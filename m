@@ -1,593 +1,486 @@
-Return-Path: <linux-kernel+bounces-885187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ABF7C32372
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:05:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354E4C32390
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99F024EB7C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D833AB887
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E201E338939;
-	Tue,  4 Nov 2025 17:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC85C33B6C9;
+	Tue,  4 Nov 2025 17:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Kbv8rPX9"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010035.outbound.protection.outlook.com [52.101.85.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="Or4EZNTd"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5931A3314D9;
-	Tue,  4 Nov 2025 17:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275811; cv=fail; b=nQurn57WPGhLBKDTFoTbMZuhVmWE22Yyfk74Z2H1Rh4DMDl3/ngf1FjQSXuAMPIzgsd0Hm9d0aDiMZ9KFnPAMC4VJpp4mNmLmul/NTaCQHrGL27+QS1+j1qZbyqvPrcVGzuei3QBX2gdUjsgYg4L4XL3+jHmqv5KVw2jCjkhKBk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275811; c=relaxed/simple;
-	bh=g3FaBmivLXEsdLHsGR3q/HycFRlWE+4Z0UwJedVcyvM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FKwJxtupcQY6UK/vbDa08+v5zMSh8kEroNrIBcXJY+t0PHCJuFNz5HC1ZhBoPXeQp1+NLAU87karzc8b+Lxoo7n44I2OtBsiTCQd0oDesPi2S1LAt73EtS3Ha99cM7I5gSiZUD/qP+n8oNmnww4PHLlXuoC1qveg7W2bivREYgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Kbv8rPX9; arc=fail smtp.client-ip=52.101.85.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KcET8nX4l46ElEnphxJBU23FnM0lFFG+GCc7WqkBTc3jxY6mLwunxlaEcqgFWGRt7LQBJ9UMCKvZAE7VOtU30TSI6iOgP93GXICB4is5HS/xib9J0iEjSDYwEZx/6ayw7zZc2QYLHY/qprAzvA4NR2qU69j47+R0cWqLrKwUx9bwhX3I5DO9up4zLgahSG4AU8Yw8wW4i9p7nUtZMxAM+hZG6zQtaCbhS+rTe23qbZJfLlMSZPe/cZhyz80lBQ/X+PWnG51F2GqzFyz93P34XyJ5dOil0aAOaq9D4UPGta3Xk8ZpPUm3QkCOORk/Im1ByLJocKUSs6ZG65JQtlT1Zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TWS2fX0x/S66+C4ZmEBor5+04oBd/k/c00Zl/ouOkC0=;
- b=IIdVkgIFqwe4BEYHKVsPhgt5/gwFhYVI3/Q7PbV/QfzoGm8Z5TQV0B+gl2N8hl5Lw97yr34zx58lD8hKcTsUmBjz13/7fw2TVBmPAwSInSaZasXJ+6XI1G6rsSQ7nr0zle4heR+yppRguBRMdWxJS19kt+f4hR+nFx/VkcX/3axKGs/jP2jtELQwdEUA2IvOb28vkVKehvOKaqDrRqfHhj5Rp0ri79/7pM5my+WQWgp2QjjZQ+eHQOv25ooBIp4irSZ16X5N/DAWLoGfrd9usxPNuAuOjb9DTdDMm0URQKZzqgq3b78iNB7L9a7uHp5+yT7H41thp4IUAtC8Jc9Iag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=stgolabs.net smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TWS2fX0x/S66+C4ZmEBor5+04oBd/k/c00Zl/ouOkC0=;
- b=Kbv8rPX9A8zmiY9zErwrYqLXsz174zVyJUBLsObgYm7MZCkB1CmbeZBpMqDvVpeRfNp++J5XviwoGBO4OBkRhSuI44vxj4gZKeEf6iFqJ8pf1/Lg+BKSyPvH5urMfbKGzzEjk8zIjP4238MI0S6DxcQDBDkUdyyDX5g3WKwesGQ=
-Received: from BN9P221CA0007.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::26)
- by PH7PR12MB5712.namprd12.prod.outlook.com (2603:10b6:510:1e3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Tue, 4 Nov
- 2025 17:03:24 +0000
-Received: from BL6PEPF0001AB72.namprd02.prod.outlook.com
- (2603:10b6:408:10a:cafe::a0) by BN9P221CA0007.outlook.office365.com
- (2603:10b6:408:10a::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
- 4 Nov 2025 17:03:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL6PEPF0001AB72.mail.protection.outlook.com (10.167.242.165) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 17:03:23 +0000
-Received: from ethanolx7ea3host.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 4 Nov
- 2025 09:03:22 -0800
-From: Terry Bowman <terry.bowman@amd.com>
-To: <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<terry.bowman@amd.com>
-Subject: [RESEND v13 01/25] CXL/PCI: Move CXL DVSEC definitions into uapi/linux/pci_regs.h
-Date: Tue, 4 Nov 2025 11:02:41 -0600
-Message-ID: <20251104170305.4163840-2-terry.bowman@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104170305.4163840-1-terry.bowman@amd.com>
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12272334C00
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762275766; cv=none; b=ch5PVUmj3YkkJeWuHkiwXYM8KCHsE2JsHaIqoqWWO28jLrKvIbnKRyF76LqB96BeslI+GziMGDqZnB5H0rQ3zCUA8meqY985rmL83EmZKOJKhNy08K+qN16GrWxDjULH2m9BlRzVUUG3QRKFPlcimDs0knhXTLdMNw+ZxX9AYho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762275766; c=relaxed/simple;
+	bh=EWO5+Jo98nLUKzqMNaEDKH9OgdjG0IrjZ+odi0gpRnk=;
+	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=QosGGMSPKhUJDzlTCe57lb6ZkRKebL0p8PBSKh8arX/W+UeKA8kliiLD2cWz2pcgqJDFwc29hgZblxGzO+MteqK+VywdZy1HlbwE0UrquhlrzoecXdsM7NfTRc8mw3/K/06fbK1/tJVvIZxmN9hgiyD6Q4NqHoSH0uu0Br4kzco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=Or4EZNTd; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7869819394aso9699257b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1762275763; x=1762880563; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=P1UexZIIp+qR5KNU45yjHwV4Htk3+9pyERy+GG7OFns=;
+        b=Or4EZNTdcS9OLxZePetbgm7HtovkV4n5usP+bfkQXSrdFdksOe2GNWo+o88zuGH0Qm
+         KVPEXzVL9RUU8+4wVqeEuHHKMHWdeiWKSsauxfqsHuB0rYxJHpQ2oiO74O0ZYbaPCIyv
+         TQRxEu1C3/0pV6ZN+OdNCWgrT7WHHnDdpqACJvwT+bwK4w/8PvQv+YfsD0XXS4ePbhjw
+         GNt2UMusTR1yg85AIW3KoHb+qgV7i7baa/1pH6bS1XWUDrRqcCH7zZgJ73j9h//zLr78
+         LOOlKzAfVRLHUjrAiECPNBw6acaAv+0G8D6W9bSanhPep7K2jUIxU4HsrOs7RRzEAeCt
+         Swkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762275763; x=1762880563;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P1UexZIIp+qR5KNU45yjHwV4Htk3+9pyERy+GG7OFns=;
+        b=UI44JNsBT8nxidgwhR7e6m6FfOSxkFaBcPb9pUcWFnyketiS2w5oJNbsIulsPV0I8G
+         BLAC3XLUYwQ5Hv6+JvKsEtwMxJLGub2gpSrTuZ7S7zy2hHOEpVi1wj22O9Mne0/3Mff2
+         yPJSjCIH67DD/gJimNfb/zmdufzfYHwIHJ7c21nwv91/wRjAd1xNmv8bYCAa53CfViYF
+         MEW/582aH8/ON1RNS4Hf/1Wiu7bbzpGER3Gic316onS9bobvzyq9GnHV2rLJ5pqDYXMJ
+         UkjX+oORz1fInRYEUsn+zkKFnAxgXTS/Qns70SgFbYsSwGS4eevXgjSfP7JteOP/WHjF
+         L0eQ==
+X-Gm-Message-State: AOJu0YwJ2Dnd9vLdzIDv524ULo1x3IKjf8/bBQuuR/92WX7iDaQRQkGJ
+	16mUm+EgcWPQCWcDWM5ml7vZJKS2Mp9TyAA1v8/a6rXqtPZRdYD9FkWR5dqQJrti5R4Rreg4Kxg
+	xXyROd2ebJzEwEEjYmPHu410Dy71c9SwNciIVN66pquOPs/PhqLJ7OQ==
+X-Gm-Gg: ASbGncvNUi5JE4/C5lAss55bOG/h8J/BZYoFAY5jKxBcdSOEVQ/Yl8krwxMGbf0nSdM
+	wSoQD1ulKmjZ79yI8SnZs3YOOlB8MtOcRO0fHi4Lo4M6xIYH0tgU+xkAzGjKTZGDTQ/DQpmqNdF
+	pH3qVdUYA1BkEwAW1UEvHuSKMW303L7HsZOw0bEyq6gW5bybhj4rSJVWq0wQ4m8Aeq+ubNXEnVa
+	05iC3ekt9etPFULK3s/nWyZ2/sHePWexC95P965Gt3WtT9CazZNvVKo1qOXWA==
+X-Google-Smtp-Source: AGHT+IF9sHg5VXSO50QCBDqS0vPspAIHZHreI6gFNaukDo/oju8p3Ml/vzWsz+xdlaR8tvFGqdrL9bQnu3AXBg7oPwo=
+X-Received: by 2002:a05:690e:1517:b0:63f:aa5b:bce9 with SMTP id
+ 956f58d0204a3-63fd358096dmr116353d50.53.1762275762407; Tue, 04 Nov 2025
+ 09:02:42 -0800 (PST)
+Received: from 239600423368 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 4 Nov 2025 12:02:42 -0500
+Received: from 239600423368 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 4 Nov 2025 12:02:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB72:EE_|PH7PR12MB5712:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a25f57c-c500-4410-ec65-08de1bc4101f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fIV4+QKyXXImak4HViCY0juyzlVNJIBphxMfP3/ketS+0bRJaEMY+tMHP5tD?=
- =?us-ascii?Q?VH0BR9PH9zVZNLisbo5XXICWGaVrA/rzPSvYJKT6fTe9/gYxcREMeGh7EJDr?=
- =?us-ascii?Q?k0z3L8qswXHw3kA6BouhTu9KJoHZhNzYWRXr4s8iyKdTlF7WDzHKKDr/xoge?=
- =?us-ascii?Q?07U686zKAx9bf4XOTwDLfFekI0RNrCoKF4uryVNnrhk9hSaAbBiRKmi+TuXh?=
- =?us-ascii?Q?2hAAv6KKFBvdgj5gGScrdgvjfNQLMnNTS5OXUPGvOwmm3kHD3djqw2vkhup7?=
- =?us-ascii?Q?TUpyBmn+S7X3qZ9+ThHFni4awceQgL3Gi17cHJ+UH0ZQqhX+eO07DPx9tAAF?=
- =?us-ascii?Q?6EhaNZrO0WtzKoxyOtnqgd8qXMfZexWlZtfz70FD79RXBMBuayZOF5msi2RA?=
- =?us-ascii?Q?b+norGnHfXR9WJJRUpGMDn2g92/+xTB0It3lc4leDMXoDxtTN7qiAje/qwKf?=
- =?us-ascii?Q?lzOXPe31OBiqla/2PxSC3OX9vHVYkTeIdHTWkWZmYu8OQVDVzrB8bExrn+DZ?=
- =?us-ascii?Q?Ft/Wd+fhAk2IFBwA/1VOGfdQA4Vb/Y6xeNLCc7i1PfgdXM4iyII7MU4AZzKo?=
- =?us-ascii?Q?49DD9w1eNAEWBcgoLm10E0/V88SbWDqnRvX4T0gfLCGZU65GRtmW4jBhbo7U?=
- =?us-ascii?Q?4hD9QMTduvqehBWJr9aVhmHv/BTxiwM8ImNBbWgRwKSrkA782iWHcn6Fe0HW?=
- =?us-ascii?Q?96sm43bL/5AuvMNoxryhxTHPV2pw0RscBNI52JJ6KtNrw9NnJrw8a+A5kIC+?=
- =?us-ascii?Q?dvfWFMdVMB5kb9DK97SDn9GBbQUhYcmcXTlMZHwnw+MbnwL/Kb8SNwSuZnwX?=
- =?us-ascii?Q?E4GMw8q99RcFnhNZI7UXnN6txqf0a2kxJLajW9fGxOPd/V2NuHxl+QXUt3r4?=
- =?us-ascii?Q?nN/MEauh7Dd2ytW3GIuEjbatrrSWpsQrrn/XsXBrTtmtCY8OoynFxgOBObSr?=
- =?us-ascii?Q?hOpwGsZ6E+s2crW055UMbGwBy6jsuM0I3flfAj8IP5oZkzoAiBKjfci1DT7z?=
- =?us-ascii?Q?peVoddzJ8WmBxzEao8BrL0GVdPHjSFd0K9VBBDOUdzxGRPB/rCvqnIEWuxk6?=
- =?us-ascii?Q?kcUzR1pqziqqz+7tdfPRn+wV8DoRGU2T0rGFNqLeH7g5hBdNbVhukXfbHCnW?=
- =?us-ascii?Q?Hn9IS0Oocdc7lDJPK5/4xyAkohi0fxQUPFaaZnx1pdhIVYWK8GoLRkKWSkQW?=
- =?us-ascii?Q?/8ZyKTJvxyYlH9+HDYffXGZ2eDdBmyDKTMC/Rv3CFeENGvVJAOk5RH44CyI8?=
- =?us-ascii?Q?77px1YPxjVKn9GWEWinBPYyOaAuJbhdPkEdZzUOPKfJI40qFsSV27SLXKRkK?=
- =?us-ascii?Q?+7YoXNXU1Zs+it1Tc9N3W8HpVSPs/ePKHvY3R4/4gnzDhVtC4Mk7f/PxPZDw?=
- =?us-ascii?Q?Cq46NJq1D0xgK5sFQt6/+viV0Zn6mVzMQx6fY0vwFZvW/wYe7uBzAB8pHSAw?=
- =?us-ascii?Q?YNPVkllpiBiaO5Y2Rmbr5WYplfzmNUDHOYk/lXDTb86i+4iobN1keNZOYG9A?=
- =?us-ascii?Q?5p4SM70sjtbBV3pFVaWAaXeFeQGmmN6ez7Khd2zs+JIEN57LI/D4cug/16D7?=
- =?us-ascii?Q?E48LRQsf/Rl0b7NoNNKqb7pTbAHY4bjiFY5TRTdM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 17:03:23.0746
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a25f57c-c500-4410-ec65-08de1bc4101f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB72.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5712
+from: Sean Rhodes <sean@starlabs.systems>
+Date: Tue, 4 Nov 2025 12:02:42 -0500
+X-Gm-Features: AWmQ_bkZBKcIz6XI9FtNNFWqf_HvrtkjXQAJJVoJFV43lplTNNpZo_OVc3FNgPY
+Message-ID: <CABtds-08TC6brxcSDqz426BZyXVusp96poGS=GrWfSOTFNULMg@mail.gmail.com>
+Subject: [PATCH] drivers/mmc: rtsx_usb: add workqueue-based card polling
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The CXL DVSECs are currently defined in cxl/core/cxlpci.h. These are not
-accessible to other subsystems. Move these to uapi/linux/pci_regs.h.
+From 542dd6baa424b262ef663cfbd2abc60dded6f91b Mon Sep 17 00:00:00 2001
+From: Sean Rhodes <sean@starlabs.systems>
+Date: Tue, 4 Nov 2025 16:16:48 +0000
+Subject: [PATCH 4/5] drivers/mmc: rtsx_usb: add workqueue-based card polling
 
-Change DVSEC name formatting to follow the existing PCI format in
-pci_regs.h. The current format uses CXL_DVSEC_XYZ and the CXL defines must
-be changed to be PCI_DVSEC_CXL_XYZ to match existing pci_regs.h. Leave
-PCI_DVSEC_CXL_PORT* defines as-is because they are already defined and may
-be in use by userspace application(s).
+Move the SD/MMC host to a delayed work poll that adapts between a
+50 ms cadence while a request is active/present and a 1 s cadence once
+the controller goes quiet. Track ongoing sequential transfers so we
+can stop streaming cleanly, and drop the clock tree into an idle state
+when the card is absent or idle to save power.
 
-Update existing usage to match the name change.
-
-Update the inline documentation to refer to latest CXL spec version.
-
-Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-----
-
-Changes in v12->v13:
-- Add Dave Jiang's reviewed-by
-- Remove changes to existing PCI_DVSEC_CXL_PORT* defines. Update commit
-  message. (Jonathan)
-
-Changes in v11 -> v12:
-- Change formatting to be same as existing definitions
-- Change GENMASK() -> __GENMASK() and BIT() to _BITUL()
-
-Changes in v10 -> v11:
-- New commit
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ricky Wu <ricky_wu@realtek.com>
+Cc: Avri Altman <avri.altman@sandisk.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Jisheng Zhang <jszhang@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sean Rhodes <sean@starlabs.systems>
 ---
- drivers/cxl/core/pci.c        | 62 +++++++++++++++++-----------------
- drivers/cxl/core/regs.c       | 12 +++----
- drivers/cxl/cxlpci.h          | 53 -----------------------------
- drivers/cxl/pci.c             |  2 +-
- drivers/pci/pci.c             |  4 ++-
- include/uapi/linux/pci_regs.h | 63 ++++++++++++++++++++++++++++++++---
- 6 files changed, 100 insertions(+), 96 deletions(-)
+ drivers/mmc/host/rtsx_usb_sdmmc.c | 245 +++++++++++++++++++++++++++++-
+ 1 file changed, 242 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-index 18825e1505d6..cbc8defa6848 100644
---- a/drivers/cxl/core/pci.c
-+++ b/drivers/cxl/core/pci.c
-@@ -158,19 +158,19 @@ static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
- 	int rc, i;
- 	u32 temp;
- 
--	if (id > CXL_DVSEC_RANGE_MAX)
-+	if (id > PCI_DVSEC_CXL_RANGE_MAX)
- 		return -EINVAL;
- 
- 	/* Check MEM INFO VALID bit first, give up after 1s */
- 	i = 1;
- 	do {
- 		rc = pci_read_config_dword(pdev,
--					   d + CXL_DVSEC_RANGE_SIZE_LOW(id),
-+					   d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(id),
- 					   &temp);
- 		if (rc)
- 			return rc;
- 
--		valid = FIELD_GET(CXL_DVSEC_MEM_INFO_VALID, temp);
-+		valid = FIELD_GET(PCI_DVSEC_CXL_MEM_INFO_VALID, temp);
- 		if (valid)
- 			break;
- 		msleep(1000);
-@@ -194,17 +194,17 @@ static int cxl_dvsec_mem_range_active(struct cxl_dev_state *cxlds, int id)
- 	int rc, i;
- 	u32 temp;
- 
--	if (id > CXL_DVSEC_RANGE_MAX)
-+	if (id > PCI_DVSEC_CXL_RANGE_MAX)
- 		return -EINVAL;
- 
- 	/* Check MEM ACTIVE bit, up to 60s timeout by default */
- 	for (i = media_ready_timeout; i; i--) {
- 		rc = pci_read_config_dword(
--			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(id), &temp);
-+			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(id), &temp);
- 		if (rc)
- 			return rc;
- 
--		active = FIELD_GET(CXL_DVSEC_MEM_ACTIVE, temp);
-+		active = FIELD_GET(PCI_DVSEC_CXL_MEM_ACTIVE, temp);
- 		if (active)
- 			break;
- 		msleep(1000);
-@@ -233,11 +233,11 @@ int cxl_await_media_ready(struct cxl_dev_state *cxlds)
- 	u16 cap;
- 
- 	rc = pci_read_config_word(pdev,
--				  d + CXL_DVSEC_CAP_OFFSET, &cap);
-+				  d + PCI_DVSEC_CXL_CAP_OFFSET, &cap);
- 	if (rc)
- 		return rc;
- 
--	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
-+	hdm_count = FIELD_GET(PCI_DVSEC_CXL_HDM_COUNT_MASK, cap);
- 	for (i = 0; i < hdm_count; i++) {
- 		rc = cxl_dvsec_mem_range_valid(cxlds, i);
- 		if (rc)
-@@ -265,16 +265,16 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
- 	u16 ctrl;
- 	int rc;
- 
--	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
-+	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, &ctrl);
- 	if (rc < 0)
- 		return rc;
- 
--	if ((ctrl & CXL_DVSEC_MEM_ENABLE) == val)
-+	if ((ctrl & PCI_DVSEC_CXL_MEM_ENABLE) == val)
- 		return 1;
--	ctrl &= ~CXL_DVSEC_MEM_ENABLE;
-+	ctrl &= ~PCI_DVSEC_CXL_MEM_ENABLE;
- 	ctrl |= val;
- 
--	rc = pci_write_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, ctrl);
-+	rc = pci_write_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, ctrl);
- 	if (rc < 0)
- 		return rc;
- 
-@@ -290,7 +290,7 @@ static int devm_cxl_enable_mem(struct device *host, struct cxl_dev_state *cxlds)
+diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c
+b/drivers/mmc/host/rtsx_usb_sdmmc.c
+index e23ef4111dab..5d8c72459b3f 100644
+--- a/drivers/mmc/host/rtsx_usb_sdmmc.c
++++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+@@ -19,6 +19,8 @@
+ #include <linux/scatterlist.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
++#include <linux/workqueue.h>
++#include <linux/jiffies.h>
+
+ #include <linux/rtsx_usb.h>
+ #include <linux/unaligned.h>
+@@ -26,10 +28,14 @@
+ #if defined(CONFIG_LEDS_CLASS) || (defined(CONFIG_LEDS_CLASS_MODULE) && \
+ 		defined(CONFIG_MMC_REALTEK_USB_MODULE))
+ #include <linux/leds.h>
+-#include <linux/workqueue.h>
+ #define RTSX_USB_USE_LEDS_CLASS
+ #endif
+
++#define RTSX_USB_SD_POLL_INTERVAL	msecs_to_jiffies(50)
++#define RTSX_USB_SD_IDLE_POLL_INTERVAL	msecs_to_jiffies(1000)
++#define RTSX_USB_SD_IDLE_WAIT_MAX	10
++#define RTSX_USB_SD_SEQ_WAIT_MAX	2
++
+ struct rtsx_usb_sdmmc {
+ 	struct platform_device	*pdev;
+ 	struct rtsx_ucr	*ucr;
+@@ -37,6 +43,15 @@ struct rtsx_usb_sdmmc {
+ 	struct mmc_request	*mrq;
+
+ 	struct mutex		host_mutex;
++	struct delayed_work	card_poll;
++	unsigned long		poll_interval;
++	unsigned int		idle_counter;
++	unsigned int		idle_wait_max;
++	bool			idle;
++	bool			seq_mode;
++	bool			seq_read;
++	unsigned int		seq_counter;
++	unsigned int		seq_wait_max;
+
+ 	u8			ssc_depth;
+ 	unsigned int		clock;
+@@ -72,6 +87,78 @@ static inline void sd_clear_error(struct
+rtsx_usb_sdmmc *host)
+ 	rtsx_usb_clear_fsm_err(ucr);
+ }
+
++static void sdmmc_stop_seq_mode(struct rtsx_usb_sdmmc *host)
++{
++	struct mmc_command stop = { };
++
++	if (!host->seq_mode)
++		return;
++
++	stop.opcode = MMC_STOP_TRANSMISSION;
++	stop.arg = 0;
++	stop.flags = MMC_RSP_R1B | MMC_CMD_AC;
++
++	sd_send_cmd_get_rsp(host, &stop);
++	if (stop.error)
++		dev_dbg(sdmmc_dev(host), "stop transmission err %d\n",
++			stop.error);
++
++	rtsx_usb_write_register(host->ucr, MC_FIFO_CTL,
++				      FIFO_FLUSH, FIFO_FLUSH);
++	host->seq_mode = false;
++	host->seq_read = false;
++	host->seq_counter = 0;
++}
++
++static void sdmmc_enter_idle(struct rtsx_usb_sdmmc *host)
++{
++	struct rtsx_ucr *ucr = host->ucr;
++	int err;
++
++	if (host->idle)
++		return;
++
++	err = rtsx_usb_write_register(ucr, CLK_DIV, CLK_CHANGE, CLK_CHANGE);
++	if (err)
++		goto out_dbg;
++
++	err = rtsx_usb_write_register(ucr, FPDCTL,
++				      SSC_POWER_MASK, SSC_POWER_DOWN);
++	if (!err)
++		host->idle = true;
++
++out_dbg:
++	if (err)
++		dev_dbg(sdmmc_dev(host), "enter idle failed %d\n", err);
++	else
++		host->idle_counter = host->idle_wait_max;
++}
++
++static void sdmmc_leave_idle(struct rtsx_usb_sdmmc *host)
++{
++	struct rtsx_ucr *ucr = host->ucr;
++	int err;
++
++	if (!host->idle)
++		return;
++
++	err = rtsx_usb_write_register(ucr, FPDCTL,
++				      SSC_POWER_MASK, SSC_POWER_ON);
++	if (err)
++		goto out_dbg;
++
++	usleep_range(100, 150);
++	err = rtsx_usb_write_register(ucr, CLK_DIV, CLK_CHANGE, 0);
++	if (!err)
++		host->idle = false;
++
++out_dbg:
++	if (err)
++		dev_dbg(sdmmc_dev(host), "leave idle failed %d\n", err);
++	else
++		host->idle_counter = 0;
++}
++
+ #ifdef DEBUG
+ static void sd_print_debug_regs(struct rtsx_usb_sdmmc *host)
  {
- 	int rc;
- 
--	rc = cxl_set_mem_enable(cxlds, CXL_DVSEC_MEM_ENABLE);
-+	rc = cxl_set_mem_enable(cxlds, PCI_DVSEC_CXL_MEM_ENABLE);
- 	if (rc < 0)
- 		return rc;
- 	if (rc > 0)
-@@ -352,11 +352,11 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
- 		return -ENXIO;
+@@ -507,8 +594,11 @@ static int sd_rw_multi(struct rtsx_usb_sdmmc
+*host, struct mmc_request *mrq)
+ 			SD_TRANSFER_END, SD_TRANSFER_END);
+
+ 	err = rtsx_usb_send_cmd(ucr, flag, 100);
+-	if (err)
++	if (err) {
++		host->seq_mode = false;
++		host->seq_counter = 0;
+ 		return err;
++	}
+
+ 	if (read)
+ 		pipe = usb_rcvbulkpipe(ucr->pusb_dev, EP_BULK_IN);
+@@ -521,10 +611,23 @@ static int sd_rw_multi(struct rtsx_usb_sdmmc
+*host, struct mmc_request *mrq)
+ 		dev_dbg(sdmmc_dev(host), "rtsx_usb_transfer_data error %d\n"
+ 				, err);
+ 		sd_clear_error(host);
++		host->seq_mode = false;
++		host->seq_counter = 0;
+ 		return err;
  	}
- 
--	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CAP_OFFSET, &cap);
-+	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CAP_OFFSET, &cap);
- 	if (rc)
- 		return rc;
- 
--	if (!(cap & CXL_DVSEC_MEM_CAPABLE)) {
-+	if (!(cap & PCI_DVSEC_CXL_MEM_CAPABLE)) {
- 		dev_dbg(dev, "Not MEM Capable\n");
- 		return -ENXIO;
- 	}
-@@ -367,7 +367,7 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
- 	 * driver is for a spec defined class code which must be CXL.mem
- 	 * capable, there is no point in continuing to enable CXL.mem.
- 	 */
--	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
-+	hdm_count = FIELD_GET(PCI_DVSEC_CXL_HDM_COUNT_MASK, cap);
- 	if (!hdm_count || hdm_count > 2)
- 		return -EINVAL;
- 
-@@ -376,11 +376,11 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
- 	 * disabled, and they will remain moot after the HDM Decoder
- 	 * capability is enabled.
- 	 */
--	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
-+	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, &ctrl);
- 	if (rc)
- 		return rc;
- 
--	info->mem_enabled = FIELD_GET(CXL_DVSEC_MEM_ENABLE, ctrl);
-+	info->mem_enabled = FIELD_GET(PCI_DVSEC_CXL_MEM_ENABLE, ctrl);
- 	if (!info->mem_enabled)
- 		return 0;
- 
-@@ -393,35 +393,35 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
- 			return rc;
- 
- 		rc = pci_read_config_dword(
--			pdev, d + CXL_DVSEC_RANGE_SIZE_HIGH(i), &temp);
-+			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i), &temp);
- 		if (rc)
- 			return rc;
- 
- 		size = (u64)temp << 32;
- 
- 		rc = pci_read_config_dword(
--			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(i), &temp);
-+			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(i), &temp);
- 		if (rc)
- 			return rc;
- 
--		size |= temp & CXL_DVSEC_MEM_SIZE_LOW_MASK;
-+		size |= temp & PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK;
- 		if (!size) {
- 			continue;
- 		}
- 
- 		rc = pci_read_config_dword(
--			pdev, d + CXL_DVSEC_RANGE_BASE_HIGH(i), &temp);
-+			pdev, d + PCI_DVSEC_CXL_RANGE_BASE_HIGH(i), &temp);
- 		if (rc)
- 			return rc;
- 
- 		base = (u64)temp << 32;
- 
- 		rc = pci_read_config_dword(
--			pdev, d + CXL_DVSEC_RANGE_BASE_LOW(i), &temp);
-+			pdev, d + PCI_DVSEC_CXL_RANGE_BASE_LOW(i), &temp);
- 		if (rc)
- 			return rc;
- 
--		base |= temp & CXL_DVSEC_MEM_BASE_LOW_MASK;
-+		base |= temp & PCI_DVSEC_CXL_MEM_BASE_LOW_MASK;
- 
- 		info->dvsec_range[ranges++] = (struct range) {
- 			.start = base,
-@@ -1147,7 +1147,7 @@ u16 cxl_gpf_get_dvsec(struct device *dev)
- 		is_port = false;
- 
- 	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
--			is_port ? CXL_DVSEC_PORT_GPF : CXL_DVSEC_DEVICE_GPF);
-+			is_port ? PCI_DVSEC_CXL_PORT_GPF : PCI_DVSEC_CXL_DEVICE_GPF);
- 	if (!dvsec)
- 		dev_warn(dev, "%s GPF DVSEC not present\n",
- 			 is_port ? "Port" : "Device");
-@@ -1163,14 +1163,14 @@ static int update_gpf_port_dvsec(struct pci_dev *pdev, int dvsec, int phase)
- 
- 	switch (phase) {
- 	case 1:
--		offset = CXL_DVSEC_PORT_GPF_PHASE_1_CONTROL_OFFSET;
--		base = CXL_DVSEC_PORT_GPF_PHASE_1_TMO_BASE_MASK;
--		scale = CXL_DVSEC_PORT_GPF_PHASE_1_TMO_SCALE_MASK;
-+		offset = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_CONTROL_OFFSET;
-+		base = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_BASE_MASK;
-+		scale = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_SCALE_MASK;
- 		break;
- 	case 2:
--		offset = CXL_DVSEC_PORT_GPF_PHASE_2_CONTROL_OFFSET;
--		base = CXL_DVSEC_PORT_GPF_PHASE_2_TMO_BASE_MASK;
--		scale = CXL_DVSEC_PORT_GPF_PHASE_2_TMO_SCALE_MASK;
-+		offset = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_CONTROL_OFFSET;
-+		base = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_BASE_MASK;
-+		scale = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_SCALE_MASK;
- 		break;
- 	default:
- 		return -EINVAL;
-diff --git a/drivers/cxl/core/regs.c b/drivers/cxl/core/regs.c
-index 5ca7b0eed568..fb70ffbba72d 100644
---- a/drivers/cxl/core/regs.c
-+++ b/drivers/cxl/core/regs.c
-@@ -271,10 +271,10 @@ EXPORT_SYMBOL_NS_GPL(cxl_map_device_regs, "CXL");
- static bool cxl_decode_regblock(struct pci_dev *pdev, u32 reg_lo, u32 reg_hi,
- 				struct cxl_register_map *map)
+
+-	return rtsx_usb_get_rsp(ucr, 1, 2000);
++	err = rtsx_usb_get_rsp(ucr, 1, 2000);
++	if (!err) {
++		host->seq_mode = true;
++		host->seq_read = read;
++		host->seq_counter = 0;
++	} else {
++		dev_dbg(sdmmc_dev(host), "sd multi rsp err %d\n", err);
++		host->seq_mode = false;
++		host->seq_counter = 0;
++	}
++
++	return err;
+ }
+
+ static inline void sd_enable_initial_mode(struct rtsx_usb_sdmmc *host)
+@@ -807,6 +910,119 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
+ 	return 0;
+ }
+
++static void rtsx_usb_sdmmc_poll_card(struct work_struct *work)
++{
++	struct rtsx_usb_sdmmc *host = container_of(work,
++			struct rtsx_usb_sdmmc, card_poll.work);
++	struct rtsx_ucr *ucr = host->ucr;
++	struct device *dev = sdmmc_dev(host);
++	bool present = READ_ONCE(host->card_exist);
++	bool changed = false;
++	bool prev;
++	int err;
++	u16 status = 0;
++	u8 pend;
++
++	if (host->host_removal)
++		return;
++
++	err = pm_runtime_get_sync(dev);
++	if (err < 0) {
++		pm_runtime_put_noidle(dev);
++		goto requeue;
++	}
++
++	mutex_lock(&ucr->dev_mutex);
++
++	prev = READ_ONCE(host->card_exist);
++
++	err = rtsx_usb_get_card_status(ucr, &status);
++	if (!err) {
++		host->ocp_stat = (status >> 4) & 0x03;
++		present = !!(status & SD_CD);
++		if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
++			sdmmc_leave_idle(host);
++			rtsx_usb_write_register(ucr, CARD_OE,
++					SD_OUTPUT_EN, 0);
++		}
++	}
++
++	if (!err) {
++		err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &pend);
++		if (!err && (pend & SD_INT)) {
++			rtsx_usb_write_register(ucr, CARD_INT_PEND,
++				SD_INT, SD_INT);
++			if (prev && present)
++				present = false;
++		}
++	}
++
++	if (!err && !present &&
++	    (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER))) {
++		rtsx_usb_write_register(ucr, OCPCTL,
++				MS_OCP_CLEAR, MS_OCP_CLEAR);
++		host->ocp_stat = 0;
++	}
++
++	if (!err) {
++		bool busy = READ_ONCE(host->mrq) != NULL;
++
++		changed = present != prev;
++		WRITE_ONCE(host->card_exist, present);
++
++		if (busy) {
++			host->idle_counter = 0;
++			if (host->idle)
++				sdmmc_leave_idle(host);
++		} else if (!present) {
++			if (host->idle_counter < host->idle_wait_max)
++				host->idle_counter++;
++			if (!host->idle &&
++			    host->idle_counter >= host->idle_wait_max)
++				sdmmc_enter_idle(host);
++		} else {
++			host->idle_counter = 0;
++			if (host->idle)
++				sdmmc_leave_idle(host);
++		}
++
++		if (!present) {
++			if (host->seq_mode)
++				sdmmc_stop_seq_mode(host);
++			host->seq_mode = false;
++			host->seq_read = false;
++			host->seq_counter = 0;
++		} else if (host->seq_mode) {
++			if (busy) {
++				host->seq_counter = 0;
++			} else if (++host->seq_counter >= host->seq_wait_max) {
++				sdmmc_stop_seq_mode(host);
++			}
++		} else {
++			host->seq_counter = 0;
++		}
++	}
++
++	mutex_unlock(&ucr->dev_mutex);
++
++	pm_runtime_put_sync_suspend(dev);
++
++	if (changed)
++		mmc_detect_change(host->mmc, 0);
++
++requeue:
++	if (!host->host_removal) {
++		bool request_active = READ_ONCE(host->mrq) != NULL;
++		bool card_present = READ_ONCE(host->card_exist);
++		unsigned long delay = card_present || request_active ?
++			RTSX_USB_SD_POLL_INTERVAL :
++			RTSX_USB_SD_IDLE_POLL_INTERVAL;
++
++		host->poll_interval = delay;
++		queue_delayed_work(system_wq, &host->card_poll, delay);
++	}
++}
++
+ static void sdmmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
  {
--	u8 reg_type = FIELD_GET(CXL_DVSEC_REG_LOCATOR_BLOCK_ID_MASK, reg_lo);
--	int bar = FIELD_GET(CXL_DVSEC_REG_LOCATOR_BIR_MASK, reg_lo);
-+	u8 reg_type = FIELD_GET(PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_ID_MASK, reg_lo);
-+	int bar = FIELD_GET(PCI_DVSEC_CXL_REG_LOCATOR_BIR_MASK, reg_lo);
- 	u64 offset = ((u64)reg_hi << 32) |
--		     (reg_lo & CXL_DVSEC_REG_LOCATOR_BLOCK_OFF_LOW_MASK);
-+		     (reg_lo & PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_OFF_LOW_MASK);
- 
- 	if (offset > pci_resource_len(pdev, bar)) {
- 		dev_warn(&pdev->dev,
-@@ -311,15 +311,15 @@ static int __cxl_find_regblock_instance(struct pci_dev *pdev, enum cxl_regloc_ty
- 	};
- 
- 	regloc = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
--					   CXL_DVSEC_REG_LOCATOR);
-+					   PCI_DVSEC_CXL_REG_LOCATOR);
- 	if (!regloc)
- 		return -ENXIO;
- 
- 	pci_read_config_dword(pdev, regloc + PCI_DVSEC_HEADER1, &regloc_size);
- 	regloc_size = FIELD_GET(PCI_DVSEC_HEADER1_LENGTH_MASK, regloc_size);
- 
--	regloc += CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET;
--	regblocks = (regloc_size - CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET) / 8;
-+	regloc += PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET;
-+	regblocks = (regloc_size - PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET) / 8;
- 
- 	for (i = 0; i < regblocks; i++, regloc += 8) {
- 		u32 reg_lo, reg_hi;
-diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
-index 7ae621e618e7..4985dbd90069 100644
---- a/drivers/cxl/cxlpci.h
-+++ b/drivers/cxl/cxlpci.h
-@@ -7,59 +7,6 @@
- 
- #define CXL_MEMORY_PROGIF	0x10
- 
--/*
-- * See section 8.1 Configuration Space Registers in the CXL 2.0
-- * Specification. Names are taken straight from the specification with "CXL" and
-- * "DVSEC" redundancies removed. When obvious, abbreviations may be used.
-- */
--#define PCI_DVSEC_HEADER1_LENGTH_MASK	GENMASK(31, 20)
--
--/* CXL 2.0 8.1.3: PCIe DVSEC for CXL Device */
--#define CXL_DVSEC_PCIE_DEVICE					0
--#define   CXL_DVSEC_CAP_OFFSET		0xA
--#define     CXL_DVSEC_MEM_CAPABLE	BIT(2)
--#define     CXL_DVSEC_HDM_COUNT_MASK	GENMASK(5, 4)
--#define   CXL_DVSEC_CTRL_OFFSET		0xC
--#define     CXL_DVSEC_MEM_ENABLE	BIT(2)
--#define   CXL_DVSEC_RANGE_SIZE_HIGH(i)	(0x18 + (i * 0x10))
--#define   CXL_DVSEC_RANGE_SIZE_LOW(i)	(0x1C + (i * 0x10))
--#define     CXL_DVSEC_MEM_INFO_VALID	BIT(0)
--#define     CXL_DVSEC_MEM_ACTIVE	BIT(1)
--#define     CXL_DVSEC_MEM_SIZE_LOW_MASK	GENMASK(31, 28)
--#define   CXL_DVSEC_RANGE_BASE_HIGH(i)	(0x20 + (i * 0x10))
--#define   CXL_DVSEC_RANGE_BASE_LOW(i)	(0x24 + (i * 0x10))
--#define     CXL_DVSEC_MEM_BASE_LOW_MASK	GENMASK(31, 28)
--
--#define CXL_DVSEC_RANGE_MAX		2
--
--/* CXL 2.0 8.1.4: Non-CXL Function Map DVSEC */
--#define CXL_DVSEC_FUNCTION_MAP					2
--
--/* CXL 2.0 8.1.5: CXL 2.0 Extensions DVSEC for Ports */
--#define CXL_DVSEC_PORT_EXTENSIONS				3
--
--/* CXL 2.0 8.1.6: GPF DVSEC for CXL Port */
--#define CXL_DVSEC_PORT_GPF					4
--#define   CXL_DVSEC_PORT_GPF_PHASE_1_CONTROL_OFFSET		0x0C
--#define     CXL_DVSEC_PORT_GPF_PHASE_1_TMO_BASE_MASK		GENMASK(3, 0)
--#define     CXL_DVSEC_PORT_GPF_PHASE_1_TMO_SCALE_MASK		GENMASK(11, 8)
--#define   CXL_DVSEC_PORT_GPF_PHASE_2_CONTROL_OFFSET		0xE
--#define     CXL_DVSEC_PORT_GPF_PHASE_2_TMO_BASE_MASK		GENMASK(3, 0)
--#define     CXL_DVSEC_PORT_GPF_PHASE_2_TMO_SCALE_MASK		GENMASK(11, 8)
--
--/* CXL 2.0 8.1.7: GPF DVSEC for CXL Device */
--#define CXL_DVSEC_DEVICE_GPF					5
--
--/* CXL 2.0 8.1.8: PCIe DVSEC for Flex Bus Port */
--#define CXL_DVSEC_PCIE_FLEXBUS_PORT				7
--
--/* CXL 2.0 8.1.9: Register Locator DVSEC */
--#define CXL_DVSEC_REG_LOCATOR					8
--#define   CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET			0xC
--#define     CXL_DVSEC_REG_LOCATOR_BIR_MASK			GENMASK(2, 0)
--#define	    CXL_DVSEC_REG_LOCATOR_BLOCK_ID_MASK			GENMASK(15, 8)
--#define     CXL_DVSEC_REG_LOCATOR_BLOCK_OFF_LOW_MASK		GENMASK(31, 16)
--
- /*
-  * NOTE: Currently all the functions which are enabled for CXL require their
-  * vectors to be in the first 16.  Use this as the default max.
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index bd100ac31672..bd95be1f3d5c 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -933,7 +933,7 @@ static int cxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	cxlds->rcd = is_cxl_restricted(pdev);
- 	cxlds->serial = pci_get_dsn(pdev);
- 	cxlds->cxl_dvsec = pci_find_dvsec_capability(
--		pdev, PCI_VENDOR_ID_CXL, CXL_DVSEC_PCIE_DEVICE);
-+		pdev, PCI_VENDOR_ID_CXL, PCI_DVSEC_CXL_DEVICE);
- 	if (!cxlds->cxl_dvsec)
- 		dev_warn(&pdev->dev,
- 			 "Device DVSEC not present, skip CXL.mem init\n");
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b14dd064006c..53a49bb32514 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5002,7 +5002,9 @@ static bool cxl_sbr_masked(struct pci_dev *dev)
- 	if (!dvsec)
- 		return false;
- 
--	rc = pci_read_config_word(dev, dvsec + PCI_DVSEC_CXL_PORT_CTL, &reg);
-+	rc = pci_read_config_word(dev,
-+				  dvsec + PCI_DVSEC_CXL_PORT_CTL,
-+				  &reg);
- 	if (rc || PCI_POSSIBLE_ERROR(reg))
- 		return false;
- 
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 07e06aafec50..279b92f01d08 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -1244,9 +1244,64 @@
- /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
- #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
- 
--/* Compute Express Link (CXL r3.1, sec 8.1.5) */
--#define PCI_DVSEC_CXL_PORT				3
--#define PCI_DVSEC_CXL_PORT_CTL				0x0c
--#define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
-+/* Compute Express Link (CXL r3.2, sec 8.1)
-+ *
-+ * Note that CXL DVSEC id 3 and 7 to be ignored when the CXL link state
-+ * is "disconnected" (CXL r3.2, sec 9.12.3). Re-enumerate these
-+ * registers on downstream link-up events.
-+ */
+ 	struct rtsx_usb_sdmmc *host = mmc_priv(mmc);
+@@ -832,10 +1048,14 @@ static void sdmmc_request(struct mmc_host *mmc,
+struct mmc_request *mrq)
+ 		goto finish_detect_card;
+ 	}
+ 	mutex_lock(&ucr->dev_mutex);
++	if (host->seq_mode)
++		sdmmc_stop_seq_mode(host);
+
+ 	mutex_lock(&host->host_mutex);
+ 	host->mrq = mrq;
+ 	mutex_unlock(&host->host_mutex);
++	sdmmc_leave_idle(host);
++	host->idle_counter = 0;
+
+ 	if (mrq->data)
+ 		data_size = data->blocks * data->blksz;
+@@ -1051,6 +1271,8 @@ static void sd_set_power_mode(struct rtsx_usb_sdmmc *host,
+ 		if (err)
+ 			dev_dbg(sdmmc_dev(host), "power-off (err = %d)\n", err);
+ 		pm_runtime_put_noidle(sdmmc_dev(host));
++		sdmmc_enter_idle(host);
++		host->idle_counter = 0;
+ 		break;
+
+ 	case MMC_POWER_UP:
+@@ -1060,11 +1282,15 @@ static void sd_set_power_mode(struct
+rtsx_usb_sdmmc *host,
+ 			dev_dbg(sdmmc_dev(host), "power-on (err = %d)\n", err);
+ 		/* issue the clock signals to card at least 74 clocks */
+ 		rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN,
+SD_CLK_TOGGLE_EN);
++		sdmmc_leave_idle(host);
++		host->idle_counter = 0;
+ 		break;
+
+ 	case MMC_POWER_ON:
+ 		/* stop to send the clock signals */
+ 		rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN, 0x00);
++		sdmmc_leave_idle(host);
++		host->idle_counter = 0;
+ 		break;
+
+ 	case MMC_POWER_UNDEFINED:
+@@ -1367,6 +1593,13 @@ static void rtsx_usb_init_host(struct
+rtsx_usb_sdmmc *host)
+
+ 	host->power_mode = MMC_POWER_OFF;
+ 	host->ocp_stat = 0;
++	host->idle_counter = 0;
++	host->idle_wait_max = RTSX_USB_SD_IDLE_WAIT_MAX;
++	host->idle = false;
++	host->seq_mode = false;
++	host->seq_read = false;
++	host->seq_counter = 0;
++	host->seq_wait_max = RTSX_USB_SD_SEQ_WAIT_MAX;
+ }
+
+ static int rtsx_usb_sdmmc_drv_probe(struct platform_device *pdev)
+@@ -1397,6 +1630,8 @@ static int rtsx_usb_sdmmc_drv_probe(struct
+platform_device *pdev)
+
+ 	mutex_init(&host->host_mutex);
+ 	rtsx_usb_init_host(host);
++	host->poll_interval = RTSX_USB_SD_POLL_INTERVAL;
++	INIT_DELAYED_WORK(&host->card_poll, rtsx_usb_sdmmc_poll_card);
+ 	pm_runtime_enable(&pdev->dev);
+
+ #ifdef RTSX_USB_USE_LEDS_CLASS
+@@ -1423,6 +1658,9 @@ static int rtsx_usb_sdmmc_drv_probe(struct
+platform_device *pdev)
+ 		return ret;
+ 	}
+
++	queue_delayed_work(system_wq, &host->card_poll,
++			 host->poll_interval);
 +
-+#define PCI_DVSEC_HEADER1_LENGTH_MASK  __GENMASK(31, 20)
-+
-+/* CXL 3.2 8.1.3: PCIe DVSEC for CXL Device */
-+#define PCI_DVSEC_CXL_DEVICE			0
-+#define  PCI_DVSEC_CXL_CAP_OFFSET		0xA
-+#define   PCI_DVSEC_CXL_MEM_CAPABLE		_BITUL(2)
-+#define   PCI_DVSEC_CXL_HDM_COUNT_MASK		__GENMASK(5, 4)
-+#define  PCI_DVSEC_CXL_CTRL_OFFSET		0xC
-+#define   PCI_DVSEC_CXL_MEM_ENABLE		_BITUL(2)
-+#define  PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i)	(0x18 + (i * 0x10))
-+#define  PCI_DVSEC_CXL_RANGE_SIZE_LOW(i)	(0x1C + (i * 0x10))
-+#define   PCI_DVSEC_CXL_MEM_INFO_VALID		_BITUL(0)
-+#define   PCI_DVSEC_CXL_MEM_ACTIVE		_BITUL(1)
-+#define   PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK	__GENMASK(31, 28)
-+#define  PCI_DVSEC_CXL_RANGE_BASE_HIGH(i)	(0x20 + (i * 0x10))
-+#define  PCI_DVSEC_CXL_RANGE_BASE_LOW(i)	(0x24 + (i * 0x10))
-+#define   PCI_DVSEC_CXL_MEM_BASE_LOW_MASK	__GENMASK(31, 28)
-+
-+#define PCI_DVSEC_CXL_RANGE_MAX			2
-+
-+/* CXL 3.2 8.1.4: Non-CXL Function Map DVSEC */
-+#define PCI_DVSEC_CXL_FUNCTION_MAP				2
-+
-+/* CXL 3.2 8.1.5: Extensions DVSEC for Ports */
-+#define PCI_DVSEC_CXL_PORT					3
-+#define   PCI_DVSEC_CXL_PORT_CTL				0x0c
-+#define    PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
-+
-+/* CXL 3.2 8.1.6: GPF DVSEC for CXL Port */
-+#define PCI_DVSEC_CXL_PORT_GPF					4
-+#define  PCI_DVSEC_CXL_PORT_GPF_PHASE_1_CONTROL_OFFSET		0x0C
-+#define   PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_BASE_MASK		__GENMASK(3, 0)
-+#define   PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_SCALE_MASK		__GENMASK(11, 8)
-+#define  PCI_DVSEC_CXL_PORT_GPF_PHASE_2_CONTROL_OFFSET		0xE
-+#define   PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_BASE_MASK		__GENMASK(3, 0)
-+#define   PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_SCALE_MASK		__GENMASK(11, 8)
-+
-+/* CXL 3.2 8.1.7: GPF DVSEC for CXL Device */
-+#define PCI_DVSEC_CXL_DEVICE_GPF				5
-+
-+/* CXL 3.2 8.1.8: PCIe DVSEC for Flex Bus Port */
-+#define PCI_DVSEC_CXL_FLEXBUS_PORT				7
-+#define  PCI_DVSEC_CXL_FLEXBUS_STATUS_OFFSET			0xE
-+#define   PCI_DVSEC_CXL_FLEXBUS_STATUS_CACHE_MASK		_BITUL(0)
-+#define   PCI_DVSEC_CXL_FLEXBUS_STATUS_MEM_MASK			_BITUL(2)
-+
-+/* CXL 3.2 8.1.9: Register Locator DVSEC */
-+#define PCI_DVSEC_CXL_REG_LOCATOR				8
-+#define  PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET		0xC
-+#define   PCI_DVSEC_CXL_REG_LOCATOR_BIR_MASK			__GENMASK(2, 0)
-+#define   PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_ID_MASK		__GENMASK(15, 8)
-+#define   PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_OFF_LOW_MASK		__GENMASK(31, 16)
- 
- #endif /* LINUX_PCI_REGS_H */
+ 	return 0;
+ }
+
+@@ -1436,6 +1674,7 @@ static void rtsx_usb_sdmmc_drv_remove(struct
+platform_device *pdev)
+
+ 	mmc = host->mmc;
+ 	host->host_removal = true;
++	cancel_delayed_work_sync(&host->card_poll);
+
+ 	mutex_lock(&host->host_mutex);
+ 	if (host->mrq) {
 -- 
-2.34.1
-
+2.51.0
 
