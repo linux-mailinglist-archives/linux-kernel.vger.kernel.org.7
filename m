@@ -1,170 +1,130 @@
-Return-Path: <linux-kernel+bounces-884386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9BEC30124
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:54:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83017C30136
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E7A462061
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52DD3A54F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5029A2BDC09;
-	Tue,  4 Nov 2025 08:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E6826ED5F;
+	Tue,  4 Nov 2025 08:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzJvYqoy"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CRfjG70T"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8352429AB11
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E31B19D8AC;
+	Tue,  4 Nov 2025 08:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246005; cv=none; b=Pq7cZcyELNBeSGT+8Yv1Pkv2u7j3qEuFxEWap8q8Pwq4EIK5XIKkIka5u6z9zPI3uU3y8YGdpd2i5kOYb1aj3YXPl5nvdmyio295XMVZ75GSJ2owIxHdHl0qpwB+fsbqZnKHgaAQmUx7HAdG6RPNTg+9WfnIMPcZdybR0h2iJ8o=
+	t=1762246115; cv=none; b=k476AkwnXK8guNIAh55vz5zGMkg6isHFg+DwJpV8HZ6RgZJwtbYoVosS7KnORnhm1ylpROqmuiqiJg67Jr4x8Xd7Mcb1MfkjgwhuUTNrTmg8xHSgYRgh+DXC0YjJPf33DBfk3AsZTaPO+gzyuWcdlgTsOuxXmSQ3ynsScd6EOsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246005; c=relaxed/simple;
-	bh=Wf4TBrAOAA3IG3OdYDh0WfQE4U26yPFHYPSBa9u/sV8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qy8g4TkNwt1PCl1rjF/b4/jM0uzWkjBPaxIwqDZIb21lalletbBO3xYn8WbJ2TGphcqAxWaAIU0GAVotVwwWYLbp2wLqlW8qqc1u6n9mnVf9uWxlXlNiwp6tcM4GGEWdm2gKMVFAUXHbHerTrGhE8rNeLEmVVKEF7C9URNjzRBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzJvYqoy; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47755a7652eso3360545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:46:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762246002; x=1762850802; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rK9/r+IfnFlfj3Kuw96HA2MKcOpR1Q7/bmqW3PPyDGM=;
-        b=AzJvYqoyeZNEIZz1r1MyaKLevuSbekCCDfnYwRWFGsdf0CYUJIy2vQI7a9nXLBrdkU
-         YNudemUToIqjeW/g7Q4nsq5TimuUXYeuxEhoP8ICyEh+OFKAGCpeFSA4TmRHZs0m7G+A
-         buWLPQDZ7b1JwaLgShM6xVdgEhuziO8bai75iU4Xeurd5gAk18Qok/IgLLRvZX+sx0nd
-         kE8Fu1ggrGTySSmgJ2n3QOwZQwiic7ulmWGYU9DXvAY8HSOIDWLUwX7xEoIOjPNrI7NX
-         EuAra7gaDdxLjVWaAuRGhkrqJQhE5ChgB1QLJfUg5OQe9H+UYQ5JZ4QCdXfvdDILA/HX
-         42vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762246002; x=1762850802;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rK9/r+IfnFlfj3Kuw96HA2MKcOpR1Q7/bmqW3PPyDGM=;
-        b=YXXySoSpSbYbMwbzNU66sr0cphOvVvGAxTf1+8vVfGYLVKELSdMUQ68w5U3G8HVQC5
-         Pc7t/6UGA5xvjCwdP5h3vppOmXk+fynSxwZnc2HljxdOiN5ZUAM7kwWCEbQ1vdcma/GG
-         kHRf/9ExHveBliTsd1Z4QEWWAgmlRi+66iBIzcQMBjBKKF3KLHLRoPyScQTexeYROrwT
-         omFCnucK9cqDWGEhBXTCXVVdbiq2j6Cdab4bS3mkf9iSdbUg56qdTeyQmT08BwLsajWx
-         6hXpO5DoEOZJWQU0bCuT0+euB/FPBiUoHrxIQM8UNn5Obqx8xwUrYL7pJTNEpfDZWVZq
-         BWsA==
-X-Gm-Message-State: AOJu0YyLsTJlGDMNfHhYgw2VNeewPpN9ru6KIYUvgFi1ua4GREkO6QMk
-	cbKjY6bStoTbhuDmS4yTdc4Hs+QHBHDMZq9h8gtgg1lXyF53oKL+e0Os
-X-Gm-Gg: ASbGncuAIjVaUA78K1FtwA6g27V9J86uftnyJgdWdRcDIjOi9EEuafKH2WjW/mlstGu
-	afJSqy6sANYjBLrcSuhqS5OSFOmnWrtGvtHHvk/YWmbLDtZMiFI2V32uWKiTCr4aFrcRAD0c0hx
-	Zh+8lw8O+KFoxfxIpMAqEuX4aXCONS1ZavyVfrbikJwy9DjswRCkJN5f2QkIpDEYDBcWyJzpnHG
-	wbmpgAoJmpfI4zxMkqWf5mNYdmgDgSoPhVt2upiVdqVHKCQbH94aY8IhOmmkCA/k3PKoMIczM2O
-	/7gUh5d2ZM9pyzLdd1BwJSw1xI/sz3Sjoga8iL6HijcMv/BZHwB8tYnJ6nr/aqWt2yQV6998hX8
-	NrRSrXyARHA4HmLVgLgit76T0gihoOAN5PJPniV/4maZawMyLhYKAe5U37zbzU31x1YY2RRuzjU
-	0xv2vlNwuWTt5zXsk6ef2aUw==
-X-Google-Smtp-Source: AGHT+IGhgCX2NfeSdDb0gpSYu/I4DorVKH+J4uT9I1EZQvppI43csdNacLNGraQ9BsMWF4m2sbtX8Q==
-X-Received: by 2002:a05:600d:4350:b0:477:3543:3a4a with SMTP id 5b1f17b1804b1-47735433f88mr92298435e9.2.1762246001456;
-        Tue, 04 Nov 2025 00:46:41 -0800 (PST)
-Received: from localhost.localdomain ([46.10.223.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c394e33sm200375535e9.13.2025.11.04.00.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 00:46:41 -0800 (PST)
-From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	khalid@kernel.org,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Subject: [PATCH v3 2/2] f2fs: Add sanity checks before unlinking and loading  inodes
-Date: Tue,  4 Nov 2025 10:46:20 +0200
-Message-ID: <ef5cfc5cee26e34586e7415de41d865a360e0d98.1762184787.git.zlatistiv@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1762184787.git.zlatistiv@gmail.com>
-References: <cover.1762184787.git.zlatistiv@gmail.com>
+	s=arc-20240116; t=1762246115; c=relaxed/simple;
+	bh=TTQr+0R+W0AqrqEoPVc7J5rpzXqWM5mmludeeFcg23Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOY9o9mLz4JOzz7ZZjDUMdYqyrPDbX6hBDctpPS2RbEGpW5Rn0xzuFFM7GMRzYy/bsJH13O30Vq6AGRySAzozfc94bpoT341cLAiNq7PTUuGefYX34v9JNY/pDZKibqEf/b02CqVPBdY4KLOD6HZ6KTx22pbcOU3mIVlDcuexc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CRfjG70T; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762246113; x=1793782113;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TTQr+0R+W0AqrqEoPVc7J5rpzXqWM5mmludeeFcg23Q=;
+  b=CRfjG70T87nhOWhBnujwtl4Tr8CIn6mB1JaPRIHtRV6gRhDYVrIKB0BW
+   W6Snxzd44blysaWuC5TyZX6V9lQy3opqoI+6YmPNTqyv3bwlcL6XYNJZd
+   TleipxmD/OJ92FvfCbItyWkwoWJkxqx+seIHiUI5jeOQdFzw7HsTByHGZ
+   VO7c6KHpBPsqAOWruC57CZ4CbJPll4hkB7rB5JSy83SjbhT8wTq7X4WcF
+   TvYBeWmbeq0xXrPTdRkWzWqmUgEeEBDR1j5kBvm9oumt23Iv+0Mo3//rv
+   dIBVB+dbl+9s445olZx0mnKhXvbWYjZtBaL+LifHFlU2gP9Brl0nEA3E4
+   w==;
+X-CSE-ConnectionGUID: cuBV7z19QNieLgsXxlf1Vg==
+X-CSE-MsgGUID: AMkxw+pPTB+e2XdkMflsTQ==
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="asc'?scan'208";a="215994660"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:48:32 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Tue, 4 Nov 2025 01:48:08 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
+ Transport; Tue, 4 Nov 2025 01:48:06 -0700
+Date: Tue, 4 Nov 2025 08:46:23 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+CC: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
+ Jean" <cyril.jean@microchip.com>
+Subject: Re: [PATCH v1 1/3] spi: microchip: rename driver file and internal
+ identifiers
+Message-ID: <20251104-paralyze-creature-d2ab0ce2566a@wendy>
+References: <20251103160515.412706-1-prajna.rajendrakumar@microchip.com>
+ <20251103160515.412706-2-prajna.rajendrakumar@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dbyOFFU7ujEIU9/Y"
+Content-Disposition: inline
+In-Reply-To: <20251103160515.412706-2-prajna.rajendrakumar@microchip.com>
 
-Add check for inode->i_nlink == 1 for directories during unlink,
-as their value is decremented twice, which can trigger a warning in
-drop_nlink. In such case mark the filesystem as corrupted and return
-from the function call with the relevant failure return value.
+--dbyOFFU7ujEIU9/Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Additionally add the check for i_nlink == 1 in
-sanity_check_inode in order to detect on-disk corruption early.
+On Mon, Nov 03, 2025 at 04:05:13PM +0000, Prajna Rajendra Kumar wrote:
+> The spi-microchip-core.c driver provides support for the Microchip
+> PolarFire SoC (MPFS) "hard" SPI controller. It was originally named
+> "core" with the expectation that it might also cover Microchip's
+> CoreSPI "soft" IP, but that never materialized.
+>=20
+> The CoreSPI IP cannot be supported by this driver because its register
+> layout differs substantially from the MPFS SPI controller. In practice
+> most of the code would need to be replaced to handle those differences
+> so keeping the drivers separate is the simpler approach.
+>=20
+> The file and internal symbols are renamed to reflect MPFS support and
+> to free up "spi-microchip-core.c" for CoreSPI driver.
+>=20
+> Fixes: 9ac8d17694b6 ("spi: add support for microchip fpga spi controllers=
+")
+> Signed-off-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
 
-Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
----
- fs/f2fs/inode.c |  6 ++++++
- fs/f2fs/namei.c | 15 +++++++++++----
- 2 files changed, 17 insertions(+), 4 deletions(-)
+Renaming the driver from spi-mpfs to spi-microchip-core was my mistake,
+based on the knowledge that the coreSPI IP is what had been hardened and
+use in the mpfs device. I didn't expect that the register layout had
+been changed so dramatically between the two, when all other "hardened" IP
+just added extra bits in registers or whole new registers.
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 8c4eafe9ffac..b808e1dc2ae7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -294,6 +294,12 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
- 		return false;
- 	}
- 
-+	if (S_ISDIR(inode->i_mode) && unlikely(inode->i_nlink == 1)) {
-+		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-+			  __func__, inode->i_ino);
-+		return false;
-+	}
-+
- 	if (f2fs_has_extra_attr(inode)) {
- 		if (!f2fs_sb_has_extra_attr(sbi)) {
- 			f2fs_warn(sbi, "%s: inode (ino=%lx) is with extra_attr, but extra_attr feature is off",
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 40cf80fd9d9a..65af1d56a99e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -572,10 +572,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	if (unlikely(inode->i_nlink == 0)) {
- 		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
- 			  __func__, inode->i_ino);
--		err = -EFSCORRUPTED;
--		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
--		f2fs_folio_put(folio, false);
--		goto out;
-+		goto corrupted;
-+	} else if (S_ISDIR(inode->i_mode) && unlikely(inode->i_nlink == 1)) {
-+		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-+			  __func__, inode->i_ino);
-+		goto corrupted;
- 	}
- 
- 	f2fs_balance_fs(sbi, true);
-@@ -601,6 +602,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-+
-+	goto out;
-+corrupted:
-+	err = -EFSCORRUPTED;
-+	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-+	f2fs_folio_put(folio, false);
- out:
- 	trace_f2fs_unlink_exit(inode, err);
- 	return err;
--- 
-2.51.0
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+--dbyOFFU7ujEIU9/Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQm9XwAKCRB4tDGHoIJi
+0mN6AP9OaCb3FGGYqtgk+5W1t+1MWt58dVr1qbwzn5K6+yOO9gD8Cf6jDATNSvyc
+0SnFN+sA0OZ52EDvffH7yuSTGCJV3gs=
+=cXn0
+-----END PGP SIGNATURE-----
+
+--dbyOFFU7ujEIU9/Y--
 
