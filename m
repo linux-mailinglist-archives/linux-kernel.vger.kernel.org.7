@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-883951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D61C2EE5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3194C2EE79
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D14E64E5106
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:55:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB2404E386D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5332475C2;
-	Tue,  4 Nov 2025 01:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B549423908B;
+	Tue,  4 Nov 2025 02:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw5gBglO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cx5/kz6O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6786245019;
-	Tue,  4 Nov 2025 01:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB534D3BD;
+	Tue,  4 Nov 2025 02:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762221291; cv=none; b=dXKpIAPthXGnTJ+2NJZ5AlgYuhDFhXwLsTMixd3pWnkW84lrm3zCjXE6bkcLU+tnDAMPQt5FZlipP6DTCCOy8IsUhy+lj96e92N4meqmyX48k+vv8x0lKmeT+vHgup9qAIElZ5PfPht9d7nEfTotVcSYuzJlZ/yk0JbMypdcJYU=
+	t=1762221644; cv=none; b=FuH80VKTml3vLpahYJ64UVdNbD253l2R2WlU2BgKSu1BehnT2164RNroiizz730oasGZn/HMAgcWkes0iWT4LuTl/c/yD6/rRfqgwQriOpAqzP+TXYNFZGFow7PunMJQOkiav18b7yW8zPeAKp3JrqPb3FfnfBl/6/cQej62BDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762221291; c=relaxed/simple;
-	bh=gKUL+8Ptu4jH1CeENsJt01k4NTTpT6BEfmtzAkitn/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WMAsxTjO8TRixdaxQbfCCiihRPqFoz7OKI37B1a9AegiV1CK2IBpZw2GM30t/s+oFhA2BnQGbxqcInZ1IorERb+HOKI4EX7ZXpZJH94QCavcl+NR+7DO/CDgY6KOI9c/XH4SeLkS+hW4dI/euILbULRwUcrmhI8yeZg8Qmxecbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw5gBglO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C26C4CEFD;
-	Tue,  4 Nov 2025 01:54:50 +0000 (UTC)
+	s=arc-20240116; t=1762221644; c=relaxed/simple;
+	bh=nEPXZx80eny23FSBcFiXyhd/C4UeVlgnlwkJ8T5FR1A=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=b7PBkTOqS01O7XeGfPPdFPw3Pr3xL5y0qZZUP5P1jKW/uFbBX365I7fBcguyfTLyE2MWaLKJjOC+cc5KThHvKsB4jXFDDW3WwgFiI1X5RWhR4QBFQyEDcf+5JsphU9O9TfQptu9+UNlgHwhc6p+sCM3tMJ9Sti6eX0GCOzINbhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cx5/kz6O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A501CC4CEE7;
+	Tue,  4 Nov 2025 02:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762221291;
-	bh=gKUL+8Ptu4jH1CeENsJt01k4NTTpT6BEfmtzAkitn/c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Iw5gBglOBPxTFpiqMwUPSIono3rugFs+B7D+gMvBjMh7BoSe46Cc4/mTlLSBy9KxP
-	 Aj+QGrJ1mNXSWNwsbgomDfJPBf/dhN9cKq9NSPM5LH+okuGoV3Tpg3cc5lyZ2GlC+l
-	 4y5kJGH8fNG5CvLC0EF0sgAUk2R+ZKSC7tERZ+d0/b3bzi376K9WvURm8vgmDGnSRC
-	 25gmNyfEn5Etjwc1EnnAhF/RJ4iyOLwta+9/r1ykmAtiQtVpDDGOCdGjgeROXALHLq
-	 AUXlZfLQYFRVonhuXBJWmC0DF8mX1U3pu/l+VoIedFbnaV8mAN26QA1TYKZQ1IENhc
-	 gSu8pLnSM2fPg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	jingyi.wang@oss.qualcomm.com,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: aiqun.yu@oss.qualcomm.com,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: (subset) [PATCH v2 0/6] Add support for Clock controllers for Kaanapali
-Date: Mon,  3 Nov 2025 19:58:17 -0600
-Message-ID: <176222149552.1132260.12639291385565534252.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
-References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
+	s=k20201202; t=1762221643;
+	bh=nEPXZx80eny23FSBcFiXyhd/C4UeVlgnlwkJ8T5FR1A=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cx5/kz6OAcq9Qoq1EjA37+E7Myq30qoOcRasNJHDbz3JChdKMTguDANSG01Py+XYB
+	 CcDuFlVPLsCom+uTLaXmhvnlCDepacBdV/54QG5sB0ZfndqaA3QRMbGb3kPlrboQGA
+	 m23w0RBmPlhCW44YGpDKdHzTW2w62hIYJt1iJ8C3dxjKKvwcKANJmFdYkUrEj3wKid
+	 RTLU9yAFSeotHiCmOKp9ZzfSQP1ctvuEgez+UVMXCimffyXk8+fanT3KwgtJLs71BO
+	 vlwXgqGvXVKqXp6B4KLXg+gCA74TiOP1mZO3+6p82xTqTVUi1u3W2DNRjVTi8bz5AI
+	 rAg/LNvKKbfQA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C7E380A95C;
+	Tue,  4 Nov 2025 02:00:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v4 0/2] bpf: Skip bounds adjustment for
+ conditional
+ jumps on same scalar register
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176222161773.2291263.14482517778610810582.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Nov 2025 02:00:17 +0000
+References: <20251103063108.1111764-1-kafai.wan@linux.dev>
+In-Reply-To: <20251103063108.1111764-1-kafai.wan@linux.dev>
+To: KaFai Wan <kafai.wan@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ paul.chaignon@gmail.com, m.shachnai@gmail.com,
+ harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
+ luis.gerhorst@fau.de, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
+Hello:
 
-On Thu, 30 Oct 2025 16:39:03 +0530, Taniya Das wrote:
-> Add support for Global clock controller(GCC), TCSR and the RPMH clock
-> controller for the Qualcomm Kaanapali SoC.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Mon,  3 Nov 2025 14:31:06 +0800 you wrote:
+> This small patchset is about avoid verifier bug warning when conditional
+>  jumps on same register when the register holds a scalar with range.
 > 
-> Kaanapali(Snapdragon SoC from Qualcomm):
-> https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-gen-5
+> v4:
+>   - make code better. (Alexei)
 > 
-> Changes in v2:
->   - Update the commit message for all dt-bindings to incorporate
->     "SoC/platform" inplace of drivers [Krzysztof]
->   - Add RB tag from [Krzysztof] for dt-bindings
->   - Split the TCSRCC to a new driver instead of reusing the SM8750
->     driver with offset updates [Dmitry]
->   - Update the new RPMH clocks to use 'clkN' convention [Dmitry]
->   - Add RB tag from [Dmitry] for GCC
->   - This series does not have any strict PLL code dependencies [Bjorn], thus
->     drop them and will be added in the Multimedia clock controller
->     series. Drop the following patches.
-> 	- Update the PLL support for cal_l
-> 	- Add support for controlling Pongo EKO_T PLL
-> 	- Add support for controlling Rivian PLL
->   - Link to v1: https://lore.kernel.org/lkml/20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com/
+> v3:
+>   https://lore.kernel.org/bpf/20251031154107.403054-1-kafai.wan@linux.dev/
+>   - Enhance is_scalar_branch_taken() to handle scalar case. (Eduard)
+>   - Update the selftest to cover all conditional jump opcodes. (Eduard)
 > 
 > [...]
 
-Applied, thanks!
+Here is the summary with links:
+  - [bpf-next,v4,1/2] bpf: Skip bounds adjustment for conditional jumps on same scalar register
+    https://git.kernel.org/bpf/bpf-next/c/d43ad9da8052
+  - [bpf-next,v4,2/2] selftests/bpf: Add test for conditional jumps on same scalar register
+    (no matching commit)
 
-[1/6] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for Kaanapali
-      commit: 15c320b286a128131193ad270d7aac23bba4c219
-[2/6] dt-bindings: clock: qcom: Document the Kaanapali TCSR Clock Controller
-      commit: 395e0e794f9a485d9a5d6af062f096b97beecc11
-[3/6] dt-bindings: clock: qcom: Add Kaanapali Global clock controller
-      commit: 342d2a607450f256105781d29aa6300921c6152e
-
-Best regards,
+You are awesome, thank you!
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
