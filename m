@@ -1,163 +1,531 @@
-Return-Path: <linux-kernel+bounces-884746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2159EC30FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:29:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BCCC30FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7607D189FAC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9548189FB66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F31284694;
-	Tue,  4 Nov 2025 12:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553FD2ECEB9;
+	Tue,  4 Nov 2025 12:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NyeRX1+d";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SsUFykUt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjCZV7vF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89802E9EA0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 12:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762259355; cv=none; b=k5TsuLPUSwnFCvp9pknYxw+KrPYxunEbQbvZkifA2BZWUk0TK9DKr04FJBqneVjHbjGbMjY0FL08D6tjdTjv17+Uj6MjBK8bCp1LH50YttOn0pNVjqxfTEk53UAbKTv+W4GxSF+5yDL7VSryKOHl3z6lY0vXHIDLUxbMyGrHoe8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762259355; c=relaxed/simple;
-	bh=QBblT/dcw33cmxcjkpKgkXx90k/BCpzqUmz4XX5QMmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FryGxn6DM1iO1jEWBy7INa7XxxCKXYO9/Bf4KRo6a0nSmfUE/lk/zHfuoWOep3y8ZGJhpO977wQSCriRljhavINklvhCz3wv9oIDX35Bwxoquo1NM3VmTl/F6OA5Vrl6vtQCKExg52z4u0hPpxFN42QbjXY9ZDo7LWqOE/d1RrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NyeRX1+d; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SsUFykUt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A49VFO21653197
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 12:29:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jp+/EPItfX0Kl/yCkw+LiAmlIKMEk+RTTt5cVqxOpoE=; b=NyeRX1+dSm7O0fss
-	UmyAbcSKh9oQKb4g80FkRNB0vq0Prq0hN/U9QNM3ITBhytroP2OFqll2ULPK1c2N
-	d4rca2OKvWzjsbegCx2lW8I9Qthelw28GixwKA/l8m9o2AwoMNaIXW5wJscka1zR
-	D0LDsVpYG12VoiuoNNetPxUCG45ogzGbh9QjrIFtp4qrX+qA0MgLyw3uti5jEXlV
-	uEdc07VriT+jNufhAAaPZJTDU9dkLCI0024i/EJnzkpXQRzugoJIv38tiKt1p47s
-	EKNIzCWxzNcY//n4/3HDkpVsqcl9a/vvRWiKkH2Zds0LRG7CRY+LhBEbkwi+4XqC
-	t0W9hw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7ex7re9c-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 12:29:12 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8804372387fso14382586d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 04:29:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762259352; x=1762864152; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jp+/EPItfX0Kl/yCkw+LiAmlIKMEk+RTTt5cVqxOpoE=;
-        b=SsUFykUtIqF12stJqA+p0pYSpAgeExTJ2DGx1DCcnCoG6uD5jlv+BY7nGRsQ0S3SZ5
-         1HYgjWt1dE8YhqRsYViB3LhoD9EcPlPSuDLiEvnRPaMHjvQVbM9cIVTJQdlwkv43a/SR
-         BxpuIYkJEDg/G71U2UVCFllzNQ0bH9UKOGCEtN8UPdgeFjF4J/KQ/BxYstaTcyCRwnV+
-         n4zQ3Fyxpv6mQBV+jD7jbRNglgaFU0OAW+owODaahd2ts9W1yD4Fy3bJwSiEY8p3r3N9
-         BjEqiyKL0Odc5H2mj1P3R33OM223yKwxsr0fw/P8jp+whXc0ASbSf8jbhYoRnvPlzL8Z
-         VtOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762259352; x=1762864152;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jp+/EPItfX0Kl/yCkw+LiAmlIKMEk+RTTt5cVqxOpoE=;
-        b=TjdN8ozqVLaQvt4HM/uCaFLh8uj2CxJ+vkP7KTItFPsxgKM3/metMPIPq098KWuaar
-         XxDrp19Rvd9pXiou0BUHupZrCM/Y8hinxdvOOPYeVuWGY42mw0F5EqEoQLbW1LlFVfFv
-         iQlFoSjtPmYsMRKIrpMT/ISoRYBiCZhbOZT0Yvk43TSv1uNG11LKxVS8/naHxxaGklAq
-         pqCsmiZ/U8W4n71F7XlNuiX1RWXwQf0Nvtq6zDrALOwM5n888lBFlP0KlliojMHq9gLN
-         KaYH5KZ+e0Kik+BPFe8sidNKuHjyCsEnhHL2kvM66s+CewzSuYYI2d+qKR0dT+1KuByx
-         7UOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQUzB+KtnNUJzi0g3XnddLDAAV7TBrAMK0sHqHufzhkRE75MwxazVTxRCPyHtJq/G4RhtMEtQ8yME0XIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcYGlQ1ljUooyL/WczPU9HLBOPVzWadBdchQzOfQ8kdnIhQs9I
-	KGXWbArkjEGU+FqNI+y99R+qGAOewiNxVTu6l0PrvIzThFg0RJffXJZUR03vib3DkZKqe62z5oT
-	Mo3mPdY8loU4BvqnRBmJWl/fMqj24YtpgOpPa+cheeemDzrhXWo5cuN3pBuCVBKvHmWs=
-X-Gm-Gg: ASbGnctPdWwcQAb8QQQnSe/ZduxzvkF4Joaj+E1I8WcktenKbj2B47PWeiPgQZuHJt8
-	8sncAmKYwqe9p1Rp5jALVq6TZ4dHTZZxiBDh3cag/7SM1dlfXzu2oBq16XVKsuD8f5iTg63KwRV
-	1JX6XgP79oRqYvOdDxi7Pt7ufD47MpIyYETQSWCPKRijhBpiVU/7Y28pEVlQe6I0/CeAorcGGXC
-	X2uhk3R7bq2meqcB272HPGkDSZlRIUkjhnVqtjkQjHgvP7hwiRq6FNOYdVuHSvtq2WPatB8+dkG
-	YkcCFUugH90OUToSboGbvbO3Q31QzARRuQd3BagMzPXvXBp1L3Y0k8yYE6Uq63Y1HhXANICON93
-	+KUePmdv863p48sRU6Fihk1nyTFYR1pa0MVVxoEtbi/k/7DQLzxoJaMOD
-X-Received: by 2002:a05:622a:1649:b0:4ec:f9c2:c1ec with SMTP id d75a77b69052e-4ed30f7af4cmr136104881cf.9.1762259351850;
-        Tue, 04 Nov 2025 04:29:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFdHMSaJt9QzIHQX1ome9OCYQiISPLKujDe7y+SE1yj7dXfiNxPYHd/6dSCipjKiOGu+2MdGQ==
-X-Received: by 2002:a05:622a:1649:b0:4ec:f9c2:c1ec with SMTP id d75a77b69052e-4ed30f7af4cmr136104641cf.9.1762259351300;
-        Tue, 04 Nov 2025 04:29:11 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e06f8sm211219066b.38.2025.11.04.04.29.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 04:29:10 -0800 (PST)
-Message-ID: <29b32098-39ca-440d-9b51-915157b752b5@oss.qualcomm.com>
-Date: Tue, 4 Nov 2025 13:29:08 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A3C2EB5CD;
+	Tue,  4 Nov 2025 12:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762259378; cv=fail; b=sl5dvY1MVvQl7oWc2ZeP6fJgJtq3qjEA3xMlM0/Mxbt4HNI5ksHYiPiPLMyY8JUSHfYcbbUS+X+vx+k6hgZU9w4/7h61nsQ4xsyK8S5VzdlOCuHgU54m07rmfJtyQPHv2P6NGpPZmXw/0JL2ugsLrz+H8BQjOTybCj/FsjKcRN0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762259378; c=relaxed/simple;
+	bh=HwRHYWvoOYmYflprkcC3wBTHEOUgNg5K7b7ORllQ6zY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Sh8zdYzWQuDRg6jodh+SQsOfELKqD/SzXK6oL3xla9ur1XTBzeF78eCcqWdR5g4VsKbUZX1lK9LUfGtoDpMXe5tIRPJaafoc9Gfog96kdp2yMdvd9TWnxckQaZl289bC1gtZcxu0pKKC37H/HVXvGnk8ts+KUP/pssLF3c2ixIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjCZV7vF; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762259376; x=1793795376;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=HwRHYWvoOYmYflprkcC3wBTHEOUgNg5K7b7ORllQ6zY=;
+  b=hjCZV7vFFvlnqDzwTTQ94DIVPYZAgn331YrqK9UZ+ilXoL6GEse+kAaz
+   MIEMiZl3oqDsh046vdqGuZ37LrPFOo9P5r2Gfr5LUdlcL7b8QvnZD6I/B
+   6bcjM5cPDZGXqvZz6zedvxzmaO9hXWxMXlQ5W/4HuhLK2jsjmN3mMMWN3
+   VDml3IvL44WLH3XN5xrCN+BhAMWpuMbYQHg/aRFVu/Ic9OWHITMo0CuKg
+   7uVmwCBIyHF+2KwTVev9jRQa0ftkgJCXsEFmJl+sYpAAxQRH4EbildlP4
+   y7EjzgYa6VgiUTBZknBrkHWk4QWxSIBiUJ67rQj7TSA8sJOSNX+qTfAvh
+   w==;
+X-CSE-ConnectionGUID: 9bJtKhOATpGS0uS3QVxiUg==
+X-CSE-MsgGUID: JiG5hotPRQOXdILQP5pNpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="86980735"
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="86980735"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 04:29:36 -0800
+X-CSE-ConnectionGUID: bfsHjCGcTEiofpIHvwg7Pw==
+X-CSE-MsgGUID: ICOHF6GCTdGdud7KKVt+Yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="192315693"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 04:29:35 -0800
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 4 Nov 2025 04:29:34 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 4 Nov 2025 04:29:34 -0800
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.38) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 4 Nov 2025 04:29:34 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJx/KHC2jP9495ftR8X044cDIHG5fnKlTd/xyJp2BPEL/9F5juPMahGOrOJHAOV/JnxltEmWfOdCuDhnzwaREqegm+YuR7SsgxtcMTk051wGXH0gtoK+BhdGv41PeqDNkdqQLQ+5pYAnAuN9G0yBS/VA42PlVbDBi7HyaOoyHTnDRPDf9iwIi8i5t9R8HesNwEEk70f9M5UyAgHwoQXHBQa7AOwugPPVRSp3/aE4FcuzX02TfeuxQfOxP4BWh6czEL3rlqPja3C75LCNVBSnkiMYBrKoVyNrE8KGtXo4L1tDWwL93CiQiK8oXkEpnfVD+38l49LbDKSJkZJ53AMSKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0bhxoBnQz3ZXTArGCJBto0KwUd2sBUOeZNB5FGQ+Qco=;
+ b=b6gbGIQ8JL5C66NQ5diSwFWo6bEkGOqo3+JRQw193l23rcHFx9zj5f8XD2o0vePGIKAEFKkynw3jkQyk1ax3Xbf2QObdfmkfCyAAc4NIST553neXCBfCiKUwjd0+XvyzDXZpD10f4poB4iMvRwYF6CndwQ7CnC7wcI1dn22yFHcNt1KelO7ZoTasiJIIg2mtKbb0d/kwtddaiFMiXUCt3tMqf2+vrKS5a5WYx213UQVVGfH3uaRlv7d/RW2UP67LpvZX3NcOmCOZGHSBAY4MgLpnzJbBgaOjocPT81msRM7N2OIgXxtiuwoqgrqaAwAt0UNlxdG3K4gF/7xIN4IGZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ PH0PR11MB4934.namprd11.prod.outlook.com (2603:10b6:510:30::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.7; Tue, 4 Nov 2025 12:29:32 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9275.011; Tue, 4 Nov 2025
+ 12:29:32 +0000
+Date: Tue, 4 Nov 2025 13:29:28 +0100
+From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+To: Michal Wajdeczko <michal.wajdeczko@intel.com>
+CC: Alex Williamson <alex@shazbot.org>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
+	<intel-xe@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, Matthew Brost <matthew.brost@intel.com>,
+	<dri-devel@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>, Christoph Hellwig
+	<hch@infradead.org>
+Subject: Re: [PATCH v3 19/28] drm/xe/pf: Handle MMIO migration data as part
+ of PF control
+Message-ID: <75wxtpocoxc5qaxcdxmqzazwny3eoqtdmiudt5j4ep5e7t3x5q@wxefgbt3m7lm>
+References: <20251030203135.337696-1-michal.winiarski@intel.com>
+ <20251030203135.337696-20-michal.winiarski@intel.com>
+ <63446059-7af2-45b8-906b-4ba0688ed0d4@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <63446059-7af2-45b8-906b-4ba0688ed0d4@intel.com>
+X-ClientProxiedBy: VI1P195CA0074.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:59::27) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: qcom: Program correct T_POWER_ON value for L1.2 exit
- timing
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mayank.rana@oss.qualcomm.com,
-        quic_vbadigan@quicinc.com
-References: <20251104-t_power_on_fux-v1-1-eb5916e47fd7@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251104-t_power_on_fux-v1-1-eb5916e47fd7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEwMyBTYWx0ZWRfX21XmssxXTQSp
- INJidKj7cv6Hlj9uPBXtu2KO15ihbqFZKSjqg8bX9ql5wuMPXYkHHPON7fgFYCRZZH1ohZ6wSz4
- uCUpVJxEuYYyNNepzFZQCLidWkSvKBxRr1LwExzzukCc2NUr+wJTVB9lufN/XPgyZC66TGngbJ6
- 8532Y4zZiSlkL/Wg7nU/UoOpHHsTtA+XQ1cFHpzJDuARws42L3U+KMScLwKNuDuI1BF1AeL/3XH
- Fl9mc0hYOcvDS0B35BZOKGeVOdwBhCwo8W380wZuwojb+0Fe+Drpmj4FIX6G98MB4DHpS8NIK1x
- JoOLA6YK+QZsA+IHIxh+n9Muqw6SJWZNEzSuBa5F8rRfKV9xEFpnp0IXX7HpG6DkCkEbTJ/HcCX
- 4gzNBoRyiuOaKVyzPqFqIlNImErsVw==
-X-Proofpoint-ORIG-GUID: sZhS-hg4c0SDhOuvNGa3uVYHazgaq9ln
-X-Proofpoint-GUID: sZhS-hg4c0SDhOuvNGa3uVYHazgaq9ln
-X-Authority-Analysis: v=2.4 cv=auy/yCZV c=1 sm=1 tr=0 ts=6909f198 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=0-KxG6J98Nod6oUgsXgA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-04_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040103
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|PH0PR11MB4934:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4daa625-6936-4ed6-0115-08de1b9dceaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aEtWbkdnN000TVQ2b090dVNBamRtekRYUXR0LytaeFJRLytaVGh2bFR5a0Nv?=
+ =?utf-8?B?TDRod3N6dGticEp6c0YyUGUwTkZlcStmZHhXM21TbzIxRHFMd1RVZnoxZm1W?=
+ =?utf-8?B?UmhtVE4wL2gweGVJMExLdFBza3E1SGNaWWVwbzMzME16eTUwdW9GaXFjNThw?=
+ =?utf-8?B?bUh4bFFsZGprMVl3aTkxdXZqRkZsdnFkUFNqVldiUFdpYjhmaHp5VjBscmVE?=
+ =?utf-8?B?WE00dUJMMCtBTzN5U1NCMEwwbG1IZm1KT3pMemRDLzdSTG9IL1RGRFlvN1p5?=
+ =?utf-8?B?REJOK083ZkhJN3VhWGhvT3dQZjNFM3BkR05uWUs1aFZYOXYxem9WZHpJcnRX?=
+ =?utf-8?B?cGpobFhYTUszNUFYdndLU0cxTllPSFRJd2RKeWpVZkZNSlZZdFFFdlE5SEk1?=
+ =?utf-8?B?SU1xTVQ3UVVqbVA5V01EQlRSTlRlc2NIb2JPeFdlVnJiZFRBeGErOFg2RkVF?=
+ =?utf-8?B?R3ZLK2dMQ3VVQ1Fid0ZwRzlJNDAwSkdjUWxXR2RwRkdXRkMzcjhDTVlYSUdj?=
+ =?utf-8?B?Y1FZTjRPKzB6OENYOWlLOE9rSjR6MmQ2bFNDcFhHZUZXQjFFd0J0MzBqZlk3?=
+ =?utf-8?B?N2ZGODBrQ1N5L1FVbjZhUFhQSlhQZ3RoZStXcENmZE14anRRN3ZvNXVjeDFy?=
+ =?utf-8?B?eUNQUGM1SHpMN1JmSmdnazBUZ1Axa21LZkVpRWRudWZqeEwwUzFmNE9qc2xq?=
+ =?utf-8?B?SThMbjlhZUg5Mmo1VTJkNDRYYWM1bFJDdTJrRS9HT2w4ckFZUHZRNmpkOEdt?=
+ =?utf-8?B?b0xXV0s3d2hZRnVMQjY2TUtGdUFqdVI5WkxXWmR5cVAvNXVvVm1HSW1DQk5h?=
+ =?utf-8?B?eC9Nc0FXSlpxSXZaYUxsQk5UQzd0SC9PUUhZN0ZYekN0SGViTlRSNThLU25W?=
+ =?utf-8?B?dzUyME1SS1ZyNGZwb2FRZXk1SW9rQzU5TkIvUDgxOTNPeGdYZnJGR2Roazg0?=
+ =?utf-8?B?QUZCMkxyZlcvZ2FjbWxMTURHMGxjcHk1UkpKSEZoRnlhK1dFbjhXYVlnUDRy?=
+ =?utf-8?B?cW5zUjJacXd3T1l5MzFNbEwvQ0V2QTR6LzVSKzBUMW9jbU9VcjRVci9CRGNC?=
+ =?utf-8?B?NCtlUE9CWkF6M1U4SFUwOGl3VzdDNzhwVmY1NUFLQjdhM013cjE5OGkyN05k?=
+ =?utf-8?B?c3dmdWc2d3RqaFdLNTJ4RnNrdmswaW9pR3ZXM1pyTFZVVktyb3ZKam00UDBh?=
+ =?utf-8?B?Vm5zcTBlWXhyV3dld2QxYWpvWDlCa0p0T2pRNUVKVXJCM0krSTdaS3hCN2N0?=
+ =?utf-8?B?SzM3Yy8vamJjN1NndTFpQTE0Tm1rc0FoK1VuRFZ4UEpqNVpmNk1UVjduQnlO?=
+ =?utf-8?B?a0liRmtseVVCdUQ1TkVrcVU1UTA0ejh0bWxPcHlYbE5FM1g5T3RFWEl4aUR1?=
+ =?utf-8?B?cVg2NklCNlNLMDFURnFJK0lzODBDSDNyd3VGaEtCWTBLUWVDYXg0aTlwOTNs?=
+ =?utf-8?B?OEVQYUxjMERtUnVCVVNDbTV2Y0d0djZKYWhzdzRlUnZIalNqWFVVVGc2SzBl?=
+ =?utf-8?B?QUlYRzJOS0JySmpKQmZDVE4vQUFFSm5IcHlFUHJnbVV3VmtBMkNDcU5KRXYv?=
+ =?utf-8?B?TEk2K1NyL3lGcnhhL2JGSTh4RHlDVmFrNW5Nd3V5MFJXVEVMUEVaVnFvZmZE?=
+ =?utf-8?B?Z2ozVXgzYTY0U0l0TGxBWDhQLzlWS2dhZUVQM1ZOdklpZ2FmTlVlUWh6eVJB?=
+ =?utf-8?B?SEJvdWIvbjNmY29aTzNNMUEzaWlZV213TTZvTm5GSTJvZm96SmFlMGRpandO?=
+ =?utf-8?B?djl2K1NGWFdtdkNwZ1hTOGFSSGxEUVpJM3VIeXd3Wm5LYTRvL3IrTHFONEts?=
+ =?utf-8?B?dnFXdVNiSnZ5YzF4cE1BdGlMTVZZTkplejl2TDNNWXJaRkozR0ZVSUxCZFIv?=
+ =?utf-8?B?b1kzQlZwTUprSGE4Unk3YzVEandaNmxQWWxvaXJPSkprUjVHemJ1b1lEc2RF?=
+ =?utf-8?Q?OFtsKKlwPN5xZKxMy/gRvmJ+FZI7gsie?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TVZLTGMwT3MyVmh1UWVZUW5vOUpEVlYrdlN4OXJWM1k0eXc4NGkrUk55SGxq?=
+ =?utf-8?B?OFM5bHhjc0J4WVZlY21PNW9QZU5Oa1lZNGZ0Y0x1Tmg3R1h2N05mV3RRUmM3?=
+ =?utf-8?B?QzRsNVNRZk54ZVcrKzZqQkZQRjNmL1duK0pmNnFEdE5ibi9oRHg2SUh1NXRq?=
+ =?utf-8?B?cXZRVEFVSW9WcTh5S2J3SVdxazNSOEdBVStnMnRxU0JvQWNPUGFJa1UxSmE5?=
+ =?utf-8?B?R05HelY2UE85TnhNZ2dvMndmRlBUcnpZQS9NNmIzRUpvZ2Fyd0QwRGhya0Fp?=
+ =?utf-8?B?ekpkRk50TnJoS2VQNXUxRCtaMll3dEs2T1VER2VhRGwvOUlkMWozdUdmSkNG?=
+ =?utf-8?B?VWhPblAwT2pXNi9hcTQ0eVRFSjIvdHZkMnlaSHA3Qk1HN2FiWnQ2bkd0V1JB?=
+ =?utf-8?B?SkdFckVsUjFTVTVXdHF1eTVqWmdXTFErSFVTdVo5WFphL3BuSWFmYUpDbWNy?=
+ =?utf-8?B?VDNtcnVxYjhoUFRQcnJsK3BtWWdoZHRLb3hMeU4zRnhzQVRnZHY3OXl1VmR3?=
+ =?utf-8?B?S0x0cmk3eklPb1BGYnVFdE1mb1I3bkR5Sjh0WlJtbGQzQ3lQWEdiS09QTnVu?=
+ =?utf-8?B?NTZieGUrQTFsZ2g1bXdqeHFjRlV4L3lWekdiNklqN1BqNmdSVElub1Z2bjVF?=
+ =?utf-8?B?UmVmQmNjZktzVDZ5U1ZmdnFnejJqWWQxY3RnUXhaSzE5OFc4RDdyYnVXNEIy?=
+ =?utf-8?B?VGdoSHluOHpzaE1vUnRLeGJzQ0JGQS9IWFZRYUFZS1ROWkJ6TEtqL1M3Q2dX?=
+ =?utf-8?B?SFNXd0prc2NXYzlYUWpPS1dXWkZpamtOU3BOOEZINU9YUXBMWndSU0cwVTdT?=
+ =?utf-8?B?aTg3bjJvbVJuVThtVittdEE4NkdYVjNON1ZpRCt0MzVvaHp6V3Rvbmg0RjJM?=
+ =?utf-8?B?RUFVZUlMdTN4TmhVVXJJNEJQenB4cFgzRStVZkFKRnIvRlhrMlJuT1FLWmV4?=
+ =?utf-8?B?eXVnNzVJQUlxOGN3MXNsSWhiS2lDcEwzWW1vRFhzMzROL2o3bUxKS2xPMUdE?=
+ =?utf-8?B?Rk1vVSs1ZHB5c2o5cSsxeC85a0VJRzNyOFhPc1JGMlNmWlc4ZFVHVHFmcnNx?=
+ =?utf-8?B?S2s3VS9RdnZzK3duZHdTbEVPWkU2ekQ0YlFEVDAvdTgxNkV6dHdDbEFyTXBq?=
+ =?utf-8?B?eUZicEZsdWFRSk1jT2piNzY2dVFPdlJnRTFXQVhXVUtucFhuMUd4ZzhBZEhE?=
+ =?utf-8?B?T3JPTjNLVnNyTXczRGNZYlZCblBlMCsvekVNT3NrOTRYUWNhdzR3djg3M0JB?=
+ =?utf-8?B?Rm9aTFRsSlRsc3JSd251Y1dYbzRTVXduUEk5MityZ0sxOGVnOTVWdGE3N2Vr?=
+ =?utf-8?B?Yjd1c2QrUW15aUxheFBHLzQ1c29mZTZ3L1RoZm1PQnFvOVFTeVp6RTk3dzZz?=
+ =?utf-8?B?M2dkYlFFbGFyeVZ3NUlBM09tYVB5eWZza3VTc0RCMWpLcTNEWnRBNjVXcVBQ?=
+ =?utf-8?B?ZGpGWEJQYjdZWDlPc3FxQVdQYUN1clNlMUN0OVkweEFuMFJid01wdVR4VUpr?=
+ =?utf-8?B?UGNpRkJNYmlPeUFRd0lwdFFLdU5HaWJZajdraFNaNVVMQm1Ta0NvQWlKb2tU?=
+ =?utf-8?B?Z1NHVldmeFozMWZNM0RNSyt6d2JtSE0ycG5EdmpEeFo4ZGl2N0dEVE5ETGtt?=
+ =?utf-8?B?M2Y1YTRXSEh3cFpGR2EvNWJvRldnVmV5UmFVNVp5amxOSGJOOU9iY28wNWY2?=
+ =?utf-8?B?UWIvdElMVGlCS21SS2FvZXk5S0R6SEQrUGxnWnFJd3dieTZLRHB6M2E4aUxx?=
+ =?utf-8?B?RW1BbFhVRllHSFJqeThsa1RIc3FKbi8rY0pUekpMMWRySWFSZVQ5ekJlbFdx?=
+ =?utf-8?B?cUVUYU5na1hhV3dlOHBRWDdjQ0NPVmJtRy9IMGx2L3RlaWRRZXhpVnFGTjhn?=
+ =?utf-8?B?MzVPSFZrMU96dG9QYWs0dzFjSlUya0RjeXF0T0poSjN1M05tcUpHT2N2dEVu?=
+ =?utf-8?B?WVlvSTlTc3kwa1IrZC9pZjJyVUw2SXFiQVlQamlLLzEzRXpwSko0Mmg3RElC?=
+ =?utf-8?B?dlZYcHMwNTY3c0lLSXZFMGNvN3M5VFk0R2dyOXFPVlN3Umx1MWdrNWtKUXpn?=
+ =?utf-8?B?Wk9rblRVdWhkYXcwQWFxSWhqRVJLZHEySHZqSVNOUFdmQTkxdDRCWGFoeUNL?=
+ =?utf-8?B?Z3g3Q3VETG1mVUs4cENlS3QwR1FSdjVod2llYjlCaFBMNHRWbTdiMDU0OTFh?=
+ =?utf-8?B?Y1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4daa625-6936-4ed6-0115-08de1b9dceaf
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 12:29:32.7366
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZTffo731DpOR0e5ws4xfmGetqG0rF4Z1g/ON9oECl18vVTgQDkWDd4DYcCgs/DUGi16pju+JrYn/gjU5V2tAZXG3H7S2wRhO69vQbuUz9Cc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4934
+X-OriginatorOrg: intel.com
 
-On 11/4/25 1:12 PM, Krishna Chaitanya Chundru wrote:
-> The T_POWER_ON indicates the time (in μs) that a Port requires the port
-> on the opposite side of Link to wait in L1.2.Exit after sampling CLKREQ#
-> asserted before actively driving the interface. This value is used by
-> the ASPM driver to compute the LTR_L1.2_THRESHOLD.
+On Fri, Oct 31, 2025 at 07:39:58PM +0100, Michal Wajdeczko wrote:
 > 
-> Currently, the root port exposes a T_POWER_ON value of zero in the L1SS
-> capability registers, leading to incorrect LTR_L1.2_THRESHOLD calculations.
-> This can result in improper L1.2 exit behavior and can trigger AER's.
 > 
-> To address this, program the T_POWER_ON value to 80us (scale = 1,
-> value = 8) in the PCI_L1SS_CAP register during host initialization. This
-> ensures that ASPM can take the root port's T_POWER_ON value into account
-> while calculating the LTR_L1.2_THRESHOLD value.
+> On 10/30/2025 9:31 PM, Michał Winiarski wrote:
+> > Implement the helpers and use them for save and restore of MMIO
+> > migration data in stop_copy / resume device state.
+> > 
+> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> > ---
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf.h           |   2 +
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c   |  13 ++
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 158 ++++++++++++++++++
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |   3 +
+> >  4 files changed, 176 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > index e7fde3f9937af..c0dcbb1054e4d 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > @@ -6,6 +6,8 @@
+> >  #ifndef _XE_GT_SRIOV_PF_H_
+> >  #define _XE_GT_SRIOV_PF_H_
+> >  
+> > +#include <linux/types.h>
+> 
+> ?
 
-Is 80us a meaningful value, or "just happens to work"?
+Oops, leftover from previous iterations.
 
-Konrad
+> 
+> > +
+> >  struct xe_gt;
+> >  
+> >  #ifdef CONFIG_PCI_IOV
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> > index e7ea9b88fd246..7cd7cae950bc7 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> > @@ -870,6 +870,16 @@ static int pf_handle_vf_save_data(struct xe_gt *gt, unsigned int vfid)
+> >  		return -EAGAIN;
+> >  	}
+> >  
+> > +	if (xe_gt_sriov_pf_migration_save_test(gt, vfid, XE_SRIOV_MIGRATION_DATA_TYPE_MMIO)) {
+> > +		ret = xe_gt_sriov_pf_migration_mmio_save(gt, vfid);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		xe_gt_sriov_pf_migration_save_clear(gt, vfid, XE_SRIOV_MIGRATION_DATA_TYPE_MMIO);
+> > +
+> > +		return -EAGAIN;
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > @@ -1079,6 +1089,9 @@ static int pf_handle_vf_restore_data(struct xe_gt *gt, unsigned int vfid)
+> >  	case XE_SRIOV_MIGRATION_DATA_TYPE_GGTT:
+> >  		ret = xe_gt_sriov_pf_migration_ggtt_restore(gt, vfid, data);
+> >  		break;
+> > +	case XE_SRIOV_MIGRATION_DATA_TYPE_MMIO:
+> > +		ret = xe_gt_sriov_pf_migration_mmio_restore(gt, vfid, data);
+> > +		break;
+> >  	case XE_SRIOV_MIGRATION_DATA_TYPE_GUC:
+> >  		ret = xe_gt_sriov_pf_migration_guc_restore(gt, vfid, data);
+> >  		break;
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> > index 6f2ee5820bdd4..5e90aeafeeb41 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> > @@ -5,10 +5,13 @@
+> >  
+> >  #include <drm/drm_managed.h>
+> >  
+> > +#include "regs/xe_guc_regs.h"
+> > +
+> >  #include "abi/guc_actions_sriov_abi.h"
+> >  #include "xe_bo.h"
+> >  #include "xe_ggtt.h"
+> >  #include "xe_gt.h"
+> > +#include "xe_gt_sriov_pf.h"
+> >  #include "xe_gt_sriov_pf_config.h"
+> >  #include "xe_gt_sriov_pf_control.h"
+> >  #include "xe_gt_sriov_pf_helpers.h"
+> > @@ -16,6 +19,7 @@
+> >  #include "xe_gt_sriov_printk.h"
+> >  #include "xe_guc_buf.h"
+> >  #include "xe_guc_ct.h"
+> > +#include "xe_mmio.h"
+> >  #include "xe_sriov.h"
+> >  #include "xe_sriov_migration_data.h"
+> >  #include "xe_sriov_pf_migration.h"
+> > @@ -357,6 +361,150 @@ int xe_gt_sriov_pf_migration_guc_restore(struct xe_gt *gt, unsigned int vfid,
+> >  	return pf_restore_vf_guc_state(gt, vfid, data);
+> >  }
+> >  
+> > +static ssize_t pf_migration_mmio_size(struct xe_gt *gt, unsigned int vfid)
+> > +{
+> > +	if (xe_gt_is_media_type(gt))
+> > +		return MED_VF_SW_FLAG_COUNT * sizeof(u32);
+> > +	else
+> > +		return VF_SW_FLAG_COUNT * sizeof(u32);
+> > +}
+> > +
+> > +static int pf_migration_mmio_save(struct xe_gt *gt, unsigned int vfid, void *buf, size_t size)
+> > +{
+> > +	struct xe_mmio mmio;
+> > +	u32 *regs = buf;
+> > +	int n;
+> > +
+> > +	xe_mmio_init_vf_view(&mmio, &gt->mmio, vfid);
+> > +
+> > +	if (size != pf_migration_mmio_size(gt, vfid))
+> > +		return -EINVAL;
+> 
+> you may want to check that first (before init vf view)
 
+Ok.
+
+> 
+> > +
+> > +	if (xe_gt_is_media_type(gt))
+> > +		for (n = 0; n < MED_VF_SW_FLAG_COUNT; n++)
+> > +			regs[n] = xe_mmio_read32(&gt->mmio, MED_VF_SW_FLAG(n));
+> > +	else
+> > +		for (n = 0; n < VF_SW_FLAG_COUNT; n++)
+> > +			regs[n] = xe_mmio_read32(&gt->mmio, VF_SW_FLAG(n));
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pf_migration_mmio_restore(struct xe_gt *gt, unsigned int vfid,
+> > +				     const void *buf, size_t size)
+> > +{
+> > +	const u32 *regs = buf;
+> > +	struct xe_mmio mmio;
+> > +	int n;
+> > +
+> > +	xe_mmio_init_vf_view(&mmio, &gt->mmio, vfid);
+> > +
+> > +	if (size != pf_migration_mmio_size(gt, vfid))
+> > +		return -EINVAL;
+> 
+> ditto
+
+Ok.
+
+> 
+> > +
+> > +	if (xe_gt_is_media_type(gt))
+> > +		for (n = 0; n < MED_VF_SW_FLAG_COUNT; n++)
+> > +			xe_mmio_write32(&gt->mmio, MED_VF_SW_FLAG(n), regs[n]);
+> > +	else
+> > +		for (n = 0; n < VF_SW_FLAG_COUNT; n++)
+> > +			xe_mmio_write32(&gt->mmio, VF_SW_FLAG(n), regs[n]);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pf_save_vf_mmio_mig_data(struct xe_gt *gt, unsigned int vfid)
+> > +{
+> > +	struct xe_sriov_migration_data *data;
+> > +	size_t size;
+> > +	int ret;
+> > +
+> > +	size = pf_migration_mmio_size(gt, vfid);
+> > +	xe_gt_assert(gt, size);
+> > +
+> > +	data = xe_sriov_migration_data_alloc(gt_to_xe(gt));
+> > +	if (!data)
+> > +		return -ENOMEM;
+> > +
+> > +	ret = xe_sriov_migration_data_init(data, gt->tile->id, gt->info.id,
+> > +					   XE_SRIOV_MIGRATION_DATA_TYPE_MMIO, 0, size);
+> > +	if (ret)
+> > +		goto fail;
+> > +
+> > +	ret = pf_migration_mmio_save(gt, vfid, data->vaddr, size);
+> > +	if (ret)
+> > +		goto fail;
+> > +
+> > +	xe_gt_sriov_dbg_verbose(gt, "VF%u MMIO data save (%zu bytes)\n", vfid, size);
+> 
+> maybe make it part of the pf_dump_mig_data() ?
+> 
+> 	pf_dump_mig_data(gt, vfid, data, "MMIO saved");
+
+Different patch - but I'll merge the two.
+
+> 
+> > +	pf_dump_mig_data(gt, vfid, data);
+> > +
+> > +	ret = xe_gt_sriov_pf_migration_save_produce(gt, vfid, data);
+> > +	if (ret)
+> > +		goto fail;
+> > +
+> > +	return 0;
+> > +
+> > +fail:
+> > +	xe_sriov_migration_data_free(data);
+> > +	xe_gt_sriov_err(gt, "Failed to save VF%u MMIO data (%pe)\n", vfid, ERR_PTR(ret));
+> > +	return ret;
+> > +}
+> > +
+> > +static int pf_restore_vf_mmio_mig_data(struct xe_gt *gt, unsigned int vfid,
+> > +				       struct xe_sriov_migration_data *data)
+> > +{
+> > +	int ret;
+> > +
+> > +	xe_gt_sriov_dbg_verbose(gt, "VF%u MMIO data restore (%llu bytes)\n", vfid, data->size);
+> 
+> and here:
+
+Ok.
+
+> 
+> 	pf_dump_mig_data(gt, vfid, data, "restoring MMIO");
+> > +	pf_dump_mig_data(gt, vfid, data);
+> > +
+> > +	ret = pf_migration_mmio_restore(gt, vfid, data->vaddr, data->size);
+> > +	if (ret) {
+> > +		xe_gt_sriov_err(gt, "Failed to restore VF%u MMIO data (%pe)\n",
+> > +				vfid, ERR_PTR(ret));
+> > +
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * xe_gt_sriov_pf_migration_mmio_save() - Save VF MMIO migration data.
+> > + * @gt: the &xe_gt
+> > + * @vfid: the VF identifier (can't be 0)
+> > + *
+> > + * This function is for PF only.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_gt_sriov_pf_migration_mmio_save(struct xe_gt *gt, unsigned int vfid)
+> > +{
+> > +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
+> > +	xe_gt_assert(gt, vfid != PFID);
+> > +	xe_gt_assert(gt, vfid <= xe_sriov_pf_get_totalvfs(gt_to_xe(gt)));
+> > +
+> > +	return pf_save_vf_mmio_mig_data(gt, vfid);
+> > +}
+> > +
+> > +/**
+> > + * xe_gt_sriov_pf_migration_mmio_restore() - Restore VF MMIO migration data.
+> > + * @gt: the &xe_gt
+> > + * @vfid: the VF identifier (can't be 0)
+> > + *
+> > + * This function is for PF only.
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_gt_sriov_pf_migration_mmio_restore(struct xe_gt *gt, unsigned int vfid,
+> > +					  struct xe_sriov_migration_data *data)
+> > +{
+> > +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
+> > +	xe_gt_assert(gt, vfid != PFID);
+> > +	xe_gt_assert(gt, vfid <= xe_sriov_pf_get_totalvfs(gt_to_xe(gt)));
+> > +
+> > +	return pf_restore_vf_mmio_mig_data(gt, vfid, data);
+> > +}
+> > +
+> >  /**
+> >   * xe_gt_sriov_pf_migration_size() - Total size of migration data from all components within a GT.
+> >   * @gt: the &xe_gt
+> > @@ -389,6 +537,13 @@ ssize_t xe_gt_sriov_pf_migration_size(struct xe_gt *gt, unsigned int vfid)
+> >  		size += sizeof(struct xe_sriov_pf_migration_hdr);
+> >  	total += size;
+> >  
+> > +	size = pf_migration_mmio_size(gt, vfid);
+> > +	if (size < 0)
+> > +		return size;
+> > +	if (size > 0)
+> > +		size += sizeof(struct xe_sriov_pf_migration_hdr);
+> > +	total += size;
+> > +
+> >  	return total;
+> >  }
+> >  
+> > @@ -453,6 +608,9 @@ void xe_gt_sriov_pf_migration_save_init(struct xe_gt *gt, unsigned int vfid)
+> >  
+> >  	if (pf_migration_ggtt_size(gt, vfid) > 0)
+> >  		set_bit(XE_SRIOV_MIGRATION_DATA_TYPE_GGTT, &migration->save.data_remaining);
+> > +
+> > +	xe_gt_assert(gt, pf_migration_mmio_size(gt, vfid) > 0);
+> > +	set_bit(XE_SRIOV_MIGRATION_DATA_TYPE_MMIO, &migration->save.data_remaining);
+> >  }
+> >  
+> >  /**
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> > index bc201d8f3147a..b0eec94fea3a6 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> > @@ -22,6 +22,9 @@ int xe_gt_sriov_pf_migration_guc_restore(struct xe_gt *gt, unsigned int vfid,
+> >  int xe_gt_sriov_pf_migration_ggtt_save(struct xe_gt *gt, unsigned int vfid);
+> >  int xe_gt_sriov_pf_migration_ggtt_restore(struct xe_gt *gt, unsigned int vfid,
+> >  					  struct xe_sriov_migration_data *data);
+> > +int xe_gt_sriov_pf_migration_mmio_save(struct xe_gt *gt, unsigned int vfid);
+> > +int xe_gt_sriov_pf_migration_mmio_restore(struct xe_gt *gt, unsigned int vfid,
+> > +					  struct xe_sriov_migration_data *data);
+> >  
+> >  ssize_t xe_gt_sriov_pf_migration_size(struct xe_gt *gt, unsigned int vfid);
+> >  
+> 
+> but patch looks ok, so with #include fixed (and maybe with better dump helper),
+> 
+> Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+> 
+
+Thanks,
+-Michał
 
