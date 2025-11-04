@@ -1,154 +1,158 @@
-Return-Path: <linux-kernel+bounces-884685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7789C30C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:39:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889C4C30CA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE21D4E48E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30DE428196
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E9B2F3C22;
-	Tue,  4 Nov 2025 11:37:33 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43762F1FF6;
-	Tue,  4 Nov 2025 11:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81422EBBB3;
+	Tue,  4 Nov 2025 11:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="CXlGXGVC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="u5SaXu9g";
+	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="T3v0JfOA";
+	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="xovdgGKk"
+Received: from sender7.mail.selcloud.ru (sender7.mail.selcloud.ru [5.8.75.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AEF2E8B8B;
+	Tue,  4 Nov 2025 11:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762256252; cv=none; b=ZWDx2+2arLS9q6XhrMbemvffoVLs9UdDG+qm4xNl0TeDhw9fL8eoq+2IjC6EDI2xw23bfajnVkMSQha+UupUSb0Mr3QEFBPvM7Qpc7MOFXfWK7bR9kF5Wq3FRQky4ixiEsW02u2z1NdxrYoiiOlhWs+dwFPFB/1MiHlLMXJZvhk=
+	t=1762256265; cv=none; b=a/j6s9Iw1JO2qifZSPapwwFNGjjOmAvzTizQLkmhd6vr7xN1Wc9lQnI6OVpDVKIbY3dZiPZ6aFE2M/NsYVvF4q1K6/s6d8VF98yO9QcSZ5C0VbTcM+6G+KGrZFtjOUvRXEgPURIjQ0I0/sS6u/SlamgrsbYf+gfpeo5bg8o/pG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762256252; c=relaxed/simple;
-	bh=EYH/yVHdnb089sbM06R3GlT36iMXXinhgjkzboFZYQI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YUYPrcfQS0moD5A4HNsiu65wWKDsKiA025IGjpQYyqUtwI3cCllI5E3lKXoNZgaW8hcJLfqvG20wzMoAit0mHsKah2heXG/fhQMaAclvwbMjPr0P91avmXIj2hV7jYpOF1S4UJSVMovUcmh6M6w7mirghZI637YsRvc/p1UdvIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8CxqdFy5QlpjbQeAA--.1524S3;
-	Tue, 04 Nov 2025 19:37:22 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAx+8Bw5QlpZDImAQ--.57838S3;
-	Tue, 04 Nov 2025 19:37:21 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 7/7] KVM: LoongArch: selftests: Add time counter test
-Date: Tue,  4 Nov 2025 19:36:59 +0800
-Message-Id: <20251104113700.1561752-8-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20251104113700.1561752-1-maobibo@loongson.cn>
-References: <20251104113700.1561752-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1762256265; c=relaxed/simple;
+	bh=PzeEpfs4XQ8khKCgddMv3ZysOZTSEHJWELPss5Sd8Os=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3SZlUPGqKo7o1vAbQy8BdtCBArivHnOjyoEa5gxOj59+DqBxxGuOa7dS2g9kFLlfGvZ+a8RRV5JAj8buLw+Tlb4JyYKK80yuGqg14Omp6uF9Fa1cSzLTGQQy7PXBk2uj28JeDKB+XbfCJb9lz0p8wPGQcskfKKggh9sxZqxkJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=CXlGXGVC; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=u5SaXu9g; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=T3v0JfOA; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=xovdgGKk; arc=none smtp.client-ip=5.8.75.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	List-id:List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cwBP2P2We621Mi/XOMj9ZN+8+iVGjNLeiLZTgudXf2E=; t=1762256261; x=1762429061;
+	 b=CXlGXGVCXFGyT0Qvt9QVjE9tCrSOvDItNoeLqfJ/MRjz8El8Zv3q4ofmWG5FJyt2y+LFyRQ882
+	iQ7UhWK5zAsJaujKRtWagYztaJbWFnkEhbYJw2LDT66ZnTuP7o4jWGVlMK7yjMJDNBM/aqzW8n3NF
+	qX4NaBG5fsqoNa/W43rY=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:List-id:
+	List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cwBP2P2We621Mi/XOMj9ZN+8+iVGjNLeiLZTgudXf2E=; t=1762256261; x=1762429061;
+	 b=u5SaXu9gzrXdNHaQddxaq3N5uNIzEiMs8Tuu0j2h+kDNdJLYU5mZLLrb48nffO3gPpmTQEy2kw
+	k/KkqZTvR3DRSLR+9avStjFdTsjZEF3lHgGcdJ9q4+vdatra0TSv4rCDJ1Yi4RJgqdHGi8WXn8RGY
+	c63Tz0Bdw97WxSu9y6P0=;
+Precedence: bulk
+X-Issuen: 1410789
+X-User: 149890965
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1410789:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20251029.201254
+X-SMTPUID: mlgnr61
+DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762256251; bh=cwBP2P2We621Mi/XOMj9ZN+
+	8+iVGjNLeiLZTgudXf2E=; b=T3v0JfOA3neOcfNVUuEKgmYwj+jpzo5lyhvxUrm5MPsz5zvJBS
+	M6LBTjBZy6QGC8otiqV8sEnNagm48Ltr/P/368/dbNEj6fDURlHY1abIQVjDwe3ruMQx5pogaHH
+	mKy5Pqfc271F7xrsfR2vNLSnbljztQAtnytp3tjfCh9YWfspb4KOpXjgAkhDA4ikcbcuZqkN1w3
+	Ob+qsbp0rYzJKkyCQxrxspHiSDc28ppfLKMqb0cQSLRhgC6IewTCxia/Ow8o3Dpq0Ja9X7kin6R
+	pPw4I5jk0ZuttkyiOKYmDckZKciAcLG8Z6KmXUQvb+Wrd4/UpxrPNn6Rvk8LzsxD32w==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762256251; bh=cwBP2P2We621Mi/XOMj9ZN+
+	8+iVGjNLeiLZTgudXf2E=; b=xovdgGKk0xAqehSmgyaYaJ6k93wB5KoGddPEzk2VNOFcjERTe5
+	i5Vp2c9RY4Ds0tZu+5QPkEHyGM4SuXDY2BAA==;
+Message-ID: <98e33c86-f5f3-46c5-8dba-c28a459b4a45@foxido.dev>
+Date: Tue, 4 Nov 2025 14:37:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx+8Bw5QlpZDImAQ--.57838S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] btrfs: make ASSERT no-op in release builds
+To: dsterba@suse.cz
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251102073904.2149103-1-foxido@foxido.dev>
+ <20251104001800.GM13846@suse.cz>
+Content-Language: en-US
+From: Gladyshev Ilya <foxido@foxido.dev>
+In-Reply-To: <20251104001800.GM13846@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-With time counter test, it is to verify that time count starts from 0
-and always grows up then.
+On 11/4/25 03:18, David Sterba wrote:
+> On Sun, Nov 02, 2025 at 10:38:52AM +0300, Gladyshev Ilya wrote:
+>> The current definition of `ASSERT(cond)` as `(void)(cond)` is redundant,
+>> since these checks have no side effects and don't affect code logic.
+> 
+> Have you checked that none of the assert expressions really don't have
+> side effects other than touching the memory?
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- .../selftests/kvm/lib/loongarch/processor.c   |  9 ++++++
- .../selftests/kvm/loongarch/arch_timer.c      | 29 +++++++++++++++++++
- 2 files changed, 38 insertions(+)
+Yes, but visually only. Most checks are plain C comparisons, and some 
+call folio/btrfs/refcount _check/test_ functions where I didn't find 
+side effects.
 
-diff --git a/tools/testing/selftests/kvm/lib/loongarch/processor.c b/tools/testing/selftests/kvm/lib/loongarch/processor.c
-index 436990258068..ac2ffd076bff 100644
---- a/tools/testing/selftests/kvm/lib/loongarch/processor.c
-+++ b/tools/testing/selftests/kvm/lib/loongarch/processor.c
-@@ -3,6 +3,7 @@
- #include <assert.h>
- #include <linux/compiler.h>
- 
-+#include <asm/kvm.h>
- #include "kvm_util.h"
- #include "processor.h"
- #include "ucall_common.h"
-@@ -256,6 +257,11 @@ static void loongarch_set_csr(struct kvm_vcpu *vcpu, uint64_t id, uint64_t val)
- 	__vcpu_set_reg(vcpu, csrid, val);
- }
- 
-+static void loongarch_set_reg(struct kvm_vcpu *vcpu, uint64_t id, uint64_t val)
-+{
-+	__vcpu_set_reg(vcpu, id, val);
-+}
-+
- static void loongarch_vcpu_setup(struct kvm_vcpu *vcpu)
- {
- 	int width;
-@@ -279,6 +285,9 @@ static void loongarch_vcpu_setup(struct kvm_vcpu *vcpu)
- 	loongarch_set_csr(vcpu, LOONGARCH_CSR_ECFG, 0);
- 	loongarch_set_csr(vcpu, LOONGARCH_CSR_TCFG, 0);
- 	loongarch_set_csr(vcpu, LOONGARCH_CSR_ASID, 1);
-+	/* time count start from 0 */
-+	val = 0;
-+	loongarch_set_reg(vcpu, KVM_REG_LOONGARCH_COUNTER, val);
- 
- 	val = 0;
- 	width = vm->page_shift - 3;
-diff --git a/tools/testing/selftests/kvm/loongarch/arch_timer.c b/tools/testing/selftests/kvm/loongarch/arch_timer.c
-index 579132a082cd..f3a25a0163fc 100644
---- a/tools/testing/selftests/kvm/loongarch/arch_timer.c
-+++ b/tools/testing/selftests/kvm/loongarch/arch_timer.c
-@@ -133,10 +133,39 @@ static void guest_test_emulate_timer(uint32_t cpu)
- 	local_irq_enable();
- }
- 
-+static void guest_time_count_test(uint32_t cpu)
-+{
-+	uint32_t config_iter;
-+	unsigned long start, end, prev, us;
-+
-+	/* Assuming that test case starts to run in 1 second */
-+	start = timer_get_cycles();
-+	us = msec_to_cycles(1000);
-+	__GUEST_ASSERT(start <= us,
-+			"start = 0x%lx, us = 0x%lx.\n",
-+			start, us);
-+
-+	us = msec_to_cycles(test_args.timer_period_ms);
-+	for (config_iter = 0; config_iter < test_args.nr_iter; config_iter++) {
-+		start = timer_get_cycles();
-+		end = start + us;
-+		/* test time count growing up always */
-+		while (start < end) {
-+			prev = start;
-+			start = timer_get_cycles();
-+			__GUEST_ASSERT(prev <= start,
-+					"prev = 0x%lx, start = 0x%lx.\n",
-+					prev, start);
-+		}
-+	}
-+}
-+
- static void guest_code(void)
- {
- 	uint32_t cpu = guest_get_vcpuid();
- 
-+	/* must run at first */
-+	guest_time_count_test(cpu);
- 	timer_irq_enable();
- 	local_irq_enable();
- 	guest_test_oneshot_timer(cpu);
--- 
-2.39.3
+However, fs/btrfs/ has ~880 asserts, so if you know more robust 
+verification methods, I'd be glad to try them.
 
+>> However, some checks contain READ_ONCE or other compiler-unfriendly
+>> constructs. For example, ASSERT(list_empty) in btrfs_add_dealloc_inode
+>> was compiled to a redundant mov instruction due to this issue.
+>>
+>> This patch defines ASSERT as BUILD_BUG_ON_INVALID for !CONFIG_BTRFS_ASSERT
+>> builds. It also marks `full_page_sectors_uptodate` as __maybe_unused to
+>> suppress "unneeded declaration" warning (it's needed in compile time)
+>>
+>> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+>> ---
+>> Changes from v1:
+>> - Annotate full_page_sectors_uptodate as __maybe_unused to avoid
+>>    compiler warning
+>>
+>> Link to v1: https://lore.kernel.org/linux-btrfs/20251030182322.4085697-1-foxido@foxido.dev/
+>> ---
+>>   fs/btrfs/messages.h | 2 +-
+>>   fs/btrfs/raid56.c   | 4 ++--
+>>   2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/btrfs/messages.h b/fs/btrfs/messages.h
+>> index 4416c165644f..f80fe40a2c2b 100644
+>> --- a/fs/btrfs/messages.h
+>> +++ b/fs/btrfs/messages.h
+>> @@ -168,7 +168,7 @@ do {										\
+>>   #endif
+>>   
+>>   #else
+>> -#define ASSERT(cond, args...)			(void)(cond)
+>> +#define ASSERT(cond, args...)			BUILD_BUG_ON_INVALID(cond)
+> 
+> I'd rather have the expression open coded rather than using
+> BUILD_BUG_ON_INVALID, the name is confusing as it's not checking build
+> time condtitons.
+
+The name kinda indicates that it triggers on invalid conditions, not 
+false ones, but I understand that it can be confusing. While we could 
+use direct sizeof() magic here, I prefer reusing the same infrastructure 
+as VM_BUG_ON(), VFS_*_ON() and others.
+
+Maybe adding a comment about its semantics above ASSERT definition will 
+help clarify the usage? But if you prefer the sizeof() approach, I can 
+change it - it's not a big deal.
 
