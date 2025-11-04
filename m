@@ -1,323 +1,154 @@
-Return-Path: <linux-kernel+bounces-883963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E277C2EEDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:13:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5361BC2EEF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0DF1896A36
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34B61886B66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDF823E25B;
-	Tue,  4 Nov 2025 02:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD1823EA8C;
+	Tue,  4 Nov 2025 02:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kv8hiwBC"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z4LWXKL3";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Bsdq5u3L"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691623A99E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D0C469D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762222407; cv=none; b=p0536VN2vJ3UixZqvbqRrIXZAaXa+364DDpYUcKvpLpahmW9WPSJkyneagK1Cw9Evo/9l9BUr5zPiRIkmRxqHpslwtTFPq49gTPrB/fuR238/t6S+sDtGNkrtRSycrK0itLvV2B9BMSddPjD6iguUtsGAmCOiWwdpJrNQ/6qbDY=
+	t=1762222663; cv=none; b=ejwcKTPaRHzR2X/2UaUllxGFzOgzs+LwNvINZ0ERDeNv0qaBK2qTIsr6AJnMKjQySPBCdsFJrCPo2hL4QMlKL297uMnwfO6LdT8HCLwGHSxbuFpvLAK+R7EpeAjHGAswBQQ2kMpko6o4NuWp7tk2YDrvQXB3V+siQm861XiiEak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762222407; c=relaxed/simple;
-	bh=CDf3jvgq+OCuQr+KDgZ0aSe5ajPPr56IV5hu/qxDurg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nE/xDjeBf3B+1thAKWl6SGpUw3rQ+u4bp5ja0mUErslD3inoIv3WA723kQMwpP7IPRA82Omy/KRXK9cHo0h8UvandI38zk9r6R3rHk8hoVT//swxU/PY1WP5jsS+YfifCZrSh0rFhaxPdRksjNqRLfcu38jkrfgnqQmymfAGsM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kv8hiwBC; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-932dfe14b2eso4545717241.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 18:13:25 -0800 (PST)
+	s=arc-20240116; t=1762222663; c=relaxed/simple;
+	bh=ExrTOlDJfBqPwYdVaOdwSFv1qwdVq9mca34J0IGZUqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gImv1TaVzUoECIC23FgTFBbc/Ls2EW++YZdHfxWIMgx89BbMX+Nwyv/szt9Mu/92O2vH/2GalWYKxR0/2PM+gdA78L+wYGeAZW0WNtFMwv7row+lds+eyKuQKr72q77GYZgMRdGNK9bmI2Ygx2eFCc0OuoOm1xsxZ9hilwwKCa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z4LWXKL3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Bsdq5u3L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A428mLM695120
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 02:17:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=knpE3mIPtxcnrRPa/ZbonLml
+	p8HVii90osweuDpsQHA=; b=Z4LWXKL3Jkv4GzoNYeaj0xkditIgVLg8Z8NkNd/N
+	ZKC7hsEPCHoPiADOSZ8xW9B6t/SlMIA+uvEaMXerfc8ijIJlVBVYpVHylstMDT9x
+	+Ig0X1craoF57/dIJF4sLrYvyws3J/9m8L53I9NkawLfeFAlwP29fk23iWEcgwho
+	7c8Wun4MITq7XNHdgVDJTQWVXQk1OQU/57aWbOYThY0wXvKPa1Mi8QVxWDwtoyOs
+	tauGmn6VnCRivsNhuIchegu4XXGTSSx5LMV1zSQSZumkfcZdHavlyFF7Abpk49Ii
+	CQs0aF2n5nL/PhpIn7/hQ+D13Do4qg68R+SZHKs/rPz1pw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a78eqr0p5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:17:40 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-87c0e0d12ddso138454846d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 18:17:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762222404; x=1762827204; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BPYsJYFrtqkibhcoOmwhJR6RFtPleupdkLO0gfGpmxA=;
-        b=Kv8hiwBC9H2XCwdEwU+I4dgsyb2XhBe36rxE/9yRCOb98FJ4VwQMRT5FgPwiRJ44xe
-         IGp59AMRudkabj1CUg0EiBHkmsoq5l+lP1ajUDvjWIYtE8+HqPoayZF27wdDGLZ1ZSAR
-         IonCmYY7d/YoWyulGzPMQU+RaGhiZcal5W12BxK00dmM7Na8eVm67vsJm/UzqwPRmn7r
-         v3so+u43jiSZ+vChYaeKaHVIG2/2m1B5l1vRgzjA3hw3EquLJjxqxaz7nl+jgHapFZsB
-         qPda00Lt0TO0I9c8ZSW8oiS58I11p8sTea8/suJWc1fF9raZLLOANSH2iRD+orq83VNo
-         8xEw==
+        d=oss.qualcomm.com; s=google; t=1762222660; x=1762827460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=knpE3mIPtxcnrRPa/ZbonLmlp8HVii90osweuDpsQHA=;
+        b=Bsdq5u3LNvREUReMQhZ8IwwoYGEf5Fd8ggmhyks8si3O/Qf1FntsgkIzNX8OKlBr5q
+         wY+m33ZIxgyM0ZD9/t4C3FOLWLQYXlErlpEKfV6UPtVVq4yODZa07Vvj+LpdoXqepUNT
+         iESQ7Qqg9PDzNagE0pLbaqH4MiU30105H3J7KOQjEE7IfOTRqgAYy7fiDm3YIVQSZxCz
+         cdemSNt/DZWKZkwXGSDdrn3cSa3bRvMI/SpVkaqx9xWGIryuE5twKL6fbYWv9CT8E4tB
+         I3BFWDZJpHXsn7iTXY+n6CfiRt/DMbtentO6TCZl3wBDFXa6U//05G4OaXw51os1/rhC
+         piCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762222404; x=1762827204;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BPYsJYFrtqkibhcoOmwhJR6RFtPleupdkLO0gfGpmxA=;
-        b=uST4O5+/GsLtEXn8+nELerLrcpfCDJbqthfT/pF0+YyEhuU+5qsv/1DMfufvnhjmlx
-         INBBaHiqNuqqjM4LH2lHuQGiP5WxQK91wv5tePaohHkZbhf1zv7OigNc94gunHzGtdf1
-         nH6m/wmiHMrnnnYKB6lenMOA2UnyGDUu6F/Kg7ORkwK/GJF2xlfT7y169WwzrRINlVn8
-         XiLSUKYIhOhHLw7Xix4kNiFyU41C5q+EVVniERQUspDugM8n8WF12G489d+9JSQJKS+N
-         V4aCsVVNrzAdt/6DETF9pVXq/Zut67mgDHMseC6411CeGKt9jNM3ma/Rdl99ebI29jTz
-         4BYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYD1wLcnQbze5LmmRDsG0XXtb+Dw/MvIH9iD3s+fqztp+OC0Cdd10hx2cIt+lhgOjCAZKGNZZ1e+dYHCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEnWIQm51Akah71NihUf3Olv9y6EoGugo7kwr1/LoBVYSlxt5J
-	0KywoYrrf8hlJlU9Li3ObvKzrh82aaLHXbeG5a3mS6CszT7XTpazjDDn
-X-Gm-Gg: ASbGncvJ1xNeXjE7bfXWVbINhk1CXuoCyb4esOQgp1z6yKBleCp4j6eQzxxU/JS2w7W
-	qleAFZ1A+/ZnU4MxJ5GfWYmIgSd7DyEmfx6Ap4D50z2/UMybYJk4vdYcNDwPswupf9+6YHaRdOn
-	IJvaWQy391SpM0aOLY1JGL0tKd6bENu3B1BFZ0eAYps/zIINui7dSYXrQzdJ+fDawrf5Mlnb6nm
-	b5IF089I1nsCd1jCsQrw6G5Pnd+7MdUuQ/+85pkb79cYM5140lT3pMkSE1yT6kgRRnNioj4UMaA
-	vFcNPLGlv1rn7Rx7+5MX2pmG/XCOGxoNF2iCP6wRT+/+IaViDMhzyRbte4Fc2zszUy5m1zIVzHj
-	QNI6Cp9zbgKUQk73bMac8ZxHaCt5NEGB2DC3O0QUsehLZoGt9AsycyquGwBWWEK9EZq+l5jtU2O
-	ow4TT5XnQGya+S
-X-Google-Smtp-Source: AGHT+IGanpj09wBC/6zuLxGU5hrabV1DX2/aEqDzKrdWNViKcc2hyV067fO9fqkKk4kK8FelPY9Usw==
-X-Received: by 2002:a05:6102:588d:b0:5db:c9cd:673d with SMTP id ada2fe7eead31-5dbc9cd6b9amr1979494137.26.1762222404397;
-        Mon, 03 Nov 2025 18:13:24 -0800 (PST)
-Received: from [192.168.100.70] ([2800:bf0:82:3d2:875c:6c76:e06b:3095])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93542852924sm747524241.0.2025.11.03.18.13.23
+        d=1e100.net; s=20230601; t=1762222660; x=1762827460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knpE3mIPtxcnrRPa/ZbonLmlp8HVii90osweuDpsQHA=;
+        b=hDHKtP1AeDPqOD/z1sj3/Y1Q1ZMA1Ycn+fnUuWCD8/CB3G4l8NeMsCq6kJhkmf35S5
+         i1Fk03wRcl/V3niw2vinXS0QOsNA2m1B6IXFa2pIcE/Q07aUkJlb9JO6u1DW08OtFktB
+         b2vveKyo12pRZK83zicrQEnXI9ieLVcUKqKACyMFablCozaZBpi+xJLWooaUc1JUsqCo
+         Us9n0GacX4nVnbb6Q1EQEYbo14KWzcurenlGiN9b7dOm4XkTQMt6BImtFmwPlDDzLCDw
+         JdlL1Qn/yv8YMoPXlvpNrdBC5jQep0GhLflrD2/7/RpzB5hnLAi0eWgyCGkSbhCQ1fqH
+         ngsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUloZgGOeUzDZkoOLJO/KAt6y2wqd6dJRKZpn0WDmZHB8Fpsc8KLtE4RrHANFbTWxtHzcpgEIWpUfDvQOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzhIXY6NlgDJRzVlLtaVKLfCILqdqYERCU0RINP/dL7HREuaTC
+	L+4CpvsHawAliqRsIOLK/A3NuM/2FJ5j1r7nncpLPdmaZaGn9zOwd0t3MN2ekQYMn5D6knRtyX7
+	vBaXVVhGMunyny2ji7exlVYPqbBlubFDbRo/Xg5LwZcSgnnKP/yDYkod2W4odGXkmRfw=
+X-Gm-Gg: ASbGncv+DuM4nZoV0Pg0wsrygJ/Vb6XcidroYS3Q2bZXWm5OOhC5YTHehd3DnL0zbfH
+	eqMzhfsZ3DZBjJiazQmpc1xmPqrl7F6VYBDKnwDkwGatr0nrUMAbeeVepo42QKITLnwIWTW8kH5
+	1AsbowDYL03gjIsP5909XCA0i6kdWc6wNzamuZQVWWYS/n9idkGPQN1/2qft3IBGNKCTiX8Hwue
+	eOeakQnnX/5/hvNW1CZGmi+A9r2ZjIsdr1qFlm8d/P6pUzfREm7eATBjHKBkcX585+XbmxcTx9d
+	ZJU7dVTQYumV/2qkCRT84qNg5ayFtlRqEaCitXSlbh+A6SVxUlL5R+KGvYPkTUnF62+sVS5KUcC
+	uQCI5Hl2J/1kU9KIynMSnJtdOcpoVHqudgfhyOaVtnERwb7zs9x6IGhKsjywMQz+1PUM1IkU4vW
+	seMwyglbtKNA6m
+X-Received: by 2002:a05:622a:4d89:b0:4ed:1ae1:5390 with SMTP id d75a77b69052e-4ed30dcaa18mr205476541cf.18.1762222660147;
+        Mon, 03 Nov 2025 18:17:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFwnCEn0+BeYW2n8xBwzc1o/g3a0jxTr6m0tmMJtQut2Fz7kPHouxaP2IscZJvAUGWO/slLYw==
+X-Received: by 2002:a05:622a:4d89:b0:4ed:1ae1:5390 with SMTP id d75a77b69052e-4ed30dcaa18mr205476221cf.18.1762222659590;
+        Mon, 03 Nov 2025 18:17:39 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-594343b7cc5sm353179e87.49.2025.11.03.18.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 18:13:24 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-Date: Mon, 03 Nov 2025 21:12:46 -0500
-Subject: [PATCH] platform/x86: alienware-wmi-wmax: Simplify FW profile to
- pprof matching
+        Mon, 03 Nov 2025 18:17:37 -0800 (PST)
+Date: Tue, 4 Nov 2025 04:17:35 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom,ids: Add SoC ID for QCS6490
+Message-ID: <i7qxr6lftcgzwku7nsja3wwk5hb54xquqcvep7d5qahssjjvw7@m7w6hj2h3r5b>
+References: <20251103-qcs6490_soc_id-v1-0-c139dd1e32c8@oss.qualcomm.com>
+ <20251103-qcs6490_soc_id-v1-1-c139dd1e32c8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-aw-gmode-v1-1-eba7b7be0a9c@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAB1hCWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDMyMj3cRy3fTc/JRU3cQkc0vLJCNDU8sUIyWg8oKi1LTMCrBR0bG1tQC
- WgsseWgAAAA==
-X-Change-ID: 20250622-aw-gmode-ab799b2159d2
-To: Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6862; i=kuurtb@gmail.com;
- h=from:subject:message-id; bh=CDf3jvgq+OCuQr+KDgZ0aSe5ajPPr56IV5hu/qxDurg=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDJmcicqzwg355a4++1RsGfjqvOb6iavvzq7cbvNGsGB5/
- /0n0k8rO0pZGMS4GGTFFFnaExZ9exSV99bvQOh9mDmsTCBDGLg4BWAiNasYGXZsVfJQLuBJ37J2
- +8EjritenpjNbBd1/9QHz+gPh876cs5n+B9e5fdB8VzBqRSpf23/9B/Ff7wuYTXtzJctrgF5V7m
- 7+9gA
-X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
- fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-qcs6490_soc_id-v1-1-c139dd1e32c8@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDAxNyBTYWx0ZWRfX17+GARUl5vUZ
+ zuVvp3kXqxi2pzvmxRfVXnxGPv6dKshU+5sVHEsQZyTzYwS4jteCSOMKdIaVBzIMw6Ju9d2KJFt
+ 8KVwhdSoasocVdKeu2PAWMjbI+BmE+8oxnmn0QJ23qrXIIs++JrpdUcu26bS/HUs5WtvR9Z9xlj
+ 9LwgHEAAboOuDoWzcfbttbdqzJDtpIBdZErVIdXKAIcq4sL3Dps0GRZbnZj+YSCFsF1mEgqYPSA
+ 5WQqIuQv0rbwdj1r/XehU5dgbFWyqxGNVUfY0sif/9mxwVf7gz/FF0OY7nliksgj66UH6RnJZjm
+ viPevl6C2CtTLA4B6SyWejuIvQO714YI/WtDAZ4M9Hyc0vHEMeuxLxSocfV9eQOZAkfYtvCehzO
+ 4dptcTejt0Alpl6bu9OApP1XtVFlZg==
+X-Authority-Analysis: v=2.4 cv=fofRpV4f c=1 sm=1 tr=0 ts=69096244 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=Yd8kl3vfLVjVNOsiEv8A:9 a=CjuIK1q_8ugA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: tM3rDYLGnSiznLVRm7O5KaY-sAOmCT3S
+X-Proofpoint-GUID: tM3rDYLGnSiznLVRm7O5KaY-sAOmCT3S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 clxscore=1015 adultscore=0 priorityscore=1501
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040017
 
-Drop profile matching micro-optimizations to improve readability and
-long-term maintainability.
+On Mon, Nov 03, 2025 at 04:53:10PM +0530, Komal Bajaj wrote:
+> Add unique ID for Qualcomm QCS6490 SoC.
+> 
+> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> ---
+>  include/dt-bindings/arm/qcom,ids.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Additionally, is_awcc_thermal_profile_id is implicitly ignoring the
-AWCC_PROFILE_SPECIAL_GMODE ID. State this explicitly with code and a
-comment.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 124 ++++++++++++-------------
- 1 file changed, 57 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-index 31f9643a6a3b..9af87471549c 100644
---- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-+++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-@@ -283,11 +283,6 @@ enum AWCC_THERMAL_TABLES {
- 	AWCC_THERMAL_TABLE_USTT			= 0xA,
- };
- 
--enum AWCC_SPECIAL_THERMAL_CODES {
--	AWCC_SPECIAL_PROFILE_CUSTOM		= 0x00,
--	AWCC_SPECIAL_PROFILE_GMODE		= 0xAB,
--};
--
- enum AWCC_TEMP_SENSOR_TYPES {
- 	AWCC_TEMP_SENSOR_CPU			= 0x01,
- 	AWCC_TEMP_SENSOR_FRONT			= 0x03,
-@@ -314,17 +309,18 @@ enum AWCC_FAN_TYPES {
- };
- 
- enum awcc_thermal_profile {
--	AWCC_PROFILE_USTT_BALANCED,
--	AWCC_PROFILE_USTT_BALANCED_PERFORMANCE,
--	AWCC_PROFILE_USTT_COOL,
--	AWCC_PROFILE_USTT_QUIET,
--	AWCC_PROFILE_USTT_PERFORMANCE,
--	AWCC_PROFILE_USTT_LOW_POWER,
--	AWCC_PROFILE_LEGACY_QUIET,
--	AWCC_PROFILE_LEGACY_BALANCED,
--	AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE,
--	AWCC_PROFILE_LEGACY_PERFORMANCE,
--	AWCC_PROFILE_LAST,
-+	AWCC_PROFILE_SPECIAL_CUSTOM			= 0x00,
-+	AWCC_PROFILE_LEGACY_QUIET			= 0x96,
-+	AWCC_PROFILE_LEGACY_BALANCED			= 0x97,
-+	AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE	= 0x98,
-+	AWCC_PROFILE_LEGACY_PERFORMANCE			= 0x99,
-+	AWCC_PROFILE_USTT_BALANCED			= 0xA0,
-+	AWCC_PROFILE_USTT_BALANCED_PERFORMANCE		= 0xA1,
-+	AWCC_PROFILE_USTT_COOL				= 0xA2,
-+	AWCC_PROFILE_USTT_QUIET				= 0xA3,
-+	AWCC_PROFILE_USTT_PERFORMANCE			= 0xA4,
-+	AWCC_PROFILE_USTT_LOW_POWER			= 0xA5,
-+	AWCC_PROFILE_SPECIAL_GMODE			= 0xAB,
- };
- 
- struct wmax_led_args {
-@@ -380,19 +376,6 @@ struct awcc_priv {
- 	u32 gpio_count;
- };
- 
--static const enum platform_profile_option awcc_mode_to_platform_profile[AWCC_PROFILE_LAST] = {
--	[AWCC_PROFILE_USTT_BALANCED]			= PLATFORM_PROFILE_BALANCED,
--	[AWCC_PROFILE_USTT_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
--	[AWCC_PROFILE_USTT_COOL]			= PLATFORM_PROFILE_COOL,
--	[AWCC_PROFILE_USTT_QUIET]			= PLATFORM_PROFILE_QUIET,
--	[AWCC_PROFILE_USTT_PERFORMANCE]			= PLATFORM_PROFILE_PERFORMANCE,
--	[AWCC_PROFILE_USTT_LOW_POWER]			= PLATFORM_PROFILE_LOW_POWER,
--	[AWCC_PROFILE_LEGACY_QUIET]			= PLATFORM_PROFILE_QUIET,
--	[AWCC_PROFILE_LEGACY_BALANCED]			= PLATFORM_PROFILE_BALANCED,
--	[AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
--	[AWCC_PROFILE_LEGACY_PERFORMANCE]		= PLATFORM_PROFILE_PERFORMANCE,
--};
--
- static struct awcc_quirks *awcc;
- 
- /*
-@@ -610,21 +593,41 @@ const struct attribute_group wmax_deepsleep_attribute_group = {
- /*
-  * AWCC Helpers
-  */
--static bool is_awcc_thermal_profile_id(u8 code)
-+static int awcc_profile_to_pprof(enum awcc_thermal_profile profile,
-+				 enum platform_profile_option *pprof)
- {
--	u8 table = FIELD_GET(AWCC_THERMAL_TABLE_MASK, code);
--	u8 mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, code);
-+	switch (profile) {
-+	case AWCC_PROFILE_SPECIAL_CUSTOM:
-+		*pprof = PLATFORM_PROFILE_CUSTOM;
-+		break;
-+	case AWCC_PROFILE_LEGACY_QUIET:
-+	case AWCC_PROFILE_USTT_QUIET:
-+		*pprof = PLATFORM_PROFILE_QUIET;
-+		break;
-+	case AWCC_PROFILE_LEGACY_BALANCED:
-+	case AWCC_PROFILE_USTT_BALANCED:
-+		*pprof = PLATFORM_PROFILE_BALANCED;
-+		break;
-+	case AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE:
-+	case AWCC_PROFILE_USTT_BALANCED_PERFORMANCE:
-+		*pprof = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
-+		break;
-+	case AWCC_PROFILE_LEGACY_PERFORMANCE:
-+	case AWCC_PROFILE_USTT_PERFORMANCE:
-+	case AWCC_PROFILE_SPECIAL_GMODE:
-+		*pprof = PLATFORM_PROFILE_PERFORMANCE;
-+		break;
-+	case AWCC_PROFILE_USTT_COOL:
-+		*pprof = PLATFORM_PROFILE_COOL;
-+		break;
-+	case AWCC_PROFILE_USTT_LOW_POWER:
-+		*pprof = PLATFORM_PROFILE_LOW_POWER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
- 
--	if (mode >= AWCC_PROFILE_LAST)
--		return false;
--
--	if (table == AWCC_THERMAL_TABLE_LEGACY && mode >= AWCC_PROFILE_LEGACY_QUIET)
--		return true;
--
--	if (table == AWCC_THERMAL_TABLE_USTT && mode <= AWCC_PROFILE_USTT_LOW_POWER)
--		return true;
--
--	return false;
-+	return 0;
- }
- 
- static int awcc_wmi_command(struct wmi_device *wdev, u32 method_id,
-@@ -1273,24 +1276,7 @@ static int awcc_platform_profile_get(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	switch (out_data) {
--	case AWCC_SPECIAL_PROFILE_CUSTOM:
--		*profile = PLATFORM_PROFILE_CUSTOM;
--		return 0;
--	case AWCC_SPECIAL_PROFILE_GMODE:
--		*profile = PLATFORM_PROFILE_PERFORMANCE;
--		return 0;
--	default:
--		break;
--	}
--
--	if (!is_awcc_thermal_profile_id(out_data))
--		return -ENODATA;
--
--	out_data = FIELD_GET(AWCC_THERMAL_MODE_MASK, out_data);
--	*profile = awcc_mode_to_platform_profile[out_data];
--
--	return 0;
-+	return awcc_profile_to_pprof(out_data, profile);
- }
- 
- static int awcc_platform_profile_set(struct device *dev,
-@@ -1327,7 +1313,6 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
- {
- 	enum platform_profile_option profile;
- 	struct awcc_priv *priv = drvdata;
--	enum awcc_thermal_profile mode;
- 	u8 id, offset = 0;
- 	int ret;
- 
-@@ -1349,15 +1334,20 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
- 		if (ret)
- 			return ret;
- 
--		if (!is_awcc_thermal_profile_id(id)) {
-+		/*
-+		 * G-Mode profile ID is not listed consistently across modeles
-+		 * that support it, therefore we handle it through quirks.
-+		 */
-+		if (id == AWCC_PROFILE_SPECIAL_GMODE)
-+			continue;
-+
-+		ret = awcc_profile_to_pprof(id, &profile);
-+		if (ret) {
- 			dev_dbg(&priv->wdev->dev, "Unmapped thermal profile ID 0x%02x\n", id);
- 			continue;
- 		}
- 
--		mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
--		profile = awcc_mode_to_platform_profile[mode];
- 		priv->supported_profiles[profile] = id;
--
- 		__set_bit(profile, choices);
- 	}
- 
-@@ -1366,14 +1356,14 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
- 
- 	if (awcc->gmode) {
- 		priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =
--			AWCC_SPECIAL_PROFILE_GMODE;
-+			AWCC_PROFILE_SPECIAL_GMODE;
- 
- 		__set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
- 	}
- 
- 	/* Every model supports the "custom" profile */
- 	priv->supported_profiles[PLATFORM_PROFILE_CUSTOM] =
--		AWCC_SPECIAL_PROFILE_CUSTOM;
-+		AWCC_PROFILE_SPECIAL_CUSTOM;
- 
- 	__set_bit(PLATFORM_PROFILE_CUSTOM, choices);
- 
-
----
-base-commit: 1c72d9c3e0c61468de878d906a65d4cc845718fb
-change-id: 20250622-aw-gmode-ab799b2159d2
 
 -- 
- ~ Kurt
-
+With best wishes
+Dmitry
 
