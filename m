@@ -1,246 +1,142 @@
-Return-Path: <linux-kernel+bounces-884549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F67C30682
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:04:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80F8C306CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC6E1889852
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1E94225C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0222D3EEE;
-	Tue,  4 Nov 2025 10:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515C2D595B;
+	Tue,  4 Nov 2025 10:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y95QAXwx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQ53Ntyq"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB627E04C;
-	Tue,  4 Nov 2025 10:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ADA2D4807
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762250585; cv=none; b=eRYxOEN+ZBH5FWeXVr5wQmQM3p+aGXHOk0zVAIyoBq8Opq34S/c3OSdSLUdc2xvcR1XMTisa8RhKrz5qPMVdy1/vTHHJyFhjVLXWRAbnh/tnnfDfiPKTI90e3Yv4gyVzasd1hPFZL2Y1FfwrQJFLLqKMi4PEueH1wEY/cKbhxVI=
+	t=1762250623; cv=none; b=Ohl4aIbXChYR8LcH04IJd48d/64SA9YWF+bjCxP5CB/YxZ95O8/H+wW8ryeFR+lrs8bQChIF+TtAtTeZFWmz48+BPNC/vdg4mQrhFst9qT5GIKZO2c1an3maqW0ib9wZg18UJHz/4jIAQkb/J3cZNaw+po57mWppBzbgteKfeK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762250585; c=relaxed/simple;
-	bh=2DvZOttmCMGhJVjRPtQmLNf9Cv5+1jUn6WqdwCDUNJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlZHwjWNF6luxIcakDizAxemCZ/ftZoFFGn/qI6yqk9evZIjDTM8xC4PeoONWadIP8aHtIlaMbDYEa0+KUKr0lrUBKvm5bmlJI+ThbB0uIFhJKhPWYcnQ9bBGFmo67UCqMi/zwztJp3F9EzCHW6DBJ4u84uR29V4b7TgGOieY20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y95QAXwx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7F4C4CEF7;
-	Tue,  4 Nov 2025 10:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762250583;
-	bh=2DvZOttmCMGhJVjRPtQmLNf9Cv5+1jUn6WqdwCDUNJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y95QAXwx8mvpXm4IYCFvCUCKCQ5y4h4Mklc00Tmy25wZ83n7/bSXYXzRXJAIK68Mg
-	 kTFbicgW4b7aQp4kcY4qT+WUb3C+XJutOPY/INDaDxl7mVAmVffoM+pyI2TtGA/cA3
-	 0hYovc7OopGw1yWhwDapBsCXvOlBstR0+VqJKHkOraF7dBC1vnzIvqUVRy9gJtiN39
-	 OQCuqPLpFOWgLBjiKu1AGFdM0hc4a6kFB5JChVYRhBSSMCjtCSpDHu4iMCbCficebs
-	 gANKCfLy56LYExl0+IGSqqSKuiddZQ/4irYmbtg4mLozeWyqBNeYbUGmm4Pkz3WqyF
-	 LwXtFxFVOKoRw==
-Date: Tue, 4 Nov 2025 11:03:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, 
-	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mtd: nvidia,tegra20-nand: convert to DT
- schema
-Message-ID: <20251104-prompt-rampant-cat-30fd9a@kuoka>
-References: <20251030-nvidia-nand-v1-1-7614e1428292@gmail.com>
+	s=arc-20240116; t=1762250623; c=relaxed/simple;
+	bh=yCNhQ4a0Nk0Atx6Dr4wxtJ0ZtyqyLGT9ZWpCeh0ba7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DSeZSrRp/hpVcnEmepShxrGJi5rsmVhpFouKU0IPTTjW/T5kkiSNbh3gnofiKbakY01pdNABETqPZ4iLc1O4ym/VCPirwtAfz3X1EN9/FhYWE9X+W7udMdoyO76Q95ifP1w46fzQ+4wpmrs6gL8W9x6lioSrJNc4LdJnpoHFM2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQ53Ntyq; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2960771ec71so643685ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:03:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762250621; x=1762855421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VKUczaa/kE48HAcaJ5lE+YSGWpwTs3a+tEo/Ya98+Oc=;
+        b=mQ53Ntyq00EMTSh035RR+uDtW7hqjDsU/ZP5ohgCtXU8iDxkKWRO+rWmFTmRd3dtve
+         /9oHlAvsGwGsM7p2C1MXvAi61D0Uk3dIy6G2YyjJfgSsmY8gX3MXp3jMK7pwNmuNcqBd
+         uHBqxjox4bQW/TlBTz4WEPe6EVfSCehly9TXbbO2OuQquuXC92Ulw1VY/Ubm7A+gTN0S
+         LvH6K+3Z9chVBQ7YtbJ4ir7Yf1if9X0rhTIXdW/PEyCyRlKuRLOCEQpRXQEW0BWzRMAQ
+         uvCO6YkLHlqWaMmAlYMUrhOdL11AIOQ6AHx7XxZhTMVc/xlY5vav4vcw3g9oeQk2eZ0/
+         853A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762250621; x=1762855421;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VKUczaa/kE48HAcaJ5lE+YSGWpwTs3a+tEo/Ya98+Oc=;
+        b=hqjNGsfHtnEnRllrIT6zgyjnYSFojowaEuNV/Yotdoiq7OxAPx3Ky0J++1+XRXi3pZ
+         VaU1DkSUMy2bbMOKAeBDy4t6QMgdY/dHt7EDEmeLmp45hZlSiajOC8pbFmS5NQojEEkJ
+         Z+a2+En9pMf5lXZet4WBY7amrvCJNvLWNtUgabWPe7HlOhKypS2wmD+3FYs4P+FzyVxW
+         OarMmTahWMXd9u84G87yUsGNj491bP9rJZogsv1sX5BUDr26pLZrc/IYRu3/4G9/w/0Q
+         sYCZV7rh5bNkxCjuuehz3g/P2WmOuh7OWDOXQwD1tZRFUjgIMxDgczqMCuc6fOzKRUPG
+         /eag==
+X-Forwarded-Encrypted: i=1; AJvYcCUlTDhmlKOr5VshbTG+E0WqfMSNNsJv12Wnim8wMMlUDtxAb9vbOH3RRtspjOAyEF7rc/UNKHKl9zSRMck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu8wRJiq7T9vkO14eO8wKjyqTUp1zVVofCgfogNV7rsyVnibxF
+	R9slWXshs3LytWbzvZvVuuq+V43e1pHXQpMlsZdFoZFEbOLf4tt8xL9iOy6lzLGq8Bc=
+X-Gm-Gg: ASbGncsyK2EG59aPVBMljVbJG8BTwzleD9kfI054jfsgKPrtRsrmpkAsyyRVHA3Aico
+	K012OwTWixAtODY8H/3SBDLy4psi8kW+1+C7HC5i53G7JoYeXa4mfp2uXpuclOtVzQTkk8bUZOJ
+	4qVica0km/+Zj4GjdVDPxMIsOWIr9tVzkwXnZu5QyOt5hCqp1oY53HLoOLIMXXPJB5wGUYNxDej
+	djWgnwYuirYqVH6+rDc5vjyCMpmT4w0EoLhMhqIDb8k5+Cgdzdk3uEwLg16wzgW7rXw9MLws4c6
+	KwrfbTwlclUyCiqOQ0iuPEnDJpaeQmrJfGtCyVPS/XtZgcNm/mxXAJwegcstt8pAiG2FCO9Di9W
+	H8aur8dBlETakeAgf2VVzt23Y+GZzG/XNwij4vHVlzBGhEanEmMO/04xqYCVWDSkovVnoVtrNof
+	4hqS/OTiG4nPy0LC8GG6ZAUOFveyFWlF+xNIDnPpqWssONJVk4rRngXm2jfyMQng==
+X-Google-Smtp-Source: AGHT+IERjCdObduOqXZ7oaX8UqF7sHs4pQ6NQtq4FOaNwiNZd5TJwbQT+UFYEFtX/Kv19Ewgasg8YA==
+X-Received: by 2002:a17:902:f393:b0:295:54cd:d2e2 with SMTP id d9443c01a7336-29554cdd55fmr54991885ad.0.1762250620759;
+        Tue, 04 Nov 2025 02:03:40 -0800 (PST)
+Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998ef7sm20672565ad.33.2025.11.04.02.03.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 02:03:40 -0800 (PST)
+From: Qianchang Zhao <pioooooooooip@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Qianchang Zhao <pioooooooooip@gmail.com>,
+	Zhitong Liu <liuzhitong1993@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
+Date: Tue,  4 Nov 2025 19:03:25 +0900
+Message-Id: <20251104100325.343863-1-pioooooooooip@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025110432-maimed-polio-c7b4@gregkh>
+References: <2025110432-maimed-polio-c7b4@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251030-nvidia-nand-v1-1-7614e1428292@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 06:47:25PM +0000, Charan Pedumuru wrote:
-> Convert NVIDIA Tegra NAND Flash Controller binding to YAML format.
-> Changes during Conversion:
-> - Define new properties `power-domains` and `operating-points-v2`
->   to resolve errors generated by `dtb_check`.
+When encrypt_resp() fails at the send path, we only set
+STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
+in this tree). Repeating this path leaks kernel memory and can lead to
+OOM (DoS) when encryption is required.
 
-instead - because existing in-tree DTS uses them.
+Reproduced on: Linux v6.18-rc2 (self-built test kernel)
 
-> - Add the `#address-cells` and `#size-cells` properties to the parent
->   node to fix errors reported by `dt_check`, and include these properties
+Fix by freeing the transform buffer and forcing plaintext error reply.
 
-What is dt_check? Aren't you adding them because other schema requires
-them? Then say that (and which schema...).
+Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+---
+ fs/smb/server/server.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-
->   in the `required` section, as they are not mentioned in the text binding.
-> 
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
-> ---
->  .../bindings/mtd/nvidia,tegra20-nand.yaml          | 157 +++++++++++++++++++++
->  .../bindings/mtd/nvidia-tegra20-nand.txt           |  64 ---------
->  2 files changed, 157 insertions(+), 64 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
-> new file mode 100644
-> index 000000000000..67b3c45566db
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
-> @@ -0,0 +1,157 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mtd/nvidia,tegra20-nand.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra NAND Flash Controller
-> +
-> +maintainers:
-> +  - Jonathan Hunter <jonathanh@nvidia.com>
-> +
-> +description:
-> +  Device tree bindings for the NVIDIA Tegra NAND Flash Controller (NFC).
-
-Drop sentencem completely redundant. Title already said that.
-
-> +  The controller supports a single NAND chip with specific properties.
-
-What is/are "specific properties"? Can properties be unspecific?
-
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra20-nand
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: nand
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: nand
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  operating-points-v2:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^nand@[0-5]$":
-
-Keep consistent quotes, either ' or "
-
-> +    type: object
-> +    description: Individual NAND chip connected to the NAND controller
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +      nand-ecc-mode:
-> +        description:
-> +          Operation mode of the NAND ECC, currently only hardware
-> +          mode supported
-> +        const: hw
-> +
-> +      nand-ecc-algo:
-> +        description: Algorithm for NAND ECC when using hw ECC mode
-> +        enum:
-> +          - rs
-> +          - bch
-> +
-> +      nand-bus-width:
-> +        description: Width of the NAND flash bus in bits
-> +        enum: [8, 16]
-> +        default: 8
-> +
-> +      nand-on-flash-bbt:
-> +        description: Use an on-flash bad block table to track bad blocks
-> +        type: boolean
-> +
-> +      nand-ecc-maximize:
-
-Why are you duplicating all these properties from nand schema?
-
-> +        description:
-> +          Maximize ECC strength for the NAND chip, overriding
-> +          default strength selection
-> +        type: boolean
-> +
-> +      nand-ecc-strength:
-> +        description: Number of bits to correct per ECC step (512 bytes)
-> +        enum: [4, 6, 8, 14, 16]
-> +
-> +      nand-is-boot-medium:
-> +        description: Ensures ECC strengths are compatible with the boot ROM
-> +        type: boolean
-> +
-> +      wp-gpios:
-> +        description: GPIO specifier for the write protect pin
-> +        maxItems: 1
-> +
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 1
-> +
-> +    patternProperties:
-> +      "^partition@[0-9a-f]+$":
-> +        $ref: /schemas/mtd/mtd.yaml#
-> +        description:
-> +          Optional MTD partitions for the NAND chip, as defined in mtd.yaml
-> +
-> +    required:
-> +      - reg
-> +
-> +    unevaluatedProperties: false
-
-So this should tell you that you miss proper ref
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +
-> +unevaluatedProperties: false
-
-Same here. Why do you use unevaluatedProperties if there is no ref?
-Please open other bindings to understand how MTD binding should be
-written.
-
-Best regards,
-Krzysztof
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 7b01c7589..15dd13e76 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -246,11 +246,11 @@ static void __handle_ksmbd_work(struct ksmbd_work *work,
+ 		rc = conn->ops->encrypt_resp(work);
+ 		if (rc < 0) {
+ 			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
+-			 work->encrypted = false;
+-    			 	if (work->tr_buf) {
+-            				kvfree(work->tr_buf);
+-            				work->tr_buf = NULL;
+-       			   	}
++			work->encrypted = false;
++			if (work->tr_buf) {
++				kvfree(work->tr_buf);
++				work->tr_buf = NULL;
++			}
+ 		}
+ 	}
+ 	if (work->sess)
+-- 
+2.34.1
 
 
