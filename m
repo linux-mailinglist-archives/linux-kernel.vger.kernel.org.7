@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-885232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FA2C324F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:23:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1E9C32502
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DC204E3A21
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9D73AA6D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA9337104;
-	Tue,  4 Nov 2025 17:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E29533971D;
+	Tue,  4 Nov 2025 17:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NZU2jqni"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaetDQwr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356013314B8;
-	Tue,  4 Nov 2025 17:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BFB338587;
+	Tue,  4 Nov 2025 17:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276995; cv=none; b=p5PCp1ROqvkmPudNVs03r6or6ISIdbuoQfczp+Bv/zCR+Yu3TfTIiK5HhbHTBpWYFSs20Brq7+j61ECBFV1NrJiJx5At2PF8BLXakcA927hqDZ4kWN+rIKgGvgynoqYuDiV3c84i1K3jH4RMAipcPLqikTWb8krYJFj+KCzH8Gc=
+	t=1762276996; cv=none; b=jkGKTc0aX+92D3Wc4J9NrlSn41TdMmIHJ0I7gaLzlx3SvNVFhYxIOuzWBNYARAfCiWrT3AgwVFC5uSmrH86U0mCBw+TIFvC3k2f9nGGPBcXV3zAwlpNBLFJbslxr5Vna4MYoJup9cXF1f0g6U0TXHsYRhSq48IlZaIPQDeNymIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276995; c=relaxed/simple;
-	bh=7xC9bNwLpibUkJxSmVmr7/bvvRh2GQnoAG6xFo/rxsI=;
+	s=arc-20240116; t=1762276996; c=relaxed/simple;
+	bh=E5LlO3nuIGMGzEZzuymHEqptWv1aueAZNyEcApu+pa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpNS8X5Nreo+3Oufqc9tD8S++04ySwgDTtfIQdh/87upYpf+PhOeE/j6wBRYry9jXTfQPV1BbvwFlg91rVaccnewbhcQKAHxzxA5XiUicuXQsepnymsR9dtrF7Pq4oIXtlaiFWuMWpD9VE6fwFAB1RzhYTwuWf8CYG/6RXjUzts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=NZU2jqni; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=q3U1R5x06sN2pKWdRc4egagEUfY7xp6lzS8x+ow57Ss=; b=NZU2jqnilv5F5BzYqXAvi+1W7M
-	YdtF5wgWkWdqNMrcR/cciCZtpm63DEwFegVJ3uo9F6mMfyNt6hR1GNyhMzGNTjKRz0pXl64f8uKuW
-	KZ7UzuSa+4jQ0+2ZvnQgOWaNhxd5TUyLG2ROiIhhUux5Wn/Pwc/fZ0sRkGPFOxyqrvwSMV1cTtY3n
-	D8CYXKtzRbw9SU4QCxzJu0C4D/mUJB2WVC2rBwQfV2BXpMl0UcOzjyZnseOxF45YIouxNjc5jv5l7
-	K8YJecWzWUubQYre1rHSsDHmj5NFoUtj2XcwVOwe/m0MFNrR1i9QOzNaBVYX5rD3OUlROFgdJofJy
-	AUYxb2pw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37654)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vGKkC-000000002SL-0XPY;
-	Tue, 04 Nov 2025 17:22:56 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vGKk9-000000004vZ-3pQ1;
-	Tue, 04 Nov 2025 17:22:53 +0000
-Date: Tue, 4 Nov 2025 17:22:53 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Jacob Keller <jacob.e.keller@intel.com>, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJb9ihIzbRlD78M8MXVCPHjFNP2AQDDWm4nw2VlhZQSKEXrAme2FwRowRExzJGZN2uCmoGPJC1eddcKahPj9V/RHPDJCKoYDbueNoultolY3Gq+VZNAiMjqMU1MLzvvrTjKk+iEMiiJV+0Zpaew4Brexhp5n6Kp9viKTEmRZ6rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaetDQwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99B8C4CEF7;
+	Tue,  4 Nov 2025 17:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762276996;
+	bh=E5LlO3nuIGMGzEZzuymHEqptWv1aueAZNyEcApu+pa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HaetDQwrl/7Fkot0PU9d+nSTeVzFdfuXVDZmdtpJpJVeBaaA0klVmA1eENrt1+e+5
+	 TvhgjKUbjrZtovhEDg0p/Am7ivqIXvS57RaliFTnO9C2HOAGLORQ+0s4yJ1549qzi5
+	 gnwahsmhyujkKSeMLxE7Jq6+mB8ZvHH3Eqy2gdJKkij38H6iV88jCabEwF+N90TP+d
+	 nkBwS/85Hd9v0+6QjTt5T3ckOMj14HwnAD/nWS9HVhCHfN326C9iagieA4W0sQaU1i
+	 OHNav7/x0N7m+JDB2QKDKumsi6pntWjK6Fai4t3GiS1oW6jXuTiAMboyPolY1CBmjo
+	 4EbUobAL5zV1w==
+Date: Tue, 4 Nov 2025 17:23:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/3] net: stmmac: loongson: Use generic PCI
- suspend/resume routines
-Message-ID: <aQo2bcdbtVzxXGbR@shell.armlinux.org.uk>
-References: <20251104151647.3125-1-ziyao@disroot.org>
- <20251104151647.3125-3-ziyao@disroot.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: hwmon: Add AST2700 compatible
+Message-ID: <20251104-grumbling-document-6483add9415e@spud>
+References: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EAVUn09jG7fwpxUy"
+Content-Disposition: inline
+In-Reply-To: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
+
+
+--EAVUn09jG7fwpxUy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251104151647.3125-3-ziyao@disroot.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 03:16:46PM +0000, Yao Zi wrote:
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -367,6 +367,8 @@ config DWMAC_INTEL
->  	  This selects the Intel platform specific bus support for the
->  	  stmmac driver. This driver is used for Intel Quark/EHL/TGL.
->  
-> +if STMMAC_LIBPCI
-> +
->  config DWMAC_LOONGSON
->  	tristate "Loongson PCI DWMAC support"
->  	default MACH_LOONGSON64
+On Tue, Nov 04, 2025 at 01:51:11PM +0800, Billy Tsai wrote:
+> Adds support for the AST2700 PWM/Tach controller by extending the
+> compatible string enumeration in the device tree binding.
+>=20
+> The AST2700 PWM/Tach hardware is compatible with the existing binding
+> schema and requires no additional properties or modifications beyond
+> the new compatible string.
 
-As the next line is:
+With this commit message, I expected there to be a fallback compatible.
+Why isn't one used?
 
-        depends on (MACH_LOONGSON64 || COMPILE_TEST) && STMMAC_ETH && PCI
+>=20
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.y=
+aml b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
+> index 9e5ed901ae54..d6ff4182085e 100644
+> --- a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
+> @@ -20,6 +20,7 @@ properties:
+>    compatible:
+>      enum:
+>        - aspeed,ast2600-pwm-tach
+> +      - aspeed,ast2700-pwm-tach
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.25.1
+>=20
 
-where STMMAC_LIBPCI depends on PCI, and the whole lot is surrounded by
-if STMMAC_ETH ... endif, shouldn't this become:
+--EAVUn09jG7fwpxUy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	depends on MACH_LOONGSON64 || COMPILE_TEST
+-----BEGIN PGP SIGNATURE-----
 
-?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo2fwAKCRB4tDGHoIJi
+0sYTAQDbftqnYaV1ZmhlGS+OCOMPY79jqcr4MOlskykoteVUhgD6AqEmQ/T3y0h7
+Z5h+xKS/iDZ9j7HhE/bIphciTJDIMgQ=
+=uT06
+-----END PGP SIGNATURE-----
 
-Otherwise, looks good, thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+--EAVUn09jG7fwpxUy--
 
