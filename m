@@ -1,172 +1,138 @@
-Return-Path: <linux-kernel+bounces-885573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EEFC335A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:16:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8429EC335B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 525F234BD7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FEE189E88A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E92D8370;
-	Tue,  4 Nov 2025 23:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E02DAFCB;
+	Tue,  4 Nov 2025 23:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Io8dkI4w"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bVdZgzlB"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAA12882BE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782E02D94A8;
+	Tue,  4 Nov 2025 23:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762298195; cv=none; b=NwvdoKclIQcylkB3QxRhQ24gZ+ZabGgIPWAJIdh+9Ny+y6iq6HH++2BlD1jtS+3p0iX5ZhLo2G51x/NE1H1P0ikBCT30PytPNGM77OhcGH8/6JjJlZhBi+W2k0GfXPGZi5a/w/QwtTsNLs6CXrl435b23xdOj8M1/f3S5up261M=
+	t=1762298302; cv=none; b=jVZXqL4EIvNCyG72/1zURzInL4NlkXjfATxAsERJ/WKrL6NeC0myANokTJeWxTGAy8kdA+0f/ELW6P3fxP/UVDm54JkBaHmDLhTSOvNR6jHT24KI5oNoEv3s6c9pqSd1vpzdYUU4HN6e1tT2KT9IqBChbLl5DMAF2QlPNKcaOok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762298195; c=relaxed/simple;
-	bh=V8nVuV0n+sCURNFds7Oo6rBhBJDlAUh0JyVdqPhZQaE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aWQLvVbwpPHl5wvvAlPZ6cnpOlyIncKeTLe+kBx1HT2NU9sSg3L8eg6DmA2ItI0GM10z/4zvfRqETVXmggQSDbu9bxJykODOUkHh6hPXShjhM5PUclLSjgEfRD4Bf+H9P9KnjpzSGKDBnc05jsFlZzVUcxoeAQxLF1RAM98knHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Io8dkI4w; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29516a36affso47138225ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:16:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762298192; x=1762902992; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EGZr6HMcs4RCfjM1Y9yPGFu8E7vFsFeaGWiFPXlpJwM=;
-        b=Io8dkI4wlfvuwgGKwYItNI9G7AqZnsoo+jH+K2HA2lw13rx+uJJse6QYrs6PGvBwR4
-         Nls4n1Zda46E1A8daXGK+M1NsEoLs1kUqiyDvOEocj3F/zkf5zrI5etbCLgTK+DullIM
-         uJumzw9op1gotbi2mn0caFJ5H+R0unsyT7e/yhOE2L6Sk2E8ND8WY1usk8fSfE0ZT+hY
-         pxltk716W+TGa6yBthSNVOgeRwDK+l3sOe5NaBlhV+taXu0TOWH+aZPTO/CwJckxr5PG
-         JkeXePjwZI4/mLzwRQWK7HAWVXkWQrxvMAXHernznf8tfDIJHTQCPwFsH9TX7VfLWxd0
-         jyHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762298192; x=1762902992;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EGZr6HMcs4RCfjM1Y9yPGFu8E7vFsFeaGWiFPXlpJwM=;
-        b=OzsrjKHf/5rhnPQaaN/uXAA5iBrPLWKeSaVvZWPuqRadTBN74q1d8WKnTtN7vRWFh9
-         h+O+BtTvEO8VfZZHF1kaBtihtSxzD60YxekaRJuUmw2v597HuzeESSr+j6ujB3DOJwNr
-         khpM3Te0noO7/BY6j4kvz173e+ciDM2kDZ66cy0ZxbWOEQrOo7kPP9D9VpqCkfvpM2+L
-         iz9w3tfm6xHihUxPFiAg5X30/RaDa24F+HgbzZAGiKUd4Uf29b2Z5GnN6i6W23IRQPdv
-         gVk50nH0nVGLINEM4u8+h7tcgWJ4kdIezQaqRpIhCxRPng978NDDHqPh2ptQjHC3n5im
-         qZEw==
-X-Gm-Message-State: AOJu0YxUOKOCY1f8mcxnoxdnor6Hynwaxu6NvE3Wys65c4Bk7PDSXAFD
-	f67VXtF8da8hgwxs0WzURbrV5Y9JzPX6ScE9zxv/GuZI+zgbrx9FLYfa
-X-Gm-Gg: ASbGncsw4mktLp5Zx2WshlDuowKSp3bvC+X4JIeEdsgSmtCxaK8YSBLUJrJkIOMcXEV
-	CFsOa2h/OWl5ILteKkWTqiz6AHVcl8nm450lxz1/hy3fNqc/FTnNEb2/ax2N6IYpRTtH4BeIkJK
-	5Gq8qAghr7MCzgD2pnu6RwbY9b71BAdojQGA9CJU2ub9q/k5Etclcv6N3Jf4ZIzZP3kFROo6z7+
-	H36lrpgrXSvXEhA37yphDqq+8MSIu83XjeU3iUl+DJlrZQtq+siux8Ut3IJPPBKwX9oe60msQsv
-	yN6EdZu4RYIoa+RoIhpA2W1CzDaCqxdLXuoxBvNQD+ph1/fQ2KvWuGF+gs/ugmMURx9ARRhFSCL
-	xMeQMWTfpO9FZMA04eBNegMXpiMtDpEv7Ld15JszHF+1SOUF9cHi/VOnLGi/VEyA69DZMp7zih7
-	MUrKjXw2yD1KG6TZ+O1O7jWzuqWIf7GaVEgA==
-X-Google-Smtp-Source: AGHT+IH6crtzR+6zUOkBPB5+ybCD3YGJNF15Oi0eJ/TItqEIBk+h6nP03we74gUPUgZhidc6G0zBzw==
-X-Received: by 2002:a17:902:ce81:b0:290:cd5f:a876 with SMTP id d9443c01a7336-2962ad1c7c8mr20507755ad.13.1762298192310;
-        Tue, 04 Nov 2025 15:16:32 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:a643:22b:eb9:c921? ([2620:10d:c090:500::5:99aa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601b8f28esm39826705ad.5.2025.11.04.15.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 15:16:32 -0800 (PST)
-Message-ID: <ba6272aa416c80c8a4800945b6ed311fe1506a74.camel@gmail.com>
-Subject: Re: [RFC PATCH v4 1/7] libbpf: Extract BTF type remapping logic
- into helper function
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Andrii Nakryiko	
- <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song
- Liu	 <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Date: Tue, 04 Nov 2025 15:16:30 -0800
-In-Reply-To: <20251104134033.344807-2-dolinux.peng@gmail.com>
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
-	 <20251104134033.344807-2-dolinux.peng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1762298302; c=relaxed/simple;
+	bh=8eaU4PEC2c2giMxU+6+faFJS11n7Ure0cR+De/7s2vU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=L+diKTlS+1QUrihy1ghI5+kdNhazNoiM+PmKwAaoNcj6tBToNEfU5x0WyliMZAZIwGNoGDl9ukaZMsk3UJHRi6zVvV5pl8lJvDqYwB0NIRtu8x9cuogJG9eMjbOJVG9E009t/J9R8USWL6C3yYMfrW6V32xPtXRmY3BPWjFbpAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bVdZgzlB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=Y790WKwGEGT5HnCsGWE23gAkpRos3CR2T6aFVpk1eug=; b=bVdZgzlBmcSONzcAqO9ipb6pCj
+	1mA0SoZMXnmQ3BEY1ZoBRSWNzky0bSvN34jBb7IFXtOY6x5MUADzVy5MyF/mKOJkPeQnyTcLYF4xY
+	69kfgIvjbsZ7fErq3LyhCjirB6GJJOn6URuJ2xy6aHX9aw1qP6VewAcmWcwbv2Z2RTcyUNYIPFHCi
+	iCgdgoKjEWO5hZ6AVaZi0ozrmj0mDHoKJuJLRWnMn+u7aPz58NakTArRI3EtdfVNjXBuwLfB6k4Dv
+	7Wb2Rkygu/fXOWzA9cgaJQARoa+ap3G6TUYl/2GOCEKiQGn/fFQtpmRXXBkuEF8AeTX7DQP1DWcnx
+	w4RHpndA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGQI6-0000000CkB6-3u5t;
+	Tue, 04 Nov 2025 23:18:18 +0000
+Message-ID: <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
+Date: Tue, 4 Nov 2025 15:18:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-11-04 at 21:40 +0800, Donglin Peng wrote:
-> From: pengdonglin <pengdonglin@xiaomi.com>
->=20
-> Refactor btf_dedup_remap_types() by extracting its core logic into a new
-> btf_remap_types() helper function. This eliminates code duplication
-> and improves modularity while maintaining the same functionality.
->=20
-> The new function encapsulates iteration over BTF types and BTF ext
-> sections, accepting a callback for flexible type ID remapping. This
-> makes the type remapping logic more maintainable and reusable.
->=20
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Cc: Song Liu <song@kernel.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+
+
+On 11/4/25 1:55 PM, Andy Shevchenko wrote:
+> When kernel-doc parses the sections for the documentation some errors
+> may occur. In many cases the warning is simply stored to the current
+> "entry" object. However, in the most of such cases this object gets
+> discarded and there is no way for the output engine to even know about
+> that. To avoid that, check if the "entry" is going to be discarded and
+> if there warnings have been collected, issue them to the current logger
+> as is and then flush the "entry". This fixes the problem that original
+> Perl implementation doesn't have.
+> 
+> As of Linux kernel v6.18-rc4 the reproducer can be:
+> 
+> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> ...
+> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> ...
+> 
+> while with the proposed change applied it gives one more line:
+> 
+> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> ...
+> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> Warning: include/linux/util_macros.h:144 expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> ...
+> 
+> And with the original Perl script:
+> 
+> $ scripts/kernel-doc.pl -v -none -Wall include/linux/util_macros.h
+> ...
+> include/linux/util_macros.h:139: info: Scanning doc for function to_user_ptr
+> include/linux/util_macros.h:149: warning: expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> ...
+> 
+> Fixes: 9cbc2d3b137b ("scripts/kernel-doc.py: postpone warnings to the output plugin")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Oh, thank you. I knew that I had been missing some warnings since
+I still compare outputs from the 2 kernel-docs (perl vs. python).
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
 > ---
+>  scripts/lib/kdoc/kdoc_parser.py | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index ee1a4ea6e725..f7dbb0868367 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -451,6 +451,13 @@ class KernelDoc:
+>          variables used by the state machine.
+>          """
+>  
+> +        #
+> +        # Flush the warnings out before we proceed further
+> +        #
+> +        if self.entry and self.entry not in self.entries:
+> +            for log_msg in self.entry.warnings:
+> +                self.config.log.warning(log_msg)
+> +
+>          self.entry = KernelEntry(self.config, self.fname, ln)
+>  
+>          # State flags
 
-Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-
->  tools/lib/bpf/btf.c             | 63 +++++++++++++++++----------------
->  tools/lib/bpf/libbpf_internal.h |  1 +
->  2 files changed, 33 insertions(+), 31 deletions(-)
->=20
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 18907f0fcf9f..5e1c09b5dce8 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -3400,6 +3400,37 @@ int btf_ext__set_endianness(struct btf_ext *btf_ex=
-t, enum btf_endianness endian)
->  	return 0;
->  }
-> =20
-> +static int btf_remap_types(struct btf *btf, struct btf_ext *btf_ext,
-> +			   btf_remap_type_fn visit, void *ctx)
-                           ^^^^^^^^^^^^^^^^^
-Nit: there is already 'type_id_visit_fn', no need to add new type.
-
-> +{
-> +	int i, r;
-> +
-> +	for (i =3D 0; i < btf->nr_types; i++) {
-> +		struct btf_type *t =3D btf_type_by_id(btf, btf->start_id + i);
-> +		struct btf_field_iter it;
-> +		__u32 *type_id;
-> +
-> +		r =3D btf_field_iter_init(&it, t, BTF_FIELD_ITER_IDS);
-> +		if (r)
-> +			return r;
-> +
-> +		while ((type_id =3D btf_field_iter_next(&it))) {
-> +			r =3D visit(type_id, ctx);
-> +			if (r)
-> +				return r;
-> +		}
-> +	}
-> +
-> +	if (!btf_ext)
-> +		return 0;
-> +
-> +	r =3D btf_ext_visit_type_ids(btf_ext, visit, ctx);
-> +	if (r)
-> +		return r;
-> +
-> +	return 0;
-> +}
-> +
->  struct btf_dedup;
-> =20
->  static struct btf_dedup *btf_dedup_new(struct btf *btf, const struct btf=
-_dedup_opts *opts);
-
-[...]
+-- 
+~Randy
 
