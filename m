@@ -1,249 +1,164 @@
-Return-Path: <linux-kernel+bounces-884988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784C2C31ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C4DC31B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 838314F389F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:56:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 831F44FB719
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F232E73E;
-	Tue,  4 Nov 2025 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3399F3314C4;
+	Tue,  4 Nov 2025 14:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cXZvVAxP"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013010.outbound.protection.outlook.com [40.107.201.10])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="szIn24wp"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B934325702;
-	Tue,  4 Nov 2025 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268160; cv=fail; b=DfDUMZ4exacPM9pAizagWjf34YqOOA3uOC80omGR8ouDOkm2wkgLyce04jv3giP3UIAUJDWytx42wbmVrOOtnfFmB5yrxj04DXZ0KzFCz4ESnuxTsvdnKAYLX4Uaau1fbI5GfbnbVY0KQ50J2/0tNoxl8j2a0s9b6brevTRBCbk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268160; c=relaxed/simple;
-	bh=h/BGkOpXjPGriCJCq9V56yAm5XvtayjI/hpAKp7kLcY=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=cJ2C5BezssYPS21cEU3ifkebZzdmxls2OJOwOhdIM1zESpzGnS1Ni0QZHZ4iZuFOg9HP4xs5H8jEhnmqvgkPnoGwHVRL/y3bRbJmNC+2hgDwkZXPVi8qsmJJrcDloRn9CH5+smAaFXAr9WKZd+GnkKgngRG6acKDQwnwI5cZPA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cXZvVAxP; arc=fail smtp.client-ip=40.107.201.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ri8sWOmFIj9gUSBpaLA8sKcmy9Y6c1fAS9bkCqtGaaHCyNrOGpURKKrYxJwZxv0kUv8+LKTrIf0+GZ8UJ+A2Rp+/7BNh9+7gUlN8rS6PUIesJBw/Lus4UYFZtwdeN9SAOfzVxXMw+NLJGufRJxLe190PUId+Xht16LGngaseNkSnNrUonKaM2EPaDJP5KWbiOH6mm76BAdMuBoGmbkM9cc1b4wd4FjNe3H7shT2SoXqQJKwdYQwwGGRRJze7S+0brkVG/Zm3DUjWyILYEUwMz2GNWT4odE7mh+jw26pgBlg3Om3JZDLAgShNj9adPcngpThove+bhxT5+mcL0opz9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y6WnmwqSE/jMCJAEP/telf5fonzpqhjwefOhNYXNrzQ=;
- b=JPhpoQC9Vp524Hk7DIDtQkBKYPqZ4oSpsOYpD6b1redrGRYGuvquKO9xJCgJ3NL/qimtR/Y7h1ShJxK1QD6y+Rg4zhxKG8Fh4WrSioFCoRgntMYjWgEqJ6CKJlRWgjafKmv/qiwAa+hl3Zk2bMBs7b7cTpPBt5aHmKbkgfXSUJ5xoHfX/Fh9yM4YuagP8r2llc8vNcDz81toJPOWa+arjbWs2VbAwZQR2NehI9eGZcbH7XtMo/lJU8Pd3ZQS+/eGXm80DPNt3ZRBMALLuuhw9UU/ST/CpuCxGPPqaKRJFLq+YjaZ22fygOZp2NIdQcAQhx1C9FpzTIoxIOjz6WpKOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y6WnmwqSE/jMCJAEP/telf5fonzpqhjwefOhNYXNrzQ=;
- b=cXZvVAxP+yzCJ8LoXl1yzZEoR/IH9hC0PXn2SrLITr9QNv8Zhh4VQZFRNNADfX9v8U50yL8SrbmxBfVVWF619DXziQaQMEmoLmwdFZzYxrDwMJUHtKIw44YH6NI10YXDmSjEcAewxJEqkhjM8JRW02BSwBHe++CUGVVWo6DJys8=
-Received: from DM6PR06CA0081.namprd06.prod.outlook.com (2603:10b6:5:336::14)
- by SJ2PR12MB8873.namprd12.prod.outlook.com (2603:10b6:a03:53d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 14:55:56 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:5:336:cafe::70) by DM6PR06CA0081.outlook.office365.com
- (2603:10b6:5:336::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Tue, 4
- Nov 2025 14:55:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 14:55:55 +0000
-Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 4 Nov
- 2025 06:55:50 -0800
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: [PATCH v8 0/8] AMD MCA interrupts rework
-Date: Tue, 4 Nov 2025 14:55:37 +0000
-Message-ID: <20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E493328F2;
+	Tue,  4 Nov 2025 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762268171; cv=none; b=VqUbG54ZHNMT+CWn8TlUShhiSJyGUJyvvi2LE2A2lcCrr7KpxGV86hgaywASewQCw9skFmv1unAtBV7Ihk0G9HaPC81K1rANXp7a/BMFQ0+RwrOdzMP0bAjzqC4GFeujw5y4mjU9rJU9x2MsDG7A+jws5FhWPJnPqC3loWRsyaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762268171; c=relaxed/simple;
+	bh=lFHqmfqjInR++fuy7MylpWpAhCLAZ7fTkTfLDwYTIRI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GW1okTsGkEM4zaV/Yzrhbd2zt0iuw5pomJy5UVtJl7iBlsKzmOghdbugiGCF3I1jl6Epd5Q0h0J/gZfh8DTW29gIyUeE4NmBLqnYa56HEsLgG340wQq2Cfk3wr1sEGUzMqLH/Zyhm3GAh/yAIfsaYiMbV1tTlCMRUZaI1a2bDyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=szIn24wp; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1762268156; x=1762872956; i=markus.elfring@web.de;
+	bh=lFHqmfqjInR++fuy7MylpWpAhCLAZ7fTkTfLDwYTIRI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=szIn24wpQsAers95vQ+PYSOkPw+E9Fb0kT8L81SqYp2nqxlpQ8Rl6r6xuVr9bx5o
+	 Lp1aJDToRzNAX7GNolfcQSfbB43MoXaANc/LzxyIyGg8q4bZLXBRzT9YswbkLyvJI
+	 CxnCa2nbe+lT3sgjJQUPeKDE+tR3WEyH7pGS0it6o5YMPB3c7vlLHZlhBJHxUnlkW
+	 Q8JaediQ7LB3cl2qLg4iYjf6ekxBYZ99ujwbHT1N8KSHIfCLr6d60oUNcyF3MOsWj
+	 cgM/s7u6SqIGw0XbHZ6eslI2Qx1DpWzsjpC6duBIdkZiNjzuXM9UCdDC5f3Zl142d
+	 qf4bRMaPL/BSysSLuA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgzaR-1vtCUr0oqz-00nwdZ; Tue, 04
+ Nov 2025 15:55:56 +0100
+Message-ID: <073e1aed-11d4-4410-b40c-1d4684f3c192@web.de>
+Date: Tue, 4 Nov 2025 15:55:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOkTCmkC/23Py27DIBAF0F+JWJeE14DdVf+j6gLDkLDwQ+C6T
- aP8eyFSa7nu8kqcuZcbyZgiZvJ8uJGES8xxHEpong7EXexwRhp9yUQwAUxwRj/iRHtn6fvk7Yy
- ZduiF1ca1DgwpakoY4ufj4utbyZ3NSLtkB3epd+Y4nZLNJzcmrM8vMc9juj76F15RrVIMhOQAW
- vGjaBgozimnV/uFw/FcZg22f7G9P7qxJ7VkET+yjpS7kYugjEotNSgTkEHYarlqxWGvZdFNCL7
- FTlkLeqvVqrVQe62KFlJ7b1TQ6m83rLoR/3RD7dZgdGMFYmi2Wq+6Zc1e66KLAq+dUV3rttr8a
- s643mtTNDguW6vK11y36vv9/g1fis8IOwIAAA==
-X-Change-ID: 20250210-wip-mca-updates-bed2a67c9c57
-To: <x86@kernel.org>, Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<Smita.KoralahalliChannabasappa@amd.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, Bert Karwatzki <spasswolf@web.de>,
-	<linux-acpi@vger.kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>
-X-Mailer: b4 0.15-dev-9b767
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|SJ2PR12MB8873:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11dfa2a9-8cec-424f-9b93-08de1bb241f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MEtqSmFqeks5WUtnYWQ5ZUllNXBvVW1XV1FCbzRCVVBKdVFYZDRtUndqaGRh?=
- =?utf-8?B?UkEyVGpIYTIrN1NNbnRsU1F4NlZqUndDUEZLaWpPeEFVUkxNZy93cVJWZkxN?=
- =?utf-8?B?N3NxUWhDLzNzblBBVE1ETXlJcXh2MldaVU13aUFIS0NXZjJidnZlWE5Da3RU?=
- =?utf-8?B?eG1yS2FXZUxXdndydldBQmpCZ0l5czlsaEkxbDh4S0E1azhYdjMrWmtob0JB?=
- =?utf-8?B?NWdFR3EwKzVnalhsRGpuY0xRVVZNWEc3cW9saGlmMTNYVUk3Rnk2dnkzdWd1?=
- =?utf-8?B?cmQzTDY3Yyt6UjQrbzZTaHRGRmI0ZzE0azFVNktyWlo0eThvTXMrUWI1emtn?=
- =?utf-8?B?SXhwcDA5NDI1cEVuTERxZ1BySXQwV0FubEJENXF3QWhQSXBVNFZTNVNOellu?=
- =?utf-8?B?bVMxRW9sQ0V1UHEyU0FRYUJvdnpsQ0k1NUo4VmMyaENhU3VUT0pDUEg3eU43?=
- =?utf-8?B?Mld6ajNVZTlISzJSUG04c1YrNTh1Rm4zcFVldDdxWHZKbTUyZXAvZ2h4aFFM?=
- =?utf-8?B?em81cVM1b085WThKYW5XTm1zS3FDTFZZczc1UmlVZllyekRhQytEMFI3THJk?=
- =?utf-8?B?VWwrNG4xUzhBdjJyWit4b250aStlOWpBN2dyMC9ML2lpNWRIWEgyY0NxUFls?=
- =?utf-8?B?TDJFcWNWM0FTek9IaWMrYXNDZ1R3RmJuU2kvajlBZ255WHJ0Nnh2ODRDTUhj?=
- =?utf-8?B?WTd6MFFSL05xcldOUDV6VFp0Z3JWTkx4RmdGVmRFSEpPOXpTd1B2THdJSlNn?=
- =?utf-8?B?cXFKbWdYM0dzTXR6WU9iRmxMQ2JmSE9LK0w5enlyTWJjQ2UzZ3NjZUIycm1N?=
- =?utf-8?B?a1huaUQ3QzJzSjZSOFdyakFVQXRLOTVjWGhxTnhIWURmVzdDbFZ0QS94YmlV?=
- =?utf-8?B?QTR4aG8wOFE3bWR4dUp0NGJCaDZhbW9IRTJMNVV4NEp4cHlMbWozUjBGQzBX?=
- =?utf-8?B?T3ZrUkhwNEk4ZzY2dE9xVmtMNDRDVElwWVdYSVJRNFlkZVpKdGJ0V2MzdzhY?=
- =?utf-8?B?REp0aDFPN1BwNHoxV0RpM0RsZjFWOEMxdTBaakJUZzFUN1k5VEx1STY1US95?=
- =?utf-8?B?aUxhcXlJY1lnVXpObFVYMTBxNk1pZGErRkRTUzBaYlZKbnJCR3pIM3lUWjZJ?=
- =?utf-8?B?SUYxOU9sUTd4cWc3OXphSGgwSEJoaVFhQkd2L3VvY2c0NEwwMkU0RG44V0xX?=
- =?utf-8?B?V20wREF2K2FvM2pTS2ZYK2VWVGFnTXMySE5LOHlRZUpsY3R5bTYwZXZYVXJx?=
- =?utf-8?B?blFtRWtLTUs4bkdLcGVQOFlmYWlYbHozSHRMU2tZSkZYMC8zU3lmSzFWb2V4?=
- =?utf-8?B?UUdlQUlZYVAxRU13MkhmOXhJek9iTTNOUWc2VU5pNnVHTE51emkza2ZwYjUr?=
- =?utf-8?B?QjNsTElDaCt6TnozelFoZy93N3FjKzBJVFYyYkIwNXJiTDVGZEoxU2xGalRz?=
- =?utf-8?B?bmYxUVRGSk1qbG5UbzJqaVBIbEFWbHlWaXdseFYxM2NHT1RqVmxZR2p1ekU0?=
- =?utf-8?B?UEp2RkphSGdwL1ZmUUNBcWZJZkZkOCtqWHlyNS9VdEc4dFp4R2Z6cU9jVWRF?=
- =?utf-8?B?QmlWWEZ2L0R6M1VuZElpSk1yUlVkT2lPc3hmZDh5ekdjK09RUjdJTk5JOVZU?=
- =?utf-8?B?bFZVTnYwbjNxU01uQ3o0eHBnbjRvV2FkRFU1TnpCaXpNMUsrTFNsY2NHRXZq?=
- =?utf-8?B?TFJlcDR2OW5wSXNtdGR4OXh2a054T2doK2lCWnM1ZExPU0xyUEZXVEpsOGlI?=
- =?utf-8?B?alQwVnVaSEpjL1Rsbk43SXJabDN0Vlp3bUppZTZRM2ZNUXFpS1JZdXk2aWxD?=
- =?utf-8?B?VWU5dU1RL0gzL3hCemFROEdXOW9kUHh6YTZyd2VUdk03RkhFRzhCR0E1RmQz?=
- =?utf-8?B?ZExlR2pMNHpkN1ArdmRJMVp1R3R4TitzWlBFK2ZkSkluVVM3ODN3Z0d2Wllt?=
- =?utf-8?B?RDNCc0VQR3UyMzhRY2ZHTE84b09tb0RpdGtoeUxncHYxdlJrb2N5ZnRhckZw?=
- =?utf-8?B?ZmZnbTg4My9kaktIaGZIcjFuY0l1R1F3YkpmZHo5VzJpMXFhZ253M0pJZkZ6?=
- =?utf-8?B?ME40TmZTN3Z3NVZSaWtNVFRTKzFZL3RLUU9WTER4eWNJOHQrRUI5cnhXaDVu?=
- =?utf-8?Q?eIuU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 14:55:55.7189
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11dfa2a9-8cec-424f-9b93-08de1bb241f6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8873
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linux-rdma@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Danil Kipnis <danil.kipnis@cloud.ionos.com>,
+ Haris Iqbal <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+References: <20251104021900.11896-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] RDMA/rtrs: server: Fix error handling in
+ get_or_create_srv
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251104021900.11896-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:c1ZwohL0bP/VTTUzKNy7Uvy7AP9yv6cwF3amJ/OrcqNxUudfRfn
+ Hv+TGUJq4Z99ZcdZ2zGNvpXz2ouD93vvyRUdrzI6AISP8rLqwdW/3NQH1PCFkb4iBY1pua7
+ hM1PFWAK+pU/Z+6a5KmyiyQ7IB9NZZ+WqpP0iko0amsOn9jYQct8LUo6qVv052LgovFhmbk
+ 1VDc1wSUtiI/kJx5QKzLg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ON9LiD21JUo=;GGcCWjEdgQgf7oPP04e+h6BNUgE
+ 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
+ mjNZ0eJj7R7mIQdb8R+zrBjSP8=
 
-Hi all,
+> get_or_create_srv() fails to call put_device() after
+> device_initialize() when memory allocation fails. =E2=80=A6
 
-This set unifies the AMD MCA interrupt handlers with common MCA code.
-The goal is to avoid duplicating functionality like reading and clearing
-MCA banks.
+Why do you propose then to replace a kfree(srv) call by put_device(&srv->d=
+ev)?
 
-Patches 1-2:
-Unify AMD interrupt handlers with common MCE code.
 
-Patches 3-4:
-SMCA Corrected Error Interrupt support.
+Would an other word wrapping be a bit nicer for such a change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
 
-Patches 5-7:
-Interrupt storm handling rebased on current set.
-
-Patch 8:
-Add support to get threshold limit from APEI HEST.
-
-Thanks,
-Yazen
-
----
-Changes in v8:
-- Apply "DFR unify" fixups. (Boris)
-- Update "HEST threshold limit" string. (Boris)
-- Link to v7: https://lore.kernel.org/r/20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com
-
-Changes in v7:
-- Rework DFR error handling to avoid reporting bogus errors.
-- Don't modify polling banks for AMD-systems after an interrupt storm.
-- Link to v6: https://lore.kernel.org/r/20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com
-- Link to "spurious errors" thread:
-  https://lore.kernel.org/r/20250915010010.3547-1-spasswolf@web.de
-
-Changes in v6:
-- Rebase on tip/ras/core.
-- Address comments from Boris for patches 1, 8, and 10.
-- Link to v5: https://lore.kernel.org/r/20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com
-
-Changes in v5:
-- Rebase on v6.17-rc1.
-- Add tags and address comments from Nikolay.
-- Added back patch that was dropped from v4.
-- Link to v4: https://lore.kernel.org/r/20250624-wip-mca-updates-v4-0-236dd74f645f@amd.com
-
-Changes in v4:
-- Rebase on v6.16-rc3.
-- Address comments from Boris about function names.
-- Redo DFR handler integration.
-- Drop AMD APIC LVT rework.
-- Include more AMD thresholding reworks and fixes.
-- Add support to get threshold limit from APEI HEST.
-- Reorder patches so most fixes and reworks are at the beginning.
-- Link to v3: https://lore.kernel.org/r/20250415-wip-mca-updates-v3-0-8ffd9eb4aa56@amd.com
-
-Changes in v3:
-- Rebased on tip/x86/merge rather than tip/master.
-- Updated MSR access helpers (*msrl -> *msrq).
-- Add patch to fix polling after a storm.
-- Link to v2: https://lore.kernel.org/r/20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com
-
-Changes in v2:
-- Add general cleanup pre-patches.
-- Add changes for BSP-only init.
-- Add interrupt storm handling for AMD.
-- Link to v1: https://lore.kernel.org/r/20240523155641.2805411-1-yazen.ghannam@amd.com
-
----
-Smita Koralahalli (1):
-      x86/mce: Handle AMD threshold interrupt storms
-
-Yazen Ghannam (7):
-      x86/mce: Unify AMD THR handler with MCA Polling
-      x86/mce: Unify AMD DFR handler with MCA Polling
-      x86/mce/amd: Enable interrupt vectors once per-CPU on SMCA systems
-      x86/mce/amd: Support SMCA Corrected Error Interrupt
-      x86/mce/amd: Remove redundant reset_block()
-      x86/mce/amd: Define threshold restart function for banks
-      x86/mce: Save and use APEI corrected threshold limit
-
- arch/x86/include/asm/mce.h          |  12 ++
- arch/x86/kernel/acpi/apei.c         |   2 +
- arch/x86/kernel/cpu/mce/amd.c       | 340 ++++++++++++++----------------------
- arch/x86/kernel/cpu/mce/core.c      |  31 +++-
- arch/x86/kernel/cpu/mce/internal.h  |   4 +
- arch/x86/kernel/cpu/mce/threshold.c |  19 +-
- 6 files changed, 195 insertions(+), 213 deletions(-)
----
-base-commit: 5c6f123c419b6e20f84ac1683089a52f449273aa
-change-id: 20250210-wip-mca-updates-bed2a67c9c57
-
+Regards,
+Markus
 
