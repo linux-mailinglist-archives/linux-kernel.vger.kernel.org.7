@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-884252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38316C2FBDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:59:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F31AC2FBE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31273AA9AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:59:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CBEE4E7667
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DAE3101C7;
-	Tue,  4 Nov 2025 07:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7821330FF36;
+	Tue,  4 Nov 2025 07:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJLyiiq7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="MwTivhKL"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34E530AAB8;
-	Tue,  4 Nov 2025 07:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762243158; cv=none; b=Qzh5CNCTt/iJNM6TE3rM/NAuZe3YTBrzPKIXpN6BwXLIXXTy5Cg9vA7/Rx1hxmDRFNqytojkpZ4W8bMjUQDGPMj146PCqEhrhCnRapQfNwrpTwsZCvE1czr8QJNNt9A91uk4a9iOo1S3odMO2rkPmuG8Ls2cq5poLlOU5UMH/Pw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762243158; c=relaxed/simple;
-	bh=ceTMCAQBjXMugyQDf4pTHgS3GhNstdu8FQnYn1odlLs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4430FF2F;
+	Tue,  4 Nov 2025 07:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.220
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762243182; cv=pass; b=PegAfJcnc9FFgfQTxG5qnpHTF2NaNRFa8WQhYkJwqbfD2MpAPoGfl7L6of9HEfhEiLjfkOu5QRpMUh3pjgGO+1U76NY0hZvjA4B6PYFTuLRucZ5XO43FdufnmcvkvhFXmMl4cEgqe7M7DdwBgi9DVFlCoGO5WptNzsXY/X8MK2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762243182; c=relaxed/simple;
+	bh=jHMHfRzvje1niRGcxn/V6XKwhietog/5hqFtffGjMog=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kIxtoMVelgrMVSKOLQ/wYe9jwBoKcTz6uhfS+tJs5FDrD4SRlwgt/kh+OjyfSpc0uczG49i6bv0XIWgaE3xtcppHHE4ZfCHkgTCE723dCCfPwUofJedxjbZfKWd/QFtnFL9YfpQvEgx2GL3QEhKhMmbYJuIAeoeTWPX/5CgR4uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJLyiiq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19080C4CEF7;
-	Tue,  4 Nov 2025 07:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762243158;
-	bh=ceTMCAQBjXMugyQDf4pTHgS3GhNstdu8FQnYn1odlLs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VJLyiiq7QPREtMu7vKjYX9yNH9eMZkB8493i9BROERplgcJqryLKMsXADnVgPQNsb
-	 hjZXeO5l7/9XXyE5yDJn1uPzAROIi4p1vlsXuT41jm9camhmqr5faz02AeA24c9jb9
-	 09vvAkwBRHNURUDzx3xFTwb5i05PFGeS2tLI4MBSFKU8fqihilp1prThrH6wi/Kc2d
-	 MFRauJvTuzofZ7XLMHF/0cWl6j6LJBCD+s+aSBp96x7p2o6tut3ojD8zdvp7+SCd+8
-	 rCWSHs48RVBwSJNdlhFp+mKTydo7QqXripqo4CmaG/StlHqL/gIpCZQ6UxyysuiZrd
-	 J47ExdQKKGfXA==
-Message-ID: <76ec3e26-a38c-4643-aaab-7806cc39bd89@kernel.org>
-Date: Tue, 4 Nov 2025 08:59:13 +0100
+	 In-Reply-To:Content-Type; b=okUozjzQ5PTH6HMswUTR+DYSpEvKTlKyqXUE17uSLhG/ZVEGcELhKeaGbcVWotg4BrOlNN7XdXct3kZ41t/batFV869Hr7XrDr174/73PzU7/85jYnA9JgNx1gnjz7fGJV2HcbtRlq0B1t77WNITjVA26VhleZM7Z2sLDmT+Bu8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=MwTivhKL; arc=pass smtp.client-ip=81.169.146.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1762243176; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=K3oqZOvlkvsaeRKUI4HpaHlgyZK9lZSNQ+gJXrzUg5/8jDUuniGyXj83aeUz22gfK/
+    9x4uMISA7mvW+HwoVs8nhoVrH4cwTUOp/82+sJqqrI8Dz5q9lK0wABbt6/tOhQMz6DRX
+    HiVcTTqiHIswPK9ySQNvqoSv0cS87I2/dzc3MDGTFrPl1oDHf/12jPIPfyaUjvnj52xT
+    lzJUEUZEhmu1BrgYoLfir7YDX60WeBHq8mZw9iyy+bjYU9k09IhukzQ2rMJEKXtav0Ov
+    JBLc0g3XjRI/gRzcZxX4d4jDJvNuhMBTnnbbfcUgYCqzpmlXheYZ595r/OT7G3o1fQDy
+    jKdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1762243176;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=3SEhGJcm3+ZhNL2YLTbslWeZfp8/PHKFMPTQUZcvMGA=;
+    b=FxsbmZRn6HIDd8mJSxxzE1mE+z/VLlbKMxh/O5u9ymwTSJUFiHXL6KoQz7sJ4rMGbH
+    Uee6ql8uxxUmoXgxWDTXbJ5vomwNj9HUsGeLy8fi8E3YJ8Nr2+RMxXVYG5/N+0E4CSwB
+    uZrTaRzoR931dXtm2YDY4xcHS9pWnbIex2Gu1xWt1IcYuCUVLmeKeOfM2Oi7RsBAtXFL
+    oG01A9JwAHIOjwBnf2vTlpwTYALEdlfT6hGwxXCYL4lTLcnclNYPLX+Z3coHFV989gn9
+    8rO5h6ALYcjYQ3XIpcYOXmV9frR61dSFplz/s1YFDhiOcRBhO7r5OoUWa0alU9xtC2Mv
+    l3ZA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1762243176;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=3SEhGJcm3+ZhNL2YLTbslWeZfp8/PHKFMPTQUZcvMGA=;
+    b=MwTivhKL3tR15KJt+JaEh41MxMTnatwDAA8rZnwj0cDMRVoVRjsLzWlL+pgwWI469q
+    OkmaSnZbiGBY5Jkg7nW+fsnr7AMbF8Xcox/G94jWODrBSxXALwA2M/oQSAFfr4QSrVjp
+    LphIBsbVfovJFRFTdtcElhLjb9DXxkG/yZKvEcbIwqrgx6DWlZVmwnBL7u/9jBeV2L29
+    yYIYV/RRPAeC2TucE2grtb14XkaFXVU7u/KrZ8GNMiHIR/As67iFQXEgafeEczMe7UDL
+    g0ojA34tZOxefQE/OcaZahJcQOCOVmOkXwQpPM8IDYUP8Ul6i3GhcnJnAOgkqNKQtcft
+    9/VQ==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
+Received: from [IPV6:2a00:6020:4a38:6810::9f3]
+    by smtp.strato.de (RZmta 53.4.2 AUTH)
+    with ESMTPSA id Kf23d01A47xa79n
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 4 Nov 2025 08:59:36 +0100 (CET)
+Message-ID: <eb78ad91-72ff-4094-a1cd-e63a0eb7b980@hartkopp.net>
+Date: Tue, 4 Nov 2025 08:59:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,88 +80,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
-To: caohang@eswincomputing.com, gregkh@linuxfoundation.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, Thinh.Nguyen@synopsys.com,
- p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- pinkesh.vaghela@einfochips.com,
- Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-References: <20251104065045.1464-1-caohang@eswincomputing.com>
- <20251104065226.1513-1-caohang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH RFC 0/3] can: calc_bittiming: add sample point calculation
+ for PWM encoding
+To: Vincent Mailhol <mailhol@kernel.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251104065226.1513-1-caohang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04/11/2025 07:52, caohang@eswincomputing.com wrote:
-> From: Hang Cao <caohang@eswincomputing.com>
+
+
+On 02.11.25 23:01, Vincent Mailhol wrote:
+> I wrote this series in response to Oliver's feedback in [1]. I am
+> sending this as an RFC based on top of [2] for the moment so that we
+> can discuss this separately. The plan is to merge this to the CAN XL
+> branch once we reach a consensus on this part.
 > 
-> Add the eic7700 usb driver, which is responsible for
-> identifying,configuring and connecting usb devices.
+> Patch #1 and #2 are refactors, patch #3 introduces a dedicated
+> function for the PWM sample point calculation.
 > 
-> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> Signed-off-by: Hang Cao <caohang@eswincomputing.com>
+> [1] https://lore.kernel.org/linux-can/743ba133-3735-48fd-994a-9727cfe8c114@hartkopp.net/
+> 
+> [2] [PATCH v2 00/10] can: netlink: add CAN XL
+> Link: https://lore.kernel.org/linux-can/20251021-canxl-netlink-v2-0-8b8f58257ab6@kernel.org/
+> 
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 
-...
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Reviewed-by: Oliver Hartkopp <socketcan@hartkopp.net>
 
-> +
->  static int dwc3_generic_probe(struct platform_device *pdev)
->  {
->  	const struct dwc3_properties *properties;
-> @@ -83,6 +119,12 @@ static int dwc3_generic_probe(struct platform_device *pdev)
->  	else
->  		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
->  
-> +	if (of_device_is_compatible(dev->of_node, "eswin,eic7700-dwc3")) {
+> ---
+> Vincent Mailhol (3):
+>        can: calc_bittiming: get rid of the incorrect "nominal" word
+>        can: calc_bittiming: add can_calc_sample_point_nrz()
+>        can: calc_bittiming: add can_calc_sample_point_pwm()
+> 
+>   drivers/net/can/dev/calc_bittiming.c | 68 ++++++++++++++++++++++++------------
+>   1 file changed, 45 insertions(+), 23 deletions(-)
+> ---
+> base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
+> change-id: 20251102-pwm_sample_point-8823cb3cd459
+> prerequisite-change-id: 20241229-canxl-netlink-bc640af10673:v2
+> prerequisite-patch-id: 6b3294205bd76b38257516c63b7001ab242c9b62
+> prerequisite-patch-id: 56431d12edcc0f325cf5204bb6868742c462c0ed
+> prerequisite-patch-id: 1547fd7ea8f1937f0491cfc0996b09890f850991
+> prerequisite-patch-id: 1dae270b0454352e46b927f71d1b47ff2bf7a49e
+> prerequisite-patch-id: e4d43de873dfdefc023a0b86e397b37ea2b9e9a3
+> prerequisite-patch-id: 4f3db477ff411effe70075c59ae6eac04fc65600
+> prerequisite-patch-id: 148dbfce9d3bb09537087ee93e60bb7819bdadee
+> prerequisite-patch-id: 7996539e26d449e8db260425c7287b4dce8cdf35
+> prerequisite-patch-id: 42215044df6a63fff07c7a7d771d7dc375cc8b0e
+> prerequisite-patch-id: 640ebf8ac8a1d114dcb91e6c05b9414bd09416fc
+> prerequisite-patch-id: 84ee5e4f937f8e4cd97833d601affea78fe55914
+> 
+> Best regards,
 
-No, you have driver match data for that.
-
-Best regards,
-Krzysztof
 
