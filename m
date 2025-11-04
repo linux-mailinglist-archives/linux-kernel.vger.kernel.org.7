@@ -1,240 +1,159 @@
-Return-Path: <linux-kernel+bounces-885326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0735DC32989
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB0BC329AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:20:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF893A38EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:14:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7564678B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E64348864;
-	Tue,  4 Nov 2025 18:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3DSD4LS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5D833FE02;
+	Tue,  4 Nov 2025 18:11:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A41B33F8A8;
-	Tue,  4 Nov 2025 18:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4F433F8A5;
+	Tue,  4 Nov 2025 18:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762279839; cv=none; b=HVt5p1FJjeD/TxAr3NSUd46xxzaSQkFrpPMWmfpMcw0zWPakaqmYVhS4XN+N0ttYGC0P2O0KTOtgBA5/E1PA7wvYt4IOlYg2a4ZxeK+ojp6wbuZGDd1NHUGOx2b28YCOvnKE8Rv6O3eoPVyf7+Hg8CRNw/1CctjOOvZsDtuROug=
+	t=1762279859; cv=none; b=m9+WtB0q+mt+HGizLWqztM1x0QAfJrv3Llby8MLuiK76kexqOwCxk6SQskWIoyfKRKyOch15JV2Bfa1H69De+frYgjSQ/EZWW0k+oxS6/zVjDYelJmMcOmRLvHb5dIG/puQAcFv6ZpoVpX91pjob7SnV3elZM4TkMVYAjM+x4v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762279839; c=relaxed/simple;
-	bh=BOEQH/InhK+EPN1Ed5pwR6+fua/wJd5n8mBh0wZnu7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RvvAy63WOBppkeyMuc6LMOMkGuJ7ca0al//XoDAlXgcgS6Cjw7m+o+KPx+a2+ktXjr/5Ugh9CCUPajDC+d1gsVBN0Anz6heiPB5t92DyczHu1Okvy35N6MyPza4DLqkHbLWdqnS22ZK+BKZGrlFyhtpp2QfyIlJbINlRtcBbwIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3DSD4LS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A75C4AF09;
-	Tue,  4 Nov 2025 18:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762279839;
-	bh=BOEQH/InhK+EPN1Ed5pwR6+fua/wJd5n8mBh0wZnu7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u3DSD4LS0V3MEKs29WXx0AkBIEzIWsUkkt03AXhK92ObSWXqbZCcia96TSev5uLiR
-	 0NYMPCtNRRHwICAkJvRGFUChYXQ85DSaXuOdmNlXKVi4dsSVWhAJ2GCRrVjFJlJKPW
-	 npWzgSIWn13Md5OJ7xR1Se30N1kifoCogo5K/z9HhYzgn8N986x74kQePlNtVBw1Zf
-	 /dj9vH4bSnwjU8Ge2rkJeglQYSKZkwhUw3nXH7oIIpp9Bb4laHmQnGDe56Ys2LXezm
-	 CYenhHk5SdYcu7dNXZhJ/BPuvVSMz5MnXr8OdTjKtTLwB20fmc10xhqDtxiFh/RP1E
-	 +yYnzYWn5Xv+Q==
-Date: Tue, 4 Nov 2025 10:10:32 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	James Clark <james.clark@linaro.org>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] perf stat-shadow: Read tool events directly
-Message-ID: <aQpBmIEX8G7mTrWQ@google.com>
-References: <20251104053449.1208800-1-irogers@google.com>
- <20251104053449.1208800-2-irogers@google.com>
+	s=arc-20240116; t=1762279859; c=relaxed/simple;
+	bh=XuUiG47ISv44Sp1JnJsqzc9DQGp2Ng5Oj3Rl+aDtfiA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eo7aOhBIsfLSsbhIDpVWsp6AFO7EI9yS3eD2dVF2OVLmq9bShMFHHJmc2enKD+WADvTQd5914EafL9FakFJXo6ut7Npt2Tz6pw90IaKzOo8EEw4Wu50kF9GuBLkdXcn6gexVvquAfim/nnoOiRdsKvSas51CcW3XEEZY1LMSLq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d1Ghq4mpczJ468g;
+	Wed,  5 Nov 2025 02:10:35 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8630F14038F;
+	Wed,  5 Nov 2025 02:10:55 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 18:10:54 +0000
+Date: Tue, 4 Nov 2025 18:10:53 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [RESEND v13 10/25] cxl/pci: Update RAS handler interfaces to
+ also support CXL Ports
+Message-ID: <20251104181053.00003587@huawei.com>
+In-Reply-To: <20251104170305.4163840-11-terry.bowman@amd.com>
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
+	<20251104170305.4163840-11-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104053449.1208800-2-irogers@google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Ian,
+On Tue, 4 Nov 2025 11:02:50 -0600
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-On Mon, Nov 03, 2025 at 09:34:48PM -0800, Ian Rogers wrote:
-> When reading time values for metrics don't use the globals updated in
-> builtin-stat, just read the events as regular events. The only
-> exception is for time events where nanoseconds need converting to
-> seconds as metrics assume time metrics are in seconds.
+> CXL PCIe Port Protocol Error handling support will be added to the
+> CXL drivers in the future. In preparation, rename the existing
+> interfaces to support handling all CXL PCIe Port Protocol Errors.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> The driver's RAS support functions currently rely on a 'struct
+> cxl_dev_state' type parameter, which is not available for CXL Port
+> devices. However, since the same CXL RAS capability structure is
+> needed across most CXL components and devices, a common handling
+> approach should be adopted.
+> 
+> To accommodate this, update the __cxl_handle_cor_ras() and
+> __cxl_handle_ras() functions to use a `struct device` instead of
+> `struct cxl_dev_state`.
+> 
+> No functional changes are introduced.
+> 
+> [1] CXL 3.1 Spec, 8.2.4 CXL.cache and CXL.mem Registers
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
+> 
+One additional comment inline.
+
 > ---
->  tools/perf/util/stat-shadow.c | 123 +++++++++++++---------------------
->  1 file changed, 45 insertions(+), 78 deletions(-)
 > 
-> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-> index abaf6b579bfc..9fae3d32a519 100644
-> --- a/tools/perf/util/stat-shadow.c
-> +++ b/tools/perf/util/stat-shadow.c
-> @@ -371,6 +371,18 @@ static void print_nsecs(struct perf_stat_config *config,
->  	}
+> Changes in v12->v13:
+> - Added Ben's review-by
+> ---
+>  drivers/cxl/core/core.h    | 15 ++++++---------
+>  drivers/cxl/core/ras.c     | 12 ++++++------
+>  drivers/cxl/core/ras_rch.c |  4 ++--
+>  3 files changed, 14 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index c30ab7c25a92..1a419b35fa59 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/pci.h>
+>  #include <cxl/mailbox.h>
+>  #include <linux/rwsem.h>
+> +#include <linux/pci.h>
+
+Similar to earlier. Not setting what is no here that is pci specific
+that wasn't before.  Maybe a forwards def of
+struct device is needed? 
+
+>  
+>  extern const struct device_type cxl_nvdimm_bridge_type;
+>  extern const struct device_type cxl_nvdimm_type;
+> @@ -148,23 +149,19 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>  #ifdef CONFIG_CXL_RAS
+>  int cxl_ras_init(void);
+>  void cxl_ras_exit(void);
+> -bool cxl_handle_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base);
+> -void cxl_handle_cor_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base);
+> +bool cxl_handle_ras(struct device *dev, void __iomem *ras_base);
+> +void cxl_handle_cor_ras(struct device *dev, void __iomem *ras_base);
+>  #else
+>  static inline int cxl_ras_init(void)
+>  {
+>  	return 0;
 >  }
+> -
+> -static inline void cxl_ras_exit(void)
+> -{
+> -}
+> -
+> -static inline bool cxl_handle_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base)
+> +static inline void cxl_ras_exit(void) { }
+> +static inline bool cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  {
+>  	return false;
+>  }
+> -static inline void cxl_handle_cor_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base) { }
+> +static inline void cxl_handle_cor_ras(struct device *dev, void __iomem *ras_base) { }
+>  #endif /* CONFIG_CXL_RAS */
 >  
-> +static double tool_pmu__scale_for_metric(const struct evsel *evsel)
-> +{
-> +	enum tool_pmu_event event = evsel__tool_event(evsel);
-> +
-> +	if (event == TOOL_PMU__EVENT_DURATION_TIME ||
-> +	    event == TOOL_PMU__EVENT_USER_TIME ||
-> +	    event == TOOL_PMU__EVENT_SYSTEM_TIME)
-> +		return 1e-9; /* Scale nanoseconds to seconds. */
-> +
-> +	return 1.0;
-> +}
-> +
->  static int prepare_metric(const struct metric_expr *mexp,
->  			  const struct evsel *evsel,
->  			  struct expr_parse_ctx *pctx,
-> @@ -382,90 +394,45 @@ static int prepare_metric(const struct metric_expr *mexp,
->  
->  	for (i = 0; metric_events[i]; i++) {
->  		char *n;
-> -		double val;
-> +		double val, scale = tool_pmu__scale_for_metric(metric_events[i]);
->  		int source_count = 0;
-> +		struct perf_stat_evsel *ps = metric_events[i]->stats;
-> +		struct perf_stat_aggr *aggr;
->  
-> -		if (evsel__is_tool(metric_events[i])) {
-> -			struct stats *stats;
-> -			double scale;
-> -
-> -			switch (evsel__tool_event(metric_events[i])) {
-> -			case TOOL_PMU__EVENT_DURATION_TIME:
-> -				stats = &walltime_nsecs_stats;
-> -				scale = 1e-9;
-> -				break;
-> -			case TOOL_PMU__EVENT_USER_TIME:
-> -				stats = &ru_stats.ru_utime_usec_stat;
-> -				scale = 1e-6;
-> -				break;
-> -			case TOOL_PMU__EVENT_SYSTEM_TIME:
-> -				stats = &ru_stats.ru_stime_usec_stat;
-> -				scale = 1e-6;
+>  /* Restricted CXL Host specific RAS functions */
 
-Do {USER,SYSTEM}_TIME become nanosecond now?
-
-Thanks,
-Namhyung
-
-> +		/*
-> +		 * If there are multiple uncore PMUs and we're not reading the
-> +		 * leader's stats, determine the stats for the appropriate
-> +		 * uncore PMU.
-> +		 */
-> +		if (evsel && evsel->metric_leader &&
-> +		    evsel->pmu != evsel->metric_leader->pmu &&
-> +		    mexp->metric_events[i]->pmu == evsel->metric_leader->pmu) {
-> +			struct evsel *pos;
-> +
-> +			evlist__for_each_entry(evsel->evlist, pos) {
-> +				if (pos->pmu != evsel->pmu)
-> +					continue;
-> +				if (pos->metric_leader != mexp->metric_events[i])
-> +					continue;
-> +				ps = pos->stats;
-> +				source_count = 1;
->  				break;
-> -			case TOOL_PMU__EVENT_NONE:
-> -				pr_err("Invalid tool event 'none'");
-> -				abort();
-> -			case TOOL_PMU__EVENT_MAX:
-> -				pr_err("Invalid tool event 'max'");
-> -				abort();
-> -			case TOOL_PMU__EVENT_HAS_PMEM:
-> -			case TOOL_PMU__EVENT_NUM_CORES:
-> -			case TOOL_PMU__EVENT_NUM_CPUS:
-> -			case TOOL_PMU__EVENT_NUM_CPUS_ONLINE:
-> -			case TOOL_PMU__EVENT_NUM_DIES:
-> -			case TOOL_PMU__EVENT_NUM_PACKAGES:
-> -			case TOOL_PMU__EVENT_SLOTS:
-> -			case TOOL_PMU__EVENT_SMT_ON:
-> -			case TOOL_PMU__EVENT_SYSTEM_TSC_FREQ:
-> -			default:
-> -				pr_err("Unexpected tool event '%s'", evsel__name(metric_events[i]));
-> -				abort();
->  			}
-> -			val = avg_stats(stats) * scale;
-> -			source_count = 1;
-> -		} else {
-> -			struct perf_stat_evsel *ps = metric_events[i]->stats;
-> -			struct perf_stat_aggr *aggr;
-> -
-> +		}
-> +		aggr = &ps->aggr[aggr_idx];
-> +		if (!aggr || !metric_events[i]->supported) {
->  			/*
-> -			 * If there are multiple uncore PMUs and we're not
-> -			 * reading the leader's stats, determine the stats for
-> -			 * the appropriate uncore PMU.
-> +			 * Not supported events will have a count of 0, which
-> +			 * can be confusing in a metric. Explicitly set the
-> +			 * value to NAN. Not counted events (enable time of 0)
-> +			 * are read as 0.
->  			 */
-> -			if (evsel && evsel->metric_leader &&
-> -			    evsel->pmu != evsel->metric_leader->pmu &&
-> -			    mexp->metric_events[i]->pmu == evsel->metric_leader->pmu) {
-> -				struct evsel *pos;
-> -
-> -				evlist__for_each_entry(evsel->evlist, pos) {
-> -					if (pos->pmu != evsel->pmu)
-> -						continue;
-> -					if (pos->metric_leader != mexp->metric_events[i])
-> -						continue;
-> -					ps = pos->stats;
-> -					source_count = 1;
-> -					break;
-> -				}
-> -			}
-> -			aggr = &ps->aggr[aggr_idx];
-> -			if (!aggr)
-> -				break;
-> -
-> -			if (!metric_events[i]->supported) {
-> -				/*
-> -				 * Not supported events will have a count of 0,
-> -				 * which can be confusing in a
-> -				 * metric. Explicitly set the value to NAN. Not
-> -				 * counted events (enable time of 0) are read as
-> -				 * 0.
-> -				 */
-> -				val = NAN;
-> -				source_count = 0;
-> -			} else {
-> -				val = aggr->counts.val;
-> -				if (!source_count)
-> -					source_count = evsel__source_count(metric_events[i]);
-> -			}
-> +			val = NAN;
-> +			source_count = 0;
-> +		} else {
-> +			val = aggr->counts.val * scale;
-> +			if (!source_count)
-> +				source_count = evsel__source_count(metric_events[i]);
->  		}
->  		n = strdup(evsel__metric_id(metric_events[i]));
->  		if (!n)
-> -- 
-> 2.51.2.1006.ga50a493c49-goog
-> 
 
