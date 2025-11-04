@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-885225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCA7C324BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:20:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B212EC32523
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0583A6724
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41D81895728
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F080833438F;
-	Tue,  4 Nov 2025 17:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD3338939;
+	Tue,  4 Nov 2025 17:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjnPMOIP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wiyp6CfS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B0F1A9FB6;
-	Tue,  4 Nov 2025 17:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4254F3271EF;
+	Tue,  4 Nov 2025 17:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276700; cv=none; b=q8WVLSsAZaPHhb65EfVhuxYPMRAxjZ2pLhhYb/gRrmw8+Td9qGqaBlV/X/slnQUpZzxnhw5FG3X3WRnfgaW0s45W5oIep/JT3V/+j5GnziCB8S84+cFBxtq54SBs5PHeELAud4Jb2lGxjE2kyXQOb9nBEB/mUcfot47q8HrqHws=
+	t=1762276840; cv=none; b=VGRrly0/cfYxY16GpH7SMeXAVhTNQ72bfesaO1WAhGVnH6FE/VOet0dFAYTrYNLzS7S0wCqR3iUkayXMeaiiJqE/O+krfCKi8POhEDiAjGpbRrkfDOEamg+oAo+Tom4qNfgz1BYAdhIeA3qcKToCzBaA2PXR3BrJTTNfU2IsksI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276700; c=relaxed/simple;
-	bh=EoYB0PWVLIGHWL/t+m2DAhQWSJ/AvI+O/9iELKKU8B8=;
+	s=arc-20240116; t=1762276840; c=relaxed/simple;
+	bh=jmu6OyWnBMfKHX6Zj0i7cFQhUadJ2xlzy+K+HbdcDLs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUCpmKNMpEqg5m0acKN3CrRcf6HhE1sUn96xXhIkdQQSIxbZvdFvQqiiFN3LsjEOJwDJY57aeFKyxGeye8mjQPNak5D0i5Co78/Nbt2HSnNXEpvcdu0DjqQA3tcWDoHN8mOy/LPQBPRchSCSEeA7IHHrdJauQRAvX5D51uQND2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjnPMOIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7A6C4CEF7;
-	Tue,  4 Nov 2025 17:18:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVHaSUmRAjrLw0zTUqOMy2/wLIfIN5nJ1QaXXYlvUw2uT++LhIC17bv6SadVAs2yW/PyDCL3drSeTxCbLUUpxBaa4SsPcwlZBPNc67irNb9bZ196TGmllwc8+FUhnjI6/f8dfx447DhY3qxfJoLsoDaMZKzQ2owFbz9wTSkTNKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wiyp6CfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3005FC4CEF7;
+	Tue,  4 Nov 2025 17:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762276700;
-	bh=EoYB0PWVLIGHWL/t+m2DAhQWSJ/AvI+O/9iELKKU8B8=;
+	s=k20201202; t=1762276839;
+	bh=jmu6OyWnBMfKHX6Zj0i7cFQhUadJ2xlzy+K+HbdcDLs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LjnPMOIP5C99X8WAMf59MwKO6YCUExvkThrlOsLYDyQBSyKMQd6tFJV0zwILESpQw
-	 BErK7G4mTNIlhxRXMh8vbTiNZW348f2u1L8NrZr5ChgAGhSJKPoUg1bX8PYNVoXiO8
-	 BU9pcso8wGIEnUgfxusuTsAtA6jbdzDOoTjU4xORAnAo5W4xHjl6GoqLX1xntagMOR
-	 DQZ6FpWCWysWc5yxTjhP/IQHGa5iXdHhnSihzM+UsF+o2hdhQz82vgeiHvfbwiLsTK
-	 iAEI/MPclxreW/sCxtpbg11wTkJgs4Ky0+cK57+2jQsAI5ylO0PhbqTIbataBQlldi
-	 SoZjoWi/U/KaQ==
-Date: Tue, 4 Nov 2025 19:18:14 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, akpm@linux-foundation.org
-Subject: Re: [PATCH] memblock: fix memblock_estimated_nr_free_pages() for
- soft-reserved memory
-Message-ID: <aQo1VjjQw1OZG8nY@kernel.org>
-References: <20251104003921.9707-1-akinobu.mita@gmail.com>
+	b=Wiyp6CfSiFTBpq0MyIPe5kAEf43OVKzhCk9j1lClY2xTc3246kr3Ek4gwZ3x67gcY
+	 pUaFKlViKPZ1Sa6BSvDg9MkcxnFSqOK4NWlAJAX7f1gBwF6gMN9d1GRUe+YzmVMnBe
+	 JjyPzbyrEwIWdV8mxoPR77le5GCDewlixY26QlpQYx0sRQLPVTOH1y9OjT9BA13UdK
+	 luHRPBLLpl5fZxvs2z/vPhVonz9jVN5LEJkk3J/mww3kAbA+cIGrdmvibcRbeAHZn8
+	 K3gTxcvRuRwt00jjq7GdIm2AAoi/yd64MhuKTn7SDM30V2SsM7QryoU0+XlI2r9uil
+	 znvBTyN1ZYxwg==
+Date: Tue, 4 Nov 2025 17:20:34 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: arm: ti: add Toradex Aquila AM69
+Message-ID: <20251104-spiny-tumbling-87cb4d754be6@spud>
+References: <20251104144915.60445-1-francesco@dolcini.it>
+ <20251104145240.61219-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="X2GGlsUyBYvruX+g"
 Content-Disposition: inline
-In-Reply-To: <20251104003921.9707-1-akinobu.mita@gmail.com>
+In-Reply-To: <20251104145240.61219-1-francesco@dolcini.it>
 
-(added Dan Williams)
 
-Hi,
+--X2GGlsUyBYvruX+g
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 09:39:21AM +0900, Akinobu Mita wrote:
-> memblock_estimated_nr_free_pages() returns the difference between the total
-> size of the "memory" memblock type and the "reserved" memblock type.
-> 
-> The "soft-reserved" memory regions are added to the "reserved" memblock
-> type, but not to the "memory" memblock type. Therefore,
+On Tue, Nov 04, 2025 at 03:52:35PM +0100, Francesco Dolcini wrote:
+> From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+>=20
+> Add DT compatible strings for the Toradex Aquila AM69 SoM and its
+> supported carrier boards: the Aquila Development Board and the Clover
+> carrier board.
+>=20
+> Link: https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am=
+69
+> Link: https://www.toradex.com/products/carrier-board/aquila-development-b=
+oard-kit
+> Link: https://www.toradex.com/products/carrier-board/clover
+> Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-@Dan, do we really need to memblock_reserve() the E820_TYPE_SOFT_RESERVED
-ranges?
-Quick scan didn't show anything that requires this, but I could easily miss
-something.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-> memblock_estimated_nr_free_pages() may return a smaller value than
-> expected, or if it underflows, an extremely large value.
-> 
-> /proc/sys/kernel/threads-max is determined by the value of
-> memblock_estimated_nr_free_pages().  This issue was discovered on machines
-> with CXL memory because kernel.threads-max was either smaller than expected
-> or extremely large for the installed DRAM size.
-> 
-> This fixes the issue by improving the accuracy of
-> memblock_estimated_nr_free_pages() by subtracting only the overlapping size
-> of regions with "memory" and "reserved" memblock types.
-> 
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> ---
->  mm/memblock.c | 33 ++++++++++++++++++++++++++++++++-
->  1 file changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index e23e16618e9b..af014fa10a44 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
+--X2GGlsUyBYvruX+g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-...
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -1826,7 +1842,22 @@ phys_addr_t __init_memblock memblock_reserved_kern_size(phys_addr_t limit, int n
->   */
->  unsigned long __init memblock_estimated_nr_free_pages(void)
->  {
-> -	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo13gAKCRB4tDGHoIJi
+0sxkAP4+vHqzJhRKRiGqUGCwTfOBg6kzrwpHR4sIHF8nStqKFAD8Cym+92y4xamh
+7UzbMTgSKxHrqRwnyTHjSSTQQTOHtw8=
+=oY/v
+-----END PGP SIGNATURE-----
 
-We have memblock_reserved_kern_size() that tells how much memory was
-reserved from the actual RAM. Replacing memblock_reserved_size() with
-memblock_reserved_kern_size() will omit "soft-reserved" ranges.
-
-> +	int memory_idx, reserved_idx;
-> +	struct memblock_type *memory_type = &memblock.memory;
-> +	struct memblock_type *reserved_type = &memblock.reserved;
-> +	struct memblock_region *memory_region, *reserved_region;
-> +	phys_addr_t phys_mem_size = 0;
-> +
-> +	for_each_memblock_type(memory_idx, memory_type, memory_region) {
-> +		phys_mem_size += memory_region->size;
-> +		for_each_memblock_type(reserved_idx, reserved_type, reserved_region) {
-> +			phys_mem_size -= memblock_addrs_overlap_size(memory_region->base,
-> +					memory_region->size, reserved_region->base,
-> +					reserved_region->size);
-> +		}
-> +	}
-> +
-> +	return PHYS_PFN(phys_mem_size);
->  }
->  
->  /* lowest address */
-> -- 
-> 2.43.0
-> 
-
--- 
-Sincerely yours,
-Mike.
+--X2GGlsUyBYvruX+g--
 
