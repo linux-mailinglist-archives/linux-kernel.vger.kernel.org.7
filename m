@@ -1,139 +1,163 @@
-Return-Path: <linux-kernel+bounces-885053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47EBC31D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:32:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D90AC31DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3A63B4142
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:30:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6FE74ED031
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317E02561AB;
-	Tue,  4 Nov 2025 15:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3D24A069;
+	Tue,  4 Nov 2025 15:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IwxMFQXU"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2EPE5c/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F39A269D06;
-	Tue,  4 Nov 2025 15:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEA22561AB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762270245; cv=none; b=pf9mvG5TaDwrz4msw9UmCqzoLPDYWE3iAImgh7L2qo7l/Xf55lKoA+THLI2JM0hnLya7F7BYIHxnxkvAmrDW96w+6Jwr5vXnZFvMIuvsXcWvdzqWsMwTgooFYvJvv62MOLCNlMnyQF3nze5MuMcEQLeZNTj19bLIWqEIDM1kcPI=
+	t=1762270361; cv=none; b=IL5+tryqNpCjcuY0IgUN7XEeu8cVzb2ONDuP2RG3u4BfSAlP0X7v6QlikrPDW3H0TlxDggfdcUkmzkrInHaRbt8RtW8spsDEvdUCI+5Ri+qVq64XeBfL53WLtcQXznPDjHQNqwLujjDLRBSv1uvn+hSLkV0No2Wot5nTuYlm+No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762270245; c=relaxed/simple;
-	bh=7LgTVs0vVnyj5RQK2XpeZ4a55ijlPbDWWeN0aI5fO6w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aS4tvrFKhkYw+U6wPZxMARI/FfcE3zp3T6KfK9TbEOLi9zXFTlSUWfXF6FyrsRbM3MGnNni4QGU2oVzPYlk00/tODR+stsPD9E8oRWah57BPrSykPYztdEXjRI2M3JfRT4Mr6HbdmSEldIq1jJ6RoTRSBloYM0iURGT+2/jVnO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IwxMFQXU; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d1C8H2BNPz9v76;
-	Tue,  4 Nov 2025 16:30:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762270239; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jXw6kCFBo5eidUV/wPgMY2T8iMEfPQj0hALJrToc0oY=;
-	b=IwxMFQXUcI3TdafSuVoVPXSCtxouMMSjDnqn11sgXym8XEDiCOrOK2HYxs3xK6TIFEliG1
-	+McIE9KGm4i0lmPhaP+r5zGI5rFZR8pF36F+rQBxmuleWOq6m38Io9WpUsxAsjaTOtq7Zo
-	/iZw2c4a/qDmf6Oobue+Tt3Izlq84WpXqHLCN7FE9JFuM1tqEZowZ6f9kuBrkQ5GZ4bdK5
-	FLJMW+hhEXRpCYU8cARrrGyWKOYX7oq4IJMJVNwBKfnGJBEGlQ9936FYheUYxlgCJFxEO9
-	KMDqjzSnYCSepWseYXsC+GyJ3jCLyKuHlIrRXA+n3B4OPvmoKI4JrpJVw18kog==
-Message-ID: <85e573fa81913b4afe274f27142f526062f184f4.camel@mailbox.org>
-Subject: Re: [PATCH v3] drm/sched: Fix deadlock in
- drm_sched_entity_kill_jobs_cb
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, phasta@kernel.org, 
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Matthew
- Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Luben Tuikov <luben.tuikov@amd.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?=
-	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org
-Date: Tue, 04 Nov 2025 16:30:24 +0100
-In-Reply-To: <c1da66b4-3b71-4d83-8e8e-56151030b691@damsy.net>
-References: <20251104095358.15092-1-pierre-eric.pelloux-prayer@amd.com>
-	 <628cdf3a0c5b783c09fe2a40aca4a4a48c614e66.camel@mailbox.org>
-	 <c1da66b4-3b71-4d83-8e8e-56151030b691@damsy.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762270361; c=relaxed/simple;
+	bh=8ucPxln4jCUuHFhw/d6Q11VjxjnmrQRrHkqL4b1Kkeg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y07eIA7iuyKB4xEKuX9gfJNm6pYwLhf2kgwua/Nmtshv17LpT3ZRTJYgoy6rR1ZMsyVhlSarlOUL7eUrkniIfac4UmH2os1HFAYyO/EFzRreArc2rM5MKdn4y4l2rTit9WbR5486yWBnyJWSS9svz4JuhfJ65mLfCA29exUNyrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2EPE5c/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93CC6C116C6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762270361;
+	bh=8ucPxln4jCUuHFhw/d6Q11VjxjnmrQRrHkqL4b1Kkeg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e2EPE5c/iiYhzgcYCbz55pMXl2qSKkkMnUVtPulbwAO6u99+Shf3FP95kREg0IXhC
+	 B4Wt9Sry1YTldXDY89BrRStt3l2ju/TJCul/a2Bhs2bDoJvKeT+kibcvhSw8fVBEVb
+	 drQeiUd0D/EF4/5iOseSGP+kEvBwDuU5dvOB0efMFp5bGe+PT54w5yQrHQBmSC8ThL
+	 jvFRlXZpd3lPx8vi5OU8mZAig6qvSw9JZ/i8BRIEvFS/9geR3yP0wvLo7P2Tk1wiYc
+	 KC6o9dIYNWuRd7V1V8fLIovimPSfvz2QIoPFn2/0A8QQHHNAvpSJErxScY/Car2A5J
+	 jegtfQx7Qvbwg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37a415a22ecso11454721fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 07:32:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWtp9qv3f9EqoDVGH+Qr7JRahrLPDS9QJ5/0qBNePz94yOz0o2Z9Dpgrg9BdF8vO48wDtxY3KI1EbVx1Xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+OBQdAb+KLXanLk/gXzqFDkkk2YC0Gh6WBIyBiE27dKBq7zB2
+	d4/L3iIpzwCdfZ+BqvTn3aATrXt3pkCzAbL09pQ4x4EBi7vl+9frmnF1Kq47o6+XFBchdhGDrFT
+	O1Xh0MXRKK2WYJadhlu700zLuywmE4D4=
+X-Google-Smtp-Source: AGHT+IH+CVhvcHFEROY6DI4fTTA1A0rVOvk6V2lH0Qy3bvx0oWjtx6rv8LHLiMplqLO8Ccc4rIiO5m5I7sknLNpZ/eA=
+X-Received: by 2002:a2e:a554:0:b0:372:91d2:f659 with SMTP id
+ 38308e7fff4ca-37a4e6f08demr36141fa.3.1762270359952; Tue, 04 Nov 2025 07:32:39
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: b7zmj93dted6cq4japbk7tzm6j7j7tmc
-X-MBO-RS-ID: ce66c1907a5c42a4b78
+References: <20251031103858.529530-23-ardb+git@google.com> <20251031103858.529530-31-ardb+git@google.com>
+ <20251031134909.00006bf3@huawei.com> <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
+ <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com> <20251103112836.00006966@huawei.com>
+In-Reply-To: <20251103112836.00006966@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 4 Nov 2025 16:32:28 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmFX2z95LFUqFBLXa1zysHI_LqNQuskPyUwu9Z4a7PNLTWxdw_qHd8vC_4
+Message-ID: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
+Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
+ guard API
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, ebiggers@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-11-04 at 16:24 +0100, Pierre-Eric Pelloux-Prayer wrote:
->=20
->=20
-> Le 04/11/2025 =C3=A0 13:43, Philipp Stanner a =C3=A9crit=C2=A0:
->=20
-> >=20
-> > Some things I have unfortunately overlooked below.
-> >=20
-> > >=20
-> > > Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and fi=
-ni")
-> >=20
-> > We should +Cc stable. It's a deadlock after all.
->=20
-> OK.
->=20
-> >=20
-> > > Link: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908
-> > > Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-> > > Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer=
-@amd.com>
-> > > ---
-> > > =C2=A0=C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++=
-++-----------
-> > > =C2=A0=C2=A01 file changed, 19 insertions(+), 15 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/d=
-rm/scheduler/sched_entity.c
-> > > index c8e949f4a568..fe174a4857be 100644
-> > > --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> > > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> > > @@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_ent=
-ity *entity)
-> > > =C2=A0=C2=A0}
-> > > =C2=A0=C2=A0EXPORT_SYMBOL(drm_sched_entity_error);
-> > > =C2=A0=20
-> > > +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-> > > +					=C2=A0 struct dma_fence_cb *cb);
-> >=20
-> > It's far better to move the function up instead. Can you do that?
->=20
-> Since drm_sched_entity_kill_jobs_cb uses drm_sched_entity_kill_jobs and v=
-ice=20
-> versa, I'll have to forward declare one of the 2 functions anyway.
+On Mon, 3 Nov 2025 at 12:28, Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+> On Fri, 31 Oct 2025 15:05:19 +0100
+> Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> > On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
+> > > <jonathan.cameron@huawei.com> wrote:
+> > > >
+> > > > On Fri, 31 Oct 2025 11:39:07 +0100
+> > > > Ard Biesheuvel <ardb+git@google.com> wrote:
+> > > >
+> > > > > From: Ard Biesheuvel <ardb@kernel.org>
+> > > > >
+> > > > > Before modifying the prototypes of kernel_neon_begin() and
+> > > > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
+> > > > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
+> > > > > which encapsulates the calls to those functions.
+> > > > >
+> > > > > For symmetry, do the same for 32-bit ARM too.
+> > > > >
+> > > > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > > > ---
+> > > > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
+> > > > >  lib/crc/arm/crc32.h        | 11 ++++-------
+> > > > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
+> > > > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
+> > > > >  4 files changed, 20 insertions(+), 39 deletions(-)
+> > > > >
+> > > > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
+> > > > > index 63441de5e3f1..aaeeab0defb5 100644
+> > > > > --- a/lib/crc/arm/crc-t10dif.h
+> > > > > +++ b/lib/crc/arm/crc-t10dif.h
+> > > >
+> > > > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
+> > > > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
+> > > > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+> > > > >  {
+> > > > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
+> > > > > -             if (static_branch_likely(&have_pmull)) {
+> > > > > -                     if (likely(may_use_simd())) {
+> > > > > -                             kernel_neon_begin();
+> > > > > -                             crc = crc_t10dif_pmull64(crc, data, length);
+> > > > > -                             kernel_neon_end();
+> > > > > -                             return crc;
+> > > > > -                     }
+> > > > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
+> > > > > +                     scoped_ksimd()
+> > > > > +                             return crc_t10dif_pmull64(crc, data, length);
+> > > >
+> > > > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> > > > >                          static_branch_likely(&have_neon) &&
+> > > > >                          likely(may_use_simd())) {
+> > > >
+> > > > I briefly thought this was a functional change but it's not because
+> > > > of may_use_simd() being something that isn't going to change between
+> > > > the two evaluations.
+> > > >
+> > > > Would it hurt at all to pull that up to be
+> > > >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
+> > > >                 if (static_branch_likely(&have_pmull)) {
+> > > >                         scoped_ksimd()
+> > > >                                 return crc_t10dif_pmull64(crc, data, length);
+> > > >
+> > > >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> > > >                            static_branch_likely(&have_neon)) {
+> > > >                 ...
+> > > >
+> > > > ?
+> > > >
+> > >
+> > > Yeah that would be a reasonable cleanup, I guess.
+> >
+> > Actually, looking more closely, that would result in may_use_simd()
+> > being evaluated even when the static keys are set to false, given that
+> > the compiler is unlikely to be able to figure out by itself that
+> > may_use_simd() has no side effects.
+> Yeah. That was why it was a question :)
+> Given everything is marked as likely I wasn't sure if we cared about when
+> the static keys aren't set.
+>
 
-Ah, right.
-OK then.
-
-I can push this and +Cc stable in the commit message if you want.
-
-
-P.
+Yeah, it is rather doubtful that those annotations (or the use of
+static keys, for that matter) make a meaningful difference here.
 
