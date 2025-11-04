@@ -1,182 +1,143 @@
-Return-Path: <linux-kernel+bounces-885535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A56EC333EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:35:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCACC333FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706BD1899781
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:35:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CABE4E5AA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8245D313261;
-	Tue,  4 Nov 2025 22:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD235314B9A;
+	Tue,  4 Nov 2025 22:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SIHEeflj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYS5PxKW"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E6F2AC17;
-	Tue,  4 Nov 2025 22:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8DF309F0E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762295715; cv=none; b=X1gHaX4oLfrXaUYd+iaNuGsP3nwNltiRKCRXLZliM53elWpVrAti+THYbZWPjnSDme7suh8bb7qMaTBOL+sHtEdSKIxsL5jeUUC/8QAJYVBOvhVilGo5te23tts0I+Kyx6psrLNfS7+FrcPopwAkylI93mYh3aHtz1gsrx9O5Kw=
+	t=1762295952; cv=none; b=pgKKI8Q1UaBa/cABN8YboRDrKSVh5RvkRztd0aKS9RZc5tldYiEfXbfAnVCUFZSIXKlxvhRZMUS1FkMvQ2RLsYXGz2srDl3mIGVlAb+p+HiNcpUfs0VtAPwpPZK41z6LPaDXD/OvgtSSC4vm1wVE+r5LO+CNRnyVLOpK/vhCW2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762295715; c=relaxed/simple;
-	bh=zwvfAnkePn/7Ue0RlYCgRjrP8ceDWHA0Qhm4rHPAzK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VWNaqWDZsQNR2+wf42gvbS/66Lqk/nUPYzKMaPA+vzM0uwX9P3EdnV4zd6abJ8DFt0Cv7L35ICiE2hmdNi7CHuAumvWYPykAtzFpf9wWXMF/CgbGdbWNIVOTySHqqqCgJP6bsnjBGwsCLBS3F7H8p09wnWqsyzCbDwxh0OmY1r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SIHEeflj; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762295714; x=1793831714;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zwvfAnkePn/7Ue0RlYCgRjrP8ceDWHA0Qhm4rHPAzK0=;
-  b=SIHEefljG0bRHJJ3+VOM02YLkslICNyXzumzuuU6HKF5CS7LoIej92G5
-   wri85paVp6bQULrWjjIdfdH12oZ/chOuLWh1OKFP2NqEtwdUoJBJTKVrS
-   aGsAJepP7mmOvQbqtQP5VWPnEel2i3ylYd0o5zswu4OkQoWRKDD9ZKkz8
-   vN1y+s48Vpgr2J8OIsB7k/q3O2iUfcZRDeH7edZfNTXAxUJrt/TXNKoiB
-   mDWrTC/Pvq/3CcgXJqPC9APnyfU2bno6rsTN73QMCtQu8ZxWqLeCxWjUA
-   XI45OyqrLskXMaOhyLyYhVRa3Fxg25AslTF26GnJloopFccIW3mic8p72
-   A==;
-X-CSE-ConnectionGUID: 5/cgCaZDTEKtWj2qtEnjhw==
-X-CSE-MsgGUID: nYSaSqdVQkGiMDs7zG/GFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64442058"
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="64442058"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 14:35:13 -0800
-X-CSE-ConnectionGUID: 9VTHrX3xSCC5CRnMD/6lfw==
-X-CSE-MsgGUID: lBKIjOkqSd6+kuL4Gv24dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="187585920"
-Received: from aduenasd-mobl5.amr.corp.intel.com (HELO [10.125.110.195]) ([10.125.110.195])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 14:35:12 -0800
-Message-ID: <c6b9a696-975f-4dfa-bf65-9a1e983fab54@intel.com>
-Date: Tue, 4 Nov 2025 14:35:11 -0800
+	s=arc-20240116; t=1762295952; c=relaxed/simple;
+	bh=ZR9/j052YDNAkFJ3hHReoZQ9gREe6fypHqzQIW+W8y4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F/kxt3VS2IxOeEZu1oo8okwZ8tLpC3vIahBXOv90pD0IDIbvi9cC1yGU7vtCdMvLuqgys4ZMgjycTRzl6PsivvMRl2HZ0KFrNuTPXJrt/fF/EQuc+FRKXbvgRedqS2S5WaD006PMa2mb3zSWM/UBtZY/gu0nWZK0MphRhS9YT9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYS5PxKW; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-29570bcf220so42377065ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:39:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762295949; x=1762900749; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7OH/VaXbxgdDQ3VEdnOK5yc54+Zfxu1IfTiRbOYzNo=;
+        b=jYS5PxKWCGC96YVaoEPvU/GV3r+WFCWDCkjEsppc2/g9tcCb8RJKJUO/Ol7iCNIiNU
+         AS0W/WifMk0vbSaXxR2AhrAyf6G1X355l+R/mRId9n5ZviHQlhji6s8BQtC7TYC36hOh
+         SDi7f2iwH1uFJzhC+Cj1QVs8d5AFlbxF41RUqTw+4SQyOW+ll76vVxGVuU7lkztr8l2v
+         GpgQRZoxWFtDRlg/nAHdLt1ydlkIO3aDAnFRHemGQnMD0YFkAxGodWtRUQdtzwZ3hmMv
+         hUERZ2/yXIgRMmlfaXAB9kkz/9amrb8cC4OO55rrn0g1uyy0HKC11wyVKfxIeqpYh7Dd
+         CJwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762295949; x=1762900749;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k7OH/VaXbxgdDQ3VEdnOK5yc54+Zfxu1IfTiRbOYzNo=;
+        b=aMV/87RTs2cfteKl72a1zxJFALhIHn2VG2dD7tlcBP8M7RFqFoR/94tU4aRrH0F2ER
+         vJweVSJywsmxwx58rYYveMXEr5ErQ7n+i2EvDNfFJ5iS0J+HxJlEUBoIvO+xOQYMz/Dy
+         N68bUf0Qa4Zb73mKbeh1aN2Ldo89JtoD+9OFna0U/kP6FxsKuxTnOqY9+R+CTCj/Zg+F
+         nypcN3Xsd3dpMDca2K/rKBeibEhrDw9PrU8Mz1L/vREMxvn3pcKFxqQvgqiMYVnHub5a
+         MEfRqLbgNOYt8EtMcavRoF3Qhpr9HrjRb5dpFWyGNgi6sRZHYT33TzJ6jqV0olM8Lh8e
+         xG8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXOqeuwCCPJixE2IAFjs1MvvEHBmM1CY6F8E3wJ74gH4WbjD3aFK5Eh86CyirbSkDtdW6IlNj420XDycEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7w2Kxgkm9NfLa62NAEkYJJeU1nbKbB+n8qMRbJjr3XJ5veQOa
+	orYYQPogO3X+w9ANcGpZcwVCdgI+qHA0H8YAv63G9uKqdmsa0Rax2fi/
+X-Gm-Gg: ASbGnctH/l7TxfMOMA+cMskP9TH/dNK6MnzmpkFV1nDGjVBlRaII6D0jHu0qImdPQZd
+	i++JOa6IL83it8bN+4CPFj6zXEyZSPWyRBacc7BC24NeZtnRWr/OlXU+SZkD6hoby6tQEwJtujr
+	LHDvZXIMqp1gHECoy8YBGTfYSabqUArqqVlYSRja69Qns6h8yimvsPRv5RSCxX/Gg7DVrtdFeAU
+	0z0swxwrVyycXI56HaULBnVRMUlIZsYQb8zgtYKzSisfjwPD0e4fy8U1iZ6c7EAXbUDoIsGXN50
+	67tjGEn+VwCOnNqkSuBkQmW/YOymI3IBq5YaZ+LkqC9OKp+LCypSHpl+hPihWtZJq/F0GgY3bX+
+	jZarq7ZzaMZxxqYD6up4aFkGk8X31D1s43KB5penBKnGbS9S4WfR2KzARDkJscbPDb334s9wcLQ
+	==
+X-Google-Smtp-Source: AGHT+IEf8Nrub88wm5PzVqxHEp7+fQp/JKH+iJ9scU23Jg6FQodVkNNRoH/TfsmpGm25Zf50pWGuAA==
+X-Received: by 2002:a17:902:dac2:b0:272:dee1:c133 with SMTP id d9443c01a7336-2962adb20f8mr14797755ad.22.1762295949382;
+        Tue, 04 Nov 2025 14:39:09 -0800 (PST)
+Received: from localhost ([2a03:2880:2ff:74::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a5d174sm39069295ad.77.2025.11.04.14.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 14:39:09 -0800 (PST)
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+Subject: [PATCH net-next v2 00/12] selftests/vsock: refactor and improve
+ vmtest infrastructure
+Date: Tue, 04 Nov 2025 14:38:50 -0800
+Message-Id: <20251104-vsock-selftests-fixes-and-improvements-v2-0-ca2070fd1601@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] x86/vmscape: Remove LFENCE from BHB clearing long
- loop
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, David Kaplan <david.kaplan@amd.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Asit Mallick <asit.k.mallick@intel.com>,
- Tao Zhang <tao1.zhang@intel.com>
-References: <20251027-vmscape-bhb-v3-0-5793c2534e93@linux.intel.com>
- <20251027-vmscape-bhb-v3-3-5793c2534e93@linux.intel.com>
- <c98e68f0-e5e2-482d-9a64-ad8164e4bae8@intel.com>
- <20251104220100.wrorcuok5slqy74u@desk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251104220100.wrorcuok5slqy74u@desk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHqACmkC/52OywrCMBBFf6Vk7UiSvtCV/yFdpM3EBm1SMiFUS
+ v/dWAS34vLOvZwzKyMMFomdi5UFTJasdznIQ8GGUbkbgtU5M8llLbgUkMgPdyB8mIgUCYxdkEA
+ 5DXaag084octnXrdVxY3ppVEsw+aA+zKzrsxhBIdLZF1uRkvRh+f+QRJ7/5HJX2VJAIcKT21pt
+ BywF5cJozoOfnqr/6Khzpj2pJuqKb+0btu2F09HTHczAQAA
+To: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
+X-Mailer: b4 0.13.0
 
-On 11/4/25 14:01, Pawan Gupta wrote:
-> On Mon, Nov 03, 2025 at 12:45:35PM -0800, Dave Hansen wrote:
-...
->> Too. Much. Assembly.
->>
->> Is there a reason we can't do more of this in C?
-> 
-> Apart from VMSCAPE, BHB clearing is also required when entering kernel from
-> system calls. And one of the safety requirement is to absolutely not
-> execute any indirect call/jmp unless we have cleared the BHB. In a C
-> implementation we cannot guarantee that the compiler won't generate
-> indirect branches before the BHB clearing can be done.
+Hey all,
 
-That's a good reason, and I did forget about the CLEAR_BRANCH_HISTORY
-route to get in to this code.
+This patch series refactors the vsock selftest VM infrastructure to
+improve test run times, improve logging, and prepare for future tests
+which make heavy usage of these refactored functions and have new
+requirements such as simultaneous QEMU processes.
 
-But my main aversion was to having so many different functions with
-different names to do different things that are also exported to the world.
+These patches were broken off from this prior series:
+https://lore.kernel.org/all/20251021-vsock-vmtest-v7-0-0661b7b6f081@meta.com/
 
-For instance, if we need an LFENCE in the entry code, we could do this:
+---
+Changes in v2:
+- remove "Fixes" for some patches because they do not fix bugs in
+  kselftest runs (some fix bugs only when using bash args that kselftest
+  does not use or otherwise prepare functions for new usage)
+- broke out one fixes patch for "net"
+- per-patch changes
+- add patch for shellcheck declaration to disable false positives
+- Link to v1: https://lore.kernel.org/r/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com
 
-.macro CLEAR_BRANCH_HISTORY
-        ALTERNATIVE "", "call clear_bhb_loop; lfence",\
-			X86_FEATURE_CLEAR_BHB_LOOP
-.endm
+---
+Bobby Eshleman (12):
+      selftests/vsock: improve logging in vmtest.sh
+      selftests/vsock: make wait_for_listener() work even if pipefail is on
+      selftests/vsock: reuse logic for vsock_test through wrapper functions
+      selftests/vsock: avoid multi-VM pidfile collisions with QEMU
+      selftests/vsock: do not unconditionally die if qemu fails
+      selftests/vsock: speed up tests by reducing the QEMU pidfile timeout
+      selftests/vsock: add check_result() for pass/fail counting
+      selftests/vsock: identify and execute tests that can re-use VM
+      selftests/vsock: add BUILD=0 definition
+      selftests/vsock: add 1.37 to tested virtme-ng versions
+      selftests/vsock: add vsock_loopback module loading
+      selftests/vsock: disable shellcheck SC2317 and SC2119
 
-Instead of having a LFENCE variant of clear_bhb_loop().
+ tools/testing/selftests/vsock/vmtest.sh | 332 +++++++++++++++++++++-----------
+ 1 file changed, 216 insertions(+), 116 deletions(-)
+---
+base-commit: 255d75ef029f33f75fcf5015052b7302486f7ad2
+change-id: 20251021-vsock-selftests-fixes-and-improvements-057440ffb2fa
 
->> Can we have _one_ assembly function, please? One that takes the loop
->> counts? No macros, no duplication functions. Just one:
-> 
-> This seems possible for all the C callers. ASM callers should stick to asm
-> versions of BHB clearing to guarantee the compiler did not do anything
-> funky that would break the mitigation.
+Best regards,
+-- 
+Bobby Eshleman <bobbyeshleman@meta.com>
 
-ASM callers can pass arguments to functions too. ;)
-
-Sure, the syscall entry path might not be the *best* place in the world
-to do that because it'll add even more noops.
-
-It does make me wonder if we want to deal with this more holistically
-somehow:
-
-        /* clobbers %rax, make sure it is after saving the syscall nr */
-        IBRS_ENTER
-        UNTRAIN_RET
-        CLEAR_BRANCH_HISTORY
-
-especially if we're creating lots and lots of variants of functions to
-keep the ALTERNATIVE noop padding short.
 
