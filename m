@@ -1,321 +1,96 @@
-Return-Path: <linux-kernel+bounces-884103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A2EC2F5E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:25:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC27C2F5EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3458E420663
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDD4189A3A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD4D2BEFF9;
-	Tue,  4 Nov 2025 05:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250962C11FC;
+	Tue,  4 Nov 2025 05:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGhdmJ5w"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFLBjI6J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AD3299920
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E17E286885;
+	Tue,  4 Nov 2025 05:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762233810; cv=none; b=m4xmsEJ87La3MedfSPXqM15Lijx6Q1NaSrYEKMQQE42KHzC3k9VvhNHpA5/732w7dD/5jSoFzkynqFLwGHllRrjMkvMK1UIIpgiLb2wWPJBg8iybkgJQPe4q9gfZyM9By5WVZSB3PhX/5IjCctpn2mz5emlgl6iW1N2DVwgTlDw=
+	t=1762233946; cv=none; b=LCijWon8pEgVGsC+Plpyw16s5Szq8/z72L06JqNsmkD7ZdqqSoP3u2ZCwsyaEdAQAsnkSIbRpLXr8WbkAc5U6PhPlHursFs6fJR1YiDrYHMtqry6aVLEqorvUivDYHj7Ry9dURqHOFNt3NjowE99xkiLnU7udvkL/tQBW+bLHEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762233810; c=relaxed/simple;
-	bh=BpMFFzCKsqjHvHxf4Lx02ot6GpP/Rp2oDI5kb+IS4aQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T0LUnxmnO9zy0g+zBNAjnor0j3/qDO3Y2cNNusUZJMOi6QATi4NcopCH5UshpoVrHTXSDUUMiy72zFLgZ3PCvIygE9kMeNsAOaoOydhtHxlirenRI8QS7pDm0yWgY7h6Iumb9vJfoobt8f05JupJt/idkkTJbp54RCJENpu9iBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGhdmJ5w; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64034284521so8859239a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 21:23:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762233807; x=1762838607; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A4RUZF6DeQxRbL7hk8aE8m25nMDIdsE4Fw4B+jDjdxs=;
-        b=NGhdmJ5w/FD0zIbBJimNdq31/qPk7ReZ5pej2yzLNHch5QqC52uoE1jP8nO3JOw9Ps
-         3/P3H1RzoM4UfleMMg3JkPf1ELBpd+zwd9gcOQyaPNPPoh1LjBIES/JtpAD6c+bXsLtA
-         uoQAUcLnnuP7ved22f0Tr9jT+hkJeyhxMN+5gMIX9UD81EPVWriu4IGZZJBDzrMzFc/5
-         ap3TeYwqCy4t7ifkDt6IDspo/k1ZBVOmtIVGkkCXoyLhkdeTQcXx3ZkkKUkQIJIg2TQ2
-         i6Xhrt/VNzw1FEFuj2+g/EbidE6ypM5xPbxDlYAaCMz8Wg4HiKygyaezMm0v8/xREsMP
-         0TEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762233807; x=1762838607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A4RUZF6DeQxRbL7hk8aE8m25nMDIdsE4Fw4B+jDjdxs=;
-        b=dAcYp9uxhpB8z/7kfBJEYdaCeEQDYPNdl6raMbde5Fenjz9bhIuEGGigz9fvwWsUDq
-         Ic5bx5h3PwC+P+j6Y82LW0tEKd1ArShzcH0Q8YG/qOqkAz2L2l0KnbQXCH95t+X9wYoP
-         aXIR2UziVf/o43X8fXWQTMVabTcbWEBgPAkxvIU5DOuLe0mvB4h3/7r4H8wPD1izQ+qr
-         feijj/Et55ndTaPm8vdQDIsm1BlfHPy/e0wskVw6usM0LyTjkBD1Aw2VacPyLaKwgaFC
-         ksCOYY7lNCqaGxStduyY4nvrDmdo88Yp0eJTgAirVScMhduh9rkOHBK//43cgUmgC8s5
-         XL2A==
-X-Forwarded-Encrypted: i=1; AJvYcCX5+tWNrayRF4qXycCRw6Y4CfmKC3HU+7dE6kHM9hWaD07KtNNZg+jmbYjq+x0uevbliiPbOdzpcJyaD78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1dKOKD+WBuCjljhxXCj9zKOz3tg9y5n345FvdlYjJprJtmq4k
-	8hulOqRERkcoAr7zBMHF4adlVz/tYVRIYzRdMyEX/AyixpD1JFTavWUoHCJhbaPjeAsMLjU0hcP
-	dwu2ya5MbQT6EjGx9atp+3yOlUbi8/x8=
-X-Gm-Gg: ASbGncvPffESKUu3Iqq+LuUnyEtT4uW+3oDCuvUhpjWRhV/iJ8TMp5OGVA7oyMkqAsy
-	9tFJfnW9m/40N7aIaslZRAYf4k6JLpahgdrDps9nPqAR5bmHCpGmeIsj6l2KzA00WSSSBjkkQJJ
-	tCWQ4l8KABngKaynEVPiNx2ChgiRNVyDNVR2ZeDtiU6i/eRK8PEh8TzrPQN17i79xStnEfCQcyT
-	RGnXxZMwfGRzdaBNAX7O6umsoqqVWv5JAzxkfPrfhO3BcnTFE9/2ar6W2hS
-X-Google-Smtp-Source: AGHT+IE9GdvxzDs+AiWUrHrkWTw5ZWTLQAZJtdC7zFZ0vRv283/BNkkD0+50XIVUnPGg88dPjuz0BaVD627TibUqfoc=
-X-Received: by 2002:a17:907:1c93:b0:b4e:fc90:47a8 with SMTP id
- a640c23a62f3a-b70700b5153mr1814180666b.4.1762233806865; Mon, 03 Nov 2025
- 21:23:26 -0800 (PST)
+	s=arc-20240116; t=1762233946; c=relaxed/simple;
+	bh=O9jQ9RG4Snm/WXV0wdgEuzbv7+LCQop7+T+faHf011g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSGc8+kGMBzDkeGYuM1WHLRcGiXHzN3YrNYRS5+Xkm0VZtxhXvLEKzjjqZQI/dMxnJn3WbkEWx5+hpul3mxZriV4Mf1lv3H8iKVQROWzlWsNdf3sEqcKXHLstwkpNeccOOJP3jzaJ3u2kE7rcyZdz4CGp/Z0nqF9+Tn2pRitSpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFLBjI6J; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762233941; x=1793769941;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O9jQ9RG4Snm/WXV0wdgEuzbv7+LCQop7+T+faHf011g=;
+  b=TFLBjI6JspiAc5Ke5Q16Ui2Ie+V0V4/LsREVxVifnCTUQxRBtjM5ZQA1
+   2TtLKsXwDfkpQGIc11C5cnIqMBu9aOkxEuNrFaODIqC7XCCFUsoQLgvrz
+   rPZVgR5NgOM6Py9ntF37E5jSdGoPX0tW2fO8qqHy821Vk16QXdwynRRZL
+   L3yf8KQgSN+dZTxFaPdAnRp/BYLat/sUq4tHORNS+ZMiSsTjBCktVYngt
+   0NoyTFA0hWpxLo6bXMX4F90UeYNMh8+GCTpKLNYQl+yq/djFE3iX3XwRg
+   oKVfLcjiWgKawQf64XL5kFPA7dtBoNMgQQGLbkDHzZrMU2rA2YqX4cZu0
+   Q==;
+X-CSE-ConnectionGUID: fR6ygbqUSuqX5XXfRSboPQ==
+X-CSE-MsgGUID: ZcHlj/j7SoWlZXnCnDlbDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64360287"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="64360287"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 21:25:41 -0800
+X-CSE-ConnectionGUID: Lgh0UUMtQJClmh7XjdmItA==
+X-CSE-MsgGUID: zJSbmmbkQlS4R0vNsh1mSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="186741457"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa007.fm.intel.com with ESMTP; 03 Nov 2025 21:25:40 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 19D7B95; Tue, 04 Nov 2025 06:25:39 +0100 (CET)
+Date: Tue, 4 Nov 2025 06:25:39 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 0/4] pinctrl: intel: Unify error messages
+Message-ID: <20251104052539.GK2912318@black.igk.intel.com>
+References: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103110648.878325-1-caojunjie650@gmail.com>
- <20251103110648.878325-3-caojunjie650@gmail.com> <aQjY5_uEaTv4_L2s@aspen.lan>
-In-Reply-To: <aQjY5_uEaTv4_L2s@aspen.lan>
-From: Junjie Cao <caojunjie650@gmail.com>
-Date: Tue, 4 Nov 2025 13:23:15 +0800
-X-Gm-Features: AWmQ_bkg7-u1JQXWEtjUocJxGMuIfL8KF1cVsoKVcrovu50dF2JnvSEL5f1fIno
-Message-ID: <CAK6c68gjzSytxwX5kUYLwbRceFgTHP-mynUSq1tNmUWD8n55Cg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] backlight: aw99706: Add support for Awinic AW99706 backlight
-To: Daniel Thompson <daniel@riscstar.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
 
-On Tue, Nov 4, 2025 at 12:30=E2=80=AFAM Daniel Thompson <daniel@riscstar.co=
-m> wrote:
->
-> On Mon, Nov 03, 2025 at 07:06:48PM +0800, Junjie Cao wrote:
-> > From: Pengyu Luo <mitltlatltl@gmail.com>
-> >
-> > Add support for Awinic AW99706 backlight, which can be found in
-> > tablet and notebook backlight, one case is the Lenovo Legion Y700
-> > Gen4. This driver refers to the official datasheets and android
-> > driver, they can be found in [1].
-> >
-> > [1] https://www.awinic.com/en/productDetail/AW99706QNR
-> >
-> > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> > ---
-> > Changes in v2:
-> > - add handler for max-brightness and default-brightness
-> > - use proper units for properties (Krzysztof)
-> > - drop non-fixed properties (Krzysztof)
-> > - include default values in the aw99706_dt_props table (Daniel)
-> > - warn when a property value from DT is invalid (Daniel)
-> > - drop warning when optional properties are missing (Daniel)
-> > - add a function pointer into the aw99706_dt_props table to handle look=
-up (Daniel)
-> > - use a lookup function instead of hardcoding the formula for the iLED =
-max (Daniel)
-> > - move BL enalbe handler into aw99706_update_brightness (Daniel)
-> > - Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727=
--3-caojunjie650@gmail.com
->
-> Thanks for the changes.
->
-> I'm afraid I don't like encoding the `shift` in the DT properties table.
-> Caching something that is so easy to recalculate makes no sense to me.
-> See below:
->
->
-> > +struct aw99706_dt_prop {
-> > +     const char * const name;
-> > +     int (*lookup)(const struct aw99706_dt_prop *prop, u32 dt_val, u8 =
-*val);
-> > +     const u32 * const lookup_tbl;
-> > +     u8 tbl_size;
-> > +     u8 reg;
-> > +     u8 mask;
-> > +     u8 shift;
->
-> There should bee no need to record `shift` here. It's just a
-> duplicating information already held in `mask`.
->
->
-> > +     u32 def_val;
-> > +};
-> > +
-> > +static int aw99706_dt_property_lookup(const struct aw99706_dt_prop *pr=
-op,
-> > +                                   u32 dt_val, u8 *val)
-> > +{
-> > +     int i;
-> > +
-> > +     if (!prop->lookup_tbl) {
-> > +             *val =3D dt_val;
-> > +             return 0;
-> > +     }
-> > +
-> > +     for (i =3D 0; i < prop->tbl_size; i++)
-> > +             if (prop->lookup_tbl[i] =3D=3D dt_val)
-> > +                     break;
-> > +
-> > +     *val =3D i;
-> > +
-> > +     return i =3D=3D prop->tbl_size ? -1 : 0;
-> > +}
-> > +
-> > +#define MIN_ILED_MAX 5000
-> > +#define MAX_ILED_MAX 50000
-> > +#define STEP_ILED_MAX        500
-> > +
-> > +static int
-> > +aw99706_dt_property_iled_max_convert(const struct aw99706_dt_prop *pro=
-p,
-> > +                                  u32 dt_val, u8 *val)
-> > +{
-> > +     if (dt_val > MAX_ILED_MAX || dt_val < MIN_ILED_MAX)
-> > +             return -1;
-> > +
-> > +     *val =3D (dt_val - MIN_ILED_MAX) / STEP_ILED_MAX;
-> > +
-> > +     return (dt_val - MIN_ILED_MAX) % STEP_ILED_MAX;
-> > +}
-> > +
-> > +static const struct aw99706_dt_prop aw99706_dt_props[] =3D {
-> > +     {
-> > +             "awinic,dim-mode", aw99706_dt_property_lookup,
-> > +             NULL, 0,
-> > +             AW99706_CFG0_REG,
-> > +             AW99706_DIM_MODE_MASK, __builtin_ctz(AW99706_DIM_MODE_MAS=
-K),
->
-> These __builtin_ctz() calls shouldn't be in the lookup table (if they
-> are not in the lookup table then can never be inconsistant with the
-> mask).
->
->
-> > +             1,
-> > +     },
-> <snip>
-> > +     {
-> > +             "awinic,ramp-ctl", aw99706_dt_property_lookup,
-> > +             NULL, 0,
-> > +             AW99706_CFG6_REG,
-> > +             AW99706_RAMP_CTL_MASK, __builtin_ctz(AW99706_RAMP_CTL_MAS=
-K),
-> > +             2,
-> > +     },
-> > +};
-> > +
-> > +struct reg_init_data {
-> > +     u8 reg;
-> > +     u8 mask;
-> > +     u8 val;
-> > +};
-> > +
-> > +static struct reg_init_data reg_init_tbl[ARRAY_SIZE(aw99706_dt_props)]=
-;
-> > +
-> > +static void aw99706_dt_parse(struct aw99706_device *aw,
-> > +                          struct backlight_properties *bl_props)
-> > +{
-> > +     const struct aw99706_dt_prop *prop;
-> > +     u32 dt_val;
-> > +     int ret, i;
-> > +     u8 val;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
-> > +             prop =3D &aw99706_dt_props[i];
-> > +             ret =3D device_property_read_u32(aw->dev, prop->name, &dt=
-_val);
-> > +             if (ret < 0)
-> > +                     dt_val =3D prop->def_val;
-> > +
-> > +             if (prop->lookup(prop, dt_val, &val)) {
-> > +                     dev_warn(aw->dev, "invalid value %d for property =
-%s, using default value %d\n",
-> > +                              dt_val, prop->name, prop->def_val);
-> > +
-> > +                     prop->lookup(prop, prop->def_val, &val);
-> > +             }
-> > +
-> > +             reg_init_tbl[i].reg =3D prop->reg;
-> > +             reg_init_tbl[i].mask =3D prop->mask;
-> > +             reg_init_tbl[i].val =3D val << prop->shift;
->
-> Can't you just use FIELD_PREP() to set val (either here or at the point
-> the init table is consumed)? That why there's no ffs() or clz() at all.
->
+On Mon, Nov 03, 2025 at 08:58:27PM +0100, Andy Shevchenko wrote:
+> Unify error messages with help of dev_err_probe(). This brings
+> a common pattern with error code printed as well. While at it,
+> make the text message the same for the same reasons across
+> the Intel pin control drivers.
+> 
+> Andy Shevchenko (4):
+>   pinctrl: baytrail: Unify messages with help of dev_err_probe()
+>   pinctrl: cherryview: Unify messages with help of dev_err_probe()
+>   pinctrl: intel: Unify messages with help of dev_err_probe()
+>   pinctrl: tangier: Unify messages with help of dev_err_probe()
 
-Thanks for it, I tried to find something like FIELD_PREP() to avoid
-keeping shift, but I failed to notice it in the bitfield.h. I will drop
-the shift field and use it to handle bit operations gracefully.
+For the series,
 
->
-> > +     }
-> > +
-> > +     aw->init_tbl =3D reg_init_tbl;
-> > +     aw->init_tbl_size =3D ARRAY_SIZE(reg_init_tbl);
->
-> Copying a pointer to a single instance static data buffer into a
-> dynamically allocated data structure isn't right.
->
-> You should include the init table as part of `struct aw99706_device`.
->
-
-I see. Multiple instances should be taken into account.
-
->
-> > +
-> > +     bl_props->brightness =3D AW99706_MAX_BRT_LVL >> 1;
-> > +     bl_props->max_brightness =3D AW99706_MAX_BRT_LVL;
-> > +     device_property_read_u32(aw->dev, "default-brightness",
-> > +                              &bl_props->brightness);
-> > +     device_property_read_u32(aw->dev, "max-brightness",
-> > +                              &bl_props->max_brightness);
-> > +
-> > +     if (bl_props->max_brightness > AW99706_MAX_BRT_LVL)
-> > +             bl_props->max_brightness =3D AW99706_MAX_BRT_LVL;
-> > +
-> > +     if (bl_props->brightness > bl_props->max_brightness)
-> > +             bl_props->brightness =3D bl_props->max_brightness;
-> > +}
-> > +
-> > +static int aw99706_hw_init(struct aw99706_device *aw)
-> > +{
-> > +     int ret, i;
-> > +
-> > +     gpiod_set_value_cansleep(aw->hwen_gpio, 1);
-> > +
-> > +     for (i =3D 0; i < aw->init_tbl_size; i++) {
-> > +             ret =3D aw99706_i2c_update_bits(aw, aw->init_tbl[i].reg,
-> > +                                           aw->init_tbl[i].mask,
-> > +                                           aw->init_tbl[i].val);
-> > +             if (ret < 0) {
-> > +                     dev_err(aw->dev, "Failed to write init data %d\n"=
-, ret);
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int aw99706_bl_enable(struct aw99706_device *aw, bool en)
-> > +{
-> > +     int ret;
-> > +     u8 val;
-> > +
-> > +     FIELD_MODIFY(AW99706_BACKLIGHT_EN_MASK, &val, en);
->
-> This should use FIELD_PREP() not FIELD_MODIFY();
->
-
-ACK. FIELD_PREP() makes more sense here.
-
-Regards,
-Junjie
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
