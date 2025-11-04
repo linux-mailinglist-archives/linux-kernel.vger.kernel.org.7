@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-884850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BAB4C314F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 725BAC314F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC45218C464F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFD189855C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB40329E6D;
-	Tue,  4 Nov 2025 13:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407AE322755;
+	Tue,  4 Nov 2025 13:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBkuWwjl"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOsFIG7L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D4B328B7C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC0D1922FB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762264338; cv=none; b=bddDw9G9hsUPZdzdFOqV1Y9a3XYvS+7ByvoJJy3RsFvc0Zu7eAdqj0934Lc8BPGkk4Hdw8ikmAAbC63jK9Eye3oltkCd/l70oz9Wm8gXGi8NrK97DTONQldm5YoGuGmPI4uomWKM71GfTZ5CYsAol6Sc1WyKIH40pYY56fL3haA=
+	t=1762264335; cv=none; b=oD5/Px+dnxTpBq+CqZkfLQ4WjbigZpxhhLkE78nm7IWMVT06O8w7ThMSqds+H7WtYC1eQpFn7bMwr6QKCmISRz8gO1FBQZ0P9crnp+/CdtwZP0FFD7sAgvIdEEwaXUbsmQSrsl3wKaXdGawwOswgKFVHclG9jvxT37eyUA4unXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762264338; c=relaxed/simple;
-	bh=r6Hua29X/7gS1gkkx42NgjYUqsmKHO9v/7TQQDlpL/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=po5wVQ+7GFDE4POhkxFt1L7peszzSrw05opU+1OUFpsXYquEK1FdLUjhOsRZ6TLhWmrc8PNKW941VPSZiUt+trIEoq+kIIUXZEw0sBlk9zcciDEc+zJanAO9DA/teyUmmglp82VkODGY8pNIMR/ZyFoXbf96MDXXu/N1PNxqNS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBkuWwjl; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-340bb45e37cso756440a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:52:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762264336; x=1762869136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WgxSC2aKqxilandHAezVm5gKzGGQcz0P4+qV+dri/oU=;
-        b=DBkuWwjl+yg6GnaiaExuVDPA5t/BMSFBzVn+PvRpmGFY4b8oUyASuL4lE2eO3f/ROG
-         tRUAZ8kutKsncFzzFLAgL24dubPUS5I+DBG2yrysoPFbnTqXEHfsAoA6daal469Csli0
-         USD9IMnAhovp67G4oAOzoPejKALHqsW3XxGHKkmj/3yCaHU6LPc6g9gYsfCznfYDuZ7i
-         6OXVmFzJWQmYAa15Z+v1VB36tds4Fa0K9vnqnKRrsWjOiow4pMsSFjuCDOrdllkEJOZw
-         qq0JEXfFoFuyrCOFKycAZ866VLTGPjYaJ1lnOQtlWLEohxU2X273bS1bf7O7Y/kYjzB2
-         qe5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762264336; x=1762869136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WgxSC2aKqxilandHAezVm5gKzGGQcz0P4+qV+dri/oU=;
-        b=rklvD53OW/+1Q1iExJOigwPO0P+y/ooV9yiNYiN8WGtz6GaIKCGPyYp8HwmbEuAb86
-         JX3V8x0/F799lKVyctsWMt4ea0ipWn90yH20pPKCXx/Bh2y3SQSguLhU6nHsvf1u52Bg
-         0A2yfigTX+Rgw/gfPGZimBls/7v+H7hbl4To1cNteb5OSCxKM51uvWqRNuheXN9fww4e
-         2uIGmyWdCSigIFKcekLZekMuUbYy/jpvy+12bb29HT+AncF8voja1po0J8C9/SD5s6lX
-         mPqd6uQUdZVjSTbDM2nW0IQdJ5qItQqWzk9xUCQMitP3F5spxSenYGKJx9h0PYLPPFlh
-         WivQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjphB5NvQVy9cJIgozvP7phmkBguy+gqrStLweJPcPFO24bhl1WzUDgd/nR1JOKwqFABC1tg1Chqxs5w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn4xWokn2f9FmFvvccO3qTZW8t3dVQciRKkDnEd8FxiRKVYeNi
-	XS79p0JlKKPsSpqpfSl0dbqwakuHebJZuRs1ILuolp7q2rLk0wnAl1byxrib9CSSTG4VR1zGCSf
-	NWAiVrsMAGeVKmyq5iYQ8yIiXvPLhDlI=
-X-Gm-Gg: ASbGncvhDSiDyMN6NPYKh9vF9bPjxD89cjO7WhRH+vwc+Abb67yJuIIQVNKg23WS/4X
-	jIcAxQuU8qHpUkTDfoEgY7AEVIzMT/B84Gm9TW8DzI6Q2Orf/cQql2/J1YPvn20JzItkS0ui/us
-	UWD/UvghnKuqFFIyn1NiKjHKda5f59rH6YG8Pw/92oSDkDUE7ulH6W6kDeGz+FH7cfbLB3P/TRK
-	zJDRfAIrs0lumcgYMJjnw3UUyqLFG6/LOxzo6jQvFb5vqQwEiJGQnCtj5bRO2JmR0Q0Ip3J6fBu
-	0I94LasYmX/U3oDYsDPkC4dXg/D4mEIqZQ8mqGuP8+5a/noShHD/YUkqCJnf2nQA8I10z1VLHGv
-	JTjU=
-X-Google-Smtp-Source: AGHT+IEHIHWibqjAZGWyvY0H8m2w47BvrG2lZbXh2UQMD9AI1DeCBy/GvhFpcB4QhflEwGDTQ3v2/JNfuI82Byb03zs=
-X-Received: by 2002:a17:90b:3b87:b0:340:b8f2:250c with SMTP id
- 98e67ed59e1d1-340b8f22df9mr9464706a91.1.1762264336293; Tue, 04 Nov 2025
- 05:52:16 -0800 (PST)
+	s=arc-20240116; t=1762264335; c=relaxed/simple;
+	bh=mvMjXhl3MNKPgc5Kqll4DxQ9dTiVZSH7HfzvE28ozI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzBpWGH4tkbtj87S7nEZKpuv/lLq6J7r38uawlujDHZqLmJFGQgVyFo9SDrIU5MVebb+PjbImpEQ5crVAhqZLNirsFmYFfwFIebc6shT8yE/ShXakXOwCbPsbg4McISbxuJvtp7wWNr++ssfGdvfc0hs1n5DaiS0rMo4rVV1t8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOsFIG7L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57FEC4CEF7;
+	Tue,  4 Nov 2025 13:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762264335;
+	bh=mvMjXhl3MNKPgc5Kqll4DxQ9dTiVZSH7HfzvE28ozI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HOsFIG7LVU0esaWa+vyGn7o7fSR5cYgCPYdRq3ryjy7xarL8b1OFcpFBBq7goSw1T
+	 SrD0qvclMEZl1Rkf3I088Y4ApUiERQDfMej3/X0rV9BQL1fAnbJj0MwFmoO75VXJUe
+	 q1URqUwLAngEa7gm7BsFidPAKSI/YAlmlP/N37OaF8XuflWFpBhP/u+IvXRmF7CR4k
+	 ko0QMnZD/3tGVIlRaB86V1bpGhIhA8O1I/mPzE4cLx/wyBVFpucjibONeu1RnW6/nq
+	 SargB4ZW6aSn6ZRWynrzAOWRKpUhCk8HRc9g+hSTrSL38w0apfrrh3yhpgRRSlKjhk
+	 euu2YqjTfo0Hg==
+Date: Tue, 4 Nov 2025 13:52:11 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andreas Kemnade <akemnade@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] regulator: core: fix constraints handling if current
+ state out of range
+Message-ID: <aQoFC3YDNlw4imML@finisterre.sirena.org.uk>
+References: <20251103-regu-fix-v1-1-c8a46581c850@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-2-joelagnelf@nvidia.com> <DDX1WYWQNTAB.BBEICMO8NM30@nvidia.com>
- <20251104005812.GA2101511@joelbox2>
-In-Reply-To: <20251104005812.GA2101511@joelbox2>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Nov 2025 14:52:03 +0100
-X-Gm-Features: AWmQ_blJ7jEt0nl7CKtiOJzaUdItBJ90fhDQUgIcURkC12jl_69-w8beSolcQvU
-Message-ID: <CANiq72m692bb+W32QN1G+LJa7sHs=gU8k6dri3mu95Smj7GiRw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] rust: clist: Add abstraction for iterating over C
- linked lists
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, David Airlie <airlied@gmail.com>, Alistair Popple <apopple@nvidia.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org, 
-	Elle Rhumsaa <elle@weathered-steel.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>, nouveau@lists.freedesktop.org, 
-	Nouveau <nouveau-bounces@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H2LHxGUrPEiBrxQb"
+Content-Disposition: inline
+In-Reply-To: <20251103-regu-fix-v1-1-c8a46581c850@kernel.org>
+X-Cookie: If in doubt, mumble.
 
-On Tue, Nov 4, 2025 at 1:58=E2=80=AFAM Joel Fernandes <joelagnelf@nvidia.co=
-m> wrote:
->
-> Perhaps wrapping it is #cfg is sufficient.
 
-`cfg` attributes and the `cfg!` macro should work in doctests -- we
-have already a few instances, e.g. this hidden one:
+--H2LHxGUrPEiBrxQb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    /// ```
-    /// # #![cfg(CONFIG_OF)]
-    /// use kernel::clk::Hertz;
+On Mon, Nov 03, 2025 at 08:32:41PM +0100, Andreas Kemnade wrote:
 
-Cheers,
-Miguel
+> -		if (current_uV < rdev->constraints->min_uV) {
+> +		if ((current_uV < rdev->constraints->min_uV) ||
+> +		    (current_uV > rdev->constraints->max_uV)) {
+>  			target_min = rdev->constraints->min_uV;
+> -			target_max = rdev->constraints->min_uV;
+> -		}
+> -
+> -		if (current_uV > rdev->constraints->max_uV) {
+> -			target_min = rdev->constraints->max_uV;
+>  			target_max = rdev->constraints->max_uV;
+>  		}
+
+There's a valid issue here if we can't represent the exact constraint
+(the hope was that people wouldn't specify constraints that their
+hardware wasn't capable of representing but we can't exactly stop
+them...) however this change is risky in the case where the voltage is
+too high since if we specify a range from minimum to maximum we'll try
+to select a voltage as close as possible to the minimum.  That could
+result in a large change if the range is wide, and potentially go under
+the voltage the hardware needs for it's current configuration.  We were
+trying to set the highest voltage in the range to minimise the risk
+there.  This isn't a concern in the case where we're raising the
+voltage.
+
+--H2LHxGUrPEiBrxQb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkKBQsACgkQJNaLcl1U
+h9CbbAf9FRZnxoNVgvCCVyEdUk/O7uflh5d/26SSY9RbW6XWKEmgGCATfLk77KwW
+YSsHItwiwBtyaYgHommZ54JXp2nprvlDBL7uO56JRMZygiyAetwWGFhofGZBYz5W
+fYlhS0YqWX7PgdvIaesjT2kyqjrdE0PtZaNftbqYn2ko1RAC2T7jXXVmBQkcj1Qc
+EVxxAzKwROseU1/7pp3bN/hZIrCBkTK0N+NYkTQ/mebT2dkWXHgEAHFryk5+cuMU
+6EOstSDvbkFM8zrKFTizi5if3m6sPESnP8UKNJxEOsrNXOYTmlDKge5d5lTzUXuV
+gXvJhoVav/cNykxv7upciM362+Z9uQ==
+=5+J/
+-----END PGP SIGNATURE-----
+
+--H2LHxGUrPEiBrxQb--
 
