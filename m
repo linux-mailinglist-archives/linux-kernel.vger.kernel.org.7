@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-884592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D54C308CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:40:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DDBC308D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B7DD4EA4EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78D43BBD80
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264B62D738E;
-	Tue,  4 Nov 2025 10:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E22D6E53;
+	Tue,  4 Nov 2025 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlNk83dt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ilF0MDDj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DC0JfO9V";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oeiZPlC5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rhDBbVND"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6527E04C;
-	Tue,  4 Nov 2025 10:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7922BF3DB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762252794; cv=none; b=UGZfcRROW5h4kDe6Al9rA8eUPPT64W8J28hvtRSNWNwSAqq3U8utCTRpzwS82ekJtXYI5ImCnR0pGZ2fbfBPGHpBmE0AObcHqkgsiOQqWKP2CFMs5KRKXnBFpwCWNQlmdO2NgNtabFEMskoQtfs4Gi2wbbzgA8zSU8BXNJM0qZo=
+	t=1762252835; cv=none; b=Qse5vDWydWI12msI5m6kc/2u2g/ihsmbyj+OEdjO2389hKTcR/n2DgCA9vTBWkhIbVMKRVlSuTBOyXmiBW9Kgw8JSzR6k/ErRNlwArH+V+On51w72gI1GNosWjrs01uc2p+89h/xdUIkM7nhBFkEH32t7ws83OATZz3YDdNRDHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762252794; c=relaxed/simple;
-	bh=bVSOpVrl2E+aD2iwJShLNXwchdC6N4vvdH0xbq0Wv7Q=;
+	s=arc-20240116; t=1762252835; c=relaxed/simple;
+	bh=ScsvhX3dtt3SwLD1cu4spJwSs1sx3CRExS1mxaYaN3g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pHnstrxNg9yS17ADWxmx1s9gfBvrCfTsubepi5uSg9zSLUcpJJ8DUmAq6YxaEc3OyDHvBxN7XJe3PA7c4JRkVvF85U7UabNrcAMR6NsLrA+52/S/eWfyDdRnZV6Xw3DgEp2PkrsFCgevBXj8qf0GUGHN0ix/zN6QrtFHJJ/Lb7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlNk83dt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4DC6C116B1;
-	Tue,  4 Nov 2025 10:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762252794;
-	bh=bVSOpVrl2E+aD2iwJShLNXwchdC6N4vvdH0xbq0Wv7Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SlNk83dt1Smbc3hLuSAOFwWkfmmmmga4QZ2/iN/3hvrii36ah911xR1PZR6CrIzMW
-	 bZw4faGQ5Y7SCpkJqDpd5uAX1CHrdxz7S5+rPLO3U6mHZy06WdlubrhGRZIXF8WJrD
-	 7RHzF3sRp7Iez191RHjK0bMbNeIKDsYy0CaroJe1tyQvGL6Qc1/PNYmSE6BGlkjdfl
-	 lkycl49PkuqE5g7LvXy4gZC10Vy2odMekVQYQOk/17egZGcFZxQB9IK6WqNYNbO9sz
-	 FmLc0IesnZ3Yr3DHYFgYF9BHORkyuY/hKO6esZwjP5rJWFmz2pIhYx175Z1C9RAVf1
-	 Jl1MhdXrOJ2BQ==
-Message-ID: <0735f540-8085-440c-9c0f-7ac23b52b838@kernel.org>
-Date: Tue, 4 Nov 2025 10:39:50 +0000
+	 In-Reply-To:Content-Type; b=uw2dsx9evwpxqlSJ8RH6Vr6tZH2x99yBombtcMCjbUnAf2gyHG+fYWI98/4S5mPx85Kp9Rl6k6lKG8w7uVcS3W0oJXG6PFQ9w4CNj2kUfjTw1Zth2Ml5mwBoL4ou1zmi0v6yu7Kda8fBiwDho1scn/TOazSlK+FU5KDXs4MgGCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ilF0MDDj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DC0JfO9V; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oeiZPlC5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rhDBbVND; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BBA732116D;
+	Tue,  4 Nov 2025 10:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762252832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3wUrCtseumKk5fl2r2TTo6EYvzBfcEx8Q5G/gUQ/4PQ=;
+	b=ilF0MDDj5rioIRFigF7RMtnAyL372JkQAJPNxFmPjD35rxLp9gAHk7w1VRjfzBMBrQZN+p
+	oAzTOSq4IUhlEeoeXY0p+5ZSh0Sc6lrnBR4dQHGOkVpYMZzoS07d1WOUJpNSUZ/OuC109Y
+	1KR+hAQe5EQexy6WSozkSANiDuvH/HE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762252832;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3wUrCtseumKk5fl2r2TTo6EYvzBfcEx8Q5G/gUQ/4PQ=;
+	b=DC0JfO9VBo+1USgHrOXy48pSvizxc+FGm/fblelFYV1H+GGOnStW7Mb0ygmRwYfbqLyAfj
+	0ErhndUWXWsD/gBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oeiZPlC5;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rhDBbVND
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762252831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3wUrCtseumKk5fl2r2TTo6EYvzBfcEx8Q5G/gUQ/4PQ=;
+	b=oeiZPlC5hzZtUN9P8jYZb01R1knoxM4o/z02b4DRwvQlVq1WJ2qi6kKUWU2umqToP5iNtY
+	XCbUcKbYG6KOHDiO/6dr7txDyQDvZvzh8g5txWcVuVP4ljQVSmtLvqvAYgWkzm0bqux8S9
+	KesufEvB/+nTbFWmYLEtgZ3dhEYLfaA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762252831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3wUrCtseumKk5fl2r2TTo6EYvzBfcEx8Q5G/gUQ/4PQ=;
+	b=rhDBbVNDCVJyh48JW1zxTyCk29uyD4svS6OHwqVPk/zxFVy99S13vjsrEuqMEDVX9zW6+u
+	uEpzwXxUfcQVpmDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C9CA139A9;
+	Tue,  4 Nov 2025 10:40:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KaaqJR/YCWmiYgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 04 Nov 2025 10:40:31 +0000
+Message-ID: <e5620018-e95b-4b4e-a829-f5b3115c59e0@suse.de>
+Date: Tue, 4 Nov 2025 11:40:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,157 +97,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] media: qcom: iris: Improve format alignment for
- encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- quic_qiweil@quicinc.com, quic_renjiang@quicinc.com
-References: <20251104-iris_encoder_enhancements-v3-0-63b0c431b4d0@oss.qualcomm.com>
- <k3umzf0z69-Hbh7jbT-Gjp4pyquNAYVC3VfIXQcdVZstI5FTtcGU_NEgb8l796Z3Cr6Dz0DQ0BoVQQPd4fr6sQ==@protonmail.internalid>
- <20251104-iris_encoder_enhancements-v3-1-63b0c431b4d0@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [RESEND] [PATCH] nvme-tcp: fix usage of page_frag_cache
+To: Dmitry Bogdanov <d.bogdanov@yadro.com>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Stuart Hayes <stuart.w.hayes@gmail.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux@yadro.com, stable@vger.kernel.org
+References: <20251027163627.12289-1-d.bogdanov@yadro.com>
 Content-Language: en-US
-In-Reply-To: <20251104-iris_encoder_enhancements-v3-1-63b0c431b4d0@oss.qualcomm.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20251027163627.12289-1-d.bogdanov@yadro.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: BBA732116D
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[yadro.com,kernel.org,kernel.dk,lst.de,grimberg.me,gmail.com,lists.infradead.org,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-On 04/11/2025 08:11, Wangao Wang wrote:
-> Add members enc_raw_width, enc_raw_height to the struct iris_inst to
-> support codec alignment requirements.
+On 10/27/25 17:36, Dmitry Bogdanov wrote:
+> nvme uses page_frag_cache to preallocate PDU for each preallocated request
+> of block device. Block devices are created in parallel threads,
+> consequently page_frag_cache is used in not thread-safe manner.
+> That leads to incorrect refcounting of backstore pages and premature free.
 > 
-> HFI_PROP_CROP_OFFSETS is used to inform the firmware of the region
-> of interest, rather than indicating that the codec supports crop.
-> Therefore, the crop handling has been corrected accordingly.
+> That can be catched by !sendpage_ok inside network stack:
 > 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+> WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
+> 	tcp_sendmsg_locked+0x782/0xce0
+> 	tcp_sendmsg+0x27/0x40
+> 	sock_sendmsg+0x8b/0xa0
+> 	nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
+> Then random panic may occur.
+> 
+> Fix that by serializing the usage of page_frag_cache.
+> 
+> Cc: stable@vger.kernel.org # 6.12
+> Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
+> Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
 > ---
->   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 23 ++++++++++++++++------
->   drivers/media/platform/qcom/iris/iris_instance.h   |  4 ++++
->   drivers/media/platform/qcom/iris/iris_venc.c       | 10 ++++++++--
->   3 files changed, 29 insertions(+), 8 deletions(-)
+>   drivers/nvme/host/tcp.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index 4ce71a14250832440099e4cf3835b4aedfb749e8..2469e027706fb6c9c0b95be11109c3cd0f8d70ce 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -168,8 +168,7 @@ static int iris_hfi_gen2_session_set_property(struct iris_inst *inst, u32 packet
-> 
->   static int iris_hfi_gen2_set_raw_resolution(struct iris_inst *inst, u32 plane)
->   {
-> -	u32 resolution = inst->fmt_src->fmt.pix_mp.width << 16 |
-> -		inst->fmt_src->fmt.pix_mp.height;
-> +	u32 resolution = inst->enc_raw_width << 16 | inst->enc_raw_height;
->   	u32 port = iris_hfi_gen2_get_port(inst, plane);
-> 
->   	return iris_hfi_gen2_session_set_property(inst,
-> @@ -216,8 +215,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->   	u32 port = iris_hfi_gen2_get_port(inst, plane);
->   	u32 bottom_offset, right_offset;
->   	u32 left_offset, top_offset;
-> +	u32 codec_align;
->   	u32 payload[2];
-> 
-> +	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> +
->   	if (inst->domain == DECODER) {
->   		if (V4L2_TYPE_IS_OUTPUT(plane)) {
->   			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> @@ -231,10 +233,19 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->   			top_offset = inst->compose.top;
->   		}
->   	} else {
-> -		bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> -		right_offset = (inst->fmt_src->fmt.pix_mp.width - inst->crop.width);
-> -		left_offset = inst->crop.left;
-> -		top_offset = inst->crop.top;
-> +		if (V4L2_TYPE_IS_OUTPUT(plane)) {
-> +			bottom_offset = (inst->enc_raw_height - inst->crop.height);
-> +			right_offset = (inst->enc_raw_width - inst->crop.width);
-> +			left_offset = inst->crop.left;
-> +			top_offset = inst->crop.top;
-> +		} else {
-> +			bottom_offset = (ALIGN(inst->enc_raw_height, codec_align) -
-> +					inst->enc_raw_height);
-> +			right_offset = (ALIGN(inst->enc_raw_width, codec_align) -
-> +					inst->enc_raw_width);
-> +			left_offset = 0;
-> +			top_offset = 0;
-> +		}
->   	}
-> 
->   	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
-> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
-> index 5982d7adefeab80905478b32cddba7bd4651a691..fbae1662947df73bb3d10b7892839fa1076b7e61 100644
-> --- a/drivers/media/platform/qcom/iris/iris_instance.h
-> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
-> @@ -64,6 +64,8 @@ struct iris_fmt {
->    * @frame_rate: frame rate of current instance
->    * @operating_rate: operating rate of current instance
->    * @hfi_rc_type: rate control type
-> + * @enc_raw_width: raw image width for encoder instance
-> + * @enc_raw_height: raw image height for encoder instance
->    */
-> 
->   struct iris_inst {
-> @@ -102,6 +104,8 @@ struct iris_inst {
->   	u32				frame_rate;
->   	u32				operating_rate;
->   	u32				hfi_rc_type;
-> +	u32				enc_raw_width;
-> +	u32				enc_raw_height;
->   };
-> 
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-> index 099bd5ed4ae0294725860305254c4cad1ec88d7e..7ad747d2272f029e69a56572a188a032f898a3fb 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
-> @@ -62,12 +62,15 @@ int iris_venc_inst_init(struct iris_inst *inst)
-> 
->   	inst->crop.left = 0;
->   	inst->crop.top = 0;
-> -	inst->crop.width = f->fmt.pix_mp.width;
-> -	inst->crop.height = f->fmt.pix_mp.height;
-> +	inst->crop.width = DEFAULT_WIDTH;
-> +	inst->crop.height = DEFAULT_HEIGHT;
-> 
->   	inst->operating_rate = DEFAULT_FPS;
->   	inst->frame_rate = DEFAULT_FPS;
-> 
-> +	inst->enc_raw_width = DEFAULT_WIDTH;
-> +	inst->enc_raw_height = DEFAULT_HEIGHT;
-> +
->   	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
->   	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
-> 
-> @@ -249,6 +252,9 @@ static int iris_venc_s_fmt_input(struct iris_inst *inst, struct v4l2_format *f)
->   	inst->buffers[BUF_INPUT].min_count = iris_vpu_buf_count(inst, BUF_INPUT);
->   	inst->buffers[BUF_INPUT].size = fmt->fmt.pix_mp.plane_fmt[0].sizeimage;
-> 
-> +	inst->enc_raw_width = f->fmt.pix_mp.width;
-> +	inst->enc_raw_height = f->fmt.pix_mp.height;
-> +
->   	if (f->fmt.pix_mp.width != inst->crop.width ||
->   	    f->fmt.pix_mp.height != inst->crop.height) {
->   		inst->crop.top = 0;
-> 
-> --
-> 2.43.0
-> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-To me reading this patch you seem to have three or four different 
-alignment changed bunched into one.
+Cheers,
 
-I would prefer to see more granular and specific patches for each change.
-
-Please break this up into more bite size chunks.
-
----
-bod
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
