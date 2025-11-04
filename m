@@ -1,117 +1,209 @@
-Return-Path: <linux-kernel+bounces-884136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4FCC2F6FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8D5C2F707
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 084E534C301
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:21:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C6D8834C7C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C1A2C234A;
-	Tue,  4 Nov 2025 06:21:44 +0000 (UTC)
-Received: from wxsgout04.xfusion.com (wxsgout04.xfusion.com [36.139.87.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280AF2D1901;
+	Tue,  4 Nov 2025 06:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CWrXKmDa"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3522918C933;
-	Tue,  4 Nov 2025 06:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=36.139.87.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A731285074
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762237303; cv=none; b=plZUnu5yxHlI4GrPzyUcDoDXGFgblluSiT9zoxkC/2Dt8nG7GY5D0VIRJFf2EKzWcWlgqNYhZCTpE15fUy4oPbLmwZ9YEwnPvrpOnh96Wj715vmLmuA+nKGLeZo7EeS/j8Y+JGK4xTSueph+q3OaHBo3vB30KIIEiuFimQ/8T7A=
+	t=1762237544; cv=none; b=cU+rRMQWjVOeEpMZwSf2OyQvTBV9c71M7dc6xBxFzesfO7KrO9lLJMT/NZSMCSGYt4MYsHzEG/BB8xsPdfJwbHzOZo4QGtOodBcchNdGgZ30kO09M+X3crdyWJqRfZIP9yVUfivpwo38Lq7uVGRNObGSC/7GVKs2M+v+JvFRr5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762237303; c=relaxed/simple;
-	bh=rC7j2N1SkGmfCrflixlud1j3F7KJscRsP8Cmk3WjFRY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hX1MbJdVbHLxU2bFCuuUZrAxABkqxlJelmF0+RDq8G1qKzUOyLJAFhRc+WnWdC2k08wghszBCcXgi/RN3ykOVqX2jXCSQ98oEN+EGIRlSDAHlaANdCKvDs5S/+dYwM1APDxW1lMosCxF3Ji9kj/jCip2IGw0kX4Ai8cIB8AzTXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com; spf=pass smtp.mailfrom=xfusion.com; arc=none smtp.client-ip=36.139.87.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xfusion.com
-Received: from wuxpheds03048.xfusion.com (unknown [10.32.143.30])
-	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4d0yvp0WkCzB7P0P;
-	Tue,  4 Nov 2025 14:19:02 +0800 (CST)
-Received: from DESKTOP-Q8I2N5U.xfusion.com (10.82.130.100) by
- wuxpheds03048.xfusion.com (10.32.143.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20;
- Tue, 4 Nov 2025 14:21:29 +0800
-From: shechenglong <shechenglong@xfusion.com>
-To: <axboe@kernel.dk>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stone.xulei@xfusion.com>, <chenjialong@xfusion.com>, shechenglong
-	<shechenglong@xfusion.com>
-Subject: [PATCH] block: fix typos in comments and strings in blk-core.c
-Date: Tue, 4 Nov 2025 14:21:13 +0800
-Message-ID: <20251104062113.1929-1-shechenglong@xfusion.com>
-X-Mailer: git-send-email 2.37.1.windows.1
+	s=arc-20240116; t=1762237544; c=relaxed/simple;
+	bh=ubuEjmLy2kImJfqKlWH5VdcWP18WDUWYFH4tWBBfrDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oEaoUFisoikFKb+XHSLSK/y7BeXQoURZe545BI4Fa08I9RCK0jD+u2i9dVSJccJIZ5m38ksJEbUQELmB108M7yXk2Nlqah7B2RCeWbpTWI/qEpurv32LlOA0/AX1PMCLKuS/pk99Y75ndywerEOiRTKGECLWi/3hS8YUvbRWgL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CWrXKmDa; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d4e44c54aso673549466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:25:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762237540; x=1762842340; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F21nu/70Y4PIfJ/LJgoigNQF+DEjcT0vVb1Y4wntgZo=;
+        b=CWrXKmDam1D58J4SxpJi7chMazeSRUcECyK+V/3D66pFkBxf6WMl9e/Kpk4WPyw+5+
+         lunjZpQ/1wlvEj1f6EuVS6lVjcKTi+qBBCW4tLfh3NEG//YSHUE4ZXkd/uKAyr5vHtRE
+         L+aTFqCcsyjxR4HJsAhK4aHyLyu3LwJ8WuwFM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762237540; x=1762842340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F21nu/70Y4PIfJ/LJgoigNQF+DEjcT0vVb1Y4wntgZo=;
+        b=WwUSJv5P9nfM8vYv3aNklqG8z4siOg0Q7bXSIk3PT0RDFhbSpJlerPel97SyjriCkU
+         tIdaI+Fktxii9oR9sEn6wQO0i2rrMpHiVSpP0wYqhojtaIUCaO6dC1LKnn3cwj4kAeen
+         1i9t/weSGRc1cRINU+PsGybCAuhVRMtSPDtdY0KkRHBTi9swG94kxdnddcWXlZ7drs3x
+         vNCj4RyBv21L4m+RiLmKZx4hmUTSJbmJW1FtB7kNs2gF+E2KP5RT9xWf4f+gN82uiFIe
+         KDRq9kgGrbKfXFdP3AoNXLe5VJnIfgWM1vWlr5oe7dblidGFwLwP+EaqvroguFa5a3YI
+         /OgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgyj9TzSnRG/voeQzxqNvtHDAYT604/wcRZpynoni7PEBXyLRwVaOskHQ/Xg5fXFlv1KHDYvykt9U3KC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0BMMuqoSkzRzmUaHuttwY6JufSoAi+aFM76iYVg7P8jhWQjrU
+	JhHYGZ6CLwFI4zKs+WOTuNaHJMCezQRy04EuGuol41EUwSUs7ai28N5V72K3Z3Z/1fYeJhirrEd
+	9UfrFwhk58Q==
+X-Gm-Gg: ASbGncvbxp5irFxYBCemEPxD6Vfzqs9OnUzf0qdjysXXFB+fjJzau2DqHQ5f6Mco5Qj
+	PpDQX4unq3V/FcCgLfQZRFWsqj3chGXC8+8nqLRF/75Ajrm5k97uJK4MMAq8xWxQOy4lvTc9pHN
+	N5ndm+sM7LY/XY5h1qE8BrTDpy4ITkwUp4CUZN4D9iR5dOrc57ejualW+OW7DCdwgEbRNCi8gVr
+	ppoJfti9bRpmICi9NFPArAK+hsIn623uk5ggth9n1200b6b2UtxK/eXDLNwMlHelIWdrno8Wols
+	GRZAezlMSxL5UTz735QHl8LKAYtgzJPlLfyTuUEdyOL0WMLMhWDe5W0tucxcPHSE/QeXYEWZwRE
+	+zQRhuLOkTMM5wEb9X6kBJ26fmdjx6ZSz+CbbQxekI7HaNdl/coYudGNORP6/uparGoDcWEkSrn
+	yIC39KFfriqES0zcXMSSlGF5e5BEU4o7/LnvoOeu6XO0PnjiCS0A==
+X-Google-Smtp-Source: AGHT+IHd/xJMkwHUMlUbaq3+0qPk8hkrhxtRYlRWyx0Piasgu2Gg9CYm4zdvcS25uv22zYL5XMeFrw==
+X-Received: by 2002:a17:906:f34f:b0:b70:7cd8:9098 with SMTP id a640c23a62f3a-b707cd8a9cemr997396966b.61.1762237540021;
+        Mon, 03 Nov 2025 22:25:40 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fe37cb9sm119567466b.61.2025.11.03.22.25.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 22:25:38 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b6d78062424so1039772466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:25:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWrAJ4dteQKBa1ELpvGF/4YRZqP7AQRCqFshmJflSbWciZc3AEH01aKOq+RWe17Wt45D/ZxnrLfUV6BiCc=@vger.kernel.org
+X-Received: by 2002:a17:906:d555:b0:b70:b5ce:e66e with SMTP id
+ a640c23a62f3a-b70b5cf23acmr702009266b.21.1762237537508; Mon, 03 Nov 2025
+ 22:25:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: wuxpheds03047.xfusion.com (10.32.141.63) To
- wuxpheds03048.xfusion.com (10.32.143.30)
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+In-Reply-To: <20251031174220.43458-2-mjguzik@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Nov 2025 15:25:20 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkCiE0d-T6yyLCYrNs9euBFEsDAScPsO79Es5nrtD56kkYzWZYWoyCfZ7k
+Message-ID: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
+Content-Type: multipart/mixed; boundary="0000000000006f35580642bee61d"
 
-This patch fixes multiple spelling mistakes in comments and documentation
-in the file block/blk-core.c.
+--0000000000006f35580642bee61d
+Content-Type: text/plain; charset="UTF-8"
 
-No functional changes intended.
+[ Adding x86 maintainers - I had added Thomas earlier, but I guess at
+least Borislav might actually care and have input too ]
 
-Signed-off-by: shechenglong <shechenglong@xfusion.com>
----
- block/blk-core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+So I think the patch I will commit would look like the attached: it's
+similar to your suggestion, but without the renaming of USER_PTR_MAX,
+and with just a
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 14ae73eebe0d..7757cd589b59 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -662,13 +662,13 @@ static void __submit_bio(struct bio *bio)
-  *    bio_list of new bios to be added.  ->submit_bio() may indeed add some more
-  *    bios through a recursive call to submit_bio_noacct.  If it did, we find a
-  *    non-NULL value in bio_list and re-enter the loop from the top.
-- *  - In this case we really did just take the bio of the top of the list (no
-+ *  - In this case we really did just take the bio off the top of the list (no
-  *    pretending) and so remove it from bio_list, and call into ->submit_bio()
-  *    again.
-  *
-  * bio_list_on_stack[0] contains bios submitted by the current ->submit_bio.
-  * bio_list_on_stack[1] contains bios that were submitted before the current
-- *	->submit_bio, but that haven't been processed yet.
-+ *	->submit_bio(), but that haven't been processed yet.
-  */
- static void __submit_bio_noacct(struct bio *bio)
- {
-@@ -743,7 +743,7 @@ void submit_bio_noacct_nocheck(struct bio *bio, bool split)
- 	/*
- 	 * We only want one ->submit_bio to be active at a time, else stack
- 	 * usage with stacked devices could be a problem.  Use current->bio_list
--	 * to collect a list of requests submited by a ->submit_bio method while
-+	 * to collect a list of requests submitted by a ->submit_bio method while
- 	 * it is active, and then process them after it returned.
- 	 */
- 	if (current->bio_list) {
-@@ -901,7 +901,7 @@ static void bio_set_ioprio(struct bio *bio)
-  *
-  * submit_bio() is used to submit I/O requests to block devices.  It is passed a
-  * fully set up &struct bio that describes the I/O that needs to be done.  The
-- * bio will be send to the device described by the bi_bdev field.
-+ * bio will be sent to the device described by the bi_bdev field.
-  *
-  * The success/failure status of the request, along with notification of
-  * completion, is delivered asynchronously through the ->bi_end_io() callback
-@@ -991,7 +991,7 @@ int iocb_bio_iopoll(struct kiocb *kiocb, struct io_comp_batch *iob,
- 	 * point to a freshly allocated bio at this point.  If that happens
- 	 * we have a few cases to consider:
- 	 *
--	 *  1) the bio is beeing initialized and bi_bdev is NULL.  We can just
-+	 *  1) the bio is being initialized and bi_bdev is NULL.  We can just
- 	 *     simply nothing in this case
- 	 *  2) the bio points to a not poll enabled device.  bio_poll will catch
- 	 *     this and return 0
--- 
-2.33.0
+  #ifdef MODULE
+    #define runtime_const_ptr(sym) (sym)
+  #else
+    #include <asm/runtime-const.h>
+  #endif
 
+in the x86 asm/uaccess_64.h header file and an added '#error' for the
+MODULE case in the actual x86 runtime-const.h file.
+
+As it is, this bug really only affects modular code that uses
+access_ok() and __{get,put}_user(), which is a really broken pattern
+to begin with these days, and is happily fairly rare.
+
+That is an old optimization that is no longer an optimization at all
+(since a plain "get_user()" is actually *faster* than the access_ok()
+and __get_user() these days), and I wish we didn't have any such code
+any more, but there are a handful of things that have never been
+converted to the modern world order.
+
+So it is what it is, and we have to deal with it.
+
+Also, even that kind of rare and broken code actually *works*,
+although the whole "non-canonical reads can speculatively leak
+possibly kernel data" does end up being an issue (largely theoretical
+because it's now limited to just a couple of odd-ball code sequences)
+
+And yes, it works just because I picked a runtime-const value that is
+non-canonical. I'd say it's "by luck", but I did pick that value
+partly *because* it's non-canonical, so it's not _entirely_ just luck.
+But mostly.
+
+That was all a long explanation for why I am planning on committing
+this as a real fix, even if the actual impact of it is largely
+theoretical.
+
+Borislav - comments? Generating this patch took longer than it should
+have, but I had travel and jetlag and a flight that I expected to have
+wifi but didn't...  And properly it should probably be committed by
+x86 maintainers rather than me, but I did mess this code up in the
+first place.
+
+The patch *looks* very straightforward, but since I'm on the road I am
+doing this on my laptop and haven't actually tested it yet (well, I've
+built this, and booted it, but nothing past that).
+
+Mateusz - I'd like to just credit you with this, since your comment
+about modules was why I started looking into this all in the first
+place (and you then wrote a similar patch). But I'm not going to do
+that without your ack.
+
+               Linus
+
+--0000000000006f35580642bee61d
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mhk6mmvp0>
+X-Attachment-Id: f_mhk6mmvp0
+
+IGFyY2gveDg2L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8ICA0ICsrKysKIGFyY2gveDg2
+L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaCAgICB8IDEwICsrKysrLS0tLS0KIGFyY2gveDg2L2tl
+cm5lbC9jcHUvY29tbW9uLmMgICAgICAgICB8ICA2ICsrKysrLQogMyBmaWxlcyBjaGFuZ2VkLCAx
+NCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2lu
+Y2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3J1bnRpbWUt
+Y29uc3QuaAppbmRleCA4ZDk4M2NmZDA2ZWEuLmU1YTEzZGM4ODE2ZSAxMDA2NDQKLS0tIGEvYXJj
+aC94ODYvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oCisrKyBiL2FyY2gveDg2L2luY2x1ZGUv
+YXNtL3J1bnRpbWUtY29uc3QuaApAQCAtMiw2ICsyLDEwIEBACiAjaWZuZGVmIF9BU01fUlVOVElN
+RV9DT05TVF9ICiAjZGVmaW5lIF9BU01fUlVOVElNRV9DT05TVF9ICiAKKyNpZmRlZiBNT0RVTEUK
+KyAgI2Vycm9yICJDYW5ub3QgdXNlIHJ1bnRpbWUtY29uc3QgaW5mcmFzdHJ1Y3R1cmUgZnJvbSBt
+b2R1bGVzIgorI2VuZGlmCisKICNpZmRlZiBfX0FTU0VNQkxZX18KIAogLm1hY3JvIFJVTlRJTUVf
+Q09OU1RfUFRSIHN5bSByZWcKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nl
+c3NfNjQuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaAppbmRleCBjOGE1YWUz
+NWM4NzEuLjY0MWY0NWMyMmY5ZCAxMDA2NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFj
+Y2Vzc182NC5oCisrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaApAQCAtMTIs
+MTIgKzEyLDEyIEBACiAjaW5jbHVkZSA8YXNtL2NwdWZlYXR1cmVzLmg+CiAjaW5jbHVkZSA8YXNt
+L3BhZ2UuaD4KICNpbmNsdWRlIDxhc20vcGVyY3B1Lmg+Ci0jaW5jbHVkZSA8YXNtL3J1bnRpbWUt
+Y29uc3QuaD4KIAotLyoKLSAqIFZpcnR1YWwgdmFyaWFibGU6IHRoZXJlJ3Mgbm8gYWN0dWFsIGJh
+Y2tpbmcgc3RvcmUgZm9yIHRoaXMsCi0gKiBpdCBjYW4gcHVyZWx5IGJlIHVzZWQgYXMgJ3J1bnRp
+bWVfY29uc3RfcHRyKFVTRVJfUFRSX01BWCknCi0gKi8KKyNpZmRlZiBNT0RVTEUKKyAgI2RlZmlu
+ZSBydW50aW1lX2NvbnN0X3B0cihzeW0pIChzeW0pCisjZWxzZQorICAjaW5jbHVkZSA8YXNtL3J1
+bnRpbWUtY29uc3QuaD4KKyNlbmRpZgogZXh0ZXJuIHVuc2lnbmVkIGxvbmcgVVNFUl9QVFJfTUFY
+OwogCiAjaWZkZWYgQ09ORklHX0FERFJFU1NfTUFTS0lORwpkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
+a2VybmVsL2NwdS9jb21tb24uYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvY29tbW9uLmMKaW5kZXgg
+YzdkMzUxMjkxNGNhLi4wMmQ5NzgzNGExZDQgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC9j
+cHUvY29tbW9uLmMKKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9jb21tb24uYwpAQCAtNzgsNiAr
+NzgsMTAgQEAKIERFRklORV9QRVJfQ1BVX1JFQURfTU9TVExZKHN0cnVjdCBjcHVpbmZvX3g4Niwg
+Y3B1X2luZm8pOwogRVhQT1JUX1BFUl9DUFVfU1lNQk9MKGNwdV9pbmZvKTsKIAorLyogVXNlZCBm
+b3IgbW9kdWxlczogYnVpbHQtaW4gY29kZSB1c2VzIHJ1bnRpbWUgY29uc3RhbnRzICovCit1bnNp
+Z25lZCBsb25nIFVTRVJfUFRSX01BWDsKK0VYUE9SVF9TWU1CT0woVVNFUl9QVFJfTUFYKTsKKwog
+dTMyIGVsZl9od2NhcDIgX19yZWFkX21vc3RseTsKIAogLyogTnVtYmVyIG9mIHNpYmxpbmdzIHBl
+ciBDUFUgcGFja2FnZSAqLwpAQCAtMjU3OSw3ICsyNTgzLDcgQEAgdm9pZCBfX2luaXQgYXJjaF9j
+cHVfZmluYWxpemVfaW5pdCh2b2lkKQogCWFsdGVybmF0aXZlX2luc3RydWN0aW9ucygpOwogCiAJ
+aWYgKElTX0VOQUJMRUQoQ09ORklHX1g4Nl82NCkpIHsKLQkJdW5zaWduZWQgbG9uZyBVU0VSX1BU
+Ul9NQVggPSBUQVNLX1NJWkVfTUFYOworCQlVU0VSX1BUUl9NQVggPSBUQVNLX1NJWkVfTUFYOwog
+CiAJCS8qCiAJCSAqIEVuYWJsZSB0aGlzIHdoZW4gTEFNIGlzIGdhdGVkIG9uIExBU1Mgc3VwcG9y
+dAo=
+--0000000000006f35580642bee61d--
 
