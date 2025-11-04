@@ -1,159 +1,188 @@
-Return-Path: <linux-kernel+bounces-884628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC17C309BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:54:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B9EC309CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D193A5C50
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD39518838B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2ED2D6E76;
-	Tue,  4 Nov 2025 10:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1E22D7DDC;
+	Tue,  4 Nov 2025 10:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tB2Hs0BJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lkiWxvgF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tB2Hs0BJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lkiWxvgF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KgD/oN9w"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47BD19F40A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CD319F40A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762253645; cv=none; b=dfIPIHDhQCScXbJHLm1cW70R7EdBNhWcy73UhrRw+w9ekcKGecawmr1v9yI7c+3qLZHBv0qTwfTWSq1Acjs3871+YfTBFE8yKoJwdZKrUSaah9eTo5LNOi/FGcJVgA9DOfn4VSBjuZeJEOcCdTD6mM4sjUEWEw2caRrdw44UUg0=
+	t=1762253701; cv=none; b=GUbGT4TBrXRCXDukMBdtQjhY/3G5815b+PUoXE2I8oVz9ox184QGNkwPjqoF5n/AV8phavF1Z29KVl69w7jCKow5r+4OazUqT5joAG2zpividOtgj7JsFH6c8YtUVC4nj+35btXULeLQFDpxhCHT+DyqS7u0MsIu7RROwgKDJWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762253645; c=relaxed/simple;
-	bh=xff2ou2COWsnGapS98FVlJPduzs6isPv7hXDAEStANk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dymzHZL700rLuV22YqewU9vgnN1BvIpIR2104BnL81c9c1GB4MEURaNxZO9ulgzsMZ0j2GmdL7VYAvvh3dkRXwCN8ZGp4ndOefO05MRTpoPoyDckjjK1XXl+hE4MvLa4KY2jkHxiL4rW84j81IPJHU4BYAcJM8xkWqUE/QNJuS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tB2Hs0BJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lkiWxvgF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tB2Hs0BJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lkiWxvgF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A59C61F387;
-	Tue,  4 Nov 2025 10:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762253641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbVY/VBqk2zvjO5PdxoPmUFEkfs061ELl9sM5HumuOM=;
-	b=tB2Hs0BJrBJDXILIjdtq8kcNXqgGd0Mp6BzN0QaLC3tF2Z4+fidBQ37qN4HJr/t0Mksvil
-	uJ199Pn0gpJzR/EeaJnW3coiInA9bKAM6f1aB3wInY1MCuLrjIqEijth3FKmMJkhzWPWJ4
-	S0SzIN4tVk9Di7FsKDDysM1/PDVerxg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762253641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbVY/VBqk2zvjO5PdxoPmUFEkfs061ELl9sM5HumuOM=;
-	b=lkiWxvgFmDuug3uR3C6RYE0H5Tw4gzabSFHCzuau/LiHt3nMPZN3zmzkkT2qZVt1YdKZCJ
-	qUISTFzX6OMvhAAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762253641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbVY/VBqk2zvjO5PdxoPmUFEkfs061ELl9sM5HumuOM=;
-	b=tB2Hs0BJrBJDXILIjdtq8kcNXqgGd0Mp6BzN0QaLC3tF2Z4+fidBQ37qN4HJr/t0Mksvil
-	uJ199Pn0gpJzR/EeaJnW3coiInA9bKAM6f1aB3wInY1MCuLrjIqEijth3FKmMJkhzWPWJ4
-	S0SzIN4tVk9Di7FsKDDysM1/PDVerxg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762253641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbVY/VBqk2zvjO5PdxoPmUFEkfs061ELl9sM5HumuOM=;
-	b=lkiWxvgFmDuug3uR3C6RYE0H5Tw4gzabSFHCzuau/LiHt3nMPZN3zmzkkT2qZVt1YdKZCJ
-	qUISTFzX6OMvhAAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A96A139A9;
-	Tue,  4 Nov 2025 10:54:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3YUeIUnbCWn4cAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 04 Nov 2025 10:54:01 +0000
-Message-ID: <58eb1762-342d-4729-bfe4-8c79ef63f913@suse.de>
-Date: Tue, 4 Nov 2025 11:54:01 +0100
+	s=arc-20240116; t=1762253701; c=relaxed/simple;
+	bh=R1jeV3wiv8DXKujJVS3YRokbucemxRcp2L9aU/+ZO2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTN6kukXe+xzt7r4NFdAed/A4wnjMlbWpBqers1DgVFm/jUgr3FXeXH5u06tZSXu3duMu7bZfw6nQY6bYEzvpkl5bvEmEhvpY58gbCO91h4rUCsWLa0gtoFkISLNnALCRTU3ldIEhx5NfB7Wb7t9e2s5Q+8RI4NAoKDKZO/XM5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KgD/oN9w; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3b27b50090so832062566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:54:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762253698; x=1762858498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h68+BzrgDoWnKcF5o/ojKkTPKX3UizaTNvfX1EgB8Ec=;
+        b=KgD/oN9wnLB688glrZk0raXjwK+UyQBMBVNFeNjb1sg2zB7iVlEe5UafQ5Gbi0lNCk
+         OE+Bxfa2l9XjZ2ayQBe3LZZFrOggrMJ4pSVGB3OeyYlWEd8fmIeAS5Drup+YLWB22T53
+         GQbA5E09/Emi8980QyyeGv8ahduJwEykJxYEUAQX14FzH0x5le5JfOkqreE/QOLGu0r3
+         kgMJyOK2iGdmcw/MQsOfR/99OXElPDDUlNt3kpGg1iEiwiReG+uj17aDGywz6ooh8sJy
+         UNUcr3ihLg0jrX80lhDt1Lahkc/+w6nigZi0fTCZ84NoxqqcXLVqGYD+pvXTtE+sldwx
+         Bu1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762253698; x=1762858498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h68+BzrgDoWnKcF5o/ojKkTPKX3UizaTNvfX1EgB8Ec=;
+        b=HRsZzo6AD4mdxVtVS46iD2uC5rKwXZPgfEVq4FVmNxIg3wyNl0cFT3VkNvQm3lKQOL
+         sm1ew5JGGExP9HHAgs3rkPfLCpMsYHWT8E7FGm4lvK6Cnqzwb/q8RTVS7544mzIIBW0E
+         fqKjshesKAKImZaZT2a5q2vz2WmbSHZLsB6mLbr8r5IWxEo9Ska32/LX9h2Iawz88Bts
+         Ku0B5LH7cmkud5y2k73DFMr2PD5CxLAHBPmCN3RCBgfbAVrij5POggyCJuEiqtrFW2ze
+         REieuH3y25ietxpQYxWj5dkNQ0a/30X6KtV/bE0iY0gT6sELGXTk+UWLIRD6cz1vY9o/
+         vdvw==
+X-Gm-Message-State: AOJu0Yxvi+hOa++H3udgXdE+2ixTTFoz/ixjKhiorvZGk/abpPXyDNLc
+	BTjbnUZxIYfGToMR4tqOPeFbbXBTtty0ArXT0JaLrq5AO+HeK9X7U5fzzocsJ73wkwcVtYrMKmc
+	nTN0e
+X-Gm-Gg: ASbGncvA/XCDtliETfzEt/OgQTNbVRXWXK87pmrHtb53vZtgL/Q8xDKMjeOatsnZ/nB
+	PmIHTmWptgVdo2qPLzsWZko8mZ3R5tQHz4Z4MF5sBcKiwS9is2yzHSIEQPwpMiC24+2i8jpdeYU
+	jFexXMu4cUKEjR6Sr/zQX2DziUsGsUbNt//Q77L4WM5+OBnkY1cXwv8wEVYbiG846qauRF6wd79
+	l1hXdKnC4eQ5ronYVM1ccfND0Gpmj4mSaiEC0BqCn+UlHE1XdTJ77ggAhXIGrax24vO2ZieJFu1
+	2xAdJGHMfQhVE3JEDTa23PabrAis3OT6zfKFvDUTV8dCh3BljRuyAHO1UNnaGnmDptILyHFcBcU
+	kwYTfNfsYwTPiWr8uEhpkFHPiVZ2/zvMOTL6vh00SD1MizPRjbTDQJv712HRllu7Dw1mo9sUdEC
+	5uvxU30Zy1rGtLGA==
+X-Google-Smtp-Source: AGHT+IHfPN6V1Gb0/vnW2BNSqlXyl8GiEmiehj7J7xXiDDPdmxVdlwQ2TmXH/z4ECTJFaHlBm/ipbw==
+X-Received: by 2002:a17:907:7256:b0:b72:5983:db20 with SMTP id a640c23a62f3a-b725983dfdamr87995466b.32.1762253698012;
+        Tue, 04 Nov 2025 02:54:58 -0800 (PST)
+Received: from linux ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723d3a3d4asm180927566b.2.2025.11.04.02.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 02:54:57 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: [PATCH] tty: replace use of system_unbound_wq with system_dfl_wq
+Date: Tue,  4 Nov 2025 11:54:46 +0100
+Message-ID: <20251104105446.110884-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] nvmet-fc: use pr_* print macros instead of dev_*
-To: Daniel Wagner <wagi@kernel.org>, Justin Tee <justin.tee@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Cc: James Smart <james.smart@broadcom.com>, Jens Axboe <axboe@kernel.dk>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org>
- <20251028-nvmet-fcloop-fixes-v1-5-765427148613@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251028-nvmet-fcloop-fixes-v1-5-765427148613@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
 
-On 10/28/25 16:26, Daniel Wagner wrote:
-> Many of the nvmet-fc log messages cannot print the device used, because
-> it's not there yet:
-> 
->    (NULL device *): {0:0} Association deleted
-> 
-> Use the pr_* macros consistently throughout the module and match the
-> output of the nvme-fc module.
-> 
-> Using port:association ids are more useful when debugging what's going
-> on, because these match now with the log entries from nvme-fc.
-> ---
->   drivers/nvme/target/fc.c | 48 +++++++++++++++++++++---------------------------
->   1 file changed, 21 insertions(+), 27 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Cheers,
+This lack of consistentcy cannot be addressed without refactoring the API.
 
-Hannes
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+system_dfl_wq should be the default workqueue so as not to enforce
+locality constraints for random work whenever it's not required.
+
+The old system_unbound_wq will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 4 ++--
+ drivers/tty/tty_buffer.c          | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 710ae4d40aec..27af83f0ff46 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -361,7 +361,7 @@ static int dw8250_clk_notifier_cb(struct notifier_block *nb,
+ 	 * deferred event handling complication.
+ 	 */
+ 	if (event == POST_RATE_CHANGE) {
+-		queue_work(system_unbound_wq, &d->clk_work);
++		queue_work(system_dfl_wq, &d->clk_work);
+ 		return NOTIFY_OK;
+ 	}
+ 
+@@ -680,7 +680,7 @@ static int dw8250_probe(struct platform_device *pdev)
+ 		err = clk_notifier_register(data->clk, &data->clk_notifier);
+ 		if (err)
+ 			return dev_err_probe(dev, err, "Failed to set the clock notifier\n");
+-		queue_work(system_unbound_wq, &data->clk_work);
++		queue_work(system_dfl_wq, &data->clk_work);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, data);
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index 67271fc0b223..1a5673acd9b1 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -76,7 +76,7 @@ void tty_buffer_unlock_exclusive(struct tty_port *port)
+ 	mutex_unlock(&buf->lock);
+ 
+ 	if (restart)
+-		queue_work(system_unbound_wq, &buf->work);
++		queue_work(system_dfl_wq, &buf->work);
+ }
+ EXPORT_SYMBOL_GPL(tty_buffer_unlock_exclusive);
+ 
+@@ -530,7 +530,7 @@ void tty_flip_buffer_push(struct tty_port *port)
+ 	struct tty_bufhead *buf = &port->buf;
+ 
+ 	tty_flip_buffer_commit(buf->tail);
+-	queue_work(system_unbound_wq, &buf->work);
++	queue_work(system_dfl_wq, &buf->work);
+ }
+ EXPORT_SYMBOL(tty_flip_buffer_push);
+ 
+@@ -560,7 +560,7 @@ int tty_insert_flip_string_and_push_buffer(struct tty_port *port,
+ 		tty_flip_buffer_commit(buf->tail);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+-	queue_work(system_unbound_wq, &buf->work);
++	queue_work(system_dfl_wq, &buf->work);
+ 
+ 	return size;
+ }
+@@ -613,7 +613,7 @@ void tty_buffer_set_lock_subclass(struct tty_port *port)
+ 
+ bool tty_buffer_restart_work(struct tty_port *port)
+ {
+-	return queue_work(system_unbound_wq, &port->buf.work);
++	return queue_work(system_dfl_wq, &port->buf.work);
+ }
+ 
+ bool tty_buffer_cancel_work(struct tty_port *port)
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.51.1
+
 
