@@ -1,184 +1,169 @@
-Return-Path: <linux-kernel+bounces-883877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E9EC2EA5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:38:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83146C2EA69
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB17B3AA11B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26D7188B058
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1E11FDA61;
-	Tue,  4 Nov 2025 00:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97F41F4168;
+	Tue,  4 Nov 2025 00:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JV5dwkzd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6T8Bx66"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CE13AF2;
-	Tue,  4 Nov 2025 00:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BA328DB3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762216511; cv=none; b=pC2/dprnVLMjW/9lZkz+nM/eJv6TboSxf5ObL+LuXf6KxcUf1X3C3nBok0SvAv5O13B0NOzPcMqOslofVrnm/45p4iaA6AGw2fGK644v8F0BsTN/FUjc/4KgXZRktxflWPIKR15066Ab9YhfYv36/81N3daus+8fZnvs8QjtuXE=
+	t=1762216796; cv=none; b=G89Fgix+a9fJHEHikLYmA1ZpL0Ja/Uc2jnquW4qZFQ2a1ymsyLrQV5v9taux6TqbAabowHaQy++bsuRQJd4B+qyMz5yyCfeDrrZ/btGvwDGlovRVi6p3LVrS2mxjGJnhyRj/Nq6fdfWYGJSrgH9h+p4jL8/5Hq0tQLnhrssGYS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762216511; c=relaxed/simple;
-	bh=ecE3j/QuPReF1lQC13Cv31CK9ZwdPtU6taEd0JEVHu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbOmLkzFK4k0QHzTDeU2pdof8BDcj8acXIkD34DSB1Bt0NE9WEnb0lb4Rn0OV8fFZ6MDNL1OC/gzXj8JRxntjhAJUK04+O5V8VFBu5YoyVx13YB43I2p2YULIssi0gpM1UeOHfZzxkGX1O39cjSFumVYCxklgcZi6AXwE3+wNX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JV5dwkzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323FFC4CEFD;
-	Tue,  4 Nov 2025 00:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762216511;
-	bh=ecE3j/QuPReF1lQC13Cv31CK9ZwdPtU6taEd0JEVHu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JV5dwkzddOqporZhwxdMYNSID/Gi6ccACFjakENdiZ2bQEKh7UfO/mT5rPNVcuy28
-	 JdvIUztXQXlC2oLplOh9wZ8iYhZuKeS2zdywSlhW0cW7spJiyA4dp0c9AzP9dLuWSY
-	 cElGkBbMbQGYtG1u1ybmxLOcGrO7btsJmPQUrtMba/sjvEfYCatACXlolkko1uayHz
-	 8oXMw8DTKKe/2dgrS+y8tmZpsbNbdJ58aMm24vqzi/DTWKId6RedqPQq/RS8op+7As
-	 EKGuZKYBjqz8vD+geT4eVbDbMe4OAY0nkSTDbku5VIAVjIModpHOJlqC2ECvgiNsmX
-	 aTtJHE9itvaZg==
-Date: Mon, 3 Nov 2025 18:38:42 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 1/2] soc: qcom: smem: Register gunyah watchdog device
-Message-ID: <bzyh2jfmga4zk2x3sb3bhex5d25hnhcdti3gneso4nys36k5as@nnkzk6ersyqi>
-References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
- <20251031-gunyah_watchdog-v4-1-7abb1ee11315@oss.qualcomm.com>
- <9421ff80-bd86-4b29-baca-c86da90c91aa@roeck-us.net>
- <wxdglhtsss4it6gfm3d7nngi6aezcvpcs44oa5mlmdwe34d5o2@qlkri6oknnpe>
- <931eaa75-52f8-4790-9103-02e97b820c7f@oss.qualcomm.com>
+	s=arc-20240116; t=1762216796; c=relaxed/simple;
+	bh=iW93nzX0z9zZaTNYKnzw3iwZ7cMIZimkgtTMI3k4PDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JvDOc6EyWdDjZnoLmtuGywCYKkCjNplV6IRe+oabVSiORTrqxcOHDfxtbgGNY0MtEtqHJDb6t/3+GT2aiXWPsE1+5ozdJsG9AAtmt52vkkcC5yk6LEzfd1z6+hjrRbqXJ7UdCR0pb3lZI4tev5/tTUzlFnIn/xwyzoUFWHe87O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6T8Bx66; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so5030251b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 16:39:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762216794; x=1762821594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iam28yxbxtTcQIZpnqIWn4zgf5SETAhbeipE7iPuLHg=;
+        b=B6T8Bx66YAf7UEFd4y1SLti4GZEEgNMtaB+qQ14iayZoXimw+/s1/tPicRSCrzC/KH
+         tVpWQgYTZ9xy1v8BdePglAxrOFl0ey1TdQBCNnXvkqw6JkaVYuJGCIbxARvYVUeQn2cc
+         +Y9bQVkhefKVGslc/xLFgBOMbKjLxcbBN0Kdpvv2eA2jEG47eRGpjZRkynWz75GMZPCi
+         4d+//s3c8o/WhggT91M5FmHCFe4y6BRNbdfyVTp67BtWRyiLK/3y8ibPuVl1qCaRsgSB
+         zmA8INzIBGQR2N8Pj9dH5H5RxcF49nrLLh2PRJSJ/Lcz2WLeggJ+j75DTlMIyOmHDzt8
+         yPww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762216794; x=1762821594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iam28yxbxtTcQIZpnqIWn4zgf5SETAhbeipE7iPuLHg=;
+        b=YLnTpLCdKxVDT5aZCGU415EkZq4LGI8D7aFcqfhcJaCpY8QKI1E6tNB9vX7KmPkECS
+         nq8WRD++azOhQDhY4EE4rwbVPfLoNVvuA8i2RT2J1FYEgRIAQjk7WNvjfV0JGMJupiyI
+         qOhl5s12IiSasIIxndOPVEvSJWE7bq08VP8Rzl4zrY4JslArxpL7gXxJIWsUt6V7vJS/
+         ZEK9ZBZFpXSM3xClF4bw7KlviSNPdIPIyk9hLssg3Oa8xEo8NrbD+wIuEm/By8ubzXHl
+         ea1XosydLUEqX6OchU55alca5cN+Wm+3YvExJgGyytdC8hxD97oHqiIv9wN0Z88zTHqg
+         rdcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo9Xs6SfQeHcswj3j4RegHtsMdv/2CSQV33s1xmBebI8RO7pej7f8TN4/VOCMv/0W7GfO7Ilq3iRfxKdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziRHgUJE7zOeuV+8YyZ3RrQqLLT3IN8HdbxMmm3om+Hqz4oYzf
+	8zzeNSxfickfY3LrKDj5053vWGi7WsgT7t4yU12xDvP3GyeanzSCMQla
+X-Gm-Gg: ASbGnctvpo4gWUvE3ZhBtnsIDwjgLj46l0UWDmfZhgXz4nnRkipQ8PHF/DU7ap8nKqm
+	4Yn//HcQeCqqhYEgO/wZwoleMAP2XSAOkJwKG8l9p0pzdKPtTZd/1VLcCCXY3Ugvr4aC4fjdNT8
+	Y/X4qKSSC7u2a8KWTVe2SZ/EiovsAxw5bVjUobAid8K3i3NF7Pkyjn3Gf9XOmzzh0JiPALhdEyU
+	twb5/zhR3Y6EOOzdhazLqS1vuD7zpU28pJnSXgPXVLOQ+QmkohfsQLWWBt7KJZeKOCCx9MK8r+v
+	aLSzh0C6umuEizg2NCjZ3S23qgXM7JuBqH9RiIksVwg2cyB1vlMvZnLMqNPnKEE7Bx++yXNmup+
+	6ITjjoH/4ApLcT/rwVdpZVx7wHcXvOt3oFVjjm5JHDwakxipr9cDCSerDEIk6bo7EzL/TIfxf7Y
+	4A8feLvTDM0JlWmBsF7ts1wH9jaw==
+X-Google-Smtp-Source: AGHT+IFJbftbMdXgKxfl5nxnplvx3Z6+G0scrRMZ2oVSB3QoWsoHMMWseKqIUdRWNIb6rfsyQvsVRA==
+X-Received: by 2002:a05:6a21:6d8d:b0:2cb:519b:33fe with SMTP id adf61e73a8af0-34e2a1a60bemr1475870637.21.1762216793733;
+        Mon, 03 Nov 2025 16:39:53 -0800 (PST)
+Received: from localhost.localdomain ([240f:34:212d:1:30f4:78b7:7acf:47d9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd634081dsm666661b3a.58.2025.11.03.16.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 16:39:52 -0800 (PST)
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: akinobu.mita@gmail.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org
+Subject: [PATCH] memblock: fix memblock_estimated_nr_free_pages() for soft-reserved memory
+Date: Tue,  4 Nov 2025 09:39:21 +0900
+Message-ID: <20251104003921.9707-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <931eaa75-52f8-4790-9103-02e97b820c7f@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 03:23:27PM +0530, Hrishabh Rajput wrote:
-> 
-> On 11/2/2025 12:20 AM, Bjorn Andersson wrote:
-> > On Fri, Oct 31, 2025 at 08:24:44AM -0700, Guenter Roeck wrote:
-> > > On 10/31/25 03:18, Hrishabh Rajput via B4 Relay wrote:
-> > > > From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-> > > > 
-> > > > To restrict gunyah watchdog initialization to Qualcomm platforms,
-> > > > register the watchdog device in the SMEM driver.
-> > > > 
-> > > > When Gunyah is not present or Gunyah emulates MMIO-based
-> > > > watchdog, we expect Qualcomm watchdog or ARM SBSA watchdog device to be
-> > > > present in the devicetree. If none of these device nodes are detected,
-> > > > we register the SMC-based Gunyah watchdog device.
-> > > > 
-> > > There should also be an explanation why there is no "qcom,gunyah-wdt"
-> > > devicetree node, both here and in the file.
-> > > 
-> > > > Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-> > > > ---
-> > > >    drivers/soc/qcom/smem.c | 37 +++++++++++++++++++++++++++++++++++++
-> > > >    1 file changed, 37 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> > > > index cf425930539e..40e4749fab02 100644
-> > > > --- a/drivers/soc/qcom/smem.c
-> > > > +++ b/drivers/soc/qcom/smem.c
-> > > > @@ -1118,6 +1118,34 @@ static int qcom_smem_resolve_mem(struct qcom_smem *smem, const char *name,
-> > > >    	return 0;
-> > > >    }
-> > > > +static int register_gunyah_wdt_device(void)
-> > > > +{
-> > > > +	struct platform_device *gunyah_wdt_dev;
-> > > > +	struct device_node *np;
-> > > > +
-> > > > +	/*
-> > > > +	 * When Gunyah is not present or Gunyah is emulating a memory-mapped
-> > > > +	 * watchdog, either of Qualcomm watchdog or ARM SBSA watchdog will be
-> > > > +	 * present. Skip initialization of SMC-based Gunyah watchdog if that is
-> > > > +	 * the case.
-> > > > +	 */
-> > > > +	np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
-> > > > +	if (np) {
-> > > > +		of_node_put(np);
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
-> > > > +	if (np) {
-> > > > +		of_node_put(np);
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	gunyah_wdt_dev = platform_device_register_simple("gunyah-wdt", -1,
-> > > > +							 NULL, 0);
-> > > > +	return PTR_ERR_OR_ZERO(gunyah_wdt_dev);
-> > > > +}
-> > > > +
-> > > >    static int qcom_smem_probe(struct platform_device *pdev)
-> > > >    {
-> > > >    	struct smem_header *header;
-> > > > @@ -1236,11 +1264,20 @@ static int qcom_smem_probe(struct platform_device *pdev)
-> > > >    	if (IS_ERR(smem->socinfo))
-> > > >    		dev_dbg(&pdev->dev, "failed to register socinfo device\n");
-> > > > +	ret = register_gunyah_wdt_device();
-> > > > +	if (ret)
-> > > > +		dev_dbg(&pdev->dev, "failed to register watchdog device\n");
-> > > > +
-> > > >    	return 0;
-> > > >    }
-> > > >    static void qcom_smem_remove(struct platform_device *pdev)
-> > > >    {
-> > > > +	/*
-> > > > +	 * Gunyah watchdog is intended to be a persistent module. Hence, the
-> > > > +	 * watchdog device is not unregistered.
-> > > > +	 */
-> > > > +
-> > > Odd explanation.
-> > > I would assume that the smem device is supposed to be
-> > > persistent as well.
-> > Yes, but it's perfectly possible to run a modern Qualcomm device without
-> > SMEM, with a fair amount of functionality. So, the reevaluation of this
-> > decision is grinding in the back of my mind...
-> 
-> One option can be the SCM driver which was suggested by Neil in v3 [1].
-> 
-> Let us know if you have any suggestions where we can register the watchdog
-> device?
-> 
+memblock_estimated_nr_free_pages() returns the difference between the total
+size of the "memory" memblock type and the "reserved" memblock type.
 
-I think it makes more sense to tie it to the SCM driver, it's after all
-related to the HVC-interface, which SMEM isn't.
+The "soft-reserved" memory regions are added to the "reserved" memblock
+type, but not to the "memory" memblock type. Therefore,
+memblock_estimated_nr_free_pages() may return a smaller value than
+expected, or if it underflows, an extremely large value.
 
-But I don't think that answers our question of how do you determine if
-Gunyah is there or not. Because qcom,scm-sc7280 is regardless of Linux
-running under Gunyah, KVM, or directly in EL2.
+/proc/sys/kernel/threads-max is determined by the value of
+memblock_estimated_nr_free_pages().  This issue was discovered on machines
+with CXL memory because kernel.threads-max was either smaller than expected
+or extremely large for the installed DRAM size.
 
+This fixes the issue by improving the accuracy of
+memblock_estimated_nr_free_pages() by subtracting only the overlapping size
+of regions with "memory" and "reserved" memblock types.
 
-I can't help feeling that this is a property of the hardware/firmware
-interface that the OS finds itself in, which should be expressed in
-DeviceTree - unless there's a bulletproof "Gunyah, are you there?"
-check.
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+---
+ mm/memblock.c | 33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/mm/memblock.c b/mm/memblock.c
+index e23e16618e9b..af014fa10a44 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1812,6 +1812,22 @@ phys_addr_t __init_memblock memblock_reserved_kern_size(phys_addr_t limit, int n
+ 	return total;
+ }
+ 
++static phys_addr_t __init memblock_addrs_overlap_size(phys_addr_t base1, phys_addr_t size1,
++		phys_addr_t base2, phys_addr_t size2)
++{
++	phys_addr_t start, end;
++
++	if (!memblock_addrs_overlap(base1, size1, base2, size2))
++		return 0;
++
++	memblock_cap_size(base1, &size1);
++	memblock_cap_size(base2, &size2);
++	start = max(base1, base2);
++	end = min(base1 + size1, base2 + size2);
++
++	return end - start;
++}
++
+ /**
+  * memblock_estimated_nr_free_pages - return estimated number of free pages
+  * from memblock point of view
+@@ -1826,7 +1842,22 @@ phys_addr_t __init_memblock memblock_reserved_kern_size(phys_addr_t limit, int n
+  */
+ unsigned long __init memblock_estimated_nr_free_pages(void)
+ {
+-	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
++	int memory_idx, reserved_idx;
++	struct memblock_type *memory_type = &memblock.memory;
++	struct memblock_type *reserved_type = &memblock.reserved;
++	struct memblock_region *memory_region, *reserved_region;
++	phys_addr_t phys_mem_size = 0;
++
++	for_each_memblock_type(memory_idx, memory_type, memory_region) {
++		phys_mem_size += memory_region->size;
++		for_each_memblock_type(reserved_idx, reserved_type, reserved_region) {
++			phys_mem_size -= memblock_addrs_overlap_size(memory_region->base,
++					memory_region->size, reserved_region->base,
++					reserved_region->size);
++		}
++	}
++
++	return PHYS_PFN(phys_mem_size);
+ }
+ 
+ /* lowest address */
+-- 
+2.43.0
 
-
-> [1]:
-> https://lore.kernel.org/lkml/321f5289-64c0-48f1-91b5-c45e82396ca9@linaro.org/
-> 
-> Thanks,
-> 
-> Hrishabh
-> 
 
