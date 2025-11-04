@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-884397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B78C301B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:59:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0CFC301CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B0164FBE19
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:52:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38E754FC2BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99F2303C83;
-	Tue,  4 Nov 2025 08:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90B63128AA;
+	Tue,  4 Nov 2025 08:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FMOYF+0M"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C5LqQKv8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63BFA41;
-	Tue,  4 Nov 2025 08:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1A02BE053;
+	Tue,  4 Nov 2025 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246301; cv=none; b=NV3H2q85IOF4e05ca54YDlT8WTVjiXfbATUMrzifCm/vaHG559wBzF9W/AHQbElgXeEVUzncuYPEA1OgdD9X294xYBznj5AKSb9Y40Q6tIl9p10WaKuGWJ51b8/DYrJkX2avWTYhem+wKBhgUGfYNkgcDIcNwvLxdGNwv+BmAxY=
+	t=1762246302; cv=none; b=ar26M9manZZruFT7CjkRWvxmKrnQS2cI8kW0xiY7ZM2JRzoCdlmOYtUpxb0+ZGFv8Yu2TfxkGh5hmI6y32hS1qds5YmI2sGXk/87V5MyepyICSJSSr4RAk24rWueBFdhtNhvQbFTUCnoa7B+We9q0IJb2R+LtO6eNXdRUJNB13g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246301; c=relaxed/simple;
-	bh=gOuIyGLZ0rbsf6nsYKEXLYFRABxPkLduPu93VheiC5Q=;
+	s=arc-20240116; t=1762246302; c=relaxed/simple;
+	bh=XBHmA7qlPLX+kFD8ABJYT1oT3ouZH9Ry6KTyDXUW7qQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Er8tnWHF8NYRqrtC0VUBc6it2NieGzed4Yhmd4/ISzhH7XO7vS/MfySKO4Dy32jnACzCE2PlznPtTONX8q1IRjzfqlrfYQZ3ya5jXbf8AYfk7cXzMYcAn7rm+v+3p9mlJol7QXpwQma8lGOx1uQAECJEdmw5Cj9yNxvDxXelMDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FMOYF+0M; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=XzMSQQFxESrOy9ZW3WoYld76G+79YGo4DhcT5EFpgSl3kE4sjgvZg60nWf0GXtOrYYIgoJ1t1zDnUbmyPqsdbFPWKzYI57G1qOxhNdFjgBoTyNBv4U/+2sPWOTrqXPN56l3C2ACI+tl4Qf3LX7DFBj/0Kq1fKIqz/n2blYBaUjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C5LqQKv8; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A48gXTa1527981;
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A48gaET1458842;
 	Tue, 4 Nov 2025 08:51:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=Oq7jhL9Dsoo
-	0hdUeRXSucX/YZ/8jt6Z0ez9C2jRwySw=; b=FMOYF+0MpVKuVZi4kNvGvLUK5tT
-	xMhbxjtHkyn1KMHpRO2vL3Mqlrfp3OqQa9IabEs5GA+uMQsuhQveFTFSRZSjPSEB
-	jkTMZ/EjW5eMbAtkEswak4rEenZHdg8hMi+ffs4ZZBVC2HBg2kRBTyDlaCWkVlzU
-	IuKJl8Uac72XEpAEKzLVcLEVme2LEBIPBZelxHhw1MJ488NSWWm68vuN3rwlA5E3
-	H9nxk4cFAAclFqU8D9VSgwxi0FqYzdiX0WwG3b1kvxP6o16sTDaqfsTlVyLDHc+s
-	LeoWnhEbDFmenzlLkCm5rBtDY9AoX1V3SHCwJXACvl0kN7nHh57a6Cnjc/w==
+	:mime-version:references:subject:to; s=qcppdkim1; bh=ftPxWf+ghFV
+	agk4AQyFCHqg3xEedQaBO5njDkQhWAAA=; b=C5LqQKv8sUKnMWGknpkqL2GE8jZ
+	E1Ow/YxFAKeQ4qaoAib+vkXG1xyDcbqxUq38hkTVM4Vf15Fl/DCitnfcgEGyoK3q
+	JJk1UM/4vd7fUtC1y8OgI3LKF6Ba+gaQuwI7zRAvlsBFxufIJpKLU02rifXdWaOv
+	LaKSZcfWTep9xyLrVi/QXNGtbu095eaLQTIDfr39IaC7fkwAKXYqSQMuaeac5MoF
+	q5KgjOjYDCmlxVSpdnQNfJulyPYThRBkT/saYapGuSpbMu178hxXti6CuziniZnB
+	5ihskJ8W7H4rh2Z7CF0UGHJy1ulVxrVCz8XQT9bdZK066WQh+AZ5bosUlbA==
 Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70kcaawb-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70gea9h1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 08:51:30 +0000 (GMT)
+	Tue, 04 Nov 2025 08:51:31 +0000 (GMT)
 Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A48pRYQ016331;
-	Tue, 4 Nov 2025 08:51:28 GMT
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A48pRhu016345;
+	Tue, 4 Nov 2025 08:51:27 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9m5515-1
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9m5517-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 08:51:28 +0000
+	Tue, 04 Nov 2025 08:51:27 +0000
 Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A48pQqe016287;
-	Tue, 4 Nov 2025 08:51:26 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A48pQUb016290;
+	Tue, 4 Nov 2025 08:51:27 GMT
 Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-charante-hyd.qualcomm.com [10.213.97.134])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A48pQGK016281
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A48pQsO016277
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 04 Nov 2025 08:51:26 +0000
 Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 389980)
-	id E95125DC; Tue,  4 Nov 2025 14:21:25 +0530 (+0530)
+	id ED8C75EF; Tue,  4 Nov 2025 14:21:25 +0530 (+0530)
 From: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
 To: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, robh@kernel.org,
         dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
@@ -71,9 +71,9 @@ To: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, robh@kernel.org,
 Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Subject: [PATCH 2/6] of: introduce wrapper function to query the cell count
-Date: Tue,  4 Nov 2025 14:21:01 +0530
-Message-Id: <47bdcf06aacc1fec791577ffd4a4a94034a4d3ed.1762235099.git.charan.kalla@oss.qualcomm.com>
+Subject: [PATCH 3/6] of: parse #<name>-cells property to get the cell count
+Date: Tue,  4 Nov 2025 14:21:02 +0530
+Message-Id: <d2caaf822fde3565e4e67158da751fc97afbaa92.1762235099.git.charan.kalla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
 References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
@@ -88,100 +88,94 @@ X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA3MSBTYWx0ZWRfX+1vBt2H+M/UU
- ID9AzEO28/YPq9PKXJPhWtDkt+oXwGERlbBi4EMTlJ4Ym2kE/eAvfHuG2G7mKiQM0AYkgFbM7qC
- 3YH2acO3350kp/3CpFRuPLR75gdNtjM+k1RAGOaF2CgsPJRgaBG84nZfIQS8l8Ak/YKlxhy+QHZ
- tSZUfaoIYVpa0RKDFVqjVWwg1LwqWt+c1h0mBzGqyDGL3YTH1/ahjkZtfeNRK61gkMYSMqtoQo6
- M+hEgv3Luj7sXr3jWVdxeEJTByARUJ/1NIVrL5TRpOvrFfuLM3TNoI7/A1lT3RM1Qya5YOieu7s
- Q7X820p9LsdZQlPfD8knFW66VJUV+9iIQx1z6mp40znUrBuPuKRTf1wxwItuw233Ik8N0Azwrqb
- AvVcjb+icCEKwUDG4cp/GMo9X1Kaag==
-X-Proofpoint-GUID: DNCsy5Ha3fOIxbIBPK7z2uGPo4mgHSqK
-X-Proofpoint-ORIG-GUID: DNCsy5Ha3fOIxbIBPK7z2uGPo4mgHSqK
-X-Authority-Analysis: v=2.4 cv=TIJIilla c=1 sm=1 tr=0 ts=6909be93 cx=c_pps
+X-Proofpoint-ORIG-GUID: aA3qhFG3oaAnLl2LhReDdYC0MDIdUDDN
+X-Authority-Analysis: v=2.4 cv=bqBBxUai c=1 sm=1 tr=0 ts=6909be93 cx=c_pps
  a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=mpKIZ7k51TbimRKpb2YA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=GmOhC2pl64uPHZqriGYA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA3MSBTYWx0ZWRfX0SiQ7Pyo1Xhf
+ +JXzqwU0HXG/yTBJpCLkNoYH3EwBJyUDlsD7KzTDBxMc3WuK+TjOWOvZDO6JCCoJ1Dx0tw/Y4X7
+ +TJM3hkQAGrY5Z09N7LgKcmqxpcj1713JNmgpFEpAScGa3fIMKlSIZKes/Up6x/dHdkXJgLkOWi
+ Osn8Qh41SYF1HJr6RXij8YXXoU1k9R6qRkkgQ5xRWY67ffNf8AR2KPMyd+oxA9WfC2Ddc6zfXGJ
+ +FPAXYQ0gbUCgMf29MpmayK6ezQi+fyEf2B56qApzXAxriMrjixtSjjaWRjylB+Y3EAcUbRAYiQ
+ cvZBQYA4WdMjy8EWQ8n7dBqxUcc6T6PX8uwiewkgdZSt4XOQ4iPwU0UsbSLdK8vj3klLhi5Htcl
+ Hm+JuTQt/WXEy0Ywp0d2jDJoAmY3SQ==
+X-Proofpoint-GUID: aA3qhFG3oaAnLl2LhReDdYC0MDIdUDDN
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ suspectscore=0 phishscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
  definitions=main-2511040071
 
-Introduce the wrapper function, of_map_id_cell_count(), to query the
-actual cell count that need to be considered by the of_map_id() when
-used for translating the <property>-map entries. Accordingly make sure
-of_map_id_or_funcid() operates on this returned cell count.
+Implement the generic function, of_map_id_cell_count(), that can
+parse and return the number of cells represented by #<name>-cells,
+eg: #msi-cells, #iommu-cells.
 
-This wrapper function returns cell count as 1 thus no functional
-changes.
+Since the second argument of a property that is parsed by the
+of_map_id() is always phandle, that represents a controller, probe
+it to get the #<name>-cells property.
 
-The subsequent patches improve the logic in wrapper function to detect
-the proper cell count.
+Further patches properly consume cell count value returned by this
+wrapper and this patch just returns 1 irrespective of cells value, thus
+no functional changes.
 
 Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
 ---
- drivers/of/base.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/of/base.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 diff --git a/drivers/of/base.c b/drivers/of/base.c
-index ac6b726cd5e3..5e76abcc7940 100644
+index 5e76abcc7940..e5ba8a318769 100644
 --- a/drivers/of/base.c
 +++ b/drivers/of/base.c
-@@ -2045,6 +2045,12 @@ int of_find_last_cache_level(unsigned int cpu)
+@@ -2045,9 +2045,43 @@ int of_find_last_cache_level(unsigned int cpu)
  	return cache_level;
  }
  
-+static int of_map_id_cell_count(const __be32 *map, const char *map_name,
-+				int map_len)
-+{
-+	return 1;
-+}
-+
- /*
-  * Look at the documentation of of_map_id.
-  */
-@@ -2053,6 +2059,7 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
- 		struct device_node **target, u32 *id_out)
++/**
++ * of_map_id_cell_count - parse the cell count.
++ *
++ * @map: pointer to the property data that needs to be translated, eg: msi-map/iommu-map.
++ * @map_name: name to identify the details of @map.
++ * @map_len: length of @map in bytes.
++ *
++ * Return: number of cells that the caller should be considered while parsing
++ * the @map. It is > 0 for success, 0 for failure.
++ */
+ static int of_map_id_cell_count(const __be32 *map, const char *map_name,
+ 				int map_len)
  {
- 	u32 map_mask, masked_id;
-+	u32 cell_count, total_cells;
- 	int map_len;
- 	const __be32 *map = NULL;
- 
-@@ -2068,7 +2075,13 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
- 		return 0;
- 	}
- 
--	if (!map_len || map_len % (4 * sizeof(*map))) {
-+	cell_count = of_map_id_cell_count(map, map_name, map_len);
-+	if (!cell_count)
-+		return -EINVAL;
++	const char *cells_prop_name __free(kfree) = NULL;
++	struct device_node *node __free(device_node) = NULL;
++	u32 cells;
++	int ret;
 +
-+	total_cells = 2 + cell_count + 1;
++	/* map + 1 is a controller. */
++	node = of_find_node_by_phandle(be32_to_cpup(map + 1));
++	if (!node) {
++		pr_err("Failed to find controller node from phandle\n");
++		return 0;
++	}
 +
-+	if (!map_len || map_len % (total_cells * sizeof(*map))) {
- 		pr_err("%pOF: Error: Bad %s length: %d\n", np,
- 			map_name, map_len);
- 		return -EINVAL;
-@@ -2085,12 +2098,12 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
- 		of_property_read_u32(np, map_mask_name, &map_mask);
++	/* get #<name>-cells property from #<name>-map */
++	cells_prop_name = kasprintf(GFP_KERNEL, "#%.*scells",
++			(int)strlen(map_name) - 3, map_name);
++	if (!cells_prop_name)
++		return 0;
++
++	ret = of_property_read_u32(node, cells_prop_name, &cells);
++	if (ret) {
++		pr_err("%pOF: Failed to read %s property\n", node, cells_prop_name);
++		return 0;
++	}
++
+ 	return 1;
+ }
  
- 	masked_id = map_mask & id;
--	for ( ; map_len > 0; map_len -= 4 * sizeof(*map), map += 4) {
-+	for ( ; map_len > 0; map_len -= total_cells * sizeof(*map), map += total_cells) {
- 		struct device_node *phandle_node;
- 		u32 id_base = be32_to_cpup(map + 0);
- 		u32 phandle = be32_to_cpup(map + 1);
- 		u32 out_base = be32_to_cpup(map + 2);
--		u32 id_len = be32_to_cpup(map + 3);
-+		u32 id_len = be32_to_cpup(map + total_cells - 1);
- 
- 		if (id_base & ~map_mask) {
- 			pr_err("%pOF: Invalid %s translation - %s-mask (0x%x) ignores id-base (0x%x)\n",
 -- 
 2.34.1
 
