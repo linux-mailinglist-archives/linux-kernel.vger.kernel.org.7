@@ -1,209 +1,107 @@
-Return-Path: <linux-kernel+bounces-884331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5D5C2FEC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:35:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AFEC2FDFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BC5188B3B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:29:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FF8034426B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A939313267;
-	Tue,  4 Nov 2025 08:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B2F312829;
+	Tue,  4 Nov 2025 08:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UI27BKKo"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IKZmuY5x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eex7FxTa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974783115A6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BD62BEC4A;
+	Tue,  4 Nov 2025 08:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762244893; cv=none; b=IcV/sRTI4gzXE0DcRlbP6ddmc6G3QQov8KSpt+/vo06EtDYBJV2laXzzg0YBjKV813eqobX9WjU+QOcgRglP9+zLUqJBudLktMHtJdL6v1rzkdVdjvoSe76ekjJUygI4M39omDTTN+7Pi4r42kiLfgumPmHHradrRACNlUTIHtc=
+	t=1762244920; cv=none; b=s1eq0tsTm+ydQSrnUAZS/7lW5KsVGb2gpWETb17JG3EkBo4MHxX6VzvnMUcY4DH/7JhZgnKtwMQuvsKCr43wjyAWObGDPl3HJsX677PdpPHHbl8EfPMYB/jqF+NoIXUGqYpdxGuqsMVeRotD768UwI12t/XwQsu+awYB/DHPDMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762244893; c=relaxed/simple;
-	bh=LqIk0BpxBLI5IJn6XweWFJYr1RRUDL4M/FAHdXfNl+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ynbzf5pwcxQO0OnRoSgbC2ZEkuAuTIEciugEUrHVuzepOg2Hk0uDpJQSi/NS9m9MrwFaAfv4kQvZlU+9IjUecwh+UXUU82vat2uNtQ/+zrUT8fJGeKczQ4LD4SraKJGzPcoa4cOkIyTHkEziGq7Bxq0BCbrfrPXMS1Tgpm4cDFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UI27BKKo; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-34182b1c64bso164682a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762244891; x=1762849691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFICcE+Vtbf0TwZWSrWoxdS8zOuWh2Ntsa14GnmIyDk=;
-        b=UI27BKKoSEV1WJsjVDILbG6caTpFTU2mXKtb++LnEQo17B55L4apOche09aW38MhfR
-         7RYjAUSICeIQ7nH/7ZULt6uHNfgnf9+APlqAr0cKchyRb1aWpk4+r1YSM3kUNXjYCgab
-         aOFVLCsciYWuo8U5Pt/djQlJ1igvP2UXP5TiD47HtvStMoYFWfE6+8UTYInIm8rfqJ2y
-         PFBf6ikwJ3Sx0vtCPAzmYXRoXt+c3Hhk7G4Lw+NuUiOQmZnbOOKkyibMtRR7Ahib52ta
-         XMu/YXRioCx26W3Rr+25ixo6yosaA9m2zNARFzoQYijcbY1NmyDht5roIEdA9WWmtKIE
-         zdMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762244891; x=1762849691;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qFICcE+Vtbf0TwZWSrWoxdS8zOuWh2Ntsa14GnmIyDk=;
-        b=AscPxCCf7O4uLwHLNAXadItdOmfpm5+HHuJ+uOC8lccRj1vreba2PqayPrkGUk4ssj
-         Sl7tA2LgmLapdg5aDiXQ+y0eq2RYUa7Q2AwVMUTmodln9aumPPbBCKafDLvtjvVp0fWi
-         61HcK9fUz+gOJIrDyLu4yy7oFFI/BuEeCXiNnVp+G8tzPTsd68tKlCt7PKbzyaVCtOsV
-         2CP/YgsezSkzj7bK5X22vne0ltdABLlYn7SUwRM6sFhtpQA7zvDQLSfM0KwY62HdVAzu
-         xPSpTBWzwFxOR5y3Wmv9gvHOCkUyKVXl2s8tT9vrKDHuoYOeKW/Cnl2L7fBcfUABasy8
-         Y/Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN7s6wNWdGK92XCbnVM58OYp0tCm0lTOtKahksNxnJORKM1D5M6qOiP3e07zjqDLr7SpDnCbqlMU5IBB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSSM/T4CmhjcjFDZPAE5X5U2img+r/jSYSfgHcxNMtX9NgrgKv
-	x5xTgDDMwmkryQNq1aaB59svFg+W6x2jSjp8RPxLdSzwxrpYdkzEh92KTwe8hDj5
-X-Gm-Gg: ASbGncuNfWu/G0yj3GoDbmoMU+SaUB6efo7nRhFKy6d4kwJ6FOATU4iWvOtL6ieMaW5
-	NbqVj2oTsaxiwCYn+nxm1d1jhYPY19gC3ArDKmAY51H4ixP6Kb4BW0S25Z2sRXUkteLNVPKbiiM
-	Y7VNVs5k5qOsWVA/R5DSHj4213H8rh0YIhSzpFZGecj/rv/CCmqUnWOdyEeYOkFNIChn9YulBVT
-	H787Fl8gfTZFm37pzYtJt4M4dC5PH2grQF7PHajS+JeaDEy6j5rBh8M0jU3nK3jOWDW9f1cT5iD
-	On/oB6YXD5sY3GBeD+4eiVzb6JI997R81d8TdxF5xbJ+nE7qzew1qBkJikNRud8/Qj4R/W9ba6k
-	XZ31b5qxkV6l+uEuVck2r+vLk3YOhEhS+c+qeI5TxnRyOrAW0HtYW9C8pUkw3DxhOn0aZ
-X-Google-Smtp-Source: AGHT+IGVUulaM8PgxdpqWXbaXLvoTSxC4FBTiFBtCJmYm4R/u5Kqq0KGBrKf+VchkH7vBPb6AjB/0w==
-X-Received: by 2002:a17:90b:1a8b:b0:339:cece:a99 with SMTP id 98e67ed59e1d1-34082fc2ca5mr19922869a91.13.1762244890765;
-        Tue, 04 Nov 2025 00:28:10 -0800 (PST)
-Received: from lgs.. ([172.81.120.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c8b78f8sm3661514a91.20.2025.11.04.00.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 00:28:10 -0800 (PST)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-	Florian Westphal <fw@strlen.de>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] e1000: fix OOB in e1000_tbi_should_accept()
-Date: Tue,  4 Nov 2025 16:28:01 +0800
-Message-ID: <20251104082801.994195-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762244920; c=relaxed/simple;
+	bh=KRgnztshsryrhUg3jdsgqyFuCbUMtBMYBmlbKr9IW+U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Dvj41mggBg0mB5aNLEGcuyAha2XApoZLq6li4ot+CmC3usLBkq7K64g1GWKt9T9SyLWxykan/0Qh89plB0+cvE93ZlHi2yNwcETSxYv4tknWgXNWpLs35/7GblN+Z5NUBMUMD2uT03OfX4nb1H6kVmRTr4ybujRw26/MuJdOSEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IKZmuY5x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eex7FxTa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762244917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KRgnztshsryrhUg3jdsgqyFuCbUMtBMYBmlbKr9IW+U=;
+	b=IKZmuY5xEME0fUnU+ODBigfDbR+GDPF0wsKdSVh7NOi0bmWHRzMOE1+0gnFtaFQt7K91Rz
+	E04TcsoIRqznH5cFa9OSmu3xy29RxdOC55tX2z1bSHMqtM8qHadmIWKAkhDtXbvuIe1tBU
+	K4RbiKQjDYBb5Mw1NaCvQvWD2I7w8GsEe7XlKItzPPXsGtmTI48td9ACPTPdw1uBXMzREk
+	W278jp0r3Zw0t+VfuaxbbPP9dZ/WDVrmrV4vRW1F9Q5u6Ck78mImmH2yLPBnhiQTQSLExJ
+	ZeAvo11+JhYTJmBZHxgLXPglB25/mYc5dGndQrXI9Z3aU0oELQnh5TRyqrRh6w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762244917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KRgnztshsryrhUg3jdsgqyFuCbUMtBMYBmlbKr9IW+U=;
+	b=eex7FxTaHfR53OT+DalJPlNTNLYO8jGKZD67BZ8V9MMyZJtH0QV8Sb1L7hk0hnTx2mgWoJ
+	rTfNJ2OPUF/kHqCA==
+To: Sherry Sun <sherry.sun@nxp.com>, "esben@geanix.com" <esben@geanix.com>,
+ "pmladek@suse.com" <pmladek@suse.com>, "senozhatsky@chromium.org"
+ <senozhatsky@chromium.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ "ryotkkr98@gmail.com" <ryotkkr98@gmail.com>, "kkartik@nvidia.com"
+ <kkartik@nvidia.com>, "fj6611ie@aa.jp.fujitsu.com"
+ <fj6611ie@aa.jp.fujitsu.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial
+ <linux-serial@vger.kernel.org>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [BUG] Suspend failure with nbcon + pm_debug_messages (Linux
+ 6.18-rc4)
+In-Reply-To: <DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+References: <DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Date: Tue, 04 Nov 2025 09:34:36 +0106
+Message-ID: <87tszamcaz.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-In e1000_tbi_should_accept() we read the last byte of the frame via
-'data[length - 1]' to evaluate the TBI workaround. If the descriptor-
-reported length is zero or larger than the actual RX buffer size, this
-read goes out of bounds and can hit unrelated slab objects. The issue
-is observed from the NAPI receive path (e1000_clean_rx_irq):
+Hi Sherry,
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in e1000_tbi_should_accept+0x610/0x790
-Read of size 1 at addr ffff888014114e54 by task sshd/363
+On 2025-11-04, Sherry Sun <sherry.sun@nxp.com> wrote:
+> Since the latest i.MX UART switch to nbcon console with commit
+> 70acca67bdd3 ("serial: imx: Switch to nbcon console"), I'm
+> encountering a suspend issue on an i.MX8MP EVK board while testing
+> with Linux 6.18-rc4.
+>
+> The system fails to suspend when both nbcon is enabled and
+> `pm_debug_messages` is turned on. When `pm_debug_messages` is
+> disabled, suspend works normally. Additionally, if I revert the patch
+> that adds nbcon support for the i.MX UART, suspend also works fine
+> even with `pm_debug_messages` enabled.
 
-CPU: 0 PID: 363 Comm: sshd Not tainted 5.18.0-rc1 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x5a/0x74
- print_address_description+0x7b/0x440
- print_report+0x101/0x200
- kasan_report+0xc1/0xf0
- e1000_tbi_should_accept+0x610/0x790
- e1000_clean_rx_irq+0xa8c/0x1110
- e1000_clean+0xde2/0x3c10
- __napi_poll+0x98/0x380
- net_rx_action+0x491/0xa20
- __do_softirq+0x2c9/0x61d
- do_softirq+0xd1/0x120
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0xfe/0x130
- ip_finish_output2+0x7d5/0xb00
- __ip_queue_xmit+0xe24/0x1ab0
- __tcp_transmit_skb+0x1bcb/0x3340
- tcp_write_xmit+0x175d/0x6bd0
- __tcp_push_pending_frames+0x7b/0x280
- tcp_sendmsg_locked+0x2e4f/0x32d0
- tcp_sendmsg+0x24/0x40
- sock_write_iter+0x322/0x430
- vfs_write+0x56c/0xa60
- ksys_write+0xd1/0x190
- do_syscall_64+0x43/0x90
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f511b476b10
-Code: 73 01 c3 48 8b 0d 88 d3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d f9 2b 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 8e 9b 01 00 48 89 04 24
-RSP: 002b:00007ffc9211d4e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000004024 RCX: 00007f511b476b10
-RDX: 0000000000004024 RSI: 0000559a9385962c RDI: 0000000000000003
-RBP: 0000559a9383a400 R08: fffffffffffffff0 R09: 0000000000004f00
-R10: 0000000000000070 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc9211d57f R14: 0000559a9347bde7 R15: 0000000000000003
- </TASK>
-Allocated by task 1:
- __kasan_krealloc+0x131/0x1c0
- krealloc+0x90/0xc0
- add_sysfs_param+0xcb/0x8a0
- kernel_add_sysfs_param+0x81/0xd4
- param_sysfs_builtin+0x138/0x1a6
- param_sysfs_init+0x57/0x5b
- do_one_initcall+0x104/0x250
- do_initcall_level+0x102/0x132
- do_initcalls+0x46/0x74
- kernel_init_freeable+0x28f/0x393
- kernel_init+0x14/0x1a0
- ret_from_fork+0x22/0x30
-The buggy address belongs to the object at ffff888014114000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 1620 bytes to the right of
- 2048-byte region [ffff888014114000, ffff888014114800]
-The buggy address belongs to the physical page:
-page:ffffea0000504400 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x14110
-head:ffffea0000504400 order:3 compound_mapcount:0 compound_pincount:0
-flags: 0x100000000010200(slab|head|node=0|zone=1)
-raw: 0100000000010200 0000000000000000 dead000000000001 ffff888013442000
-raw: 0000000000000000 0000000000080008 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-==================================================================
+Thanks for reporting! I believe this is the same issue reported by
+NVIDIA [0] when we tried to switch the 8250 UART driver to nbcon.
 
-This happens because the TBI check unconditionally dereferences the last
-byte without validating the reported length first:
+We have been working with NVIDIA recently to address the issue. There is
+a patch [1] we are currently testing that looks good so far. It is based
+on 6.17 but should work fine for 6.18-rc4 as well. Can you give it a
+spin?
 
-	u8 last_byte = *(data + length - 1);
+John Ogness
 
-Fix by rejecting the frame early if the length is zero, or if it exceeds
-adapter->rx_buffer_len. This preserves the TBI workaround semantics for
-valid frames and prevents touching memory beyond the RX buffer.
+[0] https://lore.kernel.org/lkml/80b020fc-c18a-4da4-b222-16da1cab2f4c@nvidia.com
 
-Fixes: 2037110c96d5 ("e1000: move tbi workaround code into helper function")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index 3f5feb55cfba..2d2ed5e2c3c8 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -4090,6 +4090,12 @@ static bool e1000_tbi_should_accept(struct e1000_adapter *adapter,
- 				    u8 status, u8 errors,
- 				    u32 length, const u8 *data)
- {
-+	/* Guard against OOB on data[length - 1] */
-+	if (unlikely(!length))
-+		return false;
-+	/* Upper bound: length must not exceed rx_buffer_len */
-+	if (unlikely(length > adapter->rx_buffer_len))
-+		return false;
- 	struct e1000_hw *hw = &adapter->hw;
- 	u8 last_byte = *(data + length - 1);
- 
--- 
-2.43.0
-
+[1] https://github.com/Linutronix/linux/commit/ae173249d9028ef159fba040bdab260d80dda43f
 
