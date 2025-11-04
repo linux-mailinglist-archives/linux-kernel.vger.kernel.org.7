@@ -1,375 +1,420 @@
-Return-Path: <linux-kernel+bounces-885550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F49C334B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2072CC334F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C19AF4EFD5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:44:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC6454E1DAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC37531A564;
-	Tue,  4 Nov 2025 22:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF3334C25;
+	Tue,  4 Nov 2025 22:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tIkxGOym"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pzhkh6DX"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011046.outbound.protection.outlook.com [40.93.194.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11542F9D82
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762296269; cv=none; b=qBtyrQXGKqBEGMqr2SOHrpH6gse33j/D2CX4LlbJYH53Ao+S6MP6p1elJyHVCrTKWo2EYN7Yq0/Znlnp2+4g3t7W8sB8qL3hpozwdTR7pW4vF7+ZamCVM5C9lSY/bo6h9IFm5LmncHZirj0LN6ISLa/BC+8C8hYv7RSr9WFCG5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762296269; c=relaxed/simple;
-	bh=eS3W7k+HnJ8OI3vn+W3JIleiJDBojcLDGWPm/+QiQZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DG/pZZJMGvF3KKFniIp8TF6Fck4i6JHbQE6xcA4G1qhec0TXIFabEKdF6+0ZcxL2QV9H3lLl2A8vnMULY0oj+YeewOY8QT3mdF/MmewEuUCUep89PvzVOe/hs/lppvuXylTgFiGfZ51zqOg84kidDS0kvf/nIz8iY5ThdmoyT5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tIkxGOym; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78118e163e5so239886b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:44:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762296267; x=1762901067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KiDvzC489Q/yYinLktNcmGSgFp1iqEtljNgNWh7um/4=;
-        b=tIkxGOymd+zUoF2TLPB6bC5Nq07g/LZsPmD6rOvw4jCOZ8qDxv8628Oz359BHEjVrW
-         RjqvKPhGCP3PdAc7I1fCOGtfuAQl3V1Jr6G4bt8FR+Pu/InsVx7tDS1qIJrraAC0jco5
-         yAUy9D52SoEM16Jk4RiX1FwU0FqcLUTnlwrbzTKSNw94+xTO2uc8vqmLoyYW7a3V8SgY
-         Gf6O1KHuphNovd3/SzLWmTklsfl5uW0TZzffNPru+NCZMeZGzgOWnrws4S62sarTim49
-         +ILSg4aWL6cgYHpD+V7EeEgSpDwNRxjTF7uAb1szy5XO4LniE+/gKfES5G/XGEnO0btD
-         VaiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762296267; x=1762901067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KiDvzC489Q/yYinLktNcmGSgFp1iqEtljNgNWh7um/4=;
-        b=a3p7aZmWDFXk63+JyHnQHqRPV9WVQ1CNVjuUMH5kKJizTs8U5EF1DOLSOmvEVJhZtr
-         arbtM3s1gUrWXOtYrZrYse3Q7TE5Ke8YTKg6/o+I4y9d8ay8w6JjyECci1v8L8DZwT20
-         V4wtdwqgPwEPhQZ8C0wv9aaYWugruFYwl1xCKD9kupkbvQoLny4e170Rr49j3EkFQpZ2
-         h6rPTB8nwudgBTKL1lqhJ5FEQvCMXEEdINnYBQdiCLDBocYtPmLDvcPzEI7ca+lPhj44
-         wzAK6Stx1UmbktixqDH+KcjA+Zph3tMnPayGIm9bxAw8rlz66VAVTNrWkbuO2z7JkKwv
-         mDCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW4L3FGpzhUQL8Nhyv0wuSM+XO16B0ctd4POtfSPiz96Wt2eftPEQyOkQb+CC3ZWcOj7KZqEjArFS8krk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+bCye+XP3/L7NZn7SMF5ugRnsZcn8iQzRxuX2owdM7u5rUQbA
-	CxVTbs4gIXAxJbBx17/YRfFXGGn1FHS9dlZXDDWj4gq8uitg4TWNMBWJeF9JKc1geo54MLddpYG
-	GFCO9Ag32cYuV9QBzPRn/PwPeZLaVuZyVsNMl2T4L
-X-Gm-Gg: ASbGncvaH4T4sgKXn+tgK3UY+9dPPTa1gW/ss+f7PIHFibex5HRcd6bccTKj0QjdEb6
-	68sl59vQxvZ47C17UrJELfFk0UbCPRcLHfeRMsb6ioi/kjblTxrgwowwz5+Cjf55RnOxOgBvHA0
-	ves78bT9WM25GxxCEMxQgX0Zc2/Noos1LUX9Z4kf1QoRV2cX9QkWnCFrdAkR0meH9ZjBhoCwrGw
-	9dEs0aZqbAkgueP3Z1vctf+0uHd8Pl3dWoGyVPm2f+7PfrOAVlS/UxUxIw1zQ+0q1K9/mBP/+1M
-	ttGje5ysbMnr7g==
-X-Google-Smtp-Source: AGHT+IEyIyhxPHY+ZpDB21zqn18n6CTXncejgAvnBv3OB2nsCPYwEViQzPqA0FzGhM2pLVwRlD2jnu0wGoSpqflhq3o=
-X-Received: by 2002:a05:6a20:9392:b0:2d7:1689:e3bb with SMTP id
- adf61e73a8af0-34e2964310amr5766821637.22.1762296266857; Tue, 04 Nov 2025
- 14:44:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE01D2877C3;
+	Tue,  4 Nov 2025 22:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762297044; cv=fail; b=U2shBLoODh6orA/ltVnvb7vT688zZUVgdvH2jlobB/CnbuY7vZIIFPS3wdrAQuf+WMlcF0nW87auK9ARK4X4SEJASY9FxXZGWZ8lPrblV+CqFwbZpCO39ZP40ReBtE0vUA66Q0RAcZnWanfCYqznRUGsCt8/dukrUhaYJ4c88Ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762297044; c=relaxed/simple;
+	bh=86Fop541dvnz1ghQKZR8EuKl4JI+6BBxuVEFKoRBdBE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MJH4A0XLLUT3MXjKqSFXRwMNoWCtXzyU+Azqp/fJ06fDf2KsuYwxuJSXjAVMxhjoxEYyseEDzpt3V1GAqp02jiirCRfRavaS5EVjLuSCYxfTeWiPsMbqXXW281nQ48o7qKpxPP+6zXekJ3Gqv/XCdtQ5dZjP/KMSGPrNrvibDB8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pzhkh6DX; arc=fail smtp.client-ip=40.93.194.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ISqXk3M/iLt+ZMRpKGt4EtGdqhp0jpAAvQwHrcFahyXFTIcggS843x6X3exG8F4Ciux05CRjiJjmwWdroCA6bXHHD8dNN/iX0oH7gKf3pUndjhZjL7DfumAhfjXm0QWV+glnxqVwsdSanhDQOVzvHDNKtsMoKmFEqOk8nipSonXFHP0w7Q+g6bfo+vCyisbwnGA/qgCoqc36QJ0nNA4ahNGe60U4F+9wBdlnad+elCSafGDaBz8fFH2JAERbEqen3dr0m2qWIFnWtY0HcjbP6DPuaGWpxVehmvHLO//bttdimNe8Q4A8UzOACQoVDbl3L6RMh6oFSNW4GN1jlnkBSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ztSVbg4pQAeKhRxWrCw4r7aWKyTMPNpdd9owqfQ1YF8=;
+ b=BqbZOzXLMi8V4jXLNV5LkbzQ+9Ql0Bi5dYZmBJoSM67Wc1ltfJYEJ1dZiyKzmQ3Q10DeSzjZDw5UTJhteQOagjPptkNj+YWLowMuKgOdvskZYglDgAL9CtQIDxOH+M/sIdMeXuX1fItvqhhv43n9rtwQBEeA5PALn7BZj2yrVZn18b41LSD31GN9v/41qT0YYiILV4mTRsK7YBKYYajEUpFbSWwQNFjiiPBoaGXTnvJHBGHUN59b5r0C+rd4F5uM8DIuSxp+ALywIWMOUrZXZzzt2+oE4opVx0D1d4bjZUHjWgXVqXthzHHShy04a23CtHKgJTWnhQALjEc2uPunDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ztSVbg4pQAeKhRxWrCw4r7aWKyTMPNpdd9owqfQ1YF8=;
+ b=pzhkh6DXYY+pUhB0PPIOPmfngmGid/F7/5nr7KgeCeA76G2arbSSaeQinZ/i2t5HEBaZ5HmLzPNcjkOqtEuYnn4C38YOlXE6AOuWSfJjZhFA6PQeHaNaXZdVcfhaxfTuYgq++mBv32P9m2eRph2bSVtXTvL8oGZqGVv6azRn7Ga0ZjaSaP5axdgjSG1KzLCPArSqRKG97DYT+uaXNNnGKuPWcKhAavgVLJGXBt204xKlXm45C0YtbBnbXcv3PCfoKvI8Oe8Kvh72YqWMpFhWe9utXm+S8+FS7eTi1bhOlK3W9OlyzyTrhBpxgxc1fm4Bjux88AEPXAu1IZcJEpHDgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SJ2PR12MB9163.namprd12.prod.outlook.com (2603:10b6:a03:559::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
+ 2025 22:57:18 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 22:57:15 +0000
+Message-ID: <c16cbd82-a2a3-4f98-b42f-2a474f706d16@nvidia.com>
+Date: Tue, 4 Nov 2025 17:57:12 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/4] rust: drm: Add DRM buddy allocator bindings
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dakr@kernel.org,
+ David Airlie <airlied@gmail.com>, acourbot@nvidia.com,
+ Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
+ nouveau@lists.freedesktop.org
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-4-joelagnelf@nvidia.com>
+ <aQSAijFQ6kBqI5f3@google.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aQSAijFQ6kBqI5f3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0321.namprd13.prod.outlook.com
+ (2603:10b6:208:2c1::26) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104221348.4163417-1-florian.fainelli@broadcom.com> <20251104221348.4163417-2-florian.fainelli@broadcom.com>
-In-Reply-To: <20251104221348.4163417-2-florian.fainelli@broadcom.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Tue, 4 Nov 2025 14:44:15 -0800
-X-Gm-Features: AWmQ_bl-3Inyd_3hEG3iiOv3rQ_M1VvkP2XiWHdbuk5Yb9KMUmLUqM-smX_7X64
-Message-ID: <CAAVpQUAXPadkvRa7Rdo-_bQOpH5XRr+GST4cdv6G-be=SQ5sAQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 1/2] net: ethernet: Allow disabling pause on panic
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, 
-	Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Antoine Tenart <atenart@kernel.org>, Yajun Deng <yajun.deng@linux.dev>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ2PR12MB9163:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc03ac6e-2b63-4f35-a3ab-08de1bf57f7d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wkpwbit4RjdPZnVISTRVVzBrNS9xdXJzRmZkWkE5UHp2YzVib3luZzB2Wmh0?=
+ =?utf-8?B?RXBOUGxROGE1MUhGaUVnd2JPeFFKNWZ5cjc1bzJLTmVnOHRJSHRubklZUVA2?=
+ =?utf-8?B?ekU1QWN3RTVVTmdsNzlVdzJ5WWU4VVJHbEx1WnV0TFlMdGhPTHZqWWFyUU1m?=
+ =?utf-8?B?UUhIVUZKOGg1Z20zeXM5Rk1waHVHS2ppOXl5Z3YyQXFwb3diVkgxRW9ya1NY?=
+ =?utf-8?B?NEF6Rm1rbDl0eGtEQnB0M1dNMXhlRTVpOTlOdVBHYXowVk5JVFg1UU1EaU5B?=
+ =?utf-8?B?N2JEd2RLTFUxaXlTTWswdkVzSEN3bzJ5eXJEeXk2Umg1em1Ubk0zcTFTQU1M?=
+ =?utf-8?B?UXNlUGlEZnA1RFlGcHpXWWZQQyt0WU5ka05SS05ROGUyUHBFMDZaejM0Ym55?=
+ =?utf-8?B?elROeCt4L2FhTWc2YU1zbUNQbzREUXNnd0ZkMmdjNWlsbVZvTjlvbFoveEVK?=
+ =?utf-8?B?QnJUbldPRVhoQ1RscklscmQvc0h5VVh5OE9Xak16WFJoekEwLzBhc25jQmNy?=
+ =?utf-8?B?bm9WWmJKRzl5UDB4cWZLblFhbSt5TzFnT0s3eUg3RmgrWEx4MmpaVG1QUG16?=
+ =?utf-8?B?TkxWVnNRYytsYVpmaTR5ODlSWW44bVF2RlRxWVkybnd0S215aUNuWExnejJv?=
+ =?utf-8?B?cWg3d2Y3M2IzZmFUYVdaN0FvU1o5Ym8rRVBBMkpobVoxL2tHS1haUWFiaG9J?=
+ =?utf-8?B?ZWJvbGpoRTh4YkwyMm5ScnIwUzdMQmlKb01Vc2YyWVhhaC9xRWxuRng2V0pi?=
+ =?utf-8?B?NUdGbmtwb0hDYm43RWdiamtlZlVRajhkWUY4aTBBeWVLSS9wOWJmRXdScFdq?=
+ =?utf-8?B?cXJPSWhHUHVDek1zVkFtWjRXb1VUWVlpSXZTZkNqdHgvQ3RDUWd1VGsyaDJn?=
+ =?utf-8?B?bkorWHVOZXp4VU5neDdHa3Q2b3dXT2Q5SnpTVG4yaHRYblNBb0JnYWRwN1lM?=
+ =?utf-8?B?czczZDFhcUtVeFdTNzZEdnB1dGdtMTc3T1hEckZDSmtzREk1YW8vdGJEZ252?=
+ =?utf-8?B?OTREZVBacTI1cUozMGpiNk1IbUxJdTdFL1Z3SWxkakMza2hSSVNYcTdZZkwz?=
+ =?utf-8?B?TWo0cklySXIzdnFPK3RlMnl1VS9xV0JYYmVFaHNCaU1kalo5UTdzWHBvaEU1?=
+ =?utf-8?B?R2x5VDA4VGFQcGhmdW0rNEhxZk4yL3Via1dDSllFckEybGhkZVl1d2YrLytP?=
+ =?utf-8?B?RndSTVVHb0tCTUZqNjJ3ZlBLQStCdVRSMUVBNXdVU0ZBbndpcTh2eUI5cFZm?=
+ =?utf-8?B?bEU1Q0pwZ0c1OG1BUlVTZ2FHSjdQNVArc3JCOVp0ZGRXMkZqL1l2QUZ0MW9Z?=
+ =?utf-8?B?c2N0b0ZXV0R4aC8rZlY4VVY3cDJSTE1FRFVzVWlOc2thaU9SdStYL3pRQnRk?=
+ =?utf-8?B?aTdSb091eXU4dXR6UFN6YTdpbjBrYS9HcTNYVG1vLzdmay9qd2tTckdkUlJO?=
+ =?utf-8?B?N1BmUzVmYWE0a3NBZDlpODZETkFKNGlCK0dCb3dCWE5QdXg2NnNvVUgwL0tB?=
+ =?utf-8?B?c2o0Q3UreXRTc2VwNlE4UlZMdDlmandpTEZzKzFnbGFzdnJtcmI2cEdpRE9n?=
+ =?utf-8?B?SERKbkF0SUM2OUM5VDZrMXBHNEpmV0tPNEE2R08yYi85Sm01SHRpSGpuQ2hJ?=
+ =?utf-8?B?Z25ocmlMeU1EczBTL2czMXd4amNuSUduSTErSWZZTGVEVXQyTk1GTkNJRGtH?=
+ =?utf-8?B?SDN3bFRkbThpd1d0Y0VDbVdrUVh5ZDhUNUE0YUJpdkU2bGt6RXN3dld4M1ZS?=
+ =?utf-8?B?Y0F5U3VDN1lXNUJFQTYwMU5RejFENG9VRUdvTjNKMnAwZ3A0by9VZmdUSGRV?=
+ =?utf-8?B?Y2ZpdmZiWVp6MDZINnpLNXViL2x0TllxNGJGL1NWV09DblZDbUplYjlmM0g5?=
+ =?utf-8?B?bTc0RGNaVjVyUmJEZ3RjQ0FmV1VqeW5YTmVHL3AzK0ZMOExYUk9tMEcrMUpD?=
+ =?utf-8?Q?9EbcYB8MYni/tb3ygs5TnVPs4WISBIC3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MUNJYmNMSVVoN1VaTTBtQVdhQXdvRjBqdXBqM2g2ZVB3dDFOWTN6ZjV4WnVP?=
+ =?utf-8?B?V3k1QnhqelBUczBhcC9SdHNEa3RRdVVqNmIwQVNhcjZwanZVZzBUZWphVmRt?=
+ =?utf-8?B?aDZBRm9Kalk4ZW0vdlpjZE8xSVk5Z1FqM2xVV1phUnJYQmRKZWFwZXdtR1RE?=
+ =?utf-8?B?Mm96SEVjZG10SjQyS0ptNE5NU3h3OEdyL0tlZHJveldUV0VLNlJGdHErZFRo?=
+ =?utf-8?B?RHJycWE5a3krSDdxQllMVGdlUWVmRk4yb1BBMWpNK1FMekdSNXAwQ3JKUzhq?=
+ =?utf-8?B?UXQxd1hnMlFDZWdVY1NTeXRJOTdBeWZXc1A3QUVHM0dVWmFkZDZXZmwrbS9i?=
+ =?utf-8?B?anNJcGkzYTVreWN0TXF3VXlERHRBOWpzTTZYU0I2MHlqRzFlR0U1VjZUK1lT?=
+ =?utf-8?B?TStyaUw2S0VhV3VxT1JOQ2k5Um5oSUZ2S2lqalNiVHBleEs0ODBRdDE1b3Z2?=
+ =?utf-8?B?N01iWmZHZHBlV2NHSExDTjM2RktQRm5BUXV2b1FIYU5ML0cvbE1obHh6Y3VS?=
+ =?utf-8?B?a0dtZWRReE5oTTRvdFRiRXZCbmlWam15RW0xbkIyb0hOWjZUejQvT0JId201?=
+ =?utf-8?B?ck11Q0Fab1dBdVdIS3NmY3d4QjlLQ2t4b29KV2kyT0RQSlVObDM4dlR4dUJH?=
+ =?utf-8?B?MmhKQWNVbmxySTBGWVJmOWZLaGpXdVJjaG9MdjdKenJNZnY4M2VubC8yV1gy?=
+ =?utf-8?B?R2hmTjlTZDlGcDBiY2lJb0NjMHlqVG9UVDFRL1pmYkdrekE3UnhmTzZlbGR6?=
+ =?utf-8?B?cktLQ25yNU4xdGtwcU52ZGI4aWFXejliSUQ5VUdTblJqR3ZERkhrb2ZrakMv?=
+ =?utf-8?B?MFNmV0ZLendtVWx0UlAxVTdtZHdFOXNqMmJGdWZoN2VqYlVKNUlOOEhPOTR1?=
+ =?utf-8?B?YktKaHdkTGphaFdkUmhwR0xiNTBNT29BNlYwVDRsRWdIMVFtb01GZ0krQ0hJ?=
+ =?utf-8?B?dUxsc1J3RVQ5d3UxOTJWQTNSOGhzbktpcG5CSityQkJJbkZFTHl2MlNubktD?=
+ =?utf-8?B?dHlKMFdmZ2VSdDRZTUtVeTVobG1QQzhKZUtTQStNNnEraXdwNHY0dkZMeE0y?=
+ =?utf-8?B?cDNBeGdOOTRPNWdEbjZudjJLcjYvcE9lQnlzazlSUVA1WlhRL0ZiNDFnNWdE?=
+ =?utf-8?B?TTUzRU9YTG5mQ0JST2YvUVRwaGM1RlE3QmZuZzV2QzFJS2NBM0xSZDFUNzY0?=
+ =?utf-8?B?aTg5TzRkcnpQNzA0bGZOaGZkY05taGJlL25xZ2Q2TCtXRWZ1eXp4QmNXenBp?=
+ =?utf-8?B?Si9TSTROcVQwVThnZzR6WGl1eTc0Q0RmL1Z4VWZ1V01wNW9DekpxMVdvbEpF?=
+ =?utf-8?B?dU56TnVST01aVGtudzhYMTRCZi9UcEtDam4xNmlzM1VSd3BLcCtDa0NicXcv?=
+ =?utf-8?B?T2tJWDJLZFdoeU5TZ1RZelJOQ1lZZFg5a01Hb3NVK2M1QVRCMzZNK29DTFM2?=
+ =?utf-8?B?YXduSndIekwwYXd3VThUazNHdUlsc0hWSVRmbkxOVUFzSHBFWVN5QTY3RE9h?=
+ =?utf-8?B?K1k5UzZ0dEhsNGJlOFY4TGtNaDFzU2tZOGtidnNCbFRESm9RUjVFM29jQ2dO?=
+ =?utf-8?B?ZTJSL0VLYTN3Mjd5bmgrNTdwb0orYTEvQXpjc21YclZONlBLVkFzNHlPakhu?=
+ =?utf-8?B?QjlEbU9jUVg3M0xSMlhZblJFWGI1N2ZTTFVoeU54RVgvZlQzTE4xdldFeGI5?=
+ =?utf-8?B?VUt6ajB1cTB3Ui95K0ZOYVZWSEY1YWpubXJkNlk0TU5FYmJ3WHNJc2hSTDho?=
+ =?utf-8?B?YzlnazkxandYcFNuQ0RJdm5meHQ2WGRaT0RRYklib2JFbW1jRmtldUhVWHJa?=
+ =?utf-8?B?ZGMyOEdXMDl2TmZYK2NabzBweXd4UTh2cTZZVTR6aGVuL3JTOVFwWWx0N0Ru?=
+ =?utf-8?B?WlppTHlUM3V3OTg4K1pUT1AzZTZ3aXJhTm1lbjU4RU5PcksyZ0FtU2tkVGFR?=
+ =?utf-8?B?QU4vRnV6RXBHdS9tbStRb0NMZ3hNaEtyVEVYYVRyQndaK0tSZzJ4NDcxYjhw?=
+ =?utf-8?B?aU1vbERXcmNja2c1RmZNTDFLcWI2RFBqYnpZKzEveDEwbjUySFY5TUJmY09B?=
+ =?utf-8?B?TWFLV2pwOER5ZS91Y0Q1d0Y5T3RpbWRuZTNBOUgrUTB4ZkQ4R3VaSzZDQU1r?=
+ =?utf-8?Q?ldCGVynY6nGD0q/nsx5LNnemU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc03ac6e-2b63-4f35-a3ab-08de1bf57f7d
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 22:57:15.5046
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: drqaGNDFPCmlPKE6aqFIYj6GgDzXKg3tjnn8WD7wHlaecDUZNMUnQq8KuKjJ8majK3a3L3gtzfv4F/PnXtEa6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9163
 
-On Tue, Nov 4, 2025 at 2:13=E2=80=AFPM Florian Fainelli
-<florian.fainelli@broadcom.com> wrote:
->
-> Development devices on a lab network might be subject to kernel panics
-> and if they have pause frame generation enabled, once the kernel panics,
-> the Ethernet controller stops being serviced. This can create a flood of
-> pause frames that certain switches are unable to handle resulting a
-> completle paralysis of the network because they broadcast to other
-> stations on that same network segment.
->
-> To accomodate for such situation introduce a
-> /sys/class/net/<device>/disable_pause_on_panic knob which will disable
-> Ethernet pause frame generation upon kernel panic.
->
-> Note that device driver wishing to make use of that feature need to
-> implement ethtool_ops::set_pauseparam_panic to specifically deal with
-> that atomic context.
->
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  Documentation/ABI/testing/sysfs-class-net | 16 +++++
->  include/linux/ethtool.h                   |  3 +
->  include/linux/netdevice.h                 |  1 +
->  net/core/net-sysfs.c                      | 34 ++++++++++
->  net/ethernet/Makefile                     |  3 +-
->  net/ethernet/pause_panic.c                | 81 +++++++++++++++++++++++
->  6 files changed, 137 insertions(+), 1 deletion(-)
->  create mode 100644 net/ethernet/pause_panic.c
->
-> diff --git a/Documentation/ABI/testing/sysfs-class-net b/Documentation/AB=
-I/testing/sysfs-class-net
-> index ebf21beba846..f762ce439203 100644
-> --- a/Documentation/ABI/testing/sysfs-class-net
-> +++ b/Documentation/ABI/testing/sysfs-class-net
-> @@ -352,3 +352,19 @@ Description:
->                 0  threaded mode disabled for this dev
->                 1  threaded mode enabled for this dev
->                 =3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +What:          /sys/class/net/<iface>/disable_pause_on_panic
-> +Date:          Nov 2025
-> +KernelVersion: 6.20
-> +Contact:       netdev@vger.kernel.org
-> +Description:
-> +               Boolean value to control whether to disable pause frame
-> +               generation on panic. This is helpful in environments wher=
-e
-> +               the link partner may incorrect respond to pause frames (e=
-.g.:
-> +               improperly configured Ethernet switches)
-> +
-> +               Possible values:
-> +               =3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +               0  threaded mode disabled for this dev
-> +               1  threaded mode enabled for this dev
+Hi Alice,
 
-nit: These lines need to be updated.
+On 10/31/2025 5:25 AM, Alice Ryhl wrote:
+> On Thu, Oct 30, 2025 at 03:06:12PM -0400, Joel Fernandes wrote:
+>> Add safe Rust abstractions over the Linux kernel's DRM buddy
+>> allocator for physical memory management. The DRM buddy allocator
+>> implements a binary buddy system for useful for GPU physical memory
+>> allocation. nova-core will use it for physical memory allocation.
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+[...]>> +
+>> +/// DRM buddy allocator instance.
+>> +///
+>> +/// This structure wraps the C `drm_buddy` allocator.
+>> +///
+>> +/// # Safety
+>> +///
+>> +/// Not thread-safe. Concurrent alloc/free operations require external
+>> +/// synchronization (e.g., wrapping in `Arc<Mutex<DrmBuddy>>`).
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// - `mm` is initialized via `drm_buddy_init()` and remains valid until Drop.
+> 
+> Usually an invariant is a statement about the present rather than about
+> the past. I would say that `mm` is a valid buddy allocator.
+Noted, and I will change it to that, thanks!
 
+>> +pub struct DrmBuddy {
+>> +    mm: Opaque<bindings::drm_buddy>,
+>> +}
+>> +
+>> +impl DrmBuddy {
+>> +    /// Create a new buddy allocator.
+>> +    ///
+>> +    /// Creates a buddy allocator that manages a contiguous address space of the given
+>> +    /// size, with the specified minimum allocation unit (chunk_size must be at least 4KB).
+>> +    ///
+>> +    /// # Examples
+>> +    ///
+>> +    /// See the complete example in the documentation comments for [`AllocatedBlocks`].
+>> +    pub fn new(size: usize, chunk_size: usize) -> Result<Self> {
+>> +        // Create buddy allocator with zeroed memory.
+>> +        let buddy = Self {
+>> +            mm: Opaque::zeroed(),
+>> +        };
+>> +
+>> +        // Initialize the C buddy structure.
+>> +        // SAFETY: buddy.mm points to valid, zeroed memory.
+>> +        unsafe {
+>> +            to_result(bindings::drm_buddy_init(
+>> +                buddy.mm.get(),
+> 
+> After this call to drm_buddy_init, you return it which moves the struct.
+> Is the struct safe to move from one location to another?
 
-> +               =3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
-> index c2d8b4ec62eb..e014d0f2a5ac 100644
-> --- a/include/linux/ethtool.h
-> +++ b/include/linux/ethtool.h
-> @@ -956,6 +956,8 @@ struct kernel_ethtool_ts_info {
->   * @get_pauseparam: Report pause parameters
->   * @set_pauseparam: Set pause parameters.  Returns a negative error code
->   *     or zero.
-> + * @set_pauseparam_panic: Set pause parameters while in a panic context.=
- This
-> + *     call is not allowed to sleep. Returns a negative error code or ze=
-ro.
->   * @self_test: Run specified self-tests
->   * @get_strings: Return a set of strings that describe the requested obj=
-ects
->   * @set_phys_id: Identify the physical devices, e.g. by flashing an LED
-> @@ -1170,6 +1172,7 @@ struct ethtool_ops {
->                                   struct ethtool_pauseparam*);
->         int     (*set_pauseparam)(struct net_device *,
->                                   struct ethtool_pauseparam*);
-> +       void    (*set_pauseparam_panic)(struct net_device *);
->         void    (*self_test)(struct net_device *, struct ethtool_test *, =
-u64 *);
->         void    (*get_strings)(struct net_device *, u32 stringset, u8 *);
->         int     (*set_phys_id)(struct net_device *, enum ethtool_phys_id_=
-state);
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index e808071dbb7d..2d4b07693745 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -2441,6 +2441,7 @@ struct net_device {
->         bool                    proto_down;
->         bool                    irq_affinity_auto;
->         bool                    rx_cpu_rmap_auto;
-> +       bool                    disable_pause_on_panic;
->
->         /* priv_flags_slow, ungrouped to save space */
->         unsigned long           see_all_hwtstamp_requests:1;
-> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-> index ca878525ad7c..c01dc3e200d8 100644
-> --- a/net/core/net-sysfs.c
-> +++ b/net/core/net-sysfs.c
-> @@ -770,6 +770,39 @@ static ssize_t threaded_store(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(threaded);
->
-> +static ssize_t disable_pause_on_panic_show(struct device *dev,
-> +                                           struct device_attribute *attr=
-,
-> +                                           char *buf)
-> +{
-> +       struct net_device *ndev =3D to_net_dev(dev);
-> +       ssize_t ret =3D -EINVAL;
-> +
-> +       rcu_read_lock();
-> +       if (dev_isalive(ndev))
-> +               ret =3D sysfs_emit(buf, fmt_dec, READ_ONCE(ndev->disable_=
-pause_on_panic));
-> +       rcu_read_unlock();
-> +
-> +       return ret;
-> +}
-> +
-> +static int modify_disable_pause_on_panic(struct net_device *dev, unsigne=
-d long val)
-> +{
-> +       if (val !=3D 0 && val !=3D 1)
-> +               return -EINVAL;
+It is safe to move this struct since it does not contain anything
+self-referential or DMA buffers. But we should pin it for more robustness/future
+proofing. I will do that.
 
-Should we validate !ops->set_pauseparam_panic here
-rather than disable_pause_on_device() ?
+> Also I usually put the to_result outside of the unsafe block.
 
-ops =3D dev->ethtool_ops;
-if (!ops || !ops->set_pauseparam_panic)
-    return -EOPNOTSUPP;
+Will do.
 
+[...]
+>> +
+>> +    /// Allocate blocks from the buddy allocator.
+>> +    ///
+>> +    /// Returns an [`AllocatedBlocks`] structure that owns the allocated blocks and automatically
+>> +    /// frees them when dropped. Allocation of `list_head` uses the `gfp` flags passed.
+>> +    pub fn alloc_blocks(
+>> +        &self,
+>> +        start: usize,
+>> +        end: usize,
+>> +        size: usize,
+>> +        min_block_size: usize,
+>> +        flags: BuddyFlags,
+>> +        gfp: Flags,
+>> +    ) -> Result<AllocatedBlocks<'_>> {
+>> +        // Allocate list_head on the heap.
+>> +        let mut list_head = KBox::new(bindings::list_head::default(), gfp)?;
+>> +
+>> +        // SAFETY: list_head is valid and heap-allocated.
+>> +        unsafe {
+>> +            bindings::INIT_LIST_HEAD(&mut *list_head as *mut _);
+>> +        }
+>> +
+>> +        // SAFETY: mm is a valid DrmBuddy object per the type's invariants.
+>> +        unsafe {
+>> +            to_result(bindings::drm_buddy_alloc_blocks(
+>> +                self.as_raw(),
+>> +                start as u64,
+>> +                end as u64,
+>> +                size as u64,
+>> +                min_block_size as u64,
+>> +                &mut *list_head as *mut _,
+>> +                flags.as_raw() as usize,
+>> +            ))?;
+>> +        }
+>> +
+>> +        // `list_head` is now the head of a list that contains allocated blocks
+>> +        // from C code. The allocated blocks will be automatically freed when
+>> +        // `AllocatedBlocks` is dropped.
+>> +        Ok(AllocatedBlocks {
+>> +            list_head,
+>> +            buddy: self,
+>> +        })
+>> +    }
+>> +}
+>> +
+>> +impl Drop for DrmBuddy {
+>> +    fn drop(&mut self) {
+>> +        // SAFETY: self.mm is initialized and valid. drm_buddy_fini properly
+>> +        // cleans up all resources. This is called exactly once during Drop.
+>> +        unsafe {
+>> +            bindings::drm_buddy_fini(self.as_raw());
+>> +        }
+>> +    }
+>> +}
+>> +
+>> +// SAFETY: DrmBuddy can be sent between threads. Caller is responsible for
+>> +// ensuring thread-safe access if needed (e.g., via Mutex).
+>> +unsafe impl Send for DrmBuddy {}
+> 
+> Generally, we should implement both Send and Sync unless we really can't
+> do so. If methods require external synchronization, then those methods
+> should be marked &mut self and then you implement Sync.
 
-> +
-> +       WRITE_ONCE(dev->disable_pause_on_panic, val);
-> +
-> +       return 0;
-> +}
-> +
-> +static ssize_t disable_pause_on_panic_store(struct device *dev,
-> +                                            struct device_attribute *att=
-r,
-> +                                            const char *buf, size_t len)
-> +{
-> +       return netdev_store(dev, attr, buf, len, modify_disable_pause_on_=
-panic);
-> +}
-> +static DEVICE_ATTR_RW(disable_pause_on_panic);
-> +
->  static struct attribute *net_class_attrs[] __ro_after_init =3D {
->         &dev_attr_netdev_group.attr,
->         &dev_attr_type.attr,
-> @@ -800,6 +833,7 @@ static struct attribute *net_class_attrs[] __ro_after=
-_init =3D {
->         &dev_attr_carrier_up_count.attr,
->         &dev_attr_carrier_down_count.attr,
->         &dev_attr_threaded.attr,
-> +       &dev_attr_disable_pause_on_panic.attr,
->         NULL,
->  };
->  ATTRIBUTE_GROUPS(net_class);
-> diff --git a/net/ethernet/Makefile b/net/ethernet/Makefile
-> index e03eff94e0db..9b1f3ff8695a 100644
-> --- a/net/ethernet/Makefile
-> +++ b/net/ethernet/Makefile
-> @@ -3,4 +3,5 @@
->  # Makefile for the Linux Ethernet layer.
->  #
->
-> -obj-y                                  +=3D eth.o
-> +obj-y                                  +=3D eth.o \
-> +                                          pause_panic.o
-> diff --git a/net/ethernet/pause_panic.c b/net/ethernet/pause_panic.c
-> new file mode 100644
-> index 000000000000..8ef61eb768a0
-> --- /dev/null
-> +++ b/net/ethernet/pause_panic.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Ethernet pause disable on panic handler
-> + *
-> + * This module provides per-device control via sysfs to disable Ethernet=
- flow
-> + * control (pause frames) on individual Ethernet devices when the kernel=
- panics.
-> + * Each device can be configured via /sys/class/net/<device>/disable_pau=
-se_on_panic.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/panic_notifier.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/ethtool.h>
-> +#include <linux/notifier.h>
-> +#include <linux/if_ether.h>
-> +#include <net/net_namespace.h>
-> +
-> +/*
-> + * Disable pause/flow control on a single Ethernet device.
-> + */
-> +static void disable_pause_on_device(struct net_device *dev)
-> +{
-> +       const struct ethtool_ops *ops;
-> +
-> +       /* Only proceed if this device has the flag enabled */
-> +       if (!READ_ONCE(dev->disable_pause_on_panic))
-> +               return;
-> +
-> +       ops =3D dev->ethtool_ops;
-> +       if (!ops || !ops->set_pauseparam_panic)
-> +               return;
-> +
-> +       /*
-> +        * In panic context, we're in atomic context and cannot sleep.
-> +        */
-> +       ops->set_pauseparam_panic(dev);
-> +}
-> +
-> +/*
-> + * Panic notifier to disable pause frames on all Ethernet devices.
-> + * Called in atomic context during kernel panic.
-> + */
-> +static int eth_pause_panic_handler(struct notifier_block *this,
-> +                                       unsigned long event, void *ptr)
-> +{
-> +       struct net_device *dev;
-> +
-> +       /*
-> +        * Iterate over all network devices in the init namespace.
-> +        * In panic context, we cannot acquire locks that might sleep,
-> +        * so we use RCU iteration.
-> +        * Each device will check its own disable_pause_on_panic flag.
-> +        */
-> +       rcu_read_lock();
-> +       for_each_netdev_rcu(&init_net, dev) {
-> +               /* Reference count might not be available in panic */
-> +               if (!dev)
-> +                       continue;
+Thanks for letting me know the convention. Just to clarify, when you say "then
+you implement Sync", you mean "then you implement mutual exclusion, say via
+locks" correct?
+> If you instead omit Sync and make the methods &self, then the caller is
+> severely restricted and can't e.g. store it in an Arc.
+Ok so I will implement Sync and keep the methods as &self since at the moment,
+mutation is not required. Let me know if I missed something though.
 
-This seems unnecessary unless while() + next_net_device_rcu()
-is used instead of for_each_netdev_rcu().
+>> +/// Allocated blocks from the buddy allocator with automatic cleanup.
+>> +///
+>> +/// This structure owns a list of allocated blocks and ensures they are
+>> +/// automatically freed when dropped. Blocks may be iterated over and are
+>> +/// read-only after allocation (iteration via [`IntoIterator`] and
+>> +/// automatic cleanup via [`Drop`] only). To share across threads, wrap
+>> +/// in `Arc<AllocatedBlocks>`. Rust owns the head list head of the
+>> +/// allocated blocks; C allocates blocks and links them to the head
+>> +/// list head. Clean up of the allocated blocks is handled by C code.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// - `list_head` is an owned, valid, initialized list_head.
+>> +/// - `buddy` points to a valid, initialized [`DrmBuddy`].
+>> +pub struct AllocatedBlocks<'a> {
+>> +    list_head: KBox<bindings::list_head>,
+>> +    buddy: &'a DrmBuddy,
+>> +}
+>> +
+>> +impl Drop for AllocatedBlocks<'_> {
+>> +    fn drop(&mut self) {
+>> +        // Free all blocks automatically when dropped.
+>> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
+>> +        unsafe {
+>> +            bindings::drm_buddy_free_list(self.buddy.as_raw(), &mut *self.list_head as *mut _, 0);
+>> +        }
+>> +    }
+>> +}
+>> +
+>> +impl<'a> AllocatedBlocks<'a> {
+>> +    /// Check if the block list is empty.
+>> +    pub fn is_empty(&self) -> bool {
+>> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
+>> +        unsafe { clist::list_empty(&*self.list_head as *const _) }
+>> +    }
+>> +
+>> +    /// Iterate over allocated blocks.
+>> +    pub fn iter(&self) -> clist::ClistIter<'_, Block> {
+>> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
+>> +        clist::iter_list_head::<Block>(&*self.list_head)
+>> +    }
+>> +}
+>> +
+>> +/// Iteration support for allocated blocks.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// ```ignore
+>> +/// for block in &allocated_blocks {
+>> +///     // Use block.
+>> +/// }
+>> +/// ```
+>> +impl<'a> IntoIterator for &'a AllocatedBlocks<'_> {
+>> +    type Item = Block;
+>> +    type IntoIter = clist::ClistIter<'a, Block>;
+>> +
+>> +    fn into_iter(self) -> Self::IntoIter {
+>> +        self.iter()
+>> +    }
+>> +}
+>> +
+>> +/// A DRM buddy block.
+>> +///
+>> +/// Wraps a pointer to a C `drm_buddy_block` structure. This is returned
+>> +/// from allocation operations and used to free blocks.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// `drm_buddy_block_ptr` points to a valid `drm_buddy_block` managed by the buddy allocator.
+>> +pub struct Block {
+>> +    drm_buddy_block_ptr: NonNull<bindings::drm_buddy_block>,
+>> +}
+> 
+> This type is exposed to the user by ownership (as opposed to being
+> exposed behind a reference), and has no lifetime annotation. This
+> implies that the caller is allowed to keep it alive for arbitrary
+> amounts of time.
+> 
+> However, it looks like dropping AllocatedBlock would also free this
+> Block object. That is a problem.
+> 
+> The ownership of Block should probably be tied to AllocatedBlock so that
+> the borrow-checker prevents dropping AllocatedBlock while Block objects
+> exist. Or this code should be changed so that Block keeps the underlying
+> AllocatedBlock alive using a refcount. Or similar. It depends on how it
+> will be used - if Block is stored long-term in structs, then you should
+> avoid lifetimes, but if it's a view into AllocatedBlock that is not
+> stored long-term, then lifetimes are the right choice.
+> 
+You're right! Thanks for catching this, I am leaning to the ref count approach,
+but I'll look into the use cases more and designing it accordingly.
 
-Or are we assuming that something could overwrite NULL to
-dev->dev_list.next and panic ?
+thanks,
 
+ - Joel
 
-> +
-> +               disable_pause_on_device(dev);
-> +       }
-> +       rcu_read_unlock();
-> +
-> +       return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block eth_pause_panic_notifier =3D {
-> +       .notifier_call =3D eth_pause_panic_handler,
-> +       .priority =3D INT_MAX, /* Run as late as possible */
-> +};
-> +
-> +static int __init eth_pause_panic_init(void)
-> +{
-> +       /* Register panic notifier */
-> +       atomic_notifier_chain_register(&panic_notifier_list,
-> +                                      &eth_pause_panic_notifier);
-> +
-> +       return 0;
-> +}
-> +device_initcall(eth_pause_panic_init);
-> --
-> 2.34.1
->
 
