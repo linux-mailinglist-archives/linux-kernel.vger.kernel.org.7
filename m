@@ -1,207 +1,171 @@
-Return-Path: <linux-kernel+bounces-884920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5747AC31800
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:25:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6D6C3180C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F9618855C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:25:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E23D4E911A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227E732F774;
-	Tue,  4 Nov 2025 14:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311B832D7C8;
+	Tue,  4 Nov 2025 14:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="J7o570zp"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GajqFWEr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D4532D432
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C292EBDCB;
+	Tue,  4 Nov 2025 14:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266285; cv=none; b=aRF6JppWipMlL/VbMYh7jZ1g8KQ4txL0R3bahp9fzFZopW+HHVBq2Rgr7DeMMhmto1FOhYsFfwW1eT+MovkmmqexJJcuUPO6qOMUMF0qClrnC64MTpe72imKtCbPd0qB2ffRqOvqjuFLQdpgZFku/DA+3VUA+gzThI6QlsATQ7k=
+	t=1762266370; cv=none; b=dcerps4983KtvKW/N6944LDIeek33jL7QbULoH9dhFonP2NTeI9a+o/yOL7FeyVop+Dxo8CW4Utd4a62LhxAF6ZclMYtHb7rfty4un5a/dZ7Q45xGulXWfqImIowKIlMv2JSHUtExIgGuurwonxCae5+ZodvFPr4Sk9VX/0BpXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266285; c=relaxed/simple;
-	bh=vWgnkaNAeKEq0vQp0UwcEMQJQyKclEImElkKB/VLY0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lvbJD9P5eMEE+5OG2luqYv2IJMtXoDrvgLk3kddASSKgxpFhJe6UwxIsc24B2GyB5yuBBH+xqd/cfVhvSyLL5kSpK/mXqSW62/YLxD7x2T4TXmd1R2xAJfmBMJvKHI7BBiBZNdMis5F/pRG2l9HPnoRjcFMAo05Gz57JgDb100I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=J7o570zp; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 4B8AC24002B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:24:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1762266274; bh=rUtqlSZS/SNOoEJkSSPQTgciFJ8CEUiEH7X/3AsdH3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=J7o570zpe/XWgxwUzcr170z9snhaskfKuFAGsukW2TtfNQgkOz0CwmxV2Ns7EYTtK
-	 QtY1mk+mahSO9I6xaNvrgB3tG7xj8zmcv+U4DJ2E3+rZipoCPQqzCv57YaO1ukpS+i
-	 EXszaKRb7WRKMXhWzBwYDjhZIK/Fi1tXBq3vygmocix0+8cHQCVIP9vaAp3zpO+TRc
-	 EEFj0rnxXfGcZORYGsg3rU5Wy/E4pMby9wI1kRL/cMvj/O4L2sBNJG/zs55mtkISOf
-	 bLwlfbsXcgolRQsm3DABT4lWKTzYNIL1l7l9l3bOt+vBoC+/h/Lsv/P93w0wsO5iP1
-	 cULPsa0JeAutg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4d19h126z2z6twf;
-	Tue,  4 Nov 2025 15:24:33 +0100 (CET)
-From: Markus Probst <markus.probst@posteo.de>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-ide@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Markus Probst <markus.probst@posteo.de>
-Subject: [PATCH v6 3/3] ata: stop disk on restart if ACPI power resources are found
-Date: Tue, 04 Nov 2025 14:24:34 +0000
-Message-ID: <20251104142413.322347-4-markus.probst@posteo.de>
-In-Reply-To: <20251104142413.322347-1-markus.probst@posteo.de>
-References: <20251104142413.322347-1-markus.probst@posteo.de>
+	s=arc-20240116; t=1762266370; c=relaxed/simple;
+	bh=8/pICxOi6wsmpEPfhRShty6JhC0Ysu9IAZRq8awAsWI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fakT0HGjTFkFwDKLyLuMPfSbctrsWNuVlq4gUsPz/EN8Oei1p59NX1In3K6tukQXPOC2+oQmkpIH2gvi8clEzLJ/1XLK53VMX8+G+QIo5A34e3CkuGP84H8qtMD5mXv4T6DCqWUZGMxV377IWacbOaTE4FmNMG38Gsmu6HAL9Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GajqFWEr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D977C4CEF7;
+	Tue,  4 Nov 2025 14:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762266368;
+	bh=8/pICxOi6wsmpEPfhRShty6JhC0Ysu9IAZRq8awAsWI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GajqFWErKv5jv64ubYOvWw+U+rkMGY6OKEaj79rzbH56wpR/icFei7lm1LqHkTnCk
+	 wP36yqtdNRO1unv5LHZ95fj6C8F2ky5sJPh0iPssTGSIilMUQZ7ks5SmvY6z67jygd
+	 S44lNwn8uolq5zHzJrqlbyAm7cMUNGFMXMTV8h5ktlJsYp/EXWRl0QlHGbh+/7r3Aw
+	 72yc1CTy2hDfnmce/Pby1A5FP3PZ7CbUOnaVe2DaE24UdyDx3ABnW9JYa7LPSIygse
+	 6KHT3Xv2U/ZfBudsp3zycd0jfi7HQOc0Wa0O0xPsM5c1l8ReH5shJQfTaKMiCjyQL7
+	 Cx+LpKRcVwrXA==
+Message-ID: <b6717831-1840-4b9a-aade-ab2248e3f75d@kernel.org>
+Date: Tue, 4 Nov 2025 15:26:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
+ compatible
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
+ <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
+ <20251104-glaring-rebel-pillbug-a467ca@kuoka>
+ <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some embedded devices have the ability to control whether power is
-provided to the disks via the SATA power connector or not. ACPI power
-resources are usually off by default, thus making it unclear if the
-specific power resource will retain its state after a restart. If power
-resources are defined on ATA ports / devices in ACPI, we should stop the
-disk on SYSTEM_RESTART, to ensure the disk will not lose power while
-active.
+On 04/11/2025 13:32, Konrad Dybcio wrote:
+> On 11/4/25 9:16 AM, Krzysztof Kozlowski wrote:
+>> On Sun, Nov 02, 2025 at 11:25:06PM -0800, Jingyi Wang wrote:
+>>> Document qcom,kaanapali-imem compatible. Kaanapali IMEM is not a syscon or
+>>> simple-mfd, also "reboot reason" is not required on Kaanapali like some
+>>
+>> I do not see correlation. Something is not a syscon, so you add a new
+>> generic compatible? No.
+>>
+>>> other platforms. So define a common "qcom,imem" binding and fallback to it.
+>>
+>> You did not define fallback to it!
+>>
+>> ...
+>>
+>>> +      - items:
+>>> +          - enum:
+>>> +              - qcom,kaanapali-imem
+>>> +          - const: qcom,imem
+>>
+>> I do not understand what this generic compatible is supposed to express,
+>> not explained in commit msg. Considering this wasn't before, it is a
+>> major and really undesired change. It also makes no sesne. There was no
+>> generic compatible before but "if not syscon" now this must have generic
+>> compatible, what?
+> 
+> So IMEM (or SYSTEM_IMEM more specifically as opposed to BOOT_IMEM which
+> you can take your guesses what it's used for) is to the best of our
+> understanding just a piece of SRAM that's accessible by multiple
+> processors/subsystems on the SoC.
+> 
+> A smaller region within it ("shared IMEM") is a little bit of a dumping
+> ground for various (incl. runtime) configuration and debug magic data
+> and that's usually what Linux is concerned with.
+> 
+> IMEM is currently described as a simple-mfd+syscon, which it is clearly
+> not. The former, as we've established in the past, was used as a hack to
+> have something call of_platform_populate().
+> 
+> I think that in turn is only necessary for the old arm32 DTs which have
+> a syscon-reboot-mode node under IMEM (and I think that's where the syscon
+> compatible comes from).
+> 
+> Should we make the switch to mmio-sram and settle this discussion?
+> It would probably require convincing the sram maintainer to add that
+> of_platform_populate() call in its probe func and making syscon-reboot
+> not depend on a syscon (not like it's very hard)
 
-Add a new function, ata_acpi_dev_manage_restart(), that will be used to
-determine if a disk should be stopped before restarting the system. If a
-usable ACPI power resource has been found, it is assumed that the disk
-will lose power after a restart and should be stopped to avoid unclean
-shutdown due to power loss.
+This I got, but nothing here explains why you need generic compatible.
+To re-iterate: there was no generic compatible before, now there is.
+Writing bindings and numerous reviews from DT maintainers ask not to use
+generic compatibles.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- drivers/ata/libata-acpi.c | 26 ++++++++++++++++++++++++++
- drivers/ata/libata-scsi.c |  1 +
- drivers/ata/libata.h      |  2 ++
- 3 files changed, 29 insertions(+)
-
-diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
-index 4782e0f22d7f..15e18d50dcc6 100644
---- a/drivers/ata/libata-acpi.c
-+++ b/drivers/ata/libata-acpi.c
-@@ -245,6 +245,32 @@ void ata_acpi_bind_dev(struct ata_device *dev)
- 				   ata_acpi_dev_uevent);
- }
- 
-+/**
-+ * ata_acpi_dev_manage_restart - if the disk should be stopped (spun down) on
-+ *                               system restart.
-+ * @dev: target ATA device
-+ *
-+ * RETURNS:
-+ * true if the disk should be stopped, otherwise false.
-+ */
-+bool ata_acpi_dev_manage_restart(struct ata_device *dev)
-+{
-+	struct device *tdev;
-+
-+	/*
-+	 * If ATA_FLAG_ACPI_SATA is set, the acpi fwnode is attached to the
-+	 * ata_device instead of the ata_port.
-+	 */
-+	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA)
-+		tdev = &dev->tdev;
-+	else
-+		tdev = &dev->link->ap->tdev;
-+
-+	if (!is_acpi_device_node(tdev->fwnode))
-+		return false;
-+	return acpi_bus_power_manageable(ACPI_HANDLE(tdev));
-+}
-+
- /**
-  * ata_acpi_port_power_on - set the power state of the ata port to D0
-  * @ap: target ATA port
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index b43a3196e2be..026122bb6f2f 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1095,6 +1095,7 @@ int ata_scsi_dev_config(struct scsi_device *sdev, struct queue_limits *lim,
- 		 */
- 		sdev->manage_runtime_start_stop = 1;
- 		sdev->manage_shutdown = 1;
-+		sdev->manage_restart = ata_acpi_dev_manage_restart(dev);
- 		sdev->force_runtime_start_on_system_start = 1;
- 	}
- 
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 8cc7227f2d94..0e7ecac73680 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -131,6 +131,7 @@ extern void ata_acpi_set_state(struct ata_port *ap, pm_message_t state);
- extern void ata_acpi_bind_port(struct ata_port *ap);
- extern void ata_acpi_bind_dev(struct ata_device *dev);
- extern void ata_acpi_port_power_on(struct ata_port *ap);
-+extern bool ata_acpi_dev_manage_restart(struct ata_device *dev);
- extern acpi_handle ata_dev_acpi_handle(struct ata_device *dev);
- #else
- static inline void ata_acpi_dissociate(struct ata_host *host) { }
-@@ -142,6 +143,7 @@ static inline void ata_acpi_set_state(struct ata_port *ap,
- static inline void ata_acpi_bind_port(struct ata_port *ap) {}
- static inline void ata_acpi_bind_dev(struct ata_device *dev) {}
- static inline void ata_acpi_port_power_on(struct ata_port *ap) {}
-+static inline bool ata_acpi_dev_manage_restart(struct ata_device *dev) { return 0; }
- #endif
- 
- /* libata-scsi.c */
--- 
-2.51.0
-
+Best regards,
+Krzysztof
 
