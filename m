@@ -1,168 +1,191 @@
-Return-Path: <linux-kernel+bounces-884257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECC9C2FC04
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:01:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D68C2FBF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2391898A91
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:01:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E3B334D335
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD3D29E116;
-	Tue,  4 Nov 2025 08:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CE72951A7;
+	Tue,  4 Nov 2025 08:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="P7NDqxTr"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSJUp1lm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9629821D3F2;
-	Tue,  4 Nov 2025 08:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7157F2459DC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762243282; cv=none; b=EV+XNxTlfc2vFoDj5ZJLdIZb/5xw9TWJnRPbW0MEiOwgIl0TfizSi65aoVz98qI18qsr8r1zWvK2ueeHL9cVczEBq8Gk6YzmyE8oUt3iRl5bdKh/3D169gn6UARnUQwNXz7gqTUG5BUTWQoVmkfesKVktolHRtGWnI0IjWdtkwk=
+	t=1762243256; cv=none; b=JZXHn/HIFiSOQTrDPf8Vx53kahkYXn+t43mohYhT2ii5rLonwvs/dH5YYic07n1F8Pb3HfAX0akGdc6m9vkxD26AgpcWtckY2aW0jWJhDWSJImVJUc6s3ZGNja9q8ra0XDCebI84QhTBNBRgR3nsh56kHLseex1ksWNRi0dBLCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762243282; c=relaxed/simple;
-	bh=LIjhCgJ9W1g4cpf+suhDVd4gd+dWH+jYjTKj1L2B/H4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRB55TPfi/7Wu9Sf5lZwa13ifMnd0fRAGkHTPkUQJKxmeMv9Hj70UFOZv3cHBE8oCBMeAA2QSMltruTVXBhWbryz8dy+LTH/Cxz6ErVRkb3WUxw1zPOZ0ZRCZZo/YbB/aFHeLNaldZa1r1ojq5nhXkPomAmZE6g9CAYPmDcJNDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=P7NDqxTr; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762243251; x=1762848051; i=markus.elfring@web.de;
-	bh=hhz2X8iMqr1a8u4yGbTY7EoJyJceNYVntNcmYCAHrUA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=P7NDqxTr2hlhDoWkTKklPgckrapgdF6B+4UVdBaNfLRUA35EsDZbr6HG47KT1gnj
-	 PGY2xa1teu2jt6t22gFYqsjtB5XkC9M4baQH9kwOiewGeQ01vQdjJnOGvwn2bQRBC
-	 kgjAd0HMaNCBDeVzYiNebE/a/bHZ0wFK8idKKeXSlh2iRy+l9wPN4pMKYHYPARz4/
-	 q5Wt3YGKMWWOt/wyITiZPSy8YF3sZ6ptm8yxQJxQH63btNLmLEG7eb3Zs5UQxKjb2
-	 CfOdWzjJ8e/jEfmN3SAZNfyrvUbozObD7u5iY9BjoVdhexCXEwJSnlM2/sFVSNHpX
-	 McAnuCE1VQxYBFsiqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8n08-1wLieD0x0A-00vqsJ; Tue, 04
- Nov 2025 09:00:51 +0100
-Message-ID: <4f6f8ef7-0095-4d76-a96b-9a78031e9ca3@web.de>
-Date: Tue, 4 Nov 2025 09:00:48 +0100
+	s=arc-20240116; t=1762243256; c=relaxed/simple;
+	bh=PuqSRgKY4tTRslHCnIdLX5a9mAqIoTyPqIDfD9qJFTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzoIsqorQ8lCvq8bzWWh26k/d9HsxFzvUfzKy/N5cT7dFVgRDzqvfJ5BKmTYWUrrqdKsew1z8F/ouBQA2fBqXSY91xIGB8k6BR/tu6Qgh2Nzu5zx7JLPIcfg0kJDmZ5ZFK2aQmJuMf8xyyFDpaYPBHUV8QTLk3aX+ZeMfYMK2Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSJUp1lm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F398C116B1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762243256;
+	bh=PuqSRgKY4tTRslHCnIdLX5a9mAqIoTyPqIDfD9qJFTY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CSJUp1lmHp3hz0LCNyjgfhfrEzthneKW7/OKfLaYL2heWOT+Hn6JibpgVaBahiuSI
+	 uaNyA973U42y6JQwzIloVDlQxoJEyIyoTqmOYeVDagUGZMRGNeILgL5xJDANHyctk9
+	 RWg5qEF/OJyoFNoc8v44loQU5cS8nFCBQGEh35+e/1kuOdyJga0MHH91sQd118KStK
+	 +yJjfY6qnOgk/LMv+ollf0NN2i0MdOFRukL3WC8WYCQciCNcswesTva60wZ1n6yufS
+	 q4ClJ7Mw3OI6ZdknGap+DiXvjMZcNJimKkWkgt7FL/GqYpgEo8+Lvu0ORj9p0IQBd1
+	 vvbJCFQgJn3uA==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b715064bed6so221224666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:00:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVbY+z7ShK5pftk9le5vR37RxusVMDE0elaXs1Cfrlt9h5zKNSAZuyJ4yexOS/Syxx2DfSH+f+ttRL7LVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygd6o28bDvs2AXK4PL+AZWJ+hF3r6sPbt80cU3ZfhnjcEtcLPk
+	dweF3Dz6rHy6G31ccWdZHh2LIapFGr61aVdQqX83W4j3TtZvZe5tTiCk1SzMmwcPXtv7xNvJVVZ
+	VybTd9wcFOnuGelcsSnWQdHfD7D6J8YQ=
+X-Google-Smtp-Source: AGHT+IHIs4+6OBOp4RqpqefxiLfpCGnf/D+NxvdkoozjKR966Glf2llUVjvc8wIBEtQlwvpPcc3fyqEKerv7cThEoK4=
+X-Received: by 2002:a17:907:3d45:b0:b6d:9bab:a7ba with SMTP id
+ a640c23a62f3a-b70704e16a2mr1560642266b.42.1762243254594; Tue, 04 Nov 2025
+ 00:00:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: sti: fix device leaks at component probe
-To: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>,
- Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250922122012.27407-1-johan@kernel.org>
- <d1c2e56b-2ef9-4ab1-a4f8-3834d1857386@web.de> <aQj69wzTceDklx2Y@thinkstation>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aQj69wzTceDklx2Y@thinkstation>
-Content-Type: text/plain; charset=UTF-8
+References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
+In-Reply-To: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 4 Nov 2025 16:00:51 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bloCtvEGDGM7glFVyRnOfFYLga14ov4xbpTGd4Rhq6-yJ3cFAIVjrxTyOM
+Message-ID: <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
+Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
+To: Tianyang Zhang <zhangtianyang@loongson.cn>
+Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org, 
+	david@redhat.com, linmag7@gmail.com, thuth@redhat.com, maobibo@loongson.cn, 
+	apopple@nvidia.com, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Liupu Wang <wangliupu@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qmSNMYXLjCRUwbqJNYdpA1qr1VQNU89RD+9UtJMfiOpgeoOOfPJ
- +AtYkOj6H5hHIkXEqLw6WQ5xmXjOiwhG+ck5argKQ7xYGVclBh91BuEiiyCoFFOeeFZaDQ1
- 7cDde+nGGZRESvuZQM7CJrp/T8kR3fyS2ov5gfcn4uLr++iFJ1fICtXsH3iO/XxJOm1HWCl
- xnD2QOvWTTGkbBc2eZkKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3lZRLDAHVv4=;+O2K6/ugtZpAHTPwVOaxR53lq8L
- IBxzukGJsCOntbZ2Z60+ihUd4jPTpF8xCMLZE3OL7HHPfH4niOlAuJutLqxOqrGVWvq5NjpXh
- 4awMXMom3RBUQjZJpK5jRYze2X+Y6CXiRXjF9eV9mHZoTQwgNbfhKalx284dYFHih+P3dHsbs
- 0ECsKJMt4ohro/+0n5kcdFZum3qIDZuz7giuEBimjCNngQaQIb3+LSoG7LPJ7NV5YzXxfaJ11
- mSLJgHtUg1hc3jqCEMQnHTmjxf3454oNskm6wS2QU10zJnYF822VbQvC/v38ALdvT+d/J4a7y
- QEx+R2qYI8zdfqHW3eKwyt5ucYMSPE3+GG9LiKX1VYZq713l8ifyrJU9oeFUrZwRfZDV8rLmZ
- 06x/qSbTFtouM0JAFugdrzYhWWAO13oFpvjXLbv2rUXB4ba7QERzIaDderZlrM4+IesCEIJD2
- Vlldo7pcd44Lu54Pg2ZkcydXL8xdA/91wlX8/6xK86dL88x/XNYHS1OhxAsPL8j8vJJiO9Iee
- WFhg+oGwrnw2ho6fhiT5aADhJc21Nq1+8/Uv0u0AsxW6dcaHLjUFL8OShpAnIdNYvpjb9vrNC
- JEx22UVdDy9spF9BVap3if3PZY0ZQormPVq3D62t/6Ft7KmnXkeTB4TR/14xSmTxC+nKROUdl
- isABZq4W2AE0H/k24plm6tT7Y9A/V84b8lAyvTgbAPmdPHKdkpGMx9p+JDUGH1rw0n0hwxiOM
- oibJYZl2+snGRiR2qk2te/XyTCyEDUZdrP/t2yqyp1VvRklvTvXD9h/KfHvqzo8Ii6Syylgzt
- ArEJt9GO1TmX/oZK08DXbBDVfqgPJSqNkB2ruzWwFWYuVJhaJIbqrn53IAEk+h3QkFpRwf8zk
- R5NvKptzdryTYIjd0atxKS5QFvRSlLNoD3WDvxWrLmTCZ9TwAJ+qlHTKyJ/r2a5JEl9lJxxqp
- 6mbDn6AWfWFQmPWSSAMy7K10bLSaiuiqUxEUy+jHnRsC804XklXcZTn+gae98fcV75MiWY9vF
- p/1kqDQc3DNwBd+ryZkK/pouUG+u5H1OQQsrc9Ug5hx31Dr4jh2PZJdX4pARCTuQByVMz3WdR
- xxgGHMlOVRXMvv53O9WdFYUhh9Gc+q59WndeRX9nINDZlPwks9KKpyQi5kfPoS33fG2cDdXM5
- xb5LxWFtAZxe7GFPGQdeeP9qVmhszF50WuK3Q5hGzQMkcHdu/QYwOuc88PPDDoD/L5ptKt+7C
- Gt8nTg29H1eZ4I2I+Ju0cdcW+Mfh6SMR+62tiUcStRWSdxnpWTw8kb+YwSlx2uW5ilDjZzhb4
- hauy6P4HkaFGfqdq+0AkflNF5u7B96UEGNfi81FbnlcyXw5nUG8DD5widn3watFAjNIIL7e2o
- 3GDrIwzS+f1pJ7SOiPI3PlKSXc7Ftbn8aGTmhIkGhxygmgCFsubFaj54a/4j+eQGBeOJbKt74
- vJr2nRzH4BdLHXq/HdJraOI83eyyM/UbFZXfnbW9yyMhw1/JylctRIubd5FaOeNy3AOaOO5z2
- FGC6GZgN9jG8yR8U2NZpXRnI3owVTCgX8likl+ssLLUmDxq2FTOSyE7D+U6CyEwK1u4I8+Frr
- Aht+WKzKXdyMsa+e6+ID6iQOfmBO1B/8YWcPOVeks6ZcnjceIExTaNlsqIgJ13fbEU92cxmlf
- UuGqWxDYRmH1mGx09A6juqAwLOmEq0L7RAVB6P1t2pBazRutLYF35QWx7ncd8UIXLWA2vjyhB
- mRrlsKs5qh4FH6bTc0/+d6M+ANrQt3IZOtiMKCNNHPSo86mfC3UE+2RIrGBG0MgVSq98Wsljr
- CXb1bP3KgMg+0bBTRye58wJP2I7IuUs2UUrYThVb9bSJQ5thFWFhpX0LmZUlbCyk7xyRT4FHU
- mrNmpU4Z79YrvDUXR4XXyXYu9xuecyaE/CfxHZTcIyNBEqdiB7/iwdGiQykP2/PC/uYZZjq+Q
- JXZ8In6fi13EKGIf8oXHTpJGCYK44dT2rg0tP13eUNmBVIIQuGZUe7Fnms3nEUyL7i9cv4Zuu
- ZzYSLLIkyN8A8qeQnpnzEnAHhR3RPFOr57lv5A0PY5DUUwgeXfutPliwioEQ+aa4j0KwdCxeX
- KMG5nCmjJDvJZqvh4wGtgt8eYG7oqZbNT/9HcfF1XMoWRThSd3PwCQL64CeSi/EC7irijCCCO
- T4Zp6OnLSQItq/Kf4rNK49IsqxRaxkBktmJHhupGuJ1EPTI2OIk0KO5p3ltwT79kW8au9Eqqb
- /gRHjI6Nm9J1TJ05/KaeZabMJvhCzUt/XasyglxdiX28k4usauXhilrWZag9yTjpAn7P0B438
- Jrlxu4GL+l7Gz785KhXNUmywkN/lZGMRPdHxxdm2Qd0azgkwDOJXnDayof9ptcSolAcTNNs1k
- Q4KLcBnXbG75mo8XDcBrw/FPX1UsUiFTCJ1QLwkdpfaCSXAuJ7T0dH1h5oJbEDbivoqEbXdVC
- A3eX3eg1fYowOpylS6PWrPVDQ8x1KTsXIbz58eg25MNjhfw/BoIWeyTjEWZyPqSy+Pc6phg4K
- oqyV+b1cgPwmd1Yd/E0+V1LEmzepARUjBhNbRHIgNMjq8fYZhOPxTUUiyPwdqxX58d6IzVxTL
- HaszO1s3+XUnHNGyZp1oRPpPRWdtVuuw9cCFmiVC6kfi34ZxMdmyibi+xy6d5h0pxrCtvfnYq
- 6qqq5svB0k5nVqj/9iy0mznVR4e6SujOkpQH0PExKij4ycGi5u728vs0gW/fswiofiMgLDRjR
- HX/prmaBKnkY5YZEVnB0/JGK0yicQW6+CHwJXFrcL1kE9m/USbje75EsGuUEROuZS8SGZFgFM
- o7l8aznI3towR4XvHyGwR3ylWZnfDYGjC/AEFZSGeVkTDvS69XzffSux0WXi6f6RnfEcwROgH
- QfKWA5AnyUUghj/HyxVvWlcqKj/x4WrQ2Jc+T8fAqPnPhVlvj1uwQGwknHtOIqtWLLFnr7IED
- YVGW609uDIrzK0YyAzdVfBbUM2u5oiJsldy37Vfi4GoeUwu6P+PoOZTtGKIRzcbQ4N+5YgjJY
- sKSPAttow2x5zRnmOhJE04OBGjJVpfxdtIgg9o5Ena/rzUDccLJuLDzHihUIFrsyIhO6M6bpp
- WjVxerOtmOr0oKw+bVf/VudhJhCguczpKvH+ITRBol12CAQeKWLiOU6vHcY4cUjA8Q0p5MxC0
- UUsai6sqobD1O0IBAD9KAAmXGgFOjeQ8XZlV1Wgz/246g0S1dG3DbIwKYi7RsnnaRn6BJhhxM
- 3uweBA0ihfV47WTz8DJyG/erPMvLEDl6pzyGvSnRTbaYFWny8mSUDiMSZCdXb4SwQLJuUZMA4
- tEgzeJfY0KsPLqfMeO/L/nfgv5bYLy32fG7Xd6g3b+APpl4b85QZZawVZClxNGk1g2AUaqRBr
- CA0R9QkzJbKB0NP3i2Oa6oT09DvFlHj88Z4oKtjALk1IfgIqEq+4Wv2yN7vmdV2eS6SGHfjYM
- zU3mFOIBiiENTnhnnZgJ0u4DqsuTEiRQLtgIjP7TD5IjChFFuCXA0lmD1LFbe1xLjUkSsc4aE
- rYV7EUMUvSySiorusILMO6idwak/foiXiBNZKW/76HTPtziYbQo7LXTK2fwBy1JCb852SF2aj
- 4BgrJ7/SLQh3qh5oLtQMh5IG/FfhplVlP47IvL8z3mDqFBEEbHuqfbZXr+iEGDG2Ygss4dtPF
- mzp4CkJxf4CHBgRGOC2QzFNJuEAM0oStos8Pqk2SsZ2Hj7l6VPeQs/Qq/Wqjeuy8Wiilani0V
- mboQe+iT9JLdCANIAYXxgZloJN2yOWEDzaH/Z4ObF1iY///zr+/w8P8L8rtyuqGtan6wF/g+g
- p7weOtT/GxrkbUlWZkIQDp2XhCFvPScfEEHKtWDcokW1yyA7YM+JPx8V/IF1ArIL3Y27kG9cx
- xofFoIn7lTdC8tE78YNVqMTrlFglq/QPmGDKCNmD+03atuY9J+6IwXmeNSxJrsTMD1C8TkAyY
- /vwVr2RlZ1gLJAmd8tqSOHso0HLFv0E1CarNPMqGZ92XA0ZRi4/XxluGBPCb7QkwWeAneNHUF
- bMmjhq+z34NYBUxSp9r8ZHM12H3RHczprWUyUVUWgUufK5UeVZ3piK0jojARU672D/FYkrFGr
- h2Njn/cxNgu2X6OzjnN934SLQXiSfS4CuMFiFtMUDKfctAYS+CX4mY9UtmP3i1kefLHlD8eXG
- nCzYZya96KsOVnwlS21vdBZkGqVrHWGZ881BVIMEJ9NbqTyWlcenvdZJOBcCfUgbUD8rexLOT
- mP2eH9aemsvmnkkAN1nG2Y4k30uHA4ctWC+J3oTkj1kQwJEm5g2qBogKTp4t/dmDHXiY3ZDEn
- JryT8q1ZFGwNpAWEZSm+4dA3n26ziVQprY0YfoptrY32Dmsz2uG5xqwjBPqACww/Yh/BHe7lU
- ossV/krQJcMlL7e9fgLh+8cVWuuEFMHwYHgIByKpCdDfP+1COLBXSTot0DUicmXNnl65p8zAb
- YYoiYzC7W71ybLukD2qpXZ5gMEUa0zhl/DMLzaO72ClTjFz85Wuws0njgkpG/JpeT57ZpRJ2+
- 3Kt9E6uRGoKL0qODyV4mDfz7LGfmGAcq/VAiqNmtrC3/7JuJdswbU1CUBX8ut1ZMqLxtil9hy
- LfPBujaiPUaW2dlKLtzgS2OBhVFO7il8GX3rAhyXl6ee+Hhl0Re+XTK7Wtls6655bVIaxQlUC
- aPEGfNFFEY7vafyCaQ9gvM5BabahwPgTf7nML+gx8WYsFL2BwAugPjYsxav6ZfeS4fpZQJUXM
- tH6p3XMOerWbD7qILMzBYE3rKFJSdap3nb7sz3z0UB7Mio2e6aozHnGLPSb67C5Y0QRQbqlBe
- D94MXwdkrCjf1DYLPhH6qR2yZ68si0/fLRxuLDEy994Ry0DjELv3j7SJXutke1wC8ibHF2ayg
- 1UmTfpqodhiMnyLjYeB33xizMZU73Dnq4HR4aQhGWduDuQiOlCJUnD+ToHHJr43iFVpAzBNeF
- UJanK7JZY8lpKfeXL3FDxKOZTym2O8Y5v0/moRXdqaeuzZRNH1ycaQMVRA1v7Sa8OCR6Krtl/
- DVFZsmCINY2dcEQ2BAQq75Sz2HLLMYG/a6KHkijH484FEj/
 
-=E2=80=A6> +++ w/drivers/gpu/drm/sti/sti_vtg.c
-> @@ -142,7 +142,7 @@ struct sti_vtg {
->=20
->  struct sti_vtg *of_vtg_find(struct device_node *np)
+Hi, Tianyang,
+
+The subject line can be:
+LoongArch: Let {pte,pmd}_modify() record the status of _PAGE_DIRTY (If
+I'm right in the later comments).
+
+On Tue, Nov 4, 2025 at 3:30=E2=80=AFPM Tianyang Zhang <zhangtianyang@loongs=
+on.cn> wrote:
+>
+> In the current pte_modify operation, _PAGE_DIRTY might be cleared. Since
+> the hardware-page-walk does not have a predefined _PAGE_MODIFIED flag,
+> this could lead to loss of valid data in certain scenarios.
+>
+> The new modification involves checking whether the original PTE has the
+> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, ensuring
+> that the pte_dirty interface can return accurate information.
+The description may be wrong here. Because pte_dirty() returns
+pte_val(pte) & (_PAGE_DIRTY | _PAGE_MODIFIED).
+If _PAGE_DIRTY isn't lost, pte_dirty() is always right, no matter
+whether there is or isn't _PAGE_MODIFIED.
+
+I think the real reason is we need to set _PAGE_MODIFIED in
+pte/pmd_modify to record the status of _PAGE_DIRTY, so that we can
+recover _PAGE_DIRTY afterwards, such as in pte/pmd_mkwrite().
+
+>
+> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
+> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
+> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/includ=
+e/asm/pgtable.h
+> index bd128696e96d..106abfa5183b 100644
+> --- a/arch/loongarch/include/asm/pgtable.h
+> +++ b/arch/loongarch/include/asm/pgtable.h
+> @@ -424,8 +424,13 @@ static inline unsigned long pte_accessible(struct mm=
+_struct *mm, pte_t a)
+>
+>  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
 >  {
-> -       struct platform_device *pdev;
-> +       struct platform_device *pdev __free(put_device) =3D NULL;
-=E2=80=A6
+> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+> +       unsigned long val =3D (pte_val(pte) & _PAGE_CHG_MASK) |
+> +                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+> +
+> +       if (pte_val(pte) & _PAGE_DIRTY)
+> +               val |=3D _PAGE_MODIFIED;
+> +
+> +       return __pte(val);
+>  }
+>
+>  extern void __update_tlb(struct vm_area_struct *vma,
+> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
+>
+>  static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+>  {
+> -       pmd_val(pmd) =3D (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+> +       unsigned long val =3D (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>                                 (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
+> -       return pmd;
+> +
+> +       if (pmd_val(pmd) & _PAGE_DIRTY)
+> +               val |=3D _PAGE_MODIFIED;
+> +
+> +       return __pmd(val);
+>  }
+A minimal modification can be:
+diff --git a/arch/loongarch/include/asm/pgtable.h
+b/arch/loongarch/include/asm/pgtable.h
+index 1f20e9280062..907ece0199e0 100644
+--- a/arch/loongarch/include/asm/pgtable.h
++++ b/arch/loongarch/include/asm/pgtable.h
+@@ -448,8 +448,13 @@ static inline unsigned long pte_accessible(struct
+mm_struct *mm, pte_t a)
 
-The scope may be reduced for such a variable.
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ {
+-       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+-                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
++       pte_val(pte) =3D (pte_val(pte) & _PAGE_CHG_MASK) |
++                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
++
++       if (pte_val(pte) & _PAGE_DIRTY)
++               pte_val(pte) |=3D _PAGE_MODIFIED;
++
++       return pte;
+ }
 
-Regards,
-Markus
+ extern void __update_tlb(struct vm_area_struct *vma,
+@@ -583,7 +588,11 @@ static inline struct page *pmd_page(pmd_t pmd)
+ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+ {
+        pmd_val(pmd) =3D (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+-                               (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
++                       (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
++
++       if (pmd_val(pmd) & _PAGE_DIRTY)
++               pmd_val(pmd) |=3D _PAGE_MODIFIED;
++
+        return pmd;
+ }
+
+You needn't define a new variable.
+
+
+Huacai
+
+>
+>  static inline pmd_t pmd_mkinvalid(pmd_t pmd)
+> --
+> 2.41.0
+>
+>
 
