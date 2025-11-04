@@ -1,175 +1,230 @@
-Return-Path: <linux-kernel+bounces-884191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3E0C2F910
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:14:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E23BC2F926
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 196764E69D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3CC189424D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E541302169;
-	Tue,  4 Nov 2025 07:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94BA1B87EB;
+	Tue,  4 Nov 2025 07:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3B5caX/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MQeQ+YWH";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="c1NB0pPH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857093019CB;
-	Tue,  4 Nov 2025 07:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1C6305948
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762240455; cv=none; b=BLuXSytnoirEchIjIlS5hfYEB0b58pLnv0xYmOsANlpGhgDUM8C8E7o+Y7Se0GYQRqS1d5PsVUQ98UGtyHhygNip+vmbUTVlkXin4TmqOpglEF0Enf53qotLALj1TICIv++wK+OtslnO9pWs6HdHIOO/gdwDcvHr0eAP+nZ/i3g=
+	t=1762240718; cv=none; b=uaeI5I5sjp4SV9ItU6Gv+m1W1zJ6yA7v83QyNba4iT1gtORVgRT4V/EtE0JWhAE0HZOJlRUiAP9mG2d4/dWjx4xau1mKt4zKDNc6Ek8CNhkwzvDJ29+I7hh6XMEdDxZ6nusUmbBVsz82q3Rmda10v93fy8PiZl+7WOtWjP0TtRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762240455; c=relaxed/simple;
-	bh=SSf0Rpn+K0mGokCfLmx8pESVX/TTUwsxUbFN2NWZMRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpLalxyWtiwsYw9v+S6jp1Nv8YPiZNJbY1hwfHCJiFwws19PuihSG6gkv8k0ZQni5qXz8p2FdiAtHuvjn4alJ8UG28HxYgLxyZnBROOexyl7JmLhy1sprn4poBKE/wpbPzSTG6N7gcuY4WUbfDScY3/R18bv5elvhx7xSs1m69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3B5caX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB39CC4CEF7;
-	Tue,  4 Nov 2025 07:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762240454;
-	bh=SSf0Rpn+K0mGokCfLmx8pESVX/TTUwsxUbFN2NWZMRA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j3B5caX/k4j5t/VKIWrVuRTYvuua5zD2wSPJhdRsD+cA/MSFwoh7q0I/3GMqB4xjp
-	 1fiBNFayP8CRHZtPizm2E/rKxcupAAxbtkHevSaHaINyU7QavY87C7rTry9Ouguip8
-	 /XyUdglfw056D1nyy5pHsoHdrscc6WdLSqGGLkevJPTQqPPulpF/zPGuq9eGVv7v+8
-	 KGrDTCdfZvmPy1yiTk9u0Ijl7sDMQMeVTR7+PcGrOUjHun1dPeZmdn/D69rV9I/9m3
-	 hiN1+Hd+bG1he3OjmFUU36L/d0gs86URZcMV9qCwq8cYmtK/D1kRb3MJh25NcD5mEX
-	 k8wQ8lDMipvJw==
-Message-ID: <b9b10943-0ece-495f-a6a8-403fc1ab9213@kernel.org>
-Date: Tue, 4 Nov 2025 08:14:08 +0100
+	s=arc-20240116; t=1762240718; c=relaxed/simple;
+	bh=FEJihQxlnDdgEbfs+h950KC+cNQf1olxV+ZiL4YMXeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eUd+d5QuMv03xG3SldO3aVtYEOSp5BZ1v7Wl8q25paERs9iwMxLGoHT02aB8Ylh1xz7oLAbg2lL3YEEdqZ+rPESaGoG3EfBBN/cxabo3WinfymroHouS6VsCGmROzfOMIrjUFWEQ3jthyNtArzCjZUu0ql2loqkri3YLynY5n8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MQeQ+YWH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=c1NB0pPH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762240714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MTzuXIJmP4zZ1Lttp8cwRd37ZWwl4ogSNFFocfQsRMg=;
+	b=MQeQ+YWHf2tjLclEdLa5ov1yL025+ZIXWq98l6juEQKDo5W8wLXKGFmlOgE1YDaxhW3x8O
+	21WoNKBszIWIoN8YxwOA5sTX/MlE0EicfWiHAR3N1/6atNCGoouYktdx+kL4gH0qhS1OKf
+	DunopH7lY8Fe4fKwQa6ina3Y8eQVJzA=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-YRZ3EqatOqWqLazfwD7u5Q-1; Tue, 04 Nov 2025 02:18:17 -0500
+X-MC-Unique: YRZ3EqatOqWqLazfwD7u5Q-1
+X-Mimecast-MFC-AGG-ID: YRZ3EqatOqWqLazfwD7u5Q_1762240690
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-37773b4780dso29463001fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 23:18:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762240690; x=1762845490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MTzuXIJmP4zZ1Lttp8cwRd37ZWwl4ogSNFFocfQsRMg=;
+        b=c1NB0pPHSwMsNUgHPhzPHBEurqvGBVnme3/PY4L1mxawVEoFxXD54konUV600ufRWD
+         6MJbjJD9g9wSBJz3Tdp1yskN465kbokynjsm7WaofBZTr9far9lrNBVhij1gPTC9JmHF
+         8agXZOqCdHeQKAh5zQq4y35rGQrOvH1PVv8iONiaJ1AitNnmwRnbG2FsAFZCnqZ1FLnl
+         UqFdHiTdQkaHwZA587/SmM20r/iKDygIaKhTxyeGFm0AzbMqZSXlyH1nOyw3dj7nxCO+
+         YtpeZFaVnsl3UPWD2A1aHe7ldKRIrhPcq/oucTzatyq1Rd+24HU0X5fzrBw1lcdZH91q
+         j11w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762240690; x=1762845490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MTzuXIJmP4zZ1Lttp8cwRd37ZWwl4ogSNFFocfQsRMg=;
+        b=N98g65AZMgRuuDMT9UVL5tmZVE362dSLZdsScMqIpRTx88O1Jq3dnciWjx5gQfMjqU
+         sNTZdFMfbDzCjIrcEKTqZpMEXn/U7AkMLd6b7EBMH5ahXfpD0f1gqctn5o4DfY7BjJXp
+         xueHDz/oIg/jfVyjgeX0Nd3z2Ql/RdVLmbx+svs4kP2emqwmIBXiNABQZammL6IbqKlu
+         OKV6i2nt8QLfmCrnaZqknWA3hns2Pf/Vo1Bvkuwvq6HsBKXGCnkBoO0VZ4H/Sem4ZzVv
+         6tt/BfIOsNZzSGr0WOHoCDXbGLk16aMabV0poi+QE4Kp/Xkd3s+oAkUtamMtz/9oQWlJ
+         mxmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXK64KiVoOAwwqNECw1JA0J8APw4ZNmrsXfr4DvaadNSmNT3rfFhCHUVLVCBk2apc2ni5vgUdrDVT1eWMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5ZGqbPFuehM5caaabK06wDQt6WDd2mxORgkHRlcK7L0HlfoEe
+	1a+rYUJL1QQYX/Sx5Jo1DRLbIF9jKqnxO7B6xQ0n3jnwVDEWIY+pX/NT3/r3Q7Dh+tuEJdCTBYB
+	3Kz8eXi62s+GJ/0LAUZ+vvPd5jhEY/lIzeyxioJh9+c9GKe8MiikwI+Nblf/OpzMH13EPhmec1U
+	FPOohMy/82+urGmR3pCAEGWLCvwlnE1Xjg0Cvhcfl4
+X-Gm-Gg: ASbGncsz0aXpPrxSbxMicgJMJLTMWm47ke5ntdbNpTGqCYH/VvDFZMZhj6NmGQ2kaF+
+	2nKclYR+qsWzeshRFaN7H61lm9KPf1W7e7LMPm/8D0Rt+hGZfWvdfzWasMiS4zcHI8PdSXp4h/Y
+	vWmhkacB3FQBzMmcKcd7wsaXp8leIgj0eXHoEUEHaP6hsAVXIxUhG9roBJ
+X-Received: by 2002:ac2:4c4f:0:b0:57e:c1e6:ba8 with SMTP id 2adb3069b0e04-5941d50dcbcmr4947732e87.12.1762240690111;
+        Mon, 03 Nov 2025 23:18:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFa6LnqZyINfI1b6s+9A/MlotDy35EIE1oPO8bxAz3Ccj1BadfcUSCe6jPWhqctv6leB+d0rvY5OjB+9YI3eak=
+X-Received: by 2002:ac2:4c4f:0:b0:57e:c1e6:ba8 with SMTP id
+ 2adb3069b0e04-5941d50dcbcmr4947721e87.12.1762240689606; Mon, 03 Nov 2025
+ 23:18:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] arm64: dts: exynos: gs101: add the chipid node
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
- <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
- <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251103125757.1405796-1-linan666@huaweicloud.com>
+ <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
+ <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com>
+In-Reply-To: <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 4 Nov 2025 15:17:56 +0800
+X-Gm-Features: AWmQ_bn4wssZ7JMXroEdNiwVdeEmp206W4p2YKP5GrtWM-x5aZ6_txv7RtiB-oE
+Message-ID: <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
+To: Li Nan <linan666@huaweicloud.com>
+Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, hare@suse.de, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/11/2025 11:50, Tudor Ambarus wrote:
-> 
-> 
-> On 11/3/25 12:18 PM, Krzysztof Kozlowski wrote:
->> On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
->>> Add the chipid node.
->>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
->>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> @@ -467,6 +467,12 @@ opp-2802000000 {
->>>  		};
->>>  	};
->>>  
->>> +	chipid {
->>> +		compatible = "google,gs101-chipid";
->>
->> That's not a real device, sorry.
->>
->> I had some doubts when reading the bindings, then more when reading
->> driver - like chipid probe() was basically empty, no single device
->> access, except calling other kernel subsystem - and now here no single
->> actual hardware resource, except reference to other node.
->>
->> Are you REALLY REALLY sure you have in your datasheet such device as
->> chipid?
->>
->> It is damn basic question, which you should start with.
-> 
-> Documentation says that  GS101 "includes a CHIPID block for the software
-> that sends and receives APB interface signals to and from the bus system.
-> The first address of the SFR region (0x1000_0000) contains the product ID."
+On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Li Nan <linan666@huaweicloud.com> w=
+rote:
+>
+>
+>
+> =E5=9C=A8 2025/11/4 9:47, Xiao Ni =E5=86=99=E9=81=93:
+> > On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> wrote=
+:
+> >>
+> >> From: Li Nan <linan122@huawei.com>
+> >>
+> >> Raid checks if pad3 is zero when loading superblock from disk. Arrays
+> >> created with new features may fail to assemble on old kernels as pad3
+> >> is used.
+> >>
+> >> Add module parameter check_new_feature to bypass this check.
+> >>
+> >> Signed-off-by: Li Nan <linan122@huawei.com>
+> >> ---
+> >>   drivers/md/md.c | 12 +++++++++---
+> >>   1 file changed, 9 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> >> index dffc6a482181..5921fb245bfa 100644
+> >> --- a/drivers/md/md.c
+> >> +++ b/drivers/md/md.c
+> >> @@ -339,6 +339,7 @@ static int start_readonly;
+> >>    */
+> >>   static bool create_on_open =3D true;
+> >>   static bool legacy_async_del_gendisk =3D true;
+> >> +static bool check_new_feature =3D true;
+> >>
+> >>   /*
+> >>    * We have a system wide 'event count' that is incremented
+> >> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rdev, s=
+truct md_rdev *refdev, int minor_
+> >>          }
+> >>          if (sb->pad0 ||
+> >>              sb->pad3[0] ||
+> >> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
+>pad3[1])))
+> >> -               /* Some padding is non-zero, might be a new feature */
+> >> -               return -EINVAL;
+> >> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
+>pad3[1]))) {
+> >> +               pr_warn("Some padding is non-zero on %pg, might be a n=
+ew feature\n",
+> >> +                       rdev->bdev);
+> >> +               if (check_new_feature)
+> >> +                       return -EINVAL;
+> >> +               pr_warn("check_new_feature is disabled, data corruptio=
+n possible\n");
+> >> +       }
+> >>
+> >>          rdev->preferred_minor =3D 0xffff;
+> >>          rdev->data_offset =3D le64_to_cpu(sb->data_offset);
+> >> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_IRUG=
+O|S_IWUSR);
+> >>   module_param_call(new_array, add_named_array, NULL, NULL, S_IWUSR);
+> >>   module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
+> >>   module_param(legacy_async_del_gendisk, bool, 0600);
+> >> +module_param(check_new_feature, bool, 0600);
+> >>
+> >>   MODULE_LICENSE("GPL");
+> >>   MODULE_DESCRIPTION("MD RAID framework");
+> >> --
+> >> 2.39.2
+> >>
+> >
+> > Hi
+> >
+> > Thanks for finding this problem in time. The default of this kernel
+> > module is true. I don't think people can check new kernel modules
+> > after updating to a new kernel. They will find the array can't
+> > assemble and report bugs. You already use pad3, is it good to remove
+> > the check about pad3 directly here?
+> >
+> > By the way, have you run the regression tests?
+> >
+> > Regards
+> > Xiao
+> >
+> >
+> > .
+>
+> Hi Xiao.
+>
+> Thanks for your review.
+>
+> Deleting this check directly is risky. For example, in configurable LBS:
+> if user sets LBS to 4K, the LBS of a RAID array assembled on old kernel
+> becomes 512. Forcing use of this array then risks data loss -- the
+> original issue this feature want to solve.
 
-So chipid@1000_0000
+You're right, we can't delete the check.
+For the old kernel, the array which has specified logical size can't
+be assembled. This patch still can't fix this problem, because it is
+an old kernel and this patch is for a new kernel, right?
+For existing arrays, they don't have such problems. They can be
+assembled after updating to a new kernel.
+So, do we need this patch?
 
-> 
-> 0x1000_0000 is the base address of the OTP controller (OTP_CON_TOP).
+>
+> Future features may also have similar risks, so instead of deleting this
+> check directly, I chose to add a module parameter to give users a choice.
+> What do you think?
 
+Maybe we can add a feature bit to avoid the kernel parameter. This
+feature bit can be set when specifying logical block size.
 
-and efuse@1000_0000 from your other patchset and your sentence above.
+Regards
+Xiao
+>
+> --
+> Thanks,
+> Nan
+>
 
-Please add them to DTS and check for warnings.
-
-> 
-> "CHIPID block" tells it's a device, no? But now I think it was just an
-> unfortunate datasheet description. Do you have an advice on how I shall
-> treat this next please? Maybe register to the soc interface directly from
-> the OTP controller driver?
-I think in the SoC it is impossible or at least never happening that you
-create two devices for the same address, therefore either chipid is a
-device or efuse is a device.
-
-Best regards,
-Krzysztof
 
