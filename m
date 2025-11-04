@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-884668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA336C30BBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:28:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860EFC30BC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BBDC4E6E31
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45F3421326
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77412E5439;
-	Tue,  4 Nov 2025 11:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXmDb5EL"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4C42D2488
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287412E54DB;
+	Tue,  4 Nov 2025 11:28:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93592DA759;
+	Tue,  4 Nov 2025 11:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762255726; cv=none; b=pP9eoseai3gL9RJpc+3LF7N0yr0qBtAWz6fW+2RyRwJuIDkNEB5fE5B3xdJ9ZFcVZ28dC4Pl3MVkXjDCY9xCfyL/5ZqnLJG8YXO0CEtlDgEfrELN+H7w5Qms2xuYPSbdYIiCQI8WFbFv10rSEkA+14Nkf7ijMmHdaF+qw7xsdIM=
+	t=1762255735; cv=none; b=AyyJcT0xsLGc9SsCGJ46Zm0jT4SgpUK5x+H9MK60rKfPafasv0kifhfxAf9CinOWnNeOy6h2froy2JbKEPswOJMDNkQL6hcYrDfpxznWIgURoLeJQzU3xMcYtKCCJnuufneEVDvwuCwxYkTpyIJ5PYj6PbkwzM6O5iMYz5vzOtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762255726; c=relaxed/simple;
-	bh=zVzW848wcpzFwJAgPK/KarPXxlh9qHAQdW2+l80NgnY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gKtlobz/MonoV+jut2/nJefdeQm3LPavEAtQUXKByx4C0ARulhrt3PcN1bLk/EeA0cOdFhkpDd9MunUBPdfirGeFmoJ3izAIuhrGZGrzg0Vug/yfRzc8VKdwFynY+0d52Jf71yuxgTX2C2mSLE7ezw6xmj7rehkyOaqn8lOCUN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXmDb5EL; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27d3540a43fso53407865ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:28:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762255724; x=1762860524; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CxdVni7d9zY7Eb56aBlMj/F4HouDx96+uAbwzp09kRU=;
-        b=CXmDb5EL84gQ/j61XbCFXBC3X3Z1wXNRislpaN4E5p1nS3xwgmx3OIWy5r8XiMyl4H
-         9ebKaKkksNoiZIrCJmUznF1SjaygeJwPrlhy/J/abwUiE/RUdp4KnleUtUKbocKeUSKQ
-         ffz1u44jBeLJaoGl3TjiHr1gYUPjJVVRJ2VsUpEjBWMcpy4QJHki9D2kMvnNbjESUGMf
-         LJxMSUBP535rCsc8HeBmsfxMtlRreat6vbUBPkUQG3QisBAOYpEz1WdAdV6DYCREV9yB
-         Ef5F+EpbFNJFkM+MsUQy71N2NFeLERUfX6bAjzkZihiXygLSwPV5QNwaxK6xHGHpOh5m
-         zZtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762255724; x=1762860524;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CxdVni7d9zY7Eb56aBlMj/F4HouDx96+uAbwzp09kRU=;
-        b=N5SmwAsYyoq2pGwOFotRn7dIWdbYBgYgMB7Is/P5j6bAtS3L+MkJ6J8i+kLULz5ChX
-         HZaWjPQAvnNMJZNWgKshEADnenGXSW4rR99ImeyJ/oDF6WxLu82i/Yy8v1NKHje4Dy/e
-         UgwhZgRs/vmbANVB/sbIo3ffQ5NT4PbTpGJEm7/0g6qcczzI+EzZm/7I8qVwvW2Gllg6
-         nJy8VcTjF90jSsTZHhd7qBUJ5GokirbeJrto/8HUB/aYnFQllroGnkY6FWSPSJsjlR/m
-         V5k7vRw5suP2IKHn8XpbAxAxUmFShZbqZLTDeaTQhgOre75agBdzThHepC6n6LGQZeY6
-         5waA==
-X-Forwarded-Encrypted: i=1; AJvYcCWt2ypKh0KC4U4OvpK9va70d7v3SOdU4FfRwVWYfDNF1FDjlH2ESYL1XO7+sMjBFMYVxMhIOMthyZDCbfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+8jQboObEeSSxxeUbsUwsXqRQlbHXZXBUNtF/wd+q6SJpq9w4
-	VLmbz75EHGbxVFvlPYZjwOllobCHmbIoeW2qDH6u0XJhK++7AXwabihM
-X-Gm-Gg: ASbGncubA/tEuiQKL+ywcjMM1FeHiMCv8P+pIBiYmhXUUDj+r8HQTJcATUBlnInjYgg
-	aW1B+RaeDjjzD9gf+likTX2JbEj2eF38L1IrFuxvgk3CO5UTDawX4V7NDJ4OoXnD+yCv34vebln
-	PSvwXvlO1Zw/UUTeG3NhJWuNk71Pm8CVcLnzOuAJJmLwNs/RG9pZnRktfona6Q5SWJlHCj2o9Hp
-	8LISPqNW/rhuBu1OEcExB9S34gkK03K6xsFcu69o7lrk6YTQxQBeihTXhn3DCbodGblgOulEyih
-	2cFpSOD0VUj6eMB+iwD/20bPRmkxq6yXe3avU+GaWfUuQfuW+Rd3SJwid08siDCVqFTVIudDtHw
-	FqPUdUKYVntYpa0u5XELEDfKJSxJVbhR1Gj/bwpowD6+Js/qNytf9s0TmeBFxcUFgVk8b9Ouhtw
-	4d
-X-Google-Smtp-Source: AGHT+IGuay4E3cOeIh7l443N7j7NEY6XyHAZjQH0TJBkBS2+aHXGG30+zXi+TgbVqPSIBrRWuFP+2Q==
-X-Received: by 2002:a17:902:ecd0:b0:295:9b39:4533 with SMTP id d9443c01a7336-2959b396096mr101951295ad.30.1762255723916;
-        Tue, 04 Nov 2025 03:28:43 -0800 (PST)
-Received: from aheev.home ([2401:4900:88f5:503e:a1c1:64ad:7a99:42ba])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a73c91sm23386055ad.100.2025.11.04.03.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 03:28:43 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Tue, 04 Nov 2025 16:58:36 +0530
-Subject: [PATCH] powerpc: 82xx: fix uninitialized pointers with free attr
+	s=arc-20240116; t=1762255735; c=relaxed/simple;
+	bh=Q8S8W8Ce89aAd6Lp63iqNC1/ehzjUmA4uJIWdv2wfyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NCgqKUBOnPwuy8p4Lqd4NUtYBV4QwLum3gdmDujhrdzh0eg2UDqE2i5UXVIR5WTNKOOIBKCOenCStn/rqx+mg4bCYyztBLr/yc5wTjeOzoMfiyLccT8t2qzIZVcja2vLcvj2nPHR3SMFA3ESAAWiDgCtArU3jGvKZ1P48VyBbIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D54651C2B;
+	Tue,  4 Nov 2025 03:28:44 -0800 (PST)
+Received: from [10.1.38.100] (e126510-lin.cambridge.arm.com [10.1.38.100])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15B213F63F;
+	Tue,  4 Nov 2025 03:28:44 -0800 (PST)
+Message-ID: <216d54f1-334f-4600-9ecb-f7788b1abd7d@arm.com>
+Date: Tue, 4 Nov 2025 11:28:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-aheev-uninitialized-free-attr-km82xx-v1-1-903be69f2cd4@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGPjCWkC/x3Nyw7CIBBG4VdpZu0kgPX6KsYFwl87UbEZsCE2f
- XeJy29zzkIZKsh07hZSzJLlnRrspqMw+nQHS2wmZ9zOWtOzH4GZP0mSFPFP+SLyoAD7UpQfr6O
- rlY0JfbgdwjbuT9RSk2KQ+t9cruv6A4Cmc6F2AAAA
-X-Change-ID: 20251104-aheev-uninitialized-free-attr-km82xx-00c4cb7c3d69
-To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1538; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=zVzW848wcpzFwJAgPK/KarPXxlh9qHAQdW2+l80NgnY=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDI5H6dPmL776+tMe7e3QZ0318e/f3BxT1aTy5UIJemqh
- ycVdn3U7ihlYRDjYpAVU2RhFJXy09skNSHucNI3mDmsTCBDGLg4BWAi3IaMDK/fBt7uiFoRctHp
- gKHpwlnTvh6+MP+lUP/07c8D+9Mi5pUw/K80q9nr8unJ/96fl2tzkssvnrvyRmx28bt706pV2VK
- 23mUGAA==
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/12] x86/xen: use lazy_mmu_state when
+ context-switching
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-12-kevin.brodsky@arm.com>
+ <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
+ <285faae4-dab6-4819-847a-889bdf87d5d7@arm.com>
+ <a326d1eb-62f1-4add-8dc9-cea7d7e4ed3c@kernel.org>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <a326d1eb-62f1-4add-8dc9-cea7d7e4ed3c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behaviour as the memory allocated to the pointer is freed automatically
-when the pointer goes out of scope
+On 03/11/2025 19:23, David Hildenbrand (Red Hat) wrote:
+> On 03.11.25 19:29, Kevin Brodsky wrote:
+>> On 03/11/2025 16:15, David Hildenbrand (Red Hat) wrote:
+>>> On 29.10.25 11:09, Kevin Brodsky wrote:
+>>>> [...]
+>>>>
+>>>> @@ -437,7 +436,7 @@ static void xen_end_context_switch(struct
+>>>> task_struct *next)
+>>>>          xen_mc_flush();
+>>>>        leave_lazy(XEN_LAZY_CPU);
+>>>> -    if (test_and_clear_ti_thread_flag(task_thread_info(next),
+>>>> TIF_LAZY_MMU_UPDATES))
+>>>> +    if (next->lazy_mmu_state.active)
+>>>
+>>> This is nasty. If in_lazy_mmu_mode() is not sufficient, we will want
+>>> to have a separate helper that makes it clear what the difference
+>>> between both variants is.
+>>
+>> in_lazy_mmu_mode() operates on current, but here we're operating on a
+>> different task. The difference is more fundamental than just passing a
+>> task_struct * or not: in_lazy_mmu_mode() is about whether we're
+>> currently in lazy MMU mode, i.e. not paused and not in interrupt
+>> context. A task that isn't scheduled is never in lazy MMU mode -
+>> lazy_mmu_state.active is just the saved state to be restored when
+>> scheduled again.
+>>
+>> My point here is that we could have a helper for this use-case, but it
+>> should not be used in other situations (at least not on current). Maybe
+>> __task_lazy_mmu_active(task)? I do wonder if accessing lazy_mmu_state
+>> directly isn't expressing the intention well enough though (checking the
+>> saved state).
+>
+>
+> Likely there should be a
+>
+> /**
+>  * task_lazy_mmu_active - test whether the lazy-mmu mode is active for a
+>  *              task
+>  * @task: ...
+>  *
+>  * The lazy-mmu mode is active if a task has lazy-mmu mode enabled and
+>  * currently not paused.
+>  */
+> static inline bool task_lazy_mmu_active(struct task_struct *task)
+> {
+>     return task->lazy_mmu_state.active;
+> }
+>
+> /**
+>  * in_lazy_mmu_mode() - test whether current is in lazy-mmu mode
+>  *
+>  * Test whether the current task is in lazy-mmu mode: whether the
+>  * interrupts are enabled and the lazy-mmu mode is active for the
+>  * current task.
+>  */
+>  static inline bool in_lazy_mmu_mode(void)
+>  {
+> +    if (in_interrupt())
+> +        return false;
+> +
+>      return task_lazy_mmu_active(current);
+>  }
+>
+>
+> Something like that. Maybe we can find better terminology.
 
-powerpc/km82xx doesn't have any bugs related to this as of now, but,
-it is better to initialize and assign pointers with `__free` attribute
-in one statement to ensure proper scope-based cleanup
+That's probably the clearest yes, will make the change. I can't think of
+more self-documenting names, spelling out the difference in the comments
+is likely the best we can do.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
-Testing:
-Successfully compiled the kernel with `allmodconfig`
----
- arch/powerpc/platforms/82xx/km82xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/platforms/82xx/km82xx.c b/arch/powerpc/platforms/82xx/km82xx.c
-index 99f0f0f4187672614f4f8ad46ab7906f7ad8078b..4ad223525e893c0de15540db2b2c4d239d6d841e 100644
---- a/arch/powerpc/platforms/82xx/km82xx.c
-+++ b/arch/powerpc/platforms/82xx/km82xx.c
-@@ -27,8 +27,8 @@
- 
- static void __init km82xx_pic_init(void)
- {
--	struct device_node *np __free(device_node);
--	np = of_find_compatible_node(NULL, NULL, "fsl,pq2-pic");
-+	struct device_node *np __free(device_node) = of_find_compatible_node(NULL,
-+		NULL, "fsl,pq2-pic");
- 
- 	if (!np) {
- 		pr_err("PIC init: can not find cpm-pic node\n");
-
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251104-aheev-uninitialized-free-attr-km82xx-00c4cb7c3d69
-
-Best regards,
--- 
-Ally Heev <allyheev@gmail.com>
-
+- Kevin
 
