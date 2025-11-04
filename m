@@ -1,140 +1,96 @@
-Return-Path: <linux-kernel+bounces-884816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD71C3138F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:27:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A02C313C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B956188DD6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:27:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B584A4FBE48
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208D2DF13E;
-	Tue,  4 Nov 2025 13:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96732573E;
+	Tue,  4 Nov 2025 13:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ma01gJio"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sU0OKzZt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5753F2FB99C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25792F5A1D;
+	Tue,  4 Nov 2025 13:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262816; cv=none; b=PiP/yBeo0WGozycd2iCzIe9EnmJpEtdeDQ9nQT+OXwrsxQezjyHwvWPCd2vjTqNGMuaooKYbBPfs2CwLZipRaASkidx/KTJVE6SaOPe3P5v3BtCPPrKZRla05CUOo3V3i7U8/DI4I3iSAcPm3oJTv+pWMUWPd/QEvFrGKDJobc4=
+	t=1762262708; cv=none; b=oIeEKes+h0ITh9txd53+Ri1gHuEIUGS3JZvWLw8X8v3jOSHOUBKumom86tY75L28Dt310cVdPyTXJyEvYsIQqG3LdSG+JQjKtR4MjwsQCNg3kfhooOqKuHrSrVo87zcQ5w01FCOTYa1ggTq980v0QxPBldNiJRv3XKJ5nQH0avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262816; c=relaxed/simple;
-	bh=F74OLeSmrW0D6mi+O/1ODpediCxwIMxbpnxzFvQ2tj4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=kMtmt7ocvU4VRUzCPxhszHQD2xI83GCCgV4SoUK/Pe7/rPlf0AM6iJpBnonpwcYsnwxCP7BhOwa5yr1EVHKozI2hBWuKr5LWKRPHjgwfr/oxuarbrwT31r0voJiIOEPw+9R2BwjpHHnA9lolKQgbr3CeIKXodO5t2Y40aV40ziA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ma01gJio; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762262814; x=1793798814;
-  h=date:from:to:cc:subject:message-id;
-  bh=F74OLeSmrW0D6mi+O/1ODpediCxwIMxbpnxzFvQ2tj4=;
-  b=Ma01gJiopDJciG51tonurD+zQTvQNigu0KVCYDL6GMr2Hxae6ZmmABp1
-   AmM5hPXX6oLwKzFvuD8fuPn9IF91HG80iMVPYIw/1BmdslrPePQ4T8H5f
-   NBGZR6VXvz/bhriTLEMlrzzWfPZwu9g8WYlVMuTBQNeJOMwdpRu9tk66R
-   nHhi2UMvZL+jHLeQhFOPYAqTlTSAVxQh/60Z1u5qASuxekWutT8jUgr+1
-   qtNRfa0Q2oK3nKhDh94p4IUx+D3Mm/vXNPvuVFpj3e4HOMUZUEimSvuJw
-   2H+JWIDZynKk5B2pNYf5bnmhHaEuN3EzWk1IIHRrMUw5ynWL1xTDTaZav
-   w==;
-X-CSE-ConnectionGUID: EXmKrJx2TRywCaX5zVgXQg==
-X-CSE-MsgGUID: jidUxQJaTlGBkQUPZvuyYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75805411"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="75805411"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 05:26:54 -0800
-X-CSE-ConnectionGUID: RmStsEU2TaKhS+zVlrX9xA==
-X-CSE-MsgGUID: pGuP9qViTm6Z3dTi+taLyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="191509480"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 04 Nov 2025 05:26:53 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGH2v-000RR0-1A;
-	Tue, 04 Nov 2025 13:26:16 +0000
-Date: Tue, 04 Nov 2025 21:24:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 0a4b61d9c2e496b5f0a10e29e355a1465c8738bb
-Message-ID: <202511042154.oh0N0iSH-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762262708; c=relaxed/simple;
+	bh=iATfAD80ddorotenYSHXywKR7AKJQY/F+ZFnNEwTPEM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IBlvh/1VnX/CIX3Ddg/oQ1PiRMzwKhkB/BN8r5dV5jxOgj8zJWys/tUW5cOmTwS0WPvR7bcSEmEwBtWW26XQd4v8Pm+92+vX1i6sAvtiJZeAhon4L1QGCEJtpSi0TghKNllJoaKAxM6mcJQv+4XSFFHuVMcTCHojbZqxQAg+/m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sU0OKzZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5619C4CEF7;
+	Tue,  4 Nov 2025 13:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762262708;
+	bh=iATfAD80ddorotenYSHXywKR7AKJQY/F+ZFnNEwTPEM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=sU0OKzZt6g0S+mWgVHBvftuaXH5wuKFhF4Io6tn4K72nZBEf7XYBsZAGiYuyltlg0
+	 dLJFxc56flKunbq3fy9rtLkx9VNy/YEnASXLz/vFhLpRAaCX8SDQ8LRAFohUVWzRtD
+	 sJclyonKr9c79UdnPVblcjjx6d4Ob2X84AL+fazY+oDhBfXZFvstYoCDWgN3/N1AmL
+	 Qizo/w4wHwgnMa1+atMDnkGt1I1XX8b6pI57NqPL75sm5Qjdn67zCTqUGcCx0/Iphh
+	 /QqXl2ptvCFvbNEAgOg4fI08StuANm1EgJA9LpOFLkvRTRwfKziEjQXbFlR8M/lEKT
+	 q0Qa9eFuG4xWA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aQYKoiivuec3m0Jj@stanley.mountain>
+References: <aQYKoiivuec3m0Jj@stanley.mountain>
+Subject: Re: [PATCH] regulator: Small cleanup in
+ of_get_regulation_constraints()
+Message-Id: <176226270691.2215752.9832991675412345735.b4-ty@kernel.org>
+Date: Tue, 04 Nov 2025 13:25:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a6db3
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 0a4b61d9c2e496b5f0a10e29e355a1465c8738bb  x86/amd_node: Fix AMD root device caching
+On Sat, 01 Nov 2025 16:26:58 +0300, Dan Carpenter wrote:
+> Just pass "init_data" instead the address of it.
+> 
+> 
 
-elapsed time: 1464m
+Applied to
 
-configs tested: 48
-configs skipped: 129
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thanks!
 
-tested configs:
-i386                          allnoconfig    gcc-14
-i386    buildonly-randconfig-001-20251104    gcc-14
-i386    buildonly-randconfig-002-20251104    clang-20
-i386    buildonly-randconfig-003-20251104    gcc-12
-i386    buildonly-randconfig-004-20251104    gcc-14
-i386    buildonly-randconfig-005-20251104    gcc-12
-i386    buildonly-randconfig-006-20251104    gcc-14
-i386                            defconfig    clang-20
-i386              randconfig-001-20251104    gcc-12
-i386              randconfig-002-20251104    gcc-14
-i386              randconfig-003-20251104    clang-20
-i386              randconfig-004-20251104    gcc-14
-i386              randconfig-005-20251104    gcc-14
-i386              randconfig-006-20251104    gcc-14
-i386              randconfig-007-20251104    gcc-14
-i386              randconfig-011-20251104    gcc-13
-i386              randconfig-012-20251104    clang-20
-i386              randconfig-013-20251104    gcc-14
-i386              randconfig-014-20251104    clang-20
-i386              randconfig-015-20251104    gcc-14
-i386              randconfig-016-20251104    clang-20
-i386              randconfig-017-20251104    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64  buildonly-randconfig-001-20251104    clang-20
-x86_64  buildonly-randconfig-002-20251104    gcc-12
-x86_64  buildonly-randconfig-003-20251104    gcc-14
-x86_64  buildonly-randconfig-004-20251104    gcc-14
-x86_64  buildonly-randconfig-005-20251104    gcc-12
-x86_64  buildonly-randconfig-006-20251104    clang-20
-x86_64                          defconfig    gcc-14
-x86_64            randconfig-001-20251104    gcc-14
-x86_64            randconfig-002-20251104    clang-20
-x86_64            randconfig-003-20251104    gcc-13
-x86_64            randconfig-004-20251104    clang-20
-x86_64            randconfig-005-20251104    clang-20
-x86_64            randconfig-006-20251104    gcc-14
-x86_64            randconfig-011-20251104    gcc-14
-x86_64            randconfig-012-20251104    gcc-14
-x86_64            randconfig-013-20251104    clang-20
-x86_64            randconfig-014-20251104    clang-20
-x86_64            randconfig-015-20251104    gcc-14
-x86_64            randconfig-016-20251104    clang-20
-x86_64            randconfig-071-20251104    clang-20
-x86_64            randconfig-072-20251104    clang-20
-x86_64            randconfig-073-20251104    clang-20
-x86_64            randconfig-074-20251104    gcc-14
-x86_64            randconfig-075-20251104    clang-20
-x86_64            randconfig-076-20251104    clang-20
+[1/1] regulator: Small cleanup in of_get_regulation_constraints()
+      commit: 252abf2d07d33b1c70a59ba1c9395ba42bbd793e
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
