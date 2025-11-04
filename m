@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-885499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F33BC33235
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:14:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA431C33244
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:15:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F40F24E99CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBE918C1F4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D220F30CD94;
-	Tue,  4 Nov 2025 22:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E130234963;
+	Tue,  4 Nov 2025 22:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="O3RA4WZN"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FCFKYNr/";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="K33pKP2B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3202C376B;
-	Tue,  4 Nov 2025 22:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061BC2BB1D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762294442; cv=none; b=A3peoPehMrGLUTPh6pS/2YjtGDpKOb6aQqzESrou70NH5S1QZRaNrLtp1z/JkR8Mhckrgd8l2lNP9puvBTtPCTSJBckbxmf291N7xrr0eFtQ1E1gyxSoAASTUKADM/ofFLrXP2SHzopaDdq9baqPhDV67esub6VzyGOQ0KkjrPw=
+	t=1762294512; cv=none; b=BBVu5FmkRkMWUccYQEDisCkB9HVZncrvPDa4f9FCXUtKvY2wH4wytH32kNt6q319iLg01sqvzyk+vRyLENcp92yMOQM5MNWIpTDA0EP8YVlMtcRPptsVPaKTQDZZNjg67tnTwp/bxoK2SR9gOzQ9w1f3GXPqDqHFe82QVNAwftY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762294442; c=relaxed/simple;
-	bh=nkdxGoHbtBgkqF4hvXzcmYUK6jPG9kz/+bIf/5XKspA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fCf/XbUJWVK7Pyz+oOV2gPrMRjL3FzKn/79okb11A/+ZCPxUFFkC0zTZRYXfrM2kfxGcfUiN6sLDmVqPx2WF5iBEPmgfYlegxrWrVCtlE2TX8ep3i3K+eC0R6qCh8pFxxofz6sYtA4lubWSw7/CyblL5AJbAYDWYaA9Y6Z+oKWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=O3RA4WZN; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 52344C000C7F;
-	Tue,  4 Nov 2025 14:13:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 52344C000C7F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1762294434;
-	bh=nkdxGoHbtBgkqF4hvXzcmYUK6jPG9kz/+bIf/5XKspA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O3RA4WZNn0l/GpokJl4x55zNousas4IhQ6meRiHHjM1QpdXJ1XWBzfJqPb17geWR7
-	 ETHLM7tl54RdcFM8yoVUw2YTJHn3AOrgVaF1VVqGlNxn8Eu1zQKyVof90AsNJhGx3V
-	 Nh/tOTQ7xiaO5I17tGvucCQAHpHaJ57uFdlMrlb0=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 3CB094002F44;
-	Tue,  4 Nov 2025 17:13:53 -0500 (EST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Antoine Tenart <atenart@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v2 2/2] net: bcmgenet: Add support for set_pauseparam_panic
-Date: Tue,  4 Nov 2025 14:13:48 -0800
-Message-Id: <20251104221348.4163417-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104221348.4163417-1-florian.fainelli@broadcom.com>
-References: <20251104221348.4163417-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1762294512; c=relaxed/simple;
+	bh=Dc4kqL4A0k+kCirDqu7t00i8lKGuYTBpwR/YdNPIuAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SfgIPSWkW/0iFdgEM+VP2+xHp7wp3zGucLRK4KeKl/lWR0SYLnvOh/Nb43PqhHLyMEKs7vHM8zlIlJZK1XrlHcnQmUZN2jeqjXEBkKCJgLsV8VRie9qV5OioJk2r+bnsJ8CKaO7OSbllDwZ2AcLr/pPTA3FisxiP85A6pLR7d4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FCFKYNr/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=K33pKP2B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KgDb73086286
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 22:15:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ogbBgd/Tv25LIQg1F6++n7axOZ48HuYuD70xNJM/fEQ=; b=FCFKYNr/ialbd9JR
+	pHORa2NYr5qUtOAxtzEzhdloSYdIhKvmqVj9ntsGL0McN4s1pCOmXirkCBE31WGq
+	snFcuo17qKaA1mtkbA8rlxUoVfseOylW8Az5aOM5x1XlwdXVcpUkwT4qzu9l+CRw
+	MDCsSObf3ojBQmlgtLvhrDrFFiVRfivzXt6I8vnLyR+SuGewkxNp2qbcCNmqDUoW
+	WCiZnQq5ff0T8eW11zjyxPFl5vvKf/yfkicTo64QeyZW4bijiJrqZV8jvYu8fDF6
+	4QnqP6zgn6t3NqtvTfd/OGL6CysJLMZLacxK3IQHI8ekUcZs09lx3U0i+KzJJiAG
+	Xp4Gkg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a79jju34f-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 22:15:09 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-79e43c51e6fso230765b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:15:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762294509; x=1762899309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ogbBgd/Tv25LIQg1F6++n7axOZ48HuYuD70xNJM/fEQ=;
+        b=K33pKP2BTFixdM70iOG/3Kd3gFe9sp97LTpnr73YurtTY+bK4nrozBknFiKzZgiVmD
+         qj34TWnMDImE3cV5yTIuEOO/npfFWvMK/AVkcJ67N1Hbkwcj7hJmBUV0cAN3jBPIetmU
+         x5FrnzdY2/eDv3iUv6oXZKFj3cS6ZCmuK4OTVQfKLhkHsfZ4W8tXR6seJ/vDfakUH0sf
+         NE5OUc9BObfPTVvb1G/ua9nkVa96MFPIrvz/EBAkAHN2Q66daY7Nl2amozbx32jgs3DB
+         BJtxZSRzVcoT/cawt2p7AVkae4MpAjtPbVoW4akvJf3o2zJLaSSLWghSQUc1fV2jM3aS
+         E/WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762294509; x=1762899309;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ogbBgd/Tv25LIQg1F6++n7axOZ48HuYuD70xNJM/fEQ=;
+        b=mnxwUvJeXqgJCfdni7UAHvudEeo/wm+Gg4/MoDgOqmfrlHHc8AB8M2XLeCsRhGb340
+         aJH/3JSGhzMS3vNdrr6Kt8I/9qWuQkkADFe6pgB73ivns6WK08BjYBVbYrB9Ywy6cCUZ
+         8iK4HIX5zVOR8Yvf2sqdCecgWDcbEIeyLz0e+qS8DfK05R1lCZv3d8GTPUxuyh4EsCY3
+         C2XUfJuItFG+PfrDQEdbjFspDTvZ+xbqFqROEc7GHkACibeixt9MZrz+z0i8uLbCrcBC
+         XqtJcYqGlVlIqv4WMILT300hDeE82+U1k4MGqauq/A0S4ihnDQW7Bimsjn9yVXpyXtSd
+         x1Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Za3W4lYl+bFbAbm+dPfVpAPV7L6t9li1JTmsLgxx1mnXvGRNRpwPRf4GRIXJiz1NdhIywSYYEU9vdt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb30aFgt38ZNNkeA7oTDT10GR8xxlu4OBacjYjsvBa1+W9hakh
+	nsjr3b8eZR3IsZogMEV5SUqX8SLdySTK4aGFemOGAy79PXjXmoqYUJDQNuQBhsI5PYv8UQ56TZL
+	p3+egA7P6P6IoHRnuFmVE3izbG6TXQfHkwLBZva4tUPM7YyK+OuKjFX4Vu90ptd6JMwY=
+X-Gm-Gg: ASbGncsuH38iXs0d6JNZdzTzTYUD14SilhtDPoACvqAvACZZY0TZ24dWjuv1MF9izmk
+	5IJnF6k/B0LauAi0IdTkGNNiAbKTZVBGNkEiqS3evSQ2miUemi/Vq2gpvO6L7W8bQSMQ1zbNHFB
+	JccztXoU7rC4zHwidQ6/g1DrSWRo6T00XMHJHhhoSJvqgSl0lLqoxDO7cjXMYilygchPPZtRJGm
+	Th1M4MK4EbpFKJRoINVmAoyLJoQefYWfMk1+s0+PPpccQO4WdMpVP1EkkPFzPpHQHad5rLZk8EN
+	9I4jKZX0aWy8Xhwlo0fH9fb1n2dkomL5cnWX/+qZrVp2FdOk+Bv5i0PLgHV/elTkdbfVmvNE3zY
+	KkCRdLruTZ2o3PSPCsI6045s=
+X-Received: by 2002:a05:6a00:4188:b0:7ad:8299:6155 with SMTP id d2e1a72fcca58-7ad82997336mr2710630b3a.2.1762294508745;
+        Tue, 04 Nov 2025 14:15:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEMSaGzu4ogexmgVVatd2/255fBbWIxfGY0+4QCkMTk6DFn3f8QXyGVUkFdUAVjo2NXiMQ6Dg==
+X-Received: by 2002:a05:6a00:4188:b0:7ad:8299:6155 with SMTP id d2e1a72fcca58-7ad82997336mr2710598b3a.2.1762294508107;
+        Tue, 04 Nov 2025 14:15:08 -0800 (PST)
+Received: from [192.168.1.6] ([106.222.228.179])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd3b10bd1sm4013047b3a.30.2025.11.04.14.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 14:15:07 -0800 (PST)
+Message-ID: <b94eff34-8a10-44fe-ac8b-304407922984@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 03:45:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add Akhil as a reviewer for the Adreno
+ driver
+To: Rob Clark <robin.clark@oss.qualcomm.com>, dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
+Content-Language: en-US
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+In-Reply-To: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: ym13rcUiFYSJ7wDvHoe3wE04alZXbuNC
+X-Proofpoint-ORIG-GUID: ym13rcUiFYSJ7wDvHoe3wE04alZXbuNC
+X-Authority-Analysis: v=2.4 cv=TuPrRTXh c=1 sm=1 tr=0 ts=690a7aed cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=oSIXvc0h2ZBec1W313aPdA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=e5mUnYsNAAAA:8
+ a=V8cJkdWAq56nonIdhLQA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDE4NyBTYWx0ZWRfX/fM19y57h9LM
+ LyVlMAULw+pWWUBnHwAep4+48jxpBTt+Q54lbvjtBYlbz2VLK1PR2UVI/bWpo8MLcd+09GohN4n
+ fhLmVK7whLXEmoqS/d+eemLtOfg1cwPM2KSbjoCVhroxid9Dw8WKriOyEEHYjYBLkIToXyiIF1L
+ K7Ob2PWhRyaq3C8wJYxPnTSA7X5e0QqbgMehqWfrg00iQ77fdbZ61VvVOMg/Nw6CyO/dZ+enlUV
+ Py+ehXbcOlthCWamleNRVfi3/OJ9MqrQMwggTfr2FQh8ierXFIA/zEJ3MXOdlkbgVNOVTp/CP7Z
+ 9Vkp1M7KD6dfanz5vAfTBKckgbXX5eZiaykkH3cJkzI4yx0W20d26JCRFNHTYk6PVyXl2Vju1V+
+ GMimk9DJvGS1d/H7PSmzdAYsF17h/Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-04_04,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511040187
 
-Avoid making sleeping calls that would in not being able to complete the
-MMIO writes ignoring pause frame reception and generation at the
-Ethernet MAC controller level.
+On 11/5/2025 3:32 AM, Rob Clark wrote:
+> Akhil should be getting tagged to review GPU patches.
+> 
+> Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c |  8 ++++++++
- drivers/net/ethernet/broadcom/genet/bcmgenet.h |  1 +
- drivers/net/ethernet/broadcom/genet/bcmmii.c   | 10 ++++++++++
- 3 files changed, 19 insertions(+)
+Acked-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index d99ef92feb82..323bf119c2af 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -966,6 +966,13 @@ static int bcmgenet_set_pauseparam(struct net_device *dev,
- 	return 0;
- }
- 
-+static void bcmgenet_set_pauseparam_panic(struct net_device *dev)
-+{
-+	struct bcmgenet_priv *priv = netdev_priv(dev);
-+
-+	bcmgenet_set_pause_panic(priv);
-+}
-+
- /* standard ethtool support functions. */
- enum bcmgenet_stat_type {
- 	BCMGENET_STAT_RTNL = -1,
-@@ -1702,6 +1709,7 @@ static const struct ethtool_ops bcmgenet_ethtool_ops = {
- 	.set_rxnfc		= bcmgenet_set_rxnfc,
- 	.get_pauseparam		= bcmgenet_get_pauseparam,
- 	.set_pauseparam		= bcmgenet_set_pauseparam,
-+	.set_pauseparam_panic	= bcmgenet_set_pauseparam_panic,
- };
- 
- /* Power down the unimac, based on mode. */
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.h b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-index 5ec3979779ec..faf0d2406e9a 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -738,6 +738,7 @@ int bcmgenet_mii_config(struct net_device *dev, bool init);
- int bcmgenet_mii_probe(struct net_device *dev);
- void bcmgenet_mii_exit(struct net_device *dev);
- void bcmgenet_phy_pause_set(struct net_device *dev, bool rx, bool tx);
-+void bcmgenet_set_pause_panic(struct bcmgenet_priv *priv);
- void bcmgenet_phy_power_set(struct net_device *dev, bool enable);
- void bcmgenet_mii_setup(struct net_device *dev);
- 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 38f854b94a79..a9a1d06032fa 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -147,6 +147,16 @@ void bcmgenet_phy_pause_set(struct net_device *dev, bool rx, bool tx)
- 	mutex_unlock(&phydev->lock);
- }
- 
-+void bcmgenet_set_pause_panic(struct bcmgenet_priv *priv)
-+{
-+	u32 reg;
-+
-+	/* Disable pause frame generation and reception */
-+	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
-+	reg |= CMD_RX_PAUSE_IGNORE | CMD_TX_PAUSE_IGNORE;
-+	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+}
-+
- void bcmgenet_phy_power_set(struct net_device *dev, bool enable)
- {
- 	struct bcmgenet_priv *priv = netdev_priv(dev);
--- 
-2.34.1
+-Akhil
+
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1083598bb2b6..033675aab0d0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7880,6 +7880,7 @@ DRM DRIVER for Qualcomm Adreno GPUs
+>  M:	Rob Clark <robin.clark@oss.qualcomm.com>
+>  R:	Sean Paul <sean@poorly.run>
+>  R:	Konrad Dybcio <konradybcio@kernel.org>
+> +R:	Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>  L:	linux-arm-msm@vger.kernel.org
+>  L:	dri-devel@lists.freedesktop.org
+>  L:	freedreno@lists.freedesktop.org
 
 
