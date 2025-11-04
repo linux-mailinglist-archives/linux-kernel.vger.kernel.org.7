@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-884901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12E6C31724
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72369C31782
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD51D4F89A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60603465CBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7185732C942;
-	Tue,  4 Nov 2025 14:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B56A32D0EA;
+	Tue,  4 Nov 2025 14:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imm7HD1R"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YXMOX5l0"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBC532C93A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3600032C942
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762265547; cv=none; b=QycID2gB5Ql14GOHKSkmlvgu3rsRiJEAE4jYcA8XX6/H0Y0bZk4gptSj9pAfdbf20y3kd3DEprAvPrrtFVQAw/7fy5qquXN8+Isg0rfjkEZkTBqxj389tFY8uYfHzGkEnsdHNMBod1c18Zw3aqTDAv1XSiIDTOJgfMC0MTcUmY4=
+	t=1762265539; cv=none; b=sYav8vCLeVJtXB+ABCXcylRqWwLcB8jsM1e8bVDl0rp8LB4wdosXtYn00mGvWgXfN+StvHQ/EL8iZUYzIKe9Pto1JNpQ16nmxeis9qQEfkUVCFnEyuB89qa7VYSX28iBmApNhvf3LPfg9GyGZmLduVUXSRnEYkPX4x5VCPZlP50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762265547; c=relaxed/simple;
-	bh=0nrrlREagafRXQeDgB+zbKiCfD15/eLfwA/KcOk41RA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jv9ecTehjMqLYlx8SmFsjFgCTsKZB893JZVvS4+b9ZBod0lK6ecer3+jC4d9/JypxylAr+rGj5wrwP1bEOSuikpsJ5ngxkqk5QDHH6ioGjScpgFq6t3+1MJV3cI5/QwrK4PhQWMMY/UNAO3H2GI8W8dDMotw8mCyLRJ0Z418Io4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imm7HD1R; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-26808b24a00so8416175ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:12:26 -0800 (PST)
+	s=arc-20240116; t=1762265539; c=relaxed/simple;
+	bh=LYroiBGaiqJFoYRjuCQFvHWZlCK3HdSaFOb38tGzgTY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uLmBrG1Mw8USXa0Y54J8/n7xy+g0a9sdv097T88JZG/lgZ9z2bel3Vi1aPm94PxChhwi8LZOw+KJU0IMlkccCECifUoSmMGopeDAZkLADJYSfglyITkrMsDaSf5+YPRvMFIBlrVzdYD5qYoI4YMH2WUpozVaZ2CkEsp2rcL84DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YXMOX5l0; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso48585985e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:12:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762265546; x=1762870346; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B0HPvUdMK3sKhI8XnoOYJRY8A3cM+jePDjpaUPHvJoM=;
-        b=imm7HD1RNd6jMNZCzpRX7BzlrZbNqUjvsp1l3W8QzrPX4q3dh8vszmrDZW389KPT5g
-         Ng7BCF7jeA8gul+hQRDjs5UBYwwXf1LcBAdhsNRDKLe69zeVswZ+xvufRnhCLavXbVWg
-         P6EC6qepEglAMefMYKwaiJEcqcUC4HFxAXqBTYC/l3HIGICMWmY/siWuq0Cs/dZ90x6e
-         FlywCoOaB4Md6nEMpEENe/dNGrGQ/Z0vpYfpktRsyEmbdcNgEZE2YePcEW4o3rdKYD7N
-         lZMlbVruGTUXfdXdw8oks3+TYHsO+8ukWDTB1lO+HZhvqTf4UObTndUdfJNT/nM8fogM
-         Apaw==
+        d=google.com; s=20230601; t=1762265536; x=1762870336; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEcbNaHwwUu98mMFzjQHBl3Ur9imCbSK1SRamisoVo0=;
+        b=YXMOX5l0MCa98HOuCNOLye8nzmjYKfBO3kDRL6JBOuxbcgBo7g4yru2YpyqVDMtqRl
+         EE3hHfFKUTIAvo0tkLz8g98Mpfv/FhQNDkJjXSEwItYkmd5UDIwC6zSp/cW5T0oZyjzf
+         ShvlfIgujf21CNtUC8npNQ3GGBFyQWOKdxo4IQRZzS6+NbIO0wKpYVUtAt69ndCxAxHP
+         O/IKsWHTw4fUcppJ6+VhVXwXUTkO4cY0dWpVbgkjwqQUWy1VDgdR1v8IcYojDbASzOMl
+         RNCri5PPoGAh23ryrD7HQP+DJV4aH/eMDCJ/b+jqBgR44EtMkJxqkM5AneyvrnIAhiPE
+         xfqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762265546; x=1762870346;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B0HPvUdMK3sKhI8XnoOYJRY8A3cM+jePDjpaUPHvJoM=;
-        b=L00jym4bwJffn/uK2rKpfFTPsVTXXV/NM2+a8QO2UmKripgiH0kp0dpV3dbqTJXHQ7
-         tjw+J3yqzq4gCfRxfzCBQKVKDAP1y4ZD24k6IOl/adPZKgIzLq5d2G+U7ltCb6FUyNCz
-         pLpLIVfXyzswqusT1Wd37cXZtLB/XHIigN9PchkYtFdqWIDsCs7DYD5V0i/dtAXW5DTu
-         Btz0OY2PxSOdy4jz0Uf9nTMNJE9JjAI7qo2xnqcZJRoor+4CjNX8aUdJENb7UvEODrwi
-         O+n3Bt0hLLSRlA3OEOIe9v18aSgPAOyCSStCK299xdwBVq3pNRRYy3C5OWBOhQkjciHG
-         GPzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeAp6/qQEyqCoT6MnMrp98AttRHC47HJQU3JRYwdXnZ+Uwty3+wEoK527ql5WdWYeu9ICX/zY2fm14+2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM4uAAp66/4tOGiGEUCd+TludZtAwBtSnmwKsua0Kph+jA60cB
-	VSj7LAcLEMXpvnpvUKYGzUNl2xgUfXeMBFf27LdACIUyZO1Rmx4Vynu9
-X-Gm-Gg: ASbGnctaiNslrFaZpB5IM0Oh1EPdnySJ2eZy4LgHUzfv2HmPNwx0cxuuRW4ps6zywg2
-	E86iowWnuTOh3SBv4LgJ543Kdf927M284JcaI6DHSicAHk3Kg1uIRumONP2pqQYer7IK+ZPZ9HK
-	MXDhqUc55LR1aFOp14bYihUsi++W7+wOOzaSZTi55XiJ8mQLhEKDAAq+pDgNN4Lj87UjCoSSdSR
-	91pRuCErQ9MJXRUBb0nBWcGrs+RW8VPVMEK5wwLR3ZeoJIlbmEBny/2OfxozOEN6t3mRPL3vy9S
-	dR9FvQgX9uWxo3OV2kEyGKkfyxH41GGDqZOlQ09nGLf0/NqzqWUqToAgCXZ88m82tSrE4D9zYjz
-	8moE+4WGVnKG0HoAASnAPZ2G161oxRMW28xsWIndiwIQS9PiTRlCzg1hO+ov28OTbBz+JcLguU3
-	n3K2I175WYH1JEBye7+GZFZkyD1h29SPRn3dsSLTh7YsaCqW4Wgl5ITLhAjNV03A==
-X-Google-Smtp-Source: AGHT+IHAugMJ2nxjbD5sdy8UKfYjv2iz1PHt/Er2Dg2Libs5zWlSaypUfNKo7evt+LepO6KkcCxWDA==
-X-Received: by 2002:a17:902:c651:b0:266:914a:2e7a with SMTP id d9443c01a7336-2951a491ecamr80222935ad.6.1762265545624;
-        Tue, 04 Nov 2025 06:12:25 -0800 (PST)
-Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a60ef0sm28866755ad.83.2025.11.04.06.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 06:12:25 -0800 (PST)
-From: Qianchang Zhao <pioooooooooip@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Qianchang Zhao <pioooooooooip@gmail.com>,
-	Zhitong Liu <liuzhitong1993@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
-Date: Tue,  4 Nov 2025 23:12:14 +0900
-Message-Id: <20251104141214.345175-1-pioooooooooip@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025110432-maimed-polio-c7b4@gregkh>
-References: <2025110432-maimed-polio-c7b4@gregkh>
+        d=1e100.net; s=20230601; t=1762265536; x=1762870336;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEcbNaHwwUu98mMFzjQHBl3Ur9imCbSK1SRamisoVo0=;
+        b=nI5eDA8sp5P3Y5GTKP9hckwoUqoW5tKACE5s0VBwX97/sGUx+VejxNRRVnI5lUQ0IX
+         ifFHrttSCujTFFHA+DJadm+KWdJ12dQTtnmi/hUFh/lTDh5VIjC1TM5K/HqlB42QxNDD
+         hfykb6kkWQTFaWGFrxMxCzThlDb8JhnWNJ3S2+6tA+hbfYgPkpX8HmSp3nYEy90W7pR3
+         KZE5u+mfIY4jS8As2543iz9sGouUc4TAGa+eHkNb7+W5lbM1COrcN1SxvcrW30/Ubjev
+         4d/N4n5geFPk8s945cUEtmdBFp2+tWx5Hm+IX1BZWiatWzWDqm0pcDAHBRESRHxrrM6k
+         aSPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVj7YNCUjFDjpIVWur1FbAgMgDM1m1nRgdv2t8NrDF7QEHdJsnLwisjrl3eQI0ymgX4w1uAUiTNN0PI4K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhwVnW5GyuSC8VCrSFXA3x8mbvNoeAfeebmd1pmMliLsRw4NvG
+	CTW5lN2sIgjcV1IQ7cTeHWww4mXQLTDd4PMma5mZl0D97keiA+oLaJ8L+xXmv7xae7dUHOQ6kMt
+	5/GnKFibkH7i8uJf7ZQ==
+X-Google-Smtp-Source: AGHT+IGmpX17CaUkQY1Gxu1oZZH6fZFyNIPKiUmNUKaWbFGeyvKLHWQP3KgMrQGejtswKORq1dCUqZB740zTpoM=
+X-Received: from wmnv20.prod.google.com ([2002:a05:600c:4454:b0:477:54f2:85b7])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:538e:b0:46e:5100:326e with SMTP id 5b1f17b1804b1-477308a1198mr141637275e9.23.1762265536653;
+ Tue, 04 Nov 2025 06:12:16 -0800 (PST)
+Date: Tue, 4 Nov 2025 14:12:15 +0000
+In-Reply-To: <20251101-b4-frombytes-prefix-v1-1-0d9c1fd63b34@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251101-b4-frombytes-prefix-v1-1-0d9c1fd63b34@nvidia.com>
+Message-ID: <aQoJv3k8sJvbWaF9@google.com>
+Subject: Re: [PATCH RESEND] rust: transmute: add `from_bytes_prefix` family of methods
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-When encrypt_resp() fails at the send path, we only set
-STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
-in this tree). Repeating this path leaks kernel memory and can lead to
-OOM (DoS) when encryption is required.
+On Sat, Nov 01, 2025 at 10:41:21PM +0900, Alexandre Courbot wrote:
+> The `from_bytes*` family of functions expect a slice of the exact same
+> size as the requested type. This can be sometimes cumbersome for callers
+> that deal with dynamic stream of data that needs to be manually cut
+> before each invocation of `from_bytes`.
+> 
+> To simplify such callers, introduce a new `from_bytes*_prefix` family of
+> methods, which split the input slice at the index required for the
+> equivalent `from_bytes` method to succeed, and return its result
+> alongside with the remainder of the slice.
+> 
+> This design is inspired by zerocopy's `try_*_from_prefix` family of
+> methods.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Reproduced on: Linux v6.18-rc2 (self-built test kernel)
-
-Fix by freeing the transform buffer and forcing plaintext error reply.
-
-Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
----
- fs/smb/server/server.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 40420544c..15dd13e76 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -244,8 +244,14 @@ static void __handle_ksmbd_work(struct ksmbd_work *work,
- 	if (work->sess && work->sess->enc && work->encrypted &&
- 	    conn->ops->encrypt_resp) {
- 		rc = conn->ops->encrypt_resp(work);
--		if (rc < 0)
-+		if (rc < 0) {
- 			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
-+			work->encrypted = false;
-+			if (work->tr_buf) {
-+				kvfree(work->tr_buf);
-+				work->tr_buf = NULL;
-+			}
-+		}
- 	}
- 	if (work->sess)
- 		ksmbd_user_session_put(work->sess);
--- 
-2.34.1
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
