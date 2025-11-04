@@ -1,110 +1,174 @@
-Return-Path: <linux-kernel+bounces-884936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD28EC31893
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:33:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503CBC318DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220ED18C5911
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1598518953E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7FA330332;
-	Tue,  4 Nov 2025 14:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E25E3314D9;
+	Tue,  4 Nov 2025 14:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RYhNbb2X"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DpTH4fdi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC8232ED59;
-	Tue,  4 Nov 2025 14:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBD426F29F;
+	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266624; cv=none; b=a4g3PFCCRfoo8oyKN2jz6g3crLvy9cGl3SWdIVQchdlM0EUHLebrL1+8iK1ZrhDOIrzaLcb2jfIJ/WjHk/K48MyXMgCpZHUretRSY65sJCXkHcu0NLVHHJPTLTrXs5K96HMlGFV6h+NYEGIoFU3JZZw25dpQWJjgEKdxLtD/sZE=
+	t=1762266670; cv=none; b=lWQEdCQ3588Sck9UZy/mNKIYdMSsu71umR2jX/p9FHOfL6M9rGtu9ulrU3R7fYZSe6/YhLL3QFSWfBlOjOpwfvSkILpwph0VWco9f7UOaNAuw7c+6fP66uB8RNy+J3UggqNihuqXUdwa/JtA4wua13I/hd0JI243ZNKBU5l+NgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266624; c=relaxed/simple;
-	bh=xjMIBr6AMjwygXnX/e3NAeGPHp4K/p0K97biE5sQOhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zo70HxSFdqFOS8APSzcnNToOhzrxMYwtXTT1x2Nv7afNz1F+xHpbBaRj7lqtU+jMK37sJjJJO6mHS+8QfQ4H7VjpskMm880wzCoLNiupcqjBFw4b52fpWIsMH6zuugIsxK9Eky6Vz0AiRaUVOA+hbqsb9k+e44zgoLHYKJGwS4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RYhNbb2X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F48C4CEF7;
-	Tue,  4 Nov 2025 14:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762266623;
-	bh=xjMIBr6AMjwygXnX/e3NAeGPHp4K/p0K97biE5sQOhY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RYhNbb2Xcx6i6i/LaW6+2C8lVhP52SbjCr9FpEZZWvICau9hP6b6xmn19rrA/tNhb
-	 iybm6l0CdKD38ERqWLSV2dcucbuJu/wJKKYG70ASiESC79aI7i2scX8E3Y+urIF5zp
-	 wTobQVJ4FYoXe12+DxMZk/1mRLjR6srx/fDxwGT4=
-Date: Tue, 4 Nov 2025 23:30:18 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jakub Lecki <lec.jakub@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>
-Subject: Re: [PATCH 3/3] usbip: Limit maximum number of virtual host
- controllers to 31.
-Message-ID: <2025110450-abnormal-goofball-bc68@gregkh>
-References: <20251104113248.223594-1-lec.jakub@gmail.com>
- <20251104113248.223594-4-lec.jakub@gmail.com>
+	s=arc-20240116; t=1762266670; c=relaxed/simple;
+	bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=npJVxAzOUi8jcSd1sei+AtqtONd4eq1Nvd48VKZVRl5l3m8iyyZ6z1J5jM5KOp8AxAp0eaJD6ZrpCmfgUngsPakUVfeh/qXAJtopfl3SBazbZnpXdtzkyJ/fBjvs7394WM+7n9UtUcJ/5qeB48AS8tXk8eYu3Apd8Ct+Z7V1QRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DpTH4fdi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9DC2CC116B1;
+	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1762266669; bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DpTH4fdi3nv71Gk4FB5nzIcBwdsLFO9hKJHz7zWcuDxLc6+Zf5ZV7cWQATKZCVeP8
+	 +JW95S07qdBChkBW5nLB6rQsRpkANJkqNiqqpyBuZ8C4yYvr2FuhN5xRQnnGedjU6P
+	 OdqFjaKCUkz69swf+ai4+PIRnv1CYUKY6zYluD/g=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949A0CCFA06;
+	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
+Subject: [PATCH v8 0/8] Add strobe duration and strobe output enable v4l2
+ ctrl
+Date: Tue, 04 Nov 2025 15:30:51 +0100
+Message-Id: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104113248.223594-4-lec.jakub@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABsOCmkC/33Oy27CMBAF0F9BXtfIM37FrPofVReOH8USEGoHi
+ wrx7zVhERSlXd7RnTNzIyXkFArZbW4kh5pKGk4tdG8b4vb29BVo8i0TZCgZZ5wO1WCHNB5s2dM
+ y5qEP1DrVe8ac8UGRtnnOIabrpH58PnMO35eGj88h6W0J1A3HYxp3m6q20NHsBHmU96mMQ/6ZP
+ qowtf89XoEyyqKX2oJUorfvh3S6XLc+1Mmr+GKAWDewGSC8ttgBF+iXBp8NgWbd4M1AYNIF0MZ
+ IXBpiNiTT64ZohsYejXHQa2eWhpwNBX8YshlGK/RWC8+UXBpqNjSodUM9DC4ioA0xcr409GwYB
+ uuGboaXnZdWGWGjezXu9/svxG3EbnsCAAA=
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
+ Hans Verkuil <hverkuil@kernel.org>
+X-Mailer: b4 0.15-dev-509f5
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762266668; l=4585;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+ b=Y6K/eNkCRS3B2mkeyzDitGHJBnoHXPATLdECblo2ekE/fPDcwq15MClTrzq2IdD5k3N79dzGJ
+ GgoppjMCqMLBrbvjxWtv9Y+0IQiWOtEj5pvOA8ncBkyqMSmvobVXJ7w
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-On Tue, Nov 04, 2025 at 12:32:48PM +0100, Jakub Lecki wrote:
-> When loading the vhci-hcd module with number of virtual host controllers
-> configured to max value of 128, the module initialization fails due to
-> insufficient number of available IDs for USB busses.
-> 
-> Each virtual host controller registers two usb hubs (USB2.0 & USB3.0) to
-> the usb core, each with a unique bus number. The number of USB busses is
-> limited by ID allocation range [1 .. USB_MAXBUS - 1] (defined in
-> usb_register_bus()). Therefore, VHCI_MAX_NR_HCS must not be greater than
-> (USB_MAXBUS - 1) / 2 = 31.
-> 
-> In real world scenarios the maximum number of virtual host controllers
-> possible to create may be even lower as other USB host controllers may
-> be registered. In this case, the module initialization failure is
-> correct as the number of virtual host controllers must be adjusted by
-> a user to a given use-case.
-> 
-> Signed-off-by: Jakub Lecki <lec.jakub@gmail.com>
-> ---
->  drivers/usb/usbip/vhci.h | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/usbip/vhci.h b/drivers/usb/usbip/vhci.h
-> index 2772d923a8cb..3b0ea4038e51 100644
-> --- a/drivers/usb/usbip/vhci.h
-> +++ b/drivers/usb/usbip/vhci.h
-> @@ -76,8 +76,17 @@ enum hub_speed {
->  #define VHCI_DEFAULT_HC_PORTS 8
->  #define VHCI_MAX_HC_PORTS USB_SS_MAXPORTS
->  
-> +/*
-> + * Number of supported virtual host controllers. Value has upperbound of
-> + * maximum possible usb busses.
-> + * It is limited by a bus ID allocation in [1 .. USB_MAXBUS - 1] range,
-> + * resulting in maximum of USB_MAXBUS - 1 usb busses allocated.
-> + * Additionally, each virtual host controller registers 2 usb hubs (USB2.0
-> + * & USB3.0), therefore maximum number of virtual host controllers is:
-> + * (USB_MAXBUS - 1) / 2
-> + */
->  #define VHCI_DEFAULT_NR_HCS 1
-> -#define VHCI_MAX_NR_HCS 128
-> +#define VHCI_MAX_NR_HCS 31
+This series adds two new v4l2 controls:
+- V4L2_CID_FLASH_DURATION: "Strobe duration": This control enables
+  setting a desired flash/strobe length/duration in µs.
+- V4L2_CID_FLASH_STROBE_OE: "Strobe output enable": This
+  control enables the hardware strobe output signal of a v4l2 device.
 
-Why have any max at all?  Why not just dynamically allocate them when
-asked for?
+As a first user of these new controls add basic flash/strobe support
+for ov9282 sensors using their "hardware strobe output". The duration
+calculation is only interpolated from various measurements, as no
+documentation was found.
 
-thanks,
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers for ov9282 will likely be implemented in future series.
 
-greg k-h
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
+
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+---
+Changes in v8:
+- Minor styling changes across the set
+- Add missing error handling for ov9282 strobe_frame_span writing
+- Rename V4L2_CID_FLASH_HW_STROBE_SIGNAL to V4L2_CID_FLASH_STROBE_OE
+- Drop 02/10: FLASH_DURATION handling in v4l2-flash
+- Drop 08/10: strobe_source in ov9282
+- Link to v7: https://lore.kernel.org/r/20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev
+
+Changes in v7:
+- Improved v4l2 uAPI documentation (thanks Sakari)
+- Link to v6: https://lore.kernel.org/r/20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev
+
+Changes in v6:
+- Fix "Alignment should match open parenthesis" by Media-CI bot in v4l2-flash-led-class.c
+- Fix "format string contains non-ascii character (µ)" by Media-CI bot in ov9282.c
+- Introduce new V4L2_CID_FLASH_HW_STROBE_SIGNAL control (as suggested by Sakari)
+- Implement V4L2_CID_FLASH_HW_STROBE_SIGNAL instead of
+  V4L2_CID_FLASH_LED_MODE in ov9282.c (as suggested by Sakari)
+- Drop "media: v4l2-flash: fix flash_timeout comment" as this was
+  applied (thanks Lee)
+- Link to v5: https://lore.kernel.org/r/20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev
+
+Changes in v5:
+- Improve try_ctrl for flash_duration by using DIV_ROUND_UP() and abs() (thanks Sakari)
+- Drop "leds: flash: Add support for flash/strobe duration" as this was applied upstream
+- Add "media: i2c: ov9282: dynamic flash_duration maximum" (thanks Sakari)
+- Link to v4: https://lore.kernel.org/r/20250507-ov9282-flash-strobe-v4-0-72b299c1b7c9@linux.dev
+
+Changes in v4:
+- Fix FLASH_DURATION implementation in v4l2-flash-led-class.c by adding a
+  missing brace and enum entry (thanks Sakari)
+- Fix format of multiline comment in ov9282.c (thanks Sakari)
+- Add missing NULL check in ov9282.c (thanks Sakari)
+- Adapt nr_of_controls_hint for v4l2 handler in ov9282.c (thanks Sakari)
+- Add patch for implementing try_ctrl for strobe_duration (thanks Sakari)
+- Link to v3: https://lore.kernel.org/r/20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev
+
+Changes in v3:
+- create separate patch for leds driver changes (thanks Lee)
+- Link to v2: https://lore.kernel.org/r/20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev
+
+Changes in v2:
+- remove not needed controls in struct ov9282 (thanks Dave)
+- Fix commit message of 3/3 regarding framerate get/set (thanks Dave)
+- Add V4L2_CID_FLASH_STROBE_SOURCE impementation to ov9282
+- Add new V4L2_CID_FLASH_DURATION control (as suggested by Laurent)
+- Use FLASH_DURATION instead of FLASH_TIMEOUT for ov9282
+- Link to v1: https://lore.kernel.org/r/20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev
+
+---
+Richard Leitner (8):
+      media: v4l: ctrls: add a control for flash/strobe duration
+      media: v4l: ctrls: add a control for enabling strobe output
+      Documentation: uAPI: media: add V4L2_CID_FLASH_{DURATION,STROBE_OE}
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add strobe output enable v4l2 control
+      media: i2c: ov9282: add strobe_duration v4l2 control
+      media: i2c: ov9282: implement try_ctrl for strobe_duration
+      media: i2c: ov9282: dynamic flash_duration maximum
+
+ .../userspace-api/media/v4l/ext-ctrls-flash.rst    |  42 ++++++
+ drivers/media/i2c/ov9282.c                         | 165 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c          |   3 +
+ include/uapi/linux/v4l2-controls.h                 |   2 +
+ 4 files changed, 206 insertions(+), 6 deletions(-)
+---
+base-commit: 2f112b1c25da9f5346c2261ed35c5b1e0b906471
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+
+Best regards,
+--  
+Richard Leitner <richard.leitner@linux.dev>
+
+
 
