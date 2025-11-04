@@ -1,142 +1,129 @@
-Return-Path: <linux-kernel+bounces-885520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2BAC33338
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76AEC33329
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC70B466869
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAEE18C3071
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82C8346FBB;
-	Tue,  4 Nov 2025 22:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADCB2D2481;
+	Tue,  4 Nov 2025 22:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="B6IG88M6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DC0346FA7;
-	Tue,  4 Nov 2025 22:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EDJyKSj0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657462D061C;
+	Tue,  4 Nov 2025 22:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762294739; cv=none; b=P7H3zz+qo+UZ390q0hzleRtI8AuSfPL0+94MmvM3Poc0Kkkepiz/6XSY+9I4pToFBGPu8luQqOcrqR6hRPclzKElEnC/1kCawyOEIAtT18WXQc7q80e+9hDD0hATOlehhShpyzbnoB3ZtEgCja4AWWXMbXWoLkty+XHrm7FbJek=
+	t=1762294796; cv=none; b=kDeAhsQmcT0eY79czomVbQ3DQdEbvWqRfV/Ea4CNE4tpmvuSZL5QaZKQbbaySLo/4dijvxlk2yDtWfQaORgi3FfGlmMJEjNseVArbSUYOR6rybGRJpT9xNn43QARxVq1nqrqyxZCL0id4ViZaNro8m1B4el4u0Cjkd4Z1w/lK98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762294739; c=relaxed/simple;
-	bh=TXrX5oV8mPwToJOMuvNtkS/D7kHlFn6sd2060dwajh0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=igxUVR4IYeoRRaysJm43CHEh8/wjrUWGSDGi+OMeltHCRtc5jgcFtyQ039+egx6jrBs3W+Vq31HDg7L7VD0uBaf+VgIdInE59veo3n1Q/EC65zLfQUUJB9TpxI6savQRX34FxnrgTspSPKSWdfjIWj17ES7BEXyYqqC1SrjdL6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=B6IG88M6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1032)
-	id 61D8320120AF; Tue,  4 Nov 2025 14:18:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 61D8320120AF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762294737;
-	bh=6unYkmbeitl40gBGHjkXLZR6PtjbQ2f/EzU5hFhbB9I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=B6IG88M6t2lmJ3qDk1gpWZbbk8QQHZmNviruun3woNR+JXNO2J+8GQUMwpeIFL0/E
-	 Dbsbmjoc+rszR6ueqIwH9pe/dMNT6htnM7HZFPzmYQ57mZzj+sHeFV3e7iCkh5u0qM
-	 Gbsf2mJslG5MIgxPVvAP9jvqMyjzuCa23xOGuseE=
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	magnuskulke@linux.microsoft.com
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	longli@microsoft.com,
-	mhklinux@outlook.com,
-	skinsburskii@linux.microsoft.com,
-	prapal@linux.microsoft.com,
-	mrathor@linux.microsoft.com,
-	muislam@microsoft.com,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Subject: [PATCH] mshv: Allow mappings that overlap in uaddr
-Date: Tue,  4 Nov 2025 14:18:48 -0800
-Message-Id: <1762294728-21721-1-git-send-email-nunodasneves@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1762294796; c=relaxed/simple;
+	bh=Qz/fqXRWiPHQN3ewpaRgvnz+eM4EoT2NCq5O9Sx62/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LAgIUEqTgxEbQT2LqeY7HBKB40w61bSJcH82XX6IhC7jS9XhIKgM/GQzrCfGb3BHe+BOF+HZGF3mpTNQhWUN5cASsodOG5vI/1xGOKItxo46x7jsZTxEeJwQqdh6yc6ZMtpJ0hlKWsRde04GMXhO5MhEa7QeDu5vfrl8DqKlh3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EDJyKSj0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762294788;
+	bh=CPd1XVl0PC+zgXR94idC0ZyTnwALPOoPLFtBmKFwa98=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EDJyKSj0QxhQdmj2JMQYkGNx8tM7ez18EGIeVjYopIeCATY+pG6kyJ1V3TMBJU6yg
+	 UsRgzOU/SHAPL1AYH0f4xfc5BAu5bwET4Msa+Nw4RDe6EPxJ+FRKKEMDR01hvSr0sf
+	 PBOtH2mzo5F/EvRUNdzqrbs0WB2zh/qVGcCdTerSatopUjFISKbZN5ndAhXkOHRjS8
+	 sR3dM/jEb+lDYpm02vOtniFQybn/7ZQG6bSQzOHo0kkYV7h+dJuTT9UasnvtvzCoz3
+	 I7PjoElVaBhaxhTjyzX4ZrK3Y/kGIrOL4SS7f1i86ER/TayjZsO2tyMStzbwmTqz/b
+	 B+fid2E7MDXzA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1NDN0Dqjz4wCZ;
+	Wed, 05 Nov 2025 09:19:48 +1100 (AEDT)
+Date: Wed, 5 Nov 2025 09:19:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Drew Fustini <fustini@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley
+ <conor@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Add tenstorrent to linux-next
+Message-ID: <20251105091947.2692a796@canb.auug.org.au>
+In-Reply-To: <aQpkDYXT3N6qWiZs@x1>
+References: <aQpkDYXT3N6qWiZs@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/ULWV=an8W5NfKQGUzapEptF";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Magnus Kulke <magnuskulke@linux.microsoft.com>
+--Sig_/ULWV=an8W5NfKQGUzapEptF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Currently the MSHV driver rejects mappings that would overlap in
-userspace.
+Hi Drew,
 
-Some VMMs require the same memory to be mapped to different parts of
-the guest's address space, and so working around this restriction is
-difficult.
+On Tue, 4 Nov 2025 12:37:33 -0800 Drew Fustini <fustini@kernel.org> wrote:
+>
+> I have setup device tree branches for Tenstorrent RISC-V SoCs, and I
+> would like to add them to linux-next for testing coverage. I have sent a
+> v6.19 PR to Arnd to add the Tenstorrent Blachkole SoC device tree [1].
+>=20
+> tenstorrent-dt-fixes git https://github.com/tenstorrent/linux.git#tenstor=
+rent-dt-fixes
+> tenstorrent-dt-for-next git https://github.com/tenstorrent/linux.git#tens=
+torrent-dt-for-next
 
-The hypervisor itself doesn't prohibit mappings that overlap in uaddr,
-(really in SPA: system physical addresses), so supporting this in the
-driver doesn't require any extra work, only the checks need to be
-removed.
+Added from today (I called the second "tenstorrent-dt").  I have just
+you as contact so far - should I add anyone else?
 
-Since no userspace code up until has been able to overlap regions in
-userspace, relaxing this constraint can't break any existing code.
+Also, should I update your other trees (thead-clk, thead-clk-fixes,
+thead-dt and thead-dt-fixes) to use your kernel.org address as contact?
 
-Signed-off-by: Magnus Kulke <magnuskulke@linux.microsoft.com>
-Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
----
- drivers/hv/mshv_root_main.c | 19 +------------------
- include/uapi/linux/mshv.h   |  2 +-
- 2 files changed, 2 insertions(+), 19 deletions(-)
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index 814465a0912d..e5da5f2ab6f7 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -1206,21 +1206,6 @@ mshv_partition_region_by_gfn(struct mshv_partition *partition, u64 gfn)
- 	return NULL;
- }
- 
--static struct mshv_mem_region *
--mshv_partition_region_by_uaddr(struct mshv_partition *partition, u64 uaddr)
--{
--	struct mshv_mem_region *region;
--
--	hlist_for_each_entry(region, &partition->pt_mem_regions, hnode) {
--		if (uaddr >= region->start_uaddr &&
--		    uaddr < region->start_uaddr +
--			    (region->nr_pages << HV_HYP_PAGE_SHIFT))
--			return region;
--	}
--
--	return NULL;
--}
--
- /*
-  * NB: caller checks and makes sure mem->size is page aligned
-  * Returns: 0 with regionpp updated on success, or -errno
-@@ -1235,9 +1220,7 @@ static int mshv_partition_create_region(struct mshv_partition *partition,
- 
- 	/* Reject overlapping regions */
- 	if (mshv_partition_region_by_gfn(partition, mem->guest_pfn) ||
--	    mshv_partition_region_by_gfn(partition, mem->guest_pfn + nr_pages - 1) ||
--	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr) ||
--	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr + mem->size - 1))
-+	    mshv_partition_region_by_gfn(partition, mem->guest_pfn + nr_pages - 1))
- 		return -EEXIST;
- 
- 	region = vzalloc(sizeof(*region) + sizeof(struct page *) * nr_pages);
-diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
-index 9091946cba23..b10c8d1cb2ad 100644
---- a/include/uapi/linux/mshv.h
-+++ b/include/uapi/linux/mshv.h
-@@ -123,7 +123,7 @@ enum {
-  * @rsvd: MBZ
-  *
-  * Map or unmap a region of userspace memory to Guest Physical Addresses (GPA).
-- * Mappings can't overlap in GPA space or userspace.
-+ * Mappings can't overlap in GPA space.
-  * To unmap, these fields must match an existing mapping.
-  */
- struct mshv_user_mem_region {
--- 
-2.34.1
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/ULWV=an8W5NfKQGUzapEptF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkKfAMACgkQAVBC80lX
+0GzALwf/fyDxySEYKsqJatdQeIxMChR8AMtPBSNdDU/+v38ZI1d8cpsIibMC+T9J
+8jcu0O0NZKPre6v9dOr4qOcbGBWRvtTYxu888QnT+P2Ck1VqlcG9wWjVv0u7LoLW
+A87WKE8XV3DbL0VgEgY+5kqZs3c9i3zGj23dgDCx+0syCW1SL8M1fOP2xd14qs10
+9OQZH2utD/W22vvIkFmSBIiSpF6qDmRiuYS5IBKnD091MexpYjFR0K/4q0tNEzG0
+z0iZY2KOOoqUSCfRgxp8EPecXOv+BW/pBJACUFUk4QilsJq+j8ACE8Ntl5gc7cPS
+CgwWGXf+Q4mXNHvePnpObPmPOctWtA==
+=XONg
+-----END PGP SIGNATURE-----
+
+--Sig_/ULWV=an8W5NfKQGUzapEptF--
 
