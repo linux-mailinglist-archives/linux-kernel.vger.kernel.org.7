@@ -1,218 +1,255 @@
-Return-Path: <linux-kernel+bounces-884340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A37C2FFCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:39:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F74FC30040
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9477C1885BA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2E818C1AAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D513064B5;
-	Tue,  4 Nov 2025 08:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8157F31A06F;
+	Tue,  4 Nov 2025 08:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="BGy9Et3O"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023120.outbound.protection.outlook.com [52.101.127.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uMPvTSfW"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DCF280A58;
-	Tue,  4 Nov 2025 08:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245345; cv=fail; b=AG5X+8BsS7MGiKvS0fk03DsRO2QPkI2JcZFp4RIrjzwyQ9rw+UAa3A0WeoghXVzM/pqV0wWl+BryXOfiE4+ONBGnvARofHGyGgabtdgArEzkP5A0P7YtVXD/3D06qpE3M2QKn7wtxjuvm+FEOJjI1sLjC37sklsC6D9LBYG+U0E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245345; c=relaxed/simple;
-	bh=WUiECuR/rX/XxFIm+5NTDj0IdFsMmzfyh2AD5iXrg6o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e/m8RgeHB9xjUTfv0zhlTwcvQNwueLoNsOsfsUJWznxRB6BwS68VDzmKLy82kIRO8OZ5TE8U7pkujzwn5+U5E03OZIoGuEaijOYufCRVaqVIX1oFkm8tw/7dx72lvcSM64WgL0FAFl34yRZqm4guZmRsbKu05OXEjEEFDpobqlc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=BGy9Et3O; arc=fail smtp.client-ip=52.101.127.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VhraKTKEkipzvyCODFxuIa1Hmxy9FEeOA9M15HfsNKX1ux7JhQy61hjy+4vEDtM2oFaelw5LQETvdMRDxPjZWPLXotuxbAXkjgn+6eYsF05F+2G7IF5SWNxEWVbBBOa/h6tsD71t9L1k7/eDM55hAR4mee2JdknZqCLg49DO7XAQO9juqrevssnZ1ITM8SSlVnAC8RU7zwjixYsBxNqvmtG+FMnWz4dewYgRPeqhdAS3zPsByvFc38PMjvVNlhmsdRlyHyb0DV0H7CnSqaImHOueczl3KiyOy+usZ4r9oUFa8ihC10MjucCl+EmQaSmZPnlCgAaUu+VjD/4mSnJaaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WUiECuR/rX/XxFIm+5NTDj0IdFsMmzfyh2AD5iXrg6o=;
- b=CLxoS3HcC9BuAjz8PNpCUkyUskYGGx6RvfsvKF19OcZ1sahbTRX2UPEAkjBu5Cbx25x83h+/nwWr4UR+V18BstevfbWy2zS1jPzJ72mMFD79h2mvYrm8Qu0NFBTx8XHyJbF8MIxSXUECvtXRAWWFAUrqtAGI/tp/BQphVfQ4nPk4i2HBROiLUwAZgNJKUYdZ3QY5BTT9tO44JrfnRLsuOW/KS7vyF9r/iBfmmi0mYeZ5Bk1ezUImpbUgObb91CsxMWL+ZKealpqJu3clt/QEaSuASedo939Vajq+0pZxB92GciWzJEV5EQszB5Dudpm4Sxg4/jvskNFgn8JddCndCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WUiECuR/rX/XxFIm+5NTDj0IdFsMmzfyh2AD5iXrg6o=;
- b=BGy9Et3OSLNTUoqJnhbA+9ktIUx71kqneRxA5Mx2IF/+iU9E58UhKFwOj07pFf+KsnrN1fxSd2itPSOI8+BbRDe0cpDBC+BzYO0vNyg5gIUl+z6K3DUpajSs6YKO0I1a/+L8t9VqodpiJwBfFVCUMN8I3Ome8avSdoRPdcz85+Vc8SvyIeCbC0PTvvGRtfLnsgJjLkt5HkgP+ygsQuVX7P5+gM+FkQp6UjLYytpVIIsRrCWiwx3R7tyI28BGfGTgmdxTFDlhSSUz6I1sQsSwkgtPFAqkRS8CwsxSmabRCE0kF7k34dyUFoPL3nMbyhUvHHIkMl5wtcaRhT5RBTrAQw==
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
- by TY0PR06MB5401.apcprd06.prod.outlook.com (2603:1096:400:216::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 08:35:37 +0000
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 08:35:37 +0000
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Po-Yu Chuang <ratbert@faraday-tech.com>, Joel Stanley
-	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "taoren@meta.com" <taoren@meta.com>
-Subject:
- =?utf-8?B?5Zue6KaGOiBbUEFUQ0ggbmV0LW5leHQgdjMgMC80XSBBZGQgQVNUMjYwMCBS?=
- =?utf-8?Q?GMII_delay_into_ftgmac100?=
-Thread-Topic: [PATCH net-next v3 0/4] Add AST2600 RGMII delay into ftgmac100
-Thread-Index: AQHcTJT/x96fax4fRUGWRrw/l8DMzbTiLpaAgAADPOA=
-Date: Tue, 4 Nov 2025 08:35:37 +0000
-Message-ID:
- <SEYPR06MB51347DC658F062BD79BE18A59DC4A@SEYPR06MB5134.apcprd06.prod.outlook.com>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
- <20251104-dangerous-auk-of-order-6afab2@kuoka>
-In-Reply-To: <20251104-dangerous-auk-of-order-6afab2@kuoka>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|TY0PR06MB5401:EE_
-x-ms-office365-filtering-correlation-id: 63e44bdb-dd5a-41d5-b283-08de1b7d2114
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TWJyTGd1d0VFcTZPSHVuVEFoUldxQ3dCOTZ4d25sbm9uU1VTSGtFOW8wUDRK?=
- =?utf-8?B?dFFLK1h6dUlOSGplYitOMk1YandoL01BZ2ZhcUZ0bEdmZlYzUkJTSzZOQk0z?=
- =?utf-8?B?N251Y3V0OURIRXhtdVVxL0JOb0l3NkswVk5LM2JqRXdMN3JnRE5TdnFyWVVP?=
- =?utf-8?B?Q3hpKzRtTVo4UGtDT0J5dzBGazc4NE80dEd2YndscDFMSmxxS3owdFo3bGVk?=
- =?utf-8?B?aWdpYXZFYW1DNjlWUmpMT1NHSWo0MXBzZ0RQaDJhU3NIVFA4MkhvNC85OHZK?=
- =?utf-8?B?L21BZUorSFJQT3cvdlBnaVJlTkhPQmx6Szh5MDk0T1gxNUI2TnA2alU4T1JX?=
- =?utf-8?B?UEVrOUVXOGtGQzByTzZYLzVZdjBiRW9kRktuWnFPR1d2Q0paSEVhN2NTQ2hV?=
- =?utf-8?B?bDMrZTRrTlgvNzh2RENBSUY2TG5vTHBuY29acTZYbTlyaXdnMXUxSUJvMDdN?=
- =?utf-8?B?djZwdkVvU3k0MVdseWZmbGFzUHBDM0pKVjBiaUtaazgxT05DUldlQ1MrK2cv?=
- =?utf-8?B?S2hzOVFMa2tXRlFvZzdTV2lZMUlydGRQN05HcHhsc01JZk5vUnRGVldWT2My?=
- =?utf-8?B?TnNYaWt4dzQ3U25mL1FINVFCaHZBUXlFSHBsYWI0RmMvR2VMbnZualBGVW5R?=
- =?utf-8?B?UDR2UUVFQlRDSk9RWGpFeXQ0K2NnQkpnODNBenhuYW8zdVpncm5WYWM2c00z?=
- =?utf-8?B?djVKWEN5VHNnakJCcXRlT1paZGtWcGpiR2RVWG8zek04Vndwb3VFYzFmaCtD?=
- =?utf-8?B?dUdvbkUwUHNoNEN6VVJtMTZ6Y2FNTWZHdFN2S01lWlFvb2liZ29CengyL20r?=
- =?utf-8?B?RDB5Y2tEcko4OWxVT1huSU50QjRGd3dUdzlqdVhqZUs4SFUra3BlazRHUjVr?=
- =?utf-8?B?aERlOGZrMGYxek5CL29BZkJ5Tmh1QmdYTWQxUXUrU2NaV1ZJRVREblA0Mmk4?=
- =?utf-8?B?dDV6TUFKd2ZkU25kTHdDSTVhN3gvVDBVdU1sTk9oT3p3RVBsZW9PdkIyWEZh?=
- =?utf-8?B?QWlaMVdpejF3N3hyTzlXMzdkbXk2UnU1SlMzSkZyOGVITmI0TnZtL1M5Ymdl?=
- =?utf-8?B?cGFqWkRIeDFwV2RoeHpTcVZvVXdCRXJVb0xSUDBpWDVJOUZZL2Jodzg3VFZ4?=
- =?utf-8?B?YkhDb2NmSE5RM0tnbzB5TGdaTXc1K1oyYm1JeHlOMktYa1Y0WklJZEJJdG8z?=
- =?utf-8?B?NURJMk1ucjZLMWN0RXR0eDA4Y0ZMMzgrOG9ia0dNaWxCTHIvalRmSSt6Nkg2?=
- =?utf-8?B?YUYzM25PNnlkS0QxZUQzQWVvQ0IvZGVyMGJJOEZpZWNVZ0JVSWpiejJQZ0hB?=
- =?utf-8?B?MFpDeEJ0bUZyM2tobkZFY3Rkd3lOcUZVc0VUMjhYUlBmdXY1NG5FaW5DeWRr?=
- =?utf-8?B?NEY4Zml1dm9IazhoSFk1U3dGbUZZRDBuUU4wekNCSURJMkpEQjM2eE9pc2lq?=
- =?utf-8?B?V0FqWktMazJSZkNGMGdtZ1F4a25pdVNwRVpHcEhrazRjWlMyZFVqVUVER0JB?=
- =?utf-8?B?a0hPWHZjYW5QMUIzUUY1TTNaZW5YQ09ZRWtVbG94dm1vUVVLdmxMa2h2QVY2?=
- =?utf-8?B?Wmo2NTQrNkJOYWpqWWExcVFFdjVISDhzODkzZFBPYjlxM2RCY2UzblVWQm95?=
- =?utf-8?B?N1F5dzJ2MmI4Z2V5Z1VEMlRockdyRXRyUStud3lRWHpZcmI4ZVBuYTJoTFUy?=
- =?utf-8?B?V2w3RHdLd0lJQVYxazZJYnVqTWhJM2ZFMXlpbDBHblk0L2tiWndoSUJDMHVX?=
- =?utf-8?B?NjB6S1lnclc3dzlaV0xJN2FXZnNDbG1FT000MERPbUN5b2xtUHU0NklqbnRw?=
- =?utf-8?B?bEF4QVIxamd1bjlRR1hwTEZNVTdjL3kyTXVKRnJKQ0xER2JvQU1Rd0JoNEF6?=
- =?utf-8?B?TlJRQ1JaTlViQXVHSFRDZFpydG12ZkVtcWcyMkF6N1J6b2VzVncxc0ttSHRK?=
- =?utf-8?B?aEdNbU1uMXdPRVhkeEJyY3k1ak9ySTVHckJSYzNWUjNwdFRyRndTNU1EUU9u?=
- =?utf-8?B?dXM3c1hVektGbGw3Tmc4Z2NHcW9Icm5kaHJqeEhacE9Fb1pCREZYQkE3c1hh?=
- =?utf-8?Q?VIn1mP?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TnN3UHFBcEpaQVJOcWdBYVF6QlMrNUluWDFFOGJESnhxZmIxZVBBNXlFR254?=
- =?utf-8?B?dXVBcDNqVEhNUmNoNWJoaitJOXFVNDJnbFVWK0JtSDBSVHZPZENnWHllNGY1?=
- =?utf-8?B?U2FqZ2RabE55TE85SXhnbWl0ejU0bnh5Rm80bVozOTY1T0tPSktHYm1tQ1NV?=
- =?utf-8?B?dzBrVXJoTkkyRzdUNjFVRDVJTDNqbC91Q3JMQitjckhTZkhFYkU2ckMxRjZE?=
- =?utf-8?B?LzVRVng5ZzBkakw1T25YcjNkWUNpbDF6SnJnRWRmdUw1R1o3Qm5aNE1BMXND?=
- =?utf-8?B?aTRUYXBLYWJGY2Fuc3FxY1dvd29uVVNPNmdMZWZnUHJTaFNkMTVEcXBDa3N4?=
- =?utf-8?B?SWhxTXlrWkpaWjlDUWliMXRPemZzSWtZOUxra2dkOTNBU0J0aHJnVmZ6VFhO?=
- =?utf-8?B?S1JKeit0ZTZlcmc5QUZLY05JRnhpT1BJWFFRajltMHVYMXpOVXZnKzBqbHl6?=
- =?utf-8?B?U1RwSG01SFVJNWRqWnJwRXZBZXQyMDUwZm1jNktsYmcwUHlRZWVOQytIWGFZ?=
- =?utf-8?B?YUg5Nm5lRFF3U0tOaDcyb1R2QlQwaVhFRGR3YVFtVlkrQnIxVEJPdnY1K1Z5?=
- =?utf-8?B?eFFnamUyR1REcW9xSSs2QmxDZnRxQUNyUUpqVUk2em56ZXQxNGhqVFNwYTRi?=
- =?utf-8?B?T1NxcDd3YVhEL2RKSFFzVFBzUUowaDNMcWlSZzVPeGpCVllONXlaU0JpbDZh?=
- =?utf-8?B?NjVHWXBzR21mMzF4VTdwN2gya1pVYkx0RWVFZHQ2WEFoc09zeTNTM0h6ZDZz?=
- =?utf-8?B?T2YxM2dQQmx5eFpHMTJMWHhCNU1KeGhkRzZ6NWdqYzlTTVpTalpOTEwxZ2NH?=
- =?utf-8?B?eDZYR1lZeXAxTjFrRitKZHo2MWhSN1ZuVzRxaGhxRnRuNGxNVTNCVkRsNkV2?=
- =?utf-8?B?VVFyQ3N2Uzg0dDJoT3BiY0drbWt5cGcrenl4MUd1Q3MzQ3hxSTFQZ2lpbEdm?=
- =?utf-8?B?ZFRxWXZjdmVuNkdsNmUwM3E1UzJHUjFlZTNnUWZYdTViUFUwTFNCdmkvTnNu?=
- =?utf-8?B?WlRWYVJtNlRiNzZPMW1uVHk5NitYYkd6aElZQ0hJaENhblM4YkhlRkhCN0JX?=
- =?utf-8?B?VFZvejZIN2JCcnlrSkZRUFlST252OHRoMEFnWU9EOTFueS9ROUVJUFBTM2N4?=
- =?utf-8?B?YXdQVEVRYUtvTktBblJCOVljbCt6MFZQcGh2QlltYTNRbmJBaDYrK2c1ZUFa?=
- =?utf-8?B?OUtMZVVGZ2FPK1hrazR4dzU0dEVWdXlnYVdEZEhQY1MrNURkUEgyYTFxT1JO?=
- =?utf-8?B?VS9KNGpKUTF4Q01HVWpWSVR6TXFodFkvNDNHQVdZRTlYajlPVWdtTVE2UEJm?=
- =?utf-8?B?cGRHUitWZFpCSERIeXBjMVBWT0ZPdUJ2VENtMmRvSW4rOHhVQUdQWk9lNkFD?=
- =?utf-8?B?aWo4UXYzVzA2RENLWmliVTVvTVVUYmNyYTZwSUE3SjYrZmV2Zzd4VzJCWUt0?=
- =?utf-8?B?Y3VubEsydG40Q1FaaDVVeDZhVjl4VGVNZzBDWTJQaWMyelQ1Y2d4MUx2bnEy?=
- =?utf-8?B?KzVyeFpNRk5VVTFIL2ZVVUYyc2ZuNjFvNUdjZnpiSGxYa2FGclVXUDRLOWRN?=
- =?utf-8?B?MmVFdm5BNGFyY1F6UXVzbHRkWHkxUXNCMkNsRVdkWTNJWjZ0YUJYM3JUbjhL?=
- =?utf-8?B?TGRFTC82V1dHNDEyR3pEdDBUK0NUa3FFTlhhVm0zbER6azY2R0VvTzJLb2Zu?=
- =?utf-8?B?NnEzUFZCMU0zcjE3bnB0czl1TlhFcnlaTmVyVEVYU1lDV1J3Z2lhTVRTa0Nx?=
- =?utf-8?B?cXRrdW8xUDZNN0phS2UxcU11TWFUMTdYVXB4dDQ2VEhYUWRIWForUkRFQWdR?=
- =?utf-8?B?UWQ0YWZ0U1kvNEtlaXNyUWw5eXVwS3VjaElLd1dOSmlzWXlqUjhHcGlubWVs?=
- =?utf-8?B?Mk5tRmZySTg0TzhxV1lRNU9TNHRrWVJ3NEFLek40MDVrZkc5djRyeUp1dWVR?=
- =?utf-8?B?ZUg2KzhERnFqdllMOC9jUkpqSW9TSCtiazBKNDBnOFBIaEhyUEllT2Uvcy9S?=
- =?utf-8?B?VUVweUlpUW5jVGw1V1VtT09MTzRMTjZCeW5US0xieGJZUXQ2blJGODI3bWpW?=
- =?utf-8?B?RjNVOVkra2lmVkdMb0o5Z1lvSG9BWG9ISFR3Z0REVXJBVlN4RTRFVmwxL1Zv?=
- =?utf-8?B?M3EwdjNNeEozWHV1aFVwbHFsSms2cVhwV241aXdxaG5HampzNEJSRk9IWTNP?=
- =?utf-8?B?a1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE01317701
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762245425; cv=none; b=oE0vljn6ev3kRQEIgG36BjI9NyusYPVTKONOWmynddjbqwvtyTMrbpgcfUAqaKEsURD9i6yyW0H49dn1Gv5H1v0osvtQ1aBb8I/t/wPzOF2ItvWU1Mjjivh2UaZFqTIAzELZpDT1LJ6vTwgYbN1chJxceDanuMvwbhmrJ7uVi9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762245425; c=relaxed/simple;
+	bh=KjBRbZ4bkrlSakH8TMfjW4NCE/Px2HuvZ+aVWMkIPE4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=szwr8FSJEhY8edhzB2ZWkd4elyvhAOOh45sxtmPX5W9AiSr+V9DNnOjyEyF6uKsoWb0La7OqjpcP4fIfYCrRLFz4yxGUW5vPwiOVsapzk1aqrJU1v4se6x0PWmv/MjWmpzx/OLnMBATG+7YTIEY7uayO49b2nEUJdIfrlHBDwj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uMPvTSfW; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4710d174c31so56948285e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:37:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762245422; x=1762850222; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SIFibIxGtr22aof+eoY73n2jRzngRkz56RLCEf2qwc=;
+        b=uMPvTSfWLq3fHAiX7p7s82c4FooFLNUGtYlUoo0b4LPIPhEB6b1FgB7/2f5G4r8dk6
+         V7WGhoS+hIkF+Pg/BhsAenOSklfuTm2FXnram1yQ5129weQLWaKzxOOi4zbohfP9uA4D
+         qAcHb+UgpDEEVmKDvdX71JwCBo7IV1maxOj60WSYJgwtBVjpmek/sDLb2MFZ+HDGoIJh
+         L5D4JHBMEfCVvBPoAEgnNwy52wySHlQ7w8/El9PbcvtAITC9hsiq0tG3f/JwqzrjfQGd
+         7Mn0gVmodQfmd1mjq+xKlVmomiLLtRSCg1v6cbtG3Y/4K9+nBsKsiypw2biKlkhxfKjt
+         e4IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762245422; x=1762850222;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SIFibIxGtr22aof+eoY73n2jRzngRkz56RLCEf2qwc=;
+        b=ujRSiRf+FDJjy4rvRVrp57eXbEyw48JCvkrM3nuZx4kKE7c4+gOpmLRucxXAlBu4pZ
+         /kbANf61b4PeRSWQK9En+PDXbtxTKx0qOv9LangsFwaj6WSWOEAA/G+NTu47GK9psBIL
+         yFQ2a3d7p0x/50G0HUK+42SENTDHvtl0fJNltjgF0/EoiZVmdFTPYk5Pbhep5OXqCC6M
+         T6fuK7l47bQ6OY3k2//GTom89ygX0zwRXYcQXzh3QV2Ugo2XyHQqbDhaolN/EPwh5Xca
+         GIgSc1QxVc+WcR31eUbn/ghfZyikZjzQa1PeP4ObKTcYKRmsigUi2ULGHZBnJkZ6H2hu
+         XVTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsmEuLlGVynuj2olSr++aWoe2JgZwqu1XmUp15E31XM9fjaJnpJUl9mRQSflqeip0MEJxyp5paBvmEYFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKHDMDw3VS1ETSB4mj+IXuAVVb4Aypk+zinwS2nof0RKiwYtyr
+	1kOv4zI+va/vB55g2ikhGXc8yJaLKSXV+CHD8nE+yWjfgItAXljDAvaenf7fQUOawzQzx5LkgfL
+	KvcfvRezk/WsgVvPFYQ==
+X-Google-Smtp-Source: AGHT+IEg5xttFX2ft6eTsCCjP1/B0SKHrlRkwGAmvuAZGburwGNPSoMEYyhqVEPJi3uwc+HT+qYKC0k+Vu62A0Q=
+X-Received: from wmf19.prod.google.com ([2002:a05:600c:2293:b0:477:10f8:4597])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:621b:b0:475:d917:7218 with SMTP id 5b1f17b1804b1-477308a6900mr139520125e9.36.1762245421804;
+ Tue, 04 Nov 2025 00:37:01 -0800 (PST)
+Date: Tue, 4 Nov 2025 08:37:00 +0000
+In-Reply-To: <DDZ5J5OC26UH.1B8CGNEJGRTS5@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63e44bdb-dd5a-41d5-b283-08de1b7d2114
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 08:35:37.2702
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fwOhYQQJeJcG5ZJvuM8dl7SmC3ka1RDVn4wy4QsrJ3kEAD5lwzvy4COy/VmeaLcSbttayqQrPVQnEnPfXj5XZD6AIs2SdhN0OnRgsCtgIpg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5401
+Mime-Version: 1.0
+References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
+ <aQiCeZE7eN_KVdZ5@google.com> <DDZ5J5OC26UH.1B8CGNEJGRTS5@nvidia.com>
+Message-ID: <aQm7LNwPwxm8HZ_I@google.com>
+Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract it
+ through an extension trait
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-SGkgS3J6eXN6dG9mDQoNCj4gPiAtLS0NCj4gPiB2MzoNCj4gPiAgLSBBZGQgbmV3IGl0ZW0gb24g
-Y29tcGF0aWJsZSBwcm9wZXJ0eSBmb3IgbmV3IGNvbXBhdGlibGUgc3RyaW5ncw0KPiA+ICAtIFJl
-bW92ZSB0aGUgbmV3IGNvbXBhdGlibGUgYW5kIHNjdSBoYW5kbGUgb2YgTUFDIGZyb20gYXNwZWVk
-LWc2LmR0c2kNCj4gPiAgLSBBZGQgbmV3IGNvbXBhdGlibGUgYW5kIHNjdSBoYW5kbGUgdG8gTUFD
-IG5vZGUgaW4NCj4gPiAgICBhc3BlZWQtYXN0MjYwMC1ldmIuZHRzDQo+ID4gIC0gQ2hhbmdlIGFs
-bCBwaHktbW9kZSBvZiBNQUNzIHRvICJyZ21paS1pZCINCj4gPiAgLSBLZWVwICJhc3BlZWQsYXN0
-MjYwMC1tYWMiIGNvbXBhdGlibGUgaW4gZnRnbWFjMTAwLmMgYW5kIGNvbmZpZ3VyZSB0aGUNCj4g
-PiAgICByZ21paSBkZWxheSB3aXRoICJhc3BlZWQsYXN0MjYwMC1tYWMwMSIgYW5kICJhc3BlZWQs
-YXN0MjYwMC1tYWMyMyINCj4gPiB2MjoNCj4gPiAgLSBhZGRlZCBuZXcgY29tcGF0aWJsZSBzdHJp
-bmdzIGZvciBNQUMwLzEgYW5kIE1BQzIvMw0KPiA+ICAtIHVwZGF0ZWQgZGV2aWNlIHRyZWUgYmlu
-ZGluZ3MgdG8gcmVzdHJpY3QgcGh5LW1vZGUgYW5kIGRlbGF5DQo+ID4gcHJvcGVydGllcw0KPiA+
-ICAtIHJlZmFjdG9yZWQgZHJpdmVyIGNvZGUgdG8gaGFuZGxlIHJnbWlpIGRlbGF5IGNvbmZpZ3Vy
-YXRpb24NCj4gDQo+IFRoYXQncyBiNCBtYW5hZ2VkIGNoYW5nZSwgc28gd2hlcmUgYXJlIHRoZSBs
-b3JlbGlua3M/IFdoeSBhcmUgeW91IHJlbW92aW5nDQo+IHRoZW0/DQo+IA0KPiBTaW5jZSB5b3Ug
-ZGVjaWRlZCB0byBkcm9wIHRoZW0gbWFraW5nIGl0IGRpZmZpY3VsdCBmb3IgbWUgdG8gZmluZCBw
-cmV2aW91cw0KPiByZXZpc2lvbnMsIEkgd2lsbCBub3QgYm90aGVyIHRvIGxvb2sgYXQgYmFja2dy
-b3VuZCBvZiB0aGlzIHBhdGNoc2V0IHRvIHVuZGVyc3RhbmQNCj4gd2h5IHlvdSBkaWQgdGhhdCB3
-YXkgYW5kIGp1c3QgTkFLIHRoZSBiaW5kaW5nLg0KPiANCj4gTmV4dCB0aW1lLCBtYWtlIGl0IGVh
-c3kgZm9yIHJldmlld2Vycywgbm90IGludGVudGlvbmFsbHkgZGlmZmljdWx0Lg0KPiANCg0KVGhh
-bmtzIGZvciBwb2ludGluZyB0aGF0IG91dC4NClRoZSBtaXNzaW5nIGxvcmUgbGlua3Mgd2VyZSBk
-dWUgdG8gbXkgYXR0ZW1wdCB0byB1c2UgYjQgZm9yIHNlbmRpbmcgdGhpcyB2ZXJzaW9uLCANCmFu
-ZCBzb21lIGluZm9ybWF0aW9uIHdhcyB1bmludGVudGlvbmFsbHkgZHJvcHBlZC4NClN0YXJ0aW5n
-IGZyb20gdGhlIG5leHQgcmV2aXNpb24sIEnigJlsbCBtYWtlIHN1cmUgdG8gaW5jbHVkZSBhbGwg
-dGhlIHByb3BlciBsb3JlIGxpbmtzIA0KYW5kIG1ldGFkYXRhIGdlbmVyYXRlZCBieSBiNCBzZW5k
-Lg0KDQpTb3JyeSBhYm91dCB0aGUgbWlzc2luZyBsb3JlIGxpbmtzIGluIHRoaXMgdmVyc2lvbi4g
-YW5kIHRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KVGhhbmtzLA0KSmFja3kNCg==
+On Tue, Nov 04, 2025 at 12:06:54AM +0900, Alexandre Courbot wrote:
+> On Mon Nov 3, 2025 at 7:22 PM JST, Alice Ryhl wrote:
+> > On Sat, Nov 01, 2025 at 10:31:38PM +0900, Alexandre Courbot wrote:
+> >> In Rust 1.80, the previously unstable `slice::flatten` family of methods
+> >> have been stabilized and renamed to `as_flattened`.
+> >> 
+> >> This creates an issue as we want to use `as_flattened`, but need to
+> >> support the MSRV (which at the moment is Rust 1.78) where it is named
+> >> `flatten`.
+> >> 
+> >> Solve this by enabling the `slice_flatten` feature, and abstracting
+> >> `as_flatten` behind an extension trait that calls the right method
+> >> depending on the Rust version.
+> >> 
+> >> This extension trait can be removed once the MSRV passes 1.80.
+> >> 
+> >> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> >> Link: https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
+> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> >> ---
+> >> This patch was part of the Nova GSP boot series [1], but since it
+> >> requires attention from the core Rust team (and possibly the build
+> >> maintainers?) and is otherwise buried under Nova patches, I am taking
+> >> the freedom to send it separately for visibility.
+> >> 
+> >> Hopefully it captures Miguel's suggestion [2] accurately, but please let
+> >> me know if I missed something.
+> >> 
+> >> Since the Nova GSP boot series makes use of this, I hope to eventually
+> >> merge it alongside the series, through the DRM tree.
+> >> 
+> >> Thanks!
+> >> 
+> >> [1] https://lore.kernel.org/all/20251029-gsp_boot-v7-0-34227afad347@nvidia.com/
+> >> [2] https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
+> >> ---
+> >>  init/Kconfig           |  3 +++
+> >>  rust/kernel/lib.rs     |  4 ++++
+> >>  rust/kernel/slice.rs   | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> >>  scripts/Makefile.build |  3 ++-
+> >>  4 files changed, 72 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/init/Kconfig b/init/Kconfig
+> >> index cab3ad28ca49..7da93c9cccc3 100644
+> >> --- a/init/Kconfig
+> >> +++ b/init/Kconfig
+> >> @@ -147,6 +147,9 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
+> >>  	# https://github.com/llvm/llvm-project/pull/130661
+> >>  	def_bool LD_IS_BFD || LLD_VERSION >= 210000
+> >>  
+> >> +config RUSTC_HAS_SLICE_AS_FLATTENED
+> >> +	def_bool RUSTC_VERSION >= 108000
+> >> +
+> >>  config RUSTC_HAS_COERCE_POINTEE
+> >>  	def_bool RUSTC_VERSION >= 108400
+> >>  
+> >> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> >> index 3dd7bebe7888..2581a356d114 100644
+> >> --- a/rust/kernel/lib.rs
+> >> +++ b/rust/kernel/lib.rs
+> >> @@ -21,6 +21,9 @@
+> >>  #![feature(inline_const)]
+> >>  #![feature(pointer_is_aligned)]
+> >>  //
+> >> +// Stable since Rust 1.80.0.
+> >> +#![feature(slice_flatten)]
+> >> +//
+> >>  // Stable since Rust 1.81.0.
+> >>  #![feature(lint_reasons)]
+> >>  //
+> >> @@ -128,6 +131,7 @@
+> >>  pub mod security;
+> >>  pub mod seq_file;
+> >>  pub mod sizes;
+> >> +pub mod slice;
+> >>  mod static_assert;
+> >>  #[doc(hidden)]
+> >>  pub mod std_vendor;
+> >> diff --git a/rust/kernel/slice.rs b/rust/kernel/slice.rs
+> >> new file mode 100644
+> >> index 000000000000..7e837bec4bed
+> >> --- /dev/null
+> >> +++ b/rust/kernel/slice.rs
+> >> @@ -0,0 +1,63 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +
+> >> +//! Additional (and temporary) slice helpers.
+> >> +
+> >> +/// Extension trait providing a portable version of [`as_flattened`] and
+> >> +/// [`as_flattened_mut`].
+> >> +///
+> >> +/// In Rust 1.80, the previously unstable `slice::flatten` family of methods
+> >> +/// have been stabilized and renamed from `flatten` to `as_flattened`.
+> >> +///
+> >> +/// This creates an issue for as long as the MSRV is < 1.80, as the same functionality is provided
+> >> +/// by different methods depending on the compiler version.
+> >> +///
+> >> +/// This extension trait solves this by abstracting `as_flatten` and calling the correct  method
+> >> +/// depending on the Rust version.
+> >> +///
+> >> +/// This trait can be removed once the MSRV passes 1.80.
+> >> +///
+> >> +/// [`as_flattened`]: slice::as_flattened
+> >> +/// [`as_flattened_mut`]: slice::as_flattened_mut
+> >> +pub trait AsFlattened<T> {
+> >> +    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
+> >> +    ///
+> >> +    /// This is an portable layer on top of [`as_flattened`]; see its documentation for details.
+> >> +    ///
+> >> +    /// [`as_flattened`]: slice::as_flattened
+> >> +    fn as_flattened_slice(&self) -> &[T];
+> >> +
+> >> +    /// Takes an `&mut [[T; N]]` and flattens it to a `&mut [T]`.
+> >> +    ///
+> >> +    /// This is an portable layer on top of [`as_flattened_mut`]; see its documentation for details.
+> >> +    ///
+> >> +    /// [`as_flattened_mut`]: slice::as_flattened_mut
+> >> +    fn as_flattened_slice_mut(&mut self) -> &mut [T];
+> >> +}
+> >> +
+> >> +impl<T, const N: usize> AsFlattened<T> for [[T; N]] {
+> >> +    #[allow(clippy::incompatible_msrv)]
+> >> +    fn as_flattened_slice(&self) -> &[T] {
+> >> +        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
+> >> +        {
+> >> +            self.flatten()
+> >> +        }
+> >> +
+> >> +        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
+> >> +        {
+> >> +            self.as_flattened()
+> >> +        }
+> >> +    }
+> >> +
+> >> +    #[allow(clippy::incompatible_msrv)]
+> >> +    fn as_flattened_slice_mut(&mut self) -> &mut [T] {
+> >> +        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
+> >> +        {
+> >> +            self.flatten_mut()
+> >> +        }
+> >> +
+> >> +        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
+> >> +        {
+> >> +            self.as_flattened_mut()
+> >> +        }
+> >
+> > Hmm. Why not have this match the name that this was stabilized under?
+> > That way, when bumping the MSRV, we can just remove this trait without
+> > changing the callers.
+> 
+> I expected that doing so would clash with the methods of the same name
+> in `slice` on Rust >= 1.80, but instead I just got a warning that my
+> `AsFlattened` import was ignored - it looks like Rust did the right
+> thing and picked the non-trait method by default.
+> 
+> So all we need to do to make your proposal work is to make the import
+> conditional on Rust being < 1.80. And we can also make the whole trait
+> and its impl block that way.
+> 
+> That would actually be much cleaner! Thanks a lot.
+
+One option is to put the trait in the prelude on relevant rustc
+versions. That way, users of the method don't need any conditional
+logic.
+
+Alice
 
