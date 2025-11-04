@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-884984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FAFC31A91
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:58:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB24C31A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:55:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B399461E8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4D21883A64
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEB0330331;
-	Tue,  4 Nov 2025 14:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA76330B3B;
+	Tue,  4 Nov 2025 14:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Be0pWcoA"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ix74fq6U"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0732E73A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2306732F75C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268083; cv=none; b=rtL5m1cD3/vP2VJqrE3d/lof6wSfDmGBxDvX0y4NpdWwK8M7+3TtJDRjN1LI4wke8WqY2BfPHBGGBFC0N5R6qifE2Pstxb19v3dVIRbJ+01WhBRwtoLKYZjG0bL+CQQ4qpsFi2wvtFYDS1g83OforGHiId3KEDyFsee/xExiVEE=
+	t=1762268084; cv=none; b=BNSPro4IOPEcl6fOelYaV0hdbFOW6/lkT5WiurWrSnic5B3T6ace+JJODdD07D5gpiSNUAT25yBm+nQJXqtRlKggXtskh1bGHcv7rM9cIzpUGMFdnGbP1tChfCYG+Q8RcBDIt7BtgoGQV3S8AYhHiGmfcU5rhsk//EjRUtR6/y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268083; c=relaxed/simple;
-	bh=SoHtZGOkpwN5ZSgnbeU8DhJb1ETpZRQWa1wSF/osbfk=;
+	s=arc-20240116; t=1762268084; c=relaxed/simple;
+	bh=WXJgANZ+e9h8MzCDzeaAESu7lB6O6+zjBXrW56L/8IQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6Nfo4AdENG0I1jE/Xnm6SDLLOsEX+3GrGx7vRAB+pRf2DdMWtlltE4FFxxCCRx7pnX7aJWmi4cNRdP4wamVfGutQ4Jc6mYqDPjaaEsWsqIViMCvag2mj5Jeopum/NhGYxysik01yZ+0Tdalc6kKnDNi09as8RLUYX9fi8CzAYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Be0pWcoA; arc=none smtp.client-ip=209.85.208.42
+	 MIME-Version; b=HyQoS2QOBShCSgK67jseg8wjcJ9/C/ZUPDyvaiwNqzS+njUHmIMiSsrAixgbQH1RjnIV7c8hrXChIulsaJo4qQ2ymBzoxCcKhp3+tlTNuv4JqWOAP34rikajsI85AXTYUv7hwmAGu4foLAep75dVcAONWwxJye3b1bci8mHJFWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ix74fq6U; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso9636035a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:54:41 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-641018845beso90398a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:54:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762268080; x=1762872880; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762268081; x=1762872881; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AtBjBlbxbG5P+AxPedmUChhqbCDi46Di3hP9tiOhxEw=;
-        b=Be0pWcoAWwCPLT3bfOkZ3fujqHjLLaGVZEpyv3Ea+3Wp3rvYQ953vD5PVYAhN5grn4
-         I6HIFBdNqlkJwcOtED1LujNtbX64OtI539E336xiLBRa1pqZVtq4CEMPPcAMXjIbxNat
-         6ZN6YDAoaixMpih2Ku+6apXRJ1uHrCVshTAD2H6JzuZ1yWIDBsCRdVDQd/Ac/NgG6duv
-         1E1bER2Wgml1JXzfidylFjWsPuObrY0PIAf8eAFrxuntu3+fBdHtY17E2puaEFRkBUpJ
-         KTK7sSuaE1yPuMN2xoIfk3Qa8RXri544zKKPoI7b04sKljqvApgwyARrPrl1dYFZISnK
-         QC6A==
+        bh=1Eoyutw2xWn5tZ7X64KI/elnJZ6bDgfQd3mhxBVUbfo=;
+        b=Ix74fq6UDHhm2Gfgs0Ecv2/CMIr2PSZYO3cfVs0C/uOvECHY9K2XOI+gKjUxiPzTB9
+         o3myGmXM0bf6k9aM2TeBCxtJLH4x5YUI6HKJTtTXoNxj/U+KV9vC06Iar+KUVfGNMbhL
+         BQHJyjubllGoONnDkkJDejqZmiVv7XXKJ7xeSEoOxBwIQ7mJM4Xl+c/3wxllLxCdkenW
+         8tYJpZHNdHAH4L1xDHM5uqhWXBK4pwO9A3W2W57c5bvHpE+KXs+D6lFSvU4ZkcqakJaa
+         xde/iEhTegaan9eQ05ne2xIi7CRCUkdi2sutNFgAmSgi5RsSGCCDCsFkBKd1C9R/XDUx
+         Zcpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762268080; x=1762872880;
+        d=1e100.net; s=20230601; t=1762268081; x=1762872881;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AtBjBlbxbG5P+AxPedmUChhqbCDi46Di3hP9tiOhxEw=;
-        b=enMJ6LfM1/jCsOTBxdpWc/HXh3zw4NN1fJuHaznv4SqeZkdjHL7tF2YhhCAbnDnMSH
-         Kq9XMYsyjfJQ6RNmN0AcfeR4UhKMCO2lQCX7KFpILmJ8zQ7CumOB0GDZVGKIioq7r9oQ
-         FHCcvG7CHdYjGAGpNLK4U4Si6lX8jF0+NSy7GiiQEDDr5vW/ZWWGt5jpha/88eHAIxec
-         4Suneeo1NdqB4BYuNSRTvDSmPmozrVbp0Ic0RwBd5EUGJzrZ4DxQ2awvKhIMgEfy1p/h
-         qXEtKt1xmZqmRT3co/pOCMg8+2rBDZb28QovMqgmEfHqKZY9cj2GdMqu9pUDE5mxYGLX
-         sh+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXGAnqAvnuIBtHu/AX5jhqmkdgPV66JoNBuXaY5Q0MraobXWl5k4sHs8eEO6U6hq6FmrQiCFrgLEhC/qac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOgPilyjhKld4jT3DkY5LSWSHjDlrzW5D/C1q7ET+JKjfppQBH
-	gEb2jE4qO+XBwS1HGHONYORWyjzevCE6hkGTT1ZL4bqYauoS8w2YWR8w
-X-Gm-Gg: ASbGncvj0em/C1n8JwhkG7uXU6NoMZhXoALDVooDYLL8ei9g4zEGzrgucKky2PiSvTD
-	2qpGfSffL5fwyZnEQJNZRrXwJ+Ps9tqQMsA5UkAr4ty3cYc1boH4qrv6HsQuJvUCZa7suVev6PD
-	Ocs3/wba8pU0NWi14qpfsO538XeXOybprAmbGVG1/KvKQCD21VdFsBkKz+9xZ0YGKKz9IMnFdrT
-	YP6rWNa+c8Ls/2YsYF1UTw1wylrj6zH4i9qFQQlpdHtktKlvnV+9Mp1HTTSA7jDYm9oRhqEeJ7n
-	GmS2LcBKrO/hqLkB70akUIJvjEVJsKlD0G+a1anRT5HfJje10Eb/C5ow7Z54RvyOJ0bODC2lbSW
-	ijOIXvfFWKLSE9E8QnHugkH5TTMetbRQirh29vPTCX9DWN702MPZjClZN4k1D9NGzopkG0IWQqU
-	TK
-X-Google-Smtp-Source: AGHT+IEimrOHYKCn1i8ge4asMD7MxgDWkgnwVngHkgx5pY5obj+4FYjBvrDj4wPa0I6px9iIE31nQQ==
-X-Received: by 2002:a05:6402:13c8:b0:640:93b2:fd0a with SMTP id 4fb4d7f45d1cf-64093b2fee5mr12182414a12.20.1762268079444;
-        Tue, 04 Nov 2025 06:54:39 -0800 (PST)
+        bh=1Eoyutw2xWn5tZ7X64KI/elnJZ6bDgfQd3mhxBVUbfo=;
+        b=rJ7q4QiMhnQkHV2Z704ftYW4Z5GJ7A+DY7Neh5yUz4Hfd+9zsOiww3HEUX9UhgtsNY
+         7v2cZP1c3nl/R/9Shi81V/ML10wJwsx3ULmggBlqAWSrPhV1WqG4ZsHV1kZQqp4ozVtR
+         Wu0j0rubDC0pxVZsdX0FLNmyYno751pSWtG9rayXqW/zrRWR97LpVDYO4n7rjLYIuHSj
+         0qJQzs2sCINmj5d95e+wfUg+cYfuKU8c5/8JhJaQysbfP07XQZTAXczJR3O2GhJI5guV
+         A4BRn6LEkVU7aef71fQ/eWSwRk7G1BGpH1VnUxl19GzREdkhdCO06CTY/SEIY7ZgTbXv
+         NB3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTSNWKvagllUMzeYF5w1WCEthtJFtw/1WvY2AD9LIbgj9aTyOBUBt/JHM9JzfXPMzXrYx4YSs+bdt4/bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhwSkz4ZN3f53McbeJdMgtKaJCTbHqXsI/UhWJ2BoKcwSeRBGx
+	RlIOfCie86g8TYG4hPFKV2IyzGFMrb5DazM8MlHiQbD9pDWPkokexA96
+X-Gm-Gg: ASbGncsgjenwHDUwNxp6vxDSrHtISDWS+QDuy+LlcbjjZtn4FFSEvqXyhx/QeuyCyQb
+	7pV6evv8aM5fOZS27vcfare1V+1a2DUDtUnYUkwa8XNTUCsx27X16GvIR6zMnBe2FAG8uh7ewdu
+	t1aKhVYlPRrrCZ/m5EKsznKufgCGOjW2I/S+7MZzReys9/NbwxNUkpOVrXha63z1K7kxEbABL6U
+	hNraFgxRZXnO0HrcDqqT9lmVbygcaIHI8rZYaPB/oIs0FWBDqdL6OJ27uR77FL+cnWsKS03NekP
+	8NYyxDF32Y6geeol/dxGWNaWJxzdobgFBANF2D967ypZ3UsX9F600vjb7BRnqq7bS/PyVBUSPFt
+	MVXq10s9TKxNSV7BDClmyJzWNfURe094/PZSwmWalx7nSPBAiLaTg4DgzxMMHvnzDDpwtdeGuYL
+	E8lrtDt4JVpM8=
+X-Google-Smtp-Source: AGHT+IEYcV6g8pSrWp9gJnopoqBVCsEt0pmu0JfN5263UUfCpD9RJnczJUaoNY/BYUSo+GB2s8qE/g==
+X-Received: by 2002:a05:6402:51ca:b0:640:eb29:fc7e with SMTP id 4fb4d7f45d1cf-640eb29fdc4mr2223377a12.20.1762268081332;
+        Tue, 04 Nov 2025 06:54:41 -0800 (PST)
 Received: from NB-6746.. ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a70b50sm2235016a12.25.2025.11.04.06.54.38
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a70b50sm2235016a12.25.2025.11.04.06.54.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 06:54:39 -0800 (PST)
+        Tue, 04 Nov 2025 06:54:40 -0800 (PST)
 From: Artem Shimko <a.shimko.dev@gmail.com>
 To: ilpo.jarvinen@linux.intel.com,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -81,9 +81,9 @@ To: ilpo.jarvinen@linux.intel.com,
 Cc: Artem Shimko <a.shimko.dev@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v2 1/2] serial: 8250_dw: handle clock enable errors in runtime_resume
-Date: Tue,  4 Nov 2025 17:54:25 +0300
-Message-ID: <20251104145433.2316165-2-a.shimko.dev@gmail.com>
+Subject: [PATCH v2 2/2] serial: 8250_dw: fix runtime PM initialization sequence
+Date: Tue,  4 Nov 2025 17:54:26 +0300
+Message-ID: <20251104145433.2316165-3-a.shimko.dev@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251104145433.2316165-1-a.shimko.dev@gmail.com>
 References: <20251104145433.2316165-1-a.shimko.dev@gmail.com>
@@ -95,48 +95,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add error checking for clk_prepare_enable() calls in
-dw8250_runtime_resume(). Currently if either clock fails to enable,
-the function returns success while leaving clocks in inconsistent state.
+Move pm_runtime_set_active() call earlier in probe to simplify error
+handling and add proper error checking to ensure the device is marked
+as active before any runtime PM operations can occur.
 
-This change implements comprehensive error handling by checking the return
-values of both clk_prepare_enable() calls. If the second clock enable
-operation fails after the first clock has already been successfully
-enabled, the code now properly cleans up by disabling and unpreparing
-the first clock before returning. The error code is then propagated to
-the caller, ensuring that clock enable failures are properly reported
-rather than being silently ignored.
+Additionally, replace the const struct dev_pm_ops declaration with
+_DEFINE_DEV_PM_OPS macro for better consistency with modern kernel PM
+patterns.
 
 Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
 ---
- drivers/tty/serial/8250/8250_dw.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 710ae4d40aec..0ff500965c10 100644
+index 0ff500965c10..0c0a9fc97fe3 100644
 --- a/drivers/tty/serial/8250/8250_dw.c
 +++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -741,11 +741,18 @@ static int dw8250_runtime_suspend(struct device *dev)
+@@ -643,6 +643,10 @@ static int dw8250_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
  
- static int dw8250_runtime_resume(struct device *dev)
- {
-+	int ret;
- 	struct dw8250_data *data = dev_get_drvdata(dev);
++	err = pm_runtime_set_active(dev);
++	if (err)
++		return dev_err_probe(dev, err, "Failed to set the runtime suspend as active\n");
++
+ 	data->uart_16550_compatible = device_property_read_bool(dev, "snps,uart-16550-compatible");
  
--	clk_prepare_enable(data->pclk);
-+	ret = clk_prepare_enable(data->pclk);
-+	if (ret)
-+		return ret;
+ 	data->pdata = device_get_match_data(p->dev);
+@@ -685,7 +689,6 @@ static int dw8250_probe(struct platform_device *pdev)
  
--	clk_prepare_enable(data->clk);
-+	ret = clk_prepare_enable(data->clk);
-+	if (ret) {
-+		clk_disable_unprepare(data->pclk);
-+		return ret;
-+	}
+ 	platform_set_drvdata(pdev, data);
+ 
+-	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
  
  	return 0;
+@@ -757,10 +760,9 @@ static int dw8250_runtime_resume(struct device *dev)
+ 	return 0;
  }
+ 
+-static const struct dev_pm_ops dw8250_pm_ops = {
+-	SYSTEM_SLEEP_PM_OPS(dw8250_suspend, dw8250_resume)
+-	RUNTIME_PM_OPS(dw8250_runtime_suspend, dw8250_runtime_resume, NULL)
+-};
++static _DEFINE_DEV_PM_OPS(dw8250_pm_ops, dw8250_suspend, dw8250_resume,
++			  dw8250_runtime_suspend, dw8250_runtime_resume,
++			  NULL);
+ 
+ static const struct dw8250_platform_data dw8250_dw_apb = {
+ 	.usr_reg = DW_UART_USR,
 -- 
 2.43.0
 
