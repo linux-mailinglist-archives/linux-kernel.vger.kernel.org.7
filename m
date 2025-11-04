@@ -1,187 +1,142 @@
-Return-Path: <linux-kernel+bounces-884927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B57C31857
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:30:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E49C3186D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E122189562F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04FE5424DAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746D532E759;
-	Tue,  4 Nov 2025 14:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6581832F75B;
+	Tue,  4 Nov 2025 14:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HJUOWZ3X";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SwxD78op"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Rqqxztu5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191FA32E159
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79B932B99E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266484; cv=none; b=tSbr+CwB2nOyCjefeta4NHJVSX99CENmb+yDTiMrn+/H9v9cFfJF1xDtVosT0wPnognSv4NuUMLocLfENZpuHS3Vmb3dR7UiAQump0IJYfSnVN1JRA7RWUXWL09Q3FITK0LC2AudRPcWuRR6skdK2jVLmbObe861GnxwMKg5jtY=
+	t=1762266507; cv=none; b=h6V0/u/ePsdSx2fk+WSSLSLjb51Z8rDE/wfvQWvtuMUa9xYlSG1UzY38oQd+ToChhO8nmIyc3d7RJV1pM0lrHLc9gVor8p78Y3xVZj/TA7kaIFKX2JYRQyS+n2VLj3ufMSftOkZYWHeAnhi3oq+thpZZRwyO6LC5HhAzPDChV6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266484; c=relaxed/simple;
-	bh=FlnDwNrJFJmqPBwkTdjJOC5TZs/1XiJe4Y8W0n/8/Bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VloTMIXg/DLDvFsCkWbK4nn/FO+mDiO2ttsw40MfBQWEjKKfKWzBoycO+XvG4vzXakVM5R2seCcJlsxKXkpEUA78uXw5sgbjpohzwxNknFEEdT2b//GYWK52UWuyhCoiADMYS+TIt+pllBhKjHotWJTTVamJhpjMKR+vJNUWkAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HJUOWZ3X; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SwxD78op; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4Cfig22098977
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 14:28:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6vMooj6nQEjhpvsQbqOx+QSNSWMlut6t0Tcg77EZzlM=; b=HJUOWZ3XZK7vGT5H
-	C4nJ5B3RjqZhrfAZ4xDMHZoLUy8GZDjM8aBPWxSy/9xdnm3fMQkn+R5i5qX8qIGD
-	fmjCn80SvSOFtiwcD2OnMoL5SAs1CO6tcJm1S9ckEozoPKg2PQ2lAk3qCx7T4aD7
-	Abh1MC4dquOmkRfDmib7Z2bT4+ZbDAj7/K+XzReEB/K8iy2CYm3C9RZfVrQQ7B0A
-	ANz+dbTgoQopiN0QUvUn9Qa/5FoOISTEueyYgPu58nPA5sMNnwQcfiSHXfdV/M3V
-	G9IJm+xQ0FFxARZmo/0G5nNcIDHDcVOKjUqAlUuQZRSsJ6Y5+/hDAtZmNwL/ig7j
-	GaJA/w==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a79jjsqay-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:28:01 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed5ff5e770so2794881cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:28:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762266481; x=1762871281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6vMooj6nQEjhpvsQbqOx+QSNSWMlut6t0Tcg77EZzlM=;
-        b=SwxD78op8asA1uEdGgrMqYo2OMt+O/BxOWyLUpA+XPGj4glrCX9mOm/9AgV42SH4VF
-         2jIwxcp9OG6FdBq3d4znVoXVwZOQUDTpVvCHEoRD+54oykXiB/G25jN9QoaqjfPtdBWv
-         WKpDLCjJ9cR6BmPIB9cg6yJZ4SPDdY4meAxI4OFUgNzKgkTbTu2lIY61NFdUASj5TjuB
-         bOiARQoV8OL4zSsT2VKJFFIWKqWA+JXbhnU/Qgx/0Rnr99fJ6k6f+OkgtY+gvBt6Gd7D
-         l5/lhFw4md88UA1T4a5Vq2se4N2D/BB3kVaX1J6EmRu21oocV+jYwXIARDtK1zCWu84n
-         WiVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762266481; x=1762871281;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vMooj6nQEjhpvsQbqOx+QSNSWMlut6t0Tcg77EZzlM=;
-        b=JgFGCmiB1jGZZbS5DS/gMcIMjgW2ag948GNms1fuRXVYX2ZUcuz9IAPDfUIUuQ9JEZ
-         wIKsxrNY+bNrc1byVi5gbSRNQM5C/NHpXTYgQEkKvYq+fVeI7i/L1p9pvWIupWVX+wKI
-         uZe+FsF98eWzyylpAg66vpBBCwLIpwQJLbbh2r0lJ6kVoJVN4ZBnV6jMNttFQ3H2dde2
-         jGfJxzn1xTK9suGteQqj3rAKi10AKlEY6yyhZBRJHQhYcMFsNwgJgPZqlPU1QqoLNo7R
-         31w+VFHRqT5qc7iG+8pv7+gZ1MzP+Gx6y2MZYqCjIrXbqNcGdb5NThG2VPPW2fndXwFY
-         VYwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtb9zDMulR2ySPIltR9V81saqpw3za0MzzyuZ5LplI2dfk+yDf9Cu7dyYtV5MWlHHEY64OGqVK17CZeu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrnZV0e9a0BZgYdjoPkoUehKH1Thr5jZPVkeHfclCRti/dA5t1
-	fZTg3+TVav9fCRidn+yuvdF335+U1d4t+pNf+/eGv3yO4KsNLUOdXDEXVliR6MsI5YMjeUhSbtO
-	Pt5r5xm12pHDU1K4NYK9fqomShuW+Pd93ZEtM66j4dblBnuqLlAu+Ufje6chNx33P11A=
-X-Gm-Gg: ASbGncvB/8EKaOxi5lYjY519pWXJCJbPyhz9kksy92iPouEa1eTPqAc6kPdL/f/80tu
-	a9iu6vN6xYPGtQ39Ll4H/I+4jQMTovRH7tHqJTnDvRVbKOuSqucfowawGgXdk2+OTstr0kVGbDu
-	nLMmTF9Fb9d7jgwI5RCnyAUz/Fsr+Tmku30+2YM+M2ZHblnQ8hRBe7qPzYhST/wK3H8w2wQ11vQ
-	NqpN+fFtCeapUIlWNvsI1i90iRbOOK/1JZz95k5mdBcP1/Dn6Rut3jVa3ybh6vao4FkCl7OXqYA
-	EroGszL6fT4OXgBlevUD3w5hBGoBAhxDbxO6Eo71H3iC6rlUE8b+pbypaA5zbN6hym4WsBnB61+
-	MOV5A98pqk8wxhZN2QC888TnsXfqXDxlx5hKepPMBK1rN3coifOTcqBrK
-X-Received: by 2002:a05:622a:1a93:b0:4ed:6ea1:ceb6 with SMTP id d75a77b69052e-4ed6ea26d3dmr5168801cf.3.1762266481159;
-        Tue, 04 Nov 2025 06:28:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGcuy8dFebGaXBPucoUYrFWUWiOv4h9ZlBQ/EW+321APZlZZj9bXttm3CnufIKewnbdiOh2Jg==
-X-Received: by 2002:a05:622a:1a93:b0:4ed:6ea1:ceb6 with SMTP id d75a77b69052e-4ed6ea26d3dmr5168391cf.3.1762266480564;
-        Tue, 04 Nov 2025 06:28:00 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723d6f273fsm221158366b.17.2025.11.04.06.27.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 06:27:56 -0800 (PST)
-Message-ID: <27f51013-9276-4e41-b57d-fb0baaec5bc6@oss.qualcomm.com>
-Date: Tue, 4 Nov 2025 15:27:54 +0100
+	s=arc-20240116; t=1762266507; c=relaxed/simple;
+	bh=bOUseqs0/yr0gyLsEbF5SZzGuVHo114FDuUCPMgV0CA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JrPJNIH6Ib7FM5y95sgR28hVMV/Yx/MmMl9fJ1HDhV0+QWAg4CfglP2+zhJf19k+S47bwNcmgIKWyrNQ9naQPpW07JENhEOFFvQtH20B0kkflLBxtEaou8qd1Ooef5OaKjOza4qoLS4x/vZyMzjkQVc4mSTYQ8ukKTQJEWqeEtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Rqqxztu5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0C4C19421
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:28:26 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Rqqxztu5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1762266501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bOUseqs0/yr0gyLsEbF5SZzGuVHo114FDuUCPMgV0CA=;
+	b=Rqqxztu5gAR49K4yDbS8TJh6E4ugKy5FZDUu7tvMaMpl1CtILOe9Qavc8L5xW6x+242z7p
+	ajFdqAKKgAwZgObw688KgTogNMgBwMnpGXhbGuDe03/2W+kdZIn5SAbNtulwG+Z3oR2BzE
+	3jImKgxZHnh0jpv3d7WQchw+kjr0uJk=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d71798fe (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
+	for <linux-kernel@vger.kernel.org>;
+	Tue, 4 Nov 2025 14:28:20 +0000 (UTC)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3d3ed0c9f49so1681273fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:28:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXrUXipyu3eoXB5kz1GkXvAVMaPRhWKaD+RKLvnNSQ4/MASuFo/z55IVAJBzlJ24IZSvJms6qzPlVOa1TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4N3uLAwcWKk+pq4vHJKH0I6JEEKOg273tP4pvQbkifwmWv+r5
+	MsbeyHOyQZ126KEvV/F0oem9b3qEnbym6pcyKZPPHB6MKLndB6LgfQlOOEw4eFSzwsW1RmJ2mQI
+	zKO91E0TEu5D2SNtfH0JA8MSxglqcBaw=
+X-Google-Smtp-Source: AGHT+IGza8zzX144QnXoi8LJlcrNNICdujUMm9bvpPztquEv4qZX4iTQn23WLE4gSQ0MKPZYc0di0vFXGT3WuVLb3xw=
+X-Received: by 2002:a05:6871:af89:b0:3e1:1de:9c0d with SMTP id
+ 586e51a60fabf-3e101dec119mr304129fac.17.1762266498684; Tue, 04 Nov 2025
+ 06:28:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: talos-evk: Add support for
- QCS615 talos evk board
-To: Sudarshan Shetty <tessolveupstream@gmail.com>, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251104125126.1006400-1-tessolveupstream@gmail.com>
- <20251104125126.1006400-3-tessolveupstream@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251104125126.1006400-3-tessolveupstream@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KfN68QnYUudBACquoHVq6j43k0tEP6Ds
-X-Proofpoint-ORIG-GUID: KfN68QnYUudBACquoHVq6j43k0tEP6Ds
-X-Authority-Analysis: v=2.4 cv=TuPrRTXh c=1 sm=1 tr=0 ts=690a0d71 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=kaRI8otYv47dkxnPBlMA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEyMCBTYWx0ZWRfX1xXT8wuogm0W
- 2h/F+RazsJDiM6f6RF4DgDLnLEc3EhmvwRRoZVv+eXO9LpMLWkE3symq/bXhRX6JEwObvo5oAsI
- csyJSLHv82P2eV5xTJqIkBovxhiIME+uyVaLjf6fMo4TCcLaIAilyFuEheH/AVkxTXnwp1e65xS
- sZ/MZDQGbuKQomBvdJpfhC7YdA/drjmO97Z7+ar+35wI0zd06j1hKL40iy57AOwnaq9RNdpiv4v
- CSd8JpT7WybWOQ0rK+DVVW1y/qL0g/jiCopWEAzGv48Z8cmelCVW4efBvTVkDn4dRtuj30QQd+A
- a5rtzRevVUymxLh3lHXPbV85cPRTwpCj4H+BJdel2GEW3B9g3aX1eijh1FfGRfsL0nb16so78VN
- FiiT03IUdCaBjaQB/YH3JjNYi2fQDQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-04_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0 spamscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511040120
+References: <aPT9vUT7Hcrkh6_l@zx2c4.com> <176216536464.37138.975167391934381427@copycat>
+ <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local> <176221415302.318632.4870393502359325240@copycat>
+ <20251104132118.GCaQn9zoT_sqwHeX-4@fat_crate.local>
+In-Reply-To: <20251104132118.GCaQn9zoT_sqwHeX-4@fat_crate.local>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Tue, 4 Nov 2025 15:28:07 +0100
+X-Gmail-Original-Message-ID: <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
+X-Gm-Features: AWmQ_bm6guEyV2s4zGI9wdjGi49bamfyTDiHqxDlH_4YqQNR0PHmH9jtIBy2EWU
+Message-ID: <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an error.
+To: Borislav Petkov <bp@alien8.de>
+Cc: Christopher Snowhill <chris@kode54.net>, Gregory Price <gourry@gourry.net>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org, 
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com, 
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com, 
+	darwi@linutronix.de, stable@vger.kernel.org, thiago.macieira@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/4/25 1:51 PM, Sudarshan Shetty wrote:
-> Introduce the device tree support for the QCS615-based talos-evk
-> platform, which follows the SMARC (Smart Mobility ARChitecture)
-> standard. The platform is composed of two main hardware
-> components: the talos-evk-som and the talos-evk carrier board.
+On Tue, Nov 4, 2025 at 2:21=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrote=
+:
+> And the problem here is that, AFAICT, Qt is not providing a proper fallba=
+ck
+> for !RDSEED. Dunno, maybe getrandom(2) or so. It is only a syscall which =
+has
+> been there since forever. Rather, it would simply throw hands in the air.
 
-How is the carrier board a separate entity from the "talos-evk.dts"?
+Qt seems to be kinda wild.
 
-[...]
+When you use -mcpu=3D, you generally can then omit cpuid checks. That's
+the whole idea. But then Qt checks cpuid anyway and compares it to the
+-mcpu=3D feature set and aborts early. This mismatch happens in the case
+Christopher is complaining about when the kernel has masked that out
+of the cpuid, due to bugs. But I guess if it just wouldn't check the
+cpuid, it would have worked anyway, modulo the actual cpu bug. But
+regarding rdseed/rand bugs, there's a workaround for earlier AMD
+rdrand bugs: https://github.com/qt/qtbase/blob/dev/src/corelib/global/qsimd=
+.cpp#L781
+But then it skips that for -mcpu=3D with `(_compilerCpuFeatures &
+CpuFeatureRDRND)`. Weird.
 
-> +&mdss_dp_phy {
-> +	vdda-phy-supply = <&vreg_l11a>;
-> +	vdda-pll-supply = <&vreg_l5a>;
-> +	status = "okay";
+Another strange thing, though, is the way this is actually used. As
+far as I can tell from reading this messy source,
+QRandomGenerator::SystemGenerator::generate() tries in order:
 
-Please apply a consistent \n before status
+1. rdseed
+2. rdrand
+3. getentropy (getrandom)
+4. /dev/urandom
+5. /dev/random
+6. Something ridiculous using mt19937
 
-[...]
+In addition to rdseed really not being appropriate here, in order to
+have seeds for option (6), no matter what happens with 1,2,3,4,5, it
+always stores the first 4 bytes of output from previous calls, just in
+case at some point it needs to use (6). Goodbye forward secrecy? And
+does this mt19937 stuff leak? And also, wtf?
 
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				adv7535_in: endpoint {
+This is totally strange. It should just be using getrandom() and
+falling back to /dev/urandom for old kernels unavailable. Full stop.
+Actually, src/corelib/global/minimum-linux_p.h suggests 4.11 is
+required ("We require the following features in Qt (unconditional, no
+fallback)"), so it could replace basically this entire file with
+getentropy() for unix and rtlgenrandom for windows.
 
-and between the last property and the following subnode
+I dunno, maybe I read this code wrong --
+https://github.com/qt/qtbase/blob/dev/src/corelib/global/qrandom.cpp
+-- you can look at yourself. But this whole thing seems to be muddled
+and pretty bad.
 
-Konrad
+So I'm slightly unsympathetic.
 
-> +					remote-endpoint = <&mdss_dsi0_out>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				adv7535_out: endpoint {
-> +					remote-endpoint = <&hdmi_con_out>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
+I'm CC'ing Thiago; he'll maybe have some sort of defense of all this
+weirdness. But really -- you're doing it wrong. Just use getrandom()!
+
+Jason
 
