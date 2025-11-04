@@ -1,189 +1,130 @@
-Return-Path: <linux-kernel+bounces-884955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DB7C31929
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:41:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 024C5C31932
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79711920116
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95DFA18848D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01284330B3A;
-	Tue,  4 Nov 2025 14:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D455932E159;
+	Tue,  4 Nov 2025 14:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCbZ3SMq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BJdGB6yv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E22626F29F;
-	Tue,  4 Nov 2025 14:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278971494CC;
+	Tue,  4 Nov 2025 14:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266821; cv=none; b=Xz4ddHf1+d0UUvc5xGAmLxZGHw9jDILypecHJkx/mGaexizXiJcRS0ySWipe3e8nxQskfrMpvhtWxC+O1rzWBDZYo9oXnB74W4EL5aG1TIbYM0YhC5JJENfVDbI2unTkPuUWT7ph+1hu3FXJp8woKWRNs72ha66wMi8N8g/tWos=
+	t=1762266909; cv=none; b=QwZEgnFpmfcx0lsiWHByENV4VK+yRioCPkzIQA6LbBJUJw6Pv15T5EjBE4bS6yhj7IZAp8TINVEKBUhnD5RHOuARLYq6XCL5f9DmrmfCAUhWJAN7x95E5FY3CM/Rrllta3tRRAuSw66nQReOnfTJdkLYMuWQG0GidqTS6dGV9cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266821; c=relaxed/simple;
-	bh=0G9fdQTuchMOtrgk6j8v31mD7u4BKOCI9XLm/Ftvq5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qezOejAeLq4QgAqea1CRA1JNMIjbgyJi0G12Swoa/2zKmVLGU87twHHeHURoqYh1peMLbnc9qSotpFkc1PSAmmxLPSfJhXNnuHw8mMdcQAO70rJRr9mC/MO6wvnsWRKy8p8jCxyFFvyKgsTsFC4GUME9ToABeQ7l/AN0dNG8ckM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCbZ3SMq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E791C4CEF7;
-	Tue,  4 Nov 2025 14:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762266820;
-	bh=0G9fdQTuchMOtrgk6j8v31mD7u4BKOCI9XLm/Ftvq5c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aCbZ3SMqp4p9BZFo/G8zOEbJDIBYjrAyF0Ft6H4bV3sJBr/MjJh1cfVjC5RSCu2fn
-	 UBJZrT4JlZU3Rel/mRJX6Z0/k9+rrLiWflpx0t7Pmo15/wpNctj0HqOMdLhx4iLnZ1
-	 UYXFVJryElWlYLpSSNBYV8wtaTsT0e6DXXQKOlWfewYJasRbF2lXZJ63lWWqIMHyWA
-	 81JzvnBr2E8GZ1bIO9W9EIbkHx7i4YseTHQ3guCJHP6RWheQY46lHQ84CLX39nRNio
-	 0M9pA3PNklXWz5rwr8j+RX0S+PNk75IGdo6//tFBOKFsoPJvJciG7m1JlBe/gXyJ7x
-	 7caUzYb01Zriw==
-Message-ID: <4e4d89c8-4a59-445b-ac2c-2d3992190e99@kernel.org>
-Date: Tue, 4 Nov 2025 15:33:36 +0100
+	s=arc-20240116; t=1762266909; c=relaxed/simple;
+	bh=780Lu7Vk+L7OEz1zpmgzeoNUJ51QqPpcyt599aDv/jI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4i6fKcD7M0oEbqjJ24HqaLXuEvFAhqrzH1JYqFPLpjcNOiGpeUHSlIzShY7LboaLkiPqtApYWfRGqSXmHDSr7AVlu10m91YMm5vMCr72w7MT0cSq7dW+uPkIY3HOzBb+/v2hgQuas7WsEGApTqWpFsbOikNfS/ojz5bOT2XlEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BJdGB6yv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C021C116B1;
+	Tue,  4 Nov 2025 14:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762266908;
+	bh=780Lu7Vk+L7OEz1zpmgzeoNUJ51QqPpcyt599aDv/jI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BJdGB6yvX4Vbe5yrzv+YHesKh8NPm4vP2fWyWddFgPRpFv2veGF+wXvy9ddQU+/w8
+	 bGKPWhgvqOsa3dPrsKDHmV0iaV2Hqbs5+Aki/rDp/qxxaoNmGeUvMDFApLYIWoA7J9
+	 72XTUlA4u6wMB5MThXh4cHcxglNanfe93OVFbq5Y=
+Date: Tue, 4 Nov 2025 23:35:03 +0900
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] firmware_loader: make RUST_FW_LOADER_ABSTRACTIONS select
+ FW_LOADER
+Message-ID: <2025110407-scouting-unpiloted-39f4@gregkh>
+References: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: firmware: svc: Add IOMMU support for
- Agilex5
-To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
- "Rabara, Niravkumar Laxmidas" <nirav.rabara@altera.com>
-References: <cover.1762135710.git.khairul.anuar.romli@altera.com>
- <ca75b88a64412274d415e17d4aef6dd018ac7167.1762135710.git.khairul.anuar.romli@altera.com>
- <20251104-bipedal-sheep-of-advertising-08450c@kuoka>
- <fc68b68a-586c-4af6-ae59-85b79d1d8002@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <fc68b68a-586c-4af6-ae59-85b79d1d8002@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
 
-On 04/11/2025 12:14, Romli, Khairul Anuar wrote:
-> On 4/11/2025 5:48 pm, Krzysztof Kozlowski wrote:
->> On Tue, Nov 04, 2025 at 07:39:27AM +0800, Khairul Anuar Romli wrote:
->>> In Agilex5, the TBU (Translation Buffer Unit) can now operate in non-secure
->>> mode, enabling Linux to utilize it through the IOMMU framework. This allows
->>> improved memory management capabilities in non-secure environments. With
->>> Agilex5 lifting this restriction, we are now extending the device tree
->>> bindings to support IOMMU for the Agilex5 SVC.
->>>
->>> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
->>> Reviewed-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
->>> Reviewed-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->>
->> Two reviews but...
->>
->>>   
->>> -required:
->>> -  - compatible
->>> -  - method
->>> -  - memory-region
->>> +allOf:
->>> +  - required:
->>> +      - compatible
->>> +      - method
->>> +      - memory-region
->>
->> ... none told you this is not the correct syntax / style?
->>
->> Were these reviews really happening? What exactly was reviewed here?
->>
->> Best regards,
->> Krzysztof
->>
+On Tue, Nov 04, 2025 at 11:04:49PM +0900, Alexandre Courbot wrote:
+> I have noticed that build will fail when doing the following:
 > 
-> The peer review was on the property and compatible added in this patch.
-> I was at fault for not emphasize to check on the syntax / style for the 
-> logical changes.
-
-Rather the reviewers gave you just simple acks without doing their job.
-That's a 10 liner patch...
-
-Feels like just to tick gerrit or satisfy internal procedures.
-
-If internal reviewers give you such "okay" marks, without adhering to
-reviewers statement of oversight, you can freely ignore them and instead
-educate them to provide full review on the mailing list.
-
+> - Start with the x86 defconfig,
+> - Using nconfig, enable `CONFIG_RUST` and `CONFIG_DRM_NOVA`,
+> - Start building.
 > 
-> I refers to 
-> Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml 
-> and the changes could be as follows:
+> The problem is that `CONFIG_RUST_FW_LOADER_ABSTRACTIONS` remains
+> unselected, despite it being a dependency of `CONFIG_NOVA_CORE`. This
+> seems to happen because `CONFIG_DRM_NOVA` selects `CONFIG_NOVA_CORE`.
 > 
-> required:
->    - compatible
->    - method
->    - memory-region
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: intel,agilex5-svc
-> +    then:
-> +      required:
-> +        - iommus
+> Fix this by making `CONFIG_RUST_FW_LOADER_ABSTRACTIONS` select
+> `CONFIG_FW_LOADER`, and by transition make all users of
+> `CONFIG_RUST_FW_LOADER_ABSTRACTIONS` (so far, nova-core and net/phy)
+> select it as well.
 > 
-> Do I need to re-specify the rest of the compatible property other than 
-> intel,agilex5-svc and their required properties under the allOf block?
+> `CONFIG_FW_LOADER` is more often selected than depended on, so this
+> seems to make sense generally speaking.
 > 
-> My objective is to specify that iommus only for intel,agilex5-svc but 
-> not the rest of devices.
-It all depends whether other devices also use IOMMU.
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> I am not 100% percent confident that this is the proper fix, but the
+> problem is undeniable. :) I guess the alternative would be to make nova-drm
+> depend on nova-core instead of selecting it, but I suspect that the
+> `select` behavior is correct in this case - after all, firmware loading
+> does not make sense without any user.
+> ---
+>  drivers/base/firmware_loader/Kconfig | 2 +-
+>  drivers/gpu/nova-core/Kconfig        | 2 +-
+>  drivers/net/phy/Kconfig              | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+> index 752b9a9bea03..15eff8a4b505 100644
+> --- a/drivers/base/firmware_loader/Kconfig
+> +++ b/drivers/base/firmware_loader/Kconfig
+> @@ -38,7 +38,7 @@ config FW_LOADER_DEBUG
+>  config RUST_FW_LOADER_ABSTRACTIONS
+>  	bool "Rust Firmware Loader abstractions"
+>  	depends on RUST
+> -	depends on FW_LOADER=y
+> +	select FW_LOADER
 
-Best regards,
-Krzysztof
+Please no, select should almost never be used, it causes hard-to-debug
+issues.
+
+As something is failing, perhaps another "depends" needs to be added
+somewhere instead?
+
+
+thanks,
+
+greg k-h
 
