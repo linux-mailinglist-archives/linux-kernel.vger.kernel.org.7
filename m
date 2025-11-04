@@ -1,155 +1,205 @@
-Return-Path: <linux-kernel+bounces-884593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C24C308D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:40:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D54C308CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E4E84EAFD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:40:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B7DD4EA4EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFC72D7D27;
-	Tue,  4 Nov 2025 10:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264B62D738E;
+	Tue,  4 Nov 2025 10:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T72qNEmv"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlNk83dt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2586D2D73A7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6527E04C;
+	Tue,  4 Nov 2025 10:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762252798; cv=none; b=V0O+jlrBfOqeJbM07FZo161qZaKeQez6+SUuS6j4drlLEC0q+a/UfkI9jnMgdBgD0Fs1+ARHtFOMqffi3ZiPmW0Bg4n5kA0VfZi3S39uHY2lYxfXnF0YIfv1b02ilYOdxm7TkqSXqVKOgxcRPsF1RPWK0vJsxToCYBgwYSIRAPE=
+	t=1762252794; cv=none; b=UGZfcRROW5h4kDe6Al9rA8eUPPT64W8J28hvtRSNWNwSAqq3U8utCTRpzwS82ekJtXYI5ImCnR0pGZ2fbfBPGHpBmE0AObcHqkgsiOQqWKP2CFMs5KRKXnBFpwCWNQlmdO2NgNtabFEMskoQtfs4Gi2wbbzgA8zSU8BXNJM0qZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762252798; c=relaxed/simple;
-	bh=mBQcfulaULMJs9Ri80bCniWF9vmb1TTMZvnFi9RYStw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PchayiquLmhedLFFEZ6kKPihx4njCP/Ld7L4UBWpVugN7GV20HUh1eX0apLloUJtJR3ZtD9N+ewRDkBhohTQxWcP9D1vxnc1XI/IshE4ivO0A9pIebZ5CR+OIC8xX6ZX1qs7gPOB9JUw2CQTvhc4BPGbEFhHReY0nzShV5xOoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T72qNEmv; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b6d3effe106so838956966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:39:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762252794; x=1762857594; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QqlXXzI8Au0XTieknIe+lDfj6CC3yKlLay1p36P5BWA=;
-        b=T72qNEmv5Kq0iloI8U6PLRTeQrGSSe6DiJ0qzj/+kxrFtQ4WIsKXw1qqDPRk3DVxyQ
-         PtdrIDtMA5hVmIYRO6xmarcRo+bK4VLipOm+BWGADMQA2eBJzFhFlLup6Wa/wxcVU8Ra
-         eTnxzsGfIMAlOsncxoniZ4vTn+CPBUMYQwbKkjaOJnRjTAVDV6EU8adV6+POFG0BkjbG
-         /UIOdxqu32whtkOhJzHMKAN+DTsPM21HfEapTbBRvaLgnabyljD21g9g/v3dulqgx7hZ
-         T4cvaJi2xUnZbAZI1bRXaw0vmXuasOwB24ufix4TiXpao/LRKtA7/TuTTBojnDnzOxEE
-         hNfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762252794; x=1762857594;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QqlXXzI8Au0XTieknIe+lDfj6CC3yKlLay1p36P5BWA=;
-        b=ILhEljAa1XQ58MwA443r3uY19bPXC+Dfrxg+DFaSN9lveTd88/XTG3K/fg+fAKdfPR
-         ySEfysmESNb+vgVpmvTDsc0fHND2N2lXaeEmk+odiGQkSBuV5LYbvFzvVUO8KciF6/JG
-         CcfiP5rQLbwLrJwgwwQA9CrsWYFcVh86jLovNHNbjKAy+PeuQPYrnkxwBhI7aXPf1NWE
-         yJvndkIsbwRBlAJrE9+emIpAfXmjuxRaQU4eyr2R2YfSMiVXBQTNINWaYqg80mL47Ct2
-         iZWtNyH+bRQIrw77kJmrW4ynC/eX2eKwE0a0LWzljKYkvjz/PQ2CfjsspE4ZCIJ409mS
-         f70w==
-X-Gm-Message-State: AOJu0Yznq3NPYwHSfd2Oykz2TxMeS0CefGdbZCaRr/FJQnDMJd9dtr2f
-	04mmxgxmkPpy4RnQVHLDp3/PwY+8Ho5oEHeTy0eY3TgeRBa09HfmAM2eZvgzw/FEyBgAxoGXSUJ
-	EFO3w
-X-Gm-Gg: ASbGncuDjRqT3CWQ6Bsm8Y+q4hoS18XvLt4EgVVlSAsD4HqKSvA3YDWj1FQUmAGEY/J
-	Chllk229p217MIRPQ6jZd78AeeXxNCSdQfRTUqTH7Yy2lHZDTSaYspmG6a3BBl+ZKsnlrAYNAKu
-	jnWK1bWjrr7rCFqQjxrYFwT4qM/V3sYk4Qv2O5VOAgjXayQTjdoyjTqfNAO/KwzPVtKulYwq+pI
-	U5AZiF0IC75BheyS81ERDHvi+R/DYnLWZOiGg+TMRkMaH9O2bfQiLea8JB+U2wF1MOLYMQJEbLv
-	SbzU3bpLhNg8/51X4+J7PvoFvou5Y808lU/osyYdOn8RGJ9jEK87IiiQGtOwwBxv0VIBw8Yu/GG
-	Bk/MXX74Umj06mxURrh7F9QSidLcaymU7Y9kbpZhAu19u7sy/L2KDFHb5aAsZ0HLyTtLctLk65p
-	u4xSU=
-X-Google-Smtp-Source: AGHT+IFHdu3jVlRRTgt2EsjZoNbWOzlzZQBq47hjinpGHe0X6AXDR+UMU39LFk/i2FqEqJ1vPcxfFQ==
-X-Received: by 2002:a17:907:9628:b0:b6d:62e4:a63a with SMTP id a640c23a62f3a-b70704c3ec7mr1537809466b.40.1762252794102;
-        Tue, 04 Nov 2025 02:39:54 -0800 (PST)
-Received: from linux ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e26e7sm175960366b.41.2025.11.04.02.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 02:39:53 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Michal Simek <michal.simek@amd.com>
-Subject: [PATCH] soc/xilinx: replace use of system_unbound_wq with system_dfl_wq
-Date: Tue,  4 Nov 2025 11:39:42 +0100
-Message-ID: <20251104103942.96647-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762252794; c=relaxed/simple;
+	bh=bVSOpVrl2E+aD2iwJShLNXwchdC6N4vvdH0xbq0Wv7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pHnstrxNg9yS17ADWxmx1s9gfBvrCfTsubepi5uSg9zSLUcpJJ8DUmAq6YxaEc3OyDHvBxN7XJe3PA7c4JRkVvF85U7UabNrcAMR6NsLrA+52/S/eWfyDdRnZV6Xw3DgEp2PkrsFCgevBXj8qf0GUGHN0ix/zN6QrtFHJJ/Lb7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlNk83dt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4DC6C116B1;
+	Tue,  4 Nov 2025 10:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762252794;
+	bh=bVSOpVrl2E+aD2iwJShLNXwchdC6N4vvdH0xbq0Wv7Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SlNk83dt1Smbc3hLuSAOFwWkfmmmmga4QZ2/iN/3hvrii36ah911xR1PZR6CrIzMW
+	 bZw4faGQ5Y7SCpkJqDpd5uAX1CHrdxz7S5+rPLO3U6mHZy06WdlubrhGRZIXF8WJrD
+	 7RHzF3sRp7Iez191RHjK0bMbNeIKDsYy0CaroJe1tyQvGL6Qc1/PNYmSE6BGlkjdfl
+	 lkycl49PkuqE5g7LvXy4gZC10Vy2odMekVQYQOk/17egZGcFZxQB9IK6WqNYNbO9sz
+	 FmLc0IesnZ3Yr3DHYFgYF9BHORkyuY/hKO6esZwjP5rJWFmz2pIhYx175Z1C9RAVf1
+	 Jl1MhdXrOJ2BQ==
+Message-ID: <0735f540-8085-440c-9c0f-7ac23b52b838@kernel.org>
+Date: Tue, 4 Nov 2025 10:39:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] media: qcom: iris: Improve format alignment for
+ encoder
+To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+ quic_qiweil@quicinc.com, quic_renjiang@quicinc.com
+References: <20251104-iris_encoder_enhancements-v3-0-63b0c431b4d0@oss.qualcomm.com>
+ <k3umzf0z69-Hbh7jbT-Gjp4pyquNAYVC3VfIXQcdVZstI5FTtcGU_NEgb8l796Z3Cr6Dz0DQ0BoVQQPd4fr6sQ==@protonmail.internalid>
+ <20251104-iris_encoder_enhancements-v3-1-63b0c431b4d0@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251104-iris_encoder_enhancements-v3-1-63b0c431b4d0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+On 04/11/2025 08:11, Wangao Wang wrote:
+> Add members enc_raw_width, enc_raw_height to the struct iris_inst to
+> support codec alignment requirements.
+> 
+> HFI_PROP_CROP_OFFSETS is used to inform the firmware of the region
+> of interest, rather than indicating that the codec supports crop.
+> Therefore, the crop handling has been corrected accordingly.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
+> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+> ---
+>   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 23 ++++++++++++++++------
+>   drivers/media/platform/qcom/iris/iris_instance.h   |  4 ++++
+>   drivers/media/platform/qcom/iris/iris_venc.c       | 10 ++++++++--
+>   3 files changed, 29 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index 4ce71a14250832440099e4cf3835b4aedfb749e8..2469e027706fb6c9c0b95be11109c3cd0f8d70ce 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -168,8 +168,7 @@ static int iris_hfi_gen2_session_set_property(struct iris_inst *inst, u32 packet
+> 
+>   static int iris_hfi_gen2_set_raw_resolution(struct iris_inst *inst, u32 plane)
+>   {
+> -	u32 resolution = inst->fmt_src->fmt.pix_mp.width << 16 |
+> -		inst->fmt_src->fmt.pix_mp.height;
+> +	u32 resolution = inst->enc_raw_width << 16 | inst->enc_raw_height;
+>   	u32 port = iris_hfi_gen2_get_port(inst, plane);
+> 
+>   	return iris_hfi_gen2_session_set_property(inst,
+> @@ -216,8 +215,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+>   	u32 port = iris_hfi_gen2_get_port(inst, plane);
+>   	u32 bottom_offset, right_offset;
+>   	u32 left_offset, top_offset;
+> +	u32 codec_align;
+>   	u32 payload[2];
+> 
+> +	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
+> +
+>   	if (inst->domain == DECODER) {
+>   		if (V4L2_TYPE_IS_OUTPUT(plane)) {
+>   			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
+> @@ -231,10 +233,19 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+>   			top_offset = inst->compose.top;
+>   		}
+>   	} else {
+> -		bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
+> -		right_offset = (inst->fmt_src->fmt.pix_mp.width - inst->crop.width);
+> -		left_offset = inst->crop.left;
+> -		top_offset = inst->crop.top;
+> +		if (V4L2_TYPE_IS_OUTPUT(plane)) {
+> +			bottom_offset = (inst->enc_raw_height - inst->crop.height);
+> +			right_offset = (inst->enc_raw_width - inst->crop.width);
+> +			left_offset = inst->crop.left;
+> +			top_offset = inst->crop.top;
+> +		} else {
+> +			bottom_offset = (ALIGN(inst->enc_raw_height, codec_align) -
+> +					inst->enc_raw_height);
+> +			right_offset = (ALIGN(inst->enc_raw_width, codec_align) -
+> +					inst->enc_raw_width);
+> +			left_offset = 0;
+> +			top_offset = 0;
+> +		}
+>   	}
+> 
+>   	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
+> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
+> index 5982d7adefeab80905478b32cddba7bd4651a691..fbae1662947df73bb3d10b7892839fa1076b7e61 100644
+> --- a/drivers/media/platform/qcom/iris/iris_instance.h
+> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
+> @@ -64,6 +64,8 @@ struct iris_fmt {
+>    * @frame_rate: frame rate of current instance
+>    * @operating_rate: operating rate of current instance
+>    * @hfi_rc_type: rate control type
+> + * @enc_raw_width: raw image width for encoder instance
+> + * @enc_raw_height: raw image height for encoder instance
+>    */
+> 
+>   struct iris_inst {
+> @@ -102,6 +104,8 @@ struct iris_inst {
+>   	u32				frame_rate;
+>   	u32				operating_rate;
+>   	u32				hfi_rc_type;
+> +	u32				enc_raw_width;
+> +	u32				enc_raw_height;
+>   };
+> 
+>   #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
+> index 099bd5ed4ae0294725860305254c4cad1ec88d7e..7ad747d2272f029e69a56572a188a032f898a3fb 100644
+> --- a/drivers/media/platform/qcom/iris/iris_venc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
+> @@ -62,12 +62,15 @@ int iris_venc_inst_init(struct iris_inst *inst)
+> 
+>   	inst->crop.left = 0;
+>   	inst->crop.top = 0;
+> -	inst->crop.width = f->fmt.pix_mp.width;
+> -	inst->crop.height = f->fmt.pix_mp.height;
+> +	inst->crop.width = DEFAULT_WIDTH;
+> +	inst->crop.height = DEFAULT_HEIGHT;
+> 
+>   	inst->operating_rate = DEFAULT_FPS;
+>   	inst->frame_rate = DEFAULT_FPS;
+> 
+> +	inst->enc_raw_width = DEFAULT_WIDTH;
+> +	inst->enc_raw_height = DEFAULT_HEIGHT;
+> +
+>   	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
+>   	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
+> 
+> @@ -249,6 +252,9 @@ static int iris_venc_s_fmt_input(struct iris_inst *inst, struct v4l2_format *f)
+>   	inst->buffers[BUF_INPUT].min_count = iris_vpu_buf_count(inst, BUF_INPUT);
+>   	inst->buffers[BUF_INPUT].size = fmt->fmt.pix_mp.plane_fmt[0].sizeimage;
+> 
+> +	inst->enc_raw_width = f->fmt.pix_mp.width;
+> +	inst->enc_raw_height = f->fmt.pix_mp.height;
+> +
+>   	if (f->fmt.pix_mp.width != inst->crop.width ||
+>   	    f->fmt.pix_mp.height != inst->crop.height) {
+>   		inst->crop.top = 0;
+> 
+> --
+> 2.43.0
+> 
 
-This lack of consistentcy cannot be addressed without refactoring the API.
+To me reading this patch you seem to have three or four different 
+alignment changed bunched into one.
 
-This patch continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
+I would prefer to see more granular and specific patches for each change.
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+Please break this up into more bite size chunks.
 
-system_dfl_wq should be the default workqueue so as not to enforce
-locality constraints for random work whenever it's not required.
-
-The old system_unbound_wq will be kept for a few release cycles.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/soc/xilinx/zynqmp_power.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
-index ae59bf16659a..6145c4fe192e 100644
---- a/drivers/soc/xilinx/zynqmp_power.c
-+++ b/drivers/soc/xilinx/zynqmp_power.c
-@@ -82,7 +82,7 @@ static void subsystem_restart_event_callback(const u32 *payload, void *data)
- 	memcpy(zynqmp_pm_init_restart_work->args, &payload[0],
- 	       sizeof(zynqmp_pm_init_restart_work->args));
- 
--	queue_work(system_unbound_wq, &zynqmp_pm_init_restart_work->callback_work);
-+	queue_work(system_dfl_wq, &zynqmp_pm_init_restart_work->callback_work);
- }
- 
- static void suspend_event_callback(const u32 *payload, void *data)
-@@ -95,7 +95,7 @@ static void suspend_event_callback(const u32 *payload, void *data)
- 	memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
- 	       sizeof(zynqmp_pm_init_suspend_work->args));
- 
--	queue_work(system_unbound_wq, &zynqmp_pm_init_suspend_work->callback_work);
-+	queue_work(system_dfl_wq, &zynqmp_pm_init_suspend_work->callback_work);
- }
- 
- static irqreturn_t zynqmp_pm_isr(int irq, void *data)
-@@ -140,7 +140,7 @@ static void ipi_receive_callback(struct mbox_client *cl, void *data)
- 		memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
- 		       sizeof(zynqmp_pm_init_suspend_work->args));
- 
--		queue_work(system_unbound_wq,
-+		queue_work(system_dfl_wq,
- 			   &zynqmp_pm_init_suspend_work->callback_work);
- 
- 		/* Send NULL message to mbox controller to ack the message */
--- 
-2.51.1
-
+bod
 
