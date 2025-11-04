@@ -1,132 +1,139 @@
-Return-Path: <linux-kernel+bounces-885224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F364C32450
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:16:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCA7C324BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AFEE034AE43
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0583A6724
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33430299AB5;
-	Tue,  4 Nov 2025 17:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F080833438F;
+	Tue,  4 Nov 2025 17:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l/TbMY2a"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjnPMOIP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2017332EDA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B0F1A9FB6;
+	Tue,  4 Nov 2025 17:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276583; cv=none; b=YiJfivVlXA3ycKQjWMrhAZHEvvy+gO2kXjW1Sjck7RK2qyLIvbqJR8P1B7cUGoHiHmA+IBoHh9UI/+riBebx4+8li+I5PR0rojA47Y9hSOOhBH7bdravk9l/9HLeOwQhQKfpFtcWWTehoeulZj2gMOchVmZjIdpNFSdxAngWSxk=
+	t=1762276700; cv=none; b=q8WVLSsAZaPHhb65EfVhuxYPMRAxjZ2pLhhYb/gRrmw8+Td9qGqaBlV/X/slnQUpZzxnhw5FG3X3WRnfgaW0s45W5oIep/JT3V/+j5GnziCB8S84+cFBxtq54SBs5PHeELAud4Jb2lGxjE2kyXQOb9nBEB/mUcfot47q8HrqHws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276583; c=relaxed/simple;
-	bh=74YBZDoQ83xKtptK80/takPjZbLTMjieIiqtSwmNNJs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HseTSwVMHocAMM0zSc9jlGwCr0D8kJaAVBMcVxbVsEr4Cs94QMpWMI8AtlJR5GyzqZbz5ZLVEI9u8fh67iQGX8nE4aDt4KQeHiT+wRPJVdGNoJHPdWSJWntAKld16yRFuVDu+lSCKvWeIVfFqSrLNfkDzpboLeeqJtGb0GXkflI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l/TbMY2a; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29523ed27e0so52879355ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:16:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762276572; x=1762881372; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tS4bLkjfdqWxdiK6mwiFizJkIXMdxek1nIt3B9oDobs=;
-        b=l/TbMY2a8xpeaTkpchRwNykNVkEdH/f5QackNGVwgOn3WPBPS5dEx11lFp8SNsSRVz
-         3sKFOZOmixJCTL1WdfdjdTUuDnk0XXv8jqa0mtf3Py1g1ZjesEmnoPElZOnKsZE56pSc
-         Amkfjkls0PHti3HX6fOxMMAExpOywoUj+TQyNfvR3WoIt/aIOlCMuJon+1Gkb4TtBzV3
-         1IPRR1x3Ke38BycKUyw174ZmBiv4gdLwCnLtCuVw5kH47weXjRZx3q+A8dEKEQvmFiUK
-         We+Vbh7qj+gecpJvGPae4coecubN0IXFAkYo2iUiI7ySF+BMDbhcwpDgbJMfd+MhEzlO
-         Ebsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762276572; x=1762881372;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tS4bLkjfdqWxdiK6mwiFizJkIXMdxek1nIt3B9oDobs=;
-        b=dtFlEBu7HJgd/NDEU2+um7gvseJ6tu6kv1knt+0kLbvHNX4xVwJqAoTja2ggdrAzJ3
-         jRWg7hq/I72UM3Kjkr33TDHuXrXsE7jTy0SMaBI0U2eLKWqnSE6mvrQHS4sEzgOlbB2N
-         m3c74A7zuB+uQSoV1q8jwH2u6Qj9QqKtiKjtXdANRHYd9RZQK/gvh1iYArG0BWOC5oVy
-         Ok+PrmiK0LOGgQSM+cnCYfIDSxI0dzqx5kaS2zxg+xC4gsssB1YYR2e9dfN6xKR4nSOo
-         bKNGW5Y/njFL6Gdj+C0v7WfL8rqaFTYJQ27tLAULXdj8+1hAj+1bBE73ynEj348yQ1S+
-         wp2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXh1KKUs/XPhN4qDke7JVBP6VY6pmnWZoEokoOt3zojXHLtMxjtisnQwI+5PThCwUCe2F7xP89EGpSBTOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTkXjeIoLoS4bADB3rYJ7TCdKHcZnIVplYqCWSYvco8SpOxWBX
-	rSk9O88CNuSvoqMFCTuIuVxstHvFef/pNxq+hPyOg962Qc0inZ27RomMTD87ke89XR5vWGXMfdl
-	oZa5uOw==
-X-Google-Smtp-Source: AGHT+IEb98zdibRUw3q8rz5s7dc2rz9KLXalBcAB3oaxD9YhpNQGD+LumJ8fuqIknfJVxR3bHJsxCZ35FjU=
-X-Received: from plhy12.prod.google.com ([2002:a17:902:d64c:b0:295:525b:2186])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:41cf:b0:295:3d5d:fe57
- with SMTP id d9443c01a7336-2962ad2add3mr4432015ad.21.1762276572264; Tue, 04
- Nov 2025 09:16:12 -0800 (PST)
-Date: Tue, 4 Nov 2025 09:16:08 -0800
-In-Reply-To: <ojg5bq2guzb6hk7q7n2przo2ygkra6boavhhq7u5kptygu6jij@5nvgdi3preqg>
+	s=arc-20240116; t=1762276700; c=relaxed/simple;
+	bh=EoYB0PWVLIGHWL/t+m2DAhQWSJ/AvI+O/9iELKKU8B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUCpmKNMpEqg5m0acKN3CrRcf6HhE1sUn96xXhIkdQQSIxbZvdFvQqiiFN3LsjEOJwDJY57aeFKyxGeye8mjQPNak5D0i5Co78/Nbt2HSnNXEpvcdu0DjqQA3tcWDoHN8mOy/LPQBPRchSCSEeA7IHHrdJauQRAvX5D51uQND2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjnPMOIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7A6C4CEF7;
+	Tue,  4 Nov 2025 17:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762276700;
+	bh=EoYB0PWVLIGHWL/t+m2DAhQWSJ/AvI+O/9iELKKU8B8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjnPMOIP5C99X8WAMf59MwKO6YCUExvkThrlOsLYDyQBSyKMQd6tFJV0zwILESpQw
+	 BErK7G4mTNIlhxRXMh8vbTiNZW348f2u1L8NrZr5ChgAGhSJKPoUg1bX8PYNVoXiO8
+	 BU9pcso8wGIEnUgfxusuTsAtA6jbdzDOoTjU4xORAnAo5W4xHjl6GoqLX1xntagMOR
+	 DQZ6FpWCWysWc5yxTjhP/IQHGa5iXdHhnSihzM+UsF+o2hdhQz82vgeiHvfbwiLsTK
+	 iAEI/MPclxreW/sCxtpbg11wTkJgs4Ky0+cK57+2jQsAI5ylO0PhbqTIbataBQlldi
+	 SoZjoWi/U/KaQ==
+Date: Tue, 4 Nov 2025 19:18:14 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Akinobu Mita <akinobu.mita@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] memblock: fix memblock_estimated_nr_free_pages() for
+ soft-reserved memory
+Message-ID: <aQo1VjjQw1OZG8nY@kernel.org>
+References: <20251104003921.9707-1-akinobu.mita@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030185004.3372256-1-seanjc@google.com> <ojg5bq2guzb6hk7q7n2przo2ygkra6boavhhq7u5kptygu6jij@5nvgdi3preqg>
-Message-ID: <aQo02LpJ5IfNzVD3@google.com>
-Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled VM-Exits
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104003921.9707-1-akinobu.mita@gmail.com>
 
-On Mon, Nov 03, 2025, Yosry Ahmed wrote:
-> On Thu, Oct 30, 2025 at 11:50:03AM -0700, Sean Christopherson wrote:
-> > Add and use a helper, kvm_prepare_unexpected_reason_exit(), to dedup the
-> > code that fills the exit reason and CPU when KVM encounters a VM-Exit that
-> > KVM doesn't know how to handle.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  1 +
-> >  arch/x86/kvm/svm/svm.c          |  7 +------
-> >  arch/x86/kvm/vmx/tdx.c          |  6 +-----
-> >  arch/x86/kvm/vmx/vmx.c          |  9 +--------
-> >  arch/x86/kvm/x86.c              | 12 ++++++++++++
-> >  5 files changed, 16 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index 48598d017d6f..4fbe4b7ce1da 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -2167,6 +2167,7 @@ void __kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu,
-> >  void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
-> >  
-> >  void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa);
-> > +void kvm_prepare_unexpected_reason_exit(struct kvm_vcpu *vcpu, u64 exit_reason);
-> >  
-> >  void kvm_enable_efer_bits(u64);
-> >  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index f14709a511aa..83e0d4d5f4c5 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -3451,13 +3451,8 @@ static bool svm_check_exit_valid(u64 exit_code)
-> >  
-> >  static int svm_handle_invalid_exit(struct kvm_vcpu *vcpu, u64 exit_code)
-> >  {
-> > -	vcpu_unimpl(vcpu, "svm: unexpected exit reason 0x%llx\n", exit_code);
-> >  	dump_vmcb(vcpu);
-> > -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> > -	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> > -	vcpu->run->internal.ndata = 2;
-> > -	vcpu->run->internal.data[0] = exit_code;
-> > -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> > +	kvm_prepare_unexpected_reason_exit(vcpu, exit_code);
-> >  	return 0;
-> >  }
+(added Dan Williams)
+
+Hi,
+
+On Tue, Nov 04, 2025 at 09:39:21AM +0900, Akinobu Mita wrote:
+> memblock_estimated_nr_free_pages() returns the difference between the total
+> size of the "memory" memblock type and the "reserved" memblock type.
 > 
-> We can probably drop svm_handle_invalid_exit() entirely now
+> The "soft-reserved" memory regions are added to the "reserved" memblock
+> type, but not to the "memory" memblock type. Therefore,
 
-Hmm, yeah.  I'll do so in a separate follow-up, as I want to do more than just
-fold svm_handle_invalid_exit() into svm_invoke_exit_handler().
+@Dan, do we really need to memblock_reserve() the E820_TYPE_SOFT_RESERVED
+ranges?
+Quick scan didn't show anything that requires this, but I could easily miss
+something.
+
+> memblock_estimated_nr_free_pages() may return a smaller value than
+> expected, or if it underflows, an extremely large value.
+> 
+> /proc/sys/kernel/threads-max is determined by the value of
+> memblock_estimated_nr_free_pages().  This issue was discovered on machines
+> with CXL memory because kernel.threads-max was either smaller than expected
+> or extremely large for the installed DRAM size.
+> 
+> This fixes the issue by improving the accuracy of
+> memblock_estimated_nr_free_pages() by subtracting only the overlapping size
+> of regions with "memory" and "reserved" memblock types.
+> 
+> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+> ---
+>  mm/memblock.c | 33 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index e23e16618e9b..af014fa10a44 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+
+...
+
+> @@ -1826,7 +1842,22 @@ phys_addr_t __init_memblock memblock_reserved_kern_size(phys_addr_t limit, int n
+>   */
+>  unsigned long __init memblock_estimated_nr_free_pages(void)
+>  {
+> -	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
+
+We have memblock_reserved_kern_size() that tells how much memory was
+reserved from the actual RAM. Replacing memblock_reserved_size() with
+memblock_reserved_kern_size() will omit "soft-reserved" ranges.
+
+> +	int memory_idx, reserved_idx;
+> +	struct memblock_type *memory_type = &memblock.memory;
+> +	struct memblock_type *reserved_type = &memblock.reserved;
+> +	struct memblock_region *memory_region, *reserved_region;
+> +	phys_addr_t phys_mem_size = 0;
+> +
+> +	for_each_memblock_type(memory_idx, memory_type, memory_region) {
+> +		phys_mem_size += memory_region->size;
+> +		for_each_memblock_type(reserved_idx, reserved_type, reserved_region) {
+> +			phys_mem_size -= memblock_addrs_overlap_size(memory_region->base,
+> +					memory_region->size, reserved_region->base,
+> +					reserved_region->size);
+> +		}
+> +	}
+> +
+> +	return PHYS_PFN(phys_mem_size);
+>  }
+>  
+>  /* lowest address */
+> -- 
+> 2.43.0
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
