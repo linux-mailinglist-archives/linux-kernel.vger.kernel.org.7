@@ -1,112 +1,189 @@
-Return-Path: <linux-kernel+bounces-884954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF68C3190B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:38:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DB7C31929
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD31F4FC725
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79711920116
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB13331A70;
-	Tue,  4 Nov 2025 14:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01284330B3A;
+	Tue,  4 Nov 2025 14:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu/DmIlA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCbZ3SMq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3059330B2B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E22626F29F;
+	Tue,  4 Nov 2025 14:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266770; cv=none; b=GW4D/Y92ErdeD1/r93+zzPcjcEtikBpLZj3axABjT1MVC16cmXsLyaLokiAp8TWcXeI6ZstOfLWuUH0S5Gc5FaSrIt9sy9f9+/DgkvdQiUxSScwF51JlcgCxEa7k0YhNGHCjvBi40wRqXtQcpgKrl5om4h9kOPFqIzo/PAAPjFM=
+	t=1762266821; cv=none; b=Xz4ddHf1+d0UUvc5xGAmLxZGHw9jDILypecHJkx/mGaexizXiJcRS0ySWipe3e8nxQskfrMpvhtWxC+O1rzWBDZYo9oXnB74W4EL5aG1TIbYM0YhC5JJENfVDbI2unTkPuUWT7ph+1hu3FXJp8woKWRNs72ha66wMi8N8g/tWos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266770; c=relaxed/simple;
-	bh=RORlDZODXaQvDU2xYSdqK34eg3g039xujjqxDT3MR80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YzulmN3og3Qsb97r/THS5ec6kjgFseptgjUEZbFG1oXMBVd6wCvqNtmbQq3L85S7nOAwWOyeRNUnU1Yg+0vCsSAXpJYw7/OrcwneFS+TmOhijLleRZ0vf0EhUCUxhuSgt8W9Nbjje9f/HASQcBaRhUxL/L+YC99RJt+qyCzrw7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu/DmIlA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6212DC116B1;
-	Tue,  4 Nov 2025 14:32:46 +0000 (UTC)
+	s=arc-20240116; t=1762266821; c=relaxed/simple;
+	bh=0G9fdQTuchMOtrgk6j8v31mD7u4BKOCI9XLm/Ftvq5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qezOejAeLq4QgAqea1CRA1JNMIjbgyJi0G12Swoa/2zKmVLGU87twHHeHURoqYh1peMLbnc9qSotpFkc1PSAmmxLPSfJhXNnuHw8mMdcQAO70rJRr9mC/MO6wvnsWRKy8p8jCxyFFvyKgsTsFC4GUME9ToABeQ7l/AN0dNG8ckM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCbZ3SMq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E791C4CEF7;
+	Tue,  4 Nov 2025 14:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762266769;
-	bh=RORlDZODXaQvDU2xYSdqK34eg3g039xujjqxDT3MR80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hu/DmIlAB5Kq9YX5KdYPEScDdxOcvtnhommT7pX+0QcphEpKxyk1bEZbEyk8V0NEk
-	 a0wrz3MWKZhMkalsjp3HtpQS1Eym66KN0kQm2gCu6/zd8BkRtQ+Cff5zRUZ+JpyOnZ
-	 hxM3eNqaBWAsZoCe6WoOlQhhLmxyWYo7WGWF64mUjG1Z0hOQRJg7xLa8RPmtRjsJst
-	 gqyR5LibszsQsOEBd3iV9M5JM2WueL0l5P4Bc7Q86iT3hTijngXJIJu5oHWXNc49YV
-	 GhBxMUrUvh7aeIABcXutqnbfg1UTsicDuZUCRD1X5Fm6R+IBQGxxVKU1xJhlrJMtDA
-	 HWUJvljcoDm3A==
-Date: Tue, 4 Nov 2025 16:32:42 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	kexec@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] kho: warn and exit when unpreserved page wasn't
- preserved
-Message-ID: <aQoOinskO4_BzzeQ@kernel.org>
-References: <20251103180235.71409-1-pratyush@kernel.org>
- <20251103180235.71409-3-pratyush@kernel.org>
+	s=k20201202; t=1762266820;
+	bh=0G9fdQTuchMOtrgk6j8v31mD7u4BKOCI9XLm/Ftvq5c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aCbZ3SMqp4p9BZFo/G8zOEbJDIBYjrAyF0Ft6H4bV3sJBr/MjJh1cfVjC5RSCu2fn
+	 UBJZrT4JlZU3Rel/mRJX6Z0/k9+rrLiWflpx0t7Pmo15/wpNctj0HqOMdLhx4iLnZ1
+	 UYXFVJryElWlYLpSSNBYV8wtaTsT0e6DXXQKOlWfewYJasRbF2lXZJ63lWWqIMHyWA
+	 81JzvnBr2E8GZ1bIO9W9EIbkHx7i4YseTHQ3guCJHP6RWheQY46lHQ84CLX39nRNio
+	 0M9pA3PNklXWz5rwr8j+RX0S+PNk75IGdo6//tFBOKFsoPJvJciG7m1JlBe/gXyJ7x
+	 7caUzYb01Zriw==
+Message-ID: <4e4d89c8-4a59-445b-ac2c-2d3992190e99@kernel.org>
+Date: Tue, 4 Nov 2025 15:33:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103180235.71409-3-pratyush@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: firmware: svc: Add IOMMU support for
+ Agilex5
+To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
+ "Rabara, Niravkumar Laxmidas" <nirav.rabara@altera.com>
+References: <cover.1762135710.git.khairul.anuar.romli@altera.com>
+ <ca75b88a64412274d415e17d4aef6dd018ac7167.1762135710.git.khairul.anuar.romli@altera.com>
+ <20251104-bipedal-sheep-of-advertising-08450c@kuoka>
+ <fc68b68a-586c-4af6-ae59-85b79d1d8002@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <fc68b68a-586c-4af6-ae59-85b79d1d8002@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 07:02:32PM +0100, Pratyush Yadav wrote:
-> Calling __kho_unpreserve() on a pair of (pfn, end_pfn) that wasn't
-> preserved is a bug. Currently, if that is done, the physxa or bits can
-> be NULL. This results in a soft lockup since a NULL physxa or bits
-> results in redoing the loop without ever making any progress.
+On 04/11/2025 12:14, Romli, Khairul Anuar wrote:
+> On 4/11/2025 5:48 pm, Krzysztof Kozlowski wrote:
+>> On Tue, Nov 04, 2025 at 07:39:27AM +0800, Khairul Anuar Romli wrote:
+>>> In Agilex5, the TBU (Translation Buffer Unit) can now operate in non-secure
+>>> mode, enabling Linux to utilize it through the IOMMU framework. This allows
+>>> improved memory management capabilities in non-secure environments. With
+>>> Agilex5 lifting this restriction, we are now extending the device tree
+>>> bindings to support IOMMU for the Agilex5 SVC.
+>>>
+>>> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+>>> Reviewed-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+>>> Reviewed-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+>>
+>> Two reviews but...
+>>
+>>>   
+>>> -required:
+>>> -  - compatible
+>>> -  - method
+>>> -  - memory-region
+>>> +allOf:
+>>> +  - required:
+>>> +      - compatible
+>>> +      - method
+>>> +      - memory-region
+>>
+>> ... none told you this is not the correct syntax / style?
+>>
+>> Were these reviews really happening? What exactly was reviewed here?
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Return when physxa or bits are not found, but WARN first to loudly
-> indicate invalid behaviour.
-> 
-> Fixes: fc33e4b44b271 ("kexec: enable KHO support for memory preservation")
-> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+> The peer review was on the property and compatible added in this patch.
+> I was at fault for not emphasize to check on the syntax / style for the 
+> logical changes.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Rather the reviewers gave you just simple acks without doing their job.
+That's a 10 liner patch...
 
-> ---
->  kernel/kexec_handover.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index c2bcbb10918ce..e5fd833726226 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -167,12 +167,12 @@ static void __kho_unpreserve(struct kho_mem_track *track, unsigned long pfn,
->  		const unsigned long pfn_high = pfn >> order;
->  
->  		physxa = xa_load(&track->orders, order);
-> -		if (!physxa)
-> -			continue;
-> +		if (WARN_ON_ONCE(!physxa))
-> +			return;
->  
->  		bits = xa_load(&physxa->phys_bits, pfn_high / PRESERVE_BITS);
-> -		if (!bits)
-> -			continue;
-> +		if (WARN_ON_ONCE(!bits))
-> +			return;
->  
->  		clear_bit(pfn_high % PRESERVE_BITS, bits->preserve);
->  
-> -- 
-> 2.47.3
-> 
+Feels like just to tick gerrit or satisfy internal procedures.
 
--- 
-Sincerely yours,
-Mike.
+If internal reviewers give you such "okay" marks, without adhering to
+reviewers statement of oversight, you can freely ignore them and instead
+educate them to provide full review on the mailing list.
+
+> 
+> I refers to 
+> Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml 
+> and the changes could be as follows:
+> 
+> required:
+>    - compatible
+>    - method
+>    - memory-region
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: intel,agilex5-svc
+> +    then:
+> +      required:
+> +        - iommus
+> 
+> Do I need to re-specify the rest of the compatible property other than 
+> intel,agilex5-svc and their required properties under the allOf block?
+> 
+> My objective is to specify that iommus only for intel,agilex5-svc but 
+> not the rest of devices.
+It all depends whether other devices also use IOMMU.
+
+Best regards,
+Krzysztof
 
