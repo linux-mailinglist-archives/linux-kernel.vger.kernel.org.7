@@ -1,181 +1,113 @@
-Return-Path: <linux-kernel+bounces-883938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C6AC2EDDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:45:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931ACC2EDF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 061D64E2245
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:45:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A85E4E4DF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C82222A0;
-	Tue,  4 Nov 2025 01:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90B3231A3B;
+	Tue,  4 Nov 2025 01:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eej7SG6K"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="i1d9XUag"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4091C5F13
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD91017A303
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762220731; cv=none; b=AR44kqnm1Z3iiBwacaKCknjxWSFz4lRwL/kyMNDErzxrfgGxpuRts02+7OS4skZ2DfQ1vp3rioj6jXdOzLqjdFLpOLrekpXL+mvBRpfzdoaR2PJI4x2zQej9om+gHEbi2urkKTjadR4Jmudtr/77AYDWB0+YcRznA6EEW9O8F0M=
+	t=1762220931; cv=none; b=Mt2kfd8+7xjGXGuIQ2wko7W/4Fe/ZPnafEhXw2mBEu2V44naqVxdkaA1LTMJ2LlqL/+V7Fi/FBXgnCaEt6L/e8rIUKNyEK9cnITvHykO0QlqXFEYWWGVt9oIcsD/sYyUdAaqYJlZr57NGSuTL/vbtN3zepjAJHUmr3Drg/OZh3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762220731; c=relaxed/simple;
-	bh=eE0Sksc1E8tASsNmX0nfCalfYGhh0r9ceygIkOqmHvg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OMHwqnohfhMcoBfSbPYjyYBqJWIZii5xncOhiV4yWyip3PIO7luO2MfAWKD/VTfopa49YcdLjDbh6kkLZnkGELGzyZ6kQUJ8l7Z8rp/WdNPYAEPddin89vAM1YnZZ4btCiRZn4AgGZvD6AVoUyXVwn/ROOvZC5/TiEf3VJqD5j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eej7SG6K; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1762220931; c=relaxed/simple;
+	bh=8n7yRExyFgHYfUULPtG7ZIubacmLiDD6ZcsL4aI2anM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QG/z3rqP/g5MSHOmrHxnG5R9S/e6TDpayShnAvK+1g2gA/GiXhQcQRtP8g7JgqxZi4tkuFupTW77l/VQsXmzu7O205PwfIz+z5RTSyk1Tv/Pgf3HwGU9mL2QykVCZCBKMQTVg67GMtV8iZFYCRAr80+Upsl322GficZcs9y45zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=i1d9XUag; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762220716;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1762220927;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=P2r2L9mfw9r+buciI9SKXnid4aHeJcUG8hdz1itgchw=;
-	b=eej7SG6KYOyP3W/QXNmOQHfVG0rj2NyX9HRwoKpg+FWmsW7ArMfA2C/rXKHxlOZYdKzghs
-	oqCvSSke2vPfqgIIicBVX3ygA8Fsiz0AOAIbO9KSQKL9jyicSmHTjkv1WG0pn5uuQu8j6t
-	Ib+R2BY04rXYyG9jZXzc/7qccoD5dzg=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
- <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
- Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
-  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
-  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
-In-Reply-To: <aQj7uRjz668NNrm_@tiehlicka> (Michal Hocko's message of "Mon, 3
-	Nov 2025 20:00:09 +0100")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-7-roman.gushchin@linux.dev>
-	<aQR7HIiQ82Ye2UfA@tiehlicka> <875xbsglra.fsf@linux.dev>
-	<aQj7uRjz668NNrm_@tiehlicka>
-Date: Mon, 03 Nov 2025 17:45:09 -0800
-Message-ID: <87a512muze.fsf@linux.dev>
+	bh=OeOQKsQrYLAJRjnO5Q4cmqKi/VkAf2NQPTMDZnSIUtg=;
+	b=i1d9XUagKKoN86iEgNvJzl+vyvt85A0WdS3Q4XMKKTWF2KV5zGKKNNxZT+CoPX7e2Bunpz
+	Amc7OcbtUwW2EOvIkLmEoetFvGeGzZPsOXWW14deax+VsHJx7bO+0R4q8pM430KaoqjomV
+	UGTTXo0Ntf/+ophro8UJ0BI9qh5oiIaeeoQZSF1vHOHBcq+JnfFW1zdV7HRq8xIRhNuqkr
+	lcX7xRRN4C4jwGvvtEAvAD/AvTqqFLW7NtLZm4XgfHTD7LHLAovUSwEY/vnB2kQbUmSybk
+	pn3+2YNwUG3mpuQuPF0sw2zZ3JMvr0gkHb3NDFSrg4WSUuRxLxYYmfdl0Y0Wug==
+From: George Anthony Vernon <contact@gvernon.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	linux-fsdevel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Cc: George Anthony Vernon <contact@gvernon.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	penguin-kernel@i-love.sakura.ne.jp
+Subject: [PATCH v2 0/2] hfs: Validate CNIDs read from filesystem
+Date: Tue,  4 Nov 2025 01:47:35 +0000
+Message-ID: <20251104014738.131872-2-contact@gvernon.com>
+In-Reply-To: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Michal Hocko <mhocko@suse.com> writes:
+Changes from V1->V2:
+- is_valid_cnid prototype now takes u32 and u8 types
+- Add fsck advice in dmesg
+- Replace make_bad_inode calls in hfs_read_inode with gotos
+- Reuse same check in hfs_write_inode
+- Disallow HFS_POR_CNID, HFS_BAD_CNID, and HFS_EXCH_CNID
+- Add Tetsuo's patch to mine and make it a patch series
 
-> On Sun 02-11-25 13:36:25, Roman Gushchin wrote:
->> Michal Hocko <mhocko@suse.com> writes:
->> 
->> > On Mon 27-10-25 16:17:09, Roman Gushchin wrote:
->> >> Introduce a bpf struct ops for implementing custom OOM handling
->> >> policies.
->> >> 
->> >> It's possible to load one bpf_oom_ops for the system and one
->> >> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
->> >> cgroup tree is traversed from the OOM'ing memcg up to the root and
->> >> corresponding BPF OOM handlers are executed until some memory is
->> >> freed. If no memory is freed, the kernel OOM killer is invoked.
->> >
->> > Do you have any usecase in mind where parent memcg oom handler decides
->> > to not kill or cannot kill anything and hand over upwards in the
->> > hierarchy?
->> 
->> I believe that in most cases bpf handlers will handle ooms themselves,
->> but because strictly speaking I don't have control over what bpf
->> programs do or do not, the kernel should provide the fallback mechanism.
->> This is a common practice with bpf, e.g. sched_ext falls back to
->> CFS/EEVDF in case something is wrong.
->
-> We do have fallback mechanism - the kernel oom handling. For that we do
-> not need to pass to parent handler. Please not that I am not opposing
-> this but I would like to understand thinking behind and hopefully start
-> with a simpler model and then extend it later than go with a more
-> complex one initially and then corner ourselves with weird side
-> effects.
->  
->> Specifically to OOM case, I believe someone might want to use bpf
->> programs just for monitoring/collecting some information, without
->> trying to actually free some memory.
->> 
->> >> The struct ops provides the bpf_handle_out_of_memory() callback,
->> >> which expected to return 1 if it was able to free some memory and 0
->> >> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
->> >> field of the oom_control structure, which is expected to be set by
->> >> kfuncs suitable for releasing memory. If both are set, OOM is
->> >> considered handled, otherwise the next OOM handler in the chain
->> >> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
->> >> killer) is executed.
->> >
->> > Could you explain why do we need both? Why is not bpf_memory_freed
->> > return value sufficient?
->> 
->> Strictly speaking, bpf_memory_freed should be enough, but because
->> bpf programs have to return an int and there is no additional cost
->> to add this option (pass to next or in-kernel oom handler), I thought
->> it's not a bad idea. If you feel strongly otherwise, I can ignore
->> the return value on rely on bpf_memory_freed only.
->
-> No, I do not feel strongly one way or the other but I would like to
-> understand thinking behind that. My slight preference would be to have a
-> single return status that clearly describe the intention. If you want to
-> have more flexible chaining semantic then an enum { IGNORED, HANDLED,
-> PASS_TO_PARENT, ...} would be both more flexible, extensible and easier
-> to understand.
+This patch series contains two patches which work together to prevent
+bad catalog records from being read. Previously it was possible for a
+malformed HFS filesystem image to reach a BUG() in writeback. I propose
+to fix this by verifying that CNIDs are allowed ones when constructing
+an inode in hfs_read_inode(). Tetsuo Handa's additional check in
+hfs_fill_super makes sure the root inode's CNID is correct, handling an
+edge case where the records' directory CNID > 15.
 
-The thinking is simple:
-1) Most users will have a single global bpf oom policy, which basically
-replaces the in-kernel oom killer.
-2) If there are standalone containers, they might want to do the same on
-their level. And the "host" system doesn't directly control it.
-3) If for some reason the inner oom handler fails to free up some
-memory, there are two potential fallback options: call the in-kernel oom
-killer for that memory cgroup or call an upper level bpf oom killer, if
-there is one.
+I think we should continue returning BUG() in hfs_write_inode() because
+it is a filesystem implementation error if we ever allow an inode to be
+constructed from a bad CNID. Now we properly guard our reads in
+hfs_read_inode(), records with bad CNIDs should not get so far as to
+initialise inodes which are queued for writeback.
 
-I think the latter is more logical and less surprising. Imagine you're
-running multiple containers and some of them implement their own bpf oom
-logic and some don't. Why would we treat them differently if their bpf
-logic fails?
+I'm suggesting to disallow HFS_POR_CNID because there is no 'real'
+record with that CNID or corresponding file, it doesn't make sense to
+present an inode for it to the VFS when it exists only as a dummy
+reference in our internal btree. Similarly I'm suggesting to disallow
+HFS_BAD_CNID and HFS_EXCH_CNID because not only are they for internal
+use, but we also do not implement bad blocks or exchange file
+functionality in the Linux driver.
 
-Re a single return value: I can absolutely specify return values as an
-enum, my point is that unlike the kernel code we can't fully trust the
-value returned from a bpf program, this is why the second check is in
-place.
+Thank you to Slava and Tetsuo for the feedback on V1.
 
-Can we just ignore the returned value and rely on the freed_memory flag?
-Sure, but I don't think it bus us anything.
+George Anthony Vernon (2):
+  hfs: Validate CNIDs in hfs_read_inode
+  hfs: Update sanity check of the root record
 
-Also, I have to admit that I don't have an immediate production use case
-for nested oom handlers (I'm fine with a global one), but it was asked
-by Alexei Starovoitov. And I agree with him that the containerized case
-will come up soon, so it's better to think of it in advance.
+ fs/hfs/inode.c | 67 +++++++++++++++++++++++++++++++++++++++-----------
+ fs/hfs/super.c |  2 +-
+ 2 files changed, 54 insertions(+), 15 deletions(-)
 
->> >> The bpf_handle_out_of_memory() callback program is sleepable to enable
->> >> using iterators, e.g. cgroup iterators. The callback receives struct
->> >> oom_control as an argument, so it can determine the scope of the OOM
->> >> event: if this is a memcg-wide or system-wide OOM.
->> >
->> > This could be tricky because it might introduce a subtle and hard to
->> > debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
->> > Sleepable locks should be only allowed in trylock mode.
->> 
->> Agree, but it's achieved by controlling the context where oom can be
->> declared (e.g. in bpf_psi case it's done from a work context).
->
-> but out_of_memory is any sleepable context. So this is a real problem.
+-- 
+2.50.1
 
-We need to restrict both:
-1) where from bpf_out_of_memory() can be called (already done, as of now
-only from bpf_psi callback, which is safe).
-2) which kfuncs are available to bpf oom handlers (only those, which are
-not trying to grab unsafe locks) - I'll double check it in thenext version.
-
-Thank you!
 
