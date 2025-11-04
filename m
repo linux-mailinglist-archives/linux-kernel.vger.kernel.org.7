@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-883832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923E8C2E893
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:13:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C89C2E8D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33154F584E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73355189C826
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8770A1922FB;
-	Tue,  4 Nov 2025 00:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93D72066F7;
+	Tue,  4 Nov 2025 00:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FAqLf4VS"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyVLwvHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB9D186E2E;
-	Tue,  4 Nov 2025 00:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DB41E5B7A;
+	Tue,  4 Nov 2025 00:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762215121; cv=none; b=pAlhdXkeKs9vf7J4LJRDJoArwS628czQLqSjz90DUKoBOKPL+BEL3GHL7wsllmWxV0MH+9I7dbi52pYxxDdBTvFW4WWaFUUGIGPyfdNI2Z8J8AoxTko2UFHMQO81Ux80LjI2w/qy8i5YO2Hkap9YHUnloexdF+1FXWEWQZd93r8=
+	t=1762215227; cv=none; b=eiyAqiGRAikHvv2YCgmnNN7iue9GdkbuPevWwmPNvnqotlLwtS8uhz1qtmYfgSXaiQ5YbVoIHZ7z6WZy0PX0IvcX3ea8Gclb7PmD30onBtLtVGI+g2lUEVt+f9YzptLeZFmtaI3e4IncxRTD/QIaJWuIAKmfM2t5c+0P29mp5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762215121; c=relaxed/simple;
-	bh=Ifrqezm9e5YRFfp+Do4S6PhVVNj4jf79q2anrhIAZxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLdCbK5LSSs9xpJiAbLKoK8zdKyByZJnRRENcoN+XncaAh6ZgAbBaLAdWfjojWlvuhxB6FRxCo7ipFIbSkacvSDHpi8RGxAUh/HqRHTPEi8AOvI14IgaBnLOSNtO/X0rtEj7rx6MkPmGe4M5VhR8emgPOGa9z9F+M/X4KAs4yJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FAqLf4VS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=sBxIUpTJeGIY2hXTtX0cnKaghkTbezK2U0dIJnf6z5o=; b=FAqLf4VS6XGvwq8x2O7YH29Dc5
-	EdwE6SDNYPu2xK1SthkHS6lUghrHthPSb4O4uHw31ylZKSO8jW9kJCUsIugY2dLTiFZSUBhs0Z3d3
-	+BCt8pMaiTA5WOpGolxj6kbgV0umUhzptmAB6JPaSjW4C1MKh3kdmbukkASi+jvaO3lijehT7UYL6
-	fL7Gl6kTFcdvYEes2BfgSN1kk55P8mDerSgO3g8OPiSa+v5btofu8ZRYDPy2pBLHSBYEdmRq7l1PO
-	vT6z5gNc2s2cpJUWTCbbxTy+0rzazgmn53bjSUm3U57uvRzdoL51pK8Jgu3gvb6Aimb3rl9BZrJVt
-	uaMw5oCw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vG4eR-0000000ApKh-3oUR;
-	Tue, 04 Nov 2025 00:11:55 +0000
-Message-ID: <b7150e4e-7eb9-4dd1-8b9e-7d43159b5c72@infradead.org>
-Date: Mon, 3 Nov 2025 16:11:55 -0800
+	s=arc-20240116; t=1762215227; c=relaxed/simple;
+	bh=VFJYRBnpKMizw+xln40E9l/gQ5KUr9v3w/ueJyDiEa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFbNG8g7exkT9IFhsRAMn7IpkS9RU6j0892GXCYCA/H5w1z7Lb3TRUviMERcWlrEOyagHy8nCR4wKRxrM7WUdjIMI2pJH2cpfZ69w5Adikek7hUx3aBIU1iyk56b8PUhxwEDcvkot0zsDeXsKD07S0jhbHubGow8+4W4S9xQ7x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyVLwvHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3CAC4CEE7;
+	Tue,  4 Nov 2025 00:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762215226;
+	bh=VFJYRBnpKMizw+xln40E9l/gQ5KUr9v3w/ueJyDiEa4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AyVLwvHQHD9p9FwBny3PvY3BtQv0l5g0ht+VJDCpecCBkY4qiHJsLBjVINpxG8BkN
+	 WQq9RbBs3sdUu82rTFBfn2A+NV17EulTGBn6ObJl3lX1eg0J8/wxsEhzRkOq1fZofd
+	 hB0wUfF3nkqYtBV9KYv2Kv/plKEOV961VDs020CbPIdsomuCxDRfP6fgidxv/CEn8q
+	 5/oJyUuaLI1BCpLa6R8lsbEJwC6Q7VY5HVTX9kbj1ssyGNDK1n9OkE9oxTdl2l4Vhv
+	 PqAoEeKD0/+Aok216Fo3/oQAgeAYWNUURImGS9DknfMIkhIWJAqfUL7U+kLaWX4izI
+	 yNIYnxpt1sT/A==
+Date: Mon, 3 Nov 2025 16:13:46 -0800
+From: Kees Cook <kees@kernel.org>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Malcolm Priestley <tvboxspy@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
+ characters
+Message-ID: <202511031612.8A05E2FD1C@keescook>
+References: <20251010030348.it.784-kees@kernel.org>
+ <176219902728.2668573.8447418880394997824.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 6/9] Documentation: xfrm_sysctl: Trim trailing
- colon in section heading
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Networking <netdev@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-References: <20251103015029.17018-2-bagasdotme@gmail.com>
- <20251103015029.17018-8-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251103015029.17018-8-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176219902728.2668573.8447418880394997824.b4-ty@kernel.org>
 
-
-
-On 11/2/25 5:50 PM, Bagas Sanjaya wrote:
-> The sole section heading ("/proc/sys/net/core/xfrm_* Variables") has
-> trailing colon. Trim it.
+On Mon, Nov 03, 2025 at 08:49:43PM +0100, Daniel Gomez wrote:
 > 
-> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/networking/xfrm_sysctl.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On Thu, 09 Oct 2025 20:06:06 -0700, Kees Cook wrote:
+> >  v2:
+> >  - use static_assert instead of _Static_assert
+> >  - add Hans's Reviewed-by's
+> >  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
+> > 
+> > Hi!
+> > 
+> > [...]
 > 
-> diff --git a/Documentation/networking/xfrm_sysctl.rst b/Documentation/networking/xfrm_sysctl.rst
-> index 47b9bbdd017977..7d0c4b17c0bdf1 100644
-> --- a/Documentation/networking/xfrm_sysctl.rst
-> +++ b/Documentation/networking/xfrm_sysctl.rst
-> @@ -4,8 +4,8 @@
->  XFRM Syscall
->  ============
->  
-> -/proc/sys/net/core/xfrm_* Variables:
-> -====================================
-> +/proc/sys/net/core/xfrm_* Variables
-> +===================================
->  
->  xfrm_acq_expires - INTEGER
->  	default 30 - hard timeout in seconds for acquire requests
+> Applied patch 3, thanks!
+> 
+> [3/3] module: Add compile-time check for embedded NUL characters
+>       commit: 913359754ea821c4d6f6a77e0449b29984099663
+
+I'm nervous about this going in alone -- it breaks allmodconfig builds
+without the media fixes. My intention was to have the media fixes land
+first...
+
+Should I send the media fixes to linus right away?
+
+-Kees
 
 -- 
-~Randy
+Kees Cook
 
