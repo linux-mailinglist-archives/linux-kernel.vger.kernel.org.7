@@ -1,186 +1,221 @@
-Return-Path: <linux-kernel+bounces-884381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF5FC30101
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:52:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AD4C30112
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C23A94F98E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA450461362
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388BC3148B6;
-	Tue,  4 Nov 2025 08:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7715223A58E;
+	Tue,  4 Nov 2025 08:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NIfzfLaK"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="UZyOwWSu"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F8D313524;
-	Tue,  4 Nov 2025 08:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071A23F412
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245887; cv=none; b=FVhpXDpjgEl3ncFWz67hVuLc170caS2QZHOhdMLoA11zOJ8vek153JqL9Js8ecopWrQzAebJGowYHl60YnIclpXjJIQZk3Ugwp0UzyTBbVQkQRNayFCxpxX7jNR+zHbe8iCzIPb4R7c2w+k7nV7k4Dus6gkjWHOGC0vVxCY/RpI=
+	t=1762245948; cv=none; b=ZYoZj9QtZ32/Ac6/RrlUJqIMJFJVVZQKzJOtcV5QZ8gqsQZYw0xsIDGrDLSWUmPUCA7vVBoXXR5grzVO7P6quzworKbkfnQzgiHlp8MJSQnj+TIcVFREcoyVvsYCAXEd0X3utYDG/Tnzq1ZtjINXLYlDmNI20L1cX1eCVjwHuMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245887; c=relaxed/simple;
-	bh=NToKopaiiCorKnog1Ua+Guz58w6YXipmGADFT5V1BS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=t1xXNMMMUwqyl7FyunoSk9XmT3YULkeEiVeY/pYtYhAzzmTYN5s8qN3BoWT47vXE3vpmIg67zTD5zRSmIlfR20LRGfQf6IiEVzBBas6i6xWFe0DurgoHryoSv1deDddIGbhXl9U2FctGmOj9pAFfeUuiDGDOoul6ESVPSjkw6l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NIfzfLaK; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251104084442euoutp0102088d40135302607f87347b0dc37851~0wUsqg9XY0417804178euoutp01G;
-	Tue,  4 Nov 2025 08:44:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251104084442euoutp0102088d40135302607f87347b0dc37851~0wUsqg9XY0417804178euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762245882;
-	bh=4Fu9AdCheOvxz3Im1FXmK3GvN5Xitn31VIJ6mONdECE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=NIfzfLaKbrHZu0Gnes91/bNFpnUi+PCBujRxqfn1+x6PF4bWcGMTESoPuAVb8BCNe
-	 TtlBUOWDuOkNSnmVQ30DXStAE0ZC8Og/doIluRR7N6u64puk7uGLaCr147tEyKOLdV
-	 mk1n6uHGDW++q0sGM+SWQUfE/wNIAUBaBoIJ+ACU=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287~0wUr8pCub0922509225eucas1p2b;
-	Tue,  4 Nov 2025 08:44:42 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251104084440eusmtip27dfa57d3ff654ed50f16a811242c3a65~0wUqFptgI2591225912eusmtip2U;
-	Tue,  4 Nov 2025 08:44:39 +0000 (GMT)
-Message-ID: <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
-Date: Tue, 4 Nov 2025 09:44:38 +0100
+	s=arc-20240116; t=1762245948; c=relaxed/simple;
+	bh=PN0zYbucyFvRDAgetmp3jqYlZ/7ZYZYgxqA3IuHoPE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PYiG+Og/cm1tIA47tkV58dY1dIglm/dZRdwRPZXMxDNO6PZkVN/EDdeYyWqJaFrMfpNL8BjYkPqXJERXGvbIBu9XZybhollm0j9TS33QV94GNI/bvdG7aEAPo8gcm7mudpwE7na8yZkYUu+FJs79p+aI6cqVUNGzMMDK4uCd49Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=UZyOwWSu; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-59431f57bf6so1419507e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:45:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1762245945; x=1762850745; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RSzAQ24HSl4CevKsG32QBTt1QzsVJYEHj3v/tZDkDc=;
+        b=UZyOwWSuEsOSijGmfAI8bTSU/4cwzUWlkZ7nfSxqy/TinxP+DX1XGIDCX9rNFDe0yf
+         7gTB200T6I5thjd+jwFohUMANmmeUVhE4vMEt2gCBpwau1NlP4mY8t28F2odAC67TCjD
+         dJcsQYJg8tNk1Sy9307bhdAw9gIuFlqw76otg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762245945; x=1762850745;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2RSzAQ24HSl4CevKsG32QBTt1QzsVJYEHj3v/tZDkDc=;
+        b=seC0hyOy/4cEzC5JHPhNvaGBn8/Tosr2EOanHJIbzNJz4iXsVFAJM0pQqu7euWRdoH
+         4tz416+SFLGMXYATatBNYM/DNmKcBdXDNJf8caVO5EM5VavQzkcoCMauLbmyKukhCjkO
+         W1CencETLum3k6c/uR6ZHHGdAt+v7yPBnLiJ/RY0HzvJJHomDd8/N77jVFKI4Xf34Uay
+         4grnOaQYL9xR/WLOZRtPPOq10aCH6c6CYyw2DOQiLUj4M9mhCAveKfIXKTSz7TjaoIe/
+         BQB85RpJG3OZr0tZkZ0hrjoSBWy2M1qDVWuGOquIxHnNYmaUZe1nKy3JGkD5IjnSYT+K
+         LRqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUULo9JoB1zdOZPDg01hPlh4W2MqVCqcrndqcb7Jc87X0hNOOQjcPHNm1sNYGCLbnLWb8iyMB8wNcgzXAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8J4VG7ocANK6rhVfiRHjTsSAiDbbwbreCzgnh5Cn+tBjb6oBX
+	rCaELLplePm28ilC6yrBjp4zdsn9x5+HLLvtudEHgW/7bYJrknPLsxzLM0B2CVYip2Y/m9HvXwv
+	5lVNkGJL7KErHLbHIyxFoAfyOa2Ko8NGB+V4GBjsYjw==
+X-Gm-Gg: ASbGncslF0lpFKMjxW7wqYIlhI8/jF8wO1KQYD0Rsw95MHvkIqecEms6z4yG64Jhlm4
+	7bHs9z2AcKvKDSVtVHV2yWfTpJvN1IpHxl7puzz9pwQl31cdRB9nqa9RSCCWm+uGl4dVQCN0KMU
+	jDrYTCm6WTIP8CxJfnVIJtD4UBn92PZKa4enB7vWxJXuN+i3ECbWwk5AyQCLRgdtZM8hPCAmDqq
+	2ZWfuwwufapJkJUN7AqRAssZPgZW4eluqPhmSBS0+NIjH/rghp0NdU3Um+M
+X-Google-Smtp-Source: AGHT+IFEKvFX/PZTJ29M6W4Mp7l5Z6W+B+zFgA2nSdktSZiKnMxF+DapTY8O+S9s2Q5waGMPdQWLa7/+Hvuajw7T6/I=
+X-Received: by 2002:a05:6512:3e10:b0:594:2a0f:916f with SMTP id
+ 2adb3069b0e04-5942a0f94e8mr1878807e87.43.1762245943565; Tue, 04 Nov 2025
+ 00:45:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
-To: Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
-	<thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
-	<arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, Andreas Larsson
-	<andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, John Stultz
-	<jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, John Paul Adrian
-	Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
-	Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Thomas
-	Bogendoerfer <tsbogend@alpha.franken.de>, Heiko Carstens
-	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Nagarathnam Muthusamy
-	<nagarathnam.muthusamy@oracle.com>, Shannon Nelson <sln@onemain.com>,
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-	Aishwarya.TCV@arm.com
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287
-X-EPHeader: CA
-X-CMS-RootMailID: 20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
-	<20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
-	<aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
-	<CGME20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287@eucas1p2.samsung.com>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-7-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-7-ca449b7b7aa0@kernel.org>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Tue, 4 Nov 2025 09:45:32 +0100
+X-Gm-Features: AWmQ_bmGmSsMLZ3W30EoBy7JM7gw3m9QpQBa7PrIXq1Ns2b_-4I1cV8wPwwRM8s
+Message-ID: <CAJqdLrpCH9wsJUo0F2a9XVTFWav-jE--m+KoV5KF0Dqp2qU9hg@mail.gmail.com>
+Subject: Re: [PATCH 07/22] pidfs: drop struct pidfs_exit_info
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Yu Watanabe <watanabe.yu+github@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
+	Luca Boccassi <luca.boccassi@gmail.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-On 03.11.2025 16:24, Mark Brown wrote:
-> On Tue, Oct 14, 2025 at 08:49:09AM +0200, Thomas Weißschuh wrote:
+Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
+<brauner@kernel.org>:
 >
->> An upcoming change will allocate the datapages dynamically instead of as
->> part of the kernel image. Such pages can only be mapped through
->> 'struct page' and not through PFNs.
-> I'm seeing some boot failures on some arm64 platforms in -next which are
-> bisecting to this patch in -next.  Unfortunately the diagnostics aren't
-> super useful, we seem to just stop making progress in userspace with no
-> obvious output.  One sample log from the FVP is:
+> This is not needed anymore now that we have the new scheme to guarantee
+> all-or-nothing information exposure.
 >
->     https://lava.sirena.org.uk/scheduler/job/2036229#L1268
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+> ---
+>  fs/pidfs.c | 35 +++++++++++------------------------
+>  1 file changed, 11 insertions(+), 24 deletions(-)
 >
-> which isn't super instructive.  Not all platforms seem to be affected,
-> I've seen this on at least the Arm FVP, Orion O6 and Libretech Renegade
-> Elite.  The diagnostics aren't very clear here but given that I'm seeing
-> the same issue and bisect result on multiple platforms it seemed worth
-> mentioning.  Some platforms do seem fine.
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 0fad0c969b7a..a3b80be3b98b 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -39,16 +39,6 @@ void pidfs_get_root(struct path *path)
+>         path_get(path);
+>  }
 >
-> We do have some other serious breakage affecting arm64 in -next which
-> are making it hard to get a clear picture of which platforms are
-> affected, at least the FVP and O6 are unaffected by those other issues
-> (due to using MTE on platforms that don't have it, those platforms do
-> have MTE).
-
-I got almost the same result while bisecting on ARM 32bit Exynos-based 
-boards, so the issue with this patchset is not fully ARM64 specific. For 
-some reasons it also doesn't affect all systems though. It is even 
-worse, because it affected only a subset of boards, but different for 
-each tested commit. The observed failure looks exactly the same:
-
-...
-
-[   10.199852] devtmpfs: mounted
-[   10.205013] Freeing unused kernel image (initmem) memory: 1024K
-[   10.210086] Run /sbin/init as init process
-
-INIT: version 2.88 booting
-
-(no more messages)
-
-The only difference is that bisecting on ARM32bit lead me to the next 
-patch (10d91dac2ea5 ("vdso/datastore: Allocate data pages dynamically") 
-/ [PATCH v4 24/35]).
-
-Then I've tested it on ARM64bit (RaspberrryPi3b+ board) and got the 
-following panic on 6a011a228293 ("vdso/datastore: Map pages through 
-struct page") commit:
-
-VFS: Mounted root (ext4 filesystem) on device 179:3. Trying to move old 
-root to /initrd ... okay devtmpfs: mounted Freeing unused kernel memory: 
-12672K Run /sbin/init as init process Unable to handle kernel paging 
-request at virtual address ffffffffc20b5d48 Mem abort info: ESR = 
-0x0000000096000006 EC = 0x25: DABT (current EL), IL = 32 bits SET = 0, 
-FnV = 0 EA = 0, S1PTW = 0 FSC = 0x06: level 2 translation fault Data 
-abort info: ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000 CM = 0, WnR = 
-0, TnD = 0, TagAccess = 0 GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0 
-swapper pgtable: 4k pages, 48-bit VAs, pgdp=000000000230b000 
-[ffffffffc20b5d48] pgd=0000000000000000, p4d=0000000003618403, 
-pud=0000000003619403, pmd=0000000000000000 Internal error: Oops: 
-0000000096000006 [#1] SMP Modules linked in: CPU: 2 UID: 0 PID: 1 Comm: 
-init Tainted: G W 6.18.0-rc1+ #16136 PREEMPT Tainted: [W]=WARN Hardware 
-name: Raspberry Pi 3 Model B (DT) pstate: 80000005 (Nzcv daif -PAN -UAO 
--TCO -DIT -SSBS BTYPE=--) pc : vvar_fault+0x7c/0x17c lr : 
-vvar_fault+0x24/0x17c ... Call trace: vvar_fault+0x7c/0x17c (P) 
-special_mapping_fault+0x24/0xd0 __do_fault+0x3c/0x238 
-__handle_mm_fault+0xaa0/0x19e0 handle_mm_fault+0xcc/0x384 
-do_page_fault+0x1a0/0x720 do_translation_fault+0x60/0x6c 
-do_mem_abort+0x44/0x94 el0_da+0x54/0x230 el0t_64_sync_handler+0xd0/0xe4 
-el0t_64_sync+0x198/0x19c Code: f2d83fe0 8b010063 d34cfc63 8b031803 
-(f9400461) ---[ end trace 0000000000000000 ]--- Kernel panic - not 
-syncing: Attempted to kill init! exitcode=0x0000000b SMP: stopping 
-secondary CPUs Kernel Offset: disabled CPU features: 
-0x000000,00180000,40004000,0400421b Memory Limit: none ---[ end Kernel 
-panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
-
-Reverting "clocksource: Remove ARCH_CLOCKSOURCE_DATA", "vdso/datastore: 
-Allocate data pages dynamically" and "vdso/datastore: Map pages through 
-struct page" on top of linux-next fixes booting on all tested boards.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+> -/*
+> - * Stashes information that userspace needs to access even after the
+> - * process has been reaped.
+> - */
+> -struct pidfs_exit_info {
+> -       __u64 cgroupid;
+> -       __s32 exit_code;
+> -       __u32 coredump_mask;
+> -};
+> -
+>  enum pidfs_attr_mask_bits {
+>         PIDFS_ATTR_BIT_EXIT     = 0,
+>  };
+> @@ -56,8 +46,11 @@ enum pidfs_attr_mask_bits {
+>  struct pidfs_attr {
+>         unsigned long attr_mask;
+>         struct simple_xattrs *xattrs;
+> -       struct pidfs_exit_info __pei;
+> -       struct pidfs_exit_info *exit_info;
+> +       struct /* exit info */ {
+> +               __u64 cgroupid;
+> +               __s32 exit_code;
+> +       };
+> +       __u32 coredump_mask;
+>  };
+>
+>  static struct rb_root pidfs_ino_tree = RB_ROOT;
+> @@ -313,7 +306,6 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>         struct pid *pid = pidfd_pid(file);
+>         size_t usize = _IOC_SIZE(cmd);
+>         struct pidfd_info kinfo = {};
+> -       struct pidfs_exit_info *exit_info;
+>         struct user_namespace *user_ns;
+>         struct pidfs_attr *attr;
+>         const struct cred *c;
+> @@ -342,15 +334,15 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>                         smp_rmb();
+>                         kinfo.mask |= PIDFD_INFO_EXIT;
+>  #ifdef CONFIG_CGROUPS
+> -                       kinfo.cgroupid = exit_info->cgroupid;
+> +                       kinfo.cgroupid = attr->cgroupid;
+>                         kinfo.mask |= PIDFD_INFO_CGROUPID;
+>  #endif
+> -                       kinfo.exit_code = exit_info->exit_code;
+> +                       kinfo.exit_code = attr->exit_code;
+>                 }
+>         }
+>
+>         if (mask & PIDFD_INFO_COREDUMP) {
+> -               kinfo.coredump_mask = READ_ONCE(attr->__pei.coredump_mask);
+> +               kinfo.coredump_mask = READ_ONCE(attr->coredump_mask);
+>                 if (kinfo.coredump_mask)
+>                         kinfo.mask |= PIDFD_INFO_COREDUMP;
+>         }
+> @@ -629,7 +621,6 @@ void pidfs_exit(struct task_struct *tsk)
+>  {
+>         struct pid *pid = task_pid(tsk);
+>         struct pidfs_attr *attr;
+> -       struct pidfs_exit_info *exit_info;
+>  #ifdef CONFIG_CGROUPS
+>         struct cgroup *cgrp;
+>  #endif
+> @@ -657,15 +648,13 @@ void pidfs_exit(struct task_struct *tsk)
+>          * is put
+>          */
+>
+> -       exit_info = &attr->__pei;
+> -
+>  #ifdef CONFIG_CGROUPS
+>         rcu_read_lock();
+>         cgrp = task_dfl_cgroup(tsk);
+> -       exit_info->cgroupid = cgroup_id(cgrp);
+> +       attr->cgroupid = cgroup_id(cgrp);
+>         rcu_read_unlock();
+>  #endif
+> -       exit_info->exit_code = tsk->exit_code;
+> +       attr->exit_code = tsk->exit_code;
+>
+>         /* Ensure that PIDFD_GET_INFO sees either all or nothing. */
+>         smp_wmb();
+> @@ -676,7 +665,6 @@ void pidfs_exit(struct task_struct *tsk)
+>  void pidfs_coredump(const struct coredump_params *cprm)
+>  {
+>         struct pid *pid = cprm->pid;
+> -       struct pidfs_exit_info *exit_info;
+>         struct pidfs_attr *attr;
+>         __u32 coredump_mask = 0;
+>
+> @@ -685,14 +673,13 @@ void pidfs_coredump(const struct coredump_params *cprm)
+>         VFS_WARN_ON_ONCE(!attr);
+>         VFS_WARN_ON_ONCE(attr == PIDFS_PID_DEAD);
+>
+> -       exit_info = &attr->__pei;
+>         /* Note how we were coredumped. */
+>         coredump_mask = pidfs_coredump_mask(cprm->mm_flags);
+>         /* Note that we actually did coredump. */
+>         coredump_mask |= PIDFD_COREDUMPED;
+>         /* If coredumping is set to skip we should never end up here. */
+>         VFS_WARN_ON_ONCE(coredump_mask & PIDFD_COREDUMP_SKIP);
+> -       smp_store_release(&exit_info->coredump_mask, coredump_mask);
+> +       smp_store_release(&attr->coredump_mask, coredump_mask);
+>  }
+>  #endif
+>
+>
+> --
+> 2.47.3
+>
 
