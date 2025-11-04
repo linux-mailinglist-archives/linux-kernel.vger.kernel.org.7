@@ -1,209 +1,438 @@
-Return-Path: <linux-kernel+bounces-884546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8579EC30666
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:02:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1331C30696
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDFC04EEF50
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755D13BC9F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1B4314B68;
-	Tue,  4 Nov 2025 10:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91F92D3A89;
+	Tue,  4 Nov 2025 10:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gfq48Rav"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MIhjvN2B";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SyQqtGJ3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA462D594A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA627E04C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762250454; cv=none; b=KMwRUuGCN4oPGVN19srJkdHbcwai01FHuFSJEAXAh0300bGagfUyiv6ycQ3ZAB1DdjLZePo3PRYIJM60mwoyZhMsqZ3M5J93AQtxka2OYpY5xVdzr/T/NtxgDjcyiC+D8lliGzig6iWJ4/in35D/g+ZZmq8d7EaWoQJ2423auPo=
+	t=1762250492; cv=none; b=bKnxaGtU8/pbqfo2E5L5aNrZgcQ5JN6DFEPttJU87ZeX/gXF+OYAUz7g/8IX6HZOiLRLxyQZOlwHwSCgJSnW33/DHquaoI6s8UqIDHWN6w5pSzcw7Zv21dFOFFPiREafC4D0NtZZpZ5XwjNcyVZ72vEMe+nzdZDd8E3sRaJOtxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762250454; c=relaxed/simple;
-	bh=1lM896dluTThHb5Dr0rgqp7Q2lq1nzVGRs7ZWDUKcWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FF+x6fdOUq+IQ0BbsiBHmGo0EqQJnepq5qegjwD753cndAKmFV8Y8A9MbkaYTtSHhdn1Fh5ldsM0ch0fZNGj2L6qBQYio465chiBHFfC2/omo3mvKSNLNaSfOHFIvHFSdadAfv3P7qeXHXnYHyMEC05YhA6ixl5OUh94/6Mmr88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gfq48Rav; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso43980575e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:00:50 -0800 (PST)
+	s=arc-20240116; t=1762250492; c=relaxed/simple;
+	bh=mXWNv40modumig5JKINFtQaRERKglcatw6zCZg+27iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XFF2UuhFq9aWQdsLj4s8sr7bBSdcI2moZSfPKMPE2eJTrFFmZ7lvbJcZ/rpgQmr2upxAoNworpUZWJwJr0ma0JRVFMAKKmfAzuGonO9GvbCtdEXHtLb77vyvEYDArzBk4KO2h+ftG2kn5jyq/NsiHjC9dA5WnniZoG/e/c87wGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MIhjvN2B; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SyQqtGJ3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A48gaQK1458842
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 10:01:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DJzQWzOR6O3Ekp0j4f2FOsokTUfCPyDM3FAwqjwJS/0=; b=MIhjvN2B6aQE1TAc
+	9Aw4C2kvNcPA4mYXG8x0XRwMlW0SWletdkMIfnjqzWig6nDi/NPxvmizjl1Fs+7S
+	G190i7EDB9bF1XzaB9MyKJYCKbwTmxrI0d0T/dYQQXtf3IexDgUU/U2Bhhjl5S4K
+	u48AaXpsvauM+k0jf5N6VmaG1c1CYkMMxmnaQiF2sBnAC25xoPbN74m51N4bN27Y
+	Za3agOpJAWN8z1UEsOEtuZn0oJS+7v0FwTfA1h8KkOyM5aS0bmyAaXUb5u8f8/i2
+	1WwhMiQv9PTIp5ZaRpiS0nfhz5Gtp7daazf4W70VRaJCOKuR5/ivFCop/5QKXLr/
+	C2Oaxw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70geag82-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:01:30 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b5edecdf94eso11164813a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:01:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762250449; x=1762855249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JlVwKwolM5sjAhAjoNFJjS/Et/bs8gMf2Li6ilbi0sk=;
-        b=gfq48RavXuchewHWyMlPJP39d3hGq3VUFG2QBiGGbvZff+Bhl+Y1Xa0zQwXi9Idbgc
-         zk8vfk75Q7BvyqqZngorV1DkKBkdLytg5qIBqZkAVrIuYO/LrIqlR2MqLIzkfwncWfRN
-         yl8owSjvJ475VySXpIfiPyxZkeJMPpy3WKgLP6rebl947NH9wvkUoVAGIbWTWNTtiM18
-         GsAgXlpQ38URe9cDgDOFKmcEzeLLVJD2++A3azgy+0ZnZQ96aVmgZfGOnhdErhuHe6JE
-         ZHtttuc8sIpfk9VObvzG4HwqBcbGv1UDHBz/eBk4eXgUY2ExUr3obzv6IcESH3mYL0Yq
-         tmbQ==
+        d=oss.qualcomm.com; s=google; t=1762250489; x=1762855289; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DJzQWzOR6O3Ekp0j4f2FOsokTUfCPyDM3FAwqjwJS/0=;
+        b=SyQqtGJ3ZnZYJDj839gEZS+IOr3ZBtqspt8+nQMmutccENJSuoDGS6tE3KQeTHrPvz
+         uS/K1mrcyGwsRNKb8NPHdCiUsz3WmN/QsiptD2NWCjeXn8gqVnSmWXVjN2AK9okqlo+A
+         V8PXAh+fWcCu07HHvcwji5tAXREuTmQIfeJgh69GcX0B4pxFjqsoy0CcyBRBuMSKP2c9
+         krArArr2CenrGC/iXeXTZW3mPGjg6BPMgRamMJFzZCZq/Idn4ZJniSzqIZVxOJlooft3
+         IE7XBfgK6zY6Vqy0AbLtsBHxKZGCg1WflPJdyZkZ2MpYlusqlv0bB8B+1gBkz+sGSe4r
+         6I/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762250449; x=1762855249;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JlVwKwolM5sjAhAjoNFJjS/Et/bs8gMf2Li6ilbi0sk=;
-        b=YLMx9Pb/w+X3fBhLuubNJHkxia8z18XzbJVEP/MKWKfLRf1+MW88izpa28/rW1ZxYo
-         U47tfyAMjrTUJcHi0xn/4WtwtvYoFlKx3OU5+Bk8UV/hDkqeORYK8OhJQsya1j7mQzeL
-         hLUf81el0uPH1Ue4xKfVz75MDNlo1cCddTZfOXm3cvOgeHZeUTE6u7yoCTpaLke+/y8I
-         a9ykgwNR920zj0TvO0vZxigvtQnI+BxJ9LAjS8yMnHuIwCIz6SJ2mDwmQYok2nzEUINE
-         88UKVXABZlz4w2CJMV438rX1NlV6Ykcn/ReSx/drZAQ/3Rw7osW+Yronhw/w0l6rN6yO
-         IPlA==
-X-Gm-Message-State: AOJu0YxrPIuwGnEe6fziGaq0N+ys7aOLbhxx2V+rrFu5epZwyv85B/Zx
-	u/5bWeTrMIgTSkttgRhmGADTX6/a+VjLBCq1dm28BQcRr/i7HPUEJbhXZDOpyADpS8ABc9VV0NN
-	M0NYd
-X-Gm-Gg: ASbGnculx1LdLfDMz1vZUl/Ma/HT+4JklL4FDWZpBjHdcc/VDC/+BrqLASEYlIDfoEz
-	VhcNOs899o+XBsdpcXKEm+EN5V0C7xpbDWICgrjf72zzVyXEhW+YBijuh4ghwccqLdIaIglK7yt
-	bN74FRowhflLDET1wkt1G64TIirtm0JsuxB2pG2sior+UjUxZD1Xy69lVRijL/to3LGozPbyOVT
-	VF+AsuGdxJ2Vcz5YU93PU3C8mSZVrtHp7CKkpRfItl6oTtPE5/VlzXNrCBjGycYQYZDAc31FDGv
-	oU/Tj2fPUt675xTHLaHLpcex+RwB5vM+bsehBStyr4aoHIM0Rgu4ETr1G1uz1cLoApBT5J4gOWK
-	8SWIlsSebuZJesqWsVfbyqRqaHp2thD7xbT3vKnaD1A+0XalgNrbtBG27BghJkz5Ik0fQOkeJQg
-	NE77oFmT1FaOgEtw+xxAqTmAOD
-X-Google-Smtp-Source: AGHT+IE35Zr7TnYBf7Tgb5joKNHpDdpqyjXIULZRst3eRHtFoQa+qKm5wqipI7KhNj5WLe8NJxZfFQ==
-X-Received: by 2002:a05:600c:1f91:b0:471:13fa:1b84 with SMTP id 5b1f17b1804b1-4773082e1e3mr138207635e9.12.1762250448895;
-        Tue, 04 Nov 2025 02:00:48 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755942772sm14325865e9.5.2025.11.04.02.00.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 02:00:48 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Karas <krzysztof.karas@intel.com>
-Subject: [PATCH v3 3/3] drm/i915: add WQ_PERCPU to alloc_workqueue users
-Date: Tue,  4 Nov 2025 11:00:32 +0100
-Message-ID: <20251104100032.61525-4-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251104100032.61525-1-marco.crivellari@suse.com>
-References: <20251104100032.61525-1-marco.crivellari@suse.com>
+        d=1e100.net; s=20230601; t=1762250489; x=1762855289;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJzQWzOR6O3Ekp0j4f2FOsokTUfCPyDM3FAwqjwJS/0=;
+        b=DzRumdVZMTuSsWAEGu1cjGC4uCjw92ZXQDjBXTik4LmTTmGuPthujyDdSTSbqWRwn6
+         ujPyGmUzWY9Tw/0RWN7jaR58Ylttr1BJwnYZnxcC+5a1a1Ih0hSLdnhkR6s29Htpjx0x
+         WCpUOmhsqhGtdh8eRuulIbGgqsOrHGA10gD6qBdkPB4sPS/9tG3cJEfEXeX3FBkm/mG0
+         np7jqtEG6R1uWOGbd5JfijG8yeH0MPKCBSjOV1TZkL5JjZSYbFPA/s+++FlpIb3LAe7k
+         EVfTW2KlW91Eb0idsKVN9ftok8brP9BESMFHPKkYUeDmtOpIMas4MPBz8MrEtvUehajx
+         opDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXA/NWBeGa8CpSeYYV+0FP44u8SgyNVcHhlXg5pf6Bl9Sn6n/xp+eXMwAiVqLITttOxjLZULSwH3i/4VeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQAB2eUD5fQKNRaijZKcIbhG2CrKcLZz9nA0rBwVuD8w7RFgKu
+	aTC7HVrDfA/Bx2jZuXDtien7hdfSf/8OAjukCtrWkIQThho9ZelRKqOEUEa4g9tiB4uWHO9z5QL
+	L1t1ctROObJOJZ60WFrVqCsI4bLxPeDOfeyEHJr0YEmS4LX0o6RvXct07G3nc1NLrFxM=
+X-Gm-Gg: ASbGncuiWOF91rFyI1000HUwMiY9Yz1Bi9qSVrETJJjWyGE80MbwelCQ50PnyJnUDdD
+	rAndp/ajrh7zMaAH3MPCJokz0snIVDWWknUT8F3oPiq9wRNHp2vdf9Yrj+VVZBZZe4Jbq0OJpc0
+	CUUn38U6wvS537cNZKMaI1jsJklLjXflrNITS5pAQb5RssdOIr7YeOPPdR6J96fsefwL/kf2pkJ
+	9NXKUlT++obSv2xsWcza1MbN2Xbwjs1FUC4kQrAJDSD6PafowKnEHoA/3CRhb6wQYLhpkI+Eswm
+	72Ij2aBeLHc1BoSNqUkN8eLtdzv3ARnYBsZQaiu/7Nl5J+b25lXRIM/aAVQwDbaC8dc3jJR6cQ8
+	IbfDTr9BadCtNLLnaJI3P+MRt9IeI/3c=
+X-Received: by 2002:a05:6a21:3285:b0:33a:f317:58ac with SMTP id adf61e73a8af0-348cd220befmr21612587637.59.1762250489174;
+        Tue, 04 Nov 2025 02:01:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHB4RE2v5o9PQxrRjGLqqNiGcngkai+DRbzDVobX/iG4IY3nTqNwUmoAcJeexpEu8oStStt+A==
+X-Received: by 2002:a05:6a21:3285:b0:33a:f317:58ac with SMTP id adf61e73a8af0-348cd220befmr21612524637.59.1762250488510;
+        Tue, 04 Nov 2025 02:01:28 -0800 (PST)
+Received: from [10.204.86.118] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f87a710asm1849643a12.30.2025.11.04.02.01.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 02:01:27 -0800 (PST)
+Message-ID: <d20b8fac-9676-41e8-a32d-006af74f4c44@oss.qualcomm.com>
+Date: Tue, 4 Nov 2025 15:31:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/20] arm64: dts: qcom: kaanapali: Add remoteprocs for
+ Kaanapali SoC
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Alexey Klimov <alexey.klimov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-7-3fdbc4b9e1b1@oss.qualcomm.com>
+ <DD6B62STZOTG.L12V3DGNDZUZ@linaro.org>
+ <bace46c5-e912-4003-812b-c654673be43e@oss.qualcomm.com>
+Content-Language: en-US
+From: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+In-Reply-To: <bace46c5-e912-4003-812b-c654673be43e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: u1fFjUj3mRgpdeX-zpTOarpN0zJM9Ifi
+X-Authority-Analysis: v=2.4 cv=bqBBxUai c=1 sm=1 tr=0 ts=6909cefa cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=bsKYn6jhUO5kCu_E1qoA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA4MSBTYWx0ZWRfX0n012VFlJn+0
+ oSYXHoBJ+iy+0FpAN2y6J/gvze1Ri4Qe61coLVyA3bKlGxyTpMpur9K5DQ7QNyp9yHHDxSqrKgr
+ 8rL1oD9J75AG5Hfo9tRak0aPpd5YaiB351/QWaYkhrl4dECVrmaItVfp6oHos8wzpqH+k3YIKnP
+ 7/A+yBL6IK4aFWW/so0SovrEZo/ocZ+/0IzhqNjrUG1j2HPuGzyqwA03uV/h2HhVsfIeHy4UI1N
+ YLopy5vNVkNGlmEL76Y0BjL/zBgjsD51nWm1KBMKj5891Lwjdrq/i3ZqxOHhPHATTomKH8BtyNZ
+ pSqnWBMfpZz1B5/F7sgL8fCRsaQmsh8vDxOkZcd2F6SGcsXQqMLaCOTzeA0fyog1XqsAKy+aXbq
+ 4O+q6UlqT/l1n9mpe4Xn4oneR9nmmw==
+X-Proofpoint-GUID: u1fFjUj3mRgpdeX-zpTOarpN0zJM9Ifi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511040081
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+On 11/4/2025 2:29 PM, Jingyi Wang wrote:
+> 
+> 
+> On 10/1/2025 1:24 AM, Alexey Klimov wrote:
+>> On Thu Sep 25, 2025 at 1:17 AM BST, Jingyi Wang wrote:
+>>> Add remoteproc PAS loader for ADSP, CDSP, MPSS and SoCCP with
+>>> its SMP2P and fastrpc nodes.
+>>>
+>>> Written with help from Kumari Pallavi(added fastrpc).
+>>
+>> Co-developed-by tag then maybe?
+>>
+>> Also I don't see this name in email addresses.
+>>
+> 
+> Hi Alexey,
+> 
+> We got review comments to merge dt changes in one patch, we are still discussing on
+> how to organize next version, I think we can add the Co-developed-by tag if remoteproc
+> is sent as a single patch in next version, "Written with" description will be used
+> to avoid SOB chain too long.
+> 
+> Thanks,
+> Jingyi
+> 
+>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/kaanapali.dtsi | 484 ++++++++++++++++++++++++++++++++
+>>>   1 file changed, 484 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/kaanapali.dtsi b/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+>>> index 08ab267bf9a7..c3b38fd851c5 100644
+>>> --- a/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+>>> @@ -438,6 +438,121 @@ rmtfs_mem: rmtfs@d7c00000 {
+>>>   		};
+>>>   	};
+>>
+>> [...]
+>>
+>>> +		remoteproc_adsp: remoteproc@6800000 {
+>>> +			compatible = "qcom,kaanapali-adsp-pas", "qcom,sm8550-adsp-pas";
+>>> +			reg = <0x0 0x06800000 0x0 0x10000>;
+>>> +
+>>> +			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
+>>> +					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
+>>> +					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
+>>> +					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
+>>> +					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
+>>> +					      <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
+>>> +			interrupt-names = "wdog",
+>>> +					  "fatal",
+>>> +					  "ready",
+>>> +					  "handover",
+>>> +					  "stop-ack",
+>>> +					  "shutdown-ack";
+>>> +
+>>> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>>> +			clock-names = "xo";
+>>> +
+>>> +			interconnects = <&lpass_lpicx_noc MASTER_LPASS_PROC QCOM_ICC_TAG_ALWAYS
+>>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+>>> +
+>>> +			power-domains = <&rpmhpd RPMHPD_LCX>,
+>>> +					<&rpmhpd RPMHPD_LMX>;
+>>> +			power-domain-names = "lcx",
+>>> +					     "lmx";
+>>> +
+>>> +			memory-region = <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
+>>> +
+>>> +			qcom,qmp = <&aoss_qmp>;
+>>> +
+>>> +			qcom,smem-states = <&smp2p_adsp_out 0>;
+>>> +			qcom,smem-state-names = "stop";
+>>> +
+>>> +			status = "disabled";
+>>> +
+>>> +			remoteproc_adsp_glink: glink-edge {
+>>> +				interrupts-extended = <&ipcc IPCC_MPROC_LPASS
+>>> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
+>>> +							     IRQ_TYPE_EDGE_RISING>;
+>>> +
+>>> +				mboxes = <&ipcc IPCC_MPROC_LPASS
+>>> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
+>>> +
+>>> +				qcom,remote-pid = <2>;
+>>> +
+>>> +				label = "lpass";
+>>> +
+>>> +				fastrpc {
+>>> +					compatible = "qcom,fastrpc";
+>>> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+>>> +					label = "adsp";
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +
+>>> +					compute-cb@3 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <3>;
+>>> +
+>>> +						iommus = <&apps_smmu 0x1003 0x80>,
+>>> +							 <&apps_smmu 0x1043 0x20>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@4 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <4>;
+>>> +
+>>> +						iommus = <&apps_smmu 0x1004 0x80>,
+>>> +							 <&apps_smmu 0x1044 0x20>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@5 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <5>;
+>>> +
+>>> +						iommus = <&apps_smmu 0x1005 0x80>,
+>>> +							 <&apps_smmu 0x1045 0x20>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@6 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <6>;
+>>> +
+>>> +						iommus = <&apps_smmu 0x1006 0x80>,
+>>> +							 <&apps_smmu 0x1046 0x20>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@7 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <7>;
+>>> +
+>>> +						iommus = <&apps_smmu 0x1007 0x40>,
+>>> +							 <&apps_smmu 0x1067 0x0>,
+>>> +							 <&apps_smmu 0x1087 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +				};
+>>> +			};
+>>> +		};
+>>
+>> Fastrpc nodes here. Was this tested? If yes, then how?
+>> Or was it just copied from somewhere from downstream?
+>>
+>> The same questions basically go for cdsp fastrpc too.
+>>
+> 
+> +Kumari, could you please comment on this?
+> 
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+I verified the CDSP and ADSP nodes by running the tests available at 
+https://github.com/qualcomm/fastrpc/tree/development/test. Upon 
+successful execution, the message "All tests completed successfully" is 
+displayed.
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+>>
+>> [..]
+>>
+>>> +				label = "cdsp";
+>>> +
+>>> +				fastrpc {
+>>> +					compatible = "qcom,fastrpc";
+>>> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+>>> +					label = "cdsp";
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +
+>>> +					compute-cb@1 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <1>;
+>>> +						iommus = <&apps_smmu 0x19c1 0x0>,
+>>> +							 <&apps_smmu 0x1961 0x0>,
+>>> +							 <&apps_smmu 0x0c21 0x0>,
+>>> +							 <&apps_smmu 0x0c01 0x40>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@2 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <2>;
+>>> +						iommus = <&apps_smmu 0x1962 0x0>,
+>>> +							 <&apps_smmu 0x0c02 0x20>,
+>>> +							 <&apps_smmu 0x0c42 0x0>,
+>>> +							 <&apps_smmu 0x19c2 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@3 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <3>;
+>>> +						iommus = <&apps_smmu 0x1963 0x0>,
+>>> +							 <&apps_smmu 0x0c23 0x0>,
+>>> +							 <&apps_smmu 0x0c03 0x40>,
+>>> +							 <&apps_smmu 0x19c3 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@4 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <4>;
+>>> +						iommus = <&apps_smmu 0x1964 0x0>,
+>>> +							 <&apps_smmu 0x0c44 0x0>,
+>>> +							 <&apps_smmu 0x0c04 0x20>,
+>>> +							 <&apps_smmu 0x19c4 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@5 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <5>;
+>>> +						iommus = <&apps_smmu 0x1965 0x0>,
+>>> +							 <&apps_smmu 0x0c45 0x0>,
+>>> +							 <&apps_smmu 0x0c05 0x20>,
+>>> +							 <&apps_smmu 0x19c5 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@6 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <6>;
+>>> +						iommus = <&apps_smmu 0x1966 0x0>,
+>>> +							 <&apps_smmu 0x0c06 0x20>,
+>>> +							 <&apps_smmu 0x0c46 0x0>,
+>>> +							 <&apps_smmu 0x19c6 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@7 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <7>;
+>>> +						iommus = <&apps_smmu 0x1967 0x0>,
+>>> +							 <&apps_smmu 0x0c27 0x0>,
+>>> +							 <&apps_smmu 0x0c07 0x40>,
+>>> +							 <&apps_smmu 0x19c7 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@8 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <8>;
+>>> +						iommus = <&apps_smmu 0x1968 0x0>,
+>>> +							 <&apps_smmu 0x0c08 0x20>,
+>>> +							 <&apps_smmu 0x0c48 0x0>,
+>>> +							 <&apps_smmu 0x19c8 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					/* note: secure cb9 in downstream */
+>>> +
+>>> +					compute-cb@12 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <12>;
+>>> +						iommus = <&apps_smmu 0x196c 0x0>,
+>>> +							 <&apps_smmu 0x0c2c 0x00>,
+>>> +							 <&apps_smmu 0x0c0c 0x40>,
+>>> +							 <&apps_smmu 0x19cc 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +
+>>> +					compute-cb@13 {
+>>> +						compatible = "qcom,fastrpc-compute-cb";
+>>> +						reg = <13>;
+>>> +						iommus = <&apps_smmu 0x196d 0x0>,
+>>> +							 <&apps_smmu 0x0c0d 0x40>,
+>>> +							 <&apps_smmu 0x0c2e 0x0>,
+>>> +							 <&apps_smmu 0x0c2d 0x0>,
+>>> +							 <&apps_smmu 0x19cd 0x0>;
+>>> +						dma-coherent;
+>>> +					};
+>>> +				};
+>>> +			};
+>>> +		};
+>>> +
+>>
+>> Best regards,
+>> Alexey
+>>
+> 
 
-This patch continues the effort to refactor worqueue APIs, which has
-begun with the change introducing new workqueues:
-
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/gpu/drm/i915/display/intel_display_driver.c | 4 ++--
- drivers/gpu/drm/i915/i915_driver.c                  | 3 ++-
- drivers/gpu/drm/i915/selftests/i915_sw_fence.c      | 2 +-
- drivers/gpu/drm/i915/selftests/mock_gem_device.c    | 2 +-
- 4 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_display_driver.c b/drivers/gpu/drm/i915/display/intel_display_driver.c
-index cf1c14412abe..e12f9126b155 100644
---- a/drivers/gpu/drm/i915/display/intel_display_driver.c
-+++ b/drivers/gpu/drm/i915/display/intel_display_driver.c
-@@ -257,13 +257,13 @@ int intel_display_driver_probe_noirq(struct intel_display *display)
- 		goto cleanup_wq_modeset;
- 	}
- 
--	display->wq.cleanup = alloc_workqueue("i915_cleanup", WQ_HIGHPRI, 0);
-+	display->wq.cleanup = alloc_workqueue("i915_cleanup", WQ_HIGHPRI | WQ_PERCPU, 0);
- 	if (!display->wq.cleanup) {
- 		ret = -ENOMEM;
- 		goto cleanup_wq_flip;
- 	}
- 
--	display->wq.unordered = alloc_workqueue("display_unordered", 0, 0);
-+	display->wq.unordered = alloc_workqueue("display_unordered", WQ_PERCPU, 0);
- 	if (!display->wq.unordered) {
- 		ret = -ENOMEM;
- 		goto cleanup_wq_cleanup;
-diff --git a/drivers/gpu/drm/i915/i915_driver.c b/drivers/gpu/drm/i915/i915_driver.c
-index 0f33cdc11736..380cb20a47c6 100644
---- a/drivers/gpu/drm/i915/i915_driver.c
-+++ b/drivers/gpu/drm/i915/i915_driver.c
-@@ -143,7 +143,8 @@ static int i915_workqueues_init(struct drm_i915_private *dev_priv)
- 	 * to be scheduled on the system_percpu_wq before moving to a driver
- 	 * instance due deprecation of flush_scheduled_work().
- 	 */
--	dev_priv->unordered_wq = alloc_workqueue("i915-unordered", 0, 0);
-+	dev_priv->unordered_wq = alloc_workqueue("i915-unordered", WQ_PERCPU,
-+						 0);
- 	if (dev_priv->unordered_wq == NULL)
- 		goto out_free_wq;
- 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_sw_fence.c b/drivers/gpu/drm/i915/selftests/i915_sw_fence.c
-index 8f5ce71fa453..b81d65c77458 100644
---- a/drivers/gpu/drm/i915/selftests/i915_sw_fence.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_sw_fence.c
-@@ -526,7 +526,7 @@ static int test_ipc(void *arg)
- 	struct workqueue_struct *wq;
- 	int ret = 0;
- 
--	wq = alloc_workqueue("i1915-selftest", 0, 0);
-+	wq = alloc_workqueue("i1915-selftest", WQ_PERCPU, 0);
- 	if (wq == NULL)
- 		return -ENOMEM;
- 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-index fb8751bd5df0..684e6ca0f960 100644
---- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-@@ -221,7 +221,7 @@ struct drm_i915_private *mock_gem_device(void)
- 	if (!i915->wq)
- 		goto err_drv;
- 
--	i915->unordered_wq = alloc_workqueue("mock-unordered", 0, 0);
-+	i915->unordered_wq = alloc_workqueue("mock-unordered", WQ_PERCPU, 0);
- 	if (!i915->unordered_wq)
- 		goto err_wq;
- 
--- 
-2.51.1
+Thanks,
+Pallavi
 
 
