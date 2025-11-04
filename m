@@ -1,184 +1,235 @@
-Return-Path: <linux-kernel+bounces-884787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94190C31256
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:11:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D4AC312B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7826F423FFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4974275D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955CC2F3609;
-	Tue,  4 Nov 2025 13:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2B32EDD60;
+	Tue,  4 Nov 2025 13:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="asFRzB4l";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FeyZzZbe"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwrtHff4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E232EFD92
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5462F7446;
+	Tue,  4 Nov 2025 13:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762261770; cv=none; b=NWpe/Ba6uO1OpHODkuyBkGkdz6MdOCxbWFog1pMuCOU3ciGwN/nnOrB7PpEaZDr+WGGqZaQqPEhid5H3hq6FQt+W8oYCQqnn4bmKmfyghdZktsRxCAp6VfZewu3gsixgQO7vvmJy/otbx3OIx/dyhcpUuaDa2CM4OI5Yu96FP+Q=
+	t=1762261810; cv=none; b=eJXr6w2f9XSdbpSAgzFtK1f/rWy4Ybyp/M1pAheJLk7YV7ch2fI/LGQCoRJMiOnrZ871cIOubSd4uxRGsXoQXeDISPHNTFV44yU8rBIy1s95008YhJYXsY8mjGtAovMd2pwkgCDTUEVO0uUIZHNJS4x64c150SjUNK8HApQy3ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762261770; c=relaxed/simple;
-	bh=hBXdul3tZxW+UflTZF7a9/uEf7GXrBBqnjbNYy4v6ZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k20oL6RZ7svhlP9+WQn4XbgPwmAApoo5tATbIRc1MTZFfGQjLKzuQ1nn6WEe15Lz8DAjrTJuo7/Hf4EIHpv3Psrg3sqv55f8DZIrQ+0zm+C+n41TofFnihqO90STGLRR2sxBDeWimuVCmMp5jTFc0XkUmPbhT5JkOvz40eq2CJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=asFRzB4l; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FeyZzZbe; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4CgI8X1912539
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 13:09:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=kS50UD6Sue9
-	tYO27zvEv2Eatvnw8kndPVKBjjqjKB6A=; b=asFRzB4lqBCczjjerNma5etna4p
-	nT/jwVcPqjWcASQ5+qEU/PF4tkVh1m7yNcovCsqUzcozbfULAWhgXR3Eu+w/oFs8
-	VwzS3pVyphSv1vVkC8vDwfphV4jQM/EnbmBtt29PP7L3bXenOLGCtgdHpsLh1K7A
-	1fD1gF2W0P88Yofxet0mtgeWL4pAfzttPtDUuUbV1CqpfD+CAxw+/8QQo+Vjylag
-	ropRyyPqHMn+BJ24RwwQF6nzW5y8NhuyniPv69bDDw/GFIqHN8P3xgd95YGtKPkY
-	4R4bDsjM2Ehcl5ux+mniYMoKZLkklsw+I0jG0ybhxe/FXQBLdEB+eY38qwg==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70exjymv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 13:09:28 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b471737e673so9033366a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:09:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762261768; x=1762866568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kS50UD6Sue9tYO27zvEv2Eatvnw8kndPVKBjjqjKB6A=;
-        b=FeyZzZbeX075KiUW0Ca8fMW3u7jcm+MW6UvlQsfb8jbi5kZG5vrG7SnM3zvFyIMIct
-         sHV0KQRNcUu76N8RkdWLc/LDB0D6Z8Rvv7SZYLh+5PH9I23ZLGLQSZgjDR/wToUFvIkO
-         f0GHT0QsExjqh7r1/9mrHcPOTOZFH+LqfP9kAsIOF57eUGaCVzV1g71NqXpWAVU+r5sh
-         4RYo9aznx/rSYcMqCZp7Fkv77j3nyGJ2GiMCYNhD9l8JYjKk4AxgdJI06Tmus2IFwBJo
-         XgO+QIyTJPTPDKttO4gyFkoSFsmVZLQXAh7S5MkruDcl02nxxINSm5txrnrypYWThxlq
-         ZMwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762261768; x=1762866568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kS50UD6Sue9tYO27zvEv2Eatvnw8kndPVKBjjqjKB6A=;
-        b=BSXdh7UO4LiPKjhgp+ZvGcUFtuqQ+iR1G4uGvdNiizzLWb41xjO2I6fIUCuiY3lCNE
-         l5+pzeKCFucyG9TMPCGKZQN0bqrHbdipivUTUNXYEUPe5WtfQJn7udltWz/bm7L2D4TY
-         AW8IoZJnoV/rqOQQRtMiSbXMmeOJsnydMIzalh/m+26PA9dtG8/U4+LtZkKS8TxVPJG+
-         j/lfJr4RlTDDIfgX2flLJc7wttAsd/75NyU+pRxNimD0b64pk57sKaun48owHBsU7syD
-         sqNovBza4DQn0a5ZUwxCsIUoMop9rMTKVBTJN9z7pVpwU5e6Rw92iyl6e3h0FHQpmsSD
-         7Q1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvJCY7E+Lwagspc5OzIZVa8S/PWIOT3vdN+WtCtcH/KLq6UIjRDbV0t7b3IxRcgDNxqs5M9zT//F+QqhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/0Q5G8DTC4jx+dN+mdPjeHxAeIoTZ0io6yijPB6HsOLFjKuGU
-	TJcrkPCoSiLoLx+vgzs1e43YEkpAd/wNDKKcOfFvpodSZCRJAcnRaGwmQS3YmR9fc0AjA/Bu6BB
-	mo1IWpoFbOFvF/NLdBfDUJOMmfJunIbANndW9pCtmQs/dxOZELD2Srejfpq8hm0CMleo=
-X-Gm-Gg: ASbGncuXLcfhynbY5iqZUvKJLNq3OhuDzArEfa6nNXDLsb+NPy5hHAOCQ7xuZi+gPRd
-	vy+7HOsn2hNiwladyyhFQgb1OGIy9iMKYAz+5V6DBsSJS4xhhmshqqJ3dZRVXMX+nTGGc3vC4O8
-	hxFZJiWBhoVIaQgkbz4uiqyNvBGCiqY4HGEdV7GVBYMoqiV+Fbvu3S1JHwz+WAm89CnLLyPSU7t
-	rXmIcnaGN2+UZzLZT0xZeChprs/wDrly9K8Nw5M1/1u2DPoc9AHXFAS6eGGQ88NYN4KQBsz/S0W
-	EWBs9HzFEK7JNMFfvaqYhR/BOWXOr2w9ZyfXZMvVbueeySdRDZGxi0E2j34Vg1rNVDZ0Age9bsw
-	Ch0FxhTIaXKGZsT5GRYz84Kv6WA==
-X-Received: by 2002:a17:902:ce01:b0:295:6c9d:1905 with SMTP id d9443c01a7336-2956c9d1b4dmr136218775ad.18.1762261767301;
-        Tue, 04 Nov 2025 05:09:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IExhsgU9nC+Hq4bQOucw237rkyN7rqKgYdPY0GVx/nL6Ylr2tteGOJuuk8u74ulHg02MbKKzQ==
-X-Received: by 2002:a17:902:ce01:b0:295:6c9d:1905 with SMTP id d9443c01a7336-2956c9d1b4dmr136218165ad.18.1762261766473;
-        Tue, 04 Nov 2025 05:09:26 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998c3esm27105855ad.41.2025.11.04.05.09.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 05:09:26 -0800 (PST)
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH v4 2/2] soc: qcom: socinfo: Add reserve field to support future extension
-Date: Tue,  4 Nov 2025 18:39:06 +0530
-Message-ID: <20251104130906.167666-2-mukesh.ojha@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251104130906.167666-1-mukesh.ojha@oss.qualcomm.com>
-References: <20251104130906.167666-1-mukesh.ojha@oss.qualcomm.com>
+	s=arc-20240116; t=1762261810; c=relaxed/simple;
+	bh=p14sODUXnnOpdTxi73+aY04rSHjs8Q9n6BTtPP0joeM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e2PUA23IGIJ1N0BqJv/tjb3UQKpXII7FTQCifyeQ5+lsTxTHBn22I2YJ5x9sqkYNmTnNrAXBzMvbvvrhygpdCcEK4ziAImwtRUbGVXBjpk7tum/L0Lx+WvIUS7LKj+/WdxmyKhQ8qacWounq8WhDZ8r4hyXkP39K3CzreqbjsDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwrtHff4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D7B7C116B1;
+	Tue,  4 Nov 2025 13:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762261809;
+	bh=p14sODUXnnOpdTxi73+aY04rSHjs8Q9n6BTtPP0joeM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jwrtHff4kDk5a60SWz4y5uWl/Ak8YOLyBc+P1n90aQPgZRtyA00Rjvm9EvgiYh588
+	 Y8YB3xjnzpRFI67zFY7UQbVEVtlHAdGLu8o9nMEL/bgRguu0a6XLA2ULCeS3n73EAP
+	 eQ09o0IZwPC3x+3YpnETqBVrXy7vbJ8cZZpUkwe7i5ujFa5sZIprXd45uPjfq6nhJp
+	 sGrQnIOYzNbewhARa63COXgSWQ559Fx4a1dYCdI8h/Wp3+GhEWnHFAyGHgamSZMNRL
+	 RDw9p0RGMd5xHlefkGmBClVuP9BzwREe0bygIYOPLxbcEoGcSLQGDaVsBoSPzFeUtK
+	 GI4///o1zG9jg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Thomas
+ Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
+ linux-kernel@vger.kernel.org, Daniel Almeida
+ <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Mitchell
+ Levy <levymitchell0@gmail.com>, Shankari Anand
+ <shankari.ak0208@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: Re: [PATCH v13 09/17] rust: sync: Add SpinLockIrq
+In-Reply-To: <20251013155205.2004838-10-lyude@redhat.com>
+References: <20251013155205.2004838-1-lyude@redhat.com>
+ <20251013155205.2004838-10-lyude@redhat.com>
+Date: Tue, 04 Nov 2025 14:09:49 +0100
+Message-ID: <87zf926j1e.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=APHuRV3Y c=1 sm=1 tr=0 ts=6909fb08 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=-2KMb3mI12hdAPWKM-cA:9 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-GUID: w6KB0qI63InHLJcah1X5GL_6lgQ8BgFQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEwOSBTYWx0ZWRfX42tAcP9tnvrK
- 5AAqRZWF4G/aZSltpxwwE0evP6mqOLFrJk8NrFG2YVGcmRCx2OZohqgXimNZZDGP7HuY2EwS54/
- yNlQo8AO9+VQQ0OEoaVdiYNWVhHqAjY/ewro2vHHgxADzLhE/ZHBiBBhnWRDaVjBJvHhi0XyN6i
- Br2tCnhJzelVDjFhP3cehbTDE4DRrzkk10RHm3gZ6VY94yVB2U1oY3mbzcUw37bDdFfCm/YxLek
- nSuTSsCssBVP0MhUpwEPrTEevDSDQpg2gzc3nUbIDGAz+TCK/vAbX4tsaiF5I2+BQc9yXzQy0qK
- p7hdXCyxQimmIhcZ+ja89NOKciTvvnwRNhcJnEwHqQBbF//OIfFvjRz9dZU0PU9M4L1UpnDouzC
- SSWd7hwhDuSXvwWoWMoS49X0IzQcxg==
-X-Proofpoint-ORIG-GUID: w6KB0qI63InHLJcah1X5GL_6lgQ8BgFQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-04_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 adultscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040109
+Content-Type: text/plain
 
-Some of the new field added to socinfo structure with version 21, 22
-and 23 which is only used by boot firmware and it is of no use for
-Linux.Add reserve field in socinfo so that the structure remain
-updated and prepared if we get any new field in future which could
-be used by Linux. While at it, also updates switch case for backward
-compatibility if the SoC runs with boot firmware which has these
-new version added.
+Lyude Paul <lyude@redhat.com> writes:
 
-Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
----
-Changes in v4:
-- This is new change combining multiple soc-info field
-  update with reserve field introduction.
+> A variant of SpinLock that is expected to be used in noirq contexts, so
+> lock() will disable interrupts and unlock() (i.e. `Guard::drop()` will
+> undo the interrupt disable.
+>
+> [Boqun: Port to use spin_lock_irq_disable() and
+> spin_unlock_irq_enable()]
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+>
+> ---
+> V10:
+> * Also add support to GlobalLock
+> * Documentation fixes from Dirk
+> V11:
+> * Add unit test requested by Daniel Almeida
+>
+>  rust/kernel/sync.rs               |   4 +-
+>  rust/kernel/sync/lock/global.rs   |   3 +
+>  rust/kernel/sync/lock/spinlock.rs | 229 ++++++++++++++++++++++++++++++
+>  3 files changed, 235 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index cf5b638a097d9..f293bbe13e855 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -26,7 +26,9 @@
+>  pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
+>  pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
+>  pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
+> -pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
+> +pub use lock::spinlock::{
+> +    new_spinlock, new_spinlock_irq, SpinLock, SpinLockGuard, SpinLockIrq, SpinLockIrqGuard,
+> +};
+>  pub use locked_by::LockedBy;
+>  pub use refcount::Refcount;
+>  
+> diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
+> index d65f94b5caf26..47e200b750c1d 100644
+> --- a/rust/kernel/sync/lock/global.rs
+> +++ b/rust/kernel/sync/lock/global.rs
+> @@ -299,4 +299,7 @@ macro_rules! global_lock_inner {
+>      (backend SpinLock) => {
+>          $crate::sync::lock::spinlock::SpinLockBackend
+>      };
+> +    (backend SpinLockIrq) => {
+> +        $crate::sync::lock::spinlock::SpinLockIrqBackend
+> +    };
+>  }
+> diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
+> index d7be38ccbdc7d..6e6d571acd90c 100644
+> --- a/rust/kernel/sync/lock/spinlock.rs
+> +++ b/rust/kernel/sync/lock/spinlock.rs
+> @@ -3,6 +3,7 @@
+>  //! A kernel spinlock.
+>  //!
+>  //! This module allows Rust code to use the kernel's `spinlock_t`.
+> +use crate::prelude::*;
+>  
+>  /// Creates a [`SpinLock`] initialiser with the given name and a newly-created lock class.
+>  ///
+> @@ -139,3 +140,231 @@ unsafe fn assert_is_held(ptr: *mut Self::State) {
+>          unsafe { bindings::spin_assert_is_held(ptr) }
+>      }
+>  }
+> +
+> +/// Creates a [`SpinLockIrq`] initialiser with the given name and a newly-created lock class.
+> +///
+> +/// It uses the name if one is given, otherwise it generates one based on the file name and line
+> +/// number.
+> +#[macro_export]
+> +macro_rules! new_spinlock_irq {
+> +    ($inner:expr $(, $name:literal)? $(,)?) => {
+> +        $crate::sync::SpinLockIrq::new(
+> +            $inner, $crate::optional_name!($($name)?), $crate::static_lock_class!())
+> +    };
+> +}
+> +pub use new_spinlock_irq;
+> +
+> +/// A spinlock that may be acquired when local processor interrupts are disabled.
+> +///
+> +/// This is a version of [`SpinLock`] that can only be used in contexts where interrupts for the
+> +/// local CPU are disabled. It can be acquired in two ways:
+> +///
+> +/// - Using [`lock()`] like any other type of lock, in which case the bindings will modify the
+> +///   interrupt state to ensure that local processor interrupts remain disabled for at least as long
+> +///   as the [`SpinLockIrqGuard`] exists.
+> +/// - Using [`lock_with()`] in contexts where a [`LocalInterruptDisabled`] token is present and
+> +///   local processor interrupts are already known to be disabled, in which case the local interrupt
+> +///   state will not be touched. This method should be preferred if a [`LocalInterruptDisabled`]
+> +///   token is present in the scope.
+> +///
+> +/// For more info on spinlocks, see [`SpinLock`]. For more information on interrupts,
+> +/// [see the interrupt module](kernel::interrupt).
+> +///
+> +/// # Examples
+> +///
+> +/// The following example shows how to declare, allocate initialise and access a struct (`Example`)
+> +/// that contains an inner struct (`Inner`) that is protected by a spinlock that requires local
+> +/// processor interrupts to be disabled.
+> +///
+> +/// ```
+> +/// use kernel::sync::{new_spinlock_irq, SpinLockIrq};
+> +///
+> +/// struct Inner {
+> +///     a: u32,
+> +///     b: u32,
+> +/// }
+> +///
+> +/// #[pin_data]
+> +/// struct Example {
+> +///     #[pin]
+> +///     c: SpinLockIrq<Inner>,
+> +///     #[pin]
+> +///     d: SpinLockIrq<Inner>,
+> +/// }
+> +///
+> +/// impl Example {
+> +///     fn new() -> impl PinInit<Self> {
+> +///         pin_init!(Self {
+> +///             c <- new_spinlock_irq!(Inner { a: 0, b: 10 }),
+> +///             d <- new_spinlock_irq!(Inner { a: 20, b: 30 }),
+> +///         })
+> +///     }
+> +/// }
+> +///
+> +/// // Allocate a boxed `Example`
+> +/// let e = KBox::pin_init(Example::new(), GFP_KERNEL)?;
+> +///
+> +/// // Accessing an `Example` from a context where interrupts may not be disabled already.
+> +/// let c_guard = e.c.lock(); // interrupts are disabled now, +1 interrupt disable refcount
+> +/// let d_guard = e.d.lock(); // no interrupt state change, +1 interrupt disable refcount
+> +///
+> +/// assert_eq!(c_guard.a, 0);
+> +/// assert_eq!(c_guard.b, 10);
+> +/// assert_eq!(d_guard.a, 20);
+> +/// assert_eq!(d_guard.b, 30);
+> +///
+> +/// drop(c_guard); // Dropping c_guard will not re-enable interrupts just yet, since d_guard is
+> +///                // still in scope.
+> +/// drop(d_guard); // Last interrupt disable reference dropped here, so interrupts are re-enabled
+> +///                // now
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +///
+> +/// [`lock()`]: SpinLockIrq::lock
+> +/// [`lock_with()`]: SpinLockIrq::lock_with
+> +pub type SpinLockIrq<T> = super::Lock<T, SpinLockIrqBackend>;
+> +
+> +/// A kernel `spinlock_t` lock backend that is acquired in interrupt disabled contexts.
+
+I would suggest rephrasing to "A kernel `spinlock_t` lock backend that can only be
+acquired in interrupt disabled contexts.".
+
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+Best regards,
+Andreas Hindborg
 
 
- drivers/soc/qcom/socinfo.c       | 3 +++
- include/linux/soc/qcom/socinfo.h | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 77d0b8062208..c5352e1fead2 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -657,6 +657,9 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
- 			   &qcom_socinfo->info.fmt);
- 
- 	switch (qcom_socinfo->info.fmt) {
-+	case SOCINFO_VERSION(0, 23):
-+	case SOCINFO_VERSION(0, 22):
-+	case SOCINFO_VERSION(0, 21):
- 	case SOCINFO_VERSION(0, 20):
- 		qcom_socinfo->info.raw_package_type = __le32_to_cpu(info->raw_package_type);
- 		debugfs_create_u32("raw_package_type", 0444, qcom_socinfo->dbg_root,
-diff --git a/include/linux/soc/qcom/socinfo.h b/include/linux/soc/qcom/socinfo.h
-index c4dae173cc30..ba823a0013c5 100644
---- a/include/linux/soc/qcom/socinfo.h
-+++ b/include/linux/soc/qcom/socinfo.h
-@@ -84,6 +84,8 @@ struct socinfo {
- 	__le32 boot_core;
- 	/* Version 20 */
- 	__le32 raw_package_type;
-+	/* Version 21, 22, 23 */
-+	__le32 reserve1[4];
- };
- 
- /* Internal feature codes */
--- 
-2.50.1
 
 
