@@ -1,430 +1,175 @@
-Return-Path: <linux-kernel+bounces-883981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81287C2EFD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:39:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9F9C2EFD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E1A3AEAFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D2189805F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AE423EABF;
-	Tue,  4 Nov 2025 02:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E99324729A;
+	Tue,  4 Nov 2025 02:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gmect3fU"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wzkJVWFw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8905C245020
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E249C24466B;
+	Tue,  4 Nov 2025 02:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762223937; cv=none; b=f9LIPdSuwOZFx79yPH3my97yG2boj1/ptaWddjv0we7mU0XI8es+x00xR7zblcjEFj7Ibvx80c0fHjHMutVnZOHAEFqFZO8qfh1LBt/c3665zfX+3QV9F+l8RFOIDj3ZsXknp5AUuBL9PXSvrUFWqA2tmQ1IHDcOgHWmOSYo5xc=
+	t=1762223962; cv=none; b=Ho1W7D/oZONUKa8I1BQlLrblSK8fx6DTjU3J7DIHsfG+unPMfxyzJv6K4Gsc2/fPlhlp1fhK8szPfImzOZy/uOOOSwHzNqQWmoD3EwUW09F4z1BGrrsLs8JMn/55bdnRcaG3OrBWqBwV8IgOHoE5uC0+R+Vn2PIyeCff2z2Blfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762223937; c=relaxed/simple;
-	bh=9+HSAzR213v9931gZ+J/TTh6JWUaMD525JpxKT5klPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BkqagoSaucUN9zJYsmkI1EzU9UuVNVlfjFJEcUEQKWrRLzka3mwzoL2BW3VjNiBAuo7FwXTMlZuEzUEGtu/AoUN0o6Orm4e489W94S4HN4QCD4YaO3gXvZzjxAWnIiNYQNKtyVbIcPoXmwP9zhrlnKkJwVGF6+69KNAxnABGG0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gmect3fU; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762223933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=df4S7Pov33oelXc5qG3OuAE7jT7hLdKeSl/8gItGAHE=;
-	b=gmect3fUQDka4qo9pGxSSVnG//H7bHZ/WwTFVs9+NQOJcSDizbUv8llA6IW7nWrz133s1f
-	K5xVCm2Habr1jZJC7Kt8XchR/8U00w0sWNOu8UCY07p5IbuTqcZ8pB0dPScpo3QmwylqSI
-	VWaSexo6FXcDL3Z7udYtlHquWvXKomk=
-From: Hui Zhu <hui.zhu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Hui Zhu <zhuhui@kylinos.cn>,
-	Geliang Tang <geliang@kernel.org>
-Subject: [PATCH v2 2/2] mm/hugetlb: extract sysctl into hugetlb_sysctl.c
-Date: Tue,  4 Nov 2025 10:38:33 +0800
-Message-ID: <51ab8a485c9b299e36384c2c5741d9cb6b9ebd75.1762221536.git.zhuhui@kylinos.cn>
-In-Reply-To: <cover.1762221536.git.zhuhui@kylinos.cn>
-References: <cover.1762221536.git.zhuhui@kylinos.cn>
+	s=arc-20240116; t=1762223962; c=relaxed/simple;
+	bh=Ssge7uihD80WDLx+qQHZ2sams1eS72XGBuVXonViGUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osabqDeZOksv+GfIpk/aeKZg/YHISL5CIqt0WQGhGNL15SP/cvJUE/tduY4r6NmT3oczvNUSniifLTIDOQoo/GgL4Y4bEKgPdzx0i08OFsYsmQmZcWZ9B6njSTuZ6i/ZrpBCak2VERvG8iwqJstdyAByhD3NLhk9BG8XZ6zDRP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wzkJVWFw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8gU4iu/jxMJVno8QaMCLdahHidjmz5hXR/hIiNJxZ5Q=; b=wzkJVWFwzWwRQDtieVeeWxvCTY
+	N+AVdOv9y4J3HJ14l+7IfSo/8GyV3CWeLDyPv/tzevlhm4ggiJ7lt7q8cYRnsp67nL4cgromDXfZC
+	0yE0P+zw8htEIQ4gZxOGG/tsE+54jXt0uNMLWeHNXowHaz9BfZhRgB8mk/hi39eZT8zA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vG6we-00Cqbf-KO; Tue, 04 Nov 2025 03:38:52 +0100
+Date: Tue, 4 Nov 2025 03:38:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Po-Yu Chuang <ratbert@faraday-tech.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, taoren@meta.com
+Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
+Message-ID: <2424e7e9-8eef-43f4-88aa-054413ca63fe@lunn.ch>
+References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+ <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
 
-From: Hui Zhu <zhuhui@kylinos.cn>
+On Mon, Nov 03, 2025 at 03:39:16PM +0800, Jacky Chou wrote:
+> Create the new compatibles to identify AST2600 MAC0/1 and MAC3/4.
+> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
+> - For "aspeed,ast2600-mac01", require rx/tx-internal-delay-ps properties
+>   with 45ps step.
+> - For "aspeed,ast2600-mac23", require rx/tx-internal-delay-ps properties
+>   with 250ps step.
+> - Both require the "scu" property.
+> Other compatible values remain unrestricted.
+> 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/net/faraday,ftgmac100.yaml | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> index d14410018bcf..de646e7e3bca 100644
+> --- a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> +++ b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> @@ -19,6 +19,12 @@ properties:
+>                - aspeed,ast2500-mac
+>                - aspeed,ast2600-mac
+>            - const: faraday,ftgmac100
+> +      - items:
+> +          - enum:
+> +              - aspeed,ast2600-mac01
+> +              - aspeed,ast2600-mac23
+> +          - const: aspeed,ast2600-mac
+> +          - const: faraday,ftgmac100
+>  
+>    reg:
+>      maxItems: 1
+> @@ -69,6 +75,12 @@ properties:
+>    mdio:
+>      $ref: /schemas/net/mdio.yaml#
+>  
+> +  scu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the SCU (System Control Unit) syscon node for Aspeed platform.
+> +      This reference is used by the MAC controller to configure the RGMII delays.
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -88,6 +100,44 @@ allOf:
+>      else:
+>        properties:
+>          resets: false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: aspeed,ast2600-mac01
+> +    then:
+> +      properties:
+> +        rx-internal-delay-ps:
+> +          minimum: 0
+> +          maximum: 1395
+> +          multipleOf: 45
 
-Following the extraction of sysfs code, this patch moves the sysctl
-interface implementation into a dedicated file to further improve code
-organization and maintainability of the hugetlb subsystem.
+I would add a default: 0
 
-The following components are moved to mm/hugetlb_sysctl.c:
-- proc_hugetlb_doulongvec_minmax()
-- hugetlb_sysctl_handler_common()
-- hugetlb_sysctl_handler()
-- hugetlb_mempolicy_sysctl_handler() (CONFIG_NUMA)
-- hugetlb_overcommit_handler()
-- hugetlb_table[] sysctl table definition
-- hugetlb_sysctl_init()
+> +        tx-internal-delay-ps:
+> +          minimum: 0
+> +          maximum: 1395
+> +          multipleOf: 45
 
-The hugetlb_internal.h header file is updated to declare the sysctl
-initialization function with proper #ifdef guards for configurations
-without CONFIG_SYSCTL support.
+and also here.
 
-The Makefile is updated to compile hugetlb_sysctl.o when CONFIG_HUGETLBFS
-is enabled. This refactoring reduces the size of hugetlb.c and logically
-separates the sysctl interface from core hugetlb management code.
+> +      required:
+> +        - scu
+> +        - rx-internal-delay-ps
+> +        - tx-internal-delay-ps
 
-No functional changes are introduced; all code is moved as-is from
-hugetlb.c with consistent formatting.
+and then these are not required, but optional.
 
-Signed-off-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
----
- mm/Makefile           |   2 +-
- mm/hugetlb.c          | 132 -----------------------------------------
- mm/hugetlb_internal.h |   6 ++
- mm/hugetlb_sysctl.c   | 133 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 140 insertions(+), 133 deletions(-)
- create mode 100644 mm/hugetlb_sysctl.c
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: aspeed,ast2600-mac23
+> +    then:
+> +      properties:
+> +        rx-internal-delay-ps:
+> +          minimum: 0
+> +          maximum: 7750
+> +          multipleOf: 250
+> +        tx-internal-delay-ps:
+> +          minimum: 0
+> +          maximum: 7750
+> +          multipleOf: 250
+> +      required:
+> +        - scu
+> +        - rx-internal-delay-ps
+> +        - tx-internal-delay-ps
 
-diff --git a/mm/Makefile b/mm/Makefile
-index b9edfce6c202..00ceb2418b64 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -78,7 +78,7 @@ endif
- obj-$(CONFIG_SWAP)	+= page_io.o swap_state.o swapfile.o
- obj-$(CONFIG_ZSWAP)	+= zswap.o
- obj-$(CONFIG_HAS_DMA)	+= dmapool.o
--obj-$(CONFIG_HUGETLBFS)	+= hugetlb.o hugetlb_sysfs.o
-+obj-$(CONFIG_HUGETLBFS)	+= hugetlb.o hugetlb_sysfs.o hugetlb_sysctl.o
- ifdef CONFIG_CMA
- obj-$(CONFIG_HUGETLBFS)	+= hugetlb_cma.o
- endif
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 1fc24f7e63ac..ee2df563550e 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -7,7 +7,6 @@
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/seq_file.h>
--#include <linux/sysctl.h>
- #include <linux/highmem.h>
- #include <linux/mmu_notifier.h>
- #include <linux/nodemask.h>
-@@ -3983,12 +3982,6 @@ ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
- 	return err ? err : len;
- }
- 
--#ifdef CONFIG_SYSCTL
--static void hugetlb_sysctl_init(void);
--#else
--static inline void hugetlb_sysctl_init(void) { }
--#endif
--
- static int __init hugetlb_init(void)
- {
- 	int i;
-@@ -4421,131 +4414,6 @@ static unsigned int allowed_mems_nr(struct hstate *h)
- 	return nr;
- }
- 
--#ifdef CONFIG_SYSCTL
--static int proc_hugetlb_doulongvec_minmax(const struct ctl_table *table, int write,
--					  void *buffer, size_t *length,
--					  loff_t *ppos, unsigned long *out)
--{
--	struct ctl_table dup_table;
--
--	/*
--	 * In order to avoid races with __do_proc_doulongvec_minmax(), we
--	 * can duplicate the @table and alter the duplicate of it.
--	 */
--	dup_table = *table;
--	dup_table.data = out;
--
--	return proc_doulongvec_minmax(&dup_table, write, buffer, length, ppos);
--}
--
--static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
--			 const struct ctl_table *table, int write,
--			 void *buffer, size_t *length, loff_t *ppos)
--{
--	struct hstate *h = &default_hstate;
--	unsigned long tmp = h->max_huge_pages;
--	int ret;
--
--	if (!hugepages_supported())
--		return -EOPNOTSUPP;
--
--	ret = proc_hugetlb_doulongvec_minmax(table, write, buffer, length, ppos,
--					     &tmp);
--	if (ret)
--		goto out;
--
--	if (write)
--		ret = __nr_hugepages_store_common(obey_mempolicy, h,
--						  NUMA_NO_NODE, tmp, *length);
--out:
--	return ret;
--}
--
--static int hugetlb_sysctl_handler(const struct ctl_table *table, int write,
--			  void *buffer, size_t *length, loff_t *ppos)
--{
--
--	return hugetlb_sysctl_handler_common(false, table, write,
--							buffer, length, ppos);
--}
--
--#ifdef CONFIG_NUMA
--static int hugetlb_mempolicy_sysctl_handler(const struct ctl_table *table, int write,
--			  void *buffer, size_t *length, loff_t *ppos)
--{
--	return hugetlb_sysctl_handler_common(true, table, write,
--							buffer, length, ppos);
--}
--#endif /* CONFIG_NUMA */
--
--static int hugetlb_overcommit_handler(const struct ctl_table *table, int write,
--		void *buffer, size_t *length, loff_t *ppos)
--{
--	struct hstate *h = &default_hstate;
--	unsigned long tmp;
--	int ret;
--
--	if (!hugepages_supported())
--		return -EOPNOTSUPP;
--
--	tmp = h->nr_overcommit_huge_pages;
--
--	if (write && hstate_is_gigantic_no_runtime(h))
--		return -EINVAL;
--
--	ret = proc_hugetlb_doulongvec_minmax(table, write, buffer, length, ppos,
--					     &tmp);
--	if (ret)
--		goto out;
--
--	if (write) {
--		spin_lock_irq(&hugetlb_lock);
--		h->nr_overcommit_huge_pages = tmp;
--		spin_unlock_irq(&hugetlb_lock);
--	}
--out:
--	return ret;
--}
--
--static const struct ctl_table hugetlb_table[] = {
--	{
--		.procname	= "nr_hugepages",
--		.data		= NULL,
--		.maxlen		= sizeof(unsigned long),
--		.mode		= 0644,
--		.proc_handler	= hugetlb_sysctl_handler,
--	},
--#ifdef CONFIG_NUMA
--	{
--		.procname       = "nr_hugepages_mempolicy",
--		.data           = NULL,
--		.maxlen         = sizeof(unsigned long),
--		.mode           = 0644,
--		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
--	},
--#endif
--	{
--		.procname	= "hugetlb_shm_group",
--		.data		= &sysctl_hugetlb_shm_group,
--		.maxlen		= sizeof(gid_t),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "nr_overcommit_hugepages",
--		.data		= NULL,
--		.maxlen		= sizeof(unsigned long),
--		.mode		= 0644,
--		.proc_handler	= hugetlb_overcommit_handler,
--	},
--};
--
--static void __init hugetlb_sysctl_init(void)
--{
--	register_sysctl_init("vm", hugetlb_table);
--}
--#endif /* CONFIG_SYSCTL */
--
- void hugetlb_report_meminfo(struct seq_file *m)
- {
- 	struct hstate *h;
-diff --git a/mm/hugetlb_internal.h b/mm/hugetlb_internal.h
-index 63ab13cfb072..8c303d666fd8 100644
---- a/mm/hugetlb_internal.h
-+++ b/mm/hugetlb_internal.h
-@@ -107,4 +107,10 @@ extern ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
- 
- extern void hugetlb_sysfs_init(void) __init;
- 
-+#ifdef CONFIG_SYSCTL
-+extern void hugetlb_sysctl_init(void);
-+#else
-+static inline void hugetlb_sysctl_init(void) { }
-+#endif
-+
- #endif /* _LINUX_HUGETLB_INTERNAL_H */
-diff --git a/mm/hugetlb_sysctl.c b/mm/hugetlb_sysctl.c
-new file mode 100644
-index 000000000000..590798376612
---- /dev/null
-+++ b/mm/hugetlb_sysctl.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * HugeTLB sysfs interfaces.
-+ */
-+
-+#include <linux/sysctl.h>
-+
-+#include "hugetlb_internal.h"
-+
-+#ifdef CONFIG_SYSCTL
-+static int proc_hugetlb_doulongvec_minmax(const struct ctl_table *table, int write,
-+					  void *buffer, size_t *length,
-+					  loff_t *ppos, unsigned long *out)
-+{
-+	struct ctl_table dup_table;
-+
-+	/*
-+	 * In order to avoid races with __do_proc_doulongvec_minmax(), we
-+	 * can duplicate the @table and alter the duplicate of it.
-+	 */
-+	dup_table = *table;
-+	dup_table.data = out;
-+
-+	return proc_doulongvec_minmax(&dup_table, write, buffer, length, ppos);
-+}
-+
-+static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
-+			 const struct ctl_table *table, int write,
-+			 void *buffer, size_t *length, loff_t *ppos)
-+{
-+	struct hstate *h = &default_hstate;
-+	unsigned long tmp = h->max_huge_pages;
-+	int ret;
-+
-+	if (!hugepages_supported())
-+		return -EOPNOTSUPP;
-+
-+	ret = proc_hugetlb_doulongvec_minmax(table, write, buffer, length, ppos,
-+					     &tmp);
-+	if (ret)
-+		goto out;
-+
-+	if (write)
-+		ret = __nr_hugepages_store_common(obey_mempolicy, h,
-+						  NUMA_NO_NODE, tmp, *length);
-+out:
-+	return ret;
-+}
-+
-+static int hugetlb_sysctl_handler(const struct ctl_table *table, int write,
-+			  void *buffer, size_t *length, loff_t *ppos)
-+{
-+
-+	return hugetlb_sysctl_handler_common(false, table, write,
-+							buffer, length, ppos);
-+}
-+
-+#ifdef CONFIG_NUMA
-+static int hugetlb_mempolicy_sysctl_handler(const struct ctl_table *table, int write,
-+			  void *buffer, size_t *length, loff_t *ppos)
-+{
-+	return hugetlb_sysctl_handler_common(true, table, write,
-+							buffer, length, ppos);
-+}
-+#endif /* CONFIG_NUMA */
-+
-+static int hugetlb_overcommit_handler(const struct ctl_table *table, int write,
-+		void *buffer, size_t *length, loff_t *ppos)
-+{
-+	struct hstate *h = &default_hstate;
-+	unsigned long tmp;
-+	int ret;
-+
-+	if (!hugepages_supported())
-+		return -EOPNOTSUPP;
-+
-+	tmp = h->nr_overcommit_huge_pages;
-+
-+	if (write && hstate_is_gigantic_no_runtime(h))
-+		return -EINVAL;
-+
-+	ret = proc_hugetlb_doulongvec_minmax(table, write, buffer, length, ppos,
-+					     &tmp);
-+	if (ret)
-+		goto out;
-+
-+	if (write) {
-+		spin_lock_irq(&hugetlb_lock);
-+		h->nr_overcommit_huge_pages = tmp;
-+		spin_unlock_irq(&hugetlb_lock);
-+	}
-+out:
-+	return ret;
-+}
-+
-+static const struct ctl_table hugetlb_table[] = {
-+	{
-+		.procname	= "nr_hugepages",
-+		.data		= NULL,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= hugetlb_sysctl_handler,
-+	},
-+#ifdef CONFIG_NUMA
-+	{
-+		.procname       = "nr_hugepages_mempolicy",
-+		.data           = NULL,
-+		.maxlen         = sizeof(unsigned long),
-+		.mode           = 0644,
-+		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
-+	},
-+#endif
-+	{
-+		.procname	= "hugetlb_shm_group",
-+		.data		= &sysctl_hugetlb_shm_group,
-+		.maxlen		= sizeof(gid_t),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "nr_overcommit_hugepages",
-+		.data		= NULL,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= hugetlb_overcommit_handler,
-+	},
-+};
-+
-+void __init hugetlb_sysctl_init(void)
-+{
-+	register_sysctl_init("vm", hugetlb_table);
-+}
-+#endif /* CONFIG_SYSCTL */
--- 
-2.43.0
+Same again here.
 
+	Andrew
 
