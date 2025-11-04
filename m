@@ -1,129 +1,180 @@
-Return-Path: <linux-kernel+bounces-883848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6784C2E8EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FE1C2E903
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05BE23BBA72
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:16:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5663D3B30F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F734CB5B;
-	Tue,  4 Nov 2025 00:15:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8D421348
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D811494CC;
+	Tue,  4 Nov 2025 00:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i+Js2kag";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D0NloXk3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i+Js2kag";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D0NloXk3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B1234D3A0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762215322; cv=none; b=WYKr5AuxEyVaH8yxLjN4Dr+bJZGPONMDBtA8AJD19YPJJZU9uQr+WUpfrWIanzUP/aE4BkUqBscXgPEQx9YJFdvc2JWGL+rO7Wf3V++QURBgt9aMmbuxkaitL1jc5Bwi5d1c4U6+EGkTJt/mAR4LBPUhHLKTv0DIv6uni0+mkzA=
+	t=1762215490; cv=none; b=itQksvlW9j17Khxcx2Kg0ihxhdp0rcBRWQP5enjg1MsXHugLa/R+muIaFRlyVaHx1iXuUit784GPTes0W/J+pDhO+ZxTaT6XKWgvsE38KR8/VRSTkvE7nLxBhLQ1d276MlakKi5xPPo+VQCpzHdllCXG3UJQW2S/htFYmiu1Jsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762215322; c=relaxed/simple;
-	bh=H6brIF8jxyf5Fedu+T4DroNbUrftDL2liW+acA9iy6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NDWVVddLbdXX740jL6r45Y6imcwMuVgKF8B+kAYazpanwP64lbPLebC7zVbHgD0PQVLQIAwwIeuyAiG4ydVTzwL3jtx2DB4KXwXMPs5GekzJz4uOosDzE14m0YCNR9S942thDoe0WOe17woJGB6SIyQxTAKLqI2yx2PHjc4ZMBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FBC81D14;
-	Mon,  3 Nov 2025 16:15:11 -0800 (PST)
-Received: from [10.163.73.5] (unknown [10.163.73.5])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 310173F694;
-	Mon,  3 Nov 2025 16:15:15 -0800 (PST)
-Message-ID: <fcb92f87-063e-4042-8313-0154941404fa@arm.com>
-Date: Tue, 4 Nov 2025 05:45:13 +0530
+	s=arc-20240116; t=1762215490; c=relaxed/simple;
+	bh=DIybKqsOv5ZP5SQJ/0zU1HAOaDwoPp1CB30t9+caZVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTmupYKz99ddbFALUWWa9hTNqXF+tKy25FRbjpuj/Vo8Q//SjGXJ/3c6p3b6ocOrXzwb+84PZD07PbZMfbgKKkN6Bgj68r7PkqiUvSnRj8XZS5HpP7mAn7KWnUy5Z6S3vh5j3jCfX5t3rA1GfSkiCzbWrJoIAGU5rPoWo/NhsIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i+Js2kag; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D0NloXk3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i+Js2kag; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D0NloXk3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B85D12128B;
+	Tue,  4 Nov 2025 00:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762215485;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qBkh+VPC0L7lilKwKnFHdQGAX9w0BnkehFZ6H9L4j0=;
+	b=i+Js2kagrJ7GtfymiY+3EVKtQh9JNYveq9u++TjsiHr+olDUgZGI6x3kTPa16R2t59h3A8
+	6xYikcfge7yK2GXj+hw7tOQFZkognFs/NPgHJxksiSTmlUELKWDsz7XDySToTNZA4LSHe4
+	Z4IhYL3dx/MgeD+kSWf4mTHtRm96+qI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762215485;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qBkh+VPC0L7lilKwKnFHdQGAX9w0BnkehFZ6H9L4j0=;
+	b=D0NloXk3v16y+rtc2Ofz2zNaoK+nj1nmW3vPcrkWWRG6UDFKAKk7GqBnFQJNsi00CJ+bJL
+	SUQZrYclKj9xUUAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=i+Js2kag;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=D0NloXk3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762215485;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qBkh+VPC0L7lilKwKnFHdQGAX9w0BnkehFZ6H9L4j0=;
+	b=i+Js2kagrJ7GtfymiY+3EVKtQh9JNYveq9u++TjsiHr+olDUgZGI6x3kTPa16R2t59h3A8
+	6xYikcfge7yK2GXj+hw7tOQFZkognFs/NPgHJxksiSTmlUELKWDsz7XDySToTNZA4LSHe4
+	Z4IhYL3dx/MgeD+kSWf4mTHtRm96+qI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762215485;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qBkh+VPC0L7lilKwKnFHdQGAX9w0BnkehFZ6H9L4j0=;
+	b=D0NloXk3v16y+rtc2Ofz2zNaoK+nj1nmW3vPcrkWWRG6UDFKAKk7GqBnFQJNsi00CJ+bJL
+	SUQZrYclKj9xUUAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C9DB1388E;
+	Tue,  4 Nov 2025 00:18:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H8INJj1GCWnkEQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 04 Nov 2025 00:18:05 +0000
+Date: Tue, 4 Nov 2025 01:18:00 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Gladyshev Ilya <foxido@foxido.dev>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs: make ASSERT no-op in release builds
+Message-ID: <20251104001800.GM13846@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20251102073904.2149103-1-foxido@foxido.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte
- protection transitions
-To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: wangkefeng.wang@huawei.com, ryan.roberts@arm.com, baohua@kernel.org,
- pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251017160251.96717-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251017160251.96717-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102073904.2149103-1-foxido@foxido.dev>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B85D12128B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.21
 
+On Sun, Nov 02, 2025 at 10:38:52AM +0300, Gladyshev Ilya wrote:
+> The current definition of `ASSERT(cond)` as `(void)(cond)` is redundant,
+> since these checks have no side effects and don't affect code logic.
 
+Have you checked that none of the assert expressions really don't have
+side effects other than touching the memory?
 
-On 17/10/25 9:32 PM, Dev Jain wrote:
-> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
-> required for some cases, for example, when changing from PROT_NONE to
-> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
-> growing into the non-main heaps), and unsetting uffd-wp in a range.
+> However, some checks contain READ_ONCE or other compiler-unfriendly
+> constructs. For example, ASSERT(list_empty) in btrfs_add_dealloc_inode
+> was compiled to a redundant mov instruction due to this issue.
 > 
-> Therefore, implement pte_needs_flush() for arm64, which is already
-> implemented by some other arches as well.
+> This patch defines ASSERT as BUILD_BUG_ON_INVALID for !CONFIG_BTRFS_ASSERT
+> builds. It also marks `full_page_sectors_uptodate` as __maybe_unused to
+> suppress "unneeded declaration" warning (it's needed in compile time)
 > 
-> Running a userspace program changing permissions back and forth between
-> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
-> for the none->rw transition, I get a reduction from 3.2 microseconds to
-> 2.85 microseconds, giving a 12.3% improvement.
-> 
-> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
 > ---
-> mm-selftests pass. Based on 6.18-rc1.
+> Changes from v1:
+> - Annotate full_page_sectors_uptodate as __maybe_unused to avoid
+>   compiler warning
 > 
-> v1->v2:
->  - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
->    pteval_t, return !!diff (Ryan)
+> Link to v1: https://lore.kernel.org/linux-btrfs/20251030182322.4085697-1-foxido@foxido.dev/
+> ---
+>  fs/btrfs/messages.h | 2 +-
+>  fs/btrfs/raid56.c   | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
->  arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 18a5dc0c9a54..40df783ba09a 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
->  {
->  	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->  }
-> +
-> +static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
-> +{
-> +	ptdesc_t diff = oldval ^ newval;
-> +
-> +	/* invalid to valid transition requires no flush */
-> +	if (!(oldval & PTE_VALID))
-
-Using pte_valid() helper would be better.
-
-	if (!pte_valid(oldval))
-		return false;
-> +		return false;
-> +
-> +	/* Transition in the SW bits requires no flush */
-> +	diff &= ~PTE_SWBITS_MASK;
-> +
-> +	return !!diff;
-> +}
-> +
-> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
-> +{
-> +	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
-> +}
-> +#define pte_needs_flush pte_needs_flush
-> +
-> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
-> +{
-> +	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
-> +}
-> +#define huge_pmd_needs_flush huge_pmd_needs_flush
-> +
+> diff --git a/fs/btrfs/messages.h b/fs/btrfs/messages.h
+> index 4416c165644f..f80fe40a2c2b 100644
+> --- a/fs/btrfs/messages.h
+> +++ b/fs/btrfs/messages.h
+> @@ -168,7 +168,7 @@ do {										\
 >  #endif
 >  
->  #endif
+>  #else
+> -#define ASSERT(cond, args...)			(void)(cond)
+> +#define ASSERT(cond, args...)			BUILD_BUG_ON_INVALID(cond)
 
+I'd rather have the expression open coded rather than using
+BUILD_BUG_ON_INVALID, the name is confusing as it's not checking build
+time condtitons.
 
