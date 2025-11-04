@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-884818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90950C313A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:28:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859DBC313BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E4818904E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF643B9DF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B782324B1B;
-	Tue,  4 Nov 2025 13:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJJK7T9K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8CA3254BD;
+	Tue,  4 Nov 2025 13:29:10 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4302F90C4;
-	Tue,  4 Nov 2025 13:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FAB322C83
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262920; cv=none; b=e8pI2WZFWytFNtzPc4iTXyupdTg0/+ix4BVKPqDhYPzzOcFFAn2PuoSHrQXPI6RLR73Ew6HDkNBPnd+iPfPBbvdpXSC1ElbGAWs/JesB61A0eB/PwKopAnYsgsQXsXreFc5v8aJ3Btu04CKTV6oVs2fp+dhQaqL4YpnKcVTp0no=
+	t=1762262949; cv=none; b=ZwILT90jZq/hof80mgtU4dcRIoQ4GTVBmWhZjbwajNqndio0Hw/npR9KZdW9x+uW90NmNF57a6n+32iRDXmWSDY1yAlyiMm2N/4ZNAVscTnns7Zfy5I7ZnXMHlbYjNvEg1KgIKOdJCgc9IIRfUJtXwyXIybCMhCZrM0JgftC1yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262920; c=relaxed/simple;
-	bh=9CvQGqPY0E1C22RS/IR+Yxy6Dan0xzS9zSeM6da8C7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWXpiYdyQ/AZuts5I4gJTewnPQA1Lgrt3ZIciKz2TRLXKoqPGasYxGTm6T7oPy9aHmypHikuQVZHhvtfBAi/PW9OpRsdKWwzfGreuPqCZjqkzD1DODohW4TQRdk/97izQIxyywaP1ZTH/CM9VlnfRVZRfUHI1Ulx7y9QNuYNtkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJJK7T9K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08ABC4CEF7;
-	Tue,  4 Nov 2025 13:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762262920;
-	bh=9CvQGqPY0E1C22RS/IR+Yxy6Dan0xzS9zSeM6da8C7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XJJK7T9K54xBsqZQr5dsd4VEMZACpRsO7HakgkbUqfJIJfLkI7iQdBNdlWmONsLOk
-	 qGBj8Opmm0i4OIwOcyM1SJTbqkx81shX+Ch8SAsmTj4sL68SdFtplJiY41K1+xhwRS
-	 NeCVF7x7cgcGnbETmt22SLAPuShwctTrzzVKIoGeQZYwyyu1Dx+EsAaZEQpWrzEFuj
-	 ZjxmhNcArococH+9vfHluIuBNRnm8snNrp/CYU+IZ/yegE/u5MTZXPZvtIkFvfjoQq
-	 9vWpe8EckGts5TBkhDj+drcvEzlOdM9g4HhUyW4HCKRGi4G66ZGANowSHRF+UAGzpQ
-	 AxzKRGwEhMKPw==
-Date: Tue, 4 Nov 2025 13:28:35 +0000
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Daniel Mentz <danielmentz@google.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Pranjal Shrivastava <praan@google.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] iommu/io-pgtable-arm: Implement .iotlb_sync_map
- callback
-Message-ID: <aQn_g85KI_uuYpJh@willie-the-truck>
-References: <20250927223953.936562-1-danielmentz@google.com>
- <aNp5sS7VpPirrRGE@google.com>
- <CAE2F3rB6TYjy0a9yecW4zwBLraaj75YBafEz3DUh8zrLChnuCg@mail.gmail.com>
- <aNuelC9K24z_Ph_G@google.com>
+	s=arc-20240116; t=1762262949; c=relaxed/simple;
+	bh=jz4XbMEhT14ABokNLSyNocUWmIjvQFrqSNdxYOhl118=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4zrilqiEELNZ5XkwRYkjygCO87KeKEVCyT3xIyQpk61fAgGSeTFwZ3ZaiE/AL73KWv9b6nfbMszWVsg1HAVUJ+oh4I3VEcwtBpxTshHH1K9gOdkcslNRGGS9OO5u3GnyTSk8qGAZaLcvUfFjC90Yt3lxsMWkuyOGcYb1r0TlL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5db394cf0d1so2315577137.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:29:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762262946; x=1762867746;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lYDUlHzikfVS+CmiS/PszA+brPtjo5Wdl3Z2oI+5wg4=;
+        b=I28xf65NjdISzCOmUo6WO716DGNxqwuN/qJbnjk5soAg9JB+Xf9A+m4cJ9oa1nMIGK
+         vilzwrYwPmNzlT9clkH4GczYFZOwwA1avtZ+V5HPQ/UKb66UJfawo3Wavz5rPbqrijY6
+         RfIzSIQEfPnw40LjU+tbjUQ1KTVk41M9+4XCxeaPOu6XmoCRvez7JeXSxRfhiIYzcavM
+         Fg6uhIbVi2y7TR4NtvUizF3hMnmr/Wv4TSR75dHZ2zjIFDdQrhw/tcrb1pERv+XLkiOW
+         AQLpGAI7tadfB7/tXtIlF0xQKNof3MLoIXi6hklh0PQ8ofhKf4kDc1vTuWYl4mIW9Wyj
+         Q1dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBKpNzmbFLRTbdQG483loGRoMCn20J+qbg4hQ5uhSOoI9eIcdXNvL7yUp02lXeZpsyT3VZHWqszxPVPJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypQ0ErWdLfGBHECe6oWABRCMlK6Q2uj6RdD1ZjY5l+rXnVxsBJ
+	P6EcJIDdveKBb0qGFCE6Ud80DxOgQ8paHa8g4SGiPKTijrboWMHb5F+4fQfaQvI9
+X-Gm-Gg: ASbGncvSTqDqdjDoQenl7CQ35xMalcAwC77Ue8UWD5RpCjM00PsXeYlL12C1yRwV0rf
+	sTO44YUdev01eHkG+NYeqUSgal95ACYTGO3r9yDx69uAvzfldkaIR7OjYFd4DbXy5HvsxQv4zi1
+	xNSZ0b3EHNXabwrGx0TpTQMTxHdMqBoWOsHmIfk3h2qmcN1pleNZX05t+qBdiDR+FVgOpXxwfCG
+	Sk0C6Rok/o0jpurUFH7BS8KGyGaurO4RdQoMpM7ZwvUZec68cernui/38taIpF+QsjqZMmFjrHz
+	x4ARhfCOGcHM1ADTqp7UT6q2UJzBSVA0CxG3FLA8TgVr5ZxR6Pb7oYQHr0nBXcDTYgSCEf1UF7E
+	K6VvKt0pLL0r04eC7IyDlIvcaqai/3HQ60hwpnNSFgm3W833u6sSQL9RRVIHEF+eOFl09oF9Ter
+	4LpOn4y77TCMrc6K8Y51RhXkgXm97VCuNN6DsUxYL41vI0iCdntmcb
+X-Google-Smtp-Source: AGHT+IH6rIWOZRxXGLfXM3hBFORUCVeOzGR5D+hYzdGO5CH+afHXBq5ojg8oHiSNF1X4YOi2iG7QuA==
+X-Received: by 2002:a05:6102:3596:b0:5d5:f6ae:74b3 with SMTP id ada2fe7eead31-5dbb135dcbdmr5068089137.39.1762262946300;
+        Tue, 04 Nov 2025 05:29:06 -0800 (PST)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dbf310491asm1059471137.4.2025.11.04.05.29.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 05:29:05 -0800 (PST)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-557bf688086so964916e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:29:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWLa/EuKFpxVduS7WMxcZZoHJsj7ifwxWTp8KDefFUfmyRAiOyW+rObUkrwOtEFA1Gd5ztgqNz09G7MeNc=@vger.kernel.org
+X-Received: by 2002:a05:6102:4409:b0:5db:ecdd:1819 with SMTP id
+ ada2fe7eead31-5dbecdd1f41mr1520007137.4.1762262945679; Tue, 04 Nov 2025
+ 05:29:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNuelC9K24z_Ph_G@google.com>
+References: <20251104-aheev-checkpatch-uninitialized-free-v3-1-d94ccef4917a@gmail.com>
+In-Reply-To: <20251104-aheev-checkpatch-uninitialized-free-v3-1-d94ccef4917a@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Nov 2025 14:28:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV+12MoAGNHC9kf==Bt0cLuJ39Fs+W61DN67sE_p-u=og@mail.gmail.com>
+X-Gm-Features: AWmQ_blcNEGb9JhXjFZhCY93PMFoseFIULDniUnWfKSfhj8iZuZ5UaoNxtqoLrc
+Message-ID: <CAMuHMdV+12MoAGNHC9kf==Bt0cLuJ39Fs+W61DN67sE_p-u=og@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3] checkpatch: add uninitialized pointer with
+ __free attribute check
+To: Ally Heev <allyheev@gmail.com>
+Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>, 
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+	David Hunter <david.hunter.linux@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-pm <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 30, 2025 at 09:10:44AM +0000, Mostafa Saleh wrote:
-> On Mon, Sep 29, 2025 at 02:00:09PM -0700, Daniel Mentz wrote:
-> > On Mon, Sep 29, 2025 at 5:21 AM Mostafa Saleh <smostafa@google.com> wrote:
-> > > On Sat, Sep 27, 2025 at 10:39:52PM +0000, Daniel Mentz wrote:
-> > > > @@ -582,6 +582,69 @@ static int arm_lpae_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
-> > > >       return ret;
-> > > >  }
-> > > >
-> > > > +static int __arm_lpae_iotlb_sync_map(struct arm_lpae_io_pgtable *data, unsigned long iova,
-> > > > +                           size_t size, int lvl, arm_lpae_iopte *ptep)
-> > > > +{
-> > > > +     struct io_pgtable *iop = &data->iop;
-> > > > +     size_t block_size = ARM_LPAE_BLOCK_SIZE(lvl, data);
-> > > > +     int ret = 0, num_entries, max_entries;
-> > > > +     unsigned long iova_offset, sync_idx_start, sync_idx_end;
-> > > > +     int i, shift, synced_entries = 0;
-> > > > +
-> > > > +     shift = (ARM_LPAE_LVL_SHIFT(lvl - 1, data) + ARM_LPAE_PGD_IDX(lvl - 1, data));
-> > > > +     iova_offset = iova & ((1ULL << shift) - 1);
-> > > > +     sync_idx_start = ARM_LPAE_LVL_IDX(iova, lvl, data);
-> > > > +     sync_idx_end = (iova_offset + size + block_size - ARM_LPAE_GRANULE(data)) >>
-> > > > +             ARM_LPAE_LVL_SHIFT(lvl, data);
-> > > > +     max_entries = arm_lpae_max_entries(sync_idx_start, data);
-> > > > +     num_entries = min_t(unsigned long, sync_idx_end - sync_idx_start, max_entries);
-> > > > +     ptep += sync_idx_start;
-> > > > +
-> > > > +     if (lvl < (ARM_LPAE_MAX_LEVELS - 1)) {
-> > > > +             for (i = 0; i < num_entries; i++) {
-> > > > +                     arm_lpae_iopte pte = READ_ONCE(ptep[i]);
-> > > > +                     unsigned long synced;
-> > > > +
-> > > > +                     WARN_ON(!pte);
-> > > > +
-> > > > +                     if (iopte_type(pte) == ARM_LPAE_PTE_TYPE_TABLE) {
-> > > > +                             int n = i - synced_entries;
-> > > > +
-> > > > +                             if (n) {
-> > > > +                                     __arm_lpae_sync_pte(&ptep[synced_entries], n, &iop->cfg);
-> > > > +                                     synced_entries += n;
-> > > > +                             }
-> > > > +                             ret = __arm_lpae_iotlb_sync_map(data, iova, size, lvl + 1,
-> > > > +                                                             iopte_deref(pte, data));
-> > > > +                             synced_entries++;
-> > > > +                     }
-> > > > +                     synced = block_size - (iova & (block_size - 1));
-> > > > +                     size -= synced;
-> > > > +                     iova += synced;
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > > +     if (synced_entries != num_entries)
-> > > > +             __arm_lpae_sync_pte(&ptep[synced_entries], num_entries - synced_entries, &iop->cfg);
-> > > > +
-> > > > +     return ret;
-> > > > +}
-> > >
-> > > Can't we rely on the exisiting generic table walker "__arm_lpae_iopte_walk",
-> > > instead writing a new one, that is already used for iova_to_phys and dirty bit.
-> > 
-> > The performance gains of .iotlb_sync_map are achieved by performing
-> > CMOs on a range of descriptors as opposed to individually on each
-> > descriptor in isolation. The function __arm_lpae_iopte_walk is
-> > inherently incompatible with this, because it calls the .visit
-> > callback once for each descriptor it finds in the specified range. I
-> > guess I could work around this limitation by saving some state in
-> > io_pgtable_walk_data and developing a .visit function that tries to
-> > coalesce individual descriptors into contiguous ranges and delays CMOs
-> > until it finds a break in continuity. I'm afraid, though, that that
-> > might hurt performance significantly.
-> 
-> Exactly, I think that would be the way, I don’t have a strong opinion
-> though, but I’d avoid open coding a new walker unless it’s necessary.
-> Also, the current walker won’t do ranges, it needs some more changes,
-> I did that as part of (half of the patch doesn’t apply for this case):
-> https://lore.kernel.org/all/20241212180423.1578358-38-smostafa@google.com/
+Hi Ally,
 
-I'm inclined to agree that it would be better to avoid open-coding a
-new walker here and if we're able to reuse/extend the generic walker
-then that would be cleaner.
+On Tue, 4 Nov 2025 at 10:58, Ally Heev <allyheev@gmail.com> wrote:
+> uninitialized pointers with __free attribute can cause undefined
+> behaviour as the memory allocated to the pointer is freed
+> automatically when the pointer goes out of scope.
+> add check in checkpatch to detect such issues
+>
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Link: https://lore.kernel.org/all/8a4c0b43-cf63-400d-b33d-d9c447b7e0b9@suswa.mountain/
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Ally Heev <allyheev@gmail.com>
 
-If that's not workable (due to Daniel's performance worries), another
-option is to bring back the ->map_sg() hook (removed by d88e61faad52
-("iommu: Remove the ->map_sg indirection")) and implement an optimised
-version of that, preferably sharing as much code as possible with the
-existing map path.
+Thanks for your patch!
 
-Will
+> --- a/Documentation/dev-tools/checkpatch.rst
+> +++ b/Documentation/dev-tools/checkpatch.rst
+> @@ -1009,6 +1009,11 @@ Functions and Variables
+>
+>        return bar;
+>
+> +  **UNINITIALIZED_PTR_WITH_FREE**
+> +    Pointers with __free attribute should be initialized. Not doing so
+> +    may lead to undefined behavior as the memory allocated (garbage,
+> +    in case not initialized) to the pointer is freed automatically
+> +    when the pointer goes out of scope.
+
+I think this is misleading, and can be improved: if the pointer is
+uninitialized, no memory was allocated?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
