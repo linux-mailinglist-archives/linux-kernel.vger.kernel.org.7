@@ -1,117 +1,292 @@
-Return-Path: <linux-kernel+bounces-883912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC581C2EBD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:25:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5375FC2EBDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 58D8E34C7D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:25:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 277C34EE970
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA5E21C167;
-	Tue,  4 Nov 2025 01:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76996220F37;
+	Tue,  4 Nov 2025 01:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="OesQPTod"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qb+0ITxH";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HrE748ag"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D67F1A5BB4;
-	Tue,  4 Nov 2025 01:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59DF21CC55
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762219510; cv=none; b=VZ57jkE7XqvTGnVkYDmkHEjA1WeUAkFvTe443BvnnIGm3Zwuxa6r1WhOw+vWwchI2Yc50XA6QvI7iCbzvco0KfjFXizxotZt22KMv2/i87dlgjJvgCJQeAqoe+4tzFlGaktlFjZMh6XwXjVH7CR/nPawQUJfu5nUdStFIPZM5Nc=
+	t=1762219515; cv=none; b=lG2Dnpd7KlvXgrPC+I9x4tTcLfSlA39U9C6RdqMVYJDe2Y9WHP98WQPHnYnotwS7pZQMHiq/vLJC2LHJMdydltN0zFqfW7rOC4vgWxmA70aH2OuQdP/4Fvv7D/RWaLOlIvwA+LgnDCwJAdHvtiF67xA/qTfHxsQXBWUpMl7NZpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762219510; c=relaxed/simple;
-	bh=cTpPT4cig9t3raQPQtj4U0kY+SvgSFfLmEaCK2rsmAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRay7ix1amC/x3Z5SbXQJA4pLjIGePysVWYyxfEj9v/NO06KsPNQ8iUdbb19V8foT18IT4hWvWi7f74/RUW6MQObluh4F8Vf5FVb+polrcd9xehKaeVlekQTSub5YmS0rWPZs747bcOA8DsHkALCrcntUZYQ71V1P8I2fTGHYX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=OesQPTod; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762219458;
-	bh=0hwl2OtFMXqkwgYt4ObNVkGet/D5+H7Gsx+xlg7Voxw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=OesQPTodsuo35YiXsczEWC1wTnAdRUYbpa61iB5aujdnMBOGA+n8n0cCiA861lFVx
-	 C4Iprtm53EuRkPgYvc0pCKv41wzGsi/QQ88xAwadIpTCJfeAGl6O/+4EEFM1va01jn
-	 jmWmM2ivLRBlGl6YamMAvv8gup3KtN2gWETlwLoA=
-X-QQ-mid: esmtpgz11t1762219450t564302b0
-X-QQ-Originating-IP: SNiv4Oe5sCRBWmV/7m5EOzuMnyMJ79uGdNyLs1smY5c=
-Received: from = ( [183.48.246.20])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Nov 2025 09:24:08 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1834260174305305172
-EX-QQ-RecipientCnt: 15
-Date: Tue, 4 Nov 2025 09:24:08 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>, @kernel.org
-Cc: linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
+	s=arc-20240116; t=1762219515; c=relaxed/simple;
+	bh=CYEmIKuR9CLW3Et/k3h/vTZHPiYXmHvJBxUygLG4wdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDkDGUJGc6swqgxusjbwAHB7uZoQMkpaECDumoP4+Em7HS58tNzFPODQGQGsI6tymzYG8kXgdQjhBnjeJluviON3yVZol1PiTBtV+6KXm9fuKeLDEAEVqhu6O4A+Zk13HN1JoqAyOBxA9tze3SYtp+HrzVFD+0OBjvg1BX1VvhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qb+0ITxH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HrE748ag; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762219512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+Pi6/EzEUXDzMLfenxWjlTIF8SdLRl2QPAi+dgGym8=;
+	b=Qb+0ITxHaSl0Swaj0jQJqH3pXQgitAGv0K6f+HYKy8DRZfKwwoPfg7+S0I3l8aCynSEfju
+	95mXdzjkHiUBOJBLJStvM1H36hvQHU07TGaRzYEwkQZt9JJUDXtrtQFQ2oKsN/Qr0sII+I
+	npXSCEChl81A6YNnFDUAoFFIy7C6TtQ=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-qitRX1HAOwCK5bed9jORFQ-1; Mon, 03 Nov 2025 20:25:11 -0500
+X-MC-Unique: qitRX1HAOwCK5bed9jORFQ-1
+X-Mimecast-MFC-AGG-ID: qitRX1HAOwCK5bed9jORFQ_1762219510
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5942d088d25so1061943e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 17:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762219509; x=1762824309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d+Pi6/EzEUXDzMLfenxWjlTIF8SdLRl2QPAi+dgGym8=;
+        b=HrE748agXw2FeXFIg4dG8k/KaNm9iwWEXo0cYojEx/Bx5IFXozxk8FTDiOuFuTGJ3J
+         cz9m70OCtci2u20DPWWbVES9lTMQRyAzwl1UltckTFpV0bVvkhOWnrg39TuF7OpDnek0
+         pfUvAHodtdYTTK3s5wEF1LkMZ6VVsnt6gBbuMrfONbDlb7VBQEmy64Mz07d9BnHkK4on
+         eVASTVgmf9BHTaCxi3XPMG6efq8IC04afjjjaZnkO3FlXcSN9hvOG3s7AMGsMJKAhkmM
+         JlUALDhOM9D0Jt5eUnZpo9e/Ow0T0O8h4mQTPskpZo5gZJIwIaCmDD7eOREAOlPnpNYZ
+         JGxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762219509; x=1762824309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d+Pi6/EzEUXDzMLfenxWjlTIF8SdLRl2QPAi+dgGym8=;
+        b=XT2D2UjhMf2k7Lbh0VnnTZ05nc8r8q2HDSEfgieUzHDmsG3e+uQmTg0eTJ43nMseTa
+         1qS3gdc9SofuXnn1IED8YZlMMCA6TPlWOZyOaJon8Ve0/+wlDYmFd29c8JC6XvZMRcuN
+         u9sEGHOfv/GoHe6FQa+DvX5Le9VaRYr5W9IVJ8EU54+gJpa4256WBMUHAAxN2WDWJnXp
+         vb66sgwR2xXPzqmr5y7cqhdn64LBiKzb6WBQXyT3NrnQ8PGOIQUZ84hB9HBNJ2IlXK8L
+         n1Wmnv4bYWeJpLuS2f6OotnPz/NBEqD2xtX9rRIKf6hhhTYpuqz+5MsjP01NX2V+jHfW
+         UPdg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dHm+7qHzqSMXjhoDvwPKXl86DBze1nkaBGbd/9JFVd+zjWgjJubq1u+ulAx1y+hGTN36s0OaLlSY9H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8gH9MwAKfDLMKB2S8wWS9nNJV5iRjeHpw9uGYg3b+DzrEvzXY
+	vFBfq25H5RjuEQRqOONmsxt/lCugYmtvgmj1yf1cxQCUI1h8ybsEVJp+fYoyXzRjE+eIaX4Uwx/
+	/W32NHAfxncG/CYD1r0+BPBvk1qYWAA7G716ybyJF7U2+WvFW+M2LLUbNoikLO2X7IZ35tMA4mf
+	/Dk67voCPH9QtE+pwYZ8ATpdbe5w9xi6yxVgozR4N5IUO1PAZCsfc=
+X-Gm-Gg: ASbGncs+ElkRAqXY11A6tZM2Oich2B2ynJ1ECMdseLEGMwN84/crrIPN2/E8SKZ28e0
+	XV0yE/U/5cCNyQfsYt5g0uIw1GxTxEoRcHjcplBe5PRYUioYUYOCpXeFE+Ky5cFlqInGKWfJ8Ed
+	CwfAVnSK0oCSFZDgPycc9S2CGMsxf5AUEGuQX7JeSx0fYWtGsb0N8Rv9Dq
+X-Received: by 2002:a05:6512:3b9f:b0:594:2f46:3906 with SMTP id 2adb3069b0e04-5942f463d1amr1182723e87.42.1762219509401;
+        Mon, 03 Nov 2025 17:25:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFw+KiUrbgaRA5jFO8291/8XW/xkoPYWP1hLqH3v4yorjNPQPklqDre2uxyaVfCPIDpDHsw7E2sA0cWV4kRwBU=
+X-Received: by 2002:a05:6512:3b9f:b0:594:2f46:3906 with SMTP id
+ 2adb3069b0e04-5942f463d1amr1182709e87.42.1762219507875; Mon, 03 Nov 2025
+ 17:25:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OXhWvHhbOVwtp8l6XuniZAsqSKFyUEwr3bv8yUqJc8kIBgygrt0iACsy
-	99mbFLhmna/9NLzh2fOs+IG8S3ENoJYAS3Kp5orGi/kyQbbNG4ZahSF11LTIuXZWtRe1lJ5
-	n70ZVEzBL7XHxFuKUAEZ2jrZ2pBqxkymLOjQ2hU0CSdJPWYyJj2S3yBF8AY5j99sdHqRgF7
-	RqqtVE7Zh+FkKT1XQ07lDV2ke6FPF02nfxvkjzN0qE2iCPO+9wgsVrobSVtf6bRKpiG9V+9
-	amvnOPsoaO4snIgayz9TQisLIBsXJ59oV3yoMpVfIs9TtX+tHNHfaR1TRprPF48valpKuhw
-	Nn9ay4UYZ0uKN8x55DZDTf1xdGJdK3yLB4AEn85lp2ROsH7KgjnacxigyFLLu9nxClnUw4w
-	7Rg4lgNUBZJdmrNfw9NfVjB18dWR9bOt444miyleusr7W+igLe9Td+0AMmRwAUWBivmxtBj
-	+afkZebJ4O2FusoKvb2N2WvHAcYbtehEeMno8mJBuYp5xHEsxyKwQygnAM4vRP3BS5sQmUY
-	OPseknkt0qm++4mbNGo1uqrbWdOvGIXia+LrBELOD5gNFNRolUTK6FqWWmZOrb3axuvE90c
-	J7HoiKbuxq+xaaMsycYvdJOKX5+WWb83BZHXbn/usICJXZc7V9X6w2TCWrw96/iEfi+vb2Z
-	1pSBXDyxoi9FyOBAaZf2NCORe81NOCsAMKtK5qvtkcSLDLGnP8BVNXYZFG/3kOEm7780dC1
-	0v5Srlj345S31a5HQ3a8rY58zY1MoOs3UF+uUED/NBIKaPqVeQ78DwIwAv9Ng7L0KoIxd7B
-	/QbLWTu3ye4bUvMryFKpg3ET0izbnv4IlphhGTRqHwAT5wSM4f5hzD9/aYJDvU3uJFcwhnf
-	MZDduaeOLxjhEsFFxdR2PHCmoghWHQn5IF2/X8BrwdvSrr9EfIkrMYQfUg7KY6Si+lWon+3
-	m3145wBDo3N+D4CMsffYSp5XHqg4BV6vvllmRb/H8JKvBa9th3r6/VGxlaS30fLYPK7VTnw
-	s2FoaWrtMso4HPqZ3YkJFZUPeKxpABkt8tWvNwNlzSSDSQVn0pf4PUXA7gW2XGVfvcqpnrc
-	Id1ID7tNOBw
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20251103125757.1405796-1-linan666@huaweicloud.com> <20251103125757.1405796-3-linan666@huaweicloud.com>
+In-Reply-To: <20251103125757.1405796-3-linan666@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 4 Nov 2025 09:24:56 +0800
+X-Gm-Features: AWmQ_bl0ZE8kKgiKI_kPU0KuvN7Otr0v8uenrtaMuUfYGTLMUrnpLuESn0q_kmc
+Message-ID: <CALTww29QY49_DA3e71fev+YDCQ-Qse5tGVCdjY+czw096K0EAg@mail.gmail.com>
+Subject: Re: [PATCH v9 2/5] md: init bioset in mddev_init
+To: linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com, 
+	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> 
-> On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> > commonly paired with the SpacemiT K1 SoC.
-> > 
-> > Note: For reliable operation, this driver depends on a this patch that adds
-> > atomic transfer support to the SpacemiT I2C controller driver:
-> >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
->       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-Should we apply it now? The dependency patch hasn’t been merged yet...
+On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> IO operations may be needed before md_run(), such as updating metadata
+> after writing sysfs. Without bioset, this triggers a NULL pointer
+> dereference as below:
+>
+>  BUG: kernel NULL pointer dereference, address: 0000000000000020
+>  Call Trace:
+>   md_update_sb+0x658/0xe00
+>   new_level_store+0xc5/0x120
+>   md_attr_store+0xc9/0x1e0
+>   sysfs_kf_write+0x6f/0xa0
+>   kernfs_fop_write_iter+0x141/0x2a0
+>   vfs_write+0x1fc/0x5a0
+>   ksys_write+0x79/0x180
+>   __x64_sys_write+0x1d/0x30
+>   x64_sys_call+0x2818/0x2880
+>   do_syscall_64+0xa9/0x580
+>   entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>
+> Reproducer
+> ```
+>   mdadm -CR /dev/md0 -l1 -n2 /dev/sd[cd]
+>   echo inactive > /sys/block/md0/md/array_state
+>   echo 10 > /sys/block/md0/md/new_level
+> ```
+>
+> mddev_init() can only be called once per mddev, no need to test if bioset
+> has been initialized anymore.
+>
+> Fixes: d981ed841930 ("md: Add new_level sysfs interface")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  drivers/md/md.c | 69 +++++++++++++++++++++++--------------------------
+>  1 file changed, 33 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index f6fd55a1637b..dffc6a482181 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -730,6 +730,8 @@ static void mddev_clear_bitmap_ops(struct mddev *mdde=
+v)
+>
+>  int mddev_init(struct mddev *mddev)
+>  {
+> +       int err =3D 0;
+> +
+>         if (!IS_ENABLED(CONFIG_MD_BITMAP))
+>                 mddev->bitmap_id =3D ID_BITMAP_NONE;
+>         else
+> @@ -741,10 +743,23 @@ int mddev_init(struct mddev *mddev)
+>
+>         if (percpu_ref_init(&mddev->writes_pending, no_op,
+>                             PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+> -               percpu_ref_exit(&mddev->active_io);
+> -               return -ENOMEM;
+> +               err =3D -ENOMEM;
+> +               goto exit_acitve_io;
+>         }
+>
+> +       err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEE=
+D_BVECS);
+> +       if (err)
+> +               goto exit_writes_pending;
+> +
+> +       err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NE=
+ED_BVECS);
+> +       if (err)
+> +               goto exit_bio_set;
+> +
+> +       err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
+> +                         offsetof(struct md_io_clone, bio_clone), 0);
+> +       if (err)
+> +               goto exit_sync_set;
+> +
+>         /* We want to start with the refcount at zero */
+>         percpu_ref_put(&mddev->writes_pending);
+>
+> @@ -773,11 +788,24 @@ int mddev_init(struct mddev *mddev)
+>         INIT_WORK(&mddev->del_work, mddev_delayed_delete);
+>
+>         return 0;
+> +
+> +exit_sync_set:
+> +       bioset_exit(&mddev->sync_set);
+> +exit_bio_set:
+> +       bioset_exit(&mddev->bio_set);
+> +exit_writes_pending:
+> +       percpu_ref_exit(&mddev->writes_pending);
+> +exit_acitve_io:
+> +       percpu_ref_exit(&mddev->active_io);
+> +       return err;
+>  }
+>  EXPORT_SYMBOL_GPL(mddev_init);
+>
+>  void mddev_destroy(struct mddev *mddev)
+>  {
+> +       bioset_exit(&mddev->bio_set);
+> +       bioset_exit(&mddev->sync_set);
+> +       bioset_exit(&mddev->io_clone_set);
+>         percpu_ref_exit(&mddev->active_io);
+>         percpu_ref_exit(&mddev->writes_pending);
+>  }
+> @@ -6393,29 +6421,9 @@ int md_run(struct mddev *mddev)
+>                 nowait =3D nowait && bdev_nowait(rdev->bdev);
+>         }
+>
+> -       if (!bioset_initialized(&mddev->bio_set)) {
+> -               err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BI=
+OSET_NEED_BVECS);
+> -               if (err)
+> -                       return err;
+> -       }
+> -       if (!bioset_initialized(&mddev->sync_set)) {
+> -               err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, B=
+IOSET_NEED_BVECS);
+> -               if (err)
+> -                       goto exit_bio_set;
+> -       }
+> -
+> -       if (!bioset_initialized(&mddev->io_clone_set)) {
+> -               err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
+> -                                 offsetof(struct md_io_clone, bio_clone)=
+, 0);
+> -               if (err)
+> -                       goto exit_sync_set;
+> -       }
+> -
+>         pers =3D get_pers(mddev->level, mddev->clevel);
+> -       if (!pers) {
+> -               err =3D -EINVAL;
+> -               goto abort;
+> -       }
+> +       if (!pers)
+> +               return -EINVAL;
+>         if (mddev->level !=3D pers->head.id) {
+>                 mddev->level =3D pers->head.id;
+>                 mddev->new_level =3D pers->head.id;
+> @@ -6426,8 +6434,7 @@ int md_run(struct mddev *mddev)
+>             pers->start_reshape =3D=3D NULL) {
+>                 /* This personality cannot handle reshaping... */
+>                 put_pers(pers);
+> -               err =3D -EINVAL;
+> -               goto abort;
+> +               return -EINVAL;
+>         }
+>
+>         if (pers->sync_request) {
+> @@ -6554,12 +6561,6 @@ int md_run(struct mddev *mddev)
+>         mddev->private =3D NULL;
+>         put_pers(pers);
+>         md_bitmap_destroy(mddev);
+> -abort:
+> -       bioset_exit(&mddev->io_clone_set);
+> -exit_sync_set:
+> -       bioset_exit(&mddev->sync_set);
+> -exit_bio_set:
+> -       bioset_exit(&mddev->bio_set);
+>         return err;
+>  }
+>  EXPORT_SYMBOL_GPL(md_run);
+> @@ -6784,10 +6785,6 @@ static void __md_stop(struct mddev *mddev)
+>         mddev->private =3D NULL;
+>         put_pers(pers);
+>         clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+> -
+> -       bioset_exit(&mddev->bio_set);
+> -       bioset_exit(&mddev->sync_set);
+> -       bioset_exit(&mddev->io_clone_set);
+>  }
+>
+>  void md_stop(struct mddev *mddev)
+> --
+> 2.39.2
+>
 
-                                       - Troy
+Looks good to me.
+
+Reviewed-by: Xiao Ni <xni@redhat.com>
+
 
