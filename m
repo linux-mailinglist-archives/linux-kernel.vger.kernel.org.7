@@ -1,190 +1,137 @@
-Return-Path: <linux-kernel+bounces-885020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F06FC31BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:09:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20E3C31C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7633AB6FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:04:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FB69500779
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2A257AFB;
-	Tue,  4 Nov 2025 15:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E4F2566D9;
+	Tue,  4 Nov 2025 15:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpYT4giR"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="e9Ddh+tb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13872522BA;
-	Tue,  4 Nov 2025 15:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DE925228D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268415; cv=none; b=rjIYp4CrC/WTvu+Z4xZi5FrgADbkGIJo8dI/X4A8njplkM4XKX5Lww9JsEZc4fD9HW+04R9mGUTA3LDPadpllfoKD5KORbVxzxlu4sU4ExH4VTZ1sRH8iXSU9tgLOTVQxHKXEiiy13CpDbKVVef5jf6VQfNL9fTyDhUYBs/a/jk=
+	t=1762268454; cv=none; b=PXqXjISysOnveLmS30rKN0JfhKLwyqzAqrxLCPsOE1rY0CPiYJ33XPC5PVBOyiAN8uzULxFNDlXqosjPwswYJoACosXQVkDF618WUkuWfzjyq3bJDlQPx5lAI6BB/VQdVVZXPn+eAUpovVy5s8QqAiLS/ikWamysqQ+dqOvUS/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268415; c=relaxed/simple;
-	bh=ebMwlcOllEAmVux6uigBYvOvQ1U699pEuwenpk8GAa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcGr79xvNcTw9qByREPDi2Lh6v0gBea/7m1x+Dx/BLlWmAVzqa/r12n8DvoDX2+RfsIz+k7+RElZxoIJRBBy+iVVhL7DEVUYIq2JdvUVwm4B29YldcHMEMwSVzFYmxvY9RwZ+2E1oCd6r0d3B57CkJoXrL4HAAKEOQ6yud8As7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpYT4giR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B73C4CEF7;
-	Tue,  4 Nov 2025 15:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762268415;
-	bh=ebMwlcOllEAmVux6uigBYvOvQ1U699pEuwenpk8GAa8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EpYT4giRowe6c94+e/O49vmTAnRcdfwZ9BkTVxBfzSYWtXoUvG0xiGmllObuw0CNI
-	 EWg1qvF9vAw9LLzr4AzKDAQTb0tnnGHgF7sZdQxK+PreK1mJU+YuTq1V9/ZOIXyNjX
-	 IEQF+GTYmE1SqYnyCgBu1p4ddfaFlecE6gfs+FWa/2yNX4x4gmMs2YJNPF7sskkzEN
-	 KT7Qou+0EQoMyafMIgLxtuitNanOeADgO2OnfkM+wLpdc9HSCdMl2agtwE8Z9lk8oB
-	 72RWkrV0w50Nv5xXUezTyrjbwSjP/T4DyqAlmcmOiqexhD/wxPXJHekqTkTxGuJRtz
-	 bdqr3E09iK3yw==
-Date: Tue, 4 Nov 2025 16:00:08 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, bhelgaas@google.com, heiko@sntech.de,
-	mani@kernel.org, yue.wang@amlogic.com, pali@kernel.org,
-	neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
-	khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 1/2] PCI: Configure root port MPS during host probing
-Message-ID: <aQoU-JhWz6IYTpGi@ryzen>
-References: <20250620155507.1022099-2-18255117159@163.com>
- <20250902174828.GA1165373@bhelgaas>
- <aLlmV8Qiaph1PHFY@ryzen>
+	s=arc-20240116; t=1762268454; c=relaxed/simple;
+	bh=eKDPwZQ/Fbb+gmQTh99oVMn5UPkffNUDx43TdAguj8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2yuuojyru7kUhNRHJQDsNfvb8gHp3YimQBnMAa7z/Bs4FUEdetq5QN5Oxj65pEkZ80ZrOBkieZGVBRcN3YUsj1CC5AG6Z2E3LRwPxgDCi0qO3FJCZeHmVFCYRNZlB+Sc4Lbk0RxVpIO5GRWsYA8nmFXaaeOyr5YNkr2FVstRXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=e9Ddh+tb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E959C116C6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:00:53 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="e9Ddh+tb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1762268447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OMhMo+FD0DPSdoRsPCCV4u9kNEQr9FX1sBqbPLxKSmw=;
+	b=e9Ddh+tbPemMu4NFBccXkLnLDM3vJ4ese90fY0pNIcBBjgDo0Arpv+xbtlGeNVdh39Hhu7
+	do3Ax6+TLlQSZ6xNCzguJ841TJ1h+VlVKHXv+8YGIzu/1xzMHhy6nzGENNvPAb83wLkq5x
+	g9RHszjdyHjJ+tDfsZXoI9CtL41WoKU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eaf9fdfb (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
+	for <linux-kernel@vger.kernel.org>;
+	Tue, 4 Nov 2025 15:00:47 +0000 (UTC)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3c9859913d0so3728602fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 07:00:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX3HkbP8seA64QPzQrKBCutxWqzmY0syt6FNiXnUUnDCl0KQG3zPEZRTiB/X1FsCPw6xk6avQHCE7RzmcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxznmP9FRjg/sxYSIFDD2a2GCLAdFLwGDzWTkCiSXX11rEvp/4t
+	Hkf2KFTiw7211CEvvPx+pedKZ8IAQeNR7Y00CNO2gjiBugJ7sSBLp1AIY7Y0gQRx8vLbo38QGwU
+	QD4Po/18vAbMvZivphVm9Di/MnIMOEI8=
+X-Google-Smtp-Source: AGHT+IHXS/SPuiVMTem3zW3lMfDHfTOu6xBk8bXomDTl8LZ2Y5WSDsvq0QVQ9T156CV0BIURiYsG8QmzmpZKLMW6ZMw=
+X-Received: by 2002:a05:6870:c6a4:b0:3d1:8919:71f8 with SMTP id
+ 586e51a60fabf-3dace28f2bbmr7683653fac.48.1762268444983; Tue, 04 Nov 2025
+ 07:00:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLlmV8Qiaph1PHFY@ryzen>
+References: <aPT9vUT7Hcrkh6_l@zx2c4.com> <176216536464.37138.975167391934381427@copycat>
+ <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local> <176221415302.318632.4870393502359325240@copycat>
+ <20251104132118.GCaQn9zoT_sqwHeX-4@fat_crate.local> <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
+In-Reply-To: <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Tue, 4 Nov 2025 16:00:33 +0100
+X-Gmail-Original-Message-ID: <CAHmME9rRyBoqA8CnCBLFMioZjkPG0tai-y2g0OMRFrSMrLK52w@mail.gmail.com>
+X-Gm-Features: AWmQ_bnIdZ7LrOKmoG9HwsEkExs0NstjDaUgbpjdU1BMe4dlJHZfzqS78EGxxT8
+Message-ID: <CAHmME9rRyBoqA8CnCBLFMioZjkPG0tai-y2g0OMRFrSMrLK52w@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an error.
+To: Borislav Petkov <bp@alien8.de>
+Cc: Christopher Snowhill <chris@kode54.net>, Gregory Price <gourry@gourry.net>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org, 
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com, 
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com, 
+	darwi@linutronix.de, stable@vger.kernel.org, thiago.macieira@intel.com, 
+	jonas@jkvinge.net
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Hans,
+The documentation really isn't helping things either.
 
-Any chance that you have time to re-spin this series?
+https://doc.qt.io/qt-6/qrandomgenerator.html
 
-I've seen some new DWC based drivers like NXP that also want to
-configure MPS.
+From the intro: "QRandomGenerator::securelySeeded() can be used to
+create a QRandomGenerator that is securely seeded with
+QRandomGenerator::system(), meaning that the sequence of numbers it
+generates cannot be easily predicted. Additionally,
+QRandomGenerator::global() returns a global instance of
+QRandomGenerator that Qt will ensure to be securely seeded." And then
+later, reading about QRandomGenerator::global(), it starts by saying,
+"Returns a pointer to a shared QRandomGenerator that was seeded using
+securelySeeded()."
 
-Most likely we know the reason... The PCI core does not change it
-without this series.
+Sounds great, like we should just use QRandomGenerator::global() for
+everything, right? Wrong. It turns out QRandomGenerator::system() is
+the one that uses 1,2,3,4,5,(6godforbid) in my email above.
+QRandomGenerator::global(), on the contrary uses
+"std::mersenne_twister_engine<quint32,32,624,397,31,0x9908b0df,11,0xffffffff,7,0x9d2c5680,15,0xefc60000,18,1812433253>".
 
+So then you keep reading the documentation and it mentions that
+::system() is "to access the system's cryptographically-safe random
+generator." So okay maybe if you're really up with the lingo, you'll
+know to use that. But to your average reader, what's the difference
+between "securely seeded" and "system's cryptographically-safe random
+number generator"? And even to me, I was left wondering what exactly
+was securely seeded before I looked at the source. For example,
+OpenBSD's arc4random securely seeds a chacha20 instance in libc before
+proceeding. That's a lot different from std::mersenne_twister_engine!
 
-Kind regards,
-Niklas
+I was looking for uses of ::system() on my laptop so that I could
+verify the behavior described in my last email dynamically, when I
+came across this from my favorite music player (author CC'd):
+https://github.com/strawberrymusicplayer/strawberry/blob/master/src/utilities/randutils.cpp#L50
 
-On Thu, Sep 04, 2025 at 12:13:43PM +0200, Niklas Cassel wrote:
-> On Tue, Sep 02, 2025 at 12:48:28PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Jun 20, 2025 at 11:55:06PM +0800, Hans Zhang wrote:
-> > > Current PCIe initialization logic may leave root ports operating with
-> > > non-optimal Maximum Payload Size (MPS) settings. While downstream device
-> > > configuration is handled during bus enumeration, root port MPS values
-> > > inherited from firmware or hardware defaults ...
-> > 
-> > Apparently Root Port MPS configuration is different from that for
-> > downstream devices?
-> 
-> pci_host_probe() will call pci_scan_root_bus_bridge(), which will call
-> pci_scan_single_device(), which will call pci_device_add(), which will
-> call pci_configure_device(), which will call pci_configure_mps().
-> 
-> This will be done for both bridges and endpoints.
-> 
-> The bridge will be scanned/added first, before devices behind the bridge.
-> 
-> 
-> While pci_configure_device()/pci_configure_mps() will be called for both
-> bridges and endpoints, pci_configure_mps() will do an early return for
-> devices where pci_upstream_bridge() returns NULL, i.e. for devices where
-> that does not have an upstream bridge, i.e. for the root bridge itself:
-> https://github.com/torvalds/linux/blob/v6.17-rc4/drivers/pci/probe.c#L2181-L2182
-> 
-> So MPS will not be touched for root bridges.
-> 
-> This patch ensures that MPS for root bridges gets initialized to MPSS
-> (Max supported MPS).
-> 
-> Later, when pci_configure_device()/pci_configure_mps() is called for a
-> device behind the bridge, if the MPSS of the device behind the bridge is
-> smaller than the MPS of the bridge, the code reduces the MPS of the bridge:
-> https://github.com/torvalds/linux/blob/v6.17-rc4/drivers/pci/probe.c#L2205
-> 
-> 
-> My only question with this patch is if there is a bridge behind a bridge,
-> will the bridge behind the bridge still have pci_pcie_type() ==
-> PCI_EXP_TYPE_ROOT_PORT ?
-> 
-> If so, perhaps we should modify this patch from:
-> 
-> +       if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> +           pcie_bus_config != PCIE_BUS_TUNE_OFF) {
-> +               pcie_write_mps(dev, 128 << dev->pcie_mpss);
-> +       }
-> +
->         if (!bridge || !pci_is_pcie(bridge))
->                 return;
-> 
-> 
-> to:
-> 
-> +       if (!bridge && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> +           pcie_bus_config != PCIE_BUS_TUNE_OFF) {
-> +               pcie_write_mps(dev, 128 << dev->pcie_mpss);
-> +       }
-> +
->         if (!bridge || !pci_is_pcie(bridge))
->                 return;
-> 
-> 
-> 
-> > > During host controller probing phase, when PCIe bus tuning is enabled,
-> > > the implementation now configures root port MPS settings to their
-> > > hardware-supported maximum values. Specifically, when configuring the MPS
-> > > for a PCIe device, if the device is a root port and the bus tuning is not
-> > > disabled (PCIE_BUS_TUNE_OFF), the MPS is set to 128 << dev->pcie_mpss to
-> > > match the Root Port's maximum supported payload size. The Max Read Request
-> > > Size (MRRS) is subsequently adjusted through existing companion logic to
-> > > maintain compatibility with PCIe specifications.
-> > > 
-> > > Note that this initial setting of the root port MPS to the maximum might
-> > > be reduced later during the enumeration of downstream devices if any of
-> > > those devices do not support the maximum MPS of the root port.
-> > > 
-> > > Explicit initialization at host probing stage ensures consistent PCIe
-> > > topology configuration before downstream devices perform their own MPS
-> > > negotiations. This proactive approach addresses platform-specific
-> > > requirements where controller drivers depend on properly initialized
-> > > root port settings, while maintaining backward compatibility through
-> > > PCIE_BUS_TUNE_OFF conditional checks. Hardware capabilities are fully
-> > > utilized without altering existing device negotiation behaviors.
-> > 
-> > This last paragraph seems kind of like marketing without any real
-> > content.  Is there something important in there?
-> > 
-> > Nits:
-> > s/root port/Root Port/
-> > 
-> > Reword "implementation now configures" to be clear about whether "now"
-> > refers to before this patch or after.
-> > 
-> > Update the MRRS "to maintain compatibility" part.  I'm dubious about
-> > there being a spec compatibility issue with respect to MRRS.  Cite the
-> > relevant section if there is an issue.
-> 
-> I'm not sure why the commit message mentions MRRS at all.
-> 
-> Sure, pcie_write_mrrs() might set MRRS to MPS, but that is existing logic
-> and not really related to the change in this patch IMO.
-> 
-> 
-> Kind regards,
-> Niklas
+QString CryptographicRandomString(const int len) {
+  const QString
+UseCharacters(u"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"_s);
+  return GetRandomString(len, UseCharacters);
+}
+QString GetRandomString(const int len, const QString &UseCharacters) {
+  QString randstr;
+  for (int i = 0; i < len; ++i) {
+    const qint64 index = QRandomGenerator::global()->bounded(0,
+UseCharacters.length());
+
+Using ::global() for something "cryptographic". I don't blame the
+author at all! The documentation is confusing as can be.
+
+And this is all on top of the fact that ::system() is pretty mucky, as
+described in my last email.
+
+Jason
 
