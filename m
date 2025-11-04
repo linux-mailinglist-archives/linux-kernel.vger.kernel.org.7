@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-884334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4C3C2FE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:31:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C8EC2FF47
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F0474F0D9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D792189D896
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA62430F941;
-	Tue,  4 Nov 2025 08:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A922AC17;
+	Tue,  4 Nov 2025 08:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mBYcAXhM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7/Zsfoc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169D61A2392;
-	Tue,  4 Nov 2025 08:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E7EEC0;
+	Tue,  4 Nov 2025 08:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245000; cv=none; b=dLfM4bm7MLLY6gOlzdEuBKj6JQpGc0Bu3mMC30Hbk7ZKCFroChLI47IBIMOzBjLuS+aBJh8C70XrbQauQozWjjud5MTIkouAQ25r/yfWf4UjQqbtP4RxhphiR7p8eC/y5RvGgmXkEJBOVTXh9CIKwp3j5eTa4+/xf/kR0kTTgJE=
+	t=1762245070; cv=none; b=UCb1pZYFNyOtkzqVPdOlJW76XXqZIhPdyNZA+KkuGQuRt7Wy5bjdrtLV9V1PGufeO45BQNytH5DrAlrC6hJkF3Q+eXr+Ly6vLiTh9QuypFRqhJeIJeg7Ek/BK0bQ0aTv6VlNML8NBrlgS5+6QG3nWSsYk5KRNsG1zHozAhM67G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245000; c=relaxed/simple;
-	bh=ZY4MLG3Pozng8Yzu+/rwnU2R7ji3n4sypI/tK3knfZU=;
+	s=arc-20240116; t=1762245070; c=relaxed/simple;
+	bh=3xceHsxXhCdcgtIdMQ5qJFYY8DSrH0P3Oh57cMWibVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dq1O2c4oBHFnBYkirkTfGodkEj+pjhglUPZ3wer2/Pqe9/avkCIFkwiuw4WOdHYas9k7SpZJqWjtTuO4R9dQNDoMGIZxDpLeU3LA5gDOWrDVUch0jaisZR3GSWtyUhDhGUcdUjvFrOEOFmuW570dCOwuAVDI0Cdz3OufMc0V+EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mBYcAXhM; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762244998; x=1793780998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZY4MLG3Pozng8Yzu+/rwnU2R7ji3n4sypI/tK3knfZU=;
-  b=mBYcAXhM97LYoFQ/SEgkof9xh/ELn8SmZW2Sni+8la0CUgqcDAOEUKZC
-   SiVJZvjsQcnSUu2MtibrspPdKBvExzwg/j0cJwlPJ7LFKxyn9lShaBs87
-   SpvZEJ5YZBUc25XiHbJ+kWDwrBnGQzNRRowc61TaHcT9DkIQKHqzM+M5b
-   lmV04g9QMPNiDVDzzhEqUGBuhcEMpWsx9heFt9NwGWdSqnsmp7jWQzRG3
-   LNuo5FAfom/xBlfQDaV3o4BZnffh9UWEDg8RAVAxu3oUKGqZ/Nus2NTns
-   oQxONQuJ4hTOqYljvnpuB2afUTMa0hqNudJSeFNv7dnH82HXudLna2xX5
-   Q==;
-X-CSE-ConnectionGUID: J680W1UNRlyA+EMebqq+JA==
-X-CSE-MsgGUID: B8yaGn4JQu2X665cgr6SzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81962057"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="81962057"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 00:29:57 -0800
-X-CSE-ConnectionGUID: AHMEmrQCTUezwu5XTwmg0A==
-X-CSE-MsgGUID: rcWOw5QfS8yXslGPdIZ0EQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="187827199"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.133])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 00:29:50 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 1090411FB83;
-	Tue, 04 Nov 2025 10:29:48 +0200 (EET)
-Date: Tue, 4 Nov 2025 10:29:48 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Tarang Raval <tarang.raval@siliconsignals.io>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v4 2/2] media: i2c: add Himax HM1246 image sensor driver
-Message-ID: <aQm5fEB5YTyt2qgY@kekkonen.localdomain>
-References: <20251017-hm1246-v4-0-e3388ea2f08c@emfend.at>
- <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
- <aPec0SRvDlqtVKIJ@kekkonen.localdomain>
- <6e7a63b1-6aee-4b4f-9fb9-2f2df92782b4@emfend.at>
- <85df7f30-e9ac-422e-8ab5-7c6b82774aaf@emfend.at>
- <aQiL111bKgKE6M22@kekkonen.localdomain>
- <a7c2b507-90e8-4b0b-92d6-5b232e7ba22f@emfend.at>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rN/krvQ8HbUw2u0Yzwqm6dWAVyqY34WHHFq6t3cCPpgCcZ3loEnKn/Rhjls6gKsvsqn8SsvMeZfunAGw6g2mcG0ZYO2Wx+sTv41Uw1du3nQupCxf+5WOjp2NMkadG/LWhNtEsafILjzXfFxppvGvniaAGvXRfViKcUiC6t+Cz5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7/Zsfoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF666C4CEF7;
+	Tue,  4 Nov 2025 08:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762245067;
+	bh=3xceHsxXhCdcgtIdMQ5qJFYY8DSrH0P3Oh57cMWibVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r7/ZsfocgWcavXRz5mce/0NqwSfnLGokwYxa4JjTB1YZVH1/up/3juZNYYvaSZ+cc
+	 TbH18iCnMtmR2iwPzGm6gaFxXfwNPS/OSy9fcifBThKvJmWUfKEJiIJ++rI/cPE0Cz
+	 gGCOzJYpl8BUNHelyuT8JbV7gga/BBib0waopzKLxFLtbJ6MFUX/2GoGxgmw6vyOTF
+	 gnYdnpdKW5Zaavx/nEGOAWP8hfP8kF77c6lMwEsgSluecQojiCV+TczSEWaGfWa3Ot
+	 St61y02YsPaSif1iRBhOYRJtcuhMcbaJdfNjoOELhUiYxxz6VKjLJeAozNZ4R54/8D
+	 PrT4K5KYTJgTg==
+Date: Tue, 4 Nov 2025 09:31:05 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 07/20] dt-bindings: firmware: google,gs101-acpm-ipc:
+ update PMIC examples
+Message-ID: <20251104-awesome-tacky-magpie-bacd9f@kuoka>
+References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
+ <20251103-s2mpg1x-regulators-v3-7-b8b96b79e058@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7c2b507-90e8-4b0b-92d6-5b232e7ba22f@emfend.at>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251103-s2mpg1x-regulators-v3-7-b8b96b79e058@linaro.org>
 
-Hi Matthias,
+On Mon, Nov 03, 2025 at 07:14:46PM +0000, Andr=C3=A9 Draszik wrote:
+> In a typical system using the Samsung S2MPG10 PMIC, an S2MPG11 is used
+> as a sub-PMIC.
+>=20
+> The interface for both is the ACPM firmware protocol, so update the
+> example here to describe the connection for both.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 40 ++++++++++++++++=
+++++--
+>  1 file changed, 37 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
+-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
+c.yaml
+> index 4a1e3e3c0505aad6669cadf9b7b58aa4c7f284cb..c25e155926e5f44bd74f195cd=
+bff3672c7499f8e 100644
+> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
+ml
+> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
+ml
+> @@ -45,6 +45,15 @@ properties:
+>        compatible:
+>          const: samsung,s2mpg10-pmic
+> =20
+> +  pmic2:
 
-On Mon, Nov 03, 2025 at 05:19:47PM +0100, Matthias Fend wrote:
-> > > > > > +static int hm1246_parse_fwnode(struct hm1246 *hm1246)
-> > > > > > +{
-> > > > > > +    struct fwnode_handle *endpoint;
-> > > > > > +    struct v4l2_fwnode_endpoint bus_cfg = {
-> > > > > > +        .bus_type = V4L2_MBUS_PARALLEL,
-> > > > > > +    };
-> > > > > > +    int ret;
-> > > > > > +
-> > > > > > +    endpoint =
-> > > > > > fwnode_graph_get_endpoint_by_id(dev_fwnode(hm1246- >dev), 0,
-> > > > > > +                           0,
-> > > > > > +                           FWNODE_GRAPH_ENDPOINT_NEXT);
-> > > > > > +    if (!endpoint)
-> > > > > > +        return dev_err_probe(hm1246->dev, -EINVAL,
-> > > > > > +                     "missing endpoint node\n");
-> > > > > > +
-> > > > > > +    ret = v4l2_fwnode_endpoint_parse(endpoint, &bus_cfg);
-> > > > > 
-> > > > > What about validating the link frequencies? You can use
-> > > > > v4l2_link_freq_to_bitmap(), too.
-> > > > 
-> > > > I was under the impression that for sensors with a parallel interface,
-> > > > no frequency information is provided in the device tree (because there's
-> > > > no need for it). Since there are no frequency entries, they can't be
-> > > > verified.
-> > > > 
-> > > > Am I wrong, or did you perhaps mean something else?
-> > 
-> > The current documentation
-> > <URL:https://hverkuil.home.xs4all.nl/spec/driver-api/camera-sensor.html>
-> > doesn't distinguish CSI-2 and parallel interfaces in this respect. It's a
-> > good idea to ensure a safe frequency is used as the driver works the same
-> > way in all cases, whether or not using one is mandatory.
-> 
-> If I understand correctly, this means that in the bindings, the port
-> property 'link-frequencies' should be marked as 'required', and the port in
-> the example node should be extended with the line 'link-frequencies = /bits/
-> 64 <42174000>;'.
-> Then, during probe, it can be checked with v4l2_link_freq_to_bitmap()
-> whether the link frequency entered in the device tree is supported (this
-> also requires switching to v4l2_fwnode_endpoint_alloc_parse).
-> 
-> Does this describe the desired change?
+pmic-2
 
-Yes, it does.
+Are there more pmics? Bindings are supposed to be complete (see writing
+bindings) and if you did follow this approach earlier, you would nicely
+call first "pmic-1" (instead of "pmic") and then "pmic-2".
 
--- 
-Regards,
+> +    description: Child node describing the sub PMIC.
+> +    type: object
+> +    additionalProperties: true
 
-Sakari Ailus
+Best regards,
+Krzysztof
+
 
