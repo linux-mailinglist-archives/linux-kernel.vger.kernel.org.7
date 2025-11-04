@@ -1,193 +1,114 @@
-Return-Path: <linux-kernel+bounces-884807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AD0C31320
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:21:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289E8C3138C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:27:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9E63AE45D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:21:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E72A4F42F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5396B320CB5;
-	Tue,  4 Nov 2025 13:21:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF367320A29
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41F2F5A1D;
+	Tue,  4 Nov 2025 13:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JJqJFsnK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE45B2F83AE;
+	Tue,  4 Nov 2025 13:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262478; cv=none; b=LQqltTgmOWtaBEg9me347DBaz+3WaSXdi2vi1UX/K8a8xPY+wNxkMpaiBdk2L/G6al+8exiy6TC6IegNILeFGbuEZTMD6MD3poKzFEG3EPLV+nxht2bCmAnMe6M9laAtG0fRw00WCw2zIs90G25kjWPDUwnfyHnfBK1Al11M/Js=
+	t=1762262521; cv=none; b=Cn9zJfLRbHlikVmI7uDMeyekNzdZc8KDpxcdJ5993DmWP/uioczNLHevJpkVaEzrRdu35Sjn3HDwYKntxjrjfkMoyqMfew56lId4sAsSldOq+q2PhPwjVtxNEaZURF+XD32n89EJfCBSMQ2IeImHzE+IjZyu3/RrnyvXc/+3uks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262478; c=relaxed/simple;
-	bh=ZszWIcep5j8BMARO1YZ7AX2+22qA9IuN2AzHj9fLZRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7RBBSUnOlSw0C/g1034BtpTkTLFTw9swvYdaipsTa4nETca0Gi8DdBTIW409E8zFIaROvpc1I3bWx4ooMaZKp7ZDX8ayOasoKClbjbobOjh8IRXZaeeY4nIKMMIHIcfPT99YQbrl7b8hHxSYqZVEBYHMUeb9u1BgwEoutq8YSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BE1D1CE0;
-	Tue,  4 Nov 2025 05:21:08 -0800 (PST)
-Received: from [10.164.18.64] (unknown [10.164.18.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2E9C3F66E;
-	Tue,  4 Nov 2025 05:21:08 -0800 (PST)
-Message-ID: <d51ecac7-d67b-4da0-babe-a65aaf9293d0@arm.com>
-Date: Tue, 4 Nov 2025 18:51:05 +0530
+	s=arc-20240116; t=1762262521; c=relaxed/simple;
+	bh=A8uNsn01/WnKgfXHXpP9rtbba4JgRI3AzKgqACHqeJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I21F/IhtoIS8qC5HyQyAypqwLnpYUQol4/E44tjrOEpgtdrV9o5Cy7iFzTrQBqu+1shO0VP1cZKIcU842/hV1TkedQDxex4d6kMWMGnXjNwIroqW47GjSDjztKV99ipn6GLHvbWGDNsT05j/K9tRYBCydu5Zitx7+uI7T/mAXMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JJqJFsnK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 67FD540E01CD;
+	Tue,  4 Nov 2025 13:21:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Lf8_NI5z6oTE; Tue,  4 Nov 2025 13:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762262503; bh=uWN8A3k4MptfZyPCNRH5jFhgxBi6r1ClNs78sPDO9Ig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JJqJFsnKXnlO3wIcz2hAl+sI6cA+ur0co+0Yf5CYbQ6goujdlO3VzhDWulK7STaMB
+	 FIC1xrXq3tIhjWVGv9GQJgFTO/kDFMRYlrHg3ANtAacL0Yk6dG26AjIxMNyWNuvO2u
+	 Rs+p8Ns8TYZAdSr6WVbbmt2ZAjm5EuUrlciVIqR7YdhYeZvj+/FShqaoPgNB284J2G
+	 /XWeIaQ6dc9uCjQyp1Od7TH3HkXquol1TRVcYiWUtgbcvdmyfENV4JalrLflHnlzdD
+	 HBTfxOCmsuQU0zd64JJURX3zNKbPrwMn4z4bcUT5kA9KX1oqcaUrc3XOfsB3hzFtd5
+	 DOQzLjnALoSrADn8rHXtasmqlFirhAOnQbaJ6/BzBJQZebC7g/tetMulqzMrsRlbzH
+	 +/cHH0+ym73wVAHQipwWbEU1mAS9lxnbVwCPcg7bulUc5v/aSSFp87ACUBdHgaVdpq
+	 06HLPAIY4/SJ3YShygmPqQbyA/7ASs2QdMvJlosOowy5kDY6EhM5ffrNxM4tlcJ8Ee
+	 i3AidWp88999Oav/3yj6Gld55y3G2dM+KP6eCaus4FjnRQ32XwhSiwzcizkLyt+XPi
+	 CeGuJtwClGgace29+HBTxAZwQnh2mqpx4yyATY5UvfSjw9o3H+Sa43kabHp0/Y34kE
+	 ieAU85bG75xj3C5JNYbwKyJg=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B221F40E021C;
+	Tue,  4 Nov 2025 13:21:24 +0000 (UTC)
+Date: Tue, 4 Nov 2025 14:21:18 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Christopher Snowhill <chris@kode54.net>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Gregory Price <gourry@gourry.net>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
+	darwi@linutronix.de, stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
+ error.
+Message-ID: <20251104132118.GCaQn9zoT_sqwHeX-4@fat_crate.local>
+References: <aPT9vUT7Hcrkh6_l@zx2c4.com>
+ <176216536464.37138.975167391934381427@copycat>
+ <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local>
+ <176221415302.318632.4870393502359325240@copycat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
-To: Lance Yang <ioworker0@gmail.com>, zhengqi.arch@bytedance.com
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, bp@alien8.de,
- catalin.marinas@arm.com, dave.hansen@linux.intel.com, david@redhat.com,
- hannes@cmpxchg.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, mhocko@suse.com,
- mingo@redhat.com, ppt@kernel.org, ryan.roberts@arm.com,
- shakeel.butt@linux.dev, surenb@google.com, tglx@linutronix.de,
- vbabka@suse.cz, will@kernel.org, x86@kernel.org,
- Lance Yang <lance.yang@linux.dev>
-References: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
- <20251104131348.32332-1-ioworker0@gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251104131348.32332-1-ioworker0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <176221415302.318632.4870393502359325240@copycat>
 
+On Mon, Nov 03, 2025 at 03:55:53PM -0800, Christopher Snowhill wrote:
+> https://lore.kernel.org/lkml/9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org/
 
-On 04/11/25 6:43 pm, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
->
->
-> On Tue, 4 Nov 2025 14:33:00 +0800, Qi Zheng wrote:
->>
->> On 11/4/25 12:02 PM, Dev Jain wrote:
->>> On 03/11/25 2:37 pm, Qi Zheng wrote:
->>>> Hi Dev,
->>>>
->>>> On 11/3/25 4:43 PM, Dev Jain wrote:
->>>>> On 03/11/25 12:33 pm, Qi Zheng wrote:
->>>>>> Hi Dev,
->>>>>>
->>>>>> On 11/3/25 2:37 PM, Dev Jain wrote:
->>>>>>> The implementation of CONFIG_PT_RECLAIM is completely contained in
->>>>>>> generic
->>>>>>> mm code. It depends on the RCU callback which will reclaim the
->>>>>>> pagetables -
->>>>>>> there is nothing arch-specific about that. So, enable this config for
->>>>>>> all architectures.
->>>>>> Thanks for doing this!
->>>>>>
->>>>>> But unfortunately, not all architectures call tlb_remove_ptdesc() in
->>>>>> __pte_free_tlb(). Some architectures directly call pte_free() to
->>>>>> free PTE pages (without RCU).
->>>>> Thanks! This was not obvious to figure out.
->>>>>
->>>>> Is there an arch bottleneck because of which they do this? I mean to
->>>>> say,
->>>>>
->>>>> is something stopping us from simply redirecting __pte_free_tlb to
->>>>> tlb_remove_ptdesc
->>>> Some architectures have special handling in __pte_free_tlb(), and cannot
->>>> simple redirect __pte_free_tlb() to tlb_remove_ptdesc(), such as m68k,
->>>> powerpc, etc.
->>>>
->>>> For those architectures that call pte_free() in __pte_free_tlb(), it
->>>> should be easy to modify them.
->>>>
->>>> If you're not in a rush, I can take the time to finish the above tasks.
->>> Right then, I'll leave that up to you!
->> OK, I will do it ASAP.
-> Cool! Looking forward to seeing that land ;p
->
-> Cheers,
-> Lance
->
->>>
->>>>> or pte_free_defer?
->>>>>
->>>>>
->>>>> I am looking to enable this config at least on arm64 by default, I
->>>>> believe it will be legal
-> Great proposal, Dev! That looks like a very useful feature. Let's make it
-> happen on arm64 ;)
+tglx already summed up what the options are:
 
-Yup, but not sure whether an arm64 enabling patch, only for that to go away
-when Qi implements the feature generically, is worth the trouble!
+https://lore.kernel.org/all/878qgnw0vt.ffs@tglx
 
->
->>>>> to do this at least here.
->>>> IIRC, arm64 can directly enable CONFIG_PT_RECLAIM, as it is supported
->>>> at the architecture level.
->>>>
->>>> Thanks,
->>>> Qi
->>>>
->>>>>
->>>>>> We need to modify these architectures first, otherwise it will
->>>>>> lead to UAF. This approach is feasible because Hugh provides similar
->>>>>> support in pte_free_defer().
->>>>>>
->>>>>> Enabling PT_RECLAIM on all architecture has always been on my
->>>>>> TODO list, but it's been blocked by other things. :(
->>>>>>
->>>>>> Thanks,
->>>>>> Qi
->>>>>>
->>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>>>> ---
->>>>>>>    arch/x86/Kconfig | 1 -
->>>>>>>    mm/Kconfig       | 5 +----
->>>>>>>    mm/pt_reclaim.c  | 2 +-
->>>>>>>    3 files changed, 2 insertions(+), 6 deletions(-)
->>>>>>>
->>>>>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->>>>>>> index fa3b616af03a..5681308a5650 100644
->>>>>>> --- a/arch/x86/Kconfig
->>>>>>> +++ b/arch/x86/Kconfig
->>>>>>> @@ -327,7 +327,6 @@ config X86
->>>>>>>        select FUNCTION_ALIGNMENT_4B
->>>>>>>        imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
->>>>>>>        select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
->>>>>>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
->>>>>>>        select ARCH_SUPPORTS_SCHED_SMT        if SMP
->>>>>>>        select SCHED_SMT            if SMP
->>>>>>>        select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
->>>>>>> diff --git a/mm/Kconfig b/mm/Kconfig
->>>>>>> index 0e26f4fc8717..903c37d02555 100644
->>>>>>> --- a/mm/Kconfig
->>>>>>> +++ b/mm/Kconfig
->>>>>>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
->>>>>>>          The architecture has hardware support for userspace shadow
->>>>>>> call
->>>>>>>              stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
->>>>>>>    -config ARCH_SUPPORTS_PT_RECLAIM
->>>>>>> -    def_bool n
->>>>>>> -
->>>>>>>    config PT_RECLAIM
->>>>>>>        bool "reclaim empty user page table pages"
->>>>>>>        default y
->>>>>>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
->>>>>>> +    depends on MMU && SMP
->>>>>>>        select MMU_GATHER_RCU_TABLE_FREE
->>>>>>>        help
->>>>>>>          Try to reclaim empty user page table pages in paths other
->>>>>>> than munmap
->>>>>>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
->>>>>>> index 7e9455a18aae..049e17f08c6a 100644
->>>>>>> --- a/mm/pt_reclaim.c
->>>>>>> +++ b/mm/pt_reclaim.c
->>>>>>> @@ -1,6 +1,6 @@
->>>>>>>    // SPDX-License-Identifier: GPL-2.0
->>>>>>>    #include <linux/hugetlb.h>
->>>>>>> -#include <asm-generic/tlb.h>
->>>>>>> +#include <asm/tlb.h>
->>>>>>>    #include <asm/pgalloc.h>
->>>>>>>      #include "internal.h"
->>
+> Qt is built with -march=znver4, which automatically enables -mrdseed.
+> This is building rdseed 64 bit, but then the software is also performing
+> kernel feature checks on startup. There is no separate feature flag for
+> 16/32/64 variants.
+
+No, there aren't.
+
+And the problem here is that, AFAICT, Qt is not providing a proper fallback
+for !RDSEED. Dunno, maybe getrandom(2) or so. It is only a syscall which has
+been there since forever. Rather, it would simply throw hands in the air.
+
+Soon there will be client microcode fixes too so all should be well.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
