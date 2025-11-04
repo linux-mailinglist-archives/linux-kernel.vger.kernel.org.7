@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-884059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1184C2F391
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:01:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71D8C2F380
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B933BE6D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:01:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 099FA34C55B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272BE261B70;
-	Tue,  4 Nov 2025 04:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6792A2C0282;
+	Tue,  4 Nov 2025 03:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PGBKiwpN"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgGGo5hS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13D3A932;
-	Tue,  4 Nov 2025 04:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C882BB1D;
+	Tue,  4 Nov 2025 03:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762228875; cv=none; b=iteMtnZQUa+qi0wAOvx3W8izuEDfpt3lAVjwvLNpLppYiTc5+6klnFEGRB73L8geT8O9D5Zx9LYFt076lpxbjVu46Pd/CgMkhMfaNQvtjW2tbPuuGnKlH43KlMQrq3RE+ITIRzHk1rWRjowEmR4VgelizrgaOkEKnxFG4fPcAcA=
+	t=1762228721; cv=none; b=Xaxscu+AMhyWfUq7dfqLBSP7zwJ5szTKN10aGtnBB9MxoGr3EAVEiqPodzAYRqWeJ5K/pyOqezhfgWJgoiPE73gwVhQG7s8S0TT1AX93M6k3KVpIVG412KTCORxXkbctBRDvYIq8t/zjNe513qUWkKGWZvcC6v25c3LwTjpwPME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762228875; c=relaxed/simple;
-	bh=lx96qL89DOI9EKJjX9OYd1ablMS5BvfT5Wf/2+dyRQc=;
+	s=arc-20240116; t=1762228721; c=relaxed/simple;
+	bh=+Ki3E1HMECV/Re8mxC5wCaHUywU4kqrtJf6FJykpzRQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PM8dwa6umhb7wCXOpKvYYyJIirIzVNdf9GgEPK95p6DIxJVbNMgNriXXEwoQz2IJKX6Bx6PcZahfD4lh7VV5C5mewvohB6aEPJnxAwRZBertOUp8ZpMABQTWTySJMAyXessCtSmajPcm4S3qcjhNLwoYp29EkXIFtNx2LZr8pkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PGBKiwpN; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=H7yiL8lrVrCfercd8VJZOnrUXZAUWNvskegvwzX0TS8=; b=PG
-	BKiwpNTDxXNwoYGTDvFE3lrCCRZd1UYwXofw9p2eTl1WFLNSSB0kueGwtnx4PvWmvcXoW/D7rzGSj
-	qDSskFz/1KZAATFLTXQJib441VDLxzDE1khI9Awb7wadi72KgsXdA9XArEoUf+6JTK8VKfui8G9if
-	F1JOS4G5pPjeFDw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vG8E6-00Cqwu-4D; Tue, 04 Nov 2025 05:00:58 +0100
-Date: Tue, 4 Nov 2025 05:00:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Po-Yu Chuang <ratbert@faraday-tech.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, taoren@meta.com
-Subject: Re: [PATCH net-next v3 3/4] ARM: dts: aspeed: ast2600-evb: Configure
- RGMII delay for MAC
-Message-ID: <afdd366b-8bf0-40a4-ae02-dfc2ff79011f@lunn.ch>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
- <20251103-rgmii_delay_2600-v3-3-e2af2656f7d7@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOtqmhJG8kAb+RMcXbnkfAoZmqUqDMoklcONWAHSlEwcfM3SuMzRwmYxus3w76I1wUC1lnhic7vVTyofAf4734cV0liputmyc2DnZFBk5blbq0dFMxyxg7xrGtL9NSTqwLbE73xo3SlbfY/APWv4vR4dANoL7tN6eLHlYTDx0Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgGGo5hS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9B3C4CEF7;
+	Tue,  4 Nov 2025 03:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762228721;
+	bh=+Ki3E1HMECV/Re8mxC5wCaHUywU4kqrtJf6FJykpzRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rgGGo5hS1XO6eeJm2hBGkjhgah9Uj5zRun9awk1n3jj+V6UVMi6VJyUC7T4XPS+zP
+	 FbfLZoK+KunZ1NLOZtOI1BV/FPbMAojcgXfnTTed/y8gTyp56fTqmatD8e6RB+mC7u
+	 7SieDUCeM/zoAvXetPmqQ8/1HeEKSeg6qojLVpUtVHH0J1vtu+tBR+ILWmJrnTZP0V
+	 AKYu9d4O8O35GXLRj8sIKfcfbMa4GcLcLkrKXbsbJwNEZb8G/MhqwGh3I8hVyM0lrq
+	 facjVHJT/O7ijUd9F8kV9oZIFHCieaQcCmf2ycKUROcYSJ3pEHmmhog44nW+jqMQaS
+	 UYduoQg3NvKPQ==
+Date: Mon, 3 Nov 2025 22:02:13 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
+Message-ID: <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
+References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
+ <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251103-rgmii_delay_2600-v3-3-e2af2656f7d7@aspeedtech.com>
+In-Reply-To: <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
 
-On Mon, Nov 03, 2025 at 03:39:18PM +0800, Jacky Chou wrote:
-> This change sets the rx-internal-delay-ps and tx-internal-delay-ps
-> properties to control the RGMII signal delay.
-> The phy-mode for MAC0–MAC3 is updated to "rgmii-id" to enable TX/RX
-> internal delay on the PHY and disable the corresponding delay
-> on the MAC.
+On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
+> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
+> > Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
+> > control and status functions for their peripherals.
+> > 
+> > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> > index 14ae3f00ef7e..ae55b0a70766 100644
+> > --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> > @@ -48,6 +48,7 @@ properties:
+> >            - qcom,tcsr-ipq8064
+> >            - qcom,tcsr-ipq8074
+> >            - qcom,tcsr-ipq9574
+> > +          - qcom,tcsr-kaanapali
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts | 28 +++++++++++++++++++++----
->  1 file changed, 24 insertions(+), 4 deletions(-)
+> It looks good to me. Glymur didn't have this functionality verified yet.
+
+You spelled Reviewed-by: Aiqun Yu <..> wrong.
+
+> Remind for review.
+
+No need for that, reviewers will review when they have time.
+
 > 
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts b/arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts
-> index de83c0eb1d6e..a65568e637bd 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts
-> @@ -121,44 +121,64 @@ ethphy3: ethernet-phy@0 {
->  };
->  
->  &mac0 {
-> +	compatible = "aspeed,ast2600-mac01", "aspeed,ast2600-mac", "faraday,ftgmac100";
 
-Is it really compatible to aspeed,ast2600-mac? If a driver binds to
-that, not aspeed,ast2600-mac01, doesn't that imply the bootloader
-delays are still in use, so phy-mode will be wrong?
+But that said, most modern additions to this binding follow the common
+format of qcom,<soc>-<block>.
 
-I think you should only list aspeed,ast2600-mac01. If somebody uses
-this DT blob on an old kernel, then you won't get an ethernet
-interface, rather than a not working ethernet interface, which is
-probably preferable.
+So I would prefer this to be qcom,kaanapali-tcsr.
 
-	Andrew
+Regards,
+Bjorn
+
+> >            - qcom,tcsr-mdm9615
+> >            - qcom,tcsr-msm8226
+> >            - qcom,tcsr-msm8660
+> > 
+> > ---
+> > base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> > change-id: 20250917-knp-mfd-4dd3c81e6b9b
+> > 
+> > Best regards,
+> 
+> 
+> -- 
+> Thx and BRs,
+> Aiqun(Maria) Yu
 
