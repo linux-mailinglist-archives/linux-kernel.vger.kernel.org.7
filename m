@@ -1,300 +1,269 @@
-Return-Path: <linux-kernel+bounces-885365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57B1C32B39
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:47:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80045C32B3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D73A1894567
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:47:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBE9C4E652C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7EA339716;
-	Tue,  4 Nov 2025 18:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="csnmFKmG"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5040433E375;
+	Tue,  4 Nov 2025 18:47:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0682652A4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A93B33343E;
+	Tue,  4 Nov 2025 18:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762282037; cv=none; b=HxbNOkjcO9yLFx39RuuuEWZA4VBxN4rfHVabkpYO59A6kJn+vTGcP68GNXE3Y2zNb3Uemo6QC0AP/Kv3zsPcZXpIhh1VOXIwD0gL4tL5PuEGNHRCqfjBhXop04M/bWQbQEOrsrACTf9TxyhTLCdikj1973ujlIoOa7uv967HjKU=
+	t=1762282059; cv=none; b=IUChmEwhMCCz3irLO3rdl+HABTOfaLeS6J+43MR5CZ4rtA1fgbWpKIZZ/wIN11YjudfalJODhw8u/MJORyJbwemKkAAlzEpwqdZS43dbi0ljP0s3ihA1hsjcbp3V7D86HniwPcvAG/+UjeBrAvRIuPvjf5yHwQMoPB+kEtmFsBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762282037; c=relaxed/simple;
-	bh=KKMCBwuGCiFUjK2VvVxn1MfvAe2xK1/bDfZAgGnL9ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tx2Syh79I6Gk6tQ5BjMMfmEzyFDAo5DGftYXQX9t3/AKgg/pi6yzzOsRZ6781VH4DM6b1TR6K4XvISX4vK4N/32I9VjIWfTl5tZT2Pk/mjpOMZVXNfPQtZj5fl5ZrfEppsuIDR6tQTtNddmCHWfyroBJiFaQNnNFRgv5nWUEFcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=csnmFKmG; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27d67abd215so21645ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:47:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762282035; x=1762886835; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P/jlOoGNiDidR02MLTeYPPu7BGXO9FosT3UCDKaUXjo=;
-        b=csnmFKmGXLm1PMbXbzkueEz/JFFx1FoK0OzZWrtYoB3QzAB0rCqxXxD8MjUG6VyYgZ
-         MtJbtmyDNTw74QJEY0qEDnFCGFVjgaTjlXZdtBgPynlBOWO5lPHrglmR2bZh/wR7uEsj
-         b4nX/4FF5P0QC7ZML5mTFnBXfvgtKu+T5QnK4BcqyaZ7Ht5eAvNqAX1PqPYd3VsqPdcv
-         otfSUx8iID+DhicjfxvO1NCAheYmPrrzZ3/xsowWnkiModPGoyaJgt2YksgtOXWgK/aD
-         /h3zcxmf1s+/AEdpvVIl9asGnyb6jD9vDNxyXgRXJC0tqdfXdZHf4C0+LmqwFbrlkp8K
-         yFbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762282035; x=1762886835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=P/jlOoGNiDidR02MLTeYPPu7BGXO9FosT3UCDKaUXjo=;
-        b=AhNfgaiJJ9xwlqhBgHfFm9IBS1/cMJwBfNc+c7NSJWO8si4teaipHzgyogJRX57XbH
-         qiXMZTAkK7Dtu7IflvAjriNTOl+Lqqw/s1eyH0uQmMKeKrT1LwwCrPy4c2iBM2ULkyGd
-         VWKaJ9cJ8sk8vBmqkgyFW88x+tKKg1R8sBe+tRjjGO0FvVq/wM+Ks/bFtERFgkzDRAAd
-         4F/RoMIPXls/dkGOj0D42lGcnqa7mFzd0/WzQZ08InaveZYdosLEFjx4/0/NC3kJUdo4
-         m2ABmBtCMY7cSskC8hVkmmuKEKfeX+PrhVnA1Yi6G7Jmrt1ICu1dH7/WV41j+yrPgrZ8
-         Zp7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVEZh9uVxqvEPP/h/ZxOTH+aqxFziw3F4pJ9pfcl4uYciverok0juNOPtjeRGCNjQRz92kqokIW2tnrVMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxgZosSkRHjhjPwaRVLUJPBvfCcVjrWofGZ5ylKAJRmetLDHQE
-	aJgRDx0JfNk5Nlf+G6fxf3kXzLLRf0/beGOxSMBVcMOZQk7nA+/zgeE+k6di7ewiC++wfbNqJF3
-	foiPDNS5td5nX2d91fg2yEnVTmTl17KvBUBwwsVnv
-X-Gm-Gg: ASbGncs254AuTTE96Wdgt1WKA51Uh+F0oHq3MUj3ClYr1JHoKRgxZRYJFFpFXlX1Egj
-	TMHcYolvdcxTbXEM1Y2dNTfbVTwb5UbitbSIZ7yOZa3cCfxe+hIqA2lRODpUNkjTtG2vjPvWzZe
-	0PKo45dVoK6qVJ6N7VPhhq7NkbCBQCsLm/YjEb3zU16DDJQXDpfQQGqWX/s29/fHh/vy0KpbDPb
-	f3Dz44WGlsCgp0aqt88tPx9XjRaZYyqJr80vBa+TUQ/p67mCwb11hq0F03DV6oBD+R4g3CpvH7R
-	HbhMuHZTHukm78k=
-X-Google-Smtp-Source: AGHT+IFEL1igWzNF0ecT+YC39xo2x7+67kX8Mtuc98edexOzCudTrCWPCDXgDs/thVWs0wQZvcUoCsJmottDgSYXEC4=
-X-Received: by 2002:a17:902:f545:b0:26a:befc:e7e1 with SMTP id
- d9443c01a7336-29631395060mr342705ad.12.1762282034968; Tue, 04 Nov 2025
- 10:47:14 -0800 (PST)
+	s=arc-20240116; t=1762282059; c=relaxed/simple;
+	bh=uCIp+EeOZD6pzIWqiK+Q2ukeZcm7qrmXOw0ZbTiGmY8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SSAm4L2UFb4mMmKLxzOKpmz3zL4rxIhnmxFntaYpbvbOHJ3u+hCqAhzFBoxaTTL0xnVlvdwG4UFCRdcWPk6swJb5os5oj+ogSKO/D7sMRq5aKPtoIg02kBIp7TlgCBKZ8n+tcFK6Wx2+wVBi9ql0NTHWNBId0RcxYx5yfxI+wps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4d1HR43xpPz6L56k;
+	Wed,  5 Nov 2025 02:43:44 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id B11CA1402A4;
+	Wed,  5 Nov 2025 02:47:34 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 18:47:33 +0000
+Date: Tue, 4 Nov 2025 18:47:32 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [RESEND v13 23/25] CXL/PCI: Introduce CXL uncorrectable
+ protocol error recovery
+Message-ID: <20251104184732.0000362f@huawei.com>
+In-Reply-To: <20251104170305.4163840-24-terry.bowman@amd.com>
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
+	<20251104170305.4163840-24-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104053449.1208800-1-irogers@google.com> <20251104053449.1208800-2-irogers@google.com>
- <aQpBmIEX8G7mTrWQ@google.com>
-In-Reply-To: <aQpBmIEX8G7mTrWQ@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 4 Nov 2025 10:47:03 -0800
-X-Gm-Features: AWmQ_bm7akqY14bRYWcJu10nqWPgMmWccIgWrGnpR3bhYQqCB_vcGgSafDMyOzM
-Message-ID: <CAP-5=fW20XxHwQnjeJZjLvCF0nVJ8tJ6tDeCm4-eDHKDdg0m4Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] perf stat-shadow: Read tool events directly
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Yang Li <yang.lee@linux.alibaba.com>, 
-	James Clark <james.clark@linaro.org>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Tue, Nov 4, 2025 at 10:10=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Ian,
->
-> On Mon, Nov 03, 2025 at 09:34:48PM -0800, Ian Rogers wrote:
-> > When reading time values for metrics don't use the globals updated in
-> > builtin-stat, just read the events as regular events. The only
-> > exception is for time events where nanoseconds need converting to
-> > seconds as metrics assume time metrics are in seconds.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/stat-shadow.c | 123 +++++++++++++---------------------
-> >  1 file changed, 45 insertions(+), 78 deletions(-)
-> >
-> > diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shado=
-w.c
-> > index abaf6b579bfc..9fae3d32a519 100644
-> > --- a/tools/perf/util/stat-shadow.c
-> > +++ b/tools/perf/util/stat-shadow.c
-> > @@ -371,6 +371,18 @@ static void print_nsecs(struct perf_stat_config *c=
-onfig,
-> >       }
-> >  }
-> >
-> > +static double tool_pmu__scale_for_metric(const struct evsel *evsel)
-> > +{
-> > +     enum tool_pmu_event event =3D evsel__tool_event(evsel);
-> > +
-> > +     if (event =3D=3D TOOL_PMU__EVENT_DURATION_TIME ||
-> > +         event =3D=3D TOOL_PMU__EVENT_USER_TIME ||
-> > +         event =3D=3D TOOL_PMU__EVENT_SYSTEM_TIME)
-> > +             return 1e-9; /* Scale nanoseconds to seconds. */
-> > +
-> > +     return 1.0;
-> > +}
-> > +
-> >  static int prepare_metric(const struct metric_expr *mexp,
-> >                         const struct evsel *evsel,
-> >                         struct expr_parse_ctx *pctx,
-> > @@ -382,90 +394,45 @@ static int prepare_metric(const struct metric_exp=
-r *mexp,
-> >
-> >       for (i =3D 0; metric_events[i]; i++) {
-> >               char *n;
-> > -             double val;
-> > +             double val, scale =3D tool_pmu__scale_for_metric(metric_e=
-vents[i]);
-> >               int source_count =3D 0;
-> > +             struct perf_stat_evsel *ps =3D metric_events[i]->stats;
-> > +             struct perf_stat_aggr *aggr;
-> >
-> > -             if (evsel__is_tool(metric_events[i])) {
-> > -                     struct stats *stats;
-> > -                     double scale;
-> > -
-> > -                     switch (evsel__tool_event(metric_events[i])) {
-> > -                     case TOOL_PMU__EVENT_DURATION_TIME:
-> > -                             stats =3D &walltime_nsecs_stats;
-> > -                             scale =3D 1e-9;
-> > -                             break;
-> > -                     case TOOL_PMU__EVENT_USER_TIME:
-> > -                             stats =3D &ru_stats.ru_utime_usec_stat;
-> > -                             scale =3D 1e-6;
-> > -                             break;
-> > -                     case TOOL_PMU__EVENT_SYSTEM_TIME:
-> > -                             stats =3D &ru_stats.ru_stime_usec_stat;
-> > -                             scale =3D 1e-6;
->
-> Do {USER,SYSTEM}_TIME become nanosecond now?
+On Tue, 4 Nov 2025 11:03:03 -0600
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-The behavior is the same. In the event system/user time are read as
-microseconds while duration time is nanoseconds, the system/user times
-are scaled to be nanoseconds for some kind of consistency. In the
-metrics we were doing a similar scaling but scaling nanoseconds and
-microseconds to be seconds. Using the events directly we know the
-counts are always in nanoseconds so we just need to do 1 scaling
-factor.
+> Implement cxl_do_recovery() to handle uncorrectable protocol
+> errors (UCE), following the design of pcie_do_recovery(). Unlike PCIe,
+> all CXL UCEs are treated as fatal and trigger a kernel panic to avoid
+> potential CXL memory corruption.
+> 
+> Add cxl_walk_port(), analogous to pci_walk_bridge(), to traverse the
+> CXL topology from the error source through downstream CXL ports and
+> endpoints.
+> 
+> Introduce cxl_report_error_detected(), mirroring PCI's
+> report_error_detected(), and implement device locking for the affected
+> subtree. Endpoints require locking the PCI device (pdev->dev) and the
+> CXL memdev (cxlmd->dev). CXL ports require locking the PCI
+> device (pdev->dev) and the parent CXL port.
+> 
+> The device locks should be taken early where possible. The initially
+> reporting device will be locked after kfifo dequeue. Iterated devices
+> will be locked in cxl_report_error_detected() and must lock the
+> iterated devices except for the first device as it has already been
+> locked.
+> 
+> Export pci_aer_clear_fatal_status() for use when a UCE is not present.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-Thanks,
-Ian
+Follow on comments around the locking stuff. If that has been there
+a while and I didn't notice before, sorry!
 
-> > +             /*
-> > +              * If there are multiple uncore PMUs and we're not readin=
-g the
-> > +              * leader's stats, determine the stats for the appropriat=
-e
-> > +              * uncore PMU.
-> > +              */
-> > +             if (evsel && evsel->metric_leader &&
-> > +                 evsel->pmu !=3D evsel->metric_leader->pmu &&
-> > +                 mexp->metric_events[i]->pmu =3D=3D evsel->metric_lead=
-er->pmu) {
-> > +                     struct evsel *pos;
-> > +
-> > +                     evlist__for_each_entry(evsel->evlist, pos) {
-> > +                             if (pos->pmu !=3D evsel->pmu)
-> > +                                     continue;
-> > +                             if (pos->metric_leader !=3D mexp->metric_=
-events[i])
-> > +                                     continue;
-> > +                             ps =3D pos->stats;
-> > +                             source_count =3D 1;
-> >                               break;
-> > -                     case TOOL_PMU__EVENT_NONE:
-> > -                             pr_err("Invalid tool event 'none'");
-> > -                             abort();
-> > -                     case TOOL_PMU__EVENT_MAX:
-> > -                             pr_err("Invalid tool event 'max'");
-> > -                             abort();
-> > -                     case TOOL_PMU__EVENT_HAS_PMEM:
-> > -                     case TOOL_PMU__EVENT_NUM_CORES:
-> > -                     case TOOL_PMU__EVENT_NUM_CPUS:
-> > -                     case TOOL_PMU__EVENT_NUM_CPUS_ONLINE:
-> > -                     case TOOL_PMU__EVENT_NUM_DIES:
-> > -                     case TOOL_PMU__EVENT_NUM_PACKAGES:
-> > -                     case TOOL_PMU__EVENT_SLOTS:
-> > -                     case TOOL_PMU__EVENT_SMT_ON:
-> > -                     case TOOL_PMU__EVENT_SYSTEM_TSC_FREQ:
-> > -                     default:
-> > -                             pr_err("Unexpected tool event '%s'", evse=
-l__name(metric_events[i]));
-> > -                             abort();
-> >                       }
-> > -                     val =3D avg_stats(stats) * scale;
-> > -                     source_count =3D 1;
-> > -             } else {
-> > -                     struct perf_stat_evsel *ps =3D metric_events[i]->=
-stats;
-> > -                     struct perf_stat_aggr *aggr;
-> > -
-> > +             }
-> > +             aggr =3D &ps->aggr[aggr_idx];
-> > +             if (!aggr || !metric_events[i]->supported) {
-> >                       /*
-> > -                      * If there are multiple uncore PMUs and we're no=
-t
-> > -                      * reading the leader's stats, determine the stat=
-s for
-> > -                      * the appropriate uncore PMU.
-> > +                      * Not supported events will have a count of 0, w=
-hich
-> > +                      * can be confusing in a metric. Explicitly set t=
-he
-> > +                      * value to NAN. Not counted events (enable time =
-of 0)
-> > +                      * are read as 0.
-> >                        */
-> > -                     if (evsel && evsel->metric_leader &&
-> > -                         evsel->pmu !=3D evsel->metric_leader->pmu &&
-> > -                         mexp->metric_events[i]->pmu =3D=3D evsel->met=
-ric_leader->pmu) {
-> > -                             struct evsel *pos;
-> > -
-> > -                             evlist__for_each_entry(evsel->evlist, pos=
-) {
-> > -                                     if (pos->pmu !=3D evsel->pmu)
-> > -                                             continue;
-> > -                                     if (pos->metric_leader !=3D mexp-=
->metric_events[i])
-> > -                                             continue;
-> > -                                     ps =3D pos->stats;
-> > -                                     source_count =3D 1;
-> > -                                     break;
-> > -                             }
-> > -                     }
-> > -                     aggr =3D &ps->aggr[aggr_idx];
-> > -                     if (!aggr)
-> > -                             break;
-> > -
-> > -                     if (!metric_events[i]->supported) {
-> > -                             /*
-> > -                              * Not supported events will have a count=
- of 0,
-> > -                              * which can be confusing in a
-> > -                              * metric. Explicitly set the value to NA=
-N. Not
-> > -                              * counted events (enable time of 0) are =
-read as
-> > -                              * 0.
-> > -                              */
-> > -                             val =3D NAN;
-> > -                             source_count =3D 0;
-> > -                     } else {
-> > -                             val =3D aggr->counts.val;
-> > -                             if (!source_count)
-> > -                                     source_count =3D evsel__source_co=
-unt(metric_events[i]);
-> > -                     }
-> > +                     val =3D NAN;
-> > +                     source_count =3D 0;
-> > +             } else {
-> > +                     val =3D aggr->counts.val * scale;
-> > +                     if (!source_count)
-> > +                             source_count =3D evsel__source_count(metr=
-ic_events[i]);
-> >               }
-> >               n =3D strdup(evsel__metric_id(metric_events[i]));
-> >               if (!n)
-> > --
-> > 2.51.2.1006.ga50a493c49-goog
-> >
+> 
+> ---
+> 
+> Changes in v12->v13:
+> - Add guard() before calling cxl_pci_drv_bound() (Dave Jiang)
+> - Add guard() calls for EP (cxlds->cxlmd->dev & pdev->dev) and ports
+>   (pdev->dev & parent cxl_port) in cxl_report_error_detected() and
+>   cxl_handle_proto_error() (Terry)
+> - Remove unnecessary check for endpoint port. (Dave Jiang)
+> - Remove check for RCIEP EP in cxl_report_error_detected(). (Terry)
+> 
+> Changes in v11->v12:
+> - Clean up port discovery in cxl_do_recovery() (Dave)
+> - Add PCI_EXP_TYPE_RC_END to type check in cxl_report_error_detected()
+> 
+> Changes in v10->v11:
+> - pci_ers_merge_results() - Move to earlier patch
+> ---
+>  drivers/cxl/core/ras.c | 135 ++++++++++++++++++++++++++++++++++++++++-
+>  drivers/pci/pci.h      |   1 -
+>  drivers/pci/pcie/aer.c |   1 +
+>  include/linux/aer.h    |   2 +
+>  4 files changed, 135 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 5bc144cde0ee..52c6f19564b6 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -259,8 +259,138 @@ static void device_unlock_if(struct device *dev, bool take)
+>  		device_unlock(dev);
+>  }
+>  
+> +/**
+> + * cxl_report_error_detected
+> + * @dev: Device being reported
+> + * @data: Result
+> + * @err_pdev: Device with initial detected error. Is locked immediately
+> + *            after KFIFO dequeue.
+> + */
+> +static int cxl_report_error_detected(struct device *dev, void *data, struct pci_dev *err_pdev)
+> +{
+> +	bool need_lock = (dev != &err_pdev->dev);
+
+Add a comment on why this controls need for locking.
+The resulting code is complex enough I'd be tempted to split the whole
+thing into locked and unlocked variants.
+
+> +	pci_ers_result_t vote, *result = data;
+> +	struct pci_dev *pdev;
+> +
+> +	if (!dev || !dev_is_pci(dev))
+> +		return 0;
+> +	pdev = to_pci_dev(dev);
+> +
+> +	device_lock_if(&pdev->dev, need_lock);
+> +	if (is_pcie_endpoint(pdev) && !cxl_pci_drv_bound(pdev)) {
+> +		device_unlock_if(&pdev->dev, need_lock);
+> +		return PCI_ERS_RESULT_NONE;
+> +	}
+> +
+> +	if (pdev->aer_cap)
+> +		pci_clear_and_set_config_dword(pdev,
+> +					       pdev->aer_cap + PCI_ERR_COR_STATUS,
+> +					       0, PCI_ERR_COR_INTERNAL);
+> +
+> +	if (is_pcie_endpoint(pdev)) {
+> +		struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
+> +
+> +		device_lock_if(&cxlds->cxlmd->dev, need_lock);
+> +		vote = cxl_error_detected(&cxlds->cxlmd->dev);
+> +		device_unlock_if(&cxlds->cxlmd->dev, need_lock);
+> +	} else {
+> +		vote = cxl_port_error_detected(dev);
+> +	}
+> +
+> +	pcie_clear_device_status(pdev);
+> +	*result = pcie_ers_merge_result(*result, vote);
+> +	device_unlock_if(&pdev->dev, need_lock);
+> +
+> +	return 0;
+> +}
+
+> +
+> +/**
+> + * cxl_walk_port
+Needs a short description I think to count as valid kernel-doc and
+stop the tool moaning if anyone runs it on this.
+
+> + *
+> + * @port: Port be traversed into
+> + * @cb: Callback for handling the CXL Ports
+> + * @userdata: Result
+> + * @err_pdev: Device with initial detected error. Is locked immediately
+> + *            after KFIFO dequeue.
+> + */
+> +static void cxl_walk_port(struct cxl_port *port,
+> +			  int (*cb)(struct device *, void *, struct pci_dev *),
+> +			  void *userdata,
+> +			  struct pci_dev *err_pdev)
+> +{
+> +	struct cxl_port *err_port __free(put_cxl_port) = get_cxl_port(err_pdev);
+> +	bool need_lock = (port != err_port);
+> +	struct cxl_dport *dport = NULL;
+> +	unsigned long index;
+> +
+> +	device_lock_if(&port->dev, need_lock);
+> +	if (is_cxl_endpoint(port)) {
+> +		cb(port->uport_dev->parent, userdata, err_pdev);
+> +		device_unlock_if(&port->dev, need_lock);
+> +		return;
+> +	}
+> +
+> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
+> +		cb(port->uport_dev, userdata, err_pdev);
+> +
+> +	/*
+> +	 * Iterate over the set of Downstream Ports recorded in port->dports (XArray):
+> +	 *  - For each dport, attempt to find a child CXL Port whose parent dport
+> +	 *    match.
+> +	 *  - Invoke the provided callback on the dport's device.
+> +	 *  - If a matching child CXL Port device is found, recurse into that port to
+> +	 *    continue the walk.
+> +	 */
+> +	xa_for_each(&port->dports, index, dport)
+> +	{
+
+Move that to line above for normal kernel loop formatting.
+
+	xa_for_each(&port->dports, index, dport) {
+
+> +		struct device *child_port_dev __free(put_device) =
+> +			bus_find_device(&cxl_bus_type, &port->dev, dport->dport_dev,
+> +					match_port_by_parent_dport);
+> +
+> +		cb(dport->dport_dev, userdata, err_pdev);
+> +		if (child_port_dev)
+> +			cxl_walk_port(to_cxl_port(child_port_dev), cb, userdata, err_pdev);
+> +	}
+> +	device_unlock_if(&port->dev, need_lock);
+> +}
+> +
+
+>  
+>  void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+> @@ -483,16 +613,15 @@ static void cxl_proto_err_work_fn(struct work_struct *work)
+>  			if (!cxl_pci_drv_bound(pdev))
+>  				return;
+>  			cxlmd_dev = &cxlds->cxlmd->dev;
+> -			device_lock_if(cxlmd_dev, cxlmd_dev);
+>  		} else {
+>  			cxlmd_dev = NULL;
+>  		}
+>  
+> +		/* Lock the CXL parent Port */
+>  		struct cxl_port *port __free(put_cxl_port) = get_cxl_port(pdev);
+> -		if (!port)
+> -			return;
+>  		guard(device)(&port->dev);
+>  
+> +		device_lock_if(cxlmd_dev, cxlmd_dev);
+>  		cxl_handle_proto_error(&wd);
+>  		device_unlock_if(cxlmd_dev, cxlmd_dev);
+Same issue on these helpers, but I'm also not sure why moving them in this
+patch makes sense. I'm not sure what changed.
+
+Perhaps this is stuff that ended up in wrong patch?
+>  	}
+
 
