@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-884560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F38C30736
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:17:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49192C3074B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B743AAAE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262933AA008
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1803F312829;
-	Tue,  4 Nov 2025 10:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24F831618C;
+	Tue,  4 Nov 2025 10:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c0rXDAzY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOUVxZVC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E43634D3B2;
-	Tue,  4 Nov 2025 10:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41992314D39;
+	Tue,  4 Nov 2025 10:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762251442; cv=none; b=sj7osWQb17skJe+0rW0rLyhwjFpVQOT5LGG2nY921gOM3pJS1QiBtUQpcPCNl9E8qKwbDz5ZCF7cNBPPc6U8sr+2YyPVQZnEx6Oq7oChnFz13icnvulLVuhIu0YxAtes8saOyfh0RhU0PtOMazWHNnBPPsI5bVT2NGZXVtVgBRY=
+	t=1762251469; cv=none; b=aV4WteDyB+Hn9kIRUuC5O3OWzgEH/ZNJ4nApHRl4JDWbbZ2Nb/VblLpG3Q4tHysaGJI6XbdIyiFsrpuyDYDFa37p4/wr8n7ifX2QwTC0aK5qwVbRk9lWNfMSqkvdrmyjFUbPdt0/kee7nN2RYZ9dSO9qr1dLYqwVcSTyg+9+5rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762251442; c=relaxed/simple;
-	bh=K9IsUGi2wKpFhfnL6iptoWIjbutL+DAGLt1r4zaWAlQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o+9bmTYA94OLmZ8aONkGi2utZYWMMtuqlqgd8ivJpg1gy/MOS+i2oKzT6UYK3Tf1ktvOw8gkPJwaaRr9pXUMWaIYYrW7Dz7N6jJ3nrJbOVoCDWMaqNaUyPQCVOefBh7LtOr/EPSXcywArOd2VeqjI89N6JGPwygyOKfyhcnJTSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c0rXDAzY; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762251440; x=1793787440;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=K9IsUGi2wKpFhfnL6iptoWIjbutL+DAGLt1r4zaWAlQ=;
-  b=c0rXDAzYtP2L3ORj7+/S+Hx1slnJUhNGSIUf7AQZpTKxo9VQpFjglJ6o
-   3HusEBQl82KlKWbE5ApfbDsi/8kRXOYYWXl1DzWe2oCXYLbXfCe6ShpAN
-   dVoyHkl7xeIujk6+2rFDgTTPwvq4XDYqr14SuTsuWjSM5l1yryvhIm1Gw
-   /ydMJJQFEdt66yzxElkvIG4sSjWu0BWNbfucVAdRhLdHi8ueZKZvJO1c1
-   FaPUl3sgoxnIS1rbD8LMcQ4GJhZnvsNmfoLXrmpzUEKBoVASdad/8aHby
-   gF7eYuUak8lRWQ8XTu+sJOmqTM542czgfX7LGGLLtGvoEEi4kzExc7cxZ
-   w==;
-X-CSE-ConnectionGUID: 5Ndbn5o4T7eVPEeZzjuUmA==
-X-CSE-MsgGUID: DUESihMYTAKfkrXO6KqL2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81970891"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="81970891"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 02:17:19 -0800
-X-CSE-ConnectionGUID: kvc8uvYsS7yF+E03YkuOZA==
-X-CSE-MsgGUID: kQv+ZSHeSwqzS3z9bIuzhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="186363416"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.182])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 02:17:17 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-In-Reply-To: <20251104101158.1cc9abcd@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251103112418.031b3f8c@canb.auug.org.au>
- <b4faab8bee2b4430447ff7aeac0f2b3e9aac8ec8@intel.com>
- <20251104101158.1cc9abcd@canb.auug.org.au>
-Date: Tue, 04 Nov 2025 12:17:14 +0200
-Message-ID: <adda2398c0a29e0c5b0dcaa93a5be6ed0b67a1ce@intel.com>
+	s=arc-20240116; t=1762251469; c=relaxed/simple;
+	bh=ttNLsP/20T6FcakaJaUuep8SMlcvj039YD36vOMH/OE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=psAVpwycW5cPqIRdI6iCIi1VzgWcXJ4bfW1PYUjC0Xdf3CTM7O1QHniuR/E778XugZ+CsI3iBgpTmNfnKNFBtkvrk23TB37XNOehB2eZdKBWz8MHFN6O4qpNnlo1PJUTty71N6Lm9fMcAXQcQp5+UfVjHPg49EqiGBhDmdowdco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOUVxZVC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1734C4CEF7;
+	Tue,  4 Nov 2025 10:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762251468;
+	bh=ttNLsP/20T6FcakaJaUuep8SMlcvj039YD36vOMH/OE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bOUVxZVCGq1qstUWv52ljXAE8NzkRiAHmZuBindnrfln8DMwf4QoIlm32A81MaE2f
+	 OOSpIt9AQl2kFeatpJbtsuoUiERqpsGlMDQeRtLJi4DvSmp5zXUKgN6SgNjo+s+ux9
+	 jkNVtbanCYm/OOK28O66fu8vCZMXbwR7GtM8FUmhDgBLwvdWm5yZUVuClN/h5Bn31+
+	 6v3bhcQ2wc/Me0zQfpIEShUWtjbrpqy+tYapPZEh/c2js//IkKLy7iq+5yWv8SQ8wr
+	 gZlplwsAJImxosGgPhcz2Vs6lfP56lgialaxq3xkYK4QVdbpe9HmPhGrWAhU9E7HXK
+	 SVtkypQ4klcBQ==
+Message-ID: <d6004442-fba0-4896-95e1-04a0c6b1dd7b@kernel.org>
+Date: Tue, 4 Nov 2025 10:17:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: iris: Refine internal buffer reconfiguration logic
+ for resolution change
+To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Val Packett <val@packett.cool>
+References: <fvBCdCb-T9Aph_ehFVcrbBvq0WKOiNeL6BBlMNHABJCm52zzKRfEc5UpSLKfUqgzIYpKyJ1faCTYq111P2LAVg==@protonmail.internalid>
+ <20251103-iris-seek-fix-v1-1-6db5f5e17722@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251103-iris-seek-fix-v1-1-6db5f5e17722@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 04 Nov 2025, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> On Mon, 03 Nov 2025 11:26:01 +0200 Jani Nikula <jani.nikula@intel.com> wrote:
->>
-> And now this:
->
-> drivers/gpu/drm/hyperv/hyperv_drm_drv.c: In function 'hyperv_setup_vram':
-> drivers/gpu/drm/hyperv/hyperv_drm_drv.c:80:17: error: implicit declaration of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-declaration]
->    80 |                 drm_err(dev, "Failed to allocate mmio\n");
->       |                 ^~~~~~~
->       |                 pr_err
-> drivers/gpu/drm/hyperv/hyperv_drm_drv.c: In function 'hyperv_vmbus_probe':
-> drivers/gpu/drm/hyperv/hyperv_drm_drv.c:140:17: error: implicit declaration of function 'drm_warn'; did you mean 'dev_warn'? [-Wimplicit-function-declaration]
->   140 |                 drm_warn(dev, "Failed to update vram location.\n");
->       |                 ^~~~~~~~
->       |                 dev_warn
-> drivers/gpu/drm/hyperv/hyperv_drm_modeset.c: In function 'hyperv_plane_atomic_check':
-> drivers/gpu/drm/hyperv/hyperv_drm_modeset.c:161:17: error: implicit declaration of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-declaration]
->   161 |                 drm_err(&hv->dev, "fb size requested by %s for %dX%d (pitch %d) greater than %ld\n",
->       |                 ^~~~~~~
->       |                 pr_err
->
-> I have used the drm-misc tree from next-20251031 again.
+On 03/11/2025 11:05, Dikshita Agarwal wrote:
+> Improve the condition used to determine when input internal buffers need
+> to be reconfigured during streamon on the capture port. Previously, the
+> check relied on the INPUT_PAUSE sub-state, which was also being set
+> during seek operations. This led to input buffers being queued multiple
+> times to the firmware, causing session errors due to duplicate buffer
+> submissions.
+> 
+> This change introduces a more accurate check using the FIRST_IPSC and
+> DRC sub-states to ensure that input buffer reconfiguration is triggered
+> only during resolution change scenarios, such as streamoff/on on the
+> capture port. This avoids duplicate buffer queuing during seek
+> operations.
+> 
+> Fixes: c1f8b2cc72ec ("media: iris: handle streamoff/on from client in dynamic resolution change")
+> Reported-by: Val Packett <val@packett.cool>
+> Closes: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4700
+> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_common.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_common.c b/drivers/media/platform/qcom/iris/iris_common.c
+> index 9fc663bdaf3fc989fe1273b4d4280a87f68de85d..21e176ce49ac2d2d26cf4fc25c1e5bca0abe501f 100644
+> --- a/drivers/media/platform/qcom/iris/iris_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_common.c
+> @@ -90,13 +90,15 @@ int iris_process_streamon_input(struct iris_inst *inst)
+> 
+>   int iris_process_streamon_output(struct iris_inst *inst)
+>   {
+> +	bool drain_active = false, drc_active = false, first_ipsc = false;
+>   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
+> -	bool drain_active = false, drc_active = false;
+>   	enum iris_inst_sub_state clear_sub_state = 0;
+>   	int ret = 0;
+> 
+>   	iris_scale_power(inst);
+> 
+> +	first_ipsc = inst->sub_state & IRIS_INST_SUB_FIRST_IPSC;
+> +
+>   	drain_active = inst->sub_state & IRIS_INST_SUB_DRAIN &&
+>   		inst->sub_state & IRIS_INST_SUB_DRAIN_LAST;
+> 
+> @@ -108,7 +110,8 @@ int iris_process_streamon_output(struct iris_inst *inst)
+>   	else if (drain_active)
+>   		clear_sub_state = IRIS_INST_SUB_DRAIN | IRIS_INST_SUB_DRAIN_LAST;
+> 
+> -	if (inst->domain == DECODER && inst->sub_state & IRIS_INST_SUB_INPUT_PAUSE) {
+> +	 /* Input internal buffer reconfiguration required incase of resolution change */
+> +	if (first_ipsc || drc_active) {
+>   		ret = iris_alloc_and_queue_input_int_bufs(inst);
+>   		if (ret)
+>   			return ret;
+> 
+> ---
+> base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
+> change-id: 20251103-iris-seek-fix-7a25af22fa52
+> 
+> Best regards,
+> --
+> Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> 
 
-And now this fix [1]...
+This is breaking in CI
 
-Thanks for the report, and sorry for the trouble.
+https://gitlab.freedesktop.org/linux-media/users/bodonoghue/-/commit/3d6c2dff61e37bd36eeb677c061ebcf64945060a
 
-BR,
-Jani.
-
-
-[1] https://lore.kernel.org/r/20251104100253.646577-1-jani.nikula@intel.com
-
-
--- 
-Jani Nikula, Intel
+---
+bod
 
