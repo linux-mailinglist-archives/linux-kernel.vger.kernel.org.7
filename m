@@ -1,124 +1,195 @@
-Return-Path: <linux-kernel+bounces-884314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19D9C2FD6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:24:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB21AC2FDB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4EF6A34D580
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:24:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B1174F5E3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AA732863B;
-	Tue,  4 Nov 2025 08:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35B311940;
+	Tue,  4 Nov 2025 08:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QHRjTY3F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="05JX/w6u"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E1uEMldG"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BF2327208;
-	Tue,  4 Nov 2025 08:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92B228643A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762244276; cv=none; b=HtNKi5KfyP6bsKAN/D0t0oQQIGnf11fGq4kXGmDLOWPqaN8V9LHCGWZ/IVB01ycXP14SeMUmqrt2L3twByHGRl09ktubT4A9EvU/KKVCQaUD701SWD1tv8R5o8/DWht8H/AYoGhG/4F4TKdoDDzPiv/fEjKjRyevq1wN/FWgdnU=
+	t=1762244309; cv=none; b=ZvjMAaVd9i5OF7Z7VFib8iP/EywAZwhMY2+Jv3NRmTdJMoQOOSc4ndRay0TCNj2k6go3/GEdhKq+dHXC3JP83cUq3ZLxw4wzRhzGvfG8MaVvZZoNDM21ft233d6XdJLAR2crl+suWA7/IodpM3UW5ksjNCd0+Burud+1zhjQoQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762244276; c=relaxed/simple;
-	bh=K+oLGJiS4AknUnk4/DMUUUDU5O4gin5nXWcmxNWrQ14=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ktCqnRImvGf059Zf6Gc/cYqJu0XswbejzPDdON6z2L96v22HOkvafSrBGOE7mk1q+gHyQo6LzBcqvdzbKE7bScl34NyO/93b3OdkeeI0Qp7dx/vxNQQFhBq/SrpGnXawOvHVTjgC6Fi7zfiB7EKRxuzSsL0U4al5zjo/dKbHoh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QHRjTY3F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=05JX/w6u; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Nov 2025 08:17:51 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762244272;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=FuHERyq22ok2p2dWTPONsYdSLIX7umjI9m9cZm5ITY8=;
-	b=QHRjTY3FisgaEAxxMajelPVNnn4GpYKNWSm4U+b/lYtjGhGpYPDu1GalMPi2F0LqgO7uoD
-	rNKh/y40dsIkaT4a2kvu+eJeEyRo6jIjkl8OL6QnCqX0k3LBq9nTqayxNUfuBUdnmEcqyz
-	It1nVpKjxcPbNTw3EWLB7JdGhetjZB1+W9qE5bN48ugFn5EiQ4X35sl7T8mzF7QmqPbD9o
-	pWZSItwhwJH6+ecZ2UKZx9x0UARElG9lOCygxYhjZUoTwRAJo0/7vMK0Jt03XiOeiO7PY8
-	BdxCEATHLwFnya/JvebdbNTttC7t82zNVDcTZIrzxIKwKjX0AUXZpzOlTOrEXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762244272;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=FuHERyq22ok2p2dWTPONsYdSLIX7umjI9m9cZm5ITY8=;
-	b=05JX/w6u2/jqQ1mBprkLR7ipcflmI6A9wN6zAKdPWt2PD0oL3OTVZCWI+42UXIp3ebtwi/
-	/JqrhyTaFRzvDhBw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rseq] arm64: uaccess: Use unsafe wrappers for ASM GOTO
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kernel test robot <lkp@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1762244309; c=relaxed/simple;
+	bh=y1H0J8xShtW8C86BhW+X8QqScD8LGdJ12xq4p3MILSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieQqdi0zkdu76czk4tu+joOeHSFskZX4tslGq2bzL7kbVJ1ZwM8cZTIVoRBWC2Y8tdvYRM9NK99VmEDtKw8ixVcYWBbN/UFxl+AaOoFZq4a+wmKHmxTpQeYS5iU4JyAgQstDX/HmXAxpW5T3SdOBJWrLXqnFDSdrh4BsbxR5A2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E1uEMldG; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-429c19b5de4so193388f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:18:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762244304; x=1762849104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HDGrwGIAe+HNiwkyvFhP/kp5qQx4Bemq/CCgC2+MOGE=;
+        b=E1uEMldGmpryX7F87XkuxTRDtdwDgdHX1+Ghb8cr9Y+KDJ084RLi5KHRRsc9uMWuZ2
+         si/J3mlAwe6fCyi35LOCST0p2smFYFBlJDjAdr3DuhcX08k0b0aNWmC0KtcLQyr4CPMU
+         qEQJQUlI3YSd2twL/M9XEGogCnLBxCBkjm8MSRVhj1EDdA9P9/Zk3vcqEsial8zOaA1r
+         iSoALBkdeI+ve9EVjjS63MNaxxeWZsQjamPCEn9CaW2QhkLMioynSBZd93yQg2NXqniq
+         UhyqlI9cgPmXfJvXzCE6dNDBtyO64WoEaFZukUXORJGwCC4FdNVSjFDIBfVJozzpfI9X
+         AvbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762244304; x=1762849104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HDGrwGIAe+HNiwkyvFhP/kp5qQx4Bemq/CCgC2+MOGE=;
+        b=gwHA4PF3Xm/IRi4pSiwLz/iO2s5/dve6hkEMgUdMjzCSUP/EDf0vksTnPdC4W3vhtZ
+         UVuRSoWC0vQaEzAPjwr5DtawpkrvWr1w+pWRTkcUpE6CLRw+TwzRddW9fCFVx26Y/sjO
+         78aupYMtEcprlMuBjY/44ffwwHD1/9+8kgBHNI5eTsl3rRTpC06HfNG54HnsPgUt5RKw
+         GDEmwwMKNI+AjwM1i42n8TTKrcBDcsIS7qQRgR4J3Tr1xLkZ3UKCEZuSALyb8gxWTN1J
+         2MV50wXG6qAi4RwPdUAMaR+rt1fZPHvm09DCZrkuYHbLxyWjVEKkGYyi02U49Kpv6MBz
+         cytw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjBrJEWVg73xaHm/6ak3h9xmbHFWes15LkePJd5li3Z541LsCJV2YbWIxVvOaAa510jnqZ/tuuydj34Vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv1E2dVRjhptn1l6bPZxzvEBnNhprHWF7Pp43tpo0cFEVf7Wd0
+	sRwt4Ln55vCQOED/T6loMp/2tp5GeaoWmm1tAtgDT08cIHE/yr2PtpGq0NAL35Ix+oE=
+X-Gm-Gg: ASbGncus2XU/0424r8u9k9XX5Xo2xIZcWfILENbY+MI+0dzz/Gf8foZ7HbG8bLFb3is
+	j4+k49bzwhBrIr+d/RGr1HaRAHsClbECDzwvE1r2rvucUPTIXtd9M17unhlDHMnPZNO23HZ36HA
+	9p5BmlxR4b4S0lsWI3JOmdYxTAutP423Fx/03w0r8dXUSQGMYYif3mRSNnbPiYaKh/mGLebYZZf
+	StXkAR+IcpP0kQuUzIt6MUzY1KiwTuvfC2ObQrDz6t1IDUt2onnHhnDquYfklDTI06NmfGUcnDD
+	HZfFkViB19w8bAHmKy5FOY0dRZkSduowWW3G4NxGCdFmNf2BHTyfE7ztmr3EAFqX1wEaynkYPQr
+	tArnR2WV3Mrn1w/LkAIRBaHTgIjm3MJeoCwb7PYwC5g6MmAWZ7JWYBjRA2+Kz1jkI7irOzXGFFZ
+	XXdc7p4UYAcGfGnD0vSgM=
+X-Google-Smtp-Source: AGHT+IER82dbwOAWSEGagB9JoBAQ4DFL/N85XJT6dQwU/F6NCVBuyJKblUAv95YkwnJ9rUbOTpPUNg==
+X-Received: by 2002:a05:6000:40c7:b0:425:76e3:81c5 with SMTP id ffacd0b85a97d-429bd6827fcmr12672112f8f.17.1762244303953;
+        Tue, 04 Nov 2025 00:18:23 -0800 (PST)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc193e27sm3237804f8f.18.2025.11.04.00.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 00:18:23 -0800 (PST)
+Date: Tue, 4 Nov 2025 09:18:22 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+Message-ID: <aQm2zqmD9mHE1psg@tiehlicka>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-7-roman.gushchin@linux.dev>
+ <aQR7HIiQ82Ye2UfA@tiehlicka>
+ <875xbsglra.fsf@linux.dev>
+ <aQj7uRjz668NNrm_@tiehlicka>
+ <87a512muze.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176224427132.2601451.863881467711737162.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a512muze.fsf@linux.dev>
 
-The following commit has been merged into the core/rseq branch of tip:
+On Mon 03-11-25 17:45:09, Roman Gushchin wrote:
+> Michal Hocko <mhocko@suse.com> writes:
+> 
+> > On Sun 02-11-25 13:36:25, Roman Gushchin wrote:
+> >> Michal Hocko <mhocko@suse.com> writes:
+[...]
+> > No, I do not feel strongly one way or the other but I would like to
+> > understand thinking behind that. My slight preference would be to have a
+> > single return status that clearly describe the intention. If you want to
+> > have more flexible chaining semantic then an enum { IGNORED, HANDLED,
+> > PASS_TO_PARENT, ...} would be both more flexible, extensible and easier
+> > to understand.
+> 
+> The thinking is simple:
+> 1) Most users will have a single global bpf oom policy, which basically
+> replaces the in-kernel oom killer.
+> 2) If there are standalone containers, they might want to do the same on
+> their level. And the "host" system doesn't directly control it.
+> 3) If for some reason the inner oom handler fails to free up some
+> memory, there are two potential fallback options: call the in-kernel oom
+> killer for that memory cgroup or call an upper level bpf oom killer, if
+> there is one.
+> 
+> I think the latter is more logical and less surprising. Imagine you're
+> running multiple containers and some of them implement their own bpf oom
+> logic and some don't. Why would we treat them differently if their bpf
+> logic fails?
 
-Commit-ID:     2db48d8bf87d3cb9d968e73623efc1c5a02523e7
-Gitweb:        https://git.kernel.org/tip/2db48d8bf87d3cb9d968e73623efc1c5a02=
-523e7
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Fri, 31 Oct 2025 10:37:09 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Nov 2025 08:27:20 +01:00
+I think both approaches are valid and it should be the actual handler to
+tell what to do next. If the handler would prefer the in-kernel fallback
+it should be able to enforce that rather than a potentially unknown bpf
+handler up the chain.
 
-arm64: uaccess: Use unsafe wrappers for ASM GOTO
+> Re a single return value: I can absolutely specify return values as an
+> enum, my point is that unlike the kernel code we can't fully trust the
+> value returned from a bpf program, this is why the second check is in
+> place.
 
-Clang propagates a provided label, which is outside of a cleanup scope to
-ASM GOTO despite the fact that __raw_get_mem() has a local label for that
-purpose:
+I do not understand this. Could you elaborate? Why we cannot trust the
+return value but we can trust a combination of the return value and a
+state stored in a helper structure?
 
-  "error: cannot jump from this asm goto statement to one of its possible tar=
-gets"
+> Can we just ignore the returned value and rely on the freed_memory flag?
 
-Using the unsafe wrapper with the extra local label indirection cures that.
+I do not think having a single freed_memory flag is more helpful. This
+is just a number that cannot say much more than a memory has been freed.
+It is not really important whether and how much memory bpf handler
+believes it has freed. It is much more important to note whether it
+believes it is done, it needs assistance from a different handler up the
+chain or just pass over to the in-kernel implementation.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/arm64/include/asm/uaccess.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Sure, but I don't think it bus us anything.
+> 
+> Also, I have to admit that I don't have an immediate production use case
+> for nested oom handlers (I'm fine with a global one), but it was asked
+> by Alexei Starovoitov. And I agree with him that the containerized case
+> will come up soon, so it's better to think of it in advance.
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uacces=
-s.h
-index 1aa4ecb..6490930 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -422,9 +422,9 @@ static __must_check __always_inline bool user_access_begi=
-n(const void __user *pt
- }
- #define user_access_begin(a,b)	user_access_begin(a,b)
- #define user_access_end()	uaccess_ttbr0_disable()
--#define unsafe_put_user(x, ptr, label) \
-+#define arch_unsafe_put_user(x, ptr, label) \
- 	__raw_put_mem("sttr", x, uaccess_mask_ptr(ptr), label, U)
--#define unsafe_get_user(x, ptr, label) \
-+#define arch_unsafe_get_user(x, ptr, label) \
- 	__raw_get_mem("ldtr", x, uaccess_mask_ptr(ptr), label, U)
-=20
- /*
+I agree it is good to be prepared for that.
+
+> >> >> The bpf_handle_out_of_memory() callback program is sleepable to enable
+> >> >> using iterators, e.g. cgroup iterators. The callback receives struct
+> >> >> oom_control as an argument, so it can determine the scope of the OOM
+> >> >> event: if this is a memcg-wide or system-wide OOM.
+> >> >
+> >> > This could be tricky because it might introduce a subtle and hard to
+> >> > debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
+> >> > Sleepable locks should be only allowed in trylock mode.
+> >> 
+> >> Agree, but it's achieved by controlling the context where oom can be
+> >> declared (e.g. in bpf_psi case it's done from a work context).
+> >
+> > but out_of_memory is any sleepable context. So this is a real problem.
+> 
+> We need to restrict both:
+> 1) where from bpf_out_of_memory() can be called (already done, as of now
+> only from bpf_psi callback, which is safe).
+> 2) which kfuncs are available to bpf oom handlers (only those, which are
+> not trying to grab unsafe locks) - I'll double check it in thenext version.
+
+OK. All I am trying to say is that only safe sleepable locks are
+trylocks and that should be documented because I do not think it can be
+enforced
+
+-- 
+Michal Hocko
+SUSE Labs
 
