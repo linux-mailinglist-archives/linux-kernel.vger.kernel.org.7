@@ -1,107 +1,410 @@
-Return-Path: <linux-kernel+bounces-883891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056D8C2EAC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:59:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01423C2EACA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A0E0934C3DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:59:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E16544E2A2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B99E1F5834;
-	Tue,  4 Nov 2025 00:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E064A207DF7;
+	Tue,  4 Nov 2025 01:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jl/ymXFa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GSFV8TPJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8B27456
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08233A95E;
+	Tue,  4 Nov 2025 01:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762217976; cv=none; b=jrlbltKPdFkSLPA+eHk0j23Yc4mllDdG5yB9WavN9N3yozCjYmS/o456798BlRKUfs7odM+uMp++Yij2hlXvCzyg0yX1rXBYEJXsQMmR6lJbjYFASwzgytsfEqxYxkNtiszw35QO9ZZFtFIOTTfvmUHS+bLP5qwwJBRXnUIDpVw=
+	t=1762218012; cv=none; b=OrLQYdf3pOsgBtPoorij/DQQmXq+RrwD2+yfiNJien59SEpjikMLPBlArrfSzI7L5e99vHD6sq9tWQ+GL9wfqtacKbfqNR46lJST9nmB3kUHG+AafWg/Ejdx5N1fXJf9qGgJTs6JGVjJoGD1uCNA90gT4IAf51+Uez4/EBDLraY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762217976; c=relaxed/simple;
-	bh=4kBumpLPX76t+5M1bV9a46fiVCJFH23dZmzlUcwuvU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=L8NwSnpHmRQSJJgB4oeofQDQ8fyfNwO8cV/9uaOhM1jQjyh/7gt2zcJ919crsh06KFF0CmRzmxXilXDp4pVa+PbF/TjB4whi+49zhAE5ls1v9ZA4UQpJ6GjHhOwFJeBv4kpQTIOhbLrmnVnAxECKCYNqQ80061D3jIdpfuN1SFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jl/ymXFa; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1762218012; c=relaxed/simple;
+	bh=Xr+fyAfvLq6ALEQtjIKWn7BTLqTCF5SxS34QhEfHc9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MnXUebJsem0uUZDHvxL5KYsFARRA5GMw6omDNVXA6ttLPRR+KoqFU8jK7P0p8LBvBqqB+HWHWl7duOwi8JeKbcMAkCGYH1w7ZRmokvd+q2vpR0uXLQF3nTjtqogKwouY3+GdCjQggK42veDTes5yCjSLpcjBhGa3PlCXkVF6V1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GSFV8TPJ; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762217975; x=1793753975;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=4kBumpLPX76t+5M1bV9a46fiVCJFH23dZmzlUcwuvU4=;
-  b=jl/ymXFaFPBjEPDVmp0RYOOMo2Gwz8LGlokG+OgXlWpbm9+hZI9wNLHE
-   DIvI2cO3r/kYhe0gHcBU5JiHGj2Mtrv3xqm4gtYg+a7QcmUMxwCLB4WVh
-   yLCD2F8QsfaO4BuZKxu6I3r5ki03P+xQT4V/1r0SsLcWi4f7YBEXZzSFZ
-   ePjVunVDnmUU+llMBHZS4uZrZ7jjONMjIRtZ/HZnmN9aHBgKR7Yf1kz+Z
-   FtSnzUmipNHpjMVVbefp/d/b7QICyLaCQs+ZlVi468Dl2H3d1hhPxgxvq
-   21gN/LASfa0yedYYI5GIII7qpjCDr2y6mxbsMYPRwR+Mw36h3DmC056oB
-   w==;
-X-CSE-ConnectionGUID: bF4pw3imRjOHv3IJhNFmmQ==
-X-CSE-MsgGUID: ISdnVrOLSHG5OEEYDQlaMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64189979"
+  t=1762218011; x=1793754011;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Xr+fyAfvLq6ALEQtjIKWn7BTLqTCF5SxS34QhEfHc9M=;
+  b=GSFV8TPJBIaAYyYksr0fFEgUU0JLtHZIJWQqULfQXYc0pUfO7FY5cta+
+   avqhwseYozoB4GmbqgdT4T9ovy2UOC+ZiVNWI7nTtc9Y8gaHI06QQKzHO
+   KA81emnNtK8879RlBdxSkU9Av3gSUPQH+qZGwBw9rg2wMXBreYErez98k
+   kaIZWLXn9ESB40+AORS3xAU2cb+jzRdoo0AD/fm+hToSjMhSDWUUGNUpq
+   Un29V4CnBxQtEMH5IVzPbLj8MErfGYhqjFxVnPY6gCZas77UXsUu+xccS
+   cZ2MalLapeOWnUPit56XhMrEUDLaP9KcxEUBg3cLuZYlT2i6T59UrUULW
+   A==;
+X-CSE-ConnectionGUID: HeyuPh33QiylscyosyLOSw==
+X-CSE-MsgGUID: rpJ/QVCRTk+Meh4o0zGESg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75754905"
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="64189979"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 16:59:34 -0800
-X-CSE-ConnectionGUID: c37iCtTyTFut3d1ZTS0qEQ==
-X-CSE-MsgGUID: VD6T7xAjSzSTESCwuqaV9Q==
+   d="scan'208";a="75754905"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 17:00:10 -0800
+X-CSE-ConnectionGUID: oD9QD8CESwm6KC+TyNdanA==
+X-CSE-MsgGUID: YUSJxwCRT0+9aeLucL0Q/g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="224261563"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 03 Nov 2025 16:59:33 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vG5OU-000Qhf-2q;
-	Tue, 04 Nov 2025 00:59:30 +0000
-Date: Tue, 4 Nov 2025 08:58:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: [tip:objtool/core 1/1] arm-linux-gnueabi-ld: warning: orphan section
- `.text.start.constprop.0' from `drivers/usb/host/sl811-hcd.o' being placed
- in section `.text.start.constprop.0'
-Message-ID: <202511040812.DFGedJiy-lkp@intel.com>
+   d="scan'208";a="186693544"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 17:00:09 -0800
+Message-ID: <d752b9b3-c032-41c5-b10f-48b711a54eee@intel.com>
+Date: Mon, 3 Nov 2025 18:00:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/14] cxl: Enable AMD Zen5 address translation using
+ ACPI PRMT
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-11-rrichter@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251103184804.509762-11-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git objtool/core
-head:   6568f14cb5ae68cd6c612604ca0c89301cf3a0d0
-commit: 6568f14cb5ae68cd6c612604ca0c89301cf3a0d0 [1/1] vmlinux.lds: Exclude .text.startup and .text.exit from TEXT_MAIN
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20251104/202511040812.DFGedJiy-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251104/202511040812.DFGedJiy-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511040812.DFGedJiy-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+On 11/3/25 11:47 AM, Robert Richter wrote:
+> Add AMD Zen5 support for address translation.
+> 
+> Zen5 systems may be configured to use 'Normalized addresses'. Then,
+> host physical addresses (HPA) are different from their system physical
+> addresses (SPA). The endpoint has its own physical address space and
+> an incoming HPA is already converted to the device's physical address
+> (DPA). Thus it has interleaving disabled and CXL endpoints are
+> programmed passthrough (DPA == HPA).
+> 
+> Host Physical Addresses (HPAs) need to be translated from the endpoint
+> to its CXL host bridge, esp. to identify the endpoint's root decoder
+> and region's address range. ACPI Platform Runtime Mechanism (PRM)
+> provides a handler to translate the DPA to its SPA. This is documented
+> in:
+> 
+>  AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+>  ACPI v6.5 Porting Guide, Publication # 58088
+>  https://www.amd.com/en/search/documentation/hub.html
+> 
+> With Normalized Addressing this PRM handler must be used to translate
+> an HPA of an endpoint to its SPA.
+> 
+> Do the following to implement AMD Zen5 address translation:
+> 
+> Introduce a new file core/atl.c to handle ACPI PRM specific address
+> translation code. Naming is loosely related to the kernel's AMD
+> Address Translation Library (CONFIG_AMD_ATL) but implementation does
+> not depend on it, nor it is vendor specific. Use Kbuild and Kconfig
+> options respectively to enable the code depending on architecture and
+> platform options.
+> 
+> AMD Zen5 systems support the ACPI PRM CXL Address Translation firmware
+> call (see ACPI v6.5 Porting Guide, Address Translation - CXL DPA to
+> System Physical Address). Firmware enables the PRM handler if the
+> platform has address translation implemented. Check firmware and
+> kernel support of ACPI PRM using the specific GUID. On success enable
+> address translation by setting up the earlier introduced root port
+> callback, see function cxl_prm_translate_hpa_range(). Setup is done in
+> cxl_setup_prm_address_translation(), it is the only function that
+> needs to be exported. For low level PRM firmware calls, use the ACPI
+> framework.
+> 
+> Identify the region's interleaving ways by inspecting the address
+> ranges. Also determine the interleaving granularity using the address
+> translation callback. Note that the position of the chunk from one
+> interleaving block to the next may vary and thus cannot be considered
+> constant. Address offsets larger than the interleaving block size
+> cannot be used to calculate the granularity. Thus, probe the
+> granularity using address translation for various HPAs in the same
+> interleaving block.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+Just a small thing below, otherwise:
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/cxl/Kconfig       |   4 +
+>  drivers/cxl/acpi.c        |   2 +
+>  drivers/cxl/core/Makefile |   1 +
+>  drivers/cxl/core/atl.c    | 195 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h         |   7 ++
+>  5 files changed, 209 insertions(+)
+>  create mode 100644 drivers/cxl/core/atl.c
+> 
+> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> index 48b7314afdb8..e599badba69b 100644
+> --- a/drivers/cxl/Kconfig
+> +++ b/drivers/cxl/Kconfig
+> @@ -233,4 +233,8 @@ config CXL_MCE
+>  	def_bool y
+>  	depends on X86_MCE && MEMORY_FAILURE
+>  
+> +config CXL_ATL
+> +       def_bool y
+> +       depends on ACPI_PRMT && AMD_NB
+> +
+>  endif
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index a54d56376787..f9bbc77f3ec2 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -916,6 +916,8 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>  	cxl_root->ops.qos_class = cxl_acpi_qos_class;
+>  	root_port = &cxl_root->port;
+>  
+> +	cxl_setup_prm_address_translation(cxl_root);
+> +
+>  	rc = bus_for_each_dev(adev->dev.bus, NULL, root_port,
+>  			      add_host_bridge_dport);
+>  	if (rc < 0)
+> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
+> index 5ad8fef210b5..11fe272a6e29 100644
+> --- a/drivers/cxl/core/Makefile
+> +++ b/drivers/cxl/core/Makefile
+> @@ -20,3 +20,4 @@ cxl_core-$(CONFIG_CXL_REGION) += region.o
+>  cxl_core-$(CONFIG_CXL_MCE) += mce.o
+>  cxl_core-$(CONFIG_CXL_FEATURES) += features.o
+>  cxl_core-$(CONFIG_CXL_EDAC_MEM_FEATURES) += edac.o
+> +cxl_core-$(CONFIG_CXL_ATL) += atl.o
+> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+> new file mode 100644
+> index 000000000000..d6aa7e6d0ac5
+> --- /dev/null
+> +++ b/drivers/cxl/core/atl.c
+> @@ -0,0 +1,195 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/prmt.h>
+> +#include <linux/pci.h>
+> +#include <linux/acpi.h>
+> +
+> +#include <cxlmem.h>
+> +#include "core.h"
+> +
+> +/*
+> + * PRM Address Translation - CXL DPA to System Physical Address
+> + *
+> + * Reference:
+> + *
+> + * AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+> + * ACPI v6.5 Porting Guide, Publication # 58088
+> + */
+> +
+> +static const guid_t prm_cxl_dpa_spa_guid =
+> +	GUID_INIT(0xee41b397, 0x25d4, 0x452c, 0xad, 0x54, 0x48, 0xc6, 0xe3,
+> +		  0x48, 0x0b, 0x94);
+> +
+> +struct prm_cxl_dpa_spa_data {
+> +	u64 dpa;
+> +	u8 reserved;
+> +	u8 devfn;
+> +	u8 bus;
+> +	u8 segment;
+> +	u64 *spa;
+> +} __packed;
+> +
+> +static u64 prm_cxl_dpa_spa(struct pci_dev *pci_dev, u64 dpa)
+> +{
+> +	struct prm_cxl_dpa_spa_data data;
+> +	u64 spa;
+> +	int rc;
+> +
+> +	data = (struct prm_cxl_dpa_spa_data) {
+> +		.dpa     = dpa,
+> +		.devfn   = pci_dev->devfn,
+> +		.bus     = pci_dev->bus->number,
+> +		.segment = pci_domain_nr(pci_dev->bus),
+> +		.spa     = &spa,
+> +	};
+> +
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc) {
+> +		pci_dbg(pci_dev, "failed to get SPA for %#llx: %d\n", dpa, rc);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	pci_dbg(pci_dev, "PRM address translation: DPA -> SPA: %#llx -> %#llx\n", dpa, spa);
+> +
+> +	return spa;
+> +}
+> +
+> +static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
+> +{
+> +	struct cxl_region_context *ctx = data;
+> +	struct cxl_endpoint_decoder *cxled = ctx->cxled;
+> +	struct cxl_decoder *cxld = &cxled->cxld;
+> +	struct cxl_memdev *cxlmd = ctx->cxlmd;
+> +	struct range hpa_range = ctx->hpa_range;
+> +	struct pci_dev *pci_dev;
+> +	u64 spa_len, len = range_len(&hpa_range);
+> +	u64 addr, base_spa, base = hpa_range.start;
+> +	int ways, gran;
+> +
+> +	/*
+> +	 * When Normalized Addressing is enabled, the endpoint
+> +	 * maintains a 1:1 mapping between HPA and DPA. If disabled,
+> +	 * skip address translation and perform only a range check.
+> +	 */
+> +	if (hpa_range.start != cxled->dpa_res->start)
+> +		return 0;
+> +
+> +	if (!IS_ALIGNED(hpa_range.start, SZ_256M) ||
+> +	    !IS_ALIGNED(hpa_range.end + 1, SZ_256M)) {
+> +		dev_dbg(cxld->dev.parent,
+> +			"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
+> +			hpa_range.start, hpa_range.end, dev_name(&cxld->dev));
+> +		return -ENXIO;
+> +	}
+> +
+> +	/*
+> +	 * Endpoints are programmed passthrough in Normalized
+> +	 * Addressing mode.
+> +	 */
+> +	if (ctx->interleave_ways != 1) {
+> +		dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
+> +			ctx->interleave_ways, ctx->interleave_granularity);
+> +		return -ENXIO;
+> +	}
+> +
+> +	if (!cxlmd || !dev_is_pci(cxlmd->dev.parent)) {
+> +		dev_dbg(&cxld->dev, "No endpoint found: %s, range %#llx-%#llx\n",
+> +			dev_name(cxld->dev.parent), hpa_range.start,
+> +			hpa_range.end);
+> +		return -ENXIO;
+> +	}
+> +
+> +	pci_dev = to_pci_dev(cxlmd->dev.parent);
+> +
+> +	/* Translate HPA range to SPA. */
+> +	hpa_range.start = base_spa = prm_cxl_dpa_spa(pci_dev, hpa_range.start);
+> +	hpa_range.end = prm_cxl_dpa_spa(pci_dev, hpa_range.end);
+> +
+> +	if (hpa_range.start == ULLONG_MAX || hpa_range.end == ULLONG_MAX) {
+> +		dev_dbg(cxld->dev.parent,
+> +			"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
+> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
+> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+> +		return -ENXIO;
+> +	}
+> +
+> +	/*
+> +	 * Since translated addresses include the interleaving
+> +	 * offsets, align the range to 256 MB.
+> +	 */
+> +	hpa_range.start = ALIGN_DOWN(hpa_range.start, SZ_256M);
+> +	hpa_range.end = ALIGN(hpa_range.end, SZ_256M) - 1;
+> +
+> +	spa_len = range_len(&hpa_range);
+> +	if (!len || !spa_len || spa_len % len) {
+> +		dev_dbg(cxld->dev.parent,
+> +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
+> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
+> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+> +		return -ENXIO;
+> +	}
+> +
+> +	ways = spa_len / len;
+> +	gran = SZ_256;
 
->> arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/usb/host/sl811-hcd.o' being placed in section `.text.start.constprop.0'
->> arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/dvb-frontends/drxk_hard.o' being placed in section `.text.start.constprop.0'
->> arm-linux-gnueabi-ld: warning: orphan section `.text.start' from `drivers/media/dvb-frontends/stv0910.o' being placed in section `.text.start'
->> arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/pci/ddbridge/ddbridge-sx8.o' being placed in section `.text.start.constprop.0'
-   arm-linux-gnueabi-ld: drivers/spi/spi-amlogic-spifc-a4.o: in function `aml_sfc_set_bus_width':
-   spi-amlogic-spifc-a4.c:(.text.aml_sfc_set_bus_width+0x8c): undefined reference to `__ffsdi2'
-   arm-linux-gnueabi-ld: spi-amlogic-spifc-a4.c:(.text.aml_sfc_set_bus_width+0xac): undefined reference to `__ffsdi2'
-   arm-linux-gnueabi-ld: spi-amlogic-spifc-a4.c:(.text.aml_sfc_set_bus_width+0xcc): undefined reference to `__ffsdi2'
+maybe init 'base' and 'base_hpa' here. Makes it easier to recall rather than having to go up to recall what it was.> +
+> +	/*
+> +	 * Determine interleave granularity
+> +	 *
+> +	 * Note: The position of the chunk from one interleaving block
+> +	 * to the next may vary and thus cannot be considered
+> +	 * constant. Address offsets larger than the interleaving
+> +	 * block size cannot be used to calculate the granularity.
+> +	 */
+> +	while (ways > 1 && gran <= SZ_16M) {
+> +		addr = prm_cxl_dpa_spa(pci_dev, base + gran);
+> +		if (addr != base_spa + gran)
+> +			break;
+> +		gran <<= 1;
+> +	}
+> +
+> +	if (gran > SZ_16M) {
+> +		dev_dbg(cxld->dev.parent,
+> +			"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
+> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
+> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+> +		return -ENXIO;
+> +	}
+> +
+> +	ctx->hpa_range = hpa_range;
+> +	ctx->interleave_ways = ways;
+> +	ctx->interleave_granularity = gran;
+> +
+> +	dev_dbg(&cxld->dev,
+> +		"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
+> +		dev_name(ctx->cxlmd->dev.parent), base, len, hpa_range.start,
+> +		spa_len, ways, gran);
+> +
+> +	return 0;
+> +}
+> +
+> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root)
+> +{
+> +	struct device *host = cxl_root->port.uport_dev;
+> +	u64 spa;
+> +	struct prm_cxl_dpa_spa_data data = { .spa = &spa, };
+> +	int rc;
+> +
+> +	/*
+> +	 * Applies only to PCIe Host Bridges which are children of the
+> +	 * CXL Root Device (HID=“ACPI0017”). Check this and drop
+> +	 * cxl_test instances.
+> +	 */
+> +	if (!acpi_match_device(host->driver->acpi_match_table, host))
+> +		return;
+> +
+> +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc == -EOPNOTSUPP || rc == -ENODEV)
+> +		return;
+> +
+> +	cxl_root->ops.translate_hpa_range = cxl_prm_translate_hpa_range;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_setup_prm_address_translation, "CXL");
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 94b9fcc07469..0af46d1b0abc 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -790,6 +790,13 @@ static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
+>  						struct device *host) { }
+>  #endif
+>  
+> +#ifdef CONFIG_CXL_ATL
+> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root);
+> +#else
+> +static inline
+> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root) {}
+> +#endif
+> +
+>  struct cxl_decoder *to_cxl_decoder(struct device *dev);
+>  struct cxl_root_decoder *to_cxl_root_decoder(struct device *dev);
+>  struct cxl_switch_decoder *to_cxl_switch_decoder(struct device *dev);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
