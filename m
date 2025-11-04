@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-884677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D780C30C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:34:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA44C30C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55CE1895528
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410F54213F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08CB2EA173;
-	Tue,  4 Nov 2025 11:33:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E195286D4E;
-	Tue,  4 Nov 2025 11:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497742EAD16;
+	Tue,  4 Nov 2025 11:37:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F7A2DCF78
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762255996; cv=none; b=GIkVxdimwCKkLTX3u0B6tjIa2+/CqTol/kPNyiHfoT3mY+557ikY57VGqScNWQ3j5+lwAdHsWM+xMxTUSVgQD2W3SFiH/hHCIQ2Sxuvz6A84FPjaH+mHBbwhZnfaVQP5RB8PAPQdy1zEcMORSVlHWm8Ux7AHufxXHqEbSmoWgqk=
+	t=1762256231; cv=none; b=eyM8vIYiLpREVwTtjQE/OnDg8+nTz/rHwvbFu6/8JP+id/Oz60vSwfZA+b/t7SGZ/ODQ0VXEsME+YcXOtt4yPlN7hSND0UccIMOfPe2WWV1UGgr198aIV+EmJB+Jfjb6sQpOa1HMhWjpk291QCGErLdPb/DXMSeK5QpVtYRCK5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762255996; c=relaxed/simple;
-	bh=6WOQeTavzPrauVi8MwJO524evgvZo3Tkv1ShmH0pjuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWBYxQYjVVe8e7+6Ot84II5ZI5SscEwikTldA7u50smpTDvgLr66eX1umS5/khcElV4YFlFzGf8p5RLUeGW+nv43E+O20HQ2BB3H5OSU+/vkZeCqzlBDX48XDH6bafgAzzPwFsQAj86n0z0kzJ6/rfJch8OtSqaLItOz+yaH+kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D06201C2B;
-	Tue,  4 Nov 2025 03:33:05 -0800 (PST)
-Received: from [10.1.38.100] (e126510-lin.cambridge.arm.com [10.1.38.100])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C979F3F63F;
-	Tue,  4 Nov 2025 03:33:06 -0800 (PST)
-Message-ID: <e3326a9c-108a-4eb2-b12e-bff2b5edd1d3@arm.com>
-Date: Tue, 4 Nov 2025 11:33:03 +0000
+	s=arc-20240116; t=1762256231; c=relaxed/simple;
+	bh=xiUc3Li4ny/si6xBgXPpJv56hxi06RYl6cV/ye2B3Lc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R6tdQJDIeqO8F7ms4hcqqAdgyxhCsAx+OyNdb4UjzPqxRPkVcBwIRwC5B7qzmjPoViBzxQdahC0ldC7k5Cvbb1W9LLsUsQYijM343iJV5IkofazIhyf8mDOdG/CW2JVNw4Q85CZN3EPQHo7/8XSG3RYDz9xYo8PPZnCREVcvONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Cxrr9e5QlpXLQeAA--.65323S3;
+	Tue, 04 Nov 2025 19:37:02 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJDx_8Nc5QlpQTImAQ--.54832S2;
+	Tue, 04 Nov 2025 19:37:00 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] KVM: LoongArch: selftests: Add timer test case
+Date: Tue,  4 Nov 2025 19:36:52 +0800
+Message-Id: <20251104113700.1561752-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/12] powerpc/mm: replace batch->active with
- in_lazy_mmu_mode()
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-10-kevin.brodsky@arm.com>
- <05e2062c-1689-44e7-9cc6-697646ca075d@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <05e2062c-1689-44e7-9cc6-697646ca075d@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDx_8Nc5QlpQTImAQ--.54832S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On 03/11/2025 16:05, David Hildenbrand wrote:
-> On 29.10.25 11:09, Kevin Brodsky wrote:
->> A per-CPU batch struct is activated when entering lazy MMU mode; its
->> lifetime is the same as the lazy MMU section (it is deactivated when
->> leaving the mode). Preemption is disabled in that interval to ensure
->> that the per-CPU reference remains valid.
->>
->> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
->> mode. We can therefore use the generic helper in_lazy_mmu_mode()
->> to tell whether a batch struct is active instead of tracking it
->> explicitly.
->>
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> ---
->
-> I suspect you were not able to test this on real HW. Some help from
-> the ppc folks would be appreciated.
+This patchset adds timer test case for LoongArch system, it is based
+on common arch_timer test case. And it includes one-shot and period mode
+timer interrupt test, software emulated timer function and time counter
+test.
+---
+v1 ... v2:
+  1. Restore PC and PRMD after exception handler.
+  2. Split patch 4 into two small patches with period timer test and
+     time counter test.
+  3. With time counter test, set time count with 0 when create VM. And
+     verify time count starts from 0 in guest code. 
+---
+Bibo Mao (7):
+  KVM: LoongArch: selftests: Add system registers save and restore on
+    exception
+  KVM: LoongArch: selftests: Add exception handler register interface
+  KVM: LoongArch: selftests: Add basic interfaces
+  KVM: LoongArch: selftests: Add timer test case with one-shot mode
+  KVM: LoongArch: selftests: Add period mode timer test
+  KVM: LoongArch: selftests: Add SW emulated timer test
+  KVM: LoongArch: selftests: Add time counter test
 
-Indeed, it would be nice to get some testing on ppc HW that actually
-uses lazy MMU (!radix_enabled()).
+ tools/testing/selftests/kvm/Makefile.kvm      |  10 +-
+ .../kvm/include/loongarch/arch_timer.h        |  84 ++++++++
+ .../kvm/include/loongarch/processor.h         |  81 +++++++-
+ .../selftests/kvm/lib/loongarch/exception.S   |   6 +
+ .../selftests/kvm/lib/loongarch/processor.c   |  47 ++++-
+ .../selftests/kvm/loongarch/arch_timer.c      | 195 ++++++++++++++++++
+ 6 files changed, 417 insertions(+), 6 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/loongarch/arch_timer.h
+ create mode 100644 tools/testing/selftests/kvm/loongarch/arch_timer.c
 
->
-> LGTM, but the interaction with pause/resume adds a bit of complication
-> on top.
 
-Does it? This series doesn't change when arch_enter() and arch_leave()
-are called, batch->active and in_lazy_mmu_mode() should coincide. 
+base-commit: ec0b62ccc986c06552c57f54116171cfd186ef92
+-- 
+2.39.3
 
-- Kevin
 
