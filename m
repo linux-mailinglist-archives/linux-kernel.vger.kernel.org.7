@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-884121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D459DC2F673
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:51:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE4BC2F685
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CE63BF8A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:51:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2458F4F09D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D862C21CB;
-	Tue,  4 Nov 2025 05:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17562D9498;
+	Tue,  4 Nov 2025 05:51:18 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0B034D3B0;
-	Tue,  4 Nov 2025 05:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD392C0F8E;
+	Tue,  4 Nov 2025 05:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762235476; cv=none; b=nuEZC1GTTcVk9mSO58hAZklcwhuusiV9khPL4wvatJ7rBHLKgf3N7nVxWB0e17pxZJBscjudheK4F5W76LS2YL62wKqV61edvs6Jch6O85LzzS9S28SVVWLXvhwMi86u7NyYnwionF4h1p8xElV+iPAFQbtOZAqg+jmFfVlerqg=
+	t=1762235478; cv=none; b=McpteOJTiPTr/j3QE6GVZg+SzLuYh16ABjGh37t07c0GC70Gt2NCzCzO8a4k24gOgKzD24pujGDi9o+PpLAGW+9pjgZeXl30Tg0PfNzrmcSt4E5s0uQ2y5U7FQfnKPjxU+tLkgwuAhK//UbldgfC+/YH5BM5CaAGNlbUsIIllOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762235476; c=relaxed/simple;
-	bh=hpgA+YRHXc6fvLb5gsgLIet88dZivJTwiQCVpMCkXO0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AKplS5DDXwnR7pREUOZf/4ZSMvDv5370lRkMW8eA6Bl3bDKWVfM88ur0Yuro6LhgUeH5JBWHr3eA1GNcGYhdwunjMRx/nzXPrZ7T1tD28bsJdZQ4rXeNfkmil5BSGCavzDoBDE0mQGuUlR6JEITtdKmQ6h/2Ln8FQ/LgsNcuZAU=
+	s=arc-20240116; t=1762235478; c=relaxed/simple;
+	bh=FQY5LIHQ0lHHXMQmBtrO7lLlYspnnXPcW63KcxCH1Y8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qUO7FGXKWmAoRMdcilRMqCc2JdV4cqd7jnLRCb0LoKBGbxmnQZVyOzLre8x3DjMlEvnPu66u3QMorRcqiE5Jze9U6twCcIfE74fw3WNZwXIEWx31HlkQNH2QbhaYcSilgwkOolsQHlJyoyDryp4Ch2RbQI62a6Mn75jbJOAR0hQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -40,10 +41,12 @@ To: <linux@roeck-us.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<billy_tsai@aspeedtech.com>, <linux-hwmon@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 1/2] dt-bindings: hwmon: Add AST2700 compatible
-Date: Tue, 4 Nov 2025 13:51:11 +0800
-Message-ID: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
+Subject: [PATCH v1 2/2] hwmon: (aspeed-g6-pwm-tach): Add AST2700 compatible string
+Date: Tue, 4 Nov 2025 13:51:12 +0800
+Message-ID: <20251104055112.2679087-2-billy_tsai@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
+References: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,30 +56,31 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Adds support for the AST2700 PWM/Tach controller by extending the
-compatible string enumeration in the device tree binding.
+Extends device tree support to include the AST2700 chip variant by
+adding its compatible string to the device match table.
 
-The AST2700 PWM/Tach hardware is compatible with the existing binding
-schema and requires no additional properties or modifications beyond
-the new compatible string.
+The AST2700 PWM/TACH hardware is compatible with the existing driver
+implementation used for AST2600.
 
 Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 ---
- Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwmon/aspeed-g6-pwm-tach.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
-index 9e5ed901ae54..d6ff4182085e 100644
---- a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
-@@ -20,6 +20,7 @@ properties:
-   compatible:
-     enum:
-       - aspeed,ast2600-pwm-tach
-+      - aspeed,ast2700-pwm-tach
- 
-   reg:
-     maxItems: 1
+diff --git a/drivers/hwmon/aspeed-g6-pwm-tach.c b/drivers/hwmon/aspeed-g6-pwm-tach.c
+index 4174b129d1fc..44e1ecba205d 100644
+--- a/drivers/hwmon/aspeed-g6-pwm-tach.c
++++ b/drivers/hwmon/aspeed-g6-pwm-tach.c
+@@ -528,6 +528,9 @@ static const struct of_device_id aspeed_pwm_tach_match[] = {
+ 	{
+ 		.compatible = "aspeed,ast2600-pwm-tach",
+ 	},
++	{
++		.compatible = "aspeed,ast2700-pwm-tach",
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, aspeed_pwm_tach_match);
 -- 
 2.25.1
 
