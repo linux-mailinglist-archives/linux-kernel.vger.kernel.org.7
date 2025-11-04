@@ -1,192 +1,254 @@
-Return-Path: <linux-kernel+bounces-884646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D7C30AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:08:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EB3C30ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C062034C835
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:08:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC97E4EF2E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B662E54BF;
-	Tue,  4 Nov 2025 11:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5372E282C;
+	Tue,  4 Nov 2025 11:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fOi6cERc"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pFDw7sdd"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6EB2E2DC1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D776E191F92;
+	Tue,  4 Nov 2025 11:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762254508; cv=none; b=oRMvOUGJUFskE+SQ/2+uW35POlgaKfmFb8rNI77YZFU4H0Wec/Je6j89h38/XDhQrd/wCwSQ8vE3g98iLd+2bys0n4KqIh7GZxTau7BlEMZocffEhvTw3oZfxif0AgkzRIVGWO8Qm+yjQPr6w4Cit5cv3/DEW1NqjT/8uVcjg1Q=
+	t=1762254543; cv=none; b=ZxgEvQfxPirafME+j8RNsLhdbcHwLxz99BetewFT+Nq7bO//A2wwau0oEL+535vUv2jLLon4OV9I+f0haLBaaWomuKLuNaaqad1Ndp8iteqdx2349o5u1mBZDSrpWdq6gD6oowBsfidcySAXUjXryfOEdQIf6hDzznY4V7UVU+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762254508; c=relaxed/simple;
-	bh=hGCmoKsbTJZjLqzPr2g+Pp/EUZnTi1S5B2EwX1vZ0U0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u7N9QYni5KJa5jJOHWCTwLou6tiYeIF/oZM8YhzptcE9/JstuXgYHwsPGaRphEY8BdYTz2WwbRKN46C+omgcDzR+oxgWkZjybSPAeH+Inz8U0SLf8kxXn/u1NeJ9LNUUX7aGl0Uf3G+aAiXuejeawDHtR6IcXBg9llDr4ih94Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fOi6cERc; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-477563e531cso5001265e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:08:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762254505; x=1762859305; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a4cH/AxQtviVkhj7n7m5X/IItvMNFrrOxnPoGxdV9l8=;
-        b=fOi6cERc3oxNKySp93N+xGtpdQTmBLUmZkeP7IiX4XXgPG6lFdOGAFIHaEADyURTxl
-         7Kxddg0lFNrsFDZkwJiMeD0PQvHm2DXbCQqsh77jpMWgqySROtYGzyz7ma3XJeoHIcsp
-         nGJbFzQqKI9fDJe70U/xBwYf9AosmwzziDmgi7uc0T1PqPjUeDZOFRNqffXEpf26Ovwp
-         G6i5Ke4VD14cYJglw3x53i+hkX352Rl3na838EnIMVB6XsYr8G21taJ6cj4XVkH7g+9b
-         tp5JOoIzjh9jXzrN9n2ox9sFzFssx6MO5EqKwCCra5puyFSmVMcKQ4XKC3hqZIaSYjk9
-         0M9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762254505; x=1762859305;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a4cH/AxQtviVkhj7n7m5X/IItvMNFrrOxnPoGxdV9l8=;
-        b=UwLXztuPaiLW+nlX5jHfKJ0SoCAKSXq7XZJyucwIE0gsG3iYiVvUvpn7uXD2bAgKXL
-         mE+hP8CrNfWr1au4b1lyW1Q5B6DGhS2MRHgFIs4vE48m1HsRt307TA0T/1XV/QIgBCF0
-         Ta9eIvuaD/od3VYEm9Y3O1e0dXzoioG+hs1Kwsv+TiBotFcmepgTRdsFvn5gtXUZMPk8
-         DxcPCiIZJ5zidlog3RyoYC0QhI70POturiLUzkBMEAY1XI6oya4JkA7AKS+UircVGQIb
-         y1/41gOk25lrf7LWD0CBqrZLbMA0J559xIBKeKfawlolUF2TPGgR2RxMSlLXoEFo837w
-         XtOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTOGBl7tcgVKtHcntikcgw1ZVBv9kUgqQvV7+De7B7UuDZtTrCqKEEv41kAw+/Hk1Ci9A7JJ/4tfKV1Vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5WP54JayjeR+mXfWZ6PGCOJZFTMDnS+eKX4YY1bLOtNhQXTUx
-	V7rDpx6v7tj8WPgU3T+trjocLXxPysqbDNtgLIGff7/N1rkbhhzNLfZC+N7hq4l2XeFoN7kMak3
-	+5zKBTqHEeEiRnQ==
-X-Google-Smtp-Source: AGHT+IHvMIGMZ3oRYsIKBDomkCS6KVzlMOaVYE+CMhTF6/Om+i57uqifzVXn/OYDK9jNj1kCcP7uTWSdj5qqlA==
-X-Received: from wmbg22.prod.google.com ([2002:a05:600c:a416:b0:477:14b8:19f6])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1549:b0:477:e66:4077 with SMTP id 5b1f17b1804b1-4773089bd5bmr143775885e9.29.1762254504672;
- Tue, 04 Nov 2025 03:08:24 -0800 (PST)
-Date: Tue, 04 Nov 2025 11:08:23 +0000
-In-Reply-To: <aQiJAfO8wiVPko_N@kernel.org>
+	s=arc-20240116; t=1762254543; c=relaxed/simple;
+	bh=l6q5AMhS09Ke0kDsZOdMSGCdAMqiuA52MZttsj3WfZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hINvkxBKChGFBgmWKadF+S3WJK19ZW6eo/KC1FUdi7oWypfDCml+CfpuX29WLfshHc228lWSiBJrH0nJctXRLevWAdyPuS0UtqDUsC5AO7+3NE5oMR7ntPlTo94gmS3PtKYF6b8YUxtCtUfkMVZVkP5xSN0wn9tB9+Id+R8BxuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pFDw7sdd; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=CzcMdp2iynSnLwdcr7Xyc/HaEci5kKTUV9g0xKg98Kw=; b=pFDw7sddAIbfGsSbmG8PgRB2IW
+	CS4KayctWIlylbuFqBwLtsbKi8+tu8TB+grcFcSPn+NFYk3qqoN/myszwsE/5vlhwatwpkQGPbYyb
+	qKMoB2Z9CicZ+T+LotPL4apiyDLrTpoBqqftBas8hmwn2GPjHRbKERjLULtaVwwgeX0HglHsShM0h
+	jJEIOLwpaKB0Zdf/rNrE1m5D/JW88nJDWHexCkEbAvQiXW5Y0AM3oTWzf0CuMZWhO3RJEbjKnQlME
+	JyCS7FZGwgLLAl21uVfuGyi2l6VFaCEqcvljPRjWCDjC3SFmZx5QPYLfeMn1FscdMAArCCZ7Zxx/4
+	FWkoSv4w==;
+Received: from i53875aae.versanet.de ([83.135.90.174] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vGEuD-0004GC-It; Tue, 04 Nov 2025 12:08:53 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Ye Zhang <ye.zhang@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ tao.huang@rock-chips.com
+Subject: Re: [PATCH v1 3/3] pinctrl: rockchip: add rk3506 rmio support
+Date: Tue, 04 Nov 2025 12:08:52 +0100
+Message-ID: <4419588.mogB4TqSGs@diego>
+In-Reply-To: <20251104021223.2375116-4-ye.zhang@rock-chips.com>
+References:
+ <20251104021223.2375116-1-ye.zhang@rock-chips.com>
+ <20251104021223.2375116-4-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk> <20250924152214.7292-2-roypat@amazon.co.uk>
- <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com> <aQXVNuBwEIRBtOc0@kernel.org>
- <DDYZRG8A99D1.2MYZVGBKJNHJW@google.com> <aQiJAfO8wiVPko_N@kernel.org>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDZV32U60137.1HE9JGMU6P1KD@google.com>
-Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from direct map
-From: Brendan Jackman <jackmanb@google.com>
-To: Mike Rapoport <rppt@kernel.org>, Brendan Jackman <jackmanb@google.com>
-Cc: "Roy, Patrick" <roypat@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "joey.gouly@arm.com" <joey.gouly@arm.com>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com" <david@redhat.com>, 
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>, 
-	"jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
-	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>, 
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
-	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon Nov 3, 2025 at 10:50 AM UTC, Mike Rapoport wrote:
-> On Mon, Nov 03, 2025 at 10:35:38AM +0000, Brendan Jackman wrote:
->> On Sat Nov 1, 2025 at 9:39 AM UTC, Mike Rapoport wrote:
->> > On Fri, Oct 31, 2025 at 05:30:12PM +0000, Brendan Jackman wrote:
->> >> On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
->> >> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
->> >> > index 1d0585616aa3..73a15cade54a 100644
->> >> > --- a/include/linux/kvm_host.h
->> >> > +++ b/include/linux/kvm_host.h
->> >> > @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
->> >> >  bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
->> >> >  #endif
->> >> >  
->> >> > +#ifdef CONFIG_KVM_GUEST_MEMFD
->> >> > +#ifndef kvm_arch_gmem_supports_no_direct_map
->> >> > +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
->> >> > +#endif
->> >> > +#endif /* CONFIG_KVM_GUEST_MEMFD */
->> >> 
->> >> The test robot seems happy so I think I'm probably mistaken here, but
->> >> AFAICS can_set_direct_map only exists when ARCH_HAS_SET_DIRECT_MAP,
->> >> which powerpc doesn't set.
->> >
->> > We have stubs returning 0 for architectures that don't have
->> > ARCH_HAS_SET_DIRECT_MAP.
->> 
->> I can't see any such stub for can_set_direct_map() specifically?
->
-> include/linux/set_memory.h:
->
-> #ifndef CONFIG_ARCH_HAS_SET_DIRECT_MAP
-> static inline int set_direct_map_invalid_noflush(struct page *page)
-> {
-> 	return 0;
-> }
-> static inline int set_direct_map_default_noflush(struct page *page)
-> {
-> 	return 0;
-> }
->
-> static inline int set_direct_map_valid_noflush(struct page *page,
-> 					       unsigned nr, bool valid)
-> {
-> 	return 0;
-> }
->
-> static inline bool kernel_page_present(struct page *page)
-> {
-> 	return true;
-> }
-> #else /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
-> /*
->  * Some architectures, e.g. ARM64 can disable direct map modifications at
->  * boot time. Let them overrive this query.
->  */
-> #ifndef can_set_direct_map
-> static inline bool can_set_direct_map(void)
-> {
-> 	return true;
-> }
-> #define can_set_direct_map can_set_direct_map
+Am Dienstag, 4. November 2025, 03:12:23 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Ye Zhang:
+> Support rockchip matrix io
+>=20
+> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 75 ++++++++++++++++++++++++++++++
+>  drivers/pinctrl/pinctrl-rockchip.h |  1 +
+>  2 files changed, 76 insertions(+)
 
-But this is for CONFIG_ARCH_HAS_DIRECT_MAP? I am reading this as a stub
-to fill in for archs that have set_direct_map_*, but don't have runtime
-disablement like arm64.
+Here I disagree though.
 
-Whereas my concern is archs that don't have set_direct_map_* at all,
-i.e. where we need to unconditionally fail
-GUEST_MEMFG_FLAG_NO_DIRECT_MAP.
+The RMIO controller is a completely separate thing and from what I understa=
+nd
+from the documentation
 
-(Or would we prefer to just not define it at all on those archs? Not
-sure what the norms are there, I guess that's a question for KVM/arch
-maintainers).
+=2D you set the pinmux to go to the rmio controller, and then that controll=
+er
+  selects the function for this pin.
+
+=46or example pinmux values for gpio0a7_sel are
+=2D 0: GPIO0_A7
+=2D 1: F SAI0_SDI3
+=2D 2: SPI1_CSN1
+=2D 7: RM_IO7
+
+With 7 being the route to the matrix-io controller.
+
+
+So lumping this into the main pinctrl feels definitly wrong, as then you
+create a number of "virtual" pinmuxes where they don't belong.
+
+So instead of trying to bolt this onto the main pinctrl, I'd like things
+to be separate ... for the main iomux you route the pin to the rmio
+controller and then have a separate configuration for the rmio marix.
+
+bus2: bus2 {
+	rockchip,pins =3D <0 RK_PA0 7 &pcfg_pull_none_drv_8ma>,
+		<0 RK_PA1 7 &pcfg_pull_none_drv_8ma>,
+		<0 RK_PA2 7 &pcfg_pull_none_drv_8ma>,
+		<0 RK_PA3 7 &pcfg_pull_none_drv_8ma>,
+
+	rockchip,rmio-pins {
+		/* some way to sanely describe the rmio-config */
+		pins =3D "GPIO0_A0", "GPIO0_A1";
+		functions =3D "i2c0-scl", "i2c0-sda";
+	};
+};
+
+This is especially true, as each pin in the rmio-controller can have each
+function. So gpio0-a0 can be uart1-tx, uart1-rx etc etc ... 98 different
+functions according to the documentation.
+
+
+Heiko
+
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl=
+=2Drockchip.c
+> index e44ef262beec..89ff8d8c7fcc 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -1258,6 +1258,74 @@ static int rockchip_verify_mux(struct rockchip_pin=
+_bank *bank,
+>  	return 0;
+>  }
+> =20
+> +static int rockchip_set_rmio(struct rockchip_pin_bank *bank, int pin, in=
+t *mux)
+> +{
+> +	struct rockchip_pinctrl *info =3D bank->drvdata;
+> +	struct rockchip_pin_ctrl *ctrl =3D info->ctrl;
+> +	struct regmap *regmap;
+> +	int reg, function;
+> +	u32 data, rmask;
+> +	int ret =3D 0;
+> +	int iomux_num =3D (pin / 8);
+> +	u32 iomux_max, mux_type;
+> +
+> +	mux_type =3D bank->iomux[iomux_num].type;
+> +	if (mux_type & IOMUX_WIDTH_4BIT)
+> +		iomux_max =3D (1 << 4) - 1;
+> +	else if (mux_type & IOMUX_WIDTH_3BIT)
+> +		iomux_max =3D (1 << 3) - 1;
+> +	else
+> +		iomux_max =3D (1 << 2) - 1;
+> +
+> +	if (*mux > iomux_max)
+> +		function =3D *mux - iomux_max;
+> +	else
+> +		return 0;
+> +
+> +	switch (ctrl->type) {
+> +	case RK3506:
+> +		regmap =3D info->regmap_rmio;
+> +		if (bank->bank_num =3D=3D 0) {
+> +			if (pin < 24)
+> +				reg =3D 0x80 + 0x4 * pin;
+> +			else
+> +				ret =3D -EINVAL;
+> +		} else if (bank->bank_num =3D=3D 1) {
+> +			if (pin >=3D 9 && pin <=3D 11)
+> +				reg =3D 0xbc + 0x4 * pin;
+> +			else if (pin >=3D 18 && pin <=3D 19)
+> +				reg =3D 0xa4 + 0x4 * pin;
+> +			else if (pin >=3D 25 && pin <=3D 27)
+> +				reg =3D 0x90 + 0x4 * pin;
+> +			else
+> +				ret =3D -EINVAL;
+> +		} else {
+> +			ret =3D -EINVAL;
+> +		}
+> +
+> +		if (ret) {
+> +			dev_err(info->dev,
+> +				"rmio unsupported bank_num %d function %d\n",
+> +				bank->bank_num, function);
+> +
+> +			return -EINVAL;
+> +		}
+> +
+> +		rmask =3D 0x7f007f;
+> +		data =3D 0x7f0000 | function;
+> +		*mux =3D 7;
+> +		ret =3D regmap_update_bits(regmap, reg, rmask, data);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Set a new mux function for a pin.
+>   *
+> @@ -1291,6 +1359,10 @@ static int rockchip_set_mux(struct rockchip_pin_ba=
+nk *bank, int pin, int mux)
+> =20
+>  	dev_dbg(dev, "setting mux of GPIO%d-%d to %d\n", bank->bank_num, pin, m=
+ux);
+> =20
+> +	ret =3D rockchip_set_rmio(bank, pin, &mux);
+> +	if (ret)
+> +		return ret;
+> +
+>  	if (bank->iomux[iomux_num].type & IOMUX_SOURCE_PMU)
+>  		regmap =3D info->regmap_pmu;
+>  	else if (bank->iomux[iomux_num].type & IOMUX_L_SOURCE_PMU)
+> @@ -4247,6 +4319,9 @@ static int rockchip_pinctrl_probe(struct platform_d=
+evice *pdev)
+>  	/* try to find the optional reference to the ioc1 syscon */
+>  	info->regmap_ioc1 =3D syscon_regmap_lookup_by_phandle_optional(np, "roc=
+kchip,ioc1");
+> =20
+> +	/* try to find the optional reference to the rmio syscon */
+> +	info->regmap_rmio =3D syscon_regmap_lookup_by_phandle_optional(np, "roc=
+kchip,rmio");
+> +
+>  	ret =3D rockchip_pinctrl_register(pdev, info);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl=
+=2Drockchip.h
+> index 4f4aff42a80a..6d79ccf73b71 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.h
+> +++ b/drivers/pinctrl/pinctrl-rockchip.h
+> @@ -462,6 +462,7 @@ struct rockchip_pinctrl {
+>  	struct regmap			*regmap_pull;
+>  	struct regmap			*regmap_pmu;
+>  	struct regmap			*regmap_ioc1;
+> +	struct regmap			*regmap_rmio;
+>  	struct device			*dev;
+>  	struct rockchip_pin_ctrl	*ctrl;
+>  	struct pinctrl_desc		pctl;
+>=20
+
+
+
 
 
