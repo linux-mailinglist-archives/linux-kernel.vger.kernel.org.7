@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-885496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0418EC33226
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:11:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379FEC33229
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D711888F5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AF71889F1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304422F0670;
-	Tue,  4 Nov 2025 22:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E372C3255;
+	Tue,  4 Nov 2025 22:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="HL8+OWMk"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWZArF3G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F402E2BE7B2;
-	Tue,  4 Nov 2025 22:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768BE182D0;
+	Tue,  4 Nov 2025 22:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762294286; cv=none; b=F7auticTsl88G0inMkOSLSD5maUtcMcBKUukSfvqB/Q+VQ3efsMCNJkcLRl5qE0rrhzn0RhMxp89M3lePB1PbClyS1fJHozUSSN97qdY7oQXWiq0Fj3DXCynqqA2HUvNW678cWVPtDScC0qZyiv4NsoW4aKTjAkIIR8muxLUQjw=
+	t=1762294322; cv=none; b=awtrX63kC98Fr+AGHDpFAV2Z6/n6KkLDqhPXZ/ZbJL0Zx9pxdX8BG9p8dTG39+t6kSQ4PSV96uhWWDbVIj2WvqsuZxKF0hRju4IuG6BRIsSdQP3l7vXO2PwyYC7RKXqFydTPlpvzHBD5FW7ToSYqVROSY9ef6++HkPmAYu6YkkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762294286; c=relaxed/simple;
-	bh=/BlojT3ZNpb08cgBE5OnkdRei3sKYEo3Zbg5wHQuBX4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rxcnPr0jkBb0ImtWFYNoKnvyfe68O1SVBRs+iGDTIxwtTgLhK/M9q147Qvv/9HNZYmkLZq4w7uPlYPEwZigGHIqtQEOynKIbvWtmPToWOhevhrxH7hfQYXWjCUumCs37Vjz/ErncWWOA4Zh8ehdy0L6QbnKdn38TYuQvAsvHZHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=HL8+OWMk; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1762294278;
-	bh=/BlojT3ZNpb08cgBE5OnkdRei3sKYEo3Zbg5wHQuBX4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=HL8+OWMki6jvFLVTzvijjMKsacdQgaB8EP0E9FXTOv8VtzXVmj8iaskuVHjHDwXU1
-	 F/X3reeJs0CiPIfv+15OHdZv0PNQvrryiBq7UlG6XL57DZ/v217i5hup1kftWnIjMm
-	 7cJ4cOMPCI62TYmS62eD8VNQgOa6x7knQBKSkdAc=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 822DC4015D; Tue, 04 Nov 2025 14:11:18 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 7E34A4014B;
-	Tue, 04 Nov 2025 14:11:18 -0800 (PST)
-Date: Tue, 4 Nov 2025 14:11:18 -0800 (PST)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    David Rientjes <rientjes@google.com>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Suren Baghdasaryan <surenb@google.com>, 
-    Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-    Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-    bpf@vger.kernel.org, kasan-dev@googlegroups.com, 
-    Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
-    Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH RFC 00/19] slab: replace cpu (partial) slabs with
- sheaves
-In-Reply-To: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
-Message-ID: <f7c33974-e520-387e-9e2f-1e523bfe1545@gentwo.org>
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
+	s=arc-20240116; t=1762294322; c=relaxed/simple;
+	bh=Il0ufsoV/Sma0i1holpRy4Whf9gHwe/ZVb++0GXviIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=XFcQyf1fmCwOIkapR8g2RZfcd/2I+pqDQTLhDxjuFXatwBmLW4TB2WcFvTMkf7J7MyhUGXKXmM3acJQLnZewstxubxXgbcrz4D1zFzS28YAi+dwcVtM4OQcmtuAnvipD9AsLX1xbPr2pyh4mzkuVF/AId/rttQ4kh+csawYZ6WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWZArF3G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDDAC4CEF7;
+	Tue,  4 Nov 2025 22:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762294322;
+	bh=Il0ufsoV/Sma0i1holpRy4Whf9gHwe/ZVb++0GXviIo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=EWZArF3GsL/k7gSe/Epj5GyyKWvY26X5/gqjRNo8KfJQ58lBwq9WHSaDolISN6wtp
+	 bOtLbiOtOy/Thv79tV9vyxkW04HY5U0R9QN8vZ2toPlb/01RtAy5e2hm9TrVyIfev0
+	 USGfJ7mLnJQ60LI3dFew2gvVI5TQTMXwRiSJsgpBh1emQpq8Zz8opMMPfeFTtNMie7
+	 9/sbY1G7syexHklGjrMKSbXvoshDqWUMhIP172g5zMGjusGm3IxgvVOLAQRxeUOuQH
+	 gpsvBhXV+s9CjjciKyR733bQJls6zhVCc/droYw6jjH4/7ZLUQ6iUqn7K5hK6TNZX+
+	 qruUYDce3tB9g==
+Date: Tue, 4 Nov 2025 16:12:00 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+	lukas@wunner.de, Benjamin.Cheatham@amd.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [RESEND v13 00/25] Enable CXL PCIe Port Protocol Error handling
+ and logging
+Message-ID: <20251104221200.GA1874852@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f601ff2f-cb1c-4cd1-983f-c344d05d34a6@amd.com>
 
-On Thu, 23 Oct 2025, Vlastimil Babka wrote:
+On Tue, Nov 04, 2025 at 03:54:21PM -0600, Bowman, Terry wrote:
+> 
+> 
+> On 11/4/2025 1:11 PM, Bjorn Helgaas wrote:
+> > On Tue, Nov 04, 2025 at 11:02:40AM -0600, Terry Bowman wrote:
+> >> This patchset updates CXL Protocol Error handling for CXL Ports and CXL
+> >> Endpoints (EP). Previous versions of this series can be found here:
+> >> https://lore.kernel.org/linux-cxl/20250925223440.3539069-1-terry.bowman@amd.com/
+> >> ...
+> >> Terry Bowman (24):
+> >>   CXL/PCI: Move CXL DVSEC definitions into uapi/linux/pci_regs.h
+> >>   PCI/CXL: Introduce pcie_is_cxl()
+> >>   cxl/pci: Remove unnecessary CXL Endpoint handling helper functions
+> >>   cxl/pci: Remove unnecessary CXL RCH handling helper functions
+> >>   cxl: Move CXL driver's RCH error handling into core/ras_rch.c
+> >>   CXL/AER: Replace device_lock() in cxl_rch_handle_error_iter() with
+> >>     guard() lock
+> >>   CXL/AER: Move AER drivers RCH error handling into pcie/aer_cxl_rch.c
+> >>   PCI/AER: Report CXL or PCIe bus error type in trace logging
+> >>   cxl/pci: Update RAS handler interfaces to also support CXL Ports
+> >>   cxl/pci: Log message if RAS registers are unmapped
+> >>   cxl/pci: Unify CXL trace logging for CXL Endpoints and CXL Ports
+> >>   cxl/pci: Update cxl_handle_cor_ras() to return early if no RAS errors
+> >>   cxl/pci: Map CXL Endpoint Port and CXL Switch Port RAS registers
+> >>   CXL/PCI: Introduce PCI_ERS_RESULT_PANIC
+> >>   CXL/AER: Introduce pcie/aer_cxl_vh.c in AER driver for forwarding CXL
+> >>     errors
+> >>   cxl: Introduce cxl_pci_drv_bound() to check for bound driver
+> >>   cxl: Change CXL handlers to use guard() instead of scoped_guard()
+> >>   cxl/pci: Introduce CXL protocol error handlers for Endpoints
+> >>   CXL/PCI: Introduce CXL Port protocol error handlers
+> >>   PCI/AER: Dequeue forwarded CXL error
+> >>   CXL/PCI: Export and rename merge_result() to pci_ers_merge_result()
+> >>   CXL/PCI: Introduce CXL uncorrectable protocol error recovery
+> >>   CXL/PCI: Enable CXL protocol errors during CXL Port probe
+> >>   CXL/PCI: Disable CXL protocol error interrupts during CXL Port cleanup
+> > Is the mix of "CXL/PCI" vs "cxl/pci" in the above telling me
+> > something, or should they all match?
+> >
+> > As a rule of thumb, I'm going to look at things that start with "PCI"
+> > and skip most of the rest on the assumption that the rest only have
+> > incidental effects on PCI.
+>
+> I think there was logic behind the (un)capitalized but I forget the
+> reasoning. It's  better to keep it simple. I'll change to use
+> PCI/CXL and AER/CXL.
 
-> Besides (hopefully) improved performance, this removes the rather
-> complicated code related to the lockless fastpaths (using
-> this_cpu_try_cmpxchg128/64) and its complications with PREEMPT_RT or
-> kmalloc_nolock().
+I don't know what "AER/CXL" means.  I think "PCI" and "CXL" are the
+big chunks here and one of them should be first in the prefix.
 
-Going back to a strict LIFO scheme for alloc/free removes the following
-performance features:
-
-1. Objects are served randomly from a variety of slab pages instead of
-serving all available objects from a single slab page and then from the
-next. This means that the objects require a larger set of TLB entries to
-cover. TLB pressure will increase.
-
-2. The number of partial slabs will increase since the free objects in a
-partial page are not used up before moving onto the next. Instead free
-objects from random slab pages are used.
-
-Spatial object locality is reduced. Temporal object hotness increases.
-
-> The lockless slab freelist+counters update operation using
-> try_cmpxchg128/64 remains and is crucial for freeing remote NUMA objects
-> without repeating the "alien" array flushing of SLUB, and to allow
-> flushing objects from sheaves to slabs mostly without the node
-> list_lock.
-
-Hmm... So potential cache hot objects are lost that way and reused on
-another node next. The role of the alien caches in SLAB was to cover that
-case and we saw performance regressions without these caches.
-
-The method of freeing still reduces the amount of remote partial slabs
-that have to be managed and increases the locality of the objects.
+I do think there's value in using "PCI/AER" for things specific to AER
+and "PCI/ERR" for more generic PCI error handling, and maybe "PCI/CXL"
+for significant CXL-related things in drivers/pci/.
 
