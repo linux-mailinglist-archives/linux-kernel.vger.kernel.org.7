@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-884088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F390C2F53E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:59:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3065DC2F535
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8D664EFEB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:57:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23C1B4E5B39
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838D128751A;
-	Tue,  4 Nov 2025 04:57:50 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5984028751A;
+	Tue,  4 Nov 2025 04:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdvIqm0m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F077B1DFF0;
-	Tue,  4 Nov 2025 04:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD8F8248C;
+	Tue,  4 Nov 2025 04:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762232270; cv=none; b=Flu4tJE2vfa8a2iS0zR8rXSWtNLWEQpVF3lL2R6c6hkTzDawZQPp16QlL9lm4AiQP8PRm4vQmHfeaJ9Cp2litjYVfMjwQLX/cXtm1mlGpajwS3eZ0h3EZlRD9n1hoSO+NRzF0ZvzyDE6nb32dlqmo5GDiUtIg/mE5t5WvpIeYFI=
+	t=1762232194; cv=none; b=QxJSKSs5Wq5kUlQzBsehv6GPfgigxBiHLGI/GuKgOwpKmZswAM0rj5i40KrJ0XeHVG7QtT7zJtjuPkz19zRjfvu6RJOJZ1/P+hrVPLTsyKH4z4RBjc3ns2417dvQcwG3YgdNq6J1yZyctunUhjEYn+YLnGYH+prBp+ZevoDYXho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762232270; c=relaxed/simple;
-	bh=CINvRsRn/Cl5sObyLZwIhUY3ZoPdcJ6V3VPzduSzFwg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mvoyqaNihkgFsDW/fVNCRRwwDvGaHUSZIvfmUr5GULz0V5vS41h+PW0Q9z6OLZbbr9nBrFyDANglF9bC/CCwY/dd/bJ+0U5zqTBSypa+jiYfQuTlV5L5TYnsJgJh/xhNu2V4XHWX+EhQvzv1qrOJM5eSaDyEGq7/0xRWN1iMje4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c91cece2b93a11f0a38c85956e01ac42-20251104
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:8fe78762-560f-4e92-b705-5ed91c0172bb,IP:10,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:0
-X-CID-INFO: VERSION:1.3.6,REQID:8fe78762-560f-4e92-b705-5ed91c0172bb,IP:10,URL
-	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:1b4c901fb95263d686a28f094659186f,BulkI
-	D:251104125739V6UO0J4G,BulkQuantity:0,Recheck:0,SF:10|66|78|102|850,TC:nil
-	,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: c91cece2b93a11f0a38c85956e01ac42-20251104
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.169)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1906036543; Tue, 04 Nov 2025 12:57:38 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH] tracing/hist: make err_text array fully const
-Date: Tue,  4 Nov 2025 12:55:58 +0800
-Message-Id: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762232194; c=relaxed/simple;
+	bh=dhmMrBLVyxKqMVKDRWFG+f1uPSry0Fn1e2cRqwN+yhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSiAQW68CyxdfD6tX4wnsNJF4+0kNrrCD1hd1c7YGahdXJ6afii9rHAfktXJvmgdVJ1eGyGmHc1hVJ4dRocvy6tlCM07NDtqBoKYlT40jlqS+jylv+RakvF1c7QGbb8ICFlhx9NjD59Bl6XAbjQz3YkbBCc5pomvMGC+OsyCnmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdvIqm0m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BCAEC4CEF7;
+	Tue,  4 Nov 2025 04:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762232193;
+	bh=dhmMrBLVyxKqMVKDRWFG+f1uPSry0Fn1e2cRqwN+yhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IdvIqm0m5T/jQVSaj2gcqgFV2ODzlxZevbS1Rx+z92uRlH8uO+SwcQTblaLEcSDyR
+	 OjpFYwotQkCiPPGZbYrNA90PlooY4n1PQ+HPf8TQaPbwUZxSZJgt626yugupolJqgH
+	 cUvqfBoISpJ3ZzSHX+smQxMbz0SRJJVSlPZCTHQJNU2hemd5E8go9P1ZqbTYmu5wEH
+	 9iMQDv9npjV5eIN3u8cfrLMAOE13na2tXGS+4hh++hnsO2uSof8tzy74yV56/9B6PD
+	 1fc6lESqnC2paB3qaO3JzCloG08dpOnedXmlJP+8tPWj+sNenaU80uKssOl1EWpRIq
+	 tpvrfogCQV90A==
+Date: Mon, 3 Nov 2025 20:56:31 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 07/22] perf expr: Add #target_cpu literal
+Message-ID: <aQmHfya8SYIcVGcg@google.com>
+References: <20251024175857.808401-1-irogers@google.com>
+ <20251024175857.808401-8-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251024175857.808401-8-irogers@google.com>
 
-The err_text array contains string literals that are never modified.
-Previously it was declared as:
+On Fri, Oct 24, 2025 at 10:58:42AM -0700, Ian Rogers wrote:
+> For CPU nanoseconds a lot of the stat-shadow metrics use either
+> task-clock or cpu-clock, the latter being used when
+> target__has_cpu. Add a #target_cpu literal so that json metrics can
+> perform the same test.
 
-    static const char *err_text[]
+Do we have documentation for the literals and metric expressions in
+general?  I think it's getting complex and we should provide one.
 
-which makes the strings themselves const but allows the pointers
-in the array to be changed.
+Thanks,
+Namhyung
 
-Change it to:
-
-    static const char * const err_text[]
-
-This prevents accidental modification of the array pointers,
-fixes checkpatch warnings, and allows the compiler to place the
-entire array in the read-only data section (.rodata).
-
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
----
- kernel/trace/trace_events_hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1d536219b624..3be35ebdaa62 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -80,7 +80,7 @@ enum { ERRORS };
- #undef C
- #define C(a, b)		b
- 
--static const char *err_text[] = { ERRORS };
-+static const char * const err_text[] = { ERRORS };
- 
- struct hist_field;
- 
--- 
-2.25.1
-
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/expr.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/perf/util/expr.c b/tools/perf/util/expr.c
+> index 7fda0ff89c16..4df56f2b283d 100644
+> --- a/tools/perf/util/expr.c
+> +++ b/tools/perf/util/expr.c
+> @@ -409,6 +409,9 @@ double expr__get_literal(const char *literal, const struct expr_scanner_ctx *ctx
+>  	} else if (!strcmp("#core_wide", literal)) {
+>  		result = core_wide(ctx->system_wide, ctx->user_requested_cpu_list)
+>  			? 1.0 : 0.0;
+> +	} else if (!strcmp("#target_cpu", literal)) {
+> +		result = (ctx->system_wide || ctx->user_requested_cpu_list)
+> +			? 1.0 : 0.0;
+>  	} else {
+>  		pr_err("Unrecognized literal '%s'", literal);
+>  	}
+> -- 
+> 2.51.1.821.gb6fe4d2222-goog
+> 
 
