@@ -1,102 +1,232 @@
-Return-Path: <linux-kernel+bounces-883956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD16C2EE8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:02:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 232C2C2EE73
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 224DB4E8A5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784D51892A18
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1D220F5D;
-	Tue,  4 Nov 2025 02:01:58 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C9B239E9B;
+	Tue,  4 Nov 2025 01:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqJFlWx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54A2D515;
-	Tue,  4 Nov 2025 02:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496241D5174;
+	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762221718; cv=none; b=ShIb3Wv7yjb23f3krvolZ5L4UkKQ+LFpkOlMJ3SEAGGdfmhfC25UQGoKjp9LpMOo6P7Gu22CkTHRrK/w0b3coGugQLtlxiexKb5XgHPTpqKE+7Djrwe1HZyhX0yGc++vH8grimmk/QZJPbFLWXk1hxVtNQcLNUqMkWOGbTER/mM=
+	t=1762221495; cv=none; b=TrWNIR91mRS8TWj2oW+ca7CdZDacjEbTm1QpTr84nJDtjgR3lHlyOnUji95GMt9CqQuu0i0mRknheCchUl68Wo3vm6flV2+5vTMjAbGEoUn3vFNX/H3nz47Vrr32eVJgaBsjaQN+Gw6pCrmVOI3niINBkZi1y4qldYwNKQL7wjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762221718; c=relaxed/simple;
-	bh=GhfGJY/c2fpp5GNxD/8wpOQ3b7/KtTzQPcOtoJAgAL0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=d+HJTJsIuZ4NhHJXQ+RcFA76O/7nFrebefKIZzlxC1hHSqUZyAaqQQjvD5nZ0iXhZQH3a4MJJUoDTT09TgW6MRL9O6NzvAOJMTQLpqEYJmDyIUX5fHH/xrdzyL8IyKqxYsdaM4nOhy1iOa66BE0nGud9QFBoew+lbaAVCjPX3u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-03 (Coremail) with SMTP id rQCowACnI+t_XglpplVZAQ--.27197S2;
-	Tue, 04 Nov 2025 10:01:47 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alexander.usyskin@intel.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] mei: Fix error handling in mei_register
-Date: Tue,  4 Nov 2025 10:01:33 +0800
-Message-Id: <20251104020133.5017-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:rQCowACnI+t_XglpplVZAQ--.27197S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKrWxZrWfJr1DJFWDZryUGFg_yoWkArX_Ga
-	nY9r9rWr4kGrWIkr1Yyr4fZFWS9FsF9FWfJr17tFZ5t3yxZrZrur1DZwnxtr1Uur47Cr15
-	AFyUXrWSkw1UujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUkHUDUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1762221495; c=relaxed/simple;
+	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM+HWGTV2m8L1Wgn8IOxkmcih/+BAJQ7QLMmKQd9pjO4+nUyBK7P435ddTzsEKbr/GASdnr2USEa7iOwGb8j7gB2izlWIIhvXUHZBKmv5THeZuafhhJcGWXFHkGC7K1eriT15M9N+cvrxtQ03xzRLQ5Z9DB2KjYl6O2QMeRqxy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqJFlWx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237BEC4CEE7;
+	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762221494;
+	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UtqJFlWxN48EHZ6m4Vs71XABqkqSHNA+J9xKtZE/yJvhxrW22GvuoB+canVe3T2Fp
+	 gGCqludTo3AtiS0EpSWULM1b5KCAF4uMUYYhrHbAYmi5117Fuu1XppAp9o1QoLzUP0
+	 eu8/RtHN6ajUFY01QeHnQhXP7jsPBeicbmM99gW2/QJYx574Ldt1xS5ifXgdw0jsT2
+	 U6h6k0e9pNPHMy1vxQVeHP3EY1KdQlvcXd6/3VD4W8gF8qt41Na5qj03amZU3KMF96
+	 W5Z5srpRXZadHdsDYG2t8+sZ9Ap/P+i/ttUEJXLvdgSOh/0XXxfnT1OUWzKZHpyrrs
+	 o3SAfpTJ3NS8A==
+Date: Mon, 3 Nov 2025 20:01:46 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Cc: chris.lew@oss.qualcomm.com, konradybcio@kernel.org, 
+	jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] soc: qcom: smp2p: Add support for smp2p v2
+Message-ID: <d6vx4owncfgnpnujfepavtxeg76pt6rzlxf4fhhd6uwwtrfl3v@6rnc2llvoo26>
+References: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
+ <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
 
-mei_register() fails to release the device reference in error paths
-after device_initialize(). During normal device registration, the
-reference is properly handled through mei_deregister() which calls
-device_destroy(). However, in error handling paths (such as cdev_alloc
-failure, cdev_add failure, etc.), missing put_device() calls cause
-reference count leaks, preventing the device's release function
-(mei_device_release) from being called and resulting in memory leaks
-of mei_device.
+On Mon, Nov 03, 2025 at 08:59:29PM +0530, Deepak Kumar Singh wrote:
+> From: Chris Lew <chris.lew@oss.qualcomm.com>
+> 
+> Some remoteproc need smp2p v2 support, mirror the version written by the
+> remote if the remote supports v2.
 
-Found by code review.
+I don't think they _need_ v2 support. The subsystem might implement v2
+and only support v2...
 
-Cc: stable@vger.kernel.org
-Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/misc/mei/main.c | 1 +
- 1 file changed, 1 insertion(+)
+> This is needed if the remote does not have backwards compatibility
+> with v1.
 
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index 86a73684a373..6f26d5160788 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -1307,6 +1307,7 @@ int mei_register(struct mei_device *dev, struct device *parent)
- err_del_cdev:
- 	cdev_del(dev->cdev);
- err:
-+	put_device(&dev->dev);
- 	mei_minor_free(minor);
- 	return ret;
- }
--- 
-2.17.1
+I guess this retroactively amends the previous sentence to make it
+valid? Please rewrite these two sentences.
 
+> And reset entry last value on SSR for smp2p v2.
+
+The first two sentences described a problem and a "solution" to that
+problem, here you're just throwing in a fact.
+
+Please document what version 2 actually is and make it clear why
+resetting "entry last value on SSR".
+
+> 
+> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
+> Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+> ---
+>  drivers/soc/qcom/smp2p.c | 41 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 38 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index 39628df36745..c35ca7535c14 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -36,6 +36,10 @@
+>   * The driver uses the Linux GPIO and interrupt framework to expose a virtual
+>   * GPIO for each outbound entry and a virtual interrupt controller for each
+>   * inbound entry.
+> + *
+> + * Driver supports two versions:
+> + * V1 - For processor that start after local host
+> + * V2 - For processor that start in early boot sequence
+>   */
+>  
+>  #define SMP2P_MAX_ENTRY 16
+> @@ -50,11 +54,12 @@
+>  
+>  #define ONE 1
+>  #define TWO 2
+> +#define MAX_VERSION TWO
+>  
+>  /**
+>   * struct smp2p_smem_item - in memory communication structure
+>   * @magic:		magic number
+> - * @version:		version - must be 1
+> + * @version:		version
+>   * @features:		features flag - currently unused
+>   * @local_pid:		processor id of sending end
+>   * @remote_pid:		processor id of receiving end
+> @@ -183,14 +188,23 @@ static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
+>  static bool qcom_smp2p_check_ssr(struct qcom_smp2p *smp2p)
+>  {
+>  	struct smp2p_smem_item *in = smp2p->in;
+> +	struct smp2p_entry *entry;
+>  	bool restart;
+>  
+>  	if (!smp2p->ssr_ack_enabled)
+>  		return false;
+>  
+>  	restart = in->flags & BIT(SMP2P_FLAGS_RESTART_DONE_BIT);
+> +	restart = restart != smp2p->ssr_ack;
+
+This is hard to read, please try to avoid the immediate reassignment.
+
+> +	if (restart && in->version > ONE) {
+> +		list_for_each_entry(entry, &smp2p->inbound, node) {
+> +			if (!entry->value)
+> +				continue;
+> +			entry->last_value = 0;
+
+Why do we only do this for version 2+?
+
+> +		}
+> +	}
+>  
+> -	return restart != smp2p->ssr_ack;
+> +	return restart;
+>  }
+>  
+>  static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
+> @@ -225,6 +239,20 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
+>  	}
+>  }
+>  
+> +static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
+> +{
+> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
+> +	unsigned int pid = smp2p->remote_pid;
+> +	struct smp2p_smem_item *in;
+> +	size_t size;
+> +
+> +	in = qcom_smem_get(pid, smem_id, &size);
+> +	if (IS_ERR(in))
+> +		return 0;
+> +
+> +	return in->version;
+> +}
+> +
+>  static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
+>  {
+>  	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
+> @@ -522,6 +550,7 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
+>  	struct smp2p_smem_item *out;
+>  	unsigned smem_id = smp2p->smem_items[SMP2P_OUTBOUND];
+>  	unsigned pid = smp2p->remote_pid;
+> +	u8 in_version;
+>  	int ret;
+>  
+>  	ret = qcom_smem_alloc(pid, smem_id, sizeof(*out));
+> @@ -543,12 +572,18 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
+>  	out->valid_entries = 0;
+>  	out->features = SMP2P_ALL_FEATURES;
+>  
+> +	in_version = qcom_smp2p_in_version(smp2p);
+
+This is a bit obfuscated in my view, and doesn't seem complete.
+
+We're calling qcom_smp2p_alloc_outbound_item() during probe(), at which
+time any non-early booted subsystem will yet to have been launched and
+hence they haven't allocated their SMP2P SMEM item.
+
+So in_version will be 0, which is less than 2, so therefor we're running
+version 1.
+
+If the subsystem is then brought out of reset and it implements version
+2 (we intended it to be launched by bootloader, but it wasn't - this
+shouldn't be a problem), we will have a version "mismatch".
+
+Upon first interrupt from the remote we will determine in
+qcom_smp2p_negotiate() that we're version 1 and they are version 2, so
+we will not complete the negotiation - and thereby not deliver
+interrupts.
+
+> +	if (in_version > MAX_VERSION) {
+> +		dev_err(smp2p->dev, "Unsupported smp2p version\n");
+
+I think we can afford ourself to add "...: %d\n", in_version); here. It
+would make the error print directly actionable the day we hit it (or
+make it obvious if we hit this error due to a bogus in_version).
+
+Regards,
+Bjorn
+
+> +		return -EINVAL;
+> +	}
+> +
+>  	/*
+>  	 * Make sure the rest of the header is written before we validate the
+>  	 * item by writing a valid version number.
+>  	 */
+>  	wmb();
+> -	out->version = 1;
+> +	out->version = (in_version) ? in_version : 1;
+>  
+>  	qcom_smp2p_kick(smp2p);
+>  
+> -- 
+> 2.34.1
+> 
 
