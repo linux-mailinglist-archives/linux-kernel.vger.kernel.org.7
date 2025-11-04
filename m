@@ -1,191 +1,187 @@
-Return-Path: <linux-kernel+bounces-885335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5422BC329BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE6CC329C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A5B56051D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F013156098C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747E34217C;
-	Tue,  4 Nov 2025 18:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9805E33F393;
+	Tue,  4 Nov 2025 18:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="0Cs2pGYv"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CYncNzCz"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE5E342170
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78B433EB1D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762279960; cv=none; b=Sq5Xmmo0WP+SVY2cfnNcSazeOPDHa02gLI1pAx55XlxiqtIB5azL/RYMAzi5trDyTQEc7SlvGREo97VAR/QKwBR96cZx0Q2t7+91kMYO9yqe0MJwe08f8gBn7bdvUwV9fY3PXrbp/tfngO6PIZ8r6akpwukYxP0ZngLk6MJL25A=
+	t=1762280068; cv=none; b=QyFBAlsWKywjEEr9eNEhYUfmdL5CVa9B1DJMr8Vj16YAnUeSIkUGIQdq8x4s/M51N3u1/QTahcZXvAL+hPwOx2nTETubw9SQxx7fWSWvj0AlTTGbS+OHmMw11FmiEvm7GDfn7tGgAVi79TmFdHKv4NF5G0uu+Qv5wLFLhrrIA6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762279960; c=relaxed/simple;
-	bh=m1uwxnIQgDEvoGlGJEV2cdGCHNy/Jt3/XLouPoDvnzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GttEBsGrymNsyAzhlkz2Krl9oz7XNed77eBBFV/pM+7vl9IQ8hhBXOkVYSHUiErjQRd1Op985EaTbVEqUnZebzjHj9gUjrInZZ2XHHQYfVVfp5lO9BFbF3Yd07vvzkKR8fd++PO/TgOn4ONmWhbqGnuM/jOloQKZAbv2IS/mWC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=0Cs2pGYv; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7810af03c69so217336b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:12:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1762279958; x=1762884758; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fXMTm+VYzAvY0dzLHfbkpTMRVQ9wHEDxxkapIdIQmk4=;
-        b=0Cs2pGYvCe+TXrnys5A7s1RaIOoTeFfpuJFTfj8UdHKz5yzUx+BNmxzdTeVNyNrebx
-         Iyy+ygdOjgnVvLIFuMUx2UFBg3DiUve5ObJC3nl8K4wdssDL2+b/wjy+b+yPlo8hKAab
-         49AVFhjbZTxOowingm7vuIC/HXxByzOjHOZ5Rqx3bjegKxGQ2SfuXy9x7+crmla2Yx2Y
-         a0PITAgVL2WAm/1sYhfALC+TLgO/zubvZzdsGKIIgW9/ZHDH5YrMn61Xt9QY5IQgPCQE
-         cCDs55lGWqvJU1H0E0oTVS0SNFu4LCrnPY4eUAYV23tgw9lRHJOecLWSC7x4WuGsSyF9
-         ZVPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762279958; x=1762884758;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXMTm+VYzAvY0dzLHfbkpTMRVQ9wHEDxxkapIdIQmk4=;
-        b=QJpAGmtTBQsn+xX0e1j/01BTfj7UZ5TvJ8ttJaZN2S5tqkY6xezBQHZw6td5n7/FrH
-         cWopl8mfdAY7vi4sw5+EX2LzI9WQ9HwEWrXhXOFtNA6WDJia71i0DfvvDZ6W+jXJUylh
-         p78iqgtAUIl8m379XTWRwUvr1wgFrC0XobWCAlqi0KrNc6qG7PE2yoCtUvXCEDJYtuKH
-         qQKzCqeiQYsQPnu5roR1zc0Zxj8v5K6nE3ejUuTekd4eo0yw+VtRxvuxKuBaRRgCcmWv
-         rR7cFxEfOZkEWVr1lSUyB9Dnl3d4MBXEumfQX8T1g9L0NdtpOSkCnPqKfIETuJWJdUb3
-         Cj6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNmqJgJ327z6uVJD7mV+37eyGAWLuaM3NJMI/l0QdjyxCT1YPIDqXwPpMftyPoce86qJSvRX3kILvepsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFnHEIzsi7MMz+ZxF1MoovxGr+axQJtJSouCKBfj9OHWE3g/V1
-	unUj0Rb5yDsgFRKmiwbO6kO5g+1y9OQFz8CDtx9LHbWIMKawZokvPwfbWuJL03fdWWE=
-X-Gm-Gg: ASbGncvzOzFiKBeDH+ZJmjQwK5OlcV8UZhiELG70JiBgdbIrkuCTUs0IRvXZiv9CkTS
-	zu39Wcs1uPnjkLx5FDfQyxQbgDqrPePBfEQlojjrqRuWmUSPye56NZAmOtwxVtcp9D6OvkZTWEw
-	VNHDD8e2DTkGd68rDuY9h33tFedWytezQc+F1pK+mJlKU4hXyGVRzHRm2uYG/D42P28gqLKBBHb
-	J0HF6H5dQxoUV08EFofCvUWvfmzK1iMGM1KiT6HQQdIogqP1QNcuZIRgWHzDJE3Zp6+dPfzO+uz
-	b9mAmt2zHwhw6W6sF/eVcIhnE01FipqrPut2AVABlcC37Ik7TDbFsnequS7eS9NZBgqI7XhVatB
-	oMiZ4hmthyvsy4PDWYV/j35cJ/ta/2UWVIR7H2t60qe19i8EqoRYUVeIvAg==
-X-Google-Smtp-Source: AGHT+IEfMevdEiMdqDvcfkgPhov93sowDZtb/5DAGljcPm4WdOYVS1DF54t90hQB/DDdvYdf8wD0vg==
-X-Received: by 2002:a05:6a20:12c3:b0:342:8c38:ed0 with SMTP id adf61e73a8af0-34f87106a7cmr92855637.8.1762279958021;
-        Tue, 04 Nov 2025 10:12:38 -0800 (PST)
-Received: from telecaster ([2620:10d:c090:400::5:5bc5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f87a6155sm3008088a12.29.2025.11.04.10.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 10:12:37 -0800 (PST)
-Date: Tue, 4 Nov 2025 10:12:35 -0800
-From: Omar Sandoval <osandov@osandov.com>
-To: linux-kbuild@vger.kernel.org, nathan@kernel.org,
-	dimitri.ledkov@surgut.co.uk
-Cc: Samir M <samir@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
-	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	linux-debuggers@vger.kernel.org
-Subject: Re: [mainline]Error while running make modules_install command
-Message-ID: <aQpCE_XTU-bZHFbk@telecaster>
-References: <7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com>
- <56905387-ec43-4f89-9146-0db6889e46ab@linux.ibm.com>
+	s=arc-20240116; t=1762280068; c=relaxed/simple;
+	bh=eW9gLOYQ4PO/YSLIAFmpY62Rr4JFZ49YbcwqvrnIPBU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TgcnZaYe30XYWhrGZMF3FTCCCOV5Z6xBER/2qIYuR5gMmxKXDEoOpSuRHf+EjiYndJlkjJRJoutsA/Vs65LkSXrYmKSrmqu97wl55alYGUY9am1eG8bUQvZsBmr8tP2+pJGqk2TgO8X38Qhd/FKRyGp6mmxoy3/3YfT2G1WfBLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CYncNzCz; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762280054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NAWdqQAMF5nun7wl28IZyFWxTMsXgZF6tpsdkVCFUVk=;
+	b=CYncNzCzYkQqitwhPYqZZ2XB5M4zBBImGrmM8RswwHaI5fjYIChKwb+qJ+P6ev/4Y8jaEV
+	UINgarZFhBJlyEkb3eGVjNfCyAerXhNhDDKh9POde27z+UNbv9dAnXxmOAcCOohdCIqP0I
+	m20QJOx7Cz/kEmiqvkHdkwAZ8kL8w+w=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
+ <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
+ Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
+  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
+  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+In-Reply-To: <aQm2zqmD9mHE1psg@tiehlicka> (Michal Hocko's message of "Tue, 4
+	Nov 2025 09:18:22 +0100")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-7-roman.gushchin@linux.dev>
+	<aQR7HIiQ82Ye2UfA@tiehlicka> <875xbsglra.fsf@linux.dev>
+	<aQj7uRjz668NNrm_@tiehlicka> <87a512muze.fsf@linux.dev>
+	<aQm2zqmD9mHE1psg@tiehlicka>
+Date: Tue, 04 Nov 2025 10:14:05 -0800
+Message-ID: <87h5v93bte.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <56905387-ec43-4f89-9146-0db6889e46ab@linux.ibm.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 04, 2025 at 04:54:38PM +0530, Venkat Rao Bagalkote wrote:
-> 
-> On 04/11/25 4:47 pm, Samir M wrote:
-> > Hello,
-> > 
-> > 
-> > I am observing below error while running the make modules_install
-> > command on latest mainline kernel on IBM Power11 server.
-> > 
-> > 
-> > Error:
-> > DEPMOD  /lib/modules/6.18.0-rc4 depmod: ERROR: kmod_builtin_iter_next:
-> > unexpected string without modname prefix
-> > 
-> 
-> IBM CI has also reported this error.
-> 
-> 
-> Error:
-> 
-> 
-> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
-> prefix
->   INSTALL /boot
-> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
-> prefix
-> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
-> prefix
-> 
-> 
-> Git bisect is pointing to below commit as first bad commit.
-> 
-> 
-> d50f21091358b2b29dc06c2061106cdb0f030d03 is the first bad commit
-> commit d50f21091358b2b29dc06c2061106cdb0f030d03
-> Author: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
-> Date:   Sun Oct 26 20:21:00 2025 +0000
-> 
->     kbuild: align modinfo section for Secureboot Authenticode EDK2 compat
-> 
->     Previously linker scripts would always generate vmlinuz that has
-> sections
->     aligned. And thus padded (correct Authenticode calculation) and unpadded
->     calculation would be same. As in https://github.com/rhboot/pesign
-> userspace
->     tool would produce the same authenticode digest for both of the
-> following
->     commands:
-> 
->         pesign --padding --hash --in ./arch/x86_64/boot/bzImage
->         pesign --nopadding --hash --in ./arch/x86_64/boot/bzImage
-> 
->     The commit 3e86e4d74c04 ("kbuild: keep .modinfo section in
->     vmlinux.unstripped") added .modinfo section of variable length.
-> Depending
->     on kernel configuration it may or may not be aligned.
-> 
->     All userspace signing tooling correctly pads such section to calculation
->     spec compliant authenticode digest.
-> 
->     However, if bzImage is not further processed and is attempted to be
-> loaded
->     directly by EDK2 firmware, it calculates unpadded Authenticode digest
-> and
->     fails to correct accept/reject such kernel builds even when propoer
->     Authenticode values are enrolled in db/dbx. One can say EDK2 requires
->     aligned/padded kernels in Secureboot.
-> 
->     Thus add ALIGN(8) to the .modinfo section, to esure kernels irrespective
-> of
->     modinfo contents can be loaded by all existing EDK2 firmware builds.
-> 
->     Fixes: 3e86e4d74c04 ("kbuild: keep .modinfo section in
-> vmlinux.unstripped")
->     Cc: stable@vger.kernel.org
->     Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
->     Link:
-> https://patch.msgid.link/20251026202100.679989-1-dimitri.ledkov@surgut.co.uk
->     Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> 
->  include/asm-generic/vmlinux.lds.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Michal Hocko <mhocko@suse.com> writes:
 
-drgn's CI hit this same failure. FWIW, the commit fixed by this bisected
-commit, 3e86e4d74c04 ("kbuild: keep .modinfo section in
-vmlinux.unstripped"), also results in ELF segments of size 0 in vmlinux
-for some configurations, which confused drgn until I added a workaround
-(https://github.com/osandov/drgn/commit/2a9053de8796af866fd720a3c8c23013595d391a).
-So there's some funkiness in this area.
+> On Mon 03-11-25 17:45:09, Roman Gushchin wrote:
+>> Michal Hocko <mhocko@suse.com> writes:
+>> 
+>> > On Sun 02-11-25 13:36:25, Roman Gushchin wrote:
+>> >> Michal Hocko <mhocko@suse.com> writes:
+> [...]
+>> > No, I do not feel strongly one way or the other but I would like to
+>> > understand thinking behind that. My slight preference would be to have a
+>> > single return status that clearly describe the intention. If you want to
+>> > have more flexible chaining semantic then an enum { IGNORED, HANDLED,
+>> > PASS_TO_PARENT, ...} would be both more flexible, extensible and easier
+>> > to understand.
+>> 
+>> The thinking is simple:
+>> 1) Most users will have a single global bpf oom policy, which basically
+>> replaces the in-kernel oom killer.
+>> 2) If there are standalone containers, they might want to do the same on
+>> their level. And the "host" system doesn't directly control it.
+>> 3) If for some reason the inner oom handler fails to free up some
+>> memory, there are two potential fallback options: call the in-kernel oom
+>> killer for that memory cgroup or call an upper level bpf oom killer, if
+>> there is one.
+>> 
+>> I think the latter is more logical and less surprising. Imagine you're
+>> running multiple containers and some of them implement their own bpf oom
+>> logic and some don't. Why would we treat them differently if their bpf
+>> logic fails?
+>
+> I think both approaches are valid and it should be the actual handler to
+> tell what to do next. If the handler would prefer the in-kernel fallback
+> it should be able to enforce that rather than a potentially unknown bpf
+> handler up the chain.
 
-Thanks,
-Omar
+The counter-argument is that cgroups are hierarchical and higher level
+cgroups should be able to enforce the desired behavior for their
+sub-trees. I'm not sure what's more important here and have to think
+more about it.
+Do you have an example when it might be important for container to not
+pass to a higher level bpf handler?
+
+>
+>> Re a single return value: I can absolutely specify return values as an
+>> enum, my point is that unlike the kernel code we can't fully trust the
+>> value returned from a bpf program, this is why the second check is in
+>> place.
+>
+> I do not understand this. Could you elaborate? Why we cannot trust the
+> return value but we can trust a combination of the return value and a
+> state stored in a helper structure?
+
+Imagine bpf program which does nothing and simple returns 1. Imagine
+it's loaded as a system-wide oom handler. This will effectively disable
+the oom killer and lead to a potential deadlock on memory.
+But it's a perfectly valid bpf program.
+This is something I want to avoid (and it's a common practice with other
+bpf programs).
+
+What I do I also rely on the value of the oom control's field, which is
+not accessible to the bpf program for write directly, but can be changed
+by calling certain helper functions, e.g. bpf_oom_kill_process.
+
+>> Can we just ignore the returned value and rely on the freed_memory flag?
+>
+> I do not think having a single freed_memory flag is more helpful. This
+> is just a number that cannot say much more than a memory has been freed.
+> It is not really important whether and how much memory bpf handler
+> believes it has freed. It is much more important to note whether it
+> believes it is done, it needs assistance from a different handler up the
+> chain or just pass over to the in-kernel implementation.
+
+Btw in general in a containerized environment a bpf handler knows
+nothing about bpf programs up in the cgroup hierarchy... So it only
+knows whether it was able to free some memory or not.
+
+>
+>> Sure, but I don't think it bus us anything.
+>> 
+>> Also, I have to admit that I don't have an immediate production use case
+>> for nested oom handlers (I'm fine with a global one), but it was asked
+>> by Alexei Starovoitov. And I agree with him that the containerized case
+>> will come up soon, so it's better to think of it in advance.
+>
+> I agree it is good to be prepared for that.
+>
+>> >> >> The bpf_handle_out_of_memory() callback program is sleepable to enable
+>> >> >> using iterators, e.g. cgroup iterators. The callback receives struct
+>> >> >> oom_control as an argument, so it can determine the scope of the OOM
+>> >> >> event: if this is a memcg-wide or system-wide OOM.
+>> >> >
+>> >> > This could be tricky because it might introduce a subtle and hard to
+>> >> > debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
+>> >> > Sleepable locks should be only allowed in trylock mode.
+>> >> 
+>> >> Agree, but it's achieved by controlling the context where oom can be
+>> >> declared (e.g. in bpf_psi case it's done from a work context).
+>> >
+>> > but out_of_memory is any sleepable context. So this is a real problem.
+>> 
+>> We need to restrict both:
+>> 1) where from bpf_out_of_memory() can be called (already done, as of now
+>> only from bpf_psi callback, which is safe).
+>> 2) which kfuncs are available to bpf oom handlers (only those, which are
+>> not trying to grab unsafe locks) - I'll double check it in thenext version.
+>
+> OK. All I am trying to say is that only safe sleepable locks are
+> trylocks and that should be documented because I do not think it can be
+> enforced
+
+It can! Not directly, but by controlling which kfuncs/helpers are
+available to bpf programs.
+I agree with you in principle re locks and necessary precaution here.
+
+Thanks!
 
