@@ -1,167 +1,126 @@
-Return-Path: <linux-kernel+bounces-884379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCE4C300E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:51:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D06C3005D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DCC3BE9C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:44:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C2094FA6DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C28431D396;
-	Tue,  4 Nov 2025 08:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6250930596F;
+	Tue,  4 Nov 2025 08:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JJndxSo/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lpn7E2Of"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A9F306B37;
-	Tue,  4 Nov 2025 08:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F8F3115A6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245718; cv=none; b=LyJedHzM8quA4CDZBu/I4K4FNBnDCo0Vy+NzvMsA98AMoyHhq11Tbh0G2iTV6qz5rBBOFPWbfz8ESY+kV0aPxbgXLYb6Oq7jF+CSBPIccvouC3MaT4dq/XjMl8MjilmqVqSrfW9f/EO67kOikQuqUJk4LQAEXb7oK7KAGKpKcGk=
+	t=1762245591; cv=none; b=YG3OKI5coF/XtyZHnGjTC4GwSuoCy9Ef3dyEUKRYxbSNo+mVdvfV90PAcVUtX+Q51cTO1TwWAJURveUW6hRRO9q0JQhI2tqrTQOSUENSF+Jl6oa4ImdUZ//TKJbmb0Ws05x/NwDo28VtgTz4i7t5JeFD12+otMi9xg85RhMFnQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245718; c=relaxed/simple;
-	bh=purqrqfkmeNjHQsl8PGKaLr5sce14i7I1X0t6grKmRE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6+0//4UUgD1jpYooeDEDkzfTa0Ctw/k30rs1UfyS+AxcikTatQZy7liJjDzjCubRvWBeqwKRIUarSF6kwlAIXIg3CPktI6sgY5/5sfCRXJW/QB5I0SMZji7BGIfEZIXiHHCxdHLDN3Po6WYu39dBGntVNviuEewiNBYpQZu4qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JJndxSo/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762245716; x=1793781716;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=purqrqfkmeNjHQsl8PGKaLr5sce14i7I1X0t6grKmRE=;
-  b=JJndxSo/Jbv9chcr/MWWsqgrFvkje+0i2hTjJHWbHBIX0JWjoyWVJfC6
-   YPurGJYhgiwu8S6vv6Nfqs6CTEmCRdChAhEbbX9fSGSSUdu+fa3eEc1r/
-   sRlnP1iWe+5VbbLZ494p/7FRVONmLm3DVfq3UEFwhaBcnCyvFA8ULqWDn
-   GOe7Te1ZughGtnhtM7oTX3Jr3MdIICo/aJ+0zgT01S02lnm9zASppzNYK
-   hrUY6q0IcD8uFhU2C0Ta9vQZP6Ue5AizARKsFofioVrfmVof8WDKYRJbU
-   G9nj1t8hRDmgxtxpde1sTnfYctqan7ktfsxAiKqbPJZYNioFYUqBWttO9
-   g==;
-X-CSE-ConnectionGUID: UM+sI3xNSuSueVWnZFHkVw==
-X-CSE-MsgGUID: mbc01x2RR+e0T7CjDOussw==
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="asc'?scan'208";a="48018374"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:41:55 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex2.mchp-main.com (10.10.87.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 4 Nov 2025 01:41:24 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
- Transport; Tue, 4 Nov 2025 01:41:22 -0700
-Date: Tue, 4 Nov 2025 08:39:39 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <Marius.Cristea@microchip.com>
-CC: <conor@kernel.org>, <corbet@lwn.net>, <linux@roeck-us.net>,
-	<linux-hwmon@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<robh@kernel.org>, <linux-kernel@vger.kernel.org>, <krzk+dt@kernel.org>,
-	<linux-doc@vger.kernel.org>, <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: temperature: add support for
- EMC1812
-Message-ID: <20251104-displace-pretense-9efca7fd0796@wendy>
-References: <20251029-hw_mon-emc1812-v1-0-be4fd8af016a@microchip.com>
- <20251029-hw_mon-emc1812-v1-1-be4fd8af016a@microchip.com>
- <20251029-blaspheme-stinking-91b73a8ab778@spud>
- <c844428aa8d57d870b8cb55ce37d6359e3142585.camel@microchip.com>
+	s=arc-20240116; t=1762245591; c=relaxed/simple;
+	bh=KdtFMVyHKzZo/EDAlzANyTHb/8+wSJvqdNjo7/oA70w=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=XshHz79kSOv4uU48jQ/kHT+E7AEx+CrSkPwpUAMx8vcO5wgVuCMhg75UMBVY4xvmpaFT/1MewZTnzqMImRe0OFKzO+9fRl3M7XPkFp+YPzSA1nQ4fXiQ6kcjQ3lnSQpHTySSe7M3qL4y1/X+zVefypGel+6AaVSUrvjExh7Ve+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lpn7E2Of; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/AVkAT3sA6d22eia"
-Content-Disposition: inline
-In-Reply-To: <c844428aa8d57d870b8cb55ce37d6359e3142585.camel@microchip.com>
-
---/AVkAT3sA6d22eia
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762245586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XUhkfPH/iDzPYPJB5B9fd+xmNjC6dsjlXnkqvz4zmUI=;
+	b=lpn7E2OfkVZHiHatEPiMSgIs1yg5dZmWJqK7Tl9WnOoNWUfIR3vnoj6OHM5Oa36Mqag9R8
+	7cMP7Yo36xOQNBPWzhG7u4fmw4EzsXj2ckFGiI4PJYy0qag7vl2CNYqq77Jqj4w7TZ9lKZ
+	8Z9tvdY12LxMxVn4CuFH7ZqFnE93GAI=
+Date: Tue, 04 Nov 2025 08:39:44 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: hui.zhu@linux.dev
+Message-ID: <f4a25c9dc3af7365b6ade4cd9a0404530afeaa11@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
+To: "SeongJae Park" <sj@kernel.org>
+Cc: "SeongJae Park" <sj@kernel.org>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Muchun Song" <muchun.song@linux.dev>,
+ "Oscar Salvador" <osalvador@suse.de>, "David Hildenbrand"
+ <david@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ "Hui Zhu" <zhuhui@kylinos.cn>
+In-Reply-To: <20251104044355.94885-1-sj@kernel.org>
+References: <20251104044355.94885-1-sj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 03, 2025 at 04:35:27PM +0000, Marius.Cristea@microchip.com wrot=
-e:
-> Hi Conor,
+2025=E5=B9=B411=E6=9C=884=E6=97=A5 12:43, "SeongJae Park" <sj@kernel.org =
+mailto:sj@kernel.org?to=3D%22SeongJae%20Park%22%20%3Csj%40kernel.org%3E >=
+ =E5=86=99=E5=88=B0:
+
+
 >=20
-> On Wed, 2025-10-29 at 18:25 +0000, Conor Dooley wrote:
-> > On Wed, Oct 29, 2025 at 05:50:58PM +0200, Marius Cristea wrote:
-> > > This is the devicetree schema for Microchip EMC1812/13/14/15/33
-> > > Multichannel Low-Voltage Remote Diode Sensor Family.
-> > >=20
-> > > Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
-> > > ---
-> > > =A0.../bindings/hwmon/microchip,emc1812.yaml=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0 | 176
-> > > +++++++++++++++++++++
-> > > =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 6 +
-> > > =A02 files changed, 182 insertions(+)
-> > >=20
-> >=20
+>=20On Mon, 3 Nov 2025 16:22:07 +0800 Hui Zhu <hui.zhu@linux.dev> wrote:
 >=20
-> ...
-> > You should be able to just move this into interrupts:
-> > =A0 interrupts:
-> > =A0=A0=A0 items:
-> > =A0=A0=A0=A0=A0 - description:
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 alert-therm2 asserts when a diode temperatu=
-re exceeds the
-> > ALERT
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 threshold.
-> > =A0=A0=A0=A0=A0 - description:
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 therm-addr asserts low when the hardware-se=
-t THERM limit
-> > threshold is
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 exceeded by one of the temperature sensors.
+>=20>=20
+>=20> From: Hui Zhu <zhuhui@kylinos.cn>
+> >=20=20
+>=20>  The hugetlb.c file has grown significantly and become difficult to
+> >  maintain. This patch series extracts the sysfs and sysctl interface
+> >  code into separate dedicated files to improve code organization.
+> >=20=20
+>=20>  The refactoring includes:
+> >  - Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
+> >  - Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
+> >=20=20
+>=20>  No functional changes are introduced in this series. The code is m=
+oved
+> >  as-is, with only minor formatting adjustments for code style
+> >  consistency. This should make future maintenance and enhancements to
+> >  the hugetlb subsystem easier.
+> >=20=20
+>=20>  Testing: The patch series has been compile-tested and maintains th=
+e
+> >  same functionality as the original code.
+> >=20=20
+>=20>  Geliang Tang (1):
+> >  mm/hugetlb: extract sysfs into hugetlb_sysfs.c
+> >=20=20
+>=20>  Hui Zhu (1):
+> >  mm/hugetlb: extract sysctl into hugetlb_sysctl.c
+> >=20=20
+>=20>  mm/Makefile | 2 +-
+> >  mm/hugetlb.c | 852 +-----------------------------------------
+> >  mm/hugetlb_internal.h | 116 ++++++
+> >  mm/hugetlb_sysctl.c | 136 +++++++
+> >  mm/hugetlb_sysfs.c | 632 +++++++++++++++++++++++++++++++
+> >  5 files changed, 894 insertions(+), 844 deletions(-)
+> >  create mode 100644 mm/hugetlb_internal.h
+> >  create mode 100644 mm/hugetlb_sysctl.c
+> >  create mode 100644 mm/hugetlb_sysfs.c
 > >=20
-> > > +=A0=A0=A0 items:
-> > > +=A0=A0=A0=A0=A0 - const: alert-therm2
-> > > +=A0=A0=A0=A0=A0 - const: therm-addr
-> >=20
-> > Also, should this and interrupts have minItems: 1? Are both actually
-> > required? Can you have therm-addr without alert-therm2?
-> >=20
+>=20I think MAINTAINERS file should also be updated for the newly added f=
+iles.
 >=20
-> Right now the driver doesn't support any interrupts, but it may support
-> in future. The "alert-therm2" is a maskable interrupt and the "therm-
-> addr" can't be masked and is "always enabled" into the chip.
+
+Updated MAINTAINERS to v3 version according your comments.
+
+Best,
+Hui
+
+> Thanks,
+> SJ
 >=20
-> I didn't use "minItems: 1" because I wanted to leave to the user the
-> decision if he needs any interrupts into their system
-
-Unfortunately, this doesn't work the way you expected. If you don't set
-minItems: 1, then anyone who wants to use an interrupt must use both.
-
-If someone that would connect therm-addr would always also connect
-alert-therm2, then minItems: 1 is enough to add. If someone might want to
-use therm-addr but not use alter-therm2, then this needs to be changed
-to permit these in any order. You can do that by adding the names as an
-enum, eg
-items:
- - enum: [ foo, bar]
- - bar
-
-
---/AVkAT3sA6d22eia
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQm7xgAKCRB4tDGHoIJi
-0qzwAP9rzTZh+YSsUM1T+ZHciOGT5L48rZNWNccs8J4qtoMlvAEApRwHpACBMctm
-Mk4QHnFon5IRCmT2BU8GZYlnlDRTDQ0=
-=lZcD
------END PGP SIGNATURE-----
-
---/AVkAT3sA6d22eia--
+>=20[...]
+>
 
