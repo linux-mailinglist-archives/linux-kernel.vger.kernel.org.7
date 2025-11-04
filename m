@@ -1,110 +1,217 @@
-Return-Path: <linux-kernel+bounces-885218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE12C3245D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:17:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E806C324A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 063953AA10C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F518803E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2268733B6F1;
-	Tue,  4 Nov 2025 17:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4465D337B99;
+	Tue,  4 Nov 2025 17:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c23TkH3x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acJyscNx"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD19433B6E3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D695323D294
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276300; cv=none; b=a67KK5OBAIKfq61CzDl2uE1VlFL6ThEAzl9QPTVYoQKvsZbCBDL4d1dwF+JbHpi7h9Ftar737rCnwlWqPlM9dF92Edu54Sf+/h+60KoXJoXE2F7jfwTH0j5EznFShH3GbIK4Jge/ogDIENKAnU5RytUKu9qVxO13c64O7t2Ms30=
+	t=1762276412; cv=none; b=jsq/x2tNLgcL9s2fQYiQlt5RuL62XcCSmVoJWetbMlCMOb2OSWh3AsmzYcXW3xUxocfcYIQTno+CEF9peXfABOtNoGQqQ8KKGJHCmZtWBH1el89JfphFxrpjoVt2qmTlHbohfVRUj+S2Ql2/iRPtw1CVxStggD3ePo7LuMdcIIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276300; c=relaxed/simple;
-	bh=l66L8qBe+Tdr24KTy0VRX3lpLVTd4YmRSr8tLx2/SxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iryXsdD+LmlKFfnTRXNWQz2eBwkpjef/+l6WnJ5USL59bdM5cN4SE9tFNScApFdGlHuqqP1CTitCFjB5aqaAJEboJiTnZpbeORZNTyzGS4hOpgH57HreLbgF3I9xMtd8W/aDUM9YURRNNBAHtJb6FeUBfjwLN7sycNSNLC6uOqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c23TkH3x; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762276298; x=1793812298;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l66L8qBe+Tdr24KTy0VRX3lpLVTd4YmRSr8tLx2/SxU=;
-  b=c23TkH3x703YUdro8hURv+/JVHSboyvE7dWoDITQnD5vg+wRBpuipbJ2
-   R/cTnzPKULsDWLWEtJRVQ4y3CcBWNLP2M8hWGdQi+Jeo916VrRy4pDKJN
-   8dL+XLdnCSMM7sia1tRWMkagr34pSPHTA6o2vFhZAT/5ZRrrBEAQdTpFz
-   d0uOmbQOonBaab6lBRk0oU+3+I//XSJAzuEnpPFF3/zjGBgcNtWr13KEX
-   KxQoCq4g3QAKvxDKkOx9IuuNCRLQ//zOjyM6HSPbEWLtNSGurO0owXPWQ
-   n86V8LfMoDEEQ+bRrgsAN06fNNE40I5a5lLdIKh4vSuGS1mJHS/kkx36y
-   A==;
-X-CSE-ConnectionGUID: Q5QJJNGVQVW3gDfbbTkFNQ==
-X-CSE-MsgGUID: yJCleNLiRcS+5BrrSw0mcA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75058514"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="75058514"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:11:38 -0800
-X-CSE-ConnectionGUID: zgowIiKlTp+K3GvWlJRf1w==
-X-CSE-MsgGUID: tqI676p/RJaN4s2o52nLAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="224462167"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.146])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:11:37 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vGKZC-00000005WU4-1Vxa;
-	Tue, 04 Nov 2025 19:11:34 +0200
-Date: Tue, 4 Nov 2025 19:11:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: regulator branch mess
-Message-ID: <aQozxqDFtAhDpBQB@smile.fi.intel.com>
-References: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
- <aQocq1eRjOOjiRdY@finisterre.sirena.org.uk>
- <aQogTFANK1fMtloW@smile.fi.intel.com>
- <aQojdTvP94aYVW4l@finisterre.sirena.org.uk>
- <aQolne8AKHXdJw0-@smile.fi.intel.com>
- <aQonVNgqJI56nspA@smile.fi.intel.com>
- <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
- <aQov22j_S8LRzIdm@smile.fi.intel.com>
- <aQoyT4Com8t6zE5U@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1762276412; c=relaxed/simple;
+	bh=m1XkeAEKgnYB+1UGxur6dH6wOd+HzUrXUozfaL+/uQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=urD/NBukgRKFMl9DFhOeSk5yVg95+4lGdi+BdzyGWxI31M8NUugSWSs3aDf8gv0bjj8WtFKnE4jah98RKwHE01xyRxkCxzs1nLdgfo+n1vq+KflLqfWHpPxHtL2d63BIAKDGvi4l6RH0u/BoQU3x4d5Zl9YIDzH3gTXrlTb4tnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acJyscNx; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29555b384acso35890475ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:13:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762276410; x=1762881210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usbtFusXECf+ztp+zNDIhf2MMecxiC++PMfHrUtumrQ=;
+        b=acJyscNx1YvB+GtAkExmVtzeAcptRjQEGsQCayEOdRuLV7/0RcbB04/pqPyiRN2XtJ
+         Pcz+OmJtgJiO4CRBChWae0sdCs6iz+aN49E97+//aNQo66IBEdAEO3PuMxKUUN+aSPAm
+         NCdWzX1AKD+z8Ke03KqBm4toO2t/O1c/e/L/mzcmDGeFEVW/oTwbI9ArzOHPqjZXaBVB
+         gNYzPIPnD9v0XO7+goVMtBAz+yiZ1r8bzbb1LT9nf1ZE0s+ss/JQgFI/LCYrw5tG4u3t
+         AI2+Jby6Z6NDC7+uG5yar0OdoEYNQ8zzAzs4TU+ifGAeMTfcb5gJ52Ly/2T5+SShxshS
+         dUNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762276410; x=1762881210;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usbtFusXECf+ztp+zNDIhf2MMecxiC++PMfHrUtumrQ=;
+        b=jVtqRGznxnCN5hTBnxwaNJvZIaveyxY5/etLiCD5FhlnkV7N1OFVGU83fWR7siBF0Q
+         FYgOTDwjMcG5KgFGbjU4WVVAzV4NXa7vT9Cnyuy8/h2bTYWtwyWRIjKhoT4VfrdYIGfZ
+         2mij6Tv/aJ4R7DJePqih3TzwEHJ/CtBigaMp0X7ZGZJBa1mv3VF+2rotWfAmUFuXn5xL
+         Kok+qzAU9pVhVeZKvB+9M4zUfI1FJLX2F2WSHs/8zcbuivACEYj+b4XR/U6EWik19HwT
+         9FV/ttT2igCRVML8TMzH5iVFKEPoTqDK/Wse8fgGUjzmu+hMXTYrONmyelRmAdw4LLCq
+         T7QA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoznwEIlYNA+/lrEVgmokEHbg13Op2v5gGbgdGrvI16j0xbRBH45Jw6r7okJ4QR6Y7KNF7DKoLnXYcIqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz45dRB4sbUQFFG6IV3umCbxKJH15sq5WUav5NtHJvcNwblfSFQ
+	NgFwLFzJU1cDHaVZ6GogMtBDlXPxgQRBqS8lOyXRmYstpFJ7ocfAnkSb
+X-Gm-Gg: ASbGncvSHrldUman/d7E9Np20V/1sK0oOEK6SRflZwaHZmjbAsL42qv4ukoH5dTVK6q
+	scg3QxNLER9ppK9tEP1Q1UbGr7rrzNcjP7N2BiQoFMC1tgJsnSmZFFpqxcB+bEvwcXlFU5aXLJ7
+	Z7Zd/bd88OTy/sFSPvCBwvUHkwC/s7ZbJ5nhvmsS5/Klv9EzJK4E18CIRc6epvThYkhl9C4hfHV
+	Kic/euUlGatcRUzohYev62uFiLZCfb+M8aiawEV/LmUqiab5L+XBoIIZ6CbVXferQM9yHjYSH9d
+	yGQkxTipel2tjJsbgcKlVRmJIcuqI5SBkxkTKRjKhbx6nYdYNSmyRQ8UT05HH4ILt3CsZ4nriPS
+	Fcfs14fXpXfEWNkR4Kcnd/dXsIgViHxbTp4setO9cQU3sJK15hfLacaKESc+jt6PNPEvmS1eJ8s
+	XhENW8zWAPL9iQj+cvbtE=
+X-Google-Smtp-Source: AGHT+IHEPM6IeTHqwRglV3CNNPvXG1HRbfYSUDnDZvEYFFaMOFPrf9AoRvdMvHe2ekdTYstoOgW7Og==
+X-Received: by 2002:a17:903:3bc7:b0:295:bedb:8d7 with SMTP id d9443c01a7336-2962add071cmr4121695ad.48.1762276410092;
+        Tue, 04 Nov 2025 09:13:30 -0800 (PST)
+Received: from shankari-IdeaPad.. ([2409:408c:9413:f347:f0d6:3544:e27:d190])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296019982c7sm32643875ad.25.2025.11.04.09.13.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 09:13:29 -0800 (PST)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-block@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: Re:[PATCH v2] rust: block: update ARef and AlwaysRefCounted imports from sync::aref
+Date: Tue,  4 Nov 2025 22:43:16 +0530
+Message-Id: <20251104171316.6672-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251012142012.166230-1-shankari.ak0208@gmail.com>
+References: <20251012142012.166230-1-shankari.ak0208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQoyT4Com8t6zE5U@finisterre.sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 05:05:19PM +0000, Mark Brown wrote:
-> On Tue, Nov 04, 2025 at 06:54:51PM +0200, Andy Shevchenko wrote:
-> > On Tue, Nov 04, 2025 at 04:30:54PM +0000, Mark Brown wrote:
+On Sun, Oct 12, 2025 at 07:50:12PM +0530, Shankari Anand wrote:
+> Update call sites in the block subsystem to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
 > 
-> > > That is the full list of commits in the for-6.19 that do not already
-> > > appear in mainline.
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
 > 
-> > Yes, because this merge brings also rc3-rc4 bump:
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+> ---
+> Changelog:
+> v1 -> v2:
+> Rebased it on top of the latest linux-next upstream commit
+> Dropped 1/7 from the subject as it might lead to confusion of it being a series
+> Link of v1: https://lore.kernel.org/lkml/20250716090712.809750-1-shankari.ak0208@gmail.com/
 > 
-> Yes, it does.
+> The original patch of moving ARef and AlwaysRefCounted to sync::aref is here:
+> (commit 07dad44aa9a93)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+> 
+> 
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
+> ---
+>  
+>  drivers/block/rnull/rnull.rs       | 3 +--
+>  rust/kernel/block/mq.rs            | 5 ++---
+>  rust/kernel/block/mq/operations.rs | 4 ++--
+>  rust/kernel/block/mq/request.rs    | 8 ++++++--
+>  4 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
+> index 1ec694d7f1a6..a9d5e575a2c4 100644
+> --- a/drivers/block/rnull/rnull.rs
+> +++ b/drivers/block/rnull/rnull.rs
+> @@ -17,8 +17,7 @@
+>      error::Result,
+>      pr_info,
+>      prelude::*,
+> -    sync::Arc,
+> -    types::ARef,
+> +    sync::{aref::ARef, Arc},
+>  };
+>  use pin_init::PinInit;
+>  
+> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
+> index 637018ead0ab..1fd0d54dd549 100644
+> --- a/rust/kernel/block/mq.rs
+> +++ b/rust/kernel/block/mq.rs
+> @@ -20,7 +20,7 @@
+>  //! The kernel will interface with the block device driver by calling the method
+>  //! implementations of the `Operations` trait.
+>  //!
+> -//! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
+> +//! IO requests are passed to the driver as [`kernel::sync::aref::ARef<Request>`]
+>  //! instances. The `Request` type is a wrapper around the C `struct request`.
+>  //! The driver must mark end of processing by calling one of the
+>  //! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
+> @@ -61,8 +61,7 @@
+>  //!     block::mq::*,
+>  //!     new_mutex,
+>  //!     prelude::*,
+> -//!     sync::{Arc, Mutex},
+> -//!     types::{ARef, ForeignOwnable},
+> +//!     sync::{aref::ARef, Arc, Mutex},
+>  //! };
+>  //!
+>  //! struct MyBlkDevice;
+> diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
+> index f91a1719886c..8ad46129a52c 100644
+> --- a/rust/kernel/block/mq/operations.rs
+> +++ b/rust/kernel/block/mq/operations.rs
+> @@ -9,8 +9,8 @@
+>      block::mq::{request::RequestDataWrapper, Request},
+>      error::{from_result, Result},
+>      prelude::*,
+> -    sync::Refcount,
+> -    types::{ARef, ForeignOwnable},
+> +    sync::{aref::ARef, Refcount},
+> +    types::ForeignOwnable,
+>  };
+>  use core::marker::PhantomData;
+>  
+> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+> index c5f1f6b1ccfb..ce3e30c81cb5 100644
+> --- a/rust/kernel/block/mq/request.rs
+> +++ b/rust/kernel/block/mq/request.rs
+> @@ -8,8 +8,12 @@
+>      bindings,
+>      block::mq::Operations,
+>      error::Result,
+> -    sync::{atomic::Relaxed, Refcount},
+> -    types::{ARef, AlwaysRefCounted, Opaque},
+> +    sync::{
+> +        aref::{ARef, AlwaysRefCounted},
+> +        atomic::Relaxed,
+> +        Refcount,
+> +    },
+> +    types::Opaque,
+>  };
+>  use core::{marker::PhantomData, ptr::NonNull};
+> 
+> base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae 
+> -- 
+> 2.34.1
+> 
+Hello, can this patch be reviewed?
 
-Thanks for patience and helping me to understand this. So, if it's all
-expected, I have no problem with :-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Shankari
 
