@@ -1,595 +1,206 @@
-Return-Path: <linux-kernel+bounces-885370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EE3C32B5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:54:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A17C32B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F88C3A8F62
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C593A9597
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432B533DEF1;
-	Tue,  4 Nov 2025 18:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67B133F8C8;
+	Tue,  4 Nov 2025 18:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i6q+GrWy"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012041.outbound.protection.outlook.com [40.93.195.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7cG+qxu"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07C42CCC5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762282430; cv=fail; b=gVi0XUa3xMCpyO6mL/aWqz4cB1r7rLqTLzlIojjzeik51R5fsrc7hyGCYnlCz9hDcJjl9o67K03bpu+oCWfiHTG885agiSHY0J0GYHA79yKYzLb1gso2MnoMkoWMv9hQJcOL0xGWCiBKkg6rlB/InOVnaz8A7dsvhqzr/gX2XnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762282430; c=relaxed/simple;
-	bh=tCr/ae58nnYd/ZI0de6zU8Xt6X5FD56BgfsZP/raJHM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=joDnqQd6nohI5vqCyyTjwiY16EG1PhDHMYaFPOR3mAq+SKOlpXq8K7NChnW0TUEMQU8FlVNAINwTj6fNLQcdARdLQfXPw3KmrYQefCOwOO5D5e6Sov2bf12ri6TKnW8R2Fr4/WR/attNe8x4OgosEKpZhjEZkKuVuDUgBKxIYyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i6q+GrWy; arc=fail smtp.client-ip=40.93.195.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oqCcw8dfx7A5544gyd6ibfmpkGtjb0ede/HsOR2J5vsoDqnuMaAg8imxrohTS5WMG/R25hxfRZqViFHTewUp5WBeHuRe7wGenNckQKD1Nm41hNQlwsiNe2j1EOE3sjg+bfuLm32db6VJPskOk+T+v04qZL/mdm3gWncJBsAfyICm+RcJYFefNBENJpt+1ou1pTU6ohK+TkhK2vZW6NkERZL0yv4dNGCHhLQdRsLwDEve89SevgKq4TWPHbsJS9fYkZ7u/aDj3TWQ7UGaNuRPxn3MJn+XzVwzzK6h7uCuPnHul107E3hDAO6FkM+6rBw7rSUzqhz6wcJhBwvqXA6yFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XrMonR81310bs8I5nr0M9LNSJYiRiVj6XHPr/IjQgPA=;
- b=SX14pKrsi4ANF8zrxbAAPfyOlSKdZbp0All9SRMj3+ObAZtQrccRZOjUDDu3pXUgVlHKE8+wND4/LsLu/cg/0N+ScGZ22ILG6H/Wsf4pXNWxL450edSWXN44TJNjGSNCIil4oXaB6JZpHH3AFO8mQJtGbOio354/bFquF1DSzyMFdvwQ/Vqxj2beOtbSsdpPjb93Aay3XHOWL8va3b06ZSW8CyG+uDReUlc/tCcAjcoa/uOvZK8nJLjt9hZRx91OxkV4vO4fmWxN8lxq2gQlYqUp7opHT3n68xCeF9ObCzwxPcVb8lMi/ushUb/6fdHZiiHudv6GcFBt7XrNXtB7Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XrMonR81310bs8I5nr0M9LNSJYiRiVj6XHPr/IjQgPA=;
- b=i6q+GrWy5Ilb3FLlmgKyWf0SSOHOk63JT4T3NFadrZOzxdYd/38Lx4Ra4laSfqheJ1TwtguN605dN4piRrBIEP0HTYTc77sADwB1YJSg0IwM0LTuCUjPJUM24ex9HF24mQY1rijqyW4wcfMXP8In+fcT8Ardxy3tsanjHDAo+C4=
-Received: from BLAPR03CA0041.namprd03.prod.outlook.com (2603:10b6:208:32d::16)
- by DS7PR12MB9475.namprd12.prod.outlook.com (2603:10b6:8:251::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
- 2025 18:53:43 +0000
-Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
- (2603:10b6:208:32d:cafe::42) by BLAPR03CA0041.outlook.office365.com
- (2603:10b6:208:32d::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
- 4 Nov 2025 18:53:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 18:53:43 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 4 Nov
- 2025 10:53:42 -0800
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 4 Nov
- 2025 12:53:42 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 4 Nov 2025 10:53:41 -0800
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
-Subject: [PATCH V1] accel/amdxdna: Support preemption requests
-Date: Tue, 4 Nov 2025 10:53:39 -0800
-Message-ID: <20251104185340.897560-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7D633E352
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762282586; cv=none; b=DUWOa/H3l4EgSfD5Ohg9MYNd0tQe/+jKKjteGgtYVTSp3HkrxoBpxeWqTpPJfdDqJUmEs3ONftDa7qMCG4f0vlVLyo75PPo9wNDL7ciVSMCmFXrz+MJi++59ShekeReh8vDK7Ne+Qv1STsCkTreSF2XtfVQdFp7TyToZpfc28fk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762282586; c=relaxed/simple;
+	bh=1YsclRHRX16kW+F4BUH8OrD5tzZOGvtmNO3gu7zn/jA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I1MJhjJLrBDu5U/9Bf4x2QKtJaHr+gTpj7AB4sYHao1PSSsjD7vTDI6z2WVjZoreueEfQtb8qh5i0BTCtt8Ra2c1Un4g1t1mLxi3uXjP9Z2sstwMiCLaltM6+/GAl+oriREg/QwmveD84CiQXukl3uxdW/pGOYwxaEC8m9dUpz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7cG+qxu; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429c7869704so3898662f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762282583; x=1762887383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qyVxNDhzeuX7e1Hm9faErYkOpONAjmcZigzr7RrJCec=;
+        b=Q7cG+qxuTZO9/oKWznlk4GnwNt+gPg1QoN0Ax+GsQW1a5+HQastrg2vjEhxI1/6fpL
+         DecHEAzvbzUhPLHrutkj6olqaK+R/IDQqMtnyaSQTMzXo3d4nmXsxPZ9OY/kY7fQvn8y
+         ZSNP52LRIvPjqKPt916loBesIEUN+RQzYdKl9iu1qKjYgTBrFUaMX1kk/3hRI4h94+ws
+         IE+O3wFhtbZ+/4KN+xNK61IY0oqaBKj92bBgLW+Nb8KXXWM+tGSvJcmWuOAubpQYReUS
+         jO/XyoV7SZ8Gur+NBO7vfX/IAmJgfYjDfnR7wCNRRajrMGGdDZ32jtfts8pMJmNWPbq8
+         4Rgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762282583; x=1762887383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qyVxNDhzeuX7e1Hm9faErYkOpONAjmcZigzr7RrJCec=;
+        b=HrDIQ6pyz/nSj5s1x89jJ8Ij7cnX8tHW31LCkHkc+tBL4JcRifwCpKrTjMcQGtY0DE
+         UBYDqBqHJM2Eg57phLUVkKP3EyC1zoP3gmRDHT/OT8+3QAW0YuV/sf8dFoBOrxsaDH2I
+         xt/e7yhhwGImjy9KVd7OMzsrtscj9YfC7jqLwsjnPS16SDGdxYdI27ZyJvdX1b3ziq1t
+         MIYUOiCJEruwbbL3VBpZQqrfGT+WUFHRR5xzZz3xOG3SKr+H0eC7hGZxro8nBzSuo5fj
+         ho8PY7bTHbGXnp7Pao1gZmsh+dZQb1yrqBnnUQ2yre8vcX1nLPHLlEVfUzxWrzSrJ70+
+         Ea/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUXeUxZMkYf9g3CMVQv1l+UB5GFpcO0vwTT3hRcbRCIZiXMLu/Hd2cm+tclQ+hEDESuD7UoLBPJMFIbV7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztRZwuNpBXoEMY/pjUsSHoGy+Wp67o2JkOuA3zclKb7qk5hBg1
+	+9kViSAUPepPOlkZ56bmlslEUugIZq/cdceTxnBQnQ42URdtO+H5RQggGooy4QcTaRPZMmlYRsD
+	Wfs5cHfsF9dhvioFCLtN03zGED2zfTJg=
+X-Gm-Gg: ASbGnctkfKswAunOucsuCrE2hj869/piXHwS7TgdG7HGyGEXh0fpwQtBB9eYH15Gg7n
+	cEnBgiUsyh/g3eFxN0s0EhDtkTFNyHJmzb2S1uh0kWEyQSF255oyPqG5KC+cBap0KMzJgF0AY2d
+	lSd5OTeSRs5MlGk4bSfmW0QKqfm6ShXjdn12zO/VvUIsfP56pEECYbc71hLTvKAaE7ffqxkTq7f
+	ZLv8UvWzqP8lFlMJ8OUULspc4RXW5DSbdaU2OWjqShwnXqV50cGqpLr9fVahqQ4wAlWGavvDGeL
+X-Google-Smtp-Source: AGHT+IFJOInFmzbqZmECILRroALB/RTVl7MjNKGkZgcM/wZQZhU9czd1hU9lNpogQZguKz7XWer3EishDJ+kqONidvU=
+X-Received: by 2002:a05:6000:4105:b0:3eb:4e88:585 with SMTP id
+ ffacd0b85a97d-429e3305dbcmr291156f8f.29.1762282582747; Tue, 04 Nov 2025
+ 10:56:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|DS7PR12MB9475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3827bb3b-ae55-4a31-8a7b-08de1bd37a17
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E6cWp4Q7P3B9IJoxjASRzzhk6WKcBJSxFzlCswUhDDlQ0Tl+r0hgNzQxsxIt?=
- =?us-ascii?Q?xYojviNz3eaI7y3gyOQcaFEfiSXRz1n4p6LlZKTa+u2gTqI2CrVJaaja+HYw?=
- =?us-ascii?Q?DPKdAVEjNq9K5BpHwKk2jnpRLMakkjURV6hqG9UXTSvITVIcCDHXpQg6FcFx?=
- =?us-ascii?Q?WFGQArWg1XjAwDhb58dKGWCOLtjun3QOOnT7gXio80KPiXclg3wMTdxQr24p?=
- =?us-ascii?Q?SMZbR3xzGpQVJ+cO1aJSUbiF9WiEs150GnFGnFzvSduNgy9Ve/srz8GXulhg?=
- =?us-ascii?Q?ZjIlr56kRPSr8F46+GXgePjCr85dtoLDj0oxokFHAUFXYSI+pos20Tb17MBv?=
- =?us-ascii?Q?96XMJo6vUGMqETxSuRkfGKq/HQnVRPmU1+7+ZjO0Q7DFLXYbfcXgy04jSLhZ?=
- =?us-ascii?Q?7dE+Gzdk8IlUAWc10w29argeh6xOApLrjQvF8jqA2QPAo52iFtIOBb80zeMZ?=
- =?us-ascii?Q?xjfXZW7y9vbt4y7viED5RPjza/1qskErGSKtnP1fxgLd3ShOzu5H1H2o8xU2?=
- =?us-ascii?Q?km2fm0ntzON+9DwrcrZ9xrdz62Z62h0tLoKRiYCd8O6ywyZcOA+VSbSJontN?=
- =?us-ascii?Q?UzZWZls4JM7lM8QDC9IYWKsUplcmf1nV2MYQT0V5+Fpm/dHSBe2hyWgi1Z86?=
- =?us-ascii?Q?W3q443niRqTdkhaNWMfPIPpR0dvTqtRPLSd/+YySWAq7gsAqPA8PYvlnEhui?=
- =?us-ascii?Q?jznOXa1m96iebYJIXkCfh0S3zUCoZkxMk4QsInjHVNP+EH8TbHvp10n/5OKq?=
- =?us-ascii?Q?qG4Zsquewnd9/oDpL2URQMpvLbQHXx1aGGq7rBN2+69MCzZFEmNtdJTIFpyB?=
- =?us-ascii?Q?sKXrbZCB/Nq0qWVXkC2BrfW/poGfKvnQS4upck9m0aPpkvi9A8PHGCGhPKtG?=
- =?us-ascii?Q?ojJlcy9TYlMs+4fViuceW2EvfV2wpHPd2f21WuV51HO4ZmEyjIjhWB6xSeGX?=
- =?us-ascii?Q?xsanfb8N4vrpZ7uLzKJdsGSvQ0HtxTlfzlC1zE5KlMwBTRsheiR8GYEgnSzG?=
- =?us-ascii?Q?AcS2V3lvepUysw7VfaTlMBolXXQ9kHh9bpQsNpu/gFr3ov5oaVJieE8TnpCt?=
- =?us-ascii?Q?uagdEx7krzegrU59y75nHUfJevxP4Xcge8aQjoZTP6E1r89ikvrj+3Ho0xzh?=
- =?us-ascii?Q?cKyGZuz1N+FUaM01w8NGnYOBSxqM04thxfQN9SbcaxwF6w7JTXRK175a8Dsp?=
- =?us-ascii?Q?GDCLNgSlQupLW5wCio8pUdrvv9XChr1a/4e4v3RlsuTbwNLJTaxc5z0v1WG0?=
- =?us-ascii?Q?OO6+bZsWbZnkGWogCQIKFxTvOUH8z8ZZ4C5Zo1HNrDxCPY205BtsYZPnBS18?=
- =?us-ascii?Q?ax/CrdLxDd8u+yxCa4v5pvTqnRB438HJmZBoTLuhdwLgg0nJ5VxsNVewoWIL?=
- =?us-ascii?Q?nNqf06gfp4FvypTkXtrUJWquNTO7lNQpb5J0P1AUHgqezANhBT/G7u4EGYdL?=
- =?us-ascii?Q?j8x/CXSpj3JGneyL+fr25GVIkIYzsHIt69zbySbvZx+Izlbg5WcG8EveO001?=
- =?us-ascii?Q?61ksB+PCXWKuvIZ9CgYn1x2dU2ltPb4Z4JVse0YiBCd/3t50hjPiVN62QDDw?=
- =?us-ascii?Q?h3bLlUpQSVTMZ1wGEeQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 18:53:43.3152
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3827bb3b-ae55-4a31-8a7b-08de1bd37a17
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9475
+References: <20251104104913.689439-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20251104104913.689439-1-dongml2@chinatelecom.cn>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 4 Nov 2025 10:56:09 -0800
+X-Gm-Features: AWmQ_bn3-3pUzEzIlIcXVV-BIX9Cml9X2hduNwfYMH_N1D55oNwjtosZOsMwPrI
+Message-ID: <CAADnVQJTOFjXe5=01KfOnBD86YU_Vy1YGezLQum3LnhFHAD+gg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev, 
+	Menglong Dong <menglong.dong@linux.dev>, bpf <bpf@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The driver checks the firmware version during initialization.If preemption
-is supported, the driver configures preemption accordingly and handles
-userspace preemption requests. Otherwise, the driver returns an error for
-userspace preemption requests.
+On Tue, Nov 4, 2025 at 2:49=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
+com> wrote:
+>
+> In origin call case, we skip the "rip" directly before we return, which
+> break the RSB, as we have twice "call", but only once "ret".
 
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_message.c    | 95 +++++++++++++++++++++++++
- drivers/accel/amdxdna/aie2_msg_priv.h   |  3 +
- drivers/accel/amdxdna/aie2_pci.c        | 63 ++++++++++++++++
- drivers/accel/amdxdna/aie2_pci.h        |  8 +++
- drivers/accel/amdxdna/amdxdna_ctx.h     | 17 +++++
- drivers/accel/amdxdna/amdxdna_pci_drv.c |  3 +-
- drivers/accel/amdxdna/npu4_regs.c       |  4 ++
- include/uapi/drm/amdxdna_accel.h        | 16 ++++-
- 8 files changed, 207 insertions(+), 2 deletions(-)
+RSB meaning return stack buffer?
 
-diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-index 69cdce9ff208..d493bb1c3360 100644
---- a/drivers/accel/amdxdna/aie2_message.c
-+++ b/drivers/accel/amdxdna/aie2_message.c
-@@ -210,6 +210,14 @@ int aie2_create_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwct
- 	hwctx->fw_ctx_id = resp.context_id;
- 	WARN_ONCE(hwctx->fw_ctx_id == -1, "Unexpected context id");
- 
-+	if (ndev->force_preempt_enabled) {
-+		ret = aie2_runtime_cfg(ndev, AIE2_RT_CFG_FORCE_PREEMPT, &hwctx->fw_ctx_id);
-+		if (ret) {
-+			XDNA_ERR(xdna, "failed to enable force preempt %d", ret);
-+			return ret;
-+		}
-+	}
-+
- 	cq_pair = &resp.cq_pair[0];
- 	x2i.mb_head_ptr_reg = AIE2_MBOX_OFF(ndev, cq_pair->x2i_q.head_addr);
- 	x2i.mb_tail_ptr_reg = AIE2_MBOX_OFF(ndev, cq_pair->x2i_q.tail_addr);
-@@ -601,6 +609,11 @@ aie2_cmdlist_fill_dpu(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size)
- 	return 0;
- }
- 
-+static int aie2_cmdlist_unsupp(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static u32 aie2_get_chain_msg_op(u32 cmd_op)
- {
- 	switch (cmd_op) {
-@@ -621,6 +634,8 @@ static struct aie2_exec_msg_ops legacy_exec_message_ops = {
- 	.init_chain_req = aie2_init_exec_chain_req,
- 	.fill_cf_slot = aie2_cmdlist_fill_cf,
- 	.fill_dpu_slot = aie2_cmdlist_fill_dpu,
-+	.fill_preempt_slot = aie2_cmdlist_unsupp,
-+	.fill_elf_slot = aie2_cmdlist_unsupp,
- 	.get_chain_msg_op = aie2_get_chain_msg_op,
- };
- 
-@@ -680,6 +695,74 @@ aie2_cmdlist_fill_npu_dpu(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *si
- 	return 0;
- }
- 
-+static int
-+aie2_cmdlist_fill_npu_preempt(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size)
-+{
-+	struct cmd_chain_slot_npu *npu_slot = slot;
-+	struct amdxdna_cmd_preempt_data *pd;
-+	u32 cmd_len;
-+	u32 arg_sz;
-+
-+	pd = amdxdna_cmd_get_payload(cmd_bo, &cmd_len);
-+	arg_sz = cmd_len - sizeof(*pd);
-+	if (cmd_len < sizeof(*pd) || arg_sz > MAX_NPU_ARGS_SIZE)
-+		return -EINVAL;
-+
-+	if (*size < sizeof(*npu_slot) + arg_sz)
-+		return -EINVAL;
-+
-+	npu_slot->cu_idx = amdxdna_cmd_get_cu_idx(cmd_bo);
-+	if (npu_slot->cu_idx == INVALID_CU_IDX)
-+		return -EINVAL;
-+
-+	memset(npu_slot, 0, sizeof(*npu_slot));
-+	npu_slot->type = EXEC_NPU_TYPE_PREEMPT;
-+	npu_slot->inst_buf_addr = pd->inst_buf;
-+	npu_slot->save_buf_addr = pd->save_buf;
-+	npu_slot->restore_buf_addr = pd->restore_buf;
-+	npu_slot->inst_size = pd->inst_size;
-+	npu_slot->save_size = pd->save_size;
-+	npu_slot->restore_size = pd->restore_size;
-+	npu_slot->inst_prop_cnt = pd->inst_prop_cnt;
-+	npu_slot->arg_cnt = arg_sz / sizeof(u32);
-+	memcpy(npu_slot->args, pd->prop_args, arg_sz);
-+
-+	*size = sizeof(*npu_slot) + arg_sz;
-+	return 0;
-+}
-+
-+static int
-+aie2_cmdlist_fill_npu_elf(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size)
-+{
-+	struct cmd_chain_slot_npu *npu_slot = slot;
-+	struct amdxdna_cmd_preempt_data *pd;
-+	u32 cmd_len;
-+	u32 arg_sz;
-+
-+	pd = amdxdna_cmd_get_payload(cmd_bo, &cmd_len);
-+	arg_sz = cmd_len - sizeof(*pd);
-+	if (cmd_len < sizeof(*pd) || arg_sz > MAX_NPU_ARGS_SIZE)
-+		return -EINVAL;
-+
-+	if (*size < sizeof(*npu_slot) + arg_sz)
-+		return -EINVAL;
-+
-+	memset(npu_slot, 0, sizeof(*npu_slot));
-+	npu_slot->type = EXEC_NPU_TYPE_ELF;
-+	npu_slot->inst_buf_addr = pd->inst_buf;
-+	npu_slot->save_buf_addr = pd->save_buf;
-+	npu_slot->restore_buf_addr = pd->restore_buf;
-+	npu_slot->inst_size = pd->inst_size;
-+	npu_slot->save_size = pd->save_size;
-+	npu_slot->restore_size = pd->restore_size;
-+	npu_slot->inst_prop_cnt = pd->inst_prop_cnt;
-+	npu_slot->arg_cnt = 1;
-+	npu_slot->args[0] = AIE2_EXEC_BUFFER_KERNEL_OP_TXN;
-+
-+	*size = struct_size(npu_slot, args, npu_slot->arg_cnt);
-+	return 0;
-+}
-+
- static u32 aie2_get_npu_chain_msg_op(u32 cmd_op)
- {
- 	return MSG_OP_CHAIN_EXEC_NPU;
-@@ -691,6 +774,8 @@ static struct aie2_exec_msg_ops npu_exec_message_ops = {
- 	.init_chain_req = aie2_init_npu_chain_req,
- 	.fill_cf_slot = aie2_cmdlist_fill_npu_cf,
- 	.fill_dpu_slot = aie2_cmdlist_fill_npu_dpu,
-+	.fill_preempt_slot = aie2_cmdlist_fill_npu_preempt,
-+	.fill_elf_slot = aie2_cmdlist_fill_npu_elf,
- 	.get_chain_msg_op = aie2_get_npu_chain_msg_op,
- };
- 
-@@ -749,6 +834,16 @@ aie2_cmdlist_fill_slot(void *slot, struct amdxdna_gem_obj *cmd_abo,
- 	case ERT_START_NPU:
- 		ret = EXEC_MSG_OPS(xdna)->fill_dpu_slot(cmd_abo, slot, size);
- 		break;
-+	case ERT_START_NPU_PREEMPT:
-+		if (!AIE2_FEATURE_ON(xdna->dev_handle, AIE2_PREEMPT))
-+			return -EOPNOTSUPP;
-+		ret = EXEC_MSG_OPS(xdna)->fill_preempt_slot(cmd_abo, slot, size);
-+		break;
-+	case ERT_START_NPU_PREEMPT_ELF:
-+		if (!AIE2_FEATURE_ON(xdna->dev_handle, AIE2_PREEMPT))
-+			return -EOPNOTSUPP;
-+		ret = EXEC_MSG_OPS(xdna)->fill_elf_slot(cmd_abo, slot, size);
-+		break;
- 	default:
- 		XDNA_INFO(xdna, "Unsupported op %d", op);
- 		ret = -EOPNOTSUPP;
-diff --git a/drivers/accel/amdxdna/aie2_msg_priv.h b/drivers/accel/amdxdna/aie2_msg_priv.h
-index 947daa63f064..1c957a6298d3 100644
---- a/drivers/accel/amdxdna/aie2_msg_priv.h
-+++ b/drivers/accel/amdxdna/aie2_msg_priv.h
-@@ -176,6 +176,8 @@ struct exec_dpu_req {
- enum exec_npu_type {
- 	EXEC_NPU_TYPE_NON_ELF		= 0x1,
- 	EXEC_NPU_TYPE_PARTIAL_ELF	= 0x2,
-+	EXEC_NPU_TYPE_PREEMPT		= 0x3,
-+	EXEC_NPU_TYPE_ELF		= 0x4,
- };
- 
- union exec_req {
-@@ -372,6 +374,7 @@ struct cmd_chain_slot_dpu {
- };
- 
- #define MAX_NPU_ARGS_SIZE (26 * sizeof(__u32))
-+#define AIE2_EXEC_BUFFER_KERNEL_OP_TXN	3
- struct cmd_chain_slot_npu {
- 	enum exec_npu_type type;
- 	u64 inst_buf_addr;
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index d7ccbdaf47f5..ceef1c502e9e 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -183,6 +183,10 @@ int aie2_runtime_cfg(struct amdxdna_dev_hdl *ndev,
- 		if (cfg->category != category)
- 			continue;
- 
-+		if (cfg->feature_mask &&
-+		    bitmap_subset(&cfg->feature_mask, &ndev->feature_mask, AIE2_FEATURE_MAX))
-+			continue;
-+
- 		value = val ? *val : cfg->value;
- 		ret = aie2_set_runtime_cfg(ndev, cfg->type, value);
- 		if (ret) {
-@@ -932,6 +936,25 @@ static int aie2_get_telemetry(struct amdxdna_client *client,
- 	return 0;
- }
- 
-+static int aie2_get_preempt_state(struct amdxdna_client *client,
-+				  struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_attribute_state state = {};
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+
-+	ndev = xdna->dev_handle;
-+	if (args->param == DRM_AMDXDNA_GET_FORCE_PREEMPT_STATE)
-+		state.state = ndev->force_preempt_enabled;
-+	else if (args->param == DRM_AMDXDNA_GET_FRAME_BOUNDARY_PREEMPT_STATE)
-+		state.state = ndev->frame_boundary_preempt;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &state, sizeof(state)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_info *args)
- {
- 	struct amdxdna_dev *xdna = client->xdna;
-@@ -972,6 +995,10 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
- 	case DRM_AMDXDNA_QUERY_RESOURCE_INFO:
- 		ret = aie2_query_resource_info(client, args);
- 		break;
-+	case DRM_AMDXDNA_GET_FORCE_PREEMPT_STATE:
-+	case DRM_AMDXDNA_GET_FRAME_BOUNDARY_PREEMPT_STATE:
-+		ret = aie2_get_preempt_state(client, args);
-+		break;
- 	default:
- 		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
- 		ret = -EOPNOTSUPP;
-@@ -1078,6 +1105,38 @@ static int aie2_set_power_mode(struct amdxdna_client *client,
- 	return aie2_pm_set_mode(xdna->dev_handle, power_mode);
- }
- 
-+static int aie2_set_preempt_state(struct amdxdna_client *client,
-+				  struct amdxdna_drm_set_state *args)
-+{
-+	struct amdxdna_dev_hdl *ndev = client->xdna->dev_handle;
-+	struct amdxdna_drm_attribute_state state;
-+	u32 val;
-+	int ret;
-+
-+	if (copy_from_user(&state, u64_to_user_ptr(args->buffer), sizeof(state)))
-+		return -EFAULT;
-+
-+	if (state.state > 1)
-+		return -EINVAL;
-+
-+	if (XDNA_MBZ_DBG(client->xdna, state.pad, sizeof(state.pad)))
-+		return -EINVAL;
-+
-+	if (args->param == DRM_AMDXDNA_SET_FORCE_PREEMPT) {
-+		ndev->force_preempt_enabled = state.state;
-+	} else if (args->param == DRM_AMDXDNA_SET_FRAME_BOUNDARY_PREEMPT) {
-+		val = state.state;
-+		ret = aie2_runtime_cfg(ndev, AIE2_RT_CFG_FRAME_BOUNDARY_PREEMPT,
-+				       &val);
-+		if (ret)
-+			return ret;
-+
-+		ndev->frame_boundary_preempt = state.state;
-+	}
-+
-+	return 0;
-+}
-+
- static int aie2_set_state(struct amdxdna_client *client,
- 			  struct amdxdna_drm_set_state *args)
- {
-@@ -1095,6 +1154,10 @@ static int aie2_set_state(struct amdxdna_client *client,
- 	case DRM_AMDXDNA_SET_POWER_MODE:
- 		ret = aie2_set_power_mode(client, args);
- 		break;
-+	case DRM_AMDXDNA_SET_FORCE_PREEMPT:
-+	case DRM_AMDXDNA_SET_FRAME_BOUNDARY_PREEMPT:
-+		ret = aie2_set_preempt_state(client, args);
-+		break;
- 	default:
- 		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
- 		ret = -EOPNOTSUPP;
-diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-index 9793cd1e0c55..a5f9c42155d1 100644
---- a/drivers/accel/amdxdna/aie2_pci.h
-+++ b/drivers/accel/amdxdna/aie2_pci.h
-@@ -110,12 +110,15 @@ struct aie_metadata {
- enum rt_config_category {
- 	AIE2_RT_CFG_INIT,
- 	AIE2_RT_CFG_CLK_GATING,
-+	AIE2_RT_CFG_FORCE_PREEMPT,
-+	AIE2_RT_CFG_FRAME_BOUNDARY_PREEMPT,
- };
- 
- struct rt_config {
- 	u32	type;
- 	u32	value;
- 	u32	category;
-+	unsigned long feature_mask;
- };
- 
- struct dpm_clk_freq {
-@@ -164,6 +167,8 @@ struct aie2_exec_msg_ops {
- 	void (*init_chain_req)(void *req, u64 slot_addr, size_t size, u32 cmd_cnt);
- 	int (*fill_cf_slot)(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size);
- 	int (*fill_dpu_slot)(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size);
-+	int (*fill_preempt_slot)(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size);
-+	int (*fill_elf_slot)(struct amdxdna_gem_obj *cmd_bo, void *slot, size_t *size);
- 	u32 (*get_chain_msg_op)(u32 cmd_op);
- };
- 
-@@ -197,6 +202,8 @@ struct amdxdna_dev_hdl {
- 	u32				hclk_freq;
- 	u32				max_tops;
- 	u32				curr_tops;
-+	u32				force_preempt_enabled;
-+	u32				frame_boundary_preempt;
- 
- 	/* Mailbox and the management channel */
- 	struct mailbox			*mbox;
-@@ -223,6 +230,7 @@ struct aie2_hw_ops {
- 
- enum aie2_fw_feature {
- 	AIE2_NPU_COMMAND,
-+	AIE2_PREEMPT,
- 	AIE2_FEATURE_MAX
- };
- 
-diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
-index d02fb32499fa..b6151244d64f 100644
---- a/drivers/accel/amdxdna/amdxdna_ctx.h
-+++ b/drivers/accel/amdxdna/amdxdna_ctx.h
-@@ -16,6 +16,8 @@ enum ert_cmd_opcode {
- 	ERT_START_CU = 0,
- 	ERT_CMD_CHAIN = 19,
- 	ERT_START_NPU = 20,
-+	ERT_START_NPU_PREEMPT = 21,
-+	ERT_START_NPU_PREEMPT_ELF = 22,
- 	ERT_INVALID_CMD	= ~0U,
- };
- 
-@@ -55,6 +57,21 @@ struct amdxdna_cmd_chain {
- 	u64 data[] __counted_by(command_count);
- };
- 
-+/*
-+ * Interpretation of the beginning of data payload for ERT_START_NPU_PREEMPT in
-+ * amdxdna_cmd. The rest of the payload in amdxdna_cmd is regular kernel args.
-+ */
-+struct amdxdna_cmd_preempt_data {
-+	u64 inst_buf;	    /* instruction buffer address */
-+	u64 save_buf;	    /* save buffer address */
-+	u64 restore_buf;    /* restore buffer address */
-+	u32 inst_size;	    /* size of instruction buffer in bytes */
-+	u32 save_size;	    /* size of save buffer in bytes */
-+	u32 restore_size;   /* size of restore buffer in bytes */
-+	u32 inst_prop_cnt;  /* properties count */
-+	u32 prop_args[];    /* properties and regular kernel arguments */
-+};
-+
- /* Exec buffer command header format */
- #define AMDXDNA_CMD_STATE		GENMASK(3, 0)
- #define AMDXDNA_CMD_EXTRA_CU_MASK	GENMASK(11, 10)
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-index 7590265d4485..1973ab67721b 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-@@ -31,9 +31,10 @@ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
-  * 0.3: Support firmware debug buffer
-  * 0.4: Support getting resource information
-  * 0.5: Support getting telemetry data
-+ * 0.6: Support preemption
-  */
- #define AMDXDNA_DRIVER_MAJOR		0
--#define AMDXDNA_DRIVER_MINOR		5
-+#define AMDXDNA_DRIVER_MINOR		6
- 
- /*
-  * Bind the driver base on (vendor_id, device_id) pair and later use the
-diff --git a/drivers/accel/amdxdna/npu4_regs.c b/drivers/accel/amdxdna/npu4_regs.c
-index d90777275a9f..986a5f28ba24 100644
---- a/drivers/accel/amdxdna/npu4_regs.c
-+++ b/drivers/accel/amdxdna/npu4_regs.c
-@@ -64,10 +64,13 @@
- const struct rt_config npu4_default_rt_cfg[] = {
- 	{ 5, 1, AIE2_RT_CFG_INIT }, /* PDI APP LOAD MODE */
- 	{ 10, 1, AIE2_RT_CFG_INIT }, /* DEBUG BUF */
-+	{ 14, 0, AIE2_RT_CFG_INIT, BIT_U64(AIE2_PREEMPT) }, /* Frame boundary preemption */
- 	{ 1, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
- 	{ 2, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
- 	{ 3, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
- 	{ 4, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
-+	{ 13, 0, AIE2_RT_CFG_FORCE_PREEMPT },
-+	{ 14, 0, AIE2_RT_CFG_FRAME_BOUNDARY_PREEMPT },
- 	{ 0 },
- };
- 
-@@ -85,6 +88,7 @@ const struct dpm_clk_freq npu4_dpm_clk_table[] = {
- 
- const struct aie2_fw_feature_tbl npu4_fw_feature_table[] = {
- 	{ .feature = AIE2_NPU_COMMAND, .min_minor = 15 },
-+	{ .feature = AIE2_PREEMPT, .min_minor = 12 },
- 	{ 0 }
- };
- 
-diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-index 8ad254bc35a5..62c917fd4f7b 100644
---- a/include/uapi/drm/amdxdna_accel.h
-+++ b/include/uapi/drm/amdxdna_accel.h
-@@ -443,7 +443,9 @@ enum amdxdna_drm_get_param {
- 	DRM_AMDXDNA_QUERY_FIRMWARE_VERSION = 8,
- 	DRM_AMDXDNA_GET_POWER_MODE,
- 	DRM_AMDXDNA_QUERY_TELEMETRY,
--	DRM_AMDXDNA_QUERY_RESOURCE_INFO = 12,
-+	DRM_AMDXDNA_GET_FORCE_PREEMPT_STATE,
-+	DRM_AMDXDNA_QUERY_RESOURCE_INFO,
-+	DRM_AMDXDNA_GET_FRAME_BOUNDARY_PREEMPT_STATE,
- };
- 
- /**
-@@ -462,6 +464,16 @@ struct amdxdna_drm_get_resource_info {
- 	__u64 npu_task_curr;
- };
- 
-+/**
-+ * struct amdxdna_drm_attribute_state - State of an attribute
-+ */
-+struct amdxdna_drm_attribute_state {
-+	/** @state: enabled or disabled */
-+	__u8 state;
-+	/** @pad: MBZ */
-+	__u8 pad[7];
-+};
-+
- /**
-  * struct amdxdna_drm_query_telemetry_header - Telemetry data header
-  */
-@@ -613,6 +625,8 @@ enum amdxdna_drm_set_param {
- 	DRM_AMDXDNA_SET_POWER_MODE,
- 	DRM_AMDXDNA_WRITE_AIE_MEM,
- 	DRM_AMDXDNA_WRITE_AIE_REG,
-+	DRM_AMDXDNA_SET_FORCE_PREEMPT,
-+	DRM_AMDXDNA_SET_FRAME_BOUNDARY_PREEMPT,
- };
- 
- /**
--- 
-2.34.1
+and by "breaks RSB" you mean it makes the cpu less efficient?
+Or you mean call depth accounting that is done in sw ?
 
+> Do the RSB balance by pseudo a "ret". Instead of skipping the "rip", we
+> modify it to the address of a "ret" insn that we generate.
+>
+> The performance of "fexit" increases from 76M/s to 84M/s. Before this
+> optimize, the bench resulting of fexit is:
+>
+> fexit          :   76.494 =C2=B1 0.216M/s
+> fexit          :   76.319 =C2=B1 0.097M/s
+> fexit          :   70.680 =C2=B1 0.060M/s
+> fexit          :   75.509 =C2=B1 0.039M/s
+> fexit          :   76.392 =C2=B1 0.049M/s
+>
+> After this optimize:
+>
+> fexit          :   86.023 =C2=B1 0.518M/s
+> fexit          :   83.388 =C2=B1 0.021M/s
+> fexit          :   85.146 =C2=B1 0.058M/s
+> fexit          :   85.646 =C2=B1 0.136M/s
+> fexit          :   84.040 =C2=B1 0.045M/s
+
+This is with or without calldepth accounting?
+
+> Things become a little more complex, not sure if the benefits worth it :/
+>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+>  arch/x86/net/bpf_jit_comp.c | 32 +++++++++++++++++++++++++++++---
+>  1 file changed, 29 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> index d4c93d9e73e4..a9c2142a84d0 100644
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -3185,6 +3185,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf=
+_tramp_image *im, void *rw_im
+>         struct bpf_tramp_links *fmod_ret =3D &tlinks[BPF_TRAMP_MODIFY_RET=
+URN];
+>         void *orig_call =3D func_addr;
+>         u8 **branches =3D NULL;
+> +       u8 *rsb_pos;
+>         u8 *prog;
+>         bool save_ret;
+>
+> @@ -3431,17 +3432,42 @@ static int __arch_prepare_bpf_trampoline(struct b=
+pf_tramp_image *im, void *rw_im
+>                 LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack_size);
+>         }
+>
+> +       if (flags & BPF_TRAMP_F_SKIP_FRAME) {
+> +               u64 ret_addr =3D (u64)(image + (prog - (u8 *)rw_image));
+> +
+> +               rsb_pos =3D prog;
+> +               /*
+> +                * reserve the room to save the return address to rax:
+> +                *   movabs rax, imm64
+> +                *
+> +                * this is used to do the RSB balance. For the SKIP_FRAME
+> +                * case, we do the "call" twice, but only have one "ret",
+> +                * which can break the RSB.
+> +                *
+> +                * Therefore, instead of skipping the "rip", we make it a=
+s
+> +                * a pseudo return: modify the "rip" in the stack to the
+> +                * second "ret" address that we build bellow.
+> +                */
+> +               emit_mov_imm64(&prog, BPF_REG_0, ret_addr >> 32, (u32)ret=
+_addr);
+> +               /* mov [rbp + 8], rax */
+> +               EMIT4(0x48, 0x89, 0x45, 0x08);
+> +       }
+> +
+>         /* restore return value of orig_call or fentry prog back into RAX=
+ */
+>         if (save_ret)
+>                 emit_ldx(&prog, BPF_DW, BPF_REG_0, BPF_REG_FP, -8);
+>
+>         emit_ldx(&prog, BPF_DW, BPF_REG_6, BPF_REG_FP, -rbx_off);
+>         EMIT1(0xC9); /* leave */
+> +       emit_return(&prog, image + (prog - (u8 *)rw_image));
+>         if (flags & BPF_TRAMP_F_SKIP_FRAME) {
+> -               /* skip our return address and return to parent */
+> -               EMIT4(0x48, 0x83, 0xC4, 8); /* add rsp, 8 */
+> +               u64 ret_addr =3D (u64)(image + (prog - (u8 *)rw_image));
+> +
+> +               /* fix the return address to second return address */
+> +               emit_mov_imm64(&rsb_pos, BPF_REG_0, ret_addr >> 32, (u32)=
+ret_addr);
+
+So the first "movabs rax, imm64" is not needed ?
+Why compute ret_addr there and everything ?
+I mean it could have been prog +=3D sizeof(movabs), right?
+
+> +               /* this is the second(real) return */
+> +               emit_return(&prog, image + (prog - (u8 *)rw_image));
+>         }
+> -       emit_return(&prog, image + (prog - (u8 *)rw_image));
 
