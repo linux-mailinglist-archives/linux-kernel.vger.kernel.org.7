@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-883918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADBAC2EC0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:31:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831CEC2EC1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B2F6634C91D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BB4D189B515
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C099C2192EA;
-	Tue,  4 Nov 2025 01:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EA322FE0E;
+	Tue,  4 Nov 2025 01:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0m+rRTQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlriV+fl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128A9210F59;
-	Tue,  4 Nov 2025 01:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E2D22B8CB;
+	Tue,  4 Nov 2025 01:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762219842; cv=none; b=i6z2qHH1HFr1AsKLhGm87IW6u1eV6d5V6WdPGPw6QszzVlcJNHURiNkmOUC8yLzPG2mBr9jntw/DnT665XmgnjCEBg0Wsbf1Y3gUcQFwQpDTJwamFPeixJs4v1LESSBrDm/47F3Js723KVriAIYmN3qrUqi02zETBghCzu2HnTw=
+	t=1762219844; cv=none; b=a0WxkimR0PM/qlzYArlZtNbQXj2Q3XljGjFvJN6iH234uXnpMocIPs4J859+IpLhn9qRT6UffvelE/8396mc0w2twy2zuXnXe0P1L5G8bv57t82e5zEOiRYKCVf/YX7DCy/QZW6I7KQ6dyeZoPQnM0v+9m+oEr8OHmX4Bw94GIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762219842; c=relaxed/simple;
-	bh=2hn7TExh5bvx/aSQHQygAQxTFzzeJn1z4S8zBCuEYyE=;
+	s=arc-20240116; t=1762219844; c=relaxed/simple;
+	bh=3J1Rb8Iwm7Bi3wu+yp/VgP+Ys1fBv/l3I3gQyVTtQqk=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fFWRLNfgO1zbrt8WAM4C2E6cYY80OKG62/jNAWXk3Tet8rz4bRvkfR54gGjsGfhfH53HjfY9auLZRz33PVnf+IK0IQTuWgA6wayFPN96q1VyJ24TzHyblRhVvV+usoLT0tSyoPcUswkWzm5iGItns+yrzFiRpypSjJ8LBn6Pq+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0m+rRTQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1562C116D0;
-	Tue,  4 Nov 2025 01:30:41 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ZnLPwmxDitvXhQds+zWohHxOnl+IRveX4iBlcKuIeagxLdOPyYTol3AdYld+eT2nkk10ptcKKKUO1dyXS65/ZL1EkL4QGgvx39ZpdXQJzK2VOiNXaQchS6TVLuAX8CJcU1pDKAgf1+iJCOo0hgqU7LNRdsTrVivjthAjW66M8A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlriV+fl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64479C116C6;
+	Tue,  4 Nov 2025 01:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762219841;
-	bh=2hn7TExh5bvx/aSQHQygAQxTFzzeJn1z4S8zBCuEYyE=;
+	s=k20201202; t=1762219844;
+	bh=3J1Rb8Iwm7Bi3wu+yp/VgP+Ys1fBv/l3I3gQyVTtQqk=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=P0m+rRTQdzvbstTPD3HFTlSgA0enZRpwijBg3E7RGaOfh3LSFoYBRbsz63kvJcYwG
-	 zjmBAgvtrlVnIJ8kZuYyzPAJsIJ7eoIRDUY0QTNmjeV0t4lBvrQYZ+SA6oX3WJkALx
-	 G6PQxjS0s+UvxSaZ7JdfhI4thWNGQYhz3mzz0az5gTeU2bYT1iIR0d67OlRW/R9L1O
-	 J+FMcfp0qvxqpBOKKv1gi8c4+lmTRjzZ7FvB1IFypDR/7/GHrNV42i7Ey05kfG0O2u
-	 DIqIDM1xZX9cefoP+1YyT7WuAVTzqEZktUDcKe6bzEasrwWzWPyX59kMAjMIkSYkho
-	 JhzWKtGAd9Ucg==
+	b=SlriV+fli9f1GAKr0rpGWQnr7HKdG+lsLU+/DExX0yjtJD2hHU+GVAl1WND3gfIUt
+	 dIxu8c1DEfn5hoeJvi/mR0q4EjGgWBYQfV0rod+q5f5R7rjj/rZT+qNkFQexDt1WeG
+	 500ooYtvROqcPoqu1zLyASnR8GlukNi80jXovDe4XpdDjylJJ221E500NOvH8URH9e
+	 9i8je0eSRw/XJUl/omkcVQmJQ1/vpVB+Yoh5514k1I+M3y0p0petg/Wuje6tmogDpz
+	 wbV/+Jgy0ptB8ieYrJghapD3cbA1JkOpMvwo1jbUreqGP5SIHTnuIdQeNLVG8c95jA
+	 pFqsp/Usm4JWA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BB13809A8A;
-	Tue,  4 Nov 2025 01:30:17 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE033809A8A;
+	Tue,  4 Nov 2025 01:30:19 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: stmmac: rename devlink parameter ts_coarse
- into
- phc_coarse_adj
+Subject: Re: [PATCH net-next] net: phy: realtek: add interrupt support for
+ RTL8221B
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176221981575.2281445.16125578755361920845.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Nov 2025 01:30:15 +0000
-References: <20251030182454.182406-1-maxime.chevallier@bootlin.com>
-In-Reply-To: <20251030182454.182406-1-maxime.chevallier@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, andrew+netdev@lunn.ch,
+ <176221981849.2281445.7129169862335846863.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Nov 2025 01:30:18 +0000
+References: <20251102152644.1676482-1-olek2@wp.pl>
+In-Reply-To: <20251102152644.1676482-1-olek2@wp.pl>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, richardcochran@gmail.com, linux@armlinux.org.uk,
- kory.maincent@bootlin.com, vadim.fedorenko@linux.dev,
- alexis.lothore@bootlin.com, thomas.petazzoni@bootlin.com,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+ michael@fossekall.de, daniel.braunwarth@kuka.com, rmk+kernel@armlinux.org.uk,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, zhaojh329@gmail.com
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 30 Oct 2025 19:24:53 +0100 you wrote:
-> The devlink param "ts_coarse" doesn't indicate that we get coarse
-> timestamps, but rather that the PHC clock adjusments are coarse as the
-> frequency won't be continuously adjusted. Adjust the devlink parameter
-> name to reflect that.
+On Sun,  2 Nov 2025 16:26:37 +0100 you wrote:
+> From: Jianhui Zhao <zhaojh329@gmail.com>
 > 
-> The Coarse terminlogy comes from the dwmac register naming, update the
-> documentation to better explain what the parameter is about.
+> This commit introduces interrupt support for RTL8221B (C45 mode).
+> Interrupts are mapped on the VEND2 page. VEND2 registers are only
+> accessible via C45 reads and cannot be accessed by C45 over C22.
+> 
+> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+> [Enable only link state change interrupts]
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: stmmac: rename devlink parameter ts_coarse into phc_coarse_adj
-    https://git.kernel.org/netdev/net-next/c/209ff7af79bf
+  - [net-next] net: phy: realtek: add interrupt support for RTL8221B
+    https://git.kernel.org/netdev/net-next/c/18aa36238a4d
 
 You are awesome, thank you!
 -- 
