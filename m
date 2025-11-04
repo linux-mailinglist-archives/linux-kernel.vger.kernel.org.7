@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-884812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4830C3137A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53679C3137D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:26:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE5F4610C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C2A461AEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5073B3254BA;
-	Tue,  4 Nov 2025 13:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79192325736;
+	Tue,  4 Nov 2025 13:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9FAST3n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovtupvph"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4585325480;
-	Tue,  4 Nov 2025 13:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC56322C66;
+	Tue,  4 Nov 2025 13:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262697; cv=none; b=AcgqQ5HHYgcliMoSKBYQ6bAm3HCmqg9J+fxkYjcI22SupYufLFbVspCIKeFwbCyIHQ1dcs1ACRDBJH9HnvvhfOmn1iTUHYmEq71UVLcZV+yrnih1SStGi2Liw/zT+CzOPM9lJd3JGfODMD3G/lUZO/j+R4v98ju5TfdXvATldFg=
+	t=1762262700; cv=none; b=fK+ZRsTdYMug+OOu5/zY+dvusAtPGBOXb3lV6u45/010fLjk/wXJYETLfEkH6z3BJouyQ+ofs5zsVc1yLd4V0rOe7W8CA8vNeegD4eVpZW71Aa3vejconjsSaKxFIwrOaULE3LoGrRwkKTwoqQh47PVhSZmQYnnmoFnAYjsUm1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262697; c=relaxed/simple;
-	bh=OgT8GX4BTKq9o4++Ukknmcl8Gkeh69TUQ/5cGTM9a80=;
+	s=arc-20240116; t=1762262700; c=relaxed/simple;
+	bh=Y38eEqKX315O/hK8GM4uxaI+ySMw+eyVY1SFmRr/Zgo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AcxWsvqe6LQClcRhFaj1dbXotZWOjVI7YmQZMIaNhi94S4KMOCH6TU82gyv8N6LyHPCsPEbJjDrkhZpFA4JkQ7cwfvk/T8H0JYNrFIqtH6fMsqce5L/DnVcKvdVq8Tmd6FFYj3VZY5kxr/dRRm8hALm4HwruQz53ppoS3AKTXxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9FAST3n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E442C4CEF7;
-	Tue,  4 Nov 2025 13:24:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fbUK7m+mstcRVfB0lTSGWNe1isN88AFIXm7lT7/fscHSSJ82gl/WTBnSOwChDI359tSFlKa+jmRzovR8taoj99OYkM7LmaqzJaM7qaGgwWfDXmdaGvau0ZDCT+fxgktoz+nVBMQR0QlQkbsbbj+IwIPE+6bYlIq8rGiGyvsi6No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovtupvph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E12C116C6;
+	Tue,  4 Nov 2025 13:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762262697;
-	bh=OgT8GX4BTKq9o4++Ukknmcl8Gkeh69TUQ/5cGTM9a80=;
+	s=k20201202; t=1762262700;
+	bh=Y38eEqKX315O/hK8GM4uxaI+ySMw+eyVY1SFmRr/Zgo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P9FAST3nOnvRCM35LKxG51aiTKotgZW+aaknZOjf0Icbvo/JjdQ24fucz6HKAjuUN
-	 zEzNQxntkCHpr2zwK8MU1WEKOKGEb7TLm920t8J8acm/9W+zoSjE5G6HEjw+EsaUVv
-	 YvK4m+++rJsMcNvrV8gYRJM6dssSuPbqTM73J/d4pYTkNenqqRr1NlAxHtLjzWYRNh
-	 N9F4vUR3z0RSQOoe/RK6wZXgIWUthZxqH4/bS7L6Bt6EC/irdqUJEl62ozGmbozwb9
-	 KzKn0QVct9nPQ+9rF4hBzvix8bbX/U3JPBpuLmF+v03T8buy53meok+ID0oFTlYkrS
-	 USWJDlJP/mpOA==
+	b=ovtupvphRvOwowH9up9y/0B+7TVWAXgjx2SZCYu0TOyZ+UmdQUhkZyMVY03x2m7BX
+	 pt6m2CLV6Le+opzwJ0BKV3LE/gQ4+13sbe7EkP58W+GWgytfhYoNYvsZdwbFo4c/wO
+	 zzDuk3gcIV/T9bqXHf6GfyeLCXis5mR1s2/AeJsz+20qnXRKKtfyYDfJkDfzDNpNQB
+	 tH6E792kgbrxRHYahYlCN1wvFKmuJeeelv/VF6x3FYNW7OEqUka2jsUyseELJX9V/1
+	 aWI36NxsQ6n0mWox3WgitZMadExXZQlrsNK/iD4+wPTCN7WbAhWGrx450mgYLDjBhL
+	 kzeB1mmTRkyjw==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thorsten Blum <thorsten.blum@linux.dev>, 
- Marco Crivellari <marco.crivellari@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aQYKxl2f-zGVdYFC@stanley.mountain>
-References: <aQYKxl2f-zGVdYFC@stanley.mountain>
-Subject: Re: [PATCH] ASoC: codecs: aw88261: pass pointer directly instead
- of passing the address
-Message-Id: <176226269445.2215600.15081607722114405841.b4-ty@kernel.org>
-Date: Tue, 04 Nov 2025 13:24:54 +0000
+To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <5fe08f028395a6c6f50d11eee8fdb4a90b1f68ab.1762151503.git.christophe.jaillet@wanadoo.fr>
+References: <5fe08f028395a6c6f50d11eee8fdb4a90b1f68ab.1762151503.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: fsl_spdif: Constify some structures
+Message-Id: <176226269713.2215600.7013778287587240101.b4-ty@kernel.org>
+Date: Tue, 04 Nov 2025 13:24:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,11 +63,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-a6db3
 
-On Sat, 01 Nov 2025 16:27:34 +0300, Dan Carpenter wrote:
-> It's a little bit cleaner to just pass "aw88261" instead of the address
-> of it "&aw88261".
+On Mon, 03 Nov 2025 07:32:03 +0100, Christophe JAILLET wrote:
+> 'struct fsl_spdif_soc_data' and 'struct snd_kcontrol_new' are not modified
+> in this driver.
 > 
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
 > 
+> [...]
 
 Applied to
 
@@ -77,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: aw88261: pass pointer directly instead of passing the address
-      commit: 84194c66aaf78fed150edb217b9f341518b1cba2
+[1/1] ASoC: fsl_spdif: Constify some structures
+      commit: 1a88479436a52452429f6d50ec5bd0a546406485
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
