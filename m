@@ -1,232 +1,143 @@
-Return-Path: <linux-kernel+bounces-884840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED9DC31493
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:46:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739AFC31478
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5556E3AD852
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:43:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EF0C334D0B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F38328616;
-	Tue,  4 Nov 2025 13:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9hwvzaw"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAB12E6CD5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5170C31E115;
+	Tue,  4 Nov 2025 13:44:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBFB2E9721
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762263837; cv=none; b=MnnmWRvV92OdrvIs2+95zhjVVfBBx9VSaFj27mbbpyJkaN/hRZ+zhqp2g/PyZk1ODwMZaBlcliANjmzl2zSCMS3ftI9Wccm+yUfWPO0NBFJk7adY1W+aAQHshPxAzjXTgdYHbcm6T/8adKJoIyIbfb2vtQ/kBsJylIFVYtkJOL4=
+	t=1762263870; cv=none; b=RnPsPSvUqGsQXWh44fsDUP3m+f74xUB/IjphpOqEeFy5FYAgRSjFpRBO07OmneYKlGwdtISEWfTL8pYFN50dkrCyagw1U9cVeto4tdVurQ75HfsNI6bysFMgXSLs6zvBonTlXZtKuF8cCYzBUGTsinWeqAYRsIntketKo/1iB9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762263837; c=relaxed/simple;
-	bh=lFb4yPpZtK3Bwon0C6HzQEwc8sB9kXocdlaLUdamsf0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=st+nrtMjK8aJeCclfhdosNxRiOGfQJ9tU+HZ/wjyPlumfwclcox8W3lWbfY3cCCIW5bcKIO2aeVHj+33iU10xhdoxghU31cD0yeu+zJ8MrGCgMvwnnv7KgKuOFNqe8lL2qi/lppcWato+q1h1utpAZEE/9aT9dSoo2McmChxPPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I9hwvzaw; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7864ab69f01so38268777b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:43:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762263835; x=1762868635; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjiVDEb6cm0IQNwx2lZ93BPJc14dj5R/bK/BpZzo6VU=;
-        b=I9hwvzawBO4KDl6ZO6louKM+uvS6N6d4rzjhWMmpIhuMK2ZDivLApkeJnEO0fbpFnf
-         B40OIoh//ioyAtiLwpv78oEn0oR1LQNdPY44fn1LBwyKVijDAyuLK0ERe87143zx9ybH
-         /l5oxsXUA3lib1ijp43oXr4sc5yHStcZjWmMwqXYtrhzLd3KfjZ01j4s9Hd/vE7dfqF/
-         +Vn9wL/EoD2qybmetygq1gIAHhLehjMXh5+mzgpiBMSoozrByM+7kxC7a4JLFZ8lEE4S
-         UDmXngdwOCALajwBdmid0wQnmdNBEkqaT1YdzX72eX4wpFOxTK6NHfSRw0dB0owxEEfk
-         58Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762263835; x=1762868635;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bjiVDEb6cm0IQNwx2lZ93BPJc14dj5R/bK/BpZzo6VU=;
-        b=c7fnquxC9iu8SAlQ/xpGgDq3cXr1AgR999XaUNW0TjP8Wy6dgQVPWeTmkAPHUyqe9W
-         4BSIN4Gwdgg3saTUVar2wCm5aK1IVj5zWHBMF6iEx8X1sh98HZvIfn1pSrb8KHBRW+k8
-         TmrZa7paM/gLdFUVcZKfp4ty4dOYqsezKVFSfTqpNkwZVNDvtCBXVBerbpbxw8WYZe+K
-         M++NPCF+OlnqLTRJZkLO79vBkKDZWP8+yPo6uIin+NDkOybRPpPWAMAFp7hmxzEOefPL
-         nDfx0/WIEPuMoUFD1G5beJesWc0qIMzT3Cr0iwRwQaDe6D6Aisw2XiHigR//UePOCGXL
-         dGWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnQ00cBSq3jyPJSlk4jW1BTGkpTWyW59JPuOgpzafzmU14+DZWIgwhFtkcPOPPPfwTRoDkdlIfEUHe8J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7auTp0jarEAeJQRC7VgSHEDrI3aX3Qda0Rb9D+ZMQznu2zGWA
-	nABpbCgK60YFk8hFDuCG07blih+dbZpfNgGjuW+Dz/Xjcptg6PRdjGwcbej3YGUqSdyhJQYHFHX
-	L4dvwhv7EpGNkJjv3MBaeigkcswMICbnogPd/5Jq3XA==
-X-Gm-Gg: ASbGncugwhdrREKdL5N7x1Zf2GXeKJdJxK3gBKG/ghW122xG2ilGWyMsmzx/ElQgV65
-	ydk9CYFmuOC/x5IMQ2WCSImxKylvoHYA1f7A2pIPKvxXyllbexXi3kBrd99JaGMAtb6rkTlpiR7
-	Q8lVyU52jOoZJkR0biN7Y33ZPzdKdLLlWF5xEJWEz7kYOPY5DZ17jRrrwIhlpRefQwsh42KmhQo
-	48CT5MBHiiFS/kj+pWyXfxYtCGJKCOwgNC4F54e8PFDf7nDld481aMlvpZF+A==
-X-Google-Smtp-Source: AGHT+IH+xJM5OuT+ynGz/BcB2JMNDwt+HfQJxGitdqIPsmVDhekVmNUAamUG4n8DzrZpGoHggRFap3lMfbO2RdQhyHw=
-X-Received: by 2002:a05:690c:708f:b0:781:212f:b508 with SMTP id
- 00721157ae682-786485533d5mr151925497b3.63.1762263834960; Tue, 04 Nov 2025
- 05:43:54 -0800 (PST)
+	s=arc-20240116; t=1762263870; c=relaxed/simple;
+	bh=5CMJIquHcqvYCtFsJtDrbANSiyHOhrfDnYeeXPbQjQo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uG+LC25sEVKpHPlTUZdpmKZNMpF72lxZVDg/USXCfuDB/xTxWy3zW6jWA9XLTWk9lZYTrE3glNlLstgg71Xdy8y7V3PbSkaQZ8dtwXcU3roqEjtb8pl9OPTzHTf6Illv10qwRxGGfDynPkxhzrRUOAKa/drsfGaq33EtO+QmKWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAE561CE0;
+	Tue,  4 Nov 2025 05:44:20 -0800 (PST)
+Received: from [10.1.31.224] (XHFQ2J9959.cambridge.arm.com [10.1.31.224])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A025C3F66E;
+	Tue,  4 Nov 2025 05:44:27 -0800 (PST)
+Message-ID: <3ad071db-775c-491d-ac31-0f4753eb3bce@arm.com>
+Date: Tue, 4 Nov 2025 13:44:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-4-ulf.hansson@linaro.org> <20251031192322.kpsy5biokvuywzdj@lcpd911>
-In-Reply-To: <20251031192322.kpsy5biokvuywzdj@lcpd911>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 4 Nov 2025 14:43:19 +0100
-X-Gm-Features: AWmQ_bn-zdaH9ELfagCV1hR3Eqqv5E86xcqWdZ7QiiQHIMqA2xOLmg6yZU16JBQ
-Message-ID: <CAPDyKFp8DuNE-j6Fpejgbg3+HK00RiuvbtG+Ypud4uzFBRO99g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] sched: idle: Respect the CPU system-wakeup QoS
- limit for s2idle
-To: Dhruva Gole <d-gole@ti.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: kprobes: check the return value of
+ set_memory_rox()
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251103194505.4077265-1-yang@os.amperecomputing.com>
+ <b5b978f3-bb29-4cbc-b006-fb9c4402b067@arm.com>
+In-Reply-To: <b5b978f3-bb29-4cbc-b006-fb9c4402b067@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 31 Oct 2025 at 20:23, Dhruva Gole <d-gole@ti.com> wrote:
->
-> On Oct 16, 2025 at 17:19:23 +0200, Ulf Hansson wrote:
-> > A CPU system-wakeup QoS limit may have been requested by user-space. To
-> > avoid breaking this constraint when entering a low-power state during
-> > s2idle, let's start to take into account the QoS limit.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >
-> > Changes in v2:
-> >       - Rework the code to take into account the failure/error path, when we
-> >       don't find a s2idle specific state.
-> >
-> > ---
-> >  drivers/cpuidle/cpuidle.c | 12 +++++++-----
-> >  include/linux/cpuidle.h   |  6 ++++--
-> >  kernel/sched/idle.c       | 12 +++++++-----
-> >  3 files changed, 18 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> > index 56132e843c99..c7876e9e024f 100644
-> > --- a/drivers/cpuidle/cpuidle.c
-> > +++ b/drivers/cpuidle/cpuidle.c
-> > @@ -184,20 +184,22 @@ static noinstr void enter_s2idle_proper(struct cpuidle_driver *drv,
-> >   * cpuidle_enter_s2idle - Enter an idle state suitable for suspend-to-idle.
-> >   * @drv: cpuidle driver for the given CPU.
-> >   * @dev: cpuidle device for the given CPU.
-> > + * @latency_limit_ns: Idle state exit latency limit
-> >   *
-> >   * If there are states with the ->enter_s2idle callback, find the deepest of
-> >   * them and enter it with frozen tick.
-> >   */
-> > -int cpuidle_enter_s2idle(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-> > +int cpuidle_enter_s2idle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-> > +                      u64 latency_limit_ns)
-> >  {
-> >       int index;
-> >
-> >       /*
-> > -      * Find the deepest state with ->enter_s2idle present, which guarantees
-> > -      * that interrupts won't be enabled when it exits and allows the tick to
-> > -      * be frozen safely.
-> > +      * Find the deepest state with ->enter_s2idle present that meets the
-> > +      * specified latency limit, which guarantees that interrupts won't be
-> > +      * enabled when it exits and allows the tick to be frozen safely.
-> >        */
-> > -     index = find_deepest_state(drv, dev, U64_MAX, 0, true);
-> > +     index = find_deepest_state(drv, dev, latency_limit_ns, 0, true);
-> >       if (index > 0) {
-> >               enter_s2idle_proper(drv, dev, index);
-> >               local_irq_enable();
-> > diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-> > index a9ee4fe55dcf..4073690504a7 100644
-> > --- a/include/linux/cpuidle.h
-> > +++ b/include/linux/cpuidle.h
-> > @@ -248,7 +248,8 @@ extern int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> >                                     struct cpuidle_device *dev,
-> >                                     u64 latency_limit_ns);
-> >  extern int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
-> > -                             struct cpuidle_device *dev);
-> > +                             struct cpuidle_device *dev,
-> > +                             u64 latency_limit_ns);
-> >  extern void cpuidle_use_deepest_state(u64 latency_limit_ns);
-> >  #else
-> >  static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> > @@ -256,7 +257,8 @@ static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> >                                            u64 latency_limit_ns)
-> >  {return -ENODEV; }
-> >  static inline int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
-> > -                                    struct cpuidle_device *dev)
-> > +                                    struct cpuidle_device *dev,
-> > +                                    u64 latency_limit_ns)
-> >  {return -ENODEV; }
-> >  static inline void cpuidle_use_deepest_state(u64 latency_limit_ns)
-> >  {
-> > diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> > index c39b089d4f09..c1c3d0166610 100644
-> > --- a/kernel/sched/idle.c
-> > +++ b/kernel/sched/idle.c
-> > @@ -131,12 +131,13 @@ void __cpuidle default_idle_call(void)
-> >  }
-> >
-> >  static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
-> > -                            struct cpuidle_device *dev)
-> > +                            struct cpuidle_device *dev,
-> > +                            u64 max_latency_ns)
-> >  {
-> >       if (current_clr_polling_and_test())
-> >               return -EBUSY;
-> >
-> > -     return cpuidle_enter_s2idle(drv, dev);
-> > +     return cpuidle_enter_s2idle(drv, dev, max_latency_ns);
-> >  }
-> >
-> >  static int call_cpuidle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-> > @@ -205,12 +206,13 @@ static void cpuidle_idle_call(void)
-> >               u64 max_latency_ns;
-> >
-> >               if (idle_should_enter_s2idle()) {
-> > +                     max_latency_ns = cpu_wakeup_latency_qos_limit() *
-> > +                                      NSEC_PER_USEC;
->
-> This is only taking into account the new API for the
-> cpu_wakeup_latency_qos_limit, however what if someone has set
-> cpu_latency_qos_limit, doesn't that need to be honoured?
-> Just trying to understand the differences in both qos here and why one
-> is chosen over the other.
+On 04/11/2025 13:14, Ryan Roberts wrote:
+> On 03/11/2025 19:45, Yang Shi wrote:
+>> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
+>> rodata=full"), __change_memory_common has more chance to fail due to
+>> memory allocation fialure when splitting page table. So check the return
+>> value of set_memory_rox(), then bail out if it fails otherwise we may have
+>> RW memory mapping for kprobes insn page.
+>>
+>> Fixes: 195a1b7d8388 ("arm64: kprobes: call set_memory_rox() for kprobe page")
+>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> 
+> This patch looks correct so:
+> 
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> but, I think I see an separate issue below...
+> 
+>> ---
+>> I actually epxected 195a1b7d8388 ("arm64: kprobes: call set_memory_rox()
+>> for kprobe page") can be merged in 6.17-rcX, so I just restored it to
+>> before commit 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in
+>> alloc_insn_page"), however it turned out to be merged in 6.18-rc1 and it
+>> is after commit a166563e7ec3 ("arm64: mm: support large block mapping when
+>> rodata=full"). So I made the fix tag point to it.
+>> And I don't think we need to backport this patch to pre-6.18.
+>>
+>>  arch/arm64/kernel/probes/kprobes.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+>> index 8ab6104a4883..43a0361a8bf0 100644
+>> --- a/arch/arm64/kernel/probes/kprobes.c
+>> +++ b/arch/arm64/kernel/probes/kprobes.c
+>> @@ -49,7 +49,10 @@ void *alloc_insn_page(void)
+>>  	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>>  	if (!addr)
+>>  		return NULL;
+>> -	set_memory_rox((unsigned long)addr, 1);
+>> +	if (set_memory_rox((unsigned long)addr, 1)) {
+> 
+> How does x get cleared when freeing this memory? arm64's set_memory_x() sets
+> PTE_MAYBE_GP and clears PTE_PXN. The only function that will revert that is
+> set_memory_nx(). But that only gets called from module_enable_data_nx() (which I
+> don't think is applicable here) and execmem_force_rw() - but only if
+> CONFIG_ARCH_HAS_EXECMEM_ROX is enabled, which I don't think it is for arm64?
+> 
+> So I think once we flip a page executable, it will be executable forever?
+> 
+> Do we need to modify set_direct_map_default_noflush() to make the memory nx?
+> Then vm_reset_perms() will fix it up at vfree time?
 
-cpu_latency_qos_limit is for runtime only, during regular cpuidle idle
-state selection.
 
-The new cpu_wakeup_latency_qos_limit is taken into account above for
-s2idle, specifically.
+Dev just pointed this out to me. Panic over!
 
-That said, Rafael suggests that the new cpu_wakeup_latency_qos_limit
-should be respected for runtime cpuidle state selection too, so I am
-working on updating the series to take that into account.
+static int change_memory_common(unsigned long addr, int numpages,
+				pgprot_t set_mask, pgprot_t clear_mask)
+{
+	...
 
->
-> >
-> > -                     entered_state = call_cpuidle_s2idle(drv, dev);
-> > +                     entered_state = call_cpuidle_s2idle(drv, dev,
-> > +                                                         max_latency_ns);
-> >                       if (entered_state > 0)
-> >                               goto exit_idle;
-> > -
-> > -                     max_latency_ns = U64_MAX;
-> >               } else {
-> >                       max_latency_ns = dev->forced_idle_latency_limit_ns;
-> >               }
-> > --
-> > 2.43.0
-> >
->
+	/*
+	 * If we are manipulating read-only permissions, apply the same
+	 * change to the linear mapping of the pages that back this VM area.
+	 */
+	if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
+			    pgprot_val(clear_mask) == PTE_RDONLY)) {
+		for (i = 0; i < area->nr_pages; i++) {
+			__change_memory_common(...);
+		}
+	}
 
-Kind regards
-Uffe
+	...
+}
+
+
+> 
+> Thanks,
+> Ryan
+> 
+>> +		execmem_free(addr);
+>> +		return NULL;
+>> +	}
+>>  	return addr;
+>>  }
+>>  
+> 
+
 
