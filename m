@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-885411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC4FC32D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:37:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28487C32D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 423574F75B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888A13A4C2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCFA2836B1;
-	Tue,  4 Nov 2025 19:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55E326ED46;
+	Tue,  4 Nov 2025 19:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eAFtIC+l"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADAC184540
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WmSnUpMA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5408154BE2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762284884; cv=none; b=GPbdPLBkcUc1utErnTbjsMmR6icd6W4EwTnXtwqjBaYIQOTDFVi/73TZWryXuz/sZtP9f8SDXusdgvV9mB/QCmHBn5b9A14egC+F09NuDjIsPRBpmxVwIkLLZfoazBDfQu5HemdeVQ6g1H3LDxL/Rvav5br2+BdmhnQUOoqNgxQ=
+	t=1762285052; cv=none; b=Bag06HY6tm5GMlMzMSSyMxmPyh8cBcZ2jRGG07x/Nzvt4kslrXu7pe+dkDEKhFuwCcOsus3HHCpJJQ40QR1y1FFm/bMYW1i2ahnYkL1fX1o1mrshHOd/QD/M/SwcbF0gJJ6nYKXDyrTCV1cewwh1x4G8dgvHPou4M6hjllA46Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762284884; c=relaxed/simple;
-	bh=+0KQLznGWai2QqA3COF+wfMOTBGaiIT1pBvD3XbGrNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ucdc+43ZiyRUmgZtueNXntj4Aw9Ih2Yis8RlKKgeEBiUmbMOdNtJ8qxpqXRw1DEPXy7R83VAayHwB6IQJ2Yy5s2J6k2o7fCnUWp/yxkExVzJsGDrw6bIHbNaOYDXhqehyMikeVQrGHLx2ksA/09DkUx+OjbkGR0im6mGKd0TTTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eAFtIC+l; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so6414596a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:34:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1762284880; x=1762889680; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kJTDMIYCy2+6jR/hKcOnnxfENzi0WCsvGq1H0Tr1Gd8=;
-        b=eAFtIC+l2x7gxD+7kimg6alL/dxUm31F81a2p9iBrYmiPUvXBSmdrR1uVemXRHncnH
-         7vlHe+SQAHZzeIPq50jjXNAcpb9gukcQmMox46IF1QwaDYphtSyvv+8OPAU+pzXXGcxW
-         9hJsjo3ZfcDVJ3Ado3emJ3MngEcqz9zvLa9LU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762284880; x=1762889680;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kJTDMIYCy2+6jR/hKcOnnxfENzi0WCsvGq1H0Tr1Gd8=;
-        b=QGVXX0ES0oET0I2iIfMzgOwu+yJ7NvPipAHjmD18F3Bu4n8sD1d8XsWWwk+C7OnPca
-         wao3CxyYRisK0Bl8qSUDmYbjbqT2XzwSbzYMCg+FPD4CD89wrzOR7rw9nywyyXIAfbz+
-         JApGmHR/PQvfHcgXdkXad2WQtjgOp65rOL3uBZ1fkQA7wHuBhEiCEYdICuyDNEi75uul
-         4yySWj1IVLLYdk2fKmNXnhp16AQZR1yjz6l8GpTAt9BRomsDbVaMTMhrOqeKheo7obRP
-         dHwQnrOJGADgO2590EOwzqqKw97yMQKoBDW0otMaPMW2mPN7lCwagrLjm3pQcT4v4+q5
-         4Rdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXyUmT3FarOVYvoxmjhr/+4c6QjYpEOjzbnqhRGacB/b2XokBixd3JcPj63r40kt8gDBhCg7HUxpjKzQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLv1Ja16JChuX6s5oW71f1NzwnFTSEaIkNWRF9nWtFkvZmGT3i
-	SaurBoCcnlkTdK/7hJudd9JugLEMsBJMWKoyRNmdIVLghy+jhGvXlvwz9LEPa6k9ulZQxRD//Qo
-	ymJu0yghWgA==
-X-Gm-Gg: ASbGnctUs0OYEahH6U7kkB2aqugZFb2JPuW0qodepwId/2ktu7x99Z1/EVU/b55H+w7
-	IoMAyluO40FL0fKGpPGmqmCEy0lCPeHTVyHgAEUTSEN7m50UQlEZJjT2tnTPkNR15//mG79gmYs
-	HYI8maCqwrJqrKZpBcJvvekfTFFUqm/mKV+S6iFDxYBbB420V3JWfUP79+Z6QGBnDzHk1oQshB6
-	tNradUIaE+U5woifYKPhuuRtgwbhcGCxENNJ8QDvdfgjawbSsiG1K72aohHEzlTUE5DZk33yudM
-	AMftoOmqjVnS/eLSGTLMUz+IvTd3sQOlIu8tZQ7ioGkMAebx3NVgfHb4HAAYxCocGcY65JLkybI
-	0ucHWJ8W8yKkoGMdI8aCk5aH3cVNw9eTbHZxZU64Y0ra6R4F8pZsfPZnTlJyPnYIikYoxSYfRNb
-	ronX1WocW80M1KCjxpS/xv+ZfWzlCltDXZLhynCaXRcw8SoZ6kfw==
-X-Google-Smtp-Source: AGHT+IH6TKdWn+qpQ9tIC0F36IRj7/XX2IDddpaiIS2Ze0yYDJA8BG3YTivvV+tdKQedvIOYax1GPQ==
-X-Received: by 2002:a05:6402:26c2:b0:640:aa43:1595 with SMTP id 4fb4d7f45d1cf-64105ca97c8mr327794a12.38.1762284880410;
-        Tue, 04 Nov 2025 11:34:40 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e78f8985sm2647175a12.27.2025.11.04.11.34.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 11:34:39 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b7200568b13so284289366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:34:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV3BG4Wg6vkK1tgoeEYIAyFAK/+gefCYASMnUIfeFQ7LpFO8VeoyiZ8zdHfWTIIxNYxbMEVJSQn7Xz1g0A=@vger.kernel.org
-X-Received: by 2002:a17:907:1c0a:b0:b45:1063:fb65 with SMTP id
- a640c23a62f3a-b7265587595mr27576366b.39.1762284878155; Tue, 04 Nov 2025
- 11:34:38 -0800 (PST)
+	s=arc-20240116; t=1762285052; c=relaxed/simple;
+	bh=hj4gK3suMwSqFwLsdPSXTOmAGsGI39w2NC9u5ACsNQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WoV/A+NrqaxSEpQXz6hVMJ2ldWnHLyY+GOL7ATDwd7EBRmj0nJ8s4x4ZKZkgx/rc8mDi1d841K3PRujcb88YxyypSs1UjgrMPkGjyLa9//IbtutJaaZBQz9FtO11Tcutsfc2/QgzGglKY5c9s3Cqy81oHX7l0phAxzdsB8SWusQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WmSnUpMA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A7CF6200FE5A;
+	Tue,  4 Nov 2025 11:37:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A7CF6200FE5A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762285050;
+	bh=A2Qx6X64Zj6TSyldcGb1H5NxOGmulgLscxHvDKJ+aaQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WmSnUpMArDeLYsAdqY1lirHXLX7OOh0MHpidrzrQMdw2W7Khnzw0iloGPO3cqxo5o
+	 m+Z4tc0x1ZjlU8hDdiCwbOzcaIDONDHNYxUGDPGfFpisWrHTNr+Z9l3shjuEyZ4oW8
+	 QTNx/1OxbJKePPOh13/lM3yn5iwpjxoQ3cne/EYI=
+Date: Tue, 4 Nov 2025 11:37:28 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
+ <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+ <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
+Message-ID: <20251104113728.0000568e@linux.microsoft.com>
+In-Reply-To: <aQpKf2IPD5xeBu1K@Asurada-Nvidia>
+References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+	<20251020224353.1408-2-jacob.pan@linux.microsoft.com>
+	<aQPptXsqzt6kJS7f@Asurada-Nvidia>
+	<20251103151631.0000703a@linux.microsoft.com>
+	<aQlVjtTiqd34I+NC@Asurada-Nvidia>
+	<20251104102539.00001110@linux.microsoft.com>
+	<aQpKf2IPD5xeBu1K@Asurada-Nvidia>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
- <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
- <aQozS2ZHX4x1APvb@google.com> <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 5 Nov 2025 04:34:20 +0900
-X-Gmail-Original-Message-ID: <CAHk-=wgYPbj1yQu3=wvMvfX2knKEmaeCoaG9wkPXmM1LoVxRuQ@mail.gmail.com>
-X-Gm-Features: AWmQ_blVf2isOH-EeyNpLShBliAIq3Vx5qa1nvwuHS5khsUBXtzT-rTUMVRjBpY
-Message-ID: <CAHk-=wgYPbj1yQu3=wvMvfX2knKEmaeCoaG9wkPXmM1LoVxRuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
- wrong USER_PTR_MAX in modules
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 5 Nov 2025 at 04:07, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Sadly, no. We've wanted to do that many times for various other
-> reasons, and we really should, but because of historical semantics,
-> some horrendous users still use "__get_user()" for addresses that
-> might be user space or might be kernel space depending on use-case.
->
-> Maybe we should bite the bullet and just break any remaining cases of
-> that horrendous historical pattern. [...]
+Hi Nicolin,
 
-What I think is probably the right approach is to just take the normal
-__get_user() calls - the ones that are obviously to user space, and
-have an access_ok() - and just replace them with get_user().
+On Tue, 4 Nov 2025 10:48:31 -0800
+Nicolin Chen <nicolinc@nvidia.com> wrote:
 
-That should all be very simple and straightforward for any half-way
-normal code, and you won't see any downsides.
+> On Tue, Nov 04, 2025 at 10:25:39AM -0800, Jacob Pan wrote:
+> > > -----------------------------------------------------------------
+> > > 
+> > > And the commit message should point out:
+> > > 
+> > > The existing arm_smmu_cmdq_poll_until_not_full() doesn't fit
+> > > efficiently nor ideally to the only caller
+> > > arm_smmu_cmdq_issue_cmdlist():
+> > >  - It uses a new timer at every single call, which fails to limit
+> > > to the preset ARM_SMMU_POLL_TIMEOUT_US per issue.  
+> 
+> > Not following what you mean.
+> > The original code below does honor the timeout of
+> > ARM_SMMU_POLL_TIMEOUT_US  
+> 
+> It sets the timeout per arm_smmu_cmdq_poll_until_not_full(), not
+> the entire wait-for-space routine. And that's why you moved the
+> queue_poll_init() to the caller, right?
+> 
+Got you! will do.
 
-And in the unlikely case that you can measure any performance impact
-because you had one single access_ok() and many __get_user() calls,
-and *if* you really really care, that kind of code should be using
-"user_read_access_begin()" and friends anyway, because unlike the
-range checking, the *real* performance issue is almost certainly going
-to be the cost of the CLAC/STAC instructions.
+Thanks,
 
-Put another way: __get_user() is simply always wrong these days.
-Either it's wrong because it's a bad historical optimization that
-isn't an optimization any more, or it's wrong because it's mis-using
-the old semantics to play tricks with kernel-vs-user memory.
+Jacob
 
-So we shouldn't try to "fix" __get_user(). We should aim to get rid of it.
-
-             LInus
 
