@@ -1,118 +1,226 @@
-Return-Path: <linux-kernel+bounces-885259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8377C3266A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C02C3267C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 546AF34B5EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:40:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2E55334B80C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EF033A02D;
-	Tue,  4 Nov 2025 17:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF86C33B962;
+	Tue,  4 Nov 2025 17:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNbOMyTg"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fE9suEnc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384BB332EDA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D28E2DCC1B;
+	Tue,  4 Nov 2025 17:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762278047; cv=none; b=Z4baknxB6Rw6T47RVvEGBVYiPjox2B068HWYdVG65PWj0fp0gTMv2/eIEnOGomc6nkqbGK3NSDXZtCLxL+gSU8UYgYSVcBlUDZJtYDSCsPwdseENJwSZ27KPgPs5I5xOFAC3FegK8jxk8wvOO5uB730pmlGkHgLjYmrKr/+PjTw=
+	t=1762278082; cv=none; b=pM6p3BP6Njw4wQjIud4yjMj/x3XLZRhpJSz363M7W6Qxrq9tbddnWDSFo9PLKQ1iNGpUXKvuM8yh4+85RiPsreK+gQH0VJ2YZ9s9emZtZ3DeNGNVvczUWBR4MeamCSIkKEaAFz4nwelbZR1ryets+06LegmZjiYvx7lEkO73lvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762278047; c=relaxed/simple;
-	bh=Wx29MHBm2RXDiUAmF5T94+hpdR6eJPgN69rPPWd5OmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O/L65ze4hV3HD2KcOBqZ8salrdi66PjlpBOS63K3i5aQLLkcGld9Hb9F+D+pCowIMgvC8qruwg+WXYvCHdWn3B6vnXqDl4HiDOxdRllRj7zodMIisRbe0VQXBu6bmo7tt/LgEc12XZ87pcorKDZqPCVl+xpyRSQRP2g3NYkhG2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNbOMyTg; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47114a40161so10477445e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:40:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762278045; x=1762882845; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pvW8YZNNPsNEShPfc1BYhe9HoTHxi+BogUvpfvWJsZU=;
-        b=DNbOMyTgQCJk5uWQmJY28FtcTW9l3t60aYdvUiOQGriS6xhNjt79re3/eUNxLw22fZ
-         SJQX9ubMNKxc4gbE+qOu+eS3xm/fsrrCLmRKJAYgQ6UD0ryiw9KuRBq3DWHZ2aUbWE94
-         vHkxNVQdZiqf6qIPpEHsQZ0h3YZHPQi2A+StO6FZROYSGHl1Iz9DoHoQTrvnhM6YuweU
-         2cM/xjEMyohTQfKkGCBP+RjPpTUgWsfYigd/jS+mbsSEZb+/6RlK8mJLoHWJZX3dDjOR
-         xP/0kJMmkptus7p0+sBG6W9AvPiX+w9pjNveYPyMD2M/un+jvidV15nxMK05ciUhJlRm
-         rBzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762278045; x=1762882845;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvW8YZNNPsNEShPfc1BYhe9HoTHxi+BogUvpfvWJsZU=;
-        b=ER8PioNi2Nwomi4sXapi14SvykgW01I2F+S/QMzmpef5hrStfP/+w+xzbE3pogff2f
-         lM1+2wPIIQZ/r9XpB+6JjuyIdcuGwAMIkfnF44N51f9vf25D/bi+JbTGlLNuRW4ZIyzT
-         jTX6asvtBuOGR0dTMPV9UHIY8+LecYqh78KmqohLMm64GSWfTjTxspRARiVJVXS2+PiT
-         gyBNLx/BiB1xRwJOuLVx6Mn8LFdx66Mo1/0vEO+Sy/VN8t2BD3cT1bDjegMKFNeYKils
-         dPg+9k52obVRUr5axLB1t57zzFM07WxaxUGhLngS4fpqoYKKWNZYWrDEDKxWsd5tjH4J
-         PLKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc/2l/zad9y+UIk+1hx5/zweDvLFrCe59zG8szP3wPYS33WvxPMcLu0HknB/MznwCWL33JPbSulhcQ6ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGlCcSK8cwuNMbADrcPa7T1Znxxsk475yEJfPDB+RuXcc9I3Go
-	8FLyV3G0Ib4tWXvdh3dx3k+Uy77zR/m0Gcj7rYMQZ9jzJk+cSBjXSemD
-X-Gm-Gg: ASbGncvPOXdnpVSmWELnoLH9x/cr3UU3n9XEiUTVioIsQNgOPiCcte49ZEzCALtrsu7
-	Qle2JnWSaAvgFeIIZjwmBaLBmtc+WMFbCN77+JRLYr8D1pFVPoF/fJjZdajNwgdqJTGs4PKVwFU
-	JiLmSXhnJDEiOipc59WkKS9jbJ96RTLqB/XfzhuOhhLP1Lbkx/S4bH9FdEwDzCIopZIpVKbZABn
-	QvAHAScnAII8nCH3l7wA6CZdGDS7hds9YH1/SG3qc12h5zVnjzrNXC+Xj8la9C1Ky76FTFd8kEk
-	1xfA0UgWi+S815a9VkHvu+s5D4YmHkhvE7c6w+jJYS5dPF0VQS7HWV6+by8IxrL14lCJtXwPY1W
-	tH+JhxHKupXZEOv2bsrmZImMd3fkp+UXh00cZWNHeFWsDKO+ylNGfJYcbE2ZGQQrgZzUSZkrAjw
-	JuLBqEzVTWL2+IYxHm76mGiMlW1TYHmUcX/gaLe4g+AAeUkwnQXW38AO8GXJQQNGY=
-X-Google-Smtp-Source: AGHT+IG8vD2A31Am91kKp86zcrwHM1GJNdLY6dWjx4cxR0fFQbBMXyptxdu0zGiFmrarnTn1sUpqAQ==
-X-Received: by 2002:a05:6000:601:b0:429:d2a7:45a7 with SMTP id ffacd0b85a97d-429e32f4abcmr119842f8f.25.1762278044409;
-        Tue, 04 Nov 2025 09:40:44 -0800 (PST)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc200878sm5622982f8f.45.2025.11.04.09.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 09:40:44 -0800 (PST)
-Message-ID: <08951e84-24f4-4708-82e9-d23147d0c352@gmail.com>
-Date: Tue, 4 Nov 2025 17:40:42 +0000
+	s=arc-20240116; t=1762278082; c=relaxed/simple;
+	bh=umIjh2hxElKZEt0hMfWdEeuXiD8zOf8YcvUahdfvxcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GPI8bTts5YTz28WldjQZR5H6eY5v47ymYRceNrCTlNtRT4cwe2SWfHm56A0T7ykaN/opeSHkiJ1SuBJLF/aJ0UlCCwXLP1+2k3wHXFZ3wvZDsHNwTy1CI+OiXyNqDjlPiL58csDQrAUaf7sE+1lZKha2g5LJsRUBzvUHUusVshQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fE9suEnc; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762278080; x=1793814080;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=umIjh2hxElKZEt0hMfWdEeuXiD8zOf8YcvUahdfvxcI=;
+  b=fE9suEncE9bwVi1Xg6tlWNTn/QfzjUHg99k6xYyIzFmEZLsv+cNBmRfl
+   TgdtbG2hLfa/ePvj9LeVQfBlyaXS8C4lSfwvzU2suaY5jkmpIIxYyht4Z
+   tiJjy26aC6iAmGIpcmTSLLaw8ZLBzGKy2jbWsz/SS7ximtsDHwOMJxvvq
+   qxiMc30FxU18z3F8ee7GR6I1/2H0AciMAOUEo/6A/ajvPe+lwtbzo0tMv
+   1SbWN4wB3+zK3b3drefppS5sULF9WyGXIf19tYpKUVS84FXSDgNUmaAR1
+   8zwMNkDmy+DZ5NLQeHHsEi+j9josxmuLlqHhVSjUkRjHbm6207XgN4VOD
+   g==;
+X-CSE-ConnectionGUID: 4BHkkp39R8uUiOxbP9Or9g==
+X-CSE-MsgGUID: rSV6c7BYSYOJpmgoFfOOzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75062069"
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="75062069"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:41:19 -0800
+X-CSE-ConnectionGUID: fxvhx8QBR6a2sC+c/6MBTA==
+X-CSE-MsgGUID: UD5GfdqfRcGrhfQvZcmZFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="192384949"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.211])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:41:07 -0800
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Shuai Xue <xueshuai@linux.alibaba.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Guo Weikang <guoweikang.kernel@gmail.com>,
+ Xin Li <xin@zytor.com>, Will Deacon <will@kernel.org>,
+ Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
+ Li Ming <ming.li@zohomail.com>,
+ Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Karolina Stolarek <karolina.stolarek@oracle.com>,
+ Jon Pan-Doh <pandoh@google.com>, Lukas Wunner <lukas@wunner.de>,
+ Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-pci@vger.kernel.org
+Subject:
+ Re: [PATCH 4/6 v6] acpi/ghes: Add helper for CXL protocol errors checks
+Date: Tue, 04 Nov 2025 18:41:04 +0100
+Message-ID: <2925654.DJkKcVGEfx@fdefranc-mobl3>
+In-Reply-To: <20251028145415.000034bd@huawei.com>
+References:
+ <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
+ <20251023122612.1326748-5-fabio.m.de.francesco@linux.intel.com>
+ <20251028145415.000034bd@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sfc: Fix double word in comments
-To: Jakub Kicinski <kuba@kernel.org>, Bo Liu <liubo03@inspur.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-net-drivers@amd.com,
- linux-kernel@vger.kernel.org
-References: <20251029072131.17892-1-liubo03@inspur.com>
- <20251103162416.788bca9f@kernel.org>
-Content-Language: en-GB
-From: Edward Cree <ecree.xilinx@gmail.com>
-In-Reply-To: <20251103162416.788bca9f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 04/11/2025 00:24, Jakub Kicinski wrote:
-> On Wed, 29 Oct 2025 15:21:31 +0800 Bo Liu wrote:
->> Remove the repeated word "the" in comments.
->>
->> Signed-off-by: Bo Liu <liubo03@inspur.com>
-> 
-> If you're doing typo-style fixes please fix all of the problems in
-> the file.
+On Tuesday, October 28, 2025 3:54:15=E2=80=AFPM Central European Standard T=
+ime Jonathan Cameron wrote:
+> On Thu, 23 Oct 2025 14:25:39 +0200
+> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+>=20
+> > Move the CPER CXL protocol errors validity out of
+>=20
+> validity check
+>=20
+> > cxl_cper_post_prot_err() to cxl_cper_sec_prot_err_valid() and limit the
+>=20
+> to new cxl_cper_sec_prot_err_valid()=20
+>=20
+> as otherwise it sounds like it already exists.
+>=20
+> > serial number check only to CXL agents that are CXL devices (UEFI v2.10,
+> > Appendix N.2.13).
+>=20
+> Perhaps a little more here on why.  I assume because you are going to have
+> a second user for it, but good to say that. Also serves to justify the
+> export.
+>=20
+Hi Jonathan,
 
-FWIW this file is automatically generated from definitions managed
- by the sfc firmware team, so typo fixes need to go to that upstream
- source or they will just be overwritten next time the file is
- regenerated.  (We have tweaked the script to add a comment at the
- top of the file explaining this, but we haven't pushed out a header
- regeneration patch since then so it's not there yet.)
-If Liu does produce a comprehensive typo-fix patch, I will do the
- work to upstream the changes.  But it doesn't seem worth it for a
- single fix like this.
+All the corrections you made will be applied to the next version.
+> >=20
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
+com>
+> > ---
+> >  drivers/acpi/apei/ghes.c | 32 ++++++++++++++++++++++----------
+> >  include/cxl/event.h      | 10 ++++++++++
+> >  2 files changed, 32 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > index d6fe5f020e96..e69ae864f43d 100644
+> > --- a/drivers/acpi/apei/ghes.c
+> > +++ b/drivers/acpi/apei/ghes.c
+> > @@ -706,30 +706,42 @@ static DEFINE_KFIFO(cxl_cper_prot_err_fifo, struc=
+t cxl_cper_prot_err_work_data,
+> >  static DEFINE_SPINLOCK(cxl_cper_prot_err_work_lock);
+> >  struct work_struct *cxl_cper_prot_err_work;
+> > =20
+> > -static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_=
+err,
+> > -				   int severity)
+> > +int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
+>=20
+> Useful to return an error number?  Or would a bool be better given it is =
+either
+> valid or not?
+>=20
+I prefer to return more information when reasonable and leave the callers f=
+ree
+to use or ignore the specific error number.
 
--ed
+=46abio
+>
+> Otherwise looks good to me,
+>=20
+> Jonathan
+>=20
+> >  {
+> > -	struct cxl_cper_prot_err_work_data wd;
+> > -	u8 *dvsec_start, *cap_start;
+> > -
+> >  	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
+> >  		pr_err_ratelimited("CXL CPER invalid agent type\n");
+> > -		return;
+> > +		return -EINVAL;
+> >  	}
+> > =20
+> >  	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
+> >  		pr_err_ratelimited("CXL CPER invalid protocol error log\n");
+> > -		return;
+> > +		return -EINVAL;
+> >  	}
+> > =20
+> >  	if (prot_err->err_len !=3D sizeof(struct cxl_ras_capability_regs)) {
+> >  		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
+> >  				   prot_err->err_len);
+> > -		return;
+> > +		return -EINVAL;
+> >  	}
+> > =20
+> > -	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> > -		pr_warn(FW_WARN "CXL CPER no device serial number\n");
+> > +	if ((prot_err->agent_type =3D=3D RCD || prot_err->agent_type =3D=3D D=
+EVICE ||
+> > +	     prot_err->agent_type =3D=3D LD || prot_err->agent_type =3D=3D FM=
+LD) &&
+> > +	    !(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> > +		pr_warn_ratelimited(FW_WARN
+> > +				    "CXL CPER no device serial number\n");
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_valid);
+> > +
+> > +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_=
+err,
+> > +				   int severity)
+> > +{
+> > +	struct cxl_cper_prot_err_work_data wd;
+> > +	u8 *dvsec_start, *cap_start;
+> > +
+> > +	if (cxl_cper_sec_prot_err_valid(prot_err))
+> > +		return;
+> > =20
+> >  	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
+> > =20
+>=20
+>=20
+>=20
+
+
+
+
 
