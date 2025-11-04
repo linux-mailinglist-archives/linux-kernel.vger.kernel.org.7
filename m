@@ -1,200 +1,214 @@
-Return-Path: <linux-kernel+bounces-885595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A816AC336B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:47:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A64FC336B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0234C18C37BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38CE84637AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586CB34B1AC;
-	Tue,  4 Nov 2025 23:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E75E34B1AB;
+	Tue,  4 Nov 2025 23:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJAzV/Iu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GifgasKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0216034B186;
-	Tue,  4 Nov 2025 23:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF35E34B186;
+	Tue,  4 Nov 2025 23:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762300064; cv=none; b=bQozw2JFf/rokqv3IE37LW8ttjUs1LHsCt1AgHN95cznSr4jqbH7xVCnc+fuBkR7BYB50n8qo8fMl1z6hO5fFpNUfixg3EDu2o+HzNz1TWFR50+pwxSuImvT978TKLZwO0rwhGFOSww5y8yLt+YVLcYrBuRU32lJ/9RlRPYVOX0=
+	t=1762300073; cv=none; b=SE9yHuXH0s06MjgoBpDNhwXWO9k6Y1i9UyGw0rPp0lyIZyL4Ya8G2Y1S/E5Q23Ngl7bauTXNRSGt48UsJ7jjgzuVtntejNlWxav1wk2wNFmtbYHPFTnOiqHWkpDPfdv70BSru93af7hFg91P3UNOg/CtW35qPDNakjy1OnEUIEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762300064; c=relaxed/simple;
-	bh=q8Yf8/7HLuXQG0Z7K5FKnH461+e+Cvderu2RfpjgDQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ehf9L3KMGOdXW46zRT3dA7PplItC/UujqieS3HWvYzJhJU/nsrqg/oHCIkGdYEBmAiToT7T3d2S/Bzhnrxk3jU4/LUnzptBp4PAsmxWYdr2wT4QPA3SDd/zJioqZJ6ztfHwD2DxDcUeLbM7GTvx3GBDngpq3FydeUnXRbjnfkq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJAzV/Iu; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762300064; x=1793836064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q8Yf8/7HLuXQG0Z7K5FKnH461+e+Cvderu2RfpjgDQw=;
-  b=ZJAzV/IujyZL2QrDw86+vUK47lhjAsOqAHEqFTmgsUZMtlcp97oDTdxT
-   4hNMe9AYsDJO+EzzowDTNWdRgahET/ovg+oF8fKttvyswfCZ4gyMKPYE3
-   pwij+3ryVDU3iRmcKUUrmysIOackKLaZFPUptu35SKkJCYE6Rs2d6PFzZ
-   43+jXroD7QgbgKj40qff21+bZFeHj1uRwehWGLFMsFudmwzkCFLLh4z15
-   4qg4L9CbWwcfyWbDkSrKx+4aPaabaDa6Sjnx/cY4CHFO9t09ZpyXQWlU2
-   WaqjpMVGqjKLuBK6Rp9Nxynn4aht1SY/89Fm+D+iBi+Ly7EtqbyZNZ4YX
-   g==;
-X-CSE-ConnectionGUID: odFTKybCSd+9RAMQtDUU9A==
-X-CSE-MsgGUID: TG103etjQfCkg/GXJkSd8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75517356"
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="75517356"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 15:47:43 -0800
-X-CSE-ConnectionGUID: hTt4v9M+THmoCh//MpN9YQ==
-X-CSE-MsgGUID: jtjy4XN6T/2HSjrKEIqwQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="192375649"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 04 Nov 2025 15:47:40 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGQjl-000Rwm-1Y;
-	Tue, 04 Nov 2025 23:47:04 +0000
-Date: Wed, 5 Nov 2025 07:46:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Val Packett <val@packett.cool>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Subject: Re: [PATCH v2] media: iris: Refine internal buffer reconfiguration
- logic for resolution change
-Message-ID: <202511050737.07EKKlnk-lkp@intel.com>
-References: <20251104-iris-seek-fix-v2-1-c9dace39b43d@oss.qualcomm.com>
+	s=arc-20240116; t=1762300073; c=relaxed/simple;
+	bh=fEsn3jOrCN93c6qUqNl2qj5zUfUGbA4A30+4VyWcL6o=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=efrz6WCdt7jm5495H3m3TsARF0PKsah0TEZ4xytsODC6zp3wDJa+X3mO3DGd9jNTHO+Wd54s0mCwyQQLeODhQ1Uw4wy36aik7jBlye9O6VemWMWp0xbSmZvjI4OoTcrFatMRAWntqfYspsOYY4sjK+7ax7VqdF5ooHhjAPThZnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GifgasKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E2FC4CEF7;
+	Tue,  4 Nov 2025 23:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762300072;
+	bh=fEsn3jOrCN93c6qUqNl2qj5zUfUGbA4A30+4VyWcL6o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GifgasKwjeePbhflYlgd4hJiKOTL0PN8UFtOLFGNE50PA7Md4557Iix92WelIc1Jd
+	 B/+JIEV4c+OiRNjG35DM22q0ZKcwRokM6vBxdNth1Tg62rGSMSuBz/IgVHssX2RmPo
+	 WpZk/VmI4dYdYjihKj8ExggTH1olkoqD8WC127noU3KnSicUXgZDwr5BQFGe+oOS4l
+	 dn1qL+ZuszUWMtnEyEWr8VvTlouP4mVmhYmqBUitVqNmNGfei6O9MFRfsAh0UkS4uc
+	 p23ZfDJa8L32R8s6OAIwS6FqPcjgLXsJc/FHQWNeotIC3s9/5XN+BnGOkbgNPfDDiS
+	 zHuf30b9LyG9Q==
+Date: Wed, 5 Nov 2025 08:47:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <skhan@linuxfoundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] selftests/tracing: Add basic test for trace_marker_raw
+ file
+Message-Id: <20251105084748.f34e1efec291d420a50a7b62@kernel.org>
+In-Reply-To: <20251014145149.3e3c1033@gandalf.local.home>
+References: <20251014145149.3e3c1033@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-iris-seek-fix-v2-1-c9dace39b43d@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dikshita,
+On Tue, 14 Oct 2025 14:51:49 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-kernel test robot noticed the following build errors:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Commit 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to read
+> user space") made an update that fixed both trace_marker and
+> trace_marker_raw. But the small difference made to trace_marker_raw had a
+> blatant bug in it that any basic testing would have uncovered.
+> Unfortunately, the self tests have tests for trace_marker but nothing for
+> trace_marker_raw which allowed the bug to get upstream.
+> 
+> Add basic selftests to test trace_marker_raw so that this doesn't happen
+> again.
+> 
 
-[auto build test ERROR on 163917839c0eea3bdfe3620f27f617a55fd76302]
+Looks good to me.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal/media-iris-Refine-internal-buffer-reconfiguration-logic-for-resolution-change/20251104-131307
-base:   163917839c0eea3bdfe3620f27f617a55fd76302
-patch link:    https://lore.kernel.org/r/20251104-iris-seek-fix-v2-1-c9dace39b43d%40oss.qualcomm.com
-patch subject: [PATCH v2] media: iris: Refine internal buffer reconfiguration logic for resolution change
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20251105/202511050737.07EKKlnk-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511050737.07EKKlnk-lkp@intel.com/reproduce)
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511050737.07EKKlnk-lkp@intel.com/
+Thanks!
 
-All errors (new ones prefixed by >>):
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  .../ftrace/test.d/00basic/trace_marker_raw.tc | 107 ++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/trace_marker_raw.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/00basic/trace_marker_raw.tc b/tools/testing/selftests/ftrace/test.d/00basic/trace_marker_raw.tc
+> new file mode 100644
+> index 000000000000..7daf7292209e
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/00basic/trace_marker_raw.tc
+> @@ -0,0 +1,107 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: Basic tests on writing to trace_marker_raw
+> +# requires: trace_marker_raw
+> +# flags: instance
+> +
+> +is_little_endian() {
+> +	if lscpu | grep -q 'Little Endian'; then
+> +		echo 1;
+> +	else
+> +		echo 0;
+> +	fi
+> +}
+> +
+> +little=`is_little_endian`
+> +
+> +make_str() {
+> +	id=$1
+> +	cnt=$2
+> +
+> +	if [ $little -eq 1 ]; then
+> +		val=`printf "\\%03o\\%03o\\%03o\\%03o" \
+> +			$(($id & 0xff)) \
+> +			$((($id >> 8) & 0xff)) \
+> +			$((($id >> 16) & 0xff)) \
+> +			$((($id >> 24) & 0xff))`
+> +	else
+> +		val=`printf "\\%03o\\%03o\\%03o\\%03o" \
+> +			$((($id >> 24) & 0xff)) \
+> +			$((($id >> 16) & 0xff)) \
+> +			$((($id >> 8) & 0xff)) \
+> +			$(($id & 0xff))`
+> +	fi
+> +
+> +	data=`printf -- 'X%.0s' $(seq $cnt)`
+> +
+> +	printf "${val}${data}"
+> +}
+> +
+> +write_buffer() {
+> +	id=$1
+> +	size=$2
+> +
+> +	# write the string into the raw marker
+> +	make_str $id $size > trace_marker_raw
+> +}
+> +
+> +
+> +test_multiple_writes() {
+> +
+> +	# Write a bunch of data where the id is the count of
+> +	# data to write
+> +	for i in `seq 1 10` `seq 101 110` `seq 1001 1010`; do
+> +		write_buffer $i $i
+> +	done
+> +
+> +	# add a little buffer
+> +	echo stop > trace_marker
+> +
+> +	# Check to make sure the number of entries is the id (rounded up by 4)
+> +	awk '/.*: # [0-9a-f]* / {
+> +			print;
+> +			cnt = -1;
+> +			for (i = 0; i < NF; i++) {
+> +				# The counter is after the "#" marker
+> +				if ( $i == "#" ) {
+> +					i++;
+> +					cnt = strtonum("0x" $i);
+> +					num = NF - (i + 1);
+> +					# The number of items is always rounded up by 4
+> +					cnt2 = int((cnt + 3) / 4) * 4;
+> +					if (cnt2 != num) {
+> +						exit 1;
+> +					}
+> +					break;
+> +				}
+> +			}
+> +		}
+> +	// { if (NR > 30) { exit 0; } } ' trace_pipe;
+> +}
+> +
+> +
+> +get_buffer_data_size() {
+> +	sed -ne 's/^.*data.*size:\([0-9][0-9]*\).*/\1/p' events/header_page
+> +}
+> +
+> +test_buffer() {
+> +
+> +	# The id must be four bytes, test that 3 bytes fails a write
+> +	if echo -n abc > ./trace_marker_raw ; then
+> +		echo "Too small of write expected to fail but did not"
+> +		exit_fail
+> +	fi
+> +
+> +	size=`get_buffer_data_size`
+> +	echo size = $size
+> +
+> +	# Now add a little more than what it can handle
+> +
+> +	if write_buffer 0xdeadbeef $size ; then
+> +		echo "Too big of write expected to fail but did not"
+> +		exit_fail
+> +	fi
+> +}
+> +
+> +test_buffer
+> +test_multiple_writes
+> -- 
+> 2.51.0
+> 
 
-   drivers/media/platform/qcom/iris/iris_common.c: In function 'iris_process_streamon_output':
->> drivers/media/platform/qcom/iris/iris_common.c:99:9: error: 'first_ipsc' undeclared (first use in this function)
-      99 |         first_ipsc = inst->sub_state & IRIS_INST_SUB_FIRST_IPSC;
-         |         ^~~~~~~~~~
-   drivers/media/platform/qcom/iris/iris_common.c:99:9: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/media/platform/qcom/iris/iris_common.c:101:9: error: 'drain_active' undeclared (first use in this function); did you mean 'swait_active'?
-     101 |         drain_active = inst->sub_state & IRIS_INST_SUB_DRAIN &&
-         |         ^~~~~~~~~~~~
-         |         swait_active
->> drivers/media/platform/qcom/iris/iris_common.c:104:9: error: 'drc_active' undeclared (first use in this function); did you mean 'PG_active'?
-     104 |         drc_active = inst->sub_state & IRIS_INST_SUB_DRC &&
-         |         ^~~~~~~~~~
-         |         PG_active
-
-
-vim +/first_ipsc +99 drivers/media/platform/qcom/iris/iris_common.c
-
-    90	
-    91	int iris_process_streamon_output(struct iris_inst *inst)
-    92	{
-    93		const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-    94		enum iris_inst_sub_state clear_sub_state = 0;
-    95		int ret = 0;
-    96	
-    97		iris_scale_power(inst);
-    98	
-  > 99		first_ipsc = inst->sub_state & IRIS_INST_SUB_FIRST_IPSC;
-   100	
- > 101		drain_active = inst->sub_state & IRIS_INST_SUB_DRAIN &&
-   102			inst->sub_state & IRIS_INST_SUB_DRAIN_LAST;
-   103	
- > 104		drc_active = inst->sub_state & IRIS_INST_SUB_DRC &&
-   105			inst->sub_state & IRIS_INST_SUB_DRC_LAST;
-   106	
-   107		if (drc_active)
-   108			clear_sub_state = IRIS_INST_SUB_DRC | IRIS_INST_SUB_DRC_LAST;
-   109		else if (drain_active)
-   110			clear_sub_state = IRIS_INST_SUB_DRAIN | IRIS_INST_SUB_DRAIN_LAST;
-   111	
-   112		/* Input internal buffer reconfiguration required in case of resolution change */
-   113		if (first_ipsc || drc_active) {
-   114			ret = iris_alloc_and_queue_input_int_bufs(inst);
-   115			if (ret)
-   116				return ret;
-   117			ret = iris_set_stage(inst, STAGE);
-   118			if (ret)
-   119				return ret;
-   120			ret = iris_set_pipe(inst, PIPE);
-   121			if (ret)
-   122				return ret;
-   123		}
-   124	
-   125		if (inst->state == IRIS_INST_INPUT_STREAMING &&
-   126		    inst->sub_state & IRIS_INST_SUB_INPUT_PAUSE) {
-   127			if (!drain_active)
-   128				ret = hfi_ops->session_resume_drc(inst,
-   129								  V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
-   130			else if (hfi_ops->session_resume_drain)
-   131				ret = hfi_ops->session_resume_drain(inst,
-   132								    V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
-   133			if (ret)
-   134				return ret;
-   135			clear_sub_state |= IRIS_INST_SUB_INPUT_PAUSE;
-   136		}
-   137	
-   138		if (inst->sub_state & IRIS_INST_SUB_FIRST_IPSC)
-   139			clear_sub_state |= IRIS_INST_SUB_FIRST_IPSC;
-   140	
-   141		ret = hfi_ops->session_start(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-   142		if (ret)
-   143			return ret;
-   144	
-   145		if (inst->sub_state & IRIS_INST_SUB_OUTPUT_PAUSE)
-   146			clear_sub_state |= IRIS_INST_SUB_OUTPUT_PAUSE;
-   147	
-   148		ret = iris_inst_state_change_streamon(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-   149		if (ret)
-   150			return ret;
-   151	
-   152		inst->last_buffer_dequeued = false;
-   153	
-   154		return iris_inst_change_sub_state(inst, clear_sub_state, 0);
-   155	}
-   156	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
