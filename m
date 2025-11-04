@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-884921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6D6C3180C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:27:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880A3C31812
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E23D4E911A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05B41893DEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311B832D7C8;
-	Tue,  4 Nov 2025 14:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3245432D455;
+	Tue,  4 Nov 2025 14:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GajqFWEr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fj3vgmYT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C292EBDCB;
-	Tue,  4 Nov 2025 14:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949ED329375;
+	Tue,  4 Nov 2025 14:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266370; cv=none; b=dcerps4983KtvKW/N6944LDIeek33jL7QbULoH9dhFonP2NTeI9a+o/yOL7FeyVop+Dxo8CW4Utd4a62LhxAF6ZclMYtHb7rfty4un5a/dZ7Q45xGulXWfqImIowKIlMv2JSHUtExIgGuurwonxCae5+ZodvFPr4Sk9VX/0BpXU=
+	t=1762266421; cv=none; b=VCXYoeiQ+Tov3DduEULs1bM/LEPGchgyHVZiZn65kKV3ob9dOcxKfxRTDFevdzJIAaStvnC34XpdZl9kkqJxsPw55xgyCqR8Hjob32Edc8KZjPJw7s6VhSv+AOniQwGFVSMohlBN2Pik4+3VyUbL/2WFjdj5y8ZHWaNOI0ocJPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266370; c=relaxed/simple;
-	bh=8/pICxOi6wsmpEPfhRShty6JhC0Ysu9IAZRq8awAsWI=;
+	s=arc-20240116; t=1762266421; c=relaxed/simple;
+	bh=IDwF3Uy+dHAw2yHyo8OlsKhLSef6SFWeAYInQaGIgug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fakT0HGjTFkFwDKLyLuMPfSbctrsWNuVlq4gUsPz/EN8Oei1p59NX1In3K6tukQXPOC2+oQmkpIH2gvi8clEzLJ/1XLK53VMX8+G+QIo5A34e3CkuGP84H8qtMD5mXv4T6DCqWUZGMxV377IWacbOaTE4FmNMG38Gsmu6HAL9Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GajqFWEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D977C4CEF7;
-	Tue,  4 Nov 2025 14:26:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762266368;
-	bh=8/pICxOi6wsmpEPfhRShty6JhC0Ysu9IAZRq8awAsWI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GajqFWErKv5jv64ubYOvWw+U+rkMGY6OKEaj79rzbH56wpR/icFei7lm1LqHkTnCk
-	 wP36yqtdNRO1unv5LHZ95fj6C8F2ky5sJPh0iPssTGSIilMUQZ7ks5SmvY6z67jygd
-	 S44lNwn8uolq5zHzJrqlbyAm7cMUNGFMXMTV8h5ktlJsYp/EXWRl0QlHGbh+/7r3Aw
-	 72yc1CTy2hDfnmce/Pby1A5FP3PZ7CbUOnaVe2DaE24UdyDx3ABnW9JYa7LPSIygse
-	 6KHT3Xv2U/ZfBudsp3zycd0jfi7HQOc0Wa0O0xPsM5c1l8ReH5shJQfTaKMiCjyQL7
-	 Cx+LpKRcVwrXA==
-Message-ID: <b6717831-1840-4b9a-aade-ab2248e3f75d@kernel.org>
-Date: Tue, 4 Nov 2025 15:26:03 +0100
+	 In-Reply-To:Content-Type; b=W3icTUjXXWUyJdiX7giiwa6vGyGNAnUZn1HHALv1dUSibLYEtxD28uDRP6A5ne50pfyHke5W4U+AIDVMM98XiChSv/MNYTVSOKST6Z8RRTEobh3PtL1U7c4t1i+w8Qy46/FY+LAEbAfovqVt+pJB7cn8C5+eQff6ZZcZwDAGZ0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fj3vgmYT; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762266420; x=1793802420;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IDwF3Uy+dHAw2yHyo8OlsKhLSef6SFWeAYInQaGIgug=;
+  b=fj3vgmYTwt778zW5lw2a/w8e1Dyrc8t5GtJ24qtDO5RVP1KnaIyWk5T4
+   7Q+SEQwwa5cnxw4Nl+yrps7q3uVjT+ATPJUVZzqReAVgNdKDR9iF+OQ4d
+   Tx3o8jjOuiWo0Zfumj8o43jbzvm1dxwJKTN1LwXkK6bZ/PkqhoTCQeqRR
+   Mw3MrDmc2LO0GcRsvwhyxVwFIqtZnvnLL5krvFgUd2HCBBCFDLZDiDrwV
+   UE4SCH3JI3HYoYMJQPTeGJt7opoP2lYlNOw6PzdaPe6e/riUODB8tsoI+
+   L4KY4DJN3g7oBVjBmJQo6rSLKN2WwMAC4ZYsHzuzvU57f4iWHR5dPCRm/
+   g==;
+X-CSE-ConnectionGUID: GwKHmzT4TZWNj+oV/a3wSw==
+X-CSE-MsgGUID: tT6fHqo3QCKIm0EpWSKOUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81767548"
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="81767548"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:26:59 -0800
+X-CSE-ConnectionGUID: D7xvNA+0R76wWmLtoIviIw==
+X-CSE-MsgGUID: U6CJ0f+XSuGRaR1jIIer7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="186857506"
+Received: from jmaxwel1-mobl.amr.corp.intel.com (HELO [10.125.110.166]) ([10.125.110.166])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:26:58 -0800
+Message-ID: <47b3e8ba-bc95-41ce-be0a-ddfd1323bab3@intel.com>
+Date: Tue, 4 Nov 2025 06:26:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,123 +66,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
- compatible
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
- <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
- <20251104-glaring-rebel-pillbug-a467ca@kuoka>
- <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/2] x86/mm: support memory-failure on 32-bits with
+ SPARSEMEM
+To: Xie Yuanbin <xieyuanbin1@huawei.com>, david@redhat.com, bp@alien8.de,
+ tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ hpa@zytor.com, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linmiaohe@huawei.com, nao.horiguchi@gmail.com,
+ luto@kernel.org, peterz@infradead.org, tony.luck@intel.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-edac@vger.kernel.org, will@kernel.org, liaohua4@huawei.com,
+ lilinjie8@huawei.com
+References: <20251104072306.100738-1-xieyuanbin1@huawei.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251104072306.100738-1-xieyuanbin1@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/11/2025 13:32, Konrad Dybcio wrote:
-> On 11/4/25 9:16 AM, Krzysztof Kozlowski wrote:
->> On Sun, Nov 02, 2025 at 11:25:06PM -0800, Jingyi Wang wrote:
->>> Document qcom,kaanapali-imem compatible. Kaanapali IMEM is not a syscon or
->>> simple-mfd, also "reboot reason" is not required on Kaanapali like some
->>
->> I do not see correlation. Something is not a syscon, so you add a new
->> generic compatible? No.
->>
->>> other platforms. So define a common "qcom,imem" binding and fallback to it.
->>
->> You did not define fallback to it!
->>
->> ...
->>
->>> +      - items:
->>> +          - enum:
->>> +              - qcom,kaanapali-imem
->>> +          - const: qcom,imem
->>
->> I do not understand what this generic compatible is supposed to express,
->> not explained in commit msg. Considering this wasn't before, it is a
->> major and really undesired change. It also makes no sesne. There was no
->> generic compatible before but "if not syscon" now this must have generic
->> compatible, what?
+On 11/3/25 23:23, Xie Yuanbin wrote:
+> Memory bit flips are among the most common hardware errors in the server
+> and embedded fields, many hardware components have memory verification
+> mechanisms, for example ECC. When an error is detected, some hardware or
+> architectures report the information to software (OS/BIOS), for example,
+> the MCE (Machine Check Exception) on x86.
 > 
-> So IMEM (or SYSTEM_IMEM more specifically as opposed to BOOT_IMEM which
-> you can take your guesses what it's used for) is to the best of our
-> understanding just a piece of SRAM that's accessible by multiple
-> processors/subsystems on the SoC.
+> Common errors include CE (Correctable Errors) and UE (Uncorrectable
+> Errors). When the kernel receives memory error information, if it has the
+> memory-failure feature, it can better handle memory errors without reboot.
+> For example, kernel can attempt to offline the affected memory by
+> migrating it or killing the process. Therefore, this feature is widely
+> used in servers and embedded fields.
 > 
-> A smaller region within it ("shared IMEM") is a little bit of a dumping
-> ground for various (incl. runtime) configuration and debug magic data
-> and that's usually what Linux is concerned with.
+> For historical versions, memory-failure cannot be enabled with x86_32 &&
+> SPARSEMEM because the number of page-flags are insufficient. However, this
+> issue has been resolved in the current version, and this patch will allow
+> SPARSEMEM and memory-failure to be enabled together on x86_32.
 > 
-> IMEM is currently described as a simple-mfd+syscon, which it is clearly
-> not. The former, as we've established in the past, was used as a hack to
-> have something call of_platform_populate().
-> 
-> I think that in turn is only necessary for the old arm32 DTs which have
-> a syscon-reboot-mode node under IMEM (and I think that's where the syscon
-> compatible comes from).
-> 
-> Should we make the switch to mmio-sram and settle this discussion?
-> It would probably require convincing the sram maintainer to add that
-> of_platform_populate() call in its probe func and making syscon-reboot
-> not depend on a syscon (not like it's very hard)
+> By the way, due to increased demand, DRAM prices have recently
+> skyrocketed, making memory-failure potentially even more valuable in the
+> coming years.
 
-This I got, but nothing here explains why you need generic compatible.
-To re-iterate: there was no generic compatible before, now there is.
-Writing bindings and numerous reviews from DT maintainers ask not to use
-generic compatibles.
+Which LLM generated that for you, btw?
 
-Best regards,
-Krzysztof
+I wanted to know _specifically_ what kind of hardware or 32-bit
+environment you wanted to support with this series, though.
+
 
