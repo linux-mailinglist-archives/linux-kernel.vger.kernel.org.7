@@ -1,334 +1,283 @@
-Return-Path: <linux-kernel+bounces-883922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FBFC2EC24
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:32:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A1C2EC9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F882349C69
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E8A18897B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B628023B627;
-	Tue,  4 Nov 2025 01:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743C21FFC6D;
+	Tue,  4 Nov 2025 01:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUeViESq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Ycyv/quY";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="QSO/NF7E"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298A823AE62
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8F43F9C5;
+	Tue,  4 Nov 2025 01:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762219864; cv=none; b=K3Kw4bXjY9jyZ8sOJYeuEDfKVcPIgOu4HzcGeWw3PhoDszk/iMYBO1ru1iwQq5GXX0KPq9dikNZ4SGg/iBmW6dTI/RFYCOwlhMxLZntQkwICX0pfb7fFvLXPb/FBrpXinK7jlQKsrtN3H/t7kVy6TO/iIgp32ZADtRJNDbiofTA=
+	t=1762219914; cv=none; b=OKSylS0hHcwzfo3joAF2L0Vdn+v9SUE03Gjw5VFlQFHLgheIYE1ewDYqzUvaa/mM88ExoQrX6o7A6xYVXeUfKjc9wIviTcBp44MK0Sfti5gFk9LiyF5QGyLkBFrOU35Ko43u06VH/LOg1VwqRCNLCQ0nb7TQE33xgVvKe5A+fO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762219864; c=relaxed/simple;
-	bh=v8QKUmbq8i7jSRCrxQg+b3tC8orcXLp5bmBSIzV0x2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fojJ+3PtFZBpyeZPZyi3vK/SbFtybKq6CJzX9GwnGoPTDAdaOD+a5dcAk75s2cxBDL6MwFSGUrOQXQmbUhePt48K1pKKxjKKE4T6Hev4eml3jz+EEs6vxOwUPEvP8/xkHDMccHt+JYpNK+xMWQrMEzFT27HMcdTc/e2pHC51P4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUeViESq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762219862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ljuAAt+TifIm5ca711WY2ieL2DClvpYg6AtN4LW+1io=;
-	b=NUeViESqsfJmPf3uom4qMpkJgmdvQcJWt0YMlpXOsLViHNoM18C4lM2/hdVkRrETXWebO/
-	reokPtziathzU7ufwrglolXo1nM6pELn3vJfhf8XP4BBjRtxaPfK8NOSspxhaO5FExsLJP
-	a/rE7wU5AMH9gPQmJM3sc1poE1T/vXA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-WynKkvQqNXi38a2k_3HD-Q-1; Mon,
- 03 Nov 2025 20:30:59 -0500
-X-MC-Unique: WynKkvQqNXi38a2k_3HD-Q-1
-X-Mimecast-MFC-AGG-ID: WynKkvQqNXi38a2k_3HD-Q_1762219857
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E8D61800654;
-	Tue,  4 Nov 2025 01:30:57 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.81.236])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7199B30001A1;
-	Tue,  4 Nov 2025 01:30:55 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ridong <chenridong@huawei.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Waiman Long <longman@redhat.com>
-Subject: [cgroup/for-6.19 PATCH v2 3/3] cgroup/cpuset: Globally track isolated_cpus update
-Date: Mon,  3 Nov 2025 20:30:37 -0500
-Message-ID: <20251104013037.296013-4-longman@redhat.com>
-In-Reply-To: <20251104013037.296013-1-longman@redhat.com>
-References: <20251104013037.296013-1-longman@redhat.com>
+	s=arc-20240116; t=1762219914; c=relaxed/simple;
+	bh=pdLqvoikaKwVRlFctCtN+OcLX+L63MwdvYXG+SZkC1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUriFxg6sI0SZbqdYzYU5gA3L64PByC8idXmJAlZBxEqQmJaQIQ4hvAlqModRq+r39bF/l3L49A5zmYekCC/oZWY1mcAe2qp/TB0hq803ppiOAHBZdvZ71RNrKfJ5CzVq/0i1kV/l04LHvh/TFk7FUg+sfO7sAwlg4tE1IYeF20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Ycyv/quY; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=QSO/NF7E; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762219859; bh=fM/ML8+eiFDNrhDwbDXimr3
+	UHaTvT4GeVqajlNLki+8=; b=Ycyv/quYpfC1vZ2XrqanaJqCKS0oYBIcQVGF8LL+DbLvqm0gyi
+	08BkhaynJsLulHaqGGvN43le1UU0H60tspFdLQiPEZKxy8XVG5BI9jqC/z1bzhsrzPWRueYqy++
+	uy3h7WHhMKJOefWbltZol6YOM2MeQqGiKJImQ95p3E9ZmzLSZMcqmxUguG2JS1H+jAb1UG12tsH
+	JKzCUYprRCqQTtVRPvBtprH2jP0D/JpZZnrrvc5sBG96gD1rlJZYZa/FX0/W9RaRhW6/A2Yp9l8
+	XvaPHO9fYt6Q6PvPR2xEluAYCHo24fxWdRX2xMe8hRsW9kw986GQ7j/EaPs8wObrP7Q==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762219859; bh=fM/ML8+eiFDNrhDwbDXimr3
+	UHaTvT4GeVqajlNLki+8=; b=QSO/NF7EtmXjONvj3ruouIpXm2yaGnZy9G4EHlG6Hd54VrWIL4
+	c0W5lfKAznTnBAJIM/OB0KkQDt/w5GiH3hBQ==;
+Message-ID: <bb4a8978-790a-46c5-94bd-9f97ffa15b64@mainlining.org>
+Date: Tue, 4 Nov 2025 02:30:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC RFT] drm/msm: adreno: attach the GMU device to a
+ driver
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251022-topic-adreno-attach-gmu-to-driver-v1-1-999037f7c83e@linaro.org>
+ <02356e35-0a3a-4a50-ad38-3032f9f166c9@mainlining.org>
+ <e9e117ed-823c-47e3-8ed6-14dbecc844bc@linaro.org>
+Content-Language: en-US
+From: Jens Reidel <adrian@mainlining.org>
+In-Reply-To: <e9e117ed-823c-47e3-8ed6-14dbecc844bc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The current cpuset code passes a local isolcpus_updated flag around in a
-number of functions to determine if external isolation related cpumasks
-like wq_unbound_cpumask should be updated. It is a bit cumbersome and
-makes the code more complex. Simplify the code by using a global boolean
-flag "isolated_cpus_updating" to track this. This flag will be set in
-isolated_cpus_update() and cleared in update_isolation_cpumasks().
+Hi Neil,
 
-No functional change is expected.
+On 10/29/25 11:25 AM, Neil Armstrong wrote:
+> Hi,
+> 
+> On 10/26/25 02:31, Jens Reidel wrote:
+>> On 10/22/25 14:44, Neil Armstrong wrote:
+>>> Due to the sync_state is enabled by default in pmdomain & CCF since 
+>>> v6.17,
+>>> the GCC and GPUCC sync_state would stay pending, leaving the 
+>>> resources in
+>>> full performance:
+>>> gcc-x1e80100 100000.clock-controller: sync_state() pending due to 
+>>> 3d6a000.gmu
+>>> gpucc-x1e80100 3d90000.clock-controller: sync_state() pending due to 
+>>> 3d6a000.gmu
+>>>
+>>> In order to fix this state and allow the GMU to be properly
+>>> probed, let's add a proper driver for the GMU and add it to
+>>> the MSM driver components.
+>>>
+>>> Only the proper GMU has been tested since I don't have
+>>> access to hardware with a GMU wrapper.
+>>>
+>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> ---
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 354 +++++++++++++ 
+>>> +---------------
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |   6 -
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h      |   3 -
+>>>   drivers/gpu/drm/msm/adreno/adreno_device.c |   4 +
+>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   4 +
+>>>   drivers/gpu/drm/msm/msm_drv.c              |  16 +-
+>>>   6 files changed, 192 insertions(+), 195 deletions(-)
+>>>
+> 
+> <snip>
+> 
+>>>
+>>> ---
+>>> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+>>> change-id: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
+>>>
+>>> Best regards,
+>>
+>> Hi Neil,
+>>
+>> thanks for the patch. With it applied, my GPU fails to initialize.
+>> Here's the related dmesg section:
+>>
+>> [    1.733062] [drm:dpu_kms_hw_init:1173] dpu hardware 
+>> revision:0x50020000
+>> [    1.735229] [drm] Initialized msm 1.13.0 for ae01000.display- 
+>> controller on minor 0
+>> [    1.735403] msm_dpu ae01000.display-controller: 
+>> [drm:adreno_request_fw] loaded qcom/a630_sqe.fw from new location
+>> [    1.735513] msm_dpu ae01000.display-controller: 
+>> [drm:adreno_request_fw] loaded qcom/a630_gmu.bin from new location
+>> [    1.746710] a6xx_gmu 506a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* 
+>> Timeout waiting for GMU OOB set BOOT_SLUMBER: 0x800000
+>> [    1.746766] msm_dpu ae01000.display-controller: 
+>> [drm:adreno_load_gpu] *ERROR* Couldn't power up the GPU: -110
+>>
+>> This could be because I have an Adreno 630-family GPU, which is marked 
+>> as legacy in a6xx_gmu_init / a6xx_gmu_bind. Previously, the rest of 
+>> the init code would just always run, while now, some parts are 
+>> conditionally disabled for legacy GPUs - that may be unintentional? 
+>> However, unconditionally enabling those parts seems to fail to 
+>> initialize the GPU followed by a reset shortly after, so there's 
+>> probably more to this.
+>>
+>> Please let me know if there's anything I can do to help debug this.
+> 
+> Thanks for the report, it's an sdm845 based right ?
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 73 ++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 38 deletions(-)
+Almost, it's SM7150 with Adreno 618.
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 0c49905df394..854fe4cc1358 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -81,6 +81,13 @@ static cpumask_var_t	subpartitions_cpus;
-  */
- static cpumask_var_t	isolated_cpus;
- 
-+/*
-+ * isolated_cpus updating flag (protected by cpuset_mutex)
-+ * Set if isolated_cpus is going to be updated in the current
-+ * cpuset_mutex crtical section.
-+ */
-+static bool isolated_cpus_updating;
+> 
+> I may have mismatched the role of the legacy parameter...
+> 
+> Could you try this on top:
+
+<snip>
+
+> ===========================><=====================================
+
+This is about what I had already tried earlier. I wasn't able to grab a 
+log from
+UART to see what exactly was still wrong back then, but I finally got 
+around to it today.
+
+Short excerpt from decoded stacktrace:
+
+[    4.838573] Unable to handle kernel paging request at virtual address 
+0000000000023010
+[    4.846726] Mem abort info:
+[    4.857916]   ESR = 0x0000000096000044
+[    4.870865]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    4.883897]   SET = 0, FnV = 0
+[    4.895344]   EA = 0, S1PTW = 0
+[    4.898584]   FSC = 0x04: level 0 translation fault
+[    4.898586] Data abort info:
+[    4.898587]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
+[    4.898589]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+[    4.898591]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    4.898593] [0000000000023010] user address but active_mm is swapper
+[    4.898597] Internal error: Oops: 0000000096000044 [#1]  SMP
+[    4.898600] Modules linked in:
+[    4.898612] Tainted: [W]=WARN
+[    4.898613] Hardware name: xiaomi Xiaomi POCO X3 NFC (Huaxing)/Xiaomi 
+POCO X3 NFC (Huaxing), BIOS 2025.10-gcb980be18336 10/01/2025
+[    4.898616] Workqueue: events_unbound deferred_probe_work_func
+[    4.911316]
+[    4.911318] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS 
+BTYPE=--)
+[    4.911321] pc : a6xx_gmu_rpmh_init (arch/arm64/include/asm/io.h:43 
+include/asm-generic/io.h:293 drivers/gpu/drm/msm/adreno/a6xx_gmu.h:183 
+drivers/gpu/drm/msm/adreno/a6xx_gmu.c:621)
+[    4.911327] lr : a6xx_gmu_rpmh_init 
+(drivers/gpu/drm/msm/adreno/a6xx_gmu.c:1811)
+[    4.911331] sp : ffff8000809f3560
+[    4.911332] x29: ffff8000809f3560 x28: 0000000000000001
+[    4.919938]  x27: ffff800081e50000
+[    4.919940] x26: 0000000000000300 x25: 0068000000000413 x24: 
+ffffc51d5cca9000
+[    4.919944] x23: 0000000000030090 x22: ffff000080aec3b0 x21: 
+ffff00008162c010
+[    4.919947] x20: ffff000080aec578 x19: ffff800081f90000 x18: 
+000000000aa663d1
+[    4.919950] x17: ffffc51d5cefc000 x16: ffffc51d5cca9d80 x15: 
+0078000000000f13
+[    4.930595]
+[    4.930596] x14: 0000000000000000 x13: ffff800081f9ffff x12: 
+ffff800081f9ffff
+[    4.930600] x11: 0000000001000000 x10: 0000000000023010 x9 : 
+0000000000000000
+[    4.930603] x8 : 0000000000000000 x7 : ffff00008155a960 x6 : 
+0000000000000000
+[    4.930606] x5 : 0000000000000cc0 x4 : 0000000000001000 x3 : 
+007800000b49ff13
+[    4.930610] x2 : 000000000b4a0000
+[    4.942943]  x1 : ffff800081fa0000 x0 : ffff800081e50000
+[    4.942947] Call trace:
+[    4.942948]  a6xx_gmu_rpmh_init (arch/arm64/include/asm/io.h:43 
+include/asm-generic/io.h:293 drivers/gpu/drm/msm/adreno/a6xx_gmu.h:183 
+drivers/gpu/drm/msm/adreno/a6xx_gmu.c:621) (P)
+[    4.942954]  a6xx_gmu_bind (drivers/gpu/drm/msm/adreno/a6xx_gmu.c:2102)
+[    4.942957]  component_bind_all (drivers/base/component.c:660)
+[    4.956709]  msm_drm_init (drivers/gpu/drm/msm/msm_drv.c:159)
+[    4.956714]  msm_drm_bind (drivers/gpu/drm/msm/msm_drv.c:1032)
+
+Turns out that previously, gmu->mmio was assigned before setting
+gmu->rscc = gmu->mmio + 0x23000;
+With your changes, the order is now wrong.
+Moving the assignment up again (and applying the diff you shared
+for proper handling of legacy parameter) fixes it:
+
+==========================================
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -2027,6 +2027,13 @@ static int a6xx_gmu_bind(struct device *dev, 
+struct device *master, void *data)
+                 if (ret)
+                         goto err_memory;
+
++               /* Map the GMU registers */
++               gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
++               if (IS_ERR(gmu->mmio)) {
++                       ret = PTR_ERR(gmu->mmio);
++                       goto err_memory;
++               }
 +
- /*
-  * Housekeeping (HK_TYPE_DOMAIN) CPUs at boot
-  */
-@@ -1327,6 +1334,8 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
- 		cpumask_or(isolated_cpus, isolated_cpus, xcpus);
- 	else
- 		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
-+
-+	isolated_cpus_updating = true;
- }
- 
- /*
-@@ -1334,15 +1343,12 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
-  * @new_prs: new partition_root_state
-  * @parent: parent cpuset
-  * @xcpus: exclusive CPUs to be added
-- * Return: true if isolated_cpus modified, false otherwise
-  *
-  * Remote partition if parent == NULL
-  */
--static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
-+static void partition_xcpus_add(int new_prs, struct cpuset *parent,
- 				struct cpumask *xcpus)
- {
--	bool isolcpus_updated;
+                 if (adreno_is_a650_family(adreno_gpu) ||
+                     adreno_is_a7xx(adreno_gpu)) {
+                         gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
+@@ -2048,13 +2055,6 @@ static int a6xx_gmu_bind(struct device *dev, 
+struct device *master, void *data)
+                 }
+         }
+
+-       /* Map the GMU registers */
+-       gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
+-       if (IS_ERR(gmu->mmio)) {
+-               ret = PTR_ERR(gmu->mmio);
+-               goto err_memory;
+-       }
 -
- 	WARN_ON_ONCE(new_prs < 0);
- 	lockdep_assert_held(&callback_lock);
- 	if (!parent)
-@@ -1352,13 +1358,11 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
- 	if (parent == &top_cpuset)
- 		cpumask_or(subpartitions_cpus, subpartitions_cpus, xcpus);
- 
--	isolcpus_updated = (new_prs != parent->partition_root_state);
--	if (isolcpus_updated)
-+	if (new_prs != parent->partition_root_state)
- 		isolated_cpus_update(parent->partition_root_state, new_prs,
- 				     xcpus);
- 
- 	cpumask_andnot(parent->effective_cpus, parent->effective_cpus, xcpus);
--	return isolcpus_updated;
- }
- 
- /*
-@@ -1366,15 +1370,12 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
-  * @old_prs: old partition_root_state
-  * @parent: parent cpuset
-  * @xcpus: exclusive CPUs to be removed
-- * Return: true if isolated_cpus modified, false otherwise
-  *
-  * Remote partition if parent == NULL
-  */
--static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
-+static void partition_xcpus_del(int old_prs, struct cpuset *parent,
- 				struct cpumask *xcpus)
- {
--	bool isolcpus_updated;
--
- 	WARN_ON_ONCE(old_prs < 0);
- 	lockdep_assert_held(&callback_lock);
- 	if (!parent)
-@@ -1383,14 +1384,12 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
- 	if (parent == &top_cpuset)
- 		cpumask_andnot(subpartitions_cpus, subpartitions_cpus, xcpus);
- 
--	isolcpus_updated = (old_prs != parent->partition_root_state);
--	if (isolcpus_updated)
-+	if (old_prs != parent->partition_root_state)
- 		isolated_cpus_update(old_prs, parent->partition_root_state,
- 				     xcpus);
- 
- 	cpumask_and(xcpus, xcpus, cpu_active_mask);
- 	cpumask_or(parent->effective_cpus, parent->effective_cpus, xcpus);
--	return isolcpus_updated;
- }
- 
- /*
-@@ -1432,17 +1431,24 @@ static bool isolated_cpus_can_update(struct cpumask *add_cpus,
- 	return res;
- }
- 
--static void update_isolation_cpumasks(bool isolcpus_updated)
-+/*
-+ * update_isolation_cpumasks - Update external isolation related CPU masks
-+ *
-+ * The following external CPU masks will be updated if necessary:
-+ * - workqueue unbound cpumask
-+ */
-+static void update_isolation_cpumasks(void)
- {
- 	int ret;
- 
--	lockdep_assert_cpus_held();
--
--	if (!isolcpus_updated)
-+	if (!isolated_cpus_updating)
- 		return;
- 
-+	lockdep_assert_cpus_held();
-+
- 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
- 	WARN_ON_ONCE(ret < 0);
-+	isolated_cpus_updating = false;
- }
- 
- /**
-@@ -1567,8 +1573,6 @@ static inline bool is_local_partition(struct cpuset *cs)
- static int remote_partition_enable(struct cpuset *cs, int new_prs,
- 				   struct tmpmasks *tmp)
- {
--	bool isolcpus_updated;
--
- 	/*
- 	 * The user must have sysadmin privilege.
- 	 */
-@@ -1595,11 +1599,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
- 		return PERR_HKEEPING;
- 
- 	spin_lock_irq(&callback_lock);
--	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-+	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
- 	list_add(&cs->remote_sibling, &remote_children);
- 	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
- 	spin_unlock_irq(&callback_lock);
--	update_isolation_cpumasks(isolcpus_updated);
-+	update_isolation_cpumasks();
- 	cpuset_force_rebuild();
- 	cs->prs_err = 0;
- 
-@@ -1622,15 +1626,12 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
-  */
- static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
- {
--	bool isolcpus_updated;
--
- 	WARN_ON_ONCE(!is_remote_partition(cs));
- 	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
- 
- 	spin_lock_irq(&callback_lock);
- 	list_del_init(&cs->remote_sibling);
--	isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
--					       NULL, cs->effective_xcpus);
-+	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
- 	if (cs->prs_err)
- 		cs->partition_root_state = -cs->partition_root_state;
- 	else
-@@ -1640,7 +1641,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
- 	compute_excpus(cs, cs->effective_xcpus);
- 	reset_partition_data(cs);
- 	spin_unlock_irq(&callback_lock);
--	update_isolation_cpumasks(isolcpus_updated);
-+	update_isolation_cpumasks();
- 	cpuset_force_rebuild();
- 
- 	/*
-@@ -1665,7 +1666,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
- {
- 	bool adding, deleting;
- 	int prs = cs->partition_root_state;
--	int isolcpus_updated = 0;
- 
- 	if (WARN_ON_ONCE(!is_remote_partition(cs)))
- 		return;
-@@ -1701,9 +1701,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
- 
- 	spin_lock_irq(&callback_lock);
- 	if (adding)
--		isolcpus_updated += partition_xcpus_add(prs, NULL, tmp->addmask);
-+		partition_xcpus_add(prs, NULL, tmp->addmask);
- 	if (deleting)
--		isolcpus_updated += partition_xcpus_del(prs, NULL, tmp->delmask);
-+		partition_xcpus_del(prs, NULL, tmp->delmask);
- 	/*
- 	 * Need to update effective_xcpus and exclusive_cpus now as
- 	 * update_sibling_cpumasks() below may iterate back to the same cs.
-@@ -1712,7 +1712,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
- 	if (xcpus)
- 		cpumask_copy(cs->exclusive_cpus, xcpus);
- 	spin_unlock_irq(&callback_lock);
--	update_isolation_cpumasks(isolcpus_updated);
-+	update_isolation_cpumasks();
- 	if (adding || deleting)
- 		cpuset_force_rebuild();
- 
-@@ -1793,7 +1793,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 	int deleting;	/* Deleting cpus from parent's effective_cpus	*/
- 	int old_prs, new_prs;
- 	int part_error = PERR_NONE;	/* Partition error? */
--	int isolcpus_updated = 0;
- 	struct cpumask *xcpus = user_xcpus(cs);
- 	int parent_prs = parent->partition_root_state;
- 	bool nocpu;
-@@ -2072,14 +2071,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 	 * and vice versa.
- 	 */
- 	if (adding)
--		isolcpus_updated += partition_xcpus_del(old_prs, parent,
--							tmp->addmask);
-+		partition_xcpus_del(old_prs, parent, tmp->addmask);
- 	if (deleting)
--		isolcpus_updated += partition_xcpus_add(new_prs, parent,
--							tmp->delmask);
-+		partition_xcpus_add(new_prs, parent, tmp->delmask);
- 
- 	spin_unlock_irq(&callback_lock);
--	update_isolation_cpumasks(isolcpus_updated);
-+	update_isolation_cpumasks();
- 
- 	if ((old_prs != new_prs) && (cmd == partcmd_update))
- 		update_partition_exclusive_flag(cs, new_prs);
-@@ -3102,7 +3099,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 	else if (isolcpus_updated)
- 		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
- 	spin_unlock_irq(&callback_lock);
--	update_isolation_cpumasks(isolcpus_updated);
-+	update_isolation_cpumasks();
- 
- 	/* Force update if switching back to member & update effective_xcpus */
- 	update_cpumasks_hier(cs, &tmpmask, !new_prs);
--- 
-2.51.1
+         gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+         if (IS_ERR(gmu->cxpd)) {
+                 ret = PTR_ERR(gmu->cxpd);
+==========================================
+
+This almost certainly isn't correct either because the wrapper needs
+its registers mapped too, perhaps this is better suited for moving it
+above the if block, I think that makes more sense.
+
+With the legacy parameter changes and GMU register mapping prior to RSCC
+offset calculation:Tested-by: Jens Reidel <adrian@mainlining.org> # SM7150
+
+Best regards,Jens
+> 
+> Thanks,
+> Neil
+> 
+>>
+>> Best regards,
+>> Jens
+> 
 
 
