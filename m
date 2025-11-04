@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-885068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7760C31E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:46:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EECEC31E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4175423C21
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9B9423B67
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F84024E4C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0FB26FA5A;
 	Tue,  4 Nov 2025 15:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="buH0476G"
-Received: from smtp95.iad3a.emailsrvr.com (smtp95.iad3a.emailsrvr.com [173.203.187.95])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="rlb4D83n"
+Received: from smtp93.iad3a.emailsrvr.com (smtp93.iad3a.emailsrvr.com [173.203.187.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5B42571C7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5432550D7
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.95
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762271210; cv=none; b=ihRE3xHmNtCHmKVvPLuXW4K9k69QefPP5uH6CVTjYyWcdd8fcfeavZoUMxQFraghK1j7unGG8hcJm0TuTCw6K+fhG9apifXwhpxS0yT3z0+XROoUSwVKbEehy6wcnIX0K7aMEzUc3maJdPwTJLmpp2F5LQkwTrCevK61PVvtCTo=
+	t=1762271210; cv=none; b=ApXK0NeuH0rq5fXbWes+XX/a3/0aoC0xIvM3RU66TguqivhzaAomvLvp3U6M+eQXdvBmegvBNYfVbGIqfF6WboEm0krDZwaZSXw2v85DMyZWurrS0OHzrmBJw5L7dN79AVIt/raqrEPXP491u8f6uQTqRPKbN8v7iMFVCud8ZB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762271210; c=relaxed/simple;
-	bh=pMilZKZx2jVf6zyaNURLd3OxiXN16FkOjWdl17Kj8K8=;
+	bh=zJrTM+9Q+tb4LzRuOVK4bkpRachZdbEALEQL41CkUOY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XatvoIBXmk4ESVW+RS56WsfGD2V8DoIM1eIinhyXRcrXveiFvOFh5b2wVvg5MUE7kDO7OGCp3wwSFjmEFxLLVt/p8T/YN994boOkGKaSzLXXbUt+PC/zFw0kK+8fbKZigX1smxAahjGFYXfjPwDy2hL/C7D8PQ5Vb7h/9dv02KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=buH0476G; arc=none smtp.client-ip=173.203.187.95
+	 MIME-Version; b=Q6wz0edxRsOXk31NuYNq+s3ryIKIgJ4GlAcC46F696IsQDQBlRMTLH96AWiMSd2IBCj0wYWB1iMu7ZZF2ayN7mgvcDXBRlLF/3PdTPxNQDlUdqJ7rM3GvK6LaFZZv9DcjwiRxdRKXdOnCwLN4lWjVOKnotl+M4p4vtyBhQ9LYVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=rlb4D83n; arc=none smtp.client-ip=173.203.187.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1762270229;
-	bh=pMilZKZx2jVf6zyaNURLd3OxiXN16FkOjWdl17Kj8K8=;
+	s=20221208-6x11dpa4; t=1762270230;
+	bh=zJrTM+9Q+tb4LzRuOVK4bkpRachZdbEALEQL41CkUOY=;
 	h=From:To:Subject:Date:From;
-	b=buH0476GU7Hcnr7J8cPiUBjcV6wP74cny4l1xQVLXPz3e2sMjvTzaA2fc/KEjS1Cy
-	 HUs9H6S2T6GDD02fUvOD+CEjftTKu0jLG9X+CvSIhG3giYDAqGhsISwgUcLi73GXiX
-	 etGFK3LKVh5A5JtVB2FZcN34F5NL2PYjtw+c+ksY=
+	b=rlb4D83n1miqHZelsautZ7OFpDBXmOow4hSuSJcGx72JCrAFd4CmJ+Zzmw38Ug6sZ
+	 NAciu2Ws/xjU2nqR0VcfOk+wUVnFh30xcpQR4BbVxadLUrdEkbqj6oluixY8At9pQy
+	 UImJBpafES6tJPkh4U1tuKISMQQ8qa7+SsITo20Q=
 X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp4.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 8CC9555B7;
-	Tue,  4 Nov 2025 10:30:28 -0500 (EST)
+Received: by smtp4.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id AC1F05579;
+	Tue,  4 Nov 2025 10:30:29 -0500 (EST)
 From: Ian Abbott <abbotti@mev.co.uk>
 To: linux-fpga@vger.kernel.org
 Cc: Moritz Fischer <mdf@kernel.org>,
@@ -47,9 +47,9 @@ Cc: Moritz Fischer <mdf@kernel.org>,
 	Tom Rix <trix@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 1/4] fpga: altera-pr-ip: Add dummy definitions of API functions
-Date: Tue,  4 Nov 2025 15:27:02 +0000
-Message-ID: <20251104153013.154463-2-abbotti@mev.co.uk>
+Subject: [PATCH 2/4] fpga: bridge: Add dummy definitions of API functions
+Date: Tue,  4 Nov 2025 15:27:03 +0000
+Message-ID: <20251104153013.154463-3-abbotti@mev.co.uk>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251104153013.154463-1-abbotti@mev.co.uk>
 References: <20251104153013.154463-1-abbotti@mev.co.uk>
@@ -60,34 +60,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Classification-ID: 7af648e7-5513-437d-9d71-25d484e80853-2-1
+X-Classification-ID: 7af648e7-5513-437d-9d71-25d484e80853-3-1
 
-Add a dummy definition of alt_pr_register() for build testing.
+Add dummy versions of the FPGA bridge API functions for build testing.
 
 Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
 ---
- include/linux/fpga/altera-pr-ip-core.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/fpga/fpga-bridge.h | 75 +++++++++++++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fpga/altera-pr-ip-core.h b/include/linux/fpga/altera-pr-ip-core.h
-index a6b4c07858cc..4a5aa9adaccc 100644
---- a/include/linux/fpga/altera-pr-ip-core.h
-+++ b/include/linux/fpga/altera-pr-ip-core.h
-@@ -11,7 +11,13 @@
- #ifndef _ALT_PR_IP_CORE_H
- #define _ALT_PR_IP_CORE_H
- #include <linux/io.h>
-+#include <asm/errno.h>
+diff --git a/include/linux/fpga/fpga-bridge.h b/include/linux/fpga/fpga-bridge.h
+index 94c4edd047e5..107e97adcc7c 100644
+--- a/include/linux/fpga/fpga-bridge.h
++++ b/include/linux/fpga/fpga-bridge.h
+@@ -5,6 +5,7 @@
  
-+#ifdef CONFIG_ALTERA_PR_IP_CORE
- int alt_pr_register(struct device *dev, void __iomem *reg_base);
--
+ #include <linux/device.h>
+ #include <linux/fpga/fpga-mgr.h>
++#include <linux/err.h>
+ 
+ struct fpga_bridge;
+ 
+@@ -63,6 +64,10 @@ struct fpga_bridge {
+ 
+ #define to_fpga_bridge(d) container_of(d, struct fpga_bridge, dev)
+ 
++#define fpga_bridge_register(parent, name, br_ops, priv) \
++	__fpga_bridge_register(parent, name, br_ops, priv, THIS_MODULE)
++
++#ifdef CONFIG_FPGA_BRIDGE
+ struct fpga_bridge *of_fpga_bridge_get(struct device_node *node,
+ 				       struct fpga_image_info *info);
+ struct fpga_bridge *fpga_bridge_get(struct device *dev,
+@@ -81,12 +86,78 @@ int of_fpga_bridge_get_to_list(struct device_node *np,
+ 			       struct fpga_image_info *info,
+ 			       struct list_head *bridge_list);
+ 
+-#define fpga_bridge_register(parent, name, br_ops, priv) \
+-	__fpga_bridge_register(parent, name, br_ops, priv, THIS_MODULE)
+ struct fpga_bridge *
+ __fpga_bridge_register(struct device *parent, const char *name,
+ 		       const struct fpga_bridge_ops *br_ops, void *priv,
+ 		       struct module *owner);
+ void fpga_bridge_unregister(struct fpga_bridge *br);
+ 
 +#else
-+static inline int alt_pr_register(struct device *dev, void __iomem *reg_base)
++static inline struct fpga_bridge *
++of_fpga_bridge_get(struct device_node *node, struct fpga_image_info *info)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
++static inline struct fpga_bridge *
++fpga_bridge_get(struct device *dev, struct fpga_image_info *info)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
++static inline void fpga_bridge_put(struct fpga_bridge *bridge)
++{
++}
++
++static inline int fpga_bridge_enable(struct fpga_bridge *bridge)
 +{
 +	return -EOPNOTSUPP;
 +}
- #endif /* _ALT_PR_IP_CORE_H */
++
++static inline int fpga_bridge_disable(struct fpga_bridge *bridge)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int fpga_bridges_enable(struct list_head *bridge_list)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int fpga_bridges_disable(struct list_head *bridge_list)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline void fpga_bridges_put(struct list_head *bridge_list)
++{
++}
++
++static inline int fpga_bridge_get_to_list(struct device *dev,
++					  struct fpga_image_info *info,
++					  struct list_head *bridge_list)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int of_fpga_bridge_get_to_list(struct device_node *np,
++					     struct fpga_image_info *info,
++					     struct list_head *bridge_list)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline struct fpga_bridge *
++__fpga_bridge_register(struct device *parent, const char *name,
++		       const struct fpga_bridge_ops *br_ops, void *priv,
++		       struct module *owner)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
++static inline void fpga_bridge_unregister(struct fpga_bridge *br)
++{
++}
++#endif
++
+ #endif /* _LINUX_FPGA_BRIDGE_H */
 -- 
 2.51.0
 
