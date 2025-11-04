@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-885055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D90AC31DC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:35:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 156C1C31DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6FE74ED031
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:32:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 996734EE3DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3D24A069;
-	Tue,  4 Nov 2025 15:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1342620DE;
+	Tue,  4 Nov 2025 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2EPE5c/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGX+m/bu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEA22561AB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E02163
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762270361; cv=none; b=IL5+tryqNpCjcuY0IgUN7XEeu8cVzb2ONDuP2RG3u4BfSAlP0X7v6QlikrPDW3H0TlxDggfdcUkmzkrInHaRbt8RtW8spsDEvdUCI+5Ri+qVq64XeBfL53WLtcQXznPDjHQNqwLujjDLRBSv1uvn+hSLkV0No2Wot5nTuYlm+No=
+	t=1762270382; cv=none; b=EUbM2q2s/ftJwvTNqmJFMeW8EeHoUAb6rAXlEYhB8Avw+nG/99uVtuD5tcAYXIwOSayAInSXrb8Aj9ZSZVH8ZxZNXfJ0GkoSQYHHz8+mYv4F6F8Kfw1e0ag1EBZBcKAC4iUrUVyNRm1VnawEuf97vOO9s3yAQTapMGPQnf1bo3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762270361; c=relaxed/simple;
-	bh=8ucPxln4jCUuHFhw/d6Q11VjxjnmrQRrHkqL4b1Kkeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y07eIA7iuyKB4xEKuX9gfJNm6pYwLhf2kgwua/Nmtshv17LpT3ZRTJYgoy6rR1ZMsyVhlSarlOUL7eUrkniIfac4UmH2os1HFAYyO/EFzRreArc2rM5MKdn4y4l2rTit9WbR5486yWBnyJWSS9svz4JuhfJ65mLfCA29exUNyrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2EPE5c/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93CC6C116C6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:32:41 +0000 (UTC)
+	s=arc-20240116; t=1762270382; c=relaxed/simple;
+	bh=X7nbnpqTZEY8i7Mu8ZgmQcVXpO3RbTTTraj7HJK2ASU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gRqI8ELEFcmWW8H283GsJLI+VtV7rKIVpGiEr0wPmKgiQocF2m12uHcxHnd5EupMWUMhmkha1RnWCDmV7SajqvMt3wntYJqb++iWukHtsMuNgIRQVlknrq9ISeAzNcbmYhC8A5kpYt48dye98L4He9B5kDVocDr3Etbkyaa2hxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGX+m/bu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D271FC4CEF7;
+	Tue,  4 Nov 2025 15:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762270361;
-	bh=8ucPxln4jCUuHFhw/d6Q11VjxjnmrQRrHkqL4b1Kkeg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e2EPE5c/iiYhzgcYCbz55pMXl2qSKkkMnUVtPulbwAO6u99+Shf3FP95kREg0IXhC
-	 B4Wt9Sry1YTldXDY89BrRStt3l2ju/TJCul/a2Bhs2bDoJvKeT+kibcvhSw8fVBEVb
-	 drQeiUd0D/EF4/5iOseSGP+kEvBwDuU5dvOB0efMFp5bGe+PT54w5yQrHQBmSC8ThL
-	 jvFRlXZpd3lPx8vi5OU8mZAig6qvSw9JZ/i8BRIEvFS/9geR3yP0wvLo7P2Tk1wiYc
-	 KC6o9dIYNWuRd7V1V8fLIovimPSfvz2QIoPFn2/0A8QQHHNAvpSJErxScY/Car2A5J
-	 jegtfQx7Qvbwg==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37a415a22ecso11454721fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 07:32:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWtp9qv3f9EqoDVGH+Qr7JRahrLPDS9QJ5/0qBNePz94yOz0o2Z9Dpgrg9BdF8vO48wDtxY3KI1EbVx1Xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+OBQdAb+KLXanLk/gXzqFDkkk2YC0Gh6WBIyBiE27dKBq7zB2
-	d4/L3iIpzwCdfZ+BqvTn3aATrXt3pkCzAbL09pQ4x4EBi7vl+9frmnF1Kq47o6+XFBchdhGDrFT
-	O1Xh0MXRKK2WYJadhlu700zLuywmE4D4=
-X-Google-Smtp-Source: AGHT+IH+CVhvcHFEROY6DI4fTTA1A0rVOvk6V2lH0Qy3bvx0oWjtx6rv8LHLiMplqLO8Ccc4rIiO5m5I7sknLNpZ/eA=
-X-Received: by 2002:a2e:a554:0:b0:372:91d2:f659 with SMTP id
- 38308e7fff4ca-37a4e6f08demr36141fa.3.1762270359952; Tue, 04 Nov 2025 07:32:39
- -0800 (PST)
+	s=k20201202; t=1762270382;
+	bh=X7nbnpqTZEY8i7Mu8ZgmQcVXpO3RbTTTraj7HJK2ASU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eGX+m/buo+BDLsk+en9q5E9BmVMuAQ/XxyxN4Rny4PgbO3cvPa4DOhVcEsnEziD4r
+	 zfH9NuE5GXZD7vAbOmI6tpyzviRnaSxKHO1hQefu6WYNo0rCZwPjxBIa0XoqPJvs1P
+	 Ad8JAUvjm8/AaayXEfhBNIyHyQTQ8p0Yxenl9Nm0MbWrkQuqPR7xykqSMoUoU2M+U9
+	 T8FjNoqCpBTGM6Ybr7yLpvJi5KzMfzHDBn1Jkc5O6vCuNAbhqJgi4BH/0znqTp8Q2H
+	 Ci/2TDS6vSkX8Pt0kwk7mdyCtt/4yfiLuk8GGADKC+o53kFSpsbtDOPfIYxCwultIE
+	 bkTEVlKn4A4Ug==
+Date: Tue, 4 Nov 2025 15:32:59 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: regulator branch mess
+Message-ID: <aQocq1eRjOOjiRdY@finisterre.sirena.org.uk>
+References: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031103858.529530-23-ardb+git@google.com> <20251031103858.529530-31-ardb+git@google.com>
- <20251031134909.00006bf3@huawei.com> <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
- <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com> <20251103112836.00006966@huawei.com>
-In-Reply-To: <20251103112836.00006966@huawei.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 4 Nov 2025 16:32:28 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmFX2z95LFUqFBLXa1zysHI_LqNQuskPyUwu9Z4a7PNLTWxdw_qHd8vC_4
-Message-ID: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
-Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
- guard API
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, ebiggers@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H+2D55tAT0OVo2Bc"
+Content-Disposition: inline
+In-Reply-To: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
+X-Cookie: If in doubt, mumble.
 
-On Mon, 3 Nov 2025 at 12:28, Jonathan Cameron
-<jonathan.cameron@huawei.com> wrote:
->
-> On Fri, 31 Oct 2025 15:05:19 +0100
-> Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> > On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >
-> > > On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
-> > > <jonathan.cameron@huawei.com> wrote:
-> > > >
-> > > > On Fri, 31 Oct 2025 11:39:07 +0100
-> > > > Ard Biesheuvel <ardb+git@google.com> wrote:
-> > > >
-> > > > > From: Ard Biesheuvel <ardb@kernel.org>
-> > > > >
-> > > > > Before modifying the prototypes of kernel_neon_begin() and
-> > > > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
-> > > > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
-> > > > > which encapsulates the calls to those functions.
-> > > > >
-> > > > > For symmetry, do the same for 32-bit ARM too.
-> > > > >
-> > > > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > > ---
-> > > > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
-> > > > >  lib/crc/arm/crc32.h        | 11 ++++-------
-> > > > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
-> > > > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
-> > > > >  4 files changed, 20 insertions(+), 39 deletions(-)
-> > > > >
-> > > > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
-> > > > > index 63441de5e3f1..aaeeab0defb5 100644
-> > > > > --- a/lib/crc/arm/crc-t10dif.h
-> > > > > +++ b/lib/crc/arm/crc-t10dif.h
-> > > >
-> > > > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
-> > > > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
-> > > > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
-> > > > >  {
-> > > > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
-> > > > > -             if (static_branch_likely(&have_pmull)) {
-> > > > > -                     if (likely(may_use_simd())) {
-> > > > > -                             kernel_neon_begin();
-> > > > > -                             crc = crc_t10dif_pmull64(crc, data, length);
-> > > > > -                             kernel_neon_end();
-> > > > > -                             return crc;
-> > > > > -                     }
-> > > > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
-> > > > > +                     scoped_ksimd()
-> > > > > +                             return crc_t10dif_pmull64(crc, data, length);
-> > > >
-> > > > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> > > > >                          static_branch_likely(&have_neon) &&
-> > > > >                          likely(may_use_simd())) {
-> > > >
-> > > > I briefly thought this was a functional change but it's not because
-> > > > of may_use_simd() being something that isn't going to change between
-> > > > the two evaluations.
-> > > >
-> > > > Would it hurt at all to pull that up to be
-> > > >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
-> > > >                 if (static_branch_likely(&have_pmull)) {
-> > > >                         scoped_ksimd()
-> > > >                                 return crc_t10dif_pmull64(crc, data, length);
-> > > >
-> > > >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> > > >                            static_branch_likely(&have_neon)) {
-> > > >                 ...
-> > > >
-> > > > ?
-> > > >
-> > >
-> > > Yeah that would be a reasonable cleanup, I guess.
-> >
-> > Actually, looking more closely, that would result in may_use_simd()
-> > being evaluated even when the static keys are set to false, given that
-> > the compiler is unlikely to be able to figure out by itself that
-> > may_use_simd() has no side effects.
-> Yeah. That was why it was a question :)
-> Given everything is marked as likely I wasn't sure if we cared about when
-> the static keys aren't set.
->
 
-Yeah, it is rather doubtful that those annotations (or the use of
-static keys, for that matter) make a meaningful difference here.
+--H+2D55tAT0OVo2Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Nov 04, 2025 at 05:20:59PM +0200, Andy Shevchenko wrote:
+
+> Something bad happened to the regulator branch [1].
+> First of all, the merge message contains unneeded details (at least the
+> author's email signature). Second, the few lines series becomes 3kLoCs
+> merge commit. I think the base was wrong and `b4` (if you use that one)
+> took too much to merge.
+
+I forgot to trim the cover letter but otherwise I really can't see any
+issues and you're not in the slightest bit specific about what you think
+is a problem.  The diffstat for the tree is:
+
+ 13 files changed, 1149 insertions(+), 780 deletions(-)
+
+which doesn't doesn't correspond to "thousands" of lines.  I really
+can't tell what on earth you are talking about here.
+
+--H+2D55tAT0OVo2Bc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkKHKcACgkQJNaLcl1U
+h9Coawf/anO2mMvtcmPROWSwe2R5UF1fDFkChebXt3k8QqNQOoeTCEMkOZL6rC1v
+83exT9RTUDHTUeeZNUR8WL9wGVuemi1QwRK4fH0G965eHF3XCHXycyl8cjovhQA4
+f3dXgXjNkRh9qcEI9Sd3sIORaqifKVjG1cHp1nev2mUrq2KtKxLd0O8otztRoxz6
+wO0kjMzIBJMjh2W38ii3JtiegO0WYp0CwOxyekhBi8xtqBWQAs9Q4u321JRMod8d
+1wxcGFaccJy5LVbeLGdfzhv6edzdxGeT0zRTkymUyqso9hgm8GkRyt+oZq1d4ImA
+9QskyGxVRUhE0wLviC3OZJNEdAJhCQ==
+=Ysef
+-----END PGP SIGNATURE-----
+
+--H+2D55tAT0OVo2Bc--
 
