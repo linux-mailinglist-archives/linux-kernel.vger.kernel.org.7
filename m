@@ -1,233 +1,204 @@
-Return-Path: <linux-kernel+bounces-885221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7CC7C324CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:21:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBCFC32484
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7EA1884241
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6672A3BCF3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC73626CE17;
-	Tue,  4 Nov 2025 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B11338912;
+	Tue,  4 Nov 2025 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUkxBdIB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZizmwdT9"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010038.outbound.protection.outlook.com [52.101.201.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62985328B6D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276504; cv=none; b=RhTqGEvwDoqzkDlKFcVTgH5DQc1qUFHj04h6YbgfG0wR/J8boup9Z8eCCjWZu7sh6KUeKoI9aQWN6YeU5x+7asVlV4nYK7iRHMdL39tcreCNutGzu39bOmrZs05e3EZQccrAh9tmtAhhsyLuIWEV3fQ1CrQAw+loncp8Oz2sqv4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276504; c=relaxed/simple;
-	bh=ltIUAp0Ncm40SN9BDjzL4HOekKSNBiLZaLjfDxM2WI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Up70C1/rodMgvX3nbvIaNJbnU4qwBWzc67CjIrNvZZkpswIRdIJIWeo21Ir+uzyt9G8ylfNGCiVvbTUhJkS/uVe0xl9pKhvhcT83kgje/HtNKuLwdBZYoii3gV5sp0BCuTtTRbvcv+R37wVYW3zBXhWp+t5iWMXLhGEiLX1mHjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUkxBdIB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429b7eecf7cso32538f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762276501; x=1762881301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EaoZBohhvrk9X6IahLs5KKKjtGD8B8F0O49y85YnKU4=;
-        b=HUkxBdIBY+J35m0xUGG7MY2onj409bNlPRj2A4qygLvuKjwHDnEWjJe8Qn8Gcq6K81
-         lZtsU1DtpMMdPfsLQvujK5YkIDYxSZGTLFSr+gQZs9Sjz5PX5edMo16qLi1y0m/1Q3is
-         1PJ6r136P1zIj4CrXGJ3Hec/EHyINEh8+tH9dF1JNxMrsJAlKbxSj55Iz/3tKpG1B2Rb
-         2EtLeHftt769A+lMIRQ4Ddbi31RNgRRjDdLtjLUZsN0qAGElgvO5BKMK5gYvetk++Z5w
-         wds/R7ZefwFGHfgD/OLfkZS8CCZxHcOD8Oz6s+8r9txU8boVefBH2o0+ICTR1zOrcyAE
-         gbOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762276501; x=1762881301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EaoZBohhvrk9X6IahLs5KKKjtGD8B8F0O49y85YnKU4=;
-        b=NrKifS0d2j92pvLiBRla7ynsWwuElQiQZ6iYK2xzD0izvpq9hks5tv4+K4zOxu887M
-         jASexXj1THh1SiWhoKd45rsSYzsnVneAiC90ZgGmWCKA3jZDfTmOaqGXFaNa3YzI2LGO
-         HsD5VJfBEU0NmHsa6y0uAcV7SCFgrfxyhlSI+2uIBh4AmZztx4EH6ZiYVdEG9mR3uBco
-         Ajs8xe7gA5p6yL80yQ5rs/bElFGtJYdyFYiVBugcTrTkqf0csf6iIDuLG6fKCEVNMVKL
-         nf3OG4jL/cCu7OQAHbcfR87nNz8vWo3rsbzdZAX1eJ5MOstLmL+ibcQ9l7qzijai0iCe
-         tJfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXe600/hAjGpsM4UTR72rXG85aYoEm76xQ+PXD56pixsk6waRM4puxhGwhL1K6cyj4VJM1HWaUEmGF49qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAi7gFfk6/fDcgBjA9NcWTuSCKfaSPryYngxrSRS/UOsAcm1XN
-	tvjMWbuaQ00e/ZR8VBdWElMAIIDvpheV7ZqFH9VHur/ayErtKN97uMzz/hSFksuy8tmcXBYAUZN
-	5ImB+8sR+R/Q/gXjQCxo4IlS+QwltIOBm69/f
-X-Gm-Gg: ASbGncvBKYl9uwc6da6zRfZ7kMinGfVTuEXERnvqcLOGxIXhhF7GmC2TMo9U2WHTQaI
-	wH23uo76Dna21I6MnA0W7ygO/FME3gCaxA/M5i2oNJAoWgpv18VPL5hIna7RXZuGXt1Nvqz8mlN
-	JJGoNdjF/b7b69VySvP7RggCEzOrocwtOYb2Nfpl47cbd8XSpDTqDtMCnP/RC//d3Ra2IzgBX1D
-	D8YdjFbrB1lNQpORJ5oyt01o97j1X3j03Ron8nhohD79fXayG6YU1ZPsLsZJsCM0hwF3fGfTPzB
-X-Google-Smtp-Source: AGHT+IGyQos6i+6j/fPgHNGknJkZvaAenzHKb/XWKRbP3p2LX3ZKsQKIZE+UqBYq7tnH5qZdQgMou/Il4fE7m3DsbC0=
-X-Received: by 2002:a05:6000:1a8d:b0:428:56ed:c68e with SMTP id
- ffacd0b85a97d-429dbcdfec7mr4087672f8f.9.1762276500501; Tue, 04 Nov 2025
- 09:15:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7DC338935;
+	Tue,  4 Nov 2025 17:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762276510; cv=fail; b=id5CFQ9Wf0GyINAJCMBAUsVm2KyBvCuc/x/k5Xrr4pwEQvVF6nTa/d+5OcHPeLe3ITcZrYvSHPuYnO6aZaSUN2px/k24ebS39/fljkrrepTUeFH+4PINobAOxsGFvgs9ulAEnEGrTMSFLlGcqINj6lHF100buCDiZfqucgJPfsY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762276510; c=relaxed/simple;
+	bh=/GGW+YapkhINwX6i9WAD9boeurolhVcMpSIlQ9bGLj0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jhESl31m9XENqahuEtXWjvBqlK2hu/7cUnsS0hiAhR5K9LNbcpdXD1FBm3c1NJd/6KegspkzIu3CGtfVQNQcFdq9DXdzh4kVT+0uARjc5MIBARwGXVia8JIdNUdqsD7qyzBWCe8SrkBy7QTwXG82HElv/gnHXdTmpC2Li1I2GDk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZizmwdT9; arc=fail smtp.client-ip=52.101.201.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vzjDT7fk04CjfzQH19SUGUw2ZVbXAuE2K7r3Dw2SWz315gVWznnbWTY0QRyOijVIy95eZTOeUuI2T9/DqnpbjUvm5xy+jj9T9AWzElZE3MX6okrOSe1Qtw2OODQtMvLayI8/eheguCagIKoKk+yciQ0wVe00qq2A2ZmURC5tq9xWig+bSqG80DQbWF5HCAmQx/b9QGfmaBRfkuGp6Xs3sUrEW/6v17oAfACDrpaWBGmkvzZwf+dw6HkaSmuORZVq1PRx7u6Cv95qPRXbgN6eUmhPWjB1szj32cwkJ6ttKRH+4wJL5RDph+jb9KCCLMvjaNm+fqq5KzV1AiCl37d6Gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/GGW+YapkhINwX6i9WAD9boeurolhVcMpSIlQ9bGLj0=;
+ b=lfFfUna7hif3dLrYNxOczNR1c8zQGfaaQ+V8tKE9yKQPT/3RODYwujCYEGuGQP3uLcYZFj6gG5JE9+yrOPkmWPCLsp0OX7Woc/XNZZYFr9qqt9nfRKYadUGBzPPgD3Aaq4SHEZCdjGi9bLrEEfgu49cmbVaSzBX8PwT9q68W7KD0PR6Ry8apqge46CKaVJ1E8IwbLYUt6RU5nV8hSCavf9NPTbCKD+scXeF34neYoiXBxFuDNqEq6xG5rIwUE8WgL1cfwRvGlxtjts7S8hGL2NGXELOW3Vg/opZyL9HW1UGOPbGmItWdeDQogrOcYFrsanSt20w2iaDY8SXLlyMbog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/GGW+YapkhINwX6i9WAD9boeurolhVcMpSIlQ9bGLj0=;
+ b=ZizmwdT9XxrSYHwyZo98tDVP2XKsXWBzwpbYYhf8Wq4Anc/Fwjz4RacYe6F/mB7XCA9BiravlNMqxgmhnoEF2dQaEHis/9mZbsRjjHViFfKqR24Fprgvj6duk92rdqVmbwavm+eXDxvbUvejzyhGV6kl35IkLe4Ji5iJgNleazbn4y+WmxkJdCbwED5sBu8+XZ5MiQIkGh4SzhdVaQW9NQGRXKs2yJVJScNkwB5j5qha3S31uCG9VG5iljHlUZK0/jrfLIHVv4pcVXO3zrnhipCPf8klCv+mEmPi08NdIlvfqPy0AkrzFrH5Od5teSwASepSbVWY9mz1RM2jUTm9tQ==
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21)
+ by CY8PR12MB7219.namprd12.prod.outlook.com (2603:10b6:930:59::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
+ 2025 17:15:04 +0000
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2]) by SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2%7]) with mapi id 15.20.9275.013; Tue, 4 Nov 2025
+ 17:15:04 +0000
+From: Ankit Agrawal <ankita@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Aniket Agashe <aniketa@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Matt Ochs <mochs@nvidia.com>, Shameer
+ Kolothum <skolothumtho@nvidia.com>, "linmiaohe@huawei.com"
+	<linmiaohe@huawei.com>, "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"david@redhat.com" <david@redhat.com>, "lorenzo.stoakes@oracle.com"
+	<lorenzo.stoakes@oracle.com>, "Liam.Howlett@oracle.com"
+	<Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>,
+	"mhocko@suse.com" <mhocko@suse.com>, "tony.luck@intel.com"
+	<tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>, "rafael@kernel.org"
+	<rafael@kernel.org>, "guohanjun@huawei.com" <guohanjun@huawei.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "lenb@kernel.org"
+	<lenb@kernel.org>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"alex@shazbot.org" <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>, Kirti
+ Wankhede <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)"
+	<targupta@nvidia.com>, Zhi Wang <zhiw@nvidia.com>, Dheeraj Nigam
+	<dnigam@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "Jonathan.Cameron@huawei.com"
+	<Jonathan.Cameron@huawei.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"Smita.KoralahalliChannabasappa@amd.com"
+	<Smita.KoralahalliChannabasappa@amd.com>, "u.kleine-koenig@baylibre.com"
+	<u.kleine-koenig@baylibre.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v5 0/3] mm: Implement ECC handling for pfn with no struct
+ page
+Thread-Topic: [PATCH v5 0/3] mm: Implement ECC handling for pfn with no struct
+ page
+Thread-Index: AQHcTCjI0pjrCheBKUOiFkE7k4wQB7Th0nYAgADyENI=
+Date: Tue, 4 Nov 2025 17:15:04 +0000
+Message-ID:
+ <SA1PR12MB7199FF870DE7DBE9F1757935B0C4A@SA1PR12MB7199.namprd12.prod.outlook.com>
+References: <20251102184434.2406-1-ankita@nvidia.com>
+ <20251103184742.441e98e93c5ed36320c4f41a@linux-foundation.org>
+In-Reply-To: <20251103184742.441e98e93c5ed36320c4f41a@linux-foundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB7199:EE_|CY8PR12MB7219:EE_
+x-ms-office365-filtering-correlation-id: 53a1203c-7992-4c82-a657-08de1bc5b218
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?POomm5zhVHvW5kS8+M1wEk2j9lZlNa/wmatMZExgYGH0MACSjVRea6EbD8?=
+ =?iso-8859-1?Q?36EAp8GO6sTT7+nAw6mB8S4Jrqou6edqDA2RWeBD2m+u4aqg2I0Qx9w/Nq?=
+ =?iso-8859-1?Q?nfRjNxzqcwq6Z9rzHiF5avkGi4QDuhLNTBjnIxhHXA4ZIreq5vs/NAz6KP?=
+ =?iso-8859-1?Q?A84uAhdVQig6Q3Jv36zhpiSnZDTMhIfpgs6B5NqraIu3ef9+3gTGalYMhB?=
+ =?iso-8859-1?Q?Qs/O5G6hiLfEHUJIrHERizpU9u6c8COqhGhQlJYk5HsijQ3fHwwEI/kqTQ?=
+ =?iso-8859-1?Q?5SjWPlQ/ikB93w5CpAdMAE4308Pkn+0lnEIcAg4GphqNRCdku/eEzCWX1Z?=
+ =?iso-8859-1?Q?Und6lVg/ZGp0N/1QaUX3a6y/q71yT9gSmVR6ipfBIj6/k4E+qtJQS8iY1A?=
+ =?iso-8859-1?Q?8fMy3oIbyIBnNm/X5jp0/uB6mqbEFgX54OEd2TcLGbM/nskXfVFeO3Ga9Q?=
+ =?iso-8859-1?Q?NmB5kQNluG/2wlvQ4mpgEAQJFUavDF/h6ADURhaj5TGFN6VZZmhkv7yodO?=
+ =?iso-8859-1?Q?vPFnnYTtlFTaCSmfAnoTEomeSqzJCJ/69BOfYuldHGaPeqOdPduqMYR52q?=
+ =?iso-8859-1?Q?oBBpTuJooEc3Nw/QiOUs+Zc9N9CXNdxc7bdAZ5zad/z8LNcPcUWE//NOa3?=
+ =?iso-8859-1?Q?pNBRA1akgVdAZxgfWY4I03nIE/zLoYQWaKflyloxMRt+B9MNDqZ/R1KcEK?=
+ =?iso-8859-1?Q?nXGZN8gcHRgqCmqp9Jv9inw99UUoFBxkpNWFNZz/BqQZxPpeaXseHAGCmg?=
+ =?iso-8859-1?Q?J9HkO+TgYzSY0ohfzjyqloTQ2v/9mxUjjInl4AbTOHejypqJj/kQEieDu6?=
+ =?iso-8859-1?Q?7UFEcggJAfolpInTP8mnwLSJwLMrNkxJxA9Olw8V05iPCqcYgkGPb8742v?=
+ =?iso-8859-1?Q?ePqbv13M9QBkckxsqVUSxru8j5PmG0qVk2Oldre6JyNVGwAP5dnA/5rD+x?=
+ =?iso-8859-1?Q?zANsT6KTFEA0Oux7waxcmzkIYpB/yIDBk7OIQ3uD8mmrr+etCVUPJhz+tI?=
+ =?iso-8859-1?Q?58kyfh8oDKoD/KG+dXbvAI1kLesqXnyNLWWhgiLSCZrXpSyMZnniVG2g7U?=
+ =?iso-8859-1?Q?uda156cfrM9wgtQGPUtstpEP1czHKvCFtWu6ibQsk/2NKcn4vwoxp8st4y?=
+ =?iso-8859-1?Q?3MeyvUFt/VdnfLVrBywZ4JhTS1It66EPQ/qttTrnWPGngQSHC5IcvR9fNp?=
+ =?iso-8859-1?Q?KVSc8R1kE5BYVo3S5T/IDm+L5JEngBWaNG9nUiUCi44R9wGN1FbuY45NjZ?=
+ =?iso-8859-1?Q?Y98nxrg+NDg6ZJc3+yC24mxF33j4IrfxMPVwNQospC1hHo8Czn1C531x5n?=
+ =?iso-8859-1?Q?yuOzFFMCFVOn0vEwPY+cAy4mng/LEv2OJbmffrbLZHS56/Qr5dSlB/KGKx?=
+ =?iso-8859-1?Q?dYEgYNGsNet3NlGQh//m0nl+eIb2GU07eBzF2dacVpic9gMnUlwTczdbtm?=
+ =?iso-8859-1?Q?V8xAp0Te4zwcVSEa1aggzATv1JRF02HYkhUZx6i3Hudb20QXGsM3USH+B6?=
+ =?iso-8859-1?Q?/8myC/p4g5fCCm5FQU/3se0wfxWBJW1Vd8+AY1KGMa/NouXhd+YHkhDycg?=
+ =?iso-8859-1?Q?Dp4sTUCkq5TQxOSBlf0PxlkJMIU5?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7199.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?f9nMQAGDxO7pLLEIZvBMK2yHPvHmHwB4+TzQpgI1CdiChWg2gqlJLhD2SF?=
+ =?iso-8859-1?Q?8LX8YJY0z1LD1lfPyMNf4Lu5/7aGd5IjRUted8w0YiQIh5u3tWHnURjwGy?=
+ =?iso-8859-1?Q?tbIkMUMAD1mftiqlLwdI7m1K1qDCocglGZixbF3I1JKFJEAz8FNSo8XIqD?=
+ =?iso-8859-1?Q?pq6AC/8E2vD5OeJ53yr3n4kazQRniZbw14b3lP/ncamS4j21sLcjdrEoDQ?=
+ =?iso-8859-1?Q?ywZZG8C99tDvi0D0UNKYityG6sx+D+fqkQM7ToTP83FPHA3y9djxcXljaM?=
+ =?iso-8859-1?Q?MQKNlNXORUE8CoUBymAj5EoitQ6Mtl0nGxqsnBsR1GCpNOZWodOLFDMbKt?=
+ =?iso-8859-1?Q?pX7oKE5qg17EaQfXfMscNd1aEqOE1DOjVBTdCd2mQiIfBcFKQQoo9RWZPu?=
+ =?iso-8859-1?Q?ez+ARzY526cugkavpS7o0ckp/XYPqa7MVZUwlEqpk3VgA+/qQGua2oPIBZ?=
+ =?iso-8859-1?Q?MzTloI1dMRWTaiEAva/ZIAuJdDMoF0kx3ennESwDfMkASqhsCwtsui99h2?=
+ =?iso-8859-1?Q?HvXb4JkXkLwK8mJ0a+STX1uOwX1GV4VZ+EnpHaN3Da9G/yjtIeYgDhucZx?=
+ =?iso-8859-1?Q?NR0oQJ8Ag1p4f4qZ9w/7inHf9FQRPZ27S7LnLcEd/O8OLmJGvWMBk/IDAz?=
+ =?iso-8859-1?Q?HlJLGHbtSwWlXDn3IniMiO0/MFADOB74W7PCFHVRQmq8gP74mPPKY91mxX?=
+ =?iso-8859-1?Q?UBYGVeGjVB9bQNyxROtwb1pDDy3LtsioA9wn27ixdrneN25woirDqQ8Zmn?=
+ =?iso-8859-1?Q?rxX5C6+xuoyas8hEJSX++72TXAjOBPoPoDFA1yQg40dEol0s0HSJ3HGbLF?=
+ =?iso-8859-1?Q?J4ZinkcWBy9ilW8fBTLggxL6Z1pyr+aF34XcqpPdI0fz8YDb8FieXd6qjl?=
+ =?iso-8859-1?Q?yW9Exb5x4/VCnxvoqy6k8alPXGX0SfMwOxzpjeQH67MUbE3MtVgKuCuxoe?=
+ =?iso-8859-1?Q?el+BzuPqPmIFtTwzsp1hDrfsI25YbzaHGq6nIUks9FoMvdwblFevni9vs9?=
+ =?iso-8859-1?Q?ZkdpNhhwHkkeqOu+D5H5oK8sjspktzf3Rkw4chaAv14Vj7bo99ks8ULmok?=
+ =?iso-8859-1?Q?V/ZQwIF/cNI5PjMdI2AJnr8TzmUtVg+1T4ptVfB8lvVhHS9/wV5eEO/4a2?=
+ =?iso-8859-1?Q?tza9UNJDZOXxDac+EGK2go+7MBF5bOqkLb3I7WmLEXXKE4uX2xADvz9prV?=
+ =?iso-8859-1?Q?YhYeY95izR82aho+ikHpN9Tu8f2No2xBxxr5MbwUKt33yg97NNSkM7V9ih?=
+ =?iso-8859-1?Q?ArsFfhPRNo6b1+tgtaSXbuxgazmoNFBbt45cY2VO9rC17kq7SimCGPDZ4/?=
+ =?iso-8859-1?Q?pn+tEez1hfaVgRxm/xpLD3YqxzhSxK4+1lfwkFkdq6Vku9QzbHP8wHq/Ts?=
+ =?iso-8859-1?Q?xC4hf7qu4lwxOQvf9WXRgqRucsrxD0KRFPDiNRgXhRdSK2WsmjMZi/Laat?=
+ =?iso-8859-1?Q?YfPAOw2Nmtn0S/4frvKooOm73lyScSaMOoRCK5+DqL6h2Iv7hsvPKCZhzt?=
+ =?iso-8859-1?Q?5pWFpWPi9m2Dd9WEfqFE32CcyUDhMJ75dmu0jOiaCLXANyImW3OdWOxHLv?=
+ =?iso-8859-1?Q?K7HreLT0RKZmYZMI1E4IvEQTobPgJMTfTi61GzJv1LF7JQGqptxQdOr0eC?=
+ =?iso-8859-1?Q?AWB0FQGsPrkdY=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com> <20251104134033.344807-6-dolinux.peng@gmail.com>
-In-Reply-To: <20251104134033.344807-6-dolinux.peng@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 4 Nov 2025 09:14:46 -0800
-X-Gm-Features: AWmQ_blqBVF2gna_7Kls9kKFTqv1JFkdXlNKRWyoszSCf_T5Zve1vrCP8cG0qoQ
-Message-ID: <CAADnVQKxqScrBhTKOXcwSL_mVXE36YQ_yQX7qwg8C3X1ZnXHnA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 5/7] btf: Optimize type lookup with binary search
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7199.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53a1203c-7992-4c82-a657-08de1bc5b218
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 17:15:04.3507
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 041yYJ9sqSS9BbkrdwZ8KDvocErKu7uj8SbW55fpo7sxDShWf95Ucr6BMNP3S//TUKxuKOFZHntZ5/6ZzUjdHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7219
 
-On Tue, Nov 4, 2025 at 5:41=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.com=
-> wrote:
->
-> From: pengdonglin <pengdonglin@xiaomi.com>
->
-> Improve btf_find_by_name_kind() performance by adding binary search
-> support for sorted types. Falls back to linear search for compatibility.
->
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Cc: Song Liu <song@kernel.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
->  kernel/bpf/btf.c | 111 ++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 101 insertions(+), 10 deletions(-)
->
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 0de8fc8a0e0b..da35d8636b9b 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -259,6 +259,7 @@ struct btf {
->         void *nohdr_data;
->         struct btf_header hdr;
->         u32 nr_types; /* includes VOID for base BTF */
-> +       u32 nr_sorted_types; /* exclude VOID for base BTF */
->         u32 types_size;
->         u32 data_size;
->         refcount_t refcnt;
-> @@ -494,6 +495,11 @@ static bool btf_type_is_modifier(const struct btf_ty=
-pe *t)
->         return false;
->  }
->
-> +static int btf_start_id(const struct btf *btf)
-> +{
-> +       return btf->start_id + (btf->base_btf ? 0 : 1);
-> +}
-> +
->  bool btf_type_is_void(const struct btf_type *t)
->  {
->         return t =3D=3D &btf_void;
-> @@ -544,24 +550,109 @@ u32 btf_nr_types(const struct btf *btf)
->         return total;
->  }
->
-> -s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 ki=
-nd)
-> +/* Find BTF types with matching names within the [left, right] index ran=
-ge.
-> + * On success, updates *left and *right to the boundaries of the matchin=
-g range
-> + * and returns the leftmost matching index.
-> + */
-> +static s32 btf_find_by_name_kind_bsearch(const struct btf *btf, const ch=
-ar *name,
-> +                                               s32 *left, s32 *right)
->  {
->         const struct btf_type *t;
->         const char *tname;
-> -       u32 i, total;
-> +       s32 l, r, m, lmost, rmost;
-> +       int ret;
->
-> -       total =3D btf_nr_types(btf);
-> -       for (i =3D 1; i < total; i++) {
-> -               t =3D btf_type_by_id(btf, i);
-> -               if (BTF_INFO_KIND(t->info) !=3D kind)
-> -                       continue;
-> +       /* found the leftmost btf_type that matches */
-> +       l =3D *left;
-> +       r =3D *right;
-> +       lmost =3D -1;
-> +       while (l <=3D r) {
-> +               m =3D l + (r - l) / 2;
-> +               t =3D btf_type_by_id(btf, m);
-> +               tname =3D btf_name_by_offset(btf, t->name_off);
-> +               ret =3D strcmp(tname, name);
-> +               if (ret < 0) {
-> +                       l =3D m + 1;
-> +               } else {
-> +                       if (ret =3D=3D 0)
-> +                               lmost =3D m;
-> +                       r =3D m - 1;
-> +               }
-> +       }
->
-> +       if (lmost =3D=3D -1)
-> +               return -ENOENT;
-> +
-> +       /* found the rightmost btf_type that matches */
-> +       l =3D lmost;
-> +       r =3D *right;
-> +       rmost =3D -1;
-> +       while (l <=3D r) {
-> +               m =3D l + (r - l) / 2;
-> +               t =3D btf_type_by_id(btf, m);
->                 tname =3D btf_name_by_offset(btf, t->name_off);
-> -               if (!strcmp(tname, name))
-> -                       return i;
-> +               ret =3D strcmp(tname, name);
-> +               if (ret <=3D 0) {
-> +                       if (ret =3D=3D 0)
-> +                               rmost =3D m;
-> +                       l =3D m + 1;
-> +               } else {
-> +                       r =3D m - 1;
-> +               }
->         }
->
-> -       return -ENOENT;
-> +       *left =3D lmost;
-> +       *right =3D rmost;
-> +       return lmost;
-> +}
-> +
-> +s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 ki=
-nd)
-> +{
-> +       const struct btf *base_btf =3D btf_base_btf(btf);;
-> +       const struct btf_type *t;
-> +       const char *tname;
-> +       int err =3D -ENOENT;
-> +
-> +       if (base_btf)
-> +               err =3D btf_find_by_name_kind(base_btf, name, kind);
-> +
-> +       if (err =3D=3D -ENOENT) {
-
-Please avoid the needless indent.
-
-> +               if (btf->nr_sorted_types) {
-
-looks buggy,
-since you init it to btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
-
-Also AI is right. Init the field in the same patch.
-
-pw-bot: cr
+=0A=
+> Thanks.=A0 My knowledge of this material is weaker than usual :( But the=
+=0A=
+> series looks good to my eye so I'll toss it into mm.git's mm-new branch=
+=0A=
+> for some testing exposure.=A0 If that goes OK then I'll later move it=0A=
+> into the mm-unstable branch where it will get linux-next esposure.=A0 At=
+=0A=
+> that point I'll monitor reviewer and tester feedback (please).=0A=
+=0A=
+Thanks Andrew! Lets see how that goes.=0A=
+=0A=
+=0A=
+=0A=
 
