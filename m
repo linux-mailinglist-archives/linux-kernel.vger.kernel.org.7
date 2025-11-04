@@ -1,167 +1,94 @@
-Return-Path: <linux-kernel+bounces-884934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA50DC3188A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A649C3188D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4CAB189EE13
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FAD118C5103
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1F732ED25;
-	Tue,  4 Nov 2025 14:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA2C32D7C8;
+	Tue,  4 Nov 2025 14:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DymkLmE9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="WZHvPOJu"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0163E32D7F4;
-	Tue,  4 Nov 2025 14:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E5B2222D0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266580; cv=none; b=e2gPBRc94t1BKwfhMUh0oU47zH/CtvKHjn0m4nkM2WIHiV35HiOsUuC+uD9MAMJIreGghfSNyKvnS34MZduLYr1MFfPxX4xS41mVoQxJWznjxdRORVWB7ArG5sCM3ulsq2Kero3mIKWZZG3p7DWYPwdOV79nsPEMZjrkRyuq2Ws=
+	t=1762266618; cv=none; b=atjDV8uIanqs0oHjygq4UOfNFEaPye2hBYEBQPSaVBpZYbjym+OlW1lmXp43aabXhfCH81dEHE9xRC+vpyjAWnKAvCiASYIYHuTUyjB3HXFfv6LscvqCgOEg5sRLelPGRF42JrvoGuXV5gtjJ02joQsn/iK1DiZPfwaU1wcV5+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266580; c=relaxed/simple;
-	bh=c4RLP+0vDN22bgBLg9lz58qJzb1Ge1h66SNRV9dWN28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6P4l72H6Ma5MUAArx4mLeV1AxkmvjJlfiem2h+4sVud9VisLNTLWNDg/VXyVG3uanjEnsAZg8UhbDFHDoM/WZ5YjDIMme44ejngqhyQp95xZafbp6puTBWCFpFDQPQY7SFLbOoIXiO1PFf7xpAyg7kaX2pROMHbEWmIaNacdfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DymkLmE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF99C4CEF7;
-	Tue,  4 Nov 2025 14:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762266578;
-	bh=c4RLP+0vDN22bgBLg9lz58qJzb1Ge1h66SNRV9dWN28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DymkLmE9+QCgMxOa0/F3c/CZRjbA+jZYpn8aMVzxWJFt+fVGH9GajnxsNiUrFpEWD
-	 G5njtKAG5qkT4+gpTDCGRwvPPzWl5rsfR91YJEr2Q6QRhsqwtGKFX9eCkTBwlyF36J
-	 InzWg7MW4oJGqUbiSm0J6Ysy3Qz9i71DubLIAqcY=
-Date: Tue, 4 Nov 2025 23:29:33 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jakub Lecki <lec.jakub@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>
-Subject: Re: [PATCH 1/3] usbip: Convert CONFIG_USBIP_VHCI_NR_HCS to a module
- parameter.
-Message-ID: <2025110450-limping-retaliate-1ad9@gregkh>
-References: <20251104113248.223594-1-lec.jakub@gmail.com>
- <20251104113248.223594-2-lec.jakub@gmail.com>
+	s=arc-20240116; t=1762266618; c=relaxed/simple;
+	bh=F5S/0iH2cpmMGHud5IC55HcyTekJ4slPNvntrHD1n8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYjhSqZJq0M1npR3RcXgI7K/lYjYBQxvvI4REcJt/NHtD/yx9j8kpLiMNyBfo9FvoCqUR4BboSZrtyxDxGgAGm2BZ+BVvs1gmd5K4tCpDzxNPGb70FLAW6v5P8zMl0GaEKC2L8KqcU79ZLwjBSZMq7+tyJuqAmmSvsEF8YYzyj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=WZHvPOJu; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: fdbc7bb4-b98a-11f0-9e68-005056994fde
+Received: from smtp.kpnmail.nl (unknown [10.31.155.8])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id fdbc7bb4-b98a-11f0-9e68-005056994fde;
+	Tue, 04 Nov 2025 15:31:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=mime-version:message-id:date:subject:to:from;
+	bh=XbM4iNsi5nJLgtGzuN4SDkuKeOirEOrYvwhEt+pkvfM=;
+	b=WZHvPOJuf2DwMtFLbTbDY7J/XNpVmwBNlWlhSCAZukdIraOBeVGLsTNt/enBpfX/yjadietqMHls2
+	 jvEwC0Itvtvc7POAIhrXF5IiKTwW1p4Yt3StT7f2pX3e0ZCaoNBZIev8EvBkWS+X/Nrii923lAbovH
+	 yxWmgX5PNs5g/leBDaqsjlCr4MVUipkN43JiCQ7S1yVnxg5dyB0OlA/V/Zx8RCoK7g+Q2HJ37fBj5c
+	 yd+NBmgYAC3cLThClN8uGQGPV4jmEjBg70F2Z8JP/PyKu5Kl2K4aZpxaY+aDtBLA0hHUPG/HMobl8F
+	 CWlejRzZ6IOL5JB4ySg/EoINJPgK4mQ==
+X-KPN-MID: 33|LAJlAHdLnro746YRsnom0KjKcr8ybqbZPBrmTRGIYHn0sX+TuV+F1Pab7T19EzH
+ DgYzw/r4aM3apNQVsi8q8GQ==
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|TI1C/vEuYkrfME8/uwQA2fthvIzI1Vk97qlqOUmKxHpSzaYqs1V6xPXcssVCLjc
+ tFaw9lfgUkB8sLLAQBCtVmg==
+Received: from daedalus.home (unknown [178.231.9.53])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id c27280d7-b98a-11f0-9bf6-00505699d6e5;
+	Tue, 04 Nov 2025 15:30:07 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Christian Brauner <brauner@kernel.org>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Taotao Chen <chentaotao@didiglobal.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	NeilBrown <neil@brown.name>
+Cc: jkoolstra@xs4all.nl,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Fix two syzbot corruption bugs in minix filesystem
+Date: Tue,  4 Nov 2025 15:30:02 +0100
+Message-ID: <20251104143005.3283980-1-jkoolstra@xs4all.nl>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104113248.223594-2-lec.jakub@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 12:32:46PM +0100, Jakub Lecki wrote:
-> In workflows involving a greater number of remote
-> USB/IP devices, the default number of available virtual ports may be
-> insufficient, forcing user to recompile the module with greater number
-> of configured virtual host controllers and/or number of ports.
-> 
-> Allow a user to configure the number of USB/IP virtual host controllers
-> via a new 'num_controllers' module parameter to simplify the usage of
-> this module.
-> 
-> VHCI controller structures are already dynamically allocated during
-> module initialization, so the only change is switch from assigning
-> 'vhci_num_controllers' via Kconfig to using the module parameter
-> framework.
-> 
-> - Remove the USBIP_VHCI_NR_HCS Kconfig option and replace it with a
->   module parameter.
-> - Trim the value of the configured 'num_controllers' parameter if it
->   exceeds bounds, and emit a warning.
-> 
-> Signed-off-by: Jakub Lecki <lec.jakub@gmail.com>
-> ---
->  drivers/usb/usbip/Kconfig    | 11 -----------
->  drivers/usb/usbip/vhci.h     |  9 +++------
->  drivers/usb/usbip/vhci_hcd.c | 16 ++++++++++++++--
->  3 files changed, 17 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/usb/usbip/Kconfig b/drivers/usb/usbip/Kconfig
-> index b9f94e2e278d..bdcb6f4fdbec 100644
-> --- a/drivers/usb/usbip/Kconfig
-> +++ b/drivers/usb/usbip/Kconfig
-> @@ -38,17 +38,6 @@ config USBIP_VHCI_HC_PORTS
->  	  host controller driver, this defines number of ports per
->  	  USB/IP virtual host controller.
->  
-> -config USBIP_VHCI_NR_HCS
-> -	int "Number of USB/IP virtual host controllers"
-> -	range 1 128
-> -	default 1
-> -	depends on USBIP_VHCI_HCD
-> -	help
-> -	  To increase number of ports available for USB/IP virtual
-> -	  host controller driver, this defines number of USB/IP
-> -	  virtual host controllers as if adding physical host
-> -	  controllers.
-> -
->  config USBIP_HOST
->  	tristate "Host driver"
->  	depends on USBIP_CORE && USB
-> diff --git a/drivers/usb/usbip/vhci.h b/drivers/usb/usbip/vhci.h
-> index 5659dce1526e..30b8540e0b49 100644
-> --- a/drivers/usb/usbip/vhci.h
-> +++ b/drivers/usb/usbip/vhci.h
-> @@ -82,11 +82,8 @@ enum hub_speed {
->  /* Each VHCI has 2 hubs (USB2 and USB3), each has VHCI_HC_PORTS ports */
->  #define VHCI_PORTS	(VHCI_HC_PORTS*2)
->  
-> -#ifdef CONFIG_USBIP_VHCI_NR_HCS
-> -#define VHCI_NR_HCS CONFIG_USBIP_VHCI_NR_HCS
-> -#else
-> -#define VHCI_NR_HCS 1
-> -#endif
-> +#define VHCI_DEFAULT_NR_HCS 1
-> +#define VHCI_MAX_NR_HCS 128
->  
->  #define MAX_STATUS_NAME 16
->  
-> @@ -118,7 +115,7 @@ struct vhci_hcd {
->  	struct vhci_device vdev[VHCI_HC_PORTS];
->  };
->  
-> -extern int vhci_num_controllers;
-> +extern unsigned int vhci_num_controllers;
->  extern struct vhci *vhcis;
->  extern struct attribute_group vhci_attr_group;
->  
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index e70fba9f55d6..93c3fa3e1c53 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -10,6 +10,7 @@
->  #include <linux/kthread.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/printk.h>
->  #include <linux/slab.h>
->  #include <linux/string_choices.h>
->  
-> @@ -44,7 +45,12 @@ static int vhci_get_frame_number(struct usb_hcd *hcd);
->  static const char driver_name[] = "vhci_hcd";
->  static const char driver_desc[] = "USB/IP Virtual Host Controller";
->  
-> -int vhci_num_controllers = VHCI_NR_HCS;
-> +unsigned int vhci_num_controllers = VHCI_DEFAULT_NR_HCS;
-> +module_param_named(num_controllers, vhci_num_controllers, uint, 0444);
-> +MODULE_PARM_DESC(num_controllers, "Number of USB/IP virtual host controllers (range: 0-"
-> +		 __MODULE_STRING(VHCI_MAX_NR_HCS) ", default: "
-> +		 __MODULE_STRING(VHCI_DEFAULT_NR_HCS) ")");
+Syzbot fuzzes /fs by trying to mount and manipulate deliberately
+corrupted filesystems. This should not lead to BUG_ONs and WARN_ONs for
+easy to detect corruptions. This series adds code to be able to report
+such corruptions and fixes two syzbot bugs on this kind.
 
-I'm all for making this dynamic, but this is not the 1990's, please do
-not add new module parameters.  Use the "proper" api for this, either
-sysfs or configfs, instead.
+Jori Koolstra (3):
+  Add error handling to minix filesystem for inode corruption detection
+  Fix a drop_nlink warning in minix_rmdir
+  Fix a drop_nlink warning in minix_rename
 
-thanks,
+ fs/minix/inode.c | 16 ++++++++++++++++
+ fs/minix/minix.h |  9 +++++++++
+ fs/minix/namei.c | 39 ++++++++++++++++++++++++++++++++-------
+ 3 files changed, 57 insertions(+), 7 deletions(-)
 
-greg k-h
+-- 
+2.51.2
+
 
