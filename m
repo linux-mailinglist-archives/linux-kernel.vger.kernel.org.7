@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-884939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECB9C31899
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:34:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD28EC31893
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DA542470E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220ED18C5911
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED18331A42;
-	Tue,  4 Nov 2025 14:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7FA330332;
+	Tue,  4 Nov 2025 14:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="saCyWy/s"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RYhNbb2X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740A83314A0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC8232ED59;
+	Tue,  4 Nov 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266633; cv=none; b=pe0h/S2iLHQiH//HquXQ6FWZ1kE9OWi4N9jiJEI3BYNTMbTq+5t/sZq4IPTjdTqIrm1+B7YfBMczTH2uhOwiOHze1OTnUFRfN7y2xVjmovXV0BCRU1M3RUolFSwHaa9Ymshy40VaeNf10V/6b3jKBB72ZdkOhVJ4phT+Rdjri60=
+	t=1762266624; cv=none; b=a4g3PFCCRfoo8oyKN2jz6g3crLvy9cGl3SWdIVQchdlM0EUHLebrL1+8iK1ZrhDOIrzaLcb2jfIJ/WjHk/K48MyXMgCpZHUretRSY65sJCXkHcu0NLVHHJPTLTrXs5K96HMlGFV6h+NYEGIoFU3JZZw25dpQWJjgEKdxLtD/sZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266633; c=relaxed/simple;
-	bh=IL2nrGlEqs3K32c6TMpRLuNQm6KKha/RXLuIUi5rJsI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jZuOMjhNmuqwHHdV1xByJ/B9IvY9sGI51tgzJKP/0JrJfh8RmCMMVXGecquRmMoy3jtBUfLZag2SY9MSQIC67M3V2/13AIqlWFGPmpP6NNGHTR/pjWIvwcNQ4brtSQEsqtfhynGOTYc1N4l/XgGr+J3UL0SDaHEvGzgmvpPoQWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=saCyWy/s; arc=none smtp.client-ip=195.121.94.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: eb973a6d-b98a-11f0-809d-005056992ed3
-Received: from smtp.kpnmail.nl (unknown [10.31.155.8])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id eb973a6d-b98a-11f0-809d-005056992ed3;
-	Tue, 04 Nov 2025 15:31:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=mime-version:message-id:date:subject:to:from;
-	bh=So3V6E2kJy5zkPbcq4XrBxevV+PIGfWxZmUHoE1an4I=;
-	b=saCyWy/stXYI35VSyKCaQCtFtE+OFlFekLrswaqhuTz+DwF3gkgFRH1wXgKm0RCN1wIJv6FGUtQWD
-	 DC7hSJnuwHw0QKMJ3hiG1mwwRjWx1PUb8NCsfs/v//xi1/VIB94BZg4LEK9PN2Ehy60Rb+/fup+NVS
-	 iLxWQkrfhnabwPJTPxq9cPyr9RkzweW3mECIusZtJqkR3Bo9iKixDTtIPsCQvGCaxTW563kUaN0wW0
-	 ReDaJ88KvVbRQmtg2Z09OnV1fyvVzpMSVz0YJ4VC48CxK9La0tz05z8geuTrq1gCZKIi8XPG/zbym4
-	 w5SCXk8GM78zX1Hnlch97Rz8AmkXp2g==
-X-KPN-MID: 33|T0nD5WN8WsynbF9UJ6sQxGlWSXykxTaW+9Odhmv6jUxAOcFVwOnrfSunCM/EPqt
- ND2O8n17gEcQHrUl6Pw2fkAsxCsFca5O/dmqNuc2nvUI=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|6GV+mNOx4esihGkMDcJdfZgD7UFh9x1J3SNjl027vj0XaFwqJsL1h51tHzwkVL9
- xcaqxRzwXKkEOvt7+pZvjaA==
-Received: from daedalus.home (unknown [178.231.9.53])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id cc594538-b98a-11f0-9bf6-00505699d6e5;
-	Tue, 04 Nov 2025 15:30:23 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Christian Brauner <brauner@kernel.org>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Taotao Chen <chentaotao@didiglobal.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	NeilBrown <neil@brown.name>
-Cc: jkoolstra@xs4all.nl,
-	linux-kernel@vger.kernel.org,
-	syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com
-Subject: [PATCH 3/3] Fix a drop_nlink warning in minix_rename
-Date: Tue,  4 Nov 2025 15:30:05 +0100
-Message-ID: <20251104143005.3283980-4-jkoolstra@xs4all.nl>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251104143005.3283980-1-jkoolstra@xs4all.nl>
-References: <20251104143005.3283980-1-jkoolstra@xs4all.nl>
+	s=arc-20240116; t=1762266624; c=relaxed/simple;
+	bh=xjMIBr6AMjwygXnX/e3NAeGPHp4K/p0K97biE5sQOhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zo70HxSFdqFOS8APSzcnNToOhzrxMYwtXTT1x2Nv7afNz1F+xHpbBaRj7lqtU+jMK37sJjJJO6mHS+8QfQ4H7VjpskMm880wzCoLNiupcqjBFw4b52fpWIsMH6zuugIsxK9Eky6Vz0AiRaUVOA+hbqsb9k+e44zgoLHYKJGwS4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RYhNbb2X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F48C4CEF7;
+	Tue,  4 Nov 2025 14:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762266623;
+	bh=xjMIBr6AMjwygXnX/e3NAeGPHp4K/p0K97biE5sQOhY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RYhNbb2Xcx6i6i/LaW6+2C8lVhP52SbjCr9FpEZZWvICau9hP6b6xmn19rrA/tNhb
+	 iybm6l0CdKD38ERqWLSV2dcucbuJu/wJKKYG70ASiESC79aI7i2scX8E3Y+urIF5zp
+	 wTobQVJ4FYoXe12+DxMZk/1mRLjR6srx/fDxwGT4=
+Date: Tue, 4 Nov 2025 23:30:18 +0900
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jakub Lecki <lec.jakub@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Valentina Manea <valentina.manea.m@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>
+Subject: Re: [PATCH 3/3] usbip: Limit maximum number of virtual host
+ controllers to 31.
+Message-ID: <2025110450-abnormal-goofball-bc68@gregkh>
+References: <20251104113248.223594-1-lec.jakub@gmail.com>
+ <20251104113248.223594-4-lec.jakub@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104113248.223594-4-lec.jakub@gmail.com>
 
-Syzbot found a drop_nlink warning that is triggered by an easy to
-detect nlink corruption. This patch adds sanity checks to minix_unlink
-and minix_rename to prevent the warning and instead return EFSCORRUPTED
-to the caller.
+On Tue, Nov 04, 2025 at 12:32:48PM +0100, Jakub Lecki wrote:
+> When loading the vhci-hcd module with number of virtual host controllers
+> configured to max value of 128, the module initialization fails due to
+> insufficient number of available IDs for USB busses.
+> 
+> Each virtual host controller registers two usb hubs (USB2.0 & USB3.0) to
+> the usb core, each with a unique bus number. The number of USB busses is
+> limited by ID allocation range [1 .. USB_MAXBUS - 1] (defined in
+> usb_register_bus()). Therefore, VHCI_MAX_NR_HCS must not be greater than
+> (USB_MAXBUS - 1) / 2 = 31.
+> 
+> In real world scenarios the maximum number of virtual host controllers
+> possible to create may be even lower as other USB host controllers may
+> be registered. In this case, the module initialization failure is
+> correct as the number of virtual host controllers must be adjusted by
+> a user to a given use-case.
+> 
+> Signed-off-by: Jakub Lecki <lec.jakub@gmail.com>
+> ---
+>  drivers/usb/usbip/vhci.h | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/usbip/vhci.h b/drivers/usb/usbip/vhci.h
+> index 2772d923a8cb..3b0ea4038e51 100644
+> --- a/drivers/usb/usbip/vhci.h
+> +++ b/drivers/usb/usbip/vhci.h
+> @@ -76,8 +76,17 @@ enum hub_speed {
+>  #define VHCI_DEFAULT_HC_PORTS 8
+>  #define VHCI_MAX_HC_PORTS USB_SS_MAXPORTS
+>  
+> +/*
+> + * Number of supported virtual host controllers. Value has upperbound of
+> + * maximum possible usb busses.
+> + * It is limited by a bus ID allocation in [1 .. USB_MAXBUS - 1] range,
+> + * resulting in maximum of USB_MAXBUS - 1 usb busses allocated.
+> + * Additionally, each virtual host controller registers 2 usb hubs (USB2.0
+> + * & USB3.0), therefore maximum number of virtual host controllers is:
+> + * (USB_MAXBUS - 1) / 2
+> + */
+>  #define VHCI_DEFAULT_NR_HCS 1
+> -#define VHCI_MAX_NR_HCS 128
+> +#define VHCI_MAX_NR_HCS 31
 
-The changes were tested using the syzbot reproducer as well as local
-testing.
+Why have any max at all?  Why not just dynamically allocate them when
+asked for?
 
-Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-Reported-by: syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com
-Closes: https://syzbot.org/bug?extid=a65e824272c5f741247d
----
- fs/minix/namei.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+thanks,
 
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 68d2dd75b97f..263e4ba8b1c8 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -145,6 +145,11 @@ static int minix_unlink(struct inode * dir, struct dentry *dentry)
- 	struct minix_dir_entry * de;
- 	int err;
- 
-+	if (inode->i_nlink == 0) {
-+		minix_error_inode(inode, "inode has corrupted nlink");
-+		return -EFSCORRUPTED;
-+	}
-+
- 	de = minix_find_entry(dentry, &folio);
- 	if (!de)
- 		return -ENOENT;
-@@ -217,6 +222,17 @@ static int minix_rename(struct mnt_idmap *idmap,
- 		if (dir_de && !minix_empty_dir(new_inode))
- 			goto out_dir;
- 
-+		err = -EFSCORRUPTED;
-+		if (new_inode->i_nlink == 0 || (dir_de && new_inode->i_nlink != 2)) {
-+			minix_error_inode(new_inode, "inode has corrupted nlink");
-+			goto out_dir;
-+		}
-+
-+		if (dir_de && old_dir->i_nlink <= 2) {
-+			minix_error_inode(old_dir, "inode has corrupted nlink");
-+			goto out_dir;
-+		}
-+
- 		err = -ENOENT;
- 		new_de = minix_find_entry(new_dentry, &new_folio);
- 		if (!new_de)
--- 
-2.51.2
-
+greg k-h
 
