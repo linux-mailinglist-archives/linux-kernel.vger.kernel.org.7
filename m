@@ -1,166 +1,116 @@
-Return-Path: <linux-kernel+bounces-884801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6514EC312F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC14C312F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A455E460ED0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DBD4617EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BDB2FBDFB;
-	Tue,  4 Nov 2025 13:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUh2v7+A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841812F6924;
-	Tue,  4 Nov 2025 13:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54662F8BC3;
+	Tue,  4 Nov 2025 13:14:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB85C2F659C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262047; cv=none; b=XzAhEl8NehWxWhnXAIr/F3OhoEs1X6sPeNkuoC2/lIR85jeWsPSse/rnVfLwf6bzvf6ZPIZVghoH5rX5VFv+VMIICIjURjTNFNFm94Zxa6UgkbDhh7QIiF8Ss7bBl1vCe7nsfjw3XBohA3yQzfQp2VJvai98cYtYn5W9ZsXA4n8=
+	t=1762262060; cv=none; b=joV+GKYvrHBgy+IfRyE4KWHvCEKA4tHnn7cb8p8Pr2o8x9scqYXVkq3F0UcW8LtbrXfftfLBP+KpGb6bKSe3/JDBDMFF9ORbjU/HtNqiLLjU3aB74D4LbrTwazrf3elaC13m/3poK+utWyYHyk17bT4WxgjvszdvBluiLmN4Amg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262047; c=relaxed/simple;
-	bh=TLHJRTKusGt1SWwlRj6IWh5YXbaorV2upXYBUOE5fxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uU8cChe63s65rDFnOIVmxvXybOFMTh/5FhW+MQVZK8JD1RP0rf6DaGoAMHxKrsqAbgXEaZyCGpAKiJINwfxlMRMUGcYhzOqyvlm9S/+OMs0i4y7jS6dUZamxfSa7wCJbal3PMoxQ2cg+fo7qNRe3r0KEPIIqcYAFVuILnHTvSy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUh2v7+A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC57C116C6;
-	Tue,  4 Nov 2025 13:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762262046;
-	bh=TLHJRTKusGt1SWwlRj6IWh5YXbaorV2upXYBUOE5fxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AUh2v7+AGMG1M1KAwd9XVU0ZEEtc0idzYycFUQzUWn8Ne8ZLvkGSSY86BljMoFgdo
-	 s1x1F0zLMZZorAwGBDtwzXG008ekfB2o6bSkbmQN/YZNa0Yb3NX/0Spx1pK5LSCKJX
-	 tPsh/URzrvwZ4vKibGGiB2euAkENeKL+s3715RrKYE3esVh1YmYYRybpx7JSV58juE
-	 JQZeNQaexG/UFiAJgR03lFTyYNyYI4eUvWniKFIwObKCl+z9ty1e1jSGqNI/L/sUlC
-	 EWCrxCOXxDbQZzJGRUZPua9sRtBgCovGFpXYETDAkgeqp8F9+Y6erBbVv1roBV3Qhx
-	 7aVbMCZamwO6w==
-Date: Tue, 4 Nov 2025 13:14:03 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
-Message-ID: <aQn8G9r2OWv_yEQp@finisterre.sirena.org.uk>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
- <20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
- <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
- <CGME20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287@eucas1p2.samsung.com>
- <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
+	s=arc-20240116; t=1762262060; c=relaxed/simple;
+	bh=ntRz6jITIbBBBGOIaf9xFjE4nod5orCM61laMH9WhBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a6v/LMvW7AThTvVsVPJDGdwSPrWNlmymmoAIZj+W2KQpHrPkb7EKEazsRgRc2Ob3wHOiEp4G+nnM4xPClDAztkKToV1VIbxp9ot4hmyPTV8QlFOQv+BfE+Xl4jHCmbSiawKGOMrU+AVActiS3MBCOUyRQYNGguaMO134Ji96mxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11CDA1CE0;
+	Tue,  4 Nov 2025 05:14:10 -0800 (PST)
+Received: from [10.1.31.224] (XHFQ2J9959.cambridge.arm.com [10.1.31.224])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC0DE3F66E;
+	Tue,  4 Nov 2025 05:14:16 -0800 (PST)
+Message-ID: <b5b978f3-bb29-4cbc-b006-fb9c4402b067@arm.com>
+Date: Tue, 4 Nov 2025 13:14:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rRRcUhwA4JOwqNzp"
-Content-Disposition: inline
-In-Reply-To: <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
-X-Cookie: If in doubt, mumble.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: kprobes: check the return value of
+ set_memory_rox()
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251103194505.4077265-1-yang@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251103194505.4077265-1-yang@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 03/11/2025 19:45, Yang Shi wrote:
+> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
+> rodata=full"), __change_memory_common has more chance to fail due to
+> memory allocation fialure when splitting page table. So check the return
+> value of set_memory_rox(), then bail out if it fails otherwise we may have
+> RW memory mapping for kprobes insn page.
+> 
+> Fixes: 195a1b7d8388 ("arm64: kprobes: call set_memory_rox() for kprobe page")
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 
---rRRcUhwA4JOwqNzp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch looks correct so:
 
-On Tue, Nov 04, 2025 at 09:44:38AM +0100, Marek Szyprowski wrote:
-> On 03.11.2025 16:24, Mark Brown wrote:
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-> > We do have some other serious breakage affecting arm64 in -next which
-> > are making it hard to get a clear picture of which platforms are
-> > affected, at least the FVP and O6 are unaffected by those other issues
-> > (due to using MTE on platforms that don't have it, those platforms do
-> > have MTE).
+but, I think I see an separate issue below...
 
-> I got almost the same result while bisecting on ARM 32bit Exynos-based=20
-> boards, so the issue with this patchset is not fully ARM64 specific. For=
-=20
-> some reasons it also doesn't affect all systems though. It is even=20
-> worse, because it affected only a subset of boards, but different for=20
-> each tested commit. The observed failure looks exactly the same:
+> ---
+> I actually epxected 195a1b7d8388 ("arm64: kprobes: call set_memory_rox()
+> for kprobe page") can be merged in 6.17-rcX, so I just restored it to
+> before commit 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in
+> alloc_insn_page"), however it turned out to be merged in 6.18-rc1 and it
+> is after commit a166563e7ec3 ("arm64: mm: support large block mapping when
+> rodata=full"). So I made the fix tag point to it.
+> And I don't think we need to backport this patch to pre-6.18.
+> 
+>  arch/arm64/kernel/probes/kprobes.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+> index 8ab6104a4883..43a0361a8bf0 100644
+> --- a/arch/arm64/kernel/probes/kprobes.c
+> +++ b/arch/arm64/kernel/probes/kprobes.c
+> @@ -49,7 +49,10 @@ void *alloc_insn_page(void)
+>  	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>  	if (!addr)
+>  		return NULL;
+> -	set_memory_rox((unsigned long)addr, 1);
+> +	if (set_memory_rox((unsigned long)addr, 1)) {
 
-I've now got the results for this specific commit, it looks like every
-single arm64 system is failing.  I didn't test any other architectures.
+How does x get cleared when freeing this memory? arm64's set_memory_x() sets
+PTE_MAYBE_GP and clears PTE_PXN. The only function that will revert that is
+set_memory_nx(). But that only gets called from module_enable_data_nx() (which I
+don't think is applicable here) and execmem_force_rw() - but only if
+CONFIG_ARCH_HAS_EXECMEM_ROX is enabled, which I don't think it is for arm64?
 
-> Then I've tested it on ARM64bit (RaspberrryPi3b+ board) and got the=20
-> following panic on 6a011a228293 ("vdso/datastore: Map pages through=20
-> struct page") commit:
+So I think once we flip a page executable, it will be executable forever?
 
-I'm seeing the same thing on at least some of the systems - this is with
-arm64 defconfig (I suspect that's what Marek is doing too).  For
-example:
+Do we need to modify set_direct_map_default_noflush() to make the memory nx?
+Then vm_reset_perms() will fix it up at vfree time?
 
-   https://lava.sirena.org.uk/scheduler/job/2039543#L1109
+Thanks,
+Ryan
 
-I didn't check every single failure.  Feeding one of the backtraces
-through addr2line says:
+> +		execmem_free(addr);
+> +		return NULL;
+> +	}
+>  	return addr;
+>  }
+>  
 
-/build/stage/linux/include/linux/page-flags.h:284 (discriminator 2)
-/build/stage/linux/mm/mmap.c:1438
-/build/stage/linux/mm/memory.c:5280
-/build/stage/linux/mm/memory.c:5698
-/build/stage/linux/mm/memory.c:6487
-/build/stage/linux/arch/arm64/mm/fault.c:696
-/build/stage/linux/arch/arm64/mm/fault.c:793
-/build/stage/linux/arch/arm64/mm/fault.c:929 (discriminator 1)
-/build/stage/linux/arch/arm64/include/asm/irqflags.h:55
-/build/stage/linux/arch/arm64/kernel/entry-common.c:767
-/build/stage/linux/arch/arm64/kernel/entry.S:596
-
-(this is for this specific commit.)
-
---rRRcUhwA4JOwqNzp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkJ/BcACgkQJNaLcl1U
-h9AuDwf/ZhCLlPLgluyDWUvdRnCQxJ2N1dGVAjMGRwZUyrTvO3LxFTQzkTL5nIcp
-s6gUEfOujaroyD4CcDlNOBBu2V8JtVuzh/NuC5m2O9SbHiLyR2qay111fo14LogV
-u/rKBgA0DjjCOsWmxyWcAB8abWnwgcTjN2YzIzoXh9RR+I/zmwjoOyUcTGGJpNzk
-zT1lZjL5mXvMULyQVTH8fadw8kjyEt0TVMBb/kyMaX0KFWNc2g69WuSH9k72bHhk
-CZp8Nzicv6Tna9Efz9IPio1+lVoEVK3up3fJJHRiorhknWDffaxf3D7VHLvZ5NmA
-hQFWctpg74kN8ORA8oS1+bS5Ni2d/A==
-=CgDl
------END PGP SIGNATURE-----
-
---rRRcUhwA4JOwqNzp--
 
