@@ -1,57 +1,49 @@
-Return-Path: <linux-kernel+bounces-884123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A82EC2F68B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:51:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D459DC2F673
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253CB4F2130
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CE63BF8A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534FA2C21CB;
-	Tue,  4 Nov 2025 05:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eizjvtRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D862C21CB;
+	Tue,  4 Nov 2025 05:51:16 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B53219F40A;
-	Tue,  4 Nov 2025 05:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0B034D3B0;
+	Tue,  4 Nov 2025 05:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762235486; cv=none; b=CIgbRnrucMywrdzjkuxLPCKvqpHGdtbsM+dJjRngok3E3L1cIB1xFhFCsfqqxBWFcSwIEUpFrmuhEniUTc0+WU9/Av7EzVsDyHqWvCRVgeYx3nIt/oI8LXZhoxeOJk8Q3o7rY6jVfgLXzDpOxXMdNxzzP50u0ZvJe6LiEcYbFI8=
+	t=1762235476; cv=none; b=nuEZC1GTTcVk9mSO58hAZklcwhuusiV9khPL4wvatJ7rBHLKgf3N7nVxWB0e17pxZJBscjudheK4F5W76LS2YL62wKqV61edvs6Jch6O85LzzS9S28SVVWLXvhwMi86u7NyYnwionF4h1p8xElV+iPAFQbtOZAqg+jmFfVlerqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762235486; c=relaxed/simple;
-	bh=+zIjCyngQqsvAfo8AR7dkJkLn9qM+SwI4b9HqY5K+Pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eQs+mFkENarU2ob0kt7NjvhlOe+uvtsCqx9XYFKFmOD78mBDUyMrwWhfp8/YtlAKDI5PRdVcTFc7+Eqy8NAMTM7Qou5kXobwwxvb/tc9Drf2/wMZuCx/5nT2ZGK+R5hFvE5A3SSzyo78kwS2Vjwlb6Tr3VKKw6zKm6G7wdNwnoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eizjvtRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEADC4CEF7;
-	Tue,  4 Nov 2025 05:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762235486;
-	bh=+zIjCyngQqsvAfo8AR7dkJkLn9qM+SwI4b9HqY5K+Pk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eizjvtRx6NsjrEsOsNhJcNTVKKLIsXJ7oUbIaV8aRsTgWT/p+J64taxBobqTFrZvY
-	 6OIlp8zMqfHLB/gav3KITTRTtYI63qBODgUTue2maHNe6EmewqqPQN2zLfkiTuUb9Z
-	 i0WzZNGKeOe3f4tblvcszGpEFUohXTeSz+X0cc5BMU8RfgtE5rEyxrOjabw+qvFhrR
-	 hRFSmR9PvUgWUZ/bTcrOireJaKbCOzEqSMubsBnnNOibHcQYZnu5TKtJnRA+AELcoK
-	 5mOFu2k/uVzb7MXQaTZ6XI6fD9OEpTLtHIE0RYkbAj7xmkJwcGQgYdb2qkcpso6T6W
-	 fdqe9BM+8CmMQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-arm-kernel@lists.infradead.org,
-	Eric Biggers <ebiggers@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] lib/crypto: arm/curve25519: Disable on CPU_BIG_ENDIAN
-Date: Mon,  3 Nov 2025 21:49:06 -0800
-Message-ID: <20251104054906.716914-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762235476; c=relaxed/simple;
+	bh=hpgA+YRHXc6fvLb5gsgLIet88dZivJTwiQCVpMCkXO0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AKplS5DDXwnR7pREUOZf/4ZSMvDv5370lRkMW8eA6Bl3bDKWVfM88ur0Yuro6LhgUeH5JBWHr3eA1GNcGYhdwunjMRx/nzXPrZ7T1tD28bsJdZQ4rXeNfkmil5BSGCavzDoBDE0mQGuUlR6JEITtdKmQ6h/2Ln8FQ/LgsNcuZAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 4 Nov
+ 2025 13:51:12 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 4 Nov 2025 13:51:12 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linux@roeck-us.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<billy_tsai@aspeedtech.com>, <linux-hwmon@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/2] dt-bindings: hwmon: Add AST2700 compatible
+Date: Tue, 4 Nov 2025 13:51:11 +0800
+Message-ID: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,49 +51,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On big endian arm kernels, the arm optimized Curve25519 code produces
-incorrect outputs and fails the Curve25519 test.  This has been true
-ever since this code was added.
+Adds support for the AST2700 PWM/Tach controller by extending the
+compatible string enumeration in the device tree binding.
 
-It seems that hardly anyone (or even no one?) actually uses big endian
-arm kernels.  But as long as they're ostensibly supported, we should
-disable this code on them so that it's not accidentally used.
+The AST2700 PWM/Tach hardware is compatible with the existing binding
+schema and requires no additional properties or modifications beyond
+the new compatible string.
 
-Note: for future-proofing, use !CPU_BIG_ENDIAN instead of
-CPU_LITTLE_ENDIAN.  Both of these are arch-specific options that could
-get removed in the future if big endian support gets dropped.
-
-Fixes: d8f1308a025f ("crypto: arm/curve25519 - wire up NEON implementation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 ---
+ Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-This patch is targeting libcrypto-fixes
-
- lib/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
-index 8886055e938f..16859c6226dd 100644
---- a/lib/crypto/Kconfig
-+++ b/lib/crypto/Kconfig
-@@ -62,11 +62,11 @@ config CRYPTO_LIB_CURVE25519
- 	  of the functions from <crypto/curve25519.h>.
+diff --git a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
+index 9e5ed901ae54..d6ff4182085e 100644
+--- a/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
++++ b/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml
+@@ -20,6 +20,7 @@ properties:
+   compatible:
+     enum:
+       - aspeed,ast2600-pwm-tach
++      - aspeed,ast2700-pwm-tach
  
- config CRYPTO_LIB_CURVE25519_ARCH
- 	bool
- 	depends on CRYPTO_LIB_CURVE25519 && !UML && !KMSAN
--	default y if ARM && KERNEL_MODE_NEON
-+	default y if ARM && KERNEL_MODE_NEON && !CPU_BIG_ENDIAN
- 	default y if PPC64 && CPU_LITTLE_ENDIAN
- 	default y if X86_64
- 
- config CRYPTO_LIB_CURVE25519_GENERIC
- 	bool
-
-base-commit: 1af424b15401d2be789c4dc2279889514e7c5c94
+   reg:
+     maxItems: 1
 -- 
-2.51.2
+2.25.1
 
 
