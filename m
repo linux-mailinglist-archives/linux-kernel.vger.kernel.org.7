@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-885526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B2FC333B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:29:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30739C333B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AC3A8518
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1531F3A8254
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A0630BB8C;
-	Tue,  4 Nov 2025 22:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4EA303CAF;
+	Tue,  4 Nov 2025 22:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iBhQ58E7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bj5BARdk"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011040.outbound.protection.outlook.com [52.101.70.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFC7190664
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C4F2AE89;
+	Tue,  4 Nov 2025 22:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762295195; cv=fail; b=jhoI4Z47yQkzC2hWaWuO44sVUqYCQLs838jzOywrUyW+pM98fc5bFqqcB8OyxD7Wp7q3PG88JpM/9rZRj0Sjm6OTcZ80wAhmJd7uYSHXdcgz1IQnKLJ1O9JdYXCjVjFpdeYFDRfeoaaMAPPkQnAfxZDCchjV1t3ZKmv1z0sG1sA=
+	t=1762295256; cv=fail; b=KjFviQwJWL7r/Y25PvqD8pELsE7PbeAfw+LvQmDOOlmPmNsnnDv0SASlF3tiYryIMvD54ZUYpiqcVPGv5Ek5zkUwPdAcvL+s6v5jZ+HXacXsl3CB9DOYBpgq8c9kcH94mxlHUDZSEU5QQnJA32/t7LmKq+dC2NTOxsdhvV3EBSQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762295195; c=relaxed/simple;
-	bh=yhk29A5bwh8+FkDs0r/ZP90UEM39o+n65tOfiM3BP+Q=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZLqjtpCIa53PQwWpHGEHttc5AvSdzDJi6zFJhCYDHolymP+OtV63zikBznZblDr/jTc0qrzBuRpRToQA0MZaZ6zAecH3JhijQzCXOa9IYpeJEgcwQcOLUFvlZf/9oUZHxUifk+CSMp7z5gYCxTFzukr+Dgp5I24fGlPZF3s/Jp8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iBhQ58E7; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762295192; x=1793831192;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yhk29A5bwh8+FkDs0r/ZP90UEM39o+n65tOfiM3BP+Q=;
-  b=iBhQ58E7IjKuK/Ya/yVC3MwsFpjpw76PmtCSrI/0MaAnS7Pca96rHh1I
-   TnGAKN43JuGcG10xlfuXT7GnSayLq1il55XqM/Xa0zQ2ak3VobwKXDXnd
-   zxriYn/d85IANZjjYTcUyCW9XZbtUD+/oCjivV1Jn6z8CopUqYVywSqyR
-   +gSGF9qnBedV8O1jXDeUZFesMzJBqt3ZMceW4RpkYvlM/KUOgn8mePjLF
-   jUdhKEvXmvRP52vqjllvwAEqaGgKdrXJWf3SRhvMxf/0IdUreEpiciBSB
-   hFPI/ARzD85EbReyjUJxnwLlCRslD79zvX9sNgHbPNoPULj0cA4jFwpRF
-   w==;
-X-CSE-ConnectionGUID: WqV0XiYuQ/iK3rrr/kXzFA==
-X-CSE-MsgGUID: HuM0bGwFQDumZ9Lj0aovCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64286844"
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="64286844"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 14:26:32 -0800
-X-CSE-ConnectionGUID: KtXhBvBXQqCbbenff9XY0g==
-X-CSE-MsgGUID: FLI3hQJcQnKnQco8wxkz3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="218077320"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 14:26:32 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 4 Nov 2025 14:26:31 -0800
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 4 Nov 2025 14:26:31 -0800
-Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.35) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 4 Nov 2025 14:26:31 -0800
+	s=arc-20240116; t=1762295256; c=relaxed/simple;
+	bh=NXlx15kFsm/J131upYZNDfC13rTNECLbdacclQ9y8UE=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=tTx1zY+ellqP+tV2jS6yHuBoDfmAA7tl3h1TW36HL6m3Ulij4UVBjzX8OcaFStmTPxFwTzukEfrgVnYHQyDmpfBxzK7Wf65PDdEjV4fX1w84lzNpO+wNseuG/g9XqRIseJlmx+9UXQyNM/Kxs6c45dxuCgTnar+eNC+LPmCscHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Bj5BARdk; arc=fail smtp.client-ip=52.101.70.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ru/B7nxtGe0oT1X0aklhvgECBgBc7bCKwzyGGDfa9O1QbsAY3wTLEx0EAkCjDRBV+OQve4em6EMiyL2aibB06EuAscrmGijdLkZavTZ6v9jhD+ST5Fk3f9lrlIiiD6h/647C39SqyitRV7KXJjf0IpHqjvQuRT5+T4uNjdEVwGxGAvamWwWXXAkkd0kwAnipBUp4OswcTy0qkvAhAH6oUmQN//YBAFNWymBLu+z+6nEkGcTeOMjPgkD69fZHIplznlG186iVRpQs8/QoB0HVJ0EF1nxG2itbfORWDwcyWDSeJpU4ksl59gwr4vYVUIxhSZD+KnFlsXJVMwRHxXGE1Q==
+ b=ybYa9MUuBtAS1zLOoQZ806PaZCJN6OBoc8t3JgY/Y934y3/JKAwRammRtL2HCuXBFcrvQAvVyFtRgdqfmPf805eo6NneM5IJ9mrXeKeZXl1ChfeS/SNMnlTj+bcOjLAvGIuQtHEbxFHU24jBMxOL1vfhGlwN5bmXFeILKuLjEnRVr6a6nEd3S7qgcRolQeYgVXg66l0gm0BXfmDd8Vj8Af3htAAVuox4kmZ/45sJn2+7B66w4EP7xvHRl/l0SWt+cCmt9g4GD5QDUw/859nrkueaVBlmDXco/npoJ9kFqkGfa6wf46mw9XbKOQ0pnNC+I+r7ke7haSdUgsohxm3gsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HytGrFhN1Y2BryPZFoFTyTrFNYGRu1pI5gC0M6+Wtog=;
- b=j+jHZh2v1XMJOa58v4rh0CwKjDSJzhyIeuG/VFYM9xbV+HRD2OGA2T+J9sIq1kQeF1OB7Sewr9YrRd7QPfYi7DQC8jhwz8D/UZ+5W5FjMXXwUE762TK7HGqWbDMTvJZqtcxtSfBG1QjssWXNBnPNDL6BNWGjA8Zem+uNE4LVmcMJevdR7T2jLNfdSrv9fT0qhdr75SPFYf0Cr+wLZVaNf0TLwsTAoRKXRlLMYAKKXqoNEgSXJe7JGygHX4dHTLhuAO7+zOQBDxSHGG+DvdAkyez8M1I1FqCBb4cqIGp+gDgtHbTXroZCIq4Pe3K1NafVyJngE82qtLr7URDhl7xr2w==
+ bh=0nszrk6h1byveC7pSSpIso3dhKBuElyqCg7byA9qxbU=;
+ b=zOHdmyxegw+yf6EeRbTsfFvbal3nFEHgJPdF7jYcH5JVJnfCa+n+2kwdwzJM1E0vYtXxHsKsSEUJPg9jTPlmTPUjbvFJQm4zGOzHi490aQWn6pcwYAhLV7YT8PffexqCuHxAONP4A+I/5ndM8eR5e1STB2tiVXFc8v4AJXHL/gMjOrilIAenbBLzYNMNqsALOPniHScsmwvYjXxFdnvXdX05TQ07hme2ZX3DJVsgya4o1Ku3ge7ZC+49v98qgFlUCltshZpyMnJlPmkOtiqLsTAgDIZRAZa7kTWdK4lDnEVscgeS5oCK6j8CTV3Fs8BfjGVIwS85EjZp2oLaB1MYdA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0nszrk6h1byveC7pSSpIso3dhKBuElyqCg7byA9qxbU=;
+ b=Bj5BARdkpstGWLebH7dcL7dhTyg+NGRQRGeN5N3z+PZednDBIpX2tojwDnB1VMuat0mW4UMHa7HId3lsmLpm5wrzx1PdeGK3eyjsXLgsF7pjgIOY5TNMmhHz89192v5Be52Sy0Ne8A/i9Tj4IHIRcHvV6By0Lw2Pg0yZ1Jd5S8TnWmMhEOj99NMwWQsiCgE6HFS+qpdotNmwDZBhEIiA23uBZGEPD3EAWcsu9IodD7V+Gg5nhAygT+taW7nzUiI4nJjPJfXPTROm3HJJdERkL0zJnaRhiPRFpZcRQ1rjBhVonPTHUhKO6H78t3wjfcxiZzDLJ8u455Yc3twhIgKdTA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SJ5PPF89507EDE4.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::83e) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by DBAPR04MB7286.eurprd04.prod.outlook.com (2603:10a6:10:1aa::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 22:26:19 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 22:26:19 +0000
-Message-ID: <08078c25-87fc-43e6-b062-f9945edcee80@intel.com>
-Date: Tue, 4 Nov 2025 14:26:16 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fs/resctrl: Generic schema description
-To: Dave Martin <Dave.Martin@arm.com>
-CC: <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, "James
- Morse" <james.morse@arm.com>, "Chen, Yu C" <yu.c.chen@intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, <x86@kernel.org>
-References: <aPtfMFfLV1l/RB0L@e133380.arm.com>
- <a9b49861-ff36-4550-ad29-a737eb5c1d63@intel.com>
- <aQOUAeVP9oc7RIn/@e133380.arm.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <aQOUAeVP9oc7RIn/@e133380.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR03CA0219.namprd03.prod.outlook.com
- (2603:10b6:303:b9::14) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+ 2025 22:27:30 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Tue, 4 Nov 2025
+ 22:27:30 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH 0/3] ARM: dts: imx: cleanup most gpmi related CHECK_DTB
+ warning
+Date: Tue, 04 Nov 2025 17:27:11 -0500
+Message-Id: <20251104-gpmi_dts-v1-0-886865393d0f@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL99CmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQwMT3fSC3Mz4lJJiXTPzNAPztCQjAxPDZCWg8oKi1LTMCrBR0bG1tQC
+ p3jLUWgAAAA==
+X-Change-ID: 20251104-gpmi_dts-67f07fb2041c
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762295246; l=2400;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=NXlx15kFsm/J131upYZNDfC13rTNECLbdacclQ9y8UE=;
+ b=vqWbRBFqKHLP7F1lAF8iHCPqhAGzN203wXdTpJVFqt9mufRG2CSzWTxjQ34vjFJMiGa1bEERW
+ PZtgCvijuytCVWVfUuvgRX1JMUdGORSpSGt3vKlFu+ySh2xtgvIXYv6
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: BY5PR20CA0033.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::46) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,437 +91,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ5PPF89507EDE4:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0124413c-b704-49c8-351d-08de1bf12cf7
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DBAPR04MB7286:EE_
+X-MS-Office365-Filtering-Correlation-Id: 525a7b40-f640-4f1b-5aa4-08de1bf15722
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TWxDaEN0MHNuQktLRW10L0lqMUdwMmNCMWdYVHFaSCtTUU9CUGZCR3haeG1p?=
- =?utf-8?B?eCtPZEU2Q1lnQzlJUlA2Rm5xb0ZjVGlBNTZUaUIzcUV0WWZYQUhPUUpXSHk1?=
- =?utf-8?B?Rm12UWt1RjdBS3V2SUdjSU05d3o0VFByUkcyeVlGOXptMkpTRlNpWHhNTS8w?=
- =?utf-8?B?SGk5dElyT3hFR0xzSWJJL2hzeElnRXR0K1pjSG1RZzM5QmRNTnQxTTlUSFZw?=
- =?utf-8?B?bmRLRSs1QmFzVkp5UDJZTUtBOXV3RTN1ZitSRERoTENsbzlDMnZ3blVEd0FV?=
- =?utf-8?B?NVhwVDhHWkhiSWlBTWpFRGkyU0k1eVFRenpyblZWTlhjWmZuTFRDazFsb3pC?=
- =?utf-8?B?eHRuemNPSDc5OWZmbU5jdGJTRXlSa0VVYUhGTVFJL1NRMWRhSVlsaDhhVE8v?=
- =?utf-8?B?TWFOZXlkRG44ZENMaURxaGhLenV4dCtjalFrWjQzT1dvWmJIUkhwMzJtN2lS?=
- =?utf-8?B?S09KR2FyZFVublpRcnlXeXF5RHlrWmY2bEQvUGRvb011THR5aVhKTThiYlp2?=
- =?utf-8?B?RzFBTzh3V1FzamdlcU5YcG1TRFRjaVQ5dldYOEpUNzFlUGx1Qkw5QXhTTEtx?=
- =?utf-8?B?Q1p1MExHL0tNcTVCNzFBSldGQUhMOXRaYTVtM0UxWUtMdzhhUytnQi9NNmkr?=
- =?utf-8?B?ZHEvMXdyd1ZQc1hCVVlEeUdWR05RR1Y5K0FmNW92TU56OXFmZzlhMndzK1lD?=
- =?utf-8?B?a09uM1piME9xS1ByRldZK3JZNER5QTNPRDVETkNRTTFiM2pXTHBTdHhSR3Mz?=
- =?utf-8?B?M1oyMEZZOXYvdUphdWwyVE1iRk12TFR1cEtvbWxpTkxwZVlzQkVHdllMRFpp?=
- =?utf-8?B?N3FqWWkwM1NGdThHSUErOStGM0hJelF3amVjc0ZmOGllaVJDUVhHNkx5bTJR?=
- =?utf-8?B?bTArOTdGOUx1Nmg5dDlRM1ZaSXhLdUd2dkpSekhlNFFrcjlxWURKSjQwaXZH?=
- =?utf-8?B?RlZtY3Yvbmt5cXRtbk9SakJZdzVrK0kyQWoyVHphODJjTE16NEZTcW5CMDU1?=
- =?utf-8?B?N1lqeFRKNHIxbVRhUVphMmlaTG0vYURzQkJETVB6WEJMYTlmcDZwakdBK1Rh?=
- =?utf-8?B?VDBxSkZwRUVaY1BVVCt4Nm15R2pFQUxyb25wMDJrUzdCRXBPYTRWclNEbDVv?=
- =?utf-8?B?SmhzWkVFeEEwdlJiREd4OWxIcVJXMWhFMElWRTFDQlJOdXpFR2NRUGE4ZUND?=
- =?utf-8?B?R2UzZW01NnFINTdDc3FSUlR0RTlEMFlnMUdCVklJaC8vYmhaZ3E0VHk4blBq?=
- =?utf-8?B?Q0lWSk0vZVcxTE9abk0rYlFnMEdPL0FUekVUZzN5UkNPUWZubVNnZzhic1dJ?=
- =?utf-8?B?THpXa1d2WndUNVZqdmtPUnQwN0c0OUFNUUJTbG5zaUtaa004L25XdFREWVJJ?=
- =?utf-8?B?Uk5VUERNdHZObjRFb0tCOHl6ZFF6U0IyMDRMejBKSlluKzdGTDZOTXVmd0cy?=
- =?utf-8?B?WXFwYmRENXArL3B3azNnV2lEbHljTzBxVTF4V0x4TUVRSEdleEt6V0ZHbmZj?=
- =?utf-8?B?K0pMT015K1Y4NWkvY1R0T1BpOWYya1VTOGRyRmRkYXFQU0ZJS0RHblBrSmtB?=
- =?utf-8?B?cVgvNWVRdTRld2NsWlVaNVY5bVpsV21Ra2NKaU8rMEc1Ky8xKzVhaVhKZFM4?=
- =?utf-8?B?UU9mdnNGUFVIK1AvNkN6SXNxbXBaZ3p0ZGpsbFpDTXJJWjRuU3JkSGltelJm?=
- =?utf-8?B?YjQ3SDZCODhlT3pzZkt5WEoxdkErWEVHcEQxcHBrUDRBRXIzaVNnQWZEdmVR?=
- =?utf-8?B?dmR3cUNxZUY3azRScHBiVUlVRC9URlV5TWJ6dXR1UEJGUHRPcjR5MmtKU1BF?=
- =?utf-8?B?RGFMaTdPZFV4MTk2eVFnSEhVTjFKUGNJWk9ncDhGNDlGTHFWMUhXWUg1bDdo?=
- =?utf-8?B?M1RGVk92ZVp0K1JVY3VodENFTHdiQmpPbTZjdlNiR3QxNEtMZmJSQnNyMXRS?=
- =?utf-8?B?Um1ydW4yU3R0KzZha3o1b093MWVlNzhnL3VFS211V2xzcXR5T3JXZ3J4YkhI?=
- =?utf-8?B?WTdPWVdTWkl3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXp2OW1leWNkWTB3T0dHMjRtTlgxaTRoMDh5NFNGQ1Z4R09CRXUvTDhBZVEv?=
+ =?utf-8?B?UHNERlNPc1k3VHpZeXMzTjA2V1U2Rkx4dkZvR0VUbGJEUHVNUk13eGdVcnlq?=
+ =?utf-8?B?VmNIclh1Y3Z0VHNwV1ZBeS9LMERGUVF0dnJkWnZoMDZWQ3c5MXhvRCtlTStu?=
+ =?utf-8?B?KzNyK1BHd0tVYS9HaDJDRzBNd3huUzZ0TTN0dGxENk0xREduSGVNWEVnWSs5?=
+ =?utf-8?B?a3BsWDB6blJZMmpNSjluNkVXT1AybWlRNUQreks5RzFGTENoZTBsTkZGRWpl?=
+ =?utf-8?B?UXJDSWRXQytTaktRTk5VZ1BGNE1hdUUxZnNBcnhWWEk1SEhBalJBSUZxYXRn?=
+ =?utf-8?B?L1NHbFc3djh1Mkl5QnJTQlhaNkFnM3cxL3Q0T1Q1aXZjTEhzTXdMQnhpWVQw?=
+ =?utf-8?B?OUdGK3IwREpHWDdMQk5leW5lVDNZTFBiOXpBNm9ud2RONVB6d1FpeGxReEcw?=
+ =?utf-8?B?TWFPdHozVjFYazhRK1QyN3lyd3I3UGVKdDRHakdCb0diK0VPOWo3ZzJyU2tY?=
+ =?utf-8?B?MEgvRy9nMjRtVGRvUm1CNHcwZXAwMEErT1JXY3BPbmlUVTdIVHlNcEJOMWxB?=
+ =?utf-8?B?THF0eStBSkhwYmdRdEhPVUtKcUNhNDlBN0RGd21raXpBaFMvWGNrOUhCYWlU?=
+ =?utf-8?B?RlV6UlpIUTkxMHFiSUFTYjVXVTAxV3IvQTM2eVJmem9VaWh6Wks3VkxqWjlw?=
+ =?utf-8?B?aStTQ0dsNktxQk8vMWZBSm84SWo2Vk1xV0F1cUVORnJZaU1yRTNjeWlkN1Z2?=
+ =?utf-8?B?eFc5c1grSTR0QlErbnd1WktWVTFmeENQazlkSnBFbkQ4ckx1RTBENkxpVFUw?=
+ =?utf-8?B?dGp1NjZTcmF6RkZBNTAvNzNhSVFwYW9ZWXpXSnNyS1BTKzJnK1JkTktMQzE3?=
+ =?utf-8?B?UEg3ZjJ2VmV2WWpXaVhPaktzSkdGWVVTQ1BUNGhtc3RvQU10YThZb1BKb0Jq?=
+ =?utf-8?B?dDBndzl2WnJ2b09YOVdyNHM0NzhheXJ2KzZ1bEtTKy9OclNiS2lsYXo4dEVV?=
+ =?utf-8?B?YzdiZkJhalpybGJYOXAvK056QmxzUVlqbnpyeWJ0U216MDFXTTlMVUVaVks5?=
+ =?utf-8?B?WjMxUTVzZTFOeTVWTHEzTEptb2ZnY0ROUG9aZXA2TGdadmJIcGsyNXBMYUc0?=
+ =?utf-8?B?R3NnK2xsY1dGMVhlL0NCeWVWTjV6ZFpyTW9uWnkxVWF4OUxpMzhKaVNlWVVU?=
+ =?utf-8?B?azFGdVFwU1RjYWxDakJhMFBQZjVRbHhCVnppbldZdkhDY1JLMGJKZHJOWUp3?=
+ =?utf-8?B?QVZtWUVlekQ1ZldZc2NHcHFheXVjWVhvSXZIcndML2tMVVJxK2FxVWhaZ0Fv?=
+ =?utf-8?B?Z0dXVnFDUDBDVitQY0t6b241NGRqSm8vVGVzRnNVc2lnNkljazVIWmtDL2ox?=
+ =?utf-8?B?aDI2L3I1RlJHbkIvaFllZXdYZ041UXJZa2JOaUhvWmp5MjUrTmI5SFEzM0xu?=
+ =?utf-8?B?M3dIUTJPcHVwSXlETnNLSEdxOVM1dFhlYUw5Y2R5ZFQ1OEcxVVhUUy9GU2Zs?=
+ =?utf-8?B?VmtBS0RnSzlqNTIwQUozbEJ5blRZTFZKaVI0VzlHVDhmSFUyaVRKOVB2dmpw?=
+ =?utf-8?B?Nm9uRUpQckFmNktvT0hTcXkrdkRrU0xFelNnN1hyWjFxOWFVdlc2eElxT0Iv?=
+ =?utf-8?B?SEQxRkorNU1HNUNUaFpKcURYWGl2NTlCY1lxYyt4RjJ0akdGd0hHV2lFY2Vx?=
+ =?utf-8?B?aW9iNXdsQWI5MTdxN21WdEd2aWQvYnpuZXIyVlBiN3Z2YXh6Z2c5UUhGMURx?=
+ =?utf-8?B?Y2s1b2VqWlB2WmJsL25WVks3ZEp6bGIvbE5uMHYzMy9wNjRvQ0xKL2lIeHFu?=
+ =?utf-8?B?VG5UVjFKSzBJbXNycUlPbkxnTnRJdDh2dGJwM3VtVy8weDJqQUlSamh1T04y?=
+ =?utf-8?B?Qzk2TDR2WER0MzhQdmlXbWFBOFQzemt5eHkrSUg0Sm9mMkMxTm15d1RMSTh4?=
+ =?utf-8?B?ektDV0hqSnAvbmxHT0dxV3YvTGJUcXlENnJ3WUt0YXFxZHo1aHJPdzNDU1NE?=
+ =?utf-8?Q?gHDpijY98W0IIvcDsq7JZOkvQXT3vI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RklZQld0dkNzQ243MStMVHdpSXBwOFJ3QU5rdERuL3puTnA4V0lNQ3pVdGlR?=
- =?utf-8?B?SHVXRkxGUExHdTJoMVREcDJuUEpNdmFHVk14ZS9BTllLd2ZXanJUcWdtUHVC?=
- =?utf-8?B?MEV5QXpkTEQycEJVb2pHa1ZEM3NiMHBrRWE1cFY3WHlBN09SQk9LeFpydzBj?=
- =?utf-8?B?SlZQanZENGFwWUhrRk1jM1A1Vkx1dmg4VEpWY3NLNDFCZmVKcWFyaEVYRnRU?=
- =?utf-8?B?SFpIbHJmU20zR3J1cGoxWlU1WkQwa1J4WUdJOUVVVnA3c1NXRTltK25OaGNh?=
- =?utf-8?B?SmFvbnA3cE1HcExtdkNCWFV2UzNJcnFzNXVqOUlZZG9QUnRIQkI3MTRlS3pF?=
- =?utf-8?B?NG1Gc0l2VkVOVGM1SnNHbTJDaEdPR0pxakhkVHhXWU15K1owVG5RY0lvK29N?=
- =?utf-8?B?bW9jb0doc2wwaHFPV052b1ZySUx2dDhPYmFRR0t4TVlWR2dNd2xwMWNQZ1Ev?=
- =?utf-8?B?RFZIaGVqcVRNalZTSzduZkJaV2ZqeHM0RUpiZnpUNjFmZ01rcENpQUZEMUpD?=
- =?utf-8?B?RXFGK3FWNjEzdlVxaG5SN1JncmRwenRCT2RwTjViVU1ZWXlOc1Rka2huUVlt?=
- =?utf-8?B?V3duTkpCTUlIRzZYczV0Mlo1MkZjMHNKVmJxbHZtd1gvREhEUm95SHlEYUJq?=
- =?utf-8?B?a1RxWXRaMnppNk9sUndoSWJXUVM0Rmp5S0V3bkVUU2VuZ0JpWkduVHZiT1VV?=
- =?utf-8?B?NmZCUnJ4MTQzMGVzb1RRYVQ5RG9VbEJkMFJZSnZFUk5HR3hGNzlUS2RucEtv?=
- =?utf-8?B?VGhUNjlCQUQyN1ZNRXVySVRlQ1BTNkRMMjgvckl3bHNhT1hYWHU1eGhtbmUz?=
- =?utf-8?B?Snd4SldBc3A2NHdENHhqRTIyT2ZRTSs0dXpUTkZDNUtINjhlRU5YU2YwV21L?=
- =?utf-8?B?TTkyQURIbEcvaE5nREJtYTVTU2lMb2JnZWlZUnlvaHVzcHZ1d296dFhXTDlG?=
- =?utf-8?B?QlNOZzFJa0FFR0tlNDVramNrajZVRDFHd1BWdzJpaUNJTHdNVGF6YnJwdTJO?=
- =?utf-8?B?R1F1N2FwZXduQ0YzSzRzc05XbmFzT3JCdk1jYWhLckM1SWhoWk1ZUWFYYmxO?=
- =?utf-8?B?T21xZlh1UjNvbTdrSElXN0h2TGtXZGh6dVhPMEV4My9wTHhYdXppQVNWL09V?=
- =?utf-8?B?T0wvK0RlVGgxY2RaOXBkZFIraHN3WitSQit1bmNOWFVwSnNXRFFPR1IzWUda?=
- =?utf-8?B?cWk2QjRzQWFxVWFXaSthSHJ6N1NTV2JGYzZhRzh6cHJaTVZYWjZpci9kRFNC?=
- =?utf-8?B?aGcrTDZvUmtlWGFoWkMzTWZNdEs3Y3A4ODdJdnZTbENSdnFBRVRRa3lpblRh?=
- =?utf-8?B?VWhGcDF2WDF4K24zU01KWmJpeDRCaFRNckNFazkyMjNIQmdUT1ZmaHVCa0Q0?=
- =?utf-8?B?YlVub3BVakhtT3ZZdHVDbkNsWEVxODZpVU1veisrM0pDemM3M0VlWWpvQ25T?=
- =?utf-8?B?MEtBdnI5Z3lVL0l2MExkUTRLb0MweVdySHNFMSs1ZXJRQ0N4S1I5OFcxNHdE?=
- =?utf-8?B?RmNFazJUMjFGZjc5MWVGOHhlMDV5NGVQZEw4aTBOeEVwS1NSRWpES1VobzFw?=
- =?utf-8?B?RjIreUEydDJFSGtMU1VoVGdpSFFKMFdZTys2NzBmNG8wRWZHaTJQUG5XbTYr?=
- =?utf-8?B?VmFZM0svK1ZKNmVQakZIT1VPMGc5bjErZ0lkTGNZWDJEM0QzWkZ0SHFZUEdw?=
- =?utf-8?B?aTZHS2szVFVJUjRTa1ozeXB1ZXJpckNKZVNOM2NseCt2ZHFCUDVkZXd1REJ4?=
- =?utf-8?B?MVF1VVBZaVRWNTAwSGNqOWJ3L3VLbkFWSEFWcWRLdVhqcXlXSVZYRHY1WWVu?=
- =?utf-8?B?a2hLWitodGV1UjNPaWpOOWFYQ3BxSzdDM1FwTWZ4NTNQdm52YVNVcjlNZ004?=
- =?utf-8?B?ZVFHMkM2RkhlSUlPdDVWMkdObGhQRHhUOUNyc1lBRXFKMW5EN01WeGFCL1Nk?=
- =?utf-8?B?MHQwRVpSUzJNQ08xeFE1Y1BLZWdoMXc2QnI4a3kwT0F1dVRDczdiSThzVEly?=
- =?utf-8?B?TENIU3FoUmUvZlVNU0pkTXhqcDJ1UGg1OE5CZWxkLytXdldHb2xsMFk1N2xQ?=
- =?utf-8?B?YlZGb3Q3Vm5vRkNLSlVtaExaMzRZUzNKWVdLdjJjemRERDBQa3pzdE9XaVRn?=
- =?utf-8?B?SmUyVlFkNGZaTE9IdnN0dEgvKzZxUmxpN0diYnZCemJyaktaQTN1YWtvZ3g3?=
- =?utf-8?B?dlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0124413c-b704-49c8-351d-08de1bf12cf7
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U3F5MVBwNlB3TWxpWDdrWVNDbGdPV3NuanNQZTErTUJVSXExcytFVTNDU21X?=
+ =?utf-8?B?cFZ2OVRpWjJjYi84ZThVMVJsN0FGS2Y4ZmNqY0dnbTJJQ0xIZEIzdHNqRFht?=
+ =?utf-8?B?aUs5ODJYRFhUdUxqMW5iSmtqdEMvVE1TVGV6N1d5TmNZTDZCUmIzOHd6dWtQ?=
+ =?utf-8?B?YUZDa3JhU3ZsQzE2WFM3VW5jbGpKLzBPWldZNHpaaStyd1VWVjlpTUpqY1E5?=
+ =?utf-8?B?aWt6UTQ5Q1lYUUplaWlMc1FsU2RycXRTdVR2Vm5OYktQOUhTS3VXaU1FV2hw?=
+ =?utf-8?B?SGRWcVE3QTZKaVFQU2xlbEJ1SGIrb05ka3UxV3pYTVlUVEdPUDBEeEdFTHJx?=
+ =?utf-8?B?dCtUNnZXNVNOcE9wL24rMVVYWmlIRC9PaHN3NWVhT0Nyak4wYmw4WTl0V1ZX?=
+ =?utf-8?B?LzNvSUNsRVFkcVQxZEdXOEloMlcyNjlDbHdXUVhsZ1RqTm1GMWNhNVBOL3Zv?=
+ =?utf-8?B?WE9JMy93Qm9pZHlxN2d6b0JOa3U5dml0a1ZuTWFTWFNjTWtjMmdRQUo5bDlW?=
+ =?utf-8?B?MkdPQWVxcnNqTERhclpzRVVmUVRvRnJKRVJPdTdERGFvZVhFRmloZWxHeFND?=
+ =?utf-8?B?eXI1Wm5TcXk5eXNTa1IrMGZqQ0IzQzkyazUyT0t4R205TlFKMzZSbDRTelJx?=
+ =?utf-8?B?L0VydEVQRFZjNWdWQkRNUktRWk1jd0w4TXhHK1M3QnpJWkxXcEd3dGFlbjJ6?=
+ =?utf-8?B?SlljVWhJSm5ROFNBZUk0eHh3TXpQSVNvYkV2WmpnR3h3RzRIcGtacTNFR0Jl?=
+ =?utf-8?B?YUF4NGFEelc0YWdmUHUzdWQ5NTh6Sy9xZ09XTGJneDJxUDVuN09kWElRbTda?=
+ =?utf-8?B?aThVZWVPY1VpaHBBMGQzZUIxdSs3bVlFSDIvR2NEaThrYmF1c3VVUmpWNkpR?=
+ =?utf-8?B?MDdYcjFOYzkvUjg0bGJDb1prNTNkZFhZTGpPOFFLUlZKY1dDU3NlQk1PRHB0?=
+ =?utf-8?B?d3VMUjh2Y0psUVZ0cHBoaUVkTHFESHFvSlpuWlFkTHdnZGNOTWZIRFlmUkRJ?=
+ =?utf-8?B?YURyU2FTdGs2TjVWNG45bm14bE9OdWdXN0tWSTY1WmNBYmJWN1I4VXlvbGcz?=
+ =?utf-8?B?aFA0SnVLbEkxRjU2RndiNjZkLzl5Wm1McVJDNmJ6WnF0V29tR01TdVR5Zkty?=
+ =?utf-8?B?OVJ4c1hMMHd2Ry9DVGxsTFB3M3JJU2FTWlJMODNndUxzUlJaaTNXVEREMG92?=
+ =?utf-8?B?SDd0Qld3MjhUWXZsWHZXRGR4bXl4MHRyTXp1SGZGZTVuSWhrZmJrUDJPYStl?=
+ =?utf-8?B?c2paOWFjbUVocjNOMTE2NlRjaWRsVG5sRUVTazdMZklZSGcwUG53NkFJa2pm?=
+ =?utf-8?B?dmhhY3VNS05vVHd2bS9idnNEL2JKTElWUk51b1NQLy8zYjF3dEVjMTNnNjZU?=
+ =?utf-8?B?OUdKMTVUdTlCbFErNFlxMUxMV2xZVnlLT2ZVZWpFTUtTVlUrMGN0cGtYN2hL?=
+ =?utf-8?B?UkJnQ3lsLys0ek9VSWNIMDBVQ05mNUx3dU5teDQzdlRqc1VLQkdXbHJxSkxM?=
+ =?utf-8?B?R0JvU0xWUldXOTYxb1BRNDFPeWtjRld0aXZRQk0wekZJcXovR0FtNGEycVRs?=
+ =?utf-8?B?ZWdUT3Zjb1YzV1Q3ZXRmN2U3YzhZR09VK0tQTzNwanlmbHRaRmRzVW93Smpl?=
+ =?utf-8?B?RU1KQU5Cb2p4TTVkc2NldjZLMUxHcGxYOHByZksyV053dlhpVlRSYVR0ajFE?=
+ =?utf-8?B?eU9VKzN0dXpLVkpEMDI4Y1RDRlJoS2lzWm9Ud3lXYkpUVFRSczVSUm9LcUtX?=
+ =?utf-8?B?ZjJyczdtK1VCTWVBRkxFeXdhN0lIcjBUNE03VFl5TkRHR2gycUZwbElVRHNF?=
+ =?utf-8?B?MmlWNXhDbHNFbUFEdnNaKzFOQXJINGYxSE5laFIzV3Vvdi9LaytlTFVETnRG?=
+ =?utf-8?B?L2pRWmJPSGg3dS9sbmdkUzJnR0c0cXg1elZCc3F1TkVoQ1JzU1N5UFppYzhq?=
+ =?utf-8?B?anI2V25QSWhMQzZUWkRsVTIzSDRKKytBc1BJV0R4b1A4NVJYVUhPZ0xqT2pC?=
+ =?utf-8?B?alNZZ0RiU25ZMUFZVTJsdU1ERjR2MFhJaEJPUFBYWUdkeWVsMmVURVFHdnRl?=
+ =?utf-8?B?UlpoU3c2M3IzbWgyQ2NJeTlSWnRrdE1pc0ZxZGxBU3RjU1h5LytITlh2R210?=
+ =?utf-8?Q?2di33IgtmtkFCmr0zfCIN9p2v?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 525a7b40-f640-4f1b-5aa4-08de1bf15722
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 22:26:19.3294
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 22:27:29.9525
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WsfNYmJf552EBlI7CEpL5rSe/afw3/lMdjRiBE+BxYqs45up2RliBXLIlg4JMTDevE86aYUNpGXdbIlsaAaCxsl06yv2ajbSnG8NmgVh7ko=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF89507EDE4
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: TRednwP8HGMALY9MI2Y8LYqC9W8TOgWlkFo8XYmfEXFdNsT8EZaycPTtDtBcnDHYdZLVgVtbS/iD9wzyrG/7WQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7286
 
-Hi Dave,
+Only few warning left because original data is wrong
+arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea-bmm.dtb: nand-controller@1806000 (fsl,imx6q-gpmi-nand): nand@0:nand-ecc-step-size: 0 is less than the minimum of 1
 
-On 10/30/25 9:36 AM, Dave Martin wrote:
-> Hi Reinette,
-> 
-> On Tue, Oct 28, 2025 at 04:17:05PM -0700, Reinette Chatre wrote:
->> Hi Dave,
->>
->> On 10/24/25 4:12 AM, Dave Martin wrote:
->>> Hi all,
->>>
->>> Going forward, a single resctrl resource (such as memory bandwidth) is
->>> likely to require multiple schemata, either because we want to add new
->>> schemata that provide finer control, or because the hardware has
->>> multiple controls, covering different aspects of resource allocation.
->>>
->>> The fit between MPAM's memory bandwidth controls and the resctrl MB
->>> schema is already awkward, and later Intel RDT features such as Region
->>> Aware Memory Bandwidth Allocation are already pushing past what the MB
->>> schema can describe.  Both of these can involve multiple control
->>> values and finer resolution than the 100 steps offered by the current
->>> "MB" schema.
->>>
->>> The previous discussion went off in a few different directions [1], so
->>> I want to focus back onto defining an extended schema description that
->>> aims to cover the use cases that we know about or anticipate today, and
->>> allows for future extension as needed.
->>>
->>> (A separate discussion is needed on how new schemata interact with
->>> previously-defined schemata (such as the MB percentage schema). 
->>> suggest we pause that discussion for now, in the interests of getting
->>> the schema description nailed down.)
->>
->> ok, but let's keep this as "open #1"
->>
->>> Following on from the previous mail thread, I've tried to refine and
->>> flesh out the proposal for schema descriptions a bit, as follows.
->>>
->>> Proposal:
->>>
->>>   * Split resource names and schema names in resctrlfs.
->>>
->>>     Resources will be named for the unique, existing schema for each
->>>     resource.
->>
->> Are you referring to the implementation or how things are exposed to user
->> space? I am trying to understand how the existing L3CODE/L3DATA schemata
->> fit in ... they are presented to user space as two separate resources since
->> they each have their own directory in "info" while internally they are 
->> schema of the L3 resource.
-> 
-> Good question -- I didn't take into account here the fact that some
-> physical resources already have multiple schemata exposed to userspace.
-> 
-> I've probably overformalised, here.  I'm not proposing to refactor the
-> arrangement of existing schemata and resources.	
-> 
-> So we would continue to have
-> info/L3CODE/resource_schemata/L3CODE/ and
-> info/L3DATA/resource_schemata/L3DATA/.
-> 
-> 
-> I think that the decision to combine these under a single resctrl
-> resource internally is the most logical one, but I'm proposing just to
-> extend the info/ content, without unnecssary changes.
+driver will leave default value when these value is 0, but binding require
+start from 1.
 
-Thank you for confirming. This matches the way I was thinking about this work.
+Since 2019 year, commit
+        (212e496935929 dt-bindings: mtd: Add YAML schemas for the generic NAND options)
+        NAND related property is preferred located under nand@<n> even though only
+        one NAND chip supported.
 
-> 
-> The current arrangement does have one shortcoming, which is that
-> software doesn't know (other than by built-in knowledge) that L3CODE
-> and L3DATA claim resource from the same hardware pool, so
-> 
-> 	L3CODE:0=0001
-> 	L3DATA:0=0001
-> 
-> implies that the transactions on the I-side and D-side contend for
-> cache lines (unless there are separate L3 I- and D-caches -- but I
-> don't think that's a thing on any relevant system...)
-> 
-> So, we might want some way to indicate that L3CODE and L3DATA are
-> linked.  But I think that CDP is a unique case where we can reasonably
-> expect some built-in userspace knowledge.
+NAND related property should be located under nand@0. This format already
+support quite long time, so it should be safe to switch to modern format.
 
-I'll admit that it is not as obvious as this new interface would make it be
-for new schemata but userspace is not entirely left to its own devices. 
-resctrl will ensure that these resources do not overlap when, for example,
-a resource group is exclusive. For example, an L3CODE allocation in one
-resource group cannot be created to overlap with an L3DATA allocation in
-another when one of the resource groups is exclusive.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Frank Li (3):
+      ARM: dts: imx6qdl: add '#address-cells' and '#size-cells' for gpmi-nand
+      ARM: dts: imx6sx: update gpmi #size-cells to 0
+      ARM: dts: imx: move nand related property under nand@0
 
-> 
-> I didn't currently plan to address this, but it could come later if we
-> think it's important.
-> 
->> Just trying to understand if you are talking about reverting
->> https://lore.kernel.org/all/20210728170637.25610-1-james.morse@arm.com/ ?
-> 
-> No...
-> 
->> The current implementation appears to match this proposal so we may need to
->> have special cases to keep CDP backwards compatible.
->>
->> SMBA may also need some extra care ... especially if other architectures start
->> to allocate memory bandwidth to CXL resource via their "MB" resource.
-> 
-> Perhaps.  I think it may be necessary to hack up and implementation of
-> these changes, to flush out things that don't quite fit.
+ arch/arm/boot/dts/nxp/imx/imx6-logicpd-som.dtsi           |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-icore.dtsi              |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi      |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-skov-cpu.dtsi           |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi                |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6qdl.dtsi                    |  2 ++
+ arch/arm/boot/dts/nxp/imx/imx6sx.dtsi                     |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-geam.dts                 |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi               |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6ul-phytec-phycore-som.dtsi  |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi               |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6ull-colibri.dtsi            | 12 ++++++++----
+ arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea.dtsi   | 12 ++++++++----
+ arch/arm/boot/dts/nxp/imx/imx6ull-myir-mys-6ulx.dtsi      |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts          |  6 +++++-
+ arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi               |  8 ++++++--
+ 17 files changed, 85 insertions(+), 23 deletions(-)
+---
+base-commit: f8a6148698538647188a0f801f686ff90035a8ca
+change-id: 20251104-gpmi_dts-67f07fb2041c
 
-Have you considered how MPAM may want to deal with different memory "types"?
-With SMBA there is a "CXL memory" resource while the MB resource has mostly
-been "anything that misses L3". From a user space perspective it is not obvious
-to me how users prefer to refer to different memory types.
+Best regards,
+--
+Frank Li <Frank.Li@nxp.com>
 
-> 
->>  
->>>     The existing schema will keep its name (the same as the resource
->>>     name), and new schemata defined for a resource will include that
->>>     name as a prefix (at least, by default).
-
-We may have to be explicit on expectations wrt which schema can be observed in
-which area (schemata file vs new info hierarchy). resctrl.rst currently contains:
-	"schemata":
-		A list of all the resources available to this group.
-With the above in existing documentation resctrl may be forced to always keep
-existing schema/resource in the schemata file and be careful when considering to
-drop them as mused in https://lore.kernel.org/lkml/aPkEb4CkJHZVDt0V@agluck-desk3/
-
-Theoretically it may be possible in the future for it to vary which resources a
-resource group may allocate. Consider for example when resources support different
-numbers of CLOSID/PARTID and there is a desire to expose that to user space instead of
-constraining all resource groups to lowest CLOSID/PARTID. In such a scenario it should
-be clear to user space which resources it can allocate to a resource group so it is
-reasonable to expect the existing documentation for "schemata" being "A list of all
-the resources available to this group." to be respected.
-
-On the flip side, it may not be required that a new schema in new info hierarchy always
-appears in the schemata file. Reason I think this is after seeing in MPAM that
-controls could be enabled/disabled (like MPAMCFG_MBW_PROP.EN for proportional-stride
-partitioning).
-
-resctrl may thus have support for more partitioning controls than what is exposed by
-schemata file with ability for user space to choose which partitioning controls to expose
-in schemata file to use to manage a resource. It may then turn out that in addition to
-(read-only) schema "properties" there may also be (writable) schema "controls" (bad name
-since this would "control" a "partitioning control") where user space can modify behavior
-of a partitioning control.
-
->>>
->>>     So, for example, we will have an MB resource with a schema called
->>>     MB (the schema that we have already).  But we may go on to define
->>>     additional schemata for the MB resource, with names such MB_MAX,
->>>     etc.
->>>
->>>   * Stop adding new schema description information in the top-level
->>>     info/<resource>/ directory in resctrlfs.
->>>
->>>     For backwards compatibilty, we can keep the existing property
->>>     files under the resource info directory to describe the previously
->>>     defined resource, but we seem to need something richer going
->>>     forward.
-
-ack.
-
->>>
->>>   * Add a hierarchy to list all the schemata for each resource, along
->>>     with their properties.  So far, the proposal looks like this,
->>>     taking the MB resource as an example:
->>>
->>> 	info/
->>> 	 └─ MB/
->>> 	     └─ resource_schemata/
->>> 	         ├─ MB/
->>> 	         ├─ MB_MIN/
->>> 	         ├─ MB_MAX/
->>> 	         ┆
->>>
->>>     Here, MB, MB_MIN and MB_MAX are all schemata for the "MB" resource.
->>>     In this proposal, what these just dummy schema names for
->>>     illustration purposes.  The important thing is that they all
->>>     control aspects of the "MB" resource, and that there can be more
->>>     than one of them.
->>>
->>>     It may be appropriate to have a nested hierarchy, where some
->>>     schemata are presented as children of other schemata if they
->>>     affect the same hardware controls.  For now, let's put this issue
->>>     on one side, and consider what properties should be advertsed for
->>>     each schema.
->>
->> ok to put this aside but I think we should keep including it, "open #2" ?
-> 
-> Yes; I'm not abandoning this, but I wanted to focus on the schema
-> description, here.
-
-Understood. There may be some connection with this work if there is a hierarchy
-since one schema's description may then be in terms of another. For example,
-the relationships described via pseudocode in https://lore.kernel.org/lkml/aPJP52jXJvRYAjjV@e133380.arm.com/
-
-As a sidenote (related to the '#' prefix discussion), while trying to understand how
-this work may impact user expectations I did come across this in section
-"Reading/writing the schemata file" of resctrl.rst:
-	When writing you only need to specify those values which you wish to change.
-
-This seems quite close to addressing the concern raised in
-https://lore.kernel.org/lkml/aNv53UmFGDBL0z3O@e133380.arm.com/ :
-	The reason why I think that this convention may be needed is that we
-	never told (old) userspace what it was supposed to do with schemata 
-	entries that it does not recognise.
- 
->>>   * Current properties that I think we might want are:
->>>
->>> 	info/
->>> 	 └─ SOME_RESOURCE/
->>> 	     └─ resource_schemata/
->>> 	         ├─ SOME_SCHEMA/
->>> 	         ┆   ├─ type
->>> 	             ├─ min
->>> 	             ├─ max
->>> 	             ├─ tolerance
->>> 	             ├─ resolution
->>> 	             ├─ scale
->>> 	             └─ unit
->>>
->>>     (I've tweaked the properties a bit since previous postings.
->>>     "type" replaces "map"; "scale" is now the unit multiplier;
->>>     "resolution" is now a scaling divisor -- details below.)
->>>
->>>     I assume that we expose the properties in individual files, but we
->>>     could also combine them into a single description file per schema,
->>>     per resource or (possibly) a single global file.
->>>     (I don't have a strong view on the best option.)
->>>
->>>
->>>     Either way, the following set of properties may be a reasonable
->>>     place to start:
->>>
->>>
->>>     type: the schema type, followed by optional flag specifiers:
->>>
->>>       - "scalar": a single-valued numeric control
->>>
->>>         A mandatory flag indicates how the control value written to
->>>         the schemata file is converted to an amount of resource for
->>>         hardware regulation.
->>>
->>> 	The flag "linear" indicates a linear mapping.
->>>
->>> 	In this case, the amount of resource E that is actually
->>> 	allocated is derived from the control value C written to the
->>> 	schemata file as follows:
->>>
->>>     	E = C * scale * unit / resolution
->>>
->>> 	Other flags values could be defined later, if we encounter
->>> 	hardware with non-linear controls.
->>>
->>>       - "bitmap": a bitmap control
->>>
->>>         The optional flag "sparse" is present if the control accepts
->>>         sparse bitmaps.
->>>
->>> 	In this case, E = bitmap_weight(C) * scale * unit / resolution.
->>>
->>> 	As before, each bit controls access to a specific chunk of
->>> 	resource in the hardware, such as a group of cache lines.  All
->>> 	chunks are equally sized.
->>>
->>> 	(Different CTRL_MON groups may still contend within the
->>> 	allocation E, when they have bits in common between their
->>> 	bitmaps.)
->>
->> Would it not be simpler to have the files/properties depend on the
->> schema type? It almost seems as though some of the properties are forced
->> to have some meaning for bitmap when they do not seem to be needed. Instead,
->> for a bitmap type there can be bitmap specific properties like, for example,
->> bit_usage. This may also create more flexibility when there is a future
->> mapping function needed that depends on some new property?
->>
->> Reinette
-> 
-> Sure, there is no reason why the set of properties has to be identical
-> for different schema types.
-> 
-> It turned out that a single set of properties fitted better than I
-> expected, so I presented things that way to see what people thought
-> about it.
-> 
-> For bitmaps, there isn't a strong need to change the set of properties
-> already available in the top-level info/ directories.  These can be
-> adopted into the new info under resource_schemata/, but I might be
-> tempted to rename them to remove "cbm" string so that the names are
-> applicable to all bitmap- style resources.  I might also rename the
-> min_cbm_bits property if we can think of a more intuitive name -- it's
-> not obvious how this should apply to sparse bitmaps.
-
-yes, this is a good time to rename things.
-
-> 
-> 
-> Thinking about bit_usage, is that really per-schema?
-
-Good point. This is per resource.
-
-This may create complexity if multiple controls are available for a resource. For
-example, if there is a MB resource with both a proportional schema and a max then
-it sounds like it may be possible to program the proportional schema with 100% while
-setting the max to 50%. On the hardware side these values may be legal, albeit with
-unpredictable performance, but it will be difficult for resctrl to visualize the
-"bit_usage" of such an allocation.
-
-> 
-> If L3CODE and L3DATA are really allocating the same underlying
-> resource, I wonder whether their bit_usage should be combined,
-> somehow.
-
-Related to earlier comment this is done internally by resctrl but not exposed to
-user space. I earlier mentioned how exclusive groups take this into account, there
-is also the bitmasks used when creating new resource groups. You will, for example,
-find in __init_one_rdt_domain() that their bit usage is combined as below:
-
-		if (resctrl_arch_get_cdp_enabled(r->rid))               
-			peer_ctl = resctrl_arch_get_config(r, d, i, peer_type);  
-		else                                                    
-			peer_ctl = 0;                                   
-		ctrl_val = resctrl_arch_get_config(r, d, i, s->conf_type);       
-		used_b |= ctrl_val | peer_ctl;                     
-
-> 
-> This might be one for later, though.
-> 
-> It doesn't look necessary to adopt all existing properties into the
-> extended schema description immediately -- if there are some that don't
-> quite fit, we could adopt them later on without breaking backwards
-> compatibilty.
-
-It is not obvious to me that it will be simple to add a property to an
-existing schema type. We may be forced to create new schema type when needing to
-do so.
-
-I also think there may be more schema types that will eventually need to be
-supported, for example MPAM's priority partitioning?
-
-Reinette
 
