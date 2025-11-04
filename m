@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-884591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23947C308BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:38:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C24C308D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1F0134C256
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:37:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E4E84EAFD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B842D63F6;
-	Tue,  4 Nov 2025 10:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFC72D7D27;
+	Tue,  4 Nov 2025 10:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O+WnJ9Ah"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T72qNEmv"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4CE27E04C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2586D2D73A7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762252647; cv=none; b=l63hDBjm3aAUvBvH6JpEOTgGeoKyIziqi2KVXarjJx9ox+njLErs3D4rMSksISR3e5DreRxPCkSLDP/tJO1mV4DzjJv8tF2i32/imxFvcyVtEBJlSi0iAH5xhea2YhDF2jVpTbPtcFJYxNKSsoKUk9Kq29dD3ihFcLi7RJ2KH+M=
+	t=1762252798; cv=none; b=V0O+jlrBfOqeJbM07FZo161qZaKeQez6+SUuS6j4drlLEC0q+a/UfkI9jnMgdBgD0Fs1+ARHtFOMqffi3ZiPmW0Bg4n5kA0VfZi3S39uHY2lYxfXnF0YIfv1b02ilYOdxm7TkqSXqVKOgxcRPsF1RPWK0vJsxToCYBgwYSIRAPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762252647; c=relaxed/simple;
-	bh=v8zG2e4TYh8HI28N1gaia3u1IQr0AA8J+GRTSgdfhoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPeZAxcZkgooNBzhuwzPMjWWNjtr9CkY+jmr7jH3b2OA0moiba9uezARclwOSp38xZt5jzxP8EUW6XtW9tHPsZt763pzqsu0fiRyLFbqW+B1XOdk8y9pe7VHAzAKWUXpeYgqYSxO3bqp4V/EnHoGDYduO0LoMOSZI1uyJmZXaPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O+WnJ9Ah; arc=none smtp.client-ip=209.85.128.65
+	s=arc-20240116; t=1762252798; c=relaxed/simple;
+	bh=mBQcfulaULMJs9Ri80bCniWF9vmb1TTMZvnFi9RYStw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PchayiquLmhedLFFEZ6kKPihx4njCP/Ld7L4UBWpVugN7GV20HUh1eX0apLloUJtJR3ZtD9N+ewRDkBhohTQxWcP9D1vxnc1XI/IshE4ivO0A9pIebZ5CR+OIC8xX6ZX1qs7gPOB9JUw2CQTvhc4BPGbEFhHReY0nzShV5xOoDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T72qNEmv; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-47758595eecso1859535e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:37:24 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b6d3effe106so838956966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:39:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762252643; x=1762857443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Ne4ZDSlj913IS0afaCeah9/sHQf3Ytf7YNZFUi1jMY=;
-        b=O+WnJ9Ah2VyHBrkKQlkZBmZ1Qre3JWPRNTix2PP2ii8vPWhScYQSmtVfTcLkCQOip2
-         PSBRr6b2d997dBR9BswZ9xNtmlWB3ketx8y54bEKb/iu+kCtP1Vd2ta9u52Hq6z6ughD
-         1B3yWUMwhbeiV5pA82MhkvOfkDWLKTDcq5GeH7YTJeSSh+v7UC2VDX4PS0DOQ/lc0/8i
-         VI3GHV4tfPPSbHQU01cFGypkgSl9UmweoznFO7xnzhKx+SSA3PnnyBqyIh2M1VFB2y4B
-         sh7BfPQLX/uy9qtrTpdW7yhRSp2jeQNwTCcmLoxQoihKN9+o3yzrAQpDiLtXgjkcz4md
-         t++A==
+        d=suse.com; s=google; t=1762252794; x=1762857594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QqlXXzI8Au0XTieknIe+lDfj6CC3yKlLay1p36P5BWA=;
+        b=T72qNEmv5Kq0iloI8U6PLRTeQrGSSe6DiJ0qzj/+kxrFtQ4WIsKXw1qqDPRk3DVxyQ
+         PtdrIDtMA5hVmIYRO6xmarcRo+bK4VLipOm+BWGADMQA2eBJzFhFlLup6Wa/wxcVU8Ra
+         eTnxzsGfIMAlOsncxoniZ4vTn+CPBUMYQwbKkjaOJnRjTAVDV6EU8adV6+POFG0BkjbG
+         /UIOdxqu32whtkOhJzHMKAN+DTsPM21HfEapTbBRvaLgnabyljD21g9g/v3dulqgx7hZ
+         T4cvaJi2xUnZbAZI1bRXaw0vmXuasOwB24ufix4TiXpao/LRKtA7/TuTTBojnDnzOxEE
+         hNfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762252643; x=1762857443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Ne4ZDSlj913IS0afaCeah9/sHQf3Ytf7YNZFUi1jMY=;
-        b=SBM++DtUVTZBMudVfiiPohW4/FpAyq0gFXh2yUXQGuYu4xXdqW95+6k4Fen+XnYvq7
-         FEL+DdXEcuBsuZL0uAx28vocgK0/qaWbp6UZh3Xxrx0D+Jho/yZDDsE44ftw/Lm1ZBfx
-         uKRa7LNiee4cTpxoRiM5ocj4P8xlt69gossggsJNpHJQt6WB00ISyEOGUNrKZc+xFUqe
-         VaP9jdyepy7HQbU5TDTA5eb/c6qCjwfzXc19acLHBMzVPZdGtHZOnKMckQdI9vQZgOb1
-         DiWzFzb2bcD42QxsRrVQX0N8WM0n+hE+7m/chq/GIUzBqKexfCLASsFCAn+HHT61wsRw
-         CGfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJomIN/lBX8iEpxa664mm9YMc8yhs1aPWY77xIq/uuZKspX0UMdZIM6JLPF46CnQ3gVYW3D77Zk0iRMvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySNMnAeXOG4EcSHfYR9YA4mkPyC9B6ZlmqqkxccXJCG/5O4KoH
-	D8TorZHX9d6HlHIvZ9f2OpD9kD5rwM9gtAv8Wbs9CbDZl81nkHnNMKHFbLYcDB0P+JE=
-X-Gm-Gg: ASbGncuxHbCbJz0CUQ5by3D/aMsAICRYsj1a01k6Y4aZ1HzuXYUiU9RQ+1oPptRamjl
-	dMWG6G+ZQfXhYHpBvbA0SR0W1Icznqw+gu9k9oG3QXkxAdCjLNq2m9QDQrF/ThWfi3dG/IGoIbI
-	/74hoAIz8Q9buGkt9piwdRp6FSgPSymMyjqXstQ065A0gGdv6MWHyAmfgWUPaV/aXN04/zOhZYR
-	ayROlL3IbcO9kdgz4d0mPaYtQVUyEeLNRrsFfrROa64zkVczVkrh6FUxmQ5zw43bhJk0XQTsdoh
-	Q8Y/g5IcFdTjX7L4LLkJHcetEHh1zFwbDeZf+lSXxFxGmAITofkzImU+tHp/prqdh6KhBi3L4h3
-	wdDj5/Psj9z/AiueNVdF+FDCR//qpDslQ+DkZD4OQtSNknsE8LT0SsRChzpQLgxLW7M8LNT8TKd
-	X5ADFBOjML
-X-Google-Smtp-Source: AGHT+IFf1wOTlsdo8GWYHh8jAMEFl3Fd6ZMSKUjEHUzMaQyfhIP4OVI40+a/WDrXsXYVLl3vLVN/Zg==
-X-Received: by 2002:a05:600d:4390:b0:477:333a:f71f with SMTP id 5b1f17b1804b1-477333af9f8mr83874795e9.17.1762252643284;
-        Tue, 04 Nov 2025 02:37:23 -0800 (PST)
-Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5be4sm3680221f8f.31.2025.11.04.02.37.22
+        d=1e100.net; s=20230601; t=1762252794; x=1762857594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QqlXXzI8Au0XTieknIe+lDfj6CC3yKlLay1p36P5BWA=;
+        b=ILhEljAa1XQ58MwA443r3uY19bPXC+Dfrxg+DFaSN9lveTd88/XTG3K/fg+fAKdfPR
+         ySEfysmESNb+vgVpmvTDsc0fHND2N2lXaeEmk+odiGQkSBuV5LYbvFzvVUO8KciF6/JG
+         CcfiP5rQLbwLrJwgwwQA9CrsWYFcVh86jLovNHNbjKAy+PeuQPYrnkxwBhI7aXPf1NWE
+         yJvndkIsbwRBlAJrE9+emIpAfXmjuxRaQU4eyr2R2YfSMiVXBQTNINWaYqg80mL47Ct2
+         iZWtNyH+bRQIrw77kJmrW4ynC/eX2eKwE0a0LWzljKYkvjz/PQ2CfjsspE4ZCIJ409mS
+         f70w==
+X-Gm-Message-State: AOJu0Yznq3NPYwHSfd2Oykz2TxMeS0CefGdbZCaRr/FJQnDMJd9dtr2f
+	04mmxgxmkPpy4RnQVHLDp3/PwY+8Ho5oEHeTy0eY3TgeRBa09HfmAM2eZvgzw/FEyBgAxoGXSUJ
+	EFO3w
+X-Gm-Gg: ASbGncuDjRqT3CWQ6Bsm8Y+q4hoS18XvLt4EgVVlSAsD4HqKSvA3YDWj1FQUmAGEY/J
+	Chllk229p217MIRPQ6jZd78AeeXxNCSdQfRTUqTH7Yy2lHZDTSaYspmG6a3BBl+ZKsnlrAYNAKu
+	jnWK1bWjrr7rCFqQjxrYFwT4qM/V3sYk4Qv2O5VOAgjXayQTjdoyjTqfNAO/KwzPVtKulYwq+pI
+	U5AZiF0IC75BheyS81ERDHvi+R/DYnLWZOiGg+TMRkMaH9O2bfQiLea8JB+U2wF1MOLYMQJEbLv
+	SbzU3bpLhNg8/51X4+J7PvoFvou5Y808lU/osyYdOn8RGJ9jEK87IiiQGtOwwBxv0VIBw8Yu/GG
+	Bk/MXX74Umj06mxURrh7F9QSidLcaymU7Y9kbpZhAu19u7sy/L2KDFHb5aAsZ0HLyTtLctLk65p
+	u4xSU=
+X-Google-Smtp-Source: AGHT+IFHdu3jVlRRTgt2EsjZoNbWOzlzZQBq47hjinpGHe0X6AXDR+UMU39LFk/i2FqEqJ1vPcxfFQ==
+X-Received: by 2002:a17:907:9628:b0:b6d:62e4:a63a with SMTP id a640c23a62f3a-b70704c3ec7mr1537809466b.40.1762252794102;
+        Tue, 04 Nov 2025 02:39:54 -0800 (PST)
+Received: from linux ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e26e7sm175960366b.41.2025.11.04.02.39.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 02:37:22 -0800 (PST)
-Date: Tue, 4 Nov 2025 11:37:22 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ankit Agrawal <ankita@nvidia.com>, Aniket Agashe <aniketa@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Matt Ochs <mochs@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
-	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"surenb@google.com" <surenb@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"guohanjun@huawei.com" <guohanjun@huawei.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"alex@shazbot.org" <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>,
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: handle poisoning of pfn without struct pages
-Message-ID: <aQnXYsPR7zkV_ram@tiehlicka>
-References: <20251026141919.2261-1-ankita@nvidia.com>
- <20251026141919.2261-3-ankita@nvidia.com>
- <20251027172620.d764b8e0eab34abd427d7945@linux-foundation.org>
- <MW4PR12MB7213976611F767842380FB56B0FAA@MW4PR12MB7213.namprd12.prod.outlook.com>
- <aQRy4rafpvo-W-j6@tiehlicka>
- <SA1PR12MB71998D21DD1852EB074A11ABB0C6A@SA1PR12MB7199.namprd12.prod.outlook.com>
- <aQjy0ZsVq7vhxtr7@tiehlicka>
- <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
+        Tue, 04 Nov 2025 02:39:53 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Michal Simek <michal.simek@amd.com>
+Subject: [PATCH] soc/xilinx: replace use of system_unbound_wq with system_dfl_wq
+Date: Tue,  4 Nov 2025 11:39:42 +0100
+Message-ID: <20251104103942.96647-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon 03-11-25 18:52:26, Andrew Morton wrote:
-> On Mon, 3 Nov 2025 19:22:09 +0100 Michal Hocko <mhocko@suse.com> wrote:
-> 
-> > > Hi Michal, I am trying to replicate what is being done today for non-PFNMAP
-> > > memory failure in __add_to_kill
-> > > (https://github.com/torvalds/linux/blob/master/mm/memory-failure.c#L376).
-> > > For this series, I am inclined to keep it uniform.
-> > 
-> > Unless there is a very good reason for this code then I would rather not
-> > rely on an atomic allocation. This just makes the behavior hard to
-> > predict
-> 
-> I don't think this was addressed in the v5 series.
-> 
-> Yes please, anything we can do to avoid GFP_ATOMIC makes the kernel
-> more reliable.
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-This could be done on top of the series because as such this is not a
-blocker but it would be really great if we can stop copying a bad code
-and rather get rid of it also in other poisoning code.
+This lack of consistentcy cannot be addressed without refactoring the API.
 
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+system_dfl_wq should be the default workqueue so as not to enforce
+locality constraints for random work whenever it's not required.
+
+The old system_unbound_wq will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/soc/xilinx/zynqmp_power.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index ae59bf16659a..6145c4fe192e 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -82,7 +82,7 @@ static void subsystem_restart_event_callback(const u32 *payload, void *data)
+ 	memcpy(zynqmp_pm_init_restart_work->args, &payload[0],
+ 	       sizeof(zynqmp_pm_init_restart_work->args));
+ 
+-	queue_work(system_unbound_wq, &zynqmp_pm_init_restart_work->callback_work);
++	queue_work(system_dfl_wq, &zynqmp_pm_init_restart_work->callback_work);
+ }
+ 
+ static void suspend_event_callback(const u32 *payload, void *data)
+@@ -95,7 +95,7 @@ static void suspend_event_callback(const u32 *payload, void *data)
+ 	memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
+ 	       sizeof(zynqmp_pm_init_suspend_work->args));
+ 
+-	queue_work(system_unbound_wq, &zynqmp_pm_init_suspend_work->callback_work);
++	queue_work(system_dfl_wq, &zynqmp_pm_init_suspend_work->callback_work);
+ }
+ 
+ static irqreturn_t zynqmp_pm_isr(int irq, void *data)
+@@ -140,7 +140,7 @@ static void ipi_receive_callback(struct mbox_client *cl, void *data)
+ 		memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
+ 		       sizeof(zynqmp_pm_init_suspend_work->args));
+ 
+-		queue_work(system_unbound_wq,
++		queue_work(system_dfl_wq,
+ 			   &zynqmp_pm_init_suspend_work->callback_work);
+ 
+ 		/* Send NULL message to mbox controller to ack the message */
 -- 
-Michal Hocko
-SUSE Labs
+2.51.1
+
 
