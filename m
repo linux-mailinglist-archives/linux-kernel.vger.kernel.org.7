@@ -1,232 +1,320 @@
-Return-Path: <linux-kernel+bounces-883953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232C2C2EE73
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C4EC2EE97
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784D51892A18
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:58:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976D1189413C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C9B239E9B;
-	Tue,  4 Nov 2025 01:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B565F23A58E;
+	Tue,  4 Nov 2025 02:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqJFlWx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="YAD1qoUR"
+Received: from sg-1-23.ptr.blmpb.com (sg-1-23.ptr.blmpb.com [118.26.132.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496241D5174;
-	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BD51D7995
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762221495; cv=none; b=TrWNIR91mRS8TWj2oW+ca7CdZDacjEbTm1QpTr84nJDtjgR3lHlyOnUji95GMt9CqQuu0i0mRknheCchUl68Wo3vm6flV2+5vTMjAbGEoUn3vFNX/H3nz47Vrr32eVJgaBsjaQN+Gw6pCrmVOI3niINBkZi1y4qldYwNKQL7wjw=
+	t=1762221880; cv=none; b=cJZQo8AfXTENV9OX4mifERXkoY4SqZkNrcXyhxvwulx4YMEsVUmZ8G2x6eqXuc5FAevgfti1gsorAb8HgiVhWmMBG/FOVlWDMgLt/Fd/97AZYV/idIkz+GlyNLgmbUrDBySYfaAhpzGhfAbDqMZR/JvT5nP0c3HAQVwuc1KoBts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762221495; c=relaxed/simple;
-	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jM+HWGTV2m8L1Wgn8IOxkmcih/+BAJQ7QLMmKQd9pjO4+nUyBK7P435ddTzsEKbr/GASdnr2USEa7iOwGb8j7gB2izlWIIhvXUHZBKmv5THeZuafhhJcGWXFHkGC7K1eriT15M9N+cvrxtQ03xzRLQ5Z9DB2KjYl6O2QMeRqxy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqJFlWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237BEC4CEE7;
-	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762221494;
-	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UtqJFlWxN48EHZ6m4Vs71XABqkqSHNA+J9xKtZE/yJvhxrW22GvuoB+canVe3T2Fp
-	 gGCqludTo3AtiS0EpSWULM1b5KCAF4uMUYYhrHbAYmi5117Fuu1XppAp9o1QoLzUP0
-	 eu8/RtHN6ajUFY01QeHnQhXP7jsPBeicbmM99gW2/QJYx574Ldt1xS5ifXgdw0jsT2
-	 U6h6k0e9pNPHMy1vxQVeHP3EY1KdQlvcXd6/3VD4W8gF8qt41Na5qj03amZU3KMF96
-	 W5Z5srpRXZadHdsDYG2t8+sZ9Ap/P+i/ttUEJXLvdgSOh/0XXxfnT1OUWzKZHpyrrs
-	 o3SAfpTJ3NS8A==
-Date: Mon, 3 Nov 2025 20:01:46 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-Cc: chris.lew@oss.qualcomm.com, konradybcio@kernel.org, 
-	jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] soc: qcom: smp2p: Add support for smp2p v2
-Message-ID: <d6vx4owncfgnpnujfepavtxeg76pt6rzlxf4fhhd6uwwtrfl3v@6rnc2llvoo26>
-References: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
- <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
+	s=arc-20240116; t=1762221880; c=relaxed/simple;
+	bh=3dHXHFYNyWdBrj3QM1sPWTu1d7dOjFuM0sBqiRWqc84=;
+	h=Subject:Date:Message-Id:Mime-Version:To:Content-Type:Cc:From; b=UMeUgsXNfF4vffXN21H7e3UC+LChddXpozBA747/cOF8kJcrxrUGHsfyXsV9UcLIfVydjY3rBeIjan3dZ7epHcEcEiCWBMD3mIequvWHpGdUor6m8vW1XNnk2TxUvTvwxg4K1MWgXTrr8OQHnVADF4mCmcyVaJL/QhEY1oBgZHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=YAD1qoUR; arc=none smtp.client-ip=118.26.132.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762221867;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=aAdyEZtvZBLjgCCraE7HYCkvc3HoTW1UVwpwoqEAgIU=;
+ b=YAD1qoURgyNSSnbxBit/Htl0VzY/z4nO9et1H+MbwZOhOIeFeqq4Y2wR6VHcyQ7F7sBN6X
+ YS98nM/OS1v+Tikcv/FskxHD6sZZV6PMBeMnH5gdyvsceAhLO9juhtrjDMkKfK6jRQEVDL
+ mNn6FVw6oBxOf2yQQvAszOsIFISPBYVvXPU9fyyXcMfLblWUIA0IuRaj3Lvw3xBdSoQFfz
+ sWuHZwV/stIrSKcFC0YZO1bC0zTD57ONQb9BVp5ZX7+UcQ6WVILV9x8k8X9EkmWIJmvJ9t
+ v0zAOIS1crx6kr+obTPrRT7CGpEM7bhytNz6yDSqmoHxgICBvwbAniCJ6CElxw==
+Subject: [PATCH] rust: kernel: Support more jump_label api
+Received: from localhost.localdomain ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Tue, 04 Nov 2025 10:04:24 +0800
+X-Lms-Return-Path: <lba+269095f29+4c89be+vger.kernel.org+chenmiao@openatom.club>
+X-Mailer: git-send-email 2.43.0
+Date: Tue,  4 Nov 2025 02:04:17 +0000
+Message-Id: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
+Mime-Version: 1.0
+To: <ojeda@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Cc: "Alex Gaynor" <alex.gaynor@gmail.com>, 
+	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	"Benno Lossin" <lossin@kernel.org>, 
+	"Andreas Hindborg" <a.hindborg@kernel.org>, 
+	"Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, 
+	"Danilo Krummrich" <dakr@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	"open list" <linux-kernel@vger.kernel.org>
+From: "chenmiao" <chenmiao@openatom.club>
+X-Original-From: chenmiao <chenmiao@openatom.club>
 
-On Mon, Nov 03, 2025 at 08:59:29PM +0530, Deepak Kumar Singh wrote:
-> From: Chris Lew <chris.lew@oss.qualcomm.com>
-> 
-> Some remoteproc need smp2p v2 support, mirror the version written by the
-> remote if the remote supports v2.
+The initial implementation of arch_static_branch was achieved by accessing
+the offset from the original type. However, this approach extended the
+path and introduced redundant calculations when dealing with types like
+`static_key_true/false`, as shown below:
 
-I don't think they _need_ v2 support. The subsystem might implement v2
-and only support v2...
+```
+static_brach_unlikely(tp, tracepoint, key)
+  => tracepoint->key->key
+  => &tracepoint->key(static_key_false) == &tracepoint->key.key(static_key)
+  => off: tracepoint->key - tracepoint
+```
 
-> This is needed if the remote does not have backwards compatibility
-> with v1.
+In practice, the implementation of `arch_static_branch` overlooked many
+detailed descriptions. To improve clarity, additional comments have been
+added to the original logic. The approach has been modified to directly
+locate the corresponding `static_key` instead of using offsets, thereby
+reducing  computational overhead.
 
-I guess this retroactively amends the previous sentence to make it
-valid? Please rewrite these two sentences.
+If finding the offset from the primitive type is necessary for this
+implementation, I will abandon this change.
 
-> And reset entry last value on SSR for smp2p v2.
+Additionally, support for the `static_branch_enable/disable` APIs has been
+introduced.
 
-The first two sentences described a problem and a "solution" to that
-problem, here you're just throwing in a fact.
+Signed-off-by: chenmiao <chenmiao@openatom.club>
+---
+ .../generated_arch_static_branch_asm.rs.S     |   2 +-
+ rust/kernel/jump_label.rs                     | 169 ++++++++++++++++--
+ 2 files changed, 155 insertions(+), 16 deletions(-)
 
-Please document what version 2 actually is and make it clear why
-resetting "entry last value on SSR".
-
-> 
-> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
-> Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/smp2p.c | 41 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 38 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index 39628df36745..c35ca7535c14 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -36,6 +36,10 @@
->   * The driver uses the Linux GPIO and interrupt framework to expose a virtual
->   * GPIO for each outbound entry and a virtual interrupt controller for each
->   * inbound entry.
-> + *
-> + * Driver supports two versions:
-> + * V1 - For processor that start after local host
-> + * V2 - For processor that start in early boot sequence
->   */
->  
->  #define SMP2P_MAX_ENTRY 16
-> @@ -50,11 +54,12 @@
->  
->  #define ONE 1
->  #define TWO 2
-> +#define MAX_VERSION TWO
->  
->  /**
->   * struct smp2p_smem_item - in memory communication structure
->   * @magic:		magic number
-> - * @version:		version - must be 1
-> + * @version:		version
->   * @features:		features flag - currently unused
->   * @local_pid:		processor id of sending end
->   * @remote_pid:		processor id of receiving end
-> @@ -183,14 +188,23 @@ static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
->  static bool qcom_smp2p_check_ssr(struct qcom_smp2p *smp2p)
->  {
->  	struct smp2p_smem_item *in = smp2p->in;
-> +	struct smp2p_entry *entry;
->  	bool restart;
->  
->  	if (!smp2p->ssr_ack_enabled)
->  		return false;
->  
->  	restart = in->flags & BIT(SMP2P_FLAGS_RESTART_DONE_BIT);
-> +	restart = restart != smp2p->ssr_ack;
-
-This is hard to read, please try to avoid the immediate reassignment.
-
-> +	if (restart && in->version > ONE) {
-> +		list_for_each_entry(entry, &smp2p->inbound, node) {
-> +			if (!entry->value)
-> +				continue;
-> +			entry->last_value = 0;
-
-Why do we only do this for version 2+?
-
-> +		}
-> +	}
->  
-> -	return restart != smp2p->ssr_ack;
-> +	return restart;
->  }
->  
->  static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
-> @@ -225,6 +239,20 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->  	}
->  }
->  
-> +static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
-> +{
-> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-> +	unsigned int pid = smp2p->remote_pid;
-> +	struct smp2p_smem_item *in;
-> +	size_t size;
-> +
-> +	in = qcom_smem_get(pid, smem_id, &size);
-> +	if (IS_ERR(in))
-> +		return 0;
-> +
-> +	return in->version;
-> +}
-> +
->  static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
->  {
->  	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-> @@ -522,6 +550,7 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
->  	struct smp2p_smem_item *out;
->  	unsigned smem_id = smp2p->smem_items[SMP2P_OUTBOUND];
->  	unsigned pid = smp2p->remote_pid;
-> +	u8 in_version;
->  	int ret;
->  
->  	ret = qcom_smem_alloc(pid, smem_id, sizeof(*out));
-> @@ -543,12 +572,18 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
->  	out->valid_entries = 0;
->  	out->features = SMP2P_ALL_FEATURES;
->  
-> +	in_version = qcom_smp2p_in_version(smp2p);
-
-This is a bit obfuscated in my view, and doesn't seem complete.
-
-We're calling qcom_smp2p_alloc_outbound_item() during probe(), at which
-time any non-early booted subsystem will yet to have been launched and
-hence they haven't allocated their SMP2P SMEM item.
-
-So in_version will be 0, which is less than 2, so therefor we're running
-version 1.
-
-If the subsystem is then brought out of reset and it implements version
-2 (we intended it to be launched by bootloader, but it wasn't - this
-shouldn't be a problem), we will have a version "mismatch".
-
-Upon first interrupt from the remote we will determine in
-qcom_smp2p_negotiate() that we're version 1 and they are version 2, so
-we will not complete the negotiation - and thereby not deliver
-interrupts.
-
-> +	if (in_version > MAX_VERSION) {
-> +		dev_err(smp2p->dev, "Unsupported smp2p version\n");
-
-I think we can afford ourself to add "...: %d\n", in_version); here. It
-would make the error print directly actionable the day we hit it (or
-make it obvious if we hit this error due to a bogus in_version).
-
-Regards,
-Bjorn
-
-> +		return -EINVAL;
-> +	}
-> +
->  	/*
->  	 * Make sure the rest of the header is written before we validate the
->  	 * item by writing a valid version number.
->  	 */
->  	wmb();
-> -	out->version = 1;
-> +	out->version = (in_version) ? in_version : 1;
->  
->  	qcom_smp2p_kick(smp2p);
->  
-> -- 
-> 2.34.1
-> 
+diff --git a/rust/kernel/generated_arch_static_branch_asm.rs.S b/rust/kernel/generated_arch_static_branch_asm.rs.S
+index 2afb638708db3..08603dc2d61e7 100644
+--- a/rust/kernel/generated_arch_static_branch_asm.rs.S
++++ b/rust/kernel/generated_arch_static_branch_asm.rs.S
+@@ -4,4 +4,4 @@
+ 
+ // Cut here.
+ 
+-::kernel::concat_literals!(ARCH_STATIC_BRANCH_ASM("{symb} + {off} + {branch}", "{l_yes}"))
++::kernel::concat_literals!(ARCH_STATIC_BRANCH_ASM("{real_key} + {branch}", "{l_yes}"))
+diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
+index 4e974c768dbd5..12ae78f95c761 100644
+--- a/rust/kernel/jump_label.rs
++++ b/rust/kernel/jump_label.rs
+@@ -6,22 +6,63 @@
+ //!
+ //! C header: [`include/linux/jump_label.h`](srctree/include/linux/jump_label.h).
+ 
+-/// Branch based on a static key.
++/// The key used for the static_key_false/true.
+ ///
+-/// Takes three arguments:
++/// If the key just contains a static_key, like: `struct tracepoint`;
+ ///
+-/// * `key` - the path to the static variable containing the `static_key`.
+-/// * `keytyp` - the type of `key`.
+-/// * `field` - the name of the field of `key` that contains the `static_key`.
++/// ```
++/// pub struct tracepoint {
++///     ...,
++///     key: static_key,
++///     ...,
++/// }
+ ///
+-/// # Safety
++/// // When you use the tracepoint as the parameter.
++/// if static_branch_unlikely!(tp, tracepoint, key) {
++///     // Do something
++/// }
+ ///
+-/// The macro must be used with a real static key defined by C.
+-#[macro_export]
+-macro_rules! static_branch_unlikely {
+-    ($key:path, $keytyp:ty, $field:ident) => {{
++/// // It just like:
++/// let _key: *const crate::bindings::tracepoint = ::core::ptr::addr_of!($key);
++/// let _key: *const crate::bindings::static_key_false = ::core::ptr::addr_of!((*_key).key);
++/// let _key: *const crate::bindings::static_key = _key.cast();
++/// ```
++///
++/// If the key just contains a single static_key, like: `struct static_key_false`;
++///
++/// ```
++/// pub struct static_key_false {
++///     key: static_key,
++/// }
++///
++/// // When you use the static_key_false as the parameter.
++/// if static_branch_unlikely!(key) {
++///     // Do something
++/// }
++///
++/// // It just like:
++/// let _key: *const crate::bindings::static_key_false = ::core::ptr::addr_of!($key);
++/// let _key: *const crate::bindings::static_key = _key.cast();
++/// ```
++///
++macro_rules! __static_branch_base {
++    ($basety:ty, $branch:expr, $key:path) => {{
++        let _key: *const $basety = ::core::ptr::addr_of!($key);
++        let _key: *const $crate::bindings::static_key = _key.cast();
++
++        #[cfg(not(CONFIG_JUMP_LABEL))]
++        {
++            $crate::bindings::static_key_count(_key.cast_mut()) > 0
++        }
++
++        #[cfg(CONFIG_JUMP_LABEL)]
++        {
++            $crate::jump_label::arch_static_branch! { _key, $branch }
++        }
++    }};
++    ($basety:ty, $branch:expr, $key:path, $keytyp:ty, $field:ident) => {{
+         let _key: *const $keytyp = ::core::ptr::addr_of!($key);
+-        let _key: *const $crate::bindings::static_key_false = ::core::ptr::addr_of!((*_key).$field);
++        let _key: *const $basety = ::core::ptr::addr_of!((*_key).$field);
+         let _key: *const $crate::bindings::static_key = _key.cast();
+ 
+         #[cfg(not(CONFIG_JUMP_LABEL))]
+@@ -30,7 +71,88 @@ macro_rules! static_branch_unlikely {
+         }
+ 
+         #[cfg(CONFIG_JUMP_LABEL)]
+-        $crate::jump_label::arch_static_branch! { $key, $keytyp, $field, false }
++        {
++            $crate::jump_label::arch_static_branch! { _key, $branch }
++        }
++    }};
++}
++
++/// Branch based on a static key.
++///
++/// Takes two type arguments:
++///
++/// First Type takes one argument:
++///
++/// * `key` - the static variable containing the `static_key`.
++///
++/// Second Type takes three arguments:
++///
++/// * `key` - the path to the static variable containing the `static_key`.
++/// * `keytyp` - the type of `key`.
++/// * `field` - the name of the field of `key` that contains the `static_key`.
++///
++/// # Safety
++///
++/// ```
++/// let tp: tracepoint = tracepoint::new();
++/// if static_key_likely!(tp, tracepoint, key) {
++///     // Do something
++/// }
++///
++/// let key: static_key_false = static_key_true::new();
++/// if static_key_likely!(key) {
++///     // Do something
++/// }
++/// ```
++///
++/// The macro must be used with a real static key defined by C.
++#[macro_export]
++macro_rules! static_branch_likely {
++    ($key:path) => {{
++        __static_branch_base! { $crate::bindings::static_key_true, true, $key }
++    }};
++    ($key:path, $keytyp:ty, $field:ident) => {{
++        __static_branch_base! { $crate::bindings::static_key_true, true, $key, $keytyp, $field }
++    }};
++}
++pub use static_branch_likely;
++
++/// Branch based on a static key.
++///
++/// Takes two type arguments:
++///
++/// First Type takes one argument:
++///
++/// * `key` - the static variable containing the `static_key`.
++///
++/// Second Type takes three arguments:
++///
++/// * `key` - the path to the static variable containing the `static_key`.
++/// * `keytyp` - the type of `key`.
++/// * `field` - the name of the field of `key` that contains the `static_key`.
++///
++/// # Safety
++///
++/// ```
++/// let tp: tracepoint = tracepoint::new();
++/// if static_key_unlikely!(tp, tracepoint, key) {
++///     // Do something
++/// }
++///
++/// let key: static_key_false = static_key_false::new();
++/// if static_key_unlikely!(key) {
++///     // Do something
++/// }
++/// ```
++///
++/// The macro must be used with a real static key defined by C.
++#[macro_export]
++macro_rules! static_branch_unlikely {
++    ($key:path) => {{
++        static_branch_base! { $crate::bindings::static_key_false, false, $key }
++    }};
++    ($key:path, $keytyp:ty, $field:ident) => {{
++        static_branch_base! { $crate::bindings::static_key_false, false, $key, $keytyp, $field }
+     }};
+ }
+ pub use static_branch_unlikely;
+@@ -46,14 +168,13 @@ macro_rules! static_branch_unlikely {
+ #[doc(hidden)]
+ #[cfg(CONFIG_JUMP_LABEL)]
+ macro_rules! arch_static_branch {
+-    ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
++    ($key:path, $branch:expr) => {'my_label: {
+         $crate::asm!(
+             include!(concat!(env!("OBJTREE"), "/rust/kernel/generated_arch_static_branch_asm.rs"));
+             l_yes = label {
+                 break 'my_label true;
+             },
+-            symb = sym $key,
+-            off = const ::core::mem::offset_of!($keytyp, $field),
++            real_key = sym $key,
+             branch = const $crate::jump_label::bool_to_int($branch),
+         );
+ 
+@@ -72,3 +193,21 @@ macro_rules! arch_static_branch {
+ pub const fn bool_to_int(b: bool) -> i32 {
+     b as i32
+ }
++
++/// Enable a static branch.
++#[macro_export]
++macro_rules! static_branch_enable {
++    ($key:path) => {{
++        let _key: *const $crate::bindings::static_key = ::core::ptr::addr_of!($key);
++        $crate::bindings::static_key_enable(_key.cast_mut());
++    }};
++}
++
++/// Disable a static branch.
++#[macro_export]
++macro_rules! static_branch_disable {
++    ($key:path) => {{
++        let _key: *const $crate::bindings::static_key = ::core::ptr::addr_of!($key);
++        $crate::bindings::static_key_disable(_key.cast_mut());
++    }};
++}
+-- 
+2.43.0
 
