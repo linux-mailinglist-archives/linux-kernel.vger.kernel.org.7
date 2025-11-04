@@ -1,290 +1,184 @@
-Return-Path: <linux-kernel+bounces-884571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77BDC307FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:27:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25E2C307C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B2A3BCACA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:24:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D1CA34ACEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FEA315D42;
-	Tue,  4 Nov 2025 10:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D863164AF;
+	Tue,  4 Nov 2025 10:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="gRF93W3l"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uwu7EiHC"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F6152F88;
-	Tue,  4 Nov 2025 10:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60789314A7F;
+	Tue,  4 Nov 2025 10:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762251869; cv=none; b=OcRRzaRXCjeK8nt/giMS7dxAmDy2AV1x6O2kkp4JFBd0JlXFEQ/BTewy3J1tU944AOnswYKq8Gu6JS73yij8miRrMKOImz6rwjRbhYAS/uGej9e+N2tR9hkm2iHD2+P5uqXXJC7nvgnC3r8Xcur/4A0C7OlbP8XVZw17CAYIiGc=
+	t=1762251871; cv=none; b=oL3vJpMcSF3AL3LxXPq7gE93u12T3Zo1tvtnQiGoxtQWENmCqJwb/5496m0i7ina5G18IKBzWtyMeWBJPFYdSkIUQTi//WtXYL0mFqPmmj3yhTtQAk7o2SeCtZ3YvlQaq9et8kTrkV3Ok8FTvuqd88i6bpINMQBhr9DPXVKHhjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762251869; c=relaxed/simple;
-	bh=lRdGiHbw4UD0ciFa8bbOF/H+kh0F6+4HpI8oB1t7WBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlg6Sm3ww1zzhlGh1qqnImF1kCEENzF5ybqm1M0kwoO3YIo6C1dFsZTDocdre5vjsW/FonOaIfz//9iWgnOkuJiofHvsIHpoQSUkAOUn1XD0bPQZT2uSsyaKF3WlBEuD8ebVWYyLscXviodDVCeb9xqNBKW2SuIRRCsiSyWxlOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=gRF93W3l; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3228B14839C7;
-	Tue,  4 Nov 2025 11:24:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1762251856; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=dBPVZv8ZAjPrctbt7IeOOktebaSybrHF8X5GDqBvhPw=;
-	b=gRF93W3lpRdwy25l5NWJ3tEGdnnvKife1be96721Lgu80iB8DwHlcXqZpFoeRsIh8V1Qrr
-	gfzismOMmeOhcydzxRLlUHHDSpRRyv1+2MvyDTQaDp4Pw5tQPBIAsaNeLpKbFvkRFi2sKE
-	zKdY+NgcIduDDOWphmLh+mFvo3RXLVSsa3yKbQd9eBExN622o+NyzK4ytb9rLp6L/ByE9Q
-	0I7hnZCZyU5oAOXb0uixzeS90BP36vcb30lb/cLcj61DyIQT7cZd7h6fp9GRD87+Eoqdgc
-	RMtkAMEgsy8igmm2iiUDNHjIK9z3EgtyR9lLhqwl/QaDxo6bJRuC0pQ8tKGa6w==
-Date: Tue, 4 Nov 2025 11:24:05 +0100
-From: Alexander Dahl <ada@thorsis.com>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jon Nettleton <jon@solid-run.com>,
-	Mikhail Anikin <mikhail.anikin@solid-run.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH 08/10] arm64: dts: add description for solidrun imx8mp
- hummingboard-iiot
-Message-ID: <20251104-sandal-playset-6f4ad0665c7b@thorsis.com>
-Mail-Followup-To: Josua Mayer <josua@solid-run.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jon Nettleton <jon@solid-run.com>,
-	Mikhail Anikin <mikhail.anikin@solid-run.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-References: <20251027-imx8mp-hb-iiot-v1-0-683f86357818@solid-run.com>
- <20251027-imx8mp-hb-iiot-v1-8-683f86357818@solid-run.com>
- <2c54b7b7-4eb4-44a0-8025-8da16a28efd4@solid-run.com>
- <20251029-jittery-ambiguity-14e03ad2f0df@thorsis.com>
- <054eecb5-1296-4c41-ae86-1779abe0360c@solid-run.com>
+	s=arc-20240116; t=1762251871; c=relaxed/simple;
+	bh=TFaGxltno5WwV2KBpCBbRWY3IyHfrcyUkCjGl96saNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nq69lm5F+wGRNu9zqb4ejj4s9U5GkDfeVHFPWGVHsWXHh3ekXBVKablAVJA90NyfcsBqBRy3pF7ICPbtQj5W2a3EB/Us7xtwSmgKhjsS1AMz5YOAkwIRRPJ9157X9pFyeoKI5mjI9F5ZMWaCIFEikqKGhQVW9GRYMgfFEEmUmao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uwu7EiHC; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 6A9991A1871;
+	Tue,  4 Nov 2025 10:24:26 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 30128606EF;
+	Tue,  4 Nov 2025 10:24:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3E03102F1CE8;
+	Tue,  4 Nov 2025 11:24:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762251864; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=Yh/SOsjRqtgPLuq8QRVnn/lrGryn5Z5zYSTW9+Wd1lE=;
+	b=uwu7EiHCDvkOi+ZlaNqDmWa7sDjt1+KNUXllXXwIo7BBazhl8rSoPx6BVnpH9z+jfnu3AN
+	M704y1JCBh8jUjN0L1cESmxgAsuL/HG1dpnA8pkxVWp+V+NUYpIsRVSEdL1KPdP6GhPMtM
+	NMZcL50+dzYfv1YP7uz27gLG9O83Kv4TwoM5Vz1q/0Sgwyl5sDhiNrZVhWiFwVL0miKigv
+	QCIJ805towdU/JbBzlnj80L6OK/kU++DuYG/iG4h/SXHDnQjUn8N2K6QbLxM9f6YFvJw65
+	6/5Bic3PvCFetE3+rKQiGGPaLwxTnrpCFS0pnzFfB44qrYnmLbrU8KLeS4N4vg==
+Message-ID: <d6545844-f7f6-4714-927f-cf985dc50a54@bootlin.com>
+Date: Tue, 4 Nov 2025 11:24:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor drm_writeback_connector
+ structure
+To: Suraj Kandpal <suraj.kandpal@intel.com>, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ kernel-list@raspberrypi.com, amd-gfx@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: dmitry.baryshkov@oss.qualcomm.com, ankit.k.nautiyal@intel.com,
+ arun.r.murthy@intel.com, uma.shankar@intel.com, jani.nikula@intel.com,
+ harry.wentland@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
+ christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
+ liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev, tzimmermann@suse.de,
+ jessica.zhang@oss.qualcomm.com, sean@poorly.run,
+ marijn.suijten@somainline.org, laurent.pinchart+renesas@ideasonboard.com,
+ mcanal@igalia.com, dave.stevenson@raspberrypi.com,
+ tomi.valkeinen+renesas@ideasonboard.com,
+ kieran.bingham+renesas@ideasonboard.com
+References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
+ <20251007054528.2900905-2-suraj.kandpal@intel.com>
+Content-Language: en-US, fr
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20251007054528.2900905-2-suraj.kandpal@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <054eecb5-1296-4c41-ae86-1779abe0360c@solid-run.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Josua,
 
-Am Thu, Oct 30, 2025 at 04:44:40PM +0000 schrieb Josua Mayer:
-> Hi Alex,
+
+Le 07/10/2025 à 07:45, Suraj Kandpal a écrit :
+> Some drivers cannot work with the current design where the connector
+> is embedded within the drm_writeback_connector such as Intel and
+> some drivers that can get it working end up adding a lot of checks
+> all around the code to check if it's a writeback conenctor or not,
+> this is due to the limitation of inheritance in C.
+> To solve this move the drm_writeback_connector within the
+> drm_connector and remove the drm_connector base which was in
+> drm_writeback_connector. Make this drm_writeback_connector
+> a union with hdmi connector to save memory and since a connector can
+> never be both writeback and hdmi it should serve us well.
+> Do all other required modifications that come with these changes
+> along with addition of new function which returns the drm_connector
+> when drm_writeback_connector is present.
+> Modify drivers using the drm_writeback_connector to
+> allow them to use this connector without breaking them.
+> The drivers modified here are amd, komeda, mali, vc4, vkms,
+> rcar_du, msm
 > 
-> Am 29.10.25 um 10:23 schrieb Alexander Dahl:
-> > Hello Josua,
-> >
-> > Am Tue, Oct 28, 2025 at 12:24:36PM +0000 schrieb Josua Mayer:
-> >> Am 27.10.25 um 18:48 schrieb Josua Mayer:
-> >>
-> >>> Add description for the SolidRun i.MX8MP HummingBoard IIoT.
-> >>> The board is a new design around the i.MX8MP System on Module, not
-> >>> sharing much with previous HummingBoards.
-> >>>
-> >>> It comes with some common features:
-> >>> - 3x USB-3.0 Type A connector
-> >>> - 2x 1Gbps RJ45 Ethernet
-> >>> - USB Type-C Console Port
-> >>> - microSD connector
-> >>> - RTC with backup battery
-> >>> - RGB Status LED
-> >>> - 1x M.2 M-Key connector with PCI-E Gen. 3 x1
-> >>> - 1x M.2 B-Key connector with USB-2.0/3.0 + SIM card holder
-> >>> - 1x LVDS Display Connector
-> >>> - 1x DSI Display Connector
-> >>> - GPIO header
-> >>> - 2x RS232/RS485 ports (configurable)
-> >>> - 2x CAN
-> >>>
-> >>> In addition there is a board-to-board expansion connector to support
-> >>> custom daughter boards with access to SPI, a range of GPIOs and -
-> >>> notably - CAN and UART. Both 2x CAN and 2x UART can be muxed either
-> >>> to this b2b connector, or a termianl block connector on the base board.
-> >>>
-> >>> The routing choice for UART and CAN is expressed through gpio
-> >>> mux-controllers in DT and can be changed by applying dtb addons.
-> >>>
-> >>> Four dtb addons are provided:
-> >>>
-> >>> - dsi panel Winstar WJ70N3TYJHMNG0
-> >>> - lvds panel Winstar WF70A8SYJHLNGA
-> >>> - RS485 on UART port "A" (default rs232)
-> >>> - RS485 on UART port "B" (default rs232)
-> >>>
-> >>> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/freescale/Makefile             |   6 +
-> >>>  ...hummingboard-iiot-panel-dsi-WJ70N3TYJHMNG0.dtso |  70 ++
-> >>>  ...ummingboard-iiot-panel-lvds-WF70A8SYJHLNGA.dtso | 105 +++
-> >>>  .../imx8mp-hummingboard-iiot-rs485-a.dtso          |  18 +
-> >>>  .../imx8mp-hummingboard-iiot-rs485-b.dtso          |  18 +
-> >>>  .../dts/freescale/imx8mp-hummingboard-iiot.dts     | 710 +++++++++++++++++++++
-> >>>  6 files changed, 927 insertions(+)
-> >> cut
-> >>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-iiot.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-iiot.dts
-> >>> new file mode 100644
-> >>> index 0000000000000..2e4cb676bc9da
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-iiot.dts
-> >> cut
-> >>> +	led-controller@30 {
-> >>> +		compatible = "ti,lp5562";
-> >>> +		reg = <0x30>;
-> >>> +		/* use internal clock, could use external generated by rtc */
-> >>> +		clock-mode = /bits/ 8 <1>;
-> >>> +		#address-cells = <1>;
-> >>> +		#size-cells = <0>;
-> >>> +
-> >>> +		multi-led@0 {
-> >>> +			reg = <0x0>;
-> >>> +			color = <LED_COLOR_ID_RGB>;
-> >>> +			#address-cells = <1>;
-> >>> +			#size-cells = <0>;
-> >>> +
-> >>> +			led@0 {
-> >>> +				reg = <0x0>;
-> >>> +				color = <LED_COLOR_ID_RED>;
-> >>> +				led-cur = /bits/ 8 <0x32>;
-> >>> +				max-cur = /bits/ 8 <0x64>;
-> >>> +			};
-> >>> +
-> >>> +			led@1 {
-> >>> +				reg = <0x1>;
-> >>> +				color = <LED_COLOR_ID_GREEN>;
-> >>> +				led-cur = /bits/ 8 <0x19>;
-> >>> +				max-cur = /bits/ 8 <0x32>;
-> >>> +			};
-> >>> +
-> >>> +			led@2 {
-> >>> +				reg = <0x2>;
-> >>> +				color = <LED_COLOR_ID_BLUE>;
-> >>> +				led-cur = /bits/ 8 <0x19>;
-> >>> +				max-cur = /bits/ 8 <0x32>;
-> >>> +			};
-> >>> +		};
-> >>> +
-> >>> +		led@3 {
-> >>> +			reg = <3>;
-> >>> +			chan-name = "D8";
-> >> chan-name gives the led the name D6 in sysfs.
-> >>
-> >> The bindings do not allow however setting chan-name on
-> >> the multi-led, and it has an auto-generated name in sysfs.
-> >>
-> >> Am I missing something? Can multi-leds have a custom name?
-> > The sysfs names are auto-generated based on the attributes "color",
-> > "function", and "label" with the last being discouraged for new
-> > designs.
-> Thank you for reminding me of this one!
-> > If the "ti,lp5562" driver does nothing special,you could
-> > add "function" to the multi-led node and see if that fits your needs.
-> The board is not a complete product by itself so we have not chosen
-> a specific function for each led.
-> Therefore only color and label are actually applicable.
+> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
+> ---
+> V1 -> V2: Use &connector->writeback, make commit message imperative (Dmitry)
+> ---
 
-In such cases I use a generic function and the enumerator,
-something like this (in this case for a different led driver):
+[...]
 
-    led_11_red: led-0 {
-            function = LED_FUNCTION_INDICATOR;
-            function-enumerator = <0>;
-            color = <LED_COLOR_ID_RED>;
-            gpios = <&pioC 18 GPIO_ACTIVE_HIGH>;
-    };
+>   drivers/gpu/drm/vkms/vkms_composer.c          |  2 +-
+>   drivers/gpu/drm/vkms/vkms_drv.h               |  2 +-
+>   drivers/gpu/drm/vkms/vkms_writeback.c         | 13 ++--
 
-…
+For the VKMS part:
 
-    led_13_red: led-2 {
-            function = LED_FUNCTION_INDICATOR;
-            function-enumerator = <1>;
-            color = <LED_COLOR_ID_RED>;
-            gpios = <&pioC 20 GPIO_ACTIVE_HIGH>;
-    };
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-This gives stable sysfs paths like this:
+Thanks,
+Louis Chauvet
 
-  /sys/class/leds/red:indicator-0
-  /sys/class/leds/red:indicator-1
+--
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Of course only with a LED driver supporting that automatic naming
-scheme.
-
-> After testing on v6.18-rc1 I can state that leds-lp5562 driver does
-> something special - function and label properties do not have any
-> impact on the names in sysfs.
-> 
-> However I could set label on both LEDs regardless?
-
-When using the 'label' attribute, color and function attributes are
-more or less informational only, because label determines the sysfs
-path.  Someone could change the leds-lp5562 driver to behave like the
-other drivers, but then I would advise to explicitly set label in this
-case, so you won't end up with changed sysfs paths after the driver is
-changed.
-
-Not sure if this helps you.  Sorry.
-
-Greets
-Alex
-
-> 
-> >
-> > Adding linux-leds to Cc, because this is a LED related question.
-> >
-> > Greets
-> > Alex
-> >
-> >> In v6.6 leds-lp5562 driver if I set in each multi-led led@[0-2] sub-node
-> >> chan-name to the same string "D7" - then the sysfs name becomes D7.
-> >>
-> >>> +			color = <LED_COLOR_ID_GREEN>;
-> >>> +			led-cur = /bits/ 8 <0x19>;
-> >>> +			max-cur = /bits/ 8 <0x64>;
-> >>> +		};
-> >>> +	};
 
