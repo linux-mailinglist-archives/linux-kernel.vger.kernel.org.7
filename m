@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-884725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D4AC30E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:11:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D9FC30E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4893B6091
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:11:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 443214E3D51
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070F22EE60B;
-	Tue,  4 Nov 2025 12:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134D72EDD60;
+	Tue,  4 Nov 2025 12:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CR54QPO5"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012002.outbound.protection.outlook.com [52.101.43.2])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="0SvR9VoW"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7A62ECE9E;
-	Tue,  4 Nov 2025 12:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762258274; cv=fail; b=QCtuvTks6UL4NlaTIU6pKegDoCKNlPCMlQe4knBkzOspNjDVTwLtPMe7s1srxv8YoEtjdkjR6EsgbLOBRp8CDlbCGpuoOX3En0+UbbOh4G6SH/CHJqdaF0bOtG+KJcvQ8z+OQ4tjEQjXwW5YkJlg4uRlPJtWnbChVC88kiDbPvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762258274; c=relaxed/simple;
-	bh=qPTBJzYTf+LtfVwZL4KcV5T2DgWmmGlcnY74pSXTh1w=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF652EC54B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 12:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762258213; cv=none; b=amoTETFiz6fv/2AEY5pfvlAL8b5VuFkjG/cJqX5N43qaH0of8OMBPqn6aR9Ve73xz1NDMDi4WI8NA0yErWLzx1qLT0aZwnVkZGu+96iw7hqXPWENAdhg9GtRLnfIOd+Tyja+Rh3yU9cJpijaZOxIf+ZaH6c8aUhWqlzkqdUAwE4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762258213; c=relaxed/simple;
+	bh=81NqNFq430kZI2prWoUsrG2YpuuCb8Xd55KakpMw4fQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pqr/pXeu0sc/1WSXNUs64lpBu8AMyfEArjPZWKAQTGIaYpDNuS6V7otagZRbGKxzVT9jPZbnExj/lU9IqJCLxSQ6KGHYRmO5VweNl2sLSnu+6jr43vcsmgP9hH0kG//Dl1TuH60EFSeEpcGSYwdWipRljBFdE2ZxyB0pT2GdUHc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CR54QPO5; arc=fail smtp.client-ip=52.101.43.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eZusja4L6saxKxVwMjjoXVoT63EDGf3MANuKVeg6Z16ER5DAhqcbrpO/k7fUHHYDhNVQr7i3zrMct1YYMutUaS29qCF9wod3yBR/Hb6nIf4EdKIPnJfoQfWc+4p/4p77UNIsKLH+5Izjnsh7p4eeQWigboCUqYlHMELFr1A4xjDJW4VWWxH5RM4Py86V0iEqaMVf51Dc8KQzfNzOjZATEUzGrhbORUs/p3drnx0ATbz4laDPdtG71vO3/PWhy7kR3wt67TywYN+VkLERM4/N4OW3BMq3H4yAICDBHTCML0WTe0edVD/vSQQxVC4ChyASahfubqCEJC7ayShJufcHTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lUAWZOK4gDrgGwcOjflfX7agprCcrcbIjxXDlzqbEIk=;
- b=DUYTuMcci954hujCXoHmVCdvpYqsR5mO4zzNuqLRLBK2eT891x71TPeUiN/r0IJEDn38nMh51NH4lP6i7+IK25YFAG3Aq31bQm1e9HixomnyeO8zUD24B6QVtHNDaduNLuwRRhToNRO5RAjIFIJhVz3O7LhjQUtCNwBMKE5MLIlfmNMXAWIIgmxq/4Ry+5wh9hkd8EnyFstyHKlar6TTdxBo5JMBYy3dLE0rrvPRahARadfjP3/TgK+IiV5cDP+RWw5C9g9VRUUxPLG0RydKzzXcn+g8WeC3uxrliL7sMXpUJRSb8RNOnvxVti2LhPBHvHDvTI7TbdkHCMuLDiukpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lUAWZOK4gDrgGwcOjflfX7agprCcrcbIjxXDlzqbEIk=;
- b=CR54QPO5FzcHhQ2KIC2z7KQMGuRoL7hVYWaVRM6qSwfj2aiVTrzDa9DA9qNplzLUT8P5k4kaqCsULjsyuetjZ5Pf4V8XoDmnNGMUlVC4fgATXWt9n4hB2TqLE95xvQMaSB1pPZ76ICUnyL8115PJ5FjCBeN9/ulGGl20uvhJEuK7q6WltO5rLueYs5VtwrEUF1DvhlqJxuepBnInn6SgEwrziAoMfISg1eU291Oz1sS53JK9YkdJbOh1LtB2rrZrGLyJ5EmHHs8hYY5I3DWQrZSZRjMDvCU/62XAscgwTXyOz3OJJpIxlT1Ks8iGYpjcY431cqeZsi5aCbKHqRHTgA==
-Received: from CH0PR03CA0323.namprd03.prod.outlook.com (2603:10b6:610:118::6)
- by SJ2PR12MB7845.namprd12.prod.outlook.com (2603:10b6:a03:4ce::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Tue, 4 Nov
- 2025 12:11:10 +0000
-Received: from DS2PEPF00003444.namprd04.prod.outlook.com
- (2603:10b6:610:118:cafe::c0) by CH0PR03CA0323.outlook.office365.com
- (2603:10b6:610:118::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Tue, 4
- Nov 2025 12:11:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003444.mail.protection.outlook.com (10.167.17.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 12:11:10 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 04:10:58 -0800
-Received: from [10.242.158.240] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 04:10:55 -0800
-Message-ID: <f04438b5-2f62-498b-91f4-07085f46d6b9@nvidia.com>
-Date: Tue, 4 Nov 2025 14:09:52 +0200
+	 In-Reply-To:Content-Type; b=cXpHGbGvhY9y5I/WXXZWDI/uWwT/VhfssmQRw7CeouYqVrG3ybK8HYVyNgop7ramdT0FTofzpk/OEi+xQ4Dn5jM+OPlEfmTjk2dsMGHe41varkdSbeC5n0exaHRg6xy8J1r0BPbGYCwMxH5A/g+j0de50ZjPQZk/2PEUxYMU898=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=0SvR9VoW; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=muowinBjB5u+VBZIerFKK9Iv670g+lCFTaqTXK7kMfE=;
+	b=0SvR9VoWnt+T2u4dNohjI1F1XGclCpF4gVQDX59MF6RB1AetoxXCPPt0x5HpT6tj7G0EXNQXq
+	D+L0xxUHXFYSuOFWuuFq3w9/akt8+DBjAXz1gFhoBNzSQQSXW4ILAJxcR4aqxRLtmR/z7BglSMZ
+	1suk62WNhnA8ACmx1hOq6iE=
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d16fy4f48zmV6l;
+	Tue,  4 Nov 2025 20:08:26 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7B8CE140143;
+	Tue,  4 Nov 2025 20:10:01 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 20:10:00 +0800
+Message-ID: <c9925b2e-207b-447e-afce-07873406a853@huawei.com>
+Date: Tue, 4 Nov 2025 20:09:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,172 +56,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: mlx5: CX7: fw_tracer: crash at mlx5_tracer_print_trace()
-To: Usama Arif <usamaarif642@gmail.com>, Breno Leitao <leitao@debian.org>,
-	<saeedm@nvidia.com>, <itayavr@nvidia.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dcostantino@meta.com>, <kuba@kernel.org>
-References: <hanz6rzrb2bqbplryjrakvkbmv4y5jlmtthnvi3thg5slqvelp@t3s3erottr6s>
- <e9abc694-27f2-4064-873c-76859573a921@nvidia.com>
- <0c2cc197-f540-4842-a807-3f11d2ae632a@gmail.com>
+Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: Barry Song <21cnbao@gmail.com>, <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>, Suren Baghdasaryan <surenb@google.com>,
+	<linux-kernel@vger.kernel.org>, Barry Song <v-songbaohua@oppo.com>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Lokesh Gidra
+	<lokeshgidra@google.com>, Tangquan Zheng <zhengtangquan@oppo.com>, Qi Zheng
+	<zhengqi.arch@bytedance.com>
+References: <20250607220150.2980-1-21cnbao@gmail.com>
+ <efeb3350-fbdf-408c-92ef-c6eada4a5755@huawei.com>
+ <564941f2-b538-462a-ac55-f38d3e8a6f2e@lucifer.local>
 Content-Language: en-US
-From: Moshe Shemesh <moshe@nvidia.com>
-In-Reply-To: <0c2cc197-f540-4842-a807-3f11d2ae632a@gmail.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <564941f2-b538-462a-ac55-f38d3e8a6f2e@lucifer.local>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003444:EE_|SJ2PR12MB7845:EE_
-X-MS-Office365-Filtering-Correlation-Id: 495778df-2aa4-4a4d-aba5-08de1b9b3db8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UG15Z1pndFhWZDV3UzBUSFdEZjYvRHgxcmJKVjh6Wm9kRkpVTW5DcGc5cTdX?=
- =?utf-8?B?MWJUbHZPZGxITVlabzZiaGllbG1EeWs5bDVzRy8rZU4wOWsxcGRaeFIwMGZI?=
- =?utf-8?B?V1pmV3g1NE1VK1dGVFd4UTRaNzErbWcrYXd4cWEwYlFBcFRiVFBFYnl2Sjcr?=
- =?utf-8?B?TnhueEtFbmxPTWZZT3JObGgvcXFBVHY2K2hleDArRmg0NlVzdk1DenhVWDhD?=
- =?utf-8?B?NGxDSGRYdE04V2tRbzZ3Nm0ramdPSGNVczkvWmZFdFpxR1IxckNndmtUdE1O?=
- =?utf-8?B?WWhaMmpxeDdoZll3N2pOaUxsWmk4M05aQ2RqayswK0ZvKzFzN0RLTlNIV3NI?=
- =?utf-8?B?cjdsVS9ndFNzTnBFTE44dS9xWDJlUW9JTm9qTnVleXN6Z05rTVlxUGh5Smw4?=
- =?utf-8?B?SVBuSlZqS2dHY2xONUdBaTZEcEV6dWx6V0ttYXVKVGdRRi8vc2piRTZPaGVM?=
- =?utf-8?B?Si9MTFdPUEZKMWlyOUloSjRUVWl0NGs2WDliOTVvVkZNbDhhaU5WNGZxdTBw?=
- =?utf-8?B?VmJvODF5c044MHp2YWxaK0lHN3Vqa1pTWUpZWnI3RHpOcjRyNFZiWDFyaTBa?=
- =?utf-8?B?dG1jaFhzQU5KdGpGTWRkc013VmRCWjgzbHZUWDUxLy8zcldkU1gwRkUwVExW?=
- =?utf-8?B?UDlmUmxUcGh1dm1lci9ta3hiUzIzd2I2RFBkSUUxS2Z6RWRXMjRzS0pRTVZO?=
- =?utf-8?B?WE9lMHA4MDFjbG8vcFNlWFhqRi9MYjh0YWdPa3JSdi9hWnh0L0IwN0Z5NFlO?=
- =?utf-8?B?OEdNTnBLa3gzVjNpbVdPWDgvK2V1T3VIV2tnMzQ1T2NXSTU3b2QrK1QyQ25v?=
- =?utf-8?B?RlNUK3F5QmtxL29oc1FNWnUvVU42Q0czTHJDN2FpTVpQaWhyTC80S0xSL1Jr?=
- =?utf-8?B?cTRFYVRwaVZNNi9oNVJMMWtvbHdUZUJOZENrVEx1QUlBRlFLSVNiZnI1c1R4?=
- =?utf-8?B?VjY2NjZHZlljZy9IUmhYM3g5dCtvVG1aNlN3eG5aNjY5TGFDZUNIKytxbnBV?=
- =?utf-8?B?T0NUckpqMDE4c0RESEw1Y3ZDbFU1KzFvdHR2aHI1QXBQY042SUxTOHlocnQ1?=
- =?utf-8?B?U1puQ0lEd3cxQVB1N3RsdzlCek9xVEw0WlFqbzJMeDVzR1JrUjlmdGkzQ1RV?=
- =?utf-8?B?MVUwaFI4ay9TL0dCaE5NeHJRZ1d5VjNzWG1Hek9WdkhFR0xudXRqSTd0UUVv?=
- =?utf-8?B?RExwZFlMdUxIRFQ5SDBHWVZiUUlIWUg2eDI4YlBsSXhPeWYvbFBWU3lGNjBZ?=
- =?utf-8?B?Z2ZmeFNic0FDR2xzMm9ueGp3dWppOWx3SktRMkEzdjNaS1IwcWV6SHJXUm1t?=
- =?utf-8?B?WXg0N3YwRFBlRzA5TVR4UVliY0xVUEZXNWE4Q1V5c0tjUm92YjVXWFR0RjRR?=
- =?utf-8?B?RDFqSVNnNlpTbDZmeHBPRGNPcDIveXUzTktidU5sdDFDekVKNFN5ck9sSCtu?=
- =?utf-8?B?OVlOblJlWHBwUG12NDZlQVVxdkVYaFNwelhkRFJmdUJ3MURqRWpGYmVtaDZG?=
- =?utf-8?B?cHI3NERmSEE4UnJtOUtNUDZkVmdkT1NRTmZyMWtMbnpBY0tFQ1ZyN0x1d2FI?=
- =?utf-8?B?Tll3eEdzRmNCZHQ5ZXJtMGoreWJ3b3hGdEFQTUpzL2xWWVlodGphYTdkOFIv?=
- =?utf-8?B?TzQvQUR4eG5EQVp2ejBFZHAvL1J4cVZPS3RxVjYrQk9QUksybVdZeUFTR0xp?=
- =?utf-8?B?Z2tIejNDT1hTNDFGS2xKOVlXaEoyVzNUMS9qTDlZQTJRRnRiRG05dzJxZmsx?=
- =?utf-8?B?UE9Jejl5WWQrRFpVK2JLZ04xdUw3aldRVGFUd1FRNml6dFgxMnJmZ1VING1x?=
- =?utf-8?B?MXBUUVRmYVZpRmlLWWpod3FvbGJQcTdJNG1ya21YUll5OVVGNmpWNVUyajB2?=
- =?utf-8?B?NldITk0yaTQrK3pPZWU5SEkvUjdSYkpwYVUyaVBZL0JmUVl2ZkxIQTc4aERB?=
- =?utf-8?B?QzJWTnVjbDJER3I1Lzh2S2RFdEVaUnFCSUliVVNzZkRIc0hxVDlkUDV2bFcv?=
- =?utf-8?B?bTJZM1d6VDk0S3I4VDdjaU1xQTlLV0V5dVM1dDU3dmVHZ2VRTkh6bEJoWFhi?=
- =?utf-8?B?VXRxNnBvbEFBQTdHc2hHbmpXOGoyRlY0OXFwQ1NJWCtsWGxGUlVpcmZCNXU0?=
- =?utf-8?Q?TZHM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 12:11:10.1057
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 495778df-2aa4-4a4d-aba5-08de1b9b3db8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003444.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7845
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
 
 
-On 11/3/2025 12:45 PM, Usama Arif wrote:
-> On 15/10/2025 12:13, Moshe Shemesh wrote:
+On 2025/11/4 17:01, Lorenzo Stoakes wrote:
+> On Tue, Nov 04, 2025 at 04:34:35PM +0800, Kefeng Wang wrote:
+>>> +static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavior)
+>>>    {
+>>> +	int behavior = madv_behavior->behavior;
+>>> +
+>>>    	if (is_memory_failure(behavior))
+>>> -		return 0;
+>>> +		return MADVISE_NO_LOCK;
+>>> -	if (madvise_need_mmap_write(behavior)) {
+>>> +	switch (behavior) {
+>>> +	case MADV_REMOVE:
+>>> +	case MADV_WILLNEED:
+>>> +	case MADV_COLD:
+>>> +	case MADV_PAGEOUT:
+>>> +	case MADV_FREE:
+>>> +	case MADV_POPULATE_READ:
+>>> +	case MADV_POPULATE_WRITE:
+>>> +	case MADV_COLLAPSE:
+>>> +	case MADV_GUARD_INSTALL:
+>>> +	case MADV_GUARD_REMOVE:
+>>> +		return MADVISE_MMAP_READ_LOCK;
+>>> +	case MADV_DONTNEED:
+>>> +	case MADV_DONTNEED_LOCKED:
+>>> +		return MADVISE_VMA_READ_LOCK;
 >>
->>
->> On 10/9/2025 3:42 PM, Breno Leitao wrote:
->>> Hello,
->>>
->>> I am seeing a crash in some production host in function
->>> mlx5_tracer_print_trace() that sprintf a string (%s) pointing to value
->>> that doesn't seem to be addressable. I am seeing this on 6.13, but,
->>> looking at the upstream code, the function is the same.
->>>
->>> Unfortunately I am not able to reproduce this on upstream kernel easily.
->>> Host is running ConnectX-7.
->>>
->>> Here is the quick stack of the problem:
->>>
->>>      Unable to handle kernel paging request at virtual address 00000000213afe58
->>>
->>>      #0  string_nocheck(buf=0xffff8002a11af909[vmap stack: 1315725 (kworker/u576:1) +0xf909], end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], s=0x213afe59, len=0) (lib/vsprintf.c:646:12)
->>>      #1  string(end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], s=0x213afe58) (lib/vsprintf.c:728:9)
->>>      #2  vsnprintf(buf=0xffff8002a11af8e0[vmap stack: 1315725 (kworker/u576:1) +0xf8e0], fmt=0xffff10006cd4950a, end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], str=0xffff8002a11af909[vmap stack: 1315725 (kworker/u576:1) +0xf909], old_fmt=0xffff10006cd49508) (lib/vsprintf.c:2848:10)
->>>      #3  snprintf (lib/vsprintf.c:2983:6)
->>>
->>> Looking further, I found this code:
->>>
->>>           snprintf(tmp, sizeof(tmp), str_frmt->string,
->>>                    str_frmt->params[0],
->>>                    str_frmt->params[1],
->>>                    str_frmt->params[2],
->>>                    str_frmt->params[3],
->>>                    str_frmt->params[4],
->>>                    str_frmt->params[5],
->>>                    str_frmt->params[6]);
->>>
->>>
->>> and the str_frmt has the following content:
->>>
->>>      *(struct tracer_string_format *)0xffff100026547260 = {
->>>      .string = (char *)0xffff10006cd494df = "PCA 9655E init, failed to verify command %s, failed %d",
->>>      .params = (int [7]){ 557514328, 3 },
->>>      .num_of_params = (int)2,
->>>      .last_param_num = (int)2,
->>>      .event_id = (u8)3,
->>>      .tmsn = (u32)5201,
->>>      .hlist = (struct hlist_node){
->>>          .next = (struct hlist_node *)0xffff0009f63ce078,
->>>          .pprev = (struct hlist_node **)0xffff0004123ec8d8,
->>>      },
->>>      .list = (struct list_head){
->>>          .next = (struct list_head *)0xdead000000000100,
->>>          .prev = (struct list_head *)0xdead000000000122,
->>>      },
->>>      .timestamp = (u32)22,
->>>      .lost = (bool)0,
->>>      }
->>>
->>>
->>> My understanding that we are printf %s with params[0], which is 557514328 (aka
->>> 0x213afe58). So, sprintf is trying to access the content of 0x213afe58, which
->>> is invalid, and crash.
->>>
->>> Is this a known issue?
->>>
->>
->> Not a known issue, not expected, thanks for reporting.
->> We will send patch to protect from such crash.
->> Please send FW version it was detected on.
+>> I have a question, we will try per-vma lock for dontneed,
+>> but there is a mmap_assert_locked() during madvise_dontneed_free(),
 > 
-> Hello!
+> Hmm, this is only in the THP PUD huge case, and MADV_FREE is only valid for
+> anonymous memory, and I think only DAX can have some weird THP PUD case.
 > 
-> I work with Breno and just following up on his behalf while he is away. Just wanted to check
-> if there was an update on the patch?
+> So I don't think we can hit this.
+
+Yes, we don't support pud THP for anonymous pages.
+
+> 
+> In any event, I think this mmap_assert_locked() is mistaken, as we should
+> only need a VMA lock here.
+> 
+> So we could replace with a:
+> 
+> 	if (!rwsem_is_locked(&tlb->mm->mmap_lock))
+> 		vma_assert_locked(vma);
+> 
+> ?
 > 
 
-Hi, patch is currently in internal review.
+The pmd dax/anon split don't have assert, for PUD dax, we maybe remove 
+this assert?
 
-Thanks,
-Moshe.
 
-> Thanks
-> Usama
+
+
 >>
->> Thanks,
->> Moshe.
+>> madvise_dontneed_free
+>>    madvise_dontneed_single_vma
+>>      zap_page_range_single_batched
+>>        unmap_single_vma
+>>           unmap_page_range
+>>             zap_pud_range
+>>               mmap_assert_locked
 >>
->>> Thanks
->>> --breno
->>>
+>> We could fix it by passing the lock_mode into zap_detial and then check
+>> the right lock here, but I'm not sure whether it is safe to zap page
+>> only with vma lock?
+> 
+> It's fine to zap with the VMA lock. You need only hold the VMA stable which
+> a VMA lock achieves.
+> 
+> See https://docs.kernel.org/mm/process_addrs.html
+
+Thanks, I will learn it.
+
+> 
 >>
+>> And another about 4f8ba33bbdfc （"mm: madvise: use per_vma lock
+>> for MADV_FREE"）, it called walk_page_range_vma() in
+>> madvise_free_single_vma(),  but from link[1] and 5631da56c9a8
+>> ("fs/proc/task_mmu: read proc/pid/maps under per-vma lock"), it saids
+>>
+>>    "Note that similar approach would not work for /proc/pid/smaps
+>>    reading as it also walks the page table and that's not RCU-safe"
+>>
+>> We could use walk_page_range_vma() instead of walk_page_range() in
+>> smap_gather_stats(), and same question, why 4f8ba33bbdfc(for MADV_FREEE)
+>> is safe but not for show_numa_map()/show_smap()?
+> 
+> We only use walk_page_range() there in case 4 listed in show_smaps_rollup()
+> where the mmap lock is dropped on contention.
+
+Sorry, I mean the walk_page_range() in smap_gather_stats() called by
+show_smap()  from /proc/pid/smaps, not the walk_page_range() in
+show_smaps_rollup() from /proc/pid/smaps_rollup.
+
+
+> 
+>>
+>> Thanks.
+>>
+>> [1] https://lkml.kernel.org/r/20250719182854.3166724-1-surenb@google.com
+> 
+> AFAICT That's referring to a previous approach that tried to walk
+> /proc/$pid/swaps under RCU _alone_ without VMA locks. This is not safe as
+> page tables can be yanked from under you not under RCU.
+
+But for now it tries per-vma lock or fallback to mmap lock, not 
+lockless, so do you mean we could try per-vma lock for 
+/proc/pid/numa_maps or /proc/pid/smaps ?
+
+> 
+> Cheers, Lorenzo
 > 
 
 
