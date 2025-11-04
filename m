@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-884657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27597C30B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:22:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27445C30B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511863ACC98
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1CB63ADFB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883ED2E719E;
-	Tue,  4 Nov 2025 11:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921E82E7652;
+	Tue,  4 Nov 2025 11:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGtnNCN/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgYpEGXy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF8B2C11D1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69AF2C0F7E;
+	Tue,  4 Nov 2025 11:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762255345; cv=none; b=TnRV0h+IQysA5a3u761vpu7ceAMDceNdPatBp4q7OfnZ/xBZctL12/whxx/wIvu+4Oz128Xi2uuZiFnlfQipeM+jBHe3NQV9Oat/2SFsyc/hSBUV23R0ZZ6f9+03YcC+wuohIWAh+4JAPdfoBrhove2QE5Mrv9x6+wHnCf6q8Q0=
+	t=1762255436; cv=none; b=hqISX/MCO+5oig97EFenJIzOnM+cl4T+50yQwy18cn4IewTJR72HQmzpLf4XQmptZcm+SYKzUIxjH7tDfNGWyK9PtidUG975luXBsuLt0KXTCi7ohxUYn/6jPeCoVnLR61EYh2u/5OAOoE2clDMtrBioFu+BkD2Gcko1nm8DhXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762255345; c=relaxed/simple;
-	bh=50x9iL/Y/BljBKuXl4bSN56iD5/TTDcB13FlDryEG7c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hKvTVyQ957RzmKxCVZm6/R0KbjjOaVqn2J2zaTMmUWYqAQemq/TMV3kBgqu28NOo6/jov6o9OCTtmu4w4xcjnZ8Rk7b261ZqYVipo0GGhl7Zi53R+dizSKkOQeJLY4q8+2sshB+UZGt1TB2OMhTtpWKwafeBEMIfpFoCfQjuCUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GGtnNCN/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762255342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOiwR+3npBDpnhOAXG48/ro8cjEOatu32+L6Iae+fU8=;
-	b=GGtnNCN/b3Lj2VRloJ9d6LXZKXITHCMXXeIoKVHU1RtMMV7SPzc8jaxL14qpCJ4AXe0Ohm
-	cuDyZq/W2265BlgieOopsk42PZhiV49z8/4NAo15KXuwQtw29KNmdqS+UJRtd4J04lYKX7
-	KRfZjNWNXvFX1DZBdJzMZvE7Jp9GVBQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-OX-uAnzuNrOrXdiqog2IIA-1; Tue,
- 04 Nov 2025 06:22:17 -0500
-X-MC-Unique: OX-uAnzuNrOrXdiqog2IIA-1
-X-Mimecast-MFC-AGG-ID: OX-uAnzuNrOrXdiqog2IIA_1762255334
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6596818002C1;
-	Tue,  4 Nov 2025 11:22:13 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.33.172])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B895630001A1;
-	Tue,  4 Nov 2025 11:22:04 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Jens Remus <jremus@linux.ibm.com>,  Steven Rostedt <rostedt@kernel.org>,
-  linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
-  bpf@vger.kernel.org,  x86@kernel.org,  Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,  Josh Poimboeuf <jpoimboe@kernel.org>,
-  Ingo Molnar <mingo@kernel.org>,  Jiri Olsa <jolsa@kernel.org>,  Arnaldo
- Carvalho de Melo <acme@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,
-  Thomas Gleixner <tglx@linutronix.de>,  Andrii Nakryiko
- <andrii@kernel.org>,  Indu Bhagat <indu.bhagat@oracle.com>,  "Jose E.
- Marchesi" <jemarch@gnu.org>,  Beau Belgrave <beaub@linux.microsoft.com>,
-  Linus Torvalds <torvalds@linux-foundation.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Sam James <sam@gentoo.org>,  Kees Cook
- <kees@kernel.org>,  Carlos O'Donell <codonell@redhat.com>,  Heiko Carstens
- <hca@linux.ibm.com>,  Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-In-Reply-To: <20251024145156.GM4068168@noisy.programming.kicks-ass.net> (Peter
-	Zijlstra's message of "Fri, 24 Oct 2025 16:51:56 +0200")
-References: <20251007214008.080852573@kernel.org>
-	<20251023150002.GR4067720@noisy.programming.kicks-ass.net>
-	<20251024092926.GI4068168@noisy.programming.kicks-ass.net>
-	<20251024104119.GJ4068168@noisy.programming.kicks-ass.net>
-	<a59509f0-5888-4663-9e82-98e27fc3e813@linux.ibm.com>
-	<20251024140815.GE3245006@noisy.programming.kicks-ass.net>
-	<20251024145156.GM4068168@noisy.programming.kicks-ass.net>
-Date: Tue, 04 Nov 2025 12:22:01 +0100
-Message-ID: <lhuldkmujom.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762255436; c=relaxed/simple;
+	bh=HhTVtV4rEohbmJ8Omo+NT88w6Is5yQozSY2c2wbVNKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQNSDkN6SCGkpmBEwpbMx3/nLvLVllgXs1u272t+4PjALDK/3f4KRJnyNfvcQv9OegQs0/XDLgeYrFcBKUI95Jp3XZ0sEHBVtl1ZOuF0gOEW7mtUtJT3pWPIpO+BmimxMOg3LYirJrxhg7stn0qLL4f/O/SPQ8In30Zf14Bg+4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgYpEGXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A87AC116B1;
+	Tue,  4 Nov 2025 11:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762255435;
+	bh=HhTVtV4rEohbmJ8Omo+NT88w6Is5yQozSY2c2wbVNKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EgYpEGXy/xHY4SfNKGNUN/yedaOO2FcuYbdiyefrF+gdJsKs9bne+OU33pf4BHRoe
+	 +jG28RiH52Wt9vASp2n4hzFiMstmxLRByY8Oy+SAubgdEZelFeXtAyr4i4xztucwO3
+	 VrJ5V0Prd62IlY0RKv5T3viDxGenzK9o7nn9/v3cR6mbbvX72vM97BWSPGKvUtH8M4
+	 NZxwu+1SNscjf4XvnhtrIoWYZzGXc3LqhpIiUEOqAJUtoS3TJfi2f0VKDmuT3oTjuZ
+	 7YwQHAKxa+iX4uUoTC1DsdKIDqxI7UyHtwWZVbKXOGYS+Cqqg3guozcRjF04j2dtR2
+	 nlnmIfWtpubew==
+Date: Tue, 4 Nov 2025 12:23:52 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Martyn Welch <martyn.welch@collabora.com>, kernel@collabora.com, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
+Message-ID: <sauwnl3nyyzgyop2qskjrczjgoog4jnjkkhwjf4ofwrthatvzk@2a5rb3vsf75z>
+References: <20251009162445.701589-1-martyn.welch@collabora.com>
+ <7uuuqhmkmmucmeeo5fybzld62rybyq6fjxwqqnxqr6eufis2ze@xfc2owdzfcs5>
+ <b041fde6-afea-4233-b00b-4e8cbb294c4a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qlmq2cdaierwkwwb"
+Content-Disposition: inline
+In-Reply-To: <b041fde6-afea-4233-b00b-4e8cbb294c4a@kernel.org>
 
-* Peter Zijlstra:
 
-> +/*
-> + * Heuristic-based check if uprobe is installed at the function entry.
-> + *
-> + * Under assumption of user code being compiled with frame pointers,
-> + * `push %rbp/%ebp` is a good indicator that we indeed are.
-> + *
-> + * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
-> + * If we get this wrong, captured stack trace might have one extra bogus
-> + * entry, but the rest of stack trace will still be meaningful.
-> + */
-> +bool is_uprobe_at_func_entry(struct pt_regs *regs)
+--qlmq2cdaierwkwwb
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: rz-mtu3: Share parent device node to MTU3 PWM
+MIME-Version: 1.0
 
-Is this specifically for uprobes?  Wouldn't it make sense to tell the
-kernel when the uprobe is installed whether the frame pointer has been
-set up at this point?  Userspace can typically figure this out easily
-enough (it's not much more difficult to find the address of the
-function).
+Hello,
 
-Thanks,
-Florian
+On Tue, Oct 21, 2025 at 12:47:52PM +0200, Krzysztof Kozlowski wrote:
+> On 21/10/2025 12:19, Uwe Kleine-K=F6nig wrote:
+> >> diff --git a/drivers/pwm/pwm-rz-mtu3.c b/drivers/pwm/pwm-rz-mtu3.c
+> >> index ab39bd37edafc..5825875fa0128 100644
+> >> --- a/drivers/pwm/pwm-rz-mtu3.c
+> >> +++ b/drivers/pwm/pwm-rz-mtu3.c
+> >> @@ -523,6 +523,12 @@ static int rz_mtu3_pwm_probe(struct platform_devi=
+ce *pdev)
+> >>  	if (ret < 0)
+> >>  		return ret;
+> >> =20
+> >> +	/*
+> >> +	 * There is only one DT node, get it from the parent MFD device, so
+> >> +	 * that the PWM channels can be referenced via phandles
+> >> +	 */
+> >> +	dev->of_node =3D dev->parent->of_node;
+> >> +
+> >=20
+> > I (very quickly) talked to Krzysztof about this. He said that
+> > of_node_get() should probably be used here. I wonder if
+> > device_add_of_node() is the right function to use (which uses
+> > of_node_get(), also handles fwnode and implements some safeguards).
+>=20
+>=20
+> I am not so sure about device_add_of_node(). You do not need to
+> get_device(), because reference is already hold. Although setting
+> dev->fwnode might make sense... But, not that important I think, works
+> with me.
 
+Note that device_add_of_node() only holds the get_device() reference
+temporarily as it calls put_device() before returning. So that's only to
+assert that the device doesn't disappear in-flight. That "locking" might
+not be needed here, but it also doesn't do any harm (apart from a minor
+runtime overhead).
+
+Best regards
+Uwe
+
+--qlmq2cdaierwkwwb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkJ4kUACgkQj4D7WH0S
+/k6VVAgAhshI0+vwCsZuCJkq7CmD+INgvTz5OUo9fDsQeK4PqZpbbOh6Evv7K2u+
+L4ZOQ95qNb7AMkm9ePyHD170SyrogcXF1/sZYk/dK0Exs3sjuCpzTdBbKdEeRXQk
+tSJTIxV5vPwxoMzKgVLqVqK78rKfdRPvd440AqJsqz5dZ9adhcVZYU3k2lRKK58g
+bab779DEBXvwkD1F2KolI1aVHvNW4fto/SeFGsLS6NhO44knmTMp4IRS6vpK55Q3
+vMwkZi9DjEUy0TZo+Zfuj0Woeif1WpqQnw15nl7cpXcFHzVs3aq2jWYrtf3YgP0F
+/TKqoDZosIff4g9Q4on28r3C83Clxw==
+=7UKB
+-----END PGP SIGNATURE-----
+
+--qlmq2cdaierwkwwb--
 
