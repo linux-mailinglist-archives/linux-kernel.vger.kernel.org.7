@@ -1,74 +1,123 @@
-Return-Path: <linux-kernel+bounces-885397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196C6C32C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:30:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08739C32CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9905818C080E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:31:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 285CC4F0AFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF58154BE2;
-	Tue,  4 Nov 2025 19:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC969248F51;
+	Tue,  4 Nov 2025 19:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxLKM4G0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+M40Ynf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984208F54
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DD23183F;
+	Tue,  4 Nov 2025 19:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762284644; cv=none; b=Z5un5KOKWA6TCrkMkYKiVgYefmSou9saSFgHwcb6ykFaeBbGghy5GL38+L9fNy/tVkcDHpWVSUxAjkO7N8xzca9423YR+4dWVoMg2b+LuvLcTJqKZm9zsNl7u6YGsJaMJP4gC/VA9JWtin3lwZv9VWRAyvmYYce0gEOYThakTNM=
+	t=1762284678; cv=none; b=CnSkonHj+wGyhHRj2Xeg+6ALfGyVSLLd6gmqY7PDzgazu+gy3suPD0foYM3KY7CVDpR8Pzg1lhQGwgjGDaUUDmF4TUlnZ6GXPJmZ2QyKDVzR3PntVp+DSYVqkXnY8fRO04Eo0Uc6D65Ua3gB128HrE4xHSz/FkJ5VGoFHU4Mb08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762284644; c=relaxed/simple;
-	bh=4IGghb+PdozHytQUZpeqOp4t9p9Ko5vzzEC9iU5cpEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GlQut8VgrlJvJap0IUuUyGa9TIPFhAwk1iVz1BSAYJmmfENXZED7fpJTZTd1WHGiY0PEL0sji/oDmQkUVK7GraTP87T060kNHbDlsVOSUFuAfdv5gnMpamVAOKStIl/h0THGhNrRYq4XUbYNtd4EpIrDoJfQ4evl8yy03GWBUUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxLKM4G0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166CCC4CEF7;
-	Tue,  4 Nov 2025 19:30:44 +0000 (UTC)
+	s=arc-20240116; t=1762284678; c=relaxed/simple;
+	bh=bv5RrLvyhbRRTVmzsWpNHNTYrpGvKzpe/nqRzbjAMOc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uTNXtKZ6sgVsmkXyCp63aqeAgU8sIkQrdzc/GEaJpuWXIKv76cwu2Yq7wKZUkPJ6AYLXvJvUNOqL+LYrHYRQN6PDDf3YNlP1ifgkQznNzjuF5yNV2Ru5W7ufm/N2ek0jZ1hC0IF2DcUwU6dVM0t69TDofCFBr+NemG8xLzPg3CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+M40Ynf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD05FC116B1;
+	Tue,  4 Nov 2025 19:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762284644;
-	bh=4IGghb+PdozHytQUZpeqOp4t9p9Ko5vzzEC9iU5cpEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZxLKM4G0udzgWHz7ZlarbroDDhyS/VyIV1AJnUUxpFzC3r/9EH/Ebtuub3vNX1uxc
-	 4GQ6lDqzx09VjwgmoOvJSkjoZG2w/uWrxg/uutW76Rklanp8ZwxFBCQs+SRHQe01or
-	 76+1J0rE82E1SWzi+oJe6iBBFFrOw95E+tv9jkjy2Skv2nWN+6uTDcEnPdfdjFKlKz
-	 +eqe9gRBTohDTliOpQz6ZFy6jr/1euWOnKhyhD58MrfKAIA7tQsnFwHaj5xX62vHKW
-	 8Ip2MFQmnWPiToH/QCQiXyQrDj9XTk2Hti9sxdCp+5xmf1N1B4erT0z4HoTOk7hHKn
-	 iOqzzjRBHeV5Q==
-Date: Tue, 4 Nov 2025 09:30:43 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, Dan Schatzberg <dschatzberg@meta.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: DEBUG_ATOMIC_SLEEP spew in cgroup_task_dead() on next-20251104
-Message-ID: <aQpUY7fEp6_ZqGel@slm.duckdns.org>
-References: <20251104181114.489391-1-calvin@wbinvd.org>
+	s=k20201202; t=1762284677;
+	bh=bv5RrLvyhbRRTVmzsWpNHNTYrpGvKzpe/nqRzbjAMOc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=c+M40YnfD7beibvpnLx5x7JTJxsI8UKfWeerqy+wnhCGnuIEEdKuAPbMRrmL14vG7
+	 OP5Z8LhbKV6qlXKCmk/umHqs2ez0wm6y99i+x+3EE8JpbkXhTr14Lc6PZYNTbaQecI
+	 7U1is6qB+I4HGST8GzSf0pZIKBGMbda5tDdOmPNHr8H+gntvMRIX9oQngYiEvGYZz/
+	 ScJEhzNnsDL/NDqU63Mt3U8z7f6wYjzLXSuybWHK81ljSvq4Zlq6OJ6TAXpb2gnSPH
+	 1uy+xh8BIcofnCeXYt3SuC3AqYaxjFkrJwyTENJo73bWBCt0SxHd2b0BE8/SwC53JT
+	 zeFXGRBL7tLew==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/5] Define VDD_MXC for SC8280XP
+Date: Tue, 04 Nov 2025 20:31:05 +0100
+Message-Id: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104181114.489391-1-calvin@wbinvd.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHlUCmkC/x3MSwqAMAwA0atI1haSqlC9iohIGjULP7QiQvHuF
+ pdvMZMgSlCJ0BUJgtwa9dgzqCyA12lfxKjPBou2IcLaXMepbJx1OG4PG2kte+KKkBBydAaZ9fm
+ H/fC+H75OoqtgAAAA
+X-Change-ID: 20251104-topic-8280_mxc-e92cd1c31010
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Imran Shaik <quic_imrashai@quicinc.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762284668; l=1567;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=bv5RrLvyhbRRTVmzsWpNHNTYrpGvKzpe/nqRzbjAMOc=;
+ b=H5Hd0okQAulEy5VeWlV8Ukx2Eq3uQdliujWHUP28jquv7CdJcQSVW5tPKUZqcsIBq/Oc0n+VX
+ g4PRdGKoPoZDtMDG/DJ8gVlJ+7R3S7koWQx/xzhvi9gc0dNm/ZJgGt2
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Hello, Calvin! How are you?
+This has somehow been omitted, leading to potentially stale votes.
+On the flip side, the domain will now be powered off, which will
+uncover any omissions we've made in the DTs so far.
 
-On Tue, Nov 04, 2025 at 10:11:14AM -0800, Calvin Owens wrote:
-> I'm guessing this is related to d245698d727a ("cgroup: Defer task cgroup
-> unlink until after the task is done switching out")? Is there any other
-> useful info I can provide?
+Reasonably tested on an x13s without pd_ignore_unused (camera still
+works).
 
-Ah, I need to make css_set_lock a raw one. I'll reply with patches.
+Video (not upstream right now) will also need this connection.
 
-Thanks.
+This series defines VDD_MXC and wires it up to consumers.
 
+pmdomain patches extracted from:
+https://lore.kernel.org/linux-arm-msm/20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (5):
+      dt-bindings: power: qcom,rpmpd: Add SC8280XP_MXC_AO
+      dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP power desc
+      dt-bindings: clock: qcom: Allow MXC on SC8280XP CAMCC
+      pmdomain: qcom: rpmhpd: Add MXC to SC8280XP
+      arm64: dts: qcom: sc8280xp: Add missing VDD_MXC links
+
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         | 13 -------------
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |  2 ++
+ .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |  4 ++++
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi             | 22 ++++++++++++++++------
+ drivers/pmdomain/qcom/rpmhpd.c                     |  4 ++++
+ include/dt-bindings/power/qcom,rpmhpd.h            |  1 +
+ 6 files changed, 27 insertions(+), 19 deletions(-)
+---
+base-commit: 17490bd0527f59d841168457b245581f314b5fa0
+change-id: 20251104-topic-8280_mxc-e92cd1c31010
+
+Best regards,
 -- 
-tejun
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
