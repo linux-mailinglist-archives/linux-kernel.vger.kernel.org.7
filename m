@@ -1,94 +1,167 @@
-Return-Path: <linux-kernel+bounces-884371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521BBC30051
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:46:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCE4C300E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 645574FA2B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DCC3BE9C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7777314D15;
-	Tue,  4 Nov 2025 08:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C28431D396;
+	Tue,  4 Nov 2025 08:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="no1UisIr"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JJndxSo/"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE6A314D04
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A9F306B37;
+	Tue,  4 Nov 2025 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245570; cv=none; b=kh+vCURmoU3GnmrxGvZ4ttsrULayFZ0ZsqvqCpjpmjcq4msD62x1ekGVD2fWOC+T/47jXUtL68abXqh1NeCXwTURJdqCpMEPx3Thr0vg9ygTk1CA6xWr555hV8nnhXwfid47oMSuLcOPIcxjNfcmFFUSOba7od4CcJe14N7a3gs=
+	t=1762245718; cv=none; b=LyJedHzM8quA4CDZBu/I4K4FNBnDCo0Vy+NzvMsA98AMoyHhq11Tbh0G2iTV6qz5rBBOFPWbfz8ESY+kV0aPxbgXLYb6Oq7jF+CSBPIccvouC3MaT4dq/XjMl8MjilmqVqSrfW9f/EO67kOikQuqUJk4LQAEXb7oK7KAGKpKcGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245570; c=relaxed/simple;
-	bh=h2sULprMiu4wN4KAUeGPmQvu2wQnnQR98dqeeRGDV44=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=r7k92/J07LErbwwYvPVj77hRtQWKOdwfJ7EHdCL7qdfF1AZqTGywpLibf7j4Xcj6Wx5JiM4x7yr5aPSnMTnTcr6slNEcpn8x3xD1YWSARosEORn1DPt28ljV9d6dc8sqL3KoQKnivaoBxtzKK70VrHxcg7ERVawJ4bSMdl025+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=no1UisIr; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-639494bed86so8304711a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:39:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762245567; x=1762850367; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXJXC5xQMOSakE6z31ZXBIwOFgfH9N+KP/Twx5AGmg8=;
-        b=no1UisIrJsCM7qet0NJuKdKWova2m4Ls081wkarfe88DruZ9Pwz+a3hlgoH2qy4/e6
-         moi984qQbD6EL1DN/YEJxZTUu8CWZr6hLfOqZ0AQlj6hanDC2RXDgl9kzp68OxZbGt19
-         J2ByH2dYKW0pTU7lwFHJF7rPr4rR8iKqzr/Sy3iq1fsOKh6PQNOIJhUVBVLnhH06/egG
-         FgSXgpIfZJ7cupeS13XjcLNB4shcB8bvxGtLtMJpw8VptsbDZBuTU5b1V6boMsSQJJsP
-         DkSo43H4A4B8vEZiwJQ+1E4smYePfueBa1rRfv3DrQVPJcxIXNuyMbmgeH/vdomqSFxj
-         AtWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762245567; x=1762850367;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXJXC5xQMOSakE6z31ZXBIwOFgfH9N+KP/Twx5AGmg8=;
-        b=xFlQXYuNYpkLMl91NhDi8uEckI6fr81Xvzp7qlPAfAU/ayUbSp6fX0TOkByty7dsyv
-         Q0nEWqJGpQ/e7uXpwL2Lsdxf3PvpNBp1Pss8iIBpb0taobmhFnKp8WacNgnPyF5cAWdh
-         3IvkDWGJ3RI8TqzKFWqYhH0ud2OI7YzFKDp0t3tbBlOcEPS3kmvj2wpayYeo8neUdD1G
-         IJNDfl8Om/wd3aoR7Gk/Nid5Smu4mCzREdyqBx4rywrAaDBA0NuqtY0d0nKo3rFjJDax
-         laR58s8K6muhj5qWoB1kf3OnrFsdFB6ya342immNLNqpDlM5PA433+AIoexPenPai628
-         uiHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj4xXTKyVQbwelpTpbvUlr5MoAaw1MRfQNagYEXRRgBJAa2Daf5Sz7S/8u5g2K0V3CMWlHVvoK5639Sgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8UrWcjUpArDrXrgwEhnkg1sSJHLulvl5gh3+0xuIsemRdzESp
-	Hp+jbbVukbtSPcM6zeoAR+dgCvkvlt58LvrX7SbPIAWXNSLOlZhb2eN1A5qgEv5djLa3Dhit+9i
-	wQMSiAfrgkHNNOFHSuA==
-X-Google-Smtp-Source: AGHT+IHkkLru3RbEHbg6oteE557RNvxiRGcW+0DLs9KKkh37U6J5Frmy/B6gSA4955Mr/WPDvyloEY0RzOh+CrQ=
-X-Received: from ejclm4.prod.google.com ([2002:a17:907:18c4:b0:b72:41e4:7530])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:906:b859:b0:b70:b077:b948 with SMTP id a640c23a62f3a-b70b077bc3emr512890366b.35.1762245566871;
- Tue, 04 Nov 2025 00:39:26 -0800 (PST)
-Date: Tue, 4 Nov 2025 08:39:25 +0000
-In-Reply-To: <20251103190655.2326191-2-dakr@kernel.org>
+	s=arc-20240116; t=1762245718; c=relaxed/simple;
+	bh=purqrqfkmeNjHQsl8PGKaLr5sce14i7I1X0t6grKmRE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6+0//4UUgD1jpYooeDEDkzfTa0Ctw/k30rs1UfyS+AxcikTatQZy7liJjDzjCubRvWBeqwKRIUarSF6kwlAIXIg3CPktI6sgY5/5sfCRXJW/QB5I0SMZji7BGIfEZIXiHHCxdHLDN3Po6WYu39dBGntVNviuEewiNBYpQZu4qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JJndxSo/; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762245716; x=1793781716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=purqrqfkmeNjHQsl8PGKaLr5sce14i7I1X0t6grKmRE=;
+  b=JJndxSo/Jbv9chcr/MWWsqgrFvkje+0i2hTjJHWbHBIX0JWjoyWVJfC6
+   YPurGJYhgiwu8S6vv6Nfqs6CTEmCRdChAhEbbX9fSGSSUdu+fa3eEc1r/
+   sRlnP1iWe+5VbbLZ494p/7FRVONmLm3DVfq3UEFwhaBcnCyvFA8ULqWDn
+   GOe7Te1ZughGtnhtM7oTX3Jr3MdIICo/aJ+0zgT01S02lnm9zASppzNYK
+   hrUY6q0IcD8uFhU2C0Ta9vQZP6Ue5AizARKsFofioVrfmVof8WDKYRJbU
+   G9nj1t8hRDmgxtxpde1sTnfYctqan7ktfsxAiKqbPJZYNioFYUqBWttO9
+   g==;
+X-CSE-ConnectionGUID: UM+sI3xNSuSueVWnZFHkVw==
+X-CSE-MsgGUID: mbc01x2RR+e0T7CjDOussw==
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="asc'?scan'208";a="48018374"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:41:55 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex2.mchp-main.com (10.10.87.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Tue, 4 Nov 2025 01:41:24 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
+ Transport; Tue, 4 Nov 2025 01:41:22 -0700
+Date: Tue, 4 Nov 2025 08:39:39 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <Marius.Cristea@microchip.com>
+CC: <conor@kernel.org>, <corbet@lwn.net>, <linux@roeck-us.net>,
+	<linux-hwmon@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<robh@kernel.org>, <linux-kernel@vger.kernel.org>, <krzk+dt@kernel.org>,
+	<linux-doc@vger.kernel.org>, <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: temperature: add support for
+ EMC1812
+Message-ID: <20251104-displace-pretense-9efca7fd0796@wendy>
+References: <20251029-hw_mon-emc1812-v1-0-be4fd8af016a@microchip.com>
+ <20251029-hw_mon-emc1812-v1-1-be4fd8af016a@microchip.com>
+ <20251029-blaspheme-stinking-91b73a8ab778@spud>
+ <c844428aa8d57d870b8cb55ce37d6359e3142585.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251103190655.2326191-1-dakr@kernel.org> <20251103190655.2326191-2-dakr@kernel.org>
-Message-ID: <aQm7vReThpKDOO67@google.com>
-Subject: Re: [PATCH 2/2] rust: dma: use NonNull<T> instead of *mut T
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com, 
-	robin.murphy@arm.com, a.hindborg@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/AVkAT3sA6d22eia"
+Content-Disposition: inline
+In-Reply-To: <c844428aa8d57d870b8cb55ce37d6359e3142585.camel@microchip.com>
 
-On Mon, Nov 03, 2025 at 08:06:50PM +0100, Danilo Krummrich wrote:
-> In struct CoherentAllocation, use NonNull<T> instead of a raw *mut T for
-> the CPU address; the CPU address of a valid CoherentAllocation won't
-> ever be NULL.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+--/AVkAT3sA6d22eia
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On Mon, Nov 03, 2025 at 04:35:27PM +0000, Marius.Cristea@microchip.com wrot=
+e:
+> Hi Conor,
+>=20
+> On Wed, 2025-10-29 at 18:25 +0000, Conor Dooley wrote:
+> > On Wed, Oct 29, 2025 at 05:50:58PM +0200, Marius Cristea wrote:
+> > > This is the devicetree schema for Microchip EMC1812/13/14/15/33
+> > > Multichannel Low-Voltage Remote Diode Sensor Family.
+> > >=20
+> > > Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
+> > > ---
+> > > =A0.../bindings/hwmon/microchip,emc1812.yaml=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 | 176
+> > > +++++++++++++++++++++
+> > > =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 6 +
+> > > =A02 files changed, 182 insertions(+)
+> > >=20
+> >=20
+>=20
+> ...
+> > You should be able to just move this into interrupts:
+> > =A0 interrupts:
+> > =A0=A0=A0 items:
+> > =A0=A0=A0=A0=A0 - description:
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 alert-therm2 asserts when a diode temperatu=
+re exceeds the
+> > ALERT
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 threshold.
+> > =A0=A0=A0=A0=A0 - description:
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 therm-addr asserts low when the hardware-se=
+t THERM limit
+> > threshold is
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0 exceeded by one of the temperature sensors.
+> >=20
+> > > +=A0=A0=A0 items:
+> > > +=A0=A0=A0=A0=A0 - const: alert-therm2
+> > > +=A0=A0=A0=A0=A0 - const: therm-addr
+> >=20
+> > Also, should this and interrupts have minItems: 1? Are both actually
+> > required? Can you have therm-addr without alert-therm2?
+> >=20
+>=20
+> Right now the driver doesn't support any interrupts, but it may support
+> in future. The "alert-therm2" is a maskable interrupt and the "therm-
+> addr" can't be masked and is "always enabled" into the chip.
+>=20
+> I didn't use "minItems: 1" because I wanted to leave to the user the
+> decision if he needs any interrupts into their system
+
+Unfortunately, this doesn't work the way you expected. If you don't set
+minItems: 1, then anyone who wants to use an interrupt must use both.
+
+If someone that would connect therm-addr would always also connect
+alert-therm2, then minItems: 1 is enough to add. If someone might want to
+use therm-addr but not use alter-therm2, then this needs to be changed
+to permit these in any order. You can do that by adding the names as an
+enum, eg
+items:
+ - enum: [ foo, bar]
+ - bar
+
+
+--/AVkAT3sA6d22eia
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQm7xgAKCRB4tDGHoIJi
+0qzwAP9rzTZh+YSsUM1T+ZHciOGT5L48rZNWNccs8J4qtoMlvAEApRwHpACBMctm
+Mk4QHnFon5IRCmT2BU8GZYlnlDRTDQ0=
+=lZcD
+-----END PGP SIGNATURE-----
+
+--/AVkAT3sA6d22eia--
 
