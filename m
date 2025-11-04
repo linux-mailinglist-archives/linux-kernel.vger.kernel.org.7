@@ -1,77 +1,252 @@
-Return-Path: <linux-kernel+bounces-884963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E62C3197B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:44:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7362EC31A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA15A4FA50C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:40:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB7E1883626
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2957232E6B0;
-	Tue,  4 Nov 2025 14:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE16C32BF54;
+	Tue,  4 Nov 2025 14:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDdPIO/d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UkN86Nle"
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D5130AAB6;
-	Tue,  4 Nov 2025 14:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6E3328606
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267240; cv=none; b=a6wmY2GWKxsMO6AHpsMy6Ov1Ly+Qp77D0z+Let0P1L0SivqiI30L4u1mUOSO+Pz/zMMIYa9J++Vlfz/tTqRTTzT4t/cvoF0K5uozNq8DnznuSeOfvlmqk3b/ltsCqj8uWM+o2hJ658Bg6nT4w6HLBWS+V5MQR6TMb/ZpXrkplsI=
+	t=1762267921; cv=none; b=krAEUb2OwW1+2y/F3080UoHq3mYb46iSmUqY/7R+HEHgqXars4PtsY0mBhQAcdB1dvyx2sxO7yM+8hLoWs9lEnrjgHy2A6ITMQTRLT0ktBE0pRdHrEFlqUi6d4vq9vICyUgtaMOA/llJo6odB3zA3UwuL6s/Y+EIpjEV3CiKO1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267240; c=relaxed/simple;
-	bh=cpZ4Yt5fJQhUXtSstkvHE+lAcxd35irLk0s4/MGgoTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhBAM2J/kHgZUkl5HfAZWfS5U7k6+Q8wdBTWnEtnzA37YNpbvtg0WErZ6B4OhXkYvnlNJZuM+McP0RA0cHFq44iQ7Rk82wjpBYMBfElgaD0smRD3kxzgjV42Rk02JSXjBIoYGEhSx6wSnWFO3GAwTjfLqvVHblMjurhngNtiQwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDdPIO/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE8CC4CEF7;
-	Tue,  4 Nov 2025 14:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762267240;
-	bh=cpZ4Yt5fJQhUXtSstkvHE+lAcxd35irLk0s4/MGgoTg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DDdPIO/dOAIq2I8yU/rwukj3/H9uva1XA/a0AzYDeIkzsc5cw4maVIXCNkCwFRp8v
-	 fw6nLzD+DBMmwYnxUD0vlNirbNiFMZK4ITkouIDn1JayGyZGwHZlxo8hZZwm7EGdOT
-	 X2Qlqo0KiAHZQ/jxMw9c/VIt1mi7J0Wfl3P1HaNzcF+kGC9/anO91JDiqxU9drnLya
-	 XVabhDAbcS+sGw9NKa1mTUdVs9jO2UajQ+w7mqLaDETGuI1w9FnsozHVxBeSG4388e
-	 o/aJ0j9fgtj1kd9x2jMWHDUpAaie4Zg0k46s9Us4ka1f56QlYjTB9e+GGOg7CEuUOB
-	 iddwDqi4/U3eg==
-Date: Tue, 4 Nov 2025 14:40:36 +0000
-From: Simon Horman <horms@kernel.org>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: sungem_phy: Fix a typo error in sungem_phy
-Message-ID: <aQoQZFUXupfJI1nA@horms.kernel.org>
-References: <20251103054443.2878-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1762267921; c=relaxed/simple;
+	bh=cW8znymWPnQ9E2lv9ObI7kU+4qQxlmHzvnjHhqI8XLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tpyAvtn0GI6mkH58NF9NyyujQqg7U7uvL+1FHI9nsQRGCbQZyTIOj3Pg+BvBohAetYurNtKJAX/UT6IIgtalFXcTxeDQ37mF9sv/m2IKNZAcT03+bQy8ZjcU64yuDzaGtNorrAKN2XZarZrpeyGlv1PZvHsiQZfP4YPBtnd1zZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UkN86Nle; arc=none smtp.client-ip=66.163.185.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762267918; bh=G46ndWcyOHWFzhQ4Un6CADH/oAjGqm36Vlz0C+52OJ8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UkN86Nle9hDofDDSat2apHWcWYumCD3IRLEIGbN17ch/AD0BpcNPPN5Tjvkf/uNXaLHDsLOtsnCFk2MMNz2cCjhwzXlomeL2iwrzsoitBAVDnczA55Vd88dD7PSS0kCJNU4+ogiwedOXqkiW2JH0mvRia70kjJNeSpL5Lertq2q5ZVqy1u+0kA1iERMi+Lxv4Ag83zPn5WLD16j/o53cqMCNoTr2mm/z38p7kSjgaHjNCMxudgnzYILXAWXs4U2Upk5dxvJMiE4c4YK6dI5EADpfyKxfh9jCaCfkgQrWyYURWNyjYI33UZeBCZ2/gxhwbq5Iz2uPjxHUwjMJd8mCiA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762267918; bh=WPDDyX+psjJi8AQjDZEIjfCGor2PCyPmNNac34NtYhI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=qO17iKGkJxolojmFo9GwdbjRzYxY7kdtNKyE0R3hfAbqUVbKLb9srkcVjX6qRIbWpq/kzaLELRi1vlmbScrBZSAzm59UXqwPc/D6xMc1jMhP2NMDP1zoNodRsobsVcfQ521r7uenwAv4gQeQXd3ScbQvvNpUPCdQlAxDZJdVRpjZinyfpB8QQFRTpAQuIVxeeU/rU9XS4m/vAzbNcMO0mtC6bxxxY19uoLqrngwbmZNOwYbxqzyrp1gOD5IpeYrmr1oCNleKvW/ITN6J+8ycR26w25Hw2sTfL4aumCiJgDI3DtrLK7k8mhFYNccoGgzjF2Fuyb1r453RnJiGh1RZ5A==
+X-YMail-OSG: 3EpOxPsVM1mNUj.CKRL_wvcXMQ40.2IpkvgTsz30yBQk6cM6nkgb_yZTcCFDKD7
+ EB4fJPQFwbtLfNooyHM4GCKeGmhBo.49at.zeBAeDGv1KspCM3Gvr.AsLmywUI7T6xLxe1OAxlVW
+ _mK1WHntd8BMntDDOxTzJ.WFmmxkqMKvrkptk9WDOcAFgz407ixpDDMXNwymHR2AStDhznymDDg1
+ pdCfp1uZWQwRX1qb9jNSL7irEVcZUO8GNQHt6oOiEgK7odOs.6kYXKKlLm2ZU2cPOpslPRiiuBsf
+ TPrID8ObVBGfoedtbfem7h2PtCPPSXftQ6Lsv_IXuhLM3KGeBU9sxN_hTFvLJBApvs26SFOKq8Kz
+ AAo48U0DvBj26.hTXIZ2JD.mCYpR5IYdMxIxWZRN8ypC4smbSxCDsDm48U1Vf8Y4bqjc1dgnTp7G
+ 5Zz0PKMTIwBmx08UV77Xj7vF9.J4NXwsM5aTlWZsGIeO8G.CovaM9na1K5Du0DRkWZhFv6DZ.5dW
+ IAWrmBDI8mZcRg07CCtkq9Cpbf1Pn7HzWmYYbJ8x6Nd9hMkoGzpSZMnLB5Ey5e.263cQTL7A2sjC
+ Zwnnbqq8s__7tAaw5BCGuKnaTyoN0lslknw_oQMvnv5NicEAVXM5mmnDPwsD0q5YKcdyO.Nh5J8j
+ OGvQUYt_0rJ9HR0n.8JgP_G0ZxsP8BTuzAwlUNYRsLaZmyRzlnW4pT9omDeM0QBbYcgg9_xrI3hj
+ LljqEapvMRdF6jgIy0S.YU34cwP4tH6yU1mQ2YYd5dWyIDZ00bpSmvFCdlOjwNkm3HuGQdECuTBf
+ j1bDbvBvg7uYuG0ggvmMTf1RMUEiaUp2qbwfiomgBA.RSlpOjEyzOS0ghAs.wEMwcQ77EHWOnW3V
+ xxzX4PuN2lSilVSgZpQeP9l4YTgv67hju02hAA2yA9NJyHucJHy8A9eW2Yb6wIBjOGgWMm.1F5Hp
+ IN6q27q9QYVooBqGqbCGvAku0MLPzE0MCH7h6IGs2044VdVjvFg1jPtNzghNyEGcfRz1CqkMgOO.
+ EtXuKcvN38ZxPONL76YB0oVRlqkSw_5zbCmcXrk5FCe5_.bJXuxVUhzFTzKWil7NMrY7wnzoOr4H
+ rMW_qrh2jlvlC9z5AFl3Na2kVW2vTywdxRKkukl0cIsk27OZ6Xj.Nf5yPfgRFu16b.PdEUfuxzpj
+ kr5hlFBNptR48ShGuXWjC805J3RAtye_JjBNGeAmH9SyGPOij7t.xJN7YJW51eVY_aKCx89PeT_T
+ fzsa1WajS30Z.go_xkBwLI3cObvEaBcv6ZBSy7FEwJjb2LfWdHgRer.f7dKykeWOMcRQXR2METXf
+ 1oPJ9z8XO2SGYeQbjWAKfxIMczmxWgqaFU6RV0.cMhj2pum.9grSqu5J_1DEX3DgkIXjkmuHSAYk
+ FxwLOi1yhNNqiiN_umK.edMA1rEmsIUhNLIeGiW9fJOVsSbTqXo_EpbTHDdoovPEPFzH3WCe8Aoe
+ .IqMc5KT4CyIjg85Nb83xh30vIe1xSwRLxnKkfQjtffO5xjDHw_HMLHsd9GVOihkQd3_T3KlTQ.H
+ 7LHj3fWg3ZFvR0A6YmncHzCPVxoLlIv6tsYlxKRLoKe.A6yxEx_FUKsCWXO4URDUxdmnVswsSUuC
+ h7wlBApoQfOArchYDMjUQPH_RHvTB06O4I.gI0lk3AQdXpPwYs1MQN_vyfapRJN_iHjM1kiDCJfB
+ LoqhKnubK5aLkEsw31sj4lUkgJmAfoYjix4OP0_QEPtPkhWM.82MExaiY4yQxYvRb17H03rzYYoG
+ QzXISL0Vqpf5ECToPZXGR4VqFazESsilQWeojFhJ4vq41XIzrz.6qNpaRRzd3mZ4hy2QcmK9dkPg
+ HSNWomXqaK6mgB1_GgUXJHMq0k1ul57hxkVKHL1iJUdhRMPbkwi1Ubgu4CffF9aIqIAMzktELZzb
+ Ke.Ob2xykz1NGicoeqcBkw5yFslgY85KDym1ADkBgOViP1AEopoYm0boHGIkAYarMIOfhf.bvcEz
+ pfkSFNdXjfEkqKDiKf3Oy5uqpNy8RMEN1ZvaDsD02AUFTI2HrcIVMuDIODIZmwhrzCeoJlhJGf2P
+ qaD1Ogf.l5xSqmEVnpldHuQlcH7hmvMFZA9txhjR_oJ0Vz6yDbZc1sg9LB25kqtqQ_obaOr2R.zp
+ FUEmaczsHFHItG1dnWGmBBdfePvTJ3alDjkbGBQ2TqHaocq3jRW6Y_k_vd5IUdXlvuWhj8Ff9Nln
+ NxaQehjMVVkQqQJWhYzZxnTp3BIN257AZyi7Onc2OJaYV0hyv9WKQltMbyLVS7Lq.FfDt4Yrwjer
+ zq4P5EcID0imcD8vzbzonhugE4lyd
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7d77c22d-a5a2-45c8-a786-651590860dcf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Nov 2025 14:51:58 +0000
+Received: by hermes--production-gq1-86c5846576-9kznp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b319eceaf085359051caa19a21ae3d2e;
+          Tue, 04 Nov 2025 14:41:44 +0000 (UTC)
+Message-ID: <5252d5ed-4e10-42c2-b0fd-071c04ce98f9@schaufler-ca.com>
+Date: Tue, 4 Nov 2025 06:41:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103054443.2878-1-chuguangqing@inspur.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] Smack: add support for lsm_config_self_policy and
+ lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+ stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
+ penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
+ linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20251010132610.12001-1-maxime.belair@canonical.com>
+ <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, Nov 03, 2025 at 01:44:43PM +0800, Chu Guangqing wrote:
-> Fix a spelling mistakes for regularly
-> 
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+On 10/10/2025 6:25 AM, Maxime Bélair wrote:
+> Enable users to manage Smack policies through the new hooks
+> lsm_config_self_policy and lsm_config_system_policy.
+>
+> lsm_config_self_policy allows adding Smack policies for the current cred.
+> For now it remains restricted to CAP_MAC_ADMIN.
+>
+> lsm_config_system_policy allows adding globabl Smack policies. This is
+> restricted to CAP_MAC_ADMIN.
+>
+> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
+
+Apologies for the late review. I see that Paul has suggested the set
+wait until the LSM namespace discussions have moved forward.
+
 > ---
->  drivers/net/sungem_phy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/smack/smack.h     |  8 +++++
+>  security/smack/smack_lsm.c | 73 ++++++++++++++++++++++++++++++++++++++
+>  security/smack/smackfs.c   |  2 +-
+>  3 files changed, 82 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index bf6a6ed3946c..3e3d30dfdcf7 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -275,6 +275,14 @@ struct smk_audit_info {
+>  #endif
+>  };
+>  
+> +/*
+> + * This function is in smackfs.c
+> + */
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +			     size_t count, loff_t *ppos,
+> +			     struct list_head *rule_list,
+> +			     struct mutex *rule_lock, int format);
+> +
+>  /*
+>   * These functions are in smack_access.c
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 99833168604e..bf4bb2242768 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -5027,6 +5027,76 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
+>  
+>  #endif /* CONFIG_IO_URING */
+>  
+> +/**
+> + * smack_lsm_config_system_policy - Configure a system smack policy
 
-Thanks,
+Smack prefers to say "rule set" instead of "policy". Smack policy
+doesn't change, but the allowed exceptions to the policy (rules)
+are mutable.
 
-I see that with this change this file is now codespell-clean.
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_system_policy(u32 op, void __user *buf, size_t size,
+> +					  u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+There should be a max check as well.
 
-...
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, NULL, NULL, fmt);
+> +}
+> +
+> +/**
+> + * smack_lsm_config_self_policy - Configure a smack policy for the current cred
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_self_policy(u32 op, void __user *buf, size_t size,
+> +					u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +	struct task_smack *tsp;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +	/**
+> +	 * smk_write_rules_list could be used to gain privileges.
+> +	 * This function is thus restricted to CAP_MAC_ADMIN.
+> +	 * TODO: Ensure that the new rule does not give extra privileges
+> +	 * before dropping this CAP_MAC_ADMIN check.
+> +	 */
+> +	if (!capable(CAP_MAC_ADMIN))
+> +		return -EPERM;
+> +
+> +
+> +	tsp = smack_cred(current_cred());
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, &tsp->smk_rules,
+> +				    &tsp->smk_rules_lock, fmt);
+> +}
+> +
+>  struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
+>  	.lbs_cred = sizeof(struct task_smack),
+>  	.lbs_file = sizeof(struct smack_known *),
+> @@ -5203,6 +5273,9 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
+>  	LSM_HOOK_INIT(uring_cmd, smack_uring_cmd),
+>  #endif
+> +	LSM_HOOK_INIT(lsm_config_self_policy, smack_lsm_config_self_policy),
+> +	LSM_HOOK_INIT(lsm_config_system_policy, smack_lsm_config_system_policy),
+> +
+>  };
+>  
+>  
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 90a67e410808..ed1814588d56 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -441,7 +441,7 @@ static ssize_t smk_parse_long_rule(char *data, struct smack_parsed_rule *rule,
+>   *	"subject<whitespace>object<whitespace>
+>   *	 acc_enable<whitespace>acc_disable[<whitespace>...]"
+>   */
+> -static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+>  					size_t count, loff_t *ppos,
+>  					struct list_head *rule_list,
+>  					struct mutex *rule_lock, int format)
 
