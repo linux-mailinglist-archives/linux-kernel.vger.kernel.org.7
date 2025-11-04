@@ -1,184 +1,270 @@
-Return-Path: <linux-kernel+bounces-884881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9F8C31685
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E888CC316AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B833A8865
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B13F4623DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAE932B989;
-	Tue,  4 Nov 2025 14:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5C932D0CA;
+	Tue,  4 Nov 2025 14:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l01UDk6r"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xi873wuU"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013054.outbound.protection.outlook.com [40.107.201.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEBF21CC5B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762265091; cv=none; b=rVDCM11gV0wQ+h2QZsMfUOIGhaNfQYE64fzv+h2e+YMCIlSCB6rI/2CBdVJ+5GYBfjR5ng3Ct6YFqRYQSDn3Iq9ZSoP0Cbs4/9DAAvwQOyP0h6mSCyOPrHCdHfFflq5I1S2RYAjF6cK4S+LOISj76/GAmC2ZtjT08WMOxRRr6Tk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762265091; c=relaxed/simple;
-	bh=MTxp0/PKLzbVwjiow0feXaNnHKiZOUanRZstCsNoaxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0RMNBHIpc3ntLbc2UheuyNVbczM0UdF4FgAj8A84MFQZdrdM+Pimd3+d7JPMgyjwx0ov+RCV4JC3VNYjhTOLU09K7mP5Q3sery10r4iVx0zgwkeAONHOyu+ottwZq37rsGv7d2oXk+gqdIkCQvAQwcagc6QPpueL/DLiL3OyJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l01UDk6r; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-426fc536b5dso3524220f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:04:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762265087; x=1762869887; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wle2VluI3me5dMN4kF5i3s4wsFtd6MD14qvcKfc1TeE=;
-        b=l01UDk6rfwvVP+nNqyoHZtFoO3AZ7/p4WF5ZUJMUaGc+47onuUgOun7OiZNmIBTcdH
-         V/jEs1Rf/Z2ayHdiKxqNtztw4/Y7E0sNfR8tcd4ii6QcjwIJdZ0lV6tRfaCduLeiIQ+I
-         eHWAAH8vIv9iG18almX4PY+ZPWLTotsZu8LPX4RVdFA+u+dhJfbwAMk85/nvehmb/IwX
-         e9b764TJfFsQEDnmUmYh5JOCpg9owykB4ASqVUvkW9G/5rgcAuOBJnp9Cb6c/Q9EbQGb
-         KBYb/K3oukDWJ4T2J2h4vzaRg1ik73sq/U9lY18WoW5AMSKQMp1cxEF2j7YIY6ngeIDE
-         niZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762265087; x=1762869887;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wle2VluI3me5dMN4kF5i3s4wsFtd6MD14qvcKfc1TeE=;
-        b=JacmB51bpLvDlFfJvSnuoPxT8aSTljImnRRIk7S5yG6WAcwX+Na/4fqF9qS0WF6Rxr
-         9rsf+8PT8iKnd+UxjSPCLsUdlmo6zXhkF3CEdN/dNgWpSt8iRStqt/SVIInARzvqkEbE
-         3+NUCp7jEWkBufOEqZnY9BJfPUpBbI8gnOhOoq1LEjMamJ5Owx2KEaEDDBp+h7WnLvmd
-         rrnZxnbOXBOggu89aH6HI9Vo/YKmt3oq67hh7q2AmPEBLr7lLCBHL8opbRfspKnwajp2
-         FMRBdMrXjXC/APGuEL4mNpltLKjNPSg+vPyYwLib+cVidVLSQoyEytzuFiMhI2wVI1RE
-         SV5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW9mm6YWfOB77dbaivmtYYIa2nnOKCfd4eN3rwyOWGls8/Xwtv/MX/c6eHQtR9uKhQFAPZhINrt3DlioFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnjTC+kkArac3JluIQJjlBMAxy9mRq7QPto06VflYTIvBdPC7L
-	VG54GDOgK3EA+fC7R392RrDrctVQa0Qf5T1au7iviuctX2y7slcYcC9iUcayBS1DTM8=
-X-Gm-Gg: ASbGnctWSb/PRyxGEDc+Bi1YRhLVMzUS1UflXNC03zpN246zzVwuXCVY6B2IIeYL55J
-	lCJjet0hH2Cq8p61ZoGI6vNSc9GfvehBg4qUYnnWykvOtis9aHkXEfJowAtx3efhGmCSOi505U4
-	dBotwyczt/alT3JbSZW3kzovXdoa6GDNjm7v2XwzeDsNXQ2/bjVSKxU0PAlOXDh5/49r2XLZyTl
-	WsP4ctNjpTCcGyXUUIohCZmRbBQWXasD4UbvMWqy3dHkjl4uffwDMMwSdSQXkKepvP+b8L1dyA5
-	sdKeGIT0Ke1hQrwCHGtGNR9lSHjs9j8UHnl8yjk+zYMd2tm3s3C/ZjcREGBzWzIk79pcsEJ6N5S
-	weUK+7koxA7cnNMvy+xQnaAr6ErZxjyJ4o+Zk8P73XgHMoix6mih+xN6B8uUzifVRc9pmqgoHNr
-	radAe04Z1W
-X-Google-Smtp-Source: AGHT+IHK7sSDJEYV6eGR77z9FN7edUVgENg1u4Mo1XjzfalFcLxE75ybAkYdDsWxs8e/jV1LfAK7YA==
-X-Received: by 2002:a05:6000:2f88:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-429bd6a93edmr14608216f8f.45.1762265087391;
-        Tue, 04 Nov 2025 06:04:47 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1fda36sm4719620f8f.40.2025.11.04.06.04.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 06:04:46 -0800 (PST)
-Message-ID: <a97b8fdd-4c6d-4191-b8c8-2277550a9810@tuxon.dev>
-Date: Tue, 4 Nov 2025 16:04:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8038D32C949;
+	Tue,  4 Nov 2025 14:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762265114; cv=fail; b=U5dwz7ixZ834AZDxCEamUtsMCGVeiwLXHVAH8Mubp9n30YKxRaxRfv5Kj/JWOpJUNsrlBlt5tWZnRe0qUGvXBJX2jdBLUtl2cu5XgMdTFa8Z7k5459cuI3aCsyhdRLuUf6V1Mo6jdkLwHiOD0X++5Y2Ci1KsYlH6esdbK69mj3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762265114; c=relaxed/simple;
+	bh=a32vJoGObDF8wfpltt+HdbmMVgLs/ZSSJ9OztUxRkuc=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=hKNMrhgDsGERILeHY1Uo8VuIWexvUXnRbqint8m1+ZPCqiJ0+s4j/2KxGkdWNYHmq6CDXCptxHCW1+59TfaW1Ssv6U59OyQhFnE8tTwBvifIbsYoZybr3EnFOqqC2dy5ATWOpI/eeCrZPwrCONYC7Kk92uDpQ5RbSXIiscYFpas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xi873wuU; arc=fail smtp.client-ip=40.107.201.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xsr9ndEUoKsxwlezDJPBQyzR29LSf3Ywa6Z3i6ybNNaQhQb20eCcj6/eY6fsk9h8zaafzvoAj1KEG4pwGQpoGGF+qioHSOfy34ZOm0pfPcP2uXx2Skp/3CL2UqOmKlSi6uquoFsluyg4PmOBKvNEZBLCtFx9GMklVCd5wc6Mlj6VpKVHWPJ7OCZdscUeMWQz5jtF7X4o2DAbk2qpX0TVqOo89LEfQPxP2/MJSoDEv4RlXQItv5je7JgXDl72k5ZMuWmMgoepelx0Ros22M7MSICJh7Jd2tAuOKCB98vVjXZJvyqLPxOEV0QZms22xPw7GlpfVPtidqrSSaiFFk1U0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DUt+W6etxZ3XN2UCTpLlJlo5Iod+pNvUGfZlGkSoONk=;
+ b=wigQJ8+F6zjKVWANbwcmYUXB7bZTt176eOz4x8AjVnywltLa6J6ZunZT10+VtmCfRzBnu1u99T25oxJ58Beue5PC6MS9kk7NImWL+JqFhYnIZnmfsc1zn7FXtTwm3Hj+8KCcpoi9dFiKwU/MP/UGJYlHKkgKM+KoI00Hb48VY2Q00zdqlM9NaOMsll4aapjAJM4WRw6RqDicCYED9ZCkpi7QDaPHW5+J/L+5zapzCVUnu5e1vGOkxMXbXqnFIqX5vmF5kUe27eOro33aUqKIHfSF5kQ77ZtUorgbqXdjSR8KabixTQ4UAgimz5wq+NA42k9Qb+8+pef/7OmyLkJj2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DUt+W6etxZ3XN2UCTpLlJlo5Iod+pNvUGfZlGkSoONk=;
+ b=Xi873wuUBxg4CyFckWfDb+XcGZWNjdcH698y6jePHHdriBAITYPekULaBVydah9hAH+1xcxzQKRYVDbQ7/ttv3rl+nEATpqDV8NN+RTLE4Q+fkRWbYCFqOIbz3NR39HjBKNeZE+XE2TIOrpsdzFh52F73Ie75xjtmXDNQipJwKDgpxsxFfZVy8pmffC4+2hJ7/F38cRV5FHsqfThEtYjCa7RnoAWtT2GPuZ9AugdQDpztfdr/z73lbqZDQAdoR2yE+t9+ap6Zgd2XTi8/h+JSfD4oBOsjxdvY2pXOIYTIEyFKsyyPspfnBxvo66clw+d7+Kfdnrp2xf/I+r+wnhnug==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by LV3PR12MB9355.namprd12.prod.outlook.com (2603:10b6:408:216::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
+ 2025 14:05:08 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 14:05:07 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Tue, 04 Nov 2025 23:04:49 +0900
+Subject: [PATCH] firmware_loader: make RUST_FW_LOADER_ABSTRACTIONS select
+ FW_LOADER
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAAAICmkC/x3M3QpAQBCG4VvRHJuyWopbkQO7PkwJ7fgruXebw
+ +fgfR9SBIFSnTwUcIrKukSYNCE/dcsIlj6a8iwvjMksO8uKGX7ncOjOw8UdnIEtnQcqit0WMMj
+ 9P5v2fT8Mq2hUYwAAAA==
+X-Change-ID: 20251104-b4-select-rust-fw-aeb1e46bcee9
+To: Luis Chamberlain <mcgrof@kernel.org>, 
+ Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: TY4P286CA0077.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36d::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] amba: bus: Drop dev_pm_domain_detach() call
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux@armlinux.org.uk, chentao@kylinos.cn,
- claudiu.beznea.uj@bp.renesas.com, rmk+kernel@armlinux.org.uk,
- jroedel@suse.de, lpieralisi@kernel.org, robin.murphy@arm.com,
- rafael@kernel.org, linux-kernel@vger.kernel.org
-References: <20250827100337.926020-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFr1VJRS2hV4Yyx_sxwSLfc0cpH5-6Bh4iO7PvWeBXoxGA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAPDyKFr1VJRS2hV4Yyx_sxwSLfc0cpH5-6Bh4iO7PvWeBXoxGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV3PR12MB9355:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12401274-ca69-46e0-6214-08de1bab28f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c29jaFlJWkJiaVNJcERDaUVndDRjLzNmZm1UalZjajZRS2dBYnNxem1LaHpG?=
+ =?utf-8?B?aVdPbi9wU3p1MGRGdzhmT1NpYk1DYUZYbXlmSXZNWjlvNmtKYy9PVExIdkFW?=
+ =?utf-8?B?SEUxNXdFUXFRV1VOUmlocllFeWFBNXowME9CbU9McnQyWjQwSUNRV0cxTkNU?=
+ =?utf-8?B?N2J2S3V1MDdvUVVCeXplRzZxTHpWSVhOYU9ocGFRaHlUSHVjVXFsN2dHM2Vo?=
+ =?utf-8?B?SEl2ZGVMZ3ZyL3JOYzFnNURxbDh5NjJDVTYwMDBTVGxEaXVFWGpTMFRSaEZB?=
+ =?utf-8?B?YjZTOGRORC9qZzYxWmpkMHRQMEY0QjZvRVcvMVF4Y29DVTk5NUcyald3NVI1?=
+ =?utf-8?B?Y3FVMjJlbDFtWUIxdERXMTRBVTlDZUx6bjBOV0k3TnVyQ3FiWXpHMVlYdmMy?=
+ =?utf-8?B?OHNFVGRwZVJyK3ZZaEE1UkwvUTB5ci9PcXNJRGc0TDlJeGhCaW5FU0d5T2FW?=
+ =?utf-8?B?aHlFVXFOM054aHFhNFpmWHpoTmtmNVhGRUF0N3YyV0xXZFFCRVByWVFlMEhI?=
+ =?utf-8?B?RTNxdlJjVWlMa1p2K29mL0hGL2YrbE5sRmVpVWtpOFdLTk1OR3dPMFUrcVJN?=
+ =?utf-8?B?Z2JXSWNQRVhYdkN6UXlkczdMOHpibmx2aDZXTnBnS2tXdEJxeEJsM0VoMmhm?=
+ =?utf-8?B?bmMzTXhGbnpMSENJOUMwSHpxUit1R2VtSEhQTVpaUzRVT1g2WU55TFlIbGFI?=
+ =?utf-8?B?VkxGcFRHSmh4UkZyb1AwQnhYMjBUejFmQmExTWVMdE1nOXRYRmJzNFBwNS9u?=
+ =?utf-8?B?dWRhWmorMGpycVlnUmRIU1VpakpsenBVR1c0SXoxYTROeTF1T2tScXRmLytz?=
+ =?utf-8?B?a2NVRjI0Q29ncW9iRHVuRHRnaDgvK3N3ZU1jd2V4V2VRYlNtTFRFQjhWNExI?=
+ =?utf-8?B?NGhNY0ZHaXpJcVVHK1p4RnZaV3ZZMVJtV0RZbUNLOURkb0Y2U05XeTZtRE9t?=
+ =?utf-8?B?dXFhRUc5b3JCQWxLc0hKenhuQUxwdjNZRTVuZzlqNXB6RDdYcmZoN1YramNs?=
+ =?utf-8?B?WGppWnFqWUtLaHVQcEZ5WVBWYmY1QlBTaXExR3dhVlcxRXJCZ3g4RjNzckxw?=
+ =?utf-8?B?c3BwbUhVZFJoMFNOQUgyS1VHbDRwOFpzUzN1Z3pwbTVHQnhseWpNeFcxMGs1?=
+ =?utf-8?B?WjdMS01ZekNaSk5ZNVh3SWZqMXBsYmprSjZrQ2ExMHI0R010VmpQWDZsekRy?=
+ =?utf-8?B?dzExVWJGdUlZRExxcTl5R21rK3Yzb0FaS2FRMFBIM0dtNWpSMGM1em1VRGw1?=
+ =?utf-8?B?TVdCZi81OG8rOWNmWEc0UGlSWkdKcWgyeGErT0ZEbkU4QVVlVHFTUks0QUhE?=
+ =?utf-8?B?K0pCYy9tS0NNcnpzcnNtclBOcDE5V0x5M2RhZGVPVE5WakhVT1RUdXNXN0Fx?=
+ =?utf-8?B?bHhpY1Z0WEMzL0NwQUFPaUNVeWhKc3VET2cwQkNRcWFrd21nQjU5NEZMTStv?=
+ =?utf-8?B?L05kcjJpVmQvQlBYSnhpYmpKVUFmK01EeTA3VEdhNW9JUHprRWM2V1pjQnhE?=
+ =?utf-8?B?aGpMbVVrSU0xdXJ4eER0UW8ySU44UWJmRDBuWFRFRTFsVjI4VVZIb1E1VUNa?=
+ =?utf-8?B?aVpIeXdrbmsySVAyRWxQWFJqbUR2ZHBnWlNXKzlDZHQyZldxMGNJYW1JMXJq?=
+ =?utf-8?B?YVpuZ1JQQXF1UWMvSU4vaWE4Rk9ZSnRyV1pJTnd0MXB4Ump6UTRSNFdhNC9B?=
+ =?utf-8?B?anZ3cWxFNDFqcVVoazB2U3pBREovcFJRcjN5bUhTczlJQU1TaDVqUm5iQjBN?=
+ =?utf-8?B?VEZvb0E4SUtvTXg3OExIUDdhc2JKdmhlWlZLQTZwWWlYREFVVUtpYUZmMnpm?=
+ =?utf-8?B?eUh2ZXdHRW5qa28yazdnRVFwYXQvL2kvQzhqUG9pRVBoQi9sQkZiSmprOExz?=
+ =?utf-8?B?OGVocTBVZE1Jb0hqNWl2RGVIQXlralEya3ZSWmtzcE5ZenNoVittdzhBMVA5?=
+ =?utf-8?B?N0p5aG1HckJSamdnSi9qaE93M2pUUmZyUHV4ZW82eXhSUUxXcDFVWGJxK0Fu?=
+ =?utf-8?Q?2WgWLCYAnAZ8a2Sb77JQB42l90Xc/4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R2ZBa2tkc2lzSW1KN1FqUzdSQmtZempzV01aVlNkdktJdmZJVHExdDZzbWtR?=
+ =?utf-8?B?ODdhU1lobFZvb2NsZXJmbFIwSWZBQWJ0akU2alQrOWlpMExyTGd5cEordzVV?=
+ =?utf-8?B?d3JhTGlDdjJrcCtzeTlOTjBLak9rT2wwR0tsQ2RqYk0zNm43ZnhQMVl2WVhq?=
+ =?utf-8?B?Y25wdGllL29mSkRnY2YvbVFwM3N4alZrVmt4TXFIZmhZUVZzSlY5M2MzQXNq?=
+ =?utf-8?B?cnpEREFjaHZNWTl1WTRiTkZPOUc1YmdocWU3U09nQmJ1d0U3TDVQTGcwb3Ir?=
+ =?utf-8?B?eXRPU0tPRjhWcnBoZ3ZsR0tyOW9ac3pONG5RY2h4K3hnMVFwV002SWYyQnpS?=
+ =?utf-8?B?M0xkaFBSc0J6Z1VnalphWENqeC9CMDkvMTVKdE9CNUlzMVRQQWhhSmh3Y3Rr?=
+ =?utf-8?B?ZHRKV05QQ2pDZlRKL0hFTFhybjRYdlRkQXVhMG10T0FOa2ZUKzFPNW9BdWZM?=
+ =?utf-8?B?VFRZTi9RUUhWdG80bno0cFJranlwaHJJajkyZnp3VVluZ0V1ZHR3SHlpdldJ?=
+ =?utf-8?B?UW5ZNkw3MEZVSXByZEFNM3k2OHl2WHFtVlRXdlkxTE0raExEb05MdVoxVmR5?=
+ =?utf-8?B?dHdOcFU4UGZ4QzhkbFBTWVNxdkNUMTd5RjQ5N25wUXVuOVdjdklVZ011TmJI?=
+ =?utf-8?B?NUpUR3RXZXJETytaVWhzY3BFRGplQ20yU3hkQ1VTUGYzODdXNVZDalFpdld4?=
+ =?utf-8?B?b0M1VXlJenhZdWxuYWRoc3hjMmtQTERXVGRMZ2ZST3ZWTWdhYzczZ0xqdFp3?=
+ =?utf-8?B?aG1SMTcxbzhGZld5MEpQdFZtR08zMmhYOU1hMWgxUW04bE42NlhrNTJRSjNC?=
+ =?utf-8?B?RCtoZ2tGZlpGYlByVTcxWktLOExBOHFIY1BzQzd3R3EzVFMydVFEOUtnWHFB?=
+ =?utf-8?B?cFpPbFU0MDFsTWRVRlJxODk4L3J0ZVRuQjVtRlh5UjJJMEZLUWNZeTBNM3pD?=
+ =?utf-8?B?cUZ3T0dPbUcvNThYSlRVcXVEdVdPL1BMMmw1RzRlbHltMG0yd2RTa3FCOGdp?=
+ =?utf-8?B?YnNLbWZLVGVtNStuRENjOXlBZjI1WWxUTnVwSyt4Z04yMUMwaXZSZzZTOG5R?=
+ =?utf-8?B?alFDN29LSU9ieDU3cU81YnIrTzQrRG9aejNPbXh5V0c0ekVERlJ3V3lWTzlM?=
+ =?utf-8?B?SUxaQ1BjMFBkTmpRK1ZWNjVNMnB1SGJUYWhMbjFqTzR3VVQ0Vk9HRU94YnFL?=
+ =?utf-8?B?WnVUTktqUHN6OVIwampmUklRdzc3RDR6dlEraW1EYmN5bGFOQzNsd0NtcHlz?=
+ =?utf-8?B?Ry9OSFEvRnp4YXRMMUw0RVQ2cFVFRFpOR2xGRVhKQ29wQ3FaV0c4eFR6SHpK?=
+ =?utf-8?B?Q1hIR1Bud2FhNlc2ZUs2OU9iMGtuMDRkVXo5WmsvSmVuSVdTYjdJQnlLRmZs?=
+ =?utf-8?B?eXhHQmJQVnNmQnd6WkdCR3o4a0dYcUdUREc3L1VEZVZYVUxwczk1ZWQxdnRo?=
+ =?utf-8?B?QWsxemtIMy9MQUY2UDUzSmpLUG1ZakdoUWhOZndkMzJ1TzJueWgvcDlKUzA3?=
+ =?utf-8?B?N2NJd0lqM09RSWREa29uVGFseUIxZG84VDFhZFpmSDZJM0hoR3pvbVdPbWU5?=
+ =?utf-8?B?YWcwcmwveXN6QllTa2xFSEJPbGRRakJpb1N0R3VYNmVyekZTcXhLUkhmQ0lG?=
+ =?utf-8?B?clgvVUE5Tmd4T1ovWXZNb090eUxBS0tPMzNJVGVLVW9tcHVWZFJST2xYTVM1?=
+ =?utf-8?B?S25YRFVpWHFOU0pqWmQwd0l1SGlKaUNiUUhFTEFBT1hSZlBrQVlMRUFDZ2Yz?=
+ =?utf-8?B?S3pNcVJKclpDbXVuWVhrMW9EMjdWRUdOQjRtY2I4bmVmNjE3Mm1seGsxeHFu?=
+ =?utf-8?B?MkY4TndSenk4VVZTYkNRZXZydVFSZ3I0ZGMzaEl4U3ErVGR3UDNIVFc5Vjhr?=
+ =?utf-8?B?Y2JzakxvalRGNk9QUy9IcWNXSi8wR1I1ZnZGMHAycEx5NlA3dXNXTlZCWGhq?=
+ =?utf-8?B?aGdKZWU5bDFKbFg5VTZTMkdaNFZrc1RBSHE4cmkvcVdUQ0F4TEVOd3FFeS83?=
+ =?utf-8?B?VE56VkZXcDNGQ2hzaS9RM2MzSDU5Y05kM2FCUVZOc1FyYU9tSGQ1VlpPYmxB?=
+ =?utf-8?B?YUxMZ0Z6V0gyOEpZcDAydDVIQnVLTC84dHkwNVNndXdsNnI0S2VaYUlQT29l?=
+ =?utf-8?B?WDNyRGVQWUYwcUNHd202YmpsWEdKZWFISmdMb1hzbzJqUTBhN3NRbERDRzhK?=
+ =?utf-8?Q?zXHn/mXQgMU+8wWQeAxLqmx4fOwfujY4Hx1WtKoqeFac?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12401274-ca69-46e0-6214-08de1bab28f9
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 14:05:07.5363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CjQx4ldxU8kE1zj1Y/MonbfotxrAHkAZsI08+rIpbqqO5g2/jPtKFA0PHjvWbNM4x/dGWUic5OKAr9MtuND2TA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9355
 
-Hi, Ulf,
+I have noticed that build will fail when doing the following:
 
-On 8/27/25 14:35, Ulf Hansson wrote:
-> On Wed, 27 Aug 2025 at 12:03, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Starting with commit f99508074e78 ("PM: domains: Detach on
->> device_unbind_cleanup()"), there is no longer a need to call
->> dev_pm_domain_detach() in the bus remove function. The
->> device_unbind_cleanup() function now handles this to avoid
->> invoking devres cleanup handlers while the PM domain is
->> powered off, which could otherwise lead to failures as
->> described in the above-mentioned commit.
->>
->> Drop the explicit dev_pm_domain_detach() call and rely instead
->> on the flags passed to dev_pm_domain_attach() to power off the
->> domain.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> If it helps, let me know if you want me to pick this up via my pmdomain tree.
+- Start with the x86 defconfig,
+- Using nconfig, enable `CONFIG_RUST` and `CONFIG_DRM_NOVA`,
+- Start building.
 
-This wasn't picked up so far. Could you please take it through your tree if
-everything looks good?
+The problem is that `CONFIG_RUST_FW_LOADER_ABSTRACTIONS` remains
+unselected, despite it being a dependency of `CONFIG_NOVA_CORE`. This
+seems to happen because `CONFIG_DRM_NOVA` selects `CONFIG_NOVA_CORE`.
 
-Thank you,
-Claudiu
+Fix this by making `CONFIG_RUST_FW_LOADER_ABSTRACTIONS` select
+`CONFIG_FW_LOADER`, and by transition make all users of
+`CONFIG_RUST_FW_LOADER_ABSTRACTIONS` (so far, nova-core and net/phy)
+select it as well.
 
-> 
-> Kind regards
-> Uffe
-> 
-> 
->> ---
->>  drivers/amba/bus.c | 9 +++------
->>  1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
->> index 74e34a07ef72..952c45ca6e48 100644
->> --- a/drivers/amba/bus.c
->> +++ b/drivers/amba/bus.c
->> @@ -291,15 +291,14 @@ static int amba_probe(struct device *dev)
->>                 if (ret < 0)
->>                         break;
->>
->> -               ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
->> +               ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
->> +                                               PD_FLAG_DETACH_POWER_OFF);
->>                 if (ret)
->>                         break;
->>
->>                 ret = amba_get_enable_pclk(pcdev);
->> -               if (ret) {
->> -                       dev_pm_domain_detach(dev, true);
->> +               if (ret)
->>                         break;
->> -               }
->>
->>                 pm_runtime_get_noresume(dev);
->>                 pm_runtime_set_active(dev);
->> @@ -314,7 +313,6 @@ static int amba_probe(struct device *dev)
->>                 pm_runtime_put_noidle(dev);
->>
->>                 amba_put_disable_pclk(pcdev);
->> -               dev_pm_domain_detach(dev, true);
->>         } while (0);
->>
->>         return ret;
->> @@ -336,7 +334,6 @@ static void amba_remove(struct device *dev)
->>         pm_runtime_put_noidle(dev);
->>
->>         amba_put_disable_pclk(pcdev);
->> -       dev_pm_domain_detach(dev, true);
->>  }
->>
->>  static void amba_shutdown(struct device *dev)
->> --
->> 2.43.0
->>
-> 
-> 
+`CONFIG_FW_LOADER` is more often selected than depended on, so this
+seems to make sense generally speaking.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+I am not 100% percent confident that this is the proper fix, but the
+problem is undeniable. :) I guess the alternative would be to make nova-drm
+depend on nova-core instead of selecting it, but I suspect that the
+`select` behavior is correct in this case - after all, firmware loading
+does not make sense without any user.
+---
+ drivers/base/firmware_loader/Kconfig | 2 +-
+ drivers/gpu/nova-core/Kconfig        | 2 +-
+ drivers/net/phy/Kconfig              | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+index 752b9a9bea03..15eff8a4b505 100644
+--- a/drivers/base/firmware_loader/Kconfig
++++ b/drivers/base/firmware_loader/Kconfig
+@@ -38,7 +38,7 @@ config FW_LOADER_DEBUG
+ config RUST_FW_LOADER_ABSTRACTIONS
+ 	bool "Rust Firmware Loader abstractions"
+ 	depends on RUST
+-	depends on FW_LOADER=y
++	select FW_LOADER
+ 	help
+ 	  This enables the Rust abstractions for the firmware loader API.
+ 
+diff --git a/drivers/gpu/nova-core/Kconfig b/drivers/gpu/nova-core/Kconfig
+index 20d3e6d0d796..527920f9c4d3 100644
+--- a/drivers/gpu/nova-core/Kconfig
++++ b/drivers/gpu/nova-core/Kconfig
+@@ -3,7 +3,7 @@ config NOVA_CORE
+ 	depends on 64BIT
+ 	depends on PCI
+ 	depends on RUST
+-	depends on RUST_FW_LOADER_ABSTRACTIONS
++	select RUST_FW_LOADER_ABSTRACTIONS
+ 	select AUXILIARY_BUS
+ 	default n
+ 	help
+diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+index 98700d069191..d4987fc6b26c 100644
+--- a/drivers/net/phy/Kconfig
++++ b/drivers/net/phy/Kconfig
+@@ -132,7 +132,7 @@ config ADIN1100_PHY
+ config AMCC_QT2025_PHY
+ 	tristate "AMCC QT2025 PHY"
+ 	depends on RUST_PHYLIB_ABSTRACTIONS
+-	depends on RUST_FW_LOADER_ABSTRACTIONS
++	select RUST_FW_LOADER_ABSTRACTIONS
+ 	help
+ 	  Adds support for the Applied Micro Circuits Corporation QT2025 PHY.
+ 
+
+---
+base-commit: 6553a8f168fb7941ae73d39eccac64f3a2b9b399
+change-id: 20251104-b4-select-rust-fw-aeb1e46bcee9
+
+Best regards,
+-- 
+Alexandre Courbot <acourbot@nvidia.com>
 
 
