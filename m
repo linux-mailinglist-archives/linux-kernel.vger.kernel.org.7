@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-884365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1614C30027
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:44:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBACC30083
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 191494F7292
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:41:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911BE18941F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576332144A;
-	Tue,  4 Nov 2025 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DD3313524;
+	Tue,  4 Nov 2025 08:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnhENImu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TTNsfDWP"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED40320CB5;
-	Tue,  4 Nov 2025 08:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11835313275
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245446; cv=none; b=nvwHpI0LuJKmQqEfG2sgcidIumkgjwUhAHtLPHFrHm6ruWBxZYOqe6MisCYDV7TErS8569bcSyRBmrUo03NQEaE0OHkLhKZLso396Z828yhiNmJRRrkpGWV+9WUhdeXrXqEE+dHDwhPMdrNJlJOD+yoPo6fC5IrcrQnR+IDi08M=
+	t=1762245484; cv=none; b=QOoG3oYGJLpEQIqat9uCF3WXlXKXAIpoqylHPeXPuFRdPkGtuVhwhN4hePBKwppX/Hd4jQQMDUQ1Q1jo/QzNuvwVXunykAngxBX5ae61loBaMaEkuxl+xH1KIaH9n1h5KPQJZ8X+qPCkvlRjMntns8hFJPKSra1ZE1tFX/TEAec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245446; c=relaxed/simple;
-	bh=foCiIsSb/QzMBNXONPuDU6fZ9CxIPNvgssjQ2N/7VoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpiDIBT2l8pnsBo9v3nip2dB+ptZodQP59aNwFFrVl8bsHDq/IO4AyFxwi1TjT+oe5FYDStm0hr5LyD2Pj6r2RuI0RROwCtfm1yRMYgHC63jcBC7n8dTM+RkFa0uwjCnsLpqckrDIOMInaLzK36WxqlUYOA44S2+kwds2AHs+/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnhENImu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4C6C4CEF7;
-	Tue,  4 Nov 2025 08:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762245446;
-	bh=foCiIsSb/QzMBNXONPuDU6fZ9CxIPNvgssjQ2N/7VoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GnhENImuJBLXNH+o0kZQcdwodiyRLlSXdWyu1XnV/mhLcHwQxruBSL7BD4oHTnxi6
-	 krFMSBEr0oC2n60Dzs+iWBUtWZFUd3ZDac2CKTZwJwyHzZlM0P//vOBAgKtHTs0KhZ
-	 jh+SE2ZYfz51op7vPIygdx8IKi+yXPj4j/tpnge8z5T1BlYjU+Z9LOu1gcgQayn0w6
-	 2ODs2KBnAFB4AhIgMeXn4s/LYLfWqDvglIDo9j3fl9mV/4IPN9my5BC3+UYlO9wbAL
-	 GEKHX4YhnTwt7FelTjy8M4pw5mDFwLoBvwEtJAqATKCrBw2rR1g7cm6mKXRbek8JeY
-	 QJroEwaNsjFDA==
-Date: Tue, 4 Nov 2025 09:37:23 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 06/20] dt-bindings: mfd: samsung,s2mpg10: Add
- s2mpg11-pmic
-Message-ID: <20251104-glossy-frog-of-grandeur-a345d1@kuoka>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
- <20251103-s2mpg1x-regulators-v3-6-b8b96b79e058@linaro.org>
+	s=arc-20240116; t=1762245484; c=relaxed/simple;
+	bh=R6iW/mU31KGdvS84BeKMSKNktsVhPwIhbdJwzaLBxXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PzrwbcMfaSZN9UVZUkrLP0/q82mYUW9qUm0jrvviVqzfpEB6QH+23YZMmUNioDAwTj008c/i8wAT8eRbAwum2OONHhl8QORjuConKlsbp1HY4Fng5ffjV2G12JTn+fH9044uUeSrLxZsNJL+963L4LdQzUoOKL5shs3WjpnOFfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TTNsfDWP; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762245478;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OgNnOMsS50KZEW2Uu5LLuchS1BcFg93kxAnhG0zifF0=;
+	b=TTNsfDWPw4SN7MyW7OwQGbloCmpkQ4GOZn86TPZAjHsddPG7e2W8c65FrBum0rATGdfa8H
+	0/4NV6WriY+ObP9+5vFDgWgNT4QwnbpZZ6CHvKC5Mw5fWKwM94z3ZOV/y3ymInTCNXuy6u
+	lV4zLs2mxsGWY0Uf26e29y97bu5H4Gg=
+From: Hui Zhu <hui.zhu@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Hui Zhu <zhuhui@kylinos.cn>
+Subject: [PATCH v3 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
+Date: Tue,  4 Nov 2025 16:37:41 +0800
+Message-ID: <cover.1762245157.git.zhuhui@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251103-s2mpg1x-regulators-v3-6-b8b96b79e058@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 03, 2025 at 07:14:45PM +0000, Andr=C3=A9 Draszik wrote:
-> +  "^vinb[abd]-supply$":
-> +    description: |
-> +      Phandle to the power supply for the additional buck rails of the S=
-2MPG11
-> +      PMIC. The mapping of supply to rail is as follows::
-> +        vinba - bucka
-> +        vinbb - buck boost
-> +        vinbd - buckd
-> +
-> +  "^vinl[1-6]s-supply$":
-> +    description: |
-> +      Phandle to the power supply for one or multiple LDO rails of the S=
-2MPG11
-> +      PMIC. The mapping of supply to rail(s) is as follows:
-> +        vinl1s - ldo1s, ldo2s
-> +        vinl2s - ldo8s, ldo9s
-> +        vinl3s - ldo3s, ldo5s, ldo7s, ldo15s
-> +        vinl4s - ldo10s, ldo11s, ldo12s, ldo14s
-> +        vinl5s - ldo4s, ldo6s
-> +        vinl6s - ldo13s
-> +
->  required:
->    - compatible
->    - interrupts
-> @@ -81,3 +102,23 @@ allOf:
->        properties:
->          regulators:
->            $ref: /schemas/regulator/samsung,s2mpg10-regulator.yaml
-> +
-> +      patternProperties:
-> +        "[^m]-supply$": false
-> +
-> +  - if:
+From: Hui Zhu <zhuhui@kylinos.cn>
 
-OK, so this explains why earlier you put $ref in if:then:. I propose to
-move it to separate new MFD schema, because half or more of properties
-are not applicable between each of the devices.
+The hugetlb.c file has grown significantly and become difficult to
+maintain. This patch series extracts the sysfs and sysctl interface
+code into separate dedicated files to improve code organization.
 
+The refactoring includes:
+- Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
+- Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
 
-Best regards,
-Krzysztof
+No functional changes are introduced in this series. The code is moved
+as-is, with only minor formatting adjustments for code style
+consistency. This should make future maintenance and enhancements to
+the hugetlb subsystem easier.
+
+Testing: The patch series has been compile-tested and maintains the
+same functionality as the original code.
+
+Changelog:
+v3:
+According to the comments of SeongJae Park, updated MAINTAINERS to
+add new files.
+Removed the wrong copyright in hugetlb_internal.h.
+v2:
+According to the comments of David Hildenbrand, removed the wrong
+copyright in the file headers.
+
+Hui Zhu (2):
+  mm/hugetlb: extract sysfs into hugetlb_sysfs.c
+  mm/hugetlb: extract sysctl into hugetlb_sysctl.c
+
+ MAINTAINERS           |   2 +
+ mm/Makefile           |   2 +-
+ mm/hugetlb.c          | 852 +-----------------------------------------
+ mm/hugetlb_internal.h | 113 ++++++
+ mm/hugetlb_sysctl.c   | 133 +++++++
+ mm/hugetlb_sysfs.c    | 629 +++++++++++++++++++++++++++++++
+ 6 files changed, 887 insertions(+), 844 deletions(-)
+ create mode 100644 mm/hugetlb_internal.h
+ create mode 100644 mm/hugetlb_sysctl.c
+ create mode 100644 mm/hugetlb_sysfs.c
+
+-- 
+2.43.0
 
 
