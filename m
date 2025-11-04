@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-884967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BFDC319DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6400DC319D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B413B8EE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:47:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D93B54F891B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E4B2F5A17;
-	Tue,  4 Nov 2025 14:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C153732ED4B;
+	Tue,  4 Nov 2025 14:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnTz02Cw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehE/zfGW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8776733030C;
-	Tue,  4 Nov 2025 14:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195B5247280;
+	Tue,  4 Nov 2025 14:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267616; cv=none; b=mHRJNAtbOnA1tR0bB72Gcv64XSg2R2nnupw7UiquvFP117EjEbEknxzGvimFWY6F0osyIqWiAnVHtUyw+XoyIGt2iP5xGZSkerEaBryJ9aiWh7NdqXuI8OUCuamI8foFct4PYfk0DMgkjGalbPa2FZBHd/A9r+55uNdHU4Cd5Yg=
+	t=1762267652; cv=none; b=Ir6+XoTG0zRLd0unEM3yziIl+Fce4oU6bokPYZpMi/G7uutT97SX4fQPdvX9MVVOv1nLZ/UjXn7+2HgOYhtNsQfIdE0geBcTuMmDOV7H4k0hF2ls8+fxldlhlL2QPybTPUaQEC6vKWhIENVIOFcpZCKNb/6EQ3coZsCc3CwQj60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267616; c=relaxed/simple;
-	bh=/a27NOlv+cT1f3NL+AngUXaBuBQ16btI2AZABdX1FjI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jKjJ/oFzLodS6br6CtmhKCvNYr+HsRvHlayTQeV3btkGp+XgnBSodW0nhwSd2O5H8rstlTOSAcXNOpVMLbyq36RGydgJS0lz8V61FIdHMYUdHjf21iLL98f+qG3B5Fj7yFkdtMIqTIxB2rcsqMZwL9ITgRTBuK21qZK1iL/EDoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnTz02Cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9321C116C6;
-	Tue,  4 Nov 2025 14:46:54 +0000 (UTC)
+	s=arc-20240116; t=1762267652; c=relaxed/simple;
+	bh=OV4P0dQlw5eQa4hMgT36AAPIOMd8iH5vmSgWbIqbY4k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MEOOunJoe4JG2vA+W9QO+pmDJ764r+4Z1ivtG04I2FV0OYCnqSDLzHfRme14/uDE8HSH0OJofLF5qu7cdx6DZi9EtXc5r6kjKodRGEz/Q9ZjT0KftA80dhEf9mWF5n6mKEEEogH13tcXBny46NuDezx1MR6l2c9Iir9ppI3bLs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehE/zfGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22102C116C6;
+	Tue,  4 Nov 2025 14:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762267616;
-	bh=/a27NOlv+cT1f3NL+AngUXaBuBQ16btI2AZABdX1FjI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EnTz02Cwp+Y3RPRj68dlr1fJul2hHB0LO4HUJ/e/hVwU2cV2GD++TXWXr1npmN/QS
-	 0bLcZqrDpFm7EcnRWXzPyQ4qKXwbF9PTsXhwI2WQLFecIJp2sQqo3w+xYYNa1uHlxR
-	 71MuWd092p9+Mi6mu947vIfX52fA6f7DbRYOOwzEthC0/4GOo9jyj/MJKhickOljbm
-	 hoQu7uwUjjaZEA8ymDSkWefHh9uXQMnkyKHFafZK6FQ36x5NB9QWHoDciLMwzyZg4q
-	 ywAqNGGntrFgiHChCcvtwLmKmKrHeHOVoJZ92aSqpyuWe6jJvv+UiHSCaa6XTl7Zeg
-	 mthb45v2VURjA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 04 Nov 2025 15:46:34 +0100
-Subject: [PATCH 3/3] fs: add fs_super.h header
+	s=k20201202; t=1762267651;
+	bh=OV4P0dQlw5eQa4hMgT36AAPIOMd8iH5vmSgWbIqbY4k=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ehE/zfGW7oviD32/eocltTKVSmt7z9hmZsUx1/87iegaZf0nwsZ4KNmLLrqy2f2hq
+	 pec0AgwhXm8j43kZjvK9qPqn1pvz0tZACT3Mf6iJz56la1kKXStrBpWwsR14wxjHnN
+	 MUOcOeabxXw9I3mwd2WfglDWQ6znfVhgZGYZHgQxeBGRmk7cDECbNNAMRr03O7b6fQ
+	 xS1Seuejdy2zKg7ey6CoWiVCR1KEFBa0AZspkk+Yzu0ESiNqubrFEaj7mlhvLnEnfc
+	 V5BPguqduKwxsNtbbeQ8Urf1a93M1f7iNRcEJXwyj0qn/XQjUfPykUwUlz40PLtbth
+	 3jHqBlM5zKy1w==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Tue, 04 Nov 2025 15:47:26 +0100
+Subject: [PATCH v3] dt-bindings: iommu: qcom_iommu: Allow 'tbu' clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,551 +50,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-work-fs-header-v1-3-fb39a2efe39e@kernel.org>
-References: <20251104-work-fs-header-v1-0-fb39a2efe39e@kernel.org>
-In-Reply-To: <20251104-work-fs-header-v1-0-fb39a2efe39e@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=18003; i=brauner@kernel.org;
- h=from:subject:message-id; bh=/a27NOlv+cT1f3NL+AngUXaBuBQ16btI2AZABdX1FjI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyCd4on7mqvn5xqfuXhxzuTGyvFXsrD87vNT1vPbem0
- /OIymWTjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImsncfI8FX67aqwWT5LTJTm
- nJgld6f5ZNRxszQmgY8sKa3+rCaL2hkZnr+SP1wjteHSuv+6z/Jub/g0P+K9hE/Nt9MCt8UXpOc
- IcAMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Message-Id: <20251104-topic-qciommu_bindings_fix-v3-1-09c52a1e5ffb@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAP0RCmkC/42NWwqDMBBFtyLz3UgeSrFf3YeIaIw6UBPNqLSIe
+ +/UFfRnLudyOXMAuYiO4JEcEN2OhMEzmFsCdmz84AR2zKClzpVUuVjDjFYsFsM0bXWLvkM/UN3
+ jW5i2N4XMZKbaAlgwR8f1JS8r5hFpDfFz/dr1r/1Lu2uhRCN7Y+8y7zifgShdtuZleZzygeo8z
+ y928K7gywAAAA==
+X-Change-ID: 20251015-topic-qciommu_bindings_fix-3bf3904041b9
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762267648; l=2802;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=Ao2GpzsTUbbPp3qeDPkivYO7J3zJnsKyZE+xMiE7snU=;
+ b=LvZA7Lsa2QhPRHhjFRsSsqTe8uaJw2ig9tJTgmBE0EQJYaC4bLy+/ijbo2uYoG04jNR/cWunR
+ 3RW4C1hzK+LAKPQ5lncjMja3Xv99pUj1G5OgZzSqZtu5/aU46qiARMm
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Split out super block associated functions into a separate header.
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Some IOMMUs on some platforms (there doesn't seem to be a good denominator
+for this) require the presence of a third clock, specifically relating
+to the instance's Translation Buffer Unit (TBU).
+
+Stephan Gerhold noted [1] that according to Qualcomm Snapdragon 410E
+Processor (APQ8016E) Technical Reference Manual, SMMU chapter, section
+"8.8.3.1.2 Clock gating", which reads:
+
+For APPS TCU/TBU (TBU to TCU interface is asynchronous)
+Software should turn ON clock to APPS TCU
+  - During APPS TCU register programming sequence
+
+For GPU TCU/TBU (TBU to TCU interface is synchronous)
+Software should turn ON clock to GPU TBU
+  - During GPU TLB invalidation sequence <=====================
+Software should turn ON clock to GPU TCU
+  - During GPU TCU register programming sequence
+  - While GPU master clock is Active
+
+The clock should be turned on at least during TLB invalidation on the
+GPU SMMU instance. This is corroborated by Commit 5bc1cf1466f6
+("iommu/qcom: add optional 'tbu' clock for TLB invalidate").
+
+This is also not to be confused with qcom,sdm845-tbu, which is a
+description of a debug interface, absent on the generation of hardware
+that this binding describes.
+
+Allow this clock.
+
+[1] https://lore.kernel.org/linux-arm-msm/aPX_cKtial56AgvU@linaro.org/
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- include/linux/fs.h       | 220 +-------------------------------------------
- include/linux/fs_super.h | 233 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 234 insertions(+), 219 deletions(-)
+Changes in v3:
+- Expand the commit message
+- Link to v2: https://lore.kernel.org/r/20251015-topic-qciommu_bindings_fix-v2-1-a0f3c705d0f3@oss.qualcomm.com
+Changes in v2:
+- Resending from a 2023 megaseries, no changes
+- Link to v1: https://lore.kernel.org/lkml/20230627-topic-more_bindings-v1-7-6b4b6cd081e5@linaro.org/
+---
+ Documentation/devicetree/bindings/iommu/qcom,iommu.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 17fa9b64354b..1fde6bab3287 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2,7 +2,7 @@
- #ifndef _LINUX_FS_H
- #define _LINUX_FS_H
+diff --git a/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml b/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
+index 3e5623edd207..93a489025317 100644
+--- a/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
++++ b/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
+@@ -32,14 +32,18 @@ properties:
+           - const: qcom,msm-iommu-v2
  
--#include <linux/fs_super_types.h>
-+#include <linux/fs_super.h>
- #include <linux/vfsdebug.h>
- #include <linux/linkage.h>
- #include <linux/wait_bit.h>
-@@ -1662,66 +1662,6 @@ struct timespec64 simple_inode_init_ts(struct inode *inode);
-  * Snapshotting support.
-  */
+   clocks:
++    minItems: 2
+     items:
+       - description: Clock required for IOMMU register group access
+       - description: Clock required for underlying bus access
++      - description: Clock required for Translation Buffer Unit access
  
--/*
-- * These are internal functions, please use sb_start_{write,pagefault,intwrite}
-- * instead.
-- */
--static inline void __sb_end_write(struct super_block *sb, int level)
--{
--	percpu_up_read(sb->s_writers.rw_sem + level-1);
--}
--
--static inline void __sb_start_write(struct super_block *sb, int level)
--{
--	percpu_down_read_freezable(sb->s_writers.rw_sem + level - 1, true);
--}
--
--static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
--{
--	return percpu_down_read_trylock(sb->s_writers.rw_sem + level - 1);
--}
--
--#define __sb_writers_acquired(sb, lev)	\
--	percpu_rwsem_acquire(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
--#define __sb_writers_release(sb, lev)	\
--	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], _THIS_IP_)
--
--/**
-- * __sb_write_started - check if sb freeze level is held
-- * @sb: the super we write to
-- * @level: the freeze level
-- *
-- * * > 0 - sb freeze level is held
-- * *   0 - sb freeze level is not held
-- * * < 0 - !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
-- */
--static inline int __sb_write_started(const struct super_block *sb, int level)
--{
--	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
--}
--
--/**
-- * sb_write_started - check if SB_FREEZE_WRITE is held
-- * @sb: the super we write to
-- *
-- * May be false positive with !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN.
-- */
--static inline bool sb_write_started(const struct super_block *sb)
--{
--	return __sb_write_started(sb, SB_FREEZE_WRITE);
--}
--
--/**
-- * sb_write_not_started - check if SB_FREEZE_WRITE is not held
-- * @sb: the super we write to
-- *
-- * May be false positive with !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN.
-- */
--static inline bool sb_write_not_started(const struct super_block *sb)
--{
--	return __sb_write_started(sb, SB_FREEZE_WRITE) <= 0;
--}
--
- /**
-  * file_write_started - check if SB_FREEZE_WRITE is held
-  * @file: the file we write to
-@@ -1752,118 +1692,6 @@ static inline bool file_write_not_started(const struct file *file)
- 	return sb_write_not_started(file_inode(file)->i_sb);
- }
+   clock-names:
++    minItems: 2
+     items:
+       - const: iface
+       - const: bus
++      - const: tbu
  
--/**
-- * sb_end_write - drop write access to a superblock
-- * @sb: the super we wrote to
-- *
-- * Decrement number of writers to the filesystem. Wake up possible waiters
-- * wanting to freeze the filesystem.
-- */
--static inline void sb_end_write(struct super_block *sb)
--{
--	__sb_end_write(sb, SB_FREEZE_WRITE);
--}
--
--/**
-- * sb_end_pagefault - drop write access to a superblock from a page fault
-- * @sb: the super we wrote to
-- *
-- * Decrement number of processes handling write page fault to the filesystem.
-- * Wake up possible waiters wanting to freeze the filesystem.
-- */
--static inline void sb_end_pagefault(struct super_block *sb)
--{
--	__sb_end_write(sb, SB_FREEZE_PAGEFAULT);
--}
--
--/**
-- * sb_end_intwrite - drop write access to a superblock for internal fs purposes
-- * @sb: the super we wrote to
-- *
-- * Decrement fs-internal number of writers to the filesystem.  Wake up possible
-- * waiters wanting to freeze the filesystem.
-- */
--static inline void sb_end_intwrite(struct super_block *sb)
--{
--	__sb_end_write(sb, SB_FREEZE_FS);
--}
--
--/**
-- * sb_start_write - get write access to a superblock
-- * @sb: the super we write to
-- *
-- * When a process wants to write data or metadata to a file system (i.e. dirty
-- * a page or an inode), it should embed the operation in a sb_start_write() -
-- * sb_end_write() pair to get exclusion against file system freezing. This
-- * function increments number of writers preventing freezing. If the file
-- * system is already frozen, the function waits until the file system is
-- * thawed.
-- *
-- * Since freeze protection behaves as a lock, users have to preserve
-- * ordering of freeze protection and other filesystem locks. Generally,
-- * freeze protection should be the outermost lock. In particular, we have:
-- *
-- * sb_start_write
-- *   -> i_rwsem			(write path, truncate, directory ops, ...)
-- *   -> s_umount		(freeze_super, thaw_super)
-- */
--static inline void sb_start_write(struct super_block *sb)
--{
--	__sb_start_write(sb, SB_FREEZE_WRITE);
--}
--
--static inline bool sb_start_write_trylock(struct super_block *sb)
--{
--	return __sb_start_write_trylock(sb, SB_FREEZE_WRITE);
--}
--
--/**
-- * sb_start_pagefault - get write access to a superblock from a page fault
-- * @sb: the super we write to
-- *
-- * When a process starts handling write page fault, it should embed the
-- * operation into sb_start_pagefault() - sb_end_pagefault() pair to get
-- * exclusion against file system freezing. This is needed since the page fault
-- * is going to dirty a page. This function increments number of running page
-- * faults preventing freezing. If the file system is already frozen, the
-- * function waits until the file system is thawed.
-- *
-- * Since page fault freeze protection behaves as a lock, users have to preserve
-- * ordering of freeze protection and other filesystem locks. It is advised to
-- * put sb_start_pagefault() close to mmap_lock in lock ordering. Page fault
-- * handling code implies lock dependency:
-- *
-- * mmap_lock
-- *   -> sb_start_pagefault
-- */
--static inline void sb_start_pagefault(struct super_block *sb)
--{
--	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
--}
--
--/**
-- * sb_start_intwrite - get write access to a superblock for internal fs purposes
-- * @sb: the super we write to
-- *
-- * This is the third level of protection against filesystem freezing. It is
-- * free for use by a filesystem. The only requirement is that it must rank
-- * below sb_start_pagefault.
-- *
-- * For example filesystem can call sb_start_intwrite() when starting a
-- * transaction which somewhat eases handling of freezing for internal sources
-- * of filesystem changes (internal fs threads, discarding preallocation on file
-- * close, etc.).
-- */
--static inline void sb_start_intwrite(struct super_block *sb)
--{
--	__sb_start_write(sb, SB_FREEZE_FS);
--}
--
--static inline bool sb_start_intwrite_trylock(struct super_block *sb)
--{
--	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
--}
--
- bool inode_owner_or_capable(struct mnt_idmap *idmap,
- 			    const struct inode *inode);
- 
-@@ -2233,7 +2061,6 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-  */
- #define __IS_FLG(inode, flg)	((inode)->i_sb->s_flags & (flg))
- 
--static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags & SB_RDONLY; }
- #define IS_RDONLY(inode)	sb_rdonly((inode)->i_sb)
- #define IS_SYNC(inode)		(__IS_FLG(inode, SB_SYNCHRONOUS) || \
- 					((inode)->i_flags & S_SYNC))
-@@ -2467,10 +2294,6 @@ extern int unregister_filesystem(struct file_system_type *);
- extern int vfs_statfs(const struct path *, struct kstatfs *);
- extern int user_statfs(const char __user *, struct kstatfs *);
- extern int fd_statfs(int, struct kstatfs *);
--int freeze_super(struct super_block *super, enum freeze_holder who,
--		 const void *freeze_owner);
--int thaw_super(struct super_block *super, enum freeze_holder who,
--	       const void *freeze_owner);
- extern __printf(2, 3)
- int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
- extern int super_setup_bdi(struct super_block *sb);
-@@ -2657,12 +2480,6 @@ extern struct kmem_cache *names_cachep;
- #define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
- #define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
- 
--extern struct super_block *blockdev_superblock;
--static inline bool sb_is_blkdev_sb(struct super_block *sb)
--{
--	return IS_ENABLED(CONFIG_BLOCK) && sb == blockdev_superblock;
--}
--
- void emergency_thaw_all(void);
- extern int sync_filesystem(struct super_block *);
- extern const struct file_operations def_blk_fops;
-@@ -3117,9 +2934,6 @@ static inline void remove_inode_hash(struct inode *inode)
- extern void inode_sb_list_add(struct inode *inode);
- extern void inode_add_lru(struct inode *inode);
- 
--extern int sb_set_blocksize(struct super_block *, int);
--extern int sb_min_blocksize(struct super_block *, int);
--
- int generic_file_mmap(struct file *, struct vm_area_struct *);
- int generic_file_mmap_prepare(struct vm_area_desc *desc);
- int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
-@@ -3439,38 +3253,6 @@ static inline bool generic_ci_validate_strict_name(struct inode *dir,
- }
- #endif
- 
--static inline struct unicode_map *sb_encoding(const struct super_block *sb)
--{
--#if IS_ENABLED(CONFIG_UNICODE)
--	return sb->s_encoding;
--#else
--	return NULL;
--#endif
--}
--
--static inline bool sb_has_encoding(const struct super_block *sb)
--{
--	return !!sb_encoding(sb);
--}
--
--/*
-- * Compare if two super blocks have the same encoding and flags
-- */
--static inline bool sb_same_encoding(const struct super_block *sb1,
--				    const struct super_block *sb2)
--{
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (sb1->s_encoding == sb2->s_encoding)
--		return true;
--
--	return (sb1->s_encoding && sb2->s_encoding &&
--	       (sb1->s_encoding->version == sb2->s_encoding->version) &&
--	       (sb1->s_encoding_flags == sb2->s_encoding_flags));
--#else
--	return true;
--#endif
--}
--
- int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
- 		unsigned int ia_valid);
- int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
-diff --git a/include/linux/fs_super.h b/include/linux/fs_super.h
-new file mode 100644
-index 000000000000..2c8f4e61a5dd
---- /dev/null
-+++ b/include/linux/fs_super.h
-@@ -0,0 +1,233 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_FS_SUPER_H
-+#define _LINUX_FS_SUPER_H
-+
-+#include <linux/fs_super_types.h>
-+#include <linux/unicode.h>
-+
-+/*
-+ * These are internal functions, please use sb_start_{write,pagefault,intwrite}
-+ * instead.
-+ */
-+static inline void __sb_end_write(struct super_block *sb, int level)
-+{
-+	percpu_up_read(sb->s_writers.rw_sem + level - 1);
-+}
-+
-+static inline void __sb_start_write(struct super_block *sb, int level)
-+{
-+	percpu_down_read_freezable(sb->s_writers.rw_sem + level - 1, true);
-+}
-+
-+static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
-+{
-+	return percpu_down_read_trylock(sb->s_writers.rw_sem + level - 1);
-+}
-+
-+#define __sb_writers_acquired(sb, lev) \
-+	percpu_rwsem_acquire(&(sb)->s_writers.rw_sem[(lev) - 1], 1, _THIS_IP_)
-+#define __sb_writers_release(sb, lev) \
-+	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev) - 1], _THIS_IP_)
-+
-+/**
-+ * __sb_write_started - check if sb freeze level is held
-+ * @sb: the super we write to
-+ * @level: the freeze level
-+ *
-+ * * > 0 - sb freeze level is held
-+ * *   0 - sb freeze level is not held
-+ * * < 0 - !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
-+ */
-+static inline int __sb_write_started(const struct super_block *sb, int level)
-+{
-+	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
-+}
-+
-+/**
-+ * sb_write_started - check if SB_FREEZE_WRITE is held
-+ * @sb: the super we write to
-+ *
-+ * May be false positive with !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN.
-+ */
-+static inline bool sb_write_started(const struct super_block *sb)
-+{
-+	return __sb_write_started(sb, SB_FREEZE_WRITE);
-+}
-+
-+/**
-+ * sb_write_not_started - check if SB_FREEZE_WRITE is not held
-+ * @sb: the super we write to
-+ *
-+ * May be false positive with !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN.
-+ */
-+static inline bool sb_write_not_started(const struct super_block *sb)
-+{
-+	return __sb_write_started(sb, SB_FREEZE_WRITE) <= 0;
-+}
-+
-+/**
-+ * sb_end_write - drop write access to a superblock
-+ * @sb: the super we wrote to
-+ *
-+ * Decrement number of writers to the filesystem. Wake up possible waiters
-+ * wanting to freeze the filesystem.
-+ */
-+static inline void sb_end_write(struct super_block *sb)
-+{
-+	__sb_end_write(sb, SB_FREEZE_WRITE);
-+}
-+
-+/**
-+ * sb_end_pagefault - drop write access to a superblock from a page fault
-+ * @sb: the super we wrote to
-+ *
-+ * Decrement number of processes handling write page fault to the filesystem.
-+ * Wake up possible waiters wanting to freeze the filesystem.
-+ */
-+static inline void sb_end_pagefault(struct super_block *sb)
-+{
-+	__sb_end_write(sb, SB_FREEZE_PAGEFAULT);
-+}
-+
-+/**
-+ * sb_end_intwrite - drop write access to a superblock for internal fs purposes
-+ * @sb: the super we wrote to
-+ *
-+ * Decrement fs-internal number of writers to the filesystem.  Wake up possible
-+ * waiters wanting to freeze the filesystem.
-+ */
-+static inline void sb_end_intwrite(struct super_block *sb)
-+{
-+	__sb_end_write(sb, SB_FREEZE_FS);
-+}
-+
-+/**
-+ * sb_start_write - get write access to a superblock
-+ * @sb: the super we write to
-+ *
-+ * When a process wants to write data or metadata to a file system (i.e. dirty
-+ * a page or an inode), it should embed the operation in a sb_start_write() -
-+ * sb_end_write() pair to get exclusion against file system freezing. This
-+ * function increments number of writers preventing freezing. If the file
-+ * system is already frozen, the function waits until the file system is
-+ * thawed.
-+ *
-+ * Since freeze protection behaves as a lock, users have to preserve
-+ * ordering of freeze protection and other filesystem locks. Generally,
-+ * freeze protection should be the outermost lock. In particular, we have:
-+ *
-+ * sb_start_write
-+ *   -> i_rwsem			(write path, truncate, directory ops, ...)
-+ *   -> s_umount		(freeze_super, thaw_super)
-+ */
-+static inline void sb_start_write(struct super_block *sb)
-+{
-+	__sb_start_write(sb, SB_FREEZE_WRITE);
-+}
-+
-+static inline bool sb_start_write_trylock(struct super_block *sb)
-+{
-+	return __sb_start_write_trylock(sb, SB_FREEZE_WRITE);
-+}
-+
-+/**
-+ * sb_start_pagefault - get write access to a superblock from a page fault
-+ * @sb: the super we write to
-+ *
-+ * When a process starts handling write page fault, it should embed the
-+ * operation into sb_start_pagefault() - sb_end_pagefault() pair to get
-+ * exclusion against file system freezing. This is needed since the page fault
-+ * is going to dirty a page. This function increments number of running page
-+ * faults preventing freezing. If the file system is already frozen, the
-+ * function waits until the file system is thawed.
-+ *
-+ * Since page fault freeze protection behaves as a lock, users have to preserve
-+ * ordering of freeze protection and other filesystem locks. It is advised to
-+ * put sb_start_pagefault() close to mmap_lock in lock ordering. Page fault
-+ * handling code implies lock dependency:
-+ *
-+ * mmap_lock
-+ *   -> sb_start_pagefault
-+ */
-+static inline void sb_start_pagefault(struct super_block *sb)
-+{
-+	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
-+}
-+
-+/**
-+ * sb_start_intwrite - get write access to a superblock for internal fs purposes
-+ * @sb: the super we write to
-+ *
-+ * This is the third level of protection against filesystem freezing. It is
-+ * free for use by a filesystem. The only requirement is that it must rank
-+ * below sb_start_pagefault.
-+ *
-+ * For example filesystem can call sb_start_intwrite() when starting a
-+ * transaction which somewhat eases handling of freezing for internal sources
-+ * of filesystem changes (internal fs threads, discarding preallocation on file
-+ * close, etc.).
-+ */
-+static inline void sb_start_intwrite(struct super_block *sb)
-+{
-+	__sb_start_write(sb, SB_FREEZE_FS);
-+}
-+
-+static inline bool sb_start_intwrite_trylock(struct super_block *sb)
-+{
-+	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
-+}
-+
-+static inline bool sb_rdonly(const struct super_block *sb)
-+{
-+	return sb->s_flags & SB_RDONLY;
-+}
-+
-+static inline bool sb_is_blkdev_sb(struct super_block *sb)
-+{
-+	return IS_ENABLED(CONFIG_BLOCK) && sb == blockdev_superblock;
-+}
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+static inline struct unicode_map *sb_encoding(const struct super_block *sb)
-+{
-+	return sb->s_encoding;
-+}
-+
-+/* Compare if two super blocks have the same encoding and flags */
-+static inline bool sb_same_encoding(const struct super_block *sb1,
-+				    const struct super_block *sb2)
-+{
-+	if (sb1->s_encoding == sb2->s_encoding)
-+		return true;
-+
-+	return (sb1->s_encoding && sb2->s_encoding &&
-+		(sb1->s_encoding->version == sb2->s_encoding->version) &&
-+		(sb1->s_encoding_flags == sb2->s_encoding_flags));
-+}
-+#else
-+static inline struct unicode_map *sb_encoding(const struct super_block *sb)
-+{
-+	return NULL;
-+}
-+
-+static inline bool sb_same_encoding(const struct super_block *sb1,
-+				    const struct super_block *sb2)
-+{
-+	return true;
-+}
-+#endif
-+
-+static inline bool sb_has_encoding(const struct super_block *sb)
-+{
-+	return !!sb_encoding(sb);
-+}
-+
-+int sb_set_blocksize(struct super_block *sb, int size);
-+int sb_min_blocksize(struct super_block *sb, int size);
-+
-+int freeze_super(struct super_block *super, enum freeze_holder who,
-+		 const void *freeze_owner);
-+int thaw_super(struct super_block *super, enum freeze_holder who,
-+	       const void *freeze_owner);
-+
-+#endif /* _LINUX_FS_SUPER_H */
+   power-domains:
+     maxItems: 1
 
+---
+base-commit: 12132ce56439eaefea25c647d850eeed99179d88
+change-id: 20251015-topic-qciommu_bindings_fix-3bf3904041b9
+
+Best regards,
 -- 
-2.47.3
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
