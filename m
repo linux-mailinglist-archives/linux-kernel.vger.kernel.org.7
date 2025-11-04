@@ -1,259 +1,230 @@
-Return-Path: <linux-kernel+bounces-884064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2004AC2F43A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:10:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B85C2F482
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02B364E45A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0749E3B76D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D90726C3BE;
-	Tue,  4 Nov 2025 04:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4387285CB6;
+	Tue,  4 Nov 2025 04:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FfCotOKm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="StRmYwoE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ATL71r9G"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azhn15010054.outbound.protection.outlook.com [52.102.136.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B741F95C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 04:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762229450; cv=none; b=heWZVNmIJZiYgWXRx75ZWoCEuctQvZ/6zF963+dRRCq65yx3ENxnIlvvqG9ra9PDTBwVKP2kfzXeqJL0dzTGcqjKMUU0sN2B3SbWxUcbhyO53oT/CShqORYhJkxwinDbZbxdTpXl9ro111RRWnFOR63NSNYrlw9c+2TrBRySVZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762229450; c=relaxed/simple;
-	bh=LNbJ3yf0aC8xMTCcNLnDlbiEuOZI0ql9+sZXsUtOIIQ=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Hc6MIwrXQ1z12qDGXm3p/FjDARJyfNuXCU5RR9Q1Nnkcm3CyJZqeTpthwZZPegKCsEusEmi3UKS1VIsj6X7Ko6E9HUPoGtrmUFwxSxqpMd97ER8x3+F7SzxMllX1O/KLqT9SH4VyiNAxA3HaB/VvEmCMA5xcSnWAZNz1//yGCQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FfCotOKm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=StRmYwoE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762229446;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x3Rt74wtZQOmwVW2oBCntRpXctW+t+5prr7cQeuEVkw=;
-	b=FfCotOKmmsmay9brLI4HEo/PBEbhvDuDlysTTX2Df4vnDaJ+bryQ0PB7hM+i4iclsUg34f
-	ffDJKQrZkb7p4+yU0DSs1nAg+enYOEhsraZk8rGt5jU6MRURaX0PUSYH+dMQq52KquqArw
-	ejKbN1kt1T1RMp1El3UgZEVHHh6mRQ0=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-59-kXfkFI_COOG5XUFtuBewGw-1; Mon, 03 Nov 2025 23:10:42 -0500
-X-MC-Unique: kXfkFI_COOG5XUFtuBewGw-1
-X-Mimecast-MFC-AGG-ID: kXfkFI_COOG5XUFtuBewGw_1762229442
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4eba120950fso130332581cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 20:10:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762229442; x=1762834242; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x3Rt74wtZQOmwVW2oBCntRpXctW+t+5prr7cQeuEVkw=;
-        b=StRmYwoEsvFQLijoBEJHeOD0QJBjcBuwchB1x7sF2h78ExBiFlSnzzgwZKbQJKEfvP
-         2Fy83cZwHQGzUI4UK1PE06yam+0T0SVu4FjaF/rTRwcz0HhaCm4+nkdMY+OcilKR7YNS
-         r2RuJBhQvpvPKo6SQzlkfJfYmXFlVO8PD4Q+O4a/OIVhMb5kXkIroTqGNMKuwvHSz3Tn
-         pUunglbD+x0tw+5OzoYv9ZCtWikEFFOFYDbfyt4WJKs6bz8y5Qs/Fxw00lNUbSESxEWr
-         HoOU7miXN0Pb2+iNBmULE5GqEnA0rcY1TXXHSSUWjz+iFsL4rWr1yST09V0PB73/3rnu
-         19zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762229442; x=1762834242;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3Rt74wtZQOmwVW2oBCntRpXctW+t+5prr7cQeuEVkw=;
-        b=W9KKdHGVy7zBa8gaJarNxiQJdWM/09FFOvVyPJWSfeEGlS27dSgICBZ37aH26+oUYw
-         uPMYF4if3SqYUyJeiFY4DdcLY4w1+31kuHOhHpG/0EUEt6iP41DrypEAEwZ8Ep1i7u9d
-         Ezt5UVbCgXbyaO4vCAjV/5W+ff0VOwIZN9KrJThCr1LMZE/Zq/AlvVMgfqdz3zrLyXDv
-         0Lwy09jF/Qvqn/76mBD+GINpOz9AVwe1Sp3vbrR2IsHMdklX8TvwneC5mHNjpGjprUze
-         gcGdjUyKPSmZ6gBGMtRrSQB+QVcGPWzyDccwC3fJdhxqTwBSYSikmAKkBYYsqSCbuNba
-         5LNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUob8IcSWBXNh0X8jkQ12/hJ7GU1xX0F/OVdKLhQL9HegGnTBH2yKw+ba7CdNkBvy1DfMw1zdF/5LkRqRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw74WsBisIEWjTM9fCjS37HeSoU6Tf64SfrKeEjzMUPt736z2EL
-	cK7KYRd2QJRK4AK3lHKH8dzSM4OXHG+4FcyzgAVOa4aFoDW+Quim8kL5yRxJoNOoLvW+iuWSmDx
-	jsqpA5MwLqyyKzPSm0UKHdDqNvQFL3uVZ7JclyH90spT3eamEaK+YHpeOz28Uj0Elag==
-X-Gm-Gg: ASbGnctW6zrkEZSb12nzA9uVCbEm2Fx35JH6gvzyjLuYg4NWd90bJnhDv0yko7yVshA
-	Oa9f0b2XuK0R5fhHZJU0vqeq+/EETgmylEn5AhNMm7Z/NGPlR7VqVvc+wdjxOuB3Nipx/yi2XQT
-	px9AsbCXyg/TDfZokk179NXl9VEtPo9FzelKfsChQNs+cv0e+xCuaEBYouttiN6lKKtnQQGjFPf
-	WKkYnJKxAU0yePxGnnUsVXQ6ZZfvEpeX1veMaJNEh+xK90m1UweRUqFBLAGfUyFospwsfe1xyOk
-	6xqWBZApPALXx0Q5/MWOaGwJUBzED3j6s/vk7LNxgTm/ZLrsySMJwRLiDpKbUQmvIS5dneQDqJG
-	cdmMl17YM2K9wfUXI3Cl3gmv4rkg+z/CJ0ehu4F6pSTZ8Xg==
-X-Received: by 2002:a05:622a:30d:b0:4e8:a5d6:707b with SMTP id d75a77b69052e-4ed30d91a0fmr192728821cf.14.1762229442318;
-        Mon, 03 Nov 2025 20:10:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGYPBjz5v15/Ez+BV7MsRKZPqaLP7BNztBU2I5f58YjB4DiBL+C+W6Tui/Hq/7i0hrd+msAXg==
-X-Received: by 2002:a05:622a:30d:b0:4e8:a5d6:707b with SMTP id d75a77b69052e-4ed30d91a0fmr192728531cf.14.1762229441843;
-        Mon, 03 Nov 2025 20:10:41 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed5faf6038sm10003881cf.11.2025.11.03.20.10.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 20:10:41 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <d6fd5e9c-d302-43db-ac89-7b09ab0770be@redhat.com>
-Date: Mon, 3 Nov 2025 23:10:40 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE3F26CE3B;
+	Tue,  4 Nov 2025 04:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.136.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762229639; cv=fail; b=p7aUh/ypbPH/IDTgimeYS/1N0CTaF10t2p8jXt8wlJw010bV2x0PygMTQPjvzr9fVULs5ZZu9p+x4TjFDU42WZOf/l0O6Rh1oT6j2KYXZP/BOywSDYeB5eY+hXDILIluHQsfqA2gceXfGF+RrCsM/TIRCBmbc/eOWfchIz2xjMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762229639; c=relaxed/simple;
+	bh=MqZccHEhfNBkrGwkUH1MDF98e0x7CovbTTFMfEZDl7o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j9XTTcymrImm+MX3bnIJmUwEFXdsm/8U4X94nlAhBf7c5QCdKF84CTsLxSa+GICQU5Bu0jF5IqdHzDxtKjwDuAlsiAo+8kduzveHUfPldCITFHY3FywQUpzJkHcngWkBkM5/utxQwkm/n/W4osLRUupn5beREtp4dZQ8OfEe6G4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ATL71r9G; arc=fail smtp.client-ip=52.102.136.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QMirQhOA7JACRzfqeiydULSP26U8u2SQrrBhLsqnX3fczx6JeX2IMaxav/qRXXsg7+fZSgpRuVH17xwMvaEcOWsN6FT4ZjZzMWejEIxTvWMck8Ygs2bwhiLjsaaTIXdXVeU6wU3enXu4xZCi8GJLd+tawiaoxjraymgL8ODXhu/9/YLtJRWKE7P1cNYqjUHeRga7W6Vv+Pb4YapjljEFbD7L54EDJIJqkEWU0ZiOjwgDoD2BQVHHHECUiV7V5As2ahHqiAnbtzXLXcMtAvAa+iaaqkiDDxFSDR3EE6UG65hoBlv6z/yNdj3qL7IausE59NCRmXuLUnWUP4BleIbgIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x5DxdrPnkQZSuNmeGpqfl6IhjNEWOA23IBnLO0AtZs8=;
+ b=Tpy22VONmwBkJTHiqX4fvAPLyJe6uKhPrl5Hzs3OXXNrldC8E8Ck9Gd5gpofd4Ip+8o52hMhOyXuoKRVgKkiIlDLPrg2Of8YJQa5hOszZW7myHKcplk1zbmZqXScbyXpaEIE/dr4hU1ujvrdBbWegLPBokc6rmMNsRDNl9gFHQvqiqL1Z8DMOAvo+VqhEZzMpkQ5C/xQ2h9Yr4r6v7wpL/ik2qavnEWdsw/JtseKua88x/CnYWL8KC1gorLXo233HtIxLQ7Wvr3JOQ4ImBCsnNuWwoNXxivrNDNLswSaLMF7rko0/baoceEJBZMWy7rQ+maxr1cZF/VcXfPJdQ/p0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=google.com smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x5DxdrPnkQZSuNmeGpqfl6IhjNEWOA23IBnLO0AtZs8=;
+ b=ATL71r9GB67QjZP7nT05rccI+5+4sxG5UxEZjMTxEUHoQvJGVRnR6vzNI4krad3ZtLNWfk2ApXysGUI06IITNdqMcz8gD/iBT/0jzuAzQZ9kdiqETnjTpbOOs+WaIDNX1VqUOGrRG/sb5qcqD+k+/FCGqXm2NZoQRoxkqAYoUjI=
+Received: from BLAP220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::8)
+ by SJ0PR10MB5670.namprd10.prod.outlook.com (2603:10b6:a03:3ed::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 04:13:54 +0000
+Received: from BL02EPF0001A0FA.namprd03.prod.outlook.com
+ (2603:10b6:208:32c:cafe::dc) by BLAP220CA0003.outlook.office365.com
+ (2603:10b6:208:32c::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
+ 4 Nov 2025 04:13:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ BL02EPF0001A0FA.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 04:13:52 +0000
+Received: from DFLE211.ent.ti.com (10.64.6.69) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 22:13:51 -0600
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 22:13:50 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 3 Nov 2025 22:13:50 -0600
+Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A44DgBT1277888;
+	Mon, 3 Nov 2025 22:13:43 -0600
+From: Baojun Xu <baojun.xu@ti.com>
+To: <broonie@kernel.org>, <tiwai@suse.de>
+CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
+	<shenghao-ding@ti.com>, <baojun.xu@ti.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<k-yi@ti.com>, <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
+	<will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
+	<chinkaiting@google.com>
+Subject: [PATCH v1 1/2] ASoC: tas2781: Add tas5822 support
+Date: Tue, 4 Nov 2025 12:13:12 +0800
+Message-ID: <20251104041314.792-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH v2 2/3] cgroup/cpuset: Fail if isolated
- and nohz_full don't leave any housekeeping
-To: Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251104013037.296013-1-longman@redhat.com>
- <20251104013037.296013-3-longman@redhat.com>
- <c4fc973a-e142-4b29-b41f-366d93cdfd0d@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <c4fc973a-e142-4b29-b41f-366d93cdfd0d@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FA:EE_|SJ0PR10MB5670:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ecac680-1a7d-438a-bf66-08de1b589058
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|82310400026|34020700016|36860700013|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Oa+oKhV1w0NG8RZiyz23BOd7p8K4jugJanh2Vc/t165n2B+F+AP/frJEdtFz?=
+ =?us-ascii?Q?Tvo2DeOwMZxSSb2i5NBK1cQLypa1sVzz5t4MEPvr6TeZ3N9qwqtmASshRHOr?=
+ =?us-ascii?Q?mY3y6aeGNfzvTlbYVjpYXAcrfZ+8FuFiUh6pM36EPxk0ti9axUXwR9AKii0o?=
+ =?us-ascii?Q?WgtyLFeyXArW0ZWfluEvupHdonqZQIvaXbeVOwKvrgSf6G+MYS+82208v28j?=
+ =?us-ascii?Q?lE77wb28/izboJgUSkGTx8xbgiuJzvHT/qkqAlO3AIQgl+dnYk2cFUei+oZJ?=
+ =?us-ascii?Q?wvbJBGscH1jIjSnsKhgu7u2Rl6A7/CmFrP5kwlE7kUpZZnIYpZ4SpHwDlnDC?=
+ =?us-ascii?Q?bI9b3recAihnuggIpwBxkNH/Och9aVsKJD6NGs/eND5mSHXyH0HEP21Cly43?=
+ =?us-ascii?Q?ED+6dRdIaVDp1ZHxQ2ct5a+tQuzjgCZ0Fwjgr5KW+lPOJdifYYCHEWWbUJ4T?=
+ =?us-ascii?Q?RObEIe1nGDCZF/qVPfOA2TBG4iy8hAYD1h8siVoO7ml4GT+86EdHiid/RtpR?=
+ =?us-ascii?Q?wg9Js/CXHiOCQP9g/3WSGPtvaOGSvxAQD79FX1y6Tke4UejOvkxYCPvlbF9i?=
+ =?us-ascii?Q?OaxgEjs/IblTWTAqaxxKQHHK2aqfouWZRUG16Am6g52e9rUnDmzl96fb9IBc?=
+ =?us-ascii?Q?GgxXmCztp0IdTuCHsF2Ot9ASnQ9wLczNKpQeQle54uJuIjaqTa3J9daa4Zm2?=
+ =?us-ascii?Q?c3rHWw9v2sjebazVmrKuq7ajaMJeMH57GpANwAIoZcPpUJEho4r5XOrFlIMy?=
+ =?us-ascii?Q?spyHW5mZq2G06K0yliNRfNYOz4ICoTVYZSMSW3aLFO2LzxI7FFEkg2owEQ9i?=
+ =?us-ascii?Q?OGvP+A7WZrxFYfFzcQay7KF2sIId1U4YGSK+aK2wsdz8hj5ckDboj77NdJ0S?=
+ =?us-ascii?Q?+cGm0+2C0CrOHwzAFvp52HaK5Qs/mG13c60LrqZwzPBFZJqstdKNks31Em5y?=
+ =?us-ascii?Q?9cmCDgeOGC6knpIwuAMYZdeAg/yn/J46OhaL/nYJMhkF98JTMK1hrnPCqFVS?=
+ =?us-ascii?Q?RGrjxAmm0w4Gu+RtUWGdNw3MtiMY5ksAeAF/nnrXu8L2s5/l2a5nXZBeFU+P?=
+ =?us-ascii?Q?5F89u3zMOktiRipmiJBM5VynVFBv1jdcYMOuOz8002LzUQEFzf4bw8MSRgie?=
+ =?us-ascii?Q?cnY5GeRKENV44jbv8I7ILy9q/IRnVfEg4qWpVpMl6gdc5fMX5sT+7GS3sFFA?=
+ =?us-ascii?Q?6Qx/pMD3H59AE2q81hyru1JeM5YufSOXJWkSVlxkMRqf4NBj5PZZWC9SD8yN?=
+ =?us-ascii?Q?E/HbfZuGhAM59tBPfIlptyw1V/moK77enoJqg6YllF8XawA0wVY2T+FlhC5T?=
+ =?us-ascii?Q?Bpjkr3XGSRB0keiiepAjebHCTXJ2b24myAW1Duuy6Rvji3vPvCAx6XNfNKaE?=
+ =?us-ascii?Q?Z9bTVCEaVpvewvBcysvoQu0CATEJWZcspb2G7TyiNqEETMglRhw6efIxrnKJ?=
+ =?us-ascii?Q?nCbnIBXpy5jFsYbMe9lpwK53qrhVkkRGWXVEAyS+vNy11liwkHFPJWNjkPEn?=
+ =?us-ascii?Q?iDPkbJZmelJvNRzL4K9zsW+hevFL1bcbQuwNSmGMxrabgW1JU6lzv+n4azWw?=
+ =?us-ascii?Q?qudoRdhcYPFA57w6sfY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(82310400026)(34020700016)(36860700013)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 04:13:52.4823
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ecac680-1a7d-438a-bf66-08de1b589058
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5670
 
-On 11/3/25 9:19 PM, Chen Ridong wrote:
->
-> On 2025/11/4 9:30, Waiman Long wrote:
->> Currently the user can set up isolated cpus via cpuset and nohz_full in
->> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
->> domain isolated nor nohz full). This can be a problem for other
->> subsystems (e.g. the timer wheel imgration).
->>
->> Prevent this configuration by blocking any assignation that would cause
->> the union of domain isolated cpus and nohz_full to covers all CPUs.
->>
->> [longman: Remove isolated_cpus_should_update() and rewrite the checking
->>   in update_prstate() and update_parent_effective_cpumask(), also add
->>   prstate_housekeeping_conflict() check in update_prstate() as
->>   suggested by Chen Ridong]
->>
->> Originally-by: Gabriele Monaco <gmonaco@redhat.com>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/cgroup/cpuset.c | 75 +++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 74 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index da770dac955e..0c49905df394 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1393,6 +1393,45 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->>   	return isolcpus_updated;
->>   }
->>   
->> +/*
->> + * isolated_cpus_can_update - check for isolated & nohz_full conflicts
->> + * @add_cpus: cpu mask for cpus that are going to be isolated
->> + * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
->> + * Return: false if there is conflict, true otherwise
->> + *
->> + * If nohz_full is enabled and we have isolated CPUs, their combination must
->> + * still leave housekeeping CPUs.
->> + *
->> + * TBD: Should consider merging this function into
->> + *      prstate_housekeeping_conflict().
->> + */
->> +static bool isolated_cpus_can_update(struct cpumask *add_cpus,
->> +				     struct cpumask *del_cpus)
->> +{
->> +	cpumask_var_t full_hk_cpus;
->> +	int res = true;
->> +
->> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
->> +		return true;
->> +
->> +	if (del_cpus && cpumask_weight_and(del_cpus,
->> +			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
->> +		return true;
->> +
->> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
->> +		return false;
->> +
->> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
->> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
->> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
->> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
->> +	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
->> +		res = false;
->> +
->> +	free_cpumask_var(full_hk_cpus);
->> +	return res;
->> +}
->> +
->>   static void update_isolation_cpumasks(bool isolcpus_updated)
->>   {
->>   	int ret;
->> @@ -1551,6 +1590,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->>   	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
->>   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->>   		return PERR_INVCPUS;
->> +	if ((new_prs == PRS_ISOLATED) &&
->> +	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
->> +		return PERR_HKEEPING;
->>   
-> Do we also need to check prstate_housekeeping_conflict here?
-Right. I missed that. Will add that in the next version.
->
->>   	spin_lock_irq(&callback_lock);
->>   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->> @@ -1650,6 +1692,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->>   		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
->>   			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
->>   			cs->prs_err = PERR_NOCPUS;
->> +		else if ((prs == PRS_ISOLATED) &&
->> +			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
->> +			cs->prs_err = PERR_HKEEPING;
->>   		if (cs->prs_err)
->>   			goto invalidate;
->>   	}
-> Ditto.
+TAS5822 has on-chip DSP without current/voltage feedback.
 
-prstate_housekeeping_conflict() has been called earlier via 
-validate_partition() from partition_cpus_change(). We don't need one 
-more check here. However, I forgot that enabling a partition will not 
-call validate_partition().
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2781.h        | 1 +
+ sound/soc/codecs/tas2781-i2c.c | 7 ++++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-
->
->> @@ -1750,6 +1795,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>   	int part_error = PERR_NONE;	/* Partition error? */
->>   	int isolcpus_updated = 0;
->>   	struct cpumask *xcpus = user_xcpus(cs);
->> +	int parent_prs = parent->partition_root_state;
->>   	bool nocpu;
->>   
->>   	lockdep_assert_held(&cpuset_mutex);
->> @@ -1813,6 +1859,10 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>   		if (prstate_housekeeping_conflict(new_prs, xcpus))
->>   			return PERR_HKEEPING;
->>   
->> +		if ((new_prs == PRS_ISOLATED) && (new_prs != parent_prs) &&
->> +		    !isolated_cpus_can_update(xcpus, NULL))
->> +			return PERR_HKEEPING;
->> +
->>   		if (tasks_nocpu_error(parent, cs, xcpus))
->>   			return PERR_NOCPUS;
->>   
-> I think isolated_cpus_can_update check should be also added to validate_partition function.
->
-> If deemed necessary, you may consider applying the patch below, which reuses validate_partition to
-> enable the local partition, so validate_partition can be common block.
->
-> https://lore.kernel.org/cgroups/20251025064844.495525-4-chenridong@huaweicloud.com/
-
-I do think your patch series will make that simpler. You can certainly 
-update your patch series to include that additional check into 
-validate_partition().
-
-Cheers,
-Longman
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 0fbcdb15c74b..c3b4c43dd2bf 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -122,6 +122,7 @@ enum audio_device {
+ 	TAS2781,
+ 	TAS5802,
+ 	TAS5815,
++	TAS5822,
+ 	TAS5825,
+ 	TAS5827,
+ 	TAS5828,
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index ba880b5de7e8..ebc7f4395f2e 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -110,6 +110,7 @@ static const struct i2c_device_id tasdevice_id[] = {
+ 	{ "tas2781", TAS2781 },
+ 	{ "tas5802", TAS5802 },
+ 	{ "tas5815", TAS5815 },
++	{ "tas5822", TAS5822 },
+ 	{ "tas5825", TAS5825 },
+ 	{ "tas5827", TAS5827 },
+ 	{ "tas5828", TAS5828 },
+@@ -129,6 +130,7 @@ static const struct of_device_id tasdevice_of_match[] = {
+ 	{ .compatible = "ti,tas2781" },
+ 	{ .compatible = "ti,tas5802" },
+ 	{ .compatible = "ti,tas5815" },
++	{ .compatible = "ti,tas5822" },
+ 	{ .compatible = "ti,tas5825" },
+ 	{ .compatible = "ti,tas5827" },
+ 	{ .compatible = "ti,tas5828" },
+@@ -1672,7 +1674,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ 
+ 	/* There is no calibration required for
+-	 * TAS5802/TAS5815/TAS5825/TAS5827/TAS5828.
++	 * TAS5802/TAS5815/TAS5822/TAS5825/TAS5827/TAS5828.
+ 	 */
+ 	if (tas_priv->chip_id < TAS5802) {
+ 		ret = tasdevice_create_cali_ctrls(tas_priv);
+@@ -1730,6 +1732,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 		case TAS2781:
+ 		case TAS5802:
+ 		case TAS5815:
++		case TAS5822:
+ 		case TAS5825:
+ 		case TAS5827:
+ 		case TAS5828:
+@@ -1895,6 +1898,7 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
+ 		break;
+ 	case TAS5802:
+ 	case TAS5815:
++	case TAS5822:
+ 	case TAS5825:
+ 	case TAS5827:
+ 	case TAS5828:
+@@ -2070,6 +2074,7 @@ static const struct acpi_device_id tasdevice_acpi_match[] = {
+ 	{ "TXNW2781", TAS2781 },
+ 	{ "TXNW5802", TAS5802 },
+ 	{ "TXNW5815", TAS5815 },
++	{ "TXNW5822", TAS5822 },
+ 	{ "TXNW5825", TAS5825 },
+ 	{ "TXNW5827", TAS5827 },
+ 	{ "TXNW5828", TAS5828 },
+-- 
+2.25.1
 
 
