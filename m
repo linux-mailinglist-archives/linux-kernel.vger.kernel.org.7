@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-884122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE4BC2F685
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:51:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA52C2F694
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2458F4F09D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856991897F9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17562D9498;
-	Tue,  4 Nov 2025 05:51:18 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D92BD036;
+	Tue,  4 Nov 2025 05:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFLkiwkb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD392C0F8E;
-	Tue,  4 Nov 2025 05:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB72E1448D5;
+	Tue,  4 Nov 2025 05:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762235478; cv=none; b=McpteOJTiPTr/j3QE6GVZg+SzLuYh16ABjGh37t07c0GC70Gt2NCzCzO8a4k24gOgKzD24pujGDi9o+PpLAGW+9pjgZeXl30Tg0PfNzrmcSt4E5s0uQ2y5U7FQfnKPjxU+tLkgwuAhK//UbldgfC+/YH5BM5CaAGNlbUsIIllOY=
+	t=1762235615; cv=none; b=UkpAJC2KGOLtsaNJYfuOj2yEHjeW84sXDJH7QAvxO3zPUhlGXdPmjUFKbpemqMsBiKfQZwvQoz1QG+HkKluNewVrPvBk+2nRl/8wzI9bd1u837ExcnG579RWxyafndXo63qiqgTvXpNmSuzcEaoxkj4+K1ZREDY9ZsZExJFH1hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762235478; c=relaxed/simple;
-	bh=FQY5LIHQ0lHHXMQmBtrO7lLlYspnnXPcW63KcxCH1Y8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qUO7FGXKWmAoRMdcilRMqCc2JdV4cqd7jnLRCb0LoKBGbxmnQZVyOzLre8x3DjMlEvnPu66u3QMorRcqiE5Jze9U6twCcIfE74fw3WNZwXIEWx31HlkQNH2QbhaYcSilgwkOolsQHlJyoyDryp4Ch2RbQI62a6Mn75jbJOAR0hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 4 Nov
- 2025 13:51:12 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 4 Nov 2025 13:51:12 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: <linux@roeck-us.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
-	<billy_tsai@aspeedtech.com>, <linux-hwmon@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] hwmon: (aspeed-g6-pwm-tach): Add AST2700 compatible string
-Date: Tue, 4 Nov 2025 13:51:12 +0800
-Message-ID: <20251104055112.2679087-2-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
-References: <20251104055112.2679087-1-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1762235615; c=relaxed/simple;
+	bh=UbX+ByTupXtukbbi248WV95MgCPA2XgOQbkRV6jr5Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaTZUgw7tS+uaa92A2/R4h3ASLl5vZWoEoOKlaETjCnyq8MhPljbVsuLoYKFtJWYQ61hOJdrSQeqpkIhOnYzXcu4GSLSHpdek/4+6TqzWAVfwwYPVuSb5kmqUISR5ldbnZ4CbIusRxGgE0BwetOFEu9Fa+d3hKyZzi1Q8ygmB94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFLkiwkb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C92FC4CEF7;
+	Tue,  4 Nov 2025 05:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762235614;
+	bh=UbX+ByTupXtukbbi248WV95MgCPA2XgOQbkRV6jr5Ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qFLkiwkbBHvYJVRFWADuiEdu4Zga+pqfgnBXx6fxKlD5HZrJr6tmhN+GcphGJ31kC
+	 p92fBfyhfvQGiFGQGJiset7qMMfF+tY1TzZwjCxLCyUFu2su4i3CcSA6f3kxex88/E
+	 5+DCTYb7rDN4epOtMKtt6F+pcxELgaeTkZYM7O20RdG9zQrHJU6DcNCgDrmXSLSKvD
+	 JLd1q8xmahSTNaiV3S9e0pmWVko2hlWQ4miKwvKx7u/KLHXcuekpXDBtBYXFDyTHL8
+	 yDzvZZS49Zt1fYRBrMqpqmuyCH8h8QzITJpHd/xrGBluouFZxhSsPrqeLUKAcAAXTZ
+	 HCBjyhZU1Htzw==
+Date: Mon, 3 Nov 2025 21:51:53 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: x86/aes-gcm-vaes-avx2 - initialize full %rax
+ return register
+Message-ID: <20251104055153.GC3674@sol>
+References: <20251102015256.171536-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102015256.171536-1-ebiggers@kernel.org>
 
-Extends device tree support to include the AST2700 chip variant by
-adding its compatible string to the device match table.
+On Sat, Nov 01, 2025 at 06:52:56PM -0700, Eric Biggers wrote:
+> Update aes_gcm_dec_final_vaes_avx2() to be consistent with
+> aes_gcm_dec_final_aesni() and aes_gcm_dec_final_vaes_avx512() by
+> initializing the full %rax return register instead of just %al.
+> Technically this is unnecessary, since these functions return bool.  But
+> I think it's worth being extra careful with the result of the tag
+> comparison and also keeping the different implementations consistent.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+> 
+> This patch is targeting libcrypto-next
 
-The AST2700 PWM/TACH hardware is compatible with the existing driver
-implementation used for AST2600.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
----
- drivers/hwmon/aspeed-g6-pwm-tach.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/hwmon/aspeed-g6-pwm-tach.c b/drivers/hwmon/aspeed-g6-pwm-tach.c
-index 4174b129d1fc..44e1ecba205d 100644
---- a/drivers/hwmon/aspeed-g6-pwm-tach.c
-+++ b/drivers/hwmon/aspeed-g6-pwm-tach.c
-@@ -528,6 +528,9 @@ static const struct of_device_id aspeed_pwm_tach_match[] = {
- 	{
- 		.compatible = "aspeed,ast2600-pwm-tach",
- 	},
-+	{
-+		.compatible = "aspeed,ast2700-pwm-tach",
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, aspeed_pwm_tach_match);
--- 
-2.25.1
-
+- Eric
 
