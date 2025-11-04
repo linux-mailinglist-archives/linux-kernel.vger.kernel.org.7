@@ -1,253 +1,235 @@
-Return-Path: <linux-kernel+bounces-884030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5E2C2F279
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:22:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19955C2F2A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E6965349AAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF031896DD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BC627F749;
-	Tue,  4 Nov 2025 03:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5BF28EA56;
+	Tue,  4 Nov 2025 03:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JKxw4SYD"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011026.outbound.protection.outlook.com [52.101.70.26])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DMY5XL7f";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JZ2lCjP9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039AF277037;
-	Tue,  4 Nov 2025 03:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762226521; cv=fail; b=ILID/I1J9F6/ufN4TYBvIb1HpXNB2yzQwJeQCnkMllxlvEVbbZB0jjiwTfWxaphtaX56CN6NQdk+fs4TwdEgoLB+6qLCVs6NRNwV4yBZH6/5LGsKRJO1M+jf79iRgtYRxJZAMLyuw3FxBKvodC4xardLQzInFxy8Fbn0dGrikVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762226521; c=relaxed/simple;
-	bh=mt127yIyZ4L3CjfaKWbxE2euRUcBr30QnzObw5b2jXU=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=GzeXvvP38/JKXbhGfF+0PY/d2R9OdzMY2+SCnCpUKyfgzVXnsc03k+S+pEH4HmhjH0VVS0lsiSo8QS38um2m2CP17ODsRi0kuoXxypDItAmKGhGOxsDLowhNpmLfrzQRY+CnJ4fxfAhuqfoDyDlWo4Uw+WA0qekjLbT3Cb5Yew8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JKxw4SYD; arc=fail smtp.client-ip=52.101.70.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wycXKPGZeGlH/TMo3Xybx0lrwqc/BcQUPm3xg3VzD5QG7/YulV/YyLHNRw8B2pkGg91NCkQV+UJShDCqlQ9s22QowLPw2Y47KycOea7HkhAv4zog6CzAi2oDqKk5gfGzJH9EgaLDEgnPK9ywQ99/bDcerRA4L9k/AXIs+Ow7kDLBBgjYSfl170m+YAF/X0jLkEF7tJq6nXOsWpG+r/QthVE6Gjzx/iHA47GXHFSKuZjQ3uxKeA2AyHA/WN6Rcb+bjZIlH7u9CgT2UCD3FKu6E8kIismcZ0qKlS07/GmrZu3Ehwj8x2a2oANzWAwkk2EF/W/JtZgouV3ABrbDYCR0Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bdFiVuJHDnYK4lEFNmDOgipRBsqxUG+jH55+rWr/lRI=;
- b=ZWkQBMU3twcmiZW8YXxKhIqi0hLl3XrsQWPqkZc0EEdcchkwYY8W3ilwmeFMGH1o3V4oxyi4HOkzF/u30xzG49a96pjkdj4vVj6K5XTD2tE1BeS07UD4UGoxi4Qi8bJ5GJXXZnEYcgBwvArpyZ197oeCUUCBfXrTHxWjNaqq/pmTsQJr+VelNH87jfGfKVV2Z3Kz6s9GpuBqhKTxUe6FocB3sb/19mWg2Hq+smtibc3soR4KT5kh1ok8+QoYYyOzIGxBQ9dJool2F64gzgJJQBstfpR33AMf88pYexZ/KLK+Ga7td6lv9e6FgiO8CmQ0xIXGv0usQ1C2C1muUFvyXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bdFiVuJHDnYK4lEFNmDOgipRBsqxUG+jH55+rWr/lRI=;
- b=JKxw4SYDC43JHLCJ5up3mC3gYY+qrw/N24kSeDpvOgds5NW7lMmHt5ZuvxeG6zZZdzDKx5lYbFq8Mj5NR4BtHx1QGNtMOI7YeF3SMl9vXpiVysNjxNTeyKgKCDRP4thDZlAl9kmmrKaSgYZkNEpcyOKAXoRqAK1bEQbLm0qAESdO8S0Nbz7wcq0F/wSWhE4I6MzoUNGMp++HDLfpiyKWRbK8kXtbZrSgUf6VLRjij8CO8GaNgVEHvz6enBeah35Yu/EnuzxmQDOCh+xCOyl4vJx+dzoi7XFLztkbHsRySPZYh47y5H4v2WBcYc+UsIsY3ObCnDDsUE3lA1EuxG3Tww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
- by DU2PR04MB8824.eurprd04.prod.outlook.com (2603:10a6:10:2e3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 03:20:51 +0000
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::92c2:2e03:bf99:68eb]) by AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::92c2:2e03:bf99:68eb%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 03:20:51 +0000
-From: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
-Date: Tue, 04 Nov 2025 11:21:07 +0800
-Subject: [PATCH v2 3/3] media: nxp: imx8-isi: Add ISI support for i.MX95
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-isi_imx95-v2-3-c05b7cb104cd@nxp.com>
-References: <20251104-isi_imx95-v2-0-c05b7cb104cd@nxp.com>
-In-Reply-To: <20251104-isi_imx95-v2-0-c05b7cb104cd@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762226484; l=2321;
- i=guoniu.zhou@nxp.com; s=20250815; h=from:subject:message-id;
- bh=gnvecHE6Mauet66Qt3yYLsGzcoW58ew0cWsAM243R/E=;
- b=7t3Drr97A+MVp9RvOCGjDotrZs1OACvr6Bi0+rcaTSP1CsBuyC9IMBDu/fld3K8YXzN7SjhGp
- iiCGxByRjTKARglP11AcZrprymxbDHYfkRqN/L73NsUTUx64bPOxMLc
-X-Developer-Key: i=guoniu.zhou@nxp.com; a=ed25519;
- pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
-X-ClientProxiedBy: SG2PR01CA0109.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::13) To AS8PR04MB9080.eurprd04.prod.outlook.com
- (2603:10a6:20b:447::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6AC1F4181
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 03:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762227037; cv=none; b=Osa/nxN+pUz6MTK96D3Hidkvm3u9SP/MMbqhH/05X8hx5E185EIKhlEb8Sp9yByM4FVasc2lu4VWpFFPzUw4/zdXvDfiXTjKtsptgTJBy2UeyGbjY1qmB+efDDiYvthjSSDXbb8ajbpWgweLArw/M1FY/Qgv2ZPXOJ1yZv5NiXI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762227037; c=relaxed/simple;
+	bh=BlSk3g/qmv69Aqy08a9H0y9SJtoy4sGuPi5gwuM79B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWULmxQNdo4X62bqsVwEPuA4Ua5JDgNH4ruaLQkuH3AHr9Y1EkSGcapyUsmaVuHHTL9DeSpTuFKftwKsbbBMB86njgBXlP825tanJuoOCcnpdJ7KWrTCOlUdru1g+3VHPqugBsH3xENehyZ1Jo+9SjFZ8IuA9v9qSlQUXo1tqdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DMY5XL7f; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JZ2lCjP9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A436ZVA3616708
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 03:30:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=aKRlnIEjZ1vQhOJXUwZiC+b+
+	tF0FUi5RTLlNjrfPLQ8=; b=DMY5XL7fkmJjHz5/cfERKpBEAgRRAWN7k4FDzq8Q
+	LtTX9vfaeQBbDYs69EpHcTiwfc+LH2UfbPfW2ZIlsCWwZ1cNloGrMR+rnWJDy+it
+	6tDscjvGJy4DVfsbJqsH1DdM1BUxUHOdDHzq3y6p0Y0ebVu8ouIQv/gh895sK8TM
+	VY28Ow5glaKWua5RtcexvxpSk6YPPtWHfl54pMbb5JCA83qWzXqQSRGS5mkJ0dsW
+	BsPoE+Lmy+0b2KgdM8h9bCaah8oN/HeIakYCUbBbUrl3F/6DkEkXKYmRn6sLYT7c
+	7EfXKeviDSTLYpC3QXRi7vNpKdeyQxoiGgGGT0SjoF83Cg==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70fhsfw7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:30:35 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-340bc4ef67fso3660958a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 19:30:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762227035; x=1762831835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKRlnIEjZ1vQhOJXUwZiC+b+tF0FUi5RTLlNjrfPLQ8=;
+        b=JZ2lCjP95wd+RrTboYo9Q493lor/yMXHwr5WFgjVIFH6LNkMD0yE4FHDxoqVfmKLaF
+         2ozn7Diwv/TpHTPuc3rLGKQq3COVFXI3T40tMjVyOYkAJWXCsBjluHjTmoJ7u4Sn/t7G
+         GDwz/ewjCW/ArxraJ0wq2vgR5XVte96n/NwGXMycmF7jb3zgRK+QtB/wz1Gjrx7yHEjT
+         6lHP+dGV1qOHaWluMma81uEKKOk/SUI+J71oSEBDayUQrm+hZpxciOg2sUW2WidA+Vxt
+         VvA5Jm0kQEKQi8NGLHAvhAOd7fJkrbD/kYB4Ye/prsU6EiyYvQbYDXr9p4pR7lu1qIiN
+         xyyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762227035; x=1762831835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKRlnIEjZ1vQhOJXUwZiC+b+tF0FUi5RTLlNjrfPLQ8=;
+        b=otRKpPsytPNtZQZcvBT6sNre160pOhvsTd9ELQsbTNiMfZwnYVRydVe1irSlIEaMju
+         Xl5RAeneKVce9CRlugLk1rfLnlgurKLS93AAUBx2JTXkieYmhy8XbaCxh6bxg/+kxXp7
+         iyPW8J/Nskz/wRHEVxtUpsESFJJdl7D33qDkP2RNm687pmw515MMMFZzXA1lny8wLoNC
+         ESI96TVuZTYjqeghD9q8bSXMsC33uF7SXu0ZpbiWWzfdNKju4MbbZQyv/RRIogAhblhn
+         gMWL7+tIxlfCFFEeSxwpw66WLEhtnjzrlUxMFPi5u6plU8f6RY7IVhmKUGFm1oWDYDX9
+         PyFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGbDqQi77++EchKdyI1+Vxz/0kQe0aNOxq5DXxNEoG7OS9TyAFMA8dIvQmsAk2y/CccqPxABjiJn6cqY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDc70FwqtUe7NBCZv2neUDCip3+gcQgt05u1revjqTFa2EdBMT
+	9A7Bo/pV77h7//rZSkBhdvFuFvZ3wM4tXmLLJhCHmX0U+LZ35AQdXuewdc/FVBg2RrGB7L1UWJY
+	Rk5eKjcKuV8qIUG4p/uwCQlo+i1eJFzVKua7aUAJSJ2Kzzg+ANghPugnyNhiSIJWRmyo=
+X-Gm-Gg: ASbGncteJHYb03Crdi7X9iLbrZdnizinkV0m6bpNNRfxfNViFlaoEO2gW320hg6fUaO
+	P4o8UN8JmGZupn2kLfnyLtmaBMzsp0LVC1cyPvztGYQgB5c8HTy0WnSb+YwfFAi0rdP07iK44qG
+	sxuxpcShAp9MJGGXU5y4kropxqNeGv9s9HEWonCGxR4TAGBUIxUz8ljWc7Dva1DE0jZLU4RjB+V
+	SsmWHw1Y77QKCOSrqhdqw8l3vTcZTj5aKt3toBuzxsPU4E5SLtSlDyGSSEf1WKPw+zrfi1Nx+WD
+	AnNrc4/hluk+yx2ZxDM3G1s+eAtFOgaLNvovgWct1qAi7ZJnQ9NxbyOJeuqM+xQO6gxKNNoA4oG
+	/nwxulbrpffStDmMZU6Jum5lVhmuqf9t4
+X-Received: by 2002:a17:90b:3d8f:b0:340:f05a:3ed1 with SMTP id 98e67ed59e1d1-340f05a40bamr9318453a91.21.1762227034797;
+        Mon, 03 Nov 2025 19:30:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJt+3mR9cCrponHqIjyBb39wA61XEC1qVOkrzh6B9Q27iV/RhmQUZTE7F/v9v66nMik1499g==
+X-Received: by 2002:a17:90b:3d8f:b0:340:f05a:3ed1 with SMTP id 98e67ed59e1d1-340f05a40bamr9318414a91.21.1762227034250;
+        Mon, 03 Nov 2025 19:30:34 -0800 (PST)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3417bcca63dsm364697a91.4.2025.11.03.19.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 19:30:33 -0800 (PST)
+Date: Tue, 4 Nov 2025 09:00:27 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v4 1/2] soc: qcom: smem: Register gunyah watchdog device
+Message-ID: <599188b5-cd2e-4667-a91d-04cbdd62cecb@quicinc.com>
+References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
+ <20251031-gunyah_watchdog-v4-1-7abb1ee11315@oss.qualcomm.com>
+ <nnq34bfbbi3satxiqzaouy5pgi3obyqp76avh2ipyqxx6w67td@e7eqehjq7iww>
+ <40a6395e-26f6-4bad-88af-d89479b6fc28@oss.qualcomm.com>
+ <abicharluq6bm7gbngkbdc2hobcfifcmazh7oukcoufsrpcpse@ml2wccwe6s7i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|DU2PR04MB8824:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2917b69-b788-4c17-c96d-08de1b5127f0
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|19092799006|7416014|52116014|376014|1800799024|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?QksrRURkTWlaSkhyU3ptTkNrS28rZ3E2WTF2N1V0Qk5HaTdkZVVWd2N4Vk0y?=
- =?utf-8?B?Z3YzYVVSaFpMalBOT0hxOHRGL3E0YWlyZ0luS1RaWEt2UnF2MURNckNEd0FJ?=
- =?utf-8?B?ZXdiQ3Y4R2lnK09jZzc4RWlMemRMYjd4ajYrR1p6M0gxNERDUEVNVldyYXl5?=
- =?utf-8?B?czVkdjVlQ3RWdW91a0FJeVJwaStwVEVlQUdwR0wwWXhnbFpxUlZsUlpyMGlB?=
- =?utf-8?B?YlNKZmVHY2w5eVFGYUxuZkJkaURVbzJQUGdqNDBYZFNZUjI5RmVMSWVuN1hJ?=
- =?utf-8?B?cks0Ly84WkVCRkxMaG81aUpuT3BXaWpMRERMM1VXK3pyYjlKRXc5SjdzSjlM?=
- =?utf-8?B?SXNTaHltWGVKQkxwalVEODhVMFVFZFZLbXVPL1BNZnI3MTU2TGx0L1VWZmpi?=
- =?utf-8?B?dGRxNWpOb3lwQ0lWS0ttWkhGZ2xPVitkUUJZYkVXMGlsU0dxTVRsTmNLUGt6?=
- =?utf-8?B?ZldSSldiRjNvU050c3pPU0xqMTF5cXlUbkNobld3VkEvQ2Y0U1NockdxalYr?=
- =?utf-8?B?V3oxSVJ3TTNxak51VVNweGdibCsvTFdUUXh5REg0QkpZaDFNL0sydlo1Q1RZ?=
- =?utf-8?B?SzZwOVZHQ1dYczRqTW0yNTZndzNMbzhOeVBxV1ZZYjd1R0RFcW5LaWl4dFBu?=
- =?utf-8?B?Yi9pMXZ2OFl6QTlJWWMyOWtJQlhxOHQyREdOZ3RPZjlmU2R0RDMyVmhmYVYr?=
- =?utf-8?B?RjBmenhockZaeVpxTTNVQlAvcFVvTHNwbEtWSlJxYW1KZ3lpalhXdXVualYy?=
- =?utf-8?B?SXVLTzlTVHN6OWhRTlB3c3kwYVg2d3E5aldoYS9XVFYvWFJVbjRxRXFjU0lN?=
- =?utf-8?B?ZjNGTlVqelNBK0JORkZGeDBxS3BONWluSk5iNUNFWHdvdkxqejc3ak80UUQ5?=
- =?utf-8?B?N3lyaEQ5RHNHemdDL1ZZWVZjQi9USUd1UWEzUHc4cVAzanhpc1BzSkg5RGcx?=
- =?utf-8?B?VUh4bTRqVVg1aHA2TUd2dzg5dFhicmEvVkljSFVxdlhsdWxWanVzZHJjUmV1?=
- =?utf-8?B?VndKV281L0NBdUNZUWZRWGdVYXpHUHZJOFM2WGNxVW1WaWphemxXUVFtS3NC?=
- =?utf-8?B?K0Y4UUdWcUNTOUdxZWlmNHBRMTh4eVF1bld2SGUxTlAyNnZTbm0vbFJ6WU9B?=
- =?utf-8?B?Q0NuT2lqNDhqbkhWMDhXc0JWWUN6U0VsdmR6TjZmSVpGZTQ1c00wRFBaNzMr?=
- =?utf-8?B?aFZFd2xXS0UyMFRvU0hGWXhjUTJVbFl3YXhDZkUvejZnU2E2bUdxNHV3bVdM?=
- =?utf-8?B?aW1sdUEyQ3MyVWNDNE0xUnBBZ2JaUkFSa2M2M3g1cytEVmZZWVE5aXhOQVdE?=
- =?utf-8?B?Y1FodWVjZ0xkUENZS0VGYkFsMDJpTERkTEczYVAwTGUrTDRrdDRKR2YzQThv?=
- =?utf-8?B?MXVSbFZoaFRqUUZiZitIMW9xZFRDS3p3L1d3MktwUU5hdkhvSlFiSjVRSmNp?=
- =?utf-8?B?blpwMmQ4K05UaVVhM0lDdGhuUjB0dlRhQVk2THJta0xXTlBLYmdhU0dNaTR3?=
- =?utf-8?B?dmpuYW0wKytieXhNYmo3VjZyaWhvaWljVWEzZTF3MEVGeDlnN3pqU0hnUXVW?=
- =?utf-8?B?YlJkaFJRam1GYUNyNVZhU053WjZJK0VEMUhBTnB6TUc1cWNreUs3N0lBRDFZ?=
- =?utf-8?B?TWJndE93S3JyS0swemhYbjJLaEFHeS9VVnZTV2FPRy9ML2hrelNrRmI4UlI2?=
- =?utf-8?B?Yk1XTUNNRGFsUFdKUkk5cG5CUUp4Q2xnRUR5V2dlalA2WHlMaDBkdGFkc2s1?=
- =?utf-8?B?c25PYmY0ZVRzR2xyWDE1SVhZMzBnSDlQcG4yWDRkY3E1V29RYktMbjRZa2Ro?=
- =?utf-8?B?TW8yV0NrRXRqbTV0dnhJbXBhNnU5Z2NsRklOclFaZkY1b2lESUh1Vm9mMzF0?=
- =?utf-8?B?aDUvMEYzdGRZcXhyNG5taERPcFJlRUdmdUZDM09jSHhhOWtZN1NQd1FUWWJj?=
- =?utf-8?B?ZGNGZjBXQmNWcWdYZTdOYmp4NmNMNGRBTjhJYmJ2YlZPVjllck1aQTNQZFJy?=
- =?utf-8?B?Y01qblFVbW4wZndZcTdTUW5OSGFDc3d4U2Y0c2duT015dzN1VkZkcmVsMCtH?=
- =?utf-8?B?VXJWakZIbGg1aDc2ejVzSDFjVG04V2UwZlIvUT09?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Z3JIaGVQS2pBNWdoUWNIc2hYS3R0RXRWenBZM2UxVFQzbGpHOUE3WkpNUk4y?=
- =?utf-8?B?QzBSTlRjUkV3MlJ5eU9iSmtMWVBseVNzVUlsZHoyTWMrV2hLUzhneDZoUmxx?=
- =?utf-8?B?Vm5oZE5GOG9yb1NpMFVUYUhwaXErcm1TRU9rRUw4Wk1mSnJOcEtXMDhiUDNW?=
- =?utf-8?B?UDM3YkJhRk16eWU1bHg4V3NES3NXUFFpVzhjNTdWeXozMWNMRlh6RTZ0M0sv?=
- =?utf-8?B?WUh6RVdmaUdYRWdRMTJ0SXFVZUhwcmR0ZGd4ZEMzTURFcTNEeHgzQ2F4K0Zp?=
- =?utf-8?B?QjVyVnRnWG5tSWM0K2psa3VJc1VRUU1Pa3h4SGFIZnNKU1dDS25xTmxVY29B?=
- =?utf-8?B?bzdDZC9uK2FzbEZTWFVNVlZkTjFERzhCeTJZZjBuTDV5U2JVb0loNEFhek11?=
- =?utf-8?B?Q0VQME5ZUndMTDI5UXZzK0lXdm1PRklzMERvRU5rOXF3VDczK3F0djAxT1U4?=
- =?utf-8?B?cSt3TFNZMm9aUFlzSjUvZEk5NHV4VDBaNGhlWG9iOGdieTVsNFBlSWtGc1dx?=
- =?utf-8?B?amcxL0pFV003MEl6VWR2dVUxUCt2dStUTGt3UEhISGRXSUw1elpubkhZdk03?=
- =?utf-8?B?UjFLczk1bHNheEFMdlF6U0FJRm03Q1MwRXA3cjhSdng4bTYrRURxdm5RVWpW?=
- =?utf-8?B?Z3RUQ2lWN2pQU2lyVjg1K281L1BtZFhPSmpIN2hVTHhPQlA4SGhTZDlsQUIx?=
- =?utf-8?B?THh5dFBkNG85L3J5RkVHUDROOXpqVVF0bmxpK0drNnhxYmxvSjNOMk5JZVRn?=
- =?utf-8?B?ZklQaUlocjBmMGZweU52SFJEYThmQS9wb1FVeDlxNXczYU14dllXWldCVHBx?=
- =?utf-8?B?WDFvK0YxMkF3SEk0NjFGZFFqeUxLaE9XWHNMS3ozajg5UFpsem8vN2R6SGVW?=
- =?utf-8?B?ZDRtQXBORGl3T3RXWlFGN0trODJyakh0RDFlcDJmQ2U1WnMzNlJzTXVsUDd2?=
- =?utf-8?B?U2NtSWdLL0ZiUlJqYkhnemY0bDNhWS8xSzcvampsTWNkWVpFWmtrR0NjVU5X?=
- =?utf-8?B?dnBaNDFnb2s1RmE2cG1JazYvcnBJMDVVeG9ieFMxb2drdEtaTHZnMk9OMloz?=
- =?utf-8?B?NlM5R0FGZEFXbm1UUHJwNEQ4RXhYc0lDUEFORDdsTC9EN0NTaGtWZ0NadlZz?=
- =?utf-8?B?REVneFQ1WXRRejBxOTltMTg3cktMZElHMi92R3ZWN095bG42N29nYk4yREZr?=
- =?utf-8?B?RksycWdxVjBnWVBaZklwK29LRVQ5N3hzTnFsempUblZnZ1ZUY1hoMGd2ZnNQ?=
- =?utf-8?B?OU80TTd1TUlOcGxyS3RISWxOOUFlaDF5S0FqcU82U28rRENQWWV2Qm44WDNm?=
- =?utf-8?B?NmEzKzRYcmlzSWEwa0E0aFVrOGRBK3NLR1VPRXhvbEFkYzVuQnRPY2VUR1E0?=
- =?utf-8?B?R2d0WjNEa1FwVzZuUVRZQmlUUjFjUkFiZDg4d09QRHp2ME1jN2NTNUVKUkky?=
- =?utf-8?B?S3JWK2ZYQlVNMWVyMG5IZk5UUk1mOWM0Wk9FZGkzT2hwcnVJMGNGelVrcUhw?=
- =?utf-8?B?QWRxR0JCQ25KWE4wQlBlTUQ1bTRaRHRxbVlwZ2ZDVFBqY0ZoZ0ZjU2MyajEv?=
- =?utf-8?B?cStTQ3JYL1Q5ZjlrS1FaUklFa2t1SXMxZXJQYVlKVitnNm5nVGVabTdQZmU3?=
- =?utf-8?B?TFdvZmxiWTA2b2lHMklYMndxSWJIalJqL1ZmNGhqUko3a1NRdlM5NkFaampo?=
- =?utf-8?B?aTZlMnpDVlZUM21Fd0ZNV3ZwZHZmcHZ4WTExTjRWWTdSREVsWWhoMkRtd2R3?=
- =?utf-8?B?b0p4VVRPNUlWeWtGZjhmWVVNRUFROVRINjAyQU85elJjY01mWllLd0RRQlB3?=
- =?utf-8?B?cGZOTXoyV3pkTFBuQ01UQ0ZUQlp6K2lQT3JyTzc0c3VKKzlnNkZoVHdRaHFZ?=
- =?utf-8?B?bkNwc1ZMNVJqcWhOV3FYNkRwYzNrTHVGSklRSzRDZmdTUEJOMU9SYWxXVlhp?=
- =?utf-8?B?cmxJR2hGbG02Sm80NlBjQjM2UkNKSGxRbUpCUWZTeXhEYXAyNXhjS3VrQVpB?=
- =?utf-8?B?Rlk1aGM3WFRvN1d3djJIbHlTTFZacnBLdUtkR0h5WW1mUDNuVlMzRU1jNTdW?=
- =?utf-8?B?c3Z2Wis3TUFjT21vWVRRNVpCQ2RtTGg3TlpsVUZQZkFVaFJuL0dWeHQvbG8z?=
- =?utf-8?Q?NqYEV8ENpxY5UK+v1aDWOMdIa?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2917b69-b788-4c17-c96d-08de1b5127f0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 03:20:51.1225
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NXeXT7YFRLg5GByGH1pcTqmqhVhLaS2VupNRgphzrkEH1Lur/ykmsMMwsBBQBxGZXjzpY4VNftJBHXkdRkdgag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abicharluq6bm7gbngkbdc2hobcfifcmazh7oukcoufsrpcpse@ml2wccwe6s7i>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDAyNiBTYWx0ZWRfXw1bMDV4jX2qJ
+ hrwoHrjvge6cc1Scn6WYNsuzs/Oopkv5+Ym7grY+xSs6V8HoMoqUpTVNDa3sX4bPKhXgvJRjqyy
+ NWS8Qsct7xFGFGnBa5ozNFnzLOz9wouIta4gBYOJIlkE+oTypWbW+M1ldValWVKmWoZ7Yh6Lzgy
+ Hk18Cn0MwJ4JRkxqsRQ1y6QHYNM2I/XPeBVm85kPkI0a3ZFdS69cSuvWRq/VzjkYv9pIGa8cKR2
+ eGZJI6IiAAeqpu9YZFIYPVz43QYOaVyYY4lh2fWHBQdAoJM6+wpgBs4nV8rXi2YA1lPoqJuM2qV
+ FTg3iII+OWDHAy4HjauWnBBhnubDyYSLPAssqlw+Tnyj0AmNPZng2Yra4ooy+ufW5xHMwvWqLdg
+ Zur6mJc3Dpftcn7D9cdCbPEHHvTnNQ==
+X-Proofpoint-ORIG-GUID: dmGk1PegL5zMfCJ_NJen78wQ681JGBEX
+X-Authority-Analysis: v=2.4 cv=CbsFJbrl c=1 sm=1 tr=0 ts=6909735b cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=LARJouCqKqH4ZFREdpwA:9 a=CjuIK1q_8ugA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: dmGk1PegL5zMfCJ_NJen78wQ681JGBEX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040026
 
-From: Guoniu Zhou <guoniu.zhou@nxp.com>
+On Mon, Nov 03, 2025 at 07:01:51PM -0600, Bjorn Andersson wrote:
+> On Mon, Nov 03, 2025 at 04:03:44PM +0530, Hrishabh Rajput wrote:
+> > 
+> > On 11/2/2025 12:15 AM, Bjorn Andersson wrote:
+> > > On Fri, Oct 31, 2025 at 10:18:13AM +0000, Hrishabh Rajput via B4 Relay wrote:
+> > > > From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+> > > > 
+> > > > To restrict gunyah watchdog initialization to Qualcomm platforms,
+> > > > register the watchdog device in the SMEM driver.
+> > > > 
+> > > > When Gunyah is not present or Gunyah emulates MMIO-based
+> > > > watchdog, we expect Qualcomm watchdog or ARM SBSA watchdog device to be
+> > > > present in the devicetree. If none of these device nodes are detected,
+> > > > we register the SMC-based Gunyah watchdog device.
+> > > > 
+> > > > Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+> > > > ---
+> > > >   drivers/soc/qcom/smem.c | 37 +++++++++++++++++++++++++++++++++++++
+> > > >   1 file changed, 37 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+> > > > index cf425930539e..40e4749fab02 100644
+> > > > --- a/drivers/soc/qcom/smem.c
+> > > > +++ b/drivers/soc/qcom/smem.c
+> > > > @@ -1118,6 +1118,34 @@ static int qcom_smem_resolve_mem(struct qcom_smem *smem, const char *name,
+> > > >   	return 0;
+> > > >   }
+> > > > +static int register_gunyah_wdt_device(void)
+> > > > +{
+> > > > +	struct platform_device *gunyah_wdt_dev;
+> > > > +	struct device_node *np;
+> > > > +
+> > > > +	/*
+> > > > +	 * When Gunyah is not present or Gunyah is emulating a memory-mapped
+> > > > +	 * watchdog, either of Qualcomm watchdog or ARM SBSA watchdog will be
+> > > > +	 * present. Skip initialization of SMC-based Gunyah watchdog if that is
+> > > > +	 * the case.
+> > > E.g. qcom-apq8064.dtsi doesn't define either qcom,kpss-wdt, nor
+> > > arm,sbsa-gwdt, does that imply that it implements the Gunyah watchdog?
+> > 
+> > 
+> > It doesn't implement Gunyah watchdog. For platforms like these we've kept a
+> > STATUS SMC call in the gunyah_wdt_probe().
+> > 
+> 
+> I think it would be good to make that call before registering the
+> platform driver.
 
-The ISI module on i.MX95 supports up to eight channels and four link
-sources to obtain the image data for processing in its pipelines. It
-can process up to eight image sources at the same time.
+Did you mean platform device here? Becase we don't want the gunayh-wdt
+module to do anything other than registering the platform driver on
+platforms other than qcom.
 
-Add ISI basic functions support for i.MX95. It works well when system
-loading isn't very high, such as no ISI buffer overflow.
+> 
+> > The SMC Call is expected to fail on platforms which do not have support for
+> > SMC based Gunyah watchdog, which in turn will fail the probe.
+> > 
+> 
+> Perhaps I'm missing something, just looked quickly and it's been a while
+> since I looked at this code, but you're making a HVC (or SMC) call with
+> the function:
+> 
+>   ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_32, ARM_SMCCC_OWNER_VENDOR_HYP, 6)
+> 
+> which doesn't look unique to Gunyah in my eyes.
+> 
+> If I read correctly, the ARM_SMCCC_SMC_32 is the only bit (literally)
+> that differentiates this from being a __vgic_v3_get_gic_config() call in
+> KVM, just as an example.
+> 
 
-Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
----
- drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c | 12 ++++++++++++
- drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h |  1 +
- 2 files changed, 13 insertions(+)
+Yes, you are right. This SMCC falls under ARM_SMCCC_OWNER_VENDOR_HYP
+space, so it would behave differently on different hypervisors.
 
-diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-index adc8d9960bf0df87d4e475661a3439beaf5ce9f6..cf609320f19e91c9c0f57634fabd62e0ff65123b 100644
---- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-+++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-@@ -337,6 +337,17 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
- 	.has_36bit_dma		= false,
- };
- 
-+static const struct mxc_isi_plat_data mxc_imx95_data = {
-+	.model			= MXC_ISI_IMX95,
-+	.num_ports		= 4,
-+	.num_channels		= 8,
-+	.reg_offset		= 0x10000,
-+	.ier_reg		= &mxc_imx8_isi_ier_v2,
-+	.set_thd		= &mxc_imx8_isi_thd_v1,
-+	.buf_active_reverse	= true,
-+	.has_36bit_dma		= true,
-+};
-+
- static const struct mxc_isi_plat_data mxc_imx8qm_data = {
- 	.model			= MXC_ISI_IMX8QM,
- 	.num_ports		= 5,
-@@ -548,6 +559,7 @@ static const struct of_device_id mxc_isi_of_match[] = {
- 	{ .compatible = "fsl,imx8qxp-isi", .data = &mxc_imx8qxp_data },
- 	{ .compatible = "fsl,imx8ulp-isi", .data = &mxc_imx8ulp_data },
- 	{ .compatible = "fsl,imx93-isi", .data = &mxc_imx93_data },
-+	{ .compatible = "fsl,imx95-isi", .data = &mxc_imx95_data },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, mxc_isi_of_match);
-diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-index e84af5127e4e7938e55e31b7063bee5e2cd4cb11..e52c7fc334b0f5624ade600914c275e7539290b4 100644
---- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-+++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-@@ -161,6 +161,7 @@ enum model {
- 	MXC_ISI_IMX8QXP,
- 	MXC_ISI_IMX8ULP,
- 	MXC_ISI_IMX93,
-+	MXC_ISI_IMX95,
- };
- 
- struct mxc_isi_plat_data {
+Please let me know what you think about this **defensive** approach.
 
--- 
-2.34.1
+- Move the Gunyah platform device registration to SCM driver.
+- Checks to be done before registering the device
+  - Make ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID SMC [1] to verify that we are
+    running under gunyah
+  - check for the other wdt devices like kpss, sbsa in dT
 
+ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID SMC will not be supported by all
+versions of Gunyah, but atleast it would confirm the definitive presence
+of Gunyah.
+
+[1]
+https://lore.kernel.org/all/20240222-gunyah-v17-4-1e9da6763d38@quicinc.com/
 
