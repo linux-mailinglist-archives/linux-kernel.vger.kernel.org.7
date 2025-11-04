@@ -1,170 +1,160 @@
-Return-Path: <linux-kernel+bounces-884174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808B8C2F858
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:55:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B06C2F846
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB98518C0534
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:53:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 275744EE52A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BB42E8B6C;
-	Tue,  4 Nov 2025 06:52:59 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001B428C854;
-	Tue,  4 Nov 2025 06:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D332E8DF6;
+	Tue,  4 Nov 2025 06:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQPm7gJR"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC97B2DE717
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239179; cv=none; b=Zqwn4AkWJsuWMUYT7kfc8H3Yn9a0SjTrIVioQUmlJE69bQWbwLHEQJjgLUUFkWvqkt9c62hFL7oVa0Xf0EArWJnBL+AEA5v+w7OhvOBdnx7KC7DMszSiNoxNCgfwlu/Na6uKBqgyxSeeLgxEo000AbxX4xTLES5YKWY5ohgftl0=
+	t=1762239199; cv=none; b=p0zSZlQM6Qb1PzNRM9x3DC/KqKdtSBPyfMcRmczwryXEejQG9hW3Akk+GGzGQCZXs/dY9JgnJ7V5hzv78BiOlFQFaboVakgDZVGbuCqsNmKiLrFaSgmxrnqcF8LJWxuJ7yTF2RaWBp68owQpoLowPXLYbEyb3ncOgAUWfYTZ4Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239179; c=relaxed/simple;
-	bh=hQ/ZtY9OF1joKZSrQToCv+8b9j7Rq8+/+XJFW0yXm9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HvZe0dsiOs0FhvE3a4+KSyXPH0KVFPOFIx63f2pRhvhXGk+ZV4vqzPqNQsa/naFnySz7xuH8F1XpzY6NCm8FETTJls67ePwa+PYr0ydJggmexnX6uUCmypjw+T6wce4xuagGZx7oAkTL2JSP6W8BbgKrpn0Z7c7D7lWLGrh6Mi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
-	by app2 (Coremail) with SMTP id TQJkCgAHSq25oglpeo4iAA--.58890S4;
-	Tue, 04 Nov 2025 14:52:43 +0800 (CST)
-From: caohang@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Hang Cao <caohang@eswincomputing.com>,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v5 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
-Date: Tue,  4 Nov 2025 14:52:26 +0800
-Message-ID: <20251104065226.1513-1-caohang@eswincomputing.com>
-X-Mailer: git-send-email 2.45.1.windows.1
-In-Reply-To: <20251104065045.1464-1-caohang@eswincomputing.com>
-References: <20251104065045.1464-1-caohang@eswincomputing.com>
+	s=arc-20240116; t=1762239199; c=relaxed/simple;
+	bh=8p0MCf6z8owtO8dtPW0HAmvbfGUyTkXxQfEU6TFdLiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myNjvD1tCpDbNCVcZNRN9OJKMnGd1hWyAZfJsiRQTqoLQC9iBXTQDO1Jt/8DOh4kNLOcwe0CzpfGtqy+N3G51p2b7v4m851ylpAdL/dkmt/KH0aR9vYXI0zqZcVslNbfNZF1eMxulnpkDqbXMEjy2pxBfSL5+JZtrcNGDwr2uOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQPm7gJR; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-44fa3aae70eso1186857b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:53:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762239196; x=1762843996; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yunsIVG2xwSWPJMISQ9png0ZDy6Yvl2IENc61OHh6yo=;
+        b=QQPm7gJRofS9D7nRw7wDMcJlvvp4BRJ7YHUqz6RvqdkJawLZxIgJcbO3dWCXoELFIU
+         r/SdWtzVCMOuVmmqtmItfYBQKSp/Jw8pACs3yiIUS9+bxoELE8f9iKdBn+CFfQ8VxP0O
+         RkEtwf5SjcQG+zKYGaWzps3uXxj7EvP6YJWq/Y8Kfg5cQm246RTTENMJEd3euywR6B1h
+         bQ59VcozYZMYS2FdjcDo8XJJ4oYTPQD9dC38Kg5tjsB9z0syk1kqZ2vk00rQVJGXcmJY
+         y84u2WHQl1ggkG/e72/d0JRvtf3uhyRWM8ftqEuZpI1VgE/CILT4lBq50AoTF9J1oCOu
+         M2Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762239196; x=1762843996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yunsIVG2xwSWPJMISQ9png0ZDy6Yvl2IENc61OHh6yo=;
+        b=vCiylF3sBiRnPGpEAkTmrTAB2zgunbXKclShd9d60ywcnyJ4ssbaD4V8ufXu3VoJSm
+         B7S88zj5/hmGmZWT2vJDPiJV0dzn8qCX12CQVMZOrwlZht9KUHn50Lr+R239PNKTEVVT
+         5WRnHoshhgvRgZD0SbKrHP8hninkM22FBiKncWpEGUbmNqJp6um54n8LNclGHfqnwOGN
+         qk5EqmgLQeSjmELJCBhatvQcUcIM6E6aVzXTKAG2dl1ppPdSijYDlRLGJ9znS2wkreMv
+         5VbcnTJ77s1cY5jUFVQAuDiGcRbBUo1EqmIXNbdJkg8uq8S37GcFiApryHGGiuT6bGoX
+         Y5bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7PDA6QK28Dz+5SQbQF3Ucy74y0jzQyNFNS8kQBrPGp4gobSrrp7ptsfdMJPBnOES+4hQUiEkfmrHPJXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP6U5qyjR378qQaFWG7bgn0RpzjDZU35fiSXDYLQTE8CEQNrNA
+	XuhH8sfLWpNS5L9NptRVkFYpQeHxo0oWu91a2GlIttY2LLFZgM3Qq5+xf2J5F7Brt7b0vMRBxTh
+	vHK8Cwd5b893pV1+Oj6twWVLPQILUFhk=
+X-Gm-Gg: ASbGncvpVSRz70LAPHaDgGal6sX0uIcMRN7JC8LBnOMNvS+mJf40CmT4I80M7vpjT+0
+	W9WGli9A7TSHqt5ACAKti+IHPEEYNW5UHArsuR/U9vII+p+zdRzgCQL5e/JGhRyUbhdxabuBXZk
+	W+EXGZCkOaC3x4jZvLoouXkfv/dvJOkNgv/V0Zx6M2M7jne/+7OHm73X8VhCKYB2MwQRqyDkc2a
+	DcR/LeTQ9Zy4Fs3fo5q2HChivxVEgPR24cHk6aWmT0Aby40lSRI7W/yhk/wG666WHQMkA==
+X-Google-Smtp-Source: AGHT+IGbn2X2/1JEEhqo1wnJ78iL2FeGF989Bo4JAY/FmMP1S8eKH8fgHgNdc4dVIuvXBjYdomI/sa/SfD70vvNJUAI=
+X-Received: by 2002:a05:6808:10c3:b0:43f:7dee:4693 with SMTP id
+ 5614622812f47-44f95e27868mr6890297b6e.14.1762239195781; Mon, 03 Nov 2025
+ 22:53:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgAHSq25oglpeo4iAA--.58890S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAryrZr45Cw15ZF4xKw17ZFb_yoW5AFykpF
-	4vkFyYkrZ5Gr4xKan3t3Z5AF1fKan7GryrtryxG3ZFvw1Dt34DGr18Wa4Fqr95GryfXFy5
-	Jw4kJrWfCF47ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHCJQUUUUU=
-X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
+References: <20251103-1-v1-1-20e6641a57da@linux.dev>
+In-Reply-To: <20251103-1-v1-1-20e6641a57da@linux.dev>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Tue, 4 Nov 2025 14:53:04 +0800
+X-Gm-Features: AWmQ_bnyRUlNuwLxwBl63QPbG926jSDDFvsN0rhY6T22CSGWWq6GN0Hkme8uPf4
+Message-ID: <CAEyhmHQoLF9dcZ2CaasrpeH7RMiaQKyo0pFTrr7Nt1T64+dhuw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: BPF: Fix sign extension for 12-bit immediates
+To: george <dongtai.guo@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Youling Tang <tangyouling@loongson.cn>, bpf@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>, 
+	Bing Huang <huangbing@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hang Cao <caohang@eswincomputing.com>
+On Mon, Nov 3, 2025 at 4:42=E2=80=AFPM george <dongtai.guo@linux.dev> wrote=
+:
+>
+> From: George Guo <guodongtai@kylinos.cn>
+>
+> When loading immediate values that fit within 12-bit signed range,
+> the move_imm function incorrectly used zero extension instead of
+> sign extension.
+>
+> The bug was exposed when scx_simple scheduler failed with -EINVAL
+> in ops.init() after passing node =3D -1 to scx_bpf_create_dsq().
+> Due to incorrect sign extension, `node >=3D (int)nr_node_ids`
+> evaluated to true instead of false, causing BPF program failure.
+>
 
-Add the eic7700 usb driver, which is responsible for
-identifying,configuring and connecting usb devices.
+Which bpf prog are you referring to?
 
-Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Signed-off-by: Hang Cao <caohang@eswincomputing.com>
----
- drivers/usb/dwc3/dwc3-generic-plat.c | 43 ++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+> Verified by testing with the scx_simple scheduler (located in
+> tools/sched_ext/). After building with `make` and running
+> ./tools/sched_ext/build/bin/scx_simple, the scheduler now
+> initializes successfully with this fix.
+>
+> Fix this by using sign extension (sext) instead of zero extension
+> for signed immediate values in move_imm.
+>
+> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
+> Reported-by: Bing Huang <huangbing@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> ---
+> Signed-off-by: george <dongtai.guo@linux.dev>
+> ---
+>  arch/loongarch/net/bpf_jit.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/net/bpf_jit.h b/arch/loongarch/net/bpf_jit.h
+> index 5697158fd1645fdc3d83f598b00a9e20dfaa8f6d..f1398eb135b69ae61a27ed81f=
+80b4bb0788cf0a0 100644
+> --- a/arch/loongarch/net/bpf_jit.h
+> +++ b/arch/loongarch/net/bpf_jit.h
+> @@ -122,7 +122,8 @@ static inline void move_imm(struct jit_ctx *ctx, enum=
+ loongarch_gpr rd, long imm
+>         /* addiw rd, $zero, imm_11_0 */
+>         if (is_signed_imm12(imm)) {
+>                 emit_insn(ctx, addiw, rd, LOONGARCH_GPR_ZERO, imm);
+> -               goto zext;
+> +               emit_sext_32(ctx, rd, is32);
+> +               return;
+>         }
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index 770fedc16bb8..89ad952a4a4c 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -10,8 +10,16 @@
- #include <linux/clk.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- #include "glue.h"
- 
-+#define EIC7700_HSP_BUS_FILTER_EN	BIT(0)
-+#define EIC7700_HSP_BUS_CLKEN_GM	BIT(9)
-+#define EIC7700_HSP_BUS_CLKEN_GS	BIT(16)
-+#define EIC7700_HSP_AXI_LP_XM_CSYSREQ	BIT(0)
-+#define EIC7700_HSP_AXI_LP_XS_CSYSREQ	BIT(16)
-+
- struct dwc3_generic {
- 	struct device		*dev;
- 	struct dwc3		dwc;
-@@ -27,6 +35,34 @@ static void dwc3_generic_reset_control_assert(void *data)
- 	reset_control_assert(data);
- }
- 
-+static int dwc3_eic7700_pre_init(struct device *dev)
-+{
-+	struct regmap *regmap;
-+	u32 hsp_usb_axi_lp;
-+	u32 hsp_usb_bus;
-+	u32 args[2];
-+	u32 val;
-+
-+	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+						      "eswin,hsp-sp-csr",
-+						      ARRAY_SIZE(args), args);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "No hsp-sp-csr phandle specified\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	hsp_usb_bus       = args[0];
-+	hsp_usb_axi_lp    = args[1];
-+
-+	regmap_read(regmap, hsp_usb_bus, &val);
-+	regmap_write(regmap, hsp_usb_bus, val | EIC7700_HSP_BUS_FILTER_EN |
-+		     EIC7700_HSP_BUS_CLKEN_GM | EIC7700_HSP_BUS_CLKEN_GS);
-+
-+	regmap_write(regmap, hsp_usb_axi_lp, EIC7700_HSP_AXI_LP_XM_CSYSREQ |
-+		     EIC7700_HSP_AXI_LP_XS_CSYSREQ);
-+	return 0;
-+}
-+
- static int dwc3_generic_probe(struct platform_device *pdev)
- {
- 	const struct dwc3_properties *properties;
-@@ -83,6 +119,12 @@ static int dwc3_generic_probe(struct platform_device *pdev)
- 	else
- 		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
- 
-+	if (of_device_is_compatible(dev->of_node, "eswin,eic7700-dwc3")) {
-+		ret = dwc3_eic7700_pre_init(dev);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "eic7700 init fail\n");
-+	}
-+
- 	ret = dwc3_core_probe(&probe_data);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
-@@ -160,6 +202,7 @@ static const struct dwc3_properties fsl_ls1028_dwc3 = {
- static const struct of_device_id dwc3_generic_of_match[] = {
- 	{ .compatible = "spacemit,k1-dwc3", },
- 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
-+	{ .compatible = "eswin,eic7700-dwc3",},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
--- 
-2.34.1
+This causes kernel panic on existing bpf selftests.
 
+>
+>         /* ori rd, $zero, imm_11_0 */
+>
+> ---
+> base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+> change-id: 20251103-1-96faa240e8f4
+>
+> Best regards,
+> --
+> george <dongtai.guo@linux.dev>
+>
 
