@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-885033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DD2C31C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:15:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B846C31CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B55C1882FD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:15:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25A314F6EA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA7C221F0A;
-	Tue,  4 Nov 2025 15:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570E13B293;
+	Tue,  4 Nov 2025 15:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KyeHW6Ys"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazhn15013039.outbound.protection.outlook.com [52.102.140.39])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fDIRjrW6"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazhn15010019.outbound.protection.outlook.com [52.102.139.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1823EABA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.140.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0633B13A3F7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.139.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762269299; cv=fail; b=kixNjy8VWtvidrmFdrPgaAR9L+fP2vYXXvCmqe6ZcsZqFMA8d4B7rNUsxmcm0SXmVdgyW3LG6oMECDhZr2TZd4KmkJvTKNGXtl9u/o7Ba7NCPmE0F3Fv1e3Ni3m/ejB3H8JFFIZyEdZLL3+VMSYbkEmQRd0LHuuUsc1BlRiDqRc=
+	t=1762269311; cv=fail; b=Aiafoy084mIna13adErqbfWeg8u1AXMxai4dYJ+z8JywIYnxQLI/GVY5zKeHnuDi2fxDvyZqv3E5rtQKPDrcB+aCk4t77NnLXRctrdEy771eTozVZWutPFCHV6QhAx6BXQit3L8/Kq8D2o4azj5owqNFfOoZuO6vhWY3WnXFU+8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762269299; c=relaxed/simple;
-	bh=mKhpOBiFP6Uzq/NQ4KI0XeAsPDDcTNaCdqjhe0TjURk=;
+	s=arc-20240116; t=1762269311; c=relaxed/simple;
+	bh=dZBVaOP4NuyRPhGTr2UXcZebaExDuFxlaW7sE9UaNVg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u65X+EwMW7rWtC/QEPVZr/pa2RBAcveafalohGiY8cSvO2+95gMHBRWvuPrbbYl/VdJPuvYgPRZ7nWorGipKcE96QQxRWupOFpXhsSdl3iyI4FKosCC7V/cz9VlUKZGuZ6jmhwhZUgpCdNlZsU7ZNUgxZEoRE6/VMDU1fuEMxtk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KyeHW6Ys; arc=fail smtp.client-ip=52.102.140.39
+	 MIME-Version:Content-Type; b=KqS5ARPp7x5cPws1ufIE4xmRtYBE1Kn0pGCstf4fnjvLmkl7kMsv4QM9CoPm1jjJF6vM2NJivlgjDatF3BMlVVRi8opP1I5Np23Zfv8sLzhvg4OBMeyG6Bvm7YyQa/njPQ6EGlDQkRqHnKRQhnEwBYuysVjw+mOdUSm7cbn4+II=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fDIRjrW6; arc=fail smtp.client-ip=52.102.139.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KWPQu2G3zGwdjGvWmqoIZrtd4qT0TLXlePF9T9o6g9RdiMkVUKojKwOeKdTp/cIVw5XYI4ZiXrCCnswyJL8Ox4xndMs7X4OwppwYt2oMRgofy29j1bS4s7HZUibgfWn8Sz+ZL8wTWW8GmVPXeyU4SwdnXODVnNjrM1dbhqFnBsH0Lk2x2jGL+Fqm0KxJGG9iymkMZAZTVfuqfqDdEPENsrnhSycuNL0JKA0EI4MELn6NYkVRka8nZDmu+fiO0dR8x6WCofoiVS0eXlFE79vRLkYINOGQWgIzGGBsL/7CPGY5EeHtAfTXnjKkjT9qV1rlZmpuwAvn7Vv9FKtMuMfHbg==
+ b=mHiUqqDvazCnphTgbcMjD9uDnrgNLq9I42ho9038k1Vb3FIVRzc9Jg0TKOEAZfJh/KZ1NwLWRbH3Ge1vigRuBBX9AicfjheAVnEDHyKslMBL7xK/W+62OjbDDkHbmVHDl7gU6cIWdQjlEUVpAJMDlK5EYgS9buavkfWF5y2JkQYRkrO/sAlF5ma/zbYIEP8auZGzkcnl+WRSllPHuNdG0cIupySGb+KAPRnKjXb34mKIw/TMk3OCjTapRpc7I+OJLrbaMJQzfPFbJhTX0icW70QEIrwgrrTi9EkEXe9R25WVT7y7R8chb92y800BdQcOSmT/0yaTfB6MzBLeoLHt7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=siv+kXmxcb8PnQx3gbwZ+mAD8sW2XcnEB9yA6ahkSnU=;
- b=nOEteS7JSf0xq/4HzJr3JdgwTcRg45+tFCKwkxID447He52tZt6MA3eYAESv8PmBkfzkTrIjD1sKOBIQ/uJlHEM6LWXmm8XEVJ6FNVfbCXRw6ZziSpZPNMxS6nA6yJ34fdVgx8VKIuXd6yWtxzPmfsJbOqX47vO51Ft8aZ0eeuNDxZPbk+0qaQtqTkVXIJmjaYh0ph5/yMaUw7nRpM1mtcvEsUREw8pReI5KAd5CU5gXfpzuIyysGd/263TEm2v2z+XMFmhN0aaNXkOULOGa/hX3SEOs0IbpyK68LGVFquE2ELiT9Eb3Ps8sJxwPBmSTQdtMVnQopDaOSp0AJRD2iQ==
+ bh=wM4iMTD7PH4U9ruG5aXe4R1Dt2U4/gsw4+SIZo94DFo=;
+ b=PRv2Ut0qPlnBUDBWG6aTGj2/Ea0R1ahorq5B2vLcf3WgLWq06fP86vv5iRr4hmsYpdCWh0vu5Up9J8OosF8IlS5LMRGdQwo0hxIAqk3sgNTuwnU5HdLwLjShrqx9J3+EOeNKjMCvmsJn68xN669ATlRAehwrCNxQ1iGSXlrZkbpG8BFBcQZirm4H3iuFgB2FazR70R5hLRSOHLiiqpPwwimE8YFrVcGuXY46i4UwzTEkD8gLWTPOUoxVqLeI1yC6xvNbVGMobNutHBIamojq6jdpu4lrSOc/k+84H5wpW/Hs4ZKxw34GEW1Ox8qQlJK3VXHaSqUqyvb5c0TqFo7t9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=siv+kXmxcb8PnQx3gbwZ+mAD8sW2XcnEB9yA6ahkSnU=;
- b=KyeHW6YsvyJWO0ncmHP5bk0ziWMOsXbjEzEGps7f0fSS00sBa6mbMt2FRzoX2i0ITETEmUpFWf5S5RBdBwWfG7xnf7HRwNzi81EUFf6Tr7lr6kzU9hHrH/Ag2FJ0LvsJPH843zaq7eJZrF/XBaRbHAhfHqijfPQmEOFNYRUFYNc=
-Received: from CH2PR11CA0013.namprd11.prod.outlook.com (2603:10b6:610:54::23)
- by CH3PR10MB7233.namprd10.prod.outlook.com (2603:10b6:610:121::16) with
+ bh=wM4iMTD7PH4U9ruG5aXe4R1Dt2U4/gsw4+SIZo94DFo=;
+ b=fDIRjrW6PUKMKTCQOY93ogkP4/8EVTLWNMKN621BPkVaH4adzwwwTXB2J1OmnZAHtL75orvVf7PDG6UMvZox6SfXzZjtCmCFhXgoS2evgd8s7ah4Vd+1hL5/tvENK9WvVR6hxzfiG5Lo7/nZkhXbUeRGHu8tNKd/wx8ENNxcZrQ=
+Received: from CH0PR08CA0015.namprd08.prod.outlook.com (2603:10b6:610:33::20)
+ by LV3PR10MB8035.namprd10.prod.outlook.com (2603:10b6:408:281::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 15:14:50 +0000
-Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:54:cafe::59) by CH2PR11CA0013.outlook.office365.com
- (2603:10b6:610:54::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Tue, 4
- Nov 2025 15:14:48 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
+ 2025 15:15:03 +0000
+Received: from CH2PEPF00000144.namprd02.prod.outlook.com
+ (2603:10b6:610:33:cafe::4) by CH0PR08CA0015.outlook.office365.com
+ (2603:10b6:610:33::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
+ 4 Nov 2025 15:14:35 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
@@ -62,24 +62,24 @@ Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
  198.47.21.195 as permitted sender) receiver=protection.outlook.com;
  client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
 Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
+ CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 15:14:48 +0000
-Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet201.ext.ti.com
+ 15.20.9275.10 via Frontend Transport; Tue, 4 Nov 2025 15:15:02 +0000
+Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet201.ext.ti.com
  (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 09:14:33 -0600
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE210.ent.ti.com
- (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 09:14:38 -0600
+Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 09:14:32 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 09:14:37 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 4 Nov 2025 09:14:32 -0600
+ Transport; Tue, 4 Nov 2025 09:14:37 -0600
 Received: from a0512632.dhcp.ti.com (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A4FENHb2142428;
-	Tue, 4 Nov 2025 09:14:28 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A4FENHc2142428;
+	Tue, 4 Nov 2025 09:14:33 -0600
 From: Swamil Jain <s-jain1@ti.com>
 To: <aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
 	<tomi.valkeinen@ideasonboard.com>, <jyri.sarha@iki.fi>,
@@ -88,9 +88,9 @@ To: <aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
 CC: <praneeth@ti.com>, <u-kumar1@ti.com>, <vigneshr@ti.com>,
 	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
 	<s-jain1@ti.com>
-Subject: [PATCH v8 1/2] drm/tidss: Remove max_pclk_khz and min_pclk_khz from tidss display features
-Date: Tue, 4 Nov 2025 20:44:21 +0530
-Message-ID: <20251104151422.307162-2-s-jain1@ti.com>
+Subject: [PATCH v8 2/2] drm/tidss: Move OLDI mode validation to OLDI bridge mode_valid hook
+Date: Tue, 4 Nov 2025 20:44:22 +0530
+Message-ID: <20251104151422.307162-3-s-jain1@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251104151422.307162-1-s-jain1@ti.com>
 References: <20251104151422.307162-1-s-jain1@ti.com>
@@ -105,265 +105,172 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|CH3PR10MB7233:EE_
-X-MS-Office365-Filtering-Correlation-Id: cac18677-2a6f-4341-ccb5-08de1bb4e55b
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|LV3PR10MB8035:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7ac0ee2-d44d-4d8d-67bc-08de1bb4edc2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|34020700016|7416014|376014|82310400026|1800799024|921020|12100799066;
+	BCL:0;ARA:13230040|376014|7416014|36860700013|34020700016|1800799024|82310400026|921020|12100799066;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PpaUcGBVfe+VSiA8dt0uTRaNjgTq1A6y1wu4U/RXh2cYPqVBMn/tx0pBGpcN?=
- =?us-ascii?Q?qk8KrPoG3nuaHrcGA1Cy63nUnDra2um0024Fcc0S9Lyx9seeUZqDxAXpXnrB?=
- =?us-ascii?Q?i3z3eEikQ0nmYiOF4OQsgjqDfVcWY0VSWEs/f7cvMN9CJnfZB3nbTwHKoL6t?=
- =?us-ascii?Q?CvwR+ZVUV8svJ50N7e3G21E610XyYRLZ1aZv6b99jqq6wDXOrJAdgO1f5dth?=
- =?us-ascii?Q?XVFVIPcKaympb9nsK2vhh5InZCXGj37YvndO/BSlesM8P2cMooZh42ZTbPUe?=
- =?us-ascii?Q?sVbP3S1L1RyT9wn1ojifbdEu7XRcW0zfP6X24QhjtvaE3iGeOjOXEbm2iUGX?=
- =?us-ascii?Q?zU1fpQh0Fo9PjNX4hEosQDSdjegcDtpfdgYhBkilxzXvkaOA14klANlNodn5?=
- =?us-ascii?Q?D7i8KNvHoJrhfrnrjtGKP2zPG47LM+l/Zu1W6pAKvcv1g4dLYJ83tWuHH0cj?=
- =?us-ascii?Q?FNUojG1cXSny54kTIzv6l0MLpwxDkVc90B5O1Nqtz+IQgcCK1FDFqmqSzJgW?=
- =?us-ascii?Q?btdyooAj8XLfiH37iR7V3pIcm5vXk7hNrgiRS45Tj29CFCIfrGc0tviP4w2I?=
- =?us-ascii?Q?hYWB1ra5ryKStXpH5CkaNARjx+N5/hlLGKfocJ6zvM72vSjVmXM+yn0hJ1S+?=
- =?us-ascii?Q?Voh9AdRj9yZVXrzY4sybItO5UM4XU1HyB2WKp/68M1bdxnIi8aUtAhJP1lqE?=
- =?us-ascii?Q?86Uem/YP4BScIVGb7B81EQIZUV7saGM76KiJMs2i8HRY16Wxa2xygBQCNgWt?=
- =?us-ascii?Q?E2siIMttvCXyozUopI37m/0pQql9wE2r/6e2kxpC00hvTfA17gWDk8lvmiQg?=
- =?us-ascii?Q?Ru+NdSEVHVhFTGa4PKCmDl3DcSmjKgipYF2VuKV/9bPumCVq0gW2tWzeiiEg?=
- =?us-ascii?Q?eiNk5pQHeSw95izeQvUeu1EHIOIFszOUYEOmSjkpBKbX3oACU+s3U4cAsLaL?=
- =?us-ascii?Q?oT04T2oufH8VFy2fCVaHP9unKIfY3E4FEoYbNygm0QOp+L8cHj/i/YsBPv5t?=
- =?us-ascii?Q?S+gptkm9lIAEUHZ3dtgkU8q5hL9bTcMwAmKlWPbPVyPNxXvEOeXc+GDf4yyp?=
- =?us-ascii?Q?WRJ/eFFj1A1L8toXhZ+DsE5+xQPes7ks3li48v7fBOdpkRLbbAQwi2lobl/9?=
- =?us-ascii?Q?uejr+cvYG9ZNrI0f7AmAT1toCzbbPoamFEmU49pgtyDAODMrHiJj0squV1bu?=
- =?us-ascii?Q?USaBSV2GtXX48WM/GsFysuoJ4R/p2D5jCrlPxI5lxjr6F38WT/N0CkrIHmSm?=
- =?us-ascii?Q?jXU+Zj8DPz8Ah5OeOzz1cJ1n8UomSt8WA5cu8ZCrSSuUVMgG5+GevbDKSjzL?=
- =?us-ascii?Q?t/CA98zDy1GXFxaUvBlczmqfNZ5FaYU0NHh4OowhCmcH7jGd6MZOy+xPtHaM?=
- =?us-ascii?Q?7Oy1iRQVja2O1I6vA0tZwSVhTOdvIQWHUEM5XOYhudQUhmxQM8EeIM/1RjTX?=
- =?us-ascii?Q?cgHJgGA1jDAJhQKjWzaRyEBmJ/jsx/kJ32UpSyvDgUHOWXLT/7kn2onY/t4q?=
- =?us-ascii?Q?m7pVHBp9V9reOGq39gQKIVfvMuexj/Bcp3kBQrHMnNa8Y6/3rr9NnbEPAwsP?=
- =?us-ascii?Q?e1rA71/Y2RjtipnufrSf2GrrERxqnc3io8e723/X?=
+	=?us-ascii?Q?nFvVfO+49Un9lpMik8iABI9KNJCHNMDGiFIOieAerCb/zk0BoSdY+vFkvEeY?=
+ =?us-ascii?Q?7yY4b6Wnzwq3SVA9A2ssDGgMm86Mw+alZnZFQ84h70Vdl6ddlAz+RDKhodnO?=
+ =?us-ascii?Q?Dz5JvHPIaukjuwC9PcHGiVo6aSRB1liHmB6MHNmiVI4WBsalyQbkMypUYyN4?=
+ =?us-ascii?Q?HozqSpTqmnVEChPglCC/DetetWLWcoWrdAHF3yxNLf8IIy8hEBtoUwvpg074?=
+ =?us-ascii?Q?BXDueAEDf8rCbXo6OxyGuA8piLi8WIBvXT4/3uE87M3TNoVmcRaG4sdEmkO5?=
+ =?us-ascii?Q?7la7hSEWQLe+x+2ohoV+3tu/9wVpFttpEU6ojGU+XMIvTHXX6VXQfhYZ/ENj?=
+ =?us-ascii?Q?IyTR/oO5sJ1lKG2BbLsrvgIlClPe7XQCDt+3xsXqW1WoW7Nkyvvz6hiHKR7l?=
+ =?us-ascii?Q?1eiifffNOhp7/fXdh7iDNY6MmVcsV4vGKBVz3Ns++ftK0mC2qVj84vR3S6+H?=
+ =?us-ascii?Q?dE5AWvX57OR8aBSlxXEnCMBmLvK2wzYesgsYsEtIFAcHx5XhqXCpZ3Hq97lC?=
+ =?us-ascii?Q?ILYQOYcIY0sEqhIk3xMOQF3jqa++an5zcNOYlJC5c7sleCNdTClZPRWBDArE?=
+ =?us-ascii?Q?e6R2nNQtQH7Dg0N4IgEmXoUzLLHP1Um2RI+QnD3vf+nM5VVG56lRAwmOP0K9?=
+ =?us-ascii?Q?YCMgWJLqYQkZszaDW/hvCtxJpd8bFLnr3ZJiatno/sJ5qqIYl1PMF9+SLVR6?=
+ =?us-ascii?Q?fVgTUFtZeu9qCpSJdjhLOr5kUtjZO72wG/5W6D3oqXa7BnzLRwOgiKl1uLv9?=
+ =?us-ascii?Q?i767d9F03ZI0+j0Dbcxeu1nBEV3nDkTCZXh/nVJ/RgcDxDjb78tTMFGyyDUo?=
+ =?us-ascii?Q?S/Idur0lXwiKHHFU6wTXGdxQ5NPprG1uBUfrjrZtPDwVIDUBoSnenfHGkmTo?=
+ =?us-ascii?Q?TJ9GwbNCWcw1oSeVapsCjOnyrXJACQJ3efknmhey3b8hT9uoRmtC685da9GI?=
+ =?us-ascii?Q?2YPtHXLH1nMmJx5C8LvcjEgLB5lJpaMMem/HkLnWAgupj+ZFCU0fXhEsyddS?=
+ =?us-ascii?Q?l9GnKEsG0KmaOOxz/yXW/gd4YS5fu5Sl3cmIx57tQS2RHbTkjzxB2R8h/Csj?=
+ =?us-ascii?Q?HS0OxE1F2UicHcyu3Td1bZz1nfB7+XCVF8rKmdd4yrQ3TgxG7tJzmjOVYhPS?=
+ =?us-ascii?Q?dcUB16i8GwmY1uAV5MpzVSiSchTErIHR7WSYq8bTldJ+DB9FZo94F2208/cy?=
+ =?us-ascii?Q?hc6DHqJLmzBEDKeanqlF72foVENbTk61QyGYXFak3x5DJsUM9Pewyl3oX3s4?=
+ =?us-ascii?Q?ERh05zWHHR+0zQb0do4drg18y91RO9TgiyWPg9ium2fwASE47GL7l2M2nXaL?=
+ =?us-ascii?Q?M0p+pHIbbTQXypnqEW/4MFnaeSsHJdqpo1icMiucyrlODxZt0arYizbeqW71?=
+ =?us-ascii?Q?Lff7RpnlCcGARg3Ky1e4BdeJz9mtICuKsRM2Qc4gTNkG+TtSgH+zq6D7ZALG?=
+ =?us-ascii?Q?EICFVD1idsHwRC0sLc/Ek0khl1+hQfF1Tkl0JJDBQqUO6iWYK4u9JEsMS/2m?=
+ =?us-ascii?Q?yqBvUWkny4pQl0QfCIAbU6w3ezcxW6tAXjSL3IxAzJ+7RH0jS4bnS8WLWKdI?=
+ =?us-ascii?Q?Gn1rxyqWqkAWpN/y4OcXwzEH/HPUvtKX1B4EiFbD?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(34020700016)(7416014)(376014)(82310400026)(1800799024)(921020)(12100799066);DIR:OUT;SFP:1501;
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(34020700016)(1800799024)(82310400026)(921020)(12100799066);DIR:OUT;SFP:1501;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 15:14:48.8590
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 15:15:02.9204
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cac18677-2a6f-4341-ccb5-08de1bb4e55b
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7ac0ee2-d44d-4d8d-67bc-08de1bb4edc2
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000014A.namprd02.prod.outlook.com
+	CH2PEPF00000144.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7233
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8035
 
 From: Jayesh Choudhary <j-choudhary@ti.com>
 
-The TIDSS hardware does not have independent maximum or minimum pixel
-clock limits for each video port. Instead, these limits are determined
-by the SoC's clock architecture. Previously, this constraint was
-modeled using the 'max_pclk_khz' and 'min_pclk_khz' fields in
-'dispc_features', but this approach is static and does not account for
-the dynamic behavior of PLLs.
+After integrating OLDI support[0], it is necessary to identify which VP
+instances use OLDI, since the OLDI driver owns the video port clock
+(as a serial clock). Clock operations on these VPs must be delegated to
+the OLDI driver, not handled by the TIDSS driver. This issue also
+emerged in upstream discussions when DSI-related clock management was
+attempted in the TIDSS driver[1].
 
-This patch removes the 'max_pclk_khz' and 'min_pclk_khz' fields from
-'dispc_features'. The correct way to check if a requested mode's pixel
-clock is supported is by using 'clk_round_rate()' in the 'mode_valid()'
-hook. If the best frequency match for the mode clock falls within the
-supported tolerance, it is approved. TIDSS supports a 5% pixel clock
-tolerance, which is now reflected in the validation logic.
+To address this, add an 'is_ext_vp_clk' array to the 'tidss_device'
+structure, marking a VP as 'true' during 'tidss_oldi_init()' and as
+'false' during 'tidss_oldi_deinit()'. TIDSS then uses 'is_ext_vp_clk'
+to skip clock validation checks in 'dispc_vp_mode_valid()' for VPs
+under OLDI control.
 
-This change allows existing DSS-compatible drivers to be reused across
-SoCs that only differ in their pixel clock characteristics. The
-validation uses 'clk_round_rate()' for each mode, which may introduce
-additional delay (about 3.5 ms for 30 modes), but this is generally
-negligible. Users desiring faster validation may bypass these calls
-selectively, for example, checking only the highest resolution mode,
-as shown here[1].
+Since OLDI uses the DSS VP clock directly as a serial interface and
+manages its own rate, mode validation should be implemented in the OLDI
+bridge's 'mode_valid' hook. This patch adds that logic, ensuring proper
+delegation and avoiding spurious clock handling in the TIDSS driver.
 
-[1]: https://lore.kernel.org/all/20250704094851.182131-3-j-choudhary@ti.com/
+[0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
+[1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
 
+Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
 Tested-by: Michael Walle <mwalle@kernel.org>
 Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
 Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 Signed-off-by: Swamil Jain <s-jain1@ti.com>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.c | 86 +++++++++++------------------
- drivers/gpu/drm/tidss/tidss_dispc.h |  3 -
- 2 files changed, 31 insertions(+), 58 deletions(-)
+ drivers/gpu/drm/tidss/tidss_dispc.c |  7 +++++++
+ drivers/gpu/drm/tidss/tidss_drv.h   |  2 ++
+ drivers/gpu/drm/tidss/tidss_oldi.c  | 22 ++++++++++++++++++++++
+ 3 files changed, 31 insertions(+)
 
 diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index d0b191c470ca..b11880178cba 100644
+index b11880178cba..ea5001311f1a 100644
 --- a/drivers/gpu/drm/tidss/tidss_dispc.c
 +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -57,12 +57,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- };
+@@ -1315,6 +1315,13 @@ static inline int check_pixel_clock(struct dispc_device *dispc,
+ {
+ 	unsigned long round_clock;
  
- const struct dispc_features dispc_k2g_feats = {
--	.min_pclk_khz = 4375,
--
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 150000,
--	},
--
++	/*
++	 * For VP's with external clocking, clock operations must be
++	 * delegated to respective driver, so we skip the check here.
++	 */
++	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
++		return 0;
++
+ 	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
  	/*
- 	 * XXX According TRM the RGB input buffer width up to 2560 should
- 	 *     work on 3 taps, but in practice it only works up to 1280.
-@@ -145,11 +139,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- };
+ 	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
+diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+index 84454a4855d1..e1c1f41d8b4b 100644
+--- a/drivers/gpu/drm/tidss/tidss_drv.h
++++ b/drivers/gpu/drm/tidss/tidss_drv.h
+@@ -24,6 +24,8 @@ struct tidss_device {
  
- const struct dispc_features dispc_am65x_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--		[DISPC_VP_OLDI_AM65X] = 165000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -245,11 +234,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- };
+ 	const struct dispc_features *feat;
+ 	struct dispc_device *dispc;
++	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
++
  
- const struct dispc_features dispc_j721e_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 170000,
--		[DISPC_VP_INTERNAL] = 600000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 2048,
- 		.in_width_max_3tap_rgb = 4096,
-@@ -316,11 +300,6 @@ const struct dispc_features dispc_j721e_feats = {
- };
- 
- const struct dispc_features dispc_am625_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--		[DISPC_VP_INTERNAL] = 170000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -377,15 +356,6 @@ const struct dispc_features dispc_am625_feats = {
- };
- 
- const struct dispc_features dispc_am62a7_feats = {
--	/*
--	 * if the code reaches dispc_mode_valid with VP1,
--	 * it should return MODE_BAD.
--	 */
--	.max_pclk_khz = {
--		[DISPC_VP_TIED_OFF] = 0,
--		[DISPC_VP_DPI] = 165000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -442,10 +412,6 @@ const struct dispc_features dispc_am62a7_feats = {
- };
- 
- const struct dispc_features dispc_am62l_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--	},
--
- 	.subrev = DISPC_AM62L,
- 
- 	.common = "common",
-@@ -1333,33 +1299,54 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
- 			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+ 	unsigned int num_crtcs;
+ 	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
+diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+index 7688251beba2..17c535bfa057 100644
+--- a/drivers/gpu/drm/tidss/tidss_oldi.c
++++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+@@ -309,6 +309,25 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+ 	return input_fmts;
  }
  
-+/*
-+ * Calculate the percentage difference between the requested pixel clock rate
-+ * and the effective rate resulting from calculating the clock divider value.
-+ */
-+unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
++static enum drm_mode_status
++tidss_oldi_mode_valid(struct drm_bridge *bridge,
++		      const struct drm_display_info *info,
++		      const struct drm_display_mode *mode)
 +{
-+	int r = rate / 100, rr = real_rate / 100;
-+
-+	return (unsigned int)(abs(((rr - r) * 100) / r));
-+}
-+
-+static inline int check_pixel_clock(struct dispc_device *dispc,
-+			     u32 hw_videoport, unsigned long clock)
-+{
++	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
 +	unsigned long round_clock;
 +
-+	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
++	round_clock = clk_round_rate(oldi->serial, mode->clock * 7 * 1000);
 +	/*
-+	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
-+	 * use the same 5% check here.
++	 * To keep the check consistent with dispc_vp_set_clk_rate(),
++	 * we use the same 5% check here.
 +	 */
-+	if (dispc_pclk_diff(clock, round_clock) > 5)
++	if (dispc_pclk_diff(mode->clock * 7 * 1000, round_clock) > 5)
 +		return -EINVAL;
 +
 +	return 0;
 +}
 +
- enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
- 					 u32 hw_videoport,
- 					 const struct drm_display_mode *mode)
- {
- 	u32 hsw, hfp, hbp, vsw, vfp, vbp;
- 	enum dispc_vp_bus_type bus_type;
--	int max_pclk;
- 
- 	bus_type = dispc->feat->vp_bus_type[hw_videoport];
- 
--	max_pclk = dispc->feat->max_pclk_khz[bus_type];
--
--	if (WARN_ON(max_pclk == 0))
-+	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
- 		return MODE_BAD;
- 
--	if (mode->clock < dispc->feat->min_pclk_khz)
--		return MODE_CLOCK_LOW;
--
--	if (mode->clock > max_pclk)
--		return MODE_CLOCK_HIGH;
--
- 	if (mode->hdisplay > 4096)
- 		return MODE_BAD;
- 
- 	if (mode->vdisplay > 4096)
- 		return MODE_BAD;
- 
-+	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
-+		return MODE_CLOCK_RANGE;
-+
- 	/* TODO: add interlace support */
- 	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
- 		return MODE_NO_INTERLACE;
-@@ -1423,17 +1410,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
- 	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
- }
- 
--/*
-- * Calculate the percentage difference between the requested pixel clock rate
-- * and the effective rate resulting from calculating the clock divider value.
-- */
--unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
--{
--	int r = rate / 100, rr = real_rate / 100;
--
--	return (unsigned int)(abs(((rr - r) * 100) / r));
--}
--
- int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
- 			  unsigned long rate)
- {
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index 60c1b400eb89..42279312dcc1 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -77,9 +77,6 @@ enum dispc_dss_subrevision {
+ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+ 	.attach	= tidss_oldi_bridge_attach,
+ 	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
+@@ -317,6 +336,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+ 	.atomic_reset = drm_atomic_helper_bridge_reset,
++	.mode_valid = tidss_oldi_mode_valid,
  };
  
- struct dispc_features {
--	int min_pclk_khz;
--	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
--
- 	struct dispc_features_scaling scaling;
+ static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
+@@ -430,6 +450,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
+ 	for (int i = 0; i < tidss->num_oldis; i++) {
+ 		if (tidss->oldis[i]) {
+ 			drm_bridge_remove(&tidss->oldis[i]->bridge);
++			tidss->is_ext_vp_clk[tidss->oldis[i]->parent_vp] = false;
+ 			tidss->oldis[i] = NULL;
+ 		}
+ 	}
+@@ -580,6 +601,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
+ 		oldi->bridge.timings = &default_tidss_oldi_timings;
  
- 	enum dispc_dss_subrevision subrev;
+ 		tidss->oldis[tidss->num_oldis++] = oldi;
++		tidss->is_ext_vp_clk[oldi->parent_vp] = true;
+ 		oldi->tidss = tidss;
+ 
+ 		drm_bridge_add(&oldi->bridge);
 
