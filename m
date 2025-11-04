@@ -1,274 +1,328 @@
-Return-Path: <linux-kernel+bounces-884838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7C0C3143F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:41:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C55CC3148A
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9EFBB34E251
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:41:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAC3A4F79C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE132BF40;
-	Tue,  4 Nov 2025 13:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E12EC542;
+	Tue,  4 Nov 2025 13:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jqtc6ou5"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TzMqze7z"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010050.outbound.protection.outlook.com [52.101.46.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E1932B9B4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762263667; cv=none; b=Gj/l1ag1UACLumq8weFdMMJIL1B4ix2q5D+w57y9M6A0HqK/tb2d8UwJzlbXn9tm0Q1bk+1WKihSJRIWe6+zdQYGQg0m/uRAMntbabvsuxyzorReOO1w3CH4X+6EBBCx0CGvV3nLF02i+G1LfFNriModWOqSrn4Zs8w6OMyo8vM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762263667; c=relaxed/simple;
-	bh=c1bDDCyExUmNe1HF4xwKZu77IBXLl0MUsBE8BWwSkww=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u21JxQ/XKxbBi1jrQbtG8dKlRWytjYN+dRKg8fgCsUYf0Uo+ibNdpVSqB2FOWBMMlD10jaBTK8zXjjlft+zGThE6EOP4HwZYdMlWJcGTaXEi/mPFDN9i0sGckD8BEbf3zctFn0Oi9LemHFHG8OXUklDkJg9KApHJfsCM06ya/CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jqtc6ou5; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-294df925292so50419715ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:41:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762263665; x=1762868465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5zWSUJxMIOmC96LC4qtuVXdDyNI1GHx9xUdNCaZaj6k=;
-        b=Jqtc6ou5Z2t/2zpzuQ1Tz/XOcuWqGA4VI1n8miVIwGuGBOJHnqSSmLNvDVA6dbA58v
-         9d0QnjZjJ6t/aitMvzyRloK2i0VRFbx1uYFopzOnx3IMQOt4cBdFphGbwvbNQYzZlOFz
-         jSyGR8LSSmjLXMZbylH783zxxU8D53yBgV9QxGuqbx9/1b5l1qSdB/ucnqnYWboT+ZZb
-         14p/seKKyY/6DdFbSQKHMT46uEv3guj+gkAYvIDxYQ3S5qDqJvBLo2iN5yLtV4i4NNY2
-         Rqb9XnREiq6cQlMwtiUEwlay3d+Q6KA/Z4aL+GbI+frpaaV8K3EHnprvgutF9UD+8FS9
-         A3MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762263665; x=1762868465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5zWSUJxMIOmC96LC4qtuVXdDyNI1GHx9xUdNCaZaj6k=;
-        b=M7lRH6aDbnS6ObDT3GN++eS9UyM9bM0UFc3KNkd2vzQ8Fqak3vitrFf2xL2T03DK7z
-         KGvWnTrl8jd+QD0ZY22tl86ywSQ+f/WGiECb0e1jXHM43hlvJI4iDEL6hIsFdQnvKGv3
-         qooVIUAEd5a4JuqhPmPyRCEQDra8ffhZAOfQVPVkA8dkO9qUqwhSqNI+BTz0pZlX00xu
-         Eu3DOdXqZxNeCSCVSzfDelYTDMxi961GZZ/uygZv/Qw3jGQH0+1A33X1Rj7Vc3QZrWhd
-         tGL+DoOeAfYvgc5r90C5SL9ZWLsHiCbesaYn8Q6x8PzpX+J60whhLBZY+tJ/qnoIjbPd
-         +fLQ==
-X-Gm-Message-State: AOJu0YwlbiZrQrooktkvxmcrheZZR2U6YbhvENoM/5NLAP8rmTi/CS9L
-	c/v6R8nAIYixAbu+f2F0rlx9qmfE6tPmyqT1QcX3lUouRYV+BBJlGTSj
-X-Gm-Gg: ASbGncsrUyqGtdMN/9hzkqMILmPoX1nOExDncgS31Iw6Y3GYGaGAMJauFxoyRSO60Ez
-	l0EbdwpW2YSWyJ5yU0af6nYMMh30nRQrvIZM68mFK/N186oKi9h7X+/YjzSA7+XNmHyNGVvtfXm
-	YS56lQfOFQdWde5FDpEuftlz7P6ihxHPenTPlpAb/SgR7bGBGbqnGG4+pfbcdqdfW6h86WyM4IU
-	DHP/g5mAk0dvmgfpWy6zN4myYWmUXdLZQfzeRZRIee9TBCsw4SF3WU21jNCg0Nr/XwBHGpZoAKx
-	bZ9veAHUa3FRwJKlWfrusC+9gHhTpZFJ5PhNwLrZsHknI9WzAaPCbko5zOCmjSv8+vJ/EeEd3IV
-	HZcO/yZWYFZABo78tsMQuChjx5umUnR0XtP9EqsoEYXj1jTalPYkzME0HABM/l8wMdGjfY1pBjd
-	5j5hcjYHM9YvTFYFZKgf7C3UMQAcA=
-X-Google-Smtp-Source: AGHT+IFWF62hNdotUyJIPELOStgUzmKw7yokMkoh5O48MpCq4zaNJbwqAYZ/JVQjN9FFQ3u/A6ecug==
-X-Received: by 2002:a17:902:f542:b0:295:4d50:aab8 with SMTP id d9443c01a7336-2954d50ac7bmr166644705ad.24.1762263665091;
-        Tue, 04 Nov 2025 05:41:05 -0800 (PST)
-Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f87a7287sm2499238a12.31.2025.11.04.05.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 05:41:04 -0800 (PST)
-From: Donglin Peng <dolinux.peng@gmail.com>
-To: ast@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Donglin Peng <dolinux.peng@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Song Liu <song@kernel.org>,
-	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [RFC PATCH v4 7/7] selftests/bpf: Add test cases for btf__permute functionality
-Date: Tue,  4 Nov 2025 21:40:33 +0800
-Message-Id: <20251104134033.344807-8-dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104134033.344807-1-dolinux.peng@gmail.com>
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A832FBDF9;
+	Tue,  4 Nov 2025 13:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762263735; cv=fail; b=ipZp96oWLIccUNlE8S7/TaZ9SyLVghGLIgnOgEV+Sm2nx0gfJdz+9xOOlIQCC1X+FhfMQN+czon00sH5EUwKkEZLFvcaCSOTI+0ZIr8yguiaJGSje5ddhKv3zgAv5rtyjW+LGOUwdY+/mnkXpOVQUqkhfff83h19P7DdykidAYw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762263735; c=relaxed/simple;
+	bh=lIbY1RpSE3Pa/g3j37us3dynieg0wriFFi0akQwjRVQ=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=JffI970J+7C56C6+z1zFAiosWXfaZptaiyp7YwKN6tUjO4fd4obSQ5yrKsSPaqYRXR3+IvBcxHaH/qfijDROJgpMXCKtJxDEFDA3QR/VKIZUC1eUxmctKTBQLtyFjadtEUWTyFqy7zKBlaeuT15V/TsW/Rkcc2aBLe1ip/1JAb4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TzMqze7z; arc=fail smtp.client-ip=52.101.46.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PXd+/VzM0naGHv0J4LjrRx/lei+AhHixp30+babdALty6S0PhD3W+bBOhPTze9hziUhlTCgwTYID5J2wU6WrklBWig15nURBqMv5dZmH3pEvRS6nkAvTf0HuEQdHHx15Xkdvo2+/mTKiVavOumkgRCJo/VfnmQFb95q5YpNcKhmaar/DUKO6wHJiTe8ReNMY4kIQCiXsN8KsRvBLfIhIx0CjXD7YNQZdyU4ZM+b/VOAv82jyvuyETrOQdE3I9huaRvyLAT2lcMyY9is9mANgblyPCEn4Gqgik0dvZlsbwRgDlA8Kbv7tuTsRQnTOYMspEdQz7DaJIUKFgpWJ2DhASA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X8NUd4ZOzrIZmgAIj0ElfrN/7sk/lWlBA1vS9hLkkbE=;
+ b=meOBV1R4bO8Qs5VCZgYayvVq652F3lQCNg90s5dq58tA/kXNRJ2KhQ1NxGsCq/Joxt7CghlthIlfUEwJy3X02Rs1MawvnOf3ZqpjPyEdGSDYdNK71DwIXKFFtQZQUGA3XNqK+dVCAGw34gt7Sa71vgnvjbdVUd+kV4tm68yyn5PfAcYquHPGgs1dhnwiZRr+ecqaiQS5oz16rcNwB3/p7Vhzj1F27HS+gAE4wZsSVSzF5Qmdu0X6AgNMS2V5vebEEfQ3RfRI2GrgkVZuvhMTmxBb759L+a+hB/wa86XDdPPhEib6Jd4KpHsW9hRK17f6w9lo0LNW4sV+TW7ZAQO8jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X8NUd4ZOzrIZmgAIj0ElfrN/7sk/lWlBA1vS9hLkkbE=;
+ b=TzMqze7zyESXHi+6FME9mukBOyQF72JwCs4x8wXM+Itr/gt2TiQgy8Er47J/76nftosoDMadh2WmYQTBbK4yGL6LDNVLJ+rOMzoeJjrvGzsQsAZeHt5rSbH/4n3QoR930FSREH0ZEFECxzRzVcVghWVyehVaSIhCIt3xwXRz923ZG2PxN35RDNKevj+5V4OWKutDdr8ynVWTqZqkrTxxRWMiV/6aB0cc9dLUYirN0UaHvWrgnbi4whFcjw/A3Hu+kr3RmCI/hk/cSnX2Ek8HMDTCQpRghn6hrAdPAVssdFRz68819whmM9Q60MKR5lXf1oJ2Mc6JiXJ4SNWxaHuD8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BL1PR12MB5826.namprd12.prod.outlook.com (2603:10b6:208:395::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 13:42:10 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 13:42:09 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Nov 2025 22:42:05 +0900
+Message-Id: <DDZYCRCPYMOL.RMTIF0R404Q4@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "David Airlie"
+ <airlied@gmail.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
+ <arighi@nvidia.com>, "Philipp Stanner" <phasta@kernel.org>,
+ <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH RFC 1/4] rust: clist: Add abstraction for iterating over
+ C linked lists
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-2-joelagnelf@nvidia.com>
+ <DDX1WYWQNTAB.BBEICMO8NM30@nvidia.com> <20251104005812.GA2101511@joelbox2>
+In-Reply-To: <20251104005812.GA2101511@joelbox2>
+X-ClientProxiedBy: TY4PR01CA0020.jpnprd01.prod.outlook.com
+ (2603:1096:405:2bf::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL1PR12MB5826:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8ff2e12-3100-422b-f7fb-08de1ba7f36d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZEJabUg3WDN4WXBmbWtEZ3NiLzhRMStwM1hQUGhYVkVzU3IwVkY3ajVJdktZ?=
+ =?utf-8?B?Z3c0bkFzWVFkeGxiTTlpVG9pQytJakk3TW1sMWpzU3d4elIySVA4VGNOdnZD?=
+ =?utf-8?B?MzJUQlgxSjNvbXpSQVJFZ1NRWVNrS2pzOGs1QXRQVTBydkNyQThEcExzTFJL?=
+ =?utf-8?B?dk1CNUxWZXNpMXBtUEdQZXd5TnZkM2RRTXNNVUZVWWhTRmRhRjJFTVhzUkdH?=
+ =?utf-8?B?czFmRitQemFmK2doeDh6Z3UyRlZ1QXhZV093WnJZUVAyRHo3NEhwK25aeFly?=
+ =?utf-8?B?bTRLaHpjVy80NXhNOERLZWVtZUtKcnVXSmZYQ0JCdVhyYkE2cU1wQmpzVi8v?=
+ =?utf-8?B?R1NmbEluOUU1Zm1VVnVnVnFHTGtMVnVaWG1HdjJrZVpjVzErMEpSczJGcDNO?=
+ =?utf-8?B?K0txcUtoSGVJaGlvS1lZQWdQZ3ROWjBmMnFLQ1Y5dXdMcVMyeGlUaUN2L29j?=
+ =?utf-8?B?bStlVHQ1T3B3cG1yY080Qm9vaUZCUFord3lsSHlSVHRXc3RLVjhSWEZYMGdB?=
+ =?utf-8?B?N1c5UzF5SHJOek4weFBGeXR3YlVLc3JXcDRlSDVlM2FyQkNVZm5GMHFuZ2RF?=
+ =?utf-8?B?WEJXRDBVUU83dkRidlJibjBsMDVPSlRibW90VjVKNEFHTXJ3QjVBaDNjb0dj?=
+ =?utf-8?B?VlcxcjR3dkF3WjRVUG5FaHRHWGs0S0VMaUFvRHdmNkdpVjAzdVZ2UFVwdUhh?=
+ =?utf-8?B?dHh5ZElVS3F6S3QzS1I0NW9DdjJpN2tJNVBzK1hHeXBNT293RUtzVjFYckpi?=
+ =?utf-8?B?bXVyUkRraTJxTE9PS3lJVHlMUGZWNDkrYkZHcjhXejZPT1I3QzVMSEFFN3BZ?=
+ =?utf-8?B?RHlmancvM2hsMW9IeU5TS1pkQWhxdDV1c0loRElIMUNSVWhhaWZPd1Y1UHg2?=
+ =?utf-8?B?clJzU0RtL1VjTXgvbW9rOGt1eFdtOFl3VCt3RjJRdTZ3cUZibnV6MUhabDBa?=
+ =?utf-8?B?UDkybWJrRWplMjRLaVo2U29KQVBZSXpoMk55TDlqRlF4UmY2OVVSTGJUT3Z2?=
+ =?utf-8?B?ZDdOV05sYjB1Wm1MWGVmMWgrTGRpNGZRbmRhWjc3Y0pjN1lVMGYva0twOE1o?=
+ =?utf-8?B?UVNSQXZCTEJpa0QvYWpza1VhVTZVRXhsNjRjUUpTdjhKeFdydUVzTUdIQUJO?=
+ =?utf-8?B?Q25MaGNNbUgwMGNYelF1c25ZTTBPWnJmNnVQYnlkZzVNUTNwSDlreXl6eFQv?=
+ =?utf-8?B?MlVmdUhMY1piTW13KzdUMjFxTzlsdnRaeSt5Nm8veWNCRmVMenpkdHJQQm0v?=
+ =?utf-8?B?L1ZpYWdOYzJ2ZXY3dytMK1RvUTlsZ3puMzlXZlplcUdqVHN5RXlFb0Joc3U4?=
+ =?utf-8?B?ZHY2ZXlJaWY4N3UweSsvN0hpM211WlZkQnlNUml5L1NGN3RFdlZCWHZHZ3Uw?=
+ =?utf-8?B?V2RVcE1PUHlSbHlERnBPNlZJek5GWCtqZFFVcjA4U0VFc253d3BpbkMrczhl?=
+ =?utf-8?B?T0djVDl0a3lxQVUyenZkUUFEaXVjUThUMWVKVW5BRXVERjBoVnBvSS9xYnBQ?=
+ =?utf-8?B?d21pWE1SdlhpSWIxQnBOU083cndKQjFqaXZycUluNmNKYzNrdzVmTkZ2SUta?=
+ =?utf-8?B?ZEVGZjAremxCd1FJclczblI2allEZ0FBWXVUZ1dwdVNBQ0pDQjhxSVpIaEZW?=
+ =?utf-8?B?R2F2S0Z1eGIxdWJJemdyMGkzMCtrUFRMSHlMM1hsTU4rYUYxNytlR3EyN2Jl?=
+ =?utf-8?B?cCtNb1YwK0x1WmZwSGVIVnFhbXlFTVZlNVk3eHVHdGhoY1ptTEpHOC9PQTVO?=
+ =?utf-8?B?RklYUW05aDZXSlpHczVzTmFaTHpsT1gzS21GampwcTMxWjBWbjRXTlRrK3Fn?=
+ =?utf-8?B?Yi8wQVdvWjdaWFV0dnRYcFQvTHEzQ1h2UmRzZGc0ZDZOM3d5eE5ZWTJGTXk5?=
+ =?utf-8?B?WXp2d2xjdFRydTVKdDBTYXE1QTRSRTI2ZzNHUWs1T3A0bTVmRk1qbENkeDZI?=
+ =?utf-8?Q?3MoYt+j74dhaydhvKCfnbJzT9E7Vgr7J?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aVJjMlhwc1FzK2k0YkdOakRZQlpHNkVnU3UxcFY0UUE3cVV0MWx4SklUYW40?=
+ =?utf-8?B?RC90b2RWRUNqc2ErMC9VZkRnVTM0N1NXc3ZwTjBiSm9yVm1RcTRUeGUrVE1Q?=
+ =?utf-8?B?dTJGOGtIcGpPeFhvaXVnZ2tDZnNoOHp0NUxqek01eFpLNytKVzBPa3ZxQklM?=
+ =?utf-8?B?eG5KU1Q5LzBnL0dhZGJiR2g5L01SbTJsdDRZRlIzSkRybnZ3MFVSR2tDajJz?=
+ =?utf-8?B?WmJZM3ZMV2hOZjZTb1BhSVIvV0ZoNW50eVoxVlFpaGoyWjdleHhhMmdya2ZQ?=
+ =?utf-8?B?R2ZVRlVxZlZLMkRYZnZ2OUxYL3RRbW41dk5oaDFnWjhEU3ZiZS9qalkrbU9R?=
+ =?utf-8?B?KzliNDBmVVY2dHVDdUtlSVNCNnM0UHNRKzhPSFkvMTFjYld3VEh1VTVDellp?=
+ =?utf-8?B?enBKVlZPQmV6Z3dqL2ZwY01TYXVWTXliUm5nWmNUV2ZOT2FOYkkwcHFJaTFN?=
+ =?utf-8?B?a1poWVgzK3ZqdURpTFVPN0I5b2crcjlFT1ltYUZKb21WOHJnREQ4bTRxM0Rn?=
+ =?utf-8?B?K1J1ZFNGbVpJWDdyRlVjY2tSa3hJMUFjWjFBL3QyWmRzUWljc1V1YUI1ZGJo?=
+ =?utf-8?B?OWlMZGZFaURuUVFwdVEwZTNIeHloLytzenI3YUc2VWtzL1NkUkpnODI3eFkr?=
+ =?utf-8?B?blpra3E3UTZlS2g4dDl0SWNjb2xVcGNDMzZFb255WGxpMS84RHgwVzlLSVhp?=
+ =?utf-8?B?OGduc0tEWm5HdUVQYzA0U2hDK1hqMWFOZkIwVnc4cXlaamZGRkcyMW82TUV1?=
+ =?utf-8?B?UDRJTGFzKzlkZVBmVm52aDg5VHNPTnhaUzUzNlFnZTgyeGY4TUhROU1zVkhR?=
+ =?utf-8?B?V25naU1WMVBXZFdyb1prZU9KdDJIS01YK2NuSzdSU1lFVEVIaXRuUE5lZXBl?=
+ =?utf-8?B?VmNuMTF3WTZuRXlWbnoxekxTaGd3L29HS3BlZkpqV01pSG1mSnN0MGxwWmZG?=
+ =?utf-8?B?TStmWWdoS1lnZ3FWWmtyYXRmbWc3WkNlcUwyaHhCcUl2VFo2R3dFbmlaSDll?=
+ =?utf-8?B?NUNza3c5UUs3VmZXVGVVb0hldlZtQjBHMXhSQUNjNitNRXdsYzA3NkZNTmdD?=
+ =?utf-8?B?NUdicmF4MnRxWVJyRE5lb2xlckNYTk43T1o4T1dtUW5GbkxidjhCQVZxZzRR?=
+ =?utf-8?B?TUN4aDVvR2d4K0QwcE1EOXlhMnFDVDQrZHh4REdVTG1nVmZRV0pBTFpWSnAz?=
+ =?utf-8?B?MEExMEp5RWNkTkJSL2hjNVZzNnpETnA4NnVPSEpnNEMxU1pHdGQzVFRSeVFr?=
+ =?utf-8?B?a2dsOVZwOFAwUjlRWkFBUXJNR09qYnBkamF6VnZ1bG5UbTRNQ0doRnNzbXFs?=
+ =?utf-8?B?c0V5MlhsREZQYlpiNVJJVVl1KzlEY3ZleEhtMVFpWjNPeFRQM1ZvS1RZYU02?=
+ =?utf-8?B?Vi9jeG93dGxndVFIUHk4MXozV3hlNkM1Q1FjTnZwbzdBeGRWbHFlU1lhM3hL?=
+ =?utf-8?B?a2tEN2tDZmp5ejlpSHRJL3VqSnVFSEUvOE4rYXJJcHF6dktHaUlMd2lOZi9p?=
+ =?utf-8?B?ZWh5T2Q0OFExRWdSWlZ5REczQzl3RmgvOCtzaDBUdGtKek1PSUoxb21TbGF4?=
+ =?utf-8?B?MHdmMWpJSmRHUWR6Q2kxcGJXNW9lMDdzUnFlUTZaOFpBQmhVWk54SnZKL1lJ?=
+ =?utf-8?B?U3pPNUdjc0x6cnRGT3VHaGE1NHZieHV5Nk9iUFh1UXY0MS9Ed0tHZnMwRC9w?=
+ =?utf-8?B?SWlqSzBIN21VT0d0b0Iva0ZKQUgvSjN4STFMMEJFYTBnU3VacTJCdk5zVHlo?=
+ =?utf-8?B?S3VPZEUxQzRoeEJVOXdaR1BUOUhoSVM1Q2RTRlRQQmdyVHl6TDI2NnhGbjdQ?=
+ =?utf-8?B?Ymd2T3JZRlRYSUY1ZHNDYmVmc1lIYnR4NmZySEVGQ2JtSFl3bTFsTTY3ZFdP?=
+ =?utf-8?B?QlBKc1ZjSkJaSXVWeXdiTWpsZTRJRmpFc25OOEphbDhGazZvWjYva2E4UExU?=
+ =?utf-8?B?SkpnWjJBUVpwS0VWbmVJK3dOVGhzejBrUnpDOVVmSU1qTGhQbjhMTE9OM0FH?=
+ =?utf-8?B?SEpxNUFLVnhDQ2RwZkVwM24wdXl2UHBLSXJQaUoxc0JxNnFFdmNKWmJDemlz?=
+ =?utf-8?B?UFJuMWxhMC9xMkZDbnBGNXhZUkNJbTJpSkJaWFZ5NXcybk5RL2RaQzdYUEQz?=
+ =?utf-8?B?eTlDTWRGOEtEVTBhbjhCUHgxNmpQN2kvUnBkdytNT2IvQnZ1UitJaFAzd2Zx?=
+ =?utf-8?Q?0ecZFtwFgLrt/+yuC0tGKxNZ341DXAXjqD94U+sGFcW4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8ff2e12-3100-422b-f7fb-08de1ba7f36d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 13:42:09.2470
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 53Cigc1bE6bu2InK6EQ+yk4CcjLbNIGDkP6bc16keuZLmO+59qmo/t/aiQnehHI4ACbBqCsl76HmrjwtMnKlbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5826
 
-From: pengdonglin <pengdonglin@xiaomi.com>
+On Tue Nov 4, 2025 at 9:58 AM JST, Joel Fernandes wrote:
+> On Sat, Nov 01, 2025 at 12:51:32PM +0900, Alexandre Courbot wrote:
+>> Hi Joel,
+>>=20
+>> On Fri Oct 31, 2025 at 4:06 AM JST, Joel Fernandes wrote:
+>> <snip>
+>> > diff --git a/rust/kernel/clist.rs b/rust/kernel/clist.rs
+>> > new file mode 100644
+>> > index 000000000000..e6a46974b1ba
+>> > --- /dev/null
+>> > +++ b/rust/kernel/clist.rs
+>> > @@ -0,0 +1,296 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +
+>> > +//! List processing module for C list_head linked lists.
+>> > +//!
+>> > +//! C header: [`include/linux/list.h`](srctree/include/linux/list.h)
+>> > +//!
+>> > +//! Provides a safe interface for iterating over C's intrusive `list_=
+head` structures.
+>> > +//! At the moment, supports only read-only iteration.
+>> > +//!
+>> > +//! # Examples
+>> > +//!
+>> > +//! ```ignore
+>>=20
+>> Examples pull double-duty as unit tests, and making them build and run
+>> ensures that they never fall out-of-date as the code evolves. Please
+>> make sure that they can be built and run. Supporting code that you don't
+>> want to show in the doc can be put behind `#`.
+>
+> Sure, the reason I didn't do it was there are a couple of challenges:
+>
+> 1. For clist, there is a "C language" component" as well in the
+> sample, as these are lists coming from C. I am not sure how to do that as=
+ a
+> doc example, I might have to emulate a C struct containing a list_head in
+> Rust itself. Is that something we're Ok with? After all the purpose of a
+> sample, is to show how this could be used to interface with lists coming =
+from
+> actual C code.
 
-This patch introduces test cases for the btf__permute function to ensure
-it works correctly with both base BTF and split BTF scenarios.
+Ah, that's a very valid point.
 
-The test suite includes:
-- test_permute_base: Validates permutation on standalone BTF
-- test_permute_split: Tests permutation on split BTF with base dependencies
+From the point of view of the documentation reader and the test itself,
+I guess it's ok if the C struct is constructed manually from the
+bindings as that part won't appear in the generated doc if you put it
+behind `#`. So it will render just fine.
 
-Each test verifies that type IDs are correctly rearranged and type
-references are properly updated after permutation operations.
+What I'm more worried about is that it might be a PITA to write. :/ But
+maybe the core folks have an example for how this could be done cleanly
+and in a reusable way (i.e. we don't want to duplicate the dummy list
+creation code for every example).
 
-Cc: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>
-Cc: Song Liu <song@kernel.org>
-Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
----
- .../selftests/bpf/prog_tests/btf_permute.c    | 142 ++++++++++++++++++
- 1 file changed, 142 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/btf_permute.c
+>
+> 2. For DRM buddy, #1 is not an issue, however CONFIG_DRM_BUDDY has to be
+> enabled for the test to work. I have to figure out how to make a doc test=
+ be
+> kernel CONFIG dependent. What if the CONFIG required is disabled, is ther=
+e a
+> standard way to make doc tests not fail for features that are disabled? A=
+re the
+> doc tests skipped in such a situation? Just something I have to figure ou=
+t.
+> Perhaps wrapping it is #cfg is sufficient.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/btf_permute.c b/tools/testing/selftests/bpf/prog_tests/btf_permute.c
-new file mode 100644
-index 000000000000..2692cef627ab
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/btf_permute.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Xiaomi */
-+
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include "btf_helpers.h"
-+
-+/* ensure btf__permute work as expected with base_btf */
-+static void test_permute_base(void)
-+{
-+	struct btf *btf;
-+	__u32 permute_ids[6];
-+	int err;
-+
-+	btf = btf__new_empty();
-+	if (!ASSERT_OK_PTR(btf, "empty_main_btf"))
-+		return;
-+
-+	btf__add_int(btf, "int", 4, BTF_INT_SIGNED);	/* [1] int */
-+	btf__add_ptr(btf, 1);				/* [2] ptr to int */
-+	btf__add_struct(btf, "s1", 4);			/* [3] struct s1 { */
-+	btf__add_field(btf, "m", 1, 0, 0);		/*       int m; */
-+							/* } */
-+	btf__add_struct(btf, "s2", 4);			/* [4] struct s2 { */
-+	btf__add_field(btf, "m", 1, 0, 0);		/*       int m; */
-+							/* } */
-+	btf__add_func_proto(btf, 1);			/* [5] int (*)(int *p); */
-+	btf__add_func_param(btf, "p", 2);
-+	btf__add_func(btf, "f", BTF_FUNC_STATIC, 5);	/* [6] int f(int *p); */
-+
-+	VALIDATE_RAW_BTF(
-+		btf,
-+		"[1] INT 'int' size=4 bits_offset=0 nr_bits=32 encoding=SIGNED",
-+		"[2] PTR '(anon)' type_id=1",
-+		"[3] STRUCT 's1' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0",
-+		"[4] STRUCT 's2' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0",
-+		"[5] FUNC_PROTO '(anon)' ret_type_id=1 vlen=1\n"
-+		"\t'p' type_id=2",
-+		"[6] FUNC 'f' type_id=5 linkage=static");
-+
-+	permute_ids[0] = 4; /* struct s2 */
-+	permute_ids[1] = 3; /* struct s1 */
-+	permute_ids[2] = 5; /* int (*)(int *p) */
-+	permute_ids[3] = 1; /* int */
-+	permute_ids[4] = 6; /* int f(int *p) */
-+	permute_ids[5] = 2; /* ptr to int */
-+	err = btf__permute(btf, permute_ids, NULL);
-+	if (!ASSERT_OK(err, "btf__permute"))
-+		goto done;
-+
-+	VALIDATE_RAW_BTF(
-+		btf,
-+		"[1] STRUCT 's2' size=4 vlen=1\n"
-+		"\t'm' type_id=4 bits_offset=0",
-+		"[2] STRUCT 's1' size=4 vlen=1\n"
-+		"\t'm' type_id=4 bits_offset=0",
-+		"[3] FUNC_PROTO '(anon)' ret_type_id=4 vlen=1\n"
-+		"\t'p' type_id=6",
-+		"[4] INT 'int' size=4 bits_offset=0 nr_bits=32 encoding=SIGNED",
-+		"[5] FUNC 'f' type_id=3 linkage=static",
-+		"[6] PTR '(anon)' type_id=4");
-+
-+done:
-+	btf__free(btf);
-+}
-+
-+/* ensure btf__permute work as expected with split_btf */
-+static void test_permute_split(void)
-+{
-+	struct btf *split_btf = NULL, *base_btf = NULL;
-+	__u32 permute_ids[4];
-+	int err;
-+
-+	base_btf = btf__new_empty();
-+	if (!ASSERT_OK_PTR(base_btf, "empty_main_btf"))
-+		return;
-+
-+	btf__add_int(base_btf, "int", 4, BTF_INT_SIGNED);	/* [1] int */
-+	btf__add_ptr(base_btf, 1);				/* [2] ptr to int */
-+	VALIDATE_RAW_BTF(
-+		base_btf,
-+		"[1] INT 'int' size=4 bits_offset=0 nr_bits=32 encoding=SIGNED",
-+		"[2] PTR '(anon)' type_id=1");
-+	split_btf = btf__new_empty_split(base_btf);
-+	if (!ASSERT_OK_PTR(split_btf, "empty_split_btf"))
-+		goto cleanup;
-+	btf__add_struct(split_btf, "s1", 4);			/* [3] struct s1 { */
-+	btf__add_field(split_btf, "m", 1, 0, 0);		/*   int m; */
-+								/* } */
-+	btf__add_struct(split_btf, "s2", 4);			/* [4] struct s2 { */
-+	btf__add_field(split_btf, "m", 1, 0, 0);		/*   int m; */
-+								/* } */
-+	btf__add_func_proto(split_btf, 1);			/* [5] int (*)(int p); */
-+	btf__add_func_param(split_btf, "p", 2);
-+	btf__add_func(split_btf, "f", BTF_FUNC_STATIC, 5);	/* [6] int f(int *p); */
-+
-+	VALIDATE_RAW_BTF(
-+		split_btf,
-+		"[1] INT 'int' size=4 bits_offset=0 nr_bits=32 encoding=SIGNED",
-+		"[2] PTR '(anon)' type_id=1",
-+		"[3] STRUCT 's1' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0",
-+		"[4] STRUCT 's2' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0",
-+		"[5] FUNC_PROTO '(anon)' ret_type_id=1 vlen=1\n"
-+		"\t'p' type_id=2",
-+		"[6] FUNC 'f' type_id=5 linkage=static");
-+
-+	permute_ids[0] = 6; /* int f(int *p) */
-+	permute_ids[1] = 3; /* struct s1 */
-+	permute_ids[2] = 5; /* int (*)(int *p) */
-+	permute_ids[3] = 4; /* struct s2 */
-+	err = btf__permute(split_btf, permute_ids, NULL);
-+	if (!ASSERT_OK(err, "btf__permute"))
-+		goto cleanup;
-+
-+	VALIDATE_RAW_BTF(
-+		split_btf,
-+		"[1] INT 'int' size=4 bits_offset=0 nr_bits=32 encoding=SIGNED",
-+		"[2] PTR '(anon)' type_id=1",
-+		"[3] FUNC 'f' type_id=5 linkage=static",
-+		"[4] STRUCT 's1' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0",
-+		"[5] FUNC_PROTO '(anon)' ret_type_id=1 vlen=1\n"
-+		"\t'p' type_id=2",
-+		"[6] STRUCT 's2' size=4 vlen=1\n"
-+		"\t'm' type_id=1 bits_offset=0");
-+
-+cleanup:
-+	btf__free(split_btf);
-+	btf__free(base_btf);
-+}
-+
-+void test_btf_permute(void)
-+{
-+	if (test__start_subtest("permute_base"))
-+		test_permute_base();
-+	if (test__start_subtest("permute_split"))
-+		test_permute_split();
-+}
--- 
-2.34.1
+Tests are not expected to run if the config option of the feature they
+test is not enabled - how could they anyway. :) So this part is working
+as intended I think.
 
+<snip>
+>> > +/// [`Clist`] can have its ownership transferred between threads ([`S=
+end`]) if `T: Send`.
+>> > +/// But its never [`Sync`] - concurrent Rust threads with `&Clist` co=
+uld call C FFI unsafely.
+>> > +/// For concurrent access, wrap in a `Mutex` or other synchronization=
+ primitive.
+>> > +///
+>> > +/// # Examples
+>> > +///
+>> > +/// ```ignore
+>> > +/// use kernel::clist::Clist;
+>> > +///
+>> > +/// // C code provides the populated list_head.
+>> > +/// let list =3D unsafe { Clist::<Item>::new(c_list_head) };
+>> > +///
+>> > +/// // Iterate over items.
+>> > +/// for item in list.iter() {
+>> > +///     // Process item.
+>> > +/// }
+>> > +/// ```
+>> > +pub struct Clist<T: FromListHead> {
+>> > +    head: *mut bindings::list_head,
+>> > +    _phantom: PhantomData<T>,
+>> > +}
+>> > +
+>> > +// SAFETY: Safe to send Clist if T is Send (pointer moves, C data sta=
+ys in place).
+>> > +unsafe impl<T: FromListHead + Send> Send for Clist<T> {}
+>> > +
+>> > +impl<T: FromListHead> Clist<T> {
+>> > +    /// Wrap an existing C list_head pointer without taking ownership=
+.
+>> > +    ///
+>> > +    /// # Safety
+>> > +    ///
+>> > +    /// Caller must ensure:
+>> > +    /// - `head` points to a valid, initialized list_head.
+>> > +    /// - `head` remains valid for the lifetime of the returned [`Cli=
+st`].
+>> > +    /// - The list is not modified by C code while [`Clist`] exists. =
+Caller must
+>> > +    ///   implement mutual exclusion algorithms if required, to coord=
+inate with C.
+>> > +    /// - Caller is responsible for requesting or working with C to f=
+ree `head` if needed.
+>> > +    pub unsafe fn new(head: *mut bindings::list_head) -> Self {
+>> > +        // SAFETY: Caller ensures head is valid and initialized
+>> > +        Self {
+>> > +            head,
+>> > +            _phantom: PhantomData,
+>> > +        }
+>> > +    }
+>>=20
+>> I am wondering whether `CList` serves an actual purpose beyond providing
+>> ` CListIter` to iterate on... Would it make sense to merge both types
+>> into a single one that implements `Iterator`?
+>>=20
+>
+> It would force us to store iteration state into `Clist`, I think for that
+> reason it would be great to keep them separate IMO.
+
+My comment was more an intuition than a strongly held opinion, so please
+use your judgment as you perform the redesign. :) I.e. if it ends up
+that one type collapses completely and ends up being a almost empty,
+maybe that means we don't need it at all in the end.
 
