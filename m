@@ -1,103 +1,203 @@
-Return-Path: <linux-kernel+bounces-884758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87103C31074
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:41:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B16C3108C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C30318864CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:41:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E0264E688F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419302EF664;
-	Tue,  4 Nov 2025 12:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D160E2EB87C;
+	Tue,  4 Nov 2025 12:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NmzUcDrm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cu9dCIEX"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9209D2EC54B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 12:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D92D3221;
+	Tue,  4 Nov 2025 12:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762260076; cv=none; b=WSopaKYDF8FlB4BSUf8Pilcu6AFNB9AkMl1n9Xa1FvV3g3ws3rV0okCoZK74N3ZF13GV20tgahQb6VAJt/iIlj23VGGj6i0BrL+By8MBNOuXZqsKC3FxMd/Om0rZq3wQyXPbK5tO8O+xAP7Qs8y3lbMqAY8AfrIYKDfBKEzXgKU=
+	t=1762260222; cv=none; b=FVpY/b8SVvJkMStCbEFPhxAflnhjUYj1obOPy8uzGvJ4ji7vLovrXVu0K/9v+XJuIhQyt2re/dU5tN0Z2UE+5qIXaDA4fMAn9Ep44/rxuA+CnYwcSTJoQjUYiG65vA4LGU745ivkjwt9+awDU7jV5AB7X5Wlsrdd5u8gks8JBdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762260076; c=relaxed/simple;
-	bh=8ymZxzZATI0ystLlUvVFK/P2C6papBtYAEpeRGinXiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ggj4irhakUQS+kUpup+QwqZlUioptL5W01VvPXjuXoALU83m5MwGYPkO7smG4JCzYkC8WeEjGTJhJu67l10AQVJES9RMrhxcYS2wx/VGctk87cOo1CPB+EOytAdzP4ZlUy+2fEAAJNAD0dlaLnG99oYjI/ao0ITtKXXRd7ZbUaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NmzUcDrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F71C4CEF7;
-	Tue,  4 Nov 2025 12:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762260076;
-	bh=8ymZxzZATI0ystLlUvVFK/P2C6papBtYAEpeRGinXiE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NmzUcDrmIdY5KiWMDwfs92R2YM6cNepuEvZMrrs8BMxPUVX8h7zve3MLDkvWTvQZB
-	 s6UfrJZCWdja9bAwSULLEvgR46b0sbn0FI6cq9Hks6j6G4qywl1xCvKZoFqGqmeek+
-	 X4E2An3nCUoYp1mzypCPpBZp4W4XhTUUG7q9nK1kJ2pDxcS5wI/hsJnzQNOcK2KDAR
-	 ujfOAeSy5U80PWzVDTRBlSibuVNF/+g2HYQPGM2NDB9UqTH/YeNlf9BiDjgr5ukAQ1
-	 o6FjAgNyWXNNNu+I2VscTRx4esBXFv6MChFOriOYLCFILrfGl7FaomZnK/QT3oO1pp
-	 2e3xNtkGOwt/Q==
-Date: Tue, 4 Nov 2025 12:41:10 +0000
-From: Will Deacon <will@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: catalin.marinas@arm.com, yang@os.amperecomputing.com, david@redhat.com,
-	ardb@kernel.org, dev.jain@arm.com, scott@os.amperecomputing.com,
-	cl@gentwo.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Guenter Roeck <groeck@google.com>
-Subject: Re: [PATCH v1] arm64: mm: Don't sleep in split_kernel_leaf_mapping()
- when in atomic context
-Message-ID: <aQn0ZqCPSA61QmDI@willie-the-truck>
-References: <20251103125738.3073566-1-ryan.roberts@arm.com>
- <aQjMUhspJrRQn5Ew@willie-the-truck>
- <3611cfeb-53d5-4db5-95a1-1d095edfc3c9@arm.com>
+	s=arc-20240116; t=1762260222; c=relaxed/simple;
+	bh=SC3J9fesfnrkX23G43m3YNEjCujBZXCwByXltqleRE0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UUoQ0BHIoM42B/2pYFBwqL5Rsca+XOyizyOTgdGmD68Kpaa6HWG0sW2PRrR8/0wBcwklUF00vzNLCxtOS6xkmdmjJJ1O+kCeYL+fr9cmm83eaUJrwzFij0gaSb1pRyOk9TCcP5u0aaF+Pf1RwI+sKGGRhLd4tdYLF9L4Tw5Shhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cu9dCIEX; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d17RW2vHfz9tc2;
+	Tue,  4 Nov 2025 13:43:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762260215; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JPkgDZbOpdQZ6CjBxSWvLUc4rQdd3n90Y0EiY992u4w=;
+	b=cu9dCIEX6zb+HQyiyF2HYnBo7cvxv34vMCj/2+2PBPrWRnD1D+9hTKIqrkCSa+IDNQG1wf
+	D6MkW5UhSTCKoqj/BX4tOO4x4zlfioTEE3NTdacLz916BfMP6zdIYOBtZZuF3B0fhrJ4yF
+	kbiNqLmKTk0iPRZahCXFwBci1aGOl0eohc+Sr/kUxXRMwnM4yYw8YdQHtcbfsTt+05V3Xw
+	7xcB2uX+UdcrG+B4aj5XYc69ytPCTgWc7/nqw7qwgX7dRFkMu10jDZWTRcDDfEC6QcEXgf
+	PPpZJsHjB9j6NLM10lFj2EKMMvoxrVf0RGVlB91SKBvy3Iu2YN9hKpUj+1SBlQ==
+Message-ID: <628cdf3a0c5b783c09fe2a40aca4a4a48c614e66.camel@mailbox.org>
+Subject: Re: [PATCH v3] drm/sched: Fix deadlock in
+ drm_sched_entity_kill_jobs_cb
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, 
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
+ <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,  Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Luben Tuikov <luben.tuikov@amd.com>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Christian
+ =?ISO-8859-1?Q?K=F6nig?=
+	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org
+Date: Tue, 04 Nov 2025 13:43:27 +0100
+In-Reply-To: <20251104095358.15092-1-pierre-eric.pelloux-prayer@amd.com>
+References: <20251104095358.15092-1-pierre-eric.pelloux-prayer@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3611cfeb-53d5-4db5-95a1-1d095edfc3c9@arm.com>
+X-MBO-RS-META: phbpfqy7crs61b9sp6exm9j8i6h4ozxt
+X-MBO-RS-ID: c9a33b565f3f691c7d2
 
-Hey Ryan,
+On Tue, 2025-11-04 at 10:53 +0100, Pierre-Eric Pelloux-Prayer wrote:
+> The Mesa issue referenced below pointed out a possible deadlock:
+>=20
+> [ 1231.611031]=C2=A0 Possible interrupt unsafe locking scenario:
+>=20
+> [ 1231.611033]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU1
+> [ 1231.611034]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----
+> [ 1231.611035]=C2=A0=C2=A0 lock(&xa->xa_lock#17);
+> [ 1231.611038]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 local_irq_disable();
+> [ 1231.611039]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock);
+> [ 1231.611041]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&xa->xa_lock#17=
+);
+> [ 1231.611044]=C2=A0=C2=A0 <Interrupt>
+> [ 1231.611045]=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock);
+> [ 1231.611047]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 *** DEADLOCK ***
+>=20
+> In this example, CPU0 would be any function accessing job->dependencies
+> through the xa_* functions that doesn't disable interrupts (eg:
+> drm_sched_job_add_dependency, drm_sched_entity_kill_jobs_cb).
+>=20
+> CPU1 is executing drm_sched_entity_kill_jobs_cb as a fence signalling
+> callback so in an interrupt context. It will deadlock when trying to
+> grab the xa_lock which is already held by CPU0.
+>=20
+> Replacing all xa_* usage by their xa_*_irq counterparts would fix
+> this issue, but Christian pointed out another issue: dma_fence_signal
+> takes fence.lock and so does dma_fence_add_callback.
+>=20
+> =C2=A0 dma_fence_signal() // locks f1.lock
+> =C2=A0 -> drm_sched_entity_kill_jobs_cb()
+> =C2=A0 -> foreach dependencies
+> =C2=A0=C2=A0=C2=A0=C2=A0 -> dma_fence_add_callback() // locks f2.lock
+>=20
+> This will deadlock if f1 and f2 share the same spinlock.
+>=20
+> To fix both issues, the code iterating on dependencies and re-arming them
+> is moved out to drm_sched_entity_kill_jobs_work.
+>=20
+> v2: reworded commit message (Philipp)
+> v3: added Fixes tag (Philipp)
 
-On Mon, Nov 03, 2025 at 04:28:44PM +0000, Ryan Roberts wrote:
-> On 03/11/2025 15:37, Will Deacon wrote:
-> > On Mon, Nov 03, 2025 at 12:57:37PM +0000, Ryan Roberts wrote:
-> >> +static int range_split_to_ptes(unsigned long start, unsigned long end, gfp_t gfp)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	arch_enter_lazy_mmu_mode();
-> >> +	ret = walk_kernel_page_table_range_lockless(start, end,
-> >> +					&split_to_ptes_ops, NULL, &gfp);
-> >> +	arch_leave_lazy_mmu_mode();
-> > 
-> > Why are you entering/leaving lazy mode now? linear_map_split_to_ptes()
-> > calls flush_tlb_kernel_range() right after this so now it looks like
-> > we have more barriers than we need there.
-> 
-> Without the lazy mmu block, every write to every pte (or pmd/pud) will cause a
-> dsb and isb to be emitted. With the lazy mmu block, we only emit a single
-> dsb/isb at the end of the block.
-> 
-> linear_map_split_to_ptes() didn't previously have a lazy mmu block; that was an
-> oversight, I believe. So when refactoring I thought it made sense to make it
-> common for both cases.
-> 
-> Yes, the flush_tlb_kernel_range() also has the barriers, so the lazy mmu mode is
-> reducing from a gazillion barriers to 2. We could further optimize from 2 to 1,
-> but I doubt the performance improvement will be measurable.
-> 
-> Perhaps I've misunderstood your point...?
+Thx for the update.
+In the future please put the changelog below between a pair of '---'
 
-I was just trying to understand whether this was a functional thing (which
-I couldn't grok) or an optimisation. Sounds like it's the latter, but I'd
-prefer not to mix optimisations with fixes.
+---
+v2: =E2=80=A6
+v3: =E2=80=A6
+---
 
-Will
+Some things I have unfortunately overlooked below.
+
+>=20
+> Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and fini")
+
+We should +Cc stable. It's a deadlock after all.
+
+> Link: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908
+> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd=
+.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++--------=
+---
+> =C2=A01 file changed, 19 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/s=
+cheduler/sched_entity.c
+> index c8e949f4a568..fe174a4857be 100644
+> --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> @@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity =
+*entity)
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL(drm_sched_entity_error);
+> =C2=A0
+> +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
+> +					=C2=A0 struct dma_fence_cb *cb);
+
+It's far better to move the function up instead. Can you do that?
+
+> +
+>=20
+
+[=E2=80=A6]
+
+> +/* Signal the scheduler finished fence when the entity in question is ki=
+lled. */
+> +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
+> +					=C2=A0 struct dma_fence_cb *cb)
+> +{
+> +	struct drm_sched_job *job =3D container_of(cb, struct drm_sched_job,
+> +						 finish_cb);
+> +
+> +	dma_fence_put(f);
+
+It would be great if we knew what fence is being dropped here and why.
+I know you're just moving the pre-existing code, but if you should
+know, informing about that via comment would be great.
+
+Optional.
+
+
+Rest of the code looks good. No further objections.
+
+
+P.
 
