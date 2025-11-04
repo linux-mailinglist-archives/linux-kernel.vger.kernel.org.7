@@ -1,48 +1,63 @@
-Return-Path: <linux-kernel+bounces-885083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDA0C31F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:53:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA46C31F29
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6652218C41B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A710D3A8A2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0812277037;
-	Tue,  4 Nov 2025 15:52:20 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D8E273D6C;
+	Tue,  4 Nov 2025 15:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP7/zdJv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760111E9B37;
-	Tue,  4 Nov 2025 15:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D131E9B37;
+	Tue,  4 Nov 2025 15:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762271540; cv=none; b=QDgzwcbE4J6v+nqclj/wrI4ISBx34LN7/B+SU20DLz0YtldU0VOI0fojLp6sNLIICwjWzWgh+Y0BSjAicuy1bYg5mW5As2OFT4Dbx3bZ74uZjZR+9Q5XCYLXA8eLlZSjdqd/GMuOqpUM8BSzBUuX12/mlpac8BGzWbaATI0mfp4=
+	t=1762271553; cv=none; b=o/1hot5t58aVhegM2o7hl/1FQibSaALWKQaVWatRvAHCdsVahJjUTqKxqophLXQexakuqjyxt2MWHM+AAaX/NfA4wD9zPvcA+ioGeLAw4YChh+ltrqvdU0u2lp7WM6bnxCF67ZIcJJWADhhQdzNbj+ypXj0MEyxhbtz7vQoeNCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762271540; c=relaxed/simple;
-	bh=XsEhg04RWKTgiB4cYbeNQOOYIBfy6/5/afqsKR1Hpqo=;
+	s=arc-20240116; t=1762271553; c=relaxed/simple;
+	bh=FptEc2MZwx9dNjeyW235y8KQvDpvs5UTFR4T5099nDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JajaPVIo7/SPkO+qpm3DUj0MGdsPR4RAi7XnxkJ2ivE+3mi3XGmM1hWSZHNxen3rPa/o2wPfsptY3HP5RSxaq1HtL6vNraWfjRKplDm1L5/vPWZXRXGqkRqQ8DtZiGX0Ij4VDY8z87tMycgygPxw52BxA/0kwfam8ED5P1BS1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 69E29227A87; Tue,  4 Nov 2025 16:52:13 +0100 (CET)
-Date: Tue, 4 Nov 2025 16:52:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH 3/4] xfs: use IOCB_DONTCACHE when falling back to
- buffered writes
-Message-ID: <20251104155213.GA651@lst.de>
-References: <20251029071537.1127397-1-hch@lst.de> <20251029071537.1127397-4-hch@lst.de> <a162ddcbd8c73adf43c7c64179db06ce60b087d6.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZOBSSiVLPPXZKKk3ZyvLKVKXtFTDcWnpLcQcavIYBOuouc4lJox4mLg87+Mnz0eYNyGUALmV3c2FhtSn/dQz5pWa6VAHfgxCtsVelrSSClZ30sMPZKz98On4lKl8Z/JTECBCorC5/GnKV8rDj9N2V8lAVONi0nS8H2sfjOGPOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP7/zdJv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11ABC4CEF8;
+	Tue,  4 Nov 2025 15:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762271553;
+	bh=FptEc2MZwx9dNjeyW235y8KQvDpvs5UTFR4T5099nDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eP7/zdJvv5oA4eUAgZBZfROBTPXF0AGhszclDFsQ9K36ZL7UguMIlkB9mIDX1jLXD
+	 pj0fC9D4Y4vCJ3b2jRzRGeE7sRRDzImAiiGHtnq150lheDex1fxcm/jUOXEgMT5Ipr
+	 6DpZ+VVmfMmRKUpR94XtptTkkrl+UtU94P3S1B4H+m070ssZFKhzk7gD618oXALPOQ
+	 MvCD/IRI8Gu/24TW93pwKCWwEq5Z4JW0mE4y1i7p/7kWO5Ue9Pqz8D67HHacjhdRKd
+	 JBG6rsQnEKRflR067gAcTc6rzTM1xWFgSfnRfdM0HDD8iGKTqPvmFBYjJwrY9QvuEQ
+	 ceQme3cb4Tc1w==
+Date: Tue, 4 Nov 2025 15:52:27 +0000
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Pierre Gondois <Pierre.Gondois@arm.com>,
+	Sami Mujawar <Sami.Mujawar@arm.com>
+Subject: Re: [PATCH v4 resend 3/7] arm64/fpsimd: Don't warn when EFI
+ execution context is preemptible
+Message-ID: <aQohO07DpxlriQfJ@willie-the-truck>
+References: <20251015205634.3820870-9-ardb+git@google.com>
+ <20251015205634.3820870-12-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,32 +66,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a162ddcbd8c73adf43c7c64179db06ce60b087d6.camel@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20251015205634.3820870-12-ardb+git@google.com>
 
-On Tue, Nov 04, 2025 at 06:03:35PM +0530, Nirjhar Roy (IBM) wrote:
-> > Doing sub-block direct writes to COW inodes is not supported by XFS,
-> > because new blocks need to be allocated as a whole.  Such writes
->
-> Okay, since allocation of new blocks involves whole lot of metatdata
-> updates/transactions etc and that would consume a lot of time and in
-> this large window the user buffer(for direct I/O) can be re-used/freed
-> which would cause corruptions?
+On Wed, Oct 15, 2025 at 10:56:38PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> Kernel mode FP/SIMD no longer requires preemption to be disabled, so
+> only warn on uses of FP/SIMD from preemptible context if the fallback
+> path is taken for cases where kernel mode NEON would not be allowed
+> otherwise.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/arm64/kernel/fpsimd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+> index e3f8f51748bc..3d848c89604e 100644
+> --- a/arch/arm64/kernel/fpsimd.c
+> +++ b/arch/arm64/kernel/fpsimd.c
+> @@ -1934,11 +1934,11 @@ void __efi_fpsimd_begin(void)
+>  	if (!system_supports_fpsimd())
+>  		return;
+>  
+> -	WARN_ON(preemptible());
+> -
+>  	if (may_use_simd()) {
+>  		kernel_neon_begin();
+>  	} else {
+> +		WARN_ON(preemptible());
+> +
 
-I don't understand what you're trying to say here.
+Given that may_use_simd() returns false on systems without support for
+fpsimd, I wonder whether moving this WARN_ON() actually helps with
+anything. That is, you probably shouldn't be calling __efi_fpsimd_begin()
+from preemptible code regardless, no?
 
-> Just thinking out loud: What if we supported sub-block direct IO in XFS
-> and indeed allocated new blocks+ update the metadata structures and then
-> directly write the user data to the newly allocated blocks instead of
-> using the page cache?
->
-> Assuming the application doesn't modify the user data buffer - can we
-> (at least theoritically) do such kind of sub-block DIO?
-
-Regular XFS does that.  Zoned XFS or the always COW debug mode can't do
-that (except maybe for appends) as it it requires a read-modify-write
-cycle that is not implemented in iomap.  Yes, we could implement that,
-but it's not going to perform any better than the fallback, and would
-also require full serialization.
-
+Will
 
