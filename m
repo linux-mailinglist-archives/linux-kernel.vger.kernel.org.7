@@ -1,217 +1,131 @@
-Return-Path: <linux-kernel+bounces-885219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E806C324A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:19:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6110EC324B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F518803E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE8618C67D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4465D337B99;
-	Tue,  4 Nov 2025 17:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238FB338F45;
+	Tue,  4 Nov 2025 17:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acJyscNx"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/Wl3QPl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D695323D294
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3183321DF;
+	Tue,  4 Nov 2025 17:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276412; cv=none; b=jsq/x2tNLgcL9s2fQYiQlt5RuL62XcCSmVoJWetbMlCMOb2OSWh3AsmzYcXW3xUxocfcYIQTno+CEF9peXfABOtNoGQqQ8KKGJHCmZtWBH1el89JfphFxrpjoVt2qmTlHbohfVRUj+S2Ql2/iRPtw1CVxStggD3ePo7LuMdcIIA=
+	t=1762276423; cv=none; b=REm9JJgdQUBI6yrqtEFTrc6pDBFOo0QnQHOooWzF/Kkp+EdyWQoDJrSsr+hTv70a9TMeAg0jYBZMDvmr7ankrrI3Mqjx0Dp2mXQjy6LuaUB6FwZnlScn/8UxdfPzv9TzKP0ywTTc3rjeaOu1NbVSxAKxdpPAeVLyP22LGmDt3C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276412; c=relaxed/simple;
-	bh=m1XkeAEKgnYB+1UGxur6dH6wOd+HzUrXUozfaL+/uQ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=urD/NBukgRKFMl9DFhOeSk5yVg95+4lGdi+BdzyGWxI31M8NUugSWSs3aDf8gv0bjj8WtFKnE4jah98RKwHE01xyRxkCxzs1nLdgfo+n1vq+KflLqfWHpPxHtL2d63BIAKDGvi4l6RH0u/BoQU3x4d5Zl9YIDzH3gTXrlTb4tnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acJyscNx; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29555b384acso35890475ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:13:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762276410; x=1762881210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=usbtFusXECf+ztp+zNDIhf2MMecxiC++PMfHrUtumrQ=;
-        b=acJyscNx1YvB+GtAkExmVtzeAcptRjQEGsQCayEOdRuLV7/0RcbB04/pqPyiRN2XtJ
-         Pcz+OmJtgJiO4CRBChWae0sdCs6iz+aN49E97+//aNQo66IBEdAEO3PuMxKUUN+aSPAm
-         NCdWzX1AKD+z8Ke03KqBm4toO2t/O1c/e/L/mzcmDGeFEVW/oTwbI9ArzOHPqjZXaBVB
-         gNYzPIPnD9v0XO7+goVMtBAz+yiZ1r8bzbb1LT9nf1ZE0s+ss/JQgFI/LCYrw5tG4u3t
-         AI2+Jby6Z6NDC7+uG5yar0OdoEYNQ8zzAzs4TU+ifGAeMTfcb5gJ52Ly/2T5+SShxshS
-         dUNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762276410; x=1762881210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=usbtFusXECf+ztp+zNDIhf2MMecxiC++PMfHrUtumrQ=;
-        b=jVtqRGznxnCN5hTBnxwaNJvZIaveyxY5/etLiCD5FhlnkV7N1OFVGU83fWR7siBF0Q
-         FYgOTDwjMcG5KgFGbjU4WVVAzV4NXa7vT9Cnyuy8/h2bTYWtwyWRIjKhoT4VfrdYIGfZ
-         2mij6Tv/aJ4R7DJePqih3TzwEHJ/CtBigaMp0X7ZGZJBa1mv3VF+2rotWfAmUFuXn5xL
-         Kok+qzAU9pVhVeZKvB+9M4zUfI1FJLX2F2WSHs/8zcbuivACEYj+b4XR/U6EWik19HwT
-         9FV/ttT2igCRVML8TMzH5iVFKEPoTqDK/Wse8fgGUjzmu+hMXTYrONmyelRmAdw4LLCq
-         T7QA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoznwEIlYNA+/lrEVgmokEHbg13Op2v5gGbgdGrvI16j0xbRBH45Jw6r7okJ4QR6Y7KNF7DKoLnXYcIqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz45dRB4sbUQFFG6IV3umCbxKJH15sq5WUav5NtHJvcNwblfSFQ
-	NgFwLFzJU1cDHaVZ6GogMtBDlXPxgQRBqS8lOyXRmYstpFJ7ocfAnkSb
-X-Gm-Gg: ASbGncvSHrldUman/d7E9Np20V/1sK0oOEK6SRflZwaHZmjbAsL42qv4ukoH5dTVK6q
-	scg3QxNLER9ppK9tEP1Q1UbGr7rrzNcjP7N2BiQoFMC1tgJsnSmZFFpqxcB+bEvwcXlFU5aXLJ7
-	Z7Zd/bd88OTy/sFSPvCBwvUHkwC/s7ZbJ5nhvmsS5/Klv9EzJK4E18CIRc6epvThYkhl9C4hfHV
-	Kic/euUlGatcRUzohYev62uFiLZCfb+M8aiawEV/LmUqiab5L+XBoIIZ6CbVXferQM9yHjYSH9d
-	yGQkxTipel2tjJsbgcKlVRmJIcuqI5SBkxkTKRjKhbx6nYdYNSmyRQ8UT05HH4ILt3CsZ4nriPS
-	Fcfs14fXpXfEWNkR4Kcnd/dXsIgViHxbTp4setO9cQU3sJK15hfLacaKESc+jt6PNPEvmS1eJ8s
-	XhENW8zWAPL9iQj+cvbtE=
-X-Google-Smtp-Source: AGHT+IHEPM6IeTHqwRglV3CNNPvXG1HRbfYSUDnDZvEYFFaMOFPrf9AoRvdMvHe2ekdTYstoOgW7Og==
-X-Received: by 2002:a17:903:3bc7:b0:295:bedb:8d7 with SMTP id d9443c01a7336-2962add071cmr4121695ad.48.1762276410092;
-        Tue, 04 Nov 2025 09:13:30 -0800 (PST)
-Received: from shankari-IdeaPad.. ([2409:408c:9413:f347:f0d6:3544:e27:d190])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296019982c7sm32643875ad.25.2025.11.04.09.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 09:13:29 -0800 (PST)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-block@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: Re:[PATCH v2] rust: block: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Tue,  4 Nov 2025 22:43:16 +0530
-Message-Id: <20251104171316.6672-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251012142012.166230-1-shankari.ak0208@gmail.com>
-References: <20251012142012.166230-1-shankari.ak0208@gmail.com>
+	s=arc-20240116; t=1762276423; c=relaxed/simple;
+	bh=kyJEGDVqlyC03PDfLG2BWsfWjvb/fgVAG7RwEUTRdh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YO6U1OK1MctEoqoeR26TE8JXhIwQUqE+pE9qeruS+kiu4jmMiVM2A4v353tG3q26i4zN0JUd1pW4TIKMeLdY8fA5Px+KlaF53HhC7FAWL/jzoa4C2Pfzriu90jo5aDH0ehjvy4EfcMuM64H6Btn6nsn3mgf+sYehe9UmCU96uX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/Wl3QPl; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762276422; x=1793812422;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kyJEGDVqlyC03PDfLG2BWsfWjvb/fgVAG7RwEUTRdh4=;
+  b=e/Wl3QPlQ1IS7y6TMRy8SYocAWc9052cojPn4QfTtl0gY9+w5ouz8pYF
+   l4RQAjsdZqiCZzQ5KiTk/gTqjPLyznfDg0uxcQlrX6z8de5qKiMKorbt/
+   OxImXFVvJlQeeAJgPMnERqDx7f2FHbKbrUpS5Ki8zzLw+KCUyIxOW3YtS
+   tAX/pmYhqc0kv9R88EXeC2MyzpJ6g0OBOUm1tNq+sw3ZTRq0uEvdcS4qs
+   yfR7n2EAVqquZ8tOMeGX5A8pQ6K8VN3Phystl15wcgY/lroxDvzrtmg7P
+   Ufdx4P0pLVPHIpbZoTEkPVaan9Ioo0TyGPw+TZ37SwcBG4/O32KFnjwip
+   Q==;
+X-CSE-ConnectionGUID: hQAaN64qQOKarLYnm+od1Q==
+X-CSE-MsgGUID: nn2xedxhQhOinUT4UWhUxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="81784799"
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="81784799"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:13:36 -0800
+X-CSE-ConnectionGUID: d5wse++8Sma4rYZOLgOe9g==
+X-CSE-MsgGUID: 7haD6cuGTua8bLtkq1Wv7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="187159814"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.201]) ([10.125.110.201])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:13:35 -0800
+Message-ID: <ae28560c-ed16-400b-bf3d-86e2cc8617cf@intel.com>
+Date: Tue, 4 Nov 2025 10:13:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/14] cxl/atl: Lock decoders that need address
+ translation
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-12-rrichter@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251103184804.509762-12-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 12, 2025 at 07:50:12PM +0530, Shankari Anand wrote:
-> Update call sites in the block subsystem to import `ARef` and
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
-> 
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to sync.
-> 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> ---
-> Changelog:
-> v1 -> v2:
-> Rebased it on top of the latest linux-next upstream commit
-> Dropped 1/7 from the subject as it might lead to confusion of it being a series
-> Link of v1: https://lore.kernel.org/lkml/20250716090712.809750-1-shankari.ak0208@gmail.com/
-> 
-> The original patch of moving ARef and AlwaysRefCounted to sync::aref is here:
-> (commit 07dad44aa9a93)
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
-> 
-> 
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
-> ---
->  
->  drivers/block/rnull/rnull.rs       | 3 +--
->  rust/kernel/block/mq.rs            | 5 ++---
->  rust/kernel/block/mq/operations.rs | 4 ++--
->  rust/kernel/block/mq/request.rs    | 8 ++++++--
->  4 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-> index 1ec694d7f1a6..a9d5e575a2c4 100644
-> --- a/drivers/block/rnull/rnull.rs
-> +++ b/drivers/block/rnull/rnull.rs
-> @@ -17,8 +17,7 @@
->      error::Result,
->      pr_info,
->      prelude::*,
-> -    sync::Arc,
-> -    types::ARef,
-> +    sync::{aref::ARef, Arc},
->  };
->  use pin_init::PinInit;
->  
-> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-> index 637018ead0ab..1fd0d54dd549 100644
-> --- a/rust/kernel/block/mq.rs
-> +++ b/rust/kernel/block/mq.rs
-> @@ -20,7 +20,7 @@
->  //! The kernel will interface with the block device driver by calling the method
->  //! implementations of the `Operations` trait.
->  //!
-> -//! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
-> +//! IO requests are passed to the driver as [`kernel::sync::aref::ARef<Request>`]
->  //! instances. The `Request` type is a wrapper around the C `struct request`.
->  //! The driver must mark end of processing by calling one of the
->  //! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
-> @@ -61,8 +61,7 @@
->  //!     block::mq::*,
->  //!     new_mutex,
->  //!     prelude::*,
-> -//!     sync::{Arc, Mutex},
-> -//!     types::{ARef, ForeignOwnable},
-> +//!     sync::{aref::ARef, Arc, Mutex},
->  //! };
->  //!
->  //! struct MyBlkDevice;
-> diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
-> index f91a1719886c..8ad46129a52c 100644
-> --- a/rust/kernel/block/mq/operations.rs
-> +++ b/rust/kernel/block/mq/operations.rs
-> @@ -9,8 +9,8 @@
->      block::mq::{request::RequestDataWrapper, Request},
->      error::{from_result, Result},
->      prelude::*,
-> -    sync::Refcount,
-> -    types::{ARef, ForeignOwnable},
-> +    sync::{aref::ARef, Refcount},
-> +    types::ForeignOwnable,
->  };
->  use core::marker::PhantomData;
->  
-> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
-> index c5f1f6b1ccfb..ce3e30c81cb5 100644
-> --- a/rust/kernel/block/mq/request.rs
-> +++ b/rust/kernel/block/mq/request.rs
-> @@ -8,8 +8,12 @@
->      bindings,
->      block::mq::Operations,
->      error::Result,
-> -    sync::{atomic::Relaxed, Refcount},
-> -    types::{ARef, AlwaysRefCounted, Opaque},
-> +    sync::{
-> +        aref::{ARef, AlwaysRefCounted},
-> +        atomic::Relaxed,
-> +        Refcount,
-> +    },
-> +    types::Opaque,
->  };
->  use core::{marker::PhantomData, ptr::NonNull};
-> 
-> base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae 
-> -- 
-> 2.34.1
-> 
-Hello, can this patch be reviewed?
 
-Thanks,
-Shankari
+
+On 11/3/25 11:47 AM, Robert Richter wrote:
+> There is only support to translate addresses from an endpoint to its
+> CXL host bridge, but not in the opposite direction from the bridge to
+> the endpoint. Thus, the endpoint address range cannot be determined
+> and setup manually for a given SPA range of a region. If the endpoint
+> has address translation enabled, lock it to prevent the kernel from
+> reconfiguring it.
+> 
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
+>  drivers/cxl/core/atl.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+> index d6aa7e6d0ac5..5c15e4d12193 100644
+> --- a/drivers/cxl/core/atl.c
+> +++ b/drivers/cxl/core/atl.c
+> @@ -158,6 +158,16 @@ static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
+>  		return -ENXIO;
+>  	}
+>  
+> +	/*
+> +	 * There is only support to translate from the endpoint to its
+> +	 * parent port, but not in the opposite direction from the
+> +	 * parent to the endpoint. Thus, the endpoint address range
+> +	 * cannot be determined and setup manually. If the address range
+> +	 * was translated and modified, forbid reprogramming of the
+> +	 * decoders and lock them.
+> +	 */
+> +	cxld->flags |= CXL_DECODER_F_LOCK;
+
+Feels like this should be something the BIOS should enforce if that is the expectation? And the kernel checks and warns if that is not the case.
+
+
+> +
+>  	ctx->hpa_range = hpa_range;
+>  	ctx->interleave_ways = ways;
+>  	ctx->interleave_granularity = gran;
+
 
