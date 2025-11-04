@@ -1,81 +1,119 @@
-Return-Path: <linux-kernel+bounces-885568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53066C33580
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:09:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E43AC33520
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8312E464F61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:08:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C1134E6EAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF0534844E;
-	Tue,  4 Nov 2025 23:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8033F2D248B;
+	Tue,  4 Nov 2025 23:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=msa.hinet.net header.i=@msa.hinet.net header.b="ar9CICU8"
-Received: from cdmsr2.hinet.net (210-65-1-144.hinet-ip.hinet.net [210.65.1.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvFrfYpK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878932DF132
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.65.1.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86E872604;
+	Tue,  4 Nov 2025 23:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762297626; cv=none; b=G1usVjgnjxneo4VXETcHJfo9zgtmn+2lx0iz9K/tKT+ndKuyAYyLTOJrMfuS5fty7WTkYsOjkrQPpY59T68JoS5iVuQkGChoSpJxxBURYOjyYT/cPkZTx9Q1Syz9xGfjLOHmKRfXNsD/XGpvnivz9pUTdfuAOlyMquq/eUSs9fs=
+	t=1762297554; cv=none; b=cm0hFWMnuJgZSysxbDoT4cYt7NMyG5NuTWuqKnXJ4WQK5xI+QbQjq83N7oDl686ASJsHK2uUjWgAurZU42xO7EIMXA8uEQqeCPF1XQ9lRjoIpJUDnaF4TcvXwSKyjd5GGtjaTLnn2GupJfdah7CN5H2Wtw90T8CT/nicpxJLhg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762297626; c=relaxed/simple;
-	bh=+Mx3vHHwCRKNAsvXKoEsKjYnD4VJ03pbDrpgha7ikas=;
-	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=K0+tAgoY6AYuSraS1pYjtKo5z3mLMgqlMBwD91G3g4zqkxxCTZxTUGdLHmDUfNLh5xV4BMwJvT4X6ocmWFjAzmBBhG91k5Ro7ak/djW1CBtQnuHFTyEMMsejEf5LFEAJfL6pCPTyQVPrHUWupUHxlQxoI6haGb3FamO6CmWHKZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=msa.hinet.net; spf=pass smtp.mailfrom=msa.hinet.net; dkim=pass (1024-bit key) header.d=msa.hinet.net header.i=@msa.hinet.net header.b=ar9CICU8; arc=none smtp.client-ip=210.65.1.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=msa.hinet.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=msa.hinet.net
-Received: from cmsr10.hinet.net ([10.199.216.89])
-	by cdmsr2.hinet.net (8.15.2/8.15.2) with ESMTPS id 5A4N6x83822779
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 07:07:01 +0800
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=msa.hinet.net;
-	s=default; t=1762297621; bh=sbYf4+NyYOsX2v1v7+F07qRXsTw=;
-	h=From:To:Subject:Date;
-	b=ar9CICU8QX2za+ZdnhFv2jGWm881FUdZqNFdVOD4qil50IGH+aa0yKgsHEh9DPe4n
-	 eKiK1K9MkmJ1oh6wHIw3omwhBCOzmVF52GnfJxNtR0htEZWRPPvlOsQYPTdth/cA/W
-	 l/CRb6N8GTjTHwjYOcu2jlKmYb6cFYyIgRQ2WFmU=
-Received: from [127.0.0.1] (118-166-161-139.dynamic-ip.hinet.net [118.166.161.139])
-	by cmsr10.hinet.net (8.15.2/8.15.2) with ESMTPS id 5A4N0Lvj737286
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 07:03:41 +0800
-From: Procurement 21098 <Linux-kernel@msa.hinet.net>
-To: linux-kernel@vger.kernel.org
-Reply-To: Procurement <purchase@pathnsithu.com>
-Subject: =?UTF-8?B?TkVXIFBPIDk4NjExIFdlZG5lc2RheSwgTm92ZW1iZXIgNSwgMjAyNSBhdCAxMjowMzozOSBBTQ==?=
-Message-ID: <216a440c-7094-d81d-0480-0f8005c57d2b@msa.hinet.net>
-Content-Transfer-Encoding: 7bit
-Date: Tue, 04 Nov 2025 23:03:40 +0000
+	s=arc-20240116; t=1762297554; c=relaxed/simple;
+	bh=WCtPTfqQtVxV9hfqYB2PSFajh5C8vxNraqseQ7UsQT8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qs3bl+nMGKajf1ihjfb1c8U04VYfZgCAoNE5XLuyZnVKOkoHjYwOZvO/KFyWEUdSIyHaOpgtX8W6wMy3Y8h9NUL06zH6GNlp+CG5aM9lrlAJZs9MFP5WlEYbeqNpAv7Mc2U1W2mVixd2I3WQXa8jZJFvPCPO1Cko/1NgLKMTPEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvFrfYpK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82776C116D0;
+	Tue,  4 Nov 2025 23:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762297554;
+	bh=WCtPTfqQtVxV9hfqYB2PSFajh5C8vxNraqseQ7UsQT8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BvFrfYpKupJEmVnXZbkqAK4A4TwNe6EgVFqvWg7p+c+vnkMbi1H7+1HD9uz3JMxgd
+	 1lS7/PcHA+LXoZuDCcJqkS8uoP1QOJrYjSt+CEJHUUBxI2eBTobtdFysyclroiVaAJ
+	 4TZyoBpdVxeisLjyFkhPVnXp8FUmu5u415JLguayLOtao4qP+wDX5DixAIrObW9/xR
+	 vKLpdlZhLQzkgfF1IC9wIzBpqVLpZESLX9C7SgQgSlw4q70eEWQxJTuSf2cfFExaJe
+	 LTXd4OBi/uHg1yBl6cDrjrKMt0lZ8lHA+q+95FymfERSfQHasz/rP3sAHXCZKFCurr
+	 R+KW8ja0KDbyg==
+From: Christian Brauner <brauner@kernel.org>
+Date: Wed, 05 Nov 2025 00:05:01 +0100
+Subject: [PATCH] pidfs: reduce wait_pidfd lock scope
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=KqTu2nWN c=1 sm=1 tr=0 ts=690a864e
-	a=2MdWEo0NGJqKQNlyjv6/Mg==:117 a=IkcTkHD0fZMA:10 a=5KLPUuaC_9wA:10
-	a=DzOKOi12GxIKdhb33lMA:9 a=QEXdDO2ut3YA:10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-work-pidfs-wait_pidfd-lock-v1-1-02638783be07@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJyGCmkC/yXM0QqDMAyF4VeRXC+jVYSxVxljpG2qwdFKM3Qgv
+ vvqvDsfB/4NlIuwwr3ZoPAiKjlV2EsDfqQ0MEqohta0vbWmxzWXCWcJUXEl+byOGfCd/YRknQn
+ dzUfbBaiBuXCU7z/+eFY7UkZXKPnxSC5Rr+e/7z9kNtZ8iAAAAA==
+X-Change-ID: 20251105-work-pidfs-wait_pidfd-lock-a1b0d38cf13d
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1448; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=WCtPTfqQtVxV9hfqYB2PSFajh5C8vxNraqseQ7UsQT8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRytV18kWbS+F/8n7clwz3W6K832YTTI3XeuefwRTjuK
+ U0/bfa5o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIylxkZ3kq/LFdLWt/Ee+r6
+ hO97f9xIXLgk0u+LSsrNzwqXag5yOTIy3HQSmJUazlNn8TXa+Odb/81e87e+/sbDuNArJnHJnDk
+ F3AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hi Linux-kernel,
+There's no need to hold the lock after we realized that pid->attr is
+set. We're holding a reference to struct pid so it won't go away and
+pidfs_exit() is called once per struct pid.
 
-Please provide a quote for your products:
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/pidfs.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-Include:
-1.Pricing (per unit)
-2.Delivery cost & timeline
-3.Quote expiry date
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 0ef5b47d796a..d2e74c069b4f 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -613,17 +613,19 @@ void pidfs_exit(struct task_struct *tsk)
+ 
+ 	might_sleep();
+ 
+-	guard(spinlock_irq)(&pid->wait_pidfd.lock);
+-	attr = pid->attr;
+-	if (!attr) {
+-		/*
+-		 * No one ever held a pidfd for this struct pid.
+-		 * Mark it as dead so no one can add a pidfs
+-		 * entry anymore. We're about to be reaped and
+-		 * so no exit information would be available.
+-		 */
+-		pid->attr = PIDFS_PID_DEAD;
+-		return;
++	/* Synchronize with pidfs_register_pid(). */
++	scoped_guard(spinlock_irq, &pid->wait_pidfd.lock) {
++		attr = pid->attr;
++		if (!attr) {
++			/*
++			 * No one ever held a pidfd for this struct pid.
++			 * Mark it as dead so no one can add a pidfs
++			 * entry anymore. We're about to be reaped and
++			 * so no exit information would be available.
++			 */
++			pid->attr = PIDFS_PID_DEAD;
++			return;
++		}
+ 	}
+ 
+ 	/*
 
-Deadline: October
+---
+base-commit: a20432b6571ddc02e86c549f582d61ac5a89ca40
+change-id: 20251105-work-pidfs-wait_pidfd-lock-a1b0d38cf13d
 
-Thanks!
-
-Danny Peddinti
-
-Noble alliance trade
 
