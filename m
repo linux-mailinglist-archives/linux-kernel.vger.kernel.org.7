@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-885532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768ACC333D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:31:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A35FC333E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F0FD034C073
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB7C1886E68
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F084B1C6FE8;
-	Tue,  4 Nov 2025 22:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7910F2D594B;
+	Tue,  4 Nov 2025 22:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BI4Z3F/w"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="tcVuinAg"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AE91EB1A4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E341C6FE8;
+	Tue,  4 Nov 2025 22:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762295478; cv=none; b=hhZo/fg5oteREu4w+2NA6fOuxb/GqS9MrSDEf5QNN7ZgfpiBKm686iCnv5g/KGd1+bx9GEfZm5Ly5E2FtQx7t2srYKkGtAt+YwfiUrijVwwZQdTKJ8lARU6s9233e/hkj1XaHQyvHyLdqOl2x0frBghRVkxKFN0V+yeTDC2VBtw=
+	t=1762295558; cv=none; b=FpAXHRNfJAVObb0e5NyVaEfCwijCynHaBOFCPsjcgNcuv9nVZ4S/SfJczMFO948/IxpWMqVwNQjrzR/cQiz3hLa5YIoka/UxpROdKTX3A/QM8hH5P0vgdhpHOk6Ml4rAX8oqIvcRATbhEmWr9Ee1O0U0fO6wiBcTL39QEc0gdis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762295478; c=relaxed/simple;
-	bh=qlbJi6CQT+n1/uVC5NZZQC6Ch1uElRomX6k6JiAkjB8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOlrHqqN0dv5/At1lQuTC28Bqj9YylYVb1ltUQPc/0iIOy554KZE6kiAL/BgcY123BeGOu5stR+lR2KUhuKmFuyuxsBwJfBag2oxUsO4TiUhR5LzXGexWPMvr746nvBBqV9hjZ2EhBXtdHdrqB6FmEaZY+nwe3FqoAlXMvIWA7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BI4Z3F/w; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640f8a7aba2so1169669a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762295473; x=1762900273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9C5WZt85rCvQ7iKyht7ngDQOKVzbs+0o0ZE9snmn2Ws=;
-        b=BI4Z3F/wEzkD+Wd5UbvIPoAVL5cgIg/BvceOGmhPTsMfWsp4lPZ8MKHssvxUoyPvvg
-         XImT4wZySW4Gz9q14/7Wdi3vfbj/n12zaCa+vhweMu8JL/s5uVKrayYTStSLTY0a1wl/
-         NhX7+26fQ6wUQx4mlrZbH4rH4aS0fK9CT6NB5uQfh8Vv8c9bs6R9mDaVLc5J2YPrElqV
-         Adnpt7cQHoYAaJFLUp80WPIfX/klmw64zLNBdsi0KCRTaii7HabsJKWRk1840U8HsMgV
-         YML8q0gSdIqNoDHucdzCCSwxCvjYF/oH4h4tE9igwOuTUSFMFrwEZgUqcAYAMQabUttU
-         EqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762295473; x=1762900273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9C5WZt85rCvQ7iKyht7ngDQOKVzbs+0o0ZE9snmn2Ws=;
-        b=hT4A/eisLxskX0H3IAQS/scGf9UlkwV7WxMGSMQWFb0z3CwnP3WoUfq3V9v78PCvE5
-         4UD8GWM2fHYlRu1yKNDMs+e6db1dA8k5i07moDJvPJf3LCg7NFbye5CuxoiNMdY3o+vl
-         FIJYI5JC0f3x81jsOKY5d3/9/Bhi/rmJ5Wd6iJttrI+Q+boLNgU25t3LEeprUl51lsfa
-         VJwv67jUC+cY8jYquKc95zygQ0sqzw2TuU4FHQ7JWaswBhEKxw1iGdP6NzzN76ZJmW0B
-         ig79qYWIw4TVokzNK8wtvaOEOhSdqeGn0M9DaBCBGGyX/ctwTyp7DpAonH5g7q7JKaDA
-         MTKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAjfavRpVFddGWBeoBlPjtDcQXrnBU0CgfxQd80PDXRvcVPwpmmmVx3kWBmOpV/1XQF+/Vg0RvRVwIg5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4csO6n080CeYdAvf5hw/dZvxuoRR/kPehIA/2upj5oXZ+KXHB
-	uySxTFGVBCvVdOFIEMsEJ/9EJvuWU+9YGdFIB2Oj43k16ojN2rO1tQoytO3hnsZbiLbf3WA5k4E
-	qboJexbk4GwZ/NagTuY3KKcrea8pG1xc=
-X-Gm-Gg: ASbGncs+iTuLZlE0WjPBHWAC4lHDAXeffrQS6XVz/lPOID0eH8SS5790sFd8LUxVrUP
-	YcrDdrLR4y/AHwbvf3GIF137GfAf/fjY7JMjMe4i8KtF8CnDsQIIsOgMFW7SRKC0SiInnNch5ks
-	e5F9OGHH+w75HO4fJaRd1B8zdKMOeWH4oKFB/ckbT7G6cBikOGvTZbs4F+X6C10F8zB9EbC9r9j
-	+raTPbhy9SgHY8dW1cdAYNjRyFPR+8vQdXJkOya603rvuI2jZKXQIK8TUezP5PDt6E52pQ9Z9w9
-	b+jg2FcYfVTaxJqjfYDMuXqoKsI=
-X-Google-Smtp-Source: AGHT+IGkfz+qjDL3k+h5Laf2ETyxJ3mO3I0sjY2eJBKDI86RPmEM4cuOT83qYE1w0rrQkzVZmnhlgLzsRzWS+8AcLAc=
-X-Received: by 2002:a05:6402:280c:b0:637:e94a:fb56 with SMTP id
- 4fb4d7f45d1cf-64105b7a5famr781421a12.35.1762295473353; Tue, 04 Nov 2025
- 14:31:13 -0800 (PST)
+	s=arc-20240116; t=1762295558; c=relaxed/simple;
+	bh=auKoRKXTDKJFUa86P3gN7iESWMTss+CyKDPpO7mwKjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A1fWWKOW3u1Xdc0ZPiguulMZur9iQ2POWlboGLGLYoP/1Ys5WkfW017HKUEu6QoTyZRpguwXLwCMeiNqLp57+NP2LGWXbxSlwSxC0BwTWlbrK7j930dWY1rvk6InHfMh/rx8QB/Zc5IjfuJ7zCHumt6ujwyTeHeLPcLT/BQZBtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=tcVuinAg; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 30ADA53410B5;
+	Tue, 04 Nov 2025 23:32:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1762295552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KAJKsthk64RKF8QGGyi5QTBRpSjezTgi8wqWCRNoUco=;
+	b=tcVuinAgdfnoH+rXpZSc0z0fCgDcOQPFp97/Yr+z+4oln7K/dmPisICOv/PItcbO8ipcie
+	O12AfSGxyWQoPBlgbAg2joDIi3hY70/ZXPQpVR8kQhOW1JS3VHykyq3nirRbdrWsQXHkch
+	bVIL4bUDtUMepdJuqV9Oa+++5aOkfTk=
+Message-ID: <aab04ca7-999c-4143-bdc0-e947d46e1424@ixit.cz>
+Date: Tue, 4 Nov 2025 23:32:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029225748.11361-2-eraykrdg1@gmail.com> <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
- <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
- <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
- <aQQ0DLqL0iVN7D15@arch-box> <leys5guzkcvlilaccjmsw7cvncm6o2vqo2wwezhuz7r6lcfjnk@va3cnphl4zf3>
- <aQS_oUDXGt_nF__d@arch-box> <stmj7kbqis2idlscf5iwch23ft2azuyyr7q2kmelavjk5lnug4@66in667d6bym>
- <aQTGFvVX22RmDhb0@arch-box>
-In-Reply-To: <aQTGFvVX22RmDhb0@arch-box>
-From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Date: Wed, 5 Nov 2025 01:31:01 +0300
-X-Gm-Features: AWmQ_blkF6ejm-czi2Y2XOMbxdhh-bOt3sr0JARj8POY-hJwKrtKgmSpVDXLl_E
-Message-ID: <CAHxJ8O9Yci6QzGckrsWhuoDHatYyOOok++ySmYc43WbEhFy3xg@mail.gmail.com>
-Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
- during read
-To: ocfs2-devel@lists.linux.dev
-Cc: Albin Babu Varghese <albinbabuvarghese20@gmail.com>, mark@fasheh.com, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	Heming Zhao <heming.zhao@suse.com>, david.hunter.linux@gmail.com, 
-	skhan@linuxfoundation.org, 
-	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sm8150: Move usb-role-switch
+ property to common dtsi
+To: Piyush Raj Chouhan <pc1598@mainlining.org>, linux-arm-msm@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com
+References: <20251104221657.51580-1-pc1598@mainlining.org>
+ <20251104221657.51580-3-pc1598@mainlining.org>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20251104221657.51580-3-pc1598@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi folks,
+You have to provide the commit message, even when the change seems to 
+you self-explaining. Just one or two sentences explaining why.
 
-I'm having some trouble getting xfstests-dev set up to test some ocfs2
-changes. I can't seem to get the configuration working correctly to run
-the ocfs2 test group.
+David
 
-Could anyone share some insights or pointers on the proper setup? Any
-help would be much appreciated.
+On 04/11/2025 23:16, Piyush Raj Chouhan wrote:
+> Signed-off-by: Piyush Raj Chouhan <pc1598@mainlining.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8150-hdk.dts | 1 -
+>   arch/arm64/boot/dts/qcom/sm8150.dtsi    | 2 ++
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> index 0339a572f34d..29afee6160cd 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> @@ -693,7 +693,6 @@ &usb_2 {
+>   
+>   &usb_1_dwc3 {
+>   	dr_mode = "otg";
+> -	usb-role-switch;
+>   };
+>   
+>   &usb_1_dwc3_hs {
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> index acdba79612aa..cd05975dacd1 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -3661,6 +3661,8 @@ usb_1_dwc3: usb@a600000 {
+>   				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
+>   				phy-names = "usb2-phy", "usb3-phy";
+>   
+> +				usb-role-switch;
+> +
+>   				ports {
+>   					#address-cells = <1>;
+>   					#size-cells = <0>;
 
-Cheers,
-Ahmet Eray
+-- 
+David Heidelberg
 
-Albin Babu Varghese <albinbabuvarghese20@gmail.com>, 31 Eki 2025 Cum,
-17:22 tarihinde =C5=9Funu yazd=C4=B1:
->
-> > > > I support adding make_bad_inode() in ocfs2_read_inode_block_full().
-> > > > ocfs2_read_locked_inode() calls ocfs2_read_inode_block[_full] to re=
-ad the inode
-> > > > from disk. However, ocfs2_read_inode_block[_full] have many callers=
-, and in
-> > > > current code, only ocfs2_read_locked_inode() marks the inode as bad=
-. All others
-> > > > forget to set the bad_inode.
-> > > >
-> > > > The 'forbid' write operations when read-only mode is worth another =
-patch, and
-> > > > I plan to create this patch. This patch adds a similar ext4_emergen=
-cy_state()
-> > > > function for ocfs2.
-> > >
-> > > We're working on this as part of the Linux Kernel Mentorship Program,=
- and we'd
-> > > love to take on implementing the read-only check if it's not overly
-> > > complicated. We're just beginners, but we thought it would be a great=
- learning
-> > > experience to work on this following the ext4 pattern you mentioned -=
- if you
-> > > haven't already started working on it by the time you see this reply.
-> >
-> > I haven't started the patch job, you are welcome to take it.
->
-> Thank you! We'll work on it and send the patch for review.
->
-> Cheers,
->         Albin
 
