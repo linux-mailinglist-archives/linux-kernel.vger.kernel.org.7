@@ -1,96 +1,120 @@
-Return-Path: <linux-kernel+bounces-884104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC27C2F5EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:25:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8DEC2F5F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:26:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDD4189A3A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1833B7A83
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250962C11FC;
-	Tue,  4 Nov 2025 05:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFLBjI6J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E17E286885;
-	Tue,  4 Nov 2025 05:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB89A2C11F0;
+	Tue,  4 Nov 2025 05:26:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B1E286885
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762233946; cv=none; b=LCijWon8pEgVGsC+Plpyw16s5Szq8/z72L06JqNsmkD7ZdqqSoP3u2ZCwsyaEdAQAsnkSIbRpLXr8WbkAc5U6PhPlHursFs6fJR1YiDrYHMtqry6aVLEqorvUivDYHj7Ry9dURqHOFNt3NjowE99xkiLnU7udvkL/tQBW+bLHEc=
+	t=1762234007; cv=none; b=b7VsJYpWoF9pZ+ip5GAHYtxbPevZiQET3WZqZ6utdjE8docVaJEm12yMKjS7+Hy9ji6QgXFrU1TbIBaahom/nD+FLe0IhoxfKgyRoXqJlGv9fs3vQ0Yx34aBvSPKPqqIwfwX+Qh0NuUrkl0FEdpH8Kq2qfZdk5D+lJBWqvvsPZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762233946; c=relaxed/simple;
-	bh=O9jQ9RG4Snm/WXV0wdgEuzbv7+LCQop7+T+faHf011g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSGc8+kGMBzDkeGYuM1WHLRcGiXHzN3YrNYRS5+Xkm0VZtxhXvLEKzjjqZQI/dMxnJn3WbkEWx5+hpul3mxZriV4Mf1lv3H8iKVQROWzlWsNdf3sEqcKXHLstwkpNeccOOJP3jzaJ3u2kE7rcyZdz4CGp/Z0nqF9+Tn2pRitSpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFLBjI6J; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762233941; x=1793769941;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O9jQ9RG4Snm/WXV0wdgEuzbv7+LCQop7+T+faHf011g=;
-  b=TFLBjI6JspiAc5Ke5Q16Ui2Ie+V0V4/LsREVxVifnCTUQxRBtjM5ZQA1
-   2TtLKsXwDfkpQGIc11C5cnIqMBu9aOkxEuNrFaODIqC7XCCFUsoQLgvrz
-   rPZVgR5NgOM6Py9ntF37E5jSdGoPX0tW2fO8qqHy821Vk16QXdwynRRZL
-   L3yf8KQgSN+dZTxFaPdAnRp/BYLat/sUq4tHORNS+ZMiSsTjBCktVYngt
-   0NoyTFA0hWpxLo6bXMX4F90UeYNMh8+GCTpKLNYQl+yq/djFE3iX3XwRg
-   oKVfLcjiWgKawQf64XL5kFPA7dtBoNMgQQGLbkDHzZrMU2rA2YqX4cZu0
-   Q==;
-X-CSE-ConnectionGUID: fR6ygbqUSuqX5XXfRSboPQ==
-X-CSE-MsgGUID: ZcHlj/j7SoWlZXnCnDlbDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64360287"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="64360287"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 21:25:41 -0800
-X-CSE-ConnectionGUID: Lgh0UUMtQJClmh7XjdmItA==
-X-CSE-MsgGUID: zJSbmmbkQlS4R0vNsh1mSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="186741457"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Nov 2025 21:25:40 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 19D7B95; Tue, 04 Nov 2025 06:25:39 +0100 (CET)
-Date: Tue, 4 Nov 2025 06:25:39 +0100
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 0/4] pinctrl: intel: Unify error messages
-Message-ID: <20251104052539.GK2912318@black.igk.intel.com>
-References: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762234007; c=relaxed/simple;
+	bh=blFs3Nnkx2tTKk80+jF/bZSZsfa6YMYZt/Cm6L77Pgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2rhRqatH+etwRhCrVZyzpVfCmFDtnDKfwWttV4UDcgcqHi38qiw5GYyp6c4g9kFUmQ8QA7KmT7pDhn0Dlr9+zCR/LBnC/GrulLycae9mWImXQwXoY1TVpG+NTHfEra+7/NuNqYfONXNsWVsZgBVh2TRTdBAfJeSjxOgHxBNp7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BEC51CE0;
+	Mon,  3 Nov 2025 21:26:36 -0800 (PST)
+Received: from [10.164.18.64] (unknown [10.164.18.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC0BE3F63F;
+	Mon,  3 Nov 2025 21:26:40 -0800 (PST)
+Message-ID: <5bb311a5-b59f-4897-b4d0-4e06d7d2b3f2@arm.com>
+Date: Tue, 4 Nov 2025 10:56:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with
+ debugging
+To: Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 08:58:27PM +0100, Andy Shevchenko wrote:
-> Unify error messages with help of dev_err_probe(). This brings
-> a common pattern with error code printed as well. While at it,
-> make the text message the same for the same reasons across
-> the Intel pin control drivers.
-> 
-> Andy Shevchenko (4):
->   pinctrl: baytrail: Unify messages with help of dev_err_probe()
->   pinctrl: cherryview: Unify messages with help of dev_err_probe()
->   pinctrl: intel: Unify messages with help of dev_err_probe()
->   pinctrl: tangier: Unify messages with help of dev_err_probe()
 
-For the series,
+On 03/11/25 5:54 pm, Vlastimil Babka wrote:
+> In review of a followup work, Harry noticed a potential infinite loop.
+> Upon closed inspection, it already exists for kmalloc_nolock() on a
+> cache with debugging enabled, since commit af92793e52c3 ("slab:
+> Introduce kmalloc_nolock() and kfree_nolock().")
+>
+> When alloc_single_from_new_slab() fails to trylock node list_lock, we
+> keep retrying to get partial slab or allocate a new slab. If we indeed
+> interrupted somebody holding the list_lock, the trylock fill fail
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Hi Vlastimil,
+
+I see that we always take n->list_lock spinlock by disabling irqs. So
+how can we interrupt someone holding the list_lock?
+If we are already in a path holding list_lock, and trigger a slab allocation
+and recursively end up in the same path again, we can get the situation
+you mention, is that possible?
+
+> deterministically and we end up allocating and defer-freeing slabs
+> indefinitely with no progress.
+>
+> To fix it, fail the allocation if spinning is not allowed. This is
+> acceptable in the restricted context of kmalloc_nolock(), especially
+> with debugging enabled.
+>
+> Reported-by: Harry Yoo <harry.yoo@oracle.com>
+> Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
+> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+> as we discussed in the linked thread, 6.18 hotfix to be included in
+> slab/for-next-fixes
+> ---
+>   mm/slub.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index d4367f25b20d..f1a5373eee7b 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4666,8 +4666,12 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+>   	if (kmem_cache_debug(s)) {
+>   		freelist = alloc_single_from_new_slab(s, slab, orig_size, gfpflags);
+>   
+> -		if (unlikely(!freelist))
+> +		if (unlikely(!freelist)) {
+> +			/* This could cause an endless loop. Fail instead. */
+> +			if (!allow_spin)
+> +				return NULL;
+>   			goto new_objects;
+> +		}
+>   
+>   		if (s->flags & SLAB_STORE_USER)
+>   			set_track(s, freelist, TRACK_ALLOC, addr,
+>
+> ---
+> base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+> change-id: 20251103-fix-nolock-loop-854e0101672f
+>
+> Best regards,
 
