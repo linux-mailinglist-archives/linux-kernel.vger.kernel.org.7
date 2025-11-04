@@ -1,138 +1,104 @@
-Return-Path: <linux-kernel+bounces-883992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D163BC2F06F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:52:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E503C2F075
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:53:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCF7189C878
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:53:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D27844F115A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74837264630;
-	Tue,  4 Nov 2025 02:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEB7260569;
+	Tue,  4 Nov 2025 02:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlPM2pRD"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="q7xTFejP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595272609D6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F65525A631;
+	Tue,  4 Nov 2025 02:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762224750; cv=none; b=BUDPWOCUOP/FdrDTenroC3q/Ir1h8jz1sZs/zbZUZTxbCvVjNPoDcJEuSSLSquehos0cPEbdFp4DA0pSlVrK9LCk6wka7WFxM6XmyMqyiDYm/8iYzT2CYBMsST3opA37Q5WPmCp6mzJBbqGR5rBV1KAsEyTmz5VBLfe4q41Eqjc=
+	t=1762224748; cv=none; b=Kf70K87BbCgArm+k5AYj9T+kB6cnaqOcxUX8Mz1VvDfxgh3bpsi8LCyW7ybfxuJZelaO85JL6S7HNHN5LBdYTRp1EAD0PVgNdwhzjXEWSEDZ/OT/HvdbWVneh9wELsxreK4wqYDisfVFYCxcXMZE9rz8q9iydyp1ySkRr6lu0ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762224750; c=relaxed/simple;
-	bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTRqIRjnrXkJ/p46kaewPS1a3lfYe1AQ2ro/mW+GsKW5Dwcz1Tdh45o5w4KQtMnqADPo5uQrXobSNXpaytnyS0oToK4sfw0nwB8Iao0np0Lhk3Y42sYsT8gjByXUbcnSvZVK9CCWmdyWnQj5nePFsrTVOb49l+vOFXD4B0VDguI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlPM2pRD; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2955805b7acso18275095ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 18:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762224749; x=1762829549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
-        b=BlPM2pRDTUqYwBJ9bOb0yj+7ByZDKskzd4eHvDD6zsFjTUoiZ+fs5HrHgMM8OuQLCW
-         jnzl4KEMwMPixepMz8wgXn7wCGCdhQXFbycJ1iYYFXn7XIAkqB/WWFWyaM2/21uPYJZE
-         Yl3x5Npbnr0dpF97HDjYMisHOXyLReeRsKqC0h4O/O09mIQfK2yBysPGmBcJjzv5nF+z
-         UzvHuep97IuhqC7ADW80F1OPs6TzPd8mwVNU71l1P+Ln5Zf1LZivFzdJxt+bRXSFTpGO
-         3HNZuexNAbuJwhdtgKeB+oVgI/m4FRYn0oEq7H3a536G0ZMTnr1MWN+qZe9ewKgGRDSd
-         oecA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762224749; x=1762829549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
-        b=rcuX4PvexYa/Gvca68g3qNogPdCz7uaF8xZppbfQvg2BtuWTg6huNEhZFuu5+yb75f
-         55AYVPMfpkDYHch7hJHzFqpmAHUeZRKtEcXtXrJWa1F8DfCgHiICKpjM5JOU4leCIAL9
-         zSbKGOZrbExlWQSSCWSO8Wh328uQk+mmW5SKJz0Lsem8gj+HWGc9H9m0OV6BWU7Dw4o5
-         KASx4g2XyJ4wk8IIEXkHas8voS3bpXu39ofTMEAdFN6WPRUL+xFIhgA+GCDhnVVSAQcv
-         JA/C2dFFroM4nOuOOtUtu9MYMqpSFi2ZbXnEUHsPrBXje5l2lhfbVMPBLYOu2M1g6GHw
-         OweA==
-X-Gm-Message-State: AOJu0YyXwGg50CEzb9x2DuhAOcHeX08GkD6wg+WZ4QYVguGV2TsRaUIz
-	pCq35Er9HubSnMkTkUzJV+qigdSxf6wUajPHf0kyWfxZo3dTh5QtPw+s
-X-Gm-Gg: ASbGncvpYT/WsTViAcFnZ0Z/GdOpWhUQYWI+FfOvUHHAdMO9600rOTP9S9PBF3tQ9NS
-	WWe2rZ8nBLOqrwd2Sn0j8TQveMC3xYT7VMQQJYH4RmJkVgfdIOhCtUKqt0AxG8siGf2RN+ge28e
-	zmrkGoNQpKPqWI6ZDZ1qR6ffLChVGekAKGFBQJ5RldyY5AxeOt1JgQeZ/ixnMcMHM4uLnxfU9vV
-	WZ9KY9/09zB6ihBcX2k3gNJtbImSTiIuq6dkCh/JO0wN1mQWiMCttqozNlNveU1hdg+K4TKKAco
-	QC0ZFPWtiZEH1cRRAiQwWXQuMWB8OSTyZkLSJ9NqsLgExPj+qe4Z3wTRY4fF6WGF3EFKi6TMwoF
-	5EQikTPAsrxdes2O8dS4hzdeaCYeiVdcV/Rwv3bwgzjhi6Mtt3sZURW08AS1J2q9m+nfe4F+ice
-	/LMWFoHFjRsC0=
-X-Google-Smtp-Source: AGHT+IFAa3BjhnfTACYpqySRfsVkvcgHY7lS7G3ybxCoYsaIw+Dr/1CCWJZhz/f7vHQRsrc7EHjyNQ==
-X-Received: by 2002:a17:903:41cd:b0:295:5623:e586 with SMTP id d9443c01a7336-295f93ab7abmr20256195ad.10.1762224748421;
-        Mon, 03 Nov 2025 18:52:28 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998887sm7185115ad.42.2025.11.03.18.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 18:52:27 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 83A5C420A6B9; Tue, 04 Nov 2025 09:52:25 +0700 (WIB)
-Date: Tue, 4 Nov 2025 09:52:25 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Vamsi Attunuru <vattunuru@marvell.com>,
-	Srujana Challa <schalla@marvell.com>,
-	Julien Panis <jpanis@baylibre.com>
-Subject: Re: [PATCH] Documentation: misc-devices: Fix C macro cross-reference
- syntax
-Message-ID: <aQlqaflrr8Ku1TFe@archie.me>
-References: <20251104022242.19224-1-bagasdotme@gmail.com>
- <2025110402-going-swore-319e@gregkh>
+	s=arc-20240116; t=1762224748; c=relaxed/simple;
+	bh=Xovpelytaf1rVw6/MGWZziRvb+wid13hMajWjKa65Y8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VhwOtx5rm+ql1bYHfJ+8Ri1n5QOBJmgwUOi8zO6w4bgJXqVqw13Ed4Ywjeu4XbuQSX0u6YNgc34h3at3pUJIeajusMYHwedZt6d+eaO1WpIV1BUJxrpWgqPMX1C0OJDsM3cRHcIClwwEc99wPCCuN08Eb8oW4DvodtW94VhCs68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=q7xTFejP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA1DC4CEFD;
+	Tue,  4 Nov 2025 02:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1762224748;
+	bh=Xovpelytaf1rVw6/MGWZziRvb+wid13hMajWjKa65Y8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q7xTFejPKd6NhT06RWpXtSixWQbEpsjjKBezm1wVg44aGl0ALe0Oy1XhGDJVqSHHy
+	 MAJJ0qgiFXuHTQuaQRCrTT7oBrEjP3r5aNq6iZqPuLddO7lzY8BxtsRizHiiSc4pKe
+	 hIbRUTmPyMmu1L6vvb9GyRzw3s52raw3T8RmJaig=
+Date: Mon, 3 Nov 2025 18:52:26 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Ankit Agrawal <ankita@nvidia.com>, Aniket Agashe <aniketa@nvidia.com>,
+ Vikram Sethi <vsethi@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>, Matt
+ Ochs <mochs@nvidia.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>, "nao.horiguchi@gmail.com"
+ <nao.horiguchi@gmail.com>, "david@redhat.com" <david@redhat.com>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
+ <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
+ <surenb@google.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
+ "bp@alien8.de" <bp@alien8.de>, "rafael@kernel.org" <rafael@kernel.org>,
+ "guohanjun@huawei.com" <guohanjun@huawei.com>, "mchehab@kernel.org"
+ <mchehab@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+ "kevin.tian@intel.com" <kevin.tian@intel.com>, "alex@shazbot.org"
+ <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>, Kirti Wankhede
+ <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>, Zhi
+ Wang <zhiw@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>, Krishnakant Jaju
+ <kjaju@nvidia.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+ "ira.weiny@intel.com" <ira.weiny@intel.com>,
+ "Smita.KoralahalliChannabasappa@amd.com"
+ <Smita.KoralahalliChannabasappa@amd.com>, "u.kleine-koenig@baylibre.com"
+ <u.kleine-koenig@baylibre.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] mm: handle poisoning of pfn without struct pages
+Message-Id: <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
+In-Reply-To: <aQjy0ZsVq7vhxtr7@tiehlicka>
+References: <20251026141919.2261-1-ankita@nvidia.com>
+	<20251026141919.2261-3-ankita@nvidia.com>
+	<20251027172620.d764b8e0eab34abd427d7945@linux-foundation.org>
+	<MW4PR12MB7213976611F767842380FB56B0FAA@MW4PR12MB7213.namprd12.prod.outlook.com>
+	<aQRy4rafpvo-W-j6@tiehlicka>
+	<SA1PR12MB71998D21DD1852EB074A11ABB0C6A@SA1PR12MB7199.namprd12.prod.outlook.com>
+	<aQjy0ZsVq7vhxtr7@tiehlicka>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lSOn3Rl1q01u6ClR"
-Content-Disposition: inline
-In-Reply-To: <2025110402-going-swore-319e@gregkh>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 3 Nov 2025 19:22:09 +0100 Michal Hocko <mhocko@suse.com> wrote:
 
---lSOn3Rl1q01u6ClR
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > Hi Michal, I am trying to replicate what is being done today for non-PFNMAP
+> > memory failure in __add_to_kill
+> > (https://github.com/torvalds/linux/blob/master/mm/memory-failure.c#L376).
+> > For this series, I am inclined to keep it uniform.
+> 
+> Unless there is a very good reason for this code then I would rather not
+> rely on an atomic allocation. This just makes the behavior hard to
+> predict
 
-On Tue, Nov 04, 2025 at 11:30:18AM +0900, Greg Kroah-Hartman wrote:
-> On Tue, Nov 04, 2025 at 09:22:42AM +0700, Bagas Sanjaya wrote:
-> > Macro references in Octeon CN10K and TI TPS6954 docs are erroneously
-> > written using :c:macro:: (double colon) rather than :c:macro: (single
-> > colon), making these rendered in htmldocs output as italics with
-> > verbatim roles. Correct them.
-> >=20
-> > Fixes: 5f67eef6dff394 ("misc: mrvl-cn10k-dpi: add Octeon CN10K DPI admi=
-nistrative driver")
-> > Fixes: dce548889650c1 ("Documentation: Add TI TPS6594 PFSM")
->=20
-> Please break this up into 2 different patches as you are doing 2
-> different things.
+I don't think this was addressed in the v5 series.
 
-OK, thanks!
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---lSOn3Rl1q01u6ClR
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQlqZAAKCRD2uYlJVVFO
-o7GmAQDqB8gDbrktA53sjm3ex+1VOcZCMxkOareCbTLb8rMVNQD9HAR3k6pc345R
-ommijr4R+ev31rX+gxlHfC+0XDNxYwo=
-=w8af
------END PGP SIGNATURE-----
-
---lSOn3Rl1q01u6ClR--
+Yes please, anything we can do to avoid GFP_ATOMIC makes the kernel
+more reliable.
 
