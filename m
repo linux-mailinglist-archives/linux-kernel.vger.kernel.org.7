@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-884642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7006CC30A7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACBBC30A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 452B54E9DCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F236D189CA22
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6682E1C4E;
-	Tue,  4 Nov 2025 11:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298882E1EE0;
+	Tue,  4 Nov 2025 11:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="u9bHmOJJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zJBvIECz"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dkNm3JJf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/yoHw74H";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dkNm3JJf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/yoHw74H"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAC32D9EE3;
-	Tue,  4 Nov 2025 11:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0332F2DAFC8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762254300; cv=none; b=UR7pM8rn53KFTi4m7YZCV6EGRBicWKzLs1emq56Qm+fslCruVioO4QeI4G6J7A9xIXpJCYNIxXykgIWWnMeij707kuQ2yig7Is17b3fzywdgHsSJ6kPBAwUGwKvpqksYdey75AJyxVlv6yqXF/2IBw8we1/vmP25JBTNKJqgUqE=
+	t=1762254388; cv=none; b=fj9ntYcPJ4Iq9QLQ505iRpsoTv/gCKGGjuGykROg5MwkwXbvPmaM0T4L7jnif4AWhtYKcz51QLYD02skE3bcLH1Fk3KXOE25fw1MQZu7cYkxNFbhLoG58UbdYySelZXoSzrQCAchNF3iRsRS5t8uhOevsCG8bRD5lRx1pQWDkxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762254300; c=relaxed/simple;
-	bh=mnnjEoZG7SCrvo/98JBq1+J/edDSNk2PsJilNdtTjGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWnat3x05P4TX05PuwWyo08RE0hRO6Bi5zFPXw9hmUxEGkD5b2PBRi1C9q2ZuCjmSbckawaepgnscfbPWBm53sgpyVGqtTY71MQK5hpnM1/Gh5+zBDJyLe+bFgjTmnGVyii9zSDrYwUxaNnuuHBk+ltkNd18wZleNZc4XK4dH94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=u9bHmOJJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zJBvIECz; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id E99D81D004E5;
-	Tue,  4 Nov 2025 06:04:55 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Tue, 04 Nov 2025 06:04:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1762254295; x=
-	1762340695; bh=dAKnNYKCOZLWWlDSxnoE7+xMSmMtjXAvFcmPRzidAyU=; b=u
-	9bHmOJJjVL8bANBsqNriNlKUVhGbC1dBFRf1qPSxVJwKWvlVqyqGO1MzMPemaQFx
-	GdhSYtrP/TfpTPgDnYOX2qfNy32i/JZjFwThzevkyUq8s7WN2ukHr1eVbh65mKBb
-	Q4lWsuDrAyfvffuhgnm+WUhnRkt9Iw9+xMhR59xBtGSLP8ix5emur3nMSAoudFaL
-	dkoPK8V71Cee9/1X9HWDRjibRqJ4Q4rwsA97JZOt6QtshrVx260t08pkB7QvQtnF
-	N8reNBMilVtElrW2AL/9l9MW/4gO4xC+YHqAiDFoges6l0Ih6rolbAhlYKHB2Ujo
-	u89A1cn258uQaKFxpBcAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762254295; x=1762340695; bh=dAKnNYKCOZLWWlDSxnoE7+xMSmMtjXAvFcm
-	PRzidAyU=; b=zJBvIECzJop+kODsr9Iklplxx9kuhepW8FAgWBGk17jLyTEY6gi
-	cQlsAnSNHIE5vN++/UItVoU8A/fPadksbqInjpra02jizRZqIUHr4Git3YKSuRWH
-	MaO6jn/IvAjyVdt2gWIqq4ZKgZ6w4h3rcEI2ogsn57vNTzcNqM0qgqAb4Uyhvkcg
-	6zKTzJlhhKmqBU9MhIBsE4dE6DhTSUxz45b4oQVbMT3DGiqJzoG0uI7ewdK5PGmv
-	2xOnfVXBi1YQqi8rCs1Yt1npFHfOBKoq4AGOMhHOIra4AxoMGkWBdtgwo6GEYUxz
-	C/PWFFEZ1gZ0NoUnUYAaeidgaX+I6gsBWJw==
-X-ME-Sender: <xms:1t0JaceVscXoOblLcO6qu3Kx6IQ6Fkce5jbaYTjlRqt4iQZOSUenJw>
-    <xme:1t0Jaa7bS2y0rOkJdteeqCnywOCdXogODZAumO3GylbJGTe9ALFERrMxiSRYS6whA
-    BGyyE_4xoXTECGuycM5wXCbMGGiVaKTWmHbZyFJQfD6KyxLK7u_Hj0>
-X-ME-Received: <xmr:1t0JaRbAACYyhzeF2qwV6I4OZxG33q9AOmv_ZeXteLEFMkqB6m8jrqK4qKxf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedtkeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
-    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
-    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
-    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopeifrghnghhlihgrnhhgjeegsehhuhgrfigvihdrtghomhdprhgtphhtthho
-    pegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlh
-    hofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepshhhuh
-    grhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:1t0JacGA86B4jibY7-PgUQ15JCu-DMoDqpJV0mrF85uosowDmker7A>
-    <xmx:190JacmFviT6lEZhdz9YFn62r0UVWQvNbaEaefcQlnE0bp0X3XkbLw>
-    <xmx:190JaRDUHaX5yHuqayKjD2IItMfTepZo7UtuIIsudivRfoxtSv6AJQ>
-    <xmx:190JaeAyZJiQ5CSp4bRklta1bQySiyGHknAt7c-Fh_fcWpq05ZHXYQ>
-    <xmx:190JacxDygH31MmBzbHd0x5HDl0c2op7DUQ_7jReLF7FEf-IPHQK3Ra3>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Nov 2025 06:04:54 -0500 (EST)
-Date: Tue, 4 Nov 2025 12:04:52 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Wang Liang <wangliang74@huawei.com>, andrew@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	shuah@kernel.org, horms@kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
-Message-ID: <aQnd1HQ-b7wFI2WP@krikkit>
-References: <20251030032203.442961-1-wangliang74@huawei.com>
- <aQPxN5lQui5j8nK8@krikkit>
- <20251030170217.43e544ad@kernel.org>
- <aQiANPQU9ZEa0zCo@krikkit>
- <20251103160133.31c856a4@kernel.org>
+	s=arc-20240116; t=1762254388; c=relaxed/simple;
+	bh=UcWiyHsJB2Kz5U+kpvC5q7i9YCuZeiYmXezgsAICK5I=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g93QUUfzlt3o7PcltvFbjkri3JZh/yXw3GViJcWfSpmHsmNyHvtQZeF2rhjAomuGaoHx1Gpqzv4cSYjDcs+OGg4zeCyEaCnqHynr7jwHI0EPMKDng7YFUVt7U1jUTi682nS3KB3HSCjrxR4nxezOrTKU2wwL/bKEX2RFFq+ChbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dkNm3JJf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/yoHw74H; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dkNm3JJf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/yoHw74H; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2484A211A2;
+	Tue,  4 Nov 2025 11:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762254385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+1w8v93M1maIude84/kjRuohQ/pOk2oTDPQmPP4h1U=;
+	b=dkNm3JJfq+Kee5/rpJNwXLRmwDmfR+2NEn4VhAnuIiyT2P8FHk6ojPY/t2TxX7eM/LhfVJ
+	fkDrGaN+41eQMNijJMnGl3kNMj6Rn64pduC81lTgk/ZauTjedZWnHmBT1mDng3lp7gDjUr
+	lKCw6g6B0PzND6CiPDV64akftQnqfKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762254385;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+1w8v93M1maIude84/kjRuohQ/pOk2oTDPQmPP4h1U=;
+	b=/yoHw74HeESJTKOlvdXHAUAqs7qhUZqRFrDNTvUrY+FLRKNokXgHY/FXD5/Wl21j3dOn+V
+	4AOa/ytJPQpPOwBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762254385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+1w8v93M1maIude84/kjRuohQ/pOk2oTDPQmPP4h1U=;
+	b=dkNm3JJfq+Kee5/rpJNwXLRmwDmfR+2NEn4VhAnuIiyT2P8FHk6ojPY/t2TxX7eM/LhfVJ
+	fkDrGaN+41eQMNijJMnGl3kNMj6Rn64pduC81lTgk/ZauTjedZWnHmBT1mDng3lp7gDjUr
+	lKCw6g6B0PzND6CiPDV64akftQnqfKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762254385;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+1w8v93M1maIude84/kjRuohQ/pOk2oTDPQmPP4h1U=;
+	b=/yoHw74HeESJTKOlvdXHAUAqs7qhUZqRFrDNTvUrY+FLRKNokXgHY/FXD5/Wl21j3dOn+V
+	4AOa/ytJPQpPOwBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E540C139A9;
+	Tue,  4 Nov 2025 11:06:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id j0yPNjDeCWlefQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 04 Nov 2025 11:06:24 +0000
+Date: Tue, 04 Nov 2025 12:06:24 +0100
+Message-ID: <87wm46giq7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Pauli Virtanen <pav@iki.fi>
+Cc: linux-bluetooth@vger.kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: add min_mute quirk for SteelSeries Arctis
+In-Reply-To: <a83f2694b1f8c37e4667a3cf057ffdc408b0f70d.1762108507.git.pav@iki.fi>
+References: <a83f2694b1f8c37e4667a3cf057ffdc408b0f70d.1762108507.git.pav@iki.fi>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103160133.31c856a4@kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-2025-11-03, 16:01:33 -0800, Jakub Kicinski wrote:
-> On Mon, 3 Nov 2025 11:13:08 +0100 Sabrina Dubroca wrote:
-> > 2025-10-30, 17:02:17 -0700, Jakub Kicinski wrote:
-> > > On Fri, 31 Oct 2025 00:13:59 +0100 Sabrina Dubroca wrote:  
-> > > > I guess it's improving the situation, but I've got a system with an
-> > > > ethtool that accepts the --json argument, but silently ignores it for
-> > > >  -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
-> > > > output), which will still cause the test to fail later.  
-> > > 
-> > > And --json was added to -k in Jan 2022, that's pretty long ago.
-> > > I'm not sure we need this aspect of the patch at all..  
-> > 
-> > Ok.  Then maybe a silly idea: for the tests that currently have some
-> > form of "$TOOL is too old" check, do we want to remove those after a
-> > while? If so, how long after the feature was introduced in $TOOL?
-> > 
-> > Or should we leave them, but not accept new checks to exclude
-> > really-old versions of tools?  Do we need to document the cut-off ("we
-> > don't support tool versions older than 2 years for networking
-> > selftests" [or similar]) somewhere in Documentation/ ?
+On Sun, 02 Nov 2025 20:10:15 +0100,
+Pauli Virtanen wrote:
 > 
-> FWIW my current thinking is to prioritize test development and kernel
-> needs over the ability to run ksft on random old set of tools and have
-> clean skips. IOW avoid complicating writing tests by making the author
-> also responsible for testing versions of all tools.
+> ID 1038:1294 SteelSeries ApS Arctis Pro Wireless
+> is reported to have muted min playback volume. Apply quirk for that.
+> 
+> Link: https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/4229#note_3174448
+> Signed-off-by: Pauli Virtanen <pav@iki.fi>
 
-I see. I liked Andrew's idea ("embed the date the requirement was
-added into the test"), but it goes completely in the opposite
-direction.
+Thanks, applied now.
 
-Figuring out why exactly a test failed in case of an old tool
-(unexpected output passed to some pipe/parsing, exit with a non-zero
-code, maybe other issues) is not always obvious. So without version
-checks on the tools, I think we have to assume that the test requires
-the latest version of all tools it calls (or at least a very recent
-one). Which I guess is reasonable for upstream kernel development.
 
-> The list of tools which need to be updated or installed for all
-> networking tests to pass is rather long. My uneducated guess
-> is all these one off SKIP patches don't amount to much. Here for
-> example author is fixing one test, I'm pretty sure that far more
-> tests depend on -k --json.
-
-A quick grep found only a few more (in python scripts under
-drivers/net) for -k. But (also from a quick grep) many tests seem to
-use jq without checking that the command is present.
-
-So I guess you would lean toward not accepting any such patch, not
-requiring new tests to have SKIP checks, but leaving any existing
-checks in? (and I suspect removing all the existing ones wouldn't
-actually reduce the flow of "add check for too old $tool" patches, so
-it probably doesn't make sense to do that)
-
--- 
-Sabrina
+Takashi
 
