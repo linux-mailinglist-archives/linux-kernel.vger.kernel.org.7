@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-885463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F66C32F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 21:52:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42893C32FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 21:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3CA693438D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 20:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03E93B390B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 20:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91DE2DF151;
-	Tue,  4 Nov 2025 20:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D475A2ED165;
+	Tue,  4 Nov 2025 20:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZAzBnIY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGejYg6b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029A4D27E;
-	Tue,  4 Nov 2025 20:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E409F9EC;
+	Tue,  4 Nov 2025 20:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762289552; cv=none; b=mCsxX0gvZp1phCN0hI+EzC0+fO2gHktQQf/RUIVA/FUmIAq3jtzj6M6Qn95ntQK8Tef5laDmNFKiS/2VdnfPqjctb3ekpdEFkWcSsMMbYhMYDrxX09wxOJXqZo8cDAiZYEo8LujAlsuEoUZruJNHzxx2NEno1KkkdGwX3syqHLE=
+	t=1762289979; cv=none; b=nsAphm8FJuKx7fFRh1FtvLC4jnyEUIUgFGQLMyn/dFosCzmhUSewi3i7Xb+1S89MnEP33y+g7ZG1Zg0h79Nr8TgYnYYhOjZ8gB0ngRke6T6BGCVpvHDOvAm9EwzQ57RvBrKsoxSlhr0JipApTWnC/+pNDia6lE2xNUkhBUMQ2fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762289552; c=relaxed/simple;
-	bh=LdYsf6Q7sFeSDFSuH51djFML5cRsgTGNO7mFPwkyuQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQL5IBBJwDYATrUr23aDurzN65fevh/mPUxibT58UWFs/W4wBakHKPTuz9W0p+9evXBGrZbsykP/gSe0lisu8dZTb3xjX7llWLG/h7s8Mq3Krv+XkL2lz/UEk10xzutvdWNoqHr6ELZLQ0jsDlCJqNuVFdI1JJdFzkwbdPGJZtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZAzBnIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B27AC4CEF7;
-	Tue,  4 Nov 2025 20:52:31 +0000 (UTC)
+	s=arc-20240116; t=1762289979; c=relaxed/simple;
+	bh=8PLo1vEl1baJbraulj2KcCy3IhdKLmTO4iwq+CU+rNE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pA+P8nCGCtUipdZScosrEGTVwHHp717NIGPQRg6YgXK64YSPYpDvzt3eKBqhObY64JURp43W5LKC1F7IAOl4nidI/YZ6mlD5PNvmLqojsIKJczV7+rh7f1pIbRHMYpbG8aTkh4F1J/vYNW/tKV4Ln2XXoTKLYPS2BmmepJHllOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGejYg6b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8ECC4CEF7;
+	Tue,  4 Nov 2025 20:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762289551;
-	bh=LdYsf6Q7sFeSDFSuH51djFML5cRsgTGNO7mFPwkyuQw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DZAzBnIYM52HWvkY+QUubrczjaHQy63871/6iqVPYU5syzGZhLPHWkd7bAyB1EXAQ
-	 e6YJgvOYrHalnGG30BObgCdzYZnEGxLYpRpjnRFo02FlAKdm76SQzwPUxrq9t+pkHs
-	 9NScWe5EnfDzdynwha1DzbIwiy0fqLN3m7zYC1iUAgPZ2u9yRT4CUwSe4w+c0Hv/Wz
-	 azFPsiw2dx7RCkEdyP0Qg7CM8RFFHg8f2xcKRqo0e/tQe9fc+3qZUh4u9TUkINUpQD
-	 j4aAjEaGmEHhP8Wua+cI9w5H85500IQWbu9cHCphBnVFIleR2F9cUli7PnVFlOMjn6
-	 z1/U6jJxFmaKQ==
-Message-ID: <e40a0d9c-7f38-44ab-a954-b09c9687ea88@kernel.org>
-Date: Tue, 4 Nov 2025 14:52:30 -0600
+	s=k20201202; t=1762289978;
+	bh=8PLo1vEl1baJbraulj2KcCy3IhdKLmTO4iwq+CU+rNE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=HGejYg6bhLXBpB8Dz3OditLI1PxMulJQYoihBd/rs4DuK3OESoS5d9OG4kJlW9T7w
+	 JSopJHh6rQG6N1+B4wDZHCUE/an9NlrjkpzwzO4wEekKkCf4dh78WBceVCc3ewUcBn
+	 P5RBk3PFgx2TiMyLVmTXAq8pJuR/nZCmsiTMpS329M0u8CYEU1fzNRTbnujlSzpnxb
+	 fy3REIS2mhKva+oCi738pS3H14rZseukNmfMe2waBNJMby0xYWPITSoyzffKrog9LB
+	 bTsBe1ttdciyhrX6K87/5tqvZlXTkmP818yAe3cUpTZRx9bpIPqMgf/6CEBTOh4LG+
+	 18S2bsBUR+4Pg==
+Message-ID: <3fc84948-37c2-4191-922e-c2e8c47fa313@kernel.org>
+Date: Tue, 4 Nov 2025 21:59:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,60 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] platform/x86: wmi: Prepare for future changes
-To: Armin Wolf <W_Armin@gmx.de>, viro@zeniv.linux.org.uk, brauner@kernel.org,
- hansg@kernel.org, ilpo.jarvinen@linux.intel.com
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20251104204540.13931-1-W_Armin@gmx.de>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20251104204540.13931-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
+ characters
+To: Daniel Gomez <da.gomez@kernel.org>, Kees Cook <kees@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Malcolm Priestley <tvboxspy@gmail.com>, Hans Verkuil <hverkuil@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20251010030348.it.784-kees@kernel.org>
+ <176219902728.2668573.8447418880394997824.b4-ty@kernel.org>
+ <202511031612.8A05E2FD1C@keescook>
+ <ab56339a-8736-4d68-bf11-d27c8d591597@kernel.org>
+ <5dba319f-56bc-40bf-9137-acb90f3cc754@kernel.org>
+ <032ef71c-fcbd-42a9-98ea-b2568d663978@kernel.org>
+ <1eecc666-ac73-425b-9d11-676fce70592a@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <1eecc666-ac73-425b-9d11-676fce70592a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/4/25 2:45 PM, Armin Wolf wrote:
-> After over a year of reverse engineering, i am finally ready to
-> introduce support for WMI-ACPI marshalling inside the WMI driver core.
-marshaling> Since the resulting patch series is quite large, i am 
-planning to
-> submit the necessary patches as three separate patch series.
+On 04/11/2025 21:35, Daniel Gomez wrote:
 > 
-> This is supposed to be the first of the three patch series. Its main
-> purpose is to prepare the WMI driver core for the upcoming changes.
-> The first patch fixes an issue inside the nls utf16 to utf8 conversion
-> code, while the next two patches fix some minor issues inside the WMI
-> driver core itself. The last patch finally moves the code of the WMI
-> driver core into a separate repository to allow for future additions
-> without cluttering the main directory.
+> 
+> On 04/11/2025 13.03, Daniel Gomez wrote:
+>>
+>>
+>> On 04/11/2025 11.35, Hans Verkuil wrote:
+>>> On 04/11/2025 07:35, Daniel Gomez wrote:
+>>>>
+>>>>
+>>>> On 04/11/2025 01.13, Kees Cook wrote:
+>>>>> On Mon, Nov 03, 2025 at 08:49:43PM +0100, Daniel Gomez wrote:
+>>>>>>
+>>>>>> On Thu, 09 Oct 2025 20:06:06 -0700, Kees Cook wrote:
+>>>>>>>  v2:
+>>>>>>>  - use static_assert instead of _Static_assert
+>>>>>>>  - add Hans's Reviewed-by's
+>>>>>>>  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
+>>>>>>>
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>> [...]
+>>>>>>
+>>>>>> Applied patch 3, thanks!
+>>>>>>
+>>>>>> [3/3] module: Add compile-time check for embedded NUL characters
+>>>>>>       commit: 913359754ea821c4d6f6a77e0449b29984099663
+>>>>>
+>>>>> I'm nervous about this going in alone -- it breaks allmodconfig builds
+>>>>> without the media fixes. My intention was to have the media fixes land
+>>>>> first...
+>>>>>
+>>>>> Should I send the media fixes to linus right away?
+>>>>>
+>>>>> -Kees
+>>>>>
+>>>>
+>>>> I can take both patches. But I think it'd make sense to drop patch 3 first and
+>>>> then, apply all 3.
+>>>>
+>>>> Please, Kees, Hans and Mauro, let me know if this is okay with you.
+>>>
+>>> I'm fine. If you take it, then I'll drop the media patches from our tree (I merged the
+>>> media patches yesterday).
+>>>
+>>> Let me know if you take them.
+>>
+>> Thanks, Hans. I merged patch 3 yesterday as well, but since patch order matters
+>> in this case, it makes sense to take all of them through the modules tree.
+>>
+>> Sorry for the trouble, and thanks Kees, for pointing this out.
+> 
+> Kees,
+> 
+> FYI, I have dropped patch 3 from modules. My intention is to merge all 3 patches
+> tomorrow.
+> 
+> I believe Hans has also dropped the patches from the media tree as I do not see
+> them here: https://git.linuxtv.org/media.git/log/
 
-One question I have here on the patch to move things.
+Correct, I dropped them. They are all yours :-)
 
-Since Windows on ARM (WoA) laptops are a thing - is this still actually 
-x86 specific?  I am wondering if this should be moving to a different 
-subsystem altogether like ACPI; especially now with this impending other 
-large patch series you have on your way.
-> 
-> Armin Wolf (4):
->    fs/nls: Fix utf16 to utf8 conversion
->    platform/x86: wmi: Use correct type when populating ACPI objects
->    platform/x86: wmi: Remove extern keyword from prototypes
->    platform/x86: wmi: Move WMI core code into a separate directory
-> 
->   Documentation/driver-api/wmi.rst           |  2 +-
->   MAINTAINERS                                |  2 +-
->   drivers/platform/x86/Kconfig               | 30 +------------------
->   drivers/platform/x86/Makefile              |  2 +-
->   drivers/platform/x86/wmi/Kconfig           | 34 ++++++++++++++++++++++
->   drivers/platform/x86/wmi/Makefile          |  8 +++++
->   drivers/platform/x86/{wmi.c => wmi/core.c} | 34 +++++++++++++---------
->   fs/nls/nls_base.c                          | 16 +++++++---
->   include/linux/wmi.h                        | 15 ++++------
->   9 files changed, 84 insertions(+), 59 deletions(-)
->   create mode 100644 drivers/platform/x86/wmi/Kconfig
->   create mode 100644 drivers/platform/x86/wmi/Makefile
->   rename drivers/platform/x86/{wmi.c => wmi/core.c} (98%)
-> 
+Regards,
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+	Hans
 
