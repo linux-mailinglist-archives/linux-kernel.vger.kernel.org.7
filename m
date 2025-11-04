@@ -1,107 +1,95 @@
-Return-Path: <linux-kernel+bounces-885360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA37C32AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:38:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901B2C32B00
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8423A4E88BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:38:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3CC7A34CA57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3237833343E;
-	Tue,  4 Nov 2025 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1283F33343E;
+	Tue,  4 Nov 2025 18:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aK4VdqlG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kl95E/2s"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EAE381C4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF69381C4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762281522; cv=none; b=aKwciRZWYbP2EkOd4GWAqv4lHKndBja7V1hFxyo2BNy3cQLa7F7IIS+D0KIwTcsDjQB3i25oC2E0cJNDkjdKjSgZMoKcED4z7DiykU/GM/7rrnSG6rwKp1gENn5J2KSs9Fq6Y9q4CyvrdZyC1Hn/f/+tAyWOm6nlVtUyps7n3VA=
+	t=1762281575; cv=none; b=bmC8/0EKVUM30Gm8vwv1QaFeL7lRFfxP3TBVCIgCOQRJCyuiczn5xTeyiDXcOOOb8c+np5WVS9UMZZkF9+fegtHEAS8vYtHaSF6AYpQr2/yOSNsLe7jOiCJcbS+ZveFOAfOCuXP5KBJOF3mLLcVuJpnfATlltFAbIqfQAIZxe9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762281522; c=relaxed/simple;
-	bh=cht6nHeLCOiPAeXjK6UTXyfo5wHYPv31b9F2JiiCjzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NnToF6GTXrtTntxIbcwU2JYbpkl7yuR+fYJOlIzhelUC+38OiGs3jRTmAOVpKiSMb8gzaI/zrLL8085wr69mO/B2bG3o2lxxWbBiN20YJzlXSOS9uEdlLsHMFeka8NFJXDYRT6G+br673dUJVP/kJDVP8puS9xcGb/Rp8OWhUEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aK4VdqlG; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762281521; x=1793817521;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cht6nHeLCOiPAeXjK6UTXyfo5wHYPv31b9F2JiiCjzI=;
-  b=aK4VdqlGAqX4705amHDeSUuQ2C4ZuRnDVlDf+Zz1akk3jOT5HmUO+x3Y
-   INNT8fzjVyhuHMElFsJMED6hNkJA82GLb7+AwYcdmG3/k/jJWEAP15tze
-   LdDMjWzR5q0xYAwqjrrs2ZygS4rNiq5fHpZ6yUIMN1MtnZb0zLszez8vL
-   zgaaOKjBXKhpoTLq94pjZh7YQRimysQ5NMa0DX0ZD7HWoXFqzHx0V/e3z
-   z8qBqvyOqwRome7Y3RFd2Jci4RuW46TUJW3J9mPsP7x7WuHznMs9xD8ws
-   Te69aLQffeaJKNILcpJMEtVM6I89T1E5SIA9TY+nPlKY1t9AvE+krXdqI
-   g==;
-X-CSE-ConnectionGUID: IpfjeNZhShiK0NyjU6oqyw==
-X-CSE-MsgGUID: +hMnDmsrTnu8S48YW/ewWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75735875"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="75735875"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 10:38:40 -0800
-X-CSE-ConnectionGUID: yor9Sf+xTvy/LOSYVZGVrA==
-X-CSE-MsgGUID: PwT0Fe8rRnyEAd3kLBwOYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="191588455"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP; 04 Nov 2025 10:38:39 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 43A5695; Tue, 04 Nov 2025 19:38:38 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v1 1/1] util_macros.h: Fix kernel-doc for u64_to_user_ptr()
-Date: Tue,  4 Nov 2025 19:38:34 +0100
-Message-ID: <20251104183834.1046584-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762281575; c=relaxed/simple;
+	bh=y4JMDfBpqtEwNdK6gf+kmO5Or8XhBsPZatR/guFnk84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ihxo+9SlRQ4wiYDsLnGKBNApnGe6xu7zbbHCoJKohL4ntGnV2mgneXrDjVPYDcfgRQLMPlIzO3b8mCqU1S7fsoPzJm8lbWePpzL9ns/SNVK8lkdmq0yIz1dzZEVmMySG6fe3/wv52iDfmv5sIJhGU+/WaAIzQBrOMa5ETAcwaeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kl95E/2s; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=K6Kq6A1aSRonO8lHf2Oysr9L8DOdIy540xhFeNq232Y=; b=Kl95E/2sdS54EXhqNCHUw592OQ
+	0I6pOpEYckRgbrZFR0LKCUFWrAosO8XX+nla5HMsv/m9EXDcIX3DvfA4jmM+2zBqT6fei8BmLhLTK
+	ELZDA1Nw8HGwn2bJrzzPHJACvF64hXVRI+4zMSgsjEFl9ABmOGFPmXjn4ow6IzAo1BDVbfwu8YX6g
+	jb+pc0UMRpmmFs6zqDYhZi+35gE6YaL56wn37wDua+nW56680/kopVQQUnDMdkpluc/M99T4rAIbj
+	TaBXF+k1EwM8V0TYrXhRoSGBrkyNqeuKzYhCnWIIQ/ov9XD8Z/ZfuOkbA3s0Mas1AEeuTp47eBsBD
+	0Ne5ZJkQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGLwI-0000000CR2f-2ygN;
+	Tue, 04 Nov 2025 18:39:30 +0000
+Message-ID: <5f132f37-75f1-46f6-88bd-63e98bdb06d9@infradead.org>
+Date: Tue, 4 Nov 2025 10:39:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: cs_dsp: fix kernel-doc warnings in a header
+ file
+To: Richard Fitzgerald <rf@opensource.cirrus.com>,
+ linux-kernel@vger.kernel.org
+Cc: Simon Trimmer <simont@opensource.cirrus.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>, patches@opensource.cirrus.com
+References: <20251104004241.482723-1-rdunlap@infradead.org>
+ <f1628a6c-6937-4951-8874-5fabb8c55208@opensource.cirrus.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <f1628a6c-6937-4951-8874-5fabb8c55208@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The added documentation to u64_to_user_ptr() misspelled the function name.
-Fix it.
 
-Fixes: 029c896c4105 ("kernel.h: move PTR_IF() and u64_to_user_ptr() to util_macros.h")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/util_macros.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/util_macros.h b/include/linux/util_macros.h
-index 9373962aade9..2eb528058d0d 100644
---- a/include/linux/util_macros.h
-+++ b/include/linux/util_macros.h
-@@ -136,10 +136,10 @@
- #define PTR_IF(cond, ptr)	((cond) ? (ptr) : NULL)
- 
- /**
-- * to_user_ptr - cast a pointer passed as u64 from user space to void __user *
-+ * u64_to_user_ptr - cast a pointer passed as u64 from user space to void __user *
-  * @x: The u64 value from user space, usually via IOCTL
-  *
-- * to_user_ptr() simply casts a pointer passed as u64 from user space to void
-+ * u64_to_user_ptr() simply casts a pointer passed as u64 from user space to void
-  * __user * correctly. Using this lets us get rid of all the tiresome casts.
-  */
- #define u64_to_user_ptr(x)		\
+On 11/4/25 2:40 AM, Richard Fitzgerald wrote:
+> On 04/11/2025 12:42 am, Randy Dunlap wrote:
+>> Use correct kernel-doc format to avoid kernel-doc warnings in
+>> nclude/linux/firmware/cirrus/cs_dsp_test_utils.h:
+>>
+>> - mark one struct member as private: since the comment says that it is
+>> private
+>> - add ending ':' to struct members where needed
+>>
+> 
+> Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> 
+> Thanks for fixing this. Sorry about those mistakes.
+> 
+> Can you re-send this patch to include Mark Brown in the To:. He deals
+> with patches for cs_dsp, since there isn't any maintainer for the
+> driver/firmware tree.
+
+Sure, will do. Thanks.
+
 -- 
-2.50.1
+~Randy
 
 
