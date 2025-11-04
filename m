@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-885149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C65C321E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:44:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985C4C321FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056933B3DBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:44:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4818B4EE0DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FA5335567;
-	Tue,  4 Nov 2025 16:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6FC33554E;
+	Tue,  4 Nov 2025 16:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToPNPUJp"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aeV2uXfE"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D446333555D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102AE330305
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762274652; cv=none; b=H3j/+uHdvyyoEuI0j8RA+45AANU8OYN1ZmeZN8+HUvQAHmzU34/6645AKr1nyjolwOfj9DcAs6T/c6EdgZDIt+9cci2aiMCpPZV3p/M4VHkb70UXYby7o+WnvutBqXI5kzcSh5jzdLmlrsxVaPTt18qih8WxtTZifxMKko29CE8=
+	t=1762274672; cv=none; b=WoH51xn11YvM/NMKmkvVRGQYSM0WF+q7jeUZuG5rltWPPTOLmNb8YVAASftanI7CDv6i6CqSyci6BBrcAII1FMkXVs+IYFbc3WJBpeqIwZcwlafB+WYS8XCXa/3k3opaxgkMBoQXMKb39SiPvFtnZOnIBQpZwXLKN5osDLCIAJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762274652; c=relaxed/simple;
-	bh=+6f8Az2YKgzFu/1Z87heVILzg2DKfZEbBe/3yhgUVjc=;
+	s=arc-20240116; t=1762274672; c=relaxed/simple;
+	bh=iKL6Oeeg1vcVGMXoUhbs/QIz4j1Xx/62odlfUSouZuU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQ0vpNFM9+Hfn3xMOe436U/tGA43qeyQ/z7eu1n8P2tq6T/SIaVXXEtx2/NJrHw0lv2s2SPLgEfKA4VYQGzuHbbhyuJjruPnkjUMuxy1Y5PoFdoXeNBD2ZQmN4t0WuNGOrYvjH9C9jAVL6Zhg+M/VWrXGQVOFD7mDb8eP1QGLEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToPNPUJp; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so3927003a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:44:08 -0800 (PST)
+	 To:Cc:Content-Type; b=jB4VmeF/ZVt0B7Ban818MDZlQvw8+8f+fDvFnmSfvE9YsjGYXui54hpun/CF1uUDXzJ6rYiwEzCK2eVeq2HlGKfxWa2Wcn2xqE4c8fZ4Lg5Eg+en7fS0il0v+AOvpwoJsUd9upZpT+NMlCWOW7HWNq4CuHg65zg3FvFNZHWzPss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aeV2uXfE; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3737d09d123so74642371fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:44:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762274646; x=1762879446; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNBFrCMvQ0mThH8RnIZnBD+qXuvr6aMextqQVAw5+04=;
-        b=ToPNPUJp2Rs9m0LhRfO2tOdPfb301XtdplVuKe/idtkl+A57r3F3HStgUeL2/FfEKR
-         c+IDrRpcqcB9Okh1BboxlCLd+deYo3Nf6SdriZSP82juPzKRXpRoPUAqhOP6B03IJZgC
-         JzBFX6XE871Lo3L8CZ/7vmTJSuk+8+7mVNKwZZqNOpXnpTok2UdErl7bvRUu6y66RkM7
-         9cnHABGyKJRNUZ8BRb65m+zFAEThzeBEkwXAgOeP81uUDmx1eQ8XOEGlYgUSS7H92QNV
-         bAK6dhf/gKaSiFETvqzvNFDUB9Wp34PXMO6KHYtUuMvGtuT9SAi4zaD7FA3ngSNDigYr
-         /ncw==
+        d=suse.com; s=google; t=1762274665; x=1762879465; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iKL6Oeeg1vcVGMXoUhbs/QIz4j1Xx/62odlfUSouZuU=;
+        b=aeV2uXfEwfc5rG6NTnzHWeOYpJl4S2aeKCldzqn3rM0lYkRApZarEazuItDuJZuLUm
+         U/92wjEKK2vHaxD30ZPT7gVylJOGtPvx8RUimA+x3wZIGPli9L37SGaN58YwX3JsYJC0
+         6N5zFNZuIxn5XLWPvvcCRKo51+HmQfG6nJXeveNY7CiL2ltdcSjOt1aWPzSO5oidl6vA
+         xXo02fqvY7kbAPmdt3UWTJaalxCo2HJA9jCNqH8PGUswbu8h1TSfmWofC4ow78RJiRPb
+         lOsQ91kVj3gyt8rrbgUW8ZnCHnarepwiA+4q5F3zmxoz+WscnU71zpa9Qepx1sngAtxl
+         yptg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762274646; x=1762879446;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XNBFrCMvQ0mThH8RnIZnBD+qXuvr6aMextqQVAw5+04=;
-        b=tWXQXWcz0dPmN8og1XAIPcErbfnb2PM0B5y52EKmo+CbSHslJs3x4b9LWbTmQpthSi
-         0/f3MBr61a8Vn0kg2SVh1U+d8COXmCfrMV2YQy67s4/A3MVXH1J/VIOPpk7/FwIWDSPo
-         hcSBZInYI2NcXVGvbUMf55Yyfv1xDzTSSnMolX7807QgAGSm8BowzS/A972qIGAjwPLo
-         TXnh+Oklow/d02ciHmONIZnkrsQrT//9ieCna+Wgveu+VOTm3aMoCzEkuySfOZSIuP82
-         XBNujdNhmHT7aj6CVXuTYmtZfplo55yFvy6DgPb75QIwEH+mDy/hxOFvFbkSWDgHDvha
-         8PbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL3pxGKRG+gojpG10R9IUNHl0H6syIiQU4H3vd8HvdwNLgFJBb4XQZc3RYn6Sz81spqHICaQJMYs6xVgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPufcBHI1k3Q6SvdjkRAtMx2B6A/6qrs/8FjbXDM2VnZ37gUof
-	haSC22SXF+rbs4p1Xq7oiHhwf3HgWXQGOmjf/kogsHshNvoezPyTbdSw3MR1JXxg3iAAsBW0ZeJ
-	qGadj8XrzzWSsfv4Z0F/oZx7eh1jckn8=
-X-Gm-Gg: ASbGncsMJFNdM0t++DDPi/cepg+ZWjDmldSRPejSI5gEnEfK2BItkF8rodLHmhOIcSd
-	OV4Rp06/WwFkOM1DaNXV7osDfKZtP6Rw8PStYrQmPyHKifsUeKADSQbovE9cS3fItr6LOcHvqPM
-	Aw8LdW9YSofE8yFKopniksgIMOq7xAlc+xy6TUZY5Hnanbf3gDj4pSFLcgSkEi6u6ZeKmEcZKzb
-	fsJcIyiSkwW5JEtjviVQCqXJmXHwkxi3WX1mhHTyhyEU070LwkRY3LEtRtSkxOMDEsqWilCY+Iq
-	wsvm/XxANV4SnxuH6djs+OZjmmsQtbU5Gl/40BCfSHtM
-X-Google-Smtp-Source: AGHT+IHjKRUqUHXHludDe/1mTMPgI/bE/8w3FFf+wR3Yq2t0BQji2y5lXCG1ALms3jIeNLLaYlQ5zmmYHpd4jhJyH70=
-X-Received: by 2002:a05:6402:90e:b0:640:cc76:ae35 with SMTP id
- 4fb4d7f45d1cf-640cc76b080mr5601496a12.21.1762274646019; Tue, 04 Nov 2025
- 08:44:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762274665; x=1762879465;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iKL6Oeeg1vcVGMXoUhbs/QIz4j1Xx/62odlfUSouZuU=;
+        b=b0anKpvsm+R2KKuuqDXT2t8PghGrKn+Rg7WFbGPO/h2kVZ3UzhjvFEQNEvTAR4M4EK
+         v4DPh3GCQFi3R8kD126CjzeZUS50D+Ivbh8v6FG9UwABEWsJAreblaahoeyKrEP9lnPo
+         TiT36qFb4YMAIBeq41w3cSShbIBOM8b95h0dBeWpzjC8MxS1tkdYR/VISEqtyoLP1Evb
+         CPNWaSbX++P8xlsqpnVRUXBIu1KGecfdHe0aFnQFvw/yACbgKgy885DM+G5m4uaZaYmp
+         FVYs66QTuPTtdzdbrgDeq+rLI2UxMDL6tPqLK8ER2495p9K+msFighBn1L9iGw7ehYCr
+         J2Gg==
+X-Gm-Message-State: AOJu0Yxy0JucU7IwrLyV99DX1eFGV3ibdIxuiWQPQ+JJGncxEZfREpnx
+	O2+WdIri/7mibp9UsUJtXB0czTcOKhOJFqY3ZtoCYgYkLAezeUV5d+zey3FScc+tnzPHj3gLmBM
+	vLfqBCXo5J8mPVHO4Sk53W0PqNSg8CAl6Oo7ByAmVLA==
+X-Gm-Gg: ASbGncuOLz/g6yT+ulYEcQQlGEaaro4rOeTO6cdGN08cwVEZSdu/Iu8zyZ+m5Js3ApH
+	3Mh1Q5/ySqpdTj49jXDG/NhDoaaIKluxbqOCVp2xqnv3ie7TaMj76RLda2FRlpZhuzg5+PhCdJc
+	ljSHlWDfmAU3UOdrtNzJNprgFbzwz3qf4Ly93GcAl9cKwqt86tqh4OmIOgMeR91bYPi1Gg5MKcL
+	I5EqMSKfXXDQBXp+RJg/LbRbLDt5KnnSdAPeDwFaw59c1gRyYsTSmWjIQt/e4f/ZkgcOcqkEEc2
+	SK36+LlebyPGqgB1NQ==
+X-Google-Smtp-Source: AGHT+IFa641/YIc8QEoSM+2u3rdMj8MWSovTl52bmxJ5Ic3O9e6IQnM9GzYEfzl+ACXNT4BjGQcDXpztd26xVGUGShQ=
+X-Received: by 2002:a05:6512:12c7:b0:587:7f2d:2580 with SMTP id
+ 2adb3069b0e04-5941d532321mr5046018e87.32.1762274665492; Tue, 04 Nov 2025
+ 08:44:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
- <20251028174222.1739954-2-viswanathiyyappan@gmail.com> <20251030192018.28dcd830@kernel.org>
-In-Reply-To: <20251030192018.28dcd830@kernel.org>
-From: I Viswanath <viswanathiyyappan@gmail.com>
-Date: Tue, 4 Nov 2025 22:13:49 +0530
-X-Gm-Features: AWmQ_bmHt-lYY7oXmHpmE0c8MQd7N05CNjm8AaKyi8JrjM3k7rUlxmiFrNq3wMI
-Message-ID: <CAPrAcgPD0ZPNPOivpX=69qC88-AAeW+Jy=oy-6+PP8jDxzNabA@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH net-next v3 1/2] net: Add ndo_write_rx_config and
- helper structs and functions:
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	horms@kernel.org, sdf@fomichev.me, kuniyu@google.com, ahmed.zaki@intel.com, 
-	aleksander.lobakin@intel.com, jacob.e.keller@intel.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	david.hunter.linux@gmail.com, khalid@kernel.org
+References: <20251104102048.79374-1-marco.crivellari@suse.com> <5ce483e5-7384-4d63-8dac-8050c2bd5930@collabora.com>
+In-Reply-To: <5ce483e5-7384-4d63-8dac-8050c2bd5930@collabora.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 4 Nov 2025 17:44:14 +0100
+X-Gm-Features: AWmQ_bmjsY3yYfB6P9rCzLcYpPklV0nouDUkJG5kFnQHbiBlQza70BlS69U3bhY
+Message-ID: <CAAofZF7k7LDxGoXENBtrpP-xokGoCJCqouGX-qumGTPwipAwVw@mail.gmail.com>
+Subject: Re: [PATCH] media: synopsys: hdmirx: replace use of system_unbound_wq
+ with system_dfl_wq
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	kernel@collabora.com, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 31 Oct 2025 at 07:50, Jakub Kicinski <kuba@kernel.org> wrote:
+Hi,
 
-> pls make sure to prefix names of types and functions with netif,
-> netdev or net
-
-I think netif is the prefix that makes the most sense here. I will do that
-
-> The driver you picked is relatively trivial, advanced drivers need
-> to sync longer lists of mcast / ucast addresses. Bulk of the complexity
-> is in keeping those lists. Simple
+On Tue, Nov 4, 2025 at 1:46=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
 >
->         *rx_config = *(config_ptr);
+> Hi,
+>[...]
+> Took me a minute to find what "dfl" stands for. Would be great if the
+> name was self-explanatory as system_default_wq. Even then, not clear to
+> me what's the point of this remaining, the system_dfl_wq naming feels
+> very obscure compared to the explicit system_unbound_wq.
 >
-> assignment is not enough.
+> Could you please explain the logic behind the new naming? Doesn't it
+> create more confusion than remove?
 
-Apologies, I had the wrong mental model of the snapshot.
+Yes, dfl it is just the abbreviation of default.
 
-From what I understand, the snapshot should look something like
+The reason is to suggest the use of the unbound workqueue
+instead of the per-cpu, unless this is really needed, of course.
 
-struct netif_rx_config {
-    char *uc_addrs; // of size uc_count * dev->addr_len
-    char *mc_addrs; // of size mc_count * dev->addr_len
-    int uc_count;
-    int mc_count;
-    bool multi_en, promisc_en, vlan_en;
-    void *device_specific_config;
-}
-Correct me if I have missed anything
+There are parts of the code who just used system_wq thinking it was the
+unbound workqueue (the "general" wq to use), so to make explicit the
+"default" is the unbound (system_dfl_wq) I think it is appropriate.
 
-Does the following pseudocode/skeleton make sense?
+I saw this myself also in this conversion round: there are maintainers
+who are asking
+to change the wq they were using from system_wq to system_dfl_wq.
 
-update_config() will be called at end of set_rx_mode()
+Let me share also where the API change (and other stuff) have been discusse=
+d:
 
-read_config() is execute_write_rx_config() and do_io() is
-dev->netdev_ops->ndo_write_rx_config() named that way
-for consistency (since read/update)
+https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 
-atomic_t cfg_in_use = ATOMIC_INIT(false);
-atomic_t cfg_update_pending = ATOMIC_INIT(false);
+On Tue, Nov 4, 2025 at 1:46=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+> AFAICS, right now system_dfl_wq duplicates system_unbound_wq. Suppose,
+> instead, the default wq could alias the system_unbound_wq.
 
-struct netif_rx_config *active, *staged;
+The idea was just give 1 choice, so remove system_unbound_wq (and
+system_wq) in future.
+Personally I don't have a strong opinion, but I think it's easier to
+have just 1 unbound wq, and 1
+per-cpu wq.
 
-void update_config()
-{
-    int was_config_pending = atomic_xchg(&cfg_update_pending, false);
+But if Tejun has other suggestions, based on your observation, I'm fine wit=
+h it!
 
-    // If prepare_config fails, it leaves staged untouched
-    // So, we check for and apply if pending update
-    int rc = prepare_config(&staged);
-    if (rc && !was_config_pending)
-        return;
+Thanks!
 
-    if (atomic_read(&cfg_in_use)) {
-        atomic_set(&cfg_update_pending, true);
-        return;
-    }
-    swap(active, staged);
-}
+--
 
-void read_config()
-{
-    atomic_set(&cfg_in_use, true);
-    do_io(active);
-    atomic_set(&cfg_in_use, false);
+Marco Crivellari
 
-    // To account for the edge case where update_config() is called
-    // during the execution of read_config() and there are no subsequent
-    // calls to update_config()
-    if (atomic_xchg(&cfg_update_pending, false))
-        swap(active, staged);
-}
-
->The driver needs to know old and new entries
-> and send ADD/DEL commands to FW. Converting virtio_net would be better,
-> but it does one huge dump which is also not representative of most
-> advanced NICs.
-
-We can definitely do this in prepare_config()
-Speaking of which, How big can uc_count and mc_count be?
-
-Would krealloc(buffer, uc_count * dev->addr_len, GFP_ATOMIC) be a good idea?
-
-Well, virtio-net does kmalloc((uc_count + mc_count) * ETH_ALEN) + ...,
-GFP_ATOMIC),
-so this shouldn't introduce any new failures for virtio-net
-
-> Let's only allocate any extra state if driver has the NDO
-> We need to shut down sooner, some time between ndo_stop and ndo_uninit
-
-Would it make sense to move init (if ndo exists) and cleanup to
-__dev_open and __dev_close?
+L3 Support Engineer, Technology & Product
 
