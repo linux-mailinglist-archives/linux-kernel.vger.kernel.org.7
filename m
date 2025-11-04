@@ -1,187 +1,215 @@
-Return-Path: <linux-kernel+bounces-884908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6D9C3175B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:17:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E10C317DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC2794EBEFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F674632D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8000332ED36;
-	Tue,  4 Nov 2025 14:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DAA32ED29;
+	Tue,  4 Nov 2025 14:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEE4RMnY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d7cwP4lv"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010032.outbound.protection.outlook.com [40.93.198.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6A632D455;
-	Tue,  4 Nov 2025 14:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762265737; cv=none; b=Dzd9FIfoE9yu/5HFMIO3GI+S6N4yswtBUXKm1XaMvxWUBuzQxm2z3kGuemSz11Rif4ZJjCaAEJ116G9unsYXIab5ufdzH8X/ZwbZ7WPW0mT6Ck6oYPsX1as0WUkkKUYFtPcwfaDzxmUz9umUE8+2sntqdp/nAK3tLhBQukyOIwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762265737; c=relaxed/simple;
-	bh=E1djz9xWSZfpNMoUbjjZ6AOdqe01/8uQr8xlUPfaUJc=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=tQ3fBuV7GgVDm3CKpzn28v02ic9bQhm77RLgF3hHIBskwdm/i9JFy6/wVIddzzi1+uIUpHnb/a1uYlOCWs96afZvLFyfhZKLolYXoRRBqk+PmYFPrxGtw4nnHRQkC7h/CCCkh7/VIKoR3FtlSaPqvQ2MaoFl3k+1UCm4IQkv6LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEE4RMnY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC558C4CEF7;
-	Tue,  4 Nov 2025 14:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762265737;
-	bh=E1djz9xWSZfpNMoUbjjZ6AOdqe01/8uQr8xlUPfaUJc=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=EEE4RMnYHL3E8llcN9SERFI50LtR7VGdawrokUs0wcVAomneSUVM4TCYruxYanBxA
-	 1yg9+bz7UzsfElBOODID5ZqapSmXadBpeMWwhWiSkFxQ97gszHUamcn6gp9vJpEn2j
-	 AU7X2BqELxhi7CrgrLWmql2aTbA/4BwfFYyOGVylk25cfCAXeytcKwXI5QJR70rsZn
-	 /nqscHd6mMqcGXXiD1RSinKyS4pW+q0WeDzMzoppd5dMvK54W830yTN7RMooS4LnlP
-	 Mq4DhLhfmDolyHaLliNx16E5L4emYH0cM16+qRSkXXDDq61i3YArCJRBmHeeR+RaVS
-	 R2FvdJKugQdHA==
-Content-Type: multipart/mixed; boundary="===============1160980078400196391=="
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC0B2FBDF9;
+	Tue,  4 Nov 2025 14:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762265802; cv=fail; b=SUNeWqvqwIiO5rbwfVVMT32e38evZIhpAJTJSXdWrL4hmLqhMgamL76I+inVe09KWos7QebDQxGSfWBa997rYYwyrVStrHH5hAWoRcQvsAzzkNh/Y8+NZMJjHBSOj5vEmGNfpExcFwvU5xGB1/y8pyXe5vUK2il5QD5s9busrfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762265802; c=relaxed/simple;
+	bh=Tb4FnQ3HozZWaGop5cNXRYejZ8Hr3R+KfJO0Ops3Z00=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NhHynf0ia7ANmnfdKyhhRlp+cKCsvXFcrezqiC8yqrKiJBJIJD7FognSL8tUpL0bq7kI0MXU50yJot6cpbSE5n4jyN9X5uV1Y8g8zGLG6DT7XPCKnpqcfOKXT2VFsqVPoDEGWJTYZ82dNibWPwNeaf0N7ho6HMvUK41T+r+ITyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d7cwP4lv; arc=fail smtp.client-ip=40.93.198.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w0e9byVV4ARVHudV16Q6yu7/JpnRwRi2urewXTkARYjgAqXweUIQcG2/glHIALyaDEXljAIBgxOPDoNxhxmUPyqgWDrZ/u9Aiaapb+eSt1hYtbe9wr7qQ4ycYL+85aMyyn1+tTHDtvDqnfyEnBQbJKNp6NSG6PDHIdxLZ4AaYcw1GciQdIUZ//RESYjrdoTqQzS01ylHmCG+oahiHAMFwykGmMOcLEtniN0nQ5QheG6FW4fJXBo6WZgexLS387ZNLPRaZFiwl0sjRjSiXarJup8LQU+qJhc2fBq5t0Rm01SdVmU1MumLIy2CRTkZig2zeqRUYOzgDKHR7PPcWgKw+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sTMyKOJot+f9ChWHefXnbJ2yyEOZmYrPfbOrp90jPps=;
+ b=WUn03SQ3A6RB60iVC0Z5uaTkb4lkJQX1ohgZp5c769mq1SQtoDOtp7XYcpaGEXD5yoxnFapfk9koFp0J/sXhk6/bgj4UXRzQjYm0xTH6hQWA1brnR2lE1gevA513/pgcRnZm0aRZZ6gsmVcRiByO6LGoX/xU8orstEmCoUJ6WAprZOhRK5CxrBzYkTtnNMw8FR5Gx2jeOfRlS8kq16MYMilmqFxiinOhcU1TfYKdvwocWUKNFA9PPVsltBBFxsCxy+ZVEis9LxJOX/a5b46S0zM4mAp7PtrifevYxyxVZoJHMhQB3/8RF8x6ZWl0l+mJELfk01gZSbPCHiFdEVfYsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sTMyKOJot+f9ChWHefXnbJ2yyEOZmYrPfbOrp90jPps=;
+ b=d7cwP4lvLrMD5uOAg/cUJe8BTy/xx4MqFa8aVJNG95Xbg3U7TGQHMv9zejhkzjDdh7Cbd9TLTCvzok84kytC1xzyAe6yarbfbdvZZoma8wDyRfZOHOK0NcXaIE8aqXPKIdFMcebgIW7zy5VTMwnzJ186FyUFBZfFIQwXhBwnKhSHmCscDcaNZbarpX+GRc1CZ6vfMfnY6WB4okYEryAFf2gsZdkpPSzSX1C+jYbIvZzDUAhEu135e0su+zn8Y3pqvrTtifqisCVt+3dRjC6ZRhcUIpu9UfrdDy+ghjYy//FjVoeqw8F2qesZAeYgrcJHo/bx2F/z1mC6+STU24ItpA==
+Received: from BN9PR03CA0328.namprd03.prod.outlook.com (2603:10b6:408:112::33)
+ by CH2PR12MB4087.namprd12.prod.outlook.com (2603:10b6:610:7f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
+ 2025 14:16:32 +0000
+Received: from BN1PEPF00004683.namprd03.prod.outlook.com
+ (2603:10b6:408:112:cafe::1c) by BN9PR03CA0328.outlook.office365.com
+ (2603:10b6:408:112::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.15 via Frontend Transport; Tue,
+ 4 Nov 2025 14:16:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN1PEPF00004683.mail.protection.outlook.com (10.167.243.89) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 14:16:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
+ 2025 06:16:12 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
+ 2025 06:16:11 -0800
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Tue, 4 Nov
+ 2025 06:16:07 -0800
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	"Mark Bloch" <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Alex Lazar
+	<alazar@nvidia.com>
+Subject: [PATCH net] net/mlx5e: Fix return value in case of module EEPROM read error
+Date: Tue, 4 Nov 2025 16:15:36 +0200
+Message-ID: <1762265736-1028868-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <1364f197cb22d16221dd90b76a10378fc5b99917f1e62c9184f9611a91357532@mail.kernel.org>
-In-Reply-To: <20251104134033.344807-4-dolinux.peng@gmail.com>
-References: <20251104134033.344807-4-dolinux.peng@gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary search for sorted BTF
-From: bot+bpf-ci@kernel.org
-To: dolinux.peng@gmail.com,ast@kernel.org
-Cc: linux-kernel@vger.kernel.org,bpf@vger.kernel.org,dolinux.peng@gmail.com,eddyz87@gmail.com,andrii.nakryiko@gmail.com,alan.maguire@oracle.com,song@kernel.org,pengdonglin@xiaomi.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Tue,  4 Nov 2025 14:15:36 +0000 (UTC)
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004683:EE_|CH2PR12MB4087:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1042cf18-39f1-49f7-8e2f-08de1bacc11f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?va+al8M2O+4N5tb29EpWpWrcNE18fbNDslW5oW4hloBnm4ltIyhljT0bOQOx?=
+ =?us-ascii?Q?Q/kZ3Qn485XwBgoBGzKSu0BHpQorz+Fozjl89nv3GI+SvDK8PTrmneRO+/KL?=
+ =?us-ascii?Q?fuYHrsBDTMo7jZyK6gvADruLfrGZqNi3rmXZdX0Gvw9cwYErTsMC1kDA4vMQ?=
+ =?us-ascii?Q?JVpHoorPrxhowr6pOpB0pqblvoXJH1SqFSUMG6lbbbwAyBL2JQwic0zvAUoj?=
+ =?us-ascii?Q?UTgOCQ5MzEMHULpAdxg9xPt3HvafSh5VVngf63yw0dxx7PwroEsYNPEjV1Ak?=
+ =?us-ascii?Q?zzrAk59OLqtX9CYIiBX3Y5Z5UyhdmaoHoMf2CCkWvoY68/tLfll9tod5n46D?=
+ =?us-ascii?Q?8FgOpl50jqw6cNfVequ0I1jMNlZxAD+ecEEIaijvUdnpHa4npSRcv/mF9sVW?=
+ =?us-ascii?Q?teG1ZePJ6aPPmUa/qwrzKBk5xLJRcFGa+GnqwjV1v1AQsFk+SjE4JXSOhC2h?=
+ =?us-ascii?Q?szydJWKJv+JnH4DgwTtX9uUD8cj9kWM/yc1LKAoDcZd+a2t6T2axGrIBPIvZ?=
+ =?us-ascii?Q?BJQxEou1QDcKxpvfw9N2wJUMGtv4KedBNjNiqIDDCQQ1MVrngvKkGIdxnGx5?=
+ =?us-ascii?Q?9+a+0dcFKfP/Q6IkePLIQ8TfqnsO7I3lmV7di1V5F2awzjcgbMTQoDDL3GDc?=
+ =?us-ascii?Q?wKQFK5a1L+KkzrOOhghu+b2XGGeb/F9XMvyoiCuoSHNdqfzGylWKRgEIvJC3?=
+ =?us-ascii?Q?0d9Un59t5razitqN+XGpZ45rOfEDKAQMvfdXPoLmANKASlcQB19+BpZRJW12?=
+ =?us-ascii?Q?kIOUrpxUPp81OL9waCXiVni8NGMQPe1xi5nEei9BME8pcp3bcAxFUpB4QtCs?=
+ =?us-ascii?Q?EIgYSE4kPLQEIViyRpncwQ6GDVk2z+NijWKPbqOwns0nzEHR7CsDwUE8waFz?=
+ =?us-ascii?Q?L5EuABjhB4unEgBskc/s/8a1DzWXwft+gROWh6PDx7mqmmtsHtZTUcutsq4n?=
+ =?us-ascii?Q?x2N5Yw4brUCEYJodLMNpRgGHXquDennbqttRIYGAlFylXOgZhwruz2OZDNhm?=
+ =?us-ascii?Q?xs4gbhHFD+Srs1QGt9r+o60Wgh1tiPzFE///gFoYPVpLeQkPa2MKbXC9SpK5?=
+ =?us-ascii?Q?htcA44hWq0OcwwKkbmLqgfh31mobXtG2H97DAhWEFEnaTXosiR+VDe0tL6Mi?=
+ =?us-ascii?Q?TcK3SXLgdCVWqMNKt91dlyARjlU6b3LAgEiKNnMfReKKBdfkxb7cSKpr/afp?=
+ =?us-ascii?Q?Z/QADh2pZHnm/1IL+bN4BkIr+a0XraVIKD+74RtqrScUfVHcjg6PDOUD1lgZ?=
+ =?us-ascii?Q?n6C7fBtPnh+vuEQMpJOPti3bfnEGac2/+X0hBSY2Vs2roRcfEeVZE/nuzeMd?=
+ =?us-ascii?Q?klsDEiVMAb1yojSYQwX/SfQ8sQF1IpxQLLBO9clAcE5yibIvOPufrI/bp4Jf?=
+ =?us-ascii?Q?ylzCl54GCAPW33A7Px3mpd1PHDfK/pJfbFKq1PjrhGK9wKPNtR3CRXiS6nyJ?=
+ =?us-ascii?Q?GdL+PApNZ9ms9jzfHU98xGZCB+QHQBI4XlLhHadCMBjyyph1IUObUGKvfyv6?=
+ =?us-ascii?Q?XCjuzmez470MRTzV0l09PFkE3uZTRy/IvK1ujCZndx3+Xrk3EzR04pPhL8vq?=
+ =?us-ascii?Q?p1Cs0bMqkEnYBVFaHpI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 14:16:31.9812
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1042cf18-39f1-49f7-8e2f-08de1bacc11f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004683.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4087
 
---===============1160980078400196391==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Gal Pressman <gal@nvidia.com>
 
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 3bc03f7fe..5af143044 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -92,6 +92,12 @@ struct btf {
->  	 *   - for split BTF counts number of types added on top of base BTF.
->  	 */
->  	__u32 nr_types;
-> +	/* number of sorted and named types in this BTF instance:
-> +	 *   - doesn't include special [0] void type;
-> +	 *   - for split BTF counts number of sorted and named types added on
-> +	 *     top of base BTF.
-> +	 */
-> +	__u32 nr_sorted_types;
+mlx5e_get_module_eeprom_by_page() has weird error handling.
 
-Where is this field initialized? I searched the entire codebase and
-found no assignments to nr_sorted_types. Since struct btf is allocated
-with calloc() in btf__new() and other allocation functions, this field
-will always be zero.
+First, it is treating -EINVAL as a special case, but it is unclear why.
 
-This means the binary search optimization added below will never execute
-because the check at btf_find_type_by_name_kind() tests:
+Second, it tries to fail "gracefully" by returning the number of bytes
+read even in case of an error. This results in wrongly returning
+success (0 return value) if the error occurs before any bytes were
+read.
 
-    if (btf->nr_sorted_types) {
-        /* binary search */
-        ...
-    }
+Simplify the error handling by returning an error when such occurs. This
+also aligns with the error handling we have in mlx5e_get_module_eeprom()
+for the old API.
 
-With nr_sorted_types always zero, the optimization appears to be
-completely non-functional in this commit.
+This fixes the following case where the query fails, but userspace
+ethtool wrongly treats it as success and dumps an output:
 
->  	/* if not NULL, points to the base BTF on top of which the current
->  	 * split BTF is based
->  	 */
+  # ethtool -m eth2
+  netlink warning: mlx5_core: Query module eeprom by page failed, read 0 bytes, err -5
+  netlink warning: mlx5_core: Query module eeprom by page failed, read 0 bytes, err -5
+  Offset		Values
+  ------		------
+  0x0000:		00 00 00 00 05 00 04 00 00 00 00 00 05 00 05 00
+  0x0010:		00 00 00 00 05 00 06 00 50 00 00 00 67 65 20 66
+  0x0020:		61 69 6c 65 64 2c 20 72 65 61 64 20 30 20 62 79
+  0x0030:		74 65 73 2c 20 65 72 72 20 2d 35 00 14 00 03 00
+  0x0040:		08 00 01 00 03 00 00 00 08 00 02 00 1a 00 00 00
+  0x0050:		14 00 04 00 08 00 01 00 04 00 00 00 08 00 02 00
+  0x0060:		0e 00 00 00 14 00 05 00 08 00 01 00 05 00 00 00
+  0x0070:		08 00 02 00 1a 00 00 00 14 00 06 00 08 00 01 00
 
-[ ... ]
-
-> @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *btf, __u32 type_id)
->  	return type_id;
->  }
->
-> -__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
-> +/*
-> + * Find BTF types with matching names within the [left, right] index range.
-> + * On success, updates *left and *right to the boundaries of the matching range
-> + * and returns the leftmost matching index.
-> + */
-> +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf, const char *name,
-> +						__s32 *left, __s32 *right)
->  {
-> -	__u32 i, nr_types = btf__type_cnt(btf);
-> +	const struct btf_type *t;
-> +	const char *tname;
-> +	__s32 l, r, m, lmost, rmost;
-> +	int ret;
-> +
-> +	/* found the leftmost btf_type that matches */
-> +	l = *left;
-> +	r = *right;
-> +	lmost = -1;
-> +	while (l <= r) {
-> +		m = l + (r - l) / 2;
-> +		t = btf_type_by_id(btf, m);
-> +		tname = btf__str_by_offset(btf, t->name_off);
-> +		ret = strcmp(tname, name);
-
-Can strcmp() crash with a NULL tname here? btf__str_by_offset() can
-return NULL when offset is invalid (see line 1713 in btf.c). The old
-code had a NULL check: "if (name && !strcmp(type_name, name))" and the
-new linear search path also checks: "if (tname && !strcmp(tname,
-type_name))", but this binary search path calls strcmp() directly.
-
-Though currently unreachable due to nr_sorted_types being zero, if that
-initialization issue is fixed, this could dereference NULL.
-
-> +		if (ret < 0) {
-> +			l = m + 1;
-> +		} else {
-> +			if (ret == 0)
-> +				lmost = m;
-> +			r = m - 1;
-> +		}
-> +	}
-> +
-> +	if (lmost == -1)
-> +		return -ENOENT;
-> +
-> +	/* found the rightmost btf_type that matches */
-> +	l = lmost;
-> +	r = *right;
-> +	rmost = -1;
-> +	while (l <= r) {
-> +		m = l + (r - l) / 2;
-> +		t = btf_type_by_id(btf, m);
-> +		tname = btf__str_by_offset(btf, t->name_off);
-> +		ret = strcmp(tname, name);
-
-Same potential NULL dereference issue here.
-
-> +		if (ret <= 0) {
-> +			if (ret == 0)
-> +				rmost = m;
-> +			l = m + 1;
-> +		} else {
-> +			r = m - 1;
-> +		}
-> +	}
-> +
-> +	*left = lmost;
-> +	*right = rmost;
-> +	return lmost;
-> +}
-
-[ ... ]
-
-
+Fixes: e109d2b204da ("net/mlx5: Implement get_module_eeprom_by_page()")
+Signed-off-by: Gal Pressman <gal@nvidia.com>
+Reviewed-by: Alex Lazar <alazar@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 ---
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19070905166
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index 53e5ae252eac..893e1380a7c9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -2125,14 +2125,12 @@ static int mlx5e_get_module_eeprom_by_page(struct net_device *netdev,
+ 		if (!size_read)
+ 			return i;
+ 
+-		if (size_read == -EINVAL)
+-			return -EINVAL;
+ 		if (size_read < 0) {
+ 			NL_SET_ERR_MSG_FMT_MOD(
+ 				extack,
+ 				"Query module eeprom by page failed, read %u bytes, err %d",
+ 				i, size_read);
+-			return i;
++			return size_read;
+ 		}
+ 
+ 		i += size_read;
 
---===============1160980078400196391==--
+base-commit: e120f46768d98151ece8756ebd688b0e43dc8b29
+-- 
+2.31.1
+
 
