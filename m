@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-884505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722DFC304A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:35:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81381C304BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 925B44E8675
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:33:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 744EE4E4244
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A742C326F;
-	Tue,  4 Nov 2025 09:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFC2D0C64;
+	Tue,  4 Nov 2025 09:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWYajnxB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="EYEiNM3E"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30A92D12EF;
-	Tue,  4 Nov 2025 09:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C77021FF47;
+	Tue,  4 Nov 2025 09:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762248828; cv=none; b=elxmupSfiiJlvWrodsZI3qznm6iaNbYgvqpRV70+FPSljhTXU9eIGnt5vV/IfP7HEb+ibnGybmL4HyXO85AowLKmepe/JPlNzHfArAcnTprbM9PWTRt1cCWIsCyJ1A40+E8LRhxh/NyQWG81fh5MXoq4rRpuxVdgn28T9rO3lus=
+	t=1762248974; cv=none; b=tEFHKRn9av+DO5qz3MN3yAMUm23843sxZVFAWg7q997Evt8gEXA2EeleqRWZAs2wV2KGWhpvGqljwH1y1oJnSoeaOwjxU8cvnMrG5y1UWBDZwx4PkeZrHfMPfR9v5jsdGbmfIxTiyY4fq7y8+BAvhUGkDB4wUkl/GBuAj0eO33I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762248828; c=relaxed/simple;
-	bh=W8xOsfIs+FLN84wwq7ugJWJ2PpWVMPpw+o5LSPIz4yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=unDeEM4IiHMnUWobOEjCwbH+IHuKYObiVTKJzc1/4fKb6uTvNG1ak9+9ezbLH6hn2pFpmOof1AgmVNkMVQIAhPn8HSOIClO1jWeHHYNrten/XfOCSos4/0+Lr1yDaz0qJuaRn1tCecz9Dj+m9+49SE1d50XVbuFYGBI7ESAiQuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWYajnxB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5A0C4CEF7;
-	Tue,  4 Nov 2025 09:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762248827;
-	bh=W8xOsfIs+FLN84wwq7ugJWJ2PpWVMPpw+o5LSPIz4yc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kWYajnxBp06uW/Fbs79kSGCpFkkJissFIjAueVxphZmrNwxcidb952mL7jDfxfeEM
-	 XJMcOLucCMvioxcRc3UuMhSygFZ8zEozO1os6GUUCJTgBUum6a2NOM8ycJBo5ZvRTh
-	 q4qL41VoYqesUXOIgnoz2xmQhohvfe/NCRDL5wM4+B6SkjG2MOumm3OV53+g5VcYQv
-	 Ey0IZONjjtkNzP6gyl/+Tqlhe8/uPT5DclF3GHsppa3KQJ96pMpc05bLsXTfHlyR57
-	 BgWJpdf/tcA4ihoVrCkv2IXq5pvCtMkA2PH3WTW6bAMPkRrAoKbNn6oZhbldp6jDjX
-	 lisGYz+Rk0wDg==
-Message-ID: <1b316667-470b-4e1a-9c18-e42571e4769c@kernel.org>
-Date: Tue, 4 Nov 2025 10:33:39 +0100
+	s=arc-20240116; t=1762248974; c=relaxed/simple;
+	bh=dRUGXfYeACsEaLRPUhjJcWbtimfoTFK+PgSLMNC6gUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tdXoJrsyNSJHPITDr7kXHoEsHrETpC+Jrr5T47zLk/lt5ALJpiW55yS6LEnWQ7fuLw5djU0uitwQ0tGObmKyvSjPi3IRBWCPQo1oaC3TuRzdcRinYraQu7JwUJbBKAoL1I4+tti651ZkeTtflYG7C2rp/aPKr7+ahdvNgVStvD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=EYEiNM3E; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1762248931;
+	bh=jmGhMAgaBUM0BajBlocMSy6qJhGOcjmpM0oQwDNPRRM=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=EYEiNM3EoYmJd9jFxYUQ2cUaTYEifLxpT01cFNWoMVirWK02PdAR3jEq/GJojFDWN
+	 V9Z98w87s+h72UfKKAN2gHDQwr0EyyVUqd2UQ0clEpDogdDaYfh2WNj5Zu+vP1Mcj4
+	 bsuDhcPyrr3/lL+Y5uDhWYDaVXZeRMqK7QTR8cQg=
+X-QQ-mid: zesmtpsz4t1762248911t51d15bed
+X-QQ-Originating-IP: se3KyUxOOCabbjx22pKi04RZr2zGRV6ZOgOzhQpzaeA=
+Received: from localhost.localdomain ( [1.85.7.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 04 Nov 2025 17:35:09 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5451745896443902141
+EX-QQ-RecipientCnt: 7
+From: Gou Hao <gouhao@uniontech.com>
+To: cem@kernel.org,
+	corbet@lwn.net
+Cc: linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gouhaojake@163.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] xfs-doc: Fix typo error
+Date: Tue,  4 Nov 2025 17:34:06 +0800
+Message-Id: <20251104093406.9135-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] x86/mm: support memory-failure on 32-bits with
- SPARSEMEM
-To: Xie Yuanbin <xieyuanbin1@huawei.com>, david@redhat.com,
- dave.hansen@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, hpa@zytor.com, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, linmiaohe@huawei.com,
- nao.horiguchi@gmail.com, luto@kernel.org, peterz@infradead.org,
- tony.luck@intel.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-edac@vger.kernel.org, will@kernel.org, liaohua4@huawei.com,
- lilinjie8@huawei.com
-References: <20251104072306.100738-1-xieyuanbin1@huawei.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251104072306.100738-1-xieyuanbin1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: OAv5WZ8gfM/qx/hcYtFNWbd0ImY6K/x+CvPrjM5EzVpWaOT0G4KLkSFq
+	ulaQWkeAdK1fj9fXyF0Z5fsYMti9RCzlJ0bj5lB9mG+gufL1OsXiirLjn0P01M+D5oE9Hnb
+	tW2kIldyIQqryrxNd/VG4Nmr+fiEehBbRe1lB7aEexDNlCi10BweTaCEkd9G4wZc1J5yZXO
+	6Z7bG5en7M/NFrP1YTCWCgR4XQpnhBccsGRGcHkwYieG0yp9BFkSLqctAzqa6Jw56Kfe/Gh
+	qJ8Xt9/6WT9TU3HAbbhEEY5BQrDSUgsz4WD9dOEv1VdmMvTUqh/f91LPC2/BTpNNYsuZPF3
+	BnWalk0TCuZMwdF5M/RhrZwmgo1rQTjC6GcBUUUb8I11Ss8tIRd3OGx5ewJFXuKFi84Wfoo
+	2ppV9LA1QYvtpjAqk6L3QYwb8J+GIi2J/n/+R1Q2UcXLbKLE8YDO2LLVSzoKTCjAQ1G/KAE
+	6JRGQhyd4NYgspjnRY5RRNLGyj+eRRj7+C+36IkXPc3OrDIiVifjUe1Xk82h2lArXbaU/4z
+	QUdXRA3SreA6aObq8KpzKS/9LDPSNlbAwNBHo88B0WOB7WD4cZN64Y5ZW++9t6KxpSgjxw0
+	pswK3uIaue8Bo/RA7mRKJD2lcHiiQ1/kVc38R64DeeKJJ8QgqJMp/fJiLEMb4DEczSQNOIV
+	hzeNjUOlsbwJvPI5unLXJy4QI3gJtrBQbjc0TRpOM7wpgQRwFr/B8OE10Z6Myyu2vm1Z5gZ
+	X64+D3w2IurLNsC9H5iStCX9TDAPOO5e/M5ISgOb3rD7lCv/ch5tbyi57o0XHQF+dAdtVim
+	AZk/pSuPdr2+1CmU3+Ji0LDN7HUtujrUzujZ+M9RagDUaY0a9hzE3hfdAZYNXcFh2ANY5Fy
+	Z87SfI0vRZvDWDO/zToj4Ot1uUhpImuv6dsENTW1uvoGLITlRCr+iCynzLtUKN4G9WdMNkL
+	KimjVrZ/FgcpB53giFE5P6OWfu1WSBpMQ3votbZMWt18JjM8T80tgX5RepVTIBspMQe5kIE
+	jH0+b4C71HsRZ5Jp118sXX8hm+26dgrwW+sIRGwW1p4h6NGLy2bWJKNfdWsK63A9vqJigKG
+	+9RFBdVH8bIwvvYm0WYB99IDOh/n5G5/w==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On 04.11.25 08:23, Xie Yuanbin wrote:
-> Memory bit flips are among the most common hardware errors in the server
-> and embedded fields, many hardware components have memory verification
-> mechanisms, for example ECC. When an error is detected, some hardware or
-> architectures report the information to software (OS/BIOS), for example,
-> the MCE (Machine Check Exception) on x86.
-> 
-> Common errors include CE (Correctable Errors) and UE (Uncorrectable
-> Errors). When the kernel receives memory error information, if it has the
-> memory-failure feature, it can better handle memory errors without reboot.
-> For example, kernel can attempt to offline the affected memory by
-> migrating it or killing the process. Therefore, this feature is widely
-> used in servers and embedded fields.
+online fsck may take longer than offline fsck...
 
-This is a pretty generic description of MCEs.
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
+---
+ Documentation/filesystems/xfs/xfs-online-fsck-design.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think what we are missing is: who runs 32bit OSes on MCE-capable 
-hardware (or VMs?) and needs this to work.
-
-What's the use case?
-
+diff --git a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
+index 8cbcd3c26434..55e727b5f12e 100644
+--- a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
++++ b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
+@@ -249,7 +249,7 @@ sharing and lock acquisition rules as the regular filesystem.
+ This means that scrub cannot take *any* shortcuts to save time, because doing
+ so could lead to concurrency problems.
+ In other words, online fsck is not a complete replacement for offline fsck, and
+-a complete run of online fsck may take longer than online fsck.
++a complete run of online fsck may take longer than offline fsck.
+ However, both of these limitations are acceptable tradeoffs to satisfy the
+ different motivations of online fsck, which are to **minimize system downtime**
+ and to **increase predictability of operation**.
 -- 
-Cheers
+2.20.1
 
-David
 
