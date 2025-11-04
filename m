@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-885524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C555C3336B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:26:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794F0C33398
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DA83B1510
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49C2462DFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C852F39C1;
-	Tue,  4 Nov 2025 22:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A220C28488D;
+	Tue,  4 Nov 2025 22:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GFYjumT7"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EhY+mDBS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11CB757EA;
-	Tue,  4 Nov 2025 22:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002422C15BC;
+	Tue,  4 Nov 2025 22:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762294952; cv=none; b=Zeu+J+ScxIp+/yGTx0NVz3Y8HxPRNIxVqZvl+FV1vFs3svULmPV6cuYVrUmclDlWmX0INIg4j7i/L5bnRLD6ZFVQ6Vp2nZ6j+CBtgd83beCM+V59BMNktPEvsbDhlVQviKQ75WZxov99ingdiqvDPgts1J+3qodiAnvNj9diPak=
+	t=1762295004; cv=none; b=lICEBpOhr/D5pDrdVOGam7GVV10I56Qc3Ot9ePM9MQxtYZD2p1LXWkwM6K806OzqgEZWKLBAjIrgEB3LW3qV1EZV09sFfW1OHoC66T/2kZRPqSy0r/euGlHyfbcQEF8DgwW/GQ7izK3n7C2kpKY0n+v2TG8MWsGgPf+rtZijMiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762294952; c=relaxed/simple;
-	bh=aqlUNg0c596uHdeWTUDcu6EdnafDbwK2pjKj403x1Fo=;
+	s=arc-20240116; t=1762295004; c=relaxed/simple;
+	bh=AX+G/tw/3GjoPVb14TZ4wmR946k+iE6L70jqLK70cxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDSVLRceTuExCXkhkE5WI7T4W7c0xlwDFsvkgVWI9yKjMsEmLDCtzWpMLmqgzDTrEDsjABvOu6wQWuHKo+Cvi4Vd6opvXEh/pc9hYuHmOxR7hn0EdFnHdI6Ih8urN1S5kJtuDPDbFIWgo3OLy4CgB7UMFfzIm4yJVtryxrPEAZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GFYjumT7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1884C4CEF8;
-	Tue,  4 Nov 2025 22:22:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fnjs/KCzRGAEiPhl5dUYHsepUd9JMOeURh6pTyqleNFXndIEmBWM42zKuaBH2ec/i8wMChooWn1cOvrmKliGPMJHG0v5qOGB1vS1qho4Gckctz84Z/klGxNx4pvNms3+VVDCAkAJ2y3E7kislIA0bztK1/SvWQe3lDciB23Ud+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EhY+mDBS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505B0C4CEF7;
+	Tue,  4 Nov 2025 22:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762294952;
-	bh=aqlUNg0c596uHdeWTUDcu6EdnafDbwK2pjKj403x1Fo=;
+	s=korg; t=1762295003;
+	bh=AX+G/tw/3GjoPVb14TZ4wmR946k+iE6L70jqLK70cxY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GFYjumT7IDjptaa+VauHwXCHykC6cd3SeIip1xQ/bUH83S4u37qHbm7Zs2PqmPn86
-	 V5r96lDUrCEXwsAFPwk46TSN0qQMdCbA0cGiM+dxaQUX6xgb87nZQxVZmfiksEqtDk
-	 2KaCcglRLURC1P6ouRVVQP8i5YpqcNhJZKw4CL8k=
-Date: Wed, 5 Nov 2025 07:22:30 +0900
+	b=EhY+mDBSczaux6QSfLqbiX7iO0XxHS2qK2uHG1ydtggMCl6MxIzYdbbGbysYiYMbk
+	 5AVwcxfLeMPdRDngrQc+YlzGhmAdnCjf1GjvF9re5ypnZ+MXFPXTpT8HIsw0eTvr+Z
+	 OFy3cPxt8gVZa5FWy2mmbEAyoIoYW4jEK12o9CBY=
+Date: Wed, 5 Nov 2025 07:23:20 +0900
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] firmware_loader: make RUST_FW_LOADER_ABSTRACTIONS select
- FW_LOADER
-Message-ID: <2025110555-purifier-veneering-d9e8@gregkh>
-References: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
- <2025110407-scouting-unpiloted-39f4@gregkh>
- <DDZZRCRHBLVI.MGWBUONLZ94K@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: make24@iscas.ac.cn, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] mei: Fix error handling in mei_register
+Message-ID: <2025110516-cubical-drowsily-7acd@gregkh>
+References: <20251104020133.5017-1-make24@iscas.ac.cn>
+ <906553df-10c3-45f9-8f27-55bc61948b95@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DDZZRCRHBLVI.MGWBUONLZ94K@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <906553df-10c3-45f9-8f27-55bc61948b95@web.de>
 
-On Tue, Nov 04, 2025 at 03:48:10PM +0100, Danilo Krummrich wrote:
-> On Tue Nov 4, 2025 at 3:35 PM CET, Greg Kroah-Hartman wrote:
-> > On Tue, Nov 04, 2025 at 11:04:49PM +0900, Alexandre Courbot wrote:
-> >> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
-> >> index 752b9a9bea03..15eff8a4b505 100644
-> >> --- a/drivers/base/firmware_loader/Kconfig
-> >> +++ b/drivers/base/firmware_loader/Kconfig
-> >> @@ -38,7 +38,7 @@ config FW_LOADER_DEBUG
-> >>  config RUST_FW_LOADER_ABSTRACTIONS
-> >>  	bool "Rust Firmware Loader abstractions"
-> >>  	depends on RUST
-> >> -	depends on FW_LOADER=y
-> >> +	select FW_LOADER
-> >
-> > Please no, select should almost never be used, it causes hard-to-debug
-> > issues.
+On Tue, Nov 04, 2025 at 04:30:08PM +0100, Markus Elfring wrote:
+> > mei_register() fails to release the device reference in error paths
+> …
 > 
-> I agree that select can be very annoying at times, but in this case it seems to
-> be the correct thing to do?
+> Would it be helpful to append parentheses also to the function name
+> in the summary phrase?
 > 
-> For instance for something like:
-> 
-> 	config MY_DRIVER
-> 		depends on PCI
-> 		depends on DRM
-> 		select AUXILIARY_BUS
-> 		select FW_LOADER
-> 
-> In this case MY_DRIVER is only available if PCI and DRM is enabled, which makes
-> sense, there is no reason to show users PCI and DRM drivers if both are
-> disabled.
-> 
-> However, for things like AUXILIARY_BUS and FW_LOADER, I'd argue that they are
-> implementation details of the driver and should be selected if the driver is
-> selected.
-> 
-> Otherwise, wouldn't we expect users to know implementation details of drivers
-> before being able to select them?
+> Regards,
+> Markus
 
-Ah, good point, I guess this is something like a "feature" that a driver
-needs to work properly.  Ok, no objection from me (other than agreeing
-that it needs to be split up as you already said.)
+Hi,
+
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
