@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-884999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF768C31B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57823C31B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FF624FDC9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:59:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0307B4FE13C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A521332ED8;
-	Tue,  4 Nov 2025 14:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B012D333456;
+	Tue,  4 Nov 2025 14:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ffk1itAW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIKQBVmu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BB3330332;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AA932E73E;
 	Tue,  4 Nov 2025 14:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268301; cv=none; b=eYH67DQHpxdkgkPNPQF0ZZ+iU/fBSVoimGByR4sUqN0To2ZmitUGqts+v178qF2njUAlfZSiF2MrlGLja9kGgYv1uTUK9YVPk5J569BV6EBQsbUOSvJw8WTehnFWGyt6k/42WNuGB4aFOwJqNGzJk/DVH4govQygrytq2FDkk90=
+	t=1762268303; cv=none; b=kcttjZEUbEO5J9XeLWNOgYE00F+MBTzVnsy7w5FXnPr8+dI2/xoLCWU5rUricRhJR2gc6Uko6blp6urZa2joANiKDKiOs2IF+60mGmmeQPnrVruk9hP40ad0+JVGY8k7tRLKzhS9EpfvBVd+9KEBSFPbsNUP8KMOpS7qwX3jLkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268301; c=relaxed/simple;
-	bh=p53eId+BN/aUzsQv7ht3j+ycqdzonncv6gakbzg1kow=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h7TUcfngQ9gFMnH+1Knt8n1uLgaZXtSFEZ+fHb1tWmEufpTU/ro989oZ9i601XJaVZYUJgq2RXKj7K4238vpJu/4eGe/rryHiqVvMGVEoFC/VWC+iJw4NLXEWuZhHooh+ET4Za+JxEkGVSJB2n4MCBNAhQqve47lXSEuuCP6VQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ffk1itAW; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1762268303; c=relaxed/simple;
+	bh=6zn4YoCVfRUVlCJYhU3G3MElINw4jana7yUXBkEBYbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TZb3i2fmQ75XLRItsLKNvuMOKb7KIQOo9bgpQM8BTLvy9tg36heFUg7pP4S/P/bFZZCIpUxuYRMxLAcGfGcMnT9a60sSrBZl50s2wvI6oWLdTw3hsjTePzQFP2zOVwRuObXgCm0+1ndJot6xz7Gf5zzcsvFeVMmvbZ2Rb7BQLkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIKQBVmu; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762268299; x=1793804299;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=p53eId+BN/aUzsQv7ht3j+ycqdzonncv6gakbzg1kow=;
-  b=Ffk1itAW/Z6w0YrqJl10R0dk8j3KRsOUoZmuvy6EoqbjH7qEW1QAOwdL
-   6iyF/hs5/DAGEO3CJO/gGWGKsErchU1AWdqSz3wh6eQmWwRkasIYhXSxG
-   nk0Bdu+JxyKeOtyF3sCfCA6O8EpW/veVpqHjMc/bgb3YBBT69TAqRWdjI
-   wMvmJ4nMmvOSVN2zzFEjxzoK7F2Tl9VXQ4STC43rLtkmS1DyLl9Y+kLI2
-   wWr5LTJD5KUjjG0utGJiZcz+91Z3EYBjebh4OQ9J+5PmtH9e0Di+F+RyM
-   xzEocs5CK037SyI7F8z8AIc4h/DQ95G9z/FDCmJN2qb5NE3WAFmaozAAU
-   w==;
-X-CSE-ConnectionGUID: sy+TCKrnTRKvfYppU8zQvw==
-X-CSE-MsgGUID: /3rl/qJoSTmDpv9hinq1ag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51933789"
+  t=1762268300; x=1793804300;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=6zn4YoCVfRUVlCJYhU3G3MElINw4jana7yUXBkEBYbw=;
+  b=KIKQBVmur14uGE7tPWdXky0fkjnDZDpNJqCW2J+dqGxVxycZ9OYS9j4s
+   NyBjYZGGELWX7PganOFQoCA0bFKHZ0avxlkEQtbqgAXLPEBQXvKf09quB
+   ajxgwedvUtUZbI1QeNEy/nfiQcVnvbnEeEjva92M1Xyv5GpVxTLXa1CgX
+   Hoj8Q4FGPKYkgGpQJXZNuSmtcfTwJp1wWRLaPFlfW2el9LMSgJGqazpQg
+   nFdj/d9uOP46jmyNT8prhgiULh95DBNImGER3qyO19BMZzwKer763n3yX
+   qz6RwV/v/yTRxkC0SCpch0/nGRMvO4/VR2vDyQPnrsnS1sfrGrm4nynYh
+   Q==;
+X-CSE-ConnectionGUID: Mjes35bHR7mVlqCXp+oPDA==
+X-CSE-MsgGUID: ZamCvIOSQpmGHjB6Pj5R2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="86992435"
 X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="51933789"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:58:19 -0800
-X-CSE-ConnectionGUID: 8rRcZZCyT/OijzXbSA4Yng==
-X-CSE-MsgGUID: +5yp4Od2QLGG19l7tZNJtQ==
+   d="scan'208";a="86992435"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:58:19 -0800
+X-CSE-ConnectionGUID: ydLwhcuYTomr5KdDFr69tA==
+X-CSE-MsgGUID: z5Do80aKQYiGeFhyJDdSKA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="186863935"
+   d="scan'208";a="186855537"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa009.jf.intel.com with ESMTP; 04 Nov 2025 06:58:18 -0800
+  by fmviesa007.fm.intel.com with ESMTP; 04 Nov 2025 06:58:17 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id C993E95; Tue, 04 Nov 2025 15:58:16 +0100 (CET)
+	id CC47D96; Tue, 04 Nov 2025 15:58:16 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -65,10 +66,12 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 00/10] pinctrl: intel: Consolidate struct intel_padgroup initialisers
-Date: Tue,  4 Nov 2025 15:56:34 +0100
-Message-ID: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 01/10] pinctrl: intel: Introduce INTEL_GPP() macro
+Date: Tue,  4 Nov 2025 15:56:35 +0100
+Message-ID: <20251104145814.1018867-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,33 +80,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We have plenty of repetitive *_GPP() macros across the drivers.
-Consolidate them under a newly introduced INTEL_GPP().
+A new macro will be used for the further refactoring of the drivers.
 
-Andy Shevchenko (10):
-  pinctrl: intel: Introduce INTEL_GPP() macro
-  pinctrl: alderlake: Switch to INTEL_GPP() macro
-  pinctrl: cannonlake: Switch to INTEL_GPP() macro
-  pinctrl: icelake: Switch to INTEL_GPP() macro
-  pinctrl: jasperlake: Switch to INTEL_GPP() macro
-  pinctrl: lakefield: Switch to INTEL_GPP() macro
-  pinctrl: meteorlake: Switch to INTEL_GPP() macro
-  pinctrl: meteorpoint: Switch to INTEL_GPP() macro
-  pinctrl: tigerlake: Switch to INTEL_GPP() macro
-  pinctrl: sunrisepoint: Switch to INTEL_GPP() macro
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- drivers/pinctrl/intel/pinctrl-alderlake.c    | 68 +++++++++----------
- drivers/pinctrl/intel/pinctrl-cannonlake.c   | 68 +++++++++----------
- drivers/pinctrl/intel/pinctrl-icelake.c      | 60 ++++++++---------
- drivers/pinctrl/intel/pinctrl-intel.h        |  9 +++
- drivers/pinctrl/intel/pinctrl-jasperlake.c   | 34 ++++------
- drivers/pinctrl/intel/pinctrl-lakefield.c    | 26 +++-----
- drivers/pinctrl/intel/pinctrl-meteorlake.c   | 54 +++++++--------
- drivers/pinctrl/intel/pinctrl-meteorpoint.c  | 46 ++++++-------
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 26 +++-----
- drivers/pinctrl/intel/pinctrl-tigerlake.c    | 70 +++++++++-----------
- 10 files changed, 199 insertions(+), 262 deletions(-)
-
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 4d4e1257afdf..654af5977603 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -76,6 +76,15 @@ enum {
+ 	INTEL_GPIO_BASE_MATCH	= 0,
+ };
+ 
++/* Initialise struct intel_padgroup */
++#define INTEL_GPP(r, s, e, g)				\
++	{						\
++		.reg_num = (r),				\
++		.base = (s),				\
++		.size = ((e) - (s) + 1),		\
++		.gpio_base = (g),			\
++	}
++
+ /**
+  * struct intel_community - Intel pin community description
+  * @barno: MMIO BAR number where registers for this community reside
 -- 
 2.50.1
 
