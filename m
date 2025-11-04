@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-885476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91C8C3304F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE870C3301F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:17:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F77189DFD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83AC189BF54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6042F8BC8;
-	Tue,  4 Nov 2025 21:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCE92F0669;
+	Tue,  4 Nov 2025 21:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="agIlejlR"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VF8R+ik/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D334C2EFDA2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 21:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225623A9AE;
+	Tue,  4 Nov 2025 21:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762291323; cv=none; b=eZo76APyMG4dkDLULDUy32hQKIJ2H0d/lo/FL49Wd8qY6nCG/E+WjFem7rr2Plc787M7BsbI03lgVFfFJcdMhfWlc3u7ymXJ+OKP5rs0cnzqs3ZMO0VFXDQEin+7rR+Pgv9j6KfLgxV9OZcjeDL3tlVbb02oeWoRtJexdrgCXHQ=
+	t=1762291060; cv=none; b=OuhXBopvFUsTRZ3ALs56MbmM9n6GeMX7TH/yAySzzb9/CSigJGJFoBGXGej9bOax5TwQ9iKmYBady5Pa2/nx8V3HjKKn3/cwzGjtgpzIzGl8cx7++6BSkgP9b0hyIi4r0yXugg56QEyt8mH/rahmhTN817J+0L7vojnuQDkqtag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762291323; c=relaxed/simple;
-	bh=7/y4GG/zdNRJGZds7j1d5GhA3Sxv/5rcIj94qXyBu1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rq0y2K2WRTZl7lqCUf5MRvs7TaY3UZxlNcP8Falhn+ExrPcNJl57RG6ZoNMmh8WQQoZBLuhmZM0gkd0lnfv51m1IbTvHiU2a+M26bxQfgH4vVK2crF4YskLoMFomuE9evgk/I1m9AVCoKp9xpN1psTY4550Yk4Jk66eYWsRJLlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=agIlejlR; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 7D3B55340393;
-	Tue, 04 Nov 2025 22:15:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1762290929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cNuQ+5Drs6+yg4HIhF+sOnWrIA3v05bKuIfAJSP2Gxo=;
-	b=agIlejlRZj2gu+Goge+iDD74ZBi5qqjNNiawiFQln2OVEBhbxB/Mj3MBNAvJdujzB1klPQ
-	zDc8BMNBlyADq+LKfCyaE6WLImtdE7ZiAOrGvNdoaX7pq6EE4TJcEtjmNiCvDSSPE5vmEW
-	IzIXnWaRAIPk4D4U6JU3yPHfB8tiWRw=
-Message-ID: <c3f5f52b-6159-4959-b7b4-6ecd7ba7daaa@ixit.cz>
-Date: Tue, 4 Nov 2025 22:15:29 +0100
+	s=arc-20240116; t=1762291060; c=relaxed/simple;
+	bh=b/IbD+YQ3MmNxvAa/DdJ5oLmEGvOE1Hazw0XPl1PZxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z+0NwnkCUc0zO2FE8BU1pJal8IHGs9COtkM7ky6NTLkht+yv4POZ3c7VWFmPQPoKUJmbkGKDIWlfZUS6yJEUi2bqXr1jp0nI6evgGPyKIyw6ppFX+u1RF5cmaXjD7J1QGdTjBMOWV2rfsIaP6pnan18pF9jO4X4f6fIWxiR+ANM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VF8R+ik/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762291053;
+	bh=tdQMJGfQ3u+h7oqkDgXpTiv5orhyCbppfiLjTJVras8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VF8R+ik/1Ab8CzEUcAEe8ul7Bg9WVip4UQDjJkcBNv/M4LzZQIbASl6xms28fJLb9
+	 I5tOnnqt5jEVXJdPs/P/B0sXyp4v6T086FpsyhmKGtv8hjW1Uy0UUh76d3RJFvZ189
+	 33efturUidkQCMK5sBL8vn34/FsgDYWymaoiemsWXDSX2lOwaOfruBfwRSUOCjnurn
+	 owWdbgp2ADm/rlYFSX6dKUg5pC09+AlJ6RUYV0CltM6YOlqEeS4ORVcYItHd3ckOSv
+	 UQfHgQvTyelID8X3cJElYOAnW2c2sNrto6rfEOEAx0iBgbGf56Z5mXsI9V2g2uEZOq
+	 HXFVYp1vQRxkQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1LrX6xdzz4w93;
+	Wed, 05 Nov 2025 08:17:32 +1100 (AEDT)
+Date: Wed, 5 Nov 2025 08:17:31 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Luis
+ Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+Message-ID: <20251105081731.3c3a979e@canb.auug.org.au>
+In-Reply-To: <ec0cb997-099a-475a-9a7e-d3a1cb82b973@kernel.org>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
+	<20251104105415.68bfb090@canb.auug.org.au>
+	<ec0cb997-099a-475a-9a7e-d3a1cb82b973@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panel: samsung-sofef00: clean up panel description
- after s6e3fc2x01 removal
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250916-sofef00-cleanup-v1-1-b29e1664e898@ixit.cz>
- <m67lqbnli2zsdwj5x2vr52s5irjqleuxv3leqey7xkj6ekpdot@loawiqett4py>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <m67lqbnli2zsdwj5x2vr52s5irjqleuxv3leqey7xkj6ekpdot@loawiqett4py>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/VO8wUZ8K=groe44TRzi3Dhw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 16/09/2025 12:52, Dmitry Baryshkov wrote:
-> On Tue, Sep 16, 2025 at 02:33:36AM +0200, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Remove leftover from s6e3fc2x01 support drop.
->>
->> Fixes: e1eb7293ab41 ("drm/panel: samsung-sofef00: Drop s6e3fc2x01 support")
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   drivers/gpu/drm/panel/Kconfig                 | 6 +++---
->>   drivers/gpu/drm/panel/panel-samsung-sofef00.c | 2 +-
->>   2 files changed, 4 insertions(+), 4 deletions(-)
->>
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+--Sig_/VO8wUZ8K=groe44TRzi3Dhw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please discard this patch, I improved the patch and put it as part of 
-SOFEF00 rework I'll send within few days.
+Hi Daniel,
 
-David>
-> 
--- 
-David Heidelberg
+On Tue, 4 Nov 2025 09:48:35 +0100 Daniel Gomez <da.gomez@kernel.org> wrote:
+>
 
+> >>       }
+> >>  -    if let Some(imports) =3D info.imports_ns {
+> >> ++    if let Some(imports) =3D &info.imports_ns {
+> >> +         for ns in imports {
+> >> +             modinfo.emit("import_ns", &ns); =20
+>=20
+> Please, drop the '&'
+>=20
+> +            modinfo.emit("import_ns", ns);
+
+I will do that from today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VO8wUZ8K=groe44TRzi3Dhw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkKbWsACgkQAVBC80lX
+0Gwd9AgAn0C3LUZeMcgNka2XBxxY7sneNHoxwssUdCtMQdcn7v71TAlxhSs6qLB0
+SSh19yXc/XkuyIcEbrKPkJCaewPd79ldGjY/JNftPZ4e1HbxoLC5GoxF5o0PWaTS
+UO/EIY6xBkgDqrke/seQ0vesf9bs7vWNFbFZeAtAB0osJs0xzUOUkQxGN9ye9PaK
+MbQOeY59zTfOlC8jcW7GLKtTWGXXks83mnqcpz5prc7YIH2BgbI5rgQoboBkFZuD
+0sI1c7eQqBXknYp5lKUj91Go9i+Hy9phKhquDpCy9d2h1V6z57pbwRgVJzdARtXB
+J5b/a2rnAqZl2mLCpjrGCOhBanR1yQ==
+=imsg
+-----END PGP SIGNATURE-----
+
+--Sig_/VO8wUZ8K=groe44TRzi3Dhw--
 
