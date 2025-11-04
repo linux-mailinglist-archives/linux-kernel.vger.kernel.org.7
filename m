@@ -1,63 +1,49 @@
-Return-Path: <linux-kernel+bounces-885084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA46C31F29
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:57:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59468C31F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A710D3A8A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:52:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F380F4EEE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D8E273D6C;
-	Tue,  4 Nov 2025 15:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP7/zdJv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3402027815D;
+	Tue,  4 Nov 2025 15:53:21 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D131E9B37;
-	Tue,  4 Nov 2025 15:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720B227056D;
+	Tue,  4 Nov 2025 15:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762271553; cv=none; b=o/1hot5t58aVhegM2o7hl/1FQibSaALWKQaVWatRvAHCdsVahJjUTqKxqophLXQexakuqjyxt2MWHM+AAaX/NfA4wD9zPvcA+ioGeLAw4YChh+ltrqvdU0u2lp7WM6bnxCF67ZIcJJWADhhQdzNbj+ypXj0MEyxhbtz7vQoeNCU=
+	t=1762271600; cv=none; b=XJPMENSFfc+LpGLAYU4udt1c8RbUUMuWi5owranelalv9j8uK4FRaez82hE7XwAkK5tKuZz20FG5Fa+Wqhh3QqXAojZpdkFn0NMMIGk7MZ6a+xw0h3DjEUMVjzX22UbgE4RRCKIPQFrBomHkimwogzq+FaTJW6WAdyqndMmQd2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762271553; c=relaxed/simple;
-	bh=FptEc2MZwx9dNjeyW235y8KQvDpvs5UTFR4T5099nDo=;
+	s=arc-20240116; t=1762271600; c=relaxed/simple;
+	bh=laMh0SAKRI0I+akncSWHigNwMwyTz5vjMOluixg5Njk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZOBSSiVLPPXZKKk3ZyvLKVKXtFTDcWnpLcQcavIYBOuouc4lJox4mLg87+Mnz0eYNyGUALmV3c2FhtSn/dQz5pWa6VAHfgxCtsVelrSSClZ30sMPZKz98On4lKl8Z/JTECBCorC5/GnKV8rDj9N2V8lAVONi0nS8H2sfjOGPOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP7/zdJv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11ABC4CEF8;
-	Tue,  4 Nov 2025 15:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762271553;
-	bh=FptEc2MZwx9dNjeyW235y8KQvDpvs5UTFR4T5099nDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eP7/zdJvv5oA4eUAgZBZfROBTPXF0AGhszclDFsQ9K36ZL7UguMIlkB9mIDX1jLXD
-	 pj0fC9D4Y4vCJ3b2jRzRGeE7sRRDzImAiiGHtnq150lheDex1fxcm/jUOXEgMT5Ipr
-	 6DpZ+VVmfMmRKUpR94XtptTkkrl+UtU94P3S1B4H+m070ssZFKhzk7gD618oXALPOQ
-	 MvCD/IRI8Gu/24TW93pwKCWwEq5Z4JW0mE4y1i7p/7kWO5Ue9Pqz8D67HHacjhdRKd
-	 JBG6rsQnEKRflR067gAcTc6rzTM1xWFgSfnRfdM0HDD8iGKTqPvmFBYjJwrY9QvuEQ
-	 ceQme3cb4Tc1w==
-Date: Tue, 4 Nov 2025 15:52:27 +0000
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Pierre Gondois <Pierre.Gondois@arm.com>,
-	Sami Mujawar <Sami.Mujawar@arm.com>
-Subject: Re: [PATCH v4 resend 3/7] arm64/fpsimd: Don't warn when EFI
- execution context is preemptible
-Message-ID: <aQohO07DpxlriQfJ@willie-the-truck>
-References: <20251015205634.3820870-9-ardb+git@google.com>
- <20251015205634.3820870-12-ardb+git@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwfSlU2gO6YfxrOxgCSmQ7o4huEpUQ0nJpP0Le/WWyZT5T1UEa6m9ui1B1tg8x4ldVJdn6Zi/Jd8mxS5igQqE8WCWmUmz3LG5+7X59QAwGIriYyS0iY9DSSWUlY8hxRot9KnFPu72vGLKxgV3aP3jP0hbKa37K0MqKzKzpB8s+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 21798227A87; Tue,  4 Nov 2025 16:53:15 +0100 (CET)
+Date: Tue, 4 Nov 2025 16:53:14 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH 2/4] fs: return writeback errors for IOCB_DONTCACHE in
+ generic_write_sync
+Message-ID: <20251104155314.GA1056@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de> <20251029071537.1127397-3-hch@lst.de> <20251029160101.GE3356773@frogsfrogsfrogs> <20251029163708.GC26985@lst.de> <a05cde7d15d85f2cee6eafdb69b1380c8b704207.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,41 +52,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015205634.3820870-12-ardb+git@google.com>
+In-Reply-To: <a05cde7d15d85f2cee6eafdb69b1380c8b704207.camel@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Oct 15, 2025 at 10:56:38PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Kernel mode FP/SIMD no longer requires preemption to be disabled, so
-> only warn on uses of FP/SIMD from preemptible context if the fallback
-> path is taken for cases where kernel mode NEON would not be allowed
-> otherwise.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/arm64/kernel/fpsimd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> index e3f8f51748bc..3d848c89604e 100644
-> --- a/arch/arm64/kernel/fpsimd.c
-> +++ b/arch/arm64/kernel/fpsimd.c
-> @@ -1934,11 +1934,11 @@ void __efi_fpsimd_begin(void)
->  	if (!system_supports_fpsimd())
->  		return;
->  
-> -	WARN_ON(preemptible());
-> -
->  	if (may_use_simd()) {
->  		kernel_neon_begin();
->  	} else {
-> +		WARN_ON(preemptible());
-> +
+On Tue, Nov 04, 2025 at 05:34:50PM +0530, Nirjhar Roy (IBM) wrote:
+> So, what you are saying is file_check_and_advance_wb_err() will
+> wait/block till the write back request done in
+> filemap_fdatawrite_range_kick() is completely submitted
 
-Given that may_use_simd() returns false on systems without support for
-fpsimd, I wonder whether moving this WARN_ON() actually helps with
-anything. That is, you probably shouldn't be calling __efi_fpsimd_begin()
-from preemptible code regardless, no?
+No, it won't wait.  But filemap_fdatawrite_range_kick isn't asynchronous,
+so it doesn't have to wait either.
 
-Will
 
