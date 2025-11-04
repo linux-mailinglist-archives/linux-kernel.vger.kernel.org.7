@@ -1,115 +1,186 @@
-Return-Path: <linux-kernel+bounces-884320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA45CC2FDC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:27:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB7CC2FDE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 741D84F3E49
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C04209C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A34314D2B;
-	Tue,  4 Nov 2025 08:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA213128D2;
+	Tue,  4 Nov 2025 08:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/UtMIYU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ExCd/zIL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1304D30F941;
-	Tue,  4 Nov 2025 08:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66C3101A3;
+	Tue,  4 Nov 2025 08:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762244430; cv=none; b=MC2VWgR6lCotmIMOtES7b/+fz6IRoHOwaICz4a/K3IyJ27/bH6LzTlGWRjhnfgs4tk5ds6MFVwHAvsrXdmv9eMfRh1hd0uChgVFaIO0apxE9+gXV6vtfxVcX3bWsC4aryf+dNfEy+1IHrLEg4ZzNdxUyxSgSaKCnLzw6iWeml1Y=
+	t=1762244511; cv=none; b=tJPxeL9D1yoynZChahAEQ+qXmvus/a7oxTLvJI04EQbj9n1JvbCavVcKiZB99G+5YCYG5c/K9g68nPZUTFpabLJ780ZUWuiMS9ByizcGwYaxSlJ3l877o578dG5TvDuYIq0l3F6OZcDX2kVtXQ3ff0+pMLjIky5Iw1XlrrMFql4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762244430; c=relaxed/simple;
-	bh=6jABtiP9twriCAafB7qhdYkC2NWk+AwMtjQZTn4C2Rc=;
+	s=arc-20240116; t=1762244511; c=relaxed/simple;
+	bh=dP/Hm1oMz6SLtDZykC/Igqm1vfSgO20yu/vJJ9qLRMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOmzuM0xq+4lYfzFbaN/2Yz5F/HU3VzyC53cQnNnanUQwI80Ljbuohnh7lyVUtMEmgoUVyH53WDdbZFNPIvX5TofvbDuSAAcrKYh+2YypUKlY1p/frKdEpMR3ym8mTSXEVwAU9bC0y2SWPJEG0iQ/VuiLVF2yIr1CjJGbtO/VHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/UtMIYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BB78C4CEF7;
-	Tue,  4 Nov 2025 08:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762244429;
-	bh=6jABtiP9twriCAafB7qhdYkC2NWk+AwMtjQZTn4C2Rc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F/UtMIYUTCw7UuAF9ifUV2bMlp41aMmcBIUBJORgkZB30LLHmuz5KXhEbbzN934YZ
-	 GQhbh+pgeMaaScX3k5Osd9TsIcCBB97MDUtjBNcwPx/VGrSntzG9+96E7QGOZjzlFY
-	 bgNFFIar+xKpx2US5yb1If682qFHgNMo/EXBhKSIHVSLgHrDhTCGc/qCmo9kecprat
-	 3u4T/P2Qu0Bc83QpxNpHqVmkhIFEX+2KaHtsWYKUO/9gY2zu/iwIDLgxB9WiraWnDk
-	 xQynuOYpwwzR9HH05orJUGrVbMH7tqbDr8fiNUIbilQ7Kpy6eaoh2IkY0uge3aR2eM
-	 ErY0lNpemZBGA==
-Date: Tue, 4 Nov 2025 09:20:27 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Po-Yu Chuang <ratbert@faraday-tech.com>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, taoren@meta.com
-Subject: Re: [PATCH net-next v3 0/4] Add AST2600 RGMII delay into ftgmac100
-Message-ID: <20251104-dangerous-auk-of-order-6afab2@kuoka>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+c1BH4+TT94K/4wXV5qiJIMRF64V66hbJ5/CdF9grgxHQ+g8b24EjT71J0M7xichVQqX1ldrSaGE0crUcT6jzFz62b9KX2wVRyCrC/hxvfGF5+RvRZ6lm5wa0Wo24Y571MKpxL5DxLBQzns1QvcD+7N3WNuzD+aPersHNaCQDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ExCd/zIL; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762244510; x=1793780510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dP/Hm1oMz6SLtDZykC/Igqm1vfSgO20yu/vJJ9qLRMo=;
+  b=ExCd/zIL/j9sbxL8qKfWHa3W2pbV1nl7lWndaRyzW7rQ3CdNfGGLZaWo
+   r8kuEVQRh4sIZf0fBBSJjnLusDLYKdI3zJf1OJb08Svejp988B11PUV/Y
+   iq7FpvsZOyyyRvGL9X+lpnI32PV3YQ84hpzGS94T6JOC5TKMk162kJJZG
+   oomlwh0wfBvspoNeaaeQTbI6DlbkP3gdiNCvsXAmBwsxtfWUR5Yhi2OHc
+   O0TlbDDzgqAKz8fTIpiJU0jvA7YtZlSRtNNyycsAdxtW/Ryo4JFlTcdff
+   IXWhHjc93UujwACvuyC67u16eksMYNQHJih7i05iYFWl+24qRrut3QuUs
+   A==;
+X-CSE-ConnectionGUID: LoBAsbr0SHmj29/BwamQug==
+X-CSE-MsgGUID: zfwK4ItcSMWdcraP8KDAsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64364202"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="64364202"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 00:21:49 -0800
+X-CSE-ConnectionGUID: WovW5LIVSY26PgrjKgcFmQ==
+X-CSE-MsgGUID: hY8UqPEpSLKpogQ7xIGJsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="186338170"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.146])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 00:21:44 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGCIO-00000005P6i-3Hb3;
+	Tue, 04 Nov 2025 10:21:40 +0200
+Date: Tue, 4 Nov 2025 10:21:40 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
+	Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
+	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+	sagi@grimberg.me, home7438072@gmail.com,
+	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <aQm3lHgM-M7ZRdVT@smile.fi.intel.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+ <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+ <aQiC4zrtXobieAUm@black.igk.intel.com>
+ <aQiM7OWWM0dXTT0J@google.com>
+ <20251103132213.5feb4586@pumpkin>
+ <aQi_JHjSi46uUcjB@smile.fi.intel.com>
+ <aQjxjlJvLnx_zRx8@smile.fi.intel.com>
+ <20251103192908.1d716a7b@pumpkin>
+ <aQkEbZrabOzPBClg@smile.fi.intel.com>
+ <20251103223255.3de9f9d7@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+In-Reply-To: <20251103223255.3de9f9d7@pumpkin>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 03, 2025 at 03:39:15PM +0800, Jacky Chou wrote:
-> This patch series adds support for configuring RGMII internal delays for the
-> Aspeed AST2600 FTGMAC100 Ethernet MACs. It introduces new compatible strings to
-> distinguish between MAC0/1 and MAC2/3, as their delay chains and configuration
-> units differ.
-> The device tree bindings are updated to restrict the allowed phy-mode and delay
-> properties for each MAC type. Corresponding changes are made to the device tree
-> source files and the FTGMAC100 driver to support the new delay configuration.
+On Mon, Nov 03, 2025 at 10:32:55PM +0000, David Laight wrote:
+> On Mon, 3 Nov 2025 21:37:17 +0200
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Nov 03, 2025 at 07:29:08PM +0000, David Laight wrote:
+> > > On Mon, 3 Nov 2025 20:16:46 +0200
+> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
+> > > > On Mon, Nov 03, 2025 at 04:41:41PM +0200, Andy Shevchenko wrote:  
+> > > > > On Mon, Nov 03, 2025 at 01:22:13PM +0000, David Laight wrote:    
+
+...
+
+> > > > > Pragma will be hated.  
+> > > 
+> > > They have been used in a few other places.
+> > > and to disable more 'useful' warnings.  
+> > 
+> > You can go with pragma, but even though it just hides the potential issues.
+> > Not my choice.
 > 
-> Summary of changes:
-> - dt-bindings: net: ftgmac100: Add conditional schema for AST2600 MAC0/1 and
->   MAC2/3, restrict delay properties, and require SCU phandle.
-> - ARM: dts: aspeed-g6: Add ethernet aliases to indentify the index of
->   MAC.
-> - ARM: dts: aspeed-ast2600-evb: Add new compatibles, scu handle and
->   rx/tx-internal-delay-ps properties and update phy-mode for MACs.
-> - net: ftgmac100: Add driver support for configuring RGMII delay for AST2600
->   MACs via SCU.
+> In this case you really want the version that has '[ 0 .. 255 ] = -1,',
+> everything else is unreadable and difficult to easily verify.
+
+No, if it's a generated via a helper script.
+
+> > > > > I believe there is a better way to do what you want. Let me cook a PoC.    
+> > > > 
+> > > > I tried locally several approaches and the best I can come up with is the pre-generated
+> > > > (via Python script) pieces of C code that we can copy'n'paste instead of that shortened
+> > > > form. So basically having a full 256 tables in the code is my suggestion to fix the build
+> > > > issue. Alternatively we can generate that at run-time (on the first run) in
+> > > > the similar way how prime_numbers.c does. The downside of such an approach is loosing
+> > > > the const specifier, which I consider kinda important.
+> > > > 
+> > > > Btw, in the future here might be also the side-channel attack concerns appear, which would
+> > > > require to reconsider the whole algo to get it constant-time execution.  
+> > > 
+> > > The array lookup version is 'reasonably' time constant.  
+> > 
+> > The array doesn't fit the cacheline.
 > 
-> This enables precise RGMII timing configuration for AST2600-based platforms,
-> improving interoperability with various PHYs
+> Ignoring all the error characters it is 2 (64 byte) cache lines (if aligned
+> on a 32 byte boundary).
+> They'll both be resident for any sane input, I doubt an attacker can determine
+> when the second one is loaded.
+> In any case you can load both at the start just to make sure.
+
+> > > One option is to offset all the array entries by 1 and subtract 1 after reading the entry.  
+> > 
+> > Yes, I was thinking of it, but found a bit weird.
+> > 
+> > > That means that the 'error' characters have zero in the array (not -1).
+> > > At least the compiler won't error that!
+> > > The extra 'subtract 1' is probably just measurable.  
+> > 
+> > > But I'd consider raising a bug on gcc :-)  
+> > 
+> > And clang? :-)
 > 
-> ---
-> v3:
->  - Add new item on compatible property for new compatible strings
->  - Remove the new compatible and scu handle of MAC from aspeed-g6.dtsi
->  - Add new compatible and scu handle to MAC node in
->    aspeed-ast2600-evb.dts
->  - Change all phy-mode of MACs to "rgmii-id"
->  - Keep "aspeed,ast2600-mac" compatible in ftgmac100.c and configure the
->    rgmii delay with "aspeed,ast2600-mac01" and "aspeed,ast2600-mac23"
-> v2:
->  - added new compatible strings for MAC0/1 and MAC2/3
->  - updated device tree bindings to restrict phy-mode and delay properties
->  - refactored driver code to handle rgmii delay configuration
+> clang is probably easier to get fixed.
+> The warning can be disabled for 'old' compilers - only one build 'tool'
+> needs to detect errors.
+> 
+> One solution is to disable the warnings in the compilers, but get sparse
+> (which I think is easier to change?) to do a sane check that allows
+> the entire array to default to non-zero while still checking for
+> other errors.
+> 
+> > > One of the uses of ranged designated initialisers for arrays is to change the
+> > > default value - as been done here.
+> > > It shouldn't cause a warning.  
+> > 
+> > This is prone to mistakes when it's not the default rewrite. I fixed already
+> > twice such an issue in drivers/hid in the past few months.
+> 
+> I was thinking that if the first initialiser is [ low ... high ] = value
+> then it should be valid to change any value.
+> I'm not sure what you fixed, clearly [ 4 ] = 5, [ 4 ] = 6, is an error,
+> but it might be sane to allow any update of a 'range' initialiser.
 
-That's b4 managed change, so where are the lorelinks? Why are you
-removing them?
+You can check a Git history for that.
 
-Since you decided to drop them making it difficult for me to find
-previous revisions, I will not bother to look at background of this
-patchset to understand why you did that way and just NAK the binding.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Next time, make it easy for reviewers, not intentionally difficult.
-
-Best regards,
-Krzysztof
 
 
