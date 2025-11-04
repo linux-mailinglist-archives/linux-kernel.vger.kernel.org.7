@@ -1,98 +1,176 @@
-Return-Path: <linux-kernel+bounces-883895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1837CC2EB00
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:03:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1D3C2EB3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519793BA514
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E91D1899E2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3745B15539A;
-	Tue,  4 Nov 2025 01:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60492080C8;
+	Tue,  4 Nov 2025 01:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCiHQLD1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B9119CD1B;
-	Tue,  4 Nov 2025 01:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="noYom8TG"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C011813AA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762218125; cv=none; b=fCDbo6hotsAr1av9Px7xvz1+/oSuF/V/k/wD69MMHOYLJHLfM78iEs+Sy/m5SxU9iLFD1EDI1PKEhYhsSG/t5cCC7IMXkuxTumnw+Nx9doelqLV0LTqmJHEhRt/cHqpgFYl376ecPomC8uDopfCR/RRb61KnkSWwv+OaJAeQIXs=
+	t=1762218533; cv=none; b=OJ8ZD21wKRZ9g2k2UXIndxzjRQ+BAMRdDUHrsjqVLfEQqh0Hlq+azTNpwDbABlhSOtf6qGofmwmSCID8nm8k7o6PXiiKFIRdTArp4jYDpa447l+bvHT71aIC8heSUly3j2+bloJutYXzq3JAVwMs6QJ+k6TNhoEl7i4aa19glqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762218125; c=relaxed/simple;
-	bh=K+rJ33e8ZnjdO7vzPy3i645krvbBHeCx31o+woikNJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qe509/6DdS9LhC1bud3iYUUFEa8xAGKyId+liafanklDO6qvJJ/iRY2c52gNPDZxPE6VxpT2ZDDovXgsska+uWVRyQZyG9C5U8ILz8A2x+bcKmmu9Hc/fvrDOf2/7aE0KzJ72kIWDbblZVb/fAKi0o37mIjEai/6NwuOgWlLEuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCiHQLD1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2FBC4CEE7;
-	Tue,  4 Nov 2025 01:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762218125;
-	bh=K+rJ33e8ZnjdO7vzPy3i645krvbBHeCx31o+woikNJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bCiHQLD1LfDXnUumr9ujAR8072dTzZSGHyeXTdV2fAzkJLddlFvRZ5nxncNOnF6xI
-	 QRO7nnv4jynO22aRogaHMHDrUYaTKRyDHtBWO0O2mn6yjY2lPBQUjtCwr/Iq7qvr5N
-	 bFW/i9EQ84cnTsQ/iUGFPWjl7/oMePj6kS6YDIYtI3gWqUEYSj9hOFgGNr57Eq6UHa
-	 ydTenu7o9ycaS80pc7ieJkBcRhrlBg1PdjkjYZzzOcsNiDUA8xjWr0A3fj5ERvjt8a
-	 X4f38gGTt00wQ2ySXjhJo5Sw+c+pb0A5kh15QKhtadtJp7kXwrlMV8Qktl9fMLcZ2C
-	 xrxhVToCmyS5A==
-Date: Mon, 3 Nov 2025 19:05:36 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] dt-bindings: qcom,pdc: document the Milos Power
- Domain Controller
-Message-ID: <zug3lkerrgvclenswztfcec3wwk36ra7mwioejjch3si5j6x3b@fok5lio66lp6>
-References: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
- <20250905-sm7635-fp6-initial-v3-3-0117c2eff1b7@fairphone.com>
+	s=arc-20240116; t=1762218533; c=relaxed/simple;
+	bh=8I4GK4S4q7K9XqrL0+9xFm8+IiIPoGOnFunW253Wh3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dx/8f0kTEWGyIiG7BG0JvczPPnaiSTDGqMRGL1M6F9TKbe1CKQudODIz8wCskPXoXHDHJypX8FbhauhfEWvbdtUPEj7qXstbjyA65DmBURwOaz6ALzXjA0EtyTcbX4U1lo4d7mWzRD2+LJ2mvE2R5dF4oBPijXw3lbyXpwqwA7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=noYom8TG; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 794A4201208F;
+	Mon,  3 Nov 2025 17:08:50 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 794A4201208F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762218530;
+	bh=KSXFQW64ZcSSVpRRiPa8R1BZW5fslHvWf05b4EavBCY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=noYom8TGYSq8pqCaKTgRf+MIerhAHrheH6BF5UsL62Lijwt5WJxZl8/9eAIGIZRb4
+	 pfOgneYgs15RWXWj+/tDVP76cX9K/awFNY4ZXctTWm8+pqU7C3BTEWPlL78CjUVFzX
+	 NuMtUU2//3rf6zXCwiWRYJwvaV/k3DMpPC5s07UY=
+Date: Mon, 3 Nov 2025 17:08:48 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
+ <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+ <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH v2 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness
+ and efficiency
+Message-ID: <20251103170848.000023aa@linux.microsoft.com>
+In-Reply-To: <aQQYIkC9lmQnd27S@Asurada-Nvidia>
+References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+	<20251020224353.1408-3-jacob.pan@linux.microsoft.com>
+	<aQQYIkC9lmQnd27S@Asurada-Nvidia>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905-sm7635-fp6-initial-v3-3-0117c2eff1b7@fairphone.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 12:40:34PM +0200, Luca Weiss wrote:
-> Document the Power Domain Controller on the Milos SoC.
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Nicolin,
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+On Thu, 30 Oct 2025 19:00:02 -0700
+Nicolin Chen <nicolinc@nvidia.com> wrote:
 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> On Mon, Oct 20, 2025 at 03:43:53PM -0700, Jacob Pan wrote:
+> > From: Alexander Grest <Alexander.Grest@microsoft.com>
+> > 
+> > The SMMU CMDQ lock is highly contentious when there are multiple
+> > CPUs issuing commands on an architecture with small queue sizes e.g
+> > 256 entries.  
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> index f06b40f88778929579ef9b3b3206f075e140ba96..3f90917a5a4dd9d068ec472565f5009690ea2c5b 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-> @@ -26,6 +26,7 @@ properties:
->    compatible:
->      items:
->        - enum:
-> +          - qcom,milos-pdc
->            - qcom,qcs615-pdc
->            - qcom,qcs8300-pdc
->            - qcom,qdu1000-pdc
+> As Robin pointed out that 256 entry itself is not quite normal,
+> the justification here might still not be very convincing..
 > 
-> -- 
-> 2.51.0
+> I'd suggest to avoid saying "an architecture with a small queue
+> sizes, but to focus on the issue itself -- potential starvation.
+> "256-entry" can be used a testing setup to reproduce the issue.
 > 
+> > The lock has the following states:
+> >  - 0:		Unlocked  
+> >  - >0:		Shared lock held with count  
+> >  - INT_MIN+N:	Exclusive lock held, where N is the # of
+> > shared waiters
+> >  - INT_MIN:	Exclusive lock held, no shared waiters
+> > 
+> > When multiple CPUs are polling for space in the queue, they attempt
+> > to grab the exclusive lock to update the cons pointer from the
+> > hardware. If they fail to get the lock, they will spin until either
+> > the cons pointer is updated by another CPU.
+> > 
+> > The current code allows the possibility of shared lock starvation
+> > if there is a constant stream of CPUs trying to grab the exclusive
+> > lock. This leads to severe latency issues and soft lockups.  
+> 
+> It'd be nicer to have a graph to show how the starvation might
+> happen due to a race:
+> 
+> CPU0 (exclusive)  | CPU1 (shared)     | CPU2 (exclusive)    |
+> `cmdq->lock`
+> --------------------------------------------------------------------------
+> trylock() //takes |                   |                     | 0 |
+> shared_lock()     |                     | INT_MIN | fetch_inc()
+> |                     | INT_MIN | no return         |
+>     | INT_MIN + 1 | spins // VAL >= 0 |                     | INT_MIN
+> + 1 unlock()          | spins...          |                     |
+> INT_MIN + 1 set_release(0)    | spins...          |
+>   | 0  <-- BUG? 
+Not sure we can call it a bug but it definitely opens the door for
+starving shared lock.
+
+>(done)            | (sees 0)          | trylock() //
+> takes  | 0 | *exits loop*      | cmpxchg(0, INT_MIN) | 0
+>                   |                   | *cuts in*           | INT_MIN
+>                   | cmpxchg(0, 1)     |                     | INT_MIN
+>                   | fails // != 0     |                     | INT_MIN
+>                   | spins // VAL >= 0 |                     | INT_MIN
+>                   | *starved*         |                     | INT_MIN
+>
+Thanks for the graph, will incorporate. The starved shared lock also
+prevents advancing cmdq which perpetuate the situation of
+!queue_has_space(&llq, n + sync)
+ 
+> And point it out that it should have reserved the "+1" from CPU1
+> instead of nuking the entire cmdq->lock to 0.
+> 
+Will do. reserved the "+1" is useful to prevent back to back exclusive
+lock acquisition. Nuking to 0 wasted such info.
+
+> > In a staged test where 32 CPUs issue SVA invalidations
+> > simultaneously on a system with a 256 entry queue, the madvise
+> > (MADV_DONTNEED) latency dropped by 50% with this patch and without
+> > soft lockups.  
+> 
+> This might not be very useful per Robin's remarks. I'd drop it.
+> 
+Will do.
+
+> > Reviewed-by: Mostafa Saleh <smostafa@google.com>
+> > Signed-off-by: Alexander Grest <Alexander.Grest@microsoft.com>
+> > Signed-off-by: Jacob Pan <jacob.pan@linux.microsoft.com>  
+> 
+> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> 
+> > @@ -500,9 +506,14 @@ static bool
+> > arm_smmu_cmdq_shared_tryunlock(struct arm_smmu_cmdq *cmdq)
+> > __ret;
+> > 	\ }) 
+> > +/*
+> > + * Only clear the sign bit when releasing the exclusive lock this
+> > will
+> > + * allow any shared_lock() waiters to proceed without the
+> > possibility
+> > + * of entering the exclusive lock in a tight loop.
+> > + */
+> >  #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq,
+> > flags)		\ ({
+> > 				\
+> > -	atomic_set_release(&cmdq->lock, 0);
+> > 	\
+> > +	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);
+> > 			\  
+> 
+> Align the tailing spacing with other lines please.
+> 
+> Nicolin
+
 
