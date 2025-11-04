@@ -1,151 +1,93 @@
-Return-Path: <linux-kernel+bounces-884985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB24C31A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:55:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CA7C31AA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4D21883A64
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2A9C3A3955
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA76330B3B;
-	Tue,  4 Nov 2025 14:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5423B221FA0;
+	Tue,  4 Nov 2025 14:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ix74fq6U"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UhiuzI8Z"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2306732F75C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7C723EA8D;
+	Tue,  4 Nov 2025 14:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268084; cv=none; b=BNSPro4IOPEcl6fOelYaV0hdbFOW6/lkT5WiurWrSnic5B3T6ace+JJODdD07D5gpiSNUAT25yBm+nQJXqtRlKggXtskh1bGHcv7rM9cIzpUGMFdnGbP1tChfCYG+Q8RcBDIt7BtgoGQV3S8AYhHiGmfcU5rhsk//EjRUtR6/y8=
+	t=1762268113; cv=none; b=BMjKvwdZIGKed95NFnCZJe/n9LLzUAGkG5FviJwgYTcqpgfdYYWr/3T4pG896zHYGebD0MnxA179g4HgwGoV4/Xs06h4embpCJfhcYxHwsdXxdel9k4sfCwRAnXnDDKUZSX2sQmdecvj/I+0gluSdEcf3aA1N+0Semoh0dpe10I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268084; c=relaxed/simple;
-	bh=WXJgANZ+e9h8MzCDzeaAESu7lB6O6+zjBXrW56L/8IQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HyQoS2QOBShCSgK67jseg8wjcJ9/C/ZUPDyvaiwNqzS+njUHmIMiSsrAixgbQH1RjnIV7c8hrXChIulsaJo4qQ2ymBzoxCcKhp3+tlTNuv4JqWOAP34rikajsI85AXTYUv7hwmAGu4foLAep75dVcAONWwxJye3b1bci8mHJFWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ix74fq6U; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-641018845beso90398a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:54:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762268081; x=1762872881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Eoyutw2xWn5tZ7X64KI/elnJZ6bDgfQd3mhxBVUbfo=;
-        b=Ix74fq6UDHhm2Gfgs0Ecv2/CMIr2PSZYO3cfVs0C/uOvECHY9K2XOI+gKjUxiPzTB9
-         o3myGmXM0bf6k9aM2TeBCxtJLH4x5YUI6HKJTtTXoNxj/U+KV9vC06Iar+KUVfGNMbhL
-         BQHJyjubllGoONnDkkJDejqZmiVv7XXKJ7xeSEoOxBwIQ7mJM4Xl+c/3wxllLxCdkenW
-         8tYJpZHNdHAH4L1xDHM5uqhWXBK4pwO9A3W2W57c5bvHpE+KXs+D6lFSvU4ZkcqakJaa
-         xde/iEhTegaan9eQ05ne2xIi7CRCUkdi2sutNFgAmSgi5RsSGCCDCsFkBKd1C9R/XDUx
-         Zcpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762268081; x=1762872881;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Eoyutw2xWn5tZ7X64KI/elnJZ6bDgfQd3mhxBVUbfo=;
-        b=rJ7q4QiMhnQkHV2Z704ftYW4Z5GJ7A+DY7Neh5yUz4Hfd+9zsOiww3HEUX9UhgtsNY
-         7v2cZP1c3nl/R/9Shi81V/ML10wJwsx3ULmggBlqAWSrPhV1WqG4ZsHV1kZQqp4ozVtR
-         Wu0j0rubDC0pxVZsdX0FLNmyYno751pSWtG9rayXqW/zrRWR97LpVDYO4n7rjLYIuHSj
-         0qJQzs2sCINmj5d95e+wfUg+cYfuKU8c5/8JhJaQysbfP07XQZTAXczJR3O2GhJI5guV
-         A4BRn6LEkVU7aef71fQ/eWSwRk7G1BGpH1VnUxl19GzREdkhdCO06CTY/SEIY7ZgTbXv
-         NB3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTSNWKvagllUMzeYF5w1WCEthtJFtw/1WvY2AD9LIbgj9aTyOBUBt/JHM9JzfXPMzXrYx4YSs+bdt4/bk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhwSkz4ZN3f53McbeJdMgtKaJCTbHqXsI/UhWJ2BoKcwSeRBGx
-	RlIOfCie86g8TYG4hPFKV2IyzGFMrb5DazM8MlHiQbD9pDWPkokexA96
-X-Gm-Gg: ASbGncsgjenwHDUwNxp6vxDSrHtISDWS+QDuy+LlcbjjZtn4FFSEvqXyhx/QeuyCyQb
-	7pV6evv8aM5fOZS27vcfare1V+1a2DUDtUnYUkwa8XNTUCsx27X16GvIR6zMnBe2FAG8uh7ewdu
-	t1aKhVYlPRrrCZ/m5EKsznKufgCGOjW2I/S+7MZzReys9/NbwxNUkpOVrXha63z1K7kxEbABL6U
-	hNraFgxRZXnO0HrcDqqT9lmVbygcaIHI8rZYaPB/oIs0FWBDqdL6OJ27uR77FL+cnWsKS03NekP
-	8NYyxDF32Y6geeol/dxGWNaWJxzdobgFBANF2D967ypZ3UsX9F600vjb7BRnqq7bS/PyVBUSPFt
-	MVXq10s9TKxNSV7BDClmyJzWNfURe094/PZSwmWalx7nSPBAiLaTg4DgzxMMHvnzDDpwtdeGuYL
-	E8lrtDt4JVpM8=
-X-Google-Smtp-Source: AGHT+IEYcV6g8pSrWp9gJnopoqBVCsEt0pmu0JfN5263UUfCpD9RJnczJUaoNY/BYUSo+GB2s8qE/g==
-X-Received: by 2002:a05:6402:51ca:b0:640:eb29:fc7e with SMTP id 4fb4d7f45d1cf-640eb29fdc4mr2223377a12.20.1762268081332;
-        Tue, 04 Nov 2025 06:54:41 -0800 (PST)
-Received: from NB-6746.. ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a70b50sm2235016a12.25.2025.11.04.06.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 06:54:40 -0800 (PST)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: ilpo.jarvinen@linux.intel.com,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Artem Shimko <a.shimko.dev@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH v2 2/2] serial: 8250_dw: fix runtime PM initialization sequence
-Date: Tue,  4 Nov 2025 17:54:26 +0300
-Message-ID: <20251104145433.2316165-3-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251104145433.2316165-1-a.shimko.dev@gmail.com>
-References: <20251104145433.2316165-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1762268113; c=relaxed/simple;
+	bh=VmZq50hBtmCAf+whIr8eq6VsBA9+gQv7xRIwH1iX9Uc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KwGDS+2O+C57n+6QeV1Y/0dHEl0hTmiXyxMERnv4cF9a/gUJBkwxIrC1791KDWcVIzdfRPNxJa055A8SY95akbAs+faBA726gjZfLi0AA9qPFNK5JtihGBOsqi/CsXKtG8dO0Z4LcnVbAAcLoMTF3IGito0oI3qR1GHuc+OJg/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UhiuzI8Z; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762268109;
+	bh=VmZq50hBtmCAf+whIr8eq6VsBA9+gQv7xRIwH1iX9Uc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=UhiuzI8ZJXOKlzj/YXyOxtHWGwOOhZfjuXO8t6vN4tT8KkVSD7X2ksELSX4EiRGR2
+	 oe4Dv7UwGmLMV7kR8Z+cm6Ji34kWbg+Rh42MJ96Rt5olLzDg7WtLmHUiY25A3vex99
+	 X7XPzziFy/lqrgmJjhs0sAHGsaAmhuknSBHs8szw=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 9F2D71C015F;
+	Tue, 04 Nov 2025 09:55:09 -0500 (EST)
+Message-ID: <50acd6bfbc8b9006bef5d7d0376b7ce4ab35f94c.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Documentation: tpm: tpm-security: Demote "Null Primary
+ Key Certification in Userspace" section
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>,  Linux Integrity
+ <linux-integrity@vger.kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jason Gunthorpe
+	 <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>
+Date: Tue, 04 Nov 2025 09:55:08 -0500
+In-Reply-To: <20251104131312.23791-1-bagasdotme@gmail.com>
+References: <20251104131312.23791-1-bagasdotme@gmail.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Move pm_runtime_set_active() call earlier in probe to simplify error
-handling and add proper error checking to ensure the device is marked
-as active before any runtime PM operations can occur.
+On Tue, 2025-11-04 at 20:13 +0700, Bagas Sanjaya wrote:
+> The last section heading in TPM security docs is formatted as title
+> heading instead. As such, it shows up as TPM toctree entry. Demote it
+> to section heading as appropriate.
 
-Additionally, replace the const struct dev_pm_ops declaration with
-_DEFINE_DEV_PM_OPS macro for better consistency with modern kernel PM
-patterns.
+It's supposed to be a separate heading.  It's explaining how to certify
+your booted kernel rather than describing TPM security within the
+kernel.
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
- drivers/tty/serial/8250/8250_dw.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Regards,
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 0ff500965c10..0c0a9fc97fe3 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -643,6 +643,10 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	err = pm_runtime_set_active(dev);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to set the runtime suspend as active\n");
-+
- 	data->uart_16550_compatible = device_property_read_bool(dev, "snps,uart-16550-compatible");
- 
- 	data->pdata = device_get_match_data(p->dev);
-@@ -685,7 +689,6 @@ static int dw8250_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, data);
- 
--	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
- 
- 	return 0;
-@@ -757,10 +760,9 @@ static int dw8250_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static const struct dev_pm_ops dw8250_pm_ops = {
--	SYSTEM_SLEEP_PM_OPS(dw8250_suspend, dw8250_resume)
--	RUNTIME_PM_OPS(dw8250_runtime_suspend, dw8250_runtime_resume, NULL)
--};
-+static _DEFINE_DEV_PM_OPS(dw8250_pm_ops, dw8250_suspend, dw8250_resume,
-+			  dw8250_runtime_suspend, dw8250_runtime_resume,
-+			  NULL);
- 
- static const struct dw8250_platform_data dw8250_dw_apb = {
- 	.usr_reg = DW_UART_USR,
--- 
-2.43.0
+James
 
 
