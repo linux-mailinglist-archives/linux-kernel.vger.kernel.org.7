@@ -1,49 +1,84 @@
-Return-Path: <linux-kernel+bounces-883943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756B9C2EE1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:51:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B4DC2EE28
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873AC1891A56
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D310318908AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0962823908B;
-	Tue,  4 Nov 2025 01:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B4623EA95;
+	Tue,  4 Nov 2025 01:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhJzu+p/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ukJVPvGh";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Nz0/zpV2"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599A472614;
-	Tue,  4 Nov 2025 01:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB54237180;
+	Tue,  4 Nov 2025 01:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762221031; cv=none; b=KR7qRbt7c8WZKZ0L7nyrAhFlXGsiCtcqzrMLQyyv2PL9pYaRHlFw5LNK/QtzwXfa3oWTcLM57j5thyjgTrWWOu24tci+KhoN5lUxp1gFeCE1Uh8wkQCiVcst5oVg9hIlnykJCnepNtf/QUNKAyxBgSQeGPvWQ/oED7FlRO1byig=
+	t=1762221042; cv=none; b=e/jfTQDIDtsfWu9LRHsazT0YBASGM7+O1yzsHu4ZiSyUewhTeEEBNU7iLGpgYU8E7MlWG4xp5fM3k9+zL8g+OZlsM9L/rNghs9RuE9P1CRtU718WvF/AoGytIaOosjBtWuvUphLX5wbgk0c9fhOtje4z1PU+BKlgzOKlorceOnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762221031; c=relaxed/simple;
-	bh=xyeWkEmQlljnPJHBF9+EF6BPKwFsQyNjI1lK2r9HxhA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tIPD/M4Lqut/Tjhzg/vj4xoZeq9r0OQHa/8fakL9ePEeNt5Rd/2Z0abk3idBSYRAntQ5s6sQua41KV+Q2wa8Z6F/oydQKAPAedi7e8zZ7iBpsFOATu7PmPa2MtQ6voj1jkMWxaQHWIUpae8EM1qayaSvoPUCZ2m+f+lno69GvUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhJzu+p/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E434AC4CEE7;
-	Tue,  4 Nov 2025 01:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762221030;
-	bh=xyeWkEmQlljnPJHBF9+EF6BPKwFsQyNjI1lK2r9HxhA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hhJzu+p/tRpudvXCM5qq4mUt329iyPbzFNwbtysQsOBoDStgsUXA4Zjy5NPvkh4NC
-	 FNOfOSFyjJCYdsUS+V37PbJZFpZ/zEITfUK1wZuX6BiVeflEYiOqVlp7MiBKdEMah1
-	 nJ2gnQbo5G2vHrxFuz1NCUKsce2/Cy8Lyf5JlmVSEWg/KfkxoxMTs5JX4qleVFrDAP
-	 Z9MpHaZDSGqM30BOsbU47uZJGA19ImzvEwrfN4PHdFw3iDJzHRLq85VABDjv6C39sI
-	 Wzu+M5VBHfNnpk3gIWtfffARBWsmSvwZRh1SvdzJW6YXpnua1FGAwHdGSUK4AcNRFb
-	 5IozqDiVcaTeg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D923809A8A;
-	Tue,  4 Nov 2025 01:50:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762221042; c=relaxed/simple;
+	bh=SAgtMFsubG/8VFAlFqC1sgnxtzgYTVufuKhUVFsu2ts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d8n9Sv2Kf5ATihS9JYWCi1n3bxH505ABzxrOfUeLtUcYNDDBEumgp2RO99Fg2iCHjL1av5RRZNzZrHQ8/ClIv7ZLVQ8ji1Hpc1dYQrroxvkrjZ5dnlcmQq4d8E5Q7PsJbdHDgUqg1qjQx3r161sf9Ofw5sRq1lrJ+jjI08qm3CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ukJVPvGh; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Nz0/zpV2; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d0ry56v23z9srX;
+	Tue,  4 Nov 2025 02:50:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762221038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vUDHSpaYhTM0MBeAOADgsVN/8YIxpgXSREgpli9VDxQ=;
+	b=ukJVPvGh+jPAzd2bTJM3eVvURU44gCZP64EThJ2NRe4oMxdWMz2Rbsn/MjNztsTKjVWYEx
+	oDzzNfVo4WxMvt+WUAy35xZT8ABUEAZcdysCVTnZbnHWTgemkbqKtBVgAs33cLBlvyh8B7
+	BLRqHb90xE3HuF0abJZNO8L+ec3n/6P2M1nxzXe/zRW6VgaJLGAHqxQ9e8jb3t8ihvUvym
+	opB5SI4auDxm3szd9iUCYAMZYn9oWYQT41kTYaMxyuzeYM05nplqqsVX85gOA939JUN5IB
+	ZcLHUlv/NM0kQiznvblVcfj6JvUBaHWpKcEXRptPcL/q8YsPzKcDGpufiai8PQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="Nz0/zpV2";
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+From: Marek Vasut <marek.vasut@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762221036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vUDHSpaYhTM0MBeAOADgsVN/8YIxpgXSREgpli9VDxQ=;
+	b=Nz0/zpV2VQ8MgfMYtlSwdN3MtmMNXbZWWCs7Na3VxwDqQWNNUzmsvSWzkY0PXgOZElGZKK
+	1eoqvJspPTAUyEzoFv8U3HIzTzo/bKbiBiLIen/eUZ5xNdZ4viALN1Ow9f/jlkkGFkMtKL
+	tYpWtT8E1emmoWDmSSQXYcFMfB/EETCat25k0HKnJYit80h3wwogHn7AbgNOxQDoS5W/AE
+	Ylw0F/K7EoVfg+RlVhBd8wetjya0e4gv25dHH+CWqR8alt2X0gXQadlKTNRR/TTExT85zn
+	DHI8SWyozPIY2azVYU5ZRtgnQ4lE0gVFSCmdRw1anCBde25I5TUZSqWjgMY4vA==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut@mailbox.org>,
+	Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: imx8mp: Add missing LED enumerators for DH electronics i.MX8M Plus DHCOM on PDK2
+Date: Tue,  4 Nov 2025 02:50:13 +0100
+Message-ID: <20251104015031.219863-1-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +86,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: usb: qmi_wwan: initialize MAC header offset in
- qmimux_rx_fixup
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176222100525.2288210.7982486320595194051.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Nov 2025 01:50:05 +0000
-References: <20251029075744.105113-1-qendrim.maxhuni@garderos.com>
-In-Reply-To: <20251029075744.105113-1-qendrim.maxhuni@garderos.com>
-To: None <qendrim.maxhuni@garderos.com>
-Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, bjorn@mork.no, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+X-MBO-RS-META: d7f6xkzgu6my1hhenurh89d46ohba76d
+X-MBO-RS-ID: b536646df4ffa1c32ed
+X-Rspamd-Queue-Id: 4d0ry56v23z9srX
 
-Hello:
+The LED enumerators are missing, which prevents the LEDs from being
+accurately told apart by label. Fill in the enumerators the same way
+they are already present on PDK3.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+---
+Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Wed, 29 Oct 2025 08:57:44 +0100 you wrote:
-> From: Qendrim Maxhuni <qendrim.maxhuni@garderos.com>
-> 
-> Raw IP packets have no MAC header, leaving skb->mac_header uninitialized.
-> This can trigger kernel panics on ARM64 when xfrm or other subsystems
-> access the offset due to strict alignment checks.
-> 
-> Initialize the MAC header to prevent such crashes.
-> 
-> [...]
-
-Here is the summary with links:
-  - net: usb: qmi_wwan: initialize MAC header offset in qmimux_rx_fixup
-    https://git.kernel.org/netdev/net/c/e120f46768d9
-
-You are awesome, thank you!
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
+index ebdf13e97b4e2..3d18c964a22cd 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
+@@ -88,6 +88,7 @@ led-0 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			default-state = "off";
+ 			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <0>;
+ 			gpios = <&gpio5 22 GPIO_ACTIVE_HIGH>; /* GPIO E */
+ 			pinctrl-0 = <&pinctrl_dhcom_e>;
+ 			pinctrl-names = "default";
+@@ -97,6 +98,7 @@ led-1 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			default-state = "off";
+ 			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <1>;
+ 			gpios = <&gpio5 23 GPIO_ACTIVE_HIGH>; /* GPIO F */
+ 			pinctrl-0 = <&pinctrl_dhcom_f>;
+ 			pinctrl-names = "default";
+@@ -106,6 +108,7 @@ led-2 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			default-state = "off";
+ 			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <2>;
+ 			gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>; /* GPIO H */
+ 			pinctrl-0 = <&pinctrl_dhcom_h>;
+ 			pinctrl-names = "default";
+@@ -115,6 +118,7 @@ led-3 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			default-state = "off";
+ 			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <3>;
+ 			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>; /* GPIO I */
+ 			pinctrl-0 = <&pinctrl_dhcom_i>;
+ 			pinctrl-names = "default";
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0
 
 
