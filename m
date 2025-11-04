@@ -1,115 +1,278 @@
-Return-Path: <linux-kernel+bounces-885472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE870C3301F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:17:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E27C33025
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83AC189BF54
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:18:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99DBE4E1236
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCE92F0669;
-	Tue,  4 Nov 2025 21:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BBA2F90CE;
+	Tue,  4 Nov 2025 21:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VF8R+ik/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="DHQwgRYj"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225623A9AE;
-	Tue,  4 Nov 2025 21:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F372D3737
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 21:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762291060; cv=none; b=OuhXBopvFUsTRZ3ALs56MbmM9n6GeMX7TH/yAySzzb9/CSigJGJFoBGXGej9bOax5TwQ9iKmYBady5Pa2/nx8V3HjKKn3/cwzGjtgpzIzGl8cx7++6BSkgP9b0hyIi4r0yXugg56QEyt8mH/rahmhTN817J+0L7vojnuQDkqtag=
+	t=1762291062; cv=none; b=ldMTmBYeCBy0a1b2ndxLX9NeiCcajz+4sNSVQFjpLYH9mo8IHAnho2+JTAOp/t7Q9eNVudsbFhnubO/Qgap1BomLTdMHxvZc/bD3sOPvCrG3/+/2OEjhDRS38pM2w/HTccX8g+q+7QlYK3q5C3qovPbrxtQKyC42Xk1dcat0yz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762291060; c=relaxed/simple;
-	bh=b/IbD+YQ3MmNxvAa/DdJ5oLmEGvOE1Hazw0XPl1PZxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z+0NwnkCUc0zO2FE8BU1pJal8IHGs9COtkM7ky6NTLkht+yv4POZ3c7VWFmPQPoKUJmbkGKDIWlfZUS6yJEUi2bqXr1jp0nI6evgGPyKIyw6ppFX+u1RF5cmaXjD7J1QGdTjBMOWV2rfsIaP6pnan18pF9jO4X4f6fIWxiR+ANM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VF8R+ik/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762291053;
-	bh=tdQMJGfQ3u+h7oqkDgXpTiv5orhyCbppfiLjTJVras8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VF8R+ik/1Ab8CzEUcAEe8ul7Bg9WVip4UQDjJkcBNv/M4LzZQIbASl6xms28fJLb9
-	 I5tOnnqt5jEVXJdPs/P/B0sXyp4v6T086FpsyhmKGtv8hjW1Uy0UUh76d3RJFvZ189
-	 33efturUidkQCMK5sBL8vn34/FsgDYWymaoiemsWXDSX2lOwaOfruBfwRSUOCjnurn
-	 owWdbgp2ADm/rlYFSX6dKUg5pC09+AlJ6RUYV0CltM6YOlqEeS4ORVcYItHd3ckOSv
-	 UQfHgQvTyelID8X3cJElYOAnW2c2sNrto6rfEOEAx0iBgbGf56Z5mXsI9V2g2uEZOq
-	 HXFVYp1vQRxkQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1LrX6xdzz4w93;
-	Wed, 05 Nov 2025 08:17:32 +1100 (AEDT)
-Date: Wed, 5 Nov 2025 08:17:31 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Luis
- Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, Sami
- Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
-Message-ID: <20251105081731.3c3a979e@canb.auug.org.au>
-In-Reply-To: <ec0cb997-099a-475a-9a7e-d3a1cb82b973@kernel.org>
-References: <20251104104827.1de36ea0@canb.auug.org.au>
-	<20251104105415.68bfb090@canb.auug.org.au>
-	<ec0cb997-099a-475a-9a7e-d3a1cb82b973@kernel.org>
+	s=arc-20240116; t=1762291062; c=relaxed/simple;
+	bh=65/cD2ZSUAzPQab5ckwiZ9PtfoIo8XCpfmICSE+u320=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gW0awLlkUuqu6XuvdDBcy9tNqay+tqsujZHnsL+eqwyNSmM+ocYkpfB/rptumthEkpovXlrEL2OvZRaez+z5Yc/Nwe+7GT/fUnqDExEASViFJGyEkrJ46h/Zss433zE42LyNWLOhOEqNpyqlYCe8Pw+0nY/8utZNZmWsyx9u9b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=DHQwgRYj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-295df6ad56cso21267685ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 13:17:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1762291060; x=1762895860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BGjWT2vMzqtOZS9xN5d6Q0YRIr9cvpctAWp7WzNW7AA=;
+        b=DHQwgRYjJfgGVZGDktDqb2za90/TsjArMQ1NacLYlwHmXd/GGDLWpWi+rrOWHejdeO
+         bOZA3WSK6EbyvSUKA6F8T6lRvmPe1AKpbLkUOloc2Tst0UYCTTFeDg7KukADO2Yj/A2x
+         VjlNc6mPtOm9G+zINbuXbfqVqcup5UGVd6CBFHln9rYQG5chwLRJ9MMpI6o3SNWk7C2R
+         r1dk2pojUd/Ehn9COBVI293w1sWbpesYVf6fABK3Fg8WgkV273Afy/JLAoncW7xFm6sg
+         pb1QWOvTMxB9lg61sqgTq3HRXYG5r20mHOxM3NrzfQvxOwjWGVTlMD0nb9VMl/PRFfBN
+         ZEqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762291060; x=1762895860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BGjWT2vMzqtOZS9xN5d6Q0YRIr9cvpctAWp7WzNW7AA=;
+        b=bcaHHFfTY9PAc5hCY6YXW/gqco6G2dpxRChO+AEVb5T/iKMkvV5mROXexRFjRfD0dD
+         GuxM4w6haGjWFsdN25D0fcdAVbFceldJacSFLkMEsQhRdlP2PK2KmIY9d0zzQ7wpxc5C
+         6Et9ZMNCLV7Cu8DWLubhFLUP4EOnslBrg+FQFxgrdFCLS2JQN2Zj3cX7pZatvU6j7tuU
+         pHQz8lmG0qqa+FvGKMDXx0Uewgh/3yKq8XlLOTfeTuIzu3ot56d0cc+2oyefiq8seCpP
+         JNiD8o/bT6zucnDOX/FyhiEdJvDszKELTqmxTx3Ms9zojBoeKOTOsrOECnB7chjbzon7
+         RmOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0mlcuXasTaacRMcbDqQdMr5vTz6WaknMP40rOQyjcmzCqj3BEOJyyhXSGC8o5GXcV5PcNqFywXfl2HCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUh8IhvLs/0ooGiHOnHRxdzNE9lYrYYBltT1WbwSXIzcH0ALBJ
+	gYwp4J47TpF0Coak54SOAe63aeEF1zfbfhlZPkcD1uQRdgD3/4fuI1YnuFXNPXwJtfQ=
+X-Gm-Gg: ASbGnctamvm1pjIvM74C+Q6pAhyoaXAVpY0VqgWdv5/9xGiHS/YtM0So9EqUb9x/4fB
+	pOv4CLx+RMyzpkkND8Fc6w4yq1EHK4ByScg6NEHI0NqIIcaHCP4UqH7lHLR2Z6dmEQwEIIF2uhT
+	dP4Cig2DThGJTHBGifBNhFyKsljtY2rTjDJodSLdIaMji6MsX9hVkw/BWFCLno52x6m9sWySYk/
+	25BgiOd+OBJn7OvNiV/RA7z9tYhmKaADWb32osdftYRDdy7cDdC2f6lCFWoFHy0qewg6YU/zaPe
+	Z2Swkvvk0JZcvjbXqyKwsHL7O5fyJO9snJEeC7/CSWUEVFw8MQllsMtRVReax16ZJJf4INb8x4b
+	fTr+3CXt68vKYSN9TbL0dyRXYLt9L58TvnhE98yahFlJZ509DVm+HzL9XT6ZJ8MahPAvPoCSKf1
+	NAqEReIjYtUd0rAsV4197U
+X-Google-Smtp-Source: AGHT+IH3Rnr9KTQSewiyDJxZYVWcxdCwkU03H2gP4ZOo4Vy5LVvo5/dzAHr56LlVqfHqMMIhppMFyg==
+X-Received: by 2002:a17:902:ce01:b0:295:2c8e:8e44 with SMTP id d9443c01a7336-2962ae94470mr13204245ad.59.1762291059617;
+        Tue, 04 Nov 2025 13:17:39 -0800 (PST)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998eb6sm37348165ad.29.2025.11.04.13.17.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 13:17:39 -0800 (PST)
+Date: Tue, 4 Nov 2025 13:17:36 -0800
+From: Deepak Gupta <debug@rivosinc.com>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, jim.shu@sifive.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	Zong Li <zong.li@sifive.com>,
+	Michael Ellerman <mpe@tenstorrent.com>
+Subject: Re: [PATCH v22 00/28] riscv control-flow integrity for usermode
+Message-ID: <aQptcHayBOY1sw1J@debug.ba.rivosinc.com>
+References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
+ <CACPK8XeQf9UJuu39bGcm2mySWrKYvUadOgFRmpas+AS9fXA2WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VO8wUZ8K=groe44TRzi3Dhw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CACPK8XeQf9UJuu39bGcm2mySWrKYvUadOgFRmpas+AS9fXA2WA@mail.gmail.com>
 
---Sig_/VO8wUZ8K=groe44TRzi3Dhw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Joel,
 
-Hi Daniel,
+Thanks a lot for testing it out.
 
-On Tue, 4 Nov 2025 09:48:35 +0100 Daniel Gomez <da.gomez@kernel.org> wrote:
+Comments inline.
+
+On Tue, Nov 04, 2025 at 05:34:11PM +1030, Joel Stanley wrote:
+>Hello Deepak,
+>
+>On Fri, 24 Oct 2025 at 03:31, Deepak Gupta via B4 Relay
+><devnull+debug.rivosinc.com@kernel.org> wrote:
+>>
+>> v22: fixing build error due to -march=zicfiss being picked in gcc-13 and above
+>> but not actually doing any codegen or recognizing instruction for zicfiss.
+>> Change in v22 makes dependence on `-fcf-protection=full` compiler flag to
+>> ensure that toolchain has support and then only CONFIG_RISCV_USER_CFI will be
+>> visible in menuconfig.
+>
+>Following our discussion at the riscv summit I spent some time with
+>this patch set with the goal of giving a test run on emulation. I only
+>got as far as qemu, as I couldn't get the selftests passing there.
+>
+>I had trouble running the podman container so I built a toolchain
+>using the riscv-gnu-toolchain branch (cfi-dev, d19f3009f6c2) you
+>pointed to.
+>
+>The opensbi branch was a bit old and wouldn't build with GCC 15, so I
+>tried to rebase and noticed the patches were already upstream. Have
+>you tested using v1.7 (or newer) there? Is there something I missed,
+>do we need more patches on upstream opensbi?
+>
+>I booted it in qemu 10.1.2 with the zicfi extensions both on and off.
+>
+>qemu-system-riscv64 -M virt,aia=aplic-imsic,aia-guests=5 \
+>  -cpu rv64,zicfilp=true,zicfiss=true,zimop=true,zcmop=true
+>  -smp 8 -nographic -bios fw_dynamic.elf
+>  -m 1024M -kernel arch/riscv/boot/Image \
+>  -initrd selftests/selftests.cpio \
+>  -append 'init=mini-init command="cfitests"'
+>
+>My results:
+>
+>no zicfi, no z*mop (crash, as expected):
+>-------------------------------------------------
+>
+>Running command: cfitests
+>system_opcode_insn: Invalid opcode for CSR read/write instruction[
+>0.462709] cfitests[85]: unhandled signal 4 code 0x1 at
+>0x0000000000011c44 in cfitests[1c44,10000+6d000]
+>[    0.463141] CPU: 4 UID: 0 PID: 85 Comm: cfitests Not tainted
+>6.18.0-rc3-tt-defconfig-jms-00090-g6e2297f1edbc #93 NONE
+>[    0.463338] Hardware name: riscv-virtio,qemu (DT)
+>[    0.463573] epc : 0000000000011c44 ra : 00000000000104e0 sp :
+>00007fffebd0ddb0
+>...
+>[    0.465177] status: 0000000200004020 badaddr: 00000000ce104073
+>cause: 0000000000000002
+>[    0.465410] Code: 0893 05d0 4501 0073 0000 b7f5 4501 b7f9 0017 0000
+>(4073) ce10
+>
+>no zicfi, z*mop (failed to start, as expected):
+>-----------------------------------------------------------
+>
+>Running command: cfitests
+>TAP version 13
+># Starting risc-v CFI tests
+>Bail out! Get landing pad status failed with -22
+>
+>zicfi, z*mop (failed to start, unexpected):
+>-------------------------------------------------------
+>Running command: cfitests
+>TAP version 13
+># Starting risc-v CFI tests
+>Bail out! Get landing pad status failed with -22
+>
+>I went digging to see why the zicfi enabled kernel failed. The
+>userspace binary was built with CFI:
+>
+>$ riscv64-unknown-linux-gnu-readelf -n selftests/cfitests
+>
+>Displaying notes found in: .note.gnu.property
+>  Owner                Data size     Description
+>  GNU                  0x00000010    NT_GNU_PROPERTY_TYPE_0
+>      Properties: RISC-V AND feature: CFI_LP_UNLABELED, CFI_SS
+>
+>I then tested your opensbi tree with some hacks to get it built with a
+>newer compiler. This produced different results, which was unexpected:
 >
 
-> >>       }
-> >>  -    if let Some(imports) =3D info.imports_ns {
-> >> ++    if let Some(imports) =3D &info.imports_ns {
-> >> +         for ns in imports {
-> >> +             modinfo.emit("import_ns", &ns); =20
->=20
-> Please, drop the '&'
->=20
-> +            modinfo.emit("import_ns", ns);
+Opensbi doesn't need to be built with new compiler. All it needs do are
+reflect MPELP bit back to S-mode (if its taking a trap and then reflecting
+back to S-mode) and ofcourse have SSE support. Both of these are upstream
+in opensbi.
 
-I will do that from today.
+I'll test with upstream opensbi, test and report back.
 
---=20
-Cheers,
-Stephen Rothwell
+>Running command: cfitests
+>TAP version 13
+># Starting risc-v CFI tests
+>Bail out! Landing pad is not enabled, should be enabled via glibc
+># Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+>
+>The selftest binary and the little toy init that starts it are both
+>statically linked and built against the toolchain's glibc, so I would
+>expect this to work.
+>
+>$ riscv64-unknown-linux-gnu-readelf -n sifive-cfi-build/sysroot/usr/lib/libc.a
+>
+>File: sifive-cfi-build/sysroot/usr/lib/libc.a(init-first.o)
+>
+>Displaying notes found in: .note.gnu.property
+>  Owner                Data size        Description
+>  GNU                  0x00000010       NT_GNU_PROPERTY_TYPE_0
+>      Properties: RISC-V AND feature: CFI_LP_UNLABELED, CFI_SS
+>
+>The kernel seems to have detected that CFI is available and is built with it:
+>
+>$ grep CFI .config
+>CONFIG_RISCV_USER_CFI=y
+>CONFIG_ARCH_SUPPORTS_CFI=y
+>
+>I did notice the func-sig-dev gcc branch is a few commits ahead of
+>what the sifive riscv-gnu-toolchain points to.
 
---Sig_/VO8wUZ8K=groe44TRzi3Dhw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Most likely PRCTL_* is not updated in cfi-dev branch? I'll take a look.
 
------BEGIN PGP SIGNATURE-----
+>
+>I had to context switch to some other tasks at this point. I wanted to
+>do some more digging to work out what was wrong, but I haven't found
+>time, so here are my notes in the hope that they are useful. I'll let
+>you know if I discover anything further.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkKbWsACgkQAVBC80lX
-0Gwd9AgAn0C3LUZeMcgNka2XBxxY7sneNHoxwssUdCtMQdcn7v71TAlxhSs6qLB0
-SSh19yXc/XkuyIcEbrKPkJCaewPd79ldGjY/JNftPZ4e1HbxoLC5GoxF5o0PWaTS
-UO/EIY6xBkgDqrke/seQ0vesf9bs7vWNFbFZeAtAB0osJs0xzUOUkQxGN9ye9PaK
-MbQOeY59zTfOlC8jcW7GLKtTWGXXks83mnqcpz5prc7YIH2BgbI5rgQoboBkFZuD
-0sI1c7eQqBXknYp5lKUj91Go9i+Hy9phKhquDpCy9d2h1V6z57pbwRgVJzdARtXB
-J5b/a2rnAqZl2mLCpjrGCOhBanR1yQ==
-=imsg
------END PGP SIGNATURE-----
-
---Sig_/VO8wUZ8K=groe44TRzi3Dhw--
+Thanks once again.
+>
+>Cheers,
+>
+>Joel
+>
+>
+>> How to test this series
+>> =======================
+>>
+>> Toolchain
+>> ---------
+>> $ git clone git@github.com:sifive/riscv-gnu-toolchain.git -b cfi-dev
+>> $ riscv-gnu-toolchain/configure --prefix=<path-to-where-to-build> --with-arch=rv64gc_zicfilp_zicfiss --enable-linux --disable-gdb  --with-extra-multilib-test="rv64gc_zicfilp_zicfiss-lp64d:-static"
+>> $ make -j$(nproc)
+>>
+>> Qemu
+>> ----
+>> Get the lastest qemu
+>> $ cd qemu
+>> $ mkdir build
+>> $ cd build
+>> $ ../configure --target-list=riscv64-softmmu
+>> $ make -j$(nproc)
+>>
+>> Opensbi
+>> -------
+>> $ git clone git@github.com:deepak0414/opensbi.git -b v6_cfi_spec_split_opensbi
+>> $ make CROSS_COMPILE=<your riscv toolchain> -j$(nproc) PLATFORM=generic
+>>
+>> Linux
+>> -----
+>> Running defconfig is fine. CFI is enabled by default if the toolchain
+>> supports it.
+>>
+>> $ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc) defconfig
+>> $ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc)
+>>
+>> Running
+>> -------
+>>
+>> Modify your qemu command to have:
+>> -bios <path-to-cfi-opensbi>/build/platform/generic/firmware/fw_dynamic.bin
+>> -cpu rv64,zicfilp=true,zicfiss=true,zimop=true,zcmop=true
 
