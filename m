@@ -1,124 +1,106 @@
-Return-Path: <linux-kernel+bounces-884062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59182C2F3E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:05:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D99EC2F410
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:08:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B0FB4E698C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76216188B57B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1591D7E5C;
-	Tue,  4 Nov 2025 04:05:33 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D775E27E1A1;
+	Tue,  4 Nov 2025 04:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cECTuwET"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37418EFD1;
-	Tue,  4 Nov 2025 04:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD39B1F95C;
+	Tue,  4 Nov 2025 04:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762229133; cv=none; b=lOszF+mIllwb/o5G2NxGqM84Ba4BvHB2Dp5ktDHsn9TbjfnA5ibMiunlxFVPAW2O2Uje8CJPMp4/ODB7w6TGAkAggA6rIkExYMzQankZDEaPDEb51GergXFfYkSQruxqDcdd5Fhf3c/TQf12624sumDHH3KUKbAjYnwQg2pskN0=
+	t=1762229295; cv=none; b=a509WspACE3RC25jq6HqAPYQ62Vooqc6436ZisCW0DazOi21pzH4iw7dFsp7u8dvKBf8LPX4ApUUuB8VJQ0gy7ksWP2td83nnWedAxsr8xxgy93nVTaOr7DmiRjHVrjwZL2LP4xdyFtWp30CelBZ97f1aT5aABdIIxxfj1UyfSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762229133; c=relaxed/simple;
-	bh=9aFU8M1H4GhB4GO8OLI/CJPOoAF5GXOiQ8AtQbX7n6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tBV2Ipwr5fOcByPkMxt6A0c9vJDBO3B2G5z5zg/0NuUZrkO1JZ4a4zKyLI+IMeDPn7Ck3MSoce7oAOR3qAjvNrqfU+1Jcwoewu2zE6lvwDLck6OB71zZIuzwCnk3vYaSPd/oRyL+QVyzV/0ZpUzznSpD94AFBy5urcRQBMRU720=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAB3IO94ewlpspxhAQ--.25862S2;
-	Tue, 04 Nov 2025 12:05:14 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] clk: mediatek: mt8173-apmixed: Fix ioremap resource leak in remove function
-Date: Tue,  4 Nov 2025 12:04:31 +0800
-Message-ID: <20251104040431.1452-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762229295; c=relaxed/simple;
+	bh=dgOQMuFGjDFbalkAxkKTOWiF8CT+szoF7qOEtnFgN0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=du8D//dEgfO4uIaASpWwger9auNEATU6JbNNz9McO+7UQZJRdUeJREATFM6nC5LEd8UosAyr1f5FMntNH0tGQGK30bwFsmvT861qqZdwo7hryB9LtcAVlCflr0VcUqr8Mvt25Z+8WRsekQxxzfhFP8uASjKINlNus3dPNl9Bhp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cECTuwET; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SCzuRbK010iCV7uM5d9o/fnRKEhVAKqhq5VkVQV9Jb0=; b=cECTuwETLawdqhDEoiTBQY82TY
+	RbZpkUtyzgw/JFQbrm9aQInyZbVWJaQl77CLk6CrImMO1gufct+nZJgh5ZGrI5nSviqcRr1JL//iZ
+	kGR3rYoFHiYAZBGa5H5AITadeGMJw8s06U05kxtiWYiu8JeV03/BMQa+1Xe6VjqCming=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vG8Ks-00Cqya-Cq; Tue, 04 Nov 2025 05:07:58 +0100
+Date: Tue, 4 Nov 2025 05:07:58 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Po-Yu Chuang <ratbert@faraday-tech.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, taoren@meta.com
+Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
+Message-ID: <cf5a3144-7b5e-479b-bfd8-3447f5f567ab@lunn.ch>
+References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+ <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3IO94ewlpspxhAQ--.25862S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr45WrW5JFW3XFyfuw48WFg_yoW8AF17pF
-	ykKFWakay8tw4Uur1vy3yvkF1Fva1Iqa45KFy7W3s3ZwnxGrZ2yF1rKayvva4xArWkKr1D
-	tr1UurWxCFW7AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	tVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgsQA2kJG3SlGQABss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
 
-The driver uses of_iomap() to map I/O memory in probe function, but
-forgets to call iounmap() in the remove function, leading to a resource
-leak when the driver is unloaded.
+On Mon, Nov 03, 2025 at 03:39:16PM +0800, Jacky Chou wrote:
+> Create the new compatibles to identify AST2600 MAC0/1 and MAC3/4.
+> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
+> - For "aspeed,ast2600-mac01", require rx/tx-internal-delay-ps properties
+>   with 45ps step.
+> - For "aspeed,ast2600-mac23", require rx/tx-internal-delay-ps properties
+>   with 250ps step.
+> - Both require the "scu" property.
+> Other compatible values remain unrestricted.
+> 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/net/faraday,ftgmac100.yaml | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> index d14410018bcf..de646e7e3bca 100644
+> --- a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> +++ b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> @@ -19,6 +19,12 @@ properties:
+>                - aspeed,ast2500-mac
+>                - aspeed,ast2600-mac
 
-Replace of_iomap() with devm_of_iomap() to automatically manage the
-I/O memory mapping. Remove the now-unnecessary unmap_io label and
-iounmap() call from the error path.
+I don't know if it is possible, but it would be good to mark
+aspeed,ast2600-mac as deprecated.
 
-Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+I also think some comments would be good, explaining how
+aspeed,ast2600-mac01 and aspeed,ast2600-mac23 differ from
+aspeed,ast2600-mac, and why you should use them.
 
-diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-index 95385bb67d55..ae759ef51f03 100644
---- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-@@ -146,15 +146,13 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- 	struct clk_hw *hw;
- 	int r;
- 
--	base = of_iomap(node, 0);
--	if (!base)
--		return -ENOMEM;
-+	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
--	if (IS_ERR_OR_NULL(clk_data)) {
--		r = -ENOMEM;
--		goto unmap_io;
--	}
-+	if (IS_ERR_OR_NULL(clk_data))
-+		return -ENOMEM;
- 
- 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
- 	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-@@ -188,8 +186,6 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- 				  ARRAY_SIZE(pllfhs), clk_data);
- free_clk_data:
- 	mtk_free_clk_data(clk_data);
--unmap_io:
--	iounmap(base);
- 	return r;
- }
- 
--- 
-2.50.1.windows.1
-
+	Andrew
 
