@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-885436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C32CC32E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 21:06:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236E7C32E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 21:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449AE425BB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 20:04:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9029A34998F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8138170809;
-	Tue,  4 Nov 2025 20:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94762E8E08;
+	Tue,  4 Nov 2025 20:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XtfD97Jt"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="KZfslalu"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AD82EB5CD;
-	Tue,  4 Nov 2025 20:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3D82BE7C2;
+	Tue,  4 Nov 2025 20:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762286622; cv=none; b=meI1TmVsH912NQsqqvLKNQpJx0B0lP0WQ1rtB78lxpzsKkQeNG/E939E84HmdXr/azthA0IppGv95qLOsnF2FkXqbDf9Um67/kIXEO+tLDj9XBsM0/GBhhCcfM8rr//vqwJ+XISWuQkECIovwaHps1Zg2qfW9X6jZpPW6U7wfLs=
+	t=1762287228; cv=none; b=qlqxzmK2u0+C3oYG7SSPUx9/cx0/y+A9HlT92w65+50DY+eZzVY0WsBvAFtsnI2tdIj3onCAgOs5xKz6VOrBS+bbCH8S5EN/BUx0aDgEAjLdjLpHUcDHjx0lrDqJMJVHJIsWfaN7nKEXM10SFYvLH+LNUmuAlCQ1s+sdKN2ImBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762286622; c=relaxed/simple;
-	bh=J1hJB6KTjOXhC0RBOjplOKBb4VvFsnVd+6JotxNhJQ4=;
+	s=arc-20240116; t=1762287228; c=relaxed/simple;
+	bh=3OVOsauAHqBfFq5y0sIH75q8XfLv7KHL4s4CePq6jik=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rWhtFHiI4nEkdTx7RruXg/OgTg/C8uuakkl0ziiviZuQufOvR2DEw1gPLNVdqlMF4BZSS2T3LSs+6NJv3sv2LrSoaP8NjnXDewy8igUe1Tr1fRals+ESnwT+FW5tfjouF85YGGf6q1VPNsPlFXGqambRQCiNa5zj1/81auS2dCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XtfD97Jt; arc=none smtp.client-ip=212.227.17.20
+	 In-Reply-To:Content-Type; b=GgnzFS53ksnTSYn8cqkEz7H6kzwO+Kp3sW+XOni6Cv64ngbSPry/KobQJ5VDr51uBsQm/+fapQ1c886f4xcfSVngob9yyCvuuWI8InL3LtjMd6cpG+9Vqj53jwZ5J+PJzYYqvNFZZuVKUEVQxn0jObhS3xVaLkA47dLAYDs4538=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=KZfslalu; arc=none smtp.client-ip=212.227.17.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762286614; x=1762891414; i=w_armin@gmx.de;
-	bh=IubVs5NxW6XbbvmkklZ1y2CBUf7SecoHug1L1V9zOns=;
+	s=s31663417; t=1762287200; x=1762892000; i=w_armin@gmx.de;
+	bh=5LCpFMy2Sa/G0xlgeiLHdmWtgBApdqYWv3zP0sHxuSQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=XtfD97Jt13Y9Y4ZIenlY4xDth8+iWJu7o7+Ete4drUUM8c3NaOuAc447W4SGbZpU
-	 toj7/rLWw8kKgitms1ZGcTmQe034BRXm7RQBplZGCMw53//uLgdAEEhyexSuey/5l
-	 8vx3BAzt4BnB7750EIo6TLAC/jdIm0exsCxbu3Ao+fllEAkGMkKijPK3LfoxxLme7
-	 Zy1BOhiJRhKwSQbDlO9jX1XL5jNVb4ey2H8EkMXgIjDa5rynZ2hZr6BsP/dAb7Hbk
-	 N+7SNgLN5SYM+C7zzJFRjMbPDpRUYWVzkNRATmr2Fun1uanwVns7zeFox/iXg79OM
-	 l9evUUnrC41d5QZNIA==
+	b=KZfslaluDyy2XKgOHK29K8y1NDxaZZ8XAq/HJ0B6VPBgQYGLxXGKV8jZbjysLXUz
+	 Dh4TFCAIsHjBMli4aAvgr7R29t/jM+xUaSf99ceO8GWFvsCHW0q8OA05sfGPYE+OW
+	 4o8J+FuVfy0869KWaihdrAKP20FQgyVcv8i9MG1raEfKcZz2HHBvsR/Ay03GUE/be
+	 IvWlgeTdPev9mtBK3WlKqBufy2H0nO7YfSBU4G1LQndb2wk4iX8M0P3WvuJKK6XEP
+	 PROS5iwzWQ4d7csAiYsWrzX6XP333Es2hNzfjyd6RtldeEVI2iDZWJMAQmRiMGW9G
+	 SIbvb4HQ9kUcEMGsmw==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MyKDU-1wAVfm0BmG-0176SZ; Tue, 04
- Nov 2025 21:03:34 +0100
-Message-ID: <e0b29b59-b37d-4c44-ab97-9527b0f959b1@gmx.de>
-Date: Tue, 4 Nov 2025 21:03:32 +0100
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLzBp-1vYBN31c2r-00IijD; Tue, 04
+ Nov 2025 21:13:20 +0100
+Message-ID: <a0b6d30b-3cba-4760-81dc-099e8fada7c0@gmx.de>
+Date: Tue, 4 Nov 2025 21:13:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,346 +57,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] platform/x86: ayaneo-ec: Add controller power and
- modules attributes
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-References: <20251031163651.1465981-1-lkml@antheas.dev>
- <20251031163651.1465981-5-lkml@antheas.dev>
- <7c521e72-1b32-4172-90ec-6e793941a8ed@gmx.de>
- <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] platform/x86: lenovo-wmi-helpers: Convert returned
+ 4B buffer into u32
+To: Rong Zhang <i@rong.moe>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20251031155349.24693-1-i@rong.moe>
+ <20251031155349.24693-2-i@rong.moe>
 Content-Language: en-US
 From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
+In-Reply-To: <20251031155349.24693-2-i@rong.moe>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5J/xaKqqSjnjOnrYMuX8wiRVr4BhCV/3vPPy3NWlyz5lJf/mDY4
- YV51fduDooLNPcUTmrhb7XzYYfAPz+HamEm2I+KTykZovbaLF2Tqz/fgexH85xlVoKG6Tj3
- 7rQ890PLjCjQHzbOGU682TB6oEMV9JzCv0C6MAA1cqVbt5OA023Gbl7XKiBEXEku9Cimt2L
- GxnyhR2S2qqXdSaY/t50A==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eWbpGXWFB+lbvGNGiVJ4mXtMmndYXQeM5YwZCB9XFoSA8lyXreB
+ kuQr+8614gTZzWxys7SK8iNV3APqfIh9yO4qkknIsc9EeDCq2gQCkmSaiktsoH/7FCUm88K
+ ONdE21r9A9mV+icIbSl7djHyVAWza3OX26qZ9AYZdZGAjCBTDgLkCBlDTNg6VTISkNX5TAm
+ 6Y8+r4GD16vNLLwvyUsUg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mgWZrW90u7k=;60H1nljeNH/CQ7tD87YOdOtel/3
- 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
- A0z8vjbg=
+UI-OutboundReport: notjunk:1;M01:P0:HLA9OgY9O+E=;GdvtZB+2ntgdV24Ql+LQG1672Q1
+ g5lyT49fDMCh9iwIbVRyZb+OxK5WeyUiw7oJUUQgbAz1qHLqH+c2751Pwb0RHCxT0Epvl70iL
+ wk3tWR/bVVz3Ku/C47fiBN3jIpP2Y8DREe3IBIJ3Yem3ZBmZo7yYpu6aUI6xeosLsxo4a0g7R
+ yErEX0/8oB/VxCmLFa1q6j6HQB+ll7DlNKFU/3jiAgDjzHzHf4E73oXIgvj6aSsZBhudhOqEX
+ Ekdc/6UZWy1u1C9xwjzofzDyyzQwgOd11FnLLTxlZ22oWF0p3osSSPBV39zlMwHzQspSRm0FG
+ Rpjf1hEYaQgyIchg2kblSt0WyrBx5L/lVL1J4fd4th4ntSO4Sqx8vv9uHLFWXhuHsD74M7PKW
+ ow76wyrFKnDf8e0ivAjEUNo3RdOyyN8XsNhHOGmp9agJl9u8IFjG1NyUrtcNgQjZ30icw2F5r
+ QIw+HEegecSpAniCKJmkveYYtSPnuJbhcZ2vLutFM0HWlFNPknYOh0X9DYSxowPvkA13JAK6R
+ JNJ6LRdSiuu1ALnIVp9reVHkNaINHs0qToIFsqYPSbibYiIblAR0Y/KZP9jy38iNw4SwajV6L
+ atRyn2ZLP8Ti6Ymw5gn3KRv0GYeK9OL5roucbWVC6FMHfazHCRxEL0KCgilug1F7XW7unkNWd
+ +LULfH8wdHCz+gmItp2bYTI17+d5sB3hhJNfTYFFGoiqlGSL9vAFOk0dtzY3IwQZGvtkgcLoi
+ SWR+i/59V7/m7Sw04DTCWepHj/BWKbVCo6EmdWX205DPAU/KlwR1SzqzVPpKEd7J8klxrB5pw
+ nwLYgvUjQ8pY+tjJGOQYp/XCq04SshfpDasQK3QpLxKN/gqhNlH1OsbhFcBHBCxqt5UwZTJ31
+ oSlwYF/K3u5+ZccZManSSOrbN2GA1p4qSEnvszAo0cGxtrcBSRgWTh/HDHL6C6LBubfTRtS+8
+ PxkFVCraqkHQHXL0R1fht+HqCu5OBJD4Q2GQLfoDKHakbLLVKCxrNhxo2dDaOdJ29G4jQd65C
+ N+WZIJbJBFn1q41u70NW7Cz5MMQf4OPxMrRQqJOQghzFvvfbp1is/q1DzLybcqRkSV7M85F9V
+ kz69XwaOxdamB9SvYbUcP82PCsmArXMHv+HpqtNKheojUlMs5MaPEVrydFyfLaokhSU6f4HmC
+ aZjM8vvAZWn2s7rBIdK7qtfLTc0PBRjGFwyuAOOckUi6w8GIfr3yd5AdPnXNNzHAgrBRYrCjO
+ w/GkJxk7wpfNsprq+fzyzQPQTnvukXaqQ7zzlDRX6mqh0FT5SdjYue66nUMwbYQ1KCQKCW6aO
+ XckqV6hK5IbRWr8uUFwxybZ28+yiegsrcvZnNocTjwPCR6X0km+qEOv/+OvMLQ7f/+oAYxQuD
+ EHFwNB6uhahG0yfvQnpVu8Z1qZW0qAVVNqeHEVS3pZ7lYaQzXlbXVn8KF76DKexEo96J35L2K
+ 0pqS4wu2DNNPA+8a4Ax16cVenO6m+jLMC16nd1fLcIrdk31YN/d3CplhYIEDrXV31GqE1IAcF
+ IUo5HUYQ3bG6vW9s77DQrFs2ZqDJn18Jbl98FcxTOtwe9ZcMfPX8E/Czmw1OmbSDCdZgphem2
+ djy5iCJjKxBFyQE+fgvlbf989ARHL0uoLWv0X2AmdN2qf0ergw2OcFTUt6dqM0UUIvnHsX8WE
+ pJ6zI9wK8+2t18Yw3IE5Cl1pphCq9tthG8+gvvG+WWkkq3A3OQch9A7v0Vkrfxke3+2c8MZqd
+ 4M+qyxx7/alJdBif1jDR/1RDKMizgPMEYsjQ7mAf8f+Z02F4c7n/CM7wYFzzlgpJeR6H8b6Bj
+ L8EPHv5pq4T/bhzM227ygOaaZRr7693r1DiHY9oA6T5KUzmHgaj+HujO0zWBGDMn/1owECBz8
+ zV+27wWLY1c160rHitYQHIe/9+gwJZUKQBMBfCTLYVBRuzqn28PD/W2gW3jEX3297CE5MnJbV
+ dqHnzqTAirZ/r2o3PUTTYH5OkrpUkTsDdfKi7hj/hvynR8gjrp4VM1Nu5wGgxSQ/Fh3EvtqXf
+ YJ4tpMmWvQ5VeEXB8GLJNUMJoNipBFF18ToJdFInwZ9fdAG9RSX1UvP0eYlPf//Ui2ckoUGdU
+ KZkIfT7hV7GuJ2whTG5pwLXFvtV+osljhuTf7tKC9Th3CB4/C96cC4TVfs6cv8ujQMjJseumn
+ +QAK5r+I+JFA+bzXpBd64IYDw9uEekMUpUI+5i7PKeSv1DOwhEpey5LkG0wefd7bijBLNbydv
+ nTUkCf69Nx6953IVn+1dFYzDCP15Apwu+GcB7ZADu5FXtM24J8q6zK5tRd/6XgIJ6OCnn5rf7
+ bl82w0rmpnjsrzoj/WwwUkHox3PpgEeuQhjaDUASN880CA8qV9vaGvqI64dn8eA/wbvKY/Aau
+ XW0NOMpVAwP8e9N2r4TmgvNqOCSz6dhhw0UzLdN/VgU/pw4taE8+0FT76ttLwN90LCSyWLW7S
+ C9MaWondtOJo0UxEu2kMd64AVfRdgNY5zJWVWZaeZZ5cB7RNiXIktMHv1oSGIlFF+bblAKWZx
+ weGIpBvqWWar4VjURIO6V4H5uFRCiDrO4Mw9avEhg/F84ml5KiCqaJCsKC6+aSK89lF4rba2B
+ XtYTWLeEJ/G4NFF4+xO4cIkZBAGobUaSFSNSYwxjbkg6IrHCP9dbcF5f26qDVk/TvPXz4srse
+ rBCqLAMDJ9/iZiS/se5+EIjG/N+oimKfCQUCld5ihMOYbSlVCdrKJz9hYbw6FpX78p5BJYzb0
+ ZPiLl6NCiqIBNLyJOPTzF9ZfKtgSbr9+AAEvNVOFooK6C7O6WkRa4GLqLjwAMJ74h2lXClSgo
+ CbCHomUovEzHDGgZhiYaVIzY630Crk+4c4pRvoTzdNvvMV5P09emwjV32oLWOz/MNM6GlpESw
+ 0hHttDF899pOF7B8Nxq6AvOKeesy9BADVZcCJRVRTrTLETtOWWkv2qlbb8IdoY8+Br+OR62pf
+ 8h6Phim/EscNmLd/X/Rr6KsSWQncKxyXOlZFyi3PxChlWab7z5uvUIVZB7FB/l9OJav3XMDzi
+ TQ6+5fd/zLt5McyvnVXesv1XwH15fNAtY0u6JIXhLhycH6yJvnx9/WHoKIuKDWPpwjdWTbkme
+ wle2nvdoKP+7WV6f69fupByOFpnS0yYz+bOc4K36CSaCnPzkFCiX/Jlu3uKwrs0mHXEUvFKsv
+ 31NVoHZzPERyt0mLKiS9pkRhlF89aToLg/xrmrw/QJroZkMxaTpvMwznCMVXUjwzFGCZKJHI9
+ 2l6cg3ZJE+5clMV+2C6DopwZwk4A4tNpzZzX7ynRPpJJ0yoB9thI3lUao+lrjWCWbuGATxlb6
+ gRiOOWroknqxsgFtKrwzr2vA+VwtZOIicusI3Xcf/NQNb6GlHY5fShiZZC1VvUrJeBZF5wR5r
+ iXFdc/C8WP47QBjezc4lMjqAmf/uq6grLWRkezlYUwdOuFVKJ3SOhvZtG4gPiRD1cMfamjRYX
+ MI70kWh/AzH5pRjGgZok9VUk9SuxetNgJpOnx8+YM7cNR/2aJQG+CsrUtkZq1VGHlFHBaAAQv
+ Hyn7RvZgONSQf9ikCChR80tLxP4aqyCEvfNw1opNGSn4xOC3CrnXV9zaoI8Rfxv2egzFrh5TA
+ pdpbxWEw5V1KZ3rg2rHLeo2BCkfmHObqda77bWvn8w+cs14VVivC4rz93ZJcSYTkr726uAJnP
+ jWSZphBiZRumVpJ3uxahg6vUxmMSNo/lTtf7v8DZDX48eedvOG0wZstKY+ElA5gmVqkcblYE9
+ f4nd2av5ZkYbq/1i3e3BwawwcTMXwztq/LpBKGYdrmu1ChWcWtT+ICuAo76znsMn5a//smyMZ
+ TWJiPkoQGQOsV1ds/bwi+SXtLIUcuIh1xPQ5Olsn27GwGIgEjc6lEu68KC4mweSJvmx9XC0lF
+ eIvzW0KRpUpTwS5sEOKTOVFQW6Z3DLFhdEjmj/jpjpn8mOTIiytXVcmp9gyXlXJeLaG5AuwqM
+ JHIMXhfk9wjHEmUuWGRzdWQ9eTjlF8KX1MKo2d7DIw+y6oX+fYTKw0pIxOS1QgQ9KUZKBDjGc
+ Uj0V5pEnkl5csFMDqFXtXgMStrsDwKzArtrU/E5S+mEDYbNWHGivHZ0hiKoBI4qTBBQxE7kNS
+ sb6sAlf6fywC/wzaouOpIqsKrqi3qPeDFvXHKnKafpLng8wRSPOp9+a7saOrmgEG24FSDK0lB
+ skMV2qPRiOVegJhVu87xuwpFHzLOU+vYTvhLOrTvfckBUQ5mjYlRm86KnO8kKcUKm86AQ8LZN
+ IReNypdEiH/CZ251i2yQDddC0EVV6dEmmQPZpWvJeyAlG54F5wOoosET49LyIyKBGbwT2Pvl/
+ BkPAjPsaTHFWG6M7icsa/ST1o6vAwYV+U2/lIzwvpzCei6EQ5uvMowr0peYs9VwQwUbczUxYD
+ 6xUg+4ANACZV2j3ZohCzRXDwlCVS7qMFhJ7yBB9pQrgx0vZpHvDUV5Gv4d+SNHvNYmynXKhtm
+ zmB5bw5Rx+H/fR0N/pxydj6les9OweisU+KeGWWw+EX1km9GnSk4kmZIR/CVHEy/qBusbZ0fF
+ Vx15NpPROJxnw5XBdivqa33d1yw9nFvsh6iMvMxJPMLElRVFYMwUHTqh23jmJpxzbQqyoWFHu
+ cZPTHgVyJzn3k4C1/jYt8WJ9axFImAOn4qcjne5ywbt81GZfo/OQIZTzdyW0SCulqgffhQxNi
+ ZQOF+ob+91ZGhorv02gbEv9PBkYYFqxxebiHY+ljBntl4nlKFb9CGrTmVz4EJR3ogG28Q2mkb
+ Mk73/1NDvoa4fTNZEknmMCetprQ5E0uJabMzmemG7XWHieGUyKX0BVZg8wxU4XYSq/F998Ctx
+ lTxfisPaaS08iwQv3hWJMlOngDaLpPIpO2GY/kiOGOtmDl1+6Dlu7zK6pvEZERUsLTzG1k0oH
+ RA2A7rz9T6CK1m6uEX25wSOG1h3SZed5E+R2zHub64jekg2mndEaSiNc1HVUWJtRWlwD7RDjA
+ gpNdjMsDb/q5H6wqb5xzWFjaa0Jfjo45nWe8kpQFq4stFV6UrSWonJcrL9fr+jKzLzRl4bZ1M
+ 2VZpz6dAx/abU0utsQ6X7uJrPMS1BDN3ehO2CJ41XLOeT9N
 
-Am 02.11.25 um 19:46 schrieb Antheas Kapenekakis:
+Am 31.10.25 um 16:51 schrieb Rong Zhang:
 
-> On Sun, 2 Nov 2025 at 19:30, Armin Wolf <W_Armin@gmx.de> wrote:
->> Am 31.10.25 um 17:36 schrieb Antheas Kapenekakis:
->>
->>> The Ayaneo 3 features hot-swappable controller modules. The ejection
->>> and management is done through HID. However, after ejecting the modules,
->>> the controller needs to be power cycled via the EC to re-initialize.
->>>
->>> For this, the EC provides a variable that holds whether the left or
->>> right modules are connected, and a power control register to turn
->>> the controller on or off. After ejecting the modules, the controller
->>> should be turned off. Then, after both modules are reinserted,
->>> the controller may be powered on again to re-initialize.
->>>
->>> This patch introduces two new sysfs attributes:
->>>    - `controller_modules`: a read-only attribute that indicates whether
->>>      the left and right modules are connected (none, left, right, both).
->>>    - `controller_power`: a read-write attribute that allows the user
->>>      to turn the controller on or off (with '1'/'0').
->>>
->>> Therefore, after ejection is complete, userspace can power off the
->>> controller, then wait until both modules have been reinserted
->>> (`controller_modules` will return 'both') to turn on the controller.
->>>
->>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>> ---
->>>    .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 ++++
->>>    MAINTAINERS                                   |   1 +
->>>    drivers/platform/x86/ayaneo-ec.c              | 106 ++++++++++++++++++
->>>    3 files changed, 126 insertions(+)
->>>    create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo-ec b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
->>> new file mode 100644
->>> index 000000000000..3c9c3580c685
->>> --- /dev/null
->>> +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
->>> @@ -0,0 +1,19 @@
->>> +What:                /sys/devices/platform/ayaneo-ec/controller_power
->>> +Date:                Oct 2025
->> I think you need to update those dates.
->>
->>> +KernelVersion:       6.19
->>> +Contact:     "Antheas Kapenekakis" <lkml@antheas.dev>
->>> +Description:
->>> +             Current controller power state. Allows turning on and off
->>> +             the controller power (e.g. for power savings). Write 1 to
->>> +             turn on, 0 to turn off. File is readable and writable.
->>> +
->>> +What:                /sys/devices/platform/ayaneo-ec/controller_modules
->>> +Date:                Oct 2025
->>> +KernelVersion:       6.19
->>> +Contact:     "Antheas Kapenekakis"  <lkml@antheas.dev>
->>> +Description:
->>> +             Shows which controller modules are currently connected to
->>> +             the device. Possible values are "left", "right" and "both".
->>> +             File is read-only. The Windows software for this device
->>> +             will only set controller power to 1 if both module sides
->>> +             are connected (i.e. this file returns "both").
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index da9498d8cc89..b4d62ea9a926 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
->>>    M:  Antheas Kapenekakis <lkml@antheas.dev>
->>>    L:  platform-driver-x86@vger.kernel.org
->>>    S:  Maintained
->>> +F:   Documentation/ABI/testing/sysfs-platform-ayaneo
->>>    F:  drivers/platform/x86/ayaneo-ec.c
->>>
->>>    AZ6007 DVB DRIVER
->>> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
->>> index 697bb053a7d6..0652c044ad76 100644
->>> --- a/drivers/platform/x86/ayaneo-ec.c
->>> +++ b/drivers/platform/x86/ayaneo-ec.c
->>> @@ -8,6 +8,7 @@
->>>     */
->>>
->>>    #include <linux/acpi.h>
->>> +#include <linux/bits.h>
->>>    #include <linux/dmi.h>
->>>    #include <linux/err.h>
->>>    #include <linux/hwmon.h>
->>> @@ -16,6 +17,7 @@
->>>    #include <linux/module.h>
->>>    #include <linux/platform_device.h>
->>>    #include <linux/power_supply.h>
->>> +#include <linux/sysfs.h>
->>>    #include <acpi/battery.h>
->>>
->>>    #define AYANEO_PWM_ENABLE_REG        0x4A
->>> @@ -32,9 +34,17 @@
->>>    #define AYANEO_CHARGE_VAL_AUTO              0xaa
->>>    #define AYANEO_CHARGE_VAL_INHIBIT   0x55
->>>
->>> +#define AYANEO_POWER_REG     0x2d
->>> +#define AYANEO_POWER_OFF     0xfe
->>> +#define AYANEO_POWER_ON              0xff
->>> +#define AYANEO_MODULE_REG    0x2f
->>> +#define AYANEO_MODULE_LEFT   BIT(0)
->>> +#define AYANEO_MODULE_RIGHT  BIT(1)
->> Using GENMASK() would make sense here.
-> Only a single bit is being used though? GENMASK is used for a contiguous series?
+> The Windows WMI-ACPI driver converts all ACPI objects into a common
+> buffer format, so returning a buffer with four bytes will look like an
+> integer for WMI consumers under Windows.
+>
+> Therefore, some devices may simply implement the corresponding ACPI
+> methods to always return a buffer. While lwmi_dev_evaluate_int() expects
+> an integer (u32), convert returned 4-byte buffer into u32 to support
+> these devices.
+>
+> Suggested-by: Armin Wolf <W_Armin@gmx.de>
+> Link: https://lore.kernel.org/r/f1787927-b655-4321-b9d9-bc12353c72db@gmx=
+.de/
+> Signed-off-by: Rong Zhang <i@rong.moe>
+> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> ---
+> Changes in v2:
+> - New patch (thanks Armin Wolf)
+> ---
+>   drivers/platform/x86/lenovo/wmi-helpers.c | 21 ++++++++++++++++++---
+>   1 file changed, 18 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/platform/x86/lenovo/wmi-helpers.c b/drivers/platfor=
+m/x86/lenovo/wmi-helpers.c
+> index f6fef6296251..f3bc92ac505a 100644
+> --- a/drivers/platform/x86/lenovo/wmi-helpers.c
+> +++ b/drivers/platform/x86/lenovo/wmi-helpers.c
+> @@ -59,10 +59,25 @@ int lwmi_dev_evaluate_int(struct wmi_device *wdev, u=
+8 instance, u32 method_id,
+>   		if (!ret_obj)
+>   			return -ENODATA;
+>  =20
+> -		if (ret_obj->type !=3D ACPI_TYPE_INTEGER)
+> -			return -ENXIO;
+> +		switch (ret_obj->type) {
+> +		/*
+> +		 * The ACPI method may simply return a 4-byte buffer when a u32
+> +		 * integer is expected. This is valid on Windows as its WMI-ACPI
+> +		 * driver converts everything to a common buffer.
+> +		 */
+> +		case ACPI_TYPE_BUFFER: {
+> +			if (ret_obj->buffer.length !=3D 4)
+> +				return -ENXIO;
 
-I was thinking of using GENMASK() for both bits:
+The Windows driver also accepts oversized buffers. I suggest that you foll=
+ow this behavior
+for the sake of compatibility.
 
-#define AYANEO_MODULE_MASK	GENMASK(1, 0)
+>  =20
+> -		*retval =3D (u32)ret_obj->integer.value;
+> +			*retval =3D *((u32 *)ret_obj->buffer.pointer);
 
-You can then retrieve both bits using FIELD_GET() and simply use a switch statement
-together with an enum in controller_modules_show().
+The buffer can be unaligned. Better use get_unaligned_le32() from linux/un=
+aligned.h.
 
 Thanks,
 Armin Wolf
 
->> With those issues being fixed:
->> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->>
->>> +
->>>    struct ayaneo_ec_quirk {
->>>        bool has_fan_control;
->>>        bool has_charge_control;
->>> +     bool has_magic_modules;
->>>    };
->>>
->>>    struct ayaneo_ec_platform_data {
->>> @@ -46,6 +56,7 @@ struct ayaneo_ec_platform_data {
->>>    static const struct ayaneo_ec_quirk quirk_ayaneo3 = {
->>>        .has_fan_control = true,
->>>        .has_charge_control = true,
->>> +     .has_magic_modules = true,
->>>    };
->>>
->>>    static const struct dmi_system_id dmi_table[] = {
->>> @@ -266,6 +277,100 @@ static int ayaneo_remove_battery(struct power_supply *battery,
->>>        return 0;
->>>    }
->>>
->>> +static ssize_t controller_power_store(struct device *dev,
->>> +                                   struct device_attribute *attr,
->>> +                                   const char *buf,
->>> +                                   size_t count)
->>> +{
->>> +     bool value;
->>> +     int ret;
->>> +
->>> +     ret = kstrtobool(buf, &value);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     ret = ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_POWER_OFF);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     return count;
->>> +}
->>> +
->>> +static ssize_t controller_power_show(struct device *dev,
->>> +                                  struct device_attribute *attr,
->>> +                                  char *buf)
->>> +{
->>> +     int ret;
->>> +     u8 val;
->>> +
->>> +     ret = ec_read(AYANEO_POWER_REG, &val);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     return sysfs_emit(buf, "%d\n", val == AYANEO_POWER_ON);
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(controller_power);
->>> +
->>> +static ssize_t controller_modules_show(struct device *dev,
->>> +                                    struct device_attribute *attr, char *buf)
->>> +{
->>> +     char *out;
->>> +     int ret;
->>> +     u8 val;
->>> +
->>> +     ret = ec_read(AYANEO_MODULE_REG, &val);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     switch (~val & (AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT)) {
->>> +     case AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT:
->>> +             out = "both";
->>> +             break;
->>> +     case AYANEO_MODULE_LEFT:
->>> +             out = "left";
->>> +             break;
->>> +     case AYANEO_MODULE_RIGHT:
->>> +             out = "right";
->>> +             break;
->>> +     default:
->>> +             out = "none";
->>> +             break;
->>> +     }
->>> +
->>> +     return sysfs_emit(buf, "%s\n", out);
->>> +}
->>> +
->>> +static DEVICE_ATTR_RO(controller_modules);
->>> +
->>> +static struct attribute *aya_mm_attrs[] = {
->>> +     &dev_attr_controller_power.attr,
->>> +     &dev_attr_controller_modules.attr,
->>> +     NULL
->>> +};
->>> +
->>> +static umode_t aya_mm_is_visible(struct kobject *kobj,
->>> +                              struct attribute *attr, int n)
->>> +{
->>> +     struct device *dev = kobj_to_dev(kobj);
->>> +     struct platform_device *pdev = to_platform_device(dev);
->>> +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
->>> +
->>> +     if (data->quirks->has_magic_modules)
->>> +             return attr->mode;
->>> +     return 0;
->>> +}
->>> +
->>> +static const struct attribute_group aya_mm_attribute_group = {
->>> +     .is_visible = aya_mm_is_visible,
->>> +     .attrs = aya_mm_attrs,
->>> +};
->>> +
->>> +static const struct attribute_group *ayaneo_ec_groups[] = {
->>> +     &aya_mm_attribute_group,
->>> +     NULL
->>> +};
->>> +
->>>    static int ayaneo_ec_probe(struct platform_device *pdev)
->>>    {
->>>        const struct dmi_system_id *dmi_entry;
->>> @@ -307,6 +412,7 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
->>>    static struct platform_driver ayaneo_platform_driver = {
->>>        .driver = {
->>>                .name = "ayaneo-ec",
->>> +             .dev_groups = ayaneo_ec_groups,
->>>        },
->>>        .probe = ayaneo_ec_probe,
->>>    };
+> +			return 0;
+> +		}
+> +		case ACPI_TYPE_INTEGER:
+> +			*retval =3D (u32)ret_obj->integer.value;
+> +			return 0;
+> +		default:
+> +			return -ENXIO;
+> +		}
+>   	}
+>  =20
+>   	return 0;
 
