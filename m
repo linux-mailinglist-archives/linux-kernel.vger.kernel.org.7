@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-884656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1893FC30B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:21:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27597C30B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA283BA91A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511863ACC98
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590F52E6CDA;
-	Tue,  4 Nov 2025 11:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883ED2E719E;
+	Tue,  4 Nov 2025 11:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkcbnEER"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGtnNCN/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B557B2C0F7E;
-	Tue,  4 Nov 2025 11:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF8B2C11D1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762255284; cv=none; b=pK/2EqNrdyUX8AjXu84CCwWhTPrTNf+ldAXCMMur0bV3rFSRCY83GNNVOY8V7KDKo0YoaWX7WhCg940VCxCP4+K42AVGHJPJolyCCuze/YsNXYqX/FtFaD+/o7mgEdqdB3tj3fnWpaugpzZY1kDzanOgiEKz3z934/a1Os8+o0Q=
+	t=1762255345; cv=none; b=TnRV0h+IQysA5a3u761vpu7ceAMDceNdPatBp4q7OfnZ/xBZctL12/whxx/wIvu+4Oz128Xi2uuZiFnlfQipeM+jBHe3NQV9Oat/2SFsyc/hSBUV23R0ZZ6f9+03YcC+wuohIWAh+4JAPdfoBrhove2QE5Mrv9x6+wHnCf6q8Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762255284; c=relaxed/simple;
-	bh=LiZJY/3wCT03/9ZLDXQDP1aBdRc5YScmWSbm14KOsPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8RS8gqma4Me5x6Ybn8VR6k1C05FLIXq2+B2G08EAPyfttFEJW+8klY11+l+yD5uCEA3adCIv/GVPbe0F564Uy7eh955X4smix0NN0xK8vtEVlrtQBzFJub4UK4UerXSv5/T3SuxfhuBISDSUfsnWahEWMHO2Rxe0D5t18SbznM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkcbnEER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227C2C4CEF7;
-	Tue,  4 Nov 2025 11:21:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762255284;
-	bh=LiZJY/3wCT03/9ZLDXQDP1aBdRc5YScmWSbm14KOsPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KkcbnEER5owyw8/sqVExh1KJpmqHnUwWMApK/ti/BnI0pXk4aMwuM8DhLAax35FmO
-	 rzGK+PmtqpC5ZHd8n1BQZ6KXsv48K0FBpiETLoB9QYcr7wVBFDJYXNMzroFXd8h+6f
-	 VK4Q+I4KQhdRfr9OMouXlAgS6Og/gKCg6EyTc8yxE4dvNbzZh8lMS0ZIYiTGqOJtvo
-	 LbN+GAw5ptKl9bbpzSqoOhfbgwbrcA+pK4sSgBpNpeYpkfmzlLzz23xIFVgbKMBQah
-	 +632D6PJf0to/Qn+MztvmBizvmyI4jIJF9tjtqecJ0JR0AaEUCywX+ENJgdv7zgShs
-	 SJ+Njqy00S4aw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vGF6M-000000007OP-1nwh;
-	Tue, 04 Nov 2025 12:21:27 +0100
-Date: Tue, 4 Nov 2025 12:21:26 +0100
-From: Johan Hovold <johan@kernel.org>
-To: =?utf-8?Q?Rapha=C3=ABl?= Gallais-Pou <rgallaispou@gmail.com>
-Cc: Alain Volmat <alain.volmat@foss.st.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: Re: [PATCH] drm: sti: fix device leaks at component probe
-Message-ID: <aQnhtkIG9-A7yH-H@hovoldconsulting.com>
-References: <20250922122012.27407-1-johan@kernel.org>
- <aQTtlvoe96Odq96A@thinkstation>
+	s=arc-20240116; t=1762255345; c=relaxed/simple;
+	bh=50x9iL/Y/BljBKuXl4bSN56iD5/TTDcB13FlDryEG7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hKvTVyQ957RzmKxCVZm6/R0KbjjOaVqn2J2zaTMmUWYqAQemq/TMV3kBgqu28NOo6/jov6o9OCTtmu4w4xcjnZ8Rk7b261ZqYVipo0GGhl7Zi53R+dizSKkOQeJLY4q8+2sshB+UZGt1TB2OMhTtpWKwafeBEMIfpFoCfQjuCUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GGtnNCN/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762255342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOiwR+3npBDpnhOAXG48/ro8cjEOatu32+L6Iae+fU8=;
+	b=GGtnNCN/b3Lj2VRloJ9d6LXZKXITHCMXXeIoKVHU1RtMMV7SPzc8jaxL14qpCJ4AXe0Ohm
+	cuDyZq/W2265BlgieOopsk42PZhiV49z8/4NAo15KXuwQtw29KNmdqS+UJRtd4J04lYKX7
+	KRfZjNWNXvFX1DZBdJzMZvE7Jp9GVBQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-OX-uAnzuNrOrXdiqog2IIA-1; Tue,
+ 04 Nov 2025 06:22:17 -0500
+X-MC-Unique: OX-uAnzuNrOrXdiqog2IIA-1
+X-Mimecast-MFC-AGG-ID: OX-uAnzuNrOrXdiqog2IIA_1762255334
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6596818002C1;
+	Tue,  4 Nov 2025 11:22:13 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.33.172])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B895630001A1;
+	Tue,  4 Nov 2025 11:22:04 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Jens Remus <jremus@linux.ibm.com>,  Steven Rostedt <rostedt@kernel.org>,
+  linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+  bpf@vger.kernel.org,  x86@kernel.org,  Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,  Josh Poimboeuf <jpoimboe@kernel.org>,
+  Ingo Molnar <mingo@kernel.org>,  Jiri Olsa <jolsa@kernel.org>,  Arnaldo
+ Carvalho de Melo <acme@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,
+  Thomas Gleixner <tglx@linutronix.de>,  Andrii Nakryiko
+ <andrii@kernel.org>,  Indu Bhagat <indu.bhagat@oracle.com>,  "Jose E.
+ Marchesi" <jemarch@gnu.org>,  Beau Belgrave <beaub@linux.microsoft.com>,
+  Linus Torvalds <torvalds@linux-foundation.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Sam James <sam@gentoo.org>,  Kees Cook
+ <kees@kernel.org>,  Carlos O'Donell <codonell@redhat.com>,  Heiko Carstens
+ <hca@linux.ibm.com>,  Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
+ infrastructure
+In-Reply-To: <20251024145156.GM4068168@noisy.programming.kicks-ass.net> (Peter
+	Zijlstra's message of "Fri, 24 Oct 2025 16:51:56 +0200")
+References: <20251007214008.080852573@kernel.org>
+	<20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+	<20251024092926.GI4068168@noisy.programming.kicks-ass.net>
+	<20251024104119.GJ4068168@noisy.programming.kicks-ass.net>
+	<a59509f0-5888-4663-9e82-98e27fc3e813@linux.ibm.com>
+	<20251024140815.GE3245006@noisy.programming.kicks-ass.net>
+	<20251024145156.GM4068168@noisy.programming.kicks-ass.net>
+Date: Tue, 04 Nov 2025 12:22:01 +0100
+Message-ID: <lhuldkmujom.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQTtlvoe96Odq96A@thinkstation>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Oct 31, 2025 at 06:10:46PM +0100, Raphaël Gallais-Pou wrote:
+* Peter Zijlstra:
 
-> Le Mon, Sep 22, 2025 at 02:20:12PM +0200, Johan Hovold a écrit :
-> > Make sure to drop the references taken to the vtg devices by
-> > of_find_device_by_node() when looking up their driver data during
-> > component probe.
-> 
-> Markus suggested “Prevent device leak in of_vtg_find()” as commit
-> summary.
+> +/*
+> + * Heuristic-based check if uprobe is installed at the function entry.
+> + *
+> + * Under assumption of user code being compiled with frame pointers,
+> + * `push %rbp/%ebp` is a good indicator that we indeed are.
+> + *
+> + * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
+> + * If we get this wrong, captured stack trace might have one extra bogus
+> + * entry, but the rest of stack trace will still be meaningful.
+> + */
+> +bool is_uprobe_at_func_entry(struct pt_regs *regs)
 
-Markus has gotten himself banned from the mailing lists some years ago
-and even if he is now back with a new mail address most of us still
-ignore him.
+Is this specifically for uprobes?  Wouldn't it make sense to tell the
+kernel when the uprobe is installed whether the frame pointer has been
+set up at this point?  Userspace can typically figure this out easily
+enough (it's not much more difficult to find the address of the
+function).
 
-I prefer the Subject as it stands since it captures when the leaks
-happens, but I don't mind mentioning of_vtg_find() instead if you
-insist.
+Thanks,
+Florian
 
-> > Note that holding a reference to a platform device does not prevent its
-> > driver data from going away so there is no point in keeping the
-> > reference after the lookup helper returns.
-> > 
-> > Fixes: cc6b741c6f63 ("drm: sti: remove useless fields from vtg structure")
-> > Cc: stable@vger.kernel.org	# 4.16
-> > Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >  drivers/gpu/drm/sti/sti_vtg.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.c
-> > index ee81691b3203..ce6bc7e7b135 100644
-> > --- a/drivers/gpu/drm/sti/sti_vtg.c
-> > +++ b/drivers/gpu/drm/sti/sti_vtg.c
-> > @@ -143,12 +143,17 @@ struct sti_vtg {
-> >  struct sti_vtg *of_vtg_find(struct device_node *np)
-> >  {
-> >  	struct platform_device *pdev;
-> > +	struct sti_vtg *vtg;
-> >  
-> >  	pdev = of_find_device_by_node(np);
-> >  	if (!pdev)
-> >  		return NULL;
-> >  
-> > -	return (struct sti_vtg *)platform_get_drvdata(pdev);
-> > +	vtg = platform_get_drvdata(pdev);
-> > +
-> > +	put_device(&pdev->dev);
-> 
-> I would prefer of_node_put() instead, which does the same basically, but
-> at least it is more obviously linked to of_find_device_by_node().
-
-of_node_put() operates on OF nodes, but here it is the platform device
-that is leaking.
-
-> > +
-> > +	return vtg;
-> >  }
-
-Johan
 
