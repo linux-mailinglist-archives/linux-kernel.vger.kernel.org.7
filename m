@@ -1,206 +1,133 @@
-Return-Path: <linux-kernel+bounces-884166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AADC2F7F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:51:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C11C2F6D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:19:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B260420D0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:51:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0CE189C5C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594D82DF144;
-	Tue,  4 Nov 2025 06:50:14 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EAF2D0C7A;
-	Tue,  4 Nov 2025 06:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25E2D97AC;
+	Tue,  4 Nov 2025 06:17:09 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0EA2D0C76;
+	Tue,  4 Nov 2025 06:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239013; cv=none; b=WJdNP7PptGW0vZWG2B6+ksPAkSkiuKfdk5kYXEQPMaBlojB8B47cJObMjJhHM1OJ8G1aFZJ3G4ODVziTh4//6ZtQByGwQp3L6ICpTfcd/bJJRU4F9theydWY0AA5n8oMniJX4n3K18BVDZuA+xrxySiPJcpUnedKREysNCDddRI=
+	t=1762237029; cv=none; b=uuNmCRCivi7PpyMxGPN4i3H8kIYrLbzwbS2yZsC7oLNJGgxhxZTtGMolrIlF3B1qHIsZjigbNexsRFS+rrwGgCyIJ8tk7wib3nvknJ0GP+bB+KWuZlfYzMG/eqeWKRcIbPdULBp9iF6viIaWPyz1UyFifwRG2rw6DGC3CsgKouk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239013; c=relaxed/simple;
-	bh=Ug8YrLFGJewg1FM2NiKLfepzQXgDqX4IFVpu7zhn/D4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+MJWMkrcWz2SRvGXJYJm8j0kGp5OYOYLIrlDrWYlpqwyFwYmZjaZaR+TM6KfZoeaYBz2p48S65Kt/8+ngLKqVm/PHAL1aN/gkedaVPt/Uu7xbGbyqcHUtbkfexoSBOBubz5QmUnORiGCpkTQNRTXtPEI141Snj38UMgEzFvo0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d0yqn4Hdvz9sSL;
-	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id KvWCvtBuZZqr; Tue,  4 Nov 2025 07:15:33 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0yqn3J6sz9sS8;
-	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 595658B76C;
-	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id fIxXjoi-bve2; Tue,  4 Nov 2025 07:15:33 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5E3778B763;
-	Tue,  4 Nov 2025 07:15:31 +0100 (CET)
-Message-ID: <f8872b02-d7f5-421d-8699-5d27987c6e1f@csgroup.eu>
-Date: Tue, 4 Nov 2025 07:15:30 +0100
+	s=arc-20240116; t=1762237029; c=relaxed/simple;
+	bh=Awe/C4dgeth/gqIck+puaWvhE1Pl7xHE9OomEMpA5Ws=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFYcHq3t7d54p9ixy1fwlM7lVU5Dkm71DPEcpZITHvZ8vOY+/4GzrNhbietm4kJb7Duy3UomGKhQ8Zgk/Rqkd101h/OM8TpheBTuBYZGd3//PyL8Yb57tcNM+Hldho2E1+OrypEk2/C6/qqss20BafLqYdhyDrHeOb8E2adYDTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: uTZkr/3MQUG+47Bde253qA==
+X-CSE-MsgGUID: ntsweP9lTCCwZ0Kzgx7tzQ==
+X-IronPort-AV: E=Sophos;i="6.19,278,1754928000"; 
+   d="scan'208";a="131456660"
+From: guhuinan <guhuinan@xiaomi.com>
+To: Oliver Neukum <oneukum@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+	<usb-storage@lists.one-eyed-alien.net>, <linux-kernel@vger.kernel.org>, "Yu
+ Chen" <chenyu45@xiaomi.com>, Owen Gu <guhuinan@xiaomi.com>, Michal Pecio
+	<michal.pecio@gmail.com>
+Subject: [PATCH v3] usb: uas: fix urb unmapping issue when the uas device is remove during ongoing data transfer
+Date: Tue, 4 Nov 2025 14:16:07 +0800
+Message-ID: <20251104061608.1336-1-guhuinan@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V5 04/12] powerpc/uaccess: Use unsafe wrappers for ASM
- GOTO
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, kernel test robot <lkp@intel.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.356628509@linutronix.de>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20251027083745.356628509@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJ-MBX17.mioffice.cn (10.237.8.137) To BJ-MBX05.mioffice.cn
+ (10.237.8.125)
 
+From: Owen Gu <guhuinan@xiaomi.com>
 
+When a UAS device is unplugged during data transfer, there is
+a probability of a system panic occurring. The root cause is
+an access to an invalid memory address during URB callback handling.
+Specifically, this happens when the dma_direct_unmap_sg() function
+is called within the usb_hcd_unmap_urb_for_dma() interface, but the
+sg->dma_address field is 0 and the sg data structure has already been
+freed.
 
-Le 27/10/2025 à 09:43, Thomas Gleixner a écrit :
-> ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
-> 
-> bool foo(u32 __user *p, u32 val)
-> {
-> 	scoped_guard(pagefault)
-> 		unsafe_put_user(val, p, efault);
-> 	return true;
-> efault:
-> 	return false;
-> }
-> 
-> It ends up leaking the pagefault disable counter in the fault path. clang
-> at least fails the build.
+The SCSI driver sends transfer commands by invoking uas_queuecommand_lck()
+in uas.c, using the uas_submit_urbs() function to submit requests to USB.
+Within the uas_submit_urbs() implementation, three URBs (sense_urb,
+data_urb, and cmd_urb) are sequentially submitted. Device removal may
+occur at any point during uas_submit_urbs execution, which may result
+in URB submission failure. However, some URBs might have been successfully
+submitted before the failure, and uas_submit_urbs will return the -ENODEV
+error code in this case. The current error handling directly calls
+scsi_done(). In the SCSI driver, this eventually triggers scsi_complete()
+to invoke scsi_end_request() for releasing the sgtable. The successfully
+submitted URBs, when being unlinked to giveback, call
+usb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg
+unmapping operations since the sg data structure has already been freed.
 
-Confirmed on powerpc:
+This patch modifies the error condition check in the uas_submit_urbs()
+function. When a UAS device is removed but one or more URBs have already
+been successfully submitted to USB, it avoids immediately invoking
+scsi_done() and save the cmnd to devinfo->cmnd array. If the successfully
+submitted URBs is completed before devinfo->resetting being set, then
+the scsi_done() function will be called within uas_try_complete() after
+all pending URB operations are finalized. Otherwise, the scsi_done()
+function will be called within uas_zap_pending(), which is executed after
+usb_kill_anchored_urbs().
 
-Before the patch
+The error handling only takes effect when uas_queuecommand_lck() calls
+uas_submit_urbs() and returns the error value -ENODEV . In this case,
+the device is disconnected, and the flow proceeds to uas_disconnect(),
+where uas_zap_pending() is invoked to call uas_try_complete().
 
-000001e8 <foo>:
-  1e8:	81 22 05 24 	lwz     r9,1316(r2)
-  1ec:	39 29 00 01 	addi    r9,r9,1
-  1f0:	91 22 05 24 	stw     r9,1316(r2)
-  1f4:	90 83 00 00 	stw     r4,0(r3)
-  1f8:	81 22 05 24 	lwz     r9,1316(r2)
-  1fc:	38 60 00 01 	li      r3,1
-  200:	39 29 ff ff 	addi    r9,r9,-1
-  204:	91 22 05 24 	stw     r9,1316(r2)
-  208:	4e 80 00 20 	blr
-  20c:	38 60 00 00 	li      r3,0
-  210:	4e 80 00 20 	blr
+Signed-off-by: Yu Chen <chenyu45@xiaomi.com>
+Signed-off-by: Owen Gu <guhuinan@xiaomi.com>
+---
+v3: Add some commit message.
+v2: Upon uas_submit_urbs() returning -ENODEV despite successful URB
+submission, the cmnd is added to the devinfo->cmnd array before
+exiting uas_queuecommand_lck().
+https://lore.kernel.org/linux-usb/20251015153157.11870-1-guhuinan@xiaomi.com/
+v1: https://lore.kernel.org/linux-usb/20250930045309.21588-1-guhuinan@xiaomi.com/
+---
+---
+ drivers/usb/storage/uas.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-00000000 <__ex_table>:
-         ...
-                         20: R_PPC_REL32 .text+0x1f4
-                         24: R_PPC_REL32 .text+0x20c
-
-After the patch
-
-000001e8 <foo>:
-  1e8:	81 22 05 24 	lwz     r9,1316(r2)
-  1ec:	39 29 00 01 	addi    r9,r9,1
-  1f0:	91 22 05 24 	stw     r9,1316(r2)
-  1f4:	90 83 00 00 	stw     r4,0(r3)
-  1f8:	81 22 05 24 	lwz     r9,1316(r2)
-  1fc:	38 60 00 01 	li      r3,1
-  200:	39 29 ff ff 	addi    r9,r9,-1
-  204:	91 22 05 24 	stw     r9,1316(r2)
-  208:	4e 80 00 20 	blr
-  20c:	81 22 05 24 	lwz     r9,1316(r2)
-  210:	38 60 00 00 	li      r3,0
-  214:	39 29 ff ff 	addi    r9,r9,-1
-  218:	91 22 05 24 	stw     r9,1316(r2)
-  21c:	4e 80 00 20 	blr
-
-00000000 <__ex_table>:
-         ...
-                         20: R_PPC_REL32 .text+0x1f4
-                         24: R_PPC_REL32 .text+0x20c
-
-
-
-> 
-> Rename unsafe_*_user() to arch_unsafe_*_user() which makes the generic
-> uaccess header wrap it with a local label that makes both compilers emit
-> correct code. Same for the kernel_nofault() variants.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: linuxppc-dev@lists.ozlabs.org
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-
-> ---
->   arch/powerpc/include/asm/uaccess.h |    8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> --- a/arch/powerpc/include/asm/uaccess.h
-> +++ b/arch/powerpc/include/asm/uaccess.h
-> @@ -451,7 +451,7 @@ user_write_access_begin(const void __use
->   #define user_write_access_begin	user_write_access_begin
->   #define user_write_access_end		prevent_current_write_to_user
->   
-> -#define unsafe_get_user(x, p, e) do {					\
-> +#define arch_unsafe_get_user(x, p, e) do {			\
->   	__long_type(*(p)) __gu_val;				\
->   	__typeof__(*(p)) __user *__gu_addr = (p);		\
->   								\
-> @@ -459,7 +459,7 @@ user_write_access_begin(const void __use
->   	(x) = (__typeof__(*(p)))__gu_val;			\
->   } while (0)
->   
-> -#define unsafe_put_user(x, p, e) \
-> +#define arch_unsafe_put_user(x, p, e)				\
->   	__put_user_size_goto((__typeof__(*(p)))(x), (p), sizeof(*(p)), e)
->   
->   #define unsafe_copy_from_user(d, s, l, e) \
-> @@ -504,11 +504,11 @@ do {									\
->   		unsafe_put_user(*(u8*)(_src + _i), (u8 __user *)(_dst + _i), e); \
->   } while (0)
->   
-> -#define __get_kernel_nofault(dst, src, type, err_label)			\
-> +#define arch_get_kernel_nofault(dst, src, type, err_label)		\
->   	__get_user_size_goto(*((type *)(dst)),				\
->   		(__force type __user *)(src), sizeof(type), err_label)
->   
-> -#define __put_kernel_nofault(dst, src, type, err_label)			\
-> +#define arch_put_kernel_nofault(dst, src, type, err_label)		\
->   	__put_user_size_goto(*((type *)(src)),				\
->   		(__force type __user *)(dst), sizeof(type), err_label)
->   
-> 
+diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+index 4ed0dc19afe0..45b01df364f7 100644
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -698,6 +698,10 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
+ 	 * of queueing, no matter how fatal the error
+ 	 */
+ 	if (err == -ENODEV) {
++		if (cmdinfo->state & (COMMAND_INFLIGHT | DATA_IN_URB_INFLIGHT |
++				DATA_OUT_URB_INFLIGHT))
++			goto out;
++
+ 		set_host_byte(cmnd, DID_NO_CONNECT);
+ 		scsi_done(cmnd);
+ 		goto zombie;
+@@ -711,6 +715,7 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
+ 		uas_add_work(cmnd);
+ 	}
+ 
++out:
+ 	devinfo->cmnd[idx] = cmnd;
+ zombie:
+ 	spin_unlock_irqrestore(&devinfo->lock, flags);
+-- 
+2.43.0
 
 
