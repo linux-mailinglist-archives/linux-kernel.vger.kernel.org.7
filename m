@@ -1,217 +1,147 @@
-Return-Path: <linux-kernel+bounces-885347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590FFC32A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:30:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F6EC32A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B685D460212
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B443B0FB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A164233F8AB;
-	Tue,  4 Nov 2025 18:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092834164A;
+	Tue,  4 Nov 2025 18:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eS/+hMqQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ntKSGPSE"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7A833EAEA;
-	Tue,  4 Nov 2025 18:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7412F33F8A2;
+	Tue,  4 Nov 2025 18:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762280741; cv=none; b=PSNbZFAa38OGozVftPfXWbdziCvMeszy1uQ+sU4Kbab2Q3CgXhenvHHWNYdohjwbQ7fI2eczrJCY6aGCnKR7h+Lxbook4fMtsYtMe8GW4JcjBqfiQ6kvlBXBn25fHkm9qtljG0TNJjS/zcOS60gY0VBJ1ZVq8f6p7TDDsWvoCeY=
+	t=1762280749; cv=none; b=bebZXKffSzLGwXqgZhte15Hm4A0wdbePbBDsIn96S91jj/6VROvm5x4mN5fq2Pp4rQPWZJl93v2zAFCv7zK2Obg2A8nvnsCs6P7x3YzqPOTSHqGTudIUbLwdht7pv8Rxs4f40qBsS/K+8C782+pgrIJVkecCi0QKjuRqqnx7pXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762280741; c=relaxed/simple;
-	bh=1Fu4iM7tbneRIMbypPYeW7I7oM9KknGnXt01E741tEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=euakAkRYgWXyfWSf3isXuufgl7C1WoIqronyVCHE54tBW3DiUWxQGCRgZcLBRaHo5Odtlfz5Mj8bAK3NUadAkMug0j6OlH7VnxfFYt4+H8sxYLUDosB2eN9yGuB07pYiqU+nVqxoAh9bbpvQcndJx39XKR1ULw8uWZotL3fe9n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eS/+hMqQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762280740; x=1793816740;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1Fu4iM7tbneRIMbypPYeW7I7oM9KknGnXt01E741tEs=;
-  b=eS/+hMqQ2PYFEhRstdUbDMagt+rlshByZnGIrzR9TdHwV58Z7aM1X+cz
-   o+BvFUCkWIaZEwi8juCqx5CBMUa9SR6nFYBVGtanOEL38Pb5cLq4Ocmsw
-   omL298mf2cgD3jo5MAfi8OGkXS7p325Fzd8j3roStdi8EErMqsTDnnOMO
-   ZyLx/x+SoC8ghpaZro4FiO8P9LANLEgeO35EMHGi+wCwdvhE2U2sgzJDC
-   LZROhozn1ZP1jxK3RLxTFHLl3rReF1EYQmYI2emHURq5erWPLdNF8dtLO
-   D+h2o6bEaU5RpGRlzUxifdGef48J4vksSoZQdM8B9HFBL0zpiDlDz4oXY
-   A==;
-X-CSE-ConnectionGUID: Mxz0LE6OQrycegHxVND2Bw==
-X-CSE-MsgGUID: lRlCVOyURI6fOIjiZmpOrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="63591213"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="63591213"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 10:25:39 -0800
-X-CSE-ConnectionGUID: VshGvM/2TPGyJ8OwJOTWtQ==
-X-CSE-MsgGUID: 4QWvbD9TTb6/n0rbmUSpxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="191325388"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.246.211])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 10:25:32 -0800
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pci@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH 6/6 v7] ACPI: extlog: Trace CPER CXL Protocol Error Section
-Date: Tue,  4 Nov 2025 19:22:37 +0100
-Message-ID: <20251104182446.863422-7-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251104182446.863422-1-fabio.m.de.francesco@linux.intel.com>
-References: <20251104182446.863422-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1762280749; c=relaxed/simple;
+	bh=i2N6U8gVZYZTsAyvftu+aK4B5nHv3/lncbA3GMHPvBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GWYKnsyXS8Uyj+iQj9c2r418Mn2EN+cJZLdolW25jTYDpIA1lvJk6Qlcn7u53vsvMca+T0KweHQ8WKEDsTtVfe31FtGk7iX3kdOYpw2Fj96j3HXNkmDe6NVfBMmrAtg5uSnT1Gh7AMi4Pnv7ar1s+V0+wlZ87r8kiAiiL6HIYTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ntKSGPSE; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1762280739; bh=i2N6U8gVZYZTsAyvftu+aK4B5nHv3/lncbA3GMHPvBw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ntKSGPSEgIK4zbk3c6+PEk22FabumzO29uARsKz5Dh3EKkw6IfsIs2q3FlPZ3wsvH
+	 QQ0CdHurvSPP/LntQSqf4c+cmB0k5j4UFBATGIkszvr1Fc2r7v9ZqRqBp/CRNY0gTN
+	 sVe5ohZO4VdSV2Edpqeu0lKYmis2ZGozNfiWe0U0=
+Message-ID: <670ddca1-9b0e-4755-95be-457ea855af45@lucaweiss.eu>
+Date: Tue, 4 Nov 2025 19:25:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/7] i2c: qcom-cci: Add msm8953 compatible
+Content-Language: en-US
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
+ <20251028-msm8953-cci-v2-2-b5f9f7135326@lucaweiss.eu>
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <20251028-msm8953-cci-v2-2-b5f9f7135326@lucaweiss.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When Firmware First is enabled, BIOS handles errors first and then it
-makes them available to the kernel via the Common Platform Error Record
-(CPER) sections (UEFI 2.11 Appendix N.2.13). Linux parses the CPER
-sections via one of two similar paths, either ELOG or GHES. The errors
-managed by ELOG are signaled to the BIOS by the I/O Machine Check
-Architecture (I/O MCA).
+On 28-10-2025 17:40, Luca Weiss wrote:
+> Add a config for the v1.2.5 CCI found on msm8953 which has different
+> values in .params compared to others already supported in the driver.
+> 
+> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 
-Currently, ELOG and GHES show some inconsistencies in how they report to
-userspace via trace events.
+Hi Andi,
 
-Therefore, make the two mentioned paths act similarly by tracing the CPER
-CXL Protocol Error Section.
+Could you please also pick up this patch? Since Wolfram has added
+Acked-by I assume he's not going to pick it up?
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
- drivers/acpi/Kconfig       |  1 +
- drivers/acpi/acpi_extlog.c | 22 ++++++++++++++++++++++
- drivers/cxl/core/ras.c     |  3 ++-
- include/cxl/event.h        |  2 ++
- 4 files changed, 27 insertions(+), 1 deletion(-)
+Regards
+Luca
 
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index be02634f2320..c2ad24e77ddf 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -498,6 +498,7 @@ config ACPI_EXTLOG
- 	select ACPI_APEI
- 	select ACPI_APEI_PCIEAER
- 	select UEFI_CPER
-+	select CXL_BUS
- 	help
- 	  Certain usages such as Predictive Failure Analysis (PFA) require
- 	  more information about the error than what can be described in
-diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-index b3976ceb4ee4..e6fb25395984 100644
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@ -12,6 +12,7 @@
- #include <linux/ratelimit.h>
- #include <linux/edac.h>
- #include <linux/ras.h>
-+#include <cxl/event.h>
- #include <acpi/ghes.h>
- #include <asm/cpu.h>
- #include <asm/mce.h>
-@@ -160,6 +161,21 @@ static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
- 	pci_dev_put(pdev);
- }
- 
-+static void
-+extlog_cxl_cper_handle_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-+				int severity)
-+{
-+	struct cxl_cper_prot_err_work_data wd;
-+
-+	if (cxl_cper_sec_prot_err_valid(prot_err))
-+		return;
-+
-+	if (cxl_cper_setup_prot_err_work_data(&wd, prot_err, severity))
-+		return;
-+
-+	cxl_cper_handle_prot_err(&wd);
-+}
-+
- static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			void *data)
- {
-@@ -211,6 +227,12 @@ static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			if (gdata->error_data_length >= sizeof(*mem))
- 				trace_extlog_mem_event(mem, err_seq, fru_id, fru_text,
- 						       (u8)gdata->error_severity);
-+		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
-+			struct cxl_cper_sec_prot_err *prot_err =
-+				acpi_hest_get_payload(gdata);
-+
-+			extlog_cxl_cper_handle_prot_err(prot_err,
-+							gdata->error_severity);
- 		} else if (guid_equal(sec_type, &CPER_SEC_PCIE)) {
- 			struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
- 
-diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-index 2731ba3a0799..a90480d07c87 100644
---- a/drivers/cxl/core/ras.c
-+++ b/drivers/cxl/core/ras.c
-@@ -63,7 +63,7 @@ static int match_memdev_by_parent(struct device *dev, const void *uport)
- 	return 0;
- }
- 
--static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
-+void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
- {
- 	unsigned int devfn = PCI_DEVFN(data->prot_err.agent_addr.device,
- 				       data->prot_err.agent_addr.function);
-@@ -104,6 +104,7 @@ static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
- 	else
- 		cxl_cper_trace_uncorr_prot_err(cxlmd, data->ras_cap);
- }
-+EXPORT_SYMBOL_GPL(cxl_cper_handle_prot_err);
- 
- static void cxl_cper_prot_err_work_fn(struct work_struct *work)
- {
-diff --git a/include/cxl/event.h b/include/cxl/event.h
-index 94081aec597a..ff97fea718d2 100644
---- a/include/cxl/event.h
-+++ b/include/cxl/event.h
-@@ -340,4 +340,6 @@ cxl_cper_setup_prot_err_work_data(struct cxl_cper_prot_err_work_data *wd,
- }
- #endif
- 
-+void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *wd);
-+
- #endif /* _LINUX_CXL_EVENT_H */
--- 
-2.51.1
+> ---
+>   drivers/i2c/busses/i2c-qcom-cci.c | 46 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 46 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
+> index e631d79baf14..884055df1560 100644
+> --- a/drivers/i2c/busses/i2c-qcom-cci.c
+> +++ b/drivers/i2c/busses/i2c-qcom-cci.c
+> @@ -783,8 +783,54 @@ static const struct cci_data cci_v2_data = {
+>   	},
+>   };
+>   
+> +static const struct cci_data cci_msm8953_data = {
+> +	.num_masters = 2,
+> +	.queue_size = { 64, 16 },
+> +	.quirks = {
+> +		.max_write_len = 11,
+> +		.max_read_len = 12,
+> +	},
+> +	.params[I2C_MODE_STANDARD] = {
+> +		.thigh = 78,
+> +		.tlow = 114,
+> +		.tsu_sto = 28,
+> +		.tsu_sta = 28,
+> +		.thd_dat = 10,
+> +		.thd_sta = 77,
+> +		.tbuf = 118,
+> +		.scl_stretch_en = 0,
+> +		.trdhld = 6,
+> +		.tsp = 1
+> +	},
+> +	.params[I2C_MODE_FAST] = {
+> +		.thigh = 20,
+> +		.tlow = 28,
+> +		.tsu_sto = 21,
+> +		.tsu_sta = 21,
+> +		.thd_dat = 13,
+> +		.thd_sta = 18,
+> +		.tbuf = 32,
+> +		.scl_stretch_en = 0,
+> +		.trdhld = 6,
+> +		.tsp = 3
+> +	},
+> +	.params[I2C_MODE_FAST_PLUS] = {
+> +		.thigh = 16,
+> +		.tlow = 22,
+> +		.tsu_sto = 17,
+> +		.tsu_sta = 18,
+> +		.thd_dat = 16,
+> +		.thd_sta = 15,
+> +		.tbuf = 19,
+> +		.scl_stretch_en = 1,
+> +		.trdhld = 3,
+> +		.tsp = 3
+> +	},
+> +};
+> +
+>   static const struct of_device_id cci_dt_match[] = {
+>   	{ .compatible = "qcom,msm8226-cci", .data = &cci_v1_data},
+> +	{ .compatible = "qcom,msm8953-cci", .data = &cci_msm8953_data},
+>   	{ .compatible = "qcom,msm8974-cci", .data = &cci_v1_5_data},
+>   	{ .compatible = "qcom,msm8996-cci", .data = &cci_v2_data},
+>   
+> 
 
 
