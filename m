@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-884621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBF4C309C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:54:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03390C3099B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CFDD4E8E75
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F30189EC20
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626362D94A8;
-	Tue,  4 Nov 2025 10:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7847A2D6E76;
+	Tue,  4 Nov 2025 10:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B0svIPP1"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D9xp1rdR"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F952D6612
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A092C2D8371
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762253399; cv=none; b=qxWmXOjhFf5Qj1VZe7qj9hPO4Nsf2tTdrSrfi6PhC7zcGWPqxx0d7Ns9j2GcSR+5pOEQP31+9I+3okMvBA38vtGbQfve9aNEKZh+9rMDprwI79YdrEcpJISApPt5yYrPD49xawjoomh9hiIShYF8ZLcCSAbUJWNynMwA4lmGiS0=
+	t=1762253416; cv=none; b=SW2YDFFWDFePJ3dWnV3idTtl+Md2JaXSe1tpCrpJh4HgmJ92cX0u4RnzSQOKZ0mv3h9Qjms/vusypeQdf8nID/CDC2HYFBd76sS1ni1d/+P4BccYPLwd8svN9jm30Dfn1Mha86aLOXWUKHFevlKx9bcLp+AjcgwEVusQGbeTDw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762253399; c=relaxed/simple;
-	bh=JpUddYw/v5BthjD6wYyY5CE8j6hzFrQ6Tocf3yJBMso=;
+	s=arc-20240116; t=1762253416; c=relaxed/simple;
+	bh=1dHrI/5j783M6QAgQ0Qth2N2Gm1wkhBAPZUTNo2hAE0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WrYny0TzvDp7GFWoxbDWvuE3kdPQnwdIlhkPBur6o9tPkoLl38bKkj7YQgp7OYojJcp8+Vs6RDixvVjyDBi5/UYxq7HKeqUkWE5jTQJH+XNKQitPUCxIoMEp8p7wo6OKNPG3qjetPreRe55bcYoNpkflPl0iN83rqbcYaAFj5mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B0svIPP1; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:Content-Type; b=rkM/Tsbukrdt5UojUXyEx64iK5cXTkHf71on5IG+4d9S9zPeR3nw6NUNUxiByI5WLSlC3khvR+Pxrc7T3r1/+/BrkctjlTIKUU3hB/qizXSbkyqcvi2YBuBuf0NnLCRHENaoEP1ejy+1+z6CpABgqXMd0EV2gtFp3K3hpc9/hLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D9xp1rdR; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 099004E4149A;
-	Tue,  4 Nov 2025 10:49:56 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 145E61A187B;
+	Tue,  4 Nov 2025 10:50:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C9581606EF;
-	Tue,  4 Nov 2025 10:49:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1E22F102F1CE8;
-	Tue,  4 Nov 2025 11:49:53 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DCEDE606EF;
+	Tue,  4 Nov 2025 10:50:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2425410B509F7;
+	Tue,  4 Nov 2025 11:50:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762253395; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1762253411; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=hlyea6D72jghryRgvFrFfQSWQQkIxtnahdErvANC6VY=;
-	b=B0svIPP1mqXGU3/uQGJ0Lo2j4kT7ctJWQwWDFZdzIH2XOigbLIWCNVmSqYohrKyS1EVJQ8
-	c4hfcl8WdT8ojTO+D4tVvGigmtneeU2MtEUUd/QDvL4t93Gfn6LleCMynQ36Dj8PbWqfq2
-	E0J8boRentELetvFPcQuVNSl/PgNrhDnWG7OyglWbyk/voEhlE3aJT3rLqnsXza/WikDrq
-	mn0C1X8QXmnXvs8TygXa8aGTRSlUmAH/awgOdD67dfpJaCe5Xx1/NeobvkxpH3mu+hUH0I
-	hVKZtGGgxIpwiyrhj51/pY+aH9KQ/QLixC4a+VVSH27oOP1agnbU+nTZ1Bjimw==
-Message-ID: <9483fbed-5bf0-4fbd-a059-86cc330b8c71@bootlin.com>
-Date: Tue, 4 Nov 2025 11:49:52 +0100
+	bh=RWR2yfrQdoWsw6o8+j8mIm8NpaENKjX1fw5W+H557nM=;
+	b=D9xp1rdRFvQcRoo3pB3Vll0QTln5dxNRq/OBjNUHrGFRnufOvb2rBjjwdrgyD0Ug13oDT8
+	UwhwoKmIAVoBi+Q7NRS4cB2Fz740Tf4FqN1T2cOf8xP53qkVsxn9QWTHjICbfKEovOXwTF
+	SAsdgqT8mUrXpyRn9s9N4raHU4I1LmV5hsRZP7bEOCXFcyQDVbIGCLNYcqrccatJKvvSCa
+	ndHPYugP5U7RCYNiM3UqSCdwZm3Vj83d37B2lVQCPBgUafAVTUqGsQtSRo2y9AX6bZC3ja
+	uuOceQAUPybE8VhdOKYDqnaJog9SR0XPvM9xBuqLJTJGZIWUL1sTAVU0TdVhwQ==
+Message-ID: <1933ce64-af94-4605-912e-01e6c9da93b9@bootlin.com>
+Date: Tue, 4 Nov 2025 11:50:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,13 +56,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/vkms: Fix run-tests.sh script name
+Subject: Re: [PATCH 2/2] drm/vkms: Update testing with IGT IGT_DEVICE
 To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
 Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
  airlied@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
  tzimmermann@suse.de, corbet@lwn.net, dri-devel@lists.freedesktop.org,
  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20251024110014.4614-1-jose.exposito89@gmail.com>
+ <20251024110014.4614-2-jose.exposito89@gmail.com>
 Content-Language: en-US, fr
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
@@ -119,7 +120,7 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
  gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
  kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
-In-Reply-To: <20251024110014.4614-1-jose.exposito89@gmail.com>
+In-Reply-To: <20251024110014.4614-2-jose.exposito89@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
@@ -127,29 +128,60 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 
 Le 24/10/2025 à 13:00, José Expósito a écrit :
-> The script is "run-tests.sh", no "run-test.sh".
+> VKMS is no longer in the platform bus, instead, it is in the faux bus.
+> 
+> In addition, when present, IGT picks hardware drivers instead of virtual
+> drivers, like VKMS or vgem, if they are not forced.
+> 
+> Update the documentation to use IGT_FORCE_DRIVER instead of IGT_DEVICE.
 > 
 > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->   Documentation/gpu/vkms.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   Documentation/gpu/vkms.rst | 19 ++++++++-----------
+>   1 file changed, 8 insertions(+), 11 deletions(-)
 > 
 > diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index 3574e01b928d..d8c445c417b7 100644
+> index d8c445c417b7..1e79e62a6bc4 100644
 > --- a/Documentation/gpu/vkms.rst
 > +++ b/Documentation/gpu/vkms.rst
-> @@ -161,7 +161,7 @@ To return to graphical mode, do::
+> @@ -159,26 +159,23 @@ To return to graphical mode, do::
 >   
->   Once you are in text only mode, you can run tests using the --device switch
->   or IGT_DEVICE variable to specify the device filter for the driver we want
-> -to test. IGT_DEVICE can also be used with the run-test.sh script to run the
-> +to test. IGT_DEVICE can also be used with the run-tests.sh script to run the
+>     sudo systemctl isolate graphical.target
+>   
+> -Once you are in text only mode, you can run tests using the --device switch
+> -or IGT_DEVICE variable to specify the device filter for the driver we want
+> -to test. IGT_DEVICE can also be used with the run-tests.sh script to run the
+> +Once you are in text only mode, you can run tests using the IGT_FORCE_DRIVER
+> +variable to specify the device filter for the driver we want to test.
+> +IGT_FORCE_DRIVER can also be used with the run-tests.sh script to run the
 >   tests for a specific driver::
 >   
->     sudo ./build/tests/<name of test> --device "sys:/sys/devices/platform/vkms"
+> -  sudo ./build/tests/<name of test> --device "sys:/sys/devices/platform/vkms"
+> -  sudo IGT_DEVICE="sys:/sys/devices/platform/vkms" ./build/tests/<name of test>
+> -  sudo IGT_DEVICE="sys:/sys/devices/platform/vkms" ./scripts/run-tests.sh -t <name of test>
+> +  sudo IGT_FORCE_DRIVER="vkms" ./build/tests/<name of test>
+> +  sudo IGT_FORCE_DRIVER="vkms" ./scripts/run-tests.sh -t <name of test>
+>   
+>   For example, to test the functionality of the writeback library,
+>   we can run the kms_writeback test::
+>   
+> -  sudo ./build/tests/kms_writeback --device "sys:/sys/devices/platform/vkms"
+> -  sudo IGT_DEVICE="sys:/sys/devices/platform/vkms" ./build/tests/kms_writeback
+> -  sudo IGT_DEVICE="sys:/sys/devices/platform/vkms" ./scripts/run-tests.sh -t kms_writeback
+> +  sudo IGT_FORCE_DRIVER="vkms" ./build/tests/kms_writeback
+> +  sudo IGT_FORCE_DRIVER="vkms" ./scripts/run-tests.sh -t kms_writeback
+>   
+>   You can also run subtests if you do not want to run the entire test::
+>   
+> -  sudo ./build/tests/kms_flip --run-subtest basic-plain-flip --device "sys:/sys/devices/platform/vkms"
+> -  sudo IGT_DEVICE="sys:/sys/devices/platform/vkms" ./build/tests/kms_flip --run-subtest basic-plain-flip
+> +  sudo IGT_FORCE_DRIVER="vkms" ./build/tests/kms_flip --run-subtest basic-plain-flip
+>   
+>   Testing With KUnit
+>   ==================
 
 -- 
 --
