@@ -1,112 +1,105 @@
-Return-Path: <linux-kernel+bounces-884366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20090C30039
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:45:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE866C3008D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F4474F8327
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 998061895D13
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729F5313270;
-	Tue,  4 Nov 2025 08:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A70311C1E;
+	Tue,  4 Nov 2025 08:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiU/xdf4"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ijSniAux"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3D12E8DF6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1477E29D27F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245479; cv=none; b=m7dzSrw1oGFtAl8KJ9UNerG7Cxrp9BIfE2J9079hTeHqRioxR363zNCCBrNUXO8sWfrSxt8Bn48eGJfuOFWp/tIKCThv3OFv9Tj5ro2skeyfeTMI+NQReqOquvKid7Uto0PdJ6em+lrQ7JEaE+1Osxqp+yTqAjjddcy4ZJDX1kA=
+	t=1762245548; cv=none; b=mbpKLkUbeAj7BXOxV0VR/sIpCOa2FaUkvj1+xz9bNG7PcDL5s2hCfUwRGHwc6Zbk20FYskXuprfkoZI9G3rg1Auv71qrVyx80Gj+fT2g34HZ5LFGZPITq0aLczGpBY/NrZ8u3n4AxmgPCAppjAOUckSXBRIUWzgdtUgfOurSUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245479; c=relaxed/simple;
-	bh=d2+eAo6NkfT7+chgCzypmzacmxG0Pw8HOq1CUIxLHSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a7+vfuTKzquvbjtXlel9SY4eX+0C3s0xuvXIJrZ3FVXODOBNWVHnqDcFLQN2OfNuYnxBuxYGhfGx72rQYAl95IwEj2qkjgHHsOKtQNI9PNx/5Es4DxOLvkgiUARSP/tZtSQXXUAOTxo1CsjXsxMfMHVwJp9elDBkb+i7NOqclnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiU/xdf4; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6409e985505so4263234a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:37:57 -0800 (PST)
+	s=arc-20240116; t=1762245548; c=relaxed/simple;
+	bh=t3IUp+ARaNaB8wz2LKnZxVPm5xytJ0pZwMX+fyMtQ0U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OwQfJMz9FdxvgsAwiUfG/WwugEbU1XDQ1Xa6jV2PzJdX28zIQNzoQU8ELFr7TRCs+MnqjBcdMiqaKi3GudyOIKLK6qQ2bGghHjrrBqJZ/vjibXimUoNDRzQfODWRk6Kso4VuJr3dLxhCmGwoOPBSH5PTjOUCD8v+4EuFpS6Clt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ijSniAux; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-477171bbf51so28883365e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:39:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762245476; x=1762850276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d2+eAo6NkfT7+chgCzypmzacmxG0Pw8HOq1CUIxLHSY=;
-        b=YiU/xdf4LqvdtsBCxz8TWEORFwPFtNFzVKbEMP/6uVQ0bWJvOdprWShz9A4yC4ZVPD
-         tMg+e6H0OrfLLvuEk6OzP9B1mNL2MitNCINkJRmTdVxFCILyNYjvM8bRIBiH1yfMDAsb
-         aVHmp+xs8Bo7CbmRMbliNzO/MAGzyf9enTApYDE2W3+oW5FRc6TlVgLBNuPRUqZvJN5d
-         Sxu6AgFpyYmtHXQ4lwYjqePRTbEJaaRXcM0gZkO8DvBYKGYncWKT5QAifjmTlTB+tl8Q
-         zVDHtoVEb09FRtbj0cTmIlC5rj3svhSYzvUUiRSvLbLubKuyzlA2ZVCf7U4199WRxkYW
-         A42w==
+        d=google.com; s=20230601; t=1762245545; x=1762850345; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WSx4j5h/K35W2b1U5cMePqydBqgF/bke1+7wCGvmmg=;
+        b=ijSniAuxKDJPa4ZM2zvcejUKc5nMw6zIDhWVwoTLQ1FtbnQOnGWgEjslH96U4vHTVs
+         LsSPJ/nbCiGpK9HU9U81zUq2js5wDH15U9GuVkUJdR+JR8G+YXrmEZNfUt6QZ1BE/rfK
+         gb8MGr4tujpX/goxMK8KXOhRkT5Cw6aXgsljJLQrAGZ/Y7X0UIW4rrR9b0WxPIjzo7f/
+         nVnwkaLRIiI8fW+3c+2ijNff93rdC7jNobF1bDfEZwPvSJ7h2kU840OgPjy8Wnf8TjkX
+         /WA0+HuGN0Qw4B4ExtAIcLLJRiMH6dC46OL5OLibEEEokx7D9RVnc9ryHOcctA9dsmct
+         YmIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762245476; x=1762850276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d2+eAo6NkfT7+chgCzypmzacmxG0Pw8HOq1CUIxLHSY=;
-        b=JplEeW2uKci5Ogbi57V/47jcnTFjnI/8wyOe/7QzPPxJd92XJFM1TCKn52L/n3+tMq
-         RDmP20CMtLQXzzjsy/i3uF2k56GssFx7MnlzjTUM2KXu7gQhRAIEk46cZtCtMHC6nPkf
-         npfM8KeSZSIzcAsX9jGQgK0li996QlpDq0ySE5ZVnOCZbWGP1p8ShCpFmzAXWLiKx9M1
-         NRADggZgsd2+EmWuv0lB6cjYBsKdl50yUTHA9Lifp+8KDUTCW3uFIJjfNnmZZLl7Qg8g
-         4wO+/TufBunqNtDgNwWAeXMMi57w80Z6VbHaXQGNkVBpKYK7ueDlXDp+9As2tE4JblDr
-         OWhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0NF+vi3Ep7it6AnjhdLkpb393fa6igKro8fLFC3WyfbrjzjQ6fdnBt4VI//o9N3eU1UPrrEk4KXWXxn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdVah+cdgxdwS0E5ieKbKncr+d9pYYZ7WInWY2AqtJ9rLRU39+
-	+bX0LJ+7oZJzaiVVFlK2Tje3DjsXvsfimEswqTjqcBlqjY7HXV0JUbAlJTWNjvH3kEwnPz5CENW
-	nqxD60p/MdCazNsQAT52l+wFZtxzvZSg=
-X-Gm-Gg: ASbGncuyM/p33J0xdd0KYg0gssXLGOQ57+Wee0gMRzOIuGN2rDjDX9fg5dh7bbwP1aA
-	HUxFVZBuNawn1fHNcXk/9MMgyib1JC+8aKDKg4RTrSm7nPMHePqr1W5LOMrQhZRDy+EzGkByKZL
-	FKBq4oai/dKtEavZZpIammh4l2c4NqpYRiaYuV42qFOikS00j/Aiq8yjV8+JZnygFeXpTUTwDtM
-	jR2McYSJPiClN4a3tsR3CqOEX/f3dkGYgr9YYhCKu0PAlGQlNzWROK3Vkt6aw==
-X-Google-Smtp-Source: AGHT+IFQkZHVwcaFP7x6sp3aN9Q9qAekqLNBhM1+eykspKuBoAzSHD59PoifHd7BmivkTUrlh5jggAUNUx1d9Ym1IdM=
-X-Received: by 2002:a05:6402:2753:b0:640:6b00:5e93 with SMTP id
- 4fb4d7f45d1cf-64077040843mr12588335a12.36.1762245476098; Tue, 04 Nov 2025
- 00:37:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762245545; x=1762850345;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WSx4j5h/K35W2b1U5cMePqydBqgF/bke1+7wCGvmmg=;
+        b=qfre7eJ6vLujrM8qMZCbNfoFy5ZoptWhD+bPS0qH1+gTvQBj3FOrH/Xh2SDJedcPwz
+         mio/mrfx5nPwizuRg32/3g/OL2BIawwGAguawPDZSWfmyZ8iv+AiaDaWjxNFyO8j/J7M
+         Nm0CM2p7utUqhdocfmJoVrGKi627VtQhx6PCQhQ8KBWK9tFgC6QlZWXBECqlcPbH0PMk
+         FiwFuz/UsudE99cMSMbLjOmQa2Te8deyamuu/cOImw1yArnsCyjOxefub9AmbWX2HKza
+         wXsEgB3N6T4/rXBfmIpAzPXHsDKIIvORRqQP5MVTbUhiahGEBuhvRnm3NnYpS7biKrV1
+         EzZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh5tAbgoztji66SeavyiBavctZGwkatGgeVRy+cAynUVjTZBWlBD976qu43cbshlVYiNoEVOkiE9h1PZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtNw4hrjzqu42axmOwQtxqEbqubOgRfpeP8lgKtj+s63SKAYUC
+	12fkN5ekyAx7NFgXYCgu1DtohgdaQ9nIRTnHlL0JtgRwZlcxPYArBjTMBxO0rdkC19Jxy7z9Huj
+	Nc9EKCdqLZXS4Q5x58Q==
+X-Google-Smtp-Source: AGHT+IEsoqg3j0WNIpG5vxJRX/Ibh5LrVrCjTx9dh/pWH7qA/STRnKJkdScMyqeumJblHqnk9Ea0X4NaSd6gQqo=
+X-Received: from wmbb2.prod.google.com ([2002:a05:600c:5882:b0:46e:2eb4:38d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1553:b0:471:16e5:6d7a with SMTP id 5b1f17b1804b1-477307ba7d2mr133828385e9.13.1762245545262;
+ Tue, 04 Nov 2025 00:39:05 -0800 (PST)
+Date: Tue, 4 Nov 2025 08:39:04 +0000
+In-Reply-To: <20251103190655.2326191-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251103213656.25912-1-linmag7@gmail.com> <0ba150517e0fd331f1227e068fd37e6e6ea42228.camel@physik.fu-berlin.de>
-In-Reply-To: <0ba150517e0fd331f1227e068fd37e6e6ea42228.camel@physik.fu-berlin.de>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Tue, 4 Nov 2025 09:37:43 +0100
-X-Gm-Features: AWmQ_bkOYl1_jWFedzzvw_vd928e1IEifgTLAjl-givq32aMdK1CdaW33XC_xHg
-Message-ID: <CA+=Fv5Sdf732mc2c_xGDsJqq2pS-EQU5d0XLBR7v-0GdgFC5EQ@mail.gmail.com>
-Subject: Re: [PATCH] Alpha: MAINTAINERS
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: richard.henderson@linaro.org, mattst88@gmail.com, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251103190655.2326191-1-dakr@kernel.org>
+Message-ID: <aQm7qLybSn6bOlCy@google.com>
+Subject: Re: [PATCH 1/2] rust: dma: make use of start_ptr() and start_ptr_mut()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com, 
+	robin.murphy@arm.com, a.hindborg@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Nov 4, 2025 at 8:23=E2=80=AFAM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
->
-> Hi Magnus,
->
-> On Mon, 2025-11-03 at 22:23 +0100, Magnus Lindholm wrote:
-> > Add Magnus Lindholm to MAINTAINERS (Alpha port)
->
-> I think this message should be in the subject of your patch mail.
->
-> Did you use git-send-email to send this patch? If not, you should set it =
-up.
->
-Hi,
+On Mon, Nov 03, 2025 at 08:06:49PM +0100, Danilo Krummrich wrote:
+> Using start_ptr() and start_ptr_mut() has the advantage that we inherit
+> the requirements the a mutable or immutable reference from those
+> methods.
+> 
+> Hence, use them instead of self.cpu_addr.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Thanks for the feedback, yes, I used git-send-email. I can put out a v1 of =
-this
-and update the messages subject accordingly.
+>          // and we've just checked that the range and index is within bounds.
+>          // - `offset` can't overflow since it is smaller than `self.count` and we've checked
+>          // that `self.count` won't overflow early in the constructor.
+> -        Ok(unsafe { self.cpu_addr.add(offset) })
+> +        Ok(unsafe { self.start_ptr().cast_mut().add(offset) })
 
-Regards
+I guess this shows that the mutable/immutable requirements we inherit
+aren't actually what we need?
 
-Magnus
+Alice
 
