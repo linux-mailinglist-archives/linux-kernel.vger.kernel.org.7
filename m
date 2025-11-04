@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-884129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D520C2F6BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:14:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AADC2F7F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DAA9C346E30
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B260420D0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B592C325F;
-	Tue,  4 Nov 2025 06:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRpYpsdo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EA0259C92;
-	Tue,  4 Nov 2025 06:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594D82DF144;
+	Tue,  4 Nov 2025 06:50:14 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EAF2D0C7A;
+	Tue,  4 Nov 2025 06:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762236846; cv=none; b=Y1G+hN7e5wOsDeBs1xDlCXE0Fk+4ztC1TuS0Oqna7UU0V947KfEhRXbflutO393e0I08XgaictUuqdA+IXBzG+JSzUZ7EmhuAcyX2Of4ytrMwyBJFGGa7mDqkIthRi+m3Ob0NIEFMkmPRfO0z0SZGmT3z0rW2RX8baUjs+kFV/8=
+	t=1762239013; cv=none; b=WJdNP7PptGW0vZWG2B6+ksPAkSkiuKfdk5kYXEQPMaBlojB8B47cJObMjJhHM1OJ8G1aFZJ3G4ODVziTh4//6ZtQByGwQp3L6ICpTfcd/bJJRU4F9theydWY0AA5n8oMniJX4n3K18BVDZuA+xrxySiPJcpUnedKREysNCDddRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762236846; c=relaxed/simple;
-	bh=MTTJxnJOzAFblsCLCicYO+NoSmzettjWWeMThjL9T6w=;
+	s=arc-20240116; t=1762239013; c=relaxed/simple;
+	bh=Ug8YrLFGJewg1FM2NiKLfepzQXgDqX4IFVpu7zhn/D4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTghhehr6Se7aW/jzn9EIH6A1M3J28TDgW/0gPEKkSxPkV17iU9crhGyasyEDdd0YGcJUj7+OvlKszSRBpHNPfPSdWQsg9lZhdL4WDczlbwAXEi9YONPGTv3UHLdONGMRUZAMA+HpyV7Lkn4u6JgZ1pstr1vEsoxuigJ+8Bqy5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NRpYpsdo; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762236844; x=1793772844;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MTTJxnJOzAFblsCLCicYO+NoSmzettjWWeMThjL9T6w=;
-  b=NRpYpsdowODnvZHtT09TzweFYpXhBCtlQ/SPbA14SGtSfo/r+vMHWT63
-   coBXfAtxtSUBcksOJQdjrZcdhEe7r375MhPSe9hTPFZsK8U1FJDYXiyP4
-   RBpr/wXDQDBxj2DTqP+bqgd/L7XxuorEfBRCdD3I1S1L4PXIYWGadYCCQ
-   zLJYs0Qhav+oXKDt0wCoCqe7LYNrl4ffejN1siAFbkzG9DS4PwDMWcOri
-   fLbLyK5iItCk/DohtYv68iRJx8haH+ZlpUnZPfMAnJzVD32532P8RMvs5
-   ljOJzuL9bofi2qY58J6NOow37pmz1Se4OcmrnO3lN2zr/SKDHwBRisVpn
-   w==;
-X-CSE-ConnectionGUID: cJ/0REzpRYahiwBf8aV1jw==
-X-CSE-MsgGUID: InWCLchNQJqR2ESQ2boCFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64421121"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="64421121"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:14:03 -0800
-X-CSE-ConnectionGUID: vHqrMOK5Tv+sZl8YoBogqQ==
-X-CSE-MsgGUID: ib5z9bsqQj6M6wDv4amMcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="224319107"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO [10.245.246.166]) ([10.245.246.166])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:13:59 -0800
-Message-ID: <ac7202f4-e5c8-477b-b805-685f573d179a@linux.intel.com>
-Date: Tue, 4 Nov 2025 08:14:13 +0200
+	 In-Reply-To:Content-Type; b=k+MJWMkrcWz2SRvGXJYJm8j0kGp5OYOYLIrlDrWYlpqwyFwYmZjaZaR+TM6KfZoeaYBz2p48S65Kt/8+ngLKqVm/PHAL1aN/gkedaVPt/Uu7xbGbyqcHUtbkfexoSBOBubz5QmUnORiGCpkTQNRTXtPEI141Snj38UMgEzFvo0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d0yqn4Hdvz9sSL;
+	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id KvWCvtBuZZqr; Tue,  4 Nov 2025 07:15:33 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0yqn3J6sz9sS8;
+	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 595658B76C;
+	Tue,  4 Nov 2025 07:15:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id fIxXjoi-bve2; Tue,  4 Nov 2025 07:15:33 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5E3778B763;
+	Tue,  4 Nov 2025 07:15:31 +0100 (CET)
+Message-ID: <f8872b02-d7f5-421d-8699-5d27987c6e1f@csgroup.eu>
+Date: Tue, 4 Nov 2025 07:15:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,102 +55,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] PCI: Add Intel Nova Lake S audio Device ID
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org,
- kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
- yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
- bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, kw@linux.com
-References: <20251103173312.GA1811842@bhelgaas>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20251103173312.GA1811842@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [patch V5 04/12] powerpc/uaccess: Use unsafe wrappers for ASM
+ GOTO
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <20251027083700.573016505@linutronix.de>
+ <20251027083745.356628509@linutronix.de>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20251027083745.356628509@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 03/11/2025 19:33, Bjorn Helgaas wrote:
-> On Mon, Nov 03, 2025 at 06:27:16PM +0200, Péter Ujfalusi wrote:
->> On 03/11/2025 18:02, Bjorn Helgaas wrote:
->>> On Mon, Nov 03, 2025 at 02:43:57PM +0200, Péter Ujfalusi wrote:
->>>> On 02/10/2025 11:42, Peter Ujfalusi wrote:
->>>>> Add Nova Lake S (NVL-S) audio Device ID
->>>>
->>>> Can you check this patch so Takashi-san can pick the series up?
->>>
->>> We have a long history of adding these Intel audio device IDs that are
->>> only used once, which is not our usual practice per the comment at the
->>> top of the file:
->>>
->>>  *      Do not add new entries to this file unless the definitions
->>>  *      are shared between multiple drivers.
->>>
->>> Generally speaking, if an ID is used by only a single driver, we
->>> either use the plain hex ID or add the #define to the driver that uses
->>> it.
->>
->> In this case the ID is used by two different driver stack, the
->> legacy HDA and SOF.
+Le 27/10/2025 à 09:43, Thomas Gleixner a écrit :
+> ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
 > 
-> Sigh.  I looked through the patch series, searching for
-> PCI_DEVICE_ID_INTEL_HDA_NVL_S, but of course there's only one instance
-> of *that*, but two others constructed via PCI_DEVICE_DATA() where only
-> "HDA_NVL_S" is mentioned.
-
-I'm not sure if it would be better, but should we move the HDA PCI IDs
-to an audio specific header?
-Like include/sound/hda_pci_ids.h
-It looks to me that mostly if not only these are Intel IDs.
-
-Not in this series, but as a separate one.
-> Can you include some hint about that in the commit log so I don't have
-> to go through this whole exercise every time?  I want pci_ids.h
-> changes to mention the multiple places a new ID is used so I know that
-> the "multiple uses" rule has been observed.
+> bool foo(u32 __user *p, u32 val)
+> {
+> 	scoped_guard(pagefault)
+> 		unsafe_put_user(val, p, efault);
+> 	return true;
+> efault:
+> 	return false;
+> }
 > 
-> With that:
+> It ends up leaking the pagefault disable counter in the fault path. clang
+> at least fails the build.
+
+Confirmed on powerpc:
+
+Before the patch
+
+000001e8 <foo>:
+  1e8:	81 22 05 24 	lwz     r9,1316(r2)
+  1ec:	39 29 00 01 	addi    r9,r9,1
+  1f0:	91 22 05 24 	stw     r9,1316(r2)
+  1f4:	90 83 00 00 	stw     r4,0(r3)
+  1f8:	81 22 05 24 	lwz     r9,1316(r2)
+  1fc:	38 60 00 01 	li      r3,1
+  200:	39 29 ff ff 	addi    r9,r9,-1
+  204:	91 22 05 24 	stw     r9,1316(r2)
+  208:	4e 80 00 20 	blr
+  20c:	38 60 00 00 	li      r3,0
+  210:	4e 80 00 20 	blr
+
+00000000 <__ex_table>:
+         ...
+                         20: R_PPC_REL32 .text+0x1f4
+                         24: R_PPC_REL32 .text+0x20c
+
+After the patch
+
+000001e8 <foo>:
+  1e8:	81 22 05 24 	lwz     r9,1316(r2)
+  1ec:	39 29 00 01 	addi    r9,r9,1
+  1f0:	91 22 05 24 	stw     r9,1316(r2)
+  1f4:	90 83 00 00 	stw     r4,0(r3)
+  1f8:	81 22 05 24 	lwz     r9,1316(r2)
+  1fc:	38 60 00 01 	li      r3,1
+  200:	39 29 ff ff 	addi    r9,r9,-1
+  204:	91 22 05 24 	stw     r9,1316(r2)
+  208:	4e 80 00 20 	blr
+  20c:	81 22 05 24 	lwz     r9,1316(r2)
+  210:	38 60 00 00 	li      r3,0
+  214:	39 29 ff ff 	addi    r9,r9,-1
+  218:	91 22 05 24 	stw     r9,1316(r2)
+  21c:	4e 80 00 20 	blr
+
+00000000 <__ex_table>:
+         ...
+                         20: R_PPC_REL32 .text+0x1f4
+                         24: R_PPC_REL32 .text+0x20c
+
+
+
 > 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Rename unsafe_*_user() to arch_unsafe_*_user() which makes the generic
+> uaccess header wrap it with a local label that makes both compilers emit
+> correct code. Same for the kernel_nofault() variants.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: linuxppc-dev@lists.ozlabs.org
 
-Thank you, I will send v2 with this update.>
->>> Have we been operating under some special exception for the Intel
->>> audio IDs?  I see that I acked some of these additions in the past,
->>> but I don't remember why.
->>
->> The HDA audio entries were moved here by v4 of this series:
->> https://www.spinics.net/lists/alsa-devel/msg161995.html
->>
->> (I cannot find link to v4, only this:
->> https://patchwork.ozlabs.org/project/linux-pci/list/?series=364212)
->>>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
->>>>> Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
->>>>> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
->>>>> ---
->>>>>  include/linux/pci_ids.h | 1 +
->>>>>  1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
->>>>> index 92ffc4373f6d..a9a089566b7c 100644
->>>>> --- a/include/linux/pci_ids.h
->>>>> +++ b/include/linux/pci_ids.h
->>>>> @@ -3075,6 +3075,7 @@
->>>>>  #define PCI_DEVICE_ID_INTEL_5100_22	0x65f6
->>>>>  #define PCI_DEVICE_ID_INTEL_IOAT_SCNB	0x65ff
->>>>>  #define PCI_DEVICE_ID_INTEL_HDA_FCL	0x67a8
->>>>> +#define PCI_DEVICE_ID_INTEL_HDA_NVL_S	0x6e50
->>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_0	0x7000
->>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_1	0x7010
->>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_2	0x7020
->>>>
->>>>
->>
->> -- 
->> Péter
->>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
--- 
-Péter
+
+> ---
+>   arch/powerpc/include/asm/uaccess.h |    8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> --- a/arch/powerpc/include/asm/uaccess.h
+> +++ b/arch/powerpc/include/asm/uaccess.h
+> @@ -451,7 +451,7 @@ user_write_access_begin(const void __use
+>   #define user_write_access_begin	user_write_access_begin
+>   #define user_write_access_end		prevent_current_write_to_user
+>   
+> -#define unsafe_get_user(x, p, e) do {					\
+> +#define arch_unsafe_get_user(x, p, e) do {			\
+>   	__long_type(*(p)) __gu_val;				\
+>   	__typeof__(*(p)) __user *__gu_addr = (p);		\
+>   								\
+> @@ -459,7 +459,7 @@ user_write_access_begin(const void __use
+>   	(x) = (__typeof__(*(p)))__gu_val;			\
+>   } while (0)
+>   
+> -#define unsafe_put_user(x, p, e) \
+> +#define arch_unsafe_put_user(x, p, e)				\
+>   	__put_user_size_goto((__typeof__(*(p)))(x), (p), sizeof(*(p)), e)
+>   
+>   #define unsafe_copy_from_user(d, s, l, e) \
+> @@ -504,11 +504,11 @@ do {									\
+>   		unsafe_put_user(*(u8*)(_src + _i), (u8 __user *)(_dst + _i), e); \
+>   } while (0)
+>   
+> -#define __get_kernel_nofault(dst, src, type, err_label)			\
+> +#define arch_get_kernel_nofault(dst, src, type, err_label)		\
+>   	__get_user_size_goto(*((type *)(dst)),				\
+>   		(__force type __user *)(src), sizeof(type), err_label)
+>   
+> -#define __put_kernel_nofault(dst, src, type, err_label)			\
+> +#define arch_put_kernel_nofault(dst, src, type, err_label)		\
+>   	__put_user_size_goto(*((type *)(src)),				\
+>   		(__force type __user *)(dst), sizeof(type), err_label)
+>   
+> 
 
 
