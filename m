@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-884424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB74CC301C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:59:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C383DC30215
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84C683492F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:59:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BD31343E02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727D92BD5BB;
-	Tue,  4 Nov 2025 08:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32866303A1E;
+	Tue,  4 Nov 2025 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwWcm3X3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZSW0fqxX"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9793A41;
-	Tue,  4 Nov 2025 08:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF932298CC7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246780; cv=none; b=ABHQu+Rg6VS730jUnUhVOAu0WG17OoaYR5NPc+z7+SEj5kwJoD8FJ3icfo/yFFnnHjAqyvCyer2GUFFbZvenB5yXhZnceu5/+61upsP880VkIA4c3X4dJRyD+YenlD6s8zG342/WU8naAXPfIigRlrVkpnuXK0jPMkFVDyPh0Dg=
+	t=1762246907; cv=none; b=jZo5YMXDHLzS6tAy6O4mRye7a2y5h51bt/TOLteAqR1pwJDyZbylXhlg8N/qt98ckywpG6HB2AUDz1K8QC0He3qk4NFMVVrl9ypddSaXi6pzSUgazypYzXWaKakeX0ihkS6Eva4vFzoXQgzoBigLpSVRPa6fUMQYJhL5/DibVaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246780; c=relaxed/simple;
-	bh=wagiKwGQOxHtGj4unkd8nLWuOwQyfBUNKlaHsKfSGEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9gWubJVeIVIrFQsxTywPz1o7X1mTKkGsQ8zw7JaQfsEvvP6ndS5UFg1KDX4c5C7g13wHll3D9yv9YmhrFEohR+417NeHtV/cj3zh3RVl1iueFeL+k32FvAazdvvmiG+ElfnxPF86X7t+vLWmdkSDBZZqQVrROsB1BdjWcOk+9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwWcm3X3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93468C4CEF7;
-	Tue,  4 Nov 2025 08:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762246780;
-	bh=wagiKwGQOxHtGj4unkd8nLWuOwQyfBUNKlaHsKfSGEI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pwWcm3X3ttlWQ95VSYmoLboGrozQS2qSAcfkDxwil2P8XIsQwh+7YsJybtR+Knq1l
-	 m2nxP0wcvmMBFE8FWV2hlwHXtR/5//IAXMTLucQ6UIoTAKGzwwmhKAyu7iRmVaBJTz
-	 gp2pwMg5FdPqph9z5N0WUj2DlWIzC1nygT9OLMJfLdmzzXamaM4bAYMUlMLl/uzbWB
-	 5H3elBY3S2HNGne0A0I2ATANHr+BBVUycfHixTEGAa5hJ1I3gViv25joWUAmUYvUIk
-	 wUbPZBJNQSwHEh/8hnzwEWMVlzYD/9rL8GvNAbQcOTwy4pUVsSsyvbWXfA+wxSC9pm
-	 Dc6Cf+ZR6zBVA==
-Message-ID: <675c80ab-1ecf-4354-93cc-3e6d6500e98a@kernel.org>
-Date: Tue, 4 Nov 2025 09:59:35 +0100
+	s=arc-20240116; t=1762246907; c=relaxed/simple;
+	bh=LEQ/ZUIkD0Ck5NZcd9lI29eGljV5AEUzqZJgxrEsExc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bUkdWbSyEXAQB+rT006HTeE5tdTaM1BavDZBFp3PwlG33BzgilckRVJ1XbwWgiKb7Bx6iTUqBa3dKTiLysdViqB5QNYfEsQ4nHA2OqWw+t9FEnBODf6SkgwMlIKt1870tm5s6p8LUvOWsR1rnmrIIYoee53jH3UtGq/3hu8k7yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZSW0fqxX; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 340844E414F0;
+	Tue,  4 Nov 2025 09:01:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EDDAC606EF;
+	Tue,  4 Nov 2025 09:01:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 217C810B509B1;
+	Tue,  4 Nov 2025 10:01:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762246901; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ZS4gepCjlUcRiOhvLWXBayriLrC7l2VxbH7bWlj0/+s=;
+	b=ZSW0fqxXLnYYH72OUhdAWNjJBojfDnx1oxQC6NkhCkFWLbcQY7Kxeba/QDFrNvJ20Jbj1d
+	Vo9fnvQNSzbIuP/j4go1yEAYHjr4F1hqwVRG4/JULTQ8GsGh7TEvqyDdcfvkjyD0MJJXH8
+	+GYusObEkNqxtw2XNUJCp8RYvG7DRV1NW9BIuGH37rOuQOLFzaa/YPHZIq4PibDPza/y7R
+	S1gD1uXZE6YfkCWe26JrSbipO00NOyMOz/GV0KzpjPxCvEvYbHJyhU+t9QHUMTTDlIquU4
+	B5cs+G0QWZGtRNI2NcN3FK3d8kdN4NrAu7Lc+rCqU47oiVcviSruTy8zv0t9vQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH net-next 1/3] net: phy: dp83869: Restart PHY when configuring mode
+Date: Tue, 04 Nov 2025 10:01:38 +0100
+Message-ID: <5936504.DvuYhMxLoT@fw-rgant>
+In-Reply-To: <aQnAFxSTyo6SofZ7@shell.armlinux.org.uk>
+References:
+ <20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com>
+ <20251104-sfp-1000basex-v1-1-f461f170c74e@bootlin.com>
+ <aQnAFxSTyo6SofZ7@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] ASoC: dt-bindings: ti,pcm1862: convert to dtschema
-To: Ranganath V N <vnranganath.20@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251104-dtbs-v6-1-61d5afa31fde@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251104-dtbs-v6-1-61d5afa31fde@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart6208107.lOV4Wx5bFT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 04/11/2025 09:52, Ranganath V N wrote:
-> convert the Texas Instruments PCM186x Universal audio ADC bindings
-> to DT schema.
-> Added the #sound-dai-cells as per the framework.
+--nextPart6208107.lOV4Wx5bFT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Date: Tue, 04 Nov 2025 10:01:38 +0100
+Message-ID: <5936504.DvuYhMxLoT@fw-rgant>
+In-Reply-To: <aQnAFxSTyo6SofZ7@shell.armlinux.org.uk>
+MIME-Version: 1.0
 
-Last sentence makes no sense. Framework tells me nothing about the
-hardware. I actually do not know what framework you are talking about.
+Hi Russell,
 
-I gave you hint how to justify a change in the bindings ("If this is
-DAI, then you miss ref to dai-common and use").
+On Tuesday, 4 November 2025 09:57:59 CET Russell King (Oracle) wrote:
+> On Tue, Nov 04, 2025 at 09:50:34AM +0100, Romain Gantois wrote:
+> > The DP83869 PHY requires a software restart when the OP_MODE is changed.
+...
+> > @@ -797,6 +797,10 @@ static int dp83869_configure_mode(struct phy_device
+> > *phydev,> 
+> >  		return -EINVAL;
+> >  	
+> >  	}
+> > 
+> > +	ret = phy_write(phydev, DP83869_CTRL, DP83869_SW_RESTART);
+> 
+> So if dp83869_configure_fiber() returns an error, that doesn't matter?
+> (This overwrites its error.)
 
-Best regards,
-Krzysztof
+That's a blunder on my part, thanks for pointing it out.
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart6208107.lOV4Wx5bFT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmkJwPIACgkQKCYAIARz
+eA7K5w//aatB6IbWqJgwOSSrTQ6DnEuJ0N5zqk7SmCrlm6hVjrqpbUeKpsI8mqXo
+Vjf4vOyigLTgXFFoS7BmIq0E+sgB7F6ZhQi/pIlsh4oCB4TP6/d2wq2YrW6JAxy9
+nszWoPcPsjpXrhyRENA4jzfE161XPyzKgu63X/qQ5M15pJN/jDfN7in8NpB9QTH/
+OjQClLNq3yQu72tynx3UnpP0P4mRX7YodPYaOGRXxVNeNDw12utrT9I9KrsFgOhE
+PxXX19ughDPTX+ZEWNeZORdi/NW0AUEjmsvC6dXH3wmvhXGDh8qlxe5DuzxsHM5P
+2ljpOR8Tq2kUZgEal9KDpuFmbTzPHWRtJlitLs9ZPmOImI+Shg18CBPoBeTx0efq
+Bt+qYLJlKbCvyZE85e8gqrGGuLPntNl7juyNwdDYEqYPgUOdEtitBCeqnF4VmEgh
+IhAj/YeqrBpNAflNOf0MPIVMni7BT7YSaCACp1QbKjEYe8nLjwra4R7gIhjaHXUp
+eQq2YlIgTf1WJHUB9oDukWAtN72E/MpejlWBHwl7ek6u4Kgh8cQ8jaLN0YBePC9+
+7WnHXK+lXzNlHy2/Y7sK+ExVDumSCgcHx75sanMsgbRGDtVDK8f6s7OIHM1k8+Fs
+5Ud/HA2O8eC0Vab7W6GDArqk6GcG+9DO+WA2cwKUYY3XEQK6y8E=
+=3f7a
+-----END PGP SIGNATURE-----
+
+--nextPart6208107.lOV4Wx5bFT--
+
+
+
 
