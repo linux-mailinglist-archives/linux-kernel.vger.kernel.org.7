@@ -1,255 +1,274 @@
-Return-Path: <linux-kernel+bounces-885352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E5CC32A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:29:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB40C32A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA74E4EA4D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:29:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7091348C21
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8524A33DEFD;
-	Tue,  4 Nov 2025 18:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5bFng8Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA0D32E694;
+	Tue,  4 Nov 2025 18:30:02 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59793299A94;
-	Tue,  4 Nov 2025 18:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F2321CC56;
+	Tue,  4 Nov 2025 18:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762280959; cv=none; b=TbN+x+5WKdpn1X/+TvGRlZYn1Mn3w2nMkdahUkAqNzWUQaX/0wZewPtoK8JtVlHHK9GgHLEVc2SZwK4cKHgaiI/hEJUW+NPVa/HeVLZGHourAnS1F2G/iqN3buoxYjDHpFwMEsWmHD+XXxVQGqCUBWAGinw+WsrurxTvowF8+1s=
+	t=1762281002; cv=none; b=m1wWhNKp2Aa+I+y2XFCGN3xxPZLU6gNK+LVoMum+SeyUxOpSeYUwkgFEo+odX5f3mpJyQiigQZGX+ZQObynI760T28v4jIHTse2goLcR04lNVAu/kb/3jUQm57ZcFX4C4HZDuiDOWXEv28DrJylb3sYkyhmeQbtIEVUtIwdME84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762280959; c=relaxed/simple;
-	bh=QOLIJdJXicTZA+aezH0oyKsN6n90p2SzQohPafNgStI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ek4MTvRAWLJnT3GFwd0QxDwuaKEUua+jgMMm1/WMOwm5BCyxNrVF3vMeSUoXRjnqOyZmCR8knUFcEmeFOjYDLWQGXJrxdz5OjUiFWIxFbnXfybYFQjyxtBY20PcenVovNF7RuTESolQoGHaPaV17lqctqcl6Kne4MECpf+8Owzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5bFng8Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A13DC4CEF7;
-	Tue,  4 Nov 2025 18:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762280958;
-	bh=QOLIJdJXicTZA+aezH0oyKsN6n90p2SzQohPafNgStI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b5bFng8Yxj1VH7quw6uNytqi/j7acNnD+AEHsw7XG3zCksx2e3osO/X/VBkDTXgOu
-	 SMNwgYGok9yVCmFvAJRI87wPx3WHQ8Sbwdt+mCRCYcj/h4Ym0qxxkGkY1NXneYBova
-	 F5cuH+sCeJxkiLhY0DoLOrcslJSZDe7vC/SeRmtyB3ZPyjJYqRch2XExq7wJhD4Wt3
-	 K6QB89nopkLNxH9goli+RMVXvanjgG51ll4XQBSBJfSRTJZjt96cGBhhV1zEP7Q2cZ
-	 Hf3yw3u7avczSKLEFi9GZGNmkwrgs83dTe+4auuj91udrleB2uyvFTjSLL9Y0qR/DD
-	 VFsu2uJXQnNdA==
-Date: Tue, 4 Nov 2025 10:27:38 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Harald Freudenberger <freude@linux.ibm.com>
-Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] SHA-3 library
-Message-ID: <20251104182738.GA2419@sol>
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
- <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
- <20251029163216.GA1603@sol>
- <fa8bc10f36b1aeb9ffe1abf6350adbc1@linux.ibm.com>
- <20251030171453.GA1624@sol>
- <c39f6b6c110def0095e5da5becc12085@linux.ibm.com>
+	s=arc-20240116; t=1762281002; c=relaxed/simple;
+	bh=0acjzFoF5T4Tl6lSXfrDZXy+pgAwGwLsMlnIY0RBylw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nWhHz/DFCOJrp0VwiJ0s5tkEzmxHmu0XbL0oqEDNQoDGSczv/hlR5IKC+ePnQGK0KEIf+aEzSJI5J2TUP7gM83dZr4b+fjJCDNqIrlooPSwsD0T9n7PVUM9i3lVDhnJc63u6nNoHJv23Y3J2yYkBsqgyxZF9I/SPYpeuIQEtt5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4d1H2k0WKWz6L55x;
+	Wed,  5 Nov 2025 02:26:06 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3277614033F;
+	Wed,  5 Nov 2025 02:29:56 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 18:29:55 +0000
+Date: Tue, 4 Nov 2025 18:29:53 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [RESEND v13 19/25] cxl/pci: Introduce CXL protocol error
+ handlers for Endpoints
+Message-ID: <20251104182953.00006a16@huawei.com>
+In-Reply-To: <20251104170305.4163840-20-terry.bowman@amd.com>
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
+	<20251104170305.4163840-20-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c39f6b6c110def0095e5da5becc12085@linux.ibm.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Tue, Nov 04, 2025 at 12:07:40PM +0100, Harald Freudenberger wrote:
-> > Thanks!  Is this with the whole series applied?  Those numbers are
-> > pretty fast, so probably at least the Keccak acceleration part is
-> > worthwhile.  But just to reiterate what I asked for:
-> > 
-> >     Also, it would be helpful to provide the benchmark output from just
-> >     before "lib/crypto: s390/sha3: Add optimized Keccak function", just
-> >     after it, and after "lib/crypto: s390/sha3: Add optimized one-shot
-> >     SHA-3 digest functions".
-> > 
-> > So I'd like to see how much each change helped, which isn't clear if you
-> > show only the result at the end.
-> > 
-> > If there's still no evidence that "lib/crypto: s390/sha3: Add optimized
-> > one-shot SHA-3 digest functions" actually helps significantly vs. simply
-> > doing the Keccak acceleration, then we should drop it for simplicity.
-[...]
-> commit b2e169dd8ca5 lib/crypto: s390/sha3: Add optimized one-shot SHA-3
-> digest functions:
+On Tue, 4 Nov 2025 11:02:59 -0600
+Terry Bowman <terry.bowman@amd.com> wrote:
+
+> CXL Endpoint protocol errors are currently handled by generic PCI error
+> handlers. However, uncorrectable errors (UCEs) require CXL.mem protocol-
+> specific handling logic that the PCI handlers cannot provide.
 > 
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # module: sha3_kunit
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     1..21
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 1 test_hash_test_vectors
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 2
-> test_hash_all_lens_up_to_4096
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 3
-> test_hash_incremental_updates
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 4
-> test_hash_buffer_overruns
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 6
-> test_hash_alignment_consistency
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 7
-> test_hash_ctx_zeroization
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 8
-> test_hash_interrupt_context_1
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 9
-> test_hash_interrupt_context_2
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 10 test_sha3_224_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 11 test_sha3_256_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 12 test_sha3_384_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 13 test_sha3_512_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 14 test_shake128_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 15 test_shake256_basic
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 16 test_shake128_nist
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 17 test_shake256_nist
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 18
-> test_shake_all_lens_up_to_4096
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 19
-> test_shake_multiple_squeezes
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 20
-> test_shake_with_guarded_bufs
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1: 12
-> MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16: 80
-> MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=64: 785
-> MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=127:
-> 812 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=128:
-> 1619 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=200:
-> 2319 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=256:
-> 2176 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=511:
-> 4881 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=512:
-> 4968 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1024:
-> 7565 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=3173:
-> 11909 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=4096:
-> 10378 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16384:
-> 12273 MB/s
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
-> Nov 04 10:50:50 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 skip:0
-> total:21
+> Add dedicated CXL protocol error handlers for CXL Endpoints. Rename the
+> existing cxl_error_handlers to pci_error_handlers to better reflect their
+> purpose and maintain naming consistency. Update the PCI error handlers to
+> invoke the new CXL protocol handlers when the endpoint is operating in
+> CXL.mem mode.
 > 
-> commit 02266b8a383e lib/crypto: s390/sha3: Add optimized Keccak functions:
+> Implement cxl_handle_ras() to return PCI_ERS_RESULT_NONE or
+> PCI_ERS_RESULT_PANIC. Remove unnecessary result checks from the previous
+> endpoint UCE handler since CXL UCE recovery is not implemented in this
+> patch.
 > 
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     # module: sha3_kunit
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     1..21
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 1 test_hash_test_vectors
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 2
-> test_hash_all_lens_up_to_4096
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 3
-> test_hash_incremental_updates
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 4
-> test_hash_buffer_overruns
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 6
-> test_hash_alignment_consistency
-> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 7
-> test_hash_ctx_zeroization
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 8
-> test_hash_interrupt_context_1
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 9
-> test_hash_interrupt_context_2
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 10 test_sha3_224_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 11 test_sha3_256_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 12 test_sha3_384_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 13 test_sha3_512_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 14 test_shake128_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 15 test_shake256_basic
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 16 test_shake128_nist
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 17 test_shake256_nist
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 18
-> test_shake_all_lens_up_to_4096
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 19
-> test_shake_multiple_squeezes
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 20
-> test_shake_with_guarded_bufs
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1: 12
-> MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16: 211
-> MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=64: 835
-> MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=127:
-> 1557 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=128:
-> 1617 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=200:
-> 1457 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=256:
-> 1830 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=511:
-> 3035 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=512:
-> 3245 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1024:
-> 5319 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=3173:
-> 9969 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=4096:
-> 11123 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16384:
-> 12767 MB/s
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
-> Nov 04 10:55:38 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 skip:0
-> total:21
+> Add device lock assertions to protect against concurrent device or RAS
+> register removal during error handling. Two devices require locking for
+> CXL endpoints:
+> 
+> 1. The PCI device (pdev->dev) - RAS registers are allocated and mapped
+>    using devm_* functions with this device as the host. Locking prevents
+>    the RAS registers from being unmapped until after error handling
+>    completes.
+> 
+> 2. The CXL memory device (cxlmd->dev) - Holds a reference to the RAS
+>    registers accessed during error handling. Locking prevents the memory
+>    device and its RAS register references from being removed during error
+>    handling.
+> 
+> The lock assertions added here will be satisfied by device locks
+> introduced in a subsequent patch. A future patch will extend the CXL UCE
+> handler to support full UCE recovery.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+Hi Terry,
 
-Thanks.  So the results before and after "lib/crypto: s390/sha3: Add
-optimized one-shot SHA-3 digest functions" are:
+A few comments inline.
 
-    Length (bytes)      Before            After
-    ==============    ==========        ==========
-         1               12 MB/s           12 MB/s
-        16              211 MB/s           80 MB/s
-        64              835 MB/s          785 MB/s
-       127             1557 MB/s          812 MB/s
-       128             1617 MB/s         1619 MB/s
-       200             1457 MB/s         2319 MB/s
-       256             1830 MB/s         2176 MB/s
-       511             3035 MB/s         4881 MB/s
-       512             3245 MB/s         4968 MB/s
-      1024             5319 MB/s         7565 MB/s
-      3173             9969 MB/s        11909 MB/s
-      4096            11123 MB/s        10378 MB/s
-     16384            12767 MB/s        12273 MB/s
+Thanks,
 
-Unfortunately that seems inconclusive.  len=200, 256, 511, 512, 1024,
-3173 improved.  But len=16, 64, 127, 4096, 16384 regressed.
+Jonathan
 
-I expected the most improvement on short lengths.  The fact that some of
-the short lengths actually regressed is concerning.
 
-It's also clear the the Keccak acceleration itself matters far more than
-this additional one-shot optimization, as expected.  The generic code
-maxed out at only 259 MB/s for you.
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index cb712772de5c..beb142054bda 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -128,6 +128,11 @@ void cxl_ras_exit(void)
+>  	cancel_work_sync(&cxl_cper_prot_err_work);
+>  }
+>  
+> +static bool is_pcie_endpoint(struct pci_dev *pdev)
+> +{
+> +	return pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT;
+> +}
 
-I suggest we hold off on "lib/crypto: s390/sha3: Add optimized one-shot
-SHA-3 digest functions" for now, to avoid the extra maintainence cost
-and opportunity for bugs.
+Not used that I can see. Maybe should be in a different patch?
 
-If you can provide more accurate numbers that show it's worthwhile, we
-can reconsider.  Maybe set the CPU to a fixed frequency, and run
-sha3_kunit multiple times (triggered via KUnit's debugfs interface)?
 
-- Eric
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_cor_error_detected, "CXL");
+>  
+> -pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+> -				    pci_channel_state_t state)
+> +void pci_cor_error_detected(struct pci_dev *pdev)
+> +{
+> +	struct cxl_dev_state *cxlds;
+> +
+> +	device_lock_assert(&pdev->dev);
+> +	if (!cxl_pci_drv_bound(pdev))
+> +		return;
+> +
+> +	cxlds = pci_get_drvdata(pdev);
+> +	guard(device)(&cxlds->cxlmd->dev);
+> +
+> +	cxl_cor_error_detected(&pdev->dev);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(pci_cor_error_detected, "CXL");
+
+Similarly to below.  I'm not keen on exporting such generic PCI
+sounding functions even in the CXL namespace.
+
+> +
+> +pci_ers_result_t cxl_error_detected(struct device *dev)
+>  {
+> -	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
+> -	struct cxl_memdev *cxlmd = cxlds->cxlmd;
+> -	struct device *dev = &cxlmd->dev;
+> -	bool ue;
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>  
+> -	guard(device)(dev);
+> +	device_lock_assert(cxlds->dev);
+> +	device_lock_assert(&cxlmd->dev);
+>  
+>  	if (!dev->driver) {
+> -		dev_warn(&pdev->dev,
+> +		dev_warn(cxlds->dev,
+>  			 "%s: memdev disabled, abort error handling\n",
+>  			 dev_name(dev));
+>  		return PCI_ERS_RESULT_DISCONNECT;
+> @@ -289,32 +308,34 @@ pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+>  
+>  	if (cxlds->rcd)
+>  		cxl_handle_rdport_errors(cxlds);
+> +
+I'd drop this blank line addition as it doesn't matter much and it does
+add noise to the patch.
+
+>  	/*
+>  	 * A frozen channel indicates an impending reset which is fatal to
+>  	 * CXL.mem operation, and will likely crash the system. On the off
+>  	 * chance the situation is recoverable dump the status of the RAS
+>  	 * capability registers and bounce the active state of the memdev.
+>  	 */
+
+Mind you - I think this comment wants to go away as it's talking about code
+that is no longer here.
+
+
+> -	ue = cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
+> -
+> -	switch (state) {
+> -	case pci_channel_io_normal:
+> -		if (ue) {
+> -			device_release_driver(dev);
+> -			return PCI_ERS_RESULT_NEED_RESET;
+> -		}
+> -		return PCI_ERS_RESULT_CAN_RECOVER;
+> -	case pci_channel_io_frozen:
+> -		dev_warn(&pdev->dev,
+> -			 "%s: frozen state error detected, disable CXL.mem\n",
+> -			 dev_name(dev));
+> -		device_release_driver(dev);
+> -		return PCI_ERS_RESULT_NEED_RESET;
+> -	case pci_channel_io_perm_failure:
+> -		dev_warn(&pdev->dev,
+> -			 "failure state error detected, request disconnect\n");
+> -		return PCI_ERS_RESULT_DISCONNECT;
+> -	}
+> -	return PCI_ERS_RESULT_NEED_RESET;
+> +	return cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_error_detected, "CXL");
+> +
+> +pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
+> +				    pci_channel_state_t error)
+> +{
+> +	struct cxl_dev_state *cxlds;
+> +	pci_ers_result_t rc;
+> +
+> +	device_lock_assert(&pdev->dev);
+> +	if (!cxl_pci_drv_bound(pdev))
+> +		return PCI_ERS_RESULT_NONE;
+> +
+> +	cxlds = pci_get_drvdata(pdev);
+> +	guard(device)(&cxlds->cxlmd->dev);
+> +
+> +	rc = cxl_error_detected(&cxlds->cxlmd->dev);
+> +	if (rc == PCI_ERS_RESULT_PANIC)
+> +		panic("CXL cachemem error.");
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(pci_error_detected, "CXL");
+
+Whilst the symbol is namespaced, I'm not sure I want to see
+an exported CXL specific function that sounds so generic pci.
+
+Maybe cxl_pci_error_detected() or something like that?
+
+> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
+> index a0a491e7b5b9..3526e6d75f79 100644
+> --- a/drivers/cxl/cxlpci.h
+> +++ b/drivers/cxl/cxlpci.h
+> @@ -79,21 +79,10 @@ struct cxl_dev_state;
+>  void read_cdat_data(struct cxl_port *port);
+>  
+>  #ifdef CONFIG_CXL_RAS
+> -void cxl_cor_error_detected(struct pci_dev *pdev);
+> -pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+> -				    pci_channel_state_t state);
+>  void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
+>  void cxl_uport_init_ras_reporting(struct cxl_port *port,
+>  				  struct device *host);
+>  #else
+> -static inline void cxl_cor_error_detected(struct pci_dev *pdev) { }
+> -
+> -static inline pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+> -						  pci_channel_state_t state)
+> -{
+> -	return PCI_ERS_RESULT_NONE;
+> -}
+> -
+>  static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
+>  						struct device *host) { }
+>  static inline void cxl_uport_init_ras_reporting(struct cxl_port *port,
+
 
