@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-883853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C0DC2E939
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:22:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4D0C2E948
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76D6A4ED163
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325BE3A8FE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24D045C0B;
-	Tue,  4 Nov 2025 00:20:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FC01494CC;
+	Tue,  4 Nov 2025 00:22:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85591D554;
-	Tue,  4 Nov 2025 00:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC901D5AC6;
+	Tue,  4 Nov 2025 00:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762215652; cv=none; b=OBK66V1zX+D3U8ICF/GgkEIFuaJxvYskcVupZyvE7sl2NAJM68IYqIGd7r8Pr2Nl490Pt/yy+ep9MNjpeEvr943rSrit/jbSJ/Cdult0cG+2wHOWvj48qyux5V/nk3WTTSBPlOU60CaZ1SUirSowVYq1beAVqxq2GEdHpdj5E6M=
+	t=1762215730; cv=none; b=f7n0CnXAZGkuqluHcZHAkpE6caSn6oRUOAkvXvZGsyC1TIvpbRkNq9XLlXMCwu836wpuWYv+NvtK+agIZcZySPeurc2vlaWcYH3s4zMDEtrqHnrITHdeoXD80QPtzNBtBNdXYXqIHzBMIh9VyAXanVY9ZI9mINP4/mrSFe+Qlj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762215652; c=relaxed/simple;
-	bh=ogsulQFcm/S4TsyXnA/p9MVyjXdYMLo8/9KPK9KGI5w=;
+	s=arc-20240116; t=1762215730; c=relaxed/simple;
+	bh=l3NqUR/1c3+ouM5VDzArbpFS3AJQLK2NWWrA3dxB9KU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L/3LGxIpjV2T1x3p3/yX2DM5QA97sMk2wrxalX/QwuX7+JnLHGMWGdeXu1jL35y2ETW5bDTk1DjDYXk10CdvHye8G7bsnOgNPPB7xktlqZgRnMMpEzMfoWrmfVdu1VcDGoWgwZ2QxoBZHYqsKOa4AOZ+G9//2/7lPZPUDQsXzyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+	 MIME-Version:Content-Type; b=BdlUQVljB+yO78UyHta8jkXvH1B+ZiHLYUVk58aC8WNqEUpGbOU4GE5xk/3f++E7+DN7FzvVuTwIsXlRtYD7eDw3DqTW9T9WuUgHY8NBkebpNEfyn8dLHx2A7FdhzhgHWxUmQaMBg3d5F/lTYTRkWivVeinNWfCHaBAY5/TSeBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 7FC3412B70E;
-	Tue,  4 Nov 2025 00:20:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 873882002C;
-	Tue,  4 Nov 2025 00:20:38 +0000 (UTC)
-Date: Mon, 3 Nov 2025 19:20:42 -0500
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 58C9F12A1F2;
+	Tue,  4 Nov 2025 00:21:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id CB3762F;
+	Tue,  4 Nov 2025 00:21:56 +0000 (UTC)
+Date: Mon, 3 Nov 2025 19:22:01 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
- <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann
- <arnd@arndb.de>, linux-arch@vger.kernel.org, vineethrp@google.com
-Subject: Re: [patch V3 02/12] rseq: Add fields and constants for time slice
- extension
-Message-ID: <20251103192042.4820571b@gandalf.local.home>
-In-Reply-To: <20251029130403.542731428@linutronix.de>
-References: <20251029125514.496134233@linutronix.de>
-	<20251029130403.542731428@linutronix.de>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Tomas Glozar <tglozar@redhat.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, John Kacur <jkacur@redhat.com>, Luis
+ Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
+ Crystal Wood <crwood@redhat.com>, Attila Fazekas <afazekas@redhat.com>
+Subject: Re: [PATCH 0/9] Documentation/rtla: Cover default options
+Message-ID: <20251103192201.4a93be06@gandalf.local.home>
+In-Reply-To: <87fraubsfv.fsf@trenco.lwn.net>
+References: <20251010083338.478961-1-tglozar@redhat.com>
+	<87fraubsfv.fsf@trenco.lwn.net>
 X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,87 +56,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: m33k1hbbzoauu5pt6944f1sodr7zabzr
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 873882002C
+X-Rspamd-Queue-Id: CB3762F
+X-Stat-Signature: qzcby539r7akh6sihfzxtaz7cxdbenm5
+X-Rspamd-Server: rspamout02
 X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19o+h2IfWRb/8/hguwbWdaEbDTx2MDcwY4=
-X-HE-Tag: 1762215638-279711
-X-HE-Meta: U2FsdGVkX18FuPWqezhU8nvfOXC8rlxFK8NFxoxQde/ssp0jHbhITVxl77aPacP7GBDTl7TH0lzDv3LIl66Od6aHrULncbIlazxn5/Iuaftv5E1ocE+JGNN0VoDYgtwD/qrS0WSvKet99dDxrET1eUY8UoS9NvWVUhmgVKg/SGu8XThYJJ2Uny873CwwqiBd62lB36S3dgaRrjQAsCXf+hr5khtS5QENHfmOxRRcAz9Zvu6KAzUrHEc6ElIYd6+xIyaFy3j0++4deM7bLOQK+i3nIBWNUpnm3X1extqhp/re+Hlge38Qh8osKrSA4wnl
+X-Session-ID: U2FsdGVkX1/0Jrix/cBmvjpqfIf8KPSDkJQcvfshX38=
+X-HE-Tag: 1762215716-399272
+X-HE-Meta: U2FsdGVkX19ZoGAV6S3yb+r4I7PP9nX2ewM9tGkHqg/gXcm3aQuAAuODFemG6oN3ZxTrX3cs8m7gEjo3pJqzTGFNEazfe/yPl51E2bGM6Y2dFb7KJM0vcxXdsGpDVQjwfqMrPpc/4lqguNs+kPXo8c8ZP9Gsi8YnJUl/AGQEoBgDfhXefFHyrFqANB0eMV38arO8cGzN+MKRrGDdVrM82oL536IbRFXnlQVuY+yIOBhDlUI+7np2181iBIlzj5fsbR3K7kcUIndW+G3PaByWLsLpwWKEC2uiJp5KZ0KtgFkJ4ImxNvAqMRuWFWSYXAEEoqjnePQ2UEthi0N6xdN+1LPTM6KCPzgrYP2G0gFBP2mGCgwmCSW+wX3oi2tYAMz10k7kGQrZH2uuugoeqzHMiX1uuzyoIFyA7pcbo4W4b8S6w65B3lnleA709sW/N6sXoyikk6d34S4Kr7vJrVyRVA==
 
-On Wed, 29 Oct 2025 14:22:14 +0100 (CET)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Mon, 03 Nov 2025 16:35:32 -0700
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-> +/**
-> + * rseq_slice_ctrl - Time slice extension control structure
-> + * @all:	Compound value
-> + * @request:	Request for a time slice extension
-> + * @granted:	Granted time slice extension
-> + *
-> + * @request is set by user space and can be cleared by user space or kernel
-> + * space.  @granted is set and cleared by the kernel and must only be read
-> + * by user space.
-> + */
-> +struct rseq_slice_ctrl {
-> +	union {
-> +		__u32		all;
-> +		struct {
-> +			__u8	request;
-> +			__u8	granted;
-> +			__u16	__reserved;
-> +		};
-> +	};
-> +};
-> +
->  /*
->   * struct rseq is aligned on 4 * 8 bytes to ensure it is always
->   * contained within a single cache-line.
-> @@ -142,6 +174,12 @@ struct rseq {
->  	__u32 mm_cid;
->  
->  	/*
-> +	 * Time slice extension control structure. CPU local updates from
-> +	 * kernel and user space.
-> +	 */
-> +	struct rseq_slice_ctrl slice_ctrl;
-> +
+> Tomas Glozar <tglozar@redhat.com> writes:
+> 
+> > RTLA has many options that have a default value that is used when
+> > the option is not set associated with them. Those are not covered in
+> > the documentation for the options, which creates confusion among users.
+> >
+> > Document the default behavior for all relevant options: -H, -P, -C,
+> > --trace-buffer-size. Some of these are covered in general
+> > descriptions, only missing from the option documentation.
+> >
+> > Also, fix a few typos and incorrect naming of tracers.  
+> 
+> So I see that this series is still unapplied...should I take it through
+> docs?
 
-BTW, Google is interested in expanding this feature for VMs. As a VM kernel
-spinlock also happens to be a user space spinlock. The KVM folks would
-rather have this implemented via the normal user spaces method than to do
-anything specific to the KVM internal code. Or at least, keep it as
-non-intrusive as possible.
+Yes please!
 
-I talked with Mathieu and the KVM folks on how it could use the rseq
-method, and it was suggested that qemu would set up a shared memory region
-between the qemu thread and the virtual CPU and possibly submit a driver
-that would expose this memory region. This could hook to a paravirt
-spinlock that would set the bit stating the system is in a critical section
-and clear it when all spin locks are released. If the vCPU was granted an
-extra time slice, then it would call a hypercall that would do the yield.
-
-When I mentioned this to Mathieu, he was against sharing the qemu's thread
-rseq with the guest VM, as that would expose much more than what is needed
-to the guest. Especially since it needs to be a writable memory location.
-
-What could be done is that another memory range is mapped between the qemu
-thread and the vCPU memory, and the rseq would have a pointer to that memory.
-
-To implement that, the slice_ctrl would need to be a pointer, where the
-kernel would need to do another indirection to follow that pointer to
-another location within the thread's memory.
-
-Now I do believe that the return back to guest goes through a different
-path. So this doesn't actually need to use rseq. But it would require a way
-for the qemu thread to pass the memory to the kernel. I'm guessing that the
-return to guest logic could share the code with the return to user logic
-with just passing a struct rseq_slice_ctrl pointer to a function?
-
-I'm bringing this up so that this use case is considered when implementing
-the extended time slice. As I believe this would be a more common case than
-then user space spin lock would be.
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
 Thanks,
 
 -- Steve
+
 
