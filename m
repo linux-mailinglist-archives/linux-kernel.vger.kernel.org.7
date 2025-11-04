@@ -1,189 +1,330 @@
-Return-Path: <linux-kernel+bounces-885587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9492C3367B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:39:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2F6C33681
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01A44636D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:38:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 362FA34D499
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0BE34844D;
-	Tue,  4 Nov 2025 23:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ECF348445;
+	Tue,  4 Nov 2025 23:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bf69R+tQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dT38Nbxk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C95F347BBC;
-	Tue,  4 Nov 2025 23:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09651347FE4;
+	Tue,  4 Nov 2025 23:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762299505; cv=none; b=kA+7nTohmKNxNsqchywktUOa/w9YYReN13EVZa4qVfODEiOCl/eOXXv1YWovzlLvzd/AhNdyslGJoUjlRsMj6jrsxm9FLRfZ/rjfsCfPTSh9MahoTtMWMJMKW6sSHawblpzzXztye5rtK56Y6KvploZ4LGFHYDjlgr8X4XpIyp4=
+	t=1762299580; cv=none; b=JXT+JgZXemlge3B3sr5kiaEY0yHG6cK7U6xXaVzekPXnQSt972X0ymELKWuwPS9+uEZm6GSD0GNaib95EwHYl5xpMVZEfiwkoyOjjVqKGJ7E+W54DeZCUo2Bo3yHcAbLeDGKBgn/aaiqkvOyhpRA6rbVOuhXYD8BSZkvmr3nRkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762299505; c=relaxed/simple;
-	bh=tJcYkVr7LDCJ3MMs5R6illjOG3OtSdYUQ0177dtNWZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oi1Ey9ywAnYcdKFZrEVWFT2Hulod0v7LjrEJyzPBLSm7TCZNQCGWTc7lcY90gI+t/sUgTH2ZiB6BpniUERphS/MvkWyB8nCgfUQmmtXwX7ER+Sdc742RM0aAofCK4r5WTrXaZwRsRyBfd3tJwy2zoBKjUqpEoxHFfp6e3dzMe7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bf69R+tQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A562CC4CEF7;
-	Tue,  4 Nov 2025 23:38:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762299504;
-	bh=tJcYkVr7LDCJ3MMs5R6illjOG3OtSdYUQ0177dtNWZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bf69R+tQbvoJJc0RLl9XP2yy03u+QbW76n0pXCeLTt4k21stSTQLGIfFCFkPgQ8wr
-	 xjByoqA7J03Ezw4oQ1gFjVlemtqgC8X3ekeY0ngiO18CkRnq0BgNr3724p7SawDRr0
-	 pINZzgqhVjY6vAX/P3BQ0wl/7Wv4mqE1hkELAV28qBDh2jF4epW7BBQlUUQfoHP4St
-	 CVldaiJhf4RI9Tv1aX4GuHvO+D5PYMfIKw47sXuEDYcshMVEmDtC/Tdy8fe60aAzXq
-	 KxEjpkZqFI8xy2BPoIR031tGqioAaBazMmRW297lx8gZnlJJLgSqbRBK/EyrVPDmNM
-	 v8cLinDTB4/Cg==
-Date: Tue, 4 Nov 2025 15:38:24 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <20251104233824.GO196370@frogsfrogsfrogs>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <20251030143324.GA31550@lst.de>
- <aQPyVtkvTg4W1nyz@dread.disaster.area>
- <20251031130050.GA15719@lst.de>
- <aQTcb-0VtWLx6ghD@kbusch-mbp>
- <20251031164701.GA27481@lst.de>
- <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
- <20251103122111.GA17600@lst.de>
+	s=arc-20240116; t=1762299580; c=relaxed/simple;
+	bh=ngSWtS+7t7YeDDelZmLGDkmDvHQs35IKcq0WhDg97t4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qwSltpJlCJ7fgkp7kqqmWWZuHARcBCnFx5TBGfgdzw8Yr24tf83lvFVx4EKNkvDJrXhXwBfDLVZQd66e/xpvuWXzRXuXOPy+gDJFz1euEGB5c4VTXSHR2PS0pET0KVWcDUu5hoRvBLM2TB0mKXqcHG14UtTM/LTvYe2MeNn9PxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dT38Nbxk; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762299578; x=1793835578;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ngSWtS+7t7YeDDelZmLGDkmDvHQs35IKcq0WhDg97t4=;
+  b=dT38NbxkiGbAYguISil7yx77Qgv+PKWi3LTz+rECvd8nh8SUeR9DPEwA
+   9YfIxJquXVHBEpmtWARxGYd3fDLXJCr9DO+klNhX+fx0Uh7lM2N+1M7xE
+   kakNyMYj9XFMhJjU9j+40683npSOglBHYDUnwUO79APsgNciDOdZLL3e4
+   3HzppSEA4mQ5sNbBHCIwavgi4iQN2xo/9ZFl7Crq/+WHt+PweI0AWYOxP
+   IgKlYG971Zotsmf3MKg8Tqg3UagHPIFUZ3WG+QHS+RLBwaKJINwtEWpjE
+   2psJ2FM6C782aR80681lzIJLOEHR5a5FX+SRwl/ZwPK8soBBXHkbMGgXy
+   Q==;
+X-CSE-ConnectionGUID: 7BT8hNfCS3Wv3cd5hVKKJA==
+X-CSE-MsgGUID: OUo8TTzCSCqo2cQkLhjkUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64437913"
+X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
+   d="scan'208";a="64437913"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 15:39:37 -0800
+X-CSE-ConnectionGUID: COpyCtZmShyX7qdMSvkFQw==
+X-CSE-MsgGUID: 3PzKnvF3SfaiQPHca9eOcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
+   d="scan'208";a="187238158"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.201]) ([10.125.110.201])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 15:39:36 -0800
+Message-ID: <848c69cd-297a-4c6b-9411-3dfa1fb3a259@intel.com>
+Date: Tue, 4 Nov 2025 16:39:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103122111.GA17600@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND v13 20/25] CXL/PCI: Introduce CXL Port protocol error
+ handlers
+To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
+ <20251104170305.4163840-21-terry.bowman@amd.com>
+ <5ed52253-a74d-4643-bdb6-a8d4852a9be7@intel.com>
+ <f09df618-987e-4051-b5a2-fd9d2cef18e2@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <f09df618-987e-4051-b5a2-fd9d2cef18e2@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 01:21:11PM +0100, Christoph Hellwig wrote:
-> On Mon, Nov 03, 2025 at 12:14:06PM +0100, Jan Kara wrote:
-> > > Yes, it's pretty clear that the result in non-deterministic in what you
-> > > get.  But that result still does not result in corruption, because
-> > > there is a clear boundary ( either the sector size, or for NVMe
-> > > optionally even a larger bodunary) that designates the atomicy boundary.
-> > 
-> > Well, is that boundary really guaranteed? I mean if you modify the buffer
-> > under IO couldn't it happen that the DMA sees part of the sector new and
-> > part of the sector old? I agree the window is small but I think the real
-> > guarantee is architecture dependent and likely cacheline granularity or
-> > something like that.
+
+
+On 11/4/25 2:27 PM, Bowman, Terry wrote:
 > 
-> If you actually modify it: yes.  But I think Keith' argument was just
-> about regular racing reads vs writes.
 > 
-> > > pretty clearly not an application bug.  It's also pretty clear that
-> > > at least some applications (qemu and other VMs) have been doings this
-> > > for 20+ years.
-> > 
-> > Well, I'm mostly of the opinion that modifying IO buffers in flight is an
-> > application bug (as much as most current storage stacks tolerate it) but on
-> > the other hand returning IO errors later or even corrupting RAID5 on resync
-> > is, in my opinion, not a sane error handling on the kernel side either so I
-> > think we need to do better.
+> On 11/4/2025 3:20 PM, Dave Jiang wrote:
+>>
+>> On 11/4/25 10:03 AM, Terry Bowman wrote:
+>>> Add CXL protocol error handlers for CXL Port devices (Root Ports,
+>>> Downstream Ports, and Upstream Ports). Implement cxl_port_cor_error_detected()
+>>> and cxl_port_error_detected() to handle correctable and uncorrectable errors
+>>> respectively.
+>>>
+>>> Introduce cxl_get_ras_base() to retrieve the cached RAS register base
+>>> address for a given CXL port. This function supports CXL Root Ports,
+>>> Downstream Ports, and Upstream Ports by returning their previously mapped
+>>> RAS register addresses.
+>>>
+>>> Add device lock assertions to protect against concurrent device or RAS
+>>> register removal during error handling. The port error handlers require
+>>> two device locks:
+>>>
+>>> 1. The port's CXL parent device - RAS registers are mapped using devm_*
+>>>    functions with the parent port as the host. Locking the parent prevents
+>>>    the RAS registers from being unmapped during error handling.
+>>>
+>>> 2. The PCI device (pdev->dev) - Locking prevents concurrent modifications
+>>>    to the PCI device structure during error handling.
+>>>
+>>> The lock assertions added here will be satisfied by device locks introduced
+>>> in a subsequent patch.
+>>>
+>>> Introduce get_pci_cxl_host_dev() to return the device responsible for
+>>> managing the RAS register mapping. This function increments the reference
+>>> count on the host device to prevent premature resource release during error
+>>> handling. The caller is responsible for decrementing the reference count.
+>>> For CXL endpoints, which manage resources without a separate host device,
+>>> this function returns NULL.
+>>>
+>>> Update the AER driver's is_cxl_error() to recognize CXL Port devices in
+>>> addition to CXL Endpoints, as both now have CXL-specific error handlers.
+>>>
+>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>
+>>> ---
+>>>
+>>> Changes in v12->v13:
+>>> - Move get_pci_cxl_host_dev() and cxl_handle_proto_error() to Dequeue
+>>>   patch (Terry)
+>>> - Remove EP case in cxl_get_ras_base(), not used. (Terry)
+>>> - Remove check for dport->dport_dev (Dave)
+>>> - Remove whitespace (Terry)
+>>>
+>>> Changes in v11->v12:
+>>> - Add call to cxl_pci_drv_bound() in cxl_handle_proto_error() and
+>>>   pci_to_cxl_dev()
+>>> - Change cxl_error_detected() -> cxl_cor_error_detected()
+>>> - Remove NULL variable assignments
+>>> - Replace bus_find_device() with find_cxl_port_by_uport() for upstream
+>>>   port searches.
+>>>
+>>> Changes in v10->v11:
+>>> - None
+>>> ---
+>>>  drivers/cxl/core/core.h       | 10 +++++++
+>>>  drivers/cxl/core/port.c       |  7 ++---
+>>>  drivers/cxl/core/ras.c        | 49 +++++++++++++++++++++++++++++++++++
+>>>  drivers/pci/pcie/aer_cxl_vh.c |  5 +++-
+>>>  4 files changed, 67 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+>>> index b2c0ccd6803f..046ec65ed147 100644
+>>> --- a/drivers/cxl/core/core.h
+>>> +++ b/drivers/cxl/core/core.h
+>>> @@ -157,6 +157,8 @@ void cxl_cor_error_detected(struct device *dev);
+>>>  pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
+>>>  				    pci_channel_state_t error);
+>>>  void pci_cor_error_detected(struct pci_dev *pdev);
+>>> +pci_ers_result_t cxl_port_error_detected(struct device *dev);
+>>> +void cxl_port_cor_error_detected(struct device *dev);
+>>>  #else
+>>>  static inline int cxl_ras_init(void)
+>>>  {
+>>> @@ -176,6 +178,11 @@ static inline pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
+>>>  	return PCI_ERS_RESULT_NONE;
+>>>  }
+>>>  static inline void pci_cor_error_detected(struct pci_dev *pdev) { }
+>>> +static inline void cxl_port_cor_error_detected(struct device *dev) { }
+>>> +static inline pci_ers_result_t cxl_port_error_detected(struct device *dev)
+>>> +{
+>>> +	return PCI_ERS_RESULT_NONE;
+>>> +}
+>>>  #endif /* CONFIG_CXL_RAS */
+>>>  
+>>>  /* Restricted CXL Host specific RAS functions */
+>>> @@ -190,6 +197,9 @@ static inline void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds) { }
+>>>  #endif /* CONFIG_CXL_RCH_RAS */
+>>>  
+>>>  int cxl_gpf_port_setup(struct cxl_dport *dport);
+>>> +struct cxl_port *find_cxl_port(struct device *dport_dev,
+>>> +			       struct cxl_dport **dport);
+>>> +struct cxl_port *find_cxl_port_by_uport(struct device *uport_dev);
+>>>  
+>>>  struct cxl_hdm;
+>>>  int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>>> index b70e1b505b5c..d060f864cf2e 100644
+>>> --- a/drivers/cxl/core/port.c
+>>> +++ b/drivers/cxl/core/port.c
+>>> @@ -1360,8 +1360,8 @@ static struct cxl_port *__find_cxl_port(struct cxl_find_port_ctx *ctx)
+>>>  	return NULL;
+>>>  }
+>>>  
+>>> -static struct cxl_port *find_cxl_port(struct device *dport_dev,
+>>> -				      struct cxl_dport **dport)
+>>> +struct cxl_port *find_cxl_port(struct device *dport_dev,
+>>> +			       struct cxl_dport **dport)
+>>>  {
+>>>  	struct cxl_find_port_ctx ctx = {
+>>>  		.dport_dev = dport_dev,
+>>> @@ -1564,7 +1564,7 @@ static int match_port_by_uport(struct device *dev, const void *data)
+>>>   * Function takes a device reference on the port device. Caller should do a
+>>>   * put_device() when done.
+>>>   */
+>>> -static struct cxl_port *find_cxl_port_by_uport(struct device *uport_dev)
+>>> +struct cxl_port *find_cxl_port_by_uport(struct device *uport_dev)
+>>>  {
+>>>  	struct device *dev;
+>>>  
+>>> @@ -1573,6 +1573,7 @@ static struct cxl_port *find_cxl_port_by_uport(struct device *uport_dev)
+>>>  		return to_cxl_port(dev);
+>>>  	return NULL;
+>>>  }
+>>> +EXPORT_SYMBOL_NS_GPL(find_cxl_port_by_uport, "CXL");
+>>>  
+>>>  static int update_decoder_targets(struct device *dev, void *data)
+>>>  {
+>>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+>>> index beb142054bda..142ca8794107 100644
+>>> --- a/drivers/cxl/core/ras.c
+>>> +++ b/drivers/cxl/core/ras.c
+>>> @@ -145,6 +145,39 @@ static void cxl_dport_map_ras(struct cxl_dport *dport)
+>>>  		dev_dbg(dev, "Failed to map RAS capability.\n");
+>>>  }
+>>>  
+>>> +static void __iomem *cxl_get_ras_base(struct device *dev)
+>>> +{
+>>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +
+>>> +	switch (pci_pcie_type(pdev)) {
+>>> +	case PCI_EXP_TYPE_ROOT_PORT:
+>>> +	case PCI_EXP_TYPE_DOWNSTREAM:
+>>> +	{
+>>> +		struct cxl_dport *dport;
+>>> +		struct cxl_port *port __free(put_cxl_port) = find_cxl_port(&pdev->dev, &dport);
+>>> +
+>>> +		if (!dport) {
+>>> +			pci_err(pdev, "Failed to find the CXL device");
+>>> +			return NULL;
+>>> +		}
+>>> +		return dport->regs.ras;
+>> The RAS MMIO mapping is done via devm_cxl_iomap_block() and is a devres against the device. Without holding the device lock, the port driver can unbind and the address mapping may go away in the middle or before cxl_handle_cor_ras()/cxl_handle_ras() being called. I think you'll have to hold the port lock here and make sure that the port driver is bound before reading the RAS register? I think the dport ras should be covered under the port umbrella.
+>>
+>>> +	}
+>>> +	case PCI_EXP_TYPE_UPSTREAM:
+>>> +	{
+>>> +		struct cxl_port *port __free(put_cxl_port) = find_cxl_port_by_uport(&pdev->dev);
+>>> +
+>>> +		if (!port) {
+>>> +			pci_err(pdev, "Failed to find the CXL device");
+>>> +			return NULL;
+>>> +		}
+>>> +		return port->uport_regs.ras;
+>> same here
+>>
+>> DJ> +	}
 > 
-> Yes.  Also if you look at the man page which is about official as it gets
-> for the semantics you can't find anything requiring the buffers to be
-> stable (but all kinds of other odd rants).
 > 
-> > I also think the performance cost of the unconditional bounce buffering is
-> > so heavy that it's just a polite way of pushing the app to do proper IO
-> > buffer synchronization itself (assuming it cares about IO performance but
-> > given it bothered with direct IO it presumably does). 
-> >
-> > So the question is how to get out of this mess with the least disruption
-> > possible which IMO also means providing easy way for well-behaved apps to
-> > avoid the overhead.
+> The cxl_port parent of the reported devices are locked previously. Locking is added in the CE case in the next patch.
+> and the UCE locking is in patch23. Locking logic is all made ASAP after after dequeueing.
+
+Ok I see them.
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
 > 
-> Remember the cases where this matters is checksumming and parity, where
-> we touch all the cache lines anyway and consume the DRAM bandwidth,
-> although bounce buffering upgrades this from pure reads to also writes.
-> So the overhead is heavy, but if we handle it the right way, that is
-> doing the checksum/parity calculation while the cache line is still hot
-> it should not be prohibitive.  And getting this right in the direct
-> I/O code means that the low-level code could stop bounce buffering
-> for buffered I/O, providing a major speedup there.
+> Terry
 > 
-> I've been thinking a bit more on how to better get the copy close to the
-> checksumming at least for PI, and to avoid the extra copies for RAID5
-> buffered I/O. M maybe a better way is to mark a bio as trusted/untrusted
-> so that the checksumming/raid code can bounce buffer it, and I start to
-> like that idea.  A complication is that PI could relax that requirement
-> if we support PI passthrough from userspace (currently only for block
-> device, but I plan to add file system support), where the device checks
-> it, but we can't do that for parity RAID.
+>>> +	}
+>>> +
+>>> +	dev_warn_once(dev, "Error: Unsupported device type (%X)", pci_pcie_type(pdev));
+>>> +	return NULL;
+>>> +}
+>>> +
+>>>  /**
+>>>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
+>>>   * @dport: the cxl_dport that needs to be initialized
+>>> @@ -254,6 +287,22 @@ pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ra
+>>>  	return PCI_ERS_RESULT_PANIC;
+>>>  }
+>>>  
+>>> +void cxl_port_cor_error_detected(struct device *dev)
+>>> +{
+>>> +	void __iomem *ras_base = cxl_get_ras_base(dev);
+>>> +
+>>> +	cxl_handle_cor_ras(dev, 0, ras_base);
+>>> +}
+>>> +EXPORT_SYMBOL_NS_GPL(cxl_port_cor_error_detected, "CXL");
+>>> +
+>>> +pci_ers_result_t cxl_port_error_detected(struct device *dev)
+>>> +{
+>>> +	void __iomem *ras_base = cxl_get_ras_base(dev);
+>>> +
+>>> +	return cxl_handle_ras(dev, 0, ras_base);
+>>> +}
+>>> +EXPORT_SYMBOL_NS_GPL(cxl_port_error_detected, "CXL");
+>>> +
+>>>  void cxl_cor_error_detected(struct device *dev)
+>>>  {
+>>>  	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
+>>> diff --git a/drivers/pci/pcie/aer_cxl_vh.c b/drivers/pci/pcie/aer_cxl_vh.c
+>>> index 5dbc81341dc4..25f9512b57f7 100644
+>>> --- a/drivers/pci/pcie/aer_cxl_vh.c
+>>> +++ b/drivers/pci/pcie/aer_cxl_vh.c
+>>> @@ -43,7 +43,10 @@ bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info)
+>>>  	if (!info || !info->is_cxl)
+>>>  		return false;
+>>>  
+>>> -	if (pci_pcie_type(pdev) != PCI_EXP_TYPE_ENDPOINT)
+>>> +	if ((pci_pcie_type(pdev) != PCI_EXP_TYPE_ENDPOINT) &&
+>>> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_ROOT_PORT) &&
+>>> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_UPSTREAM) &&
+>>> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_DOWNSTREAM))
+>>>  		return false;
+>>>  
+>>>  	return is_internal_error(info);
+> 
 
-IIRC, a PI disk is supposed to check the supplied CRC against the
-supplied data, and fail the write if there's a discrepancy, right?  In
-that case, an application can't actually corrupt its own data because
-hardware will catch it.
-
-For reads, the kernel will check the supplied CRC against the data
-buffer, right?  So a program can blow itself up, but that only affects
-the buggy program.
-
-I think that means the following:
-
-A. We can allow mutant directio to non-PI devices because buggy programs
-   can only screw themselves over.  Not great but we've allowed this
-   forever.
-
-B. We can also allow it to PI devices because those buggy programs will
-   get hit with EIOs immediately.
-
-C. Mutant directio reads from a RAID1/5 on non-PI devices are ok-ish
-   because the broken application can decide to retry and that's just
-   wasting resources.
-
-D. Mutant directio reads from a RAID1/5 on PI devices are not good
-   because the read failure will result in an unnecessary rebuild, which
-   could turn really bad if the other disks are corrupt.
-
-E. Mutant directio writes to a RAID5 are bad bad bad because you corrupt
-   the stripe and now unsuspecting users on other strips lose data.
-
-I think the btrfs corruption problems are akin to a RAID5 where you can
-persist the wrong CRC to storage and you'll only see it on re-read; but
-at least the blast is contained to the buggy application's file.
-
-I wonder if that means we really need a way to convey the potential
-damage of a mutant write through the block layer / address space so that
-the filesystem can do the right thing?  IOWs, instead of a single
-stable-pages flag, something along the lines of:
-
-enum mutation_blast_radius {
-	/* nobody will notice a thing */
-	MBR_UNCHECKED,
-
-	/* program doing the corruption will notice */
-	MBR_BADAPP,
-
-	/* everyone else's data get corrupted too */
-	MBR_EVERYONE,
-};
-
-AS_STABLE_WRITES is set for MBR_BADAPP and MBR_EVERYONE, and the
-directio -> dontcache flag change is done for a write to a MBR_EVERYONE
-bdev.
-
-Hm?
-
---D
 
