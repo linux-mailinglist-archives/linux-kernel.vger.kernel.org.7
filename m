@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-884974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAA0C319E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0781AC31A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 041CF345770
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:50:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A86A84EC2B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B57F2F691B;
-	Tue,  4 Nov 2025 14:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A3732ED42;
+	Tue,  4 Nov 2025 14:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sJYJm31M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bBJ9t9+D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sJYJm31M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bBJ9t9+D"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBpPOXof"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE751C5F10
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC16631B80A;
+	Tue,  4 Nov 2025 14:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267808; cv=none; b=ne7pUb41OwfCTUUtBf9gtB+D3PCq/GSHHM3IMAblt0NeCOkAJQlzXUyr1lQvbThdkJCZGNr/1d8zWheJopK2z++N4P5/Fz2E6OQx1kKq+z9cuyqoQDDZqru30jmJ8o+uqU7MZNPSZcSuhCiNfATeSu6FBavbjw/bBqrzSZ2Exms=
+	t=1762267949; cv=none; b=CrwAmoi4a/7uogJpsYWwiqKqvGBdgbYs1krpb83Lgxb08vFED8MNzFqDZ1AbmemIwmsd1/N4PSuUzWdnf81h+abY56obRg4pgiPbvjcbH2U2VS3EcUBOh3ArCSbDO1uHTrTlCR9UZy7N93clAVpxf0eeN2P7JMyfmeJSKWJt3pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267808; c=relaxed/simple;
-	bh=y18uDK++KO8wjrOFBTEqCodMQYjVJQALIp/BGKQgA6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIO2BI6ph5ffY/F4O6fwaL95FqOh6yAOQIn2iHrSxmvU2B2iL4h8CH/t5nIIBM5FVzA5NasAjrPk+g2gvSUapB4bkknaRX3z++vaQAv8OGBpx/MCNi0pFC1KSyyzFxoC9xwoQrz0DBbaVFgnD6akFfFU1nfhvNJA3lW1xvG41jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sJYJm31M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bBJ9t9+D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sJYJm31M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bBJ9t9+D; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 950FC211AA;
-	Tue,  4 Nov 2025 14:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762267804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn1YePjU3wGPbLNdiOwEJSPz6A2dbkpu5OMh53R/Bow=;
-	b=sJYJm31MIcnXxivMH4h/yO4u/8MzDVL9+KSWC6X+QFBKifnX/4FG4ufV2/jOHSAHQh+7Oh
-	OMXCeevdFSLfdTLog5CQb97mw5/NUpG8RBuGwVEWiFo6XaXYIrAvTKKYIPkQLcIvBG2sw4
-	E9lk0DLDJRhuexbGVGs72k91GTbkj0A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762267804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn1YePjU3wGPbLNdiOwEJSPz6A2dbkpu5OMh53R/Bow=;
-	b=bBJ9t9+DTuiqAkwr2OlDKGs5jgNG6+ReCvTTbvA7j2wfNIGI6d15Vxp0Hb7eqVjN6wN/Ms
-	EjbETsnxvhswCyAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sJYJm31M;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bBJ9t9+D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762267804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn1YePjU3wGPbLNdiOwEJSPz6A2dbkpu5OMh53R/Bow=;
-	b=sJYJm31MIcnXxivMH4h/yO4u/8MzDVL9+KSWC6X+QFBKifnX/4FG4ufV2/jOHSAHQh+7Oh
-	OMXCeevdFSLfdTLog5CQb97mw5/NUpG8RBuGwVEWiFo6XaXYIrAvTKKYIPkQLcIvBG2sw4
-	E9lk0DLDJRhuexbGVGs72k91GTbkj0A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762267804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn1YePjU3wGPbLNdiOwEJSPz6A2dbkpu5OMh53R/Bow=;
-	b=bBJ9t9+DTuiqAkwr2OlDKGs5jgNG6+ReCvTTbvA7j2wfNIGI6d15Vxp0Hb7eqVjN6wN/Ms
-	EjbETsnxvhswCyAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A54B139A9;
-	Tue,  4 Nov 2025 14:50:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jq2+IZwSCmkQYwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Nov 2025 14:50:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2A785A28EA; Tue,  4 Nov 2025 15:50:00 +0100 (CET)
-Date: Tue, 4 Nov 2025 15:50:00 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Taotao Chen <chentaotao@didiglobal.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Fix two syzbot corruption bugs in minix filesystem
-Message-ID: <bnwyu7itimritk5v7yobztcvf2o4niuo5dap7kx4oh7j3q6kg4@kxneyfqqaj2k>
-References: <20251104143005.3283980-1-jkoolstra@xs4all.nl>
+	s=arc-20240116; t=1762267949; c=relaxed/simple;
+	bh=t26y0J3cJ8VCH8gj8vcB4W52aJYOOAIO1pxaM5OANm0=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=TmnHj3MBFLJe/Tj45mDBq3IAZJO9GgT1nQz4MK3aYkH1NsffdkeN8OpctbL2eOhaHNUG/xnVM1So3RclS0yLD+Lg9I5hNf4Hqdq1lcNokB5oNUg2RTniuNuphbErV7jk+YN1VyLlB1IAQS6/iOxT7h9RjkpCVbFjMLxXsN69wn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBpPOXof; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D66C4CEF7;
+	Tue,  4 Nov 2025 14:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762267949;
+	bh=t26y0J3cJ8VCH8gj8vcB4W52aJYOOAIO1pxaM5OANm0=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=PBpPOXoffuDB2Bbvj0KhG//2uJ5Dj4mudIKwtTiQInHaVVXXp36sQYj8N12pC5jAK
+	 aCnc1TBcNpVVYuzG0nEASgUNbiiFe5pOLgM3HGArl13njXDaYBuAUJhy5upF/UkuM1
+	 FvxYUlkpDPTq9pDS0LA+H/LhFfko7FnqwKDm2WxLfjVnmDd8/N5QCgqUKfobDUBtBu
+	 ygCmZ8pLWH8X8CZay/aRvMj9pnNzqb0pHT0ygp3cF1sGEqefcy0uGwsA6Bt2jGPe86
+	 wH2GslLC3liIjSHe9S7Ivn8XMoSEW0x6dHG5VLtJ0zE8+A0/7lqtdlBkF0EZnJQtQE
+	 cYohs3vcJTUjQ==
+Content-Type: multipart/mixed; boundary="===============7773523901444292637=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104143005.3283980-1-jkoolstra@xs4all.nl>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 950FC211AA
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[xs4all.nl];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[xs4all.nl];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email]
-X-Spam-Score: -4.01
+Message-Id: <6099162df8322a2198497a8a27e1b0e1e5c017aeb74b20fc1eecde1e67826900@mail.kernel.org>
+In-Reply-To: <20251104142714.99878-3-leon.hwang@linux.dev>
+References: <20251104142714.99878-3-leon.hwang@linux.dev>
+Subject: Re: [PATCH bpf-next v5 2/2] selftests/bpf: Add test to verify freeing the special fields when update [lru_,]percpu_hash maps
+From: bot+bpf-ci@kernel.org
+To: leon.hwang@linux.dev,bpf@vger.kernel.org
+Cc: ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@linux.dev,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,memxor@gmail.com,ameryhung@gmail.com,linux-kernel@vger.kernel.org,kernel-patches-bot@fb.com,leon.hwang@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Tue,  4 Nov 2025 14:52:29 +0000 (UTC)
 
-On Tue 04-11-25 15:30:02, Jori Koolstra wrote:
-> Syzbot fuzzes /fs by trying to mount and manipulate deliberately
-> corrupted filesystems. This should not lead to BUG_ONs and WARN_ONs for
-> easy to detect corruptions. This series adds code to be able to report
-> such corruptions and fixes two syzbot bugs on this kind.
-> 
-> Jori Koolstra (3):
->   Add error handling to minix filesystem for inode corruption detection
->   Fix a drop_nlink warning in minix_rmdir
->   Fix a drop_nlink warning in minix_rename
+--===============7773523901444292637==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-The series looks good to me. Feel free to add:
+> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+> index 893a4fdb4..87b0cc018 100644
+> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[ ... ]
 
-								Honza
+> @@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
+>  	return 0;
+>  }
+>
+> +private(kptr_ref) u64 ref;
+> +
+> +static int probe_read_refcount(void)
+> +{
+> +	u32 refcount;
+> +
+> +	bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
+> +	return refcount;
+> +}
+> +
+> +static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
+> +			    struct node_data __kptr **node)
+> +{
+> +	struct node_data *n, *m;
+> +
+> +	n = bpf_obj_new(typeof(*n));
+> +	if (!n)
+> +		return -1;
+> +
+> +	m = bpf_refcount_acquire(n);
+> +	n = bpf_kptr_xchg(node, n);
+> +	if (n) {
+> +		bpf_obj_drop(n);
+> +		bpf_obj_drop(m);
+> +		return -2;
+> +	}
 
-> 
->  fs/minix/inode.c | 16 ++++++++++++++++
->  fs/minix/minix.h |  9 +++++++++
->  fs/minix/namei.c | 39 ++++++++++++++++++++++++++++++++-------
->  3 files changed, 57 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.51.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+In __insert_in_list(), after bpf_kptr_xchg() stores the new object in
+the map and returns the old value in n, can the error path drop both
+n and m? At this point, the new object (pointed to by m) is already
+referenced by the map. Dropping m here would free an object that the
+map still points to, leaving a dangling pointer.
+
+The test itself never triggers this path since it initializes the map
+with zeros first, so the kptr field starts as NULL. However, if this
+test were extended or this pattern copied elsewhere, the incorrect
+error handling could lead to a use-after-free.
+
+> +
+> +	bpf_spin_lock(lock);
+> +	bpf_list_push_front(head, &m->l);
+> +	ref = (u64)(void *) &m->ref;
+> +	bpf_spin_unlock(lock);
+> +	return probe_read_refcount();
+> +}
+
+[ ... ]
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19072261328
+
+--===============7773523901444292637==--
 
