@@ -1,266 +1,178 @@
-Return-Path: <linux-kernel+bounces-884530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFABC305B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:54:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17846C305C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9ACD4E28DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BDE418C0181
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D165E31354A;
-	Tue,  4 Nov 2025 09:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60030313559;
+	Tue,  4 Nov 2025 09:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ghr5RwuD"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012067.outbound.protection.outlook.com [52.101.43.67])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="Ia0NjXDI"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73AF313537;
-	Tue,  4 Nov 2025 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762250068; cv=fail; b=G6lHde7FS3iokBsWdrQVGz9w8loSkYMxEznk/9ILI/x7PcqPyg7sMEmS9kEKse8Cx891A4tyGkMqL4EPkTG7KIj4k/V6DYHvo/XDn/PQKJchXHizKKPKdy1v1kmzvg7tPi1FuKqBeGpjqDOkvBltD9u280LSpDwf6MPKpyy7fe4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762250068; c=relaxed/simple;
-	bh=uJif8N/Z+XNzGGDGrC8QnOx97c9tPAjiL0Q1IHqPeUE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=La4XAVDPzdmUQLsy+bErJzclieVjDxAzsxcqMV9vf4Wq71zs7X0cwN2bkItWAbV/zOqk3BxdDnyA7nfUMoMqH/F338PP37+oOYMkbiJli3R3zgkkgn4lC8zUlNX8q0cjm3d+6hvp37M+2rNL8VOuqoEahonLO6yKpoliekA62Lg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ghr5RwuD; arc=fail smtp.client-ip=52.101.43.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OZP58PQF2HegCKBWYYgs0cYWpXkGbLkvLbQYekhG7tlosWB5zC/h21+RDOLE9mh8/NF/pAi1+6zKs/23Yw1I8vxxB/zDuuME3RLqGDJI5OOPerrQl8TLRWzb801EbgqDIjb1geeRq17+9kAIgPcRArn8mHsAUOTwzfusELlmkqt+d97fC0g2JHSVmJhl5HbAhTTb4Nb9O2cUZQ+HhiulZgQ+QY/l45m0qq1p0KQy48PObnFYTIUGwf3Rar+wT7c30qVCIrx+eOnRzC7PH3RpILePDrwsTd7pX0eX8ADmbFSqKi6pm6hfbNMOH//YHEbYIwnrH/Ldf/arlKibOUcOTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uts/TC69k7OdUnyCKvM3l0w9KWKS11vz8yXBSncKiCg=;
- b=MZwk0fMQCSYn/7rXTZZjDqzGmcletyZnTIRRrAdeE7wSMlzGzOM4BUUis+Y6teMcTwFxCwEC9k5yBf3KCKR79bS/pk28flz/4+AJFAFk4/Bm6zFOHa8jzx2qQ2pxJv9BZUAliqLMaLz3w0Fj2/1pcULmmr5VPLgvz8qOSTnh1JANnnqvWoUZLu3FvTzrl5+qF153WPCKvOgGJ3939ed6XsAtGcMbQtXt1urJmDBxNesmmoY40bFiRTECkFC9JNhiM9jkbcX3s6Jt9IQFkm/PtubarCbr4pPFgXBbRJdaI1lcbhNMbdjqPHc9Yz8F2go24AdL24rhfzK9xkm7SaheoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uts/TC69k7OdUnyCKvM3l0w9KWKS11vz8yXBSncKiCg=;
- b=ghr5RwuDtXcShMUaAOtjPZ3586ZNBz/LqhpqokDhdBCe5HwrUIisWfVFkJTuRKpANgrrFflJjGb7sO9sX8LO/CJRWUInGl1npnQk+e3VUEaLnPhqLfkbkV7TKsGFcaKIBGw8guK6/nx4Bwh+6WyeZvylzLPt3FTk2b7mdWTRqA4=
-Received: from BY5PR13CA0035.namprd13.prod.outlook.com (2603:10b6:a03:180::48)
- by PH0PR12MB7815.namprd12.prod.outlook.com (2603:10b6:510:28a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 09:54:22 +0000
-Received: from MWH0EPF000A6731.namprd04.prod.outlook.com
- (2603:10b6:a03:180:cafe::77) by BY5PR13CA0035.outlook.office365.com
- (2603:10b6:a03:180::48) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Tue, 4
- Nov 2025 09:54:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000A6731.mail.protection.outlook.com (10.167.249.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 09:54:21 +0000
-Received: from FRAPPELLOUX01-WSLPUB.amd.com (10.180.168.240) by
- satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1371331329E;
+	Tue,  4 Nov 2025 09:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762250094; cv=none; b=URr9jKImNydOxbSw3pijTTqjZNRbokW81NI+G+GRk7xk9l/5Ig727RlXr0qCGYuZQDsrD3iYBdzo8WPQc07hxLSFI510u22tG44gDTDaG6n8qztisHPOdCHJkbigvEyMqMmoY6FhTan/JBxZgjyyuM/kWAyc4yyOYpj4QKnlo+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762250094; c=relaxed/simple;
+	bh=sX9UKkyVb3tpBfMOyt/mu+XM2AsdErAzW+FC4GZCdYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PIwHfljrJwUZiZfrwDrV83HtxKru5XSoNK12/HnTbjWJeCIzzSdZFQdNYB3fSVMXJa2ZsxUNL8LU33PX92/gcA/3oz+PZWZaHaUUP8Y8mhjscxc37mrqOwMgBg8uifbt9GfFdc6aOdzUE2mLF514VTBJ8TNZFo9jLgKYL7k9LVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=Ia0NjXDI; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=FgMw8XkOnRx9u46oeD+eQsnFPaZfFi2PJjezX5apYEM=;
+	b=Ia0NjXDI4MO2f/uD9fNbmqz2QiR2Nh4oo34Pm3WXGNUGTwD4evrQQqqeECy3Xc93ZjKw7hu/d
+	wu8d2vSozoHQu2wlFQTaX1jM9HGn8erW0bN/omZ4n8AW6DDS0Dxj7mEZkm3bZz3/0ZzWFFxsBSd
+	iVHI69xvPAeYezB+WK8lofc=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d13g22fXhzpStT;
+	Tue,  4 Nov 2025 17:53:18 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E0E6180080;
+	Tue,  4 Nov 2025 17:54:47 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 4 Nov 2025 01:54:18 -0800
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
-	<dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
-	<sumit.semwal@linaro.org>, Luben Tuikov <luben.tuikov@amd.com>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, "Mikhail
- Gavrilov" <mikhail.v.gavrilov@gmail.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
-	<christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linaro-mm-sig@lists.linaro.org>
-Subject: [PATCH v3] drm/sched: Fix deadlock in drm_sched_entity_kill_jobs_cb
-Date: Tue, 4 Nov 2025 10:53:57 +0100
-Message-ID: <20251104095358.15092-1-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
+ 15.2.1544.11; Tue, 4 Nov 2025 17:54:47 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 17:54:46 +0800
+Message-ID: <339a202a-86aa-46f5-b45d-aea653f3e382@huawei.com>
+Date: Tue, 4 Nov 2025 17:54:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] ACPI: processor: idle: Disable ACPI idle if get
+ power information failed in power notify
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20251103084244.2654432-1-lihuisong@huawei.com>
+ <20251103084244.2654432-5-lihuisong@huawei.com>
+ <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6731:EE_|PH0PR12MB7815:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50e95ec7-7302-48c7-4b09-08de1b88213d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|376014|36860700013|1800799024|921020|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWpGSUlsd0xKdGtiOWJmWXZDSDRmQ2o3N1RNb0twY1locHdvRkRyMGY4YjAx?=
- =?utf-8?B?c2VXQlJ4ZmhtdjRySklSa1pjekJNVjdDSGpxY0VoYytkeUJ2aHpWT1BUQS9m?=
- =?utf-8?B?aGM2b0cwd2lsb1V5WTR0cWdhUGZWTVVyTkxtU2lLNUJJcVMrR20xQkQvN0ds?=
- =?utf-8?B?L2lCUlJZdUhHWjB4YTRDWFcyTWdtL05lbWpoRlowUS8xMXB3UG93aDR2Qk1O?=
- =?utf-8?B?K0w0SXljaFVEa0dHRFNVVzg0UVZlTVlveE5QNFhLekE0MG4rRUlKM2ZlY1Jr?=
- =?utf-8?B?MXRXbGxoVzdzcm5yd25rb2dWb0pBZHNzc1p5ZzVNVmpac205MHNEOFhJVlB4?=
- =?utf-8?B?a3hwNFQzcjRPaXZwdjhucWVnWXVCTWk1TGVOOUVKU0d3S01LVWlEblJJUWxw?=
- =?utf-8?B?Rm5raVgvRnJybW5rOExhU1hJVUZrazQxaytPMVYvOEFER0pZY29yOGlhSUk0?=
- =?utf-8?B?akMvRUZaKzN2M2M1U0Z6SEZIQU1JVUpJR29vaFEyS09EUWErU0RsZkNSN2Vz?=
- =?utf-8?B?N2poS2tRTG1aZU04R3pDb083NWppcXdNb2ljcG1NY1hKVE9CMUxHWDJydUVX?=
- =?utf-8?B?dy9tbHRSVG1IUktRRXZvaDdacE1OKzRnQ3BFVXJZRnptTUZvWE9iNVB6MnZK?=
- =?utf-8?B?VzNWTkVEeHR4dlBWUzRkVlFuS0p2UUZpdVNMcU1xUzVpZWZ3YVRJczNHVXdY?=
- =?utf-8?B?T3V1alBGZ2xveFNiSUhoc3pROWFaRHJtNXoxNVI3TkxVd1lOTzZMSVRJL3VX?=
- =?utf-8?B?TFY1S0Y3OEZVNjFMMDJ5UHdTbWRQR2ZDOEp5N2tmWDVRYjd1Tkxwd05FV0xM?=
- =?utf-8?B?VFF3NEQ1YjVvWUxnSTdxdCtENnM2M1JBTW5WS2UvWEFlWXdJUzZtdGM5VENV?=
- =?utf-8?B?VGhaNUFyQVR0K01IazBFQWdqMi9jMHdnbEFEcHJHUlVaRjlCUlRkSFZMUnhw?=
- =?utf-8?B?TEZKWTZ3U0trSmJYVFZkWHJDUmlsR1V0Qm0zanZlMWQ0cmdYdk05RUZ1WHlT?=
- =?utf-8?B?ZTEyT0RjQTJQWk1JTTJRbXJCcnRsOE84YUozOTUxU0FXQ3lJTCtIRlA3Z1Q4?=
- =?utf-8?B?aUFsYjlhVno3bVpzRVFKalJMVVhKOWNEYWt3amEvOVI2UkJyeEd2d0tBbmVK?=
- =?utf-8?B?eWxWeXJvMVpQS2RhSGZCWjlrbkNxWnRtZmRVQlFGVTlhWU5RVUg3ZFYra29t?=
- =?utf-8?B?VWUrN3B6MDBMWTJZdmJ3a1Y2bGp6YXNwaTM3MVBrbXUzc2JMbUczQzRDTHJz?=
- =?utf-8?B?cHlqWEtaUDVxOG0rZmtHY3hBUEdHdFd3QUpYSVcxSzJKK1ZJd216SklOY08v?=
- =?utf-8?B?THpOUWRoUDRUVVBDcFpoVW8rcFZsM0VJMmJZYkdLQ2UwTzFOMFdMaTJpZkY2?=
- =?utf-8?B?ZEo4ay9naGEyQldhWG9kQm9Vd3pBYU5zQjcyRTd3MUhadHhsZ1E0aSt2cGdn?=
- =?utf-8?B?WnMyOGlCeHBJcGk2bW1HMXg3bGhWLzhHdXhOT1R5TE1xRENlQXlJa0hObEJz?=
- =?utf-8?B?NVZyVE9VL3VLRkc5aUV6TGtCSkFLeDlSOHVoTHQrYkJPOWw3b2UxSmErK253?=
- =?utf-8?B?THVTMFZORG80TjBxdzZkRlhrMWZGN0syNGlwL3ZDOXBoZlA2U3cra1ZJWVU4?=
- =?utf-8?B?UzBTMW54a3lieGMyUGFscE9zemZtQVZaN2o3VUZFejh2K1FYZVhZbTFTZXQ5?=
- =?utf-8?B?NTFrZTVKSHdub3FESklaSFFRazVEeFBOMFdXcmV6MFplOFNjY2RrUVFHVHpt?=
- =?utf-8?B?V0xneFFkWlFqd24yM0xoMG9ZMlhKc3l0SU5zbXlwaUNmS1VWVTYvM1lteFJT?=
- =?utf-8?B?Z0dWZWNuTzhOL2xaQ0dPSUs1dmJ6TFJGdWpLNklrb2NNRWN3KzNRQUVoczFR?=
- =?utf-8?B?SWNPakRGZ3A3cHJlUlRUZ0JibVB1VXh4am1BTVVkNWg3bVV5NFJ3dTZhMkN2?=
- =?utf-8?B?SlpyNDAxRVIxWW5UMUI4ZU8xV2ZnL1FHUCsrL3RhcStvcWJlSUljbmRNV0U0?=
- =?utf-8?B?WmxqRC85UC9nRWRLZ1ZVaFZUU3NjT2dLSVFXdTB1aHJGWTZySURWcjM2UWhs?=
- =?utf-8?Q?cv+Jip?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(36860700013)(1800799024)(921020)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 09:54:21.9010
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50e95ec7-7302-48c7-4b09-08de1b88213d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6731.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7815
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-The Mesa issue referenced below pointed out a possible deadlock:
 
-[ 1231.611031]  Possible interrupt unsafe locking scenario:
+在 2025/11/4 2:09, Rafael J. Wysocki 写道:
+> On Mon, Nov 3, 2025 at 9:42 AM Huisong Li <lihuisong@huawei.com> wrote:
+>> The old states may not be usable any more if get power information
+>> failed in power notify. The ACPI idle should be disabled entirely.
+> How does it actually disable anything?  It only changes the
+> acpi_processor_power_state_has_changed() return value AFAICS, but that
+> return value isn't checked.
+The acpi_processor_power_state_has_changed() will disable all cpuidle 
+device first.
+AFAICS, the disabled cpuidle_device would not do cpuidle, please see 
+cpuidle_not_available() and cpuidle_idle_call().
+It's enough for this?
+>
+>> Fixes: f427e5f1cf75 ("ACPI / processor: Get power info before updating the C-states")
+> So how does it fix anything?
+>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/acpi/processor_idle.c | 22 +++++++++++++++++-----
+>>   1 file changed, 17 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>> index c73df5933691..4627b00257e6 100644
+>> --- a/drivers/acpi/processor_idle.c
+>> +++ b/drivers/acpi/processor_idle.c
+>> @@ -1317,6 +1317,7 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>          int cpu;
+>>          struct acpi_processor *_pr;
+>>          struct cpuidle_device *dev;
+>> +       int ret = 0;
+>>
+>>          if (disabled_by_idle_boot_param())
+>>                  return 0;
+>> @@ -1345,8 +1346,18 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>                          cpuidle_disable_device(dev);
+>>                  }
+>>
+>> -               /* Populate Updated C-state information */
+>> -               acpi_processor_get_power_info(pr);
+>> +               /*
+>> +                * Populate Updated C-state information
+>> +                * The same idle state is used for all CPUs, cpuidle of all CPUs
+>> +                * should be disabled.
+>> +                */
+>> +               ret = acpi_processor_get_power_info(pr);
+>> +               if (ret) {
+>> +                       pr_err("Get processor-%u power information failed, disable cpuidle of all CPUs\n",
+>> +                              pr->id);
+> pr_info() at most, preferably pr_debug() or maybe pr_info_once().
+Ack, pr_info_once is good to me.
+>
+>> +                       goto release_lock;
+> "unlock" would be a better name.
+Ack
+>
+>> +               }
+>> +
+>>                  acpi_processor_setup_cpuidle_states(pr);
+>>
+>>                  /* Enable all cpuidle devices */
+>> @@ -1354,18 +1365,19 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+>>                          _pr = per_cpu(processors, cpu);
+>>                          if (!_pr || !_pr->flags.power_setup_done)
+>>                                  continue;
+>> -                       acpi_processor_get_power_info(_pr);
+>> -                       if (_pr->flags.power) {
+>> +                       ret = acpi_processor_get_power_info(_pr);
+> This does not need to be called if _pr->flags.power is unset.  Why are
+> you changing this?
 
-[ 1231.611033]        CPU0                    CPU1
-[ 1231.611034]        ----                    ----
-[ 1231.611035]   lock(&xa->xa_lock#17);
-[ 1231.611038]                                local_irq_disable();
-[ 1231.611039]                                lock(&fence->lock);
-[ 1231.611041]                                lock(&xa->xa_lock#17);
-[ 1231.611044]   <Interrupt>
-[ 1231.611045]     lock(&fence->lock);
-[ 1231.611047]
-                *** DEADLOCK ***
+_pr->flags.power is set in acpi_processor_get_power_info().
+Ok, I know what you mean.
+_pr->flags.power is unset if acpi_processor_get_power_info fail to execute.
+But it may be the old value. So here should be necessary.
 
-In this example, CPU0 would be any function accessing job->dependencies
-through the xa_* functions that doesn't disable interrupts (eg:
-drm_sched_job_add_dependency, drm_sched_entity_kill_jobs_cb).
-
-CPU1 is executing drm_sched_entity_kill_jobs_cb as a fence signalling
-callback so in an interrupt context. It will deadlock when trying to
-grab the xa_lock which is already held by CPU0.
-
-Replacing all xa_* usage by their xa_*_irq counterparts would fix
-this issue, but Christian pointed out another issue: dma_fence_signal
-takes fence.lock and so does dma_fence_add_callback.
-
-  dma_fence_signal() // locks f1.lock
-  -> drm_sched_entity_kill_jobs_cb()
-  -> foreach dependencies
-     -> dma_fence_add_callback() // locks f2.lock
-
-This will deadlock if f1 and f2 share the same spinlock.
-
-To fix both issues, the code iterating on dependencies and re-arming them
-is moved out to drm_sched_entity_kill_jobs_work.
-
-v2: reworded commit message (Philipp)
-v3: added Fixes tag (Philipp)
-
-Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and fini")
-Link: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908
-Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Suggested-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++-----------
- 1 file changed, 19 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index c8e949f4a568..fe174a4857be 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity *entity)
- }
- EXPORT_SYMBOL(drm_sched_entity_error);
- 
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb);
-+
- static void drm_sched_entity_kill_jobs_work(struct work_struct *wrk)
- {
- 	struct drm_sched_job *job = container_of(wrk, typeof(*job), work);
--
--	drm_sched_fence_scheduled(job->s_fence, NULL);
--	drm_sched_fence_finished(job->s_fence, -ESRCH);
--	WARN_ON(job->s_fence->parent);
--	job->sched->ops->free_job(job);
--}
--
--/* Signal the scheduler finished fence when the entity in question is killed. */
--static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
--					  struct dma_fence_cb *cb)
--{
--	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
--						 finish_cb);
-+	struct dma_fence *f;
- 	unsigned long index;
- 
--	dma_fence_put(f);
--
- 	/* Wait for all dependencies to avoid data corruptions */
- 	xa_for_each(&job->dependencies, index, f) {
- 		struct drm_sched_fence *s_fence = to_drm_sched_fence(f);
-@@ -220,6 +209,21 @@ static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
- 		dma_fence_put(f);
- 	}
- 
-+	drm_sched_fence_scheduled(job->s_fence, NULL);
-+	drm_sched_fence_finished(job->s_fence, -ESRCH);
-+	WARN_ON(job->s_fence->parent);
-+	job->sched->ops->free_job(job);
-+}
-+
-+/* Signal the scheduler finished fence when the entity in question is killed. */
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb)
-+{
-+	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
-+						 finish_cb);
-+
-+	dma_fence_put(f);
-+
- 	INIT_WORK(&job->work, drm_sched_entity_kill_jobs_work);
- 	schedule_work(&job->work);
- }
--- 
-2.43.0
-
+>
+>> +                       if (!ret && _pr->flags.power) {
+>>                                  dev = per_cpu(acpi_cpuidle_device, cpu);
+>>                                  acpi_processor_setup_cpuidle_dev(_pr, dev);
+>>                                  cpuidle_enable_device(dev);
+>>                          }
+> If it succeeds for the next CPU, the return value will be still 0, won't it?
+I think it is 0.
+Do we need to do something for it, like, adding debug log?
+>
+>>                  }
+>> +release_lock:
+>>                  cpuidle_resume_and_unlock();
+>>                  cpus_read_unlock();
+>>          }
+>>
+>> -       return 0;
+>> +       return ret;
+>>   }
+>>
+>>   void acpi_processor_register_idle_driver(void)
+>> --
 
