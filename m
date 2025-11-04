@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-884970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E31AC319F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1790DC319F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C6314F9872
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7703B6CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D6330319;
-	Tue,  4 Nov 2025 14:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BCB328606;
+	Tue,  4 Nov 2025 14:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="DjjSxPdz"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIMn1mOQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCEC230BD5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363CA230BD5;
+	Tue,  4 Nov 2025 14:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267707; cv=none; b=m80omoopjQnNfwrrTvte02dfoOVxMKxJEJUGzz87b31KhulTBfiFGXeJ9NXoI2UTJ5O2qVuTn/jZ6QI9T64wr6USV0Ythhv3zl+RGbyb344SmcE7vuNcBmF6yBC/intARLkLHlOBddz8eL9TTtkLCBQtIFO4cRFHHcVo1gqcMZY=
+	t=1762267698; cv=none; b=ZzFc5f96azyIo5SWm0laAHujkaPMTd+P//i2VAuqpOS+GXHWmg2vAKKOWp/spnrfe/BlwJePqMrQ9AoAUd40RhnUHej8cQnzDYa/mjNPTLlwq95WGCvM0v4AEYMrcItGeAcKvXlz3Hhw+4rn0aynIq6izhOGXfkNj4jSw6/7yjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267707; c=relaxed/simple;
-	bh=MsDud96uYbv/TfasS4+S0MPyoqpc9yVMWQVuAaCpIaA=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PoU99MXT4Nc/5jEWNAxdYHckYEBsTwMLinMjVBOyfLmCZYlNNSjY5Bk4B1xbUiU3lldZQ+s1k5dRbat+pPsMHp5j7UJKd9/LB4hS+lEnlPl60b5BC+KVYORhqqE88n89UJCV784ibL/JYrh2m+JLRHrdOLQfMcdTaG2wk+Ui6A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=DjjSxPdz; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1762267694; x=1762526894;
-	bh=My0lcXrG8cShyz59I5w5UE8WjsZYKZx5nmyqC76eTx4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=DjjSxPdz8f9+6EQiHOdfGc9ntzSl9Ub+pKG2MllZ8PxNEbtJpEFqPHOgGG+O0ekXd
-	 SpX8uhzxckJHe4ZN+MUIg4tW3wLywA+0yuZySC2uG24FfAV6vTkSSskNFdTa6KmDJB
-	 tPMNhEysZkFtgwJGI3maZo2FQxMCazYHOnry5shRcpbIwn2r67aNgAxqr+WAS5Dg6k
-	 NgDg3q4u6evkq/ckpDH10xJH6bgx/WOFAdRPij6g6STaVsOAKAl/M8XMOE7EkZuTXi
-	 LigYtBppxumrSaPlquWUZA4SQPDeRDeRe7jd7AfflY6to+oMm4pvv33KhEg2GXNtDk
-	 9hr2LvbGsWRYQ==
-Date: Tue, 04 Nov 2025 14:48:07 +0000
-To: andreyknvl@gmail.com, akpm@linux-foundation.org, ryabinin.a.a@gmail.com, elver@google.com, dvyukov@google.com, vincenzo.frascino@arm.com, urezki@gmail.com, glider@google.com
-From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, m.wieczorretman@pm.me
-Subject: [PATCH v1 0/2] kasan: vmalloc: Fix incorrect tag assignment with multiple vm_structs
-Message-ID: <cover.1762267022.git.m.wieczorretman@pm.me>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: 6755a8c21333141e5fc9d41deffd2e258c429b93
+	s=arc-20240116; t=1762267698; c=relaxed/simple;
+	bh=xCBxlDXzIhVQ/B7058fyymHUafvIparv+hEqSxtneH0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=cO7TfQfnSqfaw16BVH092hJ7Mlr2C4oXcfs9mbhZ3O0Qr2v7Acukd6STJv0dr3NWosxkH1GUJEVLb5exOYI15BJHZmUGe3gHQLEne0ef1jxmHFzsa6UnmVqNi2yIr/8pH8QLRqe3ZFANbnPKnHyvW2Y9RJ4mKLc1SB7BV3rD6i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIMn1mOQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F802C116B1;
+	Tue,  4 Nov 2025 14:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762267697;
+	bh=xCBxlDXzIhVQ/B7058fyymHUafvIparv+hEqSxtneH0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=SIMn1mOQrQQxcwiBwuWqP29ydZ+FP6EcFaa3okcvWYTrLLh4dqx1Aat7xwUVxgxP0
+	 auydmpD+uvywmyro/TOJ9RZhvxObN1EV6F83xQErcgMXXiRUc2Uwl4SQDZE+kIQItk
+	 bdVmf3q3inpKZN3kfVXj06HMZAYUfhzGptBS36PkdxxrGaIBWjgkrKpRMVHhRlHX0d
+	 E2QCMTyie6s5pamvD/LI5E4V8QktSmB7hH7sB0v+HDD1MyWns7fHxF05+izv/ZK/Lg
+	 HP3m4oD3DqawLom/Qt8t+yXEPUPfxdO0RgXv2csT0YxvTNkgEM/A6orgH+LfIRcH4x
+	 ut3EPx4B99UXQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Nov 2025 15:48:10 +0100
+Message-Id: <DDZZRCRHBLVI.MGWBUONLZ94K@kernel.org>
+Subject: Re: [PATCH] firmware_loader: make RUST_FW_LOADER_ABSTRACTIONS
+ select FW_LOADER
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrew
+ Lunn" <andrew@lunn.ch>, "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell
+ King" <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
+ <2025110407-scouting-unpiloted-39f4@gregkh>
+In-Reply-To: <2025110407-scouting-unpiloted-39f4@gregkh>
 
-A KASAN tag mismatch, possibly resulting in a kernel panic, can be
-observed on systems with a tag-based KASAN enabled and with multiple
-NUMA nodes. Initially it was only noticed on x86 [1] but later a similar
-issue was also reported on arm64 [2].
+On Tue Nov 4, 2025 at 3:35 PM CET, Greg Kroah-Hartman wrote:
+> On Tue, Nov 04, 2025 at 11:04:49PM +0900, Alexandre Courbot wrote:
+>> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmwar=
+e_loader/Kconfig
+>> index 752b9a9bea03..15eff8a4b505 100644
+>> --- a/drivers/base/firmware_loader/Kconfig
+>> +++ b/drivers/base/firmware_loader/Kconfig
+>> @@ -38,7 +38,7 @@ config FW_LOADER_DEBUG
+>>  config RUST_FW_LOADER_ABSTRACTIONS
+>>  	bool "Rust Firmware Loader abstractions"
+>>  	depends on RUST
+>> -	depends on FW_LOADER=3Dy
+>> +	select FW_LOADER
+>
+> Please no, select should almost never be used, it causes hard-to-debug
+> issues.
 
-Specifically the problem is related to how vm_structs interact with
-pcpu_chunks - both when they are allocated, assigned and when pcpu_chunk
-addresses are derived.
+I agree that select can be very annoying at times, but in this case it seem=
+s to
+be the correct thing to do?
 
-When vm_structs are allocated they are tagged if vmalloc support is
-enabled along the KASAN mode. Later when first pcpu chunk is allocated
-it gets its 'base_addr' field set to the first allocated vm_struct.
-With that it inherits that vm_struct's tag.
+For instance for something like:
 
-When pcpu_chunk addresses are later derived (by pcpu_chunk_addr(), for
-example in pcpu_alloc_noprof()) the base_addr field is used and offsets
-are added to it. If the initial conditions are satisfied then some of
-the offsets will point into memory allocated with a different vm_struct.
-So while the lower bits will get accurately derived the tag bits in the
-top of the pointer won't match the shadow memory contents.
+	config MY_DRIVER
+		depends on PCI
+		depends on DRM
+		select AUXILIARY_BUS
+		select FW_LOADER
 
-The solution (proposed at v2 of the x86 KASAN series [3]) is to tag the
-vm_structs the same when allocating them for the per cpu allocator (in
-pcpu_get_vm_areas()).
+In this case MY_DRIVER is only available if PCI and DRM is enabled, which m=
+akes
+sense, there is no reason to show users PCI and DRM drivers if both are
+disabled.
 
-Originally these patches were part of the x86 KASAN series [4].
+However, for things like AUXILIARY_BUS and FW_LOADER, I'd argue that they a=
+re
+implementation details of the driver and should be selected if the driver i=
+s
+selected.
 
-The series is based on 6.18-rc4.
-
-[1] https://lore.kernel.org/all/e7e04692866d02e6d3b32bb43b998e5d17092ba4.17=
-38686764.git.maciej.wieczor-retman@intel.com/
-[2] https://lore.kernel.org/all/aMUrW1Znp1GEj7St@MiWiFi-R3L-srv/
-[3] https://lore.kernel.org/all/CAPAsAGxDRv_uFeMYu9TwhBVWHCCtkSxoWY4xmFB_vo=
-wMbi8raw@mail.gmail.com/
-[4] https://lore.kernel.org/all/cover.1761763681.git.m.wieczorretman@pm.me/
-
-Maciej Wieczor-Retman (2):
-  kasan: Unpoison pcpu chunks with base address tag
-  kasan: Unpoison vms[area] addresses with a common tag
-
- include/linux/kasan.h | 10 ++++++++++
- mm/kasan/common.c     | 19 +++++++++++++++++++
- mm/vmalloc.c          |  4 +---
- 3 files changed, 30 insertions(+), 3 deletions(-)
-
---=20
-2.51.0
-
-
+Otherwise, wouldn't we expect users to know implementation details of drive=
+rs
+before being able to select them?
 
