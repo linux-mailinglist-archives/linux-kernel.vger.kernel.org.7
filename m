@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-884440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B88C302D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:10:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FA1C302ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CC73AD746
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:05:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59A954F786E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98142BE658;
-	Tue,  4 Nov 2025 09:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502792BE658;
+	Tue,  4 Nov 2025 09:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM9HRWR5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PoSZC+0i"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2577729B8C7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC0E26ED3F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 09:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762247105; cv=none; b=moHF7tOxRxuyydzpRCUY8rvdpggL+gbKejczONsjVNEs+giJPsrgcW/D2xe307Gb0uBuc57DeVOOYdQHz+CPL2voV+VGoRxKYAeUolYBBCsfYA5NDDLj489rJhibX9SM3NllOMtaTk5ZS72d8Vp+0pWmIGruRGn+LQY1gEC+R0A=
+	t=1762247178; cv=none; b=qQEtyJHLQ1t6o2tJwXPC8CUWcBoKZW3kmxlvJ+OCIiDDS4mOKaRmTBvZy+XCAkMQjpVdLXTtEePWL2zK8TMawlGHg2IJRdN5QzO+dKh6qglXG12xqtQqULJ6OVp5nK75tpVCtWIDZrMlz+5B/7aJ1HuDBk40HzB0TQcyJoF2Eqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762247105; c=relaxed/simple;
-	bh=MvsTRVEUb4pz4cYJ7CqvDk7q15x53H+jVN10gNSeAEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cjDSzDn5IALlBYiGblwI0y9p429dH6VtGUOOFhAiPqHEq6Zc5rSo6cEhVwlDr38oKqSrDEhBfOyPRea/sheSppnYBtrOmvpr4Ch4LHB2AiJN9zNDKIxDsQS7O26aNju4fDo/94V72ToWrXoT+JWr2N5FLHPfZXJlL97Pmp9igR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM9HRWR5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABFC3C116B1;
-	Tue,  4 Nov 2025 09:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762247105;
-	bh=MvsTRVEUb4pz4cYJ7CqvDk7q15x53H+jVN10gNSeAEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eM9HRWR5JmUWRtndmMk6sdic8Q5cEco9rIlTg+CoNAIALbbMMalNePhWqgTUpAo/6
-	 jjEg/vGmtp1kW34Q37eluMKvGmQ7rAcb97hrmzVoQ3iytzTv3KI86RuTkTIJ8yKynm
-	 9Eh1uMx4NvDQLdMihRpOZhPuSrmOxX097149ox3HvgkNjxs+cLN/PbL4Um2CnzpO0W
-	 Q+gGaCKMRn7VkKqlTJiY8dAC6gcue5fkl/J6/odIG/V3GpXlMONaNv/0Y4WC9YRkls
-	 bbosyHWrRexPPhNhQFKDfV9v1Gcn7B01hMsaX5cuPt/l7/Hm9cNQLctcYYQMtiKvPz
-	 Tl89hWgesCbuQ==
-Message-ID: <02740344-a773-4c04-af72-72d277c7c6e5@kernel.org>
-Date: Tue, 4 Nov 2025 10:05:00 +0100
+	s=arc-20240116; t=1762247178; c=relaxed/simple;
+	bh=Ve6j/8aRh68YK2EiWRDoB5ZD0BlMxlKqu7uay938KFA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cdxYFac1lceAOU8HzIoLSGplKKtLonDKHdPlPDSBMuaWtul8pjEE1x/lBJcPBr8Uo2de42RHUHFvZE30qUNIqIzo6fOsnZK5w90ZnHOAxjNynOUo+6jcdb0HujCb9OOZIqNP50jszmb0KCPAwvIDSpw51aXkKWTimKDpH+NvaF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PoSZC+0i; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378d50e1cccso53911481fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 01:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762247174; x=1762851974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ve6j/8aRh68YK2EiWRDoB5ZD0BlMxlKqu7uay938KFA=;
+        b=PoSZC+0iciZFBC2TmXOn9vSn9Kt0zggcNW1x9OICYgmt4xRVsBUgaqZIVlLrGz7XT7
+         CE94iGnisB8V5SdewP5mxG0WZ+X/QMr6INujPM3OC4vit4sg7qDxwUapRChbbI2zugsM
+         zfqM7mCQLEU4FYkg9eYwzODeZRQhq1EaO2RM+Ya32Mv8nbtxlnXHp0dKQi5XF2Tcnuh/
+         HKShYPXCSGBFxSNPbJIwV/P5Io6T+6lVakNqDa5i73piCOi5XOnmYdBdLkTkLjWoxNDz
+         eCj2JnHxRvSb+qPpZp3tinyzfYHqBBkcgRaJeTJzcT8TFbFbCwxmLIqHua0B51ONZLx8
+         20PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762247174; x=1762851974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ve6j/8aRh68YK2EiWRDoB5ZD0BlMxlKqu7uay938KFA=;
+        b=AY5MIump6JYcjXPN8/8q8iOmxx5r9pwC5T61M/fj8LP0fZUH7l/Tetk7sGGpSfvVj1
+         k9nQFuzKmBus4X/dHbAmV9LwhjSU/TGH681Do3eCdjJomcuDI2cJ7hV6kK2++CS1JrkD
+         +LRpovqKclkkuMiyq5akUaj2OW8pFCBjhn2yvxF+PkdZFepPz3M2FDDG+PHwYeWoDpBm
+         sbfOYjV0cFV8z/urIaQvEbqSgWuQuoA4jF2XWL6tMYaW+s3kC533PFuwy14kGENx0HOk
+         q222f6WXR3nn4FwGPmHQCFGqwEwETuD+S3MrJk/nMuEnNZOl+9eH98ZJ9PKczTAWhtIu
+         Tpew==
+X-Gm-Message-State: AOJu0YzW7AfJHh2alwwbyFzrFxOC+QG9LKAcVDxBBB4VtHZakBy90cKY
+	9OR6/szm2cR8vM1nAcOdU2aSLRV1RUSR470C4koP9WB4kxMnaNCKGR2Hpmef3TQH03LVjeFaQvU
+	sNLApeTX1tkd2C/B3C5atz9E+COX4G17G5YljkZ5Fng==
+X-Gm-Gg: ASbGncupytaXAaPUAjpKQSr6Gi4fCrodHRVdI4bSe6XA0hNdwSZlBHgFfy/98Ho3hKf
+	yo34vRLgbdZxyyq1QYYNLbExEd6jiMvjGcx7pQE4WqKGwvA8CE0aZife9whycHU7e1LN1OVZmEU
+	vk229tw3xr7k7gtDJvb9VlEaWcPC2dBFLx86Yq7YSqL1+emgweo6TlvbkuPBhBfZFuHfG30/2CT
+	tUcsgSXWI4uJ/N7LHSr0ocLXgRfA3gi+uC/bPLpidhIAoWLa+7vOeaCWKDBo6RaH+iyMXqs7yA7
+	ddSis7yOF2ljybt9vw==
+X-Google-Smtp-Source: AGHT+IGoHrnYG8pwuIHGlYyWwSS5cdb6Yc2Im4z8V243Aw9CaUJS7Bdv48REX9tserm65W5shJTVHeZLHIb6C1wIJVk=
+X-Received: by 2002:a05:6512:1442:10b0:594:27fb:e7ff with SMTP id
+ 2adb3069b0e04-59427fbeab4mr2389190e87.51.1762247174389; Tue, 04 Nov 2025
+ 01:06:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/hugetlb: extract sysfs into hugetlb_sysfs.c
-To: hui.zhu@linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: Geliang Tang <geliang@kernel.org>, Hui Zhu <zhuhui@kylinos.cn>
-References: <cover.1762156954.git.zhuhui@kylinos.cn>
- <fa0fee2b8c2e54cb2437db44579475492c19e94d.1762156954.git.zhuhui@kylinos.cn>
- <cbee126b-5a3b-4f03-a049-2d8b86b4e5f9@kernel.org>
- <1ecbb7b6b6c1cc85e9a52d32d968a2ad987a1922@linux.dev>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <1ecbb7b6b6c1cc85e9a52d32d968a2ad987a1922@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251103164800.294729-1-marco.crivellari@suse.com>
+ <20251103164800.294729-2-marco.crivellari@suse.com> <vzwd2i6wn75oxn5e34xwky74ezpjjosyhx5kvcvwvywhohzegq@xfhhlcdei6it>
+In-Reply-To: <vzwd2i6wn75oxn5e34xwky74ezpjjosyhx5kvcvwvywhohzegq@xfhhlcdei6it>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 4 Nov 2025 10:06:02 +0100
+X-Gm-Features: AWmQ_bm8IBsb5ejrK32XwjdslIRWl6oYAyZossJmkVQl98tzAWm4SvM3BJaQbUs
+Message-ID: <CAAofZF7nfB881LL4qry+L2Z7TNsBx+TWgELv1aKEUpkV2H=pAg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] drm/i915: replace use of system_unbound_wq with system_dfl_wq
+To: Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04.11.25 03:41, hui.zhu@linux.dev wrote:
-> 2025年11月4日 00:28, "David Hildenbrand (Red Hat)" <david@kernel.org mailto:david@kernel.org?to=%22David%20Hildenbrand%20(Red%20Hat)%22%20%3Cdavid%40kernel.org%3E > 写到:
-> 
-> 
->>
->> On 03.11.25 09:22, Hui Zhu wrote:
->>
->>>
->>> From: Geliang Tang <geliang@kernel.org>
->>>   Currently, hugetlb.c contains both core management logic and sysfs
->>>   interface implementations, making it difficult to maintain. This patch
->>>   extracts the sysfs-related code into a dedicated file to improve code
->>>   organization.
->>>   The following components are moved to mm/hugetlb_sysfs.c:
->>>   - hugetlb page demote functions (demote_free_hugetlb_folios,
->>>   demote_pool_huge_page)
->>>   - sysfs attribute definitions and handlers
->>>   - sysfs kobject management functions
->>>   - NUMA per-node hstate attribute registration
->>>   Several inline helper functions and macros are moved to
->>>   mm/hugetlb_internal.h:
->>>   - hstate_is_gigantic_no_runtime()
->>>   - next_node_allowed()
->>>   - get_valid_node_allowed()
->>>   - hstate_next_node_to_alloc()
->>>   - hstate_next_node_to_free()
->>>   - for_each_node_mask_to_alloc/to_free macros
->>>   To support code sharing, these functions are changed from static to
->>>   exported symbols:
->>>   - remove_hugetlb_folio()
->>>   - add_hugetlb_folio()
->>>   - init_new_hugetlb_folio()
->>>   - prep_and_add_allocated_folios()
->>>   - __nr_hugepages_store_common()
->>>   The Makefile is updated to compile hugetlb_sysfs.o when
->>>   CONFIG_HUGETLBFS is enabled. This maintains all existing functionality
->>>   while improving maintainability by separating concerns.
->>>   Signed-off-by: Geliang Tang <geliang@kernel.org>
->>>   Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
->>>   ---
->>>
->> [...]
->>
->>>
->>> index 000000000000..63ab13cfb072
->>>   --- /dev/null
->>>   +++ b/mm/hugetlb_internal.h
->>>   @@ -0,0 +1,110 @@
->>>   +// SPDX-License-Identifier: GPL-2.0-only
->>>   +/*
->>>   + * Internal HugeTLB definitions.
->>>   + *
->>>   + * Copyright (C) 2025 KylinSoft Corporation.
->>>   + * Author: Geliang Tang <geliang@kernel.org>
->>>   + */
->>>
->> So, you move some code and suddenly have copyright and authored that code.
->>
->> Especially given the cove letter says "The code is moved
->> as-is, with only minor formatting adjustments for code style
->> consistency."
->>
->> ?
-> 
-> Thanks for your remind.
-> Remove the wrong copyright according to your comments.
+Hi Krzysztof,
 
-You should keep/use the ones from where you move the code originally. Do 
-the same for patch #2, obviously.
+On Tue, Nov 4, 2025 at 8:31=E2=80=AFAM Krzysztof Karas
+<krzysztof.karas@intel.com> wrote:
+>[...]
+> "This patch continues the effort to refactor worqueue APIs,
+> which has begun with the change introducing new workqueues:
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag").".
+>
+> Otherwise, the sentence "The above change to the Workqueue API
+> has been introduced by" to me suggests that you are trying to
+> re-introduce or fix something that already exists in the kernel.
 
--- 
-Cheers
+Makes sense, thanks for the correction.
+I also realize that if I were put that sentence after:
 
-David
+> This lack of consistency cannot be addressed without refactoring the API.
+
+would have been better, anyhow (maybe it had already the correct meaning).
+
+Thank you!
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
