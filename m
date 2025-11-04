@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-885351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E600DC32A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:27:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E5CC32A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 922F9345099
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:27:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA74E4EA4D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FEC341AC1;
-	Tue,  4 Nov 2025 18:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8524A33DEFD;
+	Tue,  4 Nov 2025 18:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiazNw+a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5bFng8Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD4D33E364;
-	Tue,  4 Nov 2025 18:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59793299A94;
+	Tue,  4 Nov 2025 18:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762280765; cv=none; b=gHLDfF17jvu1WvcuaTkye5n5zZ7udRKTqxJfEubdJgxR5T85Z/5P5l1jXYNj81+X2lMF0GYQOuem2W6Br/XUD4BD+wtzbC32hRyEtI3yQEaFbY5K0n48AZWT8uMoJ/BAxrFv0F/hrGXmNu33AkHWVspWESO6G3tdKQaPfutDvdw=
+	t=1762280959; cv=none; b=TbN+x+5WKdpn1X/+TvGRlZYn1Mn3w2nMkdahUkAqNzWUQaX/0wZewPtoK8JtVlHHK9GgHLEVc2SZwK4cKHgaiI/hEJUW+NPVa/HeVLZGHourAnS1F2G/iqN3buoxYjDHpFwMEsWmHD+XXxVQGqCUBWAGinw+WsrurxTvowF8+1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762280765; c=relaxed/simple;
-	bh=gErckoj85Zfr04kkDQiTzUaNs44sVtVGSWxYxJJo1Uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=R5HxHLkEy6iyYM6n+zw3etPKXHa/oHBmTJZPuXuAaY+I03B9XBovQgpdOHCuxRqZQ3jLAmQ9bR/1dN1gzsT08GUcQvgtPBWjG4QIMdGuKJ2rPx6hhnc4erceH4JHnkUJO5KjaYn2ZpCkOJ8hjut2KCziaYAy9k0CV63mMJweXAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiazNw+a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B7E3C4CEF7;
-	Tue,  4 Nov 2025 18:26:04 +0000 (UTC)
+	s=arc-20240116; t=1762280959; c=relaxed/simple;
+	bh=QOLIJdJXicTZA+aezH0oyKsN6n90p2SzQohPafNgStI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ek4MTvRAWLJnT3GFwd0QxDwuaKEUua+jgMMm1/WMOwm5BCyxNrVF3vMeSUoXRjnqOyZmCR8knUFcEmeFOjYDLWQGXJrxdz5OjUiFWIxFbnXfybYFQjyxtBY20PcenVovNF7RuTESolQoGHaPaV17lqctqcl6Kne4MECpf+8Owzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5bFng8Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A13DC4CEF7;
+	Tue,  4 Nov 2025 18:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762280764;
-	bh=gErckoj85Zfr04kkDQiTzUaNs44sVtVGSWxYxJJo1Uw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GiazNw+aSlIjfth4QE+xVhXcOBx4+aiCe6IQvshr23jHDcLHN7/SHNv5qIjGFCMKp
-	 3p3bnMas6Tz+xCpBRn+aJWc2U2z2OjyKp00/ubrQQ7+RzKaGwXwceWoDCK+drQd0pT
-	 TT6n5RHbZTCXAJ6AEvdfgCw/HJARZtL+LeNLfheZMVH34n0K0R2IL2Zpidp7cAdfTG
-	 yu6NOuBqEaEj4cmtna7c/voY8wSqpzz5jHMCS9QY53C/+Hh2KHBtvqoBsdeGQKpiXB
-	 SoFQZX9gFqaQ0Ri2x5LMbrT/PtYLvPgxLdeL6FOTZaPgAV4y//aBBZOzeLbK0QkO80
-	 czt6JwIZiKFBQ==
-Date: Tue, 4 Nov 2025 12:26:03 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
-	lukas@wunner.de, Benjamin.Cheatham@amd.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND v13 09/25] PCI/AER: Report CXL or PCIe bus error type in
- trace logging
-Message-ID: <20251104182603.GA1862095@bhelgaas>
+	s=k20201202; t=1762280958;
+	bh=QOLIJdJXicTZA+aezH0oyKsN6n90p2SzQohPafNgStI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b5bFng8Yxj1VH7quw6uNytqi/j7acNnD+AEHsw7XG3zCksx2e3osO/X/VBkDTXgOu
+	 SMNwgYGok9yVCmFvAJRI87wPx3WHQ8Sbwdt+mCRCYcj/h4Ym0qxxkGkY1NXneYBova
+	 F5cuH+sCeJxkiLhY0DoLOrcslJSZDe7vC/SeRmtyB3ZPyjJYqRch2XExq7wJhD4Wt3
+	 K6QB89nopkLNxH9goli+RMVXvanjgG51ll4XQBSBJfSRTJZjt96cGBhhV1zEP7Q2cZ
+	 Hf3yw3u7avczSKLEFi9GZGNmkwrgs83dTe+4auuj91udrleB2uyvFTjSLL9Y0qR/DD
+	 VFsu2uJXQnNdA==
+Date: Tue, 4 Nov 2025 10:27:38 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Harald Freudenberger <freude@linux.ibm.com>
+Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Message-ID: <20251104182738.GA2419@sol>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+ <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
+ <20251029163216.GA1603@sol>
+ <fa8bc10f36b1aeb9ffe1abf6350adbc1@linux.ibm.com>
+ <20251030171453.GA1624@sol>
+ <c39f6b6c110def0095e5da5becc12085@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,69 +66,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251104170305.4163840-10-terry.bowman@amd.com>
+In-Reply-To: <c39f6b6c110def0095e5da5becc12085@linux.ibm.com>
 
-On Tue, Nov 04, 2025 at 11:02:49AM -0600, Terry Bowman wrote:
-> The AER service driver and aer_event tracing currently log 'PCIe Bus Type'
-> for all errors. Update the driver and aer_event tracing to log 'CXL Bus
-> Type' for CXL device errors.
+On Tue, Nov 04, 2025 at 12:07:40PM +0100, Harald Freudenberger wrote:
+> > Thanks!  Is this with the whole series applied?  Those numbers are
+> > pretty fast, so probably at least the Keccak acceleration part is
+> > worthwhile.  But just to reiterate what I asked for:
+> > 
+> >     Also, it would be helpful to provide the benchmark output from just
+> >     before "lib/crypto: s390/sha3: Add optimized Keccak function", just
+> >     after it, and after "lib/crypto: s390/sha3: Add optimized one-shot
+> >     SHA-3 digest functions".
+> > 
+> > So I'd like to see how much each change helped, which isn't clear if you
+> > show only the result at the end.
+> > 
+> > If there's still no evidence that "lib/crypto: s390/sha3: Add optimized
+> > one-shot SHA-3 digest functions" actually helps significantly vs. simply
+> > doing the Keccak acceleration, then we should drop it for simplicity.
+[...]
+> commit b2e169dd8ca5 lib/crypto: s390/sha3: Add optimized one-shot SHA-3
+> digest functions:
 > 
-> This requires the AER can identify and distinguish between PCIe errors and
-> CXL errors.
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # module: sha3_kunit
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     1..21
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 1 test_hash_test_vectors
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 2
+> test_hash_all_lens_up_to_4096
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 3
+> test_hash_incremental_updates
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 4
+> test_hash_buffer_overruns
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 6
+> test_hash_alignment_consistency
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 7
+> test_hash_ctx_zeroization
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 8
+> test_hash_interrupt_context_1
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 9
+> test_hash_interrupt_context_2
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 10 test_sha3_224_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 11 test_sha3_256_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 12 test_sha3_384_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 13 test_sha3_512_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 14 test_shake128_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 15 test_shake256_basic
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 16 test_shake128_nist
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 17 test_shake256_nist
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 18
+> test_shake_all_lens_up_to_4096
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 19
+> test_shake_multiple_squeezes
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 20
+> test_shake_with_guarded_bufs
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1: 12
+> MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16: 80
+> MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=64: 785
+> MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=127:
+> 812 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=128:
+> 1619 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=200:
+> 2319 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=256:
+> 2176 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=511:
+> 4881 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=512:
+> 4968 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1024:
+> 7565 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=3173:
+> 11909 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=4096:
+> 10378 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16384:
+> 12273 MB/s
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
+> Nov 04 10:50:50 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 skip:0
+> total:21
+> 
+> commit 02266b8a383e lib/crypto: s390/sha3: Add optimized Keccak functions:
+> 
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     # module: sha3_kunit
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     1..21
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 1 test_hash_test_vectors
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 2
+> test_hash_all_lens_up_to_4096
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 3
+> test_hash_incremental_updates
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 4
+> test_hash_buffer_overruns
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 6
+> test_hash_alignment_consistency
+> Nov 04 10:55:37 b3545008.lnxne.boe kernel:     ok 7
+> test_hash_ctx_zeroization
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 8
+> test_hash_interrupt_context_1
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 9
+> test_hash_interrupt_context_2
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 10 test_sha3_224_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 11 test_sha3_256_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 12 test_sha3_384_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 13 test_sha3_512_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 14 test_shake128_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 15 test_shake256_basic
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 16 test_shake128_nist
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 17 test_shake256_nist
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 18
+> test_shake_all_lens_up_to_4096
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 19
+> test_shake_multiple_squeezes
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 20
+> test_shake_with_guarded_bufs
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1: 12
+> MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16: 211
+> MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=64: 835
+> MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=127:
+> 1557 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=128:
+> 1617 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=200:
+> 1457 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=256:
+> 1830 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=511:
+> 3035 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=512:
+> 3245 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1024:
+> 5319 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=3173:
+> 9969 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=4096:
+> 11123 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16384:
+> 12767 MB/s
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
+> Nov 04 10:55:38 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 skip:0
+> total:21
 
-s/requires the AER/requires that AER/
+Thanks.  So the results before and after "lib/crypto: s390/sha3: Add
+optimized one-shot SHA-3 digest functions" are:
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+    Length (bytes)      Before            After
+    ==============    ==========        ==========
+         1               12 MB/s           12 MB/s
+        16              211 MB/s           80 MB/s
+        64              835 MB/s          785 MB/s
+       127             1557 MB/s          812 MB/s
+       128             1617 MB/s         1619 MB/s
+       200             1457 MB/s         2319 MB/s
+       256             1830 MB/s         2176 MB/s
+       511             3035 MB/s         4881 MB/s
+       512             3245 MB/s         4968 MB/s
+      1024             5319 MB/s         7565 MB/s
+      3173             9969 MB/s        11909 MB/s
+      4096            11123 MB/s        10378 MB/s
+     16384            12767 MB/s        12273 MB/s
 
-> +/**
-> + * struct aer_err_info - AER Error Information
-> + * @dev: Devices reporting error
-> + * @ratelimit_print: Flag to log or not log the devices' error. 0=NotLog/1=Log
-> + * @error_devnum: Number of devices reporting an error
-> + * @level: printk level to use in logging
-> + * @id: Value from register PCI_ERR_ROOT_ERR_SRC
-> + * @severity: AER severity, 0-UNCOR Non-fatal, 1-UNCOR fatal, 2-COR
-> + * @root_ratelimit_print: Flag to log or not log the root's error. 0=NotLog/1=Log
-> + * @multi_error_valid: If multiple errors are reported
-> + * @first_error: First reported error
-> + * @is_cxl: Bus type error: 0-PCI Bus error, 1-CXL Bus error
-> + * @tlp_header_valid: Indicates if TLP field contains error information
-> + * @status: COR/UNCOR error status
-> + * @mask: COR/UNCOR mask
-> + * @tlp: Transaction packet information
-> + */
+Unfortunately that seems inconclusive.  len=200, 256, 511, 512, 1024,
+3173 improved.  But len=16, 64, 127, 4096, 16384 regressed.
 
-Would you mind splitting this kernel-doc addition and comment move to
-its own patch that only does that?  That will make the functional
-changes more obvious.
+I expected the most improvement on short lengths.  The fact that some of
+the short lengths actually regressed is concerning.
 
->  struct aer_err_info {
->  	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
->  	int ratelimit_print[AER_MAX_MULTI_ERR_DEVICES];
->  	int error_dev_num;
-> -	const char *level;		/* printk level */
-> +	const char *level;
->  
->  	unsigned int id:16;
->  
-> -	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
-> -	unsigned int root_ratelimit_print:1;	/* 0=skip, 1=print */
-> +	unsigned int severity:2;
-> +	unsigned int root_ratelimit_print:1;
->  	unsigned int __pad1:4;
->  	unsigned int multi_error_valid:1;
->  
->  	unsigned int first_error:5;
-> -	unsigned int __pad2:2;
-> +	unsigned int __pad2:1;
-> +	bool is_cxl:1;
->  	unsigned int tlp_header_valid:1;
->  
-> -	unsigned int status;		/* COR/UNCOR Error Status */
-> -	unsigned int mask;		/* COR/UNCOR Error Mask */
-> -	struct pcie_tlp_log tlp;	/* TLP Header */
-> +	unsigned int status;
-> +	unsigned int mask;
-> +	struct pcie_tlp_log tlp;
->  };
+It's also clear the the Keccak acceleration itself matters far more than
+this additional one-shot optimization, as expected.  The generic code
+maxed out at only 259 MB/s for you.
+
+I suggest we hold off on "lib/crypto: s390/sha3: Add optimized one-shot
+SHA-3 digest functions" for now, to avoid the extra maintainence cost
+and opportunity for bugs.
+
+If you can provide more accurate numbers that show it's worthwhile, we
+can reconsider.  Maybe set the CPU to a fixed frequency, and run
+sha3_kunit multiple times (triggered via KUnit's debugfs interface)?
+
+- Eric
 
