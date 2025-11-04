@@ -1,101 +1,158 @@
-Return-Path: <linux-kernel+bounces-885242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9BFC3256E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:29:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2DFC325AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:32:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C7024E632D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F0E3B6800
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BA333433;
-	Tue,  4 Nov 2025 17:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED2333A000;
+	Tue,  4 Nov 2025 17:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YorEdEhW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oPpH7d3z"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70642D73BA;
-	Tue,  4 Nov 2025 17:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E7B302165
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762277348; cv=none; b=baNEd3tcvPLvm0/a3j2gGq/y7r/DBjAH8BPi61YRkBXh7ONmPOEUi8vDWOF6mwtJTLjOq+XhdSPYiNA/gIP2rEp5SI6uK7Ldv5JWSKeOJBmotRusjTg5TGyR22T4SPkFAzQBZvwUCS/FNJMI73dMtp6rr9y9FMTnRoxhHbIvjHw=
+	t=1762277441; cv=none; b=PEWVCKNY6WeO7JOwdMrnCkbCdtaQA9bgwc5Q/48Qk1iSj7dLLEoGpLG0Svy9Y7hXPhx34aEl8wGPntvx0SRy9YtjeROATVRFCzGDchsmSzLcsSZ5JbR4I/TFYSRNr511DGVS5UalRPwfHNPaZv/AEna8EYcGxpgOD/1GtF3KykM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762277348; c=relaxed/simple;
-	bh=tI4PyzTCai+yW0q5uOm9mpxVGyRvru6JHvPPumwn9bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InPPjRtMowud33H3jnxwklBGH3Iq0f+hy+Ar9Z+2ggDp+uU28JuOYuju8x2JfSa0R5zwC+0T+pgZOBksRmsc7Pve8mn4O+3MzEoZh1NLXHGO62Yw1tnq/Oik0183g0d6Ilgvqtpq1X4va3b/FA3cl0go3PFddQcutIm4rpjTkuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YorEdEhW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA42C4CEF7;
-	Tue,  4 Nov 2025 17:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762277348;
-	bh=tI4PyzTCai+yW0q5uOm9mpxVGyRvru6JHvPPumwn9bI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YorEdEhWpDhiQn/NJZEVW1RFMt0ZT8Ch/UFT6N941eIHppjapbMWkDnjL/8IkxU1V
-	 rhXwaP4RoWBTrswybIRIY9IYXK70xlwE/BnzQWtg3+quYzwcMuTgeH4dO8D1Kwu21z
-	 w60S9nxeN9i/cWoQCyocGiPHnXhqQchmwYlWCCKrv8/N0q22MwwybSWK71pvNXtahA
-	 7EWfS9HNjlnKR8o6uNQJS2t5zf/xoN8H2qp+cAil4wE4vEaIaK+r9+Vt82qE93aw1/
-	 ar0gCro09h99D1kbK+zAY9v0MAq4i/ftbbuwpskFKncsgNZ2+nI296fVjQx/9Yz2yY
-	 E0bu2DzTYAssQ==
-Date: Tue, 4 Nov 2025 17:29:01 +0000
-From: Conor Dooley <conor@kernel.org>
-To: peter.wang@mediatek.com
-Cc: linux-scsi@vger.kernel.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, lgirdwood@gmail.com,
-	broonie@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, wenst@chromium.org,
-	conor.dooley@microchip.com, chu.stanley@gmail.com,
-	chun-hung.wu@mediatek.com, alice.chao@mediatek.com,
-	naomi.chu@mediatek.com, ed.tsai@mediatek.com,
-	chunfeng.yun@mediatek.com
-Subject: Re: [PATCH v1] dt-bindings: phy: mediatek,ufs-phy: Update maintainer
- information in mediatek,ufs-phy.yaml
-Message-ID: <20251104-banish-engraved-d26d5856d0fd@spud>
-References: <20251103115808.3771214-1-peter.wang@mediatek.com>
+	s=arc-20240116; t=1762277441; c=relaxed/simple;
+	bh=yhIX5TEclnoiBz0fg3JzhCQlxIO+UE1uYXZWYOI7Ttw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OaXGm2i7vWuyHMnALtR9B6OoH3FE1dlGfr+CFSOqt1tYO9RZB57cNkOfKVQSEbJl2KldpFLmK07UiLwQ/nMmTOxg5/566M/HsqQ0msX3qUhuPym7sOfX4jzxGQwsMtlTwCj9mhy1jcrCCn1l0+w6EjNKAKVLr4ntTDNfUE9osl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oPpH7d3z; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <02b8c4ba-eb24-41e2-813c-98b83561ef9d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762277433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i9GlcllmqBesnpFx/wMZjPrsbZ2u3RkZOd65D+jcXkk=;
+	b=oPpH7d3zsFAYQE1B5RXAd1xyooIs6iHMgJXIqfq2kthwGd7qq4uP2FxD72JYwZC4IKOh25
+	bHc5IFVsOMlnWz3TJS2zuE4iM4TAWrHRwRN3SLygDRc3FODUNgHHXSUW3pSlVxeTabjNIG
+	QGOLBxFLNtY80Fm/SNSD665z5VHIq6E=
+Date: Tue, 4 Nov 2025 09:30:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EqJ9mvMN5ps+fBwp"
-Content-Disposition: inline
-In-Reply-To: <20251103115808.3771214-1-peter.wang@mediatek.com>
+Subject: Re: [PATCH bpf-next v4 4/4] selftests/bpf: Add tests to verify
+ freeing the special fields when update hash and local storage maps
+Content-Language: en-GB
+To: Leon Hwang <leon.hwang@linux.dev>, bpf@vger.kernel.org
+Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
+References: <20251030152451.62778-1-leon.hwang@linux.dev>
+ <20251030152451.62778-5-leon.hwang@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20251030152451.62778-5-leon.hwang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---EqJ9mvMN5ps+fBwp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 07:57:36PM +0800, peter.wang@mediatek.com wrote:
-> From: Peter Wang <peter.wang@mediatek.com>
->=20
-> Replace Stanley Chu with me and Chaotian in the maintainers field,
-> since his email address is no longer active.
->=20
-> Signed-off-by: Peter Wang <peter.wang@mediatek.com>
+On 10/30/25 8:24 AM, Leon Hwang wrote:
+> Add tests to verify that updating hash and local storage maps decrements
+> refcount when BPF_KPTR_REF objects are involved.
+>
+> The tests perform the following steps:
+>
+> 1. Call update_elem() to insert an initial value.
+> 2. Use bpf_refcount_acquire() to increment the refcount.
+> 3. Store the node pointer in the map value.
+> 4. Add the node to a linked list.
+> 5. Probe-read the refcount and verify it is *2*.
+> 6. Call update_elem() again to trigger refcount decrement.
+> 7. Probe-read the refcount and verify it is *1*.
+>
+> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+I applied this patch only (i.e., not including patches 1/2/3) to master
+branch and do bpf selftest and all tests succeeded.
 
---EqJ9mvMN5ps+fBwp
-Content-Type: application/pgp-signature; name="signature.asc"
+[root@arch-fb-vm1 bpf]# ./test_progs -t refcounted_kptr
+#294/1   refcounted_kptr/insert_read_both: remove from tree + list:OK
+...
+#294/18  refcounted_kptr/pcpu_hash_refcount_leak:OK
+#294/19  refcounted_kptr/check_pcpu_hash_refcount:OK
+#294/20  refcounted_kptr/hash_lock_refcount_leak:OK
+#294/21  refcounted_kptr/check_hash_lock_refcount:OK
+#294/22  refcounted_kptr/rbtree_sleepable_rcu:OK
+#294/23  refcounted_kptr/rbtree_sleepable_rcu_no_explicit_rcu_lock:OK
+#294/24  refcounted_kptr/cgroup_storage_lock_refcount_leak:OK
+#294/25  refcounted_kptr/check_cgroup_storage_lock_refcount:OK
+...
 
------BEGIN PGP SIGNATURE-----
+Did I miss anything?
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo33QAKCRB4tDGHoIJi
-0slUAQDaNzoLm5qRDZGmaVZq1Z15G/qDvAUp/mAoKtEmWaHoBQEA7pl5SuOhpCFo
-J+x+0i0xR53Wd/iJidGRqGo/gVi+5w4=
-=IlDV
------END PGP SIGNATURE-----
+> ---
+>   .../bpf/prog_tests/refcounted_kptr.c          | 134 +++++++++++++++++-
+>   .../selftests/bpf/progs/refcounted_kptr.c     | 129 +++++++++++++++++
+>   2 files changed, 262 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+> index d6bd5e16e6372..0ec91ff914af7 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+> @@ -3,7 +3,7 @@
+>   
+>   #include <test_progs.h>
+>   #include <network_helpers.h>
+> -
+> +#include "cgroup_helpers.h"
+>   #include "refcounted_kptr.skel.h"
+>   #include "refcounted_kptr_fail.skel.h"
+>   
+> @@ -44,3 +44,135 @@ void test_refcounted_kptr_wrong_owner(void)
+>   	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
+>   	refcounted_kptr__destroy(skel);
+>   }
+> +
+> +static void test_refcnt_leak(struct refcounted_kptr *skel, int key, void *values, size_t values_sz,
+> +			     u64 flags, struct bpf_map *map, struct bpf_program *prog_leak,
+> +			     struct bpf_program *prog_check, struct bpf_test_run_opts *opts)
+> +{
+> +	int ret, fd;
+> +
+> +	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
+> +	if (!ASSERT_OK(ret, "bpf_map__update_elem init"))
+> +		return;
+> +
+> +	fd = bpf_program__fd(prog_leak);
+> +	ret = bpf_prog_test_run_opts(fd, opts);
+> +	if (!ASSERT_OK(ret, "bpf_prog_test_run_opts"))
+> +		return;
+> +	if (!ASSERT_EQ(skel->bss->kptr_refcount, 2, "refcount"))
+> +		return;
+> +
+> +	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
+> +	if (!ASSERT_OK(ret, "bpf_map__update_elem dec refcount"))
+> +		return;
+> +
+> +	fd = bpf_program__fd(prog_check);
+> +	ret = bpf_prog_test_run_opts(fd, opts);
+> +	ASSERT_OK(ret, "bpf_prog_test_run_opts");
+> +	ASSERT_EQ(skel->bss->kptr_refcount, 1, "refcount");
+> +}
+> +
 
---EqJ9mvMN5ps+fBwp--
+[...]
+
 
