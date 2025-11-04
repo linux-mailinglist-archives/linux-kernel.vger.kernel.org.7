@@ -1,175 +1,92 @@
-Return-Path: <linux-kernel+bounces-884845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7F4C314B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:49:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF86C314C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB633B03FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F76E4EACF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BB12F6192;
-	Tue,  4 Nov 2025 13:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E669329E54;
+	Tue,  4 Nov 2025 13:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="juiqD+5r"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j877KRJb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A43277C8D;
-	Tue,  4 Nov 2025 13:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EFB286408;
+	Tue,  4 Nov 2025 13:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762264139; cv=none; b=c16JIdCnvLRdm8nRg0/eOP3f7GqRIqx+6q5k0oVFZPpEQkfTaTJGElq71muEWrA9POsfEnJAYrKgF8nSXKQT9fcc7Lhy5u1+xMQ19h4O+QggtmaBqfHRDQR8F3KAEWpXATK28BhSlwid0wk/aaFhao8WhoFQ46qJp6ihXQ+DDa4=
+	t=1762264189; cv=none; b=RG9YVrzfKGzeN4DmrPE3eLt/mBGdaoVsirEEGuUyloC17W2pNN24/slhp7FHMBO3AZ/s0bkNpD7In4ht2qqWeKpbPEgDm2/l5SxZmEHE4AAn4iOSBzSZEBiSRJIFVnMLeOX8X5oSbakKNzmxjepZIs9LeBOQu+oBnvkwu2bRy24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762264139; c=relaxed/simple;
-	bh=tyy27PwGGsvcneRrPtNtZCqEyrjIhx92dquuwVOnPbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VRmRZ556r3c5NGDvOuQStg0r7MF5kw84uav7j5LGK+45ry7AynEZhmbRLwnpJNIcIsFi6C0L5P6FPbEsrukAiO5Dj4wlor+Nln47383bFf1dmaORxw06LVQ7V4Z89R6vwaS7n+mRQJQ5yPAc8kN074pj7l04i//nIh3TCX1Fejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=juiqD+5r; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=HhgDFV3NXn/IRH8qXjdRXYahylPUabXUbstxozU3bK0=;
-	b=juiqD+5rV0RJy9nL5jDwbDD+vWxjSfNoRfXvQQJVf00Ih5/L/8xPUq8UXXmrrCva3dMEBL/WI
-	UhKAHGa8mMhBeZeeJgMhS7d4p3ZOOKFlGtLEf0gfhexs530LjVpByzGqb2f5qePfvb0zbBY6LHU
-	sD3ai+GbhT8PPehn6vERIAw=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d18sQ1Hflz1T4G2;
-	Tue,  4 Nov 2025 21:47:38 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 91792180080;
-	Tue,  4 Nov 2025 21:48:50 +0800 (CST)
-Received: from [10.174.178.24] (10.174.178.24) by
- kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 21:48:48 +0800
-Message-ID: <40e9934d-4d19-5cea-e21f-d287584b71f4@huawei.com>
-Date: Tue, 4 Nov 2025 21:48:47 +0800
+	s=arc-20240116; t=1762264189; c=relaxed/simple;
+	bh=qAe+WnKRhyi7M2hgYxlX4ON4RtjRVE5CgSMyQVRb7Do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MiZE26NSUs8rCaBjEBHGRfRxNUwhbfa9fEmx3T4E3f2I+r3FqeRfidKR87OjvONvDHBQGarxY9LSgE9gw/VAaPHSsxW5lQN9owl5kvuaw8454FeIywP0d3z7egbcGNtK5dgLqKwh/FkvndxWL0G9E5uXpvD+dtQ70RQYi8QZsoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j877KRJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47203C16AAE;
+	Tue,  4 Nov 2025 13:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762264186;
+	bh=qAe+WnKRhyi7M2hgYxlX4ON4RtjRVE5CgSMyQVRb7Do=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j877KRJbTrKeV32q1oEbIyDisS+qk+QRihArO5A2jdhVnNaVT1SsmLeR67MMCsyPI
+	 iJLwzKKR0+oWOerzl7ZV1rp6OkMR+LM5FH3PconG4wL1tSJTaNRtF7wyVuYx4iiFLV
+	 AmN34SEmK2OlyRjoJR3KwxPzeQVDtKrhcRk5pRWBsio6a+zU2x0YZdivy836nm44vC
+	 iWtwpW+kRataeuMXBXOSQcT0wncfkLqh5beI1snwT8ucbO3xVy18XbaciYbNP+U1FB
+	 xTNvix2BJm8eYYj7TljUHFAI8CTqlsQFBFOm3eLGeg5y4F3ZpBvbg2biUu++H38gSI
+	 eq1R6jjtTVzPQ==
+Message-ID: <daf3f3e9-19f8-4055-8964-a3ffba97e1ca@kernel.org>
+Date: Tue, 4 Nov 2025 14:49:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] arm64/mpam: Clean MBWU monitor overflow bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/4] rust: clist: Add abstraction for iterating over C
+ linked lists
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ David Airlie <airlied@gmail.com>, Alistair Popple <apopple@nvidia.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
+ nouveau@lists.freedesktop.org,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-2-joelagnelf@nvidia.com>
+ <DDX1WYWQNTAB.BBEICMO8NM30@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
-CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
-	<baolin.wang@linux.alibaba.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <jonathan.cameron@huawei.com>, <kobak@nvidia.com>,
-	<lcherian@marvell.com>, <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>, <wangkefeng.wang@huawei.com>,
-	<sunnanyong@huawei.com>
-References: <20251017185645.26604-25-james.morse@arm.com>
- <20251029075655.3284280-1-zengheng4@huawei.com>
- <b0ea1879-9e77-4eb3-8312-ce27d73cc1f4@arm.com>
- <f4518f80-8e17-e622-fbe6-e20a7d1c85fc@huawei.com>
- <293395d7-5766-45df-a2e0-1542fecda5a7@arm.com>
-From: Zeng Heng <zengheng4@huawei.com>
-In-Reply-To: <293395d7-5766-45df-a2e0-1542fecda5a7@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+In-Reply-To: <DDX1WYWQNTAB.BBEICMO8NM30@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ben,
+On 11/1/25 4:51 AM, Alexandre Courbot wrote:
+> I am wondering whether `CList` serves an actual purpose beyond providing
+> ` CListIter` to iterate on... Would it make sense to merge both types
+> into a single one that implements `Iterator`?
 
-On 2025/11/4 18:24, Ben Horgan wrote:
-> Hi Zeng,
-> 
-> On 11/3/25 03:47, Zeng Heng wrote:
->> Hi Ben,
->>
->> On 2025/10/30 17:52, Ben Horgan wrote:
->>> Hi Zeng,
->>>
->>> On 10/29/25 07:56, Zeng Heng wrote:
->>>> The MSMON_MBWU register accumulates counts monotonically forward and
->>>> would not automatically cleared to zero on overflow. The overflow
->>>> portion
->>>> is exactly what mpam_msmon_overflow_val() computes, there is no need to
->>>> additionally subtract mbwu_state->prev_val.
->>>>
->>>> Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
->>>> MSMON_MBWU register must first be read to prevent it from being
->>>> inadvertently cleared by the write operation.
->>>>
->>>> Finally, use the overflow bit instead of relying on counter wrap-around
->>>> to determine whether an overflow has occurred, that avoids the case
->>>> where
->>>> a wrap-around (now > prev_val) is overlooked. So with this, prev_val no
->>>> longer has any use and remove it.
->>>>
->>>> CC: Ben Horgan <ben.horgan@arm.com>
->>>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
->>>> ---
->>>>    drivers/resctrl/mpam_devices.c  | 22 +++++++++++++++++-----
->>>>    drivers/resctrl/mpam_internal.h |  3 ---
->>>>    2 files changed, 17 insertions(+), 8 deletions(-)
->>>
->>> This all looks fine for overflow, but what we've been forgetting about
->>> is the power management. As James mentioned in his commit message, the
->>> prev_val is after now check is doing double duty. If an msc is powered
->>> down and reset then we lose the count. Hence, to keep an accurate count,
->>> we should be considering this case too.
->>>
->>
->>
->> Regarding CPU power management and CPU on-/off-line scenarios, this
->> should and already has been handled by mpam_save_mbwu_state():
->>
->> 1. Freezes the current MSMON_MBWU counter into the
->> mbwu_state->correction;
->> 2. Clears the MSMON_MBWU counter;
->>
->> After the CPU is powered back on, the total bandwidth traffic is
->> MSMON_MBWU(the `now` variable) + correction.
->>
->> So the above solution also covers CPU power-down scenarios, and no
->> additional code is needed to adapt to this case.
->>
->> If I've missed anything, thanks in advance to point it out.
->>
-> 
-> No, I don't think you missed anything. You just didn't mention in your commit message
-> that this is also fixing the power management case.
-> 
-> I'm going to post the next version of this series for James as he is otherwise engaged.
-> I've taken your patch and adapted it to fit in with the order of patches.
-> Does this look ok to you? The support for the long counters will be added later.
-> 
+I think eventually we will have a bunch of iterator types, e.g for
+list_for_each_entry_{safe,reverse,continue}() etc. (see also [1]).
 
-Yes, I have reviewed the patch, and the related adaptations look good to
-me.
+Hence, CList has to provide a couple of methods providing different iterator types.
 
-> @@ -1016,6 +1025,9 @@ static void __ris_msmon_read(void *arg)
->          if (config_mismatch) {
->                  write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
->                  overflow = false;
-> +       } else if (overflow) {
-> +               mpam_write_monsel_reg(msc, CFG_MBWU_CTL,
-> +                                     cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS);
->          }
-
-Yes, the clear register operation is added here.
-
-
-
-Best Regards,
-Zeng Heng
+[1] https://lore.kernel.org/lkml/DDVYV1VT441A.11L5C11F8R7C9@kernel.org/
 
 
