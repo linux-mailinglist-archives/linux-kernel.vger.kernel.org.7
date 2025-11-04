@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-885402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EA6C32D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77964C32D13
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7B144F9209
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:32:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1C7B4FA174
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE571D435F;
-	Tue,  4 Nov 2025 19:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ED8299AAB;
+	Tue,  4 Nov 2025 19:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e4bKQDvR"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JMwYmvBO"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD352DF130
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6819F2E6CC0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762284682; cv=none; b=diRRIO9lXlpPZYPk9UDHI4PFucxHZrJL4AL6R8lw6RGRWs2h+y83iTXA2dFZ5ZqI9glvAfMFEliZUc97U8bkvmF70f4+AJfVdWkZv0n0GE6v5ydDDO6EunFEKBMY3/03oR9vGojlYGiFDMmZ18tI+7uqnG/SkeV6CVk/kxBNOWk=
+	t=1762284684; cv=none; b=MwSO6cThhSN9ipYmkJxTQPLyxzHZ2IJlUjq931kRgJfYOBU05y1/KFdcEHPyCgS/UyZErSw0FbU0UcOyJLRcz/U+8GI75VbL8CcpWVIsqVgKptYiOgFlyWvEG4Dk9Hg4lkCqJ1Wrx2+6beUL5G2dhJ1Y+YpKDB5JDesKIw4416g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762284682; c=relaxed/simple;
-	bh=kt678DbU1qxWHIB0EdWESp0hwR1eDkZu5lvd3m8VPAM=;
+	s=arc-20240116; t=1762284684; c=relaxed/simple;
+	bh=+ZJA6Q75MIRb7BPwJQxYYkjbOwsjL+1qbka9doCeMbA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OMEJVrLZzwPNLl9J/nf7vIcFmIlE1UIBVRLe+G+VFtxot4e2Zqu0sK6vXccjDIoN2u6pgh8DMjd+HzeEhTWSU1QF/lmgtWFG9AKiXhK4sGyFiPwvwwWa3bLsyUe9AmIJPvkYDILcQ1ZGJ0f2YdMyq8+VYNI5rPTBhjT04BHmnKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e4bKQDvR; arc=none smtp.client-ip=95.215.58.187
+	 MIME-Version; b=Q7JGntK26mFGpmiLFW4M2hUC4GJt2PZzumHoWr/iAc3DK4YsIgmDNNyi2i8yO2lHH1LLiLj0IVDoE+/Eye9ZMQVr4uZ8fPLvSypuJv5ZSEcMLsUmD7jRrM5Ie5CpvLVUbw+JQvZ06AVQCg2Ajp/UMp3wuf7zaonGG0J8NdhJvXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JMwYmvBO; arc=none smtp.client-ip=95.215.58.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762284679;
+	t=1762284680;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3L/cBhwg47T+kUAQUIyvUlpW3xHKx07/9p0yryhRDOY=;
-	b=e4bKQDvR+p/mKAV3Nfe+qHm6Dk52w4rpjOyqSGhxu8Egi1T9vp/SgSuR4P2lnm2J0IIrHw
-	KazOn7Ih8TJup/tcuYQFarywnLvOoJvwF0tkwMGcMeqiHTMFaE76JZTpY+DNy/JnJTLc0d
-	KQRIX4DXcFv7sbSqBXelorVwouY24t8=
+	bh=givJI//PiAABh+/f+gBvpZ0lroLLWSUedcKqAHccxGg=;
+	b=JMwYmvBOMhpEjCwRCpCXCEUnynnZCC36OZL1GruFCVBVHW6+CLEIPl1+ZWyjQUhagROsBD
+	JaScDP0pzUaLU1yohIV7iNXFG0lQZwEl0EkFsHdxUv7YQhGMf54KjZ2onkBGmXI5GBEAi7
+	QJb7krxIBAYJF+vcb7qwaPwh1lAPAR0=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -48,9 +48,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [kvm-unit-tests 3/4] x86/svm: Replace #UD on failure in LBRV tests with proper report()s
-Date: Tue,  4 Nov 2025 19:30:15 +0000
-Message-ID: <20251104193016.3408754-4-yosry.ahmed@linux.dev>
+Subject: [kvm-unit-tests 4/4] x86/svm: Deflake svm_tsc_scale_test
+Date: Tue,  4 Nov 2025 19:30:16 +0000
+Message-ID: <20251104193016.3408754-5-yosry.ahmed@linux.dev>
 In-Reply-To: <20251104193016.3408754-1-yosry.ahmed@linux.dev>
 References: <20251104193016.3408754-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -62,48 +62,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-In LBRV tests, failures in the guest trigger a #UD and does not convey
-useful debugging info (i.e. expected and actual values of MSRs). Replace
-them with proper report() calls.
+On an AMT Turin (EPYC Zen 5), svm_tsc_scale_test flakes on the last test
+case with 0.0001 TSC scaling ratio, even with the 24-bit shift for
+stability. On failure, the actual value is 49 instead of the expected
+50.
 
-Admittedly, it is unclear why the choice of #UD was made given that
-report() works fine in the guest.
+Use a higher scaling ratio, 0.001, which makes the test pass
+consistently.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- x86/svm_tests.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ x86/svm_tests.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/x86/svm_tests.c b/x86/svm_tests.c
-index 2981f459032cb..8d309860e76e5 100644
+index 8d309860e76e5..29c899762b7a4 100644
 --- a/x86/svm_tests.c
 +++ b/x86/svm_tests.c
-@@ -3017,16 +3017,17 @@ do {											\
- 	TEST_EXPECT_EQ((u64)to_expected, amd_get_lbr_rip(MSR_IA32_LASTBRANCHTOIP));	\
- } while (0)
+@@ -1002,7 +1002,7 @@ static void svm_tsc_scale_test(void)
+ 	}
  
--/*
-- * FIXME: Do something other than generate an exception to communicate failure.
-- * Debugging without expected vs. actual is an absolute nightmare.
-- */
- #define GUEST_CHECK_LBR(from_expected, to_expected)				\
- do {										\
--	if ((u64)(from_expected) != amd_get_lbr_rip(MSR_IA32_LASTBRANCHFROMIP))	\
--		asm volatile("ud2");						\
--	if ((u64)(to_expected) != amd_get_lbr_rip(MSR_IA32_LASTBRANCHTOIP))	\
--		asm volatile("ud2");						\
-+	u64 from_ip = amd_get_lbr_rip(MSR_IA32_LASTBRANCHFROMIP);		\
-+	u64 to_ip = amd_get_lbr_rip(MSR_IA32_LASTBRANCHTOIP);			\
-+										\
-+	report((u64)(from_expected) == from_ip,					\
-+	       "Expected MSR_IA32_LASTBRANCHFROMIP: 0x%lx, found: 0x%lx",	\
-+	       (u64)from_expected, from_ip);					\
-+	report((u64)(to_expected) == to_ip,					\
-+	       "Expected MSR_IA32_LASTBRANCHTOIP: 0x%lx, found: 0x%lx",		\
-+	       (u64)to_expected, to_ip);					\
- } while (0)
+ 	svm_tsc_scale_run_testcase(50, 255, rdrand());
+-	svm_tsc_scale_run_testcase(50, 0.0001, rdrand());
++	svm_tsc_scale_run_testcase(50, 0.001, rdrand());
+ }
  
- #define REPORT_GUEST_LBR_ERROR(vmcb)						\
+ static void latency_prepare(struct svm_test *test)
 -- 
 2.51.2.1026.g39e6a42477-goog
 
