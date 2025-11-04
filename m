@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-884968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6400DC319D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E31AC319F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D93B54F891B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:47:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C6314F9872
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C153732ED4B;
-	Tue,  4 Nov 2025 14:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D6330319;
+	Tue,  4 Nov 2025 14:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehE/zfGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="DjjSxPdz"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195B5247280;
-	Tue,  4 Nov 2025 14:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCEC230BD5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267652; cv=none; b=Ir6+XoTG0zRLd0unEM3yziIl+Fce4oU6bokPYZpMi/G7uutT97SX4fQPdvX9MVVOv1nLZ/UjXn7+2HgOYhtNsQfIdE0geBcTuMmDOV7H4k0hF2ls8+fxldlhlL2QPybTPUaQEC6vKWhIENVIOFcpZCKNb/6EQ3coZsCc3CwQj60=
+	t=1762267707; cv=none; b=m80omoopjQnNfwrrTvte02dfoOVxMKxJEJUGzz87b31KhulTBfiFGXeJ9NXoI2UTJ5O2qVuTn/jZ6QI9T64wr6USV0Ythhv3zl+RGbyb344SmcE7vuNcBmF6yBC/intARLkLHlOBddz8eL9TTtkLCBQtIFO4cRFHHcVo1gqcMZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267652; c=relaxed/simple;
-	bh=OV4P0dQlw5eQa4hMgT36AAPIOMd8iH5vmSgWbIqbY4k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MEOOunJoe4JG2vA+W9QO+pmDJ764r+4Z1ivtG04I2FV0OYCnqSDLzHfRme14/uDE8HSH0OJofLF5qu7cdx6DZi9EtXc5r6kjKodRGEz/Q9ZjT0KftA80dhEf9mWF5n6mKEEEogH13tcXBny46NuDezx1MR6l2c9Iir9ppI3bLs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehE/zfGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22102C116C6;
-	Tue,  4 Nov 2025 14:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762267651;
-	bh=OV4P0dQlw5eQa4hMgT36AAPIOMd8iH5vmSgWbIqbY4k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ehE/zfGW7oviD32/eocltTKVSmt7z9hmZsUx1/87iegaZf0nwsZ4KNmLLrqy2f2hq
-	 pec0AgwhXm8j43kZjvK9qPqn1pvz0tZACT3Mf6iJz56la1kKXStrBpWwsR14wxjHnN
-	 MUOcOeabxXw9I3mwd2WfglDWQ6znfVhgZGYZHgQxeBGRmk7cDECbNNAMRr03O7b6fQ
-	 xS1Seuejdy2zKg7ey6CoWiVCR1KEFBa0AZspkk+Yzu0ESiNqubrFEaj7mlhvLnEnfc
-	 V5BPguqduKwxsNtbbeQ8Urf1a93M1f7iNRcEJXwyj0qn/XQjUfPykUwUlz40PLtbth
-	 3jHqBlM5zKy1w==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 04 Nov 2025 15:47:26 +0100
-Subject: [PATCH v3] dt-bindings: iommu: qcom_iommu: Allow 'tbu' clock
+	s=arc-20240116; t=1762267707; c=relaxed/simple;
+	bh=MsDud96uYbv/TfasS4+S0MPyoqpc9yVMWQVuAaCpIaA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PoU99MXT4Nc/5jEWNAxdYHckYEBsTwMLinMjVBOyfLmCZYlNNSjY5Bk4B1xbUiU3lldZQ+s1k5dRbat+pPsMHp5j7UJKd9/LB4hS+lEnlPl60b5BC+KVYORhqqE88n89UJCV784ibL/JYrh2m+JLRHrdOLQfMcdTaG2wk+Ui6A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=DjjSxPdz; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1762267694; x=1762526894;
+	bh=My0lcXrG8cShyz59I5w5UE8WjsZYKZx5nmyqC76eTx4=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=DjjSxPdz8f9+6EQiHOdfGc9ntzSl9Ub+pKG2MllZ8PxNEbtJpEFqPHOgGG+O0ekXd
+	 SpX8uhzxckJHe4ZN+MUIg4tW3wLywA+0yuZySC2uG24FfAV6vTkSSskNFdTa6KmDJB
+	 tPMNhEysZkFtgwJGI3maZo2FQxMCazYHOnry5shRcpbIwn2r67aNgAxqr+WAS5Dg6k
+	 NgDg3q4u6evkq/ckpDH10xJH6bgx/WOFAdRPij6g6STaVsOAKAl/M8XMOE7EkZuTXi
+	 LigYtBppxumrSaPlquWUZA4SQPDeRDeRe7jd7AfflY6to+oMm4pvv33KhEg2GXNtDk
+	 9hr2LvbGsWRYQ==
+Date: Tue, 04 Nov 2025 14:48:07 +0000
+To: andreyknvl@gmail.com, akpm@linux-foundation.org, ryabinin.a.a@gmail.com, elver@google.com, dvyukov@google.com, vincenzo.frascino@arm.com, urezki@gmail.com, glider@google.com
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, m.wieczorretman@pm.me
+Subject: [PATCH v1 0/2] kasan: vmalloc: Fix incorrect tag assignment with multiple vm_structs
+Message-ID: <cover.1762267022.git.m.wieczorretman@pm.me>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: 6755a8c21333141e5fc9d41deffd2e258c429b93
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-topic-qciommu_bindings_fix-v3-1-09c52a1e5ffb@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAP0RCmkC/42NWwqDMBBFtyLz3UgeSrFf3YeIaIw6UBPNqLSIe
- +/UFfRnLudyOXMAuYiO4JEcEN2OhMEzmFsCdmz84AR2zKClzpVUuVjDjFYsFsM0bXWLvkM/UN3
- jW5i2N4XMZKbaAlgwR8f1JS8r5hFpDfFz/dr1r/1Lu2uhRCN7Y+8y7zifgShdtuZleZzygeo8z
- y928K7gywAAAA==
-X-Change-ID: 20251015-topic-qciommu_bindings_fix-3bf3904041b9
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762267648; l=2802;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=Ao2GpzsTUbbPp3qeDPkivYO7J3zJnsKyZE+xMiE7snU=;
- b=LvZA7Lsa2QhPRHhjFRsSsqTe8uaJw2ig9tJTgmBE0EQJYaC4bLy+/ijbo2uYoG04jNR/cWunR
- 3RW4C1hzK+LAKPQ5lncjMja3Xv99pUj1G5OgZzSqZtu5/aU46qiARMm
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
+A KASAN tag mismatch, possibly resulting in a kernel panic, can be
+observed on systems with a tag-based KASAN enabled and with multiple
+NUMA nodes. Initially it was only noticed on x86 [1] but later a similar
+issue was also reported on arm64 [2].
 
-Some IOMMUs on some platforms (there doesn't seem to be a good denominator
-for this) require the presence of a third clock, specifically relating
-to the instance's Translation Buffer Unit (TBU).
+Specifically the problem is related to how vm_structs interact with
+pcpu_chunks - both when they are allocated, assigned and when pcpu_chunk
+addresses are derived.
 
-Stephan Gerhold noted [1] that according to Qualcomm Snapdragon 410E
-Processor (APQ8016E) Technical Reference Manual, SMMU chapter, section
-"8.8.3.1.2 Clock gating", which reads:
+When vm_structs are allocated they are tagged if vmalloc support is
+enabled along the KASAN mode. Later when first pcpu chunk is allocated
+it gets its 'base_addr' field set to the first allocated vm_struct.
+With that it inherits that vm_struct's tag.
 
-For APPS TCU/TBU (TBU to TCU interface is asynchronous)
-Software should turn ON clock to APPS TCU
-  - During APPS TCU register programming sequence
+When pcpu_chunk addresses are later derived (by pcpu_chunk_addr(), for
+example in pcpu_alloc_noprof()) the base_addr field is used and offsets
+are added to it. If the initial conditions are satisfied then some of
+the offsets will point into memory allocated with a different vm_struct.
+So while the lower bits will get accurately derived the tag bits in the
+top of the pointer won't match the shadow memory contents.
 
-For GPU TCU/TBU (TBU to TCU interface is synchronous)
-Software should turn ON clock to GPU TBU
-  - During GPU TLB invalidation sequence <=====================
-Software should turn ON clock to GPU TCU
-  - During GPU TCU register programming sequence
-  - While GPU master clock is Active
+The solution (proposed at v2 of the x86 KASAN series [3]) is to tag the
+vm_structs the same when allocating them for the per cpu allocator (in
+pcpu_get_vm_areas()).
 
-The clock should be turned on at least during TLB invalidation on the
-GPU SMMU instance. This is corroborated by Commit 5bc1cf1466f6
-("iommu/qcom: add optional 'tbu' clock for TLB invalidate").
+Originally these patches were part of the x86 KASAN series [4].
 
-This is also not to be confused with qcom,sdm845-tbu, which is a
-description of a debug interface, absent on the generation of hardware
-that this binding describes.
+The series is based on 6.18-rc4.
 
-Allow this clock.
+[1] https://lore.kernel.org/all/e7e04692866d02e6d3b32bb43b998e5d17092ba4.17=
+38686764.git.maciej.wieczor-retman@intel.com/
+[2] https://lore.kernel.org/all/aMUrW1Znp1GEj7St@MiWiFi-R3L-srv/
+[3] https://lore.kernel.org/all/CAPAsAGxDRv_uFeMYu9TwhBVWHCCtkSxoWY4xmFB_vo=
+wMbi8raw@mail.gmail.com/
+[4] https://lore.kernel.org/all/cover.1761763681.git.m.wieczorretman@pm.me/
 
-[1] https://lore.kernel.org/linux-arm-msm/aPX_cKtial56AgvU@linaro.org/
+Maciej Wieczor-Retman (2):
+  kasan: Unpoison pcpu chunks with base address tag
+  kasan: Unpoison vms[area] addresses with a common tag
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
-Changes in v3:
-- Expand the commit message
-- Link to v2: https://lore.kernel.org/r/20251015-topic-qciommu_bindings_fix-v2-1-a0f3c705d0f3@oss.qualcomm.com
-Changes in v2:
-- Resending from a 2023 megaseries, no changes
-- Link to v1: https://lore.kernel.org/lkml/20230627-topic-more_bindings-v1-7-6b4b6cd081e5@linaro.org/
----
- Documentation/devicetree/bindings/iommu/qcom,iommu.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/kasan.h | 10 ++++++++++
+ mm/kasan/common.c     | 19 +++++++++++++++++++
+ mm/vmalloc.c          |  4 +---
+ 3 files changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml b/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
-index 3e5623edd207..93a489025317 100644
---- a/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/qcom,iommu.yaml
-@@ -32,14 +32,18 @@ properties:
-           - const: qcom,msm-iommu-v2
- 
-   clocks:
-+    minItems: 2
-     items:
-       - description: Clock required for IOMMU register group access
-       - description: Clock required for underlying bus access
-+      - description: Clock required for Translation Buffer Unit access
- 
-   clock-names:
-+    minItems: 2
-     items:
-       - const: iface
-       - const: bus
-+      - const: tbu
- 
-   power-domains:
-     maxItems: 1
+--=20
+2.51.0
 
----
-base-commit: 12132ce56439eaefea25c647d850eeed99179d88
-change-id: 20251015-topic-qciommu_bindings_fix-3bf3904041b9
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
