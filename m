@@ -1,381 +1,125 @@
-Return-Path: <linux-kernel+bounces-884797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B13C312CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:16:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13D9C312D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7452942976E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60995427FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC822F998D;
-	Tue,  4 Nov 2025 13:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1120C2F619B;
+	Tue,  4 Nov 2025 13:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3k5xJIu"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlYkb6KR"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E1E2F290B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2C2F3C1E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762261848; cv=none; b=KND7FdenTATReS+gF018fUDBY6aXFGg/LZpS8SuAHFfjvHs0MpepPRUrGQe+omC/Ev00tVTiM818ryGb+oExqSgWspaIrl8ZQ44+G4yc51t9XNk20NMtZW4+jcP1NkN/ZoulWYgkp90POjNBLIv2onUiZfWsYB4z+mZaBeY1UPQ=
+	t=1762262021; cv=none; b=HGXwb30mmbf0T7Y0DppH7nieo1UfgrJI9/nbNRC1wLWCdoX7JrJyi2aVLpAmQsH82K65D02DpDTtgnM6fhfxXvmdK5+mA9nkE+HnhqthMkWR5cgZ1bRj+whEBlNLY0UKtOnKVJtDK2fzrYvxhXZFBvdt84GEDBb3eI8TJBfqIos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762261848; c=relaxed/simple;
-	bh=VhkhzmMcv/smNo1A6jxBdqBtG3BBvfXHku9Ydct+gvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tsg9ocIp0pQdevvkMwKDbLV7AYGD14+RZebhORv3ZkUoCPP+jqG65yO/HZdH/30KH1Ctlm+gwMjLtmdb0jl8bLpFdl8QsUZ0ZgnW2IIvlN4m6Jc15OnFVRxviGIFsBg2NXSqymuYVQgbTILtfPwEiLLtFCOOlTx0fpYsJUpRe3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3k5xJIu; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1762262021; c=relaxed/simple;
+	bh=zReFbCpQpq9hx7S5OuXnYnE+WALGscFOwncxZWVvVD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dvM9krc88xRRzudYS6H5TDcGviZC+39TKuo7TKEX0Sx6gsXJHexGyjB701frlUcB1/G8Fwx2YgTYAS8yfk7QUJVmdeHGpzuTGQRvBKucul0c6uTlQn0gb/Au3kxmNLq897x2pFyD/qQdhY7S/QJKi4QaHakXMnVLDVShBKgXU8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlYkb6KR; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e9d633b78so1292970866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:10:45 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2958db8ae4fso25471785ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:13:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762261844; x=1762866644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3eb6Fhw+jGRkyT5hVdQ02opkzhktDn8toH3DgzCieb8=;
-        b=O3k5xJIu+oHsP1/3R52d84SbcFpm0IY+zXzKz2FzhE6FUvvAn5ULHBU/OZuLwpuFNO
-         yrsiC5XevLasctWeQbMRLglZNTGuN9C2JxB/5zZzU3snjIos0Wg1v7ldxC3R9tPCR+Nd
-         3lVmZ0x1WAleZoxU7vUjuZPOTpBR8I1GE2iTigfrgje1TQlqpON0End6ENqg359M0Xnn
-         QhddCguZGTjSwxurswyEaYOuQfqeelUBOC42g5+yi80eS+ixKIRjBwoRzbGz9uivipw8
-         aPmgXIirLV3IRl+9DyqiHR54WC6Xw+xa/ASUnonuvWl1W289hGEk403NveV0wlmlpmzE
-         7i3Q==
+        d=gmail.com; s=20230601; t=1762262019; x=1762866819; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQu9QKoK4tGUZ4g1byHHuUCj0MWqs0LgGabAs46ovQI=;
+        b=dlYkb6KR/UW9LKWC9ves9afbFubRq69qhTidO/jqnz4jxTfSKfbh0c8pdOBPUMEpjd
+         ANM/SV4e+opVC47L+0JgEz619QAnnyNk+HM5bQiVQ9sLTiS/2numzUPog15MGLruP08o
+         NHeFyHy2B6Tg4lMzXyZThDP5S6whqybd3Y5s17GiCIRjStBA4wvvtnqxsam48EOYqiMb
+         EGPDR8xGGxync7uy7MAPEjmW/iak2U6qLYlfDXWw8kbrzQx44e4y6xNSxc0jad/yGvrl
+         nR3j5hFOXzVAYSoGiFVPqllo4D7khBoN1tjlcbOwxptjbBkMfWgUx59k3j1Ti3cRt45o
+         wftQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762261844; x=1762866644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3eb6Fhw+jGRkyT5hVdQ02opkzhktDn8toH3DgzCieb8=;
-        b=cGSO7j7BS4v69Jexa3Q1MUhDLXPMRgg0Qg0pJ68IN061Zv6+J4xaWipR3VgSo8Lrw6
-         yc5sZJbj2eF+/0WgF3UguMv799NNmIbpuGTp5lPIDRU1SPGV06nAr6d0yQrsET8iGIya
-         3Un7JLhh6YcLd11eMzNkL1G9R66kExsD6lrCIPeVz8VasVUbssFYYk7ZSRCNK6Xl9NAy
-         6np37eDMdWMloEYCbpKzv+Xk1FrsmsF/nIrw/CEj90EBk1Dk8d8IFeL1kHKva5bsCbCB
-         h6EXbS1m9ug70L7HJByqh05w5G8Dxb0zjs61tEoHUiFJmQURncrmj9MIImNWJDljt+75
-         ycFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxsXeVHLzJvxkpKsZBsW8t5gbfLySKUR94TQJLR+3qoQLe6e7q67I75DylzB0uL+6yVe2dTrbkqiMduwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9JkW+JsvMOigZP4FSql9UeNLq8Spn3S2tz+reQ4PKbpGkEMGM
-	Ut/tiFrNSptvOyHqthZOmPe9KT4ohvj/dQeROMshTC7n9H0hOD0dvZ1b0nL83YL3a5qS28cG8AP
-	IZJsattROv6mQtdhIhxRzaLJljqmlBL4=
-X-Gm-Gg: ASbGncsTF3+NKJJtHzBq/2a8DrZH1MorLEHBkQ+UgJEi1AU2hKWwPbB7VQsDELvPRu4
-	LYKqYjdJzK3o7L2a0FVcg/afVsC9G/XQzpFeHCkeQ9S2Exrc4xYGKJR5h78Owri2EwIHe/u7ml7
-	G4Gngl0K8e58vRP4CNcNa7STWgg+MDi4ylrfVoDP0V0y9oTnE6ruH7Mv/FJzxKjFBAXgcD2wtYw
-	rZ1yFTi+YjAyE5+BpWSn7LD/QVHvLb1yMxrNsZC0y1IHr01b4RhJKc7ldPPTW/uzrzbuUglMVaE
-	YdCDQx6idb1ngdY7cQw=
-X-Google-Smtp-Source: AGHT+IH/2pUqmrN7VPU+SV+aH7vEEkumO/C5X2+je2g5UclR15/R3ZrjFYbk+o6g4UsV/+K6ojEY6+j2fKHiandD2bA=
-X-Received: by 2002:a17:907:dac:b0:b70:aebe:2ef7 with SMTP id
- a640c23a62f3a-b7215bd8863mr352109666b.14.1762261844201; Tue, 04 Nov 2025
- 05:10:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762262019; x=1762866819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQu9QKoK4tGUZ4g1byHHuUCj0MWqs0LgGabAs46ovQI=;
+        b=uvlJFzW8bUJvz1ZBKo+Ab1TiKkrQdzHe1gm18MqseddKsS1mWSamFaFyWkPT/xZWHS
+         SNbZh/FT8lsF/F6o6h/I511E2BPsdVTYDsh3LncUcOhBnNtZL+de813PTFNDKbfeX/AZ
+         mv7E6Cs09S/ccal4OXr2sJtWTcQJlgbcAJXzSaG0139lh0qSRNiY6gELbmN0fGKvk2fI
+         7xKMKP5Mwogdpz98+BctRoc9kjLsR8nZBdxBWlX85BiYFQfLJBKVVLH57zLNYkZJrKK5
+         7G00iwU9WLqQsAoxex0MnZFpUzbl9nShWkVOEkpDUtE9jY7OvjSK5wQUWKemC7gWEPeF
+         CMHw==
+X-Gm-Message-State: AOJu0YzlM5dLhaxWTvZLc6Oe9khP+5/cFAcofZ4bqcgEH14aC5Fe1TAD
+	/6JMuPnYDgbfAYHMUXbIqRXGtDvj4rE6Bs/4Fa0Omi7osfrtZOupi0QSV4LoCOaxjXs=
+X-Gm-Gg: ASbGncvnF8QBEGmZ4iL3uHWHvL99sYAmtm6fivlF8IVED+Y81EAbiDH7jbq9pgG20xG
+	RCaaRWRdT94p7OZ8wm2HieqKTQtqo6LtMFrperTaLVkiv3SLiQvGz05Cu8WxZGbOQ3+G+WQbdbH
+	evRuCrRPYXce/uBN1JRanMbSYcgwOT1830ThU+ni9DKznjbxl0WqeLggaE6+FhRep9ms9DqxRew
+	o3vpxlYLdImJaO74Z/Ih8G4kCJzxTegYS/qiq6gsdgx1tPOz7pRWF3hgUEfiFnenXnS73JUSsbp
+	LmerHCylI6N8Q4bOZX5BgmBlvW2/LePS16kkd9vM3u8Ili1fG4rEhJwLRKRdUsUdwmAwrsavi9u
+	s8Vm7lo7FSuTPw5c+BUSrP3UsOauB+DBuzmlcxC3nlU98QlBZhl7t04u5bMRLWimuEItkgookzi
+	li
+X-Google-Smtp-Source: AGHT+IHpp78yI4E7fmdg4RKErbV+vvTaqrD8H4+Tl6H9yDf3Xf2PrS+XAQqFQAashL3w1qH77cAnFQ==
+X-Received: by 2002:a17:903:32c2:b0:295:5da6:6014 with SMTP id d9443c01a7336-2955da66415mr134706725ad.22.1762262018823;
+        Tue, 04 Nov 2025 05:13:38 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296019729b5sm26887345ad.10.2025.11.04.05.13.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 05:13:38 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 48956420A6A8; Tue, 04 Nov 2025 20:13:27 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Integrity <linux-integrity@vger.kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] Documentation: tpm: tpm-security: Demote "Null Primary Key Certification in Userspace" section
+Date: Tue,  4 Nov 2025 20:13:12 +0700
+Message-ID: <20251104131312.23791-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
- <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com> <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp>
-In-Reply-To: <87ldkm6n5o.fsf@wotan.olymp>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 4 Nov 2025 14:10:32 +0100
-X-Gm-Features: AWmQ_bly3rdIxKic-xmn_OHbdNdph66vGTwjjJ4W0ydit2BdioRiiUqo7v_TbMk
-Message-ID: <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Luis Henriques <luis@igalia.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1112; i=bagasdotme@gmail.com; h=from:subject; bh=zReFbCpQpq9hx7S5OuXnYnE+WALGscFOwncxZWVvVD4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJmcv91Wn2n+Py0/tO3Haeca1lyzF8xGxueOf4uY+mTxt TshKpJWHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZhIWzDD/xCPHIYmWafsYBYr mejACZNcgm5f/TxP6+qB+8r/egznCDEyPJZj/BY664JLhHKtoetF1XUlqpLRncuTn5opS+tx3BN nAQA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 4, 2025 at 12:40=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
-ote:
->
-> On Tue, Sep 16 2025, Amir Goldstein wrote:
->
-> > On Tue, Sep 16, 2025 at 4:53=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> >>
-> >> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
-> >> > On Mon, Sep 15, 2025 at 10:27=E2=80=AFAM Bernd Schubert <bernd@bsber=
-nd.com> wrote:
-> >> > >
-> >> > >
-> >> > >
-> >> > > On 9/15/25 09:07, Amir Goldstein wrote:
-> >> > > > On Fri, Sep 12, 2025 at 4:58=E2=80=AFPM Darrick J. Wong <djwong@=
-kernel.org> wrote:
-> >> > > >>
-> >> > > >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
-> >> > > >>>
-> >> > > >>>
-> >> > > >>> On 9/12/25 13:41, Amir Goldstein wrote:
-> >> > > >>>> On Fri, Sep 12, 2025 at 12:31=E2=80=AFPM Bernd Schubert <bern=
-d@bsbernd.com> wrote:
-> >> > > >>>>>
-> >> > > >>>>>
-> >> > > >>>>>
-> >> > > >>>>> On 8/1/25 12:15, Luis Henriques wrote:
-> >> > > >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> >> > > >>>>>>
-> >> > > >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wr=
-ote:
-> >> > > >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong=
- wrote:
-> >> > > >>>>>>>>>
-> >> > > >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda ni=
-fty if libfuse
-> >> > > >>>>>>>>> could restart itself.  It's unclear if doing so will act=
-ually enable us
-> >> > > >>>>>>>>> to clear the condition that caused the failure in the fi=
-rst place, but I
-> >> > > >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So mayb=
-e restarts
-> >> > > >>>>>>>>> aren't totally crazy.
-> >> > > >>>>>>>>
-> >> > > >>>>>>>> I'm trying to understand what the failure scenario is her=
-e.  Is this
-> >> > > >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?=
-  If so, what
-> >> > > >>>>>>>> is supposed to happen with respect to open files, metadat=
-a and data
-> >> > > >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs=
- could run
-> >> > > >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, t=
-hat's going
-> >> > > >>>>>>>> potentally to be out of sync, right?
-> >> > > >>>>>>>>
-> >> > > >>>>>>>> What are the recovery semantics that we hope to be able t=
-o provide?
-> >> > > >>>>>>>
-> >> > > >>>>>>> <echoing what we said on the ext4 call this morning>
-> >> > > >>>>>>>
-> >> > > >>>>>>> With iomap, most of the dirty state is in the kernel, so I=
- think the new
-> >> > > >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RE=
-STARTED, which
-> >> > > >>>>>>> would initiate GETATTR requests on all the cached inodes t=
-o validate
-> >> > > >>>>>>> that they still exist; and then resend all the unacknowled=
-ged requests
-> >> > > >>>>>>> that were pending at the time.  It might be the case that =
-you have to
-> >> > > >>>>>>> that in the reverse order; I only know enough about the de=
-sign of fuse
-> >> > > >>>>>>> to suspect that to be true.
-> >> > > >>>>>>>
-> >> > > >>>>>>> Anyhow once those are complete, I think we can resume oper=
-ations with
-> >> > > >>>>>>> the surviving inodes.  The ones that fail the GETATTR reva=
-lidation are
-> >> > > >>>>>>> fuse_make_bad'd, which effectively revokes them.
-> >> > > >>>>>>
-> >> > > >>>>>> Ah! Interesting, I have been playing a bit with sending LOO=
-KUP requests,
-> >> > > >>>>>> but probably GETATTR is a better option.
-> >> > > >>>>>>
-> >> > > >>>>>> So, are you currently working on any of this?  Are you impl=
-ementing this
-> >> > > >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to =
-have a closer
-> >> > > >>>>>> look at fuse2fs too.
-> >> > > >>>>>
-> >> > > >>>>> Sorry for joining the discussion late, I was totally occupie=
-d, day and
-> >> > > >>>>> night. Added Kevin to CC, who is going to work on recovery o=
-n our
-> >> > > >>>>> DDN side.
-> >> > > >>>>>
-> >> > > >>>>> Issue with GETATTR and LOOKUP is that they need a path, but =
-on fuse
-> >> > > >>>>> server restart we want kernel to recover inodes and their lo=
-okup count.
-> >> > > >>>>> Now inode recovery might be hard, because we currently only =
-have a
-> >> > > >>>>> 64-bit node-id - which is used my most fuse application as m=
-emory
-> >> > > >>>>> pointer.
-> >> > > >>>>>
-> >> > > >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it j=
-ust re-sends
-> >> > > >>>>> outstanding requests. And that ends up in most cases in send=
-ing requests
-> >> > > >>>>> with invalid node-IDs, that are casted and might provoke ran=
-dom memory
-> >> > > >>>>> access on restart. Kind of the same issue why fuse nfs expor=
-t or
-> >> > > >>>>> open_by_handle_at doesn't work well right now.
-> >> > > >>>>>
-> >> > > >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_F=
-H, which
-> >> > > >>>>> would not return a 64-bit node ID, but a max 128 byte file h=
-andle.
-> >> > > >>>>> And then FUSE_REVALIDATE_FH on server restart.
-> >> > > >>>>> The file handles could be stored into the fuse inode and als=
-o used for
-> >> > > >>>>> NFS export.
-> >> > > >>>>>
-> >> > > >>>>> I *think* Amir had a similar idea, but I don't find the link=
- quickly.
-> >> > > >>>>> Adding Amir to CC.
-> >> > > >>>>
-> >> > > >>>> Or maybe it was Miklos' idea. Hard to keep track of this roll=
-ing thread:
-> >> > > >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quB=
-aTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> >> > > >>>
-> >> > > >>> Thanks for the reference Amir! I even had been in that thread.
-> >> > > >>>
-> >> > > >>>>
-> >> > > >>>>>
-> >> > > >>>>> Our short term plan is to add something like FUSE_NOTIFY_RES=
-TART, which
-> >> > > >>>>> will iterate over all superblock inodes and mark them with f=
-use_make_bad.
-> >> > > >>>>> Any objections against that?
-> >> > > >>
-> >> > > >> What if you actually /can/ reuse a nodeid after a restart?  Con=
-sider
-> >> > > >> fuse4fs, where the nodeid is the on-disk inode number.  After a=
- restart,
-> >> > > >> you can reconnect the fuse_inode to the ondisk inode, assuming =
-recovery
-> >> > > >> didn't delete it, obviously.
-> >> > > >
-> >> > > > FUSE_LOOKUP_HANDLE is a contract.
-> >> > > > If fuse4fs can reuse nodeid after restart then by all means, it =
-should sign
-> >> > > > this contract, otherwise there is no way for client to know that=
- the
-> >> > > > nodeids are persistent.
-> >> > > > If fuse4fs_handle :=3D nodeid, that will make implementing the l=
-ookup_handle()
-> >> > > > API trivial.
-> >> > > >
-> >> > > >>
-> >> > > >> I suppose you could just ask for refreshed stat information and=
- either
-> >> > > >> the server gives it to you and the fuse_inode lives; or the ser=
-ver
-> >> > > >> returns ENOENT and then we mark it bad.  But I'd have to see co=
-de
-> >> > > >> patches to form a real opinion.
-> >> > > >>
-> >> > > >
-> >> > > > You could make fuse4fs_handle :=3D <nodeid:fuse_instance_id>
-> >> > > > where fuse_instance_id can be its start time or random number.
-> >> > > > for auto invalidate, or maybe the fuse_instance_id should be
-> >> > > > a native part of FUSE protocol so that client knows to only inva=
-lidate
-> >> > > > attr cache in case of fuse_instance_id change?
-> >> > > >
-> >> > > > In any case, instead of a storm of revalidate messages after
-> >> > > > server restart, do it lazily on demand.
-> >> > >
-> >> > > For a network file system, probably. For fuse4fs or other block
-> >> > > based file systems, not sure. Darrick has the example of fsck.
-> >> > > Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
-> >> > > fuse-server gets restarted, fsck'ed and some files get removed.
-> >> > > Now reading these inodes would still work - wouldn't it
-> >> > > be better to invalidate the cache before going into operation
-> >> > > again?
-> >> >
-> >> > Forgive me, I was making a wrong assumption that fuse4fs
-> >> > was using ext4 filehandle as nodeid, but of course it does not.
-> >>
-> >> Well now that you mention it, there /is/ a risk of shenanigans like
-> >> that.  Consider:
-> >>
-> >> 1) fuse4fs mount an ext4 filesystem
-> >> 2) crash the fuse4fs server
-> >> <fuse4fs server restart stalls...>
-> >> 3) e2fsck -fy /dev/XXX deletes inode 17
-> >> 4) someone else mounts the fs, makes some changes that result in 17
-> >>    being reallocated, user says "OOOOOPS", unmounts it
-> >> 5) fuse4fs server finally restarts, and reconnects to the kernel
-> >>
-> >> Hey, inode 17 is now a different file!!
-> >>
-> >> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
-> >> everything's (potentially) fine because fuse4fs supplied i_generation =
-to
-> >> the kernel, and fuse_stale_inode will mark it bad if that happens.
-> >>
-> >> Hm ok then, at least there's a way out. :)
-> >>
-> >
-> > Right.
-> >
-> >> > The reason I made this wrong assumption is because fuse4fs *can*
-> >> > already use ext4 (64bit) file handle as nodeid, with existing FUSE p=
-rotocol
-> >> > which is what my fuse passthough library [1] does.
-> >> >
-> >> > My claim was that although fuse4fs could support safe restart, which
-> >> > cannot read from recycled inode number with current FUSE protocol,
-> >> > doing so with FUSE_HANDLE protocol would express a commitment
-> >>
-> >> Pardon my na=C3=AFvete, but what is FUSE_HANDLE?
-> >>
-> >> $ git grep -w FUSE_HANDLE fs
-> >> $
-> >
-> > Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
-> > https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W=
-_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> >
-> > Which means to communicate a variable sized "nodeid"
-> > which can also be declared as an object id that survives server restart=
-.
-> >
-> > Basically, the reason that I brought up LOOKUP_HANDLE is to
-> > properly support NFS export of fuse filesystems.
-> >
-> > My incentive was to support a proper fuse server restart/remount/re-exp=
-ort
-> > with the same fsid in /etc/exports, but this gives us a better starting=
- point
-> > for fuse server restart/re-connect.
->
-> Sorry for resurrecting (again!) this discussion.  I've been thinking abou=
-t
-> this, and trying to get some initial RFC for this LOOKUP_HANDLE operation=
-.
-> However, I feel there are other operations that will need to return this
-> new handle.
->
-> For example, the FUSE_CREATE (for atomic_open) also returns a nodeid.
-> Doesn't this means that, if the user-space server supports the new
-> LOOKUP_HANDLE, it should also return an handle in reply to the CREATE
-> request?
+The last section heading in TPM security docs is formatted as title
+heading instead. As such, it shows up as TPM toctree entry. Demote it
+to section heading as appropriate.
 
-Yes, I think that's what it means.
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/security/tpm/tpm-security.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The same question applies for TMPFILE, LINK, etc.  Or is there
-> something special about the LOOKUP operation that I'm missing?
->
+diff --git a/Documentation/security/tpm/tpm-security.rst b/Documentation/security/tpm/tpm-security.rst
+index 4f633f2510336b..bf73bbe66db2fa 100644
+--- a/Documentation/security/tpm/tpm-security.rst
++++ b/Documentation/security/tpm/tpm-security.rst
+@@ -153,7 +153,7 @@ protect key sealing and parameter decryption to protect key unsealing
+ and random number generation.
+ 
+ Null Primary Key Certification in Userspace
+-===========================================
++-------------------------------------------
+ 
+ Every TPM comes shipped with a couple of X.509 certificates for the
+ primary endorsement key.  This document assumes that the Elliptic
 
-Any command returning fuse_entry_out.
+base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
+-- 
+An old man doll... just what I always wanted! - Clara
 
-READDIRPLUS, MKNOD, MKDIR, SYMLINK
-
-fuse_entry_out was extended once and fuse_reply_entry()
-sends the size of the struct.
-However fuse_reply_create() sends it with fuse_open_out
-appended and fuse_add_direntry_plus() does not seem to write
-record size at all, so server and client will need to agree on the
-size of fuse_entry_out and this would need to be backward compat.
-If both server and client declare support for FUSE_LOOKUP_HANDLE
-it should be fine (?).
-
-Thanks,
-Amir.
 
