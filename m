@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-885118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7B7C3205C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:23:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B53C3207D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085451894C4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:23:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44A564F7055
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01590332EAA;
-	Tue,  4 Nov 2025 16:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74803321B4;
+	Tue,  4 Nov 2025 16:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XERX5aBH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oahc3jZx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9935133291C;
-	Tue,  4 Nov 2025 16:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7B52248BE;
+	Tue,  4 Nov 2025 16:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762273312; cv=none; b=somKRkCCevsbPR8UovKaeIYYO2JNsdzfogiLUlRdNXtCar+2IhtWvw1HCAbv4BykMMmT0od0LKsvxgJHwd0cDktXK62xfkgWZbctoK/VvHEi+2hVUEAFCk1KP5JhtvVwdwu5++3shllwimsYjncwOl5ypcp7+Ll/Uh75FYQ6YCo=
+	t=1762273311; cv=none; b=CRj7vKQvqZbia7gPTeWBNSrMQY6rZ8ayv7lvZcJdeKXrEFUvYHKB6BbMy5Lo3wwklXD39hQT9qg0aTCVJiz0wGF4r1xrYyqJJ8jsnVW83WxQngD6ZW6VXGYm18PBGkWaRfBYnxl30SBMZtW5PnQ68TAnGldsqa3CRBs1eY5GFRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762273312; c=relaxed/simple;
-	bh=ZgapEV2f6UOkVKQ4Tm3UO+ujY8mCniaMXHTUMRbX7qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwPF5T5yQfxU0mhmmuKUidpmp9revRIG2RTiwVggAruvbY9hD85MPnnGgkBomqk0W9mpDL3556v7OPv1d/nkdryemQfp/fzjmjaEYpr+93XH452l4cMoX60EBxb8y8gYQOj9QhA1rEN23ciHVMXUjfjmgIAPR7mPD5W5tUZsYuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XERX5aBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA99BC4CEF8;
-	Tue,  4 Nov 2025 16:21:51 +0000 (UTC)
+	s=arc-20240116; t=1762273311; c=relaxed/simple;
+	bh=o7+zi7GXqBkQz18IsHHUAZB/ZiKichtFr8qpatSjrio=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kG0NJ8MpOoH8JNvMKWyuOlo0FTdjCZD6NFiLFcjhB2C+ozgi72GqvF9bhrp7P1jkdDY/QZSGF0s0zNJkuAXiw1vhAX3eIzbXD1d7iYxJ7Y8nu29bdlakskTX17b+H9YZ3HQmRPWxFRZF7P7qjQHB8yy/nRZGEKDTRDGxxNIpq20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oahc3jZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D91B1C4CEF8;
+	Tue,  4 Nov 2025 16:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762273312;
-	bh=ZgapEV2f6UOkVKQ4Tm3UO+ujY8mCniaMXHTUMRbX7qU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XERX5aBHazdMMA+oEnGRxw1zsSiVD03zD1/OvFrITxNP8TY8EKGHO897kQpHZcTC4
-	 AjOz22hE45sDXPt8Me6tOdmAhG+A6sT8FL6AjX6iYO6ZcS6KadkQT0rMkbJmui1OF/
-	 y4pOsmta37VrO7TikjmFAe6yJr0DOXYwKDoT/9gVY3btW9L5vhKbX9306CCCv2kmMU
-	 q0Xm6Z0TQ7+VPuX7Bj+EZ5H6rPQRzeur3ohk90yIJvxkO3YG03g9YEM8mYNDLcUFlG
-	 PnlmletPsDgf5n3+Go+pKne9UEK4e4ygPuzYRVo35SlZ1BzC2w6vuQ8zAxKAJKLqqA
-	 KeZdQ7RUrsN6Q==
-Date: Tue, 4 Nov 2025 16:21:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
-Message-ID: <aQooHZ5p4DNhwbar@finisterre.sirena.org.uk>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
- <20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
- <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
- <CGME20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287@eucas1p2.samsung.com>
- <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
- <aQn8G9r2OWv_yEQp@finisterre.sirena.org.uk>
- <20251104162009-8cffa62d-e95b-466b-9a27-c51b0f5257cd@linutronix.de>
- <aQogAfbrP9rTPLvI@finisterre.sirena.org.uk>
- <20251104170215-3600e71c-1573-43aa-ad1d-8d02af9bbbf4@linutronix.de>
+	s=k20201202; t=1762273310;
+	bh=o7+zi7GXqBkQz18IsHHUAZB/ZiKichtFr8qpatSjrio=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=oahc3jZxo13ZrzFONDCrPCsVzlnKRpBtNcVtSsC3WQCnZXoS3Bqro7uYJkGyb2eQR
+	 7HC75blGRRDLgVK8yUcZ1p8G5Ao0hm2WodCtTEX7BYSlexad1NZ4kagFBaRODJ/m4D
+	 b/CqfBF2EbhQ6bXAKHRYUz7CkvCaU+uMdGpgbZwb/EMerN9I+uE9viduXH1A2D5Np5
+	 Cr1NLWs/V0Hu3gEnUjItVdzt+Q8wDrGbaTAOtF+R1y2dq1t5i9Md0ZCNljFbeXVgh7
+	 135EzkbHx1Zksaem9trTbjZd6DX4y3BMy54kGF72souslO6pxJDJPvvXlCDxtKQBkM
+	 4IP7xbVYdyUCw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FEBCCFA04;
+	Tue,  4 Nov 2025 16:21:50 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Subject: [PATCH RESEND 0/4] dma: dma-axi-dmac: fixes and improvements
+Date: Tue, 04 Nov 2025 16:22:24 +0000
+Message-Id: <20251104-axi-dmac-fixes-and-improvs-v1-0-3e6fd9328f72@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vgxhQqUhFOf4jqrE"
-Content-Disposition: inline
-In-Reply-To: <20251104170215-3600e71c-1573-43aa-ad1d-8d02af9bbbf4@linutronix.de>
-X-Cookie: If in doubt, mumble.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEAoCmkC/x2MMQqEMBAAvyJb34KJpvDqs71CS7FYkvVuC6NkQ
+ YTg3w2WAzOTQTkJK7yrDIkPUdliAfOqwP8p/hglFAZbW2dM3SKdgmElj4ucrEgxoKx72g5Fbig
+ 4Y6mxnYcy2BM/UuknGPqx/35gvq4biUob43QAAAA=
+X-Change-ID: 20251104-axi-dmac-fixes-and-improvs-e3ad512a329c
+To: Vinod Koul <vkoul@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762273345; l=799;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=o7+zi7GXqBkQz18IsHHUAZB/ZiKichtFr8qpatSjrio=;
+ b=CP+rdy2Ry0Bg7k8FJBgMtRxfz4jFy8Qn7wAFi54kfHeJVq79GhUxjYsf/rGuxNEpaaLjQt/h2
+ 8RTjgXeyz/PBtG3L2SQ86aCjDsSerZZgCAu9v2W/eOcSw9vIpsNqlZW
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
+
+This series adds some fixes to the DMA core with respect with cyclic
+transfer and HW scatter gather.
+
+It also adds some improvements. Most notably for allowing bigger that
+32bits DMA masks so we do not have to rely on bounce buffers from
+swiotlb.
+
+---
+Nuno Sá (4):
+      dma: dma-axi-dmac: fix SW cyclic transfers
+      dma: dma-axi-dmac: fix HW scatter-gather not looking at the queue
+      dma: dma-axi-dmac: support bigger than 32bits addresses
+      dma: dma-axi-dmac: simplify axi_dmac_parse_dt()
+
+ drivers/dma/dma-axi-dmac.c | 48 +++++++++++++++++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
+---
+base-commit: 398035178503bf662281bbffb4bebce1460a4bc5
+change-id: 20251104-axi-dmac-fixes-and-improvs-e3ad512a329c
+--
+
+Thanks!
+- Nuno Sá
 
 
---vgxhQqUhFOf4jqrE
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 04, 2025 at 05:03:28PM +0100, Thomas Wei=DFschuh wrote:
-> On Tue, Nov 04, 2025 at 03:47:13PM +0000, Mark Brown wrote:
-
-> > I can let you submit LAVA jobs to my lab (there's an API, a web
-> > interface for (re)submitting jobs and a CLI tool for shoving jobs in) if
-> > that works?  That's how my own access to it works unless I go pull
-> > boards out.  You should be able to resubmit existing jobs, it downloads
-> > test binaries over HTTP.
-
-> Sounds good.
-
-OK, folllowing up off-list for that.
-
---vgxhQqUhFOf4jqrE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkKKBwACgkQJNaLcl1U
-h9BB+Qf9EauYOf7gmQuIlmWkRFyAe3nL6GnUvplpFK7JQgCAmEpS6FK/StPLVbZL
-WwU/hE4esPcUwdBtU2pbY2fHKOHlAE3CNPiiEYfjkd51GcYtFX5b0Lw1PDB72Kgo
-ZFvKRrKRgkb3Mn3f7Dl2XoapM8m7YR/tRtJNCBk+SesiIQ0HfL5V4ExsYO+L5c7s
-wegS0czcQsWbwDBTsPWl3QJF+HPkq28QUpznRvaUwKfj7Pe5PJTpEQy9OZQf7u4r
-e8p94FrmEto2SEMlh98mHi5iZcmCBPvOtFtCrv8NmzDi7olabfnoQ+ECOnFB2+Cy
-tm2fLJofnR2UpxNKmXwxdF0pK8VkPw==
-=HhMt
------END PGP SIGNATURE-----
-
---vgxhQqUhFOf4jqrE--
 
