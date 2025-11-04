@@ -1,420 +1,123 @@
-Return-Path: <linux-kernel+bounces-885551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2072CC334F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:57:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE216C334FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:59:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC6454E1DAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EEF189F4DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF3334C25;
-	Tue,  4 Nov 2025 22:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10623358A5;
+	Tue,  4 Nov 2025 22:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pzhkh6DX"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011046.outbound.protection.outlook.com [40.93.194.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TQcyOQPj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE01D2877C3;
-	Tue,  4 Nov 2025 22:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762297044; cv=fail; b=U2shBLoODh6orA/ltVnvb7vT688zZUVgdvH2jlobB/CnbuY7vZIIFPS3wdrAQuf+WMlcF0nW87auK9ARK4X4SEJASY9FxXZGWZ8lPrblV+CqFwbZpCO39ZP40ReBtE0vUA66Q0RAcZnWanfCYqznRUGsCt8/dukrUhaYJ4c88Ow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762297044; c=relaxed/simple;
-	bh=86Fop541dvnz1ghQKZR8EuKl4JI+6BBxuVEFKoRBdBE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MJH4A0XLLUT3MXjKqSFXRwMNoWCtXzyU+Azqp/fJ06fDf2KsuYwxuJSXjAVMxhjoxEYyseEDzpt3V1GAqp02jiirCRfRavaS5EVjLuSCYxfTeWiPsMbqXXW281nQ48o7qKpxPP+6zXekJ3Gqv/XCdtQ5dZjP/KMSGPrNrvibDB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pzhkh6DX; arc=fail smtp.client-ip=40.93.194.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ISqXk3M/iLt+ZMRpKGt4EtGdqhp0jpAAvQwHrcFahyXFTIcggS843x6X3exG8F4Ciux05CRjiJjmwWdroCA6bXHHD8dNN/iX0oH7gKf3pUndjhZjL7DfumAhfjXm0QWV+glnxqVwsdSanhDQOVzvHDNKtsMoKmFEqOk8nipSonXFHP0w7Q+g6bfo+vCyisbwnGA/qgCoqc36QJ0nNA4ahNGe60U4F+9wBdlnad+elCSafGDaBz8fFH2JAERbEqen3dr0m2qWIFnWtY0HcjbP6DPuaGWpxVehmvHLO//bttdimNe8Q4A8UzOACQoVDbl3L6RMh6oFSNW4GN1jlnkBSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ztSVbg4pQAeKhRxWrCw4r7aWKyTMPNpdd9owqfQ1YF8=;
- b=BqbZOzXLMi8V4jXLNV5LkbzQ+9Ql0Bi5dYZmBJoSM67Wc1ltfJYEJ1dZiyKzmQ3Q10DeSzjZDw5UTJhteQOagjPptkNj+YWLowMuKgOdvskZYglDgAL9CtQIDxOH+M/sIdMeXuX1fItvqhhv43n9rtwQBEeA5PALn7BZj2yrVZn18b41LSD31GN9v/41qT0YYiILV4mTRsK7YBKYYajEUpFbSWwQNFjiiPBoaGXTnvJHBGHUN59b5r0C+rd4F5uM8DIuSxp+ALywIWMOUrZXZzzt2+oE4opVx0D1d4bjZUHjWgXVqXthzHHShy04a23CtHKgJTWnhQALjEc2uPunDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ztSVbg4pQAeKhRxWrCw4r7aWKyTMPNpdd9owqfQ1YF8=;
- b=pzhkh6DXYY+pUhB0PPIOPmfngmGid/F7/5nr7KgeCeA76G2arbSSaeQinZ/i2t5HEBaZ5HmLzPNcjkOqtEuYnn4C38YOlXE6AOuWSfJjZhFA6PQeHaNaXZdVcfhaxfTuYgq++mBv32P9m2eRph2bSVtXTvL8oGZqGVv6azRn7Ga0ZjaSaP5axdgjSG1KzLCPArSqRKG97DYT+uaXNNnGKuPWcKhAavgVLJGXBt204xKlXm45C0YtbBnbXcv3PCfoKvI8Oe8Kvh72YqWMpFhWe9utXm+S8+FS7eTi1bhOlK3W9OlyzyTrhBpxgxc1fm4Bjux88AEPXAu1IZcJEpHDgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SJ2PR12MB9163.namprd12.prod.outlook.com (2603:10b6:a03:559::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
- 2025 22:57:18 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 22:57:15 +0000
-Message-ID: <c16cbd82-a2a3-4f98-b42f-2a474f706d16@nvidia.com>
-Date: Tue, 4 Nov 2025 17:57:12 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] rust: drm: Add DRM buddy allocator bindings
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, dakr@kernel.org,
- David Airlie <airlied@gmail.com>, acourbot@nvidia.com,
- Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
- nouveau@lists.freedesktop.org
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-4-joelagnelf@nvidia.com>
- <aQSAijFQ6kBqI5f3@google.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <aQSAijFQ6kBqI5f3@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0321.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::26) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00A52877C3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762297177; cv=none; b=oySBAH2Lm6YACTlUK3kcitXvSDjPnN+rKUuYP8eA/ILmWgm9+JFtZPVpg20TpAbPfZnq8PLfsHTurcZ43UXk3aouehz4Z2c5ZCHaHN9PM824kWAzosrGUJ4HfclFd/mDwSg9JvDRIvtB+FGoKCB6gv+GqD+gAVlJeoNy20bLph0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762297177; c=relaxed/simple;
+	bh=Iq8MbGklyXhx9xeS940InA2Q8/EkrBxN9l1R29833y4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JwVfFmXX2MrFrJVqNwyj4vKHJq/tCevam+oOq38u3ygi2fULH/lOvGdyT6IvBdxU5ubes5CtLqiHKFq61IqQ+qZKNRwWYQL9J9rpmTj+g0r4oaShQ3tXwKXD/PWJhLAqbBhef4h2MMBSEGshZHuqY6Py+FC7fB5xqrcWhJAZ7dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--thostet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TQcyOQPj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--thostet.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3407734d98bso6329393a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 14:59:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762297175; x=1762901975; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g8Oy6aWnIh0O8I9vsplVMQmhGtDA57xeR6/6rSOUDmI=;
+        b=TQcyOQPje4A4dFg3KDcFuECXnonYg7no1Gq07FXo45XUBlwY51s5Wc7L3YYEsLd92W
+         Frr+a2OTftPQbNfhQ5flZnSXw6h00FWVJnEHOBvZpOT2fuZAcyF2jE5JbyR3bKutdT0a
+         rRzDA0T7/MrTGAHYEWK6U9/MDyd88/v4NSueEmwWQIbpNjsMJN41Oekc/My6mV2+vHEK
+         SxDNRPo8kE40eLIdhXCQrjtVKS1h6l95qZv798CLeAxisu6x23HmA27l/m5IWIE2Hqe7
+         Y16f/B4wYEsUr2srddEjTKX4M6kvn/Jy3Uuo3kdGUd0QbH+wCCYj1LzDpLwvEYOU5+kX
+         YKHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762297175; x=1762901975;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g8Oy6aWnIh0O8I9vsplVMQmhGtDA57xeR6/6rSOUDmI=;
+        b=d4S5Zy7FHepFZesYjQ4CXLJ0oBehPx7wuY0BP1Th3sNua2DOyEZrFQd3OF8KNSqReV
+         5rfUPKly7W0jJ370Pb1y/kkFm6QSrQqW2mzxAkUPFvec4npxxZ7gmwAvD7XumsJYpzKN
+         QN99b+ShpdUow6LXlVKSZhzFUOcpBRX9ehHpGzjSI8G8hXAr2VtpyuENYCFWwvTQfacw
+         /TKjF/TqEGC85ZlbvGj3PyTSifhhmXzY04wlRzDRlke3LN0RY4xYBgafDqpnfLr9m2iB
+         yRLQAlnyOh+c1pXJznSO0glHqpjXiU53d7OWOiOI3ZHZ9fT69uiqObvRf9iqPKieSyjs
+         qLCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbZw2wf0+9dpfAdQPgIylG1ZG15uyRGqkLByc00+mEdJxaMFvUFnJEsmwf0eBpYQjpWxt8+E0+krY1Yd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ5cTZn7D59EY+th6xKeJuPL1ioMD6wvLRlxhZHIr6PejXuDgw
+	GAaQHNjHLI5cosgrcUD3HurYqyNEZmdTQNVjNUQuo5ORCKYDQAd9n3AqwXzc1Cn8G/jxn6t0y/t
+	H9SBmsIRBkg==
+X-Google-Smtp-Source: AGHT+IFZmZv89AHeew1DxjqnD92JEDh/w4DRt+30O/ESQr5pPOOyv4kJIgltsLGevqqn+HClztxkCOdoWkL6
+X-Received: from pjzm12.prod.google.com ([2002:a17:90b:68c:b0:32d:e4c6:7410])
+ (user=thostet job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0b:b0:340:7972:a617
+ with SMTP id 98e67ed59e1d1-341a6dcb83emr1065737a91.18.1762297175133; Tue, 04
+ Nov 2025 14:59:35 -0800 (PST)
+Date: Tue,  4 Nov 2025 14:59:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ2PR12MB9163:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc03ac6e-2b63-4f35-a3ab-08de1bf57f7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Wkpwbit4RjdPZnVISTRVVzBrNS9xdXJzRmZkWkE5UHp2YzVib3luZzB2Wmh0?=
- =?utf-8?B?RXBOUGxROGE1MUhGaUVnd2JPeFFKNWZ5cjc1bzJLTmVnOHRJSHRubklZUVA2?=
- =?utf-8?B?ekU1QWN3RTVVTmdsNzlVdzJ5WWU4VVJHbEx1WnV0TFlMdGhPTHZqWWFyUU1m?=
- =?utf-8?B?UUhIVUZKOGg1Z20zeXM5Rk1waHVHS2ppOXl5Z3YyQXFwb3diVkgxRW9ya1NY?=
- =?utf-8?B?NEF6Rm1rbDl0eGtEQnB0M1dNMXhlRTVpOTlOdVBHYXowVk5JVFg1UU1EaU5B?=
- =?utf-8?B?N2JEd2RLTFUxaXlTTWswdkVzSEN3bzJ5eXJEeXk2Umg1em1Ubk0zcTFTQU1M?=
- =?utf-8?B?UXNlUGlEZnA1RFlGcHpXWWZQQyt0WU5ka05SS05ROGUyUHBFMDZaejM0Ym55?=
- =?utf-8?B?elROeCt4L2FhTWc2YU1zbUNQbzREUXNnd0ZkMmdjNWlsbVZvTjlvbFoveEVK?=
- =?utf-8?B?QnJUbldPRVhoQ1RscklscmQvc0h5VVh5OE9Xak16WFJoekEwLzBhc25jQmNy?=
- =?utf-8?B?bm9WWmJKRzl5UDB4cWZLblFhbSt5TzFnT0s3eUg3RmgrWEx4MmpaVG1QUG16?=
- =?utf-8?B?TkxWVnNRYytsYVpmaTR5ODlSWW44bVF2RlRxWVkybnd0S215aUNuWExnejJv?=
- =?utf-8?B?cWg3d2Y3M2IzZmFUYVdaN0FvU1o5Ym8rRVBBMkpobVoxL2tHS1haUWFiaG9J?=
- =?utf-8?B?ZWJvbGpoRTh4YkwyMm5ScnIwUzdMQmlKb01Vc2YyWVhhaC9xRWxuRng2V0pi?=
- =?utf-8?B?NUdGbmtwb0hDYm43RWdiamtlZlVRajhkWUY4aTBBeWVLSS9wOWJmRXdScFdq?=
- =?utf-8?B?cXJPSWhHUHVDek1zVkFtWjRXb1VUWVlpSXZTZkNqdHgvQ3RDUWd1VGsyaDJn?=
- =?utf-8?B?bkorWHVOZXp4VU5neDdHa3Q2b3dXT2Q5SnpTVG4yaHRYblNBb0JnYWRwN1lM?=
- =?utf-8?B?czczZDFhcUtVeFdTNzZEdnB1dGdtMTc3T1hEckZDSmtzREk1YW8vdGJEZ252?=
- =?utf-8?B?OTREZVBacTI1cUozMGpiNk1IbUxJdTdFL1Z3SWxkakMza2hSSVNYcTdZZkwz?=
- =?utf-8?B?TWo0cklySXIzdnFPK3RlMnl1VS9xV0JYYmVFaHNCaU1kalo5UTdzWHBvaEU1?=
- =?utf-8?B?R2x5VDA4VGFQcGhmdW0rNEhxZk4yL3Via1dDSllFckEybGhkZVl1d2YrLytP?=
- =?utf-8?B?RndSTVVHb0tCTUZqNjJ3ZlBLQStCdVRSMUVBNXdVU0ZBbndpcTh2eUI5cFZm?=
- =?utf-8?B?bEU1Q0pwZ0c1OG1BUlVTZ2FHSjdQNVArc3JCOVp0ZGRXMkZqL1l2QUZ0MW9Z?=
- =?utf-8?B?c2N0b0ZXV0R4aC8rZlY4VVY3cDJSTE1FRFVzVWlOc2thaU9SdStYL3pRQnRk?=
- =?utf-8?B?aTdSb091eXU4dXR6UFN6YTdpbjBrYS9HcTNYVG1vLzdmay9qd2tTckdkUlJO?=
- =?utf-8?B?N1BmUzVmYWE0a3NBZDlpODZETkFKNGlCK0dCb3dCWE5QdXg2NnNvVUgwL0tB?=
- =?utf-8?B?c2o0Q3UreXRTc2VwNlE4UlZMdDlmandpTEZzKzFnbGFzdnJtcmI2cEdpRE9n?=
- =?utf-8?B?SERKbkF0SUM2OUM5VDZrMXBHNEpmV0tPNEE2R08yYi85Sm01SHRpSGpuQ2hJ?=
- =?utf-8?B?Z25ocmlMeU1EczBTL2czMXd4amNuSUduSTErSWZZTGVEVXQyTk1GTkNJRGtH?=
- =?utf-8?B?SDN3bFRkbThpd1d0Y0VDbVdrUVh5ZDhUNUE0YUJpdkU2bGt6RXN3dld4M1ZS?=
- =?utf-8?B?Y0F5U3VDN1lXNUJFQTYwMU5RejFENG9VRUdvTjNKMnAwZ3A0by9VZmdUSGRV?=
- =?utf-8?B?Y2ZpdmZiWVp6MDZINnpLNXViL2x0TllxNGJGL1NWV09DblZDbUplYjlmM0g5?=
- =?utf-8?B?bTc0RGNaVjVyUmJEZ3RjQ0FmV1VqeW5YTmVHL3AzK0ZMOExYUk9tMEcrMUpD?=
- =?utf-8?Q?9EbcYB8MYni/tb3ygs5TnVPs4WISBIC3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MUNJYmNMSVVoN1VaTTBtQVdhQXdvRjBqdXBqM2g2ZVB3dDFOWTN6ZjV4WnVP?=
- =?utf-8?B?V3k1QnhqelBUczBhcC9SdHNEa3RRdVVqNmIwQVNhcjZwanZVZzBUZWphVmRt?=
- =?utf-8?B?aDZBRm9Kalk4ZW0vdlpjZE8xSVk5Z1FqM2xVV1phUnJYQmRKZWFwZXdtR1RE?=
- =?utf-8?B?Mm96SEVjZG10SjQyS0ptNE5NU3h3OEdyL0tlZHJveldUV0VLNlJGdHErZFRo?=
- =?utf-8?B?RHJycWE5a3krSDdxQllMVGdlUWVmRk4yb1BBMWpNK1FMekdSNXAwQ3JKUzhq?=
- =?utf-8?B?UXQxd1hnMlFDZWdVY1NTeXRJOTdBeWZXc1A3QUVHM0dVWmFkZDZXZmwrbS9i?=
- =?utf-8?B?anNJcGkzYTVreWN0TXF3VXlERHRBOWpzTTZYU0I2MHlqRzFlR0U1VjZUK1lT?=
- =?utf-8?B?TStyaUw2S0VhV3VxT1JOQ2k5Um5oSUZ2S2lqalNiVHBleEs0ODBRdDE1b3Z2?=
- =?utf-8?B?N01iWmZHZHBlV2NHSExDTjM2RktQRm5BUXV2b1FIYU5ML0cvbE1obHh6Y3VS?=
- =?utf-8?B?a0dtZWRReE5oTTRvdFRiRXZCbmlWam15RW0xbkIyb0hOWjZUejQvT0JId201?=
- =?utf-8?B?ck11Q0Fab1dBdVdIS3NmY3d4QjlLQ2t4b29KV2kyT0RQSlVObDM4dlR4dUJH?=
- =?utf-8?B?MmhKQWNVbmxySTBGWVJmOWZLaGpXdVJjaG9MdjdKenJNZnY4M2VubC8yV1gy?=
- =?utf-8?B?R2hmTjlTZDlGcDBiY2lJb0NjMHlqVG9UVDFRL1pmYkdrekE3UnhmTzZlbGR6?=
- =?utf-8?B?cktLQ25yNU4xdGtwcU52ZGI4aWFXejliSUQ5VUdTblJqR3ZERkhrb2ZrakMv?=
- =?utf-8?B?MFNmV0ZLendtVWx0UlAxVTdtZHdFOXNqMmJGdWZoN2VqYlVKNUlOOEhPOTR1?=
- =?utf-8?B?YktKaHdkTGphaFdkUmhwR0xiNTBNT29BNlYwVDRsRWdIMVFtb01GZ0krQ0hJ?=
- =?utf-8?B?dUxsc1J3RVQ5d3UxOTJWQTNSOGhzbktpcG5CSityQkJJbkZFTHl2MlNubktD?=
- =?utf-8?B?dHlKMFdmZ2VSdDRZTUtVeTVobG1QQzhKZUtTQStNNnEraXdwNHY0dkZMeE0y?=
- =?utf-8?B?cDNBeGdOOTRPNWdEbjZudjJLcjYvcE9lQnlzazlSUVA1WlhRL0ZiNDFnNWdE?=
- =?utf-8?B?TTUzRU9YTG5mQ0JST2YvUVRwaGM1RlE3QmZuZzV2QzFJS2NBM0xSZDFUNzY0?=
- =?utf-8?B?aTg5TzRkcnpQNzA0bGZOaGZkY05taGJlL25xZ2Q2TCtXRWZ1eXp4QmNXenBp?=
- =?utf-8?B?Si9TSTROcVQwVThnZzR6WGl1eTc0Q0RmL1Z4VWZ1V01wNW9DekpxMVdvbEpF?=
- =?utf-8?B?dU56TnVST01aVGtudzhYMTRCZi9UcEtDam4xNmlzM1VSd3BLcCtDa0NicXcv?=
- =?utf-8?B?T2tJWDJLZFdoeU5TZ1RZelJOQ1lZZFg5a01Hb3NVK2M1QVRCMzZNK29DTFM2?=
- =?utf-8?B?YXduSndIekwwYXd3VThUazNHdUlsc0hWSVRmbkxOVUFzSHBFWVN5QTY3RE9h?=
- =?utf-8?B?K1k5UzZ0dEhsNGJlOFY4TGtNaDFzU2tZOGtidnNCbFRESm9RUjVFM29jQ2dO?=
- =?utf-8?B?ZTJSL0VLYTN3Mjd5bmgrNTdwb0orYTEvQXpjc21YclZONlBLVkFzNHlPakhu?=
- =?utf-8?B?QjlEbU9jUVg3M0xSMlhZblJFWGI1N2ZTTFVoeU54RVgvZlQzTE4xdldFeGI5?=
- =?utf-8?B?VUt6ajB1cTB3Ui95K0ZOYVZWSEY1YWpubXJkNlk0TU5FYmJ3WHNJc2hSTDho?=
- =?utf-8?B?YzlnazkxandYcFNuQ0RJdm5meHQ2WGRaT0RRYklib2JFbW1jRmtldUhVWHJa?=
- =?utf-8?B?ZGMyOEdXMDl2TmZYK2NabzBweXd4UTh2cTZZVTR6aGVuL3JTOVFwWWx0N0Ru?=
- =?utf-8?B?WlppTHlUM3V3OTg4K1pUT1AzZTZ3aXJhTm1lbjU4RU5PcksyZ0FtU2tkVGFR?=
- =?utf-8?B?QU4vRnV6RXBHdS9tbStRb0NMZ3hNaEtyVEVYYVRyQndaK0tSZzJ4NDcxYjhw?=
- =?utf-8?B?aU1vbERXcmNja2c1RmZNTDFLcWI2RFBqYnpZKzEveDEwbjUySFY5TUJmY09B?=
- =?utf-8?B?TWFLV2pwOER5ZS91Y0Q1d0Y5T3RpbWRuZTNBOUgrUTB4ZkQ4R3VaSzZDQU1r?=
- =?utf-8?Q?ldCGVynY6nGD0q/nsx5LNnemU?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc03ac6e-2b63-4f35-a3ab-08de1bf57f7d
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 22:57:15.5046
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: drqaGNDFPCmlPKE6aqFIYj6GgDzXKg3tjnn8WD7wHlaecDUZNMUnQq8KuKjJ8majK3a3L3gtzfv4F/PnXtEa6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9163
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1026.g39e6a42477-goog
+Message-ID: <20251104225915.2040080-1-thostet@google.com>
+Subject: [PATCH net-next v2] ptp: Return -EINVAL on ptp_clock_register if
+ required ops are NULL
+From: Tim Hostetler <thostet@google.com>
+To: netdev@vger.kernel.org
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org, Tim Hostetler <thostet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alice,
+ptp_clock should never be registered unless it stubs one of gettimex64()
+or gettime64() and settime64(). WARN_ON_ONCE and error out if either set
+of function pointers is null.
 
-On 10/31/2025 5:25 AM, Alice Ryhl wrote:
-> On Thu, Oct 30, 2025 at 03:06:12PM -0400, Joel Fernandes wrote:
->> Add safe Rust abstractions over the Linux kernel's DRM buddy
->> allocator for physical memory management. The DRM buddy allocator
->> implements a binary buddy system for useful for GPU physical memory
->> allocation. nova-core will use it for physical memory allocation.
->>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-[...]>> +
->> +/// DRM buddy allocator instance.
->> +///
->> +/// This structure wraps the C `drm_buddy` allocator.
->> +///
->> +/// # Safety
->> +///
->> +/// Not thread-safe. Concurrent alloc/free operations require external
->> +/// synchronization (e.g., wrapping in `Arc<Mutex<DrmBuddy>>`).
->> +///
->> +/// # Invariants
->> +///
->> +/// - `mm` is initialized via `drm_buddy_init()` and remains valid until Drop.
-> 
-> Usually an invariant is a statement about the present rather than about
-> the past. I would say that `mm` is a valid buddy allocator.
-Noted, and I will change it to that, thanks!
+For consistency, n_alarm validation is also folded into the
+WARN_ON_ONCE.
 
->> +pub struct DrmBuddy {
->> +    mm: Opaque<bindings::drm_buddy>,
->> +}
->> +
->> +impl DrmBuddy {
->> +    /// Create a new buddy allocator.
->> +    ///
->> +    /// Creates a buddy allocator that manages a contiguous address space of the given
->> +    /// size, with the specified minimum allocation unit (chunk_size must be at least 4KB).
->> +    ///
->> +    /// # Examples
->> +    ///
->> +    /// See the complete example in the documentation comments for [`AllocatedBlocks`].
->> +    pub fn new(size: usize, chunk_size: usize) -> Result<Self> {
->> +        // Create buddy allocator with zeroed memory.
->> +        let buddy = Self {
->> +            mm: Opaque::zeroed(),
->> +        };
->> +
->> +        // Initialize the C buddy structure.
->> +        // SAFETY: buddy.mm points to valid, zeroed memory.
->> +        unsafe {
->> +            to_result(bindings::drm_buddy_init(
->> +                buddy.mm.get(),
-> 
-> After this call to drm_buddy_init, you return it which moves the struct.
-> Is the struct safe to move from one location to another?
+Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Signed-off-by: Tim Hostetler <thostet@google.com>
+---
+Changes in v2:
+  * Switch to net-next tree (Jakub Kicinski, Vadim Fedorenko)
+  * Fold in n_alarm check into WARN_ON_ONCE (Jakub Kicinski)
+---
+ drivers/ptp/ptp_clock.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-It is safe to move this struct since it does not contain anything
-self-referential or DMA buffers. But we should pin it for more robustness/future
-proofing. I will do that.
-
-> Also I usually put the to_result outside of the unsafe block.
-
-Will do.
-
-[...]
->> +
->> +    /// Allocate blocks from the buddy allocator.
->> +    ///
->> +    /// Returns an [`AllocatedBlocks`] structure that owns the allocated blocks and automatically
->> +    /// frees them when dropped. Allocation of `list_head` uses the `gfp` flags passed.
->> +    pub fn alloc_blocks(
->> +        &self,
->> +        start: usize,
->> +        end: usize,
->> +        size: usize,
->> +        min_block_size: usize,
->> +        flags: BuddyFlags,
->> +        gfp: Flags,
->> +    ) -> Result<AllocatedBlocks<'_>> {
->> +        // Allocate list_head on the heap.
->> +        let mut list_head = KBox::new(bindings::list_head::default(), gfp)?;
->> +
->> +        // SAFETY: list_head is valid and heap-allocated.
->> +        unsafe {
->> +            bindings::INIT_LIST_HEAD(&mut *list_head as *mut _);
->> +        }
->> +
->> +        // SAFETY: mm is a valid DrmBuddy object per the type's invariants.
->> +        unsafe {
->> +            to_result(bindings::drm_buddy_alloc_blocks(
->> +                self.as_raw(),
->> +                start as u64,
->> +                end as u64,
->> +                size as u64,
->> +                min_block_size as u64,
->> +                &mut *list_head as *mut _,
->> +                flags.as_raw() as usize,
->> +            ))?;
->> +        }
->> +
->> +        // `list_head` is now the head of a list that contains allocated blocks
->> +        // from C code. The allocated blocks will be automatically freed when
->> +        // `AllocatedBlocks` is dropped.
->> +        Ok(AllocatedBlocks {
->> +            list_head,
->> +            buddy: self,
->> +        })
->> +    }
->> +}
->> +
->> +impl Drop for DrmBuddy {
->> +    fn drop(&mut self) {
->> +        // SAFETY: self.mm is initialized and valid. drm_buddy_fini properly
->> +        // cleans up all resources. This is called exactly once during Drop.
->> +        unsafe {
->> +            bindings::drm_buddy_fini(self.as_raw());
->> +        }
->> +    }
->> +}
->> +
->> +// SAFETY: DrmBuddy can be sent between threads. Caller is responsible for
->> +// ensuring thread-safe access if needed (e.g., via Mutex).
->> +unsafe impl Send for DrmBuddy {}
-> 
-> Generally, we should implement both Send and Sync unless we really can't
-> do so. If methods require external synchronization, then those methods
-> should be marked &mut self and then you implement Sync.
-
-Thanks for letting me know the convention. Just to clarify, when you say "then
-you implement Sync", you mean "then you implement mutual exclusion, say via
-locks" correct?
-> If you instead omit Sync and make the methods &self, then the caller is
-> severely restricted and can't e.g. store it in an Arc.
-Ok so I will implement Sync and keep the methods as &self since at the moment,
-mutation is not required. Let me know if I missed something though.
-
->> +/// Allocated blocks from the buddy allocator with automatic cleanup.
->> +///
->> +/// This structure owns a list of allocated blocks and ensures they are
->> +/// automatically freed when dropped. Blocks may be iterated over and are
->> +/// read-only after allocation (iteration via [`IntoIterator`] and
->> +/// automatic cleanup via [`Drop`] only). To share across threads, wrap
->> +/// in `Arc<AllocatedBlocks>`. Rust owns the head list head of the
->> +/// allocated blocks; C allocates blocks and links them to the head
->> +/// list head. Clean up of the allocated blocks is handled by C code.
->> +///
->> +/// # Invariants
->> +///
->> +/// - `list_head` is an owned, valid, initialized list_head.
->> +/// - `buddy` points to a valid, initialized [`DrmBuddy`].
->> +pub struct AllocatedBlocks<'a> {
->> +    list_head: KBox<bindings::list_head>,
->> +    buddy: &'a DrmBuddy,
->> +}
->> +
->> +impl Drop for AllocatedBlocks<'_> {
->> +    fn drop(&mut self) {
->> +        // Free all blocks automatically when dropped.
->> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
->> +        unsafe {
->> +            bindings::drm_buddy_free_list(self.buddy.as_raw(), &mut *self.list_head as *mut _, 0);
->> +        }
->> +    }
->> +}
->> +
->> +impl<'a> AllocatedBlocks<'a> {
->> +    /// Check if the block list is empty.
->> +    pub fn is_empty(&self) -> bool {
->> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
->> +        unsafe { clist::list_empty(&*self.list_head as *const _) }
->> +    }
->> +
->> +    /// Iterate over allocated blocks.
->> +    pub fn iter(&self) -> clist::ClistIter<'_, Block> {
->> +        // SAFETY: list_head is a valid list of blocks per the type's invariants.
->> +        clist::iter_list_head::<Block>(&*self.list_head)
->> +    }
->> +}
->> +
->> +/// Iteration support for allocated blocks.
->> +///
->> +/// # Examples
->> +///
->> +/// ```ignore
->> +/// for block in &allocated_blocks {
->> +///     // Use block.
->> +/// }
->> +/// ```
->> +impl<'a> IntoIterator for &'a AllocatedBlocks<'_> {
->> +    type Item = Block;
->> +    type IntoIter = clist::ClistIter<'a, Block>;
->> +
->> +    fn into_iter(self) -> Self::IntoIter {
->> +        self.iter()
->> +    }
->> +}
->> +
->> +/// A DRM buddy block.
->> +///
->> +/// Wraps a pointer to a C `drm_buddy_block` structure. This is returned
->> +/// from allocation operations and used to free blocks.
->> +///
->> +/// # Invariants
->> +///
->> +/// `drm_buddy_block_ptr` points to a valid `drm_buddy_block` managed by the buddy allocator.
->> +pub struct Block {
->> +    drm_buddy_block_ptr: NonNull<bindings::drm_buddy_block>,
->> +}
-> 
-> This type is exposed to the user by ownership (as opposed to being
-> exposed behind a reference), and has no lifetime annotation. This
-> implies that the caller is allowed to keep it alive for arbitrary
-> amounts of time.
-> 
-> However, it looks like dropping AllocatedBlock would also free this
-> Block object. That is a problem.
-> 
-> The ownership of Block should probably be tied to AllocatedBlock so that
-> the borrow-checker prevents dropping AllocatedBlock while Block objects
-> exist. Or this code should be changed so that Block keeps the underlying
-> AllocatedBlock alive using a refcount. Or similar. It depends on how it
-> will be used - if Block is stored long-term in structs, then you should
-> avoid lifetimes, but if it's a view into AllocatedBlock that is not
-> stored long-term, then lifetimes are the right choice.
-> 
-You're right! Thanks for catching this, I am leaning to the ref count approach,
-but I'll look into the use cases more and designing it accordingly.
-
-thanks,
-
- - Joel
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index ef020599b771..b0e167c0b3eb 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -322,7 +322,9 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 	char debugfsname[16];
+ 	size_t size;
+ 
+-	if (info->n_alarm > PTP_MAX_ALARMS)
++	if (WARN_ON_ONCE(info->n_alarm > PTP_MAX_ALARMS ||
++			 (!info->gettimex64 && !info->gettime64) ||
++			 !info->settime64))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	/* Initialize a clock structure. */
+-- 
+2.51.2.1026.g39e6a42477-goog
 
 
