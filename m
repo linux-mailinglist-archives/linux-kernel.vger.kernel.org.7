@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-885264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12008C3269D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:46:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE48C326A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:46:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A6B7C34B9BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D41642027E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D646337B9C;
-	Tue,  4 Nov 2025 17:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8514033C50A;
+	Tue,  4 Nov 2025 17:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sEmE8SpK"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BrlfU1N1"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6DB26562D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875CD7DA66
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762278349; cv=none; b=rt/q0tiCW6siTJzWENQy+1pdM0+AaF3PcB4QPCiuNPPXCDhzwUhQlRdf/L3ekKtMXRY6SXXxptMSH/uI2hkyCzrRDWmXs80m9HxglT93fcri0F1ohwPYJzQpJSuGEzcg8m955zTuF7ZYKO1n5GS7BI58GdVFZLUptFMmmjdDwmo=
+	t=1762278356; cv=none; b=KXKdz5i97NJ8YbTS8IbcOwmtzlZh597xuMuLi8s7sJ4c3TDBysSrw9m7+n8yL/+urj1SpvRysqJBgsl2RbaHEBNtkmIa6DXH6aIgZEYwyRT/gsI2VzhYSiY9G22Wdld8O+EoXqTg8YnkDz87vH3Oc/A5BFIhDx5z58OzB2TG1Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762278349; c=relaxed/simple;
-	bh=fBHyh4lKIxCTDwgTRfUUKt+kE22zWmOu/3V7EgwlniA=;
+	s=arc-20240116; t=1762278356; c=relaxed/simple;
+	bh=ZYOsZxL2IUEUQi9IL/F5rSWxWUDAvv3d/2yLXE/nACE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jTjDeCivnZB/UwOFtBfFRkf5ZIQcXeG9amerNXah+iUEDtHiHzNuV0N82sdbalrVXczx0jDPoDgbDs8nz0tyfcbxvg9DRj4sZEPDdO0RpDdG7PaDy+FCAVJVuczV7oes3oBNR3wAgql4565ji7bYjgu3Wrfs3iDWgA+BLyyhigU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sEmE8SpK; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=iAsz7C7kS2DJrfuCAXBgskdHI3XjBOW89ZFdSD6gxxbH3C2Gp+dtVkAYMvHGvs5HjfjvgbG3p6+UyrrMgghFBlAW7wdapPTXbRTdWZBBNKzhHw4YquZs1W6X9lNk8B4Yjjbu5c/u8l5YkGz2xkf/A1MsV7C4/jA3zGja/KRfzFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BrlfU1N1; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-294ecd3fdd4so69592415ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:45:47 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-340c07119bfso7803954a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:45:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762278347; x=1762883147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z2Tu+KDxGtSxrgMOAtFN7Npf0pEh0K0jTPtmg/yHZME=;
-        b=sEmE8SpK0MCEHoqslmCpgj+evljko+l+ijzIxZMD6ViyAteeVa7bpoCpPG9Vt5xWrI
-         YZqcCrcih3iTl9L2KXjWTyAHA3BWc0f3KkNTAAPZ9/AgoB6E1bgnZL3+ehmn3IP8Db8M
-         VUZeREi1Ja32vX3+RIjUqbcclL4DHXjeBeaU0sHKSrS2rDvdSQ4x77+ra5p/FnPgNLWD
-         ZCT+NGCqY/x/dLoztP2bDy/O2i3g+lB7ywKCjWskV1TN73el19Gf88ZdtskrrzUEdnlM
-         srkljSLavv3tJvzfJWwDsyK+U20rwQ+QO5jvnJeTFutWJKVDwGLIs+Ofgng+046lOPas
-         W/UQ==
+        d=google.com; s=20230601; t=1762278354; x=1762883154; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/xAx4kN3ROUTUV2Jl/Po33RbfuZxhuxITOjGQyl8+0=;
+        b=BrlfU1N11m05sEBwRFxPHPgLNhMb9QpAZL7eTMKOIDu3lmmCR0tXdvGxXgoHDagP1m
+         20xXn3Lw2+nnykG3DiOgGYfiIX1D200adPMpU1WhfQpHPtJ8v3mWGjZVvnNaZQA+5Nvm
+         6/jz2eUl5I8QVBKhNpkwZpk6fCSR8aQRx/SV4awg9X/CBn2U4MV9uN1Iv1f97//V/e1v
+         x4rlv2nLSe4Sj03MDILJ2iPkg/0t7MK2dgtDBDU0qsNoGnxquarJuIOVtYyF2QSKjjMo
+         oeBDz6jCA/5iQxDWPEcOElXsX70wIzfUh9rj3VLIHCGNeE8mbr74abHwDD4WLmKFDZsk
+         URxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762278347; x=1762883147;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z2Tu+KDxGtSxrgMOAtFN7Npf0pEh0K0jTPtmg/yHZME=;
-        b=r2UIqe5Sv4JXCc4MDoiijRhKOS/9t+u+8iATMWnJKikpkb0KrGps68MGSPH7/mcx/d
-         AuluU5zyAwJZ8XQRGMzuHcjG7vysxUuZ1A4qKsoKsn0pdBCXmhUA8tVHvMhb6+4wfJ7q
-         yNXv7Gcdfmog92HowNttsAkb6/LmOK/sn5YeQFRNZcYCMAWVTI9pPKyHfpOvkBGRHRXj
-         nUgWHJCjxQPwW5P9zP/SX0dRLYfQpplyvaBUKvfRMYEVdOTzlAFd+GCmUZLU8kYh3tIj
-         SC+W42+3XuRrWYujgBK4IO03dMvnyvYh/2tC6fqhkRPieHXMbxxZko1FqMj4odCBFn9V
-         1wOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlOQ4pruJ6n7n/s08mYd9XT3zRUIppfeLZoXZ+PR0ON3LqzDLqfMr/Qoup8Kd8pLV9RzEHvN8cIGNlksE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwidcNXuavk47cDiPxbfb5PVyHl4FPgjH4/DLw6hjatOUCuWy22
-	kBEBJIG9Htve9Sw52gyI2dywgVGpZwS3ZANEAbIYHU2z1HBO98svYI/cGRZY/CiGVJXuxKDyjUC
-	pp63kbQ==
-X-Google-Smtp-Source: AGHT+IFv3dUrYmn1lVlBlYev0eg/cf2TWmxof3SNenYFyvB6TqMDKe0rrPAkSHQAlVHpWcI5k2MtUqf2+Ns=
-X-Received: from plrq15.prod.google.com ([2002:a17:902:b10f:b0:295:5948:f5d3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d0f:b0:252:50ad:4e6f
- with SMTP id d9443c01a7336-2962ade2bccmr5238175ad.54.1762278346475; Tue, 04
- Nov 2025 09:45:46 -0800 (PST)
-Date: Tue,  4 Nov 2025 09:44:56 -0800
-In-Reply-To: <20251028060142.29830-1-chao.gao@intel.com>
+        d=1e100.net; s=20230601; t=1762278354; x=1762883154;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/xAx4kN3ROUTUV2Jl/Po33RbfuZxhuxITOjGQyl8+0=;
+        b=IUUejTQ7woGyYacZJBeTejthHtoFbwlSvJ2coRuFM0DWEaTD47qg33y5M9AD8fFSf1
+         2xUpmkTvJYRFex9EpNhm0aDKrYAWwVWnx6J32WCpM0vSCCCvkhgv7/3Cwq2vYMveS+D7
+         KEFDp9pvoh+Rt2Yx7PTLlWNO7ojhAnjcQT02uWqiyRXmyPOEZ9cAetQnP7YC8BqbM74C
+         XiS3UCfOgjT2zI8jTIg/BRbNg5M3tuBkUQ81tVKYhbeVYND/sWroKMrhz6X40oQYRLFq
+         5usYYaUvPz6Yuv0COZdr8E8dkBvrj14xN1GLlEjg9c1BSVNHrFGuk3kbg/kiP95imtuh
+         vigw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQA3ljraYbl9K5+AKK1zNa69ZMLn3joxaw78sdUVnIFeofpoUsQisSGXqbuhkyap62rs6sLMIyVoYeeTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx1FZ53NOygdDhkECrvvjHTCyrtE5Tc34p2LBX6T3X9DDicPsk
+	b7kBXz7oO9Egnf7fqNfrzh0a5mW0gv6+yIFNhX+K/2jAwWsuls8w0yH+6mIeAXFi9OfRuyCInPv
+	VUhlVSQ==
+X-Google-Smtp-Source: AGHT+IHbbqY213K3DyOfRPQODSW2+ETr6+QF3a9xnk0Mm+lGMKcX25W1Wy4Bq37sp1Hh/GIn/ahciSdHvzY=
+X-Received: from pjbnh5.prod.google.com ([2002:a17:90b:3645:b0:330:49f5:c0a7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a81:b0:341:8b42:309e
+ with SMTP id 98e67ed59e1d1-341a6e05f1emr17784a91.31.1762278353787; Tue, 04
+ Nov 2025 09:45:53 -0800 (PST)
+Date: Tue,  4 Nov 2025 09:44:58 -0800
+In-Reply-To: <20251030194130.307900-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251028060142.29830-1-chao.gao@intel.com>
+References: <20251030194130.307900-1-mlevitsk@redhat.com>
 X-Mailer: git-send-email 2.51.2.1006.ga50a493c49-goog
-Message-ID: <176227794159.3934184.6943075964127868106.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86: Call out MSR_IA32_S_CET is not handled by XSAVES
+Message-ID: <176227788402.3933803.15173176547209151653.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: SVM: switch to raw spinlock for svm->ir_list_lock
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>
+To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 23:01:41 -0700, Chao Gao wrote:
-> Update the comment above is_xstate_managed_msr() to note that
-> MSR_IA32_S_CET isn't saved/restored by XSAVES/XRSTORS.
->=20
-> MSR_IA32_S_CET isn't part of CET_U/S state as the SDM states:
->   The register state used by Control-Flow Enforcement Technology (CET)
->   comprises the two 64-bit MSRs (IA32_U_CET and IA32_PL3_SSP) that manage
->   CET when CPL =3D 3 (CET_U state); and the three 64-bit MSRs
->   (IA32_PL0_SSP=E2=80=93IA32_PL2_SSP) that manage CET when CPL < 3 (CET_S=
- state).
->=20
+On Thu, 30 Oct 2025 15:41:30 -0400, Maxim Levitsky wrote:
+> svm->ir_list_lock can be taken during __avic_vcpu_put which can be called
+> from schedule() via kvm_sched_out.
+> 
+> Therefore use a raw spinlock instead.
+> 
+> This fixes the following lockdep warning:
+> 
 > [...]
 
-Applied to kvm-x86 fixes, with an opportunistic tweak of the comment (the w=
-hole
-spiel about the safety was attached to the wrong function).  Thanks!
+Applied to kvm-x86 fixes.  Thanks for doing this, it's been on my todo list for
+several months :-)
 
-[1/1] KVM: x86: Call out MSR_IA32_S_CET is not handled by XSAVES
-      https://github.com/kvm-x86/linux/commit/cab4098be418
+[1/1] KVM: SVM: switch to raw spinlock for svm->ir_list_lock
+      https://github.com/kvm-x86/linux/commit/fd92bd3b4445
 
 --
 https://github.com/kvm-x86/linux/tree/next
