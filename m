@@ -1,108 +1,254 @@
-Return-Path: <linux-kernel+bounces-884388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7404C3014E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:56:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7245C30142
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41E5B4F3DCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A233A85E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C2A295516;
-	Tue,  4 Nov 2025 08:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC4123D7D4;
+	Tue,  4 Nov 2025 08:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Fz2xhV4G"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8hV9xrf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1589D19CCF5;
-	Tue,  4 Nov 2025 08:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DCA41;
+	Tue,  4 Nov 2025 08:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246115; cv=none; b=DkdoRCGwnWuwQypvmj7QiqaihkK/xYMAJpTZlAC+dJ5j7u6cOvkSDCDloWRVWuGJJl16ObifW82zy9OcNCyKRx4+rTLO4UnuzKW4mxR5gVywsENH6tpk3MM85uL8mQg6l3ahitVGyAdp5mI7YwPIxL9t0KGXxuZhcEEG/D0PgC8=
+	t=1762246119; cv=none; b=bqHRrX+TOn7UrGo7xC0t4ziV80PEQpmfc1A1ryy9aJWWX0mX9xSHh4Y8Ih4O+AsWVrrzuuiR4r65qKyCW57ASq2Ky925YsyUScvstNlMwN2UJoD2CcitdwL5wmg18zl84bjrLvVvUeFlquprXTRL/mH7u7SoVP0a+IGg3qpPfHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246115; c=relaxed/simple;
-	bh=KHpdCYL1P1c5pPmSGKmaOsmNyV3IWF2XLafTKv9g6hU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W5nvxVbRJPA/y89rqRvskLzgzrtVPSS5ansercezEzcKCmoIVBuzZhuBEyVipDvrC1d/dbDum69kqud8P8PCQGfxpwXMfa9Rq2QRB+Sulx+rz8V9Um65KoZBwBmRr0ePgUKLsnoyPDa/nRcxbJ1/JXONEaxG1OmGpGwgxvBceaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Fz2xhV4G; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=LDMxSBdMWQSX4Hz7DIi6vXyes6twxoeEz9SIi1KmtHU=; t=1762246112;
-	x=1762850912; b=Fz2xhV4G0i0V6fss5K5AFLQNBNp5sxgQOQ0rk4yZgFexxS97S88z/9j9/ZeYp
-	6LSuaS911i6XsdAqTkHTlAlR5Fc/te+aNL/ikjV6Fj4AvKl+MwJAe3ZhfAMvhP+oQn6Yx4VPQWlsy
-	y1tEIrf87jN6P32AmZPpGC68M93U9/SZMaar0QGCuAttvt4f2KOIRNiOvG2lbWDpOiK6TLSxoFkjH
-	9uPy1GxclaB90LOoP4arXydlM6rnY18Vo7hy7Y0NxoCdpPMvjo1RG9l5893eBVe76huabwuuC/e1C
-	IeU8s4ZU+XujgY4rpZx63Ip7JCvKp1zvdB4q98pun5K5k3VmuQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vGCiM-00000001CGm-0a1S; Tue, 04 Nov 2025 09:48:30 +0100
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vGCiL-00000002mbz-418W; Tue, 04 Nov 2025 09:48:30 +0100
-Message-ID: <69590ab694891d84acd2b4a4317c2fa8d1a98344.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] Alpha: MAINTAINERS
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Magnus Lindholm <linmag7@gmail.com>
-Cc: richard.henderson@linaro.org, mattst88@gmail.com, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 04 Nov 2025 09:48:29 +0100
-In-Reply-To: <CA+=Fv5Sdf732mc2c_xGDsJqq2pS-EQU5d0XLBR7v-0GdgFC5EQ@mail.gmail.com>
-References: <20251103213656.25912-1-linmag7@gmail.com>
-	 <0ba150517e0fd331f1227e068fd37e6e6ea42228.camel@physik.fu-berlin.de>
-	 <CA+=Fv5Sdf732mc2c_xGDsJqq2pS-EQU5d0XLBR7v-0GdgFC5EQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1762246119; c=relaxed/simple;
+	bh=cyaOp4TzuEGnzG2aGAw91JuEsG1zpDPK6rl+pPPfG9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z1iu7HfzwusFcY6En9gye6LlCcm3wPwIUaw/249XOFVE+1T44V6gQGTzSTNiCMLtwa7f+OWaVeTbYl73daP0BiYQ987aVQfwbMmQqJD2vVKG//A0wg+NyDd4OI7L0fL+ZaZgE8ds/KkMMjtl9tYqeXaUOwed+jDIiI1K2au5I34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8hV9xrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 662DBC116B1;
+	Tue,  4 Nov 2025 08:48:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762246119;
+	bh=cyaOp4TzuEGnzG2aGAw91JuEsG1zpDPK6rl+pPPfG9c=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C8hV9xrfu+uOtB7DmJSeE/q55XaVF0Pk36O6zzdthG03XOFKc8wGRehQFBtVEynEo
+	 wTBvXQTXHh06c13wApCT5allTl0PydpG9tO+k09HCu3l6yoWYA2nC2aup2bD4XuR6C
+	 81jxPRAKtUTm94KfU9rbBNXgqVS95ZnYbDhjhv7TigL5+WJuD4GjQ7kwzep4DZaS95
+	 9M4a67xaqRxg5Pduy+U2YZp1mJtHAAkowFAv9bN2LEItDeAkZFQVhBxzLVvjnKUbQa
+	 tyMNdxWhCzQnCwlfqpPv7Khty9BDl/ttSdzCACHGpt9BMfSdM1M1Ig5gKawJETekla
+	 aH4RVcAKAQaLg==
+Message-ID: <ec0cb997-099a-475a-9a7e-d3a1cb82b973@kernel.org>
+Date: Tue, 4 Nov 2025 09:48:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Michal Wilczynski <m.wilczynski@samsung.com>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
+ <20251104105415.68bfb090@canb.auug.org.au>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20251104105415.68bfb090@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-11-04 at 09:37 +0100, Magnus Lindholm wrote:
-> On Tue, Nov 4, 2025 at 8:23=E2=80=AFAM John Paul Adrian Glaubitz
-> <glaubitz@physik.fu-berlin.de> wrote:
-> >=20
-> > Hi Magnus,
-> >=20
-> > On Mon, 2025-11-03 at 22:23 +0100, Magnus Lindholm wrote:
-> > > Add Magnus Lindholm to MAINTAINERS (Alpha port)
-> >=20
-> > I think this message should be in the subject of your patch mail.
-> >=20
-> > Did you use git-send-email to send this patch? If not, you should set i=
-t up.
-> >=20
-> Hi,
->=20
-> Thanks for the feedback, yes, I used git-send-email. I can put out a v1 o=
-f this
-> and update the messages subject accordingly.
 
-That would be the v2, you already posted the v1 ;-).
 
-Adrian
+On 04/11/2025 00.54, Stephen Rothwell wrote:
+> Hi all,
+> 
+> [adding the modules tree contacts]
+> 
+> On Tue, 4 Nov 2025 10:48:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Today's linux-next merge of the pwm tree got a conflict in:
+>>
+>>   rust/macros/module.rs
+>>
+>> between commits:
+>>
+>>   3809d7a89fe5 ("rust: module: use a reference in macros::module::module")
+>>   0b24f9740f26 ("rust: module: update the module macro with module parameter support")
+>>
+>> from the modules tree and commit:
+>>
+>>   927687809649 ("rust: macros: Add support for 'imports_ns' to module!")
+>>
+>> from the pwm tree.
+>>
+>> I followed a supplied resolution from Uwe and Danieli, thanks.  Though I
+>> am just wondering (fromfollowing the pattern) if the "&ns" on line 545
+>> should be "ns" - though I guess it would fail to build if so?
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+We missed that non-trivial reference refactor. Sorry about it.
+
+In this case, ns is already a reference so, your guess is correct. It should be:
+
+@@ -348,6 +351,11 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
+             modinfo.emit("firmware", fw);
+         }
+     }
++    if let Some(imports) = &info.imports_ns {
++        for ns in imports {
++            modinfo.emit("import_ns", ns);
++        }
++    }
+
+This is when Andreas' patch is applied before Michal's. To be clear, here's what
+I mean:
+
+HEAD -> rust: macros: Add support for 'imports_ns' to module!
+rust: module: use a reference in macros::module::module
+
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>>
+>> -- 
+>> Cheers,
+>> Stephen Rothwell
+>>
+>> diff --cc rust/macros/module.rs
+>> index d62e9c1e2a89,408cd1154875..000000000000
+>> --- a/rust/macros/module.rs
+>> +++ b/rust/macros/module.rs
+>> @@@ -205,50 -98,7 +205,51 @@@ struct ModuleInfo 
+>>       description: Option<String>,
+>>       alias: Option<Vec<String>>,
+>>       firmware: Option<Vec<String>>,
+>> +     imports_ns: Option<Vec<String>>,
+>>  +    params: Option<Vec<Parameter>>,
+>>  +}
+>>  +
+>>  +#[derive(Debug)]
+>>  +struct Parameter {
+>>  +    name: String,
+>>  +    ptype: String,
+>>  +    default: String,
+>>  +    description: String,
+>>  +}
+>>  +
+>>  +fn expect_params(it: &mut token_stream::IntoIter) -> Vec<Parameter> {
+>>  +    let params = expect_group(it);
+>>  +    assert_eq!(params.delimiter(), Delimiter::Brace);
+>>  +    let mut it = params.stream().into_iter();
+>>  +    let mut parsed = Vec::new();
+>>  +
+>>  +    loop {
+>>  +        let param_name = match it.next() {
+>>  +            Some(TokenTree::Ident(ident)) => ident.to_string(),
+>>  +            Some(_) => panic!("Expected Ident or end"),
+>>  +            None => break,
+>>  +        };
+>>  +
+>>  +        assert_eq!(expect_punct(&mut it), ':');
+>>  +        let param_type = expect_ident(&mut it);
+>>  +        let group = expect_group(&mut it);
+>>  +        assert_eq!(group.delimiter(), Delimiter::Brace);
+>>  +        assert_eq!(expect_punct(&mut it), ',');
+>>  +
+>>  +        let mut param_it = group.stream().into_iter();
+>>  +        let param_default = expect_param_default(&mut param_it);
+>>  +        let param_description = expect_string_field(&mut param_it, "description");
+>>  +        expect_end(&mut param_it);
+>>  +
+>>  +        parsed.push(Parameter {
+>>  +            name: param_name,
+>>  +            ptype: param_type,
+>>  +            default: param_default,
+>>  +            description: param_description,
+>>  +        })
+>>  +    }
+>>  +
+>>  +    parsed
+>>   }
+>>   
+>>   impl ModuleInfo {
+>> @@@ -263,7 -113,7 +264,8 @@@
+>>               "license",
+>>               "alias",
+>>               "firmware",
+>> +             "imports_ns",
+>>  +            "params",
+>>           ];
+>>           const REQUIRED_KEYS: &[&str] = &["type", "name", "license"];
+>>           let mut seen_keys = Vec::new();
+>> @@@ -289,7 -139,7 +291,8 @@@
+>>                   "license" => info.license = expect_string_ascii(it),
+>>                   "alias" => info.alias = Some(expect_string_array(it)),
+>>                   "firmware" => info.firmware = Some(expect_string_array(it)),
+>> +                 "imports_ns" => info.imports_ns = Some(expect_string_array(it)),
+>>  +                "params" => info.params = Some(expect_params(it)),
+>>                   _ => panic!("Unknown key \"{key}\". Valid keys are: {EXPECTED_KEYS:?}."),
+>>               }
+>>   
+>> @@@ -329,25 -179,30 +332,30 @@@ pub(crate) fn module(ts: TokenStream) -
+>>       // Rust does not allow hyphens in identifiers, use underscore instead.
+>>       let ident = info.name.replace('-', "_");
+>>       let mut modinfo = ModInfoBuilder::new(ident.as_ref());
+>>  -    if let Some(authors) = info.authors {
+>>  +    if let Some(authors) = &info.authors {
+>>           for author in authors {
+>>  -            modinfo.emit("author", &author);
+>>  +            modinfo.emit("author", author);
+>>           }
+>>       }
+>>  -    if let Some(description) = info.description {
+>>  -        modinfo.emit("description", &description);
+>>  +    if let Some(description) = &info.description {
+>>  +        modinfo.emit("description", description);
+>>       }
+>>       modinfo.emit("license", &info.license);
+>>  -    if let Some(aliases) = info.alias {
+>>  +    if let Some(aliases) = &info.alias {
+>>           for alias in aliases {
+>>  -            modinfo.emit("alias", &alias);
+>>  +            modinfo.emit("alias", alias);
+>>           }
+>>       }
+>>  -    if let Some(firmware) = info.firmware {
+>>  +    if let Some(firmware) = &info.firmware {
+>>           for fw in firmware {
+>>  -            modinfo.emit("firmware", &fw);
+>>  +            modinfo.emit("firmware", fw);
+>>           }
+>>       }
+>>  -    if let Some(imports) = info.imports_ns {
+>> ++    if let Some(imports) = &info.imports_ns {
+>> +         for ns in imports {
+>> +             modinfo.emit("import_ns", &ns);
+
+Please, drop the '&'
+
++            modinfo.emit("import_ns", ns);
+
+
+>> +         }
+>> +     }
+
+
+>>   
+>>       // Built-in modules also export the `file` modinfo string.
+>>       let file =
+> 
 
