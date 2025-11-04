@@ -1,58 +1,81 @@
-Return-Path: <linux-kernel+bounces-884256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E840C2FBFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:01:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AC9C2FC13
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CDA3D34D431
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:01:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14E994EA5DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E311C2951A7;
-	Tue,  4 Nov 2025 08:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2379730BF55;
+	Tue,  4 Nov 2025 08:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARho0ulf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jgwl2Vop";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8JDRw+f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8C1F5435;
-	Tue,  4 Nov 2025 08:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9B82C181;
+	Tue,  4 Nov 2025 08:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762243267; cv=none; b=FLIc2wHCsAFMb8fKYClg63Xl47aKHF2p8LEwpDEPZwvoDhRWqV6ciI76XHeBMKYTgVOZ/BSaDYiK+9vS1cLGp0ERhwvCwV1khX/l/UgHzZNLVIzwLa3Ta1rWkT8oEVJg5ltXBUn3au2tNE8ddDPE+1IU3sk0uoxjJHQFry2w/oU=
+	t=1762243327; cv=none; b=KGFnH2l9do9oWlHUThIPfdZGOyZVO2WvRGI+Myr/0hQbYShgGyirQqKcQsrt0CYrugCbwl8FXJc6a9Owa6AV61FDehYFPH6TtcQfJusFtNBvzcSqVlZ4yV5PkM+gdFTS44hD3/bolxaA1jCe39jNDbAbG5ufxt4eqMfRk6oYduY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762243267; c=relaxed/simple;
-	bh=vGoIbPpz5aXIFdt5t3D5TrfQi3IlTuwBW7gh5GXbdIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgWrAF1YAzJqOtOWbX/O6hz0WwS7OGKKDj1Hw+w3RtHUscFB9YnIghhsPF6MTRYxq4HvQWAMtb2XkTdq+YpzIzRqNb3ADAX/EP5ibswHuLG6ZZClB3n5tqeP30ZuaMiDKS+7X5keNcXDiOby6tAZ1vIGBsz5ECIE0LGqeNY/N+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARho0ulf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 496D4C4CEF7;
-	Tue,  4 Nov 2025 08:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762243263;
-	bh=vGoIbPpz5aXIFdt5t3D5TrfQi3IlTuwBW7gh5GXbdIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ARho0ulfHfD0LwtnCerN/OpEB3PVm1rYxkXWFTUkQhZWvhyVzYc3kP9WyP1ETPi0R
-	 InOd6nMfWxQ7YXQvvh6El2e3L5teEdnsUNZ3HGdhGMiRnqarqCJwCNs7UM8E2afdie
-	 btRAIVXD0WretN6HLWRNFYT/r44Z7jyrs72Uw7N5KDniTx4gnFijmV3XMdxfxsIsb/
-	 aQckCgwcevwcT9lcNazWocGkaYVjr6QrEujGifhHK7Rhu0hQtbtXWSjCKk0nLBco8Q
-	 FxEZfuViU6MD1p38Vg5dti86FWEhUcCLmXha46F3CCK3AQYVNmLpNxj3E8ISriqrQD
-	 CYROX95lHCfdA==
-Date: Tue, 4 Nov 2025 09:01:00 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Coia Prant <coiaprant@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] dt-bindings: arm: rockchip: Add 9Tripod X3568
- series
-Message-ID: <20251104-puma-of-undeniable-conversion-de00fb@kuoka>
-References: <20251103171702.1518730-1-coiaprant@gmail.com>
- <20251103171702.1518730-3-coiaprant@gmail.com>
+	s=arc-20240116; t=1762243327; c=relaxed/simple;
+	bh=vaSI9y3TVSYBJFCalfQ4W0TlJkXSf69LRSPhgBhvC3U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HOhhN6Z3TVKxvhkHfZoo6YXHC1pYbU3POb5pGKli9CRkh2PW3BdTvQyO/Uzzj8CtO0glJ0rNBHtl19S9VNRfkC3teolaMhxLuDsrzp4AP1OqWRrlJtBBuiw39vRT++8Mrt+6SGDOAodgA4216NEl730RHm9D0zbOO8eZZWCzFLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jgwl2Vop; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8JDRw+f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762243320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WxHg295CBRsqPu2lBIqw5Sn0fGrCLg/ElUlxqApeBLM=;
+	b=Jgwl2VopvLhsHH+YYqRsae6+FKzyHIS0wgTmsM6zvXdnRYVO1Mp+3CjSgP12sRf79JdkIC
+	hx50TnrXAEfEN5ICnRweGj/sSAz5nUPqUFikzhoLJZNQyXaN5ymoCj4E2L3wBjx4OeG4vN
+	lcnERol2ohNQ5nXcU3OkM3UJOm2NJRST4BTxh1MoYrChOMqgAT9DLUj9eFzBzflyLWH87K
+	qqDczZQWcFWGe/iPVZhDUA34+WNIo7S9c1kgflcSpKmM0UaRdPJMv7RLP9TTDCTxs4B7XJ
+	XLq2JS1KXSF/YOo8ZUxjIZTH8AN+3Axixi4ToMHu6WXnTGvIMsd2QaBZquI9Fg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762243320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WxHg295CBRsqPu2lBIqw5Sn0fGrCLg/ElUlxqApeBLM=;
+	b=t8JDRw+fUTFLMI+7oIYVrsnas628xW2/vuKmoPeHnnr/Dd9LlRlJTGnA4BulGKiXBQPkro
+	pOJgImdDLmiQK4AQ==
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
+ <horms@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 03/10] uaccess: Add
+ masked_user_{read/write}_access_begin
+In-Reply-To: <01d89f24-8fca-4fc3-9f48-79e28b9663db@csgroup.eu>
+References: <cover.1760529207.git.christophe.leroy@csgroup.eu>
+ <a4ef0a8e1659805c60fafc8d3b073ecd08117241.1760529207.git.christophe.leroy@csgroup.eu>
+ <87bjlyyiii.ffs@tglx> <01d89f24-8fca-4fc3-9f48-79e28b9663db@csgroup.eu>
+Date: Tue, 04 Nov 2025 09:01:58 +0100
+Message-ID: <875xbqw7ih.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +83,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103171702.1518730-3-coiaprant@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 01:17:01AM +0800, Coia Prant wrote:
-> This documents 9Tripod X3568 v4 which is a SBC based on RK3568 SoC.
-> 
-> Link: http://www.9tripod.com/showpro.php?id=117
-> Link: https://appletsapi.52solution.com/media/X3568V4%E5%BC%80%E5%8F%91%E6%9D%BF%E7%A1%AC%E4%BB%B6%E6%89%8B%E5%86%8C.pdf
-> 
-> Signed-off-by: Coia Prant <coiaprant@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Tue, Nov 04 2025 at 07:39, Christophe Leroy wrote:
+> Le 22/10/2025 =C3=A0 19:05, Thomas Gleixner a =C3=A9crit=C2=A0:
+>> On Fri, Oct 17 2025 at 12:20, Christophe Leroy wrote:
+>>> Allthough masked_user_access_begin() is to only be used when reading
+>>> data from user at the moment, introduce masked_user_read_access_begin()
+>>> and masked_user_write_access_begin() in order to match
+>>> user_read_access_begin() and user_write_access_begin().
+>>>
+>>> That means masked_user_read_access_begin() is used when user memory is
+>>> exclusively read during the window, masked_user_write_access_begin()
+>>> is used when user memory is exclusively writen during the window,
+>>> masked_user_access_begin() remains and is used when both reads and
+>>> writes are performed during the open window. Each of them is expected
+>>> to be terminated by the matching user_read_access_end(),
+>>> user_write_access_end() and user_access_end().
+>>>
+>>> Have them default to masked_user_access_begin() when they are
+>>> not defined.
+>>>
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>=20
+>> Can we please coordinate on that vs. the scoped_access() work as this
+>> nicely collides all over the place?
+>
+> Sure, I will rebase on top of your series.
+>
+> Once it is rebased, could you take the non powerpc patches in your tree ?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Sure. The current lot is at:
 
-Best regards,
-Krzysztof
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git scoped-uaccess
 
+Thanks,
+
+        tglx
 
