@@ -1,117 +1,188 @@
-Return-Path: <linux-kernel+bounces-884057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71D8C2F380
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:58:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D55C2F39B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 099FA34C55B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:58:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37BCB4E550E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6792A2C0282;
-	Tue,  4 Nov 2025 03:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgGGo5hS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C882BB1D;
-	Tue,  4 Nov 2025 03:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F5B23F429;
+	Tue,  4 Nov 2025 04:02:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E25D18EFD1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 04:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762228721; cv=none; b=Xaxscu+AMhyWfUq7dfqLBSP7zwJ5szTKN10aGtnBB9MxoGr3EAVEiqPodzAYRqWeJ5K/pyOqezhfgWJgoiPE73gwVhQG7s8S0TT1AX93M6k3KVpIVG412KTCORxXkbctBRDvYIq8t/zjNe513qUWkKGWZvcC6v25c3LwTjpwPME=
+	t=1762228958; cv=none; b=cyHZtgE3fGFcDWXsui8sGnl3e8ms5zrOZLjzK8QsQo2FqmVf5ghoNydnpwkHXbwue6QSv5RpMIujU40V+f0SnsJQr+RvVi09tuE/Xgh65xzzJZSS+7C+PbmIokZNR8bxtD7UJiGq9CKNZJUuEi/geTvYkleY7FBugzeqekaQbeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762228721; c=relaxed/simple;
-	bh=+Ki3E1HMECV/Re8mxC5wCaHUywU4kqrtJf6FJykpzRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOtqmhJG8kAb+RMcXbnkfAoZmqUqDMoklcONWAHSlEwcfM3SuMzRwmYxus3w76I1wUC1lnhic7vVTyofAf4734cV0liputmyc2DnZFBk5blbq0dFMxyxg7xrGtL9NSTqwLbE73xo3SlbfY/APWv4vR4dANoL7tN6eLHlYTDx0Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgGGo5hS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9B3C4CEF7;
-	Tue,  4 Nov 2025 03:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762228721;
-	bh=+Ki3E1HMECV/Re8mxC5wCaHUywU4kqrtJf6FJykpzRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rgGGo5hS1XO6eeJm2hBGkjhgah9Uj5zRun9awk1n3jj+V6UVMi6VJyUC7T4XPS+zP
-	 FbfLZoK+KunZ1NLOZtOI1BV/FPbMAojcgXfnTTed/y8gTyp56fTqmatD8e6RB+mC7u
-	 7SieDUCeM/zoAvXetPmqQ8/1HeEKSeg6qojLVpUtVHH0J1vtu+tBR+ILWmJrnTZP0V
-	 AKYu9d4O8O35GXLRj8sIKfcfbMa4GcLcLkrKXbsbJwNEZb8G/MhqwGh3I8hVyM0lrq
-	 facjVHJT/O7ijUd9F8kV9oZIFHCieaQcCmf2ycKUROcYSJ3pEHmmhog44nW+jqMQaS
-	 UYduoQg3NvKPQ==
-Date: Mon, 3 Nov 2025 22:02:13 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
-Message-ID: <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
-References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
- <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
+	s=arc-20240116; t=1762228958; c=relaxed/simple;
+	bh=ai311xqe2NwWYwAn1EDtxG6F9OfFgNxqHZJpzvQ6VtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kv6IQcP7Y76zPztB9loC6CiRPZaeT2uQykHLUpv2XPz4xvGcnssVvONiRm12B92/SFv1AEFhSYeoXo1sk23TbbzYweWdn7xSe6dCJ84ZhDfAKhiXS2Mv+385d738Oa0SEzd8rRsyG1xBGW7DNgdDU3JRZ2tJSoJ0OcH2KVL9FdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA7481C2B;
+	Mon,  3 Nov 2025 20:02:27 -0800 (PST)
+Received: from [10.164.18.64] (unknown [10.164.18.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E1ED3F694;
+	Mon,  3 Nov 2025 20:02:28 -0800 (PST)
+Message-ID: <2be04785-d725-4e79-a609-87f174271f83@arm.com>
+Date: Tue, 4 Nov 2025 09:32:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
+To: Qi Zheng <zhengqi.arch@bytedance.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+ david@redhat.com, hannes@cmpxchg.org
+Cc: ryan.roberts@arm.com, hpa@zytor.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, ppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, shakeel.butt@linux.dev, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251103063718.90743-1-dev.jain@arm.com>
+ <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
+ <666e012e-0b13-4def-82de-55ccd5868d36@arm.com>
+ <9359ce51-5ac7-4312-8ef8-79fa51d014f5@bytedance.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <9359ce51-5ac7-4312-8ef8-79fa51d014f5@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
-> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
-> > Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
-> > control and status functions for their peripherals.
-> > 
-> > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > index 14ae3f00ef7e..ae55b0a70766 100644
-> > --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > @@ -48,6 +48,7 @@ properties:
-> >            - qcom,tcsr-ipq8064
-> >            - qcom,tcsr-ipq8074
-> >            - qcom,tcsr-ipq9574
-> > +          - qcom,tcsr-kaanapali
-> 
-> It looks good to me. Glymur didn't have this functionality verified yet.
 
-You spelled Reviewed-by: Aiqun Yu <..> wrong.
+On 03/11/25 2:37 pm, Qi Zheng wrote:
+> Hi Dev,
+>
+> On 11/3/25 4:43 PM, Dev Jain wrote:
+>>
+>> On 03/11/25 12:33 pm, Qi Zheng wrote:
+>>> Hi Dev,
+>>>
+>>> On 11/3/25 2:37 PM, Dev Jain wrote:
+>>>> The implementation of CONFIG_PT_RECLAIM is completely contained in 
+>>>> generic
+>>>> mm code. It depends on the RCU callback which will reclaim the 
+>>>> pagetables -
+>>>> there is nothing arch-specific about that. So, enable this config for
+>>>> all architectures.
+>>>
+>>> Thanks for doing this!
+>>>
+>>> But unfortunately, not all architectures call tlb_remove_ptdesc() in
+>>> __pte_free_tlb(). Some architectures directly call pte_free() to
+>>> free PTE pages (without RCU).
+>>
+>> Thanks! This was not obvious to figure out.
+>>
+>> Is there an arch bottleneck because of which they do this? I mean to 
+>> say,
+>>
+>> is something stopping us from simply redirecting __pte_free_tlb to 
+>> tlb_remove_ptdesc
+>
+> Some architectures have special handling in __pte_free_tlb(), and cannot
+> simple redirect __pte_free_tlb() to tlb_remove_ptdesc(), such as m68k,
+> powerpc, etc.
+>
+> For those architectures that call pte_free() in __pte_free_tlb(), it
+> should be easy to modify them.
+>
+> If you're not in a rush, I can take the time to finish the above tasks.
 
-> Remind for review.
+Right then, I'll leave that up to you!
 
-No need for that, reviewers will review when they have time.
 
-> 
-
-But that said, most modern additions to this binding follow the common
-format of qcom,<soc>-<block>.
-
-So I would prefer this to be qcom,kaanapali-tcsr.
-
-Regards,
-Bjorn
-
-> >            - qcom,tcsr-mdm9615
-> >            - qcom,tcsr-msm8226
-> >            - qcom,tcsr-msm8660
-> > 
-> > ---
-> > base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
-> > change-id: 20250917-knp-mfd-4dd3c81e6b9b
-> > 
-> > Best regards,
-> 
-> 
-> -- 
-> Thx and BRs,
-> Aiqun(Maria) Yu
+>
+>>
+>> or pte_free_defer?
+>>
+>>
+>> I am looking to enable this config at least on arm64 by default, I 
+>> believe it will be legal
+>>
+>> to do this at least here.
+>
+> IIRC, arm64 can directly enable CONFIG_PT_RECLAIM, as it is supported
+> at the architecture level.
+>
+> Thanks,
+> Qi
+>
+>>
+>>
+>>>
+>>> We need to modify these architectures first, otherwise it will
+>>> lead to UAF. This approach is feasible because Hugh provides similar
+>>> support in pte_free_defer().
+>>>
+>>> Enabling PT_RECLAIM on all architecture has always been on my
+>>> TODO list, but it's been blocked by other things. :(
+>>>
+>>> Thanks,
+>>> Qi
+>>>
+>>>>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>>   arch/x86/Kconfig | 1 -
+>>>>   mm/Kconfig       | 5 +----
+>>>>   mm/pt_reclaim.c  | 2 +-
+>>>>   3 files changed, 2 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>>>> index fa3b616af03a..5681308a5650 100644
+>>>> --- a/arch/x86/Kconfig
+>>>> +++ b/arch/x86/Kconfig
+>>>> @@ -327,7 +327,6 @@ config X86
+>>>>       select FUNCTION_ALIGNMENT_4B
+>>>>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>>>>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>>>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
+>>>>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
+>>>>       select SCHED_SMT            if SMP
+>>>>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
+>>>> diff --git a/mm/Kconfig b/mm/Kconfig
+>>>> index 0e26f4fc8717..903c37d02555 100644
+>>>> --- a/mm/Kconfig
+>>>> +++ b/mm/Kconfig
+>>>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
+>>>>         The architecture has hardware support for userspace shadow 
+>>>> call
+>>>>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
+>>>>   -config ARCH_SUPPORTS_PT_RECLAIM
+>>>> -    def_bool n
+>>>> -
+>>>>   config PT_RECLAIM
+>>>>       bool "reclaim empty user page table pages"
+>>>>       default y
+>>>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
+>>>> +    depends on MMU && SMP
+>>>>       select MMU_GATHER_RCU_TABLE_FREE
+>>>>       help
+>>>>         Try to reclaim empty user page table pages in paths other 
+>>>> than munmap
+>>>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
+>>>> index 7e9455a18aae..049e17f08c6a 100644
+>>>> --- a/mm/pt_reclaim.c
+>>>> +++ b/mm/pt_reclaim.c
+>>>> @@ -1,6 +1,6 @@
+>>>>   // SPDX-License-Identifier: GPL-2.0
+>>>>   #include <linux/hugetlb.h>
+>>>> -#include <asm-generic/tlb.h>
+>>>> +#include <asm/tlb.h>
+>>>>   #include <asm/pgalloc.h>
+>>>>     #include "internal.h"
+>>>
+>
 
