@@ -1,136 +1,76 @@
-Return-Path: <linux-kernel+bounces-884445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F6FC30311
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:14:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE42C30303
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 737CA4F5733
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697791883D93
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01413112D3;
-	Tue,  4 Nov 2025 09:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67BD312802;
+	Tue,  4 Nov 2025 09:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SETdWZYD"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEY4aI3B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECC329B8FE;
-	Tue,  4 Nov 2025 09:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A64C3112C4;
+	Tue,  4 Nov 2025 09:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762247451; cv=none; b=HDTPOo16ouzOsRZD3RIzcl6BUbS7jKJQfAWTKpub0jHeiKy48SmDX+yglV453hswJP1oezH+l/hfnQ7PPhLwucspk8mruROk6ZhdEJTYZ8MwHxqM9RDLbJlmOaHXNVhki3Pk7eXokULukvOwdZ3uSihEyQp+Xsg2ajLMUg1x2dM=
+	t=1762247481; cv=none; b=F01sOxcZAtqoFDL0ZRbr02V5WGWYXhkYq4NTXdDGZl/uCRiAVfBLn+ZMF5eYtGgdVN3XrQC16QCIM+bXwEjxqrukVvD24y2xP34G9R4Wd79n23quro7JknUnrmNM90B7WeXt9TL0Rz411A4iPbQsHxGH59Epq8/x/gp5sNff6xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762247451; c=relaxed/simple;
-	bh=LMpQCdO4DpvAzMy+0oVJL+k1kGwvMBsIaCidJwajyks=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AmJkHrvn6QgfeLZTi8HyD9WFZW5J2/XjUrJi/AH7Xu3i55wxZuQHfR3n6w/4Mgm4OYRMnZsRofh9RUgn3ArjxyFFdCK9VnUsLyMgrBiHE56Mm/P/yqhp95OZ0yduKumZFnJn3Dwt3v+jvqQscc9uS456PHktKasG2AEDX3hI8f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SETdWZYD; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 64F224E414F0;
-	Tue,  4 Nov 2025 09:10:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 33A79606EF;
-	Tue,  4 Nov 2025 09:10:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A4FB410B5069D;
-	Tue,  4 Nov 2025 10:10:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762247445; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=YLPevIWNzxiE5TizcrRb1gViSqpYMR7gcBGkGD5xEPw=;
-	b=SETdWZYDwG79HdPDQOgaK4ZpKVa7hYoJHZd/Nwx6oW++IuWO9MmQlogCN7P/w/vpow0mnF
-	mHcNu+LBfLIKvWh9xJaP1U1SFNtciG4xcPMSnVulmks8W3lRKUqm6tu2Q7WSeIjl1fJR2P
-	jbEtl8qOYVThT6eOJLTlmcDkwuu/1a7JhK6U1Or1wQ7GZjNnP2hyuU2gn5LPyGV77kBk9Y
-	aMzf0V2xLRE6jB3z7Bl5owg81DjU7sJu1VGMpWYyNUBHsqYkkHzkVQyRV9Ig6oWXD0VDdB
-	fXGQt87aoI6xDvuH0UjuFseT8Pn9V6Pl76/KxcGSR7pUroYd3FhUpOcXHV1eDA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: phy: dp83869: Support 1000Base-X SFP
-Date: Tue, 04 Nov 2025 10:10:42 +0100
-Message-ID: <4689841.LvFx2qVVIh@fw-rgant>
-In-Reply-To: <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
-References:
- <20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com>
- <20251104-sfp-1000basex-v1-3-f461f170c74e@bootlin.com>
- <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
+	s=arc-20240116; t=1762247481; c=relaxed/simple;
+	bh=9J+2Ncm8oVWBPd5VHBjHUmAAaRGBje5NyAVuz16rG2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cUIpLpQ+3YbSC5w7mlKhfz0iENieGzoNj+r0hagpyI/9fdB+FJKMzULqpMJzNpivcBwvInsM0N6xYQ5uugXemFVgWrxa7jRXcNG5cN/roxyPyuJQxG4GKP8r1943rUteBvZZDUFO/wJTxbocjnfhawytEH8rH0h7fcpcx7a/HZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEY4aI3B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611A4C4CEF7;
+	Tue,  4 Nov 2025 09:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762247480;
+	bh=9J+2Ncm8oVWBPd5VHBjHUmAAaRGBje5NyAVuz16rG2U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aEY4aI3BsmqJaPusuATrULwlpRPoNmKwq5VpEgyucTSgNkgsfV10zhYZ//vWi/ppY
+	 AiyfGXAHAT2jfq1YAZFBvgtky5fZhrNKS1XV6HOt2Ij8x+IYYBy8aUJcuSrvJan30s
+	 COl5vbjO0oS6tB53CH0f8iejmvdbOigIkRg6Wjpzk+XlMSWj5SqYglvRkhv8EMGakz
+	 haRdvpP4GVBcb4mrAbqfuj00PZE5FKuzNSLJ0WSQtWwlAW1x4Mh49evNVkFwH+jnG6
+	 V0TTWvF6e63W96SoW83YVqO4GJBCt0NbVNuB9F38xY2eHPrzAgUxH7bAI7/l4BR1H9
+	 h0GIepVvSOWvA==
+Message-ID: <8461cbfb-b042-44d4-a71c-17559f2a1e21@kernel.org>
+Date: Tue, 4 Nov 2025 10:11:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2387650.ElGaqSPkdT";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] rust: transmute: add `from_bytes_prefix` family of
+ methods
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251101-b4-frombytes-prefix-v1-1-0d9c1fd63b34@nvidia.com>
+ <DDZN5VK2OK1W.25NNI77Y315WW@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <DDZN5VK2OK1W.25NNI77Y315WW@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---nextPart2387650.ElGaqSPkdT
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Date: Tue, 04 Nov 2025 10:10:42 +0100
-Message-ID: <4689841.LvFx2qVVIh@fw-rgant>
-In-Reply-To: <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
-MIME-Version: 1.0
+On 11/4/25 5:55 AM, Alexandre Courbot wrote:
+> Rust core folks: if this looks ok to you, could I get an Acked-by to
+> take this through the drm-rust tree along with the rest of the series?
 
-On Tuesday, 4 November 2025 10:01:36 CET Russell King (Oracle) wrote:
-> On Tue, Nov 04, 2025 at 09:50:36AM +0100, Romain Gantois wrote:
-> > +static void dp83869_module_remove(void *upstream)
-> > +{
-> > +	struct phy_device *phydev = upstream;
-> > +
-> > +	phydev_info(phydev, "SFP module removed\n");
-> > +
-> > +	/* Set speed and duplex to unknown to avoid downshifting warning. */
-> > +	phydev->speed = SPEED_UNKNOWN;
-> > +	phydev->duplex = DUPLEX_UNKNOWN;
-> 
-> Should this be done by core phylib code?
+For drm-rust:
 
-I guess that enough PHY drivers do this by hand that a new phylib helper could 
-be warranted. Maybe something like phy_clear_aneg_results(), which would set 
-speed, duplex, pause and asym_pause to default values.
-
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart2387650.ElGaqSPkdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmkJwxIACgkQKCYAIARz
-eA4Lgg//ZkSNIz8w17WdBe/2GkkDoBqglESJBCzjpe+Pheqlcw+QL4RECY0JIfUy
-Lz6bNYx412qsAN2LEcSbwrOBzbwLM5KXEP5jBC7jM1nn/8+Z5iILA9ccFTNbbMce
-2IQO3Ne1zZRkf4xRECPLU7rFh/kzMKOiarXTp+90dwebYEJ0s4SN/ODRXMw4T6OP
-ZeK93PZ3QKVLSyt7m8m4h/Na7NHnLcIZhefl8aRnX3j36AeHdv2WWh4+io5L7DMl
-nIch/GVH3++ah0W8RZmj6Cagd0MFzO3M0QKawHbTPsLF3U2CHY0dFJxSY0fKERrT
-MvzL3CzPKyaqQtg6mG+WnS0sFWqvQ6DiVb5gmIldwwBCJr1KIzLTxDq3UDQJize7
-nZgEHqbcdnEwQlKM3KnipbyOVodDlKjOJKEC9vMk/OjeUNVAqg8bT0RH1OdH5c7d
-aHvOxTqfY6GXeNM2xz3Sy0VYTEaedGAtfF1jdwna78ArsNj+eXFuPnAKWRwjKYI0
-D6Yxe4ZZSjAse6ujm4Yn0C34SRCYFW6jPa6GoQbfRQUhoJZgXGpRR+OapIQkjfJG
-Gyl+SWP0Scr4O3sJ/GUIh50ZRvkB2evoLeVQyhaKO2DOgh57A1Vlqg7xhZgsDWvh
-rGg0fYENiRiBlBs2inSmgd1FhhjwNlGU/FSbEsf4oZ4kQzLDMQc=
-=o8N2
------END PGP SIGNATURE-----
-
---nextPart2387650.ElGaqSPkdT--
-
-
-
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
