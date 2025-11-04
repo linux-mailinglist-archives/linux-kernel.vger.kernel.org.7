@@ -1,128 +1,128 @@
-Return-Path: <linux-kernel+bounces-885289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FBDC327E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:00:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB907C32800
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151C73B2E90
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:59:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FD994EA909
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0523933B95C;
-	Tue,  4 Nov 2025 17:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F27133DEFC;
+	Tue,  4 Nov 2025 18:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="FR7PPXiR"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UR4+Tqi1"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9EF2D7DC0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB8232D0CA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762279157; cv=none; b=WtNPDuavfFc94UWd/X4YgAog2p70iFn9wlaTv4yOrfQh8YfMghQOv1+Nz2sKtFfwtDOZz0vwG/1LXCjB+DMQrv9kH6UTlCdrf/r+9Dc2pCd4wAlpe4mN6+pLafQ2tez8PcGh8/PIkVE34jfGbFdm1X25HUbYSPq1+FvN0Uz9nRg=
+	t=1762279353; cv=none; b=TKMeeWY4naFE2ZFBoK9PZ+2EKyJ/l2v8scRd+digH76R4GYtYY1KzaCvidhI+rZ0BDYj2scLfDqBu7Du4cjeuRSokuhGe1F66UqY+eO/a4aancWaO8HLoWJOXq5zgYjDvnAQ1sXUV1DLI7uy69TBE/Zt8GMwA7pFOlzYXPef2J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762279157; c=relaxed/simple;
-	bh=vlobM313B1VdZJBATZK2pcRUJ2dE6lyciVzZaQ1W3TE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJf8I5ub2oyW8mSrdkWAV5crT05TZUaFs4sBTQOFGKjpeiOgvSnVEb06H32odFzPU2/dYgubx46y8js1xz+47KoIr/RskfSp8T0TLuI2ksY0rhHbXCRB8QkMC/1mnObkHqWnPiVRpi9WeApcQJTT+bf0lDa4nLvVIWTYYNBIee8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=FR7PPXiR; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=J2T93GZ4iRg/mXaOUM2wPtUcrFT6Ce80fUC5fly//tg=; b=FR7PPXiR6QTPHE7f
-	JNYRc8Pv8zmiwEXXZZiML1cGSQ/67sPPxC66c5986choXJCJQo2Ts6kk7lb3rrYmlCaIiOPc5tdyY
-	rVA8BmEjDqmB3Gkxkwyd8DUVarGegVTrbeqf2d9QgYSTM9swAM/yh5ORVzF+6AbkLCwM0PN7vBG4p
-	bz1WV6OvaTJwt9BrRtr0MLWSqRH76f+MelLBCGGDq2pMw9XVY5EmJx2w+M4UEK15Q1gqH1EduPO7J
-	ZZjgdX1ul6cXtnbc4nPt9CosEDsAXm+8DZsV1yyYgQtlYe3TXN/Ttte/H5O8dG6R2r4zYpYcdkKdq
-	59PqQ6+C8O/NfqOByw==;
-Received: from dg by mx.treblig.org with local (Exim 4.98.2)
-	(envelope-from <dg@treblig.org>)
-	id 1vGLJ7-000000020YW-49uU;
-	Tue, 04 Nov 2025 17:59:02 +0000
-Date: Tue, 4 Nov 2025 17:59:01 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, sam@ravnborg.org,
-	benh@kernel.crashing.org, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, rdunlap@infradead.org,
-	Cedar Maxwell <cedarmaxwell@mac.com>
-Subject: Re: [PATCH v4] powerpc: Use shared font data
-Message-ID: <aQo-5T8z2nwtNe2p@gallifrey>
-References: <20230825142754.1487900-1-linux@treblig.org>
- <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com>
- <aQeQYNANzlTqJZdR@gallifrey>
- <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
- <aQgJ95Y3pA-8GdbP@gallifrey>
- <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
+	s=arc-20240116; t=1762279353; c=relaxed/simple;
+	bh=OF+yEyqL038M/7cjkLTDiCOgvMsbpIL4Y8u0B391S+g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VPY5BvrHpqYdzw62xcVneZ0yhxtKzkuy5yDAxfvORwY3iJXDYNglMlTXSVaP38VsP5jQqQt/xUvWLlD9OsiKyJGtephWba9MUbW2frUiVECsedy5mqy4JvpIGvgDsSF1P4Vzdqzc6rIqOCSaVVh4IJ2uRFSUF/IlEsaIWdPaXcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UR4+Tqi1; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so5117738a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:02:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762279351; x=1762884151; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7TAMX5tgRxcaQgmnIz2dr5/J34h/wClq0GmkAjx/eU=;
+        b=UR4+Tqi1L73FMojp9iVDZ+IQvopPBnewz3yrj2mrt7+uFNjZMEjoss+Y89vqlTc6g6
+         1QkCZc49hnn3O7tD4S7+u05OBdO+fT/7uw3I/UwXMma9HKDA/6rCnl2wgj3kVJQZS417
+         yoZ/RY+RRIFriCAwiiTn8qM5VemCllpOot/NyH5hPEz7pBGdGOsebyz/vUx8p2Gej/Jw
+         sDFulLp3PJfS+bm/nMZfEN1zAMUKII06enHPIkGOLq1o/At6DNDteG6Tgax73nvNOvqr
+         h+ESmxXJjVeyOzvG/eqKQHjmUmq9C59EmIZ0U+uD072Y8LJ6RmdSEurrbVCQ9PE1+2XT
+         7crw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762279351; x=1762884151;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7TAMX5tgRxcaQgmnIz2dr5/J34h/wClq0GmkAjx/eU=;
+        b=QN9+DqpZjimhg3izrx0V1b0JtUdmgjQaz0NgbIPZ2hHVZCtWfixYEetDAXuQ91Zh7C
+         KF3yrU+DACUu4cjNETWmAgfgBB1baRsb8kcZSGIn7hxvlI89hfoFB/MZCIfBZLGyf2uW
+         FQXMfAqFjlO8fIo+TL9aTTV4QLU1GNjeIg9swxARLMw29hxLLSBVT4zjZCK8ci7SSnE7
+         jbOJ/pb4XsYzZnlCD8adFN14fQVxb3mdnFmQTI6L3Tl+TlPZXiixzNURiGpxZPMXHP5u
+         kgp49CpOsen9eXFNUJSsR3V9Pza7Go9xCD6hvovcMAFngavOdS7lGi2gzPK9wJJ2y7Me
+         pmCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzC4L1x2krRgBT41sXLkyKZ2w//qtIrSvDmGT/nmN3Epp4kVNk2ZgrIrCtfLUzYFBHoHmSdxCTwQMqun4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyytOifZw7HWYpUfZAgCIFZxHk0MHDCVFZ0NUy9piecjA9ORfja
+	Lf+8JyBQOA9qYf9OrEe9vVbchxFvrcf7HLqHzcRedb+u2yxQmYIp3LW+U5wWNpFYzyT7/F6cxkt
+	/n7OEkA==
+X-Google-Smtp-Source: AGHT+IEToeihVC8rNRp4WXHuCXbja7cJV9DF8/gVM9lRFkFysIMA8abH+TqAL0waWRxDGRap6/agKlo3e+8=
+X-Received: from pjbmv10.prod.google.com ([2002:a17:90b:198a:b0:340:d512:22dc])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6d92:b0:32b:7222:7459
+ with SMTP id adf61e73a8af0-34f8591c355mr151990637.34.1762279351036; Tue, 04
+ Nov 2025 10:02:31 -0800 (PST)
+Date: Tue, 4 Nov 2025 10:02:26 -0800
+In-Reply-To: <31da959f-d004-4ae0-a6a7-d5d31b646b70@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.12.48+deb13-amd64 (x86_64)
-X-Uptime: 17:58:36 up 8 days, 17:34,  2 users,  load average: 0.02, 0.02, 0.00
-User-Agent: Mutt/2.2.13 (2024-03-09)
+Mime-Version: 1.0
+References: <20251030200951.3402865-1-seanjc@google.com> <20251030200951.3402865-28-seanjc@google.com>
+ <31da959f-d004-4ae0-a6a7-d5d31b646b70@linux.intel.com>
+Message-ID: <aQo_spywQuek7fUi@google.com>
+Subject: Re: [PATCH v4 27/28] KVM: TDX: Bug the VM if extending the initial
+ measurement fails
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-* Finn Thain (fthain@linux-m68k.org) wrote:
+On Tue, Nov 04, 2025, Binbin Wu wrote:
 > 
-> On Mon, 3 Nov 2025, Dr. David Alan Gilbert wrote:
 > 
+> On 10/31/2025 4:09 AM, Sean Christopherson wrote:
+> > WARN and terminate the VM if TDH_MR_EXTEND fails, as extending the
+> > measurement should fail if and only if there is a KVM bug, or if the S-EPT
+> > mapping is invalid.  Now that KVM makes all state transitions mutually
+> > exclusive via tdx_vm_state_guard, it should be impossible for S-EPT
+> > mappings to be removed between kvm_tdp_mmu_map_private_pfn() and
+> > tdh_mr_extend().
 > > 
-> > > Anyway, I imagine that the problem with your patch was that it relies 
-> > > on font data from a different (read only) section, which is 
-> > > unavailable for some reason (MMU not fully configured yet?)
-> > > 
-> > > So I've asked Stan to test a patch that simply removes the relevant 
-> > > 'const' keywords. It's not a solution, but might narrow-down the 
-> > > search.
+> > Holding slots_lock prevents zaps due to memslot updates,
+> > filemap_invalidate_lock() prevents zaps due to guest_memfd PUNCH_HOLE,
+> > vcpu->mutex locks prevents updates from other vCPUs, kvm->lock prevents
+> > VM-scoped ioctls from creating havoc (e.g. by creating new vCPUs), and all
+> > usage of kvm_zap_gfn_range() is mutually exclusive with S-EPT entries that
+> > can be used for the initial image.
 > > 
+> > For kvm_zap_gfn_range(), the call from sev.c is obviously mutually
+> > exclusive, TDX disallows KVM_X86_QUIRK_IGNORE_GUEST_PAT so the same goes
+> > for kvm_noncoherent_dma_assignment_start_or_stop(), and
+> > __kvm_set_or_clear_apicv_inhibit() is blocked by virtue of holding all
+> > VM and vCPU mutexes (and the APIC page has its own non-guest_memfd memslot
 > 
-> Stan tested my patch to remove 'const' from the font_desc and font_data 
-> structs but it did not help. (There goes that theory.)
-> 
-> > I wonder if this is a compiler-flag-ism;  I see 
-> > arch/powerpc/kernel/Makefile has a pile of special flags, and for 
-> > btext.o it has a -fPIC (as well as turning off some other flags). I 
-> > wonder if bodging those in lib/fonts/Makefile for 
-> > lib/fonts/font_sun8x16.c fixes it? But... this is data - there's no code 
-> > is there - are any of those flags relevant for data only?
-> > 
-> 
-> I don't know. But I'm sure Stan would be willing to test a patch for you.
+> Nit:
+> It sounds like TDX is using the memslot for the APIC page, but for a TD, the
+> memslot for the APIC page is never initialized or used?
 
-Can one of you point me at the config you're testing with so I can
-try some builds with it.
-
-Dave
-
-> > > 
-> > > The BootX bootloader doesn't work on New World systems, which is 
-> > > probably why we don't see this regression on anything newer than a 
-> > > Wallstreet.
-> > > 
-> > > It's likely that other Old World systems are also affected, if they 
-> > > are using BootX. We don't yet know whether the regression also affects 
-> > > Old World systems using the iQUIK bootloader instead of BootX.
-> > 
-> > OK, remember I don't think I've ever tried PPC via MacOS booting, so not 
-> > familiar with it.
-> > 
-> 
-> I will try to set up a MacOS guest in QEMU, to see if the hang can be 
-> reproduced that way.
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Oh!  Good point.  I'll tweak that snippet when applying.
 
