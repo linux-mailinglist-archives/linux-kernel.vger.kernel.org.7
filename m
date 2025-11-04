@@ -1,196 +1,271 @@
-Return-Path: <linux-kernel+bounces-885094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FD2C31F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F983C31F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16ABC1897BDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0BB41893DBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91DC2FABFF;
-	Tue,  4 Nov 2025 16:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A57286890;
+	Tue,  4 Nov 2025 16:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FzYeH9t/"
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="LEvHRU3A"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020079.outbound.protection.outlook.com [52.101.193.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A930280A5C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762272635; cv=none; b=PPwPD+EfvHnJqh6pMzsrViqduFSL55mB97Vvh6KwCq4m2EJdiRSh292ODLjWYyM5xvSRXdyXXZDDdzez92EaQhb2p3G3SUtlrN5tLeCntNm+ecO8IcKjNpVueDT5xv5Y7h3P4v6prrNFioXrXogaGPZkjac+xUcVIGeyEfL0kOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762272635; c=relaxed/simple;
-	bh=F5wTwlPeqv/P0weo9Z3cX7yXdvdLkgndYm6p3j3f/kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUGpUpsYQ3XvOa1wDxwfR9nlwvFB0T6HxhWzKuuH4U7h0tVXy4P6YOA5vK5SdNuIluFcriTu0wEKW6Ryn4/cQQQC2AaG/um2oSv6pi5GM9n+OeOQiatIhTYE9JPSPugCYGIanoDiedx8bwmfgnGQ9yP8ChjpcLlsiAyHtdQdNsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FzYeH9t/; arc=none smtp.client-ip=66.163.190.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762272632; bh=tribQdEuQHZnZfmWubrTsreLihCksXvfegAHEnde0Qg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FzYeH9t/K9NDb7vZHCiPJmd4rfDmdxM2gs/yl7AahhQZcvWMa+iiaiK3w3mIEC2q6k3VTp6BkRTI7p20OJd07+yN0iP231CkVxJi32vtLwGAlHq8UXaWuIfd2nlNyQPny/+8JL+ddO7tJ4hHRS81eoNK1nQXuJ8RsJxF2SFjvrZVl24k0Wq0/JRYMyH5GmRwbwtVKXyQxJjmkLQHobXikjRebNuF0CcCPrCzcLqOczD2Yvw9F7vHgUk66ftBawbeE4Khe9poN2sXWgxTmzlcOYtNWbEeiWfDdJeFwMbs796MKe1an4/gwmzCmUPyasESqEiBYHxgo9PXT+GDWLHcfg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762272632; bh=Ho/DyqiXspCba7rtRLyocWqOZX7C+utWA9h4pf2z4kQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=cdV5hJQYLctPZClXx4W03uPapfuH9uJX4kIeZ3rHxg2TiX95HyS7Yc7TxilBBL0Ix7JpfGiruMktfgSCD4bIyVyuDEbhmU0zb6rYOQjUCcA1mcpd4Qqxh4AOjOHJbyxi0+2Wnp0qBV8koj/Vi0veIaI58Ee39NAnYm/ivU8ncI6eRLfQdk/Q6aY85UXpFjU8F0pdvj14kPyWuUSMyb7rsz348BFOsn0txzDs1h76091Kie3YhxbwaSbMEr481jq6nSID2K1Zv0EZKWwYNRPlywcnGioGYU370TLKpgOegsLHymMh6DaqSeg/d42XP1mex3Zf8UGAnW3ZwXvZMz/2gA==
-X-YMail-OSG: BlAm0CgVM1kr39uzWq9dBnRV1Sp1ZFfu6Mimh8dNIGQNqbpnQQfM10bZ_cY9vrB
- 2xnbw6L6DpPPuCPp8DBytsz6v9PhoooJD8c4XoY5QFvc.hRPNYvoys7uTi8GQ1tPTZslfX.AfN_d
- du4v5B_hSNZrZqs4tHSF4I16El_mZ4uaTcF7FL8dMhMS0q2VrMCnrxlEB0_uTmfrBkkzfR4h2bEM
- 24jNxrchux7RFIZnoy5Xfs_DgErjAqESiG1GJWmUKKOLfDnyTESegC8Bf2piSOTdrlU3m9.bdKEj
- L_zKzuI0kAcVrfRZvZgmRDwdERIDmXvQaaBhs6EChhFwotdJecQZst4gXcxz8ToCmLj9CGxeo3o5
- s63LSxszt3cDuhqsSJn8tfJURUfht8iNK0UgCI_tZXRT_MaBG68jrEJoP4GXq_oyYd0nYOJh_I5t
- pNEL_OA_CkuJfSOZ9sIqpkZXgfGa6P7yz38fr0eTKzOLou_luNOeeIGX_DC.UUZYHyFn8mqZxDoe
- dPWJASG.TiXpNl1mbQUEZYPSoB8MqtOzQ8vfNnEq1iSpC7zFXXZ.yQ6Tf_cXeIes0HrSgNOpWc0I
- FRFrLlaQlvAXoFeUbNQHANp3x3czYJ6v9YJaw.C9jpz5g_Z9kwgOOZktiEbv5O_f3zemXrCzfhIZ
- JEc9vYxPvUY1H8wfbIOr7Oo4KTsGwMkkuD6kbF9Mv.7sQ8pIwYkxwu7fhLfWM6agQ9BMz9pVcb7R
- UwBq60NV.AoGi5GKsyTC4H0YmB4xWVTkPR7tq7mgGcZVBPFevUE.WNBRiQxbv6Ot1P1Woo7AhXD1
- in3uaDVEwbWhVwnMGFVYgyZCvpkmccJ3Mepq2EvDqPaBMdsomSlW2_chL0v4x23ynJpjNCCwhHpI
- 68mOI5b4vPHs.N6GWTNIQvdokNVudil1b7TssAtHn3OTz63gB7rTnUck1ttUT7Bzw9qeUnkKqfSz
- _rPHSJeqca5L2Ae6A0bsyQPHXJuTnMloFtCWsRWstqd3zUzFy.6JAnfUgG1cZ9AGXnJqfGN.YDaN
- 2N9IN5M3tJP9IQnABceD_f4gmv52oeHUiQV0JKEdaqJgx_HWxiB1E7WvDA9Ho3CRX28U.bAuVIgR
- yoaOTAN8qRU0Il_Sz0skHyemDeE_HrPVjzjBXGvBDrlv9N5YV8YP.uCx_cp7hv0oRH_NGZsaZ0uX
- XzQ61HlvhZCgs9L0aehNaFSSNCeswA4me8Z1aROmQM1eAiB2ii0Df9GJWCwc99LIwZ0DL9mVR0zy
- m4vv4HLkPuhold6x0Pq_WdGRQr_PpjbFO3TIa3KUGCVc9X.XRMwMmaG7dABE.zPotX0k_25ZTyvM
- 5gyzz4lNObhNX2FgH98P5CiJ_xXz_qWmmJdXiB3sReh8KXyLLOVvd_6QT718m0hhsuImw4m3TGf9
- XeDT8tp0VljLeR.YdH95UpeJS_S.mjjI2Ygwro_ZPscOTP9c9aie4cerVPoWMZBfFlw1wLr8brdI
- cZL0Shj3Ml0TSzmAxItyUMKcfdrqIQcmrdBsgdJ2u8X7HKP6BCZkQWOlFYsTliQMOYOMNygK_Liq
- uCicsLPY664rb4EwfVyM.Lta5yebJcho5lgJUu3yxZKsV7n06Ha6Ax7VbBp8jxyAU0x8k48.n3iK
- 2oLKQgAvY2A3N8kyMzvL48FqOCqOwZnwmkdLVrJvbE7U4.wRcIgZmAVOt0CHjIru.Qzbeyuxq4WH
- 2SIb12rTrk22ufC16iTWzR8CsbzGkcN1fFsh2CC0ky4gbEsE8.ToAKcMh3FDNZhIZa9CS_lNZY9i
- ZYwAabVgZQ_cpL3nLr7bVuODRFpfB9spwrtSo.BwCJUa4mFuHSuuU1_WjTCzwWk4.duojbq.EeVR
- Dhs3zYmfmixC0BEbMfo6YbNNdftKnS.lUZjqO8jqPi.0uwANyMh6BVOGcgt_RI3Sh_ndMSYrHzm9
- .HPe9oO_f85IHpgWUdxaVrfbFvbXQCExAKge2mlP7OXfUNfMYQohIKuToftzFxDf03iDTAWqXs1O
- .gg3vL6_v8pnHxu_yK6ewDI3Z1EszVWRAvq7CKHDOo0va5_3MyALhQPKyvosvn3SfR9M3n1o4WRp
- grsdOXTlyJSGyxsWpPuolKmmvuJZmDWNXGJBCfIALuXTyHZwnY_lTih3MyO1ioS9FSWM1tBD91ey
- DvbXW_xmFURg4SKGb3HvL1P.mfuRZO0wkwNF_wQK2TOGZSQD2OkRITHQL81rJo41LHKblV6Eawg9
- FJcWJDPIMOClW2qzqke2TzmabE_A.vFsq7wfCUCQn8aNErdom0w9GJoQP4bjPraQ5mLI4bOqUyBd
- vt0TWKks6thsL96F53WhkIUNfUIGEkQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 3dd02983-d416-427c-9230-2a67029a5c13
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Nov 2025 16:10:32 +0000
-Received: by hermes--production-gq1-86c5846576-qzzfn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 941545f190b32d1bdf3fc1f206b502e7;
-          Tue, 04 Nov 2025 16:00:22 +0000 (UTC)
-Message-ID: <4c8a2252-5df3-451b-b6f5-e87cf7a161b9@schaufler-ca.com>
-Date: Tue, 4 Nov 2025 08:00:20 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD9D264630
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762272042; cv=fail; b=ldQUdJCBcMIWLq5s98GHcKDSR4ffYdIk6Uv5WPilhQQPU9maShCQENfPS8Ffd8VNo/syRDCzTU5oEgpfPzdfYnVLkm7IF/IdSyYfosMhSnKjgb4UqXNbo4hGEAyANVfZ6vyLUTgfZA22RlQy5f9rfBeu2SJFW6os+4NwSsxqmk8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762272042; c=relaxed/simple;
+	bh=imz5cTwCd1QDXJ65S7oAxkqt4g+w2nDQ1GVIaiMwvSI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SiFV2a/r+ZI+y73WVZhw/yWq99xfFs+w8lOS09+52NUbfPocjIAymoaQpfODwvsjcQSQ93zLLnAS9y8EwtryMwsY0yHo7TrNeGR/vc2iK0TA8EjGpRBL1g1Nj33ErglrwBbLo0kTYwX6Zzk0tH6o6w8P8YCduA0fFlLhiN58454=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=LEvHRU3A; arc=fail smtp.client-ip=52.101.193.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GTqLJaC1pTOZWvrzSnG3CT8uxPSAMl7GZ5VqVlT3kfHKmFS0ecR0CILRDZVt+qLQiTJjlSWLcvO4aKMIy9YmS+w2ZzHU6R8jy5R6TJdHdoEVtYONnmkxjsgowQhizNTpmMTxIHZcN8nY4vVlGbSTplcXsy44hkffQEKqJFlJIZl1lDsIf7gZ4T02UdUFSdpBwdsOcyDzCwAeVflpZLhQEYSLXjAoMZaOcrnAodc2Upf4vGIiJrLoQ957Y8Lv4c8gPgS28FBWpr81GtbImLx1W0YTTIw33p84myBXPyghKedMnhqAwyshCXrLnpFnf+dkz3OfSHURezzp60PaF0RSjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0vuR2+oyDx28UDys4tZfHJl7/N4P/mSZutONpJEH+n8=;
+ b=NMHgj4Vziz4r16Q687dQnvSlGX5J4LOO5fYh7/3TyJ73Z5GLxkBwp54X7qME9FKtnwzSHyis34vqPDNbhp/leFFM7b8nX07z/XLjlkSn84HW3uXUxwBBFIXIBUfl7wNN3tTg/WHnWHnRgLmggSh+y6m+l/2RIXbwzQ0cWUpnMmBjBGS26QSCduY9pdAesFqWJh5o6DX7zZZhYtMKLijwjgD9e9gZ78tn8uLzhTJOrYRZLpxVfOhXh77qZ0KLLCtJFm1JiaM460a94uv9X8sxBEt/SvwV9/LIxnlzqVpOsQMdjXltTZZashLJ/rU5liylygJv9czgBm80tWKsaYb/jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0vuR2+oyDx28UDys4tZfHJl7/N4P/mSZutONpJEH+n8=;
+ b=LEvHRU3ALEi+ytjtULrO0tn1++woYloMspASKnZbCa3K02jkpmILCZ96B3p2qhtP2kQgxcViOU/4z8Vdcrd3f/gyy799WUDUx2VjacOAKKntzNJU0oOUJGRkgCdC3TG6ZVvNAsFvwrybOm/Co/QEz293UVAqPfRBMnFCPUtWh8k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ SA1PR01MB8204.prod.exchangelabs.com (2603:10b6:806:38c::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.7; Tue, 4 Nov 2025 16:00:34 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9298.006; Tue, 4 Nov 2025
+ 16:00:34 +0000
+Message-ID: <663493ae-6b73-4c63-b306-66bcca17fab1@os.amperecomputing.com>
+Date: Tue, 4 Nov 2025 08:00:31 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: kprobes: check the return value of
+ set_memory_rox()
+To: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251103194505.4077265-1-yang@os.amperecomputing.com>
+ <b5b978f3-bb29-4cbc-b006-fb9c4402b067@arm.com>
+ <3ad071db-775c-491d-ac31-0f4753eb3bce@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <3ad071db-775c-491d-ac31-0f4753eb3bce@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CYZPR10CA0010.namprd10.prod.outlook.com
+ (2603:10b6:930:8a::23) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 5/15] LSM: Single calls in secid hooks
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250621171851.5869-6-casey@schaufler-ca.com>
- <ee015074a9019ef4725f7e613fd76f86@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <ee015074a9019ef4725f7e613fd76f86@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|SA1PR01MB8204:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6e91869-9d0d-494d-0c90-08de1bbb49d3
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MklNZmlwZjFTaEV2WTF1TjJXcmhzWURvOVVGT2dyT3NtSkdTam94UzdDNmpS?=
+ =?utf-8?B?Q1NMQW56Z0NYeHd0SElQdlZaOG5pZGo3MGdva1YxVGVUaXRUZ04zanZBTzdz?=
+ =?utf-8?B?cHNUeUxvazZSL3BBQ2swN0dDenlQcmdHWEw4RGNhTHF4M3d0Y0U1M256bjN4?=
+ =?utf-8?B?TVJZQW1vUUxJSGh0endUMzZlcnAyY0s3SWt0VW80dTRhNUo4TFo3VWR5Sk43?=
+ =?utf-8?B?ZHRwc1lVMWtBYlRtdEpxQ1l0YlZZbTd6MTJsdHYrWjJNTUwzZjRKS1JSUXVG?=
+ =?utf-8?B?UkZUNWsraTZhemdWSHo4SkVYV2ZaVTNrNEJOSG5wYVpSVkFKWkRGQkFCNTQ0?=
+ =?utf-8?B?N0xTdENIb085L2FuNW95Uks2ZmJiSVFKNXJVZXBjejlKdUhSQTd3dTBVWXhr?=
+ =?utf-8?B?aC80Y2FKdXkwZEJESnN4bDV5bTlRdTVkVEMyZmEzMXlYaUxHZlpmYjJjVFBO?=
+ =?utf-8?B?SWUyQzRydEhlc25UbThCdnNMZTZxUDVsR1N3c3QrS3ZjbHdIWnF4QVNuZVVF?=
+ =?utf-8?B?SWlYVkRhUW9TS3JGSjF2MWpyMTZZblYxRkVwQVBzcUpyMy82cFN3SjlZMm5Y?=
+ =?utf-8?B?MFk1a0VjVUlGaDltSjNZYVNsNTA3UllTMDV6Y1VBOTRZR29VMVRLeS9yeXRV?=
+ =?utf-8?B?azl1MFhwMkxKZ1VWbklkZ3FZaFpGODZPaDl6dmh1aHJiMXBnVXlMMSszR2h0?=
+ =?utf-8?B?WURIK2ZlejlqUnVpeEVXWE5nK0ZNZ0R0ZlNNY2gxMGcrMExJeXQ5SVJVejc3?=
+ =?utf-8?B?bllTWXZVTUQ3ckZ4NVRTRFMrbFRZRXpveTM0WndLblVLMUhoTy9DMXVpVGpU?=
+ =?utf-8?B?WUhCTDFNZVhFcjRYTUFWdXl4RzJNc3QyVWVnanhmNG5JNDBIREw3QkFBVHY5?=
+ =?utf-8?B?RnkvTkhuTTRDVjBORWE1NGxYTnNwTit2N1VVK1AyMFFhV2doS0trRlBWMFJu?=
+ =?utf-8?B?RGVjMk5uTWR1UTlZNjVnaTNpV0UzVFVPVncwbmhZMkdRMk54OHUvcVRoUzhy?=
+ =?utf-8?B?RHpvUnBMSzFGRmRuSWN4WWNTNUt4RlBpR0VZUm9yckU0NjdSMCtoY1Btajdk?=
+ =?utf-8?B?UGsvV2x5YVFvTThIM3BTQ0dXV3pyMEhNMEdZamtyR2xtZHRsSGxkZmU1TE5B?=
+ =?utf-8?B?TlhIczhXMzFzTEV1WUNNejJjeTVkVUszY2FQZmNrd24vZFo2RTB6a1NBaFhn?=
+ =?utf-8?B?NTBNaFFUZmxMdlNsciswTERTb1YwdHFqaFozTVQxT1ZJalN4eEhTRUFCajNE?=
+ =?utf-8?B?a1QrRCt2L2U0ODRlVGxUQnM1QXVTZGU2N1ZkRndKRTNiQmdaWlB2LzZQcjBC?=
+ =?utf-8?B?Wlp5OGtvelJ1dkVRMWNKVnV5dnBvc2pSaTJwLzMwU1lGb0Vuc0JvN0dHWjV4?=
+ =?utf-8?B?a1JqV2prVWJxakdnM2ViZDhPOVVOb2ZUc0IycnVIcmFUMEVqTm1jU0gzcG9W?=
+ =?utf-8?B?Z1g0bWdwaXVtN0p6YVM5Z2F2ejVnMUg5WVRsNFlOZ21RS2lWREpSN1gzRzlv?=
+ =?utf-8?B?N2xJa1UyNktRenhnU0FTWlN6M0wvWXArZ20rMmhCR0QxWi94WFFEc0pmYUVU?=
+ =?utf-8?B?MTlJTUNoM2o1R3ZBb3RPNHUvanhWUmt2dElaN05ZdDAvR01QamczZW9kQmZQ?=
+ =?utf-8?B?RDJKYlQvcGh5RW9sQ0FMTVBnSDlILzBZZmgzTnBqQlBlVWVzdnRRWE9Nd3Jk?=
+ =?utf-8?B?bGhsWUhvd3E5Mm5VSkJ2V1pyc3hINExzOU1ENEllME05cVBaWHluc05wbUw3?=
+ =?utf-8?B?QU5sZ01QNEZOZVU5K1hLczNNMTZILzNPbkU3cTF4dDYrQVZtVTA3elBuaXQ4?=
+ =?utf-8?B?YVUzSzBwWEJ5cXFZWEE1TW5wN3JsTXJzVUd5Z2lWRloyRCsrVXVRVk5XNnNm?=
+ =?utf-8?B?cHdDaWQyS2VOM1I0WDl2U2VOMktYZEhiaDJKRGlHc1E0akZqSjVxdGhBRlVI?=
+ =?utf-8?Q?DRqXWZ8qSYRhcXze9bzmNIBKbTGu3k6I?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aDVhR2RGMEdkckN6VjVlVWhFVnhIZCs1N2FsUDIwL2haK1hlQWtpWE1SRzZV?=
+ =?utf-8?B?Z0hjZndCdlpyRWlWckNmMWFWTGlKcUVpTEVsTkdyR3AzZnVDekNHMnJmbmw5?=
+ =?utf-8?B?V2szOWcrL01CeW5LTXY4azhENUU5UW9LdGFvZkpyQUVMTWJobmtoc09TOEkw?=
+ =?utf-8?B?Zm1RejYvMmJob0RhMzRnNytSdFBWdDRTWGNKS3FyZENIMFk2Qy9XdURwM3VE?=
+ =?utf-8?B?aVo3TnBsc1N2SkRqeld2SVdvTEt1TTlsNi9QYmM0L3pRNE8vblBLNjlLdDI1?=
+ =?utf-8?B?VlQzbmFhTXVYU0FKV2tLTDFoUzdSUTRoUGsyVVhLcXhnL1FkaFA2dUpDSmRx?=
+ =?utf-8?B?NjBxMFZiUmloaVlPVytFVVZuTlRqdmFTeE40OXN2K2tvc04wSEIvaVJJUDMw?=
+ =?utf-8?B?Zi9RMjk0aEs2Y3pKOUFMLytTOGZ0VEo0T1ZXR05NVDVNSkI2bjI3Ukx3dzRw?=
+ =?utf-8?B?d0pmUDcwbUw2eVN2cElPYnhnUmNYSXNESHc3UisrTExaNFZUNEF0UG5BMVVX?=
+ =?utf-8?B?SmptMEVLeTJ6N25TdENUSmZ3VnlOMjhocUx4K3hGMFJ1ZlZReUNza0ExSXZq?=
+ =?utf-8?B?dStReW5PVlViMHRqTDIyVitiYURpdDY2S0w1b3RxN2R4RXZWcVVlZlRlVXdL?=
+ =?utf-8?B?VU1DYXVDYjljSVN1WEUzWldSMm9Cd0J3Q1lWZGRtNTlITDhKQk5yR1hTc2RB?=
+ =?utf-8?B?Rm40RzV6Tjk4VWd5L01Bdld2bkZEVWJrd1BwYzZ2VUVFWmJ4bU1xM3Q2dGor?=
+ =?utf-8?B?cElVY0FPMGk5aHRGSDFqcHJJR2xOeUtUTWNBZ2s5RmxyUVYrTnFxSXpUM2xX?=
+ =?utf-8?B?S3dNbXd4ZE4zSFZRSTIwQnFrYjhtMXhwSGhzMitHL3BFTTdTbDFDZnQrbVZ1?=
+ =?utf-8?B?SFhRVnhQOVp3ek9US3Jjb1ZuYzFQY0FMUFM3bHpldG1tdmF6NXdsSXV0cnYy?=
+ =?utf-8?B?QzVySm8vNk1Rc3VMUVA1djNhbUFucWtHVmxmUURlalhIeGlCWi9WYnhJUXpm?=
+ =?utf-8?B?ZEIvMUtGVjFTLzZBb2FsVEVVejgrbW1HUXZoTmZCczIyWU9HTWFEeGROdk9B?=
+ =?utf-8?B?S1padVVsTzdPaDhGUkNlb1RVTTR6V3hMTnFNUUV6VURSdVo1R1ZOc29MazJH?=
+ =?utf-8?B?UHkvMXZLbXArc2xWR1p6S0tNWlRTRnJiSSs2aitMeG9PMVhkK2hWbEg5d1Bp?=
+ =?utf-8?B?aWtCMVRSNXJQa3ZkdU1PTmxDRWNpZFN3dGM0N2dKYWUrREZwcWMzcEc1K1ZL?=
+ =?utf-8?B?SEpVb1laYWJTZWtCMU5Mc0xyQnBNOWdRbGtUekFBT2cxVUlFSGdXZ2lYR3lv?=
+ =?utf-8?B?UHlVcDhaNis4VXpnbTc3eERlQmovRmZiR1B2T242TVlUQlBKUlB1Zkw1NUhP?=
+ =?utf-8?B?SEcxUVhZWG9GWXIrR3M5dVhNYkYrRStCaUk5a2RxR3hnanRqeTY5UFZMVWZQ?=
+ =?utf-8?B?T1FXOGNiSEplNHEyQ29LLzhWbEJGK1JnSDNJN2RUN2hSRUdrMkxKa1dkaVBJ?=
+ =?utf-8?B?c3pPdVBMT3VHek9TSVF0eWdGY1lEUjBlT2xUWjFvbWM5amtBVERvVDNNOU1Y?=
+ =?utf-8?B?YXphWW1MMWpsME5yTitBZ204VGFhQitCVmphTmdjTFZlbU1ablU0aHZNNEdh?=
+ =?utf-8?B?bndpc2xTSEMyZnhFQThlb1M3VTVpT2dVajg0c1hIeFNLRzk0T1BwT0QwblVQ?=
+ =?utf-8?B?clV1Rjg1VzdWdGUwYUtka2NKVFFMV2VaVmJkQWYvRlBtY3VPSlRuTzdPd3hD?=
+ =?utf-8?B?NE1qdFl5SmRoMS96OGJyNXlQTWt3MnUzMncvU0FXVHpUVDNSdzlEVUdGTzNZ?=
+ =?utf-8?B?aGJCRGdpczVQTTBmdG1WL0tJeXh5VStjYkpWYUYyQmR3SlZaRC84dWlGSlph?=
+ =?utf-8?B?angyL05BVy9JTXordVc2RnZ6cUk5a1Jqbm9HSlZ5R2M3V3NtdG5hMTNCRExF?=
+ =?utf-8?B?NjNuQy9nZ2hJZXNKV3lqbG9reFF0YW80NnF0eGRudHplQjZXQ0JpRWhJTUd4?=
+ =?utf-8?B?eHFETWJ4eWt4dS9KR2dWVG5WenpTdml6OWpnWWpwWHEzbi9ZL3dRVVpZUFBm?=
+ =?utf-8?B?ZndSNUtmc0hCVFVvWWd3TVBaMm9KTDhlRHdvU2k2YjYzYzMyWE5ONnZ1V2pj?=
+ =?utf-8?B?YmVSZFUzQWhVTVArZUUyeGgvRnRveEkxNzU5UEtpVzd1U2tMNGI3K3lIQ0x3?=
+ =?utf-8?Q?v3qFVrH2LAwm6Edx26ZxlGg=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6e91869-9d0d-494d-0c90-08de1bbb49d3
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 16:00:34.6284
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WIVnntFSBuy6vhvBg+Hdr5WT0F6yQdVKuMSRgJ0yStTGuwMM1zTx/QBddAs2XVvfh333G/VPf968S1kMGu1A8dlTmMjKev82d/WvF+qg+Kk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB8204
 
-On 10/14/2025 4:12 PM, Paul Moore wrote:
-> On Jun 21, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> security_socket_getpeersec_stream(), security_socket_getpeersec_dgram()
->> and security_secctx_to_secid() can only provide a single security context
->> or secid to their callers.  Open code these hooks to return the first
->> hook provided. Because only one "major" LSM is allowed there will only
->> be one hook in the list, with the excepton being BPF. BPF is not expected
->> to be using these interfaces.
+
+
+On 11/4/25 5:44 AM, Ryan Roberts wrote:
+> On 04/11/2025 13:14, Ryan Roberts wrote:
+>> On 03/11/2025 19:45, Yang Shi wrote:
+>>> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
+>>> rodata=full"), __change_memory_common has more chance to fail due to
+>>> memory allocation fialure when splitting page table. So check the return
+>>> value of set_memory_rox(), then bail out if it fails otherwise we may have
+>>> RW memory mapping for kprobes insn page.
+>>>
+>>> Fixes: 195a1b7d8388 ("arm64: kprobes: call set_memory_rox() for kprobe page")
+>>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+>> This patch looks correct so:
 >>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  security/security.c | 24 ++++++++++++++++++++----
->>  1 file changed, 20 insertions(+), 4 deletions(-)
+>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+Thank you.
+
 >>
->> diff --git a/security/security.c b/security/security.c
->> index db85006d2fd5..2286285f8aea 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -3806,8 +3806,13 @@ EXPORT_SYMBOL(security_lsmprop_to_secctx);
->>   */
->>  int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
->>  {
->> +	struct lsm_static_call *scall;
->> +
->>  	*secid = 0;
->> -	return call_int_hook(secctx_to_secid, secdata, seclen, secid);
->> +	lsm_for_each_hook(scall, secctx_to_secid) {
->> +		return scall->hl->hook.secctx_to_secid(secdata, seclen, secid);
->> +	}
->> +	return LSM_RET_DEFAULT(secctx_to_secid);
->>  }
->>  EXPORT_SYMBOL(security_secctx_to_secid);
-> Two thoughts come to mind:
+>> but, I think I see an separate issue below...
+>>
+>>> ---
+>>> I actually epxected 195a1b7d8388 ("arm64: kprobes: call set_memory_rox()
+>>> for kprobe page") can be merged in 6.17-rcX, so I just restored it to
+>>> before commit 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in
+>>> alloc_insn_page"), however it turned out to be merged in 6.18-rc1 and it
+>>> is after commit a166563e7ec3 ("arm64: mm: support large block mapping when
+>>> rodata=full"). So I made the fix tag point to it.
+>>> And I don't think we need to backport this patch to pre-6.18.
+>>>
+>>>   arch/arm64/kernel/probes/kprobes.c | 5 ++++-
+>>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+>>> index 8ab6104a4883..43a0361a8bf0 100644
+>>> --- a/arch/arm64/kernel/probes/kprobes.c
+>>> +++ b/arch/arm64/kernel/probes/kprobes.c
+>>> @@ -49,7 +49,10 @@ void *alloc_insn_page(void)
+>>>   	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>>>   	if (!addr)
+>>>   		return NULL;
+>>> -	set_memory_rox((unsigned long)addr, 1);
+>>> +	if (set_memory_rox((unsigned long)addr, 1)) {
+>> How does x get cleared when freeing this memory? arm64's set_memory_x() sets
+>> PTE_MAYBE_GP and clears PTE_PXN. The only function that will revert that is
+>> set_memory_nx(). But that only gets called from module_enable_data_nx() (which I
+>> don't think is applicable here) and execmem_force_rw() - but only if
+>> CONFIG_ARCH_HAS_EXECMEM_ROX is enabled, which I don't think it is for arm64?
+>>
+>> So I think once we flip a page executable, it will be executable forever?
+>>
+>> Do we need to modify set_direct_map_default_noflush() to make the memory nx?
+>> Then vm_reset_perms() will fix it up at vfree time?
 >
-> If we are relying on BPF not using these hooks we should remove the BPF
-> callback.  It looks like the secctx_to_secid and socket_getpeersec_stream
-> callbacks are already absent from the BPF LSM, so it's just a matter of
-> working with the BPF folks to see if socket_getpeersec_dgram can be
-> removed.  If it can't be removed, you'll need to find another solution.
+> Dev just pointed this out to me. Panic over!
 
-That should be doable. If BPF decides they want to use lsm_prop data
-they already have a passel of work to do, and I see that they have
-already suggested removing the BPF data from lsm_prop.
-The socket_getpeersec_dgram interface uses secids, not lsm_prop, but
-that's an artifact of networking attitude, not what's "right" for it.
+Aha, yes, it doesn't clear PXN at all.
 
-> Instead of opening up the call_int_hook() wrapper here, what would it
-> look like if we enforced the single callback rule at LSM registration
-> time?
+Thanks,
+Yang
 
-I have considered that approach in the past. It would require that
-security_add_hooks() know which hooks are single callback and only
-call lsm_static_call_init() if no LSM had requested the hook before.
-This would be fairly straight forward and have the advantage of allowing
-the infrastructure to report which single callback hooks have been
-chosen and which disallowed. It does raise the question of whether the
-LSM that requested the hook should be notified in the case it was
-discarded. That's messy, as there are multiple single callback hooks,
-and you could have a case where some are chosen and others disallowed.
-I would go without notification, as it's hard to say what an LSM would
-do with that information.
+>
+> static int change_memory_common(unsigned long addr, int numpages,
+> 				pgprot_t set_mask, pgprot_t clear_mask)
+> {
+> 	...
+>
+> 	/*
+> 	 * If we are manipulating read-only permissions, apply the same
+> 	 * change to the linear mapping of the pages that back this VM area.
+> 	 */
+> 	if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
+> 			    pgprot_val(clear_mask) == PTE_RDONLY)) {
+> 		for (i = 0; i < area->nr_pages; i++) {
+> 			__change_memory_common(...);
+> 		}
+> 	}
+>
+> 	...
+> }
+>
+>
+>> Thanks,
+>> Ryan
+>>
+>>> +		execmem_free(addr);
+>>> +		return NULL;
+>>> +	}
+>>>   	return addr;
+>>>   }
+>>>   
 
-I'll give it a go in the next version.
-
->> @@ -4268,8 +4273,13 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
->>  int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
->>  				      sockptr_t optlen, unsigned int len)
->>  {
->> -	return call_int_hook(socket_getpeersec_stream, sock, optval, optlen,
->> -			     len);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, socket_getpeersec_stream) {
->> +		return scall->hl->hook.socket_getpeersec_stream(sock, optval,
->> +								optlen, len);
->> +	}
->> +	return LSM_RET_DEFAULT(socket_getpeersec_stream);
->>  }
->>  
->>  /**
->> @@ -4289,7 +4299,13 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
->>  int security_socket_getpeersec_dgram(struct socket *sock,
->>  				     struct sk_buff *skb, u32 *secid)
->>  {
->> -	return call_int_hook(socket_getpeersec_dgram, sock, skb, secid);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, socket_getpeersec_dgram) {
->> +		return scall->hl->hook.socket_getpeersec_dgram(sock, skb,
->> +							       secid);
->> +	}
->> +	return LSM_RET_DEFAULT(socket_getpeersec_dgram);
->>  }
->>  EXPORT_SYMBOL(security_socket_getpeersec_dgram);
->>  
->> -- 
->> 2.47.0
-> --
-> paul-moore.com
 
