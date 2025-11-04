@@ -1,140 +1,170 @@
-Return-Path: <linux-kernel+bounces-885141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFEDC3217C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:37:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0AEC3218B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E36C34A3AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31177189FB9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C1F23EAA4;
-	Tue,  4 Nov 2025 16:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD97E32E73B;
+	Tue,  4 Nov 2025 16:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEvciSum"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i+MZG+D9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SJ/ro4sE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5AD263899
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8832A23EAA4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762274257; cv=none; b=YKoMkYJc5HfwtmHbGqI5x/ML9f++cMgbx19aVXSNCq7XOw9AHSV7y5KAcuWU61R/NuejHExI/92hyIJnLmH/24X8iaGUsb4lH+k8ARpuzYyrJOBNsH4qFwJp3/5Gqb9mdMO3KAlPDvy8QJgCrURmQEfyS3tQuoJxSYX20TwfCTg=
+	t=1762274328; cv=none; b=h6rZvq3R+YN2RlGvaP4iwdvzH15AlrA2F58SD+eo6+3JjeLiZVaU9qrJJ716BoE7AAxQvyr27HmbDMCsoGyg5ZchDslf6LVcUIx8tppvgiuEOwvW5BcCkz2DzOEjnIsNhB+N64bbr6xM6SUSWdK9Le3NBwaVD2ELHG8UxB0f+PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762274257; c=relaxed/simple;
-	bh=DuOOhubZcWA1xgwlxUOpIDKiy3RUsyOZEd3bVejwO5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZnnAhHZOrhxksX08jRNZWQpJjzmykw+zNOK23s6Mg2qGlxU22ihTbhb2J4/SaLT5I8ZfwPbYW1JaKdvKQ09IjKLmmNRiG8xKunVJPzQZ2+r7miV98v9NvCJSDkwugKD/h3AKK5bWx5KLVWVBZKrHUcPuo/b7JBGriZCsLCQDVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEvciSum; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97F0C2BC87
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762274256;
-	bh=DuOOhubZcWA1xgwlxUOpIDKiy3RUsyOZEd3bVejwO5Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nEvciSumdSXML6/82981cg4ywxlDGMGJo2vxdJgHCvBVkwYLi/74Xg9omMac1D3pU
-	 k4W4hkLmOSux9rCBsDqvuBfBU+tmRNC80e/gE52gYleWIENihN7SvHY1crzp8cG9ai
-	 nulUxXNg8tr9g7srqY9Tujn5/h4+SejVFixj4OarIejH+EnUpR89ku1cNdgkwi7rJ9
-	 ZC192t8HyneHE7+2VZRGW86Y+v1h0u3tpvIBAnFLJ1zh2qbURj2iR5DOWHyTuhw/Ut
-	 DL70wEPdpG4MJH5mfcWPwTUrgHLTbWw6iBR9Ub92wpgE/smkeiBF82hczvm3oXrx8p
-	 Ji5KdeR1eA96g==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-3d322b3fd7eso2115669fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:37:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV2YIw7UtYuBsa3ga9iYdXAMu2Ddvz9Op5j45mL6fyDhg0NbrOrDIhrU32EjAZL7zK2cm8I8QCQMQakB/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGzYnIxVAHK56bqVLGUPmIZtZyeBTTKKbC7U4DKc57wONIjFJW
-	UXUya0vXnX/rHqVccRBpYke1g0WrnDscNeSzkjcVZlOYcT7WBTemJM5a2utD991agdTxtuLP2ai
-	Lv+8XQ1xmjaKk8gTNWYuel9KKSevY68g=
-X-Google-Smtp-Source: AGHT+IFXhOxmxGRnAcwSt+4j7yeZnol49jxRf5wL+5NFterYp0qzsLK3BsehgdFzddQzZeagyb8msspIXFqt3WTKgmw=
-X-Received: by 2002:a05:6871:e70e:b0:3cd:c87c:c639 with SMTP id
- 586e51a60fabf-3daccf0f1d7mr7881618fac.49.1762274256026; Tue, 04 Nov 2025
- 08:37:36 -0800 (PST)
+	s=arc-20240116; t=1762274328; c=relaxed/simple;
+	bh=WP9gc6aoabGI8uiHDARaHICukxcNlD501b4UKexOpVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oPaKSEDojnhGTqWhEfrzwtLLyu7g82kBUIi7zV+giJhisWgCUIWY7LP8qYfFW3gmaEyJC4jbZ9iopZpQS1HuOA5XNWh1LdDMWoCGLr71yjv7YMGMRUPoLWDpb5bC0OFLp4qV9sCykoFb+EpbTjy0KQ/wrKKuDm6NDtKlTGQg0u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i+MZG+D9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SJ/ro4sE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4CgEdZ2026341
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 16:38:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WP9gc6aoabGI8uiHDARaHICukxcNlD501b4UKexOpVc=; b=i+MZG+D9QijvQiYs
+	E5oTiPE4X7OJCHpTaXS8W6BbOL9JuFfBzOSGrV2EXRABaM22NisFXwPEN5KJI0xF
+	EI12SU2ybN7gCw/QqXjRaZ8PoTKD1Uc2nNt50nbhn6nwPwWxIaGUfRTKzHIXjO4b
+	/vRJr5oTbNd15FiAOl7e+DdUe9HaMNoeOl5J9ec9XOf2iAH27ny9OcYtLayrqno5
+	OAt/XXaWJHJDfqAcOW0UWlLG882Io6b2C3UGWVrtlUBsCOLmQ9RnJpO6y7yD2tWo
+	x4UuvD+Jsrrc8zP/0tLA8fcUKVwUEZJjAQIITOqsZnLz3Udrmy0ikMr/T5Z1T3UZ
+	QVuu8Q==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7b6psvhf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:38:45 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2953deecdaeso90365785ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:38:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762274325; x=1762879125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WP9gc6aoabGI8uiHDARaHICukxcNlD501b4UKexOpVc=;
+        b=SJ/ro4sEwYIQXCEJTaNHZy7nrFSWgXneNxXPfnzkN5KzhwQgclVLVOLJ0uZ1RnbP1T
+         qDs6bJxcj2BN5zApJ1+AZY51nvvcP7nJhBIz/BMumdkHKxZPQD6SL/XIIvNEAkYkERPa
+         jMEh32eT4mjd+Es9TTcZ16CeUKIc//QbluxyU0ZFbsH5gdmH8y99qknRTlxdsOyZTDOP
+         zzWcagl9y/bkdwZ9nOBvVWF5efX4ex9rFkPL8yLMJj4zNX2M/i297qULkSRYq2X6szFx
+         ADoZmwCKkjtze+RNZsvQjaHJIwL1dyvff2lkZ4Xq8VgZiaBjMEdiMQsjyMiCNCWmvXU4
+         WazQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762274325; x=1762879125;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WP9gc6aoabGI8uiHDARaHICukxcNlD501b4UKexOpVc=;
+        b=l6MFu0DALovgdbmEkBYilOpqDlduNQsp2C52zKTVBTqcMcStTy7vLcAXCSy1xiR23+
+         2A+dFfXNe+YJI008ebeFojJ9SmztEAk884eXqv8z8VoeE6Vem3ZauCVHaYf89hy1nxtw
+         PyK8RTD0Hxe9n6ru7pJWK4nqQ44TBlb6Ir+Z89V8ncP23fMBZ50FnWUeFxx5aEbjsjF+
+         zox4rWdIY/E1GzGS519yEXUeOkCptky/HnGkTi5bSibtEEb7FyZEbTVsXe3HH+Jr9cba
+         SYR3lbKeZM2JmDNmfLZvM/7hqgqtW2ZKlXPr2FbVUxMMXZt/bHxoj/69GtXHohbsJ3QM
+         poKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcftF1Ozc2OW9F0qTUctnQ9HreQL2bxziyE4M6diqN/cJjLKbL3v1z0jM1IqDs0RdJOty0pjntC5lmsyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8eBACBSSuORL42Su4MDPNJu0AzBZKJ0NmeSLtKIi/ADQgLE9A
+	+F74j7mUakjeAQSYNhfyJbAqon8sIqQqwn2BbmkgVer2K3iIQBXBOaIAKF9As88CPddug27qThu
+	HLy4Sdy3k38OhXlBGXxhQ7+8UPPiuBZ7i126XCOY5LvDmYe1cpgvUlK5xBTurGd//ueY=
+X-Gm-Gg: ASbGncsqn80vX/+KF2yL83fxZH7MYJaWGF13Bl3BkrY6EJZoFkFmWW9p19qQPynmyBY
+	M9jp44naw+/oP5hwHFaU2Lz8NtV5PU5TY4K0nBmNcEa9vXLD/67o2k9GmIDNhpBg3Hry/quaMd4
+	p72l/I8Ks3cOqrchXPpTS5tJZpr942f57jMFXVN16uKIdf7duhHk09XyPSWN69DRE3S8vqOH5Pe
+	XfXErPmvbuhFytby2Mk2pf49btGzgWF1/YEn7HchZ/i8PqQfJA6Y1HIiDw9TCyCGcSjeu63pPmo
+	M+uNcviptgfv/BeMX0vLOgwpsD1ItvK+aezDrlTmBAeWgVSXbt0nQKJ4jp9Z8rX3tWpSejlOzph
+	TCCk2oGM/cXIbXKp0cp53z7pM+jAN8etasQ==
+X-Received: by 2002:a17:903:46c6:b0:295:39d9:8971 with SMTP id d9443c01a7336-2962ad0c936mr3416805ad.1.1762274324899;
+        Tue, 04 Nov 2025 08:38:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGz6uJF0hcsIaWD0Bqp9R29GTarddruadQBQ56H22/WdcYPRdszrtsBx7nayDpricbv68SMYA==
+X-Received: by 2002:a17:903:46c6:b0:295:39d9:8971 with SMTP id d9443c01a7336-2962ad0c936mr3416255ad.1.1762274324314;
+        Tue, 04 Nov 2025 08:38:44 -0800 (PST)
+Received: from [192.168.29.63] ([49.43.227.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601972a9fsm31883835ad.20.2025.11.04.08.38.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 08:38:44 -0800 (PST)
+Message-ID: <2d4a192f-45b2-4aee-bcc9-dbe0dce0aa93@oss.qualcomm.com>
+Date: Tue, 4 Nov 2025 22:08:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-3-ulf.hansson@linaro.org> <7h1pmik3w9.fsf@baylibre.com> <CAPDyKFr1bC1=3psegT0DM0tPQaCUm1DoOxV3xBa-gVV6oSuRVA@mail.gmail.com>
-In-Reply-To: <CAPDyKFr1bC1=3psegT0DM0tPQaCUm1DoOxV3xBa-gVV6oSuRVA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 4 Nov 2025 17:37:24 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gfd+nvvkthtjtKgw22kek02K68rOLYTy=a39D0uZYpMw@mail.gmail.com>
-X-Gm-Features: AWmQ_bn6BjRKXNK8_yMwOIPmPhLg_KvpDrsfbP_oTSAaCe6f9Sz3SI5DxQrz6q4
-Message-ID: <CAJZ5v0gfd+nvvkthtjtKgw22kek02K68rOLYTy=a39D0uZYpMw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pmdomain: Respect the CPU system-wakeup QoS limit
- during s2idle
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: qcom: Program correct T_POWER_ON value for L1.2 exit
+ timing
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mayank.rana@oss.qualcomm.com,
+        quic_vbadigan@quicinc.com
+References: <20251104-t_power_on_fux-v1-1-eb5916e47fd7@oss.qualcomm.com>
+ <29b32098-39ca-440d-9b51-915157b752b5@oss.qualcomm.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <29b32098-39ca-440d-9b51-915157b752b5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEzOSBTYWx0ZWRfX1Nv+TMNWqwDn
+ +JuPnvdAkjVZlqAlKzBrNzVSTEyRwX2SwyFTl1+KjkLTb6xh3tNo97+UOPDnxPDbDOobJ2+Ni4c
+ c2KvlV033DNJS8wmt7BhOpEyuzd9JOyQAHBzEtOOHvSla7Bu1am3gZWp/VrGA8LAV4QjUPCmitt
+ SZKBJ2xSYCEJYSX2sWnRS10kSNUtMddJvEp+WcGv1Ti2yoIrsl4ZF2i828obHrHU4B5RCyONejQ
+ AQKWXpnGgicevFUZ5lOKiLkwKWgw9RrNlPbSDm6d/uJAQtXYIzyhw3q+fhgrgKi3zOvMSEYD0YP
+ xk6a1SpGTbrTBGM770PY/dOSr29lKjCGc+Up1XcgpI379YUQ1hWQBbJMPyWqB866goxYZ0LVhHs
+ Exqtp7Pf5tCuFZTHGqM+LQHbBZWBbg==
+X-Proofpoint-GUID: bkbJwm8rTY8zqjJ_tX5yxYBcxncULgam
+X-Proofpoint-ORIG-GUID: bkbJwm8rTY8zqjJ_tX5yxYBcxncULgam
+X-Authority-Analysis: v=2.4 cv=Y4L1cxeN c=1 sm=1 tr=0 ts=690a2c15 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ISmZZG41GQzdpg15mxjwIw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=WGPAbWhItJlpQzQmOdIA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-04_02,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 suspectscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040139
 
-On Tue, Nov 4, 2025 at 5:10=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
- wrote:
->
-> On Sat, 1 Nov 2025 at 01:11, Kevin Hilman <khilman@baylibre.com> wrote:
-> >
-> > Ulf Hansson <ulf.hansson@linaro.org> writes:
-> >
-> > > A CPU system-wakeup QoS limit may have been requested by user-space. =
-To
-> > > avoid breaking this constraint when entering a low-power state during
-> > > s2idle through genpd, let's extend the corresponding genpd governor f=
-or
-> > > CPUs. More precisely, during s2idle let the genpd governor select a
-> > > suitable low-power state, by taking into account the QoS limit.
-> >
-> > In addition to a QoS limit requested by userspace, shouldn't any
-> > per-device QoS limits from devices in the PM domain with CPUs/clusters
-> > also be considered?
-> >
-> > Right now, if a device is in a PM domain that also contains CPUs, any
-> > per-device QoS constraints for those devices should also impact the
-> > state chosen by s2idle.
->
-> I am not so sure about that. The existing dev PM QoS latency is
-> targeted towards runtime suspend of a device and the genpd governor
-> also takes it into account for this use case.
->
-> If we would start to take the same dev PM QoS latency constraint into
-> account for system suspend (s2idle), it may not be what the user
-> really intended. Instead, I think we should consider extending the dev
-> PM QoS interface, to allow the user to set a specific latency limit
-> for system wakeup. Then the genpd governor should take that into
-> account for s2idle.
->
-> >
-> > I just tried a quick hack of extending you cpu_system_power_down_ok()
-> > function to look for any per-device QoS constraints set all devices in
-> > the PM domain (and subdomains).  It takes the min of all the per-device
-> > QoS constratins, compares it to the one from userspace, and uses the mi=
-n
-> > of those to decide the genpd state.
-> >
-> > That has the effect I'm after, but curious what you think about the
-> > usecase and the idea?
->
-> It makes sense, but as stated above, I think we need a new QoS limit
-> specific for system suspend.
->
-> Rafael, what's your thoughts around this?
 
-Well, it's analogous to the CPU latency limit case, so if a new
-"system suspend" QoS limit is introduced for CPUs, that also needs to
-be done for the other devices.
+On 11/4/2025 5:59 PM, Konrad Dybcio wrote:
+> On 11/4/25 1:12 PM, Krishna Chaitanya Chundru wrote:
+>> The T_POWER_ON indicates the time (in μs) that a Port requires the port
+>> on the opposite side of Link to wait in L1.2.Exit after sampling CLKREQ#
+>> asserted before actively driving the interface. This value is used by
+>> the ASPM driver to compute the LTR_L1.2_THRESHOLD.
+>>
+>> Currently, the root port exposes a T_POWER_ON value of zero in the L1SS
+>> capability registers, leading to incorrect LTR_L1.2_THRESHOLD calculations.
+>> This can result in improper L1.2 exit behavior and can trigger AER's.
+>>
+>> To address this, program the T_POWER_ON value to 80us (scale = 1,
+>> value = 8) in the PCI_L1SS_CAP register during host initialization. This
+>> ensures that ASPM can take the root port's T_POWER_ON value into account
+>> while calculating the LTR_L1.2_THRESHOLD value.
+> Is 80us a meaningful value, or "just happens to work"?
 
-However, as in the CPU case, my personal view is that the "system
-suspend" latency limits should be greater than or equal to the
-corresponding latency limits for runtime PM.
+This value is given by hardware team.
 
-One more thing that has just occurred to me is that there are systems
-in which I don't want to enable the "system suspend" limits at all.
-IOW, all of this needs to be disabled unless the platform opts in.
+- Krishna Chaitanya.
+
+>
+> Konrad
+>
 
