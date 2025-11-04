@@ -1,314 +1,139 @@
-Return-Path: <linux-kernel+bounces-885577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83267C33615
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:27:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E00AC3362D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65C418C2BB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5998A18C2CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A0A2DF71E;
-	Tue,  4 Nov 2025 23:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52AB2E040C;
+	Tue,  4 Nov 2025 23:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oIboMO5p"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013058.outbound.protection.outlook.com [40.93.201.58])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="yBTFQR6q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0zltDhmG"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A02DEA95;
-	Tue,  4 Nov 2025 23:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762298804; cv=fail; b=E1xvX5BiWmfouSBbBrAJiDvF5zHo1kZBP+njS6Hg0iBkt0jqtJd0OHF1tl1LJYxRehBpPHzLeVuTQZSXywmkx7TfoX2q6x/sfBIzxZt5npk/LweNvFjCj6Y4V06N4Uejl5KKHJt/70nI2fLi79nH7mI/ZpymM/NMTT9TrIST474=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762298804; c=relaxed/simple;
-	bh=isQn2tN1ab7ZRHBKYRwp22lNzkTg4xMDQ05Zo9fnCBc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j8f7pAeewfTN1WDa+E9D4QGJiJbJl4rsDK+TuytWHVTdwn2GD5OLpbvhqrROOBBw6u+KLmlH52gCfSl2qu1KLU8EiBWPI8AO+ymOJkZECyfd5vZsbekdMb2H62sffHz4rpeEu56igUbp9algaivXNnBLkbl0Rg3vYJmWE/Bt2BI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oIboMO5p; arc=fail smtp.client-ip=40.93.201.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yJo/UuXmPBk4uLgjBp0ZqytCF99pEhGW64FMS4pJOdiAoOboNscdgwqmZsf6j20ZTm1PWhIvO/hCJVZ6gmsftLpIftKvb2Pws/cWXKwf+KuQ5Wtu4OSMN1jBT/No2cFyJWXmERtA5f1yst8y88lhHuTzclc1dMyJZIXo/TWH2veloitgF8caSrMjoDMWEp9iJtr9tBCl9lDA14yTgQBQwe1L/493sctqmsut+uX0fDnmSdbwe9l8MxYFNGnJfWFtwiexFJAMARkVQgJPp/L86FnTI58zmtD+o5mUkMQDwcl9Lb7OApq1Hz3UVT6HY3Kw+UQMRBYrlmjVEmQLey3SCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n6/fUj6Ke2Gb1QIN0d4shDtlvdJyrqLDXaOtbwx08Pw=;
- b=Vm5GB/FhQElEtLBhTZUyJfC5t/vsi6NY2w6EgIvy58Q3/9KYcdmzc/z7VfkzqS2TEHepCsdpk5dwAsmq2FnorUQoFwscvmBlqrjiC9QLV/8RphtBnnSZUmyxB7JUy6HCmTAt+qMjAbbKEGaDt2AZ3ZVQujuJqXwxvNc8yLNNtoGnA0eYkWNYjwFKz98eugeHBfaCyUHv50xrRbbmHw+AkGMxXPRu7OReNSzX4Lvn0ldzj8HvPvj420mhM8AR01ws2WkSC2K6ek0XwMW7DGaX6p5bZ88gQC7DzN5YWI7LOnC6zD7+JepajzhpdrfDQqf4H4/ZlBNSM8Mm1NuqK6Xbmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n6/fUj6Ke2Gb1QIN0d4shDtlvdJyrqLDXaOtbwx08Pw=;
- b=oIboMO5pJdQQSnOVjOlQPWFhKUw4xBvccwYQalooQKUET9jSHbasOfATKe1GVlQk6cEdiC/OKkubUn+p3lSrQnfUflkQ6Gn2xcR0bQrY07Dp3zOXXiU0YkyuAPGf2x9nMSz97I8CCEe7WMTN7E/7qycm4a+0CwzTz/TqpxJ42ytHXhQa2XIlf9iPH5RnsMqHJv/+jzdCp3+mnuh0WFTESQuL1IpeDhKmIVrKml97jR8+QYQXOVIVPUH0sfI9ejmOovPL+GsIA4iXSWn+zt/uD1UdyCfBsjczEmku+LHD5XX3tgyrH1d3wUCQxB5IrgMkzSPgl0qDmx+rX0HSuSrTuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS4PR12MB9772.namprd12.prod.outlook.com (2603:10b6:8:2a6::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 23:26:39 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 23:26:38 +0000
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH v2 13/12] nova-core: sequencer: Refactor run() to handle unknown messages
-Date: Tue,  4 Nov 2025 18:26:26 -0500
-Message-Id: <20251104232626.2277008-1-joelagnelf@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
-References: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN1PR10CA0029.namprd10.prod.outlook.com
- (2603:10b6:408:e0::34) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578222DEA8F;
+	Tue,  4 Nov 2025 23:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762298946; cv=none; b=untHcS5HZkRki6iJbpQJ9eoFi378rBjqz1k5O6TTA7EL5jPX8bew2zXNPkZ4rz4iFyUenHIQ7/y0Gjq7iWP5F3fmpTV+C9TUGD1s11zHnH/2dBmfHJXGDYZ6fOw7T84B8yX+MZKVm3FxC4iXfY8w8Jva3vM0PdVzWBA/BLuftDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762298946; c=relaxed/simple;
+	bh=IAYCbutDxV+8B5cDn+cLRc9Kuy667sOtiE9CrMvLnT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbprI8PJoFxByAlAk/BE4JEIb5kcmiPwT7bR7ooXSWmF1tNq2qlGDPsm/eW8JT9URcyLObqm5STrCS0Up1THKX9rZOeO6NA2mZMJtA8tBLjHXLFVQWD94YebFADZTbdWx9wyFiPVdYLMTMjU5tulRVWaothgIng7sRZ0IQ3xmBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=yBTFQR6q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0zltDhmG; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id F1B147A0145;
+	Tue,  4 Nov 2025 18:29:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 04 Nov 2025 18:29:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1762298941; x=
+	1762385341; bh=EBaus4dcwmLkGPJEcpKYMG6v7xMgaARAAXfK6VCCHV8=; b=y
+	BTFQR6qZaIO80HCsaqcnTldp8PPYXhD3PZOMc3UHEThoq6QjzXreLVuFhSZ3ytgx
+	xSxNrBWLgzNis473GrQkXBGCR33uXI1v7+7Y5Go7JJK8skS7r8fG6qG2DNrWzyFn
+	LkLczZ8daa5nu6y0IykrN709Bpg55mn7GqyJVg++fBpcRkqQJHwVqQVbAQD2GU6h
+	putRUYZHdio7gkOCX5l2Q0vo8x6Ecnz6aNbvf0abilDbtHnwvGJRQ+sg0LrBzVZX
+	HA9GMcrYNCXRtf5022KmR+ubW/PFoZ+2nJvs2t7/7Nb27+vI96cTm9J3VBEjGk60
+	/6Ycs2d4i5dUp+Vi2ESnQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762298941; x=1762385341; bh=EBaus4dcwmLkGPJEcpKYMG6v7xMgaARAAXf
+	K6VCCHV8=; b=0zltDhmGzYvn7zRSYubpqq+4rKXyqeVNZWSlQqM67EF3EvlrjUy
+	diSmpFZrelg28495tWprQmzRUH9fGPoGzjzEgMgUaChVCwnRAkjF7IEbQQhOxFG2
+	fmnYgEelBtEUQqI60LBRtis9Ign3Cd2zx+JyFrtuazMG1ULVCY5ZA6HZ3OuiJJfa
+	aGwr/pPxzus8cvBOsvM41bbwN+RiARZo+ulzTTU/dEM1l5mR6TECtxhsasPN/vQz
+	DbRIwFN+Ys5F819aUJGzkYtMg71okYiv8pQCCY0cgosw2p2dq7dPGgWe5zZ3Rgpo
+	MgDtdTMMWLlbwmoljG8zA+I7zJNE68QL3+g==
+X-ME-Sender: <xms:PYwKaSQ3NjwGX5I1PH9tjT1Uif7aaGIqvcbHrThuym7gW2Vf_58I2Q>
+    <xme:PYwKaXUR7gMXTZ_v2Z1mYklcksJt4my5KFDZGx7DGPHH-Ei3aAdRQSsd3eQFOzrqB
+    GQyLqKoCUiI5A2BITmSaJYZH1Bg5wbo1aDhlsz-l7neHFRwoGztAcg>
+X-ME-Received: <xmr:PYwKaUIgZAAYWb7qIUq_Q-uA_5Y_fQpcTG8DLHlfChEE5uQzpj5o6hEs2B1f>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedvfeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
+    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedugedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgrthgvrdhkrghrshhtvghnshesghgrrh
+    hmihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepnhgrthgvrdhkrghrshhtvghnshesghhmrghilhdrtghomhdprh
+    gtphhtthhopehtohhmsehquhgrnhhtohhnihhumhdrnhgvthdprhgtphhtthhopehsthgr
+    sghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurg
+    hvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdr
+    tghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepph
+    grsggvnhhisehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:PYwKaQiIVVlveKmfZSKCApLVkzBnaqIqjJXuNT370_NeNidKWhZzaQ>
+    <xmx:PYwKaZKsvXt7Uh9PwXcLNtuHNr8505-c-QDCjF-BNQbfVaZ3pjBb5w>
+    <xmx:PYwKafi6mlImneFqoQB_2i7y__K116d_VBGohEb8RuSG9mswigAgbQ>
+    <xmx:PYwKaX0LQ0kdmIzROfXAwxSp17SOZq4yDRZNVM4pUNDH1VX-yZB0Uw>
+    <xmx:PYwKaXEJsQycRAXSij1MORXeMyuzKqYIoXyJgW5V4BWLpE7d5EfDnzrj>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Nov 2025 18:29:00 -0500 (EST)
+Date: Wed, 5 Nov 2025 00:28:58 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Nate Karstens <nate.karstens@garmin.com>
+Cc: netdev@vger.kernel.org, Nate Karstens <nate.karstens@gmail.com>,
+	Tom Herbert <tom@quantonium.net>, stable@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Jiayuan Chen <mrpre@163.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] strparser: Fix signed/unsigned mismatch bug
+Message-ID: <aQqMOoy9_pmdcwHS@krikkit>
+References: <20251104174205.984895-1-nate.karstens@garmin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS4PR12MB9772:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a984682-a20c-481d-916f-08de1bf999f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Yb6ecwOwE+/4IkZyWI+RGyXZ1nh+Vt+VXHA1fntfvhSlIdsd9oF05a8jyjdM?=
- =?us-ascii?Q?SqOxEHuReDilxq2EqGHGC3RPzZwSVQmR6XwPFeTenbS7eJK5IbWzUxEgqwh8?=
- =?us-ascii?Q?yf/xIIamVTfV7JKv8odsxoTqSZzk4sk7gI4Osfu8azddiUjyFpekgezmL8+m?=
- =?us-ascii?Q?BXz+DSUoRMAHomYAzKuwcfYvYDaKBw+L6wZf5goMZHtdW3q6+2WBC+rXlio1?=
- =?us-ascii?Q?5IRLmutIcQR7pa5r2H5WwVlHldmw+TmHT5m8PXYtJBhZ/iUDbZ91HVxrDAbR?=
- =?us-ascii?Q?FBIUND8y7tZ3y8/moWOr3VaL1O4G6Buriz9nE6Magc3WVnriHemJAs1z64Ns?=
- =?us-ascii?Q?hJXMjeyGzJMwFZBhgtHl1VuRIZ4ubVoPYTTYbrPLU5VN0bsUHq+oVWu6zztD?=
- =?us-ascii?Q?5kItxXxPhl/axBRKQDvnVODfS7UEyjhcm1GHznqVPolM1pT+SZ4rWWv7ZQ8E?=
- =?us-ascii?Q?rAeHVuAmut0BqvwcDYyViPVi/T7ciNKZ79n5vLzZs9lw0NETanb0PZT1uy0j?=
- =?us-ascii?Q?r46N+TNdEyrrFVmxGYrSuouCrvfPI+8L2FQemLI0+viqbBh+O3T/E510HEng?=
- =?us-ascii?Q?UQC9ZyyUsLG0rL+rRfS53GgKdHXzX98ITHAd0lRi581N9ycTgcMQBTwEFIt6?=
- =?us-ascii?Q?YADoUFmaFR4iBSBcvG9UZKihjX9dvnxMazPyplQbPXqtaaMImHAL8BNme+2k?=
- =?us-ascii?Q?WZeGwNMeYAttxz+pHs95GkcMQziRQEgOahFyy0OLxlxsrm6cMUmWobn+4DZk?=
- =?us-ascii?Q?Fd5XFxrEDbnjmXTXaCcTu/ROPahMwcYyn75uN1cdROebInR4h8JycrD/qFKY?=
- =?us-ascii?Q?6O8WKLeThZA3XLiArszAhPnTxUGeg9yaHdcitSu7dx8P6p4IETxDnp5in6Fh?=
- =?us-ascii?Q?BmAZoj/NTBt6h2mVumI7ycnAgxsmGZ5z/G0WTeUoN7J1d0M5ItjQEncKlLDP?=
- =?us-ascii?Q?UxJyOa6Kml2y82tDoHXYNERVTGQ5Ply1uVI2/st+AfAmOwpL2fr4AvuiZQt9?=
- =?us-ascii?Q?WGMgKBibBIS6Gf44uKSFBBl04G8DMGZ4pj8JFDcRYoqfnQCXfnBvAUENHfPL?=
- =?us-ascii?Q?Lc+a1Hq8QBHTIVbBMZwA/A6u9//K5tpF4gkZIJWs+PmuQD+2EYnvnJcNcuEU?=
- =?us-ascii?Q?lX3elIhOsiv//iZTMRGjI8VlBQL/N1SL4JTqzgCgj12QxxpwPlDcYO2MZxKn?=
- =?us-ascii?Q?vmiW7FOWXop4uvq6s6UIrSZfQgFM3D6/KKyL7SlL+IaM6Ax/BAQ9Ooou/SFx?=
- =?us-ascii?Q?GsXsk5ZWBmcChRkU1QuTwVenqEf0a8OL9skyYal/g9vtdBEb0YJ1CF2YtiWv?=
- =?us-ascii?Q?YHbV+Rq6WFbP8R+s4uTyfeq1/9WZm7rj7jQwhyjzcoJ7FTJtvwpbct9uApnZ?=
- =?us-ascii?Q?5DK0da4x8z4hryRdJV2ehsJhoGGgupbtJ90nL1CtFG7PkqxuigX2BogJvFzZ?=
- =?us-ascii?Q?ZmLKhXeQy4vughwhf9628JuKyfbyOKtu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kudWyNJtrcHWiamWJhFJt+BTxxH9K1t1PdnkCOnQ3uHPTINtRGhhHhnnzmtA?=
- =?us-ascii?Q?SxvI83ZcPqIYWW92We+ylEFtl3DqUrv4rkV1ny0v51KHwqr+Azv7n/kZ5EWw?=
- =?us-ascii?Q?FknfG0h32dRHPLQnJ8DjZd7YKW68d1x/cgcS3HnT9mHtd1gcdrPKcc77YroQ?=
- =?us-ascii?Q?8HowRewWNTuysHHKO12+Qp41T9E7aUhKJxXPl10lzt8L+RtfJcRske9mB9Iv?=
- =?us-ascii?Q?KRuUI0hHpmyZj9BQDnkkHYTkLrpdnBouAAEow+4kcAdO8DE9J9GtBOYw0Rj5?=
- =?us-ascii?Q?Q9dAXjN3zKnyj4osira7sjmh4dpAGuMpQDfe9jZr4UKvbUATz+rEF3rPDHSn?=
- =?us-ascii?Q?zny96ab+kMil4e983aJeihTYg77rHEUFtgo8oolILHcFx1BpsAwaF/ciPAou?=
- =?us-ascii?Q?rZI0MH3yklS7Vu278BI2aGg9Vr5CJxQTkVOWkltb+5sGAgfklrYi84zV8ur2?=
- =?us-ascii?Q?zx8H13kIYvSL2tmNcUkFgkKQWQ58svekoHwcVwId7B469urpc6PRUEmG/FSb?=
- =?us-ascii?Q?sAhKWU3SsHZbbO/0zd/hQmereWkT6ceu/ZI6xro3KSnsN6R12mVQQWa6grPX?=
- =?us-ascii?Q?HKpEF0GsVcVSOmoWwKIWcRcRrLiiMTXBOCYgbyDRW+21u1zun+on6t3nF+tJ?=
- =?us-ascii?Q?8hYN7O4TGNYbvfbGWv9MXTEoAs+k8Ie0xvNlggxYb67TsgvUCf9oIORMzKVm?=
- =?us-ascii?Q?tjZHQ/sQmAAFCpgiPEQY14cqqwHVEyIHx/uZWY7WlFqAkP+bSsXfDXzrMqcC?=
- =?us-ascii?Q?TgZQ/CBikhGUsm6Fnx/filMbHhQQ4czE59XeRDbIh15jBcWixbEGONJCLAim?=
- =?us-ascii?Q?x66BqZ8BUxUx5RZ1cPtvOcLmyDEau+el/Y8ZJDQKx6wloijkKWAipCyPL3to?=
- =?us-ascii?Q?tMypS+ABibgRwhvGfTz3f+mPnxyqWRnZdOyrnnMnzAuhktyoIsddeRul/eSM?=
- =?us-ascii?Q?kt3SrqKBeCG6Hw8R1O8yZR+fANZ9YvfbI5fQ6H/jPaDt2h4zFZRRtbt5dcdo?=
- =?us-ascii?Q?aEr350kkpqNjfhNWulZbkpDs4sB4rpLrLOR91hg/AYezp/BDvgqYM5RacRRW?=
- =?us-ascii?Q?Jsy5wIJJwozVfFP/aWLliwzdLp1Tzamrwxugv3E5Ih5Q1HgbWwhEGBtO2wSs?=
- =?us-ascii?Q?0tf7vdomJOvtaghr+soZnibL2V5SQ9ovJDz/AYJQe9NkxxrtBzKvayyd8wh0?=
- =?us-ascii?Q?12jHnIMtuHgMSSuVEKmBqbQ0BDqSzgxSUOZuXXps2bV80w2ON8BSJTU745vY?=
- =?us-ascii?Q?7ryWqFu/iG4yI98mYrC4VyqgSBsdinh4rwtsD5nnmuvTeSI1uoNna5vG61PU?=
- =?us-ascii?Q?Of56OK23st5ZL9Qa4qG59l/TYhoJbf7E2KzFBchplKsk5sOyAJmqzmHoNfY7?=
- =?us-ascii?Q?G/XDxilzORQOwMeyDoctiq+lYq6KFsUVIoG+VZAPz8bn8jGLT3tWsbjIGfKe?=
- =?us-ascii?Q?/kH9hJFCHNSkg9eMmZcUOb72ayOL+Qbyb1dokoTmpYWGCmO5WiR9Jmt4D4XD?=
- =?us-ascii?Q?TqxonN312DuyIQPC1mTE8AhI3+fpG3jVAbn/OGdpJhNUfu1dOZ2CIWofHqwS?=
- =?us-ascii?Q?junofYaTJedXsVJ+Cw0TjEdGOaqra1NXBEDkdWs6?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a984682-a20c-481d-916f-08de1bf999f4
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 23:26:37.9402
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XRLnXpmZeLodnjFUwj6d2kRiAv4nhJx4Et3mGyub24+q4hfBlazwdo5jClTZRjdMecoxt5FCnMorNh/3JOJ89Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9772
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104174205.984895-1-nate.karstens@garmin.com>
 
-Refactor GspSequencer::run() to follow the same pattern as gsp_init_done()
-by wrapping message reception in a loop that ignores unknown messages
-(ERANGE errors).
+2025-11-04, 11:42:03 -0600, Nate Karstens wrote:
+> The `len` member of the sk_buff is an unsigned int. This is cast to
+> `ssize_t` (a signed type) for the first sk_buff in the comparison,
+> but not the second sk_buff. This change ensures both len values are
+> cast to `ssize_t`.
+> 
+> This appears to cause an issue with ktls when multiple TLS PDUs are
+> included in a single TCP segment.
 
-Suggested-by: Timur Tabi <ttabi@nvidia.com>
-Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
----
-Additional patch to cure probe issue on Timur's GA102 (which happens to receive
-too many NOCAT records).
+Can you describe a bit more the problematic case (state of the
+strparser and all the variables involved maybe?), and how the added
+cast fixes it?
 
- drivers/gpu/nova-core/gsp/sequencer.rs | 86 +++++++++++++++-----------
- 1 file changed, 49 insertions(+), 37 deletions(-)
+And what kernel version are you using to trigger this issue (and then
+verify the fix)? ktls hasn't used net/strparser for quite a while (see
+commit 84c61fe1a75b ("tls: rx: do not use the standard strparser")).
 
-diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-core/gsp/sequencer.rs
-index ecc80f668dc8..b98e5146abd8 100644
---- a/drivers/gpu/nova-core/gsp/sequencer.rs
-+++ b/drivers/gpu/nova-core/gsp/sequencer.rs
-@@ -35,8 +35,8 @@ impl MessageFromGsp for fw::rpc_run_cpu_sequencer_v17_00 {
- 
- const CMD_SIZE: usize = size_of::<fw::GSP_SEQUENCER_BUFFER_CMD>();
- 
--struct GspSequencerInfo<'a> {
--    info: &'a fw::rpc_run_cpu_sequencer_v17_00,
-+struct GspSequencerInfo {
-+    cmd_index: u32,
-     cmd_data: KVec<u8>,
- }
- 
-@@ -125,7 +125,7 @@ pub(crate) fn size_bytes(&self) -> usize {
- }
- 
- pub(crate) struct GspSequencer<'a> {
--    seq_info: GspSequencerInfo<'a>,
-+    seq_info: GspSequencerInfo,
-     bar: &'a Bar0,
-     sec2_falcon: &'a Falcon<Sec2>,
-     gsp_falcon: &'a Falcon<Gsp>,
-@@ -368,7 +368,7 @@ fn into_iter(self) -> Self::IntoIter {
-         GspSeqIter {
-             cmd_data,
-             current_offset: 0,
--            total_cmds: self.seq_info.info.cmdIndex,
-+            total_cmds: self.seq_info.cmd_index,
-             cmds_processed: 0,
-             dev: self.dev,
-         }
-@@ -387,41 +387,53 @@ pub(crate) struct GspSequencerParams<'a> {
- 
- impl<'a> GspSequencer<'a> {
-     pub(crate) fn run(cmdq: &mut Cmdq, params: GspSequencerParams<'a>, timeout: Delta) -> Result {
--        cmdq.receive_msg_from_gsp(timeout, |info, mut sbuf| {
--            let cmd_data = sbuf.flush_into_kvec(GFP_KERNEL)?;
--            let seq_info = GspSequencerInfo { info, cmd_data };
--
--            let sequencer = GspSequencer {
--                seq_info,
--                bar: params.bar,
--                sec2_falcon: params.sec2_falcon,
--                gsp_falcon: params.gsp_falcon,
--                libos_dma_handle: params.libos_dma_handle,
--                gsp_fw: params.gsp_fw,
--                dev: params.dev,
--            };
--
--            dev_dbg!(params.dev, "Running CPU Sequencer commands\n");
--
--            for cmd_result in &sequencer {
--                match cmd_result {
--                    Ok(cmd) => cmd.run(&sequencer)?,
--                    Err(e) => {
--                        dev_err!(
--                            params.dev,
--                            "Error running command at index {}\n",
--                            sequencer.seq_info.info.cmdIndex
--                        );
--                        return Err(e);
--                    }
-+        let seq_info = loop {
-+            match cmdq.receive_msg_from_gsp(
-+                timeout,
-+                |info: &fw::rpc_run_cpu_sequencer_v17_00, mut sbuf| {
-+                    let cmd_data = sbuf.flush_into_kvec(GFP_KERNEL)?;
-+                    Ok(GspSequencerInfo {
-+                        cmd_index: info.cmdIndex,
-+                        cmd_data,
-+                    })
-+                },
-+            ) {
-+                Ok(seq_info) => break seq_info,
-+                Err(ERANGE) => continue,
-+                Err(e) => return Err(e),
-+            }
-+        };
-+
-+        let sequencer = GspSequencer {
-+            seq_info,
-+            bar: params.bar,
-+            sec2_falcon: params.sec2_falcon,
-+            gsp_falcon: params.gsp_falcon,
-+            libos_dma_handle: params.libos_dma_handle,
-+            gsp_fw: params.gsp_fw,
-+            dev: params.dev,
-+        };
-+
-+        dev_dbg!(params.dev, "Running CPU Sequencer commands\n");
-+
-+        for cmd_result in &sequencer {
-+            match cmd_result {
-+                Ok(cmd) => cmd.run(&sequencer)?,
-+                Err(e) => {
-+                    dev_err!(
-+                        params.dev,
-+                        "Error running command at index {}\n",
-+                        sequencer.seq_info.cmd_index
-+                    );
-+                    return Err(e);
-                 }
-             }
-+        }
- 
--            dev_dbg!(
--                params.dev,
--                "CPU Sequencer commands completed successfully\n"
--            );
--            Ok(())
--        })
-+        dev_dbg!(
-+            params.dev,
-+            "CPU Sequencer commands completed successfully\n"
-+        );
-+        Ok(())
-     }
- }
+> Signed-off-by: Nate Karstens <nate.karstens@garmin.com>
+
+A Fixes: tag would also be good, and the subject prefix should be
+"[PATCH net]" for bugfixes.
+
 -- 
-2.34.1
-
+Sabrina
 
