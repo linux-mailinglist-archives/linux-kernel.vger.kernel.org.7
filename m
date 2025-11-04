@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-885239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037D2C32529
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:26:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25B7C326F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DD03A5FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C40E188920A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDB8333433;
-	Tue,  4 Nov 2025 17:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/BVjjZG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7DA3314B8;
-	Tue,  4 Nov 2025 17:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6829333748;
+	Tue,  4 Nov 2025 17:50:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F562F3C28;
+	Tue,  4 Nov 2025 17:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762277205; cv=none; b=owr6dYpLMFbaGEb3YxWSsqEpHRK1cMtC/ucwMDaHaPzhlszayFxOy717eO2ltFCzZ07rhrISWbPTM7YVL2+kPGi+lMxbnldKEPloorh/PuGzjZbyypokt7WrPyLBLt5iIG0KcyT5+D8mXOHq5qTtdQfONfFTA4mx60YWyQ8Zvvo=
+	t=1762278606; cv=none; b=cfIWs1l2e3uRRNVPKJkQuM6u6tml5Gqeo8q3OCWHVxvIFpJLKQZmbz1UDOlIGMusP49QdTwJ+5RItNgX2mSOzXaJRMCLMSM8uIiicsm9MLiEnD5s7562Yz1qG/2VjZM2ttTHpvSwUq2hFX8tJRI+QEU5spY+/2WsL6UhY0HWvMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762277205; c=relaxed/simple;
-	bh=ggtgql8MvrqO772gcZSBlCsr2TAziVOolbcA6Gf1Khw=;
+	s=arc-20240116; t=1762278606; c=relaxed/simple;
+	bh=udJ2m632fXvX5DKfm77vXswEpwSjP22xMdTxTUuGdCU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jee3qA8Um4xgW18pR2kpyyYur272ahHUCscehAsBuvtn5OpmX56zkkpScWAhI4mSbf7nKm8sXBRSkLuaP655FQTBpWMf4klJJJK89fbs5lrR8Of7waonJLZINO8hdoKVH+4JJNcuzqgljf4TIMkOgXBIq9EgnYFvZBCOJY3eWCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/BVjjZG; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762277204; x=1793813204;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ggtgql8MvrqO772gcZSBlCsr2TAziVOolbcA6Gf1Khw=;
-  b=V/BVjjZGvsN5he35/ahiiN/XCeC5eYcQ697WYiphyOPnImv71sNlOd5y
-   ZLM2vmebE8lS1ZlcbE9K5XTI4YaZqVuylGmezqOB0BojZgjIvVvl1zhG3
-   6QY3d8vTLDOjoE9hmCxoVXSP+iBX8vzH0aiLwE5K2k4/wVsPywCHAsl6X
-   Zl9bM/iFktbK8Zh+OumF1FhQitp42bdXgfXquEro8V9RFcy9YVL2smGvD
-   lan0GXc52tFnNNzj6eYj6ajKVxTofG24fvbAo8/i3thnBEe4fpFkUxlLm
-   Bf/c/tdEpD9qMvSjwwnTiFQqwI1TViakRdeQbnrt6I0y5UV6593RJb71y
-   Q==;
-X-CSE-ConnectionGUID: A9568X9USOaPpK2yeBMb/g==
-X-CSE-MsgGUID: SqpPYA4ATE+djI3R1EHl2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64528998"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="64528998"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:26:43 -0800
-X-CSE-ConnectionGUID: 1dm5TmczRimHLbwI6aYaBw==
-X-CSE-MsgGUID: D1NbHidORDGipKTE5F11Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="187163175"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.201]) ([10.125.110.201])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 09:26:42 -0800
-Message-ID: <13e2a2f3-0e2b-490a-ab82-af28d6e8c76e@intel.com>
-Date: Tue, 4 Nov 2025 10:26:41 -0700
+	 In-Reply-To:Content-Type; b=NNoM8tMI6r+XvQ0nxDvQTcD1JNJkAzMYB3vgA4hkBTFm3a6j+FyXZXw293sataRW3NC2wATmDix8MVaFC9le5LXgYTSDgWrP85c6DpVDXo5uSkI7WQw6SBJg3GxRia7TOWzY8oNph4Un4POMI4FI3iBt9bXfJ6D6JNcl+S6zlKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d1FkL5Pf0z9sS7;
+	Tue,  4 Nov 2025 18:26:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ZFw0wj0g-XqU; Tue,  4 Nov 2025 18:26:50 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d1FkL4gnPz9sRy;
+	Tue,  4 Nov 2025 18:26:50 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 90CF78B76E;
+	Tue,  4 Nov 2025 18:26:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id sWXRh3sG0pVU; Tue,  4 Nov 2025 18:26:50 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 84DFE8B76D;
+	Tue,  4 Nov 2025 18:26:49 +0100 (CET)
+Message-ID: <a0921920-d381-4a67-8b4d-d91e5319a354@csgroup.eu>
+Date: Tue, 4 Nov 2025 18:26:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,134 +55,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/14] cxl: Simplify cxl_rd_ops allocation and handling
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-13-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-13-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] powerpc/flipper-pic: Fix device node reference leak in
+ flipper_pic_init
+To: Miaoqian Lin <linmq006@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Albert Herranz <albert_herranz@yahoo.es>,
+ Grant Likely <grant.likely@secretlab.ca>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20251027150914.59811-1-linmq006@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20251027150914.59811-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> A root decoder's callback handlers are collected in struct cxl_rd_ops.
-> The structure is dynamically allocated, though it contains only a few
-> pointers in it. This also requires to check two pointes to check for
-> the existance of a callback.
+Le 27/10/2025 à 16:09, Miaoqian Lin a écrit :
+> The flipper_pic_init() function calls of_get_parent() which increases
+> the device node reference count, but fails to call of_node_put() to
+> balance the reference count.
 > 
-> Simplify the allocation, release and handler check by embedding the
-> ops statical in struct cxl_root_decoder.
+> Add calls to of_node_put() in all paths to fix the leak.
 > 
-> Implementation is equivalent to how struct cxl_root_ops handles the
-> callbacks.
+> Found via static analysis.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-I think this can be split out send ahead. It's not tied to this series right?
-
+> Fixes: 028ee972f032 ("powerpc: gamecube/wii: flipper interrupt controller support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 > ---
->  drivers/cxl/acpi.c        |  8 ++------
->  drivers/cxl/core/region.c | 20 +++++---------------
->  drivers/cxl/cxl.h         |  2 +-
->  3 files changed, 8 insertions(+), 22 deletions(-)
+>   arch/powerpc/platforms/embedded6xx/flipper-pic.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index f9bbc77f3ec2..778ee29430ea 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -471,12 +471,8 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
->  	cxlrd->qos_class = cfmws->qtg_id;
->  
->  	if (cfmws->interleave_arithmetic == ACPI_CEDT_CFMWS_ARITHMETIC_XOR) {
-> -		cxlrd->ops = kzalloc(sizeof(*cxlrd->ops), GFP_KERNEL);
-> -		if (!cxlrd->ops)
-> -			return -ENOMEM;
-> -
-> -		cxlrd->ops->hpa_to_spa = cxl_apply_xor_maps;
-> -		cxlrd->ops->spa_to_hpa = cxl_apply_xor_maps;
-> +		cxlrd->ops.hpa_to_spa = cxl_apply_xor_maps;
-> +		cxlrd->ops.spa_to_hpa = cxl_apply_xor_maps;
->  	}
->  
->  	rc = cxl_decoder_add(cxld);
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 379a67cc8e31..dec003084521 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2932,16 +2932,6 @@ static bool cxl_is_hpa_in_chunk(u64 hpa, struct cxl_region *cxlr, int pos)
->  	return false;
->  }
->  
-> -static bool has_hpa_to_spa(struct cxl_root_decoder *cxlrd)
-> -{
-> -	return cxlrd->ops && cxlrd->ops->hpa_to_spa;
-> -}
-> -
-> -static bool has_spa_to_hpa(struct cxl_root_decoder *cxlrd)
-> -{
-> -	return cxlrd->ops && cxlrd->ops->spa_to_hpa;
-> -}
-> -
->  u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
->  		   u64 dpa)
->  {
-> @@ -2996,8 +2986,8 @@ u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
->  	hpa = hpa_offset + p->res->start + p->cache_size;
->  
->  	/* Root decoder translation overrides typical modulo decode */
-> -	if (has_hpa_to_spa(cxlrd))
-> -		hpa = cxlrd->ops->hpa_to_spa(cxlrd, hpa);
-> +	if (cxlrd->ops.hpa_to_spa)
-> +		hpa = cxlrd->ops.hpa_to_spa(cxlrd, hpa);
->  
->  	if (!cxl_resource_contains_addr(p->res, hpa)) {
->  		dev_dbg(&cxlr->dev,
-> @@ -3006,7 +2996,7 @@ u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
->  	}
->  
->  	/* Simple chunk check, by pos & gran, only applies to modulo decodes */
-> -	if (!has_hpa_to_spa(cxlrd) && (!cxl_is_hpa_in_chunk(hpa, cxlr, pos)))
-> +	if (!cxlrd->ops.hpa_to_spa && !cxl_is_hpa_in_chunk(hpa, cxlr, pos))
->  		return ULLONG_MAX;
->  
->  	return hpa;
-> @@ -3041,8 +3031,8 @@ static int region_offset_to_dpa_result(struct cxl_region *cxlr, u64 offset,
->  	 * If the root decoder has SPA to CXL HPA callback, use it. Otherwise
->  	 * CXL HPA is assumed to equal SPA.
->  	 */
-> -	if (has_spa_to_hpa(cxlrd)) {
-> -		hpa = cxlrd->ops->spa_to_hpa(cxlrd, p->res->start + offset);
-> +	if (cxlrd->ops.spa_to_hpa) {
-> +		hpa = cxlrd->ops.spa_to_hpa(cxlrd, p->res->start + offset);
->  		hpa_offset = hpa - p->res->start;
->  	} else {
->  		hpa_offset = offset;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 0af46d1b0abc..75fd45ddca38 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -451,7 +451,7 @@ struct cxl_root_decoder {
->  	void *platform_data;
->  	struct mutex range_lock;
->  	int qos_class;
-> -	struct cxl_rd_ops *ops;
-> +	struct cxl_rd_ops ops;
->  	struct cxl_switch_decoder cxlsd;
->  };
->  
+> diff --git a/arch/powerpc/platforms/embedded6xx/flipper-pic.c b/arch/powerpc/platforms/embedded6xx/flipper-pic.c
+> index 91a8f0a7086e..cf6f795c8d76 100644
+> --- a/arch/powerpc/platforms/embedded6xx/flipper-pic.c
+> +++ b/arch/powerpc/platforms/embedded6xx/flipper-pic.c
+> @@ -135,13 +135,13 @@ static struct irq_domain * __init flipper_pic_init(struct device_node *np)
+>   	}
+>   	if (!of_device_is_compatible(pi, "nintendo,flipper-pi")) {
+>   		pr_err("unexpected parent compatible\n");
+> -		goto out;
+> +		goto out_put_node;
+>   	}
+>   
+>   	retval = of_address_to_resource(pi, 0, &res);
+>   	if (retval) {
+>   		pr_err("no io memory range found\n");
+> -		goto out;
+> +		goto out_put_node;
+>   	}
+>   	io_base = ioremap(res.start, resource_size(&res));
+>   
+> @@ -154,9 +154,12 @@ static struct irq_domain * __init flipper_pic_init(struct device_node *np)
+>   					      &flipper_irq_domain_ops, io_base);
+>   	if (!irq_domain) {
+>   		pr_err("failed to allocate irq_domain\n");
+> +		of_node_put(pi);
+
+irq_domain is NULL here so instead of adding this of_node_put() you 
+could just remove below 'return NULL' (and the {} of the if) and 
+fallthrough.
+
+>   		return NULL;
+>   	}
+>   
+> +out_put_node:
+> +	of_node_put(pi);
+>   out:
+>   	return irq_domain;
+>   }
 
 
