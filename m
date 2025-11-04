@@ -1,87 +1,314 @@
-Return-Path: <linux-kernel+bounces-885576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E1EC335E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:22:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83267C33615
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85261899A87
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65C418C2BB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6D42DCF7C;
-	Tue,  4 Nov 2025 23:22:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A0A2DF71E;
+	Tue,  4 Nov 2025 23:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oIboMO5p"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013058.outbound.protection.outlook.com [40.93.201.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080272C326F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762298525; cv=none; b=peNEl5sOOBMLdVtRVrz4G+8LWxqIyKR11KptWGBj9deXSZZIacAkSgU+VTCQtPt6k18THDNh8CFoThsk7oAZ/4LBXW2DkNHyO17x861gF9ZmnF5AU9g6++w3VBs2eBQqaE5RYoOk6zyeIHtvRfGP1LnHHnBq1mztfHisYf6nKY8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762298525; c=relaxed/simple;
-	bh=1Zkpb+Fx53YvTLGRwut0stXpAR0/W6gNCob3bFl444s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=t6nqbWN9Nk6uWDqAJXqe1+ybdABga14Y9JE2VE1DWVdmwGv0eUaoj2NjaUrYY+Vz4c0DLyvqha+CzOCa3TkEG1cTirQkIlbWzUXRE+HBhbgDcHFst7u1IxtfMiYuHnc3y6J5hCfY/PXac8wa+OqazWxL6dxlrI2S148AGR5uRdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43329b607e0so78253975ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:22:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762298522; x=1762903322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQFVeOB4QfJAy8cMCAspQQY/XxVgjDp906dgGhtTX1w=;
-        b=wTh850PzaG8cSJ7H7fzmDI/jYAoiyAehoTVLrIDBzGKHriPiu5Kq2ZYedZc6yiZ5Zx
-         BstOxwX/XXGB+QHIHoZfqytyrg712hTBBU9JV4FWLW+1OnYtAHuw9lA3DgwhETbrKcVA
-         3NtV/ATZ8jPKgprVvDwdRPEEbOTiBU6ajw0uVw5kPOrO/gQgDSU2FuSaJK9IHQsMvaKW
-         7TnCPQLkNN7lIGFTL83JszB3qiFfZyzpuaIqbhj32UEjXyS56MSvAIDqs2SqIjJwaruq
-         hPT//Pg3to1G50r0rPThR+Pdn/VNt1t8uCVqWAsD1h1nLo6v444W9qv4w60hvjEWVm5v
-         VW8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWX/Gv33y4qdyJnkzPdaEV6EQcbiT/FbISbJxfNZuUW+d9LS1m11jTxlsGDBJGq5/hXP6dTSfTo9cv71Rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpvs6+3CcfY1I6OILBmEmkD66eF0emaaJCB8n51TGnZ0ZorpXI
-	+lwNM+M/pFmy+mYjc90RblO+ekXkOL3Vg+i91HAiLFepjbsirGjWP3GKH8ESYFUe/aktP2mHb75
-	3qPGUmIvX81O75tt6RWtzrZNy96OKnEXmNkhXI7R/wreJwGJl9QRzgE85ZiA=
-X-Google-Smtp-Source: AGHT+IGlDvkPxRkMdadEZudxvoUlxuA2dVKE7ENN+gpT2h9Q3dc0Jhid/w6pfRNBkS4X8KobyX/eJwg1W50PtkaClaOs6Cv+wc8c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A02DEA95;
+	Tue,  4 Nov 2025 23:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762298804; cv=fail; b=E1xvX5BiWmfouSBbBrAJiDvF5zHo1kZBP+njS6Hg0iBkt0jqtJd0OHF1tl1LJYxRehBpPHzLeVuTQZSXywmkx7TfoX2q6x/sfBIzxZt5npk/LweNvFjCj6Y4V06N4Uejl5KKHJt/70nI2fLi79nH7mI/ZpymM/NMTT9TrIST474=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762298804; c=relaxed/simple;
+	bh=isQn2tN1ab7ZRHBKYRwp22lNzkTg4xMDQ05Zo9fnCBc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j8f7pAeewfTN1WDa+E9D4QGJiJbJl4rsDK+TuytWHVTdwn2GD5OLpbvhqrROOBBw6u+KLmlH52gCfSl2qu1KLU8EiBWPI8AO+ymOJkZECyfd5vZsbekdMb2H62sffHz4rpeEu56igUbp9algaivXNnBLkbl0Rg3vYJmWE/Bt2BI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oIboMO5p; arc=fail smtp.client-ip=40.93.201.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yJo/UuXmPBk4uLgjBp0ZqytCF99pEhGW64FMS4pJOdiAoOboNscdgwqmZsf6j20ZTm1PWhIvO/hCJVZ6gmsftLpIftKvb2Pws/cWXKwf+KuQ5Wtu4OSMN1jBT/No2cFyJWXmERtA5f1yst8y88lhHuTzclc1dMyJZIXo/TWH2veloitgF8caSrMjoDMWEp9iJtr9tBCl9lDA14yTgQBQwe1L/493sctqmsut+uX0fDnmSdbwe9l8MxYFNGnJfWFtwiexFJAMARkVQgJPp/L86FnTI58zmtD+o5mUkMQDwcl9Lb7OApq1Hz3UVT6HY3Kw+UQMRBYrlmjVEmQLey3SCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n6/fUj6Ke2Gb1QIN0d4shDtlvdJyrqLDXaOtbwx08Pw=;
+ b=Vm5GB/FhQElEtLBhTZUyJfC5t/vsi6NY2w6EgIvy58Q3/9KYcdmzc/z7VfkzqS2TEHepCsdpk5dwAsmq2FnorUQoFwscvmBlqrjiC9QLV/8RphtBnnSZUmyxB7JUy6HCmTAt+qMjAbbKEGaDt2AZ3ZVQujuJqXwxvNc8yLNNtoGnA0eYkWNYjwFKz98eugeHBfaCyUHv50xrRbbmHw+AkGMxXPRu7OReNSzX4Lvn0ldzj8HvPvj420mhM8AR01ws2WkSC2K6ek0XwMW7DGaX6p5bZ88gQC7DzN5YWI7LOnC6zD7+JepajzhpdrfDQqf4H4/ZlBNSM8Mm1NuqK6Xbmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n6/fUj6Ke2Gb1QIN0d4shDtlvdJyrqLDXaOtbwx08Pw=;
+ b=oIboMO5pJdQQSnOVjOlQPWFhKUw4xBvccwYQalooQKUET9jSHbasOfATKe1GVlQk6cEdiC/OKkubUn+p3lSrQnfUflkQ6Gn2xcR0bQrY07Dp3zOXXiU0YkyuAPGf2x9nMSz97I8CCEe7WMTN7E/7qycm4a+0CwzTz/TqpxJ42ytHXhQa2XIlf9iPH5RnsMqHJv/+jzdCp3+mnuh0WFTESQuL1IpeDhKmIVrKml97jR8+QYQXOVIVPUH0sfI9ejmOovPL+GsIA4iXSWn+zt/uD1UdyCfBsjczEmku+LHD5XX3tgyrH1d3wUCQxB5IrgMkzSPgl0qDmx+rX0HSuSrTuQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by DS4PR12MB9772.namprd12.prod.outlook.com (2603:10b6:8:2a6::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 23:26:39 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 23:26:38 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v2 13/12] nova-core: sequencer: Refactor run() to handle unknown messages
+Date: Tue,  4 Nov 2025 18:26:26 -0500
+Message-Id: <20251104232626.2277008-1-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
+References: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN1PR10CA0029.namprd10.prod.outlook.com
+ (2603:10b6:408:e0::34) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1606:b0:433:34b5:37bc with SMTP id
- e9e14a558f8ab-433407d4e88mr17182405ab.30.1762298522198; Tue, 04 Nov 2025
- 15:22:02 -0800 (PST)
-Date: Tue, 04 Nov 2025 15:22:02 -0800
-In-Reply-To: <f5a387d4-eae3-4932-b170-37ff38ebe78d@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690a8a9a.050a0220.baf87.0001.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS4PR12MB9772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a984682-a20c-481d-916f-08de1bf999f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yb6ecwOwE+/4IkZyWI+RGyXZ1nh+Vt+VXHA1fntfvhSlIdsd9oF05a8jyjdM?=
+ =?us-ascii?Q?SqOxEHuReDilxq2EqGHGC3RPzZwSVQmR6XwPFeTenbS7eJK5IbWzUxEgqwh8?=
+ =?us-ascii?Q?yf/xIIamVTfV7JKv8odsxoTqSZzk4sk7gI4Osfu8azddiUjyFpekgezmL8+m?=
+ =?us-ascii?Q?BXz+DSUoRMAHomYAzKuwcfYvYDaKBw+L6wZf5goMZHtdW3q6+2WBC+rXlio1?=
+ =?us-ascii?Q?5IRLmutIcQR7pa5r2H5WwVlHldmw+TmHT5m8PXYtJBhZ/iUDbZ91HVxrDAbR?=
+ =?us-ascii?Q?FBIUND8y7tZ3y8/moWOr3VaL1O4G6Buriz9nE6Magc3WVnriHemJAs1z64Ns?=
+ =?us-ascii?Q?hJXMjeyGzJMwFZBhgtHl1VuRIZ4ubVoPYTTYbrPLU5VN0bsUHq+oVWu6zztD?=
+ =?us-ascii?Q?5kItxXxPhl/axBRKQDvnVODfS7UEyjhcm1GHznqVPolM1pT+SZ4rWWv7ZQ8E?=
+ =?us-ascii?Q?rAeHVuAmut0BqvwcDYyViPVi/T7ciNKZ79n5vLzZs9lw0NETanb0PZT1uy0j?=
+ =?us-ascii?Q?r46N+TNdEyrrFVmxGYrSuouCrvfPI+8L2FQemLI0+viqbBh+O3T/E510HEng?=
+ =?us-ascii?Q?UQC9ZyyUsLG0rL+rRfS53GgKdHXzX98ITHAd0lRi581N9ycTgcMQBTwEFIt6?=
+ =?us-ascii?Q?YADoUFmaFR4iBSBcvG9UZKihjX9dvnxMazPyplQbPXqtaaMImHAL8BNme+2k?=
+ =?us-ascii?Q?WZeGwNMeYAttxz+pHs95GkcMQziRQEgOahFyy0OLxlxsrm6cMUmWobn+4DZk?=
+ =?us-ascii?Q?Fd5XFxrEDbnjmXTXaCcTu/ROPahMwcYyn75uN1cdROebInR4h8JycrD/qFKY?=
+ =?us-ascii?Q?6O8WKLeThZA3XLiArszAhPnTxUGeg9yaHdcitSu7dx8P6p4IETxDnp5in6Fh?=
+ =?us-ascii?Q?BmAZoj/NTBt6h2mVumI7ycnAgxsmGZ5z/G0WTeUoN7J1d0M5ItjQEncKlLDP?=
+ =?us-ascii?Q?UxJyOa6Kml2y82tDoHXYNERVTGQ5Ply1uVI2/st+AfAmOwpL2fr4AvuiZQt9?=
+ =?us-ascii?Q?WGMgKBibBIS6Gf44uKSFBBl04G8DMGZ4pj8JFDcRYoqfnQCXfnBvAUENHfPL?=
+ =?us-ascii?Q?Lc+a1Hq8QBHTIVbBMZwA/A6u9//K5tpF4gkZIJWs+PmuQD+2EYnvnJcNcuEU?=
+ =?us-ascii?Q?lX3elIhOsiv//iZTMRGjI8VlBQL/N1SL4JTqzgCgj12QxxpwPlDcYO2MZxKn?=
+ =?us-ascii?Q?vmiW7FOWXop4uvq6s6UIrSZfQgFM3D6/KKyL7SlL+IaM6Ax/BAQ9Ooou/SFx?=
+ =?us-ascii?Q?GsXsk5ZWBmcChRkU1QuTwVenqEf0a8OL9skyYal/g9vtdBEb0YJ1CF2YtiWv?=
+ =?us-ascii?Q?YHbV+Rq6WFbP8R+s4uTyfeq1/9WZm7rj7jQwhyjzcoJ7FTJtvwpbct9uApnZ?=
+ =?us-ascii?Q?5DK0da4x8z4hryRdJV2ehsJhoGGgupbtJ90nL1CtFG7PkqxuigX2BogJvFzZ?=
+ =?us-ascii?Q?ZmLKhXeQy4vughwhf9628JuKyfbyOKtu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kudWyNJtrcHWiamWJhFJt+BTxxH9K1t1PdnkCOnQ3uHPTINtRGhhHhnnzmtA?=
+ =?us-ascii?Q?SxvI83ZcPqIYWW92We+ylEFtl3DqUrv4rkV1ny0v51KHwqr+Azv7n/kZ5EWw?=
+ =?us-ascii?Q?FknfG0h32dRHPLQnJ8DjZd7YKW68d1x/cgcS3HnT9mHtd1gcdrPKcc77YroQ?=
+ =?us-ascii?Q?8HowRewWNTuysHHKO12+Qp41T9E7aUhKJxXPl10lzt8L+RtfJcRske9mB9Iv?=
+ =?us-ascii?Q?KRuUI0hHpmyZj9BQDnkkHYTkLrpdnBouAAEow+4kcAdO8DE9J9GtBOYw0Rj5?=
+ =?us-ascii?Q?Q9dAXjN3zKnyj4osira7sjmh4dpAGuMpQDfe9jZr4UKvbUATz+rEF3rPDHSn?=
+ =?us-ascii?Q?zny96ab+kMil4e983aJeihTYg77rHEUFtgo8oolILHcFx1BpsAwaF/ciPAou?=
+ =?us-ascii?Q?rZI0MH3yklS7Vu278BI2aGg9Vr5CJxQTkVOWkltb+5sGAgfklrYi84zV8ur2?=
+ =?us-ascii?Q?zx8H13kIYvSL2tmNcUkFgkKQWQ58svekoHwcVwId7B469urpc6PRUEmG/FSb?=
+ =?us-ascii?Q?sAhKWU3SsHZbbO/0zd/hQmereWkT6ceu/ZI6xro3KSnsN6R12mVQQWa6grPX?=
+ =?us-ascii?Q?HKpEF0GsVcVSOmoWwKIWcRcRrLiiMTXBOCYgbyDRW+21u1zun+on6t3nF+tJ?=
+ =?us-ascii?Q?8hYN7O4TGNYbvfbGWv9MXTEoAs+k8Ie0xvNlggxYb67TsgvUCf9oIORMzKVm?=
+ =?us-ascii?Q?tjZHQ/sQmAAFCpgiPEQY14cqqwHVEyIHx/uZWY7WlFqAkP+bSsXfDXzrMqcC?=
+ =?us-ascii?Q?TgZQ/CBikhGUsm6Fnx/filMbHhQQ4czE59XeRDbIh15jBcWixbEGONJCLAim?=
+ =?us-ascii?Q?x66BqZ8BUxUx5RZ1cPtvOcLmyDEau+el/Y8ZJDQKx6wloijkKWAipCyPL3to?=
+ =?us-ascii?Q?tMypS+ABibgRwhvGfTz3f+mPnxyqWRnZdOyrnnMnzAuhktyoIsddeRul/eSM?=
+ =?us-ascii?Q?kt3SrqKBeCG6Hw8R1O8yZR+fANZ9YvfbI5fQ6H/jPaDt2h4zFZRRtbt5dcdo?=
+ =?us-ascii?Q?aEr350kkpqNjfhNWulZbkpDs4sB4rpLrLOR91hg/AYezp/BDvgqYM5RacRRW?=
+ =?us-ascii?Q?Jsy5wIJJwozVfFP/aWLliwzdLp1Tzamrwxugv3E5Ih5Q1HgbWwhEGBtO2wSs?=
+ =?us-ascii?Q?0tf7vdomJOvtaghr+soZnibL2V5SQ9ovJDz/AYJQe9NkxxrtBzKvayyd8wh0?=
+ =?us-ascii?Q?12jHnIMtuHgMSSuVEKmBqbQ0BDqSzgxSUOZuXXps2bV80w2ON8BSJTU745vY?=
+ =?us-ascii?Q?7ryWqFu/iG4yI98mYrC4VyqgSBsdinh4rwtsD5nnmuvTeSI1uoNna5vG61PU?=
+ =?us-ascii?Q?Of56OK23st5ZL9Qa4qG59l/TYhoJbf7E2KzFBchplKsk5sOyAJmqzmHoNfY7?=
+ =?us-ascii?Q?G/XDxilzORQOwMeyDoctiq+lYq6KFsUVIoG+VZAPz8bn8jGLT3tWsbjIGfKe?=
+ =?us-ascii?Q?/kH9hJFCHNSkg9eMmZcUOb72ayOL+Qbyb1dokoTmpYWGCmO5WiR9Jmt4D4XD?=
+ =?us-ascii?Q?TqxonN312DuyIQPC1mTE8AhI3+fpG3jVAbn/OGdpJhNUfu1dOZ2CIWofHqwS?=
+ =?us-ascii?Q?junofYaTJedXsVJ+Cw0TjEdGOaqra1NXBEDkdWs6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a984682-a20c-481d-916f-08de1bf999f4
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 23:26:37.9402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XRLnXpmZeLodnjFUwj6d2kRiAv4nhJx4Et3mGyub24+q4hfBlazwdo5jClTZRjdMecoxt5FCnMorNh/3JOJ89Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9772
 
-Hello,
+Refactor GspSequencer::run() to follow the same pattern as gsp_init_done()
+by wrapping message reception in a loop that ignores unknown messages
+(ERANGE errors).
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Suggested-by: Timur Tabi <ttabi@nvidia.com>
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+---
+Additional patch to cure probe issue on Timur's GA102 (which happens to receive
+too many NOCAT records).
 
-Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
-Tested-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+ drivers/gpu/nova-core/gsp/sequencer.rs | 86 +++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 37 deletions(-)
 
-Tested on:
+diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-core/gsp/sequencer.rs
+index ecc80f668dc8..b98e5146abd8 100644
+--- a/drivers/gpu/nova-core/gsp/sequencer.rs
++++ b/drivers/gpu/nova-core/gsp/sequencer.rs
+@@ -35,8 +35,8 @@ impl MessageFromGsp for fw::rpc_run_cpu_sequencer_v17_00 {
+ 
+ const CMD_SIZE: usize = size_of::<fw::GSP_SEQUENCER_BUFFER_CMD>();
+ 
+-struct GspSequencerInfo<'a> {
+-    info: &'a fw::rpc_run_cpu_sequencer_v17_00,
++struct GspSequencerInfo {
++    cmd_index: u32,
+     cmd_data: KVec<u8>,
+ }
+ 
+@@ -125,7 +125,7 @@ pub(crate) fn size_bytes(&self) -> usize {
+ }
+ 
+ pub(crate) struct GspSequencer<'a> {
+-    seq_info: GspSequencerInfo<'a>,
++    seq_info: GspSequencerInfo,
+     bar: &'a Bar0,
+     sec2_falcon: &'a Falcon<Sec2>,
+     gsp_falcon: &'a Falcon<Gsp>,
+@@ -368,7 +368,7 @@ fn into_iter(self) -> Self::IntoIter {
+         GspSeqIter {
+             cmd_data,
+             current_offset: 0,
+-            total_cmds: self.seq_info.info.cmdIndex,
++            total_cmds: self.seq_info.cmd_index,
+             cmds_processed: 0,
+             dev: self.dev,
+         }
+@@ -387,41 +387,53 @@ pub(crate) struct GspSequencerParams<'a> {
+ 
+ impl<'a> GspSequencer<'a> {
+     pub(crate) fn run(cmdq: &mut Cmdq, params: GspSequencerParams<'a>, timeout: Delta) -> Result {
+-        cmdq.receive_msg_from_gsp(timeout, |info, mut sbuf| {
+-            let cmd_data = sbuf.flush_into_kvec(GFP_KERNEL)?;
+-            let seq_info = GspSequencerInfo { info, cmd_data };
+-
+-            let sequencer = GspSequencer {
+-                seq_info,
+-                bar: params.bar,
+-                sec2_falcon: params.sec2_falcon,
+-                gsp_falcon: params.gsp_falcon,
+-                libos_dma_handle: params.libos_dma_handle,
+-                gsp_fw: params.gsp_fw,
+-                dev: params.dev,
+-            };
+-
+-            dev_dbg!(params.dev, "Running CPU Sequencer commands\n");
+-
+-            for cmd_result in &sequencer {
+-                match cmd_result {
+-                    Ok(cmd) => cmd.run(&sequencer)?,
+-                    Err(e) => {
+-                        dev_err!(
+-                            params.dev,
+-                            "Error running command at index {}\n",
+-                            sequencer.seq_info.info.cmdIndex
+-                        );
+-                        return Err(e);
+-                    }
++        let seq_info = loop {
++            match cmdq.receive_msg_from_gsp(
++                timeout,
++                |info: &fw::rpc_run_cpu_sequencer_v17_00, mut sbuf| {
++                    let cmd_data = sbuf.flush_into_kvec(GFP_KERNEL)?;
++                    Ok(GspSequencerInfo {
++                        cmd_index: info.cmdIndex,
++                        cmd_data,
++                    })
++                },
++            ) {
++                Ok(seq_info) => break seq_info,
++                Err(ERANGE) => continue,
++                Err(e) => return Err(e),
++            }
++        };
++
++        let sequencer = GspSequencer {
++            seq_info,
++            bar: params.bar,
++            sec2_falcon: params.sec2_falcon,
++            gsp_falcon: params.gsp_falcon,
++            libos_dma_handle: params.libos_dma_handle,
++            gsp_fw: params.gsp_fw,
++            dev: params.dev,
++        };
++
++        dev_dbg!(params.dev, "Running CPU Sequencer commands\n");
++
++        for cmd_result in &sequencer {
++            match cmd_result {
++                Ok(cmd) => cmd.run(&sequencer)?,
++                Err(e) => {
++                    dev_err!(
++                        params.dev,
++                        "Error running command at index {}\n",
++                        sequencer.seq_info.cmd_index
++                    );
++                    return Err(e);
+                 }
+             }
++        }
+ 
+-            dev_dbg!(
+-                params.dev,
+-                "CPU Sequencer commands completed successfully\n"
+-            );
+-            Ok(())
+-        })
++        dev_dbg!(
++            params.dev,
++            "CPU Sequencer commands completed successfully\n"
++        );
++        Ok(())
+     }
+ }
+-- 
+2.34.1
 
-commit:         dd6adb14 RDMA/core: Fix WARNING in gid_table_release_one
-git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d81342580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
