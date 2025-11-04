@@ -1,206 +1,156 @@
-Return-Path: <linux-kernel+bounces-884817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0614BC3139B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:28:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90950C313A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48561890A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E4818904E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16972D9EC4;
-	Tue,  4 Nov 2025 13:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B782324B1B;
+	Tue,  4 Nov 2025 13:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C76AKnm9"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJJK7T9K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88231A06F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4302F90C4;
+	Tue,  4 Nov 2025 13:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262871; cv=none; b=isiBNwbR5nMyLIJ9yRybVfYTYOQCcFa44kQ0JSQKfv54xmRjUFLhicw6SiYHeUCNQfebkYSpCKXEnylDI2OXPss+zsF6Xl6BGsQKxN2shmG7fUSlf4wKk/+oS03Bafbku+kzaiGzZ4MQEbzzIsNmfBRhsSxwRBdrLFEAcQGRXzI=
+	t=1762262920; cv=none; b=e8pI2WZFWytFNtzPc4iTXyupdTg0/+ix4BVKPqDhYPzzOcFFAn2PuoSHrQXPI6RLR73Ew6HDkNBPnd+iPfPBbvdpXSC1ElbGAWs/JesB61A0eB/PwKopAnYsgsQXsXreFc5v8aJ3Btu04CKTV6oVs2fp+dhQaqL4YpnKcVTp0no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262871; c=relaxed/simple;
-	bh=xYFy9FvuPfNQPztS84ipLwgad6MW8ZjCqUyalulzpdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lfvYtKP6UWSPAbdqIMVL6gHL2tAh+zy1Glty7mFiuU+eC7BrChvr/5GdlE3OpgcSqjZiwXCdhYWpxzI7o216G/Swn0urC39wjRG70iLQbUoDxYp7Off9Kt0nrKCc2s0yt+ks1evyPVTVvSpfT3JgRWvXHvRlU/Mcz+yfncALTfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C76AKnm9; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7867497ad2fso29971077b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:27:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762262869; x=1762867669; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9K6kgfVqBppsAmCOCyx1kErguRE3B1GwWQGCap1HUE=;
-        b=C76AKnm9F392/QLM1fOKtR7YaKjA8bDZ282OXtGHFtA8wmg7XsZE5OMn+f0CR+bjTE
-         y1JuivN3L3d7lAFpjlsHcHyRtSmTKeU8Gt3pYgfNaK8+GufUtAX9XUk5Q8Ad7m4S4hQ1
-         DNMXOZuHnktKvqRZhd0/GtNzNbqNB0fOHAOcDARQaftYgoqQvQRLJ9Q4xMz9Qsf9bP+4
-         NDhVAcYSxzaWskpVcynVxMNW8ECkVG0wepYhULK1z9MSZZYA4sJGysX2L3cR+EaKr/sy
-         3wzYPcoM26puimX8oGAznyEnYLKlQJxMk2OZaMhbe3aw/2ld0o6MZ1c89J7VAcKvWOwW
-         D1Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762262869; x=1762867669;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s9K6kgfVqBppsAmCOCyx1kErguRE3B1GwWQGCap1HUE=;
-        b=Eo1q/bi+ouuTsbPEpRgzCvrqrMZmchD4rNe3XnHydjse+AZcndP/YC1IlqTZFjLHWa
-         5r9Ifgt6/9unTjB4iwyOxsI4hYgjlI+FlVu7Bu/E5Q7l1Dey52yykzuC5bZh7jYuBn/P
-         MgpJJ3IyiAD1RKU+VNwQeqCKhzHIfphnbrtlyzYWiXy/dscEZHQSnYXEv0PRCOmivL83
-         fdS7BgE7viXz0xQW7w7lvoX8RmCvi4z2aRlTS/91gQmegn3qdg0kqC/MvFP/DvmCjJ7L
-         oN7jkZZT65FdVyhfAyTxIsoPFn0XOdJBvIzCx4VUzws/VJ/C1vSpfcvh5yZnZ/wPdOwV
-         As3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9jVOKMD/1D4p/Ze/jkfxTEtou1xBY2W/P4+6+gaiZMqeb+wnLiWMXsU4BGQJ80gTr5+HgpgtVPCGqKSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmysZO0Uo0B+MmkCSsGH3Gk6AeLt5onuRCT49K1JhNKS+IK+A+
-	l3HzmpjsgVo9WOni7KMA/ZDxu9KxVj+v5Nd4qa3k+bFcdDyRtyHNv7uBw5jjHYE7TpZ/qNBvEYL
-	z9qdoGjqVwYm89qXobRRaf5TeyrkR1rwOfUuNXE7CSg==
-X-Gm-Gg: ASbGnct9LJnLupBAPdzJdIpOnPbuSVyzi4PEevSzietXAzdYnHpdWzhwNgreCbKP/K7
-	aYe+rQ7KqADe14Tggl4ntOEiCnO7OvRZ/Sc+xmJ187XFCe/w6qKhnKBAqRERZ7IunGVaSMomHCR
-	Q95zLs9sirh9vMu0dwhFY41EbnsHHOxxSVKGd3FRFo64Lh+y9GAjMN9zcNacYrxN5qWDOt7/GTy
-	oneUoewEcJAnFLtAyZuplkQ/Zh1wNa+3RoivKD4e1E376+NM811oG7KZsOAiVwBrd3q82my
-X-Google-Smtp-Source: AGHT+IFzUemwxrYRkIidNJk8Gu5NYrvaF6biCWhPxX1iUkfnGLHCgGf3jtLrSqkXnA51haW816YZzBSUheLb33VKrO8=
-X-Received: by 2002:a05:690c:5507:b0:786:8abd:bbcf with SMTP id
- 00721157ae682-786951653bfmr24861227b3.31.1762262869125; Tue, 04 Nov 2025
- 05:27:49 -0800 (PST)
+	s=arc-20240116; t=1762262920; c=relaxed/simple;
+	bh=9CvQGqPY0E1C22RS/IR+Yxy6Dan0xzS9zSeM6da8C7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWXpiYdyQ/AZuts5I4gJTewnPQA1Lgrt3ZIciKz2TRLXKoqPGasYxGTm6T7oPy9aHmypHikuQVZHhvtfBAi/PW9OpRsdKWwzfGreuPqCZjqkzD1DODohW4TQRdk/97izQIxyywaP1ZTH/CM9VlnfRVZRfUHI1Ulx7y9QNuYNtkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJJK7T9K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08ABC4CEF7;
+	Tue,  4 Nov 2025 13:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762262920;
+	bh=9CvQGqPY0E1C22RS/IR+Yxy6Dan0xzS9zSeM6da8C7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XJJK7T9K54xBsqZQr5dsd4VEMZACpRsO7HakgkbUqfJIJfLkI7iQdBNdlWmONsLOk
+	 qGBj8Opmm0i4OIwOcyM1SJTbqkx81shX+Ch8SAsmTj4sL68SdFtplJiY41K1+xhwRS
+	 NeCVF7x7cgcGnbETmt22SLAPuShwctTrzzVKIoGeQZYwyyu1Dx+EsAaZEQpWrzEFuj
+	 ZjxmhNcArococH+9vfHluIuBNRnm8snNrp/CYU+IZ/yegE/u5MTZXPZvtIkFvfjoQq
+	 9vWpe8EckGts5TBkhDj+drcvEzlOdM9g4HhUyW4HCKRGi4G66ZGANowSHRF+UAGzpQ
+	 AxzKRGwEhMKPw==
+Date: Tue, 4 Nov 2025 13:28:35 +0000
+From: Will Deacon <will@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: Daniel Mentz <danielmentz@google.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pranjal Shrivastava <praan@google.com>,
+	Liviu Dudau <liviu.dudau@arm.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] iommu/io-pgtable-arm: Implement .iotlb_sync_map
+ callback
+Message-ID: <aQn_g85KI_uuYpJh@willie-the-truck>
+References: <20250927223953.936562-1-danielmentz@google.com>
+ <aNp5sS7VpPirrRGE@google.com>
+ <CAE2F3rB6TYjy0a9yecW4zwBLraaj75YBafEz3DUh8zrLChnuCg@mail.gmail.com>
+ <aNuelC9K24z_Ph_G@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-2-ulf.hansson@linaro.org> <20251029081014.443psmqznd2pqm4i@lcpd911>
- <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
- <20251030164542.atnhs4wgk6ggmmly@lcpd911> <CAPDyKFqTS6-69QfqdPtRrbkSqwxEnO1CPXLnRvM6WsOKNZgyQQ@mail.gmail.com>
- <20251031183724.2opdnjya7gu6fx6v@lcpd911>
-In-Reply-To: <20251031183724.2opdnjya7gu6fx6v@lcpd911>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 4 Nov 2025 14:27:13 +0100
-X-Gm-Features: AWmQ_blLizT1f9WrbeiHr43xiYViNgQnDVhrGGdghJQaJwQNmb9X1hfQr-6XS_I
-Message-ID: <CAPDyKFqyQuGC=ByxbDfJfFK_VRkwjTEQDXj1ket-51u+4_FYpw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
-To: Dhruva Gole <d-gole@ti.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aNuelC9K24z_Ph_G@google.com>
 
-On Fri, 31 Oct 2025 at 19:37, Dhruva Gole <d-gole@ti.com> wrote:
->
-> On Oct 31, 2025 at 14:47:29 +0100, Ulf Hansson wrote:
-> > [...]
-> >
+On Tue, Sep 30, 2025 at 09:10:44AM +0000, Mostafa Saleh wrote:
+> On Mon, Sep 29, 2025 at 02:00:09PM -0700, Daniel Mentz wrote:
+> > On Mon, Sep 29, 2025 at 5:21 AM Mostafa Saleh <smostafa@google.com> wrote:
+> > > On Sat, Sep 27, 2025 at 10:39:52PM +0000, Daniel Mentz wrote:
+> > > > @@ -582,6 +582,69 @@ static int arm_lpae_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+> > > >       return ret;
+> > > >  }
 > > > >
-> > > > > It seems an overkill to me that a userspace program be required to hold
-> > > > > open this file just to make sure the constraints are honoured for the
-> > > > > lifetime of the device. We should definitely give the freedom to just be
-> > > > > able to echo and also be able to cat and read back from the same place
-> > > > > about the latency constraint being set.
-> > > >
-> > > > So you'd want a sysfs attribute here, but that has its own issues (the
-> > > > last writer "wins", so if there are multiple users of it with
-> > > > different needs in user space, things get tricky).
+> > > > +static int __arm_lpae_iotlb_sync_map(struct arm_lpae_io_pgtable *data, unsigned long iova,
+> > > > +                           size_t size, int lvl, arm_lpae_iopte *ptep)
+> > > > +{
+> > > > +     struct io_pgtable *iop = &data->iop;
+> > > > +     size_t block_size = ARM_LPAE_BLOCK_SIZE(lvl, data);
+> > > > +     int ret = 0, num_entries, max_entries;
+> > > > +     unsigned long iova_offset, sync_idx_start, sync_idx_end;
+> > > > +     int i, shift, synced_entries = 0;
+> > > > +
+> > > > +     shift = (ARM_LPAE_LVL_SHIFT(lvl - 1, data) + ARM_LPAE_PGD_IDX(lvl - 1, data));
+> > > > +     iova_offset = iova & ((1ULL << shift) - 1);
+> > > > +     sync_idx_start = ARM_LPAE_LVL_IDX(iova, lvl, data);
+> > > > +     sync_idx_end = (iova_offset + size + block_size - ARM_LPAE_GRANULE(data)) >>
+> > > > +             ARM_LPAE_LVL_SHIFT(lvl, data);
+> > > > +     max_entries = arm_lpae_max_entries(sync_idx_start, data);
+> > > > +     num_entries = min_t(unsigned long, sync_idx_end - sync_idx_start, max_entries);
+> > > > +     ptep += sync_idx_start;
+> > > > +
+> > > > +     if (lvl < (ARM_LPAE_MAX_LEVELS - 1)) {
+> > > > +             for (i = 0; i < num_entries; i++) {
+> > > > +                     arm_lpae_iopte pte = READ_ONCE(ptep[i]);
+> > > > +                     unsigned long synced;
+> > > > +
+> > > > +                     WARN_ON(!pte);
+> > > > +
+> > > > +                     if (iopte_type(pte) == ARM_LPAE_PTE_TYPE_TABLE) {
+> > > > +                             int n = i - synced_entries;
+> > > > +
+> > > > +                             if (n) {
+> > > > +                                     __arm_lpae_sync_pte(&ptep[synced_entries], n, &iop->cfg);
+> > > > +                                     synced_entries += n;
+> > > > +                             }
+> > > > +                             ret = __arm_lpae_iotlb_sync_map(data, iova, size, lvl + 1,
+> > > > +                                                             iopte_deref(pte, data));
+> > > > +                             synced_entries++;
+> > > > +                     }
+> > > > +                     synced = block_size - (iova & (block_size - 1));
+> > > > +                     size -= synced;
+> > > > +                     iova += synced;
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > > +     if (synced_entries != num_entries)
+> > > > +             __arm_lpae_sync_pte(&ptep[synced_entries], num_entries - synced_entries, &iop->cfg);
+> > > > +
+> > > > +     return ret;
+> > > > +}
 > > >
-> > > sysfs makes sense, then would it make sense to have something like a
-> > > /sys/devices/system/cpu/cpu0/power/cpu_wakeup_latency entry?
-> > >
-> > > IMHO userspace should decide accordingly to manage it's users and how/whom to allow to
-> > > set the latency constraint.
-> > > We already have CPU latency QoS entry for example which is sysfs too.
-> > >
-> > > >
-> > > > > One other thing on my mind is - and probably unrelated to this specific
-> > > > > series, but I think we must have some sysfs entry either appear in
-> > > > > /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
-> > > > > state that the governor has chosen to enter based on the value set in
-> > > > > cpu_wakeup_latency.
-> > > >
-> > > > Exit latency values for all states are exposed via sysfs.  Since
-> > > > s2idle always uses the deepest state it can use, it is quite
-> > > > straightforward to figure out which of them will be used going
-> > > > forward, given a specific latency constraint.
-> > >
-> > > I disagree regarding the straightforward part. There could be
-> > > multiple domain heirarchy in a system for eg. and all these multiple
-> > > domains would have their own set of domain-idle-states. All of them having their own
-> > > entry, exit, and residency latencies. I myself while testing this series
-> > > have been thoroughly confused at times what idle-state did the kernel
-> > > actually pick this time, and had to add prints just to figure that out.
-> >
-> > If I understand correctly, most of that confusion is because of the
-> > misunderstanding of including the residency in the state selection in
-> > regards to QoS.
-> >
-> > Residency should not be accounted for, but only enter+exit latencies.
->
-> Understood your point on the latencies, however the point remains that
-> in a multi domain , multi idle-states case, do we really have an easy way to
-> determine what the next choice of idle-state the governor is going to
-> make? We don't even expose the entry exit latencies in sysfs btw...
+> > > Can't we rely on the exisiting generic table walker "__arm_lpae_iopte_walk",
+> > > instead writing a new one, that is already used for iova_to_phys and dirty bit.
+> > 
+> > The performance gains of .iotlb_sync_map are achieved by performing
+> > CMOs on a range of descriptors as opposed to individually on each
+> > descriptor in isolation. The function __arm_lpae_iopte_walk is
+> > inherently incompatible with this, because it calls the .visit
+> > callback once for each descriptor it finds in the specified range. I
+> > guess I could work around this limitation by saving some state in
+> > io_pgtable_walk_data and developing a .visit function that tries to
+> > coalesce individual descriptors into contiguous ranges and delays CMOs
+> > until it finds a break in continuity. I'm afraid, though, that that
+> > might hurt performance significantly.
+> 
+> Exactly, I think that would be the way, I don’t have a strong opinion
+> though, but I’d avoid open coding a new walker unless it’s necessary.
+> Also, the current walker won’t do ranges, it needs some more changes,
+> I did that as part of (half of the patch doesn’t apply for this case):
+> https://lore.kernel.org/all/20241212180423.1578358-38-smostafa@google.com/
 
-I agree, we should extend the sysfs/debugfs information about the
-domain-idle-states with this too. Especially since we already have it
-for the regular idle states that are managed by cpuidle.
+I'm inclined to agree that it would be better to avoid open-coding a
+new walker here and if we're able to reuse/extend the generic walker
+then that would be cleaner.
 
->
-> >
-> > >
-> > > When implementing these things for the first
-> > > time, especially when one has complex and many a domain idle-states it
-> > > would indeed help alot if the kernel could just advertise somewhere what
-> > > the governor is going to pick as the next s2idle state.
-> >
-> > The problem with advertising upfront is that the state selection is
-> > done dynamically. It simply can't work.
->
-> I understand it might be done dynamically, but as IIUC the only
-> constraint being taken into account is really coming from userspace. I
-> don't think this series is taking into account or even exposing any API
-> to kernel world to modify the cpu wakeup latency (which I think you
-> should, but that's an entirely orthogonal discussion, don't want to mix
-> it here). So as far as "dynamic" is concerned I feel if the userspace is
-> having control of which processes are setting the cpu wakeup constraints
-> then it's entirely okay for kernel to tell userspace that at any given
-> moment "this" is the next s2idle state I am going to pick if you do a
-> system s2idle right now.
->
-> >
-> > >
-> > > Also, I am not quite sure if these latencies are exposed in the
-> > > domain-idle-states scenario ...
-> > > I tried checking in /sys/kernel/debug/pm_genpd/XXX/ but I only see
-> > > these:
-> > > active_time  current_state  devices  idle_states  sub_domains  total_idle_time
-> > >
-> > > Maybe an additional s2idle_state or something appearing here is what I
-> > > was inclined toward.
-> >
-> > That sounds like an idea that is worth exploring, if what you are
-> > suggesting is to extend the idle state statistics. In principle we
-> > want a new counter per idle state that indicates the number of times
-> > we entered this state in s2idle, right?
->
-> Absolutely, having a "global" kind of a place to find out the s2idle
-> stats would really be useful.
+If that's not workable (due to Daniel's performance worries), another
+option is to bring back the ->map_sg() hook (removed by d88e61faad52
+("iommu: Remove the ->map_sg indirection")) and implement an optimised
+version of that, preferably sharing as much code as possible with the
+existing map path.
 
-For regular idle states that are managed by cpuidle, those have a
-per-state directory called s2idle (if the state is supported for
-s2idle), with usage/time counters.
-
-That said, I agree, it's a good idea to add something similar for the
-domain-idle-states that are managed by genpd.
-
-Let me think about it and I will post a couple of patches that add
-this information about the domain-idle-states.
-
-Kind regards
-Uffe
+Will
 
