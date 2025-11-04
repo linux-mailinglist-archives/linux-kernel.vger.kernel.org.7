@@ -1,53 +1,64 @@
-Return-Path: <linux-kernel+bounces-884135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D118C2F6F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:20:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D520C2F6BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:14:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FCB84E35BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:20:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DAA9C346E30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966172D2499;
-	Tue,  4 Nov 2025 06:20:08 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC10018C933;
-	Tue,  4 Nov 2025 06:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B592C325F;
+	Tue,  4 Nov 2025 06:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRpYpsdo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EA0259C92;
+	Tue,  4 Nov 2025 06:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762237208; cv=none; b=HlZpCzbS6c4nRbV+biu9bSsxIoeHT2FDff5QSQSTlOzBFR577vXpvP/0kt54yQegHeVVJhluk97y33prWw7gRSTUoRFw9REzPYE884OMwiha72uhTMlq9uKEdM6uCBLPV0E65rzeBw9nxHB+GqQLJ+UVUhdycE9+U6izkuU6Bwc=
+	t=1762236846; cv=none; b=Y1G+hN7e5wOsDeBs1xDlCXE0Fk+4ztC1TuS0Oqna7UU0V947KfEhRXbflutO393e0I08XgaictUuqdA+IXBzG+JSzUZ7EmhuAcyX2Of4ytrMwyBJFGGa7mDqkIthRi+m3Ob0NIEFMkmPRfO0z0SZGmT3z0rW2RX8baUjs+kFV/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762237208; c=relaxed/simple;
-	bh=rsWZ7bGZkQRSetQScgdnaT6tPj5+LnD8mQTU/aZN1EQ=;
+	s=arc-20240116; t=1762236846; c=relaxed/simple;
+	bh=MTTJxnJOzAFblsCLCicYO+NoSmzettjWWeMThjL9T6w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAEr0IlEAYwbp8hvNH8DvuTuwHK18WMFqgUBUexef2t/aKNfGFJ4MkbQBY+c8P/4YO7ocvV4AkQTk56djvxedqhjKy3PipbKjyxJ+b8cD1tLxeWlLSXrl0fFTdS7oUekZdYF2nSE517fSSlY2ED43sRnELnBXChupDoXGxtU9tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d0ylC5twsz9sS7;
-	Tue,  4 Nov 2025 07:11:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 1V_DzEabRqdH; Tue,  4 Nov 2025 07:11:35 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0ylC4fs9z9sRy;
-	Tue,  4 Nov 2025 07:11:35 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7EE558B76C;
-	Tue,  4 Nov 2025 07:11:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id bDAKbX6wpuSV; Tue,  4 Nov 2025 07:11:35 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D0C78B763;
-	Tue,  4 Nov 2025 07:11:33 +0100 (CET)
-Message-ID: <14010da0-9fba-4627-a499-e71034cd9bac@csgroup.eu>
-Date: Tue, 4 Nov 2025 07:11:30 +0100
+	 In-Reply-To:Content-Type; b=tTghhehr6Se7aW/jzn9EIH6A1M3J28TDgW/0gPEKkSxPkV17iU9crhGyasyEDdd0YGcJUj7+OvlKszSRBpHNPfPSdWQsg9lZhdL4WDczlbwAXEi9YONPGTv3UHLdONGMRUZAMA+HpyV7Lkn4u6JgZ1pstr1vEsoxuigJ+8Bqy5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NRpYpsdo; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762236844; x=1793772844;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MTTJxnJOzAFblsCLCicYO+NoSmzettjWWeMThjL9T6w=;
+  b=NRpYpsdowODnvZHtT09TzweFYpXhBCtlQ/SPbA14SGtSfo/r+vMHWT63
+   coBXfAtxtSUBcksOJQdjrZcdhEe7r375MhPSe9hTPFZsK8U1FJDYXiyP4
+   RBpr/wXDQDBxj2DTqP+bqgd/L7XxuorEfBRCdD3I1S1L4PXIYWGadYCCQ
+   zLJYs0Qhav+oXKDt0wCoCqe7LYNrl4ffejN1siAFbkzG9DS4PwDMWcOri
+   fLbLyK5iItCk/DohtYv68iRJx8haH+ZlpUnZPfMAnJzVD32532P8RMvs5
+   ljOJzuL9bofi2qY58J6NOow37pmz1Se4OcmrnO3lN2zr/SKDHwBRisVpn
+   w==;
+X-CSE-ConnectionGUID: cJ/0REzpRYahiwBf8aV1jw==
+X-CSE-MsgGUID: InWCLchNQJqR2ESQ2boCFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64421121"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="64421121"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:14:03 -0800
+X-CSE-ConnectionGUID: vHqrMOK5Tv+sZl8YoBogqQ==
+X-CSE-MsgGUID: ib5z9bsqQj6M6wDv4amMcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="224319107"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO [10.245.246.166]) ([10.245.246.166])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:13:59 -0800
+Message-ID: <ac7202f4-e5c8-477b-b805-685f573d179a@linux.intel.com>
+Date: Tue, 4 Nov 2025 08:14:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,236 +66,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V5 02/12] uaccess: Provide ASM GOTO safe wrappers for
- unsafe_*_user()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.231716098@linutronix.de>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20251027083745.231716098@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/7] PCI: Add Intel Nova Lake S audio Device ID
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org,
+ kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
+ yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+ bhelgaas@google.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kw@linux.com
+References: <20251103173312.GA1811842@bhelgaas>
+Content-Language: en-US
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <20251103173312.GA1811842@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-Le 27/10/2025 à 09:43, Thomas Gleixner a écrit :
-> ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
+On 03/11/2025 19:33, Bjorn Helgaas wrote:
+> On Mon, Nov 03, 2025 at 06:27:16PM +0200, Péter Ujfalusi wrote:
+>> On 03/11/2025 18:02, Bjorn Helgaas wrote:
+>>> On Mon, Nov 03, 2025 at 02:43:57PM +0200, Péter Ujfalusi wrote:
+>>>> On 02/10/2025 11:42, Peter Ujfalusi wrote:
+>>>>> Add Nova Lake S (NVL-S) audio Device ID
+>>>>
+>>>> Can you check this patch so Takashi-san can pick the series up?
+>>>
+>>> We have a long history of adding these Intel audio device IDs that are
+>>> only used once, which is not our usual practice per the comment at the
+>>> top of the file:
+>>>
+>>>  *      Do not add new entries to this file unless the definitions
+>>>  *      are shared between multiple drivers.
+>>>
+>>> Generally speaking, if an ID is used by only a single driver, we
+>>> either use the plain hex ID or add the #define to the driver that uses
+>>> it.
+>>
+>> In this case the ID is used by two different driver stack, the
+>> legacy HDA and SOF.
 > 
-> bool foo(u32 __user *p, u32 val)
-> {
-> 	scoped_guard(pagefault)
-> 		unsafe_put_user(val, p, efault);
-> 	return true;
-> efault:
-> 	return false;
-> }
-> 
->   e80:	e8 00 00 00 00       	call   e85 <foo+0x5>
->   e85:	65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
->   e8d:	83 80 04 14 00 00 01 	addl   $0x1,0x1404(%rax)   // pf_disable++
->   e94:	89 37                	mov    %esi,(%rdi)
->   e96:	83 a8 04 14 00 00 01 	subl   $0x1,0x1404(%rax)   // pf_disable--
->   e9d:	b8 01 00 00 00       	mov    $0x1,%eax           // success
->   ea2:	e9 00 00 00 00       	jmp    ea7 <foo+0x27>      // ret
->   ea7:	31 c0                	xor    %eax,%eax           // fail
->   ea9:	e9 00 00 00 00       	jmp    eae <foo+0x2e>      // ret
-> 
-> which is broken as it leaks the pagefault disable counter on failure.
+> Sigh.  I looked through the patch series, searching for
+> PCI_DEVICE_ID_INTEL_HDA_NVL_S, but of course there's only one instance
+> of *that*, but two others constructed via PCI_DEVICE_DATA() where only
+> "HDA_NVL_S" is mentioned.
 
-Is there a GCC bug report for it ?
+I'm not sure if it would be better, but should we move the HDA PCI IDs
+to an audio specific header?
+Like include/sound/hda_pci_ids.h
+It looks to me that mostly if not only these are Intel IDs.
 
+Not in this series, but as a separate one.
+> Can you include some hint about that in the commit log so I don't have
+> to go through this whole exercise every time?  I want pci_ids.h
+> changes to mention the multiple places a new ID is used so I know that
+> the "multiple uses" rule has been observed.
 > 
-> Clang at least fails the build.
+> With that:
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Is it expected ? Is the error message meaningfull ?
+Thank you, I will send v2 with this update.>
+>>> Have we been operating under some special exception for the Intel
+>>> audio IDs?  I see that I acked some of these additions in the past,
+>>> but I don't remember why.
+>>
+>> The HDA audio entries were moved here by v4 of this series:
+>> https://www.spinics.net/lists/alsa-devel/msg161995.html
+>>
+>> (I cannot find link to v4, only this:
+>> https://patchwork.ozlabs.org/project/linux-pci/list/?series=364212)
+>>>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+>>>>> Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+>>>>> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+>>>>> ---
+>>>>>  include/linux/pci_ids.h | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>>>>> index 92ffc4373f6d..a9a089566b7c 100644
+>>>>> --- a/include/linux/pci_ids.h
+>>>>> +++ b/include/linux/pci_ids.h
+>>>>> @@ -3075,6 +3075,7 @@
+>>>>>  #define PCI_DEVICE_ID_INTEL_5100_22	0x65f6
+>>>>>  #define PCI_DEVICE_ID_INTEL_IOAT_SCNB	0x65ff
+>>>>>  #define PCI_DEVICE_ID_INTEL_HDA_FCL	0x67a8
+>>>>> +#define PCI_DEVICE_ID_INTEL_HDA_NVL_S	0x6e50
+>>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_0	0x7000
+>>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_1	0x7010
+>>>>>  #define PCI_DEVICE_ID_INTEL_82371SB_2	0x7020
+>>>>
+>>>>
+>>
+>> -- 
+>> Péter
+>>
 
-> 
-> Linus suggested to add a local label into the macro scope and let that
-> jump to the actual caller supplied error label.
-> 
->         	__label__ local_label;                                  \
->          arch_unsafe_get_user(x, ptr, local_label);              \
-> 	if (0) {                                                \
-> 	local_label:                                            \
-> 		goto label;                                     \
-
-That's in a while loop so it would have been cleaner (more readable) to 
-break instead of that ugly if(0), see __get_user_size_allowed() in 
-powerpc uaccess.h
-
-> 
-> That works for both GCC and clang.
-> 
-> clang:
-> 
->   c80:	0f 1f 44 00 00       	   nopl   0x0(%rax,%rax,1)	
->   c85:	65 48 8b 0c 25 00 00 00 00 mov    %gs:0x0,%rcx
->   c8e:	ff 81 04 14 00 00    	   incl   0x1404(%rcx)	   // pf_disable++
->   c94:	31 c0                	   xor    %eax,%eax        // set retval to false
->   c96:	89 37                      mov    %esi,(%rdi)      // write
->   c98:	b0 01                	   mov    $0x1,%al         // set retval to true
->   c9a:	ff 89 04 14 00 00    	   decl   0x1404(%rcx)     // pf_disable--
->   ca0:	2e e9 00 00 00 00    	   cs jmp ca6 <foo+0x26>   // ret
-> 
-> The exception table entry points correctly to c9a
-> 
-> GCC:
-> 
->   f70:   e8 00 00 00 00          call   f75 <baz+0x5>
->   f75:   65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
->   f7d:   83 80 04 14 00 00 01    addl   $0x1,0x1404(%rax)  // pf_disable++
->   f84:   8b 17                   mov    (%rdi),%edx
->   f86:   89 16                   mov    %edx,(%rsi)
->   f88:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
->   f8f:   b8 01 00 00 00          mov    $0x1,%eax         // success
->   f94:   e9 00 00 00 00          jmp    f99 <baz+0x29>    // ret
->   f99:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
->   fa0:   31 c0                   xor    %eax,%eax         // fail
->   fa2:   e9 00 00 00 00          jmp    fa7 <baz+0x37>    // ret
-> 
-> The exception table entry points correctly to f99
-> 
-> So both compilers optimize out the extra goto and emit correct and
-> efficient code.
- > > Provide a generic wrapper to do that to avoid modifying all the 
-affected
-> architecture specific implementation with that workaround.
-> 
-> The only change required for architectures is to rename unsafe_*_user() to
-> arch_unsafe_*_user(). That's done in subsequent changes.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-
-> ---
->   include/linux/uaccess.h |   72 +++++++++++++++++++++++++++++++++++++++++++++---
->   1 file changed, 68 insertions(+), 4 deletions(-)
-> 
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -518,7 +518,34 @@ long strncpy_from_user_nofault(char *dst
->   		long count);
->   long strnlen_user_nofault(const void __user *unsafe_addr, long count);
->   
-> -#ifndef __get_kernel_nofault
-> +#ifdef arch_get_kernel_nofault
-> +/*
-> + * Wrap the architecture implementation so that @label can be outside of a
-> + * cleanup() scope. A regular C goto works correctly, but ASM goto does
-> + * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-> + */
-> +#define __get_kernel_nofault(dst, src, type, label)		\
-> +do {								\
-> +	__label__ local_label;					\
-> +	arch_get_kernel_nofault(dst, src, type, local_label);	\
-> +	if (0) {						\
-> +	local_label:						\
-> +		goto label;					\
-> +	}							\
-> +} while (0)
-> +
-> +#define __put_kernel_nofault(dst, src, type, label)		\
-> +do {								\
-> +	__label__ local_label;					\
-> +	arch_get_kernel_nofault(dst, src, type, local_label);	\
-> +	if (0) {						\
-> +	local_label:						\
-> +		goto label;					\
-> +	}							\
-> +} while (0)
-> +
-> +#elif !defined(__get_kernel_nofault) /* arch_get_kernel_nofault */
-> +
->   #define __get_kernel_nofault(dst, src, type, label)	\
->   do {							\
->   	type __user *p = (type __force __user *)(src);	\
-> @@ -535,7 +562,8 @@ do {							\
->   	if (__put_user(data, p))			\
->   		goto label;				\
->   } while (0)
-> -#endif
-> +
-> +#endif  /* !__get_kernel_nofault */
->   
->   /**
->    * get_kernel_nofault(): safely attempt to read from a location
-> @@ -549,7 +577,42 @@ do {							\
->   	copy_from_kernel_nofault(&(val), __gk_ptr, sizeof(val));\
->   })
->   
-> -#ifndef user_access_begin
-> +#ifdef user_access_begin
-> +
-> +#ifdef arch_unsafe_get_user
-> +/*
-> + * Wrap the architecture implementation so that @label can be outside of a
-> + * cleanup() scope. A regular C goto works correctly, but ASM goto does
-> + * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-> + *
-> + * Some architectures use internal local labels already, but this extra
-> + * indirection here is harmless because the compiler optimizes it out
-> + * completely in any case. This construct just ensures that the ASM GOTO
-> + * target is always in the local scope. The C goto 'label' works correct
-> + * when leaving a cleanup() scope.
-> + */
-> +#define unsafe_get_user(x, ptr, label)			\
-> +do {							\
-> +	__label__ local_label;				\
-> +	arch_unsafe_get_user(x, ptr, local_label);	\
-> +	if (0) {					\
-> +	local_label:					\
-> +		goto label;				\
-> +	}						\
-> +} while (0)
-> +
-> +#define unsafe_put_user(x, ptr, label)			\
-> +do {							\
-> +	__label__ local_label;				\
-> +	arch_unsafe_put_user(x, ptr, local_label);	\
-> +	if (0) {					\
-> +	local_label:					\
-> +		goto label;				\
-> +	}						\
-> +} while (0)
-> +#endif /* arch_unsafe_get_user */
-> +
-> +#else /* user_access_begin */
->   #define user_access_begin(ptr,len) access_ok(ptr, len)
->   #define user_access_end() do { } while (0)
->   #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
-> @@ -559,7 +622,8 @@ do {							\
->   #define unsafe_copy_from_user(d,s,l,e) unsafe_op_wrap(__copy_from_user(d,s,l),e)
->   static inline unsigned long user_access_save(void) { return 0UL; }
->   static inline void user_access_restore(unsigned long flags) { }
-> -#endif
-> +#endif /* !user_access_begin */
-> +
->   #ifndef user_write_access_begin
->   #define user_write_access_begin user_access_begin
->   #define user_write_access_end user_access_end
-> 
+-- 
+Péter
 
 
