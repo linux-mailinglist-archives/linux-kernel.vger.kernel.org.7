@@ -1,263 +1,213 @@
-Return-Path: <linux-kernel+bounces-884800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC01EC312E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:16:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD2EC31317
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D07F429D88
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74CFB4FCEAC
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79452F3C01;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45D82F619B;
 	Tue,  4 Nov 2025 13:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XMZpGFSg"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="g5WVrTcq"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013069.outbound.protection.outlook.com [40.107.162.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF902F6191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B882F5304
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262042; cv=none; b=hcIm1Bpz0+Rscq8jabI+Q+xQSgWYdyR9LZgv+sa/4lk6ngHw6lXlzSA/xQGmfICweKEX57tFLJYydt6ZnQqhBBnXQyFJGhrxKmK5MYsWI36D2uytd6hZdldqfbTXytLbcj2zL5Ol2ildRjG4LI3wfwHQawOfhC/6Xv3mLpkaeLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262042; c=relaxed/simple;
-	bh=4MPgfytn22O76WkDtUM857WsGsfoygug18mvRJwrySU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W7IvCl4ZvF+dPpMjftogtL1S3/vVjCevvjIk/pMjcnq0iPgqEM9f5+9nwyC5vPaSWGaCYsjJoWNAa+c/r2P6csywetrpRnf+6OEYun17nmZYsdKopi+qaVtxnp8+/bFwwUnAs/MsZO4vwXtd4CPjqWh+QKfKZTsOAHE5P2QyT+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XMZpGFSg; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-340a5c58bf1so2844758a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:13:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762262039; x=1762866839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=htheXeHYFH0rHBiPohNUpeYbuuhI1fDU6CfL2d8wKps=;
-        b=XMZpGFSgjE6rMMZUCbwU9miNpD7Kir1MHds0znbsJQRcVAZ6Ap2p6DXiO98L+obE/U
-         TVyLJbJMHNf505RrxFqpRoDsFH4t4kQojnTJMCzhID+RYLauv8lwRtoyOjxwUbk56vAN
-         FzL+eDxu0vD1fJjeGaDn0Z0sgI2gxLm4wcAxqpipUKzaCWxT3W6to67USyaBeKPYB5Ri
-         t/s59h7AaHoc89q5Nubrww4FrsJNhof1qOi93+zoFGAtq4sK0H9tgWxoGY5GzBgnaqHS
-         KBlAGlEXeY1AZp78PFIXOl8vzeFomGMnFNWleptmcfbJjB8JhDvBo0+8FDtrbooh+7xz
-         NsmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762262039; x=1762866839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=htheXeHYFH0rHBiPohNUpeYbuuhI1fDU6CfL2d8wKps=;
-        b=pr+vSz7bQd1wutPji1v6vIRorl5X+yoAlnv0zo94WQC/c5Y+b4ofnpyrEEJ+aJMi9N
-         QRFDLVl27GZz7nDeY/6clYtftkdSi6t7xCErnxbVLmYyV47TVepRagiMyiAmQ8K4NF2q
-         TInXcbAEqC+tI92EJ4Cu2Ye/TmyX45pz6F+ndZ7n2+lleyaebEB3u1Vu8Y7wkjyebEUV
-         lQ7GabqC7Y5TqjWyd89X64pY0qKGc3QKob1klGoWQmT4KV5NkQ5wXN2hSLnS33p4pxWP
-         4CKHnzJYHrRHUys6BlVX35APHYHJ+oAPgQI+waOAVF+Zaf0843bLf3U1SochM/ZNmb3t
-         OWhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwANrRMX5PvZlZiPeCQlILys+mzHf9vS9e3ePQJhjwMI4FTf1cCxASFeYFQGEA88eT+I3zZ0iB6D237RE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Fq+f4pdBTiFS2ZMUeLgS4oHi5f32MU7NHoWJqqmhAL0cH22q
-	ncLGU6Wc/fPuHCKbilUWfpV9SvVp+gH1r7rYxz1/SD2evThID/rLAj7R
-X-Gm-Gg: ASbGncuQ93ze3dHAK9BV54sH52yvVSyphldSnV/h6b0RZmuNk3iC2SyGu1A5yfJA4qq
-	fhzCrk5ZEmt/a/arY5DYPk3G/XOnIFZLgP97ZmKJcaPViFMUMNtXypUWIVcqrBxM/RoSA0ZgxQZ
-	qhR+PPReQu8tfFbCBWKwIA0XsoZmL+w02B60XBZFgWXQVRxEOwEw1Jait9atx4n3rVvxE3V6zdX
-	TNBhpN0FPa6poJYsigqKv4XMwDaU2/lfBkgcNu9Ii7tqeewb2epyGSLZC5k5jBxG7FLE6bXwmvZ
-	7J8lKgsgOLwk8Rv83PHhBJbGWIaTiN05fGNBh5MO8wujf/zaV3XnfZ4LtD5s2whTLpk5pntOR1e
-	L8D8G/qqptdns67AnJS4kiKm8K+XZCRpFcu6YfgwZRZUJCHEMPeUNkIS3TNsidO1Im6/ehVCtl+
-	ySzMagNIlPEsHNYctSbw==
-X-Google-Smtp-Source: AGHT+IHUCOHDOpY+jomk9+xhanjpsBEdHr6SPe8Xr4SpqUQogzIVi9n8mhwvDLW5yvR6G0BAdhVDBQ==
-X-Received: by 2002:a17:90b:3c50:b0:33f:f22c:8602 with SMTP id 98e67ed59e1d1-3408308ab16mr21572001a91.26.1762262038771;
-        Tue, 04 Nov 2025 05:13:58 -0800 (PST)
-Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415991d381sm4616141a91.2.2025.11.04.05.13.52
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 04 Nov 2025 05:13:58 -0800 (PST)
-From: Lance Yang <ioworker0@gmail.com>
-To: zhengqi.arch@bytedance.com,
-	dev.jain@arm.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	david@redhat.com,
-	hannes@cmpxchg.org,
-	hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	mingo@redhat.com,
-	ppt@kernel.org,
-	ryan.roberts@arm.com,
-	shakeel.butt@linux.dev,
-	surenb@google.com,
-	tglx@linutronix.de,
-	vbabka@suse.cz,
-	will@kernel.org,
-	x86@kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
-Date: Tue,  4 Nov 2025 21:13:45 +0800
-Message-ID: <20251104131348.32332-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
-References: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762262041; cv=fail; b=sDMIIQO4v2X/2dcryN35ciDDkSMxA973NzOWeFIo4IaugTwR8Nz4VCwKgMWIyWoaB3rXAjSzjwQsEjazSJnwiOcTyhjP6v3FxlpqM6A0O4afYDFZcX1+rtVVXH3wXBe+8jOzLYDNDS/FBdqJ75ankXfMfdQ7WCXuUH4/u5KMZQU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762262041; c=relaxed/simple;
+	bh=TNiWPWz0sQeiUhQn6USe9rb1gIXUPZRQOCK5uqyZJWI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=e/C90fTf+pvOss+U0kzmW60E18L+GO6K0QF0bjd0AiRjWit1RoLOIMCJOqgJCTNZc2+FZd4CbJNb5eEouDQU5Zx+7EWVP0zQadUBzcganspZRRj2cvfkpeKQcTAtttkliRxX0uD5fy5joeuhEsqZ+LCRrC8T2o/7dMxVlXjuExI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=g5WVrTcq; arc=fail smtp.client-ip=40.107.162.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TAon34WPaE4UT4iiVJhfuQq9yZQIv3AmYtfCn8XVObHv2uzyAcIUZAHyp8eo91Sjfwahca69wYOo8TpcBJDb4NwI1NZrdk/tjJVD3nfdSfAuc2nNsumpraVOZe1H0x2GYK7y3XvlbrwCa9zT3i8nE/Q7/FcR+4Eg6w0JfPAQ8ce4xOUXbEP89Ve4chbRXBLobbIvYs57BEvRnrHwPxq+Fxtel7DgTeSK2BHdPgKE3Rp/KlZWK89DHXiSzN0jiwuSWOlUUlAc06S9Vtc9tPDcK7Z7rv1U+qQH3jS0ypN1Qg80XwjHhbQsw7RKB40QaAiq//8GuXaFMDLcfxkNgY2ypw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TNiWPWz0sQeiUhQn6USe9rb1gIXUPZRQOCK5uqyZJWI=;
+ b=MqKwqU226INv3ZTkx6eWFxKb2e2Z2v8ZrmRh4K4O6EBcU6X6nvtrRrQPuNxxCIu4kgth4H6oG9xXmEdmjmca6I1OJEB9gQE0JuySQT8UO0UoMwO4yP5cXEN2rDMizjBJWIsa17wGkKf7SCQ3RwHR4eCwkJxvfRFyJ/b763Zl3A8CZKEwB016/Qw9xW+4/KVEV/2eLGCOrB/CYhoULXF6gFCrd4R821zrPU7qeHKWlREE+AngIPyrCCKrczDmlfj7ijHxa8xpnQPxmcLYeEwaAi52XnLjL6F+zLmomZ32lgXYSjxJlG4DfsfFuMHk5xglkW86I1KuCMQBV7vw2TvUVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TNiWPWz0sQeiUhQn6USe9rb1gIXUPZRQOCK5uqyZJWI=;
+ b=g5WVrTcqUWr5C5LVKRpfX1nLG9KAZI3eMmG+hzRk/eig6T77BUR7jRQASjXJq4TdltrAK9wA0+rSpCKX3xCM0XUh7FKj0Y+7YkMQB2bpdNI2Sh8FZLKSL/H5cJcd4fLPjL/U8dD33J9LXGgfZYRPYn5HK3vlEdRy9qJfKmNOIyecbutV7T+poLW3NVbpdklBAAAxcPrwduoRKzzU3UQLcArOGkRbybRTzRue62iVbSgjI/Nb2k+XUDYKAAWEdo0hWrbP/ssvshRBH/Q4YE0q5F1tJwmm2x/+JoRn9bblrbC1sjOZmj7eeWssCOqnzFCrwtRHLAUqMWExt8ddDYDf1g==
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
+ by PA3PR10MB9271.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4ae::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 13:13:56 +0000
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9126:d21d:31c4:1b9f]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9126:d21d:31c4:1b9f%3]) with mapi id 15.20.9275.013; Tue, 4 Nov 2025
+ 13:13:56 +0000
+From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+To: "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "hui.wang@canonical.com" <hui.wang@canonical.com>, "mwalle@kernel.org"
+	<mwalle@kernel.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "florent.trinh-thai@cs-soprasteria.com"
+	<florent.trinh-thai@cs-soprasteria.com>, "arnd@arndb.de" <arnd@arndb.de>
+Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
+Thread-Topic: [PATCH] eeprom: at25: convert to spi-mem API
+Thread-Index:
+ AQHb66DA/2ST5DqqmUGvisuiiSELdrTh5/AAgAAscICAACr6AIAAC/mAgAAB+ACAAPUxgA==
+Date: Tue, 4 Nov 2025 13:13:56 +0000
+Message-ID: <2941b3527113a0b09b9a380e4746bf899948708c.camel@siemens.com>
+References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
+	 <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
+	 <44b4f443075818cc0799724c9adf635b786e97b4.camel@siemens.com>
+	 <662a5f56-8851-43a8-af27-237acd799943@csgroup.eu>
+	 <437fcacbc39286d1256e1f7ef034a2a3d52a8b18.camel@siemens.com>
+	 <764858d5-5633-4aeb-aabe-52f9eb1eb530@csgroup.eu>
+In-Reply-To: <764858d5-5633-4aeb-aabe-52f9eb1eb530@csgroup.eu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PA3PR10MB9271:EE_
+x-ms-office365-filtering-correlation-id: 0903a216-c1a3-41b4-f93e-08de1ba402a9
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bEtCUHFrVldjSWNsejNrVTFvRk1MR1ZBNFk4OGRDUE5DS0ZWWTc2MFUrL2l6?=
+ =?utf-8?B?L1BlZ25uVG9wOUNiVWl6dmFHM2R1TzRZdDA3ZE9JMkdSemplRG8vSjhORnl4?=
+ =?utf-8?B?UmJHUy9UVDEwZGhHeUg3dUpiMi82MTF5UjdhbHhCbU8yc3RUb1g1RnZpUGFC?=
+ =?utf-8?B?ZjU5L0hTSGUwZ0xPT1FoVm55a0hQSFBzVGNRbitaN2djbjZVbWx2dmJyZXl4?=
+ =?utf-8?B?MWNyT1pRb1NmRGRHVmJtOXl4MTR6SCtZTUFmN3hxTjhoa0NNeHZSV0tncW9v?=
+ =?utf-8?B?dTFXVlJmU2xwNTREZUx5Vi9CRGtJeTZ1Q0RDTEYyZ3RWUm1xRE1uUUJMNkZz?=
+ =?utf-8?B?c3RqbUU2c3htT1I0UnlzNnlOTGYxcEFqR2F6eDU5M3E0Q256aXAvWDJTWE1X?=
+ =?utf-8?B?NDNneXlHaWpiL2hrV3dKaFBJeER2eUJvSFJQK3lPUElxWHVLcWhRakFLZmNp?=
+ =?utf-8?B?dGdHRWVUSEZrUGNtcUE3U01Wc1hLdmJva1dYc0VHQUh1djcrMlV4Tmt0STRP?=
+ =?utf-8?B?UGswVk9SdEZSd2k1amtQZnJJbHd3eDNncGtUSU0xbzYzVDBvakhscjRyZStG?=
+ =?utf-8?B?ME1IZnp6VmpoS2VRdCt3TEZLRWN4QXRtWjZjODA1aEoreCtOUms1aDVLRndl?=
+ =?utf-8?B?SFl0dFZlbUNVVEt0cFh3NVZqQm40MDRiY2R4aFlPakJ5VWFvN0RER1B1ZkMz?=
+ =?utf-8?B?WWdWRnAvOFI2OVBmRzFvNGJjU21zTmdIZGJWYUZDMUdBNXdJWlY5NnowWWdx?=
+ =?utf-8?B?VU9IOWlHdTd5d2FpTkRJcjNNcEc4THJ6dXNuNjUrdjd1cXdLZEdCSzdQVVhs?=
+ =?utf-8?B?eklpWnBsU2U4WEJBam5HR0RHUjJoK1BwZEw4K2RIWlcvWGZRZ1NIbGg0dElQ?=
+ =?utf-8?B?Tk5oMFRUSm9PVTZkZ2RFZGdqL2RuZEtMMWZwbm5DY3BCeTl3ci80VStibm9v?=
+ =?utf-8?B?elp2dExMWlVNYTAvaEVEeWxBSDBqOTF0a2RKb1IwZStpRHBJdGM3Yysvbi9Z?=
+ =?utf-8?B?TEo3WUlBdDFUVk96a2FDMVlFcERualFSUzZod2FLYk5rYitaT0IrTjVsZ1FG?=
+ =?utf-8?B?YzZYYTdIbEMzNWs1UVI4YkRPSkZhTDYvVVR0Slc3YVhuV3BNakN0QXU3Mjkz?=
+ =?utf-8?B?TlNZU1M1ajlJYUpBTWFIb3dBeUdPSGtlbEJMQWRPZXBoTXliYTJIRlVPc2RQ?=
+ =?utf-8?B?cDkrQmxBbzBSa0VuaklzSTU1Q1JzZnpTYW9YTVJhMWp5d1ZZcnVTb0l0ZndN?=
+ =?utf-8?B?RFh6R01hTWdjbWJjQmdCMmFJSkJkbW5TOFN1bFZIbUxvU3pXcHFsNFR2dFlF?=
+ =?utf-8?B?NXJvUmJ5MzlMRVVXTTV0bVNRSWplKzV0RVZ3QUJnRDJwRURGSGNaODhWZlQ5?=
+ =?utf-8?B?RGxGclJWNXNMbW1WZDhEU1BVcmpkRS9NY1hrTVpOR0w1U3h2cFlwcXMwR2xw?=
+ =?utf-8?B?b0VncnpjSytSY3VFaGc3MnRHOVMwWURPYWhzNVlUZnhVK2phN0pXZzJCUVpY?=
+ =?utf-8?B?cDdEN1hHeG5JYnFVS2Z0OTVBY1gvSmFwck5PbTZLVWNObFdIU1FnNXU3eTNS?=
+ =?utf-8?B?VDBOTTJzd1F5bVBnenU0Y2JxRy8rV0ZmWHBMNGczcEdmT0VPK1RXNXh2UmdG?=
+ =?utf-8?B?dHNvNlNxWGhNMGE3emFCaU9LUG9UL3lMMndSOUc0TmtTc29IV3h3bklyZ3Zp?=
+ =?utf-8?B?NERvKzhKSERna2FBekJzM0VFSUl0Y1B1VmM4RnhVeDVOOFlCaVBXK2hKS3lD?=
+ =?utf-8?B?a3ZKeERnWHVLaGZYYzBCL1V4d2FzQkp4VHVOUjRvNU9rWE52ZkJaTWJ4TVRa?=
+ =?utf-8?B?NlUvTHFOZ1RBaDR3VDdoMFRFK0o0Y0c2N0U1K0ZPL245WHBMbjNUYmlyTWRU?=
+ =?utf-8?B?emQ1ZkdNQS83bEM4UzJLalFBTkZxb2ZabmkxcXJBcEk5a2FkUExuWW9qdC9Q?=
+ =?utf-8?B?SFhBS1lOME1aR2QvVy9LandtUERSTUI2SzRwa3ZqTkVybXJPS01BNXF5cFkz?=
+ =?utf-8?B?VHNtaDZqaFJRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cFIxVjQ1OHlVQnh5WFJLL1JqQnNRSDMvYjVDK09PMzhVd2krc1BOaCtXdnF0?=
+ =?utf-8?B?S3pzaEYvSGc3YlJ3MkpZZmg4eWd0WElSRVNZUUVnS2NUOU5sRVhncmlUNGhJ?=
+ =?utf-8?B?T29lbVRoWnRvV0JhT2c1MFVzR0xCNktzMFVwV0RqWWRleE9wN2ZKYTA5TSta?=
+ =?utf-8?B?Z0p0Y2RKemIxcUEzVFZsajJmZWVrTUJMVVJmNGd3K0VzNzR2aThGRm52Vm12?=
+ =?utf-8?B?a1AzclFGVENQYUV3cHZDS3dHQXplTk5QU3dzSTJOSStZcHI3R0FTb0R6Wjl4?=
+ =?utf-8?B?REJsTGpFNjVkRFRselo5UDZGWUVXeDZzb0tiSldpaWRZRnRwYUg1ZG1TQ2My?=
+ =?utf-8?B?UlpyQ1doNFJ4blF3a3NSZ00rVFM2QmtJT21DMEFVdFBWb2l5cko4SDE3aG1V?=
+ =?utf-8?B?YkY1TG5VTnVKUFgxclVIMTljelBnWWtrRlJuaFc5LytiN1dFd3NwNFpKL05B?=
+ =?utf-8?B?YXFrOXhSU3hFMWI2VEprMW9hSi9zcHpqVW1Md3MybG1uWG5qV0JEZUpVbUt5?=
+ =?utf-8?B?R290TXRuQktFc2FGVG5QT2JoMnNZMGQvRk4wNEI0ZnFjenY5aVNDUkNRVzN4?=
+ =?utf-8?B?SGZaOFpiYWQ3ZGlpcnlzeHlWR3E0RG1lQUUwSWlWN1JjTjVXK2pGV1U1UWR0?=
+ =?utf-8?B?OFc4QVdaLyt4UHMxb0UwYkFRUlFwMkNTVjN6b05ZSi9IbC9VQnRoOW5sSmJn?=
+ =?utf-8?B?NVFZcTVUVW1xcUVjeURRcDEwTWh3OURUY2Q5cGx1SGhqSWM4VWppMy9CWThD?=
+ =?utf-8?B?dEptNzhSb0ExOXRZeW02a0s0TVV2QURieE1vVlV6L3NPTFdYYmxZWkVXWmxQ?=
+ =?utf-8?B?SXVLL0M1L3NsMG5pY2ZPODF1MytCdlNIcHcxcVNIOURGb1ZOVS9waFFiN1Nv?=
+ =?utf-8?B?ay9XODlWbUtORE1TYkFPaWxpclAwS1p1Q0ZHdGl1Vmd6VVd4a0dOdkJUdDlQ?=
+ =?utf-8?B?eC9QMmRKWW1Za2tJb0g0TDVIWi9vU09zT0FIaXQrTlUzRkg0WVFuL1lDeHJa?=
+ =?utf-8?B?UTdaNlh5anVQT0xNYTVLaDR4ekRjRDE0Z2xsUGtBT01YWTYzdWJka096UXk0?=
+ =?utf-8?B?dDYyTDYvQVloWFZrV0ZseVd4ZE5CR2R4bXIvVWRNMVRJa2xKaGJmbzJJcWRT?=
+ =?utf-8?B?QlpocnZaUS8vN2FFQUo0MnFHcm43VldwUFRvN1BzSGdGbEdXZ09nbDZ1eXNs?=
+ =?utf-8?B?M2QwMkJYTUxLTm1SK2p6VFpvRUZ0a2J3U0dINk8wTXlaeG9na2k2NERyYzM1?=
+ =?utf-8?B?eTdpY1R1TnczRk43ZkNteGUyLzdhdEorczhlN0pnRXVIbmZJbFU5MExCWXJy?=
+ =?utf-8?B?RldNVmwyZVNMUjcvTHFYUUdBTWpnMEtrVE5iS29UN3lneHhvWExULzBYcjRv?=
+ =?utf-8?B?Q1FMbStvTGlnRFMyb255bnRmZTRab3llWjFOOHBFS0ZrWDJUWkdkWHR4eW93?=
+ =?utf-8?B?dVZYMVlqWmx5Q1Z3ZVlaT1FVL3lpVTRlei9MSGpJQ1hLcUVWMDZUdzZqODd5?=
+ =?utf-8?B?QXpZZVNIdk1RMTNzbytma3BEV1ZnMUx6T0o2ay9XUEt0V1g4SGlwSmZySm13?=
+ =?utf-8?B?ZHVKa1l6VHpEaHRMWFk5b0t6Y0x6cTQ2Qm9Tb3d0STNqZmFBaVpxV2VTazFM?=
+ =?utf-8?B?NSs3OENZZ0FUWmdMdE1YRTNvSGtEd1JlcmFPa1dDN3hVVlJXV1NWa3hseHVu?=
+ =?utf-8?B?Z0ExdWFsMWRXMnkvMWQyR0tUM1RSWjJCR3hvWW12WHJFOGpnaGFQT1kwTDU2?=
+ =?utf-8?B?UmpjZElPU3BIZjJmNVRDb2ZEWW1qOXIvajdnMmVob1NBeSt0WXZ3eDgzL2VR?=
+ =?utf-8?B?c1NOZXB3ZjZieHNyaWVhdEZweUQ0WWRMUnZhN2hQeUNpZG13OTZjYlNHWS9y?=
+ =?utf-8?B?SDhpQ2JMdjVTOENONEJFS1VRd3AyQStJdGlCWGpYeTducFJKWUQ1TVZXSlg5?=
+ =?utf-8?B?V2FzOWRqZnJhdVM5L1BjOFBic0N3Q2RNT2RFazFwbmUrZ2VSeUNTQ2lYblVX?=
+ =?utf-8?B?ck5XRTAzcldEK0Z1UzJRLzVNZ3hUYWxvV1R6KytScEE4Vk5GM2xPTW1kRUFy?=
+ =?utf-8?B?TDk5VThIRjVRUm9Hdlp3TS80UzlqaEVBM3ZsMTl5ejkwWmU2alFNSlc4V3Nu?=
+ =?utf-8?B?bTBmb1RyRFBPWUxUR00zamNQSFB0YmlKSEFQYkRmWGdHMkNmeWNtREdkeHVw?=
+ =?utf-8?Q?ID7w9jlJOYsVaJcvCUnFUbM=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <08BFD966F3E1704D9C75124FD153CD0D@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0903a216-c1a3-41b4-f93e-08de1ba402a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 13:13:56.6389
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vAPHImZRfLaz8GSPi8NDzOycGAB+NGzgfJUpPK5J/7V8KHQfkvOVis4TQuwf4DzOoGAndjJ2XSjsbXHMxrNJ1/xtzQxSlxmEGEFVRHPg4ms=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9271
 
-From: Lance Yang <lance.yang@linux.dev>
-
-
-On Tue, 4 Nov 2025 14:33:00 +0800, Qi Zheng wrote:
-> 
-> 
-> On 11/4/25 12:02 PM, Dev Jain wrote:
-> > 
-> > On 03/11/25 2:37 pm, Qi Zheng wrote:
-> >> Hi Dev,
-> >>
-> >> On 11/3/25 4:43 PM, Dev Jain wrote:
-> >>>
-> >>> On 03/11/25 12:33 pm, Qi Zheng wrote:
-> >>>> Hi Dev,
-> >>>>
-> >>>> On 11/3/25 2:37 PM, Dev Jain wrote:
-> >>>>> The implementation of CONFIG_PT_RECLAIM is completely contained in 
-> >>>>> generic
-> >>>>> mm code. It depends on the RCU callback which will reclaim the 
-> >>>>> pagetables -
-> >>>>> there is nothing arch-specific about that. So, enable this config for
-> >>>>> all architectures.
-> >>>>
-> >>>> Thanks for doing this!
-> >>>>
-> >>>> But unfortunately, not all architectures call tlb_remove_ptdesc() in
-> >>>> __pte_free_tlb(). Some architectures directly call pte_free() to
-> >>>> free PTE pages (without RCU).
-> >>>
-> >>> Thanks! This was not obvious to figure out.
-> >>>
-> >>> Is there an arch bottleneck because of which they do this? I mean to 
-> >>> say,
-> >>>
-> >>> is something stopping us from simply redirecting __pte_free_tlb to 
-> >>> tlb_remove_ptdesc
-> >>
-> >> Some architectures have special handling in __pte_free_tlb(), and cannot
-> >> simple redirect __pte_free_tlb() to tlb_remove_ptdesc(), such as m68k,
-> >> powerpc, etc.
-> >>
-> >> For those architectures that call pte_free() in __pte_free_tlb(), it
-> >> should be easy to modify them.
-> >>
-> >> If you're not in a rush, I can take the time to finish the above tasks.
-> > 
-> > Right then, I'll leave that up to you!
-> 
-> OK, I will do it ASAP.
-
-Cool! Looking forward to seeing that land ;p
-
-Cheers,
-Lance
-
-> 
-> > 
-> > 
-> >>
-> >>>
-> >>> or pte_free_defer?
-> >>>
-> >>>
-> >>> I am looking to enable this config at least on arm64 by default, I 
-> >>> believe it will be legal
-
-Great proposal, Dev! That looks like a very useful feature. Let's make it
-happen on arm64 ;)
-
-> >>>
-> >>> to do this at least here.
-> >>
-> >> IIRC, arm64 can directly enable CONFIG_PT_RECLAIM, as it is supported
-> >> at the architecture level.
-> >>
-> >> Thanks,
-> >> Qi
-> >>
-> >>>
-> >>>
-> >>>>
-> >>>> We need to modify these architectures first, otherwise it will
-> >>>> lead to UAF. This approach is feasible because Hugh provides similar
-> >>>> support in pte_free_defer().
-> >>>>
-> >>>> Enabling PT_RECLAIM on all architecture has always been on my
-> >>>> TODO list, but it's been blocked by other things. :(
-> >>>>
-> >>>> Thanks,
-> >>>> Qi
-> >>>>
-> >>>>>
-> >>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> >>>>> ---
-> >>>>>   arch/x86/Kconfig | 1 -
-> >>>>>   mm/Kconfig       | 5 +----
-> >>>>>   mm/pt_reclaim.c  | 2 +-
-> >>>>>   3 files changed, 2 insertions(+), 6 deletions(-)
-> >>>>>
-> >>>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> >>>>> index fa3b616af03a..5681308a5650 100644
-> >>>>> --- a/arch/x86/Kconfig
-> >>>>> +++ b/arch/x86/Kconfig
-> >>>>> @@ -327,7 +327,6 @@ config X86
-> >>>>>       select FUNCTION_ALIGNMENT_4B
-> >>>>>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
-> >>>>>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
-> >>>>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
-> >>>>>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
-> >>>>>       select SCHED_SMT            if SMP
-> >>>>>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
-> >>>>> diff --git a/mm/Kconfig b/mm/Kconfig
-> >>>>> index 0e26f4fc8717..903c37d02555 100644
-> >>>>> --- a/mm/Kconfig
-> >>>>> +++ b/mm/Kconfig
-> >>>>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
-> >>>>>         The architecture has hardware support for userspace shadow 
-> >>>>> call
-> >>>>>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
-> >>>>>   -config ARCH_SUPPORTS_PT_RECLAIM
-> >>>>> -    def_bool n
-> >>>>> -
-> >>>>>   config PT_RECLAIM
-> >>>>>       bool "reclaim empty user page table pages"
-> >>>>>       default y
-> >>>>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
-> >>>>> +    depends on MMU && SMP
-> >>>>>       select MMU_GATHER_RCU_TABLE_FREE
-> >>>>>       help
-> >>>>>         Try to reclaim empty user page table pages in paths other 
-> >>>>> than munmap
-> >>>>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
-> >>>>> index 7e9455a18aae..049e17f08c6a 100644
-> >>>>> --- a/mm/pt_reclaim.c
-> >>>>> +++ b/mm/pt_reclaim.c
-> >>>>> @@ -1,6 +1,6 @@
-> >>>>>   // SPDX-License-Identifier: GPL-2.0
-> >>>>>   #include <linux/hugetlb.h>
-> >>>>> -#include <asm-generic/tlb.h>
-> >>>>> +#include <asm/tlb.h>
-> >>>>>   #include <asm/pgalloc.h>
-> >>>>>     #include "internal.h"
-> >>>>
-> >>
-> 
-> 
+SGkgQ2hyaXN0b3BoZSwNCg0KT24gTW9uLCAyMDI1LTExLTAzIGF0IDIzOjM2ICswMTAwLCBDaHJp
+c3RvcGhlIExlcm95IHdyb3RlOg0KPiA+ID4gPiA+ID4gUmVwbGFjZSB0aGUgUkFXIFNQSSBhY2Nl
+c3NlcyB3aXRoIHNwaS1tZW0gQVBJLiBUaGUgbGF0dGVyIHdpbGwgZmFsbCBiYWNrIHRvDQo+ID4g
+PiA+ID4gPiBSQVcgU1BJIGFjY2Vzc2VzIGlmIHNwaS1tZW0gY2FsbGJhY2tzIGFyZSBub3QgaW1w
+bGVtZW50ZWQgYnkgYSBjb250cm9sbGVyDQo+ID4gPiA+ID4gPiBkcml2ZXIuDQo+ID4gPiA+ID4g
+DQo+ID4gPiA+ID4gV2l0aCB0aGlzIHBhdGNoIChrZXJuZWwgdjYuMTcuMSkgb3VyIHBvd2VycGMg
+Ym9hcmRzIGFyZSB0b3RhbGx5DQo+ID4gPiA+ID4gdW5zdGFibGUsIHdlIGdldCBtdWx0aXBsZSBy
+YW5kb20gT29wcyBkdWUgdG8gYmFkIG1lbW9yeSBhY2Nlc3Nlcy4NCj4gPiA+ID4gPiANCj4gPiA+
+ID4gPiBXaXRoIHRoaXMgY29tbWl0IHJldmVydGVkIHRoZSBib2FyZCBpcyBzdGFibGUgYWdhaW4u
+DQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gVGhlIFNQSSBkcml2ZXIgaXM6DQo+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gQ09ORklHX1NQST15DQo+ID4gPiA+ID4gQ09ORklHX1NQSV9NQVNURVI9eQ0KPiA+
+ID4gPiA+IENPTkZJR19TUElfTUVNPXkNCj4gPiA+ID4gPiBDT05GSUdfU1BJX0ZTTF9MSUI9eQ0K
+PiA+ID4gPiA+IENPTkZJR19TUElfRlNMX0NQTT15DQo+ID4gPiA+ID4gQ09ORklHX1NQSV9GU0xf
+U1BJPXkNCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBIb3cgY2FuIHdlIGZ1cnRoZXIgaW52ZXN0aWdh
+dGUgdGhlIGlzc3VlID8NCj4gPiA+ID4gDQo+ID4gPiA+IGNvdWxkIHlvdSBzaGFyZSB0aGVzZSAi
+cmFuZG9tIE9vcHMiPw0KPiA+ID4gDQo+ID4gPiBTdXJlLiBBdCB0aGUgZmlyc3QgcGxhY2UgdGhl
+eSBsb29rIHVucmVsYXRlZC4gU29tZXRoaW5nIGlzIGxpa2VseQ0KPiA+IA0KPiA+IGluZGVlZCwg
+bm8gb2J2aW91cyBjb25uZWN0aW9uLi4uIERvIHlvdSBoYXZlIGEgY2hhbmNlIHRvIHJ1biBLQVNB
+Tj8NCj4gDQo+IEkgcmFuIEtBU0FOLCBpdCBmb3VuZCBhbiBvdmVycnVuIGluIHRoZSBsb29wIGlu
+IA0KPiBmc2xfc3BpX2NwbV9idWZzX2NvbXBsZXRlKCkgd2hlbiB0LT5sZW4gaXMgb2RkLCBidXQg
+b25jZSBmaXhlZCB0aGUgDQo+IHJhbmRvbSBwcm9ibGVtIGlzIHN0aWxsIHRoZXJlLg0KDQp0aGFu
+a3MgZm9yIHRoZSBxdWljayByZXBseSENClRoYXQgc291bmRzIHByb21pc2luZyBhbHJlYWR5IQ0K
+DQpEbyB5b3UgaGF2ZSBhIGNoYW5jZSB0byBydW4gd2l0aCBDT05GSUdfREVCVUdfU1RBQ0tPVkVS
+RkxPVz15ID8NCg0KLS0gDQpBbGV4YW5kZXIgU3ZlcmRsaW4NClNpZW1lbnMgQUcNCnd3dy5zaWVt
+ZW5zLmNvbQ0K
 
