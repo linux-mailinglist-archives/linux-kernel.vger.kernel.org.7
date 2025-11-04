@@ -1,264 +1,179 @@
-Return-Path: <linux-kernel+bounces-883925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8820C2EC66
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:34:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC8C2EC6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E949D4F0927
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:33:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 906544F33AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9B020ADF8;
-	Tue,  4 Nov 2025 01:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE312264B1;
+	Tue,  4 Nov 2025 01:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="afi9Pdef"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzkbed+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB953F9C5;
-	Tue,  4 Nov 2025 01:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA6814F9D6;
+	Tue,  4 Nov 2025 01:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762219940; cv=none; b=ESpfSyykD21JVpxHuEbI/NdE88g1zrXA6TX32bOncC0GynTArKnMVu3DzIPebi+VcWMaHODfafnPsP0L0etEX5sjEiGvnqaa6udiXwXfFRIUm+8LPMNDP4xTsSStJ1kpSpDBX4dT4T29uF2YDm61AZxbeNSYxD6/YfBpoN1mrV0=
+	t=1762220027; cv=none; b=O1yUqa7MGgrvVbOaOwLOEk/fT39eraJaOS4WH20qeHxEzfHOivErc0YxUKIDwP1bZTa4RdTVoB+j3qIKjXlNZH5GjjFllGKTVHdjiU6GUs8vT54W6+liMCVfFAkyyDzXGRQhtTeg+ASVGnxMqToRxSoj+Lv13fUYkC82L7qBYAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762219940; c=relaxed/simple;
-	bh=vNSBaswq9iTC4QcIDHz3o2ptHOwc66ABOSg7CYYRO4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CxLG1O0n4x/LpsoZsTletL3WWvokqvMRDVCRRya2KL63xpHh1/0oP5CBPAup4fc/bkXp7LL/Md7iGDE80SoU19e3vXTWZGP8FdKjnNKggPCN23VMNbgxKfvZwiTjEmPcfBc0OT0f3fqFCEguoVaZxrCAzAFl37PwoORTALfh2EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=afi9Pdef; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762219933; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zQjPW7LxByIK6v4CmBoQXlVZQd37/WIYx7Isg1rv6MA=;
-	b=afi9Pdefrgj1/ipq9jJem81pYeKqhijgYasfaRcqxDmHHPqJhuvOonKZy6VOjvk7Dgqop6FuUWhoWw9YsJZYgQTTXc1AySazixJ9fgvW8MEniPDM1zgcdPSTdD6bZm2ZW90rnCMD9Rcy9+ANfLWoSlXq+rTMr7pb76BV6OzQid8=
-Received: from 30.50.185.91(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WreyVhb_1762219931 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Nov 2025 09:32:12 +0800
-Message-ID: <bf42a19d-0f5d-48d8-91f5-febb8bfd06d3@linux.alibaba.com>
-Date: Tue, 4 Nov 2025 09:32:11 +0800
+	s=arc-20240116; t=1762220027; c=relaxed/simple;
+	bh=ZJ9B2/N6e28f7yAJcSHDnM45xVYlWBWvFBo0o9MsapA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dJzKnUQgLqc91ybutJgbBFf62rnLl2MkvrIu+80Leaeu9iDpxTj2o1P5KaSH1o00n1o0YAHjsY0ClnQCmdvzYkXJHRVxS6gpAHILPbtF6hoWMYvaD/vsPfBANKOzYmfJoAAsTmS+Zv9nU2dCArwUXpEtUKDH1YsajAevkKCvEEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzkbed+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E646CC4CEE7;
+	Tue,  4 Nov 2025 01:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762220027;
+	bh=ZJ9B2/N6e28f7yAJcSHDnM45xVYlWBWvFBo0o9MsapA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gzkbed+2smBl+x5TUuI7wk+dj1JnE/B6qlL7H5Bx59AEDp5Qv7DAXVGJnw9euMLiU
+	 97mzUny+63T6VzIlV97uZOOR+608te0e4OkUYp1OCIkk8zjJqgN8+uvBm6bHRwSMyl
+	 q+1ml7euH5RlYvs1iRnSVq7sH6MRswoF+8M7LtWw7v2/RDMRAcOqv5+q2MmDew8kr5
+	 4O1RAtaROspN49/6OO5RV/m7tnmn+E9sEGVkswdKAPiQAXc+P/69P+zo4sVM1fw3N1
+	 /YDtdv1wId6lljOCMShTSTAgGjphpqQrPmRxvUgEEZOER5hcOeMiSRT/h9MyczjCuC
+	 XkJhUnpk3jLeA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D500CCCFA05;
+	Tue,  4 Nov 2025 01:33:46 +0000 (UTC)
+From: Xiangxu Yin via B4 Relay <devnull+xiangxu.yin.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v7 0/4] Add DisplayPort support to QCS615 devicetree
+Date: Tue, 04 Nov 2025 09:33:22 +0800
+Message-Id: <20251104-add-displayport-support-to-qcs615-devicetree-v7-0-e51669170a6f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: APEI: Handle repeated SEA error interrupts storm
- scenarios
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Junhao He <hejunhao3@h-partners.com>, "Luck, Tony" <tony.luck@intel.com>
-Cc: tony.luck@intel.com, bp@alien8.de, guohanjun@huawei.com,
- mchehab@kernel.org, jarkko@kernel.org, yazen.ghannam@amd.com,
- jane.chu@oracle.com, lenb@kernel.org, Jonathan.Cameron@huawei.com,
- linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- shiju.jose@huawei.com, tanxiaofei@huawei.com, linuxarm@huawei.com
-References: <20251030071321.2763224-1-hejunhao3@h-partners.com>
- <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOZXCWkC/6XS327CIBQG8FcxvR4GKAUxy+J7LLugcNhIrFSoz
+ Yzx3Xeo+2Mye+F21R6afL8c+p2qDClArtaLU5VgDDnEHQ7qYVHZN7N7BRIczhWnvGGUCWKcIy7
+ kfmuOfUwDyYd+eg6R7G2WrCEOYywMCYCANcZJrgz1psLIPoEP7xP3/ILzW8hDTMdJH1k5LZBgn
+ NH7oJERSij3K2E0t0K0m/0h2LCzSxu7qlAj/4r/wx4jx3jGqXZeCScY3cScl/uD2WJ892PU/zF
+ qNJQAq2VrVkyIGUNcG82dhkDDGG7blVAUtJsxmiuDszuNBg3NPfV164XUfsaQ18a9dyXRsKJmU
+ qvGOQo3jPOlbwmwCTkMl9JVHeRsplavF48Fp5rJC94TG3dDitstpG/eR3zvkKflBzHinKTQtg7
+ v/jf6VDp+Q+Bydr2S/7kffhtw7MiocDtnG3DGWGl5extqTQZSTsKwXugVr0tBqVYKdz9/AIhao
+ dDZAwAA
+X-Change-ID: 20251014-add-displayport-support-to-qcs615-devicetree-ecaad627a0fa
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com, 
+ yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com, 
+ Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762220024; l=4414;
+ i=xiangxu.yin@oss.qualcomm.com; s=20241125; h=from:subject:message-id;
+ bh=ZJ9B2/N6e28f7yAJcSHDnM45xVYlWBWvFBo0o9MsapA=;
+ b=1no4OoRCeAj1XZEAM1Rf/AKayx7f4eoz+CzjLj60g+GbI/dH+aHjR9zSbO/CP55nKaksF1QaK
+ 9D3mi1VEeo0DTczx9zh2Z8qaDz3FqtGMaT12IeJUE9VY2Ej4TKYbA1Y
+X-Developer-Key: i=xiangxu.yin@oss.qualcomm.com; a=ed25519;
+ pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
+X-Endpoint-Received: by B4 Relay for xiangxu.yin@oss.qualcomm.com/20241125
+ with auth_id=542
+X-Original-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Reply-To: xiangxu.yin@oss.qualcomm.com
+
+This series enables DisplayPort functionality on QCS615 platforms.
+It introduces the required bindings, updates SM6150 dtsi for DP controller
+and QMP USB3-DP PHY, and enables DP on the QCS615 Ride board with
+connector and link configuration.
+
+Depends-on:
+https://lore.kernel.org/all/20250916-add-dp-controller-support-for-sm6150-v3-1-dd60ebbd101e@oss.qualcomm.com/
+https://lore.kernel.org/all/20250926-add-displayport-support-for-qcs615-platform-v7-1-dc5edaac6c2b@oss.qualcomm.com/
+
+Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+---
+Changes in v7:
+- Update schema to validate SM6150 DP node using `compatible: contains` [Rob]
+- Refine commit message for clarity and guideline compliance [Dmitry]
+- Fix subject prefix and drop redundant SoC suffix in title [Bjorn]
+- Rebase dtsi changes on latest talos.dtsi for alignment
+- Link to v6: https://lore.kernel.org/r/20251024-add-displayport-support-to-qcs615-devicetree-v6-0-c4316975dd0e@oss.qualcomm.com
+
+Changes in v6:
+- Removed useless remote-endpoint addition from previous version. [Dmitry]
+- Fix indentation and blank lines in dt-binding example.
+- Fix OPP values to correct clock rates in dt-binding example.
+- Fix blank lines between the last property and the following subnode [Konrad]
+- Link to v5: https://lore.kernel.org/r/20251021-add-displayport-support-to-qcs615-devicetree-v5-0-92f0f3bf469f@oss.qualcomm.com
+
+Changes in v5:
+- Update commit message and fix example indentation in binding
+- Update order in dtsi includes [Krzysztof]
+- Link to v4: https://lore.kernel.org/r/20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com
+
+Changes in v4:
+- Update commit message to reflect data-lanes changes.
+- Link to v3: https://lore.kernel.org/r/20251014-add-displayport-support-to-qcs615-devicetree-v3-0-74ec96ba8144@oss.qualcomm.com
+
+Changes in v3:
+- Move data-lanes from board DTS to SoC DTS [Dmitry]
+- Add missing assigned-clock PIXEL1_CLK_SRC [Dmitry]
+- Update subject prefix to qcom: qcs615-ride: for DTS patch [Konrad]
+- Link to v2: https://lore.kernel.org/r/20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com
+
+Changes in v2:
+- Update register padding and ordering [Dmitry]
+- Rebase the series on the latest driver
+- Link to v1: https://lore.kernel.org/all/20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com/
+
+---
+Xiangxu Yin (4):
+      dt-bindings: display: msm: sm6150-mdss: Add DisplayPort controller
+      dt-bindings: display: msm: sm6150-mdss: Fix example indentation and OPP values
+      arm64: dts: qcom: talos: Add DisplayPort and QMP USB3-DP PHY
+      arm64: dts: qcom: qcs615-ride: Enable DisplayPort
+
+ .../bindings/display/msm/qcom,sm6150-mdss.yaml     |  40 ++++---
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  30 ++++++
+ arch/arm64/boot/dts/qcom/talos.dtsi                | 115 ++++++++++++++++++++-
+ 3 files changed, 168 insertions(+), 17 deletions(-)
+---
+base-commit: 9823120909776bbca58a3c55ef1f27d49283c1f3
+change-id: 20251014-add-displayport-support-to-qcs615-devicetree-ecaad627a0fa
+prerequisite-message-id: <20250916-add-dp-controller-support-for-sm6150-v3-1-dd60ebbd101e@oss.qualcomm.com>
+prerequisite-patch-id: eb07ea58347e77ee18fb6dade040affb0ab68954
+prerequisite-message-id: <20250926-add-displayport-support-for-qcs615-platform-v7-0-dc5edaac6c2b@oss.qualcomm.com>
+prerequisite-patch-id: 8c6c905df7ee55a92a4e52362c8fa7cd9742de04
+prerequisite-patch-id: 0dba0fafd032bbd6cd117175f61efd1e56ae9228
+prerequisite-patch-id: d954b18774cfc0cfdb23de09aab3c56cefb8e1ea
+prerequisite-patch-id: 13f2d2efbcee6337001b5f8519a6da9a41d05276
+prerequisite-patch-id: 3a7144645ede23ccc7d54420e5a32e5bfa3bb776
+prerequisite-patch-id: b3ea55e92953c1526eaf7c5c21d939a5f8502711
+prerequisite-patch-id: 977189ef7cecbe7237175a8ef611fffb814193b0
+prerequisite-patch-id: 3a12c1b4f00eb1d074e51d586f2dae3a44de0613
+prerequisite-patch-id: 7f80e93057c1fd088ac6b4b0652cdfe2ea221cd5
+prerequisite-patch-id: 8b29d292717782982e4450a509f4428fe6e895f2
+prerequisite-patch-id: 621c3ba6bcf5b5782a5264faed72fdadfd47c630
+prerequisite-patch-id: 9c63f2c5bb39527e3031b2d168e3c9419441e8df
+prerequisite-patch-id: 364f6a7d8f4e1bc79a8f236b8d5a2425ffd225fe
+prerequisite-patch-id: eb09ea48625b5c0d39ffb37babe7d8c32a4b3122
+
+Best regards,
+-- 
+Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
 
 
-
-在 2025/11/4 00:19, Rafael J. Wysocki 写道:
-> On Thu, Oct 30, 2025 at 8:13 AM Junhao He <hejunhao3@h-partners.com> wrote:
->>
->> The do_sea() function defaults to using firmware-first mode, if supported.
->> It invoke acpi/apei/ghes ghes_notify_sea() to report and handling the SEA
->> error, The GHES uses a buffer to cache the most recent 4 kinds of SEA
->> errors. If the same kind SEA error continues to occur, GHES will skip to
->> reporting this SEA error and will not add it to the "ghes_estatus_llist"
->> list until the cache times out after 10 seconds, at which point the SEA
->> error will be reprocessed.
->>
->> The GHES invoke ghes_proc_in_irq() to handle the SEA error, which
->> ultimately executes memory_failure() to process the page with hardware
->> memory corruption. If the same SEA error appears multiple times
->> consecutively, it indicates that the previous handling was incomplete or
->> unable to resolve the fault. In such cases, it is more appropriate to
->> return a failure when encountering the same error again, and then proceed
->> to arm64_do_kernel_sea for further processing.
->>
->> When hardware memory corruption occurs, a memory error interrupt is
->> triggered. If the kernel accesses this erroneous data, it will trigger
->> the SEA error exception handler. All such handlers will call
->> memory_failure() to handle the faulty page.
->>
->> If a memory error interrupt occurs first, followed by an SEA error
->> interrupt, the faulty page is first marked as poisoned by the memory error
->> interrupt process, and then the SEA error interrupt handling process will
->> send a SIGBUS signal to the process accessing the poisoned page.
->>
->> However, if the SEA interrupt is reported first, the following exceptional
->> scenario occurs:
->>
->> When a user process directly requests and accesses a page with hardware
->> memory corruption via mmap (such as with devmem), the page containing this
->> address may still be in a free buddy state in the kernel. At this point,
->> the page is marked as "poisoned" during the SEA claim memory_failure().
->> However, since the process does not request the page through the kernel's
->> MMU, the kernel cannot send SIGBUS signal to the processes. And the memory
->> error interrupt handling process not support send SIGBUS signal. As a
->> result, these processes continues to access the faulty page, causing
->> repeated entries into the SEA exception handler. At this time, it lead to
->> an SEA error interrupt storm.
->>
->> Fixes this by returning a failure when encountering the same error again.
->>
->> The following error logs is explained using the devmem process:
->>    NOTICE:  SEA Handle
->>    NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
->>    NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->>    NOTICE:  EsrEl3 = 0x92000410
->>    NOTICE:  PA is valid: 0x1000093c00
->>    NOTICE:  Hest Set GenericError Data
->>    [ 1419.542401][    C1] {57}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 9
->>    [ 1419.551435][    C1] {57}[Hardware Error]: event severity: recoverable
->>    [ 1419.557865][    C1] {57}[Hardware Error]:  Error 0, type: recoverable
->>    [ 1419.564295][    C1] {57}[Hardware Error]:   section_type: ARM processor error
->>    [ 1419.571421][    C1] {57}[Hardware Error]:   MIDR: 0x0000000000000000
->>    [ 1419.571434][    C1] {57}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000081000100
->>    [ 1419.586813][    C1] {57}[Hardware Error]:   error affinity level: 0
->>    [ 1419.586821][    C1] {57}[Hardware Error]:   running state: 0x1
->>    [ 1419.602714][    C1] {57}[Hardware Error]:   Power State Coordination Interface state: 0
->>    [ 1419.602724][    C1] {57}[Hardware Error]:   Error info structure 0:
->>    [ 1419.614797][    C1] {57}[Hardware Error]:   num errors: 1
->>    [ 1419.614804][    C1] {57}[Hardware Error]:    error_type: 0, cache error
->>    [ 1419.629226][    C1] {57}[Hardware Error]:    error_info: 0x0000000020400014
->>    [ 1419.629234][    C1] {57}[Hardware Error]:     cache level: 1
->>    [ 1419.642006][    C1] {57}[Hardware Error]:     the error has not been corrected
->>    [ 1419.642013][    C1] {57}[Hardware Error]:    physical fault address: 0x0000001000093c00
->>    [ 1419.654001][    C1] {57}[Hardware Error]:   Vendor specific error info has 48 bytes:
->>    [ 1419.654014][    C1] {57}[Hardware Error]:    00000000: 00000000 00000000 00000000 00000000  ................
->>    [ 1419.670685][    C1] {57}[Hardware Error]:    00000010: 00000000 00000000 00000000 00000000  ................
->>    [ 1419.670692][    C1] {57}[Hardware Error]:    00000020: 00000000 00000000 00000000 00000000  ................
->>    [ 1419.783606][T54990] Memory failure: 0x1000093: recovery action for free buddy page: Recovered
->>    [ 1419.919580][ T9955] EDAC MC0: 1 UE Multi-bit ECC on unknown memory (node:0 card:1 module:71 bank:7 row:0 col:0 page:0x1000093 offset:0xc00 grain:1 - APEI location: node:0 card:257 module:71 bank:7 row:0 col:0)
->>    NOTICE:  SEA Handle
->>    NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
->>    NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->>    NOTICE:  EsrEl3 = 0x92000410
->>    NOTICE:  PA is valid: 0x1000093c00
->>    NOTICE:  Hest Set GenericError Data
->>    NOTICE:  SEA Handle
->>    NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
->>    NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->>    NOTICE:  EsrEl3 = 0x92000410
->>    NOTICE:  PA is valid: 0x1000093c00
->>    NOTICE:  Hest Set GenericError Data
->>    ...
->>    ...        ---> Hapend SEA error interrupt storm
->>    ...
->>    NOTICE:  SEA Handle
->>    NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
->>    NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->>    NOTICE:  EsrEl3 = 0x92000410
->>    NOTICE:  PA is valid: 0x1000093c00
->>    NOTICE:  Hest Set GenericError Data
->>    [ 1429.818080][ T9955] Memory failure: 0x1000093: already hardware poisoned
->>    [ 1429.825760][    C1] ghes_print_estatus: 1 callbacks suppressed
->>    [ 1429.825763][    C1] {59}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 9
->>    [ 1429.843731][    C1] {59}[Hardware Error]: event severity: recoverable
->>    [ 1429.861800][    C1] {59}[Hardware Error]:  Error 0, type: recoverable
->>    [ 1429.874658][    C1] {59}[Hardware Error]:   section_type: ARM processor error
->>    [ 1429.887516][    C1] {59}[Hardware Error]:   MIDR: 0x0000000000000000
->>    [ 1429.901159][    C1] {59}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000081000100
->>    [ 1429.901166][    C1] {59}[Hardware Error]:   error affinity level: 0
->>    [ 1429.914896][    C1] {59}[Hardware Error]:   running state: 0x1
->>    [ 1429.914903][    C1] {59}[Hardware Error]:   Power State Coordination Interface state: 0
->>    [ 1429.933319][    C1] {59}[Hardware Error]:   Error info structure 0:
->>    [ 1429.946261][    C1] {59}[Hardware Error]:   num errors: 1
->>    [ 1429.946269][    C1] {59}[Hardware Error]:    error_type: 0, cache error
->>    [ 1429.970847][    C1] {59}[Hardware Error]:    error_info: 0x0000000020400014
->>    [ 1429.970854][    C1] {59}[Hardware Error]:     cache level: 1
->>    [ 1429.988406][    C1] {59}[Hardware Error]:     the error has not been corrected
->>    [ 1430.013419][    C1] {59}[Hardware Error]:    physical fault address: 0x0000001000093c00
->>    [ 1430.013425][    C1] {59}[Hardware Error]:   Vendor specific error info has 48 bytes:
->>    [ 1430.025424][    C1] {59}[Hardware Error]:    00000000: 00000000 00000000 00000000 00000000  ................
->>    [ 1430.053736][    C1] {59}[Hardware Error]:    00000010: 00000000 00000000 00000000 00000000  ................
->>    [ 1430.066341][    C1] {59}[Hardware Error]:    00000020: 00000000 00000000 00000000 00000000  ................
->>    [ 1430.294255][T54990] Memory failure: 0x1000093: already hardware poisoned
->>    [ 1430.305518][T54990] 0x1000093: Sending SIGBUS to devmem:54990 due to hardware memory corruption
->>
->> Signed-off-by: Junhao He <hejunhao3@h-partners.com>
->> ---
->>   drivers/acpi/apei/ghes.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index 005de10d80c3..eebda39bfc30 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -1343,8 +1343,10 @@ static int ghes_in_nmi_queue_one_entry(struct ghes *ghes,
->>          ghes_clear_estatus(ghes, &tmp_header, buf_paddr, fixmap_idx);
->>
->>          /* This error has been reported before, don't process it again. */
->> -       if (ghes_estatus_cached(estatus))
->> +       if (ghes_estatus_cached(estatus)) {
->> +               rc = -ECANCELED;
->>                  goto no_work;
->> +       }
->>
->>          llist_add(&estatus_node->llnode, &ghes_estatus_llist);
->>
->> --
-> 
-> This needs a response from the APEI reviewers as per MAINTAINERS, thanks!
-
-Hi, Rafael and Junhao,
-
-Sorry for late response, I try to reproduce the issue, it seems that
-EINJ systems broken in 6.18.0-rc1+.
-
-[ 3950.741186] CPU: 36 UID: 0 PID: 74112 Comm: einj_mem_uc Tainted: G            E       6.18.0-rc1+ #227 PREEMPT(none)
-[ 3950.751749] Tainted: [E]=UNSIGNED_MODULE
-[ 3950.755655] Hardware name: Huawei TaiShan 200 (Model 2280)/BC82AMDD, BIOS 1.91 07/29/2022
-[ 3950.763797] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 3950.770729] pc : acpi_os_write_memory+0x108/0x150
-[ 3950.775419] lr : acpi_os_write_memory+0x28/0x150
-[ 3950.780017] sp : ffff800093fbba40
-[ 3950.783319] x29: ffff800093fbba40 x28: 0000000000000000 x27: 0000000000000000
-[ 3950.790425] x26: 0000000000000002 x25: ffffffffffffffff x24: 000000403f20e400
-[ 3950.797530] x23: 0000000000000000 x22: 0000000000000008 x21: 000000000000ffff
-[ 3950.804635] x20: 0000000000000040 x19: 000000002f7d0018 x18: 0000000000000000
-[ 3950.811741] x17: 0000000000000000 x16: ffffae52d36ae5d0 x15: 000000001ba8e890
-[ 3950.818847] x14: 0000000000000000 x13: 0000000000000000 x12: 0000005fffffffff
-[ 3950.825952] x11: 0000000000000001 x10: ffff00400d761b90 x9 : ffffae52d365b198
-[ 3950.833058] x8 : 0000280000000000 x7 : 000000002f7d0018 x6 : ffffae52d5198548
-[ 3950.840164] x5 : 000000002f7d1000 x4 : 0000000000000018 x3 : ffff204016735060
-[ 3950.847269] x2 : 0000000000000040 x1 : 0000000000000000 x0 : ffff8000845bd018
-[ 3950.854376] Call trace:
-[ 3950.856814]  acpi_os_write_memory+0x108/0x150 (P)
-[ 3950.861500]  apei_write+0xb4/0xd0
-[ 3950.864806]  apei_exec_write_register_value+0x88/0xc0
-[ 3950.869838]  __apei_exec_run+0xac/0x120
-[ 3950.873659]  __einj_error_inject+0x88/0x408 [einj]
-[ 3950.878434]  einj_error_inject+0x168/0x1f0 [einj]
-[ 3950.883120]  error_inject_set+0x48/0x60 [einj]
-[ 3950.887548]  simple_attr_write_xsigned.constprop.0.isra.0+0x14c/0x1d0
-[ 3950.893964]  simple_attr_write+0x1c/0x30
-[ 3950.897873]  debugfs_attr_write+0x54/0xa0
-[ 3950.901870]  vfs_write+0xc4/0x240
-[ 3950.905173]  ksys_write+0x70/0x108
-[ 3950.908562]  __arm64_sys_write+0x20/0x30
-[ 3950.912471]  invoke_syscall+0x4c/0x110
-[ 3950.916207]  el0_svc_common.constprop.0+0x44/0xe8
-[ 3950.920893]  do_el0_svc+0x20/0x30
-[ 3950.924194]  el0_svc+0x38/0x160
-[ 3950.927324]  el0t_64_sync_handler+0x98/0xe0
-[ 3950.931491]  el0t_64_sync+0x184/0x188
-[ 3950.935140] Code: 14000006 7101029f 54000221 d50332bf (f9000015)
-[ 3950.941210] ---[ end trace 0000000000000000 ]---
-[ 3950.945807] Kernel panic - not syncing: Oops: Fatal exception
-
-We need to fix it first.
-
-Thanks.
-Shuai
 
