@@ -1,226 +1,181 @@
-Return-Path: <linux-kernel+bounces-883932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458C2C2EDB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:44:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C6AC2EDDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA34189F38B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:39:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 061D64E2245
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B34A20F079;
-	Tue,  4 Nov 2025 01:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C82222A0;
+	Tue,  4 Nov 2025 01:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGucJtVY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eej7SG6K"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E320298C;
-	Tue,  4 Nov 2025 01:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4091C5F13
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762220257; cv=none; b=kqzMVFsT8QPwNyT5iYQlSc6M2eeDKr5FRBiYtch+j+W9Olz+d97xroSGc8zMOLvqdau6exA0qEw8DLSLQZJQbfoIc27e7P21g0deHy8ob8jR7zV/HUOvzlp9DaOT5QInWgfEVo+qSjdbRdT5P8UZUwKHt4IBaVMSz6prRMc2YBc=
+	t=1762220731; cv=none; b=AR44kqnm1Z3iiBwacaKCknjxWSFz4lRwL/kyMNDErzxrfgGxpuRts02+7OS4skZ2DfQ1vp3rioj6jXdOzLqjdFLpOLrekpXL+mvBRpfzdoaR2PJI4x2zQej9om+gHEbi2urkKTjadR4Jmudtr/77AYDWB0+YcRznA6EEW9O8F0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762220257; c=relaxed/simple;
-	bh=OWIXlyAFbcAS5vVCWf3qdc5NXhyWrM2dBdDvEB1KwC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5OP314aLxEsc1IEtsKkKF1yQFeHXecgC99ixgpZeKuPRwcPVcOcYMWhCRIjauzGUd5UgBuZ+2mGIJTSpfQPbHFwRJE8Oe+4mED43yabUEwadWVwS+nCK+vLmbFTutHHRFZI7+s5tCjbEzBWld594X7T0e+aA10Kr+cyGTb/8Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGucJtVY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AF5C4CEE7;
-	Tue,  4 Nov 2025 01:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762220257;
-	bh=OWIXlyAFbcAS5vVCWf3qdc5NXhyWrM2dBdDvEB1KwC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PGucJtVYtW9xNg9XCfHCLOtgBzpcVrd8s/p3u2a8UVj4dkOO/JxCT/5AhEZN2gMO+
-	 3jorV97iSbdbPCaMRY4XkYHSdmG+5c5pPFew9TlVqUtmLvKY7maklHczFHlIn0ll9j
-	 AiDYan1UpEGd49ZiEFweOSH5cDX8APGJVHkngi/oIVjfyTsaJu3wB7joNzKnrFq0QQ
-	 63I459Rh/E+oPsKRC8uB6m6YGKBHyXrTeBdsqp+wCeytSgFCujEgpeggGNVGfoTp60
-	 5Z+X6z2Zj0WHM2G3YazoGiKTF27s90Meqryb+EW9sH2GrwTRBqRI8BdSa58GhvaB4f
-	 XGdEAIT5ifgpw==
-Date: Mon, 3 Nov 2025 19:41:09 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-Cc: chris.lew@oss.qualcomm.com, konradybcio@kernel.org, 
-	jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] soc: qcom: smp2p: Add irqchip state support
-Message-ID: <5xhvxnqkvuy6lthzpyk64pm6v3zovcftfb3a2jep3oulrtohpd@o6whhdwevi5h>
-References: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
- <20251103152929.2434911-2-deepak.singh@oss.qualcomm.com>
+	s=arc-20240116; t=1762220731; c=relaxed/simple;
+	bh=eE0Sksc1E8tASsNmX0nfCalfYGhh0r9ceygIkOqmHvg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OMHwqnohfhMcoBfSbPYjyYBqJWIZii5xncOhiV4yWyip3PIO7luO2MfAWKD/VTfopa49YcdLjDbh6kkLZnkGELGzyZ6kQUJ8l7Z8rp/WdNPYAEPddin89vAM1YnZZ4btCiRZn4AgGZvD6AVoUyXVwn/ROOvZC5/TiEf3VJqD5j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eej7SG6K; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762220716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P2r2L9mfw9r+buciI9SKXnid4aHeJcUG8hdz1itgchw=;
+	b=eej7SG6KYOyP3W/QXNmOQHfVG0rj2NyX9HRwoKpg+FWmsW7ArMfA2C/rXKHxlOZYdKzghs
+	oqCvSSke2vPfqgIIicBVX3ygA8Fsiz0AOAIbO9KSQKL9jyicSmHTjkv1WG0pn5uuQu8j6t
+	Ib+R2BY04rXYyG9jZXzc/7qccoD5dzg=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
+ <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
+ Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
+  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
+  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+In-Reply-To: <aQj7uRjz668NNrm_@tiehlicka> (Michal Hocko's message of "Mon, 3
+	Nov 2025 20:00:09 +0100")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-7-roman.gushchin@linux.dev>
+	<aQR7HIiQ82Ye2UfA@tiehlicka> <875xbsglra.fsf@linux.dev>
+	<aQj7uRjz668NNrm_@tiehlicka>
+Date: Mon, 03 Nov 2025 17:45:09 -0800
+Message-ID: <87a512muze.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103152929.2434911-2-deepak.singh@oss.qualcomm.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 03, 2025 at 08:59:28PM +0530, Deepak Kumar Singh wrote:
-> From: Chris Lew <chris.lew@oss.qualcomm.com>
-> 
-> A remoteproc booted during earlier boot stages such as UEFI or the
-> bootloader, may need to be attached to without restarting the remoteproc
-> hardware. To do this the remoteproc will need to check the ready and
-> handover states in smp2p without an interrupt notification.
-> 
+Michal Hocko <mhocko@suse.com> writes:
 
-The structure of the commit message is really good. But we don't _need_
-any of this in order to attach to a remoteproc without restarting it.
-
-We _need_ this stuff to determine if a remoteproc was started by the
-bootloader, and to determine if it has crashed.
-
-> Add support for the .irq_get_irqchip_state callback so remoteproc can
-> read the current state of the fatal, ready and handover bits.
-> 
-> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
-> Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/smp2p.c | 61 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index cb515c2340c1..39628df36745 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -48,6 +48,9 @@
->  #define SMP2P_MAGIC 0x504d5324
->  #define SMP2P_ALL_FEATURES	SMP2P_FEATURE_SSR_ACK
+> On Sun 02-11-25 13:36:25, Roman Gushchin wrote:
+>> Michal Hocko <mhocko@suse.com> writes:
+>> 
+>> > On Mon 27-10-25 16:17:09, Roman Gushchin wrote:
+>> >> Introduce a bpf struct ops for implementing custom OOM handling
+>> >> policies.
+>> >> 
+>> >> It's possible to load one bpf_oom_ops for the system and one
+>> >> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
+>> >> cgroup tree is traversed from the OOM'ing memcg up to the root and
+>> >> corresponding BPF OOM handlers are executed until some memory is
+>> >> freed. If no memory is freed, the kernel OOM killer is invoked.
+>> >
+>> > Do you have any usecase in mind where parent memcg oom handler decides
+>> > to not kill or cannot kill anything and hand over upwards in the
+>> > hierarchy?
+>> 
+>> I believe that in most cases bpf handlers will handle ooms themselves,
+>> but because strictly speaking I don't have control over what bpf
+>> programs do or do not, the kernel should provide the fallback mechanism.
+>> This is a common practice with bpf, e.g. sched_ext falls back to
+>> CFS/EEVDF in case something is wrong.
+>
+> We do have fallback mechanism - the kernel oom handling. For that we do
+> not need to pass to parent handler. Please not that I am not opposing
+> this but I would like to understand thinking behind and hopefully start
+> with a simpler model and then extend it later than go with a more
+> complex one initially and then corner ourselves with weird side
+> effects.
 >  
-> +#define ONE 1
-> +#define TWO 2
+>> Specifically to OOM case, I believe someone might want to use bpf
+>> programs just for monitoring/collecting some information, without
+>> trying to actually free some memory.
+>> 
+>> >> The struct ops provides the bpf_handle_out_of_memory() callback,
+>> >> which expected to return 1 if it was able to free some memory and 0
+>> >> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
+>> >> field of the oom_control structure, which is expected to be set by
+>> >> kfuncs suitable for releasing memory. If both are set, OOM is
+>> >> considered handled, otherwise the next OOM handler in the chain
+>> >> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
+>> >> killer) is executed.
+>> >
+>> > Could you explain why do we need both? Why is not bpf_memory_freed
+>> > return value sufficient?
+>> 
+>> Strictly speaking, bpf_memory_freed should be enough, but because
+>> bpf programs have to return an int and there is no additional cost
+>> to add this option (pass to next or in-kernel oom handler), I thought
+>> it's not a bad idea. If you feel strongly otherwise, I can ignore
+>> the return value on rely on bpf_memory_freed only.
+>
+> No, I do not feel strongly one way or the other but I would like to
+> understand thinking behind that. My slight preference would be to have a
+> single return status that clearly describe the intention. If you want to
+> have more flexible chaining semantic then an enum { IGNORED, HANDLED,
+> PASS_TO_PARENT, ...} would be both more flexible, extensible and easier
+> to understand.
 
-You forgot "#define PLEASE_DONT true"...
+The thinking is simple:
+1) Most users will have a single global bpf oom policy, which basically
+replaces the in-kernel oom killer.
+2) If there are standalone containers, they might want to do the same on
+their level. And the "host" system doesn't directly control it.
+3) If for some reason the inner oom handler fails to free up some
+memory, there are two potential fallback options: call the in-kernel oom
+killer for that memory cgroup or call an upper level bpf oom killer, if
+there is one.
 
-Sorry if I wasn't expressing myself clearly enough, we're using defines
-of magic values to make the code easier to read, follow, and understand.
+I think the latter is more logical and less surprising. Imagine you're
+running multiple containers and some of them implement their own bpf oom
+logic and some don't. Why would we treat them differently if their bpf
+logic fails?
 
-Giving trivial integer version numbers a "human readable" name doesn't
-meet this criteria. Use 1 and 2 in the code.
+Re a single return value: I can absolutely specify return values as an
+enum, my point is that unlike the kernel code we can't fully trust the
+value returned from a bpf program, this is why the second check is in
+place.
 
-> +
->  /**
->   * struct smp2p_smem_item - in memory communication structure
->   * @magic:		magic number
-> @@ -222,6 +225,42 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->  	}
->  }
->  
-> +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
-> +{
-> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-> +	unsigned int pid = smp2p->remote_pid;
-> +	char buf[SMP2P_MAX_ENTRY_NAME];
-> +	struct smp2p_smem_item *in;
-> +	struct smp2p_entry *entry;
-> +	size_t size;
-> +	int i;
-> +
-> +	in = qcom_smem_get(pid, smem_id, &size);
-> +	if (IS_ERR(in))
-> +		return;
-> +
-> +	smp2p->in = in;
-> +
-> +	/* Check if version is initialized and set to v2.
+Can we just ignore the returned value and rely on the freed_memory flag?
+Sure, but I don't think it bus us anything.
 
-Newline after the /* in multi-line comments please.
+Also, I have to admit that I don't have an immediate production use case
+for nested oom handlers (I'm fine with a global one), but it was asked
+by Alexei Starovoitov. And I agree with him that the containerized case
+will come up soon, so it's better to think of it in advance.
 
-> +	 * Early enumeration of inbound entries is required only
-> +	 * for early boot processors which have smp2p version 2.
+>> >> The bpf_handle_out_of_memory() callback program is sleepable to enable
+>> >> using iterators, e.g. cgroup iterators. The callback receives struct
+>> >> oom_control as an argument, so it can determine the scope of the OOM
+>> >> event: if this is a memcg-wide or system-wide OOM.
+>> >
+>> > This could be tricky because it might introduce a subtle and hard to
+>> > debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
+>> > Sleepable locks should be only allowed in trylock mode.
+>> 
+>> Agree, but it's achieved by controlling the context where oom can be
+>> declared (e.g. in bpf_psi case it's done from a work context).
+>
+> but out_of_memory is any sleepable context. So this is a real problem.
 
-"required only for early boot processors which have smp2p version 2",
-does "version 2" imply "early boot processor"?
+We need to restrict both:
+1) where from bpf_out_of_memory() can be called (already done, as of now
+only from bpf_psi callback, which is safe).
+2) which kfuncs are available to bpf oom handlers (only those, which are
+not trying to grab unsafe locks) - I'll double check it in thenext version.
 
-Does "required" imply that we could do this for other subsystems as
-well, but we choose not do do so? This comment should be sufficient for
-me not to feel the urge of removing the condition 3 months from now.
-
-
-Also, isn't it the case that for all non-early-boot subsystems, they
-haven't been running yet, so qcom_smem_get() above will fail?
-
-
-Please start over, and rewrite this comment from the angle of describing
-how this fits into the handling of early boot systems.
-
-> +	 */
-> +	if (in->version != TWO)
-> +		return;
-> +
-> +	for (i = smp2p->valid_entries; i < in->valid_entries; i++) {
-> +		list_for_each_entry(entry, &smp2p->inbound, node) {
-> +			memcpy(buf, in->entries[i].name, sizeof(buf));
-> +			if (!strcmp(buf, entry->name)) {
-> +				entry->value = &in->entries[i].value;
-> +				entry->last_value = readl(entry->value);
-> +				break;
-> +			}
-> +		}
-> +	}
-> +	smp2p->valid_entries = i;
-
-Why don't we just call qcom_smp2p_notify_in() instead of all this?
-
-> +}
-> +
->  static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
->  {
->  	struct smp2p_smem_item *in;
-> @@ -368,12 +407,31 @@ static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
->  	seq_printf(p, "%8s", dev_name(entry->smp2p->dev));
->  }
->  
-> +static int smp2p_irq_get_irqchip_state(struct irq_data *irqd, enum irqchip_irq_state which,
-> +				       bool *state)
-> +{
-> +	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
-> +	u32 val;
-> +
-> +	if (which != IRQCHIP_STATE_LINE_LEVEL)
-> +		return -EINVAL;
-> +
-> +	if (!entry->value)
-> +		return -ENODEV;
-> +
-> +	val = readl(entry->value);
-> +	*state = !!(val & BIT(irqd_to_hwirq(irqd)));
-> +
-> +	return 0;
-> +}
-> +
->  static struct irq_chip smp2p_irq_chip = {
->  	.name           = "smp2p",
->  	.irq_mask       = smp2p_mask_irq,
->  	.irq_unmask     = smp2p_unmask_irq,
->  	.irq_set_type	= smp2p_set_irq_type,
->  	.irq_print_chip = smp2p_irq_print_chip,
-> +	.irq_get_irqchip_state = smp2p_irq_get_irqchip_state,
-
-This part looks good.
-
-Regards,
-Bjorn
-
->  };
->  
->  static int smp2p_irq_map(struct irq_domain *d,
-> @@ -618,6 +676,9 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	/* Check inbound entries in the case of early boot processor */
-> +	qcom_smp2p_start_in(smp2p);
-> +
->  	/* Kick the outgoing edge after allocating entries */
->  	qcom_smp2p_kick(smp2p);
->  
-> -- 
-> 2.34.1
-> 
+Thank you!
 
