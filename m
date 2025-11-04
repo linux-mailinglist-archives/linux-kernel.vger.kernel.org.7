@@ -1,241 +1,167 @@
-Return-Path: <linux-kernel+bounces-884604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7D4C30938
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:47:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F4EC3091D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 961E44F83C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2122D3BD299
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4060F2D8774;
-	Tue,  4 Nov 2025 10:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515B72D9481;
+	Tue,  4 Nov 2025 10:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWhDA9eM"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PyGwY59m"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BDF2D8362
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AC12D7DDC
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762253131; cv=none; b=B+TELKTAPZ2DN50FufdPfQuYPt7DoipgdrTkFftJlUyvU3kPyGIq3SsN4JUYByRIx94Q08v1DnjQOFcq3BIbSb1sl5WDO/wUsgPwDW66mE/KMth72XJYtOcFSjl34QTwZPI1aQt0gO4azmtzN+uCLONSUkq73pgz3CAp5AyvuXk=
+	t=1762253132; cv=none; b=YMY2gttZuCD4bxy29Z2pKY7hc0M0tf/XZPtR3PhR2W0G8LshHA5uzAx9WMkVWk7acIKdTt+UfZ7nZR8+9Qc/Jt/E94yKOzQEMrN93ES2CBnGNuw+roSoShrMnXRd+ffX8x+g6o/4RN1aNVLOBk0eNT1lEfB/3xrrutqDleIWJqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762253131; c=relaxed/simple;
-	bh=UtT4hB4wz8X3bMAUgHhzNLv636yEuYMZWA2ZbRDp7ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M5fLU1ArOFMnSfYCGWwzLb63X6gq/XRxWNdzjtO4NsBDwegyCxpac0eOT82AZWblkKV036vEJYDGppSX13VKDmDZvNSPZU5wRY7TRo/18Nacofn97xTN0dUCULSB+5UFrTq5TAxS8AfT69H85vZiB0UA1shOAh8g0LITeMU4qsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWhDA9eM; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b4aed12cea3so965500566b.1
+	s=arc-20240116; t=1762253132; c=relaxed/simple;
+	bh=VX0zLAsPBGlwcqvp/8KD3Z0nfnIEYq4KM2NgJGr5aXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rO3atncM55OznK3EzbCEbKJuPO4iblgC2mSEuDVA072xTu7Pvho0gox1bKK0PWQr7wmrsIONdFAhOXORzHKBdc4tl9wSJq18Bl3spyGH0XPs5DJWM/dBTlq4iPFadfRpgAoeojnaWaQUHR9d1QYfHg14b+SqB6ghuHrYOAX619k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PyGwY59m; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b403bb7843eso186968566b.3
         for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762253127; x=1762857927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OrAQ1tstwLJDUUq1JtEKI2ptLUx1UO5CNRJ0YwBBWYg=;
-        b=RWhDA9eM6X2Zmr921e1ULybXwQimDdDunW5NGkohI8d3QMbM/S2cetW34Zwe0aOYU5
-         gxnc49Nt+zh7DynUz+piHp+rHAaBv8A8zlj4FP6+wvfU23BCHGP/Cw/Fn4mRkm60sqeW
-         RWmSo0HrGIfHeaBGeh+YMtUJLHzdTuVRcOyVJbsAJFgU7uOPL8d0fmKvFVII0IrS2w9C
-         iKzWEe06yEyD+bidIfil5EE35RONvjI3iw/809zsNbZ2eoYUbZf+u3LB4Hr2INcqRhMY
-         jjptgdBxyc4YrgtCxBGZic8P61dZpjCJZOLhDZtBSbAYOn1kctdGdq3hFW1vYNHtiqYD
-         QtWg==
+        d=suse.com; s=google; t=1762253127; x=1762857927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYj8Ir61bhOOSEvOfRY0NgbszhSvxELkBx7OQsS3cOQ=;
+        b=PyGwY59mWp3utUgAh2CmYtifE3gNPZiSf6GY7GwMAB+DkCf/1JXrIlq9TfMhdxE+YQ
+         2B2ECfWUTtR/K0AeYQ0VVshxBM/SlRnewghaQcoee+U1+NL0w9hzckYfh/5tF/vQGIx1
+         062ayTngKU2E1ojnOXupLDw1C180xE3yYuxJShOygafocJhwZZblIqthF0lj2rpFEBzN
+         J0sPTxm5MpB2atG3SpzlEjttx96zpyJ5sj2eomN1bq9n+C1jmnvAwPmoTZGBC1a0hKIB
+         YNgYP83Ttnih1+3vhaphHbMAx26a+kmIF+ABLmzJPtg7GM/omOBMqGeu+4l67r7l3oV0
+         whpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762253127; x=1762857927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OrAQ1tstwLJDUUq1JtEKI2ptLUx1UO5CNRJ0YwBBWYg=;
-        b=XLyLwEhGMDr917+n0UfaUX4v2x/v4hhv1faAo9G1aNMxhRugvJ1EJx/vl6BqYKB8Lf
-         2dLefmmM6ymh770p4VWa0MPduFFIw9eU2nC/CLzanlIcmoNvIhEUK7unveGRRrFuRC3K
-         VIgQQNu8m+dsrAHsLGl/nDK0S7SlpH4YiYnoLhLIxZJjjAXvFMrvwlD3QA8PWYbMhrOA
-         pfepRB49iPOJISNVCoZF9KzvWJftVaqaW+ROieoqp5qSdoDEdSV8uPMEoRxabi+Cweja
-         AxlXE3EWCjnekjBPXJfpR1nrv3lzcg+gGwzd34TM0BQF/O/G4SJJ6B6dBfsOpYCeX2qz
-         6lXg==
-X-Forwarded-Encrypted: i=1; AJvYcCV26BkgI6f+Wk1b3id9+71CqN6Ov+FETP+TPfjJ2cEPRkxx371HNlvecN8Jfc1CVOXcBv4L6u4W9InAys0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx39sul47mWRlCct/rcDzstXoE/W1dzXZfV07Vg5RJR1/qssXvA
-	0LxNrTNcl/mK6nWjluOQGEc9WspH0xSUr9UGX7pnZIMBGxW91Tl+5fPgU0XezBf4Ylbe4gYF4IC
-	ZQeHGaBu4Mr10oXUREwWz40/SBd3L3Rk=
-X-Gm-Gg: ASbGncshuV4YyOx941yuuIAV1+7G3o2D67sfzsoFP90+1/GIE90lGVD8b3q7pB5JovJ
-	yJQgNjNNdEErfx9dDcuIQsipo0s8zryTq7+S+jdJ99ZrjE5nb12K66myLonEekpRVwqqVhxdwpy
-	lwexwBCgNzh98jg6l+rhx789m5aG7MwnKtjPa+mcQrjp/mFiXOsQ1bV9Nppt3UTL1BvTKEQN7Bs
-	rthI/RQ0/bgrpHCrEalkuQbd8I0y55DCsekW538cQS1Y89g6WmlZo2yU9eY2ZmP
-X-Google-Smtp-Source: AGHT+IEaCuYtWsLBUaCT9EKWFYKNWcQu6GTVXqPxrrHWQ7DA5N/s8CqAY4lUgmi5MjTuQPv3/sxjqCOfDtZbqoQ1cXY=
-X-Received: by 2002:a17:907:3ea0:b0:b72:5380:f645 with SMTP id
- a640c23a62f3a-b725380fcc6mr140955866b.3.1762253126839; Tue, 04 Nov 2025
- 02:45:26 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WYj8Ir61bhOOSEvOfRY0NgbszhSvxELkBx7OQsS3cOQ=;
+        b=bPKvIrz7tGx/FE/Nhm0ueaNuafCTZ+Aw3VOm7o48bvy5KfJOjmRblD/nPs2+5h4KWQ
+         9QOM6BPfuXa3y+jgNWlhJcubhFQSaoKCYSlOY0mwF3YsFqZA5bxdef4/p5U2S2RctZ5h
+         G8HXoUN8ABtXwYG7ndKztWasPM0+HlaYfpxovEfQqjzZQD4GQwQpD6HJiK7LGfyUlSH2
+         yvFIHSw0mzi0kP8+NS6BxxLKmlSm5a3x1vcxdVCiwxg9gVPX8q2AwV1yNZi9cilgx0v1
+         XdmZo9AsuPemSafxjlQJf/u2uVl/pP/VOfBH9Ndm7VA1nBjMcFXWMZecXeAzrHAClJgC
+         hedA==
+X-Gm-Message-State: AOJu0Yz+SVNnGEXbkZoduo/N05n6UK/MWDvKgLNh8Uj4kswxpbNzfaf/
+	VfBb/FQMUOCWNzcVHUReagtAh2bI2EGF+DYb7qy3F3Fa31NiV4yj5gsW4T8/VMNZ98gaxByketa
+	7gv1h
+X-Gm-Gg: ASbGnct0G5WuRYMKHCXG6lh1m6918LH8XbcOx4vi7g+ZpJW7e6KccM4BFvPu+h+jMx2
+	OULBMR+hN2bv1IINqwZi3CxH+11h2eGoVQtKfgXEdOUOuvqfuQzR8K6sLCaTgqv8btzO3bfxBBz
+	OrV50HuISuf1fw95JzngPFL+u8ZFO1/b7rG9+WGHd94MmvQ5/F00kfxeEczkTQUQlmpXBBc/N+I
+	ohl7ILk+MJeRNZ/kS/8T9e0KThPB8EhmUlEDf5cJM5HQAncy50CoFgYP3lhXcqyEDyc79BOne7P
+	zQzyypd52FBkEue0OdosFP2ff9x91uxGOMFs5YhGuJFJwzqQX7KKRY4W4aaYCfbsEkG7BicRUKO
+	9HxzSY3tdd0ayPACHdfz8EF7dDq6w6xNILvc9nP/10wv0CNYwIS29L47jsZepuqScGESxtLEtdN
+	rV0U+ESwS2M5bmxg==
+X-Google-Smtp-Source: AGHT+IEMA8UdWF6f+LHriDUDE/NjxHUOw+zfGpPihm2oIRRAOwA1BfGgSkWC9f9a8GPJW8x10c9pUQ==
+X-Received: by 2002:a17:906:e0d6:b0:b70:7d5a:2111 with SMTP id a640c23a62f3a-b707d5a6021mr1065888366b.64.1762253127163;
+        Tue, 04 Nov 2025 02:45:27 -0800 (PST)
+Received: from linux ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723d3a3082sm177827666b.11.2025.11.04.02.45.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 02:45:26 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Chris Boot <bootc@bootc.net>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH] sbp-target: replace use of system_unbound_wq with system_dfl_wq
+Date: Tue,  4 Nov 2025 11:45:18 +0100
+Message-ID: <20251104104518.102130-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
- <20251029-swap-table-p2-v1-3-3d43f3b6ec32@tencent.com> <CAGsJ_4xsUwUH_VyeYaXHURqTS66Fbuxa00GTM5izwK-=Vg_20g@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xsUwUH_VyeYaXHURqTS66Fbuxa00GTM5izwK-=Vg_20g@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 4 Nov 2025 18:44:50 +0800
-X-Gm-Features: AWmQ_bkH1skkIY2XCclQdBdauODDo9nzt-9MwbugyftrD-jN4_dDbPmfi1759Fg
-Message-ID: <CAMgjq7DR9o+MmczWoT-p0=q6X-Ed3+qXe=fxj7_CKB77QLxsog@mail.gmail.com>
-Subject: Re: [PATCH 03/19] mm, swap: never bypass the swap cache even for SWP_SYNCHRONOUS_IO
-To: Barry Song <21cnbao@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 4, 2025 at 11:47=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Wed, Oct 29, 2025 at 11:59=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
-rote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Now the overhead of the swap cache is trivial, bypassing the swap
-> > cache is no longer a valid optimization. So unify the swapin path using
-> > the swap cache. This changes the swap in behavior in multiple ways:
-> >
-> > We used to rely on `SWP_SYNCHRONOUS_IO && __swap_count(entry) =3D=3D 1`=
- as
-> > the indicator to bypass both the swap cache and readahead. The swap
-> > count check is not a good indicator for readahead. It existed because
-> > the previously swap design made readahead strictly coupled with swap
-> > cache bypassing. We actually want to always bypass readahead for
-> > SWP_SYNCHRONOUS_IO devices even if swap count > 1, But bypassing the
-> > swap cache will cause redundant IO.
->
-> I suppose it=E2=80=99s not only redundant I/O, but also causes additional=
- memory
-> copies, as each swap-in allocates a new folio. Using swapcache allows the
-> folio to be shared instead?
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Thanks for the review!
+This lack of consistentcy cannot be addressed without refactoring the API.
 
-Right, one thing I forgot to mention is after this change, workloads
-involving mTHP swapin are less likely to OOM, that's related.
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
 
->
-> >
-> > Now that limitation is gone, with the new introduced helpers and design=
-,
-> > we will always swap cache, so this check can be simplified to check
-> > SWP_SYNCHRONOUS_IO only, effectively disabling readahead for all
-> > SWP_SYNCHRONOUS_IO cases, this is a huge win for many workloads.
-> >
-> > The second thing here is that this enabled a large swap for all swap
-> > entries on SWP_SYNCHRONOUS_IO devices. Previously, the large swap in is
-> > also coupled with swap cache bypassing, and so the count checking side
-> > effect also makes large swap in less effective. Now this is also fixed.
-> > We will always have a large swap in support for all SWP_SYNCHRONOUS_IO
-> > cases.
-> >
->
-> In your cover letter, you mentioned: =E2=80=9Cit=E2=80=99s especially bet=
-ter for workloads
-> with swap count > 1 on SYNC_IO devices, about ~20% gain in the above test=
-.=E2=80=9D
-> Is this improvement mainly from mTHP swap-in?
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-Mainly from bypassing readahead I think. mTHP swap-in might also help thoug=
-h.
+system_dfl_wq should be the default workqueue so as not to enforce
+locality constraints for random work whenever it's not required.
 
-> > And to catch potential issues with large swap in, especially with page
-> > exclusiveness and swap cache, more debug sanity checks and comments are
-> > added. But overall, the code is simpler. And new helper and routines
-> > will be used by other components in later commits too. And now it's
-> > possible to rely on the swap cache layer for resolving synchronization
-> > issues, which will also be done by a later commit.
-> >
-> > Worth mentioning that for a large folio workload, this may cause more
-> > serious thrashing. This isn't a problem with this commit, but a generic
-> > large folio issue. For a 4K workload, this commit increases the
-> > performance.
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  mm/memory.c     | 136 +++++++++++++++++++++---------------------------=
---------
-> >  mm/swap.h       |   6 +++
-> >  mm/swap_state.c |  27 +++++++++++
-> >  3 files changed, 84 insertions(+), 85 deletions(-)
-> >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 4c3a7e09a159..9a43d4811781 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -4613,7 +4613,15 @@ static struct folio *alloc_swap_folio(struct vm_=
-fault *vmf)
-> >  }
-> >  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >
-> > -static DECLARE_WAIT_QUEUE_HEAD(swapcache_wq);
-> > +/* Sanity check that a folio is fully exclusive */
-> > +static void check_swap_exclusive(struct folio *folio, swp_entry_t entr=
-y,
-> > +                                unsigned int nr_pages)
-> > +{
-> > +       do {
-> > +               VM_WARN_ON_ONCE_FOLIO(__swap_count(entry) !=3D 1, folio=
-);
-> > +               entry.val++;
-> > +       } while (--nr_pages);
-> > +}
-> >
-> >  /*
-> >   * We enter with non-exclusive mmap_lock (to exclude vma changes,
-> > @@ -4626,17 +4634,14 @@ static DECLARE_WAIT_QUEUE_HEAD(swapcache_wq);
-> >  vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >  {
-> >         struct vm_area_struct *vma =3D vmf->vma;
-> > -       struct folio *swapcache, *folio =3D NULL;
-> > -       DECLARE_WAITQUEUE(wait, current);
-> > +       struct folio *swapcache =3D NULL, *folio;
-> >         struct page *page;
-> >         struct swap_info_struct *si =3D NULL;
-> >         rmap_t rmap_flags =3D RMAP_NONE;
-> > -       bool need_clear_cache =3D false;
-> >         bool exclusive =3D false;
-> >         swp_entry_t entry;
-> >         pte_t pte;
-> >         vm_fault_t ret =3D 0;
-> > -       void *shadow =3D NULL;
-> >         int nr_pages;
-> >         unsigned long page_idx;
-> >         unsigned long address;
-> > @@ -4707,57 +4712,21 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >         folio =3D swap_cache_get_folio(entry);
-> >         if (folio)
-> >                 swap_update_readahead(folio, vma, vmf->address);
-> > -       swapcache =3D folio;
-> > -
->
-> I wonder if we should move swap_update_readahead() elsewhere. Since for
-> sync IO you=E2=80=99ve completely dropped readahead, why do we still need=
- to call
-> update_readahead()?
+The old system_unbound_wq will be kept for a few release cycles.
 
-That's a very good suggestion, the overhead will be smaller too.
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/target/sbp/sbp_target.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I'm not sure if the code will be messy if we move this right now, let
-me try, or maybe this optimization can be done later.
+diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
+index 3b89b5a70331..b8457477cee9 100644
+--- a/drivers/target/sbp/sbp_target.c
++++ b/drivers/target/sbp/sbp_target.c
+@@ -730,7 +730,7 @@ static int tgt_agent_rw_orb_pointer(struct fw_card *card, int tcode, void *data,
+ 		pr_debug("tgt_agent ORB_POINTER write: 0x%llx\n",
+ 				agent->orb_pointer);
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 
+ 		return RCODE_COMPLETE;
+ 
+@@ -764,7 +764,7 @@ static int tgt_agent_rw_doorbell(struct fw_card *card, int tcode, void *data,
+ 
+ 		pr_debug("tgt_agent DOORBELL\n");
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 
+ 		return RCODE_COMPLETE;
+ 
+@@ -990,7 +990,7 @@ static void tgt_agent_fetch_work(struct work_struct *work)
+ 
+ 		if (tgt_agent_check_active(agent) && !doorbell) {
+ 			INIT_WORK(&req->work, tgt_agent_process_work);
+-			queue_work(system_unbound_wq, &req->work);
++			queue_work(system_dfl_wq, &req->work);
+ 		} else {
+ 			/* don't process this request, just check next_ORB */
+ 			sbp_free_request(req);
+@@ -1618,7 +1618,7 @@ static void sbp_mgt_agent_rw(struct fw_card *card,
+ 		agent->orb_offset = sbp2_pointer_to_addr(ptr);
+ 		agent->request = req;
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 		rcode = RCODE_COMPLETE;
+ 	} else if (tcode == TCODE_READ_BLOCK_REQUEST) {
+ 		addr_to_sbp2_pointer(agent->orb_offset, ptr);
+-- 
+2.51.1
 
-I do plan to defer swap cache lookup inside swapin_reahahead /
-swapin_folio. We can do that now because swapin_folio requires the
-caller to alloc a folio for THP swapin, so doing swap cache lookup
-early helps to reduce memory overhead.
-
-Once we unify swapin folio allocation for shmem / anon and always do
-folio allocation with swap_cache_alloc_folio, everything will be
-arranged in a nice way I think.
 
