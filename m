@@ -1,165 +1,231 @@
-Return-Path: <linux-kernel+bounces-885166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD98C32299
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:55:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32F0C322AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF59F4EBF70
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6963A8C4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97143337B8D;
-	Tue,  4 Nov 2025 16:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF35337BA5;
+	Tue,  4 Nov 2025 16:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfY4IcWp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OkTX1inV";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="joiY9tT4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F79E33710D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1744533710D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275298; cv=none; b=aLWQIx6M6BmYa37ka94bkcRnv2QoY5WOeSlotlnBezNMHEYoE8dSbK/Vidv4ZLK6+5Ivm96SnXXTwO4tHVKke6kaN0dZB3ajxjxfWVRjkEKAPNHtVi07kXG/z+fdan/q4WvB6XTWkGkP5KvMxjQZY25/wBneNQM7qvLDYa1zfh4=
+	t=1762275350; cv=none; b=E1hkp8R0xlz5SPQeqeED93YhT/V3x0FbUxJAqUSk1rUzfnzBMHNs4n2Y0yeGqTrLvQ8QZ19Ba2bb/1MSsIQapXJisM2BMRQGqALjhtcdr0gIiOTM21aatpXoqkeFSJAQh6W5z3YZW60RFfS5yNUw+TZ8tI0CnLh+3ApJFRJ/VAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275298; c=relaxed/simple;
-	bh=izwlWJtwmWiVudAGPCKbSPz0D0cfYBWGNCGgGzVUkps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qto8uv4NT0h2l6nl/GhuPlbNo9U9EHozzLgUoijlF/0YOUoEQQL7tZs2LnqPANCtAvoqnbKIBWHARJuaAtMd4bcWebC6o3sBTbeQYIvUDys/8kTjGUg5zJKlfR9OHFdlQExwdBszjA/iQEdPYh4LNUytiEwl6NS3ayiz6yJSa6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfY4IcWp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762275297; x=1793811297;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=izwlWJtwmWiVudAGPCKbSPz0D0cfYBWGNCGgGzVUkps=;
-  b=RfY4IcWpGCFZbHmdxhWRn0BgwjZzPHPcuwjMB6Y/yQIhTMioSWUdqk1d
-   o5g41p1wHEmzpS5hUDqMta5Fb6sCrM7AYu/LKlb8EYkslY2zDQNelMrEo
-   HtQ1N6HYHtcvyeaBnDul9Q0DfB/d488zfKFdzcot4CMYaJLKdicEK4H0C
-   s6XRFvhdFhGSKj3OLYklp+yLpq3pBKFE0mrf8v4MiKWxK3yxUAItWTkzC
-   in357/dDQZzkur3SpKpoY7bt+Bx2uhPE6FVdn1ekAGpoR2oHs40yYPnyv
-   5zQewSTSgpbIkYXrBSajNSpQZfu+kVklth/2Sg/aZHQ7uJG8aUkxEZxAe
-   g==;
-X-CSE-ConnectionGUID: otTM4H/sRHKh1dpoZ/Hr5w==
-X-CSE-MsgGUID: 1xYuUU8KTKScY17D6rKJuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64407759"
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="64407759"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 08:54:56 -0800
-X-CSE-ConnectionGUID: 0aUucrjFSbqEYm57TAJD9Q==
-X-CSE-MsgGUID: vNgKcNVqRgSMYLFyxiWQRQ==
-X-ExtLoop1: 1
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.146])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 08:54:54 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vGKJ1-00000005WCz-2awh;
-	Tue, 04 Nov 2025 18:54:51 +0200
-Date: Tue, 4 Nov 2025 18:54:51 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: regulator branch mess
-Message-ID: <aQov22j_S8LRzIdm@smile.fi.intel.com>
-References: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
- <aQocq1eRjOOjiRdY@finisterre.sirena.org.uk>
- <aQogTFANK1fMtloW@smile.fi.intel.com>
- <aQojdTvP94aYVW4l@finisterre.sirena.org.uk>
- <aQolne8AKHXdJw0-@smile.fi.intel.com>
- <aQonVNgqJI56nspA@smile.fi.intel.com>
- <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1762275350; c=relaxed/simple;
+	bh=TiJGFEfQCBCdhtH1YWNIQUQjYRlLTugBZObWYWIa+5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GFnQ+iBcGGauJCGElYCqGp9kEG+EHRUi61U7DwjH3MRP7uy6Yy4k80EcTjyjJZcfER5JJJCurTsqu+eqLdt0FKDjvOxJvkmZEGPLxcL8wHuwmwwDB3sZtY9+uFRQwAmJ4HJHYksYh8OidAjR7NEhdk+rGePlysoLAeK5NzurpRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OkTX1inV; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=joiY9tT4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762275347;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hm6vQC33e7nqNsZy21fXXBlp96qh8mZG59C0mIsP1cY=;
+	b=OkTX1inVdR0gtyahI2mRtv4l4I6WflsTV56UWQ/MfmaY97ZBg+LpJWp0lI+Y5b45srfABx
+	RyBKtMHqErTINkhK2c9Ierhili+vdSjmY0aSqs4X0B3vl5Q06fe8vU0M90GQLjjZnsdku8
+	fUFpPsYYxKJ/ictyaccDswMq+EqD7Nk=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-DgFPr9rhPqmBQtsElDqnEQ-1; Tue, 04 Nov 2025 11:55:46 -0500
+X-MC-Unique: DgFPr9rhPqmBQtsElDqnEQ-1
+X-Mimecast-MFC-AGG-ID: DgFPr9rhPqmBQtsElDqnEQ_1762275345
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-634700fe857so35721a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:55:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762275345; x=1762880145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hm6vQC33e7nqNsZy21fXXBlp96qh8mZG59C0mIsP1cY=;
+        b=joiY9tT42xR8e5kN1bhgamlo8HEcW80cigm6MBNvauenA4ePpy0LQ83lvNyN79YIFQ
+         ivBrtYsFToY7vg3s/44W68yLuvOJ2QOnNRe5npZjCRV4l3/et2SmRTq1tO/8ktBqHaP2
+         1+HBRpX+IGYoDxdSOyPFKxGftw/6kVaTT7DfXuL1D+v/Se+nDPLh9WD8+WDv9burxmRl
+         75lC0UtvGpqXgd078+Xgf82hi9DSaS+qb2Kf2fuM3uI/RWjQiDctmmasLXuzEAU3UP+C
+         7Ubf3dUD8tWCeYkIg6aCfJIndRlDddWdEgB12q+aneVLntxBgg/O0zziU2xqwjtg7qE7
+         1qfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762275345; x=1762880145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hm6vQC33e7nqNsZy21fXXBlp96qh8mZG59C0mIsP1cY=;
+        b=X/28OowP0GmD98XZDkhY1z+92hs7LL2oJD+SpgZdjmaGdOjYhE117w/46UMcHSLflc
+         QZgPRH/993JAWbVKCJRupKQtx+nXw+xVCq/1FzVsegBa3zVCI+bKENCTIbt5fCxZ4Jmp
+         XEYKsGPD6Iev2Zx7Fn4IPPbW7vJBaRy1V5XMVMBA04fF2sdXEdaejHxFTRTmBe4SePah
+         cYFbvTvJyQTdsGGRRcrAQNSXmTHrI9WB5tHPkYRh6ApCFQPTzL4bJ6MFjhb5TPFcjNbS
+         rOUMMTIik1NPLZUCGS1fZJxf6EL3sBpR0Hv6oLGR0mtwyLK0f5X5fQq8R44drn6ruOkt
+         Mkcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsz/MLmPZsvTilvI476fZE9Q+8siwACjESms+8Z07fnC4xxpSplxqrBbGtab8KdW5lri8xYvnafRRE9ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKj6m8jvd4XKE83zS+fOjqBp8PMW5QjMhaBEIfu+W0XWeDD10m
+	u2YctoUWK7f/YOC55BQm6TV3upHjh5NOjat965XUtmI/XlNEQLOEaW+T5vUNoLJlB0e7s4Unrq+
+	B2Dg83ftAjuH8iVnNJDmCZLR5+56a1cd3woPxfvIaRwJG6fyqnSeihX/LzmR8ycqUH8hcE3yQAA
+	9AuWXnA0rkqsRPRdAypbXshGcKUeWmV8nQjB5ljFKR
+X-Gm-Gg: ASbGnctSyBQpIlQ+2R5mMu+0E+k+KKx7t2COkJ7OUHHDhNG85IYVb2WKmFVG7KUNgmR
+	tiWLy4f1IU7KkK8r9rqs0ycZmSKfjTd7h/SLCkKe879pgsHRrQ4+wS4HO3+q5ih4zLW0XL/FNAB
+	Ujx8p+U6a84CUSuDnszyG3UBksQQXh2nFGZRlFwQcPXgeeehPoOZOshmo7
+X-Received: by 2002:a17:907:94d3:b0:b6d:5fbf:8c63 with SMTP id a640c23a62f3a-b72631fdf5cmr29678266b.15.1762275345087;
+        Tue, 04 Nov 2025 08:55:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH0F6IPtMO6sLF8EVo/ZKpg4T9PTY1cBgQJI1AWgls82FiG7QTQdkTU5cch5q8n9/7j6YmE/dmzTamG16w02RI=
+X-Received: by 2002:a17:907:94d3:b0:b6d:5fbf:8c63 with SMTP id
+ a640c23a62f3a-b72631fdf5cmr29673566b.15.1762275344567; Tue, 04 Nov 2025
+ 08:55:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251030144438.7582-1-minhquangbui99@gmail.com> <1762149401.6256416-7-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1762149401.6256416-7-xuanzhuo@linux.alibaba.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Wed, 5 Nov 2025 00:55:07 +0800
+X-Gm-Features: AWmQ_blI7oSZAo-0MCFKdglnXUXPuueQuOSCwEEpEbibTzqvZtiLszZM2HTCGLE
+Message-ID: <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
+Subject: Re: [PATCH net v7] virtio-net: fix received length check in big packets
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 04:30:54PM +0000, Mark Brown wrote:
-> On Tue, Nov 04, 2025 at 06:18:28PM +0200, Andy Shevchenko wrote:
-> > On Tue, Nov 04, 2025 at 06:11:09PM +0200, Andy Shevchenko wrote:
-> 
-> > > The merge in your regulator tree for-6.19 branch which is
-> 
-> > >   commit 9de2057bbdfb58f4d9bb1476135317cd3fe6aa52 (patch)
-> > >   tree 97c34e939fd59891ab122d191ebbe8837a0010d3
-> > > 
-> > >   regulator: pf9453: optimize PMIC PF9453 driver
-> 
-> > Because "base" keyword in the series points out to the 
-> 
-> >   commit 98bd8b16ae57e8f25c95d496fcde3dfdd8223d41 (tag: next-20251031)
-> > 	Author: Stephen Rothwell <sfr@canb.auug.org.au>
-> > 	Date:   Fri Oct 31 20:35:57 2025 +1100
-> > 
-> >   Add linux-next specific files for 20251031
-> > 
-> >   Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> > And that merge did it. If you are going to send this to Linus, I believe it
-> > will become a trouble.
-> 
-> No, that merge very much did not do that.  As you can tell with git log
-> and from the diffstat I posted previously that linux-next commit does
-> not appear in the history of the above commit.  You can also see this
-> with git cherry:
-> 
-> $ git cherry origin/master regulator/for-6.19
-> + 6277a486a7faaa6c87f4bf1d59a2de233a093248
-> + 433e294c3c5b5d2020085a0e36c1cb47b694690a
-> + 835dfb12fc389f36eb007657f163bd1c539dcd45
-> + 1356c98ef911e14ccfaf374800840ce5bdcb3bbd
-> + 6a8cdef7dc2a4c0dbde3f7d7100b3d99712a766b
-> + 65efe5404d151767653c7b7dd39bd2e7ad532c2d
-> + fb25114cd760c13cf177d9ac37837fafcc9657b5
-> + f76dbe127f1b5910e37dfe307d2de5c13d61ed89
-> + d054cc3a2ccfb19484f3b54d69b6e416832dc8f4
-> + 01313661b248c5ba586acae09bff57077dbec0a5
-> + 86df0030b71d7172317d957df17524a7fd6232d4
-> + 4c33cef58965eb655a0ac8e243aa323581ec025f
-> + 28039efa4d8e8bbf98b066133a906bd4e307d496
-> + 252abf2d07d33b1c70a59ba1c9395ba42bbd793e
-> + a2d4691b3fec6a2360e4ec953d06819ea055c3e7
-> + 0144a2b29d95af8523c308116de65d398d6e935b
-> + 2ecc8c089802e033d2e5204d21a9f467e2517df9
-> 
-> That is the full list of commits in the for-6.19 that do not already
-> appear in mainline.
+Tested this patch with virtio-net regression tests, everything works fine.
 
-Yes, because this merge brings also rc3-rc4 bump:
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-$ git merge-base origin/master reg/for-6.19
-6146a0f1dfae5d37442a9ddcba012add260bceb0
-
-$ git describe 6146a0f1dfae5d37442a9ddcba012add260bceb0
-v6.18-rc4
-
-$ git merge-base origin/master reg/for-6.19^
-dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-
-$ git describe dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-v6.18-rc3
-
-Now I see the source of those 3kLoCs in the merge commit on GitWeb.
-
-$ git diff --stat v6.18-rc3..v6.18-rc4
-...
-252 files changed, 2022 insertions(+), 854 deletions(-)
-
-+ the changes on top that you mentioned above.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+On Mon, Nov 3, 2025 at 1:59=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.co=
+m> wrote:
+>
+> On Thu, 30 Oct 2025 21:44:38 +0700, Bui Quang Minh <minhquangbui99@gmail.=
+com> wrote:
+> > Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
+> > for big packets"), when guest gso is off, the allocated size for big
+> > packets is not MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on
+> > negotiated MTU. The number of allocated frags for big packets is stored
+> > in vi->big_packets_num_skbfrags.
+> >
+> > Because the host announced buffer length can be malicious (e.g. the hos=
+t
+> > vhost_net driver's get_rx_bufs is modified to announce incorrect
+> > length), we need a check in virtio_net receive path. Currently, the
+> > check is not adapted to the new change which can lead to NULL page
+> > pointer dereference in the below while loop when receiving length that
+> > is larger than the allocated one.
+> >
+> > This commit fixes the received length check corresponding to the new
+> > change.
+> >
+> > Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big=
+ packets")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+>
+> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+>
+> > ---
+> > Changes in v7:
+> > - Fix typos
+> > - Link to v6: https://lore.kernel.org/netdev/20251028143116.4532-1-minh=
+quangbui99@gmail.com/
+> > Changes in v6:
+> > - Fix the length check
+> > - Link to v5: https://lore.kernel.org/netdev/20251024150649.22906-1-min=
+hquangbui99@gmail.com/
+> > Changes in v5:
+> > - Move the length check to receive_big
+> > - Link to v4: https://lore.kernel.org/netdev/20251022160623.51191-1-min=
+hquangbui99@gmail.com/
+> > Changes in v4:
+> > - Remove unrelated changes, add more comments
+> > - Link to v3: https://lore.kernel.org/netdev/20251021154534.53045-1-min=
+hquangbui99@gmail.com/
+> > Changes in v3:
+> > - Convert BUG_ON to WARN_ON_ONCE
+> > - Link to v2: https://lore.kernel.org/netdev/20250708144206.95091-1-min=
+hquangbui99@gmail.com/
+> > Changes in v2:
+> > - Remove incorrect give_pages call
+> > - Link to v1: https://lore.kernel.org/netdev/20250706141150.25344-1-min=
+hquangbui99@gmail.com/
+> > ---
+> >  drivers/net/virtio_net.c | 25 ++++++++++++-------------
+> >  1 file changed, 12 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index a757cbcab87f..421b9aa190a0 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -910,17 +910,6 @@ static struct sk_buff *page_to_skb(struct virtnet_=
+info *vi,
+> >               goto ok;
+> >       }
+> >
+> > -     /*
+> > -      * Verify that we can indeed put this data into a skb.
+> > -      * This is here to handle cases when the device erroneously
+> > -      * tries to receive more than is possible. This is usually
+> > -      * the case of a broken device.
+> > -      */
+> > -     if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
+> > -             net_dbg_ratelimited("%s: too much data\n", skb->dev->name=
+);
+> > -             dev_kfree_skb(skb);
+> > -             return NULL;
+> > -     }
+> >       BUG_ON(offset >=3D PAGE_SIZE);
+> >       while (len) {
+> >               unsigned int frag_size =3D min((unsigned)PAGE_SIZE - offs=
+et, len);
+> > @@ -2107,9 +2096,19 @@ static struct sk_buff *receive_big(struct net_de=
+vice *dev,
+> >                                  struct virtnet_rq_stats *stats)
+> >  {
+> >       struct page *page =3D buf;
+> > -     struct sk_buff *skb =3D
+> > -             page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
+> > +     struct sk_buff *skb;
+> > +
+> > +     /* Make sure that len does not exceed the size allocated in
+> > +      * add_recvbuf_big.
+> > +      */
+> > +     if (unlikely(len > (vi->big_packets_num_skbfrags + 1) * PAGE_SIZE=
+)) {
+> > +             pr_debug("%s: rx error: len %u exceeds allocated size %lu=
+\n",
+> > +                      dev->name, len,
+> > +                      (vi->big_packets_num_skbfrags + 1) * PAGE_SIZE);
+> > +             goto err;
+> > +     }
+> >
+> > +     skb =3D page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
+> >       u64_stats_add(&stats->bytes, len - vi->hdr_len);
+> >       if (unlikely(!skb))
+> >               goto err;
+> > --
+> > 2.43.0
+> >
+>
 
 
