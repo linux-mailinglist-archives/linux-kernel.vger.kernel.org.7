@@ -1,404 +1,230 @@
-Return-Path: <linux-kernel+bounces-884031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED60C2F28A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 121A9C2F278
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D8D44F2298
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:22:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F1CA4EE654
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786702737F8;
-	Tue,  4 Nov 2025 03:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA8627A123;
+	Tue,  4 Nov 2025 03:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="DvMDGdph"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="x6mCrJY3"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011026.outbound.protection.outlook.com [52.101.70.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1DF280CD5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 03:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762226528; cv=none; b=ASz0sMy6cyXN4Vs1WdxiUHNKoCppst7IkNR1EwVtfCc9Va6wE6PT7Ppkas2/81Fe/z1Fe/hhgeF6a49Pb0AWzstP/WFZXBYJoOmjaDgby4Kn/P9XyUOhZ8TWlJY12KHIc2I576zyYjuV1L5eF1boeYrJGRfXQh08m3+gsrh9bhQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762226528; c=relaxed/simple;
-	bh=gdnFeUD55lC/200zV9LOApz48NpUIIYrrQ5duPDEENA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ix47VGZcJElnj/6xyPa7ljM3ANr37jGDr21lbwbrmkrZJar8jpNZ57lRCjSxeUvKpncnwZBTL1X+wJwLl5nxzE7uioph5EZHPH2TNW3rLy6rUaguF5aEg0c0HRjCX0hjpTQ7gD1O8TeVmZe7FtVCyiL1DOHdPCpcb2Ynd4FyEQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=DvMDGdph; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27c369f8986so51912215ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 19:22:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762226525; x=1762831325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vXCmE7H6x7fyKpOMWrBQ1sPfqnG3V4Jxw1CcNvLnI7g=;
-        b=DvMDGdphgHCq02uF3NPgWSWxEhXvhl5Td3KNYcawHqFfY9/uyX7uvX+UJWaTsEW526
-         OVXxzf2NwSCF6Ljc6Xt9YcyNcezXP+G1Gurm0R36+1J3pxKNjidAeYjzWPUM1Dnju0SW
-         RZwgWc1GugDZM2nbi/1HeYrmpqSl2ns1RYdcuUubYsRokV4auihUw/2mFGFP3BzaGwc/
-         dpmnZk9OIB96KhNUtpd+n9AXm6P09mpbzA5PPbdbMfAURjDPBceG76mT5DDBGw0NDY7e
-         R43YIAY5Afx6mKcKmj0Q08WcH+LzDMq4noC2QGsdMJexDj2vFkbISDZgkiOghVOQXhMF
-         gEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762226525; x=1762831325;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vXCmE7H6x7fyKpOMWrBQ1sPfqnG3V4Jxw1CcNvLnI7g=;
-        b=h+6sqadg0vO7JGz+B2u/9qqhMfzPgbjxhRm+/m+k9TUvTd/3qPMFC56mZ3FSoRaMfk
-         BeGtzE1lWIjtvSVA8Wd8eUbGhexmwh1HRCOz4lowHSfX8oTmcG2J8C7S4j+uQ7Ekl/hH
-         YtKHlUdhB8fcnYpwVM+0K/9G6KSEMf4/eckD1/j0cdzY6rw9OpMmZ5IIbWqUDdOvb/q8
-         czGdUMLUfx8wuU/jgCrZK/dGbu8XkwZ6lJYCvoxce9jpfbhrD6kHezglkf4G5v0+J60N
-         yUXF5C56PcgR4v0iXnaaKxh1CuAjy9y3btp7cz1OCPXzaLUTLlrvvUEgON+B6ApSNfrP
-         l9JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVad7HiNNL3fLmwtvK2VJDOVlc6sBYV9t4RyZn2yF7pK+cGorctGF2JW3h/GdahPeaiSf5nNunzSpIwNf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh9WV28LM5QhBWzZXFUFBFA/HDTaS880phtRq8o+kuN6aNpjKa
-	/qJeP9spjOl1TrtTBnmSrdHlWMeXOFFcWxOYRuL/3iPkcqHfHjAtbtaqVJNJmXWfVQo=
-X-Gm-Gg: ASbGncs87tpqa2HouheJUeQDA2UbrC5DwYlXKJUWRKT4FVYra0sZGIx14Kz69NNmFi6
-	hTe71t3UwCUlRSlvM4hK0TD0AbLbqWl4eKaPANpgM6K4uIUmmskOHduuMtLW6TNYSjs6R9EGequ
-	r68AfnMuCY5yHShAdlmPOdEzJAtmtuwIFHLJM1A1ANi3NGwUAUjtyFqtCYkdaioiooqWkPZ8mCK
-	xlN7P9k43fyvtBbKaPnXxYn+LuStCEyx5VJ2WHTvmxlZA0VAWQ9cDmZHY2bJ+PhMQqsIFZLy19l
-	7/C/7YS6wMOjc3tmlieAUSNyr3T4GgfQl5jioYVMqTFBoTCu7ka+2MWyE0ZvEoZPoOXkYRqxCxd
-	PITP7+irRlTnTS+et19OTlRZCxPZ4sMLYSwuhbCQs7kzQR9yz2mcC29GWCVyJ8/DnBxCpLnOl8H
-	LkQpN76kAVjYdEXg==
-X-Google-Smtp-Source: AGHT+IF2TZ20FVdtcNu1/5M1Y2bthYAGkuFfgh/CKrUIJaaPONkop5s1tx0H2wZNuH9GtYdOsYlGuA==
-X-Received: by 2002:a17:902:db0e:b0:295:6c26:9348 with SMTP id d9443c01a7336-2956c2696d4mr129368375ad.59.1762226525257;
-        Mon, 03 Nov 2025 19:22:05 -0800 (PST)
-Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a5751fsm7559125ad.82.2025.11.03.19.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 19:22:04 -0800 (PST)
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-To: linux-mm@kvack.org
-Cc: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	joel.granados@kernel.org,
-	jack@suse.cz,
-	laoar.shao@gmail.com,
-	mclapinski@google.com,
-	kyle.meyer@hpe.com,
-	corbet@lwn.net,
-	lance.yang@linux.dev,
-	leon.huangfu@shopee.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: [PATCH mm-new] mm/memcontrol: Introduce sysctl vm.memcg_stats_flush_threshold
-Date: Tue,  4 Nov 2025 11:19:08 +0800
-Message-ID: <20251104031908.77313-1-leon.huangfu@shopee.com>
-X-Mailer: git-send-email 2.51.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB173272E42;
+	Tue,  4 Nov 2025 03:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762226518; cv=fail; b=JF0ygSlEbGdq6FBFL7jjCZVF7KjPuRWGT45pe/6/APF+MgI/Mc8dwbz6i2Hwfrh6FGQgtQ7/9l4U5MbJio6MmmYCs/HbWYDiL2e+Qaj0Kd4JGL3QW06t4N8mz4CKLAmsh0SfkmjBQHX279DFy0eCAHyANqMo1Qr9q21plMVNNyI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762226518; c=relaxed/simple;
+	bh=c7q1kXJ0QiUJyQ+HKaVN97EbmgnUY+TBZu5xmiqMMa4=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=SXgrLZcw/VfrYd8m8mI4ocjVnkS1xMzE05txNYQ7vrj+rYX/kdv7y3AypVLlPvbf9tRGCtKGT91C6CtGrJZXOT0MpLPNC73XtVlfgL3dp+npQz+8Ha9IhH4aH69tq7FZugNDoC5yh9inF2383zgn+5THTTNCAuUkQGmWRhxLs14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=x6mCrJY3; arc=fail smtp.client-ip=52.101.70.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jPjNX/CSSokbRTSfAz8pzI+mZ0j5CFgPe3mvIYFmzyxS2VKTvuwTHwpG+zJPex+VlWPdWNVSXuFEYSWxiK/DUK8vyMPP1G4Yj/f8eNBSrcFtDu/1e6pW94mZOCihFDmEG2nRyUa/fI4/g91PZ3pPWf7+lnrQAIcHfMkh8aSray7pCUpMV9fxVDYqCDb6vnNNeR+610joZsfTs8F7sOsdTrv0ulBJjSL8QZux2tnNrJ/3VFtVBrbyXosVboi2Dyv7x3VRsPJzQIfsG41hglmlTqfN+AOJMZEd/qzMyMqXLTJXSVSEBnI8U6NRhvcEdujy/Lx0/Qe8z0jV/HceX0EJdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=toJGfgxegWgi9ZXppKhPNZdM+3ri5zCOCpnZc75TnU0=;
+ b=yCOoAU0UZfOdp1D2bkekonDUD+SYkLyANkdmjeW9VOvHYUDrSkP18YWMOYlFi1Po19rSsvIktHDlwVcC9DRpq9osmbqN50P4kGc44hznRPurSJU4o248ScgNMy+8dxIrRnnUUIYTkSt/ritlPD+tW6KK4fUvB1iabqFHmkCz0mlv+2jEXS7sxS3GHUR8BxU9HE/HzljAHlECRbinylg2VxOzmFn5acT+Z7WilVG8jBjNqtdbkZZG1zKgeAuW08bW1q/I43FdoY+HhUSgWguO47Gh13C/bwQaT7xHpVGpfCntGm5N5TJpi3LJAdt7DAxdXBW08jOmdaGAw9qallpU1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=toJGfgxegWgi9ZXppKhPNZdM+3ri5zCOCpnZc75TnU0=;
+ b=x6mCrJY3zQQDNcHXA4ewDJwt25cgnLLJx8ZTWteMyrBKxh7pjJw5USXMBbuvKbctK5zxs49kCu5tuUl7ZxeZjOmqaLk5jD4Gm86s3cUcRkR+keVSROQdsgDPZZUXQZwpCYKq/of/WbQ/eUZxU64vgHT6uEorhl3eAm6cCOAjKYk6CuIHKwLGGMr6d83vBo+Fbyh5WvGH7Cy1cZ+SLqYMaKq7xsM7DH8g4GiBDLX0sdRoHYbBiQPujezidtQjvoZJb0EDAjzrIF8jsT4xNc5SYTR4mUdEG/lw0+upDZvGivlj4LB77WlkDCoffS34xggaN9Dry5HxKmXR6I10BFF89A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
+ by DU2PR04MB8824.eurprd04.prod.outlook.com (2603:10a6:10:2e3::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 03:20:36 +0000
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::92c2:2e03:bf99:68eb]) by AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::92c2:2e03:bf99:68eb%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 03:20:36 +0000
+From: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Subject: [PATCH v2 0/3] media: nxp: imx8-isi: Add ISI support for i.MX95
+Date: Tue, 04 Nov 2025 11:21:04 +0800
+Message-Id: <20251104-isi_imx95-v2-0-c05b7cb104cd@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACBxCWkC/03MQQ7CIBCF4as0sxbDgNTUlfcwjSEwtbNoacCQm
+ oa7i6xc/i8v3wGJIlOCW3dApMyJw1pDnTpws11fJNjXBiWVkQMaUR9PXvbBCCSNvZ48Db2C+t8
+ iTbw36zHWnjm9Q/w0OuNvbQpKdflTMgoptPVop6vTvsf7um9nFxYYSylfg28En6AAAAA=
+X-Change-ID: 20250915-isi_imx95-1e3163fde962
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762226484; l=1510;
+ i=guoniu.zhou@nxp.com; s=20250815; h=from:subject:message-id;
+ bh=c7q1kXJ0QiUJyQ+HKaVN97EbmgnUY+TBZu5xmiqMMa4=;
+ b=gyVV+9BphrPIEMGfKwkaWIaWtSV7gUxeUFS2gnDhsBIcG5bZ7IfoFo6qyAusG7D4oXmibpWmW
+ 4Cxk12RBaAPBdTzGuaAb+Y+9WqG7zNtlmQC+oqB1cJiOPB02nGbi/bL
+X-Developer-Key: i=guoniu.zhou@nxp.com; a=ed25519;
+ pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
+X-ClientProxiedBy: SG2PR01CA0109.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::13) To AS8PR04MB9080.eurprd04.prod.outlook.com
+ (2603:10a6:20b:447::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|DU2PR04MB8824:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0a18a42-89a6-4f5b-a13f-08de1b511f4a
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|7416014|52116014|376014|1800799024|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?UXlqcHVQS2phR056US9zRXRRemdHS29YUHcxcFB0L014aWNKT1V2V3o4TmFx?=
+ =?utf-8?B?czEwMXN1amFKNGV5eGl5WGtqblkxMWh2YkJ5Vlc5V1h5dVMveWRNdWRuY09n?=
+ =?utf-8?B?WlZLN0lhNDNzK0JQOHByazZyY0NQZkgvUG56a0QrMytBN3A4cmpkN2IzN01r?=
+ =?utf-8?B?aElPYW84ckMzTU5DOElkaUxQY291cTNJNE5MckhEZ2duWWUvdDNjRGJoWFI5?=
+ =?utf-8?B?RDhKKzBJQm5zR280Q0htTVZuOWxBYXoyWVRhVUpyNFlablFCMkNqaWlUMU0v?=
+ =?utf-8?B?T0tqdGRhKzVGTEUvT0d1UGlnOTBPcEZ5OUJWSE5pNXRqSHUyeEtUYWpUeVcv?=
+ =?utf-8?B?elpidi9sWDB1eWRWbThhQlhXTEtTcUxhUlFScFN1aXp1YVVFelg5MHdwa0kz?=
+ =?utf-8?B?TXNiMm1pRDd3QkkxYTRIMW5Rb01sRWYrcmd4LzBYNXNjQnF3Y2ZidkZCSkdU?=
+ =?utf-8?B?K3A3U05Tc292OWNlQUN1S2NrQk5USkxnQ0lyQkN0Nyt0TEhEWjR2M0hFVHZl?=
+ =?utf-8?B?cEVabkdMWHBpVDI4eklQZ001SURxaW90RE4zVmQ0Z25aM1Bac296OE1YdDZt?=
+ =?utf-8?B?Yk8wM0t6M2JEZEFOSHlSdVB2MnZ5Q244VVZkbEpES29zQlFMSUw4Y055TlFH?=
+ =?utf-8?B?bWEySTFPdG96ODVZNmV4ZlJ4UUY1K3Zkd0FMM2MrdzZsQm5EUG9waXp5MFhL?=
+ =?utf-8?B?YXgrODl4aDV6VTBJSUVoOEU0bmtGUWI5UDl1QkE0bzhZZ0dYSGpmS1RQMHZk?=
+ =?utf-8?B?NTZGQlBKcVBtOHhhd3RaZjFoNkpyZE5vZWFVV2x6dS9mTllhS0Fwb2FsS050?=
+ =?utf-8?B?V2JNU0RtbExxT2tRdUVRWUNGYnBTV2w4SGYwTC9KQzdwZHZwek9RR2RxUVho?=
+ =?utf-8?B?eG9DUFdseEh6YUtiaWZOT3FGZEdrU1VUZUxaaXJBN0N4Y0hXQlozUUorU1Vu?=
+ =?utf-8?B?WjI3UXBkZlRzTVRGNjhzM012SXZ2TnhaNWVNUXVybG9mbXYvWjYyVWhVYmhJ?=
+ =?utf-8?B?V0ZKd2NCSWpMdTROK1drOUtNQnptM3BFUE0wZTJuMHRTNGVsUkFZNWFWZHZm?=
+ =?utf-8?B?d3hqdG1DUDZrY1FtN3QzQ3k5YlJmdEFoTXpJUk5oeU03QndWZEpPczFMcGJG?=
+ =?utf-8?B?U0VkY0lVZkFmN3NIZ3V0WXFsYXFnY01hRllEcTR3OG5tSVVyWURmbktVM1Vw?=
+ =?utf-8?B?R05Bd2s1cDdTLzdKTEhtSkZWTktqaWprY0RNS3U2dEMvd0JwYmllOUhLZWpW?=
+ =?utf-8?B?dlMvQzg0WjU2bUg1d3pXMjUyQ3pXdGJtbkJBa1J0SWt1VkVQbzN3dW01NVVm?=
+ =?utf-8?B?WDIwak90VXlGYTlxUUhIY3ByZ1gxRjU3MzJ2dUpVcjNPdktZbFEyZ0dFT3l6?=
+ =?utf-8?B?L3R5VEhTWElrK0toVURaOThQN09YYk1pQ3FucnRpaXozQnVSL251OTNYVStj?=
+ =?utf-8?B?S1IrSUk4QXFZVTVSdkdubjBDTm9zeGlRV0h3QjFUcjdEUDBnZFZZc1VJZVhy?=
+ =?utf-8?B?Vm5ETk9JQVpCdzRnNlRvNGJrbCtOSnJ0ejJLRVE2Zzl4YjhVb2lTL2xtQThS?=
+ =?utf-8?B?eHRNcWxpODFWRnByeHhHZk11c1QzL1Y5OTc3NmVkbVYySjVMZHlnWnZVUTVa?=
+ =?utf-8?B?T21PNTE3aDhiWkZwSzRKY3JwZWFpQlE3ajI2NVRzakluNmxHTmYxdmxzekd3?=
+ =?utf-8?B?WVRMb3B6dGlCeExYbjZ6TjRldzk5c3lNVnRweER1NUZXTEhDeUZwMU9hTE5r?=
+ =?utf-8?B?NlllMHkveGNvd0wrYlNkQVd0MktaRWRrRDNLeDVIWjFFYzNTZFRYbmh1allu?=
+ =?utf-8?B?cnJYQy9RbTVuV1lqRGp2aE9OeEpLbDNKOFI5SWEyZkN1Q0xxdjI2ZUJsS1FX?=
+ =?utf-8?B?Z0pCZEdwK2lNZWFzUE9iMmVCTlYvQzZ6cU1KNllURVhXK3IvWk9GcTZxeWFk?=
+ =?utf-8?B?R1B6YWh4OGI1RUlQRDRJdG1XNHBRejA0bHVLSzExMFFHaUY4MU1VTkRDUHpa?=
+ =?utf-8?B?TVIraEo3Vjhsa2t4OUdmbkZGM09TODNqeVlNL0ZRTUxRZmZJb2gvREdkV1ZJ?=
+ =?utf-8?B?dEI3MitLd1VwZlZ4VUNzQUZVU0xzSTRObGsyQT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?QXlLUlRqVEw0VHBFOTBPLzJvemt0bFpvRktRdHBpc3RGa09pNFF5SmRLY3dh?=
+ =?utf-8?B?Z3orc2o4ZGtoU0R2aVZjakp3MWU2bkZRbmF2c1p4SlZaQ0RlL0YrNGhIMW1O?=
+ =?utf-8?B?VTJwbCtXZ1NxRWlSNzVsRHhialh6UTh6TlEyL3h1TFZ5c2lidEIvbEVid29T?=
+ =?utf-8?B?SGhvSTczdXlRVnI4elV6aWxCVzZSYlBlM3hyekwrV201dFNCc2dqNzlZT1Vz?=
+ =?utf-8?B?N1drRGwvNWNoMlFzVVppUEkxbzhYQmdFVWxLdWJmSFdTZFJOMjRwYy81Y1hm?=
+ =?utf-8?B?dzhydW92Yi8rcHZTK2l5bjlvbUlnTGlwWnFkRlBpMWlldFdEM0F3RDBUeGRX?=
+ =?utf-8?B?V0c3NGQweUpSQmszSTkrckt6VFBybVJTczdoQitlZ3RaR2M3Z3F5YnppNC91?=
+ =?utf-8?B?MFNLT21UWExRaWxCakxHWUhoT1JRdExvdnoxdEkySzFBWmN5R3B5b2k4bUF4?=
+ =?utf-8?B?cVhSa0NkMW9kOHdoeHBvYXpWNUV4dWd6c2xvTi9sYm11N2JDR01hbmNYTHJw?=
+ =?utf-8?B?b3p0dDZmT3ZIdWR1ZWNYK2JzN2dHVnlrbW5RaWRYT3ZDZjVsWlBkV2NnWURi?=
+ =?utf-8?B?MEV1NHJZWXhxd0pGQjVpMlg1VmpzUmVjT2w4UXZSZ3dlQlhkUWJPc09SNXNs?=
+ =?utf-8?B?QjFEbk5NR29pUFJicnBCbmNLMHlpNUpFS24xV1FDelhMYUFnNzU3YTYwY3da?=
+ =?utf-8?B?cURZY2V2b3NVekNPTnd4YzkzQlZ1bVZMYUNvRkVvWnpXQ0ZqNldLSnhYZURJ?=
+ =?utf-8?B?UHJwaWcwbFd1Qm5Pb3FWazkrYjJNMkl4QWhVM0pveHRUWXJxVWp3VmVaQlI4?=
+ =?utf-8?B?VUtXRzZWUDdQZjNJanNZeFNhdlo3MjdRcGNPTjg5MGFDYVpnd3E5NkNhL2Ny?=
+ =?utf-8?B?bllHdzBBelpuMU5mdmZQa0Ura3RDanIwdVRENlI5ZEJ5NzltRGR4eUxzUlB5?=
+ =?utf-8?B?bkUycmdqWHJMRkV6aDBYQU01MkVDdERXMVdXYVZhMVEzVUxCVU9oQzk0alNu?=
+ =?utf-8?B?dzc5NW1WdDVPZ0RNa25FeWROL2sxekVBRjZrczM3S2srY3pRL2ZqTlhPRHR6?=
+ =?utf-8?B?Uk16QTVJYnBmRElFYUJES3k5YjZPcjR0d2ZiNGxzcitmbTBpekpnNVcvT0dl?=
+ =?utf-8?B?RGM0S0NoaWV6TCttNFZaU3RiNS9lV1IvOG1EOW80VittUFBIc3E3eERtZ2Zr?=
+ =?utf-8?B?cjJlTkUrTU9DMGVyRXBzWERSUjBKSmpwZ0ZCRE55cnVUY3hRU1lkTlowWnAw?=
+ =?utf-8?B?TDl4emxBRGd2c0FRTjlPUk5BRkVFTnZLeXB1ZDBCREdBbk5EdnJTVGtRN2Yv?=
+ =?utf-8?B?cnVIREZGZll3TTJTa3JXT2NubzN5SzVDTUl6MXBzZUdnbDNLNi9hWmNaUjMy?=
+ =?utf-8?B?Z21JTG5xZjRURUFyYnpmY0djc29MVDVya3UxUzc3enF3aTBQWkFRZGt2V2xl?=
+ =?utf-8?B?YVltK3d1UStIc0pJZWdvdWNHQnNBbVMxOWlYUGkrWExLQmdSbjFJSVJwelRB?=
+ =?utf-8?B?Y0cyYXp1eDUzS0lOd0Y5ZjlUR3RQbmxWQzQ2bHpuNVdMVTg4OXhEeG1oT2JD?=
+ =?utf-8?B?Zm5vNFZuQ09MV1RaOWdaMTZCaEdFREkya3lpNFFnbGgzeUNZemVGL2hqbDNu?=
+ =?utf-8?B?QmZkWmtVNFlsS0F0NUpJRlhJRWtDekYySm5sVzRseWVDTWp4WWtsVVpmZHM2?=
+ =?utf-8?B?ckFDeERBTmxUZGNwTTRUK0pLZFllSlhKZTJOVzlIVHQ3aGZnTzcvV0RRNERU?=
+ =?utf-8?B?K2V5cnlzemVvL0ZqamxhL3pscENVeXNDVE5CSXJOUlZsNGM5eGJKOVdhTFBm?=
+ =?utf-8?B?ZlAzdE9kMGptL29waS80dU9vTlZxV09wRU9aZ3RGOGxwSmRITFFpQlV1NWFE?=
+ =?utf-8?B?MTJnY0ZCS0RETHYyZzYxbldtelRrblp2dU43L2Z2TEdsYWVXUEFjZjdkV3BQ?=
+ =?utf-8?B?SVd4bUw2aVVNWkI4MXdSaXo1WDg3STZNcTBvYmNMc0I0eFhRU2FheFlLcEpL?=
+ =?utf-8?B?cWUzL05YUXBJZ2VSKzU3SGxyL3lTdUYxMjRwVkJwdDY4dk0xbjNkU2xCSmFT?=
+ =?utf-8?B?cWs0Z25Majc1eGZyYzdRWHhvaitORFdZNjU2ZzFrUmNKRURoeTd6UFFhTjFn?=
+ =?utf-8?B?aW0yR1duTjc4UjNXUlIrQjBoVU5TWVo4a2RXRjV1ek9tbXMvU25CdzlXMEZ5?=
+ =?utf-8?B?WFE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0a18a42-89a6-4f5b-a13f-08de1b511f4a
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 03:20:36.6558
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yDoOIAtafLC4ZkrRwyX41eDJK+vd7XnvfK9rE6stc/M7Hc3JVw+JTbo2qebRZWPJK4sXoYv/YsNcWIzOVjr+xw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8824
 
-The current implementation uses a flush threshold calculated as
-MEMCG_CHARGE_BATCH * num_online_cpus() for determining when to
-aggregate per-CPU memory cgroup statistics. On systems with high core
-counts, this threshold can become very large (e.g., 64 * 256 = 16,384
-on a 256-core system), leading to stale statistics when userspace reads
-memory.stat files.
+Add basic functions support for i.MX95 ISI.
 
-This is particularly problematic for monitoring and management tools
-that rely on reasonably fresh statistics, as they may observe data that
-is thousands of updates out of date.
+The ISI in i.MX95 supports eight channels and interface up to 4 pixel
+link sources to obtain the image data for processing in its pipelines.
 
-Introduce a new sysctl, vm.memcg_stats_flush_threshold, that allows
-administrators to override the flush threshold specifically for
-userspace reads of memory.stat. When set to 0 (default), the behavior
-remains unchanged, using the automatic calculation. When set to a
-non-zero value, userspace reads will use the custom threshold for more
-frequent flushing.
-
-Importantly, this change only affects userspace paths. Internal kernel
-paths continue to use the default threshold (or ratelimited flushing)
-to maintain optimal performance. This is achieved by:
-
-- Introducing mem_cgroup_flush_stats_user() for userspace reads
-- Keeping mem_cgroup_flush_stats() unchanged for kernel internal paths
-- Updating memory.stat read paths to use mem_cgroup_flush_stats_user()
-
-The implementation adds comprehensive documentation in
-Documentation/admin-guide/sysctl/vm.rst explaining the use cases,
-examples for different system configurations, and the distinction
-between userspace and kernel flush behaviors.
-
-Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
+Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 ---
- Documentation/admin-guide/sysctl/vm.rst | 48 ++++++++++++++
- include/linux/memcontrol.h              |  1 +
- mm/memcontrol-v1.c                      |  4 +-
- mm/memcontrol.c                         | 86 +++++++++++++++++++++----
- 4 files changed, 124 insertions(+), 15 deletions(-)
+Changes in v2:
+- Change maxItems to minItems for the fsl,imx95-isi conditional block.
+- Add minItems for the fsl,imx8mp-isi conditional block.
+- Add "else" block to keep the same restriction for existed compatible string.
+- Update commit message in patch 2.
+- Remove gasket callbacks since icc driver still under development and ISI
+  could work well without QoS setting when system loading is normal(no buffer overflow).
+- Rebased on latest media/next.
+- Link to v1: https://lore.kernel.org/r/20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index ace73480eb9d..f40c629413ea 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -46,6 +46,7 @@ Currently, these files are in /proc/sys/vm:
- - lowmem_reserve_ratio
- - max_map_count
- - mem_profiling         (only if CONFIG_MEM_ALLOC_PROFILING=y)
-+- memcg_stats_flush_threshold
- - memory_failure_early_kill
- - memory_failure_recovery
- - min_free_kbytes
-@@ -515,6 +516,53 @@ memory allocations.
- The default value depends on CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT.
- 
- 
-+memcg_stats_flush_threshold
-+============================
-+
-+Control the threshold for flushing memory cgroup statistics when reading
-+memory.stat from userspace. Memory cgroup stats are updated frequently in
-+per-CPU counters, but these updates need to be periodically aggregated
-+(flushed) to provide accurate statistics.
-+
-+**Important**: This setting ONLY affects userspace reads of memory.stat files.
-+Internal kernel paths continue to use the default threshold (or ratelimited
-+flushing) to maintain optimal performance in latency-sensitive code paths.
-+
-+When set to 0 (default), userspace reads use the automatic threshold:
-+MEMCG_CHARGE_BATCH * num_online_cpus()
-+
-+This means on systems with many CPU cores, the threshold can become very high
-+(e.g., 64 * 256 = 16,384 updates on a 256-core system), potentially resulting
-+in stale statistics when reading memory.stat.
-+
-+Setting this to a non-zero value overrides the automatic calculation for
-+userspace reads only. Lower values result in fresher statistics when reading
-+memory.stat but may increase overhead due to more frequent flushing.
-+
-+Examples:
-+
-+- On a 256-core system with default (0):
-+  Userspace reads use threshold = 64 * 256 = 16,384 updates
-+  Internal kernel paths use default thresholds (unaffected)
-+
-+- Setting to 2048:
-+  Userspace reads use threshold = 2,048 updates (much fresher stats)
-+  Internal kernel paths use default thresholds (performance maintained)
-+
-+- Setting to 1024:
-+  Userspace reads use threshold = 1,024 updates (even fresher stats)
-+  Internal kernel paths use default thresholds (performance maintained)
-+
-+Note: Memory cgroup statistics are also flushed automatically every 2 seconds
-+regardless of this threshold.
-+
-+Recommended for systems with high core counts where the default threshold
-+results in statistics that are too stale for monitoring or management tools,
-+while keeping internal kernel operations performant.
-+
-+Default: 0 (auto-calculate based on CPU count)
-+
-+
- memory_failure_early_kill
- =========================
- 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 8d2e250535a8..208895e6cf14 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -955,6 +955,7 @@ unsigned long lruvec_page_state_local(struct lruvec *lruvec,
- 				      enum node_stat_item idx);
- 
- void mem_cgroup_flush_stats(struct mem_cgroup *memcg);
-+void mem_cgroup_flush_stats_user(struct mem_cgroup *memcg);
- void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg);
- 
- void __mod_lruvec_kmem_state(void *p, enum node_stat_item idx, int val);
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 6eed14bff742..3eeb20f6c5ad 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -1792,7 +1792,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
- 	int nid;
- 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
--	mem_cgroup_flush_stats(memcg);
-+	mem_cgroup_flush_stats_user(memcg);
- 
- 	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
- 		seq_printf(m, "%s=%lu", stat->name,
-@@ -1873,7 +1873,7 @@ void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
- 
--	mem_cgroup_flush_stats(memcg);
-+	mem_cgroup_flush_stats_user(memcg);
- 
- 	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
- 		unsigned long nr;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c34029e92bab..fffcf6518ae0 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -63,6 +63,7 @@
- #include <linux/seq_buf.h>
- #include <linux/sched/isolation.h>
- #include <linux/kmemleak.h>
-+#include <linux/sysctl.h>
- #include "internal.h"
- #include <net/sock.h>
- #include <net/ip.h>
-@@ -556,10 +557,40 @@ static u64 flush_last_time;
- 
- #define FLUSH_TIME (2UL*HZ)
- 
--static bool memcg_vmstats_needs_flush(struct memcg_vmstats *vmstats)
-+#define FLUSH_DEFAULT_THRESHOLD (MEMCG_CHARGE_BATCH * num_online_cpus())
-+
-+/*
-+ * Threshold for number of stat updates before triggering a flush.
-+ *
-+ * Default: 0
-+ *   - When set to 0 (the default), the threshold is calculated as:
-+ *         FLUSH_DEFAULT_THRESHOLD
-+ *     (i.e. MEMCG_CHARGE_BATCH * num_online_cpus())
-+ *
-+ * Tunable:
-+ *   - This value can be overridden at runtime using the sysctl:
-+ *         /proc/sys/vm/memcg_stats_flush_threshold
-+ *   - Useful for systems with many CPU cores, where the default threshold may
-+ *     result in stale stats; a lower value leads to more frequent flushing.
-+ */
-+static int memcg_stats_flush_threshold __read_mostly;
-+
-+#ifdef CONFIG_SYSCTL
-+static const struct ctl_table memcg_sysctl_table[] = {
-+	{
-+		.procname	= "memcg_stats_flush_threshold",
-+		.data		= &memcg_stats_flush_threshold,
-+		.maxlen		= sizeof(memcg_stats_flush_threshold),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+};
-+#endif
-+
-+static bool memcg_vmstats_needs_flush(struct memcg_vmstats *vmstats, int threshold)
- {
--	return atomic_read(&vmstats->stats_updates) >
--		MEMCG_CHARGE_BATCH * num_online_cpus();
-+	return atomic_read(&vmstats->stats_updates) > threshold;
- }
- 
- static inline void memcg_rstat_updated(struct mem_cgroup *memcg, int val,
-@@ -581,7 +612,7 @@ static inline void memcg_rstat_updated(struct mem_cgroup *memcg, int val,
- 		 * flushable as well and also there is no need to increase
- 		 * stats_updates.
- 		 */
--		if (memcg_vmstats_needs_flush(statc->vmstats))
-+		if (memcg_vmstats_needs_flush(statc->vmstats, FLUSH_DEFAULT_THRESHOLD))
- 			break;
- 
- 		stats_updates = this_cpu_add_return(statc_pcpu->stats_updates,
-@@ -594,9 +625,9 @@ static inline void memcg_rstat_updated(struct mem_cgroup *memcg, int val,
- 	}
- }
- 
--static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
-+static void __mem_cgroup_flush_stats_threshold(struct mem_cgroup *memcg, bool force, int threshold)
- {
--	bool needs_flush = memcg_vmstats_needs_flush(memcg->vmstats);
-+	bool needs_flush = memcg_vmstats_needs_flush(memcg->vmstats, threshold);
- 
- 	trace_memcg_flush_stats(memcg, atomic_read(&memcg->vmstats->stats_updates),
- 		force, needs_flush);
-@@ -610,6 +641,20 @@ static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
- 	css_rstat_flush(&memcg->css);
- }
- 
-+static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
-+{
-+	__mem_cgroup_flush_stats_threshold(memcg, force, FLUSH_DEFAULT_THRESHOLD);
-+}
-+
-+static void mem_cgroup_flush_stats_threshold(struct mem_cgroup *memcg, int threshold)
-+{
-+	if (mem_cgroup_disabled())
-+		return;
-+
-+	memcg = memcg ? : root_mem_cgroup;
-+	__mem_cgroup_flush_stats_threshold(memcg, false, threshold);
-+}
-+
- /*
-  * mem_cgroup_flush_stats - flush the stats of a memory cgroup subtree
-  * @memcg: root of the subtree to flush
-@@ -621,13 +666,24 @@ static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
-  */
- void mem_cgroup_flush_stats(struct mem_cgroup *memcg)
- {
--	if (mem_cgroup_disabled())
--		return;
-+	mem_cgroup_flush_stats_threshold(memcg, FLUSH_DEFAULT_THRESHOLD);
-+}
- 
--	if (!memcg)
--		memcg = root_mem_cgroup;
-+/*
-+ * mem_cgroup_flush_stats_user - flush stats when reading memory.stat from userspace
-+ * @memcg: root of the subtree to flush
-+ *
-+ * This function uses a potentially custom threshold set via sysctl
-+ * (memcg_stats_flush_threshold). It should only be used for userspace reads
-+ * of memory.stat where fresher stats are desired. Internal kernel paths
-+ * should use mem_cgroup_flush_stats() to maintain performance.
-+ */
-+void mem_cgroup_flush_stats_user(struct mem_cgroup *memcg)
-+{
-+	int threshold = READ_ONCE(memcg_stats_flush_threshold);
- 
--	__mem_cgroup_flush_stats(memcg, false);
-+	threshold = threshold ? : FLUSH_DEFAULT_THRESHOLD;
-+	mem_cgroup_flush_stats_threshold(memcg, threshold);
- }
- 
- void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg)
-@@ -1474,7 +1530,7 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 	 *
- 	 * Current memory state:
- 	 */
--	mem_cgroup_flush_stats(memcg);
-+	mem_cgroup_flush_stats_user(memcg);
- 
- 	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
- 		u64 size;
-@@ -4544,7 +4600,7 @@ static int memory_numa_stat_show(struct seq_file *m, void *v)
- 	int i;
- 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
--	mem_cgroup_flush_stats(memcg);
-+	mem_cgroup_flush_stats_user(memcg);
- 
- 	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
- 		int nid;
-@@ -5176,6 +5232,10 @@ int __init mem_cgroup_init(void)
- 	memcg_pn_cachep = KMEM_CACHE(mem_cgroup_per_node,
- 				     SLAB_PANIC | SLAB_HWCACHE_ALIGN);
- 
-+#ifdef CONFIG_SYSCTL
-+	register_sysctl_init("vm", memcg_sysctl_table);
-+#endif
-+
- 	return 0;
- }
- 
+---
+Guoniu Zhou (3):
+      media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI compatible string
+      media: nxp: imx8-isi: Keep the default value for BLANK_PXL field
+      media: nxp: imx8-isi: Add ISI support for i.MX95
+
+ .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 31 +++++++++++++++++++++-
+ .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 12 +++++++++
+ .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  1 +
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c  |  6 ++---
+ 4 files changed, 45 insertions(+), 5 deletions(-)
+---
+base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
+change-id: 20250915-isi_imx95-1e3163fde962
+
+Best regards,
 -- 
-2.51.2
+Guoniu Zhou <guoniu.zhou@nxp.com>
 
 
