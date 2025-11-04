@@ -1,486 +1,269 @@
-Return-Path: <linux-kernel+bounces-885182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354E4C32390
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:06:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB06EC323BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D833AB887
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DD24648CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC85C33B6C9;
-	Tue,  4 Nov 2025 17:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843C633B6C2;
+	Tue,  4 Nov 2025 17:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="Or4EZNTd"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D9LDLdH6"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010016.outbound.protection.outlook.com [52.101.85.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12272334C00
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275766; cv=none; b=ch5PVUmj3YkkJeWuHkiwXYM8KCHsE2JsHaIqoqWWO28jLrKvIbnKRyF76LqB96BeslI+GziMGDqZnB5H0rQ3zCUA8meqY985rmL83EmZKOJKhNy08K+qN16GrWxDjULH2m9BlRzVUUG3QRKFPlcimDs0knhXTLdMNw+ZxX9AYho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275766; c=relaxed/simple;
-	bh=EWO5+Jo98nLUKzqMNaEDKH9OgdjG0IrjZ+odi0gpRnk=;
-	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=QosGGMSPKhUJDzlTCe57lb6ZkRKebL0p8PBSKh8arX/W+UeKA8kliiLD2cWz2pcgqJDFwc29hgZblxGzO+MteqK+VywdZy1HlbwE0UrquhlrzoecXdsM7NfTRc8mw3/K/06fbK1/tJVvIZxmN9hgiyD6Q4NqHoSH0uu0Br4kzco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=Or4EZNTd; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7869819394aso9699257b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:02:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1762275763; x=1762880563; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=P1UexZIIp+qR5KNU45yjHwV4Htk3+9pyERy+GG7OFns=;
-        b=Or4EZNTdcS9OLxZePetbgm7HtovkV4n5usP+bfkQXSrdFdksOe2GNWo+o88zuGH0Qm
-         KVPEXzVL9RUU8+4wVqeEuHHKMHWdeiWKSsauxfqsHuB0rYxJHpQ2oiO74O0ZYbaPCIyv
-         TQRxEu1C3/0pV6ZN+OdNCWgrT7WHHnDdpqACJvwT+bwK4w/8PvQv+YfsD0XXS4ePbhjw
-         GNt2UMusTR1yg85AIW3KoHb+qgV7i7baa/1pH6bS1XWUDrRqcCH7zZgJ73j9h//zLr78
-         LOOlKzAfVRLHUjrAiECPNBw6acaAv+0G8D6W9bSanhPep7K2jUIxU4HsrOs7RRzEAeCt
-         Swkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762275763; x=1762880563;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P1UexZIIp+qR5KNU45yjHwV4Htk3+9pyERy+GG7OFns=;
-        b=UI44JNsBT8nxidgwhR7e6m6FfOSxkFaBcPb9pUcWFnyketiS2w5oJNbsIulsPV0I8G
-         BLAC3XLUYwQ5Hv6+JvKsEtwMxJLGub2gpSrTuZ7S7zy2hHOEpVi1wj22O9Mne0/3Mff2
-         yPJSjCIH67DD/gJimNfb/zmdufzfYHwIHJ7c21nwv91/wRjAd1xNmv8bYCAa53CfViYF
-         MEW/582aH8/ON1RNS4Hf/1Wiu7bbzpGER3Gic316onS9bobvzyq9GnHV2rLJ5pqDYXMJ
-         UkjX+oORz1fInRYEUsn+zkKFnAxgXTS/Qns70SgFbYsSwGS4eevXgjSfP7JteOP/WHjF
-         L0eQ==
-X-Gm-Message-State: AOJu0YwJ2Dnd9vLdzIDv524ULo1x3IKjf8/bBQuuR/92WX7iDaQRQkGJ
-	16mUm+EgcWPQCWcDWM5ml7vZJKS2Mp9TyAA1v8/a6rXqtPZRdYD9FkWR5dqQJrti5R4Rreg4Kxg
-	xXyROd2ebJzEwEEjYmPHu410Dy71c9SwNciIVN66pquOPs/PhqLJ7OQ==
-X-Gm-Gg: ASbGncvNUi5JE4/C5lAss55bOG/h8J/BZYoFAY5jKxBcdSOEVQ/Yl8krwxMGbf0nSdM
-	wSoQD1ulKmjZ79yI8SnZs3YOOlB8MtOcRO0fHi4Lo4M6xIYH0tgU+xkAzGjKTZGDTQ/DQpmqNdF
-	pH3qVdUYA1BkEwAW1UEvHuSKMW303L7HsZOw0bEyq6gW5bybhj4rSJVWq0wQ4m8Aeq+ubNXEnVa
-	05iC3ekt9etPFULK3s/nWyZ2/sHePWexC95P965Gt3WtT9CazZNvVKo1qOXWA==
-X-Google-Smtp-Source: AGHT+IF9sHg5VXSO50QCBDqS0vPspAIHZHreI6gFNaukDo/oju8p3Ml/vzWsz+xdlaR8tvFGqdrL9bQnu3AXBg7oPwo=
-X-Received: by 2002:a05:690e:1517:b0:63f:aa5b:bce9 with SMTP id
- 956f58d0204a3-63fd358096dmr116353d50.53.1762275762407; Tue, 04 Nov 2025
- 09:02:42 -0800 (PST)
-Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 4 Nov 2025 12:02:42 -0500
-Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 4 Nov 2025 12:02:42 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78B033A03C;
+	Tue,  4 Nov 2025 17:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762275819; cv=fail; b=HAlZhknK0FpmXM463Tb9sDzP0V4jUbJHB82flUnNE0838B+0CQdeWL9XIzzV5j9Gxim9Y6TUMyBy+xOAP631PDbZcKS7w/FoQvi0wZh263oWmrrK6KDWH77r1nOwQBk6HwiDgmo7lPOjc43ZGvUwX5CxdxIegjLga025e3Eo3T4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762275819; c=relaxed/simple;
+	bh=YjTnPAaZRcASf1PIPvV97zwtPsElk+KMkf1ygXH7jSE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PNcku97/Bo0LctFKAyxEo/0cH4pdfmMkZ+3KGMwiZPnez3w+YwnG61B6Pw6dxH2ODQdozhrn8xDTyH6au7xSUAfPDVxzR4WwkniRxJsogi7TVVohmie8PKqIcbfrvFayS8oOMB0Z79wXYJgyCSJWInuyvajeHey2F7/+d9mFON8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D9LDLdH6; arc=fail smtp.client-ip=52.101.85.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j5RJPZwGpY9RDmfns8FNi7UMJBXpnw6K0r3IFshLd3y24LNzU5uKw8yjci9N//JZCHErF34WkOYgxt4MVOzAQJieVoIsad0kbOzaQXIFpO+Xis98RBKxTHpUuJtXmcGKDwYHq+3DpGdmfwNWvk4ZEe4WY34bJk42BwM2tpZSyUACdxwN+EmX+TfmAz16w1IjSx2NxOURzZUS+7hImAdObNC31h1gyYGRlk0g+WM5njke610G6YA3SMFKAPKROYgs/izmRXmz9aZwHahbA774YJsfQXhZ5bE5RbZhoV9+40q/gO/djojRiZ7JtLzssEifmhu0qiMW/CDMAMIWJdlzyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IvqNzQsJ6B9iXo+8j27zQ0Ze117L+Fbgx0KgynH0z+o=;
+ b=sFYvv2bfVUW7l5kcu5irKBSiDHewUB9IYje9jvgFqN6fu2eU5BPiS/+m1mROG7c11nGrVSpFp481DNxVFMsGI7AohmhFD7BxjcBdENlUnMSPfxOhP53BRhy2MiIYAf+TrTm9Aan5ct+qGic5FimrVPHiHN8FimegiAs7VyEknsmMay8ERHQ2bmRhDd7Gi8xb7P4n1d+CNDsCntMoW9TwJUhxRVtfFTpXx7KW0VHsuO6sjEruzcCVtUy9B4sRnk6pMCfR7AxI7ZkyqumB75BrnJVZ8H3iKv7bs8qdPHp6Bw7KuH2Q05IAC2VTPl7bdfU3UJ7j7iAovQmTUAAWF8Fgqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=stgolabs.net smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IvqNzQsJ6B9iXo+8j27zQ0Ze117L+Fbgx0KgynH0z+o=;
+ b=D9LDLdH6RXI7b7TmCeKuLApihDfy6vvDrWjWfoAekA5ZoKms6LkJZhPzU2lJI2qqqm18TuuEURKURKVRKn0Wk1ZNyKzNIwYEn66GWnlyUfLx8S9Q9oZS/8vsvg4R/cRvU8AXE7km8Xj0QQB4pYVM9WqWeqZDF81RIu1YJdo4NO0=
+Received: from BL1P222CA0018.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::23)
+ by DM4PR12MB6566.namprd12.prod.outlook.com (2603:10b6:8:8d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 17:03:34 +0000
+Received: from BL6PEPF0001AB72.namprd02.prod.outlook.com
+ (2603:10b6:208:2c7:cafe::9f) by BL1P222CA0018.outlook.office365.com
+ (2603:10b6:208:2c7::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.8 via Frontend Transport; Tue, 4
+ Nov 2025 17:03:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL6PEPF0001AB72.mail.protection.outlook.com (10.167.242.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 17:03:34 +0000
+Received: from ethanolx7ea3host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 4 Nov
+ 2025 09:03:33 -0800
+From: Terry Bowman <terry.bowman@amd.com>
+To: <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<terry.bowman@amd.com>
+Subject: [RESEND v13 02/25] PCI/CXL: Introduce pcie_is_cxl()
+Date: Tue, 4 Nov 2025 11:02:42 -0600
+Message-ID: <20251104170305.4163840-3-terry.bowman@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104170305.4163840-1-terry.bowman@amd.com>
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-from: Sean Rhodes <sean@starlabs.systems>
-Date: Tue, 4 Nov 2025 12:02:42 -0500
-X-Gm-Features: AWmQ_bkZBKcIz6XI9FtNNFWqf_HvrtkjXQAJJVoJFV43lplTNNpZo_OVc3FNgPY
-Message-ID: <CABtds-08TC6brxcSDqz426BZyXVusp96poGS=GrWfSOTFNULMg@mail.gmail.com>
-Subject: [PATCH] drivers/mmc: rtsx_usb: add workqueue-based card polling
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB72:EE_|DM4PR12MB6566:EE_
+X-MS-Office365-Filtering-Correlation-Id: 156d7740-001b-42dd-a532-08de1bc416bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vIoJ9jbCJ2J8Oq3Ao8z0fYmP7iCszx9GDA4k/D5QtioKFDgC+409r9mUC8Qb?=
+ =?us-ascii?Q?2bsqeijYokOMBiMUhyXYUBc9uiPmGW+iHdmO2MMpXzvSLe0QabuJ98R/yLm5?=
+ =?us-ascii?Q?mh7xjFgvkN+D3R62AknejTOPZ2EOZGpfUh26IV6X9wvf+7nthoOKGIouX1Gs?=
+ =?us-ascii?Q?KdFYnINzyvZJuyICUS+LLvFHvo6UnNkOXJX1605WxsxBFLciTgB/2o/wDsQO?=
+ =?us-ascii?Q?qyNHS3Futuuf4Idp4vb1AwAb3Eh/mpV2N4JbWi/VFlG5O8Gcr6cIUV1UTEOb?=
+ =?us-ascii?Q?DH8BBwyfSOyGwyvF0HztEl4ZpZ1L3RhgjJPtSP4DEEr6XrHzSK1kl/13G5/w?=
+ =?us-ascii?Q?imciaS6Gr9W8gpWYh57dwmvNKL3d/hpdcqP5OPHtvZIC/EzIM05fYR3wlzIl?=
+ =?us-ascii?Q?RhNc1wbOZriiRFFwJRMuzoxaQ7DHurI7ddYBcPOu1PN3LdYhcvTkFvOtwvhl?=
+ =?us-ascii?Q?R7PsqacvdS4YNZ999UCDx8ChHfVhqtWRJxHm4+R3aJa4nFI9kEWIRQlPb6RN?=
+ =?us-ascii?Q?Bd6IEGGzjMGN1THJIz9Igin/szcfl8zVOfY5aUiCFIq340cjUi+O5J8s6UOx?=
+ =?us-ascii?Q?RpYpk8qtzd/rnCguTdehbXv+Sr8QccpBCNpBeD2Xnox0ekgCrATBoWqv85Nm?=
+ =?us-ascii?Q?aTsE/ew+obX1XggsNjuUJtwlG6S+YnKpmRas/aSJlcN0c1OAfE8wikIOnk4m?=
+ =?us-ascii?Q?U1Re/3E99XGhPevThZzkDpEum17wotOmb3G1jkOrSkxlN8sNaERrio29Tb5F?=
+ =?us-ascii?Q?AR0yuiX7RIoJG1WSQt97faNa0Jf42ecaCn7Cp2zch+SBL+NLWnhFnBXqsnnB?=
+ =?us-ascii?Q?Fe1PSKC57FhTeFobSGos0lJezjhyU1O43DyY3acLLntF8z6rcX3sjm6IiZ/Q?=
+ =?us-ascii?Q?RQQgda9IYxq0sJ/nOTXFNyVuTy5LDSBoRBKR95bI1ycQLYeQI7QRzI5YjUiy?=
+ =?us-ascii?Q?UwAiGXUB27D25WNWV224oNzkaxVL+L5ovKTqEWHLhRcTb7yTNa0xmbYBj+aW?=
+ =?us-ascii?Q?RPTSyjFhWLXbGpi1Cg2ZMNV2gjwik+8jgatx5CiT036BF7csV1mUSrdGnppx?=
+ =?us-ascii?Q?8uHuT8NCEc6YVWQHES83tE0/HqpPyisEA9z7MKHUdogh7Tom3jeTXBaW/Qmr?=
+ =?us-ascii?Q?hahcXbpkVly5OQQ77WLcUljImFFomArq3un+8EyWDRrQ05RI8ApRg44LPAy5?=
+ =?us-ascii?Q?r2TIIrYuj5+Y3fQmDkDFBwFIAeRugkvg0pfpTohVIDuwy+pfYVl7larmW1LC?=
+ =?us-ascii?Q?SUGEgWJB1uYDnWITW9Xr/XFc+7EysKfDw59sitTEqpBA9umQ5FsLDh0lGhV/?=
+ =?us-ascii?Q?OJIONVZ6qSE9w90vNRnrL4xPTvSUXrCvl+5jfiNuD6wGXNEUWKobv7czRPHD?=
+ =?us-ascii?Q?gwBNX+SlwqVGA4PrqIiIWcV8koV1eUllrfKfiMe3h37PmS7hDfysFB7KeMff?=
+ =?us-ascii?Q?ONC09KsjeLyS+k5U9PP/aFuaW9LcWy9NU8PHKwKnHlRhnM64dtWbR+FZgonG?=
+ =?us-ascii?Q?P2krtc5ytd3ujxFdsEqjLDv3zlsTGgrVnAIZB9u49PWwebLiZgIJDYs97H3b?=
+ =?us-ascii?Q?c9MNdTJegsqdAuQcOicZsXjPOW2V3acbayQFK8Dq?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 17:03:34.1950
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 156d7740-001b-42dd-a532-08de1bc416bf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB72.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6566
 
-From 542dd6baa424b262ef663cfbd2abc60dded6f91b Mon Sep 17 00:00:00 2001
-From: Sean Rhodes <sean@starlabs.systems>
-Date: Tue, 4 Nov 2025 16:16:48 +0000
-Subject: [PATCH 4/5] drivers/mmc: rtsx_usb: add workqueue-based card polling
+CXL and AER drivers need the ability to identify CXL devices.
 
-Move the SD/MMC host to a delayed work poll that adapts between a
-50 ms cadence while a request is active/present and a 1 s cadence once
-the controller goes quiet. Track ongoing sequential transfers so we
-can stop streaming cleanly, and drop the clock tree into an idle state
-when the card is absent or idle to save power.
+Introduce set_pcie_cxl() with logic checking for CXL.mem or CXL.cache
+status in the CXL Flexbus DVSEC status register. The CXL Flexbus DVSEC
+presence is used because it is required for all the CXL PCIe devices.[1]
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Ricky Wu <ricky_wu@realtek.com>
-Cc: Avri Altman <avri.altman@sandisk.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Jisheng Zhang <jszhang@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-mmc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sean Rhodes <sean@starlabs.systems>
+Add boolean 'struct pci_dev::is_cxl' with the purpose to cache the CXL
+CXL.cache and CXl.mem status.
+
+In the case the device is an EP or USP, call set_pcie_cxl() on behalf of
+the parent downstream device. Once a device is created there is
+possibilty the parent training or CXL state was updated as well. This
+will make certain the correct parent CXL state is cached.
+
+Add function pcie_is_cxl() to return 'struct pci_dev::is_cxl'.
+
+[1] CXL 3.1 Spec, 8.1.1 PCIe Designated Vendor-Specific Extended
+    Capability (DVSEC) ID Assignment, Table 8-2
+
+Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Alejandro Lucero <alucerop@amd.com>
+Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
+
 ---
- drivers/mmc/host/rtsx_usb_sdmmc.c | 245 +++++++++++++++++++++++++++++-
- 1 file changed, 242 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c
-b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index e23ef4111dab..5d8c72459b3f 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -19,6 +19,8 @@
- #include <linux/scatterlist.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
-+#include <linux/workqueue.h>
-+#include <linux/jiffies.h>
+Changes in v12->v13:
+- Add Ben's "reviewed-by"
 
- #include <linux/rtsx_usb.h>
- #include <linux/unaligned.h>
-@@ -26,10 +28,14 @@
- #if defined(CONFIG_LEDS_CLASS) || (defined(CONFIG_LEDS_CLASS_MODULE) && \
- 		defined(CONFIG_MMC_REALTEK_USB_MODULE))
- #include <linux/leds.h>
--#include <linux/workqueue.h>
- #define RTSX_USB_USE_LEDS_CLASS
- #endif
+Changes in v11->v12:
+- Add review-by for Alejandro
+- Add comment in set_pcie_cxl() explaining why updating parent status.
 
-+#define RTSX_USB_SD_POLL_INTERVAL	msecs_to_jiffies(50)
-+#define RTSX_USB_SD_IDLE_POLL_INTERVAL	msecs_to_jiffies(1000)
-+#define RTSX_USB_SD_IDLE_WAIT_MAX	10
-+#define RTSX_USB_SD_SEQ_WAIT_MAX	2
-+
- struct rtsx_usb_sdmmc {
- 	struct platform_device	*pdev;
- 	struct rtsx_ucr	*ucr;
-@@ -37,6 +43,15 @@ struct rtsx_usb_sdmmc {
- 	struct mmc_request	*mrq;
+Changes in v10->v11:
+- Amend set_pcie_cxl() to check for Upstream Port's and EP's parent
+  downstream port by calling set_pcie_cxl(). (Dan)
+- Retitle patch: 'Add' -> 'Introduce'
+- Add check for CXL.mem and CXL.cache (Alejandro, Dan)
+---
+ drivers/pci/probe.c | 29 +++++++++++++++++++++++++++++
+ include/linux/pci.h |  6 ++++++
+ 2 files changed, 35 insertions(+)
 
- 	struct mutex		host_mutex;
-+	struct delayed_work	card_poll;
-+	unsigned long		poll_interval;
-+	unsigned int		idle_counter;
-+	unsigned int		idle_wait_max;
-+	bool			idle;
-+	bool			seq_mode;
-+	bool			seq_read;
-+	unsigned int		seq_counter;
-+	unsigned int		seq_wait_max;
-
- 	u8			ssc_depth;
- 	unsigned int		clock;
-@@ -72,6 +87,78 @@ static inline void sd_clear_error(struct
-rtsx_usb_sdmmc *host)
- 	rtsx_usb_clear_fsm_err(ucr);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 0ce98e18b5a8..63124651f865 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1709,6 +1709,33 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+ 		dev->is_thunderbolt = 1;
  }
-
-+static void sdmmc_stop_seq_mode(struct rtsx_usb_sdmmc *host)
+ 
++static void set_pcie_cxl(struct pci_dev *dev)
 +{
-+	struct mmc_command stop = { };
++	struct pci_dev *parent;
++	u16 dvsec = pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
++					      PCI_DVSEC_CXL_FLEXBUS_PORT);
++	if (dvsec) {
++		u16 cap;
 +
-+	if (!host->seq_mode)
++		pci_read_config_word(dev, dvsec + PCI_DVSEC_CXL_FLEXBUS_STATUS_OFFSET, &cap);
++
++		dev->is_cxl = FIELD_GET(PCI_DVSEC_CXL_FLEXBUS_STATUS_CACHE_MASK, cap) ||
++			FIELD_GET(PCI_DVSEC_CXL_FLEXBUS_STATUS_MEM_MASK, cap);
++	}
++
++	if (!pci_is_pcie(dev) ||
++	    !(pci_pcie_type(dev) == PCI_EXP_TYPE_ENDPOINT ||
++	      pci_pcie_type(dev) == PCI_EXP_TYPE_UPSTREAM))
 +		return;
 +
-+	stop.opcode = MMC_STOP_TRANSMISSION;
-+	stop.arg = 0;
-+	stop.flags = MMC_RSP_R1B | MMC_CMD_AC;
-+
-+	sd_send_cmd_get_rsp(host, &stop);
-+	if (stop.error)
-+		dev_dbg(sdmmc_dev(host), "stop transmission err %d\n",
-+			stop.error);
-+
-+	rtsx_usb_write_register(host->ucr, MC_FIFO_CTL,
-+				      FIFO_FLUSH, FIFO_FLUSH);
-+	host->seq_mode = false;
-+	host->seq_read = false;
-+	host->seq_counter = 0;
++	/*
++	 * Update parent's CXL state because alternate protocol training
++	 * may have changed
++	 */
++	parent = pci_upstream_bridge(dev);
++	set_pcie_cxl(parent);
 +}
 +
-+static void sdmmc_enter_idle(struct rtsx_usb_sdmmc *host)
-+{
-+	struct rtsx_ucr *ucr = host->ucr;
-+	int err;
-+
-+	if (host->idle)
-+		return;
-+
-+	err = rtsx_usb_write_register(ucr, CLK_DIV, CLK_CHANGE, CLK_CHANGE);
-+	if (err)
-+		goto out_dbg;
-+
-+	err = rtsx_usb_write_register(ucr, FPDCTL,
-+				      SSC_POWER_MASK, SSC_POWER_DOWN);
-+	if (!err)
-+		host->idle = true;
-+
-+out_dbg:
-+	if (err)
-+		dev_dbg(sdmmc_dev(host), "enter idle failed %d\n", err);
-+	else
-+		host->idle_counter = host->idle_wait_max;
-+}
-+
-+static void sdmmc_leave_idle(struct rtsx_usb_sdmmc *host)
-+{
-+	struct rtsx_ucr *ucr = host->ucr;
-+	int err;
-+
-+	if (!host->idle)
-+		return;
-+
-+	err = rtsx_usb_write_register(ucr, FPDCTL,
-+				      SSC_POWER_MASK, SSC_POWER_ON);
-+	if (err)
-+		goto out_dbg;
-+
-+	usleep_range(100, 150);
-+	err = rtsx_usb_write_register(ucr, CLK_DIV, CLK_CHANGE, 0);
-+	if (!err)
-+		host->idle = false;
-+
-+out_dbg:
-+	if (err)
-+		dev_dbg(sdmmc_dev(host), "leave idle failed %d\n", err);
-+	else
-+		host->idle_counter = 0;
-+}
-+
- #ifdef DEBUG
- static void sd_print_debug_regs(struct rtsx_usb_sdmmc *host)
+ static void set_pcie_untrusted(struct pci_dev *dev)
  {
-@@ -507,8 +594,11 @@ static int sd_rw_multi(struct rtsx_usb_sdmmc
-*host, struct mmc_request *mrq)
- 			SD_TRANSFER_END, SD_TRANSFER_END);
-
- 	err = rtsx_usb_send_cmd(ucr, flag, 100);
--	if (err)
-+	if (err) {
-+		host->seq_mode = false;
-+		host->seq_counter = 0;
- 		return err;
-+	}
-
- 	if (read)
- 		pipe = usb_rcvbulkpipe(ucr->pusb_dev, EP_BULK_IN);
-@@ -521,10 +611,23 @@ static int sd_rw_multi(struct rtsx_usb_sdmmc
-*host, struct mmc_request *mrq)
- 		dev_dbg(sdmmc_dev(host), "rtsx_usb_transfer_data error %d\n"
- 				, err);
- 		sd_clear_error(host);
-+		host->seq_mode = false;
-+		host->seq_counter = 0;
- 		return err;
- 	}
-
--	return rtsx_usb_get_rsp(ucr, 1, 2000);
-+	err = rtsx_usb_get_rsp(ucr, 1, 2000);
-+	if (!err) {
-+		host->seq_mode = true;
-+		host->seq_read = read;
-+		host->seq_counter = 0;
-+	} else {
-+		dev_dbg(sdmmc_dev(host), "sd multi rsp err %d\n", err);
-+		host->seq_mode = false;
-+		host->seq_counter = 0;
-+	}
+ 	struct pci_dev *parent = pci_upstream_bridge(dev);
+@@ -2039,6 +2066,8 @@ int pci_setup_device(struct pci_dev *dev)
+ 	/* Need to have dev->cfg_size ready */
+ 	set_pcie_thunderbolt(dev);
+ 
++	set_pcie_cxl(dev);
 +
-+	return err;
+ 	set_pcie_untrusted(dev);
+ 
+ 	if (pci_is_pcie(dev))
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index d1fdf81fbe1e..5c4759078d2f 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -460,6 +460,7 @@ struct pci_dev {
+ 	unsigned int	is_pciehp:1;
+ 	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
+ 	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
++	unsigned int	is_cxl:1;               /* Compute Express Link (CXL) */
+ 	/*
+ 	 * Devices marked being untrusted are the ones that can potentially
+ 	 * execute DMA attacks and similar. They are typically connected
+@@ -766,6 +767,11 @@ static inline bool pci_is_display(struct pci_dev *pdev)
+ 	return (pdev->class >> 16) == PCI_BASE_CLASS_DISPLAY;
  }
-
- static inline void sd_enable_initial_mode(struct rtsx_usb_sdmmc *host)
-@@ -807,6 +910,119 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
- 	return 0;
- }
-
-+static void rtsx_usb_sdmmc_poll_card(struct work_struct *work)
+ 
++static inline bool pcie_is_cxl(struct pci_dev *pci_dev)
 +{
-+	struct rtsx_usb_sdmmc *host = container_of(work,
-+			struct rtsx_usb_sdmmc, card_poll.work);
-+	struct rtsx_ucr *ucr = host->ucr;
-+	struct device *dev = sdmmc_dev(host);
-+	bool present = READ_ONCE(host->card_exist);
-+	bool changed = false;
-+	bool prev;
-+	int err;
-+	u16 status = 0;
-+	u8 pend;
-+
-+	if (host->host_removal)
-+		return;
-+
-+	err = pm_runtime_get_sync(dev);
-+	if (err < 0) {
-+		pm_runtime_put_noidle(dev);
-+		goto requeue;
-+	}
-+
-+	mutex_lock(&ucr->dev_mutex);
-+
-+	prev = READ_ONCE(host->card_exist);
-+
-+	err = rtsx_usb_get_card_status(ucr, &status);
-+	if (!err) {
-+		host->ocp_stat = (status >> 4) & 0x03;
-+		present = !!(status & SD_CD);
-+		if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+			sdmmc_leave_idle(host);
-+			rtsx_usb_write_register(ucr, CARD_OE,
-+					SD_OUTPUT_EN, 0);
-+		}
-+	}
-+
-+	if (!err) {
-+		err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &pend);
-+		if (!err && (pend & SD_INT)) {
-+			rtsx_usb_write_register(ucr, CARD_INT_PEND,
-+				SD_INT, SD_INT);
-+			if (prev && present)
-+				present = false;
-+		}
-+	}
-+
-+	if (!err && !present &&
-+	    (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER))) {
-+		rtsx_usb_write_register(ucr, OCPCTL,
-+				MS_OCP_CLEAR, MS_OCP_CLEAR);
-+		host->ocp_stat = 0;
-+	}
-+
-+	if (!err) {
-+		bool busy = READ_ONCE(host->mrq) != NULL;
-+
-+		changed = present != prev;
-+		WRITE_ONCE(host->card_exist, present);
-+
-+		if (busy) {
-+			host->idle_counter = 0;
-+			if (host->idle)
-+				sdmmc_leave_idle(host);
-+		} else if (!present) {
-+			if (host->idle_counter < host->idle_wait_max)
-+				host->idle_counter++;
-+			if (!host->idle &&
-+			    host->idle_counter >= host->idle_wait_max)
-+				sdmmc_enter_idle(host);
-+		} else {
-+			host->idle_counter = 0;
-+			if (host->idle)
-+				sdmmc_leave_idle(host);
-+		}
-+
-+		if (!present) {
-+			if (host->seq_mode)
-+				sdmmc_stop_seq_mode(host);
-+			host->seq_mode = false;
-+			host->seq_read = false;
-+			host->seq_counter = 0;
-+		} else if (host->seq_mode) {
-+			if (busy) {
-+				host->seq_counter = 0;
-+			} else if (++host->seq_counter >= host->seq_wait_max) {
-+				sdmmc_stop_seq_mode(host);
-+			}
-+		} else {
-+			host->seq_counter = 0;
-+		}
-+	}
-+
-+	mutex_unlock(&ucr->dev_mutex);
-+
-+	pm_runtime_put_sync_suspend(dev);
-+
-+	if (changed)
-+		mmc_detect_change(host->mmc, 0);
-+
-+requeue:
-+	if (!host->host_removal) {
-+		bool request_active = READ_ONCE(host->mrq) != NULL;
-+		bool card_present = READ_ONCE(host->card_exist);
-+		unsigned long delay = card_present || request_active ?
-+			RTSX_USB_SD_POLL_INTERVAL :
-+			RTSX_USB_SD_IDLE_POLL_INTERVAL;
-+
-+		host->poll_interval = delay;
-+		queue_delayed_work(system_wq, &host->card_poll, delay);
-+	}
++	return pci_dev->is_cxl;
 +}
 +
- static void sdmmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
- 	struct rtsx_usb_sdmmc *host = mmc_priv(mmc);
-@@ -832,10 +1048,14 @@ static void sdmmc_request(struct mmc_host *mmc,
-struct mmc_request *mrq)
- 		goto finish_detect_card;
- 	}
- 	mutex_lock(&ucr->dev_mutex);
-+	if (host->seq_mode)
-+		sdmmc_stop_seq_mode(host);
-
- 	mutex_lock(&host->host_mutex);
- 	host->mrq = mrq;
- 	mutex_unlock(&host->host_mutex);
-+	sdmmc_leave_idle(host);
-+	host->idle_counter = 0;
-
- 	if (mrq->data)
- 		data_size = data->blocks * data->blksz;
-@@ -1051,6 +1271,8 @@ static void sd_set_power_mode(struct rtsx_usb_sdmmc *host,
- 		if (err)
- 			dev_dbg(sdmmc_dev(host), "power-off (err = %d)\n", err);
- 		pm_runtime_put_noidle(sdmmc_dev(host));
-+		sdmmc_enter_idle(host);
-+		host->idle_counter = 0;
- 		break;
-
- 	case MMC_POWER_UP:
-@@ -1060,11 +1282,15 @@ static void sd_set_power_mode(struct
-rtsx_usb_sdmmc *host,
- 			dev_dbg(sdmmc_dev(host), "power-on (err = %d)\n", err);
- 		/* issue the clock signals to card at least 74 clocks */
- 		rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN,
-SD_CLK_TOGGLE_EN);
-+		sdmmc_leave_idle(host);
-+		host->idle_counter = 0;
- 		break;
-
- 	case MMC_POWER_ON:
- 		/* stop to send the clock signals */
- 		rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN, 0x00);
-+		sdmmc_leave_idle(host);
-+		host->idle_counter = 0;
- 		break;
-
- 	case MMC_POWER_UNDEFINED:
-@@ -1367,6 +1593,13 @@ static void rtsx_usb_init_host(struct
-rtsx_usb_sdmmc *host)
-
- 	host->power_mode = MMC_POWER_OFF;
- 	host->ocp_stat = 0;
-+	host->idle_counter = 0;
-+	host->idle_wait_max = RTSX_USB_SD_IDLE_WAIT_MAX;
-+	host->idle = false;
-+	host->seq_mode = false;
-+	host->seq_read = false;
-+	host->seq_counter = 0;
-+	host->seq_wait_max = RTSX_USB_SD_SEQ_WAIT_MAX;
- }
-
- static int rtsx_usb_sdmmc_drv_probe(struct platform_device *pdev)
-@@ -1397,6 +1630,8 @@ static int rtsx_usb_sdmmc_drv_probe(struct
-platform_device *pdev)
-
- 	mutex_init(&host->host_mutex);
- 	rtsx_usb_init_host(host);
-+	host->poll_interval = RTSX_USB_SD_POLL_INTERVAL;
-+	INIT_DELAYED_WORK(&host->card_poll, rtsx_usb_sdmmc_poll_card);
- 	pm_runtime_enable(&pdev->dev);
-
- #ifdef RTSX_USB_USE_LEDS_CLASS
-@@ -1423,6 +1658,9 @@ static int rtsx_usb_sdmmc_drv_probe(struct
-platform_device *pdev)
- 		return ret;
- 	}
-
-+	queue_delayed_work(system_wq, &host->card_poll,
-+			 host->poll_interval);
-+
- 	return 0;
- }
-
-@@ -1436,6 +1674,7 @@ static void rtsx_usb_sdmmc_drv_remove(struct
-platform_device *pdev)
-
- 	mmc = host->mmc;
- 	host->host_removal = true;
-+	cancel_delayed_work_sync(&host->card_poll);
-
- 	mutex_lock(&host->host_mutex);
- 	if (host->mrq) {
+ #define for_each_pci_bridge(dev, bus)				\
+ 	list_for_each_entry(dev, &bus->devices, bus_list)	\
+ 		if (!pci_is_bridge(dev)) {} else
 -- 
-2.51.0
+2.34.1
+
 
