@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-884711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C28DC30DF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:04:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E56C30E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF328460D0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:04:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E32418C3DC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECA2ECE82;
-	Tue,  4 Nov 2025 12:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A74D2F0C71;
+	Tue,  4 Nov 2025 12:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l90mmw9E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfPVlvIU"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2742EDD74;
-	Tue,  4 Nov 2025 12:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544D32EC099
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 12:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762257841; cv=none; b=kJdgO+jKT8/Uy7DrLv+hWlPu3QCte4fNJL4EohaVQlqfMPEAtVd2dmEDIQNDutlVtZcYk964vtxF+R7Zl1HyrkRKinho8ch+JX0TA6X/n+VTtqTV3xEGdMrhG6anTsV6DeLAMwJugzaRP9l+siPzMhu/JTMbUwJKwm/Wmldwi6k=
+	t=1762257898; cv=none; b=A9bgjQFBkBOIsipcp41fzpQ/pnf1FQ7pFEkjCWOBw+VOfGiMRac4/654nnTUfk6FEGSGFKT82V2ctGmkHJ7Y6O28hZlNykkrzrQID7NiTQ8j7h04KIZkuM6mfY6yy+JQObSZRb5uop8G2lRmh+zBizVjPhHm9m5nE81BKWI/NY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762257841; c=relaxed/simple;
-	bh=QZ+OVXIYRCz2+yDg3+AXTqnsrpvtrpMFFjx30RVPsq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kISuG2Ry1xIpqtFxg3Vqgqtk2f5OgOeV5zWo0fgdgYOwadffDZDPPAKr46ipdDi6xdPHK5DxlbCKIXC1gjiLqMCbW8kPeDmcFV9rwQ4O/3aMIr3cjVwobEpJNvyx5PqVXUHw8Z/T4oVJcl9XQJwKikK3toDXif0bszRXd9+uCiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l90mmw9E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7B2C116C6;
-	Tue,  4 Nov 2025 12:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762257840;
-	bh=QZ+OVXIYRCz2+yDg3+AXTqnsrpvtrpMFFjx30RVPsq0=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l90mmw9EWDbZXtpP/qqYmOsc79yeV+JtdlVfTudU6GYTHJ6MtzGXuovwkuKB/RbIy
-	 S7pUCGvk8e1czxkkX1JhUcTj0DIyMuqodLJOsXBrLMqfXVeMepciXx7irbRi6Iqt46
-	 /pRtFBSv5LpDVfoLahaT+4RyZLrbYeH1WJZctjgQJgR4JG/eWK8kiZ8R9d8haj7blc
-	 qeHPj13yD2WJ/ksc1/mT1VfaT01BVyrKIzTIxNqlqRFHMJGCw3aTmo/UGRLvs3wA8a
-	 2VFTUFkvSdBvp/cleglG1DVWIzxPw9cYBiboBmyzwAg8dBxBNRtAeSknyA+5E1IaWV
-	 rNQroB0PdqsQw==
-Message-ID: <032ef71c-fcbd-42a9-98ea-b2568d663978@kernel.org>
-Date: Tue, 4 Nov 2025 13:03:56 +0100
+	s=arc-20240116; t=1762257898; c=relaxed/simple;
+	bh=91j83r0a/744GsjSSpvMj2vPPbbmwRCLqH0NKKKQxTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=K8/octdNImSsRwmFjvmz95LciYZnwqM5ztiviKvLT8YuSNjha1wtSiWZU/CsHb3PzDRIqg6qMIoPEIpjqQWC2deb8ba490X8Ealtrn6e2rmYkpPj+cgdvsEtxVEUg3x14989uxAe5oDiptxzFoDb6yPSlnPF8TZcFDRuS3rE+Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfPVlvIU; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26d0fbe238bso43118645ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 04:04:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762257897; x=1762862697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hIMOgpEtwvgPznTb3R/noQ8H3QESHZcJ3b2FNe/UuI0=;
+        b=VfPVlvIUyTV8qIihY9JjSsKeyNBWMl6UMFmRHCYWXD/joLcLMadxUuigePc7OhaZrY
+         poj39NwZlF7+axyTDmSBJZ4OAlWaIr7WNFIwvrpEi3HxnWPGVIBY+gLnWoFBRlDDThYl
+         j5zBzjXV9t/sahOazDTvFdKATZUWOqVN1tY2AzxYG1MId0HMuxoSEe2F6b82KB1ne/h+
+         LEDmMa4nPJ6uRvAYKezrrO6KUc7QMaqhzHqVkUS40HQUtiFYcPk+XmZH/a9FvXU2/hf4
+         6a80ov5PHP2a0+LlvS8un7oaNXSNfvizKWZKs7QCnHqx/okdk249o3XS+QCDKsBfTnTM
+         /yXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762257897; x=1762862697;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hIMOgpEtwvgPznTb3R/noQ8H3QESHZcJ3b2FNe/UuI0=;
+        b=ou+hd2nMWx1ZWc+fkXSdZNQ8eGO8AZsBLhVFGJhOzEBrsHGoFIhV5UWn7/Yzokav3l
+         7yyImIkSQo1mgtLQ/DkInmqHuWyxbx5hoH0EOMPY3OipIHnfsXQEKtM+ZX2xVL1LzAMk
+         1RlTw44470JOFtMJn6YvODLbAsu1jcFjuiXvIFaWiUs2HQ0To+U35PgkgaXCgOC1ZROI
+         I1FuC8BspQolsxDEs9gfSBU6Dm1VijeCESRTcLZMEM5GhBNb2Y0v44nxYmu+af8O2mJr
+         +NHaczMhTK5aLEnRaowrfQNeXXuMBbEuTdtKDiu57ZhSSksoanTT3aIK+xiwML8e5Uza
+         ODwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXS7u9yO3BwBBIutFKChYR2ArKgx5lKG1Vh5116QIojBzK7Y92yqHbyrBrJzoDa5CA9CZDN6nhb3rAu1RI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7c7qzi6CsTF86n58MbmnuCcb1k/SMGNnq32KXmXI8ORgyZPK
+	OQv1EN9YF7yhUjy31TToR7Ca+STrhxB7w5bU1HivvDUQ4PqI3Xy61reG
+X-Gm-Gg: ASbGnctJ1e6tKvdE4VGFaU5UFvmENok2X8Um7Mc7thJyCm+guOufSRJMaGAJmsHIBkL
+	hZV8xz07EyXc7DvsYSRKASW8bIAa/nmfH25n2ajE1pOmaHEqaKMdIbwdmyfjwgiv9Qda/C/2+MW
+	4KdVVx7sYAK/61E76CRaklYf6dxFkctj3qo5o+4iqaGn185m82NnH/y9lIeKdWbHubsv4PdVC+e
+	jiXAg2bzqaiNSnUd8uAewMrPJjNuonfFkwLzkNfd/+X68mqJdlP5XmwWJXhHzAma5qlsrXXvI14
+	C7pVlsHG0LeSIHSY7Bsx0dBmOX1yyjF8YNl0QfRWl4DGQ7LZrXuV7IUnPO3tu+4SqENsSkohvQn
+	H96IxYcjrfUjKMeo++VfOzyBULwrFMm8s7otVYzCmK1uIbB5hXMBjXpYiEAIW26WvsDGUJjcVf2
+	BdxTj4Ic6bKUVllRlmSoFN73E9DuhZCLn8SmtgHep+27qdfU2aZ6iWkw==
+X-Google-Smtp-Source: AGHT+IHhptMGeN6GUWdSr3woSCYhxUw05Wn9RRD4O2T5DayZS0jhPNbaRMV4ZHTfd4sd7Ew85mCkaw==
+X-Received: by 2002:a17:902:e88e:b0:295:fe33:18bb with SMTP id d9443c01a7336-295fe331993mr38565105ad.14.1762257896410;
+        Tue, 04 Nov 2025 04:04:56 -0800 (PST)
+Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.200.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2960199831esm24707045ad.37.2025.11.04.04.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 04:04:55 -0800 (PST)
+Message-ID: <a05cde7d15d85f2cee6eafdb69b1380c8b704207.camel@gmail.com>
+Subject: Re: [PATCH 2/4] fs: return writeback errors for IOCB_DONTCACHE in
+ generic_write_sync
+From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
+To: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: Carlos Maiolino <cem@kernel.org>, Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>,  linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+ linux-raid@vger.kernel.org,  linux-block@vger.kernel.org
+Date: Tue, 04 Nov 2025 17:34:50 +0530
+In-Reply-To: <20251029163708.GC26985@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de>
+	 <20251029071537.1127397-3-hch@lst.de>
+	 <20251029160101.GE3356773@frogsfrogsfrogs> <20251029163708.GC26985@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
- characters
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, Kees Cook <kees@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Malcolm Priestley <tvboxspy@gmail.com>, Hans Verkuil <hverkuil@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20251010030348.it.784-kees@kernel.org>
- <176219902728.2668573.8447418880394997824.b4-ty@kernel.org>
- <202511031612.8A05E2FD1C@keescook>
- <ab56339a-8736-4d68-bf11-d27c8d591597@kernel.org>
- <5dba319f-56bc-40bf-9137-acb90f3cc754@kernel.org>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <5dba319f-56bc-40bf-9137-acb90f3cc754@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
-
-
-On 04/11/2025 11.35, Hans Verkuil wrote:
-> On 04/11/2025 07:35, Daniel Gomez wrote:
->>
->>
->> On 04/11/2025 01.13, Kees Cook wrote:
->>> On Mon, Nov 03, 2025 at 08:49:43PM +0100, Daniel Gomez wrote:
->>>>
->>>> On Thu, 09 Oct 2025 20:06:06 -0700, Kees Cook wrote:
->>>>>  v2:
->>>>>  - use static_assert instead of _Static_assert
->>>>>  - add Hans's Reviewed-by's
->>>>>  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
->>>>>
->>>>> Hi!
->>>>>
->>>>> [...]
->>>>
->>>> Applied patch 3, thanks!
->>>>
->>>> [3/3] module: Add compile-time check for embedded NUL characters
->>>>       commit: 913359754ea821c4d6f6a77e0449b29984099663
->>>
->>> I'm nervous about this going in alone -- it breaks allmodconfig builds
->>> without the media fixes. My intention was to have the media fixes land
->>> first...
->>>
->>> Should I send the media fixes to linus right away?
->>>
->>> -Kees
->>>
->>
->> I can take both patches. But I think it'd make sense to drop patch 3 first and
->> then, apply all 3.
->>
->> Please, Kees, Hans and Mauro, let me know if this is okay with you.
+On Wed, 2025-10-29 at 17:37 +0100, Christoph Hellwig wrote:
+> On Wed, Oct 29, 2025 at 09:01:01AM -0700, Darrick J. Wong wrote:
+> > Hum.  So we kick writeback but don't wait for any of it to start, and
+> > immediately sample wberr.  Does that mean that in the "bdev died" case,
+> > the newly initiated writeback will have failed so quickly that
+> > file_check_and_advance_wb_err will see that?
 > 
-> I'm fine. If you take it, then I'll drop the media patches from our tree (I merged the
-> media patches yesterday).
+> Yes, this is primarily about catching errors in the submission path
+> before it reaches the device, which are returned synchronously.
+So, what you are saying is file_check_and_advance_wb_err() will wait/block till the write back
+request done in filemap_fdatawrite_range_kick() is completely submitted and there are no more
+chances of write back failure?
+--NR
 > 
-> Let me know if you take them.
-
-Thanks, Hans. I merged patch 3 yesterday as well, but since patch order matters
-in this case, it makes sense to take all of them through the modules tree.
-
-Sorry for the trouble, and thanks Kees, for pointing this out.
-
+> > Or are we only reflecting
+> > past write failures back to userspace on the *second* write after the
+> > device dies?
+> > 
+> > It would be helpful to know which fstests break, btw.
 > 
-> Regards,
+> generic/252 generic/329 xfs/237
 > 
-> 	Hans
+
 
