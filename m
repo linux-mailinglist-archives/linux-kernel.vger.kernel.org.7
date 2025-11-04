@@ -1,178 +1,279 @@
-Return-Path: <linux-kernel+bounces-885368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511D3C32B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:49:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9735DC32B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D580A4E6A62
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A9D3AD5DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562D62C2374;
-	Tue,  4 Nov 2025 18:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645E433E376;
+	Tue,  4 Nov 2025 18:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KYAR/E6z"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012025.outbound.protection.outlook.com [52.101.48.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxK/pcKI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C8D2CCC5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762282141; cv=fail; b=cCpKsgKMDQtZbRKDJkMOeN3t0BSM/YbOb5THQRACYjNJqiVngujrKKlh/+gjoOdFnS8ia6YRqi2bBNC1lYVrC48jNU9POOovBYCcBme1YOZAaIhO0shEjOA3z7db45BcyHNjNgi30qDhiYb8aSVOQwQAhs8qlqnoednSLeBK+aQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762282141; c=relaxed/simple;
-	bh=8YsOgne7rltDSdBbugyYl6Q/8TIKlC5QPe8xXMYWRPY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeEZYryV+AbqtZ43azflH4qpO9okRssaYBqK8JqSzxAvq1PL6ooJ7JEQEhC0SrPdOj+jAYu1o/UNTs5ir56KpWpUftBHxUZQ8XR99HVTsMkdTHdmGqvsOMFsot8hQAZ5YTfU9mMT8pyLgiX45HOHcdFdKUWzo5ffj8XrB51YnyQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KYAR/E6z; arc=fail smtp.client-ip=52.101.48.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nDC8FYaYncRbtvwyx2II5i9MmH8OEblug7gRlZsjyV2e8xsU3WdVXyYiNDfckXQ+R0nW1fJkmts1A8ijIZpQB7h0yNJe0wK8EASTOqmUEayE/1SuzOFvu1aUF9S3RRYi3HhjGhV3PuC6lzOupGfZjp+9tieY/RdL8a8/ZH8w1Mb2wSvpMp74o0f7jtD7rRPFOZds5NqfjJ48CcuB6BcEdE8zzhaienFq3UtDJU7oy8qQqlLP/nQnN6Mx1HH0x5VzblPXezvj92MhBflcjR/05/BR30BPnMZHsCahgPAMgUukeAYlSMAGW3J1ihwMl1DLqWBxsCzZ6etj3AyZ708OPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YmkjvicMSJxytvTbbMHSwJDf6sPmiAsI4iGRXJoZjzc=;
- b=O4wEtl6EuMu/Cjhko4huy7TeqOVtsHSW6KMRoEn4GkvGLu0v+dtyR5MY2rTctqi4mE5Oiv/ei6ohBpswIhPfjniZZCiPDlv5EcZ+OG82ZoUEHT6dIIbWIoiaFH7aRkv5yfwyay4zehN7BoH0Tis842q0kyp8Vobn7CHOk3uueOWvGnkOM+Qdm49yHFp9FE57EV5a1d7lpDamjf1BEIPbD2r49lo3m8K2I4T6GwC6gqoMnH3bQahtrqeneAZ4yidQdrROccEMZTqlmDMtUqVktZ7wk+N5RlbZqEiHrLj4q7yHb6JLNzoAxIuHtzo1Va1Ri6FAEMqxq461XmFrX4T0Fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linux.microsoft.com
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YmkjvicMSJxytvTbbMHSwJDf6sPmiAsI4iGRXJoZjzc=;
- b=KYAR/E6zQt1AqWypkBt8kXRKOtxYjhiOxLwWzxp9ZRZgCJB+A3Nu6wRtnAmxyFSHppaaV70da6iziA+HsQM8RRTA8hos4itZdO96NY9J/R6e3aWbsIrpT39uVBW8N/Vuyz+bHbo2wF+bZeHL5nZ2ELb2zyMfw/qw59N3pq/ENgveb0Jjh+xYwseny1StdgCBqzYFTM2i38/f/5Q5tTuzPKOs9Gm+pCbmi2s+Yofj++sqTQ3D8vKW45EKhlYK4Vg+kaDcfWwrI6Gx6wzuQHeMX7FQRZYVosnGuUjexZTL8biwvMYeEKvDbG+unlD+jIujbiGn++/Ra35u6tvnjPg1Pw==
-Received: from CH0PR13CA0013.namprd13.prod.outlook.com (2603:10b6:610:b1::18)
- by SA1PR12MB5638.namprd12.prod.outlook.com (2603:10b6:806:229::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 18:48:52 +0000
-Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
- (2603:10b6:610:b1:cafe::ef) by CH0PR13CA0013.outlook.office365.com
- (2603:10b6:610:b1::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Tue, 4
- Nov 2025 18:48:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 18:48:51 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 10:48:34 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
- 2025 10:48:33 -0800
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 4 Nov 2025 10:48:32 -0800
-Date: Tue, 4 Nov 2025 10:48:31 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-CC: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
-	<joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
-	<jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
-	<zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
-	<jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
-Message-ID: <aQpKf2IPD5xeBu1K@Asurada-Nvidia>
-References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
- <20251020224353.1408-2-jacob.pan@linux.microsoft.com>
- <aQPptXsqzt6kJS7f@Asurada-Nvidia>
- <20251103151631.0000703a@linux.microsoft.com>
- <aQlVjtTiqd34I+NC@Asurada-Nvidia>
- <20251104102539.00001110@linux.microsoft.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886B3328E1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762282336; cv=none; b=iB1pjNwM93gjrsQtbKvZyhhC+978dBge7YSiduewSTgpt8t8nB8ETPBhRfcj/HiuKwQWERY02K3GI1b/3rfyWF2rtOtCSukVD6ATZOnEBeYT+BXI0DH/sxdho9/3b/AEymoK7evw5oG/cSNqHyHZztSHEmRVIlwBRwJG1NoTucc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762282336; c=relaxed/simple;
+	bh=avC7b+3xiPbCx+s77oGh8yEmaxeXEduSTSnIsjlfEQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+rXXsjSbzIOFf6+p8bgBFl/6np3Plf8Asa3dn+gWeALhPWioirHD9ihgP8o0wHhwvOwLbDhXyfS7yi0rnF+lu6yDbGCUN4uCgSGlDilA+hMnwIqrbjVAigupxVhpnFE6AQgB0O4R+q2Hv8gfA6DqWyp3tbsynLmY4qb4HZGYOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxK/pcKI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2700AC19423
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762282336;
+	bh=avC7b+3xiPbCx+s77oGh8yEmaxeXEduSTSnIsjlfEQk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AxK/pcKIRnApjUYcl9uil8u3IzRqoE4eIqXMKvqs00oBl61yF10y7png9OBT3aQRN
+	 quGmpeKzG1kZc3Hs1dD2W84tNn1iQcthnI8hOwNdiKhgXCg8T1SHkpOATmmjSsNaF/
+	 NKtTK5bTRMiAjR2rYpdtwZce0IeTLyAaegp3BHnpTlKgtwpgKc2IdPGyhViACPP6Th
+	 qkXp3BGbjbEoRn2bTXD+5eHpgFG8NDbIzkaqVKRgzpEO5jzGjE5zuR64AwPb8Y+3Q6
+	 TaY/OHM0VIrC01fDZw+NnfzlG+im1VN/v7mTAanuyzXyn1yl112Axyr25usFruvQIa
+	 1TeX9oTseAduA==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-656bb297e31so26228eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:52:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUzRRWPeI/1qq0YNDYy3YZthk02k1qE4vfpF1KB29DKg8/4xSPCrxEogN8JCs7SsNRybaOlUVX/P1PIIic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyslchjLrjDvwMYeB2ujkMhviivWrtyUtXqkNvfnz2wjuuCyklZ
+	JcmIQf9tEIgDAYhEDQ+maKoU3QW/IFFEfDaEN395mhzV+LdluIvGRDIygTAaib7i0wWIQurwEfv
+	vG64NdT2x7JufuKWslHsMVQyyjxce7t0=
+X-Google-Smtp-Source: AGHT+IH8D6yx0YUpcs7+ZieKnEh+aQ2mXyltMfZKUXcnlQjaLiwp59/SbD+G7DQKCQ+46we2g8i41BTrb6VJJRqKgr4=
+X-Received: by 2002:a05:6808:21aa:b0:44e:c106:8192 with SMTP id
+ 5614622812f47-44fed318ce3mr176398b6e.11.1762282335291; Tue, 04 Nov 2025
+ 10:52:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251104102539.00001110@linux.microsoft.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|SA1PR12MB5638:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb284dce-c747-467e-2a70-08de1bd2cc58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Y7XbsjH3nZlSQowHM59ygSJFs+Dqg7H/jT5EQAJMAc7lEaDLjesBN0aVqKWN?=
- =?us-ascii?Q?2EZ/4aKVLxvOD+nP0Q4Wfus+4O8g30CZapZzkIbUGcph8J0RnbwbtF39LzEQ?=
- =?us-ascii?Q?BiFSh32ZydXduthmy6fvQt1pzUc3132UvFh6juV8O538s76bQPU7k2InRHIr?=
- =?us-ascii?Q?NjNfxPgtrG/tIAj4Ep7FO4CYfWbPphGPdVeRUKiCx9t9CDEwOBtXkoDZmxRx?=
- =?us-ascii?Q?2yQkzVlwaqjspXiNJZ47BKhbdmmvvMCaa0TkyPTSzUTVe9/JC5wux7bR9UG1?=
- =?us-ascii?Q?p9BVVU3RcY2FkdCl60/Pazu0GyRijhoAvzrcyAtuxaLTSYXRlpoe+JDORNe6?=
- =?us-ascii?Q?xCUztvqjG3o5Nx+AVeJ2Z8zBQN1lZHGE20xIbcB9Xu8g8TnA89IKxjUL+VBL?=
- =?us-ascii?Q?ycRRaiibbaz3Px7mC5U/LMlL+oM207dSXdTmsJUynNiUxOeMP08Sm5MLJg4m?=
- =?us-ascii?Q?qxt1ipEjxUn8vR1yzNXMIE1M859i4lMjY4X1iGZYZDWo0mjxdYby16PHgXEH?=
- =?us-ascii?Q?Vj1fdSssRQHbpC2AK63cL2lOmlbjJMfvIByEG2XGyp8HJn4+iQQd8EKXynBc?=
- =?us-ascii?Q?ISWE8IjYnLkcfL+orMV4kJ58obq2lxQmIUNOGT9GXnKyAzU7uzdwvZjQZ1c3?=
- =?us-ascii?Q?1bozS7psENJcWPSkqPvhF0gh9knOktaSqsSmsHLOhFN7uxVwqQOTZrB2iDur?=
- =?us-ascii?Q?GFRPACJN1BKz3gerkIp051cV66ygtjkpflikpAsva5a2GUG/CivXZCnWPmgq?=
- =?us-ascii?Q?OpNNkMd2Kw4KG1zPc5+pmSCZVRk4f3a20dZ6pXjRkBGdmWNm/mgZwjxkto19?=
- =?us-ascii?Q?LF/fB7e9jAzbrCV8Yx3OWyR9XGWH1a20onqW8rosFG5P85HyvRn1drGGHyPC?=
- =?us-ascii?Q?ujkQ87JHqn4QnfeJGeqB3b7UfN3D7yTik5YsnDptwZ4f1K0M14npFDFrTtWk?=
- =?us-ascii?Q?+y97pYMgsoh1IIqi1R7bmsn2l79BYmQAaYB5qBeEgd39OuFz//DOvURo1BeD?=
- =?us-ascii?Q?FE++irL0rvI6Pu9axCLn9hZX6uguNQ2cXfXQLY9hAIoglN1zFuryhXcWDKsO?=
- =?us-ascii?Q?QB/Zn2U4hmgX213/XEMrDJP2IDZZY6KTwUxWIGCzJNJi1qtOnHWVcafVDriI?=
- =?us-ascii?Q?le4S0vm0ag+sLQwf523rByBOfwgfXDnOsJfxvKHshGM34uNWjnaTRJPMFxXv?=
- =?us-ascii?Q?BErN3/3C6YKfOmjxOwv0q0LiCK6Hqj9c/oVBKdsnThi5C49D9ohfhczmE97r?=
- =?us-ascii?Q?hztrwMs9v8FAZCWr8uxmFeVsDY1Kike49vKZgVFaP6lnCr2wKDBQoe1bJaBy?=
- =?us-ascii?Q?Y4sdistSux1jFKX/lyy09XVGPRKAxsy8gqJa67r9CSazBrUN1JPApmIgw0G0?=
- =?us-ascii?Q?tuEuilJCAJRfEmb+GHEIIQ+YKwznCaOGoC6c31HOso2SNM1rSvn1VC8gn3Uy?=
- =?us-ascii?Q?vDtwZI9TH4Hubi06yFpHkVg83vk3MngC4NMnLygzvbzRA51+WTNY4fabOfYl?=
- =?us-ascii?Q?g0HF0eeIcMYV+GbTjewpud2uLDIHuJuQvh+1NAd9iDNIosuWIcmx4B6MTAWn?=
- =?us-ascii?Q?XVlWLyFg/3paG0/TkbI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 18:48:51.6593
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb284dce-c747-467e-2a70-08de1bd2cc58
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A349.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5638
+References: <20251030210110.298612-1-wusamuel@google.com>
+In-Reply-To: <20251030210110.298612-1-wusamuel@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 4 Nov 2025 19:52:04 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gzKN1cXfj508G4_9O2hKR0HncW4et3BNbaV+5Erh=LMA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmQW4WMiFEqSUNK7drgYfAsIRfAIBn5ujpwJwEx4UZpZGSny_GdVggcv3o
+Message-ID: <CAJZ5v0gzKN1cXfj508G4_9O2hKR0HncW4et3BNbaV+5Erh=LMA@mail.gmail.com>
+Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, tuhaowen@uniontech.com, 
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 10:25:39AM -0800, Jacob Pan wrote:
-> > -----------------------------------------------------------------
-> > 
-> > And the commit message should point out:
-> > 
-> > The existing arm_smmu_cmdq_poll_until_not_full() doesn't fit
-> > efficiently nor ideally to the only caller
-> > arm_smmu_cmdq_issue_cmdlist():
-> >  - It uses a new timer at every single call, which fails to limit to
-> > the preset ARM_SMMU_POLL_TIMEOUT_US per issue.
+On Thu, Oct 30, 2025 at 10:01=E2=80=AFPM Samuel Wu <wusamuel@google.com> wr=
+ote:
+>
+> At the start of suspend and hibernate, filesystems will sync to save the
+> current state of the device. However, the long tail of the filesystem
+> sync can take upwards of 25 seconds. If during this filesystem sync
+> there is some wakeup or abort signal, it will not be processed until the
+> sync is complete; from a user's perspective, this looks like the device
+> is unresponsive to any form of input.
+>
+> This patch adds functionality to handle a sleep abort signal when in
+> the filesystem sync phase of suspend or hibernate. This topic was first
+> discussed by Saravana Kannan at LPC 2024 [1], where the general
+> consensus was to allow filesystem sync on a parallel thread. In case of
+> abort, the suspend process will stop waiting on an in-progress
+> filesystem sync, and continue by aborting suspend before the filesystem
+> sync is complete.
+>
+> Additionally, there is extra care needed to account for back-to-back
+> sleeps while maintaining functionality to immediately abort during the
+> filesystem sync stage. Furthermore, in the case of the back-to-back
+> sleeps, a subsequent filesystem sync is needed to ensure the latest
+> files are synced right before sleep. If necessary, a subsequent sleep's
+> filesystem sync will be queued, and will only start when the previous
+> sleep's filesystem sync has finished. While waiting for the previous
+> sleep's filesystem sync to finish, the subsequent sleep will still abort
+> early if a wakeup event is triggered, solving the original issue of
+> filesystem sync blocking abort.
+>
+> [1]: https://lpc.events/event/18/contributions/1845/
+>
+> Suggested-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> ---
+> Changes in v6:
+> - Use spin_lock_irq() in thread context
+> - Use dedicated ordered workqueue for sync work items
+> - Use a counter instead of two bools for synchronization
+> - Queue fs_sync if it's not already pending on workqueue
+> - pm_wakeup_clear(0) is prequisite to this feature, so move it within fun=
+ction
+> - Updated commit text for motive of back-to-back fs syncs
+> - Tighter lock/unlock around setup, checks, and loop
+> - Fix function definitions for CONFIG_PM_SLEEP=3Dn
+> - v5 link: https://lore.kernel.org/all/20251017233907.2305303-1-wusamuel@=
+google.com/
+>
+> Changes in v5:
+> - Update spin_lock() to spin_lock_irqsave() since abort can be in IRQ con=
+text
+> - Updated changelog description to be more precise regarding continuing a=
+bort
+>   sleep before fs_sync() is complete
+> - Rename abort_sleep_during_fs_sync() to pm_stop_waiting_for_fs_sync()
+> - Simplify from a goto to do-while in pm_sleep_fs_sync()
+> - v4 link: https://lore.kernel.org/all/20250911185314.2377124-1-wusamuel@=
+google.com
+>
+> Changes in v4:
+> - Removed patch 1/3 of v3 as it is already picked up on linux-pm
+> - Squashed patches 2/3 and 3/3 from v3 into this single patch
+> - Added abort during fs_sync functionality to hibernate in addition to su=
+spend
+> - Moved variables and functions for abort from power/suspend.c to power/m=
+ain.c
+> - Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
+> - Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
+> - v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusamuel@=
+google.com/
+>
+> Changes in v3:
+> - Split v2 patch into 3 patches
+> - Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) conditio=
+n
+> - Updated documentation and comments within kernel/power/suspend.c
+> - v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusamuel@=
+google.com/
+>
+> Changes in v2:
+> - Added documentation for suspend_abort_fs_sync()
+> - Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration stat=
+ic
+> - v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusamuel@=
+google.com
+>
+>  drivers/base/power/wakeup.c |  8 ++++
+>  include/linux/suspend.h     |  4 ++
+>  kernel/power/hibernate.c    |  5 ++-
+>  kernel/power/main.c         | 81 +++++++++++++++++++++++++++++++++++++
+>  kernel/power/suspend.c      |  4 +-
+>  5 files changed, 100 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index d1283ff1080b..689c16b08b38 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_sou=
+rce *ws)
+>
+>         /* Increment the counter of events in progress. */
+>         cec =3D atomic_inc_return(&combined_event_count);
+> +       /*
+> +        * wakeup_source_activate() aborts sleep only if events_check_ena=
+bled
+> +        * is set (see pm_wakeup_pending()). Similarly, abort sleep durin=
+g
+> +        * fs_sync only if events_check_enabled is set.
+> +        */
+> +       if (events_check_enabled)
+> +               pm_stop_waiting_for_fs_sync();
+>
+>         trace_wakeup_source_activate(ws->name, cec);
+>  }
+> @@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+>  void pm_system_wakeup(void)
+>  {
+>         atomic_inc(&pm_abort_suspend);
+> +       pm_stop_waiting_for_fs_sync();
+>         s2idle_wake();
+>  }
+>  EXPORT_SYMBOL_GPL(pm_system_wakeup);
+> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+> index b02876f1ae38..4795f55f9cbe 100644
+> --- a/include/linux/suspend.h
+> +++ b/include/linux/suspend.h
+> @@ -450,6 +450,8 @@ void restore_processor_state(void);
+>  extern int register_pm_notifier(struct notifier_block *nb);
+>  extern int unregister_pm_notifier(struct notifier_block *nb);
+>  extern void ksys_sync_helper(void);
+> +extern void pm_stop_waiting_for_fs_sync(void);
+> +extern int pm_sleep_fs_sync(void);
+>  extern void pm_report_hw_sleep_time(u64 t);
+>  extern void pm_report_max_hw_sleep(u64 t);
+>  void pm_restrict_gfp_mask(void);
+> @@ -505,6 +507,8 @@ static inline void pm_restrict_gfp_mask(void) {}
+>  static inline void pm_restore_gfp_mask(void) {}
+>
+>  static inline void ksys_sync_helper(void) {}
+> +static inline void pm_stop_waiting_for_fs_sync(void) {}
+> +static inline int pm_sleep_fs_sync(void) { return 0; }
+>
+>  #define pm_notifier(fn, pri)   do { (void)(fn); } while (0)
+>
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index 53166ef86ba4..1874fde4b4f3 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -820,7 +820,10 @@ int hibernate(void)
+>         if (error)
+>                 goto Restore;
+>
+> -       ksys_sync_helper();
+> +       error =3D pm_sleep_fs_sync();
+> +       if (error)
+> +               goto Restore;
+> +
+>         if (filesystem_freeze_enabled)
+>                 filesystems_freeze();
+>
+> diff --git a/kernel/power/main.c b/kernel/power/main.c
+> index a6cbc3f4347a..23ca87a172a4 100644
+> --- a/kernel/power/main.c
+> +++ b/kernel/power/main.c
+> @@ -582,6 +582,84 @@ bool pm_sleep_transition_in_progress(void)
+>  {
+>         return pm_suspend_in_progress() || hibernation_in_progress();
+>  }
+> +
+> +static int pm_sleep_fs_syncs_queued;
+> +static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
+> +static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
+> +static struct workqueue_struct *pm_fs_sync_wq;
+> +
+> +static int __init pm_start_fs_sync_workqueue(void)
+> +{
+> +       pm_fs_sync_wq =3D alloc_ordered_workqueue("pm_fs_sync_wq", 0);
+> +
+> +       return pm_fs_sync_wq ? 0 : -ENOMEM;
+> +}
+> +
+> +/**
+> + * pm_stop_waiting_for_fs_sync - Abort fs_sync to abort sleep early
+> + *
+> + * This function causes the suspend process to stop waiting on an in-pro=
+gress
+> + * filesystem sync, such that the suspend process can be aborted before =
+the
+> + * filesystem sync is complete.
+> + */
+> +void pm_stop_waiting_for_fs_sync(void)
+> +{
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> +       complete(&pm_sleep_fs_sync_complete);
+> +       spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> +}
 
-> Not following what you mean.
-> The original code below does honor the timeout of
-> ARM_SMMU_POLL_TIMEOUT_US
+Apart from the kernel test robot reports,
+pm_stop_waiting_for_fs_sync() has become slightly too heavy for
+calling it from wakeup_source_activate().
 
-It sets the timeout per arm_smmu_cmdq_poll_until_not_full(), not
-the entire wait-for-space routine. And that's why you moved the
-queue_poll_init() to the caller, right?
-
-Nicolin
+Waking up the suspend process from there should be sufficient.  The
+completion is not necessary for that in principle.
 
