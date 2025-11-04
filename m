@@ -1,182 +1,246 @@
-Return-Path: <linux-kernel+bounces-884698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC463C30D1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B96C30D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDBD24E56A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AA24275A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB492EAB66;
-	Tue,  4 Nov 2025 11:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624EC2DCC1B;
+	Tue,  4 Nov 2025 11:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kAKV9RTB"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HDx1A+Lq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E872DCC1B;
-	Tue,  4 Nov 2025 11:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29302D6E6E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762256982; cv=none; b=PFIfZ0c2v++VZLUO05BzCbk3IUdaRE5fXnGd8eBHSYJmjGrq2EfZcWDEvv/c1rY+glJyaJvRZ4+7P5p6e91M76lYQTf0ue6Nbu+S7/j3/JFTHRaN/ZVxpofFpAhpWFyjUxEEN0Q35QGPdXsX4HYc34Wn88aWIeiFaQK8o3LMZ/U=
+	t=1762256970; cv=none; b=WskIt5Ffho16h0nmFY2B+LVndYX+68/ZhZzc+DtIHniAm7ECcqII9ccR6LCNzjDQqm7C6bjdRSP6N9VQ3S70WF3GA/3QRk8vXLqMte3pcF7vQxO9dg6EUhwqVDVwu2g4EXHsF/dtrPAyQg5I8ziQxOR7IczE55/GaRS4lur1/6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762256982; c=relaxed/simple;
-	bh=FvowAcvC8veNnfIagKTJiT6zHVzm/04aTlVqH5+9gAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tID5FZLjZny73yS7CAQHFbL3dA+OkVbTGOSHazDVVvvVsf+lOLmshY5LolQDX/PQEKw+EH9FQ97uvB71QDHPXeVMVQqzZhsVOXym2PCfkjZ+82o0cbvQ4QZzl3GFisQsiXfSL3nzI+mJsrW0zC1NGUwArK/oa9USEnodULL+iAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kAKV9RTB; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762256949; x=1762861749; i=markus.elfring@web.de;
-	bh=FvowAcvC8veNnfIagKTJiT6zHVzm/04aTlVqH5+9gAw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kAKV9RTBBwBWrCEmHfipZDP+tHTP7F24FWGgMht5LK31ANv9ColMTaNWj3qpAPx4
-	 0EbK4yPcFPFXJryrAdwTGFWxWjmBS14rnRDlJctinzwA6nePE03bk/x4/eT4/cbAn
-	 qsilY3BWGRmTTROua/aw3BOFVKqu0ZKkIuv7Up+MfrqHwKeyJC0q0+Y4BZcqnKxpM
-	 DutN2i2FhzhdCR/FhG+CIV1v+t9vdLfYzx9mHnsn/i5YAZ2Q6URQJxkhTWNGTUH1q
-	 A0vfdmxlPyeL7Tw+tCpK9wmT2J21REEMk+AcRm8VLHm62TweXGDd1pAlw04fyn7VY
-	 svHToC5zgA8z5lbamw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mm9VU-1vy4jF0F9s-00aQha; Tue, 04
- Nov 2025 12:49:09 +0100
-Message-ID: <36c855fe-9a04-4e83-8e0c-641e2d7e3df9@web.de>
-Date: Tue, 4 Nov 2025 12:48:35 +0100
+	s=arc-20240116; t=1762256970; c=relaxed/simple;
+	bh=CKT1nhbWtK1ppjtO41KsCtKgqW+QgLN18kyQi1cgNdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kKWJXcvWTbRgoVKwbLEzYnkd4LTFMhJ83iG6vJhWtUQYy7pWp8H2oPzK2kdId2+75WRU0ga5JKjLX/PwVAMksBdErZVC9d9nLIa4FFUy7Qws/ZuPybi1RIo/zjh4htzhish6w7TS+BSsPZLN6RkiHtzqSaNWV3iO7f2U91goH/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HDx1A+Lq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711810948aso38614275e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:49:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762256967; x=1762861767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W3Q3lfgSzo70PNdFL4DM707Bst20OFBSjv1WovPhPE0=;
+        b=HDx1A+LqrrpUNazAYyH+ZnrXLVrSEn8jrsvola2SDmQ9W89NRpw48UUxVc2EoXldBp
+         YRE/7RDnxmOoQ/OSPKqAyUjkmowuEUFA9gA/8CDPrZAe+kRR1Z6VI3w0xoTPtD+1tRIA
+         GRp6YXnIWk8qk6/4MrFkF7/Wg6Delxstid96uGuHILaSM8rmq0We4R+I2KHC/tDOs+58
+         7m803oJgs3OFae2YS8B7JKsIaHN8JsGBHCQGAi2ImiU8aMoqSfvTI7nIYmVMmc1l6P5/
+         j6ieN69X5rxBZ/z8OeDbjFYTIoR5qPFLDZx+Zb2wyVHI97TJQGlKTLr52ej8zucwYKAm
+         nc2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762256967; x=1762861767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W3Q3lfgSzo70PNdFL4DM707Bst20OFBSjv1WovPhPE0=;
+        b=DRg+JWOKy0uaqbiipJXrmuTX3rnBO6HuUmLzWhS3mJvy4KB5RqE0NKrvObjIOw0FOv
+         Xj/R0d+iSM1Blza6FLAHKmvvTRLUxUDyIwjYFTUuwj/m94l7eJ/YcK9h/M+MI6xFMI5Y
+         uAGhIkiU7AAYBqodrw473AlsRzTv9saoNI0HOhxsT/jK69K8VsOSsrC3Xf5k116rYRDs
+         WhnHfpgmCtWLrXnVm7LAUAwIzXbsHkEJ+YT3oy+UTPAgL+P+5FGZXT6QC7KeFvzvLqNH
+         SOm9zIHft1qnXAuUjbOPrgSPAQtEsoTeyoXfUUtL6LJ/No/qgJ6+cHj1SeL4MVsHsVXL
+         YuQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqpu2z4P2WpkxtvMety6coAVmpY97/Wf/veHzGKqwlRzYhDc1EYuS7SrNphDWDKUhWes41heRP7OZaANY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdmiQ7YVGe3cN5xwA/ax8EnfqU316y9prbHen6XNVTNZ+VEBFu
+	jcjF+z6SHjMQIfwVR7D8sEh4kQK126qrovwK7gEeU2C7D1ilviwA4cLwZQstTxk8TM0=
+X-Gm-Gg: ASbGncs4pmzyJZ9anUkEVArL7pb46dFaYREFlBHtsbTbqiuDeMLIUv9jEAQYV8Nvw2R
+	f+Ink0cXcd8eBh8jauY296QUjfPtpKd60RZpPLZuEjVpk3iUGEN1dwcLRQTPS9WIT3TE4nL5z0O
+	h8ToxQTBwrvmwW4blnpiSI7sZo7x8lA9hZiT0JoTWoR8U76sEeP5RbJn0OwaVntbE/VjkZVU+h2
+	TKcPyGkbkcZY8XpjPpFlrcZLDMbTM2js+q07g8dLtGNDQhSoTBgGV3YdNQEq0fcP7BkZ1tuSadj
+	8dYlk+doCMKlHaL1MAm75R42+e8ddD2jRNSLJUyVWCzFwTJKEARa9omFqaTIe3y0Jbn3Nuaivwk
+	ysurub86Bnjj/GNfzpz8yGZclvK6YeAV/glfU4z3XPPcYooCfamrIRq5kUvN4EUOven3DIBeqcV
+	spYfLFAxH0eSkEFKSmqIK0UFecKmZQGgJUtVrzPJCO
+X-Google-Smtp-Source: AGHT+IFbxxKS7M3rAb63teL3DhfpL/hNeaf7jG1V589UZvNdPARtVhJN/7tTY0bkkAg8PsGFjx+3Jg==
+X-Received: by 2002:a05:600d:835a:b0:46e:3709:d88a with SMTP id 5b1f17b1804b1-47730890ea5mr95596395e9.33.1762256966869;
+        Tue, 04 Nov 2025 03:49:26 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755942772sm16627315e9.5.2025.11.04.03.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 03:49:26 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: support.opensource@diasemi.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] ASoC: da7213: Use component driver suspend/resume
+Date: Tue,  4 Nov 2025 13:49:14 +0200
+Message-ID: <20251104114914.2060603-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc/cputable: Use pointer from memcpy() call for
- assignment in set_cur_cpu_spec()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Dmitry Vyukov <dvyukov@google.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Miaoqian Lin <linmq006@gmail.com>
-References: <6c61cf90-5811-4450-b649-7a2c84584ee9@web.de>
- <3115e03a-1995-46f4-a902-47ba3cb99901@csgroup.eu>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <3115e03a-1995-46f4-a902-47ba3cb99901@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7+RRqGhBd2/z2HqHq1MqtyP9k9EOJTPbzT50PO1Sj8zYR1GdUlK
- t026HqJ1BRc4mPYN0JAIKQRPArlOJeO9auwWlBRa8KTWLN/P4jMc7FAftx85TvnKhbpP+og
- mD/brQwwcIFA7bm75Yb3/gONngUCcYiArSoBsC7EuhGSHLsK8gFrigoAmyGar1MPuAP0zBw
- pKpykaHC7jsW08CxgrFUA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HyYHB8bf9Sw=;50WVPljSbn1kn6Nufwiu3k5yzvi
- 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
+Content-Transfer-Encoding: 8bit
 
->> A pointer was assigned to a variable. The same pointer was used for
->> the destination parameter of a memcpy() call.
->> This function is documented in the way that the same value is returned.
->> Thus convert two separate statements into a direct variable assignment =
-for
->> the return value from a memory copy action.
->=20
-> I can't see the added value of this change. For me it degrades readabili=
-ty.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I dared to present another coding style view.
+Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+and snd_soc_pm_ops is associated with the soc_driver (defined in
+sound/soc/soc-core.c), and there is no parent-child relationship between
+the soc_driver and the DA7213 codec driver, the power management subsystem
+does not enforce a specific suspend/resume order between the DA7213 driver
+and the soc_driver.
 
+Because of this, the different codec component functionalities, called from
+snd_soc_resume() to reconfigure various functions, can race with the
+DA7213 struct dev_pm_ops::resume function, leading to misapplied
+configuration. This occasionally results in clipped sound.
 
-> Many places in cputable.c have that t =3D PTRRELOC(t) pattern,
+Fix this by dropping the struct dev_pm_ops::{suspend, resume} and use
+instead struct snd_soc_component_driver::{suspend, resume}. This ensures
+the proper configuration sequence is handled by the ASoC subsystem.
 
-Several assignment statements can occur.
+Cc: stable@vger.kernel.org
+Fixes: 431e040065c8 ("ASoC: da7213: Add suspend to RAM support")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
+Changes in v2:
+- kept runtime PM ops unchanged and re-use them on
+  struct snd_soc_component_driver::{suspend, resume}
+- updated the patch description to reflect the new approach
+- fixed the patch title
+- dropped patch 2/2 from v1 along with the cover letter
 
-> I can't see why that one should be changed while other ones remain.
+ sound/soc/codecs/da7213.c | 69 +++++++++++++++++++++++++--------------
+ sound/soc/codecs/da7213.h |  1 +
+ 2 files changed, 45 insertions(+), 25 deletions(-)
 
-Copy calls influenced the suggested source code transformation.
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index c1657f348ad9..81bd5b03e2b6 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -2124,11 +2124,50 @@ static int da7213_probe(struct snd_soc_component *component)
+ 	return 0;
+ }
+ 
++static int da7213_runtime_suspend(struct device *dev)
++{
++	struct da7213_priv *da7213 = dev_get_drvdata(dev);
++
++	regcache_cache_only(da7213->regmap, true);
++	regcache_mark_dirty(da7213->regmap);
++	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
++
++	return 0;
++}
++
++static int da7213_runtime_resume(struct device *dev)
++{
++	struct da7213_priv *da7213 = dev_get_drvdata(dev);
++	int ret;
++
++	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
++	if (ret < 0)
++		return ret;
++	regcache_cache_only(da7213->regmap, false);
++	return regcache_sync(da7213->regmap);
++}
++
++static int da7213_suspend(struct snd_soc_component *component)
++{
++	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
++
++	return da7213_runtime_suspend(da7213->dev);
++}
++
++static int da7213_resume(struct snd_soc_component *component)
++{
++	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
++
++	return da7213_runtime_resume(da7213->dev);
++}
++
+ static const struct snd_soc_component_driver soc_component_dev_da7213 = {
+ 	.probe			= da7213_probe,
+ 	.set_bias_level		= da7213_set_bias_level,
+ 	.controls		= da7213_snd_controls,
+ 	.num_controls		= ARRAY_SIZE(da7213_snd_controls),
++	.suspend		= da7213_suspend,
++	.resume			= da7213_resume,
+ 	.dapm_widgets		= da7213_dapm_widgets,
+ 	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
+ 	.dapm_routes		= da7213_audio_map,
+@@ -2175,6 +2214,8 @@ static int da7213_i2c_probe(struct i2c_client *i2c)
+ 	if (!da7213->fin_min_rate)
+ 		return -EINVAL;
+ 
++	da7213->dev = &i2c->dev;
++
+ 	i2c_set_clientdata(i2c, da7213);
+ 
+ 	/* Get required supplies */
+@@ -2224,31 +2265,9 @@ static void da7213_i2c_remove(struct i2c_client *i2c)
+ 	pm_runtime_disable(&i2c->dev);
+ }
+ 
+-static int da7213_runtime_suspend(struct device *dev)
+-{
+-	struct da7213_priv *da7213 = dev_get_drvdata(dev);
+-
+-	regcache_cache_only(da7213->regmap, true);
+-	regcache_mark_dirty(da7213->regmap);
+-	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
+-
+-	return 0;
+-}
+-
+-static int da7213_runtime_resume(struct device *dev)
+-{
+-	struct da7213_priv *da7213 = dev_get_drvdata(dev);
+-	int ret;
+-
+-	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
+-	if (ret < 0)
+-		return ret;
+-	regcache_cache_only(da7213->regmap, false);
+-	return regcache_sync(da7213->regmap);
+-}
+-
+-static DEFINE_RUNTIME_DEV_PM_OPS(da7213_pm, da7213_runtime_suspend,
+-				 da7213_runtime_resume, NULL);
++static const struct dev_pm_ops da7213_pm = {
++	RUNTIME_PM_OPS(da7213_runtime_suspend, da7213_runtime_resume, NULL)
++};
+ 
+ static const struct i2c_device_id da7213_i2c_id[] = {
+ 	{ "da7213" },
+diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
+index b9ab791d6b88..29cbf0eb6124 100644
+--- a/sound/soc/codecs/da7213.h
++++ b/sound/soc/codecs/da7213.h
+@@ -595,6 +595,7 @@ enum da7213_supplies {
+ /* Codec private data */
+ struct da7213_priv {
+ 	struct regmap *regmap;
++	struct device *dev;
+ 	struct mutex ctrl_lock;
+ 	struct regulator_bulk_data supplies[DA7213_NUM_SUPPLIES];
+ 	struct clk *mclk;
+-- 
+2.43.0
 
-
-> Can you elaborate why this change is desirable ?
-
-I imagine that selected variable assignments might be avoidable.
-
-Regards,
-Markus
 
