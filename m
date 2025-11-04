@@ -1,410 +1,219 @@
-Return-Path: <linux-kernel+bounces-883892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01423C2EACA
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:00:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DABC2EAD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E16544E2A2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:00:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE32634C23E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E064A207DF7;
-	Tue,  4 Nov 2025 01:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6061A1E9919;
+	Tue,  4 Nov 2025 01:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GSFV8TPJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dipVywZf"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010023.outbound.protection.outlook.com [52.101.61.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08233A95E;
-	Tue,  4 Nov 2025 01:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762218012; cv=none; b=OrLQYdf3pOsgBtPoorij/DQQmXq+RrwD2+yfiNJien59SEpjikMLPBlArrfSzI7L5e99vHD6sq9tWQ+GL9wfqtacKbfqNR46lJST9nmB3kUHG+AafWg/Ejdx5N1fXJf9qGgJTs6JGVjJoGD1uCNA90gT4IAf51+Uez4/EBDLraY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762218012; c=relaxed/simple;
-	bh=Xr+fyAfvLq6ALEQtjIKWn7BTLqTCF5SxS34QhEfHc9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MnXUebJsem0uUZDHvxL5KYsFARRA5GMw6omDNVXA6ttLPRR+KoqFU8jK7P0p8LBvBqqB+HWHWl7duOwi8JeKbcMAkCGYH1w7ZRmokvd+q2vpR0uXLQF3nTjtqogKwouY3+GdCjQggK42veDTes5yCjSLpcjBhGa3PlCXkVF6V1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GSFV8TPJ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762218011; x=1793754011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Xr+fyAfvLq6ALEQtjIKWn7BTLqTCF5SxS34QhEfHc9M=;
-  b=GSFV8TPJBIaAYyYksr0fFEgUU0JLtHZIJWQqULfQXYc0pUfO7FY5cta+
-   avqhwseYozoB4GmbqgdT4T9ovy2UOC+ZiVNWI7nTtc9Y8gaHI06QQKzHO
-   KA81emnNtK8879RlBdxSkU9Av3gSUPQH+qZGwBw9rg2wMXBreYErez98k
-   kaIZWLXn9ESB40+AORS3xAU2cb+jzRdoo0AD/fm+hToSjMhSDWUUGNUpq
-   Un29V4CnBxQtEMH5IVzPbLj8MErfGYhqjFxVnPY6gCZas77UXsUu+xccS
-   cZ2MalLapeOWnUPit56XhMrEUDLaP9KcxEUBg3cLuZYlT2i6T59UrUULW
-   A==;
-X-CSE-ConnectionGUID: HeyuPh33QiylscyosyLOSw==
-X-CSE-MsgGUID: rpJ/QVCRTk+Meh4o0zGESg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75754905"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="75754905"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 17:00:10 -0800
-X-CSE-ConnectionGUID: oD9QD8CESwm6KC+TyNdanA==
-X-CSE-MsgGUID: YUSJxwCRT0+9aeLucL0Q/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186693544"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 17:00:09 -0800
-Message-ID: <d752b9b3-c032-41c5-b10f-48b711a54eee@intel.com>
-Date: Mon, 3 Nov 2025 18:00:08 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169FA27456;
+	Tue,  4 Nov 2025 01:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762218055; cv=fail; b=e3kKoYvRHgF+e/iMMdQqyVIbX57ZzBWMxX+/kCYBwC3lFxjcCh1gQ25lxFqGxtcW5iTtnLzHkwD8s2kx+TTm/BC5NI/H0iKRQ9OqfOxOn2gdV+uMJy8+9rvTB5u1jXSee0ixNJNKyeHjP3fSulbusAfExY1syTJlhooE0+JA47U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762218055; c=relaxed/simple;
+	bh=WBwcJYXgf5zIyuOjS1cWyKYSp8BmzmCuS579+6UXV+U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c0DD3TvCK90dKxOy/R9cgRJsYEUQjxcAFOlrpnovD0gz4I+xXLCBsuZIv+pB5QiNQ9xZoeZMJwkV7zAalFbLi+u2Hkmmk6x+dOic2GCZ2koR0GMQelW0PuEynTVHpJDFmj6DGblDwi2ivPphdoEStaETBE/VLAY18mBxxmsayww=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dipVywZf; arc=fail smtp.client-ip=52.101.61.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pCq8lJIKETToktjepuUVA01/LKFYEkGDZJFdvmYvtlg0KhW+g8ja1E7F2HfYHznrADpPSzCV5sj/2eqe+Puv/xeJDR0P8OBCibUM4MJgWV2u9QvPttSJqu+4/ajkBZODYIqukMQJGeaRA4eWVrATheBCOaFBh8rX/EIfyvCz6yDNCzJHJtt6B6hU4DbXV0VJNG4qYUR3/MGGi2uEB4/VIegz6lCvnFTpfP5Mk/IBjOljzJp5vvqGEpz2FdV7kyUiIRwh/wiFq4plsup3QbVRVLmvd6RZBw7tDkMZfIT664EuVjZPU4nugO2ODA7bWqNXj73MEE0cE/Rkc0jcfqL9Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cGrwGNscp2xhWPoxqN6fxeXDo9tdNCy0nbwiG8g4hZY=;
+ b=nUfvKh+ub3btrt0EdGoVTDTKmsOqlh3bkjq3ViNhSSVVNqbTBN0EC6PkEEwp7ntV8Tt74gHRtjNkxF3wFaz7NkBC/BfRw+af/77dt4GHNwc3yvPEaDBzE2ffOppi9Tl8ugg3vJoA/Z+TK2QH9rmnEnvbZGyck8rHUysc5B9OgoKbh8KhLueQvxRZfq2C4jBg3bBs8e5M9v0pJch+tka/hqc3V6hk+GEEdGATMohuBJ0H2OUxrvYieNwv1g3blupMheil5TgUnjmIijPw7vIeotu0UmtBIqZHQ9qBM/jhzFxBkeopW2Kv2r9jhV3tlwimkngy9CmWyBZB82S+A1Pp+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cGrwGNscp2xhWPoxqN6fxeXDo9tdNCy0nbwiG8g4hZY=;
+ b=dipVywZf6kcBHMu9/9ccl1lldd2zIco9dCXtOv12Cp4Onv2+DzzW5VKdSXoiH08J3YAUGprdadMDuBbLubLq8ayg4mKKyM9eR6ZZMZDuxx3QjJvYKe1DjUIfNq1gSE1casRoe/35GsWX2MrWb11LlYAyeu3qJLuNzJgFYNnMkblOX9p7xBt0hKXe9/y9O3zGLmJoIvJpp5UzuKvlLBvWq/Mrh2h28mY9NxGX7JB2DxPISviLlB/ONCvLzVOqJCrLcQsY7qSYtzs21LfiOzIMO3IMbwiYf4eBMyudYje9v9eyRTM/3GaxIh3H1iclyojfhAvbOdjNZ+cyNcXyreb9lA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SA1PR12MB9470.namprd12.prod.outlook.com (2603:10b6:806:459::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 01:00:51 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 01:00:51 +0000
+Message-ID: <8972320f-c38b-4bbd-856e-fe1164769607@nvidia.com>
+Date: Mon, 3 Nov 2025 20:00:49 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] gpu: nova-core: vbios: use FromBytes for
+ PmuLookupTable header
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, John Hubbard <jhubbard@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Edwin Peer <epeer@nvidia.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+ <20251029-nova-vbios-frombytes-v1-2-ac441ebc1de3@nvidia.com>
+ <20251103200416.GA2097762@joelbox2> <DDZGO1JLDCCU.249NOQLOZBW6R@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DDZGO1JLDCCU.249NOQLOZBW6R@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9PR03CA0938.namprd03.prod.outlook.com
+ (2603:10b6:408:108::13) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/14] cxl: Enable AMD Zen5 address translation using
- ACPI PRMT
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-11-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-11-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB9470:EE_
+X-MS-Office365-Filtering-Correlation-Id: af49976a-1184-4b58-76f9-08de1b3d9920
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?amhpcHNHK0JPTkM2V3dnUTBzelNZeEN3RUVpSVpVby9pc1Uxb0c5REZQM2Q3?=
+ =?utf-8?B?ek9rcnF6NGlkblZCZzFackxpak13d09CRGUzd3B3WStrVG5OT1pYN3E1ZkRu?=
+ =?utf-8?B?bWNUd1BIZ0hmSDgwUjVubWV2azVWYzZZRHR6Vi9EV0tTYmphZ0FGV1NSTG9p?=
+ =?utf-8?B?RG1RWEQ0RnE1Tk84MHZpbytlRkVONFk2VFpXeVlWNm1nVjluS1diNkZmYys1?=
+ =?utf-8?B?UFRTUy84Y3FIWFpGTWx6L3FqbFkzMXpEbTJnZUsvbVFUbGlURmxQY3BaZ285?=
+ =?utf-8?B?bUtJRlRCMDRNSGREK1dhV2g1eW5zb1MyY254RUIvanIwQ2s3VUNOekp3K3JW?=
+ =?utf-8?B?cndJVEpGNE00b0k1Q2FnTXpnNHBTVzd2ckU3S21iMzdaRFNXMWVOM0V4ZldU?=
+ =?utf-8?B?KytHKzRUb2lHT0NqaWlvVGNvbzh6d09zb3VPeVk1bXdSaW9GaFBsMEx2L3dJ?=
+ =?utf-8?B?SXVoMGdvdlYzYVdwZnVhRHRGVkROVC9jZXZRQnpVQStHVU1rSXZFU1g0ektF?=
+ =?utf-8?B?UTVkZ2FjVW9qYk5sdk5qYjZ5bXZ2cDg4djlzc2gyRllzZ1YzUUNySU5tQTVh?=
+ =?utf-8?B?R2tqL3lnbWlLUkthOUp5aWljd24xN2RTVjBtdTVoSGs3cVA1d2g4WDhHdUUw?=
+ =?utf-8?B?UTBUMmFNUXNnM25CWGhoVVE2STRpNVRWTFdxZkFPU0tMMlBuV0JhTlF1MnNR?=
+ =?utf-8?B?WE9yMTY4cGpWN1VzMnltdGI2ZmN6NHp2VkdjSXFJNXNOR1EzR0wwdE9LMUhK?=
+ =?utf-8?B?YmlLdkU2bjVBZnQ2ZmpxZkY0WXdtY0NMN29oTnI5Nkd4Tjc0c3V0ckZaMHhL?=
+ =?utf-8?B?V3Y5WE5jYlRPS2NpUDYveGw5azF3Q2FjMmNhMFdUWjRwbDNuWG5NdmZZTE4z?=
+ =?utf-8?B?alhhZHJqUWpNclBrTnZuc3dzQ2s0UzUvZFQzZHMrMVo2K3lZcmRLWHpINU5Y?=
+ =?utf-8?B?bDdkYitFSlU4c2ZPTlJ1M05GSVZKUVdCczlSM1BKaWpXNUVNblpjeFNZaEJR?=
+ =?utf-8?B?V1dqL3lqeENjQmxUa3JBUDFzUVBIaTdOenU3eFkzOUkvUk1XOE4rbURzdGtE?=
+ =?utf-8?B?RVk3dXBRdWRrVFNrWCtMVnZTcDI4MGp3bXpIeWlULzlRdjg2YitUTS9hczRH?=
+ =?utf-8?B?dDk4enFOdVc0WUlDUlhNaUkxRnNJSDl5djlvY0FBQTFRK2FWSTJWZFFuNG5H?=
+ =?utf-8?B?YUNyQ0hxNGFxTm9kWGR2eDNjU3kvKzJnWVVMcVdiMEFUMjBJd3ZNa1dlWWI4?=
+ =?utf-8?B?dUI5Y0hNZGNVeVNybXFIbFBSQjlpZmdGamNxUGxxMDY5eVVKUzV5ejRKSFNl?=
+ =?utf-8?B?OU5mMW9NRkZlbHU3UU1LL3B3STd0TXJyQzhyUG04L1krcjZrVmlTVnFud0N5?=
+ =?utf-8?B?RHpFak9xQzcwQUFSM3FxUDk0b3dzVGRuZ2dQQituTzFNS2Z2eHp6VTFLb3pv?=
+ =?utf-8?B?dm9Pc05CN296ZFZSbTF1S1RzWEJGWFFtM01XOUoxTkhyT0JNMUZYSnNiT0Vw?=
+ =?utf-8?B?YXNWeFV1bGxGaVErd3NsQzdSTjRnVm1zVHNhSFRyVFl5ZmwwRWdDZ3ZxOW1L?=
+ =?utf-8?B?eEs3TEZzdEVIcUxMN2RLVzJja1VwWGxoVnl5RVI0N1VDU1R0UjlvYXRnQnll?=
+ =?utf-8?B?NXFzdW5IMmVRSitCeXY2RGM3Y0xhcDRJRG1mZ1RxbmlDZDBvVnZBNTJHVGhY?=
+ =?utf-8?B?R3hrMGNjcFlPQWoxUHRxRnl3SEwyMk03cGpDUTg5TnVlZ0R2WXNoenNBcHNk?=
+ =?utf-8?B?aG96SkZWVDRBcnJSbUVoSlZ1OUdzVkxCTFdSa0RQaG5kY1RtSy9EQWV4S1Uw?=
+ =?utf-8?B?M3crd3VDZG5ZK1pwd1J6Rnc5UlRBODFCd2tuYnN4NUF0U3AvQkZEU2FHL3pN?=
+ =?utf-8?B?WmhnRGthL3VRQWsxRUNsT2NqYVJFaVM2eU9lWEc4c243ejd3eUJoNGg3cWRM?=
+ =?utf-8?Q?tQjipY5bqAVyMHPEO7OTI+a/hkPK5/I8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SHhmcDlTOGFGUmIrRitiUThMbFk3Z2pmc0lpL1pGTDJVTzNYKzJ4NmdLSTZl?=
+ =?utf-8?B?VDJYa2lMdGpaK1duY0pXMkdCUGtDaW9MN2lVNjBFVW4zRzA5ZGhFcFd0RTB4?=
+ =?utf-8?B?Rm05N2RHYjJnTUhhSm1icFVkUWZzcnpYOE5vUXhYdzh0WkV2TWU2RWpaRWNy?=
+ =?utf-8?B?QTFSYWpGaEpsVnhmMG0yRXQrQ3FBQ1Vkayt1SEtsVEE2WHdhM0FuVHNKQUlJ?=
+ =?utf-8?B?ZXJBemNTM2lzd25ZZ0N1azZoMU1mNzgwaWlYaEgyak5FZlJaYUQydW05S1Zu?=
+ =?utf-8?B?M2JQeHdjaVUvM3RoNzh5QTRVa0xjNFd1Vm1wUVFjeFVJK3g4TjFjc3h4eGNW?=
+ =?utf-8?B?T1JXMGZNNWF2MTR5OXFPb055WUxNUk1DaDdvamtyTXFCOHBiSGxobXpTcWRn?=
+ =?utf-8?B?Wjl6Szd6WjcwdGF3UndtaHNTR1R0SlZIZjcwY3U0ZWJuLzVHT3VYRko1bzFB?=
+ =?utf-8?B?ZWx2RWptaHR5TjFGaU9lMTBJbnpuS1lTeW9qT2xSK0hiSVRSVHVSQlVqUk1X?=
+ =?utf-8?B?WU9rSWhScWJwVzl6dWpwSlBwNVcvdXdXbVBXbWZXRlVmODdnOU1mWHFISUtO?=
+ =?utf-8?B?U2tubUs5TTZ6UWp0UjVPUTdEc1l2cUVpMm9COUp6V3RwRUZBQUJuK1plekJV?=
+ =?utf-8?B?U3hmVWNraWFXZUJ6Tjd4TDZ0ZkJXWkdZNlZVZi9GbnNCbFdDS1BqVWorZnZU?=
+ =?utf-8?B?Y2I2UFdocnhyRTJXUHRJeGxsb1A0ckhTdjkxM3hwelVvaTRDQVlzY2h2bVNP?=
+ =?utf-8?B?TGI0Zm5xcVZxYkM2ZU9tNlhHTGw5KzY0b1Zvb3JEZDhKMy9HclFuaGxHd3lv?=
+ =?utf-8?B?cUlaQU1naTdmUHRhWlhlNlpsSWxEY3V0dlR6U081VGQ4cmlERk9ocVBlQVVB?=
+ =?utf-8?B?S1ZhbDRlYmRMTmFiSzdNWW9oT2ZNSDlWU2s2Z3JRbkJESDcvOS9PallteHRy?=
+ =?utf-8?B?YzZqMmdKQXZRN2J3Rkt1SkNpbEFiVFd0NFVQVzBQOUh3SlhEZTZpcXlQZTJG?=
+ =?utf-8?B?ODVralNGV3ZNVVhTNFJjUVdCd0NISjlQREFtK0c3RmtxSkpqd2EvbmlqSHY3?=
+ =?utf-8?B?WHlFMGJKTDZrd3c5QmJoMStQYWJKeEhtc3FxM3Z4R3pkWDlURlBBYlN4eThO?=
+ =?utf-8?B?ZjdUbnAvUEg4Sm5YSVI4Y3dUd3E4WG5lZzYxdkhTcnFJUVZvRWxQYnhtNU5N?=
+ =?utf-8?B?NEgzMkdnOEQzVXBBeklSV0lQNnhWdG5rMGZ5dzZqTlN4SHRVV0xNN25WREZ0?=
+ =?utf-8?B?MVBFR0hDblY4TFRmVE5sUjVnNlVCcFMyZVF2NHo4Vmp2dlEzZGRkWXdtMFN3?=
+ =?utf-8?B?cUdxQ1g1WGJta2EvT1NjTUIwbXF5T2VKN1ZweVNMTHBXSjRpbUdwOFlKK01y?=
+ =?utf-8?B?aXFzTzdqbzFkS3hqeVpIUDREbVFVRzVaMU1DVnBmNko0dThnaVRIamlEanI2?=
+ =?utf-8?B?YVhPTHgvUWc1THhGa3l2VkZrWE1xK25IcForSXl1by95ZE9FMkVNeHRadFZi?=
+ =?utf-8?B?ODI3ZVJURmJBYXllSFY1U0F3Z3JXWitFWlRqd0VZUk5lcE5GQ09XQkdqcjVU?=
+ =?utf-8?B?bzJOVEZMcXVvQW5LQU12a0RhMVpSZlFHYWpvT1dpb1hnMWRiOUQwbFNFdzRy?=
+ =?utf-8?B?RGkvSUZJaFJtK2dPRXBPck9QY05OSFNybTkxSVQ1TU5oUm1OeWVFTCs2Qjlt?=
+ =?utf-8?B?UTRLbUppNEduQXAyazl4UE9oVlBIZFdwN0Q4b2czclgwYlNPT2Y2akF6TzFz?=
+ =?utf-8?B?MVhiYW5jeWxYbUFjM1BDSDVhK054a3dSK1RSblRlY3VORmJ0SEFyUHRVWWY2?=
+ =?utf-8?B?YlFYRkN5NlQwcTNhcjEwcWhnL0ozNjdXeWpScUpWSFFWSjVETG93eVI4d1dW?=
+ =?utf-8?B?czdTSEUwN3UvOVRVblRxaVZHVEhlVHBEN1RpYSt3SGs4NzUzQTM1Tms0RUU5?=
+ =?utf-8?B?K09TcEtySWhsWnpoTVNUOEVRam5DaitHY0k3SnFmZEdCMURjeEtmbkRPNmRI?=
+ =?utf-8?B?Y0l1MUFmQUd5YlllYkdMVVA1alltUFVKTytLZ1pvYko0U1NDajQ3eHRRWVJj?=
+ =?utf-8?B?UjFvTm1KZTlXNElISng4cFYyRnAyWWZ0a3dnV2QvVWhnTCtDNjNDa1VzQVlH?=
+ =?utf-8?Q?focC+DGNA5G+mxlV6hn8ixhkx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: af49976a-1184-4b58-76f9-08de1b3d9920
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 01:00:51.1099
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e8RBikrfcw0UMcWf811FYX0tOE0ZvDEfe3/pBQJkGFNj78caOK7B0E+q8nqjr2kVibQ9x7WDmMScjm7rjDnYJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9470
 
 
 
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> Add AMD Zen5 support for address translation.
+On 11/3/2025 6:50 PM, Alexandre Courbot wrote:
+> On Tue Nov 4, 2025 at 5:04 AM JST, Joel Fernandes wrote:
+>> Hi Alex,
+>> Nice improvement, a nit:
+>>
+>> On Wed, Oct 29, 2025 at 12:07:37AM +0900, Alexandre Courbot wrote:
+>> [..]
+>>>  impl PmuLookupTable {
+>>>      fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
+>>> -        if data.len() < 4 {
+>>> -            return Err(EINVAL);
+>>> -        }
+>>> +        let header = PmuLookupTableHeader::from_bytes_copy_prefix(data)
+>>> +            .ok_or(EINVAL)?
+>>> +            .0;
+>>
+>> Can we change to the following, it is easier to read than using `.0` IMO.
+>>
+>>  let (header, _rest) = PmuLookupTableHeader::from_bytes_copy_prefix(data)
+>>       .ok_or(EINVAL)?;
+>>
+>> (and similarly in the other patches).
 > 
-> Zen5 systems may be configured to use 'Normalized addresses'. Then,
-> host physical addresses (HPA) are different from their system physical
-> addresses (SPA). The endpoint has its own physical address space and
-> an incoming HPA is already converted to the device's physical address
-> (DPA). Thus it has interleaving disabled and CXL endpoints are
-> programmed passthrough (DPA == HPA).
+> We can use `let (header, _) =` to make sure the unused remainder is not
+> bound to any variable. That also turns that statement into a one-liner.
 > 
-> Host Physical Addresses (HPAs) need to be translated from the endpoint
-> to its CXL host bridge, esp. to identify the endpoint's root decoder
-> and region's address range. ACPI Platform Runtime Mechanism (PRM)
-> provides a handler to translate the DPA to its SPA. This is documented
-> in:
-> 
->  AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
->  ACPI v6.5 Porting Guide, Publication # 58088
->  https://www.amd.com/en/search/documentation/hub.html
-> 
-> With Normalized Addressing this PRM handler must be used to translate
-> an HPA of an endpoint to its SPA.
-> 
-> Do the following to implement AMD Zen5 address translation:
-> 
-> Introduce a new file core/atl.c to handle ACPI PRM specific address
-> translation code. Naming is loosely related to the kernel's AMD
-> Address Translation Library (CONFIG_AMD_ATL) but implementation does
-> not depend on it, nor it is vendor specific. Use Kbuild and Kconfig
-> options respectively to enable the code depending on architecture and
-> platform options.
-> 
-> AMD Zen5 systems support the ACPI PRM CXL Address Translation firmware
-> call (see ACPI v6.5 Porting Guide, Address Translation - CXL DPA to
-> System Physical Address). Firmware enables the PRM handler if the
-> platform has address translation implemented. Check firmware and
-> kernel support of ACPI PRM using the specific GUID. On success enable
-> address translation by setting up the earlier introduced root port
-> callback, see function cxl_prm_translate_hpa_range(). Setup is done in
-> cxl_setup_prm_address_translation(), it is the only function that
-> needs to be exported. For low level PRM firmware calls, use the ACPI
-> framework.
-> 
-> Identify the region's interleaving ways by inspecting the address
-> ranges. Also determine the interleaving granularity using the address
-> translation callback. Note that the position of the chunk from one
-> interleaving block to the next may vary and thus cannot be considered
-> constant. Address offsets larger than the interleaving block size
-> cannot be used to calculate the granularity. Thus, probe the
-> granularity using address translation for various HPAs in the same
-> interleaving block.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-Just a small thing below, otherwise:
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/Kconfig       |   4 +
->  drivers/cxl/acpi.c        |   2 +
->  drivers/cxl/core/Makefile |   1 +
->  drivers/cxl/core/atl.c    | 195 ++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxl.h         |   7 ++
->  5 files changed, 209 insertions(+)
->  create mode 100644 drivers/cxl/core/atl.c
-> 
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index 48b7314afdb8..e599badba69b 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -233,4 +233,8 @@ config CXL_MCE
->  	def_bool y
->  	depends on X86_MCE && MEMORY_FAILURE
->  
-> +config CXL_ATL
-> +       def_bool y
-> +       depends on ACPI_PRMT && AMD_NB
-> +
->  endif
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index a54d56376787..f9bbc77f3ec2 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -916,6 +916,8 @@ static int cxl_acpi_probe(struct platform_device *pdev)
->  	cxl_root->ops.qos_class = cxl_acpi_qos_class;
->  	root_port = &cxl_root->port;
->  
-> +	cxl_setup_prm_address_translation(cxl_root);
-> +
->  	rc = bus_for_each_dev(adev->dev.bus, NULL, root_port,
->  			      add_host_bridge_dport);
->  	if (rc < 0)
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 5ad8fef210b5..11fe272a6e29 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -20,3 +20,4 @@ cxl_core-$(CONFIG_CXL_REGION) += region.o
->  cxl_core-$(CONFIG_CXL_MCE) += mce.o
->  cxl_core-$(CONFIG_CXL_FEATURES) += features.o
->  cxl_core-$(CONFIG_CXL_EDAC_MEM_FEATURES) += edac.o
-> +cxl_core-$(CONFIG_CXL_ATL) += atl.o
-> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
-> new file mode 100644
-> index 000000000000..d6aa7e6d0ac5
-> --- /dev/null
-> +++ b/drivers/cxl/core/atl.c
-> @@ -0,0 +1,195 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/prmt.h>
-> +#include <linux/pci.h>
-> +#include <linux/acpi.h>
-> +
-> +#include <cxlmem.h>
-> +#include "core.h"
-> +
-> +/*
-> + * PRM Address Translation - CXL DPA to System Physical Address
-> + *
-> + * Reference:
-> + *
-> + * AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
-> + * ACPI v6.5 Porting Guide, Publication # 58088
-> + */
-> +
-> +static const guid_t prm_cxl_dpa_spa_guid =
-> +	GUID_INIT(0xee41b397, 0x25d4, 0x452c, 0xad, 0x54, 0x48, 0xc6, 0xe3,
-> +		  0x48, 0x0b, 0x94);
-> +
-> +struct prm_cxl_dpa_spa_data {
-> +	u64 dpa;
-> +	u8 reserved;
-> +	u8 devfn;
-> +	u8 bus;
-> +	u8 segment;
-> +	u64 *spa;
-> +} __packed;
-> +
-> +static u64 prm_cxl_dpa_spa(struct pci_dev *pci_dev, u64 dpa)
-> +{
-> +	struct prm_cxl_dpa_spa_data data;
-> +	u64 spa;
-> +	int rc;
-> +
-> +	data = (struct prm_cxl_dpa_spa_data) {
-> +		.dpa     = dpa,
-> +		.devfn   = pci_dev->devfn,
-> +		.bus     = pci_dev->bus->number,
-> +		.segment = pci_domain_nr(pci_dev->bus),
-> +		.spa     = &spa,
-> +	};
-> +
-> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
-> +	if (rc) {
-> +		pci_dbg(pci_dev, "failed to get SPA for %#llx: %d\n", dpa, rc);
-> +		return ULLONG_MAX;
-> +	}
-> +
-> +	pci_dbg(pci_dev, "PRM address translation: DPA -> SPA: %#llx -> %#llx\n", dpa, spa);
-> +
-> +	return spa;
-> +}
-> +
-> +static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
-> +{
-> +	struct cxl_region_context *ctx = data;
-> +	struct cxl_endpoint_decoder *cxled = ctx->cxled;
-> +	struct cxl_decoder *cxld = &cxled->cxld;
-> +	struct cxl_memdev *cxlmd = ctx->cxlmd;
-> +	struct range hpa_range = ctx->hpa_range;
-> +	struct pci_dev *pci_dev;
-> +	u64 spa_len, len = range_len(&hpa_range);
-> +	u64 addr, base_spa, base = hpa_range.start;
-> +	int ways, gran;
-> +
-> +	/*
-> +	 * When Normalized Addressing is enabled, the endpoint
-> +	 * maintains a 1:1 mapping between HPA and DPA. If disabled,
-> +	 * skip address translation and perform only a range check.
-> +	 */
-> +	if (hpa_range.start != cxled->dpa_res->start)
-> +		return 0;
-> +
-> +	if (!IS_ALIGNED(hpa_range.start, SZ_256M) ||
-> +	    !IS_ALIGNED(hpa_range.end + 1, SZ_256M)) {
-> +		dev_dbg(cxld->dev.parent,
-> +			"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
-> +			hpa_range.start, hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	/*
-> +	 * Endpoints are programmed passthrough in Normalized
-> +	 * Addressing mode.
-> +	 */
-> +	if (ctx->interleave_ways != 1) {
-> +		dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
-> +			ctx->interleave_ways, ctx->interleave_granularity);
-> +		return -ENXIO;
-> +	}
-> +
-> +	if (!cxlmd || !dev_is_pci(cxlmd->dev.parent)) {
-> +		dev_dbg(&cxld->dev, "No endpoint found: %s, range %#llx-%#llx\n",
-> +			dev_name(cxld->dev.parent), hpa_range.start,
-> +			hpa_range.end);
-> +		return -ENXIO;
-> +	}
-> +
-> +	pci_dev = to_pci_dev(cxlmd->dev.parent);
-> +
-> +	/* Translate HPA range to SPA. */
-> +	hpa_range.start = base_spa = prm_cxl_dpa_spa(pci_dev, hpa_range.start);
-> +	hpa_range.end = prm_cxl_dpa_spa(pci_dev, hpa_range.end);
-> +
-> +	if (hpa_range.start == ULLONG_MAX || hpa_range.end == ULLONG_MAX) {
-> +		dev_dbg(cxld->dev.parent,
-> +			"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	/*
-> +	 * Since translated addresses include the interleaving
-> +	 * offsets, align the range to 256 MB.
-> +	 */
-> +	hpa_range.start = ALIGN_DOWN(hpa_range.start, SZ_256M);
-> +	hpa_range.end = ALIGN(hpa_range.end, SZ_256M) - 1;
-> +
-> +	spa_len = range_len(&hpa_range);
-> +	if (!len || !spa_len || spa_len % len) {
-> +		dev_dbg(cxld->dev.parent,
-> +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	ways = spa_len / len;
-> +	gran = SZ_256;
 
-maybe init 'base' and 'base_hpa' here. Makes it easier to recall rather than having to go up to recall what it was.> +
-> +	/*
-> +	 * Determine interleave granularity
-> +	 *
-> +	 * Note: The position of the chunk from one interleaving block
-> +	 * to the next may vary and thus cannot be considered
-> +	 * constant. Address offsets larger than the interleaving
-> +	 * block size cannot be used to calculate the granularity.
-> +	 */
-> +	while (ways > 1 && gran <= SZ_16M) {
-> +		addr = prm_cxl_dpa_spa(pci_dev, base + gran);
-> +		if (addr != base_spa + gran)
-> +			break;
-> +		gran <<= 1;
-> +	}
-> +
-> +	if (gran > SZ_16M) {
-> +		dev_dbg(cxld->dev.parent,
-> +			"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	ctx->hpa_range = hpa_range;
-> +	ctx->interleave_ways = ways;
-> +	ctx->interleave_granularity = gran;
-> +
-> +	dev_dbg(&cxld->dev,
-> +		"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
-> +		dev_name(ctx->cxlmd->dev.parent), base, len, hpa_range.start,
-> +		spa_len, ways, gran);
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root)
-> +{
-> +	struct device *host = cxl_root->port.uport_dev;
-> +	u64 spa;
-> +	struct prm_cxl_dpa_spa_data data = { .spa = &spa, };
-> +	int rc;
-> +
-> +	/*
-> +	 * Applies only to PCIe Host Bridges which are children of the
-> +	 * CXL Root Device (HID=“ACPI0017”). Check this and drop
-> +	 * cxl_test instances.
-> +	 */
-> +	if (!acpi_match_device(host->driver->acpi_match_table, host))
-> +		return;
-> +
-> +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
-> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
-> +	if (rc == -EOPNOTSUPP || rc == -ENODEV)
-> +		return;
-> +
-> +	cxl_root->ops.translate_hpa_range = cxl_prm_translate_hpa_range;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_setup_prm_address_translation, "CXL");
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 94b9fcc07469..0af46d1b0abc 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -790,6 +790,13 @@ static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
->  						struct device *host) { }
->  #endif
->  
-> +#ifdef CONFIG_CXL_ATL
-> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root);
-> +#else
-> +static inline
-> +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root) {}
-> +#endif
-> +
->  struct cxl_decoder *to_cxl_decoder(struct device *dev);
->  struct cxl_root_decoder *to_cxl_root_decoder(struct device *dev);
->  struct cxl_switch_decoder *to_cxl_switch_decoder(struct device *dev);
+Perfect, that's even better, thanks!
+
+ - Joel
 
 
