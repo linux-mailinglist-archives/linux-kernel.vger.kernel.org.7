@@ -1,189 +1,81 @@
-Return-Path: <linux-kernel+bounces-884597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCD4C30908
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:44:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E92C308E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED8494F5EEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:41:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 347D6341EBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172142D6E58;
-	Tue,  4 Nov 2025 10:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971042D6E76;
+	Tue,  4 Nov 2025 10:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k4FHjXOW";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="a+U8oCh2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PAi+h2Ej"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D6827E04C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81B29BDBF;
+	Tue,  4 Nov 2025 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762252904; cv=none; b=I3Rn7F3nC9H0UmlF7TASW+oFWcrapypqSQMo5MRTxduQM/kTTivQQ9fBWCEoCoHv8b+fyJBdSzPbq9N65uMEulCb06eBMsRd7JXgNrJyGZX1upoRnuf366W2kCAaoncqClMqSrEMK8jY5uufmrWBkcchzrdDcdx8oGpUvwoELy4=
+	t=1762252996; cv=none; b=MVDBIrbdXtW97y6PHc6/6IByJuxM8k5o5JKB5afQACOnOCd2A1qKgeA2UNbzN/Klp/+SFNq9XX5n99RCT3e1pCUdJ5txcvt9D/bwH6vkzg81Z/j6Tc2q1b9meYpPGDgJbXP41mrxbLlWb8xTdrU4a4tUI/J5JsE/oF8zpXQurus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762252904; c=relaxed/simple;
-	bh=/AztLKbGGFxl44bpJWBFEF2PUvYcgQAohT5lnP7DCok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrRao76yltAsBb3PYKQu+bV1VSc7HVZQGVjhJGev6TAWrH1O5RwnqJwWdMuqzCqkq+wHmkAJumzGKMSoldG710fC6215qmzf8EHOX30d9F9ZXn1q2OxsqMwYojBycZS9CEfd9gyJur0L8NT3/xZVtAKx/a22PXX2kYtUw34jQMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k4FHjXOW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=a+U8oCh2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A49VCT81653014
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 10:41:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	91AvSbiJCi7tatFtu9pUmptKmfl2yPXXVuRM4ZTqYyM=; b=k4FHjXOW6gtOWYQc
-	Pu5AocvjZwhoQTXYfIaAkthHIuTCHQGYQdTnnDbKlHy3vMVmMmIMFxdKS1lTht7x
-	dIvaWo5AtgbNrv6B3PA3o83Lm0JuRJfAsqdGKfxWmTiba4KfzF2fmZsukB3xJ7QM
-	0dXj3yfQV3HWmYfOQh7i9ysvcqfBgYd5zUFog9IqRvmFeLLKk/IpC40xQ1XGbxE8
-	f5y4qJZTkHBBVGcF98ewK88vzc6IyyyzGgMPEC6VB5VW9aDhz/ViYaffU1mJSSRc
-	CW9xtTdEU2dH+SkEgO7GUZ5PV2DGgs2Zdup3TeJcxfWT/CitZPU8iabri6iBm0Xr
-	5Zzpbw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7ex7r6dv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:41:41 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7ac87b386ccso249018b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:41:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762252901; x=1762857701; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=91AvSbiJCi7tatFtu9pUmptKmfl2yPXXVuRM4ZTqYyM=;
-        b=a+U8oCh2JIQ8mCrOclrgmod8oREUNKhH2ML2TnOa43kD1Z5T96V4Hv0i9Hyh9kngTl
-         9qJRZZRNupYDP94SrAuC4u3Z9E4x3qPAyLWWCbLNyUKVS+4JZK0QEOlUDDSgN+jkgcd0
-         cMpHc0ViFiBlTn55i0dRTrgj4nLzhC4IjwOF6I7KLYtLgkrvVPjGp5yjP5bH57HG435J
-         hDOlmjxKxmwk0XdhuXblsd1kFjOHZ4BBId/Rc6Yx/nA3My3gkEUvwYb8vi2z3G9DYP1n
-         0rd9hCUgvagJFPSrqN7j2mHVBl24s9iVODvxbed2JyCtcJoWg4D/Rg/obb05qAccabqe
-         3GNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762252901; x=1762857701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=91AvSbiJCi7tatFtu9pUmptKmfl2yPXXVuRM4ZTqYyM=;
-        b=LENXHuxYvM90j1y01BKLMAqUvxWwWboIsevwzp5tYaG2ms2PE/VE54GUHftbdWGP8P
-         Qd0azGNd4NOFWNu2rvCe5PvzEqejtg68lb4nfCYZDngfcFC2frVEQiroxepvNaswiPRA
-         9vhdor+F/idi5DyvBK/hHdOHiDlXPENAUyZ1Du0q32Kg7bQ60H24zaiTzaRZlgetJz4f
-         fE7ceuFQbDXHyfAmP+9nfw7ig6AK6QKeGlqbBX+tz7k5jRCjgKvCKdzRx0Af5QAKjjf7
-         aXu0tsRGudHtWbocLGiZrkctrfK6MxhZ6SKEDlgsxLJw2TecnCXzOWSzAY4wrK+FNoUY
-         0CIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEVAU1w1UudboFqnnknBNlpeYNqKUKxJ5f0dvlAw5cFy37x2xEmOrs2IWaTdvqxGilCyMxY4IjbhkcBcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Lb0bPzftzXgJuvvLQQQbCS/iFu/OZ4MVCh1QfPUuLxg/XNhh
-	xrbBSViVW/EYJHcGb9FpnrHcNe+MuI1YJhCqMIy/oFyUdGxDDtCu9oBkbw8FRSgrSeErf+4bzrT
-	/efFARGrbXIFvKBtGibThgcF66wvw8IEzsOcxlS0KZBZar0RyvVeCt4yXDG8wl+fnvTE=
-X-Gm-Gg: ASbGncvPLCbR8QNa/S51VOo/Zj0JH6IkM0MrTFqneZ2rrIBgM/2XEYB/oNOUPdyMTcp
-	an9rllSaV/8fspE1nEqUPIrx59mykoS76+X3oQHEaCem341ey8AbJSynSZsMmnAGsLx8w8tL9PG
-	Q4KZ0wIKWo5IoGdY1d7kCeohOnhSclChum8JNnyiI04osRXVy9B1LWi2hBRS7uCj3a99SE/VypY
-	iMkABY3l2moALQ3+0t/21UfuuAXQF3Jk43IZd0TkvHT06kKzJg+uzYq+tXnVlUd8RSC917tLHoU
-	Nejwri7VuRsTLlej7ppRf8ReaJHt+DTfp4tRfLbAEfC4tzRqtMYQqHoad5lFELp5vcjqhpLG9bh
-	YQZgIk7SVpTN4fiJIGkPHaWWTtV7GJe13spX55Ebqc3yK0RDLJFTXJYEUGoTXXSI3YA==
-X-Received: by 2002:a05:6a00:1946:b0:781:1f5e:8bc4 with SMTP id d2e1a72fcca58-7a7796c3cf8mr10643261b3a.6.1762252900611;
-        Tue, 04 Nov 2025 02:41:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IECdg2X+KKdyZ7UpDXqI1KVowix3dalkZkr3HCYmMgQdCB10hcuf+eU41ymVBOCNwqvnosmxg==
-X-Received: by 2002:a05:6a00:1946:b0:781:1f5e:8bc4 with SMTP id d2e1a72fcca58-7a7796c3cf8mr10643238b3a.6.1762252899976;
-        Tue, 04 Nov 2025 02:41:39 -0800 (PST)
-Received: from [10.133.33.149] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd32473b4sm2518486b3a.6.2025.11.04.02.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 02:41:39 -0800 (PST)
-Message-ID: <bb9e76f0-7059-4405-a8a7-323f1a5f07b0@oss.qualcomm.com>
-Date: Tue, 4 Nov 2025 18:41:32 +0800
+	s=arc-20240116; t=1762252996; c=relaxed/simple;
+	bh=XjgsfMkrLaZXeX2KsYSs/abzxMl8bXYbsXOSIwq34Qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I6VZ5zQlcmmUQnQvmn+GOmBKdDtQFRIYIPYKPMBpZK5YMT3pdAC/tE2FVGpHdlfOvqooddTti4TTWJtpBhC309cA0SwpjGAfu0fdhYLH0FpYtNBNEWf90R5IBb7Rk21zGLTaTzk4QUK6mleFV4GGUj2nNoQ5vYzzu5ehqF2kOAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PAi+h2Ej; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=XjgsfMkrLaZXeX2KsYSs/abzxMl8bXYbsXOSIwq34Qk=; b=PAi+h2Ejyq4PpTkpTOO9TwDrvk
+	hkAhoy2Oz8VEBgy1YcJ7fqmqV6aPcONiQ70PhnC9z+f6W7MdFesbfVJCoRBJzXKVP7RpayOo4qyZB
+	qzdazj0fw5USxNsk3fwetilyjkhAY+nuTW1JTnEFsM909zdVYuIFGDzltIiYZQKNDNEFsEfWozAkc
+	6kj9jiyMuegVsPBHePsQlTieq/91B2JZSZFdgxHr7LMUvtA+cos9iPGTIvvrDIgAHH8CCYekQOrm+
+	uZ4AX5utJy6ylo6frILGyuZLFUScACdr71z7QHjzWBX+1lyFQPJxrxMCmZy8v9CBNq8pJWyB49n/6
+	jS3jrGJA==;
+Received: from i53875aae.versanet.de ([83.135.90.174] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vGEVG-000405-Au; Tue, 04 Nov 2025 11:43:06 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Ye Zhang <ye.zhang@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ tao.huang@rock-chips.com
+Subject: Re: [PATCH v1 1/3] dt-bindings: pinctrl: Add rk3506 pinctrl support
+Date: Tue, 04 Nov 2025 11:43:03 +0100
+Message-ID: <3705122.LM0AJKV5NW@diego>
+In-Reply-To: <20251104021223.2375116-2-ye.zhang@rock-chips.com>
+References:
+ <20251104021223.2375116-1-ye.zhang@rock-chips.com>
+ <20251104021223.2375116-2-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
- compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
- <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
- <20251104-glaring-rebel-pillbug-a467ca@kuoka>
-Content-Language: en-US
-From: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-In-Reply-To: <20251104-glaring-rebel-pillbug-a467ca@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA4NyBTYWx0ZWRfX92D3xwvY+8Ad
- j5/H+R7fL9S9CmhrlrIL48TZCGQBWofDKrazccfpXHugmK6ykBbtKID5NfXEeafXfKRoM3dNitT
- cat390nWEEPtM0oTG3Swv6coz2AoUz3tScs7Db53XIcIQBJxmqnMjXSlCmqmnVq2v1C596vI8Fp
- cnRdniMps6BMb3QJi4TXtdAx+LANhrv2PT67i21DpxqT0V1Ec6Xu07XbRUJ17KXxVpYgqx1Yasp
- LO4V3165dIgsY+jOJLywIH/i1F4xcjpOsMcoFMzPHE4STOt4sCxAX4ZLJGiXP8GAeEigbUhNjYI
- eNFyq/961Vt8IOGLQv7K8trkae7DZPXKLbGxREsMA1S6B5cXxk87JHcjinOpW6UsqATHBXxmzBJ
- mkQLgVzEO+BwsNtA29EJ3fT6r0/F3Q==
-X-Proofpoint-ORIG-GUID: 37a0AEUN_MOSUawWRhQHlDHiUyHjcrua
-X-Proofpoint-GUID: 37a0AEUN_MOSUawWRhQHlDHiUyHjcrua
-X-Authority-Analysis: v=2.4 cv=auy/yCZV c=1 sm=1 tr=0 ts=6909d865 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=df4OXsTxo-j3LUg4bp0A:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040087
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 11/4/2025 4:16 PM, Krzysztof Kozlowski wrote:
-> On Sun, Nov 02, 2025 at 11:25:06PM -0800, Jingyi Wang wrote:
->> Document qcom,kaanapali-imem compatible. Kaanapali IMEM is not a syscon or
->> simple-mfd, also "reboot reason" is not required on Kaanapali like some
-> 
-> I do not see correlation. Something is not a syscon, so you add a new
-> generic compatible? No.
-> 
->> other platforms. So define a common "qcom,imem" binding and fallback to it.
-> 
-> You did not define fallback to it!
-> 
-> ...
-> 
->> +      - items:
->> +          - enum:
->> +              - qcom,kaanapali-imem
->> +          - const: qcom,imem
-> 
-> I do not understand what this generic compatible is supposed to express,
-> not explained in commit msg. Considering this wasn't before, it is a
-> major and really undesired change. It also makes no sesne. There was no
-> generic compatible before but "if not syscon" now this must have generic
-> compatible, what?
+Am Dienstag, 4. November 2025, 03:12:21 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Ye Zhang:
+> Add the compatible string for the rk3506 SoC.
+>=20
+> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 
-Are you suggesting to remove the generic compatible of "qcom,imem"?
-Could you pls help to confirm the suggested way from your point of view?
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
 
-> 
-> NAK
-> 
-> Best regards,
-> Krzysztof
-> 
 
-
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
 
