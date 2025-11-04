@@ -1,171 +1,172 @@
-Return-Path: <linux-kernel+bounces-884035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E584C2F2AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:31:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A03FC2F2C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:34:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373263B56A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:31:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35D4C4E4357
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E417B283CA3;
-	Tue,  4 Nov 2025 03:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AC928EA56;
+	Tue,  4 Nov 2025 03:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YYMTBaDx"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IIpcdKJW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23E334D3B6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 03:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39E2284B2F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 03:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762227081; cv=none; b=GjIn3alKbjbBRvc+qTk7KtGyZB/NbDH47CBEJKerGB71wJGCbGwlfDLAvhf8U6dpWdKab4br4p3PjXwH3rrPnWx3RuJxTwVci55QUvE+PocU0iAiQ0SdhiuxlWotnXYxiPxVuywb/q+LYSS+CEd3un5G1TJB+VqThMqnHo72970=
+	t=1762227281; cv=none; b=El7gMmrPfe6dXSqQCp3UJVWJy5G3b0RBqE8a0OCbEaiw05vWwv8Bk2WK4zmPCwl7L/AI+hJuOGDgRhVgj7c9zvg6QQOxVmNEr1wTlC8qoh9qmEcEm/YCHF18PnZtom17uPGAffyBNTwp5FKYIkw3tOkCYuAb1wEMWOrepmrygBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762227081; c=relaxed/simple;
-	bh=E5oPfom5n1Q1r5cLmav2D/FmZLVsT9ghG541RwhFAOc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OSdNuhDQZx2iXlH8HOkUl7DrnXaAQoXD1ohI3NIJW7RbQ0s6ju7u3psGDBHwOPwutolsPcEG1GFOViIO0ZTgTtw5FdTF/vMr/8TWUaSL6iOom5fRpt8Kw+oeziyRw38XnfoIauwRNaHBcmtAT0iWZsw58cTsHmwjD8mKMXK/6Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YYMTBaDx; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-559748bcf99so721323e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 19:31:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762227077; x=1762831877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=52u3ce68a/2VewtwVxA8vPC3R1+VyiePk3LEPb1Gvvk=;
-        b=YYMTBaDxm0ZBQMk5kOkwkueXTtiW0MlCCOg1QFNDn45ZXTpMhoAFcRovE470aB9gJc
-         G24r6bz5dEdWk3IrdO29QLae3nnVydB/aza+v1o1XV6/XmnkzL0F5CZ2S98qK8hT0E9R
-         WOBtHTUd3OJCmMrmN6te1m4Mw3z5A2bPP41uQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762227077; x=1762831877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=52u3ce68a/2VewtwVxA8vPC3R1+VyiePk3LEPb1Gvvk=;
-        b=Ol6jXEA3xArVAqAvYdQH5P48kTzCdAPtADoziJBMLZZ1jy3gnPKAO2rZu7anpTrRby
-         Gww/iltdjr+oF56dtYPhLgJqkXpgOXtw17wX6eg8f0+tQavOtk/fFzrqZKL7uJvYvaLF
-         /OJkpaJmonpe3NF1f7yVH7WmmuvO8SOQnmHwKkJf2Xte23rVpNv8ogl6p9+v+xt/kQNJ
-         fBIbOXjQdh5fUCsVehExYcownadtSHmUvmidNHH6bDI/PRx5IzGsbzSQriETvzh4vqfc
-         YcXMesmyH3gDFGTyHU78BiWNCVC29OnUyidk+q4/QUmPZTITNcSUE95bPlW2FG7/o/iS
-         u9CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFH/E4Va8BuN+DoeWH9KWzlhi3g0l6PvHqrc6Y35BXi0tV6agVTksJ8lO6St+mpKOU/MuJRZm3nwZt64A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgERA7UxidLkskMr0O79cfEjLEPNsyzXGuWqzKJreJEWrFhMjz
-	r4y3ksqyx2ejZrmWAj9WXG6vvVfzf30GhwqQvRiE7WUZF12hNr4YKcZTAK8UPY1MR4sclQiRUXe
-	TfDI=
-X-Gm-Gg: ASbGnctLc/tLb9NsnC/DHYdIXRioT0lADaGCRuqWsjbzOHPh7o/rOPUH85EoUP7MGNn
-	3BlQFdOnGmJZfEhdSUTXC0B0NWwHLMLN6PiPyko6FkROsoDwJ0DM8NH1b359KEPVHzUBO/DigTg
-	V3a0eGNIoQdZdXcVWpXzBoTQdpMeUaafivCXlnr+sHXgrafnUXzlBuJ2yCGTfdWKTJrHCvTi6Z7
-	KghNxfs4aYbDxi6LMoSVhKn8CaaWUSgJfpfPR7QmB8pxsFOIg9s5kswNdO9Yfji19OFD0bn+R1y
-	IjZZKwxAN93U/NOQCYijw/8C7clzXE0Pa/wKzAzo9QfdAUlCeathtCgNBtqNPYLo48LZnNT3ruo
-	w/bj7lXizjg17fUY2UEpy8tXJxf+c/y29tgdCZqXPgFg44D3re3z/ZOeL+ddEGk7kRQ/3uMkdEo
-	Pzq9LFDuuMPsHihcAPJ4AOxzzo2Pl6krDziG/r2sk=
-X-Google-Smtp-Source: AGHT+IGYpojXcpnx61D0ykgKQgTYoA6YrqRop6CpHZHs7cjPbJsZmZaLbagtFrJ6/FlDUODstT8q/A==
-X-Received: by 2002:a05:6102:94d:b0:5db:cf38:f4f4 with SMTP id ada2fe7eead31-5dbcf38fa6amr2885348137.33.1762227077641;
-        Mon, 03 Nov 2025 19:31:17 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dbf3104252sm751482137.5.2025.11.03.19.31.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 19:31:17 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-559748bcf99so721309e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 19:31:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWBL7Hg8TRE444xZZHxvUv8gJLJ8pTRlS/89jASfChK9lJo/2ufCZl2gBgea5vQ0frfdkp2c7347fpo6Dc=@vger.kernel.org
-X-Received: by 2002:a05:6102:3592:b0:5db:cc25:dd7a with SMTP id
- ada2fe7eead31-5dbcc25e19emr3043231137.28.1762227076683; Mon, 03 Nov 2025
- 19:31:16 -0800 (PST)
+	s=arc-20240116; t=1762227281; c=relaxed/simple;
+	bh=p2z9f1xP/GXQS/3DqI7XwLENf2PKPkUL/8Xk8aa+4tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xw0M8LceRwX85zIOkxMDBfmO0M/fGb8rOQm2shR/vzY0wv+FaQ6blvf51aM9tCfNw2yuHc8/WwgIOv0aXLjQeM9O6KoCxy3HGup3HgSkfiIRMstJglWKnSlnmJh4jX7e+oMgqHzkkdM0lCMwZHKVTcme/o4gg0BXPjKwT7/jGGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IIpcdKJW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762227277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcG7b9I0JBUcKATIvCgBPM48eafhReejQQ3oHIGYGOs=;
+	b=IIpcdKJWXQ2yDEPrH2AAybkvIc4f1ftS88vim544oSHPK6ZvQS0HmaimnmzoyzsQS8tBJs
+	zKvGcOh0HUvCiUuv1y6SQyAf3M+76gOhBAyMm+MnXwIoRDhvaMmpn50lffThiVxjRVbugd
+	B81Mnu1B62Rz7csI4+xv//uE2SspjPI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-VlNrvbVAN3qwF90Tjw_gjQ-1; Mon,
+ 03 Nov 2025 22:34:35 -0500
+X-MC-Unique: VlNrvbVAN3qwF90Tjw_gjQ-1
+X-Mimecast-MFC-AGG-ID: VlNrvbVAN3qwF90Tjw_gjQ_1762227270
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC639180120B;
+	Tue,  4 Nov 2025 03:34:28 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.97])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 317E919560A2;
+	Tue,  4 Nov 2025 03:34:25 +0000 (UTC)
+Date: Tue, 4 Nov 2025 11:34:23 +0800
+From: Pingfan Liu <piliu@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
+ root domain when hot-unplug
+Message-ID: <aQl0P90Q7X7fG5q-@fedora>
+References: <20251028034357.11055-1-piliu@redhat.com>
+ <20251028034357.11055-2-piliu@redhat.com>
+ <52252077-30cb-4a71-ba2a-1c4ecb36df37@redhat.com>
+ <aQizF0hBnM_f1nQg@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104031533.9419-1-Niklaus.Liu@mediatek.com> <20251104031533.9419-2-Niklaus.Liu@mediatek.com>
-In-Reply-To: <20251104031533.9419-2-Niklaus.Liu@mediatek.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Tue, 4 Nov 2025 11:30:40 +0800
-X-Gmail-Original-Message-ID: <CAC=S1ngxeeV9m+5Yv0YNGWdbD0eVQisSr7k+nsxieok_7jKp=A@mail.gmail.com>
-X-Gm-Features: AWmQ_bmOhDmgmGrSBNtj0-kgZvqxGdX1GAYzQFFwyDNQ0HSH4haoGBpnhf8glsQ
-Message-ID: <CAC=S1ngxeeV9m+5Yv0YNGWdbD0eVQisSr7k+nsxieok_7jKp=A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] soc: mediatek: mtk-regulator-coupler: Add support for MT8189
-To: "niklaus.liu" <Niklaus.Liu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com, 
-	vince-wl.liu@mediatek.com, jh.hsu@mediatek.com, zhigang.qin@mediatek.com, 
-	sen.chu@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQizF0hBnM_f1nQg@jlelli-thinkpadt14gen4.remote.csb>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Nov 4, 2025 at 11:15=E2=80=AFAM niklaus.liu <Niklaus.Liu@mediatek.c=
-om> wrote:
->
-> From: Niklaus Liu <niklaus.liu@mediatek.com>
->
-> Enhance the regulator coupler driver to support GPU power control on the
-> MediaTek MT8189 platform. This update ensures proper coordination of
-> multiple regulators required for GPU operation,improving power management
-> and system stability.
->
-> Signed-off-by: Niklaus Liu <niklaus.liu@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-regulator-coupler.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/mediatek/mtk-regulator-coupler.c b/drivers/soc/m=
-ediatek/mtk-regulator-coupler.c
-> index 0b6a2884145e..f6e3b2a3a5a8 100644
-> --- a/drivers/soc/mediatek/mtk-regulator-coupler.c
-> +++ b/drivers/soc/mediatek/mtk-regulator-coupler.c
-> @@ -42,6 +42,18 @@ static int mediatek_regulator_balance_voltage(struct r=
-egulator_coupler *coupler,
->         int max_uV =3D INT_MAX;
->         int ret;
->
-> +       /*
-> +        * When vsram_gpu is enabled or disabled and the use_count of the
-> +        * vsram_gpu regulator is zero, the regulator coupler driver will
-> +        * execute regulator_do_balance_voltage, which adjusts the vsram_=
-gpu
-> +        * voltage to the minimum value. This may result in vsram_gpu bei=
-ng
-> +        * lower than vgpu. Therefore, when enabling or disabling vsram_g=
-pu,
-> +        * the 8189 temporarily skips the regulator coupler driver's modi=
-fication
-> +        * of the vsram_gpu voltage.
-> +        */
-> +       if (of_machine_is_compatible("mediatek,mt8189") && rdev =3D=3D mr=
-c->vsram_rdev)
-> +               return 0;
-> +
->         /*
->          * If the target device is on, setting the SRAM voltage directly
->          * is not supported as it scales through its coupled supply volta=
-ge.
-> @@ -148,7 +160,8 @@ static int mediatek_regulator_coupler_init(void)
->         if (!of_machine_is_compatible("mediatek,mt8183") &&
->             !of_machine_is_compatible("mediatek,mt8186") &&
->             !of_machine_is_compatible("mediatek,mt8188") &&
-> -           !of_machine_is_compatible("mediatek,mt8192"))
-> +           !of_machine_is_compatible("mediatek,mt8192") &&
-> +           !of_machine_is_compatible("mediatek,mt8189"))
+On Mon, Nov 03, 2025 at 02:50:15PM +0100, Juri Lelli wrote:
+> On 29/10/25 11:31, Waiman Long wrote:
+> > On 10/27/25 11:43 PM, Pingfan Liu wrote:
+> 
+> ...
+> 
+> > > @@ -2891,16 +2893,32 @@ void dl_add_task_root_domain(struct task_struct *p)
+> > >   		return;
+> > >   	}
+> > > -	rq = __task_rq_lock(p, &rf);
+> > > -
+> > > +	/* prevent race among cpu hotplug, changing of partition_root_state */
+> > > +	lockdep_assert_cpus_held();
+> > > +	/*
+> > > +	 * If @p is in blocked state, task_cpu() may be not active. In that
+> > > +	 * case, rq->rd does not trace a correct root_domain. On the other hand,
+> > > +	 * @p must belong to an root_domain at any given time, which must have
+> > > +	 * active rq, whose rq->rd traces the valid root domain.
+> > > +	 */
+> > > +	cpuset_get_task_effective_cpus(p, &msk);
+> > > +	cpu = cpumask_first_and(cpu_active_mask, &msk);
+> > > +	/*
+> > > +	 * If a root domain reserves bandwidth for a DL task, the DL bandwidth
+> > > +	 * check prevents CPU hot removal from deactivating all CPUs in that
+> > > +	 * domain.
+> > > +	 */
+> > > +	BUG_ON(cpu >= nr_cpu_ids);
+> > > +	rq = cpu_rq(cpu);
+> > > +	/*
+> > > +	 * This point is under the protection of cpu_hotplug_lock. Hence
+> > > +	 * rq->rd is stable.
+> > > +	 */
+> > 
+> > So you trying to find a active sched domain with some dl bw to use for
+> > checking. I don't know enough about this dl bw checking code to know if it
+> > is valid or not. I will let Juri comment on that.
+> 
+> So, just to refresh my understanding of this issue, the task was
+> sleeping/blocked while the cpu it was running on before blocking has
+> been turned off. dl_add_task_root_domain() wrongly adds its bw
+> contribution to def_root_domain as it's where offline cpus are attached
+> to while off. We instead want to attach the sleeping task contribution
+> to the root domain that once comprised also the cpu it was running on
+> before blocking. Correct?
+> 
 
-Please add the new entry by alphabetical order.
+Yes, that's correct.
 
-Regards,
-Fei
+> If that is the case, and assuming nobody touched the sleeping task
+> affinity (p->cpus_ptr), can't we just use another online cpu from
 
->                 return 0;
->
->         return regulator_coupler_register(&mediatek_coupler.coupler);
-> --
-> 2.46.0
->
->
+In fact, IIUC, the change will be always propagated through the cpuset
+hier into cpus_ptr by cpuset_update_tasks_cpumask() in cpuset v2.
+(Ridong, please correct me if my understanding is wrong)
+
+But for cpuset v1, due to async, it is not reliable at this point [1].
+
+> current task affinity to get to the right root domain? Somewhat similar
+> to what dl_task_offline_migration() is doing in the (!later_rq) case,
+> I'm thinking.
+> 
+
+Sorry, I don't quite understand what you mean. Do you mean something
+like cpumask_any_and(cpu_active_mask, p->cpus_ptr) in
+dl_task_offline_migration()?
+
+If so, that will run into the async challenge discussed in [1], where
+p->cpus_ptr becomes stale with no active CPUs. However, in fact, there
+are still active CPUs in the root domain.
+
+
+So my plan is to follow Waiman's suggestion. Any further comments or
+suggestion?
+
+[1]: https://lore.kernel.org/all/aQge00u94JKGF9Tb@fedora/
+
+
+Best Regards,
+
+Pingfan
+
 
