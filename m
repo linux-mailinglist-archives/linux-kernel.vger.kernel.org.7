@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-884923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7171C31830
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:28:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3E0C31836
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2CE18957E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:27:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C7D44E6B61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4647E32B99E;
-	Tue,  4 Nov 2025 14:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147D32C931;
+	Tue,  4 Nov 2025 14:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbvOoIJ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jELe/4EM"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94480320A04;
-	Tue,  4 Nov 2025 14:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A771E5B94
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266433; cv=none; b=BhdWAKNrorWEpF4d+LdiXqWSjftdDGAAzsbTXjwavkr8wsO2FpfoJ9JJPSSZ7eoHUba+6eKpGggJKBJrcjK4Qn62HnmYlVU/CyQvRTLQMjnFkvdraHoVfHLFxVmoVzhdbn7d98MA7xsknlw8ITFxz7KfsMFmrRcEILREkvxMSdw=
+	t=1762266459; cv=none; b=HCrYWgr5BxPbEZV4RPxmmlzNWjJXWcI5+D1HMzC55cJizQIM3R4fcj4zurwcPqLhHgBNZbEed/mdZf5W05IjoAS/UTZwfTu8G6O5bJtd1yZrTBcOT2Svtr4oCwbjXSEPXgk9ri77kR1Guqwe2n6YG4FK2Zok9HyATMd1ccLgBy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266433; c=relaxed/simple;
-	bh=Do45XQ7URvJcMZIQRLAlTFW17pLJDjXdNJtEHMyDtds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMPvYiO1FV02KK32u0QYiKquGBmHpsDnVLpkOkWA/OL73R7G8JPPf7o+Qs/sV/syhxbNRm3en8zF6CkCnvIj9PR9GSFnalG5PhQt1rbdKaTPqMS3vDpz7y98lzgYYMZGkHAfHtZrQxdPxer7RrZZHQpYrmo8ezIQ9Im/fMP/pYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbvOoIJ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9519C4CEF7;
-	Tue,  4 Nov 2025 14:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762266433;
-	bh=Do45XQ7URvJcMZIQRLAlTFW17pLJDjXdNJtEHMyDtds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FbvOoIJ281DWQPu5dTDNwHAgm2FxaQ8EsfS/xeNuo0CW0N+23ZShrs2XidA8Nff1P
-	 R/F0JigHw07kiD7oEG7qhuIn2J9mY2z2kycck0/KCCmxk+AUKKrSygV7XP28acVmUU
-	 VH6BdkSVIJY8ma9Y5FZJGhP456Mm7MhUBNZuzh2kxWqaY63eKfYYwrw1AYxBCfb+KW
-	 b24RVgmGKvZVXBaOATziZ206XLA+PM9qGe7REehn+2mn9M+O46eq8JtYebwNEpWzBq
-	 3L8He0nAklqaZzwDiy+Psz6BFL4YNzU4nDkp4OBkTxvHwVIgDIBCGfu1D7ebQwWYGf
-	 R4re2yofwhcvA==
-Date: Tue, 4 Nov 2025 14:27:10 +0000
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 10/20] regulator: add REGULATOR_LINEAR_VRANGE macro
-Message-ID: <aQoNPvwUCE9PijJ6@finisterre.sirena.org.uk>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
- <20251103-s2mpg1x-regulators-v3-10-b8b96b79e058@linaro.org>
+	s=arc-20240116; t=1762266459; c=relaxed/simple;
+	bh=fv6tcX/Yqq5n+97+2noZLlMegWira1m4kod/pRAqBak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ALpAB0hhp2FU9E0OEW6+J66YN3yjuPYnid5G/xxrLUvqxTA6+AjUVFQuJ7d4pFUNmuzuVEBjLPsI6VPX+Z4JPBqGOrHkzAm/th0aazeMjELNc/IPUSQc0Cijuymadt6J5SPdyxuEXvE6ucGXpyEboaEcpiB8807Z8ByeYnAdFMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jELe/4EM; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762266454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rW5yTOW3PQ7ihS8kw2UZ5037nTZlPgHoxIc9NxKBrzQ=;
+	b=jELe/4EMRIREJyhzXe2g0G8vVHlkZHAsyWIoJY2qMjyu8Ywxjq1W8pR2xNjoX4aSP2wuRO
+	4pN1ygDl/nqKGX9B/3ZLNREL16hs+3a74FdJxoXJdDCKJhS8ObJbFRBOP1y+XvSIV320Do
+	/c15oG1fKi5iKyvikWATCiPfRSL3/yI=
+From: Leon Hwang <leon.hwang@linux.dev>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	andrii@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	ameryhung@gmail.com,
+	linux-kernel@vger.kernel.org,
+	kernel-patches-bot@fb.com,
+	Leon Hwang <leon.hwang@linux.dev>
+Subject: [PATCH bpf-next v5 0/2] bpf: Free special fields when update [lru_,]percpu_hash maps
+Date: Tue,  4 Nov 2025 22:27:12 +0800
+Message-ID: <20251104142714.99878-1-leon.hwang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rbUu32wzqf51oqJk"
-Content-Disposition: inline
-In-Reply-To: <20251103-s2mpg1x-regulators-v3-10-b8b96b79e058@linaro.org>
-X-Cookie: If in doubt, mumble.
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+In the discussion thread
+"[PATCH bpf-next v9 0/7] bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"[1],
+it was pointed out that missing calls to bpf_obj_free_fields() could
+lead to memory leaks.
 
---rbUu32wzqf51oqJk
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A selftest was added to confirm that this is indeed a real issue - the
+refcount of BPF_KPTR_REF field is not decremented when
+bpf_obj_free_fields() is missing after copy_map_value[,_long]().
 
-On Mon, Nov 03, 2025 at 07:14:49PM +0000, Andr=E9 Draszik wrote:
+Further inspection of copy_map_value[,_long]() call sites revealed two
+locations affected by this issue:
 
-> REGULATOR_LINEAR_VRANGE is similar to REGULATOR_LINEAR_RANGE, but
-> allows a more natural declaration of a voltage range for a regulator,
-> in that it expects the minimum and maximum values as voltages rather
-> than as selectors.
+1. pcpu_copy_value()
+2. htab_map_update_elem() when used with BPF_F_LOCK
 
-> Using voltages arguably makes this macro easier to use by drivers and
-> code using it can become easier to read compared to
-> REGULATOR_LINEAR_RANGE.
+Similar case happens when update local storage maps with BPF_F_LOCK.
 
-It does introduce an additional layer of indirection into the validation
-that the configuration is correct, the reason we use selectors is that
-they should map directly onto the register in the datasheet.
+This series fixes the cases where BPF_F_LOCK is not involved by
+properly calling bpf_obj_free_fields() after copy_map_value[,_long](),
+and adds a selftest to verify the fix.
 
---rbUu32wzqf51oqJk
-Content-Type: application/pgp-signature; name="signature.asc"
+The remaining cases involving BPF_F_LOCK will be addressed in a
+separate patch set after the series
+"bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"
+is applied.
 
------BEGIN PGP SIGNATURE-----
+Changes:
+v4 -> v5:
+* Use a local variable to store the this_cpu_ptr()/per_cpu_ptr() result,
+  and reuse it between copy_map_value[,_long]() and
+  bpf_obj_free_fields() in patch #1 (per Andrii).
+* Drop patch #2 and #3, because the combination of BPF_F_LOCK with other
+  special fields (except for BPF_SPIN_LOCK) will be disallowed on the
+  UAPI side in the future (per Alexei).
+* v4: https://lore.kernel.org/bpf/20251030152451.62778-1-leon.hwang@linux.dev/
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkKDTIACgkQJNaLcl1U
-h9BVGwf9EQ7spdrjlfuI6ElbTY04kwMWnDsffD1LcsX1SlOL4tz8xP8DT2jqRGTj
-PIt+2km16qVoxcYSWaLYcVWoiyho5wYTjCPRs3pxmIZbtbDnGlWVZsNPeIwFxqYu
-D4JQEOrcrZc6TrSN2anfb8QrCiljJgN3toDogQUxj59dgKAyj0RMTWEFxksDXNLR
-Ojm+ySYkLPHSKflFMlaQCpcHEozgSgQ56PASSHkxvr++7kkpdnJNBZ0jNbbgADRM
-yBKo+TmFzQl5n8eH/eW8GT2rKi8CG0wqVROvH/E9lUMyk6sxWXWo14IIPx5MMBjX
-/5HIg/oT9I3NHuhiPnNWtLfVti4J0g==
-=Nlw4
------END PGP SIGNATURE-----
+v3 -> v4:
+* Target bpf-next tree.
+* Address comments from Amery:
+  * Drop 'bpf_obj_free_fields()' in the path of updating local storage
+    maps without BPF_F_LOCK.
+  * Drop the corresponding self test.
+  * Respin the other test of local storage maps using syscall BPF
+    programs.
+* v3: https://lore.kernel.org/bpf/20251026154000.34151-1-leon.hwang@linux.dev/
 
---rbUu32wzqf51oqJk--
+v2 -> v3:
+* Free special fields when update local storage maps without BPF_F_LOCK.
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps without BPF_F_LOCK.
+* Address review from AI bot:
+  * Slow path with BPF_F_LOCK (around line 642-646) in
+    'bpf_local_storage.c'.
+* v2: https://lore.kernel.org/bpf/20251020164608.20536-1-leon.hwang@linux.dev/
+
+v1 -> v2:
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps with BPF_F_LOCK.
+* Address review from AI bot:
+  * Fast path without bucket lock (around line 610) in
+    'bpf_local_storage.c'.
+* v1: https://lore.kernel.org/bpf/20251016145801.47552-1-leon.hwang@linux.dev/
+
+Leon Hwang (2):
+  bpf: Free special fields when update [lru_,]percpu_hash maps
+  selftests/bpf: Add test to verify freeing the special fields when
+    update [lru_,]percpu_hash maps
+
+ kernel/bpf/hashtab.c                          | 10 +++-
+ .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
+ .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
+ 3 files changed, 125 insertions(+), 2 deletions(-)
+
+--
+2.51.1
+
 
