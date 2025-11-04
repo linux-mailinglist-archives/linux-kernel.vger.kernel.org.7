@@ -1,133 +1,178 @@
-Return-Path: <linux-kernel+bounces-884207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F7FC2F9D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:30:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AE2C2F9F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF8E94E724B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E20CC1895B63
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EF13074B1;
-	Tue,  4 Nov 2025 07:30:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22329306B31
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3671E307AD7;
+	Tue,  4 Nov 2025 07:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/H7G7Nj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75768307492;
+	Tue,  4 Nov 2025 07:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762241418; cv=none; b=OK6UhtfENJCjorKhSC++HGVm+H1Uju/ffwb0rJfefXea3HLoSACuutWRv4ZbM1tKzaLzE9FdW7X4K9FqfaXdqNSPMchFPA3yd9DIiNnfSdBu7QrWkshap+uyHxtzx5T1dddih+o6BO5b/pxNyzAorXkrk3hi0Hku3hXwqJkWwoM=
+	t=1762241439; cv=none; b=c0uMDCSMk3cEhc+5zHzmLbSbpWbL30FNo3bTYI1YbWOros6vTSnNeDYiSjvnGVT/hvyi5H3MXkADIaQHfF3kJpbYgqvmzjnzMUDgrEHQrKqkHbQdW7iz3kZiDAO1hXbgVK0TH54eNIaw64m9oU/YsSx/O3vIziV481GokK85s4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762241418; c=relaxed/simple;
-	bh=4qu48qG7YL4eZS1i6WIUe1h73DZmFPEKiZYJlND7Mn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DT+1IIB1RsF4Al4hIcApUGtPHZzWWf3JWbf3MIemZ9HPSlz0ydAmy+FLPuPD8Sen6eTKuNLm8fqoeeYDBDAkiCZGmLekftmRl1ZZYeBRNcnZti9UAWTPyiQmhEH7Ob1raNoms7GniafCKAMX5uF0Glv8A/O1GDD7cFDlrDDH93g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.57.136])
-	by gateway (Coremail) with SMTP id _____8BxmdGDqwlpspkeAA--.1093S3;
-	Tue, 04 Nov 2025 15:30:11 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.57.136])
-	by front1 (Coremail) with SMTP id qMiowJAxfcGBqwlpo+MlAQ--.61910S2;
-	Tue, 04 Nov 2025 15:30:09 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	akpm@linux-foundation.org,
-	willy@infradead.org,
-	david@redhat.com,
-	linmag7@gmail.com,
-	thuth@redhat.com,
-	maobibo@loongson.cn,
-	apopple@nvidia.com
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>,
-	Liupu Wang <wangliupu@loongson.cn>
-Subject: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
-Date: Tue,  4 Nov 2025 15:30:06 +0800
-Message-ID: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1762241439; c=relaxed/simple;
+	bh=FYc4ZiYYxtHCsGxHWLiNUb6waNPfZYfSpHrij9pfVEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hWVklON0dN1YlYkuqd1vePH9gfJyuO88DtoobbicGQ3WU++kag5Uh3KjBN4mCHLaVD3Q/7HsqReR9mN4hXXii09kFmQv5mlYPbUH/s30VpMKznfr0+AZhtYp1Fys1Ys2Ps9xsOVLMvylHY37uU9ASkUAPfo1Pxvmj/gjn98WI3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/H7G7Nj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70578C4CEF8;
+	Tue,  4 Nov 2025 07:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762241439;
+	bh=FYc4ZiYYxtHCsGxHWLiNUb6waNPfZYfSpHrij9pfVEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s/H7G7NjSKeDBXViihoB12JOvfdrQyfO9//RG4Fm2gg9EbHG9idT0lmSQh5ADXkJo
+	 2y2zORuy9FCw8haXVlB7XLXPsqFC+xITKnIYzQTMSikav0oNeKdSJjFSujtKm4q1lL
+	 0xoKs2ga1cRQyLAYt+mIQKmrZg6Dhval/huZyZtp8CMWyhLkxTNqGPhNo+77GuHEyf
+	 A29e8eRMzwJIXwjLufiRFlb7qwNB6RPHp1B2vIFHajr0bGu//2gXPfs6D30bLnJkKK
+	 qEH5wZxi8dLqknBz9ixCq1FyTjtO77PQenNM1Ly48x5YqxHvVB2iNep6aCvLjNG8TO
+	 NQlvC3isX123g==
+Date: Tue, 4 Nov 2025 08:30:36 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Junjie Cao <caojunjie650@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: backlight: Add Awinic AW99706
+ backlight
+Message-ID: <20251104-dancing-panda-of-patience-49bcc7@kuoka>
+References: <20251103110648.878325-1-caojunjie650@gmail.com>
+ <20251103110648.878325-2-caojunjie650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxfcGBqwlpo+MlAQ--.61910S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFWftFWkAFyxAw1xWw47KFX_yoW8Zr4UpF
-	s7CF9Yvay5Kr1xZay3JF17Xr15AwsrGas7J3sFk3WkG3Wqq3yjqr1xKwn8Zr1rXay8Zr18
-	X3yFgw45WF4UJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251103110648.878325-2-caojunjie650@gmail.com>
 
-In the current pte_modify operation, _PAGE_DIRTY might be cleared. Since
-the hardware-page-walk does not have a predefined _PAGE_MODIFIED flag,
-this could lead to loss of valid data in certain scenarios.
+On Mon, Nov 03, 2025 at 07:06:47PM +0800, Junjie Cao wrote:
+> From: Pengyu Luo <mitltlatltl@gmail.com>
+> 
+> Add Awinic AW99706 backlight binding documentation.
+> 
+> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
 
-The new modification involves checking whether the original PTE has the
-_PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, ensuring
-that the pte_dirty interface can return accurate information.
+Messed DCO chain. This wasn't here, so you must have altered v1 to add
+some weird change.
 
-Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
-Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+This is a blocker, please read carefully submitting patches and DCO.
 
-diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index bd128696e96d..106abfa5183b 100644
---- a/arch/loongarch/include/asm/pgtable.h
-+++ b/arch/loongarch/include/asm/pgtable.h
-@@ -424,8 +424,13 @@ static inline unsigned long pte_accessible(struct mm_struct *mm, pte_t a)
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
--	return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
--		     (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
-+	unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
-+		     (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
-+
-+	if (pte_val(pte) & _PAGE_DIRTY)
-+		val |= _PAGE_MODIFIED;
-+
-+	return __pte(val);
- }
- 
- extern void __update_tlb(struct vm_area_struct *vma,
-@@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
- 
- static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
- {
--	pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
-+	unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
- 				(pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
--	return pmd;
-+
-+	if (pmd_val(pmd) & _PAGE_DIRTY)
-+		val |= _PAGE_MODIFIED;
-+
-+	return __pmd(val);
- }
- 
- static inline pmd_t pmd_mkinvalid(pmd_t pmd)
--- 
-2.41.0
+> ---
+> Changes in v2:
+> - use proper units for properties (Krzysztof)
+> - drop non-fixed properties (Krzysztof)
+> - add properties(max-brightness, default-brightness) (Krzysztof)
+> - Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-2-caojunjie650@gmail.com
 
+...
+
+> +  awinic,dim-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: >
+> +      Select dimming mode of the device.
+> +        0 = Bypass mode.
+> +        1 = DC mode.
+> +        2 = MIX mode(PWM at low brightness and DC at high brightness).
+> +        3 = MIX-26k mode(MIX mode with different PWM frequency).
+> +    enum: [ 0, 1, 2, 3 ]
+> +    default: 1
+> +
+> +  awinic,sw-freq-hz:
+> +    description: Boost switching frequency in Hz.
+> +    enum: [ 300000, 400000, 500000, 600000, 660000, 750000, 850000, 1000000, 1200000, 1330000, 1500000, 1700000 ]
+
+Please wrap code according to the preferred limit expressed in Kernel
+coding style (checkpatch is not a coding style description, but only a
+tool).
+
+> +    default: 750000
+> +
+> +  awinic,sw-ilmt-microamp:
+> +    description: Switching current limitation in uA.
+> +    enum: [ 1500000, 2000000, 2500000, 3000000 ]
+> +    default: 3000000
+> +
+> +  awinic,iled-max-microamp:
+> +    description: Maximum LED current setting in uA.
+> +    minimum: 5000
+> +    maximum: 50000
+> +    multipleOf: 500
+> +    default: 20000
+> +
+> +  awinic,uvlo-thres-microvolt:
+> +    description: UVLO(Under Voltage Lock Out) in uV.
+> +    enum: [ 2200000, 5000000 ]
+> +    default: 2200000
+> +
+> +  awinic,ramp-ctl:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: >
+> +      Select ramp control and filter of the device.
+> +        0 = Fade in/fade out.
+> +        1 = Light filter.
+> +        2 = Medium filter.
+> +        3 = Heavy filter.
+> +    enum: [ 0, 1, 2, 3 ]
+> +    default: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - enable-gpios
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        aw99706@76 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+> +            compatible = "awinic,aw99706";
+> +            reg = <0x76>;
+> +            enable-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
+> +            default-brightness = <2047>;
+> +            max-brightness = <4095>;
+> +            awinic,dim-mode = <1>;
+> +            awinic,sw-freq-hz = <750000>;
+> +            awinic,sw-ilmt-microamp = <3000000>;
+> +            awinic,uvlo-thres-microvolt = <2200000>;
+> +            awinic,iled-max-microamp = <20000>;
+> +            awinic,ramp-ctl = <2>;
+> +        };
+> +    };
+> +
+> +...
+> -- 
+> 2.51.1.dirty
+> 
 
