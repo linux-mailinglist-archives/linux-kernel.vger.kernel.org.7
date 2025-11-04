@@ -1,84 +1,141 @@
-Return-Path: <linux-kernel+bounces-884317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0700C2FDFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:29:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 429B9C2FE10
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:30:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F99D18C2BF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0ECF1890421
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377D311C09;
-	Tue,  4 Nov 2025 08:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCF3313E20;
+	Tue,  4 Nov 2025 08:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EX3qRrcN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdM5Aw65"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079C8306B0D;
-	Tue,  4 Nov 2025 08:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE541311C3B;
+	Tue,  4 Nov 2025 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762244345; cv=none; b=H0zZrZp2/pHNiYIS0H3kMuzggPXKndThBcvPTF2LP7E5UHJu7z8snA18OWxZ6W3S6JojRw4dZW/45KNcj00Te4vR2dYW+MZWyiUT0CWQ2f7hAdkHkvzbFii6EK44yQ+AnJKve1FXl+3QaZ4MrCYdKL2SIxnAsLdXr6r4cbPzEcI=
+	t=1762244409; cv=none; b=I8ES8gIy07OJyei1fGwWS4UYWyS5IThY8TPPbRWWeTup2Gtjo0s01wDIWLHRdOVoJ56pTfnZzMg0pXjyQ/45HyVWe3y0KiwzWKLYI88OrWeVXm6HYAMP89iWWUrA3SHUk+LgVEQSslJOon+dFWpfWyqAB/ZXHNZc7LsGdribyXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762244345; c=relaxed/simple;
-	bh=i4i2ZezZUkHgyxzI36i1jgZxCZSfy03Oaa0uCLjqanU=;
+	s=arc-20240116; t=1762244409; c=relaxed/simple;
+	bh=DYM83bBbxx1y5vplV3YBcZ8Mx+qy4hDpBNYYrYsw0cM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELzHgAwE/DTkBudC6/rMrFU4OjluVKT7q1q9QBGCGTGrEDeRCYjfQGvR7bRORyP5rJ62Hg5dgCcQaXW6Fpzo5kz48v3j0EWztp076WhKdPAlvVuDvTuoIgkdSgd5LVNvDh9ZCljuibn4d76a/QTzL9RxiwJpK/z+phuRQpterKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EX3qRrcN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927A6C4CEF7;
-	Tue,  4 Nov 2025 08:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762244344;
-	bh=i4i2ZezZUkHgyxzI36i1jgZxCZSfy03Oaa0uCLjqanU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EX3qRrcNsxISHXHS3gzCD3Q+b90CC4lAcftjm0w3Ite6R4rXomGsnm4tqFBqYOBbO
-	 NT29rRKutGn8d1BWvXZgSzWx3d0eHPCSjDk7iwpkP6I3hRZcYj1SSmMV1gcI4dPsMb
-	 c6hu+ZgxWlSPmfFbBJa3+qMDKfRPtD/AlDjzqa+yHRsd8j1EmMaEk9urXUYFt975k+
-	 vlSNOV9xLf5+DpkPy3nNQwce5lq7Kro2PnzI3gbusASkI3Z6aOfpw3ldRE+ittBwZQ
-	 mQoC/OQxInggfVu74SM/X/Pxt3FfzYcBUYcqCX0EAud0fx+rVJIAnQV1ihGgW7oFi2
-	 9oeKFf88+901w==
-Date: Tue, 4 Nov 2025 09:19:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Po-Yu Chuang <ratbert@faraday-tech.com>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, taoren@meta.com
-Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
- properties for AST2600
-Message-ID: <20251104-victorious-crab-of-recreation-d10bf4@kuoka>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
- <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZZho3tEKGKiH34VbLbY/VpOQwEIObDgMYI2H0HpzSD3av1xV8N/dmZC+x5lTxRCqrpbJOczA9r2pOH599CS8FfpGimutq2fEs3IWwB6/WMLDOs1vQ7yCya3w893N22bnCVnYj6YxFVQx6cjp/zmJpIVEvb4hgtNoYK44nPa57s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdM5Aw65; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762244408; x=1793780408;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DYM83bBbxx1y5vplV3YBcZ8Mx+qy4hDpBNYYrYsw0cM=;
+  b=SdM5Aw65tmK+G2S4PFzXMKCMuzbpS1Ag6ScbQX7ZlIa7tX3DfEhqS+9x
+   akhuWp3lbf1UszJ1junMO49l2c6O1WxdlOtVxm1zUM4fpZlPg40NebwGH
+   gqfxUGwj2asQp1bbzUrbD7FZLNCgLIvNq0kxZxEkG9ijPrxDZz5tKrk+o
+   g1U8UqcsL9iAPC47NGcBNO4Y82DfgBKL17Sh7BQzu7xuX7qfJKPZDe00N
+   BR4TQQ+Uwaea+aq0JSa3im4i4OZInYm49ExT0Z4eD2m/RpXO0N8Z9l1Tv
+   YzSnNSTQS54phaVwmUdnaRG5/4IjHn0djtZIE/4XFa3CrI05TEOFM/SJj
+   g==;
+X-CSE-ConnectionGUID: cOqcktI+QkOOG6EwXxHRFw==
+X-CSE-MsgGUID: H3guNeFrTs6ki1GjXsaE/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74624458"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="74624458"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 00:20:08 -0800
+X-CSE-ConnectionGUID: 4TYUN/wIR3WHvf4xaU/oPw==
+X-CSE-MsgGUID: y1bocoSQTwWw2NQg6pBoqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="191445462"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 04 Nov 2025 00:20:04 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGCGn-000R7c-2T;
+	Tue, 04 Nov 2025 08:20:01 +0000
+Date: Tue, 4 Nov 2025 16:19:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>,
+	Cyril Jean <cyril.jean@microchip.com>,
+	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+Subject: Re: [PATCH v1 3/3] spi: add support for microchip "soft" spi
+ controller
+Message-ID: <202511041624.BMMvzi6h-lkp@intel.com>
+References: <20251103160515.412706-4-prajna.rajendrakumar@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
+In-Reply-To: <20251103160515.412706-4-prajna.rajendrakumar@microchip.com>
 
-On Mon, Nov 03, 2025 at 03:39:16PM +0800, Jacky Chou wrote:
-> Create the new compatibles to identify AST2600 MAC0/1 and MAC3/4.
-> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
-> - For "aspeed,ast2600-mac01", require rx/tx-internal-delay-ps properties
->   with 45ps step.
-> - For "aspeed,ast2600-mac23", require rx/tx-internal-delay-ps properties
->   with 250ps step.
+Hi Prajna,
 
-That difference does not justify different compatibles. Basically you
-said they have same programming model, just different hardware
-characteristics, so same compatible.
+kernel test robot noticed the following build errors:
 
-Best regards,
-Krzysztof
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on linus/master v6.18-rc4 next-20251103]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Prajna-Rajendra-Kumar/spi-microchip-rename-driver-file-and-internal-identifiers/20251104-001544
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20251103160515.412706-4-prajna.rajendrakumar%40microchip.com
+patch subject: [PATCH v1 3/3] spi: add support for microchip "soft" spi controller
+config: sparc64-randconfig-002-20251104 (https://download.01.org/0day-ci/archive/20251104/202511041624.BMMvzi6h-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251104/202511041624.BMMvzi6h-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511041624.BMMvzi6h-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/spi/spi-microchip-core.c:163:23: warning: unused variable 'corespi' [-Wunused-variable]
+     163 |         struct mchp_corespi *corespi = spi_controller_get_devdata(spi->controller);
+         |                              ^~~~~~~
+>> drivers/spi/spi-microchip-core.c:438:3: error: field designator 'remove_new' does not refer to any field in type 'struct platform_driver'
+     438 |         .remove_new = mchp_corespi_remove,
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning and 1 error generated.
+
+
+vim +438 drivers/spi/spi-microchip-core.c
+
+   430	
+   431	static struct platform_driver mchp_corespi_driver = {
+   432		.probe = mchp_corespi_probe,
+   433		.driver = {
+   434			.name = "microchip-corespi",
+   435			.pm = MICROCHIP_SPI_PM_OPS,
+   436			.of_match_table = of_match_ptr(mchp_corespi_dt_ids),
+   437		},
+ > 438		.remove_new = mchp_corespi_remove,
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
