@@ -1,218 +1,377 @@
-Return-Path: <linux-kernel+bounces-885042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB998C31CEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:22:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C8EC31D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66264189AFA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:22:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4F754F8BE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DEF258CDA;
-	Tue,  4 Nov 2025 15:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91591E9B37;
+	Tue,  4 Nov 2025 15:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B1mtm+bD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YrsNR8bV";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RjosRYzD"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0C424888A;
-	Tue,  4 Nov 2025 15:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762269712; cv=none; b=D1IUnzeBGUXkjeSSvYTV876q2jD6Obe6TKzAeLMESejPaHNCRS+j6GCpxSnd6xVgmQVMAqy8q7CV0iEC8GbFrglH8gb0QP4JZcSn3NnEgW3jp0j+CsbFpLoDYwWMq3zocDxWMBBp7fLkiWorXyNOWZFiZRUv6Igi3z6lIS/i4G4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762269712; c=relaxed/simple;
-	bh=6LXznxR2BwU8Z9YC9RYhzfAgtDIv5B8KIKF2ao3iAY4=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=fWwW8ROagH8RZoB5tEYgrBdnnihoEF4j0N12Ss0frO4Wt79Abc/rG7/Sgx1rgLfNz/T7+eRI+PE1L5w5mFf/IWLoRuq0dy0b1tlWiRxOuNZpaRJXiOpSQYyz5T7hmwWNGxePbexivNwyAGezCA9s+/l28dg5x6AuGuTCtxqvDUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=B1mtm+bD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from thinkpad.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 055C422A;
-	Tue,  4 Nov 2025 16:19:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762269594;
-	bh=6LXznxR2BwU8Z9YC9RYhzfAgtDIv5B8KIKF2ao3iAY4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=B1mtm+bDKyrhASTQJIaOWjxUmG6QUZK32rkt3W6xXzxLosPVRgd5KhZKELIlwRJ/1
-	 VTjLFdWBOoCyXd57WR0OmkeDP+15uiJrEX4lCnlQYnKx7oXK7EABc2vZkA9TeJkeCz
-	 9n6rN3QkJkUQM/8IE9ILGfLuyGl0P0ORGvtLRYwA=
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73CB2405ED
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762270055; cv=fail; b=maZ9zEf8hRaQRrfsrgB3o9u6DUwynjBK+Nxl2gmqSmQqpoQCrhCENEVd8oPQCUIERMEtuIF5rQczrLIZSUipeKKT/Vu6BO9T6TgJXRpAuOuQYfiP3vi05GfWe8jnPrchXZA7utroGHX+K/l1FEwfYI/Ss8pQhSeeX9gUketXa0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762270055; c=relaxed/simple;
+	bh=mRLFSCVlODBTY23N5NbFtGwBJ4VaOWZRxGLKtFIGsC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PXCu3M+FedEqjX61S9IXWapp6cWzPlEwSvu1lWyLmn+WYyYRj/9rCXRMQtFIIgOEKC4dpqTSt539Rt3p/5BkKyg0a/3U7bSh4uGH6PGL4Y9V6aON5ZNu5+SQBTlbiV+fojM0RqeOXK6g6xfo/BjIS0FzuyC6Pw/jYlQLvNgwHCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YrsNR8bV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RjosRYzD; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A4FF2ee003522;
+	Tue, 4 Nov 2025 15:22:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=VhzqJjrXJnL4pj4PyG+/5i1VNQZx9gOCqGjP90nWyPU=; b=
+	YrsNR8bVGGAHyiDLNZsV20ODpju9xbidvbNyiu2aSVph13tN4TkfHR+XfUJeLLob
+	DG3BB1aU0vTiig2FMHKAXoQUjM6OX74rb4KVRd9WjGalVhk6zZOFAfh9OxyL4JsB
+	XlnPt2SLJZKBJcH1IsEaogEWfseOiwopDkEulcVpodE+LJNdxuaIxqQtkn1edWIX
+	MKruIZKRGufjUoDC5cBtztqM9mpPOnE4dOUUamVHMmAGKGz3PLg3cBDphKHGRSjX
+	rojM65UI01v91AtzfdzSHV/qxgZdLnKYglf3d/wEq2KbABGZqUpsNuafyXDjQ3B/
+	7fXtnEy64CAZ0dddAgWJbg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a7ky10131-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 04 Nov 2025 15:22:00 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A4DmiZI022146;
+	Tue, 4 Nov 2025 15:22:00 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010015.outbound.protection.outlook.com [40.93.198.15])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58nkgu20-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 04 Nov 2025 15:22:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=roKwRsgyiOGEluMqWliJHK4ERxKNygvJGzJZv1/oxSUr7IJVQfvOJFU/XxkmZWHIVR8ApWFjOOJsbLTPBSAS52RjN7K1zJedLDFgDu5SVdxalUOOTZ/DsjW+lOC6K3YG7tbcnV01UP6b86hyPex6WOn2N6PmJdSvhfQqgkEDOyvmV90gxRNfMwpNikSZqe4rXqUS3LOP1SYdy9zpbJ2aXp1/NKhikWi0RyqDWdxanCAMoFPIhJZN98dxUXrJ5AlbWT1sZrRKv/Hgivxcpr9dgMUwvdMb19pyrJVqJZlaonN7N087yi6s2k/dGvbAIRN/oq3brHcOA63zAwv4pvnFsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VhzqJjrXJnL4pj4PyG+/5i1VNQZx9gOCqGjP90nWyPU=;
+ b=yjlkHzX20HEsyaQ0pQcmFoWNcUk4Dw5crD1vzC0nBvPXXULTnlfahhYBmhQToA4CkT3MjCKV5607ITz7yHczb81o4JfhYTU3Skg4sGMSNYAH4p3V+TRXr0BlCQvbpWuvwRhREDL5ea+pk+8qpO0f8zbpnCWlaWUn/l4BS1O1jZAB9e3iDK/5YQAbJ3hPTKsnEdHmumbyMZY5D5lUbzbnTu62+kCVRF1a95I5HIpZfG9CGaZPTJSkELK5xUPwegZn94zSvJYSTdq2Sp5hDfYtm4CtDeeeyVgVclkYU77JT5gk7h2+kCJBChDCFpPj1Pajv4f202cbxdyytEKyffAuww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VhzqJjrXJnL4pj4PyG+/5i1VNQZx9gOCqGjP90nWyPU=;
+ b=RjosRYzDIF9obyUiiDw9iZcLQ952AkaOEfiRtdrTgV3pJomAlg69MwduvrQ/rhO+tEAJyvETpf7n03tkzCrkjDSM0i4THhnC8vhy8o59xKMep5EpBveuchVPd867kxP2bApv7st2+b+9oUxKws3eNkWsGWCHrH/muCYuSgzF4nE=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by DM4PR10MB6182.namprd10.prod.outlook.com (2603:10b6:8:89::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 15:21:55 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9253.018; Tue, 4 Nov 2025
+ 15:21:54 +0000
+Date: Tue, 4 Nov 2025 15:21:51 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>,
+        linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Jann Horn <jannh@google.com>, Lokesh Gidra <lokeshgidra@google.com>,
+        Tangquan Zheng <zhengtangquan@oppo.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
+Message-ID: <7998c1f1-fd53-45e9-b748-55043522f1c7@lucifer.local>
+References: <20250607220150.2980-1-21cnbao@gmail.com>
+ <efeb3350-fbdf-408c-92ef-c6eada4a5755@huawei.com>
+ <564941f2-b538-462a-ac55-f38d3e8a6f2e@lucifer.local>
+ <c9925b2e-207b-447e-afce-07873406a853@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c9925b2e-207b-447e-afce-07873406a853@huawei.com>
+X-ClientProxiedBy: LO4P265CA0225.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::10) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251031114835.113026-2-tarang.raval@siliconsignals.io>
-References: <20251031114835.113026-1-tarang.raval@siliconsignals.io> <20251031114835.113026-2-tarang.raval@siliconsignals.io>
-Subject: Re: [PATCH v1 1/2] media: i2c: imx219: Propagate errors from control range updates
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: Tarang Raval <tarang.raval@siliconsignals.io>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Tarang Raval <tarang.raval@siliconsignals.io>, sakari.ailus@linux.intel.com
-Date: Tue, 04 Nov 2025 15:21:44 +0000
-Message-ID: <176226970472.106261.8875678531563586397@isaac-ThinkPad-T16-Gen-2>
-User-Agent: alot/0.10
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DM4PR10MB6182:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34a3aee8-2324-448a-2f39-08de1bb5e2c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHQvR2xSMWNYek80YUJUaVk1aGxJY0JxbE1mRXN3L2QxeEV0MmJKV2JRRWRV?=
+ =?utf-8?B?a0k3SnZpNlZjMFc1Yk8rTXdiajEvbkNxc3FWTU1PQzVvZEF4N252QWFOVExX?=
+ =?utf-8?B?akh0TE8wL3gxcFJaUUpXMVYza1JhNm1SMzRGck42eFdmdjRqcFA5SC9VNUxV?=
+ =?utf-8?B?T3J4SkN1V0NPclVRYi9oTEMvOVV5WWhFZ3h2dG5PRmg1TWZINWRkVldzT243?=
+ =?utf-8?B?QWxtR0JpeDRVV0xESHFZc2NoelA3cEJGeVdjdEkra1R4ZDhRRTcrM2Z5am1R?=
+ =?utf-8?B?T0k0a3JWTUxvSWlHNmJyeEhjM0ltd29TdUE2cmZVemZjSUUxcUNMdFRFeWpI?=
+ =?utf-8?B?OXdqbGdpcVlZSHlwajEyYWJWNWxBT2FrMmVMWEhhck1aS25xRVpYZ0grcmxr?=
+ =?utf-8?B?ZjlpUmN0VGNUUVRiVkpyc3d5Y2EyNVd3OFFNRkpVWVpTeHEwSHBvdXZwNHZ3?=
+ =?utf-8?B?Vzh6MllKRHV0UGsrVEFHY1ZOTzV1U1lHeDBOMDd3WTV2cDJ1N1F1ZGEyaEFX?=
+ =?utf-8?B?RzVLZEl3VHcrUS81UXl3ejhmb3B3US9rYWxWVUgzQ1FiOWxLQkNkUFZMUjY2?=
+ =?utf-8?B?bVo1anhuRW9EdUM4Y3JUamluL2ZyRXFiMW83eEpTdnFKU2R3dDc2Z1JvbnRp?=
+ =?utf-8?B?Ujdna2xWUHI1NVR2a0JnOHBXenFuYlEzL1FFa1pjVHM0NnJYZGZob2lTOEl2?=
+ =?utf-8?B?STR1VTAybGZacjZvY3RFeGNVaXVhSkdDMi9jN291bnhObHROSEhmYzgza3RE?=
+ =?utf-8?B?UGdQV2hReWVVSXJWMlRJeXVQREZuRFNlUWNtaU1PWUVEWG9xWDBWZkhvbStm?=
+ =?utf-8?B?VS8vUitIK2l1a3I2YWZKL1F6a04vL0QzbmJyOE1BVHl0eUJmN1NrQVhEa3Rs?=
+ =?utf-8?B?dlQrbjVuRzZsQlA3Zk9Nbk1DSlJlaHp5S1E1Sm95RmFzUWw0NmpyaXpNd0l2?=
+ =?utf-8?B?VWVjVHN1VjNNZ2hlZFM2Z1lZbTJBV1RvNkY5L1QvTm9pMThxcGJXL0FETVhE?=
+ =?utf-8?B?dXdMTWttZllLUlNuUkdtZjB4c0FPNjI4aUR5eWJHSVNkbkVEejVxbHgranEz?=
+ =?utf-8?B?NUNkYm9qUk5KZXN4Y1FPaGRJdlEyc2ttWnk1ZHNkeEFSWlVTazh6eE5oRU5r?=
+ =?utf-8?B?RFVBcitacmRoWmRJQUNnUlA3YStZTmdONEJCa21WTm9hVTlhTS9nR2hMVHNM?=
+ =?utf-8?B?YlczMVMwYTZPOGt4ZllsMjNFeHpNcnU1VVl3dUtOU1RPbUJMVzYzdVMrcExm?=
+ =?utf-8?B?bEVmQXFDL0NicEw5T0RGa3pnYUZxMVQ4bGlsSUk4QUFPamxYaGdhOWd2c0xw?=
+ =?utf-8?B?aHFLWk5IV09aT3RuS04rdVFMd0liVG5XSlZ6dmgxRW1HalJMdFlxRnhENnhS?=
+ =?utf-8?B?MFhVRTgwTHF0QWk1cTV4K056NUhKRENUS21UOFc1WTh2aUhMRTVpZk9VczRY?=
+ =?utf-8?B?R2EyZHhVRERsYnlvcXY5Nk9JL1FHNGRXamNBbUVkN1VtRWgzWXl3MHY2VFF6?=
+ =?utf-8?B?VDUyY3hyaitPRzdudWhUYTNEcWRlRGFudjdsVVpIOVhrdThta1hWQTMwUHgz?=
+ =?utf-8?B?RFpueE9jQW1DUmpMT05WKzd2MnZUSTMvTGVmS0FYbzNJU0tTaGdxY1Qzc2l3?=
+ =?utf-8?B?MjhFU2VmdVNDdjRGbDZPWGFGcXk5Z3h4TkhseGVCR2t5L3k0Z1k5Nm1VNjdy?=
+ =?utf-8?B?bmN1MmxNRXlpOS9pWE5teC9qVmE3NlpMWkNqZkxjbkR5REtQdjFpUVBYUGJT?=
+ =?utf-8?B?b0d5emhGc0liSC9KUTAxVHJsUGxMdzdGYnZ1WkNmZmd6bTZuUW9USHVOUGtS?=
+ =?utf-8?B?d1p0OS9odHZSaENFdW81M3dBbFNNWlRhMStVRTNad3BDODdzV2xFNWoybjQz?=
+ =?utf-8?B?d3k1a0VjYjRQb0dweFd4NTd5NDZaODdHTjcvOEZqOE0ranJJcGVmU1VTcjRw?=
+ =?utf-8?B?Vk42VUtCOVFRZDQ0RGVncG1pNHdEZUw2TnVUUk0xQTJleXY3TU5kS3UrWW4z?=
+ =?utf-8?B?L08xQmU5WGJ3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZlJiVTVCUTBDSmR4aVFjV041b2s4WlN3cEgwc0xhZU92NmFseGhaQXJxRmJn?=
+ =?utf-8?B?emppbVZ5WUE0NmZRQ2lNaFZYcUM0WldYdGU1RUMrR0RITk0ydWFEcFFXbCtW?=
+ =?utf-8?B?QUM2REdKam85MXVQdDVsTE1idjhmc0RJT0J6Q1hTbzF5ZVdtd0RCU0hRWW91?=
+ =?utf-8?B?TlBlMzVwZHFCdWpMN1NTdVY2NTJsdHFGZXJmV1NuT1B6eGMyVlozbUtuRlIr?=
+ =?utf-8?B?dUdjSEEwSWVVUVBjdE41eUxvU3dqMVFid2xXVmZOVTczQ25zSWNnWTNOMEhQ?=
+ =?utf-8?B?cjNMdzhXSERXd1hWTy84dC85dVA2VXVYQUlsUU92Mkhsb1BxbHpOckUxT09Z?=
+ =?utf-8?B?ZWU1OVdKVWlqbmJPT1ZFOWt4bFhhV1k3WllPY0hEcElFdVliWnFPNHdUbkZ5?=
+ =?utf-8?B?bDBuMXR6aXVRZUJ0K3loYnlic1FMS29wOG1UMmlqUkcySHNzczZrNWl3TTdk?=
+ =?utf-8?B?YktXVzczZ2tKWElyUU5NUERYcWxTYkRvMG5sQ05vUzlFTTgwbXh5d2RYbnNj?=
+ =?utf-8?B?dm5tOGhWamlzNVlxNFkvOGtSTFByTTBKMEVYU21UUzJEWS9wOWdsMnBKOTdW?=
+ =?utf-8?B?TkV5eW5XZGNoWnZicWppRVpFRExCZzFhS3B1TURRa1VnNjhUOEJ5NzJFWEZO?=
+ =?utf-8?B?ZUh6cHFVam9Hdk5rQkFzcU13RTl1UzVTNytIWEpHUW5DWkVyWHNUbFA4Nllu?=
+ =?utf-8?B?NURoRXB6MDhwS3VUUHAwamNQbkpNQy9ZcGNCRXBXdmRZUjBtT2JESEJzck1u?=
+ =?utf-8?B?V00xZXlXZ0p1bmVGUnhqN2VtZlpnSCtxNU9TTWIzRDIyQUFKVFovSXhyTGEr?=
+ =?utf-8?B?bzZya0ZUVkJsT2RHajJBY3JFeEZHUndXdTllVTVsNndUbURlaXVjbW1SSXRs?=
+ =?utf-8?B?Slp6Ym1lOUpHSmt1K1RiSTk1cmE2Q2JGLzgvQ3oyM0pGV0cyNXo5TGpqbkxE?=
+ =?utf-8?B?aGJoeXRYOGFHSHJPWlFIM0k2SUFNdktkaW8rci8xUDVZRlNrelV5Y01JbWc1?=
+ =?utf-8?B?KzNHSXZZd3JDN01SUmgwakhjQ2pWN3dZMzBtM0VZcXBueWJibXdJMTUxNXVZ?=
+ =?utf-8?B?UDB6dVlkM0pZRDlUMThJVlhmQ0xZQklGejEwbCtIZGNMdDlqVlhxbHc3dnho?=
+ =?utf-8?B?OGtTekh6MURHY1FNd0F2M1ZWdWwzNytaN3F0WlFCNFV3YzIrZ0FtR01XUjQr?=
+ =?utf-8?B?aHQ0Rk1ncW5TQ3R1SURWN0hpSUtzdjRHdSthK3ZUajBHckRqQUp2aFlURGRE?=
+ =?utf-8?B?eVV0RWlhNm5MVzZmTitmOG91Tm1SdnJaTk02ajRXSDhiUERTWHV1R0NLMkt2?=
+ =?utf-8?B?N0RFZWdZdjRQdmErc0Y1d1h4V1JSNDBIQVRlMysxbStZblhaMlZvNDl3dXBr?=
+ =?utf-8?B?V25SMnpYNHBXN1ZJb1k4WWFwb2ExUTAwaGlJVTNDRWdvcHFuemFmNlgrcGsr?=
+ =?utf-8?B?RlVFWnY1Y2QxTUt5MUlvODlJM204dyt0M0tGSmE0NU5wamNuWDZTRzJJT2J0?=
+ =?utf-8?B?b3Ivd293TVQzdmJ6Tk1NYVllaDdOOU9kUmRTeFZkVlAvQk5iMHd0ZnJUejZ2?=
+ =?utf-8?B?SjVnUDc0ei9hUTRwdE05K0NuQTZNd0ZDbHkzcjIvY0NPRWxnU0xJRUpkV2d4?=
+ =?utf-8?B?UjJXU3B5ZUsrQmFMK0lmSmJYZ0EwZGpoVjNmdHNZcnRTTSs4NDhjNXFtaXJD?=
+ =?utf-8?B?cmxmR3p5SThMUzQreFluZ3RZcmRaQVNyc0ZLU09kMUkyUW1QTitIL0J6SW8v?=
+ =?utf-8?B?UmtTRmhjUktyaXhaL3lVcEtqNndFRGNWTTNnQ0xRTW56ZzIwT3lwR0Q2MXRC?=
+ =?utf-8?B?VGlaTHpUbnJYV2Y4UVg3ZDNHbU1vQTBCTXZpTWkwUU5WaWt4dmUyZHVwM3Z4?=
+ =?utf-8?B?bGNpeFRvTG1hcFFISk5kQ1VzK1h0U010VmhVU1oxcW5iOUVBSFFHOUFFVUFU?=
+ =?utf-8?B?dFZDckR4VUJBdXVnR2k4TTMvOEdOTmc1OTBtOEljZmVlNkZYUjJVR3gwRFBH?=
+ =?utf-8?B?d2xxMlFlOFBFcnBYVXZEUENWSThiRDgxeGc2ZUp4R1Z5NXhOR0FSbUlZM3lN?=
+ =?utf-8?B?SVJJZkY5WkdGZDJSbGMzU1lVNDVaTHdhZDQvZTJVNHJUY2xSazNHbWZ3QlYx?=
+ =?utf-8?B?WUYrUjBUcnhMWVdBaVl5bmROMWRoMXdXV3dSWVFzOGlVLzFmN0owa0p6a2lN?=
+ =?utf-8?B?ZXc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	602oh1T+bzrOG4zmU8aDu4XDrbiD68+pIJ4yAAprfEumH5tCnNj1FipFEfx1zCugdmz1E59+DQt3Rf3XC0SyDYEMXir3AlXkRWEoeeaITPYkVA97Pi+ZfOlAcgzXgBoki8gVNtHeSx3RjU6vvfACgriNdtQnSBKMkC5W9iN9KZ/GzZz1OFuNi1NW0SICR9i2QHw7V+HP9ObjVzelu3oM6iKZpd/uWm37C4UXsKwXr0mzpyJNp1HY6k+a3i5ox1W2u5T7giThMPtUleFmJkguOTArQYrzzP2Cd9insV4Qx8bJxT6E0A+0bQgx1vAICd4tTFadcy/38tivIZ8LzjyMRJfU7b0aWDKuHUEKmO7Ii098kx/m5c4ys6uaWT9WXflCAOiyt3zUitiBfZb0dm6aMEV6L+/VX/pDkfu6T/Kpao6vk6dFRUcPuzKN/0In2i3YTCvhsmUQ1LcRW9UReZiOkESps9dFoU/J0dsxz3af0IytGWv+/gbceHy6+UF2mmkuAindGcRqoDV4pPGCsT6OJL57so6KB6GtygUYKtlF4B17FA9E/VmDgBn8sx2yhxtGKCRJ/1K05STqxq7tvZcj4F2Yd78ZC22Qc3cqpQZhpqI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34a3aee8-2324-448a-2f39-08de1bb5e2c9
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 15:21:54.2395
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sHGYoZdDSwRhuxSeWZ/eZQDWGZRBUMy4Hu7ytzkjNsg/qaPhCxy1CVokpYeCg4NvxoSwpWK/bI5BZZCeyBZqXY08VaGdhSd+hWIZmILz2wg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6182
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-04_01,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=990 bulkscore=0 spamscore=0
+ suspectscore=0 mlxscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511040128
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEyNyBTYWx0ZWRfX1HRYlTiEqBn2
+ 4glaQ/FFmQVsi0Q5BCC8HON9jyKbPrB+VuF4NdopmuFu4VwiNfku+kzljHHt151015xHaGOmUDX
+ NSRSfVw81iXfQ8taHYegsYflz6rTAuPQ4/ZtKvbtcHaYsPBTqd0dFgcCDfQxTbYlQ80moPh+kwg
+ ik0qSgMfLCl1Am3Vk84aK9AbLqg1AAFilMaBdpPTGHZmlo7XrwMWdIGUPUflW4imYmmKOJkQSuY
+ d4Bz96avlpMce0AnqZItZQ6Bsrotwvy7qUuW1+dYpqON7vwkTOL0hgerAqQFJuEcOkEpo/+mDlk
+ tRyfWo8hAcCiKnXrsemY9qa4p15y6ZJpOwv3mikg/8e+oXPT9d9bc3MiCLAbghhRiCu5kP6pPl4
+ I+tRV/h9w4zVMj3/DcwAyObfXueZOp5zm+jX8I/iZHEgg6JypMk=
+X-Authority-Analysis: v=2.4 cv=EK0LElZC c=1 sm=1 tr=0 ts=690a1a19 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=nfdd62QgFSw9KfRWXsYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=2jmYF3J1Y9AA:10 cc=ntf awl=host:12124
+X-Proofpoint-GUID: nF-nPRcgUdjq5f25853hLu5R0pSDNPzK
+X-Proofpoint-ORIG-GUID: nF-nPRcgUdjq5f25853hLu5R0pSDNPzK
 
-Hi Tarang,
-
-Thank you for the patch!
-
-Quoting Tarang Raval (2025-10-31 11:48:34)
-> Propagate return values from __v4l2_ctrl_modify_range() and
-> __v4l2_ctrl_s_ctrl() in imx219_set_ctrl() and imx219_set_pad_format().
-> This ensures proper error handling instead of ignoring possible
-> failures. Also return the result of imx219_set_pad_format() from
-> imx219_init_state().
->=20
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-
-Reviewed-by: Isaac Scott <isaac.scott@ideasonboard.com>
-
-> ---
->  drivers/media/i2c/imx219.c | 61 +++++++++++++++++++++++++-------------
->  1 file changed, 40 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 48efdcd2a8f9..40693635c0c3 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -453,10 +453,14 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->                 exposure_max =3D format->height + ctrl->val - 4;
->                 exposure_def =3D (exposure_max < IMX219_EXPOSURE_DEFAULT)=
- ?
->                         exposure_max : IMX219_EXPOSURE_DEFAULT;
-> -               __v4l2_ctrl_modify_range(imx219->exposure,
-> -                                        imx219->exposure->minimum,
-> -                                        exposure_max, imx219->exposure->=
-step,
-> -                                        exposure_def);
-> +               ret =3D __v4l2_ctrl_modify_range(imx219->exposure,
-> +                                              imx219->exposure->minimum,
-> +                                              exposure_max,
-> +                                              imx219->exposure->step,
-> +                                              exposure_def);
-> +               if (ret)
-> +                       return ret;
-> +
->         }
-> =20
->         /*
-> @@ -848,6 +852,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *=
-sd,
->         struct v4l2_rect *crop;
->         u8 bin_h, bin_v, binning;
->         u32 prev_line_len;
-> +       int ret;
-> =20
->         format =3D v4l2_subdev_state_get_format(state, 0);
->         prev_line_len =3D format->width + imx219->hblank->val;
-> @@ -883,19 +888,28 @@ static int imx219_set_pad_format(struct v4l2_subdev=
- *sd,
->                 int pixel_rate;
-> =20
->                 /* Update limits and set FPS to default */
-> -               __v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MI=
-N,
-> -                                        IMX219_FLL_MAX - mode->height, 1,
-> +               ret =3D __v4l2_ctrl_modify_range(imx219->vblank, IMX219_V=
-BLANK_MIN,
-> +                                              IMX219_FLL_MAX - mode->hei=
-ght, 1,
-> +                                              mode->fll_def - mode->heig=
-ht);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               ret =3D __v4l2_ctrl_s_ctrl(imx219->vblank,
->                                          mode->fll_def - mode->height);
-> -               __v4l2_ctrl_s_ctrl(imx219->vblank,
-> -                                  mode->fll_def - mode->height);
-> +               if (ret)
-> +                       return ret;
-> +
->                 /* Update max exposure while meeting expected vblanking */
->                 exposure_max =3D mode->fll_def - 4;
->                 exposure_def =3D (exposure_max < IMX219_EXPOSURE_DEFAULT)=
- ?
->                         exposure_max : IMX219_EXPOSURE_DEFAULT;
-> -               __v4l2_ctrl_modify_range(imx219->exposure,
-> -                                        imx219->exposure->minimum,
-> -                                        exposure_max, imx219->exposure->=
-step,
-> -                                        exposure_def);
-> +               ret =3D __v4l2_ctrl_modify_range(imx219->exposure,
-> +                                              imx219->exposure->minimum,
-> +                                              exposure_max,
-> +                                              imx219->exposure->step,
-> +                                              exposure_def);
-> +               if (ret)
-> +                       return ret;
-> =20
->                 /*
->                  * With analog binning the default minimum line length of=
- 3448
-> @@ -906,9 +920,12 @@ static int imx219_set_pad_format(struct v4l2_subdev =
-*sd,
->                 imx219_get_binning(state, &bin_h, &bin_v);
->                 llp_min =3D (bin_h & bin_v) =3D=3D IMX219_BINNING_X2_ANAL=
-OG ?
->                                   IMX219_BINNED_LLP_MIN : IMX219_LLP_MIN;
-> -               __v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->=
-width,
-> -                                        IMX219_LLP_MAX - mode->width, 1,
-> -                                        llp_min - mode->width);
-> +               ret =3D __v4l2_ctrl_modify_range(imx219->hblank,
-> +                                              llp_min - mode->width,
-> +                                              IMX219_LLP_MAX - mode->wid=
-th, 1,
-> +                                              llp_min - mode->width);
-> +               if (ret)
-> +                       return ret;
->                 /*
->                  * Retain PPL setting from previous mode so that the
->                  * line time does not change on a mode change.
-> @@ -917,13 +934,17 @@ static int imx219_set_pad_format(struct v4l2_subdev=
- *sd,
->                  * mode width subtracted.
->                  */
->                 hblank =3D prev_line_len - mode->width;
-> -               __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +               ret =3D __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +               if (ret)
-> +                       return ret;
-> =20
->                 /* Scale the pixel rate based on the mode specific factor=
- */
->                 pixel_rate =3D imx219_get_pixel_rate(imx219) *
->                              imx219_get_rate_factor(state);
-> -               __v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> -                                        pixel_rate, 1, pixel_rate);
-> +               ret =3D __v4l2_ctrl_modify_range(imx219->pixel_rate, pixe=
-l_rate,
-> +                                              pixel_rate, 1, pixel_rate);
-> +               if (ret)
-> +                       return ret;
->         }
-> =20
->         return 0;
-> @@ -972,9 +993,7 @@ static int imx219_init_state(struct v4l2_subdev *sd,
->                 },
->         };
-> =20
-> -       imx219_set_pad_format(sd, state, &fmt);
-> -
-> -       return 0;
-> +       return imx219_set_pad_format(sd, state, &fmt);
->  }
-> =20
->  static const struct v4l2_subdev_video_ops imx219_video_ops =3D {
-> --=20
-> 2.34.1
->=20
+On Tue, Nov 04, 2025 at 08:09:58PM +0800, Kefeng Wang wrote:
 >
+>
+> On 2025/11/4 17:01, Lorenzo Stoakes wrote:
+> > On Tue, Nov 04, 2025 at 04:34:35PM +0800, Kefeng Wang wrote:
+> > > > +static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavior)
+> > > >    {
+> > > > +	int behavior = madv_behavior->behavior;
+> > > > +
+> > > >    	if (is_memory_failure(behavior))
+> > > > -		return 0;
+> > > > +		return MADVISE_NO_LOCK;
+> > > > -	if (madvise_need_mmap_write(behavior)) {
+> > > > +	switch (behavior) {
+> > > > +	case MADV_REMOVE:
+> > > > +	case MADV_WILLNEED:
+> > > > +	case MADV_COLD:
+> > > > +	case MADV_PAGEOUT:
+> > > > +	case MADV_FREE:
+> > > > +	case MADV_POPULATE_READ:
+> > > > +	case MADV_POPULATE_WRITE:
+> > > > +	case MADV_COLLAPSE:
+> > > > +	case MADV_GUARD_INSTALL:
+> > > > +	case MADV_GUARD_REMOVE:
+> > > > +		return MADVISE_MMAP_READ_LOCK;
+> > > > +	case MADV_DONTNEED:
+> > > > +	case MADV_DONTNEED_LOCKED:
+> > > > +		return MADVISE_VMA_READ_LOCK;
+> > >
+> > > I have a question, we will try per-vma lock for dontneed,
+> > > but there is a mmap_assert_locked() during madvise_dontneed_free(),
+> >
+> > Hmm, this is only in the THP PUD huge case, and MADV_FREE is only valid for
+> > anonymous memory, and I think only DAX can have some weird THP PUD case.
+> >
+> > So I don't think we can hit this.
+>
+> Yes, we don't support pud THP for anonymous pages.
+
+Right, so we can't hit this.
+
+>
+> >
+> > In any event, I think this mmap_assert_locked() is mistaken, as we should
+> > only need a VMA lock here.
+> >
+> > So we could replace with a:
+> >
+> > 	if (!rwsem_is_locked(&tlb->mm->mmap_lock))
+> > 		vma_assert_locked(vma);
+> >
+> > ?
+> >
+>
+> The pmd dax/anon split don't have assert, for PUD dax, we maybe remove this
+> assert?
+
+Well, we probably do want to assert that we hold a lock.
+
+>
+>
+>
+>
+> > >
+> > > madvise_dontneed_free
+> > >    madvise_dontneed_single_vma
+> > >      zap_page_range_single_batched
+> > >        unmap_single_vma
+> > >           unmap_page_range
+> > >             zap_pud_range
+> > >               mmap_assert_locked
+> > >
+> > > We could fix it by passing the lock_mode into zap_detial and then check
+> > > the right lock here, but I'm not sure whether it is safe to zap page
+> > > only with vma lock?
+> >
+> > It's fine to zap with the VMA lock. You need only hold the VMA stable which
+> > a VMA lock achieves.
+> >
+> > See https://docs.kernel.org/mm/process_addrs.html
+>
+> Thanks, I will learn it.
+
+Hopefully useful, I made it to remind myself of these things as they're very
+fiddly + otherwise I find myself constantly forgetting these details :)
+
+>
+> >
+> > >
+> > > And another about 4f8ba33bbdfc （"mm: madvise: use per_vma lock
+> > > for MADV_FREE"）, it called walk_page_range_vma() in
+> > > madvise_free_single_vma(),  but from link[1] and 5631da56c9a8
+> > > ("fs/proc/task_mmu: read proc/pid/maps under per-vma lock"), it saids
+> > >
+> > >    "Note that similar approach would not work for /proc/pid/smaps
+> > >    reading as it also walks the page table and that's not RCU-safe"
+> > >
+> > > We could use walk_page_range_vma() instead of walk_page_range() in
+> > > smap_gather_stats(), and same question, why 4f8ba33bbdfc(for MADV_FREEE)
+> > > is safe but not for show_numa_map()/show_smap()?
+> >
+> > We only use walk_page_range() there in case 4 listed in show_smaps_rollup()
+> > where the mmap lock is dropped on contention.
+>
+> Sorry, I mean the walk_page_range() in smap_gather_stats() called by
+> show_smap()  from /proc/pid/smaps, not the walk_page_range() in
+> show_smaps_rollup() from /proc/pid/smaps_rollup.
+
+show_smaps()
+-> smap_gather_stats(..., start = 0)
+-> walk_page_vma()
+
+Because:
+
+	if (!start)
+		walk_page_vma(vma, ops, mss);
+
+The only case where start is non-zero is show_smaps_rollup() case 4. So we are
+already using walk_page_vma() here right?
+
+I may be missing something here :)
+
+>
+>
+> >
+> > >
+> > > Thanks.
+> > >
+> > > [1] https://lkml.kernel.org/r/20250719182854.3166724-1-surenb@google.com
+> >
+> > AFAICT That's referring to a previous approach that tried to walk
+> > /proc/$pid/swaps under RCU _alone_ without VMA locks. This is not safe as
+> > page tables can be yanked from under you not under RCU.
+>
+> But for now it tries per-vma lock or fallback to mmap lock, not lockless, so
+> do you mean we could try per-vma lock for /proc/pid/numa_maps or
+> /proc/pid/smaps ?
+
+Probably we could, but I'm not sure if it'd be really worth it, since traversing
+page tables is a very heavy operation and so optimising it against contention
+like this seems probably not all that worth it?
+
+Suren maybe could comment on this.
+
+Cheers, Lorenzo
 
