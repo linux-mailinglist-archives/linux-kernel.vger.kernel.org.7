@@ -1,559 +1,395 @@
-Return-Path: <linux-kernel+bounces-884979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE8CC31A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:57:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D177C31A28
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF903B8E5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:53:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 66B303494C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABAD330B24;
-	Tue,  4 Nov 2025 14:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6964732D0C7;
+	Tue,  4 Nov 2025 14:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="RVm0C4a3"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OUPe7Vqg"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB20232E75C;
-	Tue,  4 Nov 2025 14:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E95832F770;
+	Tue,  4 Nov 2025 14:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267980; cv=none; b=GuC6sEo2ZaqYpMRGwZoWuSKX8RH1qLsm0b8h2mSA4mhnEiQnXmaIZeIcLGds+MqA8qRKRNFkbigHl4nzVIFZCUppddA1iwAiltZKeyk/SrQAKnfjbTtCVPLyCZDtWBbJyEiBUmRzEJ5jvPWYLELonw7BWGWqaFkqAT7VJeTP54s=
+	t=1762267984; cv=none; b=CXyPy5ZoQsDNE35xuBdORrtq3pcFC67IHg7TzZj7G+l7zi+kfQeWm1a1pKEP6fvmqhqyMarrE/GJtUXQr2+KXgyYT6kl9FO7ccCJmO39raG05ne8oc3PXCn2bCQVZEJ2pl5iimwnYVbNzaPAn9Qpq6MqDQwA2hvx9ee4q1roU1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267980; c=relaxed/simple;
-	bh=OR6lKo19VsO6qd9YjimXaofwW3n8vRUWqaATJno6eJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWxoR177htqpmamUhyzcfkmdTVa9NWZZ6rsYilAPC6W8IH+B9gO5n/+R8fZri3zFyWVg330hDc3FNypGx8+ayqZv7Ce6RAb6BPlCF4mQK1pAq+8CuOOKx4SnAcAFtSOmGuIRoovbtdiN9i7BPuyYdXUXfkq4FlcjlpELYOZ1f3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=RVm0C4a3; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.corp.toradex.com (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
-	by mail11.truemail.it (Postfix) with ESMTPA id A61611FAE2;
-	Tue,  4 Nov 2025 15:52:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1762267975;
-	bh=R5ETbgBOogaaUjCeMFsixqUptfUPuVyUkwJLDUHin0U=; h=From:To:Subject;
-	b=RVm0C4a3Ylxcnt0i997gAJTsoAM57LZUaG96nSkG6HH9IAhHEUP8gwRmUu0GMkWd3
-	 zjt4wZAiXNpL4E+h1/0b2XhVJtiTLmeYTS2JSqPrdCqqgWd/EJDlu570RgFXD3rh3G
-	 kL4BCx1JL7q6agq6U1jx6bG1oWqjJT1VAyL3CO7ed9rDsELXZKf+U5x9Qsc9tUODZu
-	 YEW1VfYg4ASGlj52uFR1chhjfsHZFD+oZmUiv0ohc9ejLuCeWGLZ4rB8SdPJ9wAdm4
-	 odGJ2+D4rIpgkpXFFh9U65b4+qh13x2ZAsJj9CKcP5Z8FfweoT3q6fR0nbZj6sx6qm
-	 lvmagSNJ3OnWg==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v1 3/3] arm64: dts: ti: am69-aquila: Add Clover
-Date: Tue,  4 Nov 2025 15:52:37 +0100
-Message-ID: <20251104145240.61219-3-francesco@dolcini.it>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251104145240.61219-1-francesco@dolcini.it>
-References: <20251104144915.60445-1-francesco@dolcini.it>
- <20251104145240.61219-1-francesco@dolcini.it>
+	s=arc-20240116; t=1762267984; c=relaxed/simple;
+	bh=qInCnx2+Z5thwsd3KEG5EmcqUFc39AtXbpat2Hrf2fk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Cg6nbI3uszU+evd/4YR/9mmXmrUlylpQX6owj22XNhpGcQz3e5YuJqcLo1vkLOdrp6VJLDXDPxJH0TA93Rm8jJ7w9y04QnTMacVOxxlhx8StzQvgsoSnoJ1EmhZixvJRZjQdELHnWIRf0ISTfWLbwrjVPUwAdyNB3Fy1QbeCNNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OUPe7Vqg; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oZ3ny1sqekfnMUJ9A/jQipGDI3u5GrYIN0pg9BuU9TA=; b=OUPe7VqgCFHEcg3DbFOlKeTE8r
+	e4dlacQgpRpteyraO/7IimBl2voi20CLMWeZeRssrdpF4Nz81nBNujRN1I8iBbTPCxuClURtwmbAS
+	oxvwJ5yvyo1PsQt0UsPXLOm/hhOPzlI5G2R6ZLSqhMyRJKhdSchD/nxGNJRkviN4doIzNa5b6Nf7j
+	lPvpcVQBqcXtE10+QflexmOUV2WH2Yu06ynlNAgB4Q9FdU+wmGi31ouZNHKOrrKqbaCPyScdasqY7
+	SdnM0DsORxNXglnjqeDo1vkXAvo+Zq52Ig6IsRz5sGTBJ60XZyCyDPBVxsaObVKzllF83YHWDfuB2
+	wz3je4/A==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vGIOp-001PW6-8V; Tue, 04 Nov 2025 15:52:43 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,  Bernd Schubert
+ <bernd@bsbernd.com>,  "Theodore Ts'o" <tytso@mit.edu>,  Miklos Szeredi
+ <miklos@szeredi.hu>,  Bernd Schubert <bschubert@ddn.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Kevin Chen
+ <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+	(Amir Goldstein's message of "Tue, 4 Nov 2025 14:10:32 +0100")
+References: <20250731130458.GE273706@mit.edu>
+	<20250731173858.GE2672029@frogsfrogsfrogs> <8734abgxfl.fsf@igalia.com>
+	<39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
+	<CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
+	<2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
+	<20250912145857.GQ8117@frogsfrogsfrogs>
+	<CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+	<2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+	<20250916025341.GO1587915@frogsfrogsfrogs>
+	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+	<87ldkm6n5o.fsf@wotan.olymp>
+	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+Date: Tue, 04 Nov 2025 14:52:42 +0000
+Message-ID: <87cy5x7sud.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+On Tue, Nov 04 2025, Amir Goldstein wrote:
 
-Add support for Aquila AM69 mated with Clover carrier board.
+> On Tue, Nov 4, 2025 at 12:40=E2=80=AFPM Luis Henriques <luis@igalia.com> =
+wrote:
+>>
+>> On Tue, Sep 16 2025, Amir Goldstein wrote:
+>>
+>> > On Tue, Sep 16, 2025 at 4:53=E2=80=AFAM Darrick J. Wong <djwong@kernel=
+.org> wrote:
+>> >>
+>> >> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
+>> >> > On Mon, Sep 15, 2025 at 10:27=E2=80=AFAM Bernd Schubert <bernd@bsbe=
+rnd.com> wrote:
+>> >> > >
+>> >> > >
+>> >> > >
+>> >> > > On 9/15/25 09:07, Amir Goldstein wrote:
+>> >> > > > On Fri, Sep 12, 2025 at 4:58=E2=80=AFPM Darrick J. Wong <djwong=
+@kernel.org> wrote:
+>> >> > > >>
+>> >> > > >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+>> >> > > >>>
+>> >> > > >>>
+>> >> > > >>> On 9/12/25 13:41, Amir Goldstein wrote:
+>> >> > > >>>> On Fri, Sep 12, 2025 at 12:31=E2=80=AFPM Bernd Schubert <ber=
+nd@bsbernd.com> wrote:
+>> >> > > >>>>>
+>> >> > > >>>>>
+>> >> > > >>>>>
+>> >> > > >>>>> On 8/1/25 12:15, Luis Henriques wrote:
+>> >> > > >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+>> >> > > >>>>>>
+>> >> > > >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o w=
+rote:
+>> >> > > >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Won=
+g wrote:
+>> >> > > >>>>>>>>>
+>> >> > > >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda n=
+ifty if libfuse
+>> >> > > >>>>>>>>> could restart itself.  It's unclear if doing so will ac=
+tually enable us
+>> >> > > >>>>>>>>> to clear the condition that caused the failure in the f=
+irst place, but I
+>> >> > > >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So may=
+be restarts
+>> >> > > >>>>>>>>> aren't totally crazy.
+>> >> > > >>>>>>>>
+>> >> > > >>>>>>>> I'm trying to understand what the failure scenario is he=
+re.  Is this
+>> >> > > >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed=
+?  If so, what
+>> >> > > >>>>>>>> is supposed to happen with respect to open files, metada=
+ta and data
+>> >> > > >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2f=
+s could run
+>> >> > > >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, =
+that's going
+>> >> > > >>>>>>>> potentally to be out of sync, right?
+>> >> > > >>>>>>>>
+>> >> > > >>>>>>>> What are the recovery semantics that we hope to be able =
+to provide?
+>> >> > > >>>>>>>
+>> >> > > >>>>>>> <echoing what we said on the ext4 call this morning>
+>> >> > > >>>>>>>
+>> >> > > >>>>>>> With iomap, most of the dirty state is in the kernel, so =
+I think the new
+>> >> > > >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_R=
+ESTARTED, which
+>> >> > > >>>>>>> would initiate GETATTR requests on all the cached inodes =
+to validate
+>> >> > > >>>>>>> that they still exist; and then resend all the unacknowle=
+dged requests
+>> >> > > >>>>>>> that were pending at the time.  It might be the case that=
+ you have to
+>> >> > > >>>>>>> that in the reverse order; I only know enough about the d=
+esign of fuse
+>> >> > > >>>>>>> to suspect that to be true.
+>> >> > > >>>>>>>
+>> >> > > >>>>>>> Anyhow once those are complete, I think we can resume ope=
+rations with
+>> >> > > >>>>>>> the surviving inodes.  The ones that fail the GETATTR rev=
+alidation are
+>> >> > > >>>>>>> fuse_make_bad'd, which effectively revokes them.
+>> >> > > >>>>>>
+>> >> > > >>>>>> Ah! Interesting, I have been playing a bit with sending LO=
+OKUP requests,
+>> >> > > >>>>>> but probably GETATTR is a better option.
+>> >> > > >>>>>>
+>> >> > > >>>>>> So, are you currently working on any of this?  Are you imp=
+lementing this
+>> >> > > >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to=
+ have a closer
+>> >> > > >>>>>> look at fuse2fs too.
+>> >> > > >>>>>
+>> >> > > >>>>> Sorry for joining the discussion late, I was totally occupi=
+ed, day and
+>> >> > > >>>>> night. Added Kevin to CC, who is going to work on recovery =
+on our
+>> >> > > >>>>> DDN side.
+>> >> > > >>>>>
+>> >> > > >>>>> Issue with GETATTR and LOOKUP is that they need a path, but=
+ on fuse
+>> >> > > >>>>> server restart we want kernel to recover inodes and their l=
+ookup count.
+>> >> > > >>>>> Now inode recovery might be hard, because we currently only=
+ have a
+>> >> > > >>>>> 64-bit node-id - which is used my most fuse application as =
+memory
+>> >> > > >>>>> pointer.
+>> >> > > >>>>>
+>> >> > > >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it =
+just re-sends
+>> >> > > >>>>> outstanding requests. And that ends up in most cases in sen=
+ding requests
+>> >> > > >>>>> with invalid node-IDs, that are casted and might provoke ra=
+ndom memory
+>> >> > > >>>>> access on restart. Kind of the same issue why fuse nfs expo=
+rt or
+>> >> > > >>>>> open_by_handle_at doesn't work well right now.
+>> >> > > >>>>>
+>> >> > > >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_=
+FH, which
+>> >> > > >>>>> would not return a 64-bit node ID, but a max 128 byte file =
+handle.
+>> >> > > >>>>> And then FUSE_REVALIDATE_FH on server restart.
+>> >> > > >>>>> The file handles could be stored into the fuse inode and al=
+so used for
+>> >> > > >>>>> NFS export.
+>> >> > > >>>>>
+>> >> > > >>>>> I *think* Amir had a similar idea, but I don't find the lin=
+k quickly.
+>> >> > > >>>>> Adding Amir to CC.
+>> >> > > >>>>
+>> >> > > >>>> Or maybe it was Miklos' idea. Hard to keep track of this rol=
+ling thread:
+>> >> > > >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6qu=
+BaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+>> >> > > >>>
+>> >> > > >>> Thanks for the reference Amir! I even had been in that thread.
+>> >> > > >>>
+>> >> > > >>>>
+>> >> > > >>>>>
+>> >> > > >>>>> Our short term plan is to add something like FUSE_NOTIFY_RE=
+START, which
+>> >> > > >>>>> will iterate over all superblock inodes and mark them with =
+fuse_make_bad.
+>> >> > > >>>>> Any objections against that?
+>> >> > > >>
+>> >> > > >> What if you actually /can/ reuse a nodeid after a restart?  Co=
+nsider
+>> >> > > >> fuse4fs, where the nodeid is the on-disk inode number.  After =
+a restart,
+>> >> > > >> you can reconnect the fuse_inode to the ondisk inode, assuming=
+ recovery
+>> >> > > >> didn't delete it, obviously.
+>> >> > > >
+>> >> > > > FUSE_LOOKUP_HANDLE is a contract.
+>> >> > > > If fuse4fs can reuse nodeid after restart then by all means, it=
+ should sign
+>> >> > > > this contract, otherwise there is no way for client to know tha=
+t the
+>> >> > > > nodeids are persistent.
+>> >> > > > If fuse4fs_handle :=3D nodeid, that will make implementing the =
+lookup_handle()
+>> >> > > > API trivial.
+>> >> > > >
+>> >> > > >>
+>> >> > > >> I suppose you could just ask for refreshed stat information an=
+d either
+>> >> > > >> the server gives it to you and the fuse_inode lives; or the se=
+rver
+>> >> > > >> returns ENOENT and then we mark it bad.  But I'd have to see c=
+ode
+>> >> > > >> patches to form a real opinion.
+>> >> > > >>
+>> >> > > >
+>> >> > > > You could make fuse4fs_handle :=3D <nodeid:fuse_instance_id>
+>> >> > > > where fuse_instance_id can be its start time or random number.
+>> >> > > > for auto invalidate, or maybe the fuse_instance_id should be
+>> >> > > > a native part of FUSE protocol so that client knows to only inv=
+alidate
+>> >> > > > attr cache in case of fuse_instance_id change?
+>> >> > > >
+>> >> > > > In any case, instead of a storm of revalidate messages after
+>> >> > > > server restart, do it lazily on demand.
+>> >> > >
+>> >> > > For a network file system, probably. For fuse4fs or other block
+>> >> > > based file systems, not sure. Darrick has the example of fsck.
+>> >> > > Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
+>> >> > > fuse-server gets restarted, fsck'ed and some files get removed.
+>> >> > > Now reading these inodes would still work - wouldn't it
+>> >> > > be better to invalidate the cache before going into operation
+>> >> > > again?
+>> >> >
+>> >> > Forgive me, I was making a wrong assumption that fuse4fs
+>> >> > was using ext4 filehandle as nodeid, but of course it does not.
+>> >>
+>> >> Well now that you mention it, there /is/ a risk of shenanigans like
+>> >> that.  Consider:
+>> >>
+>> >> 1) fuse4fs mount an ext4 filesystem
+>> >> 2) crash the fuse4fs server
+>> >> <fuse4fs server restart stalls...>
+>> >> 3) e2fsck -fy /dev/XXX deletes inode 17
+>> >> 4) someone else mounts the fs, makes some changes that result in 17
+>> >>    being reallocated, user says "OOOOOPS", unmounts it
+>> >> 5) fuse4fs server finally restarts, and reconnects to the kernel
+>> >>
+>> >> Hey, inode 17 is now a different file!!
+>> >>
+>> >> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
+>> >> everything's (potentially) fine because fuse4fs supplied i_generation=
+ to
+>> >> the kernel, and fuse_stale_inode will mark it bad if that happens.
+>> >>
+>> >> Hm ok then, at least there's a way out. :)
+>> >>
+>> >
+>> > Right.
+>> >
+>> >> > The reason I made this wrong assumption is because fuse4fs *can*
+>> >> > already use ext4 (64bit) file handle as nodeid, with existing FUSE =
+protocol
+>> >> > which is what my fuse passthough library [1] does.
+>> >> >
+>> >> > My claim was that although fuse4fs could support safe restart, which
+>> >> > cannot read from recycled inode number with current FUSE protocol,
+>> >> > doing so with FUSE_HANDLE protocol would express a commitment
+>> >>
+>> >> Pardon my na=C3=AFvete, but what is FUSE_HANDLE?
+>> >>
+>> >> $ git grep -w FUSE_HANDLE fs
+>> >> $
+>> >
+>> > Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
+>> > https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8=
+W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+>> >
+>> > Which means to communicate a variable sized "nodeid"
+>> > which can also be declared as an object id that survives server restar=
+t.
+>> >
+>> > Basically, the reason that I brought up LOOKUP_HANDLE is to
+>> > properly support NFS export of fuse filesystems.
+>> >
+>> > My incentive was to support a proper fuse server restart/remount/re-ex=
+port
+>> > with the same fsid in /etc/exports, but this gives us a better startin=
+g point
+>> > for fuse server restart/re-connect.
+>>
+>> Sorry for resurrecting (again!) this discussion.  I've been thinking abo=
+ut
+>> this, and trying to get some initial RFC for this LOOKUP_HANDLE operatio=
+n.
+>> However, I feel there are other operations that will need to return this
+>> new handle.
+>>
+>> For example, the FUSE_CREATE (for atomic_open) also returns a nodeid.
+>> Doesn't this means that, if the user-space server supports the new
+>> LOOKUP_HANDLE, it should also return an handle in reply to the CREATE
+>> request?
+>
+> Yes, I think that's what it means.
 
-Link: https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
-Link: https://www.toradex.com/products/carrier-board/clover
-Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../boot/dts/ti/k3-am69-aquila-clover.dts     | 451 ++++++++++++++++++
- 2 files changed, 452 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am69-aquila-clover.dts
+Awesome, thank you for confirming this.
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 6ce652fe98fa..38a93b689fe7 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -153,6 +153,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
- 
- # Boards with J784s4 SoC
-+dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-clover.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-dev.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am69-sk-pcie0-ep.dtbo
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-aquila-clover.dts b/arch/arm64/boot/dts/ti/k3-am69-aquila-clover.dts
-new file mode 100644
-index 000000000000..55fd214a82e4
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am69-aquila-clover.dts
-@@ -0,0 +1,451 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (C) 2025 Toradex
-+ *
-+ * https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
-+ * https://www.toradex.com/products/carrier-board/clover
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/pwm/pwm.h>
-+#include "k3-am69-aquila.dtsi"
-+
-+/ {
-+	model = "Toradex Aquila AM69 on Clover Board";
-+	compatible = "toradex,aquila-am69-clover",
-+		     "toradex,aquila-am69",
-+		     "ti,j784s4";
-+
-+	aliases {
-+		eeprom1 = &carrier_eeprom;
-+	};
-+
-+	reg_3v3_dp: regulator-3v3-dp {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_21_dp>;
-+		/* Aquila GPIO_21_DP (AQUILA B57) */
-+		gpio = <&main_gpio0 37 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "DP_3V3";
-+		startup-delay-us = <10000>;
-+	};
-+
-+	/* Aquila DP_1 */
-+	dp-connector {
-+		compatible = "dp-connector";
-+		dp-pwr-supply = <&reg_3v3_dp>;
-+		label = "Display Port";
-+		type = "full-size";
-+
-+		port {
-+			dp_connector_in: endpoint {
-+				remote-endpoint = <&dp0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+/* On-module ETH_1 MDIO */
-+&davinci_mdio {
-+	status = "okay";
-+};
-+
-+&dp0_ports {
-+	port@4 {
-+		reg = <4>;
-+		dp0_out: endpoint {
-+			remote-endpoint = <&dp_connector_in>;
-+		};
-+	};
-+};
-+
-+&dss {
-+	status = "okay";
-+};
-+
-+&main0_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&main0_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&main0_alert1>;
-+		};
-+	};
-+};
-+
-+&main1_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&main1_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&main1_alert1>;
-+		};
-+	};
-+};
-+
-+&main2_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&main2_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&main2_alert1>;
-+		};
-+	};
-+};
-+
-+&main3_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&main3_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&main3_alert1>;
-+		};
-+	};
-+};
-+
-+&main4_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&main4_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&main4_alert1>;
-+		};
-+	};
-+};
-+
-+/* Aquila ETH_2 */
-+&main_cpsw0 {
-+	status = "okay";
-+};
-+
-+/* Aquila ETH_2 SGMII PHY */
-+&main_cpsw0_port8  {
-+	phy-handle = <&cpsw0_port8_phy4>;
-+	status = "okay";
-+};
-+
-+/* Aquila ETH_2_XGMII_MDIO */
-+&main_cpsw0_mdio {
-+	status = "okay";
-+
-+	cpsw0_port8_phy4: ethernet-phy@4 {
-+		reg = <4>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_eth2_int>;
-+		interrupt-parent = <&main_gpio0>;
-+		interrupts = <44 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
-+/* Aquila PWM_1 */
-+&main_ehrpwm0 {
-+	status = "okay";
-+};
-+
-+/* Aquila PWM_2 */
-+&main_ehrpwm1 {
-+	status = "okay";
-+};
-+
-+&main_gpio0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio_01>, /* Aquila GPIO_01 */
-+		    <&pinctrl_gpio_02>, /* Aquila GPIO_02 */
-+		    <&pinctrl_gpio_03>; /* Aquila GPIO_03 */
-+};
-+
-+/* Aquila I2C_6 */
-+&main_i2c5 {
-+	status = "okay";
-+};
-+
-+/* Aquila CAN_1 */
-+&main_mcan10 {
-+	status = "okay";
-+};
-+
-+/* Aquila CAN_3 */
-+&main_mcan13 {
-+	status = "okay";
-+};
-+
-+/* Aquila SD_1 */
-+&main_sdhci1 {
-+	status = "okay";
-+};
-+
-+/* Aquila SPI_2 */
-+&main_spi0 {
-+	status = "okay";
-+};
-+
-+/* Aquila SPI_1 */
-+&main_spi2 {
-+	pinctrl-0 = <&pinctrl_main_spi2>,
-+		    <&pinctrl_main_spi2_cs0>,
-+		    <&pinctrl_gpio_05>;
-+	cs-gpios = <0>, <&wkup_gpio0 29 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	tpm@1 {
-+		compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+		reg = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_06>;
-+		interrupt-parent = <&wkup_gpio0>;
-+		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
-+		spi-max-frequency = <18500000>;
-+	};
-+};
-+
-+/* Aquila UART_1 */
-+&main_uart4 {
-+	status = "okay";
-+};
-+
-+/* Aquila UART_3, used as the Linux console */
-+&main_uart8 {
-+	status = "okay";
-+};
-+
-+&mcu_cpsw {
-+	status = "okay";
-+};
-+
-+/* On-module ETH_1 RGMII */
-+&mcu_cpsw_port1 {
-+	status = "okay";
-+};
-+
-+/* Aquila I2C_1 */
-+&mcu_i2c0 {
-+	clock-frequency = <100000>;
-+	status = "okay";
-+
-+	fan_controller: fan@18 {
-+		compatible = "ti,amc6821";
-+		reg = <0x18>;
-+		#pwm-cells = <2>;
-+
-+		fan: fan {
-+			cooling-levels = <102 179 255>;
-+			#cooling-cells = <2>;
-+			pwms = <&fan_controller 40000 PWM_POLARITY_INVERTED>;
-+		};
-+	};
-+
-+	temperature-sensor@4f {
-+		compatible = "ti,tmp1075";
-+		reg = <0x4f>;
-+	};
-+
-+	/* USB-C OTG (TCPC USB PD PHY) */
-+	tcpc@52 {
-+		compatible = "nxp,ptn5110", "tcpci";
-+		reg = <0x52>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usb1_int>;
-+		interrupt-parent = <&main_gpio0>;
-+		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			data-role = "dual";
-+			label = "USB-C OTG";
-+			power-role = "dual";
-+			try-power-role = "sink";
-+			self-powered;
-+			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-+			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-+			op-sink-microwatt = <1000000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usb_1_con_hs: endpoint {
-+						remote-endpoint = <&usb0_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usb_1_con_ss: endpoint {
-+						remote-endpoint = <&usb0_ss_mux>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	carrier_eeprom: eeprom@57 {
-+		compatible = "st,24c02", "atmel,24c02";
-+		reg = <0x57>;
-+		pagesize = <16>;
-+	};
-+};
-+
-+/* Aquila I2C_2 */
-+&mcu_i2c1 {
-+	status = "okay";
-+};
-+
-+/* Aquila CAN_2 */
-+&mcu_mcan0 {
-+	status = "okay";
-+};
-+
-+/* Aquila CAN_4 */
-+&mcu_mcan1 {
-+	status = "okay";
-+};
-+
-+/* Aquila UART_4 */
-+&mcu_uart0 {
-+	status = "okay";
-+};
-+
-+&mhdp {
-+	status = "okay";
-+};
-+
-+/* Aquila QSPI_1 */
-+&ospi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mcu_ospi0_4bit>, <&pinctrl_mcu_ospi0_cs0>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <66000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
-+		cdns,read-delay = <0>;
-+		cdns,tchsh-ns = <3>;
-+		cdns,tsd2d-ns = <10>;
-+		cdns,tshsl-ns = <30>;
-+		cdns,tslch-ns = <8>;
-+	};
-+};
-+
-+/* Aquila PCIE_1 */
-+&pcie0_rc {
-+	status = "okay";
-+};
-+
-+/* Aquila PCIE_2 */
-+&pcie1_rc {
-+	status = "okay";
-+};
-+
-+&serdes2 {
-+	status = "okay";
-+};
-+
-+&serdes4 {
-+	status = "okay";
-+};
-+
-+&serdes_wiz2 {
-+	status = "okay";
-+};
-+
-+&serdes_wiz4 {
-+	status = "okay";
-+};
-+
-+/* Aquila ADC_[1-4] */
-+&tscadc0 {
-+	status = "okay";
-+};
-+
-+&usbss0 {
-+	status = "okay";
-+};
-+
-+&usb0ss_mux {
-+	status = "okay";
-+
-+	port {
-+		usb0_ss_mux: endpoint {
-+			remote-endpoint = <&usb_1_con_ss>;
-+		};
-+	};
-+};
-+
-+&usb0 {
-+	status = "okay";
-+
-+	port {
-+		usb0_hs: endpoint {
-+			remote-endpoint = <&usb_1_con_hs>;
-+		};
-+	};
-+};
-+
-+&wkup0_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&wkup0_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&wkup0_alert1>;
-+		};
-+	};
-+};
-+
-+&wkup1_thermal {
-+	cooling-maps {
-+		map0 {
-+			cooling-device = <&fan 1 1>;
-+			trip = <&wkup1_alert0>;
-+		};
-+
-+		map1 {
-+			cooling-device = <&fan 2 2>;
-+			trip = <&wkup1_alert1>;
-+		};
-+	};
-+};
-+
-+&wkup_gpio0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio_04>; /* Aquila GPIO_04 */
-+};
-+
-+/* Aquila UART_2 */
-+&wkup_uart0 {
-+	status = "okay";
-+};
--- 
-2.47.3
+>> The same question applies for TMPFILE, LINK, etc.  Or is there
+>> something special about the LOOKUP operation that I'm missing?
+>>
+>
+> Any command returning fuse_entry_out.
+>
+> READDIRPLUS, MKNOD, MKDIR, SYMLINK
 
+Right, I had this list, but totally missed READDIRPLUS.
+
+> fuse_entry_out was extended once and fuse_reply_entry()
+> sends the size of the struct.
+
+So, if I'm understanding you correctly, you're suggesting to extend
+fuse_entry_out to add the new handle (a 'size' field + the actual handle).
+That's probably a good idea.  I was working towards having the
+LOOKUP_HANDLE to be similar to LOOKUP, but extending it so that it would
+include:
+
+ - An extra inarg: the parent directory handle.  (To be honest, I'm not
+   really sure this would be needed.)
+ - An extra outarg: for the actual handle.
+
+With your suggestion, only the extra inarg would be required.
+
+> However fuse_reply_create() sends it with fuse_open_out
+> appended
+
+This one should be fine...
+
+> and fuse_add_direntry_plus() does not seem to write
+> record size at all, so server and client will need to agree on the
+> size of fuse_entry_out and this would need to be backward compat.
+> If both server and client declare support for FUSE_LOOKUP_HANDLE
+> it should be fine (?).
+
+... yeah, this could be a bit trickier.  But I'll need to go look into it.
+
+Thanks a lot for your comments, Amir.  I was trying to get an RFC out
+soon(ish) to get early feedback, hoping to prevent me following wrong
+paths.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
