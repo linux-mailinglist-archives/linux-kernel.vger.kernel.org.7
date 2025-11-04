@@ -1,104 +1,83 @@
-Return-Path: <linux-kernel+bounces-883991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E503C2F075
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:53:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5E1C2F090
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D27844F115A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D703BAC70
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEB7260569;
-	Tue,  4 Nov 2025 02:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="q7xTFejP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F65525A631;
-	Tue,  4 Nov 2025 02:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AF325FA3B;
+	Tue,  4 Nov 2025 02:55:55 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED11FFC6D;
+	Tue,  4 Nov 2025 02:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762224748; cv=none; b=Kf70K87BbCgArm+k5AYj9T+kB6cnaqOcxUX8Mz1VvDfxgh3bpsi8LCyW7ybfxuJZelaO85JL6S7HNHN5LBdYTRp1EAD0PVgNdwhzjXEWSEDZ/OT/HvdbWVneh9wELsxreK4wqYDisfVFYCxcXMZE9rz8q9iydyp1ySkRr6lu0ps=
+	t=1762224954; cv=none; b=GQ5OLkS/MMBE68T1D4oSQyffLn+oCWXOBui/YvC36ypmNHOlDbP7jJlmdRFBETXptcekuOXV1y08INOXqgNAIEb4SMfWGupkpUqYTpxai9i9Sg4f7XXDGsPxkiz252SLF1g0jo/6N+YsQgSdxUkrBNxB45KkCFBuC1ia304TsG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762224748; c=relaxed/simple;
-	bh=Xovpelytaf1rVw6/MGWZziRvb+wid13hMajWjKa65Y8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VhwOtx5rm+ql1bYHfJ+8Ri1n5QOBJmgwUOi8zO6w4bgJXqVqw13Ed4Ywjeu4XbuQSX0u6YNgc34h3at3pUJIeajusMYHwedZt6d+eaO1WpIV1BUJxrpWgqPMX1C0OJDsM3cRHcIClwwEc99wPCCuN08Eb8oW4DvodtW94VhCs68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=q7xTFejP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA1DC4CEFD;
-	Tue,  4 Nov 2025 02:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762224748;
-	bh=Xovpelytaf1rVw6/MGWZziRvb+wid13hMajWjKa65Y8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q7xTFejPKd6NhT06RWpXtSixWQbEpsjjKBezm1wVg44aGl0ALe0Oy1XhGDJVqSHHy
-	 MAJJ0qgiFXuHTQuaQRCrTT7oBrEjP3r5aNq6iZqPuLddO7lzY8BxtsRizHiiSc4pKe
-	 hIbRUTmPyMmu1L6vvb9GyRzw3s52raw3T8RmJaig=
-Date: Mon, 3 Nov 2025 18:52:26 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Ankit Agrawal <ankita@nvidia.com>, Aniket Agashe <aniketa@nvidia.com>,
- Vikram Sethi <vsethi@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>, Matt
- Ochs <mochs@nvidia.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
- "linmiaohe@huawei.com" <linmiaohe@huawei.com>, "nao.horiguchi@gmail.com"
- <nao.horiguchi@gmail.com>, "david@redhat.com" <david@redhat.com>,
- "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
- "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
- <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
- <surenb@google.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
- "bp@alien8.de" <bp@alien8.de>, "rafael@kernel.org" <rafael@kernel.org>,
- "guohanjun@huawei.com" <guohanjun@huawei.com>, "mchehab@kernel.org"
- <mchehab@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
- "kevin.tian@intel.com" <kevin.tian@intel.com>, "alex@shazbot.org"
- <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>, Kirti Wankhede
- <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>, Zhi
- Wang <zhiw@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>, Krishnakant Jaju
- <kjaju@nvidia.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
- "ira.weiny@intel.com" <ira.weiny@intel.com>,
- "Smita.KoralahalliChannabasappa@amd.com"
- <Smita.KoralahalliChannabasappa@amd.com>, "u.kleine-koenig@baylibre.com"
- <u.kleine-koenig@baylibre.com>, "peterz@infradead.org"
- <peterz@infradead.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: handle poisoning of pfn without struct pages
-Message-Id: <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
-In-Reply-To: <aQjy0ZsVq7vhxtr7@tiehlicka>
-References: <20251026141919.2261-1-ankita@nvidia.com>
-	<20251026141919.2261-3-ankita@nvidia.com>
-	<20251027172620.d764b8e0eab34abd427d7945@linux-foundation.org>
-	<MW4PR12MB7213976611F767842380FB56B0FAA@MW4PR12MB7213.namprd12.prod.outlook.com>
-	<aQRy4rafpvo-W-j6@tiehlicka>
-	<SA1PR12MB71998D21DD1852EB074A11ABB0C6A@SA1PR12MB7199.namprd12.prod.outlook.com>
-	<aQjy0ZsVq7vhxtr7@tiehlicka>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762224954; c=relaxed/simple;
+	bh=VltWER56COxnICQrkyLAFOuJG20Kgc9n+y4y0mPsSQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pbR1I9gutV+FaFry85wloaLb+LdknMspE/CGN0wWypF488Ug0sWtjdLc2zVAZZ8vvlJMwzBBfn3E/jjTQRN94DLKK9uPl8DoxdS+LOaKz6MQFJxPiLV3K8F5IPTogSo55q4YDr0E5IVnLA1UIhY7/zurV0xV63/22J2vxCL9q3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee669096a78c98-5d63c;
+	Tue, 04 Nov 2025 10:52:40 +0800 (CST)
+X-RM-TRANSID:2ee669096a78c98-5d63c
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from FHB-W5100149 (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee969096a745a9-e9e91;
+	Tue, 04 Nov 2025 10:52:39 +0800 (CST)
+X-RM-TRANSID:2ee969096a745a9-e9e91
+From: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
+To: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
+Subject: [PATCH] selftests/dma: fix invalid array access in printf
+Date: Tue,  4 Nov 2025 10:52:34 +0800
+Message-ID: <20251104025234.2363-1-zhangchujun@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 3 Nov 2025 19:22:09 +0100 Michal Hocko <mhocko@suse.com> wrote:
+The printf statement attempts to print the DMA direction string using
+the syntax 'dir[directions]', which is an invalid array access. The
+variable 'dir' is an integer, and 'directions' is a char pointer array.
+This incorrect syntax should be 'directions[dir]', using 'dir' as the
+index into the 'directions' array. Fix this by correcting the array
+access from 'dir[directions]' to 'directions[dir]'.
 
-> > Hi Michal, I am trying to replicate what is being done today for non-PFNMAP
-> > memory failure in __add_to_kill
-> > (https://github.com/torvalds/linux/blob/master/mm/memory-failure.c#L376).
-> > For this series, I am inclined to keep it uniform.
-> 
-> Unless there is a very good reason for this code then I would rather not
-> rely on an atomic allocation. This just makes the behavior hard to
-> predict
+Signed-off-by: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
 
-I don't think this was addressed in the v5 series.
+diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
+index b12f1f9babf8..b925756373ce 100644
+--- a/tools/testing/selftests/dma/dma_map_benchmark.c
++++ b/tools/testing/selftests/dma/dma_map_benchmark.c
+@@ -118,7 +118,7 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule: %d\n",
+-			threads, seconds, node, dir[directions], granule);
++			threads, seconds, node, directions[dir], granule);
+ 	printf("average map latency(us):%.1f standard deviation:%.1f\n",
+ 			map.avg_map_100ns/10.0, map.map_stddev/10.0);
+ 	printf("average unmap latency(us):%.1f standard deviation:%.1f\n",
+-- 
+2.50.1.windows.1
 
-Yes please, anything we can do to avoid GFP_ATOMIC makes the kernel
-more reliable.
+
+
 
