@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-883990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3265EC2F07B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:54:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D163BC2F06F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B123BE913
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCF7189C878
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099825F98B;
-	Tue,  4 Nov 2025 02:52:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74837264630;
+	Tue,  4 Nov 2025 02:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlPM2pRD"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2AE25A631;
-	Tue,  4 Nov 2025 02:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595272609D6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762224735; cv=none; b=W43bfmHsdpuo/6CPhzQXo1uWpsj3m+2vCuetEpSDN9zkxrtaKoy8k4sLT26u0ANLWD2qh9r0uP7eKQnm8uOrKRRyd0IZyG4b6GT4RurARiVuVBUwO0O3QjavlGMxEEwiE2HP5dXeZRYSyNAgtMcr0MXMkLu4m/aLRtZZVxmea7U=
+	t=1762224750; cv=none; b=BUDPWOCUOP/FdrDTenroC3q/Ir1h8jz1sZs/zbZUZTxbCvVjNPoDcJEuSSLSquehos0cPEbdFp4DA0pSlVrK9LCk6wka7WFxM6XmyMqyiDYm/8iYzT2CYBMsST3opA37Q5WPmCp6mzJBbqGR5rBV1KAsEyTmz5VBLfe4q41Eqjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762224735; c=relaxed/simple;
-	bh=J9X2QbpjrNn7X2+YQ1pXJAJznMvevW1ogJBYEpC2aMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KsfSCDWMhI1iX6E70gAKWHg2c9TlyqyYy9iTAz2l6k/KpMVdod3tZir5I+bpzXn+GIwMj6iJB9sf26C6lfQKgKIZFGCLMXsNrmp6vkQYh74neiCInE0OCykhIJosg58GEPiNGn/zi2EcOqV3gUnpArCOrPKiUUmnagIpRp2bwnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d0tJp2XnnzYQtkJ;
-	Tue,  4 Nov 2025 10:51:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id AF00A1A07BD;
-	Tue,  4 Nov 2025 10:52:08 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgBXrERWaglpPnGNCg--.48839S3;
-	Tue, 04 Nov 2025 10:52:08 +0800 (CST)
-Message-ID: <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com>
-Date: Tue, 4 Nov 2025 10:52:06 +0800
+	s=arc-20240116; t=1762224750; c=relaxed/simple;
+	bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTRqIRjnrXkJ/p46kaewPS1a3lfYe1AQ2ro/mW+GsKW5Dwcz1Tdh45o5w4KQtMnqADPo5uQrXobSNXpaytnyS0oToK4sfw0nwB8Iao0np0Lhk3Y42sYsT8gjByXUbcnSvZVK9CCWmdyWnQj5nePFsrTVOb49l+vOFXD4B0VDguI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlPM2pRD; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2955805b7acso18275095ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 18:52:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762224749; x=1762829549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
+        b=BlPM2pRDTUqYwBJ9bOb0yj+7ByZDKskzd4eHvDD6zsFjTUoiZ+fs5HrHgMM8OuQLCW
+         jnzl4KEMwMPixepMz8wgXn7wCGCdhQXFbycJ1iYYFXn7XIAkqB/WWFWyaM2/21uPYJZE
+         Yl3x5Npbnr0dpF97HDjYMisHOXyLReeRsKqC0h4O/O09mIQfK2yBysPGmBcJjzv5nF+z
+         UzvHuep97IuhqC7ADW80F1OPs6TzPd8mwVNU71l1P+Ln5Zf1LZivFzdJxt+bRXSFTpGO
+         3HNZuexNAbuJwhdtgKeB+oVgI/m4FRYn0oEq7H3a536G0ZMTnr1MWN+qZe9ewKgGRDSd
+         oecA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762224749; x=1762829549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3tWJbifLBnvpN/JRMjzdL38LPPQ+G97PL29g19sGzQo=;
+        b=rcuX4PvexYa/Gvca68g3qNogPdCz7uaF8xZppbfQvg2BtuWTg6huNEhZFuu5+yb75f
+         55AYVPMfpkDYHch7hJHzFqpmAHUeZRKtEcXtXrJWa1F8DfCgHiICKpjM5JOU4leCIAL9
+         zSbKGOZrbExlWQSSCWSO8Wh328uQk+mmW5SKJz0Lsem8gj+HWGc9H9m0OV6BWU7Dw4o5
+         KASx4g2XyJ4wk8IIEXkHas8voS3bpXu39ofTMEAdFN6WPRUL+xFIhgA+GCDhnVVSAQcv
+         JA/C2dFFroM4nOuOOtUtu9MYMqpSFi2ZbXnEUHsPrBXje5l2lhfbVMPBLYOu2M1g6GHw
+         OweA==
+X-Gm-Message-State: AOJu0YyXwGg50CEzb9x2DuhAOcHeX08GkD6wg+WZ4QYVguGV2TsRaUIz
+	pCq35Er9HubSnMkTkUzJV+qigdSxf6wUajPHf0kyWfxZo3dTh5QtPw+s
+X-Gm-Gg: ASbGncvpYT/WsTViAcFnZ0Z/GdOpWhUQYWI+FfOvUHHAdMO9600rOTP9S9PBF3tQ9NS
+	WWe2rZ8nBLOqrwd2Sn0j8TQveMC3xYT7VMQQJYH4RmJkVgfdIOhCtUKqt0AxG8siGf2RN+ge28e
+	zmrkGoNQpKPqWI6ZDZ1qR6ffLChVGekAKGFBQJ5RldyY5AxeOt1JgQeZ/ixnMcMHM4uLnxfU9vV
+	WZ9KY9/09zB6ihBcX2k3gNJtbImSTiIuq6dkCh/JO0wN1mQWiMCttqozNlNveU1hdg+K4TKKAco
+	QC0ZFPWtiZEH1cRRAiQwWXQuMWB8OSTyZkLSJ9NqsLgExPj+qe4Z3wTRY4fF6WGF3EFKi6TMwoF
+	5EQikTPAsrxdes2O8dS4hzdeaCYeiVdcV/Rwv3bwgzjhi6Mtt3sZURW08AS1J2q9m+nfe4F+ice
+	/LMWFoHFjRsC0=
+X-Google-Smtp-Source: AGHT+IFAa3BjhnfTACYpqySRfsVkvcgHY7lS7G3ybxCoYsaIw+Dr/1CCWJZhz/f7vHQRsrc7EHjyNQ==
+X-Received: by 2002:a17:903:41cd:b0:295:5623:e586 with SMTP id d9443c01a7336-295f93ab7abmr20256195ad.10.1762224748421;
+        Mon, 03 Nov 2025 18:52:28 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998887sm7185115ad.42.2025.11.03.18.52.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 18:52:27 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 83A5C420A6B9; Tue, 04 Nov 2025 09:52:25 +0700 (WIB)
+Date: Tue, 4 Nov 2025 09:52:25 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Vamsi Attunuru <vattunuru@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
+	Julien Panis <jpanis@baylibre.com>
+Subject: Re: [PATCH] Documentation: misc-devices: Fix C macro cross-reference
+ syntax
+Message-ID: <aQlqaflrr8Ku1TFe@archie.me>
+References: <20251104022242.19224-1-bagasdotme@gmail.com>
+ <2025110402-going-swore-319e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
-To: Xiao Ni <xni@redhat.com>, linan666@huaweicloud.com
-Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, hare@suse.de,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20251103125757.1405796-1-linan666@huaweicloud.com>
- <20251103125757.1405796-5-linan666@huaweicloud.com>
- <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXrERWaglpPnGNCg--.48839S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF1UXr45Xw1DXFykZw1rXrb_yoW5AF1Upa
-	y8GF1avrW7Jr12ya1vqr1UuryrJ3yxKrWUKry5Ja4xZ3W5Kr93ArWakFWFgr9Fvry5Zr1I
-	vF4UZ3Wfu3ZFyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	vtAUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lSOn3Rl1q01u6ClR"
+Content-Disposition: inline
+In-Reply-To: <2025110402-going-swore-319e@gregkh>
 
 
+--lSOn3Rl1q01u6ClR
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/11/4 9:47, Xiao Ni 写道:
-> On Mon, Nov 3, 2025 at 9:06 PM <linan666@huaweicloud.com> wrote:
->>
->> From: Li Nan <linan122@huawei.com>
->>
->> Raid checks if pad3 is zero when loading superblock from disk. Arrays
->> created with new features may fail to assemble on old kernels as pad3
->> is used.
->>
->> Add module parameter check_new_feature to bypass this check.
->>
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> ---
->>   drivers/md/md.c | 12 +++++++++---
->>   1 file changed, 9 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index dffc6a482181..5921fb245bfa 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -339,6 +339,7 @@ static int start_readonly;
->>    */
->>   static bool create_on_open = true;
->>   static bool legacy_async_del_gendisk = true;
->> +static bool check_new_feature = true;
->>
->>   /*
->>    * We have a system wide 'event count' that is incremented
->> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rdev, struct md_rdev *refdev, int minor_
->>          }
->>          if (sb->pad0 ||
->>              sb->pad3[0] ||
->> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb->pad3[1])))
->> -               /* Some padding is non-zero, might be a new feature */
->> -               return -EINVAL;
->> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb->pad3[1]))) {
->> +               pr_warn("Some padding is non-zero on %pg, might be a new feature\n",
->> +                       rdev->bdev);
->> +               if (check_new_feature)
->> +                       return -EINVAL;
->> +               pr_warn("check_new_feature is disabled, data corruption possible\n");
->> +       }
->>
->>          rdev->preferred_minor = 0xffff;
->>          rdev->data_offset = le64_to_cpu(sb->data_offset);
->> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_IRUGO|S_IWUSR);
->>   module_param_call(new_array, add_named_array, NULL, NULL, S_IWUSR);
->>   module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
->>   module_param(legacy_async_del_gendisk, bool, 0600);
->> +module_param(check_new_feature, bool, 0600);
->>
->>   MODULE_LICENSE("GPL");
->>   MODULE_DESCRIPTION("MD RAID framework");
->> --
->> 2.39.2
->>
-> 
-> Hi
-> 
-> Thanks for finding this problem in time. The default of this kernel
-> module is true. I don't think people can check new kernel modules
-> after updating to a new kernel. They will find the array can't
-> assemble and report bugs. You already use pad3, is it good to remove
-> the check about pad3 directly here?
-> 
-> By the way, have you run the regression tests?
-> 
-> Regards
-> Xiao
-> 
-> 
-> .
+On Tue, Nov 04, 2025 at 11:30:18AM +0900, Greg Kroah-Hartman wrote:
+> On Tue, Nov 04, 2025 at 09:22:42AM +0700, Bagas Sanjaya wrote:
+> > Macro references in Octeon CN10K and TI TPS6954 docs are erroneously
+> > written using :c:macro:: (double colon) rather than :c:macro: (single
+> > colon), making these rendered in htmldocs output as italics with
+> > verbatim roles. Correct them.
+> >=20
+> > Fixes: 5f67eef6dff394 ("misc: mrvl-cn10k-dpi: add Octeon CN10K DPI admi=
+nistrative driver")
+> > Fixes: dce548889650c1 ("Documentation: Add TI TPS6594 PFSM")
+>=20
+> Please break this up into 2 different patches as you are doing 2
+> different things.
 
-Hi Xiao.
+OK, thanks!
 
-Thanks for your review.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Deleting this check directly is risky. For example, in configurable LBS:
-if user sets LBS to 4K, the LBS of a RAID array assembled on old kernel
-becomes 512. Forcing use of this array then risks data loss -- the
-original issue this feature want to solve.
+--lSOn3Rl1q01u6ClR
+Content-Type: application/pgp-signature; name=signature.asc
 
-Future features may also have similar risks, so instead of deleting this
-check directly, I chose to add a module parameter to give users a choice.
-What do you think?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Thanks,
-Nan
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQlqZAAKCRD2uYlJVVFO
+o7GmAQDqB8gDbrktA53sjm3ex+1VOcZCMxkOareCbTLb8rMVNQD9HAR3k6pc345R
+ommijr4R+ev31rX+gxlHfC+0XDNxYwo=
+=w8af
+-----END PGP SIGNATURE-----
 
+--lSOn3Rl1q01u6ClR--
 
