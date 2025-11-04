@@ -1,292 +1,141 @@
-Return-Path: <linux-kernel+bounces-883985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233FEC2F039
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:45:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F826C2F02D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BA44207F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B69213BA9EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AFD25291B;
-	Tue,  4 Nov 2025 02:44:19 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDC924679F;
+	Tue,  4 Nov 2025 02:43:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D5122D7A1;
-	Tue,  4 Nov 2025 02:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C0E22FE0E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762224259; cv=none; b=hYvoWezbY/FaeA/DVsKGLaiJMa3CHYfRMCdJJ/udr0cHl7NwpNABQrp9Ay6Brg39tvy2M91IoRnDkz3Z5VZzv15WlS1rUcHpl3DLkGGVl6dmJPvWd0bCMBgKQjupqYRu7Z4V6aQpdliMoUN/HMQf0xoFZa9ZdxHuFBlf+J0UVPI=
+	t=1762224184; cv=none; b=HASPcj98Qx/XlkEn5Q0V2gN49UJgicWD/rhyuPXQSqw0CSEKT8L2rePBN+l7jozLRWvbp2xPkOT1nf/t2+DsgIyiUl2uiIzztzRrk0htv/cuuGcxDgZdcJt6mh41LzznDjAWLanXGI7lWQ8cwR+UMPdpZbi3pkf9CjZUruqnu5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762224259; c=relaxed/simple;
-	bh=msqjpUW+QiEJLqYmW5J8m4YexABfLAfjDwU83L74MLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJJI5Ro8DntV2NGh2tDZWXODnx5a9Ssp5O9owmrtAoHIex0FQxks+fAR5ScfCMfcxcQe1yaz0u+1N0CQbPTwVX8Reko3dpulvsr+fka7Kkz4lVN7ZF7ZMRzqJjvvLBTobTC58QG4+fm7prwTLoFVyYkXLWQD8IH0wJmfHCq7j9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: esmtpsz16t1762224181t5590cb45
-X-QQ-Originating-IP: EvRggr8iWg+rMKt+SbdgLn51Uv/XopMlLWVk1mWUgqE=
-Received: from [127.0.0.1] ( [116.237.87.237])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Nov 2025 10:42:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17583655265826415366
-Message-ID: <88A0003946F4D3F6+19ac224d-3431-48b5-b8ce-9cae7c7ec264@radxa.com>
-Date: Tue, 4 Nov 2025 10:42:58 +0800
+	s=arc-20240116; t=1762224184; c=relaxed/simple;
+	bh=/PwqJgpx6d83krd2BR/Q94EK2b4ZhuINslZXJfgaVy0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YKeHoR2PuBwNrxB2luzZckisBcXxIFYE48lo41w4alwqX5pVSP6GcUzCQi3Gu75OO80yY/kCfqSZVKSb5zcxNGkgFk40C8FYQ6ERfyV/whIAinXtyvSVdBIf5DmHTjiQoxzdUY+PkmAsoT9XAbkvUiqNf/LtJ4SDTGNhkYe6THY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9483f60a7adso292229439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 18:43:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762224182; x=1762828982;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBIw0SYrhKhi35dC1UwvoNNnW3Il9lAar0bIukFldbU=;
+        b=SNB1Vv7SWhaVRGbyvPIUWGdfOD97O9+fG87VCXTjA9cGQQiC1/sMENwRUM60bJN0lp
+         /jrTWRncTOP37LX9H/YRnFKp0fJZqHdx6FMwAVY8FbtQeUo29XE/N1myOUBeSRdzkJqd
+         dYUFaqZqvNI8O7ao2Qz5uKEO3dyLUNh0h+BLPYFFOEXe5FC9v92mWE5/2eGC1YNT+2+9
+         pzQxxXETt0ETravDtsub1/KQeaAIUl4i8hSYWregQ3KvohjEZm30YsfAVyhnKEy2lGq5
+         HnomkReNqWoxUyK/G7OZlmnZUPtvP6Lftp2pZtQdPHpOSeYIHapUtCUl3TE1BJtioKBV
+         OHUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbePN4cKtyEN7Ssg0cKIPDtcM0qGNq+l9tV9nzI0q2KefNdeNZt+WFPhf0DrVBRr9dqmYP7nRYT/aXQw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd6yHx/YyVoWc17SOC/A50N7mncYljU9I8AgG+JNsapkcK6xNI
+	5m5klwS4OThQhss7axg39I2XUpoeu9knd+0GsKJO967oy+xAhM8/29sPfJHjRYXR5TSTcPfbwMW
+	R95ExaGXOx52xD7AvWZAuSVMqq3kOKSvSBYMJuriPnue1Cqq2qbq4Abjdf04=
+X-Google-Smtp-Source: AGHT+IE4zHEzVucOPYL+xz6/nTZPc+2B+jS+5ktcuCcpH5NHB6J00PeRw7cjAnyYOnMky1QPFtvntV155LaF0SvX5p90Y5mObxH1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] phy: qcom: edp: Add missing ref clock to x1e80100
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Rajendra Nayak <quic_rjendra@quicinc.com>, Johan Hovold <johan@kernel.org>,
- Taniya Das <quic_tdas@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
- <6A43111ED3D39760+a88e4a65-5da8-4d3b-b27e-fa19037462c8@radxa.com>
- <aM1wnAw0mA-iNgJy@linaro.org>
-Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <aM1wnAw0mA-iNgJy@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: MSyoPQEuxKCuFn+gUCRGdo9Xpg+bKyM9N4nZhxvnRyvUNmbYtNj3Pjt9
-	W4PO+M8z7FV559WG/fnt5uWrmfDD4k2FcZtUyZIeQ95/3GVXOM1jh5CGkZbmt7Hz44zETRj
-	j/XXMI+4swLB3GBl3uheGbucFm+l16SWxwl+9C97lWJxvIw/J6PCV9W5eWLG9oFawNv8xMw
-	IU6lkHa3uMrQoo+5nSK28yt5NgsF7AoFJMXKRP/h11LtVbHlLtvVqzm4J8ivhMlzzL1H69c
-	oLimbYhXXVoOe9qafvA5Uobyov2HFxQ7c/cKS5WxX2NSfxumh+1Kq+lQbnsOHqgNMxiWxtS
-	AyHY7l9TMDz7pA4MA2yV+vixRrygVwY67pBvTM+TIChbxyV8q16zxwUCe+bQGrDAq5t/mHZ
-	EuwtRmuSxTN87YQ0qDw92LSFlWHyu/q1XtzvadJqJt85rdY+v727T2IqkMV+uBCdQSkPz9p
-	ZCTRDY+g2ypfPfWcfKRbuWbeyJlkqLIz/1jd7tkpD4ZIkkRJedqjI7oAJWx4ZOXQ1BIZpWW
-	VGZBJQXefyr9OPWt2cMKx1MRFieow/6xvsKPb1wyUh/8zcxH7EcWeIBM/KXCjqO36wiDkDB
-	fAkKK7lE6ZsRPTlQx+bHz0AMBSl9usfdYblN4kHJqgAwa4CVo0oTSx0N+jTgZTcF6nsuz8e
-	Mg67NCeRy2G++9mcyIHo5Bf/ouPxvKHGiHc5RJlxG1QergGKjlrl/Og2Z27vC0mmwxePJOq
-	d1MP1aq6Hgge+iJgK6wcFTzumqT0LP1wUimPhKEk/0K3Hy/10LL0LQDRCJh2hLgObrm14rM
-	KxM12N577HMLi/x84iveDFKW0IzODfOoRZgB/BgqCqLIt54SwKHN7nFaCNr056YttbPJnS4
-	a/ZOYj5BKiepUcgX5Ct0ZzTIADI2PFaLvqb3+QR4OLclut5j8jX2WDI8JHE6Yi2aQQnOEb3
-	wnKbvzglgNN1Vt3/1ogdDHTS/cud6OpREI2hMBGHQ6yJc+lQXg2jhed7DOdZnPF7bqZ2r3L
-	i7vKQo0w==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+X-Received: by 2002:a05:6602:3416:b0:948:27b1:3d0f with SMTP id
+ ca18e2360f4ac-94827b13dd6mr1845011939f.15.1762224182127; Mon, 03 Nov 2025
+ 18:43:02 -0800 (PST)
+Date: Mon, 03 Nov 2025 18:43:02 -0800
+In-Reply-To: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69096836.a70a0220.88fb8.0006.GAE@google.com>
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+From: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org, 
+	joannelkoong@gmail.com, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/19/2025 11:02 PM, Stephan Gerhold wrote:
-> On Fri, Sep 19, 2025 at 07:06:36PM +0800, Xilin Wu wrote:
->> On 9/9/2025 3:33 PM, Abel Vesa wrote:
->>> According to documentation, the DP PHY on x1e80100 has another clock
->>> called ref.
->>>
->>> The current X Elite devices supported upstream work fine without this
->>> clock, because the boot firmware leaves this clock enabled. But we should
->>> not rely on that. Also, when it comes to power management, this clock
->>> needs to be also disabled on suspend. So even though this change breaks
->>> the ABI, it is needed in order to make we disable this clock on runtime
->>> PM, when that is going to be enabled in the driver.
->>>
->>> So rework the driver to allow different number of clocks, fix the
->>> dt-bindings schema and add the clock to the DT node as well.
->>>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->>> Changes in v3:
->>> - Use dev_err_probe() on clocks parsing failure.
->>> - Explain why the ABI break is necessary.
->>> - Drop the extra 'clk' suffix from the clock name. So ref instead of
->>>     refclk.
->>> - Link to v2: https://lore.kernel.org/r/20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org
->>>
->>> Changes in v2:
->>> - Fix schema by adding the minItems, as suggested by Krzysztof.
->>> - Use devm_clk_bulk_get_all, as suggested by Konrad.
->>> - Rephrase the commit messages to reflect the flexible number of clocks.
->>> - Link to v1: https://lore.kernel.org/r/20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org
->>>
->>> ---
->>> Abel Vesa (3):
->>>         dt-bindings: phy: qcom-edp: Add missing clock for X Elite
->>>         phy: qcom: edp: Make the number of clocks flexible
->>>         arm64: dts: qcom: Add missing TCSR ref clock to the DP PHYs
->>>
->>>    .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 28 +++++++++++++++++++++-
->>>    arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 12 ++++++----
->>>    drivers/phy/qualcomm/phy-qcom-edp.c                | 16 ++++++-------
->>>    3 files changed, 43 insertions(+), 13 deletions(-)
->>> ---
->>> base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
->>> change-id: 20250730-phy-qcom-edp-add-missing-refclk-5ab82828f8e7
->>>
->>> Best regards,
->>
->> Hi,
->>
->> I'm observing what looks like a related clock failure on sc8280xp when
->> booting without a monitor connected to a DP-to-HDMI bridge on mdss0_dp2.
->>
->> Do you think sc8280xp might require a similar fix, or could this be a
->> different issue?
->>
->>
->> [    0.390390] ------------[ cut here ]------------
->> [    0.390398] disp0_cc_mdss_dptx2_link_clk_src: rcg didn't update its
->> configuration.
->> [    0.390419] WARNING: CPU: 0 PID: 63 at drivers/clk/qcom/clk-rcg2.c:136
->> update_config+0xa4/0xb0
->> [    0.390439] Modules linked in:
->> [    0.390448] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Not tainted 6.16.3+
->> #45 PREEMPT(lazy)
->> [    0.390455] Hardware name: Qualcomm QRD, BIOS
->> 6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
->> [    0.390460] Workqueue: events_unbound deferred_probe_work_func
->> [    0.390476] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->> BTYPE=--)
->> [    0.390482] pc : update_config+0xa4/0xb0
->> [    0.390492] lr : update_config+0xa4/0xb0
->> [    0.390500] sp : ffff80008351b9e0
->> [    0.390504] x29: ffff80008351b9e0 x28: 0000000000000000 x27:
->> ffff0000850ec3c0
->> [    0.390515] x26: ffff800081205320 x25: 0000000000000002 x24:
->> 0000000000000000
->> [    0.390523] x23: ffff8000812052a0 x22: ffff000080467800 x21:
->> ffff800081207ef0
->> [    0.390531] x20: ffff8000822ad6f0 x19: 0000000000000000 x18:
->> ffffffffffc06b68
->> [    0.390539] x17: 616c707369642e30 x16: 3030313065613a6d x15:
->> ffff800081474230
->> [    0.390547] x14: ffffffffff806b67 x13: 2e6e6f6974617275 x12:
->> 6769666e6f632073
->> [    0.390556] x11: 0000000000000058 x10: 0000000000000018 x9 :
->> ffff8000814742b8
->> [    0.390565] x8 : 0000000000afffa8 x7 : 0000000000000179 x6 :
->> ffff800081f742b8
->> [    0.390574] x5 : ffff800081f742b8 x4 : 0000000000000178 x3 :
->> 00000000fffdffff
->> [    0.390582] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 :
->> 0000000100000000
->> [    0.390591] Call trace:
->> [    0.390595]  update_config+0xa4/0xb0 (P)
->> [    0.390606]  clk_rcg2_set_parent+0x58/0x68
->> [    0.390617]  clk_core_set_parent_nolock+0xc4/0x1e0
->> [    0.390630]  clk_set_parent+0x40/0x144
->> [    0.390638]  of_clk_set_defaults+0x12c/0x520
->> [    0.390645]  platform_probe+0x38/0xdc
->> [    0.390652]  really_probe+0xc0/0x390
->> [    0.390657]  __driver_probe_device+0x7c/0x150
->> [    0.390663]  driver_probe_device+0x40/0x120
->> [    0.390667]  __device_attach_driver+0xbc/0x168
->> [    0.390673]  bus_for_each_drv+0x74/0xc0
->> [    0.390684]  __device_attach+0x9c/0x1ac
->> [    0.390688]  device_initial_probe+0x14/0x20
->> [    0.390694]  bus_probe_device+0x9c/0xa0
->> [    0.390703]  deferred_probe_work_func+0xa8/0xf8
->> [    0.390713]  process_one_work+0x150/0x2b0
->> [    0.390725]  worker_thread+0x2d0/0x3ec
->> [    0.390731]  kthread+0x118/0x1e0
->> [    0.390738]  ret_from_fork+0x10/0x20
->> [    0.390751] ---[ end trace 0000000000000000 ]---
->> [    0.390760] clk: failed to reparent disp0_cc_mdss_dptx2_link_clk_src to
->> aec2a00.phy::link_clk: -16
->> [    0.401093] ------------[ cut here ]------------
->> [    0.401096] disp0_cc_mdss_dptx2_pixel0_clk_src: rcg didn't update its
->> configuration.
->> [    0.401112] WARNING: CPU: 0 PID: 63 at drivers/clk/qcom/clk-rcg2.c:136
->> update_config+0xa4/0xb0
->> [    0.401126] Modules linked in:
->> [    0.401132] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Tainted: G   W
->> 6.16.3+ #45 PREEMPT(lazy)
->> [    0.401141] Tainted: [W]=WARN
->> [    0.401144] Hardware name: Qualcomm QRD, BIOS
->> 6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
->> [    0.401147] Workqueue: events_unbound deferred_probe_work_func
->> [    0.401159] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->> BTYPE=--)
->> [    0.401164] pc : update_config+0xa4/0xb0
->> [    0.401174] lr : update_config+0xa4/0xb0
->> [    0.401182] sp : ffff80008351b9e0
->> [    0.401185] x29: ffff80008351b9e0 x28: 00000000fffffff0 x27:
->> ffff0000850ec3c0
->> [    0.401194] x26: ffff800081205320 x25: 0000000000000002 x24:
->> 0000000000000000
->> [    0.401203] x23: ffff8000812052a0 x22: ffff000080467800 x21:
->> ffff800081207ea0
->> [    0.401211] x20: ffff8000822ad640 x19: 0000000000000000 x18:
->> ffffffffffc07528
->> [    0.401219] x17: 32636561206f7420 x16: 0001020ef3c08cb3 x15:
->> ffff800081474230
->> [    0.401227] x14: ffffffffff807527 x13: 2e6e6f6974617275 x12:
->> 6769666e6f632073
->> [    0.401235] x11: 0000000000000058 x10: 0000000000000018 x9 :
->> ffff8000814742b8
->> [    0.401243] x8 : 0000000000afffa8 x7 : 00000000000001a4 x6 :
->> ffff800081f742b8
->> [    0.401252] x5 : ffff800081f742b8 x4 : 00000000000001a3 x3 :
->> 00000000fffdffff
->> [    0.401260] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 :
->> 0000000100000000
->> [    0.401268] Call trace:
->> [    0.401271]  update_config+0xa4/0xb0 (P)
->> [    0.401281]  clk_rcg2_set_parent+0x58/0x68
->> [    0.401291]  clk_core_set_parent_nolock+0xc4/0x1e0
->> [    0.401299]  clk_set_parent+0x40/0x144
->> [    0.401308]  of_clk_set_defaults+0x12c/0x520
->> [    0.401314]  platform_probe+0x38/0xdc
->> [    0.401321]  really_probe+0xc0/0x390
->> [    0.401325]  __driver_probe_device+0x7c/0x150
->> [    0.401330]  driver_probe_device+0x40/0x120
->> [    0.401335]  __device_attach_driver+0xbc/0x168
->> [    0.401340]  bus_for_each_drv+0x74/0xc0
->> [    0.401349]  __device_attach+0x9c/0x1ac
->> [    0.401353]  device_initial_probe+0x14/0x20
->> [    0.401358]  bus_probe_device+0x9c/0xa0
->> [    0.401367]  deferred_probe_work_func+0xa8/0xf8
->> [    0.401377]  process_one_work+0x150/0x2b0
->> [    0.401384]  worker_thread+0x2d0/0x3ec
->> [    0.401390]  kthread+0x118/0x1e0
->> [    0.401395]  ret_from_fork+0x10/0x20
->> [    0.401405] ---[ end trace 0000000000000000 ]---
->> [    0.401412] clk: failed to reparent disp0_cc_mdss_dptx2_pixel0_clk_src to
->> aec2a00.phy::vco_div_clk: -16
->>
-> 
-> The same happens on the X1E Devkit if there is nothing connected to the
-> HDMI port. I believe you are looking for my patch series instead. :-)
-> 
-> https://lore.kernel.org/r/20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org/T/
-> 
-> If it works for you, replying with a Tested-by there would be much
-> appreciated. I'm still trying to convince folks that the approach of the
-> series is the best way to move forward with this issue. :-)
+Hello,
 
-Sorry for the late reply. For some reason, I completely missed this 
-email. But it does solve the issue for me. Thank you for the fix!
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in get_data
 
-Tested-by: Xilin Wu <sophon@radxa.com> # sc8280xp
-
-> 
-> Thanks,
-> Stephan
-> 
-> 
+loop0: detected capacity change from 0 to 16
+------------[ cut here ]------------
+WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: syz.0.585/7652
+Modules linked in:
+CPU: 1 UID: 0 PID: 7652 Comm: syz.0.585 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
+Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 a7 19 1f 00 90 <0f> 0b 90 eb 05 e8 9c 19 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
+RSP: 0018:ffffc900035170e0 EFLAGS: 00010293
+RAX: ffffffff81a1eee9 RBX: 00003fffffffffff RCX: ffff888033255b80
+RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
+RBP: 0000000000000012 R08: 0000000000000e55 R09: 000000325e213cc7
+R10: 000000325e213cc7 R11: 00001de4c2000037 R12: 0000000000000012
+R13: 0000000000000000 R14: ffffc90003517228 R15: 1ffffffff1bca646
+FS:  00007f44eb8da6c0(0000) GS:ffff888125fda000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f44ea9722e0 CR3: 0000000066344000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ copy_data kernel/printk/printk_ringbuffer.c:1857 [inline]
+ prb_read kernel/printk/printk_ringbuffer.c:1966 [inline]
+ _prb_read_valid+0x672/0xa90 kernel/printk/printk_ringbuffer.c:2143
+ prb_read_valid+0x3c/0x60 kernel/printk/printk_ringbuffer.c:2215
+ printk_get_next_message+0x15c/0x7b0 kernel/printk/printk.c:2978
+ console_emit_next_record kernel/printk/printk.c:3062 [inline]
+ console_flush_one_record kernel/printk/printk.c:3194 [inline]
+ console_flush_all+0x4cc/0xb10 kernel/printk/printk.c:3268
+ __console_flush_and_unlock kernel/printk/printk.c:3298 [inline]
+ console_unlock+0xbb/0x190 kernel/printk/printk.c:3338
+ vprintk_emit+0x4c5/0x590 kernel/printk/printk.c:2423
+ _printk+0xcf/0x120 kernel/printk/printk.c:2448
+ _erofs_printk+0x349/0x410 fs/erofs/super.c:33
+ erofs_fc_fill_super+0x1591/0x1b20 fs/erofs/super.c:746
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1752
+ fc_mount fs/namespace.c:1198 [inline]
+ do_new_mount_fc fs/namespace.c:3641 [inline]
+ do_new_mount+0x302/0xa10 fs/namespace.c:3717
+ do_mount fs/namespace.c:4040 [inline]
+ __do_sys_mount fs/namespace.c:4228 [inline]
+ __se_sys_mount+0x313/0x410 fs/namespace.c:4205
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f44ea99076a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f44eb8d9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f44eb8d9ef0 RCX: 00007f44ea99076a
+RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f44eb8d9eb0
+RBP: 0000200000000180 R08: 00007f44eb8d9ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
+R13: 00007f44eb8d9eb0 R14: 00000000000001a1 R15: 0000200000000080
+ </TASK>
 
 
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Tested on:
+
+commit:         98231209 Add linux-next specific files for 20251103
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1370a292580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
+dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
 
