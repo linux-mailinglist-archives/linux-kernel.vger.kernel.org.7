@@ -1,246 +1,123 @@
-Return-Path: <linux-kernel+bounces-884697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B96C30D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D61B6C30D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AA24275A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF00B4276C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624EC2DCC1B;
-	Tue,  4 Nov 2025 11:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6782EAB66;
+	Tue,  4 Nov 2025 11:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HDx1A+Lq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXxOlMUr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29302D6E6E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204702E8DEA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762256970; cv=none; b=WskIt5Ffho16h0nmFY2B+LVndYX+68/ZhZzc+DtIHniAm7ECcqII9ccR6LCNzjDQqm7C6bjdRSP6N9VQ3S70WF3GA/3QRk8vXLqMte3pcF7vQxO9dg6EUhwqVDVwu2g4EXHsF/dtrPAyQg5I8ziQxOR7IczE55/GaRS4lur1/6M=
+	t=1762257087; cv=none; b=EqfZXr48QgpD46TWd6SE+YvVarHI0MYik4F67LBZTVwOPOjKpatCrFjkOD7iXpaWREcxo94hPx+YlKugxkOZ5ya/I+WVoRMnBK6B1B4t2vq2Q+bHaF2RS3ul3R6AOBXzPLM29g+A9Ttzh0W7xNVZHLkjDnYwj8XfR+EO+2taxmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762256970; c=relaxed/simple;
-	bh=CKT1nhbWtK1ppjtO41KsCtKgqW+QgLN18kyQi1cgNdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kKWJXcvWTbRgoVKwbLEzYnkd4LTFMhJ83iG6vJhWtUQYy7pWp8H2oPzK2kdId2+75WRU0ga5JKjLX/PwVAMksBdErZVC9d9nLIa4FFUy7Qws/ZuPybi1RIo/zjh4htzhish6w7TS+BSsPZLN6RkiHtzqSaNWV3iO7f2U91goH/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HDx1A+Lq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711810948aso38614275e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:49:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762256967; x=1762861767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W3Q3lfgSzo70PNdFL4DM707Bst20OFBSjv1WovPhPE0=;
-        b=HDx1A+LqrrpUNazAYyH+ZnrXLVrSEn8jrsvola2SDmQ9W89NRpw48UUxVc2EoXldBp
-         YRE/7RDnxmOoQ/OSPKqAyUjkmowuEUFA9gA/8CDPrZAe+kRR1Z6VI3w0xoTPtD+1tRIA
-         GRp6YXnIWk8qk6/4MrFkF7/Wg6Delxstid96uGuHILaSM8rmq0We4R+I2KHC/tDOs+58
-         7m803oJgs3OFae2YS8B7JKsIaHN8JsGBHCQGAi2ImiU8aMoqSfvTI7nIYmVMmc1l6P5/
-         j6ieN69X5rxBZ/z8OeDbjFYTIoR5qPFLDZx+Zb2wyVHI97TJQGlKTLr52ej8zucwYKAm
-         nc2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762256967; x=1762861767;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W3Q3lfgSzo70PNdFL4DM707Bst20OFBSjv1WovPhPE0=;
-        b=DRg+JWOKy0uaqbiipJXrmuTX3rnBO6HuUmLzWhS3mJvy4KB5RqE0NKrvObjIOw0FOv
-         Xj/R0d+iSM1Blza6FLAHKmvvTRLUxUDyIwjYFTUuwj/m94l7eJ/YcK9h/M+MI6xFMI5Y
-         uAGhIkiU7AAYBqodrw473AlsRzTv9saoNI0HOhxsT/jK69K8VsOSsrC3Xf5k116rYRDs
-         WhnHfpgmCtWLrXnVm7LAUAwIzXbsHkEJ+YT3oy+UTPAgL+P+5FGZXT6QC7KeFvzvLqNH
-         SOm9zIHft1qnXAuUjbOPrgSPAQtEsoTeyoXfUUtL6LJ/No/qgJ6+cHj1SeL4MVsHsVXL
-         YuQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqpu2z4P2WpkxtvMety6coAVmpY97/Wf/veHzGKqwlRzYhDc1EYuS7SrNphDWDKUhWes41heRP7OZaANY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdmiQ7YVGe3cN5xwA/ax8EnfqU316y9prbHen6XNVTNZ+VEBFu
-	jcjF+z6SHjMQIfwVR7D8sEh4kQK126qrovwK7gEeU2C7D1ilviwA4cLwZQstTxk8TM0=
-X-Gm-Gg: ASbGncs4pmzyJZ9anUkEVArL7pb46dFaYREFlBHtsbTbqiuDeMLIUv9jEAQYV8Nvw2R
-	f+Ink0cXcd8eBh8jauY296QUjfPtpKd60RZpPLZuEjVpk3iUGEN1dwcLRQTPS9WIT3TE4nL5z0O
-	h8ToxQTBwrvmwW4blnpiSI7sZo7x8lA9hZiT0JoTWoR8U76sEeP5RbJn0OwaVntbE/VjkZVU+h2
-	TKcPyGkbkcZY8XpjPpFlrcZLDMbTM2js+q07g8dLtGNDQhSoTBgGV3YdNQEq0fcP7BkZ1tuSadj
-	8dYlk+doCMKlHaL1MAm75R42+e8ddD2jRNSLJUyVWCzFwTJKEARa9omFqaTIe3y0Jbn3Nuaivwk
-	ysurub86Bnjj/GNfzpz8yGZclvK6YeAV/glfU4z3XPPcYooCfamrIRq5kUvN4EUOven3DIBeqcV
-	spYfLFAxH0eSkEFKSmqIK0UFecKmZQGgJUtVrzPJCO
-X-Google-Smtp-Source: AGHT+IFbxxKS7M3rAb63teL3DhfpL/hNeaf7jG1V589UZvNdPARtVhJN/7tTY0bkkAg8PsGFjx+3Jg==
-X-Received: by 2002:a05:600d:835a:b0:46e:3709:d88a with SMTP id 5b1f17b1804b1-47730890ea5mr95596395e9.33.1762256966869;
-        Tue, 04 Nov 2025 03:49:26 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755942772sm16627315e9.5.2025.11.04.03.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 03:49:26 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: support.opensource@diasemi.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] ASoC: da7213: Use component driver suspend/resume
-Date: Tue,  4 Nov 2025 13:49:14 +0200
-Message-ID: <20251104114914.2060603-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762257087; c=relaxed/simple;
+	bh=4sxepXpgXyoI1KPueMhCUrJEif1TBujc2PXqQCP8udA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=subtW+3jJe3YVNM1EaHivyIOPPvfCc3xzxIjTsgUdTxHmReiEtJA992cbWDPWuHSxg4fRlfCCqAuyU8/zJsSsiUkLIvhLCIYa1ZQW4Bqfv1wcx+trP/beFco4IN+TXif90f4efeSSQK65bQH9VOj3Z7V23fvp1qsb8gt3ROA5JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXxOlMUr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF0EC116B1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 11:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762257086;
+	bh=4sxepXpgXyoI1KPueMhCUrJEif1TBujc2PXqQCP8udA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hXxOlMUrR+aOK01iiyLx1NZQlQikZHJPsKwQh7vmPl4/eJv0e9fTbOBZqaV9vVvR+
+	 tZYo2HsUOyStR1MTtDGHlENB1NoNjNYdIsX0b6vE+fRhblVSZ6z+Ims5iW5E9D5AoS
+	 rpw1/nvpdqkf3nC5cDmLRTlCZU7gLDmYEdRKoGnDhuP51dT7eL9CgBay3muObANW+t
+	 2Cq8e71QQks+RxVLFQCLxv1M0+5di7ZFp9e5iHqtP432Rv1jVJGMEBFK1uoWcPWOBU
+	 bdcYKw5BRmE6Yp+l/Z3Y1y01OFDXsbVYpD5/h4gQ+XZ4oRFts0lbgScinbJ08NZFDk
+	 T0SLwQij3kjDQ==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640c48b3b90so2848234a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 03:51:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXDs+n594zaTUVIUq2FjoM7N95UQO0JMTpOIdW/T9pB2dPXdGjYP5hY7CxolsEhEXh09qjnJfaF+PYhz6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTDRAWMSFLmie60PO9JiXT31hjuvXxuMxbBaOy+It/mItcWa9B
+	HPpLQprrAPLMGM71eVWGFVhAKcRC/xT39OoTrtoI/17Q2DdxSOWqfOqO+hENbDhlt6nWV6c1TcL
+	KoHBiMaPUDt64IJFL4w9Pg995VxXXzdg=
+X-Google-Smtp-Source: AGHT+IH0IHP2Hd+YGTBC0Qhq/nb8jOkUl6kH3xIHQ6LHWCfBIRs++7edGlN5ue6wvlu/FikZ3jcA7epgb/rbOqFLt1g=
+X-Received: by 2002:a05:6402:440d:b0:640:6512:b9f with SMTP id
+ 4fb4d7f45d1cf-640770209afmr15867978a12.28.1762257085356; Tue, 04 Nov 2025
+ 03:51:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <2025110432-maimed-polio-c7b4@gregkh> <20251104100325.343863-1-pioooooooooip@gmail.com>
+In-Reply-To: <20251104100325.343863-1-pioooooooooip@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 4 Nov 2025 20:51:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_9Vf+ZMhuf8ZWvsize3RJ0SvTWGuEsX11jA8r7tvmXmA@mail.gmail.com>
+X-Gm-Features: AWmQ_bluLJT4i7opQd1DafXRLcECE3PVPLGdL0KCoJwD9OSNgVttDqFLUVcFVaM
+Message-ID: <CAKYAXd_9Vf+ZMhuf8ZWvsize3RJ0SvTWGuEsX11jA8r7tvmXmA@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
+To: Qianchang Zhao <pioooooooooip@gmail.com>
+Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	gregkh@linuxfoundation.org, Zhitong Liu <liuzhitong1993@gmail.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
-and snd_soc_pm_ops is associated with the soc_driver (defined in
-sound/soc/soc-core.c), and there is no parent-child relationship between
-the soc_driver and the DA7213 codec driver, the power management subsystem
-does not enforce a specific suspend/resume order between the DA7213 driver
-and the soc_driver.
-
-Because of this, the different codec component functionalities, called from
-snd_soc_resume() to reconfigure various functions, can race with the
-DA7213 struct dev_pm_ops::resume function, leading to misapplied
-configuration. This occasionally results in clipped sound.
-
-Fix this by dropping the struct dev_pm_ops::{suspend, resume} and use
-instead struct snd_soc_component_driver::{suspend, resume}. This ensures
-the proper configuration sequence is handled by the ASoC subsystem.
-
-Cc: stable@vger.kernel.org
-Fixes: 431e040065c8 ("ASoC: da7213: Add suspend to RAM support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v2:
-- kept runtime PM ops unchanged and re-use them on
-  struct snd_soc_component_driver::{suspend, resume}
-- updated the patch description to reflect the new approach
-- fixed the patch title
-- dropped patch 2/2 from v1 along with the cover letter
-
- sound/soc/codecs/da7213.c | 69 +++++++++++++++++++++++++--------------
- sound/soc/codecs/da7213.h |  1 +
- 2 files changed, 45 insertions(+), 25 deletions(-)
-
-diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index c1657f348ad9..81bd5b03e2b6 100644
---- a/sound/soc/codecs/da7213.c
-+++ b/sound/soc/codecs/da7213.c
-@@ -2124,11 +2124,50 @@ static int da7213_probe(struct snd_soc_component *component)
- 	return 0;
- }
- 
-+static int da7213_runtime_suspend(struct device *dev)
-+{
-+	struct da7213_priv *da7213 = dev_get_drvdata(dev);
-+
-+	regcache_cache_only(da7213->regmap, true);
-+	regcache_mark_dirty(da7213->regmap);
-+	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
-+
-+	return 0;
-+}
-+
-+static int da7213_runtime_resume(struct device *dev)
-+{
-+	struct da7213_priv *da7213 = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
-+	if (ret < 0)
-+		return ret;
-+	regcache_cache_only(da7213->regmap, false);
-+	return regcache_sync(da7213->regmap);
-+}
-+
-+static int da7213_suspend(struct snd_soc_component *component)
-+{
-+	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
-+
-+	return da7213_runtime_suspend(da7213->dev);
-+}
-+
-+static int da7213_resume(struct snd_soc_component *component)
-+{
-+	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
-+
-+	return da7213_runtime_resume(da7213->dev);
-+}
-+
- static const struct snd_soc_component_driver soc_component_dev_da7213 = {
- 	.probe			= da7213_probe,
- 	.set_bias_level		= da7213_set_bias_level,
- 	.controls		= da7213_snd_controls,
- 	.num_controls		= ARRAY_SIZE(da7213_snd_controls),
-+	.suspend		= da7213_suspend,
-+	.resume			= da7213_resume,
- 	.dapm_widgets		= da7213_dapm_widgets,
- 	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
- 	.dapm_routes		= da7213_audio_map,
-@@ -2175,6 +2214,8 @@ static int da7213_i2c_probe(struct i2c_client *i2c)
- 	if (!da7213->fin_min_rate)
- 		return -EINVAL;
- 
-+	da7213->dev = &i2c->dev;
-+
- 	i2c_set_clientdata(i2c, da7213);
- 
- 	/* Get required supplies */
-@@ -2224,31 +2265,9 @@ static void da7213_i2c_remove(struct i2c_client *i2c)
- 	pm_runtime_disable(&i2c->dev);
- }
- 
--static int da7213_runtime_suspend(struct device *dev)
--{
--	struct da7213_priv *da7213 = dev_get_drvdata(dev);
--
--	regcache_cache_only(da7213->regmap, true);
--	regcache_mark_dirty(da7213->regmap);
--	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
--
--	return 0;
--}
--
--static int da7213_runtime_resume(struct device *dev)
--{
--	struct da7213_priv *da7213 = dev_get_drvdata(dev);
--	int ret;
--
--	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
--	if (ret < 0)
--		return ret;
--	regcache_cache_only(da7213->regmap, false);
--	return regcache_sync(da7213->regmap);
--}
--
--static DEFINE_RUNTIME_DEV_PM_OPS(da7213_pm, da7213_runtime_suspend,
--				 da7213_runtime_resume, NULL);
-+static const struct dev_pm_ops da7213_pm = {
-+	RUNTIME_PM_OPS(da7213_runtime_suspend, da7213_runtime_resume, NULL)
-+};
- 
- static const struct i2c_device_id da7213_i2c_id[] = {
- 	{ "da7213" },
-diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
-index b9ab791d6b88..29cbf0eb6124 100644
---- a/sound/soc/codecs/da7213.h
-+++ b/sound/soc/codecs/da7213.h
-@@ -595,6 +595,7 @@ enum da7213_supplies {
- /* Codec private data */
- struct da7213_priv {
- 	struct regmap *regmap;
-+	struct device *dev;
- 	struct mutex ctrl_lock;
- 	struct regulator_bulk_data supplies[DA7213_NUM_SUPPLIES];
- 	struct clk *mclk;
--- 
-2.43.0
-
+On Tue, Nov 4, 2025 at 7:03=E2=80=AFPM Qianchang Zhao <pioooooooooip@gmail.=
+com> wrote:
+>
+> When encrypt_resp() fails at the send path, we only set
+> STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
+> in this tree). Repeating this path leaks kernel memory and can lead to
+> OOM (DoS) when encryption is required.
+>
+> Reproduced on: Linux v6.18-rc2 (self-built test kernel)
+>
+> Fix by freeing the transform buffer and forcing plaintext error reply.
+>
+> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> ---
+>  fs/smb/server/server.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+> index 7b01c7589..15dd13e76 100644
+> --- a/fs/smb/server/server.c
+> +++ b/fs/smb/server/server.c
+> @@ -246,11 +246,11 @@ static void __handle_ksmbd_work(struct ksmbd_work *=
+work,
+>                 rc =3D conn->ops->encrypt_resp(work);
+>                 if (rc < 0) {
+>                         conn->ops->set_rsp_status(work, STATUS_DATA_ERROR=
+);
+> -                        work->encrypted =3D false;
+> -                               if (work->tr_buf) {
+> -                                       kvfree(work->tr_buf);
+> -                                       work->tr_buf =3D NULL;
+> -                                       }
+> +                       work->encrypted =3D false;
+> +                       if (work->tr_buf) {
+> +                               kvfree(work->tr_buf);
+> +                               work->tr_buf =3D NULL;
+> +                       }
+This patch seems to be broken or wrong. Please check the patch again.
+Thanks!
+>                 }
+>         }
+>         if (work->sess)
+> --
+> 2.34.1
+>
 
