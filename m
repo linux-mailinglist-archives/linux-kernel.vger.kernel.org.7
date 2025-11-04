@@ -1,275 +1,238 @@
-Return-Path: <linux-kernel+bounces-884873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF238C315E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:03:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E357DC315F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407643A59C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAACA3A2725
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99F523957D;
-	Tue,  4 Nov 2025 14:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56122156A;
+	Tue,  4 Nov 2025 14:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xzkyk9ai";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XY08L3au"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Gk1vEjCB"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013000.outbound.protection.outlook.com [40.93.201.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C874176ADE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762264831; cv=none; b=AhVqqL6Be4PDPnnutjd3umRYgvHrRouW0+woPmqTH3RwIAQbO3lN5CEOnU2WB1JVdZAgZ4Aok9H7buweDnQRTIby+193gPoYGWrLPi7JNw5cnMY7XRx//x0zPneyVRxdWa1TMclTuTKFp973mlUb6U6vhgR4Qd7pjGGi508x2gg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762264831; c=relaxed/simple;
-	bh=QabnL+Mv9bzmVidWIHwC4eXr6/3IlqWFvu4Hz7QmdEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=InQmBJzQPMUw9Rl5YXVdeITS5ozFuG1ZHBmBE+IAbHR9d1KvjgV2K1wZxZKwPHmtMylutc5a+zbAZUYVshmlYG6okm2awxCkcqAVkKU9Z8H7AuSwLD0k+bJ9JTbDIUkUUWnjsaJGSem8VfU0g52qexIIyEd2yuvguIzeXqIsQH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xzkyk9ai; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XY08L3au; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 4 Nov 2025 15:00:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762264825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ZxK9s3GCxPTuzBYPudki95JBbm95126WkXlLNOyy3pc=;
-	b=Xzkyk9ai2VUBvd1oV8hAoizoAAKykIf/linC67FlQxcGd+z0SouRjibo+02J+Yg5OyJrZJ
-	ggCxETFg9KxFXkTt+tneP+w0gUhALGCyYvvE+THY53NKPWkyf8EsznHbd/s+4vWrs+aNU/
-	oyLfL9hM6tZGxJ65oBhR22gffR1mfrlypWfhJE5ZTVi4mgFVSQ0YAFeGRfDBDoYskJKT9T
-	XelbF0lkqxelPWPjT4iDfAbK4TSjtorLAbpbTRub6kzvbDGwKGTfBVisqL/BBB/EW6cGyA
-	qcowbar3WMOl5dWfARnM659laitmGxYtt20+vpOcanmiJJz7pF1eRe8fNz4xXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762264825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ZxK9s3GCxPTuzBYPudki95JBbm95126WkXlLNOyy3pc=;
-	b=XY08L3aufODJ3ahVeO56DMAH7usM+cxFlNOtmEP6/6HFzN0jRllW26yiDxUyzqkozh3Lfg
-	44q8C366+ot7SUBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Subject: [PATCH] locking/mutex: Redo __mutex_init()
-Message-ID: <20251104140023.jV9j77ld@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2721E22D9ED;
+	Tue,  4 Nov 2025 14:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762264961; cv=fail; b=lnxhjfONVBp4eUs0qY4UA+Qtyx9Uc7CT9/Gka/SZ+g2GpnpAyy3LLayQWlyBx7KineG+IbTYoazaKGZhGRamiDcjWKgRw3sz7M8cQUc8Bb3X97vXA7vtKE0SgBdZAOer+UnfMtFP71vSvkAwwRyfCQfI3YmpSc0qffPQJ55p+ys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762264961; c=relaxed/simple;
+	bh=gEz2+rHSWSYbp7hmrxw8AXW25yf+07ExMCNWpF9SIE0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DiRfcN8FGdexCg5/J2OH9LUcrj1TpR7UluxY11VIUtQKvUQ33ZB7azI6JXTNLdLWM8Wcp5Doz1jsIyDxifV9NvB0kYPBE+TeY4mT9NDC0rO208MczgqMRcJQJbSZQDXnrpKkm66Xl5flXMlTApP4WuVdPUR8OJS6W0U0poYqASA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Gk1vEjCB; arc=fail smtp.client-ip=40.93.201.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KwivA4mHz/nIZCqrZRZyE1m4zyhw5XCRQuexFWf/q0Y1G6SNipLO6erYYKQHYYwKcAjXoOySHo/Gim718LJy91EopjubIVVi5oX+Qf5+DzZozTqNaB/+/E0NBVxL0P9v+qjXOhKAXmrdeLjDn6BZkXbFflAl2CFARRFhYpxdK0YNEED4zdQ/0QgJ8fLVyRn4gekJkmm+hV59tjHaUeKnFJ3gbxeS3rHRE+TTAKjjQ4B29En8MO0+itzf0rtQl9uvsFdWM3j0Lrk1S7PND/y9WRyIiBF5jFW23uvTbfxam7BU3/I76TlHLW+7+GjmJWnU1dAMeponeoIvePJdmHxMHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FmITIElCi+D8OyTjp3/BtR3HKO+jnGZpm0HRO0uDVys=;
+ b=NuJEPWhkqHbstrmIE9r5gNO93nf2u2z3dP4x4H4xVynLFIx7n13GkDaaECXHqgsKMKN2B1TWGJ6fDta+DKS3FKbfeLKKKxyntxPtKMo2bhsAAnsQ996WQ5/kUBa/ubXs/b2mm0OOi5GFfQ8onaJs80/R9/tLsnVfDz6VUbMGuvlow/0mofLP00a6RWdAkPz4eRr8RWsJaNG9PbqViBUgRyWibYBw2AibbkACu4b7waG0alTVqDEROZbInGQeGsSLrEvHbl5GNU21JLF41agIEYzsjP0d/c2KYilbqhv/bf09LvsuE9Pjm3mFbslIA9hmflAuua1hAe2kRU4nXlFMqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FmITIElCi+D8OyTjp3/BtR3HKO+jnGZpm0HRO0uDVys=;
+ b=Gk1vEjCBwOsg7B79Jo6PDduri13dD0/WvliMGYSTAz5W6IiBZeWIIP2ojVq6CT35mDEiS7kw3QO2HhVeRTj7tSZbz2UPqs9BdK1CfWkgUR2T4LONCk+nEh4YZLoAoe/oUugELl9VJZEyz2IcyMJYKPm6RKj+ABtAQWonrXmcC8Iqfdeo7EOA3mONNBirvHH3fSDuek08qg8MwBxaRlIo5u28zuMZYs3SdjOMybrqdm9J8vJ33GglF6BOQ7z1P34v5/IVejckR13iKcrJtcU/vBhkUcncYZsDu8gZYyuhBqbPrwDVU2omn+mCc4m/f5XAhHAcGCQ/UBYQIBNQ2iNtgQ==
+Received: from BY3PR03CA0009.namprd03.prod.outlook.com (2603:10b6:a03:39a::14)
+ by MN2PR12MB4109.namprd12.prod.outlook.com (2603:10b6:208:1d9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
+ 2025 14:02:36 +0000
+Received: from SJ1PEPF00002326.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::5b) by BY3PR03CA0009.outlook.office365.com
+ (2603:10b6:a03:39a::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
+ 4 Nov 2025 14:02:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF00002326.mail.protection.outlook.com (10.167.242.89) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 14:02:35 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
+ 2025 06:02:14 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
+ 2025 06:02:14 -0800
+Received: from inno-vm-xubuntu (10.127.8.11) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Tue, 4 Nov
+ 2025 06:02:04 -0800
+From: Zhi Wang <zhiw@nvidia.com>
+To: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <aliceryhl@google.com>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+	<ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+	<a.hindborg@kernel.org>, <tmgross@umich.edu>, <markus.probst@posteo.de>,
+	<helgaas@kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+	<ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+	<targupta@nvidia.com>, <acourbot@nvidia.com>, <joelagnelf@nvidia.com>,
+	<jhubbard@nvidia.com>, <zhiwang@kernel.org>, Zhi Wang <zhiw@nvidia.com>
+Subject: [PATCH v4 0/4] rust: pci: add config space read/write support
+Date: Tue, 4 Nov 2025 16:01:52 +0200
+Message-ID: <20251104140156.4745-1-zhiw@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002326:EE_|MN2PR12MB4109:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad1db34a-50ab-46b0-5d8c-08de1baacec7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8Wg1M3/17pJ3VE4fH4vHvDlzJ4oAL+YotheTc7ai/nwcQGY6IYBnaueeiLgD?=
+ =?us-ascii?Q?WPEEsqphJGY6ZWMGj/GOcFGMVT65QILSZ/rppMD8ya68OhavyPn0XhBEf8Fs?=
+ =?us-ascii?Q?3+5Pwmx6Uh0pk6KNf5H2n6vCqHiM0ySmqmPEs72CFOp1VEwPaVsNeAxTrpJT?=
+ =?us-ascii?Q?Xbqm3qYLMVNgo+3hoUVWzpIjs+wuootWTs+k02056MUV140xrhu7I1wYM8t0?=
+ =?us-ascii?Q?fHZaA/qYjRDD7J/S9HErQe//gPYVBQnOyjjFC4oUILUy08kk7nctabRebVU2?=
+ =?us-ascii?Q?Ibp+4gbIJpYEMQVjm3yPyRNaDJVhtCkUV6nMMaDMZfMbYhqVvPizTp8+3zn7?=
+ =?us-ascii?Q?V4d6cqBVCrLMVZjtjb7knvTxNsbReU6Q5G1FhCCs10bY1eb/OUtIN6sNl5p0?=
+ =?us-ascii?Q?O77quPOV7vliV5aINEoE9auZOxsj6xNMAGN3OnYahK0zbFPsgsfhkVPV0hXB?=
+ =?us-ascii?Q?3mp2wijZvRzuahshwL39cDSJ2jMZYBmExSsJZAM+btcldsMHpYWNbjcroOUw?=
+ =?us-ascii?Q?H0eOvrGCW4PIQh6/q8bKgRzK+lqiFcOj0O8o/6jDr/OtKJ7/SXqv6JL2ocTX?=
+ =?us-ascii?Q?DxOaKQVxjGBRv851VQ7sZXa1BJ909rRUNNY7QRJ6IbRkvIcjh525IrpjS8Yw?=
+ =?us-ascii?Q?YYrWGhSR6+2hNSsHOEcEHX4WeJLee4wHdzv8DKdjyR1HAke9f0fstJa4Ckte?=
+ =?us-ascii?Q?PH5w+kHmVIDIbj7VhI+JHd+ajYmLi2KlyNRK7EBVazIIancMmWNdLQHKMgd9?=
+ =?us-ascii?Q?9Bi2hjfUQ7FT0NrzpBFMhnBWFi8nY9NWyXaoB+b/eP84yZfq8aAnR0FmH6K0?=
+ =?us-ascii?Q?W9cNTw9Q5+ZP6ZkNalUQT4/7cyrN2OP3QAnMyAbMkFrNaGdlgVxx/TXyDeqy?=
+ =?us-ascii?Q?OQFMiZiKn+2irDdm00lHQlDa3zfRnpnGnFRWO/e4ajIS1fxWGc4qOpW2G9dY?=
+ =?us-ascii?Q?TjPIKwGQTTQntqfYsBm6s+8TzoiA0nHpuzAhAbxEruR41JgQjiev40tyCLww?=
+ =?us-ascii?Q?SusE2qs5dWZQoeJFAk9DPfvYFhb3Yu8WKJ737J3+PW3xR7ep6wuXuvKIqwxY?=
+ =?us-ascii?Q?6RUzTefCfV7ba6bUc9OLi5pz9Zoz+yRgXc5skVAk093mJtJt8RjHy+HIDpup?=
+ =?us-ascii?Q?IOaD/E1b82RsyjOA6uvFlugf8m1uT22YOYHISjwngnU9h0BgNMek1xxfyEd2?=
+ =?us-ascii?Q?KoVIBOfEcXvvNqtf6wOaxOvWwiJabsHxV6lNbX5lPA5NXgROl2jpl0aOxM/q?=
+ =?us-ascii?Q?XNleXR4n/wEy6rsMVMCORQ5k+M10pS8n4+JUoaww1iJpYQSs2YX12irk0zrS?=
+ =?us-ascii?Q?1942YR5Ks802yW8vQNmLl0ARzh3h8/fB3752tej00LH84fw/NNMlcNxAOVj9?=
+ =?us-ascii?Q?QaQvde5/c9zTvL7HOp6iY6jwi+bvet04OWXoDpXg/kPq59bu3B/o7FFjqFZZ?=
+ =?us-ascii?Q?DBoU2pQ/q1YDYyimzxEjrEB3v1GZjByIwUbVORYQaK9aejbC6mxPUnIZXjsd?=
+ =?us-ascii?Q?MsfaLeTXI181/N/fUBm1P5hXKL6XYtTU+tqGDEKVRG0ZUY+CM7RpLcYfnALb?=
+ =?us-ascii?Q?QSdKofv2VWRlyg7zdCg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 14:02:35.9016
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad1db34a-50ab-46b0-5d8c-08de1baacec7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002326.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4109
 
-mutex_init() invokes __mutex_init() providing the name of the lock and
-a pointer to a the lock class. With LOCKDEP enabled this information is
-useful but without LOCKDEP it not used at all. Passing the pointer
-information of the lock class might be considered negligible but the
-name of the lock is passed as well and the string is stored. This
-information is wasting storage.
+In the NVIDIA vGPU RFC [1], the PCI configuration space access is
+required in nova-core for preparing gspVFInfo when vGPU support is
+enabled. This series is the following up of the discussion with Danilo
+for how to introduce support of PCI configuration space access in Rust
+PCI abstractions.
 
-Split __mutex_init() into a _plain() variant doing the initialisation of
-the lock and a _ld() version which does _plain() plus the lockdep bits.
-Restrict the lockdep version to lockdep enabled builds allowing the
-compiler to remove the unused parameter.
+v4:
 
-This results in the following size reduction:
+- Refactor the SIZE constant to be an associated constant. (Alice)
+- Remove the default method implementations in the Io trait. (Alice)
+- Make cfg_size() private. (Danilo/Bjorn)
+- Implement the infallible accessors of ConfigSpace. (Danilo)
+- Create a new Io64 trait specifically for 64-bit accessors. (Danilo)
+- Provide two separate methods for driver: config_space() and
+  config_space_extended(). (Danilo)
+- Update the sample driver to test the infallible accessors. (Danilo)
 
-      text     data       bss        dec  filename
-| 30237599  8161430   1176624   39575653  vmlinux.defconfig
-| 30233269  8149142   1176560   39558971  vmlinux.defconfig.patched
-   -4.2KiB   -12KiB
+v3:
 
-| 32455099  8471098  12934684   53860881  vmlinux.defconfig.lockdep
-| 32455100  8471098  12934684   53860882  vmlinux.defconfig.patched.lockdep
+- Turn offset_valid() into a private function of kernel::io:Io. (Alex)
+- Separate try and non-try variants. (Danilo)
+- Move all the {try_}{read,write}{8,16,32,64} accessors to the I/O trait.
+  (Danilo)
+- Replace the hardcoded MMIO type constraint with a generic trait bound
+  so that register! macro can be used in other places. (Danilo)
+- Fix doctest. (John)
+- Add an enum for PCI configuration space size. (Danilo)
+- Refine the patch comments. (Bjorn)
 
-| 27152407  7191822   2068040   36412269  vmlinux.defconfig.preempt_rt
-| 27145937  7183630   2067976   36397543  vmlinux.defconfig.patched.preempt_rt
-   -6.3KiB    -8KiB
+v2:
 
-| 29382020  7505742  13784608   50672370  vmlinux.defconfig.preempt_rt.lockdep
-| 29376229  7505742  13784544   50666515  vmlinux.defconfig.patched.preempt_rt.lockdep
-   -5.6KiB
+- Factor out common trait as 'Io' and keep the rest routines in original
+  'Io' as 'Mmio'. (Danilo)
+- Rename 'IoRaw' to 'MmioRaw'. Update the bus MMIO implementation to use
+  'MmioRaw'.
+- Introduce pci::Device<Bound>::config_space(). (Danilo)
+- Implement both infallible and fallible read/write routines, the device
+  driver decicdes which version should be used.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/mutex.h        | 45 ++++++++++++++++++++++++++++--------
- kernel/locking/mutex.c       | 22 +++++++++++++-----
- kernel/locking/rtmutex_api.c | 19 +++++++++++----
- 3 files changed, 66 insertions(+), 20 deletions(-)
+This ideas of this series are:
 
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 847b81ca64368..e731ef82aa0a0 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -86,8 +86,23 @@ do {									\
- #define DEFINE_MUTEX(mutexname) \
- 	struct mutex mutexname = __MUTEX_INITIALIZER(mutexname)
- 
--extern void __mutex_init(struct mutex *lock, const char *name,
--			 struct lock_class_key *key);
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+void mutex_init_ld(struct mutex *lock, const char *name, struct lock_class_key *key);
-+
-+static inline void __mutex_init(struct mutex *lock, const char *name,
-+				struct lock_class_key *key)
-+{
-+	mutex_init_ld(lock, name, key);
-+}
-+#else
-+extern void mutex_init_plain(struct mutex *lock);
-+
-+static inline void __mutex_init(struct mutex *lock, const char *name,
-+				struct lock_class_key *key)
-+{
-+	mutex_init_plain(lock);
-+}
-+#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
- 
- /**
-  * mutex_is_locked - is the mutex locked
-@@ -111,17 +126,27 @@ extern bool mutex_is_locked(struct mutex *lock);
- #define DEFINE_MUTEX(mutexname)						\
- 	struct mutex mutexname = __MUTEX_INITIALIZER(mutexname)
- 
--extern void __mutex_rt_init(struct mutex *lock, const char *name,
--			    struct lock_class_key *key);
--
- #define mutex_is_locked(l)	rt_mutex_base_is_locked(&(l)->rtmutex)
- 
--#define __mutex_init(mutex, name, key)			\
--do {							\
--	rt_mutex_base_init(&(mutex)->rtmutex);		\
--	__mutex_rt_init((mutex), name, key);		\
--} while (0)
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+extern void mutex_rt_init_ld(struct mutex *mutex, const char *name,
-+			     struct lock_class_key *key);
- 
-+static inline void __mutex_init(struct mutex *lock, const char *name,
-+				struct lock_class_key *key)
-+{
-+	mutex_rt_init_ld(lock, name, key);
-+}
-+
-+#else
-+extern void mutex_rt_init_plain(struct mutex *mutex);
-+
-+static inline void __mutex_init(struct mutex *lock, const char *name,
-+				struct lock_class_key *key)
-+{
-+	mutex_rt_init_plain(lock);
-+}
-+#endif /* !CONFIG_LOCKDEP */
- #endif /* CONFIG_PREEMPT_RT */
- 
- #ifdef CONFIG_DEBUG_MUTEXES
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index de7d6702cd96c..5a69d2bd44069 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -43,8 +43,7 @@
- # define MUTEX_WARN_ON(cond)
- #endif
- 
--void
--__mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
-+static void __mutex_init_plain(struct mutex *lock)
- {
- 	atomic_long_set(&lock->owner, 0);
- 	raw_spin_lock_init(&lock->wait_lock);
-@@ -52,10 +51,7 @@ __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
- #ifdef CONFIG_MUTEX_SPIN_ON_OWNER
- 	osq_lock_init(&lock->osq);
- #endif
--
--	debug_mutex_init(lock, name, key);
- }
--EXPORT_SYMBOL(__mutex_init);
- 
- static inline struct task_struct *__owner_task(unsigned long owner)
- {
-@@ -142,6 +138,11 @@ static inline bool __mutex_trylock(struct mutex *lock)
-  * There is nothing that would stop spreading the lockdep annotations outwards
-  * except more code.
-  */
-+void mutex_init_plain(struct mutex *lock)
-+{
-+	__mutex_init_plain(lock);
-+}
-+EXPORT_SYMBOL(mutex_init_plain);
- 
- /*
-  * Optimistic trylock that only works in the uncontended case. Make sure to
-@@ -166,7 +167,16 @@ static __always_inline bool __mutex_unlock_fast(struct mutex *lock)
- 
- 	return atomic_long_try_cmpxchg_release(&lock->owner, &curr, 0UL);
- }
--#endif
-+
-+#else /* !CONFIG_DEBUG_LOCK_ALLOC */
-+
-+void mutex_init_ld(struct mutex *lock, const char *name, struct lock_class_key *key)
-+{
-+	__mutex_init_plain(lock);
-+	debug_mutex_init(lock, name, key);
-+}
-+EXPORT_SYMBOL(mutex_init_ld);
-+#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
- 
- static inline void __mutex_set_flag(struct mutex *lock, unsigned long flag)
- {
-diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
-index bafd5af98eaec..43d62b29739fc 100644
---- a/kernel/locking/rtmutex_api.c
-+++ b/kernel/locking/rtmutex_api.c
-@@ -515,13 +515,11 @@ void rt_mutex_debug_task_free(struct task_struct *task)
- 
- #ifdef CONFIG_PREEMPT_RT
- /* Mutexes */
--void __mutex_rt_init(struct mutex *mutex, const char *name,
--		     struct lock_class_key *key)
-+static void __mutex_rt_init_plain(struct mutex *mutex)
- {
-+	rt_mutex_base_init(&mutex->rtmutex);
- 	debug_check_no_locks_freed((void *)mutex, sizeof(*mutex));
--	lockdep_init_map_wait(&mutex->dep_map, name, key, 0, LD_WAIT_SLEEP);
- }
--EXPORT_SYMBOL(__mutex_rt_init);
- 
- static __always_inline int __mutex_lock_common(struct mutex *lock,
- 					       unsigned int state,
-@@ -542,6 +540,13 @@ static __always_inline int __mutex_lock_common(struct mutex *lock,
- }
- 
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
-+void mutex_rt_init_ld(struct mutex *mutex, const char *name, struct lock_class_key *key)
-+{
-+	__mutex_rt_init_plain(mutex);
-+	lockdep_init_map_wait(&mutex->dep_map, name, key, 0, LD_WAIT_SLEEP);
-+}
-+EXPORT_SYMBOL(mutex_rt_init_ld);
-+
- void __sched mutex_lock_nested(struct mutex *lock, unsigned int subclass)
- {
- 	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, subclass, NULL, _RET_IP_);
-@@ -598,6 +603,12 @@ int __sched _mutex_trylock_nest_lock(struct mutex *lock,
- EXPORT_SYMBOL_GPL(_mutex_trylock_nest_lock);
- #else /* CONFIG_DEBUG_LOCK_ALLOC */
- 
-+void mutex_rt_init_plain(struct mutex *mutex)
-+{
-+	__mutex_rt_init_plain(mutex);
-+}
-+EXPORT_SYMBOL(mutex_rt_init_plain);
-+
- void __sched mutex_lock(struct mutex *lock)
- {
- 	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, 0, NULL, _RET_IP_);
+- Factor out a common trait IoRegion for other accessors to share the
+  same compiling/runtime check like before.
+
+- Factor the MMIO read/write macros from the define_read! and
+  define_write! macros. Thus, define_{read, write}! can be used in other
+  backend.
+
+  In detail:
+
+  * Introduce `call_mmio_read!` and `call_mmio_write!` helper macros
+    to encapsulate the unsafe FFI calls.
+  * Update `define_read!` and `define_write!` macros to delegate to
+    the call macros.
+  * Export `define_read` and `define_write` so they can be reused
+    for other I/O backends (e.g. PCI config space).
+
+- Add a helper to query configuration space size. This is mostly for
+  runtime check.
+
+- Implement the PCI configuration space access backend in PCI
+  Abstractions.
+
+- Add tests for config space routines in rust PCI sample driver.
+
+[1] https://lore.kernel.org/all/20250903221111.3866249-1-zhiw@nvidia.com/
+
+Zhi Wang (4):
+  rust: io: factor common I/O helpers into Io trait
+  rust: io: factor out MMIO read/write macros
+  rust: pci: add config space read/write support
+  sample: rust: pci: add tests for config space routines
+
+ drivers/gpu/nova-core/regs/macros.rs |  90 ++++----
+ drivers/gpu/nova-core/vbios.rs       |   1 +
+ rust/kernel/devres.rs                |  12 +-
+ rust/kernel/io.rs                    | 298 ++++++++++++++++++++-------
+ rust/kernel/io/mem.rs                |  16 +-
+ rust/kernel/io/poll.rs               |   4 +-
+ rust/kernel/pci.rs                   | 156 +++++++++++++-
+ samples/rust/rust_driver_pci.rs      |  48 ++++-
+ 8 files changed, 483 insertions(+), 142 deletions(-)
+
 -- 
 2.51.0
 
