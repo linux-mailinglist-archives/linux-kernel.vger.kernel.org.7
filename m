@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-885415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5728AC32D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:39:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79AFC32D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3063ABF40
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:38:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06E594EDF6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6512DF137;
-	Tue,  4 Nov 2025 19:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E36126F2B6;
+	Tue,  4 Nov 2025 19:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSr+U9qg"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO13qzGY"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0BE2C11CB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B422DF12D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762285088; cv=none; b=kTOEl1zc9RrAMwbKI6ZlkrViQ0/ro/27Grd00WcM/++SAoB3IRFDYkGCrCia+je83hJN2wA1K4u8MQzzeGVgk5nRY5JbglDFKpHUJJBsNRQRvEpLQ+a00FUkfz1o7e/j0GN4YQpkFVuRSwktEyyPFIc80kjYovWXJrm4ah41/20=
+	t=1762285090; cv=none; b=L9aPkfUF94FM35n7SVzRDx8YwyPR2ntxC1BIS90YtCzWSgEX9BhC7BQchqfbfb5TmpHvMerU5kNl2ZHlNUhGEPpGOqhUh+BWgn3mG4pTynG2u6rXr/8+nCgfHEFOb+DfWX8T/KZfs7hr9C4VyaoG0Y9wmu/HIl+j1RssNmqn0Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762285088; c=relaxed/simple;
-	bh=3pYC4Iey0LdseRucUJ2RjhbYeVK5q6IOowwADEtVzQg=;
+	s=arc-20240116; t=1762285090; c=relaxed/simple;
+	bh=5W8zvHEGFk7W8lcQQ51BUT76U5kQ6osgcX9DQnxB/Ls=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cBhPeop6OLxjva0vKSIGzlwC3z2PWvzArFa/FYD0TKQaetr6jWcOXh+dX33Va71ykW8o9Ev6lhA+5czWJbfkrTKDGOkW6EK9qCGfnzwpKju8wZpDs+iH2pF37bUx8WZzFB6kfonUIMf+ivcPjH6Fl0JB0/cZWby5P2yvrLFN6AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSr+U9qg; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=I1/4fVc55R8qMpt8ds3Ba5rt2VHCST+bgD4bhys8sIMGqirvxEer4KHdTL8uR2/UVIYTzEb0i32lMkf5BeWvdx89jtTfli2JLML0yFo9qXKLlyOvPjwMYbyTfAduQ2yM9fV8TtLXNn4uzmcbuzXUc45/4nnGp0pIgz75QGhEMpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YO13qzGY; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42557c5cedcso3581426f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:38:06 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47754b9b050so9398755e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:38:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762285085; x=1762889885; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762285087; x=1762889887; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fYgheLN32MsYWSBCELea5jaxOC/f7khm7azED0VQk/A=;
-        b=lSr+U9qgvSUApP3hCVL9arkpEZ+pAsMel5kCqWI7emW7XTMMXanoDcz1tOEtQQS+Ns
-         I9cG/if3YzrR4ifL7mZEQyXrPQCNGtuWBQvo0yEvrwyYhDOZ4SiOQr5ybkhxKPtD4MSL
-         WjkjIO4E8tX/YbDg3ATgRt5NX99tW60ew6G4kbLc+lL4qIuVT/4NrezWjBX0hZg6cfls
-         /equ1eKdzZLyAorzIO5e7OacGkS1gCtNp5JLEJHYe+SoGeFl66R/2TDQsW8ppU4wKfzX
-         RMIv6VE33AzIQRE+Bfn6ei9NEvdAlxqZzZsn4AR6VyPhikJzlTZOL1SQWBMz+otXuaJg
-         G2Cg==
+        bh=v+vu3BFi3eMkE8uZDd0o1RrqC7gSQvZv7E8xHlJ1qM4=;
+        b=YO13qzGYagGV3Qe7yiMsMTnKPlD2qIs/XToDPOdCAXGsgCcFMhKKFFvke1HQZfJ+G6
+         D0F0YOeAab6njCqlymHHPaU4+U11aUwgDsZByiADargQT2AWh+cO6PbZJG/Q4nbNFBZt
+         SW7zNopxEBqCb6JU1BoSgg/cHFzjwoBpjvT6V8SF7CIVdjhe2Z0Tcr3zLCEsSGCF6nMQ
+         /C4OLXJYkOl7yNkkYRhxjgmHhsptIaNAqYlxqcaXytWHrHpML/6SPqEN/l/rkKfTVxVd
+         Fxt6cpdeNEShRapjJo+2CRZ+GZte0RA8crNERH25U3FmCN5qY2SwdZ0H1rMfBmW2dDQm
+         d2OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762285085; x=1762889885;
+        d=1e100.net; s=20230601; t=1762285087; x=1762889887;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fYgheLN32MsYWSBCELea5jaxOC/f7khm7azED0VQk/A=;
-        b=LF/fd6McR/esBsnW4pojFkaAeJyQ61h8Xsmry42nEimMkURc7eQzMWv6al1rFJt4+y
-         rqXYvK5ESgeBVNIFh+Om219b4P6sUJVcciQx9XuQtx4B7OBgV/6h4xKgVLIZgIqd9CiE
-         kXruTEgOznfR3Gpw+lCcqKjl1bNZ0ExyLFxnrfzli2WvS2Tha6nHGDB5Ziu4JtCRy9En
-         H+wuAvABwQ2prOwrf9uEQRQcve4Cr2/MW0WWWY1GRNleVKHFX2/txqK0x6fwwMjSslKA
-         TV3iuAIv97rJuY6lEQ59jN/tx1RricjL1hFtlrWDn+moWmfCNZ/8zFBXqaaG2wJmJ4n1
-         Qb7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWM15oC2cQxef8GhuCiAk/lvwype8mpMm9CBRZsWRKG6Vjj1+WkitYx/a2wRPZgNxuWXSBr+hSoK1qhgwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH7JPrTJxQzMIFC5h82xHgqfIwnm8TtDWUoM8roIuOfNQwu5We
-	Oc7Qf2CPqjcFSwmLFxSIxTmoyBe3K84w7zAX76IKzOiAmj0prww7JnJT
-X-Gm-Gg: ASbGncugbRpSyQ7HHPZrFT2MYrTCW+r2yR+iV5zUwAT7zogLT5jiXZoAaSKvycPAZ4E
-	DYruCrMEx47H4dfqPifNpLWS5fFjvH+bzykqN9A7b7cfyjeHCvRAR5drkgsBKs7R6AR6rreOmeX
-	SjGHKSPrrTZtr74Lt6raT8vBePOHLimW87/R4KJVzZRurtp3EhnwVh0q/jxlLcRaqURQfBnQvf/
-	niVxNpF/oyw7Xtv5TSJ5d828HHgs98/VO3bNvbSWsQEPN4bBSisEEBqlhbrmL9+jsGPpYtI28lq
-	pbM0Tieh1gaaM4v6o/4YdHut8hJjlFp+Fbx9zfU4yPDUzIxCIpJyeVwcsfYvEMxNCYgpbWca1SG
-	TgDSq/iRSj6TWW2VzllMjtkS56MNy8WVDh1kpGKrwVFqCzbgNQbOFxgNL2eN/DYPNY+u8+bSnat
-	p/kYYsuiandlz3vR4QCQ==
-X-Google-Smtp-Source: AGHT+IGkjMaYQNAOAYMzRxYOldsYeku+UMuN0PlwdK6jupihKC6msqilxvcotQ3WG/fqCuJVIjKe9g==
-X-Received: by 2002:a05:6000:210c:b0:429:dde3:659d with SMTP id ffacd0b85a97d-429e3309ae3mr294212f8f.47.1762285084988;
-        Tue, 04 Nov 2025 11:38:04 -0800 (PST)
+        bh=v+vu3BFi3eMkE8uZDd0o1RrqC7gSQvZv7E8xHlJ1qM4=;
+        b=pIHRBQGIPrN5+AzAd5jm8FG1vco1JzQPYXXTjunZ+bq53bFGo3vUYh74AuBRevSSvf
+         AnhpSF87cuL+Isko7jCZfiezvaZvEYoBFeLYqCod+KB3nmfnd+XOvkHv3rtywfk1ayau
+         UA9L0fO6RxdZlWcXc3s2aaR+qOsegFH9O7wWc/DMgo+c9DGuy+IdmiUndKhjrBY2YxPT
+         ZEZBk+tFTtTjZNJDXVWxy54+j+KPJ3Vqlt6qJDjty5Lgb6nDqjmxqEhR/pz1oezharSw
+         X2LgB3huGBXGI/3MkqGAjetTsKJscK2y+LT3lr597ZQge57WQ7UnbJEROLgQt1vB9PUk
+         DxEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUndM8yZ6YgcNiQDqngUQ6W/yonhd6/Uw76Zb//Wy+4EqJOh44qmUCMdLnjwX54H0uKny5AFEnAjAdSbDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuVuAcQ2W/ACxiehxQNAaVQT1WSzxVUCUENiGuanXvSz6+ev8a
+	Pi+UpV74WyS967qzwa8sCqygShSpCRQyqXDcfL0xUkevS2xzaz186lse
+X-Gm-Gg: ASbGncuuayWl0ypQ1cnQoAymtZj43m2ZXWZl1vYyGMATTGUGTwuZFjAX5R4P1VqSbVF
+	TXWV0tqguNwDNcwBdf/zV7HWsPz7GEldAB/fpGBnCH/BMDEBkApx4e/0LP6H3vadFk89P3B4VnU
+	/IaAlFviE4RnqvwxytQ0Rqbv+Ehn4yfG8P3UbbIiuSZVFPTRpKWnaDH5o/5TYvw6KUlfkm6Cc0F
+	AEf+g9xUyObuydcJbdFUpyLDqb3JwhftsVyYKeZFUl43RxpKBLmx4mFiwE31yRwAif1jWgM6zKb
+	5OlG3+Wju/La/Fn4FGK2AHxybbW/Pb/G2e0FKO8IwIeTk7v2x8kEM89mYBF0RxNf9kelELWoGFl
+	jmZEd7L6cbLMkDPhIKWNzaHUdH62C6uW8IPa2DTRwtGKESOzTWmCxOW/V4eJy/1UYNJZXUC4OnA
+	Rw93OcuyIxllAk9lvatemThQZEoLDd
+X-Google-Smtp-Source: AGHT+IGSD5JKDCdaTTmAp0MYMS91XvkPp8oz/dP1zmqG4g5rPRzVgWr7fySwvEo5EuPqrlAAIl7B9Q==
+X-Received: by 2002:a05:600c:4444:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-4775ce2878cmr4985525e9.36.1762285087353;
+        Tue, 04 Nov 2025 11:38:07 -0800 (PST)
 Received: from archito ([2a01:e0a:acc:bb60:756b:64e3:20ef:1d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce3ef38sm5549195e9.17.2025.11.04.11.38.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce3ef38sm5549195e9.17.2025.11.04.11.38.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 11:38:04 -0800 (PST)
+        Tue, 04 Nov 2025 11:38:07 -0800 (PST)
 From: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
 To: Danilo Krummrich <dakr@kernel.org>,
 	Alexandre Courbot <acourbot@nvidia.com>,
@@ -92,9 +92,9 @@ Cc: nouveau@lists.freedesktop.org,
 	Trevor Gross <tmgross@umich.edu>,
 	rust-for-linux@vger.kernel.org,
 	Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
-Subject: [PATCH v3 3/4] nova-core: Simplify `DmaObject::from_data` in nova-core/dma.rs
-Date: Tue,  4 Nov 2025 20:37:50 +0100
-Message-ID: <20251104193756.57726-3-delcastillodelarosadaniel@gmail.com>
+Subject: [PATCH v3 4/4] nova: Update the nova todo list
+Date: Tue,  4 Nov 2025 20:37:51 +0100
+Message-ID: <20251104193756.57726-4-delcastillodelarosadaniel@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251104193756.57726-1-delcastillodelarosadaniel@gmail.com>
 References: <20251104193756.57726-1-delcastillodelarosadaniel@gmail.com>
@@ -106,53 +106,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch solves one of the existing mentions of COHA, a task
-in the Nova task list about improving the `CoherentAllocation` API.
-It uses the `write` method from `CoherentAllocation`.
+This small patch updates the nova todo list to
+remove some tasks that have been solved lately:
+* COHA is solved in this patch series
+* TRSM was solved recently [1]
+
+[1] https://lore.kernel.org/rust-for-linux/DCEJ9SV4LBJL.11EUZVXX6EB9H@nvidia.com/
 
 Signed-off-by: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
-
 ---
+ Documentation/gpu/nova/core/todo.rst | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-V1 -> V2: Split previous patch into two. One per reference to COHA.
-          Added more details in Safety comment. Let me know your thoughts
-          Kept the original map to avoid a temporary variable
-
-V2 -> V3: Fixed compilation error.
----
- drivers/gpu/nova-core/dma.rs | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
-index 94f44bcfd748..9acbe2e4d4e5 100644
---- a/drivers/gpu/nova-core/dma.rs
-+++ b/drivers/gpu/nova-core/dma.rs
-@@ -25,20 +25,11 @@ pub(crate) fn new(dev: &device::Device<device::Bound>, len: usize) -> Result<Sel
-     }
+diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
+index c55c7bedbfdf..35cc7c31d423 100644
+--- a/Documentation/gpu/nova/core/todo.rst
++++ b/Documentation/gpu/nova/core/todo.rst
+@@ -44,25 +44,6 @@ automatically generates the corresponding mappings between a value and a number.
+ | Complexity: Beginner
+ | Link: https://docs.rs/num/latest/num/trait.FromPrimitive.html
  
-     pub(crate) fn from_data(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
--        Self::new(dev, data.len()).map(|mut dma_obj| {
--            // TODO[COHA]: replace with `CoherentAllocation::write()` once available.
--            // SAFETY:
--            // - `dma_obj`'s size is at least `data.len()`.
--            // - We have just created this object and there is no other user at this stage.
--            unsafe {
--                core::ptr::copy_nonoverlapping(
--                    data.as_ptr(),
--                    dma_obj.dma.start_ptr_mut(),
--                    data.len(),
--                );
--            }
+-Conversion from byte slices for types implementing FromBytes [TRSM]
+--------------------------------------------------------------------
 -
--            dma_obj
-+        Self::new(dev, data.len()).and_then(|mut dma_obj| {
-+            // SAFETY: We have just allocated the DMA memory, we are the only users and
-+            // we haven't made the device aware of the handle yet.
-+            unsafe { dma_obj.write(data, 0)? }
-+            Ok(dma_obj)
-         })
-     }
- }
+-We retrieve several structures from byte streams coming from the BIOS or loaded
+-firmware. At the moment converting the bytes slice into the proper type require
+-an inelegant `unsafe` operation; this will go away once `FromBytes` implements
+-a proper `from_bytes` method.
+-
+-| Complexity: Beginner
+-
+-CoherentAllocation improvements [COHA]
+---------------------------------------
+-
+-`CoherentAllocation` needs a safe way to write into the allocation, and to
+-obtain slices within the allocation.
+-
+-| Complexity: Beginner
+-| Contact: Abdiel Janulgue
+-
+ Generic register abstraction [REGA]
+ -----------------------------------
+ 
 -- 
 2.51.2
 
