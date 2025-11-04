@@ -1,96 +1,95 @@
-Return-Path: <linux-kernel+bounces-884528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD2C30583
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:51:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F22C30595
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EE32834DE5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8BB189F5C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027723126AB;
-	Tue,  4 Nov 2025 09:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDE7313524;
+	Tue,  4 Nov 2025 09:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="w/wF74mo"
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1Pc2wd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581A3313271;
-	Tue,  4 Nov 2025 09:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2962459DC;
+	Tue,  4 Nov 2025 09:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762249859; cv=none; b=NaxtqE+f2alId4CMgaWwdj8GxyVxIN373epP0mbKxF0YpdWjqoZW9+mAGRGSbKAig+tYXgqJflQTwQ1NGMe5gp1LS0S7fz0g40JdauuOnhbcitONZ6pKvu2Lqq1heg4teGTDLnzv7EQyKg+UM9nexa0VglU5w6DyvRKa4B5Vr/Y=
+	t=1762249920; cv=none; b=QQHbnBGtPhwE7+KCRkmAAzC6ZJE4E7bnxrIpWm9eZM3jU0VXIZSWLDJsErMOoeoY4owcXrgpFqeKHBus8URamJtu92Et9u5t73EmJ/Bn4BGJ5tw5vGD0UBt6jICt0C0IpUnklTlDaEgQvcam3DYdqnzLVBeem7al+tmBAIdJJZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762249859; c=relaxed/simple;
-	bh=HabB8ldMI2OOh45J3M/iCspbQZpiYRCHjHPqoBhZBuA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G791zLaUS0OYULJMs1uzN0GGvkXyKiChdzJSoZ0JSAiiRi/Yw/Q1gw5bzVxtRmhuWEx2t6n2sNRyTCuJ69obXYopy8c+ME3594bQRU3ibTTEeSmly1WOJgWX2hjQRow0HVV3WMwYypTdpZrW79DdFzBAqPgAzzo0NqCKWcxnplk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=w/wF74mo; arc=none smtp.client-ip=113.46.200.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=t8ryYqzNzuomFM1qI/F9XXL0yM4A3U1rNvzkeTZ8nMY=;
-	b=w/wF74mo1/KwoyB4tDKQy8+xB8kViYjE1uL7ZkflzS+/rP/iIWNQoEXBIzZjAZ3+X8X8iOLE9
-	WnXgY/JOX/VGQ7dBqCOVHVi2P5xnsvukEBmMytUG9LEDroc5xVe3QENpNXf1HWq8jp+kA7FHJ3m
-	DaRzAsYEEupFXMccVPL+ZcA=
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4d13ZS5RNGz1K96k;
-	Tue,  4 Nov 2025 17:49:20 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id B6A6C140155;
-	Tue,  4 Nov 2025 17:50:53 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 17:50:52 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <david@kernel.org>
-CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <bp@alien8.de>,
-	<dave.hansen@intel.com>, <dave.hansen@linux.intel.com>, <david@redhat.com>,
-	<hpa@zytor.com>, <liaohua4@huawei.com>, <lilinjie8@huawei.com>,
-	<linmiaohe@huawei.com>, <linux-edac@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<lorenzo.stoakes@oracle.com>, <luto@kernel.org>, <mhocko@suse.com>,
-	<mingo@redhat.com>, <nao.horiguchi@gmail.com>, <peterz@infradead.org>,
-	<rppt@kernel.org>, <surenb@google.com>, <tglx@linutronix.de>,
-	<tony.luck@intel.com>, <vbabka@suse.cz>, <will@kernel.org>, <x86@kernel.org>,
-	<xieyuanbin1@huawei.com>
-Subject: Re: [PATCH v2 2/2] mm/memory-failure: remove the selection of RAS
-Date: Tue, 4 Nov 2025 17:50:48 +0800
-Message-ID: <20251104095048.119012-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <01b44e0f-ea2e-406f-9f65-b698b5504f42@kernel.org>
-References: <01b44e0f-ea2e-406f-9f65-b698b5504f42@kernel.org>
+	s=arc-20240116; t=1762249920; c=relaxed/simple;
+	bh=wNdYt90uqdaGUlBaeWYDe8FuBkRB5Vqr/izDKZMnQHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyZdwrogTqJRIRsN2Tf8G3oGtY4R5Tbl/g5isf+CmZ2dUBMNNtlHNnlGSqMlSVJI18IkZ42MgJQV9NY7ePQ6bBv8LkxiMz1h5WTtZbQdeMhtOwexlJSsUbL6aWppfAs2Wup6zvUqbwxsxJG6Nwn3iBYEIB7aE2vpr92Rq2t5Sd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1Pc2wd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B942C4CEF7;
+	Tue,  4 Nov 2025 09:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762249920;
+	bh=wNdYt90uqdaGUlBaeWYDe8FuBkRB5Vqr/izDKZMnQHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1Pc2wd2osFgzgrUS8qagrphCwyRBPipdUB2/51al+/n2+P6qyV3V9J1Cr8MlxSPI
+	 7jjaRYCIo0PkIvr/LP+LjHs891ouOQQ9pBf1k0Zj3HPsF5AiuLucDMWBEx5B76ZMqp
+	 phDQ2k64CgAgxZit79KJRN/mACjEfex9RKMN+WVbPqFpULrCW6PFo+mzMu0O3IoOqR
+	 WmWiaCKvH3WoW6kdqsdnnKtgqVKYkAcs4xEWYfBtcnE1eMQWXLNLt/lMZsVfS2zPRe
+	 3kFsmuYOF7ySZS51l3U1gKJffFDrp7UrlgVkmcikM9dy+AnhAVe/GkI4lK/SePYV0e
+	 pzVa2QsShVhOQ==
+Date: Tue, 4 Nov 2025 10:51:57 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Igor Reznichenko <igor@reznichenko.net>
+Cc: linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: ST TSC1641 power monitor
+Message-ID: <20251104-ruddy-tuna-of-efficiency-3321d3@kuoka>
+References: <20251104003320.1120514-1-igor@reznichenko.net>
+ <20251104003320.1120514-2-igor@reznichenko.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104003320.1120514-2-igor@reznichenko.net>
 
-> This trace system should not be called "ras". All RAS terminology should 
-> be removed here.
->
-> #define TRACE_SYSTEM memory_failure
->
-> We want to add that new file to the "HWPOISON MEMORY FAILURE HANDLING" 
-> section in MAINTAINERS.
->
-> Nothing else jumped at me.
+On Mon, Nov 03, 2025 at 04:33:19PM -0800, Igor Reznichenko wrote:
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        power-sensor@40 {
+> +            compatible = "st,tsc1641";
+> +            reg = <0x40>;
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <1 IRQ_TYPE_LEVEL_LOW>; /* Polarity board dependent */
+> +            shunt-resistor-micro-ohms = <1000>;
+> +            st,alert-polarity-active-high;
 
-Thanks, I will modify it in the v3 patches.
+That's wrong IMO. Either you use it as SMBus alert or as CPU interrupt.
+If you use as CPU interrupt, then the flag in "interrupts" defines what
+is the level of this interrupt. That flag is a combination of both
+CPU/SoC side and any inverters on the device. And actually you wrote it
+already - "Polarity board dependent" - so why do you:
+1. Provide polarity twice
+2. Provide inconsistent values - alert interrupt is level low, but
+alert interrupt is also active (level) high. So level low or level high?
 
-> Cheers
->
-> David
+Best regards,
+Krzysztof
 
-Xie Yuanbin
 
