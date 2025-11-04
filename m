@@ -1,276 +1,230 @@
-Return-Path: <linux-kernel+bounces-884098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB24C2F5A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B32C2F5B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 504584E944C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC323A8F7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE12C1587;
-	Tue,  4 Nov 2025 05:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DD12C11F0;
+	Tue,  4 Nov 2025 05:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NVaKrjGo";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="J9FIKHJ3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="XxE4bMk5"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022080.outbound.protection.outlook.com [52.101.126.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB7726F2B0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762233205; cv=none; b=OMA8hK7+oEgGNbTGJiDThRzrToUMEJueDTa8Fq3pwxFTXpZ7HYyODUszDyipF01EqtyeQuNosz/Gnu7Wh/orxYK0c6aV7Xwtoc6OHfnuRvn51iukDCj2yNNvCePtyRsybN7gc+LMBUr4hqxPsx5d6pEeMY3vvG+XH+8OTh7HFIA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762233205; c=relaxed/simple;
-	bh=5gXXk2leYs+gy3As0SntaK3hhsSuBaldS6BpeXsEbpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kQd8SRYYlpP6U2Yp9q6qzicLuSIWjQIM5TpXMbKuN4C1XMXEzUywWl2rpLnSDGHIxPQZl3w7KzW/JUNS99wlnJ4gkcpL21KQEFOGjouiWZAlYu+IUsXuW+Zbq/5CbnKxHC8vqDBPbi7/Es+puzpVdT3x375uM/qJEfO/ujzCQ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NVaKrjGo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=J9FIKHJ3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A43Brcw3845956
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 05:13:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oYAxLmTpWPvEyUagaVzeYv5g7VV5X0dDKERVjboWJL0=; b=NVaKrjGouwnDFeWh
-	Yhibpohug5B2KOBTv/pY/+2r2bjp5H2bZmicauqDTY45HENUO9IHCT+CXwDIx7zs
-	q6RZRDqDwa0VnA0OwVtfT6EkbE0EbPDimx022hCeRPEQevj5COc5gQnFCIC6wkKo
-	VeIFZaNt9KUV4SHgweYBIpKff1xfG+oAhpx4868+2ZrK6MXu031onh0rmK9TUgjg
-	lNPdagdNwWQP9psHoGTbPTs3K/LOLXkmlhv9uGk7cxHX4akSv5LwIft1M02rVXth
-	I7VXY4fNteKglMNUylfVoHO1OMIz5MXcVxYkQXIVx7x0RvihQ9bp0zA7N4o1MeUy
-	v6/VxA==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70f1hqjd-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:13:22 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b99dc8f439bso2016684a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 21:13:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762233201; x=1762838001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYAxLmTpWPvEyUagaVzeYv5g7VV5X0dDKERVjboWJL0=;
-        b=J9FIKHJ3isWjgiQ+L4UaYLjRzziHxbrD+QgB9AjaU7mQnXUvLMT8fyozcA84ePYeug
-         NAMLFLIVd11Aw4eYe37bNxxS5l8V6zz55doDcfE+w/4wcAqH51MxSuCwozr1sHd9m+gx
-         vACf+uqK4OCGfQVuYaXnz02qUFo/9D+FeBKc3x5PuzkQMhfn1vruwrnuL1nxOtI4viv9
-         ryxoLGnmDoZ3jybO28JkzLe6mT0gNMPeNdkzczC0HV93+cVZjDTZpxD7STJU0xxrHcgt
-         5MjkHbO4GbmnK2dYQgIOf/vM6Rts3F/Kzz5X8e80uyWQhwhfhlI8j54VA8WsymgNI/Sa
-         QvVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762233201; x=1762838001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYAxLmTpWPvEyUagaVzeYv5g7VV5X0dDKERVjboWJL0=;
-        b=XDTKWQjhZS7XrLqvpJAy9JRTEl5avK25aAiUnxG/2Bj9n3nQz2SpkUe+4A+020T/2B
-         PeN20Veo2MwAIs+H3gLCGdsZ14IU/+8JM8zjZqmc7poFvSCCQVkblFeN3qF3OasB5vk5
-         U+bG4qHZDbiQaJtKPULRuYZXUCe/4qRFAo7ce6z2wRtk8qQ8VwZI+1L9rEJo301syMyM
-         ImKdevdXeJfaNm2fRa42HzfAagrODfajNzkZGGY0Zt10bzTcDupYAqdyu3XfnGirHdUD
-         XvGLikZE447ErEUi7vrRyjJPLwD2sWU9Z78vlzgk/64aGlhV9ienF+kaC4CVuapwntTQ
-         okOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPtXcnmzmUltFQMVeF0M0nKetF7KfoEdJjhdWTDsIlusm4ziddRDi3eiwrZxZTNiMaKJjcArpkG34cwho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfSPyGXSuIxMiDAPSMw25bqZ3iEq9ANBzi/vTd3Oira119NSly
-	domAwbEV5mFq0sS8iNjqkMA0/m9yVK+6nQsRjSoK0s5aSsR33Hwm9Sb8KtD2Vn15bhtstJ+aUOT
-	c1jOAyT16Wl8S7ZHwexZiM8l2KTlqYT5HfOwZRAAuQlYC8VPZMXtQcZU1EAKqnvtfFm4=
-X-Gm-Gg: ASbGncvIkmSDFURddnsCNdnQFLtdovriF6dwsnmZR9PLzMUuvqJQl+lUWbxSxWWUby3
-	CjKAw7010/I2XM6I40er2sIXvGDmHnt7gNVCgPeSxu6LBukAqhMrEi2zc+U2hAroKzfkF7G1cyF
-	J8EY5JkskLg+LmjZMXVLlL2sIdOgNf/lUJoB2XeRvDsYtUmx+ksDf21AfllcFkSMDwfG7FMohLv
-	Oho2zLPUsmKqEmYWjFZ7EQw2rUhNpzaTgLAmSiy2pR9Q30gq2ljyT1WLj4kYoqpG3NO64yTsxyS
-	3HFufMOjaX0z57KkMx5oXWvojkhPmCHDvFHC2gfknut3QH+4DjZR0zTnaaf0vDb/bRIjIaDALeS
-	nMFz1whuX7jsyNyowo9qKCIVXNvPNK2o=
-X-Received: by 2002:a17:902:ecd0:b0:295:9b3a:16b7 with SMTP id d9443c01a7336-2959b3a1914mr81483105ad.4.1762233201227;
-        Mon, 03 Nov 2025 21:13:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFWACZj+ZHM6Dev75PadzPzX/oh0XnEO8AOPJIyynJU0LeztkisVKif+JFLBlZ+JntwwJxQPQ==
-X-Received: by 2002:a17:902:ecd0:b0:295:9b3a:16b7 with SMTP id d9443c01a7336-2959b3a1914mr81482885ad.4.1762233200674;
-        Mon, 03 Nov 2025 21:13:20 -0800 (PST)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd69192c2sm1305796b3a.66.2025.11.03.21.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 21:13:20 -0800 (PST)
-Message-ID: <ea10fd71-dc89-59c0-c366-446c20b3fc15@oss.qualcomm.com>
-Date: Tue, 4 Nov 2025 10:43:16 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5617F242D79;
+	Tue,  4 Nov 2025 05:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762233288; cv=fail; b=jdaJdDAH4Z0Of6PKz2nkqOQUJwAm7OdnvGbls7GnP+Tg7/4brC1q/kyCSxHdI+jvb7wjlIsqxf5+NFuP7+z0sqB151xbw+wGx+RIwuM876jY50UG5HkuNFBUZ2DRYHfGwOFKXa5iuXXPzYHZkdDVzLaSzkk/9fzXQhGjwEUeT7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762233288; c=relaxed/simple;
+	bh=4gPwaXf4zByzET+2FEcYwpxtN5xevzhLVYo9gOuDK20=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G/81ZQRnEw1UnBiUIFsd3bxJKLRfy1gE6BdhxeCx+GpIeCbTP3Ru6PUQ9GGJfw4bNJvuvUs7Mbv8auSaFMtWVrN507pa56CNEM1F0IU7r8NtQy/rXwNjrQYpR5DZW2bs9VC1hTlIG4Kc7/gZQ9fCPh7PFsSwJ9QRfIj+Ha6LS3I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=XxE4bMk5; arc=fail smtp.client-ip=52.101.126.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jfI1Z+MdUJPD9Si3VSuVyYEio/k2TCZwaa+9ATVoFkbu06lf2Qu01GyKMtPM+vDvQ+kTDmbHUWNWB+rBZ6yHL/D6gpYbjlsZYONvakKnUegDaOJRerQFowsJ6YvCp6fhRixSAfaGi+9u7dWMnmVHG2ueL9tUuE0N8U80nPJh95DYghZTsD/7QGWN8UvwGHqzyscibC+StiiwiK0gEEc00pyNdeetzjHdahbFJ7IkuZEqYDS/CPm/mxV2soQYF8nhl3VN09HN7FJTSBjYQ8wD4KTQv1PO+LBlmnYNwdo+7lnWK/gzLPBWcNNX8NmygvtJTrm38L2i6s/ooaudJTOpwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=alGgbI5dM7B5IcKcUfvIpMf+FKLOanNqVnIOlOEdg+E=;
+ b=XHCilZb14R+P7XkM2T/th4k1qOAYWb+BN04rmFRFAFnW+vu7qVt+FTysq6e5o9m2yVvhlaelSwxk2CIS3QAsIxKeekUsPxT3DQrkT/5mvuFlNlI11CzmZxvUdkT1HA0E5prPzeCIcZ9RMpuXhovZrxyOWHehslt0H+1GvVNxRuNlNfoQf7WmfybZV9OGWDAdj0lLRK485EagrLPIEu3CO+x8BHFpEDIc9FXj03diqfw/WpuYgBrrCA7fxq/V+MB29qEfOpBG67Lnb3Rq5XKvH/0uAH6zOARJFRY+JS8Bwz6H/Q+Cr89dT6eBpjqTxTh4mZ5hoSUurvezLXINwHKiPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=alGgbI5dM7B5IcKcUfvIpMf+FKLOanNqVnIOlOEdg+E=;
+ b=XxE4bMk5zwwl+CPFnp+jbRW0q4bC3f3mf8Z4llZuwUz5Spq6OeAZb63CVwgSEPwe7zqSRs8f1YGIFc3UioVKvDCNcSswsZBGwOhEYhPSAI3oSG7S7vWOqtmv4aheyiGSR5A2EdOJOlfX5X4M+T6xmUBQiUrqMGpKy+LSB9xGVRvIiF7gfbqMaJy1X4NFaMxSj64w7gNKRLcLR1amXibg6kuBM9IVWI5FOm50awCP43EtZ4sm72s8G4L/eJA3xdMTpgCMVbC0u98+mMN99TPmKGqITGdaijt+9i4wGk8Ph+4aP0U6vTPhfwePDpXc8v3DX9XBJwinY5uS56Nm4duZ+A==
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
+ by KL1PR0601MB5655.apcprd06.prod.outlook.com (2603:1096:820:bf::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
+ 2025 05:14:42 +0000
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
+ 05:14:41 +0000
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Po-Yu Chuang <ratbert@faraday-tech.com>, Joel Stanley
+	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "taoren@meta.com" <taoren@meta.com>
+Subject: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
+Thread-Topic: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
+Thread-Index: AQHcTJUB+TmCwKSgIEaeQsrh+oaRd7ThzyYAgAAnFuA=
+Date: Tue, 4 Nov 2025 05:14:41 +0000
+Message-ID:
+ <SEYPR06MB5134AB242733717317AAEDEA9DC4A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+ <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
+ <2424e7e9-8eef-43f4-88aa-054413ca63fe@lunn.ch>
+In-Reply-To: <2424e7e9-8eef-43f4-88aa-054413ca63fe@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|KL1PR0601MB5655:EE_
+x-ms-office365-filtering-correlation-id: 8ffa7e87-ea86-4d40-d721-08de1b610f80
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?THUAc97zVaHxnxhjYAtLlYfzC5pw+mdw1BBxotRmK2auyVnNEQe5PX4TF9/X?=
+ =?us-ascii?Q?CJtGpj/OzzudNmouRnYdJKs728qiTyojkf4TJYan8WcTjW+ZmsBeevG1ZUJR?=
+ =?us-ascii?Q?WTxovsZkDOBKvCzFwHj6Y8ho3tqRUf6quOX1R75fNEQutSFulnIQGIKF6Xg9?=
+ =?us-ascii?Q?vxjDxqPHCDFBQb94Py2OAe/GJDH6U0f+ovQc4AtSzK+U97B5XciV/ti/bC0/?=
+ =?us-ascii?Q?fbXRfzIJMhK+/8bI7EA07QCdnOj+pBACXCgge4YOSWqkJkOwDSXhSW3AOxoV?=
+ =?us-ascii?Q?zI7SkVgdyXc/PSdyslSu7Vt9giHG/vaNLYWL7Q6iMf8yoI2iIdefSlg9XhT9?=
+ =?us-ascii?Q?IpZXmVUBYJR84rMbeaFL1pgnrVaTahDupNT6k+2UdUKLz3rfrLC+d8YWNFJc?=
+ =?us-ascii?Q?MdT9J4iuo27wjuVqaYP0WWSKR1OdtK2zxvSbKOpNO6uSg6SIrZfEnq/xon7R?=
+ =?us-ascii?Q?n2aoQPJSAheakrewqk5lOqlFnM4QeIlL5kvy0u19L8wQRIAcUs67qA/Kgi/2?=
+ =?us-ascii?Q?xk/NPyTu+q7hfII4DlECKwnO5lr1U7tCEg2RDLCOTLJ3fAIvDlU9WwDj6WSI?=
+ =?us-ascii?Q?NFxWvVuqg4BFb71dGIna1v+pm4UOFR/qH5Kae/wwzeT1cvCiaQgX6nNFKgum?=
+ =?us-ascii?Q?4sk+hNs2SC+eQ2MMEOH1gV+OMLEbWAQGjXIUw9NhTfwa0O3aLVY07t2WDN1i?=
+ =?us-ascii?Q?tbyjYxgmpSaDb6F+4iVybC664JE6RP54QVlGeQP2m9hIq1+D/2KF142hqHrm?=
+ =?us-ascii?Q?rV0dOfDT4svPqcAbJwYE/ONzWE4IShp7uNTt32LCBWXEPkfDPOGZsJJD6riY?=
+ =?us-ascii?Q?Y+1bVcgSulRfOd24ZcNVd8i0fGk46D5+P5odr05nUxQtIxpYCsM6QJ+a+b2j?=
+ =?us-ascii?Q?jmvLjn2Pz4HZ2LyRzFMq3kwTCsIuZdOGl9HSyOWy/3E6p0M5scPPUfnbS3Qi?=
+ =?us-ascii?Q?f2kB/RvngWsEewSl+CVM1kgi6M/Jg3ZMRsr47mmKRux2HvcCPz+s4NufiPpj?=
+ =?us-ascii?Q?aq24rLe9DY6E6azi8mBmRDNVSouDIDwP0RuSEXjmtAO0Xf91+opdRSFy6IAV?=
+ =?us-ascii?Q?xHg25Ru2ttm0UXh9hxqbprBiPlzj+JOxCfJTi1S0oQy0AeiZ3sabdHs/vJZq?=
+ =?us-ascii?Q?l71wk7/41t01QA7nosH3gIiqaUChfMNH4sqjTumUKM8X1xkYZNFMgJ0532Or?=
+ =?us-ascii?Q?E0r7KJ1MX7jNJcU/Xaz4XWTiiShOzqoykxpWGjiKFB8CWOyX/5D+vFw5kQ3b?=
+ =?us-ascii?Q?11VlXaSm+zGnojwMh6p4RsvFgW7VyfArOfutpEzmUk8vUbyRs+Br+aC/8fRA?=
+ =?us-ascii?Q?5FSwdIU+6X5s3MsSbYR3n284IC/wWlpdT4/Rk8BhvHIveU2QSGaS9hoOOfMB?=
+ =?us-ascii?Q?vumoMmZqIZKQfyv6FNN65Rij6SKBdSgob0qEmvf9kw6nCTOVzsrHU/sVDE14?=
+ =?us-ascii?Q?dEbz1iJlSuLJ/Ydri3E9WBMtHE+r1srZy9n86zwp6neANKihSzSULwanaWgw?=
+ =?us-ascii?Q?4IrnkWJDADjgCV+9O/XBT7O4FZ30tgSvk33m?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?yMF5+YiOdt7FFrK2qryqR5MrPKeP3hi9Hht+kHFL4OnHK2RBtNmBdVbg1PbH?=
+ =?us-ascii?Q?n43vjw9jOe319fvE1lT6g4mU2mYx3j51BhzB6558UlaBL8CdbbGhdpaLJ9ww?=
+ =?us-ascii?Q?RjORjGFHxBR2jBE0eSzqw8bg3x1tFCPZDs06wPocX3SZRC71hAzjrNVjVnMm?=
+ =?us-ascii?Q?b6HhX0FvDXy5JRf6X0yzuf6kSCsp5lGMfP3UYR2rUH/92bKN7h6QGI35mwEs?=
+ =?us-ascii?Q?uZzV7TRraUSdATLr9nBhjDXPrxrPgw663vSfDGnecxqOCpsPLmpzz6OoFVVA?=
+ =?us-ascii?Q?D8YMQCbqyOxFt9M4mK82WpfIYIY522a7x6Q+2fGTtOb3wx6c+wtjNpI/8q2m?=
+ =?us-ascii?Q?PY8e9zkSueL/Av2ZUw7EFBGFI4ckPMmiruV4Y1xRdYTQqBvGusmz3gtgBvq9?=
+ =?us-ascii?Q?RCN3HXcXBDOXWhcHsQtnpIHAwF1jCdoTekNCXkB5eXhOLXQpyh2fKPe2iCsJ?=
+ =?us-ascii?Q?E6T2Nv3xgue1pfxm4+ZjywImjgW23agp24xi9lFCxZWZD7NIVEtRiuK4YzC6?=
+ =?us-ascii?Q?0wwX3gkXpdBmMfTAJ2oBbeP3JTTX0RAd8MN0cwNem8ffIvmxTo6bl8y6nnyj?=
+ =?us-ascii?Q?k8vpfYWJDPQoxsdiP/fFCAt0ojt2XZnav123AUAAhyte010wRbqJad2Hsh4o?=
+ =?us-ascii?Q?caTGEcMDug6wQV8n4d7f10UIlv6eGpGYNNNpW8VR7agId5QVAALaOAsFMUJ0?=
+ =?us-ascii?Q?yzOiFAlEui+fTDD/7XvXhdqiap2y6OaJYxVglyA0IEGpjITRhOsrUA92mgCa?=
+ =?us-ascii?Q?8oz0HYZ4Uo541dFQQfrQxs4M9sPESArD/cSGe1cElR+R2nyWNJMTwJY64ZAT?=
+ =?us-ascii?Q?oHAlizrSAvUnHoM2o6FvMSXEl9FcmTAcXChdbF7p8EFRVoPK8W23hAZpONQQ?=
+ =?us-ascii?Q?JuwMM7T65jmzsE8ijdRKsRPuOa0JXw7ciYc6ZdBH5AXbRJDRFGzmaODqxACZ?=
+ =?us-ascii?Q?YiaqqJZiv4pKNmjxXa+d2NcD2aGjnRwjDwkcTwuiEl4vfWquhQzJJbZvuXME?=
+ =?us-ascii?Q?Dok2G7zzRw7ArLRI8psIfTS9JuX9t3ibC5aGuc3v8VZ3wkWtrjlfsxcbdRK7?=
+ =?us-ascii?Q?tv2Bp/97fc4R8JQ3nPB0jnejEtZOi8HgakZNY+p8VuxXAENtetTaUEZq0EDG?=
+ =?us-ascii?Q?aHpR9bClFt5W2tTUROpfvCMUPA7ibwjrUlTJFUXBEyc9SejC3WbSM+1ExPCn?=
+ =?us-ascii?Q?/kmwCHOgDKLC3q0FfoE6JgOhyZhOA7Pg7aciC/U6fsHak9iB0qpjZZLB0cok?=
+ =?us-ascii?Q?/aj91NFGXExGhizrU5l0EjxSNbT9tllfWRtDP+e74UZKV4XdQDwvGi9n4DFJ?=
+ =?us-ascii?Q?cl6xZo/uDQlpINmPd/zqou4bieoahg1YH8GKuuBuDWIfKCIzEuaYmYDtCuPn?=
+ =?us-ascii?Q?oFKD1/Q8euPlUsWT2A7Ji2+sE7OBVXOQ1W01onHdnZaPr0F9nNmdjIMwHaDm?=
+ =?us-ascii?Q?ONV1frfAahXXuRJ89b/x6kxCuJD+ApnbHPkU5MpWQpd/I97KRlflZuGfOr2z?=
+ =?us-ascii?Q?O5EA72N/exAYwWchjLR35gXUJ5sHnIOlA5sH91pq32P0oVI2j7Dq9WvYgv3P?=
+ =?us-ascii?Q?KV2SYT1LmiX0cUn3AiVHsarRYDpSKYB+j+pJbhUA?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 1/5] media: qcom: iris: Improve format alignment for
- encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-References: <20251031-iris_encoder_enhancements-v2-0-319cd75cbb45@oss.qualcomm.com>
- <20251031-iris_encoder_enhancements-v2-1-319cd75cbb45@oss.qualcomm.com>
-Content-Language: en-US
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-In-Reply-To: <20251031-iris_encoder_enhancements-v2-1-319cd75cbb45@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=JLQ2csKb c=1 sm=1 tr=0 ts=69098b72 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=VppOGLtqdac6JACSmWIA:9
- a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA0MCBTYWx0ZWRfX5td8KuFiuuac
- KG1ohEslLhhd3JWVsiD5dQg90IwbMF8AE+LE+9Oev6/h65NArg11F9l7TViRWYVGAKTBG7N2OtO
- qIAqUIhtiowSylwD4Nvvl68H8U2wPhqxcas3dCSedu2T7WcPmj1XHDd7749iWpfOUi2fI9eFP90
- 4i6/dnLF5PjOUQscdrAscm77+l+tBUUEhjZkmrqcwFK2MNtbzdSdLazydMMRHpLxkCHVcqYMui0
- 08xrPyb9m9+sUrM0q9jF3QqqlELGM1+fLgoBsKJEefzQEeqE2Vtn1D/Vxgx0bZofLP1DgPjoaj3
- nXU/7MdXm18Yhn82Zt0cAFcfycuq769s8t+pwUxIESfdbcJwm4rs2nyQ5ZdIIwXumEL/4D4xTjp
- eux4cqBlpf8QoRpvyA+62X+nxqsXPA==
-X-Proofpoint-ORIG-GUID: Biin01KkqGfVtSdsGUUt2Q2PcAZ6KZU2
-X-Proofpoint-GUID: Biin01KkqGfVtSdsGUUt2Q2PcAZ6KZU2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040040
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ffa7e87-ea86-4d40-d721-08de1b610f80
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 05:14:41.8786
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xgv6r9MfkqGCgFZ9tRXGxXYTmNZKEq0UOi557YXY8hkHOJ6Omuy7QTaJ8ntloSTHC1HcxUXKIo1PFgruuilKc8hkZYV16069st2Dwb0lPPM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5655
 
+Hi Andrew,
 
+Thank you for your reply.
 
-On 10/31/2025 3:20 PM, Wangao Wang wrote:
-> Add members enc_raw_width, enc_raw_height to the struct iris_inst to
-> support codec alignment requirements.
-> 
-> HFI_PROP_CROP_OFFSETS is used to inform the firmware of the region
-> of interest, rather than indicating that the codec supports crop.
-> Therefore, the crop handling has been corrected accordingly.
-> 
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->  .../media/platform/qcom/iris/iris_hfi_gen2_command.c   | 18 ++++++++++++------
->  drivers/media/platform/qcom/iris/iris_instance.h       |  4 ++++
->  drivers/media/platform/qcom/iris/iris_venc.c           | 10 +++++++---
->  3 files changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index 4ce71a14250832440099e4cf3835b4aedfb749e8..ada9b4d298ef10ac47a573061369828a1e150f85 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -168,8 +168,7 @@ static int iris_hfi_gen2_session_set_property(struct iris_inst *inst, u32 packet
->  
->  static int iris_hfi_gen2_set_raw_resolution(struct iris_inst *inst, u32 plane)
->  {
-> -	u32 resolution = inst->fmt_src->fmt.pix_mp.width << 16 |
-> -		inst->fmt_src->fmt.pix_mp.height;
-> +	u32 resolution = inst->enc_raw_width << 16 | inst->enc_raw_height;
->  	u32 port = iris_hfi_gen2_get_port(inst, plane);
->  
->  	return iris_hfi_gen2_session_set_property(inst,
-> @@ -216,8 +215,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->  	u32 port = iris_hfi_gen2_get_port(inst, plane);
->  	u32 bottom_offset, right_offset;
->  	u32 left_offset, top_offset;
-> +	u32 codec_align;
->  	u32 payload[2];
->  
-> +	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> +
->  	if (inst->domain == DECODER) {
->  		if (V4L2_TYPE_IS_OUTPUT(plane)) {
->  			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> @@ -231,10 +233,14 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->  			top_offset = inst->compose.top;
->  		}
->  	} else {
-> -		bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-> -		right_offset = (inst->fmt_src->fmt.pix_mp.width - inst->crop.width);
-> -		left_offset = inst->crop.left;
-> -		top_offset = inst->crop.top;
-> +		if (V4L2_TYPE_IS_CAPTURE(plane)) {
-> +			bottom_offset = (ALIGN(inst->enc_raw_height, codec_align) -
-> +					inst->enc_raw_height);
-> +			right_offset = (ALIGN(inst->enc_raw_width, codec_align) -
-> +					inst->enc_raw_width);
-> +			left_offset = inst->crop.left;
-> +			top_offset = inst->crop.top;
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: aspeed,ast2600-mac01
+> > +    then:
+> > +      properties:
+> > +        rx-internal-delay-ps:
+> > +          minimum: 0
+> > +          maximum: 1395
+> > +          multipleOf: 45
+>=20
+> I would add a default: 0
+>=20
 
-As you mentioned this prop is not meant to set CROP so left offset and top
-offset can be assigned to 0 directly?
+Agreed.
+I will add it in next version.
 
-> +		}
->  	}
->  
->  	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
-> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
-> index 5982d7adefeab80905478b32cddba7bd4651a691..fbae1662947df73bb3d10b7892839fa1076b7e61 100644
-> --- a/drivers/media/platform/qcom/iris/iris_instance.h
-> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
-> @@ -64,6 +64,8 @@ struct iris_fmt {
->   * @frame_rate: frame rate of current instance
->   * @operating_rate: operating rate of current instance
->   * @hfi_rc_type: rate control type
-> + * @enc_raw_width: raw image width for encoder instance
-> + * @enc_raw_height: raw image height for encoder instance
->   */
->  
->  struct iris_inst {
-> @@ -102,6 +104,8 @@ struct iris_inst {
->  	u32				frame_rate;
->  	u32				operating_rate;
->  	u32				hfi_rc_type;
-> +	u32				enc_raw_width;
-> +	u32				enc_raw_height;
->  };
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-> index 099bd5ed4ae0294725860305254c4cad1ec88d7e..6adadc89e360a6e4bebe1f839d38892990e10fa2 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
-> @@ -68,6 +68,9 @@ int iris_venc_inst_init(struct iris_inst *inst)
->  	inst->operating_rate = DEFAULT_FPS;
->  	inst->frame_rate = DEFAULT_FPS;
->  
-> +	inst->enc_raw_width = DEFAULT_WIDTH;
-> +	inst->enc_raw_height = DEFAULT_HEIGHT;
-> +
->  	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
->  	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
->  
-> @@ -249,6 +252,9 @@ static int iris_venc_s_fmt_input(struct iris_inst *inst, struct v4l2_format *f)
->  	inst->buffers[BUF_INPUT].min_count = iris_vpu_buf_count(inst, BUF_INPUT);
->  	inst->buffers[BUF_INPUT].size = fmt->fmt.pix_mp.plane_fmt[0].sizeimage;
->  
-> +	inst->enc_raw_width = f->fmt.pix_mp.width;
-> +	inst->enc_raw_height = f->fmt.pix_mp.height;
-> +
->  	if (f->fmt.pix_mp.width != inst->crop.width ||
->  	    f->fmt.pix_mp.height != inst->crop.height) {
->  		inst->crop.top = 0;
-> @@ -329,9 +335,7 @@ int iris_venc_s_selection(struct iris_inst *inst, struct v4l2_selection *s)
->  		inst->crop.top = s->r.top;
->  		inst->crop.width = s->r.width;
->  		inst->crop.height = s->r.height;
-> -		inst->fmt_dst->fmt.pix_mp.width = inst->crop.width;
-> -		inst->fmt_dst->fmt.pix_mp.height = inst->crop.height;
-> -		return iris_venc_s_fmt_output(inst, inst->fmt_dst);
+> > +        tx-internal-delay-ps:
+> > +          minimum: 0
+> > +          maximum: 1395
+> > +          multipleOf: 45
+>=20
+> and also here.
+>=20
 
-why is this removed ?
+Agreed.
+
+> > +      required:
+> > +        - scu
+> > +        - rx-internal-delay-ps
+> > +        - tx-internal-delay-ps
+>=20
+> and then these are not required, but optional.
+>=20
+
+Configure the tx/rx delay in the scu register.
+At least, the scu handle must be required.
+
+Here I have one question.
+In v3 patches series, if the ftgmac driver cannot find one of=20
+tx-internal-delay-ps and rx-internal-delay-ps, it will return error in prob=
+e=20
+stage.
+If here is optional, does it means that just add warning and not return err=
+or when
+lack one of them and use the default to configure? Or not configure tx/rx d=
+elay just
+return success in probe stage?
 
 Thanks,
-Dikshita
-
-> +		return 0;
->  	default:
->  		return -EINVAL;
->  	}
-> 
+Jacky
 
