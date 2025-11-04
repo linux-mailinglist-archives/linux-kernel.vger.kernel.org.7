@@ -1,182 +1,146 @@
-Return-Path: <linux-kernel+bounces-884130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF16C2F6C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:17:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F84C2F6D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 48D004E4DD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351953B6EB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A31465B4;
-	Tue,  4 Nov 2025 06:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8912C11D4;
+	Tue,  4 Nov 2025 06:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OXrazto3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="IdN+22Dp"
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557AF158538;
-	Tue,  4 Nov 2025 06:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0433F275AE4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762237025; cv=none; b=n/S+SM24o5SsQfZ8DfUU8Quj5oQUw2jJpRGof1ubHWjfv4oH10qKHk/FexexXrkKm+EKpRqK8M4sUELvaCyHaQHEj/ioapWSAG7128nku2yw8V6mo71uW+Wwk+I6hbW1R3HcUCDk7ETxcf5cN7nkWaaOUdtemsC7zd1eUON9swE=
+	t=1762237056; cv=none; b=jFAHjtFLeKOChzVlxof2270axhf17ZRLjvhW3JtoxoONp1CbriueAi25sw4T1IQSt3/fDukoCYMFAGUZJZiy63brFPEEIL7TsE2p88RIjV0HuqA8ZdFKB2FhzZB2hNVlO6/FGLUg0K0S5dLs+Cauw4XvdatkMwvKLppZ+obvGbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762237025; c=relaxed/simple;
-	bh=mSKoZmGkcXW407B8mNGjY9EejInAopsSE39gAyEUn9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KxyLXMJDWe4f36kzyEg87UBSz78LaRsWAtTEPNCIXeAXBLeZrWNY7QSnHrSrW0eZl7ZlvDMi8UdWS8PpB+l+lGrYORRklXhmbr5nVLR26YzoKdDB+0vmtV0HKCFm80pcKhBYPouGs/qZtmwzAgWFA0lsZtRw1cDsMgiv3grxxsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OXrazto3; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762237023; x=1793773023;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mSKoZmGkcXW407B8mNGjY9EejInAopsSE39gAyEUn9k=;
-  b=OXrazto3bos6ZouLXm81qGUGmuUm3OZdCGxCNDmP4C2W+ykyqxLdNpHM
-   1DxyyS4eKg+f2UC8Kt2DT1ZQ1E34vbMtAEaD2xfzDXma1x2Sr01Q4K+0I
-   aF6SWWtCUu656YkV3TFUFRJN7V4ruPrFIYWNM78ZsGUX5oDCZo057lhKH
-   oGGMjooTh6E1C3Pi0yfsGM4DHcneO6QWuKHfwNwXSgurXHKDEBhDMEfqa
-   fFi5YiitRnTOAaF0VUY+gCJG52aM0x/NnUOEg/B33v6ZZnAMHrb19rw9x
-   Om3sIeQ4LUHVoj0/B1xwvM9Kfz/8Sra1hjkH8hLcR/ILGEc8Cq+pj8vUV
-   w==;
-X-CSE-ConnectionGUID: BSbMDpbCR8uIRATopONiag==
-X-CSE-MsgGUID: 8+m81WFlSHS/ZZsZ26Py2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74927767"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="74927767"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:17:03 -0800
-X-CSE-ConnectionGUID: IL8VAT68RkmI5IbPyY1fNw==
-X-CSE-MsgGUID: u8bxLoPYS/KxoreV4M7Dmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="210576877"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:16:56 -0800
-Message-ID: <31da959f-d004-4ae0-a6a7-d5d31b646b70@linux.intel.com>
-Date: Tue, 4 Nov 2025 14:16:53 +0800
+	s=arc-20240116; t=1762237056; c=relaxed/simple;
+	bh=H0akFcysYtoQMTq6SLErZbIYDBnSs6SR33JYqUBHGPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLatiqbkG6mG8gWkuZJ00eKTyyJzoPNDF6I0B1MbzzB7H7xvgUvCCHdBViDkytJWYX//Wk2zPp7W8o20WH0f6ELTX9vRFqpBLsLKzWa/fafMqYDENVqxOV61ICg2JJWuGO1rPdELEIDKPSqCa/exOLCIxXoxOuwK2EKRv3IN3n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=IdN+22Dp; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202511040617270498a4af2000020733
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 04 Nov 2025 07:17:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=kw0zFvKnv/CewtK+Xr1RXZdXV8kS1VzqX7ZfwO3TUrM=;
+ b=IdN+22DpJWY88axdQwz0mu8PUj/V4i4pB69VdJtAzZ5VAxWJfuYo9BW8Z9Y5ZVM1GDvwQh
+ sKfYs+dRda2STHlpTPto/AajshOdCBcEcUhz0rck5rnM1lDNUW59IPkVJNZ66P9rEipjosEv
+ pq30S83CgZeIUanJ1kHZ4vCDkMVh26nIFcFOntlTmz7NGiVCZQECWp9H6S7w3oMjWgbCZYRa
+ X3IOB7kYysx6alVzQi0qGZSK+LvpnAo9Tmp/XxI8ZhBPvFfuyF5TO5y+UypaUldu9VMSvZ4E
+ vyCkd5mdPpFPuD3gTDz0GB62fjNjqpHv0d4rwW9BZQ688H5fcFqNBSaA==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: net: local_termination: Wait for interfaces to come up
+Date: Tue,  4 Nov 2025 07:17:21 +0100
+Message-ID: <20251104061723.483301-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 27/28] KVM: TDX: Bug the VM if extending the initial
- measurement fails
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251030200951.3402865-1-seanjc@google.com>
- <20251030200951.3402865-28-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030200951.3402865-28-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
+It seems that most of the tests prepare the interfaces once before the test
+run (setup_prepare()), rely on setup_wait() to wait for link and only then
+run the test(s).
 
-On 10/31/2025 4:09 AM, Sean Christopherson wrote:
-> WARN and terminate the VM if TDH_MR_EXTEND fails, as extending the
-> measurement should fail if and only if there is a KVM bug, or if the S-EPT
-> mapping is invalid.  Now that KVM makes all state transitions mutually
-> exclusive via tdx_vm_state_guard, it should be impossible for S-EPT
-> mappings to be removed between kvm_tdp_mmu_map_private_pfn() and
-> tdh_mr_extend().
->
-> Holding slots_lock prevents zaps due to memslot updates,
-> filemap_invalidate_lock() prevents zaps due to guest_memfd PUNCH_HOLE,
-> vcpu->mutex locks prevents updates from other vCPUs, kvm->lock prevents
-> VM-scoped ioctls from creating havoc (e.g. by creating new vCPUs), and all
-> usage of kvm_zap_gfn_range() is mutually exclusive with S-EPT entries that
-> can be used for the initial image.
->
-> For kvm_zap_gfn_range(), the call from sev.c is obviously mutually
-> exclusive, TDX disallows KVM_X86_QUIRK_IGNORE_GUEST_PAT so the same goes
-> for kvm_noncoherent_dma_assignment_start_or_stop(), and
-> __kvm_set_or_clear_apicv_inhibit() is blocked by virtue of holding all
-> VM and vCPU mutexes (and the APIC page has its own non-guest_memfd memslot
+local_termination brings the physical interfaces down and up during test
+run but never wait for them to come up. If the auto-negotiation takes
+some seconds, first test packets are being lost, which leads to
+false-negative test results.
 
-Nit:
-It sounds like TDX is using the memslot for the APIC page, but for a TD, the
-memslot for the APIC page is never initialized or used?
+Use setup_wait_dev() after corresponding simple_if_init() on physical
+interfaces to make sure auto-negotiation has been completed and test
+packets will not be lost because of the race against link establishment.
 
-> and so can't be used for the initial image, which means that too is
-> mutually exclusive irrespective of locking).
->
-> Opportunistically return early if the region doesn't need to be measured
-> in order to reduce line lengths and avoid wraps.  Similarly, immediately
-> and explicitly return if TDH_MR_EXTEND fails to make it clear that KVM
-> needs to bail entirely if extending the measurement fails.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+The wait has to be done in each individual test because the interfaces
+have to be brough up first and only then we can wait for link (not
+individually, because they are expected to be looped in pairs).
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Fixes: 90b9566aa5cd3f ("selftests: forwarding: add a test for local_termination.sh")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ .../selftests/net/forwarding/local_termination.sh      | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> ---
->   arch/x86/kvm/vmx/tdx.c | 24 +++++++++++++-----------
->   1 file changed, 13 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 8bcdec049ac6..762f2896547f 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -3123,21 +3123,23 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
->   
->   	put_page(src_page);
->   
-> -	if (ret)
-> +	if (ret || !(arg->flags & KVM_TDX_MEASURE_MEMORY_REGION))
->   		return ret;
->   
-> -	if (arg->flags & KVM_TDX_MEASURE_MEMORY_REGION) {
-> -		for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
-> -			err = tdh_mr_extend(&kvm_tdx->td, gpa + i, &entry,
-> -					    &level_state);
-> -			if (err) {
-> -				ret = -EIO;
-> -				break;
-> -			}
-> -		}
-> +	/*
-> +	 * Note, MR.EXTEND can fail if the S-EPT mapping is somehow removed
-> +	 * between mapping the pfn and now, but slots_lock prevents memslot
-> +	 * updates, filemap_invalidate_lock() prevents guest_memfd updates,
-> +	 * mmu_notifier events can't reach S-EPT entries, and KVM's internal
-> +	 * zapping flows are mutually exclusive with S-EPT mappings.
-> +	 */
-> +	for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
-> +		err = tdh_mr_extend(&kvm_tdx->td, gpa + i, &entry, &level_state);
-> +		if (TDX_BUG_ON_2(err, TDH_MR_EXTEND, entry, level_state, kvm))
-> +			return -EIO;
->   	}
->   
-> -	return ret;
-> +	return 0;
->   }
->   
->   static int tdx_vcpu_init_mem_region(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
+diff --git a/tools/testing/selftests/net/forwarding/local_termination.sh b/tools/testing/selftests/net/forwarding/local_termination.sh
+index ecd34f364125c..369c8b2c1f4a2 100755
+--- a/tools/testing/selftests/net/forwarding/local_termination.sh
++++ b/tools/testing/selftests/net/forwarding/local_termination.sh
+@@ -430,6 +430,8 @@ standalone()
+ 	h1_create
+ 	h2_create
+ 	macvlan_create $h2
++	setup_wait_dev $h1
++	setup_wait_dev $h2
+ 
+ 	run_test $h1 $h2 $skip_ptp $no_unicast_flt "$h2"
+ 
+@@ -448,6 +450,8 @@ test_bridge()
+ 	bridge_create $vlan_filtering
+ 	simple_if_init br0 $H2_IPV4/24 $H2_IPV6/64
+ 	macvlan_create br0
++	setup_wait_dev $h1
++	setup_wait_dev $h2
+ 
+ 	run_test $h1 br0 $skip_ptp $no_unicast_flt \
+ 		"vlan_filtering=$vlan_filtering bridge"
+@@ -480,6 +484,8 @@ test_vlan()
+ 	h1_vlan_create
+ 	h2_vlan_create
+ 	macvlan_create $h2.100
++	setup_wait_dev $h1
++	setup_wait_dev $h2
+ 
+ 	run_test $h1.100 $h2.100 $skip_ptp $no_unicast_flt "VLAN upper"
+ 
+@@ -505,6 +511,8 @@ vlan_over_bridged_port()
+ 	h2_vlan_create
+ 	bridge_create $vlan_filtering
+ 	macvlan_create $h2.100
++	setup_wait_dev $h1
++	setup_wait_dev $h2
+ 
+ 	run_test $h1.100 $h2.100 $skip_ptp $no_unicast_flt \
+ 		"VLAN over vlan_filtering=$vlan_filtering bridged port"
+@@ -536,6 +544,8 @@ vlan_over_bridge()
+ 	simple_if_init br0
+ 	vlan_create br0 100 vbr0 $H2_IPV4/24 $H2_IPV6/64
+ 	macvlan_create br0.100
++	setup_wait_dev $h1
++	setup_wait_dev $h2
+ 
+ 	if [ $vlan_filtering = 1 ]; then
+ 		bridge vlan add dev $h2 vid 100 master
+-- 
+2.51.1
 
 
