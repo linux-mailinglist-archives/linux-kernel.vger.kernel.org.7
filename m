@@ -1,337 +1,155 @@
-Return-Path: <linux-kernel+bounces-885583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA94C33645
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:35:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C3FC33642
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D8E534CDA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57D218C4AB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67945346FAC;
-	Tue,  4 Nov 2025 23:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="llBSXQFT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91AD32D451;
+	Tue,  4 Nov 2025 23:35:33 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D4132B9BF;
-	Tue,  4 Nov 2025 23:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25782E3B08
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762299345; cv=none; b=bfusF5Cvl4TzYXpPAGKfgUva/IUHezfW1kwk41F5GmNtyQY7A75WI9Ls0QFYNuIc3h41LnopE1DNcQW1c/om0KCSeo1wtL8xsqgSYaFGYS1QfnJjdC5SPWxcj8knbLCw4xIS8bXbP0jpHKQ1Fed2UmQ6n2QYk9i+OUGVAz3kbBY=
+	t=1762299333; cv=none; b=Kqfsafefx/S0nLFClzh3C9X18lGYrWPUZzXtZ7jDFG1IkPRBdflP09MJR2eAybtp+AZ10xDJM3ornK9ZZXk5q9xKl1w6fO1R+t8gOgRQS1Av1D/zVaoyoyD4UjzcD3MVgZTWilJ6+82IRTECbajLIYhCcCxSMiTjWfnhkG2C8IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762299345; c=relaxed/simple;
-	bh=P8sM+279r/7jC+SZ4ufobrgc7rpxTIYv5eNtUj3Xros=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ze7cEl4InAguuNzKHnfBf0HC8jZo53KgLdblVVvzxM+k5WS7cu8DVzu1HIRkaZYUqVJi+A4bh75iL+anoqyyuo3E9X5YG8V/3zKHcQsQOzlnL8qyuQF0NvEXckQEN0GElrOBWRdBEc1840lHh0M6JoeLF+EGJIM58MmLHk7MA7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=llBSXQFT; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762299343; x=1793835343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P8sM+279r/7jC+SZ4ufobrgc7rpxTIYv5eNtUj3Xros=;
-  b=llBSXQFTXh38z34RDeEQx+bnwv4qTc7RylM+vDEKoyLvvuRxclb2OFyN
-   kLkBVHLaPcerfwApAVxWatRZPrZFD1KQDp9KsfCAzyd0mIXZnZDt+fhqe
-   mfSDfILuhlmntNYzznR1egRIdPAdNALHKCjDNZ+LhqKYfsOVDx+Cyjk5p
-   Px8OhBP8FjcN9qBFxxCAUb09CEHO09YVHjRG1iZ6CRImq72Uuy/dIZ4dZ
-   a0VSiGsMXlnYBJ+fmYeY3FXwKNHjxw2sFztPqaLfYdBJp1v1fE8AhWYNi
-   eeVTggxZxYECB48sMkL5p1hbblw5XEjdVXk+LFMM7v5ZTXIYfCkNDaeSs
-   Q==;
-X-CSE-ConnectionGUID: z8NLg7juRECFA6c+p/M8Iw==
-X-CSE-MsgGUID: q/MkU720Q6qECM+mm88ToA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64505244"
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="64505244"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 15:35:43 -0800
-X-CSE-ConnectionGUID: tXH83n4/T8+V0cnwP08HyQ==
-X-CSE-MsgGUID: SymAw6/0SNeK+eYx1M/4Iw==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Nov 2025 15:35:39 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGQYr-000Rw4-1Z;
-	Tue, 04 Nov 2025 23:35:37 +0000
-Date: Wed, 5 Nov 2025 07:35:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Robert Richter <rrichter@amd.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>
-Cc: oe-kbuild-all@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: Re: [PATCH v4 10/14] cxl: Enable AMD Zen5 address translation using
- ACPI PRMT
-Message-ID: <202511050720.Hy1VQf0n-lkp@intel.com>
-References: <20251103184804.509762-11-rrichter@amd.com>
+	s=arc-20240116; t=1762299333; c=relaxed/simple;
+	bh=2VMQrsuAbBUhWoXwE0wY+gg7obNb5pNbBsIt1CiKuQw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q/cOqUQBqfFRKPJrNapbM75R8TmKqDP0lygkkU4XiQvxTyLDcfGlQnExYIoPHObcmLNGD/Tvmr4JVc2sRgaq/za72q5DmiZaa91kh8U1HuBaxMn0gKmG3ZdRlFhiWV2wJ6QWktt/MIB99RH2k9r4ErTTW1vZFtf8GqYBqlgQUJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-433316b78f4so22301875ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:35:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762299331; x=1762904131;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AdyO4gh7iAlQFSoy5CIG4DgiFWF/85SRrg5mDm9g9P0=;
+        b=LhTlVYSVF72v4QFmFvox405Gp6+82HoVye1CjQffNGsILoqYZ5N6NsNi6XkRUDy8iL
+         MHHcFd7cmh3XfFVXZvqztL5EAeIKOdL9Klne2SQf+9Z8vXz+xjtl0WT5+Xy1H0yy4dCH
+         dnFeOLL4X49sY/c9sS5zdbZnZSEzrDmMwrqpqrOCG46RDj84IOe0u6Z0QHlgGqSZ7E0i
+         3PYRGb2fTXLOye9Piq9WtLzzwMYsIm5b3f5IC9JSBFgaS/lKRTdfAeNYipUfAwi338My
+         +kR+FKNTL1QVuh+SH2hHo7zeWPbqt94l4ojDNH1ks2vO5whWBP0XvWLWjLB/kQsf95Pb
+         x7nA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsK4h6uM3WMzqBMwh15e4bf7AdhO8b3BZMRhbL7cfp3LP2FsDe40Hs4oEdd0a14xxHEp08LTo7rA4p8TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5kFPlyNHhDYkqA2PBGg0uq3Dbd+KQ6vr9WipPIGB9gPNkksOU
+	pOK3hylGZ7vhSLPS/jRULVoD7FaFyPT2MJI00rox1GmHJU0bZXuD1GkVw87anCLVlehMvVLxuuA
+	Ds7X92RIGF55UOywZjWFBR7qR2p+L8VrH2qSz/kKtE4+R/jdyyxof9M3SZa8=
+X-Google-Smtp-Source: AGHT+IH6T+lKfQ6V0XGJrssHrVvl4K2lTnnaX2x+LBqWLou2vuLX+a7xgEa7XLvHl76HJdP0qxUDo2d0Xg7vLWcsNbDALNxYcSFU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103184804.509762-11-rrichter@amd.com>
+X-Received: by 2002:a05:6e02:1a8b:b0:433:2dd5:f571 with SMTP id
+ e9e14a558f8ab-433407eb3bcmr17291995ab.25.1762299330934; Tue, 04 Nov 2025
+ 15:35:30 -0800 (PST)
+Date: Tue, 04 Nov 2025 15:35:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690a8dc2.050a0220.3d0d33.0018.GAE@google.com>
+Subject: [syzbot] [arm?] WARNING in fpsimd_restore_current_state
+From: syzbot <syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Robert,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on 211ddde0823f1442e4ad052a2f30f050145ccada]
+HEAD commit:    dcb6fa37fd7b Linux 6.18-rc3
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a79704580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b659f0cab27b22
+dashboard link: https://syzkaller.appspot.com/bug?extid=d4ab35af21e99d07ce67
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115fdf34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1441d258580000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Robert-Richter/cxl-region-Store-root-decoder-in-struct-cxl_region/20251104-025351
-base:   211ddde0823f1442e4ad052a2f30f050145ccada
-patch link:    https://lore.kernel.org/r/20251103184804.509762-11-rrichter%40amd.com
-patch subject: [PATCH v4 10/14] cxl: Enable AMD Zen5 address translation using ACPI PRMT
-config: x86_64-randconfig-071-20251105 (https://download.01.org/0day-ci/archive/20251105/202511050720.Hy1VQf0n-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511050720.Hy1VQf0n-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ae6bec0d0398/disk-dcb6fa37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dcc732da66c3/vmlinux-dcb6fa37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/301d1bbdecc2/Image-dcb6fa37.gz.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511050720.Hy1VQf0n-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
-
-   drivers/cxl/core/atl.c: In function 'cxl_prm_translate_hpa_range':
->> drivers/cxl/core/atl.c:63:49: error: invalid use of undefined type 'struct cxl_region_context'
-      63 |         struct cxl_endpoint_decoder *cxled = ctx->cxled;
-         |                                                 ^~
-   drivers/cxl/core/atl.c:65:39: error: invalid use of undefined type 'struct cxl_region_context'
-      65 |         struct cxl_memdev *cxlmd = ctx->cxlmd;
-         |                                       ^~
-   drivers/cxl/core/atl.c:66:37: error: invalid use of undefined type 'struct cxl_region_context'
-      66 |         struct range hpa_range = ctx->hpa_range;
-         |                                     ^~
-   drivers/cxl/core/atl.c:92:16: error: invalid use of undefined type 'struct cxl_region_context'
-      92 |         if (ctx->interleave_ways != 1) {
-         |                ^~
-   In file included from include/linux/device.h:15,
-                    from include/linux/pci.h:37,
-                    from drivers/cxl/core/atl.c:7:
-   drivers/cxl/core/atl.c:94:28: error: invalid use of undefined type 'struct cxl_region_context'
-      94 |                         ctx->interleave_ways, ctx->interleave_granularity);
-         |                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:93:17: note: in expansion of macro 'dev_dbg'
-      93 |                 dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:94:50: error: invalid use of undefined type 'struct cxl_region_context'
-      94 |                         ctx->interleave_ways, ctx->interleave_granularity);
-         |                                                  ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:93:17: note: in expansion of macro 'dev_dbg'
-      93 |                 dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:114:60: error: invalid use of undefined type 'struct cxl_region_context'
-     114 |                         hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-         |                                                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:112:17: note: in expansion of macro 'dev_dbg'
-     112 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:115:28: error: invalid use of undefined type 'struct cxl_region_context'
-     115 |                         ctx->hpa_range.end, dev_name(&cxld->dev));
-         |                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:112:17: note: in expansion of macro 'dev_dbg'
-     112 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:130:60: error: invalid use of undefined type 'struct cxl_region_context'
-     130 |                         hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-         |                                                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:128:17: note: in expansion of macro 'dev_dbg'
-     128 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:131:28: error: invalid use of undefined type 'struct cxl_region_context'
-     131 |                         ctx->hpa_range.end, dev_name(&cxld->dev));
-         |                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:128:17: note: in expansion of macro 'dev_dbg'
-     128 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:156:60: error: invalid use of undefined type 'struct cxl_region_context'
-     156 |                         hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-         |                                                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:154:17: note: in expansion of macro 'dev_dbg'
-     154 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:157:28: error: invalid use of undefined type 'struct cxl_region_context'
-     157 |                         ctx->hpa_range.end, dev_name(&cxld->dev));
-         |                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/cxl/core/atl.c:154:17: note: in expansion of macro 'dev_dbg'
-     154 |                 dev_dbg(cxld->dev.parent,
-         |                 ^~~~~~~
-   drivers/cxl/core/atl.c:161:12: error: invalid use of undefined type 'struct cxl_region_context'
-     161 |         ctx->hpa_range = hpa_range;
-         |            ^~
-   drivers/cxl/core/atl.c:162:12: error: invalid use of undefined type 'struct cxl_region_context'
-     162 |         ctx->interleave_ways = ways;
-         |            ^~
-   drivers/cxl/core/atl.c:163:12: error: invalid use of undefined type 'struct cxl_region_context'
-     163 |         ctx->interleave_granularity = gran;
-         |            ^~
-   drivers/cxl/core/atl.c:167:29: error: invalid use of undefined type 'struct cxl_region_context'
-     167 |                 dev_name(ctx->cxlmd->dev.parent), base, len, hpa_range.start,
-         |                             ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+Modules linked in:
+CPU: 0 UID: 0 PID: 6720 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+pc : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+lr : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+lr : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+sp : ffff8000a1047de0
+x29: ffff8000a1047de0 x28: ffff0000dcfd9ec0 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000008 x24: 0000000000000040
+x23: 00000000000020ff x22: dfff800000000000 x21: 1fffe0001b9fb3d8
+x20: 0000000000000000 x19: ffff0000dcfd9ec0 x18: 1fffe000337db690
+x17: ffff80008ae011f8 x16: ffff80008052ae04 x15: 0000000000000001
+x14: 1fffe0001b9fb3d8 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001b9fb3d9 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000dcfd9ec0 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000008 x3 : ffff8000801f8344
+x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline] (P)
+ fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746 (P)
+ arch_exit_to_user_mode_work arch/arm64/include/asm/entry-common.h:25 [inline]
+ exit_to_user_mode_loop+0xe4/0x178 kernel/entry/common.c:46
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+ el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 129
+hardirqs last  enabled at (127): [<ffff80008ae151bc>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+hardirqs last  enabled at (127): [<ffff80008ae151bc>] _raw_spin_unlock_irq+0x30/0x80 kernel/locking/spinlock.c:202
+hardirqs last disabled at (129): [<ffff80008adecb80>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
+softirqs last  enabled at (8): [<ffff8000801f95fc>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (128): [<ffff8000801f95c8>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
 
 
-vim +63 drivers/cxl/core/atl.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-    59	
-    60	static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
-    61	{
-    62		struct cxl_region_context *ctx = data;
-  > 63		struct cxl_endpoint_decoder *cxled = ctx->cxled;
-    64		struct cxl_decoder *cxld = &cxled->cxld;
-    65		struct cxl_memdev *cxlmd = ctx->cxlmd;
-    66		struct range hpa_range = ctx->hpa_range;
-    67		struct pci_dev *pci_dev;
-    68		u64 spa_len, len = range_len(&hpa_range);
-    69		u64 addr, base_spa, base = hpa_range.start;
-    70		int ways, gran;
-    71	
-    72		/*
-    73		 * When Normalized Addressing is enabled, the endpoint
-    74		 * maintains a 1:1 mapping between HPA and DPA. If disabled,
-    75		 * skip address translation and perform only a range check.
-    76		 */
-    77		if (hpa_range.start != cxled->dpa_res->start)
-    78			return 0;
-    79	
-    80		if (!IS_ALIGNED(hpa_range.start, SZ_256M) ||
-    81		    !IS_ALIGNED(hpa_range.end + 1, SZ_256M)) {
-    82			dev_dbg(cxld->dev.parent,
-    83				"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
-    84				hpa_range.start, hpa_range.end, dev_name(&cxld->dev));
-    85			return -ENXIO;
-    86		}
-    87	
-    88		/*
-    89		 * Endpoints are programmed passthrough in Normalized
-    90		 * Addressing mode.
-    91		 */
-    92		if (ctx->interleave_ways != 1) {
-    93			dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
-    94				ctx->interleave_ways, ctx->interleave_granularity);
-    95			return -ENXIO;
-    96		}
-    97	
-    98		if (!cxlmd || !dev_is_pci(cxlmd->dev.parent)) {
-    99			dev_dbg(&cxld->dev, "No endpoint found: %s, range %#llx-%#llx\n",
-   100				dev_name(cxld->dev.parent), hpa_range.start,
-   101				hpa_range.end);
-   102			return -ENXIO;
-   103		}
-   104	
-   105		pci_dev = to_pci_dev(cxlmd->dev.parent);
-   106	
-   107		/* Translate HPA range to SPA. */
-   108		hpa_range.start = base_spa = prm_cxl_dpa_spa(pci_dev, hpa_range.start);
-   109		hpa_range.end = prm_cxl_dpa_spa(pci_dev, hpa_range.end);
-   110	
-   111		if (hpa_range.start == ULLONG_MAX || hpa_range.end == ULLONG_MAX) {
-   112			dev_dbg(cxld->dev.parent,
-   113				"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
-   114				hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-   115				ctx->hpa_range.end, dev_name(&cxld->dev));
-   116			return -ENXIO;
-   117		}
-   118	
-   119		/*
-   120		 * Since translated addresses include the interleaving
-   121		 * offsets, align the range to 256 MB.
-   122		 */
-   123		hpa_range.start = ALIGN_DOWN(hpa_range.start, SZ_256M);
-   124		hpa_range.end = ALIGN(hpa_range.end, SZ_256M) - 1;
-   125	
-   126		spa_len = range_len(&hpa_range);
-   127		if (!len || !spa_len || spa_len % len) {
-   128			dev_dbg(cxld->dev.parent,
-   129				"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
-   130				hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-   131				ctx->hpa_range.end, dev_name(&cxld->dev));
-   132			return -ENXIO;
-   133		}
-   134	
-   135		ways = spa_len / len;
-   136		gran = SZ_256;
-   137	
-   138		/*
-   139		 * Determine interleave granularity
-   140		 *
-   141		 * Note: The position of the chunk from one interleaving block
-   142		 * to the next may vary and thus cannot be considered
-   143		 * constant. Address offsets larger than the interleaving
-   144		 * block size cannot be used to calculate the granularity.
-   145		 */
-   146		while (ways > 1 && gran <= SZ_16M) {
-   147			addr = prm_cxl_dpa_spa(pci_dev, base + gran);
-   148			if (addr != base_spa + gran)
-   149				break;
-   150			gran <<= 1;
-   151		}
-   152	
-   153		if (gran > SZ_16M) {
-   154			dev_dbg(cxld->dev.parent,
-   155				"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
-   156				hpa_range.start, hpa_range.end, ctx->hpa_range.start,
-   157				ctx->hpa_range.end, dev_name(&cxld->dev));
-   158			return -ENXIO;
-   159		}
-   160	
-   161		ctx->hpa_range = hpa_range;
-   162		ctx->interleave_ways = ways;
-   163		ctx->interleave_granularity = gran;
-   164	
-   165		dev_dbg(&cxld->dev,
-   166			"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
-   167			dev_name(ctx->cxlmd->dev.parent), base, len, hpa_range.start,
-   168			spa_len, ways, gran);
-   169	
-   170		return 0;
-   171	}
-   172	
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
