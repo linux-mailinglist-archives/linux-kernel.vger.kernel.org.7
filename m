@@ -1,236 +1,175 @@
-Return-Path: <linux-kernel+bounces-884143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6B9C2F72E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:33:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6281EC2F731
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8335334C6F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE488189C1C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C009B35962;
-	Tue,  4 Nov 2025 06:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aX1YonBj"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E8F35962;
+	Tue,  4 Nov 2025 06:34:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50651B7F4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119DC1B7F4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762237997; cv=none; b=ab2LOFmUAks6H3jWvmbcyPtgtPIrU1bXeMsxiUE4VmupgKN32doHumX3bmUF8L8Yx/Iz0b0lqA9MRFSXQOpYRqzZPwrwqDC7hhncNj/ku/Zn/QU7MoHTeXJdcLJGII28cxXU+MNsIM4MtUqVHU4Wo75+2iUO/JtMdpBv6QD+0Yk=
+	t=1762238045; cv=none; b=eNon1VORxJeJwG4m4GEgcPl7VIJfdDydET6FXGPg/a3is6EpgQIcBDYJD5uzbmyLyiAkUR4rcsjU90vBZ1iu2UfEjfbsykCwVewBFI1PkIMKU685AR+rzt3J0MU3QCIEagq4h8P/V4vBxrH52WcDrtL7kYBuLPEqgt2uiMYKuAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762237997; c=relaxed/simple;
-	bh=qKgcoi3pcrygjpc0AFwC0zHhzM9thZzXIOSInB4buXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0yQJuEDKmry2+YyfUB8tGJwdlak7qBitPaSBt8lowPGWknUUDOz55Vg103Y2bBob1NMYT343F23oKZUb5NSJcnQCrTtCNA8ahLZHiy57plLkbnyZ0RjCKVsnk0BFEVj2jAwkUTiSrJNFenJLf479kj+hVtkEdN80AFNnXwXS9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aX1YonBj; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a9fb6fccabso1814428b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:33:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762237994; x=1762842794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=okre2wWfSe1mulYIwiBesIuo2idWuGwL5MuWvzP58j8=;
-        b=aX1YonBjKHBikCR5gs8ypN6PMt2lOEzIusmxV11zv5Vpmm1glq3iSPCBMHwdwoFNrp
-         QmXLLvfu1oPio3ZumuNelFeSaxBZQqoCukguXRI8X/4L9EkTGbQYAE25QyopP3KIkCvi
-         AmuWgzZHhqPEkGQYqXHkb/WeOduFQyWH0tK1195ZIG4yfxT3hJkINGi7Tdkk7zMpwZpR
-         Il/Wkh0YEGSqOQ5xzjL9gEgpdnup6GuMcY3k5BkuGRbCU9Xo5Yk9VCHQbprccfMNJFf7
-         Zhbc6gyJ7+SVabbrd7BbhFK3zIyNM/4eOqzq2xyDd0kd1QUecd8HL3uUN/sPMgLFQzW9
-         Hhxg==
+	s=arc-20240116; t=1762238045; c=relaxed/simple;
+	bh=x8YZdzL/tZVXUmkQ5Tzj1U5Guxj9yUfEJWY6s0YT3so=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mFEdQl1hM32jIwrPXnN9q/CLs+7PhGvr+JYdzowX6sYulK3Kq8vNipEW/65uD4wttXVb8cNlom0uhAQXGxVywseDtumoJuPPQpFm+iMg1ONHfn9jC/UDOUKoFxsaMF1UkXhLkThdtf177W0n2nmGOtn8aQdU0rPwjIAN1oWSskU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so754987339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:34:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762237994; x=1762842794;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=okre2wWfSe1mulYIwiBesIuo2idWuGwL5MuWvzP58j8=;
-        b=MKLwHo5/2Ei8z/ylYekRbyu+zx5fFzhfNfrkHPApryW1Yn7y04xBLXOyqGXoLrkUdn
-         RwXi2aq8DwEIy0R8ig5u1e58+pMEf+OKWrmnq+QyulZwlmHOkPmtyrUjCzpVkIrP12pd
-         gj9HG4r4joQiqB2VCuTaHISyYRIw2LvGQE19mTiyZrrUBEaKZDEsG0TzM+vVzCMefzY5
-         gF0egYWZs4x+ETopgIiVxDv5UUQ47MerQOKVM21MIRSFQmQLIehNGYt0iDv/UBpe373T
-         vxAbymBDdlAWYVN0g0hdpQweuzcevkW7xaANqQxxPjOA2KCQ0PkCvSniyyLXjhlEQs5V
-         Nwxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqRVqvZHjSUxJN7MUVIi0PgB2Sg08M/+7MmMuHu4k3aadMkTuQ1jEMusoT9PMkQ9V4aQguOqYi9RrQHmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxrI6WuAjy9aVHx7HH8kH2mDsGLFScnIOmKCPnnW5DdMt2/GNO
-	BZkKKnUoOIQ+KZeOiFzT6QWvDfwzM1Aqzr4LxifLK05hNyn7oix81EoymiXB7azlKls=
-X-Gm-Gg: ASbGncsJtpx2zOp6a2FUqSOkUJ3Dqp2OcJ/3xEfmyDP3d09RPEJ+wuLib0FahmU0MAg
-	C0SYR02qB/5YTxFY2y8OX6t/oMmwwjVqKb2XeNoDNu2HtADhZNHzwz9le4dspPCzMOe8X+aqhjI
-	wTpVIseUhxZXhRxz6++5XULlTJ1zM8qmVgr4OPMqPI4XeuI1GBORc27Bag/hd4Vlhh8W+MasrzQ
-	8Byq76iZoD+Foupfw8wuwpkpfHij8IWnaXpy9K213F13a/909Ls3DmSBm0+zcXwWn2V8rzLj4Vp
-	bPrfLY7/T2SNQTQwgSdg8EmcrXQMj7J5+9NuGhAxDKMZJNXlg6mF2yBn1Ltp+ULLoEn8V5xZCW9
-	xF7Nky3AVwoHYR863nfCTEUpQXfRUUFLl9TvHMjg49WCmm82ranj2vihKR8ubrzPBQlBh1VQLcX
-	cF1ssNQP1Y8hsVEx6HnVWXuj4Wo57c2+NYXgwkhQ==
-X-Google-Smtp-Source: AGHT+IEsK3Ywd+KdKURpAwPHwPCTZY4XIOGPtIduvvF1tV0A6LQireFulxj6l1bJiYfahHfhZiyCQw==
-X-Received: by 2002:a05:6a20:918a:b0:33f:df99:11e5 with SMTP id adf61e73a8af0-348cbda9889mr20185915637.28.1762237994112;
-        Mon, 03 Nov 2025 22:33:14 -0800 (PST)
-Received: from [100.82.90.5] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd62428dfsm1576009b3a.60.2025.11.03.22.33.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 22:33:13 -0800 (PST)
-Message-ID: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
-Date: Tue, 4 Nov 2025 14:33:00 +0800
+        d=1e100.net; s=20230601; t=1762238043; x=1762842843;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0ZnxBr7metABhqcvt5CCeBCbK8dZlok0WJ484JGXKM=;
+        b=AsIexywyNlzCQPKHQSirs331vimVwvrQgGgy10UPV7AaZFj3Ho7+XHEn9xtrsBlfob
+         a5AZPaor8E+pSlAeOChmexo+srkM2ShvKNWAzw+gbGbwgI/xyjfe+JFE8igvfSwqXzX3
+         DqOr/qJJYru5HC8oQsctmBgKjRtN81smXinOGxiFLV+9AEkEUCfHjQLhztKCt52LOkNk
+         UaefP/UWeMFF/VciHshZIfd54+Nd3ea+egH6XYLevDhQ3v9nYJ8s946H2S2GkrcWkk4b
+         h8zojHN5PzT8BqSgbKqPLRZ2ukpQt8xVfHM5lEzgikd4rgPZ7wzXUNNK1AGUtrmKxf0/
+         r7MQ==
+X-Gm-Message-State: AOJu0Yzs4l/WbGtp910iXyeto/o1tS8Sgf02yvrniGrYl4iZNFHdnfzJ
+	AKAgkzjzrOIhKDbdj/HHW7l4AAHz1oPBMprvYEZpKL69SRyQ8lyKCBHWSniOsoCzyqChplwSK0h
+	L3mOG1IVPSmfgr8hVnFgAGR8HuauIhDDu1pTQ5ROzmij8KLoNoZiRiKorzQQ=
+X-Google-Smtp-Source: AGHT+IHopg71eAti+VgHELDNCFrqnJCsoq1RtcnK6OYEDaczW6xk07fE5L1Zd3HKc5ip/T9JzkJzONQOqUhQ9E5tH9yGEpU7Qjxr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
-To: Dev Jain <dev.jain@arm.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
- david@redhat.com, hannes@cmpxchg.org
-Cc: ryan.roberts@arm.com, hpa@zytor.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, ppt@kernel.org, surenb@google.com,
- mhocko@suse.com, shakeel.butt@linux.dev, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251103063718.90743-1-dev.jain@arm.com>
- <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
- <666e012e-0b13-4def-82de-55ccd5868d36@arm.com>
- <9359ce51-5ac7-4312-8ef8-79fa51d014f5@bytedance.com>
- <2be04785-d725-4e79-a609-87f174271f83@arm.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <2be04785-d725-4e79-a609-87f174271f83@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:d:b0:433:3192:4a5 with SMTP id
+ e9e14a558f8ab-4333192069fmr76967775ab.3.1762238043151; Mon, 03 Nov 2025
+ 22:34:03 -0800 (PST)
+Date: Mon, 03 Nov 2025 22:34:03 -0800
+In-Reply-To: <uzq2pgc3ufm7iewqzhfnujt5pwqcsadnfgufywp5gx6guzdtye@4pxj7vqewujt>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69099e5b.a70a0220.88fb8.000c.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in ni_rename (2)
+From: syzbot <syzbot+4d8e30dbafb5c1260479@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: sleeping function called from invalid context in indx_insert_entry
+
+loop0: detected capacity change from 0 to 4096
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6503, name: syz.0.17
+preempt_count: 1, expected: 0
+RCU nest depth: 0, expected: 0
+6 locks held by syz.0.17/6503:
+ #0: ffff888032ba6480 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:508
+ #1: ffff888054585088 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1025 [inline]
+ #1: ffff888054585088 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: lock_rename fs/namei.c:3360 [inline]
+ #1: ffff888054585088 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: do_renameat2+0x3b9/0xa50 fs/namei.c:5311
+ #2: ffff888054585838 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #2: ffff888054585838 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: lock_two_nondirectories+0xe7/0x180 fs/inode.c:1232
+ #3: ffff888054586f48 (&sb->s_type->i_mutex_key#20/4){+.+.}-{4:4}, at: vfs_rename+0x665/0xe80 fs/namei.c:5187
+ #4: ffff888054584dd0 (&ni->ni_lock/6){+.+.}-{4:4}, at: ni_lock_dir fs/ntfs3/ntfs_fs.h:1118 [inline]
+ #4: ffff888054584dd0 (&ni->ni_lock/6){+.+.}-{4:4}, at: ntfs_rename+0x6de/0xbf0 fs/ntfs3/namei.c:327
+ #5: ffff888054586c90 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ni_lock fs/ntfs3/ntfs_fs.h:1113 [inline]
+ #5: ffff888054586c90 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ntfs_rename+0x6f7/0xbf0 fs/ntfs3/namei.c:328
+Preemption disabled at:
+[<ffffffff8301e706>] ni_rename+0x46/0x130 fs/ntfs3/frecord.c:3026
+CPU: 0 UID: 0 PID: 6503 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x44b/0x5d0 kernel/sched/core.c:8927
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4921 [inline]
+ slab_alloc_node mm/slub.c:5256 [inline]
+ __kmalloc_cache_noprof+0x60/0x6c0 mm/slub.c:5758
+ kmalloc_noprof include/linux/slab.h:957 [inline]
+ kzalloc_noprof include/linux/slab.h:1094 [inline]
+ fnd_get fs/ntfs3/ntfs_fs.h:670 [inline]
+ indx_insert_entry+0xd9/0x720 fs/ntfs3/index.c:1954
+ ni_add_name+0x8a8/0xc90 fs/ntfs3/frecord.c:2995
+ ni_rename+0x54/0x130 fs/ntfs3/frecord.c:3027
+ ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efd9b34efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efd9a9be038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007efd9b5a5fa0 RCX: 00007efd9b34efc9
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000200000000580
+RBP: 00007efd9b3d1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007efd9b5a6038 R14: 00007efd9b5a5fa0 R15: 00007ffd3bf7c298
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6503 at fs/ntfs3/frecord.c:3031 ni_rename+0x122/0x130 fs/ntfs3/frecord.c:3030
+Modules linked in:
+CPU: 0 UID: 0 PID: 6503 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ni_rename+0x122/0x130 fs/ntfs3/frecord.c:3030
+Code: 75 2d 89 d8 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 91 37 c2 07 cc e8 4b d8 bc fe e8 46 f0 30 fe eb cf e8 3f d8 bc fe 90 <0f> 0b 90 eb 98 e8 04 79 be 07 0f 1f 40 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000488fa98 EFLAGS: 00010293
+RAX: ffffffff8301e7e1 RBX: 00000000fffffffe RCX: ffff88803dc5bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000fffffffe R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1dac5ef R12: ffff888054584ce0
+R13: ffff8880268d2200 R14: ffff8880268d2a00 R15: ffff888054586ba0
+FS:  00007efd9a9be6c0(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe9d3cde000 CR3: 0000000023140000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efd9b34efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efd9a9be038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007efd9b5a5fa0 RCX: 00007efd9b34efc9
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000200000000580
+RBP: 00007efd9b3d1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007efd9b5a6038 R14: 00007efd9b5a5fa0 R15: 00007ffd3bf7c298
+ </TASK>
 
 
+Tested on:
 
-On 11/4/25 12:02 PM, Dev Jain wrote:
-> 
-> On 03/11/25 2:37 pm, Qi Zheng wrote:
->> Hi Dev,
->>
->> On 11/3/25 4:43 PM, Dev Jain wrote:
->>>
->>> On 03/11/25 12:33 pm, Qi Zheng wrote:
->>>> Hi Dev,
->>>>
->>>> On 11/3/25 2:37 PM, Dev Jain wrote:
->>>>> The implementation of CONFIG_PT_RECLAIM is completely contained in 
->>>>> generic
->>>>> mm code. It depends on the RCU callback which will reclaim the 
->>>>> pagetables -
->>>>> there is nothing arch-specific about that. So, enable this config for
->>>>> all architectures.
->>>>
->>>> Thanks for doing this!
->>>>
->>>> But unfortunately, not all architectures call tlb_remove_ptdesc() in
->>>> __pte_free_tlb(). Some architectures directly call pte_free() to
->>>> free PTE pages (without RCU).
->>>
->>> Thanks! This was not obvious to figure out.
->>>
->>> Is there an arch bottleneck because of which they do this? I mean to 
->>> say,
->>>
->>> is something stopping us from simply redirecting __pte_free_tlb to 
->>> tlb_remove_ptdesc
->>
->> Some architectures have special handling in __pte_free_tlb(), and cannot
->> simple redirect __pte_free_tlb() to tlb_remove_ptdesc(), such as m68k,
->> powerpc, etc.
->>
->> For those architectures that call pte_free() in __pte_free_tlb(), it
->> should be easy to modify them.
->>
->> If you're not in a rush, I can take the time to finish the above tasks.
-> 
-> Right then, I'll leave that up to you!
-
-OK, I will do it ASAP.
-
-> 
-> 
->>
->>>
->>> or pte_free_defer?
->>>
->>>
->>> I am looking to enable this config at least on arm64 by default, I 
->>> believe it will be legal
->>>
->>> to do this at least here.
->>
->> IIRC, arm64 can directly enable CONFIG_PT_RECLAIM, as it is supported
->> at the architecture level.
->>
->> Thanks,
->> Qi
->>
->>>
->>>
->>>>
->>>> We need to modify these architectures first, otherwise it will
->>>> lead to UAF. This approach is feasible because Hugh provides similar
->>>> support in pte_free_defer().
->>>>
->>>> Enabling PT_RECLAIM on all architecture has always been on my
->>>> TODO list, but it's been blocked by other things. :(
->>>>
->>>> Thanks,
->>>> Qi
->>>>
->>>>>
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>>   arch/x86/Kconfig | 1 -
->>>>>   mm/Kconfig       | 5 +----
->>>>>   mm/pt_reclaim.c  | 2 +-
->>>>>   3 files changed, 2 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->>>>> index fa3b616af03a..5681308a5650 100644
->>>>> --- a/arch/x86/Kconfig
->>>>> +++ b/arch/x86/Kconfig
->>>>> @@ -327,7 +327,6 @@ config X86
->>>>>       select FUNCTION_ALIGNMENT_4B
->>>>>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
->>>>>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
->>>>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
->>>>>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
->>>>>       select SCHED_SMT            if SMP
->>>>>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
->>>>> diff --git a/mm/Kconfig b/mm/Kconfig
->>>>> index 0e26f4fc8717..903c37d02555 100644
->>>>> --- a/mm/Kconfig
->>>>> +++ b/mm/Kconfig
->>>>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
->>>>>         The architecture has hardware support for userspace shadow 
->>>>> call
->>>>>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
->>>>>   -config ARCH_SUPPORTS_PT_RECLAIM
->>>>> -    def_bool n
->>>>> -
->>>>>   config PT_RECLAIM
->>>>>       bool "reclaim empty user page table pages"
->>>>>       default y
->>>>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
->>>>> +    depends on MMU && SMP
->>>>>       select MMU_GATHER_RCU_TABLE_FREE
->>>>>       help
->>>>>         Try to reclaim empty user page table pages in paths other 
->>>>> than munmap
->>>>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
->>>>> index 7e9455a18aae..049e17f08c6a 100644
->>>>> --- a/mm/pt_reclaim.c
->>>>> +++ b/mm/pt_reclaim.c
->>>>> @@ -1,6 +1,6 @@
->>>>>   // SPDX-License-Identifier: GPL-2.0
->>>>>   #include <linux/hugetlb.h>
->>>>> -#include <asm-generic/tlb.h>
->>>>> +#include <asm/tlb.h>
->>>>>   #include <asm/pgalloc.h>
->>>>>     #include "internal.h"
->>>>
->>
+commit:         c9cfc122 Merge tag 'for-6.18-rc4-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1041c114580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d8e30dbafb5c1260479
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17dfc532580000
 
 
