@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-885288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5ABC327C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:59:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FBDC327E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED4E24E6548
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151C73B2E90
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5754033B6ED;
-	Tue,  4 Nov 2025 17:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0523933B95C;
+	Tue,  4 Nov 2025 17:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g2kNi4TS"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="FR7PPXiR"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B962836AF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9EF2D7DC0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762279134; cv=none; b=lBRCFMiTdx40FSl6EgPtVtkLpec2imx/E22mbSrxo+3b64fOzGUKkAG9M26eSwA7vqfuuBh2L8likQDXwf+PeYSvBVCxsgPCT4fP+0nekoD4s0LF4iyK3bBCLcslLiljFJGGx5ianVV6ggAmuxD+Jw3lqDOC5WolecrROl3Uv5E=
+	t=1762279157; cv=none; b=WtNPDuavfFc94UWd/X4YgAog2p70iFn9wlaTv4yOrfQh8YfMghQOv1+Nz2sKtFfwtDOZz0vwG/1LXCjB+DMQrv9kH6UTlCdrf/r+9Dc2pCd4wAlpe4mN6+pLafQ2tez8PcGh8/PIkVE34jfGbFdm1X25HUbYSPq1+FvN0Uz9nRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762279134; c=relaxed/simple;
-	bh=M8hteS49kDBBnmC972KvrKrHthGw8+MuUqHN8fekdI0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rGkLZrI1xE7YAafoPoYNMXljjri13hb8Ck/DCIT78XvwODJGEb2F0Y2boY5NojVgQJuMvwK00JMZ/PH5lkw8+5QheHkP0rdn2Z8lNogOOmdQMH1ai9rX0fPyKVEckfbueO1rPxZCuvpgRRDWHm66a73soMMXV5LGYI5MaFv7hmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g2kNi4TS; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-294df925293so61912095ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762279133; x=1762883933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sTsoW0ur76ePtMo7HcuL4NYZdCCENhkyANXlSBYjqrA=;
-        b=g2kNi4TS0fhFySox+vfyeebQMICDYfFWWT16X4bYfp/CkS5n94JN6/0S7IOoRkQk06
-         qgRwW+mxLsg0bmaMSvvpxawCzdNLpQZY7nwFXNdCTapkuBKVn1k+nzQu6XgcknhTeVIe
-         mAky9pOZHG76ics0INdEgmUiKSspTqqo+vVnVE0QJ7amB4CRut6Wr3YD5SVesImRX/OZ
-         oh8S9lQkG8QvWhtKBLOVDt56/xX9buqOypkdNm7/wb4UX8ygiM3maiAKI2nx6oLYsl2Q
-         KCW6qoL0fyocQ3UO+vq8Q8eyJE+IM2mPIr/iDdDs8lQ2kOxwr75sPeEZQKpQGAe86ZZu
-         3yfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762279133; x=1762883933;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sTsoW0ur76ePtMo7HcuL4NYZdCCENhkyANXlSBYjqrA=;
-        b=fHxd1oaDxDNTJoP8qQI/FOkZ6kgJydf/buPDLELw83+IEWXTqvX9Evb8I4TwSNgCTW
-         DrQzXFa6NCZzJsr2BHqD6+VI8jF/iGqhrcLRy3FJOy0KMGy1VQbpg2FtS/VpMrP1mn3S
-         Olju5Xvxvpn+QG2CI/7TkBXebf5PciACti/bM0S2XmAxWqFmSNEHRCzOu58Io/GPhaoi
-         5TsamEiflLx9eKYVP4ZL5R1nLqnFtrgLvUuQQJAHyieD14xT4tIl9PNJqTOls8ml6dw/
-         8zGRo5CXSJzyPKVafgu/1isBktWe7AoLsnxOxJ3M2D1QJwKWPNDFTduavn+xhvZMPVme
-         wnsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7chaEe53A5uQInPR+DhU18ghu2s3oxruvO7mgjwcUebEtZKuH+EmW5Bgj7rlmD03OPaz8lIENK8FQj18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXb/ZIWCD0QjZYCseGu0aqcBefJBS4M84vqOQxpp819bfEuLlr
-	OHUWw/8LFW6gi3ECDy2q1ZWJKollxVSgcQcV316s3YXKlT6hwTPLuDQrph5JEnAP6WAoOAx3MKX
-	r+xkpqQ==
-X-Google-Smtp-Source: AGHT+IHo6/KH4EkXGXP40ZLufzSsgW7yh9/qU70MiYfxQR70XqX2CyQgg6697l1DVe5Ug6vhYlNvwdh/uJA=
-X-Received: from plok6.prod.google.com ([2002:a17:903:3bc6:b0:269:8ca7:6998])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f609:b0:295:4d97:84dd
- with SMTP id d9443c01a7336-2962adb8f9cmr4243385ad.51.1762279132506; Tue, 04
- Nov 2025 09:58:52 -0800 (PST)
-Date: Tue, 4 Nov 2025 09:58:48 -0800
-In-Reply-To: <725c68f2607ad2d4f742fd749ea517a98d669384.camel@intel.com>
+	s=arc-20240116; t=1762279157; c=relaxed/simple;
+	bh=vlobM313B1VdZJBATZK2pcRUJ2dE6lyciVzZaQ1W3TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJf8I5ub2oyW8mSrdkWAV5crT05TZUaFs4sBTQOFGKjpeiOgvSnVEb06H32odFzPU2/dYgubx46y8js1xz+47KoIr/RskfSp8T0TLuI2ksY0rhHbXCRB8QkMC/1mnObkHqWnPiVRpi9WeApcQJTT+bf0lDa4nLvVIWTYYNBIee8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=FR7PPXiR; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=J2T93GZ4iRg/mXaOUM2wPtUcrFT6Ce80fUC5fly//tg=; b=FR7PPXiR6QTPHE7f
+	JNYRc8Pv8zmiwEXXZZiML1cGSQ/67sPPxC66c5986choXJCJQo2Ts6kk7lb3rrYmlCaIiOPc5tdyY
+	rVA8BmEjDqmB3Gkxkwyd8DUVarGegVTrbeqf2d9QgYSTM9swAM/yh5ORVzF+6AbkLCwM0PN7vBG4p
+	bz1WV6OvaTJwt9BrRtr0MLWSqRH76f+MelLBCGGDq2pMw9XVY5EmJx2w+M4UEK15Q1gqH1EduPO7J
+	ZZjgdX1ul6cXtnbc4nPt9CosEDsAXm+8DZsV1yyYgQtlYe3TXN/Ttte/H5O8dG6R2r4zYpYcdkKdq
+	59PqQ6+C8O/NfqOByw==;
+Received: from dg by mx.treblig.org with local (Exim 4.98.2)
+	(envelope-from <dg@treblig.org>)
+	id 1vGLJ7-000000020YW-49uU;
+	Tue, 04 Nov 2025 17:59:02 +0000
+Date: Tue, 4 Nov 2025 17:59:01 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, sam@ravnborg.org,
+	benh@kernel.crashing.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+	Cedar Maxwell <cedarmaxwell@mac.com>
+Subject: Re: [PATCH v4] powerpc: Use shared font data
+Message-ID: <aQo-5T8z2nwtNe2p@gallifrey>
+References: <20230825142754.1487900-1-linux@treblig.org>
+ <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com>
+ <aQeQYNANzlTqJZdR@gallifrey>
+ <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
+ <aQgJ95Y3pA-8GdbP@gallifrey>
+ <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030200951.3402865-1-seanjc@google.com> <725c68f2607ad2d4f742fd749ea517a98d669384.camel@intel.com>
-Message-ID: <aQo-2OQd8ktU0ygn@google.com>
-Subject: Re: [PATCH v4 00/28] KVM: x86/mmu: TDX post-populate cleanups
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
-	"pjw@kernel.org" <pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	"kas@kernel.org" <kas@kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, 
-	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Kai Huang <kai.huang@intel.com>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, Vishal Annapurve <vannapurve@google.com>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.12.48+deb13-amd64 (x86_64)
+X-Uptime: 17:58:36 up 8 days, 17:34,  2 users,  load average: 0.02, 0.02, 0.00
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Fri, Oct 31, 2025, Rick P Edgecombe wrote:
-> On Thu, 2025-10-30 at 13:09 -0700, Sean Christopherson wrote:
-> > v4:
-> > =C2=A0- Collect reviews/acks.
-> > =C2=A0- Add a lockdep assertion in kvm_tdp_mmu_map_private_pfn(). [Yan]
-> > =C2=A0- Wrap kvm_tdp_mmu_map_private_pfn() with CONFIG_KVM_GUEST_MEMFD=
-=3Dy. [test bot]
-> > =C2=A0- Improve (or add) comments. [Kai, and probably others]
-> > =C2=A0- s/spte/mirror_spte to make it clear what's being passed in
-> > =C2=A0- Update set_external_spte() to take @mirror_spte as well. [Yan]
-> > =C2=A0- Move the KVM_BUG_ON() on tdh_mr_extend() failure to the end. [R=
-ick]
-> > =C2=A0- Take "all" the locks in tdx_vm_ioctl(). [Kai]
-> > =C2=A0- WARN if KVM attempts to map SPTEs into an invalid root. [Yan]
-> > =C2=A0- Use tdx_flush_vp_on_cpu() instead of tdx_disassociate_vp() when=
- freeing
-> > =C2=A0=C2=A0 a vCPU in VCPU_TD_STATE_UNINITIALIZED state. [Yan]
->=20
-> Do you want someone to follow up with a v2 of this after the series lands=
-? (with
-> Binbin's verbiage comments incorporated)
+* Finn Thain (fthain@linux-m68k.org) wrote:
+> 
+> On Mon, 3 Nov 2025, Dr. David Alan Gilbert wrote:
+> 
+> > 
+> > > Anyway, I imagine that the problem with your patch was that it relies 
+> > > on font data from a different (read only) section, which is 
+> > > unavailable for some reason (MMU not fully configured yet?)
+> > > 
+> > > So I've asked Stan to test a patch that simply removes the relevant 
+> > > 'const' keywords. It's not a solution, but might narrow-down the 
+> > > search.
+> > 
+> 
+> Stan tested my patch to remove 'const' from the font_desc and font_data 
+> structs but it did not help. (There goes that theory.)
+> 
+> > I wonder if this is a compiler-flag-ism;  I see 
+> > arch/powerpc/kernel/Makefile has a pile of special flags, and for 
+> > btext.o it has a -fPIC (as well as turning off some other flags). I 
+> > wonder if bodging those in lib/fonts/Makefile for 
+> > lib/fonts/font_sun8x16.c fixes it? But... this is data - there's no code 
+> > is there - are any of those flags relevant for data only?
+> > 
+> 
+> I don't know. But I'm sure Stan would be willing to test a patch for you.
 
-Feel free to send a v2 now.  Or just reply to Binbin's mail with the update=
-d
-comment.
+Can one of you point me at the config you're testing with so I can
+try some builds with it.
 
-> https://lore.kernel.org/kvm/20251028002824.1470939-1-rick.p.edgecombe@int=
-el.com/#t
+Dave
+
+> > > 
+> > > The BootX bootloader doesn't work on New World systems, which is 
+> > > probably why we don't see this regression on anything newer than a 
+> > > Wallstreet.
+> > > 
+> > > It's likely that other Old World systems are also affected, if they 
+> > > are using BootX. We don't yet know whether the regression also affects 
+> > > Old World systems using the iQUIK bootloader instead of BootX.
+> > 
+> > OK, remember I don't think I've ever tried PPC via MacOS booting, so not 
+> > familiar with it.
+> > 
+> 
+> I will try to set up a MacOS guest in QEMU, to see if the hang can be 
+> reproduced that way.
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
