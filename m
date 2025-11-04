@@ -1,166 +1,189 @@
-Return-Path: <linux-kernel+bounces-885586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C374BC33672
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9492C3367B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B95142010E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01A44636D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6351347BD5;
-	Tue,  4 Nov 2025 23:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0BE34844D;
+	Tue,  4 Nov 2025 23:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cnm41Soy"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bf69R+tQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D908F347BBC;
-	Tue,  4 Nov 2025 23:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C95F347BBC;
+	Tue,  4 Nov 2025 23:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762299498; cv=none; b=ngkEz1HBCHs3VuttKXeILuv5r8o/MAaTIBYurSLWwdhNxsgSAXWu7EHXbUGMJlUx4P5dF+v5g4EoIWjOpUcDMYE22tGKl2x5Mtz1MWqUXSIa/jcWYwYKox6liIAl7xk5EdSzhBRXamwTT43mRz2llVgBIsYiuD4EjZVZkTd0/xU=
+	t=1762299505; cv=none; b=kA+7nTohmKNxNsqchywktUOa/w9YYReN13EVZa4qVfODEiOCl/eOXXv1YWovzlLvzd/AhNdyslGJoUjlRsMj6jrsxm9FLRfZ/rjfsCfPTSh9MahoTtMWMJMKW6sSHawblpzzXztye5rtK56Y6KvploZ4LGFHYDjlgr8X4XpIyp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762299498; c=relaxed/simple;
-	bh=d6jGXoU5GQSpFp0lLHnXVWpgeyTdlTkXzUAgiwHMotQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QpnPjvR02wN03NCj7El0kFkkRu/jMQLLwW9Fi/OcZ67wVS3XaX2ZcnXruibo8VrF8ZjpD9bXukan6TbI1edKRziIKUqiD7ipH5JOHikBLkS1/pFBUImPDVQ3TvE1n3tYiht22v2we3/8Z1P7NwmMrsceVp3a23Rnji3HO6gQVFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cnm41Soy; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ElQ2RmJ1x7R7nu/XuCBdWb6wueQnVDguJsjDWzY0/do=; b=Cnm41SoyqaPXpJ/OuoYNN6myFg
-	veQLYRFhrNs3VCIj1XK2BBsbtaXoYoYBjGFide05sgrwhfZ3QIsGcI1ke4Owc+vRQxpEtyJaEBNwf
-	YVCFJfpCWXBM9TbaINmscGQOYoCe1ilC/bjRq+476xRhp9FOxBiFFykO/pD3f32yntVmZgvGqWU7t
-	pL5CYxFUUlOIBT63BMIQHJrjIby5+lPciLSSPo2Sb6hNaEbUx1Ho3rH0ETqjbhpU9tUT3/DR36m88
-	/87UB90SDbRKwfRGgrd31Kovs5SunhQfWKnwAzhAAylnDyQ/8/J/+8rpj4Qx6SSueVdRXGRvd/dwA
-	iG6j8XIQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGQbN-0000000Cl96-33oi;
-	Tue, 04 Nov 2025 23:38:13 +0000
-Message-ID: <8189649a-604f-4d5b-82a6-b31ef42967f5@infradead.org>
-Date: Tue, 4 Nov 2025 15:38:11 -0800
+	s=arc-20240116; t=1762299505; c=relaxed/simple;
+	bh=tJcYkVr7LDCJ3MMs5R6illjOG3OtSdYUQ0177dtNWZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oi1Ey9ywAnYcdKFZrEVWFT2Hulod0v7LjrEJyzPBLSm7TCZNQCGWTc7lcY90gI+t/sUgTH2ZiB6BpniUERphS/MvkWyB8nCgfUQmmtXwX7ER+Sdc742RM0aAofCK4r5WTrXaZwRsRyBfd3tJwy2zoBKjUqpEoxHFfp6e3dzMe7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bf69R+tQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A562CC4CEF7;
+	Tue,  4 Nov 2025 23:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762299504;
+	bh=tJcYkVr7LDCJ3MMs5R6illjOG3OtSdYUQ0177dtNWZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bf69R+tQbvoJJc0RLl9XP2yy03u+QbW76n0pXCeLTt4k21stSTQLGIfFCFkPgQ8wr
+	 xjByoqA7J03Ezw4oQ1gFjVlemtqgC8X3ekeY0ngiO18CkRnq0BgNr3724p7SawDRr0
+	 pINZzgqhVjY6vAX/P3BQ0wl/7Wv4mqE1hkELAV28qBDh2jF4epW7BBQlUUQfoHP4St
+	 CVldaiJhf4RI9Tv1aX4GuHvO+D5PYMfIKw47sXuEDYcshMVEmDtC/Tdy8fe60aAzXq
+	 KxEjpkZqFI8xy2BPoIR031tGqioAaBazMmRW297lx8gZnlJJLgSqbRBK/EyrVPDmNM
+	 v8cLinDTB4/Cg==
+Date: Tue, 4 Nov 2025 15:38:24 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <20251104233824.GO196370@frogsfrogsfrogs>
+References: <20251029071537.1127397-1-hch@lst.de>
+ <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <20251030143324.GA31550@lst.de>
+ <aQPyVtkvTg4W1nyz@dread.disaster.area>
+ <20251031130050.GA15719@lst.de>
+ <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: taskstats: Reindent payload kinds list
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>
-Cc: Balbir Singh <bsingharora@gmail.com>, Jonathan Corbet <corbet@lwn.net>
-References: <20251104130751.22755-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251104130751.22755-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103122111.GA17600@lst.de>
 
-
-
-On 11/4/25 5:07 AM, Bagas Sanjaya wrote:
-> Payload kinds list text is indented at the first text column, rather
-> than aligned to the list number. As an effect, the third item becomes
-> sublist of second item's third sublist item (TASKTYPE_TYPE_STATS).
+On Mon, Nov 03, 2025 at 01:21:11PM +0100, Christoph Hellwig wrote:
+> On Mon, Nov 03, 2025 at 12:14:06PM +0100, Jan Kara wrote:
+> > > Yes, it's pretty clear that the result in non-deterministic in what you
+> > > get.  But that result still does not result in corruption, because
+> > > there is a clear boundary ( either the sector size, or for NVMe
+> > > optionally even a larger bodunary) that designates the atomicy boundary.
+> > 
+> > Well, is that boundary really guaranteed? I mean if you modify the buffer
+> > under IO couldn't it happen that the DMA sees part of the sector new and
+> > part of the sector old? I agree the window is small but I think the real
+> > guarantee is architecture dependent and likely cacheline granularity or
+> > something like that.
 > 
-> Reindent the list text.
+> If you actually modify it: yes.  But I think Keith' argument was just
+> about regular racing reads vs writes.
 > 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/accounting/taskstats.rst | 52 +++++++++++++-------------
->  1 file changed, 27 insertions(+), 25 deletions(-)
+> > > pretty clearly not an application bug.  It's also pretty clear that
+> > > at least some applications (qemu and other VMs) have been doings this
+> > > for 20+ years.
+> > 
+> > Well, I'm mostly of the opinion that modifying IO buffers in flight is an
+> > application bug (as much as most current storage stacks tolerate it) but on
+> > the other hand returning IO errors later or even corrupting RAID5 on resync
+> > is, in my opinion, not a sane error handling on the kernel side either so I
+> > think we need to do better.
 > 
-> diff --git a/Documentation/accounting/taskstats.rst b/Documentation/accounting/taskstats.rst
-> index 2a28b7f55c103e..173c1e7bf5efa4 100644
-> --- a/Documentation/accounting/taskstats.rst
-> +++ b/Documentation/accounting/taskstats.rst
-> @@ -76,41 +76,43 @@ The messages are in the format::
->  The taskstats payload is one of the following three kinds:
->  
->  1. Commands: Sent from user to kernel. Commands to get data on
-> -a pid/tgid consist of one attribute, of type TASKSTATS_CMD_ATTR_PID/TGID,
-> -containing a u32 pid or tgid in the attribute payload. The pid/tgid denotes
-> -the task/process for which userspace wants statistics.
-> +   a pid/tgid consist of one attribute, of type TASKSTATS_CMD_ATTR_PID/TGID,
-> +   containing a u32 pid or tgid in the attribute payload. The pid/tgid denotes
-> +   the task/process for which userspace wants statistics.
->  
-> -Commands to register/deregister interest in exit data from a set of cpus
-> -consist of one attribute, of type
-> -TASKSTATS_CMD_ATTR_REGISTER/DEREGISTER_CPUMASK and contain a cpumask in the
-> -attribute payload. The cpumask is specified as an ascii string of
-> -comma-separated cpu ranges e.g. to listen to exit data from cpus 1,2,3,5,7,8
-> -the cpumask would be "1-3,5,7-8". If userspace forgets to deregister interest
-> -in cpus before closing the listening socket, the kernel cleans up its interest
-> -set over time. However, for the sake of efficiency, an explicit deregistration
-> -is advisable.
-> +   Commands to register/deregister interest in exit data from a set of cpus
-> +   consist of one attribute, of type
-> +   TASKSTATS_CMD_ATTR_REGISTER/DEREGISTER_CPUMASK and contain a cpumask in the
-> +   attribute payload. The cpumask is specified as an ascii string of
-> +   comma-separated cpu ranges e.g. to listen to exit data from cpus 1,2,3,5,7,8
-> +   the cpumask would be "1-3,5,7-8". If userspace forgets to deregister
-> +   interest in cpus before closing the listening socket, the kernel cleans up
-> +   its interest set over time. However, for the sake of efficiency, an explicit
-> +   deregistration is advisable.
->  
->  2. Response for a command: sent from the kernel in response to a userspace
-> -command. The payload is a series of three attributes of type:
-> +   command. The payload is a series of three attributes of type:
->  
-> -a) TASKSTATS_TYPE_AGGR_PID/TGID : attribute containing no payload but indicates
-> -a pid/tgid will be followed by some stats.
-> +   a) TASKSTATS_TYPE_AGGR_PID/TGID: attribute containing no payload but
-> +      indicates a pid/tgid will be followed by some stats.
->  
-> -b) TASKSTATS_TYPE_PID/TGID: attribute whose payload is the pid/tgid whose stats
-> -are being returned.
-> +   b) TASKSTATS_TYPE_PID/TGID: attribute whose payload is the pid/tgid whose
-> +      stats are being returned.
->  
-> -c) TASKSTATS_TYPE_STATS: attribute with a struct taskstats as payload. The
-> -same structure is used for both per-pid and per-tgid stats.
-> +   c) TASKSTATS_TYPE_STATS: attribute with a struct taskstats as payload. The
-> +      same structure is used for both per-pid and per-tgid stats.
->  
->  3. New message sent by kernel whenever a task exits. The payload consists of a
->     series of attributes of the following type:
->  
-> -a) TASKSTATS_TYPE_AGGR_PID: indicates next two attributes will be pid+stats
-> -b) TASKSTATS_TYPE_PID: contains exiting task's pid
-> -c) TASKSTATS_TYPE_STATS: contains the exiting task's per-pid stats
-> -d) TASKSTATS_TYPE_AGGR_TGID: indicates next two attributes will be tgid+stats
-> -e) TASKSTATS_TYPE_TGID: contains tgid of process to which task belongs
-> -f) TASKSTATS_TYPE_STATS: contains the per-tgid stats for exiting task's process
-> +   a) TASKSTATS_TYPE_AGGR_PID: indicates next two attributes will be pid+stats
-> +   b) TASKSTATS_TYPE_PID: contains exiting task's pid
-> +   c) TASKSTATS_TYPE_STATS: contains the exiting task's per-pid stats
-> +   d) TASKSTATS_TYPE_AGGR_TGID: indicates next two attributes will be
-> +      tgid+stats
-> +   e) TASKSTATS_TYPE_TGID: contains tgid of process to which task belongs
-> +   f) TASKSTATS_TYPE_STATS: contains the per-tgid stats for exiting task's
-> +      process
->  
->  
->  per-tgid stats
+> Yes.  Also if you look at the man page which is about official as it gets
+> for the semantics you can't find anything requiring the buffers to be
+> stable (but all kinds of other odd rants).
 > 
-> base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
+> > I also think the performance cost of the unconditional bounce buffering is
+> > so heavy that it's just a polite way of pushing the app to do proper IO
+> > buffer synchronization itself (assuming it cares about IO performance but
+> > given it bothered with direct IO it presumably does). 
+> >
+> > So the question is how to get out of this mess with the least disruption
+> > possible which IMO also means providing easy way for well-behaved apps to
+> > avoid the overhead.
+> 
+> Remember the cases where this matters is checksumming and parity, where
+> we touch all the cache lines anyway and consume the DRAM bandwidth,
+> although bounce buffering upgrades this from pure reads to also writes.
+> So the overhead is heavy, but if we handle it the right way, that is
+> doing the checksum/parity calculation while the cache line is still hot
+> it should not be prohibitive.  And getting this right in the direct
+> I/O code means that the low-level code could stop bounce buffering
+> for buffered I/O, providing a major speedup there.
+> 
+> I've been thinking a bit more on how to better get the copy close to the
+> checksumming at least for PI, and to avoid the extra copies for RAID5
+> buffered I/O. M maybe a better way is to mark a bio as trusted/untrusted
+> so that the checksumming/raid code can bounce buffer it, and I start to
+> like that idea.  A complication is that PI could relax that requirement
+> if we support PI passthrough from userspace (currently only for block
+> device, but I plan to add file system support), where the device checks
+> it, but we can't do that for parity RAID.
 
--- 
-~Randy
+IIRC, a PI disk is supposed to check the supplied CRC against the
+supplied data, and fail the write if there's a discrepancy, right?  In
+that case, an application can't actually corrupt its own data because
+hardware will catch it.
+
+For reads, the kernel will check the supplied CRC against the data
+buffer, right?  So a program can blow itself up, but that only affects
+the buggy program.
+
+I think that means the following:
+
+A. We can allow mutant directio to non-PI devices because buggy programs
+   can only screw themselves over.  Not great but we've allowed this
+   forever.
+
+B. We can also allow it to PI devices because those buggy programs will
+   get hit with EIOs immediately.
+
+C. Mutant directio reads from a RAID1/5 on non-PI devices are ok-ish
+   because the broken application can decide to retry and that's just
+   wasting resources.
+
+D. Mutant directio reads from a RAID1/5 on PI devices are not good
+   because the read failure will result in an unnecessary rebuild, which
+   could turn really bad if the other disks are corrupt.
+
+E. Mutant directio writes to a RAID5 are bad bad bad because you corrupt
+   the stripe and now unsuspecting users on other strips lose data.
+
+I think the btrfs corruption problems are akin to a RAID5 where you can
+persist the wrong CRC to storage and you'll only see it on re-read; but
+at least the blast is contained to the buggy application's file.
+
+I wonder if that means we really need a way to convey the potential
+damage of a mutant write through the block layer / address space so that
+the filesystem can do the right thing?  IOWs, instead of a single
+stable-pages flag, something along the lines of:
+
+enum mutation_blast_radius {
+	/* nobody will notice a thing */
+	MBR_UNCHECKED,
+
+	/* program doing the corruption will notice */
+	MBR_BADAPP,
+
+	/* everyone else's data get corrupted too */
+	MBR_EVERYONE,
+};
+
+AS_STABLE_WRITES is set for MBR_BADAPP and MBR_EVERYONE, and the
+directio -> dontcache flag change is done for a write to a MBR_EVERYONE
+bdev.
+
+Hm?
+
+--D
 
