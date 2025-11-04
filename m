@@ -1,70 +1,97 @@
-Return-Path: <linux-kernel+bounces-884926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F50C31821
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:28:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D3AC3186A
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8FB1F34693C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16544220F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F8432E73E;
-	Tue,  4 Nov 2025 14:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9A532ED57;
+	Tue,  4 Nov 2025 14:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lskt+sJO"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nJPNntmp"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013006.outbound.protection.outlook.com [40.93.201.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951E132E159
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266472; cv=none; b=BNHanOB/mwMTfgj5ePJ3Nq0xnOZ/Wtb4r8GH6e8yQRIsr2aQSKuM3TAiELl7r0yeefWTzOJ2WVV9UnC8oqelXdewkXqkBTIyFkq+Fr0l+/GM3IPkSyHGZbWy85nVQzRukA6M8heXyGj8848Yc2vJ1YC5zWQZ/Yov23DJSSfeu+Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266472; c=relaxed/simple;
-	bh=Wy7fZsHwdHKbfl3emFIKps5tmwm662kVweqCr2/axHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mWP9bOftpN6nMgXHpmc2pPuDYjF06aSRuJv//D3oEEmyk4u/qTnY2PmriBKt6U0EOlF0VPIL6q/GULnKVJtT/k7NJrZPfmP9UHj7zCa3MKGOtyyuYgPdYyvnJn3RKCfruy5i/l5qOqJLvQsmRSng/UHJJgSEFrkBrnLJlH5F9x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lskt+sJO; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762266468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IRYFcLw4DCyiRATjaYotN8jkTN5kuIx12CLhkTkRv28=;
-	b=lskt+sJOBNRgPGn4tFmVtA9FDFocBRzVObLXbVr9KaDIaD/wWhgAlm9eWWGb5E1rGJkJus
-	65cQViMvEqR3KlwrvC5KpSOppFyrEx/B4XAt3DXs+XfyvEiPBSuYg+Gv93dFN18/oaNjxW
-	bEbtdrTG7PICYbURmLHOQFlJh3WwNjo=
-From: Leon Hwang <leon.hwang@linux.dev>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	andrii@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	ameryhung@gmail.com,
-	linux-kernel@vger.kernel.org,
-	kernel-patches-bot@fb.com,
-	Leon Hwang <leon.hwang@linux.dev>
-Subject: [PATCH bpf-next v5 2/2] selftests/bpf: Add test to verify freeing the special fields when update [lru_,]percpu_hash maps
-Date: Tue,  4 Nov 2025 22:27:14 +0800
-Message-ID: <20251104142714.99878-3-leon.hwang@linux.dev>
-In-Reply-To: <20251104142714.99878-1-leon.hwang@linux.dev>
-References: <20251104142714.99878-1-leon.hwang@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D7C3271EF;
+	Tue,  4 Nov 2025 14:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762266504; cv=fail; b=VYaa/QcQNUOi/uiPdpzv+tfGgd/H4NyuB0Nlw93A4MVLInynuNwukyVOfoxWHnn2fp/hpkMXO0e3gRVJhmhuiBKovzkvU02sfDI+QieUZ1kplwOIdWc9AmxTB1NYlZ98HEl9eWJ1H50ZKlBapaC71SL5yVHEcoBrcJb5aAGdIcw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762266504; c=relaxed/simple;
+	bh=gEz2+rHSWSYbp7hmrxw8AXW25yf+07ExMCNWpF9SIE0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iw4irwpsKDto8bpAGJwO5TzpG0g6826EZcyezVk98FAVWqoRuKcDrBtrgNCBTnDfFfwhtDdya6Q3pR59cX8AZDI/IesULu70ozeTV6ytzuq9qI6eViyxjO7QdHMiqHsHNz8yixBGv14vjKOPUTYV7G5PN4w7zzowqIrlddx0wr4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nJPNntmp; arc=fail smtp.client-ip=40.93.201.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QNbkaMEOhCP6tu9+sVdzV9LiDTwswhXiENmlimDWv/AIPjpGzeF37yTgLjtT8Vb1whyxqwmv28fzsPjCEACvN4t530wlo4F75utmNcd8BmecXCcZnrAB39WDGufGbo4MiXkZb3DsBnhku5rQeiYX604VOe5N1RYgiu7m1n+MwOEALluMxcu8Ec+Ma0O4b5neEV1uvNqgYhgWMEZ5zGdn/iLF8pwkdqv66o/PZPjxskHzEcqpHhInRvzIcmXedyLsq0iPLqVrxBBMuSW3IoaaS8Du3EMReHkAnTa4XJ+ImMvbDr1XBW5maR9cZQ9KOjUyr7HULxdTTY/o1r1DxmYUhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FmITIElCi+D8OyTjp3/BtR3HKO+jnGZpm0HRO0uDVys=;
+ b=X9lUhtHXXSPokd8QqWf9/4Qc83+IZ0ktlKipUGgjKqlOGvNGKyYUB/bOBWCLeixbb+RqjxLedbxugBZ6Ut5pDye6Dv8pGU/V5camp33EJYKQ7+9hPWSEC1KV+bA9cO68isBOJvKoUshoW49RqoIloaZbUZjtcIUlQZVrkTFhdmzA67idHVyDqT4ZayX2cyzCP/TmQs3K9VG8n0whhMEtHPxxr9XOXSzcGONN+kCcvjC5IKXkYITeysute3z9syOb9dgDRpLlSViRH3eLzTQsaq0+WgfNMZzOBVPx+fDjj+i2D5Bb9qfRCOXl5+tWwyUArz3gf3XL+85uoSWsRRJgUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FmITIElCi+D8OyTjp3/BtR3HKO+jnGZpm0HRO0uDVys=;
+ b=nJPNntmpgRfiygF76MR8Kmd09JHRcCRiVizYUFod9tlxDPJW0PWHKSQsPzJUVajVUjXraMuW3Uq6cD2olMMGDy1c1/jliFVJ/rhzQBnJbuwIAbvNCipHTXxia2vd2+duC7nXqGd3hh0i7sRYy1yXi9eFrvG05n/rnBaANGLosu9lFRkb7TIkjFtJgEjweSz4HEWblQi+6KqdZuIk6e0dA6YARg4v/8FkMqxFuv/B4aLIGRmedo5Jhw3lXelYP+LL7wP9xtX11oXOI2ZW4J7mr3r+j9NtryUmIOFtIsXE4LAE0sD0iyBolUQZUoamaBvJsBL35H0uzSuyYr5SfL02cg==
+Received: from SN6PR04CA0073.namprd04.prod.outlook.com (2603:10b6:805:f2::14)
+ by MN6PR12MB8515.namprd12.prod.outlook.com (2603:10b6:208:470::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 14:28:17 +0000
+Received: from SN1PEPF000397B2.namprd05.prod.outlook.com
+ (2603:10b6:805:f2:cafe::36) by SN6PR04CA0073.outlook.office365.com
+ (2603:10b6:805:f2::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Tue,
+ 4 Nov 2025 14:28:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF000397B2.mail.protection.outlook.com (10.167.248.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Tue, 4 Nov 2025 14:28:16 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 4 Nov
+ 2025 06:27:55 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 4 Nov 2025 06:27:54 -0800
+Received: from inno-vm-xubuntu (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 4 Nov 2025 06:27:45 -0800
+From: Zhi Wang <zhiw@nvidia.com>
+To: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <dakr@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
+	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+	<lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
+	<markus.probst@posteo.de>, <helgaas@kernel.org>, <cjia@nvidia.com>,
+	<smitra@nvidia.com>, <ankita@nvidia.com>, <aniketa@nvidia.com>,
+	<kwankhede@nvidia.com>, <targupta@nvidia.com>, <acourbot@nvidia.com>,
+	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <zhiwang@kernel.org>, "Zhi
+ Wang" <zhiw@nvidia.com>
+Subject: [PATCH RESEND v4 0/4] rust: pci: add config space read/write support
+Date: Tue, 4 Nov 2025 16:27:29 +0200
+Message-ID: <20251104142733.5334-1-zhiw@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,162 +99,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B2:EE_|MN6PR12MB8515:EE_
+X-MS-Office365-Filtering-Correlation-Id: fef8698f-00ec-4880-45dd-08de1bae6507
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5+TJgf2UgRatXCiENklbBm2YZgpMhCp6uaCegLhYguee+EACpz/MCE9Swbpt?=
+ =?us-ascii?Q?eND5GDbUq1rNMI1aAT9lu6qiWWkkq/H+JSjDAktevIkzVxAnifvsDiIx8Kjw?=
+ =?us-ascii?Q?/pSjRO5tltOLav2SQbnYOlEUWLSXqRwaSRiMcYWjmy5bYTfeLZEEyXQfFNLz?=
+ =?us-ascii?Q?6rgLNXgekaSmgwtMGqRM5oSR/iqp7x0GJWwC50KFDwtomjKybqMwZRphbFS4?=
+ =?us-ascii?Q?qqidFEzKXNLLRwxW6KRLu11ERVDu61ixluuMAhN3oqp7JqV05kg3mwMbD88U?=
+ =?us-ascii?Q?LoCTLor2J4/50GDcrf1uuU/TCtSbSjJeOB5/SAI9Tv5yCTLWT5KoOymeh1iD?=
+ =?us-ascii?Q?LMfItFUWYhnJXJ+qaZnqTUrmPE8662vA32jAAGSpYShg+VBzvXKLf9NUqF6j?=
+ =?us-ascii?Q?br73kTT9nWjT1tTWv7sUvGWMRPHpYT8iuej73AVV/snhwxvTpQLQOwazcFEe?=
+ =?us-ascii?Q?Mx8cUk8+rznGqLW9JBQamwSS/8ol/PXwK0Lk1aise2oAbOIy4S7WWxkGfw23?=
+ =?us-ascii?Q?rEVVAEMjU3WNI2z85abXRtMfH+8SfSZdXjGqKauVeUcpIzurm1+bOBFNFBdT?=
+ =?us-ascii?Q?1xUY6DVFEPIiETs416SFvVtkVnA3L6vvi8DKcJ+/BqGOCmusfC0Vr8wa/nZh?=
+ =?us-ascii?Q?Z35VCDZMoPTKAk3XpSzDqcT800n7ltwZPHpSjhxXWl8m6WKQ9aDzd+8k6YIo?=
+ =?us-ascii?Q?cn2NG1hFP59EEWKNWA93dmeCciWXjtR7x3WV1Sj2GB/LtmSBvuOhSzFCz6T9?=
+ =?us-ascii?Q?XzWfh5j8pPe3hE23b2hzrFdDOkbPDS3URfD1ZOOuAE+HTA517TjUGQBP90nA?=
+ =?us-ascii?Q?w9lg8b7t3knAaTrqomMDCqnl71vtE+BXTTIHm5wRlyIpudRUTyafQB2LVyxC?=
+ =?us-ascii?Q?lAfp+sdWnyHxvW5UARClZkFb/I+f3KpEuEao0E4D8zcXU/TVycsJbCI4PhWl?=
+ =?us-ascii?Q?1TZDiuclTbAjK6HUnXA0J1E81ZTy/RiNpy3bPOVx9M7eKo+eoncoktXDL21i?=
+ =?us-ascii?Q?19I6E9I//XlKtMOxpFWpSVLD5aEclLKuRs1cpI2rrkop6m1qDZCZHMi6qMC5?=
+ =?us-ascii?Q?QH9omV5OFKDdtJwW2CwHbsr7C2sjB360zDdYxVBQq7dK3pGox8cLOfsFr8+U?=
+ =?us-ascii?Q?ybndwx4D8vg1YZjDGJRJIRRhbwb3O9BqRk87Q0zboEO/FAIGTqVLbpr6okwy?=
+ =?us-ascii?Q?W8c2f53URd73UV/mj3QODF0JHSdNmtdF+fYEwaN588RDXezMolGFa97pgwoD?=
+ =?us-ascii?Q?GEEW+lHoj1g/6FzP9JTxX8PsBp0DsuGJC3IisPNOtRhswZ6nvKIdIcCIRaTw?=
+ =?us-ascii?Q?xHJixMX29akyT+D8qT66YWAFxYVVdeLqKGQNtAC8eBAfYJT5LXmmbbi+P2hX?=
+ =?us-ascii?Q?s9T8v8uDXTbcIz1D9lQUA5VjkFnW995kPrkOGJboam01uxwEA5XFrZGuJSSM?=
+ =?us-ascii?Q?dl8dphLyP2w8PTst14jU5aYjFHZrxIArwdtUy6CWoVhdLOqtzDg1ym9xMsJs?=
+ =?us-ascii?Q?JJCFk4dMTlSLkNQepkOPN1thF3yaLna/gnmV1qqOMyOi+X2TrYsxDmW6QTIX?=
+ =?us-ascii?Q?ZwQTsqSG7RwAUDKos+E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 14:28:16.5102
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fef8698f-00ec-4880-45dd-08de1bae6507
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8515
 
-Add test to verify that updating [lru_,]percpu_hash maps decrements
-refcount when BPF_KPTR_REF objects are involved.
+In the NVIDIA vGPU RFC [1], the PCI configuration space access is
+required in nova-core for preparing gspVFInfo when vGPU support is
+enabled. This series is the following up of the discussion with Danilo
+for how to introduce support of PCI configuration space access in Rust
+PCI abstractions.
 
-The tests perform the following steps:
+v4:
 
-1. Call update_elem() to insert an initial value.
-2. Use bpf_refcount_acquire() to increment the refcount.
-3. Store the node pointer in the map value.
-4. Add the node to a linked list.
-5. Probe-read the refcount and verify it is *2*.
-6. Call update_elem() again to trigger refcount decrement.
-7. Probe-read the refcount and verify it is *1*.
+- Refactor the SIZE constant to be an associated constant. (Alice)
+- Remove the default method implementations in the Io trait. (Alice)
+- Make cfg_size() private. (Danilo/Bjorn)
+- Implement the infallible accessors of ConfigSpace. (Danilo)
+- Create a new Io64 trait specifically for 64-bit accessors. (Danilo)
+- Provide two separate methods for driver: config_space() and
+  config_space_extended(). (Danilo)
+- Update the sample driver to test the infallible accessors. (Danilo)
 
-Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
----
- .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
- .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
- 2 files changed, 117 insertions(+)
+v3:
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-index d6bd5e16e6372..b95551768d27b 100644
---- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-+++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-@@ -44,3 +44,60 @@ void test_refcounted_kptr_wrong_owner(void)
- 	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
- 	refcounted_kptr__destroy(skel);
- }
-+
-+void test_percpu_hash_kptr_refcount_leak(void)
-+{
-+	struct refcounted_kptr *skel;
-+	int cpu_nr, fd, err, key = 0;
-+	struct bpf_map *map;
-+	size_t values_sz;
-+	u64 *values;
-+	LIBBPF_OPTS(bpf_test_run_opts, opts,
-+		    .data_in = &pkt_v4,
-+		    .data_size_in = sizeof(pkt_v4),
-+		    .repeat = 1,
-+	);
-+
-+	cpu_nr = libbpf_num_possible_cpus();
-+	if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
-+		return;
-+
-+	values = calloc(cpu_nr, sizeof(u64));
-+	if (!ASSERT_OK_PTR(values, "calloc values"))
-+		return;
-+
-+	skel = refcounted_kptr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
-+		free(values);
-+		return;
-+	}
-+
-+	values_sz = cpu_nr * sizeof(u64);
-+	memset(values, 0, values_sz);
-+
-+	map = skel->maps.percpu_hash;
-+	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
-+	if (!ASSERT_OK(err, "bpf_map__update_elem"))
-+		goto out;
-+
-+	fd = bpf_program__fd(skel->progs.percpu_hash_refcount_leak);
-+	err = bpf_prog_test_run_opts(fd, &opts);
-+	if (!ASSERT_OK(err, "bpf_prog_test_run_opts"))
-+		goto out;
-+	if (!ASSERT_EQ(opts.retval, 2, "opts.retval"))
-+		goto out;
-+
-+	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
-+	if (!ASSERT_OK(err, "bpf_map__update_elem"))
-+		goto out;
-+
-+	fd = bpf_program__fd(skel->progs.check_percpu_hash_refcount);
-+	err = bpf_prog_test_run_opts(fd, &opts);
-+	ASSERT_OK(err, "bpf_prog_test_run_opts");
-+	ASSERT_EQ(opts.retval, 1, "opts.retval");
-+
-+out:
-+	refcounted_kptr__destroy(skel);
-+	free(values);
-+}
-+
-diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-index 893a4fdb4b6e9..87b0cc018f840 100644
---- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-+++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-@@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
- 	return 0;
- }
- 
-+private(kptr_ref) u64 ref;
-+
-+static int probe_read_refcount(void)
-+{
-+	u32 refcount;
-+
-+	bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
-+	return refcount;
-+}
-+
-+static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
-+			    struct node_data __kptr **node)
-+{
-+	struct node_data *n, *m;
-+
-+	n = bpf_obj_new(typeof(*n));
-+	if (!n)
-+		return -1;
-+
-+	m = bpf_refcount_acquire(n);
-+	n = bpf_kptr_xchg(node, n);
-+	if (n) {
-+		bpf_obj_drop(n);
-+		bpf_obj_drop(m);
-+		return -2;
-+	}
-+
-+	bpf_spin_lock(lock);
-+	bpf_list_push_front(head, &m->l);
-+	ref = (u64)(void *) &m->ref;
-+	bpf_spin_unlock(lock);
-+	return probe_read_refcount();
-+}
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_HASH);
-+	__type(key, int);
-+	__type(value, struct map_value);
-+	__uint(max_entries, 1);
-+} percpu_hash SEC(".maps");
-+
-+SEC("tc")
-+int percpu_hash_refcount_leak(void *ctx)
-+{
-+	struct map_value *v;
-+	int key = 0;
-+
-+	v = bpf_map_lookup_elem(&percpu_hash, &key);
-+	if (!v)
-+		return 0;
-+
-+	return __insert_in_list(&head, &lock, &v->node);
-+}
-+
-+SEC("tc")
-+int check_percpu_hash_refcount(void *ctx)
-+{
-+	return probe_read_refcount();
-+}
-+
- char _license[] SEC("license") = "GPL";
+- Turn offset_valid() into a private function of kernel::io:Io. (Alex)
+- Separate try and non-try variants. (Danilo)
+- Move all the {try_}{read,write}{8,16,32,64} accessors to the I/O trait.
+  (Danilo)
+- Replace the hardcoded MMIO type constraint with a generic trait bound
+  so that register! macro can be used in other places. (Danilo)
+- Fix doctest. (John)
+- Add an enum for PCI configuration space size. (Danilo)
+- Refine the patch comments. (Bjorn)
+
+v2:
+
+- Factor out common trait as 'Io' and keep the rest routines in original
+  'Io' as 'Mmio'. (Danilo)
+- Rename 'IoRaw' to 'MmioRaw'. Update the bus MMIO implementation to use
+  'MmioRaw'.
+- Introduce pci::Device<Bound>::config_space(). (Danilo)
+- Implement both infallible and fallible read/write routines, the device
+  driver decicdes which version should be used.
+
+This ideas of this series are:
+
+- Factor out a common trait IoRegion for other accessors to share the
+  same compiling/runtime check like before.
+
+- Factor the MMIO read/write macros from the define_read! and
+  define_write! macros. Thus, define_{read, write}! can be used in other
+  backend.
+
+  In detail:
+
+  * Introduce `call_mmio_read!` and `call_mmio_write!` helper macros
+    to encapsulate the unsafe FFI calls.
+  * Update `define_read!` and `define_write!` macros to delegate to
+    the call macros.
+  * Export `define_read` and `define_write` so they can be reused
+    for other I/O backends (e.g. PCI config space).
+
+- Add a helper to query configuration space size. This is mostly for
+  runtime check.
+
+- Implement the PCI configuration space access backend in PCI
+  Abstractions.
+
+- Add tests for config space routines in rust PCI sample driver.
+
+[1] https://lore.kernel.org/all/20250903221111.3866249-1-zhiw@nvidia.com/
+
+Zhi Wang (4):
+  rust: io: factor common I/O helpers into Io trait
+  rust: io: factor out MMIO read/write macros
+  rust: pci: add config space read/write support
+  sample: rust: pci: add tests for config space routines
+
+ drivers/gpu/nova-core/regs/macros.rs |  90 ++++----
+ drivers/gpu/nova-core/vbios.rs       |   1 +
+ rust/kernel/devres.rs                |  12 +-
+ rust/kernel/io.rs                    | 298 ++++++++++++++++++++-------
+ rust/kernel/io/mem.rs                |  16 +-
+ rust/kernel/io/poll.rs               |   4 +-
+ rust/kernel/pci.rs                   | 156 +++++++++++++-
+ samples/rust/rust_driver_pci.rs      |  48 ++++-
+ 8 files changed, 483 insertions(+), 142 deletions(-)
+
 -- 
-2.51.1
+2.51.0
 
 
