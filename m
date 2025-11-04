@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-884874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58E7C315E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:03:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB88FC31613
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A701889151
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:02:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FD914EE21A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9AC23B627;
-	Tue,  4 Nov 2025 14:02:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632AE21CC49
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C0932D0CB;
+	Tue,  4 Nov 2025 14:03:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D532AAA0;
+	Tue,  4 Nov 2025 14:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762264929; cv=none; b=RGAUNRbiKiEjPuh83NiXUgCWy/OUvsqFDkW0IPiX8ogOENVC3Tg5q8ZkEkeRTgmtcAcmmFfhgTz6kns5PYwKoonZHwbYKws3BPYz5zhC0KskHEuO4xXUWnDcUFDSTXTCG6tLx/JsKx+rwFjVKDEGUXM8r6015Puj9m9kfeB2NVg=
+	t=1762265004; cv=none; b=DrVMucY8g+R4Y5dhnXOh8EcBKw47dohPnu1UjzAZ73vFkiGIdc5EvVywVq/7+7jSkp3n9XMrT+rNouxBUCsyKicBRdpnO2Rrmg1eXqSWG8p46lHufu7uEqVRFtY2EF94rQgZe5fC9D68uAlDnRKrBAM4kTFWFZ/0qWKv2y/Egu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762264929; c=relaxed/simple;
-	bh=wlH1mNse9Oj7SY+5J8LZQOY+NiGMKFixFpk3OT5mNGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IYGfuGxqgB5Hi7s0TZQ8UIr2OOUDwn65l94MfTNn5HakbaazjVLDzPO5aWpvPuEeQ4wZP1HWeMWPKOY7TQ9zLyhiZugOJoH8s28cuF6b+Mw96w+PXYxnW/YeesLbUfGIHDrmoZOcKADrwsL8VY1BjmdwkWCoE6+cvl5H02gYwDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E79C01CE0;
-	Tue,  4 Nov 2025 06:01:58 -0800 (PST)
-Received: from [10.164.18.64] (unknown [10.164.18.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B037C3F694;
-	Tue,  4 Nov 2025 06:02:04 -0800 (PST)
-Message-ID: <053b2bfd-df5e-41fe-854c-f0eb96564dcb@arm.com>
-Date: Tue, 4 Nov 2025 19:32:01 +0530
+	s=arc-20240116; t=1762265004; c=relaxed/simple;
+	bh=TIs0KSHaAZac+8fB2KI+RpslKr1YnFy+r4pUcWY1ixE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=trd2O0JDbKPwPkNVJHfMWsW37Jix7eYusNXXKEfPV1VCjK+HkSNmdXUlAfFPXlARcaGNvEBl5McbZBLxxfvqMhwwop97DDe1Cun7scMF1rQ2xQobwaQ7/NoBGkOTAPXydXzpS7XYylD3jcuSRlaa8o4cEiwTXM7vo0SZRxKiacg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d19CQ1Q53zHnH87;
+	Tue,  4 Nov 2025 22:03:14 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id A80611402F0;
+	Tue,  4 Nov 2025 22:03:17 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 14:03:17 +0000
+Date: Tue, 4 Nov 2025 14:03:15 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Antoni Pokusinski
+	<apokusinski01@gmail.com>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<andy@kernel.org>, <marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] iio: mpl3115: add threshold events support
+Message-ID: <20251104140315.0000394d@huawei.com>
+In-Reply-To: <aQhmNDoI8k3KvyMR@smile.fi.intel.com>
+References: <20251031201821.88374-1-apokusinski01@gmail.com>
+	<20251031201821.88374-2-apokusinski01@gmail.com>
+	<20251102103808.73cac929@jic23-huawei>
+	<aQhmNDoI8k3KvyMR@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: kprobes: check the return value of
- set_memory_rox()
-To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org, ryan.roberts@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251103194505.4077265-1-yang@os.amperecomputing.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251103194505.4077265-1-yang@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+On Mon, 3 Nov 2025 10:22:12 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-On 04/11/25 1:15 am, Yang Shi wrote:
-> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
-> rodata=full"), __change_memory_common has more chance to fail due to
-> memory allocation fialure when splitting page table. So check the return
-> value of set_memory_rox(), then bail out if it fails otherwise we may have
-> RW memory mapping for kprobes insn page.
->
-> Fixes: 195a1b7d8388 ("arm64: kprobes: call set_memory_rox() for kprobe page")
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
-> I actually epxected 195a1b7d8388 ("arm64: kprobes: call set_memory_rox()
-> for kprobe page") can be merged in 6.17-rcX, so I just restored it to
-> before commit 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in
-> alloc_insn_page"), however it turned out to be merged in 6.18-rc1 and it
-> is after commit a166563e7ec3 ("arm64: mm: support large block mapping when
-> rodata=full"). So I made the fix tag point to it.
-> And I don't think we need to backport this patch to pre-6.18.
->
->   arch/arm64/kernel/probes/kprobes.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> index 8ab6104a4883..43a0361a8bf0 100644
-> --- a/arch/arm64/kernel/probes/kprobes.c
-> +++ b/arch/arm64/kernel/probes/kprobes.c
-> @@ -49,7 +49,10 @@ void *alloc_insn_page(void)
->   	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
->   	if (!addr)
->   		return NULL;
-> -	set_memory_rox((unsigned long)addr, 1);
-> +	if (set_memory_rox((unsigned long)addr, 1)) {
-> +		execmem_free(addr);
-> +		return NULL;
-> +	}
->   	return addr;
->   }
+> On Sun, Nov 02, 2025 at 10:38:08AM +0000, Jonathan Cameron wrote:
+> > On Fri, 31 Oct 2025 21:18:22 +0100
+> > Antoni Pokusinski <apokusinski01@gmail.com> wrote:  
+> 
+> ...
+> 
+> 
+> > Generally looks good to me, but some comments on the 24 bit value reading.  
+> 
+> > > +		i2c_smbus_read_i2c_block_data(data->client,
+> > > +					      MPL3115_OUT_PRESS,
+> > > +					      3, (u8 *)&val_press);  
+> > 
+> > This is an oddity.  Why read into a __be32 when it's a 24bit number?
+> > I guess it doesn't really matter as you just need a big enough space
+> > and throw the value away.  However, I'd read it into a u8 [3]; then size off that
+> > as well.
+> > 
+> > There are two existing cases of this in the driver. One of them should use
+> > get_unaligned_be24 on a u8[3] buffer.  The other one is more complex as it's
+> > reading directly into the scan buffer that gets pushed to the kfifo and is
+> > reading into a u8 buffer ultimately anyway so at least there is no
+> > real suggestion of it being 32 bits (just a +4 shift to deal with natural
+> > alignment as the storage has to be power of 2 in that case.).
+> > 
+> > hmm. I think either we should tidy up the easy case (_read_info_raw) +
+> > use a u8[3] here or just stick to this being odd.
+> > My preference would be to have another patch tidying up the other case
+> > + use a u8[3] here.  
+> 
+> Just a side question... Wondering, if we actually can defined __be24 and __le24
+> types (or at least u24) for really explicit cases.
 
-Looks obviously correct:
+Would be useful for readability. Particularly if we could make it work with the
+type checking stuff similar to the endian markings, but restricted to only be
+accessed with the unaligned accessors.  Possibly worth doing even without that.
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+Jonathan
 
-Although I got confused by why set_memory_rox() is being called; it is being used
-only to handle the linear map alias perm change, which is not nice :) but I don't
-see an obvious way to refactor the code to only perform the needed functionality here,
-and probably this is not a hot path that we care about.
+> 
 
->   
 
