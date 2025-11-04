@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-885298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D48C32883
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:10:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC58C328A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 19:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C728B4E3B76
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F564616B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 18:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B433E341;
-	Tue,  4 Nov 2025 18:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D98733E353;
+	Tue,  4 Nov 2025 18:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOnJw7AB"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwaOCWaY"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD8933BBA0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF2433DEE3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 18:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762279805; cv=none; b=X9wpujkd5RWXbsQD+lwozXbJekhOzSnK14l0FJolw57NJVX9U6wptp+6Tm5qZf63ns0wWIeOiPrEiga1Z2npt5ahuVyEZACh5mAR7fDB1VXYtB9eSByYpowQhPa4bc3v51dB/uelsrOm7Bb9TxkqjC6bwjpEIkAgaFU4wZBeJQo=
+	t=1762279806; cv=none; b=ZL/+djubdhiY6PyY0/t+gwXBCq1ES8UEz0biAJu35dqNUrpXSrVjp4oisrM1Pt30I2sKYbj5F9ISIOCGqwb1MHrzjzZpUeuSc6QBwLRVmHXnCsje6RDuB0TqcqhT3xmwHnxtNrjF7/kxsF0l5pvCr9zBQHA04zksxwYFBg2LfgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762279805; c=relaxed/simple;
-	bh=4G5UrM8a7/K3tV3l71rgb1Dcgib61vdWac8QHH1DBdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvXlwJkj/zerKkTXzu1xFWiuVMGiKf0/1010rApWLy1C4GgkucC17bcfqAlRb3D6YYKxViCTTUx8ECcJgk8gGRfYEd1F2WuYXw/P0nt7/seXmIH/6nyD/TtEl7N/tWNnBq1nvLURlMv505oCFQDQ4Z9EhpZGXfRjUR5hIdU6mFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UOnJw7AB; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1762279806; c=relaxed/simple;
+	bh=aREJ13it41dhVSZnZkEIp556vGl5b/Ra76n/PoBdPPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QQtpZ8QARApUq46ZSVjTjnzi5HkxkXfIG4YgN7Yk9Ee/Jy2x1tSfisXjlIoZLBdZ2coSTxRV6bYlJERLPhXIMI7jVE2VhHyfYDDSnbbIUtcM8fe0BbS8PjzA/xTQ3I+6gL0I3T9AV6WNXHVhyOWKtLmDmvwaW3Zpu0/YHxRJTag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwaOCWaY; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775638d819so5230315e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:10:03 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-471191ac79dso64629485e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 10:10:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762279802; x=1762884602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HBEyfODAKvgwzHmkCm17lPDKK7nQ8zv0WCO9yDZDp4E=;
-        b=UOnJw7ABeh8LTc6uIOzV6KkNzTvM8cRRLwKsj3xquXnEqZM84Er5uw5oEmyVh5DJlE
-         HvKBTyLud1TRlz/F/zRX1ctZ1teF6yNUhXlN27Gy3SLnP1Xq5NX/edzJ0C8V8erKk85n
-         Rgt7fspFKVWp4/z+fEY0VBZF+DV22UAtGcRMTJznTD1oFqGde0MCiQu4e+JJGh9rbVuv
-         G0DXcygXMsLOZotjx8rqusaC3jIHFGm7XqVIS4dFStkTh0SCbZHP3sQiGFmfYlHhDDtp
-         +lL3qZFV7KAPVz7ocCc7UzcAd+SxMW3eK570XCFlDKQAVicNhU3EybNsI62NzKbrncrw
-         vf2A==
+        d=gmail.com; s=20230601; t=1762279803; x=1762884603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l+/CRDV30StujBfkrHNR5F++4wuDv1TH5QOb5NIYpYA=;
+        b=hwaOCWaYTz+Da/sZQ42GwKQ/m4+pLEm8Al5vmIg2ZDUr5R7U8pC+rxqNjknA9rCmOW
+         UGv86CovdYhgXqjnp9/fiJT9y/wK8/i5tRcd1IP5oP3BDWceMJarpUAPW6kBAF7duzW+
+         z35sIAuscxMBBVxTXW3L53/2uWvZ7bkwXGc/Ok9RSwbsenONxBtUh/va248cm2cyqb1i
+         d/5mpS/9797UpHYRAXfmcAsgYMKRrHFjKdry0EeVCepzyY8hCgLeuAysdxeZuNCjXHaF
+         9AmOm7gwkCOnnG6j+jZQCs7fyCzz5Ac0haPqkPaxcvcXt1T6e41ivtdlWtXmRYoHHlqs
+         ydeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762279802; x=1762884602;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HBEyfODAKvgwzHmkCm17lPDKK7nQ8zv0WCO9yDZDp4E=;
-        b=RFwpwgdZdSRuSJ0jaCagaHjhMJogVVzcGgmQA3AQnUXTwgWn2bbqe7drJoGqI00oI9
-         IW/1UAhAP2b5Y/e6wqebWoE2L4ZNfms+GTLfMjLpZBGss/clhyp4vaHts5cZuTRq7vAC
-         asi+/TqUGmlPUF+xNKbfy+8gWwyEG0XOvE0bBXmL6Fr4EhUSf/dF2M/ZzwXITnVFdT/x
-         nb6nJb6v1A1YXoJn6YfKF03/zwvLirbi6B+mmYqWLCPhU5R4BtprH9H1JDvlTnwmQRC1
-         RCe+xl0hSE1Q9OC0KR6qWoKRsrPqVBX4El+jkyXTx+GJXcsjS5VgG7mY1uPSq/0pBVTf
-         F1SA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5rGSu2fJVTSPkbaoPsBD7mQmascLvDbzeHGXFX452P7wukt5l+G66Cq5QqGeazYxlPyJ/olO0C82IScc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOsA9bsGkMM+d9ydswbmdK8q7f4Kp3pI6+/jJNSlkjT9gSOQFd
-	621PcE8El+S38thae25H2OwyknpGpRgrP6omE+yvJvR2L923teAaFpe6
-X-Gm-Gg: ASbGncuy2O+WW4Z8KUWkMoTVNyvxaSb8Aqc4m65iDAvEDhB6dT+jbEmxryX6Vp6Er+s
-	Q0kqN+QZKvgBFirWv61BVVaOM8eVDQ8lsoN2F0Q7u0XSdtQEtjyVej4ErpLY1sCmaesaZJe37YX
-	KkvIic5A7D64lapZ6V4UOwYa0vNIGrBE20RAzx4PbkL9sP/kqlirGGvgUbu2ZM2PcgMs0sIVm1s
-	Uy1cN7obHHfmMNgwtDYGvOwm220QnzfWwIceIaaE6eKzRaAG/Xxxn0awrfWTc9QzR0fVQv2ugx6
-	iNaTEJTPfuJ6q4R7Q2xBNh+gz20zjEe9O63ijF0ksHZHNjyTd74qhbsUSdizEo7w7knWxj9fh+p
-	GiSUrHtne+sqsU9LSAoa4hLkqUtevGoog+qOnfGMtfUc0+D/0u4WbOUwfmoNsKkXO+gm+pnTO/X
-	TdDR3LAaWK8LASVMG9iA==
-X-Google-Smtp-Source: AGHT+IE+3VWITYfmpHgFCOUqnzMrVHgHtPMl6DRBEJeRwc9yMJmO7cxC+Ce40qfK3g3txnNqIhsCKA==
-X-Received: by 2002:a05:600c:6388:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-4775ce1874bmr2405065e9.29.1762279801598;
-        Tue, 04 Nov 2025 10:10:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762279803; x=1762884603;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l+/CRDV30StujBfkrHNR5F++4wuDv1TH5QOb5NIYpYA=;
+        b=HnRvue5mUXAlIW4slhskuccQ+ogpvX9JgcvuG2B7wDqD+kO0K2tUpxVxDxMIGmyCW5
+         n9FHPZYiXJTVDSb2ol3CTOetCP8k2z+6tK5VbGzmYfeGfDvtUL2G6MBwQ4S4DXO8dd9P
+         +DunwpQNYbPuHN+PSGI5bNyHjjtiiQ4f69MlUINgVCiMmkvCnj+xsJlQyYPuUwDdJYES
+         t4Dx405PaGIhPVhDUOQMOwOhMPzS3O03ROYhLb6LBIkArTMAtKMrXxG26/0jfnpHDqQh
+         tPC4WIdlsxVb9/D5TLkym15hNwqUWPJcBxyWEtq6qXPotU33SL1J/93Z6mQUSwVyRrpl
+         Sqzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbW4j+RAhV3KR7RBollk/JztzAiBHi81YvJK8uLCavsXjKAcEtt6wIsrW2x48bEhcpUyOjyZ5MXkEDaaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOPGnOuM00udRyo83YhGsKQnU+uHRAgy0vr7TnrDLL2oHMyu0o
+	Bm3E3PyDQQUxLkzOU2Y7kkPhL+e+VIqhIaFdO7Cxuy0cFVHO2Y3PGG8d
+X-Gm-Gg: ASbGncuLNGo2eceoz8jf0kWa817Qe9HnN6AvpHI3xrPP0WUC+1gFcQr/ZHfbs8RxY6E
+	HaVfygvBG24Ki/1gY8csOhY3JCjarXi0sbgRq+ZpdnZJVvWR+OjuyuBYh9SYVLvSdhlOspypT+z
+	Qz83ms8cKMJXdnRhmbxgGuTWdBE7sFLdVqWhcacLxo3kGz7muK0jUJGjpqoZmMOBrxV3PlyQGP0
+	cr/1/+XKUb4sMe4CptVX/WFdQc+PFf6UdHzGBcScgSe4j+AzC0r6ApWuxMZHnMfHu665tuguN2+
+	TYSk9uT/pycQRcgo+kBnc2ZFMCmNICRmZbbIw60TvIIwgnV97i/ZXNeYxYkczWZCvirVRi7XZ6V
+	FHNoutwnict5I3/m8Ji2TlGpR7nVECas96cOyzwHlVyZ3AQmxCkzGpjN0WgbYC5hHmDeTh41UkH
+	w/JZSYxhuv4zxB0AFypA==
+X-Google-Smtp-Source: AGHT+IGtn2Tb5IVfUa8fwzSIF6EUNQPbcBikspeOnI6L4J7SH1eZ3RvMdCq27U9/2nMsft5HkQB0Jg==
+X-Received: by 2002:a05:600c:5251:b0:46f:c55a:5a8d with SMTP id 5b1f17b1804b1-4775cdbd440mr2296855e9.4.1762279802950;
+        Tue, 04 Nov 2025 10:10:02 -0800 (PST)
 Received: from jernej-laptop ([178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558c1a03sm24688685e9.2.2025.11.04.10.10.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558c1a03sm24688685e9.2.2025.11.04.10.10.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 10:10:01 -0800 (PST)
+        Tue, 04 Nov 2025 10:10:02 -0800 (PST)
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 To: wens@csie.org
 Cc: mripard@kernel.org,
@@ -83,11 +85,14 @@ Cc: mripard@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH v2 00/30] drm/sun4i: Refactor layer code for proper DE33 support
-Date: Tue,  4 Nov 2025 19:09:12 +0100
-Message-ID: <20251104180942.61538-1-jernej.skrabec@gmail.com>
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Ryan Walklin <ryan@testtoast.com>
+Subject: [PATCH v2 01/30] drm/sun4i: mixer: Fix up DE33 channel macros
+Date: Tue,  4 Nov 2025 19:09:13 +0100
+Message-ID: <20251104180942.61538-2-jernej.skrabec@gmail.com>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251104180942.61538-1-jernej.skrabec@gmail.com>
+References: <20251104180942.61538-1-jernej.skrabec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,94 +101,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current DE33 support in sun4i-drm driver is based on my PoC code. It was
-written with *a lot* of hacks, because it was never meant to be upstreamed.
-Fortunately, DT parts were never merged which give us a chance to do it
-right.
+Properly define macros. Till now raw numbers and inappropriate macro was
+used.
 
-This is first of three series with proper DE33 support for H616 SoC. It's
-the longest, since it prepares terrain for new drivers in remaining series.
-Point of this work is to completely decouple mixer and layer code. Till
-DE3, mixer and layers were intimately connected. However, from DE33
-onwards, this is no longer the case. DE33 and upcoming DE35 planes are
-shared comodity between all mixers and can be assigned in any way driver
-(or user) prefers. This requires planes code to be completely independent
-from mixer. The only exception is mixer clock frequency which is used in
-VI scaler, but in that case mixer pointer is obtained through currently
-assigned CRTC.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Ryan Walklin <ryan@testtoast.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Second series will introduce separate driver for DE33 planes and adjust
-mixer code to new DT bindings. Third series will introduce TCON(-TOP)
-adjustments, HDMI PHY and finally, DT updates for several boards.
-
-Current WIP code for remaining two series can be found at [1]. Code has
-been tested on Tanix TX6, which has DE3, for any regressions and on Myir
-MYD-YT507H board [2], which has DE33, with HDMI and LVDS panel outputs
-running simultaneously and independently. This confirms that plane code
-is properly decoupled.
-
-Please review.
-
-Best regards,
-Jernej
-
-[1] https://github.com/jernejsk/linux-1/commits/sun4i-drm-refactor/
-[2] https://github.com/jernejsk/linux-1/commits/okt507c-v3
-
-Changes from v1:
-- collected tags
-- updated commit messages
-- added missing kerneldoc description
-- moved vi_scaler_num position
-
-Link: https://lore.kernel.org/linux-sunxi/64c0a4e1-15a5-4f41-9fba-852b0e83fd6f@app.fastmail.com/T/#t
-
-Jernej Skrabec (30):
-  drm/sun4i: mixer: Fix up DE33 channel macros
-  drm/sun4i: mixer: Remove ccsc cfg for >= DE3
-  drm/sun4i: de2: Initialize layer fields earlier
-  drm/sun4i: ui_layer: Move check from update to check callback
-  drm/sun4i: vi_layer: Move check from update to check callback
-  drm/sun4i: layers: Make atomic commit functions void
-  drm/sun4i: Move blender config from layers to mixer
-  drm/sun4i: ui layer: Write attributes in one go
-  drm/sun4i: vi layer: Write attributes in one go
-  drm/sun4i: mixer: Move layer enabling to atomic_update
-  drm/sun4i: de2/de3: Simplify CSC config interface
-  drm/sun4i: csc: Simplify arguments with taking plane state
-  drm/sun4i: de2/de3: Move plane type determination to mixer
-  drm/sun4i: ui_layer: Change index meaning
-  drm/sun4i: layer: move num of planes calc out of layer code
-  drm/sun4i: ui_layer: use layer struct instead of multiple args
-  drm/sun4i: vi_layer: use layer struct instead of multiple args
-  drm/sun4i: ui_scaler: use layer instead of mixer for args
-  drm/sun4i: vi_scaler: use layer instead of mixer for args
-  drm/sun4i: layers: Make regmap for layers configurable
-  drm/sun4i: csc: use layer arg instead of mixer
-  drm/sun4i: layers: add physical index arg
-  drm/sun4i: vi_scaler: Update DE33 base calculation
-  drm/sun4i: mixer: Convert heuristics to quirk
-  drm/sun4i: ui_scaler: drop sanity checks
-  drm/sun4i: mixer: Add quirk for number of VI scalers
-  drm/sun4i: mixer: split out layer config
-  drm/sun4i: layer: replace mixer with layer struct
-  drm/sun4i: vi_scaler: Find mixer from crtc
-  drm/sun4i: Nuke mixer pointer from layer code
-
- drivers/gpu/drm/sun4i/sun8i_csc.c       | 113 ++++++-----
- drivers/gpu/drm/sun4i/sun8i_csc.h       |  16 +-
- drivers/gpu/drm/sun4i/sun8i_mixer.c     | 217 +++++++++++++--------
- drivers/gpu/drm/sun4i/sun8i_mixer.h     |  65 ++++---
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c  | 183 +++++++-----------
- drivers/gpu/drm/sun4i/sun8i_ui_layer.h  |   7 +-
- drivers/gpu/drm/sun4i/sun8i_ui_scaler.c |  44 ++---
- drivers/gpu/drm/sun4i/sun8i_ui_scaler.h |   4 +-
- drivers/gpu/drm/sun4i/sun8i_vi_layer.c  | 244 +++++++++---------------
- drivers/gpu/drm/sun4i/sun8i_vi_layer.h  |   7 +-
- drivers/gpu/drm/sun4i/sun8i_vi_scaler.c |  51 ++---
- drivers/gpu/drm/sun4i/sun8i_vi_scaler.h |   6 +-
- 12 files changed, 475 insertions(+), 482 deletions(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+index a1c1cbccc654..b5badfa2c997 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+@@ -39,6 +39,9 @@
+ #define DE3_CH_BASE				0x1000
+ #define DE3_CH_SIZE				0x0800
+ 
++#define DE33_CH_BASE				0x1000
++#define DE33_CH_SIZE				0x20000
++
+ #define SUN8I_MIXER_BLEND_PIPE_CTL(base)	((base) + 0)
+ #define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x)	((base) + 0x4 + 0x10 * (x))
+ #define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x)	((base) + 0x8 + 0x10 * (x))
+@@ -242,7 +245,7 @@ static inline u32
+ sun8i_channel_base(struct sun8i_mixer *mixer, int channel)
+ {
+ 	if (mixer->cfg->de_type == SUN8I_MIXER_DE33)
+-		return mixer->cfg->map[channel] * 0x20000 + DE2_CH_SIZE;
++		return DE33_CH_BASE + mixer->cfg->map[channel] * DE33_CH_SIZE;
+ 	else if (mixer->cfg->de_type == SUN8I_MIXER_DE3)
+ 		return DE3_CH_BASE + channel * DE3_CH_SIZE;
+ 	else
 -- 
 2.51.2
 
