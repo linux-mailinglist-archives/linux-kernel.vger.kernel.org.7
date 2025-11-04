@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-884370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE866C3008D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:48:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521BBC30051
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 998061895D13
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 645574FA2B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A70311C1E;
-	Tue,  4 Nov 2025 08:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7777314D15;
+	Tue,  4 Nov 2025 08:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ijSniAux"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="no1UisIr"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1477E29D27F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE6A314D04
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245548; cv=none; b=mbpKLkUbeAj7BXOxV0VR/sIpCOa2FaUkvj1+xz9bNG7PcDL5s2hCfUwRGHwc6Zbk20FYskXuprfkoZI9G3rg1Auv71qrVyx80Gj+fT2g34HZ5LFGZPITq0aLczGpBY/NrZ8u3n4AxmgPCAppjAOUckSXBRIUWzgdtUgfOurSUGw=
+	t=1762245570; cv=none; b=kh+vCURmoU3GnmrxGvZ4ttsrULayFZ0ZsqvqCpjpmjcq4msD62x1ekGVD2fWOC+T/47jXUtL68abXqh1NeCXwTURJdqCpMEPx3Thr0vg9ygTk1CA6xWr555hV8nnhXwfid47oMSuLcOPIcxjNfcmFFUSOba7od4CcJe14N7a3gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245548; c=relaxed/simple;
-	bh=t3IUp+ARaNaB8wz2LKnZxVPm5xytJ0pZwMX+fyMtQ0U=;
+	s=arc-20240116; t=1762245570; c=relaxed/simple;
+	bh=h2sULprMiu4wN4KAUeGPmQvu2wQnnQR98dqeeRGDV44=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OwQfJMz9FdxvgsAwiUfG/WwugEbU1XDQ1Xa6jV2PzJdX28zIQNzoQU8ELFr7TRCs+MnqjBcdMiqaKi3GudyOIKLK6qQ2bGghHjrrBqJZ/vjibXimUoNDRzQfODWRk6Kso4VuJr3dLxhCmGwoOPBSH5PTjOUCD8v+4EuFpS6Clt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ijSniAux; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=r7k92/J07LErbwwYvPVj77hRtQWKOdwfJ7EHdCL7qdfF1AZqTGywpLibf7j4Xcj6Wx5JiM4x7yr5aPSnMTnTcr6slNEcpn8x3xD1YWSARosEORn1DPt28ljV9d6dc8sqL3KoQKnivaoBxtzKK70VrHxcg7ERVawJ4bSMdl025+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=no1UisIr; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-477171bbf51so28883365e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:39:06 -0800 (PST)
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-639494bed86so8304711a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:39:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762245545; x=1762850345; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762245567; x=1762850367; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WSx4j5h/K35W2b1U5cMePqydBqgF/bke1+7wCGvmmg=;
-        b=ijSniAuxKDJPa4ZM2zvcejUKc5nMw6zIDhWVwoTLQ1FtbnQOnGWgEjslH96U4vHTVs
-         LsSPJ/nbCiGpK9HU9U81zUq2js5wDH15U9GuVkUJdR+JR8G+YXrmEZNfUt6QZ1BE/rfK
-         gb8MGr4tujpX/goxMK8KXOhRkT5Cw6aXgsljJLQrAGZ/Y7X0UIW4rrR9b0WxPIjzo7f/
-         nVnwkaLRIiI8fW+3c+2ijNff93rdC7jNobF1bDfEZwPvSJ7h2kU840OgPjy8Wnf8TjkX
-         /WA0+HuGN0Qw4B4ExtAIcLLJRiMH6dC46OL5OLibEEEokx7D9RVnc9ryHOcctA9dsmct
-         YmIA==
+        bh=rXJXC5xQMOSakE6z31ZXBIwOFgfH9N+KP/Twx5AGmg8=;
+        b=no1UisIrJsCM7qet0NJuKdKWova2m4Ls081wkarfe88DruZ9Pwz+a3hlgoH2qy4/e6
+         moi984qQbD6EL1DN/YEJxZTUu8CWZr6hLfOqZ0AQlj6hanDC2RXDgl9kzp68OxZbGt19
+         J2ByH2dYKW0pTU7lwFHJF7rPr4rR8iKqzr/Sy3iq1fsOKh6PQNOIJhUVBVLnhH06/egG
+         FgSXgpIfZJ7cupeS13XjcLNB4shcB8bvxGtLtMJpw8VptsbDZBuTU5b1V6boMsSQJJsP
+         DkSo43H4A4B8vEZiwJQ+1E4smYePfueBa1rRfv3DrQVPJcxIXNuyMbmgeH/vdomqSFxj
+         AtWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762245545; x=1762850345;
+        d=1e100.net; s=20230601; t=1762245567; x=1762850367;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WSx4j5h/K35W2b1U5cMePqydBqgF/bke1+7wCGvmmg=;
-        b=qfre7eJ6vLujrM8qMZCbNfoFy5ZoptWhD+bPS0qH1+gTvQBj3FOrH/Xh2SDJedcPwz
-         mio/mrfx5nPwizuRg32/3g/OL2BIawwGAguawPDZSWfmyZ8iv+AiaDaWjxNFyO8j/J7M
-         Nm0CM2p7utUqhdocfmJoVrGKi627VtQhx6PCQhQ8KBWK9tFgC6QlZWXBECqlcPbH0PMk
-         FiwFuz/UsudE99cMSMbLjOmQa2Te8deyamuu/cOImw1yArnsCyjOxefub9AmbWX2HKza
-         wXsEgB3N6T4/rXBfmIpAzPXHsDKIIvORRqQP5MVTbUhiahGEBuhvRnm3NnYpS7biKrV1
-         EzZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh5tAbgoztji66SeavyiBavctZGwkatGgeVRy+cAynUVjTZBWlBD976qu43cbshlVYiNoEVOkiE9h1PZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtNw4hrjzqu42axmOwQtxqEbqubOgRfpeP8lgKtj+s63SKAYUC
-	12fkN5ekyAx7NFgXYCgu1DtohgdaQ9nIRTnHlL0JtgRwZlcxPYArBjTMBxO0rdkC19Jxy7z9Huj
-	Nc9EKCdqLZXS4Q5x58Q==
-X-Google-Smtp-Source: AGHT+IEsoqg3j0WNIpG5vxJRX/Ibh5LrVrCjTx9dh/pWH7qA/STRnKJkdScMyqeumJblHqnk9Ea0X4NaSd6gQqo=
-X-Received: from wmbb2.prod.google.com ([2002:a05:600c:5882:b0:46e:2eb4:38d])
+        bh=rXJXC5xQMOSakE6z31ZXBIwOFgfH9N+KP/Twx5AGmg8=;
+        b=xFlQXYuNYpkLMl91NhDi8uEckI6fr81Xvzp7qlPAfAU/ayUbSp6fX0TOkByty7dsyv
+         Q0nEWqJGpQ/e7uXpwL2Lsdxf3PvpNBp1Pss8iIBpb0taobmhFnKp8WacNgnPyF5cAWdh
+         3IvkDWGJ3RI8TqzKFWqYhH0ud2OI7YzFKDp0t3tbBlOcEPS3kmvj2wpayYeo8neUdD1G
+         IJNDfl8Om/wd3aoR7Gk/Nid5Smu4mCzREdyqBx4rywrAaDBA0NuqtY0d0nKo3rFjJDax
+         laR58s8K6muhj5qWoB1kf3OnrFsdFB6ya342immNLNqpDlM5PA433+AIoexPenPai628
+         uiHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj4xXTKyVQbwelpTpbvUlr5MoAaw1MRfQNagYEXRRgBJAa2Daf5Sz7S/8u5g2K0V3CMWlHVvoK5639Sgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8UrWcjUpArDrXrgwEhnkg1sSJHLulvl5gh3+0xuIsemRdzESp
+	Hp+jbbVukbtSPcM6zeoAR+dgCvkvlt58LvrX7SbPIAWXNSLOlZhb2eN1A5qgEv5djLa3Dhit+9i
+	wQMSiAfrgkHNNOFHSuA==
+X-Google-Smtp-Source: AGHT+IHkkLru3RbEHbg6oteE557RNvxiRGcW+0DLs9KKkh37U6J5Frmy/B6gSA4955Mr/WPDvyloEY0RzOh+CrQ=
+X-Received: from ejclm4.prod.google.com ([2002:a17:907:18c4:b0:b72:41e4:7530])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1553:b0:471:16e5:6d7a with SMTP id 5b1f17b1804b1-477307ba7d2mr133828385e9.13.1762245545262;
- Tue, 04 Nov 2025 00:39:05 -0800 (PST)
-Date: Tue, 4 Nov 2025 08:39:04 +0000
-In-Reply-To: <20251103190655.2326191-1-dakr@kernel.org>
+ 2002:a17:906:b859:b0:b70:b077:b948 with SMTP id a640c23a62f3a-b70b077bc3emr512890366b.35.1762245566871;
+ Tue, 04 Nov 2025 00:39:26 -0800 (PST)
+Date: Tue, 4 Nov 2025 08:39:25 +0000
+In-Reply-To: <20251103190655.2326191-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251103190655.2326191-1-dakr@kernel.org>
-Message-ID: <aQm7qLybSn6bOlCy@google.com>
-Subject: Re: [PATCH 1/2] rust: dma: make use of start_ptr() and start_ptr_mut()
+References: <20251103190655.2326191-1-dakr@kernel.org> <20251103190655.2326191-2-dakr@kernel.org>
+Message-ID: <aQm7vReThpKDOO67@google.com>
+Subject: Re: [PATCH 2/2] rust: dma: use NonNull<T> instead of *mut T
 From: Alice Ryhl <aliceryhl@google.com>
 To: Danilo Krummrich <dakr@kernel.org>
 Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com, 
@@ -83,23 +83,12 @@ Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com,
 	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, Nov 03, 2025 at 08:06:49PM +0100, Danilo Krummrich wrote:
-> Using start_ptr() and start_ptr_mut() has the advantage that we inherit
-> the requirements the a mutable or immutable reference from those
-> methods.
-> 
-> Hence, use them instead of self.cpu_addr.
+On Mon, Nov 03, 2025 at 08:06:50PM +0100, Danilo Krummrich wrote:
+> In struct CoherentAllocation, use NonNull<T> instead of a raw *mut T for
+> the CPU address; the CPU address of a valid CoherentAllocation won't
+> ever be NULL.
 > 
 > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
->          // and we've just checked that the range and index is within bounds.
->          // - `offset` can't overflow since it is smaller than `self.count` and we've checked
->          // that `self.count` won't overflow early in the constructor.
-> -        Ok(unsafe { self.cpu_addr.add(offset) })
-> +        Ok(unsafe { self.start_ptr().cast_mut().add(offset) })
-
-I guess this shows that the mutable/immutable requirements we inherit
-aren't actually what we need?
-
-Alice
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
