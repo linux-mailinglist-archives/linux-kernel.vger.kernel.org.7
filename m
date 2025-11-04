@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-885241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7B1C32592
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:31:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9BFC3256E
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C61F3AA4A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:28:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C7024E632D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB35E33890C;
-	Tue,  4 Nov 2025 17:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BA333433;
+	Tue,  4 Nov 2025 17:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXQup3nD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YorEdEhW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AB92D73BA;
-	Tue,  4 Nov 2025 17:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70642D73BA;
+	Tue,  4 Nov 2025 17:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762277313; cv=none; b=Bkp+0xl3rICup27W6qSMRC8VB3cn2kXXPCAdf9y948EVlgGU33V0gvpTnSptTYWTn/4XQjwrNCHnrX4v/8av8x7TuV5DBIoODYWkZTS0tnGOPishAFTs2rbxhRooGxwKnJv1AUCXu9WUdh0MEOyvYOgSUB26tlvQ/3DUFRCg6VQ=
+	t=1762277348; cv=none; b=baNEd3tcvPLvm0/a3j2gGq/y7r/DBjAH8BPi61YRkBXh7ONmPOEUi8vDWOF6mwtJTLjOq+XhdSPYiNA/gIP2rEp5SI6uK7Ldv5JWSKeOJBmotRusjTg5TGyR22T4SPkFAzQBZvwUCS/FNJMI73dMtp6rr9y9FMTnRoxhHbIvjHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762277313; c=relaxed/simple;
-	bh=S7Z133WpR+a5eLKR5hQpoFUBMLsZVhUq2O6OjhiGfkE=;
+	s=arc-20240116; t=1762277348; c=relaxed/simple;
+	bh=tI4PyzTCai+yW0q5uOm9mpxVGyRvru6JHvPPumwn9bI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twDt3g2ifP5pjzDFcXqoqcKY8AkYgvj4KhMTtslz7TjRSDQ8tZkhvKmDjt2N75NTfRfvpkl+CdMSdYjDIlhBiZ6hoT8nyJTl4FD0SKgwA+dcVXhLAfDVnnItPW/PyzoSAHmAwIP9ODwGJhQk4r0QvhITaLK1T0YWxZmZoUd6Fcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXQup3nD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD5CC4CEF7;
-	Tue,  4 Nov 2025 17:28:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=InPPjRtMowud33H3jnxwklBGH3Iq0f+hy+Ar9Z+2ggDp+uU28JuOYuju8x2JfSa0R5zwC+0T+pgZOBksRmsc7Pve8mn4O+3MzEoZh1NLXHGO62Yw1tnq/Oik0183g0d6Ilgvqtpq1X4va3b/FA3cl0go3PFddQcutIm4rpjTkuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YorEdEhW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA42C4CEF7;
+	Tue,  4 Nov 2025 17:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762277312;
-	bh=S7Z133WpR+a5eLKR5hQpoFUBMLsZVhUq2O6OjhiGfkE=;
+	s=k20201202; t=1762277348;
+	bh=tI4PyzTCai+yW0q5uOm9mpxVGyRvru6JHvPPumwn9bI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OXQup3nDUCW5FWA/mgd5EheZSAPpg32DbN8PDXog3xFexz+JFdrV+JDCyq1Db358s
-	 t+M4xPJKPzZOyTrC8dqQxR48j0ono/fSSAn2hd+Ha3OdZfOBQ6rb1OrUZhKR6Jq64E
-	 T1d4/c4zg96r2QOp7/RZAZ0y6Gftd/XbQjlKGJ1G2ETcFoGrD649auzhiF3JH0xXpC
-	 VUH5DBfuGzk0gezEODr4WyioU0G/FPtHt1ORYCcaD0IIDD8kbMHplEDFPY2ppw3mw8
-	 UoQ5r06x+SLBjKF1c+dtJO3IsmcpVfy6sg2rcQKsTDrZnxll/AptE8uVkLWdlQ8SGq
-	 LWeaoEfXpJPMA==
-Date: Tue, 4 Nov 2025 17:28:27 +0000
+	b=YorEdEhWpDhiQn/NJZEVW1RFMt0ZT8Ch/UFT6N941eIHppjapbMWkDnjL/8IkxU1V
+	 rhXwaP4RoWBTrswybIRIY9IYXK70xlwE/BnzQWtg3+quYzwcMuTgeH4dO8D1Kwu21z
+	 w60S9nxeN9i/cWoQCyocGiPHnXhqQchmwYlWCCKrv8/N0q22MwwybSWK71pvNXtahA
+	 7EWfS9HNjlnKR8o6uNQJS2t5zf/xoN8H2qp+cAil4wE4vEaIaK+r9+Vt82qE93aw1/
+	 ar0gCro09h99D1kbK+zAY9v0MAq4i/ftbbuwpskFKncsgNZ2+nI296fVjQx/9Yz2yY
+	 E0bu2DzTYAssQ==
+Date: Tue, 4 Nov 2025 17:29:01 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-Message-ID: <20251104-magnitude-deodorant-be607e3ff4be@spud>
-References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
- <20251103121848.6539-2-ovidiu.panait.rb@renesas.com>
+To: peter.wang@mediatek.com
+Cc: linux-scsi@vger.kernel.org, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, lgirdwood@gmail.com,
+	broonie@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, wenst@chromium.org,
+	conor.dooley@microchip.com, chu.stanley@gmail.com,
+	chun-hung.wu@mediatek.com, alice.chao@mediatek.com,
+	naomi.chu@mediatek.com, ed.tsai@mediatek.com,
+	chunfeng.yun@mediatek.com
+Subject: Re: [PATCH v1] dt-bindings: phy: mediatek,ufs-phy: Update maintainer
+ information in mediatek,ufs-phy.yaml
+Message-ID: <20251104-banish-engraved-d26d5856d0fd@spud>
+References: <20251103115808.3771214-1-peter.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,50 +66,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0rzm/jgZI01C209X"
+	protocol="application/pgp-signature"; boundary="EqJ9mvMN5ps+fBwp"
 Content-Disposition: inline
-In-Reply-To: <20251103121848.6539-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251103115808.3771214-1-peter.wang@mediatek.com>
 
 
---0rzm/jgZI01C209X
+--EqJ9mvMN5ps+fBwp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 12:18:45PM +0000, Ovidiu Panait wrote:
-> The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-> (r9a08g045), with the following differences:
-> - It lacks the time capture functionality
-> - The maximum supported periodic interrupt frequency is 128Hz instead
->   of 256Hz
-> - It requires two reset lines instead of one
+On Mon, Nov 03, 2025 at 07:57:36PM +0800, peter.wang@mediatek.com wrote:
+> From: Peter Wang <peter.wang@mediatek.com>
 >=20
-> Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and update
-> the binding accordingly:
-> - Allow "resets" to contain one or two entries depending on the SoC.
-> - Add "reset-names" property, but make it required only for RZ/V2H.
+> Replace Stanley Chu with me and Chaotian in the maintainers field,
+> since his email address is no longer active.
 >=20
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> +        reset-names:
-> +          items:
-> +            - const: rtc
-> +            - const: rtc_rtest
-
-If you respin, just make this second one rtest.
+> Signed-off-by: Peter Wang <peter.wang@mediatek.com>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
 
---0rzm/jgZI01C209X
+--EqJ9mvMN5ps+fBwp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo3uwAKCRB4tDGHoIJi
-0p8DAP0YBP/URvbpDZ415bJ+Ex+G//fAd8Bi2P4cIvMysaB1xQD9FS6YTYh/7sEE
-f2T6i7TVMxBpIu+8jGbWKU8T1wGJBQI=
-=DOwv
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo33QAKCRB4tDGHoIJi
+0slUAQDaNzoLm5qRDZGmaVZq1Z15G/qDvAUp/mAoKtEmWaHoBQEA7pl5SuOhpCFo
+J+x+0i0xR53Wd/iJidGRqGo/gVi+5w4=
+=IlDV
 -----END PGP SIGNATURE-----
 
---0rzm/jgZI01C209X--
+--EqJ9mvMN5ps+fBwp--
 
