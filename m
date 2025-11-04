@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-885565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C36CC33541
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:07:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88CAC3357D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 782C334AE9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:07:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4524EE213
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AE8346A08;
-	Tue,  4 Nov 2025 23:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B23347BBE;
+	Tue,  4 Nov 2025 23:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="A3kDzrrK"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MfeTqO1D"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821A346A06
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FB4346E79
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762297622; cv=none; b=R+kQg0Mh/mujzRyk3/951CHJnAd6KJ/8pSad/HefxmTcb0pTJ+0mftVqzBQ14JpRr4cIqlXv+8FxVWK3W5XUGhV95kEApDckE+KI46kuxe1EKkHhRaoynqMJhg7J7cI/3IPWxoeL/Zv5EsnyceGUzJjvF/qOOE7m6vdEyNaQ3A8=
+	t=1762297624; cv=none; b=tNPAPTjAZtBhIM/G6CKtMR3lLOlDf/IWkaLQ+860ulqzk9UBK4q6c/NFS/IcYtthWAgy6a0zgdeUnSD+DiCfcSjRRGHbfknfVr1j+Udk6bfOI1pk/a0awFplFvRoJnIvJqyRWKTxOnTlSH2jG01psQFIZunlsF8n3hyZSfuT6lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762297622; c=relaxed/simple;
-	bh=+x1u7DsqDUclh/owaM/bK5voNKKcZglEj793Gh4GzMk=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RxQlOAam+lYLIPw1oM9cIuRnJcIy5GWtUVDtb/4RsCz1T2NrQZeCxJDY8tMKchoUlgUoPE65eQsSUKbK0kbHoYS2t91aPRWh0a0ZPsYFl1sWr9D944L4DgAA9NOUMPnXSVvvASRgqf0vzVEn9NPmExMIajQCothN3mrVu0lMxdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=A3kDzrrK; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1762297624; c=relaxed/simple;
+	bh=yHkKXPbR33zJA3OGgfovSgAEgZn+oC9vSJyjIjciccM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uQ4fWwEp9w5rbyB6djszgQqv4G5KTfGu0mQWaFs+5qU5Ky13Fcv/IrXHepmo9Y5mXj/xf4KWvNUkf9oo1aVrS2JmQ5/lfgqbuJFUkUv0DCpSG7YNSMdkD2diS6/977fMUkQK+z41vlgkgFaN2tNZueB9o2ZEIWaY5crp+CYTvKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MfeTqO1D; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781206cce18so302289b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:07:01 -0800 (PST)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so298111b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:07:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762297620; x=1762902420; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762297621; x=1762902421; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SHSamikVjrVol75rYdX/wA0TP+ZRoamzeKbRQET/Fto=;
-        b=A3kDzrrKBAd+igP6DAPMYXIO0hAdOuNSFRt/eDGOCPHUgjCH2RT/NilhkgkpbwxXQ5
-         ezRcvUrnfusG3H50Z1cPY/I0G+14CfiBz3TUj8UT99U+31NMl8MnSkYcEcEDyIrvZX3E
-         qLMa2ge+jlffq4XaxDakgvMRxvlic91sDv7v9G/YbGULu78Fm5gk2rPOrCb/Zq1f/+4G
-         S862r92ZIvWjO5MzpPpGawVlgjwctl2TcY6B47MFvumu446C0TG3J48eYggn7ZN4I8DK
-         lnBpETodbBfNM2KfHTlKPJ5iTRlTFcdr9Nx6LU2cEeCyb2keVqrdWgvMOVIy+6WZsSga
-         tOwA==
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jIQrxW79ZVgRUN8Wsqvx7zHmiYo35lAP7L+li0aZHjA=;
+        b=MfeTqO1Dvc8gouY2B2MNvQcXsm2O8X03r/Lixk7jAziZuiOeFhg1SyTpjWVkEfhz2c
+         ykr5/EWl1hFW0yrRt4PwJSX0mQM41w0zLhfHoSCSnTsyOdbTo1cWUwTVDhaPTjEKLh/z
+         ePtdeekuC4Izp31jNFWLrTMOhjG45oNDA1nWzLqSH50VqtF2UvWck1mM8Ovd1eq9Vl+m
+         Spg/mMZhTfOC0Hsjeluohu0OthqwbSBMu1AtrV9WlWt6DmZs+wXruxjfvw33I9DYuuyy
+         dEX8kbwO+W7F386i6Yy5GaK5ir8IowSDJypN+Jmvih8uFABlGmi8V01o9QBNC8IidIOT
+         J9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762297620; x=1762902420;
+        d=1e100.net; s=20230601; t=1762297621; x=1762902421;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SHSamikVjrVol75rYdX/wA0TP+ZRoamzeKbRQET/Fto=;
-        b=fNaQ88JHVznVfp2ne3KZ3/tWStXF6bPiqiKV4cAL13ahliBpjO0NMLyL1Vxhjefx+g
-         wXKFOsbfA8OYUVuhdP+NYgW2K/NMTNyatvyjklR/L++OjAIrHZIRCO9qUSJmjE9aa+oG
-         NVQehVRffIAq073JasHembmzQWi+ZS1T3GUB6iA9a1Z7EEoK+W+4l7ptxTAp2ZXSoXQG
-         CyQkTjvrYVFVmKWUDY297XC703mUaQggV0gu20gEfNOU9NIaIrd6NEGFNfiBEcvY88A5
-         ANlgOL4gcGkRwTz7d6vlw5KD5ucDiepeGtj4/4KvDaYMC8Z9PeOHnjzRE+EohPRONhsm
-         RM+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVMZpigQqtqhpfqiMlI0cWw/A39Y6Rz9GJEt3xCznCUsIh6OZKPFAKyaFaquCV/1DOddd7am6QWsAn267E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7SjMWCa8OEYAklSNUafnELqJaha7MLWJZFq/Fflo7xH4//hD0
-	/ekOl1k9veEA1cLe9ziZJmN1VO7czzEKt1I91DsFD4mmupjnVitY4KPO8vjJJ13dCy0=
-X-Gm-Gg: ASbGncvSzaAYr2DvNCqsVLY+clPu33npaYQ8obry07x720LhuUvaEy5jD0J1UhY/Vu7
-	fpwJ0kBNmeyUfHI6LizIEhdrO4XPjg34MoP0Y6txvoI+/GQ98CzlHDFoGRYDbLp7GGVJBEgaILo
-	FlN4+Iho+W4JunVPkGcgHxYC1fmM55PvN+qj5LMyP6I84g/F7PCNlOp1S2FpZo0OALnUbULGmJ5
-	KAYzpDNNMEqhgNY2+jiWn1ue/ed52D6P/i9rP3rbzR42WoFmGJg59/wLTTgJeDiCnp2lybGcs/+
-	BZhmIMVRA+kLrr7RIeasGIn4TDbquNhFfTt0Zh+L/CXD8wtX0txd3sQAq0Fs9HjeEy7R7//ffNd
-	Q9Xp5VQCTF6dTdizJAwcHuGgWPCdOaSQglcGrnxZS5my2ptd7Sr4cYiLavEMHqI1N+HTAIX1yxQ
+        bh=jIQrxW79ZVgRUN8Wsqvx7zHmiYo35lAP7L+li0aZHjA=;
+        b=tAk5OYWqAvAJbdJhvIL2am6dKHID5tWlBAIRccYNm39MBIhzVUPMmWef6IZHWzswUZ
+         cdZ61Xb8obGyR3gTh1XFtLVQ2GQu36FY3ugwVk2k7M0bpFED5xHB59/pBAZ1YJfFZUU5
+         5Lqz/d3CxqgdLiwVpB3hpNjAhnjbr/0WVVeI8rbFppMUnzcnGOA/WzjwdJAtTOYgdqCb
+         fxfFRiUnwAzn4i0vP17H9e2tbJO9g09LyUGCeffrnOQ3HFQePfLPG1nWToh4nk1gsQjY
+         vTlb8LTFa6PiT7uRb7w1db6m9LDpYfUfmrcbx44s/YiSVs0xP/6YqNP5bax12nwBhQXl
+         rAdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSOIQwTgVaJDmeZxXIecKPedhbMnp8pOf8EAOmfdIZQjnxtHpc1JqHPB63XUqr0yYeOEpNJ0KIQpSuja8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0mGAhUPXvHQnTwt0rBcXvwtEr9mGNh00T+kquixpNgiK1BwyI
+	B/00ZAOVLRO9BA7AQJvzkfD+hd7l60ccwwOG5aTrs+9dVjj6JUcdkuVBkBD/+jdRl/7syYvWuW7
+	TQJ5/
+X-Gm-Gg: ASbGnctCJU5tq8fU0yI4F53Csw31vNslCQ6sILyrjh7vTo2kVrZSrXBO8YztoOG0g9h
+	/sLmbM8ARz/Qghu4D/M8Vmf5ucG4u3yB/ugK3dnd9YObAuvFlx32cpVjg/Q0HeV/4aF/E2wzGGH
+	0/YCPvO3iScr1+H7cdrFeIq1VTmmOFRQeThNeGbjLijBlFsvwHnqH04wk+D1SGEXzbGiNJ9VC4w
+	6874U0+UtKw/FOfmbcvcmGdSGCtdRWs6PDsjA5xK+0Oarmu106fmYLp3GgK/P+ZRY2DcILbYA7O
+	R1lGRSpbfsn4I9UGTheZYvMeoYIrXy+EotDRMoB0oPP8oYmtPNqrctEM5MSbX8pwhR0GYH179My
+	DESMuFQxzHbf+p3z3+yHUd8cL/phAdVII7XLyCfp5kEwhAei1J6s179LccOrjJIR/06h/G2RuoQ
 	==
-X-Google-Smtp-Source: AGHT+IFwaQTBRp6clVlgeUdPBLrNZliJRL42mTKXc1D1BNOKkI6h97kjY4cM1NfLKF6HAWHzWlKceA==
-X-Received: by 2002:a05:6a20:9185:b0:342:c634:e272 with SMTP id adf61e73a8af0-34f729aa687mr1756746637.28.1762297620628;
-        Tue, 04 Nov 2025 15:07:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGdQvgI/Vf/KKbauI1cOuwqSxlp39uLs0QpL5udfp/2y8wBHW57wYN3h5DJcHi+fIfaHZvoA==
+X-Received: by 2002:a05:6a00:9515:b0:7a9:7887:f0fa with SMTP id d2e1a72fcca58-7ae035df724mr1524948b3a.1.1762297621600;
+        Tue, 04 Nov 2025 15:07:01 -0800 (PST)
 Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd624030esm4104328b3a.53.2025.11.04.15.07.00
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd5d5797dsm4147472b3a.49.2025.11.04.15.07.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 15:07:00 -0800 (PST)
+        Tue, 04 Nov 2025 15:07:01 -0800 (PST)
 From: Kevin Hilman <khilman@baylibre.com>
-To: aaro.koskinen@iki.fi, rogerq@kernel.org, tony@atomide.com, 
- linux@armlinux.org.uk, tytso@mit.edu, lukas.bulwahn@redhat.com, 
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-In-Reply-To: <20251013120753.101582-1-andreas@kemnade.info>
-References: <20251013120753.101582-1-andreas@kemnade.info>
-Subject: Re: [PATCH] arm: omap2plus_defconfig: enable ext4 directly
-Message-Id: <176229761977.2840692.1048568589731485574.b4-ty@baylibre.com>
-Date: Tue, 04 Nov 2025 15:06:59 -0800
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
+ Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+In-Reply-To: <20251024-ti-sdhci-omap-v5-0-df5f6f033a38@gmail.com>
+References: <20251024-ti-sdhci-omap-v5-0-df5f6f033a38@gmail.com>
+Subject: Re: [PATCH v5 0/3] dt-bindings: mmc: ti,omap2430-sdhci: Add json
+ schema for the text binding
+Message-Id: <176229762078.2840692.12323662945445152208.b4-ty@baylibre.com>
+Date: Tue, 04 Nov 2025 15:07:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,17 +100,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-56183
 
 
-On Mon, 13 Oct 2025 14:07:53 +0200, Andreas Kemnade wrote:
-> In former times, ext4 was enabled implicitely by enabling ext3 but with
-> the ext3 fs gone, it does not get enabled, which lets devices fail to
-> mount root on non-initrd based boots with an ext4 root.
+On Fri, 24 Oct 2025 07:57:07 +0000, Charan Pedumuru wrote:
+> Create a YAML binding for ti,omap2430-sdhci and fix vmmc-supply
+> property typo for a DTS file.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] arm: omap2plus_defconfig: enable ext4 directly
-      commit: 810c5ef6efe9a2be3203a50de781d9050e8b9920
+[1/3] arm: dts: ti: omap: am335x-pepper: Fix vmmc-supply property typo
+      commit: bb2ffb47d82229a4f54ca6a83784fa288914803b
+[2/3] arm: dts: ti: omap: Drop unnecessary properties for SDHCI node
+      commit: 9485ba8ab325c4b420ec92661f15ed14741bb9d1
+[3/3] dt-bindings: mmc: ti,omap2430-sdhci: convert to DT schema
+      commit: 333fa35fbd1f20b0d8a4af3b236fd9f52f3431b2
 
 Best regards,
 -- 
