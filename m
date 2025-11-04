@@ -1,92 +1,169 @@
-Return-Path: <linux-kernel+bounces-883999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D7DC2F0CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:04:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB61C2F0C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1A73B2CB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B783F3AA72B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2233A2638BC;
-	Tue,  4 Nov 2025 03:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A98326D4DD;
+	Tue,  4 Nov 2025 03:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ne+bSW8m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqyjLxM7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD387262D;
-	Tue,  4 Nov 2025 03:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959582405ED;
+	Tue,  4 Nov 2025 03:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762225413; cv=none; b=l+v/alM/n/frwnFIFwBNVgwq7hcgtM5AqvwcHtMDM69PrHQsQscz41vl1IRrIYnEK8VjIsNPhvURa7BY1FAEUoOvFxuOLAq1j/mH8wn3X+vY/CFgyyhM1Ug3bs5dS5pvrFGzzOVAHTPqFFr1i9Lq1DBFc27/8bo33blelNO4r+g=
+	t=1762225220; cv=none; b=pM+v3c3iMqLeriyp6/KZOWZzxBW/h1DV4xxjNXyU3IoKlf3oc0QNNbGS2Dlsj1MGGj69/XDRwUh+jHyDOr3LPnR1eq0f5OMOM+H4sBWo2SsJVWbYm/f7ifsU/mT7zSRfgJoGIASYqnFDDjMER2ufNYWm13+/UjnyoGWtJ+v4h5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762225413; c=relaxed/simple;
-	bh=WGw4lGJj9huttZ/mJwmJZYcOekuBZSxll0pcVFaWMwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvcZlG/MaaC4L43hhZ1RMJcJjJYvrkLJsahCIRGcpa7sMAZ3ui0Mv1M601OvKuQjO50mFjrP84GjbFB8g/PQRkCI8LbAqj3HqL3sWovONQ+jis8C9C2NbNASsKyF8yy9KFjmT2n06p+2HdCKipvIR0lJWILLa6i2+mEln548YWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ne+bSW8m; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762225411; x=1793761411;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WGw4lGJj9huttZ/mJwmJZYcOekuBZSxll0pcVFaWMwA=;
-  b=ne+bSW8mVcby4xPGPlVA0au3PDsEGVVHvhTJ2bd0X1isnUMt//TAiTph
-   X6tubDTXtq8EXKOKKMftSaopFJu56UmCC4OITaxqNEHLSW9YXaGaneJnl
-   u34oCOL+t5w//7wpD3BIINa21ibcCe+gyWB4H6GjKtduVr0AJD44N6R8c
-   Nhl39BTihvvFU4As+Nz9QyiRw4W3iik+w36/tvQm6JYGCU/RzOgSSNV+X
-   ODaUA0ZIoj1wFo9ArnJGKjXxz7U1IS8/mZs3G/BshbbP0JC0d3gUJrXBk
-   vABvH5pMHyzsLwLlX/oc3sGigZ8IUcwZJVLZ9sihgynAo9tSSmRoO1isr
-   Q==;
-X-CSE-ConnectionGUID: i8iFHqNCSiGb0ennV0FlmA==
-X-CSE-MsgGUID: 3A24ChJfTQa49ZKoXFevDg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81718503"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="81718503"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 19:03:31 -0800
-X-CSE-ConnectionGUID: FLfftsxNTY6nI+xyiXi2xg==
-X-CSE-MsgGUID: h/xj5pRDQ2y1fFMtDEdqZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="210545521"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 19:03:28 -0800
-Message-ID: <063b0ccb-42bb-4120-89f4-48b8c2191eb7@linux.intel.com>
-Date: Tue, 4 Nov 2025 11:03:26 +0800
+	s=arc-20240116; t=1762225220; c=relaxed/simple;
+	bh=P6Nb7RFYcU3sUy6HTw6nBzT/0oqmgJRzlf4c5vKrZAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7B+UJLXtuQgUd0T9iFYy3G6SMUZmkvjJP4FcWm9Z+HHF2ZPuFXRdT5POI2W+ItI7fmGk3zrFBJU14/qmF6XGBZFDgoegUScaP1KN/ItewihPwc/I1fPimJZy/MjrZ7qN5azJ3D5SRR2ioUyqFXfOU8oqpmdPapNOFGFlmAny00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqyjLxM7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F75C4CEE7;
+	Tue,  4 Nov 2025 03:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762225220;
+	bh=P6Nb7RFYcU3sUy6HTw6nBzT/0oqmgJRzlf4c5vKrZAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dqyjLxM7qeV/bTpp62d2Rpk/yuCkN/+0noh2VDzvMudn6cUMu28UMvFIsSoPC3Cv6
+	 j4JO8BGkTR4JXSw7fOpXz2wgk0LJr/k510xVyAXvhGW1fDu95eZQbcFS2iXTH4jfJJ
+	 Jw7O/50wpTrXxsIgvLDRbnbEFOAf7DINPMLV93cR2K8r9/cyEQ5lEvUVX/sMMhjTbO
+	 6zMHeAXgQOz9xqNz0X42+KvTceDW2Rnw9nVyGMznv1X2JWUVuHF3JaXJHd2ylQfdbn
+	 fmXpx3hTdTdGfDYOzplAom/pJYWcSVFG+Al0M2iKX8T1rUBEzBMkG5KxyEzP8YEpXi
+	 RDrVieIevAeUg==
+Date: Mon, 3 Nov 2025 21:03:52 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mike Tipton <mike.tipton@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: interconnect: add reg and clocks
+ properties to enable QoS on sa8775p
+Message-ID: <ws5skjwjnte3ftf3skr3mbq6gdnm2ereaf3d4frytabbglmff3@dd2hjxdzblod>
+References: <20251001073344.6599-1-odelu.kukatla@oss.qualcomm.com>
+ <20251001073344.6599-2-odelu.kukatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled
- VM-Exits
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251030185004.3372256-1-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030185004.3372256-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001073344.6599-2-odelu.kukatla@oss.qualcomm.com>
 
+On Wed, Oct 01, 2025 at 01:03:42PM +0530, Odelu Kukatla wrote:
+> Add 'reg' and 'clocks' properties to enable QoS configuration. These
+> properties enable access to QoS registers and necessary clocks for
+> configuration.
+> 
+> QoS configuration is essential for ensuring that latency sensitive
+> components such as CPUs and multimedia engines receive prioritized
+> access to memory and interconnect resources. This helps to manage
+> bandwidth and latency across subsystems, improving system responsiveness
+> and performance in concurrent workloads.
+> 
+> Both 'reg' and 'clocks' properties are optional. If either is missing,
+> QoS configuration will be skipped. This behavior is controlled by the
+> 'qos_requires_clocks' flag in the driver, which ensures that QoS
+> configuration is bypassed when required clocks are not defined.
+> 
+> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
 
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-On 10/31/2025 2:50 AM, Sean Christopherson wrote:
-> Add and use a helper, kvm_prepare_unexpected_reason_exit(), to dedup the
-> code that fills the exit reason and CPU when KVM encounters a VM-Exit that
-> KVM doesn't know how to handle.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Regards,
+Bjorn
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
+> ---
+>  .../interconnect/qcom,sa8775p-rpmh.yaml       | 50 ++++++++++++++++++-
+>  1 file changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sa8775p-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,sa8775p-rpmh.yaml
+> index db19fd5c5708..71428d2cce18 100644
+> --- a/Documentation/devicetree/bindings/interconnect/qcom,sa8775p-rpmh.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sa8775p-rpmh.yaml
+> @@ -33,18 +33,66 @@ properties:
+>        - qcom,sa8775p-pcie-anoc
+>        - qcom,sa8775p-system-noc
+>  
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 5
+> +
+>  required:
+>    - compatible
+>  
+>  allOf:
+>    - $ref: qcom,rpmh-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sa8775p-aggre1-noc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: aggre UFS PHY AXI clock
+> +            - description: aggre QUP PRIM AXI clock
+> +            - description: aggre USB2 PRIM AXI clock
+> +            - description: aggre USB3 PRIM AXI clock
+> +            - description: aggre USB3 SEC AXI clock
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sa8775p-aggre2-noc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: aggre UFS CARD AXI clock
+> +            - description: RPMH CC IPA clock
+>  
+>  unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> -    aggre1_noc: interconnect-aggre1-noc {
+> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
+> +    clk_virt: interconnect-clk-virt {
+> +        compatible = "qcom,sa8775p-clk-virt";
+> +        #interconnect-cells = <2>;
+> +        qcom,bcm-voters = <&apps_bcm_voter>;
+> +    };
+> +
+> +    aggre1_noc: interconnect@16c0000 {
+>          compatible = "qcom,sa8775p-aggre1-noc";
+> +        reg = <0x016c0000 0x18080>;
+>          #interconnect-cells = <2>;
+>          qcom,bcm-voters = <&apps_bcm_voter>;
+> +        clocks = <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> +                 <&gcc GCC_AGGRE_NOC_QUPV3_AXI_CLK>,
+> +                 <&gcc GCC_AGGRE_USB2_PRIM_AXI_CLK>,
+> +                 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
+> +                 <&gcc GCC_AGGRE_USB3_SEC_AXI_CLK>;
+>      };
+> -- 
+> 2.17.1
+> 
 
