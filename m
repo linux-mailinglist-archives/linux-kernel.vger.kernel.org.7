@@ -1,141 +1,155 @@
-Return-Path: <linux-kernel+bounces-885284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5548CC3279F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 747A8C327BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C87D461A61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298C03B4203
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DC033DEC5;
-	Tue,  4 Nov 2025 17:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E733DEFC;
+	Tue,  4 Nov 2025 17:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeHQqYIL"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUYOI44R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20D4333427
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FF733C536;
+	Tue,  4 Nov 2025 17:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762278976; cv=none; b=IEwljnDIFT0TrSymPRYNPYqhUAcxDLpl2HPX4csEA/zyc/4OQR/EBPJHAecjIwtsqlWFHC5P+U/lk4TkZfeXq0RRFZJahxegrUvOSV6HYAMbWB7RlLTqdxVOyry7KN9k0/BFzNQA0SCGsZrUXIkxGYostJpzcVZd4xv1rLBfak0=
+	t=1762279019; cv=none; b=BJs+WYzFCIag3TdXX/0D3IUeW7d8AY0eBmtNveyxkC0D5xsHeolfsIJyeuke3jDs5PeDhZL3k/NN0IemV/9YpHrzuujaekIz5f1aqdTqXONDtbKJrMJjSSi63B0pP85OCmNcSs3bZR0JnbNrGmZ1BGxtdSZf7Lr7fm5tPSvC/xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762278976; c=relaxed/simple;
-	bh=HK572gnPFKjsmOd/RZmjDVi6DY4udcTr0A9s9HfvXlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qT+/bQFZZsz8DSo/h9d396nPeU97q6kfilute2WHiivpMZZr4lNjle1A5rvO2xSCCIwsWLUWRBhJEm4wAaDBfgh0+gM84Q+ZlByjNZ9i26C+RbvMZ7cw5nrlktvifZTnRkzxCGa8PDVRiFyqjTdd+fuIhZUTCKWtZYs03baJyUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeHQqYIL; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2951e58fa43so3933995ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:56:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762278974; x=1762883774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cdbFu86UvaH/Ty0UuDTWSO6wJfAjqp1mmNJzmWiSQ2c=;
-        b=CeHQqYILm8VRKcq+R7lfCHs2CY1BU/Y/pVGE5CQB0SFId/bp+iljdSxEnB03QspgG7
-         ee5pSSL0WnTJIWX+UVkaiG5Z82G2jMM43AiXsXboKX08btjEfyhKOla4FVmuvUqNCKk1
-         k/OyLWZ4bgHMgYdVT46jT34wGhyZxSR9JqCQPxKgx8prZDno0luMNkTv7QLwkWvsdZbC
-         GiQI2+UCL60bhd0jeFpUdgnkLMFxjLfiHxq7q3Ue+0PARal4XIgdrdMQt7z8nylTJfFx
-         tjjYP6SGfvdOYhJ9MNfL2rU7QjIvF2KHTQKgAYCAkDdKfIRZpoAPyZe72DMXFAEMaxFm
-         eltA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762278974; x=1762883774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cdbFu86UvaH/Ty0UuDTWSO6wJfAjqp1mmNJzmWiSQ2c=;
-        b=GbiTl52gFIMtq1UXzoy5TrSQCm/DcaYpItZGe0yGHkJT4JEXtNP+IsPNJtcglmYfPh
-         b6qnO02+A6xRvch1QE8aKYFL45fDDX3sYQSDrlDdYt8vSEARnX2iTvMg9RT3Ck5rCtEV
-         vhW48ahIYjwNeNCRabpLewn7ur4Ce9BeXRBuRsfcG5f9wNt59QLlu0Q7RjBpNdvCopyE
-         ti5WSy7rn3iqZ1LDlB5SaszhHfL2AzEZHCDYzzLYZP5ZvISur7T7wHD0H1mHFbcR/SEC
-         eOD7TUEpmBSKcxBrpnHnxHGhCr3WSO7nEARm2KnJOqbrxzzD7EgbCajUwRKpXkGwXXW5
-         ltfA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0fl+IH49Gs8ls/bfawVN952eDSdrmeECBjg8XckvnGhjE+rhAcVQrEc78ZinhAgCfUCyedoCPhvYLR5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybR13NYsCepRI0Vl+zJX6j+8Oluw1ud0pEgp365uD7Md6sMsup
-	ChOTAdNa/srpJWGJD5Lxbwx3NsKRHIPxyERO01s77a1jeYVe3gn3FwGW5KkjLOfAEGb4KhFYORp
-	nvPgOxdn5gkfkJA1cxSXbIVc4wYbIGE8=
-X-Gm-Gg: ASbGncvREz77AFppSBryb1fry/lSxRH/KvfXy5FdebjYg8uf+GHfmbLMzofjgKekJtO
-	ZCJzY/wy6Bc2x2NEy56NJ/FqmvJdQEGggX5HCW4QGRZkYUKYQGFRKm2lfX3WV/j4lFE3+2kH5Qn
-	HGNJC6aPc/qd8eOs6sM/ZYo1pFARMgAkFLdqgk2CwbIGCKXnIJV90dITqCUz+WZ5me5hujjijn3
-	aey1OcnjhX+tj2lbUniSbl2GJxi9RoSSHCXfBoZOp9hVr3at1YGtbf3qlP6FXTYyRPknLbcQes/
-	wadc8+6FKcqw54LeM1gd8QH7XgcfdPVLxjfyoMxXIodqYcGQqO2QRBKFVNyKwmtBXQZSdmHTerc
-	Z8sc=
-X-Google-Smtp-Source: AGHT+IFmGK+yppNjtlfVt3PYHnSU7LCIeOR2djeBicyIzVEbAacDaOZ31AyCC8o6I/noT3LJVN5NEf+tFApmxdym8ME=
-X-Received: by 2002:a17:902:db0d:b0:295:f960:be2a with SMTP id
- d9443c01a7336-2962ae6819fmr2827005ad.8.1762278974105; Tue, 04 Nov 2025
- 09:56:14 -0800 (PST)
+	s=arc-20240116; t=1762279019; c=relaxed/simple;
+	bh=FPJNCK36jeHaFc1F2/my5gol5g27q/q15TOBmvBhpLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HKu8wH0b0qbmwWh/Ijpza05WCEDLmUhYO3s99lpOEdDy/+rKNeLkfPwdMbvQuvbNO0YkY3p/njtjwZs99VOckk4kFTVBRyoD+J7qYOlhg08DMWBchkHyYUW7IYRq2A9Nc6iAsgqdje7vbiDhdBRWMSacmxpGDVXnXwkpAdGTdZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUYOI44R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B01BC4CEF7;
+	Tue,  4 Nov 2025 17:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762279019;
+	bh=FPJNCK36jeHaFc1F2/my5gol5g27q/q15TOBmvBhpLI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XUYOI44RTyjRBqzyfx5pZQyjxjb4vwf4LIUkuvw1TjImbYnmAzrxylg6fAqmwOBgX
+	 sgq6sujIcuF+vAoW30Z/m53ZlrSJ2h1F3fvfTJDDRQ98Nj5QAc6hoWg4U00qJcqtgD
+	 HbITB5nHuLYJonTOp/WwzSE0DohR7wia/xxjOAtvES9K3PkNdhPOT5kxk1+CrDVB3i
+	 hMUCRMU0d3gEDNXFuDE/davvSwrbzTEox42zUMdIeIC+lYK6h6s9LHMOHEgX9ckIHu
+	 lriqJ3z/VPA7yMqhf4BtXp+bmOpU8G+e9buCFMuhGI+1FrFpZdEg28+NBYlCw1qElV
+	 FF3DQMGaFCvaQ==
+Date: Tue, 4 Nov 2025 11:56:57 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mayank.rana@oss.qualcomm.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH] PCI: qcom: Program correct T_POWER_ON value for L1.2
+ exit timing
+Message-ID: <20251104175657.GA1861670@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020185539.49986-1-joelagnelf@nvidia.com> <20251020185539.49986-8-joelagnelf@nvidia.com>
- <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com> <02d37e88-8bfe-45ab-86da-0afa98fa1ebe@nvidia.com>
-In-Reply-To: <02d37e88-8bfe-45ab-86da-0afa98fa1ebe@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Nov 2025 18:56:01 +0100
-X-Gm-Features: AWmQ_bnuMtNId367X4k07V77YebHWkraMiqGBtJ_zKIeC98ruZBIIlgN0L2q9E0
-Message-ID: <CANiq72mR8jpsi4ekNWM3CZCtVYinjFjUhhnGtF+cNn+Q2qiTOw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table management
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org, 
-	Elle Rhumsaa <elle@weathered-steel.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251104-t_power_on_fux-v1-1-eb5916e47fd7@oss.qualcomm.com>
 
-On Mon, Nov 3, 2025 at 8:29=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> w=
-rote:
->
-> As Joel also was hinting at, is there any easy way to get this sort
-> of thing automatically checked? This is what scripts/checkpatch.pl
-> helps us out with on the C side, and maybe it is also the right
-> tool for Rust...?
+On Tue, Nov 04, 2025 at 05:42:45PM +0530, Krishna Chaitanya Chundru wrote:
+> The T_POWER_ON indicates the time (in μs) that a Port requires the port
+> on the opposite side of Link to wait in L1.2.Exit after sampling CLKREQ#
+> asserted before actively driving the interface. This value is used by
+> the ASPM driver to compute the LTR_L1.2_THRESHOLD.
+> 
+> Currently, the root port exposes a T_POWER_ON value of zero in the L1SS
+> capability registers, leading to incorrect LTR_L1.2_THRESHOLD calculations.
+> This can result in improper L1.2 exit behavior and can trigger AER's.
+> 
+> To address this, program the T_POWER_ON value to 80us (scale = 1,
+> value = 8) in the PCI_L1SS_CAP register during host initialization. This
+> ensures that ASPM can take the root port's T_POWER_ON value into account
+> while calculating the LTR_L1.2_THRESHOLD value.
 
-We have a few patches for that script (including for at least one of
-the things above), but lately I have been thinking we may want to have
-a different script or tools, ideally written in Rust, to encourage
-contributions and reviews and tests and so on.
+I think the question is whether the value depends on the circuit
+design of a particular platform (and should therefore come from DT),
+or whether it depends solely on the qcom device.
 
-Moreover, for some of the cases above it is better to put it into
-other tooling like `rustdoc`, Clippy, `rustfmt` or even klint,
-depending on what it is -- over time I have opened quite a few
-suggestions and some were implemented and work great, see e.g.
+PCIe r7.0, sec 5.5.4, says:
 
-    https://github.com/Rust-for-Linux/linux/issues/349
+  The T_POWER_ON and Common_Mode_Restore_Time fields must be
+  programmed to the appropriate values based on the components and AC
+  coupling capacitors used in the connection linking the two
+  components. The determination of these values is design
+  implementation specific.
 
-If someone wants to help with some of that, of course, please ping me!
+That suggests to me that maybe there should be devicetree properties
+related to these.  Obviously these would not be qcom-specific since
+this is standard PCIe stuff.
 
-I also had a bot I wrote back then when we used GitHub, with quite a
-few checks (especially around development process for newcomers to the
-kernel, e.g. using the right SoB and tags etc.) which people seemed to
-appreciate (to the point of someone mentioning it in a talk... :).
+Use "μs" or "us" consistently; there's a mix above.
 
-A long time ago I asked about making the bot send messages to the
-mailing list when we migrated, but it wasn't OK'd back then. I can try
-again, or perhaps it would make sense to make it send messages in
-private.
-
-Finally, nowadays, I imagine an LLM could do a reasonable job for some
-of these as well, if there is available AI time somewhere (please see
-my reply to Joel on that too).
-
-Cheers,
-Miguel
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index c48a20602d7fa4c50056ccf6502d3b5bf0a8287f..52a3412bd2584c8bf5d281fa6a0ed22141ad1989 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1252,6 +1252,27 @@ static bool qcom_pcie_link_up(struct dw_pcie *pci)
+>  	return val & PCI_EXP_LNKSTA_DLLLA;
+>  }
+>  
+> +static void qcom_pcie_program_t_pwr_on(struct dw_pcie *pci)
+> +{
+> +	u16 offset;
+> +	u32 val;
+> +
+> +	offset = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_L1SS);
+> +	if (offset) {
+> +		dw_pcie_dbi_ro_wr_en(pci);
+> +
+> +		val = readl(pci->dbi_base + offset + PCI_L1SS_CAP);
+> +		/* Program T power ON value to 80us */
+> +		val &= ~(PCI_L1SS_CAP_P_PWR_ON_SCALE | PCI_L1SS_CAP_P_PWR_ON_VALUE);
+> +		val |= FIELD_PREP(PCI_L1SS_CAP_P_PWR_ON_SCALE, 1);
+> +		val |= FIELD_PREP(PCI_L1SS_CAP_P_PWR_ON_VALUE, 8);
+> +
+> +		writel(val, pci->dbi_base + offset + PCI_L1SS_CAP);
+> +
+> +		dw_pcie_dbi_ro_wr_dis(pci);
+> +	}
+> +}
+> +
+>  static void qcom_pcie_phy_power_off(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_port *port;
+> @@ -1302,6 +1323,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_disable_phy;
+>  	}
+>  
+> +	qcom_pcie_program_t_pwr_on(pci);
+> +
+>  	qcom_ep_reset_deassert(pcie);
+>  
+>  	if (pcie->cfg->ops->config_sid) {
+> 
+> ---
+> base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
+> change-id: 20251104-t_power_on_fux-70dc68377941
+> 
+> Best regards,
+> -- 
+> Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> 
 
