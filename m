@@ -1,142 +1,172 @@
-Return-Path: <linux-kernel+bounces-884550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80F8C306CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:07:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E476C30681
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1E94225C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:03:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67D304E95ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515C2D595B;
-	Tue,  4 Nov 2025 10:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1719F3064B5;
+	Tue,  4 Nov 2025 10:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQ53Ntyq"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="C7ZkOGf/"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ADA2D4807
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE5265630;
+	Tue,  4 Nov 2025 10:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762250623; cv=none; b=Ohl4aIbXChYR8LcH04IJd48d/64SA9YWF+bjCxP5CB/YxZ95O8/H+wW8ryeFR+lrs8bQChIF+TtAtTeZFWmz48+BPNC/vdg4mQrhFst9qT5GIKZO2c1an3maqW0ib9wZg18UJHz/4jIAQkb/J3cZNaw+po57mWppBzbgteKfeK0=
+	t=1762250623; cv=none; b=bQYkyzZBnzSlbTNhdqquxjFvrk4x2pMqRQ6X30gL/7JH0qQ0/LFF+2zYDRY7o56rdcSg0U9d+VNlrlG2mnRnCWjJEOvCwEYew9voxpssRJrunxjgcBUrJm+T4MwuFAqbJ6fTybjmLWFXP6tRB+KRcbC0biKqVso0kb//x276Dv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762250623; c=relaxed/simple;
-	bh=yCNhQ4a0Nk0Atx6Dr4wxtJ0ZtyqyLGT9ZWpCeh0ba7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DSeZSrRp/hpVcnEmepShxrGJi5rsmVhpFouKU0IPTTjW/T5kkiSNbh3gnofiKbakY01pdNABETqPZ4iLc1O4ym/VCPirwtAfz3X1EN9/FhYWE9X+W7udMdoyO76Q95ifP1w46fzQ+4wpmrs6gL8W9x6lioSrJNc4LdJnpoHFM2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQ53Ntyq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2960771ec71so643685ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:03:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762250621; x=1762855421; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKUczaa/kE48HAcaJ5lE+YSGWpwTs3a+tEo/Ya98+Oc=;
-        b=mQ53Ntyq00EMTSh035RR+uDtW7hqjDsU/ZP5ohgCtXU8iDxkKWRO+rWmFTmRd3dtve
-         /9oHlAvsGwGsM7p2C1MXvAi61D0Uk3dIy6G2YyjJfgSsmY8gX3MXp3jMK7pwNmuNcqBd
-         uHBqxjox4bQW/TlBTz4WEPe6EVfSCehly9TXbbO2OuQquuXC92Ulw1VY/Ubm7A+gTN0S
-         LvH6K+3Z9chVBQ7YtbJ4ir7Yf1if9X0rhTIXdW/PEyCyRlKuRLOCEQpRXQEW0BWzRMAQ
-         uvCO6YkLHlqWaMmAlYMUrhOdL11AIOQ6AHx7XxZhTMVc/xlY5vav4vcw3g9oeQk2eZ0/
-         853A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762250621; x=1762855421;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VKUczaa/kE48HAcaJ5lE+YSGWpwTs3a+tEo/Ya98+Oc=;
-        b=hqjNGsfHtnEnRllrIT6zgyjnYSFojowaEuNV/Yotdoiq7OxAPx3Ky0J++1+XRXi3pZ
-         VaU1DkSUMy2bbMOKAeBDy4t6QMgdY/dHt7EDEmeLmp45hZlSiajOC8pbFmS5NQojEEkJ
-         Z+a2+En9pMf5lXZet4WBY7amrvCJNvLWNtUgabWPe7HlOhKypS2wmD+3FYs4P+FzyVxW
-         OarMmTahWMXd9u84G87yUsGNj491bP9rJZogsv1sX5BUDr26pLZrc/IYRu3/4G9/w/0Q
-         sYCZV7rh5bNkxCjuuehz3g/P2WmOuh7OWDOXQwD1tZRFUjgIMxDgczqMCuc6fOzKRUPG
-         /eag==
-X-Forwarded-Encrypted: i=1; AJvYcCUlTDhmlKOr5VshbTG+E0WqfMSNNsJv12Wnim8wMMlUDtxAb9vbOH3RRtspjOAyEF7rc/UNKHKl9zSRMck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu8wRJiq7T9vkO14eO8wKjyqTUp1zVVofCgfogNV7rsyVnibxF
-	R9slWXshs3LytWbzvZvVuuq+V43e1pHXQpMlsZdFoZFEbOLf4tt8xL9iOy6lzLGq8Bc=
-X-Gm-Gg: ASbGncsyK2EG59aPVBMljVbJG8BTwzleD9kfI054jfsgKPrtRsrmpkAsyyRVHA3Aico
-	K012OwTWixAtODY8H/3SBDLy4psi8kW+1+C7HC5i53G7JoYeXa4mfp2uXpuclOtVzQTkk8bUZOJ
-	4qVica0km/+Zj4GjdVDPxMIsOWIr9tVzkwXnZu5QyOt5hCqp1oY53HLoOLIMXXPJB5wGUYNxDej
-	djWgnwYuirYqVH6+rDc5vjyCMpmT4w0EoLhMhqIDb8k5+Cgdzdk3uEwLg16wzgW7rXw9MLws4c6
-	KwrfbTwlclUyCiqOQ0iuPEnDJpaeQmrJfGtCyVPS/XtZgcNm/mxXAJwegcstt8pAiG2FCO9Di9W
-	H8aur8dBlETakeAgf2VVzt23Y+GZzG/XNwij4vHVlzBGhEanEmMO/04xqYCVWDSkovVnoVtrNof
-	4hqS/OTiG4nPy0LC8GG6ZAUOFveyFWlF+xNIDnPpqWssONJVk4rRngXm2jfyMQng==
-X-Google-Smtp-Source: AGHT+IERjCdObduOqXZ7oaX8UqF7sHs4pQ6NQtq4FOaNwiNZd5TJwbQT+UFYEFtX/Kv19Ewgasg8YA==
-X-Received: by 2002:a17:902:f393:b0:295:54cd:d2e2 with SMTP id d9443c01a7336-29554cdd55fmr54991885ad.0.1762250620759;
-        Tue, 04 Nov 2025 02:03:40 -0800 (PST)
-Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998ef7sm20672565ad.33.2025.11.04.02.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 02:03:40 -0800 (PST)
-From: Qianchang Zhao <pioooooooooip@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Qianchang Zhao <pioooooooooip@gmail.com>,
-	Zhitong Liu <liuzhitong1993@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
-Date: Tue,  4 Nov 2025 19:03:25 +0900
-Message-Id: <20251104100325.343863-1-pioooooooooip@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025110432-maimed-polio-c7b4@gregkh>
-References: <2025110432-maimed-polio-c7b4@gregkh>
+	bh=ByKsPzhI1q6lq0Yr2T2YcrTBx/zROmh18KVgyPJeoss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VjTZuiwMPh69ec5HSwJDyf696ARuJ0xB0IYdof496QAVk9nd5pZLy4CM30S9mRxEs1lJnH3yx/AoPbe7wlCzqYe+ZLbereSYiCKzFiYqLYuAZdg9IU/mkZPAjFmS3b7Aqu9e0bCM6nk2PFS6eiwJq0w4SWXMOVHzb6cQUAi1C8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=C7ZkOGf/; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=tMOTGYnkv7axYrDjHMmwI8rgDmLRpJW8riM4rrASqms=;
+	b=C7ZkOGf/s2O7Yy+htzNvB8cBBVea0ycy2m5WmbYBUyqvdYkbHqAIFb2NJ1wuNuIsvbj0X5my5
+	BadG1ruocfgiauJeCF0GIhHxVMFYp+Zh9dU4Rq+b49qVjcHcScHW4kaogzDLTL+Xax13fkP84m/
+	1HnZ3W/1OOawj8FCJI3AYOw=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d13s774ryzLlVp;
+	Tue,  4 Nov 2025 18:02:03 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 44625180043;
+	Tue,  4 Nov 2025 18:03:38 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 18:03:38 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 18:03:37 +0800
+Message-ID: <e4ccdd1d-2ade-4fac-8296-3b6eebce1bfa@huawei.com>
+Date: Tue, 4 Nov 2025 18:03:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] ACPI: processor: idle: Remove useless codes about
+ the verification of cstate count
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20251103084244.2654432-1-lihuisong@huawei.com>
+ <20251103084244.2654432-6-lihuisong@huawei.com>
+ <CAJZ5v0ifcuqF7=+NowYOfPbKfGq5XCe4+mg_9Sv8gRHyMZ0gNQ@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0ifcuqF7=+NowYOfPbKfGq5XCe4+mg_9Sv8gRHyMZ0gNQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-When encrypt_resp() fails at the send path, we only set
-STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
-in this tree). Repeating this path leaks kernel memory and can lead to
-OOM (DoS) when encryption is required.
 
-Reproduced on: Linux v6.18-rc2 (self-built test kernel)
-
-Fix by freeing the transform buffer and forcing plaintext error reply.
-
-Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
----
- fs/smb/server/server.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 7b01c7589..15dd13e76 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -246,11 +246,11 @@ static void __handle_ksmbd_work(struct ksmbd_work *work,
- 		rc = conn->ops->encrypt_resp(work);
- 		if (rc < 0) {
- 			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
--			 work->encrypted = false;
--    			 	if (work->tr_buf) {
--            				kvfree(work->tr_buf);
--            				work->tr_buf = NULL;
--       			   	}
-+			work->encrypted = false;
-+			if (work->tr_buf) {
-+				kvfree(work->tr_buf);
-+				work->tr_buf = NULL;
-+			}
- 		}
- 	}
- 	if (work->sess)
--- 
-2.34.1
-
+在 2025/11/4 2:10, Rafael J. Wysocki 写道:
+> On Mon, Nov 3, 2025 at 9:42 AM Huisong Li <lihuisong@huawei.com> wrote:
+>> The acpi_processor_setup_cstates and acpi_processor_setup_cpuidle_cx will
+>> be called after successfully obtaining the power information. These setup
+>> functions have their own main role, but also verify the validity of cstate
+>> count.
+>>
+>> Actually, the acpi_processor_get_power_info_cst will return failure if the
+>> cstate count is zero and acpi_processor_get_power_info will return failure.
+>>
+>> So the verification of cstate count in these functions are useless.
+>>
+>> No intentional functional impact.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/acpi/processor_idle.c | 22 +++++++---------------
+>>   1 file changed, 7 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>> index 4627b00257e6..1f332f02d273 100644
+>> --- a/drivers/acpi/processor_idle.c
+>> +++ b/drivers/acpi/processor_idle.c
+>> @@ -732,8 +732,8 @@ static int __cpuidle acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+>>          return 0;
+>>   }
+>>
+>> -static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>> -                                          struct cpuidle_device *dev)
+>> +static void acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>> +                                           struct cpuidle_device *dev)
+>>   {
+>>          int i, count = ACPI_IDLE_STATE_START;
+>>          struct acpi_processor_cx *cx;
+>> @@ -753,14 +753,9 @@ static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>>                  if (count == CPUIDLE_STATE_MAX)
+>>                          break;
+>>          }
+>> -
+>> -       if (!count)
+>> -               return -EINVAL;
+>> -
+>> -       return 0;
+>>   }
+>>
+>> -static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+>> +static void acpi_processor_setup_cstates(struct acpi_processor *pr)
+>>   {
+>>          int i, count;
+>>          struct acpi_processor_cx *cx;
+>> @@ -822,11 +817,6 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+>>          }
+>>
+>>          drv->state_count = count;
+>> -
+>> -       if (!count)
+>> -               return -EINVAL;
+>> -
+>> -       return 0;
+>>   }
+>>
+>>   static inline void acpi_processor_cstate_first_run_checks(void)
+>> @@ -1248,7 +1238,8 @@ static int acpi_processor_setup_cpuidle_states(struct acpi_processor *pr)
+>>          if (pr->flags.has_lpi)
+>>                  return acpi_processor_setup_lpi_states(pr);
+>>
+>> -       return acpi_processor_setup_cstates(pr);
+>> +       acpi_processor_setup_cstates(pr);
+>> +       return 0;
+>>   }
+>>
+>>   /**
+>> @@ -1268,7 +1259,8 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
+>>          if (pr->flags.has_lpi)
+>>                  return 0;
+>>
+>> -       return acpi_processor_setup_cpuidle_cx(pr, dev);
+>> +       acpi_processor_setup_cpuidle_cx(pr, dev);
+>> +       return 0;
+>>   }
+>>
+>>   static int acpi_processor_get_power_info(struct acpi_processor *pr)
+>> --
+> Does this patch depend on the previous patches in the series?  If it
+> doesn't, why don't you send it independently?
+Good suggestion. Thanks, got it.
+This patch doesn't depend on them.
+But patch 6/7 and 7/7 depend on this patch and patch 3/7.
+If they still need some times to discuss, I can send this patch first.
+>
+>
 
