@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-884086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3065DC2F535
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:58:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3ACC2F538
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23C1B4E5B39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:56:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1D694E9077
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5984028751A;
-	Tue,  4 Nov 2025 04:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE4F284B29;
+	Tue,  4 Nov 2025 04:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdvIqm0m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WttHRPDw";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WttHRPDw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD8F8248C;
-	Tue,  4 Nov 2025 04:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2CA23D294
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 04:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762232194; cv=none; b=QxJSKSs5Wq5kUlQzBsehv6GPfgigxBiHLGI/GuKgOwpKmZswAM0rj5i40KrJ0XeHVG7QtT7zJtjuPkz19zRjfvu6RJOJZ1/P+hrVPLTsyKH4z4RBjc3ns2417dvQcwG3YgdNq6J1yZyctunUhjEYn+YLnGYH+prBp+ZevoDYXho=
+	t=1762232259; cv=none; b=quRhJKUyS/wYX6IiR+Luaj0MAOWIyG3wjdHTmZUF6xIX6fPBPfNYYg1IoO4QiHnPbw3jTDKWFdC0XWbPacCOp3sEF12m7PvJ1Agx/Fs/CAK+xSyuKANDKMWxu+s9cOXYrQ40HwjfkrMh5LOXockd9OhuPlWJfQjbtibh4br/3/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762232194; c=relaxed/simple;
-	bh=dhmMrBLVyxKqMVKDRWFG+f1uPSry0Fn1e2cRqwN+yhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSiAQW68CyxdfD6tX4wnsNJF4+0kNrrCD1hd1c7YGahdXJ6afii9rHAfktXJvmgdVJ1eGyGmHc1hVJ4dRocvy6tlCM07NDtqBoKYlT40jlqS+jylv+RakvF1c7QGbb8ICFlhx9NjD59Bl6XAbjQz3YkbBCc5pomvMGC+OsyCnmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdvIqm0m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BCAEC4CEF7;
-	Tue,  4 Nov 2025 04:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762232193;
-	bh=dhmMrBLVyxKqMVKDRWFG+f1uPSry0Fn1e2cRqwN+yhA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IdvIqm0m5T/jQVSaj2gcqgFV2ODzlxZevbS1Rx+z92uRlH8uO+SwcQTblaLEcSDyR
-	 OjpFYwotQkCiPPGZbYrNA90PlooY4n1PQ+HPf8TQaPbwUZxSZJgt626yugupolJqgH
-	 cUvqfBoISpJ3ZzSHX+smQxMbz0SRJJVSlPZCTHQJNU2hemd5E8go9P1ZqbTYmu5wEH
-	 9iMQDv9npjV5eIN3u8cfrLMAOE13na2tXGS+4hh++hnsO2uSof8tzy74yV56/9B6PD
-	 1fc6lESqnC2paB3qaO3JzCloG08dpOnedXmlJP+8tPWj+sNenaU80uKssOl1EWpRIq
-	 tpvrfogCQV90A==
-Date: Mon, 3 Nov 2025 20:56:31 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Levi Yun <yeoreum.yun@arm.com>,
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 07/22] perf expr: Add #target_cpu literal
-Message-ID: <aQmHfya8SYIcVGcg@google.com>
-References: <20251024175857.808401-1-irogers@google.com>
- <20251024175857.808401-8-irogers@google.com>
+	s=arc-20240116; t=1762232259; c=relaxed/simple;
+	bh=69LaS1QlxuMXdaOOQ1JpKetzMbIOE2x5XfWZBqeeXtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ic60SVxcfNCNqEWgBU9hU6YxXggVI+lxR9nuGKtsVYWvY+Lir2gudn1UwawQwN6L5hJ0qrxcs8SvDyBXcfeVya0sr4lsdwuZuOr6WecSN+VsfUARmaQeBM+E/Xl9blFkhRriUySUP8zAbOwGBnOnV16JCuP22uxhEC7mf+q2r0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WttHRPDw; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WttHRPDw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7B8151F385;
+	Tue,  4 Nov 2025 04:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762232255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXrUQAijZQMZm8mRDIGstRfRq2ikHcx/hnTqL0Q8fMw=;
+	b=WttHRPDw+F91PB5YkUcu/qDzt5MTPZLnMtGDPUWyuB8FRtIuPNTLdkzZitcpC0+kRb/BNg
+	dLPkZ7Ftb5fwOkwnG5AFNwUI+8NVMFHjRre2P9xhxWmKrapEkmI38twUFERfXXN3+vj38G
+	UJF8CVZbvkQd9sQnHQwIPHtlWgjjJtI=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=WttHRPDw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762232255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXrUQAijZQMZm8mRDIGstRfRq2ikHcx/hnTqL0Q8fMw=;
+	b=WttHRPDw+F91PB5YkUcu/qDzt5MTPZLnMtGDPUWyuB8FRtIuPNTLdkzZitcpC0+kRb/BNg
+	dLPkZ7Ftb5fwOkwnG5AFNwUI+8NVMFHjRre2P9xhxWmKrapEkmI38twUFERfXXN3+vj38G
+	UJF8CVZbvkQd9sQnHQwIPHtlWgjjJtI=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74AD3139A9;
+	Tue,  4 Nov 2025 04:57:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XQp2HL+HCWmkFQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Tue, 04 Nov 2025 04:57:35 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.18-rc5
+Date: Tue,  4 Nov 2025 05:57:28 +0100
+Message-ID: <cover.1762230638.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251024175857.808401-8-irogers@google.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 7B8151F385
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.com:dkim];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Spam-Score: -3.01
 
-On Fri, Oct 24, 2025 at 10:58:42AM -0700, Ian Rogers wrote:
-> For CPU nanoseconds a lot of the stat-shadow metrics use either
-> task-clock or cpu-clock, the latter being used when
-> target__has_cpu. Add a #target_cpu literal so that json metrics can
-> perform the same test.
+Hi,
 
-Do we have documentation for the literals and metric expressions in
-general?  I think it's getting complex and we should provide one.
+please pull a few more short fixes. Thanks.
 
-Thanks,
-Namhyung
+- fix memory leak in qgroup relation ioctl when qgroup levels are
+  invalid
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/expr.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/perf/util/expr.c b/tools/perf/util/expr.c
-> index 7fda0ff89c16..4df56f2b283d 100644
-> --- a/tools/perf/util/expr.c
-> +++ b/tools/perf/util/expr.c
-> @@ -409,6 +409,9 @@ double expr__get_literal(const char *literal, const struct expr_scanner_ctx *ctx
->  	} else if (!strcmp("#core_wide", literal)) {
->  		result = core_wide(ctx->system_wide, ctx->user_requested_cpu_list)
->  			? 1.0 : 0.0;
-> +	} else if (!strcmp("#target_cpu", literal)) {
-> +		result = (ctx->system_wide || ctx->user_requested_cpu_list)
-> +			? 1.0 : 0.0;
->  	} else {
->  		pr_err("Unrecognized literal '%s'", literal);
->  	}
-> -- 
-> 2.51.1.821.gb6fe4d2222-goog
-> 
+- don't write back dirty metadata on filesystem with errors
+
+- properly log renamed links
+
+- properly mark prealloc extent range beyond inode size as dirty
+  (when no-noles is not enabled)
+
+----------------------------------------------------------------
+The following changes since commit ada7d45b568abe4f1fd9c53d66e05fbea300674b:
+
+  btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree() (2025-10-22 09:40:07 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-rc4-tag
+
+for you to fetch changes up to 3b1a4a59a2086badab391687a6a0b86e03048393:
+
+  btrfs: mark dirty extent range for out of bound prealloc extents (2025-10-30 19:18:18 +0100)
+
+----------------------------------------------------------------
+Filipe Manana (1):
+      btrfs: set inode flag BTRFS_INODE_COPY_EVERYTHING when logging new name
+
+Qu Wenruo (1):
+      btrfs: ensure no dirty metadata is written back for an fs with errors
+
+Shardul Bankar (1):
+      btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
+
+austinchang (1):
+      btrfs: mark dirty extent range for out of bound prealloc extents
+
+ fs/btrfs/extent_io.c |  8 ++++++++
+ fs/btrfs/file.c      | 10 ++++++++++
+ fs/btrfs/inode.c     |  1 -
+ fs/btrfs/qgroup.c    |  4 +++-
+ fs/btrfs/tree-log.c  |  3 +++
+ 5 files changed, 24 insertions(+), 2 deletions(-)
 
