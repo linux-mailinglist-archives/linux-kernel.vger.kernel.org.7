@@ -1,158 +1,106 @@
-Return-Path: <linux-kernel+bounces-885243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2DFC325AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:32:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCAD9C325C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F0E3B6800
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0B3188F610
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED2333A000;
-	Tue,  4 Nov 2025 17:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8E6334C26;
+	Tue,  4 Nov 2025 17:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oPpH7d3z"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+CT1P90"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E7B302165
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC72334363
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762277441; cv=none; b=PEWVCKNY6WeO7JOwdMrnCkbCdtaQA9bgwc5Q/48Qk1iSj7dLLEoGpLG0Svy9Y7hXPhx34aEl8wGPntvx0SRy9YtjeROATVRFCzGDchsmSzLcsSZ5JbR4I/TFYSRNr511DGVS5UalRPwfHNPaZv/AEna8EYcGxpgOD/1GtF3KykM=
+	t=1762277564; cv=none; b=Xp8WyYmBwIyK/BcXevkhFKLV+Ob5J6IM5/HgAMshZxZHntHW8Fx2VNbvWibH8h+gvlR6o91eatawG5/HeEsEd7tonj1EQ0c90s1u4v3a+5P1g8redxmecyCvus6Mt6Kau2hLsHKKlQ/x5XosMCQeHr/OIGbCKNvixLyvMJVPGDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762277441; c=relaxed/simple;
-	bh=yhIX5TEclnoiBz0fg3JzhCQlxIO+UE1uYXZWYOI7Ttw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OaXGm2i7vWuyHMnALtR9B6OoH3FE1dlGfr+CFSOqt1tYO9RZB57cNkOfKVQSEbJl2KldpFLmK07UiLwQ/nMmTOxg5/566M/HsqQ0msX3qUhuPym7sOfX4jzxGQwsMtlTwCj9mhy1jcrCCn1l0+w6EjNKAKVLr4ntTDNfUE9osl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oPpH7d3z; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <02b8c4ba-eb24-41e2-813c-98b83561ef9d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762277433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i9GlcllmqBesnpFx/wMZjPrsbZ2u3RkZOd65D+jcXkk=;
-	b=oPpH7d3zsFAYQE1B5RXAd1xyooIs6iHMgJXIqfq2kthwGd7qq4uP2FxD72JYwZC4IKOh25
-	bHc5IFVsOMlnWz3TJS2zuE4iM4TAWrHRwRN3SLygDRc3FODUNgHHXSUW3pSlVxeTabjNIG
-	QGOLBxFLNtY80Fm/SNSD665z5VHIq6E=
-Date: Tue, 4 Nov 2025 09:30:27 -0800
+	s=arc-20240116; t=1762277564; c=relaxed/simple;
+	bh=SzM3QuPCpSLxXdGGco1ngdrEoCX9QqchdJ7DcUdSPxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fg9bWHCHcDoknaGJIUdlXgfGd9Nln6URru0eP4fMHQ03NcZdNQsgYAa01d/eW5srjdxzkVxe74fwrR6Rycq0lSRpNDT5J6PrNIvi5NVeDbZzQHfkw55yewGvxvfLiHTrXam1rqvBdHjIpSJkJvwuZcYFK8MKHasi3Sv6WQPRxpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+CT1P90; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-591eb980286so5468935e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:32:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762277560; x=1762882360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SzM3QuPCpSLxXdGGco1ngdrEoCX9QqchdJ7DcUdSPxc=;
+        b=m+CT1P90i9Y1oP5NhNXKq37Koow+3nuUbCmY3uUFiMtfGxvof0Ic/xTASERS2qvhuj
+         osPlh/hqiZbaazBo9L1WgNZ5h1vOoD/jj+h15dHtTrD1e88SbjfSx/CMitKoHf9K6rER
+         3VsU3arTkV+wxLM02HplL4FIUozHZ0gSBaqj9VlWwp5ZYFYxeq0KazGy19OpaDZQPFiU
+         tkuNofn35rnguMONhmwo00odGtrSG842ewdd/8KkdWa8MHSBwu80xR6gAVbbuKPG0D7F
+         cwMpKPV8lGF2iuKrnkgtW7kFtjhmuo9cxhJIkMtNcKSS7GHS0gNQ9j5CovWkdjcwCxJo
+         XfvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762277560; x=1762882360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SzM3QuPCpSLxXdGGco1ngdrEoCX9QqchdJ7DcUdSPxc=;
+        b=mzj1Y5Wf+Rq2mVdilJtJrXw2klm8gkeLdARYoIhIgfPN1xapFPr0bm2pxZur/xEpFH
+         JDX51iFtWmv7SkgvPA0KAtejcsMOn4Ui6vXDFJw2eeVpAdGrLFjpWJUW0rSNCRQhlP6X
+         1F24ga9i7cWSQHophscBPo1m5I2Unv/t33hHwLD55IaL102b9IFroAEo9pt2mlmplIUN
+         fnsYaLidjxNFbBmEFfmDhFsoE8jTxVBvdTxL5VqwsodpYD0nOXi1dAmhEGZCsUwlugar
+         7iMXV7HDNS04ACfkpqO7MYgr+zdAj59t1/4VKGrB9W6d3ATjsmF1513tX619H/rrmm9I
+         UH0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUIKofkyQ2SeXjdS1VuUPevF1KGi5QoR5ZUOb9GpsyBY5dLAjw1/mkQwOTgM6pTHVoDjEHmUIHpGHzc3AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCDFnze+ZkpWbp0Jsf8Zp6FjgEQTTUVUOsXwIXoCIOu7FuOHzV
+	sOcyOauhOkOiLtRSlks3UN1iXhlmD0vMb1QLBFNdptQcToJKYNzMYwP69kvY5/+bR3NI46RSb/6
+	i3IZ9zY3IzI5r+1xyCl3VPPBFO7Vs+XU=
+X-Gm-Gg: ASbGncvk4jMrctEDnG5VOD3mnsgXzOY9JXZPmGsRySB+Nu3Hjw0hxdgjmK6QPqcvni8
+	18prX/TEQjOd0yOSG1wSTTFSt1GrqXLmN7+oe2Q68h+WZYKtpWiwBgKVsNg08UJHlN1CPlYXYkA
+	V55ABk/N21FLNdKBm3Qcx7uxU4l9pD57BChiALOpzNcbnjE/2R00Zw72TT21rMeKJU4TJbvGpeZ
+	ZsMI5QJOwkHnTtHv6rbm13WwWzh3iGu5hJIrdxRLgzTjw+gUnW4qRHE7A==
+X-Google-Smtp-Source: AGHT+IFXI0b26Xu2rKqQvjM4aCQpacUKpmY1KjXZETX93PxYlp9C+bCDV5fm09oDr/KGDn8H7OyKaA5fDQv4TCtmtZk=
+X-Received: by 2002:a05:6512:150f:20b0:594:261c:1ed0 with SMTP id
+ 2adb3069b0e04-594261c22b4mr2564678e87.54.1762277560179; Tue, 04 Nov 2025
+ 09:32:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v4 4/4] selftests/bpf: Add tests to verify
- freeing the special fields when update hash and local storage maps
-Content-Language: en-GB
-To: Leon Hwang <leon.hwang@linux.dev>, bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
- linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-References: <20251030152451.62778-1-leon.hwang@linux.dev>
- <20251030152451.62778-5-leon.hwang@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20251030152451.62778-5-leon.hwang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251104103525.26410-1-linmag7@gmail.com>
+In-Reply-To: <20251104103525.26410-1-linmag7@gmail.com>
+From: Matt Turner <mattst88@gmail.com>
+Date: Tue, 4 Nov 2025 12:32:27 -0500
+X-Gm-Features: AWmQ_bnuBM-eGvsdkAbseo8EWUGi1fvIqcWoT54YTpb8Ju7ny4iXd1Z7El2G21E
+Message-ID: <CAEdQ38E9hWDy65vOdjwmTcy5tqtNvY8eebV7c9Sxx3e9Y4y8JA@mail.gmail.com>
+Subject: Re: [PATCH v2] Add Magnus Lindholm to MAINTAINERS (Alpha port)
+To: Magnus Lindholm <linmag7@gmail.com>
+Cc: richard.henderson@linaro.org, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/30/25 8:24 AM, Leon Hwang wrote:
-> Add tests to verify that updating hash and local storage maps decrements
-> refcount when BPF_KPTR_REF objects are involved.
+On Tue, Nov 4, 2025 at 5:35=E2=80=AFAM Magnus Lindholm <linmag7@gmail.com> =
+wrote:
 >
-> The tests perform the following steps:
+> Add Magnus Lindholm as maintainer for alpha port
 >
-> 1. Call update_elem() to insert an initial value.
-> 2. Use bpf_refcount_acquire() to increment the refcount.
-> 3. Store the node pointer in the map value.
-> 4. Add the node to a linked list.
-> 5. Probe-read the refcount and verify it is *2*.
-> 6. Call update_elem() again to trigger refcount decrement.
-> 7. Probe-read the refcount and verify it is *1*.
+> Changes since v1:
+> - Rephrase commit message and email subject
 >
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+> Signed-off-by: Magnus Lindholm <linmag7@gmail.com>
 
-I applied this patch only (i.e., not including patches 1/2/3) to master
-branch and do bpf selftest and all tests succeeded.
+Acked-by: Matt Turner <mattst88@gmail.com>
 
-[root@arch-fb-vm1 bpf]# ./test_progs -t refcounted_kptr
-#294/1   refcounted_kptr/insert_read_both: remove from tree + list:OK
-...
-#294/18  refcounted_kptr/pcpu_hash_refcount_leak:OK
-#294/19  refcounted_kptr/check_pcpu_hash_refcount:OK
-#294/20  refcounted_kptr/hash_lock_refcount_leak:OK
-#294/21  refcounted_kptr/check_hash_lock_refcount:OK
-#294/22  refcounted_kptr/rbtree_sleepable_rcu:OK
-#294/23  refcounted_kptr/rbtree_sleepable_rcu_no_explicit_rcu_lock:OK
-#294/24  refcounted_kptr/cgroup_storage_lock_refcount_leak:OK
-#294/25  refcounted_kptr/check_cgroup_storage_lock_refcount:OK
-...
+Thanks Magnus! I will take this patch through my tree ASAP so we can
+get your kernel.org account set up sooner rather than later.
 
-Did I miss anything?
-
-> ---
->   .../bpf/prog_tests/refcounted_kptr.c          | 134 +++++++++++++++++-
->   .../selftests/bpf/progs/refcounted_kptr.c     | 129 +++++++++++++++++
->   2 files changed, 262 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> index d6bd5e16e6372..0ec91ff914af7 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> @@ -3,7 +3,7 @@
->   
->   #include <test_progs.h>
->   #include <network_helpers.h>
-> -
-> +#include "cgroup_helpers.h"
->   #include "refcounted_kptr.skel.h"
->   #include "refcounted_kptr_fail.skel.h"
->   
-> @@ -44,3 +44,135 @@ void test_refcounted_kptr_wrong_owner(void)
->   	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
->   	refcounted_kptr__destroy(skel);
->   }
-> +
-> +static void test_refcnt_leak(struct refcounted_kptr *skel, int key, void *values, size_t values_sz,
-> +			     u64 flags, struct bpf_map *map, struct bpf_program *prog_leak,
-> +			     struct bpf_program *prog_check, struct bpf_test_run_opts *opts)
-> +{
-> +	int ret, fd;
-> +
-> +	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
-> +	if (!ASSERT_OK(ret, "bpf_map__update_elem init"))
-> +		return;
-> +
-> +	fd = bpf_program__fd(prog_leak);
-> +	ret = bpf_prog_test_run_opts(fd, opts);
-> +	if (!ASSERT_OK(ret, "bpf_prog_test_run_opts"))
-> +		return;
-> +	if (!ASSERT_EQ(skel->bss->kptr_refcount, 2, "refcount"))
-> +		return;
-> +
-> +	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
-> +	if (!ASSERT_OK(ret, "bpf_map__update_elem dec refcount"))
-> +		return;
-> +
-> +	fd = bpf_program__fd(prog_check);
-> +	ret = bpf_prog_test_run_opts(fd, opts);
-> +	ASSERT_OK(ret, "bpf_prog_test_run_opts");
-> +	ASSERT_EQ(skel->bss->kptr_refcount, 1, "refcount");
-> +}
-> +
-
-[...]
-
+Matt
 
