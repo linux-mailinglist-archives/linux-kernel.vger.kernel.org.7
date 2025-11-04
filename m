@@ -1,160 +1,133 @@
-Return-Path: <linux-kernel+bounces-884175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B06C2F846
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EC8C2F85E
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 275744EE52A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:53:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF5A14ED16C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D332E8DF6;
-	Tue,  4 Nov 2025 06:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073262EDD49;
+	Tue,  4 Nov 2025 06:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQPm7gJR"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="4yyPL4xi"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC97B2DE717
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 06:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27C42EB5BD;
+	Tue,  4 Nov 2025 06:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239199; cv=none; b=p0zSZlQM6Qb1PzNRM9x3DC/KqKdtSBPyfMcRmczwryXEejQG9hW3Akk+GGzGQCZXs/dY9JgnJ7V5hzv78BiOlFQFaboVakgDZVGbuCqsNmKiLrFaSgmxrnqcF8LJWxuJ7yTF2RaWBp68owQpoLowPXLYbEyb3ncOgAUWfYTZ4Lc=
+	t=1762239347; cv=none; b=Gzy/2yhD26lrEj4UE/xL5z5CJrDVMnTjWmpbYKzHuE0wZb4/cDFngSOrfoMyhc3wlheu+KLtPCRv3YxMhJ6o5oHRKYn2CDCiPBIYdODNVNLbMbEZmoXnWvBhzA7KW5QaH/dI0VS4lPKLmepbrNhRQPA/vjsgtjjWLGUHVSB/SeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239199; c=relaxed/simple;
-	bh=8p0MCf6z8owtO8dtPW0HAmvbfGUyTkXxQfEU6TFdLiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=myNjvD1tCpDbNCVcZNRN9OJKMnGd1hWyAZfJsiRQTqoLQC9iBXTQDO1Jt/8DOh4kNLOcwe0CzpfGtqy+N3G51p2b7v4m851ylpAdL/dkmt/KH0aR9vYXI0zqZcVslNbfNZF1eMxulnpkDqbXMEjy2pxBfSL5+JZtrcNGDwr2uOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQPm7gJR; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-44fa3aae70eso1186857b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 22:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762239196; x=1762843996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yunsIVG2xwSWPJMISQ9png0ZDy6Yvl2IENc61OHh6yo=;
-        b=QQPm7gJRofS9D7nRw7wDMcJlvvp4BRJ7YHUqz6RvqdkJawLZxIgJcbO3dWCXoELFIU
-         r/SdWtzVCMOuVmmqtmItfYBQKSp/Jw8pACs3yiIUS9+bxoELE8f9iKdBn+CFfQ8VxP0O
-         RkEtwf5SjcQG+zKYGaWzps3uXxj7EvP6YJWq/Y8Kfg5cQm246RTTENMJEd3euywR6B1h
-         bQ59VcozYZMYS2FdjcDo8XJJ4oYTPQD9dC38Kg5tjsB9z0syk1kqZ2vk00rQVJGXcmJY
-         y84u2WHQl1ggkG/e72/d0JRvtf3uhyRWM8ftqEuZpI1VgE/CILT4lBq50AoTF9J1oCOu
-         M2Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762239196; x=1762843996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yunsIVG2xwSWPJMISQ9png0ZDy6Yvl2IENc61OHh6yo=;
-        b=vCiylF3sBiRnPGpEAkTmrTAB2zgunbXKclShd9d60ywcnyJ4ssbaD4V8ufXu3VoJSm
-         B7S88zj5/hmGmZWT2vJDPiJV0dzn8qCX12CQVMZOrwlZht9KUHn50Lr+R239PNKTEVVT
-         5WRnHoshhgvRgZD0SbKrHP8hninkM22FBiKncWpEGUbmNqJp6um54n8LNclGHfqnwOGN
-         qk5EqmgLQeSjmELJCBhatvQcUcIM6E6aVzXTKAG2dl1ppPdSijYDlRLGJ9znS2wkreMv
-         5VbcnTJ77s1cY5jUFVQAuDiGcRbBUo1EqmIXNbdJkg8uq8S37GcFiApryHGGiuT6bGoX
-         Y5bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7PDA6QK28Dz+5SQbQF3Ucy74y0jzQyNFNS8kQBrPGp4gobSrrp7ptsfdMJPBnOES+4hQUiEkfmrHPJXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP6U5qyjR378qQaFWG7bgn0RpzjDZU35fiSXDYLQTE8CEQNrNA
-	XuhH8sfLWpNS5L9NptRVkFYpQeHxo0oWu91a2GlIttY2LLFZgM3Qq5+xf2J5F7Brt7b0vMRBxTh
-	vHK8Cwd5b893pV1+Oj6twWVLPQILUFhk=
-X-Gm-Gg: ASbGncvpVSRz70LAPHaDgGal6sX0uIcMRN7JC8LBnOMNvS+mJf40CmT4I80M7vpjT+0
-	W9WGli9A7TSHqt5ACAKti+IHPEEYNW5UHArsuR/U9vII+p+zdRzgCQL5e/JGhRyUbhdxabuBXZk
-	W+EXGZCkOaC3x4jZvLoouXkfv/dvJOkNgv/V0Zx6M2M7jne/+7OHm73X8VhCKYB2MwQRqyDkc2a
-	DcR/LeTQ9Zy4Fs3fo5q2HChivxVEgPR24cHk6aWmT0Aby40lSRI7W/yhk/wG666WHQMkA==
-X-Google-Smtp-Source: AGHT+IGbn2X2/1JEEhqo1wnJ78iL2FeGF989Bo4JAY/FmMP1S8eKH8fgHgNdc4dVIuvXBjYdomI/sa/SfD70vvNJUAI=
-X-Received: by 2002:a05:6808:10c3:b0:43f:7dee:4693 with SMTP id
- 5614622812f47-44f95e27868mr6890297b6e.14.1762239195781; Mon, 03 Nov 2025
- 22:53:15 -0800 (PST)
+	s=arc-20240116; t=1762239347; c=relaxed/simple;
+	bh=3OJez3SrS0xfhYeSl6yizweVWk27hMOpJMOwLFmUXmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=onInwz+RPQLmbBMggFAybcyreua9dfuh255Gbu1RZ+Cu03v+oaGvu30vctEQJEyk9AbLZsm9c1FR0kbjEFWmjEBjGaoXd1wjYOi6qljXDqIvGMZUIwyPfBtVTY4ZJL/tGCoe1oUPJoscoOqs8/Jafxe/OmDlCtu9itFk9mvCupo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=4yyPL4xi; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=MY0q0WzHzhej6e9lThaMmg4zC+Z3TXTsGd/cLJf2rak=;
+	b=4yyPL4xi/ls053nVqnalitPx7VgIaq/rBG8XJASRMmS2b7Cw10ZVBz3UkPwm66Plu5391QSC+
+	B0jFPLdUO7Z7GOvz5NuNCAUSmOSxAAa445EKsEB8lrd0G8Bt+WHoGqs3fMeYu4GLF2IJCuNJR5/
+	g2l0nI5e6JspjfsegSUCtOQ=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d0zhN3DzczpStT;
+	Tue,  4 Nov 2025 14:54:12 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41CCF140EE4;
+	Tue,  4 Nov 2025 14:55:41 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
+ 2025 14:55:39 +0800
+Message-ID: <4eb369fa-b03c-4883-8e01-2233dac81044@huawei.com>
+Date: Tue, 4 Nov 2025 14:55:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103-1-v1-1-20e6641a57da@linux.dev>
-In-Reply-To: <20251103-1-v1-1-20e6641a57da@linux.dev>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Tue, 4 Nov 2025 14:53:04 +0800
-X-Gm-Features: AWmQ_bnyRUlNuwLxwBl63QPbG926jSDDFvsN0rhY6T22CSGWWq6GN0Hkme8uPf4
-Message-ID: <CAEyhmHQoLF9dcZ2CaasrpeH7RMiaQKyo0pFTrr7Nt1T64+dhuw@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: BPF: Fix sign extension for 12-bit immediates
-To: george <dongtai.guo@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Youling Tang <tangyouling@loongson.cn>, bpf@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>, 
-	Bing Huang <huangbing@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/25] ext4: make ext4_punch_hole() support large block
+ size
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-5-libaokun@huaweicloud.com>
+ <v55t7ujgvjf2wfrlbyiva4zuu6xv5pjl7lac5ykgzvgrgluipc@moyoiqdnyinl>
+Content-Language: en-GB
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <v55t7ujgvjf2wfrlbyiva4zuu6xv5pjl7lac5ykgzvgrgluipc@moyoiqdnyinl>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Nov 3, 2025 at 4:42=E2=80=AFPM george <dongtai.guo@linux.dev> wrote=
-:
+On 2025-11-03 16:05, Jan Kara wrote:
+> On Sat 25-10-25 11:22:00, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Since the block size may be greater than the page size, when a hole
+>> extends beyond i_size, we need to align the hole's end upwards to the
+>> larger of PAGE_SIZE and blocksize.
+>>
+>> This is to prevent the issues seen in commit 2be4751b21ae ("ext4: fix
+>> 2nd xfstests 127 punch hole failure") from reappearing after BS > PS
+>> is supported.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> When going for bs > ps support, I'm very suspicious of any code that keeps
+> using PAGE_SIZE because it doesn't make too much sense anymore. Usually that
+> should be either appropriate folio size or something like that. For example
+> in this case if we indeed rely on freeing some buffers then with 4k block
+> size in an order-2 folio things would be already broken.
 >
-> From: George Guo <guodongtai@kylinos.cn>
->
-> When loading immediate values that fit within 12-bit signed range,
-> the move_imm function incorrectly used zero extension instead of
-> sign extension.
->
-> The bug was exposed when scx_simple scheduler failed with -EINVAL
-> in ops.init() after passing node =3D -1 to scx_bpf_create_dsq().
-> Due to incorrect sign extension, `node >=3D (int)nr_node_ids`
-> evaluated to true instead of false, causing BPF program failure.
->
+> As far as I'm checking truncate_inode_pages_range() already handles partial
+> folio invalidation fine so I think we should just use blocksize in the
+> rounding (to save pointless tail block zeroing) and be done with it.
 
-Which bpf prog are you referring to?
+Right. I missed that truncate_inode_pages_range already handles this.
 
-> Verified by testing with the scx_simple scheduler (located in
-> tools/sched_ext/). After building with `make` and running
-> ./tools/sched_ext/build/bin/scx_simple, the scheduler now
-> initializes successfully with this fix.
->
-> Fix this by using sign extension (sext) instead of zero extension
-> for signed immediate values in move_imm.
->
-> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
-> Reported-by: Bing Huang <huangbing@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> ---
-> Signed-off-by: george <dongtai.guo@linux.dev>
-> ---
->  arch/loongarch/net/bpf_jit.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/net/bpf_jit.h b/arch/loongarch/net/bpf_jit.h
-> index 5697158fd1645fdc3d83f598b00a9e20dfaa8f6d..f1398eb135b69ae61a27ed81f=
-80b4bb0788cf0a0 100644
-> --- a/arch/loongarch/net/bpf_jit.h
-> +++ b/arch/loongarch/net/bpf_jit.h
-> @@ -122,7 +122,8 @@ static inline void move_imm(struct jit_ctx *ctx, enum=
- loongarch_gpr rd, long imm
->         /* addiw rd, $zero, imm_11_0 */
->         if (is_signed_imm12(imm)) {
->                 emit_insn(ctx, addiw, rd, LOONGARCH_GPR_ZERO, imm);
-> -               goto zext;
-> +               emit_sext_32(ctx, rd, is32);
-> +               return;
->         }
+I will directly use the blocksize in v2.
 
-This causes kernel panic on existing bpf selftests.
+Thank you for your review!
+
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 4c04af7e51c9..a63513a3db53 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -4401,7 +4401,8 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  	 * the page that contains i_size.
+>>  	 */
+>>  	if (end > inode->i_size)
+> BTW I think here we should have >= (not your fault but we can fix it when
+> changing the code).
+
+Yes, I didn’t notice this bug. I will fix it together in v2.
+
+
+Cheers,
+Baokun
 
 >
->         /* ori rd, $zero, imm_11_0 */
->
-> ---
-> base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
-> change-id: 20251103-1-96faa240e8f4
->
-> Best regards,
-> --
-> george <dongtai.guo@linux.dev>
->
+>> -		end = round_up(inode->i_size, PAGE_SIZE);
+>> +		end = round_up(inode->i_size,
+>> +			       umax(PAGE_SIZE, sb->s_blocksize));
+>>  	if (end > max_end)
+>>  		end = max_end;
+>>  	length = end - offset;
+> 								Honza
 
