@@ -1,102 +1,342 @@
-Return-Path: <linux-kernel+bounces-885412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28487C32D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:39:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5363C32D46
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888A13A4C2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:37:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3ABEC34CD20
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55E326ED46;
-	Tue,  4 Nov 2025 19:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384028D8D1;
+	Tue,  4 Nov 2025 19:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WmSnUpMA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5408154BE2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJG0urUo"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FF1184540
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762285052; cv=none; b=Bag06HY6tm5GMlMzMSSyMxmPyh8cBcZ2jRGG07x/Nzvt4kslrXu7pe+dkDEKhFuwCcOsus3HHCpJJQ40QR1y1FFm/bMYW1i2ahnYkL1fX1o1mrshHOd/QD/M/SwcbF0gJJ6nYKXDyrTCV1cewwh1x4G8dgvHPou4M6hjllA46Z0=
+	t=1762285085; cv=none; b=BsyvJacODGPbS3JzUdzXOhm76Oh+0y4ebs15Gcxv0I9yvIgYT2UaJYZ6jBW5BY4xsn+uc5OeYo4wmVpZHeh9jaqm1MTw0MldWLJFgDqsCK3CWuYRJtcVfX64Mimn9qyGhjSKtt0wiCqC2fJq4glVAGJHlBDflGeZs7xMDXXjwhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762285052; c=relaxed/simple;
-	bh=hj4gK3suMwSqFwLsdPSXTOmAGsGI39w2NC9u5ACsNQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WoV/A+NrqaxSEpQXz6hVMJ2ldWnHLyY+GOL7ATDwd7EBRmj0nJ8s4x4ZKZkgx/rc8mDi1d841K3PRujcb88YxyypSs1UjgrMPkGjyLa9//IbtutJaaZBQz9FtO11Tcutsfc2/QgzGglKY5c9s3Cqy81oHX7l0phAxzdsB8SWusQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WmSnUpMA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A7CF6200FE5A;
-	Tue,  4 Nov 2025 11:37:29 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A7CF6200FE5A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762285050;
-	bh=A2Qx6X64Zj6TSyldcGb1H5NxOGmulgLscxHvDKJ+aaQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WmSnUpMArDeLYsAdqY1lirHXLX7OOh0MHpidrzrQMdw2W7Khnzw0iloGPO3cqxo5o
-	 m+Z4tc0x1ZjlU8hDdiCwbOzcaIDONDHNYxUGDPGfFpisWrHTNr+Z9l3shjuEyZ4oW8
-	 QTNx/1OxbJKePPOh13/lM3yn5iwpjxoQ3cne/EYI=
-Date: Tue, 4 Nov 2025 11:37:28 -0800
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
- <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
- <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
-Message-ID: <20251104113728.0000568e@linux.microsoft.com>
-In-Reply-To: <aQpKf2IPD5xeBu1K@Asurada-Nvidia>
-References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
-	<20251020224353.1408-2-jacob.pan@linux.microsoft.com>
-	<aQPptXsqzt6kJS7f@Asurada-Nvidia>
-	<20251103151631.0000703a@linux.microsoft.com>
-	<aQlVjtTiqd34I+NC@Asurada-Nvidia>
-	<20251104102539.00001110@linux.microsoft.com>
-	<aQpKf2IPD5xeBu1K@Asurada-Nvidia>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762285085; c=relaxed/simple;
+	bh=CXtmA1MROdI7OIWq5k2s1IgsbRaGBlIyMpch00btR70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePMMzD3WS+mRQsnGxb1NrwB1Ew1bBi+q9pcr2k3pXhy2TcEHfzMQt7QIdqPwIg+hMxbFb5uYamBW/xsApNEkON8BmkeI9/RQGu85aOpQCjDQus9OS2tKUKmLtAZA86ynQLd0jkA2uyrAehT1KqjYQSnvgi1wlHnIfLwKSl7WMNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJG0urUo; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so5160628f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:38:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762285081; x=1762889881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uuJYmeFC0Ns6q+GffQxcvrYZjSVkJQ1qk5T/GyXRo8M=;
+        b=KJG0urUoeNtMrzwVa4oRcxJm4Hdbk9xetrk0LxPg9K7CArFpvR184UA29mClQb1t4U
+         To0cguerusR9lLO3/4qbqdZl9XCRM8F5V6qEczZuVgAXjM6GHztJpUDUTtDgUfTOgK/h
+         s2YzsptUyO0nZf5PB5iFLz+ToLthV7j5l55jGZJcRCLIP0HrrsXhzWR2xP6OMoZc8LIH
+         Bq0u60wjJQcR8fcRe79yPFS7U8NyW6jajn0DwPcUVvdVDJLn/zbeuAxc36Gso2lAE7Gn
+         TziHIHQQRzn+7AiXul1XTVTqNXDK4nBz5/85OBSYLhCdynowkengjJI4A1RuzLMB9xGT
+         WAKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762285081; x=1762889881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uuJYmeFC0Ns6q+GffQxcvrYZjSVkJQ1qk5T/GyXRo8M=;
+        b=EBvorT1aWu6nWyWp515b6Cs4mHf6pLQ8mthW+Nb6h9yzB90JphDIzYxwAGgDvpeivS
+         QFrms0IO9qi8TV2TyF81g4lMxah7YTCtn0FvohZsyFBIP9frx71t0FjE2LcsLwZacgNZ
+         H+B6LSKHptBO/OnIGvyujnReRf2WLOyT10zOZG9Ti5SXLyqVhBr2XpGgWl1cPdEb/ovg
+         XA60svKBnKLvIB/6QMSuepcW7cpYuut828p1VAwr7DanDzM7Ohq2egmMIhOS4mauL8eb
+         s9un2Xsd5m77HUS6lEpjfs4AplEXa6ChjtAsTAyplAu95LgVSxtTAGom9xCwKgxR4CeF
+         xLQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQXhFsBzHZ3ytfIloEw+k9d5HdVak+wB9CbZ/lwHXGvRekgLvRBGR2lz+GXd3NP5/IKoikwxdF0OY1D+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVP7UcfTgqQEQJzWG1hmOQMY8cMdy92/B20E5KvQMcBYk5fA0w
+	QUIyE5YAlXb2TaBOijnwfOWWemBIgNadbYOK6xBvblBsKk9ofb+QJa39
+X-Gm-Gg: ASbGncsqe2Cqj4sFmzsn7svt2jyNOJtsMRNxXaeaBqwT3XUZQgq2y1270MDVhWfpAWc
+	iC4LrExMuhcQ6Nmx43BoyrjFLQ+r0ySJ5rbojFA7HQUl1/sFEPqu35br0zaTW5EeeuXexGkWlwl
+	wH7otIpiW2D0HkaRyKG03D1YgFBGiADSRXheNCPUoA0gHihIwPkIv7DGsV87nJ7A7bTdIDIY9mC
+	sY69n8zEvMdhtfzebPUdgpbt+bLHPiNSIPs24iPXmAMER9eq1XVNhRCmmMc0bpiPv9gcv2uZg2I
+	3i/7mRj/y5NsNCQrOIsWmh2AKpSfJLKK7eZAes1gAJ5gz3d6JUWQCCskKleUSKLVSztvJeh2/Dj
+	WppFQSfv+3zRTfVPMEk24nfJbKaU1FNn7CEweLYZZxihcBsuuvDRKbem/ld4eD7r4o2XOKfLXc0
+	DQWquJbxB10zkosoG3hbuDopDKG1a1
+X-Google-Smtp-Source: AGHT+IEr7t1g0NxAiQFW6/+EQdEerO4M/416bPR5jQIpAdQF9dkOK+V+9PpJ6xeniW5e27RTsxa4bw==
+X-Received: by 2002:a05:6000:2387:b0:427:151:3db6 with SMTP id ffacd0b85a97d-429e32f48bcmr414020f8f.24.1762285081045;
+        Tue, 04 Nov 2025 11:38:01 -0800 (PST)
+Received: from archito ([2a01:e0a:acc:bb60:756b:64e3:20ef:1d08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce3ef38sm5549195e9.17.2025.11.04.11.38.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 11:38:00 -0800 (PST)
+From: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+Subject: [PATCH v3 1/4] nova-core: Simplify `transmute` and `transmute_mut` in fwsec.rs
+Date: Tue,  4 Nov 2025 20:37:48 +0100
+Message-ID: <20251104193756.57726-1-delcastillodelarosadaniel@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Nicolin,
+This patch solves one of the existing mentions of COHA, a task
+in the Nova task list about improving the `CoherentAllocation` API.
+It uses the new `from_bytes` method from the `FromBytes` trait as
+well as the `as_slice` and `as_slice_mut` methods from
+`CoherentAllocation`.
 
-On Tue, 4 Nov 2025 10:48:31 -0800
-Nicolin Chen <nicolinc@nvidia.com> wrote:
+Signed-off-by: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
 
-> On Tue, Nov 04, 2025 at 10:25:39AM -0800, Jacob Pan wrote:
-> > > -----------------------------------------------------------------
-> > > 
-> > > And the commit message should point out:
-> > > 
-> > > The existing arm_smmu_cmdq_poll_until_not_full() doesn't fit
-> > > efficiently nor ideally to the only caller
-> > > arm_smmu_cmdq_issue_cmdlist():
-> > >  - It uses a new timer at every single call, which fails to limit
-> > > to the preset ARM_SMMU_POLL_TIMEOUT_US per issue.  
-> 
-> > Not following what you mean.
-> > The original code below does honor the timeout of
-> > ARM_SMMU_POLL_TIMEOUT_US  
-> 
-> It sets the timeout per arm_smmu_cmdq_poll_until_not_full(), not
-> the entire wait-for-space routine. And that's why you moved the
-> queue_poll_init() to the caller, right?
-> 
-Got you! will do.
+---
 
-Thanks,
+I confirmed by talking to Alexandre Courbot, that the reading/writing
+methods in `CoherentAllocation` can never be safe, so
+this patch doesn't actually change `CoherentAllocation`, but rather
+tries to solve one of the existing references to [COHA].
 
-Jacob
+V1 -> V2: Split previous patch into two. One per reference to COHA.
+          Improved comments. Let me know if they are okay now.
+          Use of `{...}` syntax for the `if let`
+
+V2 -> V3: Further splitting.
+            Capitalization for existing comments has its own patch
+          Fix typo. s/unitialized/uninitialized
+          Rebase
+---
+ drivers/gpu/nova-core/firmware/fwsec.rs | 117 +++++++++++-------------
+ 1 file changed, 54 insertions(+), 63 deletions(-)
+
+diff --git a/drivers/gpu/nova-core/firmware/fwsec.rs b/drivers/gpu/nova-core/firmware/fwsec.rs
+index ce78c1563754..4f268fe09573 100644
+--- a/drivers/gpu/nova-core/firmware/fwsec.rs
++++ b/drivers/gpu/nova-core/firmware/fwsec.rs
+@@ -11,12 +11,12 @@
+ //! - The ucode signature, so the GSP falcon can run FWSEC in HS mode.
+ 
+ use core::marker::PhantomData;
+-use core::mem::{align_of, size_of};
++use core::mem::size_of;
+ use core::ops::Deref;
+ 
+ use kernel::device::{self, Device};
+ use kernel::prelude::*;
+-use kernel::transmute::FromBytes;
++use kernel::transmute::{AsBytes, FromBytes};
+ 
+ use crate::dma::DmaObject;
+ use crate::driver::Bar0;
+@@ -70,6 +70,8 @@ struct FalconAppifDmemmapperV3 {
+ }
+ // SAFETY: any byte sequence is valid for this struct.
+ unsafe impl FromBytes for FalconAppifDmemmapperV3 {}
++// SAFETY: This struct doesn't contain uninitialized bytes and doesn't have interior mutability.
++unsafe impl AsBytes for FalconAppifDmemmapperV3 {}
+ 
+ #[derive(Debug)]
+ #[repr(C, packed)]
+@@ -82,6 +84,8 @@ struct ReadVbios {
+ }
+ // SAFETY: any byte sequence is valid for this struct.
+ unsafe impl FromBytes for ReadVbios {}
++// SAFETY: This struct doesn't contain uninitialized bytes and doesn't have interior mutability.
++unsafe impl AsBytes for ReadVbios {}
+ 
+ #[derive(Debug)]
+ #[repr(C, packed)]
+@@ -94,6 +98,8 @@ struct FrtsRegion {
+ }
+ // SAFETY: any byte sequence is valid for this struct.
+ unsafe impl FromBytes for FrtsRegion {}
++// SAFETY: This struct doesn't contain uninitialized bytes and doesn't have interior mutability.
++unsafe impl AsBytes for FrtsRegion {}
+ 
+ const NVFW_FRTS_CMD_REGION_TYPE_FB: u32 = 2;
+ 
+@@ -104,6 +110,8 @@ struct FrtsCmd {
+ }
+ // SAFETY: any byte sequence is valid for this struct.
+ unsafe impl FromBytes for FrtsCmd {}
++// SAFETY: This struct doesn't contain uninitialized bytes and doesn't have interior mutability.
++unsafe impl AsBytes for FrtsCmd {}
+ 
+ const NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS: u32 = 0x15;
+ const NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB: u32 = 0x19;
+@@ -147,26 +155,15 @@ impl FirmwareSignature<FwsecFirmware> for Bcrt30Rsa3kSignature {}
+ ///
+ /// # Safety
+ ///
+-/// Callers must ensure that the region of memory returned is not written for as long as the
+-/// returned reference is alive.
+-///
+-/// TODO[TRSM][COHA]: Remove this and `transmute_mut` once `CoherentAllocation::as_slice` is
+-/// available and we have a way to transmute objects implementing FromBytes, e.g.:
+-/// https://lore.kernel.org/lkml/20250330234039.29814-1-christiansantoslima21@gmail.com/
+-unsafe fn transmute<'a, 'b, T: Sized + FromBytes>(
+-    fw: &'a DmaObject,
+-    offset: usize,
+-) -> Result<&'b T> {
+-    if offset + size_of::<T>() > fw.size() {
+-        return Err(EINVAL);
+-    }
+-    if (fw.start_ptr() as usize + offset) % align_of::<T>() != 0 {
+-        return Err(EINVAL);
+-    }
+-
+-    // SAFETY: we have checked that the pointer is properly aligned that its pointed memory is
+-    // large enough the contains an instance of `T`, which implements `FromBytes`.
+-    Ok(unsafe { &*(fw.start_ptr().add(offset).cast::<T>()) })
++/// * Callers must ensure that the device does not read/write to/from memory while the returned
++///   reference is live.
++/// * Callers must ensure that this call does not race with a write to the same region while
++///   the returned reference is live.
++unsafe fn transmute<T: Sized + FromBytes>(fw: &DmaObject, offset: usize) -> Result<&T> {
++    // SAFETY: The safety requirements of the function guarantee the device won't read
++    // or write to memory while the reference is alive and that this call won't race
++    // with writes to the same memory region.
++    T::from_bytes(unsafe { fw.as_slice(offset, size_of::<T>())? }).ok_or(EINVAL)
+ }
+ 
+ /// Reinterpret the area starting from `offset` in `fw` as a mutable instance of `T` (which must
+@@ -174,22 +171,18 @@ unsafe fn transmute<'a, 'b, T: Sized + FromBytes>(
+ ///
+ /// # Safety
+ ///
+-/// Callers must ensure that the region of memory returned is not read or written for as long as
+-/// the returned reference is alive.
+-unsafe fn transmute_mut<'a, 'b, T: Sized + FromBytes>(
+-    fw: &'a mut DmaObject,
++/// * Callers must ensure that the device does not read/write to/from memory while the returned
++///   slice is live.
++/// * Callers must ensure that this call does not race with a read or write to the same region
++///   while the returned slice is live.
++unsafe fn transmute_mut<T: Sized + FromBytes + AsBytes>(
++    fw: &mut DmaObject,
+     offset: usize,
+-) -> Result<&'b mut T> {
+-    if offset + size_of::<T>() > fw.size() {
+-        return Err(EINVAL);
+-    }
+-    if (fw.start_ptr_mut() as usize + offset) % align_of::<T>() != 0 {
+-        return Err(EINVAL);
+-    }
+-
+-    // SAFETY: we have checked that the pointer is properly aligned that its pointed memory is
+-    // large enough the contains an instance of `T`, which implements `FromBytes`.
+-    Ok(unsafe { &mut *(fw.start_ptr_mut().add(offset).cast::<T>()) })
++) -> Result<&mut T> {
++    // SAFETY: The safety requirements of the function guarantee the device won't read
++    // or write to memory while the reference is alive and that this call won't race
++    // with writes or reads to the same memory region.
++    T::from_bytes_mut(unsafe { fw.as_slice_mut(offset, size_of::<T>())? }).ok_or(EINVAL)
+ }
+ 
+ /// The FWSEC microcode, extracted from the BIOS and to be run on the GSP falcon.
+@@ -260,32 +253,35 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Re
+ 
+         // Find the DMEM mapper section in the firmware.
+         for i in 0..usize::from(hdr.entry_count) {
+-            let app: &FalconAppifV1 =
+             // SAFETY: we have exclusive access to `dma_object`.
+-            unsafe {
++            let app: &FalconAppifV1 = unsafe {
+                 transmute(
+                     &dma_object,
+-                    hdr_offset + usize::from(hdr.header_size) + i * usize::from(hdr.entry_size)
++                    hdr_offset + usize::from(hdr.header_size) + i * usize::from(hdr.entry_size),
+                 )
+             }?;
+ 
+             if app.id != NVFW_FALCON_APPIF_ID_DMEMMAPPER {
+                 continue;
+             }
++            let dmem_base = app.dmem_base;
+ 
+             // SAFETY: we have exclusive access to `dma_object`.
+             let dmem_mapper: &mut FalconAppifDmemmapperV3 = unsafe {
+-                transmute_mut(
+-                    &mut dma_object,
+-                    (desc.imem_load_size + app.dmem_base) as usize,
+-                )
++                transmute_mut(&mut dma_object, (desc.imem_load_size + dmem_base) as usize)
+             }?;
+ 
++            dmem_mapper.init_cmd = match cmd {
++                FwsecCommand::Frts { .. } => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS,
++                FwsecCommand::Sb => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB,
++            };
++            let cmd_in_buffer_offset = dmem_mapper.cmd_in_buffer_offset;
++
+             // SAFETY: we have exclusive access to `dma_object`.
+             let frts_cmd: &mut FrtsCmd = unsafe {
+                 transmute_mut(
+                     &mut dma_object,
+-                    (desc.imem_load_size + dmem_mapper.cmd_in_buffer_offset) as usize,
++                    (desc.imem_load_size + cmd_in_buffer_offset) as usize,
+                 )
+             }?;
+ 
+@@ -296,24 +292,19 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Re
+                 size: 0,
+                 flags: 2,
+             };
+-
+-            dmem_mapper.init_cmd = match cmd {
+-                FwsecCommand::Frts {
+-                    frts_addr,
+-                    frts_size,
+-                } => {
+-                    frts_cmd.frts_region = FrtsRegion {
+-                        ver: 1,
+-                        hdr: u32::try_from(size_of::<FrtsRegion>())?,
+-                        addr: u32::try_from(frts_addr >> 12)?,
+-                        size: u32::try_from(frts_size >> 12)?,
+-                        ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
+-                    };
+-
+-                    NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS
+-                }
+-                FwsecCommand::Sb => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB,
+-            };
++            if let FwsecCommand::Frts {
++                frts_addr,
++                frts_size,
++            } = cmd
++            {
++                frts_cmd.frts_region = FrtsRegion {
++                    ver: 1,
++                    hdr: u32::try_from(size_of::<FrtsRegion>())?,
++                    addr: u32::try_from(frts_addr >> 12)?,
++                    size: u32::try_from(frts_size >> 12)?,
++                    ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
++                };
++            }
+ 
+             // Return early as we found and patched the DMEMMAPPER region.
+             return Ok(Self(dma_object, PhantomData));
+-- 
+2.51.2
 
 
