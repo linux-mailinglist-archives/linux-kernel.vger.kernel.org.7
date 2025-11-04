@@ -1,181 +1,162 @@
-Return-Path: <linux-kernel+bounces-885395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DEC6C32C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 569BFC32C8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE3F54E92A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:30:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DC5B4EB125
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A685A20A5F3;
-	Tue,  4 Nov 2025 19:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA322C11CB;
+	Tue,  4 Nov 2025 19:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXW4Ffaq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if1Kxuhz"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020858F54
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A8D8F54
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762284619; cv=none; b=bthO1gIMcolq6DaX9MWhnbLJhUz8DQd0aqlVDS+PzEl7szf9+9O2NvzUeMgSH17DtKJ8Nuo4w+u4ncFncHOAu45DP0XouJMMYFblQoXFw/fBkeIbSbbECXcB3lgd5o2dEOD8SBpPIh6fHHuOEejyE4uW0uspQn1OSgugh6/i88o=
+	t=1762284624; cv=none; b=qEqNSeiE/uJb6kWIB+Y8sk1QlMnjpsBQPmTm55gzXv+nAqqHMkEYvNs2z4j5LkizPTIGAjJn0xyo+4YnBO5GxpR4zPRw/0Cm9LBiaBFfAgxU/ltjFSwbN162uxEDCi/37Jcz2KTPnSWzpa7o2nuGjeG+0Vg2MDYnByppYeWauEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762284619; c=relaxed/simple;
-	bh=U/KGUor/VNiZLGidOo6/Q8mO/zTffjjiZGcdhtXLPbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dKTXPQPB/e3qrh2EMPzgEj0MqSpLyStIk4deZ21Yv21MGXZZbzJPuDD8H2/GekcXE51MlVpibZxHEU1j5//LYKF4CoXwH1TQKC72BdHL1HN3NzzaWkkvpxbqFacd9rHYeu5zHiHqfmvX9tGrg280ll8OIdiz6Dj0JyzIzXGZatc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXW4Ffaq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3ADDC4CEF7;
-	Tue,  4 Nov 2025 19:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762284618;
-	bh=U/KGUor/VNiZLGidOo6/Q8mO/zTffjjiZGcdhtXLPbU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qXW4Ffaq4Mbr+c1FU+fOa0/3NZ/eeD/vlFPCR7XLLO1hCLjdDMjrBjZURf6Z7gXQ7
-	 S58nlhGdpriXW3mPLQhsSjvngic5xrg4BBPDof2bE8o4F1XWi/EYuFz1gRtHgyff4S
-	 ioamNxjwzTVvQ5FD6c0CuZPAAkQqTPdbjCJ3anq/ZCg4Z8uVP+jBYqQrXnDZmKBKXF
-	 KgwFWnFCz3mK6GPSl15+PS8ehdbQWnZMwgYt8LBO6QCsiVP4DF7l7k3VAoAjFTO9Ce
-	 c2q6rqkT3NYQfBj34CGpwdoT3joyulLpt6fyXKNlv0VomEO7YUXTmMJN5XuBi5zewZ
-	 p6RvvVK0xt3Qg==
-Message-ID: <851cd32b-e64e-4e56-bf49-7c8b3336815f@kernel.org>
-Date: Tue, 4 Nov 2025 13:30:17 -0600
+	s=arc-20240116; t=1762284624; c=relaxed/simple;
+	bh=uYoW/8o2oWvHywWaopv1m5BZj9vCw8WNveRwCymRnA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+9wnT22kJhfgZnNCublUiNATWcqk1blcHsPAZy0trwcdUxTHUro5IDuK7H3ClT9C4r28kV42kDEpNhHvEAQyfOYgNi70YiqbvhYfd5FF8ZVoLhG1UIPM6F4Ed5F/bXD81pD7JMuk18iw7n9U3HH4qzn7G2VkLei283In68vOI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if1Kxuhz; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed65fa5e50so5350961cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:30:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762284622; x=1762889422; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yrkua1HDR61+GtT/9O/LrkaCogME0nTN9Kn1x1xYcQs=;
+        b=if1Kxuhz7kOn3zCAHr23JnBpzwX9jQOzEIfzra22lGBmLZXjly/JMD3rOycw6efEXk
+         WLmTjW60EotiMDg40iVrOg7LOQQGRx39YEjStsO0GsCW7PslWWBcU1DJM61wz3reADOl
+         kunzY2RcyQ4cTg5iuWcZyabLvP0jBu/e9L9eWloNWwcvFoLbj6jGSj4mhKN1IYppzjUX
+         WCudRpkCK77SMhepOClRKG6aVmFk1BA9t+g0Xr4J0jtBmCWYunjdyQgNth6qpEd07FFp
+         xgw+R6bwHmcyJrbvtK7MeMS55pbzKtbBuWbvDXiincB50nFx/NQps2E/2jOAXiSlqSJU
+         QzZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762284622; x=1762889422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yrkua1HDR61+GtT/9O/LrkaCogME0nTN9Kn1x1xYcQs=;
+        b=TfLXw8DUztLu7mVes3BSu0rCX0iGNVEqA3ftA/W/kj1XAW56B+MDv5JGRiuuvuN0U8
+         5tXu97v6hs3vkh+HhJ+3ZtsqrvZFRExXvzuEAxSuSGkyJdEAot6g+SjvXdxwLyF27rI6
+         8OzDByfexQ9Ph9/20owwtzSRA3CtEA+tBbdAv5cTw7iTkj3dkJQVixkhKOY/tmqBIhA9
+         D/cs6h9e66JIgpEQKFaHq6+1a/hpR2oAizAj9XbVvTlLE0Gzc3q4AxbJ9FuUC8AiU40/
+         QRL37ULRHkm7bQMxuuPlpJwvZUIkCbMZt2JALyS3AA4ccy1+LontfRX2iHhjhysekm5V
+         DpKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtUqOfGQnCdlXaZU5Ua4yEl+yMzBI3OhFzIMaZI/ZhBOyBxlLKqJPGJXp2OB64tZPdDHbMNcsr+k5ySd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK3B84llPte7Cl6Nzctw3ChX2SNtWCYRt2c1I3ulv3+CTQcPLQ
+	2WNqi1ULOmNNOKO5kXGLrnTKMBRD6LFx5RDoNBJ8+Tl5PlhHHNTbCUuE
+X-Gm-Gg: ASbGncun/QZIzDaeu+ZN+Luc/EKr1Qjc4yUgLZHczrH7hn4ZY4SUld7HR/HhXWAK2fb
+	6b43aIGJuII2guiYuojad2THTz5CTbQrIMvzs/MXdYyBgmX+c2sj/NLx8HyMlMyy9PZ4xjiONpA
+	0C7bExziXhmIQ7Ts12Ci8x9yHDz7UpI8VQ9ebc7PB3wwP2FN50IqYE5GxBZpa8E14LM28RehUBj
+	hueumFTTquyB0BECePApKH3Ft4pfjQTT1fW8Q1EcbdV6dU0Z4RdNhenuazddOouhUgaVFhVsY0A
+	ZbSpgLvFAlct+MiT4t07PLLwiA4R8NIi90V3i/SQqDWINXcpRxfyMDqudI1mJ8pTLLok4KlVNXZ
+	n074litKtTnXZXw3l5VJyttHKX/c4s1d6I5QqedP3EUfYihU48doKFwDuOFPGrIZGNG7qRv2P0b
+	m7T8QTwNI=
+X-Google-Smtp-Source: AGHT+IHHZ8QvW/CCOjhJABVz/T5Nuu/Qpdn9xw9nWT38C4aLePVGZ+lIedTnJOWnSxHq59U3rhqb6A==
+X-Received: by 2002:ac8:5d12:0:b0:4e8:b812:2e2a with SMTP id d75a77b69052e-4ed7237c610mr9079481cf.24.1762284621840;
+        Tue, 04 Nov 2025 11:30:21 -0800 (PST)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed5facb3efsm23437931cf.7.2025.11.04.11.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 11:30:21 -0800 (PST)
+Date: Tue, 4 Nov 2025 14:30:19 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: add BitInt integer wrapping type
+Message-ID: <aQpUSw49QptgxjFz@yury>
+References: <20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com>
+ <20251031-bounded_ints-v1-1-e2dbcd8fda71@nvidia.com>
+ <aQgQv6F0Ao4DH6U0@yury>
+ <DDZ3QBBUM27H.MJS1S3WHWJO0@nvidia.com>
+ <aQkEVqbhoVMUc-Km@yury>
+ <DDZKZFCK27HZ.DY3QVXKFU3BI@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] accel/amdxdna: Support preemption requests
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
-References: <20251104185340.897560-1-lizhi.hou@amd.com>
- <6011b225-ac26-4e64-ae35-db35055f7552@amd.com>
- <8c9b2d14-96c4-d917-226e-b1422d1390c8@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <8c9b2d14-96c4-d917-226e-b1422d1390c8@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDZKZFCK27HZ.DY3QVXKFU3BI@nvidia.com>
 
-On 11/4/25 1:28 PM, Lizhi Hou wrote:
-> 
-> On 11/4/25 10:58, Mario Limonciello wrote:
->> On 11/4/25 12:53 PM, Lizhi Hou wrote:
->>> The driver checks the firmware version during initialization.If 
->>> preemption
->>> is supported, the driver configures preemption accordingly and handles
->>> userspace preemption requests. Otherwise, the driver returns an error 
->>> for
->>> userspace preemption requests.
->>>
->>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
->>> ---
->>>   drivers/accel/amdxdna/aie2_message.c    | 95 +++++++++++++++++++++++++
->>>   drivers/accel/amdxdna/aie2_msg_priv.h   |  3 +
->>>   drivers/accel/amdxdna/aie2_pci.c        | 63 ++++++++++++++++
->>>   drivers/accel/amdxdna/aie2_pci.h        |  8 +++
->>>   drivers/accel/amdxdna/amdxdna_ctx.h     | 17 +++++
->>>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  3 +-
->>>   drivers/accel/amdxdna/npu4_regs.c       |  4 ++
->>>   include/uapi/drm/amdxdna_accel.h        | 16 ++++-
->>>   8 files changed, 207 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/ 
->>> amdxdna/aie2_message.c
->>> index 69cdce9ff208..d493bb1c3360 100644
->>> --- a/drivers/accel/amdxdna/aie2_message.c
->>> +++ b/drivers/accel/amdxdna/aie2_message.c
->>> @@ -210,6 +210,14 @@ int aie2_create_context(struct amdxdna_dev_hdl 
->>> *ndev, struct amdxdna_hwctx *hwct
->>>       hwctx->fw_ctx_id = resp.context_id;
->>>       WARN_ONCE(hwctx->fw_ctx_id == -1, "Unexpected context id");
->>>   +    if (ndev->force_preempt_enabled) {
->>> +        ret = aie2_runtime_cfg(ndev, AIE2_RT_CFG_FORCE_PREEMPT, 
->>> &hwctx->fw_ctx_id);
->>> +        if (ret) {
->>> +            XDNA_ERR(xdna, "failed to enable force preempt %d", ret);
->>> +            return ret;
->>> +        }
->>> +    }
->>> +
->>>       cq_pair = &resp.cq_pair[0];
->>>       x2i.mb_head_ptr_reg = AIE2_MBOX_OFF(ndev, cq_pair- 
->>> >x2i_q.head_addr);
->>>       x2i.mb_tail_ptr_reg = AIE2_MBOX_OFF(ndev, cq_pair- 
->>> >x2i_q.tail_addr);
->>> @@ -601,6 +609,11 @@ aie2_cmdlist_fill_dpu(struct amdxdna_gem_obj 
->>> *cmd_bo, void *slot, size_t *size)
->>>       return 0;
->>>   }
->>>   +static int aie2_cmdlist_unsupp(struct amdxdna_gem_obj *cmd_bo, 
->>> void *slot, size_t *size)
->>> +{
->>> +    return -EOPNOTSUPP;
->>> +}
->>> +
->>>   static u32 aie2_get_chain_msg_op(u32 cmd_op)
->>>   {
->>>       switch (cmd_op) {
->>> @@ -621,6 +634,8 @@ static struct aie2_exec_msg_ops 
->>> legacy_exec_message_ops = {
->>>       .init_chain_req = aie2_init_exec_chain_req,
->>>       .fill_cf_slot = aie2_cmdlist_fill_cf,
->>>       .fill_dpu_slot = aie2_cmdlist_fill_dpu,
->>> +    .fill_preempt_slot = aie2_cmdlist_unsupp,
->>> +    .fill_elf_slot = aie2_cmdlist_unsupp,
->>>       .get_chain_msg_op = aie2_get_chain_msg_op,
->>>   };
->>>   @@ -680,6 +695,74 @@ aie2_cmdlist_fill_npu_dpu(struct 
->>> amdxdna_gem_obj *cmd_bo, void *slot, size_t *si
->>>       return 0;
->>>   }
->>>   +static int
->>> +aie2_cmdlist_fill_npu_preempt(struct amdxdna_gem_obj *cmd_bo, void 
->>> *slot, size_t *size)
->>> +{
->>> +    struct cmd_chain_slot_npu *npu_slot = slot;
->>> +    struct amdxdna_cmd_preempt_data *pd;
->>> +    u32 cmd_len;
->>> +    u32 arg_sz;
->>> +
->>> +    pd = amdxdna_cmd_get_payload(cmd_bo, &cmd_len);
->>> +    arg_sz = cmd_len - sizeof(*pd);
->>> +    if (cmd_len < sizeof(*pd) || arg_sz > MAX_NPU_ARGS_SIZE)
->>> +        return -EINVAL;
->>> +
->>> +    if (*size < sizeof(*npu_slot) + arg_sz)
->>> +        return -EINVAL;
->>> +
->>> +    npu_slot->cu_idx = amdxdna_cmd_get_cu_idx(cmd_bo);
->>> +    if (npu_slot->cu_idx == INVALID_CU_IDX)
->>> +        return -EINVAL;
->>> +
->>> +    memset(npu_slot, 0, sizeof(*npu_slot));
->>> +    npu_slot->type = EXEC_NPU_TYPE_PREEMPT;
->>> +    npu_slot->inst_buf_addr = pd->inst_buf;
->>> +    npu_slot->save_buf_addr = pd->save_buf;
->>> +    npu_slot->restore_buf_addr = pd->restore_buf;
->>> +    npu_slot->inst_size = pd->inst_size;
->>> +    npu_slot->save_size = pd->save_size;
->>> +    npu_slot->restore_size = pd->restore_size;
->>> +    npu_slot->inst_prop_cnt = pd->inst_prop_cnt;
->>> +    npu_slot->arg_cnt = arg_sz / sizeof(u32);
->>> +    memcpy(npu_slot->args, pd->prop_args, arg_sz);
->>
->> Am I following this right?  I would think this should be:
->>
->> memcpy(npu_slot->args, pd->prop_args, npu_slot->arg_cnt);
-> 
-> npu_slot->arg_cnt is the number of u32. So arg_sz is used for memcpy here.
-> 
-> 
-Got it thanks.  No other concerns.
+On Tue, Nov 04, 2025 at 12:13:26PM +0900, Alexandre Courbot wrote:
+> On Tue Nov 4, 2025 at 4:36 AM JST, Yury Norov wrote:
+> > On Mon, Nov 03, 2025 at 10:42:13PM +0900, Alexandre Courbot wrote:
+> >> Hi Yury,
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+...
+
+>     let a = BitInt::<u8, 3>::new::<3>();
+>     let b = BitInt::<u16, 10>::new::<123>() + a.cast::<u16>();
+> 
+>     let c = a.cast::<u32>() + u32::from(b);
+> 
+> Note that `b` and `c` are regular `u16` and `u32`. Arithmetic operations
+> cannot guarantee that the BitInt invariant will be maintained, so the
+> result needs to be converted back if that's what one wants.
+
+What C does and what I proposed is to make BitInt a 1st class type,
+just like basic integers. What you implement is really a bounded int.
+
+Both have advantages. C-style BitInt() is a true type with all type
+guarantees. And I like it more because it is a natural extension of
+the existing integer scheme.
+
+Your bounded ints are actually classical integers with some limitations.
+It's not a primitive type in sense of C - it's an object. It also works
+fine. You can easily extend it to arbitrary min and max limits; you can
+expand it to floating types, and do whatever you can do with the objects.
+        
+        BitInt(i32, -128, 255)
+        BitFloat(f32, -1, 1)
+
+That's why you think that -1i32 fits into BitInt(i32, 4), and even
+into BitInt(i8, 4), while I don't.
+
+I don't know which would work better for bitfields. Most likely both
+would work reasonably well. And if bitfield will carefully hide
+internals, I hope most users will not care much.
+
+You switched name to BitInt, but still think about it as an object,
+and that brought all the confusion in my mind. Maybe switch back to
+BoundedInt then to avoid this confusion? If you find it lengthy,
+probably LimInt or simply Lint will be better for you.
+
+Looking at how good rust macros work to implement bitfields, I thought
+that they will be able to mimic native types just as well. But now it
+seems like an arbitrary-length integer types requires support on
+language side. Just like in C.
+
+With that in mind, I think that bounded integers are a bit out of
+scope of basic bit operations, and probably I'm not a right person
+to maintain them neither in Rust, nor in C.
+
+Please keep me in CC for next versions.
+
+Thanks,
+Yury
 
