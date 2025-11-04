@@ -1,197 +1,170 @@
-Return-Path: <linux-kernel+bounces-884574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE38C30814
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:28:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD504C307F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8A84220B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A361897DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29970315D5E;
-	Tue,  4 Nov 2025 10:25:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746E6314B60;
-	Tue,  4 Nov 2025 10:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29898314D39;
+	Tue,  4 Nov 2025 10:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVV9T75A"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851CF2C0290
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762251900; cv=none; b=fRP9zjMs93dm/2mhv8l2umpYwhyUCGS+HUOBU9+ugyXuWd0aIJAea0E5QqWcHyOQQJUSU4IqZxYGBgtpTiKAhitRpJRppDhNYkScsUisUFiLlgcWI6MreCbhY7zNheZEglIlD32Uu3tSFwF9QCMLrj9a2HTdngl3GpiiiLDKkUw=
+	t=1762251951; cv=none; b=FF5YEdqvE985kzrutc+S12wCQ+aPdFRV2PIP0oaYWWqJ0tHnOCQzxIZ2vHHjB2cGJ3hM579N9n4/+5tWwuk/3IV/qnEqxNl0hJX3ot3LDsck0wTgqnbPGgEYM9liibe0G6fWpShhwyWZ4LikpwyW3QmU7wVo1ckuIKJGK3Zo0Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762251900; c=relaxed/simple;
-	bh=KVZNGQPhkhNgH+vsX0tilQCrzEjfAQnpiEgZNc0e2Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBtSphlruYNsIEkDNmUL9oS/0kFbTX6xNLwm+U4Gc2Xg29bTV4FIbOP9vSo7QX7UIoqtNMXEySvDR942wq9nmwPc+LZ63HNX0L7PqmX6th1mO61Z+AMTQPLVdFamBMkhIMejLfuBGxwgYCMo3dORI5B0QarbpEsQW4qGSI3r6Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5B701CE0;
-	Tue,  4 Nov 2025 02:24:49 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4622F3F694;
-	Tue,  4 Nov 2025 02:24:52 -0800 (PST)
-Message-ID: <293395d7-5766-45df-a2e0-1542fecda5a7@arm.com>
-Date: Tue, 4 Nov 2025 10:24:50 +0000
+	s=arc-20240116; t=1762251951; c=relaxed/simple;
+	bh=Pr+RY2r+k2xdk0WLKLxatwgqY6B21A6JQV0qGJpJx20=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l2eftEkvsvtiAljv9c0IehrTn5lPhJbYXBHG9JLDfSnrzC/es/D3R06PAX8WwjjJlaFcGZ4JqFzsKuwpN7Hgwq9d4kPODD+IueUq70AdbxsE1UK3iM+jPMR0fRQiuZ6oDWy5eg7vlDH9WFPhfLskctEI+HhIg0U33WKHHYnHpmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVV9T75A; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-429c7f4f8a2so1582857f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:25:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762251947; x=1762856747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsUvrI+bVG+WlTg2GHY2axwhhFFNatFaC6KQ6ywH2FA=;
+        b=mVV9T75ATTpGm/3Xoc5GFp9uorYdLhiMTGZXTtX3hQ9sBCl34Sqx+UO1WcJZg44xFI
+         9SYexXKzSrXZXx7erSFnvvLjIfa6X/G9sKOKqR3R9coY0pRM5zwB948UUvZgy4ELwO43
+         Fe8cHE7YbXq9qgrXaMG0eQDzRnMuFejRH8rPX//LazJI76U54xs0PqH8uG4w0ErRsYa/
+         w4054WkNzI5JlIIgA9j7252+lfoqwWUDOsD41qTZ8W3nbGoW7nTDHRJfMXliGdJPvvFN
+         xaWf6e9USGBoDLRnRZL5bkWriFUCi72Cg5QfTJ2z7ooRZUGMh5ZybV/o1R44kSci1AnG
+         mNsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762251947; x=1762856747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JsUvrI+bVG+WlTg2GHY2axwhhFFNatFaC6KQ6ywH2FA=;
+        b=IOwRt9rsfDizVlwW74VOqXB/wjAHlzbNEISQADuMTbDZGTVph0oYYgfMmDI61XrFld
+         hmLP7YFNR3Dyz/O/CQqI8k18TN1YUzB0zMZDned6Ik89f35PBYnLE7GmxAOLBdppGlQO
+         78Y1PDKogyj5hT3V6lDl5tfw7kEU99hBImFBMsKGhPDTH8b8N1VpN1D9DI4ua02NBzzs
+         HJRkX2rSwv71pI1DxEx0UBfxNa5Yh9Y+EGtOpIZWNZNDJvqJ9TJFmbTchR7wbfIP2T5J
+         BDKWacHoErdW037DlCrb1F1MpewKEJoJMbdwoe7pxk+seNsNV8mkU+K1WkSph5dDPfzU
+         9qsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFFhlEvIRGM2EXJbniMRmg+VaIcNbshhZkA4G03URLgjsr6tlWeWEqdn/wPdbhAXP5ArpMyqhgBjsCnCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2hHGCQLPgcvsfnaPSOOMSXL2O3RXvPCnw5M3Tuf+gggDSgBPJ
+	7gvL4xwBkndAi8Rv9hfJP8zmX78zcmiyqe57pZGt3HXMSiBDzC+D+0sd
+X-Gm-Gg: ASbGncswR7E9fkvdyXkslxLB/tECakw0iQFbgfyAxh8JMBs0Z2/CLST/3PJnhE5MmNg
+	yE5R2Z2jugTy2a5ysH/XWaUDhROcRi1tIXtkrxD4ySybmxM0iHkvDGItYeJn5Oo5UGjxgJBIbAp
+	ouCAXZclynnokz7C/tfHIWWy2iIDrpqRxAogcgBK12UNOQBT6vwDi+qQ5z4j0ky1fidYkrfWCT/
+	tREPVuYRqQp8Mni+0aG1Y0iqh8MNdc0paR9x+dilBkfX9YisgMdD+/U7e0i5HMFXj8nsZM/SqXv
+	o9PVZNvyh5ruuxxelPApVCFjtNMRLjo+dWrgX6rJQqeFKi7SwfwG/DcWiLaecOHGeeTOYRjxApi
+	swjK+F5nVYwi5QjVy2VvqWLf5KEuhY6e5x1UtSL5v9fnLFI+mVJJ9ATcJ5JxD/iybV1yzXC5OnQ
+	==
+X-Google-Smtp-Source: AGHT+IEFVm7U2UQsd537HSbXE97LuE8N/Q+Vgp/0beLP0A4bKl4h9zVL2B9q7Oj0nO4Hkut8N8AkMg==
+X-Received: by 2002:a05:6000:40dd:b0:429:cfa3:5fde with SMTP id ffacd0b85a97d-429dbce00c7mr2483596f8f.11.1762251946685;
+        Tue, 04 Nov 2025 02:25:46 -0800 (PST)
+Received: from fedora ([94.73.38.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f98d9sm3798796f8f.32.2025.11.04.02.25.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 02:25:45 -0800 (PST)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: quic_jesszhan@quicinc.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	lumag@kernel.org,
+	quic_abhinavk@quicinc.com,
+	dan.carpenter@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v2 1/2] drm/tests: Handle EDEADLK in drm_test_check_valid_clones()
+Date: Tue,  4 Nov 2025 11:25:21 +0100
+Message-ID: <20251104102535.12212-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64/mpam: Clean MBWU monitor overflow bit
-To: Zeng Heng <zengheng4@huawei.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, carl@os.amperecomputing.com,
- catalin.marinas@arm.com, dakr@kernel.org, dave.martin@arm.com,
- david@redhat.com, dfustini@baylibre.com, fenghuay@nvidia.com,
- gregkh@linuxfoundation.org, gshan@redhat.com, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-References: <20251017185645.26604-25-james.morse@arm.com>
- <20251029075655.3284280-1-zengheng4@huawei.com>
- <b0ea1879-9e77-4eb3-8312-ce27d73cc1f4@arm.com>
- <f4518f80-8e17-e622-fbe6-e20a7d1c85fc@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <f4518f80-8e17-e622-fbe6-e20a7d1c85fc@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Zeng,
+Fedora/CentOS/RHEL CI is reporting intermittent failures while running
+the drm_test_check_valid_clones() KUnit test.
 
-On 11/3/25 03:47, Zeng Heng wrote:
-> Hi Ben,
-> 
-> On 2025/10/30 17:52, Ben Horgan wrote:
->> Hi Zeng,
->>
->> On 10/29/25 07:56, Zeng Heng wrote:
->>> The MSMON_MBWU register accumulates counts monotonically forward and
->>> would not automatically cleared to zero on overflow. The overflow
->>> portion
->>> is exactly what mpam_msmon_overflow_val() computes, there is no need to
->>> additionally subtract mbwu_state->prev_val.
->>>
->>> Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
->>> MSMON_MBWU register must first be read to prevent it from being
->>> inadvertently cleared by the write operation.
->>>
->>> Finally, use the overflow bit instead of relying on counter wrap-around
->>> to determine whether an overflow has occurred, that avoids the case
->>> where
->>> a wrap-around (now > prev_val) is overlooked. So with this, prev_val no
->>> longer has any use and remove it.
->>>
->>> CC: Ben Horgan <ben.horgan@arm.com>
->>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
->>> ---
->>>   drivers/resctrl/mpam_devices.c  | 22 +++++++++++++++++-----
->>>   drivers/resctrl/mpam_internal.h |  3 ---
->>>   2 files changed, 17 insertions(+), 8 deletions(-)
->>
->> This all looks fine for overflow, but what we've been forgetting about
->> is the power management. As James mentioned in his commit message, the
->> prev_val is after now check is doing double duty. If an msc is powered
->> down and reset then we lose the count. Hence, to keep an accurate count,
->> we should be considering this case too.
->>
-> 
-> 
-> Regarding CPU power management and CPU on-/off-line scenarios, this
-> should and already has been handled by mpam_save_mbwu_state():
-> 
-> 1. Freezes the current MSMON_MBWU counter into the
-> mbwu_state->correction;
-> 2. Clears the MSMON_MBWU counter;
-> 
-> After the CPU is powered back on, the total bandwidth traffic is
-> MSMON_MBWU(the `now` variable) + correction.
-> 
-> So the above solution also covers CPU power-down scenarios, and no
-> additional code is needed to adapt to this case.
-> 
-> If I've missed anything, thanks in advance to point it out.
-> 
+The error log can be either [1]:
 
-No, I don't think you missed anything. You just didn't mention in your commit message
-that this is also fixing the power management case.
+    # drm_test_check_valid_clones: ASSERTION FAILED at
+    # drivers/gpu/drm/tests/drm_atomic_state_test.c:295
+    Expected ret == param->expected_result, but
+        ret == -35 (0xffffffffffffffdd)
+        param->expected_result == 0 (0x0)
 
-I'm going to post the next version of this series for James as he is otherwise engaged.
-I've taken your patch and adapted it to fit in with the order of patches. 
-Does this look ok to you? The support for the long counters will be added later.
+Or [2] depending on the test case:
 
-+static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
-+{
-+       /* TODO: scaling, and long counters */
-+       return BIT_ULL(hweight_long(MSMON___VALUE));
-+}
-+
- static void __ris_msmon_read(void *arg)
- {
-        u64 now;
-        bool nrdy = false;
-        bool config_mismatch;
-+       bool overflow;
-        struct mon_read *m = arg;
-        struct mon_cfg *ctx = m->ctx;
-        struct mpam_msc_ris *ris = m->ris;
-@@ -1008,6 +1015,8 @@ static void __ris_msmon_read(void *arg)
-         * This saves waiting for 'nrdy' on subsequent reads.
-         */
-        read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
-+       overflow = cur_ctl & MSMON_CFG_x_CTL_OFLOW_STATUS;
-+
-        clean_msmon_ctl_val(&cur_ctl);
-        gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
-        config_mismatch = cur_flt != flt_val ||
-@@ -1016,6 +1025,9 @@ static void __ris_msmon_read(void *arg)
-        if (config_mismatch) {
-                write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
-                overflow = false;
-+       } else if (overflow) {
-+               mpam_write_monsel_reg(msc, CFG_MBWU_CTL,
-+                                     cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS);
-        }
+    # drm_test_check_valid_clones: ASSERTION FAILED at
+    # drivers/gpu/drm/tests/drm_atomic_state_test.c:295
+    Expected ret == param->expected_result, but
+        ret == -35 (0xffffffffffffffdd)
+        param->expected_result == -22 (0xffffffffffffffea)
+
+Restart the atomic sequence when EDEADLK is returned.
+
+[1] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2113057246/test_x86_64/11802139999/artifacts/jobwatch/logs/recipes/19824965/tasks/204347800/results/946112713/logs/dmesg.log
+[2] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2106744297/test_aarch64/11762450907/artifacts/jobwatch/logs/recipes/19797942/tasks/204139727/results/945094561/logs/dmesg.log
+Fixes: 88849f24e2ab ("drm/tests: Add test for drm_atomic_helper_check_modeset()")
+Closes: https://datawarehouse.cki-project.org/issue/4004
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+
+---
+
+v2: Added Reviewed-by: Maxime Ripard <mripard@kernel.org>
+---
+ drivers/gpu/drm/tests/drm_atomic_state_test.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+index 2f6ac7a09f44..1e857d86574c 100644
+--- a/drivers/gpu/drm/tests/drm_atomic_state_test.c
++++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+@@ -283,7 +283,14 @@ static void drm_test_check_valid_clones(struct kunit *test)
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
  
-        switch (m->type) {
-@@ -1039,7 +1051,10 @@ static void __ris_msmon_read(void *arg)
-                if (overflow)
-                        mbwu_state->correction += mpam_msmon_overflow_val(m->type);
++retry:
+ 	crtc_state = drm_atomic_get_crtc_state(state, priv->crtc);
++	if (PTR_ERR(crtc_state) == -EDEADLK) {
++		drm_atomic_state_clear(state);
++		ret = drm_modeset_backoff(&ctx);
++		if (!ret)
++			goto retry;
++	}
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
  
--               /* Include bandwidth consumed before the last hardware reset */
-+               /*
-+                * Include bandwidth consumed before the last hardware reset and
-+                * a counter size increment for each overflow.
-+                */
-                now += mbwu_state->correction;
-                break;
-        default:
-diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-index d10edf4c0f0b..7e9390211df7 100644
---- a/drivers/resctrl/mpam_internal.h
-+++ b/drivers/resctrl/mpam_internal.h
-@@ -209,7 +209,8 @@ struct msmon_mbwu_state {
-        struct mon_cfg  cfg;
+ 	crtc_state->encoder_mask = param->encoder_mask;
+@@ -292,6 +299,12 @@ static void drm_test_check_valid_clones(struct kunit *test)
+ 	crtc_state->mode_changed = true;
  
-        /*
--        * The value to add to the new reading to account for power management.
-+        * The value to add to the new reading to account for power management,
-+        * and overflow.
-         */
-        u64             correction;
-
+ 	ret = drm_atomic_helper_check_modeset(drm, state);
++	if (ret == -EDEADLK) {
++		drm_atomic_state_clear(state);
++		ret = drm_modeset_backoff(&ctx);
++		if (!ret)
++			goto retry;
++	}
+ 	KUNIT_ASSERT_EQ(test, ret, param->expected_result);
  
-Thanks,
-
-Ben
+ 	drm_modeset_drop_locks(&ctx);
+-- 
+2.51.1
 
 
