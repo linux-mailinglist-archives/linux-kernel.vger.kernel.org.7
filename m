@@ -1,1401 +1,659 @@
-Return-Path: <linux-kernel+bounces-884418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D6BC30263
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:05:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36889C30663
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A98554F7EBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96E643A5EFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A229130C352;
-	Tue,  4 Nov 2025 08:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35065314D13;
+	Tue,  4 Nov 2025 09:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="twNUbWjK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NyrOsScE"
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7092BE032;
-	Tue,  4 Nov 2025 08:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF8313E0C;
+	Tue,  4 Nov 2025 09:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246594; cv=none; b=lFata2gKiL436r0arlG9jnPZtbVMV8F8rZAIyCNHdxKPz3xrfpz/yy1p3FvJNsFp4nfoo8Sgk0NmwE5Vvhdg6oO2hZ7po0rjoDF6BsN41181LLb97QHM3x7mitCqo0YZWMkQ4rRnjLNZjq9dT0sC6kNVXDwMnpzF9aHRQAdhSkA=
+	t=1762250190; cv=none; b=iUeGq/C2pv0/PIOJPxj6A4UwV9wQpHiIQl3atuNxK4bw65ejTG+LHxMDIJF+QeZ4ZS+4dsAD/yC67wLS5BegAurbNLINNxJtFGZpzuLl+pBsmGr83TW8Eh5GXaKHKfTzkGziEtwi74T/bG6PuS2R0OaAcD58AjkteNWy06oXIQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246594; c=relaxed/simple;
-	bh=4EmK6KXqb5qibPEtx932m+NfhyTbFlNE92Xhc40W+wM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=eN2PhfWlF2iJsf1uLjmcdiap+mw6siiUGdYRvIBiFrwyiYKLzasUi5AfjTiid98p3D5zZwxosaKawHGEn7Y3Od4W/HMNVcCTfv4w/NF4yGYK0Iupfj15vY0WPBv3HLV/R4EJFsUPWpieWd4FnnsK0cDfnEbu2ppQYnIx2/+OtVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=twNUbWjK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762246591; x=1793782591;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=4EmK6KXqb5qibPEtx932m+NfhyTbFlNE92Xhc40W+wM=;
-  b=twNUbWjKukBBqNJKbAAnqSJnDc4xWgZjC5Mv+WqAhBdVv1FFCVYnGqJT
-   CKQtXvK+rxIEycxx+eiileYpArvb2ls5P2LwRaMyYZ/AJ7v7oSujWBOYS
-   YTKQsdTYwOMOlHLBJkvWX5dlEjvJ8nMaKFFBB6R/KxXtOaC4uWE/0eJmH
-   ffc/XozYfJZayrIU/kZncMEY5dukd6qt9XMWyV5DsN5NetA5PaELBHvP9
-   vdiPhGN9AuCZDN+ufdQFMVOP1wHrys17m9d2c9vb9UkHj5fZI678Ivkit
-   b6Hh5oHotUAUOiwAjogB4CL+rdQf4XTE7bCgUJSTtMqYxSOLQk1eZve+u
-   w==;
-X-CSE-ConnectionGUID: ah0thdEYRoWg7Z9edIgL+Q==
-X-CSE-MsgGUID: WfjLDgefTq24g3IgPgDA/w==
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="48018755"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:56:29 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex2.mchp-main.com (10.10.87.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 4 Nov 2025 01:55:54 -0700
-Received: from [127.0.1.1] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 4 Nov 2025 01:55:51 -0700
-From: Ariana Lazar <ariana.lazar@microchip.com>
-Date: Mon, 3 Nov 2025 17:50:30 +0200
-Subject: [PATCH v2 2/2] iio: dac: adding support for Microchip MCP47FEB02
+	s=arc-20240116; t=1762250190; c=relaxed/simple;
+	bh=VfWjf4ISuaaT6NyoPZ/iJcSJFf52ys6iGFJZPPArPRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V1/t+ZWW1ohagJkVVrR7/lCAhC1rR3N5MrVfKevBOKIABWG/KoO/EODFDELRFPZH6V4xOYVRUo0UXkWpVD1o3Rp8VnMTQwu5Si/Q/WEuIJ4dIeJYwi1bkP25Hcp9pCgnUjHsihsiT4/RkY/MpkWfkdKOKrnuW7dzXAtoNaK+DaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NyrOsScE; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28457011d;
+	Tue, 4 Nov 2025 11:06:42 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v6 4/5] dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+Date: Tue,  4 Nov 2025 11:06:32 +0800
+Message-Id: <20251104030633.2721038-5-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104030633.2721038-1-zhangqing@rock-chips.com>
+References: <20251104030633.2721038-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
-References: <20251103-mcp47feb02-v2-0-8c37741bd97a@microchip.com>
-In-Reply-To: <20251103-mcp47feb02-v2-0-8c37741bd97a@microchip.com>
-To: Ariana Lazar <ariana.lazar@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko
-	<andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762185039; l=42784;
- i=ariana.lazar@microchip.com; s=20250825; h=from:subject:message-id;
- bh=4EmK6KXqb5qibPEtx932m+NfhyTbFlNE92Xhc40W+wM=;
- b=aUBzgawBPG4QUIEiFedV63vb6viI/dDd2ScPqbfx0hzKGcUZoXD3R8+p45G4yPtP6vVzWKwmC
- E+HxtTYed2aDfvOtrEjGWjBrJlFCkrQ1T0tux8vo+leR3/lqF3bxwfT
-X-Developer-Key: i=ariana.lazar@microchip.com; a=ed25519;
- pk=jmvf1fSxcnzZmXfITM3L94IwutM+wqA1POQHiYyD6Dk=
+X-HM-Tid: 0a9a4cd4be1d03a3kunm9587110c9190cf
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0wZS1ZOTU5MQ09ITkNKTR1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=NyrOsScEoJcI3G4jvrrlUwz42ulLT5ELrLhkwIsosehI7RZgCVs7TU6Rx//zDrPP5EakXka7jNzyVgBLeGCGbNI91neHMb1WLDpEHXk5bsn+qcgPVKXOVAKRcb9BNM9QLQMSMr4PJK41vCX9YD8lhejT/a9E8tZ73c5rDCAkeUw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=nXPRP4/Lwggeqy914YG8ScreKEHBKb/NMI4Pm8Hn73Y=;
+	h=date:mime-version:subject:message-id:from;
 
-This is the iio driver for Microchip MCP47F(E/V)B(0/1/2)1,
-MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series
-of buffered voltage output Digital-to-Analog Converters with nonvolatile or
-volatile memory and an I2C Interface.
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-The families support up to 8 output channels.
+Add device tree bindings for clock and reset unit on RK3506 SoC.
+Add clock and reset IDs for RK3506 SoC.
 
-The devices can be 8-bit, 10-bit and 12-bit.
-
-Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
 ---
- MAINTAINERS                  |    1 +
- drivers/iio/dac/Kconfig      |   16 +
- drivers/iio/dac/Makefile     |    1 +
- drivers/iio/dac/mcp47feb02.c | 1233 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 1251 insertions(+)
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
+ 3 files changed, 547 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6f51890cfc3081bc49c08fddc8af526c1ecc8d72..0f97f90ac2f492895d27da86d831df83cb402516 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14943,6 +14943,7 @@ M:	Ariana Lazar <ariana.lazar@microchip.com>
- L:	linux-iio@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
-+F:	drivers/iio/dac/mcp47feb02.c
- 
- MCP4821 DAC DRIVER
- M:	Anshul Dalal <anshulusr@gmail.com>
-diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-index e0996dc014a3d538ab6b4e0d50ff54ede50f1527..179ce565036e3494e4ce43bb926de31f38b547c4 100644
---- a/drivers/iio/dac/Kconfig
-+++ b/drivers/iio/dac/Kconfig
-@@ -509,6 +509,22 @@ config MCP4728
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called mcp4728.
- 
-+config MCP47FEB02
-+	tristate "MCP47F(E/V)B|(0/1/2)(1/2/4/8)DAC driver"
-+	depends on I2C
-+	help
-+          Say yes here if you want to build a driver for the Microchip
-+          MCP47FEB01, MCP47FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12,
-+          MCP47FEB22, MCP47FVB01, MCP47FVB11, MCP47FVB21, MCP47FVB02,
-+          MCP47FVB12, MCP47FVB02, MCP47FVB12, MCP47FVB22, MCP47FVB04,
-+          MCP47FVB14, MCP47FVB24, MCP47FVB04, MCP47FVB08, MCP47FVB18,
-+          MCP47FVB28, MCP47FEB04, MCP47FEB14 and MCP47FEB24 having up to 8
-+          channels, 8-bit, 10-bit or 12-bit digital-to-analog converter (DAC)
-+          with I2C interface.
-+
-+          To compile this driver as a module, choose M here: the module
-+          will be called mcp47feb02.
-+
- config MCP4821
- 	tristate "MCP4801/02/11/12/21/22 DAC driver"
- 	depends on SPI
-diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-index 3684cd52b7fa9bc0ad9f855323dcbb2e4965c404..d633a6440fc4b9aba7d8b1c209b6dcd05cd982dd 100644
---- a/drivers/iio/dac/Makefile
-+++ b/drivers/iio/dac/Makefile
-@@ -50,6 +50,7 @@ obj-$(CONFIG_MAX5522) += max5522.o
- obj-$(CONFIG_MAX5821) += max5821.o
- obj-$(CONFIG_MCP4725) += mcp4725.o
- obj-$(CONFIG_MCP4728) += mcp4728.o
-+obj-$(CONFIG_MCP47FEB02) += mcp47feb02.o
- obj-$(CONFIG_MCP4821) += mcp4821.o
- obj-$(CONFIG_MCP4922) += mcp4922.o
- obj-$(CONFIG_STM32_DAC_CORE) += stm32-dac-core.o
-diff --git a/drivers/iio/dac/mcp47feb02.c b/drivers/iio/dac/mcp47feb02.c
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..69f5ebbc89aed8ce229cd0c6a37ca58f8a822d46
+index 000000000000..ecb5fa497747
 --- /dev/null
-+++ b/drivers/iio/dac/mcp47feb02.c
-@@ -0,0 +1,1233 @@
-+// SPDX-License-Identifier: GPL-2.0+
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip RK3506 Clock and Reset Unit (CRU)
++
++maintainers:
++  - Finley Xiao <finley.xiao@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++description: |
++  The RK3506 CRU generates the clock and also implements reset for SoC
++  peripherals.
++
++properties:
++  compatible:
++    const: rockchip,rk3506-cru
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: xin24m
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@ff9a0000 {
++      compatible = "rockchip,rk3506-cru";
++      reg = <0xff9a0000 0x20000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
+new file mode 100644
+index 000000000000..71d7dda23cc9
+--- /dev/null
++++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
+@@ -0,0 +1,285 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
-+ * IIO driver for MCP47FEB02 Multi-Channel DAC with I2C interface
-+ *
-+ * Copyright (C) 2025 Microchip Technology Inc. and its subsidiaries
-+ *
-+ * Author: Ariana Lazar <ariana.lazar@microchip.com>
-+ *
-+ * Datasheet for MCP47FEBXX can be found here:
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf
-+ *
-+ * Datasheet for MCP47FVBXX can be found here:
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005405A.pdf
-+ *
-+ * Datasheet for MCP47FXBX4/8 can be found here:
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
++ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
++ * Author: Finley Xiao <finley.xiao@rock-chips.com>
 + */
-+#include <linux/bits.h>
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/mutex.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
 +
-+#define MCP47FEB02_DAC0_REG_ADDR			(0x00 << 3)
-+#define MCP47FEB02_VREF_REG_ADDR			(0x08 << 3)
-+#define MCP47FEB02_POWER_DOWN_REG_ADDR			(0x09 << 3)
-+#define MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR		(0x0A << 3)
-+#define MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR		(0x0B << 3)
-+
-+#define MCP47FEB02_NV_DAC0_REG_ADDR			(0x10 << 3)
-+#define MCP47FEB02_NV_DAC1_REG_ADDR			(0x11 << 3)
-+#define MCP47FEB02_NV_DAC2_REG_ADDR			(0x12 << 3)
-+#define MCP47FEB02_NV_DAC3_REG_ADDR			(0x13 << 3)
-+#define MCP47FEB02_NV_DAC4_REG_ADDR			(0x14 << 3)
-+#define MCP47FEB02_NV_DAC5_REG_ADDR			(0x15 << 3)
-+#define MCP47FEB02_NV_DAC6_REG_ADDR			(0x16 << 3)
-+#define MCP47FEB02_NV_DAC7_REG_ADDR			(0x17 << 3)
-+#define MCP47FEB02_NV_VREF_REG_ADDR			(0x18 << 3)
-+#define MCP47FEB02_NV_POWER_DOWN_REG_ADDR		(0x19 << 3)
-+#define MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR	(0x1A << 3)
-+
-+#define MCP47FEBXX_MAX_CH				8
-+#define MCP47FEB02_GAIN_BIT_X1				0
-+#define MCP47FEB02_GAIN_BIT_X2				1
-+#define MCP47FEB02_MAX_VALS_SCALES_CH			6
-+#define MCP47FEB02_MAX_SCALES_CH			3
-+#define MCP47FEB02_DAC_WIPER_UNLOCKED			0
-+#define MCP47FEB02_INTERNAL_BAND_GAP_MV			2440
-+#define MCP47FEB02_DELAY_1_MS				1000
-+
-+#define SET_DAC_CTRL_MASK				GENMASK(1, 0)
-+#define SET_GAIN_BIT					BIT(0)
-+#define READFLAG_MASK					GENMASK(2, 1)
-+#define MCP47FEB02_GAIN_BIT_STATUS_EEWA_MASK		BIT(6)
-+#define MCP47FEB02_VOLATILE_GAIN_BIT_MASK		GENMASK(15, 8)
-+#define MCP47FEB02_NV_I2C_SLAVE_ADDR_MASK		GENMASK(7, 0)
-+
-+/* Voltage reference, Power-Down control register and DAC Wiperlock status register fields */
-+#define DAC_CTRL_MASK(ch)				(GENMASK(1, 0) << (2 * (ch)))
-+#define DAC_CTRL_VAL(ch, val)				((val) << (2 * (ch)))
-+
-+/* Gain Control and I2C Slave Address Reguster fields */
-+#define DAC_GAIN_MASK(ch)				(BIT(0) << (8 + (ch)))
-+#define DAC_GAIN_VAL(ch, val)				((val) << (8 + (ch)))
-+
-+enum vref_mode {
-+	MCP47FEB02_VREF_VDD = 0,
-+	MCP47FEB02_INTERNAL_BAND_GAP = 1,
-+	MCP47FEB02_EXTERNAL_VREF_UNBUFFERED = 2,
-+	MCP47FEB02_EXTERNAL_VREF_BUFFERED = 3,
-+};
-+
-+enum mcp47feb02_scale {
-+	MCP47FEB02_SCALE_VDD = 0,
-+	MCP47FEB02_SCALE_GAIN_BIT_X1 = 1,
-+	MCP47FEB02_SCALE_GAIN_BIT_X2 = 2,
-+};
-+
-+enum iio_powerdown_mode {
-+	MCP47FEB02_NORMAL_OPERATION = 0,
-+	MCP47FEB02_IIO_1K = 1,
-+	MCP47FEB02_IIO_100K = 2,
-+	MCP47FEB02_OPEN_CIRCUIT = 3,
-+};
-+
-+static const char * const mcp47feb02_powerdown_modes[] = {
-+	"1kohm_to_gnd",
-+	"100kohm_to_gnd",
-+	"open_circuit",
-+};
-+
-+/**
-+ * struct mcp47feb02_features - chip specific data
-+ * @name:		device name
-+ * @phys_channels:	number of hardware channels
-+ * @resolution:		DAC resolution
-+ * @have_ext_vref1:	does the hardware have an the second external voltage reference?
-+ * @have_eeprom:	does the hardware have an internal eeprom?
-+ */
-+struct mcp47feb02_features {
-+	const char	*name;
-+	unsigned int	phys_channels;
-+	unsigned int	resolution;
-+	bool have_ext_vref1;
-+	bool have_eeprom;
-+};
-+
-+static const struct mcp47feb02_features mcp47feb01_chip_info = {
-+	.name = "mcp47feb01",
-+	.phys_channels = 1,
-+	.resolution = 8,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb11_chip_info = {
-+	.name = "mcp47feb11",
-+	.phys_channels = 1,
-+	.resolution = 10,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb21_chip_info = {
-+	.name = "mcp47feb21",
-+	.phys_channels = 1,
-+	.resolution = 12,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb02_chip_info = {
-+	.name = "mcp47feb02",
-+	.phys_channels = 2,
-+	.resolution = 8,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb12_chip_info = {
-+	.name = "mcp47feb12",
-+	.phys_channels = 2,
-+	.resolution = 10,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb22_chip_info = {
-+	.name = "mcp47feb22",
-+	.phys_channels = 2,
-+	.resolution = 12,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb04_chip_info = {
-+	.name = "mcp47feb04",
-+	.phys_channels = 4,
-+	.resolution = 8,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb14_chip_info = {
-+	.name = "mcp47feb14",
-+	.phys_channels = 4,
-+	.resolution = 10,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb24_chip_info = {
-+	.name = "mcp47feb24",
-+	.phys_channels = 4,
-+	.resolution = 12,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb08_chip_info = {
-+	.name = "mcp47feb08",
-+	.phys_channels = 8,
-+	.resolution = 8,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb18_chip_info = {
-+	.name = "mcp47feb18",
-+	.phys_channels = 8,
-+	.resolution = 10,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47feb28_chip_info = {
-+	.name = "mcp47feb28",
-+	.phys_channels = 8,
-+	.resolution = 12,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = true,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb01_chip_info = {
-+	.name = "mcp47fvb01",
-+	.phys_channels = 1,
-+	.resolution = 8,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb11_chip_info = {
-+	.name = "mcp47fvb11",
-+	.phys_channels = 1,
-+	.resolution = 10,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb21_chip_info = {
-+	.name = "mcp47fvb21",
-+	.phys_channels = 1,
-+	.resolution = 12,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb02_chip_info = {
-+	.name = "mcp47fvb02",
-+	.phys_channels = 2,
-+	.resolution = 8,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb12_chip_info = {
-+	.name = "mcp47fvb12",
-+	.phys_channels = 2,
-+	.resolution = 8,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb22_chip_info = {
-+	.name = "mcp47fvb22",
-+	.phys_channels = 2,
-+	.resolution = 12,
-+	.have_ext_vref1 = false,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb04_chip_info = {
-+	.name = "mcp47fvb04",
-+	.phys_channels = 4,
-+	.resolution = 8,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb14_chip_info = {
-+	.name = "mcp47fvb14",
-+	.phys_channels = 4,
-+	.resolution = 10,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb24_chip_info = {
-+	.name = "mcp47fvb24",
-+	.phys_channels = 4,
-+	.resolution = 12,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb08_chip_info = {
-+	.name = "mcp47fvb08",
-+	.phys_channels = 8,
-+	.resolution = 8,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb18_chip_info = {
-+	.name = "mcp47fvb18",
-+	.phys_channels = 8,
-+	.resolution = 10,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+static const struct mcp47feb02_features mcp47fvb28_chip_info = {
-+	.name = "mcp47fvb28",
-+	.phys_channels = 4,
-+	.resolution = 8,
-+	.have_ext_vref1 = true,
-+	.have_eeprom = false,
-+};
-+
-+/**
-+ * struct mcp47feb02_channel_data - channel configuration
-+ * @ref_mode: chosen voltage for reference
-+ * @powerdown_mode: selected power-down mode
-+ * @use_2x_gain: output driver gain control
-+ * @powerdown: is false if the channel is in normal operation mode
-+ * @dac_data: read dac value
-+ */
-+struct mcp47feb02_channel_data {
-+	enum vref_mode ref_mode;
-+	u8 powerdown_mode;
-+	bool use_2x_gain;
-+	bool powerdown;
-+	u16 dac_data;
-+};
-+
-+/**
-+ * struct mcp47feb02_data - chip configuration
-+ * @chdata: options configured for each channel on the device
-+ * @scale: scales set on channels that are based on Vref/Vref0
-+ * @scale_1:  scales set on channels that are based on Vref1
-+ * @info: pointer to features struct
-+ * @labels: table with channels labels
-+ * @active_channels_mask: enabled channels
-+ * @client: the i2c-client attached to the device
-+ * @regmap: regmap for directly accessing device register
-+ * @vref1_buffered: Vref1 buffer is enabled
-+ * @vref_buffered: Vref/Vref0 buffer is enabled
-+ * @phys_channels: physical channels on the device
-+ * @lock: prevents concurrent reads/writes
-+ * @use_vref1: vref1-supply is defined
-+ * @use_vref: vref-supply is defined
-+ */
-+struct mcp47feb02_data {
-+	struct mcp47feb02_channel_data chdata[MCP47FEBXX_MAX_CH];
-+	int scale_1[MCP47FEB02_MAX_VALS_SCALES_CH];
-+	int scale[MCP47FEB02_MAX_VALS_SCALES_CH];
-+	const struct mcp47feb02_features *info;
-+	const char *labels[MCP47FEBXX_MAX_CH];
-+	unsigned long active_channels_mask;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	bool vref1_buffered;
-+	bool vref_buffered;
-+	u16 phys_channels;
-+	struct mutex lock; /* synchronize access to driver's state members */
-+	bool use_vref1;
-+	bool use_vref;
-+};
-+
-+static const struct regmap_range mcp47feb02_readable_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_NV_DAC0_REG_ADDR, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR),
-+};
-+
-+static const struct regmap_range mcp47feb02_writable_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_NV_DAC0_REG_ADDR, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR),
-+};
-+
-+static const struct regmap_range mcp47feb02_volatile_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_NV_DAC0_REG_ADDR, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_NV_DAC0_REG_ADDR, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR),
-+};
-+
-+static const struct regmap_access_table mcp47feb02_readable_table = {
-+	.yes_ranges = mcp47feb02_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47feb02_readable_ranges),
-+};
-+
-+static const struct regmap_access_table mcp47feb02_writable_table = {
-+	.yes_ranges = mcp47feb02_writable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47feb02_writable_ranges),
-+};
-+
-+static const struct regmap_access_table mcp47feb02_volatile_table = {
-+	.yes_ranges = mcp47feb02_volatile_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47feb02_volatile_ranges),
-+};
-+
-+static const struct regmap_config mcp47feb02_regmap_config = {
-+	.name = "mcp47feb02_regmap",
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.rd_table = &mcp47feb02_readable_table,
-+	.wr_table = &mcp47feb02_writable_table,
-+	.volatile_table = &mcp47feb02_volatile_table,
-+	.max_register =  MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR,
-+	.read_flag_mask	= READFLAG_MASK,
-+	.cache_type = REGCACHE_MAPLE,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+};
-+
-+/* For devices that doesn't have nonvolatile memory */
-+static const struct regmap_range mcp47fvb02_readable_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+};
-+
-+static const struct regmap_range mcp47fvb02_writable_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+};
-+
-+static const struct regmap_range mcp47fvb02_volatile_ranges[] = {
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+	regmap_reg_range(MCP47FEB02_DAC0_REG_ADDR, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR),
-+};
-+
-+static const struct regmap_access_table mcp47fvb02_readable_table = {
-+	.yes_ranges = mcp47fvb02_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47fvb02_readable_ranges),
-+};
-+
-+static const struct regmap_access_table mcp47fvb02_writable_table = {
-+	.yes_ranges = mcp47fvb02_writable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47fvb02_writable_ranges),
-+};
-+
-+static const struct regmap_access_table mcp47fvb02_volatile_table = {
-+	.yes_ranges = mcp47fvb02_volatile_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(mcp47fvb02_volatile_ranges),
-+};
-+
-+static const struct regmap_config mcp47fvb02_regmap_config = {
-+	.name = "mcp47fvb02_regmap",
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.rd_table = &mcp47fvb02_readable_table,
-+	.wr_table = &mcp47fvb02_writable_table,
-+	.volatile_table = &mcp47fvb02_volatile_table,
-+	.max_register = MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR,
-+	.read_flag_mask	= READFLAG_MASK,
-+	.cache_type = REGCACHE_MAPLE,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+};
-+
-+static int mcp47feb02_write_to_eeprom(struct mcp47feb02_data *data, unsigned int reg,
-+				      unsigned int val)
-+{
-+	int eewa_val, ret;
-+
-+	/*
-+	 * Wait till the currently occurring EEPROM Write Cycle is completed.
-+	 * Only serial commands to the volatile memory are allowed.
-+	 */
-+	guard(mutex)(&data->lock);
-+
-+	ret = regmap_read_poll_timeout(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR,
-+				       eewa_val,
-+				       !(eewa_val & MCP47FEB02_GAIN_BIT_STATUS_EEWA_MASK),
-+				       MCP47FEB02_DELAY_1_MS, MCP47FEB02_DELAY_1_MS * 5);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(data->regmap, reg, val);
-+}
-+
-+static ssize_t mcp47feb02_store_eeprom(struct device *dev, struct device_attribute *attr,
-+				       const char *buf, size_t len)
-+{
-+	struct mcp47feb02_data *data = iio_priv(dev_to_iio_dev(dev));
-+	int ret, i, val, val1, eewa_val;
-+	bool state;
-+
-+	ret = kstrtobool(buf, &state);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!state)
-+		return 0;
-+
-+	/*
-+	 * Verify DAC Wiper and DAC Configuratioin are unlocked. If both are disabled,
-+	 * writing to EEPROM is available.
-+	 */
-+	ret = regmap_read(data->regmap, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val)  {
-+		dev_err(dev, "DAC Wiper and DAC Configuration not are unlocked.\n");
-+		return -EINVAL;
-+	}
-+
-+	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-+		ret = mcp47feb02_write_to_eeprom(data, i << 3, data->chdata[i].dac_data);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_VREF_REG_ADDR, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_VREF_REG_ADDR, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_POWER_DOWN_REG_ADDR, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read_poll_timeout(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, eewa_val,
-+				       !(eewa_val & MCP47FEB02_GAIN_BIT_STATUS_EEWA_MASK),
-+				       MCP47FEB02_DELAY_1_MS, MCP47FEB02_DELAY_1_MS * 5);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, &val1);
-+	if (ret)
-+		return ret;
-+
-+	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR,
-+					 (val1 & MCP47FEB02_VOLATILE_GAIN_BIT_MASK) |
-+					 (val & MCP47FEB02_NV_I2C_SLAVE_ADDR_MASK));
-+	if (ret)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static IIO_DEVICE_ATTR(store_eeprom, 0200, NULL, mcp47feb02_store_eeprom, 0);
-+static struct attribute *mcp47feb02_attributes[] = {
-+	&iio_dev_attr_store_eeprom.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group mcp47feb02_attribute_group = {
-+	.attrs = mcp47feb02_attributes,
-+};
-+
-+static int mcp47feb02_suspend(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	int ret, ch;
-+	u8 pd_mode;
-+
-+	guard(mutex)(&data->lock);
-+
-+	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) {
-+		data->chdata[ch].powerdown = true;
-+		pd_mode = data->chdata[ch].powerdown_mode + 1;
-+		regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
-+				   DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, pd_mode));
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(data->regmap, ch << 3, data->chdata[ch].dac_data);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	int ch, ret;
-+	u8 pd_mode;
-+
-+	guard(mutex)(&data->lock);
-+
-+	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) {
-+		data->chdata[ch].powerdown = false;
-+		pd_mode = data->chdata[ch].powerdown_mode + 1;
-+
-+		ret = regmap_write(data->regmap, ch << 3, data->chdata[ch].dac_data);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(data->regmap, MCP47FEB02_VREF_REG_ADDR,
-+					 DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, pd_mode));
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR,
-+					 DAC_GAIN_MASK(ch),
-+					 DAC_GAIN_VAL(ch, data->chdata[ch].use_2x_gain));
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
-+					 DAC_CTRL_MASK(ch),
-+					 DAC_CTRL_VAL(ch, MCP47FEB02_NORMAL_OPERATION));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_get_powerdown_mode(struct iio_dev *indio_dev,
-+					 const struct iio_chan_spec *chan)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+
-+	return data->chdata[chan->address].powerdown_mode;
-+}
-+
-+static int mcp47feb02_set_powerdown_mode(struct iio_dev *indio_dev, const struct iio_chan_spec *ch,
-+					 unsigned int mode)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+
-+	data->chdata[ch->address].powerdown_mode = mode;
-+
-+	return 0;
-+}
-+
-+static ssize_t mcp47feb02_read_powerdown(struct iio_dev *indio_dev, uintptr_t private,
-+					 const struct iio_chan_spec *ch, char *buf)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+
-+	/* Check if channel is in a power-down mode or not */
-+	return sysfs_emit(buf, "%d\n", data->chdata[ch->address].powerdown);
-+}
-+
-+static ssize_t mcp47feb02_write_powerdown(struct iio_dev *indio_dev, uintptr_t private,
-+					  const struct iio_chan_spec *ch, const char *buf,
-+					  size_t len)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	unsigned long reg;
-+	u8 tmp_pd_mode;
-+	bool state;
-+	int ret;
-+
-+	guard(mutex)(&data->lock);
-+
-+	ret = kstrtobool(buf, &state);
-+	if (ret)
-+		return ret;
-+
-+	reg = ch->address;
-+
-+	/*
-+	 * Set channel to the power-down mode selected. Normal operation mode (0000h)
-+	 * must be written to register in order to exit  power-down mode.
-+	 */
-+	tmp_pd_mode = state ? (data->chdata[reg].powerdown_mode + 1) : MCP47FEB02_NORMAL_OPERATION;
-+	ret = regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
-+				 DAC_CTRL_MASK(reg), DAC_CTRL_VAL(reg, tmp_pd_mode));
-+	if (ret)
-+		return ret;
-+
-+	data->chdata[reg].powerdown = state;
-+
-+	return len;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(mcp47feb02_pm_ops, mcp47feb02_suspend, mcp47feb02_resume);
-+
-+static const struct iio_enum mcp47febxx_powerdown_mode_enum = {
-+	.items = mcp47feb02_powerdown_modes,
-+	.num_items = ARRAY_SIZE(mcp47feb02_powerdown_modes),
-+	.get = mcp47feb02_get_powerdown_mode,
-+	.set = mcp47feb02_set_powerdown_mode,
-+};
-+
-+static const struct iio_chan_spec_ext_info mcp47feb02_ext_info[] = {
-+	{
-+		.name = "powerdown",
-+		.read = mcp47feb02_read_powerdown,
-+		.write = mcp47feb02_write_powerdown,
-+		.shared = IIO_SEPARATE,
-+	},
-+	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &mcp47febxx_powerdown_mode_enum),
-+	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE, &mcp47febxx_powerdown_mode_enum),
-+	{ }
-+};
-+
-+static const struct iio_chan_spec mcp47febxx_ch_template = {
-+	.type = IIO_VOLTAGE,
-+	.output = 1,
-+	.indexed = 1,
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-+	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),
-+	.ext_info = mcp47feb02_ext_info,
-+};
-+
-+static void mcp47feb02_init_scale(struct mcp47feb02_data *data, enum mcp47feb02_scale scale,
-+				  int vref_mv, int scale_avail[])
-+{
-+	int value_micro, value_int;
-+	s64 tmp;
-+
-+	tmp = (s64)vref_mv * 1000000LL >> data->info->resolution;
-+	value_int = div_s64_rem(tmp, 1000000LL, &value_micro);
-+	scale_avail[scale * 2] = value_int;
-+	scale_avail[scale * 2 + 1] = value_micro;
-+}
-+
-+static int mcp47feb02_init_scales_avail(struct mcp47feb02_data *data, int vdd_mv,
-+					int vref_mv, int vref1_mv)
-+{
-+	struct device *dev = &data->client->dev;
-+	int tmp_vref;
-+
-+	mcp47feb02_init_scale(data, MCP47FEB02_SCALE_VDD, vdd_mv, data->scale);
-+
-+	if (data->use_vref)
-+		tmp_vref = vref_mv;
-+	else
-+		tmp_vref = MCP47FEB02_INTERNAL_BAND_GAP_MV;
-+
-+	mcp47feb02_init_scale(data, MCP47FEB02_SCALE_GAIN_BIT_X1, tmp_vref, data->scale);
-+	mcp47feb02_init_scale(data, MCP47FEB02_SCALE_GAIN_BIT_X2, tmp_vref * 2, data->scale);
-+
-+	if (data->phys_channels >= 4) {
-+		mcp47feb02_init_scale(data, MCP47FEB02_SCALE_VDD, vdd_mv, data->scale_1);
-+
-+		if (data->use_vref1 && vref1_mv <= 0)
-+			return dev_err_probe(dev, -EINVAL, "Invalid voltage for Vref1\n");
-+
-+		if (data->use_vref1)
-+			tmp_vref = vref1_mv;
-+		else
-+			tmp_vref = MCP47FEB02_INTERNAL_BAND_GAP_MV;
-+
-+		mcp47feb02_init_scale(data, MCP47FEB02_SCALE_GAIN_BIT_X1,
-+				      tmp_vref, data->scale_1);
-+		mcp47feb02_init_scale(data, MCP47FEB02_SCALE_GAIN_BIT_X2,
-+				      tmp_vref * 2, data->scale_1);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_read_avail(struct iio_dev *indio_dev, struct iio_chan_spec const *ch,
-+				 const int **vals, int *type, int *length, long info)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SCALE:
-+		switch (ch->type) {
-+		case IIO_VOLTAGE:
-+			if (data->phys_channels >= 4 && (ch->address % 2))
-+				*vals = data->scale_1;
-+			else
-+				*vals = data->scale;
-+
-+			*length = MCP47FEB02_MAX_VALS_SCALES_CH;
-+			*type = IIO_VAL_INT_PLUS_MICRO;
-+			return IIO_AVAIL_LIST;
-+		default:
-+			return -EINVAL;
-+		}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static void mcp47feb02_get_scale_avail(struct mcp47feb02_data *data, int *val, int *val2,
-+				       enum mcp47feb02_scale scale, int ch)
-+{
-+	if (data->phys_channels >= 4 && (ch % 2)) {
-+		*val = data->scale_1[scale * 2];
-+		*val2 = data->scale_1[scale * 2 + 1];
-+	} else {
-+		*val = data->scale[scale * 2];
-+		*val2 = data->scale[scale * 2 + 1];
-+	}
-+}
-+
-+static void mcp47feb02_get_scale(int ch, struct mcp47feb02_data *data, int *val, int *val2)
-+{
-+	enum mcp47feb02_scale tmp_scale;
-+
-+	if (data->chdata[ch].ref_mode == MCP47FEB02_VREF_VDD)
-+		tmp_scale = MCP47FEB02_SCALE_VDD;
-+	else if (data->chdata[ch].use_2x_gain)
-+		tmp_scale = MCP47FEB02_SCALE_GAIN_BIT_X2;
-+	else
-+		tmp_scale = MCP47FEB02_SCALE_GAIN_BIT_X1;
-+
-+	mcp47feb02_get_scale_avail(data, val, val2, tmp_scale, ch);
-+}
-+
-+static int mcp47feb02_check_scale(struct mcp47feb02_data *data, int val, int val2, int scale[])
-+{
-+	for (int i = 0; i < MCP47FEB02_MAX_SCALES_CH; i++) {
-+		if (scale[i * 2] == val && scale[i * 2 + 1] == val2)
-+			return i;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int mcp47feb02_ch_scale(struct mcp47feb02_data *data, int ch, int scale)
-+{
-+	int tmp_val, ret;
-+
-+	if (scale == MCP47FEB02_SCALE_VDD) {
-+		tmp_val = MCP47FEB02_VREF_VDD;
-+	} else if (data->phys_channels >= 4 && (ch % 2)) {
-+		if (data->use_vref1) {
-+			if (data->vref1_buffered)
-+				tmp_val = MCP47FEB02_EXTERNAL_VREF_BUFFERED;
-+			else
-+				tmp_val = MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
-+		} else {
-+			tmp_val = MCP47FEB02_INTERNAL_BAND_GAP;
-+		}
-+	} else if (data->use_vref) {
-+		if (data->vref_buffered)
-+			tmp_val = MCP47FEB02_EXTERNAL_VREF_BUFFERED;
-+		else
-+			tmp_val = MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
-+	} else {
-+		tmp_val = MCP47FEB02_INTERNAL_BAND_GAP;
-+	}
-+
-+	ret = regmap_update_bits(data->regmap, MCP47FEB02_VREF_REG_ADDR,
-+				 DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, tmp_val));
-+	if (ret)
-+		return ret;
-+
-+	data->chdata[ch].ref_mode = tmp_val;
-+
-+	return 0;
-+}
-+
++#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
++#define _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
++
++/* cru plls */
++#define PLL_GPLL			0
++#define PLL_V0PLL			1
++#define PLL_V1PLL			2
++
++/* cru-clocks indices */
++#define ARMCLK				3
++#define CLK_DDR				4
++#define XIN24M_GATE			5
++#define CLK_GPLL_GATE			6
++#define CLK_V0PLL_GATE			7
++#define CLK_V1PLL_GATE			8
++#define CLK_GPLL_DIV			9
++#define CLK_GPLL_DIV_100M		10
++#define CLK_V0PLL_DIV			11
++#define CLK_V1PLL_DIV			12
++#define CLK_INT_VOICE_MATRIX0		13
++#define CLK_INT_VOICE_MATRIX1		14
++#define CLK_INT_VOICE_MATRIX2		15
++#define CLK_FRAC_UART_MATRIX0_MUX	16
++#define CLK_FRAC_UART_MATRIX1_MUX	17
++#define CLK_FRAC_VOICE_MATRIX0_MUX	18
++#define CLK_FRAC_VOICE_MATRIX1_MUX	19
++#define CLK_FRAC_COMMON_MATRIX0_MUX	20
++#define CLK_FRAC_COMMON_MATRIX1_MUX	21
++#define CLK_FRAC_COMMON_MATRIX2_MUX	22
++#define CLK_FRAC_UART_MATRIX0		23
++#define CLK_FRAC_UART_MATRIX1		24
++#define CLK_FRAC_VOICE_MATRIX0		25
++#define CLK_FRAC_VOICE_MATRIX1		26
++#define CLK_FRAC_COMMON_MATRIX0		27
++#define CLK_FRAC_COMMON_MATRIX1		28
++#define CLK_FRAC_COMMON_MATRIX2		29
++#define CLK_REF_USBPHY_TOP		30
++#define CLK_REF_DPHY_TOP		31
++#define ACLK_CORE_ROOT			32
++#define PCLK_CORE_ROOT			33
++#define PCLK_DBG			34
++#define PCLK_CORE_GRF			35
++#define PCLK_CORE_CRU			36
++#define CLK_CORE_EMA_DETECT		37
++#define CLK_REF_PVTPLL_CORE		38
++#define PCLK_GPIO1			39
++#define DBCLK_GPIO1			40
++#define ACLK_CORE_PERI_ROOT		41
++#define HCLK_CORE_PERI_ROOT		42
++#define PCLK_CORE_PERI_ROOT		43
++#define CLK_DSMC			44
++#define ACLK_DSMC			45
++#define PCLK_DSMC			46
++#define CLK_FLEXBUS_TX			47
++#define CLK_FLEXBUS_RX			48
++#define ACLK_FLEXBUS			49
++#define HCLK_FLEXBUS			50
++#define ACLK_DSMC_SLV			51
++#define HCLK_DSMC_SLV			52
++#define ACLK_BUS_ROOT			53
++#define HCLK_BUS_ROOT			54
++#define PCLK_BUS_ROOT			55
++#define ACLK_SYSRAM			56
++#define HCLK_SYSRAM			57
++#define ACLK_DMAC0			58
++#define ACLK_DMAC1			59
++#define HCLK_M0				60
++#define PCLK_BUS_GRF			61
++#define PCLK_TIMER			62
++#define CLK_TIMER0_CH0			63
++#define CLK_TIMER0_CH1			64
++#define CLK_TIMER0_CH2			65
++#define CLK_TIMER0_CH3			66
++#define CLK_TIMER0_CH4			67
++#define CLK_TIMER0_CH5			68
++#define PCLK_WDT0			69
++#define TCLK_WDT0			70
++#define PCLK_WDT1			71
++#define TCLK_WDT1			72
++#define PCLK_MAILBOX			73
++#define PCLK_INTMUX			74
++#define PCLK_SPINLOCK			75
++#define PCLK_DDRC			76
++#define HCLK_DDRPHY			77
++#define PCLK_DDRMON			78
++#define CLK_DDRMON_OSC			79
++#define PCLK_STDBY			80
++#define HCLK_USBOTG0			81
++#define HCLK_USBOTG0_PMU		82
++#define CLK_USBOTG0_ADP			83
++#define HCLK_USBOTG1			84
++#define HCLK_USBOTG1_PMU		85
++#define CLK_USBOTG1_ADP			86
++#define PCLK_USBPHY			87
++#define ACLK_DMA2DDR			88
++#define PCLK_DMA2DDR			89
++#define STCLK_M0			90
++#define CLK_DDRPHY			91
++#define CLK_DDRC_SRC			92
++#define ACLK_DDRC_0			93
++#define ACLK_DDRC_1			94
++#define CLK_DDRC			95
++#define CLK_DDRMON			96
++#define HCLK_LSPERI_ROOT		97
++#define PCLK_LSPERI_ROOT		98
++#define PCLK_UART0			99
++#define PCLK_UART1			100
++#define PCLK_UART2			101
++#define PCLK_UART3			102
++#define PCLK_UART4			103
++#define SCLK_UART0			104
++#define SCLK_UART1			105
++#define SCLK_UART2			106
++#define SCLK_UART3			107
++#define SCLK_UART4			108
++#define PCLK_I2C0			109
++#define CLK_I2C0			110
++#define PCLK_I2C1			111
++#define CLK_I2C1			112
++#define PCLK_I2C2			113
++#define CLK_I2C2			114
++#define PCLK_PWM1			115
++#define CLK_PWM1			116
++#define CLK_OSC_PWM1			117
++#define CLK_RC_PWM1			118
++#define CLK_FREQ_PWM1			119
++#define CLK_COUNTER_PWM1		120
++#define PCLK_SPI0			121
++#define CLK_SPI0			122
++#define PCLK_SPI1			123
++#define CLK_SPI1			124
++#define PCLK_GPIO2			125
++#define DBCLK_GPIO2			126
++#define PCLK_GPIO3			127
++#define DBCLK_GPIO3			128
++#define PCLK_GPIO4			129
++#define DBCLK_GPIO4			130
++#define HCLK_CAN0			131
++#define CLK_CAN0			132
++#define HCLK_CAN1			133
++#define CLK_CAN1			134
++#define HCLK_PDM			135
++#define MCLK_PDM			136
++#define CLKOUT_PDM			137
++#define MCLK_SPDIFTX			138
++#define HCLK_SPDIFTX			139
++#define HCLK_SPDIFRX			140
++#define MCLK_SPDIFRX			141
++#define MCLK_SAI0			142
++#define HCLK_SAI0			143
++#define MCLK_OUT_SAI0			144
++#define MCLK_SAI1			145
++#define HCLK_SAI1			146
++#define MCLK_OUT_SAI1			147
++#define HCLK_ASRC0			148
++#define CLK_ASRC0			149
++#define HCLK_ASRC1			150
++#define CLK_ASRC1			151
++#define PCLK_CRU			152
++#define PCLK_PMU_ROOT			153
++#define MCLK_ASRC0			154
++#define MCLK_ASRC1			155
++#define MCLK_ASRC2			156
++#define MCLK_ASRC3			157
++#define LRCK_ASRC0_SRC			158
++#define LRCK_ASRC0_DST			159
++#define LRCK_ASRC1_SRC			160
++#define LRCK_ASRC1_DST			161
++#define ACLK_HSPERI_ROOT		162
++#define HCLK_HSPERI_ROOT		163
++#define PCLK_HSPERI_ROOT		164
++#define CCLK_SRC_SDMMC			165
++#define HCLK_SDMMC			166
++#define HCLK_FSPI			167
++#define SCLK_FSPI			168
++#define PCLK_SPI2			169
++#define ACLK_MAC0			170
++#define ACLK_MAC1			171
++#define PCLK_MAC0			172
++#define PCLK_MAC1			173
++#define CLK_MAC_ROOT			174
++#define CLK_MAC0			175
++#define CLK_MAC1			176
++#define MCLK_SAI2			177
++#define HCLK_SAI2			178
++#define MCLK_OUT_SAI2			179
++#define MCLK_SAI3_SRC			180
++#define HCLK_SAI3			181
++#define MCLK_SAI3			182
++#define MCLK_OUT_SAI3			183
++#define MCLK_SAI4_SRC			184
++#define HCLK_SAI4			185
++#define MCLK_SAI4			186
++#define HCLK_DSM			187
++#define MCLK_DSM			188
++#define PCLK_AUDIO_ADC			189
++#define MCLK_AUDIO_ADC			190
++#define MCLK_AUDIO_ADC_DIV4		191
++#define PCLK_SARADC			192
++#define CLK_SARADC			193
++#define PCLK_OTPC_NS			194
++#define CLK_SBPI_OTPC_NS		195
++#define CLK_USER_OTPC_NS		196
++#define PCLK_UART5			197
++#define SCLK_UART5			198
++#define PCLK_GPIO234_IOC		199
++#define CLK_MAC_PTP_ROOT		200
++#define CLK_MAC0_PTP			201
++#define CLK_MAC1_PTP			202
++#define CLK_SPI2			203
++#define ACLK_VIO_ROOT			204
++#define HCLK_VIO_ROOT			205
++#define PCLK_VIO_ROOT			206
++#define HCLK_RGA			207
++#define ACLK_RGA			208
++#define CLK_CORE_RGA			209
++#define ACLK_VOP			210
++#define HCLK_VOP			211
++#define DCLK_VOP			212
++#define PCLK_DPHY			213
++#define PCLK_DSI_HOST			214
++#define PCLK_TSADC			215
++#define CLK_TSADC			216
++#define CLK_TSADC_TSEN			217
++#define PCLK_GPIO1_IOC			218
++#define PCLK_OTPC_S			219
++#define CLK_SBPI_OTPC_S			220
++#define CLK_USER_OTPC_S			221
++#define PCLK_OTP_MASK			222
++#define PCLK_KEYREADER			223
++#define HCLK_BOOTROM			224
++#define PCLK_DDR_SERVICE		225
++#define HCLK_CRYPTO_S			226
++#define HCLK_KEYLAD			227
++#define CLK_CORE_CRYPTO			228
++#define CLK_PKA_CRYPTO			229
++#define CLK_CORE_CRYPTO_S		230
++#define CLK_PKA_CRYPTO_S		231
++#define ACLK_CRYPTO_S			232
++#define HCLK_RNG_S			233
++#define CLK_CORE_CRYPTO_NS		234
++#define CLK_PKA_CRYPTO_NS		235
++#define ACLK_CRYPTO_NS			236
++#define HCLK_CRYPTO_NS			237
++#define HCLK_RNG			238
++#define CLK_PMU				239
++#define PCLK_PMU			240
++#define CLK_PMU_32K			241
++#define PCLK_PMU_CRU			242
++#define PCLK_PMU_GRF			243
++#define PCLK_GPIO0_IOC			244
++#define PCLK_GPIO0			245
++#define DBCLK_GPIO0			246
++#define PCLK_GPIO1_SHADOW		247
++#define DBCLK_GPIO1_SHADOW		248
++#define PCLK_PMU_HP_TIMER		249
++#define CLK_PMU_HP_TIMER		250
++#define CLK_PMU_HP_TIMER_32K		251
++#define PCLK_PWM0			252
++#define CLK_PWM0			253
++#define CLK_OSC_PWM0			254
++#define CLK_RC_PWM0			255
++#define CLK_MAC_OUT			256
++#define CLK_REF_OUT0			257
++#define CLK_REF_OUT1			258
++#define CLK_32K_FRAC			259
++#define CLK_32K_RC			260
++#define CLK_32K				261
++#define CLK_32K_PMU			262
++#define PCLK_TOUCH_KEY			263
++#define CLK_TOUCH_KEY			264
++#define CLK_REF_PHY_PLL			265
++#define CLK_REF_PHY_PMU_MUX		266
++#define CLK_WIFI_OUT			267
++#define CLK_V0PLL_REF			268
++#define CLK_V1PLL_REF			269
++#define CLK_32K_FRAC_MUX		270
++
++#endif
+diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+new file mode 100644
+index 000000000000..f38cc066009b
+--- /dev/null
++++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+@@ -0,0 +1,211 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
-+ * Setting the scale in order to choose between VDD and (Vref or BandGap) from the user
-+ * space. You can't have an external voltage reference connected to the pin and select the
-+ * internal BandGap. The VREF pin is either an input or an output. When the DAC’s voltage
-+ * reference is configured as the VREF pin, the pin is an input. When the DAC’s voltage
-+ * reference is configured as the internal BandGap, the pin is an output.
-+ *
-+ * If Vref voltage is not available then the internal BandGap will be used to calculate one
-+ * of the possible scale.
-+ * If Vref1 voltage is not available then the internal BandGap will be used to calculate
-+ * one of the possible scale.
++ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
++ * Author: Finley Xiao <finley.xiao@rock-chips.com>
 + */
-+static int mcp47feb02_set_scale(struct mcp47feb02_data *data, int ch, int scale)
-+{
-+	int tmp_val, ret;
 +
-+	ret = mcp47feb02_ch_scale(data, ch, scale);
-+	if (ret)
-+		return ret;
++#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
++#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
 +
-+	if (scale == MCP47FEB02_SCALE_GAIN_BIT_X2)
-+		tmp_val = MCP47FEB02_GAIN_BIT_X2;
-+	else
-+		tmp_val = MCP47FEB02_GAIN_BIT_X1;
++/* CRU-->SOFTRST_CON00 */
++#define SRST_NCOREPORESET0_AC		0
++#define SRST_NCOREPORESET1_AC		1
++#define SRST_NCOREPORESET2_AC		2
++#define SRST_NCORESET0_AC		3
++#define SRST_NCORESET1_AC		4
++#define SRST_NCORESET2_AC		5
++#define SRST_NL2RESET_AC		6
++#define SRST_ARESETN_CORE_BIU_AC	7
++#define SRST_HRESETN_M0_AC		8
 +
-+	ret = regmap_update_bits(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR,
-+				 DAC_GAIN_MASK(ch), DAC_GAIN_VAL(ch, tmp_val));
-+	if (ret)
-+		return ret;
++/* CRU-->SOFTRST_CON02 */
++#define SRST_NDBGRESET			9
++#define SRST_PRESETN_CORE_BIU		10
++#define SRST_RESETN_PMU			11
 +
-+	data->chdata[ch].use_2x_gain = tmp_val;
++/* CRU-->SOFTRST_CON03 */
++#define SRST_PRESETN_DBG		12
++#define SRST_POTRESETN_DBG		13
++#define SRST_PRESETN_CORE_GRF		14
++#define SRST_RESETN_CORE_EMA_DETECT	15
++#define SRST_RESETN_REF_PVTPLL_CORE	16
++#define SRST_PRESETN_GPIO1		17
++#define SRST_DBRESETN_GPIO1		18
 +
-+	return 0;
-+}
++/* CRU-->SOFTRST_CON04 */
++#define SRST_ARESETN_CORE_PERI_BIU	19
++#define SRST_ARESETN_DSMC		20
++#define SRST_PRESETN_DSMC		21
++#define SRST_RESETN_FLEXBUS		22
++#define SRST_ARESETN_FLEXBUS		23
++#define SRST_HRESETN_FLEXBUS		24
++#define SRST_ARESETN_DSMC_SLV		25
++#define SRST_HRESETN_DSMC_SLV		26
++#define SRST_RESETN_DSMC_SLV		27
 +
-+static int mcp47feb02_read_raw(struct iio_dev *indio_dev, struct iio_chan_spec const *ch,
-+			       int *val, int *val2, long mask)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	int ret;
++/* CRU-->SOFTRST_CON05 */
++#define SRST_ARESETN_BUS_BIU		28
++#define SRST_HRESETN_BUS_BIU		29
++#define SRST_PRESETN_BUS_BIU		30
++#define SRST_ARESETN_SYSRAM		31
++#define SRST_HRESETN_SYSRAM		32
++#define SRST_ARESETN_DMAC0		33
++#define SRST_ARESETN_DMAC1		34
++#define SRST_HRESETN_M0			35
++#define SRST_RESETN_M0_JTAG		36
++#define SRST_HRESETN_CRYPTO		37
 +
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = regmap_read(data->regmap, ch->address << 3, val);
-+		if (ret)
-+			return ret;
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SCALE:
-+		mcp47feb02_get_scale(ch->address, data, val, val2);
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	default:
-+		return -EINVAL;
-+	}
-+}
++/* CRU-->SOFTRST_CON06 */
++#define SRST_HRESETN_RNG		38
++#define SRST_PRESETN_BUS_GRF		39
++#define SRST_PRESETN_TIMER0		40
++#define SRST_RESETN_TIMER0_CH0		41
++#define SRST_RESETN_TIMER0_CH1		42
++#define SRST_RESETN_TIMER0_CH2		43
++#define SRST_RESETN_TIMER0_CH3		44
++#define SRST_RESETN_TIMER0_CH4		45
++#define SRST_RESETN_TIMER0_CH5		46
++#define SRST_PRESETN_WDT0		47
++#define SRST_TRESETN_WDT0		48
++#define SRST_PRESETN_WDT1		49
++#define SRST_TRESETN_WDT1		50
++#define SRST_PRESETN_MAILBOX		51
++#define SRST_PRESETN_INTMUX		52
++#define SRST_PRESETN_SPINLOCK		53
 +
-+static int mcp47feb02_write_raw(struct iio_dev *indio_dev, struct iio_chan_spec const *ch,
-+				int val, int val2, long mask)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	int *tmp_scale;
-+	int ret;
++/* CRU-->SOFTRST_CON07 */
++#define SRST_PRESETN_DDRC		54
++#define SRST_HRESETN_DDRPHY		55
++#define SRST_PRESETN_DDRMON		56
++#define SRST_RESETN_DDRMON_OSC		57
++#define SRST_PRESETN_DDR_LPC		58
++#define SRST_HRESETN_USBOTG0		59
++#define SRST_RESETN_USBOTG0_ADP		60
++#define SRST_HRESETN_USBOTG1		61
++#define SRST_RESETN_USBOTG1_ADP		62
++#define SRST_PRESETN_USBPHY		63
++#define SRST_RESETN_USBPHY_POR		64
++#define SRST_RESETN_USBPHY_OTG0		65
++#define SRST_RESETN_USBPHY_OTG1		66
 +
-+	guard(mutex)(&data->lock);
++/* CRU-->SOFTRST_CON08 */
++#define SRST_ARESETN_DMA2DDR		67
++#define SRST_PRESETN_DMA2DDR		68
 +
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = regmap_write(data->regmap, ch->address << 3, val);
-+		if (ret)
-+			return ret;
++/* CRU-->SOFTRST_CON09 */
++#define SRST_RESETN_USBOTG0_UTMI	69
++#define SRST_RESETN_USBOTG1_UTMI	70
 +
-+		data->chdata[ch->address].dac_data = val;
-+		return 0;
-+	case IIO_CHAN_INFO_SCALE:
-+		if (data->phys_channels >= 4 && (ch->address % 2))
-+			tmp_scale = data->scale_1;
-+		else
-+			tmp_scale = data->scale;
++/* CRU-->SOFTRST_CON10 */
++#define SRST_ARESETN_DDRC_0		71
++#define SRST_ARESETN_DDRC_1		72
++#define SRST_ARESETN_DDR_BIU		73
++#define SRST_RESETN_DDRC		74
++#define SRST_RESETN_DDRMON		75
 +
-+		ret = mcp47feb02_check_scale(data, val, val2, tmp_scale);
-+		if (ret < 0)
-+			return ret;
++/* CRU-->SOFTRST_CON11 */
++#define SRST_HRESETN_LSPERI_BIU		76
++#define SRST_PRESETN_UART0		77
++#define SRST_PRESETN_UART1		78
++#define SRST_PRESETN_UART2		79
++#define SRST_PRESETN_UART3		80
++#define SRST_PRESETN_UART4		81
++#define SRST_RESETN_UART0		82
++#define SRST_RESETN_UART1		83
++#define SRST_RESETN_UART2		84
++#define SRST_RESETN_UART3		85
++#define SRST_RESETN_UART4		86
++#define SRST_PRESETN_I2C0		87
++#define SRST_RESETN_I2C0		88
 +
-+		return mcp47feb02_set_scale(data, ch->address, ret);
-+	default:
-+		return -EINVAL;
-+	}
-+}
++/* CRU-->SOFTRST_CON12 */
++#define SRST_PRESETN_I2C1		89
++#define SRST_RESETN_I2C1		90
++#define SRST_PRESETN_I2C2		91
++#define SRST_RESETN_I2C2		92
++#define SRST_PRESETN_PWM1		93
++#define SRST_RESETN_PWM1		94
++#define SRST_PRESETN_SPI0		95
++#define SRST_RESETN_SPI0		96
++#define SRST_PRESETN_SPI1		97
++#define SRST_RESETN_SPI1		98
++#define SRST_PRESETN_GPIO2		99
++#define SRST_DBRESETN_GPIO2		100
 +
-+static int mcp47feb02_read_label(struct iio_dev *indio_dev,
-+				 struct iio_chan_spec const *ch, char *label)
-+{
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
++/* CRU-->SOFTRST_CON13 */
++#define SRST_PRESETN_GPIO3		101
++#define SRST_DBRESETN_GPIO3		102
++#define SRST_PRESETN_GPIO4		103
++#define SRST_DBRESETN_GPIO4		104
++#define SRST_HRESETN_CAN0		105
++#define SRST_RESETN_CAN0		106
++#define SRST_HRESETN_CAN1		107
++#define SRST_RESETN_CAN1		108
++#define SRST_HRESETN_PDM		109
++#define SRST_MRESETN_PDM		110
++#define SRST_RESETN_PDM			111
++#define SRST_RESETN_SPDIFTX		112
++#define SRST_HRESETN_SPDIFTX		113
++#define SRST_HRESETN_SPDIFRX		114
++#define SRST_RESETN_SPDIFRX		115
++#define SRST_MRESETN_SAI0		116
 +
-+	return sysfs_emit(label, "%s\n", data->labels[ch->address]);
++/* CRU-->SOFTRST_CON14 */
++#define SRST_HRESETN_SAI0		117
++#define SRST_MRESETN_SAI1		118
++#define SRST_HRESETN_SAI1		119
++#define SRST_HRESETN_ASRC0		120
++#define SRST_RESETN_ASRC0		121
++#define SRST_HRESETN_ASRC1		122
++#define SRST_RESETN_ASRC1		123
 +
-+	return 0;
-+}
++/* CRU-->SOFTRST_CON17 */
++#define SRST_HRESETN_HSPERI_BIU		124
++#define SRST_HRESETN_SDMMC		125
++#define SRST_HRESETN_FSPI		126
++#define SRST_SRESETN_FSPI		127
++#define SRST_PRESETN_SPI2		128
++#define SRST_ARESETN_MAC0		129
++#define SRST_ARESETN_MAC1		130
 +
-+static const struct iio_info mcp47feb02_info = {
-+	.read_raw = mcp47feb02_read_raw,
-+	.write_raw = mcp47feb02_write_raw,
-+	.read_label = mcp47feb02_read_label,
-+	.read_avail = &mcp47feb02_read_avail,
-+	.attrs = &mcp47feb02_attribute_group,
-+};
++/* CRU-->SOFTRST_CON18 */
++#define SRST_MRESETN_SAI2		131
++#define SRST_HRESETN_SAI2		132
++#define SRST_HRESETN_SAI3		133
++#define SRST_MRESETN_SAI3		134
++#define SRST_HRESETN_SAI4		135
++#define SRST_MRESETN_SAI4		136
++#define SRST_HRESETN_DSM		137
++#define SRST_MRESETN_DSM		138
++#define SRST_PRESETN_AUDIO_ADC		139
++#define SRST_MRESETN_AUDIO_ADC		140
 +
-+static const struct iio_info mcp47fvb02_info = {
-+	.read_raw = mcp47feb02_read_raw,
-+	.write_raw = mcp47feb02_write_raw,
-+	.read_label = mcp47feb02_read_label,
-+	.read_avail = &mcp47feb02_read_avail,
-+	.attrs = &mcp47feb02_attribute_group,
-+};
++/* CRU-->SOFTRST_CON19 */
++#define SRST_PRESETN_SARADC		141
++#define SRST_RESETN_SARADC		142
++#define SRST_RESETN_SARADC_PHY		143
++#define SRST_PRESETN_OTPC_NS		144
++#define SRST_RESETN_SBPI_OTPC_NS	145
++#define SRST_RESETN_USER_OTPC_NS	146
++#define SRST_PRESETN_UART5		147
++#define SRST_RESETN_UART5		148
++#define SRST_PRESETN_GPIO234_IOC	149
 +
-+static int mcp47feb02_parse_fw(struct iio_dev *indio_dev, const struct mcp47feb02_features *info)
-+{
-+	struct iio_chan_spec chanspec = mcp47febxx_ch_template;
-+	struct mcp47feb02_data *data = iio_priv(indio_dev);
-+	struct device *dev = &data->client->dev;
-+	struct iio_chan_spec *channels;
-+	u32 num_channels;
-+	int chan_idx = 0;
-+	u32 reg = 0;
-+	int ret;
++/* CRU-->SOFTRST_CON21 */
++#define SRST_ARESETN_VIO_BIU		150
++#define SRST_HRESETN_VIO_BIU		151
++#define SRST_HRESETN_RGA		152
++#define SRST_ARESETN_RGA		153
++#define SRST_RESETN_CORE_RGA		154
++#define SRST_ARESETN_VOP		155
++#define SRST_HRESETN_VOP		156
++#define SRST_RESETN_VOP			157
++#define SRST_PRESETN_DPHY		158
++#define SRST_PRESETN_DSI_HOST		159
++#define SRST_PRESETN_TSADC		160
++#define SRST_RESETN_TSADC		161
 +
-+	num_channels = device_get_child_node_count(dev);
-+	if (num_channels > info->phys_channels)
-+		return dev_err_probe(dev, -EINVAL, "More channels than the chip supports\n");
++/* CRU-->SOFTRST_CON22 */
++#define SRST_PRESETN_GPIO1_IOC		162
 +
-+	if (!num_channels)
-+		return dev_err_probe(dev, -EINVAL, "No channel specified in the devicetree.\n");
-+
-+	channels = devm_kcalloc(dev, num_channels, sizeof(*channels), GFP_KERNEL);
-+	if (!channels)
-+		return -ENOMEM;
-+
-+	device_for_each_child_node_scoped(dev, child) {
-+		ret = fwnode_property_read_u32(child, "reg", &reg);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Invalid channel number\n");
-+
-+		if (reg >= info->phys_channels)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "The index of the channels does not match the chip\n");
-+
-+		set_bit(reg, &data->active_channels_mask);
-+
-+		if (fwnode_property_present(child, "label"))
-+			fwnode_property_read_string(child, "label", &data->labels[reg]);
-+
-+		chanspec.address = reg;
-+		chanspec.channel = reg;
-+		channels[chan_idx] = chanspec;
-+		chan_idx++;
-+	}
-+
-+	indio_dev->num_channels = num_channels;
-+	indio_dev->channels = channels;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	data->phys_channels = info->phys_channels;
-+
-+	/*
-+	 * Check if microchip,vref-buffered and microchip,vref1-buffered are defined
-+	 * in the devicetree
-+	 */
-+	data->vref_buffered = device_property_read_bool(dev, "microchip,vref-buffered");
-+
-+	if (info->have_ext_vref1)
-+		data->vref1_buffered = device_property_read_bool(dev, "microchip,vref1-buffered");
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_init_ctrl_regs(struct mcp47feb02_data *data)
-+{
-+	int ret, i, vref_ch, gain_ch, pd_ch, pd_tmp;
-+	struct device *dev = &data->client->dev;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_VREF_REG_ADDR, &vref_ch);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, &gain_ch);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR, &pd_ch);
-+	if (ret)
-+		return ret;
-+
-+	gain_ch = gain_ch >> 8;
-+	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-+		data->chdata[i].ref_mode = (vref_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
-+		data->chdata[i].use_2x_gain = (gain_ch >> i)  & SET_GAIN_BIT;
-+
-+		/*
-+		 * Inform the user that the current voltage reference read from volatile
-+		 * register of the chip is different from the one from device tree.
-+		 * You can't have an external voltage reference connected to the pin and
-+		 * select the internal BandGap, because the VREF pin is either an input or
-+		 * an output. When the DAC’s voltage reference is configured as the VREF pin,
-+		 * the pin is an input. When the DAC’s voltage reference is configured as the
-+		 * internal band gap, the pin is an output.
-+		 */
-+		if (data->chdata[i].ref_mode == MCP47FEB02_INTERNAL_BAND_GAP) {
-+			if (data->phys_channels >= 4 && (i % 2)) {
-+				if (data->use_vref1)
-+					dev_info(dev, "cannot use Vref1 and internal BandGap");
-+			} else {
-+				if (data->use_vref)
-+					dev_info(dev, "cannot use Vref and internal BandGap");
-+			}
-+		}
-+
-+		pd_tmp = (pd_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
-+		data->chdata[i].powerdown_mode = pd_tmp ? (pd_tmp - 1) : pd_tmp;
-+		data->chdata[i].powerdown = !!(data->chdata[i].powerdown_mode);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_init_ch_scales(struct mcp47feb02_data *data, int vdd_mv,
-+				     int vref_mv, int vref1_mv)
-+{
-+	struct device *dev = &data->client->dev;
-+	int i, ret;
-+
-+	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-+		ret = mcp47feb02_init_scales_avail(data, vdd_mv, vref_mv, vref1_mv);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to init scales for ch i %d\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp47feb02_probe(struct i2c_client *client)
-+{
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-+	const struct mcp47feb02_features *info;
-+	struct device *dev = &client->dev;
-+	struct mcp47feb02_data *data;
-+	struct iio_dev *indio_dev;
-+	int vref1_mv = 0;
-+	int vref_mv = 0;
-+	int vdd_mv = 0;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(indio_dev);
-+	data->client = client;
-+	info = i2c_get_match_data(client);
-+	if (!info)
-+		return -EINVAL;
-+
-+	data->info = info;
-+
-+	if (info->have_eeprom) {
-+		data->regmap = devm_regmap_init_i2c(client, &mcp47feb02_regmap_config);
-+		indio_dev->info = &mcp47feb02_info;
-+	} else {
-+		data->regmap = devm_regmap_init_i2c(client, &mcp47fvb02_regmap_config);
-+		indio_dev->info = &mcp47fvb02_info;
-+	}
-+
-+	if (IS_ERR(data->regmap))
-+		return dev_err_probe(dev, PTR_ERR(data->regmap), "Error initializing i2c regmap\n");
-+
-+	indio_dev->name = id->name;
-+
-+	ret = mcp47feb02_parse_fw(indio_dev, info);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Error parsing devicetree data\n");
-+
-+	ret = devm_mutex_init(dev, &data->lock);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
-+	if (ret < 0)
-+		return ret;
-+
-+	vdd_mv = ret / 1000;
-+
-+	ret = devm_regulator_get_enable_read_voltage(dev, "vref");
-+	if (ret > 0) {
-+		vref_mv = ret / 1000;
-+		data->use_vref = true;
-+	} else {
-+		dev_info(dev, "Vref is unavailable, internal band gap can be used instead\n");
-+	}
-+
-+	if (info->have_ext_vref1) {
-+		ret = devm_regulator_get_enable_read_voltage(dev, "vref1");
-+		if (ret > 0) {
-+			vref1_mv = ret / 1000;
-+			data->use_vref1 = true;
-+		} else {
-+			dev_info(dev,
-+				 "Vref1 is unavailable, internal band gap can be used instead\n");
-+		}
-+	}
-+
-+	ret = mcp47feb02_init_ctrl_regs(data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Error initialising vref register\n");
-+
-+	ret = mcp47feb02_init_ch_scales(data, vdd_mv, vref_mv, vref1_mv);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(dev, indio_dev);
-+}
-+
-+static const struct i2c_device_id mcp47feb02_id[] = {
-+	{ "mcp47feb01", (kernel_ulong_t)&mcp47feb01_chip_info },
-+	{ "mcp47feb11", (kernel_ulong_t)&mcp47feb11_chip_info },
-+	{ "mcp47feb21", (kernel_ulong_t)&mcp47feb21_chip_info },
-+	{ "mcp47feb02", (kernel_ulong_t)&mcp47feb02_chip_info },
-+	{ "mcp47feb12", (kernel_ulong_t)&mcp47feb12_chip_info },
-+	{ "mcp47feb22", (kernel_ulong_t)&mcp47feb22_chip_info },
-+	{ "mcp47feb04", (kernel_ulong_t)&mcp47feb04_chip_info },
-+	{ "mcp47feb14", (kernel_ulong_t)&mcp47feb14_chip_info },
-+	{ "mcp47feb24", (kernel_ulong_t)&mcp47feb24_chip_info },
-+	{ "mcp47feb08", (kernel_ulong_t)&mcp47feb08_chip_info },
-+	{ "mcp47feb18", (kernel_ulong_t)&mcp47feb18_chip_info },
-+	{ "mcp47feb28", (kernel_ulong_t)&mcp47feb28_chip_info },
-+	{ "mcp47fvb01", (kernel_ulong_t)&mcp47fvb01_chip_info },
-+	{ "mcp47fvb11", (kernel_ulong_t)&mcp47fvb11_chip_info },
-+	{ "mcp47fvb21", (kernel_ulong_t)&mcp47fvb21_chip_info },
-+	{ "mcp47fvb02", (kernel_ulong_t)&mcp47fvb02_chip_info },
-+	{ "mcp47fvb12", (kernel_ulong_t)&mcp47fvb12_chip_info },
-+	{ "mcp47fvb22", (kernel_ulong_t)&mcp47fvb22_chip_info },
-+	{ "mcp47fvb04", (kernel_ulong_t)&mcp47fvb04_chip_info },
-+	{ "mcp47fvb14", (kernel_ulong_t)&mcp47fvb14_chip_info },
-+	{ "mcp47fvb24", (kernel_ulong_t)&mcp47fvb24_chip_info },
-+	{ "mcp47fvb08", (kernel_ulong_t)&mcp47fvb08_chip_info },
-+	{ "mcp47fvb18", (kernel_ulong_t)&mcp47fvb18_chip_info },
-+	{ "mcp47fvb28", (kernel_ulong_t)&mcp47fvb28_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, mcp47feb02_id);
-+
-+static const struct of_device_id mcp47feb02_of_match[] = {
-+	{ .compatible = "microchip,mcp47feb01", .data = &mcp47feb01_chip_info },
-+	{ .compatible = "microchip,mcp47feb11", .data = &mcp47feb11_chip_info },
-+	{ .compatible = "microchip,mcp47feb21", .data = &mcp47feb21_chip_info },
-+	{ .compatible = "microchip,mcp47feb02", .data = &mcp47feb02_chip_info },
-+	{ .compatible = "microchip,mcp47feb12", .data = &mcp47feb12_chip_info },
-+	{ .compatible = "microchip,mcp47feb22", .data = &mcp47feb22_chip_info },
-+	{ .compatible = "microchip,mcp47feb04", .data = &mcp47feb04_chip_info },
-+	{ .compatible = "microchip,mcp47feb14", .data = &mcp47feb14_chip_info },
-+	{ .compatible = "microchip,mcp47feb24", .data = &mcp47feb24_chip_info },
-+	{ .compatible = "microchip,mcp47feb08", .data = &mcp47feb08_chip_info },
-+	{ .compatible = "microchip,mcp47feb18", .data = &mcp47feb18_chip_info },
-+	{ .compatible = "microchip,mcp47feb28", .data = &mcp47feb28_chip_info },
-+	{ .compatible = "microchip,mcp47fvb01", .data = &mcp47fvb01_chip_info },
-+	{ .compatible = "microchip,mcp47fvb11", .data = &mcp47fvb11_chip_info },
-+	{ .compatible = "microchip,mcp47fvb21", .data = &mcp47fvb21_chip_info },
-+	{ .compatible = "microchip,mcp47fvb02", .data = &mcp47fvb02_chip_info },
-+	{ .compatible = "microchip,mcp47fvb12", .data = &mcp47fvb12_chip_info },
-+	{ .compatible = "microchip,mcp47fvb22", .data = &mcp47fvb22_chip_info },
-+	{ .compatible = "microchip,mcp47fvb04", .data = &mcp47fvb04_chip_info },
-+	{ .compatible = "microchip,mcp47fvb14",	.data = &mcp47fvb14_chip_info },
-+	{ .compatible = "microchip,mcp47fvb24", .data = &mcp47fvb24_chip_info },
-+	{ .compatible = "microchip,mcp47fvb08", .data = &mcp47fvb08_chip_info },
-+	{ .compatible = "microchip,mcp47fvb18", .data = &mcp47fvb18_chip_info },
-+	{ .compatible = "microchip,mcp47fvb28", .data = &mcp47fvb28_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mcp47feb02_of_match);
-+
-+static struct i2c_driver mcp47feb02_driver = {
-+	.driver = {
-+		.name	= "mcp47feb02",
-+		.of_match_table = mcp47feb02_of_match,
-+		.pm	= pm_sleep_ptr(&mcp47feb02_pm_ops),
-+	},
-+	.probe		= mcp47feb02_probe,
-+	.id_table	= mcp47feb02_id,
-+};
-+module_i2c_driver(mcp47feb02_driver);
-+
-+MODULE_AUTHOR("Ariana Lazar <ariana.lazar@microchip.com>");
-+MODULE_DESCRIPTION("IIO driver for MCP47FEB02 Multi-Channel DAC with I2C interface");
-+MODULE_LICENSE("GPL");
-
++#endif
 -- 
-2.43.0
+2.34.1
 
 
