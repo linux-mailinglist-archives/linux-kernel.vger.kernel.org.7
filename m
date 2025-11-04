@@ -1,160 +1,117 @@
-Return-Path: <linux-kernel+bounces-884087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3ACC2F538
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 05:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B251C2F54E
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1D694E9077
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 04:57:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D6704E2161
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE4F284B29;
-	Tue,  4 Nov 2025 04:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E88327F75F;
+	Tue,  4 Nov 2025 05:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WttHRPDw";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WttHRPDw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJxeridB"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2CA23D294
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 04:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563E51DFF0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762232259; cv=none; b=quRhJKUyS/wYX6IiR+Luaj0MAOWIyG3wjdHTmZUF6xIX6fPBPfNYYg1IoO4QiHnPbw3jTDKWFdC0XWbPacCOp3sEF12m7PvJ1Agx/Fs/CAK+xSyuKANDKMWxu+s9cOXYrQ40HwjfkrMh5LOXockd9OhuPlWJfQjbtibh4br/3/U=
+	t=1762232564; cv=none; b=Sxm0KDHqJHiT/nlNNFn4NmhHQ7h1gwZRkcIg9CDpUT/14J8BIOBZ/CQ+Mrz/q63oV1khcU60Wl0pkENOhkKmiP5e0MsjnDS6dajl2F2ESV0PqVeSCXWZGT+Yv8XRRDia9yBoJLW8ItoO+xGpP2ZIv+UPSIp1eK8nPzrhSsf1nTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762232259; c=relaxed/simple;
-	bh=69LaS1QlxuMXdaOOQ1JpKetzMbIOE2x5XfWZBqeeXtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ic60SVxcfNCNqEWgBU9hU6YxXggVI+lxR9nuGKtsVYWvY+Lir2gudn1UwawQwN6L5hJ0qrxcs8SvDyBXcfeVya0sr4lsdwuZuOr6WecSN+VsfUARmaQeBM+E/Xl9blFkhRriUySUP8zAbOwGBnOnV16JCuP22uxhEC7mf+q2r0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WttHRPDw; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WttHRPDw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7B8151F385;
-	Tue,  4 Nov 2025 04:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762232255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXrUQAijZQMZm8mRDIGstRfRq2ikHcx/hnTqL0Q8fMw=;
-	b=WttHRPDw+F91PB5YkUcu/qDzt5MTPZLnMtGDPUWyuB8FRtIuPNTLdkzZitcpC0+kRb/BNg
-	dLPkZ7Ftb5fwOkwnG5AFNwUI+8NVMFHjRre2P9xhxWmKrapEkmI38twUFERfXXN3+vj38G
-	UJF8CVZbvkQd9sQnHQwIPHtlWgjjJtI=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=WttHRPDw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762232255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXrUQAijZQMZm8mRDIGstRfRq2ikHcx/hnTqL0Q8fMw=;
-	b=WttHRPDw+F91PB5YkUcu/qDzt5MTPZLnMtGDPUWyuB8FRtIuPNTLdkzZitcpC0+kRb/BNg
-	dLPkZ7Ftb5fwOkwnG5AFNwUI+8NVMFHjRre2P9xhxWmKrapEkmI38twUFERfXXN3+vj38G
-	UJF8CVZbvkQd9sQnHQwIPHtlWgjjJtI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74AD3139A9;
-	Tue,  4 Nov 2025 04:57:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XQp2HL+HCWmkFQAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Tue, 04 Nov 2025 04:57:35 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.18-rc5
-Date: Tue,  4 Nov 2025 05:57:28 +0100
-Message-ID: <cover.1762230638.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762232564; c=relaxed/simple;
+	bh=NnkoEv9aNK4Of098YGCNNK01iawIJsiNdU9WkaijWI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e58yeF7EwvF9xhQLquVBCf8V7kzfL1j/mzlololwILmnayLVKpPraQFCW6aqHUefrk5bTBoFMM/AKaJYXnpuSNJwPyDFrKKKtadJedMNMrJ5dk8QCjy7WZ5s7JRLavMpZQBXDKoemJUDfKhqUttIG1SS7YhuhmSNy8BIgj5kyy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJxeridB; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7042e50899so888071866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 21:02:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762232560; x=1762837360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NnkoEv9aNK4Of098YGCNNK01iawIJsiNdU9WkaijWI8=;
+        b=fJxeridBtxX+nlwWEifbjaH+AY5CgS8m9SGxSGqd60f0zjOg2XsVOSQNRG17HFtj4e
+         jUOffmx9hcOA6avn9aCOchxWLxxKOGo90sDDN23nA/uB/CG/SIt60RLgJ0qdRfcszmuF
+         5ulkJpJOcaUZ7Shznme1zrwHFK8GbjsTfQffSO0HXnLdZTp4lq7KQd7AOK2ivNuRjrfV
+         eqr0j9R6fxuhD3xalk29QqCWKSjCjTMd7YOdqHnKwcuk+6lfkcacXGf54wcxFQTg5GST
+         TMmhLN7T2DoShPGQdGC15tFgyuyYoNvJHdV3ZsSmOW/zhIcNFG4iye06vphwPDX5yqh9
+         Dofg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762232560; x=1762837360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NnkoEv9aNK4Of098YGCNNK01iawIJsiNdU9WkaijWI8=;
+        b=upbHDIINsElkWp4x5g8/0uZO3gqaIiS2DSphPWkBRpYLdytcKuR6rTehzK54V7uMlz
+         GjSgUbpU/KtBh/QIfv+DRoK8UHG8vCMGoajUrDftUVfwpg/kb3iMWljDuVPQC3679v7q
+         Zrr+TqErnO/gG+tyhSMud6l2wKVq9DbjluDsEmyj6h18zYhGI46RDM87DXLspFAhlqd5
+         B7epBfe0jBzNWzvYa1gF1HU/RWoEhqPGXDWTbzen9rzLtZY6ObLeAoWwc73K5w0OPwtG
+         6MBG8lC/n28H8uogdcC1bHcyqGZ076J7wNi/sFRztsuweser7E0cGD7qtKPv+Y6xHm5s
+         ppcg==
+X-Gm-Message-State: AOJu0YwjYnq1+UKYGqNwoIg9wt84ZyXpO7UpKNIApyk9QRneIYYrrAWy
+	rHWwLf/xsWCjcAloGSWfcVeSYtg2fOMvYbC23GVMJdRnoqlc1QsXwCdpFL4Wvhk3KmKVeyPMtQd
+	1NIsUNQC0kl+xeVKhvWklT4Kl7XjkbpXLKQ==
+X-Gm-Gg: ASbGnctDoCjF5XwbJl4mQz+FxqZbS2OSj/ry/KocZwPORFhUlc79TomN4/dF5u2uMtk
+	LAWjCq1qxvQ4x5AfrcMOE5bUdR/d0ny6YVRSyTM/VEcB+BscATlBPfS4jPLnD71uQM3AG5sKKZf
+	vC3oIpamyyNrW8FIRt7ob8idjLqyuXZPBY6i1oLQrX+x6ZkcJVXBvbh7kW1dg1HYhb6Cig9rUSQ
+	vXoyARjvKjkTM299BsyND/vjYgY5QNKbwvXPpXBGY40hwi5y5rNHdp7cpIsAw==
+X-Google-Smtp-Source: AGHT+IHPJe2rIt5BN19iN24bUfRnZZt/qWIXMVAt0IaSqmQIj7Z++U4fzkWV4WoYhVI/8dQepyt+iNqcgMaHgR2WWqE=
+X-Received: by 2002:a17:906:ee89:b0:b44:f9fe:913a with SMTP id
+ a640c23a62f3a-b70708a2d37mr1410981466b.65.1762232560422; Mon, 03 Nov 2025
+ 21:02:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7B8151F385
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.com:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Score: -3.01
+References: <CAOuPNLh4R=H0BfQ4f13woGzc82jX9LGB+kxAGeGVkhwYqKcg4w@mail.gmail.com>
+ <19a481a7843.53422ba121754.4867625372707455852@siddh.me>
+In-Reply-To: <19a481a7843.53422ba121754.4867625372707455852@siddh.me>
+From: Pintu Kumar Agarwal <pintu.ping@gmail.com>
+Date: Tue, 4 Nov 2025 10:32:28 +0530
+X-Gm-Features: AWmQ_bnehoVqnMZ_GeHn98TM5n3M8hAZ8c6cEJCNStbHsr3LptgmmL1_nKH6dkA
+Message-ID: <CAOuPNLhMcPJ_vkvyDKTW1c4TcSYusrzrAdu8khazHoy3txJGDw@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=C2=A0Query=3A_Y2038_patch_series_for_3=2E18_Kernel?=
+To: Siddh Raman Pant <sanganaka@siddh.me>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	kernelnewbies <kernelnewbies@kernelnewbies.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 3 Nov 2025 at 10:35, Siddh Raman Pant <sanganaka@siddh.me> wrote:
+>
+> Mon, 03 Nov 2025 09:57:18 +0530 =E0=A4=95=E0=A5=8B Pintu Kumar Agarwal =
+=E0=A4=A8=E0=A5=87 =E0=A4=B2=E0=A4=BF=E0=A4=96=E0=A4=BE :
+> > We have an arm32 based embedded product which is based on the 3.18
+> > kernel and a simple busybox.
+> > We wanted to support the Y2038 issue on this older kernel.
+> > Is this feasible
+> > Do we have the Y2038 separate patches available for both kernel and use=
+rspace
+> > ?
+> > Or upgrading the kernel is the only option ?
+>
+> Upgrading is a much much better option.
+>
+Yes, I understand, but upgrading the kernel on this older SoC brings
+more complexities, challenges and time taking.
+Customers also do not agree for the upgrade at this stage and they are
+looking for alternatives.
+So, we are exploring both the options right now.
 
-please pull a few more short fixes. Thanks.
+Are there any patchset maintained separately for this Y2038 issue for
+each kernel version to have a look ?
 
-- fix memory leak in qgroup relation ioctl when qgroup levels are
-  invalid
 
-- don't write back dirty metadata on filesystem with errors
-
-- properly log renamed links
-
-- properly mark prealloc extent range beyond inode size as dirty
-  (when no-noles is not enabled)
-
-----------------------------------------------------------------
-The following changes since commit ada7d45b568abe4f1fd9c53d66e05fbea300674b:
-
-  btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree() (2025-10-22 09:40:07 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-rc4-tag
-
-for you to fetch changes up to 3b1a4a59a2086badab391687a6a0b86e03048393:
-
-  btrfs: mark dirty extent range for out of bound prealloc extents (2025-10-30 19:18:18 +0100)
-
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: set inode flag BTRFS_INODE_COPY_EVERYTHING when logging new name
-
-Qu Wenruo (1):
-      btrfs: ensure no dirty metadata is written back for an fs with errors
-
-Shardul Bankar (1):
-      btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
-
-austinchang (1):
-      btrfs: mark dirty extent range for out of bound prealloc extents
-
- fs/btrfs/extent_io.c |  8 ++++++++
- fs/btrfs/file.c      | 10 ++++++++++
- fs/btrfs/inode.c     |  1 -
- fs/btrfs/qgroup.c    |  4 +++-
- fs/btrfs/tree-log.c  |  3 +++
- 5 files changed, 24 insertions(+), 2 deletions(-)
+Thanks,
+Pintu
 
