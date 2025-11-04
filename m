@@ -1,137 +1,172 @@
-Return-Path: <linux-kernel+bounces-885021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20E3C31C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:13:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02C1C31BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FB69500779
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C661882FDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E4F2566D9;
-	Tue,  4 Nov 2025 15:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3332F770;
+	Tue,  4 Nov 2025 15:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="e9Ddh+tb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgNfDg2f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DE925228D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73F632F764;
+	Tue,  4 Nov 2025 15:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268454; cv=none; b=PXqXjISysOnveLmS30rKN0JfhKLwyqzAqrxLCPsOE1rY0CPiYJ33XPC5PVBOyiAN8uzULxFNDlXqosjPwswYJoACosXQVkDF618WUkuWfzjyq3bJDlQPx5lAI6BB/VQdVVZXPn+eAUpovVy5s8QqAiLS/ikWamysqQ+dqOvUS/A=
+	t=1762268553; cv=none; b=RCk3duZD3aZ0JTHVrFKd3sqLwUf/AVtqqbJR5OFiGJ5d04fZN1JLR4NgKcTd61GxvJ3UJHFvZS3zDu/Ho2bflkzNQQmT2VaQaQDSZm0RVPzdFPYDF2GVVFoe5+7zsAuWQGiBIBWBc9h63e+D8Fhv99jZJ1oNl3A93YOidzDhAA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268454; c=relaxed/simple;
-	bh=eKDPwZQ/Fbb+gmQTh99oVMn5UPkffNUDx43TdAguj8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p2yuuojyru7kUhNRHJQDsNfvb8gHp3YimQBnMAa7z/Bs4FUEdetq5QN5Oxj65pEkZ80ZrOBkieZGVBRcN3YUsj1CC5AG6Z2E3LRwPxgDCi0qO3FJCZeHmVFCYRNZlB+Sc4Lbk0RxVpIO5GRWsYA8nmFXaaeOyr5YNkr2FVstRXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=e9Ddh+tb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E959C116C6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:00:53 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="e9Ddh+tb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1762268447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OMhMo+FD0DPSdoRsPCCV4u9kNEQr9FX1sBqbPLxKSmw=;
-	b=e9Ddh+tbPemMu4NFBccXkLnLDM3vJ4ese90fY0pNIcBBjgDo0Arpv+xbtlGeNVdh39Hhu7
-	do3Ax6+TLlQSZ6xNCzguJ841TJ1h+VlVKHXv+8YGIzu/1xzMHhy6nzGENNvPAb83wLkq5x
-	g9RHszjdyHjJ+tDfsZXoI9CtL41WoKU=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eaf9fdfb (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Tue, 4 Nov 2025 15:00:47 +0000 (UTC)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3c9859913d0so3728602fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 07:00:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX3HkbP8seA64QPzQrKBCutxWqzmY0syt6FNiXnUUnDCl0KQG3zPEZRTiB/X1FsCPw6xk6avQHCE7RzmcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxznmP9FRjg/sxYSIFDD2a2GCLAdFLwGDzWTkCiSXX11rEvp/4t
-	Hkf2KFTiw7211CEvvPx+pedKZ8IAQeNR7Y00CNO2gjiBugJ7sSBLp1AIY7Y0gQRx8vLbo38QGwU
-	QD4Po/18vAbMvZivphVm9Di/MnIMOEI8=
-X-Google-Smtp-Source: AGHT+IHXS/SPuiVMTem3zW3lMfDHfTOu6xBk8bXomDTl8LZ2Y5WSDsvq0QVQ9T156CV0BIURiYsG8QmzmpZKLMW6ZMw=
-X-Received: by 2002:a05:6870:c6a4:b0:3d1:8919:71f8 with SMTP id
- 586e51a60fabf-3dace28f2bbmr7683653fac.48.1762268444983; Tue, 04 Nov 2025
- 07:00:44 -0800 (PST)
+	s=arc-20240116; t=1762268553; c=relaxed/simple;
+	bh=MadU7Wv2vfsfU9rqxO2fTQYHoMOiOoJoCOKIT1cZTLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6QaFyHKzEgqnqmDpvLSo7uP5+wbz+x2vAqcUK4ixY4RiOPQ+D3S+HChsit9KuDSu+OAT4wa5zlsT0fRIinoSVSXUuG28m15MW9pwn6/kKprh8M4IlnydKB/SpaKvn4VYcTY9byrcKFF39Wzkt0K1TVdxZcVOimkfidpErw1AKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgNfDg2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DCBC4CEF7;
+	Tue,  4 Nov 2025 15:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762268553;
+	bh=MadU7Wv2vfsfU9rqxO2fTQYHoMOiOoJoCOKIT1cZTLU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dgNfDg2fnXX0TptesTHXdDR4JOXlDtK18bxuZ7ClkWYJuSD4ljAzkBLuEgYZ3apdw
+	 evFm7tNP9CKuq0Wv3j1w5kvBaqWKFzyKQOczGvuK6glxKTzmYFjXDOsYBvf7ORqzzt
+	 oUNj5to1+jkhjT5lahTx/xFGw1Y/v2GNaTxxYgcJBSeWkGA0m98fCl0gI7H09U4Upn
+	 nLhsxOt9/T10PgNZFxOsYaAnfLTW1P/4Z0mbv8BEUvDN7lAQZ6h5VuZn9XP9hWNF2e
+	 lcSGuL1o3PTlc+bA/SnKE5IOpyCSHAcGHc5MCKWxvJeE2exkT01CLEelrIrbpeXMZS
+	 nwTyXpC5bhgRQ==
+Message-ID: <8f6189b0-24ac-4e24-9db5-c6f4d1bfb26a@kernel.org>
+Date: Tue, 4 Nov 2025 16:02:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aPT9vUT7Hcrkh6_l@zx2c4.com> <176216536464.37138.975167391934381427@copycat>
- <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local> <176221415302.318632.4870393502359325240@copycat>
- <20251104132118.GCaQn9zoT_sqwHeX-4@fat_crate.local> <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
-In-Reply-To: <CAHmME9o+cVsBzkVN9Gnhos+4hH7Y7N6Sfq9C5G=bkkz=jzRUUA@mail.gmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 4 Nov 2025 16:00:33 +0100
-X-Gmail-Original-Message-ID: <CAHmME9rRyBoqA8CnCBLFMioZjkPG0tai-y2g0OMRFrSMrLK52w@mail.gmail.com>
-X-Gm-Features: AWmQ_bnIdZ7LrOKmoG9HwsEkExs0NstjDaUgbpjdU1BMe4dlJHZfzqS78EGxxT8
-Message-ID: <CAHmME9rRyBoqA8CnCBLFMioZjkPG0tai-y2g0OMRFrSMrLK52w@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an error.
-To: Borislav Petkov <bp@alien8.de>
-Cc: Christopher Snowhill <chris@kode54.net>, Gregory Price <gourry@gourry.net>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org, 
-	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com, 
-	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com, 
-	darwi@linutronix.de, stable@vger.kernel.org, thiago.macieira@intel.com, 
-	jonas@jkvinge.net
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
+ compatible
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
+ <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
+ <20251104-glaring-rebel-pillbug-a467ca@kuoka>
+ <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
+ <b6717831-1840-4b9a-aade-ab2248e3f75d@kernel.org>
+ <9ee07db9-508e-4c08-8f79-6ccfd9b646ab@oss.qualcomm.com>
+ <6af33c1b-5b95-4efc-b429-5bfb9ee7caeb@kernel.org>
+ <8cf870a8-706d-4514-a87a-a69b64521ab5@oss.qualcomm.com>
+ <f539b21b-cfe8-4055-9620-4d5d8d108098@kernel.org>
+ <9d80b581-5d3f-4b95-91e7-c73c113b0976@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9d80b581-5d3f-4b95-91e7-c73c113b0976@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The documentation really isn't helping things either.
+On 04/11/2025 15:58, Konrad Dybcio wrote:
+> On 11/4/25 3:52 PM, Krzysztof Kozlowski wrote:
+>> On 04/11/2025 15:38, Konrad Dybcio wrote:
+>>> On 11/4/25 3:37 PM, Krzysztof Kozlowski wrote:
+>>>> On 04/11/2025 15:35, Konrad Dybcio wrote:
+>>>>> On 11/4/25 3:26 PM, Krzysztof Kozlowski wrote:
+>>>>>> This I got, but nothing here explains why you need generic compatible.
+>>>>>> To re-iterate: there was no generic compatible before, now there is.
+>>>>>> Writing bindings and numerous reviews from DT maintainers ask not to use
+>>>>>> generic compatibles.
+>>>>>
+>>>>> OK so let's not worry about a generic compatible. IMEM exists since
+>>>>> MSM8974 and it only had major hw updates with SM8550. They don't
+>>>>> impact the software interface though, so qcom,msm8974-imem is OK.
+>>>>>
+>>>>> There's a separate control/status register address space for each
+>>>>> instance of this IP (usually far apart from the actual SRAM pool),
+>>>>> which Linux doesn't have to care about.
+>>>>
+>>>> Just use qcom,kaanapali-imem - that's the first device here without syscons.
+>>>
+>>> So we don't want to move the existing ones over?
+>>
+>> This was never discussed and this patch did not do it. You cannot move
+>> them, that's ABI.
+> 
+> I see, I implicitly assumed this would be a sweeping change.
+> 
+> So should the Kaanapali submitters simply send a version of this
+> patch with:
+> 
+> - oneOf:
+>   - const: qcom,kaanapali-imem
+>   - items:
+>     # existing big list
+> 
+> ?
+> 
+> I'm not a huge fan of using kaanapali as the fallback-going-forward
+> since it's literally the newest platform on the shelves (or perhaps
+> not even on the shelves yet..) so it's going to look funny when
+> someone comes up with support for another 2013 soc.. but perhaps
+> that's just how things are supposed to be
 
-https://doc.qt.io/qt-6/qrandomgenerator.html
 
-From the intro: "QRandomGenerator::securelySeeded() can be used to
-create a QRandomGenerator that is securely seeded with
-QRandomGenerator::system(), meaning that the sequence of numbers it
-generates cannot be easily predicted. Additionally,
-QRandomGenerator::global() returns a global instance of
-QRandomGenerator that Qt will ensure to be securely seeded." And then
-later, reading about QRandomGenerator::global(), it starts by saying,
-"Returns a pointer to a shared QRandomGenerator that was seeded using
-securelySeeded()."
+Yes. Feel free to choose other fully compatible device as the fallback,
+like you mentioned in previous email, I proposed Kaanapali as the easiest.
 
-Sounds great, like we should just use QRandomGenerator::global() for
-everything, right? Wrong. It turns out QRandomGenerator::system() is
-the one that uses 1,2,3,4,5,(6godforbid) in my email above.
-QRandomGenerator::global(), on the contrary uses
-"std::mersenne_twister_engine<quint32,32,624,397,31,0x9908b0df,11,0xffffffff,7,0x9d2c5680,15,0xefc60000,18,1812433253>".
-
-So then you keep reading the documentation and it mentions that
-::system() is "to access the system's cryptographically-safe random
-generator." So okay maybe if you're really up with the lingo, you'll
-know to use that. But to your average reader, what's the difference
-between "securely seeded" and "system's cryptographically-safe random
-number generator"? And even to me, I was left wondering what exactly
-was securely seeded before I looked at the source. For example,
-OpenBSD's arc4random securely seeds a chacha20 instance in libc before
-proceeding. That's a lot different from std::mersenne_twister_engine!
-
-I was looking for uses of ::system() on my laptop so that I could
-verify the behavior described in my last email dynamically, when I
-came across this from my favorite music player (author CC'd):
-https://github.com/strawberrymusicplayer/strawberry/blob/master/src/utilities/randutils.cpp#L50
-
-QString CryptographicRandomString(const int len) {
-  const QString
-UseCharacters(u"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"_s);
-  return GetRandomString(len, UseCharacters);
-}
-QString GetRandomString(const int len, const QString &UseCharacters) {
-  QString randstr;
-  for (int i = 0; i < len; ++i) {
-    const qint64 index = QRandomGenerator::global()->bounded(0,
-UseCharacters.length());
-
-Using ::global() for something "cryptographic". I don't blame the
-author at all! The documentation is confusing as can be.
-
-And this is all on top of the fact that ::system() is pretty mucky, as
-described in my last email.
-
-Jason
+Best regards,
+Krzysztof
 
