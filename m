@@ -1,139 +1,101 @@
-Return-Path: <linux-kernel+bounces-884241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E3FC2FB94
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:53:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823EEC2FBAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CE92234CBB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAA83AFE61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57623101D2;
-	Tue,  4 Nov 2025 07:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A293112C4;
+	Tue,  4 Nov 2025 07:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4yROKUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="M0DKv6WG"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E061430AAB8;
-	Tue,  4 Nov 2025 07:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3413E30FC2A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762242784; cv=none; b=HpIv9uEBH4A1S3RR+xU4gP5mtJxKU1kAOLEvKMknty6u2NBuywqp6uWAUleGeKUa7KEGMAq3T6TvbqhOGNqqTnto1rNaAZ6lYPO8+ijNCb9h6lgRfe3dGK2tXZnDMGTGtBmEfBq8/f9/EQfGgSo95cacu01WeWQ1ZcjhAlO1MAk=
+	t=1762242952; cv=none; b=mkk6yO2MQJ3CIrfRC2CcvFOeyazha3qgEH58NJoOLr9lIt+p08Nxnj+WyAAl3lbEV154BZI9LFSKpRzd4WIEMnQ0N2p+at96tVGeEKjueEIICfjXFEL6ExtpEd+sLRiJzg3En0PfZANJIQnfanKmAgTnVy5JLEuVvY6mSxo+VpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762242784; c=relaxed/simple;
-	bh=lGIbceyVZgdKoxAlgrENOyuI7iqdDhBBFcc98C3lKn0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rqDe8JC8vWeexLCQcKgdzxPhgMKA1epB0ndkEktCccV8f0JCpZXq7EZiJd0BSWJpjvKZr2939WZQN65bETTpkn/rHe8lIh8C8J5GuIOOGy5SJr6rHHnnxDnWk5Jv1LQdSmeI/1gjeuV97huhReh/X5BS1bPQZqASI69VO1ZWzz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4yROKUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E8A2C4CEF7;
-	Tue,  4 Nov 2025 07:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762242780;
-	bh=lGIbceyVZgdKoxAlgrENOyuI7iqdDhBBFcc98C3lKn0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=j4yROKUVgRxS9OZJC90/SHA8XCPDVvwVHDTgceh+mCs64FFENtqjNn3VC2cS3YHRS
-	 Vh89i49TvVRT0q9eqdMJYy6UnQ4flTEkFee+vNQ+LDBtPs6JzXOg9rqYQ1l4R+DhcE
-	 OKQGVXbTY9tU25yQyQP/GPDQop+9ZGgyxC6t3ereLkJQbDn6Ob5K1plMoN0NTftZxP
-	 H0zc0vdg/o5PK4tKAehZQ7H8UtwncmtwY6oH+6QVwjaU8ikukGQIRaxvlWW+ISd3QU
-	 to0NJLl+MiSLIdyT3IYNIGJSnGwpG80zYDO7P7ohAcYwUyIFI+7D4Iv2WyVwNsWwgM
-	 89d6ggsAvvugA==
-Date: Tue, 4 Nov 2025 00:52:53 -0700 (MST)
-From: Paul Walmsley <pjw@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: Paul Walmsley <pjw@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
-    Andy Chiu <andybnac@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, kito.cheng@sifive.com, 
-    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
-    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
-    broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v22 17/28] riscv/signal: save and restore of shadow stack
- for signal
-In-Reply-To: <d442965b-8716-4f89-be88-bc62459af712@infradead.org>
-Message-ID: <febe1a8a-a68b-1af8-a9d5-1b5f510ecab3@kernel.org>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com> <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org> <d442965b-8716-4f89-be88-bc62459af712@infradead.org>
+	s=arc-20240116; t=1762242952; c=relaxed/simple;
+	bh=6WnXT9HQaHJrS9j1P9POUxpQdXqRdks5mqiWPYe/60I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EltDN7bTurbJ5cAMJOkTZVyxVoLaTxdRKLQgR3WIfqTCrlFR4NFhCgFePB853hfuKn32vwiLNk7WZ92prbLJm93ZVdVfj+6iU09mR9Mu+xxs3XBoZJno3w4vrQTH4AyLp33GpAWlTbKdiq+uGJ4Bp3N4v/HciJFqCjFIqiVZfm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=M0DKv6WG; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=TUtKpYDIHuKRFyrLUMsfR7FjJX4crrKYSXgptWij7qo=;
+	b=M0DKv6WGTzPX1EkgHOmhX1DzI0XAzT54raZYRJee3MH/syyLn+W1+g9BnucvYimGZjtiE2nHH
+	ovureVHhfPs7MNPmDI3YpJJ8+jTCnQJmbXo88Tn+PVlNG/85H2bl00UAW3Ryx/Zzyqvx+1aTRSC
+	5kvXGpSSal7dvLaQQOurgcY=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d111b0rcPz1cySR;
+	Tue,  4 Nov 2025 15:54:11 +0800 (CST)
+Received: from kwepemk500012.china.huawei.com (unknown [7.202.194.97])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0829F1A016C;
+	Tue,  4 Nov 2025 15:55:46 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500012.china.huawei.com (7.202.194.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 15:55:45 +0800
+From: Bowen Yu <yubowen8@huawei.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <beata.michalska@arm.com>,
+	<ptsm@linux.microsoft.com>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>
+CC: <zhanjie9@hisilicon.com>, <prime.zeng@hisilicon.com>,
+	<wanghuiqiang@huawei.com>, <xuwei5@huawei.com>, <zhenglifeng1@huawei.com>,
+	<yubowen8@huawei.com>, <zhangpengjie2@huawei.com>
+Subject: [PATCH 0/3] arm64: topology: Improve cpuinfo_avg_freq for ARM64
+Date: Tue, 4 Nov 2025 15:55:41 +0800
+Message-ID: <20251104075544.3243606-1-yubowen8@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500012.china.huawei.com (7.202.194.97)
 
-Hi Randy,
+This series addresses several issues in CPU avgfreq reporting:
 
-On Fri, 31 Oct 2025, Randy Dunlap wrote:
+Patch 1:
+- Implements direct frequency calculation using AMU counters:
+  freq = (core_cycles_delta * timer_freq) / (const_cycles_delta 
+  * HZ_PER_KHZ)
+- Eliminates precision loss from SCHED_CAPACITY_SHIFT bit-shifting
 
-> 
-> On 10/31/25 1:07 PM, Paul Walmsley wrote:
-> > On Thu, 23 Oct 2025, Deepak Gupta via B4 Relay wrote:
-> > 
-> >> Save shadow stack pointer in sigcontext structure while delivering signal.
-> >> Restore shadow stack pointer from sigcontext on sigreturn.
-> 
-> > This patch causes some 'checkpatch.pl --strict' messages:
-> > 
-> > CHECK: Comparison to NULL could be written "!saved_shstk_ptr"
-> > #271: FILE: arch/riscv/kernel/usercfi.c:186:
-> > +	if (saved_shstk_ptr == NULL)
-> > 
-> > CHECK: Lines should not end with a '('
-> > #300: FILE: arch/riscv/kernel/usercfi.c:215:
-> > +		pr_info_ratelimited(
-> > 
-> > I've fixed them up here in the event that v22 goes in, but please do the 
-> > same on your side in case a new version is needed.
-> 
-> Is checkpatch.pl --strict the norm for arch/riscv/ ?
+Patch 2:
+- Resolves unreliable cpuinfo_avg_freq behavior during idle periods
+- Replaces invalid returns with governor's current frequency as fallback
+  value when all CPUs in policy are idle
 
-I run it on every patch I review.  I usually implement the formatting 
-recommendations, in the interest of keeping the codebase formatted in a 
-standard way across submitters.
+Patch 3:
+- Removes redundant housekeeping_cpu() check
 
-> If there are enough arch/riscv/-specific patch expectations,
-> maybe they could be documented in Documentation/process/maintainer-riscv.rst
-> (a new file).
+Bowen Yu (3):
+  arm64: topology: Improve AMU-based frequency calculation
+  arm64: topology: Use current freq in governor for idle cpus in
+    cpuinfo_avg_freq
+  arm64: topology: Remove redundant housekeeping_cpu() checks in
+    arch_freq_get_on_cpu
 
-It never occurred to me as being arch/riscv specific, in the sense that, 
-if --strict wasn't more broadly useful across the entire kernel tree, then 
-we should just remove it from checkpatch.pl entirely.  In other words, 
-probably everyone should use it.  There are false positive warnings, of 
-course, including at least one with this patch set; but then again, there 
-are regular false positive warnings with non-strict checkpatch (also with 
-this patch set).
+ arch/arm64/kernel/topology.c | 40 +++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
 
-In any case, thanks for the suggestion, and will consider.
-
-
-- Paul
+-- 
+2.33.0
 
 
