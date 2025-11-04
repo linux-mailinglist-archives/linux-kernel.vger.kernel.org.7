@@ -1,176 +1,145 @@
-Return-Path: <linux-kernel+bounces-885159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C807C3226A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:54:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FD1C3224C
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04B614F0016
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8B8420D3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7613B3375D1;
-	Tue,  4 Nov 2025 16:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F48C33343D;
+	Tue,  4 Nov 2025 16:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k6MUDZUw"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ccbUkR7f"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F466333426
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D06520DD52
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275159; cv=none; b=X+c95A4CH0l/CD4MQ7Dhd9966Pv00EDm9qZPf5i58mRswjd5trKtTZ+23YBxZI0oSEoJhhODVqBICzUOc0FXdZu8a5gZvg/vFvB+O+vYGrH1zqE4Cq0B2WE87iUweBBAEidzQxspVcyyKg791sxfaTEvQXW/3qMkqCxmDzppa7U=
+	t=1762275144; cv=none; b=LDRxf9Dl7+eFWuC70CgV04vDvjLtAuumqMgTyrJjXqddstXCLeWpruahyKizCMu7hJQoWCtaxzVAC6wAA5UCDNXPp7n2YbkWMk3Kt2yFoZgzFGS1pW8NqCADSMDpspCq2hPzu9KkiINh5dzGI8btHy0LVtJ6JktJG7M5vkMAUVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275159; c=relaxed/simple;
-	bh=CYd8iBDxSOMUBlm8NjiD6Yadgmla1VlAK9u5AU7CO3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ds+VxvHS0u9/v26S2CsRGqxWCulhreNkFfzetEqcV850y6qpLS6DWwMGGdDRwYbM0T4wfMrNkY+hI4Tyem4K8srj74OLUEW309EVeBi6qUuYtC5UJGN5Fq2Aq2goQdgiQ1OSy+JinoBG5BJrlhr5RzPFXRs2S5fPFvoYA2bpqeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k6MUDZUw; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7867497ad2fso402257b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:52:37 -0800 (PST)
+	s=arc-20240116; t=1762275144; c=relaxed/simple;
+	bh=Waao77MgDhV6cGwLlUokeX5i0bHOrrBqnoXpmnvyJj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uw33dXLU0tCjYx5bS+5/OmW5tVf50TLATXUY78T9u75tmIxOmzzZooVDfW/6hJ2IRcWk8KU3HiwI+TEDmDcUpOgdEcFdgbq2tv/hNjlVyL6gxPVPou0nx7cvA1byT8acCvtGa7G8K1mJnfKhhKN6neyQQ/IfETgykRxNSXiy65o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ccbUkR7f; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47755a7652eso7861965e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:52:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762275157; x=1762879957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WYosJRhaR8FvO5SmMiANWOWC/QX2IyOm4sQlU6bkTdw=;
-        b=k6MUDZUw9OUiQmTr2+fETub6UOG7YASFZAal0t2+oyobmQ1CjdxLGCOd4byJ8YEBkZ
-         RU6IFKjvdnTBixcnZ843C2guB1kIg9btyYU+8eTc6+vr6TFCiGtKWkdPNMWRy63VpaBJ
-         WOjyJYzfHsJo1jetHlKyijep8jRROShzwHZ5sqolvc0tPP21AhoN20bjn0Gg+hVsNWid
-         +7R+YbFxK6TF+n5mSW3VnVVmw6Oicy+DEeyFTUjmdTmz83uly2xF/iHR0edaorqdoubI
-         OrAsCtPFjXZz8C0YgcnsveEhy60vADUQRy1ZUS9JGW6RAwHxRgmWId726iV2rN/P+u3Y
-         eL2A==
+        d=suse.com; s=google; t=1762275140; x=1762879940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3I7l2wLDDwEsKZizWvufJnUJgFCRc38UnTb6EWKRbEM=;
+        b=ccbUkR7fn+V61q2bebSTjbDgYb/YzXipvMbYpfmCbYz7vUxG3Y/fq/xqW75QaJkyrM
+         gPDHKK8u0x97Bh5bsk97oLXooUHvCdf329b6soM/XUDgE/+L6mZsxvILH8Lyq9D6BuRx
+         fDEhbSepoNdELSkjvZgOYt1GCJO5dOM4YlPshHi2eBfohL0tBfUy5wQtiaDZddNfAQ2F
+         si6KAn96xZiF6inGUbRlZ/deo5TjuLpVdizvE1PZbcCnWfdHMjlIvKea//PJ2Dtg6cZi
+         kgRhNlt60aw5r3b7Bz0aoh4ZzoFKA6aFxr0PRHXF9cuKFGYcyZHbZE8SpFiSeVIC00aD
+         AfyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762275157; x=1762879957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WYosJRhaR8FvO5SmMiANWOWC/QX2IyOm4sQlU6bkTdw=;
-        b=OF3mMERPmoaJvnsbqXkuOXMDjDh95/cC4zAEs7Xi32Ex+u1S9X2Coe0ccqiVNvhYTO
-         aM4VCGBn9mN2vN+lwlLR/8UYJyTZbyRobh8+sGI5UQU/SYJG8fQXdpngElN9FibSNzo6
-         au2NNJTw3DlR7zArcqiolJHfrLplWLFO49sAystbxy21D4e602PZO+sQIoOdc199mery
-         hm8OkDu5KLehUjIBqY7yzX08eIyxQW7jCSfmWgx0lsGa9nRf9fhiZqNcD+cnCigt1oUP
-         gfZQrCs5VoUnWWJeyFIjGdcVjFMTIunyNZ3XE/FCvwHAIRjuqLejf4YsYtGYjitejgOx
-         77dA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vhLyKC3Hcz8+kkKmBsOWM+bKSY+T8bXPmZamEPbDWqQ4I7oZ+lkpbGy4uMqxOEZQ/DUVBaZe1Tevi8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXAhkH9TVj2kqz71IIbOVe2vrZjOfOH8bzSihLYuKDWbX1rjf2
-	z5CuVPt4Z8i8fNHwWZLDqhE5oYbwn7pw6vN0yARcE80B4VvWiXuN11E4KVVws1qJ7iuGTUKXkmh
-	CM7SABZxRTSdYDnT+CJfDd/QsPeEc44clLa9Fx56Zrg==
-X-Gm-Gg: ASbGncv+5wOIBuNsZDhIWTEsG01GeLGnYSznKbMjwDncVmPOUE1sEmXQcImma6PvJgc
-	7KGHT4pHhXYQvaJpEg2pKgVluJTsbGwNFSGUK9wJXOIajCxWYuStFq1S5OAMshdNKPEg36GlTSs
-	D1TubiHTvf/acmfzE+oJkeTRaWgzMiiB1IUxRl2Ll3w0vGTsk8RPUuJ6G9eQG2NGpXZTl+3oQGL
-	h86CvC3H8e5Vfc28O654hIElwDb7oZsZw2Lrcwpik8beM8REKr8qiEnmOfhFg==
-X-Google-Smtp-Source: AGHT+IH4DWqHdq68Z95E7a3kcFwdmE1ttrKvzgDaKNQAybNdR+pb4ADyv+Nk0hIhnmBzELBiqefCjmyokNaq01E80go=
-X-Received: by 2002:a05:690c:950f:b0:783:7768:55e6 with SMTP id
- 00721157ae682-78695019263mr32047557b3.13.1762275157127; Tue, 04 Nov 2025
- 08:52:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762275140; x=1762879940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3I7l2wLDDwEsKZizWvufJnUJgFCRc38UnTb6EWKRbEM=;
+        b=f2v1cJ3AyBWCxzu9ANPaAn2/81lz/HR+xALpPOslz9JavKAlLGiMRfmr5BBXuQ3I7+
+         ENxVC/R54ngNWg6r9eFp6uopklazX49MoLHcCppxom30IG93f8PuT9fOggaVQ4FzH0Bz
+         La7JPqS/S3R8am2DiD0JHTJ9r+YdBhYpfBHc9NWcx+F6lsC4bZDLVsvuSA00X9xx4kuH
+         GLYRx4hWtLbPE6bm/qCm5bGvIQVEd5B5qlgnH6F9wgaaGmJ+jfnkdnXEHDsWA7Zf9Bgm
+         qGMmpdJV9IAEwWtDt8c4QtDohei1aSSOduq9JXI5HvUadtydeNrfSzu67fRLrwubiCFc
+         d4jA==
+X-Gm-Message-State: AOJu0YxSQjTEFyj6LTUToeyEprankut6eUXOwHZ6IZj9HpAsMkbUduuD
+	26NAwdqv1VsJvUxIJMSj0bdhESfyTOkKwdqG4EgovzVZNs1ClJjjRQ7RemciVR4FMVuHJs/VQt+
+	uTg7e
+X-Gm-Gg: ASbGncu4E8/1DSVAs+zl7F8IiNjIOjHcim6s/fiU7lBfooIUpuKvCYMBw1WEHn72Vaw
+	vSSXJLUQdyD+OSEzgT8Sh36nGz8NuNtXLEnQ4CiBrPzQ2Hirkis3rR17oStu8s7gu0B/tuGtRDT
+	0JItvN0N/M9oMcG1yB93vSyI++MxqhHM/nClKZv+vJGHFTPPppelLZplN4vKytUsDrfUJKmlvtj
+	ytBdMMTW2WGtR47sBoPFx1B0q89eFoux2tF0tLhH4CbeODVYuod8JJ00dd/mrHZPRc2J1LhqgvU
+	Z5ph5+FJNVg/tQBlt5PgHmX6Xt4GITvIcyms/dVupfzxtM5rvYUi7I4ETDNIxCrovAbMlp+Mslj
+	iwDOBqYuMszL47pKtcDcPjhKzlDJSGB4/1j65JYDqjKdf74gKjVzs/licpHnvEhVcP/2lYEZIlJ
+	7PI3pWWe1/ATnvJjjJirCvC2o=
+X-Google-Smtp-Source: AGHT+IG3f1EiisRZ2Ghmy4+ZkeArsqoIDEncz9VaV8Ksohr2DwWKIXQ/Q+IucAz4uItuId/2mUvT7A==
+X-Received: by 2002:a05:600c:4e43:b0:477:e66:406e with SMTP id 5b1f17b1804b1-4773088be60mr168636915e9.29.1762275140054;
+        Tue, 04 Nov 2025 08:52:20 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c394f17sm224276905e9.14.2025.11.04.08.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 08:52:19 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Christian Konig <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH] drm/sched: replace use of system_wq with system_percpu_wq
+Date: Tue,  4 Nov 2025 17:52:09 +0100
+Message-ID: <20251104165209.309545-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-3-ulf.hansson@linaro.org> <7h1pmik3w9.fsf@baylibre.com>
- <CAPDyKFr1bC1=3psegT0DM0tPQaCUm1DoOxV3xBa-gVV6oSuRVA@mail.gmail.com> <CAJZ5v0gfd+nvvkthtjtKgw22kek02K68rOLYTy=a39D0uZYpMw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gfd+nvvkthtjtKgw22kek02K68rOLYTy=a39D0uZYpMw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 4 Nov 2025 17:52:01 +0100
-X-Gm-Features: AWmQ_bk1xE1CCmQc4sBp1rdNt2XT8Oy9Wrzyn6mucaP_tsqx6EQWhSuN5eLDsIA
-Message-ID: <CAPDyKFrgJf05H8S8_p9+w3V3ND7NPpHSU=bpEBk75-goO+FUjA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pmdomain: Respect the CPU system-wakeup QoS limit
- during s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Nov 2025 at 17:37, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Nov 4, 2025 at 5:10=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.or=
-g> wrote:
-> >
-> > On Sat, 1 Nov 2025 at 01:11, Kevin Hilman <khilman@baylibre.com> wrote:
-> > >
-> > > Ulf Hansson <ulf.hansson@linaro.org> writes:
-> > >
-> > > > A CPU system-wakeup QoS limit may have been requested by user-space=
-. To
-> > > > avoid breaking this constraint when entering a low-power state duri=
-ng
-> > > > s2idle through genpd, let's extend the corresponding genpd governor=
- for
-> > > > CPUs. More precisely, during s2idle let the genpd governor select a
-> > > > suitable low-power state, by taking into account the QoS limit.
-> > >
-> > > In addition to a QoS limit requested by userspace, shouldn't any
-> > > per-device QoS limits from devices in the PM domain with CPUs/cluster=
-s
-> > > also be considered?
-> > >
-> > > Right now, if a device is in a PM domain that also contains CPUs, any
-> > > per-device QoS constraints for those devices should also impact the
-> > > state chosen by s2idle.
-> >
-> > I am not so sure about that. The existing dev PM QoS latency is
-> > targeted towards runtime suspend of a device and the genpd governor
-> > also takes it into account for this use case.
-> >
-> > If we would start to take the same dev PM QoS latency constraint into
-> > account for system suspend (s2idle), it may not be what the user
-> > really intended. Instead, I think we should consider extending the dev
-> > PM QoS interface, to allow the user to set a specific latency limit
-> > for system wakeup. Then the genpd governor should take that into
-> > account for s2idle.
-> >
-> > >
-> > > I just tried a quick hack of extending you cpu_system_power_down_ok()
-> > > function to look for any per-device QoS constraints set all devices i=
-n
-> > > the PM domain (and subdomains).  It takes the min of all the per-devi=
-ce
-> > > QoS constratins, compares it to the one from userspace, and uses the =
-min
-> > > of those to decide the genpd state.
-> > >
-> > > That has the effect I'm after, but curious what you think about the
-> > > usecase and the idea?
-> >
-> > It makes sense, but as stated above, I think we need a new QoS limit
-> > specific for system suspend.
-> >
-> > Rafael, what's your thoughts around this?
->
-> Well, it's analogous to the CPU latency limit case, so if a new
-> "system suspend" QoS limit is introduced for CPUs, that also needs to
-> be done for the other devices.
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Agreed!
+This lack of consistentcy cannot be addressed without refactoring the API.
 
->
-> However, as in the CPU case, my personal view is that the "system
-> suspend" latency limits should be greater than or equal to the
-> corresponding latency limits for runtime PM.
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
 
-Right, we should treat general devices similar to CPUs.
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
->
-> One more thing that has just occurred to me is that there are systems
-> in which I don't want to enable the "system suspend" limits at all.
-> IOW, all of this needs to be disabled unless the platform opts in.
+system_wq should be the per-cpu workqueue, yet in this name nothing makes
+that clear, so replace system_wq with system_percpu_wq.
 
-Okay. So are you thinking of using a Kconfig for this or better to
-manage this in runtime?
+The old wq (system_wq) will be kept for a few release cycles.
 
-Kind regards
-Uffe
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index c39f0245e3a9..13192e99637a 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched, const struct drm_sched_init_
+ 	sched->name = args->name;
+ 	sched->timeout = args->timeout;
+ 	sched->hang_limit = args->hang_limit;
+-	sched->timeout_wq = args->timeout_wq ? args->timeout_wq : system_wq;
++	sched->timeout_wq = args->timeout_wq ? args->timeout_wq : system_percpu_wq;
+ 	sched->score = args->score ? args->score : &sched->_score;
+ 	sched->dev = args->dev;
+ 
+-- 
+2.51.1
+
 
