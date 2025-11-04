@@ -1,191 +1,246 @@
-Return-Path: <linux-kernel+bounces-884548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD485C30675
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:03:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F67C30682
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512AE189705D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC6E1889852
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7442D3728;
-	Tue,  4 Nov 2025 10:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0222D3EEE;
+	Tue,  4 Nov 2025 10:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g8RrpGjx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KK/oC2S3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g8RrpGjx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KK/oC2S3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y95QAXwx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807E92D23BD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB627E04C;
+	Tue,  4 Nov 2025 10:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762250507; cv=none; b=YYZS/PZYXosHWPRMqCOAea+eKk6VHSLpzgzu1yhR3AWJAQXH3rWOSowA3iNWIDUQvvRjxVy1aseT7DjM1uhd/73LBod9QLtOER6325Q5mqdJfCgn8H8iJycCF3dwVl2Sx9fE30KFRwCc4ZatRMbeVGUT/Q0yqh7oIesiEE5qTAg=
+	t=1762250585; cv=none; b=eRYxOEN+ZBH5FWeXVr5wQmQM3p+aGXHOk0zVAIyoBq8Opq34S/c3OSdSLUdc2xvcR1XMTisa8RhKrz5qPMVdy1/vTHHJyFhjVLXWRAbnh/tnnfDfiPKTI90e3Yv4gyVzasd1hPFZL2Y1FfwrQJFLLqKMi4PEueH1wEY/cKbhxVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762250507; c=relaxed/simple;
-	bh=Vp8s1sFUhZEtTmOe3NnIXBtWE7EhfmGKuCuGH0ddg5U=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TRyG+DTSqJGsJWAixlob4X7NpIau7VCciRJOa3Dkr5z9r+hzR/9qt+DXrst1xW2vJUOHg6CXYQGLQq8f2NOmYXpWq8mDTDIszAjNmnyMi8sLFICzk2J7h0943lw8FRIS3xQSYjcxY5jVyeTRsfXxDQFJm8D6eZ2v9NRcJMjuU1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g8RrpGjx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KK/oC2S3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g8RrpGjx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KK/oC2S3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BED391F385;
-	Tue,  4 Nov 2025 10:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762250503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvML9ahiMNR24WsBOuMm7W2eYvpxZcIULBQYbrFHl1I=;
-	b=g8RrpGjxsyYPqGI5s8P0WTepWACzYbr7YdwbUHI1rwwNXJQAAFvzLpfUpzju5lHIDBYRbg
-	CvzLnJ12Mn1LzQCEoKQlzrHvicwZ/+6iEV6wLYWRScOPu751zLiAscFFgMXG4QmYG2PLn/
-	dW7p+mdjKAb5DjnKhdFsEEwsaksZBx0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762250503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvML9ahiMNR24WsBOuMm7W2eYvpxZcIULBQYbrFHl1I=;
-	b=KK/oC2S3am5LZLEqgIsNa02QrA7XYCsH3DEo2CMl9ueIAKo6+FeHPc2nrPBDUPSPmnp/uN
-	PH24WTdTW6yybXDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762250503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvML9ahiMNR24WsBOuMm7W2eYvpxZcIULBQYbrFHl1I=;
-	b=g8RrpGjxsyYPqGI5s8P0WTepWACzYbr7YdwbUHI1rwwNXJQAAFvzLpfUpzju5lHIDBYRbg
-	CvzLnJ12Mn1LzQCEoKQlzrHvicwZ/+6iEV6wLYWRScOPu751zLiAscFFgMXG4QmYG2PLn/
-	dW7p+mdjKAb5DjnKhdFsEEwsaksZBx0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762250503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvML9ahiMNR24WsBOuMm7W2eYvpxZcIULBQYbrFHl1I=;
-	b=KK/oC2S3am5LZLEqgIsNa02QrA7XYCsH3DEo2CMl9ueIAKo6+FeHPc2nrPBDUPSPmnp/uN
-	PH24WTdTW6yybXDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E55B136D1;
-	Tue,  4 Nov 2025 10:01:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xD2mHQfPCWmtOwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 04 Nov 2025 10:01:43 +0000
-Date: Tue, 04 Nov 2025 11:01:43 +0100
-Message-ID: <874irai0ag.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: moonafterrain@outlook.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>
-Subject: Re: [PATCH v2] ALSA: wavefront: use scnprintf for longname construction
-In-Reply-To: <SYBPR01MB7881987D79C62D8122B655FEAFC6A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-References: <SYBPR01MB7881987D79C62D8122B655FEAFC6A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762250585; c=relaxed/simple;
+	bh=2DvZOttmCMGhJVjRPtQmLNf9Cv5+1jUn6WqdwCDUNJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlZHwjWNF6luxIcakDizAxemCZ/ftZoFFGn/qI6yqk9evZIjDTM8xC4PeoONWadIP8aHtIlaMbDYEa0+KUKr0lrUBKvm5bmlJI+ThbB0uIFhJKhPWYcnQ9bBGFmo67UCqMi/zwztJp3F9EzCHW6DBJ4u84uR29V4b7TgGOieY20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y95QAXwx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7F4C4CEF7;
+	Tue,  4 Nov 2025 10:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762250583;
+	bh=2DvZOttmCMGhJVjRPtQmLNf9Cv5+1jUn6WqdwCDUNJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y95QAXwx8mvpXm4IYCFvCUCKCQ5y4h4Mklc00Tmy25wZ83n7/bSXYXzRXJAIK68Mg
+	 kTFbicgW4b7aQp4kcY4qT+WUb3C+XJutOPY/INDaDxl7mVAmVffoM+pyI2TtGA/cA3
+	 0hYovc7OopGw1yWhwDapBsCXvOlBstR0+VqJKHkOraF7dBC1vnzIvqUVRy9gJtiN39
+	 OQCuqPLpFOWgLBjiKu1AGFdM0hc4a6kFB5JChVYRhBSSMCjtCSpDHu4iMCbCficebs
+	 gANKCfLy56LYExl0+IGSqqSKuiddZQ/4irYmbtg4mLozeWyqBNeYbUGmm4Pkz3WqyF
+	 LwXtFxFVOKoRw==
+Date: Tue, 4 Nov 2025 11:03:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, 
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mtd: nvidia,tegra20-nand: convert to DT
+ schema
+Message-ID: <20251104-prompt-rampant-cat-30fd9a@kuoka>
+References: <20251030-nvidia-nand-v1-1-7614e1428292@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[outlook.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,outlook.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,vger.kernel.org,gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251030-nvidia-nand-v1-1-7614e1428292@gmail.com>
 
-On Sun, 02 Nov 2025 16:32:39 +0100,
-moonafterrain@outlook.com wrote:
+On Thu, Oct 30, 2025 at 06:47:25PM +0000, Charan Pedumuru wrote:
+> Convert NVIDIA Tegra NAND Flash Controller binding to YAML format.
+> Changes during Conversion:
+> - Define new properties `power-domains` and `operating-points-v2`
+>   to resolve errors generated by `dtb_check`.
+
+instead - because existing in-tree DTS uses them.
+
+> - Add the `#address-cells` and `#size-cells` properties to the parent
+>   node to fix errors reported by `dt_check`, and include these properties
+
+What is dt_check? Aren't you adding them because other schema requires
+them? Then say that (and which schema...).
+
+
+>   in the `required` section, as they are not mentioned in the text binding.
 > 
-> From: Junrui Luo <moonafterrain@outlook.com>
-> 
-> Replace sprintf() calls with scnprintf() and a new scnprintf_append()
-> helper function when constructing card->longname. This improves code
-> readability and provides bounds checking for the 80-byte buffer.
-> 
-> While the current parameter ranges don't cause overflow in practice,
-> using safer string functions follows kernel best practices and makes
-> the code more maintainable.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Junrui Luo <moonafterrain@outlook.com>
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
 > ---
-> Changes in v2:
-> - Replace sprintf() calls with scnprintf() and a new scnprintf_append()
-> - Link to v1: https://lore.kernel.org/all/ME2PR01MB3156CEC4F31F253C9B540FB7AFFDA@ME2PR01MB3156.ausprd01.prod.outlook.com/
-
-Well, my suggestion was that we can apply such conversions once if a
-*generic* helper becomes available; that is, propose
-scnprintf_append() to be put in include/linux/string.h or whatever (I
-guess better in *.c instead of inline), and once if it's accepted, we
-can convert the relevant places (there are many, not only
-wavefront.c).
-
-BTW:
-
-> +__printf(3, 4) static int scnprintf_append(char *buf, size_t size, const char *fmt, ...)
-> +{
-> +	va_list args;
-> +	size_t len = strlen(buf);
+>  .../bindings/mtd/nvidia,tegra20-nand.yaml          | 157 +++++++++++++++++++++
+>  .../bindings/mtd/nvidia-tegra20-nand.txt           |  64 ---------
+>  2 files changed, 157 insertions(+), 64 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
+> new file mode 100644
+> index 000000000000..67b3c45566db
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.yaml
+> @@ -0,0 +1,157 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mtd/nvidia,tegra20-nand.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (len >= size)
-> +		return len;
-> +	va_start(args, fmt);
-> +	len = vscnprintf(buf + len, size - len, fmt, args);
-> +	va_end(args);
-> +	return len;
+> +title: NVIDIA Tegra NAND Flash Controller
+> +
+> +maintainers:
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +description:
+> +  Device tree bindings for the NVIDIA Tegra NAND Flash Controller (NFC).
 
-The above should be
-	len += vscnprintf(buf + len, size - len, fmt, args);
-so that it returns the full size of the string.
-If it were in user-space, I'd check a negative error code, but the
-Linux kernel implementation doesn't return a negative error code, so
-far.
-I see it's a copy from a code snipped I suggested which already
-contained the error :)
+Drop sentencem completely redundant. Title already said that.
 
-Also, it might be safer to use strnlen() instead of strlen() for
-avoiding a potential out-of-bound access.
+> +  The controller supports a single NAND chip with specific properties.
 
+What is/are "specific properties"? Can properties be unspecific?
 
-thanks,
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra20-nand
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: nand
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: nand
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  operating-points-v2:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^nand@[0-5]$":
 
-Takashi
+Keep consistent quotes, either ' or "
+
+> +    type: object
+> +    description: Individual NAND chip connected to the NAND controller
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      nand-ecc-mode:
+> +        description:
+> +          Operation mode of the NAND ECC, currently only hardware
+> +          mode supported
+> +        const: hw
+> +
+> +      nand-ecc-algo:
+> +        description: Algorithm for NAND ECC when using hw ECC mode
+> +        enum:
+> +          - rs
+> +          - bch
+> +
+> +      nand-bus-width:
+> +        description: Width of the NAND flash bus in bits
+> +        enum: [8, 16]
+> +        default: 8
+> +
+> +      nand-on-flash-bbt:
+> +        description: Use an on-flash bad block table to track bad blocks
+> +        type: boolean
+> +
+> +      nand-ecc-maximize:
+
+Why are you duplicating all these properties from nand schema?
+
+> +        description:
+> +          Maximize ECC strength for the NAND chip, overriding
+> +          default strength selection
+> +        type: boolean
+> +
+> +      nand-ecc-strength:
+> +        description: Number of bits to correct per ECC step (512 bytes)
+> +        enum: [4, 6, 8, 14, 16]
+> +
+> +      nand-is-boot-medium:
+> +        description: Ensures ECC strengths are compatible with the boot ROM
+> +        type: boolean
+> +
+> +      wp-gpios:
+> +        description: GPIO specifier for the write protect pin
+> +        maxItems: 1
+> +
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 1
+> +
+> +    patternProperties:
+> +      "^partition@[0-9a-f]+$":
+> +        $ref: /schemas/mtd/mtd.yaml#
+> +        description:
+> +          Optional MTD partitions for the NAND chip, as defined in mtd.yaml
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+
+So this should tell you that you miss proper ref
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +unevaluatedProperties: false
+
+Same here. Why do you use unevaluatedProperties if there is no ref?
+Please open other bindings to understand how MTD binding should be
+written.
+
+Best regards,
+Krzysztof
+
 
