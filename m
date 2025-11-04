@@ -1,133 +1,182 @@
-Return-Path: <linux-kernel+bounces-884131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C11C2F6D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:19:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF16C2F6C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 07:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0CE189C5C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:18:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 48D004E4DD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 06:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25E2D97AC;
-	Tue,  4 Nov 2025 06:17:09 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0EA2D0C76;
-	Tue,  4 Nov 2025 06:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A31465B4;
+	Tue,  4 Nov 2025 06:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OXrazto3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557AF158538;
+	Tue,  4 Nov 2025 06:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762237029; cv=none; b=uuNmCRCivi7PpyMxGPN4i3H8kIYrLbzwbS2yZsC7oLNJGgxhxZTtGMolrIlF3B1qHIsZjigbNexsRFS+rrwGgCyIJ8tk7wib3nvknJ0GP+bB+KWuZlfYzMG/eqeWKRcIbPdULBp9iF6viIaWPyz1UyFifwRG2rw6DGC3CsgKouk=
+	t=1762237025; cv=none; b=n/S+SM24o5SsQfZ8DfUU8Quj5oQUw2jJpRGof1ubHWjfv4oH10qKHk/FexexXrkKm+EKpRqK8M4sUELvaCyHaQHEj/ioapWSAG7128nku2yw8V6mo71uW+Wwk+I6hbW1R3HcUCDk7ETxcf5cN7nkWaaOUdtemsC7zd1eUON9swE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762237029; c=relaxed/simple;
-	bh=Awe/C4dgeth/gqIck+puaWvhE1Pl7xHE9OomEMpA5Ws=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFYcHq3t7d54p9ixy1fwlM7lVU5Dkm71DPEcpZITHvZ8vOY+/4GzrNhbietm4kJb7Duy3UomGKhQ8Zgk/Rqkd101h/OM8TpheBTuBYZGd3//PyL8Yb57tcNM+Hldho2E1+OrypEk2/C6/qqss20BafLqYdhyDrHeOb8E2adYDTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: uTZkr/3MQUG+47Bde253qA==
-X-CSE-MsgGUID: ntsweP9lTCCwZ0Kzgx7tzQ==
-X-IronPort-AV: E=Sophos;i="6.19,278,1754928000"; 
-   d="scan'208";a="131456660"
-From: guhuinan <guhuinan@xiaomi.com>
-To: Oliver Neukum <oneukum@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<usb-storage@lists.one-eyed-alien.net>, <linux-kernel@vger.kernel.org>, "Yu
- Chen" <chenyu45@xiaomi.com>, Owen Gu <guhuinan@xiaomi.com>, Michal Pecio
-	<michal.pecio@gmail.com>
-Subject: [PATCH v3] usb: uas: fix urb unmapping issue when the uas device is remove during ongoing data transfer
-Date: Tue, 4 Nov 2025 14:16:07 +0800
-Message-ID: <20251104061608.1336-1-guhuinan@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762237025; c=relaxed/simple;
+	bh=mSKoZmGkcXW407B8mNGjY9EejInAopsSE39gAyEUn9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KxyLXMJDWe4f36kzyEg87UBSz78LaRsWAtTEPNCIXeAXBLeZrWNY7QSnHrSrW0eZl7ZlvDMi8UdWS8PpB+l+lGrYORRklXhmbr5nVLR26YzoKdDB+0vmtV0HKCFm80pcKhBYPouGs/qZtmwzAgWFA0lsZtRw1cDsMgiv3grxxsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OXrazto3; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762237023; x=1793773023;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mSKoZmGkcXW407B8mNGjY9EejInAopsSE39gAyEUn9k=;
+  b=OXrazto3bos6ZouLXm81qGUGmuUm3OZdCGxCNDmP4C2W+ykyqxLdNpHM
+   1DxyyS4eKg+f2UC8Kt2DT1ZQ1E34vbMtAEaD2xfzDXma1x2Sr01Q4K+0I
+   aF6SWWtCUu656YkV3TFUFRJN7V4ruPrFIYWNM78ZsGUX5oDCZo057lhKH
+   oGGMjooTh6E1C3Pi0yfsGM4DHcneO6QWuKHfwNwXSgurXHKDEBhDMEfqa
+   fFi5YiitRnTOAaF0VUY+gCJG52aM0x/NnUOEg/B33v6ZZnAMHrb19rw9x
+   Om3sIeQ4LUHVoj0/B1xwvM9Kfz/8Sra1hjkH8hLcR/ILGEc8Cq+pj8vUV
+   w==;
+X-CSE-ConnectionGUID: BSbMDpbCR8uIRATopONiag==
+X-CSE-MsgGUID: 8+m81WFlSHS/ZZsZ26Py2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74927767"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="74927767"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:17:03 -0800
+X-CSE-ConnectionGUID: IL8VAT68RkmI5IbPyY1fNw==
+X-CSE-MsgGUID: u8bxLoPYS/KxoreV4M7Dmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="210576877"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 22:16:56 -0800
+Message-ID: <31da959f-d004-4ae0-a6a7-d5d31b646b70@linux.intel.com>
+Date: Tue, 4 Nov 2025 14:16:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJ-MBX17.mioffice.cn (10.237.8.137) To BJ-MBX05.mioffice.cn
- (10.237.8.125)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 27/28] KVM: TDX: Bug the VM if extending the initial
+ measurement fails
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251030200951.3402865-1-seanjc@google.com>
+ <20251030200951.3402865-28-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251030200951.3402865-28-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Owen Gu <guhuinan@xiaomi.com>
 
-When a UAS device is unplugged during data transfer, there is
-a probability of a system panic occurring. The root cause is
-an access to an invalid memory address during URB callback handling.
-Specifically, this happens when the dma_direct_unmap_sg() function
-is called within the usb_hcd_unmap_urb_for_dma() interface, but the
-sg->dma_address field is 0 and the sg data structure has already been
-freed.
 
-The SCSI driver sends transfer commands by invoking uas_queuecommand_lck()
-in uas.c, using the uas_submit_urbs() function to submit requests to USB.
-Within the uas_submit_urbs() implementation, three URBs (sense_urb,
-data_urb, and cmd_urb) are sequentially submitted. Device removal may
-occur at any point during uas_submit_urbs execution, which may result
-in URB submission failure. However, some URBs might have been successfully
-submitted before the failure, and uas_submit_urbs will return the -ENODEV
-error code in this case. The current error handling directly calls
-scsi_done(). In the SCSI driver, this eventually triggers scsi_complete()
-to invoke scsi_end_request() for releasing the sgtable. The successfully
-submitted URBs, when being unlinked to giveback, call
-usb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg
-unmapping operations since the sg data structure has already been freed.
+On 10/31/2025 4:09 AM, Sean Christopherson wrote:
+> WARN and terminate the VM if TDH_MR_EXTEND fails, as extending the
+> measurement should fail if and only if there is a KVM bug, or if the S-EPT
+> mapping is invalid.  Now that KVM makes all state transitions mutually
+> exclusive via tdx_vm_state_guard, it should be impossible for S-EPT
+> mappings to be removed between kvm_tdp_mmu_map_private_pfn() and
+> tdh_mr_extend().
+>
+> Holding slots_lock prevents zaps due to memslot updates,
+> filemap_invalidate_lock() prevents zaps due to guest_memfd PUNCH_HOLE,
+> vcpu->mutex locks prevents updates from other vCPUs, kvm->lock prevents
+> VM-scoped ioctls from creating havoc (e.g. by creating new vCPUs), and all
+> usage of kvm_zap_gfn_range() is mutually exclusive with S-EPT entries that
+> can be used for the initial image.
+>
+> For kvm_zap_gfn_range(), the call from sev.c is obviously mutually
+> exclusive, TDX disallows KVM_X86_QUIRK_IGNORE_GUEST_PAT so the same goes
+> for kvm_noncoherent_dma_assignment_start_or_stop(), and
+> __kvm_set_or_clear_apicv_inhibit() is blocked by virtue of holding all
+> VM and vCPU mutexes (and the APIC page has its own non-guest_memfd memslot
 
-This patch modifies the error condition check in the uas_submit_urbs()
-function. When a UAS device is removed but one or more URBs have already
-been successfully submitted to USB, it avoids immediately invoking
-scsi_done() and save the cmnd to devinfo->cmnd array. If the successfully
-submitted URBs is completed before devinfo->resetting being set, then
-the scsi_done() function will be called within uas_try_complete() after
-all pending URB operations are finalized. Otherwise, the scsi_done()
-function will be called within uas_zap_pending(), which is executed after
-usb_kill_anchored_urbs().
+Nit:
+It sounds like TDX is using the memslot for the APIC page, but for a TD, the
+memslot for the APIC page is never initialized or used?
 
-The error handling only takes effect when uas_queuecommand_lck() calls
-uas_submit_urbs() and returns the error value -ENODEV . In this case,
-the device is disconnected, and the flow proceeds to uas_disconnect(),
-where uas_zap_pending() is invoked to call uas_try_complete().
+> and so can't be used for the initial image, which means that too is
+> mutually exclusive irrespective of locking).
+>
+> Opportunistically return early if the region doesn't need to be measured
+> in order to reduce line lengths and avoid wraps.  Similarly, immediately
+> and explicitly return if TDH_MR_EXTEND fails to make it clear that KVM
+> needs to bail entirely if extending the measurement fails.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Signed-off-by: Yu Chen <chenyu45@xiaomi.com>
-Signed-off-by: Owen Gu <guhuinan@xiaomi.com>
----
-v3: Add some commit message.
-v2: Upon uas_submit_urbs() returning -ENODEV despite successful URB
-submission, the cmnd is added to the devinfo->cmnd array before
-exiting uas_queuecommand_lck().
-https://lore.kernel.org/linux-usb/20251015153157.11870-1-guhuinan@xiaomi.com/
-v1: https://lore.kernel.org/linux-usb/20250930045309.21588-1-guhuinan@xiaomi.com/
----
----
- drivers/usb/storage/uas.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-index 4ed0dc19afe0..45b01df364f7 100644
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -698,6 +698,10 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
- 	 * of queueing, no matter how fatal the error
- 	 */
- 	if (err == -ENODEV) {
-+		if (cmdinfo->state & (COMMAND_INFLIGHT | DATA_IN_URB_INFLIGHT |
-+				DATA_OUT_URB_INFLIGHT))
-+			goto out;
-+
- 		set_host_byte(cmnd, DID_NO_CONNECT);
- 		scsi_done(cmnd);
- 		goto zombie;
-@@ -711,6 +715,7 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
- 		uas_add_work(cmnd);
- 	}
- 
-+out:
- 	devinfo->cmnd[idx] = cmnd;
- zombie:
- 	spin_unlock_irqrestore(&devinfo->lock, flags);
--- 
-2.43.0
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 24 +++++++++++++-----------
+>   1 file changed, 13 insertions(+), 11 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 8bcdec049ac6..762f2896547f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -3123,21 +3123,23 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+>   
+>   	put_page(src_page);
+>   
+> -	if (ret)
+> +	if (ret || !(arg->flags & KVM_TDX_MEASURE_MEMORY_REGION))
+>   		return ret;
+>   
+> -	if (arg->flags & KVM_TDX_MEASURE_MEMORY_REGION) {
+> -		for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
+> -			err = tdh_mr_extend(&kvm_tdx->td, gpa + i, &entry,
+> -					    &level_state);
+> -			if (err) {
+> -				ret = -EIO;
+> -				break;
+> -			}
+> -		}
+> +	/*
+> +	 * Note, MR.EXTEND can fail if the S-EPT mapping is somehow removed
+> +	 * between mapping the pfn and now, but slots_lock prevents memslot
+> +	 * updates, filemap_invalidate_lock() prevents guest_memfd updates,
+> +	 * mmu_notifier events can't reach S-EPT entries, and KVM's internal
+> +	 * zapping flows are mutually exclusive with S-EPT mappings.
+> +	 */
+> +	for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
+> +		err = tdh_mr_extend(&kvm_tdx->td, gpa + i, &entry, &level_state);
+> +		if (TDX_BUG_ON_2(err, TDH_MR_EXTEND, entry, level_state, kvm))
+> +			return -EIO;
+>   	}
+>   
+> -	return ret;
+> +	return 0;
+>   }
+>   
+>   static int tdx_vcpu_init_mem_region(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
 
 
