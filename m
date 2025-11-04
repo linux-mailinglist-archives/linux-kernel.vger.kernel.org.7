@@ -1,176 +1,101 @@
-Return-Path: <linux-kernel+bounces-883896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1D3C2EB3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:08:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B1CC2EB48
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 02:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E91D1899E2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F93AD98D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 01:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60492080C8;
-	Tue,  4 Nov 2025 01:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67E215075;
+	Tue,  4 Nov 2025 01:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="noYom8TG"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C011813AA2D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 01:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qM9vVIRM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6754120CCDC;
+	Tue,  4 Nov 2025 01:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762218533; cv=none; b=OJ8ZD21wKRZ9g2k2UXIndxzjRQ+BAMRdDUHrsjqVLfEQqh0Hlq+azTNpwDbABlhSOtf6qGofmwmSCID8nm8k7o6PXiiKFIRdTArp4jYDpa447l+bvHT71aIC8heSUly3j2+bloJutYXzq3JAVwMs6QJ+k6TNhoEl7i4aa19glqM=
+	t=1762218646; cv=none; b=IpNmhVBp5JMqPhoVuMVmt1+a+eeMOk4LYLUzPdAscX/nPQ5tJmJ4428NVlCwIcMICp2xPpzhDGRUuwnLWbm3inXtx9XiyvAAEV7LlAZuGSGA0zcGvvdS6rLhuFqhs2g5mHorW5tJfXTgn5l4WUnj7rH4nBff6arZp4NuEE2sj7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762218533; c=relaxed/simple;
-	bh=8I4GK4S4q7K9XqrL0+9xFm8+IiIPoGOnFunW253Wh3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dx/8f0kTEWGyIiG7BG0JvczPPnaiSTDGqMRGL1M6F9TKbe1CKQudODIz8wCskPXoXHDHJypX8FbhauhfEWvbdtUPEj7qXstbjyA65DmBURwOaz6ALzXjA0EtyTcbX4U1lo4d7mWzRD2+LJ2mvE2R5dF4oBPijXw3lbyXpwqwA7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=noYom8TG; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [20.236.11.42])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 794A4201208F;
-	Mon,  3 Nov 2025 17:08:50 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 794A4201208F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762218530;
-	bh=KSXFQW64ZcSSVpRRiPa8R1BZW5fslHvWf05b4EavBCY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=noYom8TGYSq8pqCaKTgRf+MIerhAHrheH6BF5UsL62Lijwt5WJxZl8/9eAIGIZRb4
-	 pfOgneYgs15RWXWj+/tDVP76cX9K/awFNY4ZXctTWm8+pqU7C3BTEWPlL78CjUVFzX
-	 NuMtUU2//3rf6zXCwiWRYJwvaV/k3DMpPC5s07UY=
-Date: Mon, 3 Nov 2025 17:08:48 -0800
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
- <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
- <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v2 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness
- and efficiency
-Message-ID: <20251103170848.000023aa@linux.microsoft.com>
-In-Reply-To: <aQQYIkC9lmQnd27S@Asurada-Nvidia>
-References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
-	<20251020224353.1408-3-jacob.pan@linux.microsoft.com>
-	<aQQYIkC9lmQnd27S@Asurada-Nvidia>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762218646; c=relaxed/simple;
+	bh=KmLRKbPEB1dkEqUb0OPe6Uyy25qssI/XWuR1qIixhds=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fNWIapIMOJphGTtm9Eg914gtrOkub2l4B0jMjE24kO5JiQwMB91916235Rdj0tLOyiWRtf2YULNIyRnKCGnZLhVGXvRtR9Z8aWhIi7O8VRjGTqm5Opz5tVsYsVdM++kbWchGf+P80s2q8T5NzU6BnNUXB1e3Xc3bJK2STfWT3tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qM9vVIRM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9427C4CEFD;
+	Tue,  4 Nov 2025 01:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762218645;
+	bh=KmLRKbPEB1dkEqUb0OPe6Uyy25qssI/XWuR1qIixhds=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=qM9vVIRMCoFLiJSNmyVBoipcvwDvacPl58GPuC6dM2NpHgoso5YUZe0PGx61U/Bd0
+	 SW4xp+J1SpyArUSKVQBmiyeAGDY6dtxt2WUmqj6ObcaTsZ9jGkAENTQoLUe+h9qQtP
+	 iiJba7ziIjbGocupAZBQmqtNIp0tf4zHnkzBsOb0U3nAvClOxjWVyYlZ/memLE5Maf
+	 oCVM6eLcjYk5sog0FDIRwCQJJqjroOcJ4qf2vhJrLaAmLd4OBUVI6PJpQFsgukEjl6
+	 9I7ipSeYyROC1zXZq5vrTDQvek8/mIcISFTPP8T10J2b0IqcmW5MLdnJtyhUvU+KCo
+	 NE4d6xfcMg+oQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CC93809A8A;
+	Tue,  4 Nov 2025 01:10:21 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/3] net: dsa: b53: minor fdb related fixes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176221862024.2276313.12848174234048572482.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Nov 2025 01:10:20 +0000
+References: <20251102100758.28352-1-jonas.gorski@gmail.com>
+In-Reply-To: <20251102100758.28352-1-jonas.gorski@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ vivien.didelot@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi Nicolin,
+Hello:
 
-On Thu, 30 Oct 2025 19:00:02 -0700
-Nicolin Chen <nicolinc@nvidia.com> wrote:
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> On Mon, Oct 20, 2025 at 03:43:53PM -0700, Jacob Pan wrote:
-> > From: Alexander Grest <Alexander.Grest@microsoft.com>
-> > 
-> > The SMMU CMDQ lock is highly contentious when there are multiple
-> > CPUs issuing commands on an architecture with small queue sizes e.g
-> > 256 entries.  
+On Sun,  2 Nov 2025 11:07:55 +0100 you wrote:
+> While investigating and fixing/implenting proper ARL support for
+> bcm63xx, I encountered multiple minor issues in the current ARL
+> implementation:
 > 
-> As Robin pointed out that 256 entry itself is not quite normal,
-> the justification here might still not be very convincing..
+> * The ARL multicast support was not properly enabled for older chips,
+>   and instead a potentially reserved bit was toggled.
+> * While traversing the ARL table, "Search done" triggered one final
+>   entry which will be invalid for 4 ARL bin chips, and failed to stop
+>   the search on chips with only one result register.
+> * For chips where we have only one result register, we only traversed at
+>   most half the maximum entries.
 > 
-> I'd suggest to avoid saying "an architecture with a small queue
-> sizes, but to focus on the issue itself -- potential starvation.
-> "256-entry" can be used a testing setup to reproduce the issue.
-> 
-> > The lock has the following states:
-> >  - 0:		Unlocked  
-> >  - >0:		Shared lock held with count  
-> >  - INT_MIN+N:	Exclusive lock held, where N is the # of
-> > shared waiters
-> >  - INT_MIN:	Exclusive lock held, no shared waiters
-> > 
-> > When multiple CPUs are polling for space in the queue, they attempt
-> > to grab the exclusive lock to update the cons pointer from the
-> > hardware. If they fail to get the lock, they will spin until either
-> > the cons pointer is updated by another CPU.
-> > 
-> > The current code allows the possibility of shared lock starvation
-> > if there is a constant stream of CPUs trying to grab the exclusive
-> > lock. This leads to severe latency issues and soft lockups.  
-> 
-> It'd be nicer to have a graph to show how the starvation might
-> happen due to a race:
-> 
-> CPU0 (exclusive)  | CPU1 (shared)     | CPU2 (exclusive)    |
-> `cmdq->lock`
-> --------------------------------------------------------------------------
-> trylock() //takes |                   |                     | 0 |
-> shared_lock()     |                     | INT_MIN | fetch_inc()
-> |                     | INT_MIN | no return         |
->     | INT_MIN + 1 | spins // VAL >= 0 |                     | INT_MIN
-> + 1 unlock()          | spins...          |                     |
-> INT_MIN + 1 set_release(0)    | spins...          |
->   | 0  <-- BUG? 
-Not sure we can call it a bug but it definitely opens the door for
-starving shared lock.
+> [...]
 
->(done)            | (sees 0)          | trylock() //
-> takes  | 0 | *exits loop*      | cmpxchg(0, INT_MIN) | 0
->                   |                   | *cuts in*           | INT_MIN
->                   | cmpxchg(0, 1)     |                     | INT_MIN
->                   | fails // != 0     |                     | INT_MIN
->                   | spins // VAL >= 0 |                     | INT_MIN
->                   | *starved*         |                     | INT_MIN
->
-Thanks for the graph, will incorporate. The starved shared lock also
-prevents advancing cmdq which perpetuate the situation of
-!queue_has_space(&llq, n + sync)
- 
-> And point it out that it should have reserved the "+1" from CPU1
-> instead of nuking the entire cmdq->lock to 0.
-> 
-Will do. reserved the "+1" is useful to prevent back to back exclusive
-lock acquisition. Nuking to 0 wasted such info.
+Here is the summary with links:
+  - [net,1/3] net: dsa: b53: fix enabling ip multicast
+    https://git.kernel.org/netdev/net/c/c264294624e9
+  - [net,2/3] net: dsa: b53: stop reading ARL entries if search is done
+    https://git.kernel.org/netdev/net/c/0be04b5fa62a
+  - [net,3/3] net: dsa: b53: properly bound ARL searches for < 4 ARL bin chips
+    https://git.kernel.org/netdev/net/c/e57723fe536f
 
-> > In a staged test where 32 CPUs issue SVA invalidations
-> > simultaneously on a system with a 256 entry queue, the madvise
-> > (MADV_DONTNEED) latency dropped by 50% with this patch and without
-> > soft lockups.  
-> 
-> This might not be very useful per Robin's remarks. I'd drop it.
-> 
-Will do.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> > Reviewed-by: Mostafa Saleh <smostafa@google.com>
-> > Signed-off-by: Alexander Grest <Alexander.Grest@microsoft.com>
-> > Signed-off-by: Jacob Pan <jacob.pan@linux.microsoft.com>  
-> 
-> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
-> 
-> > @@ -500,9 +506,14 @@ static bool
-> > arm_smmu_cmdq_shared_tryunlock(struct arm_smmu_cmdq *cmdq)
-> > __ret;
-> > 	\ }) 
-> > +/*
-> > + * Only clear the sign bit when releasing the exclusive lock this
-> > will
-> > + * allow any shared_lock() waiters to proceed without the
-> > possibility
-> > + * of entering the exclusive lock in a tight loop.
-> > + */
-> >  #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq,
-> > flags)		\ ({
-> > 				\
-> > -	atomic_set_release(&cmdq->lock, 0);
-> > 	\
-> > +	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);
-> > 			\  
-> 
-> Align the tailing spacing with other lines please.
-> 
-> Nicolin
 
 
