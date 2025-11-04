@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-884444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103DDC3034D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:18:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F6FC30311
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41693A87E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:10:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 737CA4F5733
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542503115A5;
-	Tue,  4 Nov 2025 09:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01413112D3;
+	Tue,  4 Nov 2025 09:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sRxC8ZhC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SETdWZYD"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D23303C80
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 09:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECC329B8FE;
+	Tue,  4 Nov 2025 09:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762247424; cv=none; b=gxrQnlJtmcKF4pXVDG9VaLiZLjwznxMZoA6tTcdMyIjzAMmquFt/VjR7vkR14bGrRRwywk4+S17jAoHE8YyriwrQ2Pai3aO+HnCdczN22+zEs9DfSM7dw/CccVZq50kNeYD4oaLtNFSzUnpoihQ1WhXtmtwaQcqsRCpxHUZcT+k=
+	t=1762247451; cv=none; b=HDTPOo16ouzOsRZD3RIzcl6BUbS7jKJQfAWTKpub0jHeiKy48SmDX+yglV453hswJP1oezH+l/hfnQ7PPhLwucspk8mruROk6ZhdEJTYZ8MwHxqM9RDLbJlmOaHXNVhki3Pk7eXokULukvOwdZ3uSihEyQp+Xsg2ajLMUg1x2dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762247424; c=relaxed/simple;
-	bh=e+WrZa3ef8AdRcYId27XHT8jL0SxKU0LfZDZgv50HDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5UMnzmHsDcIiOsAfYaT5vE8nnwrIWSc3Ao7+FTLOizK2QCeyQyIivyV3iyjzEHgYSEkJLxdXtV78bdqTD1S+7a05YlCeTA00qM8NjJhtjCvh1qxCSSzW5ByffeYcPAtAYm5UXyPCSR/V5TLLC4P6mq9ZXNhXxfxZVcvLmBOgd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sRxC8ZhC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4710665e7deso24563285e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 01:10:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762247421; x=1762852221; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DpweAw5zruf0A8JomoHVO706aMoW4BuNB+DPtZgoR0c=;
-        b=sRxC8ZhCitcb8jMy8baFppofJesOvJhYxATqmidj2fyLLKycALUDZWc/iwXFuV1y5e
-         5vN131LXZfckyA3Z3Wf1z99UlavzxmGGdgmjTrHQ+jgWqjRZst/F5uYTwmqW8vNuoHsK
-         3+OTxrNP9AF400wvn91K+4JrHGa0AMeWaVVst/yFG3l5tTYMENtM++/UBzftx50ZBUNk
-         CCVe/5nhtOZRzDaiYcVBdWhD67lLgXG9frGXXkFG63/yIgCztmOnJ4NrDn+IqAMcqC3k
-         pRHOHL9uTZ5tUJQlSaZWiO/ZqCQgW+44851/fIUZ1knxd1/56dNtWtZI/ZogAW0KIhx0
-         UT4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762247421; x=1762852221;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DpweAw5zruf0A8JomoHVO706aMoW4BuNB+DPtZgoR0c=;
-        b=hhvBq4gjbi734VDxGRW6AlDqjdVXXdKW7Mzbwo317CNY27sywx0yr4bBHLtfgxA1Qc
-         nJyKKFQ+rXS2EaHRYUKQFO2ow21PiNwbJlPipnlJauzz5TIG/2uKDi3IYPMuJOq93cnO
-         RSKhlaAwnqwbnnuMetDBQzzyeAwCnhp8M1kjZA3I7rIWjWLUWsufDdOXefhnKynFm1uN
-         1AhoMm/G8eAhI3EkxQJruLudPPB+oDteoIE6iuu7v7ettCapKCaIFHN2TuPkzmt5NjYk
-         xDTMrP17v0xBoLWitGT/DJzv3wgI7k/GvlLdYt5HW3+mPfznvEYF3lcFk42Z1hiuo7EZ
-         dn+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiEvIzpGbjvUYZC+/X9ccXi7wCsXOnjEfDW+aK/TQmmnwMTG+2JjfdDpTpHJL2F+BBU0NPFay1S04EswQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3zdiwh/ohw/Z7LBsAkT9bzT1zh2CpPRAvAxSSPRftqU6a2FjA
-	l5vWyFDpXglPKnHjo+QoOkXbe8BS4C0NyC2kD96YLpE6BXpudsqMnEkzil+yYhLZ6OjUB7sP2Y0
-	LL6It
-X-Gm-Gg: ASbGncur/rPupCKscu9uAA5l1Y4NmG/pSjh3Mg5u2QBb+RO+WKRwVYdd1Ixtq4VvwWA
-	9GarsEmaK5IC5D6HIu71RSxUn+pvBJvYGTHHVr+O+c9yp/ZfobNBKITpa8ytfE72YOv0ezbObRo
-	7eo4JITuKWOsZOJK/+t8quqarDOvQBLvmbT3uDHBlv2jXQRxX5YbKRspukKRVoWOX6VuQcmk4iZ
-	HhdPdbU/IfLMPp429C8rDsHeW4L0QFwFWYF0ifUe1jzSqdVDf5Lkgyhxs1XTppyb36ftZnL3trw
-	3putUymq04AO4PnmdDFMMK7JwVvLLFsn/IAym1jhjpKTHR+x+i2UqWw5UI1h3css8DReLqmQS16
-	otPHmBGaYhWs5URKr1+yQjENgkjYwsD6QU21F+3CiMPCCZhfA/AU4xDhh+/kGAFBw2jY0dJrw
-X-Google-Smtp-Source: AGHT+IHCBO7xLP5BokKxzK7/sqIK85VXUnkSNyV6W821hzOhPl8zMr4wD6F/COlyyLObPR50tBq6Ig==
-X-Received: by 2002:a05:600c:3b03:b0:477:54cd:200f with SMTP id 5b1f17b1804b1-47754cd211emr18406055e9.9.1762247421039;
-        Tue, 04 Nov 2025 01:10:21 -0800 (PST)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c2ff714sm200016665e9.8.2025.11.04.01.10.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 01:10:20 -0800 (PST)
-Date: Tue, 4 Nov 2025 11:10:18 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Subject: Re: [PATCH v3 5/5] phy: qcom: qmp-pcie: add QMP PCIe PHY tables for
- Kaanapali
-Message-ID: <2cdrb57borduwntzkihdikdrmnytibbtw7eyh6xjmyqi3yppyf@iwafnggbrnzb>
-References: <20251103-kaanapali-pcie-phy-v3-0-18b0f27c7e96@oss.qualcomm.com>
- <20251103-kaanapali-pcie-phy-v3-5-18b0f27c7e96@oss.qualcomm.com>
+	s=arc-20240116; t=1762247451; c=relaxed/simple;
+	bh=LMpQCdO4DpvAzMy+0oVJL+k1kGwvMBsIaCidJwajyks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AmJkHrvn6QgfeLZTi8HyD9WFZW5J2/XjUrJi/AH7Xu3i55wxZuQHfR3n6w/4Mgm4OYRMnZsRofh9RUgn3ArjxyFFdCK9VnUsLyMgrBiHE56Mm/P/yqhp95OZ0yduKumZFnJn3Dwt3v+jvqQscc9uS456PHktKasG2AEDX3hI8f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SETdWZYD; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 64F224E414F0;
+	Tue,  4 Nov 2025 09:10:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 33A79606EF;
+	Tue,  4 Nov 2025 09:10:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A4FB410B5069D;
+	Tue,  4 Nov 2025 10:10:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762247445; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=YLPevIWNzxiE5TizcrRb1gViSqpYMR7gcBGkGD5xEPw=;
+	b=SETdWZYDwG79HdPDQOgaK4ZpKVa7hYoJHZd/Nwx6oW++IuWO9MmQlogCN7P/w/vpow0mnF
+	mHcNu+LBfLIKvWh9xJaP1U1SFNtciG4xcPMSnVulmks8W3lRKUqm6tu2Q7WSeIjl1fJR2P
+	jbEtl8qOYVThT6eOJLTlmcDkwuu/1a7JhK6U1Or1wQ7GZjNnP2hyuU2gn5LPyGV77kBk9Y
+	aMzf0V2xLRE6jB3z7Bl5owg81DjU7sJu1VGMpWYyNUBHsqYkkHzkVQyRV9Ig6oWXD0VDdB
+	fXGQt87aoI6xDvuH0UjuFseT8Pn9V6Pl76/KxcGSR7pUroYd3FhUpOcXHV1eDA==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] net: phy: dp83869: Support 1000Base-X SFP
+Date: Tue, 04 Nov 2025 10:10:42 +0100
+Message-ID: <4689841.LvFx2qVVIh@fw-rgant>
+In-Reply-To: <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
+References:
+ <20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com>
+ <20251104-sfp-1000basex-v1-3-f461f170c74e@bootlin.com>
+ <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103-kaanapali-pcie-phy-v3-5-18b0f27c7e96@oss.qualcomm.com>
+Content-Type: multipart/signed; boundary="nextPart2387650.ElGaqSPkdT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 25-11-03 19:08:17, Qiang Yu wrote:
-> Add QMP PCIe PHY support for the Kaanapali platform.
+--nextPart2387650.ElGaqSPkdT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Date: Tue, 04 Nov 2025 10:10:42 +0100
+Message-ID: <4689841.LvFx2qVVIh@fw-rgant>
+In-Reply-To: <aQnA8HZjKKgibOz-@shell.armlinux.org.uk>
+MIME-Version: 1.0
+
+On Tuesday, 4 November 2025 10:01:36 CET Russell King (Oracle) wrote:
+> On Tue, Nov 04, 2025 at 09:50:36AM +0100, Romain Gantois wrote:
+> > +static void dp83869_module_remove(void *upstream)
+> > +{
+> > +	struct phy_device *phydev = upstream;
+> > +
+> > +	phydev_info(phydev, "SFP module removed\n");
+> > +
+> > +	/* Set speed and duplex to unknown to avoid downshifting warning. */
+> > +	phydev->speed = SPEED_UNKNOWN;
+> > +	phydev->duplex = DUPLEX_UNKNOWN;
 > 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> Should this be done by core phylib code?
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+I guess that enough PHY drivers do this by hand that a new phylib helper could 
+be warranted. Maybe something like phy_clear_aneg_results(), which would set 
+speed, duplex, pause and asym_pause to default values.
+
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart2387650.ElGaqSPkdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmkJwxIACgkQKCYAIARz
+eA4Lgg//ZkSNIz8w17WdBe/2GkkDoBqglESJBCzjpe+Pheqlcw+QL4RECY0JIfUy
+Lz6bNYx412qsAN2LEcSbwrOBzbwLM5KXEP5jBC7jM1nn/8+Z5iILA9ccFTNbbMce
+2IQO3Ne1zZRkf4xRECPLU7rFh/kzMKOiarXTp+90dwebYEJ0s4SN/ODRXMw4T6OP
+ZeK93PZ3QKVLSyt7m8m4h/Na7NHnLcIZhefl8aRnX3j36AeHdv2WWh4+io5L7DMl
+nIch/GVH3++ah0W8RZmj6Cagd0MFzO3M0QKawHbTPsLF3U2CHY0dFJxSY0fKERrT
+MvzL3CzPKyaqQtg6mG+WnS0sFWqvQ6DiVb5gmIldwwBCJr1KIzLTxDq3UDQJize7
+nZgEHqbcdnEwQlKM3KnipbyOVodDlKjOJKEC9vMk/OjeUNVAqg8bT0RH1OdH5c7d
+aHvOxTqfY6GXeNM2xz3Sy0VYTEaedGAtfF1jdwna78ArsNj+eXFuPnAKWRwjKYI0
+D6Yxe4ZZSjAse6ujm4Yn0C34SRCYFW6jPa6GoQbfRQUhoJZgXGpRR+OapIQkjfJG
+Gyl+SWP0Scr4O3sJ/GUIh50ZRvkB2evoLeVQyhaKO2DOgh57A1Vlqg7xhZgsDWvh
+rGg0fYENiRiBlBs2inSmgd1FhhjwNlGU/FSbEsf4oZ4kQzLDMQc=
+=o8N2
+-----END PGP SIGNATURE-----
+
+--nextPart2387650.ElGaqSPkdT--
+
+
+
 
