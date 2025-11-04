@@ -1,175 +1,147 @@
-Return-Path: <linux-kernel+bounces-883876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC36C2EA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:34:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69696C2EA57
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D69189A2A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:35:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1C004F8199
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8382E207A0B;
-	Tue,  4 Nov 2025 00:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE111FC0EF;
+	Tue,  4 Nov 2025 00:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="ZXaqscoA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uIbao+gH"
-Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S5wb4QYX"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051131A2C11;
-	Tue,  4 Nov 2025 00:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693FB13AF2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762216473; cv=none; b=lzlOV+EXsjNYiPsaLH82jB2wgfDB69HCrBzNK2JJd5irOhA0ernPHKF7molmUp6ATqrwMBg6o6Ol6YMWqMEbUEPkPrcMM25M5D3SP7HsnhDDMp/boTNZ/ygUAVW8329u0lKV3+ku1RPy+IzqzAk1rSsNsRhXKTzRNChhYloJj84=
+	t=1762216548; cv=none; b=JNbM49URzu+irLCmaWexs4W4TFFnObi1qnTvBwrbN4PxA7muBc0klmAwSOKzS9wLAPY+WuzXiz2h9FKOyF4hMBV4TT0ccIDbtMZ3FB91zyfowUatggfzn502kMLRXPzArQ7q3mjPjCjADMKlDWYrcJeztqmKW0QsI8TKYeHxskU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762216473; c=relaxed/simple;
-	bh=BGZwrpus3lHtfsbvhH4iXIFhobnmKnvjJoGJprtyb3k=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=N7ANdc6HMAfsJ5Uh4UpKDKYp+h68C5a+KtKVozcXAv+cJXm0Jb3ya38MrQbuO36Rn4g3nDwhSUpUZkuzrKooN8PUwTThbJS58DKpvoSoHNYbn8IVXXcrF4jkgAmfiDAV1VgSXm3TFQ8wjDDHloqOGb267iLLgbFHVFEhAS3RbyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=ZXaqscoA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uIbao+gH; arc=none smtp.client-ip=202.12.124.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id 30BE41300AAF;
-	Mon,  3 Nov 2025 19:34:30 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 03 Nov 2025 19:34:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762216470; x=1762223670; bh=qeQ9pSvQPAFnDOoHPFbKVWO6Cl7+FMERadY
-	NQKykv7k=; b=ZXaqscoAoWcyH5B6xlrBBs/1+Rbd43ofN8C2+S833h0k/oNrSwV
-	tAPafKpitQJp18rWNitPDWUEXYlHxhySCAmJPDB2F4lWtimOf5M6zxQw1LHwyQbi
-	boU+V3+XsmK+8yJT3a4tW/nDkdJNf2N5GLldQAQcw4fFN8KV4VxCBeS9bI4x2SJr
-	NER8eXk22/5ALkGXkrRQBGuSbFvp12ruMqe5r+Z83PiW1LUny24nlxWxc13HsQId
-	niT5mXQfHrwnzboeDYCBTQ+RnHf08JnJdKNGS24XVRxiDoxSXF6YCIBA9yfSv6lJ
-	E1zyPCY4CGtHO76G9ZIQUTgooqrpI5FilIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762216470; x=
-	1762223670; bh=qeQ9pSvQPAFnDOoHPFbKVWO6Cl7+FMERadYNQKykv7k=; b=u
-	Ibao+gH9sPTr2bMMb8QFEzQCRAhf/D0CjSv3wC9IXrnO5K1G3KSxmRI8jQQUEgcJ
-	oWSCbYF8ejh/x6nBRUIpNP5szu0CKcUe3P7Shoua8EPrptU3c2MYR3X5j14a5dyq
-	jIz5Lls2CEVdxPMnITfhZCW6o139DpG+KcWN3W6ZzRNFEW7zDhHx1LRLk81jxYYx
-	wBKUSaLgYJgRavsvONgEcLjy88Ipj2YwVQzhcQZbcslWl0FKlIHamDwvN0YlFf3s
-	FMGx6mYrl5QDpBiwfz7Fnvf7hSc3NCkLc38qqWu0I5NHlsHKfXX/u0J9d/3dJTn4
-	8tcV9XfAWtpmeFQKrHCJA==
-X-ME-Sender: <xms:FUoJaXYKrufVPSQJF8yOL7P3S15hULdNbQHFw3Q-P9WggcvC-K8u_w>
-    <xme:FUoJaVbZ0XsaJ3UHNUfy6u6Go54wGf1pPefW6xlXguX5iaX6NOMNk5-pVE2yMVQsl
-    RB1_SsanqQtUXC7G2e_M0JJ130va4vB0Gvc-eLqZchJlxQq-Q>
-X-ME-Received: <xmr:FUoJaSNli2Bk6QH8ww3lpsxfug9luibV5gSJW-ye3CQdnk_LIKWJXHAwq9t9KkZwisurttg_OyfvPLrvL-96yEdKU-Pk3J7mWxVpX0VP8_B3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeelheekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:FUoJaaCX7ROhHlMxfULTjMpZCXgJx070-5t210jOrh2vKf1Dbsc70Q>
-    <xmx:FUoJacNlhGxAsNNP0sTE0PwH-m67-XImxsL7odxy-Iy5MH7tEpM_Wg>
-    <xmx:FUoJafyVPnRwFltBkXYn0n3f5Z_EqJ8RodWi2JrDgGA2BRx_fYEGWg>
-    <xmx:FUoJaXfJX06EVls3FZbb6OdR9ehl65ofH1qSAGck_eYJQGsDo2rIOg>
-    <xmx:FkoJad1IPwXLYRPa8uXI6XqJquLGVJAuaWDq2BDfal-cowKmcB1EugxP>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Nov 2025 19:34:18 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1762216548; c=relaxed/simple;
+	bh=J12sf3Gup8VxAlVwcUlGGSJgcvZXPv3vNw1w5YwsnkQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sE9OLF6zsrxGQuvYMOpzU1/ybpdycADd2LIum52FBttbYE+4yqc6YjlJkGlF+ghMiYL/E1bGQcB04X8AEh/yUQGe36cw8df7dej+VXLNzLg0vhxuNJUb7dejK5n3AyanihkjKnpgusJDrfpmbEDBVgWXppcrOYQiyY8E42h+FKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S5wb4QYX; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-940f9efd090so1599686539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 16:35:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762216546; x=1762821346; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vSVW06+pVd4pDgbHyrlMsErdqN3jivDXBVW0U437gUE=;
+        b=S5wb4QYXO1cDY2aZYzX7piQY7pQ+3h6Ib47xTElSuAK9SY8YqPBj0UY8RheYOf4EHJ
+         Qlp3MFwZL4NxiRDuvsikAj2VX3O4j7ttsb3Np1sfRTtBPJCT81lXquY7eSs6KBUke98z
+         HWE51kpOeURAewV0B16qkk6omSzliTpUgvbVqToOeEY23emCnB4lAttbxXUGsCd53eZy
+         eAUT9JLA5pxeUPQcVoY4eUBagq1c1kK2W+J1gRJ6oAnSU3eTBjoC0qtj6YGN24GpLGwQ
+         J8mWpvZ73ImclAarNe6F+lTpg1d8/1GPvRNn6/bYiHkhc3FV6+Z8FXwYX244WTALqirJ
+         AmDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762216546; x=1762821346;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vSVW06+pVd4pDgbHyrlMsErdqN3jivDXBVW0U437gUE=;
+        b=o8KSWbIwQh8SzJ5O+Jkd5elyN98rb0rlHwecEDMaWQlgmmPjqrfIAiY3VaTgHuhRpY
+         C7uhCZeUTAwLTdkSQCEYPEzu5pjhvNWQKqZNnlkFUOfzIUdnHBj1eOBYenlyQQtafo67
+         1bfHu+tFYrZYLyph//Zzeu1KV2NBRAWJdawLf5QEqvTHyUv+nQlP/Mdylf+zP0orZhL2
+         M29iW1ikjyIvjxR3JMNUo2Xv/a2+p24Zn779jY5vdXR5xw8zMJK2bKwpBacWWTBbOQcx
+         cvZvzDEL5Tawqe4QcomkHrGMG7PrjyFHcKwUAl6MOh8LIqJGInvWstUTlFj99enC+yfr
+         Uqbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWF9wd7ixF1v/vMYveDThuOtPLTu/GJuukW22z/ZkVrMgPRf5NzLqLmqYRfpdw/kSzHMmmLExoo2Bg6sL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfaNxRN7krzB67Hu70B9v4x6yEZgeBY8X6Q6FEzdju2/ljVy5X
+	LFFcLzrAQpAk9RSdl4cqH+OxSm4T7qPqhu1/y+Y4EgAJrQGQnbntGD6xeUJpTS3z9YUR9kmI6Zp
+	8bsljsyfsiQ==
+X-Google-Smtp-Source: AGHT+IFgXMlYo/O1xEmEJqlDiThcXEzV/Ub9UekrIDm60ecPn9RhpOr1DGHBEfBnEsjKKU8tOpheJohOlBqb
+X-Received: from iobfp4.prod.google.com ([2002:a05:6602:c84:b0:945:abfb:6eb0])
+ (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:1694:b0:93e:7883:89a6
+ with SMTP id ca18e2360f4ac-94822a5275emr2188205639f.16.1762216546593; Mon, 03
+ Nov 2025 16:35:46 -0800 (PST)
+Date: Tue,  4 Nov 2025 00:35:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Alexander Aring" <alex.aring@gmail.com>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
- "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "Kuniyuki Iwashima" <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH v4 09/17] vfs: add struct createdata for passing arguments
- to vfs_create()
-In-reply-to: <176221480589.1793333.7801494824880510264@noble.neil.brown.name>
-References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>, <>,
- <20251103-dir-deleg-ro-v4-9-961b67adee89@kernel.org>,
- <176221480589.1793333.7801494824880510264@noble.neil.brown.name>
-Date: Tue, 04 Nov 2025 11:34:14 +1100
-Message-id: <176221645432.1793333.17238801449784435061@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
+Message-ID: <20251104003536.3601931-1-rananta@google.com>
+Subject: [PATCH 0/4] vfio: selftest: Add SR-IOV UAPI test
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: David Matlack <dmatlack@google.com>, Alex Williamson <alex@shazbot.org>, 
+	Alex Williamson <alex.williamson@redhat.com>
+Cc: Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Raghavendra Rao Ananta <rananta@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 04 Nov 2025, NeilBrown wrote:
-> On Mon, 03 Nov 2025, Jeff Layton wrote:
-> > vfs_create() has grown an uncomfortably long argument list, and a
-> > following patch will add another. Convert it to take a new struct
-> > createdata pointer and fix up the callers to pass one in.
-> > 
-> 
-> I know Christian asked for this and he is a Maintainer so.....
-> 
-> but I would like say that I don't think this is a win.  The argument
-> list isn't *that* long, and all the args are quite different so there is
-> little room for confusion.
-> 
-> I would be in favour of dropping the "dir" arg because it is always
->    d_inode(dentry->d_parent)
-> which is stable.
-> 
-> I would rather pass the vfsmnt rather than the idmap, then we could pass
-> "struct path", for both that and dentry, but I know Christian disagrees.
-> 
-> So if anyone really thinks the arg list is too long, I think there are
-> better solutions.  But I don't even think the length is a problem.
+Hello,
 
-Also *every* caller of vfs_create() passes ".excl = true".  So maybe we
-don't need that arg at all.
+This series adds a vfio selftest, vfio_pci_sriov_uapi_test.c, to get some
+coverage on SR-IOV UAPI handling. Specifically, it includes the
+following cases that iterates over all the iommu modes:
+ - Setting correct/incorrect/NULL tokens during device init.
+ - Close the PF device immediately after setting the token.
+ - Change/override the PF's token after device init.
 
-I think that the last time false might have been passed to vfs_create()
-was before
+The test takes care of creating/setting up the VF device, and hence, it
+can be executed like any other test, simply by passing the PF's BDF to
+run.sh. For example,
 
-Commit ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()")
+./run.sh -d 0000:16:00.1 -- ./vfio_pci_sriov_uapi_test
++ echo "0" > /sys/bus/pci/devices/0000:16:00.1/sriov_numvfsdddd
++ echo "vfio-pci" > /sys/bus/pci/devices/0000:16:00.1/driver_override
++ echo "0000:16:00.1" > /sys/bus/pci/drivers/vfio-pci/bind
 
-NeilBrown
+TAP version 13
+1..45
+Starting 45 tests from 15 test cases.
+  RUN  vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.init_token_match
+    OK vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.init_token_match
+ok 1 vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.init_token_match
+  RUN vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.pf_early_close
+   OK vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.pf_early_close
+ok 2 vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.pf_early_close
+  RUN vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.override_token
+   OK vfio_pci_sriov_uapi_test.vfio_type1_iommu_same_uuid.override_token
+[...]
+  RUN vfio_pci_sriov_uapi_test.iommufd_null_uuid.override_token ...
+   OK vfio_pci_sriov_uapi_test.iommufd_null_uuid.override_token
+ok 45 vfio_pci_sriov_uapi_test.iommufd_null_uuid.override_token
+PASSED: 45 / 45 tests passed.
+
+The series this dependent on another series that provides fixes in the
+IOMMUFD's vf_token handling [1].
+
+Thank you.
+Raghavendra
+
+[1]: https://lore.kernel.org/all/20251031170603.2260022-1-rananta@google.com/
+
+Raghavendra Rao Ananta (4):
+  vfio: selftests: Add support for passing vf_token in device init
+  vfio: selftests: Export vfio_pci_device functions
+  vfio: selftests: Add helper to set/override a vf_token
+  vfio: selftests: Add tests to validate SR-IOV UAPI
+
+ tools/testing/selftests/vfio/Makefile         |   1 +
+ .../selftests/vfio/lib/include/vfio_util.h    |  19 +-
+ tools/testing/selftests/vfio/lib/libvfio.mk   |   4 +-
+ .../selftests/vfio/lib/vfio_pci_device.c      | 151 ++++++++++--
+ .../selftests/vfio/vfio_dma_mapping_test.c    |   2 +-
+ .../selftests/vfio/vfio_pci_device_test.c     |   4 +-
+ .../selftests/vfio/vfio_pci_driver_test.c     |   4 +-
+ .../selftests/vfio/vfio_pci_sriov_uapi_test.c | 220 ++++++++++++++++++
+ 8 files changed, 377 insertions(+), 28 deletions(-)
+ create mode 100644 tools/testing/selftests/vfio/vfio_pci_sriov_uapi_test.c
+
+
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+-- 
+2.51.2.997.g839fc31de9-goog
+
 
