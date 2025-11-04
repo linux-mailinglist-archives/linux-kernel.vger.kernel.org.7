@@ -1,202 +1,271 @@
-Return-Path: <linux-kernel+bounces-884179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4198C2F8B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE94C2F8BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1891818C0C60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0B4189ED03
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A1F3016E3;
-	Tue,  4 Nov 2025 07:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzgbiKld"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5D43009CC;
+	Tue,  4 Nov 2025 07:03:09 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E45416DEB3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44B33002A8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239636; cv=none; b=PUnxBDvmjjKD4AzdQxZfaleWMv3i2RAuFJmamn7L1LBtQhd3b+VfdmSPb3ANCPmUPdl58nRTjjsYE5euErh3MXtG8ecfrq0V/xsMM5gr8R2SmR6h6grRYvdgAJZfq3Kt+gAzkyjf2Y7QJEWkwalSxMMUhKdWKAHrXYf8jxSkXnQ=
+	t=1762239788; cv=none; b=Sh3YfCOhP8lyDkjhOOLJMrG9/P4mVdc8VpSagnbuHo0MEdCzbnwGJ31yWwsSZcl2OaRxAKfAcaFPTcLVOXbHs4MSwvy6J3MCdpbBL7iZScq4NbHDBPZwyPRTTQbVTgeEZzP1if3A2s7Y/Mhu1JOIjwMDtb+nVIU+J/xKgUgNHWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239636; c=relaxed/simple;
-	bh=Lmg3dsZX5sBPU+87vVUFPw6v+4JP4m4mRIzteONc3xY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NS9Sk9ToL7eD9g94ExxXJQYDsB0TaZVvwc/e17M/GphId5j+neC62PCGg6qc8/Wb0ngzJu18ABclDzmZyCNsQBAHi2Mwj/QICPxM+R7l11U0iewup8qiCA9FeF6aC5lcQF2mu+OckMypDuuoGN8vL0Uac2qFe5Vz2I1PJaruK4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzgbiKld; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34088fbd65aso4327504a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 23:00:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762239634; x=1762844434; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jYJY/CCyWXdpODdd8/1XVppqC3rVXb5NLy8uDvNpLnk=;
-        b=XzgbiKld6aAZbyiee1/3OB6fFR3hss/nAJiWE6kjzpIlhlCrYhVdghLvL4Z3CdTRUA
-         ZGGj98s2TBeK00khw9UVUgKUI4xTXIO2sCW+qTA0W3c3RPBww/x/HPsBabni0Hmagog2
-         t7pFF2NTRBObztrutPKnc1yy3Sk1ZGvJhhsJODZTnRPk3BbOI+d5GfnRlp5dw3Z6jXQE
-         eQu1I/3PVuApYuVmPyQV5tlgTETtRrwfkEFyJebcx6JAsWhkkjpoojEsAUU8lY4XM68t
-         +/+JSJimvLpjL1NIk0RNlF9R0IUdRo7ka0FEtgKPTmM0/91lWSK01FWtQz4cKNT6NEBJ
-         J83g==
+	s=arc-20240116; t=1762239788; c=relaxed/simple;
+	bh=bBpBB8nJJtTw1qKd2r/Ffgunpwe4ISBhUcAtqtoeVqs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sTba9VJ14ZOobM+r9wf2od63n00anzV9gdX8Kzn3HoBIko0NbLTf3FSahf7tLjnY36XSY8/SnH6cUxzDA+QAFLxuF8A1pa57+AiDbvGQqnKQ5RWtFdnLGvTzDRiSXWX+Y1IIdDgR1sVLYf7oE2Sd6DdBLOTOP756ks9ifItIqFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93bc56ebb0aso1590921439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 23:03:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762239634; x=1762844434;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1762239784; x=1762844584;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYJY/CCyWXdpODdd8/1XVppqC3rVXb5NLy8uDvNpLnk=;
-        b=Q+0zCmA5TLAqqfaR6V2F5/CG57TL2QQhTKycQOa5+CM0jlN1PIvLnSsnxr754W1JEy
-         KfDW3x4obc4L2XUkCY/OP4TmeZ12+dAcIFRE5pBel3RtZFX/9evGVyFReb7LpwukICN9
-         c9qH/x+3IbEHK1ILvESxqK+L1SGan32sMpWYNX/SHc4BZNSSMCU8U4TE+S7RJ+yISO+y
-         5n50P8cmO+LLQ4cco44m1I4XGrba4eKOVbjzi76C3fhsJYqHIGm41+vtk9CP+5Z3O0mP
-         21Jp9w8cDWiP8IbZbv6Lobx/8VZ3EBr0iVVir2ff7UwlHdREA08/AusB8Hazo5//dXZu
-         yjPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJm7BUYl52g10rStIA2bgWzNyufhK72WSxEU336GTiXfDaxhNsTC5ioRDYCBfRsQMUzrEbX94WwcPI8Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnLVv7KsKO423UFgmb5w+LmJZplu2KIZ6SoQKYE9b3aRB5ZnE1
-	urBbFxfJs2iG7o4CJub0+NH92/4tPFgZZ0qHokZFWkzzxn0EN9IsyMLU
-X-Gm-Gg: ASbGncsgeI0yLSEPyVKtH5dCyesZDXKZtjuASFLjGWt8HtBfDrBkaj8iByUWSlfJeHi
-	00wFwZMzW4tXLa9xZU2XrOnQODtKSnokP7dF9JmN3b8Ueaw8HVIqAVK25d6QhLIUFdKReFh/VlP
-	fBn/ojmiqFRtjGL/E1O/7JGU3TRgL+HQbUlOsPxJpIOYUxzCYmj67IFAtGwPgnBKyQd3/sCYv2x
-	8rfBgYYqae5G2oibva7wohDmxFwHcHUiuZySkrMa2jOSA8SyD5MAAPACGpnOw8RSKKD8LA2IzsO
-	mKGHrJLG0SWmuvomCa29pvyY+0ObSGlElhMauTITmnuzMZsg1X/XqPuSLN1Akd6/uoA0OLNJTgM
-	3Qm3wro/1s8qburXdv6bcL93L7LM3yaBVnmlLsefWbwpwRwclI9khClNbNzw4ihoV1Q5HMRUrIN
-	4VBwb7/1VyWkKnqroU1Gyn8if3cGtXgCI5MJJibROXhOWgOQ==
-X-Google-Smtp-Source: AGHT+IFuippdkSZdZbM/zbViKxiB1sV+P3foKWTH4k7vkaZ/0vpIhwnIYOp4owTWQeoz9RLgVonuMQ==
-X-Received: by 2002:a17:90b:2886:b0:340:73a2:c840 with SMTP id 98e67ed59e1d1-3408308b4f8mr18356520a91.30.1762239633674;
-        Mon, 03 Nov 2025 23:00:33 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3417bc8e9b7sm649825a91.2.2025.11.03.23.00.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 23:00:33 -0800 (PST)
-Message-ID: <e951d365-27ec-427c-ba29-8b6925342463@gmail.com>
-Date: Tue, 4 Nov 2025 16:00:27 +0900
+        bh=nV0ZlpvtJSmKU+AuYWeNRn5uCnaJyEhec8Nn7x5eLt0=;
+        b=LootEH3d6PBfgOar7wvjhDgzt1dBZPpZ0QiQS7zSLYsjlSC27wxsSQ/91btGGgl5If
+         XLIBl+G+g9KAzYfUcTmSxcLtRLQoM6q0gjdOV6wD3b010qSyQ6t4RSweHpK7/4pKeywO
+         3uJyw8KOFNSrwOXl3ohZgj3ut7Dv30ufxSTXYesQfvXDSCkiD60JUebyg95hpnnR2MD6
+         7X7zGMMBPwgPCxTC1tv+dop1rsT1OZv9moxwz7bqTzy4OnmmAoQ3mTEasePrn4uQmzeT
+         kd5MNnyr9W9dt30B/rReVXw/q7OdmfFpatj74PLC48MXjsguR+Lrrs5Bh4wKUyTeK3x7
+         Vojw==
+X-Gm-Message-State: AOJu0YzFca8sb1UGyAL0v2vZraQttRtJcHZa6RWRrrv7PtNlm44lwawR
+	hQXWiH7rwiED3KiGHUtTIJ/noUkDxybZHPXO9Ob0jV+386+WcotiKfilNvVMzltSL5H9BPwx13O
+	1U6qQJm0VKP7yMc5Wuj/rWKTEd+hgcZ+fx87hApLueFAeo/06pxOO78RAvDQ=
+X-Google-Smtp-Source: AGHT+IEB2Dwnd1PycwHr0/pnW+XStrMJqGZl8R0I4z2LlQWYaRByAQJT0Tqs7LM5ZxQZzZap+sN9A2K3kokTk+vZvUJnHL7/Vcde
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: paulmck@kernel.org
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- kernel-team@meta.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
- rcu@vger.kernel.org, rostedt@goodmis.org
-References: <20251102214436.3905633-15-paulmck@kernel.org>
-Subject: Re: [PATCH 15/19] srcu: Create an SRCU-fast-updown API
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20251102214436.3905633-15-paulmck@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6089:b0:93b:ae89:52da with SMTP id
+ ca18e2360f4ac-948229542d4mr2028500539f.10.1762239783857; Mon, 03 Nov 2025
+ 23:03:03 -0800 (PST)
+Date: Mon, 03 Nov 2025 23:03:03 -0800
+In-Reply-To: <kj6hgbdwsmff55vzjvmlsvybcmhrdywa2d4fxqt7376ocmocle@5jrydocarqf2>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6909a527.050a0220.98a6.00a1.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in ni_rename (2)
+From: syzbot <syzbot+4d8e30dbafb5c1260479@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Paul,
+Hello,
 
-Minor nitpicks in kernel-doc comment of srcu_read_lock_fast_updown().
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in ni_rename
 
-On Sun,  2 Nov 2025 13:44:32 -0800, Paul E. McKenney wrote:
-> This commit creates an SRCU-fast-updown API, including
-> DEFINE_SRCU_FAST_UPDOWN(), DEFINE_STATIC_SRCU_FAST_UPDOWN(),
-> __init_srcu_struct_fast_updown(), init_srcu_struct_fast_updown(),
-> srcu_read_lock_fast_updown(), srcu_read_unlock_fast_updown(),
-> __srcu_read_lock_fast_updown(), and __srcu_read_unlock_fast_updown().
-> 
-> These are initially identical to their SRCU-fast counterparts, but both
-> SRCU-fast and SRCU-fast-updown will be optimized in different directions
-> by later commits.  SRCU-fast will lack any sort of srcu_down_read() and
-> srcu_up_read() APIs, which will enable extremely efficient NMI safety.
-> For its part, SRCU-fast-updown will not be NMI safe, which will enable
-> reasonably efficient implementations of srcu_down_read_fast() and
-> srcu_up_read_fast().
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: <bpf@vger.kernel.org>
-> ---
->  include/linux/srcu.h     | 77 +++++++++++++++++++++++++++++++++++++---
->  include/linux/srcutiny.h | 16 +++++++++
->  include/linux/srcutree.h | 55 ++++++++++++++++++++++++++--
->  kernel/rcu/srcutree.c    | 39 +++++++++++++++++---
->  4 files changed, 176 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index 1dd6812aabe7..1fbf475eae5e 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
+loop0: detected capacity change from 0 to 4096
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/6515 is trying to acquire lock:
+ffff888042223978 (&type->i_mutex_dir_key#8){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ffff888042223978 (&type->i_mutex_dir_key#8){+.+.}-{4:4}, at: ni_rename+0x7c/0x170 fs/ntfs3/frecord.c:-1
 
-[...]
+but task is already holding lock:
+ffff888042214620 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ni_lock fs/ntfs3/ntfs_fs.h:1113 [inline]
+ffff888042214620 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ntfs_rename+0x6f7/0xbf0 fs/ntfs3/namei.c:328
 
-> @@ -305,6 +315,46 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
->  	return retval;
->  }
->  
-> +/**
-> + * srcu_read_lock_fast_updown - register a new reader for an SRCU-fast-updown structure.
-> + * @ssp: srcu_struct in which to register the new reader.
-> + *
-> + * Enter an SRCU read-side critical section, but for a light-weight
-> + * smp_mb()-free reader.  See srcu_read_lock() for more information.
-> + * This function is compatible with srcu_down_read_fast(), but is not
-> + * NMI-safe.
-> + *
-> + * For srcu_read_lock_fast_updown() to be used on an srcu_struct
-> + * structure, that structure must have been defined using either
-> + * DEFINE_SRCU_FAST_UPDOWN() or DEFINE_STATIC_SRCU_FAST_UPDOWN() on the one
-> + * hand or initialized with init_srcu_struct_fast_updown() on the other.
-> + * Such an srcu_struct structure cannot be passed to any non-fast-updown
-> + * variant of srcu_read_{,un}lock() or srcu_{down,up}_read().  In kernels
-> + * built with CONFIG_PROVE_RCU=y, () will complain bitterly if you ignore
-> + * this * restriction.
+which lock already depends on the new lock.
 
-Probably,
 
- * built with CONFIG_PROVE_RCU=y, __srcu_check_read_flavor() will complain
- * bitterly if you ignore this restriction.
+the existing dependency chain (in reverse order) is:
 
-??
+-> #2 (&ni->ni_lock#3/5){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/rtmutex_api.c:535 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:547
+       ni_lock fs/ntfs3/ntfs_fs.h:1113 [inline]
+       ntfs_save_wsl_perm+0x8b/0x410 fs/ntfs3/xattr.c:975
+       ntfs_create_inode+0x23b9/0x32a0 fs/ntfs3/inode.c:1629
+       ntfs_create+0x3d/0x50 fs/ntfs3/namei.c:110
+       lookup_open fs/namei.c:3796 [inline]
+       open_last_lookups fs/namei.c:3895 [inline]
+       path_openat+0x1500/0x3840 fs/namei.c:4131
+       do_filp_open+0x1fa/0x410 fs/namei.c:4161
+       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> + *
-> + * Grace-period auto-expediting is disabled for SRCU-fast-updown
-> + * srcu_struct structures because SRCU-fast-updown expedited grace periods
-> + * invoke synchronize_rcu_expedited(), IPIs and all.  If you need expedited
-> + * SRCU-fast-updown grace periods, use synchronize_srcu_expedited().
-> + *
-> + * The srcu_read_lock_fast_updown() function can be invoked only from
-> + those contexts where RCU is watching, that is, from contexts where
-> + it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
-> + complain.
+-> #1 (&ni->ni_lock/6){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/rtmutex_api.c:535 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:547
+       ni_lock_dir fs/ntfs3/ntfs_fs.h:1118 [inline]
+       ntfs_lookup+0xee/0x1f0 fs/ntfs3/namei.c:84
+       lookup_open fs/namei.c:3774 [inline]
+       open_last_lookups fs/namei.c:3895 [inline]
+       path_openat+0x110d/0x3840 fs/namei.c:4131
+       do_filp_open+0x1fa/0x410 fs/namei.c:4161
+       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-kernel-doc (script) complains:
+-> #0 (&type->i_mutex_dir_key#8){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x3a/0x50 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:980 [inline]
+       ni_rename+0x7c/0x170 fs/ntfs3/frecord.c:-1
+       ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+       vfs_rename+0xb34/0xe80 fs/namei.c:5216
+       do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+       __do_sys_rename fs/namei.c:5411 [inline]
+       __se_sys_rename fs/namei.c:5409 [inline]
+       __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Warning: include/linux/srcu.h:341 bad line:  those contexts where RCU is watching, that is, from contexts where
-Warning: include/linux/srcu.h:342 bad line:  it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
-Warning: include/linux/srcu.h:343 bad line:  complain.
+other info that might help us debug this:
 
-Leading "* "s are missing.
+Chain exists of:
+  &type->i_mutex_dir_key#8 --> &ni->ni_lock/6 --> &ni->ni_lock#3/5
 
-        Thanks, Akira
+ Possible unsafe locking scenario:
 
-> + */
-> +static inline struct srcu_ctr __percpu *srcu_read_lock_fast_updown(struct srcu_struct *ssp)
-> +__acquires(ssp)
-> +{
-> +	struct srcu_ctr __percpu *retval;
-> +
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast_updown().");
-> +	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST_UPDOWN);
-> +	retval = __srcu_read_lock_fast_updown(ssp);
-> +	rcu_try_lock_acquire(&ssp->dep_map);
-> +	return retval;
-> +}
-> +
->  /*
->   * Used by tracing, cannot be traced and cannot call lockdep.
->   * See srcu_read_lock_fast() for more information.
-[...]
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ni->ni_lock#3/5);
+                               lock(&ni->ni_lock/6);
+                               lock(&ni->ni_lock#3/5);
+  lock(&type->i_mutex_dir_key#8);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.0.17/6515:
+ #0: ffff88814abe0480 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:508
+ #1: ffff888042223978 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1025 [inline]
+ #1: ffff888042223978 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: lock_rename fs/namei.c:3360 [inline]
+ #1: ffff888042223978 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: do_renameat2+0x3b9/0xa50 fs/namei.c:5311
+ #2: ffff8880422148d8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #2: ffff8880422148d8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: lock_two_nondirectories+0xe7/0x180 fs/inode.c:1232
+ #3: ffff888042224128 (&sb->s_type->i_mutex_key#20/4){+.+.}-{4:4}, at: vfs_rename+0x665/0xe80 fs/namei.c:5187
+ #4: ffff8880422236c0 (&ni->ni_lock/6){+.+.}-{4:4}, at: ni_lock_dir fs/ntfs3/ntfs_fs.h:1118 [inline]
+ #4: ffff8880422236c0 (&ni->ni_lock/6){+.+.}-{4:4}, at: ntfs_rename+0x6de/0xbf0 fs/ntfs3/namei.c:327
+ #5: ffff888042214620 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ni_lock fs/ntfs3/ntfs_fs.h:1113 [inline]
+ #5: ffff888042214620 (&ni->ni_lock#3/5){+.+.}-{4:4}, at: ntfs_rename+0x6f7/0xbf0 fs/ntfs3/namei.c:328
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6515 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1590
+ inode_lock include/linux/fs.h:980 [inline]
+ ni_rename+0x7c/0x170 fs/ntfs3/frecord.c:-1
+ ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f53db12efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f53da796038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f53db385fa0 RCX: 00007f53db12efc9
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000200000000580
+RBP: 00007f53db1b1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f53db386038 R14: 00007f53db385fa0 R15: 00007ffec8956b58
+ </TASK>
+------------[ cut here ]------------
+rtmutex deadlock detected
+WARNING: CPU: 1 PID: 6515 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
+WARNING: CPU: 1 PID: 6515 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+WARNING: CPU: 1 PID: 6515 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+Modules linked in:
+CPU: 1 UID: 0 PID: 6515 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
+RIP: 0010:__rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+RIP: 0010:__rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+Code: 7c 24 20 dd 4c 8b b4 24 98 00 00 00 0f 85 fd 0a 00 00 48 8b 7c 24 10 e8 4c 40 28 09 90 48 c7 c7 60 fd ea 8a e8 ef 62 e7 ff 90 <0f> 0b 90 90 48 8b 9c 24 80 00 00 00 43 80 3c 3e 00 74 08 4c 89 e7
+RSP: 0018:ffffc90003f07740 EFLAGS: 00010246
+RAX: aef14222ed876700 RBX: ffff888023b428e0 RCX: ffff888023b41e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003f07930 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101712487b R12: ffff888023b43560
+R13: ffff888023b41e18 R14: 1ffff110047686ac R15: dffffc0000000000
+FS:  00007f53da7966c0(0000) GS:ffff888126ef9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f31ff1aa9c0 CR3: 0000000030736000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:980 [inline]
+ ni_rename+0x7c/0x170 fs/ntfs3/frecord.c:-1
+ ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f53db12efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f53da796038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f53db385fa0 RCX: 00007f53db12efc9
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000200000000580
+RBP: 00007f53db1b1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f53db386038 R14: 00007f53db385fa0 R15: 00007ffec8956b58
+ </TASK>
+
+
+Tested on:
+
+commit:         c9cfc122 Merge tag 'for-6.18-rc4-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12241bcd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d8e30dbafb5c1260479
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=129b3704580000
+
 
