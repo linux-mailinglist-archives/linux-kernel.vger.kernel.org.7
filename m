@@ -1,124 +1,175 @@
-Return-Path: <linux-kernel+bounces-884844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083FDC314C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:49:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7F4C314B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E0CF4F07AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB633B03FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAF03218B8;
-	Tue,  4 Nov 2025 13:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BB12F6192;
+	Tue,  4 Nov 2025 13:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="485pWYjv"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="juiqD+5r"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FBA19E968
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A43277C8D;
+	Tue,  4 Nov 2025 13:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762264124; cv=none; b=eTFoCr6bt1icdtvKodGw/Qt1z+Kds7lMIMg7yw16LUvqPBe4PqTGfLGwOvIazC4b9wb/oic43elif1gDgsBrUmTULoqeAbxNtPj23IPcUKLiDHrDcZvmyIL1Yyjbgo20b68STBEgXV0k1/+0BhFg7hvrXMeWdGqVhtW0xVswlkQ=
+	t=1762264139; cv=none; b=c16JIdCnvLRdm8nRg0/eOP3f7GqRIqx+6q5k0oVFZPpEQkfTaTJGElq71muEWrA9POsfEnJAYrKgF8nSXKQT9fcc7Lhy5u1+xMQ19h4O+QggtmaBqfHRDQR8F3KAEWpXATK28BhSlwid0wk/aaFhao8WhoFQ46qJp6ihXQ+DDa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762264124; c=relaxed/simple;
-	bh=3/OARezs29eUq90xKny6FQe3l9UwiuCpXkYqxg2+/iY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IgKYPqkPInZ6VNYfN9w84d5CiCXCUCneYbCN+uLYH8hQiOzaXAd2RWo+EoF0B9j3NWXefsBNJ7aYna9hU64Kia6+3cme4dS8YdXGTAuL/bHJu14N2YsMehyiAQyfzn4P9RB24dAte37sklLEdBsOdrk5npX9tPbeSmpMtk46HcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=485pWYjv; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	s=arc-20240116; t=1762264139; c=relaxed/simple;
+	bh=tyy27PwGGsvcneRrPtNtZCqEyrjIhx92dquuwVOnPbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VRmRZ556r3c5NGDvOuQStg0r7MF5kw84uav7j5LGK+45ry7AynEZhmbRLwnpJNIcIsFi6C0L5P6FPbEsrukAiO5Dj4wlor+Nln47383bFf1dmaORxw06LVQ7V4Z89R6vwaS7n+mRQJQ5yPAc8kN074pj7l04i//nIh3TCX1Fejk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=juiqD+5r; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=3/OARezs29eUq90xKny6FQe3l9UwiuCpXkYqxg2+/iY=;
-	b=485pWYjvuZXFV9mKiWgarmKxkGqcVR6VQWU2toTQMryKr2Ccu9GXeoCSUTGB9tmbqKoCpniXy
-	I+RSyrWRIamnsSyRhH5kbEOoRupCQmkdnbybmsLNDjkuvrFDBpROPDmUvLZ+CmZ8iM4HeydHHQC
-	MM1lAeLT19FUO479+LA7qEA=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d18rj1mzYz1prL4;
-	Tue,  4 Nov 2025 21:47:01 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B967180B69;
-	Tue,  4 Nov 2025 21:48:36 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+	bh=HhgDFV3NXn/IRH8qXjdRXYahylPUabXUbstxozU3bK0=;
+	b=juiqD+5rV0RJy9nL5jDwbDD+vWxjSfNoRfXvQQJVf00Ih5/L/8xPUq8UXXmrrCva3dMEBL/WI
+	UhKAHGa8mMhBeZeeJgMhS7d4p3ZOOKFlGtLEf0gfhexs530LjVpByzGqb2f5qePfvb0zbBY6LHU
+	sD3ai+GbhT8PPehn6vERIAw=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d18sQ1Hflz1T4G2;
+	Tue,  4 Nov 2025 21:47:38 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 91792180080;
+	Tue,  4 Nov 2025 21:48:50 +0800 (CST)
+Received: from [10.174.178.24] (10.174.178.24) by
+ kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 21:48:35 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <david@kernel.org>
-CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <ardb@kernel.org>,
-	<arnd@arndb.de>, <dave@vasilevsky.ca>, <david@redhat.com>,
-	<ebiggers@kernel.org>, <kees@kernel.org>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <linmiaohe@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux@armlinux.org.uk>, <lorenzo.stoakes@oracle.com>,
-	<mhocko@suse.com>, <nao.horiguchi@gmail.com>, <nathan@kernel.org>,
-	<peterz@infradead.org>, <rmk+kernel@armlinux.org.uk>, <rostedt@goodmis.org>,
-	<rppt@kernel.org>, <surenb@google.com>, <vbabka@suse.cz>, <will@kernel.org>,
-	<xieyuanbin1@huawei.com>
-Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
-Date: Tue, 4 Nov 2025 21:48:31 +0800
-Message-ID: <20251104134831.147584-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <e323f1f3-f543-4e81-af6b-243fcf9ba750@kernel.org>
-References: <e323f1f3-f543-4e81-af6b-243fcf9ba750@kernel.org>
+ 15.2.1544.11; Tue, 4 Nov 2025 21:48:48 +0800
+Message-ID: <40e9934d-4d19-5cea-e21f-d287584b71f4@huawei.com>
+Date: Tue, 4 Nov 2025 21:48:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2] arm64/mpam: Clean MBWU monitor overflow bit
+Content-Language: en-US
+To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
+CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
+	<baolin.wang@linux.alibaba.com>, <carl@os.amperecomputing.com>,
+	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
+	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
+	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
+	<jeremy.linton@arm.com>, <jonathan.cameron@huawei.com>, <kobak@nvidia.com>,
+	<lcherian@marvell.com>, <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>, <wangkefeng.wang@huawei.com>,
+	<sunnanyong@huawei.com>
+References: <20251017185645.26604-25-james.morse@arm.com>
+ <20251029075655.3284280-1-zengheng4@huawei.com>
+ <b0ea1879-9e77-4eb3-8312-ce27d73cc1f4@arm.com>
+ <f4518f80-8e17-e622-fbe6-e20a7d1c85fc@huawei.com>
+ <293395d7-5766-45df-a2e0-1542fecda5a7@arm.com>
+From: Zeng Heng <zengheng4@huawei.com>
+In-Reply-To: <293395d7-5766-45df-a2e0-1542fecda5a7@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
-On Mon, 3 Nov 2025 17:53:18 +0100, David Hildenbrand wrote:
-> Can you go into more details which exact functionality in
-> memory-failure.c you would be interested in using?
->
-> Only soft-offlining or also the other (possibly architecture-specific)
-> handling?
+Hi Ben,
 
-Thanks! Let me describe it in as much detail as possible.
+On 2025/11/4 18:24, Ben Horgan wrote:
+> Hi Zeng,
+> 
+> On 11/3/25 03:47, Zeng Heng wrote:
+>> Hi Ben,
+>>
+>> On 2025/10/30 17:52, Ben Horgan wrote:
+>>> Hi Zeng,
+>>>
+>>> On 10/29/25 07:56, Zeng Heng wrote:
+>>>> The MSMON_MBWU register accumulates counts monotonically forward and
+>>>> would not automatically cleared to zero on overflow. The overflow
+>>>> portion
+>>>> is exactly what mpam_msmon_overflow_val() computes, there is no need to
+>>>> additionally subtract mbwu_state->prev_val.
+>>>>
+>>>> Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
+>>>> MSMON_MBWU register must first be read to prevent it from being
+>>>> inadvertently cleared by the write operation.
+>>>>
+>>>> Finally, use the overflow bit instead of relying on counter wrap-around
+>>>> to determine whether an overflow has occurred, that avoids the case
+>>>> where
+>>>> a wrap-around (now > prev_val) is overlooked. So with this, prev_val no
+>>>> longer has any use and remove it.
+>>>>
+>>>> CC: Ben Horgan <ben.horgan@arm.com>
+>>>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+>>>> ---
+>>>>    drivers/resctrl/mpam_devices.c  | 22 +++++++++++++++++-----
+>>>>    drivers/resctrl/mpam_internal.h |  3 ---
+>>>>    2 files changed, 17 insertions(+), 8 deletions(-)
+>>>
+>>> This all looks fine for overflow, but what we've been forgetting about
+>>> is the power management. As James mentioned in his commit message, the
+>>> prev_val is after now check is doing double duty. If an msc is powered
+>>> down and reset then we lose the count. Hence, to keep an accurate count,
+>>> we should be considering this case too.
+>>>
+>>
+>>
+>> Regarding CPU power management and CPU on-/off-line scenarios, this
+>> should and already has been handled by mpam_save_mbwu_state():
+>>
+>> 1. Freezes the current MSMON_MBWU counter into the
+>> mbwu_state->correction;
+>> 2. Clears the MSMON_MBWU counter;
+>>
+>> After the CPU is powered back on, the total bandwidth traffic is
+>> MSMON_MBWU(the `now` variable) + correction.
+>>
+>> So the above solution also covers CPU power-down scenarios, and no
+>> additional code is needed to adapt to this case.
+>>
+>> If I've missed anything, thanks in advance to point it out.
+>>
+> 
+> No, I don't think you missed anything. You just didn't mention in your commit message
+> that this is also fixing the power management case.
+> 
+> I'm going to post the next version of this series for James as he is otherwise engaged.
+> I've taken your patch and adapted it to fit in with the order of patches.
+> Does this look ok to you? The support for the long counters will be added later.
+> 
 
-The functions in memory-failure.c are currently used in three ways:
-1. When the application is using memory, and ECC detects a UE
-(Uncorrectable Errors) bit flip from DRAM (the detection is performed by
-hardware and is not perceived by software), it reports an interrupt to the
-CPU. The relevant driver (a third-party module) has already
-registered the interrupt callback function.
-Based on the configuration, the driver calls `memory_failure_queue()`
-inside callback function, or wakes up the related kthread to call
-`soft_offline_page()`/`memory_failure()` to take the affected memory
-offline or kill the process.
+Yes, I have reviewed the patch, and the related adaptations look good to
+me.
 
-2. Hardware memory scanning function: The hardware periodically performs
-read/write tests on some memory (This hardware is not a standard hardware,
-so it is not included in the ARM spec. The scanning is not perceived by
-software) If bit flip is detected during the test, an interrupt is
-reported to the operating system to do the memory-failure,
-just like what described earlier.
+> @@ -1016,6 +1025,9 @@ static void __ris_msmon_read(void *arg)
+>          if (config_mismatch) {
+>                  write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
+>                  overflow = false;
+> +       } else if (overflow) {
+> +               mpam_write_monsel_reg(msc, CFG_MBWU_CTL,
+> +                                     cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS);
+>          }
 
-3. Software memory scanning function: The software (such as kthread/
-work-queue) periodically use `soft_offline_page()` to isolate some free
-memory and performs read/write tests. If bit flip is detected during the
-test, it is considered a failure, and the memory will not be recovered.
-Otherwise, use `unpoison_memory()` to recover the memory.
+Yes, the clear register operation is added here.
 
-Unfortunately, the driver code for these three methods is difficult to
-open-source. I have also been thinking about whether there is a
-general-purpose function that could use memory-failure, but I haven't
-come up with a good idea yet.
 
-> Cheers
->
-> David
 
-Thanks!
+Best Regards,
+Zeng Heng
 
-Xie Yuanbin
 
