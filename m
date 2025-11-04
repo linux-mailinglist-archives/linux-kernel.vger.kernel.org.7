@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-884382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6AD4C30112
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:53:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC881C30127
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA450461362
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:46:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A872E4FCA29
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7715223A58E;
-	Tue,  4 Nov 2025 08:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6194A2BDC28;
+	Tue,  4 Nov 2025 08:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="UZyOwWSu"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="bNd6EJRE"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071A23F412
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157B524886A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245948; cv=none; b=ZYoZj9QtZ32/Ac6/RrlUJqIMJFJVVZQKzJOtcV5QZ8gqsQZYw0xsIDGrDLSWUmPUCA7vVBoXXR5grzVO7P6quzworKbkfnQzgiHlp8MJSQnj+TIcVFREcoyVvsYCAXEd0X3utYDG/Tnzq1ZtjINXLYlDmNI20L1cX1eCVjwHuMQ=
+	t=1762245973; cv=none; b=szBZnK4ux4sdN9apthXeFxZ4I+SihnEd/H2XNMHAoNpChZJUcuAyLoYN2BmmcSa+rYt1NxMi7LEfKrXxZuKyI3MYKD4zA+v/OWcLW8bi7X7I092iA+0es7PF1Pgwh/82WANRoHjdVhB+E/oIg8FzKxs7EVJJS2z33PCNBBXFPT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245948; c=relaxed/simple;
-	bh=PN0zYbucyFvRDAgetmp3jqYlZ/7ZYZYgxqA3IuHoPE8=;
+	s=arc-20240116; t=1762245973; c=relaxed/simple;
+	bh=llcHZomcCcYqyyGqguubvbpQD1djA8iATNWRT6JOWCA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PYiG+Og/cm1tIA47tkV58dY1dIglm/dZRdwRPZXMxDNO6PZkVN/EDdeYyWqJaFrMfpNL8BjYkPqXJERXGvbIBu9XZybhollm0j9TS33QV94GNI/bvdG7aEAPo8gcm7mudpwE7na8yZkYUu+FJs79p+aI6cqVUNGzMMDK4uCd49Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=UZyOwWSu; arc=none smtp.client-ip=209.85.167.46
+	 To:Cc:Content-Type; b=u2NBdScAWJlM1I5tqCVGtkfZkKnXTToTm9ahMHhnYgvL9vu/NdQ42x4Vqj1i0gYm5DQWDcR+TkmFf6kkORiP3IG107WCrmH2jbuSVhhWELtizhJS4qzFfcgOSl5W0HNi8fU4GBgLo+jaqJjp5Fe6xbZWm8QvUF9z2fXDRYKK7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=bNd6EJRE; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-59431f57bf6so1419507e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:45:46 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-58b025fce96so4369931e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:46:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1762245945; x=1762850745; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1762245969; x=1762850769; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RSzAQ24HSl4CevKsG32QBTt1QzsVJYEHj3v/tZDkDc=;
-        b=UZyOwWSuEsOSijGmfAI8bTSU/4cwzUWlkZ7nfSxqy/TinxP+DX1XGIDCX9rNFDe0yf
-         7gTB200T6I5thjd+jwFohUMANmmeUVhE4vMEt2gCBpwau1NlP4mY8t28F2odAC67TCjD
-         dJcsQYJg8tNk1Sy9307bhdAw9gIuFlqw76otg=
+        bh=AnXar9Wr5UxLLu783ced0BqM7t4CxuKlHntmiXFswCI=;
+        b=bNd6EJRE/Z89MKyUJtMecTUi4xYW3+t6bqg8zgDxxelyKZggbTvNF+7dkChpzNi9UZ
+         OwNROGLctwbY6zjz4xff2Re86sEjVfVQLWjFDxSB65Y2GIo5FXkgvGpA+MnAQy13TCDm
+         wz/jHgHOOaPwZuGZX9Wv++p3b4VBfBQyYG0rg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762245945; x=1762850745;
+        d=1e100.net; s=20230601; t=1762245969; x=1762850769;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2RSzAQ24HSl4CevKsG32QBTt1QzsVJYEHj3v/tZDkDc=;
-        b=seC0hyOy/4cEzC5JHPhNvaGBn8/Tosr2EOanHJIbzNJz4iXsVFAJM0pQqu7euWRdoH
-         4tz416+SFLGMXYATatBNYM/DNmKcBdXDNJf8caVO5EM5VavQzkcoCMauLbmyKukhCjkO
-         W1CencETLum3k6c/uR6ZHHGdAt+v7yPBnLiJ/RY0HzvJJHomDd8/N77jVFKI4Xf34Uay
-         4grnOaQYL9xR/WLOZRtPPOq10aCH6c6CYyw2DOQiLUj4M9mhCAveKfIXKTSz7TjaoIe/
-         BQB85RpJG3OZr0tZkZ0hrjoSBWy2M1qDVWuGOquIxHnNYmaUZe1nKy3JGkD5IjnSYT+K
-         LRqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUULo9JoB1zdOZPDg01hPlh4W2MqVCqcrndqcb7Jc87X0hNOOQjcPHNm1sNYGCLbnLWb8iyMB8wNcgzXAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8J4VG7ocANK6rhVfiRHjTsSAiDbbwbreCzgnh5Cn+tBjb6oBX
-	rCaELLplePm28ilC6yrBjp4zdsn9x5+HLLvtudEHgW/7bYJrknPLsxzLM0B2CVYip2Y/m9HvXwv
-	5lVNkGJL7KErHLbHIyxFoAfyOa2Ko8NGB+V4GBjsYjw==
-X-Gm-Gg: ASbGncslF0lpFKMjxW7wqYIlhI8/jF8wO1KQYD0Rsw95MHvkIqecEms6z4yG64Jhlm4
-	7bHs9z2AcKvKDSVtVHV2yWfTpJvN1IpHxl7puzz9pwQl31cdRB9nqa9RSCCWm+uGl4dVQCN0KMU
-	jDrYTCm6WTIP8CxJfnVIJtD4UBn92PZKa4enB7vWxJXuN+i3ECbWwk5AyQCLRgdtZM8hPCAmDqq
-	2ZWfuwwufapJkJUN7AqRAssZPgZW4eluqPhmSBS0+NIjH/rghp0NdU3Um+M
-X-Google-Smtp-Source: AGHT+IFEKvFX/PZTJ29M6W4Mp7l5Z6W+B+zFgA2nSdktSZiKnMxF+DapTY8O+S9s2Q5waGMPdQWLa7/+Hvuajw7T6/I=
-X-Received: by 2002:a05:6512:3e10:b0:594:2a0f:916f with SMTP id
- 2adb3069b0e04-5942a0f94e8mr1878807e87.43.1762245943565; Tue, 04 Nov 2025
- 00:45:43 -0800 (PST)
+        bh=AnXar9Wr5UxLLu783ced0BqM7t4CxuKlHntmiXFswCI=;
+        b=APXJ1Yik1mD2StCVMl2oN4+kNQ9LAQenSrWjvKvDGBcbziOnrmImj2PLqKNa/H6bdY
+         ITxebjIQh0Bg+6e5jIP1CZknZ4nvzbPA+331lZnznEk7GvpcQ+/sNKRlEmEXRj6AqxUU
+         gM1zX71oLeel1cffjICDTIHT1I1PqJg9ae80+Omw/2ivs6vKQReS8QYQLvoqpInKcxmE
+         U96ZSWOS2yboebVD0H0zDToBLZ2MgkMqk3WmAs6WnuLojv932XSwT0TmtvEeDMLzEDdt
+         bYsPBH3zdkaAhmuF/RVr6Xvah+ZFYGfL4Nv33SCF1KdY+yklKmUsJ3+QTV0JV0aRThLQ
+         dvZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm5TjxPQs4F+GY1etbmIRMqNJ8p0a7TVLiLnHlfV8/8wABjZnAHzApX0XTwwbcIXsvH5BLoJTj42ekjLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG8ZOZ2V1iV/dZiHfQbzObEv9x3WZWaPHJ7UDWcONaapvGrC20
+	w6NhiHRHSE1IS09H0m4SdCrv65b8pg4DdZjTfwxLB5nh19qzSq39otDNGapDetJu/Yx6DLZ1JHb
+	sTjgKU4EDU17dYDPEZ09vWyO6/5f8DuSnTHJIBlpwPA==
+X-Gm-Gg: ASbGncv97aXhj+WvLBHhsKyYyW4Q9tgJWkxYTLR4mkD3l3SxDQ5ARzAT11Gjw/SkjG0
+	d1FBYkQHtTn4s0o9+Iqm8JCMgP8IO6Ri1hEryDUQ5wCFnVyU478idGIAdRm/KYxyy9u/JCaV+cz
+	i+OMgWSZFCMTCmkXBhRi7pVgme8Gm9+AiWy/mfDhKcBPDWlHBDIkL0FFOq/k/cCdcL4x0EESSk5
+	uME6/XIhgJGD2ZBYbHCokipPLirkCya/Mqs2aqbKhjkX70jVx5JrZq/iTCq
+X-Google-Smtp-Source: AGHT+IGmcyMQMchAUsCjxdqfrykqnEvdHSa18ThgK8/5nUb7IaGKXQ6KGbZV02Rp9MX5r7OIIwBbvBaZSiMxSHYKb1A=
+X-Received: by 2002:a05:6512:1150:b0:594:2c58:9784 with SMTP id
+ 2adb3069b0e04-5942c589aabmr2563189e87.53.1762245968851; Tue, 04 Nov 2025
+ 00:46:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-7-ca449b7b7aa0@kernel.org>
-In-Reply-To: <20251028-work-coredump-signal-v1-7-ca449b7b7aa0@kernel.org>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-8-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-8-ca449b7b7aa0@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 4 Nov 2025 09:45:32 +0100
-X-Gm-Features: AWmQ_bmGmSsMLZ3W30EoBy7JM7gw3m9QpQBa7PrIXq1Ns2b_-4I1cV8wPwwRM8s
-Message-ID: <CAJqdLrpCH9wsJUo0F2a9XVTFWav-jE--m+KoV5KF0Dqp2qU9hg@mail.gmail.com>
-Subject: Re: [PATCH 07/22] pidfs: drop struct pidfs_exit_info
+Date: Tue, 4 Nov 2025 09:45:57 +0100
+X-Gm-Features: AWmQ_bkTtgnWEZ5W_GRA60pGSiEfHADxh92uICX54W3Kpf9K7nBvZz65uK58438
+Message-ID: <CAJqdLro54iDWbR1P3hw_2AVLFPq4kSLcc85J_5u+OAifghUjyA@mail.gmail.com>
+Subject: Re: [PATCH 08/22] pidfs: expose coredump signal
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
 	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
@@ -91,128 +91,127 @@ Content-Type: text/plain; charset="UTF-8"
 Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> This is not needed anymore now that we have the new scheme to guarantee
-> all-or-nothing information exposure.
+> Userspace needs access to the signal that caused the coredump before the
+> coredumping process has been reaped. Expose it as part of the coredump
+> information in struct pidfd_info. After the process has been reaped that
+> info is also available as part of PIDFD_INFO_EXIT's exit_code field.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  fs/pidfs.c | 35 +++++++++++------------------------
->  1 file changed, 11 insertions(+), 24 deletions(-)
+>  fs/pidfs.c                 | 30 +++++++++++++++++++-----------
+>  include/uapi/linux/pidfd.h |  7 +++++--
+>  2 files changed, 24 insertions(+), 13 deletions(-)
 >
 > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 0fad0c969b7a..a3b80be3b98b 100644
+> index a3b80be3b98b..354ceb2126e7 100644
 > --- a/fs/pidfs.c
 > +++ b/fs/pidfs.c
-> @@ -39,16 +39,6 @@ void pidfs_get_root(struct path *path)
->         path_get(path);
->  }
+> @@ -41,6 +41,7 @@ void pidfs_get_root(struct path *path)
 >
-> -/*
-> - * Stashes information that userspace needs to access even after the
-> - * process has been reaped.
-> - */
-> -struct pidfs_exit_info {
-> -       __u64 cgroupid;
-> -       __s32 exit_code;
-> -       __u32 coredump_mask;
-> -};
-> -
 >  enum pidfs_attr_mask_bits {
 >         PIDFS_ATTR_BIT_EXIT     = 0,
+> +       PIDFS_ATTR_BIT_COREDUMP = 1,
 >  };
-> @@ -56,8 +46,11 @@ enum pidfs_attr_mask_bits {
+>
 >  struct pidfs_attr {
->         unsigned long attr_mask;
->         struct simple_xattrs *xattrs;
-> -       struct pidfs_exit_info __pei;
-> -       struct pidfs_exit_info *exit_info;
-> +       struct /* exit info */ {
-> +               __u64 cgroupid;
-> +               __s32 exit_code;
-> +       };
-> +       __u32 coredump_mask;
+> @@ -51,6 +52,7 @@ struct pidfs_attr {
+>                 __s32 exit_code;
+>         };
+>         __u32 coredump_mask;
+> +       __u32 coredump_signal;
 >  };
 >
 >  static struct rb_root pidfs_ino_tree = RB_ROOT;
-> @@ -313,7 +306,6 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->         struct pid *pid = pidfd_pid(file);
->         size_t usize = _IOC_SIZE(cmd);
->         struct pidfd_info kinfo = {};
-> -       struct pidfs_exit_info *exit_info;
->         struct user_namespace *user_ns;
->         struct pidfs_attr *attr;
->         const struct cred *c;
-> @@ -342,15 +334,15 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->                         smp_rmb();
->                         kinfo.mask |= PIDFD_INFO_EXIT;
->  #ifdef CONFIG_CGROUPS
-> -                       kinfo.cgroupid = exit_info->cgroupid;
-> +                       kinfo.cgroupid = attr->cgroupid;
->                         kinfo.mask |= PIDFD_INFO_CGROUPID;
->  #endif
-> -                       kinfo.exit_code = exit_info->exit_code;
-> +                       kinfo.exit_code = attr->exit_code;
->                 }
+> @@ -297,7 +299,8 @@ static __u32 pidfs_coredump_mask(unsigned long mm_flags)
+>                               PIDFD_INFO_CGROUPID | \
+>                               PIDFD_INFO_EXIT | \
+>                               PIDFD_INFO_COREDUMP | \
+> -                             PIDFD_INFO_SUPPORTED_MASK)
+> +                             PIDFD_INFO_SUPPORTED_MASK | \
+> +                             PIDFD_INFO_COREDUMP_SIGNAL)
+>
+>  static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+> @@ -342,9 +345,12 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
 >         }
 >
 >         if (mask & PIDFD_INFO_COREDUMP) {
-> -               kinfo.coredump_mask = READ_ONCE(attr->__pei.coredump_mask);
-> +               kinfo.coredump_mask = READ_ONCE(attr->coredump_mask);
->                 if (kinfo.coredump_mask)
->                         kinfo.mask |= PIDFD_INFO_COREDUMP;
+> -               kinfo.coredump_mask = READ_ONCE(attr->coredump_mask);
+> -               if (kinfo.coredump_mask)
+> -                       kinfo.mask |= PIDFD_INFO_COREDUMP;
+> +               if (test_bit(PIDFS_ATTR_BIT_COREDUMP, &attr->attr_mask)) {
+> +                       smp_rmb();
+> +                       kinfo.mask |= PIDFD_INFO_COREDUMP | PIDFD_INFO_COREDUMP_SIGNAL;
+> +                       kinfo.coredump_mask = attr->coredump_mask;
+> +                       kinfo.coredump_signal = attr->coredump_signal;
+> +               }
 >         }
-> @@ -629,7 +621,6 @@ void pidfs_exit(struct task_struct *tsk)
->  {
->         struct pid *pid = task_pid(tsk);
->         struct pidfs_attr *attr;
-> -       struct pidfs_exit_info *exit_info;
->  #ifdef CONFIG_CGROUPS
->         struct cgroup *cgrp;
->  #endif
-> @@ -657,15 +648,13 @@ void pidfs_exit(struct task_struct *tsk)
->          * is put
->          */
 >
-> -       exit_info = &attr->__pei;
-> -
->  #ifdef CONFIG_CGROUPS
->         rcu_read_lock();
->         cgrp = task_dfl_cgroup(tsk);
-> -       exit_info->cgroupid = cgroup_id(cgrp);
-> +       attr->cgroupid = cgroup_id(cgrp);
->         rcu_read_unlock();
->  #endif
-> -       exit_info->exit_code = tsk->exit_code;
-> +       attr->exit_code = tsk->exit_code;
+>         task = get_pid_task(pid, PIDTYPE_PID);
+> @@ -370,6 +376,7 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
 >
->         /* Ensure that PIDFD_GET_INFO sees either all or nothing. */
->         smp_wmb();
-> @@ -676,7 +665,6 @@ void pidfs_exit(struct task_struct *tsk)
->  void pidfs_coredump(const struct coredump_params *cprm)
+>                         kinfo.coredump_mask = pidfs_coredump_mask(flags);
+>                         kinfo.mask |= PIDFD_INFO_COREDUMP;
+> +                       /* No coredump actually took place, so no coredump signal. */
+>                 }
+>         }
+>
+> @@ -666,20 +673,21 @@ void pidfs_coredump(const struct coredump_params *cprm)
 >  {
 >         struct pid *pid = cprm->pid;
-> -       struct pidfs_exit_info *exit_info;
 >         struct pidfs_attr *attr;
->         __u32 coredump_mask = 0;
+> -       __u32 coredump_mask = 0;
 >
-> @@ -685,14 +673,13 @@ void pidfs_coredump(const struct coredump_params *cprm)
+>         attr = READ_ONCE(pid->attr);
+>
 >         VFS_WARN_ON_ONCE(!attr);
 >         VFS_WARN_ON_ONCE(attr == PIDFS_PID_DEAD);
 >
-> -       exit_info = &attr->__pei;
->         /* Note how we were coredumped. */
->         coredump_mask = pidfs_coredump_mask(cprm->mm_flags);
->         /* Note that we actually did coredump. */
->         coredump_mask |= PIDFD_COREDUMPED;
+> -       /* Note how we were coredumped. */
+> -       coredump_mask = pidfs_coredump_mask(cprm->mm_flags);
+> -       /* Note that we actually did coredump. */
+> -       coredump_mask |= PIDFD_COREDUMPED;
+> +       /* Note how we were coredumped and that we coredumped. */
+> +       attr->coredump_mask = pidfs_coredump_mask(cprm->mm_flags) |
+> +                             PIDFD_COREDUMPED;
 >         /* If coredumping is set to skip we should never end up here. */
->         VFS_WARN_ON_ONCE(coredump_mask & PIDFD_COREDUMP_SKIP);
-> -       smp_store_release(&exit_info->coredump_mask, coredump_mask);
-> +       smp_store_release(&attr->coredump_mask, coredump_mask);
+> -       VFS_WARN_ON_ONCE(coredump_mask & PIDFD_COREDUMP_SKIP);
+> -       smp_store_release(&attr->coredump_mask, coredump_mask);
+> +       VFS_WARN_ON_ONCE(attr->coredump_mask & PIDFD_COREDUMP_SKIP);
+> +       /* Expose the signal number that caused the coredump. */
+> +       attr->coredump_signal = cprm->siginfo->si_signo;
+> +       smp_wmb();
+> +       set_bit(PIDFS_ATTR_BIT_COREDUMP, &attr->attr_mask);
 >  }
 >  #endif
+>
+> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> index e05caa0e00fe..ea9a6811fc76 100644
+> --- a/include/uapi/linux/pidfd.h
+> +++ b/include/uapi/linux/pidfd.h
+> @@ -27,6 +27,7 @@
+>  #define PIDFD_INFO_EXIT                        (1UL << 3) /* Only returned if requested. */
+>  #define PIDFD_INFO_COREDUMP            (1UL << 4) /* Only returned if requested. */
+>  #define PIDFD_INFO_SUPPORTED_MASK      (1UL << 5) /* Want/got supported mask flags */
+> +#define PIDFD_INFO_COREDUMP_SIGNAL     (1UL << 6) /* Always returned if PIDFD_INFO_COREDUMP is requested. */
+>
+>  #define PIDFD_INFO_SIZE_VER0           64 /* sizeof first published struct */
+>  #define PIDFD_INFO_SIZE_VER1           72 /* sizeof second published struct */
+> @@ -94,8 +95,10 @@ struct pidfd_info {
+>         __u32 fsuid;
+>         __u32 fsgid;
+>         __s32 exit_code;
+> -       __u32 coredump_mask;
+> -       __u32 __spare1;
+> +       struct /* coredump info */ {
+> +               __u32 coredump_mask;
+> +               __u32 coredump_signal;
+> +       };
+>         __u64 supported_mask;   /* Mask flags that this kernel supports */
+>  };
 >
 >
 > --
