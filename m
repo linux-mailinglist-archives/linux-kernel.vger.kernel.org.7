@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-883971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5533C2EF41
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A73B5C2EF50
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12BA14EBD1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:21:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 952514E2249
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FD123EAB7;
-	Tue,  4 Nov 2025 02:21:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DB223A984;
+	Tue,  4 Nov 2025 02:22:20 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B61239E88;
-	Tue,  4 Nov 2025 02:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746711DE2A7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 02:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762222876; cv=none; b=q8liEgPu9PtphwnE7Ply//itT0U5g7hzpcgKzXuA9W/LAOtEgc7BrTIdDcpQ8icHvsf1YazMoBBpM0lwN7n/b7BxRWxo7T9BaAZlw7SrnMWeIksAjce2Y/bN1NF4m2F1XRsMZACHNPclo/dC8qPSjZoHNKMYAL+l4Mo6Gdl6zig=
+	t=1762222940; cv=none; b=ORLrr2USaP91kdGYVdnz9xqNuMAkv8ODtP1/Jgy3Zvdjv4vtJvS3PAeeRkreX8ILLq1FekC4V7AMf2xEdyDzmlCftgVh+tFXusDFYaOkq5T3DDWZTApWjKPn5XCZKnIyPGxG2R+Pe3Fz8+u7TcJp/WY4Qi5eLZXX/pgfsVi3KAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762222876; c=relaxed/simple;
-	bh=hTjJI2sEDxld3XmRSatkLRSAROGgVC4Yc63EfV05gEw=;
+	s=arc-20240116; t=1762222940; c=relaxed/simple;
+	bh=tFgeIE59jc/HFVOKmy9Ljs9aCmo0o12HJX/v/WhEX6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=onY8zJFMAzglMCkEOmZkVEUeJAypknwDi9eRMErREYugBzAZ54levSQOMLJn9oRV+D4AmGlOktO/wzJr2RNa+5+O96MxLiPNIaggxt7YpcUfwn6rycP9E5dbBQwaouTNXidt66n7yTSa5zZ2SA/L1XJOHEj8ivHgkVstDGB804o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d0sd60gclzYQthW;
-	Tue,  4 Nov 2025 10:20:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 693D61A07BD;
-	Tue,  4 Nov 2025 10:21:12 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP1 (Coremail) with SMTP id cCh0CgB36EsYYwlpWaloCg--.17647S2;
-	Tue, 04 Nov 2025 10:21:12 +0800 (CST)
-Message-ID: <af394d1c-1a13-4322-ba79-913193a1b5e0@huaweicloud.com>
-Date: Tue, 4 Nov 2025 10:21:11 +0800
+	 In-Reply-To:Content-Type; b=VDVlQA3moRhLrQQZU0IX0Fin2XC4Jg9G7vvjKRn5SjvCj5hI2W2yDiaBiepMkmFZnzPe4N9gQN7dOVgMdPxkUB9MNT3oRThILK8ZA7GOBADHxgwr5MMApmTKVI3JlHTjUhkDlJqhHjlmHkVqKRb6aTykKDItmGNYHBwQFsZxQZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
+X-QQ-mid: zesmtpsz7t1762222925t2995d897
+X-QQ-Originating-IP: A3/odC16aftFYDtQULxGfhYeoNPRYDA1Ks1BQJ6CPbs=
+Received: from [169.235.25.74] ( [169.235.25.74])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 04 Nov 2025 10:22:00 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 18013488585438763342
+EX-QQ-RecipientCnt: 13
+Message-ID: <0BF8B2E83B6154B6+f17f32b4-f6ff-4184-917d-4b27fb916eae@tinylab.org>
+Date: Mon, 3 Nov 2025 18:21:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,295 +46,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH v2 3/3] cgroup/cpuset: Globally track
- isolated_cpus update
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251104013037.296013-1-longman@redhat.com>
- <20251104013037.296013-4-longman@redhat.com>
+Subject: Re: [PATCH v2 0/8] dce, riscv: Unused syscall trimming with
+ PUSHSECTION and conditional KEEP()
+To: Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ i@maskray.me, Zhangjin Wu <falcon@tinylab.org>, ronbogo@outlook.com,
+ z1652074432@gmail.com, lx24@stu.ynu.edu.cn
+References: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
+ <33333fdd-2aa2-4ce0-8781-92222829ea12@app.fastmail.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251104013037.296013-4-longman@redhat.com>
+From: Yuan Tan <tanyuan@tinylab.org>
+In-Reply-To: <33333fdd-2aa2-4ce0-8781-92222829ea12@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgB36EsYYwlpWaloCg--.17647S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw15AFyrGw1UZry7Zw4Dtwb_yoWfuw1UpF
-	yUCFWxKFWUtw15u343tFsFkw4fKw4DtFnFyw15Wa4rZF9rXwn7ta4jka90yay5WrWDJrW5
-	XFWqgws7WF4xCwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: NktOKkB7nvaJqiY9zLenzlfaHPREjDigFG+hwAFBdTIDtWJ5Ng1groXF
+	oqFK3cyCfs+7cc3yStXnFGLhyAqnCfvW6nu5vNmfmE5lW/HAKgVP935pQc9cNY0YLVZapf0
+	nQBaq2r/0dq1mSwh5LHxRhWGiwWEvA2xZGmk6rpQ7kQTcGjE+h1249nkwabTDIgzcLnwa26
+	eugpoeGKDQ87o+9EZGWEe5dzDUYsqu/d3G1scM70DH38dVaRjtEYNvJ943a4JykUkQs9W7O
+	6FlVAZgqqzU4cVyD1/suc0FwDNNReAOSMNa0eCsNamlK/U2ci0uXOVoUKVzIcKyqQT5oh/5
+	i1ocmQFrMs/0aicgQNX2BGVjX4X7+uFi2jSJQCdW2m83vzahmI492PepeT07LggpaLX3G3o
+	kfXPCB0EcvUvvj2hfuXMONoVAV01Uuz2qd9g8jbgM++FCzTDjGkmOcq+qjbR85QmlswmvHd
+	4CTTU2Wajr2NTLp1WuYluf7AbVB3CqLUB15qhVcSeAA7JppKdIbcPDbLLUHfend2XzNBBpy
+	K3e9DZ0WiBVVRiU18bRBi+77Jnp5qiRnlteLZrvw7tXxOVJQx/whrQU50XbcIfdh4Qo5jUd
+	icqsJMNmv01oe9fAspcSR8SaxK7c7G9xaf9u9wYs7xRilhopGCGroVVtyOfGn97M7WiJvqr
+	fDoG0+8wX6SWf0NQ9tFYz5x20iiHBbelcYxNcd5n6qoPlpWZzuHVCNIid9LfK47+hyME+S/
+	uA4XwNsw7W0tuGxiv4/KK3qgQmVU+2rtPZ1MK/CvA+25pDSfwUyLtpnHGEMAKQRDgMAulvv
+	s3llur9sgh/QQFehBPZlIuzqE2xn0t7wIv6Wr5U9Ozoc2hHY373OKV+CtQUdTrJexe6dlMx
+	+P2edWwby4RB5V0h9Svj+DSHxwRoNZB9SLuXRUo6mHIvVU9W6cTtYpCgeaKVb3UwkEIMyOL
+	Hzi9PnEGR/qoDqqRbKSUpvt6gNYZGxq6OyLLmDVut1v4ajVR4mdsQr9GLhlDhmd89Ym6uxt
+	j3NJbtpwL5GVtYBBS70cHFOYo5O/f9NeIbOF0mvF2X+8QgTF0/rI40XX3wTooKvCc5GdNSw
+	6/epSML2YuWKUKMjmvU+Fc=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
 
+On 10/15/2025 12:47 AM, Arnd Bergmann wrote:
+> On Wed, Oct 15, 2025, at 08:16, Yuan Tan wrote:
+>> Hi all,
+>>
+>> This series aims to introduce syscall trimming support based on dead code
+>> and data elimination (DCE). This can reduce the final image size, which is
+>> particularly useful for embedded devices, while also reducing the attack
+>> surface. It might further benefit specialized scenarios such as unikernels
+>> or LTO builds, and could potentially help shrink the instruction cache
+>> footprint.
+>>
+>> Besides that, this series also introduces a new PUSHSECTION macro. This
+>> wrapper allows sections created by .pushsection to have a proper reference
+>> relationship with their callers, so that --gc-sections can safely work
+>> without requiring unconditional KEEP() entries in linker scripts.
+>>
+>> Since the new syscalltbl.sh infrastructure has been merged, I think it’s a
+>> good time to push this patchsetTODO? forward.
+>>
+>> Patch 1–3 introduce the infrastructure for TRIM_UNUSED_SYSCALLS, mainly
+>> allowing syscalltbl.sh to decide which syscalls to keep according to
+>> USED_SYSCALLS.
+>> Patch 4 enables TRIM_UNUSED_SYSCALLS for the RISC-V architecture. With
+>> syscalltbl.sh now available, this feature should be applicable to all
+>> architectures that support LD_DEAD_CODE_DATA_ELIMINATION and use
+>> syscalltbl.sh, but let’s focus on RISC-V first.
+>> Patch 5–8 address the dependency inversion problem caused by sections
+>> created with .pushsection that are forcibly retained by KEEP() in linker
+>> scripts.
+> Thanks a lot for your work on this. I think it is indeed valuable to
+> be able to optimize kernels with a smaller subset of system calls for
+> known workloads, and have as much dead code elimination as possible.
+>
+> However, I continue to think that the added scripting with a known
+> set of syscall names is fundamentally the wrong approach to get to
+> this list: This adds complexity to the build process in one of
+> the areas that is already too complicated, and it duplicates what
+> we can already do with Kconfig for a subset of the system calls.
+>
+> I think the way we should configure the set of syscalls instead is
+> to add more Kconfig symbols guarded by CONFIG_EXPERT that turn
+> classes of syscalls on or off. You have obviously done the research
+> to come up with a list of used/unused entry points for one or more
+> workloads. Can you share those lists?
+>
+>       Arnd
 
-On 2025/11/4 9:30, Waiman Long wrote:
-> The current cpuset code passes a local isolcpus_updated flag around in a
-> number of functions to determine if external isolation related cpumasks
-> like wq_unbound_cpumask should be updated. It is a bit cumbersome and
-> makes the code more complex. Simplify the code by using a global boolean
-> flag "isolated_cpus_updating" to track this. This flag will be set in
-> isolated_cpus_update() and cleared in update_isolation_cpumasks().
-> 
-> No functional change is expected.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset.c | 73 ++++++++++++++++++++----------------------
->  1 file changed, 35 insertions(+), 38 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 0c49905df394..854fe4cc1358 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -81,6 +81,13 @@ static cpumask_var_t	subpartitions_cpus;
->   */
->  static cpumask_var_t	isolated_cpus;
->  
-> +/*
-> + * isolated_cpus updating flag (protected by cpuset_mutex)
-> + * Set if isolated_cpus is going to be updated in the current
-> + * cpuset_mutex crtical section.
-> + */
-> +static bool isolated_cpus_updating;
-> +
->  /*
->   * Housekeeping (HK_TYPE_DOMAIN) CPUs at boot
->   */
-> @@ -1327,6 +1334,8 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->  		cpumask_or(isolated_cpus, isolated_cpus, xcpus);
->  	else
->  		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
-> +
-> +	isolated_cpus_updating = true;
->  }
->  
->  /*
-> @@ -1334,15 +1343,12 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->   * @new_prs: new partition_root_state
->   * @parent: parent cpuset
->   * @xcpus: exclusive CPUs to be added
-> - * Return: true if isolated_cpus modified, false otherwise
->   *
->   * Remote partition if parent == NULL
->   */
-> -static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
-> +static void partition_xcpus_add(int new_prs, struct cpuset *parent,
->  				struct cpumask *xcpus)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(new_prs < 0);
->  	lockdep_assert_held(&callback_lock);
->  	if (!parent)
-> @@ -1352,13 +1358,11 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
->  	if (parent == &top_cpuset)
->  		cpumask_or(subpartitions_cpus, subpartitions_cpus, xcpus);
->  
-> -	isolcpus_updated = (new_prs != parent->partition_root_state);
-> -	if (isolcpus_updated)
-> +	if (new_prs != parent->partition_root_state)
->  		isolated_cpus_update(parent->partition_root_state, new_prs,
->  				     xcpus);
->  
->  	cpumask_andnot(parent->effective_cpus, parent->effective_cpus, xcpus);
-> -	return isolcpus_updated;
->  }
->  
->  /*
-> @@ -1366,15 +1370,12 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
->   * @old_prs: old partition_root_state
->   * @parent: parent cpuset
->   * @xcpus: exclusive CPUs to be removed
-> - * Return: true if isolated_cpus modified, false otherwise
->   *
->   * Remote partition if parent == NULL
->   */
-> -static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
-> +static void partition_xcpus_del(int old_prs, struct cpuset *parent,
->  				struct cpumask *xcpus)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(old_prs < 0);
->  	lockdep_assert_held(&callback_lock);
->  	if (!parent)
-> @@ -1383,14 +1384,12 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->  	if (parent == &top_cpuset)
->  		cpumask_andnot(subpartitions_cpus, subpartitions_cpus, xcpus);
->  
-> -	isolcpus_updated = (old_prs != parent->partition_root_state);
-> -	if (isolcpus_updated)
-> +	if (old_prs != parent->partition_root_state)
->  		isolated_cpus_update(old_prs, parent->partition_root_state,
->  				     xcpus);
->  
->  	cpumask_and(xcpus, xcpus, cpu_active_mask);
->  	cpumask_or(parent->effective_cpus, parent->effective_cpus, xcpus);
-> -	return isolcpus_updated;
->  }
->  
->  /*
-> @@ -1432,17 +1431,24 @@ static bool isolated_cpus_can_update(struct cpumask *add_cpus,
->  	return res;
->  }
->  
-> -static void update_isolation_cpumasks(bool isolcpus_updated)
-> +/*
-> + * update_isolation_cpumasks - Update external isolation related CPU masks
-> + *
-> + * The following external CPU masks will be updated if necessary:
-> + * - workqueue unbound cpumask
-> + */
-> +static void update_isolation_cpumasks(void)
->  {
->  	int ret;
->  
-> -	lockdep_assert_cpus_held();
-> -
-> -	if (!isolcpus_updated)
-> +	if (!isolated_cpus_updating)
->  		return;
->  
-> +	lockdep_assert_cpus_held();
-> +
->  	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
->  	WARN_ON_ONCE(ret < 0);
-> +	isolated_cpus_updating = false;
->  }
->  
->  /**
-> @@ -1567,8 +1573,6 @@ static inline bool is_local_partition(struct cpuset *cs)
->  static int remote_partition_enable(struct cpuset *cs, int new_prs,
->  				   struct tmpmasks *tmp)
->  {
-> -	bool isolcpus_updated;
-> -
->  	/*
->  	 * The user must have sysadmin privilege.
->  	 */
-> @@ -1595,11 +1599,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->  		return PERR_HKEEPING;
->  
->  	spin_lock_irq(&callback_lock);
-> -	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-> +	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->  	list_add(&cs->remote_sibling, &remote_children);
->  	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	cpuset_force_rebuild();
->  	cs->prs_err = 0;
->  
-> @@ -1622,15 +1626,12 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->   */
->  static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(!is_remote_partition(cs));
->  	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
->  
->  	spin_lock_irq(&callback_lock);
->  	list_del_init(&cs->remote_sibling);
-> -	isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
-> -					       NULL, cs->effective_xcpus);
-> +	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
->  	if (cs->prs_err)
->  		cs->partition_root_state = -cs->partition_root_state;
->  	else
-> @@ -1640,7 +1641,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
->  	compute_excpus(cs, cs->effective_xcpus);
->  	reset_partition_data(cs);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	cpuset_force_rebuild();
->  
->  	/*
-> @@ -1665,7 +1666,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  {
->  	bool adding, deleting;
->  	int prs = cs->partition_root_state;
-> -	int isolcpus_updated = 0;
->  
->  	if (WARN_ON_ONCE(!is_remote_partition(cs)))
->  		return;
-> @@ -1701,9 +1701,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  
->  	spin_lock_irq(&callback_lock);
->  	if (adding)
-> -		isolcpus_updated += partition_xcpus_add(prs, NULL, tmp->addmask);
-> +		partition_xcpus_add(prs, NULL, tmp->addmask);
->  	if (deleting)
-> -		isolcpus_updated += partition_xcpus_del(prs, NULL, tmp->delmask);
-> +		partition_xcpus_del(prs, NULL, tmp->delmask);
->  	/*
->  	 * Need to update effective_xcpus and exclusive_cpus now as
->  	 * update_sibling_cpumasks() below may iterate back to the same cs.
-> @@ -1712,7 +1712,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  	if (xcpus)
->  		cpumask_copy(cs->exclusive_cpus, xcpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	if (adding || deleting)
->  		cpuset_force_rebuild();
->  
-> @@ -1793,7 +1793,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	int deleting;	/* Deleting cpus from parent's effective_cpus	*/
->  	int old_prs, new_prs;
->  	int part_error = PERR_NONE;	/* Partition error? */
-> -	int isolcpus_updated = 0;
->  	struct cpumask *xcpus = user_xcpus(cs);
->  	int parent_prs = parent->partition_root_state;
->  	bool nocpu;
-> @@ -2072,14 +2071,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	 * and vice versa.
->  	 */
->  	if (adding)
-> -		isolcpus_updated += partition_xcpus_del(old_prs, parent,
-> -							tmp->addmask);
-> +		partition_xcpus_del(old_prs, parent, tmp->addmask);
->  	if (deleting)
-> -		isolcpus_updated += partition_xcpus_add(new_prs, parent,
-> -							tmp->delmask);
-> +		partition_xcpus_add(new_prs, parent, tmp->delmask);
->  
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  
->  	if ((old_prs != new_prs) && (cmd == partcmd_update))
->  		update_partition_exclusive_flag(cs, new_prs);
-> @@ -3102,7 +3099,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->  	else if (isolcpus_updated)
->  		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  
->  	/* Force update if switching back to member & update effective_xcpus */
->  	update_cpumasks_hier(cs, &tmpmask, !new_prs);
 
-Reviewed-by: Chen Ridong <chenridong@huawei.com>
+Hi Arnd,
 
--- 
-Best regards,
-Ridong
+Sorry for the late reply — this patchset really wore me out, and I only just
+recovered.  Thank you very much for your feedback!
+
+Regarding your suggestion to use Kconfig to control which system calls are
+included or excluded, perhaps we could take inspiration from systemd's
+classification approach. For example, systemd groups syscalls into categories
+like[1]:
+
+@aio @basic-io @chown @clock @cpu-emulation @debug @file-system
+
+and so on.
+
+However, if we go down this route, we would need to continuously maintain and
+update these categories whenever Linux introduces new system calls. I' m not
+sure whether that would be an ideal long-term approach.
+
+For reference, here is the list of syscalls required to run Lighttpd.
+
+execve set_tid_address mount write brk mmap munmap getuid getgid getpid
+clock_gettime getcwd fcntl fstat read dup3 socket setsockopt bind listen
+rt_sigaction rt_sigprocmask newfstatat prlimit64 epoll_create1 epoll_ctl pipe2
+epoll_pwait accept4 getsockopt recvfrom shutdown writev getdents64 openat close
+
+We've tested it successfully on QEMU + initramfs, and I can share the
+deployment script if anyone would like to reproduce the setup.
+
+Also, I noticed that there haven't been any comments so far on the later
+patches introducing the PUSHSECTION macro.  I' m a bit concerned about how
+people perceive this part.
+
+[1] https://github.com/systemd/systemd/blob/main/src/shared/seccomp-util.c
+
+
 
 
