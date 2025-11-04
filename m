@@ -1,176 +1,111 @@
-Return-Path: <linux-kernel+bounces-885039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76770C31CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:18:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FF6C31D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187C4189BA79
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:19:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 121394F0C41
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE44A254864;
-	Tue,  4 Nov 2025 15:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iF/gu8yS"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B519119644B;
-	Tue,  4 Nov 2025 15:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886BC2580F2;
+	Tue,  4 Nov 2025 15:17:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEB225FA3B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 15:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762269519; cv=none; b=m2+ZjpnrvrUGtLqlfrVNQDkykxZz6dFSpcC7Lpks9v7UHp/PVtdDPIu8PfVrRd3wS4NiQA61UYAR6oeYwRIgbuAuteI0P3Plzbk8rzHUCKRs6fYa4HwIqaAPR+ojnd5esnMRjS4Hce3oD+qGEcoHZ5WW2JyYaKYA/9HrEAjEfxA=
+	t=1762269463; cv=none; b=FICt05aCw1XGFD/ejsKiUpz5As34RIRwslgYogf+gUbHSufkgEwK8RsdIq+YDxf/Nwq+2iQYE6RxEytFkcc+nUz8nXr6hWbXqty87eJFaisn/l96BLhzS5vtnMWhRGkvGf2iW3OUpUGXMk/sbR7aABK6sF8469/0oaFHwqD+4Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762269519; c=relaxed/simple;
-	bh=d999Gw2gebQ4f4VMTPEHK+xcUWBQzBf0MbaJId6XIGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RkvRa5xgBBsn6tv8laS7h+mZIH/MgCZW/x02oU1WfR4aDCvlkBiaz+J83x8Wq448JTZtxAonBwF3k9BIaCkTGzmvBG5PMhob5SJmyB/KD0VGZIbG61pkK6b3Ag/wmstcqYCluK6SMju9+36Agvl9urfZMf8/iWK/3l59bR/YGVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iF/gu8yS; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 778752626F;
-	Tue,  4 Nov 2025 16:18:36 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id XlOfxSJXBXVb; Tue,  4 Nov 2025 16:18:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1762269515; bh=d999Gw2gebQ4f4VMTPEHK+xcUWBQzBf0MbaJId6XIGs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iF/gu8ySs67ScCnyuf+9o3Gh0+Yi83OpdMTKoyNmRcsUAzv0ukoEBTlLv0j/pFWn+
-	 TnIEHKrxa2BXYMSkcTWy/ipJiX4nuZs9aJ4MOJEQCYZKm7REoc99ITUXPzCvGMp0e7
-	 aTHEZptH2lmoCLSUyhZ4SCWhwLBwVM8HHQxsbRohaG5fnwTmNfMt6xtKepv1adkn0l
-	 IGT7/nAR4mV4hFz1OrOVl/krpJOlTcpeAMcYPP0JAzqlf3fTFLf19/zB716jTskjj2
-	 1omfYI4Q8szn1qUjpvV2tAPeaWLikGA/B1s2jGb/uoA1ZP/znvjRA2sI5XjoQWJC6r
-	 MXQAOa3VK3sCA==
-From: Yao Zi <ziyao@disroot.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Philipp Stanner <phasta@kernel.org>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Yao Zi <ziyao@disroot.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Jacob Keller <jacob.e.keller@intel.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 3/3] net: stmmac: pci: Use generic PCI suspend/resume routines
-Date: Tue,  4 Nov 2025 15:16:47 +0000
-Message-ID: <20251104151647.3125-4-ziyao@disroot.org>
-In-Reply-To: <20251104151647.3125-1-ziyao@disroot.org>
-References: <20251104151647.3125-1-ziyao@disroot.org>
+	s=arc-20240116; t=1762269463; c=relaxed/simple;
+	bh=gs3rkVXcSCeQGGzdOynBKnqYR4GUxN/eBf75M3M166U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OK9nqIPqm6MKkqGeHUKAvsvSSNRTe0u4LZsskz3o1HvLPOb6LHgNiOAA9xJiCvj5/vkIAAARza2ATFMGySdaK6LuBV4JeM+T3YnRFEVH5w/azq/tS7VQRzZozCMVjdjrw0WZymeXrt2zBRvncbWRRvLJL21JbR46eQG6a28LF1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 625C61CE0;
+	Tue,  4 Nov 2025 07:17:32 -0800 (PST)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6FB63F66E;
+	Tue,  4 Nov 2025 07:17:38 -0800 (PST)
+Date: Tue, 4 Nov 2025 15:17:33 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] arm64/mm: Ensure correct 48 bit PA gets into
+ TTBRx_EL1
+Message-ID: <aQoZDbuBJ_2YcsyP@J2N7QTR9R3.cambridge.arm.com>
+References: <20251103052618.586763-1-anshuman.khandual@arm.com>
+ <20251103052618.586763-5-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103052618.586763-5-anshuman.khandual@arm.com>
 
-Convert STMMAC PCI glue driver to use the generic platform
-suspend/resume routines for PCI controllers, instead of implementing its
-own one.
+On Mon, Nov 03, 2025 at 05:26:16AM +0000, Anshuman Khandual wrote:
+> Even though 48 bit PA representation in TTBRx_EL1 does not involve shifting
+> partial bits like 52 bit variant does, they sill need to be masked properly
+> for correctness. Hence mask 48 bit PA with TTBRx_EL1_BADDR_MASK.
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |  5 +--
- .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 36 ++-----------------
- 2 files changed, 6 insertions(+), 35 deletions(-)
+There is no need for the address "to be masked properly for
+correctness".
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 7ec7c7630c41..59aa04e71aab 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -378,8 +378,6 @@ config DWMAC_LOONGSON
- 	  This selects the LOONGSON PCI bus support for the stmmac driver,
- 	  Support for ethernet controller on Loongson-2K1000 SoC and LS7A1000 bridge.
- 
--endif
--
- config STMMAC_PCI
- 	tristate "STMMAC PCI bus support"
- 	depends on STMMAC_ETH && PCI
-@@ -392,4 +390,7 @@ config STMMAC_PCI
- 	  If you have a controller with this interface, say Y or M here.
- 
- 	  If unsure, say N.
-+
-+endif
-+
- endif
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 94b3a3b27270..fa92be672c54 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -14,6 +14,7 @@
- #include <linux/dmi.h>
- 
- #include "stmmac.h"
-+#include "stmmac_libpci.h"
- 
- struct stmmac_pci_info {
- 	int (*setup)(struct pci_dev *pdev, struct plat_stmmacenet_data *plat);
-@@ -139,37 +140,6 @@ static const struct stmmac_pci_info snps_gmac5_pci_info = {
- 	.setup = snps_gmac5_default_data,
- };
- 
--static int stmmac_pci_suspend(struct device *dev, void *bsp_priv)
--{
--	struct pci_dev *pdev = to_pci_dev(dev);
--	int ret;
--
--	ret = pci_save_state(pdev);
--	if (ret)
--		return ret;
--
--	pci_disable_device(pdev);
--	pci_wake_from_d3(pdev, true);
--	return 0;
--}
--
--static int stmmac_pci_resume(struct device *dev, void *bsp_priv)
--{
--	struct pci_dev *pdev = to_pci_dev(dev);
--	int ret;
--
--	pci_restore_state(pdev);
--	pci_set_power_state(pdev, PCI_D0);
--
--	ret = pci_enable_device(pdev);
--	if (ret)
--		return ret;
--
--	pci_set_master(pdev);
--
--	return 0;
--}
--
- /**
-  * stmmac_pci_probe
-  *
-@@ -249,8 +219,8 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 	plat->safety_feat_cfg->prtyen = 1;
- 	plat->safety_feat_cfg->tmouten = 1;
- 
--	plat->suspend = stmmac_pci_suspend;
--	plat->resume = stmmac_pci_resume;
-+	plat->suspend = stmmac_pci_plat_suspend;
-+	plat->resume = stmmac_pci_plat_resume;
- 
- 	return stmmac_dvr_probe(&pdev->dev, plat, &res);
- }
--- 
-2.51.2
+We added masking for 52-bit PAs due to the need to shuffle the bits
+around. There is no need for that when using 48-bit PAs, since the
+address must be below 2^48, and the address must be suitably aligned.
 
+If any bits are set outside of this mask, that is a bug in the caller.
+
+Mark.
+
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/assembler.h | 1 +
+>  arch/arm64/include/asm/pgtable.h   | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+> index 23be85d93348..d5eb09fc5f8a 100644
+> --- a/arch/arm64/include/asm/assembler.h
+> +++ b/arch/arm64/include/asm/assembler.h
+> @@ -609,6 +609,7 @@ alternative_endif
+>  	and	\ttbr, \ttbr, #TTBR_BADDR_MASK_52
+>  #else
+>  	mov	\ttbr, \phys
+> +	and	\ttbr, \ttbr, #TTBRx_EL1_BADDR_MASK
+>  #endif
+>  	.endm
+>  
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 0944e296dd4a..c3110040c137 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1604,7 +1604,7 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+>  #ifdef CONFIG_ARM64_PA_BITS_52
+>  #define phys_to_ttbr(addr)	(((addr) | ((addr) >> 46)) & TTBR_BADDR_MASK_52)
+>  #else
+> -#define phys_to_ttbr(addr)	(addr)
+> +#define phys_to_ttbr(addr)	(addr & TTBRx_EL1_BADDR_MASK)
+>  #endif
+>  
+>  /*
+> -- 
+> 2.30.2
+> 
 
