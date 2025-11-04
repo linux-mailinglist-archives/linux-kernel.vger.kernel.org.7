@@ -1,289 +1,160 @@
-Return-Path: <linux-kernel+bounces-884407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35AF7C301FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:01:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B4FC30224
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789A146096D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D3E46100E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A064A306B0D;
-	Tue,  4 Nov 2025 08:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBF9313529;
+	Tue,  4 Nov 2025 08:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1XoNgwg"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="PiSoxJrO"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C4F311958
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2A42BF000
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246379; cv=none; b=q5/xxEICIFvhmqN74Vf/5j83rV0srzuZnn3UuQ3VShThi5CcJIWy9THr3m5Jbef1gsmuC2wi+fPOGqeUO3h4ow/IUQ0+dZrME9Z+wf4YRuA7nGM24C2liR4ZV9iKiF9v2mZcm1DwBCjAuYduq6LC2X/Tuye7A+Imd0UIIyNcJhE=
+	t=1762246396; cv=none; b=ugy0lROcaaw8TFsMXwbrKySZ3DLAyd26BemGYznN5AXzBYTE7IWKoOJF03O132O/jAuaiL1aVYLi5jbFGqAhl8Q/cuAjEwnlYF5500zmE9Ic6/KKDB3DxT615ZNoU0IHN5Mi7L/++jR5Lx4jW8qcldy0qyecBFQC4Qk5crh7oyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246379; c=relaxed/simple;
-	bh=2rMHlQ1WtmYv1cT3KfGLFdZenWascCkIbV7yKzG2Frw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ld4+hwMbmC2wipfY5eROK5RoKJmO6fLfn0Tsd1BLvHCFKgzr8dq/hQ6YSrxxpBkXUrDF+uvLDGg2DsAnIRU0EHdYp9Gx4yu5JlqJlui50o3n6NJA2i9yOK/H/ib/L52UJyX+jPbVC7r2zXL+xY/vzSqehF6jp1J12QupdMVoufI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1XoNgwg; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-290af0e154fso6786475ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:52:58 -0800 (PST)
+	s=arc-20240116; t=1762246396; c=relaxed/simple;
+	bh=aq0omEoi4+53NC8HrfomYE/g5rpil+xDKbV+0OWd/9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XmxKpiCGvox3LrPjIX++ao8HrEznzLgZJjfjt7Gi6xB4iBTTf0ALPBxH/CTTuBvbCWLyZFuP5pTKzREqboM8c6G3QaYmgwveSBEHVnnfYHDbVheIqmwjaklMysqH4uMTobTNm0/Cc06RV7oIf+JJlFnk/kmGTymO3BJDenTfI0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=PiSoxJrO; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-591c98ebe90so4847034e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762246377; x=1762851177; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JHJIK8+oaXWJkBBbD+h4XXw0wc94Hg7Tu0T3cHygSwk=;
-        b=G1XoNgwgqqvxW+Q6ug7nLKpu3RTpub5P5SbSxpAaP+MTs+vLhZK6Hqun1JPHPx6M0D
-         ng1bHU1tF968UAIyrmlQeHxpH8315/xZLvymTUqeUlehJZd0Dq+JHUYBCdyKiIHVVEZ8
-         IcfDvy/skLFmizJ0HJuB7JkC7aIhf8IwvSYmf7T+g3RYbcaqYIr3gbK5euocCug51d+F
-         8SMx2SOwTGUGmc3GlgIllAzdojdLMIfQcUjxoUqjrcPrNrK5qKJTQkxZze4Vs6jtdVCS
-         3Gc/yLTO5pFVt+BZKxhXNOwscyaUNZEjknKTA1c8wncYZj3AYr4hd66E2r6Dv82ykUfz
-         ONdQ==
+        d=mihalicyn.com; s=mihalicyn; t=1762246393; x=1762851193; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2BYWHPcs6UGsM6Z7RjRBFBi7foOq/GE7TEQzUwZJ+g=;
+        b=PiSoxJrO3xNSV7jcBL8dIoMmseZ3/1HZF1ITqpGStyfAqywV+dWoRT//XSRnmmLKbn
+         X1TPmSYa37oqs6+0BEKnHqB948IOCguGm+fTNVrEF5xlgBHC7oKh5tiNCvBwzmEtNvPr
+         ysx1UqMHnvGnmkKc36MYBw/o+5oYv1g+bVBu4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762246377; x=1762851177;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1762246393; x=1762851193;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JHJIK8+oaXWJkBBbD+h4XXw0wc94Hg7Tu0T3cHygSwk=;
-        b=CcfSPZGLSNULeD/qFogdYfjVQ3Klsi8s6RqrgyBg5Ymh+05oUEmCs6GNKONeMFewtL
-         1nR3GEoK1ErlafDd5vmUkCw94g4IF31notes3dhwDwmCCxWpZoxl6mFQnqOewBrR2Y8i
-         EWpfxumY/GdpJ2U7XwjnI4qKoMjkcEHhh6LJw+E3Dffzqcp8z10ryLdBhb5Hne+3cy3F
-         G5mjutYyoEYFRZ5o45KwHNvnVPtkw2L6oj7zYq74mqlj7kCdVa7gVntoXYFZb6u9sTCE
-         u9Z1URgO8noiFlso4GXPm0MYyCEsKkzPluE9cl040HP5Szf7nY1aEZArsRGMB0u3XS2G
-         ohXA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8zLHOdAFD8C+/VJRVXcmp6d/wP0XfPuCVx7jIX//7KTq0/WxVwry2PXi6twZnfnVPNigWbX5fx6/bpD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsuiBhJmEnHxZJ9uXJKoVJVvq0oklLv68TeEdjSfrNUfwQwBh0
-	sWOrVyf5a/mCiy289VXB1wgDRCQ7E1Uvp7nm1pSwYToZppcIZGKNY+VV
-X-Gm-Gg: ASbGncs4KgTEaqatzZUpmv8UnJLr4SdaP5bq22F8NPSLbEDX8xCDB3nAh1pYUB10Onf
-	r83Vtm8UFJiK3FQirt6+jiziwQuXFD2cVpDZFK/y5P9WlU/YoPoHqUzZzY9hPMIwbtebEF6CtOo
-	vgeWEe7aAYxpxN0kSeiGbicyxOZUxGsfTHXiDb5cgi2HBos5DqklVO8BDNZy1fnx031mNl3REGs
-	0wohvF8j68X1eZIx+l5sBAD0K9rSfhGm3qXpkVeOJiSBpvQ6CBkQv416U3DG7w8J/yMMm0/JLwJ
-	7BEJhXFQ2vfr4dxtee3TR4Ry9qqTzLAhQx1STjw0PcZaODMqnkKBTFl2IxhvD+STij0vPjiL1MM
-	qSB9iZ7+DCLBHAuJJeSkAaoMILeNudWXxhj6/YMpOUPWX1fj+4YFzW/ub3ohSFfxA1C1w+UEzzj
-	etGRSwH6olK51GkkO3AYhq9UgQuSuHZDNCUSz0uIHz+g==
-X-Google-Smtp-Source: AGHT+IH2t1B9DQS3NrSrgg/yHCdfBQnUffNx5XgA6o/NzrzTv4ZYh+rhCpt79HNN4moszBGMYKYYZw==
-X-Received: by 2002:a17:902:e889:b0:296:53b:fcd3 with SMTP id d9443c01a7336-296053bfe03mr10444545ad.9.1762246377353;
-        Tue, 04 Nov 2025 00:52:57 -0800 (PST)
-Received: from [127.0.1.1] ([2406:7400:10c:9fcf:2909:749f:36f6:6b85])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a609c8sm18155155ad.92.2025.11.04.00.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 00:52:56 -0800 (PST)
-From: Ranganath V N <vnranganath.20@gmail.com>
-Date: Tue, 04 Nov 2025 14:22:50 +0530
-Subject: [PATCH v6] ASoC: dt-bindings: ti,pcm1862: convert to dtschema
+        bh=X2BYWHPcs6UGsM6Z7RjRBFBi7foOq/GE7TEQzUwZJ+g=;
+        b=iAkJrkK9fxQi3PWMDlELjDttoBDfmJEgWOQSq5pL1sWvb/2Hm2dMr1Chz2SrdBU9TB
+         f/OKulKIrx1tRXDMoLbFu9JQoiaFsLwBodKUgWU/Hk9BVly+HN4miT3ZgtrkqO7Jb0Uw
+         tdYNqBuFoS6KntOzrpK6Lvi6UY9F94SQnMss5pnE3QB/Kn4YJTT4DHDy2m9ehzm0+tXp
+         bEc/hfskTFxZLzdYp1W+o7+e0SknEXFeeLObdiLUlTbte1A4MbqRTsosQd3iNm0QNuyH
+         3glJ410jukJGtDKaVVWVQ6w3o5d4XVX6kq0ER7qhUBrg6TbHS7GEO3d4XBfsePdJzMKI
+         w88Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmeWC0Fxi/S/kR7S2JLwQzHIlIXMCd3MA+vZwvPDBoUtF3iUQTT7rRqky0nqOTWSITDVJNXcnA0Zc3BbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysUnHW+2um+9xkdiUs0NlCRaoiMZJSv8UWiibtyb7hSj1cQXYl
+	x63yTLZRSL7CkrZeIwVp1SY+uI4K2dps30cpwWAJT20iu8DPrDValQ0fXJfsPu8mn8SOLZZslrI
+	vM7WJWWDwt77ki3srWWDQaqptpSqMQx+E1gFusLSPT4tHJhWGIA5jEEA9+fKRYyU=
+X-Gm-Gg: ASbGncs1jIeG81yqGNNVYz+0ubpvh1eIBy3J6kEFu0U5bWOANe5XLkZhltxC6PkiayO
+	nC+fo7jxPCxEyW5IANFrdGVe7LQh8fg6VV9VWdDqyemeNrM98jbnsg/aUCO5JvWGXApZ6DMsjVf
+	UZAEeZxRbOZ44gUtQw7JSzloMQlrvwKaKqmTltZ8Dwe2cQ97cR2HHcvvZhGj7u0S+ahGVzqcqPj
+	NLh8H02G1oFg7NUR8RDPHj3BUlNk+GEn4kdBp22xOr3BdGl8dgXtI/vdV3r
+X-Google-Smtp-Source: AGHT+IHaVkIZmiY61cwluXteqyDeM2eT2eyEncQyyx+Uds4hJ8EyPCT+scmZL5PaUyj9H4iMCL6H8Yf2ra3DqynTIKc=
+X-Received: by 2002:a05:6512:2387:b0:594:3564:437 with SMTP id
+ 2adb3069b0e04-5943564079bmr547358e87.49.1762246392566; Tue, 04 Nov 2025
+ 00:53:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-dtbs-v6-1-61d5afa31fde@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAOG+CWkC/13PQQrCMBCF4atI1kYyM2k0rryHuEinSQ2olUaKI
- r27aakQunxDvh/yFcn30Sdx3HxF74eYYvfIw2w3gq/u0XoZm7wFKqxAIcjmVSdJjiAYa1kbEPn
- ps/chvufM+ZL3NaZX13/m6gDTdRUYQILUlhicw4pqPrV3F2877u5iCgxYIrMgzIgbqvdADg8Hv
- 0ZUIrsgyoiYwSAiMOIa6QKRWpCeUAiBJgRg16gq0f9PVUbeQ8OqxuC0KtE4jj/1s5N2bAEAAA=
- =
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
- david.hunter.linux@gmail.com, khalid@kernel.org, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- Ranganath V N <vnranganath.20@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762246373; l=5252;
- i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
- bh=2rMHlQ1WtmYv1cT3KfGLFdZenWascCkIbV7yKzG2Frw=;
- b=ipXerRqWnjaK7oEEls/rfgAdyD/nxcQbl/o+dgdIHQ302NAPpKWX4WMvkbilPBABzJLtNB5ks
- z7I4qWhxcLXD85A99mublEOWTs0u8iP+HlNhskKdkE+7ix1Bo/doj7D
-X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
- pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-10-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-10-ca449b7b7aa0@kernel.org>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Tue, 4 Nov 2025 09:53:01 +0100
+X-Gm-Features: AWmQ_bk6vv7fvWPe0zWpUUuRPlVtxmU_G4j1JWfNzhZ22ZvVNF4yvVqf69K-kzw
+Message-ID: <CAJqdLro5Mtr_JRXnPehxEErY9L=rxAb-iXavAPqKxp1fTto-rw@mail.gmail.com>
+Subject: Re: [PATCH 10/22] selftests/pidfd: add first supported_mask test
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Yu Watanabe <watanabe.yu+github@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
+	Luca Boccassi <luca.boccassi@gmail.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-convert the Texas Instruments PCM186x Universal audio ADC bindings
-to DT schema.
-Added the #sound-dai-cells as per the framework.
+Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
+<brauner@kernel.org>:
+>
+> Verify that when PIDFD_INFO_SUPPORTED_MASK is requested, the kernel
+> returns the supported_mask field indicating which flags the kernel
+> supports.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
-Convert the Texas Instruments PCM186x audio ADC bindings to DT schema.
----
-Changes in v6:
-- Corrected the Subject Asoc->ASoC, dt_bindings -> dt-bindings and ti,pcm186x -> ti,pcm1862
-- Updated the commit message.
-- added the missed Description from the old binding.
-- Link to v5: https://lore.kernel.org/r/20251031-dtbs-v5-1-ee1dc0b2fa40@gmail.com
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
-Changes in v5:
-- Resolved previous patch warnings/errors
-- dtschema/dtc warnings/errors:
-- /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml: 
-- $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
-- 	 $id: http://devicetree.org/schemas/sound/ti,pcm186x.yaml
-- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
-- Link to v4: https://lore.kernel.org/r/20251030-dtbs-v4-1-3fff32221119@gmail.com
-
-Changes in v4:
-- Corrected subject dt_bindings:sound to Asoc: dt_bindings:
-- Corrected the filename to match one of the compitables in the file 
-- ti,pcm186x.yaml to ti,pcm1862.yaml
-- Link to v3: https://lore.kernel.org/r/20251029-dtbs-v3-1-3cc162221c22@gmail.com
-
-Changes in v3:
-- Unicode FEFF character was present in the begining of the file,
-- Removed unicode character.
-- Link to v2: https://lore.kernel.org/r/20251026-dtbs-v2-1-cd3b713a288e@gmail.com
-
-Changes in v2:
-- Fixes as per the reviews suggested for the v1.
-- Link to v1: https://lore.kernel.org/r/20251021-dtbs-v1-1-493c1aa253bc@gmail.com
----
- .../devicetree/bindings/sound/pcm186x.txt          | 42 ------------
- .../devicetree/bindings/sound/ti,pcm1862.yaml      | 76 ++++++++++++++++++++++
- 2 files changed, 76 insertions(+), 42 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/pcm186x.txt b/Documentation/devicetree/bindings/sound/pcm186x.txt
-deleted file mode 100644
-index 1087f4855980..000000000000
---- a/Documentation/devicetree/bindings/sound/pcm186x.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--Texas Instruments PCM186x Universal Audio ADC
--
--These devices support both I2C and SPI (configured with pin strapping
--on the board).
--
--Required properties:
--
-- - compatible : "ti,pcm1862",
--                "ti,pcm1863",
--                "ti,pcm1864",
--                "ti,pcm1865"
--
-- - reg : The I2C address of the device for I2C, the chip select
--         number for SPI.
--
-- - avdd-supply: Analog core power supply (3.3v)
-- - dvdd-supply: Digital core power supply
-- - iovdd-supply: Digital IO power supply
--        See regulator/regulator.txt for more information
--
--CODEC input pins:
-- * VINL1
-- * VINR1
-- * VINL2
-- * VINR2
-- * VINL3
-- * VINR3
-- * VINL4
-- * VINR4
--
--The pins can be used in referring sound node's audio-routing property.
--
--Example:
--
--	pcm186x: audio-codec@4a {
--		compatible = "ti,pcm1865";
--		reg = <0x4a>;
--
--		avdd-supply = <&reg_3v3_analog>;
--		dvdd-supply = <&reg_3v3>;
--		iovdd-supply = <&reg_1v8>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml b/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
-new file mode 100644
-index 000000000000..0f0e254a2420
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
-@@ -0,0 +1,76 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/ti,pcm1862.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments PCM186x Universal Audio ADC
-+
-+maintainers:
-+  - Ranganath V N <vnranganath.20@gmail.com>
-+
-+description: |
-+  The Texas Instruments PCM186x family are multi-channel audio ADCs
-+  that support both I2C and SPI control interfaces, selected by
-+  pin strapping. These devices include on-chip programmable gain
-+  amplifiers and support differential or single-ended analog inputs.
-+
-+  CODEC input pins:
-+    * VINL1
-+    * VINR1
-+    * VINL2
-+    * VINR2
-+    * VINL3
-+    * VINR3
-+    * VINL4
-+    * VINR4
-+
-+  The pins can be used in referring sound node's audio-routing property.
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,pcm1862
-+      - ti,pcm1863
-+      - ti,pcm1864
-+      - ti,pcm1865
-+
-+  reg:
-+    maxItems: 1
-+
-+  avdd-supply: true
-+
-+  dvdd-supply: true
-+
-+  iovdd-supply: true
-+
-+  '#sound-dai-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - avdd-supply
-+  - dvdd-supply
-+  - iovdd-supply
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        audio-codec@4a {
-+            compatible = "ti,pcm1865";
-+            reg = <0x4a>;
-+
-+            avdd-supply = <&reg_3v3_analog>;
-+            dvdd-supply = <&reg_3v3>;
-+            iovdd-supply = <&reg_1v8>;
-+        };
-+    };
-
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251021-dtbs-3a31f699c461
-
-Best regards,
--- 
-Ranganath V N <vnranganath.20@gmail.com>
-
+> ---
+>  tools/testing/selftests/pidfd/pidfd_info_test.c | 41 +++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>
+> diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
+> index a0eb6e81eaa2..b31a0597fbae 100644
+> --- a/tools/testing/selftests/pidfd/pidfd_info_test.c
+> +++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
+> @@ -690,4 +690,45 @@ TEST_F(pidfd_info, thread_group_exec_thread)
+>         EXPECT_EQ(close(pidfd_thread), 0);
+>  }
+>
+> +/*
+> + * Test: PIDFD_INFO_SUPPORTED_MASK field
+> + *
+> + * Verify that when PIDFD_INFO_SUPPORTED_MASK is requested, the kernel
+> + * returns the supported_mask field indicating which flags the kernel supports.
+> + */
+> +TEST(supported_mask_field)
+> +{
+> +       struct pidfd_info info = {
+> +               .mask = PIDFD_INFO_SUPPORTED_MASK,
+> +       };
+> +       int pidfd;
+> +       pid_t pid;
+> +
+> +       pid = create_child(&pidfd, 0);
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid == 0)
+> +               pause();
+> +
+> +       /* Request supported_mask field */
+> +       ASSERT_EQ(ioctl(pidfd, PIDFD_GET_INFO, &info), 0);
+> +
+> +       /* Verify PIDFD_INFO_SUPPORTED_MASK is set in the reply */
+> +       ASSERT_TRUE(!!(info.mask & PIDFD_INFO_SUPPORTED_MASK));
+> +
+> +       /* Verify supported_mask contains expected flags */
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_PID));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_CREDS));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_CGROUPID));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_EXIT));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_COREDUMP));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_SUPPORTED_MASK));
+> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_COREDUMP_SIGNAL));
+> +
+> +       /* Clean up */
+> +       sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0);
+> +       sys_waitid(P_PIDFD, pidfd, NULL, WEXITED);
+> +       close(pidfd);
+> +}
+> +
+>  TEST_HARNESS_MAIN
+>
+> --
+> 2.47.3
+>
 
