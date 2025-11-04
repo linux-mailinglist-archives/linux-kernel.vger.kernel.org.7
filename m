@@ -1,58 +1,47 @@
-Return-Path: <linux-kernel+bounces-884509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8104DC30526
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:45:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616FBC30544
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A243B4839
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C801C3B29A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0692D7BF;
-	Tue,  4 Nov 2025 09:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AFB2D12EF;
+	Tue,  4 Nov 2025 09:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="f4Pv1rm9"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFQJVcMz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C231F3B8A;
-	Tue,  4 Nov 2025 09:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F62D7BF;
+	Tue,  4 Nov 2025 09:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762249083; cv=none; b=eIDSfggzSRxUEMSnrS9YRFCmIsMFvofaKUHW6K1IUMLXyEzd+hj6Pk5st7tNmsZJns0C6wOB9zejrL2XkWDbZheMGHiNk+CRPN1Qf/7q4qydVQm6qV2gdatHosPmaxzO/wS/wrYX2lGpTNvGkEuMBD7rLMjRmSfUtiScu4AkVzA=
+	t=1762249143; cv=none; b=VhoAtxAxGm5WjjDuJXFRXrL+pNy7TqRN1wXgB6dLs3WJHPL6B5Jnd2FiWr4w4IbfzL6sehbheFj84816LS24PGsaZS+u3OYslIvdTnQ6c4b92yOw8bgWiTs+D0K+v8y/3PzDKIKGyTDxJkaraF0RCC57xRci4KDwAF0fZW7sY40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762249083; c=relaxed/simple;
-	bh=r3tQ0Szv+FMlbIxY4VqNBVRmUYxhaJhTcGifkgewxFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q5s1BBct4a96OlHeF13e2Ou30WforBQ6KZ9G7CkRLuEAolwRuBDowDttoBkKGnXQ18VKijukU7FMecqws0L0m/OGXqyVBMiHODbNeg0FiHH0P8GbyDOfAGB82KBdGBuQAIIs3XYDLVF417NAv8zXB5NK7ZSDVQyEstV8FW3/N/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=f4Pv1rm9; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=BPoZviuvXSS0vcZ/zKWMYvh/zgUUKs3Cv2NlUfmw2jM=;
-	b=f4Pv1rm9FVwpf16ppTHIVR2fQ2ygOrxsGoMItnYnMY4a0deLzM4nM/Maxz3WMOy6JEOVCeV40
-	SGVtFpcxX+JF712Xlb2W3Ln4YX/WPZ0Hvx7WuHEldpCxPiMFdv9wwcQ+lfqVjzRApNzPNIAmTEX
-	1z2zxdRISe6oJp3+l+fKyxk=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d13Hc4JQHzpStT;
-	Tue,  4 Nov 2025 17:36:28 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 941DC180238;
-	Tue,  4 Nov 2025 17:37:57 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 17:37:57 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Nov
- 2025 17:37:56 +0800
-Message-ID: <0029f2b2-4a52-4fd4-a76c-1032868ffbb0@huawei.com>
-Date: Tue, 4 Nov 2025 17:37:56 +0800
+	s=arc-20240116; t=1762249143; c=relaxed/simple;
+	bh=yCvLd6/nomDiRwqOxlI7HgKTubggDv3X7Fw8HkVVE90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZUZmxd6eAA/M0n7ueahf0n5azKFP6xkvly+sCf3Yhy8UXUegbdVyu7ybKf9QsSH9UTTI5q4ZyEN7A3EBCAeefbkfRY6JAbRFGjGUxT2vnxTaqNs7fHXXzCnx0W0h5XG7I4J2B63oBIzsUOvYcSmm+g78COkUOPIB2DGhCesSBCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFQJVcMz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B021DC16AAE;
+	Tue,  4 Nov 2025 09:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762249143;
+	bh=yCvLd6/nomDiRwqOxlI7HgKTubggDv3X7Fw8HkVVE90=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZFQJVcMzqNmStko7xcWsrOQU2jsh+T1CI46vYG7MnzH0iwjcfZAn6Iq4VUzTsLeFv
+	 EDzRxhDVpIdsBW7iHYlhsuhz8JZKZ+EfC7eqTQZjkhD5UGaB/yZ+eUzyqR2lf+hfTU
+	 RvSHzngbGZs3QS7uoyr/8slXk3r5d0MZT3i0lKwcZ8ryBtKSjdU4Rj+F2Mxdw+XEWS
+	 6LvvRwC5JqOArtOvAwEwGHqwxJqINAQ4R3zhvb+r31uCmFRLofuAX6m2wGXjxdySf/
+	 JA1nk5xWCsQ9/OWkCIAejRBF4rCVeNopvCjP4zEpewQbzFb/fi6GPJ9S/8eZxc/gki
+	 PIYs8bzyFG+Iw==
+Message-ID: <01b44e0f-ea2e-406f-9f65-b698b5504f42@kernel.org>
+Date: Tue, 4 Nov 2025 10:38:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,76 +49,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] ACPI: processor: idle: Relocate and verify
- acpi_processor_ffh_lpi_probe
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
-References: <20251103084244.2654432-1-lihuisong@huawei.com>
- <20251103084244.2654432-4-lihuisong@huawei.com>
- <CAJZ5v0gf=eTuY_CoUDSp94Naj3fxjapc_FWYY+nBjX6qvvM_cg@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0gf=eTuY_CoUDSp94Naj3fxjapc_FWYY+nBjX6qvvM_cg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Subject: Re: [PATCH v2 2/2] mm/memory-failure: remove the selection of RAS
+To: Xie Yuanbin <xieyuanbin1@huawei.com>, david@redhat.com,
+ dave.hansen@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, akpm@linux-foundation.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, linmiaohe@huawei.com,
+ nao.horiguchi@gmail.com, luto@kernel.org, peterz@infradead.org,
+ tony.luck@intel.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-edac@vger.kernel.org, will@kernel.org, liaohua4@huawei.com,
+ lilinjie8@huawei.com
+References: <20251104072306.100738-1-xieyuanbin1@huawei.com>
+ <20251104072306.100738-3-xieyuanbin1@huawei.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251104072306.100738-3-xieyuanbin1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 04.11.25 08:23, Xie Yuanbin wrote:
+> The commit 97f0b13452198290799f ("tracing: add trace event for
+> memory-failure") introduces the selection of RAS in memory-failure.
+> This commit is just a tracing feature; in reality, there is no dependency
+> between memory-failure and RAS. RAS increases the size of the bzImage
+> image by 8k, which is very valuable for embedded devices.
+> 
+> Move the memory-failure traceing code from ras_event.h to
+> memory-failure.h and remove the selection of RAS.
+> 
+> Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> ---
+
+[...]
+
+> +++ b/include/trace/events/memory-failure.h
+> @@ -0,0 +1,97 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM ras
+
+This trace system should not be called "ras". All RAS terminology should 
+be removed here.
+
+#define TRACE_SYSTEM memory_failure
+
+> +#define TRACE_INCLUDE_FILE memory-failure
+> +
+> +#if !defined(_TRACE_MEMORY_FAILURE_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_MEMORY_FAILURE_H
+> +
+> +#include <linux/tracepoint.h>
+> +#include <linux/mm.h>
+> +
+> +/*
+> + * memory-failure recovery action result event
+> + *
+> + * unsigned long pfn -	Page Frame Number of the corrupted page
+> + * int type	-	Page types of the corrupted page
+> + * int result	-	Result of recovery action
+> + */
+> +
+> +#define MF_ACTION_RESULT	\
+> +	EM ( MF_IGNORED, "Ignored" )	\
+> +	EM ( MF_FAILED,  "Failed" )	\
+> +	EM ( MF_DELAYED, "Delayed" )	\
+> +	EMe ( MF_RECOVERED, "Recovered" )
+> +
+> +#define MF_PAGE_TYPE		\
+> +	EM ( MF_MSG_KERNEL, "reserved kernel page" )			\
+> +	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )	\
+> +	EM ( MF_MSG_HUGE, "huge page" )					\
+> +	EM ( MF_MSG_FREE_HUGE, "free huge page" )			\
+> +	EM ( MF_MSG_GET_HWPOISON, "get hwpoison page" )			\
+> +	EM ( MF_MSG_UNMAP_FAILED, "unmapping failed page" )		\
+> +	EM ( MF_MSG_DIRTY_SWAPCACHE, "dirty swapcache page" )		\
+> +	EM ( MF_MSG_CLEAN_SWAPCACHE, "clean swapcache page" )		\
+> +	EM ( MF_MSG_DIRTY_MLOCKED_LRU, "dirty mlocked LRU page" )	\
+> +	EM ( MF_MSG_CLEAN_MLOCKED_LRU, "clean mlocked LRU page" )	\
+> +	EM ( MF_MSG_DIRTY_UNEVICTABLE_LRU, "dirty unevictable LRU page" )	\
+> +	EM ( MF_MSG_CLEAN_UNEVICTABLE_LRU, "clean unevictable LRU page" )	\
+> +	EM ( MF_MSG_DIRTY_LRU, "dirty LRU page" )			\
+> +	EM ( MF_MSG_CLEAN_LRU, "clean LRU page" )			\
+> +	EM ( MF_MSG_TRUNCATED_LRU, "already truncated LRU page" )	\
+> +	EM ( MF_MSG_BUDDY, "free buddy page" )				\
+> +	EM ( MF_MSG_DAX, "dax page" )					\
+> +	EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )			\
+> +	EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )		\
+> +	EMe ( MF_MSG_UNKNOWN, "unknown page" )
+> +
+> +/*
+> + * First define the enums in MM_ACTION_RESULT to be exported to userspace
+> + * via TRACE_DEFINE_ENUM().
+> + */
+> +#undef EM
+> +#undef EMe
+> +#define EM(a, b) TRACE_DEFINE_ENUM(a);
+> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+> +
+> +MF_ACTION_RESULT
+> +MF_PAGE_TYPE
+> +
+> +/*
+> + * Now redefine the EM() and EMe() macros to map the enums to the strings
+> + * that will be printed in the output.
+> + */
+> +#undef EM
+> +#undef EMe
+> +#define EM(a, b)		{ a, b },
+> +#define EMe(a, b)	{ a, b }
+> +
+> +TRACE_EVENT(memory_failure_event,
+> +	TP_PROTO(unsigned long pfn,
+> +		 int type,
+> +		 int result),
+> +
+> +	TP_ARGS(pfn, type, result),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(unsigned long, pfn)
+> +		__field(int, type)
+> +		__field(int, result)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->pfn	= pfn;
+> +		__entry->type	= type;
+> +		__entry->result	= result;
+> +	),
+> +
+> +	TP_printk("pfn %#lx: recovery action for %s: %s",
+> +		__entry->pfn,
+> +		__print_symbolic(__entry->type, MF_PAGE_TYPE),
+> +		__print_symbolic(__entry->result, MF_ACTION_RESULT)
+> +	)
+> +);
+> +#endif /* _TRACE_MEMORY_FAILURE_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
 
 
-在 2025/11/4 1:56, Rafael J. Wysocki 写道:
-> On Mon, Nov 3, 2025 at 9:42 AM Huisong Li <lihuisong@huawei.com> wrote:
->> The platform used LPI need check if the LPI support and the entry
->> method is valid by the acpi_processor_ffh_lpi_probe(). But the return
->> of acpi_processor_ffh_lpi_probe() in acpi_processor_setup_cpuidle_dev()
->> isn't verified by any caller.
->>
->> What's more, acpi_processor_get_power_info() is a more logical place for
->> verifying the validity of FFH LPI than acpi_processor_setup_cpuidle_dev().
->> So move acpi_processor_ffh_lpi_probe() from the latter to the former and
->> verify its return.
->>
->> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Idle(LPI) states")
-> If you want to add this Fixes: tag, please add some information on
-> what systems it breaks on and what the symptoms are to the changelog.
-Sorry, I didn't specifically construct it.
-This patch is just an optimization patch. All right, I will drop this 
-Fixes tag.
-Thanks for your reminder.
->
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->> ---
->>   drivers/acpi/processor_idle.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->> index 5213a545fa78..c73df5933691 100644
->> --- a/drivers/acpi/processor_idle.c
->> +++ b/drivers/acpi/processor_idle.c
->> @@ -1266,7 +1266,7 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
->>
->>          dev->cpu = pr->id;
->>          if (pr->flags.has_lpi)
->> -               return acpi_processor_ffh_lpi_probe(pr->id);
->> +               return 0;
->>
->>          return acpi_processor_setup_cpuidle_cx(pr, dev);
->>   }
->> @@ -1277,7 +1277,13 @@ static int acpi_processor_get_power_info(struct acpi_processor *pr)
->>
->>          ret = acpi_processor_get_lpi_info(pr);
->>          if (ret)
->> -               ret = acpi_processor_get_cstate_info(pr);
->> +               return acpi_processor_get_cstate_info(pr);
->> +
->> +       if (pr->flags.has_lpi) {
->> +               ret = acpi_processor_ffh_lpi_probe(pr->id);
->> +               if (ret)
->> +                       pr_err("Processor FFH LPI state is invalid.\n");
->> +       }
->>
->>          return ret;
->>   }
->> --
+We want to add that new file to the "HWPOISON MEMORY FAILURE HANDLING" 
+section in MAINTAINERS.
+
+Nothing else jumped at me.
+
+-- 
+Cheers
+
+David
 
