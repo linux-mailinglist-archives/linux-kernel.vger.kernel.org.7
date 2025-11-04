@@ -1,158 +1,89 @@
-Return-Path: <linux-kernel+bounces-883850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7634DC2E924
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:20:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A6C2E92D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 01:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2191834C3EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CFC3B568A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 00:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FC314C5B0;
-	Tue,  4 Nov 2025 00:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6703E1A9FB7;
+	Tue,  4 Nov 2025 00:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C18q6xfM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kxfHdtZn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FE529405;
-	Tue,  4 Nov 2025 00:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B71E1A256E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 00:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762215606; cv=none; b=W8sHKtI4rTLkDdIig1w4pyaup0bnq7HbabBhtb32b/JGnSvBCo+pR6n9jgrd7qZrZBs+wOSs/LuH04FLcV3nA3Sw1WAHW+fPFSyuB9oNwGclcJeYB1Kn6ZNaOPjvMNjtW7hAozLgK6WBjgv961op/3zxS3YVZDVFgD+2RuYrNIg=
+	t=1762215622; cv=none; b=LE3VDaiVgZYsmpJgPd4IxSR/j65qYdQrukasGjXslm0lFVX30IoNiowClok6j1ifmSZhEAU5gAIJr3M7mw4LfE/iL13UI6aEtDrD9PBfyrRYcyBnHK8YacqiW7OksOIN6kywl4AlKBiXJV4nZAw7oZW6jEfZRbPSFjTKmIJ34EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762215606; c=relaxed/simple;
-	bh=jQnwNYvNZfxrOldBcIBkcbxYnUzIgmI999p3q3jS52I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bwRJmVu9mb0sR43tFHmnKBJt47h9RravKRcyNbmzS7YXhMXUfxoFwk/scPxxJkDiM8HbWD+zGlRpba85EvEGo+XN/dZ+3Jp9s96iQRvqVis2GfthvCAT3VzAjrg8P2uNizu9YXfXptqbnaaCbyzOB1kNVO5fnlJqbZdCuEh8b6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C18q6xfM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=jDMq68dxdxwO9VnU+wTiU39fko+A9829mDe4Pkx2XGw=; b=C18q6xfMESE3v8GOYybl9Gvxw7
-	CyqjqorcPkrCZzUbdQVow58u/40RSv/nFmaeo05TSv1yXkxJqZJCtU5Ol9fzkUl451AuBCPIuXhN2
-	akfolhhZdXsTrfaKybK+iRMnZVu+qvb+YO4RX43t0eVDSTYzSr2E5yUJipGp56QFq6E45v2eTQ3LP
-	ShdNaLHHz8rO2bNjW2xH7lMwdFTfKo+xpuPVRhII+VeeSDKM+DgjFCakBG/wsXwchIfT9vwvD/j5d
-	5auQhHJLyBUFlC4gXgQpQCgvGpAFnMbyUDlSZc5VkG1rrHa83BwWEVG6xRnJytRCtHOUa4i19dKgJ
-	7SBcqzBg==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vG4mH-0000000Aq0y-3yNL;
-	Tue, 04 Nov 2025 00:20:02 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-	Paul Mundt <lethal@linux-sh.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org,
-	linux-sh@vger.kernel.org
-Subject: [PATCH] dmaengine: shdma: correct most kernel-doc issues in shdma-base.h
-Date: Mon,  3 Nov 2025 16:20:01 -0800
-Message-ID: <20251104002001.445297-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762215622; c=relaxed/simple;
+	bh=ARYJ94hkfr+wqtaTaCXJsG3Gdo7c5EgIBjp/zMCYw74=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RY28fXpJxhSgWocJWP8NFYtG1tKZYqLmeUAU4r8jpKQiqKj9tNkLx0e0IY4T0gyOXeW1g689Urrwi/cE7UHRENzO8xMjFgQGJA2FoMf3kET+QP3LPreFmXuxBV6SDS64di1IQfq1WR95b14j24hktybEqTXiMPhX/6LMRJOJfcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kxfHdtZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE24C19425;
+	Tue,  4 Nov 2025 00:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1762215621;
+	bh=ARYJ94hkfr+wqtaTaCXJsG3Gdo7c5EgIBjp/zMCYw74=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kxfHdtZnLR8DJe75xj8jde8hiIdLJsDODUzrkcsU3oth4EmoafaP9q1vIet2FrDF7
+	 Vif5lE2/OP4CwnUL/MCo+HJX3LicBWecGw1rfvdMKv85ziXudJQm5eF/OZ1UJX5vzy
+	 P0Le76leURiT1Nbr40lIbqF1bECoQ5dIJm3nBBJ0=
+Date: Mon, 3 Nov 2025 16:20:20 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>, Mike
+ Rapoport <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>,
+ kexec@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] kho: misc fixes
+Message-Id: <20251103162020.ac696dbc695f9341e7a267f7@linux-foundation.org>
+In-Reply-To: <20251103180235.71409-1-pratyush@kernel.org>
+References: <20251103180235.71409-1-pratyush@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix kernel-doc comments in include/linux/shdma-base.h to avoid
-most warnings:
+On Mon,  3 Nov 2025 19:02:30 +0100 Pratyush Yadav <pratyush@kernel.org> wrote:
 
-- prefix an enum name with "enum"
-- prefix enum values with '@'
-- prefix struct member names with '@'
+> This series has a couple of misc fixes for KHO I discovered during code
+> review and testing.
+> 
+> The series is based on top of [0] which has another fix for the function
+> touched by patch 1. I spotted these two after sending the patch. If that
+> one needs a reroll, I can combine the three into a series.
+>
 
-shdma-base.h:28: warning: cannot understand function prototype:
- 'enum shdma_pm_state '
-Warning: shdma-base.h:103 struct member 'desc_completed' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'halt_channel' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'channel_busy' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'slave_addr' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'desc_setup' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'set_slave' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'setup_xfer' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'start_xfer' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'embedded_desc' not described
- in 'shdma_ops'
-Warning: shdma-base.h:103 struct member 'chan_irq' not described
- in 'shdma_ops'
+Things appear to be misordered here.
 
-This one is not fixed: from 4f46f8ac80416:
-Warning: shdma-base.h:103 struct member 'get_partial' not described
- in 'shdma_ops'
+[1/2] "kho: fix unpreservation of higher-order vmalloc preservations"
+	fixes a667300bd53f2, so it's wanted in 6.18-rcX
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Paul Mundt <lethal@linux-sh.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-sh@vger.kernel.org
----
- include/linux/shdma-base.h |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+[2/2] "kho: warn and exit when unpreserved page wasn't preserved"
+	fixes fc33e4b44b271, so it's wanted in 6.16+
 
---- linux-next-20251103.orig/include/linux/shdma-base.h
-+++ linux-next-20251103/include/linux/shdma-base.h
-@@ -19,11 +19,11 @@
- #include <linux/types.h>
- 
- /**
-- * shdma_pm_state - DMA channel PM state
-- * SHDMA_PM_ESTABLISHED:	either idle or during data transfer
-- * SHDMA_PM_BUSY:		during the transfer preparation, when we have to
-+ * enum shdma_pm_state - DMA channel PM state
-+ * @SHDMA_PM_ESTABLISHED:	either idle or during data transfer
-+ * @SHDMA_PM_BUSY:		during the transfer preparation, when we have to
-  *				drop the lock temporarily
-- * SHDMA_PM_PENDING:	transfers pending
-+ * @SHDMA_PM_PENDING:	transfers pending
-  */
- enum shdma_pm_state {
- 	SHDMA_PM_ESTABLISHED,
-@@ -74,18 +74,18 @@ struct shdma_chan {
- 
- /**
-  * struct shdma_ops - simple DMA driver operations
-- * desc_completed:	return true, if this is the descriptor, that just has
-+ * @desc_completed:	return true, if this is the descriptor, that just has
-  *			completed (atomic)
-- * halt_channel:	stop DMA channel operation (atomic)
-- * channel_busy:	return true, if the channel is busy (atomic)
-- * slave_addr:		return slave DMA address
-- * desc_setup:		set up the hardware specific descriptor portion (atomic)
-- * set_slave:		bind channel to a slave
-- * setup_xfer:		configure channel hardware for operation (atomic)
-- * start_xfer:		start the DMA transfer (atomic)
-- * embedded_desc:	return Nth struct shdma_desc pointer from the
-+ * @halt_channel:	stop DMA channel operation (atomic)
-+ * @channel_busy:	return true, if the channel is busy (atomic)
-+ * @slave_addr:		return slave DMA address
-+ * @desc_setup:		set up the hardware specific descriptor portion (atomic)
-+ * @set_slave:		bind channel to a slave
-+ * @setup_xfer:		configure channel hardware for operation (atomic)
-+ * @start_xfer:		start the DMA transfer (atomic)
-+ * @embedded_desc:	return Nth struct shdma_desc pointer from the
-  *			descriptor array
-- * chan_irq:		process channel IRQ, return true if a transfer has
-+ * @chan_irq:		process channel IRQ, return true if a transfer has
-  *			completed (atomic)
-  */
- struct shdma_ops {
+So can we please have [2/2] as a standalone fix against latest -linus,
+with a cc:stable?
+
+And then [1/2] as a standalone fix against latest -linus without a
+cc:stable.
+
+
+Once I have those merged up we can then take a look at what to do about
+the 6.19 material which is presently queued in mm-unstable.
+
+Thanks.
 
