@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-883997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D13EC2F0B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 03:59:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D7DC2F0CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 04:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3E2E4E321F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 02:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1A73B2CB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 03:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA5C262FCB;
-	Tue,  4 Nov 2025 02:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2233A2638BC;
+	Tue,  4 Nov 2025 03:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTZrmV3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ne+bSW8m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06A2260583;
-	Tue,  4 Nov 2025 02:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD387262D;
+	Tue,  4 Nov 2025 03:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762225161; cv=none; b=C8wDlSY7Eem9qrm1P6FXbXYwHBy+G9e/BPavFcJSEgCX8Uy4BhrkfL6wmJeVcUDzXEk+Cevkkush2QUlx8tvOxzLE9JhKZjN0XzqcSdEAlO3dthStgo4tqF8KJxHnF0hrAWV9tuu3Q0WUFgxSAbSYTfDhzH6ul3rfNyTNOJgPGs=
+	t=1762225413; cv=none; b=l+v/alM/n/frwnFIFwBNVgwq7hcgtM5AqvwcHtMDM69PrHQsQscz41vl1IRrIYnEK8VjIsNPhvURa7BY1FAEUoOvFxuOLAq1j/mH8wn3X+vY/CFgyyhM1Ug3bs5dS5pvrFGzzOVAHTPqFFr1i9Lq1DBFc27/8bo33blelNO4r+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762225161; c=relaxed/simple;
-	bh=pZCOHjj1efJAEnHBeLtvAawr6ePQ+W1jtHPifnCyZmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dN4l/CEWIdW8kLGr7Etv5oiKnxmmmsSPSBt0gj08pm3mq/UjIgU15bJRW9WMlifcNyauZdWVhqwyWbOkTl/xCoxNuFqNYN3CNMp3Q0unhmyhzn2Oh8I759JZv1yS7YF9buCLe40I/Kr+YhsD3vhmaHkR4ePGnc/wvNT6ELLUzh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTZrmV3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C85C4CEE7;
-	Tue,  4 Nov 2025 02:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762225161;
-	bh=pZCOHjj1efJAEnHBeLtvAawr6ePQ+W1jtHPifnCyZmQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HTZrmV3LuoMWtn5wRl+nAZc8Ui+CYwjc0ji++mQCHmBhT/4919Je1UI8mGq6JIzdz
-	 Kfu/MnihENMkvxyS8S8axjeWQfpyxSX8OmQ7Ge2xkDy+3iYrtliY47oupmg9Dyg79O
-	 haDvWAL4WvlpftDYpllxVt3tFwrmPxPjHEgMylHAEupqOf77AyFlE/wUirG3fK+UXK
-	 ftQpBWENPWiTeU0d/knppi+MBac1X5wjBhy1thHoNQI5g4gMpUTZCww4vwvaRqfUNZ
-	 r9okq6LKygLoqIeuPMpV8kwgy77tGilHoFkktpb6AfqirblO+vZ1vQP+9JV1dKFpmK
-	 idOG0moT4scRQ==
-Date: Mon, 3 Nov 2025 21:02:53 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Connor Abbott <cwabbott0@gmail.com>, Srinivas Kandagatla <srini@kernel.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Gaurav Kohli <quic_gkohli@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 2/6] dt-bindings: nvmem: qfprom: Add sa8775p compatible
-Message-ID: <bkhjgw4mtfmkatxjl7enn4fqqjbutealhaqgxihdmcvhekyyd4@lsosso5ta74z>
-References: <20250910-a663-gpu-support-v6-0-5da15827b249@oss.qualcomm.com>
- <20250910-a663-gpu-support-v6-2-5da15827b249@oss.qualcomm.com>
- <8ff537c9-efa0-4aeb-987d-150bef8b7c00@oss.qualcomm.com>
+	s=arc-20240116; t=1762225413; c=relaxed/simple;
+	bh=WGw4lGJj9huttZ/mJwmJZYcOekuBZSxll0pcVFaWMwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mvcZlG/MaaC4L43hhZ1RMJcJjJYvrkLJsahCIRGcpa7sMAZ3ui0Mv1M601OvKuQjO50mFjrP84GjbFB8g/PQRkCI8LbAqj3HqL3sWovONQ+jis8C9C2NbNASsKyF8yy9KFjmT2n06p+2HdCKipvIR0lJWILLa6i2+mEln548YWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ne+bSW8m; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762225411; x=1793761411;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WGw4lGJj9huttZ/mJwmJZYcOekuBZSxll0pcVFaWMwA=;
+  b=ne+bSW8mVcby4xPGPlVA0au3PDsEGVVHvhTJ2bd0X1isnUMt//TAiTph
+   X6tubDTXtq8EXKOKKMftSaopFJu56UmCC4OITaxqNEHLSW9YXaGaneJnl
+   u34oCOL+t5w//7wpD3BIINa21ibcCe+gyWB4H6GjKtduVr0AJD44N6R8c
+   Nhl39BTihvvFU4As+Nz9QyiRw4W3iik+w36/tvQm6JYGCU/RzOgSSNV+X
+   ODaUA0ZIoj1wFo9ArnJGKjXxz7U1IS8/mZs3G/BshbbP0JC0d3gUJrXBk
+   vABvH5pMHyzsLwLlX/oc3sGigZ8IUcwZJVLZ9sihgynAo9tSSmRoO1isr
+   Q==;
+X-CSE-ConnectionGUID: i8iFHqNCSiGb0ennV0FlmA==
+X-CSE-MsgGUID: 3A24ChJfTQa49ZKoXFevDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81718503"
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="81718503"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 19:03:31 -0800
+X-CSE-ConnectionGUID: FLfftsxNTY6nI+xyiXi2xg==
+X-CSE-MsgGUID: h/xj5pRDQ2y1fFMtDEdqZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="210545521"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 19:03:28 -0800
+Message-ID: <063b0ccb-42bb-4120-89f4-48b8c2191eb7@linux.intel.com>
+Date: Tue, 4 Nov 2025 11:03:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ff537c9-efa0-4aeb-987d-150bef8b7c00@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled
+ VM-Exits
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251030185004.3372256-1-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251030185004.3372256-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 12:55:36PM +0100, Srinivas Kandagatla wrote:
-> Hi Bjorn,
-> 
-> On 9/10/25 12:25 PM, Akhil P Oommen wrote:
-> > Document compatible string for the QFPROM on Lemans platform.
-> > 
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> > ---
-> 
-> In case you plan to pick this up.
-> 
-> 
-> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> 
 
-Thanks, it seems though that I missed your reply earlier.
 
-Please pick the binding through the driver branch if you can, then I'll
-pick the dts changes.
+On 10/31/2025 2:50 AM, Sean Christopherson wrote:
+> Add and use a helper, kvm_prepare_unexpected_reason_exit(), to dedup the
+> code that fills the exit reason and CPU when KVM encounters a VM-Exit that
+> KVM doesn't know how to handle.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Regards,
-Bjorn
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-> --srini
-> 
-> >  Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-> > index 3f6dc6a3a9f1adc582a28cf71414b0e9d08629ed..7d1612acca48d24c3b54c4d25fa8a210176d3bb5 100644
-> > --- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-> > +++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-> > @@ -39,6 +39,7 @@ properties:
-> >            - qcom,qcs404-qfprom
-> >            - qcom,qcs615-qfprom
-> >            - qcom,qcs8300-qfprom
-> > +          - qcom,sa8775p-qfprom 
-> >            - qcom,sar2130p-qfprom
-> >            - qcom,sc7180-qfprom
-> >            - qcom,sc7280-qfprom
-> > 
-> 
 
