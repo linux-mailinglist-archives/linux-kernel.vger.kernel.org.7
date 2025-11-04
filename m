@@ -1,321 +1,188 @@
-Return-Path: <linux-kernel+bounces-884760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1ED3C31095
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A76DCC310A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628CD420F6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCA53BBFD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DBD2EC542;
-	Tue,  4 Nov 2025 12:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199487261C;
+	Tue,  4 Nov 2025 12:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eSjfM3Rp"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dt2pAaql"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013056.outbound.protection.outlook.com [40.107.159.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35681257AC6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 12:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762260234; cv=none; b=oACHFBPdW66LYJzODHvkjiysZEeFn68HMzcDwwE/WF0vl3Zokg/TQ4/7tW6ynkoE+yqHRq1E4s38S92o8G9hBOAkSlNGPkdpRmJ6V49V/OJVlr3Y/Aw/RXmhoHZoFSpVAMNzPwRhOkFG8PkgF0ithzo3nHUhGqm6TOPfGflK3i8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762260234; c=relaxed/simple;
-	bh=LC1nNo8cZK2+Ung0b972dLKU2apwvo677rBTuGrzUnA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WSuMRkhgbPzeMcCqF4wk5joxO2VYyP4+rE2jjIbmTKNLqm6WhjN+G2Kz4gEu22GPoA4cWl7AZiJxHUK/jcGurFVSwiMDUJSWWPaMrcARTSLBhzbuvfRr/Nq0lIYsANM/e/DdxhHa9nFJ4uyWLr2DqKQZxBh0JmbNV/7mKIq5xpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eSjfM3Rp; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429cf861327so309600f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 04:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762260230; x=1762865030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lx9/ZRtBYuBkF+gPYtIKjkasAjUUPJxma7p0SkGX9yg=;
-        b=eSjfM3RphtwpN6RuB7QpJ8tf6852f3lcJ5JOrFpxuDPDfkaWb5hEp+b427XufsW5IU
-         9DvvZFsoUcriTQ9wbb0WW3QF2IsrFobCZZcdim54T9mPpSo/i/o21NTHm9e0izQuctk5
-         GsRAjZpQA1+Bewv/hmOa1EX45dEPQMMGpIGhpM/aq7UDLirF3YCpPcwlMDTtem+b7yga
-         9CYiOSTY6pJ/v/I9WFgY6Mj7ZLU5cdI2wBw7r1z/GW55st5qnP39Mj/rsFg9r27pcOvc
-         cNo8NQblN/GgN0qBEyf7cKIq0iBxQw3pz4LdQ7RXgxEZ6kSAV0bn54HjmgqHtfe74LiX
-         hq5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762260230; x=1762865030;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Lx9/ZRtBYuBkF+gPYtIKjkasAjUUPJxma7p0SkGX9yg=;
-        b=nUoq+cBx3UGGWD8VpoBh6gz3oD5e+1xglP2QdMjfK2uFbyVAeamRSTlz3lFkfYc02V
-         XaOr/rX9XzW53LTSD/Y3QRz7j8g1SvVAS/R/ecW5S0D5snEOsnzp6Wm93YL6AjPuDJMq
-         ZTQWlit57Iu5cm/IrHLQXPBQzW8SpMXjRzjDMgBUf4ih6RrxqAhCciDVjERDqPSERcYC
-         1nV3HVmIXHvcD+Xg3NU9Kze00I349EbJbUbTq7OsuW6VDaf3jjufpB8P8iEvqS6UWw3I
-         CllePy+HVpbYNQIZIwcDcOLZ8yM36HMvyn+9MApA33+9tRRhLXBY01T9Z4gzekRtHohE
-         KaTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt6Kij/Dgs4kziCoXS/zSAUOFQCRhKNLLqopw+uNag7mrCcWcA1aGjuJEDTqayPP+9UNHYf2oEGQG0+l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv6ZIGf+nF1QmCdfLnosqUFveEybWMRnW1tJo1hzoRRgxERivU
-	Ut1gsvzdrkKKMp8tKu/8UKRB6/tURvZvFLFc30dMBg48S652uM+vrEFDw98JedOiKis=
-X-Gm-Gg: ASbGncvmgOToHdWzdBDMKZs98zjGiejZcEffkxpEQnxKMh8rqSpPEvnKqp+FI7wjeoB
-	5BdvV8ciDLf6A6Qr4AZTvvzk9iA4VSv95Y0uwwhyX6z89NsQYg64Xroe3p7mWGdbePZzM6jT6hF
-	tI0/9UKHYzYcYmUs5XFiBxOJCd74d+CZD/6g9DSkEcIfj9hFpuHrPSvjp22OrRpI7aIdT8Ab4qw
-	w4kMeI09WXSaajEL5/DT9lvkpik/rAkXeI9zBe5hNRw8LXMHXfpm7f8JcKzmu1gGWE69iArxszO
-	f9zlp0AZH5W7yIQd+ii6xj84HNcoi0HZIkk9NspVqh+F2m8H7wdohuIsO5YPrKuqCUEr9oVTP5z
-	2DoBpZ+eRwbQXLKSFkmQsAXVnh5CgyJJ39H2noslJ7XnBPGcDE2Oq+EE7+TelS11/RamjZCobPU
-	8kHDDPmym2utVWclxVfPc7PmENRl0kLb5PbQ==
-X-Google-Smtp-Source: AGHT+IEn+IPeP7UmbTbyN63za3XNZH29ht14vh3RcuTm0OyZm3PpaImB86o2gV2dUHwnhJO5ffQksw==
-X-Received: by 2002:a5d:5f43:0:b0:429:d3e9:65b with SMTP id ffacd0b85a97d-429d3e90f22mr5616888f8f.59.1762260230228;
-        Tue, 04 Nov 2025 04:43:50 -0800 (PST)
-Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5f8csm4352163f8f.23.2025.11.04.04.43.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 04:43:49 -0800 (PST)
-Message-ID: <5ff947f0-d743-422d-a897-b241ff1e02a4@linaro.org>
-Date: Tue, 4 Nov 2025 13:43:48 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3136119D8A8;
+	Tue,  4 Nov 2025 12:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762260323; cv=fail; b=mDxlWEC9oYPIp96tLgcGj5KrIeSQxZ5CgxpQloItCcmgX3d1hdCLntRnLeTJBZJXyEQAVCXCPyZWGhfnkobTJsS/C99mN+I43/1u8BwNhoE7aTgzBELpux4agAoouTNujm/p+bhN2CMSsE6J1OwTMaLTQg0W9SrmVU4fzDeo0kY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762260323; c=relaxed/simple;
+	bh=rN1OwvELmtEtwPp8gjeyUCVdjs7sXQgXjr/896K/c28=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EiT5B51gYgGe3Ih1g54uVv4bUpw4as4BGxoL7f0AMjXWxtxknSnTPpUEpiKCd50JmI151QqJ9JLl5f0ezghJ0dBMARw6NZpOALUgqFrZERCtHu6eftwlGO/0vjKgRbI9tY22n0IJ3t/aW+ydnmTMxCQTyDkqzFfQspyVV3MnGus=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dt2pAaql; arc=fail smtp.client-ip=40.107.159.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aU+4xUncqjHMKw052z6UcJ4GZJ7RTdTO3P/EsaZMF7kLiYzTob4DxrZb1hN6IIxjfpA7hIKwdQLV33f8mzuS+AnCCG8brnvPwPX87NHCbOMg5GzMewU/zz/7mGJM/IHDWkytTWgVi3dd1IXtSYKrpkI0FLnu4Xz8GUqubiqzYFaXT086gP8YgvPW+MOJorqGyHfZBz8fuv4lRG4hWSYK8CoZjr89lGvKARmX67LSGfJ85HQIaMX8nsU8Zwg/jNyjpn1CETwB0aADthF6/Gf3ak058ghT4rcvwi1BCUklWSYumk9AZX6svq4HAWNQMjCoZIZ8Q5QAlqS19Pt4jIKZ2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rN1OwvELmtEtwPp8gjeyUCVdjs7sXQgXjr/896K/c28=;
+ b=e2Sk7nAXCMU0lVmybsdUVCBrrci3sa5sr81+kpSS7MAJHsCOXwBbT47DZCOC0Li8Lg+I+qSNju5V5t8e86PnIuovRm0P1k7zW218Ccn4F54SAUo2luv2NXycWHDGeCPrZ8c5VLcPnwUWEGUEZOuSRB/fuMnAS1YwQnj0cDQXJacaP5hkTXePEE9hr0Hw1c10GwmWKiZdHTtJRZ5r50qtXQe7dhyv1wwKAuvMcqZ4cDNtuy0pKl5tYTktk5Axe3bUiHPfE+WyKJH946aKru7izxXvfC0P7ghbs6/TT50IQchV6KdNNYXDAV7Ia3R+ZO2o+mnOrLwuJb7Kcttkb/XYJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rN1OwvELmtEtwPp8gjeyUCVdjs7sXQgXjr/896K/c28=;
+ b=dt2pAaqlC4JQMA8yf76W2HuBg+HgkB3g6UehphgQiLhhJ0LUokqBzRTcqvfKyZB7wu39Xjg2ETqF13cOWt/m5CuWXV+Nbmdm++APWW3+BQxD7917eAOUWoeKP0RPLERWVpfSAt3JzYZjT79v9/iPpZH/7MAK9Qsgwyx2YZcRAnNbMvRre6FUqoB15oDN0vwmosIGbPHPOjegQieNhgRruZrnhsoQlP7/+wR2DQ4Tn0EtDNnHYALPuLSpBv8a6X6XUJvfd+fekBdPGArlR9zUk/8cvnB1EYAZiLF1bj+orbTovFhgUvmU+q6py+pyambL78fGATuIwaHPI237pdNHLw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM7PR04MB6790.eurprd04.prod.outlook.com (2603:10a6:20b:dd::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
+ 2025 12:45:17 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9298.006; Tue, 4 Nov 2025
+ 12:45:17 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Abel Vesa
+	<abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam
+	<festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta
+	<daniel.baluta@nxp.com>, "S.J. Wang" <shengjiu.wang@nxp.com>, Frank Li
+	<frank.li@nxp.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>
+Subject: RE: [PATCH v4 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Thread-Topic: [PATCH v4 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Thread-Index: AQHcTYNXHATylbq+lEOFLnjYuXp+VrTidpcg
+Date: Tue, 4 Nov 2025 12:45:17 +0000
+Message-ID:
+ <PAXPR04MB845969CF96F1AFAD5EB1DE4E88C4A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20251104120301.913-1-laurentiumihalcea111@gmail.com>
+ <20251104120301.913-4-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20251104120301.913-4-laurentiumihalcea111@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM7PR04MB6790:EE_
+x-ms-office365-filtering-correlation-id: 8d359ef1-2754-4f58-5a7f-08de1ba0021d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|19092799006|38070700021|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Y3J8u6AZ9NtGVm7B7tbIMeV2rFLgHmpK+PjOMgH6jHf1ChkTOGuEuzyNmjJP?=
+ =?us-ascii?Q?m+sDEkeY7YQehxnSLv5AzItibuhSkJdQnxkVhH1VYjdApps/eKEJCiDEglLG?=
+ =?us-ascii?Q?DTYCfdt4aXhuLITZlNxtNYK1zUSS0lOZXpptUq/70u86HgxBOG/AwoligJoY?=
+ =?us-ascii?Q?X3DdOjERDnlLCA2mQNwD2Ejm5boIeArkjKWt7H27Izmt/It8CjV+eJgDlxuT?=
+ =?us-ascii?Q?nYGZVnoXg+jSbnPwIcG3ZPm6iQGxubfHJCO4FOgz9AQnvrW1d/v9Og0XMDBA?=
+ =?us-ascii?Q?NOR9BDbqKcHcE0epiVKxLB+LQHe8yWuG3STYJd0Kmux0mDi9vzhEDUA8y/0Z?=
+ =?us-ascii?Q?XzZdfSJ0nGuPMX+3dhVgL7IJpQZKZuCnCVbEG90Y/hjmraPg7+nxFcalQSCP?=
+ =?us-ascii?Q?XaRbzP2jx1Q6J3mCmEltVs2klu0QIHmayMBy592ycxccJC+Qd7FgNH9kEOZB?=
+ =?us-ascii?Q?fanNutOtE02LMzbxDiynPFF/XDBJp2DsOo0/RiOIIevZZ4KC4LmFQNzDoXhu?=
+ =?us-ascii?Q?g/9loJ8JZFm6qxcP1K+p1b4lavz+kgRIkE4d9LHU5eWzQgNrUINqAV88CE9m?=
+ =?us-ascii?Q?kl7vk6M5c1IMlvJByRLscq8txotLYPj0TP1J7+UFo9gg6sBu5vT0fQI8IC4W?=
+ =?us-ascii?Q?4Q/F5a0nz0YXTH8NE70udxlkUpQTAkXnBSO7Zpb/LV2cikcbWG8MS1mULR0V?=
+ =?us-ascii?Q?K3L8Bc3sMdzPHx/kDrrdjyrnVlLR0z++qiKX/485rUakpZR1GSocBenn+Htg?=
+ =?us-ascii?Q?VvTe07IrG/L9cR+bgPg4mTXBKvQg0W6gbisclUM/bymLMsBMrREYHp3YTh3J?=
+ =?us-ascii?Q?aSmo5ei5nKBW8qrSM8h7tPjaEesMzKjvu7Fwpgtb6urex+Eb0BejWXniG1/4?=
+ =?us-ascii?Q?19bSbmxD/lDrNJSNiZQMXkQh1a5sJZTMlIIh5I9zZ1k1rQM6gvoZu8OpuoVL?=
+ =?us-ascii?Q?ZdLXjWYsziEYe0RIxRrm62+A9gmGCzaEhg6yw/ghbeg1TgSC6IlYHt1h1q3g?=
+ =?us-ascii?Q?87iq088nxfymjcI9eI9TXazzRbi0bQq/yAZ9K44vyKmPY1D0CMJAs+jZRUmc?=
+ =?us-ascii?Q?fw9otOJzqWyIXfvYNuUw2JKL1RbXSUojmRLJQxf5rNZESfM3vxOvsrUXzBMt?=
+ =?us-ascii?Q?xETDwGw61vyOZ5WcLmMkWpWjhXT9j5JqrFt58u+5IYmCu46wGxRYx6Q+GRLh?=
+ =?us-ascii?Q?Pk/sAYzFuQLtPNX/pOhno+3ieAHNd+NmDFlemJ9+d2hx3K+i1uHlzOoSIfgf?=
+ =?us-ascii?Q?SzD8IibBr5i6TIW+iNrVqUctVSpdWgb0kvX6go1ROoh+i0+OtazjfHuLVYdD?=
+ =?us-ascii?Q?leDZ0AFdRKXg9qv/Nl8ZFCk68jGGcrg+wHRPUdBPezoWWLcNdk8PEN33J1k+?=
+ =?us-ascii?Q?wpHQgfQUTH1/RTJIITyJCloW5ppy6rhjlQGHc82DRzJYKFGJuLN39jUctuWc?=
+ =?us-ascii?Q?BABD7cVjKl078cfQIQyN6w6WA92IQMuHzspgJJtTlyXrklxwiGUiR3Hyq6Ne?=
+ =?us-ascii?Q?WG1+mq5VJF2+jjWW6SnwroaQtOjNYYHwSL2FgN2uO/Mu+eb6yqIxyAi66A?=
+ =?us-ascii?Q?=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(19092799006)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?TegaraErJJP0Bo+iRDROIzG6ZpqBJ/Xq695T0g2PP9+QVEnwWKbMD4nEbk8q?=
+ =?us-ascii?Q?Q8Ri/HtQyYXxpZN+OYs3D4txxRolJS7oYdgKDS+U9qd+TUBebRuwd2m0glBZ?=
+ =?us-ascii?Q?s5BgnGHHbTAlm5saqp5Qmg1K20xNGAqggCrKh+eYSTVl57Dc5y0IbzpFPKhd?=
+ =?us-ascii?Q?7Oqb6XDPe9NOWfl4VZtXuUEa+Wzf+zECauGvhJwEjc2Y5w3CjVD+2OBLkilh?=
+ =?us-ascii?Q?Vg6RnuhwE1nl/vCnTvhIRJYOBrRh//vjSTb9NbWo5laOD1CTZfRnrOaxGphY?=
+ =?us-ascii?Q?FpVAHAszkAlZoOT9nGco3815Uhz2FXcQnc+t5RZH1YHrBA4W9b73g11rB7uV?=
+ =?us-ascii?Q?UX7zE5CwXOkGEU4Ov5g8NgI0AB8It5M1/kYRkzd0jPUmaN4CCJCaypojtOKe?=
+ =?us-ascii?Q?3U0tU9FIMu6Z05MQp9zNsLOZdcHaHSsnBnCAh37akYzDdVWV4CqRoTfgI+q2?=
+ =?us-ascii?Q?mq4ob+3iG1M4AOwXZQWXTBCK21rMgrKrxWvITDujDf+qGJptMtlyD8IPum8R?=
+ =?us-ascii?Q?STOgQNTkmhoMP5ZZonSumwsLdCh3axQGU2PH/rtIajJVy5v30lxA960V/UqP?=
+ =?us-ascii?Q?cvVLCXZJXrCdiQAVlZJFS8k/0KW4a3Uf5Z0cNsW286nENQ+D8HYAYr7I3F3U?=
+ =?us-ascii?Q?njthCyGws5cs0q7EiiechmeQ2pcFQPX8baAi/JUhdlNFrDebSRvztjq6RdCC?=
+ =?us-ascii?Q?N0W/Kt5ZFltogGxkrjJAdno/R6bt5H/qL/tSY33urwpZQs8fkF5J/o3XKSrm?=
+ =?us-ascii?Q?n1/w2fR+lZSLT+du6J6d2ISqPOthYP8Nu6nfxTwYqM6j4/n4DIz7LQBRdP0h?=
+ =?us-ascii?Q?jWSKn16qsrfCpqaCiCEd3qAGbPM3LxG6wvjmi3hHiUT5VhzL2NZ12LAizkx8?=
+ =?us-ascii?Q?n6oK4PZRE2g5R+wfAIHjwbjgH0q8nI3utmPz1JsmhFCvyH/UpNSruXGddf5i?=
+ =?us-ascii?Q?TQRfOdkf2f+TaLXib/eDMHRe63U/3Hw/feWEyDkKojIHQiXmS8k8AU27Ue5J?=
+ =?us-ascii?Q?4kmtd2/RiLLEJ+LZ/aLxIFbdnO5d/APiwZtGIAWstNMigcP/cvBsYl8WMm3K?=
+ =?us-ascii?Q?LrRFFDJ5fj1iqodJ+K8Dui9yFElKWxMUV5QRLQYy4uxQXs5h8/3Uoa/QjHOE?=
+ =?us-ascii?Q?wP8qAa9iTYXINynnwptMizKI3bJysCRv6jjUAnM+Kc47cNcv4r8doH+8cwVv?=
+ =?us-ascii?Q?HtakkNG7mGZeLPvDZ3wN0VsWMANOwGx8AidPTHtQhpME9bBjJxGjZtwgWHIh?=
+ =?us-ascii?Q?U/oD+7GGjACQoB6X4ISneL8WkE97VWaz7ipVrhwBoOBPTpPcsFIih8CFePLW?=
+ =?us-ascii?Q?QdFyzEZ1la3g9OsJUMHnF/zZX9x++y+9UqCxPGzXUnDvKqbMMpCQn/txLJdK?=
+ =?us-ascii?Q?9E0dXFBeIL1AyY7f9mzNS7bs12sAkLoMZ5zZ2my/+RdanDDyV5uLqJuQGgej?=
+ =?us-ascii?Q?ZVc8DPRibmmUkdCqjDUbhe/HZ8nNeiGUdZpkrgRsJAE/K4meAERxt92YKLXE?=
+ =?us-ascii?Q?imTtT905X5CSwYv6hEzm1f1D+1f+fwarHYc8Lg+mS35YFfnupMwudgfNs/hD?=
+ =?us-ascii?Q?ynGxHV4rK3Fc5Z6pd0I=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC RFT] drm/msm: adreno: attach the GMU device to a
- driver
-To: Jens Reidel <adrian@mainlining.org>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251022-topic-adreno-attach-gmu-to-driver-v1-1-999037f7c83e@linaro.org>
- <02356e35-0a3a-4a50-ad38-3032f9f166c9@mainlining.org>
- <e9e117ed-823c-47e3-8ed6-14dbecc844bc@linaro.org>
- <bb4a8978-790a-46c5-94bd-9f97ffa15b64@mainlining.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <bb4a8978-790a-46c5-94bd-9f97ffa15b64@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d359ef1-2754-4f58-5a7f-08de1ba0021d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 12:45:17.7342
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m0fDfhr/+OV2N/xIqcYTtxLw50+/f785gX5ewU76Msk17aZAk15cTHqBTagCDzKpwFre19iwzsasYRt6mziBsw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6790
 
-On 11/4/25 02:30, Jens Reidel wrote:
-> Hi Neil,
-> 
-> On 10/29/25 11:25 AM, Neil Armstrong wrote:
->> Hi,
->>
->> On 10/26/25 02:31, Jens Reidel wrote:
->>> On 10/22/25 14:44, Neil Armstrong wrote:
->>>> Due to the sync_state is enabled by default in pmdomain & CCF since v6.17,
->>>> the GCC and GPUCC sync_state would stay pending, leaving the resources in
->>>> full performance:
->>>> gcc-x1e80100 100000.clock-controller: sync_state() pending due to 3d6a000.gmu
->>>> gpucc-x1e80100 3d90000.clock-controller: sync_state() pending due to 3d6a000.gmu
->>>>
->>>> In order to fix this state and allow the GMU to be properly
->>>> probed, let's add a proper driver for the GMU and add it to
->>>> the MSM driver components.
->>>>
->>>> Only the proper GMU has been tested since I don't have
->>>> access to hardware with a GMU wrapper.
->>>>
->>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>> ---
->>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 354 +++++++++++++ +---------------
->>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |   6 -
->>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h      |   3 -
->>>>   drivers/gpu/drm/msm/adreno/adreno_device.c |   4 +
->>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   4 +
->>>>   drivers/gpu/drm/msm/msm_drv.c              |  16 +-
->>>>   6 files changed, 192 insertions(+), 195 deletions(-)
->>>>
->>
->> <snip>
->>
->>>>
->>>> ---
->>>> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
->>>> change-id: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
->>>>
->>>> Best regards,
->>>
->>> Hi Neil,
->>>
->>> thanks for the patch. With it applied, my GPU fails to initialize.
->>> Here's the related dmesg section:
->>>
->>> [    1.733062] [drm:dpu_kms_hw_init:1173] dpu hardware revision:0x50020000
->>> [    1.735229] [drm] Initialized msm 1.13.0 for ae01000.display- controller on minor 0
->>> [    1.735403] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a630_sqe.fw from new location
->>> [    1.735513] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a630_gmu.bin from new location
->>> [    1.746710] a6xx_gmu 506a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set BOOT_SLUMBER: 0x800000
->>> [    1.746766] msm_dpu ae01000.display-controller: [drm:adreno_load_gpu] *ERROR* Couldn't power up the GPU: -110
->>>
->>> This could be because I have an Adreno 630-family GPU, which is marked as legacy in a6xx_gmu_init / a6xx_gmu_bind. Previously, the rest of the init code would just always run, while now, some parts are conditionally disabled for legacy GPUs - that may be unintentional? However, unconditionally enabling those parts seems to fail to initialize the GPU followed by a reset shortly after, so there's probably more to this.
->>>
->>> Please let me know if there's anything I can do to help debug this.
->>
->> Thanks for the report, it's an sdm845 based right ?
-> 
-> Almost, it's SM7150 with Adreno 618.
-> 
->>
->> I may have mismatched the role of the legacy parameter...
->>
->> Could you try this on top:
-> 
-> <snip>
-> 
->> ===========================><=====================================
-> 
-> This is about what I had already tried earlier. I wasn't able to grab a log from
-> UART to see what exactly was still wrong back then, but I finally got around to it today.
-> 
-> Short excerpt from decoded stacktrace:
-> 
-> [    4.838573] Unable to handle kernel paging request at virtual address 0000000000023010
-> [    4.846726] Mem abort info:
-> [    4.857916]   ESR = 0x0000000096000044
-> [    4.870865]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    4.883897]   SET = 0, FnV = 0
-> [    4.895344]   EA = 0, S1PTW = 0
-> [    4.898584]   FSC = 0x04: level 0 translation fault
-> [    4.898586] Data abort info:
-> [    4.898587]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
-> [    4.898589]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
-> [    4.898591]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    4.898593] [0000000000023010] user address but active_mm is swapper
-> [    4.898597] Internal error: Oops: 0000000096000044 [#1]  SMP
-> [    4.898600] Modules linked in:
-> [    4.898612] Tainted: [W]=WARN
-> [    4.898613] Hardware name: xiaomi Xiaomi POCO X3 NFC (Huaxing)/Xiaomi POCO X3 NFC (Huaxing), BIOS 2025.10-gcb980be18336 10/01/2025
-> [    4.898616] Workqueue: events_unbound deferred_probe_work_func
-> [    4.911316]
-> [    4.911318] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    4.911321] pc : a6xx_gmu_rpmh_init (arch/arm64/include/asm/io.h:43 include/asm-generic/io.h:293 drivers/gpu/drm/msm/adreno/a6xx_gmu.h:183 drivers/gpu/drm/msm/adreno/a6xx_gmu.c:621)
-> [    4.911327] lr : a6xx_gmu_rpmh_init (drivers/gpu/drm/msm/adreno/a6xx_gmu.c:1811)
-> [    4.911331] sp : ffff8000809f3560
-> [    4.911332] x29: ffff8000809f3560 x28: 0000000000000001
-> [    4.919938]  x27: ffff800081e50000
-> [    4.919940] x26: 0000000000000300 x25: 0068000000000413 x24: ffffc51d5cca9000
-> [    4.919944] x23: 0000000000030090 x22: ffff000080aec3b0 x21: ffff00008162c010
-> [    4.919947] x20: ffff000080aec578 x19: ffff800081f90000 x18: 000000000aa663d1
-> [    4.919950] x17: ffffc51d5cefc000 x16: ffffc51d5cca9d80 x15: 0078000000000f13
-> [    4.930595]
-> [    4.930596] x14: 0000000000000000 x13: ffff800081f9ffff x12: ffff800081f9ffff
-> [    4.930600] x11: 0000000001000000 x10: 0000000000023010 x9 : 0000000000000000
-> [    4.930603] x8 : 0000000000000000 x7 : ffff00008155a960 x6 : 0000000000000000
-> [    4.930606] x5 : 0000000000000cc0 x4 : 0000000000001000 x3 : 007800000b49ff13
-> [    4.930610] x2 : 000000000b4a0000
-> [    4.942943]  x1 : ffff800081fa0000 x0 : ffff800081e50000
-> [    4.942947] Call trace:
-> [    4.942948]  a6xx_gmu_rpmh_init (arch/arm64/include/asm/io.h:43 include/asm-generic/io.h:293 drivers/gpu/drm/msm/adreno/a6xx_gmu.h:183 drivers/gpu/drm/msm/adreno/a6xx_gmu.c:621) (P)
-> [    4.942954]  a6xx_gmu_bind (drivers/gpu/drm/msm/adreno/a6xx_gmu.c:2102)
-> [    4.942957]  component_bind_all (drivers/base/component.c:660)
-> [    4.956709]  msm_drm_init (drivers/gpu/drm/msm/msm_drv.c:159)
-> [    4.956714]  msm_drm_bind (drivers/gpu/drm/msm/msm_drv.c:1032)
-> 
-> Turns out that previously, gmu->mmio was assigned before setting
-> gmu->rscc = gmu->mmio + 0x23000;
-> With your changes, the order is now wrong.
+> Subject: [PATCH v4 3/8] clk: imx: add driver for imx8ulp's sim lpav
+>=20
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>=20
+> The i.MX8ULP System Integration Module (SIM) LPAV module is a
+> block control module found inside the LPAV subsystem, which offers
+> some clock gating options and reset line assertion/de-assertion
+> capabilities.
+>=20
+> Therefore, the clock gate management is supported by registering the
+> module's driver as a clock provider, while the reset capabilities are
+> managed via the auxiliary device API to allow the DT node to act as a
+> reset and clock provider.
+>=20
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Oh crap
-
-> Moving the assignment up again (and applying the diff you shared
-> for proper handling of legacy parameter) fixes it:
-> 
-> ==========================================
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -2027,6 +2027,13 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
->                  if (ret)
->                          goto err_memory;
-> 
-> +               /* Map the GMU registers */
-> +               gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
-> +               if (IS_ERR(gmu->mmio)) {
-> +                       ret = PTR_ERR(gmu->mmio);
-> +                       goto err_memory;
-> +               }
-> +
->                  if (adreno_is_a650_family(adreno_gpu) ||
->                      adreno_is_a7xx(adreno_gpu)) {
->                          gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
-> @@ -2048,13 +2055,6 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
->                  }
->          }
-> 
-> -       /* Map the GMU registers */
-> -       gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
-> -       if (IS_ERR(gmu->mmio)) {
-> -               ret = PTR_ERR(gmu->mmio);
-> -               goto err_memory;
-> -       }
-> -
->          gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
->          if (IS_ERR(gmu->cxpd)) {
->                  ret = PTR_ERR(gmu->cxpd);
-> ==========================================
-> 
-> This almost certainly isn't correct either because the wrapper needs
-> its registers mapped too, perhaps this is better suited for moving it
-> above the if block, I think that makes more sense.
-
-Yes, merging both functions was a bad move...
-
-> 
-> With the legacy parameter changes and GMU register mapping prior to RSCC
-> offset calculation:Tested-by: Jens Reidel <adrian@mainlining.org> # SM7150
-
-Thanks for testing !
-
-Following Akhil's review, I'll probably keep the wrapper and normal
-gmu bind/unbind separated for the first step.
-
-Neil
-
-> 
-> Best regards,Jens
->>
->> Thanks,
->> Neil
->>
->>>
->>> Best regards,
->>> Jens
->>
-
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
