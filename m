@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-884373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D89C30006
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:43:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29E8C3008A
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 032DD34C072
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C73B4F483B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513C63164A0;
-	Tue,  4 Nov 2025 08:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F9D318146;
+	Tue,  4 Nov 2025 08:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="skcmRH0a"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f2JDe+wC"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCA6316189
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54685316198
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245616; cv=none; b=FSsfVszy/zq8r4qA9wlmWq9TAw3BnsOt6fjda5gvGrRAQKsP7xmh77NMuxeDXgODf1TuE+jxDWS6LRH2LBXZ42E/9WtZWhVbtXCHTY5zDO/65BxbKjRlHdhCGFfTS8g4XXIpC/wapOgWBVmvqVBZ6VAYAKfqjv8Yy9P/XZq1VLk=
+	t=1762245641; cv=none; b=h6AJx9U71PR3ZFKyEQV9C6VVki44iXBw7CCNmM4mX9mJhR1ISLeBMyfXcNmHNhMQYHOSd4oqvYtlOrW127G0pBU8Pi5k3eGiD7P/qAc8Sghf7e43kUG46klIPOdJxSHQ8PVTDCbgmeAMNip3+Xklag7Lm2LghK8db0kS1bYCufM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245616; c=relaxed/simple;
-	bh=861Choy3GbkM2iT6DyDZedv9XDJesWVVc4e/eJiX4zg=;
+	s=arc-20240116; t=1762245641; c=relaxed/simple;
+	bh=nAPc+TnO1th3O1GSH7GZu4hL5DC4Eiun1Dex1Kln7u4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UKwcGNXqwl2SzytzsKtCVHgXKBZUOEcm1ChwW/+fu6R/sg3Qrf+AUNauhYwHvYrfDd7N2PdUxoD4gtiBN0Le2rBqSSp9UAGlxVNWwBk2B8M4im8zzPkYkG42889sizkH1MbCKp6GcnWaDLuYp6lHKeHcZOIMJ8vw4I22kgwdKtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=skcmRH0a; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=ScxIcroHX3x5Hg2dMZSoUOsWXRIJ4QsLhPoVNwjmHtcPEyZcLsgrCAbw1xEVlvBgr7zr4KwhMMhsqeGjE0WZuGPOBqeDu9NWp0vGmE7l1VpgHZcHN6EM3uLdDJPMGtwGTvHu3vvWSEr/iWTWlA7BvZPYs/S61oKFDte4SOLJcPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f2JDe+wC; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-640b6ad1a3eso1899613a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:40:14 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-471168953bdso42294145e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:40:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762245613; x=1762850413; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762245638; x=1762850438; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwmZ+6WBy0DpH/2X1JFXWHRC2GMTvQN+STo8LsdNvJ0=;
-        b=skcmRH0aOLQ1hLBbunxWeRC9fLyO0lK6ev8k3Uu03Vt1rbShUXQ8zHMKcCmhFphxP6
-         49w/NJ0QrZWplafLABqV03O+uZWvjXF/swrS6TdakfxDjLaLN7thhv4Wwmux25SccEoR
-         qNJkH/qzpu8wWGlF1QHqUH2yQs/BSmeWL++bTNXxf9abflQjmmMaN1aNmteMQUZhG8ZS
-         0NqhulUNLNV3X21WEIeEkS1uJcQWTTGYRnSRlb+5PBs3S7bY6Vd/t1g4s4cAt23tMmHI
-         5fgmPRTfmlUrbLI4QEyZ4fwpMVnerVk/eyliAiGJcghzcmO7BVEaJO/deKmvxbXLv6IZ
-         Wd6A==
+        bh=mtZrvT74xjLbmtOOFn7GqR44dgC2/dnDitaPuKQQAMI=;
+        b=f2JDe+wCkeUza/Ffxe926OnTZfR4l3aN2nofzypBmPvwLSHzKMIx6z+a//pKPq31aW
+         /L3/0lC60IlRRoY8qaPZv8md//gefnPP95rQS2i5N+H9lfauXMna55XZfLGPM5dyHYJq
+         1zHb6iJEmNG+Ys5fhZ/rd+nzHD7n6PH+xfrOXBrzKVR0Gu7Aotjyh0Z8+FSfRzHzqacC
+         iXtc4WPxjcRgD14o/6NioIY0Cv3X9yIin4bR1G9huPY79UUQhdAbqdvBNJdUvGjt2Qqq
+         f1WpSIInAURSSkRuldmEB8/pcqE+FBHA3cFYsH0za2eS+5jBdmwhq5jx1KFLQ600CZWt
+         JVEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762245613; x=1762850413;
+        d=1e100.net; s=20230601; t=1762245638; x=1762850438;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwmZ+6WBy0DpH/2X1JFXWHRC2GMTvQN+STo8LsdNvJ0=;
-        b=Q7hhDptv42xHoPrWXT43xOFJPy6eK9dwSbrQ3DKErlXpovjJsBUibPbOlQRqdiM6du
-         uoCQuud+PIBGm/xH6y2eJHfhoOrsePC19r4zc3YUqYZnUtTDFbpGS0+wjEv0MMINqbNv
-         rKmCE7UezqVWxZhlC0CIT7pLIxvroBJuNUTgImSW6xh1F/926zFzMAwR2iEf+9sEWoSg
-         OwKwLYeJt2mX8XcugJE9GbV8k27IsCxsD0xx/1+jda+QX/ZA0HZXxx7I5nLVqYF+ny8D
-         x55BMjhV6gWc1yGQucNTZsPmgwdozTanGOKlb5RS4L6Wja3aefaQp8DdD2uIfbq/XrhK
-         2Qag==
-X-Forwarded-Encrypted: i=1; AJvYcCV+fXn1r7S3EiWQmRHypfut7mVza2OiGAgdgdombfbi5JFC/6XTaN5i+5tljQg4FGib/HYFSRB9BhUxbKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzPvXwslt4KY0NARjt2RNzoVSU8HTAraTr7RTcxPaoSamdakpM
-	vzO92uXDTnh2ohMnu9kLbm7uW1rQROp9fADLrib1MV7ae2gq04Ch9h+L8g+O1e27GleP1tFvBwP
-	37cawbF8dTnWFjD+C4w==
-X-Google-Smtp-Source: AGHT+IEI2OOsck3lPELYTHDmiUDPX23aQ0zOxe2XMSiUyFnIXk35xi7d9IgnDvvQ2t8WeW+/QGu3reFub1xwlLE=
-X-Received: from eddp22.prod.google.com ([2002:a05:6402:46d6:b0:63c:592c:cf21])
+        bh=mtZrvT74xjLbmtOOFn7GqR44dgC2/dnDitaPuKQQAMI=;
+        b=c7IHb4UsJJJlVspq9ke8UcBEciczxRQV5DX4842vRMerCumYwW1UX8cmA0AKYpzrHJ
+         QayoTYs5rVKrKQgXx4IF09VtRIQQqMmFxbs3rpXZ+vjvGE/vDOWJz05CMuuGT3dN15IT
+         ntKrA6vt+4ZaePAoQVw1lsgj16YypqPRQirvF0r2uMgiBZj+mZ8HYJF9AhYZeZFxEAow
+         9zjaZjZ+436fZ2w4Jzz6JVg752NctPvLBonYFzVroJNUm5RTpVybF0zfSAEqg2bfbi5J
+         B5IEenlLZ2N+zYjYAC9ouOFQPk5FtwkuSwvqBw2lSdvE0FUZiyt07eXljfn3+o59zqsX
+         kCSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+WUycJrh/KPC6v1Ydgvgw1rbBPvHM+5BiNz9V4LYA/4V+0HyGeWLltXA5GFgDmJjGIMySQQ2dnBFa9PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMkagGF54DWssfP6MxmvbjqjH9xRIPTZn/jSQerPcGcf4fp3cK
+	gWKBAdCeGhbUD0RHP/pf8ecRYn0u+CwZwHH5bOLj3pNsoOTOY0y+gMOcCVKlvHevexRQfPm8/Tq
+	LxjU7A8zypK9Nu0DYwg==
+X-Google-Smtp-Source: AGHT+IH7uxFg4fxwEB2oL2v1iRpwri8RqfVOUZGlKBwCB/nKMjy3SRSG5luxCaKkKVK2+FpZjZyZipAwKCX3T/o=
+X-Received: from wmwo13.prod.google.com ([2002:a05:600d:438d:b0:477:ad4:a2c6])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:4310:b0:640:b7f1:1ce0 with SMTP id 4fb4d7f45d1cf-640b7f139abmr7115706a12.23.1762245613116;
- Tue, 04 Nov 2025 00:40:13 -0800 (PST)
-Date: Tue, 4 Nov 2025 08:40:12 +0000
-In-Reply-To: <20251103203053.2348783-1-dakr@kernel.org>
+ 2002:a05:600c:282:b0:471:793:e795 with SMTP id 5b1f17b1804b1-47754b897e3mr13537495e9.0.1762245637657;
+ Tue, 04 Nov 2025 00:40:37 -0800 (PST)
+Date: Tue, 4 Nov 2025 08:40:36 +0000
+In-Reply-To: <20251103203053.2348783-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251103203053.2348783-1-dakr@kernel.org>
-Message-ID: <aQm77Iv8_odvASCV@google.com>
-Subject: Re: [PATCH 1/2] rust: pci: get rid of redundant Result in IRQ methods
+References: <20251103203053.2348783-1-dakr@kernel.org> <20251103203053.2348783-2-dakr@kernel.org>
+Message-ID: <aQm8BGphYfoqKZvk@google.com>
+Subject: Re: [PATCH 2/2] rust: platform: get rid of redundant Result in IRQ methods
 From: Alice Ryhl <aliceryhl@google.com>
 To: Danilo Krummrich <dakr@kernel.org>
 Cc: bhelgaas@google.com, kwilczynski@kernel.org, gregkh@linuxfoundation.org, 
@@ -84,13 +84,13 @@ Cc: bhelgaas@google.com, kwilczynski@kernel.org, gregkh@linuxfoundation.org,
 	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, Nov 03, 2025 at 09:30:12PM +0100, Danilo Krummrich wrote:
-> Currently request_irq() returns
+On Mon, Nov 03, 2025 at 09:30:13PM +0100, Danilo Krummrich wrote:
+> Currently request_irq_by_index() returns
 > 
-> 	Result<impl PinInit<irq::Registration<T>, Error> + 'a>
+>         Result<impl PinInit<irq::Registration<T>, Error> + 'a>
 > 
 > which may carry an error in the Result or the initializer; the same is
-> true for request_threaded_irq().
+> true for the other IRQ methods.
 > 
 > Use pin_init::pin_init_scope() to get rid of this redundancy.
 > 
