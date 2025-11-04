@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-885574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8429EC335B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:18:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE000C335C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FEE189E88A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:18:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC5664E7536
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E02DAFCB;
-	Tue,  4 Nov 2025 23:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474CE2DE715;
+	Tue,  4 Nov 2025 23:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bVdZgzlB"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ck9/Kb0e";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbUwdjEF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782E02D94A8;
-	Tue,  4 Nov 2025 23:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265E12DBF7C;
+	Tue,  4 Nov 2025 23:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762298302; cv=none; b=jVZXqL4EIvNCyG72/1zURzInL4NlkXjfATxAsERJ/WKrL6NeC0myANokTJeWxTGAy8kdA+0f/ELW6P3fxP/UVDm54JkBaHmDLhTSOvNR6jHT24KI5oNoEv3s6c9pqSd1vpzdYUU4HN6e1tT2KT9IqBChbLl5DMAF2QlPNKcaOok=
+	t=1762298399; cv=none; b=rh4cZ5SbTMOAyF0tEjkBr67KVseCCJYcaDHXWFT+UGJvja0GZPY+YeQK49QsPP82q1TmuFibote88gb3hn6BQdw60ynBwYkFNiFfpAon5eejtdbUu0QdZVm0gKG3G8/MtBTjRyVXXjBNI3blj4+YVvDgk60iy3hRJnQZZDMT+88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762298302; c=relaxed/simple;
-	bh=8eaU4PEC2c2giMxU+6+faFJS11n7Ure0cR+De/7s2vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=L+diKTlS+1QUrihy1ghI5+kdNhazNoiM+PmKwAaoNcj6tBToNEfU5x0WyliMZAZIwGNoGDl9ukaZMsk3UJHRi6zVvV5pl8lJvDqYwB0NIRtu8x9cuogJG9eMjbOJVG9E009t/J9R8USWL6C3yYMfrW6V32xPtXRmY3BPWjFbpAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bVdZgzlB; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=Y790WKwGEGT5HnCsGWE23gAkpRos3CR2T6aFVpk1eug=; b=bVdZgzlBmcSONzcAqO9ipb6pCj
-	1mA0SoZMXnmQ3BEY1ZoBRSWNzky0bSvN34jBb7IFXtOY6x5MUADzVy5MyF/mKOJkPeQnyTcLYF4xY
-	69kfgIvjbsZ7fErq3LyhCjirB6GJJOn6URuJ2xy6aHX9aw1qP6VewAcmWcwbv2Z2RTcyUNYIPFHCi
-	iCgdgoKjEWO5hZ6AVaZi0ozrmj0mDHoKJuJLRWnMn+u7aPz58NakTArRI3EtdfVNjXBuwLfB6k4Dv
-	7Wb2Rkygu/fXOWzA9cgaJQARoa+ap3G6TUYl/2GOCEKiQGn/fFQtpmRXXBkuEF8AeTX7DQP1DWcnx
-	w4RHpndA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGQI6-0000000CkB6-3u5t;
-	Tue, 04 Nov 2025 23:18:18 +0000
-Message-ID: <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
-Date: Tue, 4 Nov 2025 15:18:18 -0800
+	s=arc-20240116; t=1762298399; c=relaxed/simple;
+	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JTH1XhkT15wtTER6tKogrCS2dFCleM4ytPZWz4pMlrsc9MY8YIuPkSqvfmYokwHGFLKZMM3DEoZPGNUkVyLB99bbaQf+IPf3nyoNFh9UkOyst8R6EsVBN6fcvnWdYuIzgLOhS0f+u6KpqYMt6dTUyBLN1/UcoCm3RlxBCv/wxXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ck9/Kb0e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbUwdjEF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762298396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
+	b=Ck9/Kb0eie7pz087suaUDAtbkFYyXpqXdxCHZTr5dWeJ5JqTwCy4nK9zrYog/1fIyAMm2n
+	dyJS74bDt+JVfKR5IF+H6zdNSZLJf3zemFdD3gvEtoNYdpgqzO3Vmv27+9t5VwUu5TpaQn
+	WnJB0TH4DpkXp4w00HXwtcpFV9ECl7hLLo07hWwaOgEBvaxKw9aV5EjyKbxu6raIurTRtr
+	mGlakJxJF/kvIVrs+9lpqvZRSlNMsjjrsncQc0j/KKr5JBhi3H3PMnO53flZXsfgwt7VKM
+	t0a88iXi5qjpGE+2yqs3WYjBkOR9hDgJk8jBRd88j55/GxhR3IiaSNYRHvjugw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762298396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
+	b=TbUwdjEFjcX/Ax3oYG35NLH4DurhRtvskG1RxFeDEChnx2+zg6lkfLxuLJV5+6skNFttVO
+	70tcpXjJhCVmMEAA==
+To: Sherry Sun <sherry.sun@nxp.com>, "esben@geanix.com" <esben@geanix.com>,
+ "pmladek@suse.com" <pmladek@suse.com>, "senozhatsky@chromium.org"
+ <senozhatsky@chromium.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ "ryotkkr98@gmail.com" <ryotkkr98@gmail.com>, "kkartik@nvidia.com"
+ <kkartik@nvidia.com>, "fj6611ie@aa.jp.fujitsu.com"
+ <fj6611ie@aa.jp.fujitsu.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial
+ <linux-serial@vger.kernel.org>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: RE: [BUG] Suspend failure with nbcon + pm_debug_messages (Linux
+ 6.18-rc4)
+In-Reply-To: <DB9PR04MB8429F50811DDC648DD8A7B8792C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+References: <DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <87tszamcaz.fsf@jogness.linutronix.de>
+ <DB9PR04MB842977523C92FDE8AF4B714A92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <87qzuem7bo.fsf@jogness.linutronix.de>
+ <DB9PR04MB8429F50811DDC648DD8A7B8792C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Date: Wed, 05 Nov 2025 00:25:55 +0106
+Message-ID: <87bjlhz8pw.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
- discarded
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Hi Sherry,
 
+On 2025-11-04, Sherry Sun <sherry.sun@nxp.com> wrote:
+>> Thanks for confirming the fix. I will make an official post on LKML
+>> with the patch today. Since the i.MX nbcon-driver is already
+>> mainline, I will CC stable. I will CC you as well.
+>
+> I'll keep an eye on any fixes you send later and verify them if
+> necessary. Hope this fix can be applied to the mainline and the stable
+> tree ASAP.
 
-On 11/4/25 1:55 PM, Andy Shevchenko wrote:
-> When kernel-doc parses the sections for the documentation some errors
-> may occur. In many cases the warning is simply stored to the current
-> "entry" object. However, in the most of such cases this object gets
-> discarded and there is no way for the output engine to even know about
-> that. To avoid that, check if the "entry" is going to be discarded and
-> if there warnings have been collected, issue them to the current logger
-> as is and then flush the "entry". This fixes the problem that original
-> Perl implementation doesn't have.
-> 
-> As of Linux kernel v6.18-rc4 the reproducer can be:
-> 
-> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
-> ...
-> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
-> ...
-> 
-> while with the proposed change applied it gives one more line:
-> 
-> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
-> ...
-> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
-> Warning: include/linux/util_macros.h:144 expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
-> ...
-> 
-> And with the original Perl script:
-> 
-> $ scripts/kernel-doc.pl -v -none -Wall include/linux/util_macros.h
-> ...
-> include/linux/util_macros.h:139: info: Scanning doc for function to_user_ptr
-> include/linux/util_macros.h:149: warning: expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
-> ...
-> 
-> Fixes: 9cbc2d3b137b ("scripts/kernel-doc.py: postpone warnings to the output plugin")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Even with this patch [1] I am able to reproduce the problem on one of my
+test boards. I am using the following extra boot arguments:
 
-Oh, thank you. I knew that I had been missing some warnings since
-I still compare outputs from the 2 kernel-docs (perl vs. python).
+no_console_suspend loglevel=8 initcall_debug
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+And then:
 
-> ---
->  scripts/lib/kdoc/kdoc_parser.py | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index ee1a4ea6e725..f7dbb0868367 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -451,6 +451,13 @@ class KernelDoc:
->          variables used by the state machine.
->          """
->  
-> +        #
-> +        # Flush the warnings out before we proceed further
-> +        #
-> +        if self.entry and self.entry not in self.entries:
-> +            for log_msg in self.entry.warnings:
-> +                self.config.log.warning(log_msg)
-> +
->          self.entry = KernelEntry(self.config, self.fname, ln)
->  
->          # State flags
+# echo 1 > /sys/power/pm_debug_messages
+# echo mem > /sys/power/state
 
--- 
-~Randy
+This generates a lot of output and leads to the same suspend
+failure. This may be due to the out-of-tree nbcon-8250 driver I am
+using, which introduces extra irq_work usage within the driver. Could
+you please try the above boot arguments with your i.MX board?
+
+I am wondering if blocking the queueing of irq_work during suspend
+should be generally implemented rather than just printk avoiding it. It
+also seems to only be a problem for ARM32 so perhaps it needs to be
+addressed at the architecture level.
+
+John Ogness
+
+>> [1] https://github.com/Linutronix/linux/commit/ae173249d9028ef159fba040bdab260d80dda43f
 
