@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-885180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFE1C32360
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:04:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD7BC32351
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0A454ECD4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A18018C4267
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261DC339710;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D46339B42;
 	Tue,  4 Nov 2025 17:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="OOR5YrpG"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="svoLgLHE"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF743314D9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44B23D294
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275765; cv=none; b=UStqOkKjTmg+X7lJaZFMUUKdtKoeXwRdwzaDOo+qsjGgvh1s7bPbzOlxSGyfEtSUCTFsZO8xDFSW5/AQjbUAUqawgvwQiqWnocppNHyfiAL4ouUj/RINkYeMR9RF3etaX1BUxxZzete2mD7NlP5kM+WGgcc0hib9gjwcmqoI78A=
+	t=1762275765; cv=none; b=Bh3a9REtsBMSWS/GFe1r7QfJrZQw8lxf55qbMK10/5do+XgYPZcXX5aU4sziTwhvQ+OgBYKRYJC8Jm8eALJi2oqdqxUk+K1s58SMun4nOasAGwzc5/L4zGvp/yofkn5tNw9rv+Pt4hKYk4BH7pTqAOKa805yQBFnhpGuxONwzbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762275765; c=relaxed/simple;
-	bh=BtXlWrIdumXyM9ib/YUSqbsPX3katm0ADIbgFua83iY=;
-	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=tGQjS/3fimHdrRHJ4OrxsFoq2w8p8r3LFikTBYBIXvMxPYSTgt0rOA66PGcPAb5GzfUEbvz/3z7ygN+9Fu0C1IkzqiboYtPe790mQmCJ/Hlg9737L33K7Jb8ltvXXaKrYU0nj+tVoiakbxBH+nDSHVShlz3X3fBT/1N/cbt87wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=OOR5YrpG; arc=none smtp.client-ip=74.125.224.49
+	bh=MzPVupqWefpcnRVfT1d4ZuvyvgSPKq9D9NFR17u2LNo=;
+	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=b8TSc3Xy7X42yZKlDy0hdaYDSloUj8LBzj5H5M2+e9esxiYrTOZj6/4chAXU+D72IITFU/vYJrMLOawSQsNv/pDjkI9rLzW8dJMeRXAdgD1SabIGazpYjVskgmgpFbeHU8v2FRkCDSZzh6zHNUoaXv2bOV20cAIlVWm9y2DPugA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=svoLgLHE; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63fd2b18c40so150017d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:02:42 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d71bcab69so58953707b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1762275761; x=1762880561; darn=vger.kernel.org;
+        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1762275760; x=1762880560; darn=vger.kernel.org;
         h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Gsedja3EiqBaepnwF7jRsQaoV2IFZXBxn4TXmnZQIKs=;
-        b=OOR5YrpGZhOV6HYw8aJSiCu7VbCiryXRsSGMWXFRw4X5RyqboTNg3Z8VVXQLU7cVhx
-         k9IFN36s9HQK0FRibaKj+B1Y/jaeE5exr4I1Ru53JSPr05Ia7Npo41grtV9U0FX0RqHF
-         GaQpL19BnoJVXmTREgd/oVKWt3Wqnq3oNE+9Cf0eZkhLnpBPFQ0FnazeyjgoNdMl2KfP
-         o/FFUczfhLnpUwNRXQZeSnbFGXswZZ2q7JANVBtDShYJarK22e132/B0J6icAcVw8K+B
-         xrXH2gE+A5FTMbl61N+6MkCxe2yIPXuYwDmSTkr5wLUKP3YhYQNiPyRZ7hXEBuRw58PS
-         E+lA==
+        bh=1swu1IewYCbikdsLGSbLmVIWwJe/h8V6mXFPSOZrFB0=;
+        b=svoLgLHEiV/4RWrjlsPCpwpY38EJz0qiplB/qhqOtyUt6nB+YyuzUr2Ew0a6+QV2Vw
+         w0Q5At6GD5i7M2ozBoF/dIOYNREqxWXKoG1GppIqfmDsbrdbwWw1P0YCSTFaNHNlAfFF
+         pjfmCB/6ZApBq8+0W0g9lES9KembE3fX9IeEl0s6I/W3Wj+e2YNzB6rLicCU35fj4HIp
+         odRKNIWuqzq10+2Lk9C1pSqwukPIjDSjUabSCzZi+HLs0GtQhxFcuh+g3H/aM63hWB0J
+         egyx0swK55eY7OzrqqSrIHcK6DmpKI6MN7YK2dXWvQ0ewGaedx3ewxNUC99UQgYEnPuM
+         f3qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762275761; x=1762880561;
+        d=1e100.net; s=20230601; t=1762275760; x=1762880560;
         h=to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gsedja3EiqBaepnwF7jRsQaoV2IFZXBxn4TXmnZQIKs=;
-        b=mUO7Wiank69jnIS0dtTFYUsK2GF2OLRM8sB0/DrWEdA5y6FqBZCLvhx3FCZRtmJky5
-         C8G/x+lG6XUtrNEyJ8qGmSqs4IPGZ/zh9kItwlaTU2ULHoWYwkxYYDw8nAYrvTHvlCHU
-         DJxXNZzahAW/pQbRn6KEq1Sq9CXl3G5n0ER3kqnsfcicfJ+jlQ/GMSeZ6o5VKaNePWMO
-         TuV/lH4bwUIZIwH0TcBo6IMpfSoxn4eAlVrOLcjlkSBN/fMGwGwo1+3spac8JnsmKB2+
-         AM4euN63+LlPHysPIgAHyUc3XvFqh6eafbcpQC+uabv6w6icnU6yJB/uqvXh6k8/fSFx
-         M1Yw==
-X-Gm-Message-State: AOJu0YxzmMOw8eAHf8aUXH84hXq9zeJlVNa67FWBb6XORmPY0kd2lzwi
-	5jApKRKafDmVkKJPVf3LoS+m/dP+ei7uwHJwuTxWiUWdPiqzaU84T8pBwrBShROHyxAW3iF1kSq
-	3NIhM2tjMjJeDLMuBrhzODWzGivvDRf28hg13JsFc6hFpf9v82qImdA==
-X-Gm-Gg: ASbGnctx0U8zjnnK22HGfeGU0aKStDNv2P23/jK+VSIOMpsFd5UQwtZ5cTN5JoIm1Qs
-	yhhaTgLfEbHFHribfJNOylfyw9NdIRVQX4UCX61E8pEjA4MUd4aqf8ona5N0VRU6owcVIZ08huK
-	s4g0Jx/YPQArjt4jS1a3xYtbvjs5RVBjp4tiYfFm6Yw46jfjqZw/ijeqbBrrd6NTDCelHzFXenz
-	PCmqK4bpecEMcMDWA5g+Et+rrdv+qLRcsjXMRXDDZ5PLi3RqIDRwOP6JksDFg==
-X-Google-Smtp-Source: AGHT+IFLs/6mbSUM74f5TICiUV1UvBT35zpaFwUDHe0UvDMIm3TxGQ6DS/MkZ62zOWDE2G0VKbRhzIY6XoZ9MmDpNnM=
-X-Received: by 2002:a05:690e:151c:b0:63f:b590:305 with SMTP id
- 956f58d0204a3-63fd34bb3d3mr168093d50.4.1762275761011; Tue, 04 Nov 2025
- 09:02:41 -0800 (PST)
+        bh=1swu1IewYCbikdsLGSbLmVIWwJe/h8V6mXFPSOZrFB0=;
+        b=cQywApHXcKtSs5yNx79K4Nzfi8LWysdZvptiHfKnU0TzXiDIDzPxKJ+tKXuUHoYAtZ
+         rpy2bcZytKRiArGHab4SbzF/Tzb4DABoRIT5ueYjZ3NAXZo4aWGYaRgAa/QcqufZHDYJ
+         t1KXnuBZVy4mCZi7alZ4h2ZLKum7W8lpBrtc8KLxFddx9GCwCV5pReoOpsDRVfanbjlN
+         d6qzTtT304PPVIdcMsvPY22WGAioTAMDygpFPcIe99tgZ3Ww5qZzK/zWYNjKT5Lc/0I7
+         +OpxgXBKVgi2z4M9aL6kqobmc4sKVu4F3Ot6qKmy3m1zFqZKmddPEQI+2Qs+NV+TmSUz
+         6Xpw==
+X-Gm-Message-State: AOJu0YyjUXGe1pO5ehccrlPOCdXPb6sGUq0xkH7bEdRYi0tKV7UpRgii
+	RnLdppBDOfRePGJJIH9lwLFlfS6MHGF4BLH9Qe8ifPhjFbI46YEqaCsbqGlpETVp+bTlpbfu05/
+	2bb8/Yi3ATMmen0ALNrT2iI7Ke76EEc+22q9RiCJ/clTkLtQrRhmJvw==
+X-Gm-Gg: ASbGncvQWrVUQXZosb5FXOWBrlBTv95dQ9hY4nKKR09ZwFFCQ6AlVAmt+UY/J6ey/3F
+	QtPZcTDHAyi6dkNbqjNfVjgwGvre0/02TuGofayl4f+tz3YDLpujAdKiRwXHYNmVzBKNM1/WQFP
+	3mvbfm3p0m7YXoOiGYutk/6XPbnDzi3AmaTY7oV7m0XVa9+EGYqIzgX9lJbsTsHuElU5/2DY5r1
+	h1yd9rfh2ibOq6HctgzTJYJYFY/IUM5Bed5dtufxOKizG2YzID9H781N2kdPw==
+X-Google-Smtp-Source: AGHT+IFu5xWGolYVGEvsapdgHWBmKEvh/L6nUtcHvwxXkXWzfeUDeNLE6GBiE2YksVbOFA0BdSd1+FDrlj5P8vfa+f4=
+X-Received: by 2002:a05:690e:164c:b0:629:acb6:d8a with SMTP id
+ 956f58d0204a3-63fd34c4ed5mr149758d50.26.1762275760139; Tue, 04 Nov 2025
+ 09:02:40 -0800 (PST)
 Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 4 Nov 2025 12:02:38 -0500
+ HTTPREST; Tue, 4 Nov 2025 12:02:39 -0500
 Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 4 Nov 2025 12:02:38 -0500
+ HTTPREST; Tue, 4 Nov 2025 12:02:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,122 +75,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 from: Sean Rhodes <sean@starlabs.systems>
-Date: Tue, 4 Nov 2025 12:02:38 -0500
-X-Gm-Features: AWmQ_bl7UmLNoQkdYl0LBGY8F70Q2NR0PnW2nOU_3E-pI2ixNAor0W4NmTNiqqo
-Message-ID: <CABtds-3V0qP2S-Zcco8D9SsEioNbKyXCmddAkEc9eS2+TCOucQ@mail.gmail.com>
-Subject: [PATCH] drivers/memstick/rtsx_usb_ms: throttle idle card polling
+Date: Tue, 4 Nov 2025 12:02:39 -0500
+X-Gm-Features: AWmQ_bmUXtIcjvu3hDD2CxDQXMRY9CP1oiMXn22Jfdvd6U_1FxjxLljnr0gEBC0
+Message-ID: <CABtds-071dHPwOBYFxpGT7E9grcS0PGdK2PTYmcdWVF7sX-hkg@mail.gmail.com>
+Subject: [PATCH] drivers/misc: rtsx_usb: add UHS/MMC capability flags
 To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From e7dca663b4e5aa347db010e34c7e53795f489486 Mon Sep 17 00:00:00 2001
+From a7d64a86c728c8c749229272a22b95b772086911 Mon Sep 17 00:00:00 2001
 From: Sean Rhodes <sean@starlabs.systems>
-Date: Tue, 4 Nov 2025 15:43:42 +0000
-Subject: [PATCH 1/5] drivers/memstick/rtsx_usb_ms: throttle idle card polling
+Date: Tue, 4 Nov 2025 15:51:10 +0000
+Subject: [PATCH 2/5] drivers/misc: rtsx_usb: add UHS/MMC capability flags
 
-Track the poll interval in the memstick host and queue the work on
-system_wq so we can switch between a 50 ms cadence when requests or
-events are pending and a 1 s cadence while idle. Reset the interval
-after power-on so newly inserted cards are still detected promptly.
+Introduce per-device flags for SDR50, DDR50 and MMC DDR support and fill
+them during probe for the RTS5139/RTS5140/RTS5179 variants so the card
+host drivers can gate their caps in follow-up changes.
 
-Cc: Maxim Levitsky <maximlevitsky@gmail.com>
-Cc: Alex Dubov <oakad@yahoo.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ricky Wu <ricky_wu@realtek.com>
-Cc: Luo Qiu <luoqiu@kylinsec.com.cn>
-Cc: Jiayi Li <lijiayi@kylinos.cn>
-Cc: linux-mmc@vger.kernel.org
+Cc: Desnes Nunes <desnesn@redhat.com>
+Cc: Christian Heusel <christian@heusel.eu>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sean Rhodes <sean@starlabs.systems>
 ---
- drivers/memstick/host/rtsx_usb_ms.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ drivers/misc/cardreader/rtsx_usb.c | 10 ++++++++++
+ include/linux/rtsx_usb.h           |  3 +++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c
-b/drivers/memstick/host/rtsx_usb_ms.c
-index beadc389f15f..73677638a3f6 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/workqueue.h>
-+#include <linux/jiffies.h>
- #include <linux/memstick.h>
- #include <linux/kthread.h>
- #include <linux/rtsx_usb.h>
-@@ -21,6 +22,9 @@
- #include <linux/completion.h>
- #include <linux/unaligned.h>
+diff --git a/drivers/misc/cardreader/rtsx_usb.c
+b/drivers/misc/cardreader/rtsx_usb.c
+index 1830e9ed2521..f65acf4d1164 100644
+--- a/drivers/misc/cardreader/rtsx_usb.c
++++ b/drivers/misc/cardreader/rtsx_usb.c
+@@ -653,12 +653,22 @@ static int rtsx_usb_probe(struct usb_interface *intf,
+ 	mutex_init(&ucr->dev_mutex);
 
-+#define RTSX_USB_MS_POLL_INTERVAL	msecs_to_jiffies(50)
-+#define RTSX_USB_MS_IDLE_POLL_INTERVAL	msecs_to_jiffies(1000)
-+
- struct rtsx_usb_ms {
- 	struct platform_device	*pdev;
- 	struct rtsx_ucr	*ucr;
-@@ -30,6 +34,7 @@ struct rtsx_usb_ms {
- 	struct mutex		host_mutex;
- 	struct work_struct	handle_req;
- 	struct delayed_work	poll_card;
-+	unsigned long		poll_interval;
+ 	ucr->pusb_intf = intf;
++	ucr->supports_sdr50 = false;
++	ucr->supports_ddr50 = false;
++	ucr->supports_mmc_ddr = false;
 
- 	u8			ssc_depth;
- 	unsigned int		clock;
-@@ -635,8 +640,11 @@ static int rtsx_usb_ms_set_param(struct memstick_host *msh,
- 	if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON) {
- 		usleep_range(10000, 12000);
+ 	/* initialize */
+ 	ret = rtsx_usb_init_chip(ucr);
+ 	if (ret)
+ 		goto out_init_fail;
 
--		if (!host->eject)
--			schedule_delayed_work(&host->poll_card, 100);
-+		if (!host->eject) {
-+			host->poll_interval = RTSX_USB_MS_POLL_INTERVAL;
-+			queue_delayed_work(system_wq, &host->poll_card,
-+					host->poll_interval);
-+		}
- 	}
-
- 	dev_dbg(ms_dev(host), "%s: return = %d\n", __func__, err);
-@@ -723,6 +731,7 @@ static void rtsx_usb_ms_poll_card(struct work_struct *work)
- 	struct rtsx_ucr *ucr = host->ucr;
- 	int err;
- 	u8 val;
-+	bool event_pending = false;
-
- 	if (host->eject || host->power_mode != MEMSTICK_POWER_ON)
- 		return;
-@@ -747,13 +756,20 @@ static void rtsx_usb_ms_poll_card(struct
-work_struct *work)
- 	if (val & MS_INT) {
- 		dev_dbg(ms_dev(host), "MS slot change detected\n");
- 		memstick_detect_change(host->msh);
-+		event_pending = true;
- 	}
-
- poll_again:
- 	pm_runtime_put_sync(ms_dev(host));
-
--	if (!host->eject && host->power_mode == MEMSTICK_POWER_ON)
--		schedule_delayed_work(&host->poll_card, 100);
-+	if (!host->eject && host->power_mode == MEMSTICK_POWER_ON) {
-+		bool request_active = READ_ONCE(host->req) != NULL;
-+		unsigned long delay = (event_pending || request_active) ?
-+			RTSX_USB_MS_POLL_INTERVAL : RTSX_USB_MS_IDLE_POLL_INTERVAL;
-+
-+		host->poll_interval = delay;
-+		queue_delayed_work(system_wq, &host->poll_card, delay);
++	if ((ucr->product_id == 0x0139 && ucr->package == LQFP48) ||
++	    ucr->product_id == 0x0140 || ucr->is_rts5179) {
++		ucr->supports_sdr50 = true;
++		ucr->supports_ddr50 = true;
++		ucr->supports_mmc_ddr = true;
 +	}
- }
++
+ 	/* initialize USB SG transfer timer */
+ 	timer_setup(&ucr->sg_timer, rtsx_usb_sg_timed_out, 0);
 
- static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
-@@ -784,6 +800,7 @@ static int rtsx_usb_ms_drv_probe(struct
-platform_device *pdev)
- 	mutex_init(&host->host_mutex);
- 	INIT_WORK(&host->handle_req, rtsx_usb_ms_handle_req);
+diff --git a/include/linux/rtsx_usb.h b/include/linux/rtsx_usb.h
+index 276b509c03e3..54c6ea82bf43 100644
+--- a/include/linux/rtsx_usb.h
++++ b/include/linux/rtsx_usb.h
+@@ -48,6 +48,9 @@ struct rtsx_ucr {
+ 	int			package;
+ 	u8			ic_version;
+ 	bool			is_rts5179;
++	bool			supports_sdr50;
++	bool			supports_ddr50;
++	bool			supports_mmc_ddr;
 
-+	host->poll_interval = RTSX_USB_MS_POLL_INTERVAL;
- 	INIT_DELAYED_WORK(&host->poll_card, rtsx_usb_ms_poll_card);
+ 	unsigned int		cur_clk;
 
- 	msh->request = rtsx_usb_ms_request;
 -- 
 2.51.0
 
