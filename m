@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-885217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CA4C32457
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:17:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9090FC3238A
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905E23A833D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 271DA3B8117
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B15339713;
-	Tue,  4 Nov 2025 17:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D0933A038;
+	Tue,  4 Nov 2025 17:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UII60iWZ"
-Received: from sonic307-9.consmr.mail.ne1.yahoo.com (sonic307-9.consmr.mail.ne1.yahoo.com [66.163.190.32])
+	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="sR/FTJQk"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9104338F24
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4DD334698
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276296; cv=none; b=aLF/h9e3bYEicPxNtxVWc9nDv+AOYg4EJsbbrPQiuKdMYVOJYPdgukOnRF10xJIjoL+6kMHn71EWu7vBVWS+lmcb7PBdmQcdOdVYFgBJLHQub2DVF9P3oJ5zQ1Q2HgHVMth5lh1bceyLMq30CRkpG26TN/ETvlokX0zDpwEGOQY=
+	t=1762275766; cv=none; b=hPPIeFlny/uTvjGkcUOwycmdnz/v1qAAHUVpWDHTWrqgOlHaVSmSk/wGSVCVox/4X4as3P1oLX1cnLs5qpY+CkbRyGzKCf2psJ18FYm0CxtAZd4TRob1aELIvCLh83cdgO6clsISh9stwsHcQMEQVwAQf+8TIwxifyClFbg63E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276296; c=relaxed/simple;
-	bh=/db1ZbUSY4AafApDJPDAXx1CSESKs+zLeT3adZX9NKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uOSbX5G5QxYKo5hNUQRkDSvwe4WxCeI8/oYelNCsQi/QqyguSICmD+Ue5r7q6glFxOAQuhNoPnDSlo5ymseg39zw0ucTQYVXCzLzK9eFlCYr20bkWPy0JJjpbzCxfwqTfK91d1qJcIMdNAfANJo484h4KMHJTO+G4rha5A8tMso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UII60iWZ; arc=none smtp.client-ip=66.163.190.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762276293; bh=Rn+xeU8hbSVs5DH5wqprgrTEbP3KV4qe8WcAPaw+fUY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UII60iWZ/jNu3VoI8FTEMHsc2YAOrQFv7USjrmdF3UFniFSVx2NCi6dfB+pTYwlFYEpyiTTS6Gz+/PgKx3UG+te7i2TyqiudavkLSsiV5OYtkn9vCFOgQegTkHKIEg4SklCENmxAp526mo5A5q8aZEBFo4+HaGcdSFzZ1dSIc2ar7wUID6zCyby7ENzHVqY5Zf6JpxpJA1qBZkHD+HjnHDDYq+M9uBqyzAyc11KT4Pol7PZ9kdaryGDhQDMZb3Y33GjUDUH+WH3d8j4hELzc7XFAxRbT5RTZIETOdkraBCSQEnytCoMj1RBrQxGeKgKOnLoa4IXwq4VrQntjQcD8tQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762276293; bh=Yz3cF+6nG0KuPWtAqViR8vWsLZuwIhHTMIMaTwsN1Z4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=b7Mj3QatDYDlTEOTmt7EQAT54I60YLd3MnteVDYoZDgDMnbbWwZFeH645dDZY9mHSCLeH+abuaVHo9XxnM/ElWACCgDC1z8zHfXzHdBwslq2k2hGaW8hlefOKtmJprRhViJviUL52h2x8uyRAHY7NXA0NI2ot/Gxi8VTpkjQ1BMDe3FFGn6wweDRL3Yg8+fYJTTQmenB3ut7YWSLD1bs+ooNJJXte8pELnD/JGhIBnE9e3smRuvRNtsyPlLz8rasmT2ac8vkYSPEQWq+jHVxKD5P2dmg46FLAiiZxj/MmNavqi0XUMh1ug6hcAp4q/VhCqoyVpN9HwlGhV8cs1EUQg==
-X-YMail-OSG: WWEk1dAVM1mrc8MITgpROMUWlPqLyYzxww47OeGRef77El._tDqWTaO7qoyXDo_
- z2TLYXcnZws_bI4bn9e8E_eYwxGYd5xJnTx3caVNYr_Z5U1Qk5cGbwtUzZLtBCdGrV4ERW5T6c80
- 7oevHK0Wd8a9jby0gJqF601uq_o_PPMVTOaUZlLIlBJmdegVVqjgcyWC3LbYOSAYRUMIRpJFFW0f
- nFGmOK3GB7HG99FPVU0oTP5dNaVrHBSiLpKZ38LIdvXqgHpggVsJJFFdVrDL5gQ1SVnUiHbYRlYe
- ywbdXtqtpa0eB0kFVWmepvrDWx6lVKpYD8mZOXfX2VV8mhV0OJ6dVy2hBorCqhk7rTdU3hknxwVO
- _C.3k8DOlue3hWPav.xL6V1O2IrxQQdETqEl_P12I4VoiOWvWEGqmdpnXBJWKwGGI7xoeCIiCRA8
- Q.fWkCc7qJufAbSPL1M4rvi_s.6Uz46nZ4UqdNSxuH05sd183SPeAVrAUsomepTnoYeqk6LvjKQK
- Vovgm8xysC8msvpj6gfuXy3R0LxoUQuaeagcXW1h_z9.z7k_jw5rfcR7IPsQsnDILTZEqDr.CMIl
- URIULOttmZbqDiKgnmfUByS_rXrYzK7OgRLWwrbCbu06CMugGxIjmJCXCKrgpzjDfFQUqIFLVbsG
- ncrKhicsloQW3GIxtiWK.KIUdfR9qcCRnLxu5Z1qQpRs6rO6cufkTOTb.GzerxHepSFmF8eyxIt4
- nbAxKt9VuMGKJzFGg0C5q.R4j2B4hOWKkB1akqFEtzj5M5ukepZpzfAf8Eu6b9cNwGxfSVPG9Jdw
- W1OLX.cBV44NS1Am6NIob7GkyW3pEzcoBOgJ44X.ia5HbWfaokCunhPEUjSy7LRv8B2VzoaC1uCn
- BKm.fDYCStz_WqRBw1w9W__CzbXt76IASSLkakgW5eG7ySd0VUFCWqIi9xKFOWdNeXbxhGomv_MB
- Rq2Ss5UL6gyDahAN5CJXbhBAsN06rNv6cDzEO0oWwoIdrPzMvBBGBWhZbjaYXSIO22wsCHXdvMvh
- cBAvSlqCNc3mWJeRQdaJE8QW_0_7sWlGK7J_GyRo1flkeXIhdUAFokBR0WRNcRLi9eSkqF11nOhK
- mpuS69UJBoubyY4qaSiZ7zlH6RzCqyoCEE9DJo0zPVReZhdbUVllgvSZ3cI8vkPszoRsR1HKlCzB
- Yrykh30l.lIThX.ym55MSLA1R4Z.PapkZryU2EyKsvUtvGm0QunaJjYIsc_CLGErmMzrrCWuSotY
- T17TzFY3GZwmSi0EoSSen7D0hFbEdVqTUhHepNxUELsnCDebPPc.jlkubwVjm3IRUoamGF0VONxq
- bPpivTXBgR910pHUNP45fOLcEXBzR.YmA9hT3Gdpqm_qHarXzbjkK4hvFe.tMV51kJe30lS_GEmx
- e8pnqNrbkC.wtiK_C8q_hHzF6IhFYuSbGTqnvbsV7IhdtRV1_rxyMhJ7RrcF1CDbCM6gqcnFTbQx
- Fwb7b28rYoGL9WlhrsQCtkIoyfnZfX93GNNywK_lMdLUzNUI895X1ZAYK2NtE1EiWgxBYgYQHGOX
- lDaSMPkyGbCyk9z8L2wJGZjawwgWeIQm8mILiNN25nrEv1YOrQC7D5RYCvQeYy8KgPC_xDCBlYaE
- y4smWXp2ijFbRbXO.FdQb77SGBrDV9drf3EvWcjc8vsMPFHx6pimZem1pHjFTvDtKnDs5HawYYUp
- YtFK6unsI0RK7SQ8rY.fUzbdGzXUyhisukXFGi3RzoPo9MIaDJO6FTM6V_AKVCD0s1TaT0cwf0Nh
- 1CcxXoeQSq_oS0.uHHI9mkUjIHjUki2pOed7OoApteKTldhRvRmzKUJ21V0l05Oxo_10kA44cdib
- CqmtR6689ji8NCRPlh1ZFAnjiNut0TpOXkZhXGZ13pWLJGlCZc4.4tmafhMFwgR2flj5xixoF.jH
- zGTTFhAdlwve_LoTwdDG.qbdNcNq8StfXIHTXzWE3HJILKU9lko0GtkemphLad2NMMKNX0sqjeMZ
- 7sdw73qeGU1FRUUxUv9Xw9.A-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: e1279bf6-5061-4a24-b513-66a59e481355
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Nov 2025 17:11:33 +0000
-Received: by hermes--production-gq1-bd8655d9-slzsr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 558e0f080ed7f3cb59bc4b957e1742fc;
-          Tue, 04 Nov 2025 17:01:23 +0000 (UTC)
-Message-ID: <2809ae58-8019-4f31-a4d5-69677f85c4d6@schaufler-ca.com>
-Date: Tue, 4 Nov 2025 09:01:21 -0800
+	s=arc-20240116; t=1762275766; c=relaxed/simple;
+	bh=FTxMFO8xGalAHrARCSEc6RGTYHypYqCbfpsw5eH3Om4=;
+	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=S59CBfJGOm5lPZd640hAqm0dBDK74mrt/8VSqV2JsUDlrVeC5kkVrlbuK7oFG+zE2ZlHP7GjLw7tbDQY81N87GpUB9dIR+Kz2Q9RQsSvx3EuWc1KnbAqAqdtAXyRgwo1RlYX3PJCZayqvMTFGs3wypiTX14aJHgMAJlxtTGRTuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=sR/FTJQk; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63f97c4eccaso4041704d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1762275762; x=1762880562; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7z4YmMAFCFWvr8KNe1E4XyH7r7ruEqu6RVRoWJgd+ew=;
+        b=sR/FTJQkvh9dsSekuXOfSzihf6wiWnumA6BBbhdMnMKa2VBMQPrXzz9xKZYghQiDu1
+         ZEx92k64R7Ge1/BQ+oOAg2FuSrMu4kTtbbVAHKBgPakjywxZJ+gXec3E6Uhh02t2cD8U
+         XYt4arApaOHmfZBVgqugeQsubfV1jewG9jNYLh9RwXwglmw8FFWwQfAqLvInFfUPZlS1
+         P0Kp3FbJ+BNb1o8k7tkd1DPYC1HB0SaZRx4aN2SChLjBQmSGpPVfZ2FS+taumTVw2uir
+         NcF9Dzt5Zv/+mEViyV3jxLhXsCrLC1Sk7OPsvHrTL0ZO/LvJhlPKuHr1gbpzgP1Ndkzg
+         zdIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762275762; x=1762880562;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7z4YmMAFCFWvr8KNe1E4XyH7r7ruEqu6RVRoWJgd+ew=;
+        b=Rsk1uRBgR3ZWWCYn6EX11A4mlLqnqqssqSAQTP7SdXXWB2fGI59YbWeDlFBj90V3mM
+         LzjyPaK71dkOUx5HSEXDghQPo9eADIYEER42sSFrXsHM6CFKhGnGgRKc9s5yhM8gL/xy
+         0O8co1+tI3M+hbg4uV9zqWxbvnoy52QNkWDwPXh4qeNsy6hbb61tB/Zj/jLKumH1oc5G
+         4Uj8VKiRVa+/9KumF1QLMgHitSYAgDXrwVt2lKp14ba7p4OZdp9Ta28KkB/5Mf974Pt2
+         TvFAvNICn0QYqsDCtlo+GzFqcWVtJqN6coC04F/6/7TiX6RBpGx4DPtgxXtTImsuUIeW
+         zTcw==
+X-Gm-Message-State: AOJu0Yw49+vWy4bXqAsyIFEjm1DIZ4y7/oLutvKangRnzoZwy4GOQwEl
+	DGVGT4Hxx2c8004ihOrTUnVlaj7aAqpZjEChi7g/IqlCMs1meC5A7hPe/+d/xWF2+wcefu17d1l
+	Uvts+K6wyFisl2174G4Z0Wu7iYoW/TnahmYcaHqfY14JXbs5uMvFHzQ==
+X-Gm-Gg: ASbGncuwO0wEATxGFOeQjYGF8AA2CFMBzW/reEyypVuDwKr866/9TDqzn7w7lqUHzp4
+	gQvUwYcvseUkbQhbwvrA6gRVxynkX/iSFM/I4p84SepI77E894dqyNIVMc5lxuyJomPXHt8H1N2
+	Ke/bSPBFEk4MyX2aSDRB5rRSdoYaO39izcVCJYxelkxZhX576LvOJ5MdbcAoTFhadNoYKugEN1A
+	R/lX8pkRJulC7b01q34IyQVQbaIHjtW9lYmnUsfzuxWXP/OXQT3WMX1PahDTQ==
+X-Google-Smtp-Source: AGHT+IE52iYp2KC+Z6TCoWXMPh+3n11znG3xcxvSwWyrQmsCjR3X9bc4IYENLwuFfG0icZOdZwo1GM8W1KhQ25ImPkQ=
+X-Received: by 2002:a05:690e:c47:b0:63e:102f:e00e with SMTP id
+ 956f58d0204a3-63fd3572665mr153404d50.53.1762275761369; Tue, 04 Nov 2025
+ 09:02:41 -0800 (PST)
+Received: from 239600423368 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 4 Nov 2025 12:02:40 -0500
+Received: from 239600423368 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 4 Nov 2025 12:02:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
- jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20251001215643.31465-1-casey@schaufler-ca.com>
- <20251001215643.31465-3-casey@schaufler-ca.com>
- <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+from: Sean Rhodes <sean@starlabs.systems>
+Date: Tue, 4 Nov 2025 12:02:40 -0500
+X-Gm-Features: AWmQ_blhBjqs6hg5upJiZYd7b8UbEecDFsa1gMcCL3PkKggNliBopFcWa_EvYLg
+Message-ID: <CABtds-12OYfBo8pS5zZrNp7Rvgifh0jqZ3SyRvoZz+mAVJM3kw@mail.gmail.com>
+Subject: [PATCH] drivers/mmc: rtsx_usb: gate UHS/MMC caps on supported
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/9/2025 11:53 AM, Stephen Smalley wrote:
-> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Allow LSMs to request exclusive access to the netlabel facility.
->> Provide mechanism for LSMs to determine if they have access to
->> netlabel. Update the current users of netlabel, SELinux and Smack,
->> to use and respect the exclusive use of netlabel.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->> diff --git a/security/security.c b/security/security.c
->> index e59e3d403de6..9eca10844b56 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->>                 else
->>                         blob_sizes.lbs_secmark = true;
->>         }
->> +       if (needed->lbs_netlabel) {
->> +               if (blob_sizes.lbs_netlabel)
->> +                       needed->lbs_netlabel = false;
->> +               else
->> +                       blob_sizes.lbs_netlabel = true;
->> +
-> Same principle here - if a LSM wants to use netlabel, it may want to
-> guarantee that it truly has exclusive access to it no matter what the
-> LSM order is.
+From 2dfdbea7ff59c9f7b4927a8d020810bfb1c11e24 Mon Sep 17 00:00:00 2001
+From: Sean Rhodes <sean@starlabs.systems>
+Date: Tue, 4 Nov 2025 16:02:01 +0000
+Subject: [PATCH 3/5] drivers/mmc: rtsx_usb: gate UHS/MMC caps on supported
+ parts
 
-Again, SELinux doesn't actually use this very often. Declaring that SELinux
-always wants it to the exclusion of others would be obstructionist.
+Only advertise SDR50, DDR50 and MMC DDR when the USB companion reports
+support, and treat MMC DDR timing like DDR50 so the host can switch to
+that mode safely
 
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ricky Wu <ricky_wu@realtek.com>
+Cc: Avri Altman <avri.altman@sandisk.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sean Rhodes <sean@starlabs.systems>
+---
+ drivers/mmc/host/rtsx_usb_sdmmc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c
+b/drivers/mmc/host/rtsx_usb_sdmmc.c
+index 84674659a84d..e23ef4111dab 100644
+--- a/drivers/mmc/host/rtsx_usb_sdmmc.c
++++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+@@ -1097,6 +1097,7 @@ static int sd_set_timing(struct rtsx_usb_sdmmc *host,
+ 		break;
+
+ 	case MMC_TIMING_UHS_DDR50:
++	case MMC_TIMING_MMC_DDR52:
+ 		*ddr_mode = true;
+
+ 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1,
+@@ -1161,6 +1162,7 @@ static void sdmmc_set_ios(struct mmc_host *mmc,
+struct mmc_ios *ios)
+ 		host->double_clk = false;
+ 		break;
+ 	case MMC_TIMING_UHS_DDR50:
++	case MMC_TIMING_MMC_DDR52:
+ 	case MMC_TIMING_UHS_SDR25:
+ 		host->ssc_depth = SSC_DEPTH_1M;
+ 		break;
+@@ -1343,8 +1345,14 @@ static void rtsx_usb_init_host(struct
+rtsx_usb_sdmmc *host)
+ 	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34 | MMC_VDD_165_195;
+ 	mmc->caps = MMC_CAP_4_BIT_DATA | MMC_CAP_SD_HIGHSPEED |
+ 		MMC_CAP_MMC_HIGHSPEED | MMC_CAP_BUS_WIDTH_TEST |
+-		MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 | MMC_CAP_UHS_SDR50 |
++		MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 |
+ 		MMC_CAP_SYNC_RUNTIME_PM;
++	if (host->ucr->supports_sdr50)
++		mmc->caps |= MMC_CAP_UHS_SDR50;
++	if (host->ucr->supports_ddr50)
++		mmc->caps |= MMC_CAP_UHS_DDR50;
++	if (host->ucr->supports_mmc_ddr)
++		mmc->caps |= MMC_CAP_1_8V_DDR;
+ 	mmc->caps2 = MMC_CAP2_NO_PRESCAN_POWERUP | MMC_CAP2_FULL_PWR_CYCLE |
+ 		MMC_CAP2_NO_SDIO;
+
+-- 
+2.51.0
 
