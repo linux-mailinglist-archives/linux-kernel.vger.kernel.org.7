@@ -1,320 +1,376 @@
-Return-Path: <linux-kernel+bounces-884497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488A3C3043B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:28:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51C2C304F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07126343749
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6FC4226EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3DF3126B9;
-	Tue,  4 Nov 2025 09:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB282C376B;
+	Tue,  4 Nov 2025 09:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X6xhwQm+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="aJMhqfm7"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFF199931;
-	Tue,  4 Nov 2025 09:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762248476; cv=fail; b=k90zTjoCYpPPL/1Rx8umkTZd6cGiKs2PYLTvK3chzGH07P2RHWMdqmHvN4EAjPUKv9OYkMan7Jff5y1VSU3xffxX3fUvdDQ6yI/XxR+8X44PDrMn/L4ehqrm8k6hhNfvm4C6NPKt4ldXrJrURCFSNT1d3LLVtokrpgV8mDYViCo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762248476; c=relaxed/simple;
-	bh=mbbx3FDwvOutPhQ6wt6IdkE7+Crn8+1fuAxAwZIcmNs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=W77JHsRhM73QvecgPd1KYJwaG0bb4kvTSJSKryl6hR9SfaqeBLCT0T1USR4zTIeRD7EsFGqXrhC3bXeKAl9EQC8KbNWlgxqevNZvlyrzfOHDyW1gXRbG0do7PXFxsDLpQCmT2r/kGL8xBzAYspt5Qvxl13toLRbUwgXJoEOTSbo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X6xhwQm+; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762248475; x=1793784475;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=mbbx3FDwvOutPhQ6wt6IdkE7+Crn8+1fuAxAwZIcmNs=;
-  b=X6xhwQm+TYeuZNW2aHAAQrfcL2rpJr5IM+jV58LL7z6XKDKPsl7eWJkb
-   TY8N+MOXpbJPRaKm/BXBeqL04CkzN1r/DW4uXQgQR7URa2kLcQ/uUHwXo
-   KmWIBmNAVBYCQ0Ojbs2xtTdCOLb3zqs0iXoxLNrX9UuWa0clnGKhESIw7
-   iomNymxrn7fbSnMfhYEsZVmCf3wzD2p13YSwPShtbp8I5eajZL8fWPeUv
-   YSjJQ+/JQb5Eh1SrOb6KlOtjrFaY+3pxpoHa6wFuxeZRB1Wq35abT9Det
-   GQUpmhII00Y2f0z9QClXQEwRvbjhe68oj5uNXS+stfv7iB9Lm0OJyqQRM
-   Q==;
-X-CSE-ConnectionGUID: XuAIPi0+SmKjuC3wQ+8+Mw==
-X-CSE-MsgGUID: 1HTpZCjyRteLT952VXXZxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75017441"
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="75017441"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:27:52 -0800
-X-CSE-ConnectionGUID: TtF0JP5YQZuZJT4m+Kkb/A==
-X-CSE-MsgGUID: 8lRoSVRgTRu3HtsxGc9fxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="scan'208";a="224359713"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:27:51 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 4 Nov 2025 01:27:50 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 4 Nov 2025 01:27:50 -0800
-Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.19) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 4 Nov 2025 01:27:49 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RK0MTKFzHjrv7SwyrObqGOdVam4hsbIieKE1APjloHq2sO1rEyzWSRjBPQNvuW63ErYxDt7UDpFIF6f0uVC6Tfh1numu3Pl5qSb3/nwYSu/nyMd51GYbKQwvkVOP9Aexz3kzQ1hDmyrQ4ls/Bl0JYPt5T+VoZs1wu2fVmu64gh6GMZpGjleMsGq+qIkv5JJVLQiJwq4eL2AGC3fxVbdoRMEec/94RHILke1Ai4dQ3nKwaJc+iVrDOg7JT2gB/sKi5l/5gkxXsHiD2fwnevfe103w9FWm3HzsD5USkfPzCPmpj1qa0Sa/e8KrteAx9HD7tvcuEr/ioEnlLZaNg64xHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=APEJPYmw8dbnHrxrwCfV3/d0lC1ptXl3oXuA091M4Xg=;
- b=TDjT7nPtGnum3pMj+aVqKk34ixY4+EsL0TCYDfLLV8jsU3lOkcinxoQxRoiFcicPKi06SyHIB1i5ObUq8OAycx7YVD0xcQnjTLn8bNcQOM8sW+z9ylItZ5DV7eoThmovDPfwM+kcuLBdQ6uH192M1D/RTj+eenVT25RUiRNYERALEdP7O3CFY3fB0Z4sA9np+zxN4yUSYLVQRXv5N40mG51Fipo36Lg7JTFMGQt9VtnPfRo4S9eTRrGUpajjbC3eSGDgvpu9p7vFpsMWwTB/yz+05NpsQPe1ufa326zGvK5UGHrsOqruvoPyausti3meRxn9VfXWSpuTlLV1ur5qaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SA1PR11MB6568.namprd11.prod.outlook.com (2603:10b6:806:253::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
- 2025 09:27:47 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 09:27:46 +0000
-Date: Tue, 4 Nov 2025 17:25:44 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Ackerley Tng <ackerleytng@google.com>
-CC: <cgroups@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<akpm@linux-foundation.org>, <binbin.wu@linux.intel.com>, <bp@alien8.de>,
-	<brauner@kernel.org>, <chao.p.peng@intel.com>, <chenhuacai@kernel.org>,
-	<corbet@lwn.net>, <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
-	<david@redhat.com>, <dmatlack@google.com>, <erdemaktas@google.com>,
-	<fan.du@intel.com>, <fvdl@google.com>, <haibo1.xu@intel.com>,
-	<hannes@cmpxchg.org>, <hch@infradead.org>, <hpa@zytor.com>,
-	<hughd@google.com>, <ira.weiny@intel.com>, <isaku.yamahata@intel.com>,
-	<jack@suse.cz>, <james.morse@arm.com>, <jarkko@kernel.org>, <jgg@ziepe.ca>,
-	<jgowans@amazon.com>, <jhubbard@nvidia.com>, <jroedel@suse.de>,
-	<jthoughton@google.com>, <jun.miao@intel.com>, <kai.huang@intel.com>,
-	<keirf@google.com>, <kent.overstreet@linux.dev>, <liam.merwick@oracle.com>,
-	<maciej.wieczor-retman@intel.com>, <mail@maciej.szmigiero.name>,
-	<maobibo@loongson.cn>, <mathieu.desnoyers@efficios.com>, <maz@kernel.org>,
-	<mhiramat@kernel.org>, <mhocko@kernel.org>, <mic@digikod.net>,
-	<michael.roth@amd.com>, <mingo@redhat.com>, <mlevitsk@redhat.com>,
-	<mpe@ellerman.id.au>, <muchun.song@linux.dev>, <nikunj@amd.com>,
-	<nsaenz@amazon.es>, <oliver.upton@linux.dev>, <palmer@dabbelt.com>,
-	<pankaj.gupta@amd.com>, <paul.walmsley@sifive.com>, <pbonzini@redhat.com>,
-	<peterx@redhat.com>, <pgonda@google.com>, <prsampat@amd.com>,
-	<pvorel@suse.cz>, <qperret@google.com>, <richard.weiyang@gmail.com>,
-	<rick.p.edgecombe@intel.com>, <rientjes@google.com>, <rostedt@goodmis.org>,
-	<roypat@amazon.co.uk>, <rppt@kernel.org>, <seanjc@google.com>,
-	<shakeel.butt@linux.dev>, <shuah@kernel.org>, <steven.price@arm.com>,
-	<steven.sistare@oracle.com>, <suzuki.poulose@arm.com>, <tabba@google.com>,
-	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, <vannapurve@google.com>,
-	<vbabka@suse.cz>, <viro@zeniv.linux.org.uk>, <vkuznets@redhat.com>,
-	<wei.w.wang@intel.com>, <will@kernel.org>, <willy@infradead.org>,
-	<wyihan@google.com>, <xiaoyao.li@intel.com>, <yilun.xu@intel.com>,
-	<yuzenghui@huawei.com>, <zhiquan1.li@intel.com>
-Subject: Re: [RFC PATCH v1 11/37] KVM: guest_memfd: Add support for
- KVM_SET_MEMORY_ATTRIBUTES
-Message-ID: <aQnGJ5agTohMijj8@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <5a4dfc265a46959953e6c24730d22584972b1179.1760731772.git.ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <5a4dfc265a46959953e6c24730d22584972b1179.1760731772.git.ackerleytng@google.com>
-X-ClientProxiedBy: KU2P306CA0060.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:39::9) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459AB148850;
+	Tue,  4 Nov 2025 09:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762248756; cv=none; b=dLSDiaR8YZJMTnmcj1JfNmw2z7RzJQLD+ozrjOHaN1EViSOb+/OAjgMJpuTvSEfNFfRxZejvP6shSQdZWj/xS6ifZvuHSOuKuQBzKmWSMAUNkRFwBWRMIyowZ0WpIOPn6EMdV0tuUNpy7sMn+SAaIHQ/od1irNWJgK7qjH9Tpa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762248756; c=relaxed/simple;
+	bh=f3h/qhd09WaSZff3ymCwrZpZFHI86hjV72WO6mUiuTs=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=uzTreGqsUF4DD6C6yl/JcuqtsfmDuMOqvVOs2pixrXLApoEBhzZ5hZ5LtDp/vACuInbJ97czxPTSBXw39WxBbzgUJjds5BBXpLbTmVw+UoYmXzIWWsdx4mW2Eee7gBJPVQ69LofFfj9aNMVzdTVh3/ffvvbG3DN9BeZMijIoLI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=aJMhqfm7; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1762248442;
+	bh=QnxkGLAVdtCmIzgdscTcRsL1d6z1DKqXbgm/QSULunI=;
+	h=From:To:Cc:Subject:Date;
+	b=aJMhqfm7w0r+rxWwO0AwJ+DPCBGML6o58W8fnmWNhAv2ckb7jVv3HdhCdvidNmzaA
+	 mSKw8r1t6ckhG30KxIughJK8qgjOAHYBV/kOf8A/VvzZb3aCdri7ErsxUPqpoHVCho
+	 1ECNkQv+JQin9+bpL0+gZ1dd8EhtG7hy2EsFql+w=
+Received: from meizu-Precision-3660.meizu.com ([14.21.33.152])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id 6D48AA7D; Tue, 04 Nov 2025 17:27:20 +0800
+X-QQ-mid: xmsmtpt1762248440ti4r6f9r4
+Message-ID: <tencent_78FC2C4FE16BA1EBAF0897DB60FCD675ED05@qq.com>
+X-QQ-XMAILINFO: NFre1Y6i/tRCYfxGf8zLohgpt8VpGCDnN270xJycvvSkX5wTTw9Gy4D7ljvpLq
+	 cqqkm2Yb+szJGD/JG1RO8bwVCeywUferGocF5PCkMjpmnKFpE/zMnUouxDU87H1ka0nC3nBSi3SQ
+	 07g4gmPUSJwA9pkEHRq4cohiYiHu9xACkQXhKypE0x94TRueAH2GPTdi02phZ49NoYuFCgCmEoWn
+	 AU/wk2sj0D9lcT9t9kcI+sH03+dkIGeXOMc/znfBmV2o4S4MHEw3MiyRZK3sLLH56Oh8yAOv6RjY
+	 j5UEUV8BT7+AhH8MjJNKZqHu+0DYZL0Lbj2NbrzGv5KJDE+RYBtlmWxPalJ9Bp39FjJDni9JCkqI
+	 wCK7EG4b4LHC2DubUR6kBG3Po8zk6dex24+9K1uNrn3UUBIjc9tgdcEpCNG8LGDDmt/hb4Rttwld
+	 /CTKYy/4y0Ce9Ice4g0iXIuwa1O5ze81mSH2frqBSXD6g1Xc3FaBWeeyf4wf3vBRKJ6Y5Vw4tyMa
+	 1rngLtIp5F23BxWGkgyJ3bnT1jaBVZD9oYL5vFIJBeOUBRuKWx5B9bDNFkemc/Q8bE9yaqmvzjuk
+	 vDQhuJbfhsBSpRrZ2YGuLJDk2PYnVtGW1O+kQ8aedhOzItm+8AFVK/xYlAQescCkTdlqiPj0etOL
+	 NQ0pswSx1TbI6ip1YhHi5UtH7V7vWRs+huUL07O43RQiPzWIubtvveTT9CRdwSx/N5YgryvX8gx9
+	 bBtYmET/sMWxOpHikWaR67Ufx+evx3wpOBH3Znxw8LidhCfzNG1kQuIhhVLwVjZps8gjBwMvyD1/
+	 pEWHhSQMk08Lj22PprjEXX3xMkuNlKD3b+EJy2zW3kcGszTOh9q3ZcR4fVF1EQXW6dZQEU87zv7L
+	 KgxCjM/lrsmIB7QTZFrbFniDI9n+cL31WJlWXS7cEdeKespr0ISnaiWimQ3rQhy9hXKPpL9QGrhH
+	 LI0KZqdvSHNQOehnTEpYCU4KsYNYUmCMfhbrePzTj8dm70rLo2a+V7TlSchOCA5u4lFk1+lI2H3r
+	 4gRwSifv/rc9BHxp7BOUue4perpiZ/LbJurtNG3+1gzcb4at3T0GKswvq8v5iUb/P3drnwfQSH2E
+	 zn/6kaUq3X610iM7OOj4yqankHUQ1v+acvc1wsiY/4pYAroHY=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: minchan@kernel.org,
+	senozhatsky@chromium.org,
+	axboe@kernel.dk
+Cc: linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	licayy@outlook.com,
+	Yuwen Chen <ywen.chen@foxmail.com>
+Subject: [PATCH] zram: Implement multi-page write-back
+Date: Tue,  4 Nov 2025 17:27:17 +0800
+X-OQ-MSGID: <20251104092717.2658029-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA1PR11MB6568:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e3446ce-c399-4550-e293-08de1b846a28
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WytMEsmHQtu6Ngp3HqJY6i3FJF+vakmagB7KcbRqdsS1P9CDieVQBr5wikr3?=
- =?us-ascii?Q?cGJIBNOabf2Vxip1wSSbY1qpdU4nvrxX9bhKNgsAvDejhb/jBuLKN7NQfudV?=
- =?us-ascii?Q?pyjqX4aYOoOlgHiuv3j8u9GyROmPR+SPfWsELNw3YTZRQxfPZNpUGIbaUTFf?=
- =?us-ascii?Q?x5RjoqDCNmGmNqjVMZ6OV4crLq35un7i78/NoCVlSu2n7T86hpIxGSChqmVB?=
- =?us-ascii?Q?qKN25Vt1BeRv1FMn3dGJEDy486/cLTJnvBCMJPD/cP4JDtKletFaQxl2QpR6?=
- =?us-ascii?Q?VmNHPGCGMaBkTOZk976BjEuHull+8nSzzP3wEMbGXjVCa79AugvneDgzHCFH?=
- =?us-ascii?Q?i0jmkN+30XNu1YhUqvHQzVPDnmdjhhPzuOGbYDtVWMKEXj+FVHXVszczScRP?=
- =?us-ascii?Q?XYMa2U92e+zN2jWBMyaAI+SiwfRJFGDKaB/8EoABh/FHwFsxQaq8VoYuAtcg?=
- =?us-ascii?Q?VUZk0N8zBNhoR323rq5YrcLOdastykDSFhvecy9Pdg8soJMwhJIsmCcr5j09?=
- =?us-ascii?Q?gVMIf5rGxN31WcPxY5sqf0CMtlzuKYrHsu9iqJ3G/en55otklyABz/kZHUMh?=
- =?us-ascii?Q?yFzo7fh4f3NxBcMAdDJgya71HBoJnY+Mf19NZmLiMmzKKqZ1d0wGz3D2r8/v?=
- =?us-ascii?Q?2d5i/AturD3N9UEIHi1xsEowss0gjJKvYlw+kwgn8v5X8TGQdC8RjUyEt1rQ?=
- =?us-ascii?Q?+J7+LB3NFS5X3PhH6OVwBKKK2tkUuE9HgGjDHjjxA0bfb2jfGOuyjEY5+j+a?=
- =?us-ascii?Q?oM+fQ0JoqRHc3hJx/fGTIaZKn8slkhlu+OBbYV8EQKeHvMBjEFyr2qL6tIac?=
- =?us-ascii?Q?/GKXKtCDcH3KhALfw99/ki1nn089nh1JhTvNY1/oosCEBjs6jkF7/o3MiuQX?=
- =?us-ascii?Q?SJNLbcDMSkve513Cbwapy5W5cX3ar6u3vp9sIVwt1xmTtX7wPKOtDd9dtyQC?=
- =?us-ascii?Q?dPl6QXVyjhPaXQWn7D+w4pFzKSMkWoAK54TRp39qMoL+qkO48ed0fPiU1znp?=
- =?us-ascii?Q?6UPS4UMsBZPK8oeAUbHP8WzniJ3fhrVauO4xykeJE9KMzK/wGNkJOEPwODVq?=
- =?us-ascii?Q?iCBOKUgSV6Gkb2nvjKeYcMpuGKxYxjzBl2skuLchW0wQh+TjbvG4y36GlE9e?=
- =?us-ascii?Q?spr1F/x1erCuMBIGrYX2ZoVQtsIm3UryoK81BYfswwdz/0dH0Mid9QDm6gA+?=
- =?us-ascii?Q?fiHveuFKO4sXFI452eMs0GqNkXH7EwocNmhBkHy/HNu0o4P5UKj8fW+KJ8wE?=
- =?us-ascii?Q?gmI6oQhD99ZPZO+KpVCmDlAH2P/hSawTHnFy1tyc96F2G8cRNBRe2kCEvEfH?=
- =?us-ascii?Q?mwk86wq6xY7+NvtZJKXs+HdqlgdO/2kgfnihICzvrOOD3QIt2OfubVv5wk9v?=
- =?us-ascii?Q?bXniVmULbQIejKsGiZsTBF08h1uMlraaYIv0LIUrUdHw036j0WK8TfpxZvLm?=
- =?us-ascii?Q?mBr56Rvssvlz/P4At9Q5VtNI1KvpWDbx?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LFuOFfALRCu35WOxLAJgQDDelNUsHTu2l+tMD57Ya0FGzuacPS84uccOP10m?=
- =?us-ascii?Q?2jxXP3Y8uXaKx0zrkzVrUL3ykPyTkeFlthQ/XWfWcym/AomYzuX1LG9Rjwcm?=
- =?us-ascii?Q?ZbK/HRGFbqCy0goKhuAPtO29n1tlFWX6d3DQEHIC3+oRQJ5SNhMjCZ70r2TJ?=
- =?us-ascii?Q?5hcjvf0BTS7NVrz6BkYO0nQ5GhksS7q5GHmejh+GBZ5LFJLjIRDFgl8bqxWK?=
- =?us-ascii?Q?6/tsswk57GlYqdO52WhJT4kuxSdDWzu2pC1uDUq1GkKjBHWwk4wohNtx0+6c?=
- =?us-ascii?Q?Ngo/LeesxL9NqXY079AWvThz8ln3Vj7M+cAkggK7O+GwpBLh6QiHlh2jstIp?=
- =?us-ascii?Q?qfu4ivODcDDqCsW7EwrIFl/7Dj/G2vu8H7E430PWE9jR7eVkVCdSeKVANXU5?=
- =?us-ascii?Q?SgWDVgKWKPOxmzUb2R/9TBGBkyeDwyxFZegQvERWEerIWrHN9D8PhQfpepQN?=
- =?us-ascii?Q?BXMqRlaN/7TeP8SDWH4CAyXYF/1wmHc52b3ekkQzVf/vDPYP8CXYIMtTuxnB?=
- =?us-ascii?Q?3nGSzqtCbygPFirX6L1GlRRMSVrGic4qmpiOnIVMnYxtJh8N/iY12uMyB+9j?=
- =?us-ascii?Q?9XUAg7sWZIXtMyUxngi9sjxHy5lh328FeNDATmfvx45kgA6RBAAxTzmzMRah?=
- =?us-ascii?Q?RAIZd8eyQMnqWqqBgM87S3V2e/nafBQbYW+9tUwCrZb3iXgypsb9SYgqM89X?=
- =?us-ascii?Q?1NMhIkbXgeXDDKQWJ3lYgLc3ZM8q1pqXWVMp6mhmjY0NvB93IxnNkbdks3xv?=
- =?us-ascii?Q?tpn7Yz5nW5hJg+rjcr4mgOCm274x1/QvUuzwMNbcsU+RsNS/3WDj855DJaEI?=
- =?us-ascii?Q?TKFnsrai0+b9wuS5gOBkNGAuNXkiBUz9M5E9vF+QryiytcZk125orQfKxrmx?=
- =?us-ascii?Q?KlXk1qz+o2TzeszA4qHEA2zqR7ypmeMVDYZ89uZ2+3tUHRRaUFTSPtEzZJyq?=
- =?us-ascii?Q?tsyX0fKD1/sarY9p6qXJtSj2RdMX4kYkD4HE1QyWi8a8xoGCgxxLEm8Vnnzj?=
- =?us-ascii?Q?uduEakcK5Xex7NDpUeWVqTO7+Q4JddAHP+Ku1hjUT2v1yZw1OsbAEj+mW6Sg?=
- =?us-ascii?Q?CBXZQCh2hAV3qxiPxofS7WCibq6vZIrZOuiQTNN25KRoUgzbihR6k1dcWMyM?=
- =?us-ascii?Q?OIi0FoOalLGdmFpZGlmACvSttvOXRz1X2xm6viybXrBewzZmbAEB93WFI4Sm?=
- =?us-ascii?Q?i95gSZcoTz28Hpnj67FxbugE4ENAv0x/jlitZ7VD8X8n1RjaC0TxrG55czrZ?=
- =?us-ascii?Q?2MJbt755bu7iIjLVL7/xStaW7biXAfPNDEOcGxU+n4s2eK2X4fXwCTwUJW4G?=
- =?us-ascii?Q?keFqCTc8U2nHnSAOfhCCfU0rplTqzT9yeoWx2e3R8hMS1Frjdy4Uv7gRXieJ?=
- =?us-ascii?Q?5yMz0kpMX4KbcztzCaFgVHJxOQCE8xrrH9TSJmFxcmSM+30RoTXjWmwQ3jLf?=
- =?us-ascii?Q?ReVuJSjJN8aWq3xBIm5335beyjfaS2jmiNtc9F+Ry2W1N6mbsqacpaRK9G0z?=
- =?us-ascii?Q?eJZKlG6E+yosGUspyqpQvxwV7kb+PKyJ7M6a/M+f796lxfPkyM6kV9pUOM+w?=
- =?us-ascii?Q?cLti8W7bQGv9HbT7GKS6XtDFKgz2BPkZ/zbudI6g?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e3446ce-c399-4550-e293-08de1b846a28
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 09:27:46.7700
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MLuR+onqznu7U13VtIZcxSDC/R+FfC/rynMFKjUob/3aVv4QCGLJ9Cer1dILsPBUOLPGpn6QaCQqi/RDT+QL6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6568
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 01:11:52PM -0700, Ackerley Tng wrote:
-> For shared to private conversions, if refcounts on any of the folios
-> within the range are elevated, fail the conversion with -EAGAIN.
-> 
-> At the point of shared to private conversion, all folios in range are
-> also unmapped. The filemap_invalidate_lock() is held, so no faulting
-> can occur. Hence, from that point on, only transient refcounts can be
-> taken on the folios associated with that guest_memfd.
-> 
-> Hence, it is safe to do the conversion from shared to private.
-> 
-> After conversion is complete, refcounts may become elevated, but that
-> is fine since users of transient refcounts don't actually access
-> memory.
-> 
-> For private to shared conversions, there are no refcount checks. any
-> transient refcounts are expected to drop their refcounts soon. The
-> conversion process will spin waiting for these transient refcounts to
-> go away.
-Where's the code to spin?
+For block devices, sequential write performance is significantly
+better than random write. Currently, zram's write-back function
+only supports single-page operations, which fails to leverage
+the sequential write advantage and leads to suboptimal performance.
+This patch implements multi-page batch write-back for zram to
+leverage sequential write performance of block devices.
+After applying this patch, a large number of pages being merged
+into batch write operations can be observed via the following test
+code, which effectively improves write-back performance.
 
-> +/*
-> + * Preallocate memory for attributes to be stored on a maple tree, pointed to
-> + * by mas.  Adjacent ranges with attributes identical to the new attributes
-> + * will be merged.  Also sets mas's bounds up for storing attributes.
-> + *
-> + * This maintains the invariant that ranges with the same attributes will
-> + * always be merged.
-> + */
-> +static int kvm_gmem_mas_preallocate(struct ma_state *mas, u64 attributes,
-> +				    pgoff_t start, size_t nr_pages)
-> +{
-> +	pgoff_t end = start + nr_pages;
-> +	pgoff_t last = end - 1;
-> +	void *entry;
-> +
-> +	/* Try extending range. entry is NULL on overflow/wrap-around. */
-> +	mas_set_range(mas, end, end);
-> +	entry = mas_find(mas, end);
-> +	if (entry && xa_to_value(entry) == attributes)
-> +		last = mas->last;
-> +
-> +	mas_set_range(mas, start - 1, start - 1);
-Check start == 0 ?
+mount -t debugfs none /sys/kernel/debug/
+echo "block:block_bio_frontmerge" >> /sys/kernel/debug/tracing/set_event
+echo "block:block_bio_backmerge" >> /sys/kernel/debug/tracing/set_event
+cat /sys/kernel/debug/tracing/trace_pipe &
+echo "page_indexes=1-10000" > /sys/block/zram0/writeback
 
-> +	entry = mas_find(mas, start - 1);
-> +	if (entry && xa_to_value(entry) == attributes)
-> +		start = mas->index;
-> +
-> +	mas_set_range(mas, start, last);
-> +	return mas_preallocate(mas, xa_mk_value(attributes), GFP_KERNEL);
-> +}
-...
+Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
+Reviewed-by: Fengyu Lian <licayy@outlook.com>
+---
+ drivers/block/zram/zram_drv.c | 214 +++++++++++++++++++++++++---------
+ 1 file changed, 161 insertions(+), 53 deletions(-)
 
-> +static long kvm_gmem_set_attributes(struct file *file, void __user *argp)
-> +{
-> +	struct gmem_file *f = file->private_data;
-> +	struct inode *inode = file_inode(file);
-> +	struct kvm_memory_attributes2 attrs;
-> +	pgoff_t err_index;
-> +	size_t nr_pages;
-> +	pgoff_t index;
-> +	int r;
-> +
-> +	if (copy_from_user(&attrs, argp, sizeof(attrs)))
-> +		return -EFAULT;
-> +
-> +	if (attrs.flags)
-> +		return -EINVAL;
-> +	if (attrs.attributes & ~kvm_supported_mem_attributes(f->kvm))
-> +		return -EINVAL;
-> +	if (attrs.size == 0 || attrs.offset + attrs.size < attrs.offset)
-> +		return -EINVAL;
-> +	if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.offset))
-Should be
-if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.size))
-?
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index a43074657531..85ef07455eda 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -734,21 +734,125 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
+ 	submit_bio(bio);
+ }
+ 
+-static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+-{
+-	unsigned long blk_idx = 0;
+-	struct page *page = NULL;
++enum {
++	ZRAM_WB_WORK_ALLOCATED = 0,
++	ZRAM_WB_WORK_COMPLETED,
++};
++struct zram_writeback_work {
++	struct completion *done;
++	unsigned long blk_idx;
++	struct page *page;
+ 	struct zram_pp_slot *pps;
+ 	struct bio_vec bio_vec;
+ 	struct bio bio;
+-	int ret = 0, err;
+-	u32 index;
++	unsigned long flags;
++};
+ 
+-	page = alloc_page(GFP_KERNEL);
+-	if (!page)
++static int zram_writeback_complete(struct zram *zram, struct zram_writeback_work *work)
++{
++	u32 index = 0;
++	int err;
++
++	if (!test_and_clear_bit(ZRAM_WB_WORK_COMPLETED, &work->flags))
++		return 0;
++
++	err = blk_status_to_errno(work->bio.bi_status);
++	if (err)
++		return err;
++
++	index = work->pps->index;
++	atomic64_inc(&zram->stats.bd_writes);
++	zram_slot_lock(zram, index);
++	/*
++	 * Same as above, we release slot lock during writeback so
++	 * slot can change under us: slot_free() or slot_free() and
++	 * reallocation (zram_write_page()). In both cases slot loses
++	 * ZRAM_PP_SLOT flag. No concurrent post-processing can set
++	 * ZRAM_PP_SLOT on such slots until current post-processing
++	 * finishes.
++	 */
++	if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
++		goto next;
++
++	zram_free_page(zram, index);
++	zram_set_flag(zram, index, ZRAM_WB);
++	zram_set_handle(zram, index, work->blk_idx);
++	work->blk_idx = 0;
++	atomic64_inc(&zram->stats.pages_stored);
++	spin_lock(&zram->wb_limit_lock);
++	if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
++		zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
++	spin_unlock(&zram->wb_limit_lock);
++
++next:
++	zram_slot_unlock(zram, index);
++	release_pp_slot(zram, work->pps);
++	work->pps = NULL;
++	return 0;
++}
++
++static void zram_writeback_endio(struct bio *bio)
++{
++	struct zram_writeback_work *work = bio->bi_private;
++
++	set_bit(ZRAM_WB_WORK_COMPLETED, &work->flags);
++	clear_bit(ZRAM_WB_WORK_ALLOCATED, &work->flags);
++	complete(work->done);
++}
++
++static struct zram_writeback_work *zram_writeback_next_work(struct zram_writeback_work **pool,
++	int size, int *off)
++{
++	struct zram_writeback_work *work = NULL;
++	int i = 0;
++
++	for (i = *off; i < size + *off; i++) {
++		work = pool[i % size];
++		if (!work->page)
++			continue;
++
++		if (!test_and_set_bit(ZRAM_WB_WORK_ALLOCATED, &work->flags)) {
++			*off = (i + 1) % size;
++			return work;
++		}
++	}
++	return NULL;
++}
++
++#define ZRAM_WRITEBACK_BIO_SIZE (32)
++static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
++{
++	int ret = 0, err, i = 0, off = 0;
++	int work_pool_size = 0;
++	struct zram_writeback_work work_prealloc[2] = {0};
++	struct zram_writeback_work *work_pool[ZRAM_WRITEBACK_BIO_SIZE] = {NULL};
++	struct zram_writeback_work *work = NULL;
++	DECLARE_COMPLETION_ONSTACK(done);
++	u32 index = 0;
++	struct blk_plug plug;
++
++	for (i = 0; i < ARRAY_SIZE(work_pool); i++) {
++		if (i < ARRAY_SIZE(work_prealloc)) {
++			work_pool[i] = &work_prealloc[i];
++		} else {
++			work_pool[i] = kzalloc(sizeof(*work), GFP_KERNEL);
++			if (!work_pool[i])
++				break;
++		}
++		work_pool[i]->done = &done;
++		work_pool[i]->flags = 0;
++		work_pool[i]->page = alloc_page(GFP_KERNEL);
++		if (!work_pool[i]->page)
++			break;
++		work = work_pool[i];
++	}
++	if (!work)
+ 		return -ENOMEM;
++	work_pool_size = i;
++	set_bit(ZRAM_WB_WORK_ALLOCATED, &work->flags);
+ 
+-	while ((pps = select_pp_slot(ctl))) {
++	blk_start_plug(&plug);
++	while ((work->pps = select_pp_slot(ctl))) {
+ 		spin_lock(&zram->wb_limit_lock);
+ 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
+ 			spin_unlock(&zram->wb_limit_lock);
+@@ -757,15 +861,15 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+ 		}
+ 		spin_unlock(&zram->wb_limit_lock);
+ 
+-		if (!blk_idx) {
+-			blk_idx = alloc_block_bdev(zram);
+-			if (!blk_idx) {
++		if (!work->blk_idx) {
++			work->blk_idx = alloc_block_bdev(zram);
++			if (!work->blk_idx) {
+ 				ret = -ENOSPC;
+ 				break;
+ 			}
+ 		}
+ 
+-		index = pps->index;
++		index = work->pps->index;
+ 		zram_slot_lock(zram, index);
+ 		/*
+ 		 * scan_slots() sets ZRAM_PP_SLOT and relases slot lock, so
+@@ -775,22 +879,32 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+ 		 */
+ 		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
+ 			goto next;
+-		if (zram_read_from_zspool(zram, page, index))
++		if (zram_read_from_zspool(zram, work->page, index))
+ 			goto next;
+ 		zram_slot_unlock(zram, index);
+ 
+-		bio_init(&bio, zram->bdev, &bio_vec, 1,
++		bio_init(&work->bio, zram->bdev, &work->bio_vec, 1,
+ 			 REQ_OP_WRITE | REQ_SYNC);
+-		bio.bi_iter.bi_sector = blk_idx * (PAGE_SIZE >> 9);
+-		__bio_add_page(&bio, page, PAGE_SIZE, 0);
+-
+-		/*
+-		 * XXX: A single page IO would be inefficient for write
+-		 * but it would be not bad as starter.
+-		 */
+-		err = submit_bio_wait(&bio);
++		work->bio.bi_iter.bi_sector = work->blk_idx * (PAGE_SIZE >> 9);
++		work->bio.bi_end_io = zram_writeback_endio;
++		work->bio.bi_private = work;
++		__bio_add_page(&work->bio, work->page, PAGE_SIZE, 0);
++
++		list_del_init(&work->pps->entry);
++		submit_bio(&work->bio);
++
++		do {
++			work = zram_writeback_next_work(work_pool, work_pool_size, &off);
++			if (!work) {
++				blk_finish_plug(&plug);
++				wait_for_completion_io(&done);
++				blk_start_plug(&plug);
++			}
++		} while (!work);
++		err = zram_writeback_complete(zram, work);
+ 		if (err) {
+-			release_pp_slot(zram, pps);
++			release_pp_slot(zram, work->pps);
++			work->pps = NULL;
+ 			/*
+ 			 * BIO errors are not fatal, we continue and simply
+ 			 * attempt to writeback the remaining objects (pages).
+@@ -800,43 +914,37 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+ 			 * the most recent BIO error.
+ 			 */
+ 			ret = err;
+-			continue;
+ 		}
++		cond_resched();
++		continue;
+ 
+-		atomic64_inc(&zram->stats.bd_writes);
+-		zram_slot_lock(zram, index);
+-		/*
+-		 * Same as above, we release slot lock during writeback so
+-		 * slot can change under us: slot_free() or slot_free() and
+-		 * reallocation (zram_write_page()). In both cases slot loses
+-		 * ZRAM_PP_SLOT flag. No concurrent post-processing can set
+-		 * ZRAM_PP_SLOT on such slots until current post-processing
+-		 * finishes.
+-		 */
+-		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
+-			goto next;
+-
+-		zram_free_page(zram, index);
+-		zram_set_flag(zram, index, ZRAM_WB);
+-		zram_set_handle(zram, index, blk_idx);
+-		blk_idx = 0;
+-		atomic64_inc(&zram->stats.pages_stored);
+-		spin_lock(&zram->wb_limit_lock);
+-		if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
+-			zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
+-		spin_unlock(&zram->wb_limit_lock);
+ next:
+ 		zram_slot_unlock(zram, index);
+-		release_pp_slot(zram, pps);
+-
++		release_pp_slot(zram, work->pps);
++		work->pps = NULL;
+ 		cond_resched();
+ 	}
++	blk_finish_plug(&plug);
+ 
+-	if (blk_idx)
+-		free_block_bdev(zram, blk_idx);
+-	if (page)
+-		__free_page(page);
++	if (work)
++		clear_bit(ZRAM_WB_WORK_ALLOCATED, &work->flags);
++	for (i = 0; i < work_pool_size; i++) {
++		while (test_bit(ZRAM_WB_WORK_ALLOCATED, &work_pool[i]->flags))
++			wait_for_completion_io(&done);
++		err = zram_writeback_complete(zram, work_pool[i]);
++		if (err) {
++			release_pp_slot(zram, work_pool[i]->pps);
++			work->pps = NULL;
++			ret = err;
++		}
+ 
++		if (work_pool[i]->blk_idx)
++			free_block_bdev(zram, work_pool[i]->blk_idx);
++		if (work_pool[i]->page)
++			__free_page(work_pool[i]->page);
++		if (i >= ARRAY_SIZE(work_prealloc))
++			kfree(work_pool[i]);
++	}
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
 
-> +		return -EINVAL;
-> +
-> +	if (attrs.offset > inode->i_size ||
-Should be
-if (attrs.offset >= inode->i_size ||
-?
-> +	    attrs.offset + attrs.size > inode->i_size)
-> +		return -EINVAL;
-> +
-> +	nr_pages = attrs.size >> PAGE_SHIFT;
-> +	index = attrs.offset >> PAGE_SHIFT;
-> +	r = __kvm_gmem_set_attributes(inode, index, nr_pages, attrs.attributes,
-> +				      &err_index);
-> +	if (r) {
-> +		attrs.error_offset = err_index << PAGE_SHIFT;
-> +
-> +		if (copy_to_user(argp, &attrs, sizeof(attrs)))
-> +			return -EFAULT;
-> +	}
-> +
-> +	return r;
-> +}
 
