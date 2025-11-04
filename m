@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-884762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97EEC310AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:45:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5612CC310AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 13:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2E6D4E9868
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1162C4204A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 12:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC35212542;
-	Tue,  4 Nov 2025 12:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E631F1513;
+	Tue,  4 Nov 2025 12:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDXsodId"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Ei/a/lA6"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C215789D;
-	Tue,  4 Nov 2025 12:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762260335; cv=none; b=PRjdfvARjRGbfgavrobj5iog1F/zB9xIXlTdlAHfuky5XUVumso6JxZsl2ARmESQba+ethnjsWc5pT9hUujDCQ7K/mS95KI/K43WyzOBec0FzJjEnEljkb9wnWR649Q65T/Q1nG4aRQ6Xw4bXES82HbiB0QxnSVvLDK82Z3PKsA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762260335; c=relaxed/simple;
-	bh=weQp7YKscYs55DPdc8KYB4FS7Y2EgyNmky01+EGG6e8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=U0vrDeTUBh9eDI/pWnq4darTbm2N5VDU9Sn5t9yuGnAbzMQQjAiNTUTqYYXMlCpVXnqLC80CVT4vBmmiHAkTmtiSAkFLljvxVGaL8iLiizfA+SCR2200xtodYlmrEWi4/YqzRkKCpQepEZAyaQYcXn0oTfW40NKP7eADwKDN15c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDXsodId; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2758C116C6;
-	Tue,  4 Nov 2025 12:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762260335;
-	bh=weQp7YKscYs55DPdc8KYB4FS7Y2EgyNmky01+EGG6e8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=kDXsodIdVRsdEPRidfCu4meBFHuWVJB963Qpg7kdaOaSj8Xf3hAGgWZP4fYnbJ8Am
-	 G1Ccxljaitngi/zvAIWlQgf5KlvbWiz6eVUSFRJ8YrtuOqDddmlH2vhwHdsDyvjq73
-	 Nl+eAvVMMhzQlbVlUQJYq4IKpbuwE0HdHrqkYEZzRMxRtrQve4lAsW3LCbuO/7agsj
-	 LYpiUYfaNUBcLtZUfgk4QJ3nC7Z8p0/vlq4tVr8rwfDUsDT2DAYPTQTHtWbrbS2/jq
-	 wiL4FogITtIb76ocYSMVC+Hn1UTAaBAozJu9mKS7Gj7c//ZoHh8DFLWAoQdAjEAyNP
-	 q/Fpt+1gteHrg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
- linux-kernel@vger.kernel.org, Daniel Almeida
- <daniel.almeida@collabora.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Will
- Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno
- Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, David
- Woodhouse <dwmw@amazon.co.uk>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Joel Fernandes <joelagnelf@nvidia.com>, Ryo
- Takakura <ryotkkr98@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v13 05/17] irq & spin_lock: Add counted interrupt
- disabling/enabling
-In-Reply-To: <20251013155205.2004838-6-lyude@redhat.com>
-References: <20251013155205.2004838-1-lyude@redhat.com>
- <20251013155205.2004838-6-lyude@redhat.com>
-Date: Tue, 04 Nov 2025 13:45:20 +0100
-Message-ID: <878qgm7yqn.fsf@t14s.mail-host-address-is-not-set>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65514CA4E;
+	Tue,  4 Nov 2025 12:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762260389; cv=pass; b=fafjJNzM4hfqgtuQswkMZSTglXPjucGW1Rbv/cq0oZAlnVMIGjkeYd9A7KrkLgc3KpGCDFgnv62jVMMEVtGcAfS71vh4uSUkApD4FiRUlaeuBUbqKzvf/9k96PK53ZOJ23z883Hd9Gxj6ateNU1/Y25kgaVN4iuHQtU1Z0zeh/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762260389; c=relaxed/simple;
+	bh=2oAR6ncZXk23aiYjvazgP8Am0wyhI111b4liQP4g/yA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0eVFgABXSIWLhOFShWAw0AeKv4Qg9ivEQB7nJ3QIrwJbMJaDbO++NCHn2Pzii/88eM3Z5Jdt0oJCXD9ik3c5rgz4PgULcLQmgtl1t+5AMzbkjWXLz5zE9UOCPeM9glorK6nYO6h6MnDECgusCHxZHPkQZ3rKWonCTAiNj4Id0w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Ei/a/lA6; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762260360; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d6BEUv02+O96FugBx8Dp8Q9sbM9LDy4ELpi92W09WGguY39v7sYZb7iI6rCXfWHmUkLgAQ5NRu0ho3FBgfqI4KftRrI9TPiR7RW9s9OVKHUdREXgszi3c/uLPt0L94XsAxv33gUE8risF1kZ4V+0cWQltsfHcT5NdOC0EUQ4wqc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762260360; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=f/tqjFFzKGh+Rl0E2XWAumu2bPWdxjKVkXS4gNXPK6w=; 
+	b=YIFMBQ7TppXcsUMDn9youjb9gOzjzbDhPx9v6fhcn8QIb5+5zEY/oCOqrO3dJDE9Czs3gJUKoxT9t39fj+mxUL8kr4wV8cJOfEvM2GJvzsfprnMwzFxr7wFf6EapebBmah8jLNJtBjh2Ppetqk7Hl1E26pdtMbtxBlTFt39LqJ4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762260360;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=f/tqjFFzKGh+Rl0E2XWAumu2bPWdxjKVkXS4gNXPK6w=;
+	b=Ei/a/lA6vMWtgnHLrza6oyHgTCfkFHGhqI1Ds+2lxs3a92m7R8anv9IkO3f02Zlk
+	/Kt1GyCVBGwbiPFu6m06W6uUp4GmmPrL8lblbi/L/640QiZCP50eLE9gFMCL/OEfgNq
+	S/UsZLF9hs/pJieZ9/k89n4aKfrxJSrEx5PN72+Q=
+Received: by mx.zohomail.com with SMTPS id 1762260358951359.41079397626913;
+	Tue, 4 Nov 2025 04:45:58 -0800 (PST)
+Message-ID: <5ce483e5-7384-4d63-8dac-8050c2bd5930@collabora.com>
+Date: Tue, 4 Nov 2025 15:45:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: synopsys: hdmirx: replace use of system_unbound_wq
+ with system_dfl_wq
+To: Marco Crivellari <marco.crivellari@suse.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ kernel@collabora.com
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20251104102048.79374-1-marco.crivellari@suse.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20251104102048.79374-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Lyude,
+Hi,
 
-Lyude Paul <lyude@redhat.com> writes:
+On 11/4/25 13:20, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> 
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> This patch continues the effort to refactor worqueue APIs, which has begun
+> with the change introducing new workqueues:
+> 
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> 
+> system_dfl_wq should be the default workqueue so as not to enforce
+> locality constraints for random work whenever it's not required.
+> 
+> The old system_unbound_wq will be kept for a few release cycles.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> index b7d278b3889f..da6a725e4fbe 100644
+> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> @@ -1735,7 +1735,7 @@ static void process_signal_change(struct snps_hdmirx_dev *hdmirx_dev)
+>  			   FIFO_UNDERFLOW_INT_EN |
+>  			   HDMIRX_AXI_ERROR_INT_EN, 0);
+>  	hdmirx_reset_dma(hdmirx_dev);
+> -	queue_delayed_work(system_unbound_wq,
+> +	queue_delayed_work(system_dfl_wq,
 
-> From: Boqun Feng <boqun.feng@gmail.com>
+Took me a minute to find what "dfl" stands for. Would be great if the
+name was self-explanatory as system_default_wq. Even then, not clear to
+me what's the point of this remaining, the system_dfl_wq naming feels
+very obscure compared to the explicit system_unbound_wq.
 
-<cut>
+Could you please explain the logic behind the new naming? Doesn't it
+create more confusion than remove?
 
-> diff --git a/include/linux/irqflags_types.h b/include/linux/irqflags_types.h
-> index c13f0d915097a..277433f7f53eb 100644
-> --- a/include/linux/irqflags_types.h
-> +++ b/include/linux/irqflags_types.h
-> @@ -19,4 +19,10 @@ struct irqtrace_events {
->  
->  #endif
->  
-> +/* Per-cpu interrupt disabling state for local_interrupt_{disable,enable}() */
-> +struct interrupt_disable_state {
-> +	unsigned long flags;
-> +	long count;
+AFAICS, right now system_dfl_wq duplicates system_unbound_wq. Suppose,
+instead, the default wq could alias the system_unbound_wq.
 
-Is this `count` field dead?
-
-> +};
-> +
-
-
+-- 
 Best regards,
-Andreas Hindborg
-
-
+Dmitry
 
