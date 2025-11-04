@@ -1,93 +1,138 @@
-Return-Path: <linux-kernel+bounces-884618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B34C30977
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA2FC3098F
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF93F18C1851
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E855189E84C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A68A2D9499;
-	Tue,  4 Nov 2025 10:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B4C2D9EE3;
+	Tue,  4 Nov 2025 10:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yhd1zxS+"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+qO87oL"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F55C2D3221
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A312D9EC7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762253361; cv=none; b=dJU+htzYX3eAAvFG4Seh53TN4gSA2XZn3YORVVftFkOZlc2T1RDG6DbIPFwnzQNc7XVjZm/VoY0SD17JgAb9pmEZT1LUShH/ejOXk+B1f3Ih89tnFdFwEK45mm59yYQXx/vYGwQRMFgk4YScAQO3DVJD4f5uNocx/Ok4dxp0bVM=
+	t=1762253382; cv=none; b=CCZq2AC7ctqJ1HG2tmonyK+2W6s102K8BWW/fY86QZFwDUdGUddBFb9urRImyxOn2vOTt7EYsztG3P73bwh6k1vZuJ37dQLKEr2j0dGbQyZL5Ea3tbxARJUmNEl5n4OqUYMXUQ8L3QGE5o8n3e8OQK2CLCGTupCWoicd47x8yro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762253361; c=relaxed/simple;
-	bh=b0BzzEG91TswTEXmzbYZVFA9oLh7/AzirHzn30K/PzQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A8AoXKM/vl24YNJUIceRau2KoQrW+6kdA8WlkyiWChgN6XGv9A8KP0wKr5b5YakKjs3ey7cmIhb4EjHV04ZPB3kakNq6tTMVoT9hICDrTB17Yfi5vQHzbG3z8oej4j5usGP4V//lcwWw3R1txgq1lKjuPXq2yiM0y0IV6UZqTu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yhd1zxS+; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E3972C0E608;
-	Tue,  4 Nov 2025 10:48:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B5127606EF;
-	Tue,  4 Nov 2025 10:49:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D477D10B50BDE;
-	Tue,  4 Nov 2025 11:49:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762253357; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9I3vy0iA37ZZNq9rWs96vtcIs4h7b1D8KsBmAVcjis4=;
-	b=Yhd1zxS+6ZDfh4/Tb+QML8+c9q8VCHLOLBGY6ShFepYAhmIdF+arb/sK2tWC9H755aMImn
-	oHVrAYxAjDEw+/KyvRGEcgw1wuIsDy+QciFyw5fpQvS0yzxhV24ItMfLNjNOrJLYcJjtsd
-	+P1zo5wKjmZPiULRG74V6vYT2g8z26QOYkyqJD4eNgkWNdSSdnLWlQgfD8wx734R9cVgYd
-	fawujTKNzYYdvrgkI1dWiwfuVFHlPQKCYwVvXJ3rHurYu3c5rDZ+sfVmcHPPNow3aPsfT+
-	j0p1AIUvY4ihpgW9WK43d+nY1oJ8u1ik6tYqApMKFRMwvHNRieSiIuhjMxY7BQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>, 
- Harry Wentland <harry.wentland@amd.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <aPtfy2jCI_kb3Df7@stanley.mountain>
-References: <aPtfy2jCI_kb3Df7@stanley.mountain>
-Subject: Re: [PATCH next] drm/vkms: Fix use after frees on error paths
-Message-Id: <176225335371.410618.7512653404131520222.b4-ty@bootlin.com>
-Date: Tue, 04 Nov 2025 11:49:13 +0100
+	s=arc-20240116; t=1762253382; c=relaxed/simple;
+	bh=ak9HRSabsPSc2sAYhp/DgmsudFPRzOz/MW27WLeWYw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gSPKj54bDNZ9Jyh8C/ACSdIqSLxbGUtOc0J45Qwm332k7C3uE6nzUdmc+oLU+BB4at0A/dkFRMvwY+WSpArLKvjPW6d3hP2FjfZBI2AH1+vuSvpjfyYJ0o5ghiD5HDm4Vl8F/RHmasFrpCFRreDhP8Tmd0pT0066clNakNSwX7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+qO87oL; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63f94733d6cso3160263d50.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:49:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762253379; x=1762858179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ak9HRSabsPSc2sAYhp/DgmsudFPRzOz/MW27WLeWYw4=;
+        b=o+qO87oLjqt1HGXCIT4G0ktzVOXrDixA1IfDAkhH8tKdcYu8J/FZgETOWz7u86zZcf
+         eey/jBIFshN5cltJ8pU4Gddp0f3/yLDIvZJNFKWWCh1ryqBiMtud0/QEuKwNAzv/lmaD
+         roVZD/SMxZgWvHZHk5sGceJG0dMvtXwWeZu1DZ0+P/WNyP4azho7/BnyNwYxlQIDs3f1
+         YYXLe2xWD+g2Mvd33nlfAkZEu8qhpOUw6akene0TqCxEfmAjMq8X1YZevYK5atHeFIR6
+         AX98O9A6FOlGDbCbiLCaxFwngFaxQfOHNZhWcbFT0SO9FVlJURbAONLbtj9bMJCdkbg+
+         gZqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762253379; x=1762858179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ak9HRSabsPSc2sAYhp/DgmsudFPRzOz/MW27WLeWYw4=;
+        b=kUljeZUiw9Wo1UGz4cxrsy5Cw+nOTGZA4aCDOtqC++w4gRumQkE4oKtgh6UhEwnaCu
+         f+xACz++SNGFoFkfa48OW6QXggcKWTkb41EpvhEOPTB6UvxBgYcAE3Yt9CoojYrEjw2D
+         +h9lUGudVCLgiqP3IaLnT1jmDSYZDCkAc2a/9ztaRAkh2QQT7Odu9nOLXLi1MdC9Z7bT
+         Iq40ebM5C5SXSLi+3FZbfrZYzCMQSoW+su1lJG8+p40roEaHBlMpL3EFu0++LwNgZGnV
+         KiixG3p7bkc0wxYxY5Lfy3exikkz8CxbAn21MfmhLNpGqRc1SoKH6CVoBAxqGYLADAd8
+         d+Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVswZd2+pflvNxdmY/lTtqOoHM4cQ1Su3DkzTzXt2VWxfxXFGUZX6aCS1YR29cB3QAtvsfWr6Ls+ZYUHes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd1ek6hM68EQ/lCh07J6sM6vs6Qk2lShinF/ncnp6lGgX3E0f7
+	JAsQ/SBRvqbkaEuy0hVF69UmPkjMGQuJNAq2GEsHYOxlL8IooWm+/GKKyCiIzZ5PKnSWOX/pOdW
+	BesoSfJbKQ8i3l7Wf0IbShj4ilszXCn50eBGCnwbEGA==
+X-Gm-Gg: ASbGncuw8i0uQaUikAso5nVLD9rCkf5ykSlcFjnNKrpRH4Sjy3fygE+k8ugMZ7+L6Zz
+	2x7KQWF/7w9Sllf2UEAdlheAlBxCb22eHHa3GF20r55LxICkxIgRe2D9YpdoJ/NOYmh/tkEMDSV
+	8W+AT65jkK+Y+bv2gBEfxIkvGpevHjPXV+9x5PDhTfI4i59btC4thFjwGX/FjRyExznaiHAX1VG
+	dXn/gAkQuokcCsVfv0OpuiPxEEaSYWgf8IX+qYLJgGexublsRjpk06zqkR/
+X-Google-Smtp-Source: AGHT+IFkRk12Uz8wpzuhpMIHhTXXbZyl3DIW8r7FnluskO/7yYtfMjAEvExmUGloPG75YUmDMmv3zjusyYiPuTnpWEU=
+X-Received: by 2002:a05:690c:6ac8:b0:786:68da:3f4b with SMTP id
+ 00721157ae682-78668da4023mr149747947b3.31.1762253379370; Tue, 04 Nov 2025
+ 02:49:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251028061345.3885632-1-gary.yang@cixtech.com>
+ <CACRpkdYdQa4=4JvBWJcRv0X_A0PnkQpZQQ8NTPzF0ntdt9qX=A@mail.gmail.com> <PUZPR06MB5887C2D161EA5CB13A41462EEFFAA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+In-Reply-To: <PUZPR06MB5887C2D161EA5CB13A41462EEFFAA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 4 Nov 2025 11:49:20 +0100
+X-Gm-Features: AWmQ_bk_lIuQg0K_Adlxvvq0mVAjsPYqUJ9ljmVmC85MrC3marOjlEWPUkD0cB0
+Message-ID: <CACRpkdZtQkbGnQtb3DZf1XOVpbZgnBbqZD3kxEuCCAS4Pm3AGA@mail.gmail.com>
+Subject: Re: [PATCH] Pinctrl: core: export pinctrl_provide_dummies() to fix
+ build error
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>, 
+	"sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 29, 2025 at 4:35=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
+rote:
 
 
-On Fri, 24 Oct 2025 14:15:23 +0300, Dan Carpenter wrote:
-> These error paths free a pointer and then dereference it on the next line
-> to get the error code.  Save the error code first and then free the
-> memory.
-> 
-> 
+> Generally a device may has two states: default state and sleep state. The=
+y are included in DTS file.
+> So DTS has two nodes, one is for default state, and the other is for slee=
+p state. When the device works, select
+> default state, but select sleep state when the system enters str.
 
-Applied, thanks!
+What is "str"? stand-by-retention? (Sorry for my ignorance.)
 
-[1/1] drm/vkms: Fix use after frees on error paths
-      commit: f9e46acc172138a472ffb3bf0270a0b156a77411
+> There is two pinctrl controllers on CIX sky1. One is used under S0 state,=
+ and the other is used under S0 and S5 state.
+> When enter str, the system enter S3 state and S0 domain power off. So the=
+ pinctrl controller under S0 state is also off.
+> The settings for sleep state are loft and make no sense.
+>
+> But if we remove these settings, the pinctrl can't find sleep state and c=
+an't change state when system enter str.
+> When resume pinctrl, pinctrl core may think state is still the same as be=
+fore. So the settings can't be applied
+> as expected.
 
-Best regards,
--- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+Aha!
 
+> To avoid write these unused settings in DTS file, we have to use pinctrl_=
+provide_dummies() interface.
+> Do you agree our schemes? What's your opinion? Please give us some sugges=
+tions. Thanks
+
+I think it's fine to use the pinctrl dummies, I will draft a patch and
+send so you can ACK it.
+
+It's fun to get the whole picture of how this works on CIX silicon,
+it's a new way of doing
+things with two different pin controllers so I haven't seen this before!
+
+Yours,
+Linus Walleij
 
