@@ -1,102 +1,103 @@
-Return-Path: <linux-kernel+bounces-885176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AEAC322F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:59:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E821C32336
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:02:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FBD18C3CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F2E461190
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215CA3346A7;
-	Tue,  4 Nov 2025 16:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA20285060;
+	Tue,  4 Nov 2025 16:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcBgnSw/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVd3Vahi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AD52561AA;
-	Tue,  4 Nov 2025 16:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8181EEA5F;
+	Tue,  4 Nov 2025 16:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275546; cv=none; b=P+MMBbnTan74XZPNNSyUY82mZTVt7aYt8RGJEhy2So3unZk7WQFi7P+wWvKG7RbXPTyD3lpHyyyeQFBkcBsvfQky6qykixgPjchMAg+ca68WEcJZG6a+uFIJ8eIVDoVdoQecmAibsIaU+X7HAuBY6a80bvJAeRKuyHBt62JRcJc=
+	t=1762275584; cv=none; b=bmV04884gE4eVCvFra28dLMNaghdDD1UXre3HchlvYQ3auorcPeSlZL9Jmi+NUJKX7cMal+m7RDubuvtit7dfi02jJlw2/uUKzedNbf/1dS4bdAuMiwhv7oxfL2e0lir15EsCkcwkKXCrB9HjZLlu75lSA4qFZw3x9pmuZ+tSt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275546; c=relaxed/simple;
-	bh=5OvhgX2ZcGJZgpWuKUOlu57Ix1dT2ZJ9FFr7fu9FnqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JX1Oo9y0uGEKXclquDjwsSJ8hH0A9YVNx3eJ1E/8ttbgl6mftmjz0gdCUCjU0SClLAiwk1CGF4/fdnaToaJ4yyinDpK52LAyzuj9a/+BdoPuyFadcm9A8Vog/+0NhlXF7O6FMA/uiwo1H4eV5nDMZw9QqyawMUyHHEKV5y2wUWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcBgnSw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACDB5C4CEF7;
-	Tue,  4 Nov 2025 16:59:00 +0000 (UTC)
+	s=arc-20240116; t=1762275584; c=relaxed/simple;
+	bh=liDKhL8I6Oh+iBAaj5hJnFAk7TegfbjxHh776vLYF3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhHSlqV7DUBGbkaCRN1mw0afym/3FJibeifE9B8zOiYdaSQ2PAzcCegRfgVeIMNCXg8D0MMSBZthsPkuInho0jf3m35F6K/K3alItb7zgenl1wxBElN/5ddZm7hRdRsTwn/tUhOYTpOFFWlaQMucLD1xO3h6tqKp0Y5a8Vxmm7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVd3Vahi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E77C4CEF7;
+	Tue,  4 Nov 2025 16:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762275543;
-	bh=5OvhgX2ZcGJZgpWuKUOlu57Ix1dT2ZJ9FFr7fu9FnqE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JcBgnSw/dvvHQyJqEsR+k1Y+GMGvDHc/fGreeGgeNkyBht0e5vhEkY7CUjYeqU2M+
-	 sFAScvFQJMEnet98BpcNkvIETvX1YZ65GXJs6C3DofODAWzp1OsYVFAbgZV+AcM4YX
-	 SQQ4fYgR3aVWSSNQCwP3u3obCpdm+021o48Ll5JrOIgTTfQXiFYp1GBKXZx57BJAh/
-	 ajueMAmAEjLZS5vVkgf6dMHlsMZfOtenipZEa3KZzswNvOP8H8aNtNbAfoKW9teDOL
-	 YqezgTkpzuSZNe4kj7rio/BnlL1+YcgCzGmFGCcjCx/7CilI/VnacAlILw7tJDtHaJ
-	 dWODRvBAJ/9LQ==
-Message-ID: <ee324fd3-bd1b-4255-9899-a0e1a58ad1c2@kernel.org>
-Date: Tue, 4 Nov 2025 16:58:58 +0000
+	s=k20201202; t=1762275583;
+	bh=liDKhL8I6Oh+iBAaj5hJnFAk7TegfbjxHh776vLYF3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lVd3VahiNwMK1NszwWQfb4OSkjpKwVnVYF/rMCVAWMykzPVt9ntRJj20ljsQDZXRr
+	 tIy62PerUc4evsGl+FB28FYMr07Ln0fFkG3is/3/1aijeDVSqvyW25qDOoeb52TOm3
+	 81EGhVMY9/iYFvS4vpkUJWu6KG6kv10cD42TQVQPqcj7KZp12yZHsvcJ234FAGIva+
+	 pW5nUmsuCemKjbn3L6wTfrZA6CgNeY8R8w7O1VDEvZ6aLDqAzKYMWuNgXKp/j6smGH
+	 clvfjk5sPw3vIbt9draoWPaF17qVGq1KZ2179ZWB2TsoGMX6ZUOifeSZrkKf/ZWcIN
+	 frLhHGvR4UWbw==
+Date: Tue, 4 Nov 2025 08:59:43 -0800
+From: Kees Cook <kees@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v5 1/8] net: Add struct sockaddr_unsized for
+ sockaddr of unknown length
+Message-ID: <202511040858.9084011BB@keescook>
+References: <20251104002608.do.383-kees@kernel.org>
+ <20251104002617.2752303-1-kees@kernel.org>
+ <20251104091536.29d543f2@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/14] firmware: qcom_scm: Remove redundant piece of
- code
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
- <hYkrnjg1UIGrFwo6STFGKeRf--qSPLYkFuXckQNSLhqo75WL969Gk2ZA_gwICZpY0aIMpTCt3WLrO_0aHhqWxA==@protonmail.internalid>
- <20251104-kvm_rproc_v6-v6-2-7017b0adc24e@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251104-kvm_rproc_v6-v6-2-7017b0adc24e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104091536.29d543f2@pumpkin>
 
-On 04/11/2025 07:35, Mukesh Ojha wrote:
-> Remove some redundant piece of code to save some machine cycle.
+On Tue, Nov 04, 2025 at 09:15:36AM +0000, David Laight wrote:
+> On Mon,  3 Nov 2025 16:26:09 -0800
+> Kees Cook <kees@kernel.org> wrote:
 > 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->   drivers/firmware/qcom/qcom_scm.c | 2 --
->   1 file changed, 2 deletions(-)
+> > Add flexible sockaddr structure to support addresses longer than the
+> > traditional 14-byte struct sockaddr::sa_data limitation without
+> > requiring the full 128-byte sa_data of struct sockaddr_storage. This
+> > allows the network APIs to pass around a pointer to an object that
+> > isn't lying to the compiler about how big it is, but must be accompanied
+> > by its actual size as an additional parameter.
+> > 
+> > It's possible we may way to migrate to including the size with the
+> > struct in the future, e.g.:
+> > 
+> > struct sockaddr_unsized {
+> > 	u16 sa_data_len;
+> > 	u16 sa_family;
+> > 	u8  sa_data[] __counted_by(sa_data_len);
+> > };
 > 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index e777b7cb9b12..26969bcd763c 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -650,8 +650,6 @@ void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
->   	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
-> 
->   	ctx->ptr = NULL;
-> -	ctx->phys = 0;
-> -	ctx->size = 0;
->   }
->   EXPORT_SYMBOL_GPL(qcom_scm_pas_metadata_release);
-> 
-> 
-> --
-> 2.50.1
-> 
-> 
+> I'm not sure having that example helps.
+> At a quick glance it might be thought of as part of the change.
+> That particular example also has all sorts of issues, so any such
+> change would have to be very different.
 
-Please fix the commit log.
+That's fine, we can drop the example and the sentence introducing it. If
+a v6 is desired, let me know.
 
----
-bod
+-- 
+Kees Cook
 
