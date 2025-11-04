@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-884655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1161CC30B3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:19:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1893FC30B4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 12:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F86542158A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA283BA91A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 11:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254952DEA8C;
-	Tue,  4 Nov 2025 11:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590F52E6CDA;
+	Tue,  4 Nov 2025 11:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODIrewYx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkcbnEER"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0F82BE631;
-	Tue,  4 Nov 2025 11:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B557B2C0F7E;
+	Tue,  4 Nov 2025 11:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762255100; cv=none; b=CUHRt0VuMfk200TdMueHB3nzZsIlCSku3DIkY04baAx3BFBXkmmA+35XNImZy9McjzI2z0dRjZiCTS9pT6oRD8ErooB+gBpZLq6S87VMNqWLFz8DwY7FIENez5PWouXrBxyg038x9XtUP2n79K6CgvZ8sfC30GfRHf4EuhKUOhg=
+	t=1762255284; cv=none; b=pK/2EqNrdyUX8AjXu84CCwWhTPrTNf+ldAXCMMur0bV3rFSRCY83GNNVOY8V7KDKo0YoaWX7WhCg940VCxCP4+K42AVGHJPJolyCCuze/YsNXYqX/FtFaD+/o7mgEdqdB3tj3fnWpaugpzZY1kDzanOgiEKz3z934/a1Os8+o0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762255100; c=relaxed/simple;
-	bh=fj2SbyxXmiKjzW12lEreh+2amPcsYkSH41R8tYD90kA=;
+	s=arc-20240116; t=1762255284; c=relaxed/simple;
+	bh=LiZJY/3wCT03/9ZLDXQDP1aBdRc5YScmWSbm14KOsPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxTi9oGLkiBcBiHVmaysa51pcNwh0agEC+j8RXjw0qjJx81BTJaLiV4FQFzQIaQuHMvAfpBgVDd856oD4nYsluOrsMtFt5rc/fPGgcPcNvNB/IiBOzXsPp0vgRKR6RS4QOt0GwmCRZdGkYMaecjaZpX8B9BojaiH61q889Kcn+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODIrewYx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B317C116D0;
-	Tue,  4 Nov 2025 11:18:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8RS8gqma4Me5x6Ybn8VR6k1C05FLIXq2+B2G08EAPyfttFEJW+8klY11+l+yD5uCEA3adCIv/GVPbe0F564Uy7eh955X4smix0NN0xK8vtEVlrtQBzFJub4UK4UerXSv5/T3SuxfhuBISDSUfsnWahEWMHO2Rxe0D5t18SbznM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkcbnEER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227C2C4CEF7;
+	Tue,  4 Nov 2025 11:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762255099;
-	bh=fj2SbyxXmiKjzW12lEreh+2amPcsYkSH41R8tYD90kA=;
+	s=k20201202; t=1762255284;
+	bh=LiZJY/3wCT03/9ZLDXQDP1aBdRc5YScmWSbm14KOsPc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ODIrewYxNyso5c2rt/VaDZXqgu/poQAMspD22EfeDrIJbVyn4oYhMRhMiLZ3qAgQM
-	 646/Ez+EWV9QVIhoNBw2pROpZDEOiCXfsf1Lw9CMtAdzROmReaKwBQitI8cITstrBR
-	 R2YkRwgMMe/di/6klhrmqWO8JOxOKDx8Y00TCmnERpBx2G4GCyXGA3TgsPV3CRKlRS
-	 Xn54IYZ1CudQXLGmYh9j0tPVxXQOVFvgz+dc15piV3SyStL/Hca+G7MDF2oRq2Xrx6
-	 qUw7DKCEB/AzoBgG6M/YY08dYwEZl+S28yzseIKCiFYiI0Jc/6O5VSUSNH9YVBneL6
-	 bF2yNORuo+3FQ==
-Date: Tue, 4 Nov 2025 12:18:17 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] pwm: mediatek: Remove unneeded semicolon
-Message-ID: <3sgj7ykavhum3svp657khyp3udqrov7nuzvuaaneu6fo7wlxys@uyhlvrl7lnqi>
-References: <20251105214847.1279520-1-nichen@iscas.ac.cn>
+	b=KkcbnEER5owyw8/sqVExh1KJpmqHnUwWMApK/ti/BnI0pXk4aMwuM8DhLAax35FmO
+	 rzGK+PmtqpC5ZHd8n1BQZ6KXsv48K0FBpiETLoB9QYcr7wVBFDJYXNMzroFXd8h+6f
+	 VK4Q+I4KQhdRfr9OMouXlAgS6Og/gKCg6EyTc8yxE4dvNbzZh8lMS0ZIYiTGqOJtvo
+	 LbN+GAw5ptKl9bbpzSqoOhfbgwbrcA+pK4sSgBpNpeYpkfmzlLzz23xIFVgbKMBQah
+	 +632D6PJf0to/Qn+MztvmBizvmyI4jIJF9tjtqecJ0JR0AaEUCywX+ENJgdv7zgShs
+	 SJ+Njqy00S4aw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vGF6M-000000007OP-1nwh;
+	Tue, 04 Nov 2025 12:21:27 +0100
+Date: Tue, 4 Nov 2025 12:21:26 +0100
+From: Johan Hovold <johan@kernel.org>
+To: =?utf-8?Q?Rapha=C3=ABl?= Gallais-Pou <rgallaispou@gmail.com>
+Cc: Alain Volmat <alain.volmat@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Subject: Re: [PATCH] drm: sti: fix device leaks at component probe
+Message-ID: <aQnhtkIG9-A7yH-H@hovoldconsulting.com>
+References: <20250922122012.27407-1-johan@kernel.org>
+ <aQTtlvoe96Odq96A@thinkstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fc7lriu56xblnb2a"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251105214847.1279520-1-nichen@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aQTtlvoe96Odq96A@thinkstation>
 
+On Fri, Oct 31, 2025 at 06:10:46PM +0100, Raphaël Gallais-Pou wrote:
 
---fc7lriu56xblnb2a
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: mediatek: Remove unneeded semicolon
-MIME-Version: 1.0
+> Le Mon, Sep 22, 2025 at 02:20:12PM +0200, Johan Hovold a écrit :
+> > Make sure to drop the references taken to the vtg devices by
+> > of_find_device_by_node() when looking up their driver data during
+> > component probe.
+> 
+> Markus suggested “Prevent device leak in of_vtg_find()” as commit
+> summary.
 
-Hello,
+Markus has gotten himself banned from the mailing lists some years ago
+and even if he is now back with a new mail address most of us still
+ignore him.
 
-On Thu, Nov 06, 2025 at 05:48:47AM +0800, Chen Ni wrote:
-> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
->=20
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+I prefer the Subject as it stands since it captures when the leaks
+happens, but I don't mind mentioning of_vtg_find() instead if you
+insist.
 
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-=2E I added a reference to the commit that introduced it and fixed the
-author date assuming you're not living in the future :-)
+> > Note that holding a reference to a platform device does not prevent its
+> > driver data from going away so there is no point in keeping the
+> > reference after the lookup helper returns.
+> > 
+> > Fixes: cc6b741c6f63 ("drm: sti: remove useless fields from vtg structure")
+> > Cc: stable@vger.kernel.org	# 4.16
+> > Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > ---
+> >  drivers/gpu/drm/sti/sti_vtg.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.c
+> > index ee81691b3203..ce6bc7e7b135 100644
+> > --- a/drivers/gpu/drm/sti/sti_vtg.c
+> > +++ b/drivers/gpu/drm/sti/sti_vtg.c
+> > @@ -143,12 +143,17 @@ struct sti_vtg {
+> >  struct sti_vtg *of_vtg_find(struct device_node *np)
+> >  {
+> >  	struct platform_device *pdev;
+> > +	struct sti_vtg *vtg;
+> >  
+> >  	pdev = of_find_device_by_node(np);
+> >  	if (!pdev)
+> >  		return NULL;
+> >  
+> > -	return (struct sti_vtg *)platform_get_drvdata(pdev);
+> > +	vtg = platform_get_drvdata(pdev);
+> > +
+> > +	put_device(&pdev->dev);
+> 
+> I would prefer of_node_put() instead, which does the same basically, but
+> at least it is more obviously linked to of_find_device_by_node().
 
-Best regards
-Uwe
+of_node_put() operates on OF nodes, but here it is the platform device
+that is leaking.
 
---fc7lriu56xblnb2a
-Content-Type: application/pgp-signature; name="signature.asc"
+> > +
+> > +	return vtg;
+> >  }
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkJ4PYACgkQj4D7WH0S
-/k4PGQf/cEvFbnM8Pdp7I6Y6+Z2EVEtr1DR5c1dnmi1a4/Nk1P8D8V364eyXb7WH
-vmf+iI01U7XBfybzS49Z5EpJyXixcffYr83siyshJK2YADFKV5APYMlQ9w1uiC1k
-pIA2gMyqGxk6BkgaEyotHKdgX/JTByR9nP2ks4i736D/+8Exu4LA8WHjHc8yd/ht
-C5Zmqe1HnBB7MKlWw4SwvXvXdpU+cYY7pztBsaP8dMdN/dGBc5aafbWvL2YCdQjX
-CeEIyGQ14pUWk+bm8gup5I975XOrYmaIdnGEPmNxC3/1M1xyxfop+LbZ16QsrN9U
-qd6i5iUddF4Fva29kBrfvHMuVDgsFg==
-=XArI
------END PGP SIGNATURE-----
-
---fc7lriu56xblnb2a--
+Johan
 
