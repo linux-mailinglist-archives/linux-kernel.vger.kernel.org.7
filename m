@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-884421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE71C3025D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:05:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5490BC301AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09C4E4F8A07
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:58:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D1ED34E45D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D427979A;
-	Tue,  4 Nov 2025 08:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C36A41;
+	Tue,  4 Nov 2025 08:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FcnvnJJO"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HbfhUsNx"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979B8A41;
-	Tue,  4 Nov 2025 08:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E777D24290D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246691; cv=none; b=NfOezXiw8OEIyff6U86RrFUUiTenEwm/fMNUg3QPYfU5kaagqeUa7/9Nw/plm9xxjhdkP4uv/GZel6PdokyqY+aqRsJvQuZ3tJqt/QnmCsk4uVBBWNYLgoGTP2Uvh0yl0sM2zCL+W8YfaUo1SeE5uYzIcoj3B2AEzgB+sjm8smo=
+	t=1762246701; cv=none; b=KFbj03vj09yqpDtSm8kYJxJI/HW4lel4VCCjpuxAl8ksBSGTMhZSnXVXrvgE8/oQ9Tutf2LsM6CJAkMl3FF0sixFw+B4nJHtHxH+m6yqVdM0F3Un9K03XgtpurPB0Rn1I9Vf7/ayq7gB2s3tE6+DstT3NGYxDD6lawL5myqVjek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246691; c=relaxed/simple;
-	bh=P/AjJRz/CdLEZ4MqDYR4thnIkJGNgnUAUoznYrOg/nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIWVKtSAg9TVbiiNMxfQHS3iSeNNZlP8M3k1hRLqDkbL9HMhS+6iNY0cSAM8aQV05qSSMntvxUXIgZLuqLgCBEJj8GAG/WYNh3SPTeImMB9jYBw+utUPRW3gbgb77/jX10UBq+ZFxcTrpRFyUqVibQWNaLwBPfC0gpdJCpw8pGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FcnvnJJO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=K8mvk5vBxcHAFNc6juyiFWMLoFgbqb6bZHiYWEtQNQU=; b=FcnvnJJOyvaLViID66dl5B+rAa
-	H+pUylzMoeTO7DOnBMfr1DTbmqhKtWLjfJjeseJtwL6lc+ecqeqn23MjsbOyRjaWgelBeGl9y072+
-	221zuPB6b9OIhe3HP6cSRqDIrZ7VMrp5N8RZXrVDG0U4njF0xQneaRYQiFQqTS43Ou/sqmCQiSoY5
-	prJKq/WntFM23ARCST2fE7Z1zQdTQPJ5fZ5qKQ7m53Z2jN835WbLsiKZELzQtSlrqrVGqukTErf7z
-	cp/SagUUNYKIgVuJZolz3Vgi088lP7plAwWVSePijPNeyK/YTqu/uYFGusIz7sH1grtX5iXY+X5qp
-	Z12kpUiQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44012)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vGCrZ-000000001uO-3svy;
-	Tue, 04 Nov 2025 08:58:02 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vGCrX-000000004dk-39Q3;
-	Tue, 04 Nov 2025 08:57:59 +0000
-Date: Tue, 4 Nov 2025 08:57:59 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] net: phy: dp83869: Restart PHY when
- configuring mode
-Message-ID: <aQnAFxSTyo6SofZ7@shell.armlinux.org.uk>
-References: <20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com>
- <20251104-sfp-1000basex-v1-1-f461f170c74e@bootlin.com>
+	s=arc-20240116; t=1762246701; c=relaxed/simple;
+	bh=buj/u/JwTsK5y0POmxcq1Ius3CNuM9gtzbALUFSrW8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GdlsvbrIGPTJToVDw8ryzpdcqfK2Ua1mhVODEQ1zxRaIyT/LEf1zS3UIs0G7vhLaM+VgLE9b1u8wwJbu8OxGTatEemdnlDG7CVfPNvZqYLnS3TJLNx7rG3hXDlIGax4fhp30wBXAjcUg4S6kT65w7Ctq1K4V8MfxtsY2G+hlCUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HbfhUsNx; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5942a631c2dso1737592e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:58:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762246695; x=1762851495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=buj/u/JwTsK5y0POmxcq1Ius3CNuM9gtzbALUFSrW8c=;
+        b=HbfhUsNx7WiPmSs50B/3UQusuoWhnbFg1ZMUimQS7BJukDSHFOx2cHxYd352dPmkWN
+         NYnFMAb8Nktqb88EtycgByVZJXBrPGunT+qGggwRwx8S18+93NIh+/+IJgyItKAMELXA
+         pswDEdMmwZ6Kj21fKIB6OFxDLWJ+h4BOesF75k5cglY6XSTxo83Wpbwz98IZdLILz1u/
+         CWVzghb7YJSfZWg2VXZKZZ9Mzosa+3HbekaBcc0PsYASXLbr9iO3O6WrX2hN8WolemMe
+         /KJWyus7iro7QE+/5hHS/+KDb7ief1vArrpX7ID7/DpFvM3qt4r3tIsfwxWbRiWiiFE3
+         mIvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762246695; x=1762851495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=buj/u/JwTsK5y0POmxcq1Ius3CNuM9gtzbALUFSrW8c=;
+        b=jvfCEzZ+me68fWE/0gEtY0VV/kqjAI4X/SgqKXCzOwLWtcc3tAzx8UhtpH4rN1mLrM
+         nRQ6mfmm5XhuI6+6i+rlC6KC29qAToMPvKbyjEUQepYLaxz2H5X2KvwJIefDZ5Jy79Ey
+         yaneyHodZcIm4c/Gc5mb1X3evmCGoqMYrZ8DQxhmu79puGVR6VAY0Ap/0ePzPODIRNce
+         woNvI5a7AVgVu+3iaLGfgGEmublLKpazAEAzNcczZv+ODrQvhpH0xyp2Ct8G0btuYWhP
+         CNY8FP7XACP19LKWKNNLiB6cQZg6Fll0Vt3YKtIRJq3yXHbGppmUM2tVPJ4niX2m+umP
+         ESzQ==
+X-Gm-Message-State: AOJu0Yx59fSRTOiIjcw91WcCRDljqzmC72/lfzVhWJkzjdDFOREktasl
+	7R34sKQiqLhL5EM4GXZXUkKiU98CTw+VSrjZ3EJRhKPGz4puDIMNWfgxAhskkUyCiJ9UQ0olcWx
+	e/p3X1R7RxbGhLtZDkFuhGgJx+z/qtonilxDF/DF2Sg==
+X-Gm-Gg: ASbGncuQ0pMVWlgD5ewjXCoQVRRM/8cy/WLBOnGd+BvUumhh28pp3tiQ+LFbJ6/27Qx
+	5BgCpWoD8GJow+E1vFUnXVf4ucbfBXBz5fNqJWLniX1tcLdPB/Vz+wEiOywwuymcQkZ9tixJX/k
+	ikACtJJVUHaB97E4G7DD1TWcdw+LZs5Tk8EpWUS7JmfZYeb1tI0x3UWQcCQ+3iGFddOR3qyzjDm
+	FWRWklZ2VclFAUcZ4WrYetsR9snzbQDWY1BmrrvOQTPp7e1i2Pdb1cwiakfR62wiVYRLUTX0Ci7
+	EdV/sxZ9+YfW5j0c0A==
+X-Google-Smtp-Source: AGHT+IHzS8Tb36mlQDGSAgmbKE6QuvjHT2fmPiFvH3mcNUc3pQA3uN0hwqn5NtJVSNk2qDHMPfgxHaf6Ti5/HemNdSE=
+X-Received: by 2002:a05:6512:3c92:b0:58a:fa11:b7a1 with SMTP id
+ 2adb3069b0e04-5941d519925mr4899489e87.24.1762246695081; Tue, 04 Nov 2025
+ 00:58:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-sfp-1000basex-v1-1-f461f170c74e@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20251030154739.262582-1-marco.crivellari@suse.com> <CAJZ5v0gV_6+3WC6eLe3nGagx+NbmqsOFtDGFnBhyrU=H+_=+dQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gV_6+3WC6eLe3nGagx+NbmqsOFtDGFnBhyrU=H+_=+dQ@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 4 Nov 2025 09:58:02 +0100
+X-Gm-Features: AWmQ_bluACc7VGij-_FS6w5WYAmOVq2OjWaCef_HeyFB6IM-t2ntxrOoT6rTSWI
+Message-ID: <CAAofZF52vvsH8CS-Bp+q8vFoRWW5jeEsENgtMHBetZMgNinkPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] replace old wq(s), added WQ_PERCPU to alloc_workqueue
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 09:50:34AM +0100, Romain Gantois wrote:
-> The DP83869 PHY requires a software restart when the OP_MODE is changed.
-> 
-> Add this restart in dp83869_configure_mode().
-> 
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
-> ---
->  drivers/net/phy/dp83869.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-> index 1f381d7b13ff..fecacaa83b04 100644
-> --- a/drivers/net/phy/dp83869.c
-> +++ b/drivers/net/phy/dp83869.c
-> @@ -797,6 +797,10 @@ static int dp83869_configure_mode(struct phy_device *phydev,
->  		return -EINVAL;
->  	}
->  
-> +	ret = phy_write(phydev, DP83869_CTRL, DP83869_SW_RESTART);
+On Mon, Nov 3, 2025 at 6:47=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>[...]
+> All applied as 6.19 material with minor tweaks in some subjects.
+>
+> Thanks!
 
-So if dp83869_configure_fiber() returns an error, that doesn't matter?
-(This overwrites its error.)
+Many thanks Rafael!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
