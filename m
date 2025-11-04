@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-884589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD66C30898
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:36:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23947C308BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDC7E34B2CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:35:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1F0134C256
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C774A2D47E0;
-	Tue,  4 Nov 2025 10:35:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BABA29B764
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B842D63F6;
+	Tue,  4 Nov 2025 10:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O+WnJ9Ah"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4CE27E04C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762252555; cv=none; b=IbeG8GZ07MiOc0NLIOKlCSfr8MalYHlupORALqN/vIkuw7ZUurpFIq70RJg/UQPj6LQMhgNLw6MNflXKHGUXRBEwVWPH+hNsGF6LnQG2WHZBGGsCEtxciZx7Q9i3Xc4h4ZZ5KsVGiCueXUL9zjZYEA1C5q2V2pWHffcnefRUQNs=
+	t=1762252647; cv=none; b=l63hDBjm3aAUvBvH6JpEOTgGeoKyIziqi2KVXarjJx9ox+njLErs3D4rMSksISR3e5DreRxPCkSLDP/tJO1mV4DzjJv8tF2i32/imxFvcyVtEBJlSi0iAH5xhea2YhDF2jVpTbPtcFJYxNKSsoKUk9Kq29dD3ihFcLi7RJ2KH+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762252555; c=relaxed/simple;
-	bh=zUIW4Yu3Z7IGJ683BDPXs+nNJDVXffygGg9M/Lf8uzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K6qKG5udBXzgYuADKdOYtQv/dC8taZys7BR4v0xvLCSPvmlmzfpnYFkCuJryzmdWFKxS35dRxPsXWEKyFWPzFSz1/dn8RfrHI0PkHLFbhrIBL93OZ/rWLVYOUVGvXEFTmzKuiq9Pr5y9fvLQysK/HtMkyePFcTjg+VSq6/e43q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 663671764;
-	Tue,  4 Nov 2025 02:35:44 -0800 (PST)
-Received: from [10.164.18.64] (unknown [10.164.18.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 56E1C3F694;
-	Tue,  4 Nov 2025 02:35:49 -0800 (PST)
-Message-ID: <9dcd181a-7058-4fee-83a5-695df77c9edb@arm.com>
-Date: Tue, 4 Nov 2025 16:05:46 +0530
+	s=arc-20240116; t=1762252647; c=relaxed/simple;
+	bh=v8zG2e4TYh8HI28N1gaia3u1IQr0AA8J+GRTSgdfhoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPeZAxcZkgooNBzhuwzPMjWWNjtr9CkY+jmr7jH3b2OA0moiba9uezARclwOSp38xZt5jzxP8EUW6XtW9tHPsZt763pzqsu0fiRyLFbqW+B1XOdk8y9pe7VHAzAKWUXpeYgqYSxO3bqp4V/EnHoGDYduO0LoMOSZI1uyJmZXaPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O+WnJ9Ah; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-47758595eecso1859535e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:37:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762252643; x=1762857443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ne4ZDSlj913IS0afaCeah9/sHQf3Ytf7YNZFUi1jMY=;
+        b=O+WnJ9Ah2VyHBrkKQlkZBmZ1Qre3JWPRNTix2PP2ii8vPWhScYQSmtVfTcLkCQOip2
+         PSBRr6b2d997dBR9BswZ9xNtmlWB3ketx8y54bEKb/iu+kCtP1Vd2ta9u52Hq6z6ughD
+         1B3yWUMwhbeiV5pA82MhkvOfkDWLKTDcq5GeH7YTJeSSh+v7UC2VDX4PS0DOQ/lc0/8i
+         VI3GHV4tfPPSbHQU01cFGypkgSl9UmweoznFO7xnzhKx+SSA3PnnyBqyIh2M1VFB2y4B
+         sh7BfPQLX/uy9qtrTpdW7yhRSp2jeQNwTCcmLoxQoihKN9+o3yzrAQpDiLtXgjkcz4md
+         t++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762252643; x=1762857443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ne4ZDSlj913IS0afaCeah9/sHQf3Ytf7YNZFUi1jMY=;
+        b=SBM++DtUVTZBMudVfiiPohW4/FpAyq0gFXh2yUXQGuYu4xXdqW95+6k4Fen+XnYvq7
+         FEL+DdXEcuBsuZL0uAx28vocgK0/qaWbp6UZh3Xxrx0D+Jho/yZDDsE44ftw/Lm1ZBfx
+         uKRa7LNiee4cTpxoRiM5ocj4P8xlt69gossggsJNpHJQt6WB00ISyEOGUNrKZc+xFUqe
+         VaP9jdyepy7HQbU5TDTA5eb/c6qCjwfzXc19acLHBMzVPZdGtHZOnKMckQdI9vQZgOb1
+         DiWzFzb2bcD42QxsRrVQX0N8WM0n+hE+7m/chq/GIUzBqKexfCLASsFCAn+HHT61wsRw
+         CGfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJomIN/lBX8iEpxa664mm9YMc8yhs1aPWY77xIq/uuZKspX0UMdZIM6JLPF46CnQ3gVYW3D77Zk0iRMvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySNMnAeXOG4EcSHfYR9YA4mkPyC9B6ZlmqqkxccXJCG/5O4KoH
+	D8TorZHX9d6HlHIvZ9f2OpD9kD5rwM9gtAv8Wbs9CbDZl81nkHnNMKHFbLYcDB0P+JE=
+X-Gm-Gg: ASbGncuxHbCbJz0CUQ5by3D/aMsAICRYsj1a01k6Y4aZ1HzuXYUiU9RQ+1oPptRamjl
+	dMWG6G+ZQfXhYHpBvbA0SR0W1Icznqw+gu9k9oG3QXkxAdCjLNq2m9QDQrF/ThWfi3dG/IGoIbI
+	/74hoAIz8Q9buGkt9piwdRp6FSgPSymMyjqXstQ065A0gGdv6MWHyAmfgWUPaV/aXN04/zOhZYR
+	ayROlL3IbcO9kdgz4d0mPaYtQVUyEeLNRrsFfrROa64zkVczVkrh6FUxmQ5zw43bhJk0XQTsdoh
+	Q8Y/g5IcFdTjX7L4LLkJHcetEHh1zFwbDeZf+lSXxFxGmAITofkzImU+tHp/prqdh6KhBi3L4h3
+	wdDj5/Psj9z/AiueNVdF+FDCR//qpDslQ+DkZD4OQtSNknsE8LT0SsRChzpQLgxLW7M8LNT8TKd
+	X5ADFBOjML
+X-Google-Smtp-Source: AGHT+IFf1wOTlsdo8GWYHh8jAMEFl3Fd6ZMSKUjEHUzMaQyfhIP4OVI40+a/WDrXsXYVLl3vLVN/Zg==
+X-Received: by 2002:a05:600d:4390:b0:477:333a:f71f with SMTP id 5b1f17b1804b1-477333af9f8mr83874795e9.17.1762252643284;
+        Tue, 04 Nov 2025 02:37:23 -0800 (PST)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5be4sm3680221f8f.31.2025.11.04.02.37.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 02:37:22 -0800 (PST)
+Date: Tue, 4 Nov 2025 11:37:22 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ankit Agrawal <ankita@nvidia.com>, Aniket Agashe <aniketa@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Matt Ochs <mochs@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"david@redhat.com" <david@redhat.com>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>,
+	"rppt@kernel.org" <rppt@kernel.org>,
+	"surenb@google.com" <surenb@google.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"guohanjun@huawei.com" <guohanjun@huawei.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"alex@shazbot.org" <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>,
+	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] mm: handle poisoning of pfn without struct pages
+Message-ID: <aQnXYsPR7zkV_ram@tiehlicka>
+References: <20251026141919.2261-1-ankita@nvidia.com>
+ <20251026141919.2261-3-ankita@nvidia.com>
+ <20251027172620.d764b8e0eab34abd427d7945@linux-foundation.org>
+ <MW4PR12MB7213976611F767842380FB56B0FAA@MW4PR12MB7213.namprd12.prod.outlook.com>
+ <aQRy4rafpvo-W-j6@tiehlicka>
+ <SA1PR12MB71998D21DD1852EB074A11ABB0C6A@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <aQjy0ZsVq7vhxtr7@tiehlicka>
+ <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with
- debugging
-To: Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
- Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
- <5bb311a5-b59f-4897-b4d0-4e06d7d2b3f2@arm.com>
- <f59e2a0e-1da3-4670-84ee-679c2001f58f@suse.cz>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <f59e2a0e-1da3-4670-84ee-679c2001f58f@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103185226.fea151c58ce7077b11b106aa@linux-foundation.org>
 
+On Mon 03-11-25 18:52:26, Andrew Morton wrote:
+> On Mon, 3 Nov 2025 19:22:09 +0100 Michal Hocko <mhocko@suse.com> wrote:
+> 
+> > > Hi Michal, I am trying to replicate what is being done today for non-PFNMAP
+> > > memory failure in __add_to_kill
+> > > (https://github.com/torvalds/linux/blob/master/mm/memory-failure.c#L376).
+> > > For this series, I am inclined to keep it uniform.
+> > 
+> > Unless there is a very good reason for this code then I would rather not
+> > rely on an atomic allocation. This just makes the behavior hard to
+> > predict
+> 
+> I don't think this was addressed in the v5 series.
+> 
+> Yes please, anything we can do to avoid GFP_ATOMIC makes the kernel
+> more reliable.
 
-On 04/11/25 3:54 pm, Vlastimil Babka wrote:
-> On 11/4/25 6:26 AM, Dev Jain wrote:
->> On 03/11/25 5:54 pm, Vlastimil Babka wrote:
->>> In review of a followup work, Harry noticed a potential infinite loop.
->>> Upon closed inspection, it already exists for kmalloc_nolock() on a
->>> cache with debugging enabled, since commit af92793e52c3 ("slab:
->>> Introduce kmalloc_nolock() and kfree_nolock().")
->>>
->>> When alloc_single_from_new_slab() fails to trylock node list_lock, we
->>> keep retrying to get partial slab or allocate a new slab. If we indeed
->>> interrupted somebody holding the list_lock, the trylock fill fail
->> Hi Vlastimil,
->>
->> I see that we always take n->list_lock spinlock by disabling irqs. So
->> how can we interrupt someone holding the list_lock?
->  From a NMI or e.g. a kprobe->bpf hook, which are the use cases for
-> kmalloc_nolock(). The word "interrupt" thus doesn't mean IRQ, but I'm
-> not sure which word would be better. "Preempt" would be perhaps even
-> more potentially misleading.
->
->> If we are already in a path holding list_lock, and trigger a slab
->> allocation
->> and recursively end up in the same path again, we can get the situation
->> you mention, is that possible?
-> There shouldn't be such recursion in the code itself, in the absence of
-> NMI/kprobe/etc.
+This could be done on top of the series because as such this is not a
+blocker but it would be really great if we can stop copying a bad code
+and rather get rid of it also in other poisoning code.
 
-Thanks for explaining.
-
->>> deterministically and we end up allocating and defer-freeing slabs
->>> indefinitely with no progress.
->>>
->>> To fix it, fail the allocation if spinning is not allowed. This is
->>> acceptable in the restricted context of kmalloc_nolock(), especially
->>> with debugging enabled.
->>>
->>> Reported-by: Harry Yoo <harry.yoo@oracle.com>
->>> Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
->>> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and
->>> kfree_nolock().")
->>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->>> ---
->>> as we discussed in the linked thread, 6.18 hotfix to be included in
->>> slab/for-next-fixes
->>> ---
->>>    mm/slub.c | 6 +++++-
->>>    1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/mm/slub.c b/mm/slub.c
->>> index d4367f25b20d..f1a5373eee7b 100644
->>> --- a/mm/slub.c
->>> +++ b/mm/slub.c
->>> @@ -4666,8 +4666,12 @@ static void *___slab_alloc(struct kmem_cache
->>> *s, gfp_t gfpflags, int node,
->>>        if (kmem_cache_debug(s)) {
->>>            freelist = alloc_single_from_new_slab(s, slab, orig_size,
->>> gfpflags);
->>>    -        if (unlikely(!freelist))
->>> +        if (unlikely(!freelist)) {
->>> +            /* This could cause an endless loop. Fail instead. */
->>> +            if (!allow_spin)
->>> +                return NULL;
->>>                goto new_objects;
->>> +        }
->>>              if (s->flags & SLAB_STORE_USER)
->>>                set_track(s, freelist, TRACK_ALLOC, addr,
->>>
->>> ---
->>> base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
->>> change-id: 20251103-fix-nolock-loop-854e0101672f
->>>
->>> Best regards,
+-- 
+Michal Hocko
+SUSE Labs
 
