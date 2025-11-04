@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-884508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81381C304BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:37:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF90AC3050B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 744EE4E4244
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:36:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FDD42059D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFC2D0C64;
-	Tue,  4 Nov 2025 09:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255FA2D0C61;
+	Tue,  4 Nov 2025 09:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="EYEiNM3E"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="D0rY8gFg"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C77021FF47;
-	Tue,  4 Nov 2025 09:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C551552FD;
+	Tue,  4 Nov 2025 09:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762248974; cv=none; b=tEFHKRn9av+DO5qz3MN3yAMUm23843sxZVFAWg7q997Evt8gEXA2EeleqRWZAs2wV2KGWhpvGqljwH1y1oJnSoeaOwjxU8cvnMrG5y1UWBDZwx4PkeZrHfMPfR9v5jsdGbmfIxTiyY4fq7y8+BAvhUGkDB4wUkl/GBuAj0eO33I=
+	t=1762248880; cv=none; b=q1WcHgNCK85xzNhek3A7136lZwNpG9w1jbKzRXneA3nqsBtESPnaxaiKbzks05PilAg1jXwWBrTmr8QfwedOrAxG7GmdIA347ncnjml/F2isIP3j8nquzeydIWg5EkAw+pgPaEMxrIyGXJ8noUBgSLiy152e3JSaRlQhrUo8N7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762248974; c=relaxed/simple;
-	bh=dRUGXfYeACsEaLRPUhjJcWbtimfoTFK+PgSLMNC6gUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tdXoJrsyNSJHPITDr7kXHoEsHrETpC+Jrr5T47zLk/lt5ALJpiW55yS6LEnWQ7fuLw5djU0uitwQ0tGObmKyvSjPi3IRBWCPQo1oaC3TuRzdcRinYraQu7JwUJbBKAoL1I4+tti651ZkeTtflYG7C2rp/aPKr7+ahdvNgVStvD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=EYEiNM3E; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1762248931;
-	bh=jmGhMAgaBUM0BajBlocMSy6qJhGOcjmpM0oQwDNPRRM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=EYEiNM3EoYmJd9jFxYUQ2cUaTYEifLxpT01cFNWoMVirWK02PdAR3jEq/GJojFDWN
-	 V9Z98w87s+h72UfKKAN2gHDQwr0EyyVUqd2UQ0clEpDogdDaYfh2WNj5Zu+vP1Mcj4
-	 bsuDhcPyrr3/lL+Y5uDhWYDaVXZeRMqK7QTR8cQg=
-X-QQ-mid: zesmtpsz4t1762248911t51d15bed
-X-QQ-Originating-IP: se3KyUxOOCabbjx22pKi04RZr2zGRV6ZOgOzhQpzaeA=
-Received: from localhost.localdomain ( [1.85.7.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Nov 2025 17:35:09 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5451745896443902141
-EX-QQ-RecipientCnt: 7
-From: Gou Hao <gouhao@uniontech.com>
-To: cem@kernel.org,
-	corbet@lwn.net
-Cc: linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gouhaojake@163.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] xfs-doc: Fix typo error
-Date: Tue,  4 Nov 2025 17:34:06 +0800
-Message-Id: <20251104093406.9135-1-gouhao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1762248880; c=relaxed/simple;
+	bh=fEVAyXwFyCE8r5KT4F927V7DbCxgjOnCllkSXe4iing=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JqQ/ekI3lxGy0kcndZbHVdgYdCEtDkIrCkvjhkWJmBDv2Vw+X22wiuN/OeOyQx0xP7O+lHR2Reh5obXuNRfA8nVY4sX/fkmeMQOLVS6zAYdcKGNeYoGpfFkl45qw2ouZlCoayfn1TNzbrCLQC/cX1cji6Z9pmkc2GfAzep5qU5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=D0rY8gFg; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762248869; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=lNLhVwUKGHNYLggea58Uh2dC8gupkSgEBYYu/uld89Y=;
+	b=D0rY8gFgsqc9kIfoXchkwki2/IWkuoWXbQCl0wS5jo19ZgG44j2mR9m6IIeTmOf3DZeyMK4yTySNgNY4AzQGohMAXENtlhMR0Q58hXLHmspikFvP0Twas9gupUESkOdnZTWZH5gaDCg4ZmuktJG85PVcsn1+c6354A7bFz0j2sA=
+Received: from 30.50.185.91(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrgbbAl_1762248866 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 04 Nov 2025 17:34:27 +0800
+Message-ID: <1f9ee237-9d62-4c33-83c3-ce4d9ca9497f@linux.alibaba.com>
+Date: Tue, 4 Nov 2025 17:34:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 0/3] PCI: trace: Add a RAS tracepoint to monitor link
+ speed changes
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com, rostedt@goodmis.org,
+ lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com
+References: <20251025114158.71714-1-xueshuai@linux.alibaba.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20251025114158.71714-1-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: OAv5WZ8gfM/qx/hcYtFNWbd0ImY6K/x+CvPrjM5EzVpWaOT0G4KLkSFq
-	ulaQWkeAdK1fj9fXyF0Z5fsYMti9RCzlJ0bj5lB9mG+gufL1OsXiirLjn0P01M+D5oE9Hnb
-	tW2kIldyIQqryrxNd/VG4Nmr+fiEehBbRe1lB7aEexDNlCi10BweTaCEkd9G4wZc1J5yZXO
-	6Z7bG5en7M/NFrP1YTCWCgR4XQpnhBccsGRGcHkwYieG0yp9BFkSLqctAzqa6Jw56Kfe/Gh
-	qJ8Xt9/6WT9TU3HAbbhEEY5BQrDSUgsz4WD9dOEv1VdmMvTUqh/f91LPC2/BTpNNYsuZPF3
-	BnWalk0TCuZMwdF5M/RhrZwmgo1rQTjC6GcBUUUb8I11Ss8tIRd3OGx5ewJFXuKFi84Wfoo
-	2ppV9LA1QYvtpjAqk6L3QYwb8J+GIi2J/n/+R1Q2UcXLbKLE8YDO2LLVSzoKTCjAQ1G/KAE
-	6JRGQhyd4NYgspjnRY5RRNLGyj+eRRj7+C+36IkXPc3OrDIiVifjUe1Xk82h2lArXbaU/4z
-	QUdXRA3SreA6aObq8KpzKS/9LDPSNlbAwNBHo88B0WOB7WD4cZN64Y5ZW++9t6KxpSgjxw0
-	pswK3uIaue8Bo/RA7mRKJD2lcHiiQ1/kVc38R64DeeKJJ8QgqJMp/fJiLEMb4DEczSQNOIV
-	hzeNjUOlsbwJvPI5unLXJy4QI3gJtrBQbjc0TRpOM7wpgQRwFr/B8OE10Z6Myyu2vm1Z5gZ
-	X64+D3w2IurLNsC9H5iStCX9TDAPOO5e/M5ISgOb3rD7lCv/ch5tbyi57o0XHQF+dAdtVim
-	AZk/pSuPdr2+1CmU3+Ji0LDN7HUtujrUzujZ+M9RagDUaY0a9hzE3hfdAZYNXcFh2ANY5Fy
-	Z87SfI0vRZvDWDO/zToj4Ot1uUhpImuv6dsENTW1uvoGLITlRCr+iCynzLtUKN4G9WdMNkL
-	KimjVrZ/FgcpB53giFE5P6OWfu1WSBpMQ3votbZMWt18JjM8T80tgX5RepVTIBspMQe5kIE
-	jH0+b4C71HsRZ5Jp118sXX8hm+26dgrwW+sIRGwW1p4h6NGLy2bWJKNfdWsK63A9vqJigKG
-	+9RFBdVH8bIwvvYm0WYB99IDOh/n5G5/w==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
 
-online fsck may take longer than offline fsck...
 
-Signed-off-by: Gou Hao <gouhao@uniontech.com>
----
- Documentation/filesystems/xfs/xfs-online-fsck-design.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-index 8cbcd3c26434..55e727b5f12e 100644
---- a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-+++ b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-@@ -249,7 +249,7 @@ sharing and lock acquisition rules as the regular filesystem.
- This means that scrub cannot take *any* shortcuts to save time, because doing
- so could lead to concurrency problems.
- In other words, online fsck is not a complete replacement for offline fsck, and
--a complete run of online fsck may take longer than online fsck.
-+a complete run of online fsck may take longer than offline fsck.
- However, both of these limitations are acceptable tradeoffs to satisfy the
- different motivations of online fsck, which are to **minimize system downtime**
- and to **increase predictability of operation**.
--- 
-2.20.1
+在 2025/10/25 19:41, Shuai Xue 写道:
+> changes since v12:
+> - add Reviewed-by tag for PATCH 1 from Steve
+> - add Reviewed-by tag for PATCH 1-3 from Ilpo
+> - add comments for why use string to define tracepoint per Steve
+> - minor doc improvements from Ilpo
+> - remove use pci_speed_string to fix PCI dependends which cause build error on sparc64
+> 
+> changes since v11:
+> - rebase to Linux 6.18-rc1 (no functional changes)
+> 
+> changes since v10:
+> - explicitly include header file per Ilpo
+> - add comma on any non-terminator entry  per Ilpo
+> - compile trace.o under CONFIG_TRACING per Ilpo
+> 
+> changes since v9:
+> - add a documentation about PCI tracepoints per Bjorn
+> - create a dedicated drivers/pci/trace.c that always defines the PCI tracepoints per Steve
+> - move tracepoint callite into __pcie_update_link_speed() per Lukas and Bjorn
+> 
+> changes since v8:
+> - rewrite commit log from Bjorn
+> - move pci_hp_event to a common place (include/trace/events/pci.h) per Ilpo
+> - rename hotplug event strings per Bjorn and Lukas
+> - add PCIe link tracepoint per Bjorn, Lukas, and Ilpo
+> 
+> changes since v7:
+> - replace the TRACE_INCLUDE_PATH to avoid macro conflict per Steven
+> - pick up Reviewed-by from Lukas Wunner
+> 
+> Hotplug events are critical indicators for analyzing hardware health, and
+> surprise link downs can significantly impact system performance and reliability.
+> In addition, PCIe link speed degradation directly impacts system performance and
+> often indicates hardware issues such as faulty devices, physical layer problems,
+> or configuration errors.
+> 
+> This patch set add PCI hotplug and PCIe link tracepoint to help analyze PCI
+> hotplug events and PCIe link speed degradation.
+> 
+> Shuai Xue (3):
+>    PCI: trace: Add a generic RAS tracepoint for hotplug event
+>    PCI: trace: Add a RAS tracepoint to monitor link speed changes
+>    Documentation: tracing: Add documentation about PCI tracepoints
+> 
 
+Hi, Bjorn,
+
+Gentle ping.
+
+Do you have any further concerns about this patch set?
+
+Shuai
 
