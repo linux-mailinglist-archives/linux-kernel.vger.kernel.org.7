@@ -1,106 +1,107 @@
-Return-Path: <linux-kernel+bounces-884420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCFEC3022D
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:03:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE71C3025D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CBE1889D15
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:58:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09C4E4F8A07
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19992BCF75;
-	Tue,  4 Nov 2025 08:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D427979A;
+	Tue,  4 Nov 2025 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7ZooYB+"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FcnvnJJO"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AE123A9AE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979B8A41;
+	Tue,  4 Nov 2025 08:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246634; cv=none; b=QVzkrnEGTUjKAHkVymrKyXaMN57fFaJeJD41u2I1bI1t0Nb/vIfAT1oQ0Q30ANr/QkqHhVtcNLadTcxwtRU1XfKgRXZlxQeg/UZbT14FZD18Siu7j89F4Gi/RWPPmWOgPEEEuIYkeYqQkGy7ASf2CIff8oigelsjv9RUXEzS7eY=
+	t=1762246691; cv=none; b=NfOezXiw8OEIyff6U86RrFUUiTenEwm/fMNUg3QPYfU5kaagqeUa7/9Nw/plm9xxjhdkP4uv/GZel6PdokyqY+aqRsJvQuZ3tJqt/QnmCsk4uVBBWNYLgoGTP2Uvh0yl0sM2zCL+W8YfaUo1SeE5uYzIcoj3B2AEzgB+sjm8smo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246634; c=relaxed/simple;
-	bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WV6IbQ5hUMlTxsP/YNgvXvJ0iR/VrGm62GyF1PiIeEN2nYC6IpbuEurYFJ10mu6hFmkOkJYXH204vPmem62zFN/tEVmnC42YXb1A9NkNOFWuRZ17ZN2yVTjXrD34tFtMeG5t98HcxbVcBbrLBMCNey2QI1w2OIBPyaWQr0n8S20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7ZooYB+; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso851057066b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:57:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762246631; x=1762851431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
-        b=U7ZooYB+TLZ2U2mSLv+d9MUNvpKaAm3HLw2QEQWr5s4UUjiuB276934Boz0c9arn+q
-         JJ/r9reKNka8uv4GCaWmCjAghPCbgR0XMnd5ruvrgWMI6ZuVkxCmpTFh9fUbsdA37XQN
-         +4cG20g2Vjtn8qIfhN0202ATuSZZAp2dlhiltvzIIRpTk+IgpDLg4V8sHapnW17v5SqX
-         TR/zHsgPRLhhmvIThyADAailp5KTtA+CQTs4VGlrV5F8XFz8BZfCorWGJUgBDUyIUXND
-         s/Oqvfi1tYvBRJ3bql9W71SnseiKzK5xLdUGuajpYOczIdaJwM2rz1EJWVDzJ25x/daB
-         HTSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762246631; x=1762851431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
-        b=wN1bsMWiP6cfkrspbSliVkJVdXHUzbvelQ9UgJA7K/pxkTstTnPNAgkBAdSIxou/WT
-         OKB6SRCwUgdJ0SkXanCaajP6qu1KAUcxnMXLidF2+EgKFTw6XvuCDIgk8OB1+zCwJv/Q
-         Ys8FJ0V117GT7lSXvBbBgzHcDqb9cBZNQUMjFKosmnle3zXXwVDysI+C6tsURjl1FcvH
-         IQ1gY3fwddWpYkUXptvKG12VAscElHoPckSAEpwcJi8iMFx4xHqe3tfKyqo0YTEbzySk
-         dgw1mdJQuHZtIoKUDZwrgfFdo1/H0lrE8FPdUOivEFEc+gp4VVlkxWVB8+96VmGjHey2
-         bt8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUH2IMtlWUDUfHPEvsAEsuzxWzdshVk0lg9bTterY+g4FNEKSt5l1c95QSBtL3yQ0g5otuZ/d1zuVU3mZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2cmHRQIsdfuTR2XgyE06SdMVB9lBqSsnamyCuvDOkxTGmCg1k
-	Q5EF4jNb8uy6fBqXhM7OgeGrSAPZ/gerwj0n4eJGwZxYHPtEcqghm2c7+3rZVjM/7kS2VVsh9g4
-	KtdqquIzpU0Y/WLLnOYh9/wOf4yT+frI=
-X-Gm-Gg: ASbGncuZdA9mdRPTZYadhVlAmCAu5Jnn6uds58rTUq1RarADCpjrxRGxZA8TXikmpVG
-	M84qiN4QYlEFd2lnVhpu7w8eAKOipufMeldqbDOhgVgtSWCUg8VhvX+x63gkhFtuQrD1CM2J6Y4
-	OH2rJsxclznQSCQ/6jXUo78CBAGZElx7KaQpK+FyzJkhLV1LKIx+4440PeUdmP6yWUvIR6qq7Ok
-	MmJG+EDuWHRjkcNoSixYVueE/fH6NRYMZCkontu8nhN2ZnpU7qDSkDffbBim8DHCuLjwoPXDSA+
-	I09du5VghGEC3Ig=
-X-Google-Smtp-Source: AGHT+IF6ueQYBNM1+RNhYOYIFnfLiX6oNuy4l48G1lx1VU0ywiXQgL6tqvYLuu3FO24uXys20ArxBAmkiPLr3hbeIKw=
-X-Received: by 2002:a17:907:d26:b0:b04:6546:345a with SMTP id
- a640c23a62f3a-b707082bc03mr1630568866b.52.1762246630824; Tue, 04 Nov 2025
- 00:57:10 -0800 (PST)
+	s=arc-20240116; t=1762246691; c=relaxed/simple;
+	bh=P/AjJRz/CdLEZ4MqDYR4thnIkJGNgnUAUoznYrOg/nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIWVKtSAg9TVbiiNMxfQHS3iSeNNZlP8M3k1hRLqDkbL9HMhS+6iNY0cSAM8aQV05qSSMntvxUXIgZLuqLgCBEJj8GAG/WYNh3SPTeImMB9jYBw+utUPRW3gbgb77/jX10UBq+ZFxcTrpRFyUqVibQWNaLwBPfC0gpdJCpw8pGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FcnvnJJO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=K8mvk5vBxcHAFNc6juyiFWMLoFgbqb6bZHiYWEtQNQU=; b=FcnvnJJOyvaLViID66dl5B+rAa
+	H+pUylzMoeTO7DOnBMfr1DTbmqhKtWLjfJjeseJtwL6lc+ecqeqn23MjsbOyRjaWgelBeGl9y072+
+	221zuPB6b9OIhe3HP6cSRqDIrZ7VMrp5N8RZXrVDG0U4njF0xQneaRYQiFQqTS43Ou/sqmCQiSoY5
+	prJKq/WntFM23ARCST2fE7Z1zQdTQPJ5fZ5qKQ7m53Z2jN835WbLsiKZELzQtSlrqrVGqukTErf7z
+	cp/SagUUNYKIgVuJZolz3Vgi088lP7plAwWVSePijPNeyK/YTqu/uYFGusIz7sH1grtX5iXY+X5qp
+	Z12kpUiQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44012)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vGCrZ-000000001uO-3svy;
+	Tue, 04 Nov 2025 08:58:02 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vGCrX-000000004dk-39Q3;
+	Tue, 04 Nov 2025 08:57:59 +0000
+Date: Tue, 4 Nov 2025 08:57:59 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: phy: dp83869: Restart PHY when
+ configuring mode
+Message-ID: <aQnAFxSTyo6SofZ7@shell.armlinux.org.uk>
+References: <20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com>
+ <20251104-sfp-1000basex-v1-1-f461f170c74e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
- <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
-In-Reply-To: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 4 Nov 2025 09:56:56 +0100
-X-Gm-Features: AWmQ_blcze5b2JDvf6rk7zu8ZSgiylBvNU6Ne1vkeCMvYkjZxqkdx2SqKkvxo3M
-Message-ID: <CAGudoHESYkHNdZZ5j1KfZ3j23cEvPZUNWVuc7_TTKds=qNWt6w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
- wrong USER_PTR_MAX in modules
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	tglx@linutronix.de, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-sfp-1000basex-v1-1-f461f170c74e@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Nov 4, 2025 at 7:25=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> Mateusz - I'd like to just credit you with this, since your comment
-> about modules was why I started looking into this all in the first
-> place (and you then wrote a similar patch). But I'm not going to do
-> that without your ack.
->
+On Tue, Nov 04, 2025 at 09:50:34AM +0100, Romain Gantois wrote:
+> The DP83869 PHY requires a software restart when the OP_MODE is changed.
+> 
+> Add this restart in dp83869_configure_mode().
+> 
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> ---
+>  drivers/net/phy/dp83869.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+> index 1f381d7b13ff..fecacaa83b04 100644
+> --- a/drivers/net/phy/dp83869.c
+> +++ b/drivers/net/phy/dp83869.c
+> @@ -797,6 +797,10 @@ static int dp83869_configure_mode(struct phy_device *phydev,
+>  		return -EINVAL;
+>  	}
+>  
+> +	ret = phy_write(phydev, DP83869_CTRL, DP83869_SW_RESTART);
 
-I don't think crediting me here is warranted.
+So if dp83869_configure_fiber() returns an error, that doesn't matter?
+(This overwrites its error.)
 
-I would appreciate some feedback on the header split idea though. :)
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
