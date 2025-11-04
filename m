@@ -1,143 +1,215 @@
-Return-Path: <linux-kernel+bounces-885008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECC9C31BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:08:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3068C31BFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 16:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B33F14EB4ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:00:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4555A4F7E87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 15:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E598335557;
-	Tue,  4 Nov 2025 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D77C337B96;
+	Tue,  4 Nov 2025 14:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TkXpfXWC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYmW0PZi"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90209332EB0;
-	Tue,  4 Nov 2025 14:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B19335547
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268306; cv=none; b=GFF+wRWDSHDYgjfD1mTn/+xQyfpS79Qb/ufyER6xaH5S/JnLJp3WYMMNR38HOgtMvWu9z2CffvfTDalkp+6EFIUGjvW3dkBCJ/OzlTAzoZEtHCnrywZ5KvOoO1X+hh9duPGomN767ZU8BP7873cAs7+f3nm2QI4/U3RkkwMBnPs=
+	t=1762268313; cv=none; b=SMYvgoUaNlZ0/BhbyZNz3KfvNfuCknxO+VMxM9Tftj3TB4uevEM/B08F9cF5bbkfQcZrcAEAHqklpx0bDPGVjbItGlqGSVIp1/y9TcvViNLRjk/MUCROqHTrReswpTZgLQ3i3kQ3/6tn6WuEqGyuHa2iGcGxX2Tczx/pCyMJAtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268306; c=relaxed/simple;
-	bh=JbsU/grDN2NP6b+IlhIQmfd+dNS5kjC5Vx9sy3Adkf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cKoNp2rxgBDwV+U86p6C0amdCzqvGmlloEEQr2crq59FE+T6DtDx/woNKNiL3+sobml9aclhMDVBcrBd/tFiSCxSIiDSMIqhdX1vE0rEWASNDzyfHhBk7p7Ekh0+m3rzAyCNMXB557eO76ranRdrxCXBTRes42Oyc/sxGFq6m/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TkXpfXWC; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762268303; x=1793804303;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JbsU/grDN2NP6b+IlhIQmfd+dNS5kjC5Vx9sy3Adkf4=;
-  b=TkXpfXWC1XfRqHUIbunIXx1hAZS956tX3nSr1xUxzw97gnvmCRjSi2T8
-   o5brx9x304gjpHmbK8Bd0bBDbfH+ZfRaTq1G7ByKqBPH9jgvglqfNcUiH
-   caZM3PRzZ6w2GUbyckMvARhUdqdYVd6gLfSU0vxC2IQR2PvXoxrPvPrv1
-   8Sf/Z2xHkJUfzkq2D5+JmDu9B4QWPkRvTWUmG7/VR9boF/xiMyxGXyMMs
-   DJ8H02w442Cykzr5XUJ0OGVkj7qklscIuPPNmK3lgro+zUeMw1HO9fS1e
-   zZuk8Cck3vV8I80ONHE4ebNX9RbdITzi+oGrlNB0duS8NJkC0SbJM0C3o
-   g==;
-X-CSE-ConnectionGUID: WgS+nR2YTjeTG2OrO96nTA==
-X-CSE-MsgGUID: 00i8oYHSSoG1a9NEJ48Nmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64268043"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64268043"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:58:22 -0800
-X-CSE-ConnectionGUID: GlXh5wCRR2CJatTmBmssNA==
-X-CSE-MsgGUID: wVSXYqpiS0CA56oGqltb1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="191482766"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa005.fm.intel.com with ESMTP; 04 Nov 2025 06:58:20 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id F413A9F; Tue, 04 Nov 2025 15:58:16 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 10/10] pinctrl: sunrisepoint: Switch to INTEL_GPP() macro
-Date: Tue,  4 Nov 2025 15:56:44 +0100
-Message-ID: <20251104145814.1018867-11-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
-References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762268313; c=relaxed/simple;
+	bh=W9g+YJ6BtshhuZpzIE3hQJ772deNaUpm9Z9F4iVdSVk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=U+0HpEcJwdYaV4E+QrmKI3xEx7Rw4Bhoxlrx7kFCZNMAFigx2u25kotXHu1c8gp7iKS/EfedRO6GG+uUwTVEU8k4XYDY+mzdO2KsDaJqKYxYuJPcLYvA5hndpGpqqlEUzVv3ab7EpUFY0rd3ehijNcaSBPlxVNmVJhegsoiOsOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYmW0PZi; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640c1fda178so3448780a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:58:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762268308; x=1762873108; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8yDoZvnl9i2PCVqQpO58zWzoD91W2IfT5tAZBQV3TwY=;
+        b=RYmW0PZiAx88z+3Xj/OA9RvHi5JsqA6OHbwOkDW/JlNii+V+/M/CfZh7gyOGClZnm0
+         pAu7tf3Qy549y4XfixE8BYUb51gOrok4NnXl9jlb1tmtzvDiU8y8aUgPs7nv1HnTE5dN
+         edR7LP9Lt4qD2L9O0fvQCx6+729fcTdVVaWtsWvw0INl0o9nSz/qKAm4jWlxd2vIMh4M
+         /a8wUguHUpq3Dxiwyi6vkNGq8HL8/OLzZmroIaRK0O6lY93Skn0LamGOd6YlZk3KXFpQ
+         DhPnEgFq4vHMxQmse3S8pn2RSaZEI6PFuRr1uFpXa6TnYJnNqlfq71PFHJgVhemOVWT/
+         3+aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762268308; x=1762873108;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8yDoZvnl9i2PCVqQpO58zWzoD91W2IfT5tAZBQV3TwY=;
+        b=jR/ahioFS50P8UtUV/ZNzVV4kZkOl35zglRL3IyKqNzvYMz7VtqpmiBzVqoxQbMPua
+         Kb1DmqqEi/rSnzLcd5QsspGboq7kI/bO9NtrHl6h+YL3RYFdUtssmTpYN6Av8DdXQtl3
+         QIwLqdoupo8ZAAWYUZTtuuP67SYhSKnTVpsBukTX1xevFy0kp74wLfxcgDU96LlyWsjv
+         4Myo5xMmgr1YMoMcU8xXprDA/Mpr9zEUjqAHSZzry7Jrs5Bgf0ofZ0sYJ016lemiExRQ
+         9UWWD5mYr2pYCwiTOCtEi67LtuBdAmRoIcizLYOqSedYkDQ4E3RQpc7I052EovotpP9H
+         wPiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZhfQEhyL8hpcJnFJ/rMdI8T5gR7NewK/FFGrBxXAlRtMi1yv7YWaojDMXuC7cbercb7lDHYXd14nnozs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDcj95nkDa6UlwksYpM9OyGZwiBab52of3+rL+kp6TIsARUpXz
+	o55zjg9jz/wd3r/dnytZ0m2adDlwp03qXHeNmISTtK+Or/Ymavc4uT4H
+X-Gm-Gg: ASbGncszg4zNVbRPZO/vOno3xL7JrWw1NF+G3GxyJi0Q5ExXP49KK+MBSx/CHaTYu1g
+	1thXuqsgS1WAOL9f4ZXTeXIeeZJXmGR9KaLwv5qkITKFKd75UPAq9l3sbuU6A6ZyBLN3GNjO3sd
+	okgW34zV55Mgn2DQeantrnY2aLsnnRWCALsf88N1aQVdgRqwwimTC+NfaQwtk5Q0b4IxYcOZ1O7
+	jmQOQwCme4p4BDcyIYw4xiSYhVTMxKqNwIilAjPtxC3vJjl8KYxfGtYm+yflJcDPHWixE+rpqGX
+	Ojiw8kH/rWuig6PCA5LPZ0PM2Fa1P6RWDNil8iMsKlBgBLDJfv0yPvm1ADeGkEeQnYePiMe4Qtq
+	E1ut9HnzeA4uvBMYNymJbJjRg7SPw8bc5vjVFZpi5DyEUXQEWgpO22XAZibkXgo+/SzC/E3EF3o
+	Fmk8aIWYM/ljkpr2aGFIGZwRh6zV8AnklQPbH3vI04J/zwQQ0=
+X-Google-Smtp-Source: AGHT+IFs9W8O44jy0to+HH8P36ANszj/+KkeaTelvysxmEQV/qsf42k3TLW8rGxbLiSoMryUWBJ0BQ==
+X-Received: by 2002:a05:6402:26d1:b0:638:3f72:1266 with SMTP id 4fb4d7f45d1cf-64076fa052amr16212580a12.16.1762268308065;
+        Tue, 04 Nov 2025 06:58:28 -0800 (PST)
+Received: from tablet.my.domain (83.21.17.47.ipv4.supernova.orange.pl. [83.21.17.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a7fcd7sm2288874a12.37.2025.11.04.06.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 06:58:27 -0800 (PST)
+From: Artur Weber <aweber.kernel@gmail.com>
+Date: Tue, 04 Nov 2025 15:58:20 +0100
+Subject: [PATCH RESEND v7 2/7] dt-bindings: clock: brcm,kona-ccu: Drop
+ CLOCK_COUNT defines from DT headers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251104-kona-bus-clock-v7-2-071002062659@gmail.com>
+References: <20251104-kona-bus-clock-v7-0-071002062659@gmail.com>
+In-Reply-To: <20251104-kona-bus-clock-v7-0-071002062659@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+ phone-devel@vger.kernel.org, Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2725;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=W9g+YJ6BtshhuZpzIE3hQJ772deNaUpm9Z9F4iVdSVk=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBpChSNyhoRHcTk8Z6URFMUuRgH1NYbfHNCN3nuz
+ TT5s4TYN/mJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaQoUjQAKCRCzu/ihE6BR
+ aBZ8D/9GVrJnnbshf40Fq7EmWfKlSWadlwmZGigXl4snbvnPs6gFtD53934e9ydLgHRjv8u2HF6
+ v3RetY0M1wonst8EpeN0+FuNakSthGOt128Yc+TgylDcybfRojzqe5x5QgzXnKnd17rLN4PRzZk
+ b0uo3WfdvbegZCL6sTFjVIRc0186+231PoH/YXcwJEM32ltp/EKPAB3j26sIfQ6Fx7NJLkHbFhm
+ F0YXJrGbjLkV8KYRV3xHTdDNTqZ7w/HZ2VZh69brnZptYURDhXlRehZR6/iZq5Qjt9dc1sKvh7o
+ zTjZNyJy0LOeaxee4dnnGR5EqhiFycYqxrz1mXeb511qqn5qqrY6iq2ZAtSoF0gdcnkpkTpR6F1
+ UzEJ3AVHAD8zoRwTv6u/EZ/pVyedM5nW0h2xCEx0tBZsGBjyRdPBrrZs4FHx03p8Glbo/dE+X/Q
+ Islzg5UV4NnsdWM1pfAzZNzp1+frZq7Yz1BGpKUos9oGDmN+7qeiLqf7zQfmOsUa+EQLvevVbc/
+ epSm5KUSSDLiBoNrTzmlXBjIwLFppBBuKazNuQTwja4J4ic23JMayyaGURMTtslUOr5+V8J0gkE
+ DRJCYzq9mp2tk/wJmUWZ7jYqJfO+y3+JvxR7ZGYT5mLfLscGKy1XEiRu7tcjejTqLhGeskURnWB
+ dpxZ04FL3Fn47qg==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-Replace custom macro with the recently defined INTEL_GPP().
+The CLOCK_COUNT defines are not used by device trees, only by the clock
+driver. Keeping them in the DT binding header is frowned upon.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Since they're being moved to the clock driver directly, drop these defines
+from the dt-bindings header and only keep clock IDs.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 26 +++++++-------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+Changes in v3:
+- Add this commit
+---
+ include/dt-bindings/clock/bcm21664.h | 4 ----
+ include/dt-bindings/clock/bcm281xx.h | 5 -----
+ 2 files changed, 9 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-index a7a5fa65fd9d..b51befde9e8b 100644
---- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-@@ -28,14 +28,6 @@
- #define SPT_LP_GPI_IS		0x100
- #define SPT_LP_GPI_IE		0x120
+diff --git a/include/dt-bindings/clock/bcm21664.h b/include/dt-bindings/clock/bcm21664.h
+index 7c7492742f3d..7a380a51848c 100644
+--- a/include/dt-bindings/clock/bcm21664.h
++++ b/include/dt-bindings/clock/bcm21664.h
+@@ -21,12 +21,10 @@
+ /* root CCU clock ids */
  
--#define SPT_H_GPP(r, s, e, g)				\
--	{						\
--		.reg_num = (r),				\
--		.base = (s),				\
--		.size = ((e) - (s) + 1),		\
--		.gpio_base = (g),			\
--	}
--
- #define SPT_H_COMMUNITY(b, s, e, g)			\
- 	INTEL_COMMUNITY_GPPS(b, s, e, g, SPT_H)
+ #define BCM21664_ROOT_CCU_FRAC_1M		0
+-#define BCM21664_ROOT_CCU_CLOCK_COUNT		1
  
-@@ -538,21 +530,21 @@ static const struct intel_function spth_functions[] = {
- };
+ /* aon CCU clock ids */
  
- static const struct intel_padgroup spth_community0_gpps[] = {
--	SPT_H_GPP(0, 0, 23, 0),		/* GPP_A */
--	SPT_H_GPP(1, 24, 47, 24),	/* GPP_B */
-+	INTEL_GPP(0, 0, 23, 0),		/* GPP_A */
-+	INTEL_GPP(1, 24, 47, 24),	/* GPP_B */
- };
+ #define BCM21664_AON_CCU_HUB_TIMER		0
+-#define BCM21664_AON_CCU_CLOCK_COUNT		1
  
- static const struct intel_padgroup spth_community1_gpps[] = {
--	SPT_H_GPP(0, 48, 71, 48),	/* GPP_C */
--	SPT_H_GPP(1, 72, 95, 72),	/* GPP_D */
--	SPT_H_GPP(2, 96, 108, 96),	/* GPP_E */
--	SPT_H_GPP(3, 109, 132, 120),	/* GPP_F */
--	SPT_H_GPP(4, 133, 156, 144),	/* GPP_G */
--	SPT_H_GPP(5, 157, 180, 168),	/* GPP_H */
-+	INTEL_GPP(0, 48, 71, 48),	/* GPP_C */
-+	INTEL_GPP(1, 72, 95, 72),	/* GPP_D */
-+	INTEL_GPP(2, 96, 108, 96),	/* GPP_E */
-+	INTEL_GPP(3, 109, 132, 120),	/* GPP_F */
-+	INTEL_GPP(4, 133, 156, 144),	/* GPP_G */
-+	INTEL_GPP(5, 157, 180, 168),	/* GPP_H */
- };
+ /* master CCU clock ids */
  
- static const struct intel_padgroup spth_community3_gpps[] = {
--	SPT_H_GPP(0, 181, 191, 192),	/* GPP_I */
-+	INTEL_GPP(0, 181, 191, 192),	/* GPP_I */
- };
+@@ -38,7 +36,6 @@
+ #define BCM21664_MASTER_CCU_SDIO2_SLEEP		5
+ #define BCM21664_MASTER_CCU_SDIO3_SLEEP		6
+ #define BCM21664_MASTER_CCU_SDIO4_SLEEP		7
+-#define BCM21664_MASTER_CCU_CLOCK_COUNT		8
  
- static const struct intel_community spth_communities[] = {
+ /* slave CCU clock ids */
+ 
+@@ -49,6 +46,5 @@
+ #define BCM21664_SLAVE_CCU_BSC2			4
+ #define BCM21664_SLAVE_CCU_BSC3			5
+ #define BCM21664_SLAVE_CCU_BSC4			6
+-#define BCM21664_SLAVE_CCU_CLOCK_COUNT		7
+ 
+ #endif /* _CLOCK_BCM21664_H */
+diff --git a/include/dt-bindings/clock/bcm281xx.h b/include/dt-bindings/clock/bcm281xx.h
+index d74ca42112e7..0c7a7e10cb42 100644
+--- a/include/dt-bindings/clock/bcm281xx.h
++++ b/include/dt-bindings/clock/bcm281xx.h
+@@ -27,19 +27,16 @@
+ /* root CCU clock ids */
+ 
+ #define BCM281XX_ROOT_CCU_FRAC_1M		0
+-#define BCM281XX_ROOT_CCU_CLOCK_COUNT		1
+ 
+ /* aon CCU clock ids */
+ 
+ #define BCM281XX_AON_CCU_HUB_TIMER		0
+ #define BCM281XX_AON_CCU_PMU_BSC		1
+ #define BCM281XX_AON_CCU_PMU_BSC_VAR		2
+-#define BCM281XX_AON_CCU_CLOCK_COUNT		3
+ 
+ /* hub CCU clock ids */
+ 
+ #define BCM281XX_HUB_CCU_TMON_1M		0
+-#define BCM281XX_HUB_CCU_CLOCK_COUNT		1
+ 
+ /* master CCU clock ids */
+ 
+@@ -50,7 +47,6 @@
+ #define BCM281XX_MASTER_CCU_USB_IC		4
+ #define BCM281XX_MASTER_CCU_HSIC2_48M		5
+ #define BCM281XX_MASTER_CCU_HSIC2_12M		6
+-#define BCM281XX_MASTER_CCU_CLOCK_COUNT		7
+ 
+ /* slave CCU clock ids */
+ 
+@@ -64,6 +60,5 @@
+ #define BCM281XX_SLAVE_CCU_BSC2			7
+ #define BCM281XX_SLAVE_CCU_BSC3			8
+ #define BCM281XX_SLAVE_CCU_PWM			9
+-#define BCM281XX_SLAVE_CCU_CLOCK_COUNT		10
+ 
+ #endif /* _CLOCK_BCM281XX_H */
+
 -- 
-2.50.1
+2.51.1
 
 
