@@ -1,156 +1,277 @@
-Return-Path: <linux-kernel+bounces-884432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93B6C30296
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:07:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDE9C30260
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9EF4214AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF3D188BB15
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287CD2BF3D7;
-	Tue,  4 Nov 2025 09:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE812BE7B2;
+	Tue,  4 Nov 2025 09:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EojySN4o"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rkA5MSK0"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDCE72605;
-	Tue,  4 Nov 2025 09:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E0524290D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246877; cv=none; b=ugYUlIGNHKfBilmdhImG9VWPndzJQZrPnM+tRKUs0hweKWtqoWdfmJxsfsjE2dqHj+rqGPRWHB3TTNy7UNY+u5eVgreue+tHLAxboVhMo0bCkKr3C1NRnhtBzBlPIUQiTdZ4gBzfJdTn/o5B4UN9dkwBYePK8lXcHjF7/qXsUxk=
+	t=1762246801; cv=none; b=OQjiSnww28YzyDdOTD1qZd3IO+gjVAiejFIigmOvSTQnpTXaGgYEL44ZQ05Y6d2wEAEVGm+I3aV0E4Dr77YagFEEF2D8FTL3gVyf1vBjgk3tyAzg4K5DTl/lEXrdg6i/EIPSpr12xWX7CroSj2GO00d17XP3M/GM5A2IQwHxl9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246877; c=relaxed/simple;
-	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Efiprh+doH9Y5bWoCemN4VXICqboDfOMgsy8z/4eRGLnzITEajl5kZ3LUcR6+kLwBhStpMz9nXfZup739XteGOL4AokxyPzWZERUcB8pRB99O5ElqyKFcsJ07iF5aNmgKkylWq52wnKEtaPbw8ghRiwsaxjoyO2HkeARALSn14I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EojySN4o; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762246867; x=1762851667; i=markus.elfring@web.de;
-	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EojySN4og5jcWtGSXmStgcqy2yalY1uM67B29EotKW0AvRJ1TDV7kHfZxddGoulu
-	 ruU2wnKtxvvlEj8k5FoOYrf4zak+jrxQ+3FsF6Foa7pw8p/tUJm01Sf6RXmeHa2dP
-	 7+Ct9DckB5AK+nglfjEFoBKhyVLVHaXzUkgAkUV9lFcvpibCShno3ON4UeUz4WP+z
-	 omX0e6CRq4X3k4b41ctExW2p0PcgHAFtnJjbDzpQFksGzz2RZ5+s1lMRa1RblMEWv
-	 Y/bHAoD8r54O+w5GSvzFY2lVBHm2REsQra7x/YpqDmovV/8H8v75yyfGMtuTd2qPs
-	 pkMPPAp6l0nyEuzZ2A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBVv-1vuT3p0uZx-00eAi2; Tue, 04
- Nov 2025 09:55:32 +0100
-Message-ID: <f6509ce8-72f9-436e-82ca-dc7bbf601bb3@web.de>
-Date: Tue, 4 Nov 2025 09:55:30 +0100
+	s=arc-20240116; t=1762246801; c=relaxed/simple;
+	bh=GS6e2b3oH37jxFOIhSoa8Ixlw2ZpbQh35bnVCEiVku8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G/OoCghJj3Vo6iDQipmCs+u+cXJGEqczWWxClGpbZ1dnFbySHg5ZDpoIlLMWARc6plsxOZ1/g26zHii8tpwpiOZ6uSwPcAFCp0MSZQVNP3mbuFa+Vs25UVk8Afj2HbqEVaNkaIE+aLKeAdOCbOH+3eulzbPOYRzmsf7rp4O6Hds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rkA5MSK0; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9e4b1242-a4a0-4292-be0e-cfd24c640d3c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762246786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ACoxnsLPwifItDCLqYhT5k8XWG0ViCrKK5nRSuUSDtc=;
+	b=rkA5MSK0BMXWXwjbNLCwrj3u4Fv4kpzo9wawRX6o70dvqp7dWu3z9EJU6RtFsxtf4MIKfo
+	jH60YzITDWU5qvfBCRfmr1vjQDlkhBVvgTtIAVUObBKzz5OOshhE9g2oitRB0BXXZoi6VN
+	NVRxzpbihEUnPNBKhCMsuj8VNiQUHY4=
+Date: Tue, 4 Nov 2025 16:59:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-fsdevel@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] unicode: Completion of error handling
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1 21/26] mm: memcontrol: prepare for reparenting LRU
+ pages for lruvec lock
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ harry.yoo@oracle.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+ axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Muchun Song <songmuchun@bytedance.com>
+References: <202511041421.784bbd5e-lkp@intel.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <202511041421.784bbd5e-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Ocf4noJcdAYgUVvf2UdDP7Ho6e3T3DO146mj5NumU7dlsPPcJhV
- M29qPTCXfPSDwMMelKEqnBDu5SG2nK+jlxrLMrv4ZDzUBF/qjkTcJukG+tLhrZ86hZtLa/7
- S32bTU5Ond6ntSIRc8X397ig7a/2IrwsOw51Yl7oELjHp/OJshAbHtOIEsat7MtcgjWX4P9
- l37u/idi4AaSCFGywYq7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7MerS+iU8P0=;ix36Mv9ExA5sv6/qMWEh8F2tN0L
- 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
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
 
-It can be determined (also with the help of some source code analysis tools)
-that error detection (and corresponding exception handling) is incomplete
-in this source file.
-https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/unicode/mkutf8data.c
-https://cwe.mitre.org/data/definitions/252.html
 
-How do you think about to improve affected implementation details?
+On 11/4/25 2:49 PM, kernel test robot wrote:
+> 
 
-Regards,
-Markus
+[...]
+
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202511041421.784bbd5e-lkp@intel.com
+> 
+> 
+> [    1.392214][   T45] WARNING: bad unlock balance detected!
+> [    1.393285][   T45] 6.18.0-rc3-00251-gdd9e066d9677 #1 Not tainted
+> [    1.394579][   T45] -------------------------------------
+> [    1.395442][   T45] kworker/u9:1/45 is trying to release lock (rcu_read_lock) at:
+> [    1.396977][   T45] rcu_read_unlock (include/linux/rcupdate.h:341 include/linux/rcupdate.h:897)
+> [    1.398160][   T45] but there are no more locks to release!
+> [    1.399337][   T45]
+> [    1.399337][   T45] other info that might help us debug this:
+> [    1.399707][   T45] 5 locks held by kworker/u9:1/45:
+> [    1.399707][   T45]  #0: c01ad6c4 ((wq_completion)async){+.+.}-{0:0}, at: process_one_work (kernel/workqueue.c:3238)
+> [    1.399707][   T45]  #1: c08e9f18 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_one_work (kernel/workqueue.c:3239)
+> [    1.399707][   T45]  #2: c02ed27c (sb_writers#2){.+.+}-{0:0}, at: file_start_write+0x1e/0x30
+> [    1.399707][   T45]  #3: c042e0ec (&sb->s_type->i_mutex_key){++++}-{4:4}, at: generic_file_write_iter (mm/filemap.c:4404)
+> [    1.399707][   T45]  #4: eaa771a0 (lock#3){+.+.}-{3:3}, at: local_lock_acquire (include/linux/local_lock_internal.h:40)
+> [    1.399707][   T45]
+> [    1.399707][   T45] stack backtrace:
+> [    1.399707][   T45] CPU: 0 UID: 0 PID: 45 Comm: kworker/u9:1 Not tainted 6.18.0-rc3-00251-gdd9e066d9677 #1 PREEMPT(none)
+> [    1.399707][   T45] Workqueue: async async_run_entry_fn
+> [    1.399707][   T45] Call Trace:
+> [    1.399707][   T45]  dump_stack_lvl (lib/dump_stack.c:122)
+> [    1.399707][   T45]  ? rcu_read_unlock (include/linux/rcupdate.h:341 include/linux/rcupdate.h:897)
+> [    1.399707][   T45]  dump_stack (lib/dump_stack.c:130)
+> [    1.399707][   T45]  print_unlock_imbalance_bug (kernel/locking/lockdep.c:5300 kernel/locking/lockdep.c:5272)
+> [    1.399707][   T45]  ? rcu_read_unlock (include/linux/rcupdate.h:341 include/linux/rcupdate.h:897)
+> [    1.399707][   T45]  __lock_release+0x5e/0x150
+> [    1.399707][   T45]  ? rcu_read_unlock (include/linux/rcupdate.h:341 include/linux/rcupdate.h:897)
+> [    1.399707][   T45]  lock_release (kernel/locking/lockdep.c:470 kernel/locking/lockdep.c:5891 kernel/locking/lockdep.c:5875)
+> [    1.399707][   T45]  ? lru_deactivate_file (mm/swap.c:119)
+> [    1.399707][   T45]  rcu_read_unlock (include/linux/rcupdate.h:899)
+> [    1.399707][   T45]  lruvec_unlock_irqrestore (include/linux/memcontrol.h:1522)
+> [    1.399707][   T45]  folio_batch_move_lru (include/linux/mm.h:1501 mm/swap.c:179)
+> [    1.399707][   T45]  __folio_batch_add_and_move (mm/swap.c:196 (discriminator 2))
+> [    1.399707][   T45]  ? lru_deactivate_file (mm/swap.c:119)
+> [    1.399707][   T45]  folio_add_lru (mm/swap.c:514)
+> [    1.399707][   T45]  filemap_add_folio (mm/filemap.c:996)
+> [    1.399707][   T45]  __filemap_get_folio (mm/filemap.c:2023)
+> [    1.399707][   T45]  simple_write_begin (fs/libfs.c:932 (discriminator 1))
+> [    1.399707][   T45]  generic_perform_write (mm/filemap.c:4263)
+> [    1.399707][   T45]  __generic_file_write_iter (mm/filemap.c:4380)
+> [    1.399707][   T45]  generic_file_write_iter (mm/filemap.c:4406)
+> [    1.399707][   T45]  __kernel_write_iter (fs/read_write.c:619)
+> [    1.399707][   T45]  __kernel_write (fs/read_write.c:640)
+> [    1.399707][   T45]  kernel_write (fs/read_write.c:660 fs/read_write.c:650)
+> [    1.399707][   T45]  xwrite+0x27/0x80
+> [    1.399707][   T45]  do_copy (init/initramfs.c:417 (discriminator 1))
+> [    1.399707][   T45]  write_buffer (init/initramfs.c:470 (discriminator 1))
+> [    1.399707][   T45]  flush_buffer (init/initramfs.c:482 (discriminator 1))
+> [    1.399707][   T45]  __gunzip+0x21d/0x2c0
+> [    1.399707][   T45]  ? bunzip2 (lib/decompress_inflate.c:39)
+> [    1.399707][   T45]  ? __gunzip+0x2c0/0x2c0
+> [    1.399707][   T45]  gunzip (lib/decompress_inflate.c:208)
+> [    1.399707][   T45]  ? write_buffer (init/initramfs.c:476)
+> [    1.399707][   T45]  ? initrd_load (init/initramfs.c:64)
+> [    1.399707][   T45]  unpack_to_rootfs (init/initramfs.c:553)
+> [    1.399707][   T45]  ? write_buffer (init/initramfs.c:476)
+> [    1.399707][   T45]  ? initrd_load (init/initramfs.c:64)
+> [    1.399707][   T45]  ? reserve_initrd_mem (init/initramfs.c:719)
+> [    1.399707][   T45]  do_populate_rootfs (init/initramfs.c:734)
+> [    1.399707][   T45]  async_run_entry_fn (kernel/async.c:136 (discriminator 1))
+> [    1.399707][   T45]  ? async_schedule_node (kernel/async.c:118)
+> [    1.399707][   T45]  process_one_work (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:262 include/trace/events/workqueue.h:110 kernel/workqueue.c:3268)
+> [    1.399707][   T45]  process_scheduled_works (kernel/workqueue.c:3346)
+> [    1.399707][   T45]  worker_thread (include/linux/list.h:381 (discriminator 2) kernel/workqueue.c:952 (discriminator 2) kernel/workqueue.c:3428 (discriminator 2))
+> [    1.399707][   T45]  kthread (kernel/kthread.c:465)
+> [    1.399707][   T45]  ? process_scheduled_works (kernel/workqueue.c:3373)
+> [    1.399707][   T45]  ? kthread_is_per_cpu (kernel/kthread.c:412)
+> [    1.399707][   T45]  ret_from_fork (arch/x86/kernel/process.c:164)
+> [    1.399707][   T45]  ? kthread_is_per_cpu (kernel/kthread.c:412)
+> [    1.399707][   T45]  ret_from_fork_asm (arch/x86/entry/entry_32.S:737)
+> [    1.399707][   T45]  entry_INT80_32 (arch/x86/entry/entry_32.S:945)
+> [    1.467118][   T32] Callback from call_rcu_tasks() invoked.
+> [    1.468370][   T45] ------------[ cut here ]------------
+> [    1.469508][   T45] WARNING: CPU: 0 PID: 45 at kernel/rcu/tree_plugin.h:443 __rcu_read_unlock (kernel/rcu/tree_plugin.h:443)
+> [    1.471711][   T45] Modules linked in:
+> [    1.472490][   T45] CPU: 0 UID: 0 PID: 45 Comm: kworker/u9:1 Not tainted 6.18.0-rc3-00251-gdd9e066d9677 #1 PREEMPT(none)
+> [    1.474777][   T45] Workqueue: async async_run_entry_fn
+> [    1.475823][   T45] EIP: __rcu_read_unlock (kernel/rcu/tree_plugin.h:443)
+> [    1.476872][   T45] Code: 0c d0 56 c2 ff 8b a4 02 00 00 75 11 8b 83 a8 02 00 00 85 c0 74 07 89 d8 e8 7c fe ff ff 8b 83 a4 02 00 00 3d ff ff ff 3f 76 02 <0f> 0b 5b 5d 31 c0 c3 2e 8d b4 26 00 00 00 00 55 89 e5 57 56 89 c6
+> All code
+> ========
+>     0:	0c d0                	or     $0xd0,%al
+>     2:	56                   	push   %rsi
+>     3:	c2 ff 8b             	ret    $0x8bff
+>     6:	a4                   	movsb  %ds:(%rsi),%es:(%rdi)
+>     7:	02 00                	add    (%rax),%al
+>     9:	00 75 11             	add    %dh,0x11(%rbp)
+>     c:	8b 83 a8 02 00 00    	mov    0x2a8(%rbx),%eax
+>    12:	85 c0                	test   %eax,%eax
+>    14:	74 07                	je     0x1d
+>    16:	89 d8                	mov    %ebx,%eax
+>    18:	e8 7c fe ff ff       	call   0xfffffffffffffe99
+>    1d:	8b 83 a4 02 00 00    	mov    0x2a4(%rbx),%eax
+>    23:	3d ff ff ff 3f       	cmp    $0x3fffffff,%eax
+>    28:	76 02                	jbe    0x2c
+>    2a:*	0f 0b                	ud2		<-- trapping instruction
+>    2c:	5b                   	pop    %rbx
+>    2d:	5d                   	pop    %rbp
+>    2e:	31 c0                	xor    %eax,%eax
+>    30:	c3                   	ret
+>    31:	2e 8d b4 26 00 00 00 	cs lea 0x0(%rsi,%riz,1),%esi
+>    38:	00
+>    39:	55                   	push   %rbp
+>    3a:	89 e5                	mov    %esp,%ebp
+>    3c:	57                   	push   %rdi
+>    3d:	56                   	push   %rsi
+>    3e:	89 c6                	mov    %eax,%esi
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>     0:	0f 0b                	ud2
+>     2:	5b                   	pop    %rbx
+>     3:	5d                   	pop    %rbp
+>     4:	31 c0                	xor    %eax,%eax
+>     6:	c3                   	ret
+>     7:	2e 8d b4 26 00 00 00 	cs lea 0x0(%rsi,%riz,1),%esi
+>     e:	00
+>     f:	55                   	push   %rbp
+>    10:	89 e5                	mov    %esp,%ebp
+>    12:	57                   	push   %rdi
+>    13:	56                   	push   %rsi
+>    14:	89 c6                	mov    %eax,%esi
+> [    1.480862][   T45] EAX: ffffffff EBX: c0bfd640 ECX: 00000000 EDX: 00000000
+> [    1.482292][   T45] ESI: eaa771c0 EDI: c119e160 EBP: c08e9c0c ESP: c08e9c08
+> [    1.483721][   T45] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
+> [    1.485350][   T45] CR0: 80050033 CR2: ffbff000 CR3: 026c6000 CR4: 000006f0
+> [    1.486725][   T45] Call Trace:
+> [    1.487465][   T45]  rcu_read_unlock (include/linux/rcupdate.h:900)
+> [    1.488404][   T45]  lruvec_unlock_irqrestore (include/linux/memcontrol.h:1522)
+> [    1.489570][   T45]  folio_batch_move_lru (include/linux/mm.h:1501 mm/swap.c:179)
+> [    1.491100][   T45]  __folio_batch_add_and_move (mm/swap.c:196 (discriminator 2))
+> [    1.492318][   T45]  ? lru_deactivate_file (mm/swap.c:119)
+> [    1.493827][   T45]  folio_add_lru (mm/swap.c:514)
+> [    1.494817][   T45]  filemap_add_folio (mm/filemap.c:996)
+> [    1.495891][   T45]  __filemap_get_folio (mm/filemap.c:2023)
+> [    1.497735][   T45]  simple_write_begin (fs/libfs.c:932 (discriminator 1))
+> [    1.498813][   T45]  generic_perform_write (mm/filemap.c:4263)
+> [    1.500292][   T45]  __generic_file_write_iter (mm/filemap.c:4380)
+> [    1.501552][   T45]  generic_file_write_iter (mm/filemap.c:4406)
+> [    1.502790][   T45]  __kernel_write_iter (fs/read_write.c:619)
+> [    1.504090][   T45]  __kernel_write (fs/read_write.c:640)
+> [    1.505377][   T45]  kernel_write (fs/read_write.c:660 fs/read_write.c:650)
+> [    1.506306][   T45]  xwrite+0x27/0x80
+> [    1.507429][   T45]  do_copy (init/initramfs.c:417 (discriminator 1))
+> [    1.508361][   T45]  write_buffer (init/initramfs.c:470 (discriminator 1))
+> [    1.509300][   T45]  flush_buffer (init/initramfs.c:482 (discriminator 1))
+> [    1.510307][   T45]  __gunzip+0x21d/0x2c0
+> [    1.511424][   T45]  ? bunzip2 (lib/decompress_inflate.c:39)
+> [    1.512312][   T45]  ? __gunzip+0x2c0/0x2c0
+> [    1.513515][   T45]  gunzip (lib/decompress_inflate.c:208)
+> [    1.514359][   T45]  ? write_buffer (init/initramfs.c:476)
+> [    1.515304][   T45]  ? initrd_load (init/initramfs.c:64)
+> [    1.516217][   T45]  unpack_to_rootfs (init/initramfs.c:553)
+> [    1.517220][   T45]  ? write_buffer (init/initramfs.c:476)
+> [    1.518175][   T45]  ? initrd_load (init/initramfs.c:64)
+> [    1.519172][   T45]  ? reserve_initrd_mem (init/initramfs.c:719)
+> [    1.520375][   T45]  do_populate_rootfs (init/initramfs.c:734)
+> [    1.521401][   T45]  async_run_entry_fn (kernel/async.c:136 (discriminator 1))
+> [    1.522378][   T45]  ? async_schedule_node (kernel/async.c:118)
+> [    1.523492][   T45]  process_one_work (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:262 include/trace/events/workqueue.h:110 kernel/workqueue.c:3268)
+> [    1.526446][   T45]  process_scheduled_works (kernel/workqueue.c:3346)
+> [    1.527578][   T45]  worker_thread (include/linux/list.h:381 (discriminator 2) kernel/workqueue.c:952 (discriminator 2) kernel/workqueue.c:3428 (discriminator 2))
+> [    1.528573][   T45]  kthread (kernel/kthread.c:465)
+> [    1.529483][   T45]  ? process_scheduled_works (kernel/workqueue.c:3373)
+> [    1.530780][   T45]  ? kthread_is_per_cpu (kernel/kthread.c:412)
+> [    1.531779][   T45]  ret_from_fork (arch/x86/kernel/process.c:164)
+> [    1.532664][   T45]  ? kthread_is_per_cpu (kernel/kthread.c:412)
+> [    1.533736][   T45]  ret_from_fork_asm (arch/x86/entry/entry_32.S:737)
+> [    1.534846][   T45]  entry_INT80_32 (arch/x86/entry/entry_32.S:945)
+> [    1.536182][   T45] irq event stamp: 2161
+> [    1.536994][   T45] hardirqs last  enabled at (2161): _raw_spin_unlock_irqrestore (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:109 arch/x86/include/asm/irqflags.h:151 include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
+> [    1.538763][   T45] hardirqs last disabled at (2160): _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:109 kernel/locking/spinlock.c:162)
+> [    1.540674][   T45] softirqs last  enabled at (1956): handle_softirqs (kernel/softirq.c:469 (discriminator 2) kernel/softirq.c:650 (discriminator 2))
+> [    1.542454][   T45] softirqs last disabled at (1949): __do_softirq (kernel/softirq.c:657)
+> [    1.544105][   T45] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20251104/202511041421.784bbd5e-lkp@intel.com
+
+In this config file, CONFIG_MEMCG is not set:
+
+# CONFIG_MEMCG is not set
+
+In this case, folio_lruvec_lock*() was not modified (add
+rcu_read_lock()), will fix it in the next version.
+
+Thanks,
+Qi
+
+> 
+> 
+> 
+
 
