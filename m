@@ -1,148 +1,90 @@
-Return-Path: <linux-kernel+bounces-885478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EB0C3316C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:34:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3E0C33172
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 22:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E399D188DF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:34:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A5AA4E3516
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 21:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354A221FF45;
-	Tue,  4 Nov 2025 21:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D545F280312;
+	Tue,  4 Nov 2025 21:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="QT2Brp8Q"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnSLEGRZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849532AC17
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 21:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398A622FDFF;
+	Tue,  4 Nov 2025 21:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762292062; cv=none; b=PmYl7a09ClGgjxVFzCkjSMLYRWnFhmuSL8xkpoiyPAoy/72o7ta+4Ruq4sGTzD3/VGq7o+EmbF3SNFMIHUNZk+QDBA4Dv6xmExGnXXlEEME0Ak1PfpX7eM/bN/ZNKnjgc1JhJfmkzREJ21sjFIrfplkIUz6HqEJVJLt1brKeeSU=
+	t=1762292424; cv=none; b=TPw3yHt1JBftfHe9Cxrc7bD+1QimDfaFXs3pTsE0iud/8xqVssUF/PT0xlYeZTWB78hA+6z7ZQgD8OrFY2PzV8mCn2it8HdGqnOe955tWzWk21HZSFGU461rMIbm2qL/ricFK32guLJKXuThefI6/8/RfAfloPVlItMqkxBfczw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762292062; c=relaxed/simple;
-	bh=ycILqtBrjB4qGUP9x609zQaceV8q5qkag9tfFN86/fI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+oF0Bh7DT/YVsMvw1pknKYr3lgUwZQpqD5i1n1rUXHPQ2JL1e/WBKqW0oKRMRDinEZLjQYnXt97Apl12ruWD0b2IB+aA1PI9iTKqXJNYJh49cddPT3OBID+Mpasut5DolsNOEb3ab4f3992R+fsrv5DAKVvJl3jXkHaRKGRTLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=QT2Brp8Q; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d1MCk0hwdz9v6t;
-	Tue,  4 Nov 2025 22:34:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762292050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b+dDwJ+0qI41d3Nk94wkdQOdtSTxFTbLoEYJNyRM9I0=;
-	b=QT2Brp8Q4z/2gGipDpcjXBAthS1OVn4Df9xhyWHNQm4oZP0QohMcTVAuZBaTrh0t0R+pAe
-	rBUWOSJP6ZJ+g2PkpIWoSuh4AeYMZ6YVcEkuSdlUQ48y4e5xXF8yS5OWGASlLSt+/bx9FV
-	7i6C7On0YWeSViNFa5iMJzKilnWLLMNDp62kuKSuUJk8HwlRtGZdfh7lXjRzHNYCBUMPrk
-	XqLXOGK1J4cwMYbazUxDiQ4aw/NkuRVtWzU67PrkmWu+ZzDyL0OTMI4Z8DoSCKRy3IP7of
-	g1271tbxUxrTwgTo4E3mW4kWqB8SZE4NAydV9YNdSDUMZ5AkjJpLp4nuyCu7Kw==
-Message-ID: <4ac9dd98-adc8-4be9-9f5c-4e653f656453@mailbox.org>
-Date: Tue, 4 Nov 2025 22:34:07 +0100
+	s=arc-20240116; t=1762292424; c=relaxed/simple;
+	bh=xYU6XL5l0dHXzcHycJly5ql/iPEw6c2gc6LYrnlPDmo=;
+	h=Date:Message-ID:From:To:To:To:Cc:Cc:Subject; b=Cu1FQawXh4H+NWMqY2+ChV3WO5IJcTw2Xt8qCM5j/Hmz5apjue9oeyHUBk59D2rcOf/jVxr+MX+dxIQjKjBmNH2kLGDJF0Js4MMlDb9KaLc+J3fO162PciETevyV9nPVJfhb50o1S3Xt7XoRmOc4qCEhWW1rnsfHQre6o2r3QrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnSLEGRZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3546C4CEF7;
+	Tue,  4 Nov 2025 21:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762292423;
+	bh=xYU6XL5l0dHXzcHycJly5ql/iPEw6c2gc6LYrnlPDmo=;
+	h=Date:From:To:To:To:Cc:Cc:Subject:From;
+	b=rnSLEGRZST1yPwN1S875q6KzMMyC3YtXCtMgqh8+NRvdDuaGOgZFP5ogQuuzQ9s/O
+	 BcZRBLhhE5PeGROBWgrgL9+CUaBcSxL0jWPnxxJTzRJ8IbiDJyt99VXFcL1QoV4reP
+	 55MFiopyQEj6k0/Ii1OM5XPwN03c+oiCy7/GtOjF2wDDzbNHv0V/x9jR21OyHln383
+	 TK+0QxtRQIioAN2zrFthxTP8QzI876I7Z79j/055Ga55TNThg7LGhniSmhNnyRHsqb
+	 TLwHZhn4TTTfS83Ot+y9azuLH2CDoXQ2BYnqXrsZQ+Xdv3cDCNGIJdoJZ2O9jiJI3+
+	 KU1BIr2eIvDQw==
+Date: Tue, 04 Nov 2025 11:40:22 -1000
+Message-ID: <b12ef0a8bd20e1ab8849ea129db70bad@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+To: Andrea Righi <arighi@nvidia.com>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: sched-ext@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.19] sched_ext: Move __SCX_DSQ_ITER_ALL_FLAGS BUILD_BUG_ON to the right place
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP
- r6205
-To: Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
- Lucas Stach <l.stach@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
- etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250919183042.273687-1-marek.vasut@mailbox.org>
- <CAH9NwWcK_z_4CcDBRYS2nf3AxYV9-XwirvTd+O9uJtHMhyA3Og@mail.gmail.com>
- <CAH9NwWdkjpV5YHmOpuCE=f7RVm1kXzqAOgN6=Sx1s-wxO_SGGA@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAH9NwWdkjpV5YHmOpuCE=f7RVm1kXzqAOgN6=Sx1s-wxO_SGGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: hgewqfoan3j377woijwwhgfm6xd9jmht
-X-MBO-RS-ID: 6c9625f36239ef4b00f
 
-On 11/4/25 4:50 PM, Christian Gmeiner wrote:
->>> This is the GPU/NPU combined device found on the ST STM32MP25 SoC.
->>> Feature bits taken from the downstream kernel driver 6.4.21.
->>>
->>> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
->>
->> Acked-by: Christian Gmeiner <cgmeiner@igalia.com>
->>
->>> ---
->>> Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
->>> Cc: David Airlie <airlied@gmail.com>
->>> Cc: Lucas Stach <l.stach@pengutronix.de>
->>> Cc: Simona Vetter <simona@ffwll.ch>
->>> Cc: dri-devel@lists.freedesktop.org
->>> Cc: etnaviv@lists.freedesktop.org
->>> Cc: linux-kernel@vger.kernel.org
->>> ---
->>>   drivers/gpu/drm/etnaviv/etnaviv_hwdb.c | 32 ++++++++++++++++++++++++++
->>>   1 file changed, 32 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
->>> index 8665f2658d51b..32d710baf17fe 100644
->>> --- a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
->>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
->>> @@ -196,6 +196,38 @@ static const struct etnaviv_chip_identity etnaviv_chip_identities[] = {
->>>                  .minor_features10 = 0x90044250,
->>>                  .minor_features11 = 0x00000024,
->>>          },
->>> +       {
->>> +               .model = 0x8000,
->>> +               .revision = 0x6205,
->>> +               .product_id = 0x80003,
->>> +               .customer_id = 0x15,
->>> +               .eco_id = 0,
->>> +               .stream_count = 16,
->>> +               .register_max = 64,
->>> +               .thread_count = 512,
->>> +               .shader_core_count = 2,
->>> +               .nn_core_count = 2,
->>> +               .vertex_cache_size = 16,
->>> +               .vertex_output_buffer_size = 1024,
->>> +               .pixel_pipes = 1,
->>> +               .instruction_count = 512,
->>> +               .num_constants = 320,
->>> +               .buffer_size = 0,
->>> +               .varyings_count = 16,
->>> +               .features = 0xe0287c8d,
->>> +               .minor_features0 = 0xc1799eff,
->>> +               .minor_features1 = 0xfefbfad9,
->>> +               .minor_features2 = 0xeb9d4fbf,
->>> +               .minor_features3 = 0xedfffced,
->>> +               .minor_features4 = 0xdb0dafc7,
->>> +               .minor_features5 = 0x7b5ac333,
->>> +               .minor_features6 = 0xfcce6000,
->>> +               .minor_features7 = 0x03fbfa6f,
->>> +               .minor_features8 = 0x00ef0ef0,
->>> +               .minor_features9 = 0x0eca703c,
->>> +               .minor_features10 = 0x898048f0,
->>> +               .minor_features11 = 0x00000034,
->>> +       },
->>>          {
->>>                  .model = 0x8000,
->>>                  .revision = 0x7120,
->>> --
->>> 2.51.0
->>>
->>
-> 
-> Applied to drm-misc-next.
-Thank you.
+The BUILD_BUG_ON() which checks that __SCX_DSQ_ITER_ALL_FLAGS doesn't
+overlap with the private lnode bits was in scx_task_iter_start() which has
+nothing to do with DSQ iteration. Move it to bpf_iter_scx_dsq_new() where it
+belongs.
 
-I _think_ I will try to respin the flop reset patchset next.
+No functional changes.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/ext.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -474,9 +474,6 @@ struct scx_task_iter {
+  */
+ static void scx_task_iter_start(struct scx_task_iter *iter)
+ {
+-	BUILD_BUG_ON(__SCX_DSQ_ITER_ALL_FLAGS &
+-		     ((1U << __SCX_DSQ_LNODE_PRIV_SHIFT) - 1));
+-
+ 	spin_lock_irq(&scx_tasks_lock);
+
+ 	iter->cursor = (struct sched_ext_entity){ .flags = SCX_TASK_CURSOR };
+@@ -6218,6 +6215,8 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(str
+ 		     sizeof(struct bpf_iter_scx_dsq));
+ 	BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
+ 		     __alignof__(struct bpf_iter_scx_dsq));
++	BUILD_BUG_ON(__SCX_DSQ_ITER_ALL_FLAGS &
++		     ((1U << __SCX_DSQ_LNODE_PRIV_SHIFT) - 1));
+
+ 	/*
+ 	 * next() and destroy() will be called regardless of the return value.
 
