@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-884396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1714BC3019F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D15C30169
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 09:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3A0D4F9566
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:51:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3CF44F742F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0BE2BDC17;
-	Tue,  4 Nov 2025 08:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF2B26ED5F;
+	Tue,  4 Nov 2025 08:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lDIjHd+r"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8C3XyMb"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BF424886A;
-	Tue,  4 Nov 2025 08:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F1A41
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 08:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246256; cv=none; b=dmtpERo2SJxZaPnVtGCZwYtNkR38zbuJsekGL/bBcfeFZjsqyr/JQG7wimvQryDIQlrG7ImlNVBxHEMd0Zorf7r0RrRQPPbdhjMbUKvrWBazOHmINY6D6raJE/eKeM8/h0z2vXkZG0FgbTjxgWLTzek4lvh2nMKSFUkc7n0uZ3Q=
+	t=1762246170; cv=none; b=bHP6SnWasZ1gK7PoMu4tpsGLuKlUyEPekG8RzSJ858uavGWL/HVLC+cqI1nCsWk91BjYuLM8KD0fd9eTJb3Hc8MqhEoQVRmI35gsj7pvv70B3maMQ2fCXp267nW1t/NYbJ69o8lbHAQ+xxf1fseTQ+uDyQ1rqqqxB7tgheJWEP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246256; c=relaxed/simple;
-	bh=UQDCjwioHc+CBKu9bQI9yHzGAmAxgJEyxRIyI6V9LfM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3v46DNXhLoh1xWBWeq3eFCnBEldVjomBWBHtBixkJP2cJkXLLrO6zQnBZTNk8v8mxK3xWa8fIXwwadL5+zjGGPxLwwOyf89NAVWqnlzx9gxilwOSF3yrS6At5R2dsFlsc7lXKsFKBDPsiun9U9PFJke1citJCm1N93ib4EsRug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lDIjHd+r; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762246254; x=1793782254;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UQDCjwioHc+CBKu9bQI9yHzGAmAxgJEyxRIyI6V9LfM=;
-  b=lDIjHd+r6bKcuWh0gwCzb5BvyjqkhsUSLgXHGmOmdmdI1A1VdlemgWuS
-   AhsToQSs5WmKbQGvM2T982Nwka5RfBDqbXL+ilDOCSYj/bOSHz75pCqZZ
-   IBBn8ojeN6vXZgkjNIAhRmd+/hEW3yBVF4XgNbXxUg3NLv7I64OMkEyib
-   8Lzm0K48wFHq9mXvcZKeb5DpmjQH2eSl6HJG3KKP1WEnxzG9/ReM6Q/EG
-   XDCjkp4spfK48XzWnYfDbSne4UxfjCt4B8F7I16gvHNV0nlIMVZMa5bW8
-   I97By2HBtbnWQnDj9ki6YLI2lRUxzosO21RgHXCnV5Gb3CAONEOU8yXEU
-   Q==;
-X-CSE-ConnectionGUID: 5k+cQZ2HQAygUastOXmusg==
-X-CSE-MsgGUID: HlMcvepoQAyxwiqc7ny3WQ==
-X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
-   d="asc'?scan'208";a="49160518"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 01:50:53 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 4 Nov 2025 01:50:40 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
- Transport; Tue, 4 Nov 2025 01:50:38 -0700
-Date: Tue, 4 Nov 2025 08:48:55 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-CC: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>,
-	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
- Jean" <cyril.jean@microchip.com>
-Subject: Re: [PATCH v1 2/3] spi: dt-binding: document Microchip CoreSPI
-Message-ID: <20251104-ground-cosponsor-83409ccea3f0@wendy>
-References: <20251103160515.412706-1-prajna.rajendrakumar@microchip.com>
- <20251103160515.412706-3-prajna.rajendrakumar@microchip.com>
+	s=arc-20240116; t=1762246170; c=relaxed/simple;
+	bh=bwGYumF3/kIIW+zzveEhCKzNJ0ATBCRDR2j8OQO/23Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DhzmW261LiFxhVQSeLd0zPFg4In+cc88Ld0Mv1j3A4aw73zpXzwBI07lr/Aie8ctQqIjn70ovsWnb5BpVpvRB1UBniOO2y9gNcADrS51SQS8YqSnNBTWD1F5u+LYf+O/PJo/lkFQYuR/nlsZ7WWSiEExdx5EzogGLVgAnVHdEM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8C3XyMb; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2947d345949so46860295ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 00:49:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762246168; x=1762850968; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vZzjlCCT3j9j2Nd7pQrTgnxvKhulGcz35Gruny6M5Bw=;
+        b=B8C3XyMb9sztvNGcLQuH6oELUi82MwvYPXNmWWwVZIXfJq8n/xMbwV71TvTKuLCkJZ
+         xhN1jiesHsMzW3f5vJ5e/b/BdlT36STvsi2Pz9VXlkWjzW28wHdkMaGfdW4prBvnhyDS
+         MnBB0MWpzyg0WAbTKOcRL0HEqKKGGILWd1tYLmmM9mltkl2NNjAMKWQQu+5GQ4dZkI/v
+         LFfZUOu3NcG6JQhKzcrj4R1hnhUnY1lN9PJLWHKdhJY97SOZQKbSJg/lRiPjkrecRkot
+         Uqpm7EI7EdWWIfftAaBZjndccgCh+JhKr1Zy6PsTyIwKgLM4nLR67MZ8H00wsYwfKZIe
+         Jqvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762246168; x=1762850968;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vZzjlCCT3j9j2Nd7pQrTgnxvKhulGcz35Gruny6M5Bw=;
+        b=K/xuvswUVwPmi/5Sg2T1oelbso9elChHrZNRkbqUHn3crDmG2JuRJQ17hWJdUz7S72
+         Ce+/6ITh5lspzqzSv5erQmcNWT1NYs83Mn/nxN1IuWjjFOcdDr3s2bVOrujEpQfdYGf5
+         pGF5XEgOHIl9zddZjBkdu1zBzFVVRetUB0fZXdKobOmWbBGfWrAIPPKdkyDeKnuasldQ
+         WZZ4aGCrtf+8kx1wdUQxmKX82bfDDLAbmSaYmsgkCoapaCiupATBuR+By5pQZEXPPiFG
+         JPrxZKRDNV0/r3k0WnCqplMt+6UhLhZnOFxDtdDlkUO1vhRRFXG7fRarMza0ZUHeJf1H
+         wLVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsIm8ZFP5WVNLcuIJK3cCzxwx1R89V4EYyDgeXOnt2547SC0OGjUVSw9WNYmv5MBImd5y9Mb8wN6H3/TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNSBgSIuByCE//OTWl/HSPwB/tmdZZMEhZyCcRV8ItKyTTaNGg
+	fobck6HpNH9GUIRnW+aRtKQn76PbJ+kkSVjnSa/hMyq6xHxvlvJde72q
+X-Gm-Gg: ASbGncuy0QfU2WKEgfqN0GSLzl+NTgaDkutziNDWax6soZylcP5EyBd0Vwhlgkdx3V6
+	hgYgfbs5ketY7rTQz2ns/SYdv59nDbXBRMyCEdQKksw/hgVShOcevRY/RxNwxyEEqW1fOENWcZS
+	gMBYmmeGvo6OJJCq6H1yMI52Gh6cU8atUGtrqzFspW0JBLbPBo1hVyzhK81zIds9Udvcxq7yygt
+	4QZuxsIo4NW5k8bq8NGsdWjmQdlEusikR0YeyeQZOR8DwsCrrgvcpOVxfMbMxxOyassGKoLR4E9
+	LkSZMGvEpwbfiUOBWE1u58oTC1/fDxajSnIuQrv9MxLDjOwCqc6GAXOe+oeX6+noRddcVoc4XRk
+	4uIkOyUZAmmIirYJApt8Os4MIUJN+fMgge4nnYwQ02shLkoERLna5h9oPRd+10ZG0BLXi5ntJtz
+	v+RsY8Qs1e1IUj7fAz6NNZuw==
+X-Google-Smtp-Source: AGHT+IEjMIiSe0x3JjyWJftYAjRTnLk4yj1+5guJH64mFdGd5LprT3gQcg1E9FYpKQf1UnNjUVPGcA==
+X-Received: by 2002:a17:902:e801:b0:295:7f3f:b943 with SMTP id d9443c01a7336-2957f3fd4d1mr114855785ad.28.1762246167913;
+        Tue, 04 Nov 2025 00:49:27 -0800 (PST)
+Received: from iku.. ([2401:4900:1c06:600d:d663:3d9f:b9aa:53e6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c8b5cc1sm3692393a91.18.2025.11.04.00.49.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 00:49:27 -0800 (PST)
+From: Lad Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: thomas.weissschuh@linutronix.de
+Cc: Jason@zx2c4.com,
+	agordeev@linux.ibm.com,
+	andreas@gaisler.com,
+	arnd@arndb.de,
+	borntraeger@linux.ibm.com,
+	catalin.marinas@arm.com,
+	chenhuacai@kernel.org,
+	christophe.leroy@csgroup.eu,
+	davem@davemloft.net,
+	glaubitz@physik.fu-berlin.de,
+	gor@linux.ibm.com,
+	hca@linux.ibm.com,
+	jstultz@google.com,
+	kernel@xen0n.name,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux@armlinux.org.uk,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	luto@kernel.org,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	nagarathnam.muthusamy@oracle.com,
+	nick.alcock@oracle.com,
+	npiggin@gmail.com,
+	sboyd@kernel.org,
+	shuah@kernel.org,
+	sln@onemain.com,
+	sparclinux@vger.kernel.org,
+	svens@linux.ibm.com,
+	tglx@linutronix.de,
+	tsbogend@alpha.franken.de,
+	tytso@mit.edu,
+	vincenzo.frascino@arm.com,
+	will@kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [tip: timers/vdso] vdso/datastore: Allocate data pages dynamically
+Date: Tue,  4 Nov 2025 08:49:11 +0000
+Message-ID: <20251104084911.6961-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251014-vdso-sparc64-generic-2-v4-24-e0607bf49dea@linutronix.de>
+References: <20251014-vdso-sparc64-generic-2-v4-24-e0607bf49dea@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2/B7q90WIyt1Y5JN"
-Content-Disposition: inline
-In-Reply-To: <20251103160515.412706-3-prajna.rajendrakumar@microchip.com>
+Content-Transfer-Encoding: 8bit
 
---2/B7q90WIyt1Y5JN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit breaks boot on Renesas arm64 RZ/V2H and RZ/V2N platforms.
 
-On Mon, Nov 03, 2025 at 04:05:14PM +0000, Prajna Rajendra Kumar wrote:
-> Add device tree bindings for Microchip's CoreSPI controller.
->=20
-> CoreSPI is a "soft" IP core intended for FPGA implementations. Its
-> configurations are set in Libero. These properties represent
-> non-discoverable configurations determined by Verilog parameters to the
-> IP.
->=20
-> Signed-off-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+The boot process doesn't complete anymore with no obvious error logs to
+indicate the cause of the failure.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reverting the following two commits fixes the boot issue:
+  10d91dac2ea5 ("vdso/datastore: Allocate data pages dynamically")
+  6a011a228293 ("vdso/datastore: Map pages through struct page")
 
---2/B7q90WIyt1Y5JN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQm99wAKCRB4tDGHoIJi
-0tBHAP9rYYtl2NuaGODKf5vCQUDwJqqxQ7MM9ujFyrKJn11ZqwD8DhBMykUFFOS3
-ywi/TIV7uDWo4vi1SO5ItGH2opA16gk=
-=inU1
------END PGP SIGNATURE-----
-
---2/B7q90WIyt1Y5JN--
+Cheers,
+Prabhakar
 
