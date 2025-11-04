@@ -1,260 +1,200 @@
-Return-Path: <linux-kernel+bounces-884803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4A3C31326
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:22:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77813C312E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 14:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F33B4F9404
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B631884A43
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 13:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D4D3164D9;
-	Tue,  4 Nov 2025 13:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B7231A562;
+	Tue,  4 Nov 2025 13:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2NkINY7"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CGmhIGZJ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FdTOZNsn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46716311979
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C534316908
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 13:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762262135; cv=none; b=SdonEUW1Xhjb7K1xQ6O7Rw1YxChGRLfIDKiy+iYUe0aOPdmlACwXMXIl7yiaN5+d94o8D7oS4LSHK7QySnSW+PBbpfPlAcS3JEhs5dFv2c1ZFMP+PdAeWnIeLGKl8iuU1r1fehlBRnDPz4kwhgcreJfmeelwI6AiaOU/bPRwlko=
+	t=1762262186; cv=none; b=XLR3r0ZpEFX+iT3MJGa8ImQWJphV9A+pWmayrJlXdlA1dneZlt+vII6qfa7SzgYxK1mL0gZMaLCpqSPkK3ltDk98sRcOLxowdvTIZPqIle1fglz35Ft9QhhPFo1AA5cSb5Hny0M9tu/9XA4p7PW6n8PO40KknZ5MWR71ArpBLFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762262135; c=relaxed/simple;
-	bh=xP+UBwA0akWhb2m1gUTSCWu4gdeyEopc7/qO6glrb3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VbCK0huTUsvzFXOX31/5nrpq7Jaa48i7REHAkWY+6MqRz/oQpO9EaDxpGFVcIh5+kWT7fHZe5VBC9K6jgfMAZxpN6zCS9GST7JPUguo8SKhGG1OBrFe1n9tCGKL+L0u18FEKHvc0WtNM02cN2PvZJeyb0S+gdi7c1PbpoCEGRVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2NkINY7; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-294fc62d7f4so52174755ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:15:34 -0800 (PST)
+	s=arc-20240116; t=1762262186; c=relaxed/simple;
+	bh=dahnfKSQZXYULZ5tpN1l5CdbLbc02qJ3aJMjuy8fydc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h0hFdyidDlGi5pS2Xi/LSlZ0Iz0GKYnqySVxanWAawE23Du+fUtoWTYoTdYFoT7fqba9/FkUcRk/2YcX3pL3iSGzBApLNkjQmaIndA/Vn1XMqKkHqo3vaTsWnWbaAuBpehcsiPNK62ar4brtOxsRNWbg6UEaUHHRn4etFkKRiA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CGmhIGZJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FdTOZNsn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4CgHHc1988390
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Nov 2025 13:16:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tCkbvOaLp4lIGumAdGTHtAA0z022CSMFZ6B3cK81eBA=; b=CGmhIGZJf928EuFa
+	YjJDL73yAMsOTF9bxfON1lMw8XS6GO9aOAg2GY5bokJm1oThIcZlDXaHWL5783qv
+	sevzARvJpmeroMqwQDcD/ybRd2IU3OUtGiIunE7EOvWHG1QRUy27OH5zxb2/dOBC
+	NZiJI7ULK26ZihycpczXb6BzXb9dp546RRiDF/QkxNU9he+lNPYJl0yyD5ejpHk3
+	6FJdQD+Z76HIV553LjTUggT3mER5e2mhDTwmWHXshm5a5oUP9DykTCDrjdNNT8YK
+	8i8rPMdcMyCpwyvKKeSOfUJZSX2ULhoGVQG0YUBH94Xbc6iXLoDQs//L3GjvSBKM
+	5yXuJw==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7hbjr4rs-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 13:16:24 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b969f3f5c13so2606921a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 05:16:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762262134; x=1762866934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KaPdklETLQOqQGht0Ouglwao5ZyyFqDFyIPDptevZDI=;
-        b=J2NkINY7Jnbj7bJrpAwfdEFAMMepAbxsJvYu31YqWEAlbN3lRa8RpiKuMxUmOeUXUT
-         fmjD4wKJ/UEGImyDpiLJeriZV60J7hRa/xrhP1ip64tXOAlToHJLgzFvab5DFolTJhyx
-         LoiXJJK1EZp7KU4SewoeVORNQGrbLiVAA/kwKYj0wBvOq5e07j/Hue2mDJMEGTbW7XdO
-         4KHaMSIdfcgdwO4Qtyd/LoFStDKiliJ0mxsnP5LKkCpDNT1otxpl9J3T8Tna2dHdsSQZ
-         9Q+DdNjNkjwgJ0kt+AvjeQ+ywwSlObHpouoGHdtrll6BH7DdlCkSt3N5uS0DnsZ3+6IJ
-         XXYg==
+        d=oss.qualcomm.com; s=google; t=1762262184; x=1762866984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tCkbvOaLp4lIGumAdGTHtAA0z022CSMFZ6B3cK81eBA=;
+        b=FdTOZNsn00/p1kYx86iwQv9F9hAsvGYtaociYuvyuG68ZVHRGh7DLhNnrNc9tjh4lL
+         kPxxWKW1qDOJW01XqV0i6IXb5CmtHJ2k+V2rQSFjPRc+CNsAyD8HstG0f8Y/4ldbHmJF
+         tgpxvZmOYZuL5vB0n2kFjQ0y9b2XaJYBro/Lp6n3KUs5isAgAls2RQZXWJ5cWkivrdS+
+         akb1pJo56ReMQkoC9rgCYENmjYijt0iEL2qM25n9peqXJ45Ic5uQ76xGDbmrGanw1Qjq
+         z98kpkk0Y1k6CMvLvhorwGKcF9DT0MfF/7H9URwy7dErxO9pVrPbzEHPttWMd1ZMZVWq
+         kWtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762262134; x=1762866934;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KaPdklETLQOqQGht0Ouglwao5ZyyFqDFyIPDptevZDI=;
-        b=tTKadOlZnSD8Ax2OPbt+NSpHVG7IrUmmB+soeESw2M5ABmqeJPE0LuAzY1iJxxpTfs
-         aFGnvdS6HTu0pZSFZC/5/JxAExFzGvQ9dLs7DaknbfFokWyGkHfqYOX95Bk7NUOEhFG6
-         GoAdcT7dK5pFL2VgCjT4lbDNGUPIknmImHBoPowLEFv+1/OyAc9RYYmrDjA4pBt8xtkN
-         aWSyx5D6g+o0kVaO85nTg0pTvh3ANbOopPu8dIgEaARUD6LzpHcBXs/6W1fYx1E0wl3+
-         OZ+0dJ9w+nYGQWJSslvHCRMNw6thf9EBONuj+dIC6sSws8c9D2tdsIkX3n1GIv/upZmt
-         VkOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWznIQaPTSuuB+9A9M4zZw9tWEloiI70p4uxDpxn/IjY3tqzVcIhopAGoWEvmluFYpuKjSmuCjlek4tr8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfiSINbWRP0icgW3yNG660ZSUg1jpi8+4RD0EaKnORhiHt2Sfx
-	M6a1u4e5xiDOw3ryyd35/nwv/fZUeSgzfQDulEbIGVHwKWJv+BvkVA6c
-X-Gm-Gg: ASbGncuKkrkN1dFMeF3IuNHDHIhWKfaZqs7w5Wj2cjy2PLzGAsmk25YtRwDhJ/1vK0w
-	svllx2TzDnGRPq9h3Sm8mK4hAjXEGkNN6MlQJSnWt1k5yZnKSwe4VDDymA1B+zldegHTwrDSlhA
-	1D3UxdRHcbb8MOM+mFWx9Zgnl1kX8URm2Bx7Xyrm3GBPXPc63Tw4t1Ka1DixLCiw+w/ekvHnI5a
-	IU4kEAch6mVoSEz+kW34NKQlr8CjiM0HKcqbELrX0Z5J7Otxj+ixOTFU6ieX9rXht/32nw3OFN0
-	8u7o5ZKmFf77M012ItclCFKqIXdEgU8n/qKM9ZoiPsT6WVcs3gsNU3uqw+ploSoJryRmNElJvTx
-	UKu/ltClncyJ239MTYCmvroMjKupz4rx3TZJxf31rnK3vghHaWyBq8MPiecWovUq88PA0KLcInq
-	1mVHbEPVI=
-X-Google-Smtp-Source: AGHT+IFYJ+Ef86npfeYUTM5p40wZKPAA18fU6R4aES1geEESlAZFL0CbAepJgKE0wSrpDsdnIncgPw==
-X-Received: by 2002:a17:902:f68b:b0:274:3db8:e755 with SMTP id d9443c01a7336-2951a4936a6mr213193865ad.30.1762262133305;
-        Tue, 04 Nov 2025 05:15:33 -0800 (PST)
-Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601972a87sm26839245ad.15.2025.11.04.05.15.26
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 04 Nov 2025 05:15:32 -0800 (PST)
-From: Lance Yang <ioworker0@gmail.com>
-To: zhengqi.arch@bytedance.com,
-	dev.jain@arm.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	david@redhat.com,
-	hannes@cmpxchg.org,
-	hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	mingo@redhat.com,
-	ppt@kernel.org,
-	ryan.roberts@arm.com,
-	shakeel.butt@linux.dev,
-	surenb@google.com,
-	tglx@linutronix.de,
-	vbabka@suse.cz,
-	will@kernel.org,
-	x86@kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
-Date: Tue,  4 Nov 2025 21:15:21 +0800
-Message-ID: <20251104131522.33079-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
-References: <827b647d-798f-4775-bb31-ef735485c6bb@bytedance.com>
+        d=1e100.net; s=20230601; t=1762262184; x=1762866984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCkbvOaLp4lIGumAdGTHtAA0z022CSMFZ6B3cK81eBA=;
+        b=f8naItg7a0NfVIzwuK1rczP593TrchShkR5yut/SHC88LSFIteTQoOMS+qE/XTM+ND
+         zCFUMtJFbhrM+hMir9U1osIIZXt4+T0nfXGdlFpS3LzsLDBTPup3kW+UdSAuC0tUKr3g
+         QFr56ogewY3YDkjv1Z7UPi27USF6aOgEGWZUPAfErawXduytjTDnG5xJumHHewKMAlEj
+         BYxZnTfrJ+tIsxi2VqHTWziUvtbNMzy+XXPPSppDp8kbJvOiwrSiMiLmXeZ7ojFDH+x1
+         21gJU9OagNmwjrWuymrkfQErvgJPkr7HKq4ET9ltqpNNbMyiz659bjfjPoQC7wS6r8i1
+         IxeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRC7EAFbjKfY7ArOJvmS0MZRTG9BwV0YSNh6QGiktBP+9OlqoicESuLwlcw7WlRrVYhCKyFgzMjXf54yk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx7H7pkILSHu8lnmfDOwN7bkwEAcsBee5DZLxF0DJkfSE1eXzu
+	fj0HcTIF9SA/6kkoxhe1vlQUMNHCpnALnbOIYqeKPyrGw72hWzdLQLljFggaqY/cp96C4nKpMxD
+	H+z8DsiMNoZY2uquL6AorNu0x2Fww9c86RRgCW0xND4D4REu/rKO3Xp51GHPJ98H5T+A=
+X-Gm-Gg: ASbGnctfyF23D3ghywjlAtKxtl8FT2vPN/+QKK/MIzVO9fhX5fBMw16xHOyLN2C/53K
+	+tX6zl1Iw51OkAVbaPc654IfvdG0vg8IjbgmLG6tPMMUjVfnebX0nijneiLyfrXT2Sesz+/VgIe
+	f/K9OpNxGoE8epw8W5naeK0U28si562Zk2XlEdNzPWg4WNfSyu0Q7jLZezsKLef+oiqQD029WG/
+	PhBaOlvb/g/jDl6dptexzEFrpK/gN7Wni7ZWJp1cANal1Xja3ePEUe9TwnB62wcy5zW4h68XFIo
+	szi02XBJmWjbCPs0lNN8WMH8dx3LpP0KU3ofNGQxlQmmUue94wq/EGefdU93z0vTImWbyAaFdgn
+	Kuf0onFRtrfrrytKf4Fp4pxnw38NaKwbkBU2Uv/9iCcQ=
+X-Received: by 2002:a05:6a20:12c7:b0:334:9fbb:35c3 with SMTP id adf61e73a8af0-348cbfc36e5mr20524457637.46.1762262183505;
+        Tue, 04 Nov 2025 05:16:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFJ96wFJAi6EOKorEp/J4xzwntMqgifOhvphrTFuhOkUboj24jia9QeZ94B+cMWoPmdjudC8w==
+X-Received: by 2002:a05:6a20:12c7:b0:334:9fbb:35c3 with SMTP id adf61e73a8af0-348cbfc36e5mr20524417637.46.1762262182906;
+        Tue, 04 Nov 2025 05:16:22 -0800 (PST)
+Received: from [192.168.1.9] ([122.164.83.168])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f18315bfsm2412021a12.5.2025.11.04.05.16.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 05:16:22 -0800 (PST)
+Message-ID: <b81cdd25-3da7-4dd2-b69b-2f7b131f9610@oss.qualcomm.com>
+Date: Tue, 4 Nov 2025 18:46:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: sram: qcom,imem: drop the IPQ5424 compatible
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251015-ipq5424-imem-v1-1-ee1c1476c1b6@oss.qualcomm.com>
+ <20251021-quaint-hopping-tuna-0dade2@kuoka>
+ <cfb94b1a-7ad0-4067-a08b-2af358edb768@oss.qualcomm.com>
+ <45a74411-32a0-4a28-a738-9f44d66c0de3@oss.qualcomm.com>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <45a74411-32a0-4a28-a738-9f44d66c0de3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Uv5u9uwB c=1 sm=1 tr=0 ts=6909fca8 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=8axTHWJ9fAdUHyy7aoPncQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=_CKE_32nWIW8_9EVYHUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: m6Lv5-bgGtYLnRH20d1hwl47qyd8KVY1
+X-Proofpoint-GUID: m6Lv5-bgGtYLnRH20d1hwl47qyd8KVY1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDEwOSBTYWx0ZWRfX5jHx26I/YOWT
+ 6An3pQlxQJmRNrNsN7HghtdT6Fl0aHtCCSvQamj8O8/di9VgmwnE1wD+B8xTkk0oTRQ9B3IwJ5p
+ VMRb1H5H2pGcZG+Rlnhxmzyjy+t8wiKuuZh8MNMICNtDMI4t4/WAjO3t/dz7gykirhpUumMxED9
+ 4O2U/qrxv4AHYWx037IDCuTE0gBoEPPssJaC9iO2rhPv0yedRehmb/2F1d+CLGcPoXF52NcDnm4
+ pFhwamkSoDEXySsfjU+fAkwISq9LXwS4hQZbP2ofG5ephPt9E8XEptJYkBs2fqSvH/0ApoSK+YY
+ d9Uz/YyAJhXoW5u26zF+tNv4WZr3xoxkzsWTnBrO+yg2O/X+6TAb0cm1QiUHxlv5ztYLnlhGoF6
+ q/DM8NKwmDlsg2OW8xptjLlU5obLvg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-04_01,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511040109
 
-From: Lance Yang <lance.yang@linux.dev>
+
+On 11/4/2025 6:18 PM, Konrad Dybcio wrote:
+> On 10/27/25 5:59 AM, Kathiravan Thirumoorthy wrote:
+>> On 10/21/2025 12:32 PM, Krzysztof Kozlowski wrote:
+>>> On Wed, Oct 15, 2025 at 11:46:58AM +0530, Kathiravan Thirumoorthy wrote:
+>>>> Based on the recent discussion in the linux-arm-msm list[1], it is not
+>>>> appropriate to define the IMEM (On-Chip SRAM) as syscon or MFD. Since
+>>>> there are no consumers of this compatible, drop it and move to
+>>>> mmio-sram.
+>>>>
+>>>> While at it, add a comment to not to extend the list and move towards
+>>>> mmio-sram.
+>>>>
+>>>> [1] https://lore.kernel.org/linux-arm-msm/e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org/
+>>>>
+>>>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/sram/qcom,imem.yaml | 3 +--
+>>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> index 6a627c57ae2fecdbb81cae710f6fb5e48156b1f5..3147f3634a531514a670e714f3878e5375db7285 100644
+>>>> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>>>> @@ -14,11 +14,10 @@ description:
+>>>>      transactions.
+>>>>      properties:
+>>>> -  compatible:
+>>>> +  compatible: # Don't grow this list. Please use mmio-sram if possible
+>>>>        items:
+>>>>          - enum:
+>>>>              - qcom,apq8064-imem
+>>>> -          - qcom,ipq5424-imem
+>>> And where is qcom,ipq5424-imem added? This is supposed to be one patch.
+>>
+>> Kindly excuse for the delay in the response as I was out of work.
+>>
+>> This is supposed to be added in the sram.yaml binding, but I haven't completed that yet. Between Konrad has done some rework [1] on removing the imem.yaml and combined with sram.yaml (in his dev tree). So I hope it will be taken care along with that.
+>>
+>> Konrad, Can you help to share the plan on when the patches will be posted for review? It will be helpful for reviving my other series[2] and obviously yours too :)
+>>
+>> [1] https://github.com/quic-kdybcio/linux/commits/topic/imem_sram/
+>>
+>> [2] https://lore.kernel.org/linux-arm-msm/20250610-wdt_reset_reason-v5-0-2d2835160ab5@oss.qualcomm.com/#t
+> Let's get an answer on the Kaanapali thread and go from there
+>
+> https://lore.kernel.org/linux-arm-msm/176222838026.1146775.13955186005277266199.b4-ty@kernel.org/T/#mb3284a3a0bc3a9cda9cc6c0fb9433e8c2dddea2f
 
 
-On Tue, 4 Nov 2025 14:33:00 +0800, Qi Zheng wrote:
-> 
-> 
-> On 11/4/25 12:02 PM, Dev Jain wrote:
-> > 
-> > On 03/11/25 2:37 pm, Qi Zheng wrote:
-> >> Hi Dev,
-> >>
-> >> On 11/3/25 4:43 PM, Dev Jain wrote:
-> >>>
-> >>> On 03/11/25 12:33 pm, Qi Zheng wrote:
-> >>>> Hi Dev,
-> >>>>
-> >>>> On 11/3/25 2:37 PM, Dev Jain wrote:
-> >>>>> The implementation of CONFIG_PT_RECLAIM is completely contained in 
-> >>>>> generic
-> >>>>> mm code. It depends on the RCU callback which will reclaim the 
-> >>>>> pagetables -
-> >>>>> there is nothing arch-specific about that. So, enable this config for
-> >>>>> all architectures.
-> >>>>
-> >>>> Thanks for doing this!
-> >>>>
-> >>>> But unfortunately, not all architectures call tlb_remove_ptdesc() in
-> >>>> __pte_free_tlb(). Some architectures directly call pte_free() to
-> >>>> free PTE pages (without RCU).
-> >>>
-> >>> Thanks! This was not obvious to figure out.
-> >>>
-> >>> Is there an arch bottleneck because of which they do this? I mean to 
-> >>> say,
-> >>>
-> >>> is something stopping us from simply redirecting __pte_free_tlb to 
-> >>> tlb_remove_ptdesc
-> >>
-> >> Some architectures have special handling in __pte_free_tlb(), and cannot
-> >> simple redirect __pte_free_tlb() to tlb_remove_ptdesc(), such as m68k,
-> >> powerpc, etc.
-> >>
-> >> For those architectures that call pte_free() in __pte_free_tlb(), it
-> >> should be easy to modify them.
-> >>
-> >> If you're not in a rush, I can take the time to finish the above tasks.
-> > 
-> > Right then, I'll leave that up to you!
-> 
-> OK, I will do it ASAP.
+Yeah, I'm also waiting for the conclusion on the thread.
 
-Cool! Looking forward to seeing that land ;p
 
-> 
-> > 
-> > 
-> >>
-> >>>
-> >>> or pte_free_defer?
-> >>>
-> >>>
-> >>> I am looking to enable this config at least on arm64 by default, I 
-> >>> believe it will be legal
-
-Great proposal, Dev! That looks like a very useful feature. Let's make it
-happen on arm64 ;)
-
-> >>>
-> >>> to do this at least here.
-> >>
-> >> IIRC, arm64 can directly enable CONFIG_PT_RECLAIM, as it is supported
-> >> at the architecture level.
-> >>
-> >> Thanks,
-> >> Qi
-> >>
-> >>>
-> >>>
-> >>>>
-> >>>> We need to modify these architectures first, otherwise it will
-> >>>> lead to UAF. This approach is feasible because Hugh provides similar
-> >>>> support in pte_free_defer().
-> >>>>
-> >>>> Enabling PT_RECLAIM on all architecture has always been on my
-> >>>> TODO list, but it's been blocked by other things. :(
-> >>>>
-> >>>> Thanks,
-> >>>> Qi
-> >>>>
-> >>>>>
-> >>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> >>>>> ---
-> >>>>>   arch/x86/Kconfig | 1 -
-> >>>>>   mm/Kconfig       | 5 +----
-> >>>>>   mm/pt_reclaim.c  | 2 +-
-> >>>>>   3 files changed, 2 insertions(+), 6 deletions(-)
-> >>>>>
-> >>>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> >>>>> index fa3b616af03a..5681308a5650 100644
-> >>>>> --- a/arch/x86/Kconfig
-> >>>>> +++ b/arch/x86/Kconfig
-> >>>>> @@ -327,7 +327,6 @@ config X86
-> >>>>>       select FUNCTION_ALIGNMENT_4B
-> >>>>>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
-> >>>>>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
-> >>>>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
-> >>>>>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
-> >>>>>       select SCHED_SMT            if SMP
-> >>>>>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
-> >>>>> diff --git a/mm/Kconfig b/mm/Kconfig
-> >>>>> index 0e26f4fc8717..903c37d02555 100644
-> >>>>> --- a/mm/Kconfig
-> >>>>> +++ b/mm/Kconfig
-> >>>>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
-> >>>>>         The architecture has hardware support for userspace shadow 
-> >>>>> call
-> >>>>>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
-> >>>>>   -config ARCH_SUPPORTS_PT_RECLAIM
-> >>>>> -    def_bool n
-> >>>>> -
-> >>>>>   config PT_RECLAIM
-> >>>>>       bool "reclaim empty user page table pages"
-> >>>>>       default y
-> >>>>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
-> >>>>> +    depends on MMU && SMP
-> >>>>>       select MMU_GATHER_RCU_TABLE_FREE
-> >>>>>       help
-> >>>>>         Try to reclaim empty user page table pages in paths other 
-> >>>>> than munmap
-> >>>>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
-> >>>>> index 7e9455a18aae..049e17f08c6a 100644
-> >>>>> --- a/mm/pt_reclaim.c
-> >>>>> +++ b/mm/pt_reclaim.c
-> >>>>> @@ -1,6 +1,6 @@
-> >>>>>   // SPDX-License-Identifier: GPL-2.0
-> >>>>>   #include <linux/hugetlb.h>
-> >>>>> -#include <asm-generic/tlb.h>
-> >>>>> +#include <asm/tlb.h>
-> >>>>>   #include <asm/pgalloc.h>
-> >>>>>     #include "internal.h"
-> >>>>
-> >>
-> 
-> 
+>
+> Konrad
 
