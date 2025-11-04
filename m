@@ -1,284 +1,199 @@
-Return-Path: <linux-kernel+bounces-884401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11925C301E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:00:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA54C30203
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:01:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DC824FC425
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:52:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AB974FAC73
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 08:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D575313529;
-	Tue,  4 Nov 2025 08:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40759313E15;
+	Tue,  4 Nov 2025 08:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lJ2BTl0j"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="q4bVRIHM"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010012.outbound.protection.outlook.com [52.101.56.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE102951A7;
-	Tue,  4 Nov 2025 08:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246303; cv=none; b=szM6HsgtD3Yx6fftI2QydDOFSBwprU4SLz+mxzVwPXdJti8h6sI6abUevUv4ti/iBawHknfLR9zCoFvTCLhzrzjGibReJ9OGwISS3hXFDyEj2HIGSb2kX47fYv0lulalITZYyqnH8a/MR7p8ZUdr7x/DAoYjtv80Eh8LaNb5cnQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246303; c=relaxed/simple;
-	bh=eSPbfUhqhg4ACELWn76cYsuGxPgVYiIt7seUfEZq8uQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SNsnpMfCP8hLsur8/wf6aEcZVxw0/XEF+Qs3Onmtb+DStzla4Bx8J3gPsio6sQv1xokKb/AJaykPSWa0l4PT5afMJruRqcaNYkC4eJPViTWjYZrLt53x8ykt5Be07I1SctriI5275CIBZXwDxOxxJXtup+ymnn2913TFBVWwvBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lJ2BTl0j; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A48hM2O1538308;
-	Tue, 4 Nov 2025 08:51:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=Shu5iXGOh6M
-	z3xavbR5acveN2DN+xpWF20uo9kboPvE=; b=lJ2BTl0jITqoLKAUUOxJOFdxbDL
-	P7Mx0pxvp8BIlrl4dsgLRm/wkEXK3hKO7wuz66vC3wpYSOXx/ap/X1jIvL9TpVdN
-	meMDAjg34mB4NO8tgkj9eLn3sSCMxPzZDQlCcRmxYiJWdDx6JyygrnqCv3M9aUEy
-	8qDqGvi25c0wA2+Lvkgmg1eknoOq3I+sLT++rCf6H8psAC6qMHobvV/UmsRSvmKJ
-	LHO50qT6f+7gjc57OJ25L07B5yvbSQF7jNc18W4do0HZuLLQjNEGjuiEbS/zqTzM
-	vpAb20K2/Y8zvEeILZD170A4CPByMdzcNpB/n07I7YRMIEJkWT02eK88EBQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6xjqtrwg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 08:51:31 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A48pR7j016325;
-	Tue, 4 Nov 2025 08:51:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9m551n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 08:51:28 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A48pQUd016290;
-	Tue, 4 Nov 2025 08:51:27 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-charante-hyd.qualcomm.com [10.213.97.134])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A48pRGC016409
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 08:51:27 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 389980)
-	id 05AF25F4; Tue,  4 Nov 2025 14:21:26 +0530 (+0530)
-From: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-To: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, robh@kernel.org,
-        dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
-        bjorn.andersson@oss.qualcomm.com, bod@kernel.org, conor+dt@kernel.org,
-        krzk+dt@kernel.org, saravanak@google.com,
-        prakash.gupta@oss.qualcomm.com, vikash.garodia@oss.qualcomm.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Subject: [PATCH 6/6] of: use correct iommu-map parsing logic from of_iommu layer
-Date: Tue,  4 Nov 2025 14:21:05 +0530
-Message-Id: <b1ad7bee26fc87c1b73ac18d2284ad2e10b4b4d5.1762235099.git.charan.kalla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
-References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C1729D27A;
+	Tue,  4 Nov 2025 08:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762246414; cv=fail; b=GE1103pbr57IhUm+H3Scp49rCnALYHFL4aHUIm9BwcZWT7CZ3k9mwM/KPWq57KA+U1wlWrVPQwHWGdSo0WqiohBsIGgfC8N7D2T2aksvzoZEtHeIm4ciF1WtpMLMJWc8TBpg/n+s09IUhVqqp5GoiFWdv4PLRROy6sAnY6gDuXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762246414; c=relaxed/simple;
+	bh=H2Ak+g8FHrddJb6eCj5VR5AFTCtNpW5IXthO6BE8GaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Olte+ZYAPdVPCdBlA4XH+xev46+IIYdUFMDiumoxlXKyvF9bSdDnI2yO0tLSMGMU3Kr1aumlFKERUdvIpww3rK6zdM7JuheEGE5uFQ7cO/MyksuZbDVsoMXe+1v3yYG+zjRwFiBc3XQJNpxWyHVweUV2RPUArNuEZbHaqeM6nIg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=q4bVRIHM; arc=fail smtp.client-ip=52.101.56.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BOU9jG6eKD7HmOaZHN2kYiB9ELBW3pxJouA1OXfK5PVxrlZcBFS2vteKb07mecjhim029FPt8dwd1bN0zjCKZt2Gb2eAOBmCvH1Aql/QEXOsiSEiYla7S5sGLkHhJh5q9c37H0xSmvtXx/zURSr0G8gi2ofHO58NK33AUL4qhwxmDVnSgKCZ11iG2umioTNhnIBLRjh3nL6IVSm20rKOHfKcYXPcQs6cGUQ8CeUGEtp2hBuBXXWusetqxNWktGaZLq5DRzMOjjU1YreCa1JTBgzG+hphZ+ZWpxGNbYuZQWwzRJ3oN9+Svfx/iffi/8JZXdXKz6OMlzktSLEEutg7sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MyZPtDF8Ou4iiiSRIg/MY3Wh+L+16eF+htRghRfXjUg=;
+ b=R5Q+BgRRBQZ6OAD6E/XjOuSbd+WoeEUjtN8FMb3ts3hNcLkfrPB6uck8jzDZXztBDqI4fKPW4/PJd1/HBUfCIcKaky6w00ZSr6NATXd5aFa6amX23hGOCEmLGFqJJzRuDVcgw4KuszEk3unadDd48wPAC/1MlxtaxCgI2T6e2BR7nEbHyzN8DQb50Qn2vwsOPncY7xPfBujaA/Pn1uHb4v/AkbksGNQpVL7cmGfF+iW+aBxdldKfXp4NMOedVvQ/ig6vYZenm+1op5IlIoPKekocUPzPC/SeZvjMGgpVt8A2v8lXnSvpwPKcEHVvbutllGs3WGrvlXEsXiuIgvUI+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MyZPtDF8Ou4iiiSRIg/MY3Wh+L+16eF+htRghRfXjUg=;
+ b=q4bVRIHMZ0Fd9ZsdubGsbemtFWg9YDOXYpqAsXjQH5iVtkrGj7oN3jbS5ZlGY705l3aj898aQZgvblT+PgS3Q2Cx3ShKO+jrRbpitkvIt5LN27Fx5uprmM+oOwXHGp48+i70HRbb7Smb87XaiHT6RCU4TDcDJofJkjxct0uxoFgBoMwqX8TsCn5DPyZP4Spsf8Jfl4YqG7eYur0s/RN8JwH93L7R4Tac1oitZbu6Ddk4vmWyufxDj0icPWeCGHCBNCdxBfaXF78Mz345/ai698WdZE9jnO+2oZIxF86r5f8dcS4LxIIxweJHIEc4YmesRvFn/fxu3zAPEEd2NJ+zRA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
+ DM6PR03MB5164.namprd03.prod.outlook.com (2603:10b6:5:247::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.16; Tue, 4 Nov 2025 08:53:30 +0000
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::abad:9d80:7a13:9542]) by DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::abad:9d80:7a13:9542%3]) with mapi id 15.20.9275.013; Tue, 4 Nov 2025
+ 08:53:29 +0000
+From: adrianhoyin.ng@altera.com
+To: alexandre.belloni@bootlin.com,
+	Frank.Li@nxp.com,
+	wsa+renesas@sang-engineering.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: adrianhoyin.ng@altera.com
+Subject: [PATCH 0/4] i3c: dw: Add support for Device NACK Retry count
+Date: Tue,  4 Nov 2025 16:51:07 +0800
+Message-ID: <cover.1762245890.git.adrianhoyin.ng@altera.com>
+X-Mailer: git-send-email 2.49.GIT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: KUZPR03CA0028.apcprd03.prod.outlook.com
+ (2603:1096:d10:24::8) To DM8PR03MB6230.namprd03.prod.outlook.com
+ (2603:10b6:8:3c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6y6x3-m2YWocG4MPXXKbU3GdR2zXwdb6
-X-Proofpoint-ORIG-GUID: 6y6x3-m2YWocG4MPXXKbU3GdR2zXwdb6
-X-Authority-Analysis: v=2.4 cv=criWUl4i c=1 sm=1 tr=0 ts=6909be93 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=BWPSM1Px-4UC32KkbhQA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA3MSBTYWx0ZWRfX3JbM2EbuudhD
- 6W0WzU8FsFapNsiex2wzU/0UZaAooHpXSClU6/t5Izi2abn8j8eYixUbZCX2JTSoGmlNJFwu+nh
- gcweQ10cr5n9Y5C3NplAuqzPdYLI4IgFHz2ujlYkjXt2lhCFdef/XsX42ZEGkOgyQ61Wp7zJBKX
- nahkxdkKwDqHTNhdM2rNdAO+2PGXBlrmuwNG+080juc9wVy6iyCLGlH80tbnuwzije4EZeyJF2u
- GHMaHPQFOuZfDrGRZCe9HSQh7FGb4R+moNEqYlsaeR9fboGIDgtQEaUp3tWvoqJ9BX2oyp6yWzK
- hcwg8vU2Wn5N3/SHA7S2W70EVbH+mv0g+Jm6Tv5+swNY2lTIeg5Sgn8q6NWSE5FPrb3gFIxC3CK
- qTOV4gfVbBv/bNWv94wkV/Pq5pib8w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- impostorscore=0 clxscore=1015 spamscore=0 suspectscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511040071
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|DM6PR03MB5164:EE_
+X-MS-Office365-Filtering-Correlation-Id: a678cb80-0ebf-4bb1-5f55-08de1b7fa016
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xsjP4dgepLTBldSq0X68U7bZnJ3NWbLLQ4VvmdSm4gH92G/wkL8BsaUk4aia?=
+ =?us-ascii?Q?xMkIIM4MyE2Cs1ZlF7+LSb2x8BvWQx2ond65TVnSeRP3tWnNiDNS1LhGZOMe?=
+ =?us-ascii?Q?WSRTiE+ZFhzJKn3qMlpjVkV5S9qe5MFHfNiKvwABkhpc05Fzp5BA9AYN+Vz7?=
+ =?us-ascii?Q?aomMsnIKg1ZkWmH0i6dCbog610oW5Ud/Ts/A6NObIXP0p1J9sv3koldogUDu?=
+ =?us-ascii?Q?mMS4gS1EmA712SEtR5ahqECMlm8WkM6l3Z2YERTRY0CNBB86SQzt4ur486/R?=
+ =?us-ascii?Q?HkoLPgxDEILYwiGsDlE5V1+aVI9fFyObk5QOblayZ+//2aYRqXSGomS+mCwT?=
+ =?us-ascii?Q?cDvmOJ5Pt+Lx93NYxMUycvncA/rnxvKg2jFkos5Sa9E3JBZJOrhN3HlQs2TK?=
+ =?us-ascii?Q?YpLhDe9b5xR0P8UQZEsph5erwxEp7or4PYOxCoFUC4YtHRddB8WxCWYq5P4r?=
+ =?us-ascii?Q?Zblgfx9+aw44GYr4WxWeL7gmsojdmMxRT/8Wx+u1vQVT7Gy+U6jBhUxPojTQ?=
+ =?us-ascii?Q?IXpbWdoiVOCdwmkb+4yTZazrjImyRRsGCh6XSjpY6ur780UPZkBDuJ2q2Jmy?=
+ =?us-ascii?Q?aizOra62H9wgBwa2prw63qnQDcMoDPLLU9lf+fwhtV65RM7/kzf1DT+xgfY7?=
+ =?us-ascii?Q?KIki1S9e0lm269RrOnPosiFt1dr4zDQ2Xe3pDT8LST0abcgYGxrrs+B0LwRi?=
+ =?us-ascii?Q?Ttehb4c1SbLJrEpHPE+qSuWJ1hzc3Z6XfU/p5Uyoj60QXK/k2OdsYeAS6atD?=
+ =?us-ascii?Q?QaRzNacrQ5Rb8w2JVzhLPNOuLap8aYBdxPoU8jEUoLUcweFmJ90jlWuJeFy7?=
+ =?us-ascii?Q?w/q1v3iWRWQaJBWCrRV4xOBm7wEITNiK/rmk2UWcgW3UBBL2YlFqaZ8j6qkR?=
+ =?us-ascii?Q?DPcOkhLIrg8F3Mve/fHl4ldNac8l4gnFLVRGps4VpFkSFLatJCFHUIw1K3YZ?=
+ =?us-ascii?Q?Grj8HdQlPE2ZRLd9jhAIwhsIfSAQNl3MjwPJ0aooVr6rB4Hj6vKxPEpi/kij?=
+ =?us-ascii?Q?px8iqaWLfsPiBY5AGaapyuRoZ/nIVBBz0vzD+T9AgD5aoSQ1L/XwbRs+v+T4?=
+ =?us-ascii?Q?JOC0gduKaof9DL1K/bEWJHWJVo0epH385PU0VQlg0oja6LoFiSU2ZWiK92En?=
+ =?us-ascii?Q?+REzRvxQpTxmNd5flExhJmfY8f4i0bGHgvzq/hbvjAXgWpIxsnEvULYblY3J?=
+ =?us-ascii?Q?6wHrWn6OgvDWRZmpOC3EgDn2DBpeaTw/2ek1InR+Nj688hCYEbyccdkam9vd?=
+ =?us-ascii?Q?1F7jtE0rHUyEPml2pSTq5uM0itRC5Y0qVi1jd5w4z67r3oElw7HaHyPjGrNb?=
+ =?us-ascii?Q?IDhwmXY+m04i7AZF7FFyhqHeyhRSGBnf/LJp0UfQspUwC1ee+q7XuNgrhmwQ?=
+ =?us-ascii?Q?ufObaG4DCmEX9Zh8Te2ad0kkv5LQjDqlZaU1nteco2lCm8n9UL2yhYXr92i3?=
+ =?us-ascii?Q?j15plleDL7oyPTfzbUBolNx60wpJwyeFPVBmzN7qv1KTIJ3465rtN9XmSm3g?=
+ =?us-ascii?Q?vRdZ5qeTcFuv92U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vagHUlzdmTBAClaD7tyur71Hx5L4LZ4IVyNB2fh5rhiBWMBs1sEXL/ocCJ/A?=
+ =?us-ascii?Q?kSKiv+fQAFE/eKXPiVSSulJFnX17LIH545nf5kUV+e/CDjUQmS7lCEf3g6lU?=
+ =?us-ascii?Q?s8p8qzYDtk4MjdxZEbKyhFjuESjKVWgtF9xKfjLjYqmgV60P7oVbDX1SD4Dk?=
+ =?us-ascii?Q?f2VmrUsCuZvCmHHxcDUgZzXn8TsE8Q8CaQC2m8+vR/h6YlV9uBx8YW2e95nY?=
+ =?us-ascii?Q?UXbfwPT3b6dev+v8c/qALKVCPS8B5GR5CNueiEG7XqfDNQl0IMUqPS6s5TsP?=
+ =?us-ascii?Q?Bfb0RoPUVE2zLifvNI36XhKhCnMlHg1KJBxQ7ExLIW7CqFl/elIGeNjOhqch?=
+ =?us-ascii?Q?czHXMVQidq9qcME6yj1IW67qwKnekHYUctKUsQrlVusJ0Af3nupvIxLdedTR?=
+ =?us-ascii?Q?Iz7pqjXaefUlRKCHpuabb0H31BmUaSnXDmvBGzbQni4gIRtaNcv5Jerpy8dH?=
+ =?us-ascii?Q?iBOp4hhI94qild/LM7ZIUni0oX4RJb3zboWavc85bra9CQtXwOHxEx7Bs7XH?=
+ =?us-ascii?Q?+tLPQk3IWAXaSl0Lxbs5OXMUUenc5N+m0iw+uJRo/hHD9q4M2mDinQgZkrF/?=
+ =?us-ascii?Q?svqwqp/ZBGwngIxDJatNltOZ6pF94+Z/ZY7FJdKfkny5IhaMAfctKYG0pn6t?=
+ =?us-ascii?Q?QI2bjNBJfiCIHHj5JiLPk+r0sF7M/4vkwmKINFCPI172LtU6Jdyn+EnyA5rl?=
+ =?us-ascii?Q?btDe0fFf7lyWiK9umKJxn1F8TEa/vUdqZ4cO9PajHiCFlySw0bfuNa2w0Z8Q?=
+ =?us-ascii?Q?YmQ5MCFYszArvNAYLwzSWrLa3IsNDp8yB5CIt/yoQYklspifZudu7iLup/2j?=
+ =?us-ascii?Q?KwhxZ7Mm9d9cCQfmephm1URFXBMpuHcvK651xfzp8ItYwJQEr6F5j5UkFd2K?=
+ =?us-ascii?Q?rt+rwZGAlldMBYdjotTWM/2nQRulT+3Sla84hmXwelrKxsjgUaAtGEro5Poh?=
+ =?us-ascii?Q?kCl/dlGm8HrRMxegJtD0CaMLogtk4/O7InR8AWRGCBmXDsF9nlts8YDtWhqU?=
+ =?us-ascii?Q?DNKhU1U2nFRTUG/2DmEUwSZU3LzSIvbs15M9BnpJI4d6HjLDgwpvSBdUESXh?=
+ =?us-ascii?Q?Cfki/VPjiMCx/3YF1zufZacZteUuhF2uEW50WwKGQLV1hm4bkRYcv8ufX+JN?=
+ =?us-ascii?Q?rp9vSvul0yueKcvq6PYGAwrx2vGMreMDpXsWp4V21qBocD/lQ9k4g+b3ILfs?=
+ =?us-ascii?Q?QNA/scMx6jZJRGhjlxQYZnKMLjRHLthLzUU2ix+e+0YKNuSES3nwrpMPVlHB?=
+ =?us-ascii?Q?Djw7Hx7QSFTqeiEXjXKMCo0SquZH6/nCMShXBq5L8EvUGyjYCzm3lyJR0qo4?=
+ =?us-ascii?Q?nxEaRsMLxJbqsp6RLtq1b9PcEY+Z70JKewZqR6CmevbkL6uvZxtl1hGVD2lV?=
+ =?us-ascii?Q?qfyXk58PjTM8CnwvrXxi11cWf7ZHIqCDnWqOI9ljaF6TI5cvjuLLlPj6vkrG?=
+ =?us-ascii?Q?ixvNvnbc/frmm9Fm0CNYlL4w1TstL3RN8gJDA9Lo5eyERuteE+0Ad5f9VnKv?=
+ =?us-ascii?Q?EUpA0v1sWbKC7JTirdL0E0ZOA7DnH8BFeYw8MHxFR8ZLqfOWiLnPrpZhfsFq?=
+ =?us-ascii?Q?dK3ThJdwy2BfMxGipvpoqZiI7ciLzeCtRBI5FD6XciGlSSCB87Amj9LS6Fgr?=
+ =?us-ascii?Q?0A=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a678cb80-0ebf-4bb1-5f55-08de1b7fa016
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 08:53:29.7054
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zrc75eJHb35zWyH+Yc/564Y/J3FoVYtlrl8rX9Mw/mFaDgx4FLrggkXt/0yKISyjsyaj/TdSQ2IAgm+3mnJrzujT+T3UUbqfvqWyZnr2mBI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB5164
 
-Use of_map_id_or_funcid() that takes #iommu-cells into account, while
-keeping the compatibility with the existing DTs, which assume single
-argument. A callback function is used to get the of_phandle arguments,
-that contains iommu controller and its cells, and is called into the
-vendor specific driver through of_iommu_xlate().
+From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
 
-When 'args_count' passed in of_phandle_args is '1', it is expected that
-of_map_id_or_funcid() fills the translated id into the of_phandle
-arguments which then called into of_iommu_xlate().
+This series adds support for configuring the Device NACK Retry count
+in the Synopsys DesignWare I3C master controller and enables the
+corresponding property in the Altera Agilex5 device tree.
 
-When 'args_count' > 1, as it is complex to establish a defined relation
-between the input id and output, of_iommu layer handles through the
-below relation:
-For platform devices, 'rid' defined in the iommu-map tuple indicates a
-function, through a bit position, which is compared against passed input
-'id' that represents a bitmap of functions represented by the device.
+Some I3C slave devices may temporarily NACK transactions when they are
+busy or not ready to respond. To enhance bus reliability, the DesignWare
+I3C controller supports a programmable retry mechanism that automatically
+reissues NACKed transactions. This series introduces the
+snps,dev-nack-retry-cnt device tree property to configure this retry
+count. The value is written into the Device Address Table (DAT) entry for
+each I3C device, enabling fine-grained control of retry behavior.
 
-For others, 'rid' is compared against the input 'id' as an integer value.
+This series also fixes an issue where existing DAT entries could be
+overwritten when the driver restores device addresses. Update
+dw_i3c_master_restore_addrs to preserve existing bits in each
+DAT entry when restoring addresses.
 
-When matched, of_iommu_xlate() is used to call into vendor specific
-iommu driver.
+Adrian Ng Ho Yin (4):
+  dt-bindings: i3c: Add snps,dev-nack-retry-cnt property to Synopsys I3C
+    master
+  arm64: dts: intel: agilex5: Add snps,dev-nack-retry-cnt property for
+    I3C controllers
+  i3c: dw: Add support for Device NACK Retry count
+  i3c: dw: Preserve DAT entry bits when restoring addresses
 
-Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
----
- drivers/iommu/of_iommu.c | 59 +++++++++++++++++++++++++++++++++-------
- drivers/of/base.c        |  4 +--
- include/linux/of.h       | 15 ++++++++++
- 3 files changed, 66 insertions(+), 12 deletions(-)
+ .../bindings/i3c/snps,dw-i3c-master.yaml      |  8 ++++
+ .../arm64/boot/dts/intel/socfpga_agilex5.dtsi |  2 +
+ drivers/i3c/master/dw-i3c-master.c            | 40 ++++++++++++++++++-
+ drivers/i3c/master/dw-i3c-master.h            |  1 +
+ 4 files changed, 49 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 6b989a62def2..9575e37ad844 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -16,6 +16,7 @@
- #include <linux/pci.h>
- #include <linux/slab.h>
- #include <linux/fsl/mc.h>
-+#include <linux/platform_device.h>
- 
- #include "iommu-priv.h"
- 
-@@ -41,22 +42,60 @@ static int of_iommu_xlate(struct device *dev,
- 	return ret;
- }
- 
-+/**
-+ * of_iommu_map_xlate - Translate IOMMU mapping and release node reference.
-+ *
-+ * @id: bitmap for function id parsing(platform devices) or base id.
-+ * @id_base: checked against @id
-+ * @arg: Device to configure.
-+ * @iommu_spec: IOMMU specifier from device tree.
-+ *
-+ * Wrapper function that calls of_iommu_xlate() to configure the IOMMU
-+ * mapping for a device, then releases the device tree node reference.
-+ * This is used as a callback function for of_map_id_or_funcid().
-+ *
-+ * When the cell_count > 1, the relation between input id(@id) and the
-+ * output specifier is complex to define, like linear case when cell_count = 1,
-+ * Handle such cases where linear relation can't be established between
-+ * the @id and the output with the below relation:
-+ * a) For platform devices, @id_base represents the function id, which is
-+ * compared against the input @id, all maintained in bitmap relation.
-+ * b) For other devices, it performs exact ID matching.
-+ *
-+ * Return: 0 on success, -EAGAIN if ID doesn't match
-+ * and standard negative error code on failure.
-+ */
-+static int of_iommu_map_xlate(u32 id, u32 id_base,
-+			void *arg, struct of_phandle_args *iommu_spec)
-+{
-+	struct device *dev = arg;
-+	int ret;
-+
-+	if (iommu_spec->args_count > 1) {
-+		if (dev_is_platform(dev)) {     /* case a. */
-+			if (!(BIT(id_base - 1) & id))
-+				return -EAGAIN;
-+		} else if (id_base != id) {     /* case b. */
-+			return -EAGAIN;
-+		}
-+
-+	}
-+
-+	ret = of_iommu_xlate(dev, iommu_spec);
-+	of_node_put(iommu_spec->np);
-+	return ret;
-+}
-+
- static int of_iommu_configure_dev_id(struct device_node *master_np,
- 				     struct device *dev,
- 				     const u32 *id)
- {
- 	struct of_phandle_args iommu_spec = { .args_count = 1 };
--	int err;
- 
--	err = of_map_id(master_np, *id, "iommu-map",
--			 "iommu-map-mask", &iommu_spec.np,
--			 iommu_spec.args);
--	if (err)
--		return err;
--
--	err = of_iommu_xlate(dev, &iommu_spec);
--	of_node_put(iommu_spec.np);
--	return err;
-+	return of_map_id_or_funcid(master_np, *id, "iommu-map",
-+			"iommu-map-mask", &iommu_spec.np,
-+			 iommu_spec.args, dev, &iommu_spec,
-+			 of_iommu_map_xlate);
- }
- 
- static int of_iommu_configure_dev(struct device_node *master_np,
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index cd221c003dd5..b5554c0b0bc5 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -2181,7 +2181,7 @@ static int of_map_id_cell_count(const __be32 *map, const char *map_name,
-  * @id: input id that is given for translation.
-  * @arg: argument passed to the @fn.
-  * @pargs: filled by the contents of @map and pass to the @fn.
-- * @fn: Callback function that operated on @dev and @fn.
-+ * @fn: Callback function that operates on @arg.
-  *
-  * The function populates the phandle args structure with the node and
-  * specifier cells, then invokes the callback function. The callback is
-@@ -2233,7 +2233,7 @@ static int of_map_id_untranslated(const __be32 *map, u32 cell_count, u32 id,
-  *
-  * Return: 0 on success or a standard error code on failure.
-  */
--static int of_map_id_or_funcid(const struct device_node *np, u32 id,
-+int of_map_id_or_funcid(const struct device_node *np, u32 id,
- 		const char *map_name, const char *map_mask_name,
- 		struct device_node **target, u32 *id_out,
- 		void *arg, struct of_phandle_args *pargs,
-diff --git a/include/linux/of.h b/include/linux/of.h
-index f8d976205ff4..7935ff5ac09e 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -410,6 +410,12 @@ extern int of_phandle_iterator_args(struct of_phandle_iterator *it,
- extern int of_alias_get_id(const struct device_node *np, const char *stem);
- extern int of_alias_get_highest_id(const char *stem);
- 
-+extern int of_map_id_or_funcid(const struct device_node *np, u32 id,
-+	       const char *map_name, const char *map_mask_name,
-+	       struct device_node **target, u32 *id_out,
-+	       void *arg, struct of_phandle_args *pargs,
-+	       of_map_id_cb fn);
-+
- bool of_machine_compatible_match(const char *const *compats);
- 
- /**
-@@ -909,6 +915,15 @@ static inline int of_map_id(const struct device_node *np, u32 id,
- 	return -EINVAL;
- }
- 
-+static inline int of_map_id_or_funcid(const struct device_node *np, u32 id,
-+	       const char *map_name, const char *map_mask_name,
-+	       struct device_node **target, u32 *id_out,
-+	       void *arg, struct of_phandle_args *pargs,
-+	       of_map_id_cb fn)
-+{
-+	return -EINVAL;
-+}
-+
- static inline phys_addr_t of_dma_get_max_cpu_address(struct device_node *np)
- {
- 	return PHYS_ADDR_MAX;
 -- 
-2.34.1
+2.49.GIT
 
 
