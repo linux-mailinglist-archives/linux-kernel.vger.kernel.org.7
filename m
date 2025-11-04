@@ -1,175 +1,156 @@
-Return-Path: <linux-kernel+bounces-884430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5D4C3028A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:06:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93B6C30296
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 10:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269153BD1FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9EF4214AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 09:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4E53126C0;
-	Tue,  4 Nov 2025 09:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287CD2BF3D7;
+	Tue,  4 Nov 2025 09:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="mWaP5HOI"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EojySN4o"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79472BE643
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 09:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDCE72605;
+	Tue,  4 Nov 2025 09:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246812; cv=none; b=W+fY5n3e81DPD2xSWv8RyJ0p//ccXgx2SHpdI5nsegT+1zWp9fVqp6wd2hEnyOJXJJgb5n1Xlcx+Eqghfzi+sUbHVVDuJlUSwhCZcTX6fQ4NIz8rn9tyyVGNPna9+NW95vnDyQACGUdY9vkmtv5dCieWaaKb62vpF95dVj/gYcI=
+	t=1762246877; cv=none; b=ugYUlIGNHKfBilmdhImG9VWPndzJQZrPnM+tRKUs0hweKWtqoWdfmJxsfsjE2dqHj+rqGPRWHB3TTNy7UNY+u5eVgreue+tHLAxboVhMo0bCkKr3C1NRnhtBzBlPIUQiTdZ4gBzfJdTn/o5B4UN9dkwBYePK8lXcHjF7/qXsUxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246812; c=relaxed/simple;
-	bh=TvRPJFooxmrBGmLlpSKu+5bLpIXJ3w8yqv8D3MFpwGA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qPvigsprINU7G7J7FWlPTrNkjk4iC4uN4ZLa0FLtv5DE9Fh/XzsGB9Qsfdj+/TWjzrboA2dGcZ0G8XE6qQcBVqfvOuabmh2mYE6KocIiBmZ5/weGkLxdkMoEkzcrGPClzroJezQ+iWrGHIYcWFzS+gNwppjrZ0ruFhFVWJEbxB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=mWaP5HOI; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a6cd5146b95c11f0b33aeb1e7f16c2b6-20251104
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=EFMzCk1paJ9NcqfOsnEwrxiB8ulWofvWjGo/w1p9HJU=;
-	b=mWaP5HOI8g+Oku6mV2AaaAfUFtNTaqkm8zTqLWqAmmDQJg7wOjZXvjH9JX7N6g811yXz743EgXJ9U8MNnkzVuwiUKd2BSF7kEqQwV8QB9ngILkStalgh0NmBHbfsFCgAv9AZaYbjdF/YB5p4mGIdJEVH8u7qT0hqTjx/cz5VOU8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:cfa40ccd-9ba3-4214-a5f0-e4550c84d28e,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:28121de0-3890-4bb9-a90e-2a6a4ecf6c66,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: a6cd5146b95c11f0b33aeb1e7f16c2b6-20251104
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <liankun.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1688992907; Tue, 04 Nov 2025 17:00:03 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 4 Nov 2025 17:00:01 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Tue, 4 Nov 2025 17:00:00 +0800
-From: Liankun Yang <liankun.yang@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <mac.shen@mediatek.com>,
-	<peng.liu@mediatek.com>, <liankun.yang@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 2/2] drm/mediatek: Add isolation to edp
-Date: Tue, 4 Nov 2025 16:55:12 +0800
-Message-ID: <20251104085957.1175-3-liankun.yang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251104085957.1175-1-liankun.yang@mediatek.com>
-References: <20251104085957.1175-1-liankun.yang@mediatek.com>
+	s=arc-20240116; t=1762246877; c=relaxed/simple;
+	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Efiprh+doH9Y5bWoCemN4VXICqboDfOMgsy8z/4eRGLnzITEajl5kZ3LUcR6+kLwBhStpMz9nXfZup739XteGOL4AokxyPzWZERUcB8pRB99O5ElqyKFcsJ07iF5aNmgKkylWq52wnKEtaPbw8ghRiwsaxjoyO2HkeARALSn14I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EojySN4o; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1762246867; x=1762851667; i=markus.elfring@web.de;
+	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EojySN4og5jcWtGSXmStgcqy2yalY1uM67B29EotKW0AvRJ1TDV7kHfZxddGoulu
+	 ruU2wnKtxvvlEj8k5FoOYrf4zak+jrxQ+3FsF6Foa7pw8p/tUJm01Sf6RXmeHa2dP
+	 7+Ct9DckB5AK+nglfjEFoBKhyVLVHaXzUkgAkUV9lFcvpibCShno3ON4UeUz4WP+z
+	 omX0e6CRq4X3k4b41ctExW2p0PcgHAFtnJjbDzpQFksGzz2RZ5+s1lMRa1RblMEWv
+	 Y/bHAoD8r54O+w5GSvzFY2lVBHm2REsQra7x/YpqDmovV/8H8v75yyfGMtuTd2qPs
+	 pkMPPAp6l0nyEuzZ2A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBVv-1vuT3p0uZx-00eAi2; Tue, 04
+ Nov 2025 09:55:32 +0100
+Message-ID: <f6509ce8-72f9-436e-82ca-dc7bbf601bb3@web.de>
+Date: Tue, 4 Nov 2025 09:55:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+To: linux-fsdevel@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [RFC] unicode: Completion of error handling
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Ocf4noJcdAYgUVvf2UdDP7Ho6e3T3DO146mj5NumU7dlsPPcJhV
+ M29qPTCXfPSDwMMelKEqnBDu5SG2nK+jlxrLMrv4ZDzUBF/qjkTcJukG+tLhrZ86hZtLa/7
+ S32bTU5Ond6ntSIRc8X397ig7a/2IrwsOw51Yl7oELjHp/OJshAbHtOIEsat7MtcgjWX4P9
+ l37u/idi4AaSCFGywYq7Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7MerS+iU8P0=;ix36Mv9ExA5sv6/qMWEh8F2tN0L
+ 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
 
-Because edp doesn't expect any (un)plug events during runtime and
-its process differs from DP. Therefore, it is necessary to isolate
-the parsing capability, panel power, training state and enable state.
+Hello,
 
-And DP related behaviors are adjusted to execute in the second half
-of the interrupt.
-For DP details, see drm/mediatek: Adjust bandwidth limit for DP
+It can be determined (also with the help of some source code analysis tools)
+that error detection (and corresponding exception handling) is incomplete
+in this source file.
+https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/unicode/mkutf8data.c
+https://cwe.mitre.org/data/definitions/252.html
 
-Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_dp.c | 37 +++++++++++++++----------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+How do you think about to improve affected implementation details?
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-index 0ba2c208811c..efd4c45985ca 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-@@ -2187,7 +2187,8 @@ static const struct drm_edid *mtk_dp_edid_read(struct drm_bridge *bridge,
- 	 * Parse capability here to let atomic_get_input_bus_fmts and
- 	 * mode_valid use the capability to calculate sink bitrates.
- 	 */
--	if (mtk_dp_parse_capabilities(mtk_dp)) {
-+	if (mtk_dp->bridge.type == DRM_MODE_CONNECTOR_eDP &&
-+	    mtk_dp_parse_capabilities(mtk_dp)) {
- 		drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
- 		drm_edid_free(drm_edid);
- 		drm_edid = NULL;
-@@ -2385,13 +2386,15 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 		return;
- 	}
- 
--	mtk_dp_aux_panel_poweron(mtk_dp, true);
-+	if (mtk_dp->data->bridge_type == DRM_MODE_CONNECTOR_eDP) {
-+		mtk_dp_aux_panel_poweron(mtk_dp, true);
- 
--	/* Training */
--	ret = mtk_dp_training(mtk_dp);
--	if (ret) {
--		drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
--		goto power_off_aux;
-+		/* Training */
-+		ret = mtk_dp_training(mtk_dp);
-+		if (ret) {
-+			drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
-+			goto power_off_aux;
-+		}
- 	}
- 
- 	ret = mtk_dp_video_config(mtk_dp);
-@@ -2411,7 +2414,9 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 		       sizeof(mtk_dp->info.audio_cur_cfg));
- 	}
- 
--	mtk_dp->enabled = true;
-+	if (mtk_dp->data->bridge_type == DRM_MODE_CONNECTOR_eDP)
-+		mtk_dp->enabled = true;
-+
- 	mtk_dp_update_plugged_status(mtk_dp);
- 
- 	return;
-@@ -2426,21 +2431,15 @@ static void mtk_dp_bridge_atomic_disable(struct drm_bridge *bridge,
- {
- 	struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
- 
--	mtk_dp->enabled = false;
-+	if (mtk_dp->data->bridge_type == DRM_MODE_CONNECTOR_eDP) {
-+		mtk_dp->enabled = false;
-+		mtk_dp_aux_panel_poweron(mtk_dp, false);
-+	}
-+
- 	mtk_dp_update_plugged_status(mtk_dp);
- 	mtk_dp_video_enable(mtk_dp, false);
- 	mtk_dp_audio_mute(mtk_dp, true);
- 
--	if (mtk_dp->train_info.cable_plugged_in) {
--		drm_dp_dpcd_writeb(&mtk_dp->aux, DP_SET_POWER, DP_SET_POWER_D3);
--		usleep_range(2000, 3000);
--	}
--
--	/* power off aux */
--	mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
--			   DP_PWR_STATE_BANDGAP_TPLL,
--			   DP_PWR_STATE_MASK);
--
- 	/* SDP path reset sw*/
- 	mtk_dp_sdp_path_reset(mtk_dp);
- 
--- 
-2.45.2
-
+Regards,
+Markus
 
