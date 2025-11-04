@@ -1,198 +1,437 @@
-Return-Path: <linux-kernel+bounces-884577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9E8C307E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BE4C307D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 11:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 328F84E7D39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:26:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A54B24E7C55
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 10:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAFB316187;
-	Tue,  4 Nov 2025 10:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4C9316198;
+	Tue,  4 Nov 2025 10:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZi0TXAy"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N5zN7B1r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0A12367B8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 10:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F23F52F88;
+	Tue,  4 Nov 2025 10:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762251952; cv=none; b=FMjuB29CYbSLf0RGKMwP60GRnAgzx99lXnkUN7bwXgdTrsdzXaNXQXYp4YJqb/KLlFUxRVIN2lfl7RqTf2UTdeHvcfBQXBW2tlAcxwhdpY4Ad4AG49mHsmZzdn/af3QZQ80z6APn9OLo7sEA4i4ojmL6LtyjPS3mIrGhy6xtVI0=
+	t=1762251931; cv=none; b=XMJPQw9R762d5PZHlLQBGGArQlGvLdEZAYymRKfJigsok22IOTBfoG30ho8RQZxkOEHISi86LSPpTCfdNJmGoocQPV25emBDdJzLesOo0sQqou35YIkLP6eiOdZaWiW29UEdzwOketavcIGC4mICoMkryBfeymACGX3Zfq+BZcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762251952; c=relaxed/simple;
-	bh=HH6aeDaGVuxB3jXUwelH4MBTU0Ba7MgdB3kL4P4v+dw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nA0qK3dob5T+RzdJwMUgxWcXmClIJ6exHppHolorPMw0+U9UmU5R0KcIVfu4gYahKi529Hmr/wSGmAmkelKl54dylXIZRzPU4fr0Txlcfavs2rBl3R2O/hXjcb08IvqMPoFSOjiHnUvs0xJpW73XJ6iYod66Mjw75mmeQaSiS6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZi0TXAy; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso44182835e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 02:25:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762251948; x=1762856748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MhBQ8vjBwEIJBmvGBsGuhFhSJEVfR25GCo3phCvZG9I=;
-        b=ZZi0TXAyellSnX0MSSOPKbBreRsacS8ZWQXjs/akUeUMlRAFmca50ups6LBGZk0MTS
-         AS55/7uflNdNensV/J2QwXLz8h9WUE9a2Z+erJ6nj9eX5fSXSSJss7e4tIzOYvouTajv
-         /gSyEIBjEEMrmd+3qReZyXoclfqVe6GwCKDKn6NLQ7vE3MhGsOQPhM7rD5q1C4vQHRa9
-         oJTEK/H0hWBb6Dxk7gtFZnub5xp3X92dZrpXMaX0AIpw93fKlX0YMKh8RD6Bp+E1FSdo
-         v1jPPjWGF3T6RPjDn1++YqkfCBnaZGVzd28xaAyV/MG5bjGC18VZ5g26MNbIPNiYW/H2
-         9FWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762251948; x=1762856748;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MhBQ8vjBwEIJBmvGBsGuhFhSJEVfR25GCo3phCvZG9I=;
-        b=jret4v1HO8P8XY+EOJ6QsNFyiNJ7f7uahijKwnQllpZLPkNhh0QfEXGQUBuy5PEp+e
-         wPPanMVmla+hupwd/K41V+Cg/eyFYpyDpBzaW9QW+gcu1odXq3RNBbTO02l0EtAPofLc
-         TbmjWdjiCda77/nxG+N0sasMAIsQre3a3TniySGyVZfi/1CV88H1OgG9W7/ssYNg7TVU
-         msoDHVgmuXeNxES7jmVs4lVt1UnCTCnthT+qUfIF39lkz3oAn8Kf4dM43+ja6tspJ705
-         Vv8DhtF2qfZpQA1Fr0+xSvSNqBL8aEYXK0tyabjI+8c/1ineTVBlS6CtLkNUN6qg3Srq
-         1CVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2QDPzZ0b7ltAzjNioYoosrIoNpoNMXDNxct6C/8+lTn+8f4jBB1A1wrd4iMSob2PsrPvqzmHCdCMO+zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVuBx19x9rendRB4wYL4jZ34EMOfamfRoTIYGn2+uYC3OrM7Dz
-	6QlA3X+dwiCk/UG3fgoKrYgJGvWwIgF07pyfb1ivjL9AcBGo0chZVFEmgXt1uwec
-X-Gm-Gg: ASbGncu0jnMPumqaWwAlwN1HvTESo5kkwDJ/zJP6YRuy1/Fa/0XMP08T0MuKEWER+DJ
-	ECZnkA2RMO22UN1c+5gM05Fr8oKXwoL3NTXmrwsEx7eDRFLnOESOCSLh54z5H6HGnCb/YQbM3n9
-	bdzNFBhO3LTj7+RYf3TBfOmoXzPd8N7GW7JRVwduIUprnWuqFuhyjonbaPMJ7KNljh6stkfWQk0
-	9r7j3Pp1z4J6+3xGh2vYViHPUHNyt78hmaDv3x1Ej2WIAAZpUuin8yL49uRJ43O8sToPbc4CxM5
-	ZMYC7sWbDh9r/XpZ9C+XLEciwCR5FIqZA40vf3+O7S/4yTbWJbGOdAgRKj31QtdWUmQVS0LrwN1
-	TqKAXnhLic1FThORotDQIf8n/LLsjy2T3iXQokuMd/X/JgGaPqHgEasDQjAJ/9lUVK4sGd5vqmx
-	gHhRi0u9Ca
-X-Google-Smtp-Source: AGHT+IH+9hXN3zecAOt94R0UMzn3AXAI06qnGLK2FptskRb06g7/FXm0009aQA/07/l5sYYgqXvRtg==
-X-Received: by 2002:a05:6000:2c0b:b0:428:5860:48c0 with SMTP id ffacd0b85a97d-429bd672650mr11506975f8f.7.1762251947818;
-        Tue, 04 Nov 2025 02:25:47 -0800 (PST)
-Received: from fedora ([94.73.38.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f98d9sm3798796f8f.32.2025.11.04.02.25.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 02:25:47 -0800 (PST)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: quic_jesszhan@quicinc.com
-Cc: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	lumag@kernel.org,
-	quic_abhinavk@quicinc.com,
-	dan.carpenter@linaro.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v2 2/2] drm/tests: Handle EDEADLK in set_up_atomic_state()
-Date: Tue,  4 Nov 2025 11:25:22 +0100
-Message-ID: <20251104102535.12212-2-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251104102535.12212-1-jose.exposito89@gmail.com>
-References: <20251104102535.12212-1-jose.exposito89@gmail.com>
+	s=arc-20240116; t=1762251931; c=relaxed/simple;
+	bh=kakEUcQSOtzSBqF6N8EkgPMI1HGiwG5u5+sMJW43HSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KyprsmuKPSJTuedgd6Yna81hlOJqvTmPZ3T0NNYDNR2IwEZNAc7Shk/7K1rkTKR6uGRHy/LUJGrGPCejAOBDFnyI7z8kX6WWGFr5ytC60GpqV384s+43mxRWWnK3lJdoOraei3sfprXHhw10biEciSOPqT8VSQenpBpvG4OroAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N5zN7B1r; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762251929; x=1793787929;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kakEUcQSOtzSBqF6N8EkgPMI1HGiwG5u5+sMJW43HSU=;
+  b=N5zN7B1rjvguu4Jfqh183T6Yuw8aZjA+xKU8q0EuTpQIgVGOU4OSrVay
+   JaNtYzb3Lml7jRBhHN1WapPLv5onuT/DIjIrCZrFdXO0DgtEZYOYxsxyq
+   kh3VYA1rfoJWG3O9k7ASdciD5+dcIkr0YP22qWQGA9zkU86a9nGdF083C
+   BpBiFqBmhXX+7NJUEN0yLYp2eklUxtrbBfynG/tv2iFLTiDvnQ0aACySd
+   KKzrF69u77/4TfLIk3co9HIcgXQmY2C+dZ1IkffEpYEE1vhij+3qIJ7BW
+   vfyoP0kFvbqAQMJnI8ISSSr32YYhSmaQutGRD/vytlCGGdUD5XRs7/7l+
+   w==;
+X-CSE-ConnectionGUID: 896XM151S/az/ZzjcrQnyw==
+X-CSE-MsgGUID: HoXCuAlZTHOcqbU4E/Ip8A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64270962"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64270962"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 02:25:28 -0800
+X-CSE-ConnectionGUID: w0ll2e/FTpWP11qlctlusg==
+X-CSE-MsgGUID: izSN3QAdTeiOK2z0KyRO1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,278,1754982000"; 
+   d="scan'208";a="186979462"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.146])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 02:25:26 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGEE7-00000005QnX-2aZO;
+	Tue, 04 Nov 2025 12:25:23 +0200
+Date: Tue, 4 Nov 2025 12:25:23 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ariana Lazar <ariana.lazar@microchip.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: dac: adding support for Microchip MCP47FEB02
+Message-ID: <aQnUk4Inip8QQz6u@smile.fi.intel.com>
+References: <20251103-mcp47feb02-v2-0-8c37741bd97a@microchip.com>
+ <20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Fedora/CentOS/RHEL CI is reporting intermittent failures while running
-the drm_validate_modeset test [1]:
+On Mon, Nov 03, 2025 at 05:50:30PM +0200, Ariana Lazar wrote:
+> This is the iio driver for Microchip MCP47F(E/V)B(0/1/2)1,
+> MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series
+> of buffered voltage output Digital-to-Analog Converters with nonvolatile or
+> volatile memory and an I2C Interface.
+> 
+> The families support up to 8 output channels.
+> 
+> The devices can be 8-bit, 10-bit and 12-bit.
 
-    # drm_test_check_connector_changed_modeset: EXPECTATION FAILED at
-    # drivers/gpu/drm/tests/drm_atomic_state_test.c:162
-    Expected ret == 0, but
-        ret == -35 (0xffffffffffffffdd)
+...
 
-Change the set_up_atomic_state() helper function to return on error and
-restart the atomic sequence when the returned error is EDEADLK.
+> +config MCP47FEB02
+> +	tristate "MCP47F(E/V)B|(0/1/2)(1/2/4/8)DAC driver"
 
-[1] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2106744096/test_x86_64/11762450343/artifacts/jobwatch/logs/recipes/19797909/tasks/204139142/results/945095586/logs/dmesg.log
-Fixes: 73d934d7b6e3 ("drm/tests: Add test for drm_atomic_helper_commit_modeset_disables()")
-Closes: https://datawarehouse.cki-project.org/issue/4004
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+This is unreadable cryptic title. Make it more human-readable, like:
 
----
+"Microchip MCP47F family of DAC driver"
 
-v2: Added Reviewed-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/gpu/drm/tests/drm_atomic_state_test.c | 27 +++++++++++++++----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+> +	depends on I2C
+> +	help
+> +          Say yes here if you want to build a driver for the Microchip
 
-diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-index 1e857d86574c..bc27f65b2823 100644
---- a/drivers/gpu/drm/tests/drm_atomic_state_test.c
-+++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-@@ -156,24 +156,29 @@ static int set_up_atomic_state(struct kunit *test,
- 
- 	if (connector) {
- 		conn_state = drm_atomic_get_connector_state(state, connector);
--		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-+		if (IS_ERR(conn_state))
-+			return PTR_ERR(conn_state);
- 
- 		ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
--		KUNIT_EXPECT_EQ(test, ret, 0);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
- 
- 	ret = drm_atomic_set_mode_for_crtc(crtc_state, &drm_atomic_test_mode);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	if (ret)
-+		return ret;
- 
- 	crtc_state->enable = true;
- 	crtc_state->active = true;
- 
- 	if (connector) {
- 		ret = drm_atomic_commit(state);
--		KUNIT_ASSERT_EQ(test, ret, 0);
-+		if (ret)
-+			return ret;
- 	} else {
- 		// dummy connector mask
- 		crtc_state->connector_mask = DRM_TEST_CONN_0;
-@@ -206,7 +211,13 @@ static void drm_test_check_connector_changed_modeset(struct kunit *test)
- 	drm_modeset_acquire_init(&ctx, 0);
- 
- 	// first modeset to enable
-+retry_set_up:
- 	ret = set_up_atomic_state(test, priv, old_conn, &ctx);
-+	if (ret == -EDEADLK) {
-+		ret = drm_modeset_backoff(&ctx);
-+		if (!ret)
-+			goto retry_set_up;
-+	}
- 	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
-@@ -277,7 +288,13 @@ static void drm_test_check_valid_clones(struct kunit *test)
- 
- 	drm_modeset_acquire_init(&ctx, 0);
- 
-+retry_set_up:
- 	ret = set_up_atomic_state(test, priv, NULL, &ctx);
-+	if (ret == -EDEADLK) {
-+		ret = drm_modeset_backoff(&ctx);
-+		if (!ret)
-+			goto retry_set_up;
-+	}
- 	KUNIT_ASSERT_EQ(test, ret, 0);
- 
- 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+Too many spaces, see how it's done elsewhere.
+
+> +          MCP47FEB01, MCP47FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12,
+> +          MCP47FEB22, MCP47FVB01, MCP47FVB11, MCP47FVB21, MCP47FVB02,
+> +          MCP47FVB12, MCP47FVB02, MCP47FVB12, MCP47FVB22, MCP47FVB04,
+> +          MCP47FVB14, MCP47FVB24, MCP47FVB04, MCP47FVB08, MCP47FVB18,
+> +          MCP47FVB28, MCP47FEB04, MCP47FEB14 and MCP47FEB24 having up to 8
+
+This is also unreadable, please split to groups (by family species and/or bits)
+and sort each group accordingly, like
+
+	  - E-group (8-bit): MCP47FEB01, MCP47FEB11, MCP47FEB21
+	  - E-group (10-bit): MCP47FEB02, MCP47FEB12, MCP47FEB22
+	  ...
+
+Note, I put a hypothetical text there, I haven't check this for the correctness!
+
+> +          channels, 8-bit, 10-bit or 12-bit digital-to-analog converter (DAC)
+> +          with I2C interface.
+> +
+> +          To compile this driver as a module, choose M here: the module
+> +          will be called mcp47feb02.
+
+...
+
+> + * Datasheet for MCP47FEBXX can be found here:
+> + * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf
+> + *
+> + * Datasheet for MCP47FVBXX can be found here:
+> + * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005405A.pdf
+> + *
+> + * Datasheet for MCP47FXBX4/8 can be found here:
+> + * https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
+
+Avoid duplicating information, so far it can be just listed as
+
+ * Datasheet links:
+ * 
+ * [MCP47FEBxx] https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf
+ * [MCP47FVBxx] https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005405A.pdf
+ * [MCP47FxBx4/8] https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
+
+(also note xx instead of XX).
+
+Or propose a better style.
+
+...
+
+> +#include <linux/bits.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/mutex.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+
+Missing includes. E.g., for 'bool', for 'ARRAY_SIZE()', for 'guard()()'.
+Follow IWYU (Include What You Use) principle.
+
+...
+
+> +#define MCP47FEB02_DAC0_REG_ADDR			(0x00 << 3)
+
+I assume it's the similar case as for below 0x10-0x17 range. Perhaps do both as
+a macro with a parameter?
+
+> +#define MCP47FEB02_VREF_REG_ADDR			(0x08 << 3)
+> +#define MCP47FEB02_POWER_DOWN_REG_ADDR			(0x09 << 3)
+> +#define MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR		(0x0A << 3)
+> +#define MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR		(0x0B << 3)
+> +
+> +#define MCP47FEB02_NV_DAC0_REG_ADDR			(0x10 << 3)
+> +#define MCP47FEB02_NV_DAC1_REG_ADDR			(0x11 << 3)
+> +#define MCP47FEB02_NV_DAC2_REG_ADDR			(0x12 << 3)
+> +#define MCP47FEB02_NV_DAC3_REG_ADDR			(0x13 << 3)
+> +#define MCP47FEB02_NV_DAC4_REG_ADDR			(0x14 << 3)
+> +#define MCP47FEB02_NV_DAC5_REG_ADDR			(0x15 << 3)
+> +#define MCP47FEB02_NV_DAC6_REG_ADDR			(0x16 << 3)
+> +#define MCP47FEB02_NV_DAC7_REG_ADDR			(0x17 << 3)
+> +#define MCP47FEB02_NV_VREF_REG_ADDR			(0x18 << 3)
+> +#define MCP47FEB02_NV_POWER_DOWN_REG_ADDR		(0x19 << 3)
+> +#define MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR	(0x1A << 3)
+
+Drop this << 3 part, just do it at run-time. Or embed them, by providing
+shifted values. Also, there is special formats for regmap, perhaps that's what
+you wanted to begin with? *Yes, it might need some code to be added into
+drivers/base/regmap.c.
+
+...
+
+> +#define MCP47FEB02_INTERNAL_BAND_GAP_MV			2440
+
+_MV --> _mV
+
+...
+
+> +#define MCP47FEB02_DELAY_1_MS				1000
+
+Drop '_1' and use (1 * USEC_PER_MSEC) as value.
+
+But looking at the code this makes the definition useless, just use values
+directly there.
+
+...
+
+> +struct mcp47feb02_features {
+> +	const char	*name;
+> +	unsigned int	phys_channels;
+> +	unsigned int	resolution;
+> +	bool have_ext_vref1;
+> +	bool have_eeprom;
+
+Inconsistent style. Be consistent.
+
+> +};
+
+...
+
+> +struct mcp47feb02_channel_data {
+> +	enum vref_mode ref_mode;
+> +	u8 powerdown_mode;
+> +	bool use_2x_gain;
+> +	bool powerdown;
+> +	u16 dac_data;
+
+Have you ran `pahole`? Please do, and amend the data types accordingly.
+
+> +};
+
+...
+
+> +struct mcp47feb02_data {
+> +	struct mcp47feb02_channel_data chdata[MCP47FEBXX_MAX_CH];
+> +	int scale_1[MCP47FEB02_MAX_VALS_SCALES_CH];
+> +	int scale[MCP47FEB02_MAX_VALS_SCALES_CH];
+> +	const struct mcp47feb02_features *info;
+> +	const char *labels[MCP47FEBXX_MAX_CH];
+> +	unsigned long active_channels_mask;
+
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+
+Why both are needed?
+
+> +	bool vref1_buffered;
+> +	bool vref_buffered;
+> +	u16 phys_channels;
+> +	struct mutex lock; /* synchronize access to driver's state members */
+> +	bool use_vref1;
+> +	bool use_vref;
+> +};
+
+...
+
+> +static ssize_t mcp47feb02_store_eeprom(struct device *dev, struct device_attribute *attr,
+> +				       const char *buf, size_t len)
+> +{
+> +	struct mcp47feb02_data *data = iio_priv(dev_to_iio_dev(dev));
+> +	int ret, i, val, val1, eewa_val;
+
+Do you expect i to hold the signed value?
+
+> +	bool state;
+> +
+> +	ret = kstrtobool(buf, &state);
+
+> +	if (ret < 0)
+
+Why ' < 0'?
+
+> +		return ret;
+> +
+> +	if (!state)
+> +		return 0;
+> +
+> +	/*
+> +	 * Verify DAC Wiper and DAC Configuratioin are unlocked. If both are disabled,
+> +	 * writing to EEPROM is available.
+> +	 */
+> +	ret = regmap_read(data->regmap, MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val)  {
+> +		dev_err(dev, "DAC Wiper and DAC Configuration not are unlocked.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
+> +		ret = mcp47feb02_write_to_eeprom(data, i << 3, data->chdata[i].dac_data);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = regmap_read(data->regmap, MCP47FEB02_VREF_REG_ADDR, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_VREF_REG_ADDR, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_POWER_DOWN_REG_ADDR, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read_poll_timeout(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, eewa_val,
+> +				       !(eewa_val & MCP47FEB02_GAIN_BIT_STATUS_EEWA_MASK),
+> +				       MCP47FEB02_DELAY_1_MS, MCP47FEB02_DELAY_1_MS * 5);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(data->regmap, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, &val1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mcp47feb02_write_to_eeprom(data, MCP47FEB02_NV_GAIN_BIT_I2C_SLAVE_REG_ADDR,
+> +					 (val1 & MCP47FEB02_VOLATILE_GAIN_BIT_MASK) |
+> +					 (val & MCP47FEB02_NV_I2C_SLAVE_ADDR_MASK));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+
+Blank line should go after IIO_DEVICE_ATTR()...
+
+> +static IIO_DEVICE_ATTR(store_eeprom, 0200, NULL, mcp47feb02_store_eeprom, 0);
+
+...here, also Why not IIO_DEVICE_ATTR_WO()?
+
+> +static struct attribute *mcp47feb02_attributes[] = {
+> +	&iio_dev_attr_store_eeprom.dev_attr.attr,
+> +	NULL
+> +};
+
+...
+
+> +static int mcp47feb02_suspend(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct mcp47feb02_data *data = iio_priv(indio_dev);
+> +	int ret, ch;
+
+Why ch is signed?
+
+> +	u8 pd_mode;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) {
+> +		data->chdata[ch].powerdown = true;
+> +		pd_mode = data->chdata[ch].powerdown_mode + 1;
+
+> +		regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
+> +				   DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, pd_mode));
+
+Missed error check.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(data->regmap, ch << 3, data->chdata[ch].dac_data);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+
+I stopped here, I think it's already warrants a new version.
+
+...
+
+> +	tmp = (s64)vref_mv * 1000000LL >> data->info->resolution;
+
+vref_mV
+MICRO, MEGA, ... from units.h
+
+> +	value_int = div_s64_rem(tmp, 1000000LL, &value_micro);
+
+...
+
+> +		set_bit(reg, &data->active_channels_mask);
+
+Is the atomic op required here?
+
+...
+
+> +		if (fwnode_property_present(child, "label"))
+
+Useless check as you don't handle an error code from below anyway (means
+optional property).
+
+> +			fwnode_property_read_string(child, "label", &data->labels[reg]);
+
+...
+
+May you split this to add the main functionality with the subset of the
+supported chips and add, for example, FxBx later in a separate patch?
+This will help a lot with reviewing and pushing your patches forward.
+Note, considering my comments above I don't think this will make v6.19-rc1,
+so you have plenty of time to polish this and maybe even split more.
+
 -- 
-2.51.1
+With Best Regards,
+Andy Shevchenko
+
 
 
