@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-885391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06637C32C6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:27:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F14AC32C74
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 20:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AEBD4E5923
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:27:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 892674E817A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 19:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E945C2D640F;
-	Tue,  4 Nov 2025 19:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920B62D8DB8;
+	Tue,  4 Nov 2025 19:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qgw+BgiX"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ah8Miwb9"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30A32D0617
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5B643147
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 19:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762284416; cv=none; b=N1babccFEMo4ezhVbYHa5uJQ2tyC6u2qYxhJougMfvYgzDqp4wyDsWai2cYi0QX+/iZzNieRFaseAXEPGUhuOXv67vFGXD11l/Q7eDCRxjxECiFHOr2QunWnEDs8u+aw+FbJoDISMqxWewQAfz8lYuOPbeKdgY4gMW8++rWD2eU=
+	t=1762284438; cv=none; b=GPPMHmKUzee4MmISszXe+bnIjeV3UGEcWWAzDeqOPXoTAIn8glzHd/dDO6F2d6CV8W7n7EpEbYZvrnHY9JtoaKYsgEBpJqbMlFC0rvKMRe+unvGySxh8ZbMC/FvmWfLHfdzur8pgOCeWl7hrOJuoViYVoaB6SOEdBGyD6wayuHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762284416; c=relaxed/simple;
-	bh=5fxIbup6joyqmrns4IydivkkrduJVd2JGiHPSP/9gFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E/S5Pudvww62+Bf70PhaijBUdOnhIRTr7S4Az4IK4YC3KlC+s9Y6T48jOXF47eoXmPUhf9UxsgnW/Yx1CkJucPc9CVudiI2CyEBUhLt82dn6o1ip4h7tY5QI5L8iZg3bssffVu8QIfzLhXJq1DFI1BkJW1YIDtmf6b4wnBta5BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qgw+BgiX; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=/2VBuqwC7zv2FCgBkt+u17LdT3yOHYDcJ0o3Q7AhBt8=; b=Qgw+BgiX5lodSonc/C0Kx8+qI/
-	LrKymS0z0ULBEWmoburf+LQz7b5WePo95o+NBVakpp8Zs1PNlJejg6attoA38j3StKRaKEMX2aMkY
-	/HxXuBNc08O6jHVaE+2o/XuzrGEu+pnLs+iij7REMhd7HPeu8jRM4VVYTAuI7D/LqnhpxnNMDXHIu
-	mLlyJNxTgXqd/VmqXG8ZF/YxfOLBQcWtnVbkaJt5sq6L8YloIthfFfZHznVidkVNtl65iCmCUq3Re
-	2JFrUSubaeUtsGiKaZr8JnhS/1X+zxjk75DplMNXqR77nrH5jndbN+bUm63Q6EUTrO5/hyT6zT+Dn
-	rLy9wy/w==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGMg9-0000000CUQV-2hXj;
-	Tue, 04 Nov 2025 19:26:53 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	patches@opensource.cirrus.com
-Subject: [PATCH v2] firmware: cs_dsp: fix kernel-doc warnings in a header file
-Date: Tue,  4 Nov 2025 11:26:53 -0800
-Message-ID: <20251104192653.929157-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762284438; c=relaxed/simple;
+	bh=ERQVrbBCQIPe4MLibTpmxNghzimhnud2fzegQLVewpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1VVU3eiqO7UR+WR71SbPv6Id2Ll7g6aBhRCTDjp6vd1boykgMVo042/H5Kq0VJMykdNcmr8LT9V76ouBu0+SFJr2tYKmJ5RAyEbWWd3nSQpWp7kGEwqFMV8lohJ8TU5ZgUrwoNBDGJ5HoOpTSiINMI/xXeTjtvcd0x8dfcwZbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Ah8Miwb9; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8801f4e308dso53684506d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 11:27:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1762284435; x=1762889235; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mUs2AdnuvvFczrN0XtEi+7TYEAruGEb9Cu+wb9VP03U=;
+        b=Ah8Miwb98PBPZa9TlsLGk1Gm0gaRsYQf+f7ILGvO4khgzWXNJ0AqzV/ArrgDGClKsV
+         w8hZs5RgVEmD3roEXkRcFDqA5fkdjRuPXCLuH1eCAc0Hel1AZj+Umtx6A6SW4k8Mxas9
+         2D2ykWkHMZ+H6mwRE2OwRu45cBa+2cWPY3J6xNHWZADVH4S8/GIpccCeXM5DO92RUL/B
+         f6AJvii6GKfe4749vw8PA2ZZBy5EtJWCk/xIMdKgHV6zZ0iroMJI82HY6edG/DUKSnVy
+         ngopOSW21aQLJt5X9MNi3sqJGvHRA2qmjCaSay2wP6UxDugkAfh6vDlsib3gI/CyQQDb
+         sbfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762284435; x=1762889235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mUs2AdnuvvFczrN0XtEi+7TYEAruGEb9Cu+wb9VP03U=;
+        b=VJekP88YSZ2+vlS7QvqK2okLO+QsWAIu2mA+KCvIqnZtNODSIqIYbWsBgIdEU3dVb5
+         AoKUdUbMK7rD9Xs8GifkTbZ14yVcPkKLEV4HS03lZ9j9BU5tQuIEYeQWWETwyF6uN1qT
+         sRmt92i4w/StIKvqjz2Obk1Vb918D7IS9pnCe5ARr1YNl72M2oInYenmCAWZjA2LDWJ/
+         0VlczIHAT55IfNY8ANrhYd6UCI+38YDDLFbIUNZYSW8wtpXXOoA188996CQoMJJaTX0a
+         LVpnrj550LklqJ87uaC6HoMy2Cugrj1ETVQNlXvtU6jONRtBam99gvNEjJ8kD7Uxix7S
+         z96A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9vzX4srxbBkvriQpWwk+K8PgeG936RfqC//qg6vxkErmvKhUEEJjSyTn4hy24/ls/T4gD9wSDeRIsMmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDafFAR8rZ+fTxOdf1oe9mVRFq+62aSRXoXx1iFvjk0KzBDwXb
+	HgBiEeLqEUhi1t5qoP4nOFytNoF6PCBOSDVwmy/VIMACVJS5YN3UFo30kF/3lsTTN8E=
+X-Gm-Gg: ASbGncsVVGcmIGEEaLP5T4ScYsiVDQ1mk2y7B2e+PNAZEYgwY6YIrjgglUREku78r3I
+	RSljnMc2+Z/vAKXGB79ZMGFf1anCs7BSDGR8/rOfAkjCQtZA3HOY7h4e12XOIa+Etx1Lo1FmaTu
+	blsi3BL6z61Hog75aREdRsh/jA2WTewoMkeuJNCQ4XqMcGDqkiXiYpU3OALgYj5g4p1l3Rs+VVS
+	uy+sUM8yiKs7riv5Gt0vGM+F1WLN6/rxelmjxVWwJfUix7ju9lerKohR4lxV/RPNq8yRd2UWRCB
+	gzMZzuzuhZ/5+ix01KR9qkU33gemQ72WjvK+M4NQ2ZTeJLgPmeWF4Jyz9s175Kl6zOW1O61wE04
+	dftN9BaVMf+YJO2Z7px85vGV8U0VX8aNsm70cdi+pWjhZtt0CquXdNoZr5IyvDxmwWF/tyR20v3
+	qm8rmybAM1opY0ZVcA79ypIpENlrn8TaSkG9eNRf+89RlLfHUUqjRU+iv9
+X-Google-Smtp-Source: AGHT+IG0dhBeAR5RX27f2wfJWdOR7juDgLSbyDVJXq4BJqtIZIC/EimxFvt08yglge630ermzohXtg==
+X-Received: by 2002:a05:622a:2d3:b0:4ed:18d5:2140 with SMTP id d75a77b69052e-4ed7262c198mr10018791cf.66.1762284435447;
+        Tue, 04 Nov 2025 11:27:15 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed5faf6038sm22412071cf.11.2025.11.04.11.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 11:27:14 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vGMgU-000000073Cx-1Hyp;
+	Tue, 04 Nov 2025 15:27:14 -0400
+Date: Tue, 4 Nov 2025 15:27:14 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	Alex Williamson <alex@shazbot.org>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	dri-devel@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukasz Laguna <lukasz.laguna@intel.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v3 27/28] drm/intel/pciids: Add match with VFIO override
+Message-ID: <20251104192714.GK1204670@ziepe.ca>
+References: <20251030203135.337696-1-michal.winiarski@intel.com>
+ <20251030203135.337696-28-michal.winiarski@intel.com>
+ <cj3ohepcobrqmam5upr5nc6jbvb6wuhkv4akw2lm5g3rms7foo@4snkr5sui32w>
+ <xewec63623hktutmcnmrvuuq4wsmd5nvih5ptm7ovdlcjcgii2@lruzhh5raltm>
+ <3y2rsj2r27htdisspmulaoufy74w3rs7eramz4fezwcs6j5xuh@jzjrjasasryz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3y2rsj2r27htdisspmulaoufy74w3rs7eramz4fezwcs6j5xuh@jzjrjasasryz>
 
-Use correct kernel-doc format to avoid kernel-doc warnings in
-nclude/linux/firmware/cirrus/cs_dsp_test_utils.h:
+On Tue, Nov 04, 2025 at 11:41:53AM -0600, Lucas De Marchi wrote:
 
-- mark one struct member as private: since the comment says that it is
-private
-- add ending ':' to struct members where needed
+> > > > +#define INTEL_VGA_VFIO_DEVICE(_id, _info) { \
+> > > > +	PCI_DEVICE(PCI_VENDOR_ID_INTEL, (_id)), \
+> > > > +	.class = PCI_BASE_CLASS_DISPLAY << 16, .class_mask = 0xff << 16, \
+> > > > +	.driver_data = (kernel_ulong_t)(_info), \
+> > > > +	.override_only = PCI_ID_F_VFIO_DRIVER_OVERRIDE, \
+> > > 
+> > > why do we need this and can't use PCI_DRIVER_OVERRIDE_DEVICE_VFIO()
+> > > directly? Note that there are GPUs that wouldn't match the display class
+> > > above.
+> > > 
+> > > 	edb660ad79ff ("drm/intel/pciids: Add match on vendor/id only")
+> > > 	5e0de2dfbc1b ("drm/xe/cri: Add CRI platform definition")
+> > > 
+> > > Lucas De Marchi
+> > > 
+> > 
+> > I'll define it on xe-vfio-pci side and use
+> 
+> but no matter where it's defined, why do you need it to match on the
+> class? The vid/devid should be sufficient.
 
-Warning: include/linux/firmware/cirrus/cs_dsp_test_utils.h:30 struct
- member 'saw_bus_write' not described in 'cs_dsp_test'
-Warning: include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'id' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'ver' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'xm_base_words' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'xm_size_words' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'ym_base_words' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'ym_size_words' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'zm_base_words' not described in 'cs_dsp_mock_alg_def'
-Warning: ../include/linux/firmware/cirrus/cs_dsp_test_utils.h:53 struct
- member 'zm_size_words' not described in 'cs_dsp_mock_alg_def'
++1
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
-v2: add Reviewed-by from Richard;
-    send To: Mark Brown as requested by Richard;
-
-Cc: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: patches@opensource.cirrus.com
----
- include/linux/firmware/cirrus/cs_dsp_test_utils.h |   18 ++++++------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
---- linux-next-20251103.orig/include/linux/firmware/cirrus/cs_dsp_test_utils.h
-+++ linux-next-20251103/include/linux/firmware/cirrus/cs_dsp_test_utils.h
-@@ -26,21 +26,21 @@ struct cs_dsp_test {
- 
- 	struct cs_dsp_test_local *local;
- 
--	/* Following members are private */
-+	/* private: Following members are private */
- 	bool saw_bus_write;
- };
- 
- /**
-  * struct cs_dsp_mock_alg_def - Info for creating a mock algorithm entry.
-  *
-- * @id		  Algorithm ID.
-- * @ver;	  Algorithm version.
-- * @xm_base_words XM base address in DSP words.
-- * @xm_size_words XM size in DSP words.
-- * @ym_base_words YM base address in DSP words.
-- * @ym_size_words YM size in DSP words.
-- * @zm_base_words ZM base address in DSP words.
-- * @zm_size_words ZM size in DSP words.
-+ * @id:		   Algorithm ID.
-+ * @ver:	   Algorithm version.
-+ * @xm_base_words: XM base address in DSP words.
-+ * @xm_size_words: XM size in DSP words.
-+ * @ym_base_words: YM base address in DSP words.
-+ * @ym_size_words: YM size in DSP words.
-+ * @zm_base_words: ZM base address in DSP words.
-+ * @zm_size_words: ZM size in DSP words.
-  */
- struct cs_dsp_mock_alg_def {
- 	unsigned int id;
+Jason
 
