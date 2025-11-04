@@ -1,145 +1,202 @@
-Return-Path: <linux-kernel+bounces-884178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8C3C2F8B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:01:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4198C2F8B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 08:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22C7B4EDA35
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1891818C0C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 07:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D893009F6;
-	Tue,  4 Nov 2025 07:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A1F3016E3;
+	Tue,  4 Nov 2025 07:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1UEY/F8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzgbiKld"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7307E16DEB3;
-	Tue,  4 Nov 2025 07:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E45416DEB3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 07:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239630; cv=none; b=KcZzB1PrhujXRamZ4ExMUAF5RXN3SmYQJxqpihNqmqn+Megvz1TXD/RymTLoLMqtkZag33cLy9LG9Mbfjy6Sl35hpkwFdkeScUnGXPBHDJR3OcMujrCnGZ+XNC7UR1gunq1r2/R/hca36l9ci1s5MSpN4NH6dce6EK0E8bSzVdU=
+	t=1762239636; cv=none; b=PUnxBDvmjjKD4AzdQxZfaleWMv3i2RAuFJmamn7L1LBtQhd3b+VfdmSPb3ANCPmUPdl58nRTjjsYE5euErh3MXtG8ecfrq0V/xsMM5gr8R2SmR6h6grRYvdgAJZfq3Kt+gAzkyjf2Y7QJEWkwalSxMMUhKdWKAHrXYf8jxSkXnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239630; c=relaxed/simple;
-	bh=4X+6t70DXpoh2T+5EieuiIaGNQ+Nx/11qPV6DRFYJmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRoUpwqjxD2l/ralGuUgK5Qnj7LTdtIVFMwJw2up3J3s2N8DYb5928OZHp4eUUSTIiHghhlcm6hN+cDaT4NPTJulUsFD5PrCQehS+9WRQz/vJDhnj33YcMFcKmFuI3W/nSZ1N0WgZJOa5LWRC7IgBJhJbtOkk74ckVEIH5Ue/lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1UEY/F8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C40EC4CEF7;
-	Tue,  4 Nov 2025 07:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762239630;
-	bh=4X+6t70DXpoh2T+5EieuiIaGNQ+Nx/11qPV6DRFYJmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I1UEY/F8kb6rmfO1N8znpDwknPo+zoeYokqXc5isZjuBzW2kwNIyURNneL551ILHq
-	 xB1qlT1GwIRyPrqploIY1BSnrb/M+gayul0auOGaYIzVZ5ipDhkzhnPwCHrtS0f6BC
-	 z5t1VvB9oLCq/rFMCgCk9VhSiEJuSXID8okNRaVWmbtPOK+n28WqZyhoHpfWmronvf
-	 FcGjEPq4VK6Yo+LBMfOfTVdislK0QSciIeNRcwvKA5aNqAeghvNKt/yYcDiNo2g9fQ
-	 ijAwMsISbHre8xNCfIwmhQpHnPPoDWGxgBNbI3zl0/Lwh8StDazLf/AgskMUfBm9kx
-	 ZlGWIVygzFi3w==
-Date: Tue, 4 Nov 2025 09:00:21 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Jens Axboe <axboe@kernel.dk>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, iommu@lists.linux.dev,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>
-Subject: Re: [PATCH v6 00/11] vfio/pci: Allow MMIO regions to be exported
- through dma-buf
-Message-ID: <20251104070021.GC50752@unreal>
-References: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
+	s=arc-20240116; t=1762239636; c=relaxed/simple;
+	bh=Lmg3dsZX5sBPU+87vVUFPw6v+4JP4m4mRIzteONc3xY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NS9Sk9ToL7eD9g94ExxXJQYDsB0TaZVvwc/e17M/GphId5j+neC62PCGg6qc8/Wb0ngzJu18ABclDzmZyCNsQBAHi2Mwj/QICPxM+R7l11U0iewup8qiCA9FeF6aC5lcQF2mu+OckMypDuuoGN8vL0Uac2qFe5Vz2I1PJaruK4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzgbiKld; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34088fbd65aso4327504a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 23:00:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762239634; x=1762844434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jYJY/CCyWXdpODdd8/1XVppqC3rVXb5NLy8uDvNpLnk=;
+        b=XzgbiKld6aAZbyiee1/3OB6fFR3hss/nAJiWE6kjzpIlhlCrYhVdghLvL4Z3CdTRUA
+         ZGGj98s2TBeK00khw9UVUgKUI4xTXIO2sCW+qTA0W3c3RPBww/x/HPsBabni0Hmagog2
+         t7pFF2NTRBObztrutPKnc1yy3Sk1ZGvJhhsJODZTnRPk3BbOI+d5GfnRlp5dw3Z6jXQE
+         eQu1I/3PVuApYuVmPyQV5tlgTETtRrwfkEFyJebcx6JAsWhkkjpoojEsAUU8lY4XM68t
+         +/+JSJimvLpjL1NIk0RNlF9R0IUdRo7ka0FEtgKPTmM0/91lWSK01FWtQz4cKNT6NEBJ
+         J83g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762239634; x=1762844434;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jYJY/CCyWXdpODdd8/1XVppqC3rVXb5NLy8uDvNpLnk=;
+        b=Q+0zCmA5TLAqqfaR6V2F5/CG57TL2QQhTKycQOa5+CM0jlN1PIvLnSsnxr754W1JEy
+         KfDW3x4obc4L2XUkCY/OP4TmeZ12+dAcIFRE5pBel3RtZFX/9evGVyFReb7LpwukICN9
+         c9qH/x+3IbEHK1ILvESxqK+L1SGan32sMpWYNX/SHc4BZNSSMCU8U4TE+S7RJ+yISO+y
+         5n50P8cmO+LLQ4cco44m1I4XGrba4eKOVbjzi76C3fhsJYqHIGm41+vtk9CP+5Z3O0mP
+         21Jp9w8cDWiP8IbZbv6Lobx/8VZ3EBr0iVVir2ff7UwlHdREA08/AusB8Hazo5//dXZu
+         yjPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJm7BUYl52g10rStIA2bgWzNyufhK72WSxEU336GTiXfDaxhNsTC5ioRDYCBfRsQMUzrEbX94WwcPI8Rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnLVv7KsKO423UFgmb5w+LmJZplu2KIZ6SoQKYE9b3aRB5ZnE1
+	urBbFxfJs2iG7o4CJub0+NH92/4tPFgZZ0qHokZFWkzzxn0EN9IsyMLU
+X-Gm-Gg: ASbGncsgeI0yLSEPyVKtH5dCyesZDXKZtjuASFLjGWt8HtBfDrBkaj8iByUWSlfJeHi
+	00wFwZMzW4tXLa9xZU2XrOnQODtKSnokP7dF9JmN3b8Ueaw8HVIqAVK25d6QhLIUFdKReFh/VlP
+	fBn/ojmiqFRtjGL/E1O/7JGU3TRgL+HQbUlOsPxJpIOYUxzCYmj67IFAtGwPgnBKyQd3/sCYv2x
+	8rfBgYYqae5G2oibva7wohDmxFwHcHUiuZySkrMa2jOSA8SyD5MAAPACGpnOw8RSKKD8LA2IzsO
+	mKGHrJLG0SWmuvomCa29pvyY+0ObSGlElhMauTITmnuzMZsg1X/XqPuSLN1Akd6/uoA0OLNJTgM
+	3Qm3wro/1s8qburXdv6bcL93L7LM3yaBVnmlLsefWbwpwRwclI9khClNbNzw4ihoV1Q5HMRUrIN
+	4VBwb7/1VyWkKnqroU1Gyn8if3cGtXgCI5MJJibROXhOWgOQ==
+X-Google-Smtp-Source: AGHT+IFuippdkSZdZbM/zbViKxiB1sV+P3foKWTH4k7vkaZ/0vpIhwnIYOp4owTWQeoz9RLgVonuMQ==
+X-Received: by 2002:a17:90b:2886:b0:340:73a2:c840 with SMTP id 98e67ed59e1d1-3408308b4f8mr18356520a91.30.1762239633674;
+        Mon, 03 Nov 2025 23:00:33 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3417bc8e9b7sm649825a91.2.2025.11.03.23.00.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 23:00:33 -0800 (PST)
+Message-ID: <e951d365-27ec-427c-ba29-8b6925342463@gmail.com>
+Date: Tue, 4 Nov 2025 16:00:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
+User-Agent: Mozilla Thunderbird
+To: paulmck@kernel.org
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ kernel-team@meta.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+ rcu@vger.kernel.org, rostedt@goodmis.org
+References: <20251102214436.3905633-15-paulmck@kernel.org>
+Subject: Re: [PATCH 15/19] srcu: Create an SRCU-fast-updown API
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20251102214436.3905633-15-paulmck@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 02, 2025 at 10:00:48AM +0200, Leon Romanovsky wrote:
+Hi Paul,
 
-<...>
+Minor nitpicks in kernel-doc comment of srcu_read_lock_fast_updown().
 
+On Sun,  2 Nov 2025 13:44:32 -0800, Paul E. McKenney wrote:
+> This commit creates an SRCU-fast-updown API, including
+> DEFINE_SRCU_FAST_UPDOWN(), DEFINE_STATIC_SRCU_FAST_UPDOWN(),
+> __init_srcu_struct_fast_updown(), init_srcu_struct_fast_updown(),
+> srcu_read_lock_fast_updown(), srcu_read_unlock_fast_updown(),
+> __srcu_read_lock_fast_updown(), and __srcu_read_unlock_fast_updown().
+> 
+> These are initially identical to their SRCU-fast counterparts, but both
+> SRCU-fast and SRCU-fast-updown will be optimized in different directions
+> by later commits.  SRCU-fast will lack any sort of srcu_down_read() and
+> srcu_up_read() APIs, which will enable extremely efficient NMI safety.
+> For its part, SRCU-fast-updown will not be NMI safe, which will enable
+> reasonably efficient implementations of srcu_down_read_fast() and
+> srcu_up_read_fast().
+> 
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Andrii Nakryiko <andrii@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: <bpf@vger.kernel.org>
 > ---
-> Jason Gunthorpe (2):
->       PCI/P2PDMA: Document DMABUF model
->       vfio/nvgrace: Support get_dmabuf_phys
+>  include/linux/srcu.h     | 77 +++++++++++++++++++++++++++++++++++++---
+>  include/linux/srcutiny.h | 16 +++++++++
+>  include/linux/srcutree.h | 55 ++++++++++++++++++++++++++--
+>  kernel/rcu/srcutree.c    | 39 +++++++++++++++++---
+>  4 files changed, 176 insertions(+), 11 deletions(-)
 > 
-> Leon Romanovsky (7):
->       PCI/P2PDMA: Separate the mmap() support from the core logic
->       PCI/P2PDMA: Simplify bus address mapping API
->       PCI/P2PDMA: Refactor to separate core P2P functionality from memory allocation
->       PCI/P2PDMA: Provide an access to pci_p2pdma_map_type() function
->       dma-buf: provide phys_vec to scatter-gather mapping routine
->       vfio/pci: Enable peer-to-peer DMA transactions by default
->       vfio/pci: Add dma-buf export support for MMIO regions
-> 
-> Vivek Kasireddy (2):
->       vfio: Export vfio device get and put registration helpers
->       vfio/pci: Share the core device pointer while invoking feature functions
+> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> index 1dd6812aabe7..1fbf475eae5e 100644
+> --- a/include/linux/srcu.h
+> +++ b/include/linux/srcu.h
 
+[...]
 
-Hi,
+> @@ -305,6 +315,46 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
+>  	return retval;
+>  }
+>  
+> +/**
+> + * srcu_read_lock_fast_updown - register a new reader for an SRCU-fast-updown structure.
+> + * @ssp: srcu_struct in which to register the new reader.
+> + *
+> + * Enter an SRCU read-side critical section, but for a light-weight
+> + * smp_mb()-free reader.  See srcu_read_lock() for more information.
+> + * This function is compatible with srcu_down_read_fast(), but is not
+> + * NMI-safe.
+> + *
+> + * For srcu_read_lock_fast_updown() to be used on an srcu_struct
+> + * structure, that structure must have been defined using either
+> + * DEFINE_SRCU_FAST_UPDOWN() or DEFINE_STATIC_SRCU_FAST_UPDOWN() on the one
+> + * hand or initialized with init_srcu_struct_fast_updown() on the other.
+> + * Such an srcu_struct structure cannot be passed to any non-fast-updown
+> + * variant of srcu_read_{,un}lock() or srcu_{down,up}_read().  In kernels
+> + * built with CONFIG_PROVE_RCU=y, () will complain bitterly if you ignore
+> + * this * restriction.
 
-Can we get Acked-by for p2pdma and DMABUF parts?
+Probably,
 
-Thanks
+ * built with CONFIG_PROVE_RCU=y, __srcu_check_read_flavor() will complain
+ * bitterly if you ignore this restriction.
 
-> 
->  Documentation/driver-api/pci/p2pdma.rst |  95 +++++++---
->  block/blk-mq-dma.c                      |   2 +-
->  drivers/dma-buf/dma-buf.c               | 235 ++++++++++++++++++++++++
->  drivers/iommu/dma-iommu.c               |   4 +-
->  drivers/pci/p2pdma.c                    | 182 +++++++++++++-----
->  drivers/vfio/pci/Kconfig                |   3 +
->  drivers/vfio/pci/Makefile               |   1 +
->  drivers/vfio/pci/nvgrace-gpu/main.c     |  56 ++++++
->  drivers/vfio/pci/vfio_pci.c             |   5 +
->  drivers/vfio/pci/vfio_pci_config.c      |  22 ++-
->  drivers/vfio/pci/vfio_pci_core.c        |  56 ++++--
->  drivers/vfio/pci/vfio_pci_dmabuf.c      | 315 ++++++++++++++++++++++++++++++++
->  drivers/vfio/pci/vfio_pci_priv.h        |  23 +++
->  drivers/vfio/vfio_main.c                |   2 +
->  include/linux/dma-buf.h                 |  18 ++
->  include/linux/pci-p2pdma.h              | 120 +++++++-----
->  include/linux/vfio.h                    |   2 +
->  include/linux/vfio_pci_core.h           |  42 +++++
->  include/uapi/linux/vfio.h               |  27 +++
->  kernel/dma/direct.c                     |   4 +-
->  mm/hmm.c                                |   2 +-
->  21 files changed, 1077 insertions(+), 139 deletions(-)
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251016-dmabuf-vfio-6cef732adf5a
-> 
-> Best regards,
-> --  
-> Leon Romanovsky <leonro@nvidia.com>
-> 
-> 
+??
+
+> + *
+> + * Grace-period auto-expediting is disabled for SRCU-fast-updown
+> + * srcu_struct structures because SRCU-fast-updown expedited grace periods
+> + * invoke synchronize_rcu_expedited(), IPIs and all.  If you need expedited
+> + * SRCU-fast-updown grace periods, use synchronize_srcu_expedited().
+> + *
+> + * The srcu_read_lock_fast_updown() function can be invoked only from
+> + those contexts where RCU is watching, that is, from contexts where
+> + it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
+> + complain.
+
+kernel-doc (script) complains:
+
+Warning: include/linux/srcu.h:341 bad line:  those contexts where RCU is watching, that is, from contexts where
+Warning: include/linux/srcu.h:342 bad line:  it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
+Warning: include/linux/srcu.h:343 bad line:  complain.
+
+Leading "* "s are missing.
+
+        Thanks, Akira
+
+> + */
+> +static inline struct srcu_ctr __percpu *srcu_read_lock_fast_updown(struct srcu_struct *ssp)
+> +__acquires(ssp)
+> +{
+> +	struct srcu_ctr __percpu *retval;
+> +
+> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast_updown().");
+> +	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST_UPDOWN);
+> +	retval = __srcu_read_lock_fast_updown(ssp);
+> +	rcu_try_lock_acquire(&ssp->dep_map);
+> +	return retval;
+> +}
+> +
+>  /*
+>   * Used by tracing, cannot be traced and cannot call lockdep.
+>   * See srcu_read_lock_fast() for more information.
+[...]
 
