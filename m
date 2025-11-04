@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-884969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1790DC319F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:51:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282CEC31A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7703B6CFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F16F3B1182
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BCB328606;
-	Tue,  4 Nov 2025 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B631B117;
+	Tue,  4 Nov 2025 14:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIMn1mOQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="sLxtTSkC"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363CA230BD5;
-	Tue,  4 Nov 2025 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26492D63F8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762267698; cv=none; b=ZzFc5f96azyIo5SWm0laAHujkaPMTd+P//i2VAuqpOS+GXHWmg2vAKKOWp/spnrfe/BlwJePqMrQ9AoAUd40RhnUHej8cQnzDYa/mjNPTLlwq95WGCvM0v4AEYMrcItGeAcKvXlz3Hhw+4rn0aynIq6izhOGXfkNj4jSw6/7yjM=
+	t=1762267757; cv=none; b=SoA+1NnOm0EYw6XbkVDD7D2wiA1lVXnJn95sBnb/bmQbZFcwcIeHK12GZ/5mUA49YRDcmDfOj+RK/v486lnrzA90JnD+zl2vJX4PvMnR0x42qpaetEmKMMwCecwcofvCgZVlgMWs20My+92tmK46Z1LXV2h0CAYgFAlU0E+vkKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762267698; c=relaxed/simple;
-	bh=xCBxlDXzIhVQ/B7058fyymHUafvIparv+hEqSxtneH0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=cO7TfQfnSqfaw16BVH092hJ7Mlr2C4oXcfs9mbhZ3O0Qr2v7Acukd6STJv0dr3NWosxkH1GUJEVLb5exOYI15BJHZmUGe3gHQLEne0ef1jxmHFzsa6UnmVqNi2yIr/8pH8QLRqe3ZFANbnPKnHyvW2Y9RJ4mKLc1SB7BV3rD6i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIMn1mOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F802C116B1;
-	Tue,  4 Nov 2025 14:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762267697;
-	bh=xCBxlDXzIhVQ/B7058fyymHUafvIparv+hEqSxtneH0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=SIMn1mOQrQQxcwiBwuWqP29ydZ+FP6EcFaa3okcvWYTrLLh4dqx1Aat7xwUVxgxP0
-	 auydmpD+uvywmyro/TOJ9RZhvxObN1EV6F83xQErcgMXXiRUc2Uwl4SQDZE+kIQItk
-	 bdVmf3q3inpKZN3kfVXj06HMZAYUfhzGptBS36PkdxxrGaIBWjgkrKpRMVHhRlHX0d
-	 E2QCMTyie6s5pamvD/LI5E4V8QktSmB7hH7sB0v+HDD1MyWns7fHxF05+izv/ZK/Lg
-	 HP3m4oD3DqawLom/Qt8t+yXEPUPfxdO0RgXv2csT0YxvTNkgEM/A6orgH+LfIRcH4x
-	 ut3EPx4B99UXQ==
+	s=arc-20240116; t=1762267757; c=relaxed/simple;
+	bh=7bvapD1uqsnNYi1Q3JJRh8kAisoWEx0DwRXG2a9BbQQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VpefWynF6Ul32MD3h+6XBSPtvZ7qwcspPPh1QnXgiCBl2LNXcc7ezwRWt3O0ibAd+j2kH7tX7w03zal+ObxEaCCOC++Tct9VbsUbITQPy/kN5IH5Xl2qMM1zVVHRvaA9XfIiS6uYbmWF5INCFqYsWwariN34GZwKcDFWJAY6i08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=sLxtTSkC; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1762267753; x=1762526953;
+	bh=xfqs8NGDzi/GLs93yh/ZnyHEZsNbd7BFWZBeJoDbuBw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=sLxtTSkCbLJUhXOFbUAzkkZTsRM3HZRQToyIFBaRu0PGKyO5fKHZRIxLblCnA8aYq
+	 1xoYfY5qfeaDniIW4yU04b5OalIS28PDRxj+azfnN/T1tuuyxwhtvNxmTqubXlVhCP
+	 5Wmk14Q2eC7LgmtAM6XkOP6t9k8j5zagrcZeoLWy3Eae2EIy/LmGPcSjjXKunZHQeT
+	 6DVds+bC8KILEg+9m7m6wV+oKy6hyY+wCp12XaOtqDKrgK/+buG6nEwcCt2Jf1PjPB
+	 p+2mjdRnk6A4YqsQfKo4GSIhwGBNCXB6TR/nuFpapEoYpzSN1o6Ve3JeLMfBT0hAo7
+	 YpBYBfB6AI79A==
+Date: Tue, 04 Nov 2025 14:49:08 +0000
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, Marco Elver <elver@google.com>
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: m.wieczorretman@pm.me, stable@vger.kernel.org, Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v1 1/2] kasan: Unpoison pcpu chunks with base address tag
+Message-ID: <821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman@pm.me>
+In-Reply-To: <cover.1762267022.git.m.wieczorretman@pm.me>
+References: <cover.1762267022.git.m.wieczorretman@pm.me>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: fd6efc8602e9b03ae9b37c660c7f86c9a4b17086
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Nov 2025 15:48:10 +0100
-Message-Id: <DDZZRCRHBLVI.MGWBUONLZ94K@kernel.org>
-Subject: Re: [PATCH] firmware_loader: make RUST_FW_LOADER_ABSTRACTIONS
- select FW_LOADER
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Rafael J.
- Wysocki" <rafael@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrew
- Lunn" <andrew@lunn.ch>, "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell
- King" <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251104-b4-select-rust-fw-v1-1-afea175dba22@nvidia.com>
- <2025110407-scouting-unpiloted-39f4@gregkh>
-In-Reply-To: <2025110407-scouting-unpiloted-39f4@gregkh>
 
-On Tue Nov 4, 2025 at 3:35 PM CET, Greg Kroah-Hartman wrote:
-> On Tue, Nov 04, 2025 at 11:04:49PM +0900, Alexandre Courbot wrote:
->> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmwar=
-e_loader/Kconfig
->> index 752b9a9bea03..15eff8a4b505 100644
->> --- a/drivers/base/firmware_loader/Kconfig
->> +++ b/drivers/base/firmware_loader/Kconfig
->> @@ -38,7 +38,7 @@ config FW_LOADER_DEBUG
->>  config RUST_FW_LOADER_ABSTRACTIONS
->>  	bool "Rust Firmware Loader abstractions"
->>  	depends on RUST
->> -	depends on FW_LOADER=3Dy
->> +	select FW_LOADER
->
-> Please no, select should almost never be used, it causes hard-to-debug
-> issues.
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 
-I agree that select can be very annoying at times, but in this case it seem=
-s to
-be the correct thing to do?
+A KASAN tag mismatch, possibly causing a kernel panic, can be observed
+on systems with a tag-based KASAN enabled and with multiple NUMA nodes.
+It was reported on arm64 and reproduced on x86. It can be explained in
+the following points:
 
-For instance for something like:
+=091. There can be more than one virtual memory chunk.
+=092. Chunk's base address has a tag.
+=093. The base address points at the first chunk and thus inherits
+=09   the tag of the first chunk.
+=094. The subsequent chunks will be accessed with the tag from the
+=09   first chunk.
+=095. Thus, the subsequent chunks need to have their tag set to
+=09   match that of the first chunk.
 
-	config MY_DRIVER
-		depends on PCI
-		depends on DRM
-		select AUXILIARY_BUS
-		select FW_LOADER
+Refactor code by moving it into a helper in preparation for the actual
+fix.
 
-In this case MY_DRIVER is only available if PCI and DRM is enabled, which m=
-akes
-sense, there is no reason to show users PCI and DRM drivers if both are
-disabled.
+Fixes: 1d96320f8d53 ("kasan, vmalloc: add vmalloc tagging for SW_TAGS")
+Cc: <stable@vger.kernel.org> # 6.1+
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Tested-by: Baoquan He <bhe@redhat.com>
+---
+Changelog v1 (after splitting of from the KASAN series):
+- Rewrite first paragraph of the patch message to point at the user
+  impact of the issue.
+- Move helper to common.c so it can be compiled in all KASAN modes.
 
-However, for things like AUXILIARY_BUS and FW_LOADER, I'd argue that they a=
-re
-implementation details of the driver and should be selected if the driver i=
-s
-selected.
+ include/linux/kasan.h | 10 ++++++++++
+ mm/kasan/common.c     | 11 +++++++++++
+ mm/vmalloc.c          |  4 +---
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
-Otherwise, wouldn't we expect users to know implementation details of drive=
-rs
-before being able to select them?
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index d12e1a5f5a9a..b00849ea8ffd 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -614,6 +614,13 @@ static __always_inline void kasan_poison_vmalloc(const=
+ void *start,
+ =09=09__kasan_poison_vmalloc(start, size);
+ }
+=20
++void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms);
++static __always_inline void kasan_unpoison_vmap_areas(struct vm_struct **v=
+ms, int nr_vms)
++{
++=09if (kasan_enabled())
++=09=09__kasan_unpoison_vmap_areas(vms, nr_vms);
++}
++
+ #else /* CONFIG_KASAN_VMALLOC */
+=20
+ static inline void kasan_populate_early_vm_area_shadow(void *start,
+@@ -638,6 +645,9 @@ static inline void *kasan_unpoison_vmalloc(const void *=
+start,
+ static inline void kasan_poison_vmalloc(const void *start, unsigned long s=
+ize)
+ { }
+=20
++static inline void kasan_unpoison_vmap_areas(struct vm_struct **vms, int n=
+r_vms)
++{ }
++
+ #endif /* CONFIG_KASAN_VMALLOC */
+=20
+ #if (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)) && \
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index d4c14359feaf..c63544a98c24 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -28,6 +28,7 @@
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/bug.h>
++#include <linux/vmalloc.h>
+=20
+ #include "kasan.h"
+ #include "../slab.h"
+@@ -582,3 +583,13 @@ bool __kasan_check_byte(const void *address, unsigned =
+long ip)
+ =09}
+ =09return true;
+ }
++
++void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
++{
++=09int area;
++
++=09for (area =3D 0 ; area < nr_vms ; area++) {
++=09=09kasan_poison(vms[area]->addr, vms[area]->size,
++=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
++=09}
++}
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 798b2ed21e46..934c8bfbcebf 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4870,9 +4870,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned l=
+ong *offsets,
+ =09 * With hardware tag-based KASAN, marking is skipped for
+ =09 * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
+ =09 */
+-=09for (area =3D 0; area < nr_vms; area++)
+-=09=09vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->addr,
+-=09=09=09=09vms[area]->size, KASAN_VMALLOC_PROT_NORMAL);
++=09kasan_unpoison_vmap_areas(vms, nr_vms);
+=20
+ =09kfree(vas);
+ =09return vms;
+--=20
+2.51.0
+
+
 
