@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-885101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA36C32005
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:17:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF375C31FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89B684F5670
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:15:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C0794EAD02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509F0330B01;
-	Tue,  4 Nov 2025 16:14:52 +0000 (UTC)
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACF4328B6C;
+	Tue,  4 Nov 2025 16:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WsJkFqFk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF35931B132;
-	Tue,  4 Nov 2025 16:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6F228751B;
+	Tue,  4 Nov 2025 16:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762272891; cv=none; b=nXdxS6p4Snp/ZDAdpBOt2W8QWNDf0N64zTD6vc4hLIOeL3PWgIGfM4lz3bGzRVUh+FiC0/ESRP8Rq6Yn9L9DJaBDNEcYZgBbRK1wFCwB2K7n0sRLHU+47z8pdigmCpSNZ7CxlbbFxQcSL4rPVY5KlxB430ZDMaq2sZNioJs3dTc=
+	t=1762272868; cv=none; b=JIdvu3QMjr126eDmXMl5gTdogAGoUbjUP8rxeG4vW+7Cc6ssYiUS6XxLrbw79A2BMsvp3zIubbSUYNQZS0LwGn7paseFn6FTFwQGV2DvpT1lEWrGsjikDFxlw/3hJwkHDzn4zPPSDwLI3lTwfekGcelpSNX5vjzVJqyqNvo+EF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762272891; c=relaxed/simple;
-	bh=2hdzC5j2xDQnhL0Fda9wKnz2SrLCX/nkeS+rRf2Ut1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OPzkq5qy5szwEf54P2Te1YEBhleOnC42pXu/GHEKJq/Ali2/6h8ohMPXMZdhzn1SdaviS0kHC1UnpuJwabFHmW3u23j0hDNZmx1U49HSqhptf30rtSd/U77msjeD4qtRHkD1EDx4opDklPSrb4gQqJAlfKPJLF9lpv89MTCSff8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from simon-Latitude-5450.cni.e-technik.tu-dortmund.de ([129.217.186.118])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A4GEWXX011487
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 4 Nov 2025 17:14:34 +0100 (CET)
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-To: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, therbert@google.com
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>
-Subject: [PATCH net-next v1 1/1] usbnet: Add support for Byte Queue Limits (BQL)
-Date: Tue,  4 Nov 2025 17:13:27 +0100
-Message-ID: <20251104161327.41004-2-simon.schippers@tu-dortmund.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
+	s=arc-20240116; t=1762272868; c=relaxed/simple;
+	bh=jtTRcLRPl0S7ICs+I5qWMOFEWJJj/lodA+jLILnY1Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GnKAupv0IDRG675DBLA+bb8KJ7VXpetlb/g1f1Br7h80ReMLfsxkTfbN1YzMoHp7/drEkHBGgbqo0a5B8KL8GypId5OkqAPynPpHwmGPKGCcUr6g19RHxLafECXbwgkOvEnQbW/r3F6aO614T9xaxlcFX+xiE7tM2CkgPs/WEl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WsJkFqFk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9553940E01A5;
+	Tue,  4 Nov 2025 16:14:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 91D3z73EMMNp; Tue,  4 Nov 2025 16:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762272856; bh=FNgyVk2BPz+y0bw3H0Td/xY5ZxkIc4MyugmkwC321Qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WsJkFqFkzmKoHzeo2sq5btxwv0TXojUeM/TpfzyIJTc8hjVk+qMrxoJPnY3TPRilZ
+	 t/3IJ9zjf39U/IwlrTalPGaaZYf9JNVMzAtMaFK/DuTjZtlJs4+jfuL4E76Chztvgt
+	 qGcydLXPCOLJP6UEF+drNrAE2hT0WMQNvuywlp2yJfDtk3SSz05u6Qql6DDMkriBur
+	 6CPyfQKMPPfVtTnYyIldqC6gcondafrVYRbELqQUe5P/OfY2ScnKwFfGpqklHI5kbo
+	 u1ZjyrP4pOmQBE2zbfa/emBGke7hSr5TjQiM6fPMF03tW0gQHvkFc/p2O/OQmafP2h
+	 URuLkFeRPbHqV1XI8SuNUE8SgquwvStXir1n3UcKu4/zhnMHb7xfiuZ032qWQ2xPxq
+	 7E5KWsJ61g0+eZ4mcpGrUaN66gGGYkNF8TaPcELzqSo2kU3I7oJzf+UIDWB0WONd4o
+	 a8k8WJKHv6QW5W7/X41jlT36U7sOOCwApDg1V4H0OX2audqiMRpA6bm5aHtiamb6FU
+	 xrZbzE/Xkxzm1ogLCyRh0eGBlWurj6KVgldwPd/ZY8qgUgBj/2k17r2a5G7BEn+zId
+	 vUA6/4kcCZOHdjRoNaHhyCgsoSAgYg3rMjMpQXkjaXZ2EuLIcalgarcTXQy+QKdUzQ
+	 itFlhFjkqmmz5btnz8QXncHw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 944BD40E015B;
+	Tue,  4 Nov 2025 16:14:06 +0000 (UTC)
+Date: Tue, 4 Nov 2025 17:13:59 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	the arch/x86 maintainers <x86@kernel.org>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+Message-ID: <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com>
+ <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
 
-The usbnet driver currently relies on fixed transmit queue lengths, which
-can lead to bufferbloat and large latency spikes under load -
-particularly with cellular modems.
-This patch adds support for Byte Queue Limits (BQL) to dynamically manage
-the transmit queue size and reduce latency without sacrificing
-throughput.
+On Tue, Nov 04, 2025 at 11:25:44AM +0100, Borislav Petkov wrote:
+> On Tue, Nov 04, 2025 at 03:25:20PM +0900, Linus Torvalds wrote:
+> > Borislav - comments?
+> 
+> LGTM at a quick glance but lemme take it for a spin around the hw jungle here
+> later and give it a more thorough look, once I've put out all the daily
+> fires...
 
-Testing was performed on various devices using the usbnet driver for
-packet transmission:
+Did a deeper look, did randbuilds, boots fine on a couple of machines, so all
+good AFAIIC.
 
-- DELOCK 66045: USB3 to 2.5 GbE adapter (ax88179_178a)
-- DELOCK 61969: USB2 to 1 GbE adapter (asix)
-- Quectel RM520: 5G modem (qmi_wwan)
-- USB2 Android tethering (cdc_ncm)
+I sincerely hope that helps.
 
-No performance degradation was observed for iperf3 TCP or UDP traffic,
-while latency for a prioritized ping application was significantly
-reduced. For example, using the USB3 to 2.5 GbE adapter, which was fully
-utilized by iperf3 UDP traffic, the prioritized ping was improved from
-1.6 ms to 0.6 ms. With the same setup but with a 100 Mbit/s Ethernet
-connection, the prioritized ping was improved from 35 ms to 5 ms.
-
-Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
----
- drivers/net/usb/usbnet.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 62a85dbad31a..1994f03a78ad 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -831,6 +831,7 @@ int usbnet_stop(struct net_device *net)
- 
- 	clear_bit(EVENT_DEV_OPEN, &dev->flags);
- 	netif_stop_queue (net);
-+	netdev_reset_queue(net);
- 
- 	netif_info(dev, ifdown, dev->net,
- 		   "stop stats: rx/tx %lu/%lu, errs %lu/%lu\n",
-@@ -939,6 +940,7 @@ int usbnet_open(struct net_device *net)
- 	}
- 
- 	set_bit(EVENT_DEV_OPEN, &dev->flags);
-+	netdev_reset_queue(net);
- 	netif_start_queue (net);
- 	netif_info(dev, ifup, dev->net,
- 		   "open: enable queueing (rx %d, tx %d) mtu %d %s framing\n",
-@@ -1500,6 +1502,7 @@ netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
- 	case 0:
- 		netif_trans_update(net);
- 		__usbnet_queue_skb(&dev->txq, skb, tx_start);
-+		netdev_sent_queue(net, skb->len);
- 		if (dev->txq.qlen >= TX_QLEN (dev))
- 			netif_stop_queue (net);
- 	}
-@@ -1563,6 +1566,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
- static void usbnet_bh(struct timer_list *t)
- {
- 	struct usbnet		*dev = timer_container_of(dev, t, delay);
-+	unsigned int bytes_compl = 0, pkts_compl = 0;
- 	struct sk_buff		*skb;
- 	struct skb_data		*entry;
- 
-@@ -1574,6 +1578,8 @@ static void usbnet_bh(struct timer_list *t)
- 				usb_free_skb(skb);
- 			continue;
- 		case tx_done:
-+			bytes_compl += skb->len;
-+			pkts_compl++;
- 			kfree(entry->urb->sg);
- 			fallthrough;
- 		case rx_cleanup:
-@@ -1584,6 +1590,8 @@ static void usbnet_bh(struct timer_list *t)
- 		}
- 	}
- 
-+	netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
-+
- 	/* restart RX again after disabling due to high error rate */
- 	clear_bit(EVENT_RX_KILL, &dev->flags);
- 
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
