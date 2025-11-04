@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-885501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC7DC3324A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12524C332C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 23:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170A918C2456
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7A718C32AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 22:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A459F199931;
-	Tue,  4 Nov 2025 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4BC34679A;
+	Tue,  4 Nov 2025 22:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="k51sqvou"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyZncVkn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B286E2F2E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 22:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB71F199931;
+	Tue,  4 Nov 2025 22:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762294568; cv=none; b=rrlnV7txbpDGJ3XhH8ihHlZbkrNdNUyVLPVAmnA+MFJzRKCG5f2C5qxr2r2ZEPfrn+DhTHElLxnQNgcNEeDPF4ajHWOERZSt97YyU89soIsYvCVHikVYGP6ySPGPPQPJtJ3cFfdpO3J7MJq1xA3tij3lnbb3UHobKumFlXLGuWk=
+	t=1762294575; cv=none; b=eB4aeT4Kwld5laZtvK5A0CnBuiUcOtAijE56JM5tiFEMNVRm7ty7edhHVd2PusZ4pLgHJJNCgWRf4f87EGIcHlN3xBjJ8enqeTw5wQH9liDil+81U5FFIOE8INN8++ndhYv+QKmtMX2O17Z/iKobzKtB+ZSvCIqPIYYsuX6fEaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762294568; c=relaxed/simple;
-	bh=WVeyLHO99XjF2UfZfAmNY/K2ke/7Hw2YT/26lkl0n00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTTdn6JUdX61Ia27cQK1zkYrI93HWw7kb4zWPWXUkQWY1Ofrx0QUd2jvTA+V/2gRh1IP5WCCfxpkTU/rfTSXM3YLn6VJy6xJdKnAGROReisfUibgT0FXrA0KX0ayoqqp7VyXjHMxNYSseSpHzSbcg88AVvwm5g8ZDP5nzwmlMMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=k51sqvou; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-121-96.bstnma.fios.verizon.net [173.48.121.96])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5A4MFpdn030529
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Nov 2025 17:15:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1762294553; bh=Pr/wrCrDh895xdoO2H8NzvOaQz7GEFrY4OzxZO2Bw18=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=k51sqvouhrY9egjiUoMwz3FDG30ayWJblOOBJZiUrxueku/Zsl6LoToz7MSCEg+CY
-	 Ern9/gmAxnrXFjQj8L793HLqD+Lm3IyCRGYCgDjgZ+A/QBPIwwuo0vAHEuPLq8O9r+
-	 IoXQM8iD8lmVQlhUzgNJo+vAzsNtzmQpSvbAP4GFblCdHHE6Wb+khVyKDkA2vRRAjl
-	 jd+MQNH0jQMXoxkjERFGt1hN3CZtTOR/uaD6IGCxUZsTYojxFVW5HymMxtbRGFA1KU
-	 bk1LvVpCSg+II5XPJiHm7k6mvGg2S/2kdl1jDJEIcGlw9WVRf4nx8N7FsZcIDe+sLZ
-	 OAqmdUIMfYMpA==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 7BAFE2E00D9; Tue, 04 Nov 2025 17:15:51 -0500 (EST)
-Date: Tue, 4 Nov 2025 17:15:51 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: regulator branch mess
-Message-ID: <20251104221551.GA2968640@mit.edu>
-References: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
- <aQocq1eRjOOjiRdY@finisterre.sirena.org.uk>
- <aQogTFANK1fMtloW@smile.fi.intel.com>
- <aQojdTvP94aYVW4l@finisterre.sirena.org.uk>
- <aQolne8AKHXdJw0-@smile.fi.intel.com>
- <aQonVNgqJI56nspA@smile.fi.intel.com>
- <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1762294575; c=relaxed/simple;
+	bh=PMJI57pPFLnWADx4D5rtUwHi6yehpBQw9oto6JRqah0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dEqp+/UPf7OkBixCRNXOloQ3CG0Ebit9S7CZ2tQrG6kERuDluv+ODR8M8b/wcun8s1fpYtWtug9/U9szIVt35MbXd6vD+hHc54B9i/JZjoYgdhGByZ5JMg9m+6wlEt/4sEya7v34yJp4sszllZLE6JS9LHO6yjWDdCnVbkzdJ6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyZncVkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 77641C4CEF8;
+	Tue,  4 Nov 2025 22:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762294574;
+	bh=PMJI57pPFLnWADx4D5rtUwHi6yehpBQw9oto6JRqah0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=LyZncVknhUCw0m4emfG5lprqrjnnWjuY6IjiAT1bJgihIgb7UYvGp9C+9l3viV2qn
+	 e+RQMt2OgBEanH93WYOjvkTXJaWiibaPRMFr07BaQZ8ZhlR94YQZTu767LYfG1QrK0
+	 Tk0CB8SpK5c4vxOnDvTbgsr+hKBa1YrFX2nqOcQw//RlzKjxQZY2eeTFl9mgfDqfCk
+	 aGUY7r2c5yVeQXgnHOUbW8ftO2z20z05fCDP0DN+mn1oB7zhk6lwe8VyH4bIu87VJV
+	 9Em1QmxDC4yYEjuIs8WZw5M2CubC9D/ysoJ4t0kaAm8apRIGKCG9mLVCq5JiI/Uymj
+	 WFR9pkrafjTeQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD39CCFA07;
+	Tue,  4 Nov 2025 22:16:14 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH 00/12] Make Samsung SOFEF00 DDIC and panel work
+Date: Tue, 04 Nov 2025 23:16:08 +0100
+Message-Id: <20251104-sofef00-rebuild-v1-0-dfcfa17eb176@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACh7CmkC/22Oy4oCMRBFf6Wp9QQq76R/ZXCRTqo0oPZM0oog/
+ rtBNy5cngvncO/QqVXqME93aHStva7nAfJngnxI5z2JWgaDQmWlRCP6ysSIotFyqcci0GTOjlw
+ gL2FYf4243l7F392bG/1fRnh7j7CkTiKvp1Pd5kk5FWxAHxMXckU7n0mXRQadvSkhGZ2Qgmb4P
+ DS0cQej8qIfa6E2cq1R3kTRxkQMxpdo56v8bmnRHWnO6oZScLQWl6AU0zAc7B6PJ2+1YGAVAQA
+ A
+X-Change-ID: 20251104-sofef00-rebuild-04cfc6e68e71
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2701; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=PMJI57pPFLnWADx4D5rtUwHi6yehpBQw9oto6JRqah0=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpCnsrxoAimsOkpxj4oSSZ6MFZZOoxCgpdgJRR4
+ M5DBQ9mDOGJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaQp7KwAKCRBgAj/E00kg
+ cqbkD/4zeuTVk0oTgR7ncgLAK4OcDWd+0qy4jEBq/xz83o4LxkkXSFp/PJX8WsA6z2//9PK87Zw
+ gLUT1inO7eXQGtvxU/Oq+1lu3GqMn1NmfKlmAOvJEanzR/jAF1mJYHshlp/oDOoYmuRvYxkkxQD
+ zOKjgMIC4OldFy0e+6PPvWTwIZbP5Q+CRxfoqmlB3GxeC07JbuMudoby3Cy5QETK8c3S4H7L0Bu
+ M86AxsfeurNoiR7MGr3Z4/U6rsiHmbwXd+L7cnuSBh4wWmEKE012WQTtlD3yKmZvlYzNu8ikeb0
+ U5S078YoGEf6JKZBtT4auYoq5wpV7OmUskB76AnEGq4RizDGieRyqd5jJyOSOnypGivlwlNoQep
+ TivgQpupnoBoDj+OD+u6V8tFAsdxFTJ05Rmb0Wnoq/zQUkiE62P8nDuMJanYGw6JpnjofQDhwEX
+ 0M21ZNRixERwbtQBReCq7jDXGxoJpGJbg+r2jWnt78MTJPUDqZiMFtO4UPfc7w7kw/njWUU9aN9
+ 8M7hXMiE/4Ul7cXm46ZQhI339P5Yn8T63TZu9+25J2V9S6Oi3qdVJuJiQIYbg1bluGAqgABHYNL
+ /pCVDEh2jTlIkpoZm7wwQqZxLCsu3L0l9MWjG0xFijqXfh6DxZQ82pq6LglmsgjtJkFfgVXxOmr
+ 6hmn0fDMGPBNGJA==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-Andy, I don't know what github is doing to confuse you, but my
-preferred way of understanding what is in a merge commit is to use the
-command line tools, which are less likely to lie (or at least, to be
-confusing):
+This DDIC is essential for panels used in OnePlus 6 and Pixel 3a XL
+(SDC variant). With proper support, all downstream patches in
+sdm845-mainline and sdm670-mainline can be dropped.
 
-% git log --pretty=oneline regulator/for-next ^base/master
-9de2057bbdfb58f4d9bb1476135317cd3fe6aa52 (regulator/for-next, regulator/for-6.19, regulator/HEAD) regulator: pf9453: optimize PMIC PF9453 driver
-2ecc8c089802e033d2e5204d21a9f467e2517df9 regulator: pf9453: remove unused I2C_LT register
-0144a2b29d95af8523c308116de65d398d6e935b regulator: pf9453: remove low power mode
-a2d4691b3fec6a2360e4ec953d06819ea055c3e7 regulator: pf9453: change the device ID register address
-252abf2d07d33b1c70a59ba1c9395ba42bbd793e regulator: Small cleanup in of_get_regulation_constraints()
-28039efa4d8e8bbf98b066133a906bd4e307d496 MAINTAINERS: remove obsolete file entry in DIALOG SEMICONDUCTOR DRIVERS
-dc74a00c7661a14a672ea7660caca5c4aa661a79 regulator: pca9450: add input supply links
-4c33cef58965eb655a0ac8e243aa323581ec025f regulator: pca9450: link regulator inputs to supply groups
-86df0030b71d7172317d957df17524a7fd6232d4 regulator: dt-bindings: nxp,pca9450: document input supplies
-01313661b248c5ba586acae09bff57077dbec0a5 regulator: Let raspberrypi drivers depend on ARM
-d054cc3a2ccfb19484f3b54d69b6e416832dc8f4 regulator: rpmh-regulator: Add RPMH regulator support for PMR735D
-f76dbe127f1b5910e37dfe307d2de5c13d61ed89 regulator: dt-bindings: qcom,rpmh: Add support for PMR735D
-5263cd81578f99a00b2dd7de1da2b570b96a1b7c rpmh-regulators: Update rpmh-regulator driver and
-fb25114cd760c13cf177d9ac37837fafcc9657b5 regulator: sy7636a: add gpios and input regulator
-65efe5404d151767653c7b7dd39bd2e7ad532c2d regulator: rpmh-regulator: Add RPMH regulator support for Glymur
-6a8cdef7dc2a4c0dbde3f7d7100b3d99712a766b regulator: rpmh-regulator: Add support for new resource name format
-1356c98ef911e14ccfaf374800840ce5bdcb3bbd regulator: dt-bindings: rpmh-regulator: Update pmic-id DT prop info for new CMD-DB
-835dfb12fc389f36eb007657f163bd1c539dcd45 regulator: dt-bindings: rpmh-regulator : Add compatibles for PMH01XX & PMCX0102
-433e294c3c5b5d2020085a0e36c1cb47b694690a regulator: core: forward undervoltage events downstream by default
-6277a486a7faaa6c87f4bf1d59a2de233a093248 regulator: dt-bindings: Convert Dialog DA9211 Regulators to DT schema
+The mainline driver was broken so far, and with my recent introduction
+of S6E3FC2X01 driver, I had to "break it even more" due to OnePlus 6
+common device-tree changes which defined all the regulators and
+corrected properties.
 
-% git log -1 base/master
-commit c9cfc122f03711a5124b4aafab3211cf4d35a2ac (base/master, base/HEAD)
-Merge: 8bb886cb8f3a 3b1a4a59a208
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue Nov 4 14:25:38 2025 +0900
+At this moment the first version of the patchset will not include
+Pixel 3a XL (SDC) as no testers yet volunteered.
 
-    Merge tag 'for-6.18-rc4-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-    
-    Pull btrfs fixes from David Sterba:
-    
-     - fix memory leak in qgroup relation ioctl when qgroup levels are
-       invalid
-    
-     - don't write back dirty metadata on filesystem with errors
-    
-     - properly log renamed links
-    
-     - properly mark prealloc extent range beyond inode size as dirty (when
-       no-noles is not enabled)
-    
-    * tag 'for-6.18-rc4-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux:
-      btrfs: mark dirty extent range for out of bound prealloc extents
-      btrfs: set inode flag BTRFS_INODE_COPY_EVERYTHING when logging new name
-      btrfs: fix memory leak of qgroup_list in btrfs_add_qgroup_relation
-      btrfs: ensure no dirty metadata is written back for an fs with errors
+The code, including the Pixel 3a XL enhancement can be found at
+  https://gitlab.com/dhxx/linux/-/tree/b4/sofef00-rebuild
 
-Cheers,
+Due to some unknown issues with -next-20251103 - 04, the code is based
+on few previous patchsets and v6.18-rc4 (or later).
 
-						- Ted
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Casey Connolly (2):
+      drm/panel: sofef00: Add prepare_prev_first flag to drm_panel
+      drm/panel: sofef00: Initialise at 50% brightness
+
+David Heidelberg (10):
+      dt-bindings: panel: Add Samsung SOFEF00 DDIC with panel
+      arch: arm64: qcom: sdm845-enchilada: Specify panel name within the compatible
+      drm/panel: sofef00: Clean up panel description after s6e3fc2x01 removal
+      drm/panel: sofef00: Handle all regulators
+      drm/panel: sofef00: Split sending commands to the enable/disable functions
+      drm/panel: sofef00: Introduce page macro
+      drm/panel: sofef00: Name of compatible should correspond to the panel used
+      drm/panel: sofef00: Simplify get_modes
+      drm/panel: sofef00: Mark the LPM mode always-on
+      drm/panel: sofef00: Non-continuous mode and video burst are supported
+
+ .../bindings/display/panel/panel-simple-dsi.yaml   |  25 +----
+ .../bindings/display/panel/samsung,sofef00.yaml    |  83 ++++++++++++++++
+ .../boot/dts/qcom/sdm845-oneplus-enchilada.dts     |   4 +-
+ drivers/gpu/drm/panel/Kconfig                      |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-sofef00.c      | 104 +++++++++++++--------
+ 5 files changed, 160 insertions(+), 63 deletions(-)
+---
+base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+change-id: 20251104-sofef00-rebuild-04cfc6e68e71
+prerequisite-change-id: 20250927-slider-correct-d34490847d95:v1
+prerequisite-patch-id: 5584af5fec387ca2bf83150e39199d93b2af6f41
+prerequisite-change-id: 20250923-s6e3fc2x01-f9550b822fe5:v6
+prerequisite-patch-id: 042e90baee2aea539d39b398ff8a9c9a73a5a248
+prerequisite-patch-id: 0da92dde66527977eb82c542c2b5e0478e011f16
+prerequisite-patch-id: 8ba3d908464e146d4db16b3a562481928753c9b2
+prerequisite-patch-id: 0945cccdc88d640192cf56148e9b661657e11e45
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
+
 
