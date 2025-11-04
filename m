@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-884959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FFEC3194A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:42:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C940C31962
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 15:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282AE1892655
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:37:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86C884FBAE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 14:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53BE3314D9;
-	Tue,  4 Nov 2025 14:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7288D32E73E;
+	Tue,  4 Nov 2025 14:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="celNCeFq"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO3+UgUO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3D3314C0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EE71624C5;
+	Tue,  4 Nov 2025 14:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266957; cv=none; b=U/RQDF0ZhA4e+25gzrwCRRi2KqpGObrHpffabi+/LAsH0yEOQSJeF0uYsxd3jUSrx1UUpd3YG7THJjjZve2vij3Cu31GTTfYAcwmKn2GZ6q98JCt1gNfcDbxQqlMDgF8bDyDqptwfagd9rM4tXD963tMxC/bPTTNZSRcs0Ob9/s=
+	t=1762267047; cv=none; b=YvsXC8EnLzVR57NXY2Pv2PZ3uMLepel6BXzYo+TO/6eCuEWEu97D5LfUV2Cr0D6r6g6olSQhfWHOQq7eV1fEiEgrsk45yuYSlI1mCzSgWqpP3H6UHVgewiZqxCcruDu0sQU1f1pW3IVFv0pWRtvvhdxNBXHnCQVj4XDgLHIOfIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762266957; c=relaxed/simple;
-	bh=GX2GI3xXEF4HI3q0KcvqQ4jEGISNdcm25fBO522FbcI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kneM4a9951WyLSE6cv6B7ARQapL4RuSe40T1yScaJ/7HfUNUiF2fkyNS0s6YVkcDMbLXdGvyj4WGOm+K4mJjS1fcpwZ4yTQBcCncWlr6ygkJas87TpMFZQLzwdbLm/2KSCzzs4wT1UYZ84RLl+MINCX+yw5KHMrEPoEYL6HVIIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=celNCeFq; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4710d174c31so60748765e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 06:35:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762266954; x=1762871754; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOVCXPPctiOeHSzFXrhZ8UdAWinRs+tNL6RnLupq0q4=;
-        b=celNCeFqoNdguOSwp+HXD2MW1ZH/Ls4ALDcRfRBNJIb4fH6Oqmw7/X9TKKCT6N3OZ+
-         5wwdNVyeDpBz8R1hzOdnRSNDHGIlatzaeSZO9WTPqhkdo/r3YMx5svQ0EOO4wHQ6ge5w
-         u8p73ppfns3Q0m/sRBqYGObL3Lmzd4QNZwrbBns6E7lAaUUBIw1rtHghrWV22RqCh0Hd
-         jQ6zaFv/Yehxn4V9L65e6KAYscDnwRIQLf39Spypa1fUY9Q4O0P+csRsC+cdI0H2/cVi
-         1XaEmpP3c8fiL6Eytq4H753ZANweMuGAmNTr1H/kwIXkQqm8N39HmYIa/rZPsgLd93un
-         agrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762266954; x=1762871754;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOVCXPPctiOeHSzFXrhZ8UdAWinRs+tNL6RnLupq0q4=;
-        b=VsskiEv6THEr/YFbEj0BQUSLke7duXVoEOHyYDE/mro29PuHjKv8tpIwWhabj2+/VB
-         x1DzJw+Zhg7bd2bFox7Nv7NvVw4WrXF3CWQ95L3by/Z2aAhhrS1xXy1AxXL8KLdApnx3
-         QKPN8MDeuFb62ovytVsJnZww3pWE6A/GetB2sa03LUCSkGGdPLzyzTKkVcnJuKmrtC2R
-         Kl7A4QIs9tKblPeqa3DTukVPLkK9PBcCw8b8s9U8FUCH87scyMQ7sXgqo5H9ZDHoO6rj
-         YXrM0Ha8TsM6xNYzePEtMgz5g3p+rrlmjLR6HyfSB+O5TFsj4v8bRplCy0qPuBc3VB0S
-         CsvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL1m83LlHjGjsud7bBHvCNVdCu6+7ldFb3BhZs9VRjpzyeH7CMd7lXXCllV7jK5nf2oEH23JeEBUcgc7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaY1dNJrGp7df5D8M+IbGEwk7XRilaptP2QL40x2bx6v1TW5t6
-	OToBQEERn7stYGEY0IBm4R3ye2cV8sKVgP8hK9v0uR/G/Df5sQZOddWFn94PMPtgw6T9VswkqRp
-	djUxwrslsB3aiI32S+A==
-X-Google-Smtp-Source: AGHT+IHUIVO/JrZ+sifdGbE2HNDP12NCBQ4Gy+soRUB62GGdW8nKY8+xMnZfZi9CwRQeoxr1/8RQh5TlG7DGBL0=
-X-Received: from wmg26.prod.google.com ([2002:a05:600c:22da:b0:477:1347:d406])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8207:b0:477:55de:4ad with SMTP id 5b1f17b1804b1-47755de06bfmr24595865e9.30.1762266953468;
- Tue, 04 Nov 2025 06:35:53 -0800 (PST)
-Date: Tue, 4 Nov 2025 14:35:52 +0000
-In-Reply-To: <DDZZ1ZWIPH8P.3M7H00GIMJUXV@nvidia.com>
+	s=arc-20240116; t=1762267047; c=relaxed/simple;
+	bh=WbKNtPk+MKgDtXkM3x3SCcLN5o/fKwgRbzjExR/lne0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3NyI67mloprZ9Zb7Vgtry21NwcjR9mWkPFHQxx7c1KSB3/KxLd40HKgX5e8g/mRVxnIC5LMIr3tsZcCdkcchPmuwLEmktw/GMninPZ2ppTuQ9V0eGy8WsunidscIV3RwkbUkC7gO+Y+Wp2xXE9E1mnTQ+JOrHXEaCiJKgBesSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO3+UgUO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DC2C4CEF7;
+	Tue,  4 Nov 2025 14:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762267047;
+	bh=WbKNtPk+MKgDtXkM3x3SCcLN5o/fKwgRbzjExR/lne0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aO3+UgUOhPpYFCUvtPifTJVwxkxfBL//ezSKC6OUd2PBrwPFcbK8gtf0LxNwXgxdt
+	 BZFfr8Pbp7NS6Y4W+Lr6Hy9mLYxoff2y+hXQZWepTrTns9ShxTs/hMctHp0/9N03a9
+	 tamxpyLeZjTRAlRczs2L07qa7RXlFCMomonv2SJYjQBdFqmnLL64jF7kqmXqobpW28
+	 qCQcDNJrKyrYPOpx+tWQMahnbXWiQx+RZX6DFuxHuDComYao/5Pt9LBHhnqwU4LpPd
+	 MuqJCbl3vGJoDogrMh7dvCyo/zL5dSKGJd2U3Ykoxh8QAhXc7Vajhv4VXRFNheyBcx
+	 Q39Xowuqmltow==
+Message-ID: <6af33c1b-5b95-4efc-b429-5bfb9ee7caeb@kernel.org>
+Date: Tue, 4 Nov 2025 15:37:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251104-b4-as-flattened-v2-1-b042d8715a8d@nvidia.com>
- <aQoJUAdFFBpQiEZU@google.com> <DDZZ1ZWIPH8P.3M7H00GIMJUXV@nvidia.com>
-Message-ID: <aQoPSH1jyv9DWhsH@google.com>
-Subject: Re: [PATCH v2] rust: enable slice_flatten feature and provide it
- through an extension trait
-From: Alice Ryhl <aliceryhl@google.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
+ compatible
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
+ <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
+ <20251104-glaring-rebel-pillbug-a467ca@kuoka>
+ <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
+ <b6717831-1840-4b9a-aade-ab2248e3f75d@kernel.org>
+ <9ee07db9-508e-4c08-8f79-6ccfd9b646ab@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9ee07db9-508e-4c08-8f79-6ccfd9b646ab@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 04, 2025 at 11:15:03PM +0900, Alexandre Courbot wrote:
-> On Tue Nov 4, 2025 at 11:10 PM JST, Alice Ryhl wrote:
-> > On Tue, Nov 04, 2025 at 12:53:18PM +0900, Alexandre Courbot wrote:
-> >> In Rust 1.80, the previously unstable `slice::flatten` family of methods
-> >> have been stabilized and renamed to `slice::as_flattened`.
-> >> 
-> >> This creates an issue as we want to use `as_flattened`, but need to
-> >> support the MSRV (which at the moment is Rust 1.78) where it is named
-> >> `flatten`.
-> >> 
-> >> Solve this by enabling the `slice_flatten` feature, and providing an
-> >> `as_flattened` implementation through an extension trait for compiler
-> >> versions where it is not available.
-> >> 
-> >> This lets code use `as_flattened` portably by just adding
-> >> 
-> >>     #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
-> >>     use kernel::slice::AsFlattened;
-> >> 
-> >> This extension trait can be removed once the MSRV passes 1.80.
-> >> 
-> >> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> >> Link: https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
-> >> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> >> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> >> ---
-> >> This patch was part of the Nova GSP boot series [1], but since it
-> >> requires attention from the core Rust team (and possibly the build
-> >> maintainers?) and is otherwise buried under Nova patches, I am taking
-> >> the freedom to send it separately for visibility.
-> >> 
-> >> For v2, the methods are aligned with the final names of the standard
-> >> library, and the extension trait is only visible when needed. This
-> >> simplifies both the patch, and the extra labor for user code.
-> >> 
-> >> [1] https://lore.kernel.org/all/20251029-gsp_boot-v7-0-34227afad347@nvidia.com/
-> >> [2] https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
-> >
-> > With the below concern verified, you may add:
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On 04/11/2025 15:35, Konrad Dybcio wrote:
+> On 11/4/25 3:26 PM, Krzysztof Kozlowski wrote:
+>> This I got, but nothing here explains why you need generic compatible.
+>> To re-iterate: there was no generic compatible before, now there is.
+>> Writing bindings and numerous reviews from DT maintainers ask not to use
+>> generic compatibles.
 > 
-> Thanks! You may want to check the v3 that I just posted [1] which also
-> addressed your comment about having the extensions trait in the prelude.
+> OK so let's not worry about a generic compatible. IMEM exists since
+> MSM8974 and it only had major hw updates with SM8550. They don't
+> impact the software interface though, so qcom,msm8974-imem is OK.
 > 
-> [1] https://lore.kernel.org/rust-for-linux/20251104-b4-as-flattened-v3-1-6cb9c26b45cd@nvidia.com/T/#u
+> There's a separate control/status register address space for each
+> instance of this IP (usually far apart from the actual SRAM pool),
+> which Linux doesn't have to care about.
 
-Looks good thanks.
+Just use qcom,kaanapali-imem - that's the first device here without syscons.
 
-Alice
+
+Best regards,
+Krzysztof
 
