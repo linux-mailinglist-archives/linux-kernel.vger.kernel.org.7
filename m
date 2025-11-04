@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-885285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50F7C3279C
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:57:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA5DC326E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 18:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36AA54EE7A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2D1189EF9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 17:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005333DEF1;
-	Tue,  4 Nov 2025 17:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AEC33BBDD;
+	Tue,  4 Nov 2025 17:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sMaNrex6"
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ugPQCSCS"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7938D33C523
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47F523875D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 17:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762278982; cv=none; b=ZIQJ/Pm9dEA8+KYqPLxBSL+N3kBHmEa6/uh4c3dwqDSkZCdnWiJxDb44aJj+fP01wx39HR3bkJT9g8kxnPc4GMJGoi1UNQtkb+1SCRLcSsPgVDICGOLDubBVh/LGXczosSmfw5O0zJzRPLX+93Bcy/2mRX8iTAIFoHHrTJUaJTA=
+	t=1762278481; cv=none; b=AaUup4hgBCerkgS2MwpgyZCzhYJ3vGtBUH8X8jLmpmh1SQsVcaUg6GqnAFf9TG+btvzLNcIArwXSp92PvBrf91pHn4sS10VqAdKkOFmuSF88dqnWbH0Z26CSwOwrmkFolFTrJL9C0dJIhriLLJlOcpaA7mlaYn9AMJJAL/NP2/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762278982; c=relaxed/simple;
-	bh=+vRx3ABJ4EajGVIFFGaixi+4TZ+VcU6yxjdyq28GRUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nx+RnmlWsdZtEE+EUw0T8dBkff7ldc5GQ9Zwc5OpvH4beWgF7LF6zjILMf91J1cWJyVyvbk9TzEcuO0MBbrzaa+lXWi2tEFOq4ruUBIxxkN3lGK/xbVWkqPP8dkhF6tddH0I0UileZl1QhsxVplwcROwN4guyg0DcdkWU/z2lCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sMaNrex6; arc=none smtp.client-ip=66.163.190.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762278979; bh=th6F6yZ9ktqthCQv2MGa7/ckJ5CDORFCRwj664QG8rk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sMaNrex6QqG9RNwMhExTJhkzJx8VWWs6juGckqhW8+h8OxnPAh+Zs2OJWojWx/s+G6gVg17mdkBrHBoxIK28VlVde0IzaQu5sLFeEKeTynr3f+7XHpL8fhTqEs4OkG/4ls8Qe7zZBBGAdSlWrexupNDFc07VCJhPOq2scd74pOpHFYgqbuXzggsfTeu6i55QY+F2XYs/17nQ9x5neiaCX+8UcfdKwLbjl823p62hhagNX99BQWG0Pn4Q7k8ku2CtmIzVKRvEKa2jLaw3j5kD8BRpPQCLl/2MnwAZBNdyRtxbM9/HLsr9jJYuVw4w48gv6I5KcRSh+sEHbAbZEFNL+Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762278979; bh=03QWDdjVNolMymQRd7A3fOhcnAwnYIcq5ubx5t9inFa=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bsIhMABhDxfoHiYgZC5xWhLnKZA+UzPyrUQIdpCVg5gjH+iKzQk2NqTvkvc4NaHhVOwyeLTzWeYUs0c6FMmp3f4ZdlQle2yTgXrucYXgQiMKVHZ1rhImGRbDu6W5ekXF9GxFEOVEMUWoQFGa/M2l5APTtFhm1csKuGa81GG8NgN+qnxDD5a8B4yfxs8no15YP7VCDGpvGktghJH4IOSrrXBajMg2XjggTTdexNXxtdBnKf6rk+RqAmqahAFP+w1mFTZN+EAO9ON0Xr6CNnVloekgD93nZ4gTSvBhRhhCDYqXCfZPtN55Qnqu1CJjfmOp9Owi2IOrtvKJtPsmuX76UQ==
-X-YMail-OSG: ah3BC7EVM1lTrsL2uHHnvdF.OIDsV6XmfES7VvXvrSObFz3Cq5AcwNaCvp_q2hf
- B5wCD2sn8r5BOLe_5_aGMrXpdqRs8xCKX3bssNJofRis_GWZTiF11jqJypf2Hn9KhHrBSqjiJPE9
- bVYu93wqdPoA9vEeZOO1O1zZY6KVuFbcIPsc4JeSCTFK8nKRz8Om..yvKjEiG94_ylajD5j1YtRu
- qh_ypoRgOH8jj_BXutAbFiat1X_RzK3UPS6hH7DBoBKwgb.0KOJwRl4u6Zd3uWChhE6Gc.q6tHGO
- jLp.88SQ5wwK.lHeA.nFc8vJwVU7m3A9OLdI.2LxxBlewof6iOgOogE.3L3pxeP4VL87noV1ZQkR
- VPhkqxnrC7ki5WUNMU11doX95W7oy.UehCldtyAeF1UYoDq.BIfVA80KwKLxpVz1YEjtMFcS_UtQ
- 1mKXOZkdo9V_BwqV6xMwXlrHS3EMh66KIs12sgdRv5Of8UTXSCgcsTt907Vr0UbWFNauQItD2wV5
- ecSKIfAwjc9KUAARezFjkWxgBCYcz7hDWYu_vo6FkWNtmXogMlb8_vlLgkLBVyXwTxEobOX3ZqSD
- HaS6Enwi2GfWclriaai_PL1A5gmf8d0HMgalSXeLdJIlOKQaWancihntiE5T3HOiej9gRY1f5Vza
- 4S2z8cDHTcoxfJUA9paajs5_Pc1EefoP_iwhEITp3O298ytXG22lxFyj9XcI085rQyMLPglVjKqg
- rka6c.oiV5YK5eeJdoMYYqyR99xN.DEYkcFVMPAzXNJd6VyBrS7k46mh51xABdJsqEaV3qPWh2gP
- aNcBNWmTXjunFZrnRemAea6t4udC7DeHPTXDFGoMtMKfcsygb5lA4vXPsCX2nEMbQxlCAa1WcZab
- uCyJsgCUEY6_HEwPHhEGpSB6Mp8yUaOycwaAZuHWk9Iw3ATjPbdZcJVuLAbJKsVpMKoqQljFLcq0
- xHRotadGPmTFgdSh_HHd5yY072UVmPNpcmoDoCQPdbZCD8HWvEsMi.fpeDYrBbtCYyBWnSyBVYMG
- 6C7R.rxokxKmheSrpjZXuacsU_rk1oFe7km4mAyBp1ZQjsctuB4iNb8yET847z7pQYRMzHd3C6Dz
- G55k1kHKKDnnTaP59TPhjKb2N3qbsQxj.udBGtRr.U8X.pvVSDjE7XPle1W3hMTfU4zGumGvEgdY
- F90mpVSwgcfQqm.fpTo55ddtIGdGaiNgZ0qczaBnmnsSvDtaerDeNrdr2wY5b173Z16BuDzF1gdy
- RZUPzSGaElDpmMPaX9Eheqk.K0Jx3h9sMx7zc.UhwI.PDgJm0pyIV3BNeRluyQFhQ0AOuxS54QTJ
- ghl2IkHAZTT5L_hBolpCPhLsD_7AjGFJwOqc4uEfhKJflolGT1.0gQ7JneOxyAycWZoqHqMgXc_3
- F39hxJKOCsUQ8s9VHJyvTTpW8fpFl41SfRMQPqQJw3NrRYLD_SgotBo6B8NEB50QjE9qZZYRtGQT
- qslm9NWrEAP.SI5DQlN7KvmL6ZirwyNMhXDPelJH5gV8OSJvztDEEBXnCrunLsYLDyfOpgLRbgZw
- IHkF8RLIwtxxfBqu2MO2ekePJqv02LSYLSqgCbJOAaOrh7jkKPgIPRbUEl71aWIJwHDBUPge_tHy
- gzUPLzYIm2WBGM91BFIHA7Nunn8cq6FttQ_7uoCDp8_tzJFcefW1HaTkM0J_zJ4S6G3FTwiIgORi
- 0_W01DD3bZ9Gq_KJPuTChj1nZEAowi9P9m8tp7xKZYs_WyPBlCbq3vcaKOARyZyubiHWbUSMdP6F
- 1jtJVx380WM9Dk.RlTwf0oTrK271_X01u3YoFtBy_st_PFvWD76fkbxV3itXU4zHlTV9hE9vy5T7
- _LZ9SmDjUIxaQP2nNFc9dsZa9CkJdpIP.Quks9BfvPBsXGzKrtogbi16NxmNKzaB5llQA6ZAqhBj
- utUE0BmqqmB0lvXB5P0qJRFMgXwhCV_IvO8GKu3QcN3Ib5V6bY05xyg_hRuk_7PSvP144JWVaF80
- ONwIaoqRiUW8QBnDfbUko9RGlUxtnAW4d0aAleF8N05RcccXnoAvDD5JYh5ukl9YAN9xVuIIA5jP
- kQklhKCDgZwjc4ZOM8utm3i1h1wIoTtTsbGgStUJrRSZeTyBE58zqCXPtFcWrvyMU5sCUsTZtHMG
- yvvs6NdUBZGVR_n4fxOA3EtcC.ZFgA4CWbByFyAaxxmDBXunPNDSQGtN2K1o6czY5lNDGJKiOAmN
- 7tb2Wg.9buzL6bK054eeBScqj.L_E3cF9T9CiyCGODbIu5PRRB06eq2il3XtTYKvwmV3CMiPDKx5
- DS8bKL_g5R0Zx5FxgdMVClB5je6z0ZXY-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0fbb50a8-a99f-4367-bc8d-f2eeae093282
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Nov 2025 17:56:19 +0000
-Received: by hermes--production-gq1-86c5846576-72cgw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 09ccb174d06ff61091f56c6092cd5092;
-          Tue, 04 Nov 2025 17:46:10 +0000 (UTC)
-Message-ID: <200ce2d0-6243-415b-954c-3078779dff2c@schaufler-ca.com>
-Date: Tue, 4 Nov 2025 09:46:07 -0800
+	s=arc-20240116; t=1762278481; c=relaxed/simple;
+	bh=naZDWD+jXe2RTykUsxPPBYLTaOHt15sOSQ4dJwHulZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PSYWkzBFF5wMaq8poneqgfYe4M1rQ1NmxBVN58B6pCXc7C6LhHQQbhdnKpMXUNAiWN66MnS4op8oDmlOe5bV2jwb5AjAl3Q4btkBlsd7smVrmNqT5rBxkCN64djE7J2qJNA27aYG2fcbHLivXfY1ib0cM2SnCeg1oSn3X1LNeN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ugPQCSCS; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640fb02a662so168a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 09:47:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762278477; x=1762883277; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=naZDWD+jXe2RTykUsxPPBYLTaOHt15sOSQ4dJwHulZM=;
+        b=ugPQCSCSXojk6KFtAa99RlQNpQhR/iSiUJkjX+ysoYt7kmvj5TjvSYZJf7X06XbckA
+         M/P7ERcol8+OFYvX+8af7Bc7UokUG9fiMbc74rThA1q6LZS6e7fRwHzNXdO3Lh8o6Qe/
+         PNBbQIjYC4vMqOx9xl21aIw60Oo8KPnARIG1F6GPti9POO4CI3GjhSj65PQiqfaRtSCH
+         l2ovvTL/ClDlnYQUn0Aj1Cv5t9kCb4Q9ZCnJllJNePRFgnfMCM6sVFv/ksI8IQDREV1S
+         DcUhmIFr+veFz/g/Xj9LOt5aXpLIMM6DJUooeXCwrnZJP3bTjkSXgrLUZeYxi/grCIHR
+         1Scw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762278477; x=1762883277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=naZDWD+jXe2RTykUsxPPBYLTaOHt15sOSQ4dJwHulZM=;
+        b=YlsdfUelom5zlMJG1nNh8X1FeT9/WBaZqps5z0123GLSxuTxd6vTV2Eczlfkf8a8T3
+         w7p4XTM31rS7kNoGj6Fy13ElC5W3R/GRyowtSwTYpAB71ssLZzCKWYWEycUhsaI06sDQ
+         KtIzzWDJxLmoeTYhcmKxVWFcvjvAx73C9bOgt/R4eA6GC+Fc7u90ajeS5LRPBmfl5T9S
+         okuwauLqrSnPZdLI1SYdblA2QGvhl27qkGOEpEd/wr1i6VC78mjNFcspYCkFTt3wfMBO
+         S8hkh79ug3skNjUImEtkCto+j48RxB32JgmBY/OFSLKF6b5wjRZOyrA0sJ7txWfMu5Xg
+         +F9A==
+X-Forwarded-Encrypted: i=1; AJvYcCW1G+jMpcGoELfKoq9wG8KX3jXQPiRAgHFMzZrD0RGk3Iy3CGc4KCLZnSO+JysWKQMEkrs7fmmhOZulVqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJJwm+PBaBLUZrQsFkIZPnbAySNIQd9OIObEwzvjk85pmKvgQ8
+	OPS8vUn7odULEFfaUiQk3GRQGV4QOe/8PzlHbIjWWhVTSkS3SwsWvPiW1oaoSEiMGfKrOz5OH5y
+	iB2CT7tp+0IUQOrs2obwNnlZWVScA3wqWzRe8nleX
+X-Gm-Gg: ASbGncsb0AxiSC3J6BoKcqDhjEDLe+LrCRxLPBkZMW/5oy+EDN5SGDIiP32gN7oxnu9
+	n7ltw5Ml2lbU0Yz9f7EbGzHYAano09+x0/GJ2VDg3QN0uFd7h4CaF5OoWjl4Q7DaXZYqq3+jNkK
+	mIuww6Up+9jAj1eUH9kSmYhP1nskYq79UtQ30P6BNs6b/z937OBi2DvQfIcwFyYksNmY+vEsBjX
+	vNtVdVd+A/CKpyDzjqUHRAw/KWcHQkWR0XyCHwn5qQHY8NbXMGfn6PBAOyp2YOaCNdxTKJiowtU
+	YtKEs16FnNknVaRoISQCSklFrQ==
+X-Google-Smtp-Source: AGHT+IFxVdvZoaaboVMnWhHpGqiOgxBaCtl8Wdw4aZprlhirqeuesq/cXrOlHupxbHqRD67wfy6/JLS2mKLwz3kVBAY=
+X-Received: by 2002:a05:6402:d5c:b0:63c:1167:3a96 with SMTP id
+ 4fb4d7f45d1cf-640e9327aebmr121052a12.5.1762278477045; Tue, 04 Nov 2025
+ 09:47:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] LSM: Infrastructure management of the mnt_opts
- security blob
-To: Paul Moore <paul@paul-moore.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
- keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250925171208.5997-1-casey@schaufler-ca.com>
- <20250925171208.5997-3-casey@schaufler-ca.com>
- <CAEjxPJ4D7A4KDF9BfmRa9VvzcAHBkkrdKCvmGazuZUto5=qDuw@mail.gmail.com>
- <CAHC9VhSRGyMuTYxP0nDpXv_MwvNqVsrBXcak84AGHj7ycDtu3A@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSRGyMuTYxP0nDpXv_MwvNqVsrBXcak84AGHj7ycDtu3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20251030180832.388729-1-thostet@google.com> <c8b2b414-149b-4f35-8333-43011804ea2a@linux.dev>
+In-Reply-To: <c8b2b414-149b-4f35-8333-43011804ea2a@linux.dev>
+From: Tim Hostetler <thostet@google.com>
+Date: Tue, 4 Nov 2025 09:47:44 -0800
+X-Gm-Features: AWmQ_bmk1rluEW2OlBfvkjh-u6qvpegsGbFrmPmMfNLljZ4WeLV2baWrh6d4TPM
+Message-ID: <CAByH8UtTVvLQwOe-ieyfvdFUnLz8X11b_ipWmbNhGkAZAXWfOw@mail.gmail.com>
+Subject: Re: [PATCH net] ptp: Return -EINVAL on ptp_clock_register if required
+ ops are NULL
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: netdev@vger.kernel.org, richardcochran@gmail.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/13/2025 1:55 PM, Paul Moore wrote:
-> On Thu, Oct 9, 2025 at 2:38 PM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
->> On Thu, Sep 25, 2025 at 1:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> Move management of the mnt_opts->security blob out of the individual
->>> security modules and into the security infrastructure.  The modules
->>> tell the infrastructure how much space is required, and the space is
->>> allocated as required in the interfaces that use the blob.
->>>
->>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>> index 4bba9d119713..1ccf880e4894 100644
->>> --- a/security/selinux/hooks.c
->>> +++ b/security/selinux/hooks.c
->>> @@ -656,19 +651,13 @@ static int selinux_set_mnt_opts(struct super_block *sb,
->>>         mutex_lock(&sbsec->lock);
->>>
->>>         if (!selinux_initialized()) {
->>> -               if (!opts) {
->>> -                       /* Defer initialization until selinux_complete_init,
->>> -                          after the initial policy is loaded and the security
->>> -                          server is ready to handle calls. */
->>> -                       if (kern_flags & SECURITY_LSM_NATIVE_LABELS) {
->>> -                               sbsec->flags |= SE_SBNATIVE;
->>> -                               *set_kern_flags |= SECURITY_LSM_NATIVE_LABELS;
->>> -                       }
->>> -                       goto out;
->>> +               /* Defer initialization until selinux_complete_init,
->>> +                  after the initial policy is loaded and the security
->>> +                  server is ready to handle calls. */
->>> +               if (kern_flags & SECURITY_LSM_NATIVE_LABELS) {
->>> +                       sbsec->flags |= SE_SBNATIVE;
->>> +                       *set_kern_flags |= SECURITY_LSM_NATIVE_LABELS;
->> This seemingly would produce a change in behavior for SELinux.
-
-Except that it doesn't, at least from the tests I've been able to find.
-If multiple LSMs use mount options you can't use the !opts test, because
-there may be options for another LSM. Deferring initialization is harmless
-when there are options, as it's all checked again later.
-
->> Previously we would only do this if there were no SELinux mount
->> options specified.
-> What Stephen said.  I think this is good work that needs to be done
-> (thank you for doing it!), but we have to preserve existing behaviors.
+On Tue, Nov 4, 2025 at 3:32=E2=80=AFAM Vadim Fedorenko
+<vadim.fedorenko@linux.dev> wrote:
 >
+> The patch itself LGTM, but I believe it should be targeted to net-next,
+> as it doesn't actually fix any problem with GVE patches landed net tree
+> already.
+>
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+
+Thanks Vadim and Jakub, I'll spin a v2 for net-next and fold all the
+input validation into one WARN_ON_ONCE per Jakub's suggestion.
 
