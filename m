@@ -1,176 +1,276 @@
-Return-Path: <linux-kernel+bounces-885154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A5AC3221E
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:49:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAE6C3222D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 17:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA0E18C06D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:49:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F734A535
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 16:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38103375B9;
-	Tue,  4 Nov 2025 16:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02B0337108;
+	Tue,  4 Nov 2025 16:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8Xrgmt+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Geqq0g0b"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204081FFC6D;
-	Tue,  4 Nov 2025 16:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65348333754
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 16:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762274969; cv=none; b=DzkW6T+dlpL7svfB9NXR3nZ7vGoU2eNNeXj/eKuZzqngXOQBhHcwCC8AJM4tKZ2DTt/F+2culDD1CHzfT8abdahG9iiCt4nn9q1GiE7VegygatcwWSuQGlh8T3HBx2LEaTE4YbMbcBr0J3h9hZIsz+ciTTgOAWSy8/qXUDnKaCU=
+	t=1762275010; cv=none; b=nSk+w4MOIoL8JmQub5wi+imhgyEUZdwRpKTaG/+ozXAu7B/ceMWdfowPZ9SpQwL8cWGhVF6/hgvXhAhBlufq5eMDq1ADUCRNmP5A+Vtco8Sxvlqo6+eI2J1TdKXbi9PSkt8Wm2topidpi+9u67KjIDrU2El/WPqNp1DFB/sv1q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762274969; c=relaxed/simple;
-	bh=zDa1ulHN0riNVwwyBpJv8UbnPromiwgtgxQTJeHrWoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFa8aDws29bZJbhC1rfmqQb57DxM1s2zGqVr4+YdMpZbfrLQrlgU3rbaeu4Q1MTiDbJ4VS7uoys3LCjIFCBgIQJbyHcNcdQk0mfFNifhBqV3PrHyM7cvBXVVwQBTHHmvlYvx9LH+cYPR/wF3gzc/Ksn0Z1VQZyUWvMcUxOAmVso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8Xrgmt+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A4CC4CEF8;
-	Tue,  4 Nov 2025 16:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762274968;
-	bh=zDa1ulHN0riNVwwyBpJv8UbnPromiwgtgxQTJeHrWoQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=p8Xrgmt+9K+cA6snnu7WPYnf3yNDBMV7QM1ZvGQHorctDTXjcXFA0w03qJN1PLGu9
-	 R3UQFOt3ldtt/A235LIBGJFAcq7u1Kjl8mAewcJVyd2G31sL07bhB0ppYxjNx3OAeS
-	 70uFsVFVg+cxfrY/9b1rx3YioPRnxkuzQR8gmx9Fc2NcouGfTTTKXml1CbeWyu6OsN
-	 gPQcY2M5BTjbcB2H6lCqOlobHdxfQNFfSF6MfrzNjEwBuGNJC70GDNpy/UaWEekE0p
-	 H+N4j+9NkW9KrXPGPmMigftdRCMigrD79gWeOQ1zAa/vTp7bzHZLtCDoW5/A3zI25L
-	 Yjiv00ynY7SeA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 34E59CE0BB3; Tue,  4 Nov 2025 08:49:27 -0800 (PST)
-Date: Tue, 4 Nov 2025 08:49:27 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, rcu@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 15/19] srcu: Create an SRCU-fast-updown API
-Message-ID: <e166df6b-1d04-4962-854d-8c88010bff5c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20251102214436.3905633-15-paulmck@kernel.org>
- <e951d365-27ec-427c-ba29-8b6925342463@gmail.com>
+	s=arc-20240116; t=1762275010; c=relaxed/simple;
+	bh=eBpkPlO29A8M7ikSKjAPGZMl8dFPu0v4vf3XdWRDI7o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JEH4dRxFCToOtzFKropSR31LCMowRVTqxR5dQgZRqpFzHcOjLh7HMqUBuTHfnWKAF7KYC06RVbEKwl6u1ie6zmYxrD+YLDzLdOsjBanbPKAf7eUEwK3e1VZcc7t2C2XbWxm9XNbRejK7huMpBeD89LD46mphjkTZ1Sk9iLC/haI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Geqq0g0b; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429bccca1e8so2785769f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 08:50:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762275007; x=1762879807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GdZgp8rFwisH6sL9hW06vie32Q/MJPgK1VmXTcKs3fA=;
+        b=Geqq0g0bIzH2FOP/mN2FCQQwXrE4DGoqH5RglkLLOOr/oCCdTusH+E96Ab2FBP+f4q
+         i8h2JAZeySqBr0uwu8pEJGW6UWmdDn81kYn/hBtXhQpLUndHEmEXHWROnY2EXpVzC23W
+         fwPnHY7ndMH7AntoLTuNrvcjzLazUfNAGL+30wSWLu2TfYtj/cTMpVTvy0rYhsGt3pSv
+         G1AYfdNX5znxE47X+FQgUV9OdhNxIScdsblrjSwVN5KDxMKGa3IHhjXgtPNGxsWB8SKs
+         rdLhv0T5vR7/QMgnbq95Ex6JKTgXBPyiQCDNKyGpq340EGG2M6TAwUYIfTDJEyMJ34Ur
+         LA/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762275007; x=1762879807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GdZgp8rFwisH6sL9hW06vie32Q/MJPgK1VmXTcKs3fA=;
+        b=cmwSzU1DZm8pO4pdQOsuRHJDsVkGIP1IwS3mfRTjzOzOuzFGX0B46CmbXygVjU6f3/
+         tSXEnrJu2/kEw8PGuC569sWL+9PLw3+W2dmyb94zFDE7owh/6UAYENSOsvP+UiyW8mNl
+         vmtyM0PnP+xYsRYbxqCPAye5ZEu/5C20EbDX7Dt9rxIUxPceupmqxOtttm1HzgypMjXv
+         c2iu66zwyPPSvlBo9vq8lcUsOVWjm6usCRDPfKEGwrSLEkVfnt9G8A37Q15K2NiPCnMP
+         suiJAR2Na4tNeAmZVcQYOr9qwcagVEk5+OLv9Jix74TZtC7SQvLl3jU/FQ1bsrFjExgF
+         3sAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRaJePgCmWgKmgs5W43yOWpTSv1sS4R+IVylYqIKz33j38AGS6pDwg1K31YA2cYc5uotYimtX522AiSeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjih/d7nJbxAeQCo+glOvl1GQwwhZtHMlc4YGfU8PbSBkF3kum
+	R4dSHVR84f64zzIelb/SxvxNIpp0BRZdgPM10/iCo5L7PoZOEvPiab98
+X-Gm-Gg: ASbGncsTCuP+Kh0AehyWjOimGChrESmceE5C5yUS0pTYAOSTLng3+rcyE8Hzyc6gLxD
+	ljp6phYMwCN7B8vCrSxt6B6BisnXatQrMWEURgNEp06Qo6z92bxoMMx3EKnL/0DV8v3TEU+0JGi
+	8mb3My5n7JZSTb8F2d9chM3abkNc8HRwV+IWsC0Llg1+fSN/ANYtmtRwecQLUNP9lVd+2x6oDer
+	K+O60ll4o9z5FX6OkRwE2PZU0cCCaZqo4FJMAV+0XvTLmVmZNKcL/YBTGXwtwWDzjOo0xPfOgaZ
+	tpV27W2vNZkKprz7ol2KEVHjVEyLl1BJghn0OAGj/D9ZWkvzCYVmi8/5sgO+3OkKiuQitikulnL
+	jyxWHcCPFCdMal1Ji8i+YwYGwEI+ktgHJWvq2q24qtSsObcQmwepNpLvOOun+bwezhk+hcixexr
+	zOSlibE4ZyW+Sa7DVox3HYZFcZ02BkF339Frx8Ws8D9tJYp9V3AdvpDP60gT1GL24CY6c=
+X-Google-Smtp-Source: AGHT+IHsOmcFgrKN0VFuIMGhIpJEUqqSZDIXndB9GVdXwqoNi1GsBka2e33KfnMwqvPBDWre8Hxpqw==
+X-Received: by 2002:a05:6000:186b:b0:429:ce81:fe2b with SMTP id ffacd0b85a97d-429ce82013amr7678935f8f.23.1762275006529;
+        Tue, 04 Nov 2025 08:50:06 -0800 (PST)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5be4sm5345170f8f.31.2025.11.04.08.50.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 08:50:06 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: wens@kernel.org
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 26/30] drm/sun4i: mixer: Add quirk for number of VI scalers
+Date: Tue, 04 Nov 2025 17:50:04 +0100
+Message-ID: <5959058.DvuYhMxLoT@jernej-laptop>
+In-Reply-To:
+ <CAGb2v65RecyHZVUN--oSmtzPDpmUHALd3Pqf79a1fKP9yxD8cA@mail.gmail.com>
+References:
+ <20251012192330.6903-1-jernej.skrabec@gmail.com>
+ <20251012192330.6903-27-jernej.skrabec@gmail.com>
+ <CAGb2v65RecyHZVUN--oSmtzPDpmUHALd3Pqf79a1fKP9yxD8cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e951d365-27ec-427c-ba29-8b6925342463@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Nov 04, 2025 at 04:00:27PM +0900, Akira Yokosawa wrote:
-> Hi Paul,
-> 
-> Minor nitpicks in kernel-doc comment of srcu_read_lock_fast_updown().
-> 
-> On Sun,  2 Nov 2025 13:44:32 -0800, Paul E. McKenney wrote:
-> > This commit creates an SRCU-fast-updown API, including
-> > DEFINE_SRCU_FAST_UPDOWN(), DEFINE_STATIC_SRCU_FAST_UPDOWN(),
-> > __init_srcu_struct_fast_updown(), init_srcu_struct_fast_updown(),
-> > srcu_read_lock_fast_updown(), srcu_read_unlock_fast_updown(),
-> > __srcu_read_lock_fast_updown(), and __srcu_read_unlock_fast_updown().
-> > 
-> > These are initially identical to their SRCU-fast counterparts, but both
-> > SRCU-fast and SRCU-fast-updown will be optimized in different directions
-> > by later commits.  SRCU-fast will lack any sort of srcu_down_read() and
-> > srcu_up_read() APIs, which will enable extremely efficient NMI safety.
-> > For its part, SRCU-fast-updown will not be NMI safe, which will enable
-> > reasonably efficient implementations of srcu_down_read_fast() and
-> > srcu_up_read_fast().
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: <bpf@vger.kernel.org>
+Hi Chen-Yu,
+
+Dne ponedeljek, 3. november 2025 ob 18:11:07 Srednjeevropski standardni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gm=
+ail.com> wrote:
+> >
+> > On DE2 and DE3, UI scalers are located right after VI scalers. So in
+> > order to calculate proper UI scaler base address, number of VI scalers
+> > must be known. In practice, it is same as number of VI channels, but it
+> > doesn't need to be.
+> >
+> > Let's make a quirk for this number. Code for configuring channels and
+> > associated functions won't have access to vi_num quirk anymore after
+> > rework for independent planes.
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > > ---
-> >  include/linux/srcu.h     | 77 +++++++++++++++++++++++++++++++++++++---
-> >  include/linux/srcutiny.h | 16 +++++++++
-> >  include/linux/srcutree.h | 55 ++++++++++++++++++++++++++--
-> >  kernel/rcu/srcutree.c    | 39 +++++++++++++++++---
-> >  4 files changed, 176 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > index 1dd6812aabe7..1fbf475eae5e 100644
-> > --- a/include/linux/srcu.h
-> > +++ b/include/linux/srcu.h
-> 
-> [...]
-> 
-> > @@ -305,6 +315,46 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
-> >  	return retval;
-> >  }
-> >  
-> > +/**
-> > + * srcu_read_lock_fast_updown - register a new reader for an SRCU-fast-updown structure.
-> > + * @ssp: srcu_struct in which to register the new reader.
-> > + *
-> > + * Enter an SRCU read-side critical section, but for a light-weight
-> > + * smp_mb()-free reader.  See srcu_read_lock() for more information.
-> > + * This function is compatible with srcu_down_read_fast(), but is not
-> > + * NMI-safe.
-> > + *
-> > + * For srcu_read_lock_fast_updown() to be used on an srcu_struct
-> > + * structure, that structure must have been defined using either
-> > + * DEFINE_SRCU_FAST_UPDOWN() or DEFINE_STATIC_SRCU_FAST_UPDOWN() on the one
-> > + * hand or initialized with init_srcu_struct_fast_updown() on the other.
-> > + * Such an srcu_struct structure cannot be passed to any non-fast-updown
-> > + * variant of srcu_read_{,un}lock() or srcu_{down,up}_read().  In kernels
-> > + * built with CONFIG_PROVE_RCU=y, () will complain bitterly if you ignore
-> > + * this * restriction.
-> 
-> Probably,
-> 
->  * built with CONFIG_PROVE_RCU=y, __srcu_check_read_flavor() will complain
->  * bitterly if you ignore this restriction.
-> 
-> ??
-> 
-> > + *
-> > + * Grace-period auto-expediting is disabled for SRCU-fast-updown
-> > + * srcu_struct structures because SRCU-fast-updown expedited grace periods
-> > + * invoke synchronize_rcu_expedited(), IPIs and all.  If you need expedited
-> > + * SRCU-fast-updown grace periods, use synchronize_srcu_expedited().
-> > + *
-> > + * The srcu_read_lock_fast_updown() function can be invoked only from
-> > + those contexts where RCU is watching, that is, from contexts where
-> > + it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
-> > + complain.
-> 
-> kernel-doc (script) complains:
-> 
-> Warning: include/linux/srcu.h:341 bad line:  those contexts where RCU is watching, that is, from contexts where
-> Warning: include/linux/srcu.h:342 bad line:  it would be legal to invoke rcu_read_lock().  Otherwise, lockdep will
-> Warning: include/linux/srcu.h:343 bad line:  complain.
-> 
-> Leading "* "s are missing.
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 11 +++++++++++
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.h     |  2 ++
+> >  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c | 10 +++++-----
+> >  3 files changed, 18 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4=
+i/sun8i_mixer.c
+> > index 78bbfbe62833..f9131396f22f 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > @@ -708,6 +708,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixe=
+r0_cfg =3D {
+> >         .scaler_mask    =3D 0xf,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 3,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -718,6 +719,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixe=
+r1_cfg =3D {
+> >         .scaler_mask    =3D 0x3,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 1,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -729,6 +731,7 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0=
+_cfg =3D {
+> >         .scaler_mask    =3D 0xf,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 3,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -740,6 +743,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer=
+0_cfg =3D {
+> >         .scaler_mask    =3D 0xf,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 3,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -751,6 +755,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer=
+1_cfg =3D {
+> >         .scaler_mask    =3D 0x3,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 1,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -761,6 +766,7 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer=
+_cfg =3D {
+> >         .ui_num =3D 1,
+> >         .scaler_mask =3D 0x3,
+> >         .scanline_yuv =3D 2048,
+> > +       .vi_scaler_num  =3D 2,
+> >         .ccsc =3D CCSC_MIXER0_LAYOUT,
+> >         .mod_rate =3D 150000000,
+> >  };
+> > @@ -772,6 +778,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer=
+0_cfg =3D {
+> >         .scaler_mask    =3D 0x3,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 1,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -783,6 +790,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer=
+1_cfg =3D {
+> >         .scaler_mask    =3D 0x1,
+> >         .scanline_yuv   =3D 1024,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 0,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -794,6 +802,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixe=
+r0_cfg =3D {
+> >         .scaler_mask    =3D 0xf,
+> >         .scanline_yuv   =3D 4096,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 3,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -805,6 +814,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixe=
+r1_cfg =3D {
+> >         .scaler_mask    =3D 0x3,
+> >         .scanline_yuv   =3D 2048,
+> >         .de2_fcc_alpha  =3D 1,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 1,
+> >         .vi_num         =3D 1,
+> >  };
+> > @@ -814,6 +824,7 @@ static const struct sun8i_mixer_cfg sun50i_h6_mixer=
+0_cfg =3D {
+> >         .mod_rate       =3D 600000000,
+> >         .scaler_mask    =3D 0xf,
+> >         .scanline_yuv   =3D 4096,
+> > +       .vi_scaler_num  =3D 1,
+> >         .ui_num         =3D 3,
+> >         .vi_num         =3D 1,
+> >  };
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4=
+i/sun8i_mixer.h
+> > index def07afd37e1..40b800022237 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > @@ -178,6 +178,7 @@ enum sun8i_mixer_type {
+> >   * @scaline_yuv: size of a scanline for VI scaler for YUV formats.
+> >   * @de2_fcc_alpha: use FCC for missing DE2 VI alpha capability
+> >   *     Most DE2 cores has FCC. If number of VI planes is one, enable t=
+his.
+> > + * @vi_scaler_num: Number of VI scalers. Used on DE2 and DE3.
+> >   * @map: channel map for DE variants processing YUV separately (DE33)
+> >   */
+> >  struct sun8i_mixer_cfg {
+> > @@ -189,6 +190,7 @@ struct sun8i_mixer_cfg {
+> >         unsigned int    de_type;
+> >         unsigned int    scanline_yuv;
+> >         unsigned int    de2_fcc_alpha : 1;
+> > +       unsigned int    vi_scaler_num;
+>=20
+> This could be a smaller type. Please do a sweep of the struct after the
+> refactoring is done and see if any of the types could be shrunk.
 
-Good eyes on both, will fix, thank you!!!
+A lot of things can be stored in smaller type. However, making things small=
+er
+may be contraproductive. Structs are usually aligned for performance reason=
+s,
+so it won't save any memory and accessing them will use extra asm instructi=
+ons
+for zeroing out parts of CPU registers since registers are larger than used
+data type.
 
-							Thanx, Pual
+>=20
+> And just a nitpick, but I would probably insert it above scaler_mask.
+>=20
 
->         Thanks, Akira
-> 
-> > + */
-> > +static inline struct srcu_ctr __percpu *srcu_read_lock_fast_updown(struct srcu_struct *ssp)
-> > +__acquires(ssp)
-> > +{
-> > +	struct srcu_ctr __percpu *retval;
-> > +
-> > +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast_updown().");
-> > +	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST_UPDOWN);
-> > +	retval = __srcu_read_lock_fast_updown(ssp);
-> > +	rcu_try_lock_acquire(&ssp->dep_map);
-> > +	return retval;
-> > +}
-> > +
-> >  /*
-> >   * Used by tracing, cannot be traced and cannot call lockdep.
-> >   * See srcu_read_lock_fast() for more information.
-> [...]
+Will do.
+
+>=20
+> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+>=20
+
+Thanks.
+
+Best regards,
+Jernej
+
+
 
