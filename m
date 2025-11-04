@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-885575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE000C335C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:20:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E1EC335E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 00:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC5664E7536
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85261899A87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 23:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474CE2DE715;
-	Tue,  4 Nov 2025 23:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ck9/Kb0e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbUwdjEF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6D42DCF7C;
+	Tue,  4 Nov 2025 23:22:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265E12DBF7C;
-	Tue,  4 Nov 2025 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080272C326F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 23:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762298399; cv=none; b=rh4cZ5SbTMOAyF0tEjkBr67KVseCCJYcaDHXWFT+UGJvja0GZPY+YeQK49QsPP82q1TmuFibote88gb3hn6BQdw60ynBwYkFNiFfpAon5eejtdbUu0QdZVm0gKG3G8/MtBTjRyVXXjBNI3blj4+YVvDgk60iy3hRJnQZZDMT+88=
+	t=1762298525; cv=none; b=peNEl5sOOBMLdVtRVrz4G+8LWxqIyKR11KptWGBj9deXSZZIacAkSgU+VTCQtPt6k18THDNh8CFoThsk7oAZ/4LBXW2DkNHyO17x861gF9ZmnF5AU9g6++w3VBs2eBQqaE5RYoOk6zyeIHtvRfGP1LnHHnBq1mztfHisYf6nKY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762298399; c=relaxed/simple;
-	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JTH1XhkT15wtTER6tKogrCS2dFCleM4ytPZWz4pMlrsc9MY8YIuPkSqvfmYokwHGFLKZMM3DEoZPGNUkVyLB99bbaQf+IPf3nyoNFh9UkOyst8R6EsVBN6fcvnWdYuIzgLOhS0f+u6KpqYMt6dTUyBLN1/UcoCm3RlxBCv/wxXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ck9/Kb0e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbUwdjEF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762298396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
-	b=Ck9/Kb0eie7pz087suaUDAtbkFYyXpqXdxCHZTr5dWeJ5JqTwCy4nK9zrYog/1fIyAMm2n
-	dyJS74bDt+JVfKR5IF+H6zdNSZLJf3zemFdD3gvEtoNYdpgqzO3Vmv27+9t5VwUu5TpaQn
-	WnJB0TH4DpkXp4w00HXwtcpFV9ECl7hLLo07hWwaOgEBvaxKw9aV5EjyKbxu6raIurTRtr
-	mGlakJxJF/kvIVrs+9lpqvZRSlNMsjjrsncQc0j/KKr5JBhi3H3PMnO53flZXsfgwt7VKM
-	t0a88iXi5qjpGE+2yqs3WYjBkOR9hDgJk8jBRd88j55/GxhR3IiaSNYRHvjugw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762298396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6hW9k9llq8m1Kkjc+boksRi0fM+t9oeMFc+qhPZB7To=;
-	b=TbUwdjEFjcX/Ax3oYG35NLH4DurhRtvskG1RxFeDEChnx2+zg6lkfLxuLJV5+6skNFttVO
-	70tcpXjJhCVmMEAA==
-To: Sherry Sun <sherry.sun@nxp.com>, "esben@geanix.com" <esben@geanix.com>,
- "pmladek@suse.com" <pmladek@suse.com>, "senozhatsky@chromium.org"
- <senozhatsky@chromium.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
- Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- "ryotkkr98@gmail.com" <ryotkkr98@gmail.com>, "kkartik@nvidia.com"
- <kkartik@nvidia.com>, "fj6611ie@aa.jp.fujitsu.com"
- <fj6611ie@aa.jp.fujitsu.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial
- <linux-serial@vger.kernel.org>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: RE: [BUG] Suspend failure with nbcon + pm_debug_messages (Linux
- 6.18-rc4)
-In-Reply-To: <DB9PR04MB8429F50811DDC648DD8A7B8792C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
-References: <DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <87tszamcaz.fsf@jogness.linutronix.de>
- <DB9PR04MB842977523C92FDE8AF4B714A92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <87qzuem7bo.fsf@jogness.linutronix.de>
- <DB9PR04MB8429F50811DDC648DD8A7B8792C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
-Date: Wed, 05 Nov 2025 00:25:55 +0106
-Message-ID: <87bjlhz8pw.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762298525; c=relaxed/simple;
+	bh=1Zkpb+Fx53YvTLGRwut0stXpAR0/W6gNCob3bFl444s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=t6nqbWN9Nk6uWDqAJXqe1+ybdABga14Y9JE2VE1DWVdmwGv0eUaoj2NjaUrYY+Vz4c0DLyvqha+CzOCa3TkEG1cTirQkIlbWzUXRE+HBhbgDcHFst7u1IxtfMiYuHnc3y6J5hCfY/PXac8wa+OqazWxL6dxlrI2S148AGR5uRdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43329b607e0so78253975ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 15:22:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762298522; x=1762903322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQFVeOB4QfJAy8cMCAspQQY/XxVgjDp906dgGhtTX1w=;
+        b=wTh850PzaG8cSJ7H7fzmDI/jYAoiyAehoTVLrIDBzGKHriPiu5Kq2ZYedZc6yiZ5Zx
+         BstOxwX/XXGB+QHIHoZfqytyrg712hTBBU9JV4FWLW+1OnYtAHuw9lA3DgwhETbrKcVA
+         3NtV/ATZ8jPKgprVvDwdRPEEbOTiBU6ajw0uVw5kPOrO/gQgDSU2FuSaJK9IHQsMvaKW
+         7TnCPQLkNN7lIGFTL83JszB3qiFfZyzpuaIqbhj32UEjXyS56MSvAIDqs2SqIjJwaruq
+         hPT//Pg3to1G50r0rPThR+Pdn/VNt1t8uCVqWAsD1h1nLo6v444W9qv4w60hvjEWVm5v
+         VW8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWX/Gv33y4qdyJnkzPdaEV6EQcbiT/FbISbJxfNZuUW+d9LS1m11jTxlsGDBJGq5/hXP6dTSfTo9cv71Rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpvs6+3CcfY1I6OILBmEmkD66eF0emaaJCB8n51TGnZ0ZorpXI
+	+lwNM+M/pFmy+mYjc90RblO+ekXkOL3Vg+i91HAiLFepjbsirGjWP3GKH8ESYFUe/aktP2mHb75
+	3qPGUmIvX81O75tt6RWtzrZNy96OKnEXmNkhXI7R/wreJwGJl9QRzgE85ZiA=
+X-Google-Smtp-Source: AGHT+IGlDvkPxRkMdadEZudxvoUlxuA2dVKE7ENN+gpT2h9Q3dc0Jhid/w6pfRNBkS4X8KobyX/eJwg1W50PtkaClaOs6Cv+wc8c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1606:b0:433:34b5:37bc with SMTP id
+ e9e14a558f8ab-433407d4e88mr17182405ab.30.1762298522198; Tue, 04 Nov 2025
+ 15:22:02 -0800 (PST)
+Date: Tue, 04 Nov 2025 15:22:02 -0800
+In-Reply-To: <f5a387d4-eae3-4932-b170-37ff38ebe78d@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690a8a9a.050a0220.baf87.0001.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sherry,
+Hello,
 
-On 2025-11-04, Sherry Sun <sherry.sun@nxp.com> wrote:
->> Thanks for confirming the fix. I will make an official post on LKML
->> with the patch today. Since the i.MX nbcon-driver is already
->> mainline, I will CC stable. I will CC you as well.
->
-> I'll keep an eye on any fixes you send later and verify them if
-> necessary. Hope this fix can be applied to the mainline and the stable
-> tree ASAP.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Even with this patch [1] I am able to reproduce the problem on one of my
-test boards. I am using the following extra boot arguments:
+Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+Tested-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
 
-no_console_suspend loglevel=8 initcall_debug
+Tested on:
 
-And then:
+commit:         dd6adb14 RDMA/core: Fix WARNING in gid_table_release_one
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d81342580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-# echo 1 > /sys/power/pm_debug_messages
-# echo mem > /sys/power/state
-
-This generates a lot of output and leads to the same suspend
-failure. This may be due to the out-of-tree nbcon-8250 driver I am
-using, which introduces extra irq_work usage within the driver. Could
-you please try the above boot arguments with your i.MX board?
-
-I am wondering if blocking the queueing of irq_work during suspend
-should be generally implemented rather than just printk avoiding it. It
-also seems to only be a problem for ARM32 so perhaps it needs to be
-addressed at the architecture level.
-
-John Ogness
-
->> [1] https://github.com/Linutronix/linux/commit/ae173249d9028ef159fba040bdab260d80dda43f
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
