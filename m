@@ -1,142 +1,298 @@
-Return-Path: <linux-kernel+bounces-884092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-884093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C0FC2F569
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:09:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AECC2F572
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 06:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 748E83BD6F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15FE1888CC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Nov 2025 05:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99432BE04D;
-	Tue,  4 Nov 2025 05:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CD02C027D;
+	Tue,  4 Nov 2025 05:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="oSGjtgER";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dfn1So5a"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G2VAMtqZ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28061188596
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F2529B8E6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Nov 2025 05:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762232935; cv=none; b=iEV7Q9JGhVt7ik1sKDqheAKfFzkyC5npeKv61Q1E2vBzF1XCiD+JaD6FFXdUcQJkFUgKRFNj9+cD9utJSbrlf1lT1/JORxKGu3tlTGTFjnVYOJazMJu7f9rxvIwFm+QFyFpuw5nNTyoEQmCLvjHZrQnV0MgoUnwSrDtOL16V2zo=
+	t=1762232968; cv=none; b=K9X741z5IXl6F/wD2BaRIVBCQbafTeR0pxHL++FLkvg4ZQBvgIpdiAqR6QVOE609VtlvPrHj/ZU2Kbr9jJwUQ0ikJwvgn1gKBhJuDZfohSRZyj2XrQxtCzXAc0ODKN9qIoLnHn/IsZo5bUPrV/e6QgAiPA2/C0qfLFBn+2WFJvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762232935; c=relaxed/simple;
-	bh=YbLeGdsyFUT7OOMTO1Bya2H1KH3p9zoKns6Bpjel48c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l27TZN49a4twzNtCXy1QDUKkjAx3lpq6UPUdvMPM8WdzcOs4Qq782VT3gXl39m6ZRPuRq6np8m+SYsS5v2DQ0/c4pTzouHR1ILpwmW+FHQkW0osqjb024r2OPpEK3pLP06OIwRccbRxXg5duNHuCWKHgzqn518+AS1CZREp8/Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=oSGjtgER; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dfn1So5a; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DCC827A0413;
-	Tue,  4 Nov 2025 00:08:51 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 04 Nov 2025 00:08:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1762232931;
-	 x=1762319331; bh=LG9LhhmAdhRt4kpI1l4GWvyXAACukFsT4L51xylVFYo=; b=
-	oSGjtgEREkk81lRNHXg9OdNFxtRHK8+88bjh6axlMYciHhWYVqfsiAFTmgBVtBXQ
-	jy4J90q40oJhWf8rWFr+AYYUDz5BPTlW4/7Lh4ZKjMh3zMiXk67ICpUk94P0bvJ2
-	Qr6usQXdyNp61LB2qzMc5jS28DR7hCWwPRNECGcdSYMn+sR+q9hsi05wsejRoxCE
-	Vy8e+qJGVBdD0xCdU+6D1SG+gtN84QfqcIyxAITWBCYtG2pACgvLo8yusiHpQkvy
-	0+suuxy6o7LVSW+XFFnb8yIUQlBjs8bh2IugWUAPtIVFc1N4chTyT9D6BoqrUTOC
-	DcQ2TObulAyoXFeeYf4rYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762232931; x=
-	1762319331; bh=LG9LhhmAdhRt4kpI1l4GWvyXAACukFsT4L51xylVFYo=; b=d
-	fn1So5adKD0Y8pPNRieBX/2uJtUKLUk5J0DiOgiFmPXuFWUk4+nC33U2cT/tVXmN
-	0QlFu5B/9/SmHOGth5AxXykCoNeD7IlQHbUBKeqLeZk68pX437KG5zEWqRWfu9jy
-	9ZuP9bDVyA2CfAH9i8yGkBmkR6NUL5z9fh6HofcL9uNCInU032IJqjCyTMnWovPh
-	H+vlOf68MG6Vn2zC2nRjBjdnwwHvnZAMkOcNTSE64cLIW2xDw3+KYjWSmFQv3jMv
-	0gBnPJdUGo25sOOUARb6dbXUzYltZr+hG5OwUj9EtLEdZs9W1mZLPenrTxqdgHGD
-	fmnau+RRRKc6kzMeRqWXw==
-X-ME-Sender: <xms:Y4oJad7XZ3wQp0GPHyW9STEv38PTMExFq_p2TlQJB0zANeQYpYVusQ>
-    <xme:Y4oJad9eRfl3nZDQ41YUaGkif5ReNT7WJgChIMIAvVjUp3qr7kVqpeZjGG7cRTqRO
-    JzMuuTlIl-CXHLFV5256_trXQ1O2m_2IdEvHjYbMP9GzsnPDw>
-X-ME-Received: <xmr:Y4oJafGWd6nin1mfLBgV0brZonoJRXAdM_dqfI4sosy7xSMEEZ3MKr4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedtudefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpefgkeffie
-    efieevkeelteejvdetvddtledugfdvhfetjeejieduledtfefffedvieenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehpihhnthhurdhpihhnghesghhmrghilhdrtghomhdprhgtphhtthhopehsrghngh
-    grnhgrkhgrsehsihguughhrdhmvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdrug
-    gvpdhrtghpthhtohepkhgvrhhnvghlnhgvfigsihgvsheskhgvrhhnvghlnhgvfigsihgv
-    shdrohhrgh
-X-ME-Proxy: <xmx:Y4oJaSVCtpYpHkp4Hr1BBwJ9VwkEKB53OT7k-OFIWkaAGl1JHS8xfw>
-    <xmx:Y4oJab_Q445RiuuPlhqG57yzttxFYgaMMwZxwr1_umWj57jmRlpqKA>
-    <xmx:Y4oJaf6LEVng2JKgi2SZp5Md0OoiocewomeLG9bvk7hIaMt67R5g_A>
-    <xmx:Y4oJaUmR4YtDq4fwCdBWMSEbqO-G4ODfBUnuMjoJAbFFJFQ28Iw2dg>
-    <xmx:Y4oJaesgNDOj2MTuYOXI5bmtpHmidx5pbGxtBTNR33pfeHL1iqqfLorl>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Nov 2025 00:08:50 -0500 (EST)
-Date: Tue, 4 Nov 2025 14:08:48 +0900
-From: Greg KH <greg@kroah.com>
-To: Pintu Kumar Agarwal <pintu.ping@gmail.com>
-Cc: Siddh Raman Pant <sanganaka@siddh.me>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	kernelnewbies <kernelnewbies@kernelnewbies.org>
-Subject: Re: =?iso-8859-1?Q?=A0Query?= =?iso-8859-1?Q?=3A?= Y2038 patch
- series for 3.18 Kernel
-Message-ID: <2025110403-backward-skeleton-305e@gregkh>
-References: <CAOuPNLh4R=H0BfQ4f13woGzc82jX9LGB+kxAGeGVkhwYqKcg4w@mail.gmail.com>
- <19a481a7843.53422ba121754.4867625372707455852@siddh.me>
- <CAOuPNLhMcPJ_vkvyDKTW1c4TcSYusrzrAdu8khazHoy3txJGDw@mail.gmail.com>
+	s=arc-20240116; t=1762232968; c=relaxed/simple;
+	bh=7Rw7Mlw//N16pS2tJLbJ2s4N+2FAj8RHDvDLqq7eXr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WjFW6cy4jcWFDCMvp+SyQ1N90EIg4gzoYnOgBYGXFmsyfJZMPnSJih4AQcDwDCtWQiKj4Z6fU9GdXdfnrzNmuraaFVZJ69LB6dUGo37CyrhGmx2Qp3mqgSjh6lkUoyMTPjPWiuzU2LpHj7uqljILz9GKXSWNxkxR0J8ZeEHpi5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G2VAMtqZ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-295c64cb951so138345ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 21:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762232966; x=1762837766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1H7rP21zZn0qK0QNqH8RbWwYkKpPjn+ZW6EKqkMyinY=;
+        b=G2VAMtqZbVQD2cSKLyuv9p5AEmLGI7+DPRsOj6Ois7NkR6rCWkLYLdKbRHCwJUkI07
+         OvCITMfYUP4WjdxfvAxs4Rm+EXKVcoc1sP2nk8fVFEhQpTWTuP7qXuHf59wvVdl2qsH2
+         oucuw0kXDGFv9oRfRE7RYoVPQjxestF+GqfPEHrrtiraKQxm6joLwEhulYLz8fOwT4+F
+         zBc8RjzyFSlx/ICxJLAcPtEMfo88M66Ix+WSUDYbgT2+o6lbqwhhCfZnxHDMef4kFIVe
+         RDNH12yl4p6DXbIVGomH+pUeXm8LtHH8fIRun8FI+XUt7iSNutAw16hlxapG1c1tV8DL
+         mRTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762232966; x=1762837766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1H7rP21zZn0qK0QNqH8RbWwYkKpPjn+ZW6EKqkMyinY=;
+        b=RFoiVVWx1ZxX+8JfYDE8dW+BtHjElBXF/jh79CJ/P8yNjpu9ol8rtPaNuX/3kjAONB
+         A96qS5oNtjd38nO+rb9vQhaWjm6g78clX7x1V6/DM6vbg57vX5Rm8qxz8fDzkxL3KjNV
+         FL49rNT7xCTmWE49uBO9gEAdmtq/utBeIu6mDwIdSNgoRO7cykU8y4QNlSsIjd5RwxT1
+         AOumX2n993LxyAqPMujyrzETBCcb2O1IQOSuF9plt2wVed9k/e00J1BrM031Ts1FoIh7
+         XLEU3qd/wErFExb6jd6zT+LLrsnbHWqqtkbYHgD7KRKpVAf6U5ThZxQZzfPeHkZ7Y/S2
+         c1Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWNycWFGuFkOapHETrGJ0SrR4bZLoBNjWwSjL1qIDP9d1P3fgGKT/JNc6r33abfNg/+ny4DR2qothVHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAjeTEhmNkxXX2uEvL1I+7+c1lVj/C52jEfCuheSSeEudCDWc7
+	jt2uY+14BD3M9E8SiA0/vxJ7EjGOBgVYvY0+O++C3fOmYY6ZMUOYqtDVCSlpJmWFt8zCmdAMwZe
+	Zv7+Sik4PP/uNKf2PqCBhZDgt9YsJOMot4fm8IencxX/fuQRiN6A+jtQ9mP0=
+X-Gm-Gg: ASbGncvR2MxoGUWrMYhRyjlTIpxr7u2i7RZvL0goXE/ubTxA5n4bnvMwEsOSh05sOKa
+	GjZ1dc/daT0bfcyORu4OeHVpfNuhyHAWYqtDT0bIwL+6o1ps6G5oJ5erJVZw0RSYiDi3HzGZ4WD
+	slU5LKeRJyOqCCmVxNnKOVsNJnHCVLg/Y69qwhozQ8wxQB+Xdxy8sEtMNtRXkh/hwH6XWrrVicx
+	xZnY51TciskGeYTbHDy0JH47AwpO/o6NfW2Bw0Gf0430Nxof9YE2N9/Idjj6uzCHJnhdOk=
+X-Google-Smtp-Source: AGHT+IEJW4qZVXTJVnwrrok47BFsLqodC41A3mt9PojgUB+uEjajtfHl3bARmhAFZurVRZAfr+aFsCAfZg/TRNI2jt4=
+X-Received: by 2002:a17:902:da87:b0:295:28a4:f0f5 with SMTP id
+ d9443c01a7336-29601dfad59mr2052405ad.5.1762232965661; Mon, 03 Nov 2025
+ 21:09:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOuPNLhMcPJ_vkvyDKTW1c4TcSYusrzrAdu8khazHoy3txJGDw@mail.gmail.com>
+References: <20251024175857.808401-1-irogers@google.com> <aQmFV7fqURMXQNHC@google.com>
+In-Reply-To: <aQmFV7fqURMXQNHC@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 3 Nov 2025 21:09:14 -0800
+X-Gm-Features: AWmQ_bkJadQtciCiQLhwfNPZXuNPfAf5iarrS7pL6fGgXssdwSV9IzDjETwaaYE
+Message-ID: <CAP-5=fWv1JtKumMpX7Ck+K4ttXTKW-zDQZYen0MxzV1B7VizaQ@mail.gmail.com>
+Subject: Re: [PATCH v1 00/22] Switch the default perf stat metrics to json
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 10:32:28AM +0530, Pintu Kumar Agarwal wrote:
-> On Mon, 3 Nov 2025 at 10:35, Siddh Raman Pant <sanganaka@siddh.me> wrote:
+On Mon, Nov 3, 2025 at 8:47=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Hi Ian,
+>
+> On Fri, Oct 24, 2025 at 10:58:35AM -0700, Ian Rogers wrote:
+> > Prior to this series stat-shadow would produce hard coded metrics if
+> > certain events appeared in the evlist. This series produces equivalent
+> > json metrics and cleans up the consequences in tests and display
+> > output. A before and after of the default display output on a
+> > tigerlake is:
 > >
-> > Mon, 03 Nov 2025 09:57:18 +0530 को Pintu Kumar Agarwal ने लिखा :
-> > > We have an arm32 based embedded product which is based on the 3.18
-> > > kernel and a simple busybox.
-> > > We wanted to support the Y2038 issue on this older kernel.
-> > > Is this feasible
-> > > Do we have the Y2038 separate patches available for both kernel and userspace
-> > > ?
-> > > Or upgrading the kernel is the only option ?
+> > Before:
+> > ```
+> > $ perf stat -a sleep 1
 > >
-> > Upgrading is a much much better option.
+> >  Performance counter stats for 'system wide':
 > >
-> Yes, I understand, but upgrading the kernel on this older SoC brings
-> more complexities, challenges and time taking.
-> Customers also do not agree for the upgrade at this stage and they are
-> looking for alternatives.
-> So, we are exploring both the options right now.
-> 
-> Are there any patchset maintained separately for this Y2038 issue for
-> each kernel version to have a look ?
+> >     16,041,816,418      cpu-clock                        #   15.995 CPU=
+s utilized
+> >              5,749      context-switches                 #  358.376 /se=
+c
+> >                121      cpu-migrations                   #    7.543 /se=
+c
+> >              1,806      page-faults                      #  112.581 /se=
+c
+> >        825,965,204      instructions                     #    0.70  ins=
+n per cycle
+> >      1,180,799,101      cycles                           #    0.074 GHz
+> >        168,945,109      branches                         #   10.532 M/s=
+ec
+> >          4,629,567      branch-misses                    #    2.74% of =
+all branches
+> >  #     30.2 %  tma_backend_bound
+> >                                                   #      7.8 %  tma_bad=
+_speculation
+> >                                                   #     47.1 %  tma_fro=
+ntend_bound
+> >  #     14.9 %  tma_retiring
+> > ```
+> >
+> > After:
+> > ```
+> > $ perf stat -a sleep 1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >              2,890      context-switches                 #    179.9 cs/=
+sec  cs_per_second
+> >     16,061,923,339      cpu-clock                        #     16.0 CPU=
+s  CPUs_utilized
+> >                 43      cpu-migrations                   #      2.7 mig=
+rations/sec  migrations_per_second
+> >              5,645      page-faults                      #    351.5 fau=
+lts/sec  page_faults_per_second
+> >          5,708,413      branch-misses                    #      1.4 %  =
+branch_miss_rate         (88.83%)
+> >        429,978,120      branches                         #     26.8 K/s=
+ec  branch_frequency     (88.85%)
+> >      1,626,915,897      cpu-cycles                       #      0.1 GHz=
+  cycles_frequency       (88.84%)
+> >      2,556,805,534      instructions                     #      1.5 ins=
+tructions  insn_per_cycle  (88.86%)
+> >                         TopdownL1                 #     20.1 %  tma_bac=
+kend_bound
+> >                                                   #     40.5 %  tma_bad=
+_speculation      (88.90%)
+> >                                                   #     17.2 %  tma_fro=
+ntend_bound       (78.05%)
+> >                                                   #     22.2 %  tma_ret=
+iring             (88.89%)
+> >
+> >        1.002994394 seconds time elapsed
+> > ```
+>
+> While this looks nicer, I worry about the changes in the output.  And I'm
+> curious why only the "After" output shows the multiplexing percent.
+>
+> >
+> > Having the metrics in json brings greater uniformity, allows events to
+> > be shared by metrics, and it also allows descriptions like:
+> > ```
+> > $ perf list cs_per_second
+> > ...
+> >   cs_per_second
+> >        [Context switches per CPU second]
+> > ```
+> >
+> > A thorn in the side of doing this work was that the hard coded metrics
+> > were used by perf script with '-F metric'. This functionality didn't
+> > work for me (I was testing `perf record -e instructions,cycles` and
+> > then `perf script -F metric` but saw nothing but empty lines)
+>
+> The documentation says:
+>
+>         With the metric option perf script can compute metrics for
+>         sampling periods, similar to perf stat. This requires
+>         specifying a group with multiple events defining metrics with the=
+ :S option
+>         for perf record. perf will sample on the first event, and
+>         print computed metrics for all the events in the group. Please no=
+te
+>         that the metric computed is averaged over the whole sampling
+>         period (since the last sample), not just for the sample point.
+>
+> So I guess it should have 'S' modifiers in a group.
 
-Nope, sorry.  Please just update to a newer kernel version, that is the
-only way forward (and as a bonus, you actually will have tens of
-thousands of bugs fixed on your system.)
+Thanks Namhyung. Yes, this is the silly behavior where leader sample
+events are both treated as an event but then the constituent parts
+turned into individual events with the period set to the leader sample
+read counts. Most recently this behavior was disabled by struct
+perf_tool's dont_split_sample_group in the case of perf inject as it
+causes events to be processed multiple times. The perf script behavior
+doesn't rely anywhere on the grouping of the leader sample events and
+even with it the metric format option doesn't work either - I'll save
+pasting a screen full of blank lines here.
 
-good luck!
+> > but anyway I decided to fix it to the best of my ability in this
+> > series. So the script side counters were removed and the regular ones
+> > associated with the evsel used. The json metrics were all searched
+> > looking for ones that have a subset of events matching those in the
+> > perf script session, and all metrics are printed. This is kind of
+> > weird as the counters are being set by the period of samples, but I
+> > carried the behavior forward. I suspect there needs to be follow up
+> > work to make this better, but what is in the series is superior to
+> > what is currently in the tree. Follow up work could include finding
+> > metrics for the machine in the perf.data rather than using the host,
+> > allowing multiple metrics even if the metric ids of the events differ,
+> > fixing pre-existing `perf stat record/report` issues, etc.
+> >
+> > There is a lot of stat tests that, for example, assume '-e
+> > instructions,cycles' will produce an IPC metric. These things needed
+> > tidying as now the metric must be explicitly asked for and when doing
+> > this ones using software events were preferred to increase
+> > compatibility. As the test updates were numerous they are distinct to
+> > the patches updating the functionality causing periods in the series
+> > where not all tests are passing. If this is undesirable the test fixes
+> > can be squashed into the functionality updates.
+>
+> Hmm.. how many of them?  I think it'd better to have the test changes at
+> the same time so that we can assure test success count after the change.
+> Can the test changes be squashed into one or two commits?
 
-greg k-h
+So the patches are below. The first set are all clean up:
+
+> > Ian Rogers (22):
+> >   perf evsel: Remove unused metric_events variable
+> >   perf metricgroup: Update comment on location of metric_event list
+> >   perf metricgroup: Missed free on error path
+> >   perf metricgroup: When copy metrics copy default information
+> >   perf metricgroup: Add care to picking the evsel for displaying a
+> >     metric
+> >   perf jevents: Make all tables static
+
+Then there is the addition of the legacy metrics as json:
+
+> >   perf expr: Add #target_cpu literal
+> >   perf jevents: Add set of common metrics based on default ones
+> >   perf jevents: Add metric DefaultShowEvents
+> >   perf stat: Add detail -d,-dd,-ddd metrics
+
+Then there is the change to make perf script metric format work:
+
+> >   perf script: Change metric format to use json metrics
+
+Then there is a clean up patch:
+
+> >   perf stat: Remove hard coded shadow metrics
+
+Then there are fixes to perf stat's already broken output:
+
+> >   perf stat: Fix default metricgroup display on hybrid
+> >   perf stat: Sort default events/metrics
+> >   perf stat: Remove "unit" workarounds for metric-only
+
+Then there are 7 patches updating test expectations. Each patch deals
+with a separate test to make the resolution clear.
+
+> >   perf test stat+json: Improve metric-only testing
+> >   perf test stat: Ignore failures in Default[234] metricgroups
+> >   perf test stat: Update std_output testing metric expectations
+> >   perf test metrics: Update all metrics for possibly failing default
+> >     metrics
+> >   perf test stat: Update shadow test to use metrics
+> >   perf test stat: Update test expectations and events
+> >   perf test stat csv: Update test expectations and events
+
+The patch "perf jevents: Add set of common metrics based on default
+ones" most impacts the output but we don't want to verify the default
+stat output with the hardcoded metrics that are removed in "perf stat:
+Remove hard coded shadow metrics". Having a test for both hard coded
+and json metrics in an intermediate state makes little sense and the
+default output is impacting by the 3 patches fixing it and removing
+workarounds.
+
+It is possible to squash things together but I think something is lost
+in doing so, hence presenting it this way.
+
+Thanks,
+Ian
 
