@@ -1,103 +1,76 @@
-Return-Path: <linux-kernel+bounces-886842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31519C36BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A52A1C36B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D01D3A5F27
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CC8645F00
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADD6334692;
-	Wed,  5 Nov 2025 16:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hENwCIhG"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A45F335064;
+	Wed,  5 Nov 2025 16:05:32 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47446333755
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E9A33374E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358717; cv=none; b=U5GIkyTqm4xF+9WzJ8TZ3ia/JOWDccvTREzrgQXsXBNJfO1kIg0BCpMaVwFYNRCDukjdLjaNN6wsZV+gLeykT5+oeEgALjY0kECDRFs/Pmti68levH82ZTv/wMLJWKNf0APU9N2Q2CJqL2pHXnbL6kD2Y61DGBwmdYt8pZXXsrY=
+	t=1762358731; cv=none; b=j+cB7CYVLYWPf3qi4tWeMWjy7fXvEYY6DRb1EzOs65rZNVzPWGG+WTHtBxedBwV0gh4VdVlRJ7WRl7A/R8r5k8d1J+ka8774+VtLTLDasCTHH9DclJmn0ptxK1p7/e+QAJiGOUMj/049WNK/O0mMB7L3Oqvejx1linomfMmD0nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358717; c=relaxed/simple;
-	bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Me9FGS6lMt7I/LkTsk1YED0w9I53iz/03omo4aZymQ/e2VGHgixLbXqPD3eShhbo4F6zX/7Rs4Ux3ee/iNZDCCgp3Gio8OdVux/a7wV5ptfKQ9HYGCZLNYjZ1rQPVBcp+nGxeDbhOOyhfHjNmx1ccoyzRXvKto2rCKtbsT5S3XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hENwCIhG; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso11521636a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762358714; x=1762963514; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-        b=hENwCIhGKqCzd8LgQc0blP4zGkTKatUNzALQjiKSsQkn5oJZf4hai0EhW4B57cdFv6
-         K0626mapCt3Tzx0jL6fcl8Xo/9BVxqMMrHUZnHBV6GD5ru8rqyraqivim7bKk4gZdlnh
-         Bc5eLWAEj8dC3Kvt66ucKR5qOyTn84l+57FauCvoJ4uxB4WBhzZqQ13GYQVTkznXsm8n
-         1M7/VsgH4tjexnc8v4QiXXa2/2fv0J3XDdEt5gRUnySgk0QzFCHxLUsn9gFsJ1XjzRSi
-         DxAoKH82W94dGtTLEdtldzNZjolWVJZbfj5VP/LGwHdT8NIBpQlkgEblYuIbe+6au9rr
-         wSsA==
+	s=arc-20240116; t=1762358731; c=relaxed/simple;
+	bh=dn4UMedC7Sk/Ra/s80vgLZB69FibUiTfYSTiYhu5Csk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pIu+TG9UpHyTGIFBILpTrLkSUKD/6UuXnDVK9xYRQrL23nV0/J4zATnJpVo+lzal2qdL4vjGiLznChx3pEESl58wu5nArZDfUuWVffBwUu8tMSJPDhq2o5i68FffaWT4RgWhhmchUwkgRkvXgFxCDz3C6ygoQp+FYjpHu6w6Kfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-433316b78f4so30129045ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:05:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358714; x=1762963514;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1762358729; x=1762963529;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-        b=oLfMawwJ4vajCC7kOTmu+6ItN/QTV74rnGtmUx1V9JM6frIs8CnKMy0i6oL/Q20gSC
-         aGulxEymO0l6REEt/KsnnXjYXPn/r3XQqcHoAPQsRJyVsdKpBk7ypNqVpGT3lhZB9l3Y
-         me8y4wjJeI15Zs8LM9NXVIKWe0hloGlWaR7XFECU4/jWw11LNlaemTusq+i0E8BkUDrg
-         sr3FjPJaFLWa1qrjS7pNGhTFOJQxMfpcxDtch9x01jTacPOGdnKQ3lPGTttffeoPao2g
-         OcwmWZr50oL0jKYHT8RuehU5sg61YTPvzLfn2lpCrzoS4k6z8sob1glvRoXh9590jsZ+
-         7NDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWE++SYf3zF/POAEeB4OUpk4rXJr7d4WqL4lxw2L56c2gN0A8X6lpNXVpmyECNf5LlN+ybO7+fRHCLOpVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyioQ+LaDs6HHSDkl39b1cP+ddKmVnmG+sBFiCM/JLRfQeWPTWP
-	upl1NNiol0wCsFaQU/pPw8YpPHSPOkN2aPYTYM5CV8BguQOy+934NN+tZIzw09oTFf4=
-X-Gm-Gg: ASbGnctDktcmybu0vYdRPFWW9aA7jnkqv4Fxr0No0mdI0CGChPBm+5J8MnLg4xonJ2E
-	vgfUt3XGp/7K1OEvF89YmiqSW+xm9oX9bSYA9eZUg1BBWkB271sacbNYF1bwAXinkeGVvUL6AHh
-	q0Fd62hGT12P0/rwBHAUYvKdeUiouBXXMVaJ8tpQR+WQf/7z9IErtS82HiQK4F6eCrVm6L+ULhf
-	/sf1/DHAs5m+dbvt21o/awP73Q/KzvyucWgTR9H6xTZxFjo0mq4Tq5aw7dQCb/APZEbYvoPyLg2
-	7gjUn5ZQmc4DHE5gHivNTlmqR+/4O/KYo++B9hDclGweshuoAAJWcdynBwoy8ayBcKqp4FGrqr7
-	mo/9OkFWFWz40O7KBWU0jPCWqSMZrbArEB6y7mvN8fxE/ITaMFcJyKsp8VcrVz5VnaPRvjdBwhO
-	vXDYHoYfa4lqswshYBjwdg5iM=
-X-Google-Smtp-Source: AGHT+IEZ4jSMqgU1j3ShuBTWV7Zpy421hTwNR5u92fURxhF1PiKkkzbDZyzXF4ZYvCapBIQeuCyJsA==
-X-Received: by 2002:a05:6402:3247:10b0:63c:4da1:9a10 with SMTP id 4fb4d7f45d1cf-64105b9d03cmr2682548a12.31.1762358714583;
-        Wed, 05 Nov 2025 08:05:14 -0800 (PST)
-Received: from [172.20.148.132] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e680578esm4903569a12.10.2025.11.05.08.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:05:14 -0800 (PST)
-Message-ID: <fbe28f12-b462-4620-80ef-b6ba5ff3e0a3@linaro.org>
-Date: Wed, 5 Nov 2025 17:05:12 +0100
+        bh=dn4UMedC7Sk/Ra/s80vgLZB69FibUiTfYSTiYhu5Csk=;
+        b=rsvg0aCngzfSEt9oOEd1FoL/8Y8uZOKmtPDdlV6sR41seKJBNBE/TCFduaE/YrUuq2
+         vHnXMJThPHrOLUyfgfy1RmHenPYM/jBcHcnrACilIvRsmBmmjJi7lAbGfa+54z3F8v80
+         vjKWriBXSclLV5+YJyMutbtd60OlG4nS6URbqRhB13iMPHThOo1XUWRwDlw5yPEvVOJh
+         7pvCRdDVZ96DLUGJzpxOu0wdtdMQ+ukfRhsmA/ow0yuSVm4WqlpLJdmi26SyUcO9IBrK
+         L0VctXH3OYAdYNqbF2a7Wn+igNjB2oDhSf3nNm+mdu0RLgipin7sf4Y6Ng4iGMj1s25F
+         HEig==
+X-Gm-Message-State: AOJu0Yw82Kx3xiAuP8hvy6PsyRXBJuYP0k0B6OHN8ccTxpvhCBWyo5NO
+	XSz6/EdvswujPOq8BbkEiuABI4dlJMtiUX8+gOIQpmbfVm7wmYSoVG+qH5G/r0PZGLuWscex0H5
+	8Md//f7XnkQBaRpBdWWbl3og2SAUJB97vhECkOo1UCqTTVZcdq2/q/frO8ec=
+X-Google-Smtp-Source: AGHT+IG/KaRhb6ALdq/apRYYRhb6++D3Wv+7Pa4siEhyY7QwkycMog8YxDJltoRGz8BD02Hq7XWeW1CiXnnfObVvyu9kjcKe9opO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/28] mtd: spinand: Remove stale definitions
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
- <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
- <20251031-winbond-v6-17-rc1-oddr-v1-6-be42de23ebf1@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-6-be42de23ebf1@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1805:b0:432:10f9:5e0a with SMTP id
+ e9e14a558f8ab-433407d9accmr46249535ab.19.1762358729355; Wed, 05 Nov 2025
+ 08:05:29 -0800 (PST)
+Date: Wed, 05 Nov 2025 08:05:29 -0800
+In-Reply-To: <68678de0.a70a0220.29cf51.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b75c9.050a0220.3d0d33.005c.GAE@google.com>
+Subject: Forwarded: potential fix
+From: syzbot <syzbot+2fc81b50a4f8263a159b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: potential fix
+Author: rpthibeault@gmail.com
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
 
