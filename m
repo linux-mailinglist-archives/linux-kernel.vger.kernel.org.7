@@ -1,106 +1,173 @@
-Return-Path: <linux-kernel+bounces-886512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBCBC35CAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD38C35CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BE61A21942
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:17:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A44188BE2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6484315D50;
-	Wed,  5 Nov 2025 13:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9C93195E4;
+	Wed,  5 Nov 2025 13:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="nuFi3+XJ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpqAVXTi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ECC315D53
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698730C61E;
+	Wed,  5 Nov 2025 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762348609; cv=none; b=ZdLM8IB113Dhkx8aXHdh9H8Nw2kkFbVWeDF4Rndxg7rLQHcjOzkevOqMGh6M8aSIyzROwKsh9LVip2OpZpsFddTz6UpcUdsi/WrOgXiH89vcm9JCgSkVnd4H7ugZeuUrcvd2ysGUa2vMaSBh57e1DHwiBHiPqx+JG2GIXYrim/g=
+	t=1762348653; cv=none; b=LW/NhdxU2ZMoYBKGFfq/AZvIGfzNvrlzIYcX7w6NX9wMNewTyFQXaGtTVlTmciAtehwlNyRQqVhpUZG4OARNUqV5q0Xif+YYZQ/hu5vFPlRaJb2YZm/OXR67fNP9Uy91b4W9BswpYU1S8E6z6YUdnRe7XhrhULJRWP5C14gAkr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762348609; c=relaxed/simple;
-	bh=fUTwJNDHUgzPs1TItc0+dwsS8UK7KycrT4JxNbiktpg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=uyzWI2rLb0KOkASR/xZS8WccX7i5bcoICEuR76byWqRquYhgAZ79QKEOAaAmMA+mQQMQwZe33kr+wfa9QPQ+52eheVfz1leeoddWqBYKApbxzyug58By28x3z9FYxAnpy4e+73yDLWFik9WWlGoGCDM4uZYUO1NuRB593sYioZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=nuFi3+XJ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1762348653; c=relaxed/simple;
+	bh=xug3FxWs/d/eOrBPa1Z165fcOCw7ZLCHRBYee2J7rJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoEj6s8zElGsKlos5sIeJrXo+kIhMfEHw3UbEFWIT4r5LOgx7YieGrFLqnzb/0hsEidi5l3CuCCgzf+ROdEn+oDod/UzU85MlCSOeGXbGX+9Ek2ZowUgnJtXCq5g2OlkuMv1pSiOEmYz39sl6iJ03C5LtvY5xDSfljyksR5sYqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpqAVXTi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8310C4CEF8;
+	Wed,  5 Nov 2025 13:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762348653;
+	bh=xug3FxWs/d/eOrBPa1Z165fcOCw7ZLCHRBYee2J7rJY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rpqAVXTiHk7l4qK1MoF6D2zSvXCnSn88TIQnzinbIfaYm5Nvoz6eBDsjGVq1STANS
+	 xQKHPNLyjpGcbXd4Hu3cDTK8NKedfAZhaHtAuBWXaxEiCe7RXFZZO5ZGP0mK+EFtFZ
+	 rViV+YJUbsopJLoFmaD/Ny7wqv2z4sMRjByhU/vMU7wgyMYdwjU4g2qCEWjxxr5HiN
+	 /KBzy14eZ/0krF4Mk7P29WhYIr7R/ooyd63JokXklH0sRJHsUGA9PQeuLe6OEUBl/d
+	 XzMFjsGqaYskj5SuksaTfvEbBuQrbMb4jiDBSNO0uU3LZeHSqmVVh1R+ldFUgSM+y0
+	 FUcW/F5SGMxOw==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	cgroups@vger.kernel.org
+Subject: [PATCH] genirq: Fix IRQ threads affinity VS cpuset isolated partitions
+Date: Wed,  5 Nov 2025 14:17:26 +0100
+Message-ID: <20251105131726.46364-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762348604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=06qBPm1fhFSKR8WuXfgSJkBHchOvYaGI3r+Tq1ruRHM=;
-	b=nuFi3+XJIUC4IMIZbpTNvnro4Irl5tYMnQEv6fg/Kkvl/IljVEvTDKotl6REwLqxDISxs1
-	jThgRGnSFy2QBbD3kavo6bUiH81wPE88IxmoVUcgZFaqwcJLuolnq0lVd9iUCAbB9WtBZJ
-	DXX7B1rwDawDtBkYA6jbdjAFiuSeJaLipBy5O2IdmxEimmOSL2m/teOlY/62usQ0UKCA72
-	YkJeImAlO5eo6SX7oI+p+l20fKbwhNW8ixTRCMvu3x/THQH8TppAJ4pAC9gO8W/4fDyLSb
-	ORun7XhsHZ7QsaF72kfVFoe81YBN2F09k+BeOKzG5qgJotzcvXV4PRBCVeQZOQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 14:16:42 +0100
-Message-Id: <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
-To: "Heiko Stuebner" <heiko@sntech.de>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <michael.riesch@collabora.com>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: use SCMI clock id for cpu
- clock on rk356x
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-References: <20251103234926.416137-1-heiko@sntech.de>
- <20251103234926.416137-3-heiko@sntech.de>
-In-Reply-To: <20251103234926.416137-3-heiko@sntech.de>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
+When a cpuset isolated partition is created / updated or destroyed,
+the IRQ threads are affine blindly to all the non-isolated CPUs. And
+this happens without taking into account the IRQ thread initial
+affinity that becomes ignored.
 
-On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
-> Instead of hard-coding 0, use the more descriptive ID from the binding
-> to reference the SCMI clock for the cpu on rk356x.
+For example in a system with 8 CPUs, if an IRQ and its kthread are
+initially affine to CPU 5, creating an isolated partition with only
+CPU 2 inside will eventually end up affining the IRQ kthread to all
+CPUs but CPU 2 (that is CPUs 0,1,3-7), losing the kthread preference for
+CPU 5.
 
-Any particular reason you only did it for the cpu, but not the gpu?
+Besides the blind re-affinity, this doesn't take care of the actual
+low level interrupt which isn't migrated. As of today the only way to
+isolate non managed interrupts, along with their kthreads, is to
+overwrite their affinity separately, for example through /proc/irq/
 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/b=
-oot/dts/rockchip/rk356x-base.dtsi
-> index a3361527d4fe..d0c76401b45e 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-> @@ -53,7 +53,7 @@ cpu0: cpu@0 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a55";
->  			reg =3D <0x0 0x0>;
-> -			clocks =3D <&scmi_clk 0>;
-> +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+To avoid doing that manually, future development should focus on
+updating the IRQs affinity whenever cpuset isolated partitions are
+updated.
 
-Regardless of the above comment, feel free to add
+In the meantime, cpuset shouldn't fiddle with IRQ threads directly.
+To prevent from that, set the PF_NO_SETAFFINITY flag to them.
 
-Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/irq/manage.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-Cheers,
-  Diederik
-
->  			#cooling-cells =3D <2>;
->  			enable-method =3D "psci";
->  			i-cache-size =3D <0x8000>;
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 400856abf672..5ca000c9f4a7 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -176,7 +176,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
+ }
+ 
+ /**
+- * irq_set_thread_affinity - Notify irq threads to adjust affinity
++ * irq_thread_update_affinity - Notify irq threads to adjust affinity
+  * @desc:	irq descriptor which has affinity changed
+  *
+  * Just set IRQTF_AFFINITY and delegate the affinity setting to the
+@@ -184,7 +184,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
+  * we hold desc->lock and this code can be called from hard interrupt
+  * context.
+  */
+-static void irq_set_thread_affinity(struct irq_desc *desc)
++static void irq_thread_update_affinity(struct irq_desc *desc)
+ {
+ 	struct irqaction *action;
+ 
+@@ -283,7 +283,7 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 		fallthrough;
+ 	case IRQ_SET_MASK_OK_NOCOPY:
+ 		irq_validate_effective_affinity(data);
+-		irq_set_thread_affinity(desc);
++		irq_thread_update_affinity(desc);
+ 		ret = 0;
+ 	}
+ 
+@@ -1035,8 +1035,23 @@ static void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *a
+ 		set_cpus_allowed_ptr(current, mask);
+ 	free_cpumask_var(mask);
+ }
++
++static inline void irq_thread_set_affinity(struct task_struct *t,
++					   struct irq_desc *desc)
++{
++	const struct cpumask *mask;
++
++	if (cpumask_available(desc->irq_common_data.affinity))
++		mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
++	else
++		mask = cpu_possible_mask;
++
++	kthread_bind_mask(t, mask);
++}
+ #else
+ static inline void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action) { }
++static inline void irq_thread_set_affinity(struct task_struct *t,
++					   struct irq_desc *desc) { }
+ #endif
+ 
+ static int irq_wait_for_interrupt(struct irq_desc *desc,
+@@ -1221,6 +1236,7 @@ static void wake_up_and_wait_for_irq_thread_ready(struct irq_desc *desc,
+ 	if (!action || !action->thread)
+ 		return;
+ 
++	irq_thread_set_affinity(action->thread, desc);
+ 	wake_up_process(action->thread);
+ 	wait_event(desc->wait_for_threads,
+ 		   test_bit(IRQTF_READY, &action->thread_flags));
+@@ -1405,16 +1421,7 @@ setup_irq_thread(struct irqaction *new, unsigned int irq, bool secondary)
+ 	 * references an already freed task_struct.
+ 	 */
+ 	new->thread = get_task_struct(t);
+-	/*
+-	 * Tell the thread to set its affinity. This is
+-	 * important for shared interrupt handlers as we do
+-	 * not invoke setup_affinity() for the secondary
+-	 * handlers as everything is already set up. Even for
+-	 * interrupts marked with IRQF_NO_BALANCE this is
+-	 * correct as we want the thread to move to the cpu(s)
+-	 * on which the requesting code placed the interrupt.
+-	 */
+-	set_bit(IRQTF_AFFINITY, &new->thread_flags);
++
+ 	return 0;
+ }
+ 
+-- 
+2.51.0
 
 
