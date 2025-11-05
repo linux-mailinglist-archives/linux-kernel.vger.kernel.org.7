@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-886920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F860C36AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:27:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DBBC36B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 118AF34D62D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7685A1888F9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A18025E469;
-	Wed,  5 Nov 2025 16:27:31 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0E5334692;
+	Wed,  5 Nov 2025 16:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVPncHIh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77585314B65;
-	Wed,  5 Nov 2025 16:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2726A25E469;
+	Wed,  5 Nov 2025 16:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360051; cv=none; b=Wyg50HrpLcyh6iv9wcyDj9l9bpjTrqCbeGsHR+L7Wo0uIir3oABjW1NHI2jTe346GwHeRFVSUWcQTtuITPgfVqmNtf4EC0o9KoT70LQoWNsnTpMB0fWcfilQ04/ncW1IomexOMHih1U/TW8n6+AgM/McgG5xgVSc5lJxsCH5SpA=
+	t=1762360093; cv=none; b=tL4IDQoTC1HG9ck3HH0k9qn5oNau+QdfIgs4VCuFxsCF2rmrcXUDZmAbIuK+4n/KHWQNQxUWlwXIWj1neaBQLTq+Xm5KMcsfUDqcLntyUe/6OhpBs29E1sVZvlsueqB5eaSvAe36ziZQOTCm1iOdFMZQg/HU1UVxqGnafK6bf2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360051; c=relaxed/simple;
-	bh=4MsDe/E10/Ca3cOd2vmpLHcxuVPCCFzib34ACWoaEk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E5RHYAnolG91NTosQRlnPqoW+prtSOeAK+WMfB62YhsIGRUY2lMSsat5Fo/8SGqsrS4e3p7lYDQySF84o867kA0hm4gHOihhZJO7EoVN4hM41AE2LQYsrJ7pOoGsNHtt9tCabrK1zZtAg92IjtBmWX8adzJTXj3t9zILx3OZNzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from gentoo.org (gentoo.cern.ch [IPv6:2001:1458:202:227::100:45])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: amadio)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 1D035340EAC;
-	Wed, 05 Nov 2025 16:27:27 +0000 (UTC)
-Date: Wed, 5 Nov 2025 17:27:23 +0100
-From: Guilherme Amadio <amadio@gentoo.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: namhyung@kernel.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Crash when running perf top with perf-6.17.7
-Message-ID: <aQt66zhfxSA80xwt@gentoo.org>
+	s=arc-20240116; t=1762360093; c=relaxed/simple;
+	bh=XZsR+JyD+p+0AmVN0UT/SExpbSqoB4WWhXwZyYv1juM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhEZN4sbjsIxJv+Loc0+mMbU08c/vdgKokVALj4h4uK88s7zFHMIFemhIriJTXhsPaVfGHYVTYQTcQj/35s+C+fchgoy3BB21G8dYzazQCnd2wfWNTe7CbT51w0Iyl5BSDT/njRkU0eMwcwibqc7F9L3rESyObdhvjj4Fec+6vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVPncHIh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33848C4CEF8;
+	Wed,  5 Nov 2025 16:28:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762360092;
+	bh=XZsR+JyD+p+0AmVN0UT/SExpbSqoB4WWhXwZyYv1juM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVPncHIh/EOqGFCdREjl+2w+VGlqkjCAARlMMggMBvZaXK8WL0I7nOF5N4aUy12Cq
+	 1MSijhgS4t1291bQKTZV13FU2rRXBsTAO6sw3VIanGxLl45tXeypLZpfH9cBgrprC5
+	 fM1xwVaxJiZq6874ZxPd6vM4+G2lil3Imv1yectPVArs+70jgStj+MFd3Ah71oFg6O
+	 zr7opLT5qYj/5SwzNxTtzqY28hyfZ5N9A4zxq7eSVVstrYiRaE1amTmjR9YabuZCi8
+	 h9RLNiMmdI08k8CXbIE1EcfMEPVNt1U4TNNFRL6y1/AssFAz50F6+TmhCRxSGER9yX
+	 s9v6wleyskP0A==
+Date: Wed, 5 Nov 2025 17:28:10 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 16/33] PCI: Flush PCI probe workqueue on cpuset isolated
+ partition change
+Message-ID: <aQt7Gg3XJ7fVdD3W@localhost.localdomain>
+References: <20251013203146.10162-17-frederic@kernel.org>
+ <20251014205034.GA906667@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014205034.GA906667@bhelgaas>
 
-Hi Arnaldo,
+Le Tue, Oct 14, 2025 at 03:50:34PM -0500, Bjorn Helgaas a écrit :
+> On Mon, Oct 13, 2025 at 10:31:29PM +0200, Frederic Weisbecker wrote:
+> > The HK_TYPE_DOMAIN housekeeping cpumask is now modifyable at runtime. In
+> > order to synchronize against PCI probe works and make sure that no
+> > asynchronous probing is still pending or executing on a newly made
+> > isolated CPU, the housekeeping susbsystem must flush the PCI probe
+> > works.
+> > 
+> > However the PCI probe works can't be flushed easily since they are
+> > queued to the main per-CPU workqueue pool.
+> > 
+> > Solve this with creating a PCI probe specific pool and provide and use
+> > the appropriate flushing API.
+> 
+> s/modifyable/modifiable/
+> s/newly made isolated/newly isolated/
+> s/susbsystem/subsystem/
+> s/PCI probe specific pool/PCI probe-specific pool/
 
-After updating to perf-6.17.7, perf top crashes for me (seems to happen
-since perf-6.17, but doesn't happen with perf-6.16):
+All fixed! Thanks.
 
-gentoo perf $ perf top
-perf: Segmentation fault
--------- backtrace --------
-perf: Segmentation fault
--------- backtrace --------
-Segmentation fault         (core dumped) perf top
 
-The stack trace from the crash is below. If this is not enough information,
-please let me know what additional information you'd like to have.
-
-Best regards,
--Guilherme
-
-Core was generated by `perf top'.
-Program terminated with signal SIGSEGV, Segmentation fault.
-#0  close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
-
-warning: 197	/tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c: No such file or directory
-[Current thread is 1 (Thread 0x7f8769c466c0 (LWP 144140))]
-(gdb) bt
-#0  close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
-#1  0x00007f87885286dd in _bfd_cache_init_unlocked (abfd=abfd@entry=0x5567f738eb40) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:561
-#2  0x00007f8788529021 in bfd_cache_init (abfd=abfd@entry=0x5567f738eb40) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:587
-#3  0x00007f878853618a in bfd_fopen (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", target=target@entry=0x0, mode=0x7f878860c4b9 "r", fd=84)
-    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:291
-#4  0x00007f87885363c9 in bfd_fdopenr (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", target=target@entry=0x0, fd=<optimized out>)
-    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:407
-#5  0x00005567c5cf4436 in read_build_id (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", bid=bid@entry=0x7f8769c3d8f0, block=block@entry=false)
-    at util/symbol-elf.c:886
-#6  0x00005567c5cf7240 in filename__read_build_id (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", bid=bid@entry=0x7f8769c3d8f0, block=block@entry=false)
-    at util/symbol-elf.c:968
-#7  0x00005567c5caaba4 in perf_record_mmap2__read_build_id (event=event@entry=0x7f8769c3fa50, machine=machine@entry=0x5567f7392a00, is_kernel=is_kernel@entry=false)
-    at util/synthetic-events.c:404
-#8  0x00005567c5cabff2 in perf_event__synthesize_mmap_events (tool=tool@entry=0x0, event=event@entry=0x7f8769c3fa50, pid=pid@entry=144076, tgid=tgid@entry=144076,
-    process=process@entry=0x5567c5c5d491 <mmap_handler>, machine=machine@entry=0x5567f7392a00, mmap_data=true) at util/synthetic-events.c:536
-#9  0x00005567c5c598fb in machine__init_live (machine=machine@entry=0x5567f7392a00, pid=pid@entry=144076) at util/machine.c:167
-#10 0x00005567c5c5b987 in machine__new_live (host_env=host_env@entry=0x7f8769c40b70, kernel_maps=kernel_maps@entry=false, pid=pid@entry=144076) at util/machine.c:178
-#11 0x00005567c5c56b13 in __dump_stack (file=0x7f87887f25c0 <_IO_2_1_stdout_>, stackdump=stackdump@entry=0x7f8769c40d90, stackdump_size=15) at util/debug.c:318
-#12 0x00005567c5bfb299 in ui__signal_backtrace (sig=<optimized out>) at ui/tui/setup.c:111
-#13 <signal handler called>
-#14 close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
-#15 0x00007f87885286dd in _bfd_cache_init_unlocked (abfd=abfd@entry=0x5567f738e8c0) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:561
-#16 0x00007f8788529021 in bfd_cache_init (abfd=abfd@entry=0x5567f738e8c0) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:587
-#17 0x00007f878853618a in bfd_fopen (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", target=target@entry=0x0, mode=0x7f878860c4b9 "r", fd=63)
-    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:291
-#18 0x00007f87885363c9 in bfd_fdopenr (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", target=target@entry=0x0, fd=<optimized out>)
-    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:407
-#19 0x00005567c5cf4436 in read_build_id (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", bid=bid@entry=0x7f8769c425d0, block=block@entry=false)
-    at util/symbol-elf.c:886
-#20 0x00005567c5cf7240 in filename__read_build_id (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", bid=bid@entry=0x7f8769c425d0,
-    block=block@entry=false) at util/symbol-elf.c:968
-#21 0x00005567c5caaba4 in perf_record_mmap2__read_build_id (event=event@entry=0x5567f73ca000, machine=machine@entry=0x5567f7280b18, is_kernel=is_kernel@entry=false)
-    at util/synthetic-events.c:404
-#22 0x00005567c5cabff2 in perf_event__synthesize_mmap_events (tool=tool@entry=0x0, event=event@entry=0x5567f73ca000, pid=pid@entry=5227, tgid=5227,
-    process=process@entry=0x5567c5c19264 <perf_event__process>, machine=machine@entry=0x5567f7280b18, mmap_data=false) at util/synthetic-events.c:536
-#23 0x00005567c5cac2a5 in __event__synthesize_thread (comm_event=comm_event@entry=0x5567f73c8060, mmap_event=mmap_event@entry=0x5567f73ca000,
-    fork_event=fork_event@entry=0x5567f73c8080, namespaces_event=namespaces_event@entry=0x5567f7246870, pid=5227, full=full@entry=1,
-    process=0x5567c5c19264 <perf_event__process>, tool=0x0, machine=0x5567f7280b18, needs_mmap=true, mmap_data=false) at util/synthetic-events.c:851
-#24 0x00005567c5cac50d in __perf_event__synthesize_threads (tool=0x0, process=0x5567c5c19264 <perf_event__process>, machine=0x5567f7280b18, needs_mmap=true,
-    mmap_data=false, dirent=0x5567f7377400, start=475, num=19) at util/synthetic-events.c:986
-#25 0x00005567c5cac5c4 in synthesize_threads_worker (arg=<optimized out>) at util/synthetic-events.c:1018
-#26 0x00007f87886c0379 in start_thread (arg=<optimized out>) at pthread_create.c:448
-#27 0x00007f8788728fac in __GI___clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
