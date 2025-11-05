@@ -1,164 +1,100 @@
-Return-Path: <linux-kernel+bounces-887235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4957FC37A2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:09:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E36EC37A35
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A02C34EBFF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:08:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0AFF934F7A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347B234404A;
-	Wed,  5 Nov 2025 20:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562603002CA;
+	Wed,  5 Nov 2025 20:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8352Edw"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dr4HrivG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC47B34679A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB5E262FF6;
+	Wed,  5 Nov 2025 20:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762373291; cv=none; b=tMWj3MewRIHGX8BxrXSnfemaknAVX48+YeW2FoW61MK+hj/eNtp2xQhowl9E3CShTz1Vr8kPQdennkXn0M6VffRYNqlQzdJzda6XsjZfwUyo5CJDaZC+zTm9OsEfzcxT7h+ah58J3wCjlszTMqxdjjNIU17P+xfMQzNsrcUPTqk=
+	t=1762373368; cv=none; b=ddo45R+tvIWLpdmJ1yAN8DwKec184cTOs+AcCE1hgyOq8LtGlrVZoQVljWYjhzmtOfVVhXAe4lH7Pv5QZaTzqZeiyUV32hJEbPx9qZoRc4n00Q2iOLemse/n/UHMwnV9Ald6exAXtvf9SkT5SXQQBoNwW7FhlYR3UCNrYdzb/6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762373291; c=relaxed/simple;
-	bh=n3os+k4QqkzkjBHpscj0Pon1HDkYiwHI5oh2gSfO3eA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d6cPe+IvYmZd1/obYl6hOXAS2KhOSgVn6zMewXk9QrfXAf9DmRD29WGAjLQCw8WVFY0yjgj8FzKtLkp9+0UcZM7b0K5Iy84YgfCG+Q7UDhKw4Q2n1X82+bt14PPViPMvfiItcO7+HoVTrHbvN70tTvAHYatXdYExlopQoosNomE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m8352Edw; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b9a72a43e42so134387a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762373289; x=1762978089; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tsYTHqHcd87Px6g2etcm588RqeZ8ybpTCrwlTD/0dmA=;
-        b=m8352EdwkyOgg9FYO9mxPhyzcd9MSHAbuT3STBxALVeIKv0dZ1XHb+Qt4tBY5zm2sy
-         El+mUKXyj/Rqr+VDmOIuRw/IAVxKJ09RuJK3IRA3wXrrOB0C8ljGV8XJqHu6xJUagnET
-         VNfCWQ6Kcfx3J1fso/xpNfqhIaY5I65v0Q54SXGJrX3D9iTinIxrmf+vCro4AVrdggue
-         EspaOU1I6GIMveX3JPmrgZ+1cFQMZnnJgexueAHKFFfxyHHsIIDW0voMqG93gfTG80w9
-         LmCIQeSjOoLLicygkEL19hPMZQ4aOU8CWUCJRAXj6eLynt8LkklrmLjGCWd9jAA38F04
-         lpKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762373289; x=1762978089;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tsYTHqHcd87Px6g2etcm588RqeZ8ybpTCrwlTD/0dmA=;
-        b=c0LoMow2kbJHgFsshV4SX1LHqBvAOewopXYkvvCuHr9u4KQ9dr1M+GCTqDGCeU57kL
-         MZOVfiWbYzdHagds3JmKOZNxukfzPKOL60qgqQqwWnuSAz0s3L/wvuGZm8hSdYl0CPla
-         riBAoEVw7ZRBbxZdQ2CY2xUuTczkuLCDR15S/NuGQy2sYBCpfMK3x7w7fzWuJwAtxSIt
-         PRYr0Wy091SGG5tOHBOhEoODf72rckY9yNkjpGx+OK3vrO8568THFDVij4JO0CamIfsm
-         jxBHzmPn9z6EnQ3tRisiHJ/jWVaVoPQ+DuMGccxNir/OzX2PhXUS/2ihkaiWlv06QRCC
-         u+kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOg+GCePpYY8RswmZBi97JOSpYw0eNgdeIUR+K9vUhpDL6u7Z3wCT9Jkd5aLh+Yk7YMDjAItPbb7/qg5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1+LYxidQAV3oM5YKq/cs6cRloI0R2wd28GlKzAgq11RjGc4uW
-	v98sFJrmvm5leiNQKViMmsuLpMDH/V/olz45+Xa7h9HWURFE2cgJ/EKFzVPgrKTxMecbpfE0gAR
-	t9x/F2G6NfGWgWU7s+EdyPyK2tg==
-X-Google-Smtp-Source: AGHT+IFR7MYzatcpuTgTWfkgPeCwao/117d57DT7xFMktke+9nyy2N6IlS6Pz9VEWT8DicmLcYidcojAwE94zXXYMw==
-X-Received: from dlbvg6.prod.google.com ([2002:a05:7022:7f06:b0:119:96ef:3b41])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:2729:b0:340:cc06:9514 with SMTP id adf61e73a8af0-34f86e0bb65mr4218111637.57.1762373289217;
- Wed, 05 Nov 2025 12:08:09 -0800 (PST)
-Date: Wed,  5 Nov 2025 20:07:58 +0000
-In-Reply-To: <20251105200801.178381-1-almasrymina@google.com>
+	s=arc-20240116; t=1762373368; c=relaxed/simple;
+	bh=b/UD5oSKNK4B76zMcgpHBcxjM71i6ykzsxfcy0wD20Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/XAXFgLgWn2Gc5zB+bn/sGDuTeGvOvJ6ifLbUNxy2v4/USJVF/nlrDdK3+lHU/8GhzmL50Qan7O+R4ILtjna8bjZ0URh1qdWWLcJGQUc8/1sgTabXHXLjEh9omA6/Z2beRINxfiDlCQAvw+aSDZc2F9/wyu+tM1MEhXTQvr8qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dr4HrivG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FA0C4CEF5;
+	Wed,  5 Nov 2025 20:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762373368;
+	bh=b/UD5oSKNK4B76zMcgpHBcxjM71i6ykzsxfcy0wD20Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dr4HrivG+0BdtlyuK+g6XDUhDGzN0aISWnb8lxEQjTKhxb3TKjxj4Pg1wXm3Mdoxz
+	 OeZXdeFPbni7rSWj89xHI+fpPQ+tnXMcYpg2Ycc3fqowsoZLJaQYxUNSgswEzSSSoA
+	 6aIiVF74QRAH/96v9ayeocvs6kZUgDHPOOB+iS+cALEnbhJdTKjZROnUDcEXeBtQzA
+	 Xx0E5vYHD+l3URNY/m42rRP2CZV6yxudNC23haaSNBJevsjViXJr0FrT3JOXQydH3J
+	 G+/6tWUyicEmKj/6tHPo7qCciWtnoyK9b9rSyTNkb9reKJomLOqslmHDrQQf2e28He
+	 7mxwfYfPW7NkQ==
+Date: Wed, 5 Nov 2025 13:09:23 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-kbuild@vger.kernel.org, Nicolas Schier <nsc@kernel.org>
+Subject: Re: linux-next: new objtool warnings
+Message-ID: <20251105200923.GA3787308@ax162>
+References: <20251103091006.GV3245006@noisy.programming.kicks-ass.net>
+ <20251103203256.5ac39302@canb.auug.org.au>
+ <20251103093804.GY3245006@noisy.programming.kicks-ass.net>
+ <20251105143027.214f491c@canb.auug.org.au>
+ <20251105085637.GO4067720@noisy.programming.kicks-ass.net>
+ <20251105100014.GY4068168@noisy.programming.kicks-ass.net>
+ <20251105100202.GZ4068168@noisy.programming.kicks-ass.net>
+ <20251105101010.GA4068168@noisy.programming.kicks-ass.net>
+ <20251105170715.GA706366@ax162>
+ <20251105191613.GA1831451@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251105200801.178381-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.51.2.1026.g39e6a42477-goog
-Message-ID: <20251105200801.178381-2-almasrymina@google.com>
-Subject: [PATCH net v1 2/2] gve: use max allowed ring size for ZC page_pools
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, Joshua Washington <joshwash@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>, ziweixiao@google.com, 
-	Vedant Mathur <vedantmathur@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105191613.GA1831451@noisy.programming.kicks-ass.net>
 
-NCCL workloads with NCCL_P2P_PXN_LEVEL=2 or 1 are very slow with the
-current gve devmem tcp configuration.
+On Wed, Nov 05, 2025 at 08:16:13PM +0100, Peter Zijlstra wrote:
+> # make O=tmp-build clean
+> # make O=tmp-build allmodconfig
+> # make O=tmp-build -j64 vmlinux 2>&1 | grep "\[M\]"
+>   CC [M]  sound/sound_core.o
+>   CC [M]  virt/lib/irqbypass.o
+>   AS [M]  arch/x86/crypto/twofish-x86_64-asm_64.o
+>   CC [M]  arch/x86/crypto/twofish_glue.o
+>   CC [M]  samples/vfio-mdev/mtty.o
+>   CC [M]  sound/ac97_bus.o
+>   AS [M]  arch/x86/crypto/twofish-x86_64-asm_64-3way.o
+>   CC [M]  arch/x86/crypto/twofish_glue_3way.o
 
-Root causing showed that this particular workload results in a very
-bursty pattern of devmem allocations and frees, exhausting the page_pool
-ring buffer. This results in sock_devmem_dontneed taking up to 5ms to
-free a batch of 128 netmems, as each free does not find an available
-entry in the pp->ring, and going all the way down to the (slow) gen_pool,
-and gve_alloc_buffer running into a burst of successive allocations
-which also don't find entries in the pp->ring (not dontneed'd yet,
-presumably), each allocation taking up to 100us, slowing down the napi
-poll loop.
+Thanks, I bisected this to commit d2d5cba5d92c ("kbuild: remove EXPERT
+and !COMPILE_TEST guarding from TRIM_UNUSED_KSYMS"), which explains
+everything when looking at Makefile:
 
-From there, the slowness of the napi poll loop results, I suspect,
-in the rx buffers not being processed in time, and packet drops
-detected by tcpdump. The total sum of all this badness results in this
-workload running at around 0.5 GB/s, when expected perf is around 12
-GB/s.
+  ifdef CONFIG_TRIM_UNUSED_KSYMS
+  # For the kernel to actually contain only the needed exported symbols,
+  # we have to build modules as well to determine what those symbols are.
+  KBUILD_MODULES := y
+  endif
 
-This entire behavior can be avoided by increasing the pp->ring size to the
-max allowed 16384. This makes the pp able to handle the bursty
-alloc/frees of this particular workload. AFACT there should be no
-negative side effect of arbitrarily increasing the pp->ring size in this
-manner for ZC configs - the memory is prealloced and pinned by the
-memory provider anyway.
+Maybe we want to restore the !COMPILE_TEST dependency?
 
-Tested by running AllToAll PXN=2 workload. Before:
-
-Avg bus bandwidth    : 0.434191
-
-After:
-
-Avg bus bandwidth    : 12.5494
-
-Note that there is more we can do to optimize this path, such as bulk
-netmem dontneeds, bulk netmem pp refills, and possibly taking a page
-from the iouring zcrx playbook and replacing the gen_pool with a simpler
-fixed-size array based allocator, but this seems sufficient to fix these
-critcal workloads.
-
-With thanks to Willem and Eric for helping root cause this,
-
-Cc: ziweixiao@google.com
-Fixes: 62d7f40503bc ("gve: support unreadable netmem")
-Reported-by: Vedant Mathur <vedantmathur@google.com>
-Signed-off-by: Mina Almasry <almasrymina@google.com>
----
- drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
-index 0e2b703c673a..f63ffdd3b3ba 100644
---- a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
-+++ b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
-@@ -8,6 +8,8 @@
- #include "gve.h"
- #include "gve_utils.h"
- 
-+#include "net/netdev_queues.h"
-+
- int gve_buf_ref_cnt(struct gve_rx_buf_state_dqo *bs)
- {
- 	return page_count(bs->page_info.page) - bs->page_info.pagecnt_bias;
-@@ -263,6 +265,8 @@ struct page_pool *gve_rx_create_page_pool(struct gve_priv *priv,
- 	if (priv->header_split_enabled) {
- 		pp.flags |= PP_FLAG_ALLOW_UNREADABLE_NETMEM;
- 		pp.queue_idx = rx->q_num;
-+		if  (netif_rxq_has_unreadable_mp(priv->dev, rx->q_num))
-+			pp.pool_size = PAGE_POOL_MAX_RING_SIZE;
- 	}
- 
- 	return page_pool_create(&pp);
--- 
-2.51.2.1026.g39e6a42477-goog
-
+Cheers,
+Nathan
 
