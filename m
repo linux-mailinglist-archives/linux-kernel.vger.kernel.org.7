@@ -1,140 +1,284 @@
-Return-Path: <linux-kernel+bounces-886750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E838C36580
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:33:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C033C367E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8826E34F040
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:32:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5261A2700A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEEB213E6D;
-	Wed,  5 Nov 2025 15:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A130DD19;
+	Wed,  5 Nov 2025 15:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KRpKtWwq"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rM2mzroU"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazolkn19013068.outbound.protection.outlook.com [52.103.20.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FEC221269;
-	Wed,  5 Nov 2025 15:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356743; cv=none; b=H7ygj+pMR0wFCS2FpQFZrbR9LpzK1jUzajLzWQjuPo91XDW/UAWZzfby4OSk0MyZHBu6/nuLEKxLvpVjo/yQl7qlxbi494XLGcV1yGYIOREv10R3ZOLqD91I5hur90SI8tYVs1/3FGZNNCqdq+nV8g89GlIf4g2x8ohKrYcuFn8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356743; c=relaxed/simple;
-	bh=F6jCVB5FUTfR1/fbnGPmSEAnI5kBmVbJxWWuGwAZSaE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fAK6BgxiBTeBsiADzCcVmB4RzkJvErzlOLWotsK/PbuJ16mnD02P6+Qy+7UXWM5By5toJ6KdTj0rwd9+ajlxvOFvOlvN210l2pFq7OvmVJKwv8Th83bsieUnLowGTV3SdVPyMKPl0CTMimALDwTJBpik5mhjQn8sCxO4S58y5SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=KRpKtWwq; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1762356740;
-	bh=F6jCVB5FUTfR1/fbnGPmSEAnI5kBmVbJxWWuGwAZSaE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=KRpKtWwqeI+uhoAcDEQfN/z+YVbcMPVDKNflF/Zkh9BgoPkSsq7TQRj/SF74pxIO3
-	 pOvo7loVvjsDz/GetDBA9v49h+0tY+bxd9lKq4NnIxfdZsohTpJGhcVX16tQYORYyf
-	 jO7XcrPYarxLpuEo8B9dprrZnnOTiL9CaBO2W5w8=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 8DF1F1C02BB;
-	Wed, 05 Nov 2025 10:32:20 -0500 (EST)
-Message-ID: <407aed0ff7be4fdcafebd09e58e25496b6b4fec0.camel@HansenPartnership.com>
-Subject: Re: [PATCH] scsi: fix uninitialized pointers with free attr
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ally Heev <allyheev@gmail.com>, "Martin K. Petersen"
-	 <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 05 Nov 2025 10:32:19 -0500
-In-Reply-To: <f6592ccc-155d-48ba-bac6-6e2b719a5c3e@suswa.mountain>
-References: 
-	<20251105-aheev-uninitialized-free-attr-scsi-v1-1-d28435a0a7ea@gmail.com>
-	 <6d199d062b16abfbf083750820d7a39cb2ebf144.camel@HansenPartnership.com>
-	 <f6592ccc-155d-48ba-bac6-6e2b719a5c3e@suswa.mountain>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
-	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
-	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
-	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
-	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
-	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
-	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
-	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840901E9B22;
+	Wed,  5 Nov 2025 15:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762356895; cv=fail; b=a0Cxah+/4uN3RX1wL50nu5EJYMpzooWVx2IqbAoKKWgjPqVv9xAdVAMAvVVfV1kfkO2wi/6OYLgT0du1pPC3P/d+sGaqyn66KVmCGLf0yjj0eAvboByD07/j4TSpWK2eacujQSAiXh3bLNlz/FC4ORX891XDi5Htau8HliNz++o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762356895; c=relaxed/simple;
+	bh=oX2ZyY4PCvj5PuK2xBUu0ROwxskpvxUR51uqRlW/Cvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FFTa1+nV621o0CzRLBrFTfx16PPAm7+s70l5v8JqJPpPT0kY2/QzNzMhDCuJHOPQV4gN7b3kwXIoGrU2B9OBRQRQJ+vJbg0lP3CCyoxpfO4c2K4+81CsrJ2ATBs8jW5MxOOy8X19ONGDiOEh3E2lPjFzOjn12Ch+fjAz/LTjWec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=rM2mzroU; arc=fail smtp.client-ip=52.103.20.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sQuXEPF+9UHl/UKIm5LqwFqxbg0nzs1oKyTQ67nHtgWZQsw9apQRr9ZY1twQgAHaeKEA++g5Yvpxa4zeYdT7hrttMCsXnwZoFCLWFxp7BGPioVZz6Rf0ffJ7Vf/b5LtjLAloR3C1uhh2qEK9jrS4+4iyFuuOlkSJKW078anaZ7OaUn5nmzIF1WTv0016mQ23jA5BKjhlVT0nWegBKgNlp5FhsTohLVxEY9zw36+c0EB3RP15LTptCRc4kbIwPSSInd+q9UzPsRcg06qVQ50irM74MDuxp6ENW6A4RJm3S/hwPpHYbgbgkFnSSWYxhulfPi5NcYt3Zee71sDaRcJkYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DF9spPDmLRsnU7N6U3YINr0EThkeAn66FbLXNSQCIU8=;
+ b=A7LWrd4K1q+8ae9/imgaWkvIRY16W+fsRMlD8nQieoPSqiWaQ5zUyV812R67H59VIAiLGhFor5fNLmkkhYWiwpdpBSzV9DKIjh+qL4fBA4AltA/TLBuOj9GPmJbyB3aeYiAAnLH2rxgso4Ft62akD2ABoRYjTW82p3JpOUG/OweCU5fYYqQZM9h/qMtIkFsijXZFGAcvgbToFdnjV/n73iX0CmMXLos7/fY/hjjkgnRaTEkTw+SnG+1Bfq4zWKoWejHR2EZ4ZU7twevHj1KjLQ+5xuppJzwLJ23NE2lYlmkqyPJP6mVB+1sFjf541pbrNRU0xqTe/15ty/9FTIAuqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DF9spPDmLRsnU7N6U3YINr0EThkeAn66FbLXNSQCIU8=;
+ b=rM2mzroUb+c4j+ZyEta71vJc23U48hu6vUf6B/38TiB7nDrcrOmKnztKImKo//VpwP6QaZVb5PoB8R2cWciBNffFNz1wlMmvyU4QP51lAwBM2ghdiAp8XkPtitJc+6GSgb0H0VDAmsK6V0SWEM2WLV/Yo10cXwASE9W413Hv2515J1amTElXeS3KxgsfupMcqkJLf7rqbpURT3fawEyfSZLg+7ECK+jzNPZ45Q+aKbSIXxWCyBtEL4Cpz4u0XNxgKv/0+9zUTvPdco8HBh593ErKsDThi0qRWY/BAv2b/12EX9iupQw7TY8a7P0czwr8P8m9k6R3OUlTUIdCBPrM8A==
+Received: from MN6PR16MB5450.namprd16.prod.outlook.com (2603:10b6:208:476::18)
+ by SN7PR16MB5178.namprd16.prod.outlook.com (2603:10b6:806:359::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
+ 2025 15:34:49 +0000
+Received: from MN6PR16MB5450.namprd16.prod.outlook.com
+ ([fe80::3dfc:2c47:c615:2d68]) by MN6PR16MB5450.namprd16.prod.outlook.com
+ ([fe80::3dfc:2c47:c615:2d68%4]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 15:34:49 +0000
+From: Mingrui Cui <mingruic@outlook.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingrui Cui <mingruic@outlook.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Subject: [PATCH net v3] net/mlx5e: Make DEFAULT_FRAG_SIZE relative to page size
+Date: Wed,  5 Nov 2025 23:33:16 +0800
+Message-ID:
+ <MN6PR16MB54501AC60FA25B6C79FB2C3DB7C5A@MN6PR16MB5450.namprd16.prod.outlook.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0053.apcprd02.prod.outlook.com
+ (2603:1096:4:196::16) To MN6PR16MB5450.namprd16.prod.outlook.com
+ (2603:10b6:208:476::18)
+X-Microsoft-Original-Message-ID:
+ <20251105153316.528539-1-mingruic@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR16MB5450:EE_|SN7PR16MB5178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b5fcdb7-a0cf-4188-970b-08de1c80db29
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799015|15080799012|23021999003|19110799012|41001999006|13031999003|461199028|5062599005|5072599009|1602099012|40105399003|4302099013|3412199025|440099028|10035399007|12091999003|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lXjyKxXWrQ8Xv0xhtbhFIrsNbAYe5s6JNfnrQHiNQfLkLSaa+UNQcOwZBVhs?=
+ =?us-ascii?Q?O5mm2jmHASdorF86dr5Ye3JGG+UF/SZa35SPE2s++wBUjucR6L+0D2U6ejS6?=
+ =?us-ascii?Q?q2Y6dyXEdrzWkh7U0AWlaNOuT082Tt/i8QIbXwbjYL4tYyM19U0eGTimkJUG?=
+ =?us-ascii?Q?BWXMwNAFmgii98Hsv8l7LM7C4YtSo568FTRevCdU6z87QnZCm2BlqGQZulgw?=
+ =?us-ascii?Q?E567YLU5v47tzXZIMCgrFbyrNJv+/uEjqIhmQRXgwxJJ1j+iv8BjTKdWz19F?=
+ =?us-ascii?Q?Md/N2nbX/armFOkXIGCPIvVFPeIi3zouuwGWk7tm7Lbw9Sl/gAx/MwEGOaEe?=
+ =?us-ascii?Q?UQwE/Q8sHSw3s9+E60knKZXG4wNQccLPa8mcaJ3Df+kKUQI8q58POHBHo38E?=
+ =?us-ascii?Q?TwFu+PA/s/SsUoTN0hdyW6DL+fB2YNOhmub08o83aSTs/SrXmLBhSgBHsRRF?=
+ =?us-ascii?Q?WdBxGZINAh6R7oeu1H9Ntq7s6odOZ3TJl7yIJGJrEh4EBxYzOqBLR6tdi3m6?=
+ =?us-ascii?Q?e2zLr0qkxKd/nuhiXit3HEcEmKxL8p+/64yNAjGzXYIgJuwBLmHMSJ2DFUgb?=
+ =?us-ascii?Q?U5LqunN9tbPYnyJR6fJV/W1gCt8hxn9EJJdSsZIwdyz6yGim/gFktZM/FBAQ?=
+ =?us-ascii?Q?9+iBEmDJkLKUgxeRj3IHU/K+bGuDQ6mc9d6gwIRE2f5amsZy8TbaHk9RVp1h?=
+ =?us-ascii?Q?jwVmRHGf71cilzQvlKzn8jZL+VjrJqVx8Xk4W5MlQrjxO/AQJHMaVTvCSWDs?=
+ =?us-ascii?Q?1OhPdpTiBmwgSWOhqlmB+AJoenv1ccQ1zCo5ZXKwjei+ZDtl3+JqhP8B/i3G?=
+ =?us-ascii?Q?aBUYT+M02Z+Jino4usxkbsPEAVXsWvVk6DBOqy+E681wsGq9kMiun5fejU8U?=
+ =?us-ascii?Q?fcmdozd2nwqqA4heT6tqqRXBj6VP7tTXfNOCTaQzm9batMvlgfKx+vyAnwAn?=
+ =?us-ascii?Q?DsP6Qs44GLPXSH7iUFiqmEYRF+/jEZqMf7qbHXFv7pOz24amBEgk2JLXErFR?=
+ =?us-ascii?Q?oXm2D9Lj8kU+d7ffgDZpwm9FgAh592+1Ir8RpVhhLgpMsqtcnoJiGvKp3VvH?=
+ =?us-ascii?Q?R8jLdEnzu5sHfhXL1tdWMRc3ZuUx79cSPheVuYH+il8z4xICDHZT28B4LSjJ?=
+ =?us-ascii?Q?rRxc/boRyF3Uk5VLiKWjtsbhJbOrQDjeKU7lmm3why3SpfINj+2ow8Ej7jAs?=
+ =?us-ascii?Q?PQCIUcqdg0IYywt8xwR0EqTk++bKbWWx27JCry11jaPMM6uN8Mj1gd/KoE5/?=
+ =?us-ascii?Q?HO+5c0BMMN/jFKCYLl6bj3PAZaEnp+Im4UeG8NFXs9CnFr15O6vgFgRoyLnk?=
+ =?us-ascii?Q?cFs+LF+f9wzxWGl394YF/UahO3l4ti5DeFYW5941Y3p+2u9MOgyuH1UzHWlf?=
+ =?us-ascii?Q?cOaWaj5QgtW/W/leSPrgE0ntZ3/Cjc9D7CWjx6k11AlE4HHjY3UGlX9TclsW?=
+ =?us-ascii?Q?kQ+WncJ+qfk=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VjZ5+fI5VMbuSyBX8epHdyIb5Lh9ULTI3/blvxUwsxlvzUqlHeZOjRdCRKAJ?=
+ =?us-ascii?Q?f29YaSYIZk/4Y9eK9l/nTOYz7xwSXi8mHL2+cyCPlEg2QdeOqt2xn3n6N3KK?=
+ =?us-ascii?Q?ximyj9/UvOqGPPr0MnycrGVDk7bi+yYZArNQA/Zzlo4l/HQGvM9inP1b/Jow?=
+ =?us-ascii?Q?fl4jCLK8FKRz4egNGz8nvGleVcvbWPaiGX7ozXKW9/bx0Ir1lgYyW6IjWRq8?=
+ =?us-ascii?Q?8J1UzrvEuIL9S73MHMypbytScMr4MGlRPE6e6d9deZElVqFP/rQouG0eSvZ0?=
+ =?us-ascii?Q?Pynm6sgufRl338QcFFX1vfN5v7vj1S/beClcsAEoFOlKPshjbC/RgcS4XJeo?=
+ =?us-ascii?Q?N+zbRwspE8LW1MtfmrV6Pb8jK8gK+cEwEUB0Xgv/rtMsJ/xL7lGfkLWJDZvi?=
+ =?us-ascii?Q?v+vCavYQIS6tso+uprmxanycXo3hEGWH27Yu0TNAfwtmiRWWyPhlUuUDbeK5?=
+ =?us-ascii?Q?6781oAZwdg5NjCVxapUNfqEycdVwhviEwNcLWbkDvBHUbKSM3/GTb88lbzc+?=
+ =?us-ascii?Q?YVX2ZaRXu8EPvKjdCvJuCxRcy964J4wjuzTyy0ZvzTXWFAZlaKRaMbx7BeoP?=
+ =?us-ascii?Q?49dsdCHOo+blFU+4IxZBZHx3CTvmPW1a58qXFVx+VzNwa/trNONyUZC7TkKJ?=
+ =?us-ascii?Q?rJawp6QE7uQwjjUwLBMS14q6QG5JiF0Mme7fsa+Tr7T2lByBmQDye7sITWNL?=
+ =?us-ascii?Q?sgK/Z+oSJPZfywUjgWoa4J3MKAhl9xoEYSYjFVtilyVKBYxbQXG1hxDyvDEK?=
+ =?us-ascii?Q?mjUtz3AB2Rzl/cix4zvgFXJNzDkP1bRcIcZD0gH44MSOA1OQR6nno8njDUxq?=
+ =?us-ascii?Q?dRvWkdCJKE/ToVI2fSgiGvbG96FpcRc55pd8tyX79Mmdn+L7jAB81bUteak+?=
+ =?us-ascii?Q?0TbfkL2KPH69tHaQm75+RILRiapNnszPdAxFkALPHjg+0K8BnUJuKb7DJGyD?=
+ =?us-ascii?Q?GPzo+kE4Y3ZMlVUZlUuv2LxGhiYSxaHFBSRXiGn5oLoPF/UOJJNVAdEd8DuB?=
+ =?us-ascii?Q?00tGr1RmvCZFirFOrjlof9pBFsNu5aoDiq785LZYXhIgGmX8ls3jFtUzrzyj?=
+ =?us-ascii?Q?fgUeh7NwMXVLbs8/H8T8Pv3wp6LlqtYGCXoR09v0KWDBgqnI1sZiUwNF1Wit?=
+ =?us-ascii?Q?htUYAWPOhEjCjsEtYSxyVgTKiq6HzWkka0eRgu0sEJKIREAK9jcur4ZX7sl5?=
+ =?us-ascii?Q?5TPMgMTxAboZ1oEGdh7pU6QpqJuFMZ5uJt3TgXG9sODUPsScaZXtWjgFy3aN?=
+ =?us-ascii?Q?z/lWQTWYMWNtYbIQFiEU1CsDR2wxKMe9iqVGIwCBew=3D=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b5fcdb7-a0cf-4188-970b-08de1c80db29
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR16MB5450.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 15:34:49.5502
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR16MB5178
 
-On Wed, 2025-11-05 at 17:46 +0300, Dan Carpenter wrote:
-> On Wed, Nov 05, 2025 at 09:21:45AM -0500, James Bottomley wrote:
-> > On Wed, 2025-11-05 at 19:44 +0530, Ally Heev wrote:
-> > > Uninitialized pointers with `__free` attribute can cause
-> > > undefined
-> > > behaviour as the memory assigned(randomly) to the pointer is
-> > > freed
-> > > automatically when the pointer goes out of scope
-> > >=20
-> > > scsi doesn't have any bugs related to this as of now, but
-> > > it is better to initialize and assign pointers with `__free` attr
-> > > in one statement to ensure proper scope-based cleanup
-> > >=20
-> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > Closes:
-> > > https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-> > > Signed-off-by: Ally Heev <allyheev@gmail.com>
-> > > ---
-> > > =C2=A0drivers/scsi/scsi_debug.c | 4 ++--
-> > > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/scsi/scsi_debug.c
-> > > b/drivers/scsi/scsi_debug.c
-> > > index
-> > > b2ab97be5db3d43d5a5647968623b8db72448379..89b36d65926bdd15c0ae93a
-> > > 6bd2
-> > > ea968e25c0e74 100644
-> > > --- a/drivers/scsi/scsi_debug.c
-> > > +++ b/drivers/scsi/scsi_debug.c
-> > > @@ -2961,11 +2961,11 @@ static int resp_mode_sense(struct
-> > > scsi_cmnd
-> > > *scp,
-> > > =C2=A0	int target_dev_id;
-> > > =C2=A0	int target =3D scp->device->id;
-> > > =C2=A0	unsigned char *ap;
-> > > -	unsigned char *arr __free(kfree);
-> > > =C2=A0	unsigned char *cmd =3D scp->cmnd;
-> > > =C2=A0	bool dbd, llbaa, msense_6, is_disk, is_zbc, is_tape;
-> > > =C2=A0
-> > > -	arr =3D kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
-> > > +	unsigned char *arr __free(kfree) =3D
-> > > kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
-> > > +
-> >=20
-> > Moving variable assignments inside code makes it way harder to
-> > read. Given that compilers will eventually detect if we do a return
-> > before initialization, can't you have smatch do the same rather
-> > than trying to force something like this?
->=20
-> This isn't a Smatch thing, it's a change to checkpatch.
->=20
-> (Smatch does work as you describe).
+When page size is 4K, DEFAULT_FRAG_SIZE of 2048 ensures that with 3
+fragments per WQE, odd-indexed WQEs always share the same page with
+their subsequent WQE, while WQEs consisting of 4 fragments does not.
+However, this relationship does not hold for page sizes larger than 8K.
+In this case, wqe_index_mask cannot guarantee that newly allocated WQEs
+won't share the same page with old WQEs.
 
-So why are we bothering with something like this in checkpatch if we
-can detect the true problem condition and we expect compilers to catch
-up?  Encouraging people to write code like the above isn't in anyone's
-best interest.
+If the last WQE in a bulk processed by mlx5e_post_rx_wqes() shares a
+page with its subsequent WQE, allocating a page for that WQE will
+overwrite mlx5e_frag_page, preventing the original page from being
+recycled. When the next WQE is processed, the newly allocated page will
+be immediately recycled. In the next round, if these two WQEs are
+handled in the same bulk, page_pool_defrag_page() will be called again
+on the page, causing pp_frag_count to become negative[1].
 
-Regards,
+Moreover, this can also lead to memory corruption, as the page may have
+already been returned to the page pool and re-allocated to another WQE.
+And since skb_shared_info is stored at the end of the first fragment,
+its frags->bv_page pointer can be overwritten, leading to an invalid
+memory access when processing the skb[2].
 
-James
+For example, on 8K page size systems (e.g. DEC Alpha) with a ConnectX-4
+Lx MT27710 (MCX4121A-ACA_Ax) NIC setting MTU to 7657 or higher, heavy
+network loads (e.g. iperf) will first trigger a series of WARNINGs[1]
+and eventually crash[2].
+
+Fix this by making DEFAULT_FRAG_SIZE always equal to half of the page
+size.
+
+[1]
+WARNING: CPU: 9 PID: 0 at include/net/page_pool/helpers.h:130
+mlx5e_page_release_fragmented.isra.0+0xdc/0xf0 [mlx5_core]
+CPU: 9 PID: 0 Comm: swapper/9 Tainted: G        W          6.6.0
+ walk_stackframe+0x0/0x190
+ show_stack+0x70/0x94
+ dump_stack_lvl+0x98/0xd8
+ dump_stack+0x2c/0x48
+ __warn+0x1c8/0x220
+ warn_slowpath_fmt+0x20c/0x230
+ mlx5e_page_release_fragmented.isra.0+0xdc/0xf0 [mlx5_core]
+ mlx5e_free_rx_wqes+0xcc/0x120 [mlx5_core]
+ mlx5e_post_rx_wqes+0x1f4/0x4e0 [mlx5_core]
+ mlx5e_napi_poll+0x1c0/0x8d0 [mlx5_core]
+ __napi_poll+0x58/0x2e0
+ net_rx_action+0x1a8/0x340
+ __do_softirq+0x2b8/0x480
+ [...]
+
+[2]
+Unable to handle kernel paging request at virtual address 393837363534333a
+Oops [#1]
+CPU: 72 PID: 0 Comm: swapper/72 Tainted: G        W          6.6.0
+Trace:
+ walk_stackframe+0x0/0x190
+ show_stack+0x70/0x94
+ die+0x1d4/0x350
+ do_page_fault+0x630/0x690
+ entMM+0x120/0x130
+ napi_pp_put_page+0x30/0x160
+ skb_release_data+0x164/0x250
+ kfree_skb_list_reason+0xd0/0x2f0
+ skb_release_data+0x1f0/0x250
+ napi_consume_skb+0xa0/0x220
+ net_rx_action+0x158/0x340
+ __do_softirq+0x2b8/0x480
+ irq_exit+0xd4/0x120
+ do_entInt+0x164/0x520
+ entInt+0x114/0x120
+ [...]
+
+Fixes: 069d11465a80 ("net/mlx5e: RX, Enhance legacy Receive Queue memory scheme")
+Signed-off-by: Mingrui Cui <mingruic@outlook.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+---
+Changes in v3:
+  - Add a warning for page sizes above 8K as suggested.
+
+Changes in v2:
+  - Add Fixes tag and more details to commit message.
+  - Target 'net' branch.
+  - Remove the obsolete WARN_ON() and update related comments.
+Link to v2: https://lore.kernel.org/all/MN6PR16MB5450C5EC9A1B2E2E78E8B241B71AA@MN6PR16MB5450.namprd16.prod.outlook.com/
+
+ .../net/ethernet/mellanox/mlx5/core/en/params.c  | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+index c9bdee9a8b30..87b262299ef9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+@@ -668,7 +668,7 @@ static void mlx5e_rx_compute_wqe_bulk_params(struct mlx5e_params *params,
+ 	info->refill_unit = DIV_ROUND_UP(info->wqe_bulk, split_factor);
+ }
+ 
+-#define DEFAULT_FRAG_SIZE (2048)
++#define DEFAULT_FRAG_SIZE (PAGE_SIZE / 2)
+ 
+ static int mlx5e_build_rq_frags_info(struct mlx5_core_dev *mdev,
+ 				     struct mlx5e_params *params,
+@@ -758,18 +758,16 @@ static int mlx5e_build_rq_frags_info(struct mlx5_core_dev *mdev,
+ 		/* No WQE can start in the middle of a page. */
+ 		info->wqe_index_mask = 0;
+ 	} else {
+-		/* PAGE_SIZEs starting from 8192 don't use 2K-sized fragments,
+-		 * because there would be more than MLX5E_MAX_RX_FRAGS of them.
+-		 */
+-		WARN_ON(PAGE_SIZE != 2 * DEFAULT_FRAG_SIZE);
++		/* PAGE_SIZEs above 8192 normally use linear SKBs. */
++		WARN_ON(PAGE_SIZE > 8192);
+ 
+ 		/* Odd number of fragments allows to pack the last fragment of
+ 		 * the previous WQE and the first fragment of the next WQE into
+ 		 * the same page.
+-		 * As long as DEFAULT_FRAG_SIZE is 2048, and MLX5E_MAX_RX_FRAGS
+-		 * is 4, the last fragment can be bigger than the rest only if
+-		 * it's the fourth one, so WQEs consisting of 3 fragments will
+-		 * always share a page.
++		 * As long as DEFAULT_FRAG_SIZE is (PAGE_SIZE / 2), and
++		 * MLX5E_MAX_RX_FRAGS is 4, the last fragment can be bigger than
++		 * the rest only if it's the fourth one, so WQEs consisting of 3
++		 * fragments will always share a page.
+ 		 * When a page is shared, WQE bulk size is 2, otherwise just 1.
+ 		 */
+ 		info->wqe_index_mask = info->num_frags % 2;
+-- 
+2.43.0
+
 
