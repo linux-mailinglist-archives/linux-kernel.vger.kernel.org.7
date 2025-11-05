@@ -1,102 +1,185 @@
-Return-Path: <linux-kernel+bounces-886755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BA3C3678F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:50:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C99C365B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85EF6504FB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:35:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F34434F158
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD9231DDBB;
-	Wed,  5 Nov 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8167C330B08;
+	Wed,  5 Nov 2025 15:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="N7zI6v9i"
-Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kJJvQMKS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45718313E2F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B66332ED59;
+	Wed,  5 Nov 2025 15:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356920; cv=none; b=AiabKTRnGRJ+EdAdmmXR6P6+MZcNkx4LYw53KLyOaZrg/CC9mhbPirI2BKUYWpRZntJ5Um+tE9PVLuV0bcSM2sAabryePCCTCCHzPPBhGRQLGB9baXJ7Wo5aPsA7tuNvAauIntMOJKq67RX31ZBObXhbKhaDhGafjBwwm5YvnHs=
+	t=1762356924; cv=none; b=KbbpuKd84dsh2rjhprRKKcc0IIFyAEFIjQShN5TI+GNyt5t07hdqIJt2Otwrt7M602Ko/Ir9fWhnqi4Gco0wC90YUfpIkRQIoEQWvPhweHfA2UashBlqEio1r9X6HcUDS3CpQXVA/QmmTOpXjzIXHbLnv/nUg7e54IkqTxCgrKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356920; c=relaxed/simple;
-	bh=gY7n199etOHJ/OagGCxib7w94cbLdvhCZdbUdbxE+dw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pSgLb876SGc3BcVXVAiaNO3/4y3RYe/+UNt1viiO8couYYcciTE6aS5jAP0gsoZIDRovArj7KrioAvwaeS1wF2beXiJWtSQGFRXDGg3L4ovjgvIsfdbyrF0DWRPfCP6LAer3OAdGRv2dyLQQR6y5faKoE/U+xO8FCH4r7OSy6lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=N7zI6v9i; arc=none smtp.client-ip=3.72.182.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762356918; x=1793892918;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gY7n199etOHJ/OagGCxib7w94cbLdvhCZdbUdbxE+dw=;
-  b=N7zI6v9ij+V0CfEyaoj01+sAFhz3EQAukP1EH/TcnFbL7mRcMYuwLNDT
-   otli4842GU5W2AuBy4W3bypZ00utvVSQvSd8d8QgRUmSJrlfmjg/aS0Pd
-   Nw1s4qQpxwwqNB9PNwRb7pHHwEi5iR6CRPFZofol6aBb4Rbr4R6RwZbqH
-   NCkhEwMMySRnyW98bKkwH1Rxt+wXqC33UcG7YnmTDC98O+AB26+aydx5m
-   kxcX88pCAyfcsLNE0Oa8wu8447iILA96A9LUcM0P/WQjnCz1ciGmnTV0E
-   SVhup767HtZJM/aN0W2q9PTBMtfsgZLQJ+tvoZ9T9ccewDtos5ET3Q7dt
-   g==;
-X-CSE-ConnectionGUID: iRGkhXGKRn6QHYBkgUvCxw==
-X-CSE-MsgGUID: CRiqYTxxRzymQ5Hb10gNdA==
-X-IronPort-AV: E=Sophos;i="6.19,282,1754956800"; 
-   d="scan'208";a="4727003"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 15:35:00 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:9792]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.45.127:2525] with esmtp (Farcaster)
- id 4eab9f8a-1a6d-4964-918d-5e0a7635a456; Wed, 5 Nov 2025 15:35:00 +0000 (UTC)
-X-Farcaster-Flow-ID: 4eab9f8a-1a6d-4964-918d-5e0a7635a456
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 15:34:59 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.220) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 15:34:52 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>,
-	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
-	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
-Subject: Re: [PATCH 4/4] sched/fair: Add more core cookie check in wake up
-Date: Wed, 5 Nov 2025 17:34:21 +0200
-Message-ID: <20251105153423.479687-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <dc37d8bd-66c4-439e-afb3-e01670f3e08c@amd.com>
-References: <cover.1758543008.git.sieberf@amazon.com> <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com> <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com> <20250923093001.1218488-1-sieberf@amazon.com> <dc37d8bd-66c4-439e-afb3-e01670f3e08c@amd.com>
+	s=arc-20240116; t=1762356924; c=relaxed/simple;
+	bh=GAY674z3y8mSrBwlMlG7DIFjeFbna0LxeOPt6MO26Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQw4mIY1UufyptZHmnfMSA+EV5esRdMantG3Rx9WMkxeVMdxGjHNKj6C58lXDalc4JsaydT2XryfSMkwM278nbiX7vVtL1oUhCT7ExfgcbPpTI2Zny7aDS+ik8eE+b/DwD71LffBV5vNyohCd3Uf3yEuKnd6JSuErJUtrAwUH9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kJJvQMKS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A57hVAj007179;
+	Wed, 5 Nov 2025 15:34:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mBCDjF
+	CtIralqPbaobJr9w45EqrrTPgVKXorpBh75DA=; b=kJJvQMKSobCn/AX0FM8hiu
+	lAg3CQC5+pPaGaYOYIf58zJOni1GZeBU5r+Ebpnwm1cT0Y2oN+LZHcCV1AQGy5ib
+	qF0K8CkDnXRO3u+NJ6fCUcRwPNyXTzebzR/1kBMjNE2Du5ppzZk6r0ed08NSlok4
+	BG42+N57/9Pz/7iG3qodXH/AVEVRn1lt7Wp+xfxzW8Mc8+KJtePmcayAgc/3sXkU
+	bEde9/gBVgl3qsanMHgkoEtEGfkLfYWvSabDJoCV796DtA5RfDDhBuG1gLBp65Hj
+	5kCUO4tHPdGz34RItxvzgRYx4bF2NhlaTB9c8EYikfmlyWRKpxX9/Grx/RPi1bBg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mr9vpe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 15:34:36 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A5FQeET022630;
+	Wed, 5 Nov 2025 15:34:35 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mr9vpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 15:34:35 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5ChDTP021482;
+	Wed, 5 Nov 2025 15:34:34 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrjrkr3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 15:34:34 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5FYURj53674336
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 15:34:30 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A883920040;
+	Wed,  5 Nov 2025 15:34:30 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 13AF62004B;
+	Wed,  5 Nov 2025 15:34:29 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  5 Nov 2025 15:34:28 +0000 (GMT)
+Date: Wed, 5 Nov 2025 16:34:26 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Shuah Khan <shuah@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+        Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v4 24/35] vdso/datastore: Allocate data pages dynamically
+Message-ID: <20251105153426.16228C13-hca@linux.ibm.com>
+References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
+ <20251014-vdso-sparc64-generic-2-v4-24-e0607bf49dea@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D044UWB001.ant.amazon.com (10.13.139.171) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014-vdso-sparc64-generic-2-v4-24-e0607bf49dea@linutronix.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GGdzfD5G3hQ68-39VW7GakGxAH7MovxB
+X-Authority-Analysis: v=2.4 cv=MKhtWcZl c=1 sm=1 tr=0 ts=690b6e8c cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=ebG-ZW-8AAAA:8 a=e1b3s80Sx_c-5AZqzBwA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=Bj2TwAA_C77lQ_X2_dkp:22 a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-ORIG-GUID: FA8Qn-I58re3Fj-7DCZVJVXwZ4DiaPYs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwMSBTYWx0ZWRfX79q+aRjocr8A
+ WsJicIkrDzeZowDTKWdSRpdbbSTYSdnAKh3ClmRCNP0S8je+b6bwR4QAObGY+JaivfKMlj2hBVw
+ KLzTBb1GVj2u/8kaK8wfeBTBcwczqZx2uJUW94XwBBfiT1PIHgcud1V1IaGBQ7/80r1+m5QVf5y
+ 2MAbdeeWJFA/uN5CkUVEPIEOGTIF7nMUT8yZgz8qLQcWjKcDN5xrV+ylstwr289JOHk8UDvW+If
+ ZS0Vh+xa015UpwIHMHQi/pVyWTfCCQ7nEswkEgkvxtiBx1AXWt5u1z1b8gL7A+PMKBFcztnM0NI
+ NBBPJSUKiH3NfGjyVbk1no9yQUjK4mCZusqZxNsqflVQ6b/X2GCXdlXaNPmhI6deTnzJKGTxcvZ
+ 8le1/uj5xZfo4KJOYkdyfW8kJi0g6w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010001
 
-Hi Prateek,
+On Tue, Oct 14, 2025 at 08:49:10AM +0200, Thomas Weiﬂschuh wrote:
+> Allocating the datapages as part of the kernel image does not work on
+> SPARC. It is also problematic with regards to dcache aliasing as there is
+> no guarantee that the virtual addresses used by the kernel are compatible
+> with those used by userspace.
+> 
+> Allocate the data pages through the page allocator instead.
+> Unused pages in the vDSO VMA are still allocated to keep the virtual
+> addresses aligned.
+> 
+> These pages are used by both the timekeeping, random pool and architecture
+> initialization code. Introduce a new early initialization step, to make
+> sure they are available when needed.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Tested-by: Andreas Larsson <andreas@gaisler.com>
+> Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+> ---
+>  include/linux/vdso_datastore.h |  6 ++++++
+>  init/main.c                    |  2 ++
+>  lib/vdso/datastore.c           | 44 ++++++++++++++++++++++--------------------
+>  3 files changed, 31 insertions(+), 21 deletions(-)
 
-For now, I've extracted the core cookie match as standalone commit:
-https://lore.kernel.org/lkml/20251105152538.470586-1-sieberf@amazon.com/
+...
 
---Fernand
+> +void __init vdso_setup_data_pages(void)
+> +{
+> +	unsigned int order = get_order(VDSO_NR_PAGES * PAGE_SIZE);
+> +	struct folio *folio = folio_alloc(GFP_KERNEL, order);
 
+I'm seeing random hangs on s390 too with our CI, but unfortunately I cannot
+reproduce it manually. But looking at one of the dumps it looks to me like the
+vdso time page contains (more or less) random junk at the end. Or in other
+words, shouldn't this be:
 
+	struct folio *folio = folio_alloc(GFP_KERNEL | __GFP_ZERO, order);
 
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
-
+? At least that is a difference to before as far as I can tell.
 
