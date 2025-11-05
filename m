@@ -1,303 +1,295 @@
-Return-Path: <linux-kernel+bounces-885892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DEBC342EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:14:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F127C342F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EE23B5174
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9355618C43F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E762D0C8F;
-	Wed,  5 Nov 2025 07:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66262D322E;
+	Wed,  5 Nov 2025 07:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L4fBQDXj";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqrwOTD7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G8dt1cMj"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A122D1916
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4562D23BF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762326724; cv=none; b=jKtpgVnN53ogPSDIkUzs5PFj9fOYzixf6BZdzc2fAV/FOt6DmtZhu9DUeYWLfF2/mXQNweZXuOgkOVAlAv6j5Zmkct7UP919OmI0zd5bp77pclSgAdVe2BIAM9Hm8QUJ5lMrHRpB5nyIqS12dCwlAnA/GN9YjGPPqT0r4rb8Tvg=
+	t=1762326853; cv=none; b=qonS1mEZw18sWehE5iIlyhRed9KZ7rhN4fIqZ2oPmmdUnroYO37Agg0S3ei/ev/k8uT+iVuJraWUl7LlIG2bntDPl7Syl6s3iFrd1dC9VFgDtc5xDWwtYQjSYHDPh7thrtr7wCa8B4vIDQnK0t7v+X+MKen3gMumA1MVFYbTcwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762326724; c=relaxed/simple;
-	bh=9YVR2xg15jieWFBv7AAqGNPRtvxnHox4sbmbvg2DSuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dgh3HzoTq7jmSoNSTHAsT1w9nY0no5jcy5vKPzsoTm5EJQJLwbIeB5z0jsFdRQIhTK18wU481I4KBJGVs6JPaV4qXgH4OXYB8YI21o4cdp3QWuJ4NUtfim/Fd/Ywk7dJ1Wl7DgvVkBpbXLYS1TMbOOVqdDeVIrEDc/oJEe0zUd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L4fBQDXj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqrwOTD7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762326721;
+	s=arc-20240116; t=1762326853; c=relaxed/simple;
+	bh=7lWv1Lbyp1KL6LhHGzX+dIbc3TmF9sT/YjApLREzoDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OUZ+3zK7vf5W9Jyh1RbA7nZt66bKWiuL61nWaWFlfjhkGl0NGvqLquMoIu0aFhY+yOg35fbL9sIdwRXLA33Bl7IlvZzxSUWlNQAFBGrwpEshrmvUEFUOIXhqVRBvxg9xYxazRYybB1YCSsfV6Tlvau3GJA2mT7+1i0K+MfzVWRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G8dt1cMj; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762326838;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MqWY44d/tVtHF8a9wKXOXU6HsIiX0a4zma7xC+DjpJs=;
-	b=L4fBQDXjcPLyOvd2VT/7IGTTSACD+Ga6r6LVc6mDKmnVQCnG5p9CpMujfZGXyvkX3ZHiTM
-	7Ief6u025I1AH/UOTMFPyfvx9PAe5TSVb1rqsyeOjqkG/xNCloGdkAX8Bfn3Zg1R01vW4h
-	HTDzXxWFesBgLFpYfaj7lEgGbPbioY0=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-bvOHOzhbPaaZIWoGKiI2AQ-1; Wed, 05 Nov 2025 02:11:59 -0500
-X-MC-Unique: bvOHOzhbPaaZIWoGKiI2AQ-1
-X-Mimecast-MFC-AGG-ID: bvOHOzhbPaaZIWoGKiI2AQ_1762326719
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b6ce25bea3eso6171714a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762326719; x=1762931519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MqWY44d/tVtHF8a9wKXOXU6HsIiX0a4zma7xC+DjpJs=;
-        b=RqrwOTD7CGGVuZMNWT1trDhEmjhJvYTtjfFsjUxFlAp3f0sAC/xUoM4D2ByiTCnfyG
-         f1QlX21qVE1t+RbngfFeZQvqhcCig6b+iXVFJpE8ZvKRTlOJQIeNLgPooKUq67Kl8VkM
-         ZvQVpXA5SRKlJIdG2Kx0cAnkMlm5qhmCuRFNi9AkG8yI15GoI8AfIpckbJvIYrMTsQGg
-         hvZ4GZCG2GyXeBG1w6e/YZH9MY0k3KHIMqieTv6gCdGC0mgwoQfJZ6ohc2RmmTX93vNg
-         +/yzfmG35y8XOkWHs+8UHwTfoYKavGs5T16LvAB9vAM/QZcg6QbztvJ/0RQB9b42o+Qw
-         fGOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762326719; x=1762931519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MqWY44d/tVtHF8a9wKXOXU6HsIiX0a4zma7xC+DjpJs=;
-        b=PFY9YIj/3yvZkwq1v9jZlJj29dLo8zlRwN77ZOQZnVSNMnnJlL60M6PQJcJyr3lR6r
-         harfb6StyOB2BhdEbLW/K/zZ52yea2Egnno+cJJcVVkOhpr+hylZhkbRxsl5zV3A2/mF
-         pVhRRYqfZYiHm8arC+xqnNRIHU8wEsTFX11PSzwYTlW3hcg6xautNKF4QixHqEiv4rty
-         LJo1BvHPDiftybE5kA6NGy6YdExvD2Kb5CJCC4AWG56v1VuRQOFCOnEC7JkYERonIE0K
-         vhxAs/Z3DCRZOr+l+rn0OD1sfhyMxVw3k/DTKcsJQiyvRQYvMxcxLpZHnYrVO2+74FWD
-         qJvA==
-X-Gm-Message-State: AOJu0YxK230z6+ec+taXR8HZWyB69Ryuq5qpzKGkCS0L4h8e92zcScLf
-	dgByel8uJtSE75aclb/PeskraB7QupXIEylrH5eVnCCwGL5c1kba5Sr4cHP2a/cpGvl/O9MaCHp
-	sOlzcu7zvhVqnvzvTIfK1TIZDIVqNvHyqHI82ULTM+UXtc/ckPlCO86gEd7sKtygDCZ/Nf2Bxyy
-	kyXQIIwdgx/tJagqdxK/sc8EqdHAc0VTLgfmaEqszk
-X-Gm-Gg: ASbGncsjm3EHjPXCIjNHXeu1022Ugcun1pT03zvzDhurxwxAvb+00wh3c3Q1hgumFJV
-	jzb+V7nIgU8k5MS4bMvahE3I7UuzimFnbZ8SkCOM97GbpxAmJOcWcKqBk5lU5gEiB39ry0HnSkL
-	/FU5Xu17qzt3253DVYzHbI5UtxyPzW2SBvWmnMYqLCxHNI7pKB8iwkEqpJ
-X-Received: by 2002:a05:6300:6a0d:b0:34f:c83b:b3ea with SMTP id adf61e73a8af0-34fc83bbb44mr1329609637.18.1762326718555;
-        Tue, 04 Nov 2025 23:11:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF++biCJTOk6UG9a+n/zjnVMPbzdi/vZ0rWWtLLDLagx3HGwaYaeAqOPx45pqAJew1Uc67DsPx4RM9059DYF0Y=
-X-Received: by 2002:a05:6300:6a0d:b0:34f:c83b:b3ea with SMTP id
- adf61e73a8af0-34fc83bbb44mr1329591637.18.1762326718188; Tue, 04 Nov 2025
- 23:11:58 -0800 (PST)
+	bh=NfK/agWz/0WkcTINCFySDbMfKDM1u8l6Zttpn4bCw/c=;
+	b=G8dt1cMj9yQ0VdniTzxzBnpH0c0iYXvq2nqFWGjbWP9PZh7a5xW564NdFfkBuR7OJmgM1O
+	rIhNwaguElgYYk5yXJ09ajYWNq2IbEMyj9qk+15h9rBmG+BAtoPOW+/meJjiWpdf/7KFQd
+	go7BXb2SLpbbglhz+ciqHe8HI0JzaIk=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, peterz@infradead.org
+Cc: Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ David Ahern <dsahern@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev,
+ bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
+Date: Wed, 05 Nov 2025 15:13:42 +0800
+Message-ID: <4465519.ejJDZkT8p0@7950hx>
+In-Reply-To:
+ <CAADnVQKQXcUxjJ2uYNu1nvhFYt=KhN8QYAiGXrt_YwUsjMFOuA@mail.gmail.com>
+References:
+ <20251104104913.689439-1-dongml2@chinatelecom.cn> <5029485.GXAFRqVoOG@7950hx>
+ <CAADnVQKQXcUxjJ2uYNu1nvhFYt=KhN8QYAiGXrt_YwUsjMFOuA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028034357.11055-1-piliu@redhat.com> <20251028034357.11055-2-piliu@redhat.com>
- <f50cd9b8-684c-4f62-a67e-3cde74d1d324@huaweicloud.com>
-In-Reply-To: <f50cd9b8-684c-4f62-a67e-3cde74d1d324@huaweicloud.com>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Wed, 5 Nov 2025 15:11:46 +0800
-X-Gm-Features: AWmQ_bla7QzFIqgjKHbFmZnpT29S2vwo0B6GiXswMHGbUvJg3jglSBkiOYj4SDU
-Message-ID: <CAF+s44QmUOUeJyuqZuYH_TmYoG9p_OLpm_wUHzyasBOuPnPatw@mail.gmail.com>
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 5, 2025 at 10:24=E2=80=AFAM Chen Ridong <chenridong@huaweicloud=
-.com> wrote:
->
->
->
-> On 2025/10/28 11:43, Pingfan Liu wrote:
-> > *** Bug description ***
-> > When testing kexec-reboot on a 144 cpus machine with
-> > isolcpus=3Dmanaged_irq,domain,1-71,73-143 in kernel command line, I
-> > encounter the following bug:
+On 2025/11/5 10:12, Alexei Starovoitov wrote:
+> On Tue, Nov 4, 2025 at 5:30=E2=80=AFPM Menglong Dong <menglong.dong@linux=
+=2Edev> wrote:
 > >
-> > [   97.114759] psci: CPU142 killed (polled 0 ms)
-> > [   97.333236] Failed to offline CPU143 - error=3D-16
-> > [   97.333246] ------------[ cut here ]------------
-> > [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> > [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> > [...]
+> > On 2025/11/5 02:56, Alexei Starovoitov wrote:
+> > > On Tue, Nov 4, 2025 at 2:49=E2=80=AFAM Menglong Dong <menglong8.dong@=
+gmail.com> wrote:
+> > > >
+> > > > In origin call case, we skip the "rip" directly before we return, w=
+hich
+> > > > break the RSB, as we have twice "call", but only once "ret".
+> > >
+> > > RSB meaning return stack buffer?
+> > >
+> > > and by "breaks RSB" you mean it makes the cpu less efficient?
 > >
-> > In essence, the issue originates from the CPU hot-removal process, not
-> > limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
-> > program that waits indefinitely on a semaphore, spawning multiple
-> > instances to ensure some run on CPU 72, and then offlining CPUs 1=E2=80=
-=93143
-> > one by one. When attempting this, CPU 143 failed to go offline.
-> >   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devi=
-ces/system/cpu/cpu$i/online 2>/dev/null; done'
-> >
-> > `
-> > *** Issue ***
-> > Tracking down this issue, I found that dl_bw_deactivate() returned
-> > -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> > But that is not the fact, and contributed by the following factors:
-> > When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
-> > blocked-state deadline task (in this case, "cppc_fie"), it was not
-> > migrated to CPU0, and its task_rq() information is stale. So its rq->rd
-> > points to def_root_domain instead of the one shared with CPU0.  As a
-> > result, its bandwidth is wrongly accounted into a wrong root domain
-> > during domain rebuild.
-> >
-> > The key point is that root_domain is only tracked through active rq->rd=
-.
-> > To avoid using a global data structure to track all root_domains in the
-> > system, there should be a method to locate an active CPU within the
-> > corresponding root_domain.
-> >
-> > *** Solution ***
-> > To locate the active cpu, the following rules for deadline
-> > sub-system is useful
-> >   -1.any cpu belongs to a unique root domain at a given time
-> >   -2.DL bandwidth checker ensures that the root domain has active cpus.
-> >
-> > Now, let's examine the blocked-state task P.
-> > If P is attached to a cpuset that is a partition root, it is
-> > straightforward to find an active CPU.
-> > If P is attached to a cpuset that has changed from 'root' to 'member',
-> > the active CPUs are grouped into the parent root domain. Naturally, the
-> > CPUs' capacity and reserved DL bandwidth are taken into account in the
-> > ancestor root domain. (In practice, it may be unsafe to attach P to an
-> > arbitrary root domain, since that domain may lack sufficient DL
-> > bandwidth for P.) Again, it is straightforward to find an active CPU in
-> > the ancestor root domain.
-> >
-> > This patch groups CPUs into isolated and housekeeping sets. For the
-> > housekeeping group, it walks up the cpuset hierarchy to find active CPU=
-s
-> > in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> >
-> > Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: "Michal Koutn=C3=BD" <mkoutny@suse.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > Cc: Pierre Gondois <pierre.gondois@arm.com>
-> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> > Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Ben Segall <bsegall@google.com>
-> > Cc: Mel Gorman <mgorman@suse.de>
-> > Cc: Valentin Schneider <vschneid@redhat.com>
-> > To: cgroups@vger.kernel.org
-> > To: linux-kernel@vger.kernel.org
-> > ---
-> > v3 -> v4:
-> > rename function with cpuset_ prefix
-> > improve commit log
-> >
-> >  include/linux/cpuset.h  | 18 ++++++++++++++++++
-> >  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
-> >  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
-> >  3 files changed, 68 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> > index 2ddb256187b51..d4da93e51b37b 100644
-> > --- a/include/linux/cpuset.h
-> > +++ b/include/linux/cpuset.h
-> > @@ -12,6 +12,7 @@
-> >  #include <linux/sched.h>
-> >  #include <linux/sched/topology.h>
-> >  #include <linux/sched/task.h>
-> > +#include <linux/sched/housekeeping.h>
-> >  #include <linux/cpumask.h>
-> >  #include <linux/nodemask.h>
-> >  #include <linux/mm.h>
-> > @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
-> >
-> >  extern void cpuset_print_current_mems_allowed(void);
-> >  extern void cpuset_reset_sched_domains(void);
-> > +extern void cpuset_get_task_effective_cpus(struct task_struct *p, stru=
-ct cpumask *cpus);
-> >
-> >  /*
-> >   * read_mems_allowed_begin is required when making decisions involving
-> > @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void=
-)
-> >       partition_sched_domains(1, NULL, NULL);
-> >  }
-> >
-> > +static inline void cpuset_get_task_effective_cpus(struct task_struct *=
-p,
-> > +             struct cpumask *cpus)
-> > +{
-> > +     const struct cpumask *hk_msk;
-> > +
-> > +     hk_msk =3D housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > +     if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > +             if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> > +                     /* isolated cpus belong to a root domain */
-> > +                     cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > +                     return;
-> > +             }
-> > +     }
-> > +     cpumask_and(cpus, cpu_active_mask, hk_msk);
-> > +}
-> > +
-> >  static inline void cpuset_print_current_mems_allowed(void)
-> >  {
-> >  }
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 27adb04df675d..6ad88018f1a4e 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
-> >       mutex_unlock(&cpuset_mutex);
-> >  }
-> >
-> > +/* caller hold RCU read lock */
-> > +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpum=
-ask *cpus)
-> > +{
-> > +     const struct cpumask *hk_msk;
-> > +     struct cpuset *cs;
-> > +
-> > +     hk_msk =3D housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > +     if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > +             if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> > +                     /* isolated cpus belong to a root domain */
-> > +                     cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > +                     return;
-> > +             }
-> > +     }
-> > +     /* In HK_TYPE_DOMAIN, cpuset can be applied */
-> > +     cs =3D task_cs(p);
-> > +     while (cs !=3D &top_cpuset) {
-> > +             if (is_sched_load_balance(cs))
-> > +                     break;
-> > +             cs =3D parent_cs(cs);
-> > +     }
-> > +
-> > +     /* For top_cpuset, its effective_cpus does not exclude isolated c=
-pu */
-> > +     cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> > +}
-> > +
->
-> It seems cpuset_cpus_allowed functions is enough for you, no new function=
-s need to be introduced.
->
+> > Yeah, I mean it makes the cpu less efficient. The RSB is used
+> > for the branch predicting, and it will push the "rip" to its hardware
+> > stack on "call", and pop it from the stack on "ret". In the origin
+> > call case, there are twice "call" but once "ret", will break its
+> > balance.
+>=20
+> Yes. I'm aware, but your "mov [rbp + 8], rax" screws it up as well,
+> since RSB has to be updated/invalidated by this store.
+> The behavior depends on the microarchitecture, of course.
+> I think:
+> add rsp, 8
+> ret
+> will only screw up the return prediction, but won't invalidate RSB.
+>=20
+> > Similar things happen in "return_to_handler" in ftrace_64.S,
+> > which has once "call", but twice "ret". And it pretend a "call"
+> > to make it balance.
+>=20
+> This makes more sense to me. Let's try that approach instead
+> of messing with the return address on stack?
 
-Ah! Yes, it is good enough.
+The way here is similar to the "return_to_handler". For the ftrace,
+the origin stack before the "ret" of the traced function is:
 
-Best Regards,
+    POS:
+    rip   ---> return_to_handler
 
-Pingfan
+And the exit of the traced function will jump to return_to_handler.
+In return_to_handler, it will query the real "rip" of the traced function
+and the it call a internal function:
+
+    call .Ldo_rop
+
+And the stack now is:
+
+    POS:
+    rip   ----> the address after "call .Ldo_rop", which is a "int3"
+
+in the .Ldo_rop, it will modify the rip to the real rip to make
+it like this:
+
+    POS:
+    rip   ---> real rip
+
+And it return. Take the target function "foo" for example, the logic
+of it is:
+
+    call foo -> call ftrace_caller -> return ftrace_caller ->
+    return return_to_handler -> call Ldo_rop -> return foo
+
+As you can see, the call and return address for ".Ldo_rop" is
+also messed up. So I think it works here too. Compared with
+a messed "return address", a missed return maybe have
+better influence?
+
+And the whole logic for us is:
+
+    call foo -> call trampoline -> call origin ->
+    return origin -> return POS -> return foo
+
+=46ollowing is the partial code of return_to_handler:
+
+	/*
+	 * Jump back to the old return address. This cannot be JMP_NOSPEC rdi
+	 * since IBT would demand that contain ENDBR, which simply isn't so for
+	 * return addresses. Use a retpoline here to keep the RSB balanced.
+	 */
+	ANNOTATE_INTRA_FUNCTION_CALL
+	call .Ldo_rop
+	int3
+=2ELdo_rop:
+	mov %rdi, (%rsp)
+	ALTERNATIVE __stringify(RET), \
+		    __stringify(ANNOTATE_UNRET_SAFE; ret; int3), \
+		    X86_FEATURE_CALL_DEPTH
+
+>=20
+> > I were wandering why the overhead of fexit is much higher
+> > than fentry. I added the percup-ref-get-and-put stuff to the
+> > fentry, and the performance of it still can be 130M/s. However,
+> > the fexit only has 76M/s. And the only difference is the origin
+> > call.
+> >
+> > The RSB balancing mitigate it, but there are still gap. I
+> > suspect it's still the branch predicting things.
+>=20
+> If you have access to intel vtune profiler, check what is
+
+Let me have a study on the "intel vtune profiler" stuff :)
+
+I did a perf stat, and the branch miss increase seriously,
+and the IPC(insn per cycle) decrease seriously.
+
+> actually happening. It can show micro arch details.
+> I don't think there is an open source alternative.
+>=20
+> > > Or you mean call depth accounting that is done in sw ?
+> > >
+> > > > Do the RSB balance by pseudo a "ret". Instead of skipping the "rip"=
+, we
+> > > > modify it to the address of a "ret" insn that we generate.
+> > > >
+> > > > The performance of "fexit" increases from 76M/s to 84M/s. Before th=
+is
+> > > > optimize, the bench resulting of fexit is:
+> > > >
+> > > > fexit          :   76.494 =C2=B1 0.216M/s
+> > > > fexit          :   76.319 =C2=B1 0.097M/s
+> > > > fexit          :   70.680 =C2=B1 0.060M/s
+> > > > fexit          :   75.509 =C2=B1 0.039M/s
+> > > > fexit          :   76.392 =C2=B1 0.049M/s
+> > > >
+> > > > After this optimize:
+> > > >
+> > > > fexit          :   86.023 =C2=B1 0.518M/s
+> > > > fexit          :   83.388 =C2=B1 0.021M/s
+> > > > fexit          :   85.146 =C2=B1 0.058M/s
+> > > > fexit          :   85.646 =C2=B1 0.136M/s
+> > > > fexit          :   84.040 =C2=B1 0.045M/s
+> > >
+> > > This is with or without calldepth accounting?
+> >
+> > The CONFIG_MITIGATION_CALL_DEPTH_TRACKING is enabled, but
+> > I did the testing with "mitigations=3Doff" in the cmdline, so I guess
+> > "without"?
+>=20
+> Pls benchmark both. It sounds like call_depth_tracking
+> miscounting stuff ?
+
+Sadly, the performance decrease from 28M/s to 26M/s with
+mitigation enabled. I think the addition "ret" increase the
+overhead with "return-thunks" enabled.
+
+Things is not as simple as I thought, let me do more testing,
+and see if ftrace has similar performance decreasing.
+
+Hi, @Peter. Do you have any advice on this ting?
+
+Thanks!
+Menglong Dong
+
+>=20
+> > >
+[......]
+> >                            const u32 imm32_hi, const u32 imm32_lo)
+> > {
+> >         u64 imm64 =3D ((u64)imm32_hi << 32) | (u32)imm32_lo;
+> >         u8 *prog =3D *pprog;
+> >
+> >         if (is_uimm32(imm64)) {
+> >                 /*
+> >                  * For emitting plain u32, where sign bit must not be
+> >                  * propagated LLVM tends to load imm64 over mov32
+> >                  * directly, so save couple of bytes by just doing
+> >                  * 'mov %eax, imm32' instead.
+> >                  */
+> >                 emit_mov_imm32(&prog, false, dst_reg, imm32_lo);
+> >         } else if (is_simm32(imm64)) {
+> >                 emit_mov_imm32(&prog, true, dst_reg, imm32_lo);
+> >         } else {
+> >                 /* movabsq rax, imm64 */
+> >                 EMIT2(add_1mod(0x48, dst_reg), add_1reg(0xB8, dst_reg));
+> >                 EMIT(imm32_lo, 4);
+> >                 EMIT(imm32_hi, 4);
+>=20
+> This part could be factored out as a separate helper.
+> Then sizeof(movabsq) will be constant.
+> Note, in the verifier we do:
+> #if defined(MODULES_VADDR)
+>                         u64 addr =3D MODULES_VADDR;
+> #else
+>                         u64 addr =3D VMALLOC_START;
+> #endif
+>                         /* jit (e.g. x86_64) may emit fewer instructions
+>                          * if it learns a u32 imm is the same as a u64 im=
+m.
+>                          * Set close enough to possible prog address.
+>                          */
+>                         insn[0].imm =3D (u32)addr;
+>                         insn[1].imm =3D addr >> 32;
+>=20
+> do mitigate this issue.
+> So you could have done:
+> emit_mov_imm64(&prog, BPF_REG_0, VMALLOC_START >> 32, 0);
+>=20
+> since 'ret_addr' math is incorrect at that point anyway.
+> But prog +=3D sizeof is imo cleaner.
+
+Great! This make things much more clear. After I figure out all
+the stuff, (which I'm not sure if I'm able), I'll do this way.
+
+Thanks!
+Menglong Dong
+
+> The whole thing might not be necessary with extra call approach.
+> I suspect it should be faster than this approach.
+>=20
+
+
+
 
 
