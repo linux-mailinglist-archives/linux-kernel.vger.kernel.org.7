@@ -1,197 +1,202 @@
-Return-Path: <linux-kernel+bounces-885719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59105C33C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:27:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB19C33C48
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193C618C538D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E6C5188C06F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2E822A4CC;
-	Wed,  5 Nov 2025 02:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABEF2236F2;
+	Wed,  5 Nov 2025 02:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p6085tZf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="YBITJ44g"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010015.outbound.protection.outlook.com [52.101.61.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1008F212548;
-	Wed,  5 Nov 2025 02:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309613; cv=none; b=ox1t8N9lW3rlFwpH2AwrNa6Oo6yJpblEo15CgUVK6A46w/wgZhMn4jaSSQ+Sg1Tt9UbyQ+6DbRN1YJe6BHW3XLWL7DHRA2iMLubhgRHJ604/5ZE8Tc3K8IOmWTbKCaVOBBNh1+b7GXV4LvjyWp7wEetYPqZ5z1uODiJQnj0BpnE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309613; c=relaxed/simple;
-	bh=cl329UhLvY1eUGySS9zOB0PA/vLb/1DVdgsoUdvcNMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qXVT1xUMqi3XgrNJubFyKzuM1F2BXq1PGjG7YTvsGAzR7t05DFgXjl8ZtCIHmLvwBtTPAu9sx54cZ7d86wUGPKLaxRlsoR9T6akOr/rXe+x1KhlzJeSFNyHzbzzImK6T1S0/I7LH8j7NU32cyG7mPo3rhZxUEPMWBYwdWIqGRcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p6085tZf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KfmEg2904307;
-	Wed, 5 Nov 2025 02:26:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IEY0M6R23/BS8mR0Tg9Y8Wdg6If3RyMSXoF8BV/dzbI=; b=p6085tZf75yOTwhI
-	4V++P+/mUvwomrZ8BdRjan5lqG+CyM839T/Gfe3GJFyliEUX9sumkIM+c/JLwwUX
-	Y0FsEqzhvrqIvU1peyrIqYcWNiHA0nVcDfzh313lCX/fh2Pd/k95GmVK0I+yZSO4
-	0VW4RH2JB1CLUBltL9D6WgyP9saWRo1TRxBPPI5Od1rqf6ixcjsdDzClRDGhyHFa
-	dyvvEcx7uw3WL3HMj5f701IQmbmQ01eBmX4jEBTDVPUmuO+dpowUGpRTFAOzkRN/
-	8nYp4uoj6wnVa9PlIlj/CuDpV81kwj35KIpZiJB0B+iVZa2azo1udRlbXqlXHbut
-	f1IGVA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7mbbsrre-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 02:26:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A52QZEV003415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Nov 2025 02:26:35 GMT
-Received: from [10.253.38.19] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 4 Nov
- 2025 18:26:32 -0800
-Message-ID: <e9facb3e-1f35-46e4-a1d4-a377ecdb6d4a@quicinc.com>
-Date: Wed, 5 Nov 2025 10:26:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B101F4188;
+	Wed,  5 Nov 2025 02:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762309695; cv=fail; b=Mhf7lTlzIBxqOTZsSFCaJbmWAvlicJGw9m+yVCIXBdEjiUq+6EYUEHMVqt7qj4P/mWLtpNJvhfXnUtlbDWH076hpY/5Xd0Ri5L784wOiLtCJ+RPUC7UcLo4tZQXdByNyvgUFN4wYaHWvGh9Go4geqPixcceLVBr32+fWqhxQwbQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762309695; c=relaxed/simple;
+	bh=K9zgo8W3FfBN/DeOM8CyFd2AdRNEdRP7yXVpxp2JL+A=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=LJm99qkxyn0hB84IHUh2RB2tctZ/2ZjRl1PIaYScF+qgsy9TxR4naduviiclsdqIR1mM9paC5tXS/zy+Raee9nOT85imj4NhwQn3MeD1aTzrfNSWctD7Vnk7vCEVC6sf7UcxBfZqfYDNiY71yryBo6/mxaJZAs5wXh9JfLuuYuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=YBITJ44g; arc=fail smtp.client-ip=52.101.61.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PHlW+od1git9PsIxG+Wt7ISa7LcQ5My2GJ5ICW5eoh4kl/6dbAtSdkVJlxBbCJyXCYQKJpFcqiGYR2nWgV7I1rzLQCs63DH8loyFSttrXW+0a/8H/3x75kqdsmh3vECOpGrV7xErgd0kjS5rfx703eW8QPmNIUNxONDfcgAU31mYdNCQF5Tcur+5huoWPb9zXljLxnSEY1Dh24rP/CZOfLW6mKSepGywECsseFI7xyHvOBkZOt2eioYBa2DljXypeK9ImNNEjJ6NKYvt1x7S2XGa/AUPCTzrGJkGdL4qezXKY88V4M125IqWwQGMOc1v3Wk+4tEoX56EoRVrN8wteQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OZlcIvo/5ZS4vFTJBD7eF4XAsAO2MpyYfkOv6VRBmFI=;
+ b=xNdTaRd5IiuioZ6UqCW2RQDZGk+nVhLqyupUDQ+mHxC5l8N4z/Ags+SKrbNbtIxdJ1OQ4Wv9tb3vai71bZE82dduTw4YCLp/sFcYoI12FNNQ1JwKjVk8HnBDlUykW1gr2MTQ2KHgHGbBLVSKbICb3MwFNTelYPbQeXpOZ41k4d2OWbFbOS1L4LbYILrlLa7ByCOuIMnZeYq6yymlAnLvF24iLFJd6ajKVIREq7J2eKIXiPS+nS2smX4SXhfhAB2d7aHLvDOV0Ew8uf99c/ZemOe6NTsCgw+GOG/ByZgLosJcrNcJVuxHWH9UGrvcYivcMIMnO1EtfA85oMCZNTNo1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OZlcIvo/5ZS4vFTJBD7eF4XAsAO2MpyYfkOv6VRBmFI=;
+ b=YBITJ44gouW2WCaBiTv45VfKOr8EfBWH0vulcxEI1wDMLeiMeYAvIzrpwty3SXf5VPAR6NrpYAL+zyk4nL2X5jJEkvcz50UcbAgnQn/GViRY69RZuRHtsvBWOtHhFJdFuqHs5Z+6D8EDFRc7o/FdXOx9A49uJsoUuKM3sAHOeKJ1sY+Qmc4JXtyiddLMqWfiWaYHUYubmrvcXHr9XHF8fycucFry4VKZBJQ3NgC0Gzp+xIBOMxTM8pb2NUINuSm1+aLMMWGp5xghU6iDojLjqGbj/vj5qpF99T2Qz6np62Qj7p4aEiknLDLTOCpNuHyWoYTpFeqIDhJ3WtN126kL4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by SA6PR03MB7997.namprd03.prod.outlook.com (2603:10b6:806:42b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Wed, 5 Nov
+ 2025 02:28:08 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9253.013; Wed, 5 Nov 2025
+ 02:28:08 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Dinh Nguyen <dinguyen@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mahesh Rao <mahesh.rao@altera.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>,
+	Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Subject: [PATCH v5 0/2] Enable Service layer driver for Agilex5
+Date: Wed,  5 Nov 2025 10:28:00 +0800
+Message-ID: <cover.1762308672.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.43.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0020.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::25) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Fix SSR unable to wake up bug
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
-        <quic_chezhou@quicinc.com>
-References: <20251104112601.2670019-1-quic_shuaz@quicinc.com>
- <0c54ccc4-0526-4d7a-9ce3-42dde5539c7b@molgen.mpg.de>
-Content-Language: en-US
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-In-Reply-To: <0c54ccc4-0526-4d7a-9ce3-42dde5539c7b@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Zk960QH5Zp8rsCGVjSXKMPswKoyO9AVG
-X-Proofpoint-GUID: Zk960QH5Zp8rsCGVjSXKMPswKoyO9AVG
-X-Authority-Analysis: v=2.4 cv=MK1tWcZl c=1 sm=1 tr=0 ts=690ab5dc cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=b0gxvoJzpcTEPALTQqYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxMyBTYWx0ZWRfXzWw4wTuVVJlF
- T3wHim4Z7bQaTuDTDJuEV8J9/guLy8aoR/ychn2995t/z+V24mI4+wyG2PgIJUsgM9jREQ/+PU8
- 0l+B1+C8CYgLOZBPs2N/sXkri+790MTSBnks2c+OuJiN2vpQcmZBrH1rBYz7H30tLgkczmY/uHj
- Qj1V3Ky8yaMsy/P2WNqFr9/ifbfBtkHsdikHYX81R2sSPlbfrIgiR1UnkivZqK913/lrIWbf2gS
- /PQMJLCYQsa0y9d/mewsSpCE4sDUulbmLyV7EN7Ay0IrlN7xt1zn4aqCFFQMRd2Y5C2UD9dsmAD
- 9XuBXjNGYKz2ajIMlNvpVGwFjuiFw0rTDXz9AqBfiPsj9t17L+3pVaFCfzEeSWysL724GP+Myws
- cMVMo6jHbncm7cFBCU7zeDgXorTQYQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 bulkscore=0 clxscore=1015 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511050013
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|SA6PR03MB7997:EE_
+X-MS-Office365-Filtering-Correlation-Id: ada927f2-b2e1-4189-cb84-08de1c12f53f
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h7LtO1BJnLuGJWC9lELk4QxbNUZQbmiqy3tQ/YqHqvRR75eJftNXdz4b/qEO?=
+ =?us-ascii?Q?MxJotHt0qfuhll8iKMdASNSMDsBDAt48BFmiQLVhiVaZYXiDXOoRxLPEigEp?=
+ =?us-ascii?Q?HrQgUZb2yBpNQ/UmsrqHZeQMmqQUIRS6CK3zXfQfF0jaoYUqB8rgiqMVpZMZ?=
+ =?us-ascii?Q?cHudzBFiv/6jUUdkTOqweDyBof2ZFfzho52AsLXPC3MBk42uEvk2O10ELNgF?=
+ =?us-ascii?Q?glZ+OK8I4P1Nb7st1Hcwox4ofuQEovmRp8SONMOoMbuTlVDXD7ERkLvSdwUh?=
+ =?us-ascii?Q?br6qOSlFzHG6OEoncpZln60rVSMBeevfsLyJ++Dwl58YC9EKyVyto2Wvp/E8?=
+ =?us-ascii?Q?aj61R8eQciI0KG7t1qFWQ2yXs1hVdu5tq3R2s0elMtfxiZDOx/wudtId4onB?=
+ =?us-ascii?Q?F0bHz9moyB53e6hWINCXI18ycGDlm61Zr3k2tbnwZr8gE0pqhbVkaZDUR8IB?=
+ =?us-ascii?Q?lZ0KJEcboELZAmj5KlXIMSCEa4DI10kzMtGh/i9hzs3KOLG42t7s+cF0HVQ2?=
+ =?us-ascii?Q?Ul6ualND7d8cTOUsGhMkp2X0y+8lxXIevQS5Wa9vmxfgpDw9RHruhsAWvu9v?=
+ =?us-ascii?Q?7dsSt41tcupua5rdQvV7DX1rYWVZqgQha6Pp15QTm/GfLeE9E3bjCchaboM7?=
+ =?us-ascii?Q?HlYHbetkttyaIYkUcKux6YjP3CKGOyZY0UrY9vImj9qkTfVjT/wlJ3qswLkg?=
+ =?us-ascii?Q?SpkuVXJlg7ki7MS1gxtmrCfLtNXt/ATLKB7VK86exGCICJmnSv+k7vQ1aEUr?=
+ =?us-ascii?Q?z/WLEQXKWLWZPLLmRWP5yQ+awkJ/j29quxMtI90nRemiFM8gpsR9eF2Mjm4+?=
+ =?us-ascii?Q?g8WgcQlBB5cuMHxeuXBbby0MFSF0V+QRQUesro6tJAMXLrQoCX5iqbDlRgYH?=
+ =?us-ascii?Q?RvEk7KzUB2jj0wMOvWuU3ZMss3HAMakOzR+bOnfFyMtNvghUUJLOmf5KnVRo?=
+ =?us-ascii?Q?j2UF/8yFJn7fTBQAhaCjZs13CqOXUx/XzSwiRGmB+GYZyTbo4VWu0ksGbzAL?=
+ =?us-ascii?Q?xIb0a6SB42uk5/Kds8x24kJe2Ahi0Jm9jyPS945JjdptbaHNUtB9o6Hh/RmA?=
+ =?us-ascii?Q?zuaW58x7dtAyFP9OSFwil3LtWQr2qt7BBej5GEiqEwgX+rsDhhPgghhjY5X7?=
+ =?us-ascii?Q?BljxGKmrK5CVGjItSOQhOqqvTVObSoiqQ6Q/98CkHlZ9mfkRUY95GIUpMD35?=
+ =?us-ascii?Q?ji/daWxm5SyKrLaLWWUyNLxozCBRsyB5NR/RLOjTdcYeXterufME76ZDTdgV?=
+ =?us-ascii?Q?8M2EzD8hmHcncnhoEyymrDKPc8pvhltOiES7zLR1Mi98hdM2+FTk45A5XISK?=
+ =?us-ascii?Q?s86XV8suVgqDIZfh3jjbsUjjw74X+VTAXgkd7w0BnigCXwGQr8fYFpqsubGf?=
+ =?us-ascii?Q?unkI3baPDSSCDUHkeHeEUogVKWH9i077gnkiWb8BEvmj2jIpR0xVPbfjjPu9?=
+ =?us-ascii?Q?mUHnu9rqD5DWStIr+pfP2bePy9lzO7QPuAOFQI/Kz2o+wKpZPQtStsdgwOrR?=
+ =?us-ascii?Q?hyANDJrn0bvGZyd5V3mHfbdY8ThfA1f6zfk9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Wa0kHboSjh3R242gBpATVtEwPj3Ch+hGh7+wfoZOUl1CVYMA/SDSEIWGzIeH?=
+ =?us-ascii?Q?yswoyQyLvvbQwWeNUwXdSC3Rtpy59G3VnsnZ0NHENEixYrQg5DfJZ0thVHwX?=
+ =?us-ascii?Q?hGaYIWCMji4OEfXiZvBt2AZvf5FWE60Oga7HWOTyYnv5jKp9OBa0pT2i2Tmx?=
+ =?us-ascii?Q?GNlYbBFNNpx8UdRsmFb9V/etIUCXfB0VQAHCxT/5wzdD1HEb4IMSZFBDC1fw?=
+ =?us-ascii?Q?LL+bgO36xr7JGDXTeqgPCBt3fta+2Y367ENpR+JyHbFlDt18F2Tz7pKMFlss?=
+ =?us-ascii?Q?sOMMVYlguBr7RovamB+1DflbUsx6IJhQtpYlpa9hx/N5kPMETy0fWuD6hVhY?=
+ =?us-ascii?Q?CxThBIAZ4lmoV6llcvKgN558/6dm2iWX08o74UgUiWfxqUKJ3e5REoaI46fw?=
+ =?us-ascii?Q?C8Jy9Da6do14qLsgnGGXmaP+w8HWhR2/f7YHvJiJfDN6Lj3NTxiZeV5eXjPy?=
+ =?us-ascii?Q?O2pqVojj+0+yiypX3nVSgGcri0nUEsOyDWSRTpx8YjRzuTQwf2Oi9WTdJRpL?=
+ =?us-ascii?Q?Vq5MbAYiQZbRxCOL0a6+095qHBQ7R4UKv3i/vyxzc14ykFwpziT+wVVV08MT?=
+ =?us-ascii?Q?6bxFgePIBeTfosuEGl7tqRIsvI3Pu/k3CAtXBVvRgq/h0RQBk6dl8Oot0yEL?=
+ =?us-ascii?Q?YApCMUz1UgzgfxvEeehwMKg58k9Hf5ojwBC5+sd2yLo2qf5Rr3lTOOZ79csY?=
+ =?us-ascii?Q?tQxQ/+4M+cpyl2zG6sQWIGFmS2IngCX/xs2IboxGJttentnJM61G9meuRphK?=
+ =?us-ascii?Q?4Ltvq2Y2uerFQ//TM47OO1DkcwSZZkGMgTnBZjVhlD6fAwY1RvHEviY+TRwn?=
+ =?us-ascii?Q?mbsnliHIdHcQsbS2In8s29UMKnRq+V/lYn8G9bOYwmVKvYlUUEx3PCHEboBA?=
+ =?us-ascii?Q?1wsOU3eCYEV2UIpBilnKXlCObif8hXickw6OtlXVFJWMEgx8/mvVB8f+ssmn?=
+ =?us-ascii?Q?ZrXhbXu1Uk43pFiGXqfAmMkjg65XjyMjZvq8O8aONYD8WNZBBmAIIYiCjhy4?=
+ =?us-ascii?Q?C6ImJGau1uazbT5doUtCp1RvtGQkQUSq9ImhYSowgYJOiKd67V9p5rCvBJRW?=
+ =?us-ascii?Q?A9OJA1j7lX6Iv/6eXSeAR8nGPwa7fDICWN/6SbEXuqRvQPHGL4yYzuMaXkX/?=
+ =?us-ascii?Q?1zCT9ZclA6XtbvwFTfATxV91bnt1GAyjQod/eoKgqB5T99Lra0oCoT4Hi6JU?=
+ =?us-ascii?Q?oWFCdDbvXnq/iFMYbreTFGubR+lKCnIAhoUsl1tIybH3oK3wI40ToOU6wU0S?=
+ =?us-ascii?Q?Q7gXK+R1OubP6aSOdubSgORs4A1QoIe8Ati8f4u0kCQI4CHACZZm+vzS5f5g?=
+ =?us-ascii?Q?+QKxbTBmSQ5kHFdGguRHrRjjgqGXvgz51OgTvIU/vVa/DRYCXelDh0eH9qNB?=
+ =?us-ascii?Q?i3llsuazrNkhvrrje4knaRteQG82hnDjbcYHAwxj3p+KDeSQN5WhHp75pYzA?=
+ =?us-ascii?Q?u72tdFSM1woAnS3hE05MU/L1veBeIj9K/T57VhukL3J+5GXeIpXOV4g2Asdm?=
+ =?us-ascii?Q?f99YnutySnry5C9/umRTRJoQ4H0+haJoqCbUhXzYe4CSTauDXsOb5DO3mmS4?=
+ =?us-ascii?Q?bILDVbZZPpPzlwiU/igKb2vSEjECzkL5PRgEg792VTp9Cdf5Fv6Gdcgd7vuZ?=
+ =?us-ascii?Q?vw=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ada927f2-b2e1-4189-cb84-08de1c12f53f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 02:28:08.6137
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0t4tZ9LDRJ4aSKpvMAL2bguEF9VUIsXbW9P1VTwk1ztIGb+tiFMiigC7zAhmFMIWdFS8GI3FrZJbRSNcIWBNf8Zz/J4kLSQzfnuT6wSQApw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR03MB7997
 
-Hi Paul
+This patch series introduces support for the Agilex5 service layer driver
+(SVC) in the Linux kernel. The changes span across device tree bindings,
+platform DTS files, and the Stratix10 SVC firmware driver.
 
-Thanks for the feedback!
+These changes are necessary to enable firmware communication on Agilex5
+SoCs via the SVC interface, similar to existing support for Stratix10 and
+Agilex platforms.
 
-On 11/4/2025 7:43 PM, Paul Menzel wrote:
-> Dear Shuai,
-> 
-> 
-> Thank you for your patch.
-> 
-> Am 04.11.25 um 12:26 schrieb Shuai Zhang:
->> During SSR data collection period, the processing of hw_error events
->> must wait until SSR data Collected or the timeout before it can proceed.
-> 
-> Collected → collected
-> 
->> The wake_up_bit function has been added to address the issue
-> 
-> has been added → is added
-> 
->> where hw_error events could only be processed after the timeout.
-> 
-> The problem is not totally clear to me. What is the current situation? Maybe start the commit message with that?
-> 
->> The timeout unit has been changed from jiffies to milliseconds (ms).
-> 
-> Please give the numbers, and also document effect of this change. Is the timeout the same, or different?
-> 
-> Also, why not make that a separate commit?
-> 
-> Please document a test case.
-> 
+Agilex5 introduces the ability for the TBU to operate in non-secure mode,
+making it accessible to Linux through the IOMMU framework. This key
+difference enables improved memory management in non-secure environments.
+As a result, this series extends the SVC driver and device tree bindings
+to support IOMMU integration for Agilex5.
+---
+Notes:
+This patch series is applied on socfpga maintainer's tree
+https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=socfpga_dts_for_v6.19
 
-I’ll fix the grammar, add a commit message to describe the issue, 
-include a test case, and use clear_and_wake_up_bit for atomicity.
+Changes in v5:
+	- Use contains enum instead of const
+Changes in v4:
+	- Refactor the logical check without using AllOf.
+Changes in v3:
+	- Remove driver changes in driver as it is fully compatible
+	- Add iommu entry and rewrite the git commit message to describe
+	  why the changes is required.
+Changes in v2:
+	- Add driver changes for Agilex5-svc compatible
+---
+Khairul Anuar Romli (2):
+  dt-bindings: firmware: svc: Add IOMMU support for Agilex5
+  arm64: dts: intel: Add Agilex5 SVC node with memory region
 
-Additionally, I will submit a new patch to explain the timeout unit issue.
+ .../bindings/firmware/intel,stratix10-svc.yaml     | 14 ++++++++++++++
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     |  9 +++++++++
+ 2 files changed, 23 insertions(+)
 
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
->> ---
->>   drivers/bluetooth/hci_qca.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index 888176b0f..a2e3c97a8 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -1105,6 +1105,7 @@ static void qca_controller_memdump(struct work_struct *work)
->>                   cancel_delayed_work(&qca->ctrl_memdump_timeout);
->>                   clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
->>                   clear_bit(QCA_IBS_DISABLED, &qca->flags);
->> +                wake_up_bit(&qca->flags, QCA_MEMDUMP_COLLECTION);
->>                   mutex_unlock(&qca->hci_memdump_lock);
->>                   return;
->>               }
->> @@ -1182,6 +1183,7 @@ static void qca_controller_memdump(struct work_struct *work)
->>               qca->qca_memdump = NULL;
->>               qca->memdump_state = QCA_MEMDUMP_COLLECTED;
->>               clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
->> +            wake_up_bit(&qca->flags, QCA_MEMDUMP_COLLECTION);
-> 
-> `include/linux/wait_bit.h` also contains `clear_and_wake_up_bit()`.
-> 
->>           }
->>             mutex_unlock(&qca->hci_memdump_lock);
->> @@ -1602,7 +1604,7 @@ static void qca_wait_for_dump_collection(struct hci_dev *hdev)
->>       struct qca_data *qca = hu->priv;
->>         wait_on_bit_timeout(&qca->flags, QCA_MEMDUMP_COLLECTION,
->> -                TASK_UNINTERRUPTIBLE, MEMDUMP_TIMEOUT_MS);
->> +                TASK_UNINTERRUPTIBLE, msecs_to_jiffies(MEMDUMP_TIMEOUT_MS));
->>         clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
->>   }
-> 
-> 
-> Kind regards,
-> 
-> Paul
-
-Kind regards,
-
-Shuai
-
+-- 
+2.43.7
 
 
