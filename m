@@ -1,89 +1,57 @@
-Return-Path: <linux-kernel+bounces-887414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C77EC382AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:18:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A5DC3829C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7B13AD732
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:18:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC2254F2517
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FF12EBDDE;
-	Wed,  5 Nov 2025 22:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303582F12A3;
+	Wed,  5 Nov 2025 22:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayjMRaPz"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VX8z9VVV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98A52EFDAF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F75D2C11F9;
+	Wed,  5 Nov 2025 22:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762381094; cv=none; b=DQktZn82vXwv/+JxkNOv8WGjqMfeAAXM2AHiAcnBpHqyKKgRd8kuXemvNAG2MpRgQiOyhTIio00ThVnrU+4jswdq0lxwFlS5n76JaOyTVllwH+bdhfuUrfKonKdryVxkEuyADZ2EmLugSKxE9BjBkJnlmVL25XhHYMNESSCk0C4=
+	t=1762381036; cv=none; b=rRaVi8WaGyKkX8USmB/WHFKWKZydrMKt2+uKnutjVZ+O868V3/NCa4fW1Nuez214ILALEdP0FQWtYRKZiMqecFNCdFBrwCkSrrVzd7ekNMEXRrpnl5wXTrG6xfPNtYyvybu4Jgqo9WPWOLag8QE9EWlPb4/M5b8zY458/gzymyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762381094; c=relaxed/simple;
-	bh=FgSHmdWK8fD86bwRD+NZMD0W0N6z+nayNo+9iUVv+Ak=;
+	s=arc-20240116; t=1762381036; c=relaxed/simple;
+	bh=sMe7Q7c8g+PVIZxgBouDeRxgp5ZyW6ickklTN5FWV68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqxYiz6Go8PtOmxIIUhmP0A923CoXvcJlPJGNxH361c0WU4t0Mm6wIZMpV3UUbyTwHK9v7Z5OO7TT/n4K3JQKdP7PUQn+UbE4n/jXMO/A2AtqYP6yYkaxKU2eR3RUNrElirhpjpfg3YYKRQ0ua5i7LoFkuK+9E3+8+sM8OLTLGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayjMRaPz; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-340cccf6956so269820a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762381092; x=1762985892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Im7C/yPVX9MxQ3wIFuOi8MGfdZ4IZni92LwvcWpKIGs=;
-        b=ayjMRaPzv1xu7dmY/OaJsI/1A7EsC3QCEOV7CGR0Bg6ZTRXjC7dBZa0y6B9KjqsQrU
-         1+2wZr+jYdfRCNMS+zbe1nRoorC9EztQ+ppXTe2gX0tkfhV1LaDZ4nTd0xAI5MPmro0R
-         4eiPeOOs1vNV23BdWGi9+Sd9OTX/ja7ja24wvfvquPmjXw0cvft5biFO1yAEpwZ1CLTs
-         LHoHKSBzNNRFmYXnJKfQOyFF9GVqpA6xpfGG/ZKGMdZaCOhdR5VWAgTHu262I7Zqu0S1
-         QkX93ekiQZyUe+h9akbySFOP2AXbRaLbF6CNBMOBSgUlyH2JSj4OOqimdEXf2kU3uP04
-         BFpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762381092; x=1762985892;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Im7C/yPVX9MxQ3wIFuOi8MGfdZ4IZni92LwvcWpKIGs=;
-        b=wmt7G1OoEft6gtBjdrDDrVdLR6Gzn0h4zDpFeiCD5YFlJaD8/SHjG56xASWA/V9zTv
-         YrPoGtnMhYqlu/yVH2IEsXCSm98dHpW+zZI2zlBFsDBc6sn2czoxL42dXv6GpGzVK/to
-         SgV8YE3YiZSqB+8AInVdmkrUu0OSJeIwCv3fAzmczlZQF3JdtGjCpYrbiKPo9eiWmwv3
-         NkSYrd8WttA8rYtXuOo+ZIrIX+o/PfDimnxTZolHRnrospIq25qKdimycJ80OB89ijyV
-         3FEBeZCHdmJU+rR+sfsx4JWeCPqd5osLYEdJVIVcFNmaZ+ZkB0DZzVUGFEMdcCSPfG2r
-         YagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOA4DC0jd0bNwVQ/mSH0UeZwc1lJtPNFO/TyeILXNn4AU9Rw61/TzkKMkkhtnckpO1sXUCQ3ln+uRAhwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0goMGz66G9Q6n4hjoDRePkYoX+B/Tk3Xlxgqcdy1yjFZOZoaS
-	mMX3i5vH+/MzPj0LWfHdPXmxCqzNmcMmEsqsZXK0cjQSf9uB2pFPaU9y
-X-Gm-Gg: ASbGncvnQCrsOTvtMXQNuqAr8q6Z7+xH/IghjkAMrMUJwgnEI01XhxflN8e/Qirri9O
-	c9zutPBcatJV5qwGffhItd5zxCYDLywzpx9h3tLqyJlWs4h+zMq5yK42yKC5Dg7ITdG+qER3E3v
-	dlaCJlP6QcPILoE+TIDtUYsRTuMnhDo268BX33mwep3glTmPWOL+gg8fNwDD36RS7BBcXqzNZ49
-	VCqOk07Hm6MZoa5kNapvMfnR+xDpe0VN/QfQ+MqdVoBVSngSB3PZNLhtfKYjIWKu8k4MJIIj3kW
-	c3HbVyKFnUEjholI8s0LJ4eHQcyOB3frWYikHyOHGtedHwBDucTuHt5FE9tOAKUqTvz5lMsKxUO
-	8Aqv0+K4pmNqVFA1JTWWpyB5EVRDFWVK3M9P7XtqzxE+T6GdOzNvhp1DYJDbXkmCGUBlVXnaOux
-	FhaM4R/Mu06yDccD0/zMH9JvNvbLorgPS54UC6LSMYPdogmyZ1+RM2
-X-Google-Smtp-Source: AGHT+IGMYKxUc+yFWPCSR1IktVa+NNpsyxMZ4O/wnRPrxacZqCnZibSpr1AmWZE5WIphsK5cnjwcSA==
-X-Received: by 2002:a17:90b:5250:b0:340:c179:3666 with SMTP id 98e67ed59e1d1-341a6c1e314mr6059131a91.8.1762381092040;
-        Wed, 05 Nov 2025 14:18:12 -0800 (PST)
-Received: from google.com ([2a00:79e0:2ebe:8:35dd:7def:e1d1:adfe])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d05c982dsm238658a91.20.2025.11.05.14.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 14:18:11 -0800 (PST)
-Date: Wed, 5 Nov 2025 14:18:08 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: akemnade@kernel.org
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andreas Kemnade <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>, 
-	Kevin Hilman <khilman@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] Input: twl4030 - add TWL603x power button
-Message-ID: <tyx4vvapd4pca6e236rcjkbxecor5kderzoinbwyuecdclzcix@jgksmvfioc4x>
-References: <20251105-twl6030-button-v3-0-9b37eb2b0989@kernel.org>
- <20251105-twl6030-button-v3-2-9b37eb2b0989@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkIOH4O3mxpvhmPZnjmvNFeJO+oBrHTMeN4lVarMni/T0sx1v6BkqBOlSAFuDSx13cNpxVHFTTm2OwUVsptILV9etu25DXQB6t9kuJzXPC/ouYqpRFVZBW+EljKIAx1srN9BXGfh2JhRgB5iroVdGmp4PTq/7aCUHc1vqvtTx/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VX8z9VVV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F013C4CEFB;
+	Wed,  5 Nov 2025 22:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762381033;
+	bh=sMe7Q7c8g+PVIZxgBouDeRxgp5ZyW6ickklTN5FWV68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VX8z9VVVTdDrvzfXPlgLrm6IUmk2afANYaO8JFAO1tI7HavDF2AO0mMm4JnoVlCXt
+	 UD9/jtvxpcUPtxKT60yN14x+ZDP0IS3Dc6TFj5sm0QGzvqPNz+g8SnSqRnTMqaUVIX
+	 oITG0Ykjw/AEijJlTlRuzGu9FGObB3yu8TjVg8zXR95bdgvi3SnuTS7DK4IwQeYp2A
+	 cb0GBPDl5PLzdY7zFx6HDc5jsfM2GFDMnbSvthvS5mk1JK/uqAJ9AXaGJmUxDHjULh
+	 mo3ERkCgFeVYYbRkXunPIWUaEyAxOr4WGrJBTtj9QQMP837E985xY6tLPr69IMpH4I
+	 ISyuC+/0nCkng==
+Date: Wed, 5 Nov 2025 16:20:54 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
+	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>, linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com
+Subject: Re: [PATCH v2 2/3] bus: mhi: ep: Create mhi_ep_queue_buf API for raw
+ buffer queuing
+Message-ID: <x7y653maep4keb6e33dbpsjeqdasum2l6dd75o5ykwbsqpq5l6@apnaxk4tlcj4>
+References: <20251104-loopback_mhi-v2-0-727a3fd9aa74@oss.qualcomm.com>
+ <20251104-loopback_mhi-v2-2-727a3fd9aa74@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,70 +60,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105-twl6030-button-v3-2-9b37eb2b0989@kernel.org>
+In-Reply-To: <20251104-loopback_mhi-v2-2-727a3fd9aa74@oss.qualcomm.com>
 
-Hi Andreas,
+On Tue, Nov 04, 2025 at 11:09:06AM +0530, Sumit Kumar wrote:
+> Create and export a new mhi_ep_queue_buf() API that allows raw buffer
+> queuing for client not using skb.
 
-On Wed, Nov 05, 2025 at 08:52:36PM +0100, akemnade@kernel.org wrote:
-> From: Andreas Kemnade <andreas@kemnade.info>
+Start with make it clear why this patch is desired. Why would such
+clients exist, can't they just allocate some skbs?
+
 > 
-> Like the TWL4030, these PMICs also have a power button feature, so extend
-> the TWL4030 power button driver. As the irqchip of the TWL6030 mfd driver
-> does not provide mask, unmask finctions, do it manually.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Extract core logic for queuing buffers into a new internal mhi_ep_queue()
+> function that provides a unified implementation for both mhi_ep_queue_skb()
+> and mhi_ep_queue_buf(). This internal function uses a cb_buf parameter to
+> handle both socket buffers and raw buffers through the same code path.
+
+No signed-off-by?
+
 > ---
->  drivers/input/misc/twl4030-pwrbutton.c | 61 +++++++++++++++++++++++++++++++---
->  1 file changed, 57 insertions(+), 4 deletions(-)
+>  drivers/bus/mhi/ep/main.c | 23 +++++++++++++++++------
+>  include/linux/mhi_ep.h    | 10 ++++++++++
+>  2 files changed, 27 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
-> index f85cc289c053..b72fba9a1b2c 100644
-> --- a/drivers/input/misc/twl4030-pwrbutton.c
-> +++ b/drivers/input/misc/twl4030-pwrbutton.c
-> @@ -25,22 +25,40 @@
->  #include <linux/kernel.h>
->  #include <linux/errno.h>
->  #include <linux/input.h>
-> +#include <linux/bits.h>
-
-Move to the top of includes please.
-
->  #include <linux/interrupt.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/mfd/twl.h>
+> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+> index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..f4b119a8dca2dbfb3ffc24b04c85743fb57088fd 100644
+> --- a/drivers/bus/mhi/ep/main.c
+> +++ b/drivers/bus/mhi/ep/main.c
+> @@ -544,9 +544,9 @@ static void mhi_ep_skb_completion(struct mhi_ep_buf_info *buf_info)
 >  
-> -#define PWR_PWRON_IRQ (1 << 0)
-> +#define PWR_PWRON_IRQ BIT(0)
+>  	mhi_ep_ring_inc_index(ring);
+>  }
+> -
+
+I'm pretty sure we want that line.
+
+>  /* TODO: Handle partially formed TDs */
+> -int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb)
+> +static int mhi_ep_queue(struct mhi_ep_device *mhi_dev, void *buf, size_t len,
+> +			void *cb_buf)
+>  {
+>  	struct mhi_ep_cntrl *mhi_cntrl = mhi_dev->mhi_cntrl;
+>  	struct mhi_ep_chan *mhi_chan = mhi_dev->dl_chan;
+> @@ -559,7 +559,7 @@ int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb)
+>  	u32 tre_len;
+>  	int ret;
 >  
-> -#define STS_HW_CONDITIONS 0xf
-> +#define STS_HW_CONDITIONS_4030 0xf
-> +#define STS_HW_CONDITIONS_6030 0x2
-
-Probably no need for these defines, just use numbers in structure
-instances.
-
+> -	buf_left = skb->len;
+> +	buf_left = len;
+>  	ring = &mhi_cntrl->mhi_chan[mhi_chan->chan].ring;
+>  
+>  	mutex_lock(&mhi_chan->lock);
+> @@ -582,13 +582,13 @@ int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb)
+>  		tre_len = MHI_TRE_DATA_GET_LEN(el);
+>  
+>  		tr_len = min(buf_left, tre_len);
+> -		read_offset = skb->len - buf_left;
+> +		read_offset = len - buf_left;
+>  
+> -		buf_info.dev_addr = skb->data + read_offset;
+> +		buf_info.dev_addr = buf + read_offset;
+>  		buf_info.host_addr = MHI_TRE_DATA_GET_PTR(el);
+>  		buf_info.size = tr_len;
+>  		buf_info.cb = mhi_ep_skb_completion;
+> -		buf_info.cb_buf = skb;
+> +		buf_info.cb_buf = cb_buf;
+>  		buf_info.mhi_dev = mhi_dev;
+>  
+>  		/*
+> @@ -627,8 +627,19 @@ int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb)
+>  
+>  	return ret;
+>  }
 > +
-> +struct twl_pwrbutton_chipdata {
-> +	u8 status_reg;
-> +	bool need_manual_irq;
-> +};
+> +int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb)
+> +{
+> +	return mhi_ep_queue(mhi_dev, skb->data, skb->len, skb);
+> +}
+>  EXPORT_SYMBOL_GPL(mhi_ep_queue_skb);
+>  
+> +int mhi_ep_queue_buf(struct mhi_ep_device *mhi_dev, void *buf, size_t len)
+> +{
+> +	return mhi_ep_queue(mhi_dev, buf, len, buf);
+> +}
+> +EXPORT_SYMBOL_GPL(mhi_ep_queue_buf);
 > +
-> +static const struct twl_pwrbutton_chipdata twl4030_chipdata = {
-> +	STS_HW_CONDITIONS_4030,
-> +	false,
+>  static int mhi_ep_cache_host_cfg(struct mhi_ep_cntrl *mhi_cntrl)
+>  {
+>  	size_t cmd_ctx_host_size, ch_ctx_host_size, ev_ctx_host_size;
+> diff --git a/include/linux/mhi_ep.h b/include/linux/mhi_ep.h
+> index 7b40fc8cbe77ab8419d167e89264b69a817b9fb1..7186eb667b081009927af48513519084fb0be3a6 100644
+> --- a/include/linux/mhi_ep.h
+> +++ b/include/linux/mhi_ep.h
+> @@ -302,4 +302,14 @@ bool mhi_ep_queue_is_empty(struct mhi_ep_device *mhi_dev, enum dma_data_directio
+>   */
+>  int mhi_ep_queue_skb(struct mhi_ep_device *mhi_dev, struct sk_buff *skb);
+>  
+> +/**
+> + * mhi_ep_queue_buf - Send buffer to host over MHI Endpoint
+> + * @mhi_dev: Device associated with the DL channel
+> + * @buf: Buffer to be queued
+> + * @len: Size of the buffer
+> + *
+> + * Return: 0 if the buffer has been sent successfully, a negative error code otherwise.
 
-I am a big fan of named initializers, so maybe
+Sent or queued?
 
-	.status_reg = 0x0f,
-	.need_manual_irq = false,
+Regards,
+Bjorn
 
-?
-
-Otherwise looks good.
-
-Thanks.
-
--- 
-Dmitry
+> + */
+> +int mhi_ep_queue_buf(struct mhi_ep_device *mhi_dev, void *buf, size_t len);
+> +
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
