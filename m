@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-886204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A260AC34FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5E1C34FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FBA64E6D82
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:54:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D0DA4E3455
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA1130CD94;
-	Wed,  5 Nov 2025 09:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC0309EF3;
+	Wed,  5 Nov 2025 09:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IAIq58x/"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBelVxxb"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23121308F23
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8317309EE8
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336464; cv=none; b=ZSsPhZRSHKRguxV20kvQg7IguhGnOcpDAWF/aRjpiEhjTDArVif7lAo9swTJGddERA12Tbw1Iyk1qSG0ddnIUH6boqydEx3slTXVQeacc5VA+WxEYi5cgtEQAOX7Ag/gFgTrC8aI8r91PVcfbpWLE9M+SfNLhv6xc3lmNscOG0s=
+	t=1762336602; cv=none; b=S/Sdc3kpl6IX/E4JFeIAbjbFa1xNPUHze+87z2J1OOjB46FkqckHQGn7EclI/n2iGQf82RCflsRJtcojAnv3bI0gftwkeVPOZkCFpwv1U1ZDD+96nRiSmD3+Jo4/q18NEdRb3dEsY4n8wOqcdKsD2gzdp3lVG+P7FIqxJ9/gHm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336464; c=relaxed/simple;
-	bh=yhN+fmTKSMV1wig4sJn0im3lxImBaULqtYspQSfhWcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FsuuC6mGxAy4iBfWUFYtDBg7Ekqw5e1O/L2N44RyPwTpXhJz03RuIthBkS7yztKBqS72OgoIE+mRq/M61k5pedc62891PpQiP7XDlG+uqlGwLOpoiUL4+o/YzaRQLVeSsZ/Bg8LbZKiiIf5z1C2ltlIwK9WeHR94Wf9n2betvJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IAIq58x/; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b4aed12cea3so1158034266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:54:21 -0800 (PST)
+	s=arc-20240116; t=1762336602; c=relaxed/simple;
+	bh=gS6xIPz8M479BtpBVAeSxbj5OrqU4iDg1eYW71KYM1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ld/gzJUbo1bMDK3z1muljDC47T5ir++RBf0BCYkHEruZr9wVy6VTpgomiSznSxQdVHPoFm3AWQ1dPqkOr1YGL9Xh6PEi6cuYs8mhvRFO+kKMo/RiiVp9oJJnPfzjqEw4f3cryl25Pi0vpt0b5u4laKwaVZgEhr8ucgAxzxSFAis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBelVxxb; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63bdfd73e6eso1257095a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762336460; x=1762941260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MBOXj6ZoRN4JEjEYRQfoLq6weWa6pU54gR5QKGP+lBY=;
-        b=IAIq58x/tJgjdeEdra4ox1U8R9d6GMmayhkJjG+AaKq8TP+ednhmXvJU1Ptwguk74w
-         W7PGueh61xpfZTtMG+uynTfrMj0hab1lDo18i7PVk2r2U3uKMLuG8LTkaFh5IKrhkIS0
-         4deN96AmOrSJVT/00Q7bQEFcbbANoF1YQe4SRs4E/oRo2bbkJ2E50+8UQV1FFQOH0GWx
-         JX1EEsoKn9N3W5S4h0n8RZlT1aLuEQPAwGKi0PDTMU84Kh3PTY6T5ECBz552Y4WpbzqW
-         skAqO+07CMc9hIUgozq/qHfQZ1DehAPoUQ5euKjc0Ny3XV8FuZp9zFjz/tXuPeT5JSKY
-         fGkg==
+        d=gmail.com; s=20230601; t=1762336599; x=1762941399; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R3eqviX4sEAmzHdgVpUcR+crLH8NTo8PXV0ibEBUOSE=;
+        b=MBelVxxb8BXiJ/iVgHrjZH8WQXKlnbAAEyiGLhzBxPtoNwsB5VqMhb7AoDKLr9psqa
+         bUcDwid6kUVzxVykC9Qui7d5bJyVee0czhnZpP7+N28vgPZKuyfhT5fO1QVebUVszayS
+         MA9wuqjY4tgq+i+FzFhuzo+Wng6bQU6EMrrmDyEa7wVJROotSBWRFn83skZhS0bA2HbL
+         DkzbOBFOXOULrU28GG+lwiwRMkTyWGVWe/Fp5RD3nCYKOmU5msFz13/9G31SiUrb2oCP
+         OqNpZ7lbWVXlAal+70LM92dX/uRe4Yh4Q1PA51Uy2H0Gw0feEZxcTV6wgmYoblY4xvut
+         vLdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762336460; x=1762941260;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MBOXj6ZoRN4JEjEYRQfoLq6weWa6pU54gR5QKGP+lBY=;
-        b=rrhMfiTxxiVZzp9DhJg2SMh+TrNzLokUll0WxfUy9YG3yH31vx5wvhPlmsprY4pdbv
-         YHhT8d5kM/seQc8sFRqPQJLIchwgxmNmFxuamQUOlAZM4m8yICTWhjSKQAOv/WNnwQlk
-         1TzZuNs/mBB7yavacGcv02pirapTrHvneHUw11xj26G4pPRcLpB/w9YgNDGgY4Aio57X
-         DdQAe3KLFXQlWVRIEVOo7MspGjVLgHuFVh5l9D7RT8sV/QyHsSQgUsZ626F+y8bvOmdt
-         fHjD534QSnyhwtiPxwA4dVqW7fImjo43LFUSBlawDSv80T94qEprsBwnoLsdCKH8TW9D
-         Y33w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwS+7WYM1AQzvUSyUrEJKex7qsgyZWkX56DkY1NkrGXT+13ZLmlhIS2UhE5QolBsJjzbUbSbRfgIK3PJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVx68Cg3OTxl/kJm3fmyWr1paD9Rm7MgodkVIf0EuGHfkqcvBd
-	41E9daotxZjaYrDpj+aw7J5BuvtPAAymvBUbQsHrCjPCaykt8fSRefuWFeG8KpDrRM0=
-X-Gm-Gg: ASbGnctUYBssfhqWc0G1yx6s6K8jrwwZumfoSs7TqTme3NhYOfkNRXDUfYV4vBlUT4V
-	kfF4M2Bk75W79t205QGqFh0jMCnMl5aC7GsHEXs+IKOZbw2KFlLn4lpViMuiMphE2Fzb8vDr/H0
-	srBEKTw1zZmql9OUB3nS8yHU54KPg3GKCRj2tv/Z9vMbPbgbPhj6lVvTZniZNaySYTK3Nvugqek
-	KEmfpXhw0n/RzteUF5lIq+52jb7ptEkZO46nmHyzHn25ZzjRgb8XbO5EhQSKvv1aEgOdAOqjJIr
-	PlRyKQRRMZEl2rH6x+UcoMKBtsEkvBQPKuO2DYdjhhpLqjOvjzBKKrjcXnGH+haldlrg5LJxgVd
-	ndBEYypl2Zd8gRWBIOaXM4ZkLGRi3DJOV34Cd/xZIUE6JfaLC8EWwszvr3vL27MBi0LsbTmHk8C
-	73TP4KN3nM/RM5wmrUcBUnSgvuWvqB
-X-Google-Smtp-Source: AGHT+IHp4c9KbYsoS0hxUKU9/CE02Blmb8ma0MooZ5efB9d/kZmNsLVjvvcNZeCgcm6J7Atz+j6iyg==
-X-Received: by 2002:a17:906:794c:b0:aff:c306:de51 with SMTP id a640c23a62f3a-b72651558famr253914266b.4.1762336460211;
-        Wed, 05 Nov 2025 01:54:20 -0800 (PST)
-Received: from uffe-tuxpro14.. ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fe37cb9sm442571066b.61.2025.11.05.01.54.19
+        d=1e100.net; s=20230601; t=1762336599; x=1762941399;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R3eqviX4sEAmzHdgVpUcR+crLH8NTo8PXV0ibEBUOSE=;
+        b=AlKYdtX1mv1M2xFv0SMbLV/XAO3Um7cinrHEIcxBUcWPLXwlUEId9XOmjjBMgxKDYw
+         gut1zdnnhkvtl62M7JnwjP1f2rUABmmzz0Ao9vRkcIKWAv2AjDNH2iNF5CZZ4EU3OdbD
+         3l2zXFirMLTXfsO39PWkDpu0M5c9441Fu28XqsxnOG9AT3bBzbe63N2XsmEaigP/sdaF
+         zl5RE47jGQDQe2dkbMaWjMDWLj35krA/QLIc/BOSB2XbNlpDkGj9MEr7zxRym72fONEh
+         g/gsLulb21pdZYRy1byI27wJXHQlMRm2FhbZYM7i99I2YdVYF2AKxg83KWVeoQfS7HTQ
+         HIpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZBSP9RnzrcimNVMhRNiw1mvOCleRtI3rE7/31R24WRxkCLTsDxo8V+1BN+yVVFlAV9aDefV6j4QKJ6DU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwynJk3JpzuUI92eodlDDeukSOT4jGZmU5nz+Yg6gBUZLIR2yZO
+	9urbmLzMs0jXPTMLJ92ozaMYz0yMR/jdHDsZxztysXKezLTjy5c8RIl0
+X-Gm-Gg: ASbGncsYY6RsvNrSiFKbfmX8CfcSat2yzstqJyw0Tv4C1nGj3lzBvFxw+xjhUl3oDf9
+	IrhOWnlBSw1PSVRwy3eIFzGB27MpXfo2ZKBca7pDE1jcXC6NYxW45232s9NUvgWz2qVMzcNnLpB
+	M7hoOP32JLKCmz7a6z08ODC3sS3UPGAaVhkfM8OJWYOonrnVu/8KCBdjasuivTPLN7IbnAtNpzk
+	VM33n7zc3aRelIklMsz7lGZZ9JjwVnR4fNQzaqIY6o1fyCWoDygoz6y2J2CjlMxETMngUNPoBt+
+	2Ctgl7Glwxxfr/Dk+ZNE0C7M5AHB2FiQ/ZRhJqnuBT4j7FwY6wSq5n56wtoQwL9nGfYU51DzRdB
+	eeg5KHfYUMY3d+zXgXlgiePzp9y/lNaZyGt2sj3Xr/ggagAjP/cXygZOm+q6BpkRkiQN82bQNlY
+	5m8NpY650pmEJmNDQdMvjdIPoh+zg=
+X-Google-Smtp-Source: AGHT+IHXrDPosO8ZHIEZ+QZXnNFYsmuvoGI8Bg1Z3e3Hma5A+nbmYv2e2BsBP1TmnWrxy3+CUeti1g==
+X-Received: by 2002:a17:907:94d2:b0:b61:e088:b560 with SMTP id a640c23a62f3a-b72155ad0c7mr755421266b.4.1762336598739;
+        Wed, 05 Nov 2025 01:56:38 -0800 (PST)
+Received: from localhost.localdomain ([78.211.196.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fe37b7asm440266866b.60.2025.11.05.01.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 01:54:19 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Ben Horgan <ben.horgan@arm.com>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+        Wed, 05 Nov 2025 01:56:38 -0800 (PST)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v4 2/2] pmdomain: Extend the genpd governor for CPUs to account for IPIs
-Date: Wed,  5 Nov 2025 10:54:08 +0100
-Message-ID: <20251105095415.17269-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105095415.17269-1-ulf.hansson@linaro.org>
-References: <20251105095415.17269-1-ulf.hansson@linaro.org>
+	Antoni Pokusinski <apokusinski01@gmail.com>
+Subject: [PATCH v3 0/3] iio: mpl3115: support for events
+Date: Wed,  5 Nov 2025 10:56:12 +0100
+Message-Id: <20251105095615.4310-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,141 +92,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the genpd governor for CPUs, tries to select the most optimal idle
-state for a group of CPUs managed in a PM domain, it fails far too often.
+Hello,
+The mpl3115 device can raise interrupts when a pressure or temperature
+threshold is crossed, this patchset adds support for them using IIO's
+events interface.
 
-On a Dragonboard 410c, which is an arm64 based platform with 4 CPUs in one
-cluster that is using PSCI OS-initiated mode, we can observe that we often
-fail when trying to enter the selected idle state. This is certainly a
-suboptimal behaviour that leads to many unnecessary requests being sent to
-the PSCI FW.
+In this v3 I updated pressure data retrieval, so that the measurements
+are now stored into u8[3], thanks for the explanation in v2. Some other
+small cosmetic changes as well.
 
-A simple dd operation that reads from the eMMC, to generate some IRQs and
-I/O handling helps us to understand the problem, while also monitoring the
-rejected counters in debugfs for the corresponding idle states of the genpd
-in question.
-
- Menu governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             1451           437        91         149        0
-S1             65194          558        149        172        0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.562698 seconds, 140.3MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             2694           1073       265        892        1
-S1             74567          829        561        790        0
-
- The dd completed in ~3.6 seconds and rejects increased with 586.
-
- Teo governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             4976           2096       392        1721       2
-S1             160661         1893       1309       1904       0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.543225 seconds, 141.1MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5192           2194       433        1830       2
-S1             167677         2891       3184       4729       0
-
- The dd completed in ~3.6 seconds and rejects increased with 1916.
-
-The main reason to the above problem is pending IPIs for one of the CPUs
-that is affected by the idle state that the genpd governor selected. This
-leads to that the PSCI FW refuses to enter it. To improve the behaviour,
-let's start to take into account pending IPIs for CPUs in the genpd
-governor, hence we fallback to use the shallower per CPU idle state.
-
- Re-testing with this change shows a significant improved behaviour.
-
- - Menu governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             2556           878        19         368        1
-S1             69974          596        10         152        0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.522010 seconds, 142.0MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             3360           1320       28         819        1
-S1             70168          710        11         267        0
-
- The dd completed in ~3.5 seconds and rejects increased with 10.
-
- - Teo governor
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5145           1861       39         938        1
-S1             188887         3117       51         1975       0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.653100 seconds, 136.9MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5260           1923       42         1002       1
-S1             190849         4033       52         2892       0
-
- The dd completed in ~3.7 seconds and rejects increased with 4.
-
-Note that, the rejected counters in genpd are also being accumulated in the
-rejected counters that are managed by cpuidle, yet on a per CPU idle states
-basis. Comparing these counters before/after this change, through cpuidle's
-sysfs interface shows the similar improvements.
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-
-Changes in v4:
-	- None.
-
-Changes in v3:
-	- Use the new name of the helper function.
-	- Minor updates to the commit message.
-
-Changes in v2:
-	- Use the new name of the helper function.
-	- Re-test and update the statistics in the commit message.
+Kind regards,
+Antoni Pokusinski
 
 ---
- drivers/pmdomain/governor.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Changes since v2:
+(general)
+* added the patch tidying up the pressure data retrieval (u8[3] used)
+(patch 2/3 "add threshold support")
+* includes: removed unused linux/units.h
+* read_thresh: fixed comment formatting
+* interrupt_handler: val_press is now u8[3] instead of __be32 
 
-diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain/governor.c
-index 39359811a930..a46470f2261a 100644
---- a/drivers/pmdomain/governor.c
-+++ b/drivers/pmdomain/governor.c
-@@ -404,15 +404,21 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
- 		if ((idle_duration_ns >= (genpd->states[i].residency_ns +
- 		    genpd->states[i].power_off_latency_ns)) &&
- 		    (global_constraint >= (genpd->states[i].power_on_latency_ns +
--		    genpd->states[i].power_off_latency_ns))) {
--			genpd->state_idx = i;
--			genpd->gd->last_enter = now;
--			genpd->gd->reflect_residency = true;
--			return true;
--		}
-+		    genpd->states[i].power_off_latency_ns)))
-+			break;
-+
- 	} while (--i >= 0);
- 
--	return false;
-+	if (i < 0)
-+		return false;
-+
-+	if (cpus_peek_for_pending_ipi(genpd->cpus))
-+		return false;
-+
-+	genpd->state_idx = i;
-+	genpd->gd->last_enter = now;
-+	genpd->gd->reflect_residency = true;
-+	return true;
- }
- 
- struct dev_power_governor pm_domain_cpu_gov = {
+Changes since v1:
+(general)
+* squashed the cleanup patch
+* added the patch with the documentation update
+(patch 1/2 "add threshold event support")
+* patch description: explained changes in locking
+* read_event_config: replaced switch with ifs
+* read_event_config: return as early as possible, got rid of int_en_mask
+* read/write_thresh: pressure: calculation changes to comply with raw ABI
+* interrupt_handler: reordered the INT_SRC_* bits in if condition
+* read/write_thresh: used sizeof() and values from limits.h
+* write_thresh: replaced `u8 tmp[2]` with `__be16 tmp`
+* dropped the space between casting `(u8 *) &tmp`
+
+
+Antoni Pokusinski (3):
+  iio: mpl3115: use get_unaligned_be24 to retrieve pressure data
+  iio: mpl3115: add threshold events support
+  iio: ABI: document pressure event attributes
+
+ Documentation/ABI/testing/sysfs-bus-iio |   2 +
+ drivers/iio/pressure/mpl3115.c          | 225 ++++++++++++++++++++++--
+ 2 files changed, 214 insertions(+), 13 deletions(-)
+
+
+base-commit: 1d09cf18cc91d29f650ad9811ed4868d9304d6c7
 -- 
-2.43.0
+2.25.1
 
 
