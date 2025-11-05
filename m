@@ -1,147 +1,234 @@
-Return-Path: <linux-kernel+bounces-886935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A535C36F5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B1BC370D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EFA6661B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:36:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C100683410
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE2337115;
-	Wed,  5 Nov 2025 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE271F3B85;
+	Wed,  5 Nov 2025 16:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJvV3Gcj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kqc04odJ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9320B800;
-	Wed,  5 Nov 2025 16:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834F0334366
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360572; cv=none; b=X8d/iZeaHbZ+rAWTEJaMID2DuzjbO7/Kv2l4ioiFR42VPzZSj/DisDJA+33fqI+tNnJlQHm6HZ0LOQDc1NF+1W32upSB9oPVyMY1RuFFQHeXXzoLMXwdC2yAcxhL5oGTAzcUkePQ9rWV42VpmZuVhotw9jc5aovpekSvO0kq8f0=
+	t=1762360595; cv=none; b=GClo9u6H4BCk9+xkjKH+PgCqPVlJyoSVGS6Ii8gLZPgT9TgqoT+VXR80P1WUPM1MY6zq7r8T/JJaKKWd8Kz1X9/mrsxjxsZxaChaPZdjlCgnkaOjYEYR+7K443Qwna1IVKurulJajEHSMas8WNtGhW9fTXzKOXWYPlnqbvRj75I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360572; c=relaxed/simple;
-	bh=6TrJvUK9Bi4MtE396O6mjFvQ4XSVRdM4jTat1mqDJ+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNuv9Ah7ucsJKaM+9SOIK3+gk4AK2WmuqpJC0DBwpPSXdGBVprNbZnq5nbR4gCKmzfZHPiEpVP2qSHgvT02yiPTdkQt89Tif0WSxtNGOcbZD+i09jKKSuCjaaZT5mxObvU/1XIlw2DCll3EjJJC2hlnOm8tCmhEfl44A4v/Uq/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJvV3Gcj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E76C116D0;
-	Wed,  5 Nov 2025 16:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762360572;
-	bh=6TrJvUK9Bi4MtE396O6mjFvQ4XSVRdM4jTat1mqDJ+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJvV3GcjxVMkbPp2/HPHTvVQ3suklWsEfheD+VTVjPqA9H4nzGbxr2Z/oMCnFchhM
-	 hx0phKZelWW3iUoT74SWOR0eAm/GMDUMSFZuJwRx3xLLzarjdMxhpnjROdsmqC1Bz9
-	 MmxSP1G8Pm7sZ6X9Aw3/6NWdF7ILo/dLtzKjptrZcQKyjuY5ue+jqOiVpPmYroetzt
-	 pSWR0IX5HMGCyAHJeRFyG1+DMWcS1izzqvM9K89t6srVDOjWc2wPYOBV+rjwy9RPKh
-	 A6Jk4/1Jh9oT6si2+yJ2cfyT73UhwGEh/7aY2SdorDojoRR9eU1sKBBAVl6FGvx5cd
-	 7YvIKTyAlo22A==
-Date: Wed, 5 Nov 2025 17:36:09 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 18/33] cpuset: Remove cpuset_cpu_is_isolated()
-Message-ID: <aQt8-dzr4Ac3l3bt@localhost.localdomain>
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-19-frederic@kernel.org>
- <7821fb40-5082-4d11-b539-4c5abc2e572c@redhat.com>
+	s=arc-20240116; t=1762360595; c=relaxed/simple;
+	bh=vfu6o9FHVJ4VDzNtYkoiJcMRZrIdOAy2exAu63XzyUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mgEmVjSMBgshgfynpn2z3ZObjT1utrDK52UIVPbebgV2Uu7mnuUAdhmPeTusXEUJQrummrUsE54NiRrDsUncD66VcCyznx0C+16Pctu07bi/09zlF7FnsvtIcyPKJ1RpPCp9vrM7RX1O8Rps6h7/YjOenSiFCVd5Gk60lTwWoeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kqc04odJ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-429c19b5de4so23105f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:36:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762360592; x=1762965392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SyN2cVuH6Ij4/l0XiBzPZsewpM0QteHzVTa6BuG8uMQ=;
+        b=Kqc04odJNFVZ6Kg6u+BKh/zMe5Nq1JSykuMZOLawMnGZ4dRBhC9u0E8ZUYz3Iuvvt5
+         83uruEW2ngl0EKgoKPyX3p5ojT5kO4ZEmz3EIfrxXZdmZ2cBt1uzobXBJXt05UgVBlcG
+         jWyb2AOxM5PaiPSNx7ktL1qJdMb2cbtm/Avemk5KNLfL7hOpNHnNxFnhDbr0x6+x6uxe
+         dJK0smqOQPnGvC2JvSTRr0PvbE6N9ZD2RiN631zg2SCnzMRPHl5STiqPmUTFjON1Ltsh
+         ycLgvdmavO6JG9Wu+3MpMJ3ycl6esUrtrYlO9towlI2ObC8gBYI2ElHeH7VvA+c4S5t0
+         YFAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762360592; x=1762965392;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SyN2cVuH6Ij4/l0XiBzPZsewpM0QteHzVTa6BuG8uMQ=;
+        b=rSmCyJXp5zScN8yrvhPG8FxZtABMABAkfmRRGu3/wygmqysKDFE4VLRcGgfkevUz+G
+         kEQEdB6u4XrdpFRbTdayRq5ewppf2J+4lOGtKSdN1vJys9LMf2oISijWRxEMQsmdlWkG
+         c1AA7/SczBZqy13oTu3au+ajPMjJM+eoHv2DzYbLa5M5Mj29Tn2S96M0Q9q6LyfRdU3x
+         QZeFJAZ8x2wTc/gNTWbB8TYJjK8A+nvVc9Z4iXAKvM81oP9g9R3gVrCf7trhjD8o+PXc
+         iTwkhOfTHJ6rkh4CtHi80SvyjeqipeidIcGNmgfVRwFlGq2eSc6XA8GstTjxU9qnwNnL
+         Q6CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6X2+EHyyJgTDP6p887PI5m+K3A7V8jgxTtdyf608mRBhAE/7qWAxNhdfhQRR8XpiR6qQnVMut80xPse0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweU1m35xlONu2mvvdbH5Q38UDKjpA5N9SoKcxwwEjaZxbEEpyY
+	aP4DWlcLAXwmpM3XAwJG20UykJv3hube/YpZAeHiuPG5flNpNa9Gul1B
+X-Gm-Gg: ASbGncuzU58CcvnFvT4x/UBWpMvN1AQM/FGxsdEttIunxI31KC0vwx47AFnTdksxbJe
+	3PCTBndMkWjEu/j9xyzPK8D/qyOrSO/CaeVf7/H6d0t0R3Y3R44u6n6r6JDjx5CbnckpODkUqFW
+	RmekHKU7d10vuikGgYlVygidrjtUDdUefwHxHGznAXDPN/tadysXpZ33jzaZg6ptT/5g34RNeOP
+	Bp6lW1JWm/z7aYer2ZrwvWxVVaPsxcsCALkS92s+V0mycmq5eiuvsC7+oB+KNyaqR5rT41cwT/r
+	kpHnZN9I2FZIWJgaSZk0ivbak7J0s4AadpTMEPLHkDabOuU2Ds97Ws/WVNmaJyuIepTiSVzauIw
+	UfW1wFjzPJmhCG7SYChlAcY/A4znF3Co8l+mW003Ga8tSDcu2Xg6l1nTtQHfYnw6xueG/zEX5kS
+	4Fxp8eER65CWvJfyZAY5zQ/fFd
+X-Google-Smtp-Source: AGHT+IGCBw9Dy87KEkMt7Df2kUZ9moWp+TlCQ57nJTSYSofiZKmn+TZAqLy7NV/99LZi7xe+WX7gPg==
+X-Received: by 2002:a05:600c:8b54:b0:475:dd7f:f6cd with SMTP id 5b1f17b1804b1-4775ce2b845mr45093385e9.35.1762360591623;
+        Wed, 05 Nov 2025 08:36:31 -0800 (PST)
+Received: from builder.. ([2001:9e8:f106:5b16:be24:11ff:fe30:5d85])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce3ef38sm57026755e9.17.2025.11.05.08.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:36:31 -0800 (PST)
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Jonas Jelonek <jelonek.jonas@gmail.com>
+Subject: [PATCH v5 1/2] dt-bindings: gpio: add gpio-line-mux controller
+Date: Wed,  5 Nov 2025 16:36:09 +0000
+Message-ID: <20251105163610.610793-2-jelonek.jonas@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251105163610.610793-1-jelonek.jonas@gmail.com>
+References: <20251105163610.610793-1-jelonek.jonas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7821fb40-5082-4d11-b539-4c5abc2e572c@redhat.com>
 
-Le Wed, Oct 29, 2025 at 02:05:17PM -0400, Waiman Long a écrit :
-> On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
-> > The set of cpuset isolated CPUs is now included in HK_TYPE_DOMAIN
-> > housekeeping cpumask. There is no usecase left interested in just
-> > checking what is isolated by cpuset and not by the isolcpus= kernel
-> > boot parameter.
-> > 
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > ---
-> >   include/linux/cpuset.h          |  6 ------
-> >   include/linux/sched/isolation.h |  3 +--
-> >   kernel/cgroup/cpuset.c          | 12 ------------
-> >   3 files changed, 1 insertion(+), 20 deletions(-)
-> > 
-> > diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> > index 051d36fec578..a10775a4f702 100644
-> > --- a/include/linux/cpuset.h
-> > +++ b/include/linux/cpuset.h
-> > @@ -78,7 +78,6 @@ extern void cpuset_lock(void);
-> >   extern void cpuset_unlock(void);
-> >   extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
-> >   extern bool cpuset_cpus_allowed_fallback(struct task_struct *p);
-> > -extern bool cpuset_cpu_is_isolated(int cpu);
-> >   extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
-> >   #define cpuset_current_mems_allowed (current->mems_allowed)
-> >   void cpuset_init_current_mems_allowed(void);
-> > @@ -208,11 +207,6 @@ static inline bool cpuset_cpus_allowed_fallback(struct task_struct *p)
-> >   	return false;
-> >   }
-> > -static inline bool cpuset_cpu_is_isolated(int cpu)
-> > -{
-> > -	return false;
-> > -}
-> > -
-> >   static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
-> >   {
-> >   	return node_possible_map;
-> > diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> > index 94d5c835121b..0f50c152cf68 100644
-> > --- a/include/linux/sched/isolation.h
-> > +++ b/include/linux/sched/isolation.h
-> > @@ -76,8 +76,7 @@ static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-> >   static inline bool cpu_is_isolated(int cpu)
-> >   {
-> >   	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
-> > -	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK) ||
-> > -	       cpuset_cpu_is_isolated(cpu);
-> > +	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK);
-> >   }
-> 
-> You can also remove the "<linux/cpuset.h>" include from isolation.h which
-> was added by commit 3232e7aad11e5 ("cgroup/cpuset: Include isolated cpuset
-> CPUs in cpu_is_isolated() check") which introduces cpuset_cpu_is_isolated().
+Add dt-schema for a gpio-line-mux controller which exposes virtual
+GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
 
-Done. Thanks!
+The gpio-line-mux controller is a gpio-controller, thus has mostly the
+same semantics. However, it requires a mux-control to be specified upon
+which it will operate.
 
+Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+---
+ .../bindings/gpio/gpio-line-mux.yaml          | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
+new file mode 100644
+index 000000000000..0228e9915b92
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
+@@ -0,0 +1,109 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-line-mux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: GPIO line mux
++
++maintainers:
++  - Jonas Jelonek <jelonek.jonas@gmail.com>
++
++description: |
++  A GPIO controller to provide virtual GPIOs for a 1-to-many input-only mapping
++  backed by a single shared GPIO and a multiplexer. A simple illustrated
++  example is
++
++            +----- A
++    IN     /
++    <-----o------- B
++        / |\
++        | | +----- C
++        | |  \
++        | |   +--- D
++        | |
++       M1 M0
++
++    MUX CONTROL
++
++     M1 M0   IN
++      0  0   A
++      0  1   B
++      1  0   C
++      1  1   D
++
++  This can be used in case a real GPIO is connected to multiple inputs and
++  controlled by a multiplexer, and another subsystem/driver does not work
++  directly with the multiplexer subsystem.
++
++properties:
++  compatible:
++    const: gpio-line-mux
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-line-mux-states:
++    description: Mux states corresponding to the virtual GPIOs.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++  gpio-line-names: true
++
++  mux-controls:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    maxItems: 1
++    description:
++      Phandle to the multiplexer to control access to the GPIOs.
++
++  ngpios: false
++
++  muxed-gpios:
++    maxItems: 1
++    description:
++      GPIO which is the '1' in 1-to-many and is shared by the virtual GPIOs
++      and controlled via the mux.
++
++required:
++  - compatible
++  - gpio-controller
++  - gpio-line-mux-states
++  - mux-controls
++  - muxed-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/mux/mux.h>
++
++    sfp_gpio_mux: mux-controller-1 {
++        compatible = "gpio-mux";
++        mux-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
++                    <&gpio0 1 GPIO_ACTIVE_HIGH>;
++        #mux-control-cells = <0>;
++        idle-state = <MUX_IDLE_AS_IS>;
++    };
++
++    sfp1_gpio: sfp-gpio-1 {
++        compatible = "gpio-line-mux";
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        mux-controls = <&sfp_gpio_mux>;
++        muxed-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
++
++        gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "SFP1_TX_FAULT";
++        gpio-line-mux-states = <0>, <1>, <3>;
++    };
++
++    sfp1: sfp-p1 {
++        compatible = "sff,sfp";
++
++        i2c-bus = <&sfp1_i2c>;
++        los-gpios = <&sfp1_gpio 0 GPIO_ACTIVE_HIGH>;
++        mod-def0-gpios = <&sfp1_gpio 1 GPIO_ACTIVE_LOW>;
++        tx-fault-gpios = <&sfp1_gpio 2 GPIO_ACTIVE_HIGH>;
++    };
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.48.1
+
 
