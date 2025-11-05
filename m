@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-887197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6EDC3785B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:41:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB134C3785E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430223B90E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:41:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05E074E36DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D53D340D85;
-	Wed,  5 Nov 2025 19:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CEA340D85;
+	Wed,  5 Nov 2025 19:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuha9v5z"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NFntWLw4"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9E6221703
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ECB258CED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762371666; cv=none; b=s1Bz0TNNzdr6ZR46bd6lgMRzermgwgL8FmKTFGBX3wmP5slivlPYo2oQY99kpjJKO6BXs+fbqIiqquQ+UWBiJFis8pGYM8XjYeJGkZO0YmivxrTI9fGaECwLjEMEkNmVX0TFbk5LcLjK/oUEzc09u0ZbzLF2E3pUhyDF3OflvyM=
+	t=1762371683; cv=none; b=evMMzT8nc4lZEevBxUKWxhf4n8Gh05RNk48B6evai8rBezu2M+f5sZKcc6V/u10K6iVo4iDnUQD8lveUFqSVXlgBQYf8MatN6rixoDW3bKE29N+/u9W/M0tlsRfRLGdr6mD0/FOfjUb1stL/iPb9xsaF0B2WSkbDPJnVg/h1LoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762371666; c=relaxed/simple;
-	bh=C5B9GxGKynn/bGUHoRkkgvCg0pIh/B+Fhjizl4WzJJk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JWopnf907fvbqjveJlGNcuuKrddw3R6o0INPyKU8F0KgsGGgVTRofy0BRpZri3QM0FtPCjrQRntehjsj59PmqpZ1Kx1XtVHa9KH1gt1cH6GeiG7FGzklPiUYdLjaPtiNWovdpaF69IGga8v+OT48SmH+1Dad3vXP5D0SPutjCXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuha9v5z; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-339d7c4039aso298447a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:41:04 -0800 (PST)
+	s=arc-20240116; t=1762371683; c=relaxed/simple;
+	bh=bZHv94L6/tQUoE0h96uu+ssXsm4jrc3twKjnXVEhbVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AfyiflPIp2NUo4po6OUS3p09A3mtHyLpy+xSf/MoYY+X9lt5LcjfSJQYqG4ta5RQC5wx/ZZtUtI/B9AqymFoyAXpivInYp/IOx9Mo6QfErtpA2KviuB03FLJ0+qxBmsOgXNu/Z7ivadKbuu1ySAtYEhKDjhpzwUE+BvlHRYysx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NFntWLw4; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-594330147efso176997e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:41:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762371664; x=1762976464; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=C5B9GxGKynn/bGUHoRkkgvCg0pIh/B+Fhjizl4WzJJk=;
-        b=iuha9v5zBNFWYaSMXmyzZW+Mvr7qqeqpNEa34QQvaNRuSUC8Qcd/B43jY/zfpPdm0U
-         VeKgpXsUpSpmMGLCDDYKJyPTESOeVLSU2oGWYC/dZAelJRTooKHOMpiktegfWtBQtGo/
-         Yhk/NuxbFS3aIToRflOHpGKUVLgIckdVYGdpB5tIIEjGX3EnD7PK+yjVdZUhPkBFJxl3
-         Eb9IwGvllFMNFwZiZI8H79E3O5aquGVCoGCjiEkTah4s+icqAVFtwd8pgfkca1G4Ji7e
-         vcbevePC+eNg+f4c3WMrDJgt1To2d7QfRdR3pXosERZyg0Nrlp3jPPfJvb1MaKqEFEvO
-         Jxgg==
+        d=google.com; s=20230601; t=1762371680; x=1762976480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZHv94L6/tQUoE0h96uu+ssXsm4jrc3twKjnXVEhbVk=;
+        b=NFntWLw4oUOLucF1nBEsLwwyWmFE/9KfBzstS7U6Y33KHiiJaaXzjJOnV4SefYuiFe
+         9fD5/ZIlkxZmQaQNyvMGOTKLrHspoBXHq2/n/S7W8qnPg3G4bg/7ZrOeLiF2DYf8UBtO
+         qLy0hadsOHnDuzvqxzCzprvZ+pxf6PS8qsFvk4qKjU8BfVyY8mBDcyDYmHlA67Uo6sFQ
+         Qd6szAio1IC+q8SDs0mSlcEgZgAxxz3yc0bT1c7oGWdHv3H1diMlKAz+lKFzF7WGRZyN
+         H/Fu/jjp1zQDbTggPzIDD+RrjEdJssOlk/nIeF5sg0o6R5soj0kV+4oD/zTQ1ISuU5VT
+         f4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762371664; x=1762976464;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C5B9GxGKynn/bGUHoRkkgvCg0pIh/B+Fhjizl4WzJJk=;
-        b=nA/ikvrcxRcyTVjaRMdqabo/PnJXVC9EvWxa2qqj/Su6RAupn26TUvl8l347eF/Nui
-         wGYIsawMaxFZfyjiRhdz5D2lxUrk/wHGL4o7huhZEuSYsa+IxXnoOZ5Y6kLaXGsTCESX
-         KPhOy/wEUWIKJtfQgQylFNGWL62ijg1sZAF+dvG8+t1VLiJF85HoZzIjGyoTvS45gDwQ
-         SqA/viTlkyYyVAr4yyjXoQPBpRRdaCxYi8DA367relvpmBPJVF7BzO7luwvcyhlaAOeA
-         6Px2/VhorsVkZ0r/77kkvcBK54H+nuOptfSovUlQOyuIf4MaOQlzO1yJP7ifONCMZyn9
-         nGYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRWXFbph7umQtelSbM4nhzBRT1UqVorjsMXkYqd/yJSRnqk0obgJDSA66iiS6vBcPXcudjHUIE6vic7ZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmyrh5/Coa/D54X4KLcnQrUzMBFgkmoZUU/XDVNEh4UuA8jQjT
-	AYfWoIKqR8Km8VxREugtYhltmGi/ijNMwnQ5tWOPCZaWRGm0fAIwztxPqXzaSfaO
-X-Gm-Gg: ASbGncsfxMGat89H66iWLElm3Gvex87fGeCTfydgoJVT9RCn4LhlPv8njdfChLJJvhM
-	/NGucZY+L49imFLbvin4kNjZ+c6u75nRaTziH/sSTcSNBSfM8MaYcdBkckf3lI2GoRBnHY4hfyG
-	ITKskb8GTX9SuhZEiXfSydX9t2QNOlvIz6XdNbfFetXqBCqeSSE4K/Ja26Pnmy1LDm2SgXafboX
-	K2Q/Bd9JPpI+lpTVpr9Q/iT7sg2FIBAnS2AIuNXSaGl6tJ+0KwybdgLDvav+342SHPGqQM02EGy
-	xwOeT0+hvtIFztN5u/Birnxp6WUgcZ1GUTpO4F8Ryma1wMD3bIsbPqxapMxo7Kd3rDHha6oEMjk
-	9SH8rlerZSh1GzAxQFwHJ+rGSyd7IHKVVG46kF2WSLirz4N26M3lAOzfCnEn+COoWVOJYH7IC1q
-	EOqkRgZYdOi2iV/ZQz6Eyg7ya5
-X-Google-Smtp-Source: AGHT+IFlDfByK8EQR3VsU/N7Fktp4sRb4vaWqlmdg9izLxvSHW9VykP1tI0nh0Yuf2migfAoNWhLFw==
-X-Received: by 2002:a17:903:19cc:b0:269:aba0:f0a7 with SMTP id d9443c01a7336-2962adb32acmr61556695ad.2.1762371664315;
-        Wed, 05 Nov 2025 11:41:04 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:cdf2:29c1:f331:3e1? ([2620:10d:c090:500::6:8aee])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5d0c1sm3413535ad.27.2025.11.05.11.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 11:41:03 -0800 (PST)
-Message-ID: <7f3586157e17d0ab2c34b16d2f7daf4955d0692f.camel@gmail.com>
-Subject: Re: [RFC PATCH v4 1/7] libbpf: Extract BTF type remapping logic
- into helper function
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan Maguire
-	 <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
-	 <pengdonglin@xiaomi.com>
-Date: Wed, 05 Nov 2025 11:41:02 -0800
-In-Reply-To: <CAEf4BzZffw1sTJUBxwUnhx8XjQNMRf2-e+vUzOfyMqgMTpYsdA@mail.gmail.com>
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
-	 <20251104134033.344807-2-dolinux.peng@gmail.com>
-	 <CAEf4BzaPDKJvQtCss4Gm1073wyBGXmixv4s9V5twnF7uEHRhPg@mail.gmail.com>
-	 <61e92756ea7f202f2e501747b574e97b2f5bc32f.camel@gmail.com>
-	 <CAEf4BzanAmmSe84GnvWSR_KLFVmeEvrxVVJAvApFNRjgeRXk8Q@mail.gmail.com>
-	 <61f94d36d6777b9b84e9bf865edd17476a278e73.camel@gmail.com>
-	 <CAEf4BzZffw1sTJUBxwUnhx8XjQNMRf2-e+vUzOfyMqgMTpYsdA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1762371680; x=1762976480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bZHv94L6/tQUoE0h96uu+ssXsm4jrc3twKjnXVEhbVk=;
+        b=kmn+ny9Q0IWIF2CZUmUZckyASD5vumkpIENrvLmwp8xLFcjlKDQtUukG860Yi7FwSo
+         Td1mNq7EZpuIXXxeMQet9rMMNfOs+YjiW2KOD4mLwJO3ZqADBbC57id7J4U8swcBRNAH
+         gtM0tgpCY7a+xv/wAAubZOWAfualMfe9pLb6f1OfGgB0lXXMrrg+5rJx04y6UMsOuVPz
+         4AurRYEr6/WrgQ7g8UWeFHVZdOWitoC6nPdCFDrwoFvknETO6OuSh5NgB4cP9s2cASPB
+         ILd3x/VlNIbKcJta9zvN/HnHVKcELKbelsYNew9KacY9aEgf7OTZulsoyEhHEAc5XY/4
+         f7CA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9zN8BrR7uyRhfq02Y/HsNUAb089/ISRE9Lfd9ui22dYTICDPNN8w9JuMNTE9SdoQM36aZ/k1cQSuc/2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0biBshnstCQYs8D78EO9y6FuobFQXyDJzWW6Ytxuw2ThQVKac
+	RdbTkBM4jeP4yAd1MK+MeBjFb5VRjC02DKU1wExDLHeVha9IdMnzH0UyTUWREcsEA6M305hDwDp
+	ULOkWdhhacRJRmrDUyxTATvNl2ZF3KNQebeY19RY0
+X-Gm-Gg: ASbGncsQX/olyyHFrmSVAv4a5hfTSmfAlu6o4lkDO2wk1lg4RFo5CiibY9HitIIKabg
+	D1486ieWuHyqIzOTbiHfOD3KxCpBtSFdjPFcn33ZqEq421+H7ODjBDRa46TIIWO4Pts4nIUIeq9
+	lbhj9xjoL2ZeZrVOVRHf4PDzo9r0FmTesPzu2G+lx4RloaCITfrpfXIkEsyJalD4YHw0QPPfuyy
+	/NMQdsf6IODlOKLdTOoePl0rxBwd3UNnvgBVuklyqy0sXfh5Hqt4KXOpUKo87+tosvTwoRVc+Da
+	W/B4a6N/2MOkhb4sPohamcw=
+X-Google-Smtp-Source: AGHT+IGQIiPZcHHq1WrKLoi7cZHVRI6qNimojPh1PTmb/201EYfhPdIi91zsPGboaAy7eklJpvt+vajCMx08/Xsmdrg=
+X-Received: by 2002:a05:6512:1287:b0:594:2835:e751 with SMTP id
+ 2adb3069b0e04-5943d8044e6mr1659936e87.53.1762371680204; Wed, 05 Nov 2025
+ 11:41:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251010012006.2282321-1-svv@google.com> <no3r172s-899p-7s78-o199-8q8oq1r2nr71@xreary.bet>
+In-Reply-To: <no3r172s-899p-7s78-o199-8q8oq1r2nr71@xreary.bet>
+From: Siarhei Vishniakou <svv@google.com>
+Date: Wed, 5 Nov 2025 11:41:03 -0800
+X-Gm-Features: AWmQ_bnYhq1zuERdrkg_2iQXFsAeKs5IR_ItocUtDqbe34Aptv1t2IbqkWYTTkg
+Message-ID: <CAKF84v3zxT5siCOnXwn6Xc80T4vTDpP08K1Pd-J8XyBtv-V3Mw@mail.gmail.com>
+Subject: Re: [PATCH] HID: playstation: Remap joystick axes to be centered at 0
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Benjamin Tissoires <bentiss@kernel.org>, 
+	Roderick Colenbrander <roderick.colenbrander@sony.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-11-05 at 10:20 -0800, Andrii Nakryiko wrote:
+=D0=BF=D1=82, 31 =D0=BE=D0=BA=D1=82. 2025=E2=80=AF=D0=B3. =D0=B2 02:00, Jir=
+i Kosina <jikos@kernel.org>:
+>
+> On Fri, 10 Oct 2025, Siarhei Vishniakou wrote:
+>
+> > The joystick axes (ABS_X, ABS_Y, ABS_RX, ABS_RY) for PlayStation
+> > gamepads report a neutral state of 128 over HID, with a full range of
+> > [0, 255]. The driver previously mapped this directly, resulting in an
+> > evdev range of [0, 255] with a resting point of 128.
+> >
+> > This approach is unconventional for Linux gamepad drivers and has sever=
+al
+> > drawbacks: it requires userspace applications to be aware of the
+> > non-zero resting state, and it is incompatible with the input
+> > subsystem's 'flat' (deadzone) logic, which assumes a resting point of 0=
+.
+> >
+> > This patch remaps the four joystick axes to the conventional signed
+> > 8-bit range of [-128, 127], with 0 as the neutral state. This is
+> > accomplished by changing their evdev range in ps_gamepad_create() and
+> > translating the incoming hardware value in the report parsing functions
+> > by subtracting 128.
+> >
+> > The analog trigger axes (ABS_Z, ABS_RZ) are handled separately. Their
+> > resting state is 0 (un-pressed), and their hardware range of [0, 255]
+> > is already the conventional representation. They are left unmodified by
+> > this patch.
+> >
+> > This makes the joystick behavior consistent with other gamepad drivers
+> > while preserving the standard behavior for the triggers.
+> >
+> > Signed-off-by: Siarhei Vishniakou <svv@google.com>
+>
+> Hmmm ... as I am rather unaware of the existing playstation userspace
+> ecosystem -- is there any way how we could now be breaking existing
+> playstation-specific userspace assumptions that have already developed
+> based on asumptions that we're centered at 128?
+>
+> Thanks,
+>
+> --
+> Jiri Kosina
+> SUSE Labs
+>
 
-[...]
+Thanks Jiri for looking! I chatted with Roderick, and he brought up
+similar concerns. Generally, most of the joysticks have the "normal"
+ranges with the 0 value at the center. However, I understand that some
+user-space apps might have hardcoded some of these Sony-specific
+assumptions.
 
-> You don't like that I ask people to improve implementation?
-
-Not at all.
-
-> You don't like the implementation itself? Or are you suggesting that
-> we should add a "generic" C implementation of
-> lower_bound/upper_bound and use callbacks for comparison logic? What
-> are you ranting about, exactly?
-
-Actually, having it as a static inline function in a header would be
-nice. I just tried that, and gcc is perfectly capable of inlining the
-comparison function in -O2 mode.
-
-I'm ranting about patch #5 being 101 insertions(+), 10 deletions(-)
-and patch #4 being 119 insertions(+), 23 deletions(-),
-while doing exactly the same thing.
-
-And yes, this copy of binary search routine probably won't ever
-change. But changes to the comparator logic are pretty much possible,
-if we decide to include 'kind' as a secondary key one day.
-And that change will have to happen twice.
-
-> As I said, once binary search (of whatever kind, bounds or exact) is
-> written for something like this, it doesn't have to ever be modified.
-> I don't see this as a maintainability hurdle at all. But sharing code
-> between libbpf and kernel is something to be avoided. Look at #ifdef
-> __KERNEL__ sections of relo_core.c as one reason why.
+Instead, I will change this patch to provide correct initial
+(centered) values of 0x80 when the driver first starts. This is needed
+in order to fix our Sony gamepad tests on Android (and will help
+everyone else, because now there won't be a stray "bring to center"
+event emitted from the gamepad in the beginning). I will follow up
+later this week.
 
