@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-885715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA69C33C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:22:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05460C33B95
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CA77348F17
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D79A464BA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA4321CC58;
-	Wed,  5 Nov 2025 02:22:19 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475AD2222CB;
+	Wed,  5 Nov 2025 02:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="A/EiWSTd"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1663515667D;
-	Wed,  5 Nov 2025 02:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE10F22D7B9;
+	Wed,  5 Nov 2025 02:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309339; cv=none; b=dfutY5TAYfUN4PTdyqq/akqpg1E4VmqbjJCZj2rGINXXwv+saEbGKoLC8PafcOgtR7fkna2m9+3NGgx/07kspFwUeioQGnIjix+wtzeTmZKHsFJBTiQH7ZQXFim/AfrYlGJ+9G/pdn/wQ4Hk2pQ5lT1reE9hOJSOMarFP8bGPIQ=
+	t=1762308010; cv=none; b=aujnMq8BrP1uPZbnu7ku1JMdPdzGw/ENJwxbclbuhB+hPhNYsOq2Dx14991SGvp1Rx5q7qWC2J+NEom857RcjWRGViVKoAw4h49hyqAaqF4O0lddvE19xLVkoAo+9snJ0sglnRWEO54K3ARu8zj4e0TGYHjSNT01XHzLogiknL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309339; c=relaxed/simple;
-	bh=jcyZCyiQ7gewPuCpVaJy9bKOKxzxJIXCuOhjXBHr0+M=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=e6T+KIDnrk4RRZV1EImlS5EfkMJu/TMWDwCwteQHBsPOPPfG+oWr0sniDfG2OtUW3wkaoyXAt05Noi0eyNVDuYx+ml89brH/y5SvV2f+M+nA1emqDMRIGA93GrfvWOEvkGQv+6fZsJebuBmPxKA0drxTe+3f6dTRNglxg0gD6aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowABn1PK8tAppNWWQAQ--.8867S2;
-	Wed, 05 Nov 2025 10:21:58 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jbaron@akamai.com,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	qiuxu.zhuo@intel.com
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH v2] EDAC/ie31200: Fix error handling in ie31200_register_mci
-Date: Wed,  5 Nov 2025 10:21:46 +0800
-Message-Id: <20251105022146.22105-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowABn1PK8tAppNWWQAQ--.8867S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF18Wr4Uuw13tw1DJr15CFg_yoW8Gryxpw
-	sxWas8AryDtw4vka18Zr18ZFy5uwsIka15AFWfC3y3GwnxZryvyFyktrWayFy8Aa92yFWa
-	qr98J3ykAr1UAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUkHUDUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1762308010; c=relaxed/simple;
+	bh=3kt7N0J6IspO8ZgzfJnnIsQKWxjvDO8QpbGBYBRox4g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a1e0C+j2m0YUcvsMME/A9l1/5Vud4zBmpRboZozd6zNoe7ODgmDxZlJXmIBaZk4h5hwWw5F8g8UsJOYwzfhSTKnEPCzDK7hkTXHda7YGGVOiKshtX0nsmLNRY6RoJ9MznFvKzRZ+rUPdbgurFGvwdOMEyhq+fptyIpnlEfXs+y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=A/EiWSTd; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=kxoskMR4j+GqhKLlnLSTcpV0pUXxjgv9zK324E17fAU=;
+	b=A/EiWSTd2b89EzcWmmELJyb2PQywCfApC63q8RDwYgXhyHihhl1fg25PYKezyhw0EspNaJlNI
+	FBFdRXBMPBfVwWlzsEwQFs3yH+vRoUobepyen+GcO24kKiYkvK6qwZHWwoxYj3vVTtyVZyXwazH
+	MytrBUk0IWyQLvzB8RQ6hJI=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d1T4b1Fg8zKm70;
+	Wed,  5 Nov 2025 09:58:23 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD5C0180044;
+	Wed,  5 Nov 2025 09:59:58 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Nov
+ 2025 09:59:57 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <pctammela@mojatatu.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>
+Subject: [PATCH net] net/sched: Fix possible infinite loop in qdisc_tree_reduce_backlog()
+Date: Wed, 5 Nov 2025 10:22:13 +0800
+Message-ID: <20251105022213.1981982-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-ie31200_register_mci() calls device_initialize() for priv->dev
-unconditionally. However, in the error path, put_device() is not
-called, leading to an imbalance. Similarly, in the unload path,
-put_device() is missing.
+A soft lockup issue was observed with following log:
 
-Although edac_mc_free() eventually frees the memory, it does not
-release the device initialized by device_initialize(). For code
-readability and proper pairing of device_initialize()/put_device(),
-add put_device() calls in both error and unload paths.
+  watchdog: BUG: soft lockup - CPU#1 stuck for 104s! [tc:94]
+  CPU: 1 UID: 0 PID: 94 Comm: tc Tainted: G L 6.18.0-rc4-00007-gc9cfc122f037 #425 PREEMPT(voluntary)
+  RIP: 0010:qdisc_match_from_root+0x0/0x70
+  Call Trace:
+   <TASK>
+   qdisc_tree_reduce_backlog+0xec/0x110
+   fq_change+0x2e0/0x6a0
+   qdisc_create+0x138/0x4e0
+   tc_modify_qdisc+0x5b9/0x9d0
+   rtnetlink_rcv_msg+0x15a/0x400
+   netlink_rcv_skb+0x55/0x100
+   netlink_unicast+0x257/0x380
+   netlink_sendmsg+0x1e2/0x420
+   ____sys_sendmsg+0x313/0x340
+   ___sys_sendmsg+0x82/0xd0
+   __sys_sendmsg+0x6c/0xd0
+   </TASK>
 
-Found by code review.
+The issue can be reproduced by:
+  tc qdisc add dev eth0 root noqueue
+  tc qdisc add dev eth0 handle ffff:0 ingress
+  tc qdisc add dev eth0 handle ffe0:0 parent ffff:a fq
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+A fq qdisc was created in __tc_modify_qdisc(), when the input parent major
+'ffff' is equal to the ingress qdisc handle major and the complete parent
+handle is not TC_H_ROOT or TC_H_INGRESS, which leads to a infinite loop in
+qdisc_tree_reduce_backlog().
+
+The infinite loop scenario:
+
+  qdisc_tree_reduce_backlog
+
+    // init sch is fq qdisc, parent is ffff000a
+    while ((parentid = sch->parent)) {
+
+      // query qdisc by handle ffff0000
+      sch = qdisc_lookup_rcu(qdisc_dev(sch), TC_H_MAJ(parentid));
+
+      // return ingress qdisc, sch->parent is fffffff1
+      if (sch == NULL) {
+      ...
+    }
+
+Commit 2e95c4384438 ("net/sched: stop qdisc_tree_reduce_backlog on
+TC_H_ROOT") break the loop only when parent TC_H_ROOT is reached. However,
+qdisc_lookup_rcu() will return the same qdisc when input an ingress qdisc
+with major 'ffff'. If the parent TC_H_INGRESS is reached, also break the
+loop.
+
+Fixes: 2e95c4384438 ("net/sched: stop qdisc_tree_reduce_backlog on TC_H_ROOT")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
 ---
-Changes in v2:
-- modified the patch, thanks for developer's suggestions;
-- removed Fixes line.
----
- drivers/edac/ie31200_edac.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/sched/sch_api.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index 5a080ab65476..ea8fc0d5f347 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -528,6 +528,7 @@ static int ie31200_register_mci(struct pci_dev *pdev, struct res_config *cfg, in
- fail_unmap:
- 	iounmap(window);
- fail_free:
-+	put_device(&priv->dev);
- 	edac_mc_free(mci);
- 	return ret;
- }
-@@ -598,6 +599,7 @@ static void ie31200_unregister_mcis(void)
- 		mci = priv->mci;
- 		edac_mc_del_mc(mci->pdev);
- 		iounmap(priv->window);
-+		put_device(&priv->dev);
- 		edac_mc_free(mci);
- 	}
- }
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 1e058b46d3e1..b4d6fe6b6812 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -784,7 +784,7 @@ void qdisc_tree_reduce_backlog(struct Qdisc *sch, int n, int len)
+ 	drops = max_t(int, n, 0);
+ 	rcu_read_lock();
+ 	while ((parentid = sch->parent)) {
+-		if (parentid == TC_H_ROOT)
++		if (parentid == TC_H_ROOT || parentid == TC_H_INGRESS)
+ 			break;
+ 
+ 		if (sch->flags & TCQ_F_NOPARENT)
 -- 
-2.17.1
+2.34.1
 
 
