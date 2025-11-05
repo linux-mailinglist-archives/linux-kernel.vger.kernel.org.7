@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-886833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082F0C369EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:16:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EA9C36B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4E36620E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F7F622852
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030F7331A47;
-	Wed,  5 Nov 2025 15:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736871E5207;
+	Wed,  5 Nov 2025 15:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cu89J4G7"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3uwCUtr"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3665A32ED58
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105483203AA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358283; cv=none; b=X/I4xhZZ7b8Xjczm/huRD80+pE4Z2pRqhVkwh2RXMcJ4uLHfcIjigYVA2XvhPGiW21/oc94vCu2vK7dNN90aHbg7VOj59C2LCVf1HWxu6ragi5AvZ1PzFbQWqNAeRcfDhI/VTz/gWpdY+bKpDwjkBc1XjhfnGXtbtBggL9E2j5M=
+	t=1762358263; cv=none; b=dQTnxbTBmohPhmb1wQeEo2ppgkQiZicwKCySKZX3+3xqIV08xzYQaY4YfZORWq1NehHUjVNuwXZzMJBCX0XnSCl1koGzGOafCTdlV5R+Ou5xvb4cVSbyLBKDOkqjcAFTNxZjmfAWtX+rLeAbZM7/XBc8r+rRFy2500xl2TdbLpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358283; c=relaxed/simple;
-	bh=grk85sjF01n32HUEeHZMfrtFgSo/JagXsKYG9XfD330=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G4hbpMJ6lEV4rvSo0Aero9Z4zw21RWU6P/b8oSbYqph4haAYTQAIM9J10IKiSznzv++XEgznaGwXKmSbQems/hU23oYNag4L9XD76rKVNY+SRc4CdDsJtRZqZ6/TFZNEeH09vgVUNtM7QljyuuOjDm6I3Iw3C0vGcZg0pQuVtMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cu89J4G7; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4775895d69cso9931115e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:58:00 -0800 (PST)
+	s=arc-20240116; t=1762358263; c=relaxed/simple;
+	bh=YnSUOZY4yv1wHEA4ZNPWvccnW6Q2kz+n8Nso5t/pTU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V+Ahtf/vOSxeaH/UZUURxLR5MFPbBXbUxy2tI1XQwebQGSYxVsXzTpYz5mSZBeIoram5/1/qfhtPQk1qygcBxxixdE5os0+iy8HL0Vdfb6KiiomQU406ZZQZwvPacwlk0NScjJ4GFQAD5Vj9TLj1oeQWa6ZD7VY5sC2Zplq6YFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3uwCUtr; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so4637363a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762358279; x=1762963079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R7/JvpBa71JfOtKidEFviFOI29HJTQ4dpKTrEsM/LHQ=;
-        b=cu89J4G7KVjSaecOcu/O8omJFtDGcPNsmtv6kEROvubIGH5Z6rHyfcz6XCYlhmGA+P
-         OXaULNG82WyxFY+eWNItSwTZOkI4Y111vgH+FpvgiZatU0mtKUo4pkvkP/8oQp4uqKi8
-         I65ibeexcCKV57mGGwwXbXZCV8Y4/rgL9JdCxWdMnFj76bHMtKy3n0F+YuDWWNfwWl36
-         NP+/zDroJk2jIZiWLHKuXoW8/+WMZjwC5vECr88pjzx10Og+3gH2X01P6253yxggatqJ
-         hrtukIAvsIpKIpRZJ0FvP57/3D766mvWhUyiN8QvaHblW47fzwaI9TwbJDjbbFV45DuL
-         CFcA==
+        d=linaro.org; s=google; t=1762358260; x=1762963060; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gi3ulz3Ij3cW2aD1iWY/9uEnz3868+Ej+OFb25qIT1E=;
+        b=w3uwCUtr9zwYTYS+HIaCxRKDfjashVrjv0iXFeCl5/laHmeYSO1QE9ZzW9PDSiN3EP
+         RRBV4B0KOUJaleYZHqcEpuzAYeDOFXnOGYLBCmmkjZlIQIrnLpCaBouegnd+lE1bSyXy
+         4FqC770PpKLpnVD+st56EFPblasKyx885SxTRMXhgD739PiPVIyJKzBsE1V06N4SUlis
+         j98LegfTyOJijStI7duulhHFaXh4RnoKL724cV+7jzkfo3NFq/wce06fvSNfD63KvYJn
+         i+UpEHACDeeCWQ4+e2SdHMRcqOOGRMV8ZSWs0fPiWZqJea1caeBRbZXL17f1OaFfay30
+         QF+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358279; x=1762963079;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R7/JvpBa71JfOtKidEFviFOI29HJTQ4dpKTrEsM/LHQ=;
-        b=Wx5gnyRMSMprklmLNOiuESF0/N99049xFxvi0nryvBqsTQG8FKPPcheQBYQ/UX+ssr
-         5Vqee3jYbYtmbhS2kL2WzH+DY4FGYoE3ZF7c5SA4Tbm1FHx47hj4Jl2g4oNnYj+B+byl
-         oKKTbnjS4NbG+bdl+4lHgs3/7aUHWTs8J6F4hS4ElcWODwwsHreyvpho0mcxgftpy3so
-         spVHzPwSuNt6C/HMZMqMeptzZYBnOB51O244cFkHUaUqYSgg2GyJnfsgDtckmTStjiC/
-         r5DFo3HcO70uzK4Y+jCvyTmLj30C+vpZTzaq0igrjg8hXoI48eMewoySrB5xt6yXMRYK
-         Rr9w==
-X-Gm-Message-State: AOJu0Ywdm75lNSQkZ4TCpdK4m2CEibbB6Vck505Hyr0pVonzTYnYwz8v
-	MyXmV3k1/BTwyF0/Nnk1wT+tCcSx6kQJQgI5nSOrgDz/UJ36zFPCko056CypRTgIiZWKruGbEHD
-	Ki8NT
-X-Gm-Gg: ASbGncuan9hyptztBRIVksYqwm2IbxfrX3um8SQSORfNN/q8q0JWoVUYZlbdmt+lfh1
-	WQB46EpcqLNmUsOV11XgM2LcKmGhulOTw4x34xthzKCOCo53kztjxv3KSu+qVR8azb9QeS1XXEH
-	E8nvSgConCu+HxEqssQG5BwDlGLd3ui13LBNA29VEJqub86oy08zqY0gYcoA2RYbkkAVhRIXspu
-	nks9cJVY0uVF4eGtocnjbEIeeCizWfacELwL0dybcVbI/mjAVDfTWPTgMQ9zSn6bFFKcmAXbtQf
-	kKY5PYL8vjEE7nyX3gjhIMu2cUj2KMD2e9LJ8nrhngW3YqZ+1dVOzYCbw2z2YjOKGM8VyGvqafP
-	fsuAprpxLzFGy+Pfu/iLY3UwFAUaLkZCNlVy0d8PSOeXuE6HYfhLT3IN1N9WDDQrD8sbtlCuWC4
-	7xZ/2nHtmddbUtII0Ch9PeCZRQOg0dGKBW8w==
-X-Google-Smtp-Source: AGHT+IHo7HnClSy+Sn9IiiLMeR93GNnuA4NgdJUp4IkSAPro5gqZR0uQLn2I+AtxyZHtt51f9TXbQg==
-X-Received: by 2002:a05:600c:5488:b0:475:dac3:69a2 with SMTP id 5b1f17b1804b1-4775ce164c5mr32789045e9.27.1762358279231;
-        Wed, 05 Nov 2025 07:57:59 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc2d14sm55567045e9.1.2025.11.05.07.57.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 07:57:58 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 2/2] platform: x86: replace use of system_wq with system_percpu_wq
-Date: Wed,  5 Nov 2025 16:57:36 +0100
-Message-ID: <20251105155742.293326-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251105155742.293326-1-marco.crivellari@suse.com>
-References: <20251105155742.293326-1-marco.crivellari@suse.com>
+        d=1e100.net; s=20230601; t=1762358260; x=1762963060;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gi3ulz3Ij3cW2aD1iWY/9uEnz3868+Ej+OFb25qIT1E=;
+        b=SEo3HCZJiRaFRLBHUw028IvqfCBBy5D+0LgOi3RkOLWV6N393Hcv7EDJujKFmm25Ke
+         fRTuiJRSuOvJ3wjf/4OGNiEjrJSQzR+a5KymbcS4oG1qhKNG1cFMw/35vo9N4/Mpbp4T
+         VIdnh8ugl5+BgDsdOhibvZGNcUdV7EI4eLEr/vhZfoB4yNhR5MS4ICP22SC6bM0BHmQE
+         LxS1pOFBhIaaOz5Z5H86gYg4RTICy9D5jF7oZBFQRN9NKAMQtUaApz17SXnbF4aF2xKW
+         x8G0hVoEtpRQBFQ+qMfumuFi3A4eW5T8fxmDBXpBKx1relXJ/doluw7rruj5uV2/43Qk
+         Lwmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUosZdAXzZc5odYvRZelmigxXqK2n/yhmYHIOAH2fFjrWoL36/q9jCl6QNOInlKy6VHlonlkH5Nv8VXLfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXVurnnDhGgkyMvx8Sp/Czr4J7t7P3KXsw+IK6hnllLsjmBzes
+	LUg6SJrhX0JZbr9Aj79LyOMqMcyftSJqOUuSCDnd2XkfyX9pMt/q8oRGGBd/ErqNqtRpWDXpRNS
+	a1xznbeScdw==
+X-Gm-Gg: ASbGncsHrCKrK1Uye27tyXauvZJbfUUeBo/GSjhIvE21MzlTD2yHTT2vWQKDQTtBOj3
+	m8NrtC8DCbxl4pEIYktTnGZ3WcacrFUt0U1Kb1kSeKAdz8nThsDNxKEs3cSoSSkmOF5PtB8wy5Y
+	kvSGcKtUOvizOvgGsSPVD5EXA1e6L5OZKAEqC9T8D70WmYJqgJftwHfWp9I9UecACskAMCIZ1GV
+	oZZocB3iHJ5rdSD6JaF3LcGF0wOE72YkDVhAe/y76h+6shooZd1toPgYHuiEH1cf4mDlAvKCYJm
+	9tyMzts6GLI0fsRSWmEdTSNuaPgwWRLyJl29rROLKp3c6q5ECk31HbVKFjF8WnXGJqYJ+T5jqI3
+	D4qof5QyyGk7t805JIHgGKqRuiLtlHmusiL2PrY0SamV1Y/8chptVGUjjmGxTCCbCsalWbaIXmZ
+	CMkHKNd8uViy406LKeXxv15mM=
+X-Google-Smtp-Source: AGHT+IG8Ib7bTOk4rfnBCJBGTAFfgk2ImcjjuBmXvp18vfVvKZ16nOJ2X4KjkA2fJsMo226KrUYJSw==
+X-Received: by 2002:a17:907:6d0a:b0:b72:5983:db20 with SMTP id a640c23a62f3a-b72654f55c1mr405051366b.32.1762358260191;
+        Wed, 05 Nov 2025 07:57:40 -0800 (PST)
+Received: from [172.20.148.132] ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e26adsm522473466b.43.2025.11.05.07.57.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 07:57:39 -0800 (PST)
+Message-ID: <efb8bba5-8805-4c95-ba1b-3bde46a4e528@linaro.org>
+Date: Wed, 5 Nov 2025 16:57:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/28] mtd: spinand: Fix kernel doc
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
+ <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+ <20251031-winbond-v6-17-rc1-oddr-v1-4-be42de23ebf1@bootlin.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-4-be42de23ebf1@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
 
-This lack of consistency cannot be addressed without refactoring the API.
 
-This patch continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
+On 10/31/25 6:26 PM, Miquel Raynal wrote:
+> The @data buffer is 5 bytes, not 4, it has been extended for the need of
+> devices with an extra ID bytes.
+> 
+> Fixes: 34a956739d29 ("mtd: spinand: Add support for 5-byte IDs")
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+no fixes tag for documentation.
 
-Replace system_wq with system_percpu_wq, keeping the same behavior.
-The old wq (system_wq) will be kept for a few release cycles.
+with that:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/platform/x86/gpd-pocket-fan.c                      | 4 ++--
- drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+(commit msg can be updated to smth like "update kernel doc comment" too)
 
-diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
-index 7a20f68ae206..c9236738f896 100644
---- a/drivers/platform/x86/gpd-pocket-fan.c
-+++ b/drivers/platform/x86/gpd-pocket-fan.c
-@@ -112,14 +112,14 @@ static void gpd_pocket_fan_worker(struct work_struct *work)
- 	gpd_pocket_fan_set_speed(fan, speed);
- 
- 	/* When mostly idle (low temp/speed), slow down the poll interval. */
--	queue_delayed_work(system_wq, &fan->work,
-+	queue_delayed_work(system_percpu_wq, &fan->work,
- 			   msecs_to_jiffies(4000 / (speed + 1)));
- }
- 
- static void gpd_pocket_fan_force_update(struct gpd_pocket_fan_data *fan)
- {
- 	fan->last_speed = -1;
--	mod_delayed_work(system_wq, &fan->work, 0);
-+	mod_delayed_work(system_percpu_wq, &fan->work, 0);
- }
- 
- static int gpd_pocket_fan_probe(struct platform_device *pdev)
-diff --git a/drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.c b/drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.c
-index 2f8cd8d9e0ab..ebbedfe5f4e8 100644
---- a/drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.c
-+++ b/drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.c
-@@ -183,7 +183,7 @@ static void atla10_ec_external_power_changed(struct power_supply *psy)
- 	struct atla10_ec_data *data = power_supply_get_drvdata(psy);
- 
- 	/* After charger plug in/out wait 0.5s for things to stabilize */
--	mod_delayed_work(system_wq, &data->work, HZ / 2);
-+	mod_delayed_work(system_percpu_wq, &data->work, HZ / 2);
- }
- 
- static const enum power_supply_property atla10_ec_psy_props[] = {
--- 
-2.51.1
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  include/linux/mtd/spinand.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+> index 927c10d7876958276a841a9f1278a74deeb89944..1c741145e49717169152854718f784e0e519ea92 100644
+> --- a/include/linux/mtd/spinand.h
+> +++ b/include/linux/mtd/spinand.h
+> @@ -287,7 +287,7 @@ struct spinand_device;
+>  
+>  /**
+>   * struct spinand_id - SPI NAND id structure
+> - * @data: buffer containing the id bytes. Currently 4 bytes large, but can
+> + * @data: buffer containing the id bytes. Currently 5 bytes large, but can
+>   *	  be extended if required
+>   * @len: ID length
+>   */
+> 
 
 
