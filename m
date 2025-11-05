@@ -1,289 +1,198 @@
-Return-Path: <linux-kernel+bounces-886137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC2C34D3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:27:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CBCC34D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8256420A16
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:22:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6B994FEC62
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1992FA0D3;
-	Wed,  5 Nov 2025 09:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6E2FDC49;
+	Wed,  5 Nov 2025 09:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L/5v6uA4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ntew6u+s";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGFNUeh0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wqB1cCja"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ajuCtSIi"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E7E2FB62C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7335D305E38;
+	Wed,  5 Nov 2025 09:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334329; cv=none; b=AtuCyzWMF0yoPAOOsxHUPpi2p8ss85H3wQa0W7otY8NiVbC7pZ+mqHjnNfQd0y/1xWgRVvzqwsPjVuJGMti8GyS8oMolPJY60HCzPkPgieq8brJodEQ9AMrOJCASQEaB5TAGxVnssY0SQhKDG7UMh0hvGsF57EF0sABwFhYlLkE=
+	t=1762334379; cv=none; b=IJhw4vfdp0Xff9j9NLYuUvx9YdVeC7+3sUfuWnWm6W0SIk9MAKcTTYj1kTgcQ+W4khgw2SBCW8oIY16LB/i4hK82SihZeQ4qwYLiYJaszON22Cy8TPHWWSZEdPiuCubcygAqYjlP1VXWGQI0rEdP2LcDeqZX7kvRfkbxXmuM6zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334329; c=relaxed/simple;
-	bh=+JqqFvTmCpNBwqHgRg2NZsakqCExA0Dnjs9Ogu3eFNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5toMcssHAEF7mG5bh70TVxAfnPmWVb3rwoC07IE/jrj+8B94Olipn5Ks2lMxPpZrRw2xKpNDR0L7eqZghGZqMgCRx/ZQzqNs9UUe6/xX9O24NwSOZYkDofXZenNGu10X7YTtGWTA7U5Hl4hDGrXrqK7ZZ6v+3MjRNfPF2g3Ilw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L/5v6uA4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ntew6u+s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGFNUeh0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wqB1cCja; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C54941F394;
-	Wed,  5 Nov 2025 09:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dUHNWHY9N3N9CS8EUbNMZ/Hd+PugtBGD/ByWJUAr0TI=;
-	b=L/5v6uA4jQmSUe+rmgFBMs0e+y2W37fa7N280Puhbcx39WTudZhEP8yb73+Kh3PaDt3Dpr
-	WN/EDq/88YX9ff4cM0s+7dFKXUxR5lKDMDbsk8CUutWp72U0VW0I340ELI8aNXZs935Cn2
-	GZOdEA1hTEo1AYEnc3u7eQ7v4opA87w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334326;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dUHNWHY9N3N9CS8EUbNMZ/Hd+PugtBGD/ByWJUAr0TI=;
-	b=Ntew6u+sECbXiA5T5xacYOSTY5OVu0yTDT/4kR8DOnxfwC19o2aWC1J1OGC//T9+6vkdMo
-	OIKnIlMg1U//vKDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mGFNUeh0;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wqB1cCja
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dUHNWHY9N3N9CS8EUbNMZ/Hd+PugtBGD/ByWJUAr0TI=;
-	b=mGFNUeh0F0IXW9J44zNqtXoSYn8Iv/jo4aVX6RTO5WxoiSp4Ac4FxuLPj4JEPniue7pXlk
-	qSumBQF3S5UC4cn0a7d6F8tnhlhf3mXCmtXBRtXjZ17onU2xEGnx3HLh5REZ+9KiXBufPz
-	fc2H4UnNVKqcyW498Od7EYm564lyRZ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334325;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dUHNWHY9N3N9CS8EUbNMZ/Hd+PugtBGD/ByWJUAr0TI=;
-	b=wqB1cCja5TwBB4BQFUcTqubtIQ0/vgQreTWbmreJZ9MI/nryCjIlyhENWTiKDFCj29ycjE
-	q4+9xbce/WUxcGDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BABE5132DD;
-	Wed,  5 Nov 2025 09:18:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id reiVLXUWC2lPEgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:18:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 74665A083B; Wed,  5 Nov 2025 10:18:45 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:18:45 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 13/25] ext4: support large block size in
- ext4_mb_init_cache()
-Message-ID: <n3jvaazkla3usq5vx4kxsfkr33d2mwm4eu7xpgf7qssktmjwgu@btxoicdj3vrr>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-14-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762334379; c=relaxed/simple;
+	bh=Rwt6oyO6h+JdNm5uij9AavKIIufkGHxD2BupZ5YTW1k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G9CCly9lVut7FleSI9qfOlbNZhPeX4aGs36E7pHb3hbFkPqE4a0647+84QeFhVX7QKCHn+qAhsl4IF/nDX8oVI9urvxcgBRjm47Bv3IqApGHdD6gNFz4h/xsel8yHJCGwgNW35jpLvI0BK8oR831WZrm9P97jq+zjv9QH46IOgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ajuCtSIi; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A59J4Ma8876863, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762334344; bh=Rwt6oyO6h+JdNm5uij9AavKIIufkGHxD2BupZ5YTW1k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=ajuCtSIi6TCRgdFNjvVLLdmbz+RhqdOZoDorMhCSGvBCYGQw8MG4KBI5Tsw3k1EY7
+	 wFYE34Kb3+VgVyKQr7cpp9EkyMi9BZD6nyQnukWFmnQcU44aSgJHWxYTBkl29zk381
+	 v3uhW0FX6GrxyNogzsifkbSaZFir7kWaOYFZijmmXpOwb4g68rwH5AUNSRScyEeqTX
+	 OYT2neSgsc+Xn9XcpNhjNamnjhi+gxb+4AMrtqVw/KH/7JHyYFUcmUSYFHWUD95bmS
+	 ZLwFfB1PE38EV9hXlPQYOixcJxXH1KBGHtSRrI22XNjJ4z1s9g5keucJj3YEW5b0uz
+	 rrz8uX1fPmASw==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A59J4Ma8876863
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 17:19:04 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 5 Nov 2025 17:19:04 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 5 Nov 2025 17:19:04 +0800
+Received: from RTKEXHMBS03.realtek.com.tw ([::1]) by
+ RTKEXHMBS03.realtek.com.tw ([fe80::2514:51f7:92e3:7d6a%9]) with mapi id
+ 15.02.1544.027; Wed, 5 Nov 2025 17:19:04 +0800
+From: Max Chou <max.chou@realtek.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        "linux-bluetooth@vger.kernel.org"
+	<linux-bluetooth@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Hilda Wu <hildawu@realtek.com>,
+        "alex_lu@realsil.com.cn" <alex_lu@realsil.com.cn>,
+        "niall_ni@realsil.com.cn"
+	<niall_ni@realsil.com.cn>,
+        KidmanLee <kidman@realtek.com>
+Subject: RE: [PATCH] Bluetooth: btrtl: Avoid loading the config file on security chips
+Thread-Topic: [PATCH] Bluetooth: btrtl: Avoid loading the config file on
+ security chips
+Thread-Index: AQHcTh6hyxvx5bb1LUuor8htNN7fW7TjMYMAgACLy9A=
+Date: Wed, 5 Nov 2025 09:19:04 +0000
+Message-ID: <acb85eada47f40d4ab6bfd4ae42f5861@realtek.com>
+References: <20251105063736.456618-1-max.chou@realtek.com>
+ <08601ca9-e038-45a7-bd98-4ab24013a84f@molgen.mpg.de>
+In-Reply-To: <08601ca9-e038-45a7-bd98-4ab24013a84f@molgen.mpg.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-14-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: C54941F394
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,huawei.com:email,suse.com:email]
-X-Spamd-Bar: /
 
-On Sat 25-10-25 11:22:09, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Currently, ext4_mb_init_cache() uses blocks_per_page to calculate the
-> folio index and offset. However, when blocksize is larger than PAGE_SIZE,
-> blocks_per_page becomes zero, leading to a potential division-by-zero bug.
-> 
-> Since we now have the folio, we know its exact size. This allows us to
-> convert {blocks, groups}_per_page to {blocks, groups}_per_folio, thus
-> supporting block sizes greater than page size.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/mballoc.c | 44 ++++++++++++++++++++------------------------
->  1 file changed, 20 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index d42d768a705a..31f4c7d65eb4 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -1329,26 +1329,25 @@ static void mb_regenerate_buddy(struct ext4_buddy *e4b)
->   * block bitmap and buddy information. The information are
->   * stored in the inode as
->   *
-> - * {                        page                        }
-> + * {                        folio                        }
->   * [ group 0 bitmap][ group 0 buddy] [group 1][ group 1]...
->   *
->   *
->   * one block each for bitmap and buddy information.
-> - * So for each group we take up 2 blocks. A page can
-> - * contain blocks_per_page (PAGE_SIZE / blocksize)  blocks.
-> - * So it can have information regarding groups_per_page which
-> - * is blocks_per_page/2
-> + * So for each group we take up 2 blocks. A folio can
-> + * contain blocks_per_folio (folio_size / blocksize)  blocks.
-> + * So it can have information regarding groups_per_folio which
-> + * is blocks_per_folio/2
->   *
->   * Locking note:  This routine takes the block group lock of all groups
-> - * for this page; do not hold this lock when calling this routine!
-> + * for this folio; do not hold this lock when calling this routine!
->   */
-> -
->  static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  {
->  	ext4_group_t ngroups;
->  	unsigned int blocksize;
-> -	int blocks_per_page;
-> -	int groups_per_page;
-> +	int blocks_per_folio;
-> +	int groups_per_folio;
->  	int err = 0;
->  	int i;
->  	ext4_group_t first_group, group;
-> @@ -1365,27 +1364,24 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  	sb = inode->i_sb;
->  	ngroups = ext4_get_groups_count(sb);
->  	blocksize = i_blocksize(inode);
-> -	blocks_per_page = PAGE_SIZE / blocksize;
-> +	blocks_per_folio = folio_size(folio) / blocksize;
-> +	WARN_ON_ONCE(!blocks_per_folio);
-> +	groups_per_folio = DIV_ROUND_UP(blocks_per_folio, 2);
->  
->  	mb_debug(sb, "init folio %lu\n", folio->index);
->  
-> -	groups_per_page = blocks_per_page >> 1;
-> -	if (groups_per_page == 0)
-> -		groups_per_page = 1;
-> -
->  	/* allocate buffer_heads to read bitmaps */
-> -	if (groups_per_page > 1) {
-> -		i = sizeof(struct buffer_head *) * groups_per_page;
-> +	if (groups_per_folio > 1) {
-> +		i = sizeof(struct buffer_head *) * groups_per_folio;
->  		bh = kzalloc(i, gfp);
->  		if (bh == NULL)
->  			return -ENOMEM;
->  	} else
->  		bh = &bhs;
->  
-> -	first_group = folio->index * blocks_per_page / 2;
-> -
->  	/* read all groups the folio covers into the cache */
-> -	for (i = 0, group = first_group; i < groups_per_page; i++, group++) {
-> +	first_group = EXT4_P_TO_LBLK(inode, folio->index) / 2;
-> +	for (i = 0, group = first_group; i < groups_per_folio; i++, group++) {
->  		if (group >= ngroups)
->  			break;
->  
-> @@ -1393,7 +1389,7 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  		if (!grinfo)
->  			continue;
->  		/*
-> -		 * If page is uptodate then we came here after online resize
-> +		 * If folio is uptodate then we came here after online resize
->  		 * which added some new uninitialized group info structs, so
->  		 * we must skip all initialized uptodate buddies on the folio,
->  		 * which may be currently in use by an allocating task.
-> @@ -1413,7 +1409,7 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  	}
->  
->  	/* wait for I/O completion */
-> -	for (i = 0, group = first_group; i < groups_per_page; i++, group++) {
-> +	for (i = 0, group = first_group; i < groups_per_folio; i++, group++) {
->  		int err2;
->  
->  		if (!bh[i])
-> @@ -1423,8 +1419,8 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  			err = err2;
->  	}
->  
-> -	first_block = folio->index * blocks_per_page;
-> -	for (i = 0; i < blocks_per_page; i++) {
-> +	first_block = EXT4_P_TO_LBLK(inode, folio->index);
-> +	for (i = 0; i < blocks_per_folio; i++) {
->  		group = (first_block + i) >> 1;
->  		if (group >= ngroups)
->  			break;
-> @@ -1501,7 +1497,7 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  
->  out:
->  	if (bh) {
-> -		for (i = 0; i < groups_per_page; i++)
-> +		for (i = 0; i < groups_per_folio; i++)
->  			brelse(bh[i]);
->  		if (bh != &bhs)
->  			kfree(bh);
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+SGkhIFBhdWwsDQoNClRoYW5rcyBmb3IgeW91ciByZXNwb25zZS4NClBsZWFzZSBjaGVjayBteSBj
+b21tZW50cyBpbmxpbmUuDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9t
+OiBQYXVsIE1lbnplbCBbbWFpbHRvOnBtZW56ZWxAbW9sZ2VuLm1wZy5kZV0NCj4gU2VudDogV2Vk
+bmVzZGF5LCBOb3ZlbWJlciA1LCAyMDI1IDM6NTggUE0NCj4gVG86IE1heCBDaG91IDxtYXguY2hv
+dUByZWFsdGVrLmNvbT4NCj4gQ2M6IE1hcmNlbCBIb2x0bWFubiA8bWFyY2VsQGhvbHRtYW5uLm9y
+Zz47IEx1aXogQXVndXN0byB2b24gRGVudHoNCj4gPGx1aXouZGVudHpAZ21haWwuY29tPjsgbGlu
+dXgtYmx1ZXRvb3RoQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IEhpbGRhIFd1IDxoaWxkYXd1QHJlYWx0ZWsuY29tPjsNCj4gYWxleF9sdUByZWFsc2ls
+LmNvbS5jbjsgbmlhbGxfbmlAcmVhbHNpbC5jb20uY247IEtpZG1hbkxlZQ0KPiA8a2lkbWFuQHJl
+YWx0ZWsuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBCbHVldG9vdGg6IGJ0cnRsOiBBdm9p
+ZCBsb2FkaW5nIHRoZSBjb25maWcgZmlsZSBvbiBzZWN1cml0eQ0KPiBjaGlwcw0KPiANCj4gDQo+
+IEV4dGVybmFsIG1haWwgOiBUaGlzIGVtYWlsIG9yaWdpbmF0ZWQgZnJvbSBvdXRzaWRlIHRoZSBv
+cmdhbml6YXRpb24uIERvIG5vdCByZXBseSwNCj4gY2xpY2sgbGlua3MsIG9yIG9wZW4gYXR0YWNo
+bWVudHMgdW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNlbmRlciBhbmQga25vdyB0aGUNCj4gY29u
+dGVudCBpcyBzYWZlLg0KPiANCj4gDQo+IA0KPiBEZWFyIE1heCwNCj4gDQo+IA0KPiBUaGFuayB5
+b3UgZm9yIHlvdXIgcGF0Y2guDQo+IA0KPiBBbSAwNS4xMS4yNSB1bSAwNzozNyBzY2hyaWViIE1h
+eCBDaG91Og0KPiA+IEZvciBjaGlwcyB3aXRoIHNlY3VyaXR5IGVuYWJsZWQsIGl0J3Mgb25seSBw
+b3NzaWJsZSB0byBsb2FkIGZpcm13YXJlDQo+ID4gd2l0aCBhIHZhbGlkIHNpZ25hdHVyZSBwYXR0
+ZXJuLg0KPiANCj4gSG93IGNhbiBzZWN1cml0eSBiZSBlbmFibGVkPw0KPiANCj4gV2hhdCBpcyBj
+dXJyZW50bHkgbG9nZ2VkPyBBbiBlcnJvcj8NCg0KDQpUaGUgc2VjdXJpdHkgY2hpcHMgd2lsbCBi
+ZSBzaGlwcGVkIHRvIHNwZWNpZmljIGJyYW5kIGN1c3RvbWVycyBhbmQgYXJlIG1hbmFnZWQgYnkg
+YW4gZUZ1c2UsIHdoaWNoIGlzIHByb2dyYW1tZWQgZHVyaW5nIG1hbnVmYWN0dXJpbmcuDQpDdXJy
+ZW50bHksIGxvYWRpbmcgdGhlIGNvbmZpZyBmaWxlIGNhdXNlcyBpbml0aWFsaXphdGlvbiB0byBm
+YWlsIG9uIHNlY3VyaXR5IGNoaXBzLg0KVGhlIHNlY3VyaXR5IGNoaXBzIGNhbiBvbmx5IGxvYWQg
+ZmlybXdhcmUgZmlsZXMgdGhhdCBjb250YWluIGEgdmFsaWQgc2lnbmF0dXJlLg0KDQoNCj4gDQo+
+IFBsZWFzZSBnbyBpbnRvIHRoZSBjaGFuZ2VzLiBXaGF0IGlzIHRoZSB2ZW5kb3IgY29tbWFuZCAw
+eEFEIG92ZXIgMHgwRD8NCj4gDQpBY3R1YWxseSwgdGhlIGN1cnJlbnQgdmFsdWUgaXMgaW5jb3Jy
+ZWN0LiBUaGUgY29ycmVjdCB2YWx1ZSBmb3IgdGhlIHBhcmFtZXRlcnMgb2YgdGhlIHZlbmRvciBj
+b21tYW5kIGlzIDB4QUQuDQoNCj4gPiAtIEV4YW1wbGUgbG9nIGZvciBhIHNlY3VyaXR5IGNoaXAu
+DQo+ID4NCj4gPiBCbHVldG9vdGg6IGhjaTA6IFJUTDogZXhhbWluaW5nIGhjaV92ZXI9MGMgaGNp
+X3Jldj0wMDBhDQo+ID4gICAgbG1wX3Zlcj0wYyBsbXBfc3VidmVyPTg5MjINCj4gPiBCbHVldG9v
+dGg6IGhjaTA6IFJUTDogcm9tX3ZlcnNpb24gc3RhdHVzPTAgdmVyc2lvbj0xDQo+ID4gQmx1ZXRv
+b3RoOiBoY2kwOiBSVEw6IGxvYWRpbmcgcnRsX2J0L3J0bDg5MjJhdV9mdy5iaW4NCj4gPiBCbHVl
+dG9vdGg6IGhjaTA6IFJUTDogY2ZnX3N6IDAsIHRvdGFsIHN6IDcxMzAxDQo+ID4gQmx1ZXRvb3Ro
+OiBoY2kwOiBSVEw6IGZ3IHZlcnNpb24gMHg0MWMwYzkwNQ0KPiA+DQo+ID4gLSBFeGFtcGxlIGxv
+ZyBmb3IgYSBub3JtYWwgY2hpcC4NCj4gPg0KPiA+IEJsdWV0b290aDogaGNpMDogUlRMOiBleGFt
+aW5pbmcgaGNpX3Zlcj0wYyBoY2lfcmV2PTAwMGENCj4gPiAgICBsbXBfdmVyPTBjIGxtcF9zdWJ2
+ZXI9ODkyMg0KPiA+IEJsdWV0b290aDogaGNpMDogUlRMOiByb21fdmVyc2lvbiBzdGF0dXM9MCB2
+ZXJzaW9uPTENCj4gPiBCbHVldG9vdGg6IGhjaTA6IFJUTDogbG9hZGluZyBydGxfYnQvcnRsODky
+MmF1X2Z3LmJpbg0KPiA+IEJsdWV0b290aDogaGNpMDogUlRMOiBsb2FkaW5nIHJ0bF9idC9ydGw4
+OTIyYXVfY29uZmlnLmJpbg0KPiA+IEJsdWV0b290aDogaGNpMDogUlRMOiBjZmdfc3ogNiwgdG90
+YWwgc3ogNzEzMDcNCj4gPiBCbHVldG9vdGg6IGhjaTA6IFJUTDogZncgdmVyc2lvbiAweDQxYzBj
+OTA1DQo+ID4NCj4gPiBUZXN0ZWQtYnk6IEhpbGRhIFd1IDxoaWxkYXd1QHJlYWx0ZWsuY29tPg0K
+PiA+IFNpZ25lZC1vZmYtYnk6IE5pYWwgTmkgPG5pYWxsX25pQHJlYWxzaWwuY29tLmNuPg0KPiA+
+IFNpZ25lZC1vZmYtYnk6IE1heCBDaG91IDxtYXguY2hvdUByZWFsdGVrLmNvbT4NCj4gPiAtLS0N
+Cj4gPiAgIGRyaXZlcnMvYmx1ZXRvb3RoL2J0cnRsLmMgfCAyNCArKysrKysrKysrKysrLS0tLS0t
+LS0tLS0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAxMSBkZWxldGlv
+bnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2JsdWV0b290aC9idHJ0bC5jIGIv
+ZHJpdmVycy9ibHVldG9vdGgvYnRydGwuYw0KPiA+IGluZGV4IDgyOTA5MzJiOGY3Yi4uZjZmY2Nj
+NmZkZjIyIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvYmx1ZXRvb3RoL2J0cnRsLmMNCj4gPiAr
+KysgYi9kcml2ZXJzL2JsdWV0b290aC9idHJ0bC5jDQo+ID4gQEAgLTUwLDcgKzUwLDcgQEANCj4g
+Pg0KPiA+ICAgI2RlZmluZSAgICAgUlRMX0NISVBfU1VCVkVSICgmKHN0cnVjdCBydGxfdmVuZG9y
+X2NtZCkge3sweDEwLCAweDM4LCAweDA0LA0KPiAweDI4LCAweDgwfX0pDQo+ID4gICAjZGVmaW5l
+ICAgICBSVExfQ0hJUF9SRVYgICAgKCYoc3RydWN0IHJ0bF92ZW5kb3JfY21kKSB7ezB4MTAsIDB4
+M0EsIDB4MDQsDQo+IDB4MjgsIDB4ODB9fSkNCj4gPiAtI2RlZmluZSAgICAgIFJUTF9TRUNfUFJP
+SiAgICAoJihzdHJ1Y3QgcnRsX3ZlbmRvcl9jbWQpIHt7MHgxMCwgMHhBNCwgMHgwRCwNCj4gMHgw
+MCwgMHhiMH19KQ0KPiA+ICsjZGVmaW5lICAgICAgUlRMX1NFQ19QUk9KICAgICgmKHN0cnVjdCBy
+dGxfdmVuZG9yX2NtZCkge3sweDEwLCAweEE0LCAweEFELA0KPiAweDAwLCAweGIwfX0pDQo+ID4N
+Cj4gPiAgICNkZWZpbmUgUlRMX1BBVENIX1NOSVBQRVRTICAgICAgICAgIDB4MDENCj4gPiAgICNk
+ZWZpbmUgUlRMX1BBVENIX0RVTU1ZX0hFQURFUiAgICAgICAgICAgICAgMHgwMg0KPiA+IEBAIC01
+NDQsNyArNTQ0LDYgQEAgc3RhdGljIGludCBydGxidF9wYXJzZV9maXJtd2FyZV92MihzdHJ1Y3Qg
+aGNpX2Rldg0KPiAqaGRldiwNCj4gPiAgIHsNCj4gPiAgICAgICBzdHJ1Y3QgcnRsX2VwYXRjaF9o
+ZWFkZXJfdjIgKmhkcjsNCj4gPiAgICAgICBpbnQgcmM7DQo+ID4gLSAgICAgdTggcmVnX3ZhbFsy
+XTsNCj4gPiAgICAgICB1OCBrZXlfaWQ7DQo+ID4gICAgICAgdTMyIG51bV9zZWN0aW9uczsNCj4g
+PiAgICAgICBzdHJ1Y3QgcnRsX3NlY3Rpb24gKnNlY3Rpb247DQo+ID4gQEAgLTU1OSwxNCArNTU4
+LDcgQEAgc3RhdGljIGludCBydGxidF9wYXJzZV9maXJtd2FyZV92MihzdHJ1Y3QgaGNpX2Rldg0K
+PiAqaGRldiwNCj4gPiAgICAgICAgICAgICAgIC5sZW4gID0gYnRydGxfZGV2LT5md19sZW4gLSA3
+LCAvKiBDdXQgdGhlIHRhaWwgKi8NCj4gPiAgICAgICB9Ow0KPiA+DQo+ID4gLSAgICAgcmMgPSBi
+dHJ0bF92ZW5kb3JfcmVhZF9yZWcxNihoZGV2LCBSVExfU0VDX1BST0osIHJlZ192YWwpOw0KPiA+
+IC0gICAgIGlmIChyYyA8IDApDQo+ID4gLSAgICAgICAgICAgICByZXR1cm4gLUVJTzsNCj4gPiAt
+ICAgICBrZXlfaWQgPSByZWdfdmFsWzBdOw0KPiA+IC0NCj4gPiAtICAgICBydGxfZGV2X2RiZyho
+ZGV2LCAiJXM6IGtleSBpZCAldSIsIF9fZnVuY19fLCBrZXlfaWQpOw0KPiA+IC0NCj4gPiAtICAg
+ICBidHJ0bF9kZXYtPmtleV9pZCA9IGtleV9pZDsNCj4gPiArICAgICBrZXlfaWQgPSBidHJ0bF9k
+ZXYtPmtleV9pZDsNCj4gPg0KPiA+ICAgICAgIGhkciA9IHJ0bF9pb3ZfcHVsbF9kYXRhKCZpb3Ys
+IHNpemVvZigqaGRyKSk7DQo+ID4gICAgICAgaWYgKCFoZHIpDQo+ID4gQEAgLTEwODEsNiArMTA3
+Myw4IEBAIHN0cnVjdCBidHJ0bF9kZXZpY2VfaW5mbyAqYnRydGxfaW5pdGlhbGl6ZShzdHJ1Y3QN
+Cj4gaGNpX2RldiAqaGRldiwNCj4gPiAgICAgICB1MTYgaGNpX3JldiwgbG1wX3N1YnZlcjsNCj4g
+PiAgICAgICB1OCBoY2lfdmVyLCBsbXBfdmVyLCBjaGlwX3R5cGUgPSAwOw0KPiA+ICAgICAgIGlu
+dCByZXQ7DQo+ID4gKyAgICAgaW50IHJjOw0KPiA+ICsgICAgIHU4IGtleV9pZDsNCj4gPiAgICAg
+ICB1OCByZWdfdmFsWzJdOw0KPiA+DQo+ID4gICAgICAgYnRydGxfZGV2ID0ga3phbGxvYyhzaXpl
+b2YoKmJ0cnRsX2RldiksIEdGUF9LRVJORUwpOyBAQCAtMTE5MSw2DQo+ID4gKzExODUsMTQgQEAg
+c3RydWN0IGJ0cnRsX2RldmljZV9pbmZvICpidHJ0bF9pbml0aWFsaXplKHN0cnVjdCBoY2lfZGV2
+ICpoZGV2LA0KPiA+ICAgICAgICAgICAgICAgZ290byBlcnJfZnJlZTsNCj4gPiAgICAgICB9DQo+
+ID4NCj4gPiArICAgICByYyA9IGJ0cnRsX3ZlbmRvcl9yZWFkX3JlZzE2KGhkZXYsIFJUTF9TRUNf
+UFJPSiwgcmVnX3ZhbCk7DQo+ID4gKyAgICAgaWYgKHJjIDwgMCkNCj4gPiArICAgICAgICAgICAg
+IGdvdG8gZXJyX2ZyZWU7DQo+ID4gKw0KPiA+ICsgICAgIGtleV9pZCA9IHJlZ192YWxbMF07DQo+
+ID4gKyAgICAgYnRydGxfZGV2LT5rZXlfaWQgPSBrZXlfaWQ7DQo+ID4gKyAgICAgcnRsX2Rldl9k
+YmcoaGRldiwgIiVzOiBrZXkgaWQgJXUiLCBfX2Z1bmNfXywga2V5X2lkKTsNCj4gPiArDQo+ID4g
+ICAgICAgYnRydGxfZGV2LT5md19sZW4gPSAtRUlPOw0KPiA+ICAgICAgIGlmIChsbXBfc3VidmVy
+ID09IFJUTF9ST01fTE1QXzg4NTJBICYmIGhjaV9yZXYgPT0gMHgwMDBjKSB7DQo+ID4gICAgICAg
+ICAgICAgICBzbnByaW50Zihmd19uYW1lLCBzaXplb2YoZndfbmFtZSksICIlc192Mi5iaW4iLCBA
+QA0KPiA+IC0xMjEzLDcgKzEyMTUsNyBAQCBzdHJ1Y3QgYnRydGxfZGV2aWNlX2luZm8gKmJ0cnRs
+X2luaXRpYWxpemUoc3RydWN0IGhjaV9kZXYNCj4gKmhkZXYsDQo+ID4gICAgICAgICAgICAgICBn
+b3RvIGVycl9mcmVlOw0KPiA+ICAgICAgIH0NCj4gPg0KPiA+IC0gICAgIGlmIChidHJ0bF9kZXYt
+PmljX2luZm8tPmNmZ19uYW1lKSB7DQo+ID4gKyAgICAgaWYgKGJ0cnRsX2Rldi0+aWNfaW5mby0+
+Y2ZnX25hbWUgJiYgIWJ0cnRsX2Rldi0+a2V5X2lkKSB7DQo+IA0KPiBTbyBvbiBub24tc2VjdXJp
+dHkgZW5hYmxlZCBjaGlwcywga2V5X2lkIGlzIDA/IEl04oCZZCBiZSBncmVhdCBpZiB0aGF0IGNv
+dWxkIGJlIG1hZGUNCj4gY2xlYXIgaW4gdGhlIGNvbW1pdCBtZXNzYWdlLg0KDQoNCkFzIHlvdSB1
+bmRlcnN0b29kLCBrZXlfaWQgaXMgMCBmb3Igbm9ybWFsIGNoaXBzLg0KSSB3aWxsIGFkZCB0aGlz
+IGluZm9ybWF0aW9uIHRvIHRoZSBjb21taXQgbG9nIGluIHRoZSB2MiBwYXRjaC4NCg0KDQo+IA0K
+PiA+ICAgICAgICAgICAgICAgaWYgKHBvc3RmaXgpIHsNCj4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgc25wcmludGYoY2ZnX25hbWUsIHNpemVvZihjZmdfbmFtZSksICIlcy0lcy5iaW4iLA0KPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBidHJ0bF9kZXYtPmljX2luZm8tPmNmZ19u
+YW1lLCBwb3N0Zml4KTsNCj4gDQo+IA0KPiBLaW5kIHJlZ2FyZHMsDQo+IA0KPiBQYXVsDQoNCg0K
+QlJzLA0KTWF4DQo=
 
