@@ -1,210 +1,191 @@
-Return-Path: <linux-kernel+bounces-886141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818DEC34D4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:28:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65297C34D6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BECF7562E13
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:23:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB7884FE89F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F3230AADC;
-	Wed,  5 Nov 2025 09:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF202FA0E9;
+	Wed,  5 Nov 2025 09:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTIxZP9Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n7CKcfUG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1OwZB+RB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n7CKcfUG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1OwZB+RB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996F52FDC35
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2482FD676
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334382; cv=none; b=PsDQrPkmXaaWOQd9nQ2IAW35skO4dj/Vki8XSCGtPHtv2f9wnwoYt0lHBWARMbpIVMfyUmb458WHeUf6HnK9On9MbdkPzNb5y8KvpD7rDd6vKVV82PWmJ448VcYkj1sZ9/JhC7dryuCprAP3LXLgVCo3SwSwMwr03j+0cBYWwMg=
+	t=1762334371; cv=none; b=TtQOyt3ctCfVM30iyYYZrWN0gRNU0d54PZovEBJ8KV8NGKIsgRaR9R2vjdCUw2DidLmYsyau0WBcyBROFhWBeab6C7NpBgKUpAkNOTJF/7gnhXyzMNQl9DimI3mWrXzOAFy+OJwmMWW2zKupn8uvW7VZM+lkqGj5Ah/++PaSGeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334382; c=relaxed/simple;
-	bh=V42QtcJZ8FUh072qTDf/D7Guy0ATAyEhatPFCG+jmxg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=E2VrrRWlGOYQHZP5ggXM4CUoGgOMgvo/BliCdppkEBIf2S9aARP9b3qFQD2U3pXAzFY8GWV19EkrIgqUNdCUxqK3i2npCJvjWqZcblktQ1ruhgd0F/6wxeR8nMu3InLB8L7zEtIcRleHNKAbCmiKXDbvKZqz7SuQ43ReyyUCoCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTIxZP9Z; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762334379; x=1793870379;
-  h=date:from:to:cc:subject:message-id;
-  bh=V42QtcJZ8FUh072qTDf/D7Guy0ATAyEhatPFCG+jmxg=;
-  b=RTIxZP9ZqwatqQBzCnBoZ8TymglIB0a8/RvZ2C0XC6okDFB1HDQpmXYJ
-   Z53CduG4FzV8YbjtggYwy028ELQtaQXmrBin2xGTfzXV1ZQU05vUEvh1D
-   01u3jrbagKQ6Qu5V/pDlVvnk9lYYatrMyzkUvV4TEkVHy//uuNNkFZu8o
-   7vzkGTBzSKxNFrQAUFu1OKlacCoBxej8qdx/D1ZeXzYUldhQdXtE4XDAf
-   UHSAY+6Jj+Bg/LhQ2gtieWsInGPRJqjWEd6CoFoHgiW0qJJpTVItEELDK
-   3Ex3GJ3+lXY5rUrrvKYglctf0tkyH9ky53tpUrVXOjoPAA+imT3mBPPV9
-   Q==;
-X-CSE-ConnectionGUID: fmDltrOKQouORTIDo8WvdQ==
-X-CSE-MsgGUID: iDHw8i4PTbiWBC2h1pyCDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64474714"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="64474714"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:19:38 -0800
-X-CSE-ConnectionGUID: 5N4ATGe4Tgq2T7CtL3ggHQ==
-X-CSE-MsgGUID: RAm4ZjBmTreRzfkTo9aMrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="188129454"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 05 Nov 2025 01:19:37 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGZfy-000SMK-1v;
-	Wed, 05 Nov 2025 09:19:34 +0000
-Date: Wed, 05 Nov 2025 17:19:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:core/rseq] BUILD SUCCESS
- 1fe4002cf7f23d70c79bda429ca2a9423ebcfdfa
-Message-ID: <202511051716.3YBxhNhb-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762334371; c=relaxed/simple;
+	bh=sq6aVF0Cbo5IoUk3Ud3H9yMfyidVw7SfILVp4JhdL5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mv4fJn5fzxZyVNDCwKAJoCg3hA8f1G93wHtnOG1e/6JHO1Yka2pu08/2PJ4GL/ZGH91AS5x/AaCO3b9qbMjvkZwlpK/+xdsgCdfCB75VJ+vE3+k0P3ZNxH+M4m2r0xq+CqdEA3wyKnvtRdFacdZO1eZ77ACxcsVoFjZtmkEW300=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n7CKcfUG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1OwZB+RB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n7CKcfUG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1OwZB+RB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0AC941F394;
+	Wed,  5 Nov 2025 09:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762334368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMwdMVhHhC8T39Jua7OgonrjFmJ+xRW6Om3Oi/7Ntz0=;
+	b=n7CKcfUGsA9pxtR/T6/gyIL9atCSLS4qFmqG0juDkMTcHntgxPyHmPNINv5Vt4kEy6rg+k
+	1SFP7Q3BwUoZIS/TNRsjJTOAsPG9FZt99NA1xKyVRPPw+mY8CfgJzhDSCU+Anjwa3Ue+JJ
+	jwFELPxZeznF7OPG81qgnuE1ZI0zDhU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762334368;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMwdMVhHhC8T39Jua7OgonrjFmJ+xRW6Om3Oi/7Ntz0=;
+	b=1OwZB+RBx2VqDiKFCkxeh+3Fmfs9jMP5GkHhZsXrYqIco49jEwEKwxJwENpp6AZwJBVuKX
+	ZvRw0YSLC0UbpZDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=n7CKcfUG;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1OwZB+RB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762334368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMwdMVhHhC8T39Jua7OgonrjFmJ+xRW6Om3Oi/7Ntz0=;
+	b=n7CKcfUGsA9pxtR/T6/gyIL9atCSLS4qFmqG0juDkMTcHntgxPyHmPNINv5Vt4kEy6rg+k
+	1SFP7Q3BwUoZIS/TNRsjJTOAsPG9FZt99NA1xKyVRPPw+mY8CfgJzhDSCU+Anjwa3Ue+JJ
+	jwFELPxZeznF7OPG81qgnuE1ZI0zDhU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762334368;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FMwdMVhHhC8T39Jua7OgonrjFmJ+xRW6Om3Oi/7Ntz0=;
+	b=1OwZB+RBx2VqDiKFCkxeh+3Fmfs9jMP5GkHhZsXrYqIco49jEwEKwxJwENpp6AZwJBVuKX
+	ZvRw0YSLC0UbpZDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E915C132DD;
+	Wed,  5 Nov 2025 09:19:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Tu/iOJ8WC2mBEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:19:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B1A86A083B; Wed,  5 Nov 2025 10:19:27 +0100 (CET)
+Date: Wed, 5 Nov 2025 10:19:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 14/25] ext4: prepare buddy cache inode for BS > PS with
+ large folios
+Message-ID: <6beewixhvz3kfu33gz7silaiceywhuftyuplfnqsusrzwlsq6l@b75fxyfcmrkg>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-15-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-15-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.21 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	BAD_REP_POLICIES(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_NONE(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,huaweicloud.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 0AC941F394
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.21
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/rseq
-branch HEAD: 1fe4002cf7f23d70c79bda429ca2a9423ebcfdfa  x86/ptrace: Always inline trivial accessors
+On Sat 25-10-25 11:22:10, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> We use EXT4_BAD_INO for the buddy cache inode number. This inode is not
+> accessed via __ext4_new_inode() or __ext4_iget(), meaning
+> ext4_set_inode_mapping_order() is not called to set its folio order range.
+> 
+> However, future block size greater than page size support requires this
+> inode to support large folios, and the buddy cache code already handles
+> BS > PS. Therefore, ext4_set_inode_mapping_order() is now explicitly
+> called for this specific inode to set its folio order range.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-elapsed time: 1474m
+Looks good. Feel free to add:
 
-configs tested: 118
-configs skipped: 4
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+								Honza
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                     nsimosci_hs_defconfig    gcc-15.1.0
-arc                   randconfig-001-20251105    gcc-8.5.0
-arc                   randconfig-002-20251105    gcc-13.4.0
-arm                               allnoconfig    clang-22
-arm                                 defconfig    clang-22
-arm                          pxa168_defconfig    clang-19
-arm                   randconfig-001-20251105    clang-22
-arm                   randconfig-002-20251105    clang-22
-arm                   randconfig-003-20251105    clang-22
-arm                   randconfig-004-20251105    gcc-12.5.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20251105    clang-17
-arm64                 randconfig-002-20251105    gcc-13.4.0
-arm64                 randconfig-003-20251105    gcc-8.5.0
-arm64                 randconfig-004-20251105    clang-17
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251105    gcc-15.1.0
-csky                  randconfig-002-20251105    gcc-15.1.0
-hexagon                           allnoconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20251104    clang-22
-hexagon               randconfig-002-20251104    clang-16
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251105    gcc-14
-i386        buildonly-randconfig-002-20251105    gcc-14
-i386        buildonly-randconfig-003-20251105    clang-20
-i386        buildonly-randconfig-004-20251105    gcc-14
-i386        buildonly-randconfig-005-20251105    gcc-14
-i386        buildonly-randconfig-006-20251105    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251105    clang-20
-i386                  randconfig-002-20251105    gcc-14
-i386                  randconfig-003-20251105    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251104    gcc-15.1.0
-loongarch             randconfig-002-20251104    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251104    gcc-8.5.0
-nios2                 randconfig-002-20251104    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20251104    gcc-8.5.0
-parisc                randconfig-002-20251104    gcc-15.1.0
-parisc64                         alldefconfig    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                     kmeter1_defconfig    gcc-15.1.0
-powerpc                         ps3_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20251104    gcc-15.1.0
-powerpc               randconfig-002-20251104    clang-22
-powerpc64             randconfig-001-20251104    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20251104    gcc-8.5.0
-riscv                 randconfig-002-20251104    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20251104    clang-22
-s390                  randconfig-002-20251104    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                          landisk_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251104    gcc-13.4.0
-sh                    randconfig-002-20251104    gcc-11.5.0
-sh                           se7721_defconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20251105    gcc-12.5.0
-sparc                 randconfig-002-20251105    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251105    clang-22
-sparc64               randconfig-002-20251105    gcc-10.5.0
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251105    clang-22
-um                    randconfig-002-20251105    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251105    clang-20
-x86_64      buildonly-randconfig-002-20251105    gcc-13
-x86_64      buildonly-randconfig-003-20251105    gcc-14
-x86_64      buildonly-randconfig-004-20251105    gcc-13
-x86_64      buildonly-randconfig-005-20251105    gcc-14
-x86_64      buildonly-randconfig-006-20251105    gcc-13
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-011-20251105    clang-20
-x86_64                randconfig-012-20251105    clang-20
-x86_64                randconfig-013-20251105    clang-20
-x86_64                randconfig-014-20251105    gcc-14
-x86_64                randconfig-015-20251105    clang-20
-x86_64                randconfig-016-20251105    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251105    gcc-11.5.0
-xtensa                randconfig-002-20251105    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  fs/ext4/mballoc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 31f4c7d65eb4..155c43ff2bc2 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -3493,6 +3493,8 @@ static int ext4_mb_init_backend(struct super_block *sb)
+>  	 * this will avoid confusion if it ever shows up during debugging. */
+>  	sbi->s_buddy_cache->i_ino = EXT4_BAD_INO;
+>  	EXT4_I(sbi->s_buddy_cache)->i_disksize = 0;
+> +	ext4_set_inode_mapping_order(sbi->s_buddy_cache);
+> +
+>  	for (i = 0; i < ngroups; i++) {
+>  		cond_resched();
+>  		desc = ext4_get_group_desc(sb, i, NULL);
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
