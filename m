@@ -1,107 +1,135 @@
-Return-Path: <linux-kernel+bounces-886454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5DCC35A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF3C35A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6804A1886D01
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8830F189AD48
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B264313295;
-	Wed,  5 Nov 2025 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30203313295;
+	Wed,  5 Nov 2025 12:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pl+bDX0b"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OcOEff3u";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h8w1hdwk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E459B21146C;
-	Wed,  5 Nov 2025 12:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0BB2DE202;
+	Wed,  5 Nov 2025 12:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345883; cv=none; b=SaX+cMoOQbPPK3ZdHg6KZ+0iYqtC4inQlFBuiMoMHguHrdkQmhEZE+lPGSE0NYU7zhD+fvwyiJw1cMlEAUtJSaCLf5oHjr1tnBLleQ0xipFgn8cLvvC5zrWRgG7gBddLnCo5BosKM3osaDnLEjBDQ/b50JoGZ+QMl8u9sxJPI/o=
+	t=1762345900; cv=none; b=ZQvgPmzy00iWf0uKZ852uXkW7nCBpzz4ij2k54mSznMpugHSCjOBO3wPDERpwYb73Q/cY+SJ4eflsxU9YgsFjarm+OtG0RN6IT2y90R8rNRLzRr+m5NvkwwjYwSWYPGR+OzAeYgc/QiVftaHGNV0Ux/kQCEEO8x5CtE5Ql4V49A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345883; c=relaxed/simple;
-	bh=3orZaa3BJfbbwuZiYUMX6DK1I31IvSAL999Rpt9kpxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=totQm/+KCB7fL/NBiKgqiluu+N47sMeF38RfFCEZqIFeGR0pWPbn9KEz3OY7n9EmV3S7lXd8Y640OFJQJLIZSduiAqcWwSANGLHK4ffvnKnmPd/I5MiE6LB/rTj7txL5MrfhMhyeUBJAijTlPPvXwUoJmeIcBahaSK+0iRCPJlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pl+bDX0b; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762345880;
-	bh=3orZaa3BJfbbwuZiYUMX6DK1I31IvSAL999Rpt9kpxk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pl+bDX0bsfW2Sp34vBeeVU0amQOnBSbALUJjzViisp14VXUgd+kJ2YRyADMAXSu2k
-	 +tZQKNisJ1L5dnAApFHRQaYpIr0fRxzw8e7thjpllTZIxnYn6cMV7VBi3nhcUxriyM
-	 xYtTANz739MqPnWXBEdScSR/YYxXG7tyOukQXzaXjHACdxikSaT29xW0B4aDPt8gQG
-	 UGu/J/YKwraPp2LqhOqy320iKfH39MqvzGcPk1YFENq5a29Z7AFdcQK6ddODigVmSf
-	 5Zd7um2SPDAhjP0Kw8QabG3x9Tiw3p7FyOQH8mXK31/RMoRVmJFobQrKgGAVKXG5HQ
-	 D8LBxCHc0tM8A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AF9E517E009B;
-	Wed,  5 Nov 2025 13:31:19 +0100 (CET)
-Message-ID: <8bbea465-c277-499c-937d-71790a3555da@collabora.com>
-Date: Wed, 5 Nov 2025 13:31:19 +0100
+	s=arc-20240116; t=1762345900; c=relaxed/simple;
+	bh=R0xIUk5xUk5kjTH1s/f7OZ2/U/P7P9oA6a70auF7DK0=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=gtb4j1BzwBiBh6zJ0RyBwW24RAe0aJMsQmE+7qc3eaAM/EhLXWpEulTq4bSYgGLEtcqh6H7Dv+BVDTI4fQVsHP+quZiVwcIR3jDw4x//R4VR6s85rWCQidetSdhqAETzRMoQ1Th5DvwC7B/298aBtYpivDxIaiWQdH+XmdR1Tkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OcOEff3u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h8w1hdwk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Nov 2025 12:31:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762345890;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZN5gtsvEQm25Odxnls5yakPee5U15HOSC/cewgMDyHE=;
+	b=OcOEff3uWZVpW2HuvrOl3rKRrjjj46vONcfwl0uECOJYedB0dl9/yjolRP01dLwEFoPqUi
+	rwStyEKTCgNu7oIJeruHdn0Z2rf/zM3A7XjM8kSTlicf1TUcsD1OypwUsv7WTaTQcjgu3f
+	FT/UlsddL+nPGSg4/ChSkexu9jhOQpQiYG7ANilgk8F119cwW+mjQaqRBcaDtt5OsB/7ih
+	4bWnRYtd/h/bXRodYXYPs/vIDsQJ7wdSBje95sSxqdqnTkAstzUbg6+crzv6rQ0cwB6SL+
+	BVvAeLkz11FJc8AH4Lzj7bZNu2FG7JrMrtyjOHk/XWvi2KCKWiKK3mostztgbQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762345890;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZN5gtsvEQm25Odxnls5yakPee5U15HOSC/cewgMDyHE=;
+	b=h8w1hdwkowUFpYbyq7f7uPjeESxh3iBuFp3LIBjqLXZV78czk8vF23B4yDo3n4daI40TsE
+	9dwOHYuyOCD0NNAA==
+From: "tip-bot2 for Marc Herbert" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/misc] x86/msr: Add CPU_OUT_OF_SPEC taint name to
+ "unrecognized" pr_warn(msg)
+Cc: Marc Herbert <marc.herbert@linux.intel.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] media: mediatek: fix VPU device leaks on probe
-To: Johan Hovold <johan@kernel.org>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Nicolas Dufresne <nicolas@ndufresne.ca>, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251028100454.4086-1-johan@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251028100454.4086-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <176234588546.2601451.13367192916449580721.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 28/10/25 11:04, Johan Hovold ha scritto:
-> This series fixes VPU device leaks during probe of the mdp driver.
-> 
-> Included is also a minor documentation update to make it clear that the
-> VPU lookup helper returns the device with an incremented refcount.
-> 
-> Johan
-> 
-> 
-> Changes in v2
->   - drop incorrect vcodec patch since that reference leak has already
->     been fixed by commit bf1d556ad4e0 ("media: mtk-vcodec: abstract
->     firmware interface") which added the codec release callback
-> 
-> 
-> Johan Hovold (2):
->    media: mediatek: mdp: fix device leak on probe
->    media: mediatek: amend vpu_get_plat_device() documentation
-> 
->   drivers/media/platform/mediatek/mdp/mtk_mdp_core.c | 7 +++++--
->   drivers/media/platform/mediatek/vpu/mtk_vpu.h      | 2 +-
->   2 files changed, 6 insertions(+), 3 deletions(-)
-> 
+The following commit has been merged into the x86/misc branch of tip:
 
+Commit-ID:     41f4767000667f402be2f1ccd70cd215bfc41ec3
+Gitweb:        https://git.kernel.org/tip/41f4767000667f402be2f1ccd70cd215bfc=
+41ec3
+Author:        Marc Herbert <marc.herbert@linux.intel.com>
+AuthorDate:    Mon, 03 Nov 2025 03:08:11=20
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 05 Nov 2025 13:14:42 +01:00
 
-While series is
+x86/msr: Add CPU_OUT_OF_SPEC taint name to "unrecognized" pr_warn(msg)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+While restricting access,
 
+  a7e1f67ed29f ("x86/msr: Filter MSR writes")
 
+also added warning and started tainting the kernel.
+
+But the warning message never mentioned tainting. Moreover, this uses the
+"CPU_OUT_OF_SPEC" flag which is not clearly related to MSRs: that flag is
+overloaded by several, fairly different situations, including some much
+scarier ones.
+
+So, without an expert around (thank you Dave Hansen), it would have been
+practically impossible to root cause the tainting from just the log file at
+hand. So it would be prudent to explicitly mention in the logs when the
+tainting happens so that debugging crashes can be made easier.
+
+Fix this by simply appending the CPU_OUT_OF_SPEC flag to the warning message.
+
+This readability issue happened when staring at logs involving the Intel
+Memory Latency Checker (among many other things going on in that log). The MLC
+disables hardware prefetch.
+
+  [ bp: Massage and extend commit message. ]
+
+Signed-off-by: Marc Herbert <marc.herbert@linux.intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20251101-tainted-msr-v1-1-e00658ba04d4@linux.=
+intel.com
+---
+ arch/x86/kernel/msr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+index e17c16c..4469c78 100644
+--- a/arch/x86/kernel/msr.c
++++ b/arch/x86/kernel/msr.c
+@@ -98,7 +98,7 @@ static int filter_write(u32 reg)
+ 	if (!__ratelimit(&fw_rs))
+ 		return 0;
+=20
+-	pr_warn("Write to unrecognized MSR 0x%x by %s (pid: %d).\n",
++	pr_warn("Write to unrecognized MSR 0x%x by %s (pid: %d), tainting CPU_OUT_O=
+F_SPEC.\n",
+ 	        reg, current->comm, current->pid);
+ 	pr_warn("See https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/ab=
+out for details.\n");
+=20
 
