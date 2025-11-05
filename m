@@ -1,182 +1,143 @@
-Return-Path: <linux-kernel+bounces-885861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8C5C3410F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:37:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF945C34115
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3366E18C11B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9592346147E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1738D2C027B;
-	Wed,  5 Nov 2025 06:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0842D2C0274;
+	Wed,  5 Nov 2025 06:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FgS0ckKl"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxxwByMW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451B2C0F97;
-	Wed,  5 Nov 2025 06:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210A121FF2E;
+	Wed,  5 Nov 2025 06:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324650; cv=none; b=ZGDniQUjn2aqOqw/AaG0TKPkWCiwfUb1gFgr19q+WYhbaysVwY29iww07Pr6RFa65LjmofBszTcLfWSyGHaOXRMEdjrO5nj+9CPl6WGpSz31vAUuh5dbKczOlZzL87qTaXPVgSOZxJEn5M9N7uHN7HhFPE5bscgUu+ZehFIDCu0=
+	t=1762324735; cv=none; b=Vb85TGg+LWdrTa23h3hqfMzJymK//ZQQ0y2USJZ3Z306gnOKpQNuDt7nGstv5wuFAHA8JdTP3aSXvK/08f+pYT0AleoMxx16aPnyAQ28yL7mRT4Xg73rukpktRpX8B3Af+NUodWd4DFYi66Iog93dmAx+aa4oeGn24OJYF2KUGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324650; c=relaxed/simple;
-	bh=8NxT66zCphvkQCfdIza22bbxIBzsHc7TisrsL7R5jjk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p5le+QCP+tyEBx0cHVLw5YBVsirQhruZKU1LeCZ1QrP74/0zrNjSHLh+0+9WZI5eARzR0fWg/DW+qYKcCgefQdOr6tR6BWMMdvUwMisRtamt/CH60i2xuN2pIdb4r+HJjEcn6EDKhALeBNlD8/Nv/Kt8R7q8I7rSWV+fNRWqt5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FgS0ckKl; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A56bH5E1630904, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1762324637; bh=4ldqUFijuY4M4Ww4pUDqzKWGCyEgYoYPd767VqSYHa8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=FgS0ckKlTfOpMGULkk2vSnYbrR1iEZiKGr5Asa/Hns2e26JB8yxHDBDrZvlDQHeDJ
-	 964eP0OUlgNar8XLjZINhuImNOJhtAUZ/HVSce1ZVsmZejGiC4K89RVIaeizV3wAg4
-	 cYFuSVjpISlz7ytDke2x+clU2ehRlrjiWX14wvUZEJ7BXy/Q8fRSLKbYCzupahtMIp
-	 QCcAoXqRd+TsT+2PxoDjSqPXEFsy0TmFuMxrAomZSAq8lz9AMxhJKzpobuLn8XXlm0
-	 1IjQPhgCO+2eTe1YImBBKrXiEfSoPmIuMPz+OQ+t6FPtlwhMA3iWmN9WRcUBqFs0Ff
-	 gXDIjmOXT1NaQ==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A56bH5E1630904
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Nov 2025 14:37:17 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 5 Nov 2025 14:37:17 +0800
-Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 5 Nov 2025 14:37:16 +0800
-Received: from rtkbt-D520MT-K.realtek.com.tw (172.24.54.67) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server id
- 15.2.1544.27 via Frontend Transport; Wed, 5 Nov 2025 14:37:16 +0800
-From: Max Chou <max.chou@realtek.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
-        <niall_ni@realsil.com.cn>, KidmanLee <kidman@realtek.com>,
-        Max Chou
-	<max.chou@realtek.com>
-Subject: [PATCH] Bluetooth: btrtl: Avoid loading the config file on security chips
-Date: Wed, 5 Nov 2025 14:37:36 +0800
-Message-ID: <20251105063736.456618-1-max.chou@realtek.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762324735; c=relaxed/simple;
+	bh=fPumA7eDGaOvjZ5e3hO4AGXGDpfqEcmICsMsMtt8SQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GG3cRUllF1B/vCM53nuHrdjgKEMYMCaT25NaVnUMqf5J0669jxN2C/6i7JY/amTZ1c8iflRXMc3kqcEso4om/fOCfAIegIz4ZFdLG0c2rlIXvTt+gm2MoYH1d/OUP8mbH49lfgDKOXckNNNMhCVlKN4Vco9jbASBrVgenrtgbQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxxwByMW; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762324733; x=1793860733;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fPumA7eDGaOvjZ5e3hO4AGXGDpfqEcmICsMsMtt8SQM=;
+  b=TxxwByMWuNQ9NglFltTLQq+Hg8TKbnw2MUS003gfXSgH8rOGZwu/s+dT
+   ytIOisXuOG8WX/iIPdSwHzTzCZoGONPiN3isZ5sjQHvAecdZGPHAo35Cy
+   R758x+PK7p7eFExisFJMmunUWaPYAQofGC7bGhkvEtJS7biR/cTpiwnIq
+   Ie0Tm3pD43QzodlygfogWoSVgh7rahZNKZI+RNFwrE8E1be16oBZQsk61
+   GfjWMv/pBq+49BJT6p7ZyK7GFzGBUzXYZBMFhq0r3IgTjWwi9TcFVD3J3
+   SackBF0hseo8zKg6O8oHcbg6hUTEz6VvYlSeWeDmPt7/8aS7g3UFu0FFP
+   g==;
+X-CSE-ConnectionGUID: diEMPirLQVybd/uKieUkiQ==
+X-CSE-MsgGUID: NAQ4/EhXRWOuJJcCBd2KRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="68084123"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="68084123"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 22:38:52 -0800
+X-CSE-ConnectionGUID: BJNVXZDmR7arjquA4TSKhw==
+X-CSE-MsgGUID: v4/ZZh3xSTqLobQrs/fNEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="218016196"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 22:38:50 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vGXAM-00000005gwS-1Co9;
+	Wed, 05 Nov 2025 08:38:46 +0200
+Date: Wed, 5 Nov 2025 08:38:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+Message-ID: <aQrw9fWt8SS9cE2u@smile.fi.intel.com>
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+ <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-For chips with security enabled, it's only possible to load firmware
-with a valid signature pattern.
+On Tue, Nov 04, 2025 at 03:18:18PM -0800, Randy Dunlap wrote:
+> On 11/4/25 1:55 PM, Andy Shevchenko wrote:
+> > When kernel-doc parses the sections for the documentation some errors
+> > may occur. In many cases the warning is simply stored to the current
+> > "entry" object. However, in the most of such cases this object gets
+> > discarded and there is no way for the output engine to even know about
+> > that. To avoid that, check if the "entry" is going to be discarded and
+> > if there warnings have been collected, issue them to the current logger
+> > as is and then flush the "entry". This fixes the problem that original
+> > Perl implementation doesn't have.
+> > 
+> > As of Linux kernel v6.18-rc4 the reproducer can be:
+> > 
+> > $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> > ...
+> > Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> > ...
+> > 
+> > while with the proposed change applied it gives one more line:
+> > 
+> > $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> > ...
+> > Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> > Warning: include/linux/util_macros.h:144 expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> > ...
+> > 
+> > And with the original Perl script:
+> > 
+> > $ scripts/kernel-doc.pl -v -none -Wall include/linux/util_macros.h
+> > ...
+> > include/linux/util_macros.h:139: info: Scanning doc for function to_user_ptr
+> > include/linux/util_macros.h:149: warning: expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> > ...
+> > 
+> > Fixes: 9cbc2d3b137b ("scripts/kernel-doc.py: postpone warnings to the output plugin")
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Oh, thank you. I knew that I had been missing some warnings
 
-- Example log for a security chip.
+You're welcome! I Cc'ed to you a couple of 0day reports for the missed
+warnings.
 
-Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
-  lmp_ver=0c lmp_subver=8922
-Bluetooth: hci0: RTL: rom_version status=0 version=1
-Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
-Bluetooth: hci0: RTL: cfg_sz 0, total sz 71301
-Bluetooth: hci0: RTL: fw version 0x41c0c905
+> since I still compare outputs from the 2 kernel-docs (perl vs. python).
 
-- Example log for a normal chip.
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
-  lmp_ver=0c lmp_subver=8922
-Bluetooth: hci0: RTL: rom_version status=0 version=1
-Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
-Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_config.bin
-Bluetooth: hci0: RTL: cfg_sz 6, total sz 71307
-Bluetooth: hci0: RTL: fw version 0x41c0c905
+Thank you! Jon, can we apply this rather sooner to prevent more missing
+warnings, please? If the solution is not good enough, we may amend it
+later.
 
-Tested-by: Hilda Wu <hildawu@realtek.com>
-Signed-off-by: Nial Ni <niall_ni@realsil.com.cn>
-Signed-off-by: Max Chou <max.chou@realtek.com>
----
- drivers/bluetooth/btrtl.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 8290932b8f7b..f6fccc6fdf22 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -50,7 +50,7 @@
- 
- #define	RTL_CHIP_SUBVER (&(struct rtl_vendor_cmd) {{0x10, 0x38, 0x04, 0x28, 0x80}})
- #define	RTL_CHIP_REV    (&(struct rtl_vendor_cmd) {{0x10, 0x3A, 0x04, 0x28, 0x80}})
--#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0x0D, 0x00, 0xb0}})
-+#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0xAD, 0x00, 0xb0}})
- 
- #define RTL_PATCH_SNIPPETS		0x01
- #define RTL_PATCH_DUMMY_HEADER		0x02
-@@ -544,7 +544,6 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
- {
- 	struct rtl_epatch_header_v2 *hdr;
- 	int rc;
--	u8 reg_val[2];
- 	u8 key_id;
- 	u32 num_sections;
- 	struct rtl_section *section;
-@@ -559,14 +558,7 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
- 		.len  = btrtl_dev->fw_len - 7, /* Cut the tail */
- 	};
- 
--	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
--	if (rc < 0)
--		return -EIO;
--	key_id = reg_val[0];
--
--	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
--
--	btrtl_dev->key_id = key_id;
-+	key_id = btrtl_dev->key_id;
- 
- 	hdr = rtl_iov_pull_data(&iov, sizeof(*hdr));
- 	if (!hdr)
-@@ -1081,6 +1073,8 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 	u16 hci_rev, lmp_subver;
- 	u8 hci_ver, lmp_ver, chip_type = 0;
- 	int ret;
-+	int rc;
-+	u8 key_id;
- 	u8 reg_val[2];
- 
- 	btrtl_dev = kzalloc(sizeof(*btrtl_dev), GFP_KERNEL);
-@@ -1191,6 +1185,14 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 		goto err_free;
- 	}
- 
-+	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
-+	if (rc < 0)
-+		goto err_free;
-+
-+	key_id = reg_val[0];
-+	btrtl_dev->key_id = key_id;
-+	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
-+
- 	btrtl_dev->fw_len = -EIO;
- 	if (lmp_subver == RTL_ROM_LMP_8852A && hci_rev == 0x000c) {
- 		snprintf(fw_name, sizeof(fw_name), "%s_v2.bin",
-@@ -1213,7 +1215,7 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 		goto err_free;
- 	}
- 
--	if (btrtl_dev->ic_info->cfg_name) {
-+	if (btrtl_dev->ic_info->cfg_name && !btrtl_dev->key_id) {
- 		if (postfix) {
- 			snprintf(cfg_name, sizeof(cfg_name), "%s-%s.bin",
- 				 btrtl_dev->ic_info->cfg_name, postfix);
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
