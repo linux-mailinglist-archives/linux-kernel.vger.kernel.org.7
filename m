@@ -1,174 +1,94 @@
-Return-Path: <linux-kernel+bounces-886166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AB2C34E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:39:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D50FC34E70
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:39:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 124A94FF2D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:33:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DBF84F91E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4740241760;
-	Wed,  5 Nov 2025 09:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36963016E8;
+	Wed,  5 Nov 2025 09:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/IzLKtj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+OGkLBWa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GPUxJ8E7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+kwgkb2s"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXo442xp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E323D2B4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004A72FB989;
+	Wed,  5 Nov 2025 09:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335187; cv=none; b=e0Hu3K5BUR8Y25J2ggO2H17RReAZazDkigs19B1SIK5oIrkD7lucravm78dmaedzg6tcJI25PRYkAwKYYk8dY2osTQ5iWPSebuax/62tTNuPKP3jk3EX0VpRxMfh3LmUgQh1uB8cu+lVFticx7/SqV7Sp7Yv8qMpZDvDTnvzQlI=
+	t=1762335269; cv=none; b=BJwcEHfTDgdN5Imh0MdGhwz+WjJ0H2xTcqPBv1ELaCtpxMnGqom/NOXWLXsHbYrki5EB4EYKIyDa+bGnBPdUGMJByDeyDduQyiSRINEfm9GjvSs5HiWLCXiHxnaL4+w+NRYSZX/GTiGV8wzaFGVmit7kSymMwvYE5gk90J9srkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335187; c=relaxed/simple;
-	bh=aA2bXPltNT3imaXp7EnIRakEH7GhK3nJTc3gLVvHbtI=;
+	s=arc-20240116; t=1762335269; c=relaxed/simple;
+	bh=CNrqEy8bwMXrl85WfuykS9g2llTPMr5i0jDD1EzDRZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvBowHsW+3ptqVYFkADDlfMPzZJfui5JUt7V8ebtPm+n/njcKR6gg1FQCHDL3JYkxtUw8vMxQlusK+/21DDLlfdoj1i5qqluBSDoD6ilymqpa8YjMLaIU1Fa8iKjEsWqKe5LpS3O+j//N7Dt9E5Cwn3ZeWLeSFlGBYtcLy00XoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/IzLKtj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+OGkLBWa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GPUxJ8E7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+kwgkb2s; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EEE4221186;
-	Wed,  5 Nov 2025 09:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335184; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
-	b=b/IzLKtjV/0eAAbmf17eH6rNdv8R2um9sbE+sD+meEbCy7bs7qxejCiVOSCU/FsH1i+uzu
-	ZDPf1HPEqFuJts7cR/HfGh/7BHZnLqHVbeNv/R6JGJZEg0KxrTMMfKkjoAnjtIB3jC7sqG
-	z98+1sv+rG/5Llvi/1KwuZpo20EwvDY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335184;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
-	b=+OGkLBWaNbzrk+xAlP2+3LXX4So3KFAyvyUh0fDLObqSwVxEM+QzcRPG+7uC3p1ATeXm8x
-	2U8BnIhsXul6TpBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
-	b=GPUxJ8E7snsfPumu7Mni5yFht/9aqf9kvUjX9sQm5ZoryA4NYy5IzTkmEv+07lGkkgnV9C
-	aCTgU+6szYKO5dDqLw88OM4FbleP/BdRG/cDHf1RUbGCLWhMXOqRBqlYvW+xblPeYXsa6P
-	ffIBO9EKVaswdWZZBfLrcL+rFRthUFQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335182;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
-	b=+kwgkb2slUfC1ZEC2lfxhjoL8X0/ffjeTDP6GpQgeG354nOdxItk+VsF3iYCBdDhelPpWv
-	vRkc8RY6KvvUrsCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E37E7132DD;
-	Wed,  5 Nov 2025 09:33:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hVCKN84ZC2nYHwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:33:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A430CA083B; Wed,  5 Nov 2025 10:33:02 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:33:02 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 20/25] ext4: support large block size in
- __ext4_block_zero_page_range()
-Message-ID: <cyj4y73fcmqykv5xnrixngivx6hfkhczdtuo5rxs6kwqcc4aao@vok4hhzzjbog>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-21-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9jxkIRKiigDI+SsOEW56D3LeSNoWmdWIaicianuQmfjBalPpSPBwcM/W9tuHvXrJlgyDcBGbQVWZOz8QsmgZpEYhIaCiZZrkV/VFC2FKW4nBPbcf60jOIn+nb8/2tJ6tAfmQdl2GsE8i04pNjO7VROXM9+vTWF2X91dWjcADCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXo442xp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB799C4CEFB;
+	Wed,  5 Nov 2025 09:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762335268;
+	bh=CNrqEy8bwMXrl85WfuykS9g2llTPMr5i0jDD1EzDRZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXo442xp9UxvWEjC00AKsPpLYsZO8+DBfmkJYRGPI0roCO1LBJYM6meGIE8DUEGmJ
+	 TcsYCCBc0Glg+q4TXtWj/44Vyq3eZlAIZcaVEBdj3EmELGpmrhPcvRGPtJBFyzWhhF
+	 /e+kK+ArkXH8H0/tu+UzYkSY4Lk8lghMOe91xBTXOZ5xEVRDcyVYY+yEb6z2rEgPMd
+	 hgZhAmBAac+znrUHuzr3AXlqpSvySBX9/tohznS6ZQNVt9lvhgmr90TYdOQPvbl694
+	 RbRRIXQPYT9ui1egQFPw8yifhERfESTrjtPq6R3Z5reflIK0mgKkdjfwasgJIAhM1u
+	 aQIEUB4dhDXPQ==
+Date: Wed, 5 Nov 2025 09:34:21 +0000
+From: Lee Jones <lee@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
+ for poweroff/reboot
+Message-ID: <20251105093347.GD8064@google.com>
+References: <20251102230352.914421-1-aurelien@aurel32.net>
+ <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
+ <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-21-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
 
-On Sat 25-10-25 11:22:16, libaokun@huaweicloud.com wrote:
-> From: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> Use the EXT4_P_TO_LBLK() macro to convert folio indexes to blocks to avoid
-> negative left shifts after supporting blocksize greater than PAGE_SIZE.
-> 
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+On Tue, 04 Nov 2025, Troy Mitchell wrote:
 
-Looks good. Feel free to add:
+> On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
+> > 
+> > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
+> > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
+> > > commonly paired with the SpacemiT K1 SoC.
+> > > 
+> > > Note: For reliable operation, this driver depends on a this patch that adds
+> > > atomic transfer support to the SpacemiT I2C controller driver:
+> > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
+> >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
+> Should we apply it now? The dependency patch hasn’t been merged yet...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+What is the dependency?
 
-								Honza
-
-> ---
->  fs/ext4/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index ce48cc6780a3..b3fa29923a1d 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4066,7 +4066,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->  
->  	blocksize = inode->i_sb->s_blocksize;
->  
-> -	iblock = folio->index << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
-> +	iblock = EXT4_P_TO_LBLK(inode, folio->index);
->  
->  	bh = folio_buffers(folio);
->  	if (!bh)
-> -- 
-> 2.46.1
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lee Jones [李琼斯]
 
