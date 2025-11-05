@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-887373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373E0C380E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:37:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CBBC38063
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20453BBDCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:29:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E545F4EDCD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5C92C0F97;
-	Wed,  5 Nov 2025 21:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772AF2DAFDB;
+	Wed,  5 Nov 2025 21:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1TG/tgX"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="je8ivg3q"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21F423F424
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4672D6E5C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762378140; cv=none; b=Tk39lPmBvKMzoyJJbuzvDkzIi79Isfc79TwH0fDGYkVOfLJ0EoHo1YjyBQfwywGHKh/PTU4x+4WHaRBvzdF/V7I6ATvQzJWPUu2jmncZXiAVcoXolCTrkTC4z7pw8qgnzUd/oiHnl5ONPWqyqicfu89yijb0mL0oiGlKJPiGNBg=
+	t=1762378162; cv=none; b=L0s/KyLCyk6gHqT/FJk0n5bKtKR0B3q7BvBKvjwEw4j7vKpl9yjyRpjRbCXf06KkqPQZKDYFBPmO4gUsiIsoA3Vl5qbvrrOh0AOOOMoE/i8e7wVuYMHCWQx2++6XqsZSmYzGiE+cXx8bPTKmPjMOAaSp/udXG6g8nYu+zhnABIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762378140; c=relaxed/simple;
-	bh=+HEydyOW1lU2ALcOZDdqPBn4aGTT1nlZWPBmPwdNamk=;
+	s=arc-20240116; t=1762378162; c=relaxed/simple;
+	bh=PAlZ6tNkRMkFTMYnzRbwscVzdBJrBlWT3kjK7f2AI7s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lBVC23Tx9YOWn+DM0w6Q4WSkV6ffA3zZz+LGcyDNCxdBT4mZK/X6a8nfJ2txLHfvAr+QpcpJGN77C+qzwWDermrg2tienW0xC35VAu0OBI3eHrO5cejO1ix2+VG2L6XjWLNLGMlNmaOZkhm3FBSZL0Oyt5fb/odNwjjbo4plA2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1TG/tgX; arc=none smtp.client-ip=209.85.218.51
+	 In-Reply-To:Content-Type; b=SEP7Phuy/558rlh+qQKpcvdNpcZSeofYuLQooZ3Y8DTvYIdQScMvREe9EI+dKt+TAG9mGdn0nLm+Dz1POpsZfID5ZGjiRvkVUXw2jt2U4mYHHY65tyReurW0MyI4Aga//MoC0XQFNS9ty1Qp7+UC7Yp+FbKH5JYGrRs+GeDZLyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=je8ivg3q; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b7260435287so34560966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:28:58 -0800 (PST)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4298b49f103so101229f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:29:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762378137; x=1762982937; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=gmail.com; s=20230601; t=1762378159; x=1762982959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mKVAByp1/+LkpfKD4KN0974hBK7mn9fIh1iZgNrqkQU=;
-        b=L1TG/tgXV8gaYZQ5w1LWsOauPPbWn+/muZ7GkPm4RuUHyR3jGWVDskwcSXaTpXKA+L
-         q/716nhvndZZN2HTGky0JWHtGb6NKLzPKrKJLPvpE3HhrV/vQ9Ig4afTbc6gKdXsEFGU
-         jo+gXOuicn9xNJeUmXjnBrggJauE9krzeTSYeEDJw7ebj8t9aQkR1TKsYeIIF2WDMK4i
-         PgQLTobzYLVmsIE0A6FjL+Kly1TEkFIT8FysU3ywJe/NwE5iO+WLrvQOWcvDTfder+1K
-         s0mmBeWUFY807krc60yeStZ1rbDhlwiMC/Tc3rWjuZcZ+hpJWq2Khd18kVO1wVrtwIrY
-         UNbg==
+        bh=6FXHSyf2tmThjEU70iMaM/iQ+kQ6AR9dxeHlynBInUg=;
+        b=je8ivg3qNRWkcbC9jLHd7gNGYTWySEogHAKOKKuu7+YvltCk74Psr3GfL+BYpmfBVk
+         tmmWGTcN1qcJRaKqXEHPAjzJ/BsA6HH7E+7YYPYN65DoKAC0oq4hQx3meFta0VAasN3P
+         sRKgMNhjFZSyhvSD+0rByGvgMwlt8tGbqeFKWr2GggkqXjfGZUcwJA2cTeAPeFOn6WTc
+         qDjhRRjBT5dIvlvV4n9ASBxhYghJExkCblTsxE75YGuWgJMB/g73v/YqbwKHBlGFJcpn
+         tlA6hds5Jx36yzW+o5jZMyTgBApqND2xcHspff3Mx6ZC6MrLf2DyaYWVTJnlqPqTyxpc
+         B2Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762378137; x=1762982937;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1762378159; x=1762982959;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mKVAByp1/+LkpfKD4KN0974hBK7mn9fIh1iZgNrqkQU=;
-        b=izSaEJHJhAEUHaraOQoRa1mgEoYVrIK01sUmI80GtMYihNwrVi+HJk802dGHsu8o11
-         JgwKDTY51qF5LjncQsVrTX6rWLp+KyIJerxVBgcJCa55g+w3Q/NUKDOHx6WiGoKO62nC
-         LxJJ5URTqYcn8NO2wWHRD8yAFdmellWOMK7NUkPD4ol0ctbKP7qoYUzTuv6HV8qbV29O
-         8csZ9izvG4TpT9g5myy81hvxza2k5GbXonPAi8d3qWbfczMWvjFPs60M97bHh9iaa0XW
-         ht13j+jPhFus4uiuS2ZqKnlTL7p3ZXrqeDob7xuMmvA2KfKJVU0w9gxtXS0y/sf4xqfc
-         TULQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9B/ynDfyuqDlqGE5pcEqyh6GoosJIeEp4e7pyZ7Ln5nEoZ2Sw0tfvfbGs0pT++8fTi+EEzdDTonPeZtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0JhEMFuWGugwpjBQtaRahsiT6e8JNC+xg6xj2NnAAO1tGeVmS
-	G7osCFZyGE45bSlDOHaQo5N13HivyGZkH4M0TuT/wBfKjCR73Q3rvPs8RC0ju9c1g5elzQ==
-X-Gm-Gg: ASbGnctVN7s87ymMJehGQQu3LQ3fH7bGdKJ7dM6kbQNAQYwQGGGaogNBl0WMbB4DNR7
-	1tDAYEoND9dVzChgNyYibGXdE1w/0nBT0h2MpsSVINhFBdWR7rOaJ5e4hcvF5vG5aB/GW22fS0w
-	psd4YTXpBzh5yCyHJNUdr07OuHhFUOV7mjVSPPEoP3zBWV/faTHPVeyFA+ceasakfYeTo5QVesq
-	4KqadkdOvfavQSixxT50MMoKPOD00Ot+0MV8ER+rvEMDqzRwuaUWe/ylZ43mmSFfmLsjalEODxx
-	q8XTkopDSSYh8PN2bw1quxochP1Cg2458KIGKNnJ/im0o3IDJLcsez4xn964qCZJ2A8w4I4a22d
-	LvKlfAQTT0+0QP9im423GHhDS+0n/jToRzCgRZHkVon5nbPr3uPD6R//kYHsWM+vzsrsefiWjm8
-	hwpzxtmcbFuSiZhzReJeH2SEyvP1kqzAVDUJrQVOvdZjA=
-X-Google-Smtp-Source: AGHT+IEUf4Irfo3WXUTbyMeP33gFkpX21nJc4K2bsAo4h2zMwVIw3b+fLJ4IkerZJz46FY1W6XtlWQ==
-X-Received: by 2002:a17:907:6d27:b0:b6d:7e01:cbc5 with SMTP id a640c23a62f3a-b726567f8c8mr491291866b.53.1762378136693;
-        Wed, 05 Nov 2025 13:28:56 -0800 (PST)
-Received: from [192.168.4.198] (92-110-11-83.cable.dynamic.v4.ziggo.nl. [92.110.11.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b728937d2fasm58104466b.19.2025.11.05.13.28.55
+        bh=6FXHSyf2tmThjEU70iMaM/iQ+kQ6AR9dxeHlynBInUg=;
+        b=OM3yrlR0fMAog4tTlf/nsF42rm2eZm864XRl+BSjobF+J8duCIO1ZEXd5EaoJiBwWn
+         IDP+w2MLRVMOgRDUMPjiEIGD+lxH4N/ThbDdJi7waJeKTLZnUVwzS7dZswzagOJi2XEn
+         9iulFapgvP3uTObSmhUbyT4ydw4OuNO1n5TuYt2LSglX3chhKhP9lVIL4KX5aGGi3znn
+         gUPf01gUY3TDm6nITSKiCJ3Z1oPUwtGPM48gRzoxtONf8zAbrK/Y4EWw7vJVDF1KgRiA
+         rBU+gpvuumsF6IUzAM9gbHTG0ly5se+UFq+M7cFAxhFx4ngxZgPbnb15hFVdWIMVyAqz
+         oVew==
+X-Forwarded-Encrypted: i=1; AJvYcCWVgGY9sSeisUztgpobeKo/jpveazXGQnTUQ1Q8OqEqfcdM+AL8QD9C0BNspXM+sy2xGX46Lpm0JQAEc28=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh2IPBB0xejctoTzd2uODdF5hq+4Y2nvdFNFgyOqYwgPoIGjKe
+	KllZyjnekmx8ps+7pZPJu4Ef0oAhXMNGZ/lumZq6UL8iiceuQ8cFPxtM
+X-Gm-Gg: ASbGncvPeOL5ymaqjyHu6bED1uprJPBzzrAv6+4kuBW/3dNCadpX55Wd9TKwlRC457/
+	c5pUISAi5JcAVtle4cjSbCWkIdMmMOcn8mZ6OhWxJ7FzQcecjYApLHgeRCEN8pb2+JjSDcQ7xe3
+	R+syLT75vwGgxL6DapLW2qoV2TJMBIS+ItZ65NdJ3roJT2PONkNQKU4hE2+kEllVyqPjDEJGRTz
+	TXgsy8lYadO7IdLDrO+QnNPMPuSbDC1PkNKuQf/cXr72eavlFDR5vGhP+a1JzR3t/XIvZsUCqoj
+	4yofSPr2u+IjFvkn7nIWCYmGTH4xhX4V18+jlBdqnqufJAQ9O5w0fIjZuG1mBXVkwtnmjS0HLst
+	LFI2os+NALTqBSunue6+U2Hy55eidsFcy3pRJf0UGn+i0deREoHLbrLWBrDGgOTheRirVP3gttF
+	6SvhDis4almggb1zwZ6jPlMnhbxLl7t2/+ODKc+I9+01lFkE1QRv4RvLkkfc6yL1m31ZwZzjgct
+	/1pa2G7Lf7RdhgZmzNr21QQzRRN41o=
+X-Google-Smtp-Source: AGHT+IFI9Wwvq/A5D0mlqZlN00u3cG6xT1eMWW/nCv3lLfCOJ9IihPCMHOqYjym3ZOcL+eAXbx3BBQ==
+X-Received: by 2002:a05:6000:410a:b0:429:bbfa:2305 with SMTP id ffacd0b85a97d-429e330579dmr3946595f8f.35.1762378158606;
+        Wed, 05 Nov 2025 13:29:18 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403747sm874380f8f.4.2025.11.05.13.29.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 13:28:56 -0800 (PST)
-Message-ID: <eac10a43-5164-4ecf-8b56-6099e69001bc@gmail.com>
-Date: Wed, 5 Nov 2025 22:28:54 +0100
+        Wed, 05 Nov 2025 13:29:17 -0800 (PST)
+Message-ID: <bc94d739-d66f-4cd6-a3f2-68938cfd08c1@gmail.com>
+Date: Wed, 5 Nov 2025 22:29:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,105 +83,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-To: Aaron Kling <webgeek1234@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
- <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
- <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
- <72llskwvuwyllvz24zoex4ad6v6t5skiehmwylj7exoh7bmzjo@xq3v7vja5w62>
- <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
+ <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+ <aQugI-F_Jig41FR9@casper.infradead.org>
+ <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
+ <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+ <aQus_MNi2gFyY_pL@gourry-fedora-PF4VCD3F>
+ <fb718e69-8827-4226-8ab4-38d80ee07043@lucifer.local>
+ <7f507cb7-f6aa-4f52-b0b5-8f0f27905122@gmail.com>
+ <2d1f420e-c391-487d-a3cc-536eb62f3518@lucifer.local>
+ <563246df-cca4-4d21-bad0-7269ab5a419c@gmail.com>
+ <52dd0c85-9e06-4cb2-a9f9-71662922cba9@lucifer.local>
+From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
 Content-Language: en-US
-From: Jasper Korten <jja2000@gmail.com>
-In-Reply-To: <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
+In-Reply-To: <52dd0c85-9e06-4cb2-a9f9-71662922cba9@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi all,
-
-On 11/4/25 19:12, Aaron Kling wrote:
-> On Tue, Nov 4, 2025 at 3:14 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->> On Mon, Nov 03, 2025 at 12:39:57PM -0600, Aaron Kling wrote:
->>> On Mon, Nov 3, 2025 at 5:54 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->>>> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Relay wrote:
->>>>> From: Aaron Kling <webgeek1234@gmail.com>
+On 05.11.25 22:24, Lorenzo Stoakes wrote:
+> On Wed, Nov 05, 2025 at 10:15:51PM +0100, David Hildenbrand (Red Hat) wrote:
+>> On 05.11.25 22:08, Lorenzo Stoakes wrote:
+>>> On Wed, Nov 05, 2025 at 09:11:45PM +0100, David Hildenbrand (Red Hat) wrote:
+>>>> On 05.11.25 21:05, Lorenzo Stoakes wrote:
+>>>>> On Wed, Nov 05, 2025 at 03:01:00PM -0500, Gregory Price wrote:
+>>>>>> On Wed, Nov 05, 2025 at 07:52:36PM +0000, Lorenzo Stoakes wrote:
+>>>>>>> On Wed, Nov 05, 2025 at 02:25:34PM -0500, Gregory Price wrote:
+>>>>>>>> On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
+>>>>>>> I thought about doing this but it doesn't really work as the type is
+>>>>>>> _abstracted_ from the architecture-specific value, _and_ we use what is
+>>>>>>> currently the swp_type field to identify what this is.
+>>>>>>>
+>>>>>>> So we would lose the architecture-specific information that any 'hardware leaf'
+>>>>>>> entry would require and not be able to reliably identify it without losing bits.
+>>>>>>>
+>>>>>>> Trying to preserve the value _and_ correctly identify it as a present entry
+>>>>>>> would be difficult.
+>>>>>>>
+>>>>>>> And I _really_ didn't want to go on a deep dive through all the architectures to
+>>>>>>> see if we could encode it differently to allow for this.
+>>>>>>>
+>>>>>>> Rather I think it's better to differentiate between s/w + h/w leaf entries.
+>>>>>>>
+>>>>>>
+>>>>>> Reasonable - names are hard, but just about anything will be better than swp_entry.
+>>>>>>
+>>>>>> SWE / sw_entry seems perfectly reasonable.
 >>>>>
->>>>> Without the cmu, nvdisplay will display colors that are notably darker
->>>>> than intended. The vendor bootloader and the downstream display driver
->>>>> enable the cmu and sets a sRGB table. Loading that table here results in
->>>>> the intended colors.
+>>>>> I'm not a lover of 'sw' in there it's just... eye-stabby. Is that a word?
 >>>>>
->>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
->>>>> ---
->>>>>   drivers/gpu/drm/tegra/dc.h  |  13 +++
->>>>>   drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++++++++++
->>>>>   2 files changed, 219 insertions(+)
->>>> What does "darker than intended" mean? Who defines the intention? How do
->>>> we know what the intention is? What this patch ultimately seems to be
->>>> doing is define sRGB to be the default colorspace. Is that always the
->>>> right default choice? What if people want to specify a different
->>>> colorspace?
->>> I reported this issue almost a month ago. See kernel lore [0] and
->>> freedesktop issue [1]. The pictures in the latter show what nvdisplay
->>> looks like right now. It's nigh unusably dark. When booted into
->>> Android with a tv launcher that has a black background, as is default
->>> for LineageOS, it is really hard to read anything. Is it correct as a
->>> default? Well, cboot hardcodes this, so... presumably? It would be
->>> more ideal to expose this and csc to userspace, but I'm not sure if
->>> drm has a standardized interface for that or if tegra would have to
->>> make something vendor specific. I think that would be a separate
->>> change concept compared to setting this default, though.
->> The reason I'm asking is because I don't recall ever seeing "broken"
->> colors like you do. So I suspect that this may also be related to what
->> display is connected, or the mode that we're setting.
-I have tried it on both a MacroSilicon HDMI capture card and an Arzopa 
-Z1FC 1080p portable monitor and run into the same darker colors. Both 
-have in common that they use HDMI which seems to line up with what Aaron 
-is reporting. I do not have an eDP display to test or another carrier 
-board with a different display out to test.
->> It could perhaps
->> also be related to what infoframes we're sending and how these are
->> supported/interpreted by the attached display.
+>>>>> I am quite fond of my suggested soft_leaf_t, softleaf_xxx()
+>>>>
+>>>> We do have soft_dirty.
+>>>>
+>>>> It will get interesting with pte_swp_soft_dirty() :)
+>>>
+>>> Hmm but that's literally a swap entry, and is used against an actual PTE entry
+>>> not an abstracted s/w leaf entry so I doubt that'd require renaming on any
+>>> level.
 >>
->> All of that is to say that maybe this looks broken on the particular
->> setup that you have but may works fine on other setups. Changing the
->> default may fix your setup and break others.
-> Do you have a device set up so you can check? Or does the regression
-> test bench have a display that can be forwarded?
->
-> My current setup is a rack of units plugged via hdmi to a kvm which is
-> then plugged to a pikvm. I also observed this issue before I had this
-> setup, plugged directly to a 1080p monitor. I have not checked
-> displayport. I can cycle through a couple other displays without this
-> patch to see if I get any other result. I am fairly certain I have
-> consistently seen this issue since I started trying to work with
-> tegra-drm on kernel 6.1 or maybe even 5.15. I've never seen it work to
-> allow for a bisect.
->
-> I am in contact with one other person with a tx2 devkit, who
-> replicated the issue when I asked. Who plans to reply to this thread
-> with setup info later.
+>> It's used on migration entries as well. Just like pte_swp_uffd_wp().
+>>
+>> So, it's ... tricky :)
+>>
+>> But maybe I am missing your point (my brain is exhausted from uffd code)
+> 
+> We'd either not rename it or rename it to something like pte_is_uffd_wp(). So
+> it's not even so relevant.
 
-For reference, I am said person. I have a Jetson TX2 Devkit that uses 
-the P2771 Device Tree. I'm running a Fedora distrokernel with no 
-additional patches applied by myself. I have personally noticed the 
-issue to at least be present on 6.14.5 and 6.17.4.
+We do have pte_uffd_wp() for present ptes.
 
+> 
+> We'd probably call that something like pte_is_soft_dirty() in the soft dirty
+> case. The 'swp' part of that is pretty redundant.
 
-I'm currently not at home to take screenshots with and without the 
-submitted patch, but will be able to do it tomorrownight or friday.
+We do have pte_soft_dirty() for present ptes.
 
+So we'd need some indication that these are for softleaf entries (where 
+the bit positions will differ).
 
-Kindest regards,
+> 
+> If people were insistent on having softleaf in there we could call it
+> pte_softleaf_is_soft_dirty() which isn't qutie so bad. But I'd not want to put
+> softleaf in there anyway.
+> 
+> sw_entry or sw_leaf or sw_leaf_entry would all have the same weirdness.
+> 
+> I want it to be something that is readable + not hideous to look at but still
+> clear as to what it's referring too. Softleaf covers all of that off... :)
 
+I think you misunderstood me: I have nothing against softleaf, I was 
+rather saying that we already use the "soft" terminology elsewhere 
+(soft_dirt), so it's not too crazy.
 
-Jasper
-
->
-> Aaron
->
 
