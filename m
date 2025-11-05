@@ -1,130 +1,195 @@
-Return-Path: <linux-kernel+bounces-885825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392B0C33FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:28:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D762C33FE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E833118C2249
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:27:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B58354EA115
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B040C26656F;
-	Wed,  5 Nov 2025 05:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iauSROgv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2CE264602;
+	Wed,  5 Nov 2025 05:27:54 +0000 (UTC)
+Received: from smtps.ntu.edu.tw (smtps.ntu.edu.tw [140.112.2.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735301CAA6C;
-	Wed,  5 Nov 2025 05:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49175254B19
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.112.2.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762320444; cv=none; b=Ht1uq46nMW3MecY7GvVosfRm9HQQIW8oPGDEQ2P+TgDfd/aGWG9CEJ8heHtd93RVIQP67ApHbhhelhiFnSjn0uumOhRxwYOwCGuZQ2h25GpQ9R9OmGn/syNrwLLcEBBwJk5gEz9JuA3+KwD8kaYo9CqeXkMuvwV8RrzRgdXeMSk=
+	t=1762320473; cv=none; b=ePY/KaC6cOjGsD9SPP75KcqYm97oiE3aqfGetaFV9B49zNHmpAqsS+O+j/AArmdR1L7P+wrA1gVK6/pb4AiRylbnp/L9QemtLTwpLikbJ2fV67j4Lgg5cEtoWbOJIKBiQK5ir1L896Fh26dR4UGebSUlMWZcOTJKeszuuMYkXX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762320444; c=relaxed/simple;
-	bh=vTcoB99s0dCPDyQw790rmz9khhUmzVpHkcw7ysSzk0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHoIt6U18t6nYGi39RaDb5V80V/1iML6O2cxDQ47Gksisdu4bZS4b0HwMlmy+QwNh2TnVV3t4TlPK2Yfc43H8fzLmYtpbuZi6dPAEx1uRLLU/6qvHvib4str1iwMw95Emdg3NB8wO3/PhNkI5AeMuxaiNtaGDe1t9/HbzFHYkis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iauSROgv; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762320442; x=1793856442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vTcoB99s0dCPDyQw790rmz9khhUmzVpHkcw7ysSzk0o=;
-  b=iauSROgvVSZy4eN9PtzoTUW+7HWZJVPOUtqio2yM5vn4oYD/jyOGnKv2
-   JqjtXy4x+JQTTkdHlzKWtL2N4+nsCWiQxYAPtKHsKBdGsQ2BKa6APLPbL
-   NmPH+cF5sX9YY6H1P68lf8AbJ2FBl4XAhij/fZMkKDMjDN/nkz/tXcCVn
-   Vqh1Buiz0f6i1wk5U+l/EMeJEEy007gDDIVghO3i977WYAJMDrSVL2TxO
-   EbxDvNDtYu1hrXciwXI4vsvvTtmvo/YV2tRZMUiKMMDh5qSBgx33zTM6f
-   UfkhfgzX6tB+qqOWIT/KiixGGzvSiCo46/DN8O4LaZxeEzygu5euCmO3i
-   A==;
-X-CSE-ConnectionGUID: 9pUDiJzDTimD5jybkPcyhg==
-X-CSE-MsgGUID: WLbcjRmvTbaPDnjiu08TLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64310293"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="64310293"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 21:27:22 -0800
-X-CSE-ConnectionGUID: +jpMAKazT4GOMgOmPT+aXg==
-X-CSE-MsgGUID: Gj9Yv3hqTliEaqkBRhTxtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="186646179"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 21:27:20 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vGW39-00000005g1y-1tZD;
-	Wed, 05 Nov 2025 07:27:15 +0200
-Date: Wed, 5 Nov 2025 07:27:14 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <lkp@intel.com>, Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
- discarded
-Message-ID: <aQrgMldkQIS7VTtV@smile.fi.intel.com>
-References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
- <202511050706.NIxJwZER-lkp@intel.com>
+	s=arc-20240116; t=1762320473; c=relaxed/simple;
+	bh=9c2BMqJuhx1IaP9qMLxc2QvyeAVWck9b8Fg5dSSv9Wc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BoixkP4l6KvGd94TcXlqn9p/teEstsNgJceALl6rr/8L54eZfXlxtGs8YGX0MjldYPhtbbefnyuLe6U+hErsab6MwOD1+VCA2GJPkgU8DHI1uYWgsVib07V3+e4oxKqtrOG2TKxlT+AA18FSrYUKG9PgUvClBWrDW7aNCKwIkkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw; spf=pass smtp.mailfrom=ntu.edu.tw; arc=none smtp.client-ip=140.112.2.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ntu.edu.tw
+Received: from x415ea.. (unknown [101.12.130.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtps.ntu.edu.tw (Postfix) with ESMTPSA id A2260320A2;
+	Wed,  5 Nov 2025 13:27:45 +0800 (CST)
+From: Bill Tsui <b10902118@ntu.edu.tw>
+To: chenhuacai@kernel.org
+Cc: yangtiezhu@loongson.cn,
+	oleg@redhat.com,
+	kernel@xen0n.name,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Bill Tsui <b10902118@ntu.edu.tw>
+Subject: [PATCH v2] LoongArch: ptrace: Merge ptrace_hbp_set_*()
+Date: Wed,  5 Nov 2025 13:27:24 +0800
+Message-ID: <20251105052724.5994-1-b10902118@ntu.edu.tw>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251029153649.33345-1-b10902118@ntu.edu.tw>
+References: <20251029153649.33345-1-b10902118@ntu.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202511050706.NIxJwZER-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 05, 2025 at 07:14:58AM +0800, kernel test robot wrote:
-> Hi Andy,
-> 
-> kernel test robot noticed the following build warnings:
+In hw_break_set(), those functions actually can be combined into one.
+This eliminates intermediate calls to modify_user_hw_breakpoint() that
+may leave hardware registers in a partially updated state.
 
-So do these...
+This is a refactor only; no functional change.
 
-> [auto build test WARNING on lwn/docs-next]
-> [also build test WARNING on next-20251104]
-> [cannot apply to linus/master v6.18-rc4]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/kernel-doc-Issue-warnings-that-were-silently-discarded/20251105-055629
-> base:   git://git.lwn.net/linux.git docs-next
-> patch link:    https://lore.kernel.org/r/20251104215502.1049817-1-andriy.shevchenko%40linux.intel.com
-> patch subject: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently discarded
-> config: sh-allnoconfig (https://download.01.org/0day-ci/archive/20251105/202511050706.NIxJwZER-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511050706.NIxJwZER-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511050706.NIxJwZER-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'd' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'ctrlr' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'intspec' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'intsize' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'out_hwirq' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 function parameter 'out_type' not described in 'intc_evt_xlate'
-> >> Warning: drivers/sh/intc/irqdomain.c:29 expecting prototype for intc_irq_domain_evt_xlate(). Prototype was for intc_evt_xlate() instead
+Signed-off-by: Bill Tsui <b10902118@ntu.edu.tw>
+---
+ arch/loongarch/kernel/ptrace.c | 69 +++++++++-------------------------
+ 1 file changed, 17 insertions(+), 52 deletions(-)
 
+diff --git a/arch/loongarch/kernel/ptrace.c b/arch/loongarch/kernel/ptrace.c
+index 8edd0954e55a..c6cd51569a64 100644
+--- a/arch/loongarch/kernel/ptrace.c
++++ b/arch/loongarch/kernel/ptrace.c
+@@ -581,13 +581,15 @@ static int ptrace_hbp_get_addr(unsigned int note_type,
+ 	return 0;
+ }
+ 
+-static int ptrace_hbp_set_ctrl(unsigned int note_type,
++static int ptrace_hbp_set(unsigned int note_type,
+ 			       struct task_struct *tsk,
+-			       unsigned long idx, u32 uctrl)
++			       unsigned long idx, u64 addr,
++				   u64 mask, u32 uctrl)
+ {
+ 	int err;
+ 	struct perf_event *bp;
+ 	struct perf_event_attr attr;
++	struct arch_hw_breakpoint *info;
+ 	struct arch_hw_breakpoint_ctrl ctrl;
+ 	struct thread_info *ti = task_thread_info(tsk);
+ 
+@@ -597,6 +599,17 @@ static int ptrace_hbp_set_ctrl(unsigned int note_type,
+ 
+ 	attr = bp->attr;
+ 
++	/* addr */
++	/* Kernel-space address cannot be monitored by user-space */
++	if ((unsigned long)addr >= XKPRANGE)
++		return -EINVAL;
++	attr.bp_addr = addr;
++
++	/* mask */
++	info = counter_arch_bp(bp);
++	info->mask = mask;
++
++	/* ctrl */
+ 	switch (note_type) {
+ 	case NT_LOONGARCH_HW_BREAK:
+ 		ctrl.type = LOONGARCH_BREAKPOINT_EXECUTE;
+@@ -623,46 +636,6 @@ static int ptrace_hbp_set_ctrl(unsigned int note_type,
+ 	return modify_user_hw_breakpoint(bp, &attr);
+ }
+ 
+-static int ptrace_hbp_set_mask(unsigned int note_type,
+-			       struct task_struct *tsk,
+-			       unsigned long idx, u64 mask)
+-{
+-	struct perf_event *bp;
+-	struct perf_event_attr attr;
+-	struct arch_hw_breakpoint *info;
+-
+-	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
+-	if (IS_ERR(bp))
+-		return PTR_ERR(bp);
+-
+-	attr = bp->attr;
+-	info = counter_arch_bp(bp);
+-	info->mask = mask;
+-
+-	return modify_user_hw_breakpoint(bp, &attr);
+-}
+-
+-static int ptrace_hbp_set_addr(unsigned int note_type,
+-			       struct task_struct *tsk,
+-			       unsigned long idx, u64 addr)
+-{
+-	struct perf_event *bp;
+-	struct perf_event_attr attr;
+-
+-	/* Kernel-space address cannot be monitored by user-space */
+-	if ((unsigned long)addr >= XKPRANGE)
+-		return -EINVAL;
+-
+-	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
+-	if (IS_ERR(bp))
+-		return PTR_ERR(bp);
+-
+-	attr = bp->attr;
+-	attr.bp_addr = addr;
+-
+-	return modify_user_hw_breakpoint(bp, &attr);
+-}
+-
+ #define PTRACE_HBP_ADDR_SZ	sizeof(u64)
+ #define PTRACE_HBP_MASK_SZ	sizeof(u64)
+ #define PTRACE_HBP_CTRL_SZ	sizeof(u32)
+@@ -733,10 +706,6 @@ static int hw_break_set(struct task_struct *target,
+ 					 offset, offset + PTRACE_HBP_ADDR_SZ);
+ 		if (ret)
+ 			return ret;
+-
+-		ret = ptrace_hbp_set_addr(note_type, target, idx, addr);
+-		if (ret)
+-			return ret;
+ 		offset += PTRACE_HBP_ADDR_SZ;
+ 
+ 		if (!count)
+@@ -746,21 +715,17 @@ static int hw_break_set(struct task_struct *target,
+ 					 offset, offset + PTRACE_HBP_MASK_SZ);
+ 		if (ret)
+ 			return ret;
+-
+-		ret = ptrace_hbp_set_mask(note_type, target, idx, mask);
+-		if (ret)
+-			return ret;
+ 		offset += PTRACE_HBP_MASK_SZ;
+ 
+ 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ctrl,
+ 					 offset, offset + PTRACE_HBP_CTRL_SZ);
+ 		if (ret)
+ 			return ret;
++		offset += PTRACE_HBP_CTRL_SZ;
+ 
+-		ret = ptrace_hbp_set_ctrl(note_type, target, idx, ctrl);
++		ret = ptrace_hbp_set(note_type, target, idx, addr, mask, ctrl);
+ 		if (ret)
+ 			return ret;
+-		offset += PTRACE_HBP_CTRL_SZ;
+ 
+ 		user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
+ 					  offset, offset + PTRACE_HBP_PAD_SZ);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.0
 
 
