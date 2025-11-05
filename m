@@ -1,54 +1,42 @@
-Return-Path: <linux-kernel+bounces-886182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A45C34EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:47:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60670C34EC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 539B14FC50A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:44:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0C6F734D5CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFC4263C8F;
-	Wed,  5 Nov 2025 09:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Xl4yr03g"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CD2305E01;
+	Wed,  5 Nov 2025 09:45:28 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F4302CCA;
-	Wed,  5 Nov 2025 09:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F4D2D978B;
+	Wed,  5 Nov 2025 09:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335877; cv=none; b=vCwuu3nxCTH6hnsq+QQtYbQkYY/xGsdz39LovbfDkkFJqE2kwGcST4jgB5KP/8DwWKcnGetuefkXH4xdP7AlHgVwKF+l9PuWchE/gzE405ZuMzy3N3GyqgMMPjKv7fBjylAeiRwt24HiM9BdH0ixMz79n4V9icjUoiHD/gRFpWs=
+	t=1762335927; cv=none; b=d/afXaiW58Zd8L5ZqYioNsXNFebrfMaubR9t36GXYKGZ6e3Gaf1Q3g4pJ7/w/2C53rIrFH0LSZRugXrhzOoseNL1arWk/EnKpeqPPMDkfp9HHSKvK8h9UBTg4SK5MYZcnH7cUPU3T3Nf6K4lqU9HTeJAzaVAiWK6uWmJmegpc5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335877; c=relaxed/simple;
-	bh=h+qwVUZjthoiqyJjkeXnangp0W/CiVcIiWMmF/sC3DM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=En7i3tWpX1QiKN5oEsW+yE8yPt5SgKi1D4GKfxvXr7QTpXqEIiXHj1/3BwQcjgvRMmLkxpqvj1kRKAbC50E3N4LnaOBnHeRkZXoD73VPFlB/9qyfgVMI3EEeMsunt33B8G1tkEWNKgSPL0j6WHeWLERCyoTXX7JXIdxbB+++7HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Xl4yr03g; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=ULBjQjfTQ2PhD78f/wqD4u2pFSqPbYJY7fZ9PMrAk2g=;
-	b=Xl4yr03g/f6ZMnj5GicYAb2bjUPpNqrsDwGaUvWjzZYt3z8PRrBWnK0IkFrfkeg8NaXIfqMw0
-	2a5b3MBSA+BOdYGDHZvzQaLEFUUqjI+TLkwAnXhnAfK3K8mGxH0qimjxp0gfk6NGvDEac1aFfvf
-	6apkBZlSE41pxIdeWt789mg=
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d1gNd4sY5zLlSM;
-	Wed,  5 Nov 2025 17:42:57 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 91B751402C3;
-	Wed,  5 Nov 2025 17:44:32 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Nov
- 2025 17:44:31 +0800
-Message-ID: <5280bbc0-be8b-4e46-8410-28719cb79ef0@huawei.com>
-Date: Wed, 5 Nov 2025 17:44:30 +0800
+	s=arc-20240116; t=1762335927; c=relaxed/simple;
+	bh=V4qdxwMlx41RWjBcGzibBH9WEiFnvpaxZeJ5nGAVDWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r6aKR/3AgmhLh/5cTWmTlA8vtkQ2iokw6G5vZrgyKCAeppyK2ViS78LyLZla7cmG31loeCYXvAR02X2TcpM0NrOfa6VofZvbuOGkF6feeNehXdnp6yMdAXstfhHu/0DPsjTlCmOadYPa+2SggEOR2D50Yu4XDxaZdQ/+ALo8AUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af0d3.dynamic.kabel-deutschland.de [95.90.240.211])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C571D61CC3FE3;
+	Wed, 05 Nov 2025 10:45:09 +0100 (CET)
+Message-ID: <c6f8f015-267f-49e8-b427-b4524c134bfb@molgen.mpg.de>
+Date: Wed, 5 Nov 2025 10:45:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,78 +44,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/25] ext4: support large block size in
- ext4_mb_get_buddy_page_lock()
-Content-Language: en-GB
-To: Jan Kara <jack@suse.cz>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
-	<libaokun@huaweicloud.com>, Baokun Li <libaokun1@huawei.com>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-13-libaokun@huaweicloud.com>
- <5kbyz6ilhj7zde4dtv7fhy33yks3bhs2g6xesdzwptdenrrfdg@ydurgdouhuwn>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <5kbyz6ilhj7zde4dtv7fhy33yks3bhs2g6xesdzwptdenrrfdg@ydurgdouhuwn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Subject: Re: [PATCH] Bluetooth: iso: Fix UAF on iso_sock_disconn
+To: Yang Li <yang.li@amlogic.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-11-05 17:13, Jan Kara wrote:
-> On Sat 25-10-25 11:22:08, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Currently, ext4_mb_get_buddy_page_lock() uses blocks_per_page to calculate
->> folio index and offset. However, when blocksize is larger than PAGE_SIZE,
->> blocks_per_page becomes zero, leading to a potential division-by-zero bug.
->>
->> To support BS > PS, use bytes to compute folio index and offset within
->> folio to get rid of blocks_per_page.
->>
->> Also, since ext4_mb_get_buddy_page_lock() already fully supports folio,
->> rename it to ext4_mb_get_buddy_folio_lock().
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-> Looks good, just two typo fixes below. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
->> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
->> index 3494c6fe5bfb..d42d768a705a 100644
->> --- a/fs/ext4/mballoc.c
->> +++ b/fs/ext4/mballoc.c
->> @@ -1510,50 +1510,52 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->>  }
->>  
-> Let's fix some typos when updating the comment:
-
-I’ll fix these typos in the next update.
-
-Thank you for your review!
+Dear Yang,
 
 
-Regards,
-Baokun
+Thank you for your patch.
 
->
->>  /*
->> - * Lock the buddy and bitmap pages. This make sure other parallel init_group
->> - * on the same buddy page doesn't happen whild holding the buddy page lock.
->> - * Return locked buddy and bitmap pages on e4b struct. If buddy and bitmap
->> - * are on the same page e4b->bd_buddy_folio is NULL and return value is 0.
->> + * Lock the buddy and bitmap folios. This make sure other parallel init_group
-> 					     ^^^ makes
->
->> + * on the same buddy folio doesn't happen whild holding the buddy folio lock.
-> 					     ^^ while
->
->> + * Return locked buddy and bitmap folios on e4b struct. If buddy and bitmap
->> + * are on the same folio e4b->bd_buddy_folio is NULL and return value is 0.
->>   */
-> 								Honza
+Am 05.11.25 um 10:02 schrieb Yang Li via B4 Relay:
+> From: Yang Li <yang.li@amlogic.com>
+> 
+> kernel panic: Unable to handle kernel read from unreadable
+> memory at virtual address 00000000000003d8
+
+No line break needed in pasted logs.
+
+> 
+> Call trace:
+>   iso_sock_disconn+0x110/0x1c8
+>   __iso_sock_close+0x50/0x164
+>   iso_sock_release+0x48/0xf0
+>   __sock_release+0x40/0xb4
+>   sock_close+0x18/0x28
+>   __fput+0xd8/0x28c
+>   __fput_sync+0x50/0x5c
+>   __arm64_sys_close+0x38/0x7c
+>   invoke_syscall+0x48/0x118
+>   el0_svc_common.constprop.0+0x40/0xe0
+>   do_el0_svc_compat+0x1c/0x34
+>   el0_svc_compat+0x30/0x88
+>   el0t_32_sync_handler+0x90/0x140
+>   el0t_32_sync+0x198/0x19c
+
+Please add a paragraph about this problem, and how `iso_pi(sk)->conn` 
+can be NULL.
+
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> ---
+>   net/bluetooth/iso.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> index 74ec7d125c88..89c7700ceb81 100644
+> --- a/net/bluetooth/iso.c
+> +++ b/net/bluetooth/iso.c
+> @@ -838,14 +838,14 @@ static void __iso_sock_close(struct sock *sk)
+>   	case BT_CONNECT:
+>   	case BT_CONNECTED:
+>   	case BT_CONFIG:
+> -		if (iso_pi(sk)->conn->hcon)
+> +		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon)
+>   			iso_sock_disconn(sk);
+>   		else
+>   			iso_chan_del(sk, ECONNRESET);
+>   		break;
+>   
+>   	case BT_CONNECT2:
+> -		if (iso_pi(sk)->conn->hcon &&
+> +		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon &&
+>   		    (test_bit(HCI_CONN_PA_SYNC, &iso_pi(sk)->conn->hcon->flags) ||
+>   		    test_bit(HCI_CONN_PA_SYNC_FAILED, &iso_pi(sk)->conn->hcon->flags)))
+>   			iso_sock_disconn(sk);
+
+This diff looks fine.
 
 
+Kind regards,
+
+Paul
 
