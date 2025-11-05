@@ -1,223 +1,238 @@
-Return-Path: <linux-kernel+bounces-887301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38134C37CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:56:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1C9C37CAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1CA418C7392
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99443AC9C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81072D9ECA;
-	Wed,  5 Nov 2025 20:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB69B2D8780;
+	Wed,  5 Nov 2025 20:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsjC98xH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQEa4ICh"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0874B2D8395;
-	Wed,  5 Nov 2025 20:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CD02D837E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762376211; cv=none; b=oXiY2Kp4bhOMVXIp9CQHboeCVsOQ9JBTW1d3vohGljP+dKaUbyGPukdoV+CB13Tel8QJBlu2SK1fABHOsXUG68++1DQYvrdLFISRvIoqMfMuYKuKiVuF/hERexijCRenXmpUAq8n+xpX4j47UpPOtGifqYudmAk8XidWxIf9RS4=
+	t=1762376143; cv=none; b=c2VllHa1+8u1HWD8PcFOxPvsKpgAJWxmp3ZoLQ03GDcPZ8wW9lZz7c/jDaJIHiY37RyTkDFMQzOO7FErH4rcS17XNHGxIBTjS2cljc9fOqfLTls4bQBEIt+QvhXASsqmSX/TbOEtMKLPO3HGCTzmqDYups/0LtQDahZi9f7I/X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762376211; c=relaxed/simple;
-	bh=3YWwgQi9pamq55MRiyGIwd2ciVp732wOAixp3u9/Wuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOl/ZF9JCRKr55dEKVumx4SBOERjYkG/8CRXUkgRT4F0wwuPY30cu1vwPIt+gG6w16MUmj5vf6Iq7mKDeEfOXDNz1Rar2G4xm0ja2AEhXJ3ExsqpZG7tzngAF41yCMolXlpSQnTMzlwOM/BB6SSXRH6voNzFfC1JK2jnrdoX3/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsjC98xH; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762376209; x=1793912209;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3YWwgQi9pamq55MRiyGIwd2ciVp732wOAixp3u9/Wuw=;
-  b=ZsjC98xH7KI0j1QD4JT6FzGSZSYhj5D4IqdonbwKSRNUUYsGeF4Mi12C
-   kZoFNAZrH5mc9NVa7KiR3Ei6alkQXExbYIiDQyvaDWwd4qWvDY6sZLr9l
-   3Ph0z1sTrBigW1te6+vvBxxWFZvvJmbPPaUSxsArbNmFbGk/QCMz0c4US
-   tQ57/AY8wW9n1uN3YMR60l/ou5weYDLTEL+cz0KgAuR8twUCT0gpvg8jH
-   d9K1i7iirv2j1c28la/bk3BA1TIeOb7FRLW4o3ReW6MvrJvzLal+otQNL
-   8rBbZoSojLO6+LiNSQvhjLSCX9V63gnerPhDuoAkrxax3PRgF+Y9tuJqD
-   g==;
-X-CSE-ConnectionGUID: WWMiK09RQOSo9Tf+hbI3ag==
-X-CSE-MsgGUID: rjLPVqIFT9aiFWSaOQONaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64410268"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64410268"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 12:56:48 -0800
-X-CSE-ConnectionGUID: U0kr8VC2QQ+/FFBt+8TnkA==
-X-CSE-MsgGUID: 1yNn68zFSRKVXmbGcuHY7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="191664887"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 05 Nov 2025 12:56:46 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGkYH-000T7k-29;
-	Wed, 05 Nov 2025 20:56:22 +0000
-Date: Thu, 6 Nov 2025 04:55:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	s=arc-20240116; t=1762376143; c=relaxed/simple;
+	bh=EpJQxkCUe84VuUUz72+6wpORvW7Z+OmC8JqigviCnvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=crduzjggZYeMF+iSWLLrfWifVOxrkndmDFfFsTSKcXvqRxtkQliSN12z6Gl3OPSs8BjeGlPQvqLxOnLwD8VYU8lJJOYpE8Dx5qe8rldiLvhTY+KRGufmlq0PaI9r4n08wHuRmkxEg2TdcPK2hRQ9eGAt1DXGrEt41kKX8GQlssk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQEa4ICh; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so268703b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762376142; x=1762980942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hhMs1hlDgsVZf1g+dek0j89GxNp2KKlLBpBDsBeutOs=;
+        b=kQEa4IChO0i96NFN91cc4uA4msJUVtAEkgC5tC5r3MOp+rZET+iXs5xqbRJBR+NLf+
+         0RuQ6dY76F1OQNy0iDBBQsNf6TVOv2lPX74xsCeB2lfxog0IPf1Lehu7Tm4mHdzIKc1m
+         ovKhI6pLcUBbhZiDaypoNoT8/oQnIdNmdOwyIQadayoAIAap1qFQh7XsY5DsNFjrhyMn
+         NRJoJ83adrOXpqBW52u62MXI5XKroTktrJryO9P99W37OapRNsRxFm8WslAs/3DG5BPv
+         hO3xn5lDNLxKjjRWntQ92Lc3JMAOQrZpy623/pNiD5ahXuTjRhBYYpim5vJ4QvzB4Y1+
+         Ipng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762376142; x=1762980942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hhMs1hlDgsVZf1g+dek0j89GxNp2KKlLBpBDsBeutOs=;
+        b=lG89ilCb+1pk1SiI9+1qUaV6wUxrF5/uxi2hGtjRsNtbn7SK68NF7F8xedQkbQz6NR
+         UdhuqS+1IXZK7SKRCu6L9n8U2d9xzRClNcdPFJfocThKm1I+0REFM+7UECzhj2/rB1zM
+         k2C/bYO/P5oIuPBNkWcr3vIS+kXbuHRFcRDa3M65Le8XyWW4kBl3OA2qEKmcQu917ViV
+         XRTBx+3oU+186mBYo9vlGNkwZMbnDUqU2FfJQkJmkmYDOeYFdtOgeVa8Qr91SOKfk0iq
+         Iw9Q8Z70hN1aJ9l/ERj4yZxc90QatFT6Cz+zZgzkMvCR6dsorT+Ll5q13HlmWFDm4MP/
+         Lyow==
+X-Forwarded-Encrypted: i=1; AJvYcCW66NZbEkJYLBFcSvQPi4z1dEWcH8v0E4Yc1qwF0r4wy+wxSXXy7lrzc11OjsodJHCZDdfmg5PxaWmCEIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1heHVDOmsY+ix2/8fvFHjt2+uhjtZxVokbWaXfS80aqG0OUew
+	sOy0Od1LmE6fvADQEn57HDNGYopbRRMZZXUOjJbU3A2kcaNOvY3gnoGP
+X-Gm-Gg: ASbGncurL9be+Fdcj5VByOWbxEqkoQIrmYNSx85PPyTOTSvYkmrDoXrM7Znn8r1pSFG
+	jjkAxAwKmRjhciShMpQMBLzEFwM54U1aYlIwDSR7criBwtHjYicxzb6QmoAQTSxI6uv0Wk7hqJb
+	xckEGCWFQ6HxETbolW+fulynEe2srbQlFVFeRlQ+ySMu6Ev+cUwThADRRW8jx4cy4Q+ek0KU7jM
+	uP68BmPWDVEJZ2/VPmHcr/tdG3j56nLdmOWHIAk6woPzayeZiMTIlejc+3xuVRfZZBi1r83X28Z
+	iUXjefLY0bpL9X1u3U5ZyqAJm9FumoHal1cvjTVUYHKH4wEfqOVgCjVS607r3jNK+r4kAp32qru
+	pBW1AtT70SzrSmGDspQ+tUGBrT1o/s/o22FtEhBSkzZLfD+s=
+X-Google-Smtp-Source: AGHT+IHPFm5cGv1tt4RmeePKjzvdzFbQmc/HUxeSszlk9l9aFCxxYkmCsNAadtWmj7V2HR6zSfhavA==
+X-Received: by 2002:a05:6a00:140f:b0:7aa:bd80:f4db with SMTP id d2e1a72fcca58-7ae1c767de8mr5566668b3a.5.1762376141566;
+        Wed, 05 Nov 2025 12:55:41 -0800 (PST)
+Received: from ryzen ([2601:644:8000:8e26::ea0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af7f661b71sm349766b3a.12.2025.11.05.12.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 12:55:41 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: linuxppc-dev@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	leoyang.li@nxp.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>
-Subject: Re: [PATCH 3/3] bus: rifsc: add debugfs entry to dump the firewall
- configuration
-Message-ID: <202511060449.FdKTConU-lkp@intel.com>
-References: <20251104-rifsc_debugfs-v1-3-7ebdfbf8d33f@foss.st.com>
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] Revert "powerpc: dts: mpc85xx: remove "simple-bus" compatible from ifc node"
+Date: Wed,  5 Nov 2025 12:55:24 -0800
+Message-ID: <20251105205524.17362-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-rifsc_debugfs-v1-3-7ebdfbf8d33f@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Gatien,
+This reverts commit 0bf51cc9e9e57a751b4c5dacbfa499ba5cd8bd72.
 
-kernel test robot noticed the following build warnings:
+simple-bus is needed for legacy platforms such as P1010 so that nodes
+are populated properly.
 
-[auto build test WARNING on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
+Fixes fsl,ifc-nand probing under at least P1010.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gatien-Chevallier/dt-bindings-bus-add-stm32mp21-RIFSC-compatible/20251104-215726
-base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
-patch link:    https://lore.kernel.org/r/20251104-rifsc_debugfs-v1-3-7ebdfbf8d33f%40foss.st.com
-patch subject: [PATCH 3/3] bus: rifsc: add debugfs entry to dump the firewall configuration
-config: csky-randconfig-r062-20251105 (https://download.01.org/0day-ci/archive/20251106/202511060449.FdKTConU-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 15.1.0
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ arch/powerpc/boot/dts/fsl/b4si-post.dtsi      | 2 +-
+ arch/powerpc/boot/dts/fsl/bsc9131si-post.dtsi | 2 +-
+ arch/powerpc/boot/dts/fsl/bsc9132si-post.dtsi | 2 +-
+ arch/powerpc/boot/dts/fsl/c293si-post.dtsi    | 2 +-
+ arch/powerpc/boot/dts/fsl/p1010si-post.dtsi   | 2 +-
+ arch/powerpc/boot/dts/fsl/t1023si-post.dtsi   | 2 +-
+ arch/powerpc/boot/dts/fsl/t1040si-post.dtsi   | 2 +-
+ arch/powerpc/boot/dts/fsl/t2081si-post.dtsi   | 2 +-
+ arch/powerpc/boot/dts/fsl/t4240si-post.dtsi   | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511060449.FdKTConU-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/bus/stm32_rifsc.c:538:6-33: opportunity for str_enabled_disabled(d_dbg_entry . dev_cid_filt_en)
->> drivers/bus/stm32_rifsc.c:540:6-28: opportunity for str_enabled_disabled(d_dbg_entry . dev_sem_en)
->> drivers/bus/stm32_rifsc.c:596:8-30: opportunity for str_enabled_disabled(sr_dbg_entry . sr_enable)
-
-vim +538 drivers/bus/stm32_rifsc.c
-
-   505	
-   506	static int stm32_rifsc_conf_dump_show(struct seq_file *s, void *data)
-   507	{
-   508		struct rifsc_dbg_private *rifsc = (struct rifsc_dbg_private *)s->private;
-   509		int i, j;
-   510	
-   511		seq_puts(s, "\n=============================================\n");
-   512		seq_puts(s, "                 RIFSC dump\n");
-   513		seq_puts(s, "=============================================\n\n");
-   514	
-   515		seq_puts(s, "\n=============================================\n");
-   516		seq_puts(s, "                 RISUP dump\n");
-   517		seq_puts(s, "=============================================\n");
-   518	
-   519		seq_printf(s, "\n| %-15s |", "Peripheral name");
-   520		seq_puts(s, "| Firewall ID |");
-   521		seq_puts(s, "| N/SECURE |");
-   522		seq_puts(s, "| N/PRIVILEGED |");
-   523		seq_puts(s, "| CID filtering |");
-   524		seq_puts(s, "| Semaphore mode |");
-   525		seq_puts(s, "| SCID |");
-   526		seq_printf(s, "| %7s |\n", "SEMWL");
-   527	
-   528		for (i = 0; i < RIFSC_RISUP_ENTRIES && i < rifsc->nb_risup; i++) {
-   529			struct rifsc_risup_debug_data d_dbg_entry;
-   530	
-   531			stm32_rifsc_fill_dev_dbg_entry(rifsc, &d_dbg_entry, i);
-   532	
-   533			seq_printf(s, "| %-15s |", d_dbg_entry.dev_name);
-   534			seq_printf(s, "| %-11d |", d_dbg_entry.dev_id);
-   535			seq_printf(s, "| %-8s |", d_dbg_entry.dev_sec ? "SEC" : "NSEC");
-   536			seq_printf(s, "| %-12s |", d_dbg_entry.dev_priv ? "PRIV" : "NPRIV");
-   537			seq_printf(s, "| %-13s |",
- > 538				   d_dbg_entry.dev_cid_filt_en ? "enabled" : "disabled");
-   539			seq_printf(s, "| %-14s |",
- > 540				   d_dbg_entry.dev_sem_en ? "enabled" : "disabled");
-   541			seq_printf(s, "| %-4d |", d_dbg_entry.dev_cid);
-   542			seq_printf(s, "| %#-7x |\n", d_dbg_entry.dev_sem_cids);
-   543		}
-   544	
-   545		seq_puts(s, "\n=============================================\n");
-   546		seq_puts(s, "                  RIMU dump\n");
-   547		seq_puts(s, "=============================================\n");
-   548	
-   549		seq_puts(s, "| RIMU's name |");
-   550		seq_puts(s, "| CIDSEL |");
-   551		seq_puts(s, "| MCID |");
-   552		seq_puts(s, "| N/SECURE |");
-   553		seq_puts(s, "| N/PRIVILEGED |\n");
-   554	
-   555		for (i = 0; i < RIFSC_RIMU_ENTRIES && rifsc->nb_rimu; i++) {
-   556			struct rifsc_rimu_debug_data m_dbg_entry;
-   557	
-   558			stm32_rifsc_fill_rimu_dbg_entry(rifsc, &m_dbg_entry, i);
-   559	
-   560			seq_printf(s, "| %-11s |", m_dbg_entry.m_name);
-   561			seq_printf(s, "| %-6s |", m_dbg_entry.cidsel ? "CIDSEL" : "");
-   562			seq_printf(s, "| %-4d |", m_dbg_entry.m_cid);
-   563			seq_printf(s, "| %-8s |", m_dbg_entry.m_sec ? "SEC" : "NSEC");
-   564			seq_printf(s, "| %-12s |\n", m_dbg_entry.m_priv ? "PRIV" : "NPRIV");
-   565		}
-   566	
-   567		if (rifsc->nb_risal > 0) {
-   568			seq_puts(s, "\n=============================================\n");
-   569			seq_puts(s, "                  RISAL dump\n");
-   570			seq_puts(s, "=============================================\n");
-   571	
-   572			seq_puts(s, "| Memory  |");
-   573			seq_puts(s, "| Subreg. |");
-   574			seq_puts(s, "| N/SECURE |");
-   575			seq_puts(s, "| N/PRIVILEGED |");
-   576			seq_puts(s, "| Subreg. CID |");
-   577			seq_puts(s, "| Resource lock |");
-   578			seq_puts(s, "| Subreg. enable |");
-   579			seq_puts(s, "| Subreg. start |");
-   580			seq_puts(s, "|  Subreg. end  |\n");
-   581	
-   582			for (i = 0; i < rifsc->nb_risal; i++) {
-   583				for (j = 0; j < RIFSC_RISAL_SUBREGIONS; j++) {
-   584					struct rifsc_subreg_debug_data sr_dbg_entry;
-   585	
-   586					stm32_rifsc_fill_subreg_dbg_entry(rifsc, &sr_dbg_entry, i, j);
-   587	
-   588					seq_printf(s, "| LPSRAM%1d |", i + 1);
-   589					seq_printf(s, "|    %1s    |", (j == 0) ? "A" : "B");
-   590					seq_printf(s, "| %-8s |", sr_dbg_entry.sr_sec ? "SEC" : "NSEC");
-   591					seq_printf(s, "| %-12s |", sr_dbg_entry.sr_priv ? "PRIV" : "NPRIV");
-   592					seq_printf(s, "| 0x%-9x |", sr_dbg_entry.sr_cid);
-   593					seq_printf(s, "| %-13s |",
-   594						   sr_dbg_entry.sr_rlock ? "locked (1)" : "unlocked (0)");
-   595					seq_printf(s, "| %-14s |",
- > 596						   sr_dbg_entry.sr_enable ? "enabled" : "disabled");
-   597	
-   598					seq_printf(s, "| 0x%-11x |", sr_dbg_entry.sr_start);
-   599					seq_printf(s, "| 0x%-11x |\n", sr_dbg_entry.sr_start +
-   600						   sr_dbg_entry.sr_length - 1);
-   601				}
-   602			}
-   603		}
-   604	
-   605		return 0;
-   606	}
-   607	DEFINE_SHOW_ATTRIBUTE(stm32_rifsc_conf_dump);
-   608	
-
+diff --git a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
+index fb3200b006ad..4f044b41a776 100644
+--- a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
+@@ -50,7 +50,7 @@ &qman_pfdr {
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <25 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/bsc9131si-post.dtsi b/arch/powerpc/boot/dts/fsl/bsc9131si-post.dtsi
+index 5c53cee8755f..2a677fd323eb 100644
+--- a/arch/powerpc/boot/dts/fsl/bsc9131si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/bsc9131si-post.dtsi
+@@ -35,7 +35,7 @@
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <16 2 0 0 20 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/bsc9132si-post.dtsi b/arch/powerpc/boot/dts/fsl/bsc9132si-post.dtsi
+index 4da451e000d9..b8e0edd1ac69 100644
+--- a/arch/powerpc/boot/dts/fsl/bsc9132si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/bsc9132si-post.dtsi
+@@ -35,7 +35,7 @@
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	/* FIXME: Test whether interrupts are split */
+ 	interrupts = <16 2 0 0 20 2 0 0>;
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/c293si-post.dtsi b/arch/powerpc/boot/dts/fsl/c293si-post.dtsi
+index 2d443d519274..f208fb8f64b3 100644
+--- a/arch/powerpc/boot/dts/fsl/c293si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/c293si-post.dtsi
+@@ -35,7 +35,7 @@
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <19 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
+index 2d2550729dcc..b540e58ff79e 100644
+--- a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
+@@ -35,7 +35,7 @@
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <16 2 0 0 19 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
+index 8ef0c020206b..aa5152ca8120 100644
+--- a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
+@@ -52,7 +52,7 @@ &qman_pfdr {
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <25 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi b/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
+index c9542b73bd7f..776788623204 100644
+--- a/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
+@@ -52,7 +52,7 @@ &qman_pfdr {
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <25 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/t2081si-post.dtsi b/arch/powerpc/boot/dts/fsl/t2081si-post.dtsi
+index 6bb95878d39d..27714dc2f04a 100644
+--- a/arch/powerpc/boot/dts/fsl/t2081si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t2081si-post.dtsi
+@@ -50,7 +50,7 @@ &qman_pfdr {
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <25 2 0 0>;
+ };
+ 
+diff --git a/arch/powerpc/boot/dts/fsl/t4240si-post.dtsi b/arch/powerpc/boot/dts/fsl/t4240si-post.dtsi
+index 65f3e17c0d41..fcac73486d48 100644
+--- a/arch/powerpc/boot/dts/fsl/t4240si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t4240si-post.dtsi
+@@ -50,7 +50,7 @@ &qman_pfdr {
+ &ifc {
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+-	compatible = "fsl,ifc";
++	compatible = "fsl,ifc", "simple-bus";
+ 	interrupts = <25 2 0 0>;
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.2
+
 
