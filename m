@@ -1,109 +1,198 @@
-Return-Path: <linux-kernel+bounces-886840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C853C36B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:29:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432D2C36966
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105506402D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:04:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F30E4FD0D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4355321448;
-	Wed,  5 Nov 2025 16:04:48 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11063335579;
+	Wed,  5 Nov 2025 16:05:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E122A320CB6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9B334C33
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358688; cv=none; b=BrolHl9SOW1DL84KboKSmYBAZpZkyCI8cB5kLhjVhsDhi1T2GzIytY0Z8IJIqK9zaKjrb9IoOy7PLwgQekjg0RW2z6EpY311ieM5hzF4TRi/nLFaf9NVwkgJfiU3PoqFcvWUvxcZuCPctHyktYUVIyloUtaJQKxARF+S2GQ5E74=
+	t=1762358725; cv=none; b=Brz8HUgfbhI3egdfkON3y+iI5Fe4diEaDokIS6bkl6yuaDjs1mBO8Z0HFnoGBICRVb4f+Pi1F9G5B8JNrA19RRAlJJEmQQYeACKANKnpS444SpILdPb4NLb3XNDq11jIfFPR/cyjKtYSS/citnMTT2B9CWkc3Y3J9h7JH+o7tYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358688; c=relaxed/simple;
-	bh=JofqSWCzl11ihkf1QS7aH5EerIGWNBW0jBvqMlbq2a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4EKlXJ1ZszkMzm8Fx21yuaO0VEI4GZyUlhA5DmKUrWBMLBS9gQFnUy7CRBuBIaRb4irBT1jdVhW/556XgUja1EWibp4Jn6a5HSApxTB1ZXB3UStyVq1iPRY/9PZgMPBeqm/o98LSuzqZVeNKOnc9gk5OkOEfywl7IGOWt/MxT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1342511566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:04:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358685; x=1762963485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zQtbK0HPx+N0NDzFM7oR+NUAI3H2NYy2UQCcQpjJkTY=;
-        b=e/TQQdBWH6HRBAD67s/U+FTBJGyDuPZqfWuBbOAdmamh18F/fUOQ+JCUNz4GoWXY2x
-         +W1JqdSGMgL1AB2iMTwPHDmu9dQPQvGluwPZ99EKB5FXu3o99N6dXQTJ7yxgEqIvDKzO
-         1jpxRB9csPRuXoIdnFhXbZgQqQVImpxxGxWF7IyReue3JuvtA9vpjXDVxIqyAyoblwGS
-         /PFjIouGqRQ0lAzXZLLdd5sMk/qaqVFAi2CsBo6FQUYmN2E2ZT+70IH+nDkLAqy6OODP
-         pvvnrS4OFNicdKmOE1fRW6UKPSf9ED7rRORiBDpY/cxA3H+mRVGEK3csqoM8LwG17onc
-         ayXA==
-X-Gm-Message-State: AOJu0YwCPRpjP+cD93vgwbkF21BGP6Hld7zVEfGiRs/BbeXY1d2Qnuad
-	kBAv7q3yX7sST1VqpkS3ZsMaLPfZuluq4egmsV4p4WVe+syQcjMqekDG
-X-Gm-Gg: ASbGncuNwhCHiGh/FDensZ9sLuyt959wfmQe52M7/Ki4EgMjHJ7/eLWWVEJqI/HxeFs
-	9G1oTrI+DoxNHG0UTfVu7oLV+VoO7J4/+cXA5PgbK3JPEDHA+FBQiEiVYJ7CxD6zFD3p5Tb0IdR
-	mPlNQcCD7v2aeKaWPBgIvGKwowD0cVta9QSWikZNWzn4qyEoerG2AFbe/nqcKAT9iIxZaDBy2fB
-	KblJrA7y7pKL+OtZOGI5INAUX9JQ192y0wzZdUKkpm2U83SwFlSwsAOZSJllEW6RNz3j6UIREHB
-	9uSJkd5PjRxVnYQWnPZHQF1VYIOvJLRO5llQqj45bOu4rrME/UnKIGGlh1oNShCR3vvc2y+Q7r3
-	1s1DrAreWOE9/+wUeeV6rK/YLG6i+AF1GXw/Vqal/ax9dP9wibt7TUWMF7bgIIrJNXg0=
-X-Google-Smtp-Source: AGHT+IFeg0PfZi72Z71d5ee0yOEa03D5xAyx6X2QALCBR3Xeog/mqq1XoLJB5RS10SM8/uMZFbIGPg==
-X-Received: by 2002:a17:907:9815:b0:b71:854:4e49 with SMTP id a640c23a62f3a-b72655edfabmr373939666b.56.1762358685029;
-        Wed, 05 Nov 2025 08:04:45 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:71::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e2597sm528556266b.45.2025.11.05.08.04.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:04:44 -0800 (PST)
-Date: Wed, 5 Nov 2025 08:04:42 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Simon Horman <horms@kernel.org>, david decotigny <decot@googlers.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
-	kernel-team@meta.com, jv@jvosburgh.net
-Subject: Re: [PATCH net v8 4/4] selftest: netcons: add test for netconsole
- over bonded interfaces
-Message-ID: <sw7wovxj7l43rj2dkvapzl3w6rrbai5qje4zswz6xrxmmkyxtm@gym66qdsivwh>
-References: <20251104-netconsole_torture-v8-0-5288440e2fa0@debian.org>
- <20251104-netconsole_torture-v8-4-5288440e2fa0@debian.org>
+	s=arc-20240116; t=1762358725; c=relaxed/simple;
+	bh=Uapyn0o1PFsF4p87jzmRukDDVz/hXCiKLFKttO5iEUE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qoA23jtyz68fVbwve1J+aWIe0nWIgrBRd2cYzD09mP4RtDAPObEmWdQwcBBby3X0IwYsuWnk8bJ923KcEnmokQ/R5INhnqVct/yNgfXsXUEWy5vguWtPWm6vfVLzM9qg3dRHB+fwPE5AECJKjA/+gcXTZLx+Wo6GaIJZ4FUdR1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGg0F-0001Ma-RR; Wed, 05 Nov 2025 17:04:55 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGg0E-007Dp6-3D;
+	Wed, 05 Nov 2025 17:04:55 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vGg0E-00000000Cj1-3ksp;
+	Wed, 05 Nov 2025 17:04:54 +0100
+Message-ID: <4857ace4d241d3a0de4fe7247312ff07c930b11e.camel@pengutronix.de>
+Subject: Re: [PATCH v2 06/21] reset: rzv2h-usb2phy: Add support for VBUS mux
+ controller registration
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, Vinod
+ Koul	 <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Peter Rosin <peda@axentia.se>,
+ Yoshihiro Shimoda	 <yoshihiro.shimoda.uh@renesas.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman	 <gregkh@linuxfoundation.org>,
+ linux-phy@lists.infradead.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 05 Nov 2025 17:04:54 +0100
+In-Reply-To: <39923e450f1ce220cbca28dcf6b215dd9fa79dde.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
+References: <cover.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
+	 <39923e450f1ce220cbca28dcf6b215dd9fa79dde.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-netconsole_torture-v8-4-5288440e2fa0@debian.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 04, 2025 at 09:37:04AM -0800, Breno Leitao wrote:
-> diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-> index 6bb290abd48bf..57f5a5d5cea67 100644
-> --- a/tools/testing/selftests/drivers/net/bonding/config
-> +++ b/tools/testing/selftests/drivers/net/bonding/config
-> @@ -1,5 +1,6 @@
->  CONFIG_BONDING=y
->  CONFIG_BRIDGE=y
-> +CONFIG_CONFIGFS_FS=y
->  CONFIG_DUMMY=y
->  CONFIG_INET_ESP=y
->  CONFIG_INET_ESP_OFFLOAD=y
-> @@ -11,6 +12,9 @@ CONFIG_NET_CLS_FLOWER=y
->  CONFIG_NET_CLS_MATCHALL=m
->  CONFIG_NETDEVSIM=m
->  CONFIG_NET_SCH_INGRESS=y
-> +CONFIG_NETCONSOLE=m
-> +CONFIG_NETCONSOLE_DYNAMIC=y
-> +CONFIG_NETCONSOLE_EXTENDED_LOG=y
+On Mi, 2025-11-05 at 16:39 +0100, Tommaso Merciai wrote:
+> The RZ/V2H USB2 PHY requires control of the VBUS selection line
+> (VBENCTL) through a mux controller described in the device tree as
+> "mux-controller". This change adds support for registering
+> vbus-sel-mux auxiliary driver during probe.
+>=20
+> This enables proper management of USB2.0 VBUS source selection on
+> platforms using the RZ/V2H SoC.
+>=20
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+> v1->v2:
+>  - New patch
+>=20
+>  drivers/reset/Kconfig               |  1 +
+>  drivers/reset/reset-rzv2h-usb2phy.c | 65 +++++++++++++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index e1ae624661f3..f54e216ca7f6 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -255,6 +255,7 @@ config RESET_RZG2L_USBPHY_CTRL
+>  config RESET_RZV2H_USB2PHY
+>  	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY Reset driver"
+>  	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select AUXILIARY_BUS
+>  	help
+>  	  Support for USB2PHY Port reset Control found on the RZ/V2H(P) SoC
+>  	  (and similar SoCs).
+> diff --git a/drivers/reset/reset-rzv2h-usb2phy.c b/drivers/reset/reset-rz=
+v2h-usb2phy.c
+> index 5bdd39274612..6074aa8cc13a 100644
+> --- a/drivers/reset/reset-rzv2h-usb2phy.c
+> +++ b/drivers/reset/reset-rzv2h-usb2phy.c
+> @@ -5,8 +5,10 @@
+>   * Copyright (C) 2025 Renesas Electronics Corporation
+>   */
+> =20
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/cleanup.h>
+>  #include <linux/delay.h>
+> +#include <linux/idr.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -14,6 +16,9 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/reset/reset_rzv2h_usb2phy.h>
+> +
+> +static DEFINE_IDA(auxiliary_ids);
+> =20
+>  struct rzv2h_usb2phy_regval {
+>  	u16 reg;
+> @@ -104,6 +109,62 @@ static int rzv2h_usb2phy_reset_of_xlate(struct reset=
+_controller_dev *rcdev,
+>  	return 0;
+>  }
+> =20
+> +static void rzv2h_usb2phy_reset_adev_unregister(void *data)
+> +{
+> +	struct auxiliary_device *adev =3D data;
+> +
+> +	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void rzv2h_usb2phy_reset_adev_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> +
+> +	ida_free(&auxiliary_ids, adev->id);
+> +}
+> +
+> +static int rzv2h_usb2phy_reset_mux_register(struct device *dev,
+> +					    void __iomem *base,
+> +					    const char *mux_name)
+> +{
+> +	struct reset_rzv2h_usb2phy_adev *rdev;
+> +	struct auxiliary_device *adev;
+> +	int ret;
+> +
+> +	rdev =3D devm_kzalloc(dev, sizeof(*rdev), GFP_KERNEL);
+> +	if (!rdev)
+> +		return -ENOMEM;
+> +
+> +	rdev->base =3D base;
+> +
+> +	adev =3D &rdev->adev;
+> +	adev->name =3D mux_name;
+> +	adev->dev.parent =3D dev->parent;
+> +	adev->dev.release =3D rzv2h_usb2phy_reset_adev_release;
+> +	adev->dev.of_node =3D dev->of_node;
+> +	ret =3D ida_alloc(&auxiliary_ids, GFP_KERNEL);
+> +	if (ret < 0)
+> +		return ret;
+> +	adev->id =3D ret;
+> +
+> +	ret =3D auxiliary_device_init(adev);
+> +	if (ret)
+> +		goto cleanup_ida;
+> +
+> +	ret =3D auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		goto cleanup_ida;
+> +	}
+> +
+> +	return devm_add_action_or_reset(dev, rzv2h_usb2phy_reset_adev_unregiste=
+r, adev);
 
-I've just realized that check_selftest discards the '_' when checking
-for the order. This means NETCONSOLE should come before
-CONFIG_NET_SCH_INGRESS.
+Can't you use __devm_auxiliary_device_create()?
 
-I will wait for additional review, before updating.
+regards
+Philipp
 
