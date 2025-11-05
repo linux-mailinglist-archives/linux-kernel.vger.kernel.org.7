@@ -1,189 +1,106 @@
-Return-Path: <linux-kernel+bounces-887121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC04C37511
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:32:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35B8C37505
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 761BA346FDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790FE1A2144B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E33295516;
-	Wed,  5 Nov 2025 18:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C112D283FEA;
+	Wed,  5 Nov 2025 18:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="moYvwvA2"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hWTwhOKu"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823A62836AF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF9461FFE;
+	Wed,  5 Nov 2025 18:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762367508; cv=none; b=Aeig0mFRQREe9+dj1jItebaQkN2VN21SMiXz17UpriRArwIdvai1m7wIvjEkaBQ5liWBmLZzaQS6DRPFs6ncdKSgSAv0AlVSQF4EY5QbATlaFuCF0iOjWNdBtSyjZBpHXymSPRUo3BxI2Y16485FXlLF14BG+Rvk7aKEAOQGbeU=
+	t=1762367506; cv=none; b=oYRuxY167/F1JxdiiGmLeGo6QWDw6rQTBF9Z7EfSi2/Xh0NFoBS9KoFr9/17Kk2su18Y3zQ0t+kbntkI6gUl5z0QM9rL7wC1eJTolvaLMKP2llBCP3jssM/xjnAeI9xUa4/+WEM2ABnqE4Cl0Salb0pxwikpz6PsY/WiIqPpj8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762367508; c=relaxed/simple;
-	bh=cSUvPFHauqZYS/CgsZ8XBajx3T1TWYSiO6rHtLaKjfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SFS9bnep10r4h0DD+ZNKi3etRxoJwkJuB9d9O5iIqJSXnxCSNiIqabbeshDhcqb4ZWF1peZSM9Yi4vTpVPF+I2JKCc9fL3zHNTuw2awbZLasjBzVL0UeHFtgRbwxC7Em0pTW6ph/uLOd1//eeQbYnwuhSOOqAG7NskK29lIFVYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=moYvwvA2; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-786572c14e3so903007b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:31:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762367505; x=1762972305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zlbREYCC7hZZFYU/7VKZMqA+QAfKisdyFnGiY5+x3Ac=;
-        b=moYvwvA27zXvENPapH0CaBNoJCOO2eyxO4MW9MSUXnxSYepCGfx5rRQ6FgVuG/lt2X
-         45x4G+Ctsj8Hd0Sg2DAqgO2m2eBINFzXrXkUfARBiR+MH1y1hthM4QYAJ+EERt2F+Z0g
-         wX/5Ev8R59JN71QtkO808CVEmEcRE+s7rVj237LHFL/lap/bLtD7Rgqgq7H/cNKNYQiR
-         rOKj0LOmWWseMg8CnEPFyxf4Q3cGbn1yxP7CEYni0kG0XWZbLLRwzHOxcenHcWPP/ry5
-         54ewXiBejpDc5AbWydwntAfQzC8b489rHVa2OhSvIoaJ4jI9xRCOGosICz6iRgRsD7+U
-         XY9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762367505; x=1762972305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zlbREYCC7hZZFYU/7VKZMqA+QAfKisdyFnGiY5+x3Ac=;
-        b=QIHyFXTo7fev519ZuFRO9T5OYRVCn4lOAGeKFaHhVSmbjUbWVqwuIJ8olnTyFNI69i
-         yqnChhfOipBnqzouVMGCP6RLc4ncwsjOnSucId6lXwTy88Nu3iNjaSuzYdSy5Qa/Mq9h
-         nzB8kaMNAHctckbwtJMDq5Ce9SCwlZO2nvKrrQFIQ8DMADWHvcQbOHl/QOVDT2pi6yHm
-         JGshyGMRwY5YRqmn3rD+VeXiXOnqNDatDA2M8HIcbJRTDdiCxFeB7tNKQ8eQ/noDkW/M
-         6CbM4JelUI1b5/aVt6dkYKgOX3VpUDYDGb5z85J/5eggV5MOQH0tzFcP0azNYZmc503m
-         xViw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVyNs3TOBzehMcNghHSD/K0xCk/Iawszfixbbpf2WQ2FvRtKkCfQ5XnJOdB9tuTDfu/2P3VbYb3CaOusE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnzHPwCUPrcIUwXbL7QhF37rixXgXd1ddiSSuVXIRiFMSNutDC
-	TX9Xv9nCZkcCPsL3hFaJxnl9+oriwR/u2ZA0hs3YKXwTPclupQdQmYkMRmQ1XCiwgVgLoCu4KKf
-	OaBL5rmSrjFqiY7wd4hHXP4NAklzqliJ/CgkYzqAK
-X-Gm-Gg: ASbGnct3nfio4+BdAJMLN0w3Gc7aZyZVPZHAxP9IHIxbCknfghKLPz0JbbO0r1/BK/T
-	xDlV/iL6RK6PjXtOuhND2duFpuActFf/4SK9A16/UryUOfBI44I1eemQtUDQSyWkHAS65Tg9/2J
-	nNTkG2TTaJ0TGvYW4oOtEacU9cZFZ6aqtFj7llcX6Eg6ckZxxA3kwlm38t2sxCY7v6z9IZY2deO
-	QPMffdlR+5EYH1tVGglP87DWeI+Xp95FgqI4e8GdzWLGfczQm1rUuWyRp0bLmvt/gcjhCVb9bJB
-	jgAykrsOx03ggpSw54uABhiv1fuGuJq/B7FK
-X-Google-Smtp-Source: AGHT+IEOY8cyE6iEXUXwkiFxfgFzq5OVSEUXJFxiV5kaSFWjZNeby5wEMszhmBL8q+8wcQrvfgB84R8XK2eZFBODVvM=
-X-Received: by 2002:a53:c05a:0:10b0:636:d4ab:a507 with SMTP id
- 956f58d0204a3-63fd34ccd13mr3319244d50.16.1762367505139; Wed, 05 Nov 2025
- 10:31:45 -0800 (PST)
+	s=arc-20240116; t=1762367506; c=relaxed/simple;
+	bh=S2tfhWkRiFbOx2lsv+5tb2bhvhnNjayzhjGgm5XqjB8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l3e9StJ6pGXI88aQRZc9PBtCA7E8713uH4hMiIVUmRVuvWem4may3ZB465SUGCPKiblbNw5BL/5iwxZDchXhCNYhh/TDu7pQPqqVNi029bJRHwJduugL/aKKW5WAnl2/bgU6a6oaH7bPXSJsKPHx3zAzFcFipEbwf4xuhngv1+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hWTwhOKu; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0DDBC40C2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1762367504; bh=+qSm1NYuCABVquv8CRh/H8rCYxqKElrGPzu2X3oeikg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hWTwhOKuvOd6WAGFJbeX292IVnn58KvCJNWU/nuaY6ET8h9b0+FYQ3REKvQSkAdoY
+	 uRVcUWt+PUwtU1RePELyttWy32kzRfIZVel1it7osErwUORrg9Z4qWBlP/xtlA4efg
+	 THDQpVS4QVACZYJweY0cujannEIdR1V/nSI1fg7E0fgnjXLlXpoeRDRTGtgGkiqSDU
+	 0mc0i2YbOOD5mXaS2EbP1C6yR8RISfTkCqnBkhgKiuIZT/jlvnk6xSHljaHSj4r73s
+	 vPx2KQTMOT0p5NYr45A7zFZ1qH5kP7s+BwXgnbu9bvjtMmEACnmLdG7ptWqJqdb7Hf
+	 oD2SXRHYQ7Byw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0DDBC40C2F;
+	Wed,  5 Nov 2025 18:31:44 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux Accelerators
+ <linux-accelerators@lists.ozlabs.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>, Zhou Wang
+ <wangzhou1@hisilicon.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Randy
+ Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2] Documentation: uacce: Add explicit title
+In-Reply-To: <20251103093817.52764-2-bagasdotme@gmail.com>
+References: <20251103093817.52764-2-bagasdotme@gmail.com>
+Date: Wed, 05 Nov 2025 11:31:43 -0700
+Message-ID: <87y0ok5o1c.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022182301.1005777-1-joshwash@google.com> <20251022182301.1005777-3-joshwash@google.com>
- <20251023171445.2d470bb3@kernel.org> <CAJcM6BFTb+ASBwO+5sMfLZyyO4+MhWKp3AweXMJrgis9P7ygag@mail.gmail.com>
-In-Reply-To: <CAJcM6BFTb+ASBwO+5sMfLZyyO4+MhWKp3AweXMJrgis9P7ygag@mail.gmail.com>
-From: Ankit Garg <nktgrg@google.com>
-Date: Wed, 5 Nov 2025 10:31:32 -0800
-X-Gm-Features: AWmQ_bkub-0DPZQYHW6NWgclx5Hi6PlhiC9qH2yVCOKIyjJd37QVjH-PxzZDmqc
-Message-ID: <CAJcM6BE7qg464oLOJZtVEdYjaki422fxvUWFsA_=CjOAJeqZ_g@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/3] gve: Allow ethtool to configure rx_buf_len
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Joshua Washington <joshwash@google.com>, netdev@vger.kernel.org, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Jordan Rhee <jordanrhee@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Oct 24, 2025 at 11:17=E2=80=AFAM Ankit Garg <nktgrg@google.com> wro=
-te:
->
-> On Thu, Oct 23, 2025 at 5:14=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> =
-wrote:
-> >
-> > On Wed, 22 Oct 2025 11:22:24 -0700 Joshua Washington wrote:
-> > > +     if (priv->rx_cfg.packet_buffer_size !=3D SZ_2K) {
-> > > +             netdev_warn(dev,
-> > > +                         "XDP is not supported for Rx buf len %d. Se=
-t Rx buf len to %d before using XDP.\n",
-> > > +                         priv->rx_cfg.packet_buffer_size, SZ_2K);
-> > > +             return -EOPNOTSUPP;
-> > > +     }
-> >
-> > Please plumb extack thru to here. It's inside struct netdev_bpf
-> >
->
-> Using extack just for this log will make it inconsistent with other
-> logs in this method. Would it be okay if I send a fast follow patch to
-> use exstack in this method and others?
->
-> > >       max_xdp_mtu =3D priv->rx_cfg.packet_buffer_size - sizeof(struct=
- ethhdr);
-> > >       if (priv->queue_format =3D=3D GVE_GQI_QPL_FORMAT)
-> > >               max_xdp_mtu -=3D GVE_RX_PAD;
-> > > @@ -2050,6 +2057,44 @@ bool gve_header_split_supported(const struct g=
-ve_priv *priv)
-> > >               priv->queue_format =3D=3D GVE_DQO_RDA_FORMAT && !priv->=
-xdp_prog;
-> > >  }
-> > >
-> > > +int gve_set_rx_buf_len_config(struct gve_priv *priv, u32 rx_buf_len,
-> > > +                           struct netlink_ext_ack *extack,
-> > > +                           struct gve_rx_alloc_rings_cfg *rx_alloc_c=
-fg)
-> > > +{
-> > > +     u32 old_rx_buf_len =3D rx_alloc_cfg->packet_buffer_size;
-> > > +
-> > > +     if (rx_buf_len =3D=3D old_rx_buf_len)
-> > > +             return 0;
-> > > +
-> > > +     if (!gve_is_dqo(priv)) {
-> > > +             NL_SET_ERR_MSG_MOD(extack,
-> > > +                                "Modifying Rx buf len is only suppor=
-ted with DQO format");
-> > > +             return -EOPNOTSUPP;
-> > > +     }
-> > > +
-> > > +     if (priv->xdp_prog && rx_buf_len !=3D SZ_2K) {
-> > > +             NL_SET_ERR_MSG_MOD(extack,
-> > > +                                "Rx buf len can only be 2048 when XD=
-P is on");
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     if (rx_buf_len > priv->max_rx_buffer_size) {
-> >
-> > This check looks kinda pointless given the check right below against
-> > the exact sizes?
-> >
->
-> My intent was to code defensively against device accidently advertising
-> anything in [2k+1,4k) as max buffer size. I will remove this check.
->
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-After taking another look, an additional check is still needed to
-handle scenario when device doesn't advertise support for 4k buffers.
-I reworked this check (and added a comment) in v2 which hopefully
-conveys the intent better.
+> Uacce docs' sections are listed in misc-devices toctree instead due to
+> lack of explicit docs title. Add it to clean up the toctree.
+>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+> Changes since v1 [1]:
+>
+>   - s/acess/access/ (Randy)
+>
+> [1]: https://lore.kernel.org/linux-doc/20251103025950.23159-1-bagasdotme@gmail.com/
+>
+>  Documentation/misc-devices/uacce.rst | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/misc-devices/uacce.rst b/Documentation/misc-devices/uacce.rst
+> index 1db412e9b1a380..5f78d413e379f4 100644
+> --- a/Documentation/misc-devices/uacce.rst
+> +++ b/Documentation/misc-devices/uacce.rst
+> @@ -1,7 +1,10 @@
+>  .. SPDX-License-Identifier: GPL-2.0
+>  
+> -Introduction of Uacce
+> ----------------------
+> +Uacce (Unified/User-space-access-intended Accelerator Framework)
+> +================================================================
+> +
+> +Introduction
+> +------------
+>  
+Applied, thanks.
 
-
-> > > +             NL_SET_ERR_MSG_FMT_MOD(extack,
-> > > +                                    "Rx buf len exceeds the max supp=
-orted value of %u",
-> > > +                                    priv->max_rx_buffer_size);
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     if (rx_buf_len !=3D SZ_2K && rx_buf_len !=3D SZ_4K) {
-> > > +             NL_SET_ERR_MSG_MOD(extack,
-> > > +                                "Rx buf len can only be 2048 or 4096=
-");
-> > > +             return -EINVAL;
-> > > +     }
-> > > +     rx_alloc_cfg->packet_buffer_size =3D rx_buf_len;
-> > > +
-> > > +     return 0;
-> > > +}
+jon
 
