@@ -1,162 +1,158 @@
-Return-Path: <linux-kernel+bounces-886059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D032C349F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:57:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD124C34A77
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 596A44FB4D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9263D1884367
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BD2E8B87;
-	Wed,  5 Nov 2025 08:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7DF2DF71C;
+	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="aHFw+XW4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaod.org header.i=@kaod.org header.b="Bb1Ezue4"
+Received: from 9.mo548.mail-out.ovh.net (9.mo548.mail-out.ovh.net [46.105.48.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1D62DF3F9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA76021D3F2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.48.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332746; cv=none; b=mwIm+6CLUdmtSye9csNUhALG63NCqSe09V8velcIU2/6QwV83xpSLsXq4MuxU3CIzSCAquQMaE2IBjtCslEabrZzVt/X5JZgzt81gBH73uR6l3Dt+hF9PUsqAj0py1ABcpbgl7MX6q9fF4CSukIYXBUtnkpmmwu+3I2xa9QXAVg=
+	t=1762333331; cv=none; b=DFVinZYhLZEp5hYfL+wPArUiyDhKuE/7cLKr7feLtcwi1PimaYRI/FG1vIOnCbSjzuN0QjCatyMspuwYxAaLtdkfHTBrDZPYbYirhIWuxdA9h+OK30yC/PfvAIQ1vwdINKGD9yATSdMfZcoHsdX+Im5goOa8qQ5v9MiPt3d+IuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332746; c=relaxed/simple;
-	bh=gp6ONkk4LnltkUdA1hEntsuPx28a5fC4wPGe0V4ewNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcfY0tLqcE0Sf6PXHL4KfB32435mWGrhpNl7AaW8P4/MgLijyPGP3GjHwk2yGK+DkMMPBhf8erVAfA2yuE72p7RQBPDQJi7ucuoZihn4kVA34GZUcBqV0zFsEXbiD4roe0IrMUf5YZdfqF0a2j28tU8xzJeepyopXtDZYA5sM3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=aHFw+XW4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso1242595266b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:52:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762332742; x=1762937542; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gkg/vCbQBbLgfYhLaxoF1MxQ4LNFqiCSVDKlCPX94O8=;
-        b=aHFw+XW4mgvH2IW+imtB8XNv+Z3U80mSDKucZErMakceTCGynpaRjTwdXsIcbVac8G
-         KZ5GJ5et88w5Tc5qsuk5y2eQ4qUyjteNXF5n7IgroX8WAx38lbIgI42gIR5G9CeBfWPZ
-         KzrkYKd1nskvwA9a/ZK1TN4v5imG1MiieXqgf5xzfggaXb9OMMNJy+LmUk9smGhiKdO/
-         kxmUr5xnsD7izLn/8XqoAOZ0el239ju43c3gBMPbnCaXv0zK09NtgiyWC3BOnWVILg5y
-         qaYTlf84w5RMpqvFpzIqLOzmDllQ6c3/12YUTPhwpVJNWa8ySDruaG1xR39me0r2RmCT
-         7bkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762332742; x=1762937542;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gkg/vCbQBbLgfYhLaxoF1MxQ4LNFqiCSVDKlCPX94O8=;
-        b=vCDAVMZkbKB9dj/SFeE4U8aqBp7IPT5XWb0Cn6rvA9vP7rcTMJHNRUmcrsDBqmDryp
-         KHp/Ms8CPNA4F7XJXnZQxArfSBtEHeSenwvr/yVT6l9mI7vIWHlpVor4qlM7MUFZlEGi
-         5bLmh9hGERoHUf4kn07MaoiW04UcfhRLQsaRjMoaO06ahZCe3OrK9g/pTOUjSNB8OcHV
-         ZPCgPaaD2lQ0oa5qWYajfDCItwFjIwWr3ugiq7mX1Fo6t2WSoMMcNiHyZAXt/+NcIHLR
-         Hqbk4ifFOgKoKIdHssyspU2M43B0eKqN/KNPlLSXHCatla8G9eXiqugqAzsSwvpD6WKc
-         20rw==
-X-Forwarded-Encrypted: i=1; AJvYcCX45Rqrpa1wu0NCxufUtCOrVVITyn+9Dc20N8KYTWbXrrVabxhOv2TTW4yezYm2vVE8Wh6N/FUutMFx6Z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz257p2aLF3Hvrn8Fq0JBU7tZtOT2sonHXNqLvbwyqE4vc8WCXA
-	I3fXNJz8iElMeuJmnrMZHEgcfZ7og3E7hClWoqVNGCQ0vVOb6n0Gfnxbv0EBu7FSp9+n1WJyUDx
-	0k/z5tgcB/HX0+FkiN1/0xehgEIkOFO4F6EBWIvNVRQ==
-X-Gm-Gg: ASbGnctoedEkPbjXrL8EXNJbctt+1N5Rjvdsvn/qRHMHl7HqY0LYPdMX9o9Z4lRUIDl
-	A/aueQziTFPTuq9JpSacSxzhD6WyYd9RO7GV6pLQNGxqMU6hZg0ik+g9ck1LilosKLGEZddeNoi
-	e1Tqj0yXiFEmZATn9ed6EAGMzj+RTnuaHbWGdJGQzAO0X0C3CIiwEUPHZyEzj1ggEYx5qlg19z6
-	aukh6B5yDLt9R3P+AfGooIoUXc8nZWnQdar66RMnEg9Fv9npDUz/0azH6Q9iH6KQDO/3A==
-X-Google-Smtp-Source: AGHT+IFxxt2EdxGwLdk3L9EezdOqzEzIoElbn2uBq8KS5FKpSP/CV4oKR3J8eSFfaFisM3JEbR7uWvI68mpagt1N8hs=
-X-Received: by 2002:a17:907:9815:b0:b71:cec2:d54 with SMTP id
- a640c23a62f3a-b72655a5d40mr200972466b.57.1762332741872; Wed, 05 Nov 2025
- 00:52:21 -0800 (PST)
+	s=arc-20240116; t=1762333331; c=relaxed/simple;
+	bh=yckvEYcR7PTzANJ8oEUlAYy9j9aRItsSqfYZ4F/UgbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uDmQKGedyiPfJLU03yRSJ2m9xYOzy5+Ub+tkgZBiZSaxOL55yKMIs3L9b0GBD8u3iw1wXpmbifx5FBfiwhhibbLbe4SGVu2EhXpnJLVdHw8qfHFCH33I88Xe9CgFG8p8X/CKpRbxRks1HJk8ueAnAKgvi7Nsh4+Vxo+bq5oJl+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=kaod.org; dkim=pass (2048-bit key) header.d=kaod.org header.i=@kaod.org header.b=Bb1Ezue4; arc=none smtp.client-ip=46.105.48.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaod.org
+Received: from mxplan5.mail.ovh.net (unknown [10.109.254.216])
+	by mo548.mail-out.ovh.net (Postfix) with ESMTPS id 4d1fGh54yzz5xfm;
+	Wed,  5 Nov 2025 08:52:44 +0000 (UTC)
+Received: from kaod.org (37.59.142.103) by DAG8EX2.mxp5.local (172.16.2.72)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.61; Wed, 5 Nov
+ 2025 09:52:43 +0100
+Authentication-Results: garm.ovh; auth=pass (GARM-103G005ce6bb1a2-7bc6-41ef-8de6-5c9013ba0575,
+                    67C45F718E61F6068C46D45FDE48FB82D97FBBF4) smtp.auth=clg@kaod.org
+X-OVh-ClientIp: 82.64.250.170
+Message-ID: <e34f80cc-1455-4655-b2f6-64264860072e@kaod.org>
+Date: Wed, 5 Nov 2025 09:52:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105074917.94531-1-leon.huangfu@shopee.com>
- <aQsIq_zQXMfNNo6G@tiehlicka> <19986584-885b-4754-b98c-948e4bf9716b@linux.dev>
-In-Reply-To: <19986584-885b-4754-b98c-948e4bf9716b@linux.dev>
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-Date: Wed, 5 Nov 2025 16:51:45 +0800
-X-Gm-Features: AWmQ_bmvHlhc5eJ8ueTjqxVXAa3vivPGkX-f4MR8OhK4W12VAolYXW0qkjbzZYQ
-Message-ID: <CAPV86roGZa5q1N95+ehdPRE6GkXr6bZbEU89--BgpOD8td5SoQ@mail.gmail.com>
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	akpm@linux-foundation.org, joel.granados@kernel.org, jack@suse.cz, 
-	laoar.shao@gmail.com, mclapinski@google.com, kyle.meyer@hpe.com, 
-	corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spi: aspeed: Use devm_iounmap() to unmap devm_ioremap()
+ memory
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <broonie@kernel.org>,
+	<linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: kernel test robot <lkp@intel.com>
+References: <20251105084952.1063489-1-chin-ting_kuo@aspeedtech.com>
+From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Language: en-US, fr
+Autocrypt: addr=clg@kaod.org; keydata=
+ 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
+In-Reply-To: <20251105084952.1063489-1-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DAG5EX2.mxp5.local (172.16.2.42) To DAG8EX2.mxp5.local
+ (172.16.2.72)
+X-Ovh-Tracer-GUID: 19e21827-40f9-48a7-a6c1-3cc3a3a50470
+X-Ovh-Tracer-Id: 1178817205650492338
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: dmFkZTGIa25WpJ6T7W6ehLzRIX51L5OQjMn4sfjiiOiCnCKizGTNWHCFNg+x+Jd+3wOOG7V7UQznLOOI8UZVH3ZU7ZWSdOPFHpCwmLcv/oUjlS36BTUKGybDjpXph1U2RKA2f2Z8tVIety+zS8fa9wVg2L37rrR/mfWQRRwE9Yr6NeB78TQUPCXtap/0caj3pAFSCR2c+X4uKlq3x054QWnnbQ/mLZmNHj3huuNoaSWMT56BhIhanmM0tj/f/kgRE0Ua1+83dA9/8JqKr5xu46t5lXMt7K75kYQdPHdVb6jxznnA/qzZsMOG6s3inuAukJovaW/vw9Eb1bNeNNNbCFjjYZXqSp7oqwPA4feQj8oUACRZkYIR2AXrrKUhjJsbW0187sRseRgvXu2IrMUIYdvlTOornKdSRC8J23XKwYNzSol/wlHDwBNZHlUWRQvcoepA4ibpXuw1pFBONbm9jjwg2RgZHjuSitm5dLsj18WY7ph6BNe/T+yDtq/VeGDodTq31KQHacONMcFadNeuTLrSM1pwmnoCidDnyZ2NvFwFZ3uiWvV0OwuyTpHXMOe2eyE9bbXMZy/aoeKysqzgl9/YcKM61RU2VlV8Z0oUwj3U3N23LUgCGWeG6v70mojo7HhEg+sAWNM9dQvRK+7n5/5wJ17zZIRJaK5Ow2Ya0Jt42eZcDw
+DKIM-Signature: a=rsa-sha256; bh=UzhJ0D8m0FjOLM03YsXKOaPpbsXXkuTeXHNIj12fW0g=;
+ c=relaxed/relaxed; d=kaod.org; h=From; s=ovhmo393970-selector1;
+ t=1762332766; v=1;
+ b=Bb1Ezue4PwjjvMfO8iYDnkpvMyeohr8PhB5+2Z9M+EOrUAIUSA3DbfZv+hqD0D5sNONyJtJ1
+ OI8l4ltkBOGWZNeulkgB06pRkz9ZyU3sHZtlbsPgSiUxpTb8O49bTjqLzJAjsXwAGVMg7XCIfr5
+ KHctbxoS4uPbBoVcwjNcKrkgJUhVy8F4psb/UWlo+o+dRWVAWa/1Q4p2PYQcTeJvBgasAoT0wcf
+ c4drub32rPIh7oLrEz47zx9HOUBTdfFk+Q1zs4iPAjm589XBr3domu6uos7Ee73llGN0x960+F+
+ Hst9ck7xnxOUx0KsfVMK9KDgSxlt10iCO3KY7t4xtFZ5A==
 
-On Wed, Nov 5, 2025 at 4:39=E2=80=AFPM Lance Yang <lance.yang@linux.dev> wr=
-ote:
-> On 2025/11/5 16:19, Michal Hocko wrote:
-> > On Wed 05-11-25 15:49:16, Leon Huang Fu wrote:
-> >> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> >> index 6eed14bff742..8cab6b52424b 100644
-> >> --- a/mm/memcontrol-v1.c
-> >> +++ b/mm/memcontrol-v1.c
-> >> @@ -2040,6 +2040,7 @@ struct cftype mem_cgroup_legacy_files[] =3D {
-> >>      {
-> >>              .name =3D "stat",
-> >>              .seq_show =3D memory_stat_show,
-> >> +            .write_u64 =3D memory_stat_write,
-> >>      },
-> >>      {
-> >>              .name =3D "force_empty",
-> >> @@ -2078,6 +2079,7 @@ struct cftype mem_cgroup_legacy_files[] =3D {
-> >>      {
-> >>              .name =3D "numa_stat",
-> >>              .seq_show =3D memcg_numa_stat_show,
-> >> +            .write_u64 =3D memory_stat_write,
-> >>      },
-> >
-> > Any reason you are not using .write like others? Also is there any
-> > reason why a specific value is required. /proc/sys/vm/stat_refresh whic=
-h does
-> > something similar ignores the value. Also memcg.peak write handler whic=
-h
-> > resets the peak value ignores it. It is true that a specific value
-> > allows for future extensions but I guess it would be better to be
-> > consistent with others here.
-> >
-> > One last thing to consider is whether this should follow
-> > /proc/sys/vm/stat_refresh path and have a single file to flush them all
-> > or have a per file flushing. I do not have a strong preference but
-> > considering both are doing the same thing it makes sense to go
-> > stat_refresh path.
->
-> +1
->
-> IMHO, a dedicated file like memory.stat_refresh is a much better approach=
- ;)
->
-> It's cleaner, simpler to use, and much more intuitive for users.
->
+On 11/5/25 09:49, Chin-Ting Kuo wrote:
+> The AHB IO memory for each chip select is mapped using
+> devm_ioremap(), so it should be unmapped using devm_iounmap()
+> to ensure proper device-managed resource cleanup.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510292356.JnTUBxCl-lkp@intel.com/
+> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+> ---
+>   drivers/spi/spi-aspeed-smc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
+> index e8bd8fe6c4e7..179c47ffbfeb 100644
+> --- a/drivers/spi/spi-aspeed-smc.c
+> +++ b/drivers/spi/spi-aspeed-smc.c
+> @@ -396,7 +396,7 @@ static int aspeed_spi_set_window(struct aspeed_spi *aspi)
+>   
+>   	for (cs = 0; cs < aspi->data->max_cs; cs++) {
+>   		if (aspi->chips[cs].ahb_base) {
+> -			iounmap(aspi->chips[cs].ahb_base);
+> +			devm_iounmap(dev, aspi->chips[cs].ahb_base);
+>   			aspi->chips[cs].ahb_base = NULL;
+>   		}
+>   	}
 
-Agreed. Thank you both for the feedback.
 
-You're right that following the /proc/sys/vm/stat_refresh pattern makes
-more sense here. A dedicated memory.stat_refresh file has several advantage=
-s:
-
-1) It provides a clear, explicit interface for the refresh operation rather
-    than overloading existing stat files with write capability
-2) It's more consistent with the existing kernel patterns - stat_refresh
-    ignores the written value, and memory.peak also ignores it for reset
-3) It's more intuitive for users - the purpose is immediately clear from
-    the filename
-
-For the next revision, I'll introduce a dedicated memory.stat_refresh file
-that ignores the written value (similar to stat_refresh and memory.peak).
-This will work for both cgroup v1 and v2.
+Reviewed-by: Cédric Le Goater <clg@redhat.com>
 
 Thanks,
-Leon
 
-[...]
+C.
+
+
 
