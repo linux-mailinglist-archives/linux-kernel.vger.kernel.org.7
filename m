@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-885782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B53C33E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57956C33E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B80C4EB8AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:48:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3F6C4EBFA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39EF248896;
-	Wed,  5 Nov 2025 03:48:24 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77889243367;
+	Wed,  5 Nov 2025 03:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Gtb+qKZ9"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CEC2A1BF;
-	Wed,  5 Nov 2025 03:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A0B2A1BF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762314504; cv=none; b=PpKF/P/aAo2S3pF7COxh43X/Q69d8hqyvxFL+ZQ3GIcWW3SFcXUg4u4O75g6V8FcURFZ1iaNUwOjW/I9ZNEkkJBlYh3gWPi6L+m/baIjJf7y1YJgnKpaSTWathyE2EuNGQrzyyveRPuJoyo7waDKJI6taw/Fw6HtryQx8oZWZMo=
+	t=1762314514; cv=none; b=Xzm1Q1gRKMnLc3eol2r9ec7721MnAXY5IHtgetNypy2OZ7w9sCmXs79XIPE6c5uTkFiHShFoNoeu3QgrZrIRas/Vr21AvkWq0v3Pb53VWjfNWxhNgpe2fB2W62NmifbTLcbHHqPCVyEOD+QgRk0fBiQgZsca7j2bTgdgKVh2gn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762314504; c=relaxed/simple;
-	bh=XANd4G32AqWyVQdfBYh557uL85JORhL8u3ZtOFm0xYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ad1lPq9ruJ8quRR2eIMksSpcyzpsiYmkbRNv+6Bv7LAK41LfRyFvRpcxFe972KhqFCQKov3io8lxMOcV5vc8eHHlUATgCMwwATTqZzve8lW0GU0r72fEsWaZWDnAAKR/hwhITd3upaktmPbcs0toWFvWvpbc9WTCXJWYGjq1PxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAAHse_0yAppzc2TAQ--.26348S2;
-	Wed, 05 Nov 2025 11:48:05 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v3] net: wan: framer: pef2256: Switch to devm_mfd_add_devices()
-Date: Wed,  5 Nov 2025 11:47:16 +0800
-Message-ID: <20251105034716.662-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20251103111844.271-1-vulab@iscas.ac.cn>
-References: <20251103111844.271-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1762314514; c=relaxed/simple;
+	bh=OwUqpiyEXR9jOmH6UTFGLAxSXjMx78ONbMnPqk3nl7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g633Akv+Lls75bkpZgp4vZtSuXQ4RN7UBhjAULHwhkCEy9othAfEVGLo4MC8ucxjIGYkCYelsAhkw8eLRUhWL7+8y89JlUIgDzkXiQqm+HT09wLA8IaungX63aBwWLVLd9toRNjssVXQKPRcml9AsR8NLfJobx8lCqBW8W+oQDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Gtb+qKZ9; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1762314468;
+	bh=uj8Nz0JfD8slLLWQNz82y/cC4BmAzibmLr+5pvmuf3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Gtb+qKZ9Y8TplYJuKTRcYwSzwYvCubsB3xYb6Hp4KBWTF76dl26kRagdwZEpAHZq/
+	 dQ7IShf1wZlzi/LyeCRIs/n/cnUhoLPLB7K8eod+a4MxUF997sXZo7TddtAZBfyati
+	 smvnQ9mlgc59TfPyB0XrAV/Et7bPd+uSeoYTtINk=
+X-QQ-mid: zesmtpsz9t1762314465t513ccd07
+X-QQ-Originating-IP: UwD2sx5gUmoWIK0Jwk0DEJnatDYiVmhnpsekl7MKibk=
+Received: from [10.10.74.117] ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 05 Nov 2025 11:47:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5895719497772845122
+Message-ID: <0C92443D3E2100AF+c669d240-1ee8-4897-a30d-3efefe161085@uniontech.com>
+Date: Wed, 5 Nov 2025 11:47:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] kexec_file: Fix the issue of mismatch between loop
+ variable types
+To: Baoquan He <bhe@redhat.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251103063440.1681657-1-maqianga@uniontech.com>
+ <20251103063440.1681657-5-maqianga@uniontech.com>
+ <aQq/CHi10ihT8/sn@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Qiang Ma <maqianga@uniontech.com>
+In-Reply-To: <aQq/CHi10ihT8/sn@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAHse_0yAppzc2TAQ--.26348S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xJrW3KFyxXryrurWDtwb_yoW8ZF18p3
-	47Aa90yry5Jw48K3WUZw4xWFyrX3Z2k3WxJr4UZ34a9r45XFW5t34UXF12ya1UJrWxGa17
-	XF4fKrWfCF1DX3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
-	UUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRARA2kKtTRV4wACsd
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
+X-QQ-XMAILINFO: MQPu5pFEJFN4aBoiXeS/dENQRD61DZk1C7cnTb39ufRAgPtwA6xASws1
+	2Z41/RQm8b+hQxQZZdcwn7WSw7/bCEncQVR65LsDD9U0KzZdUNX16I/FqbNK25kCm2tHoXj
+	xS9827dRXff3xdNBWhrQF8DrZ1q430FR0bTBtJZmFCXvff1I8akT1dJ4G+80alvjw3Sd/0p
+	OwxvjjNxYCSd4WyEFlDpNE0gS2fKQpFycHbsfDK+I/DV9nVC9svxKbri8GtPtPL3F+tvFUb
+	iwuOXzoBGHdkEz3mwsL6NlkrbuXRcljFR5GiFQ+Zj+g+0xlFFW6l4Rp3KS9hoVcB6HJDJ94
+	fh6gDhbAoXk7juMHbJxo4EmYu7LE07PBEQ9jlUKFMFpRwDUp1pFRb7+GQuvldw6WWIUeNQo
+	b6hY1GD7ONVIuQSxelhrhgkmcOJgj2dU+ZvE4kpZfRbvcGGhHn0tVJcAb2C43d+VTiAQTs9
+	bYn206xrOGKkrEE9YGvWXnh8TnF2ykE+USWtAoskLcxIDBCpPli2NTwNha1nHz0AcK6ufqO
+	9lGc13fW126v2DCTsc3Qm3yXfPYP+GIjeAnMOlqglr/XMf1OhK1pXBLELjdB+YUtWoQz4ms
+	+WGqeGkjFgNvAvOX5tH3GbwYLK5daZwOdmYeHAnJ6SGhl/k0fHiyr6MeUt432QFSnVa7ImN
+	dv74QBYZGTL2zkGb2ic6IKZ5+k0tzLM8di+zk1oZH2b+Di7HWagLKunEHgo8SAqUb4H/x7C
+	4YD6AMfFgFfAFcBiOw9xZPCZsj8wbSY888z2CmW1K2jzEYC1yCUloeoQrO6a+ctoR1Oodoz
+	V9OKczGLjacxgdmCzX5+/jJRl5kA1eSD6aJfJw1OUQmJzf9EQca6hmHPxXPidYL1w2bMyid
+	1ExUkFj8D0w1DNO5zgt2Qg4O0YFDAeMstxmVdQoEl2eer4xjzZqWTh5h34r8as69vDLsWSc
+	vZAUS1BxTu1+IFF04IWM76pFAg9UE+wl9EqIxtyvkBF1a4BqRsErVcC3Ay7nT40DF5ZBNBj
+	VVa259XtxsCHPqN4ay
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
-in error paths after successful MFD device registration and in the remove
-function. This leads to resource leaks where MFD child devices are not
-properly unregistered.
 
-Replace mfd_add_devices with devm_mfd_add_devices to automatically
-manage the device resources.
-
-Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
-Suggested-by: Herve Codina <herve.codina@bootlin.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
-Changes in v3:
-  - Also replace mfd_add_devices() with devm_mfd_add_devices()
-    in pef2256_add_audio_devices(), which was overlooked by
-    previous patch.
-Changes in v2:
-  - Use devm_mfd_add_devices() instead of manual cleanup.
----
----
- drivers/net/wan/framer/pef2256/pef2256.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-index 1e4c8e85d598..180edde177c6 100644
---- a/drivers/net/wan/framer/pef2256/pef2256.c
-+++ b/drivers/net/wan/framer/pef2256/pef2256.c
-@@ -637,7 +637,7 @@ static int pef2256_add_audio_devices(struct pef2256 *pef2256)
- 		audio_devs[i].id = i;
- 	}
- 
--	ret = mfd_add_devices(pef2256->dev, 0, audio_devs, count, NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(pef2256->dev, 0, audio_devs, count, NULL, 0, NULL);
- 	kfree(audio_devs);
- 	return ret;
- }
-@@ -812,8 +812,8 @@ static int pef2256_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pef2256);
- 
--	ret = mfd_add_devices(pef2256->dev, 0, pef2256_devs,
--			      ARRAY_SIZE(pef2256_devs), NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(pef2256->dev, 0, pef2256_devs,
-+				   ARRAY_SIZE(pef2256_devs), NULL, 0, NULL);
- 	if (ret) {
- 		dev_err(pef2256->dev, "add devices failed (%d)\n", ret);
- 		return ret;
--- 
-2.50.1.windows.1
+在 2025/11/5 11:05, Baoquan He 写道:
+> On 11/03/25 at 02:34pm, Qiang Ma wrote:
+>> The type of the struct kimage member variable nr_segments is unsigned long.
+>> Correct the loop variable i and the print format specifier type.
+> I can't see what's meaningful with this change. nr_segments is unsigned
+> long, but it's the range 'i' will loop. If so, we need change all for
+> loop of the int iterator.
+If image->nr_segments is large enough, 'i' overflow causes an infinite loop.
+>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+>> ---
+>>   kernel/kexec_file.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+>> index 4a24aadbad02..7afdaa0efc50 100644
+>> --- a/kernel/kexec_file.c
+>> +++ b/kernel/kexec_file.c
+>> @@ -366,7 +366,8 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+>>   	int image_type = (flags & KEXEC_FILE_ON_CRASH) ?
+>>   			 KEXEC_TYPE_CRASH : KEXEC_TYPE_DEFAULT;
+>>   	struct kimage **dest_image, *image;
+>> -	int ret = 0, i;
+>> +	int ret = 0;
+>> +	unsigned long i;
+>>   
+>>   	/* We only trust the superuser with rebooting the system. */
+>>   	if (!kexec_load_permitted(image_type))
+>> @@ -432,7 +433,7 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+>>   		struct kexec_segment *ksegment;
+>>   
+>>   		ksegment = &image->segment[i];
+>> -		kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+>> +		kexec_dprintk("segment[%lu]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+>>   			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+>>   			      ksegment->memsz);
+>>   
+>> -- 
+>> 2.20.1
+>>
+>
 
 
