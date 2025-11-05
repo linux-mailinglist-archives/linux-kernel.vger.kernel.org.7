@@ -1,214 +1,202 @@
-Return-Path: <linux-kernel+bounces-886142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD35FC34D76
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:30:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C03FC34D8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE9994FF323
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:24:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CACA74F1D06
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2027C2FE056;
-	Wed,  5 Nov 2025 09:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2E830C628;
+	Wed,  5 Nov 2025 09:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GyNIZys1"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H6vcuT6f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7F2FC00E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0552FE59D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334489; cv=none; b=Xt2/t05FKlRd45XMXlf0TbnNRTwpTg2jqpz75vYKb4pj1rtd9h0i1V2hFQ7zPNBRX0QhGikTjNaXNJcWXKn2qJysy8yuut14hsEkWxzfzWl4hF21PZF9lI9G2CBwwYjjCktMatUa3U1eyGUNUeuyQqPblXJNHl8dj3YaPc+YByI=
+	t=1762334502; cv=none; b=ez/niD5QeUIgjsJzxLqSI8o68YiLZumy6tFb28RHEBFTMkZ6n1oGM6DztY8yLk1j3eBywnNCaSxWCLSFZJVr4tIAa0QTSE7OSDXBKzRyg6eIFjEa6xW7OjQ96bWOMkxl6Oypf3Hz0vqH7sjeTqzI+apxT7LjEPQaFXBVMsrrqNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334489; c=relaxed/simple;
-	bh=MsIGhFgmRY3shV51muuQARn7dSaDWqIQfo2RqSJEdV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=InoyjB64Xpjk2dHB8re8RWXnKQt38GpOEZbLKyY6BhaIhgWsn7RapKArpoa7Vx+mGor9huLH/how5jDuoMzdIbmF/wM+TaVfVi7E1c96KSWmot/T7RhGU9BiUj/5NgDscrAlESqASyj7OaklxGGai4CZOO1+v+b6pGF0NklTNfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GyNIZys1; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-378cffe5e1aso34500721fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:21:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762334485; x=1762939285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M9Cz7QFeZXHx7n2GD0Sctn9Btu8KGfjVz7K3mbh7364=;
-        b=GyNIZys1OAZAm+vHerp+X58IiegAzqoxjvafHezNTISZeaEOM3FJpERaXx9DT2FqsW
-         lt9VQbL0HI9cXkRwUHezNGwVSZLB2QzxyCVXObenBmw7vKME3a/kJtInNgfKCBUVO2gi
-         9FKF9jdOXUrR/kE67/qv9vL8ml1hPSPe+7k6M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762334485; x=1762939285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M9Cz7QFeZXHx7n2GD0Sctn9Btu8KGfjVz7K3mbh7364=;
-        b=cEwBonJzPLT/K4eWCSeiuX0KBeVXl5JSvJ79F9NZ/hAYAfsb/lo27ppINEq5t8To8Q
-         p6HcfqY+QnuGsunq1a0jERU1Tl9h4GR2kVI2f8Cq4I0gT8+KODwVh7oqTapx/n71xcpw
-         IXxrDGc9YC9Mcl/sT692atXZon/QpuInxWBb6DfilSoA6dkxsWn8hyT0oF9W/Y7B27mB
-         Fr/nYue+Wb4+66dd77/sxEECYmKARIn/mMiHcZplCNxPWJ4kyNmktfE9HVBz8bah7bSI
-         qSW8eCmKHbQXDJbZdqsC69GPuaPICdK0GkgCt8eAktJAp+CjNA41OQJDNhAIgaGmG9Nd
-         z9VA==
-X-Forwarded-Encrypted: i=1; AJvYcCXR3dZWfkEu0MM9cEHnpHcfyuAuk9Ip/GlfO0c+jxbq3NrqcsAt6yvhOZzxtM/YVkrEQ5rxskcmTlXdFyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjExGsV0FTwB8Ekqd+ya65HVcqG9UNcWhzoffsnH2ZtklHcPhZ
-	V2KSXmAbuQEqXlA6Qv3AvnVrdUAPdkODHydC+An0GvkKcUSXVPR597Lr/GYtd+lIYiSXqxiIrAT
-	mACjEGO3HWUF2Y6dqYPfuJ4RQvlmdZVZvmDiBBC3I
-X-Gm-Gg: ASbGncsRCn/QUF9q/AOHOHL/uD8eivgl68Kya8v1pf4PdV34mBfnxxdrmw354Cqyp3K
-	VsmLfCVTHX8FjsGX3z2ToIs2jyYj4dPsPafT3te4MM8nFCy1f916x4nCgn5YIvo4ajY5J5oXwb5
-	PA+kJ77EPpkuWW3130qB5T5pn1EE7jLHrHYCMTQBonQGfZWR/bgjPEY9nSF8CiTgaKvupdVsArw
-	frJ6VJosa5YaMJv2ygNLzZxNUzRETamMPRt2kQndmf8wqhLHVY9EvWPqeoqz+1qx2StM9DDSTaB
-	jwVlpTHh8lq67rw=
-X-Google-Smtp-Source: AGHT+IGQP2VVUJ5rUmY6C9xv2Mgt2qZpBhs2wiUlca0i0M5p6PJNG/u4WXKd81FDNk50RCsLvXv5mIlfnoCqea13DHc=
-X-Received: by 2002:a05:6512:104b:b0:594:34c4:a352 with SMTP id
- 2adb3069b0e04-5943d75dd17mr829339e87.23.1762334485335; Wed, 05 Nov 2025
- 01:21:25 -0800 (PST)
+	s=arc-20240116; t=1762334502; c=relaxed/simple;
+	bh=+sABwdmfd9hpr2RNRSU4kSMhWDCaxWnHWChxNQlt5bU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=TrjFThTycZCz0UT4QrctPKBhlK8XLpyj2oyeoxvBCaDkCGlePGOt2A3BZTtyGwq5yHNNpVoYlsZ37BuTPq1Ixg6YdZTTuIEkn3c8ALwrOf9iRf+zLCzuV9xXP0HpL/s3uoc6T5irx76Gw3eaOW/y5+5K60Gyq2ejoLYW0n77WGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H6vcuT6f; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762334501; x=1793870501;
+  h=date:from:to:cc:subject:message-id;
+  bh=+sABwdmfd9hpr2RNRSU4kSMhWDCaxWnHWChxNQlt5bU=;
+  b=H6vcuT6fOjCPdXeusb3GU2Cv9uq4coqRDnTpbNKqhxzgk5elmp6SZtdr
+   rW5MczBqBY5arC3zPfpDnhpbEu+kSkaTSmw0P0iT/CE3xUINBXB0NcSad
+   /VZxxjohN1YlrPAeDLJ49LlTCUCN87UCRQTwdlGPR7/UA/jyE4/snMgOF
+   AspEIpMObp+dVfSTFJsv/CvUqPnoycndSRJpli9vQntgGiMn6s3it4cF6
+   PtL+y3SHxGLLMx8lIyPDz2G+Kez71KE/QxnUfHsAycP4wTb9HLi2Jz8L5
+   vdyNlsNdaJ8fEw1x8doL9QwBVTIy+EhRa+DWK2K2r9vTrbo1KaIxpQbKm
+   A==;
+X-CSE-ConnectionGUID: W0ecNoaqShq/SN64dak5nA==
+X-CSE-MsgGUID: dteUJGoqRAOpnNCIPkrQ5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68281406"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68281406"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:21:40 -0800
+X-CSE-ConnectionGUID: sZylkPoxSziVciJKKA72Vg==
+X-CSE-MsgGUID: URWk8m50SAO/sWwf3HzyqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187564272"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 05 Nov 2025 01:21:39 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGZhu-000SMR-38;
+	Wed, 05 Nov 2025 09:21:34 +0000
+Date: Wed, 05 Nov 2025 17:21:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 948b99877bf5a1cd58bee930e455b7574daba5c3
+Message-ID: <202511051720.XrTlIQ5k-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251105062815.966716-1-wenst@chromium.org> <7250ae04-866f-489c-b1b6-b8a3d8200529@collabora.com>
-In-Reply-To: <7250ae04-866f-489c-b1b6-b8a3d8200529@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 5 Nov 2025 17:21:13 +0800
-X-Gm-Features: AWmQ_bndGi-pOLYUZIEExvSxZWBBRpwVWURG5nTKgeks0Y9s12nRjMsAjohzleQ
-Message-ID: <CAGXv+5EwiL_-ozRARH2UBm5znHi1egBoCjmELN=17hvFF_oeoQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI: mediatek-gen3: Ignore link up timeout
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Jianjun Wang <jianjun.wang@mediatek.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 5, 2025 at 4:45=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 05/11/25 07:28, Chen-Yu Tsai ha scritto:
-> > As mentioned in commit 886a9c134755 ("PCI: dwc: Move link handling into
-> > common code") come up later" in the code, it is possible for link up to
-> > occur later:
-> >
-> >    Let's standardize this to succeed as there are usecases where device=
-s
-> >    (and the link) appear later even without hotplug. For example, a
-> >    reconfigured FPGA device.
-> >
-> > Another case for this is the new PCIe power control stuff. The power
-> > control mechanism only gets triggered in the PCI core after the driver
-> > calls into pci_host_probe(). The power control framework then triggers
-> > a bus rescan. In most driver implementations, this sequence happens
-> > after link training. If the driver errors out when link training times
-> > out, it will never get to the point where the device gets turned on.
-> >
-> > Ignore the link up timeout, and lower the error message down to a
-> > warning.
-> >
-> > This makes PCIe devices that have not-always-on power rails work.
-> > However there may be some reversal of PCIe power sequencing, since now
-> > the PERST# and clocks are enabled in the driver, while the power is
-> > applied afterwards.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->
-> Ok, that's sensible.
->
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
->
-> > ---
-> > The change works to get my PCIe WiFi device working, but I wonder if
-> > the driver should expose more fine grained controls for the link clock
-> > and PERST# (when it is owned by the controller and not just a GPIO) to
-> > the power control framework. This applies not just to this driver.
-> >
-> > The PCI standard says that PERST# should hold the device in reset until
-> > the power rails are valid or stable, i.e. at their designated voltages.
->
-> I completely agree with all of the above - and I can imagine multiple PCI=
--Express
-> controller drivers doing the same as what's being done in MTK Gen3.
->
-> This means that the boot process may get slowed down by the port startup =
-sequence
-> on multiple PCI-Express controllers (again not just MediaTek) and it's so=
-mething
-> that must be resolved in some way... with the fastest course of action im=
-o being
-> giving controller drivers knowledge of whether there's any device that is=
- expected
-> to be powered off at that time (in order to at least avoid all those wait=
-s that
-> are expected to fail).
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 948b99877bf5a1cd58bee930e455b7574daba5c3  Merge branch into tip/master: 'x86/sgx'
 
-That also requires some refactoring, since all the drivers _wait_ for link
-up before going into the PCI core, which does the actual child node parsing=
-.
+elapsed time: 1475m
 
-I would like some input from Bartosz, who introduced the PCI power control
-framework, and Manivannan, who added slot power control.
+configs tested: 110
+configs skipped: 6
 
-> P.S.: Chen-Yu, did you check if the same applies to the MTK previous gen =
-driver?
->        Could you please check and eventually send a commit to do the same=
- there?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-My quick survey last week indicated that all the drivers except for the
-dwc family error out if link up timed out.
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                        nsim_700_defconfig    gcc-15.1.0
+arc                   randconfig-001-20251104    gcc-12.5.0
+arc                   randconfig-002-20251104    gcc-9.5.0
+arm                               allnoconfig    clang-22
+arm                                 defconfig    clang-22
+arm                   randconfig-001-20251104    gcc-14.3.0
+arm                   randconfig-002-20251104    gcc-10.5.0
+arm                   randconfig-003-20251104    clang-22
+arm                   randconfig-004-20251104    gcc-8.5.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20251105    clang-17
+arm64                 randconfig-002-20251105    gcc-13.4.0
+arm64                 randconfig-003-20251105    gcc-8.5.0
+arm64                 randconfig-004-20251105    clang-17
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20251105    gcc-15.1.0
+csky                  randconfig-002-20251105    gcc-15.1.0
+hexagon                           allnoconfig    clang-22
+hexagon                             defconfig    clang-22
+hexagon               randconfig-001-20251104    clang-22
+hexagon               randconfig-002-20251104    clang-16
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20251105    gcc-14
+i386        buildonly-randconfig-002-20251105    gcc-14
+i386        buildonly-randconfig-003-20251105    clang-20
+i386        buildonly-randconfig-004-20251105    gcc-14
+i386        buildonly-randconfig-005-20251105    gcc-14
+i386        buildonly-randconfig-006-20251105    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20251104    gcc-15.1.0
+loongarch             randconfig-002-20251104    clang-22
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                           ip32_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20251104    gcc-8.5.0
+nios2                 randconfig-002-20251104    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251104    gcc-8.5.0
+parisc                randconfig-002-20251104    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20251104    gcc-15.1.0
+powerpc               randconfig-002-20251104    clang-22
+powerpc                  storcenter_defconfig    gcc-15.1.0
+powerpc                 xes_mpc85xx_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20251104    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20251104    gcc-8.5.0
+riscv                 randconfig-002-20251104    gcc-8.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20251104    clang-22
+s390                  randconfig-002-20251104    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                               j2_defconfig    gcc-15.1.0
+sh                    randconfig-001-20251104    gcc-13.4.0
+sh                    randconfig-002-20251104    gcc-11.5.0
+sh                           se7619_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc64                             defconfig    clang-20
+um                                allnoconfig    clang-22
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-14
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20251105    clang-20
+x86_64      buildonly-randconfig-002-20251105    gcc-13
+x86_64      buildonly-randconfig-003-20251105    gcc-14
+x86_64      buildonly-randconfig-004-20251105    gcc-13
+x86_64      buildonly-randconfig-005-20251105    gcc-14
+x86_64      buildonly-randconfig-006-20251105    gcc-13
+x86_64                              defconfig    gcc-14
+x86_64                randconfig-011-20251105    clang-20
+x86_64                randconfig-012-20251105    clang-20
+x86_64                randconfig-013-20251105    clang-20
+x86_64                randconfig-014-20251105    gcc-14
+x86_64                randconfig-015-20251105    clang-20
+x86_64                randconfig-016-20251105    gcc-14
+xtensa                            allnoconfig    gcc-15.1.0
 
-I don't have any hardware for the older generation though. And it looks
-like for the previous gen, the driver performs even worse, since it can
-support multiple slots, and each slot is brought up sequentially. A slot
-is discarded if link up times out. And the whole driver errors out if no
-slots are working.
-
-
-ChenYu
-
-> Cheers,
-> Angelo
->
-> > ---
-> >   drivers/pci/controller/pcie-mediatek-gen3.c | 13 +++++++++----
-> >   1 file changed, 9 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/=
-controller/pcie-mediatek-gen3.c
-> > index 75ddb8bee168..5bdb312c9f9b 100644
-> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > @@ -504,10 +504,15 @@ static int mtk_pcie_startup_port(struct mtk_gen3_=
-pcie *pcie)
-> >               ltssm_index =3D PCIE_LTSSM_STATE(val);
-> >               ltssm_state =3D ltssm_index >=3D ARRAY_SIZE(ltssm_str) ?
-> >                             "Unknown state" : ltssm_str[ltssm_index];
-> > -             dev_err(pcie->dev,
-> > -                     "PCIe link down, current LTSSM state: %s (%#x)\n"=
-,
-> > -                     ltssm_state, val);
-> > -             return err;
-> > +             dev_warn(pcie->dev,
-> > +                      "PCIe link down, current LTSSM state: %s (%#x)\n=
-",
-> > +                      ltssm_state, val);
-> > +
-> > +             /*
-> > +              * Ignore the timeout, as the link may come up later,
-> > +              * such as when the PCI power control enables power to th=
-e
-> > +              * device, at which point it triggers a rescan.
-> > +              */
-> >       }
-> >
-> >       mtk_pcie_enable_msi(pcie);
->
->
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
