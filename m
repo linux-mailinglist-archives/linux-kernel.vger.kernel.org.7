@@ -1,317 +1,201 @@
-Return-Path: <linux-kernel+bounces-885697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D78C33B62
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24427C33B68
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABB354F0239
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:53:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EADA74E4D6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53271E5201;
-	Wed,  5 Nov 2025 01:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470311D0DEE;
+	Wed,  5 Nov 2025 01:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="AZr+klPD"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010069.outbound.protection.outlook.com [52.101.201.69])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hUd3ZVyM";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bvSFyLNL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ECE1C84BD;
-	Wed,  5 Nov 2025 01:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762307582; cv=fail; b=NzE7uouEermo6myS984o08oJjvzXFFQbK+tepvt1XGxr4ExDM2e/iSIekHSG+yJYZDMvetWHhaWNbgLgRugZkYGfUCGZXbkTeI88MAX3fbBxu9lLC6ATgcg7FIPCtbkCTG1vwVhhncGIAMmzwwoLdpLIxhVGjM1Edl9qdVX+P2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762307582; c=relaxed/simple;
-	bh=hbSZAqD7AiGSwYlm5hPaEndqVF/vyvwpdzAUkAQVjRU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=L1G/y/muGPYrVnT1ZUSinKojdd3Th6AKoi1fz73HZJjyNAwXg7L1PH8OlSXuu/HVChj/Yix3fmYvo63IxNPeDJvlYBvE7yyqvoqzeG+g5QAyYsw+tBRSMBpqOBGEeRNZ2TmXsGccqtDbb5Uw+ugxGWYp5a+Jy6bZK6izmYPN4Ww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=AZr+klPD; arc=fail smtp.client-ip=52.101.201.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=odCz1rVFpuQkTLqSyH1n2h+W9IcSsngEKjdA7ruk5c9RUT+8i9M4Ts+i1uTdx6Z0fG3DzT/skfaroOgLthdM4lnHKoaFCo3GhK3ssM12t58wrzerljomxFiYHalWwNC3GFzjU/ZMuBN2HWyDTuCLX/mBrcYo7+mPsi5OhRjoKVgUdh1h4TM1Kv8pqo8FAo/bUKxdpJQebJdDhO4STa+jgyMRfJTfWh9FnnVqQOfuCd2Cj23aplytocITDtz8LqEUFWN2lUqUWWIqTou5vK5iDGGyDpegxK+hXjDHjzvVfh74S0IoNOABZSz5Vy2Ir2om1jJFQad/ZyUyJYwY4cSYAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sR0dO82EU9+cinDtIshK9zUI/rmMDq7I03jvY5SeoCQ=;
- b=toGjbD9d4U32P5+KBRNFN1cJyvio/s9/jfY/UVA3Ofw4RQHb6Wa+VDcGRlCzDlcG0t3m18oxQbKm0AzMFtnF8Ny2qwPdJlkYp3Lu6CqHBx/ZTYG2XRRAISLnxstCRUMt7wAET/A/fjN534C9kY7K+KoUe5S61huATZUKYjm5dziPK9Tqa77oG61DAG+TKVANY7r2HmOlgY/RBw+eJj0w0/SzcCADgLD2WsPDSX/PBateLENJECKkNXc9z42uGK0WRNsw83lXUZaaaocT5VytKjnmyVUPHOW7u5uSbA8ZqnNxANDX0YJjZ9PaSj45UkcIq+d4ShxtuGS1IORbnb2LoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sR0dO82EU9+cinDtIshK9zUI/rmMDq7I03jvY5SeoCQ=;
- b=AZr+klPDntLww0dmGBWqv0/VcdjZOiqhd8G2scXz8zHBgJ7/n9BlK3kBsq/3ivvCpXAN6ydsonowwZDmWddpaFPlI7Q3SiAMk/2s7XGx+GQqa1udCji/KhT6Q7R1LtLchGORTGdBaE7Pdhje+cryhbcMzr955KsnoF9z1/CLXEzhWQAn8deriH9XwbIjP8Q5sBJ/9wK16Ol3f7kLBd7U759YrhysBRFTsrHi9cGlF48yvEJwTFJAxVsAY0hBJOXsXxzZXGUZ+29H/Gc8GqLJ3dAbQZsvm6/inEySzPr3Kqji6NWK6Gld64wOykkiTptHp0Au3ZWCvzqXgqXH46mw8A==
-Received: from DM3PR11MB8736.namprd11.prod.outlook.com (2603:10b6:0:47::9) by
- IA1PR11MB6122.namprd11.prod.outlook.com (2603:10b6:208:3ee::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Wed, 5 Nov
- 2025 01:52:57 +0000
-Received: from DM3PR11MB8736.namprd11.prod.outlook.com
- ([fe80::b929:8bd0:1449:67f0]) by DM3PR11MB8736.namprd11.prod.outlook.com
- ([fe80::b929:8bd0:1449:67f0%4]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
- 01:52:57 +0000
-From: <Tristram.Ha@microchip.com>
-To: <andrew@lunn.ch>
-CC: <Woojung.Huh@microchip.com>, <Arun.Ramadoss@microchip.com>,
-	<olteanv@gmail.com>, <linux@rempel-privat.de>, <lukma@nabladev.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net] net: dsa: microchip: Fix reserved multicast address
- table programming
-Thread-Topic: [PATCH net] net: dsa: microchip: Fix reserved multicast address
- table programming
-Thread-Index: AQHcStGGZyry6uUAY0iu2/zpEINAj7TfhZ0AgAPP7/A=
-Date: Wed, 5 Nov 2025 01:52:57 +0000
-Message-ID:
- <DM3PR11MB87369A57A48FA097DA7A5A74ECC5A@DM3PR11MB8736.namprd11.prod.outlook.com>
-References: <20251101014803.49842-1-Tristram.Ha@microchip.com>
- <9f8e7666-d78b-418d-b660-82af4d79983e@lunn.ch>
-In-Reply-To: <9f8e7666-d78b-418d-b660-82af4d79983e@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PR11MB8736:EE_|IA1PR11MB6122:EE_
-x-ms-office365-filtering-correlation-id: 4c8971e4-f307-4912-ba08-08de1c0e0afe
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?Ga/KZxEpZDGPgXB/qhJ8CeGgSocKngFEHtWJqd+/mpKIM6Irz6o4V9pEkJ?=
- =?iso-8859-2?Q?31FarAzzuhzFzb0s8Lo27jMPYIDD1U78vKdAxtfL9Bj72cM8dwFf72MnIz?=
- =?iso-8859-2?Q?NK1P4dcLxNVC+/VYyC+52AE62Luy6Ob2ZfFvZwSeLBo5EYXlzeJYF6yOZ5?=
- =?iso-8859-2?Q?hgkm7FsJDW0HLL/FGKtom0d539Is0DJBGukZmPUxpfZE2qkWmaHQfSIgtF?=
- =?iso-8859-2?Q?wQRkbhedT0qdpKrWzP8Hezz2H0bEePLb6e0DyuAel8mKB5cY0euNVyUCdV?=
- =?iso-8859-2?Q?48bbuvE+SMiOTk+CmYw/avtLyZktNRulDA7Gh2I28nt2V/aneJyYo6plPI?=
- =?iso-8859-2?Q?9guHV8l0p1mWq8nKyrW5qf7lfxKlwx+QGehjEGza5WvJQPvG6blCA6vnkn?=
- =?iso-8859-2?Q?WeAMkNlCQRvjLG9f/oHVEw3xYJR0P5IeWVYT2DQw7IxM1ke7snk8tGCkpR?=
- =?iso-8859-2?Q?nGQ53Q/DtUpOVvhM+2SUM9uedo9XD2ktNoWgjKuDko5n9XEXNees3mMaQD?=
- =?iso-8859-2?Q?QYvetFWhuJpzZWXcveQLfD7AXq2TPlOETJ9njYDiSn3jo/JjPq709G5zIj?=
- =?iso-8859-2?Q?78HYTg62EobQngnUctacx7x/K8ZTIXGu+pFjXKe87cFb0+9jUai31A1E5e?=
- =?iso-8859-2?Q?/J0h9xalXuOd/Gcy/+jc3kIb/0QIuLOYvZAesLKMdqhWjV+t5ndtc6p/q8?=
- =?iso-8859-2?Q?4Rg6gYbYYDv12PbNVPg/48DcWwP8iffST5vimSKDnl2CjO9G7fSQxqi0Mr?=
- =?iso-8859-2?Q?eCCHLhfWEQ+66oQfLlXm9JH5Qxn0Xxm7OVVfLmxM+1DTJgE978Z9jIA53c?=
- =?iso-8859-2?Q?fPU+ZqQA3CVLr/nyVe0g50xa9/AeQf8jdkqqFbX7syI6iMa56/6pw3BBk3?=
- =?iso-8859-2?Q?HpVZ5kJIJGZyTao2ueutOlkAcNNppqWRcIXqUCPmrJIqmmqyaiRRwLH36i?=
- =?iso-8859-2?Q?4ElMKwNV4uLgZGfOgAUr0Sn5h8TxGBB5wRnwNKIu0a5l4PIgbGun5zjB5y?=
- =?iso-8859-2?Q?Cr2GWN+upRKTm9UUPSkpcLAcU9JHsvdNA7L4i6lSdC1iJd/nSqebVNF+rp?=
- =?iso-8859-2?Q?TgpXiz/5LX50NkPCtPRxpvdQGa1q68MQbiNvLxLWyiVv4U2yyp/imQQOwv?=
- =?iso-8859-2?Q?ioW13xSzz+VA/Ab9/GIeUgl03SXYTy1wzA0J6SI5ZIbhgA3g44O4xN+rB5?=
- =?iso-8859-2?Q?75pNp8tFO1JdqezRQYxPO4vhxMPdddVC6WWg/B4LrBSwiyxXpdgD5kSZ+B?=
- =?iso-8859-2?Q?LYm8wg1KweLoLyK8zD09tmyMXEo0PWaS7CjBQLAJ3KiAnLAdfFL2kul2g7?=
- =?iso-8859-2?Q?RqTqfluVBgpYY7g7PYKnLxLZAnuedcdzvnIA4TC2bmGxwhZJp0YCO2bLfK?=
- =?iso-8859-2?Q?DvBkWQDqCtJF3k9eob8/o8P7StXrVWOj8+JibaMZeAAswAVfMrAOWgoXBt?=
- =?iso-8859-2?Q?Z0FIZ+GNH+DUxAieWiejhCIs1hc0CPCyPn+txkRllTUfO3FXD6epCL5neT?=
- =?iso-8859-2?Q?NSVVET7opJZF9cJtxeA25bkPVSWIx/ZhvLyk7bj30vDB0FhZZt9sKew2pL?=
- =?iso-8859-2?Q?ULKXMKw9+8ReFS1qf1NljxF5efm6?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PR11MB8736.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?JBAKj2rNh5FMjdAJKzUjeqvQ1e7gxO+D/n2oF5gHKbSD3Ah0TlDljMnIB4?=
- =?iso-8859-2?Q?JTJcQ9uI2hqr/y8ZGpJ9j5YnypFudhl9NupytQ8pGvsJYNyqer98Bq6Siu?=
- =?iso-8859-2?Q?5fwybXexKs3DBf/FjgnGGccJzTdZgSHF2x2c1dFywZQcPA/aY7IfDNjp3z?=
- =?iso-8859-2?Q?uEWumMaVQH4EgEZqEIAv3dHzzdIXSViOCjgR0ckGktlW5B4vMVeGXvjm21?=
- =?iso-8859-2?Q?oZRlQQF1rxt0KVnREq3vvtRerpyM5LpbZgoyv+JIEgYrLpDde+qVF2H/wO?=
- =?iso-8859-2?Q?lfHnNrwS2Gdf41gjN2RfhbOwfZi18f0Zk1R2O9xK6K5HZT6zU1kc5N3fWO?=
- =?iso-8859-2?Q?BdkvUUW1qjDFKlpTz0VpjDi+vq/yj4I+uuzP8Uf/xaYjjiwhz6SIG4a3Mp?=
- =?iso-8859-2?Q?/P8KQWqNJrNZEDsqPiCwaC3VEcnJiPHl8j9NamZZiauTxQL7UkTwFSPoBG?=
- =?iso-8859-2?Q?083Bc6Q5MmcqEp8RHaXBaFlrZXzstr5tuLci7HljOOeQAdB8XXASh0Qpgf?=
- =?iso-8859-2?Q?uSDMhPHfTTpQugwD4cizoIBTT9pjXa5iEB3BCjsowoOX7rwsaM2pYLar6n?=
- =?iso-8859-2?Q?JT6wD0iT+Fa0RjwLSpbBjoz71ZJb7qsm6tUx1IGYuG6QzwreO0rloPlZBY?=
- =?iso-8859-2?Q?PYKgzv2B5Om3ucPL9tPmlj2yuMZhJJcIrYuoNoPMQhn0IvxM7F9wFcRN1r?=
- =?iso-8859-2?Q?Nz3fWt0KW6BNOIVOriDqqcqgl3moU4isY9exp0IuLnjq7LHcdChfEEHV3M?=
- =?iso-8859-2?Q?qbMaCR7jQUWqw0V2CMe/pBHI6uVaJlBHXvrqGTWrhg36kO4Iamz0JY6FvQ?=
- =?iso-8859-2?Q?+iYHThsWEpevI6S2+y632bzfRl3n+FZhfp3hxiOainOuSnkAqqg/5qwv4A?=
- =?iso-8859-2?Q?iDWRBZ70VKMm6ODjBt8iw6PxIdvjAL04DbGofcCUcpbgaVS0/QQT/KbYL+?=
- =?iso-8859-2?Q?0RGvWDe7/7l34GldovIEz3KZdxAdHJ10L1G86Z2ZI2T8vnle52xtgq7nid?=
- =?iso-8859-2?Q?H5vUGM+xxuRoPIBC9iSk5U1V3TZyR6HmGfaEJqj92ICkcpe/b/Gr25/IUX?=
- =?iso-8859-2?Q?/ynTw5VyrgLijwYkEWoNsg4KLLox8pFMOCC+GBfoZMib8y6B/ssVsnLFCo?=
- =?iso-8859-2?Q?vpjR6LTXYrFdJZqfrRRIU4tNCKWRqBZAyJ10Cd1dnhHiMfxcdyjRUTAG7A?=
- =?iso-8859-2?Q?BokSwxMHOt/FEBqdbVI5QSJNbLzxOaS+w7gwaBGs2CNC9kHNErIwwXJmeR?=
- =?iso-8859-2?Q?ZyjXBakJ4N6EJZ/KpsY2WlQTwNWRafg2W/9P0Pv81V8uY04WcojgwaMiyK?=
- =?iso-8859-2?Q?WO9F9yKKSTA88hI7tS05Bl12W4ulyg1laPAIwCyJF/lJRO75J+B0+uJSe9?=
- =?iso-8859-2?Q?XzQEQobBlVlwnvtgFLP+ksDN+IuX0usRWk0e7j11I4O7Z7YZIGyhegnJQp?=
- =?iso-8859-2?Q?tuDcubl68tmQKVdF0N48/cnEqK4PR/6nkr7OPHQKanu1P7Yv5y+2rzgBKy?=
- =?iso-8859-2?Q?jHR+L2o18nM7Yi62lR6zVwESZnK3JpwffZN6u1h0T3NZayxaVI/kaPdFT3?=
- =?iso-8859-2?Q?79yRMx1nC3wYaNgHRujDQvrCSrVk3UBZa9Ju68MppDpGGd1dDhNewORkBS?=
- =?iso-8859-2?Q?23ww7DitAfa42T9KmK5hxHVFLlBHx0CPNt?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9679B42048
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 01:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762307646; cv=none; b=IxU0BLMB9nRKAed2AXsJiQV7CVucnWLCFfgXxNia5zppnYZuPXNghb651cX1e6HI6gzK6lfDEqiY+Un7i4KjnEBaSFCyoCMMAtsby+AII5LsqtDdmRrPF7HuseO5r0nm5WUlEFie/NvlUJnpHLa3vYfRZ+L7YsL1mnFIAi2hKKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762307646; c=relaxed/simple;
+	bh=Wq9L4LDD+TJ4+YXbM5Eoy/o/4C0nMjMp6YTsLSz1Rh0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qcOITJvXzSjJcyC7oRaOWJUThP2nj5tyjG5VsaKsmBS+rYIe0mwFSBIvD6oWRlBpWG38dK8tqhTkzCSDuWaJbBV+fAfAhQTR4kGVQXWtfnjOgR8fOK7X9aAj/7ztWmtdohp37bY5d2bscgLgdbwqvIvc8Cp/aFMYaNk21ONp5no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hUd3ZVyM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bvSFyLNL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KfnVq2967309
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 01:54:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XXmhNVJ3hoJG6pe/vOtNZg2Q+Bbm2uaXXHuBILr0mY0=; b=hUd3ZVyMwN1XBkDq
+	RNjpZHU2/jYeih+0Vy5RMw+78f7w4UPnHluulORvPzCGYHCMEqbEhx742VW1vgil
+	N5ZwEX6tQehuNbgMBrT0VYwkF5N91Ze1HQm0SEuQweZgwWNIzaUTrvTe183F0lZo
+	gnOevR/n/jk1siJ9Rx8YlhnYGsdI38/1CqTi1HsM8+TQVR5sabkBdK8jKUTmAude
+	pyM5QH51u7h0Wxngt4oAmwZwnYFa47X9ELJwr5H1Z+3LURHqwl9zbMF0ruy3R54N
+	KnmrcWK+ZiqGAwgPHEltFE7Bd0BsClDzF47yJfMWL6XdicXfhKt+WRjxAluTbA2Z
+	iG+g+A==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7heaj7gn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:54:02 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-341616a6fb7so2383653a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 17:54:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762307642; x=1762912442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XXmhNVJ3hoJG6pe/vOtNZg2Q+Bbm2uaXXHuBILr0mY0=;
+        b=bvSFyLNLxO6z4xvzYKdu2XGejUWLIug8FCiM9C/3EyaYwKm1LNBtL09U/MWKlID8VK
+         PHK1NfPraeM8VPoSYVoE7Dtn/Prm0hZKxYjww7FekcWyLZPvaMZGt/QNzBBosyfjVsY4
+         vHPz5wYDfQZO2f5Kc6fHA20LrErPglk0AQzcdtmmQxkmay1pdIAd20tsJDuklJlj29iE
+         NuKnd4sIuginq4MNi/DCBoWbED+6mGQR8i9633/7/FEbK1qjFxyNWTr4w9QQ/1MtFx17
+         mYygKmhVUDCFLMTudKaUdDmHqXU67WaV023ZS3SCU9HZXK4U/l8I1kbFTz/nuGEVY0yo
+         s7SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762307642; x=1762912442;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXmhNVJ3hoJG6pe/vOtNZg2Q+Bbm2uaXXHuBILr0mY0=;
+        b=vW8cyh/o1PVE8nnX9y/TWJfnsUzPsKMogTV8DZFc1fLB7R3GGHToRn2vY/iaa5k48Q
+         xHRzrc3uE1I4lUolY4ANXP58urC0lfjv30sDa6tvh+6zcutyC4vwsdnG/Qf4vfLvikbR
+         2n9McCMGmDm+akJF0UIPNHqfaihx4sSU+nlA3tprUeSMg8/wRxvldCqdgEqBI4QKHw6k
+         5nDArr6kb4eJcl7mSe2NpdRSu18RWtkXyaRRYf1CZUcvUlIOgYgB6t2X+y5PU6WWgV6N
+         bYoCyBi5VrCf03qOcG2WWZDyFCMD2K+vMajF2s/dD/0+WDjB7BXf1jn0AcGU5BTZUZqJ
+         THcg==
+X-Gm-Message-State: AOJu0YwQPjDsev6aQD1GoXL/7EYpLLx56bmszfURrMDm9BAshV3agUWJ
+	ZgrQA8ZRq7V6v15FBWiTPQycB+2H5r4HuhqJvglx7BHWiOHUmU2js74miuNs3Z7Eu9jV2uV9T/R
+	X9jOjCvmm3Qy1aJn9N8eUF4sc5tRe4MHOvdpiCgQl4XB3KvEBYZtlwk7BrQePZugbVQQ=
+X-Gm-Gg: ASbGncvVVMru/YAhLkGn54X/i3iALdwjqypcSUsmAOIbDs/DtTHsaKK0zcNOa3zP7Yw
+	QbbSWIrk1ZXPuhaAJ43szPNLKUaNA3jS2A5l5qxDyqr4lTpQuRR2NBkdM55pJijAYrKdoqdJ6+d
+	QIucSM7dMLPRsjtn3eYdNKroesJrcNgbULGtWZDHo2H31RVuMlRSARwlTj5dGIhM+WdPT7mUxMF
+	cvf0+8yoEp1VaQ3qOjDhKQgHUMauwQ0URD+4hMtDLDFDW0dovXLedMHRbXXdJBzaj1B3ronzD3A
+	jQh8wY5jWnd2prkQ2KxnhD0i8ZIxz64gzyUrfqj/Ei9ETY3oD+sHH9ZgX/9oBJ5pt8hoMI+OEbU
+	9xkK5NKVgwDd92TYQv9YE4BDl8xQ0fkMPfD/8nbbLjTlIBticClBwlm7R+oZzcnUbCyrI3w==
+X-Received: by 2002:a17:90b:4e83:b0:33d:ad49:16da with SMTP id 98e67ed59e1d1-341a6de76a3mr1454706a91.31.1762307641938;
+        Tue, 04 Nov 2025 17:54:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHA/bg0wXqruJ/4EMP1KV3HXVtGWNjBWM/YLfvsxYb2Nat5WHW/87S3quP7HRJbxdTtN2aw6A==
+X-Received: by 2002:a17:90b:4e83:b0:33d:ad49:16da with SMTP id 98e67ed59e1d1-341a6de76a3mr1454689a91.31.1762307641362;
+        Tue, 04 Nov 2025 17:54:01 -0800 (PST)
+Received: from [10.133.33.81] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a699c98dsm948828a91.17.2025.11.04.17.53.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 17:54:00 -0800 (PST)
+Message-ID: <88daba74-f005-4be7-be3b-627ccd424276@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 09:53:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PR11MB8736.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c8971e4-f307-4912-ba08-08de1c0e0afe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2025 01:52:57.2480
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sXx3yp/kqmgeJ3+bXk/V5lYbgOqN7vXjtqEhOyDQQA5KHtMYk/2pBdS16CqVylRxtcPDVNc6UT5Chv9fjIo0M4RYahb+FZDJVNV2W5CpaFE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6122
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scripts: coccicheck: filter *.cocci files by MODE
+From: Songwei Chai <songwei.chai@oss.qualcomm.com>
+To: Nicolas Palix <nicolas.palix@imag.fr>,
+        Julia Lawall <Julia.Lawall@inria.fr>, cocci@inria.fr
+Cc: linux-kernel@vger.kernel.org,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+        jinlong.mao@oss.qualcomm.com
+References: <20250606060936.2756980-1-quic_songchai@quicinc.com>
+ <54b6e30f-a194-4f5f-9df4-5df0d3d4d738@imag.fr>
+ <d2fd354a-e3a9-491f-b5cc-86040b037ebe@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <d2fd354a-e3a9-491f-b5cc-86040b037ebe@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=GekaXAXL c=1 sm=1 tr=0 ts=690aae3a cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=rWyacSYSx-f4FmYYJUoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxMCBTYWx0ZWRfX2lRsPigILTDo
+ B9+ROC+bK9HVMpjDomKBXWC0pQB7qglrIVwpbJRu+Q7hYMc8wAwrwRL34eErx4x54E0Gj37Z5yC
+ g1IL5WZyHdwSs6FL1psV8TEFzlwf4JjtvFl4coJAHvcshgUyePvn0saeosTqJjDxYeKePZG8h48
+ 1QpxE9chg0iB7HK5yTJSjTsIE3O6ZZbmR3CxXbwdk0N2FR01wrqYkJxuEvfmpYEMw7hzDJT3ZV7
+ BNB1f6GnQESeFK6br2Z/wYGJAJQnZq6Gvts0txbgEyAhKK+JkmcGTE1G7kBpoF4gxwly1Q9RzQv
+ 2VV9/ubd6oPsLleybM3PSWpwy5JcOAk8Md6OELQ50Ey2A8F8eBB99uetWYBBcMISejvXVHqKTQO
+ yTbSh6oY1cLXyAPfSTGTt2daVlxQBw==
+X-Proofpoint-GUID: _8YDCN3xMFFScpp6yFZb5pKDwRgIEGZp
+X-Proofpoint-ORIG-GUID: _8YDCN3xMFFScpp6yFZb5pKDwRgIEGZp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0
+ phishscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050010
 
-> Subject: Re: [PATCH net] net: dsa: microchip: Fix reserved multicast addr=
-ess table
-> programming
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content
-> is safe
->=20
-> > +     /* The reserved multicast address table has 8 entries.  Each entr=
-y has
-> > +      * a default value of which port to forward.  It is assumed the h=
-ost
-> > +      * port is the last port in most of the switches, but that is not=
- the
-> > +      * case for KSZ9477 or maybe KSZ9897.  For LAN937X family the def=
-ault
-> > +      * port is port 5, the first RGMII port.  It is okay for LAN9370,=
- a
-> > +      * 5-port switch, but may not be correct for the other 8-port
-> > +      * versions.  It is necessary to update the whole table to forwar=
-d to
-> > +      * the right ports.
-> > +      * Furthermore PTP messages can use a reserved multicast address =
-and
-> > +      * the host will not receive them if this table is not correct.
-> > +      */
-> > +     def_port =3D BIT(dev->info->port_cnt - 1);
-> > +     if (is_lan937x(dev))
-> > +             def_port =3D BIT(4);
->=20
-> Why not just def_port =3D dsa_cpu_ports(ds)?
->=20
-> The aim here is to send frames to the CPU. You then don't need the
-> comment about different switch versions.
->=20
+Gentle Reminder.
 
-There are 8 entries in the reserved multicast address table to support
-multiple multicast addresses.  They look like this for 7-port switch:
-
-0=3D0x40
-1=3D0x00
-2=3D0x40
-3=3D0x7F
-4=3D0x3F
-5=3D0x3F
-6=3D0x40
-7=3D0x3F
-
-For 3-port switch:
-
-0=3D0x04
-1=3D0x00
-2=3D0x04
-3=3D0x07
-4=3D0x03
-5=3D0x03
-6=3D0x04
-7=3D0x03
-
-When the host port is not the expected last port like in KSZ9477 then
-some entries in the table need to be updated like the ones with 0x40 and
-0x3F port forwarding.
-
-The design of LAN937X is a little bit different in that all host port
-candidates are in the middle.  The first RGMII port starts at 5, probably
-because there is a 5-port version.
-
-0=3D0x10
-1=3D0x00
-2=3D0x10
-3=3D0xFF
-4=3D0xEF
-5=3D0xEF
-6=3D0x10
-7=3D0xEF
-
-So when the host port is port 6 or port 4 then the table needs to be
-changed like this:
-
-0=3D0x20
-1=3D0x00
-2=3D0x20
-3=3D0xFF
-4=3D0xDF
-5=3D0xDF
-6=3D0x20
-7=3D0xDF
-
-The code is to check each entry and only update it if it is necessary.
-
-On the other hand software knows what the final mapping should be and
-can just write the required entries.
-
-> > +     for (i =3D 0; i < 8; i++) {
->=20
-> Please replace the 8 with a #define.
->=20
-> > +             if (ports =3D=3D def_port) {
-> > +                     /* Change the host port. */
-> > +                     update =3D BIT(dev->cpu_port);
-> > +
-> > +                     /* The host port is correct so no need to update =
-the
-> > +                      * the whole table but the first entry still need=
-s to
-> > +                      * set the Override bit for STP.
-> > +                      */
-> > +                     if (update =3D=3D def_port && i =3D=3D 0)
-> > +                             ports =3D 0;
-> > +             } else if (ports =3D=3D 0) {
-> > +                     /* No change to entry. */
-> > +                     update =3D 0;
-> > +             } else if (ports =3D=3D (all_ports & ~def_port)) {
-> > +                     /* This entry does not forward to host port.  But=
- if
-> > +                      * the host needs to process protocols like MVRP =
-and
-> > +                      * MMRP the host port needs to be set.
-> > +                      */
-> > +                     update =3D ports & ~BIT(dev->cpu_port);
-> > +                     update |=3D def_port;
-> > +             } else {
-> > +                     /* No change to entry. */
-> > +                     update =3D ports;
-> > +             }
-> > +             if (update !=3D ports) {
-> > +                     data &=3D ~dev->port_mask;
-> > +                     data |=3D update;
-> > +                     /* Set Override bit for STP in the first entry. *=
-/
-> > +                     if (i =3D=3D 0)
-> > +                             data |=3D ALU_V_OVERRIDE;
->=20
-> You have already made this comparison once before. Maybe
->=20
->         update |=3D ALU_V_OVERRIDE
->=20
-> higher up?
-
-The first entry is used for STP, so the override bit needs to be set
-regardless the host port is same or not as the host needs to receive
-BPDU even when the port receive is turned off.
-
-The six entry is responsible for multiple multicast addresses including
-01:80:C2:00:00:0E, which is used for Layer 2 Pdelay PTP messages.  The
-override bit also needs to be set as it is required to receive such PTP
-messages even though the port is closed.  This change will be updated in
-next patch.
-
+On 10/27/2025 10:39 AM, Songwei Chai wrote:
+> Hi Nicolas/Julia,
+>
+> Noticed this patch has stalled after being ACKed.
+>
+> Could you please help review it and assist in pushing it forward for 
+> merging?
+>
+> Thanks.
+>
+> On 6/6/2025 3:26 PM, Nicolas Palix wrote:
+>> Le 06/06/2025 à 08:09, Songwei Chai a écrit :
+>>> Enhance the coccicheck script to filter *.cocci files based on the
+>>> specified MODE (e.g., report, patch). This ensures that only compatible
+>>> semantic patch files are executed, preventing errors such as:
+>>>
+>>>      "virtual rule report not supported"
+>>>
+>>> This error occurs when a .cocci file does not define a 'virtual <MODE>'
+>>> rule, yet is executed in that mode.
+>>>
+>>> For example:
+>>>
+>>>      make coccicheck M=drivers/hwtracing/coresight/ MODE=report
+>>>
+>>> In this case, running "secs_to_jiffies.cocci" would trigger the error
+>>> because it lacks support for 'report' mode. With this change, such 
+>>> files
+>>> are skipped automatically, improving robustness and developer
+>>> experience.
+>>>
+>>> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+>> Acked-by: Nicolas Palix <nicolas.palix@imag.fr>
+>>> ---
+>>>   scripts/coccicheck | 6 +++++-
+>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/scripts/coccicheck b/scripts/coccicheck
+>>> index 0e6bc5a10320..89d591af5f3e 100755
+>>> --- a/scripts/coccicheck
+>>> +++ b/scripts/coccicheck
+>>> @@ -270,7 +270,11 @@ fi
+>>>     if [ "$COCCI" = "" ] ; then
+>>>       for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' 
+>>> -type f | sort`; do
+>>> -    coccinelle $f
+>>> +        if grep -q "virtual[[:space:]]\+$MODE" "$f"; then
+>>> +                coccinelle $f
+>>> +        else
+>>> +                echo "warning: Skipping $f as it does not match 
+>>> mode '$MODE'"
+>>> +        fi
+>>>       done
+>>>   else
+>>>       coccinelle $COCCI
+>>>
+>>
 
