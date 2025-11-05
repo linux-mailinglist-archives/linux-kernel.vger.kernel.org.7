@@ -1,94 +1,138 @@
-Return-Path: <linux-kernel+bounces-886357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C68EC35554
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:23:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319CAC35527
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F444422CC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:19:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 442744F472D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AF930FC18;
-	Wed,  5 Nov 2025 11:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DD930F95C;
+	Wed,  5 Nov 2025 11:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFNdm8cY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gxcZwYrT"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C242E5B2A;
-	Wed,  5 Nov 2025 11:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEF73081D5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341563; cv=none; b=saQ/Sw0r9u3p5qFPc1ZidVht0cbPKrzCsDXD1JUoTpKdePui/MXNVsYyygBiy6DMFjhMW/IOziKu5UgD/bWoyyZYJhQpeWVYd9buKBAjSRBySjRfJviG9lEu01ktOKvCNFFEIWeCnWWBILtgtF7uDk0H+RZV8W2IYuby7tPyi7c=
+	t=1762341576; cv=none; b=QoyP7J6eRFIjnl8vmUjyRZjTMY54rA+g1mjJE5NM4+yOMy6Ov/eOBOGQMNXpC1DIXbDUde0WymjLAU1IMpG2ar4nEYrKyirentp77OT7ZJeM16bqKPMLsmVbwgUoHnWae7kxkOeVE3SZOy4hCKyxH8GZB16imYGADoNmlGa4nOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341563; c=relaxed/simple;
-	bh=8fzrbqlZZIA3X+rB0huPkXNufqYWaw0N6jILyOc2Tso=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=b/NegwezgfUBrOU/YUMjIEH5ekkPjQFo6U0CTIn4Apt6qSDBV5AUKxZCSEmRGEMg6MiQwMpRZDEDDBgGlHDWp99JUa9X2yc5cJMPFrt6tBBHFPRq3fP5MWMeaPbpiK++heH7kEjNLx9lnLfAkIlm3PX3jhsx0EgPdOa7ntcIgeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFNdm8cY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D6AC4CEF8;
-	Wed,  5 Nov 2025 11:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762341562;
-	bh=8fzrbqlZZIA3X+rB0huPkXNufqYWaw0N6jILyOc2Tso=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=hFNdm8cYpgm2//0cfqkf1ADYwqH9xYEq6iRjvWT7O2lNULSlXHNod7A2yIRnxirHG
-	 7uYtW0uX8fOBs55hsRL4W7YOsVq1w26+8P3H1055ZvAGg5K+5e9tp/pebGewWhX+X9
-	 ow4ponYHHptBxFWOP6LJBovdVoRsCx8K1Nants0dtbzKOLTVkOdnp8qW0CmrXZOx+7
-	 ad+B925hdAkMjIeUxBwn4m3lm6DKfpAFf2Vc3VCSqaA/Od1S8dWFGuNFI8muhpDmHc
-	 Ub5EgORY8ycYjbI2vTuLXt7HrcGYLR9OJulv40hH+1TtAUQoOU41feGQbTzAlNfwpL
-	 syzu20P51XR4w==
+	s=arc-20240116; t=1762341576; c=relaxed/simple;
+	bh=aabsKPFWol3OJ7wY7wf6TtpPtGBpyhyhY9TUbSJJLII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLRI1CixXUOK17fXv0UH7OtPqBoOq4jWJrBbFCSjmJh48JGwyOSMj0VElHmy75ztOyE4RERl2ge7cAfGkIHtMSHHv+Pgeb8i6xj/CSHlEtlU5u6cQ1dBl9rEKJra9Zl+oX39r5tfpweqfZP8ikaStxuxq1CML69QJLedYQPk/WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gxcZwYrT; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4711810948aso46646565e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:19:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762341572; x=1762946372; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9ZoeKzZOBJ8O1X8YsczWn8JrsyIoqb3TF8bG5VlZ6s=;
+        b=gxcZwYrThlYwvVzeZKCV6YCiFl68AYnDBcZ/ON+/fTmenZ7dGwzLy099V96we8AUq8
+         0fMYfLrEOb0AIZRXI1IBSYoQo42fhB8uDl13F7N6C782Hi/KR5TQowGLwohaqiBBvr6y
+         ybH02b8cSHt5hCuYf90GTUVaYlrfGlY1QQ7jOihb3LmjcqgRNdlBVVRXJGJt7Qxfcnx3
+         4bw02aRP+HEfI9csdmjJ3aBzZRQV7Hk7y2rAbtAkOexbhXEV3t5xv0ni/ZrLwbdltd99
+         eY9X/WerPHbL7XPr4I8RpC0P+gX3fnRbKmb0hncDEijsv3bgd9UUVK/LIQsZDRfTtC5p
+         GL6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762341572; x=1762946372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M9ZoeKzZOBJ8O1X8YsczWn8JrsyIoqb3TF8bG5VlZ6s=;
+        b=fl2UVgkyH3LjA5XaEk79RAWhnneSD26M1yEwOCpVQRgOwOjZyK5QAf8E57Qp9oeVqH
+         XmuAPbcGBOSMcjl1tOau8LMw21L5dMo9Wg15VBsifrvTCee84dFTyDukCSTGBR3sKudW
+         N2MhrOLsPhjLOjdDcplK5OqSp/klrCH4QnvNH1xCbTktEVW04mfoSqaPFVHWS5lnC3uM
+         C/CU00lQ6RH/sEcxfEVGKcKuAldU5xkH+HpfMSx8TpAgosE6bhYAX6R8GOW6kqZUencs
+         caXoExRaiYIHMWC2VPq5thZkNnQGnfGFqcYmYckx3igmz7z0CimOJtYh0Z1xdgwCBZ9B
+         SL8g==
+X-Gm-Message-State: AOJu0YwdcR+GSEdd03lv5YnjvxJm8p0bATwMJZ0XduE1QOEzIrlP9waC
+	7jCH9cuun9uFn2k3us7FhVcujquCJ076QbpLAiBMGIdwpKwbn47Pk1lix8/WP9jbMLutT5gg25O
+	9d7in
+X-Gm-Gg: ASbGncsjrCv/3F3M5LbDwrsDHw8y9jh8BxlAyDNfI1ucV273jUxMHpgPmImufx4biZn
+	FYNdGVELcEd146uEENx1c21Vmtgv1bpoClGPOYXreCOginQ9UHd4yxwxFw+93G7wNTQ/Ega0mP5
+	z+5UNafwtwHLU8iCtrtQsqcTmeGoAPwn6hWOaFmCtrVNQbXz7+DwzjAhNsR9lH5A26Ee2xZhKsV
+	aIcdOlFxA98f9vO0B3uxmmq4XVOnh2S29F3NfGLs26n9v+YQFOb8aAMzAKRFYcxeXQk3Uta+U0o
+	rW2IhNZj375vKh6dJLRiyg1Mxykhzy7JcZ+18h5iX+YGBv8f/tzbOK3zZW1OGKklDZj1JbzFEw4
+	YiwuLTTKdV1VERyxN8yNEXgW3SG5kr6MdYlf+si3HFM5zsXQZnsNhlCXHrIMAVzjbioaK+WGInq
+	Qxa8rWSWkfftH+2ilbtg9o+Fcjhrk38Irpl+s=
+X-Google-Smtp-Source: AGHT+IFvzesjCO25PoLrWQtVvB99hETRDXusyKHlx8TTYHHN77FB5rlYFu4DB6U/Ofm98Y0XnPco6g==
+X-Received: by 2002:a05:600c:5304:b0:46e:4883:27d with SMTP id 5b1f17b1804b1-4775ce15c6cmr26611165e9.30.1762341571929;
+        Wed, 05 Nov 2025 03:19:31 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755930592sm39499405e9.12.2025.11.05.03.19.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 03:19:31 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Lee Jones <lee@kernel.org>
+Subject: [PATCH] leds: trigger: replace use of system_wq with system_percpu_wq
+Date: Wed,  5 Nov 2025 12:19:24 +0100
+Message-ID: <20251105111924.141555-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 12:19:17 +0100
-Message-Id: <DE0PXYNG8O8W.19MUQ9TGA6C04@kernel.org>
-Subject: Re: [PATCH 1/3] rust: fs: add a new type for file::Offset
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <viro@zeniv.linux.org.uk>,
- <jack@suse.cz>, <arnd@arndb.de>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>, "Alexandre
- Courbot" <acourbot@nvidia.com>
-To: "Christian Brauner" <brauner@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251105002346.53119-1-dakr@kernel.org>
- <20251105-begibt-gipfel-cf2718233888@brauner>
-In-Reply-To: <20251105-begibt-gipfel-cf2718233888@brauner>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Nov 5, 2025 at 11:59 AM CET, Christian Brauner wrote:
-> On Wed, Nov 05, 2025 at 01:22:48AM +0100, Danilo Krummrich wrote:
->> Replace the existing file::Offset type alias with a new type.
->>=20
->> Compared to a type alias, a new type allows for more fine grained
->> control over the operations that (semantically) make sense for a
->> specific type.
->>=20
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: Jan Kara <jack@suse.cz>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
->> Link: https://github.com/Rust-for-Linux/linux/issues/1198
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> ---
->
-> What's the base for this?
-> If it's stuff that belongs to fs/ I'd prefer if it always uses a stable
-> -rc* version as base where possible.
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Please see [1]; the base is [2] from the driver-core tree.
+This lack of consistency cannot be addressed without refactoring the API.
 
-[1] https://lore.kernel.org/lkml/DE0C1KA14PDQ.Q2CJDDTQPWOK@kernel.org/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core=
-.git/tree/?id=3D1bf5b90cd2f984e5d6ff6fd30d5d85f9f579b6f0
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+system_wq should be the per-cpu workqueue, yet in this name nothing makes
+that clear, so replace system_wq with system_percpu_wq.
+
+The old wq (system_wq) will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/leds/trigger/ledtrig-input-events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-input-events.c b/drivers/leds/trigger/ledtrig-input-events.c
+index 1c79731562c2..3c6414259c27 100644
+--- a/drivers/leds/trigger/ledtrig-input-events.c
++++ b/drivers/leds/trigger/ledtrig-input-events.c
+@@ -66,7 +66,7 @@ static void input_events_event(struct input_handle *handle, unsigned int type,
+ 
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 
+-	mod_delayed_work(system_wq, &data->work, led_off_delay);
++	mod_delayed_work(system_percpu_wq, &data->work, led_off_delay);
+ }
+ 
+ static int input_events_connect(struct input_handler *handler, struct input_dev *dev,
+-- 
+2.51.1
+
 
