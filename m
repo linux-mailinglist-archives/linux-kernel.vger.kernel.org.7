@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-886183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60670C34EC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:45:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26381C34EDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0C6F734D5CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:45:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 88D1B3435A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CD2305E01;
-	Wed,  5 Nov 2025 09:45:28 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CB730BB80;
+	Wed,  5 Nov 2025 09:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zxw4vUVq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F4D2D978B;
-	Wed,  5 Nov 2025 09:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4983043DA;
+	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335927; cv=none; b=d/afXaiW58Zd8L5ZqYioNsXNFebrfMaubR9t36GXYKGZ6e3Gaf1Q3g4pJ7/w/2C53rIrFH0LSZRugXrhzOoseNL1arWk/EnKpeqPPMDkfp9HHSKvK8h9UBTg4SK5MYZcnH7cUPU3T3Nf6K4lqU9HTeJAzaVAiWK6uWmJmegpc5k=
+	t=1762336005; cv=none; b=uZtfw4HzL2pZh8Cm+AMcmc9KD2ApJ+Q19T5gUxdN7BF0ZQPs4c5E2FIykwGoY2qiUvUBCtB9GpTHviRA75Zuvi8YyF38tMThwgbrKu8MWTYQP0Whfj9+45v5Sw+BULXd12AbINlq7cM5vuao1GSQPV3F6LK63t6HeC38gOW9q8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335927; c=relaxed/simple;
-	bh=V4qdxwMlx41RWjBcGzibBH9WEiFnvpaxZeJ5nGAVDWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6aKR/3AgmhLh/5cTWmTlA8vtkQ2iokw6G5vZrgyKCAeppyK2ViS78LyLZla7cmG31loeCYXvAR02X2TcpM0NrOfa6VofZvbuOGkF6feeNehXdnp6yMdAXstfhHu/0DPsjTlCmOadYPa+2SggEOR2D50Yu4XDxaZdQ/+ALo8AUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af0d3.dynamic.kabel-deutschland.de [95.90.240.211])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C571D61CC3FE3;
-	Wed, 05 Nov 2025 10:45:09 +0100 (CET)
-Message-ID: <c6f8f015-267f-49e8-b427-b4524c134bfb@molgen.mpg.de>
-Date: Wed, 5 Nov 2025 10:45:08 +0100
+	s=arc-20240116; t=1762336005; c=relaxed/simple;
+	bh=sBbijhHOp7oCs6GEaRJPgWgOKT9wxzc+e84cgJVXGks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fAkZd4hO/BVRzf0kaOqgq/douXoTS37IFXRmAuZsxCReOFeU59uPZViRCTGtRkSFLaxpeMhPuipuyd8pH9b/o2m2sKBJnW4qEMNC+adNCA8gmpkrmgzceTsSIWnDUwsDAAIOK8rXmX0XPMYSfUICCiCO5S5d1DyArXNNsVj+kTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zxw4vUVq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 62E6BC116B1;
+	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762336005;
+	bh=sBbijhHOp7oCs6GEaRJPgWgOKT9wxzc+e84cgJVXGks=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Zxw4vUVqTBSt3FCa/oQKoFUJGDmq5sir/ipMJvHg/ijClKxT6uvSg6aI71KYkmWEb
+	 2P1YA3dI6PVaovLr49SJRX87yU0HOb70hLnHEQ4UihQP6DP1SbSvShIktizmfBkqI1
+	 U8c/e4UrpGgwCPjuxUydBhdu1eYNRJBxsKKDl5Cv2rjZx3DIn6tdk1CMPDgP0pxIxq
+	 9JZTudEjoLkrVmqy2rkIEifc9kISLkyha5ikFflXLnU/bm6ft/JGOSE+VTuif7VVwp
+	 3M/2gFWdWqXV/5oskRWVmRSRyWT5z9wG0el2P69Vtn+bA+kIS8gLCZWRfILByoR3V/
+	 eq3AX7tUPmhWA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5044BCCFA04;
+	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/5] Add GPIO interrupt support for Amlogic S6 S7 and S7D
+Date: Wed, 05 Nov 2025 17:45:31 +0800
+Message-Id: <20251105-irqchip-gpio-s6-s7-s7d-v1-0-b4d1fe4781c1@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: iso: Fix UAF on iso_sock_disconn
-To: Yang Li <yang.li@amlogic.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALscC2kC/x2MMQqAMAwAv1IyG7AFFf2KOGiMmqWtDYhQ+neLc
+ MsNdxmUk7DCZDIkfkQl+Cq2MUDX6k9G2auDa11nbduhpJsuiXhGCag96lDZceTNEQ8HEfVQ45j
+ 4kPcfz0spH7UkiwFoAAAA
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762336003; l=1085;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=sBbijhHOp7oCs6GEaRJPgWgOKT9wxzc+e84cgJVXGks=;
+ b=UuVuyQFMIsQ/oSHSwOOpFHXycXVt9jeIo5LDQY86D6wNsX39oK3t12F0Q/VZRCTt4n0bXV7N1
+ 3mKDqs1TIz1D9OIfcbbLOYnmPLW+O2PRBqPqz+vPmG5fj356OCEol4g
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Dear Yang,
+This patch adds GPIO interrupt support for Amlogic S6 S7 and S7D SoCs.
 
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Xianwei Zhao (5):
+      dt-bindings: interrupt-controller: Add support for Amlogic S6 S7 and S7D SoCs
+      irqchip: Add support for Amlogic S6 S7 and S7D SoCs
+      arm64: dts: Add gpio_intc node for Amlogic S6 SoCs
+      arm64: dts: Add gpio_intc node for Amlogic S7 SoCs
+      arm64: dts: Add gpio_intc node for Amlogic S7D SoCs
 
-Thank you for your patch.
+ .../interrupt-controller/amlogic,meson-gpio-intc.yaml         |  3 +++
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi                   | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi                   | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi                  | 10 ++++++++++
+ drivers/irqchip/irq-meson-gpio.c                              | 11 +++++++++++
+ 5 files changed, 44 insertions(+)
+---
+base-commit: cb718411c4c05a4a424c2b73790a1648be97a4af
+change-id: 20251105-irqchip-gpio-s6-s7-s7d-9eb2ce7fccc6
 
-Am 05.11.25 um 10:02 schrieb Yang Li via B4 Relay:
-> From: Yang Li <yang.li@amlogic.com>
-> 
-> kernel panic: Unable to handle kernel read from unreadable
-> memory at virtual address 00000000000003d8
-
-No line break needed in pasted logs.
-
-> 
-> Call trace:
->   iso_sock_disconn+0x110/0x1c8
->   __iso_sock_close+0x50/0x164
->   iso_sock_release+0x48/0xf0
->   __sock_release+0x40/0xb4
->   sock_close+0x18/0x28
->   __fput+0xd8/0x28c
->   __fput_sync+0x50/0x5c
->   __arm64_sys_close+0x38/0x7c
->   invoke_syscall+0x48/0x118
->   el0_svc_common.constprop.0+0x40/0xe0
->   do_el0_svc_compat+0x1c/0x34
->   el0_svc_compat+0x30/0x88
->   el0t_32_sync_handler+0x90/0x140
->   el0t_32_sync+0x198/0x19c
-
-Please add a paragraph about this problem, and how `iso_pi(sk)->conn` 
-can be NULL.
-
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> ---
->   net/bluetooth/iso.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> index 74ec7d125c88..89c7700ceb81 100644
-> --- a/net/bluetooth/iso.c
-> +++ b/net/bluetooth/iso.c
-> @@ -838,14 +838,14 @@ static void __iso_sock_close(struct sock *sk)
->   	case BT_CONNECT:
->   	case BT_CONNECTED:
->   	case BT_CONFIG:
-> -		if (iso_pi(sk)->conn->hcon)
-> +		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon)
->   			iso_sock_disconn(sk);
->   		else
->   			iso_chan_del(sk, ECONNRESET);
->   		break;
->   
->   	case BT_CONNECT2:
-> -		if (iso_pi(sk)->conn->hcon &&
-> +		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon &&
->   		    (test_bit(HCI_CONN_PA_SYNC, &iso_pi(sk)->conn->hcon->flags) ||
->   		    test_bit(HCI_CONN_PA_SYNC_FAILED, &iso_pi(sk)->conn->hcon->flags)))
->   			iso_sock_disconn(sk);
-
-This diff looks fine.
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
-Kind regards,
-
-Paul
 
