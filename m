@@ -1,58 +1,46 @@
-Return-Path: <linux-kernel+bounces-886095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF149C34B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:11:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEF6C34B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 874394FAC92
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76E6A19213A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761122F998D;
-	Wed,  5 Nov 2025 09:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FD92F363A;
+	Wed,  5 Nov 2025 09:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="Zqe6BIiU"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="glrENEia"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BA7296BA9;
-	Wed,  5 Nov 2025 09:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6720621D3F2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333623; cv=none; b=KvyJlX6tWg0dxMAfI+yM7LqpL9tSjSBwrbJdSEKFrmjw4lLc84ZB32amdtxWf8YDZX7TCdm6nQPj3zNsTC0d/Hzrzud/9V5WBB0X7V6z02FAfcjijqaWQc5Jfo5L/c1n5a2juwf+zvpw9/YhdUjRtCphcuFA+0y1MYEvHTjJn1A=
+	t=1762333702; cv=none; b=eP6jcv5O8EkMy3TXi+Bi/7GsCBLoE6QUPvBpDPJJhsJlb0g3d/92g2xpibkf4vxjVWTWA0V5OH2C82gnJXuB4bxSbGaI6rqhiXbXk50avgONGf4uk2P9ysGaF9JyRZ0macN5iscb6msoV82zkgXE+8/FvJrn+7zHP0pGLjqMME0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333623; c=relaxed/simple;
-	bh=G3mXvrrysdRF1DEi+b4mjgB9uEBy3UbZMEhO9DUx0lM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=txrlrdnlv25UVI6Bkbhh5qb0zHl2nbWehUTOVt/2DbMSBImemcPubjVl8/+Pyx+icsMSDHpYofIiBnVBgmDbPUIINVe2RbOyBqBsUzq6avvc4nicdjCQ4yTbc0QT7yn/1UpFY4o/uYL8vzqi/RmdPwaU1UPMvf+ao+AhNwfAGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=Zqe6BIiU; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Vj/Wfm557RNXCs1yIGAz+txNLRH3xhaa459WlTk0izU=;
-	b=Zqe6BIiUDRIo19BTyg7d5Ejf4o1SEtwJFR2Mx2SugMZ7dHpMDmnLQ52F26FevUvBS+1Cfyl/5
-	rkqQtDmwwyZ9KHz1eVjVxPitLz/q15ixGxWLmi3fgjmshslsWRbwLM5eht4HiJkxlkbI435PHXx
-	0jBEvLVwtIw/5WkN98aiPN8=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d1fYG2LQrzmV6n;
-	Wed,  5 Nov 2025 17:05:22 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id ADF641A016C;
-	Wed,  5 Nov 2025 17:06:57 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 17:06:57 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Nov
- 2025 17:06:56 +0800
-Message-ID: <aad95665-fb6a-477a-b419-4ad88c5db7d2@huawei.com>
-Date: Wed, 5 Nov 2025 17:06:56 +0800
+	s=arc-20240116; t=1762333702; c=relaxed/simple;
+	bh=UPpt5D+T8aS8D17SDIspUvBP99f7bpTMGd6mYcDH9qY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aSSP1Y6ylzVKTn0PdNK+BeI+wHxoGxmLYIhlBDhmhr7WgC4ypOupFCtybrmhY9bZN/yZQneBiutUNeLQxgMWrz44n5Hr9n07EKlInlecmWiCHFqKmDOMFCl6n+/x7p2dxkAv8VCUrsASqqw7K6/rQQ/cd6j9/hPjdbu6qlif1zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=glrENEia; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=8x8hr0Snx4ROvN9D0th3HkayD2fcX/9tr04MOrHRCz0=;
+	b=glrENEiaVSupa/2NIGPZyZ092RQKMKiRQKsj7mTTU2Bt3MxeImcUJSYzRc6VwQ
+	G8Uods4H10G+AOOOsu6u7WAkwB/IoUvzikZza5ku02rKEodzd41qsfNDsoMoHJsb
+	XI5FL82fLptk2u2qExO4hOWFm3eb1JmBR753/7FBUBTIk=
+Received: from [10.42.17.251] (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wAHFcnTEwtpGde0BQ--.107S2;
+	Wed, 05 Nov 2025 17:07:33 +0800 (CST)
+Message-ID: <e82274a2-9e60-4344-9d54-78232f42b05d@163.com>
+Date: Wed, 5 Nov 2025 17:07:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,73 +48,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] ACPI: processor: idle: Disable ACPI idle if get
- power information failed in power notify
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
-References: <20251103084244.2654432-1-lihuisong@huawei.com>
- <20251103084244.2654432-5-lihuisong@huawei.com>
- <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
- <339a202a-86aa-46f5-b45d-aea653f3e382@huawei.com>
- <CAJZ5v0ii=ZJeCisXx3EOOMfqe8rRn=FvKBDsNuBucxvM0WXvgg@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0ii=ZJeCisXx3EOOMfqe8rRn=FvKBDsNuBucxvM0WXvgg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH] drm/udl: Increase get urb timeout for modeset
+To: Thomas Zimmermann <tzimmermann@suse.de>, Dave Airlie <airlied@redhat.com>
+Cc: Sean Paul <sean@poorly.run>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+References: <20251105083037.237925-1-oushixiong1025@163.com>
+ <38110178-0f27-44ba-9925-5bbe74a1bf9b@suse.de>
+Content-Language: en-US
+From: oushixiong <oushixiong1025@163.com>
+In-Reply-To: <38110178-0f27-44ba-9925-5bbe74a1bf9b@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+X-CM-TRANSID:_____wAHFcnTEwtpGde0BQ--.107S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WryrJw4DWryxZF4kZr45GFg_yoW7GF48pF
+	4DJ3yjyrWUAF4UK3Wj9F4kAF4fJa13Ka92krW8GasI93Wqkr1DJa48CryYgFyDAry7CF1a
+	qrs2qFZ09F4Ykw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Un0edUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXA78D2kLChsbMAACs7
 
+If the wait times for all operations increase, it would likely cause 
+significant blocking in the display process.
+Should we make a distinction between the two, or base it on what you 
+said about increasing  the regular GET_URB_TIMEOUT for all operations ?
 
-在 2025/11/5 0:19, Rafael J. Wysocki 写道:
-> On Tue, Nov 4, 2025 at 10:54 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+Best regards
+Shixiong
+
+在 2025/11/5 16:57, Thomas Zimmermann 写道:
+> Hi
+>
+> Am 05.11.25 um 09:30 schrieb oushixiong1025@163.com:
+>> From: Shixiong Ou <oushixiong@kylinos.cn>
 >>
->> 在 2025/11/4 2:09, Rafael J. Wysocki 写道:
->>> On Mon, Nov 3, 2025 at 9:42 AM Huisong Li <lihuisong@huawei.com> wrote:
->>>> The old states may not be usable any more if get power information
->>>> failed in power notify. The ACPI idle should be disabled entirely.
->>> How does it actually disable anything?  It only changes the
->>> acpi_processor_power_state_has_changed() return value AFAICS, but that
->>> return value isn't checked.
->> The acpi_processor_power_state_has_changed() will disable all cpuidle
->> device first.
->> AFAICS, the disabled cpuidle_device would not do cpuidle, please see
->> cpuidle_not_available() and cpuidle_idle_call().
->> It's enough for this?
-> Well, not really.
+>> [WHY]
+>> There is a situation where udl_handle_damage() was running successfully
+>> but the screen was black. it was because 
+>> udl_crtc_helper_atomic_enable() failed,
+>> and there were no error messages.
+>>
+>> [HOW]
+>> The priority for mode settings needs to be higher than damage handle, 
+>> requiring
+>> a higher success rate than ordinary operations.
+>> Increase get urb timeout for modeset.
+>>
+>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>> ---
+>>   drivers/gpu/drm/udl/udl_drv.h      |  5 ++++-
+>>   drivers/gpu/drm/udl/udl_main.c     |  5 ++---
+>>   drivers/gpu/drm/udl/udl_modeset.c  | 11 +++++++----
+>>   drivers/gpu/drm/udl/udl_transfer.c |  2 +-
+>>   4 files changed, 14 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/udl/udl_drv.h 
+>> b/drivers/gpu/drm/udl/udl_drv.h
+>> index 145bb95ccc48..38b3bdf1ae4a 100644
+>> --- a/drivers/gpu/drm/udl/udl_drv.h
+>> +++ b/drivers/gpu/drm/udl/udl_drv.h
+>> @@ -31,6 +31,9 @@ struct drm_mode_create_dumb;
+>>   #define DRIVER_MINOR        0
+>>   #define DRIVER_PATCHLEVEL    1
+>>   +#define GET_URB_TIMEOUT    HZ
+>> +#define MODESET_GET_URB_TIMEOUT    (HZ*2)
+>> +
 >
-> acpi_processor_register_idle_driver() has been changed to call
-> acpi_processor_get_power_info() for each CPU before registering the
-> idle driver and if that is successful, it will set
-> flags.power_setup_done for the given processor and call
-> acpi_processor_setup_cpuidle_states().  That processor need not be
-> CPU0.
+> Just increase the regular GET_URB_TIMEOUT for all operations.
 >
-> However, the code updated by the $subject patch calls
-> acpi_processor_get_power_info() for CPU0 and the patch would make it
-> skip re-enabling cpuidle for all CPUs if it failed.
+> Best regards
+> Thomas
 >
-> It essentially needs to do what is done in
-> acpi_processor_register_idle_driver(): find a CPU for which
-> acpi_processor_get_power_info() does not fail, then call
-> acpi_processor_setup_cpuidle_states() and re-enable cpuidle for all
-> CPUs unless acpi_processor_get_power_info() fails for all of them.
- From the initialization perspective, I also think this approach is 
-appropriate.
+>>   struct udl_device;
+>>     struct urb_node {
+>> @@ -72,7 +75,7 @@ static inline struct usb_device 
+>> *udl_to_usb_device(struct udl_device *udl)
+>>   int udl_modeset_init(struct udl_device *udl);
+>>   struct drm_connector *udl_connector_init(struct drm_device *dev);
+>>   -struct urb *udl_get_urb(struct udl_device *udl);
+>> +struct urb *udl_get_urb(struct udl_device *udl, long timeout);
+>>     int udl_submit_urb(struct udl_device *udl, struct urb *urb, 
+>> size_t len);
+>>   void udl_sync_pending_urbs(struct udl_device *udl);
+>> diff --git a/drivers/gpu/drm/udl/udl_main.c 
+>> b/drivers/gpu/drm/udl/udl_main.c
+>> index bc58991a6f14..891996f0f74b 100644
+>> --- a/drivers/gpu/drm/udl/udl_main.c
+>> +++ b/drivers/gpu/drm/udl/udl_main.c
+>> @@ -285,13 +285,12 @@ static struct urb *udl_get_urb_locked(struct 
+>> udl_device *udl, long timeout)
+>>       return unode->urb;
+>>   }
+>>   -#define GET_URB_TIMEOUT    HZ
+>> -struct urb *udl_get_urb(struct udl_device *udl)
+>> +struct urb *udl_get_urb(struct udl_device *udl, long timeout)
+>>   {
+>>       struct urb *urb;
+>>         spin_lock_irq(&udl->urbs.lock);
+>> -    urb = udl_get_urb_locked(udl, GET_URB_TIMEOUT);
+>> +    urb = udl_get_urb_locked(udl, timeout);
+>>       spin_unlock_irq(&udl->urbs.lock);
+>>       return urb;
+>>   }
+>> diff --git a/drivers/gpu/drm/udl/udl_modeset.c 
+>> b/drivers/gpu/drm/udl/udl_modeset.c
+>> index 231e829bd709..6adca5e3e471 100644
+>> --- a/drivers/gpu/drm/udl/udl_modeset.c
+>> +++ b/drivers/gpu/drm/udl/udl_modeset.c
+>> @@ -21,6 +21,7 @@
+>>   #include <drm/drm_gem_framebuffer_helper.h>
+>>   #include <drm/drm_gem_shmem_helper.h>
+>>   #include <drm/drm_modeset_helper_vtables.h>
+>> +#include <drm/drm_print.h>
+>>   #include <drm/drm_probe_helper.h>
+>>   #include <drm/drm_vblank.h>
+>>   @@ -217,7 +218,7 @@ static int udl_handle_damage(struct 
+>> drm_framebuffer *fb,
+>>           return ret;
+>>       log_bpp = ret;
+>>   -    urb = udl_get_urb(udl);
+>> +    urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+>>       if (!urb)
+>>           return -ENOMEM;
+>>       cmd = urb->transfer_buffer;
+>> @@ -341,9 +342,11 @@ static void udl_crtc_helper_atomic_enable(struct 
+>> drm_crtc *crtc, struct drm_atom
+>>       if (!drm_dev_enter(dev, &idx))
+>>           return;
+>>   -    urb = udl_get_urb(udl);
+>> -    if (!urb)
+>> +    urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
+>> +    if (!urb) {
+>> +        DRM_ERROR("Udl get urb failed when enabling crtc");
+>>           goto out;
+>> +    }
+>>         buf = (char *)urb->transfer_buffer;
+>>       buf = udl_vidreg_lock(buf);
+>> @@ -374,7 +377,7 @@ static void udl_crtc_helper_atomic_disable(struct 
+>> drm_crtc *crtc, struct drm_ato
+>>       if (!drm_dev_enter(dev, &idx))
+>>           return;
+>>   -    urb = udl_get_urb(udl);
+>> +    urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
+>>       if (!urb)
+>>           goto out;
+>>   diff --git a/drivers/gpu/drm/udl/udl_transfer.c 
+>> b/drivers/gpu/drm/udl/udl_transfer.c
+>> index 7d670b3a5293..858b47522d78 100644
+>> --- a/drivers/gpu/drm/udl/udl_transfer.c
+>> +++ b/drivers/gpu/drm/udl/udl_transfer.c
+>> @@ -202,7 +202,7 @@ int udl_render_hline(struct udl_device *udl, int 
+>> log_bpp, struct urb **urb_ptr,
+>>               int ret = udl_submit_urb(udl, urb, len);
+>>               if (ret)
+>>                   return ret;
+>> -            urb = udl_get_urb(udl);
+>> +            urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+>>               if (!urb)
+>>                   return -EAGAIN;
+>>               *urb_ptr = urb;
 >
-> But there is still a question of whether or not this addresses any
-> breakage seen in the field.  If not, maybe it's better to leave this
-> code as is for the time being?
-AFAICS, this power notify can be received on each CPU.
-It may be appropriate to update cpuidle state of this CPU if ACPI idle 
-supports per-cpu idle state.
-Now that all CPUs have the same idle state.
-I think it is ok to keep here the same as the initialization logic as 
-you said above.
->
-> I don't see why it is part of this series to be honest.  It is not a cleanup.
-Yes, now it's more like a bugfix.
->
+
 
