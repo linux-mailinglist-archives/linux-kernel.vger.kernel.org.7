@@ -1,102 +1,147 @@
-Return-Path: <linux-kernel+bounces-886347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E367C354FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:17:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA590C354D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6093BFE80
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:13:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 515734EFA73
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2DE30F7F8;
-	Wed,  5 Nov 2025 11:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF0330F941;
+	Wed,  5 Nov 2025 11:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2ZCZW2a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="IynIMTyr"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D2B30594E;
-	Wed,  5 Nov 2025 11:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4193C2EC08E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341190; cv=none; b=ed4oqJpiDmvr8Xe8sB/auCrHikzPaLRsGBPZCRXksuAup2+Z6yR18MnGy9gLBoKmRkQoFwgAz6HasrG3sySoVew3WbmQunbN8buZwDGHKk2OC8/hXNxrROd5EIiON3soeb2omvYRVkk/U6oy7dTjFTmNNy2aBu1dj7vOhGZe5Jw=
+	t=1762341190; cv=none; b=TSXsaO6bdJHYzbwSPCyW6b/vCGVxYEwxXcskyiL5tlBNogBAZs9/cFkWL1aMEZZaL0vvXMTY/u64PgkeDBkHtkXwKh9E1gmUJ09UovU1XK/PfqioeiHTK0X9+LOI/OKybA0txUJVxj+kEtybgkgSeXgxVFzT5XtQeqT2JuPic1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762341190; c=relaxed/simple;
-	bh=5SRIi5stLzkcdcYgZc1z4fAx+Z2JyFKQR3FvjHjXFVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YQfY5sJ9cGfH10SFbTF8n2xNit0RoXh6yupRWVoCMubbHRSizNzOdhD93w1b9CtOE2IWvCxFrppiDkEe0Fo3aLd8lrWthQJcwEFGex2vU4vwLnb33g+ZLXuFc2ogUxNXZ2vpdiwvL56UK/FHc/UWXXs3URuMnACl84c7vO8gwiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2ZCZW2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A383C4CEF8;
-	Wed,  5 Nov 2025 11:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762341189;
-	bh=5SRIi5stLzkcdcYgZc1z4fAx+Z2JyFKQR3FvjHjXFVU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e2ZCZW2aZUwTmoa8nkSKTRxmK//+yjCM1ni6ddcN6a2AYWWlP5SJSR2XHIhrosRhW
-	 FkeXgKxkwalJCUXVL8ZRXwgQeXt/nkskp6283MjlC7lTTeCuKO0Zkw5rnVB3x1YRyj
-	 IkGK3GVWDlaFeAKTHY2TEjLIKEY99//uecF4P0nnE+tIuUkMXWSwYWhzQql1Ie+lp8
-	 9ckfH2KMKURDpq5BwetPWNUdAICq3iLfszaq3L/zO8lfcUgUw1gtrydLEZ7qvHClaA
-	 JNdNSh8riDJiNFEj6Da9MO+mUDJRlVUmuqNFaRAMP1KIlqLGhZV6b56epn4ksLHO18
-	 yhbfDM0b0kGmQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	kees@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] binfmt_misc: restore write access before closing files opened by open_exec()
-Date: Wed,  5 Nov 2025 12:12:46 +0100
-Message-ID: <20251105-gebucht-kaktus-f394c88493d5@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105022923.1813587-1-zilin@seu.edu.cn>
-References: <20251105022923.1813587-1-zilin@seu.edu.cn>
+	bh=nQMee2/Jkv7M+Rcqa58Sh+4rIg8reEy8IZtYmf6VepA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jXM9K2KF82paeSZcEHPmrtq5uy9pEWk5G9xJ/HYkLsCsjkyRjFLCMzvRegCoVHMjFJloQVJTVHHcAf1dacCUWBD2TIp6YCNiILaa66Hv0IixnH/jqU7HgWKbQQ5Eur1eyNlzCn5cIGkTUyCiwQfK9WVuK0KQauwGMenOD7NaITA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=IynIMTyr; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1762341185; x=1762600385;
+	bh=MhOL772gDQt3HjlEW0CKt9Wxom0RYSxrQeQWZ+rjImo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=IynIMTyrNWBlf4PhOmhXwPzcshBVn1bvwsGpIzoT+fFZDNBYsCY4t116aDu5ENCsc
+	 u9OIwrF5zikcMNOI4NqGkovwN0zaLpnRkdAi8buGUu73pc2/Lx2E8WX5oO+yea9aoQ
+	 Jy2u/U/p3nX5d7IeaKkUJWrgP2GiCNnwyU1Nu06Ej/WO2Wsa7jSSvRL1WJ7F0NOKiZ
+	 mWJD/b9C6YCsfwZIqlOUqqKmByhU1SzSAlsOWuMpaoyOBxMcPIsTZ/mOrIT9Vx+eLS
+	 KwGAJ9Vk6UVm3LoycXsk4/SVrr2juYIj0IrzoyNXaIdWOPk5qqNDZzq/L2wnbxUb/D
+	 RGQbgT+gxlcEQ==
+Date: Wed, 05 Nov 2025 11:13:00 +0000
+To: Andrey Konovalov <andreyknvl@gmail.com>
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Marco Elver <elver@google.com>, stable@vger.kernel.org, Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] kasan: Unpoison vms[area] addresses with a common tag
+Message-ID: <cc4xh64s47ftujtp76hizmjqaczbgpzvmpbtzjtya2tuqyc75x@3obiajea2eem>
+In-Reply-To: <CA+fCnZdUMTQNq=hgn8KbNwv2+LsRqoZ_R0CK0uWnjB41nHzvyg@mail.gmail.com>
+References: <cover.1762267022.git.m.wieczorretman@pm.me> <cf8fe0ffcdbf54e06d9df26c8473b123c4065f02.1762267022.git.m.wieczorretman@pm.me> <CA+fCnZdUMTQNq=hgn8KbNwv2+LsRqoZ_R0CK0uWnjB41nHzvyg@mail.gmail.com>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: 9bc93b4823ad8fa97869a332ca0a7f37c2bec3e2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1299; i=brauner@kernel.org; h=from:subject:message-id; bh=5SRIi5stLzkcdcYgZc1z4fAx+Z2JyFKQR3FvjHjXFVU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyGzpEqfTLxG8oWDwtuyDHk//Hodv72q+1JTE+rNLUP S2XwKDXUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHIzwy/2USCQ6Uvv2ao9L8c P/HVjsyJzqGC0yd7/tFbfbhk50ORm4wMl+a8PfrdePHd3vzCqUfPcFe6h3vY+M7acmZhwS7tn6s CGQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 05 Nov 2025 02:29:23 +0000, Zilin Guan wrote:
-> bm_register_write() opens an executable file using open_exec(), which
-> internally calls do_open_execat() and denies write access on the file to
-> avoid modification while it is being executed.
-> 
-> However, when an error occurs, bm_register_write() closes the file using
-> filp_close() directly. This does not restore the write permission, which
-> may cause subsequent write operations on the same file to fail.
-> 
-> [...]
+On 2025-11-05 at 02:13:22 +0100, Andrey Konovalov wrote:
+>On Tue, Nov 4, 2025 at 3:49=E2=80=AFPM Maciej Wieczor-Retman
+><m.wieczorretman@pm.me> wrote:
+>>
+>> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>>
+>> A KASAN tag mismatch, possibly causing a kernel panic, can be observed
+>> on systems with a tag-based KASAN enabled and with multiple NUMA nodes.
+>> It was reported on arm64 and reproduced on x86. It can be explained in
+>> the following points:
+>>
+>>         1. There can be more than one virtual memory chunk.
+>>         2. Chunk's base address has a tag.
+>>         3. The base address points at the first chunk and thus inherits
+>>            the tag of the first chunk.
+>>         4. The subsequent chunks will be accessed with the tag from the
+>>            first chunk.
+>>         5. Thus, the subsequent chunks need to have their tag set to
+>>            match that of the first chunk.
+>>
+>> Unpoison all vm_structs after allocating them for the percpu allocator.
+>> Use the same tag to resolve the pcpu chunk address mismatch.
+>>
+>> Fixes: 1d96320f8d53 ("kasan, vmalloc: add vmalloc tagging for SW_TAGS")
+>> Cc: <stable@vger.kernel.org> # 6.1+
+>> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>> Tested-by: Baoquan He <bhe@redhat.com>
+>> ---
+>> Changelog v1 (after splitting of from the KASAN series):
+>> - Rewrite the patch message to point at the user impact of the issue.
+>> - Move helper to common.c so it can be compiled in all KASAN modes.
+>>
+>>  mm/kasan/common.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+>> index c63544a98c24..a6bbc68984cd 100644
+>> --- a/mm/kasan/common.c
+>> +++ b/mm/kasan/common.c
+>> @@ -584,12 +584,20 @@ bool __kasan_check_byte(const void *address, unsig=
+ned long ip)
+>>         return true;
+>>  }
+>>
+>> +/*
+>> + * A tag mismatch happens when calculating per-cpu chunk addresses, bec=
+ause
+>> + * they all inherit the tag from vms[0]->addr, even when nr_vms is bigg=
+er
+>> + * than 1. This is a problem because all the vms[]->addr come from sepa=
+rate
+>> + * allocations and have different tags so while the calculated address =
+is
+>> + * correct the tag isn't.
+>> + */
+>>  void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
+>>  {
+>>         int area;
+>>
+>>         for (area =3D 0 ; area < nr_vms ; area++) {
+>>                 kasan_poison(vms[area]->addr, vms[area]->size,
+>> -                            arch_kasan_get_tag(vms[area]->addr), false)=
+;
+>> +                            arch_kasan_get_tag(vms[0]->addr), false);
+>> +               arch_kasan_set_tag(vms[area]->addr, arch_kasan_get_tag(v=
+ms[0]->addr));
+>
+>set_tag() does not set the tag in place, its return value needs to be assi=
+gned.
 
-Thanks!
+Right, not sure how I missed that
 
----
+>
+>So if this patch fixes the issue, there's something off (is
+>vms[area]->addr never used for area !=3D 0)?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Maybe there is something off with my tests then. I'll try to run them in a
+couple of different environments.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+--=20
+Kind regards
+Maciej Wiecz=C3=B3r-Retman
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] binfmt_misc: restore write access before closing files opened by open_exec()
-      https://git.kernel.org/vfs/vfs/c/0e0c1b03d6d4
 
