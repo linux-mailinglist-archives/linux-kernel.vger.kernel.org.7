@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-886553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C67C35ED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1A4C35EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A75C4F953E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:49:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31D0B4F4B8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75751321F5E;
-	Wed,  5 Nov 2025 13:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C63325494;
+	Wed,  5 Nov 2025 13:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLWrh/gD"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="XJqh+z8A"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81594314A93
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8712314A93
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350577; cv=none; b=aluGQ4Fi4gJuFzKEJcsPi/uoTZ8bXf3s+YKtEBoWUEkjlonKnUkrYn9xR7wG88T2iO6N8t96flt29Ri/ymzRNWq2TvgVdONUlhWtpgNEeQ6hOsJFiDkBRHZ68Bz6+TL3nSTmf9ApEKCfF5f76bEx47h+sP4bRgsQ7/CuojprBIM=
+	t=1762350689; cv=none; b=n7BU80ZjB9fgQtiBkQtzh+GqShPvQTatr+QOdSiVLq/sq93UMyWDFTes8IJE//xnQHNSsHvlAXmoyw2U06YzJDvHe/PnU4pkoRGgPaMPaLh8eXMEgRFU4FuFIgDpVCp56oFi9gGjs5PiX/acbMp3DtGNa+R4zjLMc6YkXDA14KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350577; c=relaxed/simple;
-	bh=YQIUAYYpT6AOrVjMBIacID0TnDXNaL+LHaWc7O4/Umk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TILpG56CT6fnI4ba9TT+DKVZGYPeU6niXnz8/B1hYbhDJbnt7v5sNvoEWtSaUZJl8BRizvkH9J2/QBARj8He1+5NNh3Sc+SJQKdKFRSkR66ws6TFg60KxgJJ4IzPlAemZ080RfDrfIdxPOn0TP8Z4hoh2ht4HxFHeKU2yaIOPNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLWrh/gD; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4710022571cso62360905e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:49:35 -0800 (PST)
+	s=arc-20240116; t=1762350689; c=relaxed/simple;
+	bh=zP41Rmpn5mMZPXrAIAfE+G59N4Vqeo9bSbuVW5Vwl9E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eZQUc+o2Nhc+CHJDPgSXebghkn7nvR8VrqUc9K3GEHdtmyoTT3C/w3PTQk3MV1/gqNbMPJNSrUHyCa+U3H1qosSrtF6rSvUcWjr6wHbt4txKp7nh+Ndd/Sxoq1ZSDxJ2yA1aKEDb7cmrwrTf9Ynesu31S8P449mcvVQ4CAfju7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=XJqh+z8A; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-89ed2ee35bbso1013450485a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:51:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350573; x=1762955373; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rHphQm5cf5XJfoT0QoEw71orWJjFg1RJOwRJmwvYzAc=;
-        b=aLWrh/gDuIufcOyoknLkANELF4QRubZ2+94xoO7qnMzBjdcb2qupSnnATK8Qv/Ix7t
-         sOdXyw5dcAwGUrdY4FjYdy1sMS66+AXfGlU4SnaFiwRFuQAi1kBK6We7fkOnw8QbXRfk
-         w08elLzJry7HPg6AlHlJ36wHSGHYvIkR6s5yXQ2YA6qy7Y2LUtbRO8nsEQYof8KN4tbh
-         KN62p6XgOhsR2oDMJBU3HVKY7jiB5MuDI031Ni+YQAoER5bQBjjj+NlelXrCg4tinIqy
-         kLsstuBMpJZgFhMtbEQ7+lVheU5Jai/mzNnxvS75uvi19vgnOvPPHUQGiEjpNoR5T0Ei
-         IbKQ==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1762350687; x=1762955487; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zP41Rmpn5mMZPXrAIAfE+G59N4Vqeo9bSbuVW5Vwl9E=;
+        b=XJqh+z8AprQdeWWVaS5BDhVHZbvRwsTpw2yaxVcGPy6Lszbpc/xb9PpgQcV6iRzHmh
+         fC8gQDMzQ4cEyFcyhWYriJVTBDdTPRbvgKVQNFDzKQohrK2TBn1VBBTN803zsn89uYuk
+         FEJq7AEiiNoyyMLmTpVUonDMasiPOSsAvhSLc1obGNu90ZmZIizzy7pto1qPB3hW5ASv
+         9DLMewKqSwaXHbdVzAY5FyMiECtdNuY0O9b5WqkrSmG3LPa9oo+MayM5XsBKi1q/EgWk
+         0CVSlnEDGJIl5l9FOnQG3CYHsz5pm5t3GiQTZqlFcEJKUUri+hb6FwETuhL8/1JuGLT3
+         pXdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350573; x=1762955373;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHphQm5cf5XJfoT0QoEw71orWJjFg1RJOwRJmwvYzAc=;
-        b=oyTo4rJX5szVr8o2YFNe8/QtXLQKk7X2Uw3ey76lJdxqNNKresu/FQGcWw6XMFG3a+
-         OVzl7ErMIGzMF9RGr8WVeAXckEDd6zMpb9dkzWoHg5XfPHQbIw55sqOLG0jynBfZWiCH
-         Kd8qdiDaNMD6BdbYU2Zz8M0a+1RzSMoatYYFmmi5/f5MHqxdBQabuQAx14QI16WgrT9V
-         f+JvRg9qYRuMsyMj6etrJ1VVn9RoOWTQoXIOfacoUGJ9s/Ew2w1+Bo9lCbsyL6POZcMY
-         f+UiwfqE1fV6z8EUNMeSMxR7pnUQHVcySS2PtpSRyA9UwlNk1seMvo/in+EYH++r1y2a
-         HsQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH7v4m2IHFhiL6noCiZlqwR1ClIK0NeRne2KiyDMUQqvnjmRKT8YyW/pkyZ02wQxvIo+eNCO8/XcXYbHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIq6SsUHoj03FIKIrsslyVaBs4/sDQe7kvFFGbuYsveX4Nc8wQ
-	dtDx1rhIG6FGH9NiqiUpB6a5TNCcAJMprZjKXR3S3mZ4Q48gtZ46YYX2
-X-Gm-Gg: ASbGncsL5MlEk6pHlc7zMgamgV/+JtTRLArgr2AYS7wvRKqfMg6UdDKerMj2uuxZBmw
-	BmavtudxAxErs7d976wyrDrYy81+fvEYizAYijRv2RsaNXxwPAUSF0DsvXxxx54vw0vsSSXqvqb
-	ucxR5ELChrMs97y4WicXIqUmsGyTAJNWmQjuTc0H+PbrVjIycJjA5fClNHsAuT5C8LF0sfxx6qc
-	iGewTB8bv3J41m+Kdf9o/tT5RSCNlVzUsaQMxSL7jnWv1qAUXzh0eua5YRZCUnDpjJnv3EojtTF
-	/L6u8//yWOBHpI7+fx9dxh0hfr8hiGR6h6a5rJI8DRFRDts6Zyy9VHSP2F2dKpBnYRjiuVzSW0n
-	32Y1k47MAujkr0rzRui+faX+tFXVWHwA+ef4HuSr824G0arIr5nME/zgLGrc0kjI8Bd7bggmoux
-	FSxdhGPVi0ULhs5LywxD1kMi8LEc/6J2kFO7zjB80lzzbECRzm5yJiPVpKgZVMZXQcoyZ4
-X-Google-Smtp-Source: AGHT+IFI/Hv7z6gEwSQuhSHY5C0CGLurNtOoGmCceph9sOrcveSWFEXsnVhv7mAq2BlAIKhbC0jfKw==
-X-Received: by 2002:a05:600c:6299:b0:477:559a:1ca7 with SMTP id 5b1f17b1804b1-4775ce8e088mr25101595e9.39.1762350573031;
-        Wed, 05 Nov 2025 05:49:33 -0800 (PST)
-Received: from ?IPV6:2001:16a2:de8d:400:58:dbf8:dff9:4863? ([2001:16a2:de8d:400:58:dbf8:dff9:4863])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558e695esm44266295e9.2.2025.11.05.05.49.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 05:49:32 -0800 (PST)
-Message-ID: <017b23d3-28e1-4785-8334-b3b3f9800e2a@gmail.com>
-Date: Wed, 5 Nov 2025 16:49:30 +0300
+        d=1e100.net; s=20230601; t=1762350687; x=1762955487;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zP41Rmpn5mMZPXrAIAfE+G59N4Vqeo9bSbuVW5Vwl9E=;
+        b=TzOooFdNiN26P+tYVEcfuyh56QftBSORiH7+UvvjNHqeK3XB3Sxsc6tG17EXfXFVso
+         pexhBRN8Oth/HwY5lUlOFTJ6dEBUqyPcJvdeM5uGoq6OEvIJQRLZ6DsE+68wdFynwEFX
+         TVbeIauAAZyfpKCgg9PV/1qQysYNJNN+KsxuRNOOtFDSDtp1Jhx7WBOQMIpR//9rfES6
+         MRZ7iSQI3xTVtimJ5Ks07o5iZWDGoEwk7Gb8OO63PsMshow/0cjvXnxyz5FwM0jmAgie
+         k9n/E61GIaR3HBGnRJRIA3ANH2GJM09Q1C6fziaowmFN1QXmcCERJREA8p5yVYo6AFKz
+         mx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVdkfNvCFN4ecTHV/GcV1Q8fbx1yJNDP5POSRimT3IhWnfhBlqVtEVooB7Zb09cF94ztaqSKWFW/xIuZZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+eCCDKeTr3nVTlzgRHkkBt3BKCMpHRi+cZkKsz1mh3gBrnVpZ
+	Z7as51d+EzaFs7adWKOX8Z1JjQ/bvMqWxe7SKYHkfSdnKGz9W2w8JI1ePLyV637mBCo=
+X-Gm-Gg: ASbGncuZMltDqfxmWsdiyl/o2E/hYzOfszZ6m77dTOMH8rBQGo/qwdBPpKarXkIK16w
+	XdSkbseWlocbzSdT0j1dg3sw39LrTX3eTndxFondshm527kW7ys5RGTwFZalBhupglCgsXBcf7Q
+	6XSSUsGlm1qV8ADbdZtsSgeldowR4Yqs1+DArA/rSVcaNeo2YSAt2yjrwJxQvn9yZooDrG8xvlX
+	mGP66iHgRGnLwLus61MytCSB792c1TasDOwpciVP8TJqimbk0q6rJYaa16Y/P31J8F+9H5o6KlB
+	4W7C5tLFviVkDg+kq0rxjJNRDkmTaWaEz08Nc7wuJzAs+HiqHm6LIz0neToJ0DuQwluYe4vhCGI
+	/xPkYzprATlyL9ldh15k0JvnVEYrCY2WqDZlZCtediddg6Db9HqJdN/PVZQzYcyS/qgS+eTTi1G
+	CI+rGsdA==
+X-Google-Smtp-Source: AGHT+IHjDb17WJE5ovnji+ZuOA/1CxRvnHlgllSFFQ/L3BHsKI5wbhqVXzK9pnt8K5pFCIhkgw4W3A==
+X-Received: by 2002:a05:620a:4045:b0:8b0:f8c4:a5fe with SMTP id af79cd13be357-8b220c001f8mr430100785a.89.1762350686452;
+        Wed, 05 Nov 2025 05:51:26 -0800 (PST)
+Received: from ?IPv6:2606:6d00:11:ef24::c41? ([2606:6d00:11:ef24::c41])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b0f5413f43sm432543785a.8.2025.11.05.05.51.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 05:51:25 -0800 (PST)
+Message-ID: <6d046cef20dcef4eb14aba6fa89e30d303f6a1b5.camel@ndufresne.ca>
+Subject: Re: [PATCH 0/3] Add Amlogic stateless H.264 video decoder for S4
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Zhentao Guo <zhentao.guo@amlogic.com>, Neil Armstrong	
+ <neil.armstrong@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley	 <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet	 <jbrunet@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org
+Date: Wed, 05 Nov 2025 08:51:23 -0500
+In-Reply-To: <174ef722-99f0-440d-8eee-5dca086e13f0@amlogic.com>
+References: <20251027-b4-s4-vdec-upstream-v1-0-620401813b5d@amlogic.com>
+	 <b976b442-7d07-4fef-b851-ccd14661a233@linaro.org>
+	 <540d98ea-114c-43bc-94c0-e944b5613d74@amlogic.com>
+	 <b6e6881197dc4c83e43ef5eb1f20c2bf1887d395.camel@ndufresne.ca>
+	 <174ef722-99f0-440d-8eee-5dca086e13f0@amlogic.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-2cG765y6sSQkAAGLj2Ko"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PR_*ET_THP_DISABLE.2const: document addition of
- PR_THP_DISABLE_EXCEPT_ADVISED
-To: alx@kernel.org
-Cc: linux-man@vger.kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
- ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20251105134811.3170745-1-usamaarif642@gmail.com>
-Content-Language: en-GB
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20251105134811.3170745-1-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
 
+--=-2cG765y6sSQkAAGLj2Ko
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/11/2025 16:48, Usama Arif wrote:
-> PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
-> THPs when advised. IOW, it allows individual processes to opt-out of THP =
-> "always" into THP = "madvise", without affecting other workloads on the
-> system. The series has been merged in [1]. Before [1], the following 2
-> calls were allowed with PR_SET_THP_DISABLE:
-> 
-> prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0); // to reset THP setting.
-> prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0); // to disable THPs completely.
-> 
-> Now in addition to the 2 calls above, you can do:
-> 
-> prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0); // to
-> disable THPs except madvise.
-> 
-> This patch documents the changes introduced due to the addition of
-> PR_THP_DISABLE_EXCEPT_ADVISED flag:
-> - PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
->   is configured for the calling thread (with or without
->   PR_THP_DISABLE_EXCEPT_ADVISED).
-> - PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
->   completely for the process, or disable except madvise
->   (PR_THP_DISABLE_EXCEPT_ADVISED).
-> 
-> [1] https://github.com/torvalds/linux/commit/9dc21bbd62edeae6f63e6f25e1edb7167452457b
-> 
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
-> v1 -> v2 (Alejandro Colomar):
-> - Fixed double negation on when MADV_HUGEPAGE will succeed
-> - Turn return values of PR_GET_THP_DISABLE into a table
-> - Turn madvise calls into full italics
-> - Use semantic newlines
-> ---
->  man/man2/madvise.2                      |  6 ++-
->  man/man2const/PR_GET_THP_DISABLE.2const | 20 +++++++---
->  man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
->  3 files changed, 64 insertions(+), 14 deletions(-)
-> 
+Hi,
 
-Resending this for review as the patch to implement this is in merged [1]
+Le mercredi 05 novembre 2025 =C3=A0 17:26 +0800, Zhentao Guo a =C3=A9crit=
+=C2=A0:
+>=20
+> =E5=9C=A8 2025/11/5 0:13, Nicolas Dufresne =E5=86=99=E9=81=93:
+> > [You don't often get email from nicolas@ndufresne.ca. Learn why this is
+> > important at https://aka.ms/LearnAboutSenderIdentification=C2=A0]
+> >=20
+> > [ EXTERNAL EMAIL ]
+>=20
+> Yes, we plan to support the interlaced and mbaff streams in the=20
+> following stages. The decoder hardware can support interlaced/mbaff.
 
-[1] https://github.com/torvalds/linux/commit/9dc21bbd62edeae6f63e6f25e1edb7167452457b
+Perfect, let's focus on the core for now then, I have additional feedback f=
+or
+you on top of Neil's review, hopefully I can get these ready this week.
 
+regards,
+Nicolas
 
+--=-2cG765y6sSQkAAGLj2Ko
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQtWXAAKCRDZQZRRKWBy
+9C7bAP9Qs1rNKbRgDkazxpbW2p5TVrPLZK8wjWZLZUY+/CCltwD+LgR3cm+8x2UQ
+D82jlWcSVIKc5R+xySP7dgFgB+WISQU=
+=2auc
+-----END PGP SIGNATURE-----
+
+--=-2cG765y6sSQkAAGLj2Ko--
 
