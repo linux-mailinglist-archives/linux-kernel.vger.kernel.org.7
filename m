@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-885787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05702C33E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A73C33EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB0354EB8E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8120E3B53B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93AD264636;
-	Wed,  5 Nov 2025 03:57:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1A5207A0B;
-	Wed,  5 Nov 2025 03:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA24A21CC58;
+	Wed,  5 Nov 2025 04:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DOVKNPI6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAD71BD9CE;
+	Wed,  5 Nov 2025 04:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762315031; cv=none; b=NDs6sGtnNsoS2sY/g+Xe4enkcHQ2DbRSPaq+ALUwTYbg997fhZ7Fk+IHR7jXxd5S3pcmn7V765FqUCfFyFTKVp4lF+aRzk9zEos2tw6Z+htTGK41DyU8fPnnSdMBht0N4QCmgtSFwkGEJvl7b/AM8S9S8Z9juhPkLQgq3uTiqRw=
+	t=1762315350; cv=none; b=jvroBZoy/gUmIfgOXfx2Py1oQYWIaZb1OdJIc78Mu80aOiip2yY73dcdJq1bFNNVazQhzP7RF/OemBpAOcOP/nmQdqb1YGWS47aI0kWOS9/B8beZv+H8J8E8csP5UqoXEli5HE97PcJxHBxNeKo18r9A+ZCv/jUOGikV1BfyD4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762315031; c=relaxed/simple;
-	bh=roP89AMtaTLpPMYiuLN11KB4aUDrPhr49n3kX3iB0rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eWPR8MzyiCww77kr0yZI+jSKgvEUzJfEKLAXryhLsiH/4qDZNQJZJmFALW63ZSefNESp9pnIx2iAJCsFqRCrbHKditPZktXbN6wN6plYGb7KSZH1vps0dRQlz21zPca7S1chk4X8fziUT65HZauCqLYKhOXPdNTkhUEJ5CEhT0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF0EB16F2;
-	Tue,  4 Nov 2025 19:57:00 -0800 (PST)
-Received: from [10.164.136.37] (unknown [10.164.136.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 855B13F66E;
-	Tue,  4 Nov 2025 19:57:05 -0800 (PST)
-Message-ID: <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
-Date: Wed, 5 Nov 2025 09:27:02 +0530
+	s=arc-20240116; t=1762315350; c=relaxed/simple;
+	bh=yQXSY/WrQVDYfWdO0SbyUMhuGmS/rYRQpjuHxFCtNFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VDSD2Dz1i2qd3Z8uiDk0E94mNjcJrkhV9kuoxKRvZSv3WLBclpYJsLC2FftNHZ9xK4INr6fNiX2k+zyNT4wxgw/bv2GRqCdG/VqPFGAr6GL02iySiUdn/CF/GBPiXXQgKarnPBd5lKUkgV3Q0px4KxWnwkNv8+6QdZV5/eDCuqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DOVKNPI6; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A53ivCW028361;
+	Wed, 5 Nov 2025 04:02:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=lyooww/8Fnw1zaMTJvQpvCmFyUNEz2aBTccHlIHYh5E=; b=
+	DOVKNPI6jBE+UqXCDl/KEJNlSewD8o9L7O0OYKEwRufuTDh8Isgf4sYF8VxQXVFc
+	zh72H9FYMaEZrKFwlmP4LoaZEJUHAlci5BFeBv21PTImeI59BTXpfDgGM80p3FH7
+	i9cTf/S1Ch3KSpducNVAJ4gRv97H+6olZKnqlB+Ez078l67JC3z/puPW0XS4zyh2
+	dUQBgbkW4OiGf/cG2o9gQnf0Sq530QR7qLRFybO3lW+M8xuNWdhkhnd98E+UPfs1
+	v3mAzmjuYZr9UAfH2gzrwsu+g+KLheaCJJQlAdzy46p8L8UVlxWW5KdAozBiEBwb
+	OiMpO9/1Vy5p6j/79vuxmA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a7xxk00t3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 05 Nov 2025 04:02:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A51hgIE024836;
+	Wed, 5 Nov 2025 04:02:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ne15hn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 05 Nov 2025 04:02:26 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A542Prj005395;
+	Wed, 5 Nov 2025 04:02:26 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a58ne15gy-4;
+	Wed, 05 Nov 2025 04:02:26 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, michael.christie@oracle.com
+Subject: Re: [PATCH v3 0/7] scsi: target: Add WRITE_ATOMIC_16 support
+Date: Tue,  4 Nov 2025 23:02:18 -0500
+Message-ID: <176231440746.2306382.5588735953059411316.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251020103820.2917593-1-john.g.garry@oracle.com>
+References: <20251020103820.2917593-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
- __change_memory_common
-To: Will Deacon <will@kernel.org>
-Cc: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
- ryan.roberts@arm.com, rppt@kernel.org, shijie@os.amperecomputing.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251103061306.82034-1-dev.jain@arm.com>
- <aQjHQt2rYL6av4qw@willie-the-truck>
- <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
- <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
- <aQn4EwKar66UZ7rz@willie-the-truck>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <aQn4EwKar66UZ7rz@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_02,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511050024
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAyMyBTYWx0ZWRfX2pUx9P+mFv9A
+ 1sTLj19nPCOmqEN30R5wHhaXMuht4tg1zqOPkXCOV6Z/ej00aL6TqFYkow1GLzrQ4Oa5eTXsCnt
+ Y2KxsdkXHjOWyYYdzO4NMpFvsGSB1d5XcqVewd95MArKPnDh2tvyFXm+yXKQxoZu6Yu4I/Uq+1C
+ viRqRzg5wI1c7s5q5QWw6lFtJL4ytg9ignJRd7Mi1OCukuAcw7OEBHRZqHnW/pHeUmUvdVyYdD7
+ fMCvzR0MVKUpVVADBZVdBmbWHiUZd6xNGcpEgToyUhRwkvcOuPk3zSqvN3do/0HVlRQVtFvv158
+ 8f5tIbAfepHCSB7FYBW2ilvu429vlAHv4uZk/QoZwY82sRkZegDwxjjABjfq8ACD9lWepALH9Z/
+ G2NGDzCqP2AieBC5fQ8dlGP8T7MGShyW0oRUGOPofnyc69n0WI8=
+X-Proofpoint-GUID: PpZaBKnNKcMWaG7cfPMX3ta8d36SOTxo
+X-Authority-Analysis: v=2.4 cv=PIgCOPqC c=1 sm=1 tr=0 ts=690acc53 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=YyQzooh1NaLyuLBRQGEA:9 a=QEXdDO2ut3YA:10 cc=ntf
+ awl=host:13657
+X-Proofpoint-ORIG-GUID: PpZaBKnNKcMWaG7cfPMX3ta8d36SOTxo
 
+On Mon, 20 Oct 2025 10:38:13 +0000, John Garry wrote:
 
-On 04/11/25 6:26 pm, Will Deacon wrote:
-> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
->> On 04/11/25 12:15 am, Yang Shi wrote:
->>> On 11/3/25 7:16 AM, Will Deacon wrote:
->>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
->>>>> Post a166563e7ec3 ("arm64: mm: support large block mapping when
->>>>> rodata=full"),
->>>>> __change_memory_common has a real chance of failing due to split
->>>>> failure.
->>>>> Before that commit, this line was introduced in c55191e96caa,
->>>>> still having
->>>>> a chance of failing if it needs to allocate pagetable memory in
->>>>> apply_to_page_range, although that has never been observed to be true.
->>>>> In general, we should always propagate the return value to the caller.
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
->>>>> areas to its linear alias as well")
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>> Based on Linux 6.18-rc4.
->>>>>
->>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
->>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->>>>> index 5135f2d66958..b4ea86cd3a71 100644
->>>>> --- a/arch/arm64/mm/pageattr.c
->>>>> +++ b/arch/arm64/mm/pageattr.c
->>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
->>>>> long addr, int numpages,
->>>>>        unsigned long size = PAGE_SIZE * numpages;
->>>>>        unsigned long end = start + size;
->>>>>        struct vm_struct *area;
->>>>> +    int ret;
->>>>>        int i;
->>>>>          if (!PAGE_ALIGNED(addr)) {
->>>>> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned
->>>>> long addr, int numpages,
->>>>>        if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
->>>>>                    pgprot_val(clear_mask) == PTE_RDONLY)) {
->>>>>            for (i = 0; i < area->nr_pages; i++) {
->>>>> - __change_memory_common((u64)page_address(area->pages[i]),
->>>>> +            ret =
->>>>> __change_memory_common((u64)page_address(area->pages[i]),
->>>>>                               PAGE_SIZE, set_mask, clear_mask);
->>>>> +            if (ret)
->>>>> +                return ret;
->>>> Hmm, this means we can return failure half-way through the operation. Is
->>>> that something callers are expecting to handle? If so, how can they tell
->>>> how far we got?
->>> IIUC the callers don't have to know whether it is half-way or not
->>> because the callers will change the permission back (e.g. to RW) for the
->>> whole range when freeing memory.
->> Yes, it is the caller's responsibility to set VM_FLUSH_RESET_PERMS flag.
->> Upon vfree(), it will change the direct map permissions back to RW.
-> Ok, but vfree() ends up using update_range_prot() to do that and if we
-> need to worry about that failing (as per your commit message), then
-> we're in trouble because the calls to set_area_direct_map() are unchecked.
->
-> In other words, this patch is either not necessary or it is incomplete.
+> This is a reposting of Mike's atomic writes support for the SCSI target.
+> 
+> Again, we are now only supporting target_core_iblock. It's implemented
+> similar to UNMAP where we do not do any emulation and instead pass the
+> operation to the block layer.
+> 
+> Changes since v2:
+> - Fix 32b build error
+> 
+> [...]
 
-Here is the relevant email, in the discussion between Ryan and Yang:
+Applied to 6.19/scsi-queue, thanks!
 
-https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/
+[1/7] scsi: target: Rename target_configure_unmap_from_queue
+      https://git.kernel.org/mkp/scsi/c/3434be392051
+[2/7] scsi: target: Add atomic se_device fields
+      https://git.kernel.org/mkp/scsi/c/d505447b8d78
+[3/7] scsi: target: Add helper to setup atomic values from block_device
+      https://git.kernel.org/mkp/scsi/c/c486634fe2b1
+[4/7] scsi: target: Add WRITE_ATOMIC_16 handler
+      https://git.kernel.org/mkp/scsi/c/526145725106
+[5/7] scsi: target: Report atomic values in INQUIRY
+      https://git.kernel.org/mkp/scsi/c/710ad826e300
+[6/7] scsi: target: Add WRITE_ATOMIC_16 support to RSOC
+      https://git.kernel.org/mkp/scsi/c/2d9668883bba
+[7/7] scsi: target: Add atomic support to target_core_iblock
+      https://git.kernel.org/mkp/scsi/c/8e62d8f4b159
 
-We had concluded that all callers of set_memory_ro() or set_memory_rox() (which require the
-linear map perm change back to default, upon vfree() ) will call it for the entire region (vm_struct).
-So, when we do the set_direct_map_invalid_noflush, it is guaranteed that the region has already
-been split. So this call cannot fail.
-
-https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/
-
-This email notes that there is some code doing set_memory_rw() and unnecessarily setting the VM_FLUSH_RESET_PERMS
-flag, but in that case we don't care about the set_direct_map_invalid_noflush call failing because the protections
-are already RW.
-
-Although we had also observed that all of this is fragile and depends on the caller doing the
-correct thing. The real solution should be somehow getting rid of the BBM style invalidation.
-Ryan had proposed some methods in that email thread.
-
-One solution which I had thought of, is that, observe that we are doing an overkill by
-setting the linear map to invalid and then default, for the *entire* region. What we
-can do is iterate over the linear map alias of the vm_struct *area and only change permission
-back to RW for the pages which are *not* RW. And, those relevant mappings are guaranteed to
-be split because they were changed from RW to not RW.
-
->
-> Will
+-- 
+Martin K. Petersen
 
