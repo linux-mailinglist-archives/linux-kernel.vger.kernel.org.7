@@ -1,450 +1,140 @@
-Return-Path: <linux-kernel+bounces-886017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E24C3483D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:41:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C694C3484D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835EF189C9FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F9218971CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196CB2D3A60;
-	Wed,  5 Nov 2025 08:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F7B2D6E59;
+	Wed,  5 Nov 2025 08:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ILzj+rNh"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010031.outbound.protection.outlook.com [52.101.85.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="cU/PL7RK"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055712C0275
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332084; cv=fail; b=GtKh7TqvRKxhzFTz+7dKaebqFK0v3ucf0nAOitFqbZ2cBWWIqZ7602kv7aGq8noQ2LnakZihWW/1jufwjJ1nzPH30sjNT+9v5ClNcPkDHpq5vy87mpSPP9+jBdj331kwc1pmY8IACF06sFB406aI/89m+a6fmsDPJL79fSmk+aA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332084; c=relaxed/simple;
-	bh=y5DibadSFRTm8hPCRLUXp1/r+l7it5Le0IfrWGwN4X0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZchCRPYgaAewLsz8xR9ei9lAqj0UJE/C86+lCd9H4ft0bffE0Fe50KASgeFiUney86eTqoT/kfJkgPrcjOEOMsLspfD+zmFyYlZ/2tBTjpHsq0UjMibb49YQMowHHdeTb3ABEPgklVIWlPCNxFHindsBICzJNPnd6yrIhDzr5rE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ILzj+rNh; arc=fail smtp.client-ip=52.101.85.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pFuA6uIq777r/vNawH9wuKpywKQJ9LRu4a6B1i4P+CNI7BbBebVstY24a3vOQxbpXO8I+vCm/jH/Y/OdJRLNtecpwYFwvdA/FpaiqKXjKWyMZrfirAvltydh0iaO/CZi93ek4xGe/G2W0Yk5f93Sk+6gNyEUYrrB8Z69CDmAJBAqEMpmAQhyyJTvaUN4WYDJZG08NIZ4Sb1TP/4IehncRtGmSsztisM9zEe6o2wXv6AVjWQeSBw4GkuIcKKL1KTo+0WWA4Bm0t979yR/YE6fdtbg8MudpzCjGUndC/zfJeXBa6YydMc4UY+wH5vxbOeiX3VG6ajaSwprHuuNouuz0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zsIbacMQuf9z7tPoFk2c86IusVho4ai/QA2mqKMskG8=;
- b=jyfH7hOByr5Oc7aqdp9XFNonwUxiYb1Q4fJETvmkS2jPCNQAwDXx2IUtciaUpRpDZF4vVRJan4UPZgIz9KB4xEZOxDk5cz3w9PWMRsAkiVxuaihnKK3L51icBe4bFBqZSbDr6zB6Ef+fbKF+zZ5O7y0bdFhx/hmRAaytnHcEgxKOnmfYfJ1AJ7gqe2M/sRCwhv5CoISEAMsH1yDTQXh8BNApPziIPShMTkQZ0g6gdxjYnc2OfTRtI4EFa/k0W8P/tmApoNpH+DLL7KIZb2rn738Q6visbvtjSPfXlugsHLx4oT+C72Bju5Dw76RFIvVic3cnVX/EA4RwV/P96F35Lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zsIbacMQuf9z7tPoFk2c86IusVho4ai/QA2mqKMskG8=;
- b=ILzj+rNh7cMvGSaDA/BqfRfWpyZlwHvix5SMc9EaYrrWQLWj6PTIUN/YOHmiKG0oy6Qo5CC4dSwE8NQxSoXIXoojEwwrfDGMzoGpgbBlAQdOcNTW/GNc0ioS61/IjFvf/9yDfL2PCI0rhrDFCbyN9A7jgZ023tL/mGXRsZ97t10=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA1PR12MB8164.namprd12.prod.outlook.com (2603:10b6:806:338::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
- 2025 08:41:20 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
- 08:41:20 +0000
-Message-ID: <ef0ca8d0-d2a1-4a31-a7da-41c32b40c233@amd.com>
-Date: Wed, 5 Nov 2025 09:41:16 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 15/20] drm/amdgpu: introduce
- amdgpu_sdma_set_vm_pte_scheds
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251104083605.13677-1-pierre-eric.pelloux-prayer@amd.com>
- <20251104083605.13677-16-pierre-eric.pelloux-prayer@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20251104083605.13677-16-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0065.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ce::8) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E26726ED55
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762332120; cv=none; b=imlcjrQHTb1uMpc1nOZnIKYNTecFw0hB4E7zkpAbpHObV1gqe/ts8VFns9jtk+WnUj59bcYEq7aQByBaKtWv34zgcWrxJcxi5g+GWMKpsPjKbBWsN4NHMLErvoE7zs7XoArNHLYxUL94Ynd7a+uum5cmUGQx8D41amOA4o8CXmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762332120; c=relaxed/simple;
+	bh=lycGLt/AmYhVMaxxlc2sFqXsptoJSH+28KSwY6rR74o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQJpCQ/4hPAmfSMElZPiIF1kqrcD/qvUWocNeoXdn2m+aH+2cTfwaPNM60toqV9/7i5nP+QWfLUQIxUNpENJ/abauUko+mrktRB7GvGrrSRiHcWwEewkr/fI4T+5A/saTnO/Aq0kL0OkKa8pyTgrsPmE1/8xsstAuatPQ5jiXDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=cU/PL7RK; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so561994a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:41:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1762332118; x=1762936918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tUkopRdeDHdh9AWy0RMXnD+iemi5ZwANhUDqA8Z7pVY=;
+        b=cU/PL7RKSR1tV5ZDsvSmMjojGUYiW1PGAZi8ZuBRs3hY3MqfiktLZKApdk79+Nw6c6
+         +u84uc4YZbzgT0Fq4EF4yMmEm2klAoaNPE9tw/uNt9ONJ3X4zV2DimOJ7C/R2ALDVZk/
+         Os2W39mDqB7QtMJezrRXz/CJhYOPo4HbZvXraFQuXN8N2E6VFj8XsVvSShE9drleVqYr
+         BHUpCGby8BKjLY117vQ0bWnI9qj/nkl0+bWIDfIZv27NsT4HeeGNQNJW0GLTx2ZSCIK/
+         f3RYBhTWvWpBLOhQ9LlqJFzdCYILKH50OXc1uJVV3s5qXTj7hD/NT3zrsHgKXxTzeTn3
+         givA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762332118; x=1762936918;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUkopRdeDHdh9AWy0RMXnD+iemi5ZwANhUDqA8Z7pVY=;
+        b=xE+ZCTqGcljUPMtm9oleDLWU+lAaQZPA4TRSvvdQOO2WxPPugFCXNPjvfNxPI4idQl
+         s3mLtuyI3u7VJxecTn1I04vr5WNxcKATqYkBSgZDcr4I6JDXhhbNoN6iYXFhDNxe5tZE
+         X4RiaozYXGJFBBoOqY5cCQ3TzLEGuyiJs/6YT6ggJ5RMnlLhmp6vg/0KwYzCYGBKHfg4
+         fIx6ODMJeGAUwIG3TKTNA7e0m6r22ytWZHqGPSAXMUq4JtcUc4XO5phjIbr+5ibtkGEi
+         /So7xXSKWdQfIUUGgWHPZKyBdd8kZpiInD8OcJgpIkmuCQ8uN8IPUXwgaIg37HEGW9Qn
+         a8vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNnGdredUL0Nz7HE5C+KzplRnOnZe3OvoD93t5a2hbFa9INcjlr91AWmlDI1QB8R2xrxkfL/D5QC/QUmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzni8oUZRBHbtC2/TkijgbTwWG/9fHAz85xY5HZU6sbruQTCr2
+	Vpz49wujLnP7I2CJXAVA5RrhxGxBnCL/lCUcBtGoiHkanCpTR77U+NYTXaVV9UvbuK0=
+X-Gm-Gg: ASbGncvBHEzN5XQcg1haCxc3naaYxKvBfZFRa4w+MDgCQwpE6wUjw8RoPDfGuxQlmfj
+	kHUyiurwAvGiyaIfGEKxe4wxRZl4+umaceG9X1rqUUikxkCRIx2Uk5z+qWE+I0XWijt6IZhQ3RA
+	eF/ykqaHXwl2Mb9e7WcHlDt0lx72Xn3ZJgpHDbLJJEoL4IvYCZRTnmiO7U6FuQFpceiM8QY8i2l
+	w+5pqfC2rT3wnsT1/p82dkGmZhk6xQbXt/jjFSIXhjICnDM6851K+64Gkf5VqOjEvYC2vKFXDfz
+	UX1luovfJlUsFA/2Sm//p3Kft2YXDbQpMRHj58tXWWPGDx2F/LiwCthHH2RmMJZPhtbiUTEB/Mh
+	xM5Ymk6Xw62rqlbN/mx//HICh/p8v0HZbfN4kg+kTs4d4JvGAWaX8EG9q3lIjz51DcLT2WbzKIq
+	S28yxmfKbu3mB9prED8eoNMkUlhepAQx4R5vehoZvkkBqUaQ==
+X-Google-Smtp-Source: AGHT+IH5fMD1INFs9eEGKYVtBDuuIJ1FKf0Z38BpsziCkXGqBqC8vDLl4i3lj3Io8I0ea2eccHNQTg==
+X-Received: by 2002:a17:902:d48c:b0:24b:270e:56d4 with SMTP id d9443c01a7336-2962ad0fba0mr32538305ad.4.1762332118155;
+        Wed, 05 Nov 2025 00:41:58 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601972a9fsm52542895ad.20.2025.11.05.00.41.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 00:41:57 -0800 (PST)
+Message-ID: <913ad5f8-89cf-475f-8ab4-3fa5e21d2941@rivosinc.com>
+Date: Wed, 5 Nov 2025 09:41:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB8164:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f2d6f09-2c75-4d04-8da0-08de1c471804
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RjNyMGV0QWlMRFI3Z3AvSUJheDB0K2VTOTA5REt1OFROUXB6TDFpanAxYjdE?=
- =?utf-8?B?M3Q5QmlieEVxY3RINUZZZDRPRzRlaTF4RUFiOXpscVdEQkx0SmUralJmWjc5?=
- =?utf-8?B?TG5ueEpidDVOZ0VGS3l1OW5RT2hJV3pidzljUURObFFybTg0MWsyWWVTcEZZ?=
- =?utf-8?B?dnRMMy9qZmlldGVuTVlLWlhESUFxWjBEWTdUdERNVU1lM21QeHpvMTJZeVNT?=
- =?utf-8?B?aDAxcDNCaFZoSEt1aW5UUFhXK1hQVE5nQWRpUGdoalRXaXQ0b3JGOFpjNWhQ?=
- =?utf-8?B?Z2s4OGlaUVNaaFR3Ukp6NFcxNTB0bU9oVVdSR0VhZ2NtdWFWdmMyYmkydk9Z?=
- =?utf-8?B?eXN4d0VQM1F1ZVNFSVlMTDFXbFJ3R3VadDAxc2NtTU9GTGVhR0VvZzJaVUFh?=
- =?utf-8?B?czFDcmpHMzh4RXpoQ1o4SnZkNGZvaDdUQWRlaXk5eTJmNjMxN3pFQ2NKYzRF?=
- =?utf-8?B?ZTFTSEN1M3lmNXhSZVNjcWpKMXgydUVvdkdqZ3llWUE4Y21YK3VJOW9xQkU0?=
- =?utf-8?B?ODVkR1NicDJSVWlqam1CU1ZvaElrR0NOcVpMQkVMTVVFQjIyMFZCQXZsdnZu?=
- =?utf-8?B?cEIxQnBkWWgwV1g4YTlTdUdiSzVsYUdqcnBzUmlSbHEyeU1sV2d1ZElDYUgz?=
- =?utf-8?B?RFVWaDZGVS9sRTk5KytqV2VuS0ZRcFl2RHk1YUJQWVVLZDNHUHFqcm11U0Jj?=
- =?utf-8?B?VHQxQVVLYitDQ3FLeEN4MTlnR1llNWs5cThGMmxTRjZBMlZQVGNDbXVOR3pD?=
- =?utf-8?B?dkZPakMxT3pDODl5dVlLOTVaWTlrQVFITmthRll4bEUzQVl6ZmdobXNQdWcx?=
- =?utf-8?B?bUcwdG1pdzVhUDRkMngvOXJJRFozRkFSM3JXc040bHVLd2dCWFNKaXowcHhS?=
- =?utf-8?B?UlhJOFZpVVM5cjdNN1pKMHRzYnNPdnFObncrSk4vS3I0ZUEvaUpWN2U1NWFy?=
- =?utf-8?B?cmsxTUNIMmFUaThDZXovWDRBSFVrT3c3TGdpdFM2aG5zY2R3QmJYYzBFVER2?=
- =?utf-8?B?d3czZEFHYnY5UXBRRC9SSUhOS1EwSXRHeTdVZ1I1OEZRK015UW96b05VV3hH?=
- =?utf-8?B?SXBvMkJzaGUxVTFkNjJkQlFUd1VlVjgxbnRiejJRMXpNbFZpUGxoZnE0NGRF?=
- =?utf-8?B?cXJyemxxbGxiVWszcHZVV2Q3Qkd2RHBEci91UUZVdktxdHhpMHhTSHlmVUV4?=
- =?utf-8?B?YU1pTVQ1TVlIS1hMOVVrR2NRcTFIeS9iQUpDOW5DWDNSTld6MU5sNmZOcXo0?=
- =?utf-8?B?d2lVRDJNZFBLcU1VOXIxOVNvbDd6ZlZjTTg3NEIwYkxzdVp4QzhBdUxtMXky?=
- =?utf-8?B?SkVHR0VkcTFjU0tvSnd0SUtaR1pERDUrYmhlaktnTW54cHA1V0VTOVdFeGh0?=
- =?utf-8?B?alRnTHJNOWNPTWc3d2dIZjNGVnNLb24rbk5SV0w2bkZSZWMwckRMbW12Qk03?=
- =?utf-8?B?STU4QWE4UXNWOWtkdktSNFVPcnV4dUdxcnliU2RrdzVUVkg1S0oyNFhaMTBI?=
- =?utf-8?B?ODR0OTNYNHI0OHo3RVMrY1lNcXdvc3FsOEkxMTQ3Wi9rZEVhYnJVbi9aNXUz?=
- =?utf-8?B?UHc0c2tOdmtvaDIxSFBaQnE4Y0dNWGt0anRtbkJYaDY2eFo3eUVYanBsRzl0?=
- =?utf-8?B?Q1RtVmRFdWZnZkZDVE00QXhNV1ptYWxSZFRWeUlYNGFtVUlqYWxnbkcwVEJD?=
- =?utf-8?B?ZmtDc25CUW44T1l1eFBhVGYyWW1SdWxNVk11bFFVU1UrV2prSXBVWFlETFU3?=
- =?utf-8?B?ZU5VcUhOOTZBVnRnOEF1SUsyL1JkMW1pSXFLdldiTUM2VVZOazlyWmFJN3M1?=
- =?utf-8?B?ZDdvZnpCQnY1RmhER3VZM214TEUzeDluazhETHJCK0RTR3dFeFNJQ3hRQnJw?=
- =?utf-8?B?WlJXa3hUdVRuVm0xN0FWeFFwQVZRVG5pbEhTU1J6ZlZSUmxlOGRCRDlOcGxh?=
- =?utf-8?Q?WTKzrxYjPHwH++QpHt+IBYIfg5Prnr+v?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UUtJU2IyUGpsMW5uME5ieDdXUTZmeS9NYzhiTlJzbXY4dG9oNmhWV3JkZ3dz?=
- =?utf-8?B?RnpDMGdtYzlpazJwZUZLN1ErS0FNRTM5V3ZUZ0xWczBCQjVQV3pnL0tvWFl0?=
- =?utf-8?B?SWNDNUM3d0RxUXdOblkxL3dJYUprUXlGakdmVDZqb1lXSDU3S1gzTUxkQmZ2?=
- =?utf-8?B?RFhUTW9Yek1MQ0Z6OWJ0VEJqcjRpc0dMSVM5a2tUMms1SWNVbThHbEliTGx6?=
- =?utf-8?B?Mm8rK2tBWHdDZUN5MDN2VVBJU2RzdFd3MU9iNy9nUytRUFYwMk9RSzN1eEJM?=
- =?utf-8?B?NzkrVTV1SkYxbFUwNXhhNzgyenMydHlUM1lVOWI0ZVVGWElGTXhMaWJTUE5v?=
- =?utf-8?B?RU1IbW4vQlJ4aDNPcFQ1NDFoUktPcW5adjRwa1lwTktXSEh3L2pUTUZWdFY5?=
- =?utf-8?B?OU5UUmVUbkVTRzd3NFFjU0FBdGRHNW1jZTZsME9TZzR1Y0ViazNvdTZ0bjZx?=
- =?utf-8?B?WUFxdzRuYzFDN3pHMTZMdVBLK2Rkanp3eFgyV25QZEQrcWYzSkFwQzN3cStl?=
- =?utf-8?B?M0wvMU55WXVYZk9FeEZqS1luZS95VVZ4RXk4RGgrLzlMbXBydkZnNXp5Q1gx?=
- =?utf-8?B?WURnWkdSWXFWTjFYSXFvL3p4aVF2L3A0MkNQTFJDQnp3WnNyUTVIYWltczg0?=
- =?utf-8?B?c0xmdjVyaEJ5ZC8xcEtYRTlocmx4aXAzbzhDV0JFdmkrSmJGWlpuVHk2UDFN?=
- =?utf-8?B?cWRYWUI2TVhBREkyRWs2b3A2MllpRTdCSEJCc0FwU1lvMENQWUVnWDRGYlQ5?=
- =?utf-8?B?Z29pa2dFY2QyZkk1elJkT1JlUldVUmtSVm9obTdKVnRYbGlDZFRzZ3E4MFFy?=
- =?utf-8?B?VzYvUlFwVHdQSzJJcWdVTzNla3d6d2E3MGJPdjVRZE1TVlUwS1BYcUFleEFv?=
- =?utf-8?B?eFZUb2hveURERldycUdybWxvS25sYWlQd29QTjRjemlMYUloRmtnTjZ1eFp6?=
- =?utf-8?B?QW1qMWN5TTRXbGV0K214SGFpOURGU1dQSVk3enVvL29HanFaL3FDYnpTbGhS?=
- =?utf-8?B?MnR1RU5zUFJqRHNFeWdWMmFNaCs4MjV0MTg5ZDkyeUtPNHlObCtuTlFPVUxX?=
- =?utf-8?B?ZDZhT0ZKVFMyYVArbnpwdFQwRkxyUkovRDdaQTUzNG1idVdXWDQ3bkxDVWtu?=
- =?utf-8?B?eU5SK3ViNElqNWN3amNpMFlIdlRHbklTRk01SW1EanZpVUszSS9oa0tpTVRo?=
- =?utf-8?B?VGoyNGNVdTBtaWR6M0ZxTXpnc2Zac0dTQldyalNFaGFlekd0NmRsbWF6cXhw?=
- =?utf-8?B?dFVFUXluTVl6SWlSQkpHYlY2ODhKb3hsdVFtUU5TWUJrQ1g4bUxKNWlWYnRE?=
- =?utf-8?B?WmJjbFhyUlZ2TkJpWGErZHZIaXFKQlovQXNQZXMyQ2c3SEVrLzE5WmY3KzU1?=
- =?utf-8?B?ZzZXaEVHTHJpcHZ5bXc1cXhmZlJLcXFiM2dxcW84emxlOTEzcktCUE9GZmgw?=
- =?utf-8?B?cU1HNWYrSUxYRlgzbFBvbjJzaUY2ZkUwMzZPU3c3cFB3b3JFdWIyVmVnU0Vj?=
- =?utf-8?B?ZVBuKytseHdDc3FGRm9JZGxFY3plQ0Y4NUEwTW9IMWVCNTZGUzZ4d1BXYkJW?=
- =?utf-8?B?R2NnelJoczZoZXQ0L0Z2cmlRWjc3ME9LVUZ3OGp2RVBrM2lYZHFpVDV0UG91?=
- =?utf-8?B?alBxUTVwamQvK1M0WVY3MWtNZlppU24xeGo1Z09yRFEzcWwwVTRXTy9WRHFO?=
- =?utf-8?B?UkNMVXowMVROUG1QQmxmWlQrYWRaTDlRZG51WTE5Sk44UzhRb0JFMk8zUGpo?=
- =?utf-8?B?VkpkcFRRMERxbk1NTHh2L2p6NG1pWTNzbUFYYzZmSFRGNFovaWFTclJWcHhX?=
- =?utf-8?B?N1lGQitQMGlXQ2FrQ1B5WndJL2ZmdURXT3ZMaEwyZnFyYWkvZlNOUCtuSFl3?=
- =?utf-8?B?eWpYSWJGeGsrQWFzVXRkTStPQkRXbk0zbDJMamxBelhRUmJoWWZMSmJQTUpK?=
- =?utf-8?B?WU9YOFZNWVM5M0wyUjBBeDBxeEptU1RRMTQvckxzQkRibzNNTXVIZ1NnditF?=
- =?utf-8?B?TFZyOWlCK3l2YjBRTkdJclBnWnNsRUxETUZHbWY5eXpoYVFPTTJwSHE0SU9T?=
- =?utf-8?B?NjJjRDllNm9Kb21LS0NMd0VEQTFQOVhuK0ZCb2d4Mk1mOFFPSVl4bzhQamF3?=
- =?utf-8?Q?0QoayDEcQvC3kjySC1K0XKG8f?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f2d6f09-2c75-4d04-8da0-08de1c471804
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 08:41:20.7776
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bXje7/8GPSWqlgzXzLCco9h70ZMVSMg3XmQ+WqefjMUKWZ4qtEhBMrZ/+wIm+6US
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8164
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 04/10] riscv: Add fixmap indices for GHES IRQ and
+ SSE contexts
+To: Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-efi@vger.kernel.org,
+ acpica-devel@lists.linux.dev
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, lenb@kernel.org,
+ james.morse@arm.com, tony.luck@intel.com, ardb@kernel.org, conor@kernel.org,
+ robert.moore@intel.com, sunilvl@ventanamicro.com, apatel@ventanamicro.com
+References: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
+ <20251029112649.3811657-5-hchauhan@ventanamicro.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20251029112649.3811657-5-hchauhan@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/4/25 09:35, Pierre-Eric Pelloux-Prayer wrote:
-> All sdma versions used the same logic, so add a helper and move the
-> common code to a single place.
+
+
+On 10/29/25 12:26, Himanshu Chauhan wrote:
+> GHES error handling requires fixmap entries for IRQ notifications.
+> Add fixmap indices for IRQ, SSE Low and High priority notifications.
 > 
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu.h      |  1 +
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c   | 15 +++++++++++++++
->  drivers/gpu/drm/amd/amdgpu/cik_sdma.c    |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c   | 12 +-----------
->  drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c | 12 +-----------
->  drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c   |  8 +-------
->  drivers/gpu/drm/amd/amdgpu/si_dma.c      |  8 +-------
->  12 files changed, 26 insertions(+), 78 deletions(-)
+>  arch/riscv/include/asm/fixmap.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-> index a9dc13659899..dead938a59a4 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-> @@ -1614,6 +1614,7 @@ bool amdgpu_device_has_display_hardware(struct amdgpu_device *adev);
->  ssize_t amdgpu_get_soft_full_reset_mask(struct amdgpu_ring *ring);
->  ssize_t amdgpu_show_reset_mask(char *buf, uint32_t supported_reset);
->  void amdgpu_sdma_set_buffer_funcs_rings(struct amdgpu_device *adev);
-> +void amdgpu_sdma_set_vm_pte_scheds(struct amdgpu_device *adev);
+> diff --git a/arch/riscv/include/asm/fixmap.h b/arch/riscv/include/asm/fixmap.h
+> index 0a55099bb734..e874fd952286 100644
+> --- a/arch/riscv/include/asm/fixmap.h
+> +++ b/arch/riscv/include/asm/fixmap.h
+> @@ -38,6 +38,14 @@ enum fixed_addresses {
+>  	FIX_TEXT_POKE0,
+>  	FIX_EARLYCON_MEM_BASE,
 >  
->  /* atpx handler */
->  #if defined(CONFIG_VGA_SWITCHEROO)
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> index bc11e212f08c..b66e41e979ad 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> @@ -3210,3 +3210,18 @@ void amdgpu_vm_print_task_info(struct amdgpu_device *adev,
->  		task_info->process_name, task_info->tgid,
->  		task_info->task.comm, task_info->task.pid);
->  }
-> +
-> +void amdgpu_sdma_set_vm_pte_scheds(struct amdgpu_device *adev)
+> +#ifdef CONFIG_ACPI_APEI_GHES
+> +	/* Used for GHES mapping from assorted contexts */
+> +	FIX_APEI_GHES_IRQ,
+> +#ifdef CONFIG_RISCV_SBI_SSE
+> +	FIX_APEI_GHES_SSE_LOW_PRIORITY,
+> +	FIX_APEI_GHES_SSE_HIGH_PRIORITY,
+> +#endif /* CONFIG_RISCV_SBI_SSE */
+> +#endif /* CONFIG_ACPI_APEI_GHES */
+>  	__end_of_permanent_fixed_addresses,
+>  	/*
+>  	 * Temporary boot-time mappings, used by early_ioremap(),
 
-Please also add the vm_pte_funcs as parameters since those should always be set at the same time as the scheduler instances.
+Hi Himanshu,
 
-Apart from that looks good to me.
+Reviewed-By: Clément Léger <cleger@rivosinc.com>
 
-Regards,
-Christian.
+Thanks,
 
-> +{
-> +	struct drm_gpu_scheduler *sched;
-> +	int i;
-> +
-> +	for (i = 0; i < adev->sdma.num_instances; i++) {
-> +		if (adev->sdma.has_page_queue)
-> +			sched = &adev->sdma.instance[i].page.sched;
-> +		else
-> +			sched = &adev->sdma.instance[i].ring.sched;
-> +		adev->vm_manager.vm_pte_scheds[i] = sched;
-> +	}
-> +	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +}
-> diff --git a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
-> index 25040997c367..f2515de65597 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
-> @@ -1347,14 +1347,8 @@ static const struct amdgpu_vm_pte_funcs cik_sdma_vm_pte_funcs = {
->  
->  static void cik_sdma_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &cik_sdma_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			&adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version cik_sdma_ip_block =
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
-> index 149356c9346a..4b2c7f75eadb 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
-> @@ -1242,14 +1242,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v2_4_vm_pte_funcs = {
->  
->  static void sdma_v2_4_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v2_4_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			&adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version sdma_v2_4_ip_block = {
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-> index 6b538b6bd18f..fe0c855a803a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-> @@ -1684,14 +1684,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v3_0_vm_pte_funcs = {
->  
->  static void sdma_v3_0_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v3_0_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			 &adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version sdma_v3_0_ip_block =
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> index 60a97d1a82f2..405ccdfbafad 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> @@ -2622,18 +2622,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v4_0_vm_pte_funcs = {
->  
->  static void sdma_v4_0_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	struct drm_gpu_scheduler *sched;
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v4_0_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		if (adev->sdma.has_page_queue)
-> -			sched = &adev->sdma.instance[i].page.sched;
-> -		else
-> -			sched = &adev->sdma.instance[i].ring.sched;
-> -		adev->vm_manager.vm_pte_scheds[i] = sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  static void sdma_v4_0_get_ras_error_count(uint32_t value,
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c
-> index d265157bc4e1..1b2868b16859 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c
-> @@ -2323,18 +2323,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v4_4_2_vm_pte_funcs = {
->  
->  static void sdma_v4_4_2_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	struct drm_gpu_scheduler *sched;
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v4_4_2_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		if (adev->sdma.has_page_queue)
-> -			sched = &adev->sdma.instance[i].page.sched;
-> -		else
-> -			sched = &adev->sdma.instance[i].ring.sched;
-> -		adev->vm_manager.vm_pte_scheds[i] = sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  /**
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-> index 127f001ebb5a..af920e100400 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-> @@ -2081,15 +2081,9 @@ static const struct amdgpu_vm_pte_funcs sdma_v5_0_vm_pte_funcs = {
->  
->  static void sdma_v5_0_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	if (adev->vm_manager.vm_pte_funcs == NULL) {
->  		adev->vm_manager.vm_pte_funcs = &sdma_v5_0_vm_pte_funcs;
-> -		for (i = 0; i < adev->sdma.num_instances; i++) {
-> -			adev->vm_manager.vm_pte_scheds[i] =
-> -				&adev->sdma.instance[i].ring.sched;
-> -		}
-> -		adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +		amdgpu_sdma_set_vm_pte_scheds(adev);
->  	}
->  }
->  
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-> index 78654ac3047d..29f597d56bcb 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-> @@ -2091,15 +2091,9 @@ static const struct amdgpu_vm_pte_funcs sdma_v5_2_vm_pte_funcs = {
->  
->  static void sdma_v5_2_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	if (adev->vm_manager.vm_pte_funcs == NULL) {
->  		adev->vm_manager.vm_pte_funcs = &sdma_v5_2_vm_pte_funcs;
-> -		for (i = 0; i < adev->sdma.num_instances; i++) {
-> -			adev->vm_manager.vm_pte_scheds[i] =
-> -				&adev->sdma.instance[i].ring.sched;
-> -		}
-> -		adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +		amdgpu_sdma_set_vm_pte_scheds(adev);
->  	}
->  }
->  
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
-> index d1a7eb6e7ce2..03365db70d9c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
-> @@ -1897,14 +1897,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v6_0_vm_pte_funcs = {
->  
->  static void sdma_v6_0_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v6_0_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			&adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version sdma_v6_0_ip_block = {
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c
-> index 9f15aa1df636..90d291c304d3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c
-> @@ -1839,14 +1839,8 @@ static const struct amdgpu_vm_pte_funcs sdma_v7_0_vm_pte_funcs = {
->  
->  static void sdma_v7_0_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &sdma_v7_0_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			&adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version sdma_v7_0_ip_block = {
-> diff --git a/drivers/gpu/drm/amd/amdgpu/si_dma.c b/drivers/gpu/drm/amd/amdgpu/si_dma.c
-> index 621c6c17e6dd..4422aaeb99e3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/si_dma.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/si_dma.c
-> @@ -840,14 +840,8 @@ static const struct amdgpu_vm_pte_funcs si_dma_vm_pte_funcs = {
->  
->  static void si_dma_set_vm_pte_funcs(struct amdgpu_device *adev)
->  {
-> -	unsigned i;
-> -
->  	adev->vm_manager.vm_pte_funcs = &si_dma_vm_pte_funcs;
-> -	for (i = 0; i < adev->sdma.num_instances; i++) {
-> -		adev->vm_manager.vm_pte_scheds[i] =
-> -			&adev->sdma.instance[i].ring.sched;
-> -	}
-> -	adev->vm_manager.vm_pte_num_scheds = adev->sdma.num_instances;
-> +	amdgpu_sdma_set_vm_pte_scheds(adev);
->  }
->  
->  const struct amdgpu_ip_block_version si_dma_ip_block =
-
+Clément
 
