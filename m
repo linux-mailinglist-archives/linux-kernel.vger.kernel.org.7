@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-887203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABF5C37894
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:48:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E945CC379A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:59:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D5C93495ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:48:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B9B24E8C47
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B22343D92;
-	Wed,  5 Nov 2025 19:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE023345723;
+	Wed,  5 Nov 2025 19:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S3uIAEUN"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="xTYs1Z8j"
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0AF342CB6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD70320CD1;
+	Wed,  5 Nov 2025 19:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372110; cv=none; b=khM56/hrBB1ke/UfW5mS9tmtSWLSRKklkNLmW+GG3boxW3L2LEgPgaA7+QQXtaUb7Ooj+cdRrF/f54h4Uas0qt5+MoQSZAEgIj0wFu9B7B9rh8Xcv9D63yWR3BH9A3k7gaJ8DiOw8eFV/sB4TgxKXLHn1x4K3qNwUBOYxeKtoqc=
+	t=1762372764; cv=none; b=B4FSbjv3Oe48SthJHKUKZhTlYRXgjAdCzbSom9Zkjj6dq+Fve0oYD27i+h1VAzAZE3IyYgDezNFgl7BpiiXiIyYfi6KTbgUoxPE8VLv/lzUMrsD4qChHc4f3cqaGnxsoMAAEVHj51/iN00plHMxtgB9UdHdTsWRkUQjkAOkemYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372110; c=relaxed/simple;
-	bh=dAO5idOu+0iMr3uG0QieOyCoPcFOP+lVtFZxQxmb9tY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WNp/+VOx+2OI4JCJWPZYMfwVuOd6ki4bauBhnC/FuLHmd5JkNCrOHSOtyV5lUpm6V4LBzGT0LM6VnOnFF1JijwAQp8qEWvlC620p8H3hCO+xxaa/y0BrqtRwNBqESQxOMsRLycaTLuLCsf9wkVG27+ppFyuMSjby8kLHwRbIm0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S3uIAEUN; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3418ada9e6cso282404a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762372109; x=1762976909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iJ9g9/MW3cPbq0Qsr27VqnUS6cxO+o/mZrZxaJIOOVA=;
-        b=S3uIAEUNdGziBNiukfnqDUIReH2TN8StSKBGDZXH8olimytgpuv8k1zP+6ESqmPQlR
-         oYhIld3FVLHcfAzeM2EzA//KxOEgSZ1Ma4zmdIDuIPks4u4doJhz0UEhluM577/VeF8B
-         M9Vx3zCaWTGjKLpCc9hzVsHTjr6tyFbznyqz36mBFmG+C8KTkKvKdjdGDZGV3LEYQKfg
-         npZnYAJk+AXgiIcQQsSrhXBhmg5SvQJjQ5A+a6vNhGDY7MySSKifTeDT/an4VjuTUyjB
-         ewzMVV3hdokrx1/G2uu5j4H01mEok8G0zjdx9vvw8DYHIUqYzYiOLdl9DURqavZn1RaZ
-         7Vow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762372109; x=1762976909;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iJ9g9/MW3cPbq0Qsr27VqnUS6cxO+o/mZrZxaJIOOVA=;
-        b=pxfVro9TCSg+KJD42y6246I9aJuCpj0O1sR6yCuDzU07Y9oWxQaOHyZRRv6fbR2Toz
-         cQPvVws8PUA/zeUz+dHeXbNxRi1m0VGUILPAH20iqjKI5v/SX45YJslCZhAeGV4pYcah
-         ml6UkSSXe/b8tTqKYo/9bU4NdBoK9HiVeL3sERR9JMZI71GAfxXUiA23enBB6gyJf12R
-         sdKYXIkHqpa3kwUBPiApKxylidREKVOEHbsVVNA4TxZyRyfYBNRt45cGKxA35556faQf
-         6yyOLoGN2pqgWD79m3AP6Z2YiTbMHDeu3X4FpPr6LqtYigv8jSNgm04cijUhrT5P6fHK
-         lWXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaO5LutcOa/YQsTBRHtZST6KJOhGSv4wfdp7/DNIy+wXtyhRvCKkIGee3uFb9hyqoV46JijPUvNrdEHo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlqouxRB1NrLJExaFDoIxdQjx4ajPuPu/tGkNHX3wKfo//9YQ8
-	BYqsL5WpeVZmnTWWELtSuab4+1hNa+Dy6LidChgi834xFDSgJ5SGm52x8b3H25kXO/lcPzJRibW
-	T0DP/Eg==
-X-Google-Smtp-Source: AGHT+IFe6pvHrJuZ17PMNc8VFi8y57k5Cq5xXs5oW0zvjPZB3dLuuy7A1imQb2zstjnYRJDeHHQO/gU4Smc=
-X-Received: from pjxu7.prod.google.com ([2002:a17:90a:db47:b0:33e:34c2:1e17])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b41:b0:32e:7c34:70cf
- with SMTP id 98e67ed59e1d1-341a7005bfcmr5444226a91.36.1762372108792; Wed, 05
- Nov 2025 11:48:28 -0800 (PST)
-Date: Wed, 5 Nov 2025 11:48:27 -0800
-In-Reply-To: <20251024192918.3191141-4-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1762372764; c=relaxed/simple;
+	bh=hhTWL807dgjqF+hcdbkl/5iAPXjQhCBQIpD0yAJ1Jr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dk5M7GMcg7UAJ9+IdMc+gfbOfMQkDVrfNOBkViP20upk1vSSaRCVi8bKT+GzU/gASDOdsaxG2fWcQJpvUzxeKpD/DatHOGzV0LZCWNQ7Tgtd0XMC8Z8PY/F0Gtlx/rrmjeaiEw6KR+efpXzXIGO269vAvMwXVX/qnf+Z+QahFsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=xTYs1Z8j; arc=none smtp.client-ip=134.0.28.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout4.routing.net (Postfix) with ESMTP id C59E1100877;
+	Wed,  5 Nov 2025 19:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1762372246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g2Ea0DWfLKHagtb+f2EQs/oSvtV0KXKnH9D3lP+qtqk=;
+	b=xTYs1Z8jGMhlYKjYZQ2WnHMLz+Tmqzj0EF8hZELlrO8PIzmRT04cW9lps9/jyWKMEPrJDY
+	phLmJmthaXRFro8YH9nDbUxRqpxcAwDW5zfOVJYzmy9Zo8tL+iY3EeerVw5hO3sBP2/u2k
+	9tazsIXtvHaDyv3S1vaFEyxvbP1+928=
+Received: from frank-u24.. (fttx-pool-194.15.81.38.bambit.de [194.15.81.38])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 8E2581226DD;
+	Wed,  5 Nov 2025 19:50:45 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/5] Add Bananapi R4 Pro support
+Date: Wed,  5 Nov 2025 20:50:00 +0100
+Message-ID: <20251105195007.199229-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251024192918.3191141-1-yosry.ahmed@linux.dev> <20251024192918.3191141-4-yosry.ahmed@linux.dev>
-Message-ID: <aQuqC6Nh4--OV0Je@google.com>
-Subject: Re: [PATCH 3/3] KVM: nSVM: Avoid incorrect injection of SVM_EXIT_CR0_SEL_WRITE
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025, Yosry Ahmed wrote:
-> When emulating L2 instructions, svm_check_intercept() checks whether a
-> write to CR0 should trigger a synthesized #VMEXIT with
-> SVM_EXIT_CR0_SEL_WRITE. However, it does not check whether L1 enabled
-> the intercept for SVM_EXIT_WRITE_CR0, which has higher priority
-> according to the APM (24593=E2=80=94Rev.  3.42=E2=80=94March 2024, Table =
-15-7):
->=20
->   When both selective and non-selective CR0-write
->   intercepts are active at the same time, the non-selective
->   intercept takes priority. With respect to exceptions, the
->   priority of this inter
->=20
-> Make sure L1 does NOT intercept SVM_EXIT_WRITE_CR0 before checking if
-> SVM_EXIT_CR0_SEL_WRITE needs to be injected.
->=20
-> Fixes: cfec82cb7d31 ("KVM: SVM: Add intercept check for emulated cr acces=
-ses")
-> Cc: stable@vger.kernel
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/kvm/svm/svm.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 9ea0ff136e299..4f79c4d837535 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4533,12 +4533,22 @@ static int svm_check_intercept(struct kvm_vcpu *v=
-cpu,
->  		if (info->intercept =3D=3D x86_intercept_cr_write)
->  			icpt_info.exit_code +=3D info->modrm_reg;
-> =20
-> +		/*
-> +		 * If the write is indeed to CR0, check whether the exit_code
-> +		 * needs to be converted to SVM_EXIT_CR0_SEL_WRITE. Intercepting
-> +		 * SVM_EXIT_WRITE_CR0 has higher priority than
-> +		 * SVM_EXIT_CR0_SEL_WRITE, so this is only relevant if L1 sets
-> +		 * INTERCEPT_SELECTIVE_CR0 but not INTERCEPT_CR0_WRITE.
-> +		 */
->  		if (icpt_info.exit_code !=3D SVM_EXIT_WRITE_CR0 ||
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Oof, the existing is all kinds of confusing.  Even with your comment, it to=
-ok me
-a few seconds to understand how/where the exit_code is being modified.  Eww=
-.
+BananaPi R4 Pro is a MT7988A based board which exists in 2 different
+hardware versions:
 
-Any objection to opportunistically fixing this up to the (completely untest=
-ed)
-below when applying?
+- 4E: 4 GB RAM and using internal 2.5G Phy for WAN-Combo
+- 8X: 8 GB RAM and 2x Aeonsemi AS21010P 10G phys
 
-		/*
-		 * Adjust the exit code accordingly if a CR other than CR0 is
-		 * being written, and skip straight to the common handling as
-		 * only CR0 has an additional selective intercept.
-		 */
-		if (info->intercept =3D=3D x86_intercept_cr_write && info->modrm_reg) {
-			icpt_info.exit_code +=3D info->modrm_reg;
-			break;
-		}
+common parts:
 
-		/*
-		 * Convert the exit_code to SVM_EXIT_CR0_SEL_WRITE if L1 set
-		 * INTERCEPT_SELECTIVE_CR0 but not INTERCEPT_CR0_WRITE, as the
-		 * unconditional intercept has higher priority.
-		 */
-		if (vmcb12_is_intercept(&svm->nested.ctl, INTERCEPT_CR0_WRITE) ||
-		    !(vmcb12_is_intercept(&svm->nested.ctl, INTERCEPT_SELECTIVE_CR0)))
-			break;
+- MediaTek MT7988A Quad-core Arm Corex-A73,1.8GHz processor
+- 8GB eMMC flash
+- 256MB SPI-NAND Flash
+- Micro SD card slot
+- 1x 10G SFP+ WAN
+- 1x 10G SFP+ LAN
+- 4x 2.5G RJ45 LAN (MxL86252C)
+- 1x 1G RJ45 LAN (MT7988 internal switch)
+- 2x miniPCIe slots with PCIe3.0 2lane interface for Wi-Fi NIC
+- 2x M.2 M-KEY slots with PCIe3.0 1lane interface for NVME SSD
+- 3x M.2 B-KEY slots with USB3.2 for 5G Module (PCIe shared with key-m)
+- 1x USB3.2 slot
+- 1x USB2.0 slot
+- 1x USB TypeC Debug Console
+- 2x13 PIN Header for expanding application
 
+official product information:
+https://docs.banana-pi.org/en/BPI-R4_Pro/BananaPi_BPI-R4_Pro
 
-> -		    info->intercept =3D=3D x86_intercept_clts)
-> +		    vmcb12_is_intercept(&svm->nested.ctl,
-> +					INTERCEPT_CR0_WRITE) ||
-> +		    !(vmcb12_is_intercept(&svm->nested.ctl,
-> +					  INTERCEPT_SELECTIVE_CR0)))
+The PCIe is per default in key-m state and can be changed to key-b with
+the pcie-overlays.
 
-Let these poke out.
+changes:
+v2:
+- dropped "dt-bindings: arm: mediatek: add BPI-R4 Pro board" which was
+  applied from v1
+- added new patch "disable 2.5G phy and enable at board layer"
+- squashed "mt7988a: Add label for ssusb0" to r4pro dts commit
+- some updates after angelos review to the r4pro dts commit
+  - fixed buck4 and ldo displayed voltage (cannot be controlled by software)
+    to match schematic
+  - reorder fan after eth node (alphanumeric)
+  - reorder spi-tx after spi-rx (alphanumeric)
+  - follow reg first, then others also for spi-nand partitions
+  - drop 2pg5 phy disabling node (due to new patch disabling by default)
+  - change order of pinctrl (first number than names)
+  - fix commit prefix (mediatek was missing)
 
->  			break;
-> =20
-> -		if (!(vmcb12_is_intercept(&svm->nested.ctl,
-> -					INTERCEPT_SELECTIVE_CR0)))
-> +		/* CLTS never triggers INTERCEPT_SELECTIVE_CR0 */
-> +		if (info->intercept =3D=3D x86_intercept_clts)
->  			break;
-> =20
->  		/* LMSW always triggers INTERCEPT_SELECTIVE_CR0 */
-> --=20
-> 2.51.1.821.gb6fe4d2222-goog
->=20
+Frank Wunderlich (5):
+  dt-bindings: pinctrl: mt7988: allow gpio-hogs
+  arm64: dts: mediatek: mt7988: disable 2.5G phy and enable at board
+    layer
+  arm64: dts: mediatek: mt7988: Add devicetree for BananaPi R4 Pro
+  arm64: dts: mediatek: mt7988a-bpi-r4-pro: add PCIe overlays
+  arm64: dts: mediatek: mt7988a-bpi-r4pro: Add mmc overlays
+
+ .../pinctrl/mediatek,mt7988-pinctrl.yaml      |   5 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   8 +
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |   1 +
+ .../mt7988a-bananapi-bpi-r4-pro-4e.dts        |  16 +
+ .../mt7988a-bananapi-bpi-r4-pro-8x.dts        |  16 +
+ .../mt7988a-bananapi-bpi-r4-pro-cn15.dtso     |  20 +
+ .../mt7988a-bananapi-bpi-r4-pro-cn18.dtso     |  20 +
+ .../mt7988a-bananapi-bpi-r4-pro-emmc.dtso     |  33 ++
+ .../mt7988a-bananapi-bpi-r4-pro-sd.dtso       |  31 +
+ .../mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi | 534 ++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |   3 +-
+ 11 files changed, 686 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-4e.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-8x.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-cn15.dtso
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-cn18.dtso
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi
+
+-- 
+2.43.0
+
 
