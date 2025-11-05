@@ -1,84 +1,88 @@
-Return-Path: <linux-kernel+bounces-886437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD085C35963
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:20:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF3AC35978
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCB23B3661
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC44618C183E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3033148C4;
-	Wed,  5 Nov 2025 12:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15996314B9D;
+	Wed,  5 Nov 2025 12:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CRM65WrD"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPOmdA/Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E71312815;
-	Wed,  5 Nov 2025 12:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFC2314A82;
+	Wed,  5 Nov 2025 12:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345193; cv=none; b=cnscp/XIJsjyFdwJfGjfT6cCwvxRMAoaEMbA77yVLuQ8i0DIuIOZsx9/S+5r4tyd3roEEAFOayu2W7QSFunvL4R0QKuVH/7sJNrePVXWp/OAdApw0XQp9rzhqMhDlOGAhTw4cvt4jiLA4tG4/l10u5O+a4Pg5y2qk7NX13Prf6I=
+	t=1762345195; cv=none; b=YlxjyhRS7JLQIz11d9Rb+3W3m/JRk/RIZt92yRhmF/SC9H0FWpUoUZvJ80B3LmxJcjOE1wODiNpdGSM9xcx/2cVp7zI6EJrS8HDtZcjuxL6UC478tQqS0SiMY9Biolngk7E32l9kvDR/Ya602P2yEd82sYTJtVH5twQT1i+V0N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345193; c=relaxed/simple;
-	bh=v+cOKLS0mXGI3qhe4fSNa1rYmF2ZqvmWdVpVTHz/8rs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S4UyAeR6GqnjR2FwPZx8yDhNOLq7nNorHm6awfas1yHBrOfuBD5LBRk3IPWzxjLWPBuewwwB/dDV+wvhOIBFR54RbqBS5+C6NiBeuhVJke05jvfj9TJYuyXOaesd9fcfeZ1LK94Ayw+r168Np7gWX2KhGTF/Ll9hz/9WK030XdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CRM65WrD; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=v+cOKLS0mXGI3qhe4fSNa1rYmF2ZqvmWdVpVTHz/8rs=;
-	t=1762345191; x=1763554791; b=CRM65WrDCi6ij1mGWY1VLpU9ULsJ6zF0AhY1NcJD6J/w3id
-	fIp5rli8UiATLImtdeHKsbglrcs8LCLlKUycEjD0I/EanOO1FbY5aHClzVmkHHqXBElDN4w+B8oDR
-	w6AY4vkltj0NJVodpz7GzJa8szYlJMan/RhvPYhRWbwxpLEcb8e4HfE2b5eKUPF5fKL2ULLvaRhS+
-	5AGOil2CPHxIbHS1SxekrpuwGs7cxS7yGKjKsUaAihEeCBOyap1+uDvMs0B7tFsQQ4NYyifWhgSKx
-	JxPUJpiMgqsWAWDiXs2/uDS+U1zn6Vh2bA91NRBV25m+SJ3qXAJye+MmE5pdGHlQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vGcUI-0000000Ey2O-0HBi;
-	Wed, 05 Nov 2025 13:19:42 +0100
-Message-ID: <6156fd13fab5131c13b76acc84cb72e3c8b69271.camel@sipsolutions.net>
-Subject: Re: [PATCH] net: wireless: fix uninitialized pointers with free attr
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Ally Heev <allyheev@gmail.com>, Miri Korenblit
-	 <miriam.rachel.korenblit@intel.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Dan
- Carpenter	 <dan.carpenter@linaro.org>
-Date: Wed, 05 Nov 2025 13:19:41 +0100
-In-Reply-To: <20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com>
-References: 
-	<20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762345195; c=relaxed/simple;
+	bh=+DZc/wBGlBf0hYQMYjvYnYVWjd1kabwKmMshykftops=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLD/N3nBhSdpxI+OxEK1a5XOsSd3E9yZDSEJIe7B44FI0fwZhugRndtK1Q6wAME9gcd5WesTx45mrwipcsZqz1KzAJ1Adz3JqUmqx0M9gaoMQAqGxnKuXz6Fk1m17OLm3CxLJZgATnqk3b5n0nt7qtD/mc20aCyBi4vsFmYHZDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPOmdA/Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0792DC4CEF8;
+	Wed,  5 Nov 2025 12:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762345194;
+	bh=+DZc/wBGlBf0hYQMYjvYnYVWjd1kabwKmMshykftops=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPOmdA/Zerlk792R/gDEy7IXyt+4e7ZXIc0jGyjZ+5oDsWr43x8on7Rqk3eIG9kCz
+	 vuPCItsLJgNwzyn2oh2Y1igOYSVI+9isWEs69lFW+FT2qK6xMO59yn54z+NbXSnLMq
+	 FaBhDWV+Nfga1VxD9NJsHDdIXKRyjg+V8r3qWMA70d5ei++8TMnZmgL7YOKs990SxF
+	 Dg8yqkvYHbsm094MmrYcwtdoqaqhdv8KyeXsK+tE86YZNl9cqNUnFA8WARfliSATkG
+	 C+mnsxHXF/xM0RMaQBNsyTPAbkUPpKnL22PtUwmfTR6AYmAnvtC34g/7OQE+VlDyr8
+	 I0dzLM3EnR6pg==
+Date: Wed, 5 Nov 2025 13:19:43 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 03/17] filelock: add struct delegated_inode
+Message-ID: <20251105-vorwurf-rotwein-c3b6c398b50d@brauner>
+References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
+ <20251103-dir-deleg-ro-v4-3-961b67adee89@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251103-dir-deleg-ro-v4-3-961b67adee89@kernel.org>
 
-On Wed, 2025-11-05 at 17:20 +0530, Ally Heev wrote:
-> Uninitialized pointers with `__free` attribute can cause undefined
-> behaviour as the memory assigned(randomly) to the pointer is freed
-> automatically when the pointer goes out of scope
->=20
-> wireless doesn't have any bugs related to this as of now, but
-> it is better to initialize and assign pointers with `__free` attr
-> in one statement to ensure proper scope-based cleanup
+On Mon, Nov 03, 2025 at 07:52:31AM -0500, Jeff Layton wrote:
+> The current API requires a pointer to an inode pointer. It's easy for
+> callers to get this wrong. Add a new delegated_inode structure and use
+> that to pass back any inode that needs to be waited on.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
 
-
-Yeah but ... eww. Please read things like coding style guidelines before
-you post patches.
-
-johannes
+Yeah, I like this. I think this is a pretty obvious win.
 
