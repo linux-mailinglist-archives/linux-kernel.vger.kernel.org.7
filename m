@@ -1,349 +1,216 @@
-Return-Path: <linux-kernel+bounces-887389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1FF4C3818A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBF3C381AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BA764EEBB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5963D3AC346
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA3D2BE7AB;
-	Wed,  5 Nov 2025 21:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D342701CC;
+	Wed,  5 Nov 2025 21:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eI4/GVjO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwZJLFL8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907812701CC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762379346; cv=none; b=GRGxJuk/fbkz6u5d+IcIWRxM4HhnqSkq63Qg7t964p7cwOz3OyHCSlMbBePe0ud3NqHJ1WO+uwNEm6HFO7KfMBGdy3QPvb8arNxSM6EyZmGo+WIaCo6I9vxQDmnM+xccPsDV7vosh3KwbyuHyBXKblUbZXjxR3Kq9vJbPOIdwr4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762379346; c=relaxed/simple;
-	bh=qEYWE7LSptAUipkDHVI3+wDB+A05eDWw3Mt5dZRsq5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0v9ML/qxdhDkiLn6dnmhVoajfAmOcDo9XMewSOORXjI+e6yGMaQcRcG2G8AchvpAmBjgkqPL4lxekFqN3dUwOIdQPBEdh4/S/fLt5JwwYHRi+CJWXbZ9wQDbbxJB8l8RvRcPunEmwPgcYwG7Gln2mIfp62x8HmGLgL9DwiUkM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eI4/GVjO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5FabKW023094;
-	Wed, 5 Nov 2025 21:48:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=zjvwE2
-	qTrPY/9Kjo76gatrChsyi5BJQ46WIz9zpqTik=; b=eI4/GVjOUqFW+OPuvKGqBS
-	GdYOmLRU93iVQWn/YYgkQt+usewEDFUh2MbxeCECTKaEJIFgodh7cwdgiur96kAy
-	Sryf3qneyXj6jASg85c7aDVb7J+2vrbmm43X2PeQIRQiXNUk3unro1JDDr8LcDK/
-	EzXDk5fCTBXeXnsMGxPty/3U3IUvLEQdgzqtYPP06/rxM0lmQApKxdg1M+UKyAJp
-	ZEwtpkUGHwMQDfG12BhuZi4mwLyyP2hCcUed5Cke7OHFzAO6KlKi+hMjjYqBcMyC
-	LuW4SmMf3utKcenVeL43hKHz8P1lQ6YbksXd35pFSAnGWX2udMf5szaFx2Ta706A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xc3tdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 21:48:41 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5JNauV021467;
-	Wed, 5 Nov 2025 21:48:40 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrjt6fu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 21:48:40 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5LmeZf14484202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Nov 2025 21:48:40 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2520458045;
-	Wed,  5 Nov 2025 21:48:40 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B2B7758050;
-	Wed,  5 Nov 2025 21:48:33 +0000 (GMT)
-Received: from [9.43.127.159] (unknown [9.43.127.159])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Nov 2025 21:48:33 +0000 (GMT)
-Message-ID: <ddfde793-ad6e-4517-96b8-662dcb78acc8@linux.ibm.com>
-Date: Thu, 6 Nov 2025 03:18:30 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7401FDA89
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762379211; cv=fail; b=mOibWEn/dQPiht7yBbt0qN2PnHISisezHzCFlmrSGe4d2W2lnC/k7H1aRC8eNib2dk/Kh0C789Ngg8+VAVFxMa+U/LQHZffvVSnHFvmvEh4n4izJnXK/uiIoaL9YpC+BfL7dSXL4YojZqAspzcuJTO0pf/vBmQ+aU4voAOMjL7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762379211; c=relaxed/simple;
+	bh=TmBZHOkaQHaPZMrlne2ko61ha9tRackC3Xs6Ntc0twc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=p3IaR4dxHtBykVdDyUUg7rLpf+GcGrFxICAnNTMDlTXsMH/uir75uOTafrqzQwVwJqzTSfRd+qyfJkolWBDYyhTuKjFMiMhUEUrS/fwas72R55wg1pK6HQQgxfUTBa0BC16k++1t1UhPAlIRS5xh2BwEPQGMZVbsS0QopvqlPUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwZJLFL8; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762379210; x=1793915210;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=TmBZHOkaQHaPZMrlne2ko61ha9tRackC3Xs6Ntc0twc=;
+  b=hwZJLFL8ABHuAnyqseAoa3kl6uqxMgm/JzboSlhd5f2NLX6wKq4QdGqh
+   dSCB3aRWmTAL34FJyNab8mZVdetK+4qW4VA+nqruiy3SbCN98MZ/o8vz2
+   sEfKHmd1r2hyUhbJ8SsZ3UT8pOs4r6+PHPo9Ua8Ygj1x6TcFbtwH71DAC
+   awZc8Xpd6KANJ2P3WlND9S18viNvk8MJIt0itDrt0TKPj8V8VKKZc3wKb
+   cEgTOUyfJ/pS2SvzgYwrwN57Cwe/JMJHzDPNYHdMJ8FkkSbsgDd619WUt
+   fLGgNQUvKvea4RoFxheno98eWZrtzGtZ+GevLM8B3wMtpz3XjNbok9I4Y
+   g==;
+X-CSE-ConnectionGUID: Xlm4i0BLRUOffkIgL5njmw==
+X-CSE-MsgGUID: o9X2InGTRmGt84m+NFKqQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64433099"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64433099"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 13:46:49 -0800
+X-CSE-ConnectionGUID: 3ZtzAUHrRdiSvL40/JhlzA==
+X-CSE-MsgGUID: ZLbFQHJNTwC9iQGbEI0o0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="188293391"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 13:46:49 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 13:46:48 -0800
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 5 Nov 2025 13:46:48 -0800
+Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.21) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 13:46:48 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r+iz6AU/4nbJSrqUu4rV4/oQCCW4wNOT+IbJIe7ZL9OklfG63BMKbydzvw22wjlOTTfzR4s+52tlC9KOV6m+/zFSJlmnKN8s4AMjnNLFh5TCOv4+/ywINi3nojP569a7bDMRgfR1NR7n4pHAUJsx06Eejat8YWe7vsJ8WHn1rqfduUCJv8guW2s6WAaJUniVb2nKUTKml3/afs0lYZXdrtBRiCd6vjHyjeEIjZpp9JXi7zbDNV7aLbVw+NsNofIm0PqfPsfc+glRaQ3rlmx/xztETen+3EVOmiaA6BWr9CCXEGTfOdFHf9TNZ/NB4GgMVol2WpR6wjM0KXGSVqvZpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6KNwe9EngCIZgPBfOFeq3TEXKGyr+csH5vrO2oE3E9c=;
+ b=FQAL8NkRvRcIiyEIduN5VgABdKmMXVjR+ihAX9VrBL6Egg7um1nQ8IJqxZKnDo25MmyXmT/dzfZo17MopsuZzTUfIA9IxRt9lLVQJNsXr8nzLGkcdSKV0EZkKrhfJjuWMY4CxNzHTLTFnkzxX4k0AoAowUhRpUDfGb+5mLGFJvwwDbJgI09g3CxBbGQAcEajvIYyXtODgQuhj3fHLYT5j/C1gHGWqsIPdVAbOswCPlRpKho9A+fmMUlxXQ1cLYxXZYfQ6TEBrLiE6ZcBn4mY5KBQAr3TNEd4N05do6XvvwBUU7xehXufLrxkdVkuEKhojZwqlzhQdUFMXcSFW2sAGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by DM3PPF4C5964328.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f1e) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Wed, 5 Nov
+ 2025 21:46:41 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::8289:cecc:ea5b:f0c]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::8289:cecc:ea5b:f0c%8]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
+ 21:46:41 +0000
+Date: Wed, 5 Nov 2025 15:49:07 -0600
+From: Ira Weiny <ira.weiny@intel.com>
+To: Marco Crivellari <marco.crivellari@suse.com>,
+	<linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>
+CC: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Marco Crivellari <marco.crivellari@suse.com>,
+	"Michal Hocko" <mhocko@suse.com>, Dan Williams <dan.j.williams@intel.com>,
+	"Vishal Verma" <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+	"Ira Weiny" <ira.weiny@intel.com>
+Subject: Re: [PATCH] nvdimm: replace use of system_wq with system_percpu_wq
+Message-ID: <690bc653488eb_28747c10011@iweiny-mobl.notmuch>
+References: <20251105150826.248673-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251105150826.248673-1-marco.crivellari@suse.com>
+X-ClientProxiedBy: SJ2PR07CA0014.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::7) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
- EEVDF goals
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Valentin Schneider <vschneid@redhat.com>, Chris Mason <clm@meta.com>,
-        linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20251103110445.3503887-1-mgorman@techsingularity.net>
- <20251103110445.3503887-3-mgorman@techsingularity.net>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20251103110445.3503887-3-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX+MUoAtseH0oP
- FAhX+gKIJ/CUxadpC31IVlZWBklfiikvhhoCGQgDE4/pybj1byEuljSVuNnb9uaG5Gei9u/KM/e
- LOP1MexKORFDQsugT/6P4oGoBFXPrtWyi1Qu3JSixig7x+Gk5bpVn9epFSp7Cb2a1DIb9ffAYJ8
- sRuAgqhqoJ9ZU7luMa5IBkHkih8IRVYqj+4+HjlJWH8kySt6Y63a4TJR7iBR4RdbFQ68F8V2pgt
- zqi2bm4XvKqN4FlJ+jnUKBll8EyKsqRfr00sxZwZXZMdh97uG9S54pEKzQ5Kx+EIo3HztIT+ew3
- j/COcQ9VjL2454yZq2IWGox/fSIoyaFBfQPwVnAKXTvACsVs+ti34eAhh/KZR+WO2XUVGuhQFEB
- SaMD6uWOuI3SXr0/o6q6ky7JzrGdyA==
-X-Proofpoint-GUID: iV2ddITj7-XGbquENW6bSiNbHltvHhJd
-X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=690bc639 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=HnnIDNdDN-DDPO2MklwA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: iV2ddITj7-XGbquENW6bSiNbHltvHhJd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_08,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|DM3PPF4C5964328:EE_
+X-MS-Office365-Filtering-Correlation-Id: c97d0cf3-4294-4565-2db8-08de1cb4cddf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?q15g8am3ZDHQLgd1rI/Z0psnNVbmICciycq+DQV4Tha+bnEO8raLsaqG9CU+?=
+ =?us-ascii?Q?4GYQlcQCREfwM6cfNkDRpuQ3Pi9W1xYLH0CxkRWDACF6nTg4ZJ526NvBKQhV?=
+ =?us-ascii?Q?UExGFGAeEE25/mO3REzQRzhlRtCq69ajFDBmWlVSdZi2LH4nbuuQL8Ktqt9T?=
+ =?us-ascii?Q?rKMq3Di39/u7E0OZvcuIrgACvxfGBFxt68fW5DZLR1JLqLnd1enrp+lXCbgA?=
+ =?us-ascii?Q?LkOi1VmPTTXQgET/HZZQKGr+Jm0CG2OA2nsfC0FOErA8DbEeanPjQOmEu512?=
+ =?us-ascii?Q?NhjxW7HwtI9dl1UXdbPqu1VEDaF0ix24jtqrz72f5jxB5+g/GvWPxzbkpNGb?=
+ =?us-ascii?Q?+fMw3M5bXrWI2ADYpNqhQgjw8+5Iob47f/KGAxUkDQyFuovmv5WC4pUJzuCD?=
+ =?us-ascii?Q?/oxQ3u1kedch3DEFJVMfulYMAfxVA3MChkL2/6DBTh+9I8l/+tDv/l4HBYzB?=
+ =?us-ascii?Q?GT0mSvUTLNRORjDe7jnPAc/MT8btJlKLz7iRbUEmHEyZ2ajXc5/gJnkHT9Qz?=
+ =?us-ascii?Q?a515zBDSYg4oLPy/bmqN/4Hla3l+HAQ94OgnRyzIJxBOg19zsRVH0W7m1RnJ?=
+ =?us-ascii?Q?HpMcZuZD5r7rMTXA+D45rq0zJ1BylgBSW/khp4MpF5wTmIOLv9ztJSabtLN+?=
+ =?us-ascii?Q?eegsmRp0ecSU9MAU1p0AGoXn31hD4YjyN+A70ug3DOVe5uoHM1C452npX4md?=
+ =?us-ascii?Q?LlKmhbGxqfKf2Bdp+gcEgcl9O+8p3GFuYfXPo7Iu6gvEx0dagiHoKsJ9iHMO?=
+ =?us-ascii?Q?J7zngePW7leOSQU+k5NubF/FdhXyeb7508AgRnbWW23OOT9ke0aWcbnd2iVV?=
+ =?us-ascii?Q?NfqcS/FuIp6HKicP9fjxdOe2VhlfgT+xEt0XtXQ4yJszoIT2qm8ck7LE90uq?=
+ =?us-ascii?Q?c2+CP7LzNsX/DKBEawARLX4sTMemZo48KU68/QuaHhwfxoFJ8hIqSGYtx+Ne?=
+ =?us-ascii?Q?/RxyeoH5pb9xb3SvsdJ8E4kk4SDgHS9uL+6KPsQr2rnCefAtU1bk1Wi3w4c7?=
+ =?us-ascii?Q?AwswS4tJFF50MNzCohokA6PTJ4OhEEMBEwlnZ0pMsyaLKe7FqRJAQumasYdo?=
+ =?us-ascii?Q?s1bAkI1dWrYTNfwOjKoeBJu/wwwyZ4N71IYHMXSvrRQZSAgCcWPqHWgNM2S5?=
+ =?us-ascii?Q?Pbj3/csCcqrr7XRNmjex+Q6t8okz8luk65UdV+ZDDuB8FVjg9GSIQxLJy6LZ?=
+ =?us-ascii?Q?QpDt83bx4T9E3kRLbYPhoX32gJYUau/iynE3wxnTkpiVL4krAfQwa7ULbR/i?=
+ =?us-ascii?Q?AJBGLQtGubSGZbbBBuNrhJq+sYk/4OvAS3hDluXK+Z4J/p5kgB8EH8PwPjjd?=
+ =?us-ascii?Q?xeLOTTGimatE21H6iIfAKiJD7umZMn8bcfeFV2x8gPqqscvszz74XPG0rvR1?=
+ =?us-ascii?Q?WyHP09kwAWVk3ooICcqcKfxNizM9t3rvxPu5vFs2M3Sv5TkXBAbZzvXw3J9a?=
+ =?us-ascii?Q?jss0wfIn86WUha+yTJXSdsAAYP/XLZ3I?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LUW+TY+6SxfRB3PwfZ9i8kKK+JLpBdrQWlxeoM9ozsXGmqmMRKkVZE8mBRQJ?=
+ =?us-ascii?Q?r5oKM9PyMQuxP1RpuXYXo3tavz7bz8W3p+GSKUfMZfXs0FZoUhFTs9YoWpV/?=
+ =?us-ascii?Q?l5xT1l/0kNJS9ITWPi0BuAz9WwTgLq+bMcSfXDkVrSLLoPA4uSpVVSFfbKT4?=
+ =?us-ascii?Q?f0VQt4OstOhhXI7uPtqqvwwzG7c6xf9Js8FCjIwa3q7BJPUbDQmaVrDvyrX/?=
+ =?us-ascii?Q?a3T0y/vZ82h3D4L2qqFxfIKfAZ/JkPk+4rXF44hkS8fQFrmFQmEJ2MYRCzcy?=
+ =?us-ascii?Q?OrEH+Z0P0laBBBltb7M0ZLuO4Vki4aL8JSm8r70RGo4nUlGHOoCQqR+9mCFs?=
+ =?us-ascii?Q?K5txdK7Ldv9j+mXxYcEkEWWrUvdxC2S3eeOF3AAl2csPlBXaxnHcLyV2OZxA?=
+ =?us-ascii?Q?zBv1YaYaDEDBrddt2dWntuadTEyQvlcdRhhTSd25m5sNwthg3rlgMP0hBuj0?=
+ =?us-ascii?Q?YLh0T2YJTVd9X48bQnwCaUwLXzVcJ8SIQbGBp21DShN+bD9gU26ch9Vt+/YP?=
+ =?us-ascii?Q?+9Rren2UvIKy1jtUrxHRdkQDAaMuL2ERcWzAf7ziA4ObumYeB0u7YZSIY22G?=
+ =?us-ascii?Q?0ihxPs2HkI9YUkOcDZcRGMEtNRFzvVGF7AUBiTr+nYltHpPBeBsjliR0XHr7?=
+ =?us-ascii?Q?L5cxZLLzhu6IHS+gZJmSC5OMwhL/1VHjC24Q9uyhAV5t1gQEi5cBCTqtJ49c?=
+ =?us-ascii?Q?wspfYQczk4aa7nMChNXixnkNMGGCCnGQ96ZgtKwlQHGdeIUlkdVfa0nhhdYl?=
+ =?us-ascii?Q?3sKYV9oz6NzxXNFmhPuTEwGQGmy8dQ4sRWKYqE7x6DK49JwT5DlPNn7YC1ei?=
+ =?us-ascii?Q?3ozPgpZxut1yroC3ju3nkSfR4QtfyI8flA4Sah/ezv2h+zdfFsuZNm6NXLDA?=
+ =?us-ascii?Q?Tq3L2UhDNZcX8kVFOOIeI4anFJb9vWdCqrfwV33qc4obULZdHeWO+pz8n5rJ?=
+ =?us-ascii?Q?rD+MJCeOa/fjRyKA4L39+9502LKGIJ0gxeSs5XmLhPmB//OCPBkNlUx6pN56?=
+ =?us-ascii?Q?BHBgH9BV5byvC5IyIAHLMFILiz/jWBi8ylg5wuVQcHBXcvWqCLTYlEGuKa9r?=
+ =?us-ascii?Q?rpqwWZ6vddZPD0eSr4wsMDEBAtjZbtrVw5b1wa9WuBLwrzmrGIuhBIGkpKpB?=
+ =?us-ascii?Q?G3HXtChCaxqb0sQ3tXQiMON7XrsqsqUjc+7imqWMs159mXHQhIE2D6Fkom6F?=
+ =?us-ascii?Q?YYLfYbgyhxUfDCkSNFX4DxzaNejAh0jpetICMLfHPFn3UqJTnH2B5fV36O/t?=
+ =?us-ascii?Q?6pWUGr2sp3Wi/mWMBvt5DpwMEWOmuzDuswz5Cp4TKX4A3yRFQRKcNWFMHdRT?=
+ =?us-ascii?Q?dfZcA23emVIvWWARI8hCb7wo6P1XZ6rs+kZrsV9rDtC+NuZAAMCnOjgDEukV?=
+ =?us-ascii?Q?BbtzeCIiqzR+13qA69s/YU25GwFCPrekWZ3rmx6XyU4AQ0lkBgvl/Yv74SL8?=
+ =?us-ascii?Q?4Fi4KUSeaKqv1ZrNvtys/DA2xiKJZIIVsezpM2qwti8uiOiS+gDYDpILP113?=
+ =?us-ascii?Q?QvIDCPS1Ut7+eXl659GCUZgaPjkCj19lWuMZlPQXUFhik4QrpUTRkJe4kZ/4?=
+ =?us-ascii?Q?xLHDUofOyqBgJUqgO4VAsA/HkNfyGhSMzVUidxtR?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c97d0cf3-4294-4565-2db8-08de1cb4cddf
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 21:46:41.0663
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GTpU1pf39UXTgGlEnPdQOD4HdYmh+u9XtxbQqKUvvAdQDadw7AhnrZtkmZh6YwjVWNsxvUvY2dCzbd+EHqLfpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF4C5964328
+X-OriginatorOrg: intel.com
 
-Hi Mel,
-
-On 03/11/25 16:34, Mel Gorman wrote:
-> Reimplement NEXT_BUDDY preemption to take into account the deadline and
-> eligibility of the wakee with respect to the waker. In the event
-> multiple buddies could be considered, the one with the earliest deadline
-> is selected.
+Marco Crivellari wrote:
+> Currently if a user enqueues a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> Sync wakeups are treated differently to every other type of wakeup. The
-> WF_SYNC assumption is that the waker promises to sleep in the very near
-> future. This is violated in enough cases that WF_SYNC should be treated
-> as a suggestion instead of a contract. If a waker does go to sleep almost
-> immediately then the delay in wakeup is negligible. In all other cases,
-> it's throttled based on the accumulated runtime of the waker so there is
-> a chance that some batched wakeups have been issued before preemption.
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> This patch continues the effort to refactor worqueue APIs, which has begun
+> with the change introducing new workqueues and a new alloc_workqueue flag:
+> 
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+> 
+> Replace system_wq with system_percpu_wq, keeping the same old behavior.
+> The old wq (system_wq) will be kept for a few release cycles.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-[..snip..]
+Queued Thanks,
 
-> +static inline enum preempt_wakeup_action
-> +__do_preempt_buddy(struct rq *rq, struct cfs_rq *cfs_rq, int wake_flags,
-> +		 struct sched_entity *pse, struct sched_entity *se)
-> +{
-> +	bool pse_before;
-> +
-> +	/*
-> +	 * Ignore wakee preemption on WF_FORK as it is less likely that
-> +	 * there is shared data as exec often follow fork. Do not
-> +	 * preempt for tasks that are sched_delayed as it would violate
-> +	 * EEVDF to forcibly queue an ineligible task.
-> +	 */
-> +	if ((wake_flags & WF_FORK) || pse->sched_delayed)
-> +		return PREEMPT_WAKEUP_NONE;
-> +
-> +	/* Reschedule if waker is no longer eligible. */
-> +	if (in_task() && !entity_eligible(cfs_rq, se))
-> +		return PREEMPT_WAKEUP_RESCHED;
-> +
-> +	/*
-> +	 * Keep existing buddy if the deadline is sooner than pse.
-> +	 * The older buddy may be cache cold and completely unrelated
-> +	 * to the current wakeup but that is unpredictable where as
-> +	 * obeying the deadline is more in line with EEVDF objectives.
-> +	 */
-> +	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
-> +		return PREEMPT_WAKEUP_NEXT;
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-IIUC, the logic attempts to maintain deadline ordering among buddies, but
-this doesn't address tasks already on the runqueue.
-
-So with frequent wakeups, queued tasks (even with earlier deadlines) may be
-unfairly delayed. I understand that this would fade away quickly as the
-woken up task that got to run due to buddy preference would accumulate negative
-lag and would not be eligible to run again, but the starvation could be higher if
-wakeups are very high.
-
-To test this, I ran schbench (many message and worker threads) together with
-stress-ng (CPU-bound), and observed stress-ng's bogo-ops throughput dropped by
-around 64%.
-
-This shows a significant regression for CPU-bound tasks under heavy wakeup loads.
-Thoughts?
-
-
-I also ran schbench and hackbench. All these were run on a Power11 System
-containing 4 sockets and 160 CPUs spread across 4 NUMA nodes.
-
-schbench(new) 99.0th latency (lower is better)
-========
-load        	baseline[pct imp](std%)       With patch[pct imp]( std%)
-20mt, 10wt      1.00 [ 0.00]( 0.24)           0.97 [ +3.00]( 0.18)
-20mt, 20wt      1.00 [ 0.00]( 0.33)           1.00 [  0.00]( 0.12)
-20mt, 40wt      1.00 [ 0.00]( 2.84)           0.76 [ +24.0]( 0.32)
-20mt, 80wt      1.00 [ 0.00]( 3.66)           0.66 [ +34.0]( 0.72)
-20mt, 160wt     1.00 [ 0.00](12.92)           0.88 [ +12.0]( 6.77)
-
-mt=message threads ; wt=worker threads
-
-schbench being a wakeup sensitive workload showed good improvement.
-
-
-hackbench (lower is better)
-========
-case              load        baseline[pct imp](std%)      With patch[pct imp]( std%)
-process-sockets   1-groups    1.00 [ 0.00]( 5.21)            0.91 [ +9.00]( 5.50)
-process-sockets   4-groups    1.00 [ 0.00]( 7.30)            1.01 [ -1.00]( 4.27)
-process-sockets   12-groups   1.00 [ 0.00]( 2.44)            1.00 [  0.00]( 1.78)
-process-sockets   30-groups   1.00 [ 0.00]( 2.05)            1.04 [ -4.00]( 0.86)
-process-sockets   48-groups   1.00 [ 0.00]( 2.25)            1.04 [ -4.00]( 1.03)
-process-sockets   79-groups   1.00 [ 0.00]( 2.28)            1.05 [ -5.00]( 1.67)
-process-sockets   110-groups  1.00 [ 0.00]( 11.17)           1.04 [ -4.00]( 8.64)
-
-process-pipe      1-groups     1.00 [ 0.00]( 8.21)            0.84 [+16.00](13.00)
-process-pipe      4-groups     1.00 [ 0.00]( 5.54)            0.95 [ +5.00]( 4.21)
-process-pipe      12-groups    1.00 [ 0.00]( 3.96)            1.04 [ -4.00]( 2.26)
-process-pipe      30-groups    1.00 [ 0.00]( 7.64)            1.20 [ -20.0]( 3.63)
-process-pipe      48-groups    1.00 [ 0.00]( 6.28)            1.04 [ -4.00]( 8.48)
-process-pipe      79-groups    1.00 [ 0.00]( 6.19)            1.01 [ -1.00]( 4.36)
-process-pipe      110-groups   1.00 [ 0.00]( 10.23)           0.94 [ +6.00]( 5.21)
-
-Didn't notice significant improvement or regression in Hackbench. Mostly in the noise
-range.
-
-Thanks,
-Madadi Vineeth Reddy
-
-
-> +
-> +	set_next_buddy(pse);
-> +
-> +	/*
-> +	 * WF_SYNC|WF_TTWU indicates the waker expects to sleep but it is not
-> +	 * strictly enforced because the hint is either misunderstood or
-> +	 * multiple tasks must be woken up.
-> +	 */
-> +	pse_before = entity_before(pse, se);
-> +	if (wake_flags & WF_SYNC) {
-> +		u64 delta = rq_clock_task(rq) - se->exec_start;
-> +		u64 threshold = sysctl_sched_migration_cost;
-> +
-> +		/*
-> +		 * WF_SYNC without WF_TTWU is not expected so warn if it
-> +		 * happens even though it is likely harmless.
-> +		 */
-> +		WARN_ON_ONCE(!(wake_flags & WF_TTWU));
-> +
-> +		if ((s64)delta < 0)
-> +			delta = 0;
-> +
-> +		/*
-> +		 * WF_RQ_SELECTED implies the tasks are stacking on a
-> +		 * CPU when they could run on other CPUs. Reduce the
-> +		 * threshold before preemption is allowed to an
-> +		 * arbitrary lower value as it is more likely (but not
-> +		 * guaranteed) the waker requires the wakee to finish.
-> +		 */
-> +		if (wake_flags & WF_RQ_SELECTED)
-> +			threshold >>= 2;
-> +
-> +		/*
-> +		 * As WF_SYNC is not strictly obeyed, allow some runtime for
-> +		 * batch wakeups to be issued.
-> +		 */
-> +		if (pse_before && delta >= threshold)
-> +			return PREEMPT_WAKEUP_RESCHED;
-> +
-> +		return PREEMPT_WAKEUP_NONE;
-> +	}
-> +
-> +	return PREEMPT_WAKEUP_NEXT;
-> +}
-> +
-> +
->  /*
->   * Preempt the current task with a newly woken task if needed:
->   */
-> @@ -8734,7 +8819,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  	struct sched_entity *se = &donor->se, *pse = &p->se;
->  	struct cfs_rq *cfs_rq = task_cfs_rq(donor);
->  	int cse_is_idle, pse_is_idle;
-> -	bool do_preempt_short = false;
-> +	enum preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_NONE;
->  
->  	if (unlikely(se == pse))
->  		return;
-> @@ -8748,10 +8833,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  	if (task_is_throttled(p))
->  		return;
->  
-> -	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
-> -		set_next_buddy(pse);
-> -	}
-> -
->  	/*
->  	 * We can come here with TIF_NEED_RESCHED already set from new task
->  	 * wake up path.
-> @@ -8783,7 +8864,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  		 * When non-idle entity preempt an idle entity,
->  		 * don't give idle entity slice protection.
->  		 */
-> -		do_preempt_short = true;
-> +		preempt_action = PREEMPT_WAKEUP_SHORT;
->  		goto preempt;
->  	}
->  
-> @@ -8802,21 +8883,41 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  	 * If @p has a shorter slice than current and @p is eligible, override
->  	 * current's slice protection in order to allow preemption.
->  	 */
-> -	do_preempt_short = sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice);
-> +	if (sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice)) {
-> +		preempt_action = PREEMPT_WAKEUP_SHORT;
-> +	} else {
-> +		/*
-> +		 * If @p potentially is completing work required by current then
-> +		 * consider preemption.
-> +		 */
-> +		preempt_action = __do_preempt_buddy(rq, cfs_rq, wake_flags,
-> +						      pse, se);
-> +	}
-> +
-> +	switch (preempt_action) {
-> +	case PREEMPT_WAKEUP_NONE:
-> +		return;
-> +	case PREEMPT_WAKEUP_RESCHED:
-> +		goto preempt;
-> +	case PREEMPT_WAKEUP_SHORT:
-> +		fallthrough;
-> +	case PREEMPT_WAKEUP_NEXT:
-> +		break;
-> +	}
->  
->  	/*
->  	 * If @p has become the most eligible task, force preemption.
->  	 */
-> -	if (__pick_eevdf(cfs_rq, !do_preempt_short) == pse)
-> +	if (__pick_eevdf(cfs_rq, preempt_action != PREEMPT_WAKEUP_SHORT) == pse)
->  		goto preempt;
->  
-> -	if (sched_feat(RUN_TO_PARITY) && do_preempt_short)
-> +	if (sched_feat(RUN_TO_PARITY))
->  		update_protect_slice(cfs_rq, se);
->  
->  	return;
->  
->  preempt:
-> -	if (do_preempt_short)
-> +	if (preempt_action == PREEMPT_WAKEUP_SHORT)
->  		cancel_protect_slice(se);
->  
->  	resched_curr_lazy(rq);
-
+[snip]
 
