@@ -1,302 +1,297 @@
-Return-Path: <linux-kernel+bounces-886071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4730DC34A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9470FC34A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42EB04F8A1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FC23B4930
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7640B2E888C;
-	Wed,  5 Nov 2025 08:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C602EDD50;
+	Wed,  5 Nov 2025 08:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="REKofunG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fi9iXzf4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="REKofunG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fi9iXzf4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kTqpbmI9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95CC2DC792
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9922ED87F;
+	Wed,  5 Nov 2025 08:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333038; cv=none; b=WyzFWc9bLX6Fxv1XSw6aI3vkgZhmgBVjGqlypuNnGbdUKa8Ubby84Vhm+bOBkz43UMKXzJ75wjzV2bk9Mw64Us5z1OTrOqEvLcxvQ3kdrkNky/xX+/kV8d8OYx1BhaSMgMeqSNN5GF+FL07oNIAEw0GFzBNOBNsQZ0F5R6gpVoI=
+	t=1762333152; cv=none; b=GbpPQli4s5uhVFznqmc1q54jh0CI8yHpekbbSbNPoe5foUczU8roOvWr+ovC7aLAymQPn/QgAioWMeHYp53EWBp7UtQSMLVAROJ7KyjkuTsyHHPfeMQhY7VGKNh+yYcsGdAoUvxU4JVibXmb4UNiAHD2/9JbBHoX8luPeH+h7A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333038; c=relaxed/simple;
-	bh=KvaMmp6DLKFkmGJN1c/jqzPNuPRJotTXmJ+CGP2+EhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2X4R97REGz0TNuGI4iUFl+hOjhnKVHv5ySJDn+K2stcSyky2/e5SH2+8b04+zu5LnYPI+kHJjnXfF/Dk+FCDqnO5IIL0q/CPiCaSqThmHVQIDsyuhMRpPCDV8cEUQft5357PSZAtQA0RZVx6FbWu+jed9jX+U22O2g/Zu2Snj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=REKofunG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fi9iXzf4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=REKofunG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fi9iXzf4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 01F1321153;
-	Wed,  5 Nov 2025 08:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762333035; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
-	b=REKofunGAkZy4HSr+2sT2LcIC+JmOyb6KxRxfz0HAXVkfGOe80yI0nuM3c1rPya6Vc/C83
-	y9ZiaIXYHBSCgMgHEcWEJbDtGkCnu3rwo3+W7pbIvoBihjzHUz1ukbdgSwnG2NYs/Fj2cK
-	Mx7n/uDxuTK8sJrH4wltzv6F1Cw+/R8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762333035;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
-	b=fi9iXzf4bfkZzM3o7qlsm3Q8NDEqg+bXSI2y7Y+R4m83PbHswrnVmgWxppewpmRa+8O8D5
-	hzAShJUvnBfhspCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762333035; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
-	b=REKofunGAkZy4HSr+2sT2LcIC+JmOyb6KxRxfz0HAXVkfGOe80yI0nuM3c1rPya6Vc/C83
-	y9ZiaIXYHBSCgMgHEcWEJbDtGkCnu3rwo3+W7pbIvoBihjzHUz1ukbdgSwnG2NYs/Fj2cK
-	Mx7n/uDxuTK8sJrH4wltzv6F1Cw+/R8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762333035;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
-	b=fi9iXzf4bfkZzM3o7qlsm3Q8NDEqg+bXSI2y7Y+R4m83PbHswrnVmgWxppewpmRa+8O8D5
-	hzAShJUvnBfhspCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8B73132DD;
-	Wed,  5 Nov 2025 08:57:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l777J2oRC2npegAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 05 Nov 2025 08:57:14 +0000
-Message-ID: <38110178-0f27-44ba-9925-5bbe74a1bf9b@suse.de>
-Date: Wed, 5 Nov 2025 09:57:14 +0100
+	s=arc-20240116; t=1762333152; c=relaxed/simple;
+	bh=BlzFLQmpEqDuYR1gwH2rICRuzj+79Eg0r5tvJ5quCPs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ngnjROuCPuaBqIrmI24Us09L4pjn6UjJkNkVZ0phHWt2Tw/GPGVHWF/GVkiCNdmb9UCf0JPmpzPCmHJa5CziYCrTfZ7W1qVarFca6rbpzBeCiIC1LafMBbyd5Hr+WEvivTqwrQAEzM9OLZ3+DXj4M6Vn/rJGkcUvUqmxnP3ACmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kTqpbmI9; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762333151; x=1793869151;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=BlzFLQmpEqDuYR1gwH2rICRuzj+79Eg0r5tvJ5quCPs=;
+  b=kTqpbmI9Yo1vA24RR2KJhjk/iK8rt8ladgRb/pR/ntB99XqoD6BEAlMu
+   ffpqrgOsrPz+ntM+wv5yw2uiwXU82R9N/yvgv8TqLKQtvAgs9jm7ArpP3
+   iYppbr24UI6Zgy34udwipJORltuKr6O3WO65HD9UuA8px4krKCbnoeCPh
+   jS6AhOCQ37ySTEs+dEBz2371I/83+4ZDJAQv1mSw3eEymKiG5TC9tXF1N
+   9+33bk/0GIY0Luj4aCvlUGpsNWgZa/aPa1OFPYHuXgVdTGHIihMcMdaFZ
+   stJSxXPVo0FvIeamA6OArUY/1tERQsKou7bfNAV3k9sU4kOACLGX6XnCN
+   g==;
+X-CSE-ConnectionGUID: bJFx9x24QNulKfQB5+A+qg==
+X-CSE-MsgGUID: n2T0rdiNR46bxk9DFJv8oQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68279517"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68279517"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:59:10 -0800
+X-CSE-ConnectionGUID: Q9sGarmDTV6ZXf9wOjCpaQ==
+X-CSE-MsgGUID: 2zOkKx1ETBC0SF0T9Ucg1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="186687662"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:59:07 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 5 Nov 2025 10:59:03 +0200 (EET)
+To: Rong Zhang <i@rong.moe>
+cc: Jelle van der Waa <jelle@vdwaa.nl>, Ike Panhc <ikepanhc@gmail.com>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+    Hans de Goede <hansg@kernel.org>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] platform/x86: ideapad-laptop: Add charge_types:Fast
+ (Rapid Charge)
+In-Reply-To: <5d1ae6eb34378570ed1f9b62d945c95bda8a5b86.camel@rong.moe>
+Message-ID: <f2885370-f466-6bf2-70d1-e7f3177111db@linux.intel.com>
+References: <20251020192443.33088-1-i@rong.moe>  <dfa70284-04ce-482d-8d79-cc0ee8b4bf6d@vdwaa.nl> <5d1ae6eb34378570ed1f9b62d945c95bda8a5b86.camel@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/udl: Increase get urb timeout for modeset
-To: oushixiong1025@163.com, Dave Airlie <airlied@redhat.com>
-Cc: Sean Paul <sean@poorly.run>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20251105083037.237925-1-oushixiong1025@163.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251105083037.237925-1-oushixiong1025@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[163.com,redhat.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[poorly.run,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	URIBL_BLOCKED(0.00)[suse.com:url,suse.de:mid,imap1.dmz-prg2.suse.org:helo,kylinos.cn:email];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,suse.com:url]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
 
-Hi
+On Mon, 3 Nov 2025, Rong Zhang wrote:
 
-Am 05.11.25 um 09:30 schrieb oushixiong1025@163.com:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
+> Hi Jelle,
+> 
+> On Sun, 2025-11-02 at 17:09 +0100, Jelle van der Waa wrote:
+> > On 10/20/25 21:24, Rong Zhang wrote:
+> > > The GBMD/SBMC interface on IdeaPad/ThinkBook supports Rapid Charge mode
+> > > (charge_types: Fast) in addition to Conservation Mode (charge_types:
+> > > Long_Life).
+> > > 
+> > > This patchset exposes these two modes while carefully maintaining their
+> > > mutually exclusive state, which aligns with the behavior of manufacturer
+> > > utilities on Windows.
+> > > 
+> > > Tested on ThinkBook 14 G7+ ASP.
+> > 
+> > Tested this patch on my Lenovo Ideapad U330p, it now advertises that 
+> > `Fast` is a supported charge_type although my laptop does not seem to 
+> > support it:
+> > 
+> > [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+> > Fast [Standard] Long_Life
+> > [root@archlinux jelle]# echo 'Fast' > 
+> > /sys/class/power_supply/BAT1/charge_types
+> > [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+> > Fast [Standard] Long_Life
 >
-> [WHY]
-> There is a situation where udl_handle_damage() was running successfully
-> but the screen was black. it was because udl_crtc_helper_atomic_enable() failed,
-> and there were no error messages.
->
-> [HOW]
-> The priority for mode settings needs to be higher than damage handle, requiring
-> a higher success rate than ordinary operations.
-> Increase get urb timeout for modeset.
->
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-> ---
->   drivers/gpu/drm/udl/udl_drv.h      |  5 ++++-
->   drivers/gpu/drm/udl/udl_main.c     |  5 ++---
->   drivers/gpu/drm/udl/udl_modeset.c  | 11 +++++++----
->   drivers/gpu/drm/udl/udl_transfer.c |  2 +-
->   4 files changed, 14 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
-> index 145bb95ccc48..38b3bdf1ae4a 100644
-> --- a/drivers/gpu/drm/udl/udl_drv.h
-> +++ b/drivers/gpu/drm/udl/udl_drv.h
-> @@ -31,6 +31,9 @@ struct drm_mode_create_dumb;
->   #define DRIVER_MINOR		0
->   #define DRIVER_PATCHLEVEL	1
->   
-> +#define GET_URB_TIMEOUT	HZ
-> +#define MODESET_GET_URB_TIMEOUT	(HZ*2)
-> +
+> Ahh, then we need an approach to determine if it is supported on a
+> specific device.
+> 
+> Glancing at the disassembled DSDT.dsl of my device, I found:
+> 
+>    Method (GBMD, 0, NotSerialized)
+>    {
+>    	[...]
+>    	If ((One == QCGS))
+>    	{
+>    		Local0 |= 0x00020000
+>    	}
+>    	[...]
+>    }
+> 
+> BIT(17) of GBMD is 1 on my device. Maybe QCGS means "Quick CharGe
+> Supported?"
+> 
+> With this assumption, I did some random Internet digging. The same bit
+> on other devices is called QKSP ("QuicK charge SuPported?"), SQCG
+> ("Support Quick CharGe?"), or QCBX (see below).
+> 
+>    Method (GBMD, 0, NotSerialized)
+>    {
+>    	[...]
+>    	If ((One == QCBX))
+>    	{
+>    		If ((One == QCHO))
+>    		{
+>    			Local0 |= 0x04
+>    		}
+>    	}
+>    	[...]
+>    	If ((One == QCBX))
+>    	{
+>    		Local0 |= 0x00020000
+>    	}
+>    	[...]
+>    }
+> 
+> https://badland.io/static/acpidump.txt
+> 
+> 0x04 is BIT(2)/GBMD_RAPID_CHARGE_STATE_BIT. With all these pieces of
+> information, I presume BIT(17) of GBMD is what we are searching for.
+> 
+> > I'm wondering if the battery extension API allows to not advertise a 
+> > property if it isn't supported or if it should at least return -EINVAL.
+> 
+> We can achieve this by defining multiple struct power_supply_ext. See
+> drivers/power/supply/cros_charge-control.c.
+> 
+> Could you test the patch below (based on "review-ilpo-next")?
+> 
+> @Ilpo:
+> 
+> This patch series has been merge into your "review-ilpo-next" branch.
+> 
+> Should I reorganize the series and send a [PATCH v2]? Or should I just
+> send the patch below (after adding a commit message, ofc)?
 
-Just increase the regular GET_URB_TIMEOUT for all operations.
+Hi Rong,
 
-Best regards
-Thomas
+I've dropped those two v1 patches from the review-ilpo-next branch.
 
->   struct udl_device;
->   
->   struct urb_node {
-> @@ -72,7 +75,7 @@ static inline struct usb_device *udl_to_usb_device(struct udl_device *udl)
->   int udl_modeset_init(struct udl_device *udl);
->   struct drm_connector *udl_connector_init(struct drm_device *dev);
->   
-> -struct urb *udl_get_urb(struct udl_device *udl);
-> +struct urb *udl_get_urb(struct udl_device *udl, long timeout);
->   
->   int udl_submit_urb(struct udl_device *udl, struct urb *urb, size_t len);
->   void udl_sync_pending_urbs(struct udl_device *udl);
-> diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
-> index bc58991a6f14..891996f0f74b 100644
-> --- a/drivers/gpu/drm/udl/udl_main.c
-> +++ b/drivers/gpu/drm/udl/udl_main.c
-> @@ -285,13 +285,12 @@ static struct urb *udl_get_urb_locked(struct udl_device *udl, long timeout)
->   	return unode->urb;
->   }
->   
-> -#define GET_URB_TIMEOUT	HZ
-> -struct urb *udl_get_urb(struct udl_device *udl)
-> +struct urb *udl_get_urb(struct udl_device *udl, long timeout)
->   {
->   	struct urb *urb;
->   
->   	spin_lock_irq(&udl->urbs.lock);
-> -	urb = udl_get_urb_locked(udl, GET_URB_TIMEOUT);
-> +	urb = udl_get_urb_locked(udl, timeout);
->   	spin_unlock_irq(&udl->urbs.lock);
->   	return urb;
->   }
-> diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
-> index 231e829bd709..6adca5e3e471 100644
-> --- a/drivers/gpu/drm/udl/udl_modeset.c
-> +++ b/drivers/gpu/drm/udl/udl_modeset.c
-> @@ -21,6 +21,7 @@
->   #include <drm/drm_gem_framebuffer_helper.h>
->   #include <drm/drm_gem_shmem_helper.h>
->   #include <drm/drm_modeset_helper_vtables.h>
-> +#include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
->   #include <drm/drm_vblank.h>
->   
-> @@ -217,7 +218,7 @@ static int udl_handle_damage(struct drm_framebuffer *fb,
->   		return ret;
->   	log_bpp = ret;
->   
-> -	urb = udl_get_urb(udl);
-> +	urb = udl_get_urb(udl, GET_URB_TIMEOUT);
->   	if (!urb)
->   		return -ENOMEM;
->   	cmd = urb->transfer_buffer;
-> @@ -341,9 +342,11 @@ static void udl_crtc_helper_atomic_enable(struct drm_crtc *crtc, struct drm_atom
->   	if (!drm_dev_enter(dev, &idx))
->   		return;
->   
-> -	urb = udl_get_urb(udl);
-> -	if (!urb)
-> +	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
-> +	if (!urb) {
-> +		DRM_ERROR("Udl get urb failed when enabling crtc");
->   		goto out;
-> +	}
->   
->   	buf = (char *)urb->transfer_buffer;
->   	buf = udl_vidreg_lock(buf);
-> @@ -374,7 +377,7 @@ static void udl_crtc_helper_atomic_disable(struct drm_crtc *crtc, struct drm_ato
->   	if (!drm_dev_enter(dev, &idx))
->   		return;
->   
-> -	urb = udl_get_urb(udl);
-> +	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
->   	if (!urb)
->   		goto out;
->   
-> diff --git a/drivers/gpu/drm/udl/udl_transfer.c b/drivers/gpu/drm/udl/udl_transfer.c
-> index 7d670b3a5293..858b47522d78 100644
-> --- a/drivers/gpu/drm/udl/udl_transfer.c
-> +++ b/drivers/gpu/drm/udl/udl_transfer.c
-> @@ -202,7 +202,7 @@ int udl_render_hline(struct udl_device *udl, int log_bpp, struct urb **urb_ptr,
->   			int ret = udl_submit_urb(udl, urb, len);
->   			if (ret)
->   				return ret;
-> -			urb = udl_get_urb(udl);
-> +			urb = udl_get_urb(udl, GET_URB_TIMEOUT);
->   			if (!urb)
->   				return -EAGAIN;
->   			*urb_ptr = urb;
+(They are still in for-next but will be gone from there as well on the 
+next review-ilpo-next -> for-next propagation.)
+
+So please send the full series with this fixed as v2. You can include the 
+str_on_off() change also within the v2 series.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
+ i.
 
-
+> > Greetings,
+> > 
+> > Jelle van der Waa
+> 
+> Thanks,
+> Rong
+> 
+> ---
+> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> index 931a72a2a487..b9927493cb93 100644
+> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> @@ -75,6 +75,7 @@ enum {
+>  enum {
+>  	GBMD_RAPID_CHARGE_STATE_BIT = 2,
+>  	GBMD_CONSERVATION_STATE_BIT = 5,
+> +	GBMD_RAPID_CHARGE_SUPPORTED_BIT = 17,
+>  };
+>  
+>  enum {
+> @@ -180,6 +181,7 @@ struct ideapad_private {
+>  	struct ideapad_dytc_priv *dytc;
+>  	struct dentry *debug;
+>  	struct acpi_battery_hook battery_hook;
+> +	const struct power_supply_ext *battery_ext;
+>  	unsigned long cfg;
+>  	unsigned long r_touchpad_val;
+>  	struct {
+> @@ -2119,30 +2121,42 @@ static const enum power_supply_property ideapad_power_supply_props[] = {
+>  	POWER_SUPPLY_PROP_CHARGE_TYPES,
+>  };
+>  
+> -static const struct power_supply_ext ideapad_battery_ext = {
+> -	.name			= "ideapad_laptop",
+> -	.properties		= ideapad_power_supply_props,
+> -	.num_properties		= ARRAY_SIZE(ideapad_power_supply_props),
+> -	.charge_types		= (BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
+> -				   BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
+> -				   BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE)),
+> -	.get_property		= ideapad_psy_ext_get_prop,
+> -	.set_property		= ideapad_psy_ext_set_prop,
+> -	.property_is_writeable	= ideapad_psy_prop_is_writeable,
+> -};
+> +#define DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(_name, _charge_types)			\
+> +	static const struct power_supply_ext _name = {					\
+> +		.name			= "ideapad_laptop",				\
+> +		.properties		= ideapad_power_supply_props,			\
+> +		.num_properties		= ARRAY_SIZE(ideapad_power_supply_props),	\
+> +		.charge_types		= _charge_types,				\
+> +		.get_property		= ideapad_psy_ext_get_prop,			\
+> +		.set_property		= ideapad_psy_ext_set_prop,			\
+> +		.property_is_writeable	= ideapad_psy_prop_is_writeable,		\
+> +	}
+> +
+> +DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(ideapad_battery_ext_v1,
+> +	(BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
+> +	 BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE))
+> +);
+> +
+> +DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(ideapad_battery_ext_v2,
+> +	(BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
+> +	 BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
+> +	 BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE))
+> +);
+>  
+>  static int ideapad_battery_add(struct power_supply *battery, struct acpi_battery_hook *hook)
+>  {
+>  	struct ideapad_private *priv = container_of(hook, struct ideapad_private, battery_hook);
+>  
+> -	return power_supply_register_extension(battery, &ideapad_battery_ext,
+> +	return power_supply_register_extension(battery, priv->battery_ext,
+>  					       &priv->platform_device->dev, priv);
+>  }
+>  
+>  static int ideapad_battery_remove(struct power_supply *battery,
+>  				  struct acpi_battery_hook *hook)
+>  {
+> -	power_supply_unregister_extension(battery, &ideapad_battery_ext);
+> +	struct ideapad_private *priv = container_of(hook, struct ideapad_private, battery_hook);
+> +
+> +	power_supply_unregister_extension(battery, priv->battery_ext);
+>  
+>  	return 0;
+>  }
+> @@ -2167,14 +2181,22 @@ static int ideapad_check_features(struct ideapad_private *priv)
+>  		priv->features.fan_mode = true;
+>  
+>  	if (acpi_has_method(handle, "GBMD") && acpi_has_method(handle, "SBMC")) {
+> -		priv->features.conservation_mode = true;
+> -		priv->battery_hook.add_battery = ideapad_battery_add;
+> -		priv->battery_hook.remove_battery = ideapad_battery_remove;
+> -		priv->battery_hook.name = "Ideapad Battery Extension";
+> -
+> -		err = devm_battery_hook_register(&priv->platform_device->dev, &priv->battery_hook);
+> -		if (err)
+> -			return err;
+> +		/* Not acquiring gbmd_sbmc_mutex as race condition is impossible on init */
+> +		if (!eval_gbmd(handle, &val)) {
+> +			priv->features.conservation_mode = true;
+> +			priv->battery_ext = test_bit(GBMD_RAPID_CHARGE_SUPPORTED_BIT, &val)
+> +					  ? &ideapad_battery_ext_v2
+> +					  : &ideapad_battery_ext_v1;
+> +
+> +			priv->battery_hook.add_battery = ideapad_battery_add;
+> +			priv->battery_hook.remove_battery = ideapad_battery_remove;
+> +			priv->battery_hook.name = "Ideapad Battery Extension";
+> +
+> +			err = devm_battery_hook_register(&priv->platform_device->dev,
+> +							 &priv->battery_hook);
+> +			if (err)
+> +				return err;
+> +		}
+>  	}
+>  
+>  	if (acpi_has_method(handle, "DYTC"))
+> 
 
