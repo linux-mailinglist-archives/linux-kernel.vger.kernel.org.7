@@ -1,143 +1,313 @@
-Return-Path: <linux-kernel+bounces-886888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB3FC36AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:27:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80DDC36B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 548CD507A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:18:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C6F45083DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5468D3446A0;
-	Wed,  5 Nov 2025 16:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9FB3370F4;
+	Wed,  5 Nov 2025 16:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V1ZDJ0xv"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ABBMehgU"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6D033F364
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8267324B1D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359309; cv=none; b=F3erXgoRBbZHh8SPBYZCJkzH4izZGmPli5Qe9TZBLzXQStrTfB+v1N2uWLjVcHzhIZLbggO0W4sJlhtryWbf7Km4AXoagCcflAiZvBsp2do7qFxSwgwsQFrzoCIpEmtl8H3i4eUJshRQ9k8oqq+qqGkbt3NIbitxLPLbW8KtXCk=
+	t=1762359400; cv=none; b=KEez5FqJYTLQQJrcsqyTNHCn+3MJ9mj9rOQ3lDytZGLiWiAzu8Qi7oB419o8N+DMz+Z311wUlUe6Nuh3U6/9KrX6v5TpxTzb1sTXX7LtkJ7bgLMHRMBRh35di8J3RGzKzwKP92WZxFAZrmB3yC6Pf9NUxRY4Cp0OeZQwOI+iJBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359309; c=relaxed/simple;
-	bh=uO/6iVYZ1vFXrKMD4kA3PYSBEGhevKLmMat7U8ijANM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C9A/6ecZLT87iHZ3egs2hQYPFEKUKyQ/XPQGLyZLEOa+oW0NqsBitg3m5qZHUxuO5qCq8tV4SiI2ilEaIXilDrZ7dyeIsbSKbmPdtJ3Bt7yha8huJFO/g9sROOMABEnOdcbmZev2x27Ja49qIzKpEFj/w3GSzQtKZeOEcSdcNn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V1ZDJ0xv; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so12062941a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:15:06 -0800 (PST)
+	s=arc-20240116; t=1762359400; c=relaxed/simple;
+	bh=0mW1b+073J2WkpEQgSQKQ1fM7vUG/qFsJY90DxjuK3Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hUiaML3/8ChPDeNDLquSHt5f7SutYpP9Ndbc6Vdv9O6okoC6POqhF3CjwUXZ7B5bFA3Rxp6k5ROb8ZmB2ixzqJUPQEoW4TOFUgYoKUuv/N5snMnxib4b5XIXQEBj7Sn1mnFxM0gBSBIy4FKqm97OwSCsI+OsbB3AIYT9eZPchH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ABBMehgU; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-43320988dcfso14995545ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:16:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762359305; x=1762964105; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PW+009+mxrT5Q7b6yvU7pEoFhY6Kftp+LN/SDJfngBw=;
-        b=V1ZDJ0xvb7uRoFrhxUzsIPQlte8MdOkz2Novsgvdv55wo47Ukt/fgjcSmjlWY/lsvC
-         XcqnnhuDP8NgVHCCOv78l9UxIkMfrdRjEyxElJK9TUX2Xb0g1N7v1XafyyGB/JzpoSeb
-         cLmFdgZUMjEjd8euY9cicGuhRfaIgOhSDX6F4MJCoZ/FKodLgpmePVnBQQB1Rc3FpBGy
-         Vr1iAx+UQA8rSz9UYWy9Bq2Ij3BsFxmq4PeALc3ZsCRaJzdLolTvH6k/CWrCAAeg77WD
-         wF1XvZWMBgAQ8RjEA4pyqTEQlxWWWfu/mfHlEWMtlBXDSB1LBihExDRK6dcmSN/sdupe
-         yfig==
+        d=google.com; s=20230601; t=1762359398; x=1762964198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ACs9ehJB3oUkzpqGylHL7GURPnmGaEVz6xiN6ORjiWI=;
+        b=ABBMehgUwkZhVIo1+hLrwrvLisbWg0FCHrESyyNmmQCC8N2yXkdsC8GSGGE84D6wDm
+         w3jM9d7Vq1duUa8kv6wORSI4JvOCCkBMGHA0loPbg+GwdyE9xX4zepkitVOK9sNfa2mY
+         65QMKy/9bQi0PB+rH9WdQJlf8P39ESyPR73P92/W6vKvY6mquaWnZ3AcJz2D1T8MGK9i
+         ObdLgbka2bMwAU+OmCzEXUmEUDCD1kXOUm4MvWXFpmYi4ChDugPbFJq5GEVCShTsyCs4
+         t2kOlI2Ifphf0CX7UG9l0KTp9yb8/VaXtPocaU1qVoyHLR5NA8eT83RvT29dXpGpPp0e
+         oAoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762359305; x=1762964105;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PW+009+mxrT5Q7b6yvU7pEoFhY6Kftp+LN/SDJfngBw=;
-        b=DaruDjdlOXo5YAu/tLCwodXaAERsxioCfXCCRQ1iiGUjlsBnOkPFu8H2jtWpPfrouz
-         AN6bYOfOE/j5zJNohtWcbsDczA2vouUlngie3vB8vTQJXKwwxVEE7EdWdMUrA8VyBSuZ
-         mec0O+Sd8CanFe8qZoKJR3PO1s9SaYeCYKxw943AdAbyHD0VAn0MTrTZRxRfwO7cDPcn
-         4FoInPZoZbH05DDSq5J66yoK4c4Tc4fec+stDIWVfLEWMGvhit/+ZqGhJt4eUHjTvw/L
-         iW1i0mV5uOIWuZd0EEp5Lc+VvdDhpFZeUJfVBstnZwJ2sNDPpNqc61oQpxidpsWmgI+L
-         t8Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxmq58hewZ4oIcjzSZ2QaLfFLB7e+TXcptDS7y9uP4LVy7f8OvhGKHIwdsF7k+NOnUheLALcJXsrfv+VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxI5EYRUC5noTjDm95tYaa02P5PRwdJnrQr4XuDExEysGMF3iU
-	ULbPOGYNiI6RXqDZnSpE4fLy3vMZobp5dsnN+3dFopk8ffyY1EXtpfUqnm/8yFfr2Rw=
-X-Gm-Gg: ASbGnctIDOcZI/DObKVIeeEUeQ8bAPpRHcELnxFOQ+IZRGlJH1zFCt88hmEdq2Hjp1i
-	EOOUYHFVdvBDZiV1FyuDfX9/eluvtkAVCA3ogeNPA5/v9enVSlqZfFrxKYb3KFzj8qDhcTp0Qaf
-	eilmQZ9LnS3yPhUUaLZJvLVhDrelQ4lQJv6rR9yo00CdAdH8espj2SUvcKOgBHc/CoZDqqJ2BQR
-	kRSAEP8wtAD9NKBccaMrsOFyoLzKwzhSsUU/4DY+DZwfvV3I+0jH+1lfCFDY/Eqx9fDETZGVmE+
-	LbrfpThtX0SyFYJEY68b0XKiKO/rO8/3/0HGIoVRyfrsgDmpPdkhTVFWFXN64g1ViQxYdnZX+jD
-	u3Ja2SiKdJFDe5bXLjo55U8pre3kFt8FkHcVZHQj8bAZNh4s4pk7/7IAX+uDGto25XF8tludr52
-	cUtRoPAP8VfvAqtW4Cz+dQpg==
-X-Google-Smtp-Source: AGHT+IF4JPIePgklGlaLoqm71Bu7ApcoRu6iTmJ5L4gpcRDvE83BvmdQI2sf+Wxgg7a+5Eyn5thE4Q==
-X-Received: by 2002:a05:6402:13cb:b0:640:d0d9:71d3 with SMTP id 4fb4d7f45d1cf-641058a2312mr3606599a12.6.1762359305340;
-        Wed, 05 Nov 2025 08:15:05 -0800 (PST)
-Received: from [172.20.148.133] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e680578esm4923886a12.10.2025.11.05.08.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:15:03 -0800 (PST)
-Message-ID: <8f05eb9644d1920f7158c19d769c943fd5dba9a1.camel@linaro.org>
-Subject: Re: [PATCH v3 10/20] regulator: add REGULATOR_LINEAR_VRANGE macro
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Lee Jones <lee@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin	
- <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Wed, 05 Nov 2025 16:15:02 +0000
-In-Reply-To: <aQoNPvwUCE9PijJ6@finisterre.sirena.org.uk>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-	 <20251103-s2mpg1x-regulators-v3-10-b8b96b79e058@linaro.org>
-	 <aQoNPvwUCE9PijJ6@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        d=1e100.net; s=20230601; t=1762359398; x=1762964198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ACs9ehJB3oUkzpqGylHL7GURPnmGaEVz6xiN6ORjiWI=;
+        b=AkYkS7Y/x7011qweg4XSR+CVTyPfIto+tcASICzMm99YDEQahPF2FXKEl86lwkPKlv
+         FeMrIXKZx0kpZvwRhkTNnjl/vhdwomZSC1jteiHYCnLJs/EIwHoxTJKZC3BwzmSW40S3
+         b27AzqBCL7me8j6yow8/nVuHbG+gohPSJu3+aawXOouVePVcNcmMbX1ayHNqccjTP5Gu
+         e3FelBxcgwtlDoCg2EoCt0x9Cpw4/MwsM4yFiqqbcaklrdTq0wDaarr32CpSpI1dUUJO
+         VrK/hIDKsYQmYI7ei9p5u4JoVoiW/xWU1xocXJ9M45YBykKCrTl3tsM+MrMYZQizfL32
+         P9ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUt9vSt+wADduZ2irLGY71bMbfXskJJdr2XKtwObpdRHR5G3211th2KxaDZHzLTLI73tHsWXjB0LP2hByI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFkHSq3IpbwemRsYHNPA/sv5CtjiF2t7pCgMrdRipTsSGJXStD
+	UQdkLDYDv7awdo//epW5NMoSuaxoBwHTOgs6P+yu4Vm9p2JP0YWNF+WkDZV58QHWUu5NKvx+DGv
+	CNv9H5+EQiyib5sdobHtU2JlUiMoFkFhVtgUkGXge
+X-Gm-Gg: ASbGncsoBhsl2xn3hUNFesrxTqtpaiP2LY1Y2NLzrADx2CM2wpjFk9bIfsiOStuBQnl
+	GoRshSeU6IxpXNab9jqZwEDQAvaCf/e7Ujm0IySl+oZyEploSxN2ByOLUSdi34xaqNufsPLkkvZ
+	sKYbQ5ANv6S1r5mvwl7ZyfMO+rLdoRhcIHH43tRh4yIV96r9nLFfWEnTE6NpZWySwtOmfJBSI0p
+	8YQ8SXlJf9HhgF5OxoFSd4XIkuBMFlaDujYF3Yps08HBxeeZsT9kVB+qCtYaa4QVFVYv8RDIL2q
+	RGdrC5z9trS9hHQ31lboJrOzCw==
+X-Google-Smtp-Source: AGHT+IFrsuFMA1TSlPF6UPOqwRKI3S1TVMUqjqGwbsvSlZ623YeZIKO2ZUxGfz3c2g6/ooCxqi5U/+HTdvc4VcOqieE=
+X-Received: by 2002:a05:6e02:1805:b0:430:b994:3bd1 with SMTP id
+ e9e14a558f8ab-433407698c4mr55204705ab.1.1762359397327; Wed, 05 Nov 2025
+ 08:16:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251017185645.26604-1-james.morse@arm.com> <20251017185645.26604-21-james.morse@arm.com>
+ <OSZPR01MB8798162B444DA35707A4E3798BFCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSZPR01MB8798162B444DA35707A4E3798BFCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+From: Peter Newman <peternewman@google.com>
+Date: Wed, 5 Nov 2025 17:16:24 +0100
+X-Gm-Features: AWmQ_bn_GHMcQLM6dMy9FTsbSXlRMr5a1a_4wB6ts3RgPX1XxSVdyRM8ndMU0uE
+Message-ID: <CALPaoChLKRQqjZO+O92WQ=MsWjV+q=hVE8=BXCOdkta6ZEXNMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
+ restored during cpu online
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+Cc: James Morse <james.morse@arm.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	D Scott Phillips OS <scott@os.amperecomputing.com>, 
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>, "lcherian@marvell.com" <lcherian@marvell.com>, 
+	"bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>, 
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, 
+	Xin Hao <xhao@linux.alibaba.com>, "dfustini@baylibre.com" <dfustini@baylibre.com>, 
+	"amitsinght@marvell.com" <amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, 
+	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, 
+	Shanker Donthineni <sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>, 
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, 
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, 
+	Ben Horgan <ben.horgan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Mark for your review!
+On Mon, Oct 27, 2025 at 9:48=E2=80=AFAM Shaopeng Tan (Fujitsu)
+<tan.shaopeng@fujitsu.com> wrote:
+>
+> Hello James,
+>
+> > When CPUs come online the MSC's original configuration should be restor=
+ed.
+> >
+> > Add struct mpam_config to hold the configuration. This has a bitmap of
+> > features that were modified. Once the maximum partid is known, allocate=
+ a
+> > configuration array for each component, and reprogram each RIS configur=
+ation
+> > from this.
+> >
+> > CC: Dave Martin <Dave.Martin@arm.com>
+> > Signed-off-by: James Morse <james.morse@arm.com>
+> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> > Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> > Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> > ---
+> > Changes since v2:
+> >  * Call mpam_init_reset_cfg() on alloated config as 0 is not longer cor=
+rect.
+> >  * init_garbage() on each config - the array has to be freed in one go,=
+ but
+> >    otherwise this looks weird.
+> >  * Use struct initialiser in mpam_init_reset_cfg(),
+> >  * Moved int err definition.
+> >  * Removed srcu lock taking based on squinting at the only caller.
+> >  * Moved config reset to mpam_reset_component_cfg() for re-use in
+> >    mpam_reset_component_locked(), previous memset() was not enough
+> > since zero
+> >    no longer means reset.
+> >
+> > Changes since v1:
+> >  * Switched entry_rcu to srcu versions.
+> >
+> > Changes since RFC:
+> >  * Added a comment about the ordering around max_partid.
+> >  * Allocate configurations after interrupts are registered to reduce ch=
+urn.
+> >  * Added mpam_assert_partid_sizes_fixed();
+> >  * Make reset use an all-ones instead of zero config.
+> > ---
+> >  drivers/resctrl/mpam_devices.c  | 284
+> > +++++++++++++++++++++++++++++---
+> > drivers/resctrl/mpam_internal.h |  23 +++
+> >  2 files changed, 287 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devi=
+ces.c
+> > index ab37ed1fb5de..e990ef67df5b 100644
+> > --- a/drivers/resctrl/mpam_devices.c
+> > +++ b/drivers/resctrl/mpam_devices.c
+> > @@ -118,6 +118,17 @@ static inline void init_garbage(struct mpam_garbag=
+e
+> > *garbage)  {
+> >       init_llist_node(&garbage->llist);
+> >  }
+> > +
+> > +/*
+> > + * Once mpam is enabled, new requestors cannot further reduce the
+> > +available
+> > + * partid. Assert that the size is fixed, and new requestors will be
+> > +turned
+> > + * away.
+> > + */
+> > +static void mpam_assert_partid_sizes_fixed(void)
+> > +{
+> > +     WARN_ON_ONCE(!partid_max_published);
+> > +}
+> > +
+> >  static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)  {
+> >       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
+> > &msc->accessibility)); @@ -366,12 +377,16 @@ static void
+> > mpam_class_destroy(struct mpam_class *class)
+> >       add_to_garbage(class);
+> >  }
+> >
+> > +static void __destroy_component_cfg(struct mpam_component *comp);
+> > +
+> >  static void mpam_comp_destroy(struct mpam_component *comp)  {
+> >       struct mpam_class *class =3D comp->class;
+> >
+> >       lockdep_assert_held(&mpam_list_lock);
+> >
+> > +     __destroy_component_cfg(comp);
+> > +
+> >       list_del_rcu(&comp->class_list);
+> >       add_to_garbage(comp);
+> >
+> > @@ -812,48 +827,102 @@ static void mpam_reset_msc_bitmap(struct
+> > mpam_msc *msc, u16 reg, u16 wd)
+> >       __mpam_write_reg(msc, reg, bm);
+> >  }
+> >
+> > -static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid=
+)
+> > +/* Called via IPI. Call while holding an SRCU reference */ static void
+> > +mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
+> > +                                   struct mpam_config *cfg)
+> >  {
+> >       struct mpam_msc *msc =3D ris->vmsc->msc;
+> >       struct mpam_props *rprops =3D &ris->props;
+> >
+> > -     WARN_ON_ONCE(!srcu_read_lock_held((&mpam_srcu)));
+> > -
+> >       mutex_lock(&msc->part_sel_lock);
+> >       __mpam_part_sel(ris->ris_idx, partid, msc);
+> >
+> > -     if (mpam_has_feature(mpam_feat_cpor_part, rprops))
+> > -             mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM,
+> > rprops->cpbm_wd);
+> > +     if (mpam_has_feature(mpam_feat_cpor_part, rprops) &&
+> > +         mpam_has_feature(mpam_feat_cpor_part, cfg)) {
+> > +             if (cfg->reset_cpbm)
+> > +                     mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM,
+> > +                                           rprops->cpbm_wd);
+> > +             else
+> > +                     mpam_write_partsel_reg(msc, CPBM, cfg->cpbm);
+> > +     }
+> >
+> > -     if (mpam_has_feature(mpam_feat_mbw_part, rprops))
+> > -             mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM,
+> > rprops->mbw_pbm_bits);
+> > +     if (mpam_has_feature(mpam_feat_mbw_part, rprops) &&
+> > +         mpam_has_feature(mpam_feat_mbw_part, cfg)) {
+> > +             if (cfg->reset_mbw_pbm)
+> > +                     mpam_reset_msc_bitmap(msc,
+> > MPAMCFG_MBW_PBM,
+> > +                                           rprops->mbw_pbm_bits);
+> > +             else
+> > +                     mpam_write_partsel_reg(msc, MBW_PBM,
+> > cfg->mbw_pbm);
+> > +     }
+> >
+> > -     if (mpam_has_feature(mpam_feat_mbw_min, rprops))
+> > +     if (mpam_has_feature(mpam_feat_mbw_min, rprops) &&
+> > +         mpam_has_feature(mpam_feat_mbw_min, cfg))
+> >               mpam_write_partsel_reg(msc, MBW_MIN, 0);
+> >
+> > -     if (mpam_has_feature(mpam_feat_mbw_max, rprops))
+> > -             mpam_write_partsel_reg(msc, MBW_MAX,
+> > MPAMCFG_MBW_MAX_MAX);
+> > +     if (mpam_has_feature(mpam_feat_mbw_max, rprops) &&
+> > +         mpam_has_feature(mpam_feat_mbw_max, cfg))
+> > +             mpam_write_partsel_reg(msc, MBW_MAX, cfg->mbw_max);
+> >
+> >       mutex_unlock(&msc->part_sel_lock);
+> >  }
+> >
+> > +struct reprogram_ris {
+> > +     struct mpam_msc_ris *ris;
+> > +     struct mpam_config *cfg;
+> > +};
+> > +
+> > +/* Call with MSC lock held */
+> > +static int mpam_reprogram_ris(void *_arg) {
+> > +     u16 partid, partid_max;
+> > +     struct reprogram_ris *arg =3D _arg;
+> > +     struct mpam_msc_ris *ris =3D arg->ris;
+> > +     struct mpam_config *cfg =3D arg->cfg;
+> > +
+> > +     if (ris->in_reset_state)
+> > +             return 0;
+> > +
+> > +     spin_lock(&partid_max_lock);
+> > +     partid_max =3D mpam_partid_max;
+> > +     spin_unlock(&partid_max_lock);
+> > +     for (partid =3D 0; partid <=3D partid_max + 1; partid++)
+> > +             mpam_reprogram_ris_partid(ris, partid, cfg);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void mpam_init_reset_cfg(struct mpam_config *reset_cfg) {
+> > +     *reset_cfg =3D (struct mpam_config) {
+> > +             .cpbm =3D ~0,
+> > +             .mbw_pbm =3D ~0,
+> > +             .mbw_max =3D MPAMCFG_MBW_MAX_MAX,
+>
+> When rdtgroup_schemata_show() is called, the "cpbm" value is output to th=
+e schema file.
+> Since bitmap lengths are chip-dependent, I think we just need to reset th=
+e bitmap length portion.
+> Otherwise, 0xffffffff(u32) will be output from the schemata file.
 
-On Tue, 2025-11-04 at 14:27 +0000, Mark Brown wrote:
-> On Mon, Nov 03, 2025 at 07:14:49PM +0000, Andr=C3=A9 Draszik wrote:
->=20
-> > REGULATOR_LINEAR_VRANGE is similar to REGULATOR_LINEAR_RANGE, but
-> > allows a more natural declaration of a voltage range for a regulator,
-> > in that it expects the minimum and maximum values as voltages rather
-> > than as selectors.
->=20
-> > Using voltages arguably makes this macro easier to use by drivers and
-> > code using it can become easier to read compared to
-> > REGULATOR_LINEAR_RANGE.
->=20
-> It does introduce an additional layer of indirection into the validation
-> that the configuration is correct, the reason we use selectors is that
-> they should map directly onto the register in the datasheet.
+When I apply additional patches to add the mpam_resctrl.c stuff I
+notice this too:
 
-My datasheet mentions the range more prominently than the selectors, and as=
- driver
-author I can easily validate both (neither macro does any validation itself=
-). I do
-believe code like this:
+# grep L3 schemata
+L3:1=3Dffffffff
+# cat info/L3/shareable_bits
+ffff
 
-    REGULATOR_LINEAR_VRANGE(200000, 450000, 1300000, STEP_6_25_MV)
+I noticed that new groups also get a too-long cbm as long as any other
+groups have a too-long cbm. Maybe this out-of-range value is bleeding
+into new groups in __init_one_rdt_domain() when it calls
+resctrl_arch_get_config() on all other groups.
 
-looks more meaningful and is more naturally readable than
-
-    REGULATOR_LINEAR_RANGE(450000, 0x28, 0xb0, STEP_6_25_MV)
-
-as it's much easier to see the actual range without doing any additional ca=
-lculations.
-I'd prefer to keep the alternative macro, but will drop this patch if you r=
-eally
-disagree that it adds any value
-
-
-Cheers,
-Andre'
+-Peter
 
