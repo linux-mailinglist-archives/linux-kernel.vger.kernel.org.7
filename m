@@ -1,248 +1,225 @@
-Return-Path: <linux-kernel+bounces-887514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B693C386B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:52:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CE7C386C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AA104E585E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE5A188DA07
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DE12F5A34;
-	Wed,  5 Nov 2025 23:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94C6299959;
+	Wed,  5 Nov 2025 23:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uXsB25m1"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWvmlqm0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC65299959
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762386760; cv=none; b=W7k9iiqNgQp9JZm/T8ShZVNDJml2BMdmDs/Bn7KXgaeOPXqV/qnGxYRgjpqLqbDpSSZ5V34AJSAgr7u/Iv/Ll7oh0vJnyyP/g7/wyt5HmmvwD7gxc19lPzvNAWEezkGQMvbJwzCLT6PxEzM5Z1HOORHfB7MOdBHRtoKpqqQxZQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762386760; c=relaxed/simple;
-	bh=ARIJZPPp+H/QGGolJymBWsGF1xfUvB9lUDs0SVqyrc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=td5Rz8LFQHUyMxb8MbF6Wqu5NjfbIWwVqGSFaeWF3NeKqnDn0875gauA1OFdCznds5+Z8bBHu+KKuyaoBP8cGDN6v8tL/RWtqSydvZb8OyD6SKgywQ2uHjHYpKf5pUO1I1L0StjoFhtbBEwoMAIzhDw4wj50w2B0ufxknT2a6II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uXsB25m1; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-294fd2ca6acso11523655ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762386758; x=1762991558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbkBj/ZsjHNdPwuX0wKFAsON8f0sh7Iea9BGL9GBzAA=;
-        b=uXsB25m1D1oO3TENsXT8tX21AOdtCKlZbB46bEugTicMd8VIERxoHb/kAmfrtUYp2V
-         9zk+octk60Ap8fRKzI4aOm5mtjJQFuQE5U2SGgi2JmUQiB0PKCUCHDf6h7niMWFmNcJ4
-         fUa4mwhGjz/3AYnbiS7cy9zI/HspSVL02RXaIYjXS0/x14VApv6saiQQErFcSxnliNrj
-         wxLLDx8Q1obGJSnQ0N9+WuJZ4Zr7/TxkBTzo9MLvx6uUpcyc3DscAkUsqQtdLVAA0TsI
-         LuBRJD63bGym5VZ9BZYGYRtjTQ1jpJxktHxs+kes5BmNIF0PBsIxJYxcvfIIHPjLkWLQ
-         oufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762386758; x=1762991558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jbkBj/ZsjHNdPwuX0wKFAsON8f0sh7Iea9BGL9GBzAA=;
-        b=c97pF8VBJc4hgsl9EjnQuTKfvAy2uSBSdMYOMb/Sl5WUg5fzkTQE28ta9wXrim3xdK
-         sE68AoNa0/95ytkx6lltT6MkVlB8iMzUfTx8ET3rLMc0W3NlW8BR8OcrQ6BN4xit4FDE
-         +PFA9LUzZ3SUodALlZfZOW11K1koRaqTpkoB1qPrPtiL8QF+sTzgMNt0isALtGFS/V+z
-         OzrQeJRKSXf05wlPnIxSJ62kQfDd63PpFkKXM6yfIV0f0ATm2xQJzBD2O6zVC6yOgznZ
-         Kj/BFC5wQkwOnvGMEoaJVkngcdDsRTRc0JMc9l2jfXPsAEGEWC453eUdCFZqumzWkH+o
-         IzbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtDcj20TKhsQ2deUBnhfE3u9cfcZmO12gah3HEVeboU/Sl9fvLhZVnMeIIt8HohDr+zNBDgi8LoHemL3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys5QhOhXvpQHw00alzpOYw/AUuv0K3iCqN6bnelbgJMD6FA/1d
-	kRt6eg6260OR6Xq2DFcDKUWRr0haQgntdS2/eH/vcKB1wYMW/OG7nKulbU2UyLSCgg==
-X-Gm-Gg: ASbGnctP7ld4pjHqIboBY2rk/AVkZO8KKphJApOcuTFXnfoRl55k4kfbVI1+BSzcYSm
-	JTaiaWekK2Yg5wf/4KLLaGXgK9FKwmzMeUHpt5+LZEDaNm+uBsHZxHzql8sEOGOo2rGv0C0S7be
-	kbmMLXcj7VrW2wKgMeK8ZPIqIPk64kn6P1MlgdELsvLEKBFY4lcPacfinKKNI/43+tJjWaC3cOP
-	SWVvbOFztydO+7xrx0SjMF92o/bh2RNy1jiZizraldbZiM5xg+PM2JzahqyFbDbFPDAPal1hKM0
-	8H700qzEX2yQfHjDMXAQcEsTHCVWAqC4MOcNIaaca53JyztS7SMafgHhBYXsd3OUhaz6MzprOrO
-	kfmW3bYZzDtNXlMfrhtaK64pX7gx7gX5wE50K8z4scQE4/yHwhES4ec7V7Nxa9ay6U1ekKH1Fim
-	1PoMRphC6cZ2cyOnswiHFdMw5hMXyM7hIqyZWme3eMsxUEIDS8TUXe
-X-Google-Smtp-Source: AGHT+IFl+4bLAl16hSQ6h6hY8D49g4G1vydk6YJxERppDa81I9jESXgOuYdC3pTfYES+sKLBwIZOyA==
-X-Received: by 2002:a17:902:d512:b0:295:55fc:67a0 with SMTP id d9443c01a7336-296508402a1mr14835225ad.2.1762386757885;
-        Wed, 05 Nov 2025 15:52:37 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f8d7eee7sm518223a12.4.2025.11.05.15.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 15:52:36 -0800 (PST)
-Date: Wed, 5 Nov 2025 23:52:32 +0000
-From: David Matlack <dmatlack@google.com>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Alex Williamson <alex@shazbot.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] vfio: selftests: Add support for passing vf_token in
- device init
-Message-ID: <aQvjQDwU3f0crccT@google.com>
-References: <20251104003536.3601931-1-rananta@google.com>
- <20251104003536.3601931-2-rananta@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD322F3C09;
+	Wed,  5 Nov 2025 23:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762386816; cv=fail; b=J3vqUm9/2uPInOdh2U2X5oiOqQhnmEz7HrVgoElKPncaAzQc3kfA9PLXn4/HHwahmj9uxWZKhHljZNzS2OCpp3KIUDBHwyrfXZbNwjSwLQUkHeySkj1kVoOvkYtCHs9Cz/RGolCVTSNiwDffToLqZ4hU+FKS8Rdvj+eOXwrUSJk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762386816; c=relaxed/simple;
+	bh=5aWoz2EsWUVZeeywef4vtFkZNc+lVOEIv5J+aHJwUnU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jXsb8N1QiyNXcqnWgyjcwvOmO9k+cvo8tn/83B2Qes+CR5JbBHTknFwRhSO/8dv6OMZpPtv4ALND6KKhq3EmJAnOZwKCUlyI0x3IcURepdPsAsvzC8bCNq/0wA0rMuhD52sf3/v5JYgM7d3+kq13+rj56LZs+jAQt3cEUZKQQ6c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWvmlqm0; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762386816; x=1793922816;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=5aWoz2EsWUVZeeywef4vtFkZNc+lVOEIv5J+aHJwUnU=;
+  b=IWvmlqm0yPb8nM+3qhWOAORsbbN0ZYBUtrFecXo4lirW+CGKKgFBrepi
+   Wtnub5g4XUOk73fqtOV7U6ZnWtkAZjKQt3snr323XFgN4ChvwJ/qNEBB/
+   62Lz76qBRKgAKdPupIMbHKxz6/ZzKEer0Q3UZntGSp1SO6z1W3uzjR5Ou
+   NbOfXfzbWLxOTozDsr6l47/nuoro6M2hRTNplcJZaTQglOhiiSkSVmAoN
+   hCXQT9GYmiUczSqfnaqBncgxE1ceizgjxofXX6HK/YaRAX9h/5pGtAxDs
+   2K2XAtNPrGIMkZRqJ77iBta/0Je3KdsQR7rIrEOJIlC2xPZNcWlURw2j8
+   Q==;
+X-CSE-ConnectionGUID: G1GXdwyKT5ahSgt6rKgw1g==
+X-CSE-MsgGUID: VKzDwwO2Ti664+jDq9i4/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68354754"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68354754"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 15:53:35 -0800
+X-CSE-ConnectionGUID: glJdHPY8S6StfwWzjNycoQ==
+X-CSE-MsgGUID: LPCLdlKRTruy8RwhwuSHog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
+   d="scan'208";a="187544801"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 15:53:34 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 15:53:34 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 5 Nov 2025 15:53:34 -0800
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.12) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 15:53:34 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H1tRG5/DhAnX3irX49Aq268L2W9Vg8hGJ3J9MOtIoVZI0NCfIDLHeLszHjqBw3XNXQ97ysi/APHifOrJCjpkfhKWBg/5uFIaErCSPXa7mdMGBIG4hmog/KD9DkS30O+TJUzxoG7lLxZdt7m1aerTM2E63Uum+Y18GseD+VP0IKZWXRda9+COGL9p/pOn/pIQDekD+ohtuxOf0o7Fbl8Ekubz7V+FVWBlrlZ8lGfWZqJyi/EAY/wB5nHChCDucgwxwV4IaeWcbVmiWlmfDYW6mpr77k8K/C0GMpKG6EDV6KY+okMNpJzp7K2+Lif3Rh5P0eRKD+k1BIO+X0zsgKDizQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jEIhfYVVHwmF9tmk/NxzwVwpgrGcSrW7KctnUsN9nqI=;
+ b=a6F+FIrIJvlGms4zjNnTDszC3cEcJapM80nTBSyn+sTORHeCjpwRGDk40E+KYttXrZ8ALQgtF8rYFcNcw0nS1kFceJndxH74hPS7oH8Qzjv5ocazej5Ovfh7Qh3rcEdgRb/mrtVcbx++DYaa2FEAtKNCs8F02gW+mrSUrs1tQXng1k2US3bS22sg/TVtww3r6cmFs2hnyGcEVnXfribxSefUqnyJzXRUQEijGhnezifsc7pUPzUogcBIt/Xxsq5n17QUjLe+RG2IWYolicWIXuWh073w5sxYNmITkaEWoswUYqVRPj7cHIay30vLTXUP1KXHkzVufM3Q6WfhC5QD9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SA1PR11MB8396.namprd11.prod.outlook.com (2603:10b6:806:38d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Wed, 5 Nov
+ 2025 23:53:32 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9298.007; Wed, 5 Nov 2025
+ 23:53:32 +0000
+Date: Wed, 5 Nov 2025 15:53:30 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>, Andi Kleen
+	<andi.kleen@intel.com>
+Subject: Re: [PATCH] ACPI: APEI: GHES: Improve ghes_notify_nmi() status check
+Message-ID: <aQvjenMVnpOgne1t@agluck-desk3>
+References: <20251103230547.8715-1-tony.luck@intel.com>
+ <20251105211924.GA1264471@yaz-khff2.amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251105211924.GA1264471@yaz-khff2.amd.com>
+X-ClientProxiedBy: BYAPR05CA0081.namprd05.prod.outlook.com
+ (2603:10b6:a03:e0::22) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104003536.3601931-2-rananta@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|SA1PR11MB8396:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0cd48474-88ba-4422-c7b7-08de1cc68682
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3CtEF+TfDg3w6KA5f2lSHEgREcwppPJIPRHsqH+Y7MKQ3dW+x3vwYy9qHkU+?=
+ =?us-ascii?Q?exWvhJauspQIbnGLc2vCYQnycfoKrtDiUD/NiiWn9GMaKHn9y1iAz0AT4YJ8?=
+ =?us-ascii?Q?jA+pmnus7f3Gt+ndyHMnDAUYmE5RtaHfpnZd0kZy1xTtXH0QkrvG6oZWJvjd?=
+ =?us-ascii?Q?qm7HfLL5pSQ6AJCZTGVslDd2DT0G19Mzre/yGWraYEW1XR376D7n7jofFA7a?=
+ =?us-ascii?Q?D6LPtDtLFvvwOX0nOHfHEQVDOi2Y5zV3+ApdK/B5tgHy4MzdKQsG7eeisgJy?=
+ =?us-ascii?Q?Q8ktbLfyO0Us8w7B/k9vWJmLGx2FgwoQcKdR+iL4rAj4q7NtDZTiFoi0Kn4+?=
+ =?us-ascii?Q?H3TzPa57XNBWpt2gQ9LvDcXKg91r/7qXCAYJhBSklpL6EfNdwLtVJqKf8+6t?=
+ =?us-ascii?Q?N8BAHL3VSt9FtZ3Pl3JuOPn63KkEtYqDb1rOai41WTwAiirtccBPH6xPvCr5?=
+ =?us-ascii?Q?Od7bMJ/uDlFU7URkV2f84B2SDTqD1Rk97QyROlLlbTlc1zk1w61GZaaNCBYR?=
+ =?us-ascii?Q?L5jtrcYbHG/XcWzZO4gqxlRZbzsAlb3kHbVD9ZNWaZtrnDwfuBO5DTbuWICP?=
+ =?us-ascii?Q?7LBbo3FGxTJ+8odGps92s/KonkNPauuKY5SUocmhn0YhEx0d4ZIPFc+IYSYt?=
+ =?us-ascii?Q?vgJKVGV7q1xzl9XWt1LXNNcAdATwBuXjDCZ79b5VqMYUO7H5HlIVYA/HUARF?=
+ =?us-ascii?Q?BptTABJjjcfxA6AfXv1GWQj0hNJB6xTRUCRagAoW3IOLKU3WjVnp/UrF2vC/?=
+ =?us-ascii?Q?DmaBykDcPHG+U+KA1GV2TQh+m7kPVZiHWuwnVqQ8XgYsvffHGT7XcHUkCKVJ?=
+ =?us-ascii?Q?VkZqZ4gzq6D/WeyUmiIZ+zOK1Ci1f4/uCH4YEsfQaxsSHfCV+mI0XHi3EmZe?=
+ =?us-ascii?Q?LmLlUE3eeCZw5rVz1hpVaJwsp0O9AnN7Q2bGX0jryrGNFxNrXJiqnojcfQUE?=
+ =?us-ascii?Q?O9GgZzFOKu//yD/+SbQ2rIcg+HLp/hKBSatzzM7q6cnK5nBDVEdDYjSu7neP?=
+ =?us-ascii?Q?icBapGIPdrQN4Dc/UeZGePJRhkuEMO+vmcbYDpAy6xGN52WeGS+LTFXZslw4?=
+ =?us-ascii?Q?MfkQDo54tAQ/2H7YwJRY+gj5pCCSm7YPKVrf/b7kCcYLJhDQCvvSAl7ZY9t5?=
+ =?us-ascii?Q?7JDwBW0S8sOpCDPYp3NzSB+/e+SKpD5RMPtWUWYcmRnnXuWyiu6bQkpV6e+7?=
+ =?us-ascii?Q?L7JhLHsDsbKUVgGIIdGCjUsGJ4x82njsbT5DDEOf6bydu2Njb3+ii3zJxk2i?=
+ =?us-ascii?Q?oYIPY3IO+3HGaY8QIkzWAgq7Wz6rpA6SRMwWjla+SXGKSMcRXSmJw0JYiRWe?=
+ =?us-ascii?Q?yYdo2wO0kI8fNaKJwrxqKDKRUItWZ4ky04J9IULNErgFvrx66DpNNutJIZVw?=
+ =?us-ascii?Q?yZkMgGHKnFkAUP1FW6Mhar6lNJqCJOaKQvVpi4Ly60BbrBM9FVOchwiNjpLS?=
+ =?us-ascii?Q?kT3GqmctWFpfrkj4kUmNxgxmfOkhNEVGM5IPZbWJvos5Mubj3nVRCg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Yb7G4zv6KNRCeMtJ/l0dKh8YHZnRh2mf13yLpEVBO/dMQ7RBxgDlckm41fa5?=
+ =?us-ascii?Q?1GrqVcmX6Ypo9lpc2SqluA74mcY9pV/5DvPHnzpXb4bb6dwgvzxqbnFkXhcO?=
+ =?us-ascii?Q?oR8I0BgaMyWWpJc+qSJO4UdXzRGXPhaJR+BJ3R0Z3q0Bc+EEY9lcqOHQpmSZ?=
+ =?us-ascii?Q?xYGBCcgkWTrxOt4evwa2/vCgyexQWkUBW2XFIBspXODWD4DpN9PLcHIPxApR?=
+ =?us-ascii?Q?b45i8P/0Si2kKVg//7AoH2vwFbxtME0m7kEfgnY24FNNQakCuaCnUWxqTY02?=
+ =?us-ascii?Q?USGu7jJO9Bwv0V7nFEb/0cl6a9vQnCphNzy2XMfVusjAc+oxBnnVOFGsRqez?=
+ =?us-ascii?Q?X9TwZFsPQAUeW/JICpiJa6bBfUsbNfbI7KRC+obuCDTYgKggceCjLl6R6jFH?=
+ =?us-ascii?Q?WNdOy7l8VC+bc5JnrJKldZ5mwVz5u/ZM78TTILam1Lh8Nz4VdycRY6K67daw?=
+ =?us-ascii?Q?5BYey2B4c+zh9VaPlB2kR7sdOkTuJyn8AS9rimcOB/v2CqQTFeTgFYe+GPF/?=
+ =?us-ascii?Q?j7faOQi5tzTSx3FMXZvKT+3jcM7EKkslccmCN5QgLIF+lZy6UiCw5hhZaxig?=
+ =?us-ascii?Q?LabVgzlV0v6e6gVaBHuLO5JDqcPaEoSPR9+ul5z24gNnsCAaCwd3+Y2oK3OE?=
+ =?us-ascii?Q?4vFe2l3/A2KZXQZuGRm8Dhajn9f+KsllAAIuWr2D+EFWdu+Ixbgn2F9IvOId?=
+ =?us-ascii?Q?6iu6NGTHEkmscOzwkvYDPzvQIuV9II3vhFYPC8ddmSvH9g4+cI+3gsvxVDCV?=
+ =?us-ascii?Q?iVAR1X/tyz8otVwIQ/qfgV7cKDCzDTCil2pLpdXCmyXEexdnrjrhghbIHek+?=
+ =?us-ascii?Q?l8KPsujEXcXF9A40kdHEAxTuLEReu26VeLB2ZODz0qx7mv4SiKUpnv4aoe/z?=
+ =?us-ascii?Q?wbeV81DB5zyr/Xn8wBQgFk4gYKbXBJLebA0rBzqwUMaTl4jSZrf0u1hR0xyF?=
+ =?us-ascii?Q?SVsFOr7a8XBjvKoiz27QKoTHOBge8Xk75hDniH5Je2ryJvedkhRhcuJ9SHxE?=
+ =?us-ascii?Q?9z+sX9OfZTfo/4IjvsXLxkAEPBMkxxCGOjaGFqXst6iqOoCLdazHWZiZCFw7?=
+ =?us-ascii?Q?4gi1OJ/ICPajtHiZJVDFsfhaoTt6EWqjvNOmp5bNujrnwCRVkVKw3NGGZegv?=
+ =?us-ascii?Q?IY4xT3SbUmWw1KSxPs/2+OuApjUXP7LMHwGKRcYZyKGAAx2D6BJ6RPOM37Df?=
+ =?us-ascii?Q?b9VlTla+Ky+kl0z7I4EG2Yv7IhstrG5BFjBJ1FuL9g/7MHPb3/P/GH1ybgoN?=
+ =?us-ascii?Q?XtkZr0VRESaJMR2LE6repMBUBLSZFHDyNr2m86iCEQ3k1xF8WZGRh6/8dgwg?=
+ =?us-ascii?Q?0jcE7A6F7wecrGTW0oXIIvnX6GJgADEClFIUAkmD3B1xcPn6/zhlFJBWExSb?=
+ =?us-ascii?Q?d+LMYzOYoIi2KeDIYZjPWhkxI+TdLjk7+jtmvF7vGKseTazHg6JEXp7tD76D?=
+ =?us-ascii?Q?Q4LYezvjWr2qQFZXMDMTlr66G5iFnLBlotMeYHAzzH/k/I48i5YMmXPH6w+i?=
+ =?us-ascii?Q?c6AmLCvmBpAreIRMTPmsEljlSzW6ME3ugGjsW/y4JkHSw+IaAfXzCCS72ey/?=
+ =?us-ascii?Q?Of0r+gDX/j3ZoUfTNTGbem594sUfDhMJzTxpwaPi?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cd48474-88ba-4422-c7b7-08de1cc68682
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 23:53:32.0299
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w14Gxh6pP/czMAn1oAXSReF35c7HF5BezJBSBi5uFLaYQx2i+BP8WrNHRr1/bAzcqawc+GvIH7jAx72MnlEPiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8396
+X-OriginatorOrg: intel.com
 
-On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+On Wed, Nov 05, 2025 at 04:19:24PM -0500, Yazen Ghannam wrote:
+> On Mon, Nov 03, 2025 at 03:05:47PM -0800, Tony Luck wrote:
+> > N.B. I only talked to an Intel BIOS expert about this. GHES code is shared by
+> > other architectures, so it would be wise to get confirmation on whether this
+> > assumption applies to all, or is Intel (or X86) specific.
+> 
+> I think that is how the ACPI spec describes it.
+> https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html?highlight=hest#error-source-discovery
+> 
+> The HEST and other tables are fixed at init time. There's an ACPI notify
+> event for if/when a device method needs to be re-evaluted, but I don't
+> think anything in APEI expects that.
 
-> -struct vfio_pci_device *vfio_pci_device_init(const char *bdf, const char *iommu_mode);
-> +struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
-> +					      const char *iommu_mode,
-> +					      const char *vf_token);
+Yazen,
 
-Vipin is also looking at adding an optional parameter to
-vfio_pci_device_init():
-https://lore.kernel.org/kvm/20251018000713.677779-20-vipinsh@google.com/
+Thanks for looking.
 
-I am wondering if we should support an options struct for such
-parameters. e.g. something like this
+James Morse pointed me to the fact that HAVE_ACPI_APEI_NMI
+is only selected by arch/x86/Kconfig. So scope is limited
+to x86.
 
-diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools/testing/selftests/vfio/lib/include/vfio_util.h
-index b01068d98fda..cee837fe561c 100644
---- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
-+++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
-@@ -160,6 +160,10 @@ struct vfio_pci_driver {
-        int msi;
- };
+That "18.3 Error Source Discovery" section of the ACPI spec feels
+pretty vague. The "During initialization, OSPM examines the tables"
+bit is comforting, but I was worried that although the tables are
+static (so the generic ACPI address from the NMI error source
+shouldn't change) there is an extra level of indirection where
+that points to a location that holds the address of the error
+status block. Some might not consider that as part of the "tables".
 
-+struct vfio_pci_device_options {
-+       const char *vf_token;
-+};
-+
- struct vfio_pci_device {
-        int fd;
+Further pondering has me 99% convinced that there would be no
+reason for firmware to update that pointer (though it has led
+me to wonder why that indirection exists).
 
-@@ -202,9 +206,18 @@ const char *vfio_pci_get_cdev_path(const char *bdf);
+Rafael: I think this patch is good to go.
 
- extern const char *default_iommu_mode;
-
--struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
--                                             const char *iommu_mode,
--                                             const char *vf_token);
-+struct vfio_pci_device *__vfio_pci_device_init(const char *bdf,
-+                                              const char *iommu_mode,
-+                                              const struct vfio_pci_device_options *options);
-+
-+static inline struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
-+                                                          const char *iommu_mode)
-+{
-+       static const struct vfio_pci_device_options default_options = {};
-+
-+       return __vfio_pci_device_init(bdf, iommu_mode, &default_options);
-+}
-+
-
-This will avoid you having to update every test.
-
-You can create a helper function in vfio_pci_sriov_uapi_test.c to call
-__vfio_pci_device_init() and abstract away the options stuff from your
-test.
-
-> -static void vfio_pci_container_setup(struct vfio_pci_device *device, const char *bdf)
-> +static void vfio_pci_container_get_device_fd(struct vfio_pci_device *device,
-
-Let's name this vfio_pci_group_get_device_fd() since it's getting the
-device FD from the group using ioctl(VFIO_GROUP_GET_DEVICE_FD).
-
-> +					      const char *bdf,
-> +					      const char *vf_token)
-
-There's an extra space before these arguments. Align them all vertically
-with the first argument.
-
-I noticed this throughout this patch, so please fix throughout the whole
-series in v2.
-
-Also please run checkpatch.pl. It will catch things like this for you.
-
-  CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
-  #78: FILE: tools/testing/selftests/vfio/lib/vfio_pci_device.c:335:
-  +static void vfio_pci_container_get_device_fd(struct vfio_pci_device *device,
-  +                                             const char *bdf,
-
-> +{
-> +	char *arg = (char *) bdf;
-
-No space necessary after a cast. This is another one checkpatch.pl will
-catch for you.
-
-  CHECK:SPACING: No space is necessary after a cast
-  #81: FILE: tools/testing/selftests/vfio/lib/vfio_pci_device.c:338:
-  +       char *arg = (char *) bdf;
-
-> +
-> +	/*
-> +	 * If a vf_token exists, argument to VFIO_GROUP_GET_DEVICE_FD
-> +	 * will be in the form of the following example:
-> +	 * "0000:04:10.0 vf_token=bd8d9d2b-5a5f-4f5a-a211-f591514ba1f3"
-> +	 */
-> +	if (vf_token) {
-> +		size_t sz = strlen(bdf) + strlen(" "VF_TOKEN_ARG) +
-> +			    strlen(vf_token) + 1;
-> +
-> +		arg = calloc(1, sz);
-> +		VFIO_ASSERT_NOT_NULL(arg);
-> +
-> +		snprintf(arg, sz, "%s %s%s", bdf, VF_TOKEN_ARG, vf_token);
-> +	}
-
-UUIDs are 16 bytes so I think we could create a pretty reasonably fixed
-size array to hold the argument and simplify this code, make it more
-self-documenting, and eliminate VF_TOKEN_ARG. This is test code, so we
-can make the array bigger in the future if we need to.  Keeping the code
-simple is more important IMO.
-
-static void vfio_pci_container_get_device_fd(struct vfio_pci_device *device,
-                                             const char *bdf,
-                                             const char *vf_token)
-{
-        char arg[64];
-
-        if (vf_token)
-                snprintf(arg, ARRAY_SIZE(arg), "%s vf_token=%s", bdf, vf_token);
-        else
-                snprintf(arg, ARRAY_SIZE(arg), "%s", bdf);
-
-        device->fd = ioctl(device->group_fd, VFIO_GROUP_GET_DEVICE_FD, arg);
-        VFIO_ASSERT_GE(device->fd, 0);
-}
-
-And to protect against writing off the end of arg, we can introduce a
-snprintf_assert() in a separate commit. There are actually a few
-snprintf() calls in vfio_pci_device.c that would be nice to convert to
-snprintf_assert().
-
-#define snprintf_assert(_s, _size, _fmt, ...) do {                      \
-        int __ret = snprintf(_s, _size, _fmt, ##__VA_ARGS__);           \
-        VFIO_ASSERT_LT(__ret, _size);                                   \
-} while (0)
-
-snprintf_assert() could be added in a precursor commit to this one.
-
-> +static void vfio_device_bind_iommufd(int device_fd, int iommufd, const char *vf_token)
->  {
->  	struct vfio_device_bind_iommufd args = {
->  		.argsz = sizeof(args),
->  		.iommufd = iommufd,
->  	};
-> +	uuid_t token_uuid = {0};
-> +
-> +	if (vf_token) {
-> +		VFIO_ASSERT_EQ(uuid_parse(vf_token, token_uuid), 0);
-> +		args.flags = VFIO_DEVICE_BIND_FLAG_TOKEN;
-
-Maybe make this |= instead of = ? I had to double-check that this wasn't
-overwriting any flags set above this. Obviously it's not since this is a
-small function, but |= would make that super obvious.
+-Tony
 
