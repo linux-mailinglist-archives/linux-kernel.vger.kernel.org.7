@@ -1,131 +1,174 @@
-Return-Path: <linux-kernel+bounces-887498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F5BC385FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:32:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDB0C38613
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 325174EC921
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:32:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D987E4E80A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3B42F5473;
-	Wed,  5 Nov 2025 23:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B862F5499;
+	Wed,  5 Nov 2025 23:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWw1J20y"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rd3MaR6M"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FB8259CAF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1131122D9ED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762385560; cv=none; b=CiMPp41hYTJ5euMozp67+12YPLpW5t0iYUvE1NSM7l7YXf1VbZfeWSL0cK6gFPvCwphBRN9VxhSw+wIEKp6yptbfLoaaprrXN2L2Mma/GICKgqYiNQeZ9NZFlBAwvmZPoEPn63ZLJ3IYEnS987dqBUlJJsz/1hSE+oxJpqGaXjw=
+	t=1762385621; cv=none; b=ePl7K5eKvFI6CTZgRhpi8cBdyOt5ME2eRp0GqcmMDIxbE78816G4YDTc2Jna4MTLj4JaRaw1G8MiHjyWvQ9M/Ztoi607MsG78+ghlIPoPhjfwFDGBGVUwyFkjqDyxBuQvgfpLikYV5AVlikETJ/4N8X+6m5e9qNFQNxC2i2qivs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762385560; c=relaxed/simple;
-	bh=vnTm+ozSRZaCK9bpPSSeJvTXgMs06nW1kYwVBeO3ndE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYocUDVBDd9AxUN2kexkLaE2Fj74S2sgGRzpbjm/ry49my/hyMJFRRTiHp4aG3XD57vit8MFMbkX9FfFX4OmMh6Ml29czVH5pXyfrNlcUOVf2puzmvaJyHFwRtheNXk4k0E3R82Cl5Aub3Oc+V86ePW61wNGS3VB7YpNhmScj/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWw1J20y; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1762385621; c=relaxed/simple;
+	bh=RoHqgdm7fFl5Yh0xwlNj+CL9/T7cunCVRJpIqPbD+E4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDk8qJdHP2JsVBtHHbaQsw4eIlfiAxlxIj7+teWstoiYX+4M2UEALFBeY7HFh0Sk+9SJbMIjIfyL2dwH+VAykJXXlk/yasVmbfJcjSTBQ/5D+NQmzv5cAqKdNd/7ARxQvidsd7rkjOB2ACT8P3yCpngN1XBvdiN1QnVeY/DtYAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rd3MaR6M; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-341c68c953bso540408a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:32:38 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429c7f4f8a2so793733f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762385558; x=1762990358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vnTm+ozSRZaCK9bpPSSeJvTXgMs06nW1kYwVBeO3ndE=;
-        b=FWw1J20yRloskHdSuQWug5keqgd/8WSM/HclUUIknagWX4nXL+HnS9SzgtDPAhTiTA
-         MfxUQoE4wh3xS/TZGb/eMkxvuzI9RMOR23MLwdJgevFkv6obOvbUnA/JgX5FTgOTqOVH
-         B4ULf/UgKoE5kbXlQ/y9io0kOwJI+ZFhohcY9mdc2lNwY37Y0Z6rbimuOQCnGKlwhuYA
-         TgEDHAxCR4AcFprtUMwUAf46Lm2Y02V8K32mpfXIcfVhfmQHSgpzRnxOmhXIBCLjvi6L
-         ppQOj80IDomIQiZ2dQvGHJ+MgoL84yuFJOvGmIxY7czD0Fa19/p4z5Usms35sBGNcX0j
-         berw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762385558; x=1762990358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762385618; x=1762990418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vnTm+ozSRZaCK9bpPSSeJvTXgMs06nW1kYwVBeO3ndE=;
-        b=ued0T1x/jzuTe3rH36OJiV8myXd717uTRUd5V+qNs4VPIBSvpc3Oy6ClIw4nVK4bfo
-         GwHtb6qs3Y5LrP9I9ZNTMxRBavpfm+OClXQ0VtCsl3oLvTVLRwimxzLN1jryAUUX6OI1
-         ai3/zDIXuS7pHhY0gFKLA15FgMVmOQfUR65iehmdBFE4tI0ITlKJZ7t7KRXwVBw75/mS
-         mGNPjMlN3qt7dBufya4xW1wNuHsdx2hTb7V0h53H19/XPAL1blLg4WgLElPZQQe7e0ID
-         GUZEonoSSQ9B9QuV0I9xWX77Euhkz9GJI7+Erpb0JYNjwCY1lEofMf1pmn+tWv3jdaGd
-         Pc1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDgoixNaBGHKx9zrZ78PFq6KaEHfYe7Y8dNZy9xA71Hubiges8CifkOjT/cTpmD5eriI+4wa8sGYJHcVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyonbn4+EVijHCWgqht4554v48AVsd4BNa9ZYQxLO7/2CS4pu+
-	6RSXW+fHTpOmF79LrIuBtFee7UljsD5F06XlKCzG4jo/fwLOqne2PauU
-X-Gm-Gg: ASbGncsiyLxLn780oGIxDslWwIyahW9eo5yiQnOpPAc+Xik52Jf2NZwsv/bTSlJxXC/
-	UhA+uV56I82xsKaRR38fZ2mhWA4hV4GloEqpF49HJa1IVKG8qw/xzuVpGd0gE23RUDZUJeVHbkE
-	eYZWiMTtqehRblG2PYcdN+7zI0i+iGY+ncBZA/v17AflSnT8j0xi5vE3lZYwrvVdSXIeBvWAIRu
-	rmdNkqYUabbEdnedmPpXQ14bXUgZuc/DtlOmmxDsHZBlvIl469cUKRlRhwG2nqeTs+nlOKzpykZ
-	V5IFviKGtxfe6a14RcUkby+QoInjYtIh2db+k6h41aiX8i4BCbuih75YTOJQ4Pgw6Pxwmdm8IS9
-	flcZZF2rIhXaAIAFukLuFVSRq8Jl+tpszsOGlVAxc8Qn7E9m5iq+AwgTmLPYfM2FtNZfAs5XWod
-	PrGT6tocphN90=
-X-Google-Smtp-Source: AGHT+IEhPmuR4erigmmxR9eFUPzgSmw6sxAsUVA7h4flt4tHbzQCGMOXFc5w95RmdKQlTP3Q4hRRPA==
-X-Received: by 2002:a17:902:d4c7:b0:292:fe19:8896 with SMTP id d9443c01a7336-2962add623emr67834225ad.52.1762385558111;
-        Wed, 05 Nov 2025 15:32:38 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c7c5ccsm6499405ad.57.2025.11.05.15.32.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 15:32:37 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id DC583420A685; Thu, 06 Nov 2025 06:32:29 +0700 (WIB)
-Date: Thu, 6 Nov 2025 06:32:29 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>,
-	netdev@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: andrey.bokhanko@huawei.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Subject: Re: [PATCH net-next 01/14] ipvlan: Preparation to support mac-nat
-Message-ID: <aQvejbf52_GDs9vn@archie.me>
-References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
- <20251105161450.1730216-2-skorodumov.dmitry@huawei.com>
+        bh=A32nXO43+m2kR+8eaRzNcHIYkEApDPiVW8pHqnBOQt0=;
+        b=Rd3MaR6Mbkr6u3FFERkInTigl5NhDD/8zcLQSTTEDG90Uz7a/zhgpMIEDqGFOdL/1w
+         429p4UHQCrqmonvW/oJUzb/avDv5Dxl8XibBmrw3YdTphlmYtyzEUY8f7wGYU983aFMQ
+         BRg9CbOki3kLWiSDq4cgRVg82BFRb1+2HGtjZTykCtLy6RaTKkZ1DaofgAM7mD8MkJq6
+         U+kCDbIfwM4PPEBA2Py6b9Lxuz3ub0x3nmozII/zVxGnpR3dlDmsjnuLFNQDg7oLMGJj
+         j7L+BNKXYbqTQk2LEb3QYQQ4lb9WrbNFsSuWjFGB6LbXRQ5KOB4HFHdkzc4SN9zwF3ej
+         hUng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762385618; x=1762990418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=A32nXO43+m2kR+8eaRzNcHIYkEApDPiVW8pHqnBOQt0=;
+        b=Ix57VxAC+fTAdVTtQBZsen/sv4kb0VkjZjJ2COWu9cpMDOfYJj3e9DBCvx8ePsJ7NE
+         N9Ckg6ze0acMA5u3DPUTKnWOzFLw/BnQnwidumuWxg7zeN/TTjiuZqTS81ucjOFjxVjk
+         8me35Miee0rVL52Dgf05bKjYJO1xHcTBwGQFBTcpd9cyk6Q8yubhf2T0P0mtw4VQZntV
+         ioxFaogJNSCvVI89D3dkPSeRc5VQw95K7FU1ci4ELLqKdCxV8y4vzGm98RniDe4pd3I9
+         1x+PB+5WVcQTmCGWg+gHirnCVaSBcbCgDE/yeC0dzVn7gWktzD9axmmbK/sjaA9EVlvM
+         OJOw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Wd9ipJGhZRPSNpf7nOQtvJCgxENtVOa2BKCwDjgRhuTd1TugSjL7WPayFcUIGkAWhGRHi6s9evMCTS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkFSTTeDyPOMjLw88tOMlRd64yXCH4uOG2Zp91dz7gWh54QO85
+	47cb7BwszSKG9aQY5f50nPaa4LQ5JDMJ99PsQEy7ly3ICkFnM7mZyr1e/fkJfJ95X0bHNO8f1O4
+	6hYrOdW8N5Ec9UpS/ZlbRrUAUBAV2LkU=
+X-Gm-Gg: ASbGncvqnI0X8Haye8xVQGaR3tMsfy7tWAXe2hGHIg/bux2igvQsXe4MUztijDx6ngP
+	NJXjPMkSh+ZxTW4M8u5Islb9Auufk5qfLjYgc/xRjrP+Ay1ej74uT6zB2f/BBXKu3I90nkED2n3
+	WoF2sBzhbStdVJ1AUeRVBUQz37dRZ+v8RVxTpFHZHEu1HZv4qSC3xyQI3lnPgS02AO566echDes
+	NnAKbzl/wHc6misbaRsd4yyQOcrKfRXeEfCX0aHwXBNK32MLfxgO9P5VKZgqcf1/MmceSF2zKTG
+	UBvO8zEH++2PyFuzKerZr7tFkTl2
+X-Google-Smtp-Source: AGHT+IFi15XXG51xVgDDu0e2kdYsdqqcOP+5TL9/eEL9rxbiDzL6XMtse44f+Pr3b/wZshISq8Jg/ZZNqOdRK5iGPdo=
+X-Received: by 2002:a05:6000:1849:b0:429:ccd0:d36c with SMTP id
+ ffacd0b85a97d-429eb19d72cmr1055962f8f.14.1762385618434; Wed, 05 Nov 2025
+ 15:33:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aE3/3REKYeQ2PROd"
-Content-Disposition: inline
-In-Reply-To: <20251105161450.1730216-2-skorodumov.dmitry@huawei.com>
-
-
---aE3/3REKYeQ2PROd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251105201415.227144-1-hoyeon.lee@suse.com> <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
+ <b3f13550169288578796548f12619e5e972c0636.camel@gmail.com>
+In-Reply-To: <b3f13550169288578796548f12619e5e972c0636.camel@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 5 Nov 2025 15:33:25 -0800
+X-Gm-Features: AWmQ_bmfpzydKuHyeC5aqOqiAefI6FMJ9biunpiR2FY5nzyk7MMSFvRPKri5HKg
+Message-ID: <CAADnVQJVYDbOCuJnf9jZWdFya7-PfFfPv2=d2M=75aA+VGGayg@mail.gmail.com>
+Subject: Re: [bpf-next] selftests/bpf: refactor snprintf_btf test to use bpf_strncmp
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Hoyeon Lee <hoyeon.lee@suse.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 07:14:37PM +0300, Dmitry Skorodumov wrote:
-> +4.4 L2_MACNAT mode:
-> +-------------
+On Wed, Nov 5, 2025 at 2:52=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com>=
+ wrote:
+>
+> On Wed, 2025-11-05 at 14:45 -0800, Alexei Starovoitov wrote:
+> > On Wed, Nov 5, 2025 at 12:14=E2=80=AFPM Hoyeon Lee <hoyeon.lee@suse.com=
+> wrote:
+> > >
+> > > The netif_receive_skb BPF program used in snprintf_btf test still use=
+s
+> > > a custom __strncmp. This is unnecessary as the bpf_strncmp helper is
+> > > available and provides the same functionality.
+> > >
+> > > This commit refactors the test to use the bpf_strncmp helper, removin=
+g
+> > > the redundant custom implementation.
+> > >
+> > > Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
+> > > ---
+> > >  .../selftests/bpf/progs/netif_receive_skb.c       | 15 +------------=
+--
+> > >  1 file changed, 1 insertion(+), 14 deletions(-)
+> > >
+> > > diff --git a/tools/testing/selftests/bpf/progs/netif_receive_skb.c b/=
+tools/testing/selftests/bpf/progs/netif_receive_skb.c
+> > > index 9e067dcbf607..186b8c82b9e6 100644
+> > > --- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
+> > > +++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
+> > > @@ -31,19 +31,6 @@ struct {
+> > >         __type(value, char[STRSIZE]);
+> > >  } strdata SEC(".maps");
+> > >
+> > > -static int __strncmp(const void *m1, const void *m2, size_t len)
+> > > -{
+> > > -       const unsigned char *s1 =3D m1;
+> > > -       const unsigned char *s2 =3D m2;
+> > > -       int i, delta =3D 0;
+> > > -
+> > > -       for (i =3D 0; i < len; i++) {
+> > > -               delta =3D s1[i] - s2[i];
+> > > -               if (delta || s1[i] =3D=3D 0 || s2[i] =3D=3D 0)
+> > > -                       break;
+> > > -       }
+> > > -       return delta;
+> > > -}
+> > >
+> > >  #if __has_builtin(__builtin_btf_type_id)
+> > >  #define        TEST_BTF(_str, _type, _flags, _expected, ...)        =
+           \
+> > > @@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const void *m2=
+, size_t len)
+> > >                                        &_ptr, sizeof(_ptr), _hflags);=
+   \
+> > >                 if (ret)                                             =
+   \
+> > >                         break;                                       =
+   \
+> > > -               _cmp =3D __strncmp(_str, _expectedval, EXPECTED_STRSI=
+ZE); \
+> > > +               _cmp =3D bpf_strncmp(_str, EXPECTED_STRSIZE, _expecte=
+dval); \
+> >
+> > Though it's equivalent, the point of the test is to be heavy
+> > for the verifier with open coded __strncmp().
+> >
+> > pw-bot: cr
+>
+> I double checked that before acking, the test was added as a part of [1].
+> So it seems to be focused on bpf_snprintf_btf(), not on scalability.
+> And it's not that heavy in terms of instructions budget:
+>
+> File                     Program                  Verdict  Insns  States
+> -----------------------  -----------------------  -------  -----  ------
+> netif_receive_skb.bpf.o  trace_netif_receive_skb  success  18152     629
 
-Please match section underline length to the heading text.
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---aE3/3REKYeQ2PROd
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQvejQAKCRD2uYlJVVFO
-owVcAQDm0PZzhhqLqUC27UoEFbWfodx6ifxImkkq/tQWbG9OwQD/XNmP5oJqoktv
-FtqxdYVTu3c9wN0sp329mXF1ZLKppAk=
-=OcFx
------END PGP SIGNATURE-----
-
---aE3/3REKYeQ2PROd--
+Is this before or after?
+What is the % decrease in insn_processed?
+I'd like to better understand the impact of the change.
 
