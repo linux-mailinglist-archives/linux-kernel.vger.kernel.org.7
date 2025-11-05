@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-886451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EB7C35A5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:28:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC8DC35A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E858034B33E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC23A3B6664
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B134931576C;
-	Wed,  5 Nov 2025 12:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E85313E0E;
+	Wed,  5 Nov 2025 12:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mbD4Rh9K"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uU2jGNff"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047CC2FD1AD;
-	Wed,  5 Nov 2025 12:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B703321146C;
+	Wed,  5 Nov 2025 12:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345700; cv=none; b=R07EYbVhEGS2sZWFqlkF4Ww3rWaWiV5VRL0KmdIMVx2smjN9Xx4bjuCOZZYjg1dKOI7EtvCnSAzNzXue36a9Ew1OqTRIMWmuDGDx9fIKz4FoU7Z3SDCloELjR4RDdUQ7spFxJvdGT7TkYvx2/UQkh+EFqOw2WDvw1jNLcSqB3OY=
+	t=1762345831; cv=none; b=YLIxf4QcyzmDqs1Xvzoln0ovZgbIBe3EoXMxoUZmDYeogx4mtTVkeYmjxWfIzdj+hGJCpy5GYcR4gqQXoy7/pEueblDCg+mmHFJN3XTK/wwnnsQ8wRX6vvjzOdSEn6VGlkrvSTkbnPqrrxXccvnPzeXcIM9dO1y+IjLEOGix1A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345700; c=relaxed/simple;
-	bh=ZBUNYFaC+VVX4BgzNFr0jQiWV2aFK6ZjbIQY0VFc/WM=;
+	s=arc-20240116; t=1762345831; c=relaxed/simple;
+	bh=525xIYhnqs6gU0i43TmewTm6+Cpp9ybaLuwXK2KBlks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQRs57k36hbLMz+h14FbMhIIgZnQ0Nh33zDud9hZASrDArlKNoE0xq7LdXZD7Q9e1EFuNcB5KOwVa59sJmw63wluDWnrpBmCWgTyaHAuoEdbth5s0QEdZqbOHZ9IjIXOXn7V1x6VsewTuGIQoeFewmSgPQdwWiKZOBcMTwGsiY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mbD4Rh9K; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DhdLwiEgnDXsfa0lfNS/MpiahRLm84cONTTG9dPFdbE=; b=mbD4Rh9KY/pgPdEImqGvUr0ivi
-	QRMANNNUaxiNC81PedWW7IOsWb3qrsI9lC9aV3TRxWyhL69X6bsBLtGv2Vx3Q9MTJ3ziJtplinnTI
-	tY6xHU/na5UFz83PvmK5GvOyn8tAsZ7vSzInG58qvpJENgFStbHwtxi5euH5s1RrYofTo/Soa+Kdn
-	Ybfynv1GE+7tNMt3LRjAmH5VDEfSdg3GlWQxUw6TfIqbXG10d2FGv3WnHVDYGQ3Sq/pnNuwLw/z9T
-	LZ/xnw6rUpyV61V1K1KZRp6K6VIvIxTVe/FFJ4gS2B5QR7MyPp5Z+3tQ5pe5KRA/IkGu6bg7PHXlh
-	8heX73xA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGccS-00000005gx4-2TK5;
-	Wed, 05 Nov 2025 12:28:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5BBC530023C; Wed, 05 Nov 2025 13:28:08 +0100 (CET)
-Date: Wed, 5 Nov 2025 13:28:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Fernand Sieber <sieberf@amazon.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-	aubrey.li@linux.intel.com, yu.c.chen@intel.com, jstultz@google.com
-Subject: Re: [tip:sched/core] [sched/fair] 79104becf4:
- BUG:kernel_NULL_pointer_dereference,address
-Message-ID: <20251105122808.GK988547@noisy.programming.kicks-ass.net>
-References: <202510211205.1e0f5223-lkp@intel.com>
- <20251104210456.652800-1-sieberf@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+GWLtD+lOct1pk06SjYo7pcqyb3z+1NblAlKQoQGbmsERqjGFuSmLIWfK+srdDCdoqnhT2HEVpMBq43RmEL60DlttT/PeAksOXMJwywd0ZAk2cSGTLDk13VHJWImI1ktMLvb1Usi880X0IbuYjgBZjOWvChqgSFecW0mi/m5iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uU2jGNff; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAA8C4CEFB;
+	Wed,  5 Nov 2025 12:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762345831;
+	bh=525xIYhnqs6gU0i43TmewTm6+Cpp9ybaLuwXK2KBlks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uU2jGNffhWp6PpiTw1kv8C4LS8KSEJ+m3+958NRPn71F67CuaAn6j2hddjjAT2nVB
+	 KwKQTUmb0Lt6S79/mg87FUDYSn2Vm7SZYGiXOpi9oVAw04exHv7BxkN98VGu+yFdSt
+	 3I1zhERvSZGSwUUdBlBPUD2haRJeQlQTmEWDz/xNXY3vf61zim9U/g22KMxg+A0CNG
+	 ufZCjVR86XBviXe+ubV7jNL0rMkG2z+ile3WNTz910ZatYq0D3n15+u7U1ol+HJOHp
+	 pVMcTpOZOWnK8dZORtUIdAgNMQxHg6vJcor3Ko/ROALzwCmQTWen6XxVLc1m/6GDmx
+	 DGSrizQXVt9Kg==
+Date: Wed, 5 Nov 2025 13:30:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-block@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	guanghuifeng@linux.alibaba.com, zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+Message-ID: <20251105-elstern-wippen-3af38a8f40f3@brauner>
+References: <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+ <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+ <2025103155-definite-stays-ebfe@gregkh>
+ <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
+ <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+ <2025103106-proposal-jogging-a076@gregkh>
+ <83b9dac8-815e-4990-8cc7-5aaf4ba85f42@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251104210456.652800-1-sieberf@amazon.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <83b9dac8-815e-4990-8cc7-5aaf4ba85f42@linux.alibaba.com>
 
-On Tue, Nov 04, 2025 at 11:04:55PM +0200, Fernand Sieber wrote:
-> Hi Peter,
+On Fri, Oct 31, 2025 at 10:44:53PM +0800, Gao Xiang wrote:
 > 
-> I spent some time today investigating this report. The crash happens when 
-> a proxy task yields.
 > 
-> Since it probably doesn't make sense that a task blocking the best pick 
-> yields, a simple workaround is to ignore the yield in this case:
+> On 2025/10/31 22:34, Greg Kroah-Hartman wrote:
+> > On Fri, Oct 31, 2025 at 08:23:32PM +0800, Gao Xiang wrote:
+> > > 
+> > > 
+> > > On 2025/10/31 18:12, Gao Xiang wrote:
+> > > > Hi Greg,
+> > > > 
+> > > > On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
+> > > > > On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 2025/10/31 17:45, Christoph Hellwig wrote:
+> > > 
+> > > ...
+> > > 
+> > > > > > > But why does the device node
+> > > > > > > get created earlier?  My assumption was that it would only be
+> > > > > > > created by the KOBJ_ADD uevent.  Adding the device model maintainers
+> > > > > > > as my little dig through the core drivers/base/ code doesn't find
+> > > > > > > anything to the contrary, but maybe I don't fully understand it.
+> > > > > > 
+> > > > > > AFAIK, device_add() is used to trigger devtmpfs file
+> > > > > > creation, and it can be observed if frequently
+> > > > > > hotpluging device in the VM and mount.  Currently
+> > > > > > I don't have time slot to build an easy reproducer,
+> > > > > > but I think it's a real issue anyway.
+> > > > > 
+> > > > > As I say above, that's not normal, and you have to be root to do this,
+> > > I just spent time to reproduce with dynamic loop devices and
+> > > actually it's easy if msleep() is located artificiallly,
+> > > the diff as below:
+> > > 
+> > > diff --git a/block/bdev.c b/block/bdev.c
+> > > index 810707cca970..a4273b5ad456 100644
+> > > --- a/block/bdev.c
+> > > +++ b/block/bdev.c
+> > > @@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
+> > >   	struct inode *inode;
+> > > 
+> > >   	inode = ilookup(blockdev_superblock, dev);
+> > > -	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
+> > > +	if (0) {
+> > >   		blk_request_module(dev);
+> > >   		inode = ilookup(blockdev_superblock, dev);
+> > >   		if (inode)
+> > > diff --git a/block/genhd.c b/block/genhd.c
+> > > index 9bbc38d12792..3c9116fdc1ce 100644
+> > > --- a/block/genhd.c
+> > > +++ b/block/genhd.c
+> > > @@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
+> > >   	set_bit(GD_ADDED, &disk->state);
+> > >   }
+> > > 
+> > > +#include <linux/delay.h>
+> > > +
+> > >   static int __add_disk(struct device *parent, struct gendisk *disk,
+> > >   		      const struct attribute_group **groups,
+> > >   		      struct fwnode_handle *fwnode)
+> > > @@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
+> > >   	if (ret)
+> > >   		goto out_free_ext_minor;
+> > > 
+> > > +	if (disk->major == LOOP_MAJOR)
+> > > +		msleep(2500);           // delay 2.5s for all loops
+> > > +
+> > 
+> > Yes, so you need to watch for the uevent to happen, THEN it is safe to
+> > access the block device.  Doing it before then isn't a good idea :)
+> > 
+> > But, if you think this is an issue, do you have a patch that passes your
+> > testing to fix it?
+> 
+> I just raise it up for some ideas, and this change is
+> buried into the code refactor and honestly I need to
+> look into the codebase and related patchsets first.
+> 
+> Currently I have dozens of other development stuffs
+> on hand, if it's really a regression, I do hope
+> Christoph or other folks who are familiar with the code
+> could try to address this.
 
-Well yield() as a whole doesn't make much sense outside of the strict RT
-setting where it is well defined.
-
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8993,6 +8993,11 @@ static void yield_task_fair(struct rq *rq)
->  	if (unlikely(rq->nr_running == 1))
->  		return;
->  
-> +	/* Don't yield if we're running a proxy task */
-> +	if (rq->donor && rq->donor != curr) {
-> +		return;
-> +	}
-
-Well, yield_task_fair() should probably have:
-
- 	struct task_struct curr = rq->donor;
-
-But yeah, if the task holding your resource is doing yield() you're
-'sad'. Basically a sched-fair yield() means: I've no fucking clue what
-I'm doing and lets hope we can make progress a little later.
-
-And it gets worse in the context of PI/proxy, because in that case your
-fair task can deadlock the system through sheer incompetence.
-
-Anyway, consider the PI case, we bump a fair task to FIFO and then
-yield() would do the FIFO yield -- with all the possible problems.
-
-And we want the same for proxy, if the boosting context is FIFO, we want
-a FIFO yield.
-
-So I'm thinking, for all things to be consistent, we want something
-like:
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 6b8a9286e2fc..13112c680f92 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2143,7 +2143,7 @@ static void yield_task_dl(struct rq *rq)
- 	 * it and the bandwidth timer will wake it up and will give it
- 	 * new scheduling parameters (thanks to dl_yielded=1).
- 	 */
--	rq->curr->dl.dl_yielded = 1;
-+	rq->donor->dl.dl_yielded = 1;
- 
- 	update_rq_clock(rq);
- 	update_curr_dl(rq);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 273e2871b59e..f1d8eb350f59 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8980,7 +8980,7 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
-  */
- static void yield_task_fair(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq->donor;
- 	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
- 	struct sched_entity *se = &curr->se;
- 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 1fd97f2d7ec6..f1867fe8e5c5 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1490,7 +1490,7 @@ static void requeue_task_rt(struct rq *rq, struct task_struct *p, int head)
- 
- static void yield_task_rt(struct rq *rq)
- {
--	requeue_task_rt(rq, rq->curr, 0);
-+	requeue_task_rt(rq, rq->donor, 0);
- }
- 
- static int find_lowest_rq(struct task_struct *task);
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 8f0f603b530b..865ec5d6e824 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1319,7 +1319,7 @@ static void do_sched_yield(void)
- 	rq = this_rq_lock_irq(&rf);
- 
- 	schedstat_inc(rq->yld_count);
--	current->sched_class->yield_task(rq);
-+	rq->donor->sched_class->yield_task(rq);
- 
- 	preempt_disable();
- 	rq_unlock_irq(rq, &rf);
+If it's easy to do without much of a regression or performance risk then
+the device node should only show up once the device is actually ready.
+It's certainly best-practive to wait for the uevent though.
 
