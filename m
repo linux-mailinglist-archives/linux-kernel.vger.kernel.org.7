@@ -1,182 +1,206 @@
-Return-Path: <linux-kernel+bounces-886569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1180AC35F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:07:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EF7C35F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDAE64E6B20
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:07:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22DAB4E21A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2182328B73;
-	Wed,  5 Nov 2025 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD25324B0C;
+	Wed,  5 Nov 2025 14:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T+ZLIo6B"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kpbSCE/U"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9831F2DE704
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B006B2FB97B;
+	Wed,  5 Nov 2025 14:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762351614; cv=none; b=aoLMTaWB9fGJWJO5bRZs/9BHA1z0gY5T23k/7FbcoBSBvcoJdUO1e6IBB7ZZcwSEC70bL62OY0xYANkI7Udco6+BcnAUcfioFW7kUZfF6IPJu4PmMQvsc5dRY0iSpqJ9IgOkjnoWEeNKidH9FeHZINJSMvsKUsrjWV+YlYFLMwQ=
+	t=1762351668; cv=none; b=BOpFtxZV24gSZyja5msECi3TctqcSudfveJrX8tl2YHaC45IoC3dld2XN/MQvIiCDd70sUNvgZbYaJSRz3QieZjBnADcR2YiIrkRke8vhFSXEwdGBKSfigmbHwPr626hF8+90J77UZGf/vu7gbTViIqM2x3zNo2nE/D1X0Du6T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762351614; c=relaxed/simple;
-	bh=ozn9PYHQwNtUsQDR0l/eASn5HgtewKzU570OFp64LKI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pRKnlZc8k1fVtHU8SjOhCJyrG25Cn2trtcPiH+IfiCoE9dzKlKsowIS2X7DCPQX369ELZwtOlwZ+2yAqUBV7xjAKdugPgC5RLMOmhxaHNFQQudFBi1xP1QJfUmRTWq+xzfzBjSgu4LSdjexQRlgEPblGFdm5GFF+EyVp5Q9lW6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--shubhankarm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T+ZLIo6B; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--shubhankarm.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7aee84f1defso351748b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:06:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762351612; x=1762956412; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KC4zJ3U3fiL9QB80+aHnOXr/oYYa3/i7uuu7o8EzkMA=;
-        b=T+ZLIo6Bz7LTlZDWb6eBwC58Mcvjhu/MNgMM6/utk3hrjd9UFLdlY0W82wAmMwm7gV
-         xc6A+4KjT5vVOWhkfOl9O3MM+Ox7F7xHimvBaT6j4LJmJEd56hUjvwgmu6yDDQ5Bj7jD
-         O7AmVMsK6gT7lj3i5N2XEq03i+IQDAnGnIJ8pjfMFyL9wQryID7vK0pc/HfqAvVsT7Bf
-         tocpwUDHzld2CuMY4TBRpAZYXMLQ8fvO7knIFfaMMKYbi7E5WNpFiV7anmAYoSAWXpqv
-         /UanZvMdYMwzIUJkv92BURUeguuP+we9b9YbY4aJEZM3Gmq3rqi9JZ7ZNdNkB6GnnJ2K
-         3PBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762351612; x=1762956412;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KC4zJ3U3fiL9QB80+aHnOXr/oYYa3/i7uuu7o8EzkMA=;
-        b=fMd+4U3mtFCry37WuG1unsH88C45mOScTj08Jh5E+xk6cCEquOD3Q2GB/S26LAPteY
-         qCpSNON90KTdDG4UuU5rdvI9degHhecJr3yagC4EmWDepdhfiR7Desu36HazBzhCAlp8
-         zL36C3rs2rzOMUfID7eYUL2hCe+2zNrhL/YR90MIZC9m6sPq+0O1SDNImIiafcXvI2RM
-         Hy6a3Rkn41FfSzFGHlf65rvi4SmYHSZM2uYNTdrsg6gj9lpFjtS/HZDgJKTSIBq7EZLI
-         FCuaWYeQz2TigwX9/FalNUzpVhenffYYaxFH7YEyal6JmHqYrgHC0G2GmA70nWAFUaTa
-         OfQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ74yt7wwVjp2rnqeBHVg+dagBrna8mfocd8O81lZm13WNDhpwYGQ+clA3wLJuzGE1+mbzWDhVtMlCHKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAuKGUdUlss7bOhYyBdc9jHXgx2tqDgK45F4h57qBKO61I7LmW
-	BxZ9KIstmTXiXi4EWUxprNXgSx1GS03TtI19xe2uvloIoubRn1KaANl0juV39qmRIVTeSj7LmZ2
-	lNBGgsQq95uGp50OgnfnTIgLEJQ==
-X-Google-Smtp-Source: AGHT+IElIGJaekv/GMBuxpe+HEsDxIU6AAtmOZaPK4vNutfdM59d6biGutlEYxH9Dv9jkKKkkacGxGXq0HN3kTV9Wg==
-X-Received: from pfbhr5-n2.prod.google.com ([2002:a05:6a00:6b85:20b0:78a:fa44:ad73])
- (user=shubhankarm job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:8d04:b0:7ad:1082:fdef with SMTP id d2e1a72fcca58-7ae1f78a48amr2593461b3a.26.1762351611744;
- Wed, 05 Nov 2025 06:06:51 -0800 (PST)
-Date: Wed,  5 Nov 2025 14:06:44 +0000
+	s=arc-20240116; t=1762351668; c=relaxed/simple;
+	bh=tkdeOi7cY12aMcnr2J+SO43SXIWe+71wa+sOYjd1tME=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=jQQha9zvXDEkwa6Opd+8fyk42SBRKA/8NsEdAIJzx9Kpf8MlZ1pUH/X0nxcQ+YJZyNZljRoOOPytmweMVavRCqsSiyAPP48Qxdr7A+Z6H0oyg1AIfeApQdrByCq1WUE7uYPSKiLU8ryLH/mlWMTI04F8BAovmQeQtaohL3s6Syk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kpbSCE/U; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A550KcT001308;
+	Wed, 5 Nov 2025 14:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tkdeOi
+	7cY12aMcnr2J+SO43SXIWe+71wa+sOYjd1tME=; b=kpbSCE/Uz032aVhAyocG6o
+	XPWHUtkwkmbMy8BRT1C09ac0T+e3B3EzS/u+RKqinc4I1hKlXWI0ROqjmo4q46/q
+	4+EGoojfaUXuKXBAPb5W+eHYKBpexexlv8ex/2u3zR8/RmhK+oQ51zp+taheZf4w
+	1RlzV84cQF/rvcnzs7W4sWbr88NJl1T7MQUyYblcQogYIl6drc8RW1QMhsTU54Ig
+	e6tTNuIbDqYKT3wP3oGTnZm9McBEyFWeGMQSoWyugt8IBIMRmcxWkHZrac8K92vy
+	e+zhyqIzH8vSZafpMCpkVMHc7gLg1XwmTxqqti/fbGfnR5uiOlIzwgah6NJyU17A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mr9ed4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 14:07:16 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A5DhEOo029586;
+	Wed, 5 Nov 2025 14:07:16 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mr9ecu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 14:07:16 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5CZHQd018804;
+	Wed, 5 Nov 2025 14:07:15 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5whngcw4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 14:07:15 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5E7EVj25428572
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 14:07:14 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 606A15803F;
+	Wed,  5 Nov 2025 14:07:14 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D7CC858055;
+	Wed,  5 Nov 2025 14:07:12 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.10.126])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Nov 2025 14:07:12 +0000 (GMT)
+Message-ID: <0c7e94a436a3742003e5e1155a48480d8307a9c7.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook
+ security_kernel_module_read_file to access decompressed kernel module
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>, Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn" <serge@hallyn.com>,
+        Luis Chamberlain	 <mcgrof@kernel.org>,
+        Petr
+ Pavlu <petr.pavlu@suse.com>, Daniel Gomez	 <da.gomez@kernel.org>,
+        Sami
+ Tolvanen <samitolvanen@google.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        open list
+ <linux-kernel@vger.kernel.org>,
+        "open list:MODULE SUPPORT"
+ <linux-modules@vger.kernel.org>
+In-Reply-To: <CAHC9VhRGwXvhU64Nk5jdmtPfrt9bbkzpLVqS0LRbtN3Q3HhnCw@mail.gmail.com>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <20251031074016.1975356-1-coxu@redhat.com>
+	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+	 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+	 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+	 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
+	 <CAHC9VhRGwXvhU64Nk5jdmtPfrt9bbkzpLVqS0LRbtN3Q3HhnCw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 05 Nov 2025 09:07:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.2.1006.ga50a493c49-goog
-Message-ID: <20251105140645.2150719-1-shubhankarm@google.com>
-Subject: [PATCH] dm verity fec: Expose corrected block count via status
-From: Shubhankar Mishra <shubhankarm@google.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Mikulas Patocka <mpatocka@redhat.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: dm-devel@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, kernel-team@android.com, 
-	Shubhankar Mishra <shubhankarm@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: eGRNDIJmH03w3Ati_fcyHVM2BapRwb3X
+X-Authority-Analysis: v=2.4 cv=MKhtWcZl c=1 sm=1 tr=0 ts=690b5a14 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=ouyXqMZaNgMXvW1HyOUA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: F6O3LgHbdETKh35Acolo2MDmhTEF-8n0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwMSBTYWx0ZWRfXwgxkNudsW+/Z
+ c4V8kB9fvoPo1uLUcZT4ADOgL33NRgN0fxLRhoY0hfX0CH4ihXzFVXSXAjNw11g4DTwdqTTuDTr
+ bIa0jBJNeHo1Zb0TFPO7kvgu2N85xQGhYzybvwyXMe9N/mAXVnKt/wPAbkgUIodSwp+VwkdwmuX
+ XH2WRZpwWKhTIxhlP72sQh/cbr2TgkppEou1P4Uk6v9+Hl+9q2QQjIp97lpGoIRSggWt82iZj+X
+ 7hN1x54bLh30VNwtaaN2EKcmJnlmrGpAN8URzk4dzkFpCMdmG+MGX25MPiYdstte7ZTZ6zTJkwc
+ 9rFT4d059QAfcfFGxuNPsUMuwM3bEjKWoAi7Z7l9Q43PUFRiz1Qf25DnHU9AH0++eJCTmi5q4I5
+ ThbLz8FHREkyLZumasPEX5ruvMsfUg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_05,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010001
 
-Enhance visibility into dm-verity Forward Error Correction (FEC)
-activity. While FEC can correct on-disk corruptions, the number of
-successful correction events is not readily exposed through a standard
-interface.
-
-This change integrates FEC statistics into the verity target's
-.status handler for STATUSTYPE_INFO. The info output now
-includes count of corrected block by FEC.
-
-The counter is a per-device instance atomic64_t, maintained within
-the struct dm_verity_fec, tracking blocks successfully repaired by FEC
-on this specific device instance since it was created.
-
-This approach aligns with the standard Device Mapper mechanism for
-targets to report runtime information, as used by other targets like
-dm-integrity.
-
-This patch also updates Documentation/admin-guide/device-mapper/verity.rst
-to reflect the new status information.
-
-Tested:
-  Induced single-bit errors on a block device protected by dm-verity
-  with FEC on android phone. Confirmed 'dmctl status <device>' on Android
-  reports an incrementing 'fec_corrected_blocks' count after the
-  corrupted blocks were accessed.
-
-Signed-off-by: Shubhankar Mishra <shubhankarm@google.com>
----
- Documentation/admin-guide/device-mapper/verity.rst | 6 ++++--
- drivers/md/dm-verity-fec.c                         | 4 +++-
- drivers/md/dm-verity-fec.h                         | 1 +
- drivers/md/dm-verity-target.c                      | 4 ++++
- 4 files changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/device-mapper/verity.rst b/Documentation/admin-guide/device-mapper/verity.rst
-index 8c3f1f967a3c..3ecab1cff9c6 100644
---- a/Documentation/admin-guide/device-mapper/verity.rst
-+++ b/Documentation/admin-guide/device-mapper/verity.rst
-@@ -236,8 +236,10 @@ is available at the cryptsetup project's wiki page
- 
- Status
- ======
--V (for Valid) is returned if every check performed so far was valid.
--If any check failed, C (for Corruption) is returned.
-+1. V (for Valid) is returned if every check performed so far was valid.
-+   If any check failed, C (for Corruption) is returned.
-+2. Number of corrected blocks by Forward Error Correction.
-+   '-' if Forward Error Correction is not enabled.
- 
- Example
- =======
-diff --git a/drivers/md/dm-verity-fec.c b/drivers/md/dm-verity-fec.c
-index 301a9c01bf86..d792eaed0792 100644
---- a/drivers/md/dm-verity-fec.c
-+++ b/drivers/md/dm-verity-fec.c
-@@ -177,9 +177,11 @@ static int fec_decode_bufs(struct dm_verity *v, struct dm_verity_io *io,
- 	if (r < 0 && neras)
- 		DMERR_LIMIT("%s: FEC %llu: failed to correct: %d",
- 			    v->data_dev->name, (unsigned long long)rsb, r);
--	else if (r > 0)
-+	else if (r > 0) {
- 		DMWARN_LIMIT("%s: FEC %llu: corrected %d errors",
- 			     v->data_dev->name, (unsigned long long)rsb, r);
-+		atomic64_inc(&v->fec->corrected);
-+	}
- 
- 	return r;
- }
-diff --git a/drivers/md/dm-verity-fec.h b/drivers/md/dm-verity-fec.h
-index a6689cdc489d..dd55037377b6 100644
---- a/drivers/md/dm-verity-fec.h
-+++ b/drivers/md/dm-verity-fec.h
-@@ -48,6 +48,7 @@ struct dm_verity_fec {
- 	mempool_t extra_pool;	/* mempool for extra buffers */
- 	mempool_t output_pool;	/* mempool for output */
- 	struct kmem_cache *cache;	/* cache for buffers */
-+	atomic64_t corrected; /* corrected errors */
- };
- 
- /* per-bio data */
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index bf0aee73b074..52a0e052a5e8 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -848,6 +848,10 @@ static void verity_status(struct dm_target *ti, status_type_t type,
- 	switch (type) {
- 	case STATUSTYPE_INFO:
- 		DMEMIT("%c", v->hash_failed ? 'C' : 'V');
-+		if (verity_fec_is_enabled(v))
-+			DMEMIT(" %lld", atomic64_read(&v->fec->corrected));
-+		else
-+			DMEMIT(" -");
- 		break;
- 	case STATUSTYPE_TABLE:
- 		DMEMIT("%u %s %s %u %u %llu %llu %s ",
--- 
-2.51.2.1006.ga50a493c49-goog
+T24gVHVlLCAyMDI1LTExLTA0IGF0IDIxOjQ3IC0wNTAwLCBQYXVsIE1vb3JlIHdyb3RlOgo+IEFz
+c3VtaW5nIEknbSB1bmRlcnN0YW5kaW5nIHRoZSBwcm9ibGVtIGNvcnJlY3RseSwgSSB0aGluayB5
+b3UncmUKPiBtYWtpbmcgdGhpcyBoYXJkZXIgdGhhbiBpdCBuZWVkcyB0byBiZS7CoCBJIGJlbGll
+dmUgc29tZXRoaW5nIGxpa2UgdGhpcwo+IHNob3VsZCBzb2x2ZSB0aGUgcHJvYmxlbSB3aXRob3V0
+IGhhdmluZyB0byBhZGQgbW9yZSBjb25kaXRpb25hbHMKPiBhcm91bmQgdGhlIGhvb2tzIGluIGtl
+cm5lbF9yZWFkX2ZpbGUoKSwgYW5kIGxpbWl0aW5nIHRoZSBtdWx0aXBsZQo+IHNlY3VyaXR5X2tl
+cm5lbF9wb3N0X3JlYWRfZmlsZSgpIGNhbGxzIHRvIGp1c3QgdGhlIGNvbXByZXNzZWQgY2FzZSAu
+Li4KPiBhbmQgaG9uZXN0bHkgaW4gZWFjaCBvZiB0aGUgX3Bvc3RfcmVhZF9maWxlKCkgY2FsbHMg
+aW4gdGhlIGNvbXByZXNzZWQKPiBjYXNlLCB0aGUgYnVmZmVyIGNvbnRlbnRzIGhhdmUgY2hhbmdl
+ZCBzbyBpdCBzb21ld2hhdCBtYWtlcyBzZW5zZS4KCj4gR2l2ZW4gdGhlIGNvZGUgYmVsb3csIElN
+QSBjb3VsZCBzaW1wbHkgaWdub3JlIHRoZQo+IFJFQURJTkdfTU9EVUxFX0NPTVBSRVNTRUQgY2Fz
+ZSAob3Igd2hhdGV2ZXIgaXQgaXMgdGhlIElNQSBuZWVkcyB0byBkbwo+IGluIHRoYXQgY2FzZSkg
+YW5kIGZvY3VzIG9uIHRoZSBSRUFESU5HX01PRFVMRSBjYXNlIGFzIGl0IGRvZXMgdG9kYXkuCj4g
+SSBleHBlY3QgdGhlIGFzc29jaWF0ZWQgSU1BIHBhdGNoIHdvdWxkIGJlIGJvdGggdHJpdmlhbCBh
+bmQgc21hbGwuCj4gCj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9tb2R1bGUvbWFpbi5jIGIva2VybmVs
+L21vZHVsZS9tYWluLmMKPiBpbmRleCBjNjZiMjYxODQ5MzYuLmI0MzVjNDk4ZWMwMSAxMDA2NDQK
+PiAtLS0gYS9rZXJuZWwvbW9kdWxlL21haW4uYwo+ICsrKyBiL2tlcm5lbC9tb2R1bGUvbWFpbi5j
+Cj4gQEAgLTM2NzUsMTcgKzM2NzUsMTkgQEAgc3RhdGljIGludCBpZGVtcG90ZW50X3dhaXRfZm9y
+X2NvbXBsZXRpb24oc3RydWN0IGlkZW1wb3QKPiBlbnQgKnUpCj4gCj4gc3RhdGljIGludCBpbml0
+X21vZHVsZV9mcm9tX2ZpbGUoc3RydWN0IGZpbGUgKmYsIGNvbnN0IGNoYXIgX191c2VyICogdWFy
+Z3MsIGludAo+IGZsYWdzKQo+IHsKPiArwqDCoMKgwqDCoMKgIGJvb2wgY29tcHJlc3NlZCA9ICEh
+KGZsYWdzICYgTU9EVUxFX0lOSVRfQ09NUFJFU1NFRF9GSUxFKTsKPiDCoMKgwqDCoMKgwqAgc3Ry
+dWN0IGxvYWRfaW5mbyBpbmZvID0geyB9Owo+IMKgwqDCoMKgwqDCoCB2b2lkICpidWYgPSBOVUxM
+Owo+IMKgwqDCoMKgwqDCoCBpbnQgbGVuOwo+IAo+IC3CoMKgwqDCoMKgwqAgbGVuID0ga2VybmVs
+X3JlYWRfZmlsZShmLCAwLCAmYnVmLCBJTlRfTUFYLCBOVUxMLCBSRUFESU5HX01PRFVMRSk7Cj4g
+K8KgwqDCoMKgwqDCoCBsZW4gPSBrZXJuZWxfcmVhZF9maWxlKGYsIDAsICZidWYsIElOVF9NQVgs
+IE5VTEwsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgY29tcHJlc3NlZCA/IFJFQURJTkdfTU9EVUxFX0NPTVBSRVNTRUQgOiBSRUFE
+SU5HXwo+IE1PRFVMRSk7Cj4gwqDCoMKgwqDCoMKgIGlmIChsZW4gPCAwKSB7Cj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBtb2Rfc3RhdF9pbmMoJmZhaWxlZF9rcmVhZHMpOwo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGxlbjsKPiDCoMKgwqDCoMKgwqAgfQo+IAo+
+IC3CoMKgwqDCoMKgwqAgaWYgKGZsYWdzICYgTU9EVUxFX0lOSVRfQ09NUFJFU1NFRF9GSUxFKSB7
+Cj4gK8KgwqDCoMKgwqDCoCBpZiAoY29tcHJlc3NlZCkgewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgaW50IGVyciA9IG1vZHVsZV9kZWNvbXByZXNzKCZpbmZvLCBidWYsIGxlbik7Cj4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2ZnJlZShidWYpOyAvKiBjb21wcmVzc2VkIGRh
+dGEgaXMgbm8gbG9uZ2VyIG5lZWRlZCAqLwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+aWYgKGVycikgewo+IEBAIC0zNjkzLDYgKzM2OTUsMTQgQEAgc3RhdGljIGludCBpbml0X21vZHVs
+ZV9mcm9tX2ZpbGUoc3RydWN0IGZpbGUgKmYsIGNvbnN0IGNoCj4gYXIgX191c2VyICogdWFyZ3Ms
+IGludAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1vZF9z
+dGF0X2FkZF9sb25nKGxlbiwgJmludmFsaWRfZGVjb21wcmVzc19ieXRlcyk7Cj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGVycjsKPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgZXJyID0gc2VjdXJpdHlfa2VybmVsX3Bvc3RfcmVhZF9maWxlKGYsCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoY2hhciAqKWluZm8uaGRyLCBpbmZv
+LmxlbiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFJF
+QURJTkdfTU9EVUxFKTsKCldpdGhvdXQgY2hhbmdpbmcgdGhlIGVudW1lcmF0aW9uIGhlcmUsIElN
+QSB3b3VsZCBub3QgYmUgYWJsZSB0byBkaWZmZXJlbnRpYXRlCnRoZSBmaXJzdCBjYWxsIHRvIHNl
+Y3VyaXR5X2tlcm5lbF9wb3N0X3JlYWRfZmlsZSgpIGFuZCB0aGlzIG9uZS4gIFRoZSBmaXJzdCBj
+YWxsCndvdWxkIHJlc3VsdCBpbiB1bm5lY2Vzc2FyeSBlcnJvciBtZXNzYWdlcy4KCkFkZGluZyBh
+biBhZGRpdGlvbmFsIGNhbGwgdG8gc2VjdXJpdHlfa2VybmVsX3Bvc3RfcmVhZF9maWxlKCkgaGVy
+ZSwgd291bGQKcmVxdWlyZSBkZWZpbmluZyAyIGFkZGl0aW9uYWwgZW51bWVyYXRpb25zOiBSRUFE
+SU5HX01PRFVMRV9DT01QUkVTU0VELApSRUFESU5HX01PRFVMRV9ERUNPTVBSRVNTRUQuCgo+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChlcnIpIHsKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbW9kX3N0YXRfaW5jKCZmYWlsZWRfa3JlYWRz
+KTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJu
+IGVycjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gwqDCoMKgwqDCoMKgIH0g
+ZWxzZSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbmZvLmhkciA9IGJ1ZjsKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGluZm8ubGVuID0gbGVuOwoKRGVmZXJyaW5nIHRo
+ZSBzZWN1cml0eV9rZXJuZWxfcG9zdF9yZWFkX2ZpbGUoKSBjYWxsIHRvIGhlcmUsIGVsaW1pbmF0
+ZXMgdGhlIG5lZWQKZm9yIGRlZmluaW5nIGFkZGl0aW9uYWwgZW51bWVyYXRpb25zLiAgKENvaWJ5
+J3MgZmlyc3QgbGluay4pCgpBZGRpbmcgYW4gYWRkaXRpb25hbCBjYWxsIHRvIHNlY3VyaXR5X2tl
+cm5lbF9wb3N0X3JlYWRfZmlsZSgpIGhlcmUsIHJlcXVpcmVzIDEKYWRkaXRpb25hbCBlbnVtZXJh
+dGlvbi4gIChDb2lieSdzIDJuZCBsaW5rLikKCk1pbWkKCgo=
 
 
