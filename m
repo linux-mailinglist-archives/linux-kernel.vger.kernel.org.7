@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-887441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A242C3840D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:49:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E869C38419
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E832A4E8C61
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161713B80FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82A12DC323;
-	Wed,  5 Nov 2025 22:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C0E2D7DC6;
+	Wed,  5 Nov 2025 22:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="p9/HaLn8"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MihoPuc4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE372D2388;
-	Wed,  5 Nov 2025 22:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121BF28B7EA;
+	Wed,  5 Nov 2025 22:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762382986; cv=none; b=dwu+JAO51TLWKCIr386yXCmyGjcQMaOLnS4qehj0hVzSWadqFYvNggNETlpg7TansEWonMdzrNvFryY6Xd9y0qqUUylvSUHTxS0Zx7Lg6Xjvpc8S+PHx2VUsSU1XWaZn18TYerFVvIvDkNWLHNl4yIFA9AqnzH78flFsEP+xEOY=
+	t=1762382999; cv=none; b=Uv0oqEeisPDVGyk6fz6jDkBQ7zG4otqbco6sD5ZgeEm/wz1J+EGfpMk5HSAkHBAAxFApX+kLE3t6bgpk+3KspaZoVWLkhstLrQwPKnmBPhjlZ+zBFIhIccLqG6rozvHIvNMkdqFxmK2cBB9Yp6C7hkMa5OT46yfCLNFdJvh/zZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762382986; c=relaxed/simple;
-	bh=9W+JZgh6zEumSbgA+u40BdlWRsUbWYl5s3WkNt9fkPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PQ8iDy02U9OUkKfWloqoGf8xXCt6U8z7brzox9l++FfaYbaCQhEJrez/dlAqphAdGZkK2dxO/e/cp6jRVT6BLj/It1+aAbVOwsNr+6S/raTtx1ZUidV5Tg41TxWiwxakc5exvMNvhS7idS85dDXgE2jFCHFId0+0OasylzMEiL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=p9/HaLn8; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=7B7gYt+LYlqrQkECAw+Erqll5FdWOFdju69wPPGYGxM=; b=p9/HaLn80YendaEi5jpbR2NlAy
-	mmLPxWqqxHK9lg4A6MmefTNtD17WB2gX1XXiiEEMjMwutwfEnpYic/hupIJwGxc7yBsM9ntzxsQ4D
-	uC9d7qDgfARmpqYG+mB/lfWHr4w15x+D1OQuaW1GEqKY3vTaY+Ii+Fk/QSZxtpoF/mHIPi37dhJPW
-	KexrSMMUp6GVBIfZj1YXqoyTDmj3dIYudXM3XwglXE9HOCJTjQyjUP7kmOD6iW/fqSBfJZbw/xxmz
-	KHVCjFHztMyARI3qxDfDTkQGWhi6bh5+LKrd8JDv/osSeeHMMKyU9U++hj3iT1SHWCSrdiq2mgnsB
-	rtgInH2g==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vGmJt-0000000Ag2k-3AUR;
-	Wed, 05 Nov 2025 23:49:37 +0100
-Date: Wed, 5 Nov 2025 23:49:37 +0100
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <aQvUgQvM48LsSzei@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-pm@vger.kernel.org
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
- <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
- <20251105093347.GD8064@google.com>
- <E205F88FB1EE06C5+aQscI0Uy7pgiMzEt@kernel.org>
+	s=arc-20240116; t=1762382999; c=relaxed/simple;
+	bh=GpCtjN6SHyGVn3Uea1Jq3CBszKiOb3OEtVVncQOoyd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=etThl2Cvtyil17TCJmBQcHTW0NwlUJYH0uPjgyqAwXcP29CJTic8+cYK35cEacQZph6+hXfViUnDseTNgYHUtZYAg4lm2Iobu13j3ShdPfLpj/rAb0LiPIdPDDcWTL+P2Tf7uXQ32E7iR0uN74yDr3xOxzmCdMjC7sG5lJy9zcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MihoPuc4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762382992;
+	bh=CO08Trqok0EYgpaOcqtK9LwfhUfVsk9sFujvAevFW3U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MihoPuc4ZdF8TlxA/gxpWgRDt0pUxRyxrlp1zzHccNISjMBMeHrXP2ztf4fKhL7B+
+	 U4yrMZvJNzk/+HDFHpU+saKS9sqDKwSLuq+QTpASOrl9ygyBLOCw+qbHVQz265qiNH
+	 dVIemAUxOo62zR9O0a5kg8lpIJGLn+HfmY1jDAtZxvSpa7Lns+FErEA4JK6p0HBJo/
+	 B0Be2KUVYRC1sg0kRNKszlgiJIZwpZCp3iEV4kV2TpVFebDzrn7CFBn6EVHCeu/fv+
+	 xc99ysWQ5yb8n3xj3R9IkIAL3v1Ob6ziLbK7GxWbiuDqNVqM+CcMxGNKa4CSpP4TZE
+	 w2TVfSFv5GSzw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d20rc3H2mz4x4g;
+	Thu, 06 Nov 2025 09:49:52 +1100 (AEDT)
+Date: Thu, 6 Nov 2025 09:49:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20251106094951.6fe49332@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/n40uXww7+pV.f6qrym.ll2T";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/n40uXww7+pV.f6qrym.ll2T
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <E205F88FB1EE06C5+aQscI0Uy7pgiMzEt@kernel.org>
-User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On 2025-11-05 17:42, Troy Mitchell wrote:
-> On Wed, Nov 05, 2025 at 09:34:21AM +0000, Lee Jones wrote:
-> > On Tue, 04 Nov 2025, Troy Mitchell wrote:
-> >=20
-> > > On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> > > >=20
-> > > > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > > > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, =
-which is
-> > > > > commonly paired with the SpacemiT K1 SoC.
-> > > > >=20
-> > > > > Note: For reliable operation, this driver depends on a this patch=
- that adds
-> > > > > atomic transfer support to the SpacemiT I2C controller driver:
-> > > > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a8=
-9367870286@linux.spacemit.com/
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> dependency is here.
+Hi all,
 
-Oh indeed, I have forgotten about this part.
+After merging the vfs-brauner tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> > > > >=20
-> > > > > [...]
-> > > >=20
-> > > > Applied, thanks!
-> > > >=20
-> > > > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-> > > >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-> > > Should we apply it now? The dependency patch hasn=E2=80=99t been merg=
-ed yet...
-> >=20
-> > What is the dependency?
-> I point it out above.
-> Without this patch, reboot and shutdown would end up calling the non-atom=
-ic i2c_transfer.
+In file included from include/linux/compat.h:17,
+                 from arch/powerpc/kernel/asm-offsets.c:13:
+include/linux/fs.h:1431:1: error: version control conflict marker in file
+ 1431 | <<<<<<< HEAD
+      | ^~~~~~~
 
-Note however this is not a strong dependency, it is needed to make the=20
-reset or power off reliable. Calling non-atomic i2c_transfer lead to a=20
-successful reset or power off a bit more than half of the time.
+and it went downhill from there :-(
 
-Regards
-Aurelien
+Caused by commit
+
+  3fef0b63fe1c ("Merge branch 'vfs-6.19.fs_header' into vfs.all")
+
+Please, the order is merge stuff, test, publish ... :-(
+
+I refetched the vfs-brauner tree (which has been updated) and tried again.
 
 --=20
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+Cheers,
+Stephen Rothwell
+
+--Sig_/n40uXww7+pV.f6qrym.ll2T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkL1I8ACgkQAVBC80lX
+0GybuAgAoMePJqe3Q+avikUB4msK8U/tw/z2DJXSgR3HNwVB+r1G+TKS64I9aqFd
+PXNktCQYvS5UysMKBNPTTczwFimqfM1J3g2cPgCXmc2W+wmjC2QAU84m8wbXtmFc
+ZDDJ/rI96434mQUgcBoPUTJTnM326pBepQJ64tk+vR59XhwshdZcq78Bv+HJ4wsr
+9TwTULmKEw237+1e2yeukYAJiZ6/xe6C1G69+m4Dxs+trloIMpA232I5M0EwbgRA
+sEpCZC+p9si2m4DmroNue0zG1N3CBbGxk3hkcydvYFXYfqZ6mWC2khrKvk6yV5u0
+NjbC42XNZQcSopxMIG17Bumx+APSNA==
+=4iL/
+-----END PGP SIGNATURE-----
+
+--Sig_/n40uXww7+pV.f6qrym.ll2T--
 
