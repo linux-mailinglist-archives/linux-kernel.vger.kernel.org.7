@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-886862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040BBC36B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:31:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E860C36AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CE424FD7C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:11:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A14B2501F38
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27777338594;
-	Wed,  5 Nov 2025 16:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2651334C3F;
+	Wed,  5 Nov 2025 16:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aa4LlpN2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHbDbLIt"
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE05337B8D;
-	Wed,  5 Nov 2025 16:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5887322A3E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359042; cv=none; b=CBfmb7wmwufc3H+VuqX3aWVAwhTCUOOEGumupx8DbOcX4fqd24N8KMFFYG1ojnFy+MA244ljftwE4qML1XS936gO1eW1Uu7uiHZE2d9OIpsKsMPsd6AF56iOApxPdpfpVElq0CQnRTsnvAQGUagXeIEE8X8XXQLpS5NJP9CQX9o=
+	t=1762359095; cv=none; b=ZIx7AXs/ypAzCQSyC715ULTE92rbR+CymPJhKRXmYPfLL6EH0xOikwt57n6OvOhS5C6mlvyHMXMghYpt7LJ0piWhV5ERJPDycj6ThyIdP8n0DjlkevC9RkIorcCKz654Ej7xqxDq+8wkloYHGvSdxYY8eLI8Qq/pMu3VDCIU2F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359042; c=relaxed/simple;
-	bh=XYA0QT3mqjvdTOITUkYl9g9WPkydTiL2kfrfusBPpNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z03HDRRbxqW4cMTY5xEogAb5X3AwpzvwPU5D2ovcNGlOhZL1GSyoCbQxdCXipDzXVgHyHuCL+JcMqvNsihZhFg0Rabw75Fc9B+1bsfXTfQrflba/GcQ+7HJSQr9TKGZlZgKWHCyDTgMQn7PbfaI0ynwotvpvx9QeO9H+SxZ1Pag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aa4LlpN2; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762359041; x=1793895041;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=XYA0QT3mqjvdTOITUkYl9g9WPkydTiL2kfrfusBPpNU=;
-  b=aa4LlpN2yOfkaUezIGabqAyathDHGILCtsFXpV9pPil0wB8Fb/CapP5R
-   nuj3mW+Z82GrastbGF6EcwQ5Ap30gxl9+1CeuGTwRiaF8GedyhxppZX65
-   2uiyhscojssgLA/ICn0qX4qIOEpPNmI96oODhkukC5ywxKVBC5WrkMyCR
-   7CJVEy8FCs0Fy7V7QcfPeWwims5PgkjSilGMceChoARr+DJbTKMf2d6My
-   MQ8tF4DAFLaQr9JrEWUObSdciWgW3CcMTP4YTByeW0gpm9e1EGKh+fiHS
-   UNA7VxwmDRXkqNBdjn/+KQ8tdiTfNYEHWWe1JN0mzEQOQpuyEwGMk22Mm
-   g==;
-X-CSE-ConnectionGUID: oNmqnrn1SKG843Gyb5fTzg==
-X-CSE-MsgGUID: fWYALw2uR9yHCMZm8SI48g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="68337305"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="68337305"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 08:10:40 -0800
-X-CSE-ConnectionGUID: oqAlASDJQ9ey+Wxwyv6JbA==
-X-CSE-MsgGUID: fxLVxVU5SN+2XZuOAeMlng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="187158870"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.242]) ([10.125.110.242])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 08:10:38 -0800
-Message-ID: <3024ae89-4c19-4d29-aca4-0aef21bcd5e9@intel.com>
-Date: Wed, 5 Nov 2025 09:10:37 -0700
+	s=arc-20240116; t=1762359095; c=relaxed/simple;
+	bh=W3rIEqDAjFHWAwm+pwB74Wz+AVL3IfQgKO4Y4lo7W2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6NB33njjTku9B9LCI+A86fJIVhlr25Zo1sJc7A03a6hAFt6BJnIM9BIMoNj4He9Opts4lrvbH6+8JYs7Hq1EYoKH8EPd4BVHTnY44/SKqgE4nKqZHTlL/73rrJvJnmXK1/+Z+fjB5mYMzkUb7JToxETx/MS68tkjU1DmceL0gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHbDbLIt; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-63e1e1bf882so9783d50.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:11:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762359093; x=1762963893; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ymZ6xdXrqo7vWAgf0QChueJMpmkC1T045PA4GVzRwIo=;
+        b=YHbDbLItjw4+eMXKEAHsY2z6+TDNrzIu7JCue8TYKGBW5rNDBDA4JyyM/UgPjyAf4M
+         5MqkGFSQxKclN7aJD+qGLJCYV8vCTg6YPemfsPJrI3AV/XQJqcMzkaKNo0t8msTKlFda
+         e0pVYvImharsbSWHL60w2PP/PvzOKgwAoZzx3jTNCWMoPWQBzVE8Htct92I7j5p4HMZE
+         BhFEFcR3GXgmVF4F6OGJ1AgDCO4C0Dk3QKjpQlQJvUykVFNLhQIEiM9DB7tiQ78fkYeL
+         41nBDihiXKZ3pD+aMvDrHd4Kdyc90F8YhaprnNZCz7GEXfN1+UFPvh2qp+b46wLn+QxX
+         /s6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762359093; x=1762963893;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymZ6xdXrqo7vWAgf0QChueJMpmkC1T045PA4GVzRwIo=;
+        b=t4zsI4TBhdSjeF+8MmLsuaGJZSjA2ii3rZzRH2WYZdR0S/sm6jeVbLeMrorrpaw5Ex
+         IrG5f7AFNT4B6U3yJqkFjyVf91CMfWcBoLpMX15D7XXi1oQp0Z0tkk6XA3DYsDdLUp4E
+         PgdHvC3pm7123QA+KZ4PdUKYDPtsgC0d5NZvxOcDniIuoQ2f2tIgpov6ezL+fuQI4Vlv
+         OgrdOQKHOKG9YkdPFOw3n5IIc861ykDBl2D2XJwQjYEHTjk8aCNvVEPqgwiBIJ4VjFkK
+         hfdN0t6TC2R7wYinvp/uqubG9YAAIbGhqNe20wz7FRwhflBwR8Tb2CBeSTbSo5eHD8yD
+         DGzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdj/oRsqdZ87iTcv8xe2q/z2o0Vvd3B83vR7sVUZ7ciDfaW0sbf9GlDx3PFVlcSYKtn5gDotg3WPqPu3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIbW59xghXfO0KgDTAvZiIYc6MUTVH0HOt6QLni6jtyX7hn2VN
+	1wl+bJ2c2hael1zGSE+188UdNmrtfpSbRVMoy4K9ddwz3Rx9ilbOP2Kw
+X-Gm-Gg: ASbGnct3oXK+j6UUmq++jVRgfSRIc/xU8uTzrc/UAoD9LnOHqIChDhIzc9qkbyTe6NL
+	soSuIEiCdIlWni/sDLpzcSGRFtGUu4Hn5kLwnwNWmgTDMwKShSLZpnHpYgV4Z/zxA9anSuNUkdg
+	ETcZn2mdErNu87mvpI3PO+XaYcBsFOMzEvO0AMvxCJkk0c4/UT5NAv6FDg5TZkDPWcCbGFXBdB+
+	rDNKpxdE0DW8H/+w+tzoUiqYBLd9c4g6I5n/iSFzFbN1FQcJWewZbYQNuq46NTg/gp8JWDvbizI
+	ev4CzYIlaI0e830BNwCMluN9Pld0XmL2NQf96AFiVndhG6Elf3SpuD85oijqzyoQqh03ldE1y6m
+	9uiYUpN5K/hstkFaYHdRsJOo3EB6tSWAQkkFqhQeVgMKa7I3PwqUhiCb4KbZp1T6VAuwhL3Lj2J
+	YodnbI11epueV1GvyAyNRLkbPHcpt+vYE5Zz4=
+X-Google-Smtp-Source: AGHT+IFO1Aj58ygyCOlI2zA+lUSTMddFikFOwBkJL3a+he6zkxfPMBnlF0h5B3IACmlOERHv2GNjEQ==
+X-Received: by 2002:a05:690c:9a0a:b0:786:581d:f24b with SMTP id 00721157ae682-786a41e29cemr57871067b3.47.1762359092678;
+        Wed, 05 Nov 2025 08:11:32 -0800 (PST)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:7::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78691d8f0b4sm20313777b3.4.2025.11.05.08.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:11:32 -0800 (PST)
+Date: Wed, 5 Nov 2025 08:11:26 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net] selftests/vsock: avoid false-positives when checking
+ dmesg
+Message-ID: <aQt3LitYPBcD0MM+@devvm11784.nha0.facebook.com>
+References: <20251104-vsock-vmtest-dmesg-fix-v1-1-80c8db3f5dfe@meta.com>
+ <oqglacowaadnhai4ts4pn4khaumxyoedqb5pieiwsvkqtk7cpr@ltjbthajbxyq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v13 23/25] CXL/PCI: Introduce CXL uncorrectable protocol
- error recovery
-To: "Bowman, Terry" <terry.bowman@amd.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: dave@stgolabs.net, alison.schofield@intel.com, dan.j.williams@intel.com,
- bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
- Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
- dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
- lukas@wunner.de, Benjamin.Cheatham@amd.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
- alucerop@amd.com, ira.weiny@intel.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-24-terry.bowman@amd.com>
- <20251104184732.0000362f@huawei.com>
- <10115294-8be9-42af-a466-40a194cfa4e8@intel.com>
- <5246e21b-d226-4faf-936b-d3dffe2cc45e@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <5246e21b-d226-4faf-936b-d3dffe2cc45e@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <oqglacowaadnhai4ts4pn4khaumxyoedqb5pieiwsvkqtk7cpr@ltjbthajbxyq>
 
-
-
-On 11/5/25 7:59 AM, Bowman, Terry wrote:
+On Wed, Nov 05, 2025 at 12:16:42PM +0100, Stefano Garzarella wrote:
+> On Tue, Nov 04, 2025 at 01:50:50PM -0800, Bobby Eshleman wrote:
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+> > 
+> > Sometimes VMs will have some intermittent dmesg warnings that are
+> > unrelated to vsock. Change the dmesg parsing to filter on strings
+> > containing 'vsock' to avoid false positive failures that are unrelated
+> > to vsock. The downside is that it is possible for some vsock related
+> > warnings to not contain the substring 'vsock', so those will be missed.
+> > 
+> > Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
+> > Reviewed-by: Simon Horman <horms@kernel.org>
+> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> > ---
+> > Previously was part of the series:
+> > https://lore.kernel.org/all/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com/
+> > ---
+> > tools/testing/selftests/vsock/vmtest.sh | 8 ++++----
+> > 1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+> > index edacebfc1632..e1732f236d14 100755
+> > --- a/tools/testing/selftests/vsock/vmtest.sh
+> > +++ b/tools/testing/selftests/vsock/vmtest.sh
+> > @@ -389,9 +389,9 @@ run_test() {
+> > 	local rc
+> > 
+> > 	host_oops_cnt_before=$(dmesg | grep -c -i 'Oops')
+> > -	host_warn_cnt_before=$(dmesg --level=warn | wc -l)
+> > +	host_warn_cnt_before=$(dmesg --level=warn | grep -c -i 'vsock')
+> > 	vm_oops_cnt_before=$(vm_ssh -- dmesg | grep -c -i 'Oops')
+> > -	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | wc -l)
+> > +	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | grep -c -i 'vsock')
+> > 
+> > 	name=$(echo "${1}" | awk '{ print $1 }')
+> > 	eval test_"${name}"
+> > @@ -403,7 +403,7 @@ run_test() {
+> > 		rc=$KSFT_FAIL
+> > 	fi
+> > 
+> > -	host_warn_cnt_after=$(dmesg --level=warn | wc -l)
+> > +	host_warn_cnt_after=$(dmesg --level=warn | grep -c -i vsock)
 > 
+> In the previous hunk we quoted 'vsock', but here and in the next we did
+> not. Can we be consistent at least in the same patch ?
 > 
-> On 11/4/2025 5:43 PM, Dave Jiang wrote:
->>
->> On 11/4/25 11:47 AM, Jonathan Cameron wrote:
->>> On Tue, 4 Nov 2025 11:03:03 -0600
->>> Terry Bowman <terry.bowman@amd.com> wrote:
-
-<snip>
-
->>>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
->>>> index 5bc144cde0ee..52c6f19564b6 100644
->>>> --- a/drivers/cxl/core/ras.c
->>>> +++ b/drivers/cxl/core/ras.c
->>>> @@ -259,8 +259,138 @@ static void device_unlock_if(struct device *dev, bool take)
->>>>  		device_unlock(dev);
->>>>  }
->>>>  
->>>> +/**
->>>> + * cxl_report_error_detected
->>>> + * @dev: Device being reported
->>>> + * @data: Result
->>>> + * @err_pdev: Device with initial detected error. Is locked immediately
->>>> + *            after KFIFO dequeue.
->>>> + */
->>>> +static int cxl_report_error_detected(struct device *dev, void *data, struct pci_dev *err_pdev)
->>>> +{
->>>> +	bool need_lock = (dev != &err_pdev->dev);
->>> Add a comment on why this controls need for locking.
->>> The resulting code is complex enough I'd be tempted to split the whole
->>> thing into locked and unlocked variants.
->> May not be a bad idea. Terry, can you see if this would reduce the complexity?
->>
->> DJ 
+> The rest LGTM.
 > 
-> I agree and will split into 2 functions. Do you have naming suggestions for a function copy 
-> without locks? Is cxl_report_error_detected_nolock() OK to go along with existing 
-> cxl_report_error_detected()? 
+> Stefano
 
-Maybe cxl_report_error_detected_lock() vs cxl_report_error_detected().
-I think there's also precedent of __cxl_report_error_detected() with no lock and indicates a raw function vs cxl_report_error_detected() with lock. 
+Just sent the update, sorry for the oversight.
 
-DJ
-
-> 
-> Terry
-
-
+Best,
+Bobby
 
