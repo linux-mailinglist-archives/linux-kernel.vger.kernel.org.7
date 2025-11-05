@@ -1,273 +1,375 @@
-Return-Path: <linux-kernel+bounces-887176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D34C37730
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:18:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB1AC376F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49DBC341F66
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A433A9D84
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FE4342CA9;
-	Wed,  5 Nov 2025 19:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B0C331A59;
+	Wed,  5 Nov 2025 19:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jx5wTg8d"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6B333FE18;
-	Wed,  5 Nov 2025 19:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lo0K6I2C"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B1321422;
+	Wed,  5 Nov 2025 19:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762370205; cv=none; b=nqTauhry7bRehzpuDyMgjK53qE2fA/0ojVAnpAjPU5zzT/J9JpPKWRxtovsQb1TO8k/gRRaSuGJg0hX8Q6WRxurFkTKDzaB5UwBMLqwtZ9q5ByQ1RqzigkU6XOsf6FhcGiuaxK/i76yUl4OI/FF2sq3n8qqBkPNtWK0s5Harfd8=
+	t=1762369842; cv=none; b=pRZ+STO8HMDpKVBwgpS75CedQnIZSY0nqSSwR12niXB1jpi+PzBuuWPqwIq0tezUR+RxRt8/En8c0rPaHaCYxN4HxFHhAl/wxTw7dqHfCK3nVtHAMROoWMdnjnqmLI74Sa5vaUQU12y3k0kskne7gu54qYLN3xaooyXz1cp5ajI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762370205; c=relaxed/simple;
-	bh=22Z3mj1k3enKgJtEbBtMi+H4eLL7PQ660K2yzaiWT/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y1EbqdPXGDbNVcKDbhZojZHSH+OfstLuVJDBGCagvuuUyEX4SoYDOELUD5SUArTEGrfbzjvX33tqlWNyvTUjh3y6io/plTomioMZZTsUwrkzCMPky385OzPM/vY8Wt6UaVfe5br6QgGZAiVnKa/beOmkMi3fT1ft+yXLkzXIx18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jx5wTg8d; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5D8jxl009411;
-	Wed, 5 Nov 2025 19:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=oWL+2CjkMNbiQD1Rr
-	qj0Z+xs4KQ7ALjD1Ir1gDVUNgw=; b=jx5wTg8dcFf4a5G9eSxwL2Y7cCZmvGQ8T
-	6YNZpjB1gkyqcGMxpKOyoVCBGnpM0RD6Hu8avdl2FDt1XqMc4ASyzV5Xz+fm0n+P
-	QODicHt7cfTwg25+l5be6B6BXRGALYwBu1wzdDOX2qqsgJ39qJP7XKGMWq30oEZx
-	50a0vaOhPVB5zvgCV4WqpG22/9jSllJQYPGk9vdxx24rg5GT3NmUFwLD4vYo/KL+
-	7dzbc4Op/r9zUa+rAnjEV0Rygu8jagYx/Pn1JcdbDBkNv9ofrJMlF4c+U09/4J9X
-	TAPmC/uGZMwtZKbZ0P1dzRvZsh2EiXPzMwJdR6TxsJQ48dJC8LMzw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vuk8xu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 19:16:40 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5GTgbu012974;
-	Wed, 5 Nov 2025 19:16:39 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y821h20-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 19:16:39 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5JGaIB41812392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Nov 2025 19:16:36 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 17CCA20043;
-	Wed,  5 Nov 2025 19:16:36 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9293420040;
-	Wed,  5 Nov 2025 19:16:35 +0000 (GMT)
-Received: from heavy.ibm.com (unknown [9.87.135.254])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Nov 2025 19:16:35 +0000 (GMT)
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH 5/5] perf test java symbol: Add PID namespace variant
-Date: Wed,  5 Nov 2025 20:10:28 +0100
-Message-ID: <20251105191626.34998-6-iii@linux.ibm.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251105191626.34998-1-iii@linux.ibm.com>
-References: <20251105191626.34998-1-iii@linux.ibm.com>
+	s=arc-20240116; t=1762369842; c=relaxed/simple;
+	bh=QumDJDKN3BbP+JeTHScZ3LMa/AbubpDuNa6w7jIQhPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ualQN97B0A69LiHPPPQQ+DeI5WtGu5pJh426yUyE0NYKnvMBXnjz4rV6j4UXKk61kj8tZUEiRaoHh4mr5D4V3kwjba9qdn80Oo9qoW2+GXiwijbz9wBi1iX5Gpa8HaNgX9A7/CSKBoKJWuPsIIW2M6dY9cogR1zg4P819/Hu6gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Lo0K6I2C; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 33D1D20120AA;
+	Wed,  5 Nov 2025 11:10:39 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 33D1D20120AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762369839;
+	bh=EuwYc2LuCt2GdBfXpQF0MJHPZO9Mje71Y+veLXDEU78=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lo0K6I2Cf+twolyKhr1Lnb4oLxPBLss2OhD9i3d7RBEG53HfLGL4RDMUbPCDxOjbb
+	 eJRHkkheyLWCs0zIgMIh8Jby8OWrRmFbYwGFRGQKw7Iyu5fnBNPQa4JmXd4Wkdvl//
+	 HRqG6ebmfCzUEwbSrCZijM+UXKVyDGizQIr5EYZs=
+Message-ID: <31e9a5be-05d6-49f8-893e-2d8986dc8ce4@linux.microsoft.com>
+Date: Wed, 5 Nov 2025 11:10:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 67HUu6tjUeQb4lMg6u_lCwGNJw0jhE5F
-X-Proofpoint-GUID: 67HUu6tjUeQb4lMg6u_lCwGNJw0jhE5F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfXzDy4Duiq5+y4
- BvDOD0wgbvmFfzPl4+Ia9AexdU7Qsj3bXXt3EY7xMxt+2xAo0JBeuoYgcs1jU/rCc93q3LQwUN5
- SolwJy6WKUpT1IVzE/KGnA4xIvGQ7AZUfUq7NXQDlp8KQ6DVQRRaEthapseQ/8wOS9M8PXNDXln
- TqNrIse67F1EGQlVJMXsjolK7DPEYKME4wcYuoCneMKNaLWkQBNJBLiPV6trqmYvf5MeodMuWu7
- /y3uZWr/RutnLs6lV9ID98l3G5n25wqaRp9P05f4pafgAvkVOV0a3ZJIpR34+OPuWEFN7SI6KtV
- rlwRD4fgEGQRMAoTQa5aJrLewnkIUZFptjEQT7KalhsNhFSDaMkYPAMrmBG4dPwM9k0uajzX953
- gU3ERwXbw1XNllYksx4GcUhTJnIbfA==
-X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690ba298 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=2i8RwoOR_BBpVC3p_GAA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_07,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511010021
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mshv: Extend create partition ioctl to support cpu
+ features
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "easwar.hariharan@linux.microsoft.com" <easwar.hariharan@linux.microsoft.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "longli@microsoft.com" <longli@microsoft.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "romank@linux.microsoft.com" <romank@linux.microsoft.com>,
+ Jinank Jain <jinankjain@microsoft.com>
+References: <1762292846-14253-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB41571FC666D406397858A377D4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41571FC666D406397858A377D4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a PID namespace variant of test_java_symbol.sh. Compared to the
-existing test, we must jump through two extra hoops here.
+On 11/5/2025 9:41 AM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, November 4, 2025 1:47 PM
+>>
+>> From: Muminul Islam <muislam@microsoft.com>
+>>
+>> The existing mshv create partition ioctl does not provide a way to
+>> specify which cpu features are enabled in the guest. Instead, it
+>> attempts to enable all features and those that are not supported are
+>> silently disabled by the hypervisor.
+>>
+>> This was done to reduce unnecessary complexity and is sufficient for
+>> many cases. However, new scenarios require fine-grained control over
+>> these features.
+>>
+>> Define a new mshv_create_partition_v2 structure which supports
+>> passing the disabled processor and xsave feature bits through to the
+>> create partition hypercall directly.
+>>
+>> The kernel does not introspect the bits in these new fields as they
+>> are part of the hypervisor ABI. Require the caller to provide the
+>> number of cpu feature banks passed, to support extending the number
+>> of banks in future. Disable all banks that are not specified to ensure
+>> the behavior is predictable with newer hypervisors.
+>>
+>> Introduce a new flag MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables
+>> the new structure. If unset, the original mshv_create_partition struct
+>> is used, with the old behavior of enabling all features.
+>>
+>> Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+>> Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+>> Signed-off-by: Muminul Islam <muislam@microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>> Changes in v3:
+>> - Remove the new cpu features definitions in hvhdk.h, and retain the
+>>   old behavior of enabling all features for the old struct. For the v2
+>>   struct, still disable unspecified feature banks, since that makes it
+>>   robust to future extensions.
+>> - Amend comments and commit message to reflect the above
+>> - Fix unused variable on arm64 [kernel test robot]
+>>
+>> Changes in v2:
+>> - Fix exposure of CONFIG_X86_64 to uapi [kernel test robot]
+>> - Fix compilation issue on arm64 [kernel test robot]
+>>
+>> ---
+>>  drivers/hv/mshv_root_main.c | 94 ++++++++++++++++++++++++++++++-------
+>>  include/uapi/linux/mshv.h   | 34 ++++++++++++++
+>>  2 files changed, 110 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index d542a0143bb8..814465a0912d 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -1900,43 +1900,101 @@ add_partition(struct mshv_partition *partition)
+>>  	return 0;
+>>  }
+>>
+>> -static long
+>> -mshv_ioctl_create_partition(void __user *user_arg, struct device *module_dev)
+>> +static_assert(MSHV_NUM_CPU_FEATURES_BANKS <=
+>> +	      HV_PARTITION_PROCESSOR_FEATURES_BANKS);
+>> +
+>> +static long mshv_ioctl_process_pt_flags(void __user *user_arg, u64 *pt_flags,
+>> +					struct hv_partition_creation_properties *cr_props,
+>> +					union hv_partition_isolation_properties *isol_props)
+>>  {
+>> -	struct mshv_create_partition args;
+>> -	u64 creation_flags;
+>> -	struct hv_partition_creation_properties creation_properties = {};
+>> -	union hv_partition_isolation_properties isolation_properties = {};
+>> -	struct mshv_partition *partition;
+>> -	struct file *file;
+>> -	int fd;
+>> -	long ret;
+>> +	int i;
+>> +	struct mshv_create_partition_v2 args;
+>> +	union hv_partition_processor_features *disabled_procs;
+>> +	union hv_partition_processor_xsave_features *disabled_xsave;
+>>
+>> -	if (copy_from_user(&args, user_arg, sizeof(args)))
+>> +	/* First, copy orig struct in case user is on previous versions */
+>> +	if (copy_from_user(&args, user_arg,
+>> +			   sizeof(struct mshv_create_partition)))
+>>  		return -EFAULT;
+>>
+>>  	if ((args.pt_flags & ~MSHV_PT_FLAGS_MASK) ||
+>>  	    args.pt_isolation >= MSHV_PT_ISOLATION_COUNT)
+>>  		return -EINVAL;
+>>
+>> +	disabled_procs = &cr_props->disabled_processor_features;
+>> +	disabled_xsave = &cr_props->disabled_processor_xsave_features;
+>> +
+>> +	/* Check if user provided newer struct with feature fields */
+>> +	if (args.pt_flags & BIT(MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES)) {
+> 
+> Should probably be "BIT_ULL" instead of "BIT" since args.pt_flags is a long long field,
+> though it really doesn't matter as long as the number of flags is <= 32.
+> 
+Noted, thanks
 
-First, we need to check whether unshare is there an is usable, which
-may not be the case either due to kernel config or permissions.
+>> +		if (copy_from_user(&args, user_arg, sizeof(args)))
+>> +			return -EFAULT;
+>> +
+>> +		if (args.pt_num_cpu_fbanks > MSHV_NUM_CPU_FEATURES_BANKS ||
+>> +		    mshv_field_nonzero(args, pt_rsvd) ||
+>> +		    mshv_field_nonzero(args, pt_rsvd1))
+>> +			return -EINVAL;
+>> +
+>> +
+>> +		for (i = 0; i < args.pt_num_cpu_fbanks; i++)
+>> +			disabled_procs->as_uint64[i] = args.pt_cpu_fbanks[i];
+>> +
+>> +		/* Disable any features left unspecified */
+>> +		for (; i < HV_PARTITION_PROCESSOR_FEATURES_BANKS; i++)
+>> +			disabled_procs->as_uint64[i] = -1;
+> 
+> I'm trying to convince myself that disabling unspecified features is the right
+> thing to do. In the current hypervisor scenario with 2 banks, if the VMM caller
+> specifies only one bank of disable flags, then all the features in the 2nd bank
+> are disabled. That's certainly the reverse from the current code which
+> always enables all features, and from the hypervisor itself which in the
+> hypercall ABI defines the flags as "disable" flags rather than "enable" flags.
+> 
+> Then in a scenario where a new version of the hypervisor shows up with
+> support for 3 banks, the old VMM code that only knows about 2 banks
+> will cause all features in that 3rd bank to be disabled. Again, that's the
+> reverse of the current code.
+> 
+> I guess it depends on how the hypervisor defines any such new features.
+> Are they typically defined to be benign if they are enabled by default? Or
+> is the polarity the opposite, where the VMM must know about new
+> features before they are enabled? The hypercall interface seems to imply
+> the former but maybe I'm reading too much into it.
+> 
+The intent is to provide an interface which allows the VMM to control exactly
+which features are enabled/disabled. E.g. for live migration of a VM, if the
+target machine has more features available and they are enabled inadvertently,
+the state may not be restored properly (particularly an issue for xsave).
 
-Second, we need to keep jshell running after perf record exits in order
-to reproduce a real issue with this setup. This means we have to attach
-perf after starting jshell, use ctl-fifo and ack-fifo, and work around
-perf's inability to attach to existing children.
+So to me it makes sense to disable anything unspecified. In general, enabling
+features by default doesn't cause problems, it's only for specific scenarios
+like the above. I suppose that's why it's a "disable" mask, though I can't
+say I fully understand the reasoning...
 
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
----
- .../tests/shell/test_java_symbol_pidns.sh     | 135 ++++++++++++++++++
- 1 file changed, 135 insertions(+)
- create mode 100755 tools/perf/tests/shell/test_java_symbol_pidns.sh
+> A code comment about the thinking here would be useful for future readers.
+> 
+Noted. I can repeat the reasoning from the commit message if that is
+sufficient:
+"
+Disable all banks that are not specified to ensure
+the behavior is predictable with newer hypervisors.
+"
 
-diff --git a/tools/perf/tests/shell/test_java_symbol_pidns.sh b/tools/perf/tests/shell/test_java_symbol_pidns.sh
-new file mode 100755
-index 0000000000000..afee6d055ad90
---- /dev/null
-+++ b/tools/perf/tests/shell/test_java_symbol_pidns.sh
-@@ -0,0 +1,135 @@
-+#!/bin/bash
-+# Test symbol resolution for java running inside a PID namespace
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set -u -o pipefail
-+
-+# shellcheck source=lib/setup_libjvmti.sh
-+. "$(dirname "$0")/lib/setup_libjvmti.sh"
-+
-+JSHELL=(jshell -s -J"-agentpath:$LIBJVMTI")
-+if ! command -v jshell &>/dev/null; then
-+	echo "skip: no jshell, install JDK"
-+	exit 2
-+fi
-+
-+UNSHARE=(
-+	unshare
-+	--user --map-user="$(id -u)" --map-group="$(id -g)"
-+	--fork --pid --mount-proc
-+)
-+if ! "${UNSHARE[@]}" true; then
-+	echo "skip: unshare not functional"
-+	exit 2
-+fi
-+
-+if [ "$#" -eq 0 ]; then
-+	# Verify isolation by running the test inside a separate PID namespace.
-+	exec "${UNSHARE[@]}" "$0" "$@" stage2
-+fi
-+if [ "$1" != stage2 ]; then
-+	echo "$0 must be started without arguments"
-+	exit 1
-+fi
-+shift
-+
-+WORKDIR=$(mktemp -d /tmp/__perf_test_java_symbol_pidns.XXXXX)
-+trap 'rm -r "$WORKDIR"' EXIT
-+
-+test() {
-+	TEST_ID=jshell-exit-$JSHELL_EXIT
-+
-+	# Verify that perf inject can deal with JIT dump produced by jshell
-+	# running in PID namespace that is different from its own one.
-+	# Make sure jshell is still around when perf inject runs, so attach and
-+	# detach perf manually.
-+	# jshell is a shell script that runs java as a child process, and perf
-+	# cannot attach to existing children. Therefore create a stopped
-+	# process, which will exec jshell after it's resumed.
-+	JSHELL_STDIN=$WORKDIR/jshell-stdin-$TEST_ID
-+	JSHELL_STDOUT=$WORKDIR/jshell-stdout-$TEST_ID
-+	mkfifo "$JSHELL_STDIN"
-+	mkfifo "$JSHELL_STDOUT"
-+	exec {JSHELL_STDIN_FD}<>"$JSHELL_STDIN"
-+	exec {JSHELL_STDOUT_FD}<>"$JSHELL_STDOUT"
-+	JITDUMPDIR="$WORKDIR" bash -c 'kill -STOP "$$" && exec "$0" "$@"' \
-+		"${UNSHARE[@]}" "${JSHELL[@]}" \
-+		<&"$JSHELL_STDIN_FD" >&"$JSHELL_STDOUT_FD" &
-+	JSHELL_PID=$!
-+
-+	# Start perf record and wait until it attaches to jshell.
-+	PERF_CTL=$WORKDIR/perf-ctl-$TEST_ID
-+	PERF_ACK=$WORKDIR/perf-ack-$TEST_ID
-+	mkfifo "$PERF_CTL"
-+	mkfifo "$PERF_ACK"
-+	exec {PERF_CTL_FD}<>"$PERF_CTL"
-+	exec {PERF_ACK_FD}<>"$PERF_ACK"
-+	PERF_DATA=$WORKDIR/perf-$TEST_ID.data
-+	perf record --clockid=1 --delay=-1 \
-+		--control="fd:$PERF_CTL_FD,$PERF_ACK_FD" \
-+		--output="$PERF_DATA" --pid="$JSHELL_PID" &
-+	PERF_PID=$!
-+	echo "enable" >&"$PERF_CTL_FD"
-+	while IFS= read -r LINE <&"$PERF_ACK_FD"; do
-+		[ "$LINE" != "ack" ] || break
-+	done
-+
-+	# Spawn jshell and ask it to run some CPU-intensive code.
-+	kill -CONT "$JSHELL_PID"
-+	cat >&"$JSHELL_STDIN_FD" <<EOF
-+int fib(int x) { return x > 1 ? fib(x - 2) + fib(x - 1) : 1; }
-+System.out.println(fib(44));
-+EOF
-+	while IFS= read -r LINE <&"$JSHELL_STDOUT_FD"; do
-+		[ "$LINE" != 1134903170 ] || break
-+	done
-+
-+	# Terminate perf record.
-+	echo "stop" >"$PERF_CTL"
-+	if ! wait "$PERF_PID"; then
-+		echo "Fail to record for java program"
-+		exit 1
-+	fi
-+
-+	# Terminate jshell before perf inject.
-+	if [ "$JSHELL_EXIT" = "early" ]; then
-+		echo "/exit" >&"$JSHELL_STDIN_FD"
-+		if ! wait "$JSHELL_PID"; then
-+			echo "Fail to run java program"
-+			exit 1
-+		fi
-+	fi
-+
-+	# Inject the JIT data.
-+	PERF_INJ_DATA=$WORKDIR/perf-$TEST_ID.data.inj
-+	if ! DEBUGINFOD_URLS="" perf inject --input="$PERF_DATA" \
-+		--output="$PERF_INJ_DATA" --jit; then
-+		echo "Fail to inject samples"
-+		exit 1
-+	fi
-+
-+	# Below is an example of the instruction samples reporting:
-+	#   8.18%  jshell           jitted-50116-29.so    [.] Interpreter
-+	#   0.75%  Thread-1         jitted-83602-1670.so  [.] jdk.internal.jimage.BasicImageReader.getString(int)
-+	# Look for them, while avoiding false positives from lines like this:
-+	#   0.03%  jshell           libjvm.so             [.] InterpreterRuntime::resolve_get_put(JavaThread*, Bytecodes::Code)
-+	if ! perf report --input="$PERF_INJ_DATA" --stdio |
-+		grep ' jshell .* jitted-.*\.so .* \(Interpreter$\|jdk\.internal\)' \
-+			&>/dev/null; then
-+		echo "Fail to find java symbols"
-+		exit 1
-+	fi
-+
-+	# Terminate jshell after perf inject.
-+	if [ "$JSHELL_EXIT" = "late" ]; then
-+		echo "/exit" >&"$JSHELL_STDIN_FD"
-+		if ! wait "$JSHELL_PID"; then
-+			echo "Fail to run java program"
-+			exit 1
-+		fi
-+	fi
-+}
-+
-+for JSHELL_EXIT in early late; do
-+	test
-+done
--- 
-2.51.1
+>> +
+>> +#if IS_ENABLED(CONFIG_X86_64)
+>> +		disabled_xsave->as_uint64 = args.pt_disabled_xsave;
+>> +#else
+>> +		if (mshv_field_nonzero(args, pt_rsvd2))
+>> +			return -EINVAL;
+>> +
+>> +		disabled_xsave->as_uint64 = -1;
+> 
+> Does the arm64 version of the hypercall do anything with this field?
+> Or does it just ignore it? I would be more inclined to set ignored
+> fields to zero unless there's an identifiable reason otherwise.
+> (especially since the VMM is required to pass in zero on arm64).
+> 
+Good point. Checking the code, it seems to be completely ignored on arm64.
+I will remove this line.
+
+>> +#endif
+>> +	} else {
+>> +		/* v1 behavior: try to enable everything */
+>> +		for (i = 0; i < HV_PARTITION_PROCESSOR_FEATURES_BANKS; i++)
+>> +			disabled_procs->as_uint64[i] = 0;
+>> +
+>> +		disabled_xsave->as_uint64 = 0;
+>> +	}
+>> +
+>>  	/* Only support EXO partitions */
+>> -	creation_flags = HV_PARTITION_CREATION_FLAG_EXO_PARTITION  HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED;
+>> +	*pt_flags = HV_PARTITION_CREATION_FLAG_EXO_PARTITION |
+>> +		 HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED;
+>>
+>>  	if (args.pt_flags & BIT(MSHV_PT_BIT_LAPIC))
+>> -		creation_flags |= HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED;
+>> +		*pt_flags |= HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED;
+>>  	if (args.pt_flags & BIT(MSHV_PT_BIT_X2APIC))
+>> -		creation_flags |= HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE;
+>> +		*pt_flags |= HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE;
+>>  	if (args.pt_flags & BIT(MSHV_PT_BIT_GPA_SUPER_PAGES))
+>> -		creation_flags |= HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED;
+>> +		*pt_flags |= HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED;
+>>
+>>  	switch (args.pt_isolation) {
+>>  	case MSHV_PT_ISOLATION_NONE:
+>> -		isolation_properties.isolation_type =
+>> -			HV_PARTITION_ISOLATION_TYPE_NONE;
+>> +		isol_props->isolation_type = HV_PARTITION_ISOLATION_TYPE_NONE;
+>>  		break;
+>>  	}
+>>
+>> +	return 0;
+>> +}
+>> +
+>> +static long
+>> +mshv_ioctl_create_partition(void __user *user_arg, struct device *module_dev)
+>> +{
+>> +	u64 creation_flags;
+>> +	struct hv_partition_creation_properties creation_properties = {};
+>> +	union hv_partition_isolation_properties isolation_properties = {};
+>> +	struct mshv_partition *partition;
+>> +	struct file *file;
+>> +	int fd;
+>> +	long ret;
+>> +
+>> +	ret = mshv_ioctl_process_pt_flags(user_arg, &creation_flags,
+>> +					  &creation_properties,
+>> +					  &isolation_properties);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	partition = kzalloc(sizeof(*partition), GFP_KERNEL);
+>>  	if (!partition)
+>>  		return -ENOMEM;
+>> diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
+>> index 876bfe4e4227..9091946cba23 100644
+>> --- a/include/uapi/linux/mshv.h
+>> +++ b/include/uapi/linux/mshv.h
+>> @@ -26,6 +26,7 @@ enum {
+>>  	MSHV_PT_BIT_LAPIC,
+>>  	MSHV_PT_BIT_X2APIC,
+>>  	MSHV_PT_BIT_GPA_SUPER_PAGES,
+>> +	MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES,
+>>  	MSHV_PT_BIT_COUNT,
+>>  };
+>>
+>> @@ -41,6 +42,8 @@ enum {
+>>   * @pt_flags: Bitmask of 1 << MSHV_PT_BIT_*
+>>   * @pt_isolation: MSHV_PT_ISOLATION_*
+>>   *
+>> + * This is the initial/v0 version for backward compatibility.
+>> + *
+>>   * Returns a file descriptor to act as a handle to a guest partition.
+>>   * At this point the partition is not yet initialized in the hypervisor.
+>>   * Some operations must be done with the partition in this state, e.g. setting
+>> @@ -52,6 +55,37 @@ struct mshv_create_partition {
+>>  	__u64 pt_isolation;
+>>  };
+>>
+>> +#define MSHV_NUM_CPU_FEATURES_BANKS 2
+>> +
+>> +/**
+>> + * struct mshv_create_partition_v2
+>> + *
+>> + * This is extended version of the above initial MSHV_CREATE_PARTITION
+>> + * ioctl and allows for following additional parameters:
+>> + *
+>> + * @pt_num_cpu_fbanks: number of processor feature banks being provided.
+>> + *                     This must not exceed MSHV_NUM_CPU_FEATURES_BANKS.
+>> + *                     If set to less than the number of available banks,
+>> + *                     additional banks will be set to -1 (disabled).
+>> + * @pt_cpu_fbanks: disabled processor feature banks array.
+>> + * @pt_disabled_xsave: disabled xsave feature bits.
+>> + *
+>> + * Returns : same as above original mshv_create_partition
+>> + */
+>> +struct mshv_create_partition_v2 {
+>> +	__u64 pt_flags;
+>> +	__u64 pt_isolation;
+>> +	__u16 pt_num_cpu_fbanks;
+>> +	__u8  pt_rsvd[6];		/* MBZ */
+>> +	__u64 pt_cpu_fbanks[MSHV_NUM_CPU_FEATURES_BANKS];
+>> +	__u64 pt_rsvd1[2];		/* MBZ */
+> 
+> I presume this is for future expansion of the number of banks?
+> And that the choice of 2 additional banks is somewhat arbitrary?
+> 
+A 3rd bank is sure to be added in the near future. At this rate
+it seems likely a 4th will eventually be needed, though it's hard
+to say for sure.
+
+Nuno
+
+> Michael
+> 
+>> +#if defined(__x86_64__)
+>> +	__u64 pt_disabled_xsave;
+>> +#else
+>> +	__u64 pt_rsvd2;			/* MBZ */
+>> +#endif
+>> +} __packed;
+>> +
+>>  /* /dev/mshv */
+>>  #define MSHV_CREATE_PARTITION	_IOW(MSHV_IOCTL, 0x00, struct
+>> mshv_create_partition)
+>>
+>> --
+>> 2.34.1
 
 
