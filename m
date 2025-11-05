@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-886019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8C8C34859
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CF5C34877
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C253AADF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA9C4674C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B6B2652B2;
-	Wed,  5 Nov 2025 08:42:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E2E2D8DD0;
+	Wed,  5 Nov 2025 08:42:48 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9F22D837C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B92D595D;
+	Wed,  5 Nov 2025 08:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332124; cv=none; b=I9QzlRAxv19Kks8SLfD3mz2elLD85114cwFQ76z7Flwe9f9jqIccf62dIt1KuA2UylD0uq0a19FCqwC2jthP1/py/6DbMWZnbqrECX2uf/4AvRYcrBZWcLRnNQfeA0hHzQBN9lRgZnQys6v1/5g9paIEuaX0phJIG4Us3tu92y0=
+	t=1762332167; cv=none; b=NyM0HHen6c2pPIqR2CiHwZ3pknZFYrnAajKRrJ6fxrJOKf25l5+0V4Af2zz1ck2SFzR2FCSr9xzEiKLXlek7hSHhB1UAF9mlvoiby/crhMSBsVIj+sUXuXqg197P51TSywuy3EeiHG1cDSa66AW7uq2xfwsfMYNLGb5gEK/cgnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332124; c=relaxed/simple;
-	bh=ePzZxdoEQ4MSlsO8jZ5nVaUKnRj+vGl1Dv+XdLuICqk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=H0/1atvT8ywjUPx9CcQiFKcoNWkOTe14BLG1s4mQHaQAjAUaUj890XNeypqHGdwbrmYhg/hVRPOfrqK3xkbdt5hUfdJUGDKkW6LE0ZJONlOwh9ijzJJtWXPfqTsCzFO0ds5aib9mCOeiwUe9y2k1fnGr/wEpoJ05V/Dd75XaMrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43323ffc26bso26234775ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:42:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762332122; x=1762936922;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dyM3cOm+VdmpHMfHR12n65P+vMQ7A1WfaZjjKZ8hFcE=;
-        b=mLVN4lE3LY/zN83WvTwbhFUNdXqbkDnxIlfrjNd6c4si4O/BIRgNnvGEDCKtXwBrgG
-         RE/AoMrF+lgcNRor0yhmBld5+yPqkszMGJ9wnSjjbQCruQUIcTuqMh0S3CwLORq0dQYh
-         hBSZMX4JTFyqMnev6+I4311dimrrU45Yjv2ifaZHmq24MjDm3qExOwA1cOoAkyGciFFU
-         RHfqTSQir+CcmeLBsqUZHVT360+PBPSfY6pmqZEdcoyKDNphqm5c2FQTeTtTVlXpcB//
-         wFbxGQ+0Oy11nsVtPA1TMwDgid5f9gHdIJsrmCWOvjJGzNBUG5t3dznbcZtfNnRLKGfq
-         5EUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsDIvp2/Nxd465ZMTcb0ZkdrMCuEwRgBhaBsYtHNnX/CnjHy8IpRVyhNGBBmFUyk4O5SRrQFDg8reW5mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRElm0WFAszRNVdvGL8/gngsBTKz23w7UCnKG6kh6TQDaPBWfv
-	kdBIAtZersL/ORaVV+ZPQVJ0v1iVkfsGMYtj93bhqBoRyfRdQONm8yrHUPtoEa0W7WLAz7DUGtC
-	ayImnF+H5fhCmngk4vl46cV0Z82yDRxuEGGbGtWPJjS4AjSmcgUPwukND1Yk=
-X-Google-Smtp-Source: AGHT+IF2CcPIZOQMPzkAU4aGFq7+QhYfX0iQP/wp6BW8K1b0Fhsi6zmchiYfie1kTDNkZKOKwogsvoaQ6WGPeVOrmpWA0iEvj5Xi
+	s=arc-20240116; t=1762332167; c=relaxed/simple;
+	bh=MynJdN+q0tQCspRsA/Y2l/tUwetCPLe9L2/rq1X6uFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VaPKJnCn+U3RJhZrDWsEqd0g23+sYvurvAhwEmww/os1VP6LaQjD+iESAAz6riEtdvzzY6NL1yz7aZLqCI7Za460//q/49Rdh3RzjRmbuEHsmUotBcoEDEKDjZy/weNHikU73rlfFKo71vpehleI4g9oHrlxHgenhCb+ESV8xRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAA3sun6DQtp4wiWAQ--.25976S2;
+	Wed, 05 Nov 2025 16:42:36 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: linux-watchdog@vger.kernel.org,
+	xingyu.wu@starfivetech.com,
+	ziv.xu@starfivetech.com,
+	wim@linux-watchdog.org
+Cc: linux@roeck-us.net,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] watchdog: starfive: Fix resource leak in probe error path
+Date: Wed,  5 Nov 2025 16:42:20 +0800
+Message-ID: <20251105084220.1334-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c23:b0:433:2cca:f004 with SMTP id
- e9e14a558f8ab-433407eafb1mr30592955ab.23.1762332122448; Wed, 05 Nov 2025
- 00:42:02 -0800 (PST)
-Date: Wed, 05 Nov 2025 00:42:02 -0800
-In-Reply-To: <CAPqLRf36qEgmaLxkGfURAQ549Em_==asxBSuy6PcoKYpXi05ag@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b0dda.050a0220.2e3c35.0002.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr (3)
-From: syzbot <syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com>
-To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAA3sun6DQtp4wiWAQ--.25976S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrWrGF1rAF1DAr45tFy7Jrb_yoW8JF4Dpw
+	4Skasakr10qr429r47Ja1DZa45Cayxt347ArW8Ga4F9rs8Cw4rtw4vyFyYga1DJr93Ga17
+	ta1qq3y8uayakr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7
+	UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAURA2kK8b6plAAAsK
 
-Hello,
+If pm_runtime_put_sync() fails after watchdog_register_device()
+succeeds, the probe function jumps to err_exit without
+unregistering the watchdog device. This leaves the watchdog
+registered in the subsystem while the driver fails to load,
+resulting in a resource leak.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Add a new error label err_unregister_wdt to properly unregister
+the watchdog device.
 
-Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
-Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+Fixes: 8bc22a2f1bf0 ("watchdog: starfive: Check pm_runtime_enabled() before decrementing usage counter")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/watchdog/starfive-wdt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Tested on:
+diff --git a/drivers/watchdog/starfive-wdt.c b/drivers/watchdog/starfive-wdt.c
+index 355918d62f63..ed71d3960a0f 100644
+--- a/drivers/watchdog/starfive-wdt.c
++++ b/drivers/watchdog/starfive-wdt.c
+@@ -500,12 +500,14 @@ static int starfive_wdt_probe(struct platform_device *pdev)
+ 		if (pm_runtime_enabled(&pdev->dev)) {
+ 			ret = pm_runtime_put_sync(&pdev->dev);
+ 			if (ret)
+-				goto err_exit;
++				goto err_unregister_wdt;
+ 		}
+ 	}
+ 
+ 	return 0;
+ 
++err_unregister_wdt:
++	watchdog_unregister_device(&wdt->wdd);
+ err_exit:
+ 	starfive_wdt_disable_clock(wdt);
+ 	pm_runtime_disable(&pdev->dev);
+-- 
+2.50.1.windows.1
 
-commit:         84d39fb9 Add linux-next specific files for 20251105
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1782a114580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1fcb9bd985db1e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10d8a532580000
-
-Note: testing is done by a robot and is best-effort only.
 
