@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-886919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B3EC36CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:49:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F860C36AE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E55214FE073
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:27:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 118AF34D62D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DD6310777;
-	Wed,  5 Nov 2025 16:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHA1o6Ri"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A18025E469;
+	Wed,  5 Nov 2025 16:27:31 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD39303A32
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77585314B65;
+	Wed,  5 Nov 2025 16:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360041; cv=none; b=mHIz+haPTujXB51HbRDEGVhlhi9kkxQ1XwGJ9UV/Tcf3j5OGrYzjKTBU+fKAEVEy8+yrfKHtapKw3yzq/ZIcMT4jhx5xTYH5RCJo7gUUQQpfJLwSUfzwF03AwS1PoefYZ1m6nzB8YRu47r9Exs78pCd453UBheMmxoYUX76sFKI=
+	t=1762360051; cv=none; b=Wyg50HrpLcyh6iv9wcyDj9l9bpjTrqCbeGsHR+L7Wo0uIir3oABjW1NHI2jTe346GwHeRFVSUWcQTtuITPgfVqmNtf4EC0o9KoT70LQoWNsnTpMB0fWcfilQ04/ncW1IomexOMHih1U/TW8n6+AgM/McgG5xgVSc5lJxsCH5SpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360041; c=relaxed/simple;
-	bh=HYq4MzEXhs69h85BKnz867qg7d5EWHBgFdp42SDp81w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oAwQExrFIiKsBCmI9JT16fENY+JZq1cF2qpMOeNLsO3En2fWSWtJ9J7VrngDSdV939L4+kmiemSGuVdJkuWzJaRE/ruOqsauzYlHq4OtvMCZ5qgAtMaMY7YmbNnaC/NEfw/JKqIoakz8+NqhalTzhgDU+PNy641vJO1pbsEsFAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHA1o6Ri; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF318C4CEF5;
-	Wed,  5 Nov 2025 16:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762360040;
-	bh=HYq4MzEXhs69h85BKnz867qg7d5EWHBgFdp42SDp81w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EHA1o6Ril2AssBhILRyAOCYWpPM5VvnOfJJ7AUuaWwPnEpdZ6+mdBmSAcNMN0FiQJ
-	 I5xHwAVJiIxKLo39uNG4YwfML9EkkoveCM6e76oLYIcCbtCdf+UtSkSCSgcx98D8N7
-	 UIZj4CXSlX73P6VBD5luRQn/PlndL5/ApvYjHTFzpWWFYdtCp2byAQCSjECsaP+Lbr
-	 B9NWzzLC9AV6nWWWFH68Ub2VpQII4OFbh/csGWP+abFSL9uMWr/1oY2Pe+6AQtOzHc
-	 uzqEdkKnwstJPhwxwn3O8bS5PddAl2qWVkeMfZStUAj3dzZC1Mmmm1e8sZ5rJdA9Gc
-	 Xu5HoXfty4DBA==
-Date: Wed, 5 Nov 2025 16:27:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH] regulator: irq_helper: replace use of system_wq with
- system_percpu_wq
-Message-ID: <aQt65Rp0psfRr60s@finisterre.sirena.org.uk>
-References: <20251105161425.308499-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1762360051; c=relaxed/simple;
+	bh=4MsDe/E10/Ca3cOd2vmpLHcxuVPCCFzib34ACWoaEk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=E5RHYAnolG91NTosQRlnPqoW+prtSOeAK+WMfB62YhsIGRUY2lMSsat5Fo/8SGqsrS4e3p7lYDQySF84o867kA0hm4gHOihhZJO7EoVN4hM41AE2LQYsrJ7pOoGsNHtt9tCabrK1zZtAg92IjtBmWX8adzJTXj3t9zILx3OZNzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from gentoo.org (gentoo.cern.ch [IPv6:2001:1458:202:227::100:45])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: amadio)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 1D035340EAC;
+	Wed, 05 Nov 2025 16:27:27 +0000 (UTC)
+Date: Wed, 5 Nov 2025 17:27:23 +0100
+From: Guilherme Amadio <amadio@gentoo.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: namhyung@kernel.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Crash when running perf top with perf-6.17.7
+Message-ID: <aQt66zhfxSA80xwt@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DirHLVmZPjy9UV+Y"
-Content-Disposition: inline
-In-Reply-To: <20251105161425.308499-1-marco.crivellari@suse.com>
-X-Cookie: If in doubt, mumble.
-
-
---DirHLVmZPjy9UV+Y
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
-On Wed, Nov 05, 2025 at 05:14:25PM +0100, Marco Crivellari wrote:
+Hi Arnaldo,
 
-> Replace system_wq with system_percpu_wq, keeping the old behavior.
-> The old wq (system_wq) will be kept for a few release cycles.
+After updating to perf-6.17.7, perf top crashes for me (seems to happen
+since perf-6.17, but doesn't happen with perf-6.16):
 
-Same thing here, if we're using a per CPU workqueue it should be clear
-why.
+gentoo perf $ perf top
+perf: Segmentation fault
+-------- backtrace --------
+perf: Segmentation fault
+-------- backtrace --------
+Segmentation fault         (core dumped) perf top
 
---DirHLVmZPjy9UV+Y
-Content-Type: application/pgp-signature; name="signature.asc"
+The stack trace from the crash is below. If this is not enough information,
+please let me know what additional information you'd like to have.
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-Guilherme
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkLeuQACgkQJNaLcl1U
-h9BfFwf/W5A38CGUgIqwM7+LRk1M5RqDoPrOU8+55GCMsw2GUBzSBRf9PePGw1D8
-ETKQ+A+9jPPALa3JYXvQw9iUKdQQ1hVYqSlQ1zYIz4Z6XNp3PBjhM+Pqa3XywZSV
-oSIpeTOd1+3xN9hiP6EFXps1yBuFbnyshef1GNbwb5scWcyz0/Z1GF93/xPG3EdV
-VQcUCQWrqmiamZCwI4KyDTPkXJ98VBZ36gElYVwpbJuPr4nRhm85pa4wn2Q1Q9J7
-bypfLcTHG+NLiy9D9ZZissrX4T9dH47pVIfncqnWEI54yd3e3PTas5jc0F+1qCw+
-WPzllOD81oV5Dn3vzh31i5gwJFzEdA==
-=IuCR
------END PGP SIGNATURE-----
+Core was generated by `perf top'.
+Program terminated with signal SIGSEGV, Segmentation fault.
+#0  close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
 
---DirHLVmZPjy9UV+Y--
+warning: 197	/tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c: No such file or directory
+[Current thread is 1 (Thread 0x7f8769c466c0 (LWP 144140))]
+(gdb) bt
+#0  close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
+#1  0x00007f87885286dd in _bfd_cache_init_unlocked (abfd=abfd@entry=0x5567f738eb40) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:561
+#2  0x00007f8788529021 in bfd_cache_init (abfd=abfd@entry=0x5567f738eb40) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:587
+#3  0x00007f878853618a in bfd_fopen (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", target=target@entry=0x0, mode=0x7f878860c4b9 "r", fd=84)
+    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:291
+#4  0x00007f87885363c9 in bfd_fdopenr (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", target=target@entry=0x0, fd=<optimized out>)
+    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:407
+#5  0x00005567c5cf4436 in read_build_id (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", bid=bid@entry=0x7f8769c3d8f0, block=block@entry=false)
+    at util/symbol-elf.c:886
+#6  0x00005567c5cf7240 in filename__read_build_id (filename=filename@entry=0x7f8769c3fa98 "/usr/bin/perf", bid=bid@entry=0x7f8769c3d8f0, block=block@entry=false)
+    at util/symbol-elf.c:968
+#7  0x00005567c5caaba4 in perf_record_mmap2__read_build_id (event=event@entry=0x7f8769c3fa50, machine=machine@entry=0x5567f7392a00, is_kernel=is_kernel@entry=false)
+    at util/synthetic-events.c:404
+#8  0x00005567c5cabff2 in perf_event__synthesize_mmap_events (tool=tool@entry=0x0, event=event@entry=0x7f8769c3fa50, pid=pid@entry=144076, tgid=tgid@entry=144076,
+    process=process@entry=0x5567c5c5d491 <mmap_handler>, machine=machine@entry=0x5567f7392a00, mmap_data=true) at util/synthetic-events.c:536
+#9  0x00005567c5c598fb in machine__init_live (machine=machine@entry=0x5567f7392a00, pid=pid@entry=144076) at util/machine.c:167
+#10 0x00005567c5c5b987 in machine__new_live (host_env=host_env@entry=0x7f8769c40b70, kernel_maps=kernel_maps@entry=false, pid=pid@entry=144076) at util/machine.c:178
+#11 0x00005567c5c56b13 in __dump_stack (file=0x7f87887f25c0 <_IO_2_1_stdout_>, stackdump=stackdump@entry=0x7f8769c40d90, stackdump_size=15) at util/debug.c:318
+#12 0x00005567c5bfb299 in ui__signal_backtrace (sig=<optimized out>) at ui/tui/setup.c:111
+#13 <signal handler called>
+#14 close_one () at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:197
+#15 0x00007f87885286dd in _bfd_cache_init_unlocked (abfd=abfd@entry=0x5567f738e8c0) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:561
+#16 0x00007f8788529021 in bfd_cache_init (abfd=abfd@entry=0x5567f738e8c0) at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/cache.c:587
+#17 0x00007f878853618a in bfd_fopen (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", target=target@entry=0x0, mode=0x7f878860c4b9 "r", fd=63)
+    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:291
+#18 0x00007f87885363c9 in bfd_fdopenr (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", target=target@entry=0x0, fd=<optimized out>)
+    at /tmp/portage/sys-libs/binutils-libs-2.45-r1/work/binutils-2.45/bfd/opncls.c:407
+#19 0x00005567c5cf4436 in read_build_id (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", bid=bid@entry=0x7f8769c425d0, block=block@entry=false)
+    at util/symbol-elf.c:886
+#20 0x00005567c5cf7240 in filename__read_build_id (filename=filename@entry=0x5567f73ca048 "/usr/lib64/libfribidi.so.0.4.0", bid=bid@entry=0x7f8769c425d0,
+    block=block@entry=false) at util/symbol-elf.c:968
+#21 0x00005567c5caaba4 in perf_record_mmap2__read_build_id (event=event@entry=0x5567f73ca000, machine=machine@entry=0x5567f7280b18, is_kernel=is_kernel@entry=false)
+    at util/synthetic-events.c:404
+#22 0x00005567c5cabff2 in perf_event__synthesize_mmap_events (tool=tool@entry=0x0, event=event@entry=0x5567f73ca000, pid=pid@entry=5227, tgid=5227,
+    process=process@entry=0x5567c5c19264 <perf_event__process>, machine=machine@entry=0x5567f7280b18, mmap_data=false) at util/synthetic-events.c:536
+#23 0x00005567c5cac2a5 in __event__synthesize_thread (comm_event=comm_event@entry=0x5567f73c8060, mmap_event=mmap_event@entry=0x5567f73ca000,
+    fork_event=fork_event@entry=0x5567f73c8080, namespaces_event=namespaces_event@entry=0x5567f7246870, pid=5227, full=full@entry=1,
+    process=0x5567c5c19264 <perf_event__process>, tool=0x0, machine=0x5567f7280b18, needs_mmap=true, mmap_data=false) at util/synthetic-events.c:851
+#24 0x00005567c5cac50d in __perf_event__synthesize_threads (tool=0x0, process=0x5567c5c19264 <perf_event__process>, machine=0x5567f7280b18, needs_mmap=true,
+    mmap_data=false, dirent=0x5567f7377400, start=475, num=19) at util/synthetic-events.c:986
+#25 0x00005567c5cac5c4 in synthesize_threads_worker (arg=<optimized out>) at util/synthetic-events.c:1018
+#26 0x00007f87886c0379 in start_thread (arg=<optimized out>) at pthread_create.c:448
+#27 0x00007f8788728fac in __GI___clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
 
