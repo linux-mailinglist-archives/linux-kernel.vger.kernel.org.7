@@ -1,168 +1,169 @@
-Return-Path: <linux-kernel+bounces-886064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8163DC34A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:58:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351D2C349DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90F53A7631
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714CC19209EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A862EAD0D;
-	Wed,  5 Nov 2025 08:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880992ECEBB;
+	Wed,  5 Nov 2025 08:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CCKm0f5P"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXhoFv0f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784FE2E9EBE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC172ECE97
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332940; cv=none; b=QWcQH1BnlTNX4JZvGgR9ydF5Mum8GrhCvpYHiH8iAITnWGoXfqoSlYEp0pPQauOo7rA/tCygb0O3XoG1nsdqT4eggykymWz30ENpnAH/29Z4UMh4ejV0Puow7AOhShG0tIer7Rw1YL8ZeXU33Jdlk9x0Qr5hjM7OOt26M21KHlc=
+	t=1762332945; cv=none; b=ZK+T6fyJym7BYB9yxIYIzIb4csFnOlXTIUkJ9UmUMxaPYKqhMfIHj6hnDhRqA+ZJORZWMfXVilSOzua077ASAEAXz3EAqfjf8wD0fWXu1uPSxqb6qa9+m8w/XlWcozgW6v9/jJhY21FpkOfdfrbzLPfH4lSV8mIPavpa6afXWoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332940; c=relaxed/simple;
-	bh=3XzqJkACJTnBrY3n8Y/2hXaChUELFZ6bE8Jx9Sk9b98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ank8xkjfLndr4xur2i0DgtVdddDRKt8+GQ2zBVHvUsPItDmsrhUccOmij7NP/QkAlNh2/a0TY95OnDvsdTUpDfC+S195TKDRqtdvUT2mOGBVEUJ4k2UcWQp4DiPXwtjLXpDUI8sv9WFPccL5/YtxeyOkrMEXePS7W7o7QG7gbFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CCKm0f5P; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-594249d3732so603393e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762332937; x=1762937737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3XzqJkACJTnBrY3n8Y/2hXaChUELFZ6bE8Jx9Sk9b98=;
-        b=CCKm0f5PO/c3drCeyipVkSV+5wNTI7NMlfrfL3rqiwrPqlJEGZFph6CgBLwqoMNxJG
-         9koE4hscmDfr6qV3yAn+mapKKK5AFE7jNqHhXcKMhyEALNMVYb5QatqlpUGHp99Fa5qV
-         siEa997O3OkA1U2Uk+vvzd6xYVlwq5oga/qmh0Q7zgvvv/QqMCUr1ESTtL9xfiMX3n0j
-         UiJbVG5/1zWsi4XKqh1oJ/XFSMSMmEWFBBFLIvE/nEHmteKSDzdTP7VrtAsXSmZ2xclu
-         v8o7/O46kOzx7ywBS0gHPiCYP8q+po6wGb9cZ4Pi4+HPD5B9jyV3PuL+Xq3LrOahZH6i
-         eKRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762332937; x=1762937737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3XzqJkACJTnBrY3n8Y/2hXaChUELFZ6bE8Jx9Sk9b98=;
-        b=XGvXqBKvxffU15KEXi4058vx0RvvbZPKgMgPKxN6dlNiFiPItYm/Npy4iCWR4sD//V
-         RxRHaTm/bWDtqLd1RfY4bUCHm4OMunSQtZWu6Mfu+jFWScBnh/oT52Qr/fnYwpLA2MFy
-         /gRuqvuATwVO1p4nm0QfZPAgEXtsyrkCLrlAgmLT7ztibzACKEj1g/sutHaAJMns8vnV
-         7r4qnBlUFzUFKDm6DCBCKXI+TnGWPl5ElzJ7Y4Ux+pYP+UU3AEGphfwxINWRWZbsGftm
-         FLc4qSYZdY8JWIcLRjd6z+f/h7v1gb1ctHrlh9AblshotWyzV1qPISU9xw4E1BCXlY9d
-         lryA==
-X-Gm-Message-State: AOJu0YxOo1SH1HJM8JpbGo8TlK7csP48ad69hLsOepW27Gc/WdeSHfgu
-	phv35OicrRnM/ec14D5cnliEx9E+LJHcIJAGga805ZdRj3mbcjL+G6uXZz2+ecR8LT2PFX5DslL
-	75LBMzyx6Yjn8/s6fFiudD8RWi33puCWaNaMctG7CAQ==
-X-Gm-Gg: ASbGncsDl/nTXmeRFnGNDBC8xXJl7IeQnTWZel1kmDllx20XlJB9eThA4U2hqR+GhL8
-	NtZAdk3slUzpgR045X9ypw3Tdx456RKeWwAu9tyuLZk1+atXgAgeDAtNQ0XIZxLyAcqRd3n72kU
-	41DyjE3CxnnHRxWoFdwjCy/6sfKcgCYqntKTavYwBvp7FUCtmT6q+LwqKPiYTRkYYgCTdxIXtrP
-	kmSZai2HWobM+lCnyaEK2wZObJPfmzdUEDno9ipQKyRxhYLC52zzRFQiPFhK3XUPWZZbEwF+iOQ
-	/qZuK03U/zo+hDtKeg==
-X-Google-Smtp-Source: AGHT+IFMlfRHsAR4DMeaSo5FVlFF6m6I5phVCcm5VA1bPtlqEJheDm6cFYf0KfTy8jlSmnG/sEoU/sGLR5rlsl9ves0=
-X-Received: by 2002:a05:6512:63d7:10b0:594:2f25:d491 with SMTP id
- 2adb3069b0e04-5943cc407b6mr700023e87.16.1762332936582; Wed, 05 Nov 2025
- 00:55:36 -0800 (PST)
+	s=arc-20240116; t=1762332945; c=relaxed/simple;
+	bh=zjnh2IINIo6wVYoaZBxYamNA8CoojFDNsxJ2QLarrpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6T5bahWQw5ixrI0u6W836xjZFtC2r4MHQcI1APKWY82NucbUKMV9W6d+hZX42B9siQRyF3eQ96qj2dZxnL1i42pQL5EekadkuVzj+7fzofbTTrRH2X1xS0yV/hTwt1C1ScJuILyMNdWwMVt5NAm5XSaw+MutUzgVLLK2ejWZsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXhoFv0f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762332942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3O8sqEc7UMT+QuBb+fSUL40PLRswigOjtkRGZ3MJ0r4=;
+	b=FXhoFv0fdcj4O5GwHH3YmBJoK19/78K/3Y5c3zt3W4QQ/71gUEEITqJxMZs8Ti4kn/+HhV
+	jFXRi6tSNmHS1cGemUIhoknN1PVluigL1wECYuFOaGxXW62A3+LQaffQz+HPCRqAGH02N9
+	QG+VXV34kvuan3d3eHjN4gytacui2QA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-37ux7VyrNzKZJ7T-P_ytWQ-1; Wed,
+ 05 Nov 2025 03:55:37 -0500
+X-MC-Unique: 37ux7VyrNzKZJ7T-P_ytWQ-1
+X-Mimecast-MFC-AGG-ID: 37ux7VyrNzKZJ7T-P_ytWQ_1762332936
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BF05180034F;
+	Wed,  5 Nov 2025 08:55:35 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.190])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD0D2300018D;
+	Wed,  5 Nov 2025 08:55:32 +0000 (UTC)
+Date: Wed, 5 Nov 2025 16:55:28 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 3/4] kexec: print out debugging message if required
+ for kexec_load
+Message-ID: <aQsRADZ+pPho9pYa@MiWiFi-R3L-srv>
+References: <20251103063440.1681657-1-maqianga@uniontech.com>
+ <20251103063440.1681657-4-maqianga@uniontech.com>
+ <aQq97iGeYvZdr3SX@MiWiFi-R3L-srv>
+ <5FC4A8D79744B238+97288be4-6c1a-4c0d-ae7d-be2029ec87f3@uniontech.com>
+ <aQsCaeTx0WduSjSz@MiWiFi-R3L-srv>
+ <2331A9F3E09581FC+4ab7e9ba-8776-47d2-868f-cb01ca9cd909@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104165209.309545-1-marco.crivellari@suse.com> <7808bc5fcac1236640f481733d1c8aaaf8accb02.camel@mailbox.org>
-In-Reply-To: <7808bc5fcac1236640f481733d1c8aaaf8accb02.camel@mailbox.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Wed, 5 Nov 2025 09:55:25 +0100
-X-Gm-Features: AWmQ_bmsSlL8L1MkdAbNYg0dra-VH-QzHmvod4fA1eM_prAILZHwQjVAE8_kjN8
-Message-ID: <CAAofZF5=WZ_C7FP62mr+FzDJD4-XV8+JXMULpLB9HxYmjVPBPQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/sched: replace use of system_wq with system_percpu_wq
-To: phasta@kernel.org
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Christian Konig <ckoenig.leichtzumerken@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2331A9F3E09581FC+4ab7e9ba-8776-47d2-868f-cb01ca9cd909@uniontech.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Nov 5, 2025 at 9:39=E2=80=AFAM Philipp Stanner <phasta@mailbox.org>=
- wrote:
->
-> nit: s/replace/Replace
->
-> On Tue, 2025-11-04 at 17:52 +0100, Marco Crivellari wrote:
-> > Currently if a user enqueue a work item using schedule_delayed_work() t=
-he
->
-> s/enqueue/enqueues
->
-> Also: maybe start the sentence with something like "In the general
-> workqueue implementation, if a user [=E2=80=A6]". Otherwise it at first r=
-eads
-> as if we're talking about a drm/sched user here.
->
-> In general, the commit message should focus more on drm/sched. See
-> below, too.
->
-> > used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> > WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies t=
-o
-> > schedule_work() that is using system_wq and queue_work(), that makes us=
-e
-> > again of WORK_CPU_UNBOUND.
-> >
-> > This lack of consistentcy cannot be addressed without refactoring the A=
-PI.
-> >
-> > This patch continues the effort to refactor worqueue APIs, which has be=
-gun
-> > with the change introducing new workqueues and a new alloc_workqueue fl=
-ag:
-> >
-> > commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq=
-")
-> > commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
->
-> From my POV it would be enough if you provide these commits in this
-> commit message and maybe a Link: to the overall discussion in the
-> workqueue subsystem / implementation.
->
-> You can give the details above if you want, but I think drm/sched
-> doesn't care too much about them. The drm/sched users who really care
-> about the timeout_wq's exact behavior use one they allocate themselves
-> anyways.
->
-> >
-> > system_wq should be the per-cpu workqueue, yet in this name nothing mak=
-es
-> > that clear, so replace system_wq with system_percpu_wq.
-> >
-> > The old wq (system_wq) will be kept for a few release cycles.
->
-> Please state in your commit message what you're actually doing to
-> drm/sched. Like:
->
-> "Use the successor of system_wq, system_percpu_wq, for the scheduler's
-> default timeout_wq. system_wq will be removed in a few release cycles."
->[...]
-> Actual change looks fine by me.
->
->
-> Thanks for your patch,
-> P.
+On 11/05/25 at 04:35pm, Qiang Ma wrote:
+> 
+> 在 2025/11/5 15:53, Baoquan He 写道:
+> > On 11/05/25 at 11:41am, Qiang Ma wrote:
+> > > 在 2025/11/5 11:01, Baoquan He 写道:
+> > > > On 11/03/25 at 02:34pm, Qiang Ma wrote:
+> > > > > The commit a85ee18c7900 ("kexec_file: print out debugging message
+> > > > > if required") has added general code printing in kexec_file_load(),
+> > > > > but not in kexec_load().
+> > > > > 
+> > > > > Especially in the RISC-V architecture, kexec_image_info() has been
+> > > > > removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
+> > > > > message if required")). As a result, when using '-d' for the kexec_load
+> > > > > interface, print nothing in the kernel space. This might be helpful for
+> > > > > verifying the accuracy of the data passed to the kernel. Therefore,
+> > > > > refer to this commit a85ee18c7900 ("kexec_file: print out debugging
+> > > > > message if required"), debug print information has been added.
+> > > > > 
+> > > > > Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > Closes: https://lore.kernel.org/oe-kbuild-all/202510310332.6XrLe70K-lkp@intel.com/
+> > > > > ---
+> > > > >    kernel/kexec.c | 11 +++++++++++
+> > > > >    1 file changed, 11 insertions(+)
+> > > > > 
+> > > > > diff --git a/kernel/kexec.c b/kernel/kexec.c
+> > > > > index c7a869d32f87..9b433b972cc1 100644
+> > > > > --- a/kernel/kexec.c
+> > > > > +++ b/kernel/kexec.c
+> > > > > @@ -154,7 +154,15 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> > > > >    	if (ret)
+> > > > >    		goto out;
+> > > > > +	kexec_dprintk("nr_segments = %lu\n", nr_segments);
+> > > > >    	for (i = 0; i < nr_segments; i++) {
+> > > > > +		struct kexec_segment *ksegment;
+> > > > > +
+> > > > > +		ksegment = &image->segment[i];
+> > > > > +		kexec_dprintk("segment[%lu]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+> > > > > +			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+> > > > > +			      ksegment->memsz);
+> > > > There has already been a print_segments() in kexec-tools/kexec/kexec.c,
+> > > > you will get duplicated printing. That sounds not good. Have you tested
+> > > > this?
+> > > I have tested it, kexec-tools is the debug message printed
+> > > in user space, while kexec_dprintk is printed
+> > > in kernel space.
+> > > 
+> > > This might be helpful for verifying the accuracy of
+> > > the data passed to the kernel.
+> > Hmm, that's not necessary with a debug printing to verify value passed
+> > in kernel. We should only add debug pringing when we need but lack it.
+> > I didn't check it carefully, if you add the debug printing only for
+> > verifying accuracy, that doesn't justify the code change.
+> It's not entirely because of it.
+> 
+> Another reason is that for RISC-V, for kexec_file_load interface,
+> kexec_image_info() was deleted at that time because the content
+> has been printed out in generic code.
+> 
+> However, these contents were not printed in kexec_load because
+> kexec_image_info was deleted. So now it has been added.
 
-Many thanks for all your feedback Philipp.
+print_segments() in kexec-tools/kexec/kexec.c is a generic function,
+shouldn't you make it called in kexec-tools for risc-v? I am confused by
+the purpose of this patchset.
 
---=20
+> > > > > +
+> > > > >    		ret = kimage_load_segment(image, i);
+> > > > >    		if (ret)
+> > > > >    			goto out;
+> > > > > @@ -166,6 +174,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> > > > >    	if (ret)
+> > > > >    		goto out;
+> > > > > +	kexec_dprintk("kexec_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
+> > > > > +		      image->type, image->start, image->head, flags);
+> > > > > +
+> > > > >    	/* Install the new kernel and uninstall the old */
+> > > > >    	image = xchg(dest_image, image);
+> > > > > -- 
+> > > > > 2.20.1
+> > > > > 
+> > 
+> 
 
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
 
