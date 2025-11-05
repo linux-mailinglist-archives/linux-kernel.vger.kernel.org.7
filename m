@@ -1,213 +1,117 @@
-Return-Path: <linux-kernel+bounces-886194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA07AC34F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:51:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDA9C34F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46F614FD0AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:48:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FB334F7DF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EEF270557;
-	Wed,  5 Nov 2025 09:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013163043DA;
+	Wed,  5 Nov 2025 09:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eu9KieHv"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aGbBU3P1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1F20DD52
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9CC20DD52;
+	Wed,  5 Nov 2025 09:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336114; cv=none; b=BSUvtFWBrS8y0wylOnng3B4miS2/m1wyy1H9ZUHuQMl0EqT1w4iq8R8cRnNypkkslh18uVLxDT8qILEEioqJQr07+xpVIitV1g0dqcpKHZ4sHvwzy7yn18gTkctquFqjTocXrX7q4+2WF2ywt9cGbz9TdHrvlqMtVajh2poC7pA=
+	t=1762336156; cv=none; b=J3DCClOGWOMzVlGf7Y5d+3/Tpno1r7lj/EZqj6t+qd/OVa9tEuFxWrk7gc14uk1sPOlMYDIXqILRpVzDDGj26vpv/vRIuQ+H+P6X0ymxmxacJETBg/j/vo36HIrE/mJydaA4lNWQ/35dmGv++t2yHCc+A8BMNJhp6FgAMZRUpnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336114; c=relaxed/simple;
-	bh=WpbqLe6mspDexwSEWOmQtR2K4XKM/1s8lyFPl9hxm1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mPFqaLuRtaCk8s6sSbfR3Dpq/O9Cfp6Hv7/Oqilp0aNOWj5TBYEDPlS7uOs+bWT/fffdBdgRL8TWw87D5tFPiF2aV6xt2lhXOxx9eZiyuUDG+M4C1uxrPYsvBKH4FR7fknPjsosOJPLgIXOL3w1y/U9Ra7+TvfL+sX9r7jmYqb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eu9KieHv; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429b7ba208eso4042835f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:48:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762336111; x=1762940911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/eC1//SZtzXCJ9VDP38XGpX45I3TMA2WSmv1Cg2gDD4=;
-        b=eu9KieHvQh2LWbiGCDvcFKC0+MN5LeKK52xOuS/N0C/zt6MAsxE5Yx+yKtKo4T3a8f
-         y1qyCo/t28c/udWVXEoXXOuALau7vQQVbuOe9KY4w5BTK7fuPwdVcmDd2YqkA0XwRKl9
-         1ju7wzLBP3RrN7SsG1Wu9e/adcYgbpkj4bNzEcU3tHTSPzYUPxUdClTEV+2gnPH5Tv3f
-         pldpPeHkSB9CLbU+36p4w7MqZlGXjQ0MUuPtiWvfK5Sp4Ru/iRl6WPzncDmWDMGEvVa/
-         ZLM6AgtlybWal1iBSbEiVJ2Z0kD0gZ/Kb8O8eHGDbwLIH0lPKZgwe0GLtkVvfZt8jwp3
-         7iNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762336111; x=1762940911;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/eC1//SZtzXCJ9VDP38XGpX45I3TMA2WSmv1Cg2gDD4=;
-        b=XI/F98M4jxrWF1qmb7GlJJZFzPuOcdvgsln0kQILosqlFkoi9Wagt0sT+M6+wXN8Y5
-         0yRiGrT/cl8bdYOaRMl/UJnYGcXs8mqZ/R8YeGzZOB1+lR287HCTG3N2FCFbh50bwkQ6
-         SDodWJr27fPXpnSKPph0Hx361BE7lpaKI21Tzqkx30OOkHEmq9L4kZo4xUaUud9Mguwj
-         YyZy6RafoAZzjZRDi69mzKKE8inAXmAK+3WMmbI5F6W9dU6WxpyGtMG89GVRx4d54Ri8
-         UM76423gpcVo64TPYPkhSRGh0gsi7YxnxqxY98VK2ol0FpI+WRL9+9jPEC2hZvSKVKlg
-         C83Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxIWO3DU8dHKJpxbVxhjHUSy/euotFxeSDBZwNm3RH0zW2Nd1xfLuS/zpB5s5Jv7sXLO32PDPCjg+zA4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLIP8qZDrYx38SoEhVMX0gPPim/A0OdbNxegutCXsiOUScxyF
-	gQe+OsaAJDWIAoXf0tFsMuQDwzU8mRROcRVYd02zrROe0xIjNZJu53Mq
-X-Gm-Gg: ASbGncs93rSYdLdMs7Mab6pIBqZTF1N/Wacp021ugsvlcp0ULTblujK/V/MLNY5sV7W
-	/PgdU3JG5418tsZG8PQBGsTlau6Qwr0cih796bj9mi66igHO0W+/e5vdjIvlq7edfWzMhZiubC9
-	ofBCa/7xTq+xgC8xLWsxrft0keVxvJpT34bMivJbbPBUlkzJkQw3cIbvqLbWeoSRpkt+gQQnuje
-	89rjmh/qYEaH590dSQ+rHWGR8TyMSxW9sGBih8Ksdn7xJ9gcyO0qFLnJo73s25W5506/mXr1nDK
-	Ft+VLjlFF4j0Ay7zO7MwCXIPwLLjXbV99ytsEc5eQEZ/YPozKD5bKHUO6WUoo7zFcDZTcMJWUyX
-	ONRgQh4AkZAgTAW1QUO23OmQjRpiICTymRNVQ3VEy7N8oJiIfEBmuS9VmkXtNTwfBby808HtFzh
-	JGKpkwE0HyUaxKuvBArO16HzYKukIq2IIWS1crsfuCzg==
-X-Google-Smtp-Source: AGHT+IEkpFxLVpMLxH+nTe91ZvHCIlFgTDwSuHknsPOjs1KqbNBabtxkQXZcHtDrGMnxK6gDuS+BvQ==
-X-Received: by 2002:a05:600c:34d0:b0:471:6f4:601f with SMTP id 5b1f17b1804b1-4775cdf54aemr21466965e9.19.1762336110467;
-        Wed, 05 Nov 2025 01:48:30 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdee965sm38069125e9.17.2025.11.05.01.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 01:48:29 -0800 (PST)
-Date: Wed, 5 Nov 2025 09:48:27 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Guan-Chun Wu
- <409411716@gms.tku.edu.tw>, Andrew Morton <akpm@linux-foundation.org>,
- ebiggers@kernel.org, tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
- idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
- sagi@grimberg.me, home7438072@gmail.com, linux-nvme@lists.infradead.org,
- linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <20251105094827.10e67b2d@pumpkin>
-In-Reply-To: <aQnMCVYFNpdsd-mm@smile.fi.intel.com>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
-	<20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
-	<aQiC4zrtXobieAUm@black.igk.intel.com>
-	<aQiM7OWWM0dXTT0J@google.com>
-	<20251104090326.2040fa75@pumpkin>
-	<aQnMCVYFNpdsd-mm@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762336156; c=relaxed/simple;
+	bh=Reu5It3RlS+/8r8crlO1X7bAM7zmrBh5CRdgE1LhJzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAaPAbGX98imJzmMhzqnnitZr5lrYMm/MaiUtiny3eM+gh31WGJAmP/Vp5v/Gm2aaS60wKHJsXAdkJ4eT3CO6TTpOL7sLGxtoAMNb6Gq0Zj2xBebu+GOX1M6MACGjf2PfOlrNRLtJiUQwQ1AUVFtEldcMQDx8+uQZRXEJA8fa98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aGbBU3P1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VNjYaB/7Qyz/laMY60Xq6CnJ63xt/Hi6zUdIPVja5OY=; b=aGbBU3P1jrQQInHliMHCQClqEZ
+	6goD/+x2v+pam4p7+caXrTxLYn90Oqao9kSxCyDsvy5ELVWD/KfqgSNSgapzHCqTMQXYgPCXfliWd
+	gPxctKum15ikmPsbB+OZGu6RSn/xBr8A3XLvku3m9H3pqCbNvd7QqlslKaPFvJtN1oYaQa3YOv+yZ
+	WXv/cybIClK5zOlaBw6T7csuhe06fGPubNvFoAxq0aLIhGbAbwC4esQdnQ760VHiGn6e9OzcLVfiV
+	o2BkAYD0k0EiFbvCx4mHjHiBnT/jRX4n2hlWXCNaCJupGQBdwZwCFUMrVY8/oJc67BCphY0ZDjvHK
+	4rZNGnOQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGZGq-00000001n0e-2umL;
+	Wed, 05 Nov 2025 08:53:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EBC10300230; Wed, 05 Nov 2025 10:49:04 +0100 (CET)
+Date: Wed, 5 Nov 2025 10:49:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Li Chen <me@linux.beauty>
+Cc: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-hardening <linux-hardening@vger.kernel.org>,
+	linux-kbuild <linux-kbuild@vger.kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [RFC PATCH 0/2] Add cleanup_plugin for detecting problematic
+ cleanup patterns
+Message-ID: <20251105094904.GL3245006@noisy.programming.kicks-ass.net>
+References: <20251105084733.3598704-1-me@linux.beauty>
+ <20251105084733.3598704-5-me@linux.beauty>
+ <19a53424397.26d1e5f01471331.8175059524177790573@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19a53424397.26d1e5f01471331.8175059524177790573@linux.beauty>
 
-On Tue, 4 Nov 2025 11:48:57 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-
-> On Tue, Nov 04, 2025 at 09:03:26AM +0000, David Laight wrote:
-> > On Mon, 3 Nov 2025 19:07:24 +0800
-> > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:  
-> > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:  
+On Wed, Nov 05, 2025 at 05:04:02PM +0800, Li Chen wrote:
+> +Peter, Dan, and Bjorn
 > 
-> ...
+> (My apologies for the oversight)
 > 
-> > > Since I believe many people test and care about W=1 builds, I think we
-> > > need to find another way to avoid this warning? Perhaps we could
-> > > consider what you suggested:
-> > > 
-> > > #define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
-> > > 	[ 0 ... '+'-1 ] = -1, \
-> > > 	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
-> > > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
-> > > 	[ '9'+1 ... 'A'-1 ] = -1, \
-> > > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
-> > > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
-> > > 	[ 'Z'+1 ... '_'-1 ] = -1, \
-> > > 	[ '_' ] = val_under, \
-> > > 	[ '_'+1 ... 'a'-1 ] = -1, \
-> > > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
-> > > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> > > 	[ 'z'+1 ... 255 ] = -1 \
-> > > }  
-> > 
-> > I've a slightly better version:
-> > 
-> > #define INIT_62_63(ch, ch_62, ch_63) \
-> > 	[ ch ] = ch == ch_62 ? 62 : ch == ch_63 ? 63 : -1
-> > 
-> > #define BASE64_REV_INIT(ch_62, ch_63) { \
-> > 	[ 0 ... '0' - 6 ] = -1, \
-> > 	INIT_62_63('+', ch_62, ch_63), \
-> > 	INIT_62_63(',', ch_62, ch_63), \
-> > 	INIT_62_63('-', ch_62, ch_63), \
-> > 	INIT_62_63('.', ch_62, ch_63), \
-> > 	INIT_62_63('/', ch_62, ch_63), \
-> > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
-> > 	[ '9' + 1 ... 'A' - 1 ] = -1, \
-> > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
-> > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
-> > 	[ 'Z' + 1 ... '_' - 1 ] = -1, \
-> > 	INIT_62_63('_', ch_62, ch_63), \
-> > 	[ '_' + 1 ... 'a' - 1 ] = -1, \
-> > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
-> > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> > 	[ 'z' + 1 ... 255 ] = -1 \
-> > }
-> > 
-> > that only requires that INIT_62_63() be used for all the characters
-> > that are used for 62 and 63 - it can be used for extra ones (eg '.').
-> > If some code wants to use different characters; the -1 need replacing
-> > with INIT_62_63() but nothing else has to be changed.
-> > 
-> > I used '0' - 6 (rather than '+' - 1 - or any other expression for 0x2a)
-> > to (possibly) make the table obviously correct without referring to the
-> > ascii code table.  
-> 
-> Still it's heavily depends on the values of '+,-./_' as an index that
-> makes it not so flexible.
+>  ---- On Wed, 05 Nov 2025 16:46:55 +0800  Li Chen <me@linux.beauty> wrote --- 
+>  > From: Li Chen <chenl311@chinatelecom.cn>
+>  > 
+>  > Hello,
+>  > 
+>  > This patch series introduces a new GCC plugin called cleanup_plugin that
+>  > warns developers about problematic patterns when using variables with
+>  > __attribute__((cleanup(...))). The plugin addresses concerns documented
+>  > in include/linux/cleanup.h regarding resource leaks and interdependency
+>  > issues.
+>  > 
+>  > The cleanup attribute helpers (__free, DEFINE_FREE, etc.) are designed
+>  > to automatically clean up resources when variables go out of scope,
+>  > following LIFO (last in first out) ordering. However, certain patterns
+>  > can lead to subtle bugs:
+>  > 
+>  > 1. Uninitialized cleanup variables: Variables declared with cleanup
+>  >    attributes but not initialized can cause issues when cleanup functions
+>  >    are called on undefined values.
+>  > 
+>  > 2. NULL-initialized cleanup variables: The "__free(...) = NULL" pattern
+>  >    at function top can cause interdependency problems, especially when
+>  >    combined with guards or multiple cleanup variables, as the cleanup
+>  >    may run in unexpected contexts.
+>  > 
+>  > The plugin detects both of these problematic patterns and provides clear
+>  > warnings to developers, helping prevent  incorrect cleanup ordering.
+>  > Importantly, the plugin's warnings are not converted
+>  > to errors by -Werror, allowing builds to continue while still alerting
+>  > developers to potential issues.
+>  > 
+>  > The plugin is enabled by default as it provides valuable compile-time
+>  > feedback without impacting build performance.
 
-How about this one?
-#define INIT_1(v, ch_lo, ch_hi, off, ch_62, ch_63) \
-	[ v ] = ((v) >= ch_lo && (v) <= ch_hi) ? (v) - ch_lo + off \
-		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
-#define INIT_2(v, ...) INIT_1(v, __VA_ARGS__), INIT_1((v) + 1, __VA_ARGS__)
-#define INIT_4(v, ...) INIT_2(v, __VA_ARGS__), INIT_2((v) + 2, __VA_ARGS__)
-#define INIT_8(v, ...) INIT_4(v, __VA_ARGS__), INIT_4((v) + 4, __VA_ARGS__)
-#define INIT_16(v, ...) INIT_8(v, __VA_ARGS__), INIT_8((v) + 8, __VA_ARGS__)
-#define INIT_32(v, ...) INIT_16(v, __VA_ARGS__), INIT_16((v) + 16, __VA_ARGS__)
-
-#define BASE64_REV_INIT(ch_62, ch_63) { \
-	[ 0 ... 0x1f ] = -1, \
-	INIT_32(0x20, '0', '9', 0, ch_62, ch_63), \
-	INIT_32(0x40, 'A', 'Z', 10, ch_62, ch_63), \
-	INIT_32(0x60, 'a', 'z', 26, ch_62, ch_63), \
-	[ 0x80 ... 0xff ] = -1 }
-
-which gets the pre-processor to do all the work.
-ch_62 and ch_63 can be any printable characters.
-
-Note that the #define names are all in a .c file - so don't need any
-kind of namespace protection.
-They can also all be #undef after the initialiser.
-
-> Moreover this table is basically a dup of the strings in the first array.
-> Which already makes an unnecessary duplication.
-
-That is what the self tests are for.
-
-> That's why I prefer to
-> see a script (one source of data) to generate the header or something like
-> this to have the tables and strings robust against typos.
-
-We have to differ on that one.
-Especially in cases (like this) where generating that data is reasonably trivial.
-
-	David
-
-> 
-> The above is simply an unreadable mess.
-> 
-
+IIRC GCC also allow dumb stuff like gotos into the scope of a cleanup
+variable, where clang will fail the compile. Does this plugin also fix
+this?
 
