@@ -1,142 +1,161 @@
-Return-Path: <linux-kernel+bounces-886761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5642C3678C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:50:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0918FC3674D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3BC7501907
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EEB5189BAED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF05332ED45;
-	Wed,  5 Nov 2025 15:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE353218B8;
+	Wed,  5 Nov 2025 15:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+DRVwMt"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SfrmACU/"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707612C0F79
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509FF25F994
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356991; cv=none; b=eVsyrFHtZUB4oIqktvWZTmitx+eIYbY6yr3q0fLi0NLT5IvFQOgh0W9/pzvnW0AiSczGKVZJMlaZ/jkQLte3cfRPUOVfBOIJ4JZB/5kQSA2xKVoNG6WGwlNRV8c/dy37psMvxySsASIzOcQxCqGzNQ6DA1xZ68AAC6Z7qgT8H6I=
+	t=1762357044; cv=none; b=iq+pCem/6xsVE5WZGKqn295mm8iTgur5YYWp17HetMkRJjnvtKuYbDu9meHPSlckO59i4ILCUB5BeH5p/4wuYUzhEKlz/RrHGThJXfqHPpU07w31VF1XJLBfry2KXv/nwVf4g12E/vqikIXBr8E7uqPd8RWKwcqtVri8e8gt0qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356991; c=relaxed/simple;
-	bh=DwpdGk8DQrrNe/uKiOzeaIcOB+1qcn0aryuH8E9eSzA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NF71LNg2ArXStMDGaWy/mWr89qvrPiraG5WT/Kc2RypyaHNVjIhLNhTWnt85UFeBfFycvC8pbUE3XN89XXhS1yfbS6oG8m6tg/4CGK6aJ+hgq5f3UpDUZ2/i7Cwqo2vkmYP+PaXVeIW4gMrxW/er38HopdQi6zR3D5dfhs2oMDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+DRVwMt; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47109187c32so35913795e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:36:29 -0800 (PST)
+	s=arc-20240116; t=1762357044; c=relaxed/simple;
+	bh=tsjWVsRRSjnvoclSRHwK3diHpWnX1Sxoum+6RmQp7f0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=irWiGytDXOWqRQ2GscZhlbyfbMkURmtMjUxDTrYzjpqywYm2Se51qZIZm6Y2k3k1LD3cY+7bcc76DNoLxbF66pxXil1ZxuyYE1E654sJDNk5C2jlbLbbKVbsDWaDBP8fsMrAoQl0KWRHw0oGuZKZSm+9xDc+8LrQ99e4rCe0D5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SfrmACU/; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-378d50e1c77so54559861fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:37:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762356988; x=1762961788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYudu93GVCayz+03i6iP+9i2AlzyUJPPG/ZJivnBUPQ=;
-        b=k+DRVwMtSxnqbrAV8aLNRScFb4ZMDhPMiZa5T7/kxle59AFipkhHzl9ywZiSBkIPvE
-         /NGUlJxKavrCW00WJhHS77F4gh2evZonywzKfcd7oSjcS1JzryhXld6afNgoImfwIN3H
-         tyn5hF5i1x+IWpVRrmFcf2b0oVnbacjPZo7HV2hZLDKF+PMEl9ajBZPRbkNOEsZ8Q9FZ
-         Oc5Kmkmp+zLtsSIXqAa/wvKJVnuSK8fBMJuHANG41L1QCTIltc8ImEJH5Bbj11Z5v75w
-         vWtJJrKUBXF1xqgjkCgJO1ECBcELWWajD4/Wo11Px1bWP0C5EhnoLHgdtdLCOIAS1sIj
-         XtZA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762357040; x=1762961840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KQVK9c2pVcdVjyDwid4GqvWLwTZQh0fbwLctVK8OiSw=;
+        b=SfrmACU/IaruvTLTM/8Y5f58WVjlsUz3ZQgyna9ZhhrN9Ep2dui8B2FZ+RyWkk4534
+         xeO9xYWeF9VW3kGPjgYBfkwbACDJsFm1lCwoKdanOMXQs5ZVhvPW+NBEjwAbxT+iO7EV
+         CrwDDGhFyVYUKPc2haSUD4utdCPJWiWvc0WpNaL9dXl1IUkpVi1iydp/Eb/trQY/3Jug
+         izYn1EY3zvDPy3R8G3sBxQoG4GZ1rsdM1GXfNpz7JSwDopVniUprTcolFZDq6na2KboL
+         RBlpO2YCopdLkL7N5kx57yTRmaV6w/dG2CWOgsUe4x8tl/+JOTHdUcguPtGx+cNwZEdi
+         4dNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356988; x=1762961788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SYudu93GVCayz+03i6iP+9i2AlzyUJPPG/ZJivnBUPQ=;
-        b=d2fYXjP69W26+wfG+yqEk0Pm2g0bNkEgH6+pdZxS0vJAi2N1rvpAgx3HkFgdSgunup
-         Eym0aTwbyFNKBXFu+MIeYg3OhmG9mpHTzo/y9LKplW2TwRmqv0py9wlbza55SA7gh0Nz
-         vq4mZ2G1NKLHSrprY4/eVZmSv9pXVfERS6OoIxN+TfiIFoKFs4Xt/gTmkQkj0PlLyC8n
-         PtyvTn/B7X5XK/rNOA0f0eUJ/lOLiBlLIEDBya6uQiG16MItsHOyZEokaTC4JKp0br9p
-         Xg/idQ8Z/N8oftTVwrC2omJ3z+f4t8+v66+fuYCvj4y8CjjDk/rWXslESeFdckwhNarX
-         yChw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLVO92T9AHENgUrfHYM3CFbWDpi7yzKXusNLYHK27ur1/jl3V91yCqdfAAw9BWgazBn0OkRAQUfbqVExc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdt4Y1D8KBvTXlVJ8LX2O3cQoZ4nUesthE7QDXv+Wm41N9buGt
-	zMJNsOrckBWB+rJAgZi8eM6/eTAWTSiH9quQEQHXkahj82HI/u7gy4eX
-X-Gm-Gg: ASbGncs8eS51Hciq/PfRtwLg2mSdgHKnlDVUyZnlGY4d7nkon3xARTnFQqD66GjAzlY
-	6TogZloemJsB9MMuxqFBY+jWv+d/7YJJSPOlgoMXAkXZ/wBehrOLzQPESVLAA+gi4rW1cf4rDlm
-	6qBdhUuyaMMcsRRX3Jxg2x4gwXn3FEW9wd8y5KahpdFeLoHFyEn9+6BFZG2NWp+rAG8UjtihTEx
-	CZFj80ZDiIMeiGK07zlzvT+FSCdp6c4/uqG8Jj9/wmcdkdBaXG5/2KQuDWW8alv7udfSDT0vb82
-	sMmYPRgL3IndbGCAjIeEmTvgtSy97CbRy2nVj3rFN8d3QtJ8NiQ+peae1b+yLG9IycWRAprLrLl
-	k3iu45y8nF8kxAmq2CUnuCt3qDDO7cjFyJ6/soyNT3FlxJKi6VwDhWMpLWlpYxqqOHIa11hO+la
-	EiRgyqqzwjMSQdUkQLRPxJg3a+fmm4FURpb4g8DPq8yZmsRxFa
-X-Google-Smtp-Source: AGHT+IENpWtT4ZSL+H5XwM1N45FW+HboaVYJ2ML/odNVsJHMO7wJ+lEx1bxqsvFrTW/4FE6rwMMUOw==
-X-Received: by 2002:a05:600c:3b0a:b0:46e:37a7:48d1 with SMTP id 5b1f17b1804b1-4775ce401ebmr46535385e9.34.1762356987470;
-        Wed, 05 Nov 2025 07:36:27 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc2007afsm11436499f8f.44.2025.11.05.07.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 07:36:26 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: hide dentry_cache behind runtime const machinery
-Date: Wed,  5 Nov 2025 16:36:22 +0100
-Message-ID: <20251105153622.758836-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762357040; x=1762961840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KQVK9c2pVcdVjyDwid4GqvWLwTZQh0fbwLctVK8OiSw=;
+        b=bkIo4tStrAjhwbPq9PPHFKlNPqBdix8nEewrN42ydQz1RHPVwtpNMwLyaP3I1NMrh1
+         UGUySxt+tOIZg6aqnyy1t/P19eexDeJar04gPxIufMt3lfNed8R56aHl1Dk2UF6HQ2CB
+         2SFBXat5dvWE00vR28IxFHgJe8Rui588SQFXglLvnL7YmcUuvqGDMS/dfTFb2qQWvZRJ
+         ceTGysepVMiSUdW07Ggbn8gMIv1yrPBJeop96sxnba1XTrNUH55rEe5nRBA2VVAGo1qF
+         pBTp8onBIuxnl6pdpWOPbuFSG3kInQiLlJL5jriwIIVrFTCNfbw2+6xGerawBePobZpK
+         uq7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvIxJMy4Mnae+ZVE+h99o1oDSw7OUniPM4+jS8+olSytM+2Thjmo1KMrJyp8yO+KAToP7Tg+j2rX8/lgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmVmzaC0trYVCl96TMsOPr5d0N6V/gT1/UVh1vZEgBWUoZHvNE
+	NJFi+8PwkKwUneT6uMP/cLGx6IBeNmWoZnxa69Qvw2ttkpMXCtj5uZDBMUitN1aHAKyAVHLe+4o
+	8mUsDibpOD+L/YVT1WywWj8EBwz6PJkr6jn8pHNNSUw==
+X-Gm-Gg: ASbGncurI5UEBWUVPidUHabWvuJYY9PaIt5lfF0qIdtQ3+b5djOOBjRlYJdLExHQtUw
+	h7K8nNZ9HNR6PpjmgcaZiZs/8EmvSQU2Q7HPTcwnVYEt/boiDyu1NK7hOyYxqQjNQQFgj7Ssm3N
+	yaqMFHmN4ALjUS8uoVP1UhoqnwhAWKV5IezU2yhcy6g9H/F+8CXKkozyEndOvCb3BU/WvboCFf6
+	Za/K4knGLOfev0uEGtGykINtPC1JNtCg2TuuzvzUuFHjC2DSRCkZrXzaeB4MmiknaqmwCTI3IUo
+	AVkjuCZ0Hnbf93Ky
+X-Google-Smtp-Source: AGHT+IGZLSyHZwdSHoXOFtP2iNbjQMFV/+/RajiafeSS7vcfUC9MhdnV6BD4cJxWmnaWMlh79AK6+5Ypz4lKmcTRIqk=
+X-Received: by 2002:a2e:b88a:0:b0:37a:3412:1415 with SMTP id
+ 38308e7fff4ca-37a513d8404mr11832991fa.8.1762357040210; Wed, 05 Nov 2025
+ 07:37:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251105103607.393353-1-jelonek.jonas@gmail.com>
+ <20251105103607.393353-3-jelonek.jonas@gmail.com> <CAMRc=MdQLN5s+MpkLUF2Ggc4vYo30zOXrA=8qkGmXvu7N3JjeA@mail.gmail.com>
+ <12efb5b2-058e-4a9c-a45d-4b1b0ee350e7@gmail.com> <CAMRc=MehBmd+-z5PRQ04UTWVFYzn7U4=32kyvDCf4ZQ4iTqXhw@mail.gmail.com>
+ <74603667-c77a-e791-d692-34d0201e5968@axentia.se>
+In-Reply-To: <74603667-c77a-e791-d692-34d0201e5968@axentia.se>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 5 Nov 2025 16:37:08 +0100
+X-Gm-Features: AWmQ_bmO335tsrm3LPxOxIYQ6LeZj7W7E6BVgAdcHPrSnLlU0JTYxziQYjrCYrc
+Message-ID: <CAMRc=MdkkRnwxx3vcMB3duOteQNdC9eb+A1P4GActou=xY9yJQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] gpio: add gpio-line-mux driver
+To: Peter Rosin <peda@axentia.se>
+Cc: Jonas Jelonek <jelonek.jonas@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Richard <thomas.richard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/dcache.c                       | 6 ++++--
- include/asm-generic/vmlinux.lds.h | 3 ++-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+On Wed, Nov 5, 2025 at 3:19=E2=80=AFPM Peter Rosin <peda@axentia.se> wrote:
+>
+> Hi!
+>
+> 2025-11-05 at 14:24, Bartosz Golaszewski wrote:
+> > On Wed, Nov 5, 2025 at 2:23=E2=80=AFPM Jonas Jelonek <jelonek.jonas@gma=
+il.com> wrote:
+> >>
+> >> Hi Bartosz,
+> >>
+> >> On 05.11.25 14:15, Bartosz Golaszewski wrote:
+> >>> Hi Jonas!
+> >>>
+> >>> This looks good, I'm ready to queue it but I'm afraid the consumer
+> >>> label "shared" will logically conflict with the work I'm doing on the
+> >>> shared GPIO support[1] as the shared GPIOs will appear as proxy
+> >>> devices containing the name "shared". Do you see any problem with
+> >>> changing the label to "gpio-mux"? I can even change it myself when
+> >>> applying.
+> >>
+> >> Another name is fine for me if it conflicts with your work, as long as=
+ the name is obvious
+> >> enough. Not sure about "gpio-mux" though. Maybe "muxed-gpio"?. Just le=
+t me know
+> >> what you think and if I should adjust it or you do.
+> >
+> > Yes, "muxed-gpio" is good. I can change it myself when applying.
+> >
+> > Bartosz
+>
+> Isn't that the name in the device tree?
+>
+> Is
+>
+>         muxed-gpio-gpios =3D <&gpio0 2 GPIO_ACTIVE_HIGH>;
+>
+> really satisfactory? Can you really make that change as you apply
+> w/o a re-review of the binding?
+>
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index de3e4e9777ea..531835e8637c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -86,7 +86,8 @@ __cacheline_aligned_in_smp DEFINE_SEQLOCK(rename_lock);
- 
- EXPORT_SYMBOL(rename_lock);
- 
--static struct kmem_cache *dentry_cache __ro_after_init;
-+static struct kmem_cache *__dentry_cache __ro_after_init;
-+#define dentry_cache runtime_const_ptr(__dentry_cache)
- 
- const struct qstr empty_name = QSTR_INIT("", 0);
- EXPORT_SYMBOL(empty_name);
-@@ -3216,9 +3217,10 @@ static void __init dcache_init(void)
- 	 * but it is probably not worth it because of the cache nature
- 	 * of the dcache.
- 	 */
--	dentry_cache = KMEM_CACHE_USERCOPY(dentry,
-+	__dentry_cache = KMEM_CACHE_USERCOPY(dentry,
- 		SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_ACCOUNT,
- 		d_shortname.string);
-+	runtime_const_init(ptr, __dentry_cache);
- 
- 	/* Hash may have been set up in dcache_init_early */
- 	if (!hashdist)
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index e04d56a5332e..caef183a73bc 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -955,7 +955,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 
- #define RUNTIME_CONST_VARIABLES						\
- 		RUNTIME_CONST(shift, d_hash_shift)			\
--		RUNTIME_CONST(ptr, dentry_hashtable)
-+		RUNTIME_CONST(ptr, dentry_hashtable)			\
-+		RUNTIME_CONST(ptr, __dentry_cache)
- 
- /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
- #define KUNIT_TABLE()							\
--- 
-2.48.1
+Ah, that's what you get for revieweing with a fever. :/
 
+You're right of course.
+
+And yes, we'd need to modify the bindings.
+
+> Or, are we talking about
+>
+>         glm->shared_gpio =3D devm_gpiod_get(dev, "muxed", GPIOD_ASIS);
+>
+> and
+>
+>         muxed-gpios =3D <&gpio0 2 GPIO_ACTIVE_HIGH>;
+>
+> ?
+>
+
+I would make it: glm->muxed_gpio =3D devm_gpiod_get(dev, "muxed", GPIOD_ASI=
+S);
+
+Jonas, could you please send another version with that addressed both
+here and in the bindings?
+
+Bartosz
 
