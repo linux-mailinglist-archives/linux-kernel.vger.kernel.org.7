@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-887244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B50C37A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:12:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D61C37A5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE643B77A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:11:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78AF24F911B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3698F34A767;
-	Wed,  5 Nov 2025 20:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F48734B19F;
+	Wed,  5 Nov 2025 20:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+lyJ/Ic"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqEEoSqO"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475D3346764
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55132FDC42
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762373459; cv=none; b=oWae96bJZsfIxEei0u7GU01DGHH1DhtflREKKJCkrcZTZkB/YmkssnSgHuItaL+Zkv1IhSkWfOwbIPn59ds7biKuhoBylGLSS1g3ovFG7hYHbCkZrDa9E8uZluWLtg3ECrJgAvpWkJxvaXD1D4gLk2v7lyYrtoPS76CVqz0OJ/Q=
+	t=1762373460; cv=none; b=c1sSIjvr4tLwi+TU7K6NJlETMFd0xI2inBO7lNpGqJfehWNR1Lrhdcie/Z1wDbaP9VU2+5OMXDcdI4iRcDN4Dc64RU5ioPnFQQdyhxcaaHNSpjkJXzgL5Tp/Ju405/9+hAgx1N5DZTXSl9M54xWGg84wRAZY9cvBgsUiWatuJUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762373459; c=relaxed/simple;
-	bh=nQcgUg1tamkssa25I7SceYXz9LMVdMlx1H4xuC6WOO0=;
+	s=arc-20240116; t=1762373460; c=relaxed/simple;
+	bh=SgoqsqYg/Z87Xt+blLgphWyz2/h1WWrB/dz2hqYSOog=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BR1i7G/EOKVkeiI4iaKoyP/s8Dfm+PWgQR+5rwOJUSBdejtrVCW7pAjxEMLA+/UJw+eciEGcntnWIMZLLjtMj+POqg3ZatgaST8QrsvzMZOy3D9iOztpdnWMgZgaOUadihywdtKS+dkYzjD7c0/490gucEN0vSCYj2RL1zhVkiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+lyJ/Ic; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=QPy4LW99djAKrprm13i2sdwQucKwPy5aiAgBwNd4rIcsjGffaYjRr9HdI0Xr59wQRHN7Hzda9wrz06Wljk+6OwOlTdFOfbVQsl+KcuOa2q9ql0/sgcFKtMUDfm+b+BEeHZAZv8FbS7Zwb8wwOMXxaqF8nVohlaQDKlgTNI9Ij+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqEEoSqO; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429b895458cso143150f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:10:57 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-471b80b994bso1779585e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:10:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762373456; x=1762978256; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762373457; x=1762978257; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=II8Ps1o8HVI6iyVPZpBUMlThSw7mZMjPEJaIwTAG0oE=;
-        b=m+lyJ/Icsfb9zzjbCXY1L3504Hjj9ix+4qL0eJzeTCtKMCr+AnmVKDgP1OlT6ovh1U
-         KI4QQkgTRA809x5lBO3ZXzQ0U/YlvvAEamPCt9joWE4HNHHQHcy+Nx4DeB5Ugrf+ASA6
-         Szx5mXPRRfk2s7hlsx2zHJRlbXFLI/4bAaU6AwMulIeVW4vHXslFUcaUG7lXqUhwhiGh
-         sGUwPTmscInFmdf9meICUoK6ot5WNXMTDZ6OB9cKlIxeFKVLKpa4YE2JAuam3vI5g20Q
-         2t6nF+b0ejL7ptuHWO0mcTWqTwkgqLdGU95ObUoJY8mSNNpyuyMl2XRSQEYaE3BceE8z
-         +BtA==
+        bh=ioBpYKTwK4o/CnDejM7nHinzWtOoVutc6otbb7BtldQ=;
+        b=UqEEoSqOx3vPxfFKM0DweT5H7U4Na1jgcLKu/XD1JGecjit8uYO/7f0CFunsD2YbcA
+         V22A3LUlItSoZCmX/pc9lQ2QTS+i0Srz2yy17o5pZBuFrNRu9y5dgPW2uuYVonYTfa0u
+         v1xnikLfZgoIN0o+LKXH7Sgym485ScaoEXpWQJEP+Hic+tO5dloLDe1/e6gbxNIV3OLy
+         QIWVBfA0qpXjIC9fMJztjyDoNbdKZMDHTNaVpEff9lj97YlFr+x+Uxu6u1uh1QgBGIdW
+         1xBkWFaAL9TugOjpdMbJfsrsoO/R7mKvjqTTvapGmgdYZHNwTjLglk5NT8nIsJ6xRx0R
+         YgIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762373456; x=1762978256;
+        d=1e100.net; s=20230601; t=1762373457; x=1762978257;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=II8Ps1o8HVI6iyVPZpBUMlThSw7mZMjPEJaIwTAG0oE=;
-        b=bw5iE5cGbakvP//ilX9FkbO/MLfyVGIhhLZ/EV/0bW1AEeZ82DSAchq+jgN0UlMjsP
-         7yPH6DSsFNPEPwRa4oOCKtJTJA8pXq4TV4iFSds78T5ccapPRYitJ4Fe2+TRqEro/KKx
-         zQ9JKIiDxVTQ5bHF/mhSmPoRGw4WkqbMF5738aHQuJIvfK9ZD8VSpFrVi8UIb189DaQ0
-         7uIA41o9jHCXCSUD11DJcXbE7KMQyLn1sE9zGRHxeiwdIJ66wa2AoQ10OqIX9uYkM/tR
-         2R7oFfSK9PFjMo8rw8F/ve7yl56R+AV59FyL19gVBoEz9ZZ12lwD6L2Xgh0kmgcxagAl
-         Jh5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkSGzb8tlzihXV+u4r2S2Ma0COavpaLXMG5D5MB78el5MnBO2/T1qTSbKfg3FjjhkvUwYNJ8EM4TwFk60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1u6kmmYYDRJrG8JsFUMqA6lke3n33onkFhSfKnT7mAzCNHJ33
-	tmLYeaStEG+/F9AbJq7XH2yEHboeLgC3T4MQCL/XlVce5UQnxeF8N4/B+TJC5g==
-X-Gm-Gg: ASbGncuaQ15Irt+EsVpIfkxAhDJap8dvaZQCjOUu//5y0skSTFh8mWTL1TpWuE/g32c
-	xoVotae61UFg8tksTVe+l+i8mndEeuxspppro2eL5nYLmSyv6cdpEdaA4USyRSM8s5FyvWjGpS/
-	MYryR++hJlUU15FcZrhf5WZzZyHVWqk2Cj8PieH9OrLVFh+QXSfqkliwQVTpkJfIaQ9u26nqwvk
-	5HySZ6mwCbLl9F+INMAiya2Bdi423yisM7MmSBU1Yr+DVmF6duNcCAhvAaDo91TlTuh/f3Uwgmt
-	EUOLnuzli8WZCTpRNVCC4KTPVysFmFPamsAC73tQe7x5xfyypUFP5i2tnUCs/ltT6dfufVzya6H
-	dzVJ3eR6XbbfVdTPz9nVditOR/+XXC5pEss6tjHHjlVDyTZMWnCOImwG1lg6u6trlyA0eXkLh6G
-	GYIbR/E3DbQrgfNnti9Wcy00dlZRJmkgAsiUuTbSM7/nhH6kLL3tMdvENVPneC+w==
-X-Google-Smtp-Source: AGHT+IFY/hfFUcD5QeTt/6rC82/eckDEwN1+xJtfeQzmZxu7KUWEW9CJn2N6Pg3PBnCs5EhLLZ9/XQ==
-X-Received: by 2002:a05:6000:1889:b0:429:c4bb:fbd9 with SMTP id ffacd0b85a97d-429e32e43d8mr3860797f8f.17.1762373455729;
-        Wed, 05 Nov 2025 12:10:55 -0800 (PST)
+        bh=ioBpYKTwK4o/CnDejM7nHinzWtOoVutc6otbb7BtldQ=;
+        b=QAK6latamlAWxbRh90qmfKGfGJr99xhm6nBAJQyTt0ZwjuAJMHUDULRw97xeZpur7s
+         rRzbCBVhN51OzbUip0SKPciqL41qkYdjzpi+fYNlVn2Uk1nu7dV4OsUIKUQO4NAHth9j
+         dC5irCcuDwAfZUQjJka8sEr6w45qRSqbp2e8LUoS2LTO7enjLemcHr8Iff/cTTtbX6j/
+         ZBPULbAsGjIIGsrr9euowa9s6x8+QNOTCR8zIDLGg1IrHZdFg9AM63bJR2I88jZdKOgR
+         RP4Qb5GoCM925Cw40KL0+X5hMG7YtaWs0Z1NsaEt8hpkbLfuI8M3SYFT1n0jyT44iqZK
+         GzNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6oF4nBesXiQj3sgMz4suENcQFDVkXN+MqHHLsYq5WLpK9WH7ofjqIQPfgIE7toUv1sSo0oXV69IF6rGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykF4fcriDdmTUxuvsHXwQieV4YIrsAWk9oLL2DnPkbXFKFyjUy
+	SWIKDz4DLeZ7ruxvMDNK5vAx0BzUwC+6BwUoF1gnbKoEq2K7HiSwMui7
+X-Gm-Gg: ASbGncvIgSeRXOtKuOX3LxVIBl/Im6Bthvy/NTT/F/KnBGsdxKatP+K0lW54mpa3tCm
+	SnzxhzMIzIE2bwHVLhzXMaUU2JqPzUYV9hiehCeQethudIA+jjxIHQhx+IUWkIcsTg1aGS/iwYy
+	DDhOSNnQlfHTGD+OnoSjJGaFrrUoj332GhYNPtQ2xEOPIn/4N3k6HEzeDN4jphI4hEi3FFWTISr
+	KqqdKS1XsTV7sAuUHOKZVV7QE6gaYg8zZMz/1u1EAiQsXrCYpWDgDJtvXPmtD8Z4i+VjRbteyne
+	2TtwU7iqgoS+dQo0FPXu0+CKXQ0WMzM/ZvOtfXL5ixt+LTokghRYIH28zgmIHmuOQO00FO0X9ID
+	EY9Pz5R0InbdvtA/9BYKkM9lgqiGFA+Nw471jJNxJmJqByznbTZQCz80cnO6FuDI7x2jZdNsUab
+	2A7eGsxa2o8A4wGQupsEwflpZ2hFdNJUCnhiH/c2HGh8wQisVt2edAOR4kquVXDHZo/XUKZ2m0
+X-Google-Smtp-Source: AGHT+IE+9/YK8eZOcut9+nmbfSnkrcIvMeeHYF1njwZC5YB1F3HW27Ghq/iNGnkGlJpcwA46TxpESQ==
+X-Received: by 2002:a05:600c:458c:b0:477:54cd:2030 with SMTP id 5b1f17b1804b1-4775cdf4322mr46701735e9.21.1762373456453;
+        Wed, 05 Nov 2025 12:10:56 -0800 (PST)
 Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb41102bsm619857f8f.17.2025.11.05.12.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 12:10:55 -0800 (PST)
+        Wed, 05 Nov 2025 12:10:56 -0800 (PST)
 From: David Laight <david.laight.linux@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org
@@ -91,9 +91,9 @@ Cc: David Laight <david.laight.linux@gmail.com>,
 	Khazhismel Kumykov <khazhy@chromium.org>,
 	Jens Axboe <axboe@kernel.dk>,
 	x86@kernel.org
-Subject: [PATCH v5 next 6/9] lib: test_mul_u64_u64_div_u64: Test both generic and arch versions
-Date: Wed,  5 Nov 2025 20:10:32 +0000
-Message-Id: <20251105201035.64043-7-david.laight.linux@gmail.com>
+Subject: [PATCH v5 next 7/9] lib: mul_u64_u64_div_u64() optimise multiply on 32bit x86
+Date: Wed,  5 Nov 2025 20:10:33 +0000
+Message-Id: <20251105201035.64043-8-david.laight.linux@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251105201035.64043-1-david.laight.linux@gmail.com>
 References: <20251105201035.64043-1-david.laight.linux@gmail.com>
@@ -105,151 +105,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change the #if in div64.c so that test_mul_u64_u64_div_u64.c
-can compile and test the generic version (including the 'long multiply')
-on architectures (eg amd64) that define their own copy.
+gcc generates horrid code for both ((u64)u32_a * u32_b) and (u64_a + u32_b).
+As well as the extra instructions it can generate a lot of spills to stack
+(including spills of constant zeros and even multiplies by constant zero).
 
-Test the kernel version and the locally compiled version on all arch.
-Output the time taken (in ns) on the 'test completed' trace.
+mul_u32_u32() already exists to optimise the multiply.
+Add a similar add_u64_32() for the addition.
+Disable both for clang - it generates better code without them.
 
-For reference, on my zen 5, the optimised version takes ~220ns and the
-generic version ~3350ns.
-Using the native multiply saves ~200ns and adding back the ilog2() 'optimisation'
-test adds ~50ms.
+Move the 64x64 => 128 multiply into a static inline helper function
+for code clarity.
+No need for the a/b_hi/lo variables, the implicit casts on the function
+calls do the work for us.
+Should have minimal effect on the generated code.
+
+Use mul_u32_u32() and add_u64_u32() in the 64x64 => 128 multiply
+in mul_u64_add_u64_div_u64().
 
 Signed-off-by: David Laight <david.laight.linux@gmail.com>
 Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
 ---
 
 Changes for v4:
-- Fix build on non x86 (eg arm32)
+- merge in patch 8.
+- Add comments about gcc being 'broken' for mixed 32/64 bit maths.
+  clang doesn't have the same issues.
+- Use a #define for define mul_add() to avoid 'defined but not used'
+  errors.
 
-Changes for v5:
-- Fix build on 32bit x86
+ arch/x86/include/asm/div64.h | 19 +++++++++++++++++
+ include/linux/math64.h       | 11 ++++++++++
+ lib/math/div64.c             | 40 +++++++++++++++++++++++-------------
+ 3 files changed, 56 insertions(+), 14 deletions(-)
 
- lib/math/div64.c                    |  8 +++--
- lib/math/test_mul_u64_u64_div_u64.c | 52 +++++++++++++++++++++++++----
- 2 files changed, 51 insertions(+), 9 deletions(-)
-
+diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
+index 6d8a3de3f43a..30fd06ede751 100644
+--- a/arch/x86/include/asm/div64.h
++++ b/arch/x86/include/asm/div64.h
+@@ -60,6 +60,12 @@ static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
+ }
+ #define div_u64_rem	div_u64_rem
+ 
++/*
++ * gcc tends to zero extend 32bit values and do full 64bit maths.
++ * Define asm functions that avoid this.
++ * (clang generates better code for the C versions.)
++ */
++#ifndef __clang__
+ static inline u64 mul_u32_u32(u32 a, u32 b)
+ {
+ 	u32 high, low;
+@@ -71,6 +77,19 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+ }
+ #define mul_u32_u32 mul_u32_u32
+ 
++static inline u64 add_u64_u32(u64 a, u32 b)
++{
++	u32 high = a >> 32, low = a;
++
++	asm ("addl %[b], %[low]; adcl $0, %[high]"
++		: [low] "+r" (low), [high] "+r" (high)
++		: [b] "rm" (b) );
++
++	return low | (u64)high << 32;
++}
++#define add_u64_u32 add_u64_u32
++#endif
++
+ /*
+  * __div64_32() is never called on x86, so prevent the
+  * generic definition from getting built.
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index e889d850b7f1..cc305206d89f 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -158,6 +158,17 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+ }
+ #endif
+ 
++#ifndef add_u64_u32
++/*
++ * Many a GCC version also messes this up.
++ * Zero extending b and then spilling everything to stack.
++ */
++static inline u64 add_u64_u32(u64 a, u32 b)
++{
++	return a + b;
++}
++#endif
++
+ #if defined(CONFIG_ARCH_SUPPORTS_INT128) && defined(__SIZEOF_INT128__)
+ 
+ #ifndef mul_u64_u32_shr
 diff --git a/lib/math/div64.c b/lib/math/div64.c
-index a88391b8ada0..18a9ba26c418 100644
+index 18a9ba26c418..bb57a48ce36a 100644
 --- a/lib/math/div64.c
 +++ b/lib/math/div64.c
-@@ -177,16 +177,18 @@ EXPORT_SYMBOL(div64_s64);
-  * Iterative div/mod for use when dividend is not expected to be much
-  * bigger than divisor.
-  */
-+#ifndef iter_div_u64_rem
- u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
- {
- 	return __iter_div_u64_rem(dividend, divisor, remainder);
- }
- EXPORT_SYMBOL(iter_div_u64_rem);
-+#endif
+@@ -186,33 +186,45 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+ #endif
  
--#ifndef mul_u64_add_u64_div_u64
-+#if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
- u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
- {
--#if defined(__SIZEOF_INT128__)
-+#if defined(__SIZEOF_INT128__) && !defined(test_mul_u64_add_u64_div_u64)
+ #if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
+-u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+-{
++
++#define mul_add(a, b, c) add_u64_u32(mul_u32_u32(a, b), c)
++
+ #if defined(__SIZEOF_INT128__) && !defined(test_mul_u64_add_u64_div_u64)
  
++static inline u64 mul_u64_u64_add_u64(u64 *p_lo, u64 a, u64 b, u64 c)
++{
  	/* native 64x64=128 bits multiplication */
  	u128 prod = (u128)a * b + c;
-@@ -267,5 +269,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
- 
- 	return res;
- }
-+#if !defined(test_mul_u64_add_u64_div_u64)
- EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
- #endif
-+#endif
-diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
-index 4d5e4e5dac67..d8d2c18c4614 100644
---- a/lib/math/test_mul_u64_u64_div_u64.c
-+++ b/lib/math/test_mul_u64_u64_div_u64.c
-@@ -73,21 +73,34 @@ done
- 
-  */
- 
--static int __init test_init(void)
-+static u64 test_mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
+-	u64 n_lo = prod, n_hi = prod >> 64;
 +
-+static int __init test_run(unsigned int fn_no, const char *fn_name)
- {
-+	u64 start_time;
- 	int errors = 0;
- 	int tests = 0;
- 	int i;
- 
--	pr_info("Starting mul_u64_u64_div_u64() test\n");
-+	start_time = ktime_get_ns();
- 
- 	for (i = 0; i < ARRAY_SIZE(test_values); i++) {
- 		u64 a = test_values[i].a;
- 		u64 b = test_values[i].b;
- 		u64 d = test_values[i].d;
- 		u64 expected_result = test_values[i].result;
--		u64 result = mul_u64_u64_div_u64(a, b, d);
--		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, d);
-+		u64 result, result_up;
-+
-+		switch (fn_no) {
-+		default:
-+			result = mul_u64_u64_div_u64(a, b, d);
-+			result_up = mul_u64_u64_div_u64_roundup(a, b, d);
-+			break;
-+		case 1:
-+			result = test_mul_u64_add_u64_div_u64(a, b, 0, d);
-+			result_up = test_mul_u64_add_u64_div_u64(a, b, d - 1, d);
-+			break;
-+		}
- 
- 		tests += 2;
- 
-@@ -106,15 +119,40 @@ static int __init test_init(void)
- 		}
- 	}
- 
--	pr_info("Completed mul_u64_u64_div_u64() test, %d tests, %d errors\n",
--		tests, errors);
--	return errors ? -EINVAL : 0;
-+	pr_info("Completed %s() test, %d tests, %d errors, %llu ns\n",
-+		fn_name, tests, errors, ktime_get_ns() - start_time);
-+	return errors;
++	*p_lo = prod;
++	return prod >> 64;
 +}
-+
-+static int __init test_init(void)
+ 
+ #else
+ 
+-	/* perform a 64x64=128 bits multiplication manually */
+-	u32 a_lo = a, a_hi = a >> 32, b_lo = b, b_hi = b >> 32;
++static inline u64 mul_u64_u64_add_u64(u64 *p_lo, u64 a, u64 b, u64 c)
 +{
-+	pr_info("Starting mul_u64_u64_div_u64() test\n");
-+	if (test_run(0, "mul_u64_u64_div_u64"))
-+		return -EINVAL;
-+	if (test_run(1, "test_mul_u64_u64_div_u64"))
-+		return -EINVAL;
-+	return 0;
- }
++	/* perform a 64x64=128 bits multiplication in 32bit chunks */
+ 	u64 x, y, z;
  
- static void __exit test_exit(void)
- {
- }
+ 	/* Since (x-1)(x-1) + 2(x-1) == x.x - 1 two u32 can be added to a u64 */
+-	x = (u64)a_lo * b_lo + (u32)c;
+-	y = (u64)a_lo * b_hi + (u32)(c >> 32);
+-	y += (u32)(x >> 32);
+-	z = (u64)a_hi * b_hi + (u32)(y >> 32);
+-	y = (u64)a_hi * b_lo + (u32)y;
+-	z += (u32)(y >> 32);
+-	x = (y << 32) + (u32)x;
+-
+-	u64 n_lo = x, n_hi = z;
++	x = mul_add(a, b, c);
++	y = mul_add(a, b >> 32, c >> 32);
++	y = add_u64_u32(y, x >> 32);
++	z = mul_add(a >> 32, b >> 32, y >> 32);
++	y = mul_add(a >> 32, b, y);
++	*p_lo = (y << 32) + (u32)x;
++	return add_u64_u32(z, y >> 32);
++}
  
-+/* Compile the generic mul_u64_add_u64_div_u64() code */
-+#undef __div64_32
-+#define __div64_32 __div64_32
-+#define div_s64_rem div_s64_rem
-+#define div64_u64_rem div64_u64_rem
-+#define div64_u64 div64_u64
-+#define div64_s64 div64_s64
-+#define iter_div_u64_rem iter_div_u64_rem
+ #endif
+ 
++u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
++{
++	u64 n_lo, n_hi;
 +
-+#undef mul_u64_add_u64_div_u64
-+#define mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
-+#define test_mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
++	n_hi = mul_u64_u64_add_u64(&n_lo, a, b, c);
 +
-+#include "div64.c"
-+
- module_init(test_init);
- module_exit(test_exit);
+ 	if (!n_hi)
+ 		return div64_u64(n_lo, d);
  
 -- 
 2.39.5
