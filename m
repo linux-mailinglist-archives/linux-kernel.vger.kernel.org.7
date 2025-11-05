@@ -1,196 +1,147 @@
-Return-Path: <linux-kernel+bounces-886931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089A7C37063
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:19:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A535C36F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB512645743
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EFA6661B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746A7334C13;
-	Wed,  5 Nov 2025 16:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE2337115;
+	Wed,  5 Nov 2025 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2JXTurZo"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJvV3Gcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAED1F3B85
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9320B800;
+	Wed,  5 Nov 2025 16:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360422; cv=none; b=IDd5HQMy+AZIKxxQ59pwNerE9meExze9pj4Ywl7sj1W4SMnwBMQxPhPQEawcbceM+U51R5dVusW7S6+jQHgMbVl2cTUVPD7Xcf+Eb6xnjrSdAtUc585XhOI63qJm+ZBBrvuEhS9mFa0sAiCDCPElZkGHUB9LmnZ1MY8/U0fotPI=
+	t=1762360572; cv=none; b=X8d/iZeaHbZ+rAWTEJaMID2DuzjbO7/Kv2l4ioiFR42VPzZSj/DisDJA+33fqI+tNnJlQHm6HZ0LOQDc1NF+1W32upSB9oPVyMY1RuFFQHeXXzoLMXwdC2yAcxhL5oGTAzcUkePQ9rWV42VpmZuVhotw9jc5aovpekSvO0kq8f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360422; c=relaxed/simple;
-	bh=y8ahAV0PZEghI2naLgmQaNfd+dOSiqQChsbkdjIjE44=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pD0gMMZ4LvZlfsHwtOXhREgZfP0T2//efoASwz1QUR1xnNukCnqyNtbEb0xQKEISEyGTKSFKvbeEc3vqEU5JAizdUvbMk7T/g8wKCTu8zQRzMkbvK/HSuziMgWfd4qF9lSewM/VyGCZ+cVQ29FacXfKR7Cra+Sq7ficLDXF3hk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2JXTurZo; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-340d3b1baafso289452a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762360420; x=1762965220; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+7k5zidXXcD+HatMzm349R3MQaUo0m1tgnERSfVu50=;
-        b=2JXTurZoQ/1tr70rv09/BzfxoyaGkxBLmEf20pvVmOhs6OtUZI3kXqsxwQCIBcfWVU
-         VCuhmWdVuYZM8qPCP2NzywF8J2pIWqyTMEdvVpqVBhdvxyRJKiDSDAPtSYaqjg8gDERU
-         DFoa8By+4hJ3sDN5Hpne/4Ry1ymTIlYir7PHpwAAd9fjBNaG8AKJDlb08FQXBSeAkcRI
-         Y7dx0ejnSLLBZ092mvmfZPDRsQTL7k7lc5ZGWBOsk4Zb5YjDQVHLq7R9QykqWv795B1i
-         FAvJz3Wc0uQkQ3peLnnwSZX0FJV0kH2vYNOVP4vS0ZsILETmx4kYQONnHf2anhI58Nhg
-         H67A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762360420; x=1762965220;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+7k5zidXXcD+HatMzm349R3MQaUo0m1tgnERSfVu50=;
-        b=vUfcw9YiwQJmuEh/DXXaHrjYKI+xoLvWXq5lh1hvAfPvn3+QDqC0G66Lk3eHXXtUql
-         fUBHRPOROeZN9/TmssITPyKNTY22wYcGbelfEvou+t9ZFYGTjZUSweAL+Go1PMgxIXtS
-         itGsN6+VoiX6BK8GSC5y2iao0JDlCczHmIuXZ3/QF82lW5p92b7XUQTyzC79DFdk4gyQ
-         ln/Qv2aH4BsJZWZMDoO2dLFYZVEZDLvktnzAfr07wKqYduX/ct1wWkPmjq3FYCehBHzf
-         dySY8/WFecQWbuYip/gd3B9RQgYoJsf3Q10ITYbJx1w0zdLCXdQhBHjKroPZ8l95BMel
-         Y+Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUUQR7Tn22YcbSNZy8nFYRO1YmKFO+yN4LuAUkbnrjaUBds7xXfqiEE/Nw1lMdNuNHoDv6bm1xAB8aam4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygoMmrR4YkY36NsnbppIHaE6/sbo2p3v83YwyZ0eC0LFjw2QWx
-	ogmd3RhBvQXqN/im3iXPZPgsnJIBRkl47hqOK2iNkL0VkdfTRplD0+D9RY3IKxTZtwQm1Vy3WHU
-	qVpaNjA==
-X-Google-Smtp-Source: AGHT+IHCE/7TNWD+0Bce75w45cojnDuYxEm5sQEcKUCO9oij2Cy9EVkqNqDCBx82s4XyrV0dcB8Ivh4jQnQ=
-X-Received: from pjzs14.prod.google.com ([2002:a17:90b:70e:b0:33b:8aa1:75ed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:350d:b0:33b:8ac4:1ac4
- with SMTP id 98e67ed59e1d1-341a7012c73mr4773216a91.35.1762360420430; Wed, 05
- Nov 2025 08:33:40 -0800 (PST)
-Date: Wed, 5 Nov 2025 08:33:38 -0800
-In-Reply-To: <cc6de4bfd9fbe0c7ac48b138681670d113d2475e.camel@intel.com>
+	s=arc-20240116; t=1762360572; c=relaxed/simple;
+	bh=6TrJvUK9Bi4MtE396O6mjFvQ4XSVRdM4jTat1mqDJ+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNuv9Ah7ucsJKaM+9SOIK3+gk4AK2WmuqpJC0DBwpPSXdGBVprNbZnq5nbR4gCKmzfZHPiEpVP2qSHgvT02yiPTdkQt89Tif0WSxtNGOcbZD+i09jKKSuCjaaZT5mxObvU/1XIlw2DCll3EjJJC2hlnOm8tCmhEfl44A4v/Uq/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJvV3Gcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E76C116D0;
+	Wed,  5 Nov 2025 16:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762360572;
+	bh=6TrJvUK9Bi4MtE396O6mjFvQ4XSVRdM4jTat1mqDJ+c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bJvV3GcjxVMkbPp2/HPHTvVQ3suklWsEfheD+VTVjPqA9H4nzGbxr2Z/oMCnFchhM
+	 hx0phKZelWW3iUoT74SWOR0eAm/GMDUMSFZuJwRx3xLLzarjdMxhpnjROdsmqC1Bz9
+	 MmxSP1G8Pm7sZ6X9Aw3/6NWdF7ILo/dLtzKjptrZcQKyjuY5ue+jqOiVpPmYroetzt
+	 pSWR0IX5HMGCyAHJeRFyG1+DMWcS1izzqvM9K89t6srVDOjWc2wPYOBV+rjwy9RPKh
+	 A6Jk4/1Jh9oT6si2+yJ2cfyT73UhwGEh/7aY2SdorDojoRR9eU1sKBBAVl6FGvx5cd
+	 7YvIKTyAlo22A==
+Date: Wed, 5 Nov 2025 17:36:09 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 18/33] cpuset: Remove cpuset_cpu_is_isolated()
+Message-ID: <aQt8-dzr4Ac3l3bt@localhost.localdomain>
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-19-frederic@kernel.org>
+ <7821fb40-5082-4d11-b539-4c5abc2e572c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918162529.640943-1-jon@nutanix.com> <aNHE0U3qxEOniXqO@google.com>
- <7F944F65-4473-440A-9A2C-235C88672E36@nutanix.com> <B116CE75-43FD-41C4-BB3A-9B0A52FFD06B@nutanix.com>
- <aPvf5Y7qjewSVCom@google.com> <EFA9296F-14F7-4D78-9B7C-1D258FF0A97A@nutanix.com>
- <aQTxoX4lB_XtZM-w@google.com> <cc6de4bfd9fbe0c7ac48b138681670d113d2475e.camel@intel.com>
-Message-ID: <aQt8Yoxea-goWrnR@google.com>
-Subject: Re: [PATCH] KVM: x86: skip userspace IOAPIC EOI exit when Directed
- EOI is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "khushit.shah@nutanix.com" <khushit.shah@nutanix.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"bp@alien8.de" <bp@alien8.de>, Jon Kohler <jon@nutanix.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7821fb40-5082-4d11-b539-4c5abc2e572c@redhat.com>
 
-On Tue, Nov 04, 2025, Kai Huang wrote:
-> 
-> [...]
-> 
-> 
-> > KVM's bogus handling of Supress EOI Broad is problematic when the guest
-> > relies on interrupts being masked in the I/O APIC until well after the
-> > initial local APIC EOI.  E.g. Windows with Credential Guard enabled
-> > handles interrupts in the following order:
+Le Wed, Oct 29, 2025 at 02:05:17PM -0400, Waiman Long a écrit :
+> On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
+> > The set of cpuset isolated CPUs is now included in HK_TYPE_DOMAIN
+> > housekeeping cpumask. There is no usecase left interested in just
+> > checking what is isolated by cpuset and not by the isolcpus= kernel
+> > boot parameter.
 > > 
-> >  the interrupt in the following order:
-> 
-> This sentence is broken and is not needed.
-> 
-> >   1. Interrupt for L2 arrives.
-> >   2. L1 APIC EOIs the interrupt.
-> >   3. L1 resumes L2 and injects the interrupt.
-> >   4. L2 EOIs after servicing.
-> >   5. L1 performs the I/O APIC EOI.
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >   include/linux/cpuset.h          |  6 ------
+> >   include/linux/sched/isolation.h |  3 +--
+> >   kernel/cgroup/cpuset.c          | 12 ------------
+> >   3 files changed, 1 insertion(+), 20 deletions(-)
 > > 
+> > diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+> > index 051d36fec578..a10775a4f702 100644
+> > --- a/include/linux/cpuset.h
+> > +++ b/include/linux/cpuset.h
+> > @@ -78,7 +78,6 @@ extern void cpuset_lock(void);
+> >   extern void cpuset_unlock(void);
+> >   extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
+> >   extern bool cpuset_cpus_allowed_fallback(struct task_struct *p);
+> > -extern bool cpuset_cpu_is_isolated(int cpu);
+> >   extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
+> >   #define cpuset_current_mems_allowed (current->mems_allowed)
+> >   void cpuset_init_current_mems_allowed(void);
+> > @@ -208,11 +207,6 @@ static inline bool cpuset_cpus_allowed_fallback(struct task_struct *p)
+> >   	return false;
+> >   }
+> > -static inline bool cpuset_cpu_is_isolated(int cpu)
+> > -{
+> > -	return false;
+> > -}
+> > -
+> >   static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
+> >   {
+> >   	return node_possible_map;
+> > diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+> > index 94d5c835121b..0f50c152cf68 100644
+> > --- a/include/linux/sched/isolation.h
+> > +++ b/include/linux/sched/isolation.h
+> > @@ -76,8 +76,7 @@ static inline bool housekeeping_cpu(int cpu, enum hk_type type)
+> >   static inline bool cpu_is_isolated(int cpu)
+> >   {
+> >   	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
+> > -	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK) ||
+> > -	       cpuset_cpu_is_isolated(cpu);
+> > +	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK);
+> >   }
 > 
-> [...]
-> 
-> > @@ -1517,6 +1518,18 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
-> >  
-> >  	/* Request a KVM exit to inform the userspace IOAPIC. */
-> >  	if (irqchip_split(apic->vcpu->kvm)) {
-> > +		/*
-> > +		 * Don't exit to userspace if the guest has enabled Directed
-> > +		 * EOI, a.k.a. Suppress EOI Broadcasts, in which case the local
-> > +		 * APIC doesn't broadcast EOIs (the guest must EOI the target
-> > +		 * I/O APIC(s) directly).  Ignore the suppression if userspace
-> > +		 * has NOT disabled KVM's quirk (KVM advertised support for
-> > +		 * Suppress EOI Broadcasts without actually suppressing EOIs).
-> > +		 */
-> > +		if ((kvm_lapic_get_reg(apic, APIC_SPIV) & APIC_SPIV_DIRECTED_EOI) &&
-> > +		    apic->vcpu->kvm->arch.disable_suppress_eoi_broadcast_quirk)
-> > +			return;
-> > +
-> 
-> I found the name 'disable_suppress_eoi_broadcast_quick' is kinda confusing,
-> since it can be interpreted in two ways:
-> 
->  - the quirk is 'suppress_eoi_broadcast', and this boolean is to disable
->    this quirk.
->  - the quirk is 'disable_suppress_eoi_broadcast'.
+> You can also remove the "<linux/cpuset.h>" include from isolation.h which
+> was added by commit 3232e7aad11e5 ("cgroup/cpuset: Include isolated cpuset
+> CPUs in cpu_is_isolated() check") which introduces cpuset_cpu_is_isolated().
 
-I hear you, but all of KVM's quirks are phrased exactly like this:
+Done. Thanks!
 
-  KVM_CAP_DISABLE_QUIRKS
-  KVM_CAP_DISABLE_QUIRKS2
-  KVM_X2APIC_API_DISABLE_BROADCAST_QUIRK
-  disable_slot_zap_quirk
-
-> And in either case, the final meaning is KVM needs to "disable suppress EOI
-> broadcast" when that boolean is true, 
-
-No.  The flag says "Disable KVM's 'Suppress EOI-broadcast' Quirk", where the
-quirk is that KVM always broadcasts even when broadcasts are supposed to be
-suppressed.
-
-> which in turn means KVM actually needs to "broadcast EOI" IIUC.  But the
-> above check seems does the opposite.
-> 
-> Perhaps "ignore suppress EOI broadcast" in your previous version is better?
-
-Hmm, I wanted to specifically call out that the behavior is a quirk.  At the
-risk of being too verbose, maybe DISABLE_IGNORE_SUPPRESS_EOI_BROADCAST_QUIRK?
-
-And then to keep line lengths sane, grab "kvm" locally so that we can end up with:
-
-	/* Request a KVM exit to inform the userspace IOAPIC. */
-	if (irqchip_split(kvm)) {
-		/*
-		 * Don't exit to userspace if the guest has enabled Directed
-		 * EOI, a.k.a. Suppress EOI Broadcasts, in which case the local
-		 * APIC doesn't broadcast EOIs (the guest must EOI the target
-		 * I/O APIC(s) directly).  Ignore the suppression if userspace
-		 * has NOT disabled KVM's quirk (KVM advertised support for
-		 * Suppress EOI Broadcasts without actually suppressing EOIs).
-		 */
-		if ((kvm_lapic_get_reg(apic, APIC_SPIV) & APIC_SPIV_DIRECTED_EOI) &&
-		    kvm->arch.disable_ignore_suppress_eoi_broadcast_quirk)
-			return;
-
-> Also, IIUC the quirk only applies to userspace IOAPIC, so is it better to
-> include "split IRQCHIP" to the name?  Otherwise people may think it also
-> applies to in-kernel IOAPIC.
-
-Eh, I'd prefer to solve that through documentation and comments.  The name is
-already brutally long.
- 
-> Btw, personally I also found "directed EOI" is more understandable than
-> "suppress EOI broadcast".  How about using "directed EOI" in the code
-> instead?  E.g.,
-> 
->  s/disable_suppress_eoi_broadcast/disable_directed_eoi
->  s/KVM_X2APIC_DISABLE_SUPPRESS_EOI_BROADCAST/KVM_X2APIC_DISABLE_DIRECTED_EOI
-> 	
-> It is shorter, and KVM is already using APIC_LVR_DIRECTED_EOI anyway.
-
-It's also wrong.  Directed EOI is the I/O APIC feature, the local APIC (CPU)
-feature is "Suppress EOI-broadcasts" or "EOI-broadcast suppression".  Conflating
-those two features is largely what led to this mess in the first place, so I'd
-strongly prefer not to bleed that confusion into KVM's uAPI.
+-- 
+Frederic Weisbecker
+SUSE Labs
 
