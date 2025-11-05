@@ -1,61 +1,71 @@
-Return-Path: <linux-kernel+bounces-886169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3068EC34E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:35:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD77C34E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFCC734D735
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D733BFACA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5DE301482;
-	Wed,  5 Nov 2025 09:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E579F30149F;
+	Wed,  5 Nov 2025 09:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lneLXE3T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oyb86cw/"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8D92D1F7E;
-	Wed,  5 Nov 2025 09:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5822FF665
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335352; cv=none; b=Yi/H9oGLuBz2kkFyzo2w72l8VVfgFd6I4Zgx5bUWuCXcaS3KkNbZ/XBGlvrE4GBhF/vgIWCprO2u63xDtb9+KMzCpqLL2QwlWJzJ3P2qgGti39REMokpKBd8BYfZsiMbUF/eZT4jWAp5zzd6NzwEYac0/e6e+W6y5tE2mIJ1uTE=
+	t=1762335365; cv=none; b=X/NLB/Pb3WbZ+m7kpxd6p0yj0WnZBczcF4P7f1BGleUJ7dI6siqF9dmGq1nD4+kAvImp80iYJQMHsvwMdO8M6LWfiCoB8eJEDs2U4A/Te6pcRKkTgregqC5B1WQ2Lyudx9ZA5YfWRLJbkns9JloPJ5XYOy2iQd4BdnaYd7wUAhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335352; c=relaxed/simple;
-	bh=81UYSPD+0lOjQIr/2Q9pkdoxwrWEaQRmME5VjTnZv+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwmRwet3vmQv85N2JJ5IoRPYnEWXdrZ1HE/NvkWsnfSqqB8q4CX5ajoH+NqscBDJFhWB3TA1zlH2//DaZxRjfLen36o/0ujIVRijPaCg8+NN0bMZyd3V6vo8qSDbLjPfxRqVQCG+UQQUk2HZr8Jhv7Ao4RU43I7d3NM/rb3+oQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lneLXE3T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBF6C116B1;
-	Wed,  5 Nov 2025 09:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762335351;
-	bh=81UYSPD+0lOjQIr/2Q9pkdoxwrWEaQRmME5VjTnZv+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lneLXE3TvYXMOEdybO5TxbXeH7g1cXCIeTOspbt+mpAsiBjd6V0LIKA0ybfSlEmix
-	 IcmJ27k9kDU2PbiZA3JeP65eoxei3zskUXzh2eqVjXmqsvnhthLowHCRH+nF3y3Dq0
-	 vsWnqAMUWfBo3mhKIsFAaODLrlrOl4r31EDxQnpWMJoAXgB89aQQsQz/f4TGIc0yeQ
-	 8wHX4haZKZkIgIyb9RVodns1ZFlrsLaCpOue6ovqs/JdWAciIPFjZUUBNoBykFkBQl
-	 +L9na4f67XIFe48qYUQhooNmmt6fMIJfktdvpO9RWT/RxS3p2jgq9ZyMUwqZAGe/8O
-	 TD+aDeqp3fO5w==
-Date: Wed, 5 Nov 2025 09:35:44 +0000
-From: Lee Jones <lee@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <20251105093544.GE8064@google.com>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
- <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
+	s=arc-20240116; t=1762335365; c=relaxed/simple;
+	bh=1qvFsopmwgdAu8iPaOHE29Ts9hz3+IPTTaCjSjI9u0c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s8/DUzpTS0mw4EByrfKnuYrftMT188DyvO1TpFDabdrMkGg6BcQ8/Selo+7KfjAgSscD3RSlyIYQeaiybEahgmAfOrnSzUXvlBnlJarnaAQXL/fEyBaEZwwod+pq1gjmrNyEtxVOHiFuScO7soS7szQJ5nne4K8SKY9tJYsNvHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oyb86cw/; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 73E3A1A189E;
+	Wed,  5 Nov 2025 09:36:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 46ED560693;
+	Wed,  5 Nov 2025 09:36:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70CEA10B51A41;
+	Wed,  5 Nov 2025 10:35:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762335359; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=AWeVjAfEvwayrrcgeg/g3uKL1HZRS3340/63t2geN6g=;
+	b=oyb86cw/BzojwJZ92zdlAfbHZrS8ukqgwp/wMRBsJo/g1M2ARfyxMT3IDPA5VxtdCBjL7e
+	/74P04K3HbKdQVkylkn9zWf8ebOiA0eOq7PM6Ekqrjhg93NprxDdebhHME9QOBz88VU8kb
+	Z95rSJS18vUuVp0TD/yt9mqZhlcCWHH2RgqsAz2r7gqrpQKpr4YHFf/3tZmaA55g9L3yS0
+	AWDOIqedVWeoTVdWfay1f+O1iqL/szEK4PACbQRfKgKU91CEFj/Eo2Q3GqM9LBhtpIz+dn
+	lh0cchJIIlsnq/kIW/HevJPhGiB014f/FoOaT6aY276SR2XUDybFWNTJCqd/Uw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Santhosh Kumar K <s-k6@ti.com>
+Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <broonie@kernel.org>,
+  <tudor.ambarus@linaro.org>,  <pratyush@kernel.org>,  <mwalle@kernel.org>,
+  <p-mantena@ti.com>,  <linux-spi@vger.kernel.org>,
+  <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  <a-dutta@ti.com>,  <u-kumar1@ti.com>,  <praneeth@ti.com>
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+In-Reply-To: <ea19bc64-a775-4309-8f3b-ce9dd8ac02ee@ti.com> (Santhosh Kumar
+	K.'s message of "Wed, 5 Nov 2025 14:25:58 +0530")
+References: <20250811193219.731851-1-s-k6@ti.com>
+	<20250811193219.731851-2-s-k6@ti.com> <87seguemzu.fsf@bootlin.com>
+	<cb04a4ec-c643-4b80-9288-8fd8944cb4f7@ti.com>
+	<87qzunt4n4.fsf@bootlin.com>
+	<ea19bc64-a775-4309-8f3b-ce9dd8ac02ee@ti.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 05 Nov 2025 10:35:55 +0100
+Message-ID: <87ecqcakjo.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,32 +73,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 04 Nov 2025, Troy Mitchell wrote:
+Hello Santhosh,
 
-> On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> > 
-> > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> > > commonly paired with the SpacemiT K1 SoC.
-> > > 
-> > > Note: For reliable operation, this driver depends on a this patch that adds
-> > > atomic transfer support to the SpacemiT I2C controller driver:
-> > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
-> > > 
-> > > [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-> >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-> Should we apply it now? The dependency patch hasn’t been merged yet...
+>>>     - On tuning failure, retry by re-running spi_mem_needs_tuning() with
+>>> the second best set of ops (max throughput - 1)
+>> I would like to challenge this need. Can the same calibration fail if
+>> attempted multiple times (eg. because of the heat?) If yes, then we need
+>> a fallback indeed. Otherwise, I'd be in favor of just failing the
+>> probe. Calibration is an opt-in -> users must allow a higher frequency
+>> than they use to in order to enable the feature?
+>
+> It's possible the same calibration will fail intermittently for
+> different reasons (temperature changes, as you mentioned). If tuning
+> fails, the driver should fallback to the non-PHY frequency so the flash
+> continues operating with slower reads/writes rather than failing the
+> probe (availability should be prioritized, right?).
 
-And what is: ^[@kernel.org in your recipients list?
+Agreed, if the tuning may fail we must fallback in this case. However
+there is another situation that must be handled in this case: once
+tuning is done and we want to use PHY-optimized paths, we must fallback
+to more basic/slower reads if for some external reason, they start
+failing, right?
 
--- 
-Lee Jones [李琼斯]
+The obvious choice in this case would be to let this error handling to
+the controller driver. Re-using the same operation at a lower speed
+would be suboptimal, because the fastest operation at a high speed might
+not be the most efficient at slower speeds due to the number of dummy
+cycles needed,. But I believe this is negligible based on the fact that
+we already are in degraded mode at that stage.
+
+However, this may conflict with:
+- read retries
+- continuous reads (?)
+
+So in practice the fallback might be needed on the SPI NAND/NOR side
+(this can be further discussed).
+
+But once we solve this, comes a similar problem on the write side. How
+do we know if a write will or did fail because of a temperature change?
+What may be the heuristics to fallback in this case?
+
+Thanks,
+Miqu=C3=A8l
 
