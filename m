@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-885819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E7CC33F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:15:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 013F8C33FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 861FB4E227C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:15:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D66864E1DB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A11625744D;
-	Wed,  5 Nov 2025 05:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A962609EE;
+	Wed,  5 Nov 2025 05:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkMFxPK6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GcyDSSRc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5A260569
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E315721D3D2;
+	Wed,  5 Nov 2025 05:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762319709; cv=none; b=DkYg4lam96h8jbL1U4IJVfRMpQPsm5wrgGDJIOi5pmf9SmyoGDJaAtZ0rQw92hTDufm82zdiQUxPmmA+fXm5feX4+OI1vWozdDo68JrhK9VWPAKIYr2jBt8WnKmMYr+/7WHg82baMHxsAH31HrKrUXj66MFV/pj2JXoZddRevO0=
+	t=1762319925; cv=none; b=UKJ1CDR8AV0j879hw9wc4asodCiCFaOo52pIRR+IHdA2eQvnqTXwqX0u7LGA/WobF+Gu87XK/IvsfOCGqn3tWGjp9EVp2O+FjElNYriIXIftsoLOrMZ+mRgwxupZCVA5irOMexDArhsxrU2tyBvjmEqFnDqUQJpDdCuG6K/6CCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762319709; c=relaxed/simple;
-	bh=U1gcHYEs9i1aYxKKaiMBpSNsLLBtCBGwKROrVszwRYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9jjz0WZ0Pf3Ui+rLXhd5k//6NJunZoqtU1V42sM1oMVTOMqH0yjMqTa49SlBsTXrcYdP0kmj6l/rJHX4WsHCSwmyLYRz4acnWFufO2LOc1KRNwg+7Pnrh21Ck0C8exj3RrYcNiUCv3Yw6ieYZMeQHa7mZH547NCw69hr+dGbPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkMFxPK6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27BD8C19422
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762319709;
-	bh=U1gcHYEs9i1aYxKKaiMBpSNsLLBtCBGwKROrVszwRYc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kkMFxPK62VIsB9OfmQqvzhME4k+ydiNyvaGbgBGvbqCoGu0UxzgSGliq8e+B7PMxs
-	 D6DedIDFkHSgmDoguZdy8dIZ3OZ4C8eNA0shL5VLrRagW2zjDpr38TIkLrQH4yF26u
-	 43eRILXak4Zwt+3uPbVx9RTaslXSum/fMtmrm+242VV3m56amavNR7NLdZ4HydpNtp
-	 /bzgXTFfe1o9gaHgDy5vG8+wjm5HvINTOtTWQDO9n3jxZydxMX6fMYJud5FeMons7a
-	 hPucUEYzTm83YrPIAyin3Y6Bx25ucjioIGlC7mObKmQTPja1HDcj3v5wWDuBtCG1QP
-	 YgvVor0Fz4CSw==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640f627d01dso1961300a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 21:15:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUmtvkVIYCXeSYumsxpNoPw5sOxrVODW8Zu+8MbB3ND5/XtQhod3zXh8NQKvTk4vHi/K5AYeNqMZk2Q8Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ggJmal9/s9CiCIGf8/IjCdDg+A/Z7YHPTIFIl60qGhlG3sRz
-	htE4lhNCkCaWk3ZCpbELGMJlCUC5fjJ8HgX+OyWqNqfMzzDndu+1TRJ8QuT/lp+2wfBT4z5SnZi
-	tBJAgFllWt8HAGkVyWybwptZAjulcofg=
-X-Google-Smtp-Source: AGHT+IFC37S1oyDl/UFRyqOhTM6lpKE7vOb4Rois7WuNYgcmNYNdTXbXGcT2OjA1QYiPpBNetwu+J2hwSLldIctFzqo=
-X-Received: by 2002:a05:6402:5193:b0:640:baed:f675 with SMTP id
- 4fb4d7f45d1cf-64105b77b62mr1432647a12.33.1762319707657; Tue, 04 Nov 2025
- 21:15:07 -0800 (PST)
+	s=arc-20240116; t=1762319925; c=relaxed/simple;
+	bh=yaTMEskE7h7fVXAemQzy7VygptbFBLgqnZ1JHjAgufU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CBWiv/0A5rCXuTxTcE50NQE19DZEFDYqAQ1TQSg9LjP426juaTfIpaHL3iWY3J4N6bM8+0kT99DghYn5GMEzzy+jXhWZNjBjOr1syxg4UdywaQfqnWpo5vN+SgcrNQ6PR2ckV3GeR89xaH1dSy9Z4zSSx56/tE5JckxtuYSep7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GcyDSSRc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762319919;
+	bh=ichHGeDwY70+I/RnBYNCZZZ1BhgPXBb2VMOvu1qEqvI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GcyDSSRcAEtJfO6DH4I+takfpzblYIi35S8o0TZEtdE6WVU5wIOPK0iW3k0r6QO3j
+	 jbQcygkgvFcvnkTXKAt3/JkI/U+dQum797he6MKcu1LIp8YiOkFewVopzINxc4eLZI
+	 ZyLsQnwh1BX8WP/MatcOCAqW72KctoaeTyhIh+OAGq9IWSDLW09sbOo7Ky1dQ3gKrM
+	 JSc6bTNh7h4KChyU45b2kEtHrkyhAu4GAcXZPY4kBX34ebjUGdr4raciVAA0CsJRF+
+	 ROfBCtsIgmhHxPAq8At+VYHn3FEuuKuOM33Ux4q/5QCuoczeZmib0z86NDMjtEbPKQ
+	 yymB1VOwCfIXQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1YWf6Kldz4w2S;
+	Wed, 05 Nov 2025 16:18:38 +1100 (AEDT)
+Date: Wed, 5 Nov 2025 16:18:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Tvrtko Ursulin <tursulin@ursulin.net>, Tvrtko Ursulin
+ <tvrtko.ursulin@igalia.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the drm-misc tree
+Message-ID: <20251105161838.55b962a3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2025110432-maimed-polio-c7b4@gregkh> <20251104141214.345175-1-pioooooooooip@gmail.com>
-In-Reply-To: <20251104141214.345175-1-pioooooooooip@gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 5 Nov 2025 14:14:55 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_ORc86pHr66OVhCAXWbvPy7Y2DVAH_ubipOXufQGD4dQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bneHOhxu7T1nX-P1IRNUTalF5hYblatzPqzqhor9kRyW5EvYEalAbVSk9A
-Message-ID: <CAKYAXd_ORc86pHr66OVhCAXWbvPy7Y2DVAH_ubipOXufQGD4dQ@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
-To: Qianchang Zhao <pioooooooooip@gmail.com>
-Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	gregkh@linuxfoundation.org, Zhitong Liu <liuzhitong1993@gmail.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/gEv+8uzGFpiFpXs6qTHfFyL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/gEv+8uzGFpiFpXs6qTHfFyL
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 4, 2025 at 11:12=E2=80=AFPM Qianchang Zhao <pioooooooooip@gmail=
-.com> wrote:
->
-> When encrypt_resp() fails at the send path, we only set
-> STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
-> in this tree). Repeating this path leaks kernel memory and can lead to
-> OOM (DoS) when encryption is required.
->
-> Reproduced on: Linux v6.18-rc2 (self-built test kernel)
->
-> Fix by freeing the transform buffer and forcing plaintext error reply.
->
-> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
-> ---
->  fs/smb/server/server.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-> index 40420544c..15dd13e76 100644
-> --- a/fs/smb/server/server.c
-> +++ b/fs/smb/server/server.c
-> @@ -244,8 +244,14 @@ static void __handle_ksmbd_work(struct ksmbd_work *w=
-ork,
->         if (work->sess && work->sess->enc && work->encrypted &&
->             conn->ops->encrypt_resp) {
->                 rc =3D conn->ops->encrypt_resp(work);
-> -               if (rc < 0)
-> +               if (rc < 0) {
->                         conn->ops->set_rsp_status(work, STATUS_DATA_ERROR=
-);
-> +                       work->encrypted =3D false;
-> +                       if (work->tr_buf) {
-> +                               kvfree(work->tr_buf);
-->tr_buf is freed in ksmbd_free_work_struct(). How can tr_buf not be freed?
-Thanks.
-> +                               work->tr_buf =3D NULL;
-> +                       }
-> +               }
->         }
->         if (work->sess)
->                 ksmbd_user_session_put(work->sess);
-> --
-> 2.34.1
->
+Hi all,
+
+After merging the drm-misc tree, today's linux-next build (KCONFIG_NAME)
+produced these warnings:
+
+Documentation/gpu/drm-mm:40: include/drm/ttm/ttm_device.h:225: ERROR: Unkno=
+wn target name: "ttm_allocation". [docutils]
+Documentation/gpu/drm-mm:43: drivers/gpu/drm/ttm/ttm_device.c:202: ERROR: U=
+nknown target name: "ttm_allocation". [docutils]
+Documentation/gpu/drm-mm:73: include/drm/ttm/ttm_pool.h:68: ERROR: Unknown =
+target name: "ttm_allocation_pool". [docutils]
+Documentation/gpu/drm-mm:76: drivers/gpu/drm/ttm/ttm_pool.c:1070: ERROR: Un=
+known target name: "ttm_allocation_pool". [docutils]
+
+Introduced by commits
+
+  0af5b6a8f8dd ("drm/ttm: Replace multiple booleans with flags in pool init=
+")
+  77e19f8d3297 ("drm/ttm: Replace multiple booleans with flags in device in=
+it")
+  402b3a865090 ("drm/ttm: Add an allocation flag to propagate -ENOSPC on OO=
+M")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gEv+8uzGFpiFpXs6qTHfFyL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkK3i4ACgkQAVBC80lX
+0Gy6QQf/YaptmVCpT1E3I7EpmWV/90tU+zWzEWtUS/xExSsKbm5jribfBZojPIPG
+ynloJychSiFMOr/rvB35vfArDrMKZ+2249re1taf9k1Hm3oOVtXKdxx3O208VkFn
+PqX1k6mmcAReCstQTjfW6F+W3urbCu9zWTJCwr3tXtCx3qVBP1wevZX5/mDDvJwZ
+RrvJi1F6uF/SHYtT3Q3T0/aqYKC8a/SrnrdzD4LGSEpRHaT5hdu1uKZNe277ZlfT
+sihZNq8gIEsb7s4hcVtU8FFubM+0xBZGF5UBTQOBEUzzrlgTjmZXFP24wzK2b9Em
+GkPWkgoAxm+xSn3IcbGZpPdMo0KRXQ==
+=tMzV
+-----END PGP SIGNATURE-----
+
+--Sig_/gEv+8uzGFpiFpXs6qTHfFyL--
 
