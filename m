@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-886677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4997EC36435
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:13:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EBAC36546
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:28:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 960B04FE2FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B33D31A23EDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A967325494;
-	Wed,  5 Nov 2025 15:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8A0333442;
+	Wed,  5 Nov 2025 15:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YpXa65DJ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kwd49WIX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31C832E698
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911A4332EAF;
+	Wed,  5 Nov 2025 15:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355322; cv=none; b=Q4S+JUXS85PJcsdx1YCIK38kH1Tpr+IrUDFhFY8N1MPnwQxGp30C6TT/DDRMwCaXuO7OS3QmdThcMF7BKb++omC5H2AGaNfpp+UhRfy0qKEv3eJleHOg4+nnfLMkZV9nQZoJAUpw+Pp21HIUP9w0IIfDd4LWkMQWARB7IegIBW4=
+	t=1762355571; cv=none; b=TAjYqr9/O9ZvCsWFvTa44KQ5rT8nvOpECyRXKa3PSU7GxBew2zR9PwJGCAaQfXXcmA90D9j+/IWpDz+HDjCm8QHjpAq5NkSnd5G33qxHFLeHT+K8ZXd8HSzA9bwzGId6wRnINgdk9zlPUxlFLTtXKXSbz/ysmSvT9KlD1NDJeq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355322; c=relaxed/simple;
-	bh=Hf/rfLR96qfpPUUD2e/foDC8QeKSEdcQO3QrgpjU9tc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WxPAIKyIhubwvuVewygz8NkboUNTruDEGVbeHi5nQqCKWATStRVB6HegOz983a5GZxsHbdOQOLB/uh3zOct9xt8Vyw7V0182qt0SsrrFxxe10XRnd12xoE6g+uQXcjFkOC61VIbeHUz+VTmfH/HqsQ0Wq6zWWmT1+dzAUSYSLoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YpXa65DJ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429ce7e79f8so2765950f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:08:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762355319; x=1762960119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=itio/ZsVwLCabLmzfTJkSF00ft7NW0DfrxBlVBCeKeY=;
-        b=YpXa65DJUBlUJHEhy4KeVkcpo21pf2/juBz0kkgkjs/f8VUGr0ohjV+uqPDv/e2yRP
-         UmuU5sOwc+w6c4+gdKSCKSjuYnCZpOFSVTRkChU9iAWhy4XcLIKeyEXCalTPWKsNacdr
-         vGg57Qw1owfwVJu9xCV5wLs04zrYeBZsg2tWc5ltHDjPs7NNhUpIGJfL18XvTLHESyvs
-         hZ4Vs6elSLHJAe5WIzF/MzJdIvQI3Dt5ZwixLNOBucsqUddaROuqFRmYa0WYca6swj0R
-         oLoll4k/Z9EhFsXEJKdIRGP3M+Wpa9kDhnPggyZiXWrI7L15dOoo5N5kBvuoXGHwT6xY
-         FMFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762355319; x=1762960119;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=itio/ZsVwLCabLmzfTJkSF00ft7NW0DfrxBlVBCeKeY=;
-        b=cMwKmH7Cy7eKyQTJw1fBzfdU8hF9qL0btrBB/g5h1gwD+Gb4qeqwTjIqfgPCeS/gUr
-         Wj6wXYw3QjJGsIFzL0/QNYEodxPt8rcDv2IvYCHtSE6mPnCLxyMenOkOpFrOeIj7jYgg
-         YrBOWGcHk6LcgaGlHQI8zwWtfKsxt6v5LEXi19LSX4OWG8+Bgp+MxUwGrqZhsXmHHVjF
-         YBUQqIeBv2dNxY8Stp73V/X1qxx2KLmwx2PhFm+eqntvRYEbp8lwpZKPe8cgbz/rWqlY
-         tcI2O4DifZ4Kyryb3zDx0CBFuiPymJp0QLNBfyeY16KJH6FhaXcq4HnLwRSdMSrMavCF
-         0/3A==
-X-Gm-Message-State: AOJu0YykKy9W9+DVXeZSlYuYqYyWUZu6emLhnjaaXK8/048c2L/1r8E0
-	W38pd6u8qnTK6uyDLb45g5yM1H195hmz5Pup0RTMKU84bn9N4mqnTz6+5wUk9y8x8qKOUjsAkf3
-	R6Tae
-X-Gm-Gg: ASbGnctIrxi/HRDhsS17Im09Z6H37XiggPzz7DWMUINmAwUfJZPfhdy7liV8UOIFPp3
-	uHJaI9KErJlwWLrRnV69COUgMurZkpdn4Z5HHNDfCTmQ6tRxqAX5cMONu9N6SzXR6MhcBj+omJu
-	NcTgha3px2lNPyHu6uJjpkrU3SGlgyMas5Mia2pDfz95LfSZ4eh3ZB8cMDdCcxIb/TusXcjslFm
-	btMDuVUAEmWV9VDyuJy5RXts0aNeIyitnl1LWIsSC57QSeu47dbvpLSMZIncBSqCPpdikpu3A9G
-	BCSi8kKWFVRyDeaHVn0QsiF67xMddqPLEMCJNvVPYao+WeQ580c1dwRjw3AGbrnoYLzT0Uno6Oz
-	A1/uGHJOSy8JOWKli165PFhT+NXrXkn5gU3SQ6mA+dZBHAaOP+6bD75cTekdaFCjBe3ktJOLjU8
-	nI7mBn5aIaxHHWFV2ICRjLkk5WZ8l6bJdHLg==
-X-Google-Smtp-Source: AGHT+IHyjVa1GIzRPu08WXNQml466hsDkpEFv1Tr9nN3l1ce6eu3HfF96OLNZcs85q5I7sclBYcfoQ==
-X-Received: by 2002:a05:6000:64b:b0:429:ce0c:e67e with SMTP id ffacd0b85a97d-429e32e516amr3160567f8f.19.1762355318901;
-        Wed, 05 Nov 2025 07:08:38 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc19258bsm11750758f8f.12.2025.11.05.07.08.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 07:08:38 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] nvdimm: replace use of system_wq with system_percpu_wq
-Date: Wed,  5 Nov 2025 16:08:26 +0100
-Message-ID: <20251105150826.248673-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762355571; c=relaxed/simple;
+	bh=4jNzxRoMHZjr6VIuIaZcxXkpasduQGiB2dpThrzFEIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUhZHTV2nja9LXXv4sKEhuer2HTzlXxVoOD9JZMwNMmJXjNm/GryzQjflvv9Y9ChJK//4z17pC6VTDbu8bR94F0ds0sYFrr7zjImOossfc0s4DwPmX9wfJH2dDrVuQdByeA31qEZkDSiyUSC/c8QaHdWPjEXwS6p8tYqlXqtBhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kwd49WIX; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762355570; x=1793891570;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4jNzxRoMHZjr6VIuIaZcxXkpasduQGiB2dpThrzFEIQ=;
+  b=Kwd49WIXUbhK5PQdRn6FX3IFNX6OKM5Bh7jokylTb3naX1unGl/Q+rnY
+   cXDwEYqpnqw4m+HUZRQsxXvB/1tygodWJ845W+KobwDgBiTgXqJdLmpxv
+   XJD8m79f/pWmgCEKjnPH45F6Ds8lMG2HxtnS3LayM7wAvg0wHM7GdeXfC
+   vhlqIoHJK6jioEk+ClwfUOSQgBeOzydwTYF/ahrJV1BB1jEAhL5X2kjEK
+   g2DsYz7Ug3AfsI7JcLdARZDTh5bz1SNIp3d6bALYfbTtptrZRWV2NQuON
+   I2hXkAMWS9JpFSF7wYb6FgWZnt8ja5rsd4pq1yn3npgQH2h03O4n2owEr
+   Q==;
+X-CSE-ConnectionGUID: J9bLBFlpSAOQee6t5GgdoA==
+X-CSE-MsgGUID: ZbWuANQaSSyu9tSRIiZ3tA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64169037"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="64169037"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:12:49 -0800
+X-CSE-ConnectionGUID: 2/egSiv/R2eSzBr3OrgV7g==
+X-CSE-MsgGUID: K3fNOto6RruvAVgYshHAeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="218123761"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 05 Nov 2025 07:12:47 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGf9v-000Sjk-1X;
+	Wed, 05 Nov 2025 15:11:12 +0000
+Date: Wed, 5 Nov 2025 23:09:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huiwen He <hehuiwen@kylinos.cn>, Steven Rostedt <rostedt@goodmis.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Huiwen He <hehuiwen@kylinos.cn>
+Subject: Re: [PATCH] tracing/hist: make err_text array fully const
+Message-ID: <202511052258.kdB9B0rI-lkp@intel.com>
+References: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+Hi Huiwen,
 
-This lack of consistency cannot be addressed without refactoring the API.
+kernel test robot noticed the following build errors:
 
-This patch continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on linus/master v6.18-rc4 next-20251105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+url:    https://github.com/intel-lab-lkp/linux/commits/Huiwen-He/tracing-hist-make-err_text-array-fully-const/20251104-125932
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20251104045558.1644671-1-hehuiwen%40kylinos.cn
+patch subject: [PATCH] tracing/hist: make err_text array fully const
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251105/202511052258.kdB9B0rI-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511052258.kdB9B0rI-lkp@intel.com/reproduce)
 
-Replace system_wq with system_percpu_wq, keeping the same old behavior.
-The old wq (system_wq) will be kept for a few release cycles.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511052258.kdB9B0rI-lkp@intel.com/
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/nvdimm/security.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
-index 4adce8c38870..e41f6951ca0f 100644
---- a/drivers/nvdimm/security.c
-+++ b/drivers/nvdimm/security.c
-@@ -424,7 +424,7 @@ static int security_overwrite(struct nvdimm *nvdimm, unsigned int keyid)
- 		 * query.
- 		 */
- 		get_device(dev);
--		queue_delayed_work(system_wq, &nvdimm->dwork, 0);
-+		queue_delayed_work(system_percpu_wq, &nvdimm->dwork, 0);
- 	}
- 
- 	return rc;
-@@ -457,7 +457,7 @@ static void __nvdimm_security_overwrite_query(struct nvdimm *nvdimm)
- 
- 		/* setup delayed work again */
- 		tmo += 10;
--		queue_delayed_work(system_wq, &nvdimm->dwork, tmo * HZ);
-+		queue_delayed_work(system_percpu_wq, &nvdimm->dwork, tmo * HZ);
- 		nvdimm->sec.overwrite_tmo = min(15U * 60U, tmo);
- 		return;
- 	}
+>> kernel/trace/trace_events_hist.c:808:46: error: passing 'const char *const[49]' to parameter of type 'const char **' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     808 |         tracing_log_err(tr, last_cmd_loc, last_cmd, err_text,
+         |                                                     ^~~~~~~~
+   kernel/trace/trace.h:2113:21: note: passing argument to parameter 'errs' here
+    2113 |                             const char **errs, u8 type, u16 pos);
+         |                                          ^
+   1 error generated.
+
+
+vim +808 kernel/trace/trace_events_hist.c
+
+4b147936fa5096 Tom Zanussi      2018-01-15  802  
+edfeed318d59ff Tom Zanussi      2022-01-28  803  static void hist_err(struct trace_array *tr, u8 err_type, u16 err_pos)
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  804  {
+edfeed318d59ff Tom Zanussi      2022-01-28  805  	if (!last_cmd)
+edfeed318d59ff Tom Zanussi      2022-01-28  806  		return;
+edfeed318d59ff Tom Zanussi      2022-01-28  807  
+726721a51838e3 Tom Zanussi      2020-05-28 @808  	tracing_log_err(tr, last_cmd_loc, last_cmd, err_text,
+726721a51838e3 Tom Zanussi      2020-05-28  809  			err_type, err_pos);
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  810  }
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  811  
+
 -- 
-2.51.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
