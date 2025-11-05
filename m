@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-887491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB54C385B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:27:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2450C385BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470813B3425
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E58F3B035A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AADC2F5499;
-	Wed,  5 Nov 2025 23:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C906A2F658F;
+	Wed,  5 Nov 2025 23:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cO0u/46g"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8822F6168;
-	Wed,  5 Nov 2025 23:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LX5iBlkR"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE02F5A33;
+	Wed,  5 Nov 2025 23:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762385196; cv=none; b=urFC16uiQaPi5VLRjONOAVNS58wMPON/WjXHvFe2Zyd1lDPtA9FuGL+WLySmr6Yd9Sat4QDIELeLX5Ct9UYUvAdD6JqQLYvAxll9saMylaYsZxuJ/Rdvgn11wRlMbGBmYBEN/mS30QfhpaRBhByoFD9BHyuVgluYHAM7hawBhhQ=
+	t=1762385202; cv=none; b=WROLFxHYdzzNB2wyBkTOJWBuXQ30W++v2pdhK59cy3kptybuqFYlOjCCK2niRzCvCyY7FOszw75uScVphm+Qsfr3hernxH8Kz/oenkmtEyQJC/YgO31Sw4zTbJgwtgI3mumhpSG3yeMhUQqzPkpeyUcyMLjQ1bUPkC27o4LTdME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762385196; c=relaxed/simple;
-	bh=XUj1itDk6Fs0j99eYL38hRxsBNXp/8pzC7yr7UeJNt0=;
+	s=arc-20240116; t=1762385202; c=relaxed/simple;
+	bh=PIMhTwuVjXBk97J04AF7ttzGsns0vWw8LEqI5Oe/Y7g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MOjuP7EnLs1dOZEQ8qmHd8qV1z8FtIYApHPwcU6kzWH8585+TA48Ix+bdZFm6gxeMZOOPlALOQSEGPG5deY0bqMAkirTthnmUTML2ytulW8mx1kIBr8qnXs5MBGvc8mwiR6LbESOyVKTi0W9K9cWDWPIUOWdW1S1QuJ1/6sd78k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cO0u/46g; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from ubuntu.. (unknown [131.107.174.57])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 511A4211FEAA;
-	Wed,  5 Nov 2025 15:26:34 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 511A4211FEAA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762385194;
-	bh=y4yWSZvpXNw96xLFnutJZ9rJo+5mrC89tk8wZFQYBRs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cO0u/46gO55dJ8/vvpzeezdWQATL1HPM3hhvs5t5cw9mQnUfDkdHhBGU+hztGI5bP
-	 GsmHlRtWlsXu0+4FrIN4ByBt6Wme0Bz7hAhniqpn9r6MgaB3tgeFwNBlSywJTujkPt
-	 d+yoINO9RhKfzsNyKkJbgPGY7Qr71pkQGmABloi0=
-From: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
-To: wufan@kernel.org,
-	paul@paul-moore.com,
-	mic@digikod.net
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	corbet@lwn.net,
-	yanzhuhuang@linux.microsoft.com,
-	linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] ipe: Update documentation for script enforcement
-Date: Wed,  5 Nov 2025 23:26:15 +0000
-Message-ID: <20251105232615.720861-3-yanzhuhuang@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
-References: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
+	 MIME-Version:Content-Type; b=sBv9gLPk4RTdaFLYwSGQJfPbY2iwp2Ag1oOVR79U4aczSqYxm7GR2q8x8uzQj5gy8I33VMTAnnNLUcChJcT5vYdxZCoEMKmAYR00DqDP5uMA8+/Z9ooFCYQ1LFjXl+vJBvJBDlBYmMXl/6UjQeMtpQ7O2US7QkEDFhLvrqgp22I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LX5iBlkR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=wuFVci0OU2fN9OEAMkFdaSsZ4Y0TcQDJ7JJBOCcok8A=; b=LX5iBlkRbRi0vlWqwXCQ19fKzd
+	PHiS9qvugmYaEiXl/VFD5u79R8DBHhkPPU7xiwOQ/p1yMwU9ZEpGRHg5l3P9Ota3u/XbA6C7Bd6qw
+	bJXdjlDsmsgpCBTbeSTB030wIhy5ryWXtcBdhL2qKqw8wrDL2GIMsIzDesWCtvredOEKixoI0RZvM
+	EiXJgRTHQwko2nq8WBYtNfSAv2CW5bIJp7sYFwLC1Rr68fFJ8Yq8iu4kcFTTAlgbI78jsXo3u7LWP
+	9j0qZHZtwP8Lypfsqv+cX6S1UXqH1i7M9IjnVUdgIuuXFLaclY8uNbxwU1T2D1kX1H/Bq51Ww7kmD
+	NVzwMjSg==;
+Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vGmtf-0001FA-Bj; Thu, 06 Nov 2025 00:26:35 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	michael.riesch@collabora.com
+Subject: Re: [PATCH 0/2] Drop RK3568's variant of the CLK_NR_CLKS constant
+Date: Thu,  6 Nov 2025 00:26:32 +0100
+Message-ID: <176238518188.156498.3345794880564705981.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251103234032.413563-1-heiko@sntech.de>
+References: <20251103234032.413563-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-This patch adds explanation of script enforcement mechanism in admin
-guide documentation. Describes how IPE supports integrity enforcement
-for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
-how this differs from kernel enforcement for compiled executables.
 
-Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
----
- Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+On Tue, 04 Nov 2025 00:40:30 +0100, Heiko Stuebner wrote:
+> This drops the use of the CLK_NR_CLKS constant from the rk3568 clock
+> driver and after that, drops the constant from the binding that should
+> not have been part of it in the first place.
+> 
+> Heiko Stuebner (2):
+>   clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
+>   dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
+> 
+> [...]
 
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index dc7088451f9d..a756d8158531 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -95,7 +95,20 @@ languages when these scripts are invoked by passing these program files
- to the interpreter. This is because the way interpreters execute these
- files; the scripts themselves are not evaluated as executable code
- through one of IPE's hooks, but they are merely text files that are read
--(as opposed to compiled executables) [#interpreters]_.
-+(as opposed to compiled executables). However, with the introduction of the
-+``AT_EXECVE_CHECK`` flag (:doc:`AT_EXECVE_CHECK </userspace-api/check_exec>`),
-+interpreters can use it to signal the kernel that a script file will be executed,
-+and request the kernel to perform LSM security checks on it.
-+
-+IPE's EXECUTE operation enforcement differs between compiled executables and
-+interpreted scripts: For compiled executables, enforcement is triggered
-+automatically by the kernel during ``execve()``, ``execveat()``, ``mmap()``
-+and ``mprotect()`` syscalls when loading executable content. For interpreted
-+scripts, enforcement requires explicit interpreter integration using
-+``execveat()`` with ``AT_EXECVE_CHECK`` flag. Unlike exec syscalls that IPE
-+intercepts during the execution process, this mechanism needs the interpreter
-+to take the initiative, and existing interpreters won't be automatically
-+supported unless the signal call is added.
- 
- Threat Model
- ------------
-@@ -806,8 +819,6 @@ A:
- 
- .. [#digest_cache_lsm] https://lore.kernel.org/lkml/20240415142436.2545003-1-roberto.sassu@huaweicloud.com/
- 
--.. [#interpreters] There is `some interest in solving this issue <https://lore.kernel.org/lkml/20220321161557.495388-1-mic@digikod.net/>`_.
--
- .. [#devdoc] Please see :doc:`the design docs </security/ipe>` for more on
-              this topic.
- 
+Applied, thanks!
+
+[1/2] clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
+      commit: 2a42e3210d4331dddfb04b020050bd774cf99659
+[2/2] dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
+      commit: ca38f0f65eefd79889b409c89c6932d7e2fe0993
+
+Best regards,
 -- 
-2.43.0
-
+Heiko Stuebner <heiko@sntech.de>
 
