@@ -1,146 +1,222 @@
-Return-Path: <linux-kernel+bounces-887216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD591C3797B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:57:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC69C3796F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02E83BDD30
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:56:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3476E1A20766
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B534404A;
-	Wed,  5 Nov 2025 19:56:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BE43446C6;
+	Wed,  5 Nov 2025 19:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dF03gt7m";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dCPUd4wU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930A7342CB6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1B5341644
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372591; cv=none; b=EJ1zsdBHtUVxMu+/+Mz0vBV2udUHQGb/liZIoFyvBg6MRXk2mV8zI1AKmtmOcDuujlalSMExfUPjJ3zZXyL5MDibA9xN+IB7GVKQqudqSBJNOqdKb2QWr1iCy+aZQIFQRPNgIuaM+Nqe3TuigcuUbz9Pk3xUboQfOFdvG8ZEio0=
+	t=1762372603; cv=none; b=T06pZIfUDFSlQ/ezVNe50C1XnKC+TWhIQYKWS2qeTS1JUPlq+isubWbvOqsWcsza2oZI2B8oEgPpNofi7T4pzWfYTelB3YVztwfsJ933Juxtf7FsFkhqbM/FhHqRasm/4tVSI3xICyUVsixyUIncAmUl7uI2o8SMOwfLVEF9DXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372591; c=relaxed/simple;
-	bh=DA/TgFcrQsJdkNiib746rgjUVZmzRttIe9da/NbC0fQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cSRE8KgmRDmSJK8uAf1BOewNagDTG4CcmF2G5sSPjHkHsUjRN5SLIrbO3vAYG7qbpidMNQVwebdTfL/P0qEFZEUK6Jd7Hth62osqnf3ymzR5m3R+u/voXA4jVS2h/l9MdfUdveRvb3kSeprKp8bgVnj0HltUfTRwQi2f6eInZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-43331987addso4385975ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:56:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762372588; x=1762977388;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1762372603; c=relaxed/simple;
+	bh=y0djx7SaSKxrg38g7Mq/6kY7uEuPs6Y4jirNJDxy4Uo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TuhRO6gqG1lqvJ/rIzuibHXMUrax6iiKKcDN2qYXMz2O7VR5K5RYxr4wx0naPpYw8+ntq1ciI8Ue0H++SdFxNmQCyGVsl4vYmFEv/s6CnRLF7dmYMtpbJKGPM1Zw1UFlWSAAYyGO/dQms3LJyceJi7ZVYKnGxwCmNMR9c3qlYe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dF03gt7m; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dCPUd4wU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762372600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RfRdq0AOLjAvRpFgewWvnXKqu09Gq6WPLf3shQQBn6o=;
+	b=dF03gt7m4v2LFDVNmqva+6rkm0YhCFMPsx8wBni/J2D4U1RLdlMbX0NaRrTheAR+bgutxe
+	+9nqWqBrNJ1kiXdQgeG6eWuhF91HF23ejjMU92gl0mfZw+WY21fiUgQBElhLBGssEzA6jQ
+	D4o130VTH5JSUw32jVW2JPEkUpHiuRo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-47-fK4bucTONUKkapanPDdQJQ-1; Wed, 05 Nov 2025 14:56:39 -0500
+X-MC-Unique: fK4bucTONUKkapanPDdQJQ-1
+X-Mimecast-MFC-AGG-ID: fK4bucTONUKkapanPDdQJQ_1762372598
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47761eafd18so1024955e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:56:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762372598; x=1762977398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DsJIerXbiX87dCz1LLhmZWGziBLNayY2WNg901pyJbA=;
-        b=VUV6dLm0Q/8gXqw3nQCeMjuvLvsZexjYGVQEnmfU7J1RBsN8Fxn1Nl+vPEwuyXhz3u
-         Y+c+a6OjWDtmPfLR7DJ+Lg1pE/IjcULjFebijUq+qg5qTebXewPXe8qdpQFuQzaeEZLk
-         gZqbqt/0hOHQIa3mvUsczyDu+YYZ4TsoCmwBLI/+T+Dk3l5MaETaeWM47qpPysspOKBf
-         wZG/yIxq/8kREXoKIQktq+GOVDRVbhZaIdq/pOveyXXAsLg1twXthvxCvETx2FyFwh/Y
-         n90lK0IArqEXmZCvVISHHHFTJQj1l3cCj84jyoJ0qmx2WBgQ81WRWfVJTerxEVwf2tbJ
-         dzsQ==
-X-Gm-Message-State: AOJu0YzdEryYi8p0zzhKP+SqMgvoJFJ3sJObs3idO+fs2d6jvb9Uk78Q
-	6iJVjtnI5X/NmrAWpw1pk+zslHStAem5gG4rvE8jDklMVoU5LcBEGpQbyv9g1zyf1LJT+EY65Ki
-	K66tmkcVXZ6or3cjbECMfKP98Wx/Ftaij4yDlTziKtHywFPp+HqRKr3Icfb9wRw==
-X-Google-Smtp-Source: AGHT+IEwPu4aVxUjew24tnX4NK4p2HgqB3ivS5W1s02DNQalhuoV3OG/emTB2nC2LCQlj298Nc6cOTffAMSkxW9WvQtOVEJISneK
+        bh=RfRdq0AOLjAvRpFgewWvnXKqu09Gq6WPLf3shQQBn6o=;
+        b=dCPUd4wUDwoikIXTihkjC5+8ZLU9JgtloI7GLZ+q64xLT0biQ8j0HLtCqsfcgEdv2C
+         Brg2q9FoCDZ75vOlnPaGiWxMrqroASjcmmEGay9Lgbzml7QJg5z9EsOvVLPzPb0/Zxcz
+         csRp2rNYObE104mkvvIXsyGV695Rk7inc2VRtxADfH0wkaUJEPHutcSO+6hxqzjtA3po
+         CbFi8+/1Z/F24+2Mu7wOuV0bZ5FWr2uMhZUm40z6JypB9rQbdXJQOOyBUatFq3DDJhHv
+         0OPyqzoRFeq7Pu5eRWr8RZo7Zk2Jgxmpoaa2ArF1JEmYk3Ksq+3mAZuwchWByKmuJy82
+         N+ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762372598; x=1762977398;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RfRdq0AOLjAvRpFgewWvnXKqu09Gq6WPLf3shQQBn6o=;
+        b=Fn10c8Rd/Z4BBHrS7QKyD8BP2/ip7jBQ1MjcjC9F+/j8cLG5HHUa/A3McykZNuNxZH
+         20BMmA/9x4ixyG0NS8aczSj4uZKpoWZtVV1MBpFw1aDjKvyuKb1J4t+mTSuBCSy8CoTx
+         ZIlB81hzNKGeet1XYNmnafVH0dnYFvVzONzdsU7OBKpEG15XYk+6veJ3hdj4FNVtkTQl
+         z9Xr0p8/pD64qjpFJ2kvV8qTzD/kZwVM60PawdIbeQj27PEXqquJDmHputnmpkYzy7IT
+         DotiOX+p/yfDcGVBpQdy1v7du6xh8aULJjxgpTilBUX+TcsGJor2n2EmFmrGtu84xRHU
+         qAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2XJGDpQfpTHgNsPulzsypyB53snwneQ6Sq1oylnX4z5ZfrTwZnQR+rnRVj3jzOpEivGIZvDsxbamLl+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxewcTxRARsFdDMOWnSdy56Uu+b50jzWv1A9VJJ/yGMxVY1xt6N
+	LrbtlLffI2jxq6+6xxQZWGu1U0ZPhYLQDnQUxuJyKcmZIkaoohm4wGOEdBJprLRabChnmZrlJBP
+	ce0yomiMyCtDdeeVGX+k7luFZh+1OKvdFiTfYG3PB8A12pZRmjN7vgjDApyQKh2Y0wA==
+X-Gm-Gg: ASbGncsoSVqWnf7tTGtqCyrivPGHGmXKEWl3A2CcZOJxDqgiIaLBnNJAFhaevfNNfY8
+	rbtkt8QrhrZ/pZmLYgSoqqdgeB4MI6jgcbxsUU8dsEBwvNOb3ZGlnTD/ZlKh3UaS6BYdMDxy57a
+	3iFSIJ/+VoTDreCkTO3fwvyvl6EHA+50UKJjpSHnIsri5shLCSuiFp5UBcrjORcq8sky2ZW7+9Z
+	2FH8xozfFHFeo4jA9epxPOnZMHUn3YSkkYutaLmFPjUHXQLyPQYuRQlTYPKFhSU4wp0bgRPmyMZ
+	jb74NbimcxLfO1NRfSJGfHCRqA/cPFhr8eyU6dXzLwuifSvLTzCIgQdVuit2THvah8bygXLRcJN
+	ZTH43wBLSzdcaYAN/wtJsS9MStZwMueUgj1sMByMF5sOdKP2VgTGqG2+qS/8owsBnTo2UfVumJT
+	rFgFlURl/mBCkuidA04Qec+w==
+X-Received: by 2002:a05:600c:348f:b0:46f:b43a:aee1 with SMTP id 5b1f17b1804b1-4775ce2c7eemr29950065e9.38.1762372598041;
+        Wed, 05 Nov 2025 11:56:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHK7yLH47QUN086LZNyuRAD2Zw/GPvRFlywAZeFx22RAaEduz3ojwl4v/Mo8ax5jk1OZayf5g==
+X-Received: by 2002:a05:600c:348f:b0:46f:b43a:aee1 with SMTP id 5b1f17b1804b1-4775ce2c7eemr29949845e9.38.1762372597551;
+        Wed, 05 Nov 2025 11:56:37 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc33bdsm64219765e9.1.2025.11.05.11.56.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 11:56:36 -0800 (PST)
+Message-ID: <c8f4e753-836d-4ca4-8a94-c54738b7db45@redhat.com>
+Date: Wed, 5 Nov 2025 20:56:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216b:b0:433:2aac:c540 with SMTP id
- e9e14a558f8ab-433407a409emr71594115ab.14.1762372588688; Wed, 05 Nov 2025
- 11:56:28 -0800 (PST)
-Date: Wed, 05 Nov 2025 11:56:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690babec.050a0220.baf87.0064.GAE@google.com>
-Subject: [syzbot] [trace?] WARNING in ring_buffer_map_get_reader
-From: syzbot <syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Gregory Price <gourry@gourry.net>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
+ <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+ <aQugI-F_Jig41FR9@casper.infradead.org>
+ <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
+ <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+From: David Hildenbrand <dhildenb@redhat.com>
+Content-Language: en-US
+In-Reply-To: <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 05.11.25 20:52, Lorenzo Stoakes wrote:
+> On Wed, Nov 05, 2025 at 02:25:34PM -0500, Gregory Price wrote:
+>> On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
+>>> On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
+>>>> The kernel maintains leaf page table entries which contain either:
+>>>>
+>>>> - Nothing ('none' entries)
+>>>> - Present entries (that is stuff the hardware can navigate without fault)
+>>>> - Everything else that will cause a fault which the kernel handles
+>>>
+>>> The problem is that we're already using 'pmd leaf entries' to mean "this
+>>> is a pointer to a PMD entry rather than a table of PTEs".
+>>
+>> Having not looked at the implications of this for leafent_t prototypes
+>> ...
+>> Can't this be solved by just adding a leafent type "Pointer" which
+>> implies there's exactly one leaf-ent type which won't cause faults?
+>>
+>> is_present() => (table_ptr || leafent_ptr)
+>> else():      => !leafent_ptr
+>>
+>> if is_none()
+>> 	do the none-thing
+>> if is_present()
+>> 	if is_leafent(ent)  (== is_leafent_ptr)
+>> 		do the pointer thing
+>> 	else
+>> 		do the table thing
+>> else()
+>> 	type = leafent_type(ent)
+>> 	switch(type)
+>> 		do the software things
+>> 		can't be a present entry (see above)
+>>
+>>
+>> A leaf is a leaf :shrug:
+>>
+>> ~Gregory
+> 
+> I thought about doing this but it doesn't really work as the type is
+> _abstracted_ from the architecture-specific value, _and_ we use what is
+> currently the swp_type field to identify what this is.
+> 
+> So we would lose the architecture-specific information that any 'hardware leaf'
+> entry would require and not be able to reliably identify it without losing bits.
+> 
+> Trying to preserve the value _and_ correctly identify it as a present entry
+> would be difficult.
+> 
+> And I _really_ didn't want to go on a deep dive through all the architectures to
+> see if we could encode it differently to allow for this.
+> 
+> Rather I think it's better to differentiate between s/w + h/w leaf entries.
 
-syzbot found the following issue on:
+(Being rather silent because I'm busy with all kinds of other stuff)
 
-HEAD commit:    691d401c7e0e Merge tag 'spi-fix-v6.18-rc3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1388b932580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=19d831c6d0386a9c
-dashboard link: https://syzkaller.appspot.com/bug?extid=92a3745cea5ec6360309
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+I agree :)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+As Willy said, something that spells out "sw leaf" would be nice.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5eaccda03e4f/disk-691d401c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0df5294a69bc/vmlinux-691d401c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f4f242731772/bzImage-691d401c.xz
+-- 
+Cheers
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com
+David
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 9655 at kernel/trace/ring_buffer.c:7348 ring_buffer_map_get_reader+0x676/0x8e0 kernel/trace/ring_buffer.c:7348
-Modules linked in:
-CPU: 0 UID: 0 PID: 9655 Comm: syz.2.14601 Tainted: G     U  W I  L XTNJ syzkaller #0 PREEMPT(full) 
-Tainted: [U]=USER, [W]=WARN, [I]=FIRMWARE_WORKAROUND, [L]=SOFTLOCKUP, [X]=AUX, [T]=RANDSTRUCT, [N]=TEST, [J]=FWCTL
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:ring_buffer_map_get_reader+0x676/0x8e0 kernel/trace/ring_buffer.c:7348
-Code: 02 00 00 49 8b 0c 24 8b 74 24 3c 4c 89 f2 48 c7 c7 a0 09 93 8b e8 7a 1d da ff e9 e2 fe ff ff 4c 8b 74 24 58 e8 7b b0 fb ff 90 <0f> 0b 90 e8 72 b0 fb ff 48 89 df 31 db e8 88 f6 fd ff 48 8b 74 24
-RSP: 0018:ffffc900053b7db0 EFLAGS: 00010083
-RAX: 0000000000000773 RBX: ffff88813ff28800 RCX: ffffc900130af000
-RDX: 0000000000080000 RSI: ffffffff81c0bcd5 RDI: 0000000000000007
-RBP: dffffc0000000000 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: ffff88813ff288b0 R12: ffff88813ff288b0
-R13: 0000000000000000 R14: ffff88813ff28818 R15: ffff88813ff14c00
-FS:  00007f5e1e7046c0(0000) GS:ffff888124a10000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32a12ff8 CR3: 0000000021b1c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- tracing_buffers_ioctl+0x2bd/0x370 kernel/trace/trace.c:8717
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5e1d78efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5e1e704038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f5e1d9e5fa0 RCX: 00007f5e1d78efc9
-RDX: 0000000000000000 RSI: 0000000000005220 RDI: 0000000000000004
-RBP: 00007f5e1d811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f5e1d9e6038 R14: 00007f5e1d9e5fa0 R15: 00007ffcaeda0b48
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
