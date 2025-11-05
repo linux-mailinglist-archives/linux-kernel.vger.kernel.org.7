@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-886525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9826EC35D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CBDC35D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96964620C26
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C053F3AC66D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BA531DDBB;
-	Wed,  5 Nov 2025 13:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C974131E0FB;
+	Wed,  5 Nov 2025 13:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YL7Kibw+"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzSR3kru"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAF62E88B3;
-	Wed,  5 Nov 2025 13:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5F7314A83;
+	Wed,  5 Nov 2025 13:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762349212; cv=none; b=Nnptg7VDLdONCuPIIm0tyBurCxsDZVR8pvZoe7dUSfikEIyNCI9EcrWRPsQk2m6ooVV9d8J5MxfPPuetJhATpo0WpvL1PoEcxMrcN0As6SGaHyUCGTLeg3+k8wQsGtmUvi1OZqcS8lvFug5/UffHcsDNifKGs7Y+J5cXCGANefc=
+	t=1762349247; cv=none; b=sv7ZPRtrr5B4j2Jvg3AE77IaJ9Xk6XmrPZyaF1uIYWngIfpC9g8LQQRHz8KXx2xxaVkCxSVD42qzCluL28k4nQsCpA+J6PDg9QdZsFkxNlZKebYuTuEWuvg03iyn8+3sA0HzjOR4BXNVxh4OwT8FQ52FtuiJrz6O3SO5ufeniwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762349212; c=relaxed/simple;
-	bh=IHY6rytRQpqzPhB2aiYR+C+4jwVndLV36Pc4ex8HYhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5PgJfz2gVt0UyXxUDuPkun1fBB+ZhMyjVbJD3+0tC8LqmZnNNthT6fmKHRlNiPJuiRCOd5O8PP5My2UrYmcsLXe9GEwLRbAAcMsBm4/1TC6AEDdrFg4LQImazkNP3wSAxYUYczlrC0KU/3z3k2E+yiTsuqdoNoVqdl90KRtIN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YL7Kibw+; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 7F3481A18B5;
-	Wed,  5 Nov 2025 13:26:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5483860693;
-	Wed,  5 Nov 2025 13:26:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AFF1C102F1EE5;
-	Wed,  5 Nov 2025 14:26:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762349205; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=uifLZp4U9pUGvLsbQU1oTJDlQ22nTkkVAsDheTV04iY=;
-	b=YL7Kibw+BnpbXzqfm8VIkUr1qfC80eLiaXq695de/aSgs1/ct4ycRtw8ZL2nzEMDeFLvVo
-	rZrlMevg47Q4XjUAIh/ljxfQPEGosNcd/0fPzsCdnauF4qw2pf6akyxrZUVcgVi9irKG3f
-	l3KrgjWDHoQ/NEUVkiKaNS75pbaDeQFTqeAnUZAeiHV7g5y9+hOKuPJ3H4WklzINbyGr1w
-	RvKwbVLUrv1HDNT9YLADSKW7TRt2cCHJLTmomXl0cy3JbRbk2GSUTgtbiDZkQqOOCAeWGN
-	kKL90Q7U0snJqLEh0eiNYttF9q0j+wxzR0fju2ywQqAIml3NsnP2EpbPYjgXEw==
-Message-ID: <b3a4e2b3-f360-4dee-815b-cee3b9095074@bootlin.com>
-Date: Wed, 5 Nov 2025 14:26:42 +0100
+	s=arc-20240116; t=1762349247; c=relaxed/simple;
+	bh=SEerTwdJP63criKnFsZCVMg0qELu+YO6zkrLEpE2uFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaUJNZ8eyMJkAYHf2qOjMvsF4WaGuo2GZfP8AsCmna8csiOHuLsdNfw3HygvcK/9i+Ongxrc91oaw9Ht1rNCW9mh7mN+RhhOiNLuM7uH1Xqbyis6fSD6IIm/lmBvZhWDr0W9ADI8oem44SsJBAmQGcFkRb7Rm06YHqu/KiC4NUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzSR3kru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9F0C4CEF8;
+	Wed,  5 Nov 2025 13:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762349246;
+	bh=SEerTwdJP63criKnFsZCVMg0qELu+YO6zkrLEpE2uFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uzSR3krulwQOln2J5vD0V6EGeuPWYi+NlYw3iQpeIeB4GA2ymk2WMHmbkQJcWyNuH
+	 G58AgHaQpiclu/dkiR1TmtYuTVxNtZ6f7T6L735V/7+McMF8yb9VtgXKUxREtDHeDI
+	 HI0RTN1RCNVONZKjzZHIOBdUrbew1rtEMHDadthLTqfNOzOjJPh8ABTXnVYNm4+/XJ
+	 iNAxsCqKH3dYdHtK0za2xF5pJD7dsFZFbpnztNz2sdwxXrXTfcxTXzJ1JPDCsdQo8s
+	 bEReqvz0yJTfaWavdLjCWrOZ9drnEevugrmLvUzfoyG8TDKz2YdnVDok2KEZ7FYSq7
+	 BlS0MSBeqMVLg==
+Date: Wed, 5 Nov 2025 13:27:23 +0000
+From: Mark Brown <broonie@kernel.org>
+To: wangweidong.a@awinic.com
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	srinivas.kandagatla@oss.qualcomm.com, arnd@arndb.de,
+	cy_huang@richtek.com, nick.li@foursemi.com, shenghao-ding@ti.com,
+	alexey.klimov@linaro.org, niranjan.hy@ti.com, linux@treblig.org,
+	zhangyi@everest-semi.com, thorsten.blum@linux.dev,
+	kuninori.morimoto.gx@renesas.com, yesanishhere@gmail.com,
+	marco.crivellari@suse.com, ebiggers@google.com, ardb@kernel.org,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+	yijiangtao@awinic.com
+Subject: Re: [PATCH V3 6/7] ASoC: codecs: Rework the aw88261 driver
+Message-ID: <aQtQu56kG1Jb47l6@finisterre.sirena.org.uk>
+References: <20251028123357.46161-1-wangweidong.a@awinic.com>
+ <20251028123357.46161-7-wangweidong.a@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] gpio: add gpio-line-mux driver
-To: Jonas Jelonek <jelonek.jonas@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251105103607.393353-1-jelonek.jonas@gmail.com>
- <20251105103607.393353-3-jelonek.jonas@gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20251105103607.393353-3-jelonek.jonas@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xyq+H7U65wHTIEh0"
+Content-Disposition: inline
+In-Reply-To: <20251028123357.46161-7-wangweidong.a@awinic.com>
+X-Cookie: He who laughs last didn't get the joke.
 
-On 11/5/25 11:36 AM, Jonas Jelonek wrote:
-> Add a new driver which provides a 1-to-many mapping for a single real
-> GPIO using a multiplexer. Each virtual GPIO corresponds to a multiplexer
-> state which, if set for the multiplexer, connects the real GPIO to the
-> corresponding virtual GPIO.
-> 
-> This can help in various usecases. One practical case is the special
-> hardware design of the Realtek-based XS1930-10 switch from Zyxel. It
-> features two SFP+ ports/cages whose signals are wired directly to the
-> switch SoC. Although Realtek SoCs are short on GPIOs, there are usually
-> enough the fit the SFP signals without any hacks.
-> 
-> However, Zyxel did some weird design and connected RX_LOS, MOD_ABS and
-> TX_FAULT of one SFP cage onto a single GPIO line controlled by a
-> multiplexer (the same for the other SFP cage). The single multiplexer
-> controls the lines for both SFP and depending on the state, the
-> designated 'signal GPIO lines' are connected to one of the three SFP
-> signals.
-> 
-> Because the SFP core/driver doesn't support multiplexer but needs single
-> GPIOs for each of the signals, this driver fills the gap between both.
-> It registers a gpio_chip, provides multiple virtual GPIOs and sets the
-> backing multiplexer accordingly.
-> 
-> Due to several practical issues, this is input-only and doesn't support
-> IRQs.
-> 
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> ---
->  MAINTAINERS                  |   6 ++
->  drivers/gpio/Kconfig         |   9 +++
->  drivers/gpio/Makefile        |   1 +
->  drivers/gpio/gpio-line-mux.c | 129 +++++++++++++++++++++++++++++++++++
->  4 files changed, 145 insertions(+)
->  create mode 100644 drivers/gpio/gpio-line-mux.c
-> 
-Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
 
-Best Regards,
-Thomas
+--xyq+H7U65wHTIEh0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 28, 2025 at 08:33:56PM +0800, wangweidong.a@awinic.com wrote:
+> From: Weidong Wang <wangweidong.a@awinic.com>
+>=20
+> Modify the interface for calling the aw88261 driver
+> to adapt it for aw-common-device.c and aw-common-firmware.c
+
+This doesn't apply against current code, please check and resend.
+
+--xyq+H7U65wHTIEh0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkLULoACgkQJNaLcl1U
+h9A2Jwf/TOX9qFA7zSF+mpNxNV3ad2VwR1XVlaqgd8B4DTG5OUM7EKmnoUKnZ+ex
+wvv8WNXz81vpl+Zv9VpLElMugs86vgM2a8ywRQPXIAr7Dvmpy18plgV3jBJFXkT+
+Pw1LfETBbWL2QGqvizwokmdckH7avbWJkmKOMFh0lFjLf/gUsxwlcmcFvYWylqbF
+TnkqbocrI/NthOR4j5zaU5eNeEt/mg8+AKjKcoUjsA1XmcYHiYBJOl/urMaIuLBO
+DAezGIsg4Tlz5YFO7+KAtgQDZhQbJAoMPjAI90qipGWKVRUHoVb2tY8zalyR4kU9
+Ihd7S3CPWoxMUAvPL84LR+ZPQwuSYQ==
+=bRBG
+-----END PGP SIGNATURE-----
+
+--xyq+H7U65wHTIEh0--
 
