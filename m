@@ -1,202 +1,250 @@
-Return-Path: <linux-kernel+bounces-886145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C03FC34D8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:30:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC83C34D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CACA74F1D06
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D98188298A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2E830C628;
-	Wed,  5 Nov 2025 09:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE41C30DEDA;
+	Wed,  5 Nov 2025 09:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H6vcuT6f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeiR4NoS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uqvwPEKU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeiR4NoS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uqvwPEKU"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0552FE59D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C330CDBE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334502; cv=none; b=ez/niD5QeUIgjsJzxLqSI8o68YiLZumy6tFb28RHEBFTMkZ6n1oGM6DztY8yLk1j3eBywnNCaSxWCLSFZJVr4tIAa0QTSE7OSDXBKzRyg6eIFjEa6xW7OjQ96bWOMkxl6Oypf3Hz0vqH7sjeTqzI+apxT7LjEPQaFXBVMsrrqNs=
+	t=1762334516; cv=none; b=GbHfBF53cDClPC2ejdc1p3bwvIosaHbeTjb0/muKk3dIVXYWPhWAWcIsz/Z25Jn/aFg4q8vbbZdE3v4KirB3bLLoLqDPY9d8k55qX1HYtBBKWkNM99+ehmPi4HJ/oHY6bdBxhfiqP+PFYTJJtN2AKlNPxlQtS9a2uOcpEO0Imt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334502; c=relaxed/simple;
-	bh=+sABwdmfd9hpr2RNRSU4kSMhWDCaxWnHWChxNQlt5bU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=TrjFThTycZCz0UT4QrctPKBhlK8XLpyj2oyeoxvBCaDkCGlePGOt2A3BZTtyGwq5yHNNpVoYlsZ37BuTPq1Ixg6YdZTTuIEkn3c8ALwrOf9iRf+zLCzuV9xXP0HpL/s3uoc6T5irx76Gw3eaOW/y5+5K60Gyq2ejoLYW0n77WGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H6vcuT6f; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762334501; x=1793870501;
-  h=date:from:to:cc:subject:message-id;
-  bh=+sABwdmfd9hpr2RNRSU4kSMhWDCaxWnHWChxNQlt5bU=;
-  b=H6vcuT6fOjCPdXeusb3GU2Cv9uq4coqRDnTpbNKqhxzgk5elmp6SZtdr
-   rW5MczBqBY5arC3zPfpDnhpbEu+kSkaTSmw0P0iT/CE3xUINBXB0NcSad
-   /VZxxjohN1YlrPAeDLJ49LlTCUCN87UCRQTwdlGPR7/UA/jyE4/snMgOF
-   AspEIpMObp+dVfSTFJsv/CvUqPnoycndSRJpli9vQntgGiMn6s3it4cF6
-   PtL+y3SHxGLLMx8lIyPDz2G+Kez71KE/QxnUfHsAycP4wTb9HLi2Jz8L5
-   vdyNlsNdaJ8fEw1x8doL9QwBVTIy+EhRa+DWK2K2r9vTrbo1KaIxpQbKm
-   A==;
-X-CSE-ConnectionGUID: W0ecNoaqShq/SN64dak5nA==
-X-CSE-MsgGUID: dteUJGoqRAOpnNCIPkrQ5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68281406"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="68281406"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:21:40 -0800
-X-CSE-ConnectionGUID: sZylkPoxSziVciJKKA72Vg==
-X-CSE-MsgGUID: URWk8m50SAO/sWwf3HzyqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="187564272"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 05 Nov 2025 01:21:39 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGZhu-000SMR-38;
-	Wed, 05 Nov 2025 09:21:34 +0000
-Date: Wed, 05 Nov 2025 17:21:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 948b99877bf5a1cd58bee930e455b7574daba5c3
-Message-ID: <202511051720.XrTlIQ5k-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762334516; c=relaxed/simple;
+	bh=7QmbSoSFkJU0x22h/fBGtFwP6eIRiQcW2vzomv5wvQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iy62IagKXxTzBXPkvubrzc1oSc4AtmITvbAFGCOeVTJDB38XL+5BWro3JjZLUfT2+p0DvpdBeGI5fI2cv+HgOjUjqGB4fKg3EHkOMhel4p9NRbpXYhdrhaTb17qB0Ga97TDzGE9rKeRSYEKnxG8AzPEhPyRAY2vY2wNW3Kyfc5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeiR4NoS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uqvwPEKU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeiR4NoS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uqvwPEKU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 86F8221181;
+	Wed,  5 Nov 2025 09:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762334512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
+	b=xeiR4NoS39SfhExjX/IbEG6Ah8riUDdj05SyDWi1Sjm9P9AsioakTVj/b4F3y8W45kAu4W
+	5JQ1mVje6U2i+f9ewV8olKWoCRUJJRS+kYHzMD8Px1I5k0884E86/sIlxi5crdmbfWcx4n
+	vN0RXs9+aW3yziq5bmUFWj0HmIUlTXg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762334512;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
+	b=uqvwPEKUZeWCS1Oon506yU+IqoyTApTuNFNmwCAHWz+xxfm0SCKL6bFFw+gnQSOCgnLMrT
+	8zuVFDiV0O47eWCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762334512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
+	b=xeiR4NoS39SfhExjX/IbEG6Ah8riUDdj05SyDWi1Sjm9P9AsioakTVj/b4F3y8W45kAu4W
+	5JQ1mVje6U2i+f9ewV8olKWoCRUJJRS+kYHzMD8Px1I5k0884E86/sIlxi5crdmbfWcx4n
+	vN0RXs9+aW3yziq5bmUFWj0HmIUlTXg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762334512;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
+	b=uqvwPEKUZeWCS1Oon506yU+IqoyTApTuNFNmwCAHWz+xxfm0SCKL6bFFw+gnQSOCgnLMrT
+	8zuVFDiV0O47eWCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CEA3132DD;
+	Wed,  5 Nov 2025 09:21:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x4h8HjAXC2lVFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:21:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 382E2A083B; Wed,  5 Nov 2025 10:21:52 +0100 (CET)
+Date: Wed, 5 Nov 2025 10:21:52 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 15/25] ext4: rename 'page' references to 'folio' in
+ multi-block allocator
+Message-ID: <zi2xv42wg45qbveq4vxtdodencx7zb2esscwensoaka2hiojdr@imra4faaz42g>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-16-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-16-libaokun@huaweicloud.com>
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,huaweicloud.com:email,suse.cz:email,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
+X-Spam-Level: 
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 948b99877bf5a1cd58bee930e455b7574daba5c3  Merge branch into tip/master: 'x86/sgx'
+On Sat 25-10-25 11:22:11, libaokun@huaweicloud.com wrote:
+> From: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> The ext4 multi-block allocator now fully supports folio objects. Update
+> all variable names, function names, and comments to replace legacy 'page'
+> terminology with 'folio', improving clarity and consistency.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-elapsed time: 1475m
+Looks good. Feel free to add:
 
-configs tested: 110
-configs skipped: 6
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+								Honza
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                        nsim_700_defconfig    gcc-15.1.0
-arc                   randconfig-001-20251104    gcc-12.5.0
-arc                   randconfig-002-20251104    gcc-9.5.0
-arm                               allnoconfig    clang-22
-arm                                 defconfig    clang-22
-arm                   randconfig-001-20251104    gcc-14.3.0
-arm                   randconfig-002-20251104    gcc-10.5.0
-arm                   randconfig-003-20251104    clang-22
-arm                   randconfig-004-20251104    gcc-8.5.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20251105    clang-17
-arm64                 randconfig-002-20251105    gcc-13.4.0
-arm64                 randconfig-003-20251105    gcc-8.5.0
-arm64                 randconfig-004-20251105    clang-17
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251105    gcc-15.1.0
-csky                  randconfig-002-20251105    gcc-15.1.0
-hexagon                           allnoconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20251104    clang-22
-hexagon               randconfig-002-20251104    clang-16
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251105    gcc-14
-i386        buildonly-randconfig-002-20251105    gcc-14
-i386        buildonly-randconfig-003-20251105    clang-20
-i386        buildonly-randconfig-004-20251105    gcc-14
-i386        buildonly-randconfig-005-20251105    gcc-14
-i386        buildonly-randconfig-006-20251105    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251104    gcc-15.1.0
-loongarch             randconfig-002-20251104    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                           ip32_defconfig    clang-22
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251104    gcc-8.5.0
-nios2                 randconfig-002-20251104    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251104    gcc-8.5.0
-parisc                randconfig-002-20251104    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc               randconfig-001-20251104    gcc-15.1.0
-powerpc               randconfig-002-20251104    clang-22
-powerpc                  storcenter_defconfig    gcc-15.1.0
-powerpc                 xes_mpc85xx_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20251104    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251104    gcc-8.5.0
-riscv                 randconfig-002-20251104    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251104    clang-22
-s390                  randconfig-002-20251104    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                               j2_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251104    gcc-13.4.0
-sh                    randconfig-002-20251104    gcc-11.5.0
-sh                           se7619_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc64                             defconfig    clang-20
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251105    clang-20
-x86_64      buildonly-randconfig-002-20251105    gcc-13
-x86_64      buildonly-randconfig-003-20251105    gcc-14
-x86_64      buildonly-randconfig-004-20251105    gcc-13
-x86_64      buildonly-randconfig-005-20251105    gcc-14
-x86_64      buildonly-randconfig-006-20251105    gcc-13
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-011-20251105    clang-20
-x86_64                randconfig-012-20251105    clang-20
-x86_64                randconfig-013-20251105    clang-20
-x86_64                randconfig-014-20251105    gcc-14
-x86_64                randconfig-015-20251105    clang-20
-x86_64                randconfig-016-20251105    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  fs/ext4/mballoc.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 155c43ff2bc2..cf07d1067f5f 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -98,14 +98,14 @@
+>   * block bitmap and buddy information. The information are stored in the
+>   * inode as:
+>   *
+> - *  {                        page                        }
+> + *  {                        folio                        }
+>   *  [ group 0 bitmap][ group 0 buddy] [group 1][ group 1]...
+>   *
+>   *
+>   * one block each for bitmap and buddy information.  So for each group we
+> - * take up 2 blocks. A page can contain blocks_per_page (PAGE_SIZE /
+> - * blocksize) blocks.  So it can have information regarding groups_per_page
+> - * which is blocks_per_page/2
+> + * take up 2 blocks. A folio can contain blocks_per_folio (folio_size /
+> + * blocksize) blocks.  So it can have information regarding groups_per_folio
+> + * which is blocks_per_folio/2
+>   *
+>   * The buddy cache inode is not stored on disk. The inode is thrown
+>   * away when the filesystem is unmounted.
+> @@ -1556,7 +1556,7 @@ static int ext4_mb_get_buddy_folio_lock(struct super_block *sb,
+>  	return 0;
+>  }
+>  
+> -static void ext4_mb_put_buddy_page_lock(struct ext4_buddy *e4b)
+> +static void ext4_mb_put_buddy_folio_lock(struct ext4_buddy *e4b)
+>  {
+>  	if (e4b->bd_bitmap_folio) {
+>  		folio_unlock(e4b->bd_bitmap_folio);
+> @@ -1570,7 +1570,7 @@ static void ext4_mb_put_buddy_page_lock(struct ext4_buddy *e4b)
+>  
+>  /*
+>   * Locking note:  This routine calls ext4_mb_init_cache(), which takes the
+> - * block group lock of all groups for this page; do not hold the BG lock when
+> + * block group lock of all groups for this folio; do not hold the BG lock when
+>   * calling this routine!
+>   */
+>  static noinline_for_stack
+> @@ -1618,7 +1618,7 @@ int ext4_mb_init_group(struct super_block *sb, ext4_group_t group, gfp_t gfp)
+>  	if (e4b.bd_buddy_folio == NULL) {
+>  		/*
+>  		 * If both the bitmap and buddy are in
+> -		 * the same page we don't need to force
+> +		 * the same folio we don't need to force
+>  		 * init the buddy
+>  		 */
+>  		ret = 0;
+> @@ -1634,7 +1634,7 @@ int ext4_mb_init_group(struct super_block *sb, ext4_group_t group, gfp_t gfp)
+>  		goto err;
+>  	}
+>  err:
+> -	ext4_mb_put_buddy_page_lock(&e4b);
+> +	ext4_mb_put_buddy_folio_lock(&e4b);
+>  	return ret;
+>  }
+>  
+> @@ -2227,7 +2227,7 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
+>  	ac->ac_buddy = ret >> 16;
+>  
+>  	/*
+> -	 * take the page reference. We want the page to be pinned
+> +	 * take the folio reference. We want the folio to be pinned
+>  	 * so that we don't get a ext4_mb_init_cache_call for this
+>  	 * group until we update the bitmap. That would mean we
+>  	 * double allocate blocks. The reference is dropped
+> @@ -2933,7 +2933,7 @@ static int ext4_mb_scan_group(struct ext4_allocation_context *ac,
+>  	if (cr < CR_ANY_FREE && spin_is_locked(ext4_group_lock_ptr(sb, group)))
+>  		return 0;
+>  
+> -	/* This now checks without needing the buddy page */
+> +	/* This now checks without needing the buddy folio */
+>  	ret = ext4_mb_good_group_nolock(ac, group, cr);
+>  	if (ret <= 0) {
+>  		if (!ac->ac_first_err)
+> @@ -4725,7 +4725,7 @@ static void ext4_discard_allocated_blocks(struct ext4_allocation_context *ac)
+>  				   "ext4: mb_load_buddy failed (%d)", err))
+>  			/*
+>  			 * This should never happen since we pin the
+> -			 * pages in the ext4_allocation_context so
+> +			 * folios in the ext4_allocation_context so
+>  			 * ext4_mb_load_buddy() should never fail.
+>  			 */
+>  			return;
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
