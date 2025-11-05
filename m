@@ -1,92 +1,85 @@
-Return-Path: <linux-kernel+bounces-885791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADA8C33EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:13:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAF6C33ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCC44247EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E2918C26F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F28324466B;
-	Wed,  5 Nov 2025 04:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4684254855;
+	Wed,  5 Nov 2025 04:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="me5sjNZ3"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8yWVUdD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA247260F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0742F56;
+	Wed,  5 Nov 2025 04:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762315986; cv=none; b=lpVSMQ8YpnWb3ZOH2BPjR+1TyfgplJ7XdN8JubJc2nA6FVj+AOoHe8elO82L7u4OqCbBBZTrheWviZoru6MBgjWt72/APwxBkxzZcBxo8nFQQMYn1tzOKlxOJB+6DqRBhVHIU0psjaX1eaBbgMLXoQzeKoK3fdazMnPm8eqqIa8=
+	t=1762316455; cv=none; b=SHWjVo2DT6VXvv3uMtTQR4OE3ptKMd5msLO1Nu4dNI5o4TWkjOtrcjDJaXqyplp65a+r/xOpIzCL8IGOuiQuAP40Z7hFLHsoUj/+AyS59sV3mu843niL/7GvmMnGhp4eVuFnGLh6F5+Bcxj19z1raR11Qighw5bvkfwD5uzZFNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762315986; c=relaxed/simple;
-	bh=Eeg8JaMqf0IVm+msPAuMZVAemXY1r9F8Xrpn+cUTUbk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Wj43DaYfXg7N9xe2QDvwolGtujyBifhpkyGltD3rFC6QECck+yJSoex2JHaC8kf7sfgbo+1aYWN1pGIlulzVocIuuY5ZjvUIvzZjmMfR+5gfeIMnaIlyxbOL5r7zoKDIVzjVHZWSVvrjU/YaqwzKucs7paVsK7xoHiy8nSWUUhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=me5sjNZ3; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 55858EC0213;
-	Tue,  4 Nov 2025 23:13:02 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 04 Nov 2025 23:13:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762315982; x=1762402382; bh=J8MSnqb9oJ8hOyo/Cuc0Lahe+ACYy1X7u4c
-	6Cmkf0Ec=; b=me5sjNZ3cOuy9BjgUmaJtcG4W0KHRF35S9yNi0PjDrGQkc7il31
-	F5G2V/B2YbkIzvxej1bhcMOUcWGrf40Plw1YRsHGepdF6Z2pJUUObLfRoai1m/dv
-	/ypUwxuYfrI2CWkVpGKspS1uvrt+k6eUJgrq3889dC8czyCWgMeMQFNjA2ulgW/z
-	Fnv1DTZ3PoJ1NsjYB/+qiHfRQYQzEcaJS7By1ocwQ96AuK7zLau1efeG4EXgcjTt
-	VcafHWSYUU3xZ26LGu18uvzJf+Y6aDZpHWcFWY3MjjFZPhbeuB0FSUyfFj6wJ9HL
-	bjBYau+rWv8dFVY2nBctC8hNlBKVaGZYR2w==
-X-ME-Sender: <xms:zM4KaR0l1OxErxWXaygApfF_9BONM9C2pMz07CzuU3Teevzpux5yww>
-    <xme:zM4KaT5GmYkH6L3Hc_d_O-twnq6TDZQVj2sviQ1d8XNEE5V7sxMdiQWeaEkuM7fg5
-    nhh1SJYkHiRNs_7XXSaIb2SpEzMN4hRq7OI9IFkVJPV-X03a6IAwbo>
-X-ME-Received: <xmr:zM4KadTV15gR_oE47J17283eElwFXqEAHdAhnnDeImIib6dLrRyPhK-Wb_T2vXS6kXYmEPaBi9kt_6XHuPi0KhhFzqzib9yu1GE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedvleduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrgh
-    dprhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtohepmhhp
-    vgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepnhhpihhgghhinhesghhmrg
-    hilhdrtghomhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhr
-    ohhuphdrvghupdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpth
-    htohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhinhhgrdhorhhgpdhrtghpthhtohep
-    lhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:zM4KaYXAICgnitXLRix7RN-xOnsznBzZtbi6Oqh2k_pBrDpMkSzeOw>
-    <xmx:zM4KaSENEJpWEIxaOlbbiV9NSjRqK1DurtvOrl66jqRPyoMUAkOS8A>
-    <xmx:zM4KabcODOifgDuXFQVlqpGVTuhMs0g6SaXjf5HKiTk68eW4_vxOpA>
-    <xmx:zM4Kabq7p643LGzplcMHhsBzAlsyP2aWZicZVnJ0IAOHnnQEMjKu9Q>
-    <xmx:zs4KacX86euGDMYc27_IarFDd8axj6mdTHAG8SuD5NUBok2K_O5qdOP1>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Nov 2025 23:12:57 -0500 (EST)
-Date: Wed, 5 Nov 2025 15:13:09 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com, 
-    christophe.leroy@csgroup.eu, sam@ravnborg.org, benh@kernel.crashing.org, 
-    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>
-Subject: QEMU limitations, was Re: [PATCH v4] powerpc: Use shared font data
-In-Reply-To: <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
-Message-ID: <492c13c9-666c-9578-6c66-0eb8fefc93dc@linux-m68k.org>
-References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey> <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org> <aQgJ95Y3pA-8GdbP@gallifrey>
- <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
+	s=arc-20240116; t=1762316455; c=relaxed/simple;
+	bh=TZ/iCpQhqI2k8DgkkaFJpNQayv4Ws2h8B/Abzdxr+K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d7EBD2R3wd7V38AICl8pwI3O5noQZbxpiGwMcuYDQCvT+QvDyvH72JWFptQyhLGXUMLj8Fd+rvlI2cqTolbe10ED87Hrqd7z3GBrpFrnqJJu9cLMrJDpYcRX8rjusqAyUM0Wpk0NgYhyoJt00CFhD8Gwxr4Lb9uF7U+FoYAbMIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8yWVUdD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762316454; x=1793852454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TZ/iCpQhqI2k8DgkkaFJpNQayv4Ws2h8B/Abzdxr+K8=;
+  b=W8yWVUdD1FaY2RlBNXtU7S27+xqLYRMHtUcreWHJyrrGcOoYN8wKt4Kq
+   BRhiGPZCfCEKRQSp0VGlsxg3jQX3ZWFU25IujHK6Zam5Hcr9ODzxt3OM9
+   hYyhO5Dv7+HntsDIKoYBBcGqzCACHXIEahD2mGiKQ/z5N6C78Ou5tWlAA
+   MSv/RfYzlx6PaIfngAYhjyAwQmhCQ+Vsq2zuRClIhLTlntiAhcnchGWow
+   enuD8fjSyJaqsqJbJ4d8Ikk3jJJpF8047Rw8Shu7HhyoOrk8GzyEj3D2C
+   C7zi4WgWznUpGbDsGQ4iTHWCcMdkNk3QP8sNdzFeazWs1XzBpZEzEqy7x
+   A==;
+X-CSE-ConnectionGUID: EzyIoh2QTAqwrCHIPsJ7ug==
+X-CSE-MsgGUID: MJaRriBaT0GO0JRbX/ypmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="74716731"
+X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
+   d="scan'208";a="74716731"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 20:20:53 -0800
+X-CSE-ConnectionGUID: QYLtRUMnQEeRSfVzBGxQ5A==
+X-CSE-MsgGUID: FzSmdCbGRSq8R4gHd8Yy8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
+   d="scan'208";a="191698524"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 04 Nov 2025 20:20:48 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGV0e-000S9y-33;
+	Wed, 05 Nov 2025 04:20:38 +0000
+Date: Wed, 5 Nov 2025 12:20:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>, Marco Elver <elver@google.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	m.wieczorretman@pm.me, stable@vger.kernel.org,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] kasan: Unpoison pcpu chunks with base address tag
+Message-ID: <202511051219.fmeaqcaq-lkp@intel.com>
+References: <821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,31 +87,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman@pm.me>
+
+Hi Maciej,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.18-rc4 next-20251104]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Maciej-Wieczor-Retman/kasan-Unpoison-pcpu-chunks-with-base-address-tag/20251104-225204
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman%40pm.me
+patch subject: [PATCH v1 1/2] kasan: Unpoison pcpu chunks with base address tag
+config: x86_64-buildonly-randconfig-003-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051219.fmeaqcaq-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511051219.fmeaqcaq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511051219.fmeaqcaq-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/kasan/common.c:584:6: warning: no previous prototype for '__kasan_unpoison_vmap_areas' [-Wmissing-prototypes]
+     584 | void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-On Mon, 3 Nov 2025, Finn Thain wrote:
+vim +/__kasan_unpoison_vmap_areas +584 mm/kasan/common.c
 
-> > OK, remember I don't think I've ever tried PPC via MacOS booting, so 
-> > not familiar with it.
-> > 
-> 
-> I will try to set up a MacOS guest in QEMU, to see if the hang can be 
-> reproduced that way.
-> 
+   583	
+ > 584	void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
 
-QEMU appears to be incompatible with the Old World ROM from the Beige G3. 
-'qemu-system-ppc -M g3beige -bios 78F57389.ROM -serial stdio' drops into a 
-ROM diagnostic menu and won't boot.
-
-I did get 'qemu-system-ppc -M mac99 ...' to boot into MacOS 9, by using 
-OpenBIOS instead of Apple firmware. Unforunately, BootX is not compatible 
-with this configuration, so it won't help.
-
-BootX is compatible with beige powermacs, but 'qemu-system-ppc -M g3beige' 
-with OpenBIOS fails to boot MacOS 9 ("MacOS: unable to find an interrupt 
-controller node").
-
-OpenBIOS wouldn't boot a MacOS 8.1 CD-ROM either, but for different 
-reasons: both mac99 and g3beige failed with "No valid state has been set 
-by load or init-program".
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
