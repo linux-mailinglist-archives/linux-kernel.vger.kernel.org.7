@@ -1,285 +1,276 @@
-Return-Path: <linux-kernel+bounces-886551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295ADC35EAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:48:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CD7C35EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:49:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2618C6FA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609F518C6C41
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E0D321F2A;
-	Wed,  5 Nov 2025 13:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DED53126A8;
+	Wed,  5 Nov 2025 13:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b886+smX"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wmx54f+P"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685B9311971
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A429E3148A4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350498; cv=none; b=FvyHlXROr0mE8Iz3O9k2XPv3324dN1rpCYUefaHTNKCIj+ZjJIm09euhZtDrZU5upysZ7hZDweAdOtrQ9lko7WIkRS43Cs4sIB/ZiJmC9mpAmZr0nFVhME0GYcwCkQ90qsUy41o8G4zL/f6fMFsm3271qVGgwwtP6DOLsDi4204=
+	t=1762350537; cv=none; b=qqwtxEzgFw5DLMUCc3xy28u5QrSiV38Wr3JLuyQCdzlNLQJyw/CPpwps6RtoAmw0lShwmVR7FDasnQLji0vY3PFsZzJMzznXvftOJMO+q6Hgln2rkuwYU4Jrk8b44EhIRdrpBVVYu/M3iGQmyNqbB+LO9f+VjVLACmzeJSu/pdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350498; c=relaxed/simple;
-	bh=rpF/oLwwz7O841ew+syC7sbdElbrIiTt86A497EpAOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CNYeRXYx5qYSEk4Oc4Zpl5g2BdAtf7SaxORoNY4jljWFOjPK69kqHMdc8ZGDEGKpq7QW5CFbmxZHkKXxswI4ARN/c/zpysgzmTb8bRMmLlDnKpTNduYywi4ingksO7lxa/zH8TIuwdkD4a6tVSBdaJYJ783S0izu19y9oJw8XBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b886+smX; arc=none smtp.client-ip=74.125.224.54
+	s=arc-20240116; t=1762350537; c=relaxed/simple;
+	bh=5oI5qj5FAoT/zD4PITm/avrYSdsCmqjpO6F2XoPyDxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l9n4KvJDK7TiUEfaZSkTPenOstoJsueuZdlo/DanQr6CT2PHCLhr3gM1fgKJqU2sMFI6mv1F+I+VAdi7ytRgSAM7KL+Pyi18Ek+W0LJWZuj5+EXbQFWv8u57yZUGozRWDFBgFmpHhQcjBev/73EFiVuh1cM6a9tocRs06uvwewk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wmx54f+P; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63fbbad0ac3so2912374d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:48:16 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b71397df721so553421666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:48:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350495; x=1762955295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJssk0gxGn0iFLrk19VXEsDISUnqvEbeNwuR40SWB4Y=;
-        b=b886+smX3j5oZckN2lHZoPGF9ghRxRr9luDRFgUAsE8cx77wsfwW075PwOcn23ixPj
-         BBYS0XT/ReW8RfX+LZLvq9hW3ZCZ/bTVWIvdl5Yw/guZ7A+G5oJfSvJ8rtKHQid3O9rt
-         6VAWBQKuOkJoszLBXzOncEwYfgkhF0i3Pr6rAhDVh2jkSIf2wGAgqeD5dfJocGJHIoRk
-         nVoDvVT+/1qCzS349lZsVWwT5eBNSKY+bBbpRlSvzqTLGQoRPvgoTG9JYcDy9R4GJlV2
-         NYEPX7FqBrBoH2TIYF0YfM7Qz0zUqzKPD9r0MvLWsqw4a9C8/k0+7JTpCbOUHZGcWbhL
-         vE+Q==
+        d=gmail.com; s=20230601; t=1762350534; x=1762955334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6A5M4lHiwAqecEpYdy09Dd0pGpiHeylPQ1THRXjXvY=;
+        b=Wmx54f+PTu++Npt1dHK/kS2g/3FhETHIqetcTtY9dkCcDI4SlJcLJfQq/l3fTff+ke
+         GNZtS6cEw9C+F0McYtE2vpAhZeWk+oMNYfLwoqMjrsA32HJSBnW+C+hcLvF1V56ydpXQ
+         5dUa13jwxvFma40vuGbN5PY9tvLdkfho0opZHiZhZLHRavRUicFn1JSmAJHPDkB4iFUS
+         m0nbgX/XkRK2J1w4G/FOF+iazYswfD8PGwb1kofBzw8s4h1mrcWAgsnuBdLZJ/pDXCrn
+         oVrNIG5I7eNmbN5A24nLhcDTTzGNixYArCB4KBAf+JcZkvHAxZdH28EvsmW/Dxbt0350
+         91uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350495; x=1762955295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jJssk0gxGn0iFLrk19VXEsDISUnqvEbeNwuR40SWB4Y=;
-        b=jgubdaLsEkte/bcwyj2ut52JnSLnz1PROEy7d3HT+MaYvqFxQkZyRSXcoLkJNSFndI
-         XKt313thdlbo6R4trhHVUUXl68eYrruLkiFvqFpqpTxfwnIBdtZ6SnHUjH8dgEC8Eqn5
-         7QG3uXhqDVqXObD2SMiZd1Djf+wVfmGCgYzWV1SPQ8kR+IVb2JTb2oW/sMmhPn1Nz8Wd
-         Mp0YxF2+3+x0LkOYExS0Ej0FUoI/QF1R7MEPLT4RjXwQdG1ZrukoijeActkV9ztuYiB8
-         iOHfb48sYMOzYtmtw+eAXvR+HSnuQp7KLhhyUfhQxLbTtUf9odTiAPldk4fS0pbDStDA
-         +J5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRQ6yeXLL+d+jM8OItc1fcfmP8n0C1e+UmZ0AFro+KgBSgkTFblkN3AWxwQwLDEP9ebKjAo/SPuazlGVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0FRoFjju2PD4y14BxctSZvtV8D1FTY0tpjXy9J7V107eNAJWB
-	vQeq4U6W5gb8lWk/3G5TAM98Dhg/bpaXkDLMeZuP5khO/X4lI6MNnBAN
-X-Gm-Gg: ASbGnct++tC+QIF9HkByR6LHW0JIJZLPPPExK8XH8JqdWU7U3LBP4UDT7+Gwe9twBNC
-	JulTiNigxgaAriB3M/OQ8whLEjOJmg2Fq+mP+bewQ1Df+E6wbX6MpKT9Qmid2ZagmsjjGNg9i/P
-	mEX/jD+nBQTNg+LNN4Jft2wwIZwPTqKKySsg3nWs5MpIaSUwc9Rk7kTOG5/qQU777k+DDpQYwHl
-	w6KjSSTBbmlt+GzQyHHShGvWd34KCfdK2EvmxykK3zLNceRqtQJRZo/1kIvnOr20OneCX4xfR8F
-	0EJTKpTanUgRe69dtUTaa/aDBoxTOfbM3X3/jE4dYLvkJnVFQcZ/t3pCw2IS3Nrf2Ti+9y0hUfI
-	YlfVlFBMCLGI+3fWcCn1XZb5gvIF4ZIp0KenkXzQkg/Wd8Uu+YeR0PQcTZByKRHWts0+JjOAVkv
-	l8/6P1PGFzTQ==
-X-Google-Smtp-Source: AGHT+IH7BpjfVcinvMxz5MYpjHf8TptJnxAcGDEuyJEkuZoQaRvdaP9XoNNgT8DevmloqzJa5lj/qQ==
-X-Received: by 2002:a05:690e:4259:b0:63f:a63f:19d5 with SMTP id 956f58d0204a3-63fd35a3b1bmr2137748d50.65.1762350495322;
-        Wed, 05 Nov 2025 05:48:15 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:56::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78694a26cc2sm17143427b3.48.2025.11.05.05.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 05:48:14 -0800 (PST)
-From: Usama Arif <usamaarif642@gmail.com>
-To: alx@kernel.org
-Cc: linux-man@vger.kernel.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	hannes@cmpxchg.org,
-	baohua@kernel.org,
-	shakeel.butt@linux.dev,
-	ziy@nvidia.com,
-	laoar.shao@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v2] PR_*ET_THP_DISABLE.2const: document addition of PR_THP_DISABLE_EXCEPT_ADVISED
-Date: Wed,  5 Nov 2025 13:48:11 +0000
-Message-ID: <20251105134811.3170745-1-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.47.3
+        d=1e100.net; s=20230601; t=1762350534; x=1762955334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H6A5M4lHiwAqecEpYdy09Dd0pGpiHeylPQ1THRXjXvY=;
+        b=MIMN503XSuAq/y4xUMcNlchY6v7b3NDMeRjSxYft78skJfhdkqtKPidoXmrv56254d
+         9HRfbDf46tVxis9zg2Dmcc8q+bdVYS6K/R+uSYx4ppe7IXX8jE7ywrp5unyW+BF5jUyH
+         Jpc2Q98TlSuZScXGbZvyaw5RPWH419Hm+3JaZf+YJT2Cw06pUgqvl+WRpsJzMV1PAuyP
+         MTWmXZRHjxmeAXE+uhboFYtGz7DjbUuOV+rU0/5C/bET/Noyo3XlF2YaIQvvYiKPFhjB
+         4b0faqxWJbwytd+PwWgdVtQPNE02TtHlcitRLFvvji+2Pso759YJypa1vnC3ziJNNxsa
+         SdHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO77LP1uCi95+MLPrXvEO1SKpzKiQ9Cqu5AugH3K7BaCr5Fs8BZXmQFQkDwcO6j/sYT0jrIQOXK2wJnEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfHzTyu7TajnFleJdmkHpKbUTkLif3E1N0JYCddZwyvK2sVjQC
+	8rbxC5Vy42EMK3KQ2SUh/n6cfN9B+uunBA0mY2tt9ZqHfS6+DL1u2f/0Vu6fnW6qcQpkZeTPP0q
+	OauANZXXPwN4RmXRjTGVvtqsEEO+3b74=
+X-Gm-Gg: ASbGnctvA22wpcTpqu4MjKwILvrDweFK4IWIKUgRmywgjbnUAMMdKi9aXlrvXFjFKJm
+	dVRQ94YMztOeH1auw/IeKkXomhYDO8kRMBgEX2Z2oYbywhKZh5oSMznfISv27AqIIpn+0YGy7ch
+	XsGcKn1XeD/RdigpqQQKSMaIv2SguVtlrzirIzusQK5zckNUlzicixAdhvkPQT4IfzwWmHQqjMP
+	noYzs3SZYC1VTD/cDuGyIMdXgCk8s8Uuw9AKCH4XPVhuOXVEcakBfJ2/Lh8TDomaOmijcWp
+X-Google-Smtp-Source: AGHT+IEIOCx5nbP23B6IgW+Zf8q2gjqPW5IHj6AM03AAs1xYsEA2yw1wTJNGJI3WTD6OsF2moJ8RHSebS8878U8L/Y4=
+X-Received: by 2002:a17:907:d27:b0:b72:58b6:b263 with SMTP id
+ a640c23a62f3a-b72656902a0mr343574366b.60.1762350533743; Wed, 05 Nov 2025
+ 05:48:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+ <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+ <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
+ <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com> <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
+In-Reply-To: <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 5 Nov 2025 21:48:42 +0800
+X-Gm-Features: AWmQ_bl8iNYRoJAtiKbBAMBI0VEiK9JYPyC0kuOrdZYworiStDsxnQijZbZj20g
+Message-ID: <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
+ search for sorted BTF
+To: Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
-THPs when advised. IOW, it allows individual processes to opt-out of THP =
-"always" into THP = "madvise", without affecting other workloads on the
-system. The series has been merged in [1]. Before [1], the following 2
-calls were allowed with PR_SET_THP_DISABLE:
+On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com>=
+ wrote:
+>
+> On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
+> > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
+com> wrote:
+> > >
+> > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > >
+> > > [...]
+> > >
+> > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *bt=
+f, __u32 type_id)
+> > > > >         return type_id;
+> > > > >  }
+> > > > >
+> > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *type_=
+name)
+> > > > > +/*
+> > > > > + * Find BTF types with matching names within the [left, right] i=
+ndex range.
+> > > > > + * On success, updates *left and *right to the boundaries of the=
+ matching range
+> > > > > + * and returns the leftmost matching index.
+> > > > > + */
+> > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf=
+, const char *name,
+> > > > > +                                               __s32 *left, __s3=
+2 *right)
+> > > >
+> > > > I thought we discussed this, why do you need "right"? Two binary
+> > > > searches where one would do just fine.
+> > >
+> > > I think the idea is that there would be less strcmp's if there is a
+> > > long sequence of items with identical names.
+> >
+> > Sure, it's a tradeoff. But how long is the set of duplicate name
+> > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
+> > with high likelihood will take more comparisons.
+>
+> $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sort | =
+uniq -c | sort -k1nr | head
+>   51737 '(anon)'
+>     277 'bpf_kfunc'
+>       4 'long
+>       3 'perf_aux_event'
+>       3 'workspace'
+>       2 'ata_acpi_gtm'
+>       2 'avc_cache_stats'
+>       2 'bh_accounting'
+>       2 'bp_cpuinfo'
+>       2 'bpf_fastcall'
+>
+> 'bpf_kfunc' is probably for decl_tags.
+> So I agree with you regarding the second binary search, it is not
+> necessary.  But skipping all anonymous types (and thus having to
+> maintain nr_sorted_types) might be useful, on each search two
+> iterations would be wasted to skip those.
 
-prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0); // to reset THP setting.
-prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0); // to disable THPs completely.
+Thank you. After removing the redundant iterations, performance increased
+significantly compared with two iterations.
 
-Now in addition to the 2 calls above, you can do:
+Test Case: Locate all 58,719 named types in vmlinux BTF
+Methodology:
+./vmtest.sh -- ./test_progs -t btf_permute/perf -v
 
-prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0); // to
-disable THPs except madvise.
+Two iterations:
+| Condition          | Lookup Time | Improvement |
+|--------------------|-------------|-------------|
+| Unsorted (Linear)  | 17,282 ms   | Baseline    |
+| Sorted (Binary)    | 19 ms       | 909x faster |
 
-This patch documents the changes introduced due to the addition of
-PR_THP_DISABLE_EXCEPT_ADVISED flag:
-- PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
-  is configured for the calling thread (with or without
-  PR_THP_DISABLE_EXCEPT_ADVISED).
-- PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
-  completely for the process, or disable except madvise
-  (PR_THP_DISABLE_EXCEPT_ADVISED).
+One iteration:
+Results:
+| Condition          | Lookup Time | Improvement |
+|--------------------|-------------|-------------|
+| Unsorted (Linear)  | 17,619 ms   | Baseline    |
+| Sorted (Binary)    | 10 ms       | 1762x faster |
 
-[1] https://github.com/torvalds/linux/commit/9dc21bbd62edeae6f63e6f25e1edb7167452457b
+Here is the code implementation with a single iteration approach.
+I believe this scenario differs from find_linfo because we cannot
+determine in advance whether the specified type name will be found.
+Please correct me if I've misunderstood anything, and I welcome any
+guidance on this matter.
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
-v1 -> v2 (Alejandro Colomar):
-- Fixed double negation on when MADV_HUGEPAGE will succeed
-- Turn return values of PR_GET_THP_DISABLE into a table
-- Turn madvise calls into full italics
-- Use semantic newlines
----
- man/man2/madvise.2                      |  6 ++-
- man/man2const/PR_GET_THP_DISABLE.2const | 20 +++++++---
- man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
- 3 files changed, 64 insertions(+), 14 deletions(-)
+static __s32 btf_find_type_by_name_bsearch(const struct btf *btf,
+const char *name,
+                                                __s32 start_id)
+{
+        const struct btf_type *t;
+        const char *tname;
+        __s32 l, r, m, lmost =3D -ENOENT;
+        int ret;
 
-diff --git a/man/man2/madvise.2 b/man/man2/madvise.2
-index 7a4310c40..55c6f4a6c 100644
---- a/man/man2/madvise.2
-+++ b/man/man2/madvise.2
-@@ -372,9 +372,11 @@ or
- .BR VM_PFNMAP ,
- nor can it be stack memory or backed by a DAX-enabled device
- (unless the DAX device is hot-plugged as System RAM).
--The process must also not have
-+The process can have
- .B PR_SET_THP_DISABLE
--set (see
-+set only if
-+.B PR_THP_DISABLE_EXCEPT_ADVISED
-+flag is set (see
- .BR prctl (2)).
- .IP
- The
-diff --git a/man/man2const/PR_GET_THP_DISABLE.2const b/man/man2const/PR_GET_THP_DISABLE.2const
-index 38ff3b370..d63cff21c 100644
---- a/man/man2const/PR_GET_THP_DISABLE.2const
-+++ b/man/man2const/PR_GET_THP_DISABLE.2const
-@@ -6,7 +6,7 @@
- .SH NAME
- PR_GET_THP_DISABLE
- \-
--get the state of the "THP disable" flag for the calling thread
-+get the state of the "THP disable" flags for the calling thread
- .SH LIBRARY
- Standard C library
- .RI ( libc ,\~ \-lc )
-@@ -18,13 +18,23 @@ Standard C library
- .B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
- .fi
- .SH DESCRIPTION
--Return the current setting of
--the "THP disable" flag for the calling thread:
--either 1, if the flag is set, or 0, if it is not.
-+Return a value whose bits indicate how THP-disable is configured
-+for the calling thread.
-+The returned value is interpreted as follows:
-+.P
-+.TS
-+allbox;
-+cb cb cb l
-+c c c l.
-+Bit 1	Bit 0	Value	Description
-+0	0	0	No THP-disable behaviour specified.
-+0	1	1	THP is entirely disabled for this process.
-+1	1	3	THP-except-advised mode is set for this process.
-+.TE
- .SH RETURN VALUE
- On success,
- .BR PR_GET_THP_DISABLE ,
--returns the boolean value described above.
-+returns the value described above.
- On error, \-1 is returned, and
- .I errno
- is set to indicate the error.
-diff --git a/man/man2const/PR_SET_THP_DISABLE.2const b/man/man2const/PR_SET_THP_DISABLE.2const
-index 532beac66..75e17fa6a 100644
---- a/man/man2const/PR_SET_THP_DISABLE.2const
-+++ b/man/man2const/PR_SET_THP_DISABLE.2const
-@@ -6,7 +6,7 @@
- .SH NAME
- PR_SET_THP_DISABLE
- \-
--set the state of the "THP disable" flag for the calling thread
-+set the state of the "THP disable" flags for the calling thread
- .SH LIBRARY
- Standard C library
- .RI ( libc ,\~ \-lc )
-@@ -15,15 +15,20 @@ Standard C library
- .BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
- .B #include <sys/prctl.h>
- .P
--.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
-+.BI "int prctl(PR_SET_THP_DISABLE, long " thp_disable ", unsigned long " flags ", 0L, 0L);"
- .fi
- .SH DESCRIPTION
--Set the state of the "THP disable" flag for the calling thread.
-+Set the state of the "THP disable" flags for the calling thread.
- If
--.I flag
--has a nonzero value, the flag is set, otherwise it is cleared.
-+.I thp_disable
-+has a nonzero value,
-+the THP disable flag is set according to the value of
-+.I flags,
-+otherwise it is cleared.
- .P
--Setting this flag provides a method
-+This
-+.BR prctl (2)
-+provides a method
- for disabling transparent huge pages
- for jobs where the code cannot be modified,
- and using a
-@@ -31,10 +36,43 @@ and using a
- hook with
- .BR madvise (2)
- is not an option (i.e., statically allocated data).
--The setting of the "THP disable" flag is inherited by a child created via
-+The setting of the "THP disable" flags is inherited by a child created via
- .BR fork (2)
- and is preserved across
- .BR execve (2).
-+.P
-+The behavior depends on the value of
-+.IR flags:
-+.TP
-+.B 0
-+The
-+.BR prctl (2)
-+call will disable THPs completely for the process,
-+irrespective of global THP controls or
-+.BR MADV_COLLAPSE .
-+.TP
-+.B PR_THP_DISABLE_EXCEPT_ADVISED
-+The
-+.BR prctl (2)
-+call will disable THPs for the process
-+except when the usage of THPs is
-+advised.
-+Consequently, THPs will only be used when:
-+.RS
-+.IP \[bu] 3
-+Global THP controls are set to "always" or "madvise" and
-+.I \%madvise(...,\~MADV_HUGEPAGE)
-+or
-+.I \%madvise(...,\~MADV_COLLAPSE)
-+is used.
-+.IP \[bu]
-+Global THP controls are set to "never" and
-+.I \%madvise(...,\~MADV_COLLAPSE)
-+is used.
-+This is the same behavior
-+as if THPs would not be disabled on
-+a process level.
-+.RE
- .SH RETURN VALUE
- On success,
- 0 is returned.
--- 
-2.47.3
+        /* found the leftmost btf_type that matches */
+        l =3D start_id;
+        r =3D btf__type_cnt(btf) - 1;
+        while (l <=3D r) {
+                m =3D l + (r - l) / 2;
+                t =3D btf_type_by_id(btf, m);
+                if (!t->name_off) {
+                        ret =3D 1;
+                } else {
+                        tname =3D btf__str_by_offset(btf, t->name_off);
+                        ret =3D !tname ? 1 : strcmp(tname, name);
+                }
+                if (ret < 0) {
+                        l =3D m + 1;
+                } else {
+                        if (ret =3D=3D 0)
+                                lmost =3D m;
+                        r =3D m - 1;
+                }
+        }
 
+        return lmost;
+}
+
+static __s32 btf_find_type_by_name_kind(const struct btf *btf, int start_id=
+,
+                                   const char *type_name, __u32 kind)
+{
+        const struct btf_type *t;
+        const char *tname;
+        int err =3D -ENOENT;
+        __u32 total;
+
+        if (!btf)
+                goto out;
+
+        if (start_id < btf->start_id) {
+                err =3D btf_find_type_by_name_kind(btf->base_btf, start_id,
+                                                 type_name, kind);
+                if (err =3D=3D -ENOENT)
+                        start_id =3D btf->start_id;
+        }
+
+        if (err =3D=3D -ENOENT) {
+                if (btf_check_sorted((struct btf *)btf)) {
+                        /* binary search */
+                        bool skip_first;
+                        int ret;
+
+                        /* return the leftmost with maching names */
+                        ret =3D btf_find_type_by_name_bsearch(btf,
+type_name, start_id);
+                        if (ret < 0)
+                                goto out;
+                        /* skip kind checking */
+                        if (kind =3D=3D -1)
+                                return ret;
+                        total =3D btf__type_cnt(btf);
+                        skip_first =3D true;
+                        do {
+                                t =3D btf_type_by_id(btf, ret);
+                                if (btf_kind(t) !=3D kind) {
+                                        if (skip_first) {
+                                                skip_first =3D false;
+                                                continue;
+                                        }
+                                } else if (skip_first) {
+                                        return ret;
+                                }
+                                if (!t->name_off)
+                                        break;
+                                tname =3D btf__str_by_offset(btf, t->name_o=
+ff);
+                                if (tname && !strcmp(tname, type_name))
+                                        return ret;
+                                else
+                                        break;
+                        } while (++ret < total);
+                } else {
+                        /* linear search */
+...
+                }
+        }
+
+out:
+        return err;
+}
 
