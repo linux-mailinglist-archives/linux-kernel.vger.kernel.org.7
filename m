@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-886768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE83C36819
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:57:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02566C36759
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322D63BD263
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A871A4051B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65820313E2F;
-	Wed,  5 Nov 2025 15:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46067337B9C;
+	Wed,  5 Nov 2025 15:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hTo/7DOc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0p7rc+n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8995F2192EA;
-	Wed,  5 Nov 2025 15:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEA01A3172;
+	Wed,  5 Nov 2025 15:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357165; cv=none; b=h8pDFsDoKO6dWuRlRce2tQpqVI0HyMVQg1eIr4xNZePJSwn1UwrTcoRmlKUXW1k9DS6dZ8xPTpB/fLeHndxspu2I1A3t19aVnvHeA/yaxXs+vzF2jZ7Lm9PGB0zv4c3Z3yMlSope1pKI7tJaimx7RY7rFNKCYFWjnXhDY+F3/bA=
+	t=1762356327; cv=none; b=iIOIQqq38KohUCLdZbu/IumZzVAVkUZNwBJ0XYY9m4KDQFoqmc76gJZKMiHMoG/TT7Ngk2WPDuoUkaQG0OGCUvKh+HzacPWC7jdh3fOPu5RVYw7PobeU70xy0XGsichE9KEH2OAAfrC2hBYTDroJo7/Zmm//A61so8iUUi67uks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357165; c=relaxed/simple;
-	bh=WukabtLnZGMGot7G3S7/zEVenEgLCJDmSN4BvMbvwBY=;
+	s=arc-20240116; t=1762356327; c=relaxed/simple;
+	bh=HfvjEZ8zyKUtba01cWxDWXLISHrgdAAOlZhIhHId5TU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIFRpnP0hyir3kn5AvcVfvJO6kk/035alK5HHNHIiiTweNk5XdAoCpLgHgJnBneesUVFrnmbqqiXN6pltU1QfCSrDs1SDCkZyfSOYQGxByYw/i7jnnITuPb5m/ilnYu6bs7hulttFeF4in7IWMn0dYND4tLb0YbxOijJ019nsfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hTo/7DOc; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=r91uJb7WQlTpOPQyfuxy2RPu+oZ5XLS2r7H8N5ogaO8ICQux8EGjp4XpZwKBJguXJxa095ymDPqzc420kvTIUFzSvhv/9DY1zW5NHZ8nmzeWSUwFKy+KjrX33vhYSunBsbZAoEd8FA3yXrady23nry3R2CaKX0dsClmkdkZFpNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0p7rc+n; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762357163; x=1793893163;
+  t=1762356326; x=1793892326;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=WukabtLnZGMGot7G3S7/zEVenEgLCJDmSN4BvMbvwBY=;
-  b=hTo/7DOckZNZxDx1ausqbOKG5IqtaZDyIGyEcykY4XjGdI0q2ALwTfjN
-   AfjY+hMuyY2E5i/jtWjgu4S4vMVaLt1EOC45BU8xKXcH5+v5QKe4b0G0f
-   L6/LXJfpZcZWYj09TXsBWxLlenuPLYRuDcBYdfb5MdWh+8XWPiZddCno8
-   pDIjDKRHRaXYpfFtZBrUESXAGZtaMP0sp4fzLJr3pvN55Ofd8N4NH9qsH
-   8An7aMeF3ZSL8rS+jr4LHb4J3jsN6j378wAJz4wzBSw51fP+ry0AMJjth
-   TtJae3azpGndZD1Tx8DbnBgciXswCmy7ioNqRMnVJX4cPmtP9FJ4z949L
-   w==;
-X-CSE-ConnectionGUID: 6MGoDgfQTaie7ryedQkFDw==
-X-CSE-MsgGUID: MbVFUMz+S2KMnZAgBPjHyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64382338"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64382338"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:39:23 -0800
-X-CSE-ConnectionGUID: 1sqEtvIURXaUbMV2pWVvEA==
-X-CSE-MsgGUID: Ml4wtkr+SF2xVuV9z4J6LQ==
+  bh=HfvjEZ8zyKUtba01cWxDWXLISHrgdAAOlZhIhHId5TU=;
+  b=T0p7rc+npoi32U4SdKb/xiybwfkzYujBDdb3R0fOKaocsBPx6/zVEz3Z
+   1+5PpBAKru/DCgHgv8rUq0N5x2O0lwXtr6j/jqGm4F6TVaQF/lOq/wyso
+   bTzxZ3VXcS91bfgS6G13jo9bfitCD3nSfyqG/LJN0kFzcBe8KH9bhTMYz
+   mwZ4IM+2wegeuNoNqslXw4pnJYutE5vNFviJbqW0RjMzckcj8ghqGJk5M
+   eyVPzSCzHDjS9FB2iWJ/dLzQappOcp128PMdeASCvpMKUV3JgQF2REzlz
+   KMMjhWVjyYdTDIeFUvpvkmfm7q+SGXElBSgvn7YGC+/O5BDYVMrLtGc4V
+   A==;
+X-CSE-ConnectionGUID: gMMTVAN0Sv6jbeIk8rhekQ==
+X-CSE-MsgGUID: pfHeXYF1S32JyQxu+7KSug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64507954"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="64507954"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:25:25 -0800
+X-CSE-ConnectionGUID: A7SgvF8rRdaIXVCFqgPLsA==
+X-CSE-MsgGUID: sVKbbyk8R02GBNDNiNxmsQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="186735852"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa006.jf.intel.com with ESMTP; 05 Nov 2025 07:39:08 -0800
-Date: Wed, 5 Nov 2025 23:24:59 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND][PATCH 1/1] fpga: altera-cvp: Limit driver registration
- to specific device ID
-Message-ID: <aQtsS378I+4dIRE6@yilunxu-OptiPlex-7050>
-References: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
- <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
- <aQhrYucpkGBWI2zL@yilunxu-OptiPlex-7050>
- <6a74af58-3b9b-4a8d-a10f-abbcd545083b@altera.com>
+   d="scan'208";a="224728796"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:25:24 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGfNu-00000005pB7-2qhR;
+	Wed, 05 Nov 2025 17:25:18 +0200
+Date: Wed, 5 Nov 2025 17:25:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, marcelo.schmitt1@gmail.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: mpl3115: add threshold events support
+Message-ID: <aQtsXcf_rHVdwqeZ@smile.fi.intel.com>
+References: <20251105095615.4310-1-apokusinski01@gmail.com>
+ <20251105095615.4310-3-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,100 +79,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a74af58-3b9b-4a8d-a10f-abbcd545083b@altera.com>
+In-Reply-To: <20251105095615.4310-3-apokusinski01@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 05, 2025 at 06:29:06AM +0000, Murugasen Krishnan, Kuhanh wrote:
-> On 3/11/2025 4:44 pm, Xu Yilun wrote:
-> > On Thu, Oct 30, 2025 at 03:05:44AM +0800, Kuhanh Murugasen Krishnan wrote:
-> >> From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
-> > 
-> > Is this your first post?
-> > 
-> > https://lore.kernel.org/all/20250212223553.2717304-1-kuhanh.murugasen.krishnan@intel.com/
-> > 
-> > Please mark the patch v2 if this patch is for the same issue. And please
-> > firstly response the talk and make clear all previous concerns, rather than
-> > just sent the patch and left.
-> > 
-> Thanks Yilun for your review. Yes that was the first post, however I do 
-> not have access to my @intel email address anymore and had to resend 
-> this with a better commit title and description for clearer explanation 
-> of this patch. Apologies for the inconvenience.
+On Wed, Nov 05, 2025 at 10:56:14AM +0100, Antoni Pokusinski wrote:
+> Add support for pressure and temperature rising threshold events. For
+> both channels *_en and *_value (in raw units) attributes are exposed.
 > 
-> >>
-> >> The Altera CvP driver previously used PCI_ANY_ID, which caused it to
-> >> bind to all PCIe devices with the Altera vendor ID. This led to
-> >> incorrect driver association when multiple PCIe devices with different
-> >> device IDs were present on the same platform.
-> >>
-> >> Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
-> >> the driver only attaches to the intended device.
-> > 
-> > So could you please answer the previous concern here?
-> > 
-> > Does dev_id 0x00 covers all supported devices? Do you have any DOC for
-> > this?
-> > 
-> Yes it will connect to all supported Altera FPGA devices correctly, 
+> Since in write_event_config() the ctrl_reg1.active and ctrl_reg4
+> are modified, accessing the data->ctrl_reg{1,4} in set_trigger_state()
+> and write_event_config() needs to be now guarded by data->lock.
+> Otherwise, it would be possible that 2 concurrent threads executing
+> these functions would access the data->ctrl_reg{1,4} at the same time
+> and then one would overwrite the other's result.
 
-Because your change is trying to reduce the scope of devices the driver
-could support. I want to be cautious and ask for Public Documentation
-for reference. I don't want to see someone later yells "Oh, my device is
-broken!".
+...
 
-Please also add the Link of the Documentation in changelog.
+> static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
 
-> there was a bug previously which caused incorrect driver association 
+>  	struct iio_dev *indio_dev = private;
+>  	struct mpl3115_data *data = iio_priv(indio_dev);
+>  	int ret;
+> +	u8 val_press[3];
+> +	__be16 val_temp;
 
-So this is a bug, please tag with "fixes:" and Cc stable kernel.
+s/_temp/$SOMETHING meaningful/ ?
 
-> with the use of PCI_ANY_ID. Limiting the driver registration to 0x00 
-> allows the driver to attach to the intended Altera FPGA device correctly 
-> since the FPGA default address is 0x00. Using PCI_ANY_ID could 
-> potentially allow the CVP driver to associate to other PCI devices.
-> 
-> >>
-> >> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
-> > 
-> > I didn't see where the tag is from. Generally we don't prefer a
-> > Reviewed-by tag firstly appear from other than the person named.
-> > 
-> > Thanks,
-> > Yilun
-> > 
-> This patch was reviewed internally by Dinh and the tag was added. Should 
-> I send a v2 patch with this "Reviewed-by" removed?
+>  	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
+>  	if (ret < 0)
+>  		return IRQ_HANDLED;
+>  
+> -	if (!(ret & MPL3115_INT_SRC_DRDY))
+> +	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
+> +		     MPL3115_INT_SRC_DRDY)))
+>  		return IRQ_NONE;
+>  
+> -	iio_trigger_poll_nested(data->drdy_trig);
+> +	if (ret & MPL3115_INT_SRC_DRDY)
+> +		iio_trigger_poll_nested(data->drdy_trig);
+> +
+> +	if (ret & MPL3115_INT_SRC_PTH) {
+> +		iio_push_event(indio_dev,
+> +			       IIO_UNMOD_EVENT_CODE(IIO_PRESSURE, 0,
+> +						    IIO_EV_TYPE_THRESH,
+> +						    IIO_EV_DIR_RISING),
+> +						    iio_get_time_ns(indio_dev));
+> +
+> +		/* Reset the SRC_PTH bit in INT_SOURCE */
+> +		i2c_smbus_read_i2c_block_data(data->client,
+> +					      MPL3115_OUT_PRESS,
+> +					      sizeof(val_press), val_press);
+> +	}
+> +
+> +	if (ret & MPL3115_INT_SRC_TTH) {
+> +		iio_push_event(indio_dev,
+> +			       IIO_UNMOD_EVENT_CODE(IIO_TEMP, 0,
+> +						    IIO_EV_TYPE_THRESH,
+> +						    IIO_EV_DIR_RISING),
+> +						    iio_get_time_ns(indio_dev));
+> +
+> +		/* Reset the SRC_TTH bit in INT_SOURCE */
+> +		i2c_smbus_read_i2c_block_data(data->client,
+> +					      MPL3115_OUT_TEMP,
+> +					      2, (u8 *)&val_temp);
 
-Yes, fix previous comments in your v2, and removes the Reviewed-by.
-Reviewed-by is welcomed but should be publicly originated from the
-named person.
+Why not sizeof() here ?
 
-Thanks,
-Yilun
+> +	}
+>  
+>  	return IRQ_HANDLED;
+>  }
 
-> 
-> >> Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
-> >> Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
-> >> ---
-> >>   drivers/fpga/altera-cvp.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-> >> index 5af0bd33890c..97e9d4d981ad 100644
-> >> --- a/drivers/fpga/altera-cvp.c
-> >> +++ b/drivers/fpga/altera-cvp.c
-> >> @@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
-> >>   static void altera_cvp_remove(struct pci_dev *pdev);
-> >>   
-> >>   static struct pci_device_id altera_cvp_id_tbl[] = {
-> >> -	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-> >> +	{ PCI_VDEVICE(ALTERA, 0x00) },
-> >>   	{ }
-> >>   };
-> >>   MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
-> >> -- 
-> >> 2.25.1
-> >>
-> >>
-> 
+...
+
+> +static int mpl3115_read_thresh(struct iio_dev *indio_dev,
+> +			       const struct iio_chan_spec *chan,
+> +			       enum iio_event_type type,
+> +			       enum iio_event_direction dir,
+> +			       enum iio_event_info info,
+> +			       int *val, int *val2)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +	__be16 tmp;
+
+Also name can be improved. And notice confusion between temp
+(temporary?  temperature?) and tmp.
+
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		ret = i2c_smbus_read_i2c_block_data(data->client,
+> +						    MPL3115_PRESS_TGT,
+> +						    sizeof(tmp), (u8 *)&tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/*
+> +		 * Target value for the pressure is 16-bit unsigned value,
+> +		 * expressed in 2 Pa units
+> +		 */
+> +		*val = be16_to_cpu(tmp) << 1;
+> +
+> +		return IIO_VAL_INT;
+> +	case IIO_TEMP:
+> +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* Target value for the temperature is 8-bit 2's complement */
+> +		*val = sign_extend32(ret, 7);
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
