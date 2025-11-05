@@ -1,157 +1,158 @@
-Return-Path: <linux-kernel+bounces-886171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001FEC34E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:41:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350A4C34E31
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2ED04F7DAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF441898326
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483473009C7;
-	Wed,  5 Nov 2025 09:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C253016E8;
+	Wed,  5 Nov 2025 09:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="dOb1GiqP"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8WqExk8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A742FDC49;
-	Wed,  5 Nov 2025 09:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC30934D3BD;
+	Wed,  5 Nov 2025 09:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335419; cv=none; b=fzgHpDtYUSt0QoseZNdxBsVGpEMA7iZ5IKBKKghpfEPjhHJZ1KgRqkndmK9T1Q+53wE0Z6Zi62f6ES/n3WZBlidfCZ5hctNRAog0FVAkgKAyQrAbKwoW9xhg2AnaQNyouSNK7x+qsldfSao6aT0IIbHdYQIAhI97oiCZfGB4ERY=
+	t=1762335482; cv=none; b=ukbHGy4CJjBx0Xt9A18yrrrDgawCwB60MiYMLrkOnIfC9E6KV6WOU+OKGB+KwpFq4G0EDnLqbGN47CzmsDwZQuUjRjak08A3qrRSxcCNfh2Xkouu1d3HHoSlpdg10Ku8S1IkVto51G/xV2sQwwlpupjwN/WUtVx7Rn61nlZK5KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335419; c=relaxed/simple;
-	bh=WkNwxOmVHunca/CPwSbsQlkfV5vLETX0Pq9aqTANTIs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V0Uv9xPRqHO8iMXagyk45gxt7EB6DJ22YtuHLzd5xMYqbLwxLQ3a01uaJWLrDaMHwyREW1DncqdXzs+aMQ/RgDXCWSo5wANFOZvp9G1iD1Md87wYxYUFLGt9SftIgwd3p7DCxlAE4WYaV1X4zLMT50/fLrnSgKAViBHSdgyZBY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=dOb1GiqP; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Hap/jbJjIkWJVkUV8jOZ8XG03gN3kTQaTImYf5IdjoM=;
-	b=dOb1GiqPEMZAN5xCJZPQQXpKZTnfYMf/xnB88c134KFeb5GumXrA+H0k5luT+jI42UpTgsJUq
-	XxymePEs+VSzDrXa8hKnmIFR3y4uB/O0emLlJD7qKm8ZRa5walQhtryNe0xvmSVDe/6Q+LPEU8T
-	e7+R5DTsSvU2YQb/fHBZTnM=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d1gCj6N5XzLlSM;
-	Wed,  5 Nov 2025 17:35:13 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id C1B8E18001B;
-	Wed,  5 Nov 2025 17:36:48 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 17:36:48 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 17:36:48 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<Sudeep.Holla@arm.com>, <linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
-	<lihuisong@huawei.com>
-Subject: [PATCH] ACPI: processor: idle: Remove useless codes about the verification of cstate count
-Date: Wed, 5 Nov 2025 17:36:47 +0800
-Message-ID: <20251105093647.3557248-1-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1762335482; c=relaxed/simple;
+	bh=qe5u7c4FemlavOYTA8gwuTHm1A63995BSzBoTLojJJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fYHwiYzfJ9Hgin9/UzOc4LN+N5GFCX+Lsx3FUGwY9iMHNjPShtv0MwodkCS54qw5NTEVYNESX3aYVqmWyWGC8V8IB5c2FdLDc5YVmwJVw1fJ5Y/PDovckZRkLZsHAoxKF0OlbZPr+FAOvtMjI2RPIY3OHQVvbH8iKRN2BtjG1uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8WqExk8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99874C4CEF8;
+	Wed,  5 Nov 2025 09:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762335481;
+	bh=qe5u7c4FemlavOYTA8gwuTHm1A63995BSzBoTLojJJI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p8WqExk8FquJ2nz5yIjLJbNA9DhfFSvbHZsTuMkfVfYFD52mLyQWA7z9s+UbFi2Re
+	 0Vt9/JCfmdwnWIUUlLTh7KvCsCwf3PHB1TP2/yKENIO2DSI0i/4FmENiu8QeN15MUA
+	 qyr7JY5TOu3F2auYTbfUl7eGpqtP/w1kO1OvcpeBNyb6zJNc6C27ve+sIUV+BnFg2L
+	 pPkN09pep0FIFejONTWv73skCCucGg7Q6bgHP5hfWGbij69l/i2fJg36CdrjwvFkod
+	 QIGRFkqtC/gXEn7nqCbD8rpt2eMtcs4u8jXVD5ILBKm942M5V8W7wOpsJdmfvAbHf0
+	 D4viOatA2by9Q==
+Message-ID: <e9d43dab-cfae-48a8-9039-e050ea392797@kernel.org>
+Date: Wed, 5 Nov 2025 09:37:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] bpftool: Print map ID upon creation and support
+ JSON output
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: bpf <bpf@vger.kernel.org>, Alan Maguire <alan.maguire@oracle.com>,
+ Yonghong Song <yonghong.song@linux.dev>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <20251101193357.111186-1-harshit.m.mogalapalli@oracle.com>
+ <20251101193357.111186-2-harshit.m.mogalapalli@oracle.com>
+ <CAADnVQLe6a8Kae892sVaND-2p1DQDXGD5gqxHWHHUC85ntLCqw@mail.gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <CAADnVQLe6a8Kae892sVaND-2p1DQDXGD5gqxHWHHUC85ntLCqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemn100009.china.huawei.com (7.202.194.112)
 
-The acpi_processor_setup_cstates and acpi_processor_setup_cpuidle_cx will
-be called after successfully obtaining the power information. These setup
-functions have their own main role, but also verify the validity of cstate
-count.
+2025-11-04 09:54 UTC-0800 ~ Alexei Starovoitov
+<alexei.starovoitov@gmail.com>
+> On Sat, Nov 1, 2025 at 12:34 PM Harshit Mogalapalli
+> <harshit.m.mogalapalli@oracle.com> wrote:
+>>
+>> It is useful to print map ID on successful creation.
+>>
+>> JSON case:
+>> $ ./bpftool -j map create /sys/fs/bpf/test_map4 type hash key 4 value 8 entries 128 name map4
+>> {"id":12}
+>>
+>> Generic case:
+>> $ ./bpftool  map create /sys/fs/bpf/test_map5 type hash key 4 value 8 entries 128 name map5
+>> Map successfully created with ID: 15
+>>
+>> Bpftool Issue: https://github.com/libbpf/bpftool/issues/121
+>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>> Reviewed-by: Quentin Monnet <qmo@kernel.org>
+>> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+>> ---
+>> v2->v3: remove a line break("\n" ) in p_err statement. [Thanks Quentin]
+>> ---
+>>  tools/bpf/bpftool/map.c | 21 +++++++++++++++++----
+>>  1 file changed, 17 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+>> index c9de44a45778..f32ae5476d76 100644
+>> --- a/tools/bpf/bpftool/map.c
+>> +++ b/tools/bpf/bpftool/map.c
+>> @@ -1251,6 +1251,8 @@ static int do_create(int argc, char **argv)
+>>         LIBBPF_OPTS(bpf_map_create_opts, attr);
+>>         enum bpf_map_type map_type = BPF_MAP_TYPE_UNSPEC;
+>>         __u32 key_size = 0, value_size = 0, max_entries = 0;
+>> +       struct bpf_map_info map_info = {};
+>> +       __u32 map_info_len = sizeof(map_info);
+>>         const char *map_name = NULL;
+>>         const char *pinfile;
+>>         int err = -1, fd;
+>> @@ -1353,13 +1355,24 @@ static int do_create(int argc, char **argv)
+>>         }
+>>
+>>         err = do_pin_fd(fd, pinfile);
+>> -       close(fd);
+>>         if (err)
+>> -               goto exit;
+>> +               goto close_fd;
+>>
+>> -       if (json_output)
+>> -               jsonw_null(json_wtr);
+>> +       err = bpf_obj_get_info_by_fd(fd, &map_info, &map_info_len);
+>> +       if (err) {
+>> +               p_err("Failed to fetch map info: %s", strerror(errno));
+>> +               goto close_fd;
+>> +       }
+>>
+>> +       if (json_output) {
+>> +               jsonw_start_object(json_wtr);
+>> +               jsonw_int_field(json_wtr, "id", map_info.id);
+>> +               jsonw_end_object(json_wtr);
+>> +       } else {
+>> +               printf("Map successfully created with ID: %u\n", map_info.id);
+>> +       }
+> 
+> bpftool doesn't print it today and some scripts may depend on that.
 
-Actually, the acpi_processor_get_power_info_cst will return failure if the
-cstate count is zero and acpi_processor_get_power_info will return failure.
 
-So the verification of cstate count in these functions are useless.
+Hi Alexei, are you sure we can't add any input at all? I'm concerned
+that users won't ever find the IDs for created maps they might want to
+use, if they never see it in the plain output.
 
-No intentional functional impact.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- drivers/acpi/processor_idle.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+> Let's drop this 'printf'. Json can do it unconditionally, since
+> json parsing scripts should filter things they care about.
 
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 341825e8ac63..22909fccf0b1 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -732,8 +732,8 @@ static int __cpuidle acpi_idle_enter_s2idle(struct cpuidle_device *dev,
- 	return 0;
- }
- 
--static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
--					   struct cpuidle_device *dev)
-+static void acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
-+					    struct cpuidle_device *dev)
- {
- 	int i, count = ACPI_IDLE_STATE_START;
- 	struct acpi_processor_cx *cx;
-@@ -753,14 +753,9 @@ static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
- 		if (count == CPUIDLE_STATE_MAX)
- 			break;
- 	}
--
--	if (!count)
--		return -EINVAL;
--
--	return 0;
- }
- 
--static int acpi_processor_setup_cstates(struct acpi_processor *pr)
-+static void acpi_processor_setup_cstates(struct acpi_processor *pr)
- {
- 	int i, count;
- 	struct acpi_processor_cx *cx;
-@@ -822,11 +817,6 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
- 	}
- 
- 	drv->state_count = count;
--
--	if (!count)
--		return -EINVAL;
--
--	return 0;
- }
- 
- static inline void acpi_processor_cstate_first_run_checks(void)
-@@ -1241,7 +1231,8 @@ static int acpi_processor_setup_cpuidle_states(struct acpi_processor *pr)
- 	if (pr->flags.has_lpi)
- 		return acpi_processor_setup_lpi_states(pr);
- 
--	return acpi_processor_setup_cstates(pr);
-+	acpi_processor_setup_cstates(pr);
-+	return 0;
- }
- 
- /**
-@@ -1261,7 +1252,8 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
- 	if (pr->flags.has_lpi)
- 		return acpi_processor_ffh_lpi_probe(pr->id);
- 
--	return acpi_processor_setup_cpuidle_cx(pr, dev);
-+	acpi_processor_setup_cpuidle_cx(pr, dev);
-+	return 0;
- }
- 
- static int acpi_processor_get_power_info(struct acpi_processor *pr)
--- 
-2.33.0
+I'd say the risk is the same. Scripts should filter things, but in
+practise they might just as well be comparing to "null" today, given
+that we didn't have any other output for the command so far. Conversely,
+what scripts should not do is rely on plain output, we've always
+recommended using bpftool's JSON for automation (or the exit code, in
+the case of map creation). So I'm not convinced it's justified to
+introduce a difference between plain and JSON in the current case.
 
+Quentin
 
