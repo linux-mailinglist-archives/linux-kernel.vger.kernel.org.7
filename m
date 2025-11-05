@@ -1,194 +1,107 @@
-Return-Path: <linux-kernel+bounces-886670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59800C36462
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB54C36468
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF142624FC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01ED625C15
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E214632E6A3;
-	Wed,  5 Nov 2025 15:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B0032ED43;
+	Wed,  5 Nov 2025 15:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="2zxtOpuc"
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ir5jVHDN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EF32C21DE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC623314B8E;
+	Wed,  5 Nov 2025 15:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355093; cv=none; b=sdNR1wdF//eLTkhD4EK7/N0ZKs+vh0obTMpQ0l+uUup1T0kMb+fIlnpyS0BoN+m4CZJRGqIOiquYS9YJqJ704eJDWFOt4SHfjJl6w+xahFshFoK1xGTFOBIHZ3wWnw9Pv0JCmifhryfC4gABxETal6E738oIsp2f++26LX4qbHc=
+	t=1762355095; cv=none; b=JXJHyZEKgKWkPVgC7GczRfqxuvnnY1ZqoKRRq0hVjmBOeZr14DFEuXwCDzlF7YNM0NahmWdoWmaN/T0EZicBGQEeVE9TEdbVB1Sl15rSj16vUFQ8zFVdHSdEMKoPUDiz4OgMROwlpFKRzRBvyNztRPbZv/3zmjfT+nzF50N7GDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355093; c=relaxed/simple;
-	bh=Mt1QCESqgGejJLVoSOulkJQrrMyV+/X1WW2OkPibHI8=;
+	s=arc-20240116; t=1762355095; c=relaxed/simple;
+	bh=E6z5Nc1ezh/OdyRJ8gbtV68Q6zNCbloIF2sx0XTu5sA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxlL7bmXypXdUaWeUGhv5lKCcU0sHUViJFbTflg411ZtgN/TCHEmif3Ip1kCID1B8/gcUDgjLEmFXxIw7MvkqYjFUDce3ZqEVm1a5AIvMhcICa5qJXLEWFDCyL5AmVPNwj8kFlFIoc/a3f2Z4iqM6uUSwRjIP4Sub+LhqOmKcws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=2zxtOpuc; arc=none smtp.client-ip=178.62.254.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
-Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id 778359B35C;
-	Wed, 05 Nov 2025 15:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1762355082;
-	bh=Rmb+xL4wShSDVmH5+T4zXZPqT/861b/jOiVmGEz0Wes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=2zxtOpucbKrW/Mpwva4+ULP9Vq35ztDEnsvMk65EUJVnFNG4ZL+90QpLO1OziOObg
-	 Ivn9rKIodFrA4DSy/7amfmzVdjgaJIWLlV8ReJMzHFwPKOuNulf92s7K9MeT4YtZvF
-	 yodNyyooYQioFFyi9Mf/37Q67utSLuUVvZsZayhw=
-Date: Wed, 5 Nov 2025 15:04:23 +0000
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] sched/stats: Optimize /proc/schedstat printing
-Message-ID: <aQtndzCnEmAD5C-L@shell.ilvokhin.com>
-References: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
- <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
- <aQIoySXrIVcKXXGS@shell.ilvokhin.com>
- <20251029145513.GO3245006@noisy.programming.kicks-ass.net>
- <aQI3k8tqJD4L0u_c@shell.ilvokhin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7hsSIaGLqhdIInEZRl+gY537l2i6VvsvSicia/si3x8v7o17NYCwvB5QuWp0aVNV1mN+V+3BjzunZeiRnYmdLPRBerhmFY+kN8S0JgKp0PATvjgKOMfPU91oW+7/GcmXZw7X8MlPEpHzxlWjFKogZJVABvg9mNPd+n3ySJld24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ir5jVHDN; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762355094; x=1793891094;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E6z5Nc1ezh/OdyRJ8gbtV68Q6zNCbloIF2sx0XTu5sA=;
+  b=Ir5jVHDNYqT6lYjWJis14I25+20/HbGavIgW90/huQ8dDzW/2ghf0Ir0
+   aH8/2nwrgxWv8IHAENZGncqhWvlJ3BsYqGPiKlM2Dvm0Jx6W4UMltRoKg
+   cqrekBvwNbUE1Sj16G7ecSajvktsdP8g+Jjs6W5DvHnjGdo098WHNuJSe
+   ukVVsKopxBktmwDmvDh0EsDtgxs8BHc9GcKTTthgVw0oVkUdomIrlarUJ
+   D0iQd5ttCtsBy6tS3rP8XYs46op46XuEoD5D8V1g9WInidACmjcuCr1cl
+   dNVhJYxPMEkjeFKFfCbkcBoMRelkx7ohl0oNG3qw4f0Wsccbq4XRb4lcU
+   A==;
+X-CSE-ConnectionGUID: SJ9P5oQsTqmyvK6Y7bvDSA==
+X-CSE-MsgGUID: R9ZKynswTKqZkQcDwCskdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64505262"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="64505262"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:04:40 -0800
+X-CSE-ConnectionGUID: w425S8vVSC+co88XflheEA==
+X-CSE-MsgGUID: 51RPs0JpQ/++FXmpe2yhUA==
+X-ExtLoop1: 1
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:04:38 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGf3o-00000005osw-3GAL;
+	Wed, 05 Nov 2025 17:04:32 +0200
+Date: Wed, 5 Nov 2025 17:04:31 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, error27@gmail.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iio: trigger: Fix error handling in viio_trigger_alloc
+Message-ID: <aQtnfzUKHc0fY52_@smile.fi.intel.com>
+References: <20251105094714.28117-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQI3k8tqJD4L0u_c@shell.ilvokhin.com>
+In-Reply-To: <20251105094714.28117-1-make24@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 29, 2025 at 03:49:43PM +0000, Dmitry Ilvokhin wrote:
-> On Wed, Oct 29, 2025 at 03:55:13PM +0100, Peter Zijlstra wrote:
-> > On Wed, Oct 29, 2025 at 02:46:33PM +0000, Dmitry Ilvokhin wrote:
-> > > On Wed, Oct 29, 2025 at 03:07:55PM +0100, Peter Zijlstra wrote:
-> > > > On Wed, Oct 29, 2025 at 01:07:15PM +0000, Dmitry Ilvokhin wrote:
-> > > > > Function seq_printf supports rich format string for decimals printing,
-> > > > > but there is no need for it in /proc/schedstat, since majority of the
-> > > > > data is space separared decimals. Use seq_put_decimal_ull instead as
-> > > > > faster alternative.
-> > > > > 
-> > > > > Performance counter stats (truncated) for sh -c 'cat /proc/schedstat >
-> > > > > /dev/null' before and after applying the patch from machine with 72 CPUs
-> > > > > are below.
-> > > > > 
-> > > > > Before:
-> > > > > 
-> > > > >       2.94 msec task-clock               #    0.820 CPUs utilized
-> > > > >          1      context-switches         #  340.551 /sec
-> > > > >          0      cpu-migrations           #    0.000 /sec
-> > > > >        340      page-faults              #  115.787 K/sec
-> > > > > 10,327,200      instructions             #    1.89  insn per cycle
-> > > > >                                          #    0.10  stalled cycles per insn
-> > > > >  5,458,307      cycles                   #    1.859 GHz
-> > > > >  1,052,733      stalled-cycles-frontend  #   19.29% frontend cycles idle
-> > > > >  2,066,321      branches                 #  703.687 M/sec
-> > > > >     25,621      branch-misses            #    1.24% of all branches
-> > > > > 
-> > > > > 0.00357974 +- 0.00000209 seconds time elapsed  ( +-  0.06% )
-> > > > > 
-> > > > > After:
-> > > > > 
-> > > > >       2.50 msec task-clock              #    0.785 CPUs utilized
-> > > > >          1      context-switches        #  399.780 /sec
-> > > > >          0      cpu-migrations          #    0.000 /sec
-> > > > >        340      page-faults             #  135.925 K/sec
-> > > > >  7,371,867      instructions            #    1.59  insn per cycle
-> > > > >                                         #    0.13  stalled cycles per insn
-> > > > >  4,647,053      cycles                  #    1.858 GHz
-> > > > >    986,487      stalled-cycles-frontend #   21.23% frontend cycles idle
-> > > > >  1,591,374      branches                #  636.199 M/sec
-> > > > >     28,973      branch-misses           #    1.82% of all branches
-> > > > > 
-> > > > > 0.00318461 +- 0.00000295 seconds time elapsed  ( +-  0.09% )
-> > > > > 
-> > > > > This is ~11% (relative) improvement in time elapsed.
-> > > > 
-> > > > Yeah, but who cares? Why do we want less obvious code for a silly stats
-> > > > file?
-> > > 
-> > > Thanks for the feedback, Peter.
-> > > 
-> > > Fair point that /proc/schedstat isn’t a hot path in the kernel itself,
-> > > but it is a hot path for monitoring software (Prometheus for example).
-> > 
-> > Aliens! I like Xenomorphs :-) But I doubt that's what you're talking
-> > about.
-> > 
-> > > In large fleets, these files are polled periodically (often every few
-> > > seconds) on every machine. The cumulative overhead adds up quickly
-> > > across thousands of nodes, so reducing the cost of generating these
-> > > stats does have a measurable operational impact. With the ongoing trend
-> > > toward higher core counts per machine, this cost becomes even more
-> > > noticeable over time.
-> > > 
-> > > I've tried to keep the code as readable as possible, but I understand if
-> > > you think an ~11% improvement isn't worth the added complexity. If you
-> > > have suggestions for making the code cleaner or the intent clearer, I’d
-> > > be happy to rework it.
-> > 
-> > What are they doing this for? I would much rather rework all this such
-> > that all the schedstat crap becomes tracepoints and all the existing
-> > cruft optional consumers of that.
-> > 
+On Wed, Nov 05, 2025 at 05:47:14PM +0800, Ma Ke wrote:
+> viio_trigger_alloc() initializes the device with device_initialize()
+> but uses kfree() directly in error paths, which bypasses the device's
+> release callback iio_trig_release(). This could lead to memory leaks
+> and inconsistent device state.
 > 
-> One common use case for /proc/schedstat that I'm aware of is post-mortem
-> analysis of scheduler behavior, for example, debugging latency,
-> fairness, or throughput issues after they have occurred. Continuous
-> polling is often done to preserve historical data, since it’s often
-> unclear in advance which metrics will be useful for future
-> investigation. I doubt historical data from /proc/schedstat is something
-> average users monitor daily, but kernel developers or performance
-> engineers are likely to use it for more in-depth analysis.
-> 
-> > Like I argued here:
-> > 
-> >   https://lkml.kernel.org/r/20250703141800.GX1613200@noisy.programming.kicks-ass.net
-> > 
-> > Then people can consume them however makes most sense, ideally with a
-> > binary interface if it is high bandwidth.
-> 
-> I also agree that a binary interface would be a better long-term
-> approach, not only because the text interface has formatting costs on
-> the kernel side, but also due to parsing overhead in userspace. However,
-> implementing a full binary interface is a larger project: other files
-> like /proc/interrupts could benefit as well. I chose to start with a
-> smaller-scale change because the /proc interface is unlikely to
-> disappear soon, and even with better solutions available, existing
-> software will continue to use it for some time.
+> Replace kfree(trig) with put_device(&trig->dev) in error paths to
+> ensure proper cleanup through the device's release callback.
 
-Hi Peter,
+Now when irq_alloc_descs() fails, trig->subirq_base becomes negative and
+in the release callback it will pass the
 
-I wanted to follow up to make sure I fully understand your position and
-to confirm whether there's any path forward for this change exploring
-binary interface path, or if you'd prefer to leave things as they are.
+        if (trig->subirq_base) {
 
-To briefly recap, my motivation was practical: while I agree that a
-binary interface or tracepoints would be a better long-term solution,
-the current text-based /proc/schedstat is still widely used in existing
-tools. In large-scale environments, even small improvements in the
-efficiency of generating these stats can have a measurable operational
-impact, especially as core counts continue to rise.
+Is it a problem?
 
-I tried to keep the change minimal and focused, aiming for a
-straightforward improvement without adding significant complexity. 
+The release function also misses mutex_destroy().
 
-I also want to make sure that the arguments for this change haven't
-fallen between the cracks, and that the practical reasons for making the
-text version faster are fully considered. My goal is to close the loop
-on this topic, so if you feel this patch isn't justified, I'm happy to
-defer to your judgment. 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks again for your time and feedback.
+
 
