@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-887065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B40C37369
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:54:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D57C37204
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5035B666ACB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F3E1883A4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F51033858E;
-	Wed,  5 Nov 2025 17:35:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12B62F28FC;
-	Wed,  5 Nov 2025 17:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A1733858E;
+	Wed,  5 Nov 2025 17:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwssDAbz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723DC1A9F82
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762364114; cv=none; b=Y6ldt25QIadwG3T6KCP/qr4UArkA6iDqQN5u2mO+VUgEEUEYsBjx1zH74wzQjaORE44kdtq3efHhcCw1pvJ9KtXMQnNFPWpwnNNWvFVT/68nRjik1nUJlS0v6/MFGD6ja3SvBP8eZNQgXo710JKnhsiPkFqEAokjKJ+xs1ss2i4=
+	t=1762364239; cv=none; b=OrIl9VuSi4LuF3Ufyp3hoFXXZuNgWhXit/TdywQff0WoYRkVi+QAMPQUlD6kji/n/ou4zIKC4/GmCpp6i6YeziSbKILVtXXzhaDv+oD+AfI2dN72RB9E10J3rmzgqXGsPiA3DUDfDmHVe/To0bLNs1dVFCZhKbXJmEx1/6XNnvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762364114; c=relaxed/simple;
-	bh=DTXNROkRA31SpKmGKo/09BWRmLOT/RvGrF6DmXSpWgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jl3YhYcuwbc0/gEPrIyh4t5+RXZI3Zfkqywf+tyGDo+MtgrWDn7FyPYR2RZOZPzcnN9sqYCLWwCwnwWcaWFkVScHoCPFiDGPO6M7ERNyuYP4sEZQe64VAfIqxrPgoGZIzWBZelRaZqnB1aAhUkqdw7jWr1flw0SuTu36w/vVaIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25725169C;
-	Wed,  5 Nov 2025 09:35:03 -0800 (PST)
-Received: from [10.57.86.139] (unknown [10.57.86.139])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBB8E3F63F;
-	Wed,  5 Nov 2025 09:35:06 -0800 (PST)
-Message-ID: <44010837-65c6-437e-aede-7b45f69b6758@arm.com>
-Date: Wed, 5 Nov 2025 17:35:03 +0000
+	s=arc-20240116; t=1762364239; c=relaxed/simple;
+	bh=oikeBsTkXESg/zQM0VeX21fpP5BX4NjeQ4ImkTAOD5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGjR25LAbkNjF+aDWivge7MZVkW5W7QF3psGGluSmiE+BYt4iplefidiiaIDpFDp0z6qx93SkJhXIK3S/4xU4mOIWN8U5Y2tLCG6IOpmqE8Fvq95F1+hZhAFa2XsEfPVDTTRlBl78oFoeZFSvOaXkMne/7vrWR3PeD1qpeLkZ/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwssDAbz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C02C4CEF5;
+	Wed,  5 Nov 2025 17:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762364238;
+	bh=oikeBsTkXESg/zQM0VeX21fpP5BX4NjeQ4ImkTAOD5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FwssDAbz9953tgEm10JYoi4KJCfP6SA6HAnQavrw7zTCAAxZbffzhzNi1qIUHFtYB
+	 wktfURi/o17LfLNLdryKQcTkeufo9Aa+Yt+Z1np3CrMVo321ZTgvxxCWVfmLki1ioB
+	 ChNFrzDkmWVMpPJbteshSWo352Oe8lIzVbH+Q0ePF02kVWIzYfzquMgYJYdu88LS4k
+	 +CXAY85sr37wiOCTIs8Uugg5lhkgSTPGGGIzyqgOSWZoqE1sbFC7xnD6zrTXKn6zxg
+	 IHoTiDci/Ni/aU+QDZVvHJ71CB3OFl9+zb8hevZBjPFcpWNvWPXC4agZJQDi2Q9t2P
+	 XLtb2qGWIgoQQ==
+Date: Wed, 5 Nov 2025 19:37:12 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	kexec@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add myself as a reviewer for KHO
+Message-ID: <aQuLSAAy-hfxLVsJ@kernel.org>
+References: <20251105102022.18798-1-pratyush@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] of: introduce wrapper function to query the cell
- count
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, will@kernel.org,
- joro@8bytes.org, robh@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
- konrad.dybcio@oss.qualcomm.com, bjorn.andersson@oss.qualcomm.com,
- bod@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- saravanak@google.com, prakash.gupta@oss.qualcomm.com,
- vikash.garodia@oss.qualcomm.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
- <47bdcf06aacc1fec791577ffd4a4a94034a4d3ed.1762235099.git.charan.kalla@oss.qualcomm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <47bdcf06aacc1fec791577ffd4a4a94034a4d3ed.1762235099.git.charan.kalla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105102022.18798-1-pratyush@kernel.org>
 
-On 2025-11-04 8:51 am, Charan Teja Kalla wrote:
-> Introduce the wrapper function, of_map_id_cell_count(), to query the
-> actual cell count that need to be considered by the of_map_id() when
-> used for translating the <property>-map entries. Accordingly make sure
-> of_map_id_or_funcid() operates on this returned cell count.
+On Wed, Nov 05, 2025 at 11:20:19AM +0100, Pratyush Yadav wrote:
+> I have been reviewing most patches for KHO already, and it is easier to
+> spot them if I am directly in Cc.
 > 
-> This wrapper function returns cell count as 1 thus no functional
-> changes.
-> 
-> The subsequent patches improve the logic in wrapper function to detect
-> the proper cell count.
-> 
-> Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
+> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
 > ---
->   drivers/of/base.c | 19 ++++++++++++++++---
->   1 file changed, 16 insertions(+), 3 deletions(-)
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index ac6b726cd5e3..5e76abcc7940 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -2045,6 +2045,12 @@ int of_find_last_cache_level(unsigned int cpu)
->   	return cache_level;
->   }
->   
-> +static int of_map_id_cell_count(const __be32 *map, const char *map_name,
-> +				int map_len)
-> +{
-> +	return 1;
-> +}
-> +
->   /*
->    * Look at the documentation of of_map_id.
->    */
-> @@ -2053,6 +2059,7 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
->   		struct device_node **target, u32 *id_out)
->   {
->   	u32 map_mask, masked_id;
-> +	u32 cell_count, total_cells;
->   	int map_len;
->   	const __be32 *map = NULL;
->   
-> @@ -2068,7 +2075,13 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
->   		return 0;
->   	}
->   
-> -	if (!map_len || map_len % (4 * sizeof(*map))) {
-> +	cell_count = of_map_id_cell_count(map, map_name, map_len);
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8ee7cb5fe838f..3c85bb0e381fc 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13789,6 +13789,7 @@ KEXEC HANDOVER (KHO)
+>  M:	Alexander Graf <graf@amazon.com>
+>  M:	Mike Rapoport <rppt@kernel.org>
+>  M:	Pasha Tatashin <pasha.tatashin@soleen.com>
+> +R:	Pratyush Yadav <pratyush@kernel.org>
+>  L:	kexec@lists.infradead.org
+>  L:	linux-mm@kvack.org
+>  S:	Maintained
+> 
+> base-commit: d25eefc46daf21bd1ebbc699f0ffd7fe11d92296
+> -- 
+> 2.47.3
+> 
 
-This doesn't work. The output cell count for any given entry depends on 
-whatever phandle *that* entry maps to - it can't be assumed to be 
-constant for the whole map.
-
-Thanks,
-Robin.
-
-> +	if (!cell_count)
-> +		return -EINVAL;
-> +
-> +	total_cells = 2 + cell_count + 1;
-> +
-> +	if (!map_len || map_len % (total_cells * sizeof(*map))) {
->   		pr_err("%pOF: Error: Bad %s length: %d\n", np,
->   			map_name, map_len);
->   		return -EINVAL;
-> @@ -2085,12 +2098,12 @@ static int of_map_id_or_funcid(const struct device_node *np, u32 id,
->   		of_property_read_u32(np, map_mask_name, &map_mask);
->   
->   	masked_id = map_mask & id;
-> -	for ( ; map_len > 0; map_len -= 4 * sizeof(*map), map += 4) {
-> +	for ( ; map_len > 0; map_len -= total_cells * sizeof(*map), map += total_cells) {
->   		struct device_node *phandle_node;
->   		u32 id_base = be32_to_cpup(map + 0);
->   		u32 phandle = be32_to_cpup(map + 1);
->   		u32 out_base = be32_to_cpup(map + 2);
-> -		u32 id_len = be32_to_cpup(map + 3);
-> +		u32 id_len = be32_to_cpup(map + total_cells - 1);
->   
->   		if (id_base & ~map_mask) {
->   			pr_err("%pOF: Invalid %s translation - %s-mask (0x%x) ignores id-base (0x%x)\n",
-
+-- 
+Sincerely yours,
+Mike.
 
