@@ -1,80 +1,151 @@
-Return-Path: <linux-kernel+bounces-887437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE9AC3840A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:49:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5073CC383EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8819F188A066
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF4C3B9AEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4928D2F658F;
-	Wed,  5 Nov 2025 22:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCB42E9721;
+	Wed,  5 Nov 2025 22:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ummLNO59"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eC6p5Eyl"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEC02F6192;
-	Wed,  5 Nov 2025 22:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65EF2C0F64
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762382721; cv=none; b=AtAMB1+clGh7/V9XdwiZpclHzlQRBG7PvZynkuQWHgW9RUunjv1Q/itmjDNjI9w5/85IcpkCqS+K8pEQJ5yAfayvOlLbYUcwQAQaciR9aug17blMeOyAJPXdP7grGog0o/O0Qbwxf0pdGK0X8IKir3x7P8GM5up08N7+6+iigEU=
+	t=1762382764; cv=none; b=MzT4MpGQaRSQc4KujhvV98zegsGG7RqZKhhUDBRzU6ZYs9wVhlPqwbcNnk52g66WoJboJmvIro3f+MpxmWGUoYhQgSg9UGIri6fAUWreaW61cotaEHRs6ty4dA4ngOvXMOGbusaTazllEuZFSwFbtDbXtl5TIH7f2W/qWovfUBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762382721; c=relaxed/simple;
-	bh=Egewitrs3XsYEJ70fe8RW61DSMSY8r6ma4/DDNmAH60=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GFoF1gh1LjTgbnXKxaeO1yhgK7JeWRSTWtG23HpJW9Lrzr5ZwPonH8Lozvo26MXVh7fA0lZf6It6ddyEY0ngauLMxe5YSROgUDAZYnUdoU6HJncBQAhMJKUHTcSNza++Zu8rgNmmcS6HqJQmjebScT2xitYfaSDrEHzO3HidWX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ummLNO59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6685EC116B1;
-	Wed,  5 Nov 2025 22:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762382721;
-	bh=Egewitrs3XsYEJ70fe8RW61DSMSY8r6ma4/DDNmAH60=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ummLNO59I3UQdtn+nBed4QhZculMi9YTY5+WN60fy92HHzqx8rNod2sokKeZ/biwS
-	 YTUkj39lOAy09l2KxKI/IJOYjrYUtJl4ZJEhZt791/cgb44xC5kwc1owWzMbE/Khir
-	 h7xTOcirEw0NfXWVcUpeLYO12tYczG8eArr8/oXR61nl71+QCgjxtVjUVne1ZnHWXd
-	 cZsOGvez0fXH/gV8Hk3Hh8I6eUAJ3B7VL9uJDbkOcKq/Ilgbb68FuGTRW9Tuue8xS4
-	 j+Jldlk6ZSnzI498lAODP+AQ6/1/ed5NSfYdpFrlrqOl0jBlDTC33ZNDbZAgx9pmE4
-	 hgxhyiCM5dQ3g==
-Date: Wed, 5 Nov 2025 14:45:19 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: joshwash@google.com
-Cc: netdev@vger.kernel.org, Harshitha Ramamurthy <hramamurthy@google.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Willem de Bruijn <willemb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>, John Fraker
- <jfraker@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Ankit
- Garg <nktgrg@google.com>, linux-kernel@vger.kernel.org, Jordan Rhee
- <jordanrhee@google.com>
-Subject: Re: [PATCH net-next v2 3/4] gve: Allow ethtool to configure
- rx_buf_len
-Message-ID: <20251105144519.2729e38b@kernel.org>
-In-Reply-To: <20251105182603.1223474-4-joshwash@google.com>
-References: <20251105182603.1223474-1-joshwash@google.com>
-	<20251105182603.1223474-4-joshwash@google.com>
+	s=arc-20240116; t=1762382764; c=relaxed/simple;
+	bh=kkDNyCXlipn1onJC4ich9C7JgWc17Nuo8XcxAWXvuiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gc+isNc9pYCIJAVrgeCPXmjklZKBBnWL3oiivxbnWETHkx6g+dspCALWgH2Jkt0UCKIJ17hnzRPz1aPKqopYBfnZL8Hj15bcpCoGi6TANSL6YrlTeHKrL/94u1N4h8O/yvvffr3r7RukdKfRGjAImptj00I97SgRIAFcYty/0JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eC6p5Eyl; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429c7e438a8so294138f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:46:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762382760; x=1762987560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gGoN6Q1FGu70kxgsHRXjo5ei8Lx6D1HeRQOhJHTTWhA=;
+        b=eC6p5EylkYy/ZW4tzb0rWhTjt6g2gKWz8xUt6PQklcp5gBQO3jXukHiXs4wIJ5636R
+         8swaxwTpj9Puxe0HijMP/L1p/k2w1gqVu/CLAVCuh6wJDJuhIns9meg6t8MwpzNqx6ol
+         h6+bwAy+WXgfNVncowHZtUhiU9mVBBTP/uhWG/togNphF5Kv6ZYUwahAPDLIqLio+dji
+         4DuyE9Fb6rWW+t8WJQ9Vir+jmE6XWxL/1yIByhMLE4VzLamnQOG3Vg4AxtIRKxo96CO1
+         /KNutUp/2QLGZ7FLm+Ff9i+EYkiYl1ZgsZG1Wcr0+JPae7kmidRpPjYJ1dUA3wAnH3YC
+         jbBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762382760; x=1762987560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gGoN6Q1FGu70kxgsHRXjo5ei8Lx6D1HeRQOhJHTTWhA=;
+        b=I8iu8GNJYWuxXZDW0DoiKhzAmSV4jqo4h/AzLVgztPDzUT8fWo9hcAeMlb4npzdtjm
+         z+DZBBqTveDbT1fO+cvhrLvBYHv7ugUMXCRipFGAegmjWI2oA/tSbW+ldoox8ZlaTh1B
+         i/EeXZLW3DwHfnMChChhvC8oivTNDN/2N2Ma0n1Vad15V+QHMOjKMGoG380nBKkGXoAf
+         U2jzvctDo+zP2lD90dZn+pOWw/zIEZGmzAflpVysayni8jG+etT2OdrvVcTI317cspMU
+         scX6fAQYvepMF+C1U579VTsi+zE/1QA+aslixS49sjc7zvBDpIQWoKO0FOet6hODJmKc
+         87SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUN/5jjCrqr3HYc14Bi7lknl5ZT6T3UcVpsC0LCn1B2P/fB65/UkYG2G5Rrh2nBlN8cdX8rmlrAC9t56k0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8LoaZG++t3gZ56lcHN5HuNK0GaEgxfHSVyLUpoTN/i/rcPYWX
+	jYxrR6CDDtU3srdnIrinUg5mXxoc9+wv2fT/tEfY5hnSuoGtD0vZ8AB2TQFUCiB0+MxY+BCw3Op
+	UdPWIjmivLAbqLbyZhoal9d0GOftf4s4=
+X-Gm-Gg: ASbGncv9wOVntFe22UJHMXx9Q25frdL3w5RRyFb5+xNyb0Zo9HsAMjEchYhGMaWKCAI
+	74t3SnMusna9uGqix1A0R9UOYExSJAUwB37d6nNFvXpJMiALQXu6wn/q0ip5qT2tXwBjyKC3cfV
+	QoaN5vVCYLCN3TlKlZeu40/lLQ66df8+xCWWadapQuoGI3yuNlXhsnmaGsEuqpLt2HOj9GqXEwJ
+	gGcY1HNCCZ/k87cLTethKMx3Xk7hlYqi3CxenFkd7v7ldFaMYKRIxiRcy/0QCx4lNlQrFldCPua
+	YKpTnpG+RQ9cXcUDQw==
+X-Google-Smtp-Source: AGHT+IGjDwvUOY1Pq7XzI4RZbgF4ynfBtF8HaZiltB+4JMI7wP597W0WnGnQWn4EsO9dJ3ITS0umhzfO5f/LQShhu9Y=
+X-Received: by 2002:a05:6000:25c2:b0:429:cc1c:c1f with SMTP id
+ ffacd0b85a97d-429e330bb48mr4108376f8f.48.1762382760149; Wed, 05 Nov 2025
+ 14:46:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251105201415.227144-1-hoyeon.lee@suse.com>
+In-Reply-To: <20251105201415.227144-1-hoyeon.lee@suse.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 5 Nov 2025 14:45:48 -0800
+X-Gm-Features: AWmQ_bkCpm1oQayiN7axXx7bpB29hzAn2IfljyRcTIPVqCsMzM4KtipvyswazdA
+Message-ID: <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
+Subject: Re: [bpf-next] selftests/bpf: refactor snprintf_btf test to use bpf_strncmp
+To: Hoyeon Lee <hoyeon.lee@suse.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  5 Nov 2025 10:26:02 -0800 joshwash@google.com wrote:
-> +	if (priv->rx_cfg.packet_buffer_size != SZ_2K) {
-> +		NL_SET_ERR_MSG_FMT_MOD(extack,
-> +				       "XDP is not supported for Rx buf len %d, only %d supported.\n",
+On Wed, Nov 5, 2025 at 12:14=E2=80=AFPM Hoyeon Lee <hoyeon.lee@suse.com> wr=
+ote:
+>
+> The netif_receive_skb BPF program used in snprintf_btf test still uses
+> a custom __strncmp. This is unnecessary as the bpf_strncmp helper is
+> available and provides the same functionality.
+>
+> This commit refactors the test to use the bpf_strncmp helper, removing
+> the redundant custom implementation.
+>
+> Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
+> ---
+>  .../selftests/bpf/progs/netif_receive_skb.c       | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/progs/netif_receive_skb.c b/tool=
+s/testing/selftests/bpf/progs/netif_receive_skb.c
+> index 9e067dcbf607..186b8c82b9e6 100644
+> --- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
+> +++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
+> @@ -31,19 +31,6 @@ struct {
+>         __type(value, char[STRSIZE]);
+>  } strdata SEC(".maps");
+>
+> -static int __strncmp(const void *m1, const void *m2, size_t len)
+> -{
+> -       const unsigned char *s1 =3D m1;
+> -       const unsigned char *s2 =3D m2;
+> -       int i, delta =3D 0;
+> -
+> -       for (i =3D 0; i < len; i++) {
+> -               delta =3D s1[i] - s2[i];
+> -               if (delta || s1[i] =3D=3D 0 || s2[i] =3D=3D 0)
+> -                       break;
+> -       }
+> -       return delta;
+> -}
+>
+>  #if __has_builtin(__builtin_btf_type_id)
+>  #define        TEST_BTF(_str, _type, _flags, _expected, ...)            =
+       \
+> @@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const void *m2, si=
+ze_t len)
+>                                        &_ptr, sizeof(_ptr), _hflags);   \
+>                 if (ret)                                                \
+>                         break;                                          \
+> -               _cmp =3D __strncmp(_str, _expectedval, EXPECTED_STRSIZE);=
+ \
+> +               _cmp =3D bpf_strncmp(_str, EXPECTED_STRSIZE, _expectedval=
+); \
 
-No \n in extack messages, please.
--- 
+Though it's equivalent, the point of the test is to be heavy
+for the verifier with open coded __strncmp().
+
 pw-bot: cr
 
