@@ -1,150 +1,245 @@
-Return-Path: <linux-kernel+bounces-886765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A22CC36737
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:47:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FEFC365F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CB962734F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:38:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 68D4734F1EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB5F3128D7;
-	Wed,  5 Nov 2025 15:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC74330319;
+	Wed,  5 Nov 2025 15:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qmv28Zko"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="A8TEWHZe"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F7A261586
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454D31577D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357071; cv=none; b=NF4cTRqQladNKM8gF+MguDL/xLKbJcOiltAWnphjPojEZneeikJkb0rwrtmuzyJ+7/lFmH4bT0v2Q7AUujm9jRxohX1khrWvegOQc8CzBtk1tzsADNKdCfsYX1BS1FvzjSvaSbbTRffUN7AUSNA5TnolyFCsJ74b/SHYy9Mv5pg=
+	t=1762357074; cv=none; b=jzE3pBGlAdnm0kR1ZU6c/Wu4yNIamZhitQfNvUttvvXYp75O/kl5EmrwqQKfCZ/eYi5rE1TB0z7VsCqOXE7gRyQ5wghbUJAkVMV9CmOP7T88y9I1Qks4tB+M7PawMviRKLCH2daVqs0tcEFWrQpriR8ZthDAJDsr6NGMLeyg/hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357071; c=relaxed/simple;
-	bh=CXhaVTF0dUHKkqatGhyt0lR3+Ud/OKXy/N8gbTLq8uo=;
+	s=arc-20240116; t=1762357074; c=relaxed/simple;
+	bh=Hrtwr+OvIPoqONQSZPSg43U6tcdzazTxhomZ6ZCqZhM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jNi4BZC2YByXKn9w+ujg0gpUMb22R4tHkNyrwr342aorlbT8BmlksmHPYwuPz/dzCzRrLSoDpALAM7aEkl8LYy/IY9eJ2/9lPEiA9nroHJgpS6JKTpU2G8c0W/fxafZjyDu6JRsNaWzO2/Cm3sHJfQwpnZ9y7GkC6m8gAdMgyzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qmv28Zko; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6409e985505so6950321a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:37:48 -0800 (PST)
+	 To:Cc:Content-Type; b=jwmZykYves8WA4kSG79sUU5FX061XAnf9++9r7ikCusAPYow3sLL51qfzhAAJ+9+SkK8bAdsZPNlTrmm9PUR83HYObfFf9vbzbAZ4VzP+j0O1yt0Z9Cd5Tkc2/d/hLTp7DDlxKdVMwmU9MwN7vNQEGJKQCvX4H2/EUctAUpcDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=A8TEWHZe; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295291fdde4so6021855ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:37:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762357067; x=1762961867; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1762357072; x=1762961872; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/XZB/jPhn/siD8SGVJfI9EapUMgV6PkgsNvUj8ZEvXI=;
-        b=Qmv28ZkoaStSO6N64niW74oeWSBuwdXZtKwg1cKwk7DLzD6dJOGj5+P2omuY50Tnmo
-         YKjqaYkW/3Tf95QJWtTQK2/isYoRiQ7/rcowKYBtcNoRoNOLo14et36mppIZhH4mRjyJ
-         8lL4SnUHxXtq1b55m1F4J/9UhDfBc22rxHxECcpuRjhXls4e/LjhxAcpZNJG8jGR6JbK
-         4VfOo/vVhI/T806FIwNNuPGVuzla4aQETJS9mO/qIcPQfF0CMi1JERIibdAvE1BdDUiv
-         6zUpPrhSmZ2xiJPdjCDl/oGGIdZcjAfK3qbVkKBkHjmiTE8t3L8ZcuyXu0geAW4PpZkt
-         bfIQ==
+        bh=Z98l80RASzMLq3W9xClOY4agvDKw8ZVI+GsRz5Frd3k=;
+        b=A8TEWHZeincZ9dGvXfjDdFsV7Nj9DsGDk6PO6V6A7RNFs551J9s/F3GZs0/6IUjoDg
+         0EMRvrLX5kkgplBWrT1bZFZc8RKgr+NjZKNJE94MIOM8PRBRNjSIA37sRQGpKfke4B2/
+         +IleLuPAKpFE60ulE191Qhbww1rM1ORDrc0+59aZxxzY89qPE2VaayBrZiBCZ281K5Ql
+         K/coGERtCXxTFIhBurg0HbVHSk5os3oknv1McRHfhbO8N/q1RiE30acg2ExJ69iV3cKp
+         SdJKXF/JZ+vLb2JV6nLrnCSRnvyQlDGTiCcbwbbUEWw6qbxe9EzRubaIHkDg1aqP9jdv
+         zwcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762357067; x=1762961867;
+        d=1e100.net; s=20230601; t=1762357072; x=1762961872;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/XZB/jPhn/siD8SGVJfI9EapUMgV6PkgsNvUj8ZEvXI=;
-        b=sPpQCk6g+b7Crql2kjGE4I534UXKZ5l+dQ1FUbVuILpq8yur0bvHStWGwkxaJIEngk
-         NQzq5X/i8cLd944VXnrEdlfCj8kWgREzItUlRIpzVHvYHlXyQQGAg2TOX5OQAXaHqmsl
-         55LV1it8znbIN2a0J/1D9iPCcZ7yweIeikjmJf+ppYiTu01kdzrQnxmN9zxznMaA3mB2
-         K2NMMaeQGWndPLJ05IauwYjUlix1rrg4A5u3u2kET1Hh4PZgS1Hd5l7q780Y8+kgyoyJ
-         HkEVZKqAnaDKbxIYf8wdwYvrmIyK95UNXucGEHOlsze9nch1GY2wx3yay9kWBGZmNLLv
-         RBVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPxb1CXYjyQ09Li0l5xlj4H7Nckhr7uVJ58lBxt2IFqYhdapVj/rRQuoBQ48fS+a4ZexQV2oTXRDXNYv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEHCvX4siTlNmvq/eyZpOSiUqReRXZ5kYUVurbRmj+Iu94CUVZ
-	QQkvzHvLguZjMDAWPHgb2Ri3CVxjqaOK3Aq18w47R8mWvKpl0MjXSabmXG2DKHs8VYsMIYbyift
-	McS36JpDkqnMphP+I5fC3pi255gMKeWcRiRHoBuOogg==
-X-Gm-Gg: ASbGnctveAJSt48wfHdJ8T+MEpYwNUOi0UJDs2SikABk8uydOKQ7NoIMGRl0tQ+qHXW
-	cnNnZk0cIkJVuQ4yWBy7FsPg3rwfsIu0HASihQFUJ3fbYeDZ4GKnE82EnEzzo4aaQCTeO6TtFP0
-	/MDZ4zPfpHAzIONuVZUzYfBQ6xbPeoNQ5UVxg1t42UlHuy+60/bwPoLlQg1AUUjvPvWYbUFMitu
-	Uj2V1M8kOWnqU0SSLQi8/gBrJucHboBxDomlaIXQa2qHWh31aHE/FUYjfCXvgDz71yJ7T3ytcrA
-	kMQAOympjeCX2mSCOLg=
-X-Google-Smtp-Source: AGHT+IGFvg64iJ3o0M4+tOffkilkbvzs1SJ2vHC8r6yqg3/3Ymps7cseQ5kdZ+/naG/NXdxjfwB9eLvN8fIvRNHTzZA=
-X-Received: by 2002:a05:6402:51d1:b0:63c:2d72:56e3 with SMTP id
- 4fb4d7f45d1cf-64105a5d549mr3208989a12.23.1762357067158; Wed, 05 Nov 2025
- 07:37:47 -0800 (PST)
+        bh=Z98l80RASzMLq3W9xClOY4agvDKw8ZVI+GsRz5Frd3k=;
+        b=UU3GwFrZEje7ca6v5VdwrI26gddna+dWSdLkcGETeFbZCHpSb6tRgCsoA8aDdOkunv
+         4256UxDGCnK5Jwm3U7kXpU686J6SSfe/UI7mFaSbW+bKT/cLxXTW3+b1aR0N/CLpw80C
+         VK/hdAvXkjWV7k7fVnrV3tNXMSGUQhTLGxVY8/tiAjECHlFcMsJQc4/o6VbN3L14+OOp
+         pSQ2K4C8tSo+5Qxa0VAqkfURW6/qqFvPkfOsrixeNnOVd9gziNY0RxVocEksl4v3JC7O
+         BwPnzJ+iJMLxN/9Mn85bvD4SaAmjxpgkRQ3QtFg06G42I9jZIzJhJod3emnnL/8LMcVM
+         UO/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0fGGektrHntkTUWJTgc6iVRVZCcDSJ8BBUoSCLAI6HXN4hjkMR5rOllwakCOk0nIhsT30hQ3yi5JqIN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvM/vArZ4sxi5cOlbfLSCCavYxYHooeVNo5TYYDGR3XT4fma3x
+	KqrhzKRf2QxMh+wslrK6S0P6GppZAoEu93396ODuLTVzGToqIO23o2jp/gZtTPZondNRz1X2Lmb
+	9kVozD8apjQ3T1prgyf6ejbATr2klE5tQLASCRcZzjQig7E1Orj8eg6A=
+X-Gm-Gg: ASbGncuDDWpkHS84tBuidEfLPIUviCT29Q12s97hLLjfjdPtNxOrq7oMzZk82E8zvBx
+	6K+iTYSVF3AjxbQjiwUfggm+D8aBMj03loPfVWuE8zoVuRDbLvZdzZ7+N+u74eD5nmH7ynjR3L2
+	wEDGoFiDs+srcVuNf+L2VvY1xyRESsZoVsXKfdP3rxeCjZGkYGaBMmjeVLoIbcmZ6mWRnk7bVYT
+	HHmykhhe7HMaQ8iRmsiMKloPNz0uFsn1lyt/GSfUFohZiGrb1uD8l3R5FLp+9bYOsorG7aDb2+c
+	G/XGo5s/rIFYqVT7qzMIXxi7ouuv2w==
+X-Google-Smtp-Source: AGHT+IGKSPTPtsfyzUQ7CTT+3b9yrZZRx+i0pNBy0TWzb3nNrWkAuCXmFZaWGRT+4HWX3HpJwN9RBOKFdQsgiFcvGVU=
+X-Received: by 2002:a17:902:ecce:b0:295:ac6f:c891 with SMTP id
+ d9443c01a7336-2962adaf9e8mr32333525ad.2.1762357071851; Wed, 05 Nov 2025
+ 07:37:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105-aheev-uninitialized-free-attr-overlayfs-v1-1-6ae4624655db@gmail.com>
-In-Reply-To: <20251105-aheev-uninitialized-free-attr-overlayfs-v1-1-6ae4624655db@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 5 Nov 2025 16:37:36 +0100
-X-Gm-Features: AWmQ_bkJcX4CFGUWjjNBr7DeMH_3xhazSTStZKzFSqAuVB-zRtc3S2mv5dhIXQA
-Message-ID: <CAOQ4uxjFombc5SQDRxGFn3we-rJ8nbd4KrTfECG3AzSNwcQHuQ@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: fix uninitialized pointers with free attr
-To: Ally Heev <allyheev@gmail.com>, Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20251031010522.3509499-1-csander@purestorage.com>
+ <aQQwy7l_OCzG430i@fedora> <CADUfDZoPDbKO60nNVFk35X2JvT=8EV7vgROP+y2jgx6P39Woew@mail.gmail.com>
+ <aQVAVBGM7inQUa7z@fedora> <CADUfDZqKV2SzbWoe4gr4aSPaBtr+VwmEgEidZKo=LQBU9Quf2Q@mail.gmail.com>
+ <aQqs2TlXU0UYlsuy@fedora> <34e94983-3828-469b-bb87-6a08061c101a@kernel.dk>
+In-Reply-To: <34e94983-3828-469b-bb87-6a08061c101a@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 5 Nov 2025 07:37:40 -0800
+X-Gm-Features: AWmQ_bmiZXqpzQreXjGPIYwlUfbRst6wBvAJte0heP6tR1fvcJrjKWQSSP9puu4
+Message-ID: <CADUfDZrY7v93aDtZbD4-qKAaJHcGUbWTQinEVRG4Tiiy6m2BFA@mail.gmail.com>
+Subject: Re: [PATCH] ublk: use copy_{to,from}_iter() for user copy
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 5, 2025 at 3:33=E2=80=AFPM Ally Heev <allyheev@gmail.com> wrote=
+On Wed, Nov 5, 2025 at 7:26=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 11/4/25 6:48 PM, Ming Lei wrote:
+> > On Mon, Nov 03, 2025 at 08:40:30AM -0800, Caleb Sander Mateos wrote:
+> >> On Fri, Oct 31, 2025 at 4:04?PM Ming Lei <ming.lei@redhat.com> wrote:
+> >>>
+> >>> On Fri, Oct 31, 2025 at 09:02:48AM -0700, Caleb Sander Mateos wrote:
+> >>>> On Thu, Oct 30, 2025 at 8:45?PM Ming Lei <ming.lei@redhat.com> wrote=
 :
+> >>>>>
+> >>>>> On Thu, Oct 30, 2025 at 07:05:21PM -0600, Caleb Sander Mateos wrote=
+:
+> >>>>>> ublk_copy_user_pages()/ublk_copy_io_pages() currently uses
+> >>>>>> iov_iter_get_pages2() to extract the pages from the iov_iter and
+> >>>>>> memcpy()s between the bvec_iter and the iov_iter's pages one at a =
+time.
+> >>>>>> Switch to using copy_to_iter()/copy_from_iter() instead. This avoi=
+ds the
+> >>>>>> user page reference count increments and decrements and needing to=
+ split
+> >>>>>> the memcpy() at user page boundaries. It also simplifies the code
+> >>>>>> considerably.
+> >>>>>>
+> >>>>>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> >>>>>> ---
+> >>>>>>  drivers/block/ublk_drv.c | 62 +++++++++--------------------------=
+-----
+> >>>>>>  1 file changed, 14 insertions(+), 48 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> >>>>>> index 0c74a41a6753..852350e639d6 100644
+> >>>>>> --- a/drivers/block/ublk_drv.c
+> >>>>>> +++ b/drivers/block/ublk_drv.c
+> >>>>>> @@ -912,58 +912,47 @@ static const struct block_device_operations =
+ub_fops =3D {
+> >>>>>>       .open =3D         ublk_open,
+> >>>>>>       .free_disk =3D    ublk_free_disk,
+> >>>>>>       .report_zones =3D ublk_report_zones,
+> >>>>>>  };
+> >>>>>>
+> >>>>>> -#define UBLK_MAX_PIN_PAGES   32
+> >>>>>> -
+> >>>>>>  struct ublk_io_iter {
+> >>>>>> -     struct page *pages[UBLK_MAX_PIN_PAGES];
+> >>>>>>       struct bio *bio;
+> >>>>>>       struct bvec_iter iter;
+> >>>>>>  };
+> >>>>>
+> >>>>> ->pages[] is actually for pinning user io pages in batch, so killin=
+g it may cause
+> >>>>> perf drop.
+> >>>>
+> >>>> As far as I can tell, copy_to_iter()/copy_from_iter() avoids the pag=
+e
+> >>>> pinning entirely. It calls copy_to_user_iter() for each contiguous
+> >>>> user address range:
+> >>>>
+> >>>> size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter=
+ *i)
+> >>>> {
+> >>>>         if (WARN_ON_ONCE(i->data_source))
+> >>>>                 return 0;
+> >>>>         if (user_backed_iter(i))
+> >>>>                 might_fault();
+> >>>>         return iterate_and_advance(i, bytes, (void *)addr,
+> >>>>                                    copy_to_user_iter, memcpy_to_iter=
+);
+> >>>> }
+> >>>>
+> >>>> Which just checks that the address range doesn't include any kernel
+> >>>> addresses and then memcpy()s directly via the userspace virtual
+> >>>> addresses:
+> >>>>
+> >>>> static __always_inline
+> >>>> size_t copy_to_user_iter(void __user *iter_to, size_t progress,
+> >>>>                          size_t len, void *from, void *priv2)
+> >>>> {
+> >>>>         if (should_fail_usercopy())
+> >>>>                 return len;
+> >>>>         if (access_ok(iter_to, len)) {
+> >>>>                 from +=3D progress;
+> >>>>                 instrument_copy_to_user(iter_to, from, len);
+> >>>>                 len =3D raw_copy_to_user(iter_to, from, len);
+> >>>>         }
+> >>>>         return len;
+> >>>> }
+> >>>>
+> >>>> static __always_inline __must_check unsigned long
+> >>>> raw_copy_to_user(void __user *dst, const void *src, unsigned long si=
+ze)
+> >>>> {
+> >>>>         return copy_user_generic((__force void *)dst, src, size);
+> >>>> }
+> >>>>
+> >>>> static __always_inline __must_check unsigned long
+> >>>> copy_user_generic(void *to, const void *from, unsigned long len)
+> >>>> {
+> >>>>         stac();
+> >>>>         /*
+> >>>>          * If CPU has FSRM feature, use 'rep movs'.
+> >>>>          * Otherwise, use rep_movs_alternative.
+> >>>>          */
+> >>>>         asm volatile(
+> >>>>                 "1:\n\t"
+> >>>>                 ALTERNATIVE("rep movsb",
+> >>>>                             "call rep_movs_alternative",
+> >>>> ALT_NOT(X86_FEATURE_FSRM))
+> >>>>                 "2:\n"
+> >>>>                 _ASM_EXTABLE_UA(1b, 2b)
+> >>>>                 :"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTR=
+AINT
+> >>>>                 : : "memory", "rax");
+> >>>>         clac();
+> >>>>         return len;
+> >>>> }
+> >>>>
+> >>>> Am I missing something?
+> >>>
+> >>> page is allocated & mapped in page fault handler.
+> >>
+> >> Right, physical pages certainly need to be allocated for the virtual
+> >> address range being copied to/from. But that would have happened
+> >> previously in iov_iter_get_pages2(), so this isn't a new cost. And as
+> >> you point out, in the common case that the virtual pages are already
+> >> mapped to physical pages, the copy won't cause any page faults.
+> >>
+> >>>
+> >>> However, in typical cases, pages in io buffer shouldn't be swapped ou=
+t
+> >>> frequently, so this cleanup may be good, I will run some perf test.
+> >>
+> >> Thanks for testing.
+> >
+> > `fio/t/io_uring` shows 40% improvement on `./kublk -t null -q 2` with t=
+his
+> > patch in my test VM, so looks very nice improvement.
+> >
+> > Also it works well by forcing to pass IOSQE_ASYNC on the ublk uring_cmd=
+,
+> > and this change is correct because the copy is guaranteed to be done in=
+ ublk
+> > daemon context.
 >
-> Uninitialized pointers with `__free` attribute can cause undefined
-> behaviour as the memory assigned(randomly) to the pointer is freed
-> automatically when the pointer goes out of scope
->
-> overlayfs doesn't have any bugs related to this as of now, but
-> it is better to initialize and assign pointers with `__free` attr
-> in one statement to ensure proper scope-based cleanup
->
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-> Signed-off-by: Ally Heev <allyheev@gmail.com>
-> ---
+> We good to queue this up then?
 
-Christian,
-
-Would you mind picking this patch?
-
-Feel free to add:
-Acked-by: Amir Goldstein <amir73il@gmail.com>
-
+Let me write a v2 implementing Ming's suggestions to use
+copy_page_{to,from}_iter() and get rid of the open-coded bvec
+iteration.
 
 Thanks,
-Amir.
-
->  fs/overlayfs/params.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> index 63b7346c5ee1c127a9c33b12c3704aa035ff88cf..56d5906e1e41ae6581911cbd2=
-69d0fb085db4516 100644
-> --- a/fs/overlayfs/params.c
-> +++ b/fs/overlayfs/params.c
-> @@ -448,10 +448,9 @@ static int ovl_parse_layer(struct fs_context *fc, st=
-ruct fs_parameter *param,
->                 err =3D ovl_do_parse_layer(fc, param->string, &layer_path=
-, layer);
->                 break;
->         case fs_value_is_file: {
-> -               char *buf __free(kfree);
->                 char *layer_name;
-> +               char *buf __free(kfree) =3D kmalloc(PATH_MAX, GFP_KERNEL_=
-ACCOUNT);
->
-> -               buf =3D kmalloc(PATH_MAX, GFP_KERNEL_ACCOUNT);
->                 if (!buf)
->                         return -ENOMEM;
->
->
-> ---
-> base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-> change-id: 20251105-aheev-uninitialized-free-attr-overlayfs-6873964429e0
->
-> Best regards,
-> --
-> Ally Heev <allyheev@gmail.com>
->
+Caleb
 
