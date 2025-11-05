@@ -1,86 +1,174 @@
-Return-Path: <linux-kernel+bounces-886165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8765CC34E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:39:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AB2C34E5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FBA24FCBFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:33:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 124A94FF2D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3213081A0;
-	Wed,  5 Nov 2025 09:32:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4740241760;
+	Wed,  5 Nov 2025 09:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/IzLKtj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+OGkLBWa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GPUxJ8E7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+kwgkb2s"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F067F2FF643
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E323D2B4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335126; cv=none; b=Sp+thM6KBgnwwlMyo4xUM0hu6FdqH0fO97Q66Syb5CwT/JqbP6oaWPbOOPppDJ9cRGKoNys1nm+Qva7B3Jg0stUeW7Oqxj1/xmZKfNxNw2bOTvVs8/UNRvcSqUl7y2xwf2l/Eij6Sm06vrTJGkpclrQk3aXyN/S91jPPZPjVwkc=
+	t=1762335187; cv=none; b=e0Hu3K5BUR8Y25J2ggO2H17RReAZazDkigs19B1SIK5oIrkD7lucravm78dmaedzg6tcJI25PRYkAwKYYk8dY2osTQ5iWPSebuax/62tTNuPKP3jk3EX0VpRxMfh3LmUgQh1uB8cu+lVFticx7/SqV7Sp7Yv8qMpZDvDTnvzQlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335126; c=relaxed/simple;
-	bh=5GUCxWMs8ggsTmafk7RzBPsAuxFl8wSXisT78lx79Qc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DaDpFjIxkWCFeLrPIXebYqBzbuBj+ZcaYcUThuu/gvYtti0Xm8UBMgyJTJ+dXvOXv0l1WwFYGJHkKwdxEkt3f6C9U/6cVWBwY2KoARDPG9uXLvnXLaR/+fyKPtFhKpo1R5mOB4VS26qVeMuj+ZiC37BVdbbyZ7Vxszl0/85G4Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-945aa9e086eso78215239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762335124; x=1762939924;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bf3n4dqOaw3injLMRin3evDiPo8nQpXlJOO5M+SovMI=;
-        b=aVbKPy6DXcNs4sXtlMqBNqsQEvYk+eA7X5g6Nl/kNvrkOvZyKsfa966EcWv4aixEQi
-         hSHYTt6es1l6F2oh06C/SQKVMvqtqexKkASNyUWaWQIHXfSIGzoe02rKHjkGcWyyb2k/
-         RoQw1wSgqmaNHmLAA8fjy2QfAxbEqXvN/l6o20qJ/XwpZ/iB5BEKKmK/CWPbbE6d2O18
-         dg262vUcdEHO8r7THkGluiMS5JHyYCb01JvjqmJJSZ5HWzXTrCqexCDPA8IpkE1XV69u
-         q7Nwz6pQfPtLkQOa8iJIU+K0E5azt+5O0NBZaY6BiLF4aWri24h++fCt1orYvP0m4v86
-         zgEQ==
-X-Gm-Message-State: AOJu0Yy7HDEmEp1rzCYpupfSjp819kRtV6Xf+uOEwPQx/pD/0BXcGCgz
-	NfU+VaOpvkA4piEKU7Iw98Qn2/VG6FwvOZROBsxtr6PYIHbCF2H4gVAgsfmS2oLFymZhfg3lG0F
-	P/g8RVTNe80sSKmrv75OFoYm+1TZ6O9LmDpDBiMlnfBv+kXBOPDJZIdF3TO4=
-X-Google-Smtp-Source: AGHT+IFVoIxSOGGG9H4LMu05/rSFSVbUC6jTYzJQ5lH03AfS2fNvDx2y3mSTDXzn00HIoqSENGbp+OCdAOH+40MGO2chccRc8Zdl
+	s=arc-20240116; t=1762335187; c=relaxed/simple;
+	bh=aA2bXPltNT3imaXp7EnIRakEH7GhK3nJTc3gLVvHbtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvBowHsW+3ptqVYFkADDlfMPzZJfui5JUt7V8ebtPm+n/njcKR6gg1FQCHDL3JYkxtUw8vMxQlusK+/21DDLlfdoj1i5qqluBSDoD6ilymqpa8YjMLaIU1Fa8iKjEsWqKe5LpS3O+j//N7Dt9E5Cwn3ZeWLeSFlGBYtcLy00XoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/IzLKtj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+OGkLBWa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GPUxJ8E7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+kwgkb2s; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EEE4221186;
+	Wed,  5 Nov 2025 09:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762335184; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
+	b=b/IzLKtjV/0eAAbmf17eH6rNdv8R2um9sbE+sD+meEbCy7bs7qxejCiVOSCU/FsH1i+uzu
+	ZDPf1HPEqFuJts7cR/HfGh/7BHZnLqHVbeNv/R6JGJZEg0KxrTMMfKkjoAnjtIB3jC7sqG
+	z98+1sv+rG/5Llvi/1KwuZpo20EwvDY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762335184;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
+	b=+OGkLBWaNbzrk+xAlP2+3LXX4So3KFAyvyUh0fDLObqSwVxEM+QzcRPG+7uC3p1ATeXm8x
+	2U8BnIhsXul6TpBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762335182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
+	b=GPUxJ8E7snsfPumu7Mni5yFht/9aqf9kvUjX9sQm5ZoryA4NYy5IzTkmEv+07lGkkgnV9C
+	aCTgU+6szYKO5dDqLw88OM4FbleP/BdRG/cDHf1RUbGCLWhMXOqRBqlYvW+xblPeYXsa6P
+	ffIBO9EKVaswdWZZBfLrcL+rFRthUFQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762335182;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=720QJ5QwK5/vr5g/qY55TBuX1V7STFt/v1biLS/zSUc=;
+	b=+kwgkb2slUfC1ZEC2lfxhjoL8X0/ffjeTDP6GpQgeG354nOdxItk+VsF3iYCBdDhelPpWv
+	vRkc8RY6KvvUrsCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E37E7132DD;
+	Wed,  5 Nov 2025 09:33:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hVCKN84ZC2nYHwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:33:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A430CA083B; Wed,  5 Nov 2025 10:33:02 +0100 (CET)
+Date: Wed, 5 Nov 2025 10:33:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 20/25] ext4: support large block size in
+ __ext4_block_zero_page_range()
+Message-ID: <cyj4y73fcmqykv5xnrixngivx6hfkhczdtuo5rxs6kwqcc4aao@vok4hhzzjbog>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-21-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:7518:b0:945:a834:5951 with SMTP id
- ca18e2360f4ac-9486935325amr453037439f.6.1762335124057; Wed, 05 Nov 2025
- 01:32:04 -0800 (PST)
-Date: Wed, 05 Nov 2025 01:32:04 -0800
-In-Reply-To: <CAMz+-CPLgSojr8wHHY1Wdef+UUHBpVB9xWTYwZ-c0tQ41Trh2g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b1994.050a0220.baf87.0010.GAE@google.com>
-Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
-From: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	vnranganath.20@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-21-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-Hello,
+On Sat 25-10-25 11:22:16, libaokun@huaweicloud.com wrote:
+> From: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> Use the EXT4_P_TO_LBLK() macro to convert folio indexes to blocks to avoid
+> negative left shifts after supporting blocksize greater than PAGE_SIZE.
+> 
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Looks good. Feel free to add:
 
-Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Tested-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Tested on:
+								Honza
 
-commit:         284922f4 x86: uaccess: don't use runtime-const rewriti..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b93012580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac9909540ee4e359
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=107e8a92580000
-
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  fs/ext4/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index ce48cc6780a3..b3fa29923a1d 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4066,7 +4066,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+>  
+>  	blocksize = inode->i_sb->s_blocksize;
+>  
+> -	iblock = folio->index << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
+> +	iblock = EXT4_P_TO_LBLK(inode, folio->index);
+>  
+>  	bh = folio_buffers(folio);
+>  	if (!bh)
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
