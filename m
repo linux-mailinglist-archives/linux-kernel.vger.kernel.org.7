@@ -1,136 +1,145 @@
-Return-Path: <linux-kernel+bounces-886594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFB8C3607C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:23:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2A2C35FB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD5E2345FEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:23:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6509E4E57F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC113176F4;
-	Wed,  5 Nov 2025 14:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD0F329369;
+	Wed,  5 Nov 2025 14:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXjvtFFU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v2VoqFwH"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC75F22D785;
-	Wed,  5 Nov 2025 14:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86094311955
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352577; cv=none; b=K9dkWW/SFzJXmLJeu9KL38Daz1lzM7Ld/Fq1Xezp1khyqcmvi3a7rkWO+F4i8vCDZ7ocLSXHlE7ldBRdj1mnllBVKwLYbmQR4TDtiYnKArcS3W9VvFIG1JfJop0u6Ia0hYgC1ZVa2/E/YxKPEE03ZWgyxDFDWN3J5wYIcUHEWm4=
+	t=1762351812; cv=none; b=nNUDOHWe/gFSxTSF79qYoU3tWIzOa4mkHMd2jrIOVpBWQ0TB64nK/x82yxRcxt+2Eudmfrlpf0krKhYTUZ4lxvAg7tSGgQxWESy+CDfgevDUg1rt1AVVKju/uFrTDGho2b9QmGBVAGyMcsisRHAaf/XFqy9ux69aKHu3ah7oERM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352577; c=relaxed/simple;
-	bh=lHz30B4VkxkIiT9h7xSUpmJpe3w9gt1OrxbGcakIO5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kVgKtpxqMMrC8LDRDXvRVD7SPlQmsgYEx/KLy5tA3z8FLgqyp3Zt3TRC1HcQKH3YcR27B2tVYfe3MGM43eQsWtuunrkJSWvqJy/8+bVBete8+3+Y0nE9l0TInigcuBjMtU+EVv7IZqvXX2qj/F2z/LdgtWNweSUOUIxt9R5Om9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXjvtFFU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762352576; x=1793888576;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lHz30B4VkxkIiT9h7xSUpmJpe3w9gt1OrxbGcakIO5I=;
-  b=YXjvtFFUuoLT/oo+1d89UerTOTf2AcVQXEZFxW/Jwd5YshfCN3IAeLsT
-   KLOGWFoaCWpsZaCHroIu6gzK7VLnxObaTXBvNqY9QCVL8UTNvWBQ7BrOW
-   WS3FiKBdrp05d9OWkQx+4ZExvxD/yruW/wXgdg9xe/MeOfUghcCYlP7fA
-   pWHCiHkZkMbzwQMznMXqJiMfTpKtD07N9pgenFUEjq2DKg8F5sEnt1DFE
-   gOz3cnh2p2LSUyW3ic0xS2D2gUyUmksezYGMhO7fMUK8+aoe0al9nPJ+G
-   /T5rVjsX8MCpGrHTy3t4PC1Uf87kaHib89sVq0SOf/TSZl0mNk/AadiUb
-   w==;
-X-CSE-ConnectionGUID: JBThAsgmTuyghj4uEeJZJg==
-X-CSE-MsgGUID: E/pl49APS82lB1qQHrrdww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="89928475"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="89928475"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 06:22:55 -0800
-X-CSE-ConnectionGUID: 6r64+RsHTBS5Ayw86mbvFQ==
-X-CSE-MsgGUID: SpRR8Hf6RiCs4KQlhF8YoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="186755002"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa010.jf.intel.com with ESMTP; 05 Nov 2025 06:22:53 -0800
-Date: Wed, 5 Nov 2025 22:08:45 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] fpga: Add dummy definitions of API functions
-Message-ID: <aQtabTZ16CN1pmMl@yilunxu-OptiPlex-7050>
-References: <20251104153013.154463-1-abbotti@mev.co.uk>
- <aQqsnFl8uakMAsH+@yilunxu-OptiPlex-7050>
- <22148db9-3579-4298-b641-91cc98dc1c5c@mev.co.uk>
+	s=arc-20240116; t=1762351812; c=relaxed/simple;
+	bh=GuO5f1PITMKK40xOY8hKZBftofSvfoaoksU+3KNxcE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QRauyx9dMjqXpDU/hGdCJX5glHcf5PD6CEsgakSnm3Ra8xK72appixwe13pTHKqudR2c/0l1eZYrzYDLL4nVCNyoIASyBNX+TZupO5XRpqo83j/i9N7E4P3wHk5HRixQKTr+FrqnMPnoX9YJArwg2BMfWdiQDzFEky+NcU+Y9OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v2VoqFwH; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ca11cc02-0cf6-48aa-8840-1662fa61dbbc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762351807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KxhfdDNOoN0RhEK/rbfglH/AWsOBbZHhZn3FyhV0K/Q=;
+	b=v2VoqFwHDODgvbSmiSJXsBDSRax9kankVfjlgFFBipFw3Rb7OjTqf8QMFNaQ27UOJ9lgjQ
+	/+OcW0uFbg8GnbQhwsqg7MBHnqmcsml6aQfglscx4xEOu3mu6KASCAMNOMmZGswijUrcJD
+	AxnPkN8wj38hldREuf5Q0oWgdO1uv1Y=
+Date: Wed, 5 Nov 2025 22:09:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22148db9-3579-4298-b641-91cc98dc1c5c@mev.co.uk>
+Subject: Re: [PATCH bpf-next v5 2/2] selftests/bpf: Add test to verify freeing
+ the special fields when update [lru_,]percpu_hash maps
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bot+bpf-ci@kernel.org
+Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Amery Hung <ameryhung@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-patches-bot@fb.com, Martin KaFai Lau <martin.lau@kernel.org>,
+ Chris Mason <clm@meta.com>, Ihor Solodrai <ihor.solodrai@linux.dev>
+References: <20251104142714.99878-3-leon.hwang@linux.dev>
+ <6099162df8322a2198497a8a27e1b0e1e5c017aeb74b20fc1eecde1e67826900@mail.kernel.org>
+ <CAADnVQJZbyQWaUTzB0=82mq+hSVqxGb679cW1=t=OFCRuCVdXQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leon Hwang <leon.hwang@linux.dev>
+In-Reply-To: <CAADnVQJZbyQWaUTzB0=82mq+hSVqxGb679cW1=t=OFCRuCVdXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 05, 2025 at 10:37:39AM +0000, Ian Abbott wrote:
-> On 2025-11-05 01:47, Xu Yilun wrote:
-> > On Tue, Nov 04, 2025 at 03:27:01PM +0000, Ian Abbott wrote:
-> > > Add dummy definitions of the FPGA API functions for build testing
-> > > 
-> > > 1) fpga: altera-pr-ip: Add dummy definitions of API functions
-> > > 2) fpga: bridge: Add dummy definitions of API functions
-> > > 3) fpga: manager: Add dummy definitions of API functions
-> > > 4) fpga: region: Add dummy definitions of API functions
-> > 
-> > Sorry I don't get the idea. Why should someone use FPGA APIs without
-> > selecting CONIG_FPGA_XXX? Better make the changes along with the use
-> > case patches.
+
+
+On 2025/11/5 01:37, Alexei Starovoitov wrote:
+> On Tue, Nov 4, 2025 at 6:52 AM <bot+bpf-ci@kernel.org> wrote:
+>>
+>>> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>>> index 893a4fdb4..87b0cc018 100644
+>>> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>>> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>>
+>> [ ... ]
+>>
+>>> @@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
+>>>       return 0;
+>>>  }
+>>>
+>>> +private(kptr_ref) u64 ref;
+>>> +
+>>> +static int probe_read_refcount(void)
+>>> +{
+>>> +     u32 refcount;
+>>> +
+>>> +     bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
+>>> +     return refcount;
+>>> +}
+>>> +
+>>> +static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
+>>> +                         struct node_data __kptr **node)
+>>> +{
+>>> +     struct node_data *n, *m;
+>>> +
+>>> +     n = bpf_obj_new(typeof(*n));
+>>> +     if (!n)
+>>> +             return -1;
+>>> +
+>>> +     m = bpf_refcount_acquire(n);
+>>> +     n = bpf_kptr_xchg(node, n);
+>>> +     if (n) {
+>>> +             bpf_obj_drop(n);
+>>> +             bpf_obj_drop(m);
+>>> +             return -2;
+>>> +     }
+>>
+>> In __insert_in_list(), after bpf_kptr_xchg() stores the new object in
+>> the map and returns the old value in n, can the error path drop both
+>> n and m? At this point, the new object (pointed to by m) is already
+>> referenced by the map. Dropping m here would free an object that the
+>> map still points to, leaving a dangling pointer.
 > 
-> Projects using FPGAs often have custom devices with custom, out-of-tree
-> drivers, so it's quite useful to be able to build test those drivers against
-> later kernel versions on the host to keep up with kernel API drift, prior to
+> AI is wrong, but I bet it got confused by reuse of variable 'n'.
+> It's hard for humans too.
+> Leon,
+> please use a different var.
+> n = bpf_kptr_xchg(node, n); is a head scratcher.
 
-But why don't you select the FPGA options on your "later kernel"? I
-don't see much benifit for not doing so. Finally you still need
-runtime test for new kernel adoption which requires selecting these
-FPGA options.
+No problem.
 
-And the problem for these stubs is, real users lose the chance to find
-config error at earlier stage.
+I'll update the variable names in the next revision.
 
-> possible later adoption of the kernel version on the target.
 > 
-> > Thanks,
-> > Yilun
-> > 
-> > > 
-> > >   include/linux/fpga/altera-pr-ip-core.h |  8 ++-
-> > >   include/linux/fpga/fpga-bridge.h       | 75 ++++++++++++++++++++++++++-
-> > >   include/linux/fpga/fpga-mgr.h          | 95 +++++++++++++++++++++++++++++++---
-> > >   include/linux/fpga/fpga-region.h       | 44 ++++++++++++++--
-> > >   4 files changed, 207 insertions(+), 15 deletions(-)
-> However, I messed up the patches, because I only built them without the FPGA
-> configure options defined.  I plan to submit a v2 patch series unless it is
-> deemed a complete waste of effort by the maintainers.
+> Also see Yonghong's comment on v4 which I suspect applies to v5.
 
-Sorry, for now it still seems unnecessary to me.
+That was actually a misunderstanding — he didn't run the newly added tests.
+
+Still, I'll update the test name to include "refcounted_kptr" to make it
+clearer and help avoid such confusion in the future.
 
 Thanks,
-Yilun
+Leon
 
-> 
-> Cheers,
-> Ian
-> -- 
-> -=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
-> -=( registered in England & Wales.  Regd. number: 02862268.  )=-
-> -=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
-> -=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
-> 
 
