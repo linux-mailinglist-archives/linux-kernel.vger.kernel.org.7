@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-885821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699BFC33FC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EC7C33FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE66718C14A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA33F18C1860
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD60261B83;
-	Wed,  5 Nov 2025 05:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94401260583;
+	Wed,  5 Nov 2025 05:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IPsOmtk9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ATHlrEdA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E22208AD;
-	Wed,  5 Nov 2025 05:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096B2208AD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762320199; cv=none; b=ksuP3M5/MkkvNAuUgqZbMV6M+oBlx41wpAsjHqR5UlBILWllWG2nTjFnDJCFvqgGrFUHIv8huJAnDzPv54IS2BJTkYei+rFemIL6f0vbBGGOrx/M1ARMQcEN1DKJeW7IW4bb65vYusfLZuMTp5DDkrru5X/G1W7bpDV0PnXjx1w=
+	t=1762320298; cv=none; b=gDyRmxVGdOeDsSVNqd7Bdf+vviTAYsQ9Q0nP8vOZ3kXDz/JAVv/6cuOUbP3b8SqFwNM0KUjwEXOCY6iaej68EUOe8OHHD0LfoSYaAkIec3tvtuhH+TVM7T6dyarDq8xUhyoYqC6RclbCVx+BJD9H4iPNSBE+PTa+91yw4Udy/Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762320199; c=relaxed/simple;
-	bh=hEH2QB1nliq7yRhagE4p9BsmINtAm36qArRs/4bLI94=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CFp2ISnmdbQeDmFhNEGRyUs8fBtmImUtGknUb4LBKJ9qTpfufpP8q9Im6zP+OOpHQXyMU+YpR05bnuCZzFRkGNNwjMcoLEeNNbJ8hkdXkDsZMGWMEMQji2olCSzcuy86PexFHaSWNQyj9FA1rwjGKFjiqBdDNSf37+bm/Te8dfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IPsOmtk9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762320195;
-	bh=J/lwCdgYzIrvkt2Te425UziPxfrWvc6nu599jANggbA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IPsOmtk9WoaPehinZwGm6qn3+JOo3H7aI445o1FXUFyzFOnCOrBL64HPPf6AtE9oD
-	 Euvrppot5w+yFyYkh5mwDnf/GOVSGzmfE0Wr2ucl4mTPV2KjY6BvulZK12JxGbVdZH
-	 Fm0cAKeNtuSXNwluSXtvemoEt2S1NPF5M5TvCB4X5Hd6c3NGk8dK4feSxR5J/qMDbb
-	 Lf7FCkzG7N3S/w1o+xfTRymi+ZQvveI5rthaS4s+SwrZkTSnPgmpzmn+bqJTqyP2bX
-	 3ejFxi/QshCO7CZnzxhjjAXc0yV0bCtEidixcKA6uZ9z7c3/fW9Nwy0gnvw1uGj8VJ
-	 JfnD+tY3U9lZg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1Ycy5hP1z4w93;
-	Wed, 05 Nov 2025 16:23:14 +1100 (AEDT)
-Date: Wed, 5 Nov 2025 16:23:14 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zi Yan <ziy@nvidia.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the mm-unstable tree
-Message-ID: <20251105162314.004e2764@canb.auug.org.au>
+	s=arc-20240116; t=1762320298; c=relaxed/simple;
+	bh=zTTLehS2Czjct0P8KDPBwMTLTK4Jd4p/w9OtxORDz14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=By1icViGRDruDuDyMyMK7SCiD+IEwct2Qr6VAOi+cwubaOhMMsCz/eL/0tO+i4xEW6Osy5WtvJ/ixxpoL0CSf4Dfas8G36iaV+3kG7FGLzomefrZGaGvQkfFovQKvHaUXf7UTXI7TBd3iUkpAOnKHEH77ChVH2496lI5mLvsHLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ATHlrEdA; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762320298; x=1793856298;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zTTLehS2Czjct0P8KDPBwMTLTK4Jd4p/w9OtxORDz14=;
+  b=ATHlrEdAFhxJw3njAY37oAILlL/GTtm0JgIezkOtjBy//AjdsscE/odK
+   06zKkMxBBSxkB3Oe/kuUCIjrVXDSrXlf5Pbf+euj+V2R0K7q1+YYPpmXT
+   ALz97m6kj+dJr4MIVHf78JvlJmLFVcAX0puHrKqNYtMFzeG4BNDZd0iVC
+   n05PawAD+qx+w29MTBxudbRTSWXYr5M8HIvr+wWeORPHmDWkOXofCxpjg
+   eIDpiBOzGnQQwGhU8P7KPqtyB9ZA0/mg2TMyR0Qd5W6hCYLTi9knI21PK
+   9N0CS6X4IP84DWJ6JwAxiowYMps03ZsOmO/4dkfKb+4XQQHritDQmjQPL
+   A==;
+X-CSE-ConnectionGUID: xbquydb/SjOqfAuV3Oe+Hg==
+X-CSE-MsgGUID: nVbIoBOMS/2CNCfNOyRncA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68264175"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="68264175"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 21:24:57 -0800
+X-CSE-ConnectionGUID: qjbMNB0bRcWADJ0Fc20qyQ==
+X-CSE-MsgGUID: Lu1Y0AtwTzKzzTeabPpHrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187203493"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 21:24:55 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGW0p-00000005g0E-1nc9;
+	Wed, 05 Nov 2025 07:24:51 +0200
+Date: Wed, 5 Nov 2025 07:24:50 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: regulator branch mess
+Message-ID: <aQrfolXgeWs8A_gK@smile.fi.intel.com>
+References: <aQoZ22aT27wHBpbI@smile.fi.intel.com>
+ <aQocq1eRjOOjiRdY@finisterre.sirena.org.uk>
+ <aQogTFANK1fMtloW@smile.fi.intel.com>
+ <aQojdTvP94aYVW4l@finisterre.sirena.org.uk>
+ <aQolne8AKHXdJw0-@smile.fi.intel.com>
+ <aQonVNgqJI56nspA@smile.fi.intel.com>
+ <aQoqPqVeQiHJ2tiF@finisterre.sirena.org.uk>
+ <20251104221551.GA2968640@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/I4bSLXvntDrlhHF/ZjO7bQP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104221551.GA2968640@mit.edu>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
---Sig_/I4bSLXvntDrlhHF/ZjO7bQP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 04, 2025 at 05:15:51PM -0500, Theodore Ts'o wrote:
+> Andy, I don't know what github is doing to confuse you, but my
 
-Hi all,
+I haven't told anything about Git Hub, I talked about web representation on
+kernel.org.
 
-After merging the mm-unstable tree, today's linux-next build (htmldocs)
-produced these warnings:
+> preferred way of understanding what is in a merge commit is to use the
+> command line tools, which are less likely to lie (or at least, to be
+> confusing):
 
-Documentation/core-api/mm-api:134: mm/huge_memory.c:3593: ERROR: Unexpected=
- indentation. [docutils]
-Documentation/core-api/mm-api:134: mm/huge_memory.c:3595: WARNING: Block qu=
-ote ends without a blank line; unexpected unindent. [docutils]
+Yep, less confusing. The problem of the confusion here is the merge commit
+text, that only describes the merge of the small series but also implies bump
+from v6.18-rc3 to v6.18-rc4. Other subsystems I follow usually do an explicit
+back-merges to the rcX whenever is needed. But as I told Mark, I'm fine if
+that was a deliberate (known) move. Now it's all clear.
 
-Introduced by commit
+Thanks for helping me to understand this!
 
-  95164597715a ("mm/huge_memory: fix kernel-doc comments for folio_split() =
-and related")
+> % git log --pretty=oneline regulator/for-next ^base/master
+> 9de2057bbdfb58f4d9bb1476135317cd3fe6aa52 (regulator/for-next, regulator/for-6.19, regulator/HEAD) regulator: pf9453: optimize PMIC PF9453 driver
+> 2ecc8c089802e033d2e5204d21a9f467e2517df9 regulator: pf9453: remove unused I2C_LT register
+> 0144a2b29d95af8523c308116de65d398d6e935b regulator: pf9453: remove low power mode
+> a2d4691b3fec6a2360e4ec953d06819ea055c3e7 regulator: pf9453: change the device ID register address
+> 252abf2d07d33b1c70a59ba1c9395ba42bbd793e regulator: Small cleanup in of_get_regulation_constraints()
+> 28039efa4d8e8bbf98b066133a906bd4e307d496 MAINTAINERS: remove obsolete file entry in DIALOG SEMICONDUCTOR DRIVERS
+> dc74a00c7661a14a672ea7660caca5c4aa661a79 regulator: pca9450: add input supply links
+> 4c33cef58965eb655a0ac8e243aa323581ec025f regulator: pca9450: link regulator inputs to supply groups
+> 86df0030b71d7172317d957df17524a7fd6232d4 regulator: dt-bindings: nxp,pca9450: document input supplies
+> 01313661b248c5ba586acae09bff57077dbec0a5 regulator: Let raspberrypi drivers depend on ARM
+> d054cc3a2ccfb19484f3b54d69b6e416832dc8f4 regulator: rpmh-regulator: Add RPMH regulator support for PMR735D
+> f76dbe127f1b5910e37dfe307d2de5c13d61ed89 regulator: dt-bindings: qcom,rpmh: Add support for PMR735D
+> 5263cd81578f99a00b2dd7de1da2b570b96a1b7c rpmh-regulators: Update rpmh-regulator driver and
+> fb25114cd760c13cf177d9ac37837fafcc9657b5 regulator: sy7636a: add gpios and input regulator
+> 65efe5404d151767653c7b7dd39bd2e7ad532c2d regulator: rpmh-regulator: Add RPMH regulator support for Glymur
+> 6a8cdef7dc2a4c0dbde3f7d7100b3d99712a766b regulator: rpmh-regulator: Add support for new resource name format
+> 1356c98ef911e14ccfaf374800840ce5bdcb3bbd regulator: dt-bindings: rpmh-regulator: Update pmic-id DT prop info for new CMD-DB
+> 835dfb12fc389f36eb007657f163bd1c539dcd45 regulator: dt-bindings: rpmh-regulator : Add compatibles for PMH01XX & PMCX0102
+> 433e294c3c5b5d2020085a0e36c1cb47b694690a regulator: core: forward undervoltage events downstream by default
+> 6277a486a7faaa6c87f4bf1d59a2de233a093248 regulator: dt-bindings: Convert Dialog DA9211 Regulators to DT schema
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+With Best Regards,
+Andy Shevchenko
 
---Sig_/I4bSLXvntDrlhHF/ZjO7bQP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkK30IACgkQAVBC80lX
-0Gymsgf/eF1kiGifVbpIU8bDPX69SIK1G4fijSzaopbrEZR7dg+1dbqbMHzSHNVH
-791UJkv+hLvYfSpQRVZAZWvDoIqduRLZ7DXSQSUb+hqyRhYcSqSbNfOcETrUb/ES
-SzRzcI8NdW8jO0wzouosGvJrPxm+MbgjQv8ffQFUOejFaTZyi8cEb8owXTPRlybT
-FzpwHt4bfuknmWbjjXbHzSIQJJajNy2m8TF/558aCJrXrA7uO5sgaj8Qaho6FbiM
-Sp5gKXZoUMCYtmpVGs9cQEhwGVaFeQLpy/fCDCU2UTm7lo3P1mUwh70sMnuuT7r2
-4FOkarFq31AeVN/8/CaEJ8mXJgtSfQ==
-=kvde
------END PGP SIGNATURE-----
-
---Sig_/I4bSLXvntDrlhHF/ZjO7bQP--
 
