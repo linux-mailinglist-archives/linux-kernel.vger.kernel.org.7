@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-886207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D2DC34FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:57:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8A9C34FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E95834653B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B68B18C15AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B230AAA6;
-	Wed,  5 Nov 2025 09:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A8C30CD92;
+	Wed,  5 Nov 2025 09:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXxp89eM"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbX3g38o"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CD0309EF3
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C19930C61B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336610; cv=none; b=rL/xBh8pBL6xOSaH+dkjYaF87P/zAQquY9iJBH5eEJuHYiN5ScikHrEC6vYxCf+CZIwcfJihE0m6B4daRb2d7iRKw/EZ/FKHA6lmwapdT92okaTMgFZddMvZjdvZ1uX0IbeL8Bn+EXxMSnBRcfPVQBlqChzkBVIslDiJlof2D64=
+	t=1762336613; cv=none; b=CgBFgPgIN9FIbpxf42zgkR6KxfjDD64aicBhPefQl4I8LGkkBcgDfa79yabKvGidFaEt6L9Hf/8+F8uYZGAumhPPiJcHIZJQAx49XfLeloe5eJBY3cuDLEzIwj71AsHae56m2vB99EOpvGuLqLXKqATC/5ohr7C2qIfWshQVVV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336610; c=relaxed/simple;
-	bh=KKznF8+PApZcEWd9iTzewV5G7EssaoQjqQ6hmanjAHc=;
+	s=arc-20240116; t=1762336613; c=relaxed/simple;
+	bh=uhtPyUARMh6iqTL6T+FkCm4KL2BKQJC1wSSAlBNThFs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iMGw0wm5Z9Ym7G/5t/t0QQuwWerkx/+uVMWe44vsukaVNWHfO5vaX46HxwULBDV+NBwbI317FSerl+fNh62QinhUBC67mGHecq0Io3nUMwAAjDcok6znNJz6hwvKKUmE+3argtkCiyzmpUVqtzSih1INv4hV47gRH9yL2A8t9Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXxp89eM; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=eqbK61ESqOkYe0lX8n4Va/65s4uNkQGl6YMbgdrgS5RsL6xj7FW8GCZ/ESwKxp5eycpz6DjLClGSkRCmWEPti3G7Uq7M+iKKYobtUy9nST8gr+UUXWhMUZeJZ7WFtcs1C4mVPqhcqxOsYRW3N3WcWO6v1YFyM+CsggeC0r26xAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IbX3g38o; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so4003498a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:56:48 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b70fb7b54cdso352522766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:56:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762336607; x=1762941407; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762336610; x=1762941410; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zS3atC4aNLHHxOcqnZGtrBGqDXMbtPyhX2iAFhjNqj4=;
-        b=dXxp89eMYmWFlt0xWn27KVDFukqDOJtnqeat+Y6kN79tI50XkyYVeCTAIdwfYnl84Y
-         7YTVThgj70crTyiY/ZqejvjCBqNQxoZaOLQe96Zuas8lKk8/ai/nOuBQgKFQ6WqX2y4F
-         INkW/UlK9UesK7beP6rE4wUxO+/X351mx4NQKf43CntN8Snq6jveQhNn4wZwYlEhlyub
-         lYZ2A/NrgPgCOgpIA5pIKfqPEKYcx9MoGncuV1+LNMjsSIY4rCb6J2TuUc+uLabVK4oS
-         GdBW5ZHhIYTZquWO6LubvWcVeT9awItKKICQj8X5HmggNj9rrh7nOtomQkmCvXFDQkSw
-         kwnQ==
+        bh=vTXisoAd0Dg/UVvUO2lIGrX9MKyF/plfDMYlzBba5Os=;
+        b=IbX3g38o4MXh/ekiru+AyASGtD9LzwWr9rqRBYu59cIgSdr+PXQahKBDYXb1dYIdeC
+         QY9XqjFgJwmBvEzNHB0UqGcFeBiZw3EX8p5hbGjc1RxcVo1XU4qsdpwrbt1B8t00Nv1E
+         AuB7+L9Dl5DAIqg03b/BU9gzZTpR0Z3JTCSLzZ7MrGrpthS0fnrvGs4+MRQslEt49o8A
+         ZFj11QekNKJAwG/LWI6sRpRVrYxGTkyPYh21wOfZgLGgv54a8PWNjsjeP+bqKA3OGCTW
+         4m7VutICknd1LehaVvRyxOIXJf65JKJ3RcCxdNPjO5OeiWUPGAQtapLI35Qc5dwLwyyf
+         gN5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762336607; x=1762941407;
+        d=1e100.net; s=20230601; t=1762336610; x=1762941410;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zS3atC4aNLHHxOcqnZGtrBGqDXMbtPyhX2iAFhjNqj4=;
-        b=mz49yNjRnQtPfyuT0Hk/tSimmL2J2vL+CISj8PcOHpHf/aIaur0ioz5sbcPah0kymP
-         VBu73nwJ1uwZgc/UYrHuGdu+OcV2zyQ+tLZZPTyDXVpmPal7adZ5Bw/IvRhayaFIKXDf
-         1s5cXCxP7JlU7XqFJc8ObJPoBMoEwPX4/UxY7i7JZat2gLXAps2fKzi50ZlgJTlJ4kvI
-         clUFchFi+9AKZ4CNN6BjCy86fTmKepWt2c29NcHjv+CYWKKHdYEceGv4EfR4qHxyimYf
-         sbe0Jp2hqpNyh1FIhZAU9J0dy+TiCQBx/HHu/dBIqh7rNpJjxESwuJTlQxIfYOq51p4U
-         qEEw==
-X-Forwarded-Encrypted: i=1; AJvYcCULg41+uo3gXAaRRWXcbGkV4xZFL+JaqxRM2qgt5J9ZNEOXxttpVs2af1xgJhAXpveiQNelbn38CfTCepg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzspCGPS2TZjjBbVx6jANK770IG4pd28lkBBhlAaVpSIkaUNrX4
-	ku8/5EkgfIsJ7aPik7KVHNwT5cmHCoumMd3+g03P5g5aR2up+LMJV0tR
-X-Gm-Gg: ASbGncuXts+14b8tK1p7muBYvTnh8Cqz10w9gZoZ0MWNKH6hZnZ1doECGjONtd+PnyM
-	CjRRlVe16Wd3Onfph73USGB7WP+orm0OSmiOCm0fRCqqBDzE2FBU1MR4r5cKZdMsqnZKegbRNRL
-	EgCXjGIHJL4Gf5iE0dt6CX1Ny2BqWGvAnAbW7Ff2hztpKOP+lxzEvpJB3/bMiFiO0fi20Eg1oV3
-	nj7ZIoED5s2qMGJQNh2950cQIsjjayRnkVHqUmdE6FIXs4iz0Nl9zGd7wFrBEl70EM1mVoS6PuL
-	YQxeM9Y9kmkOLHq8GW7D34nBRFZkYe/r6aMRBAxopKBjSc+7tMRCfBEMJowVgnTj+1sb72bzNXM
-	2KylU/Pghq5ZjcZcmfUf/iLoKGFIDB86WWorwScMyaRr3kGHyF+TTQDyH7U44iH26RmkOAOF9Oo
-	gKn2DIBR2rfyStgs/k
-X-Google-Smtp-Source: AGHT+IF/ksgOnk3dCwpQUTb2Cd6c8bERS3mEHT2FJx4K+KRxYQJp7dERhUxUPzkHzeAHHH96+oez8w==
-X-Received: by 2002:a17:907:970a:b0:b6d:7231:3276 with SMTP id a640c23a62f3a-b72652a2368mr216155466b.19.1762336606779;
-        Wed, 05 Nov 2025 01:56:46 -0800 (PST)
+        bh=vTXisoAd0Dg/UVvUO2lIGrX9MKyF/plfDMYlzBba5Os=;
+        b=QAlgc6niSggdD2JRDyXo1BrbukCE8dK+U9ZHonZrh6PZ+3WVLXazXD8V6Y6znhdjpk
+         BoZg97QNHxaDQo+Fvx6rnfnTgruXs+5lvAhfH8CBrIZjW+GmPanOfmk4yRzSsg/V9VtV
+         ilxncITbNM9UGnTTxeND3EGlqcR/cU8tI5hX+wcujh3oIz9ZFrvsTwmvZq3pUYR7bylJ
+         7iQZn4GY/I489O9DGHAoTYDEK4LykuX9O23wZsPFYcAoHDTyB59dwVbCK+vCZmKz8aA4
+         mv1Fr55uyMYEIrC0bg7xdcFq1nzeMKaYsVQOrdi5Vy5KchhWJEGM8JeoKlPzRLPxHkYo
+         7tBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWt0/nsDCHz/QjcItF2em9N2mxNNnN2fvV7gwN49ypJspjBgIymc7DwzHYe8ltwJSgpaGhic+tHc69o3Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJLVf859JWK8/f+IE7z0+9V2V8XJiV7+2XJNBBXOTJDT+HmEil
+	45m9OZnhKr0gtAiQcuZppdVZqg8f0e4B/i33s8Lx41N0XJmkEYAw7i4u
+X-Gm-Gg: ASbGnctEqcKNNgsWRiseAzL2D/iPa9LKfimzWUb+VnTg4XAR1U6GoPySbBTI7WPaBxQ
+	2b9cqwk3IZAI1X092FpCFPv5hLIEwLcPxOJbWKrC9b1A/xtxuRhR3P63E/QEed1JeTyr+zDRLqJ
+	YL4I37tw/YL7lk6BqsHBhQvcFhZxELwNvD0ILB4JjrEh3r2DEsvDhRHjKm4aS5PtC13QQ05x/YH
+	kK/oCpqvtsaX47cbNxzL6pCJvfQ2G93hcWCG5kIrF55O65ZXxbUr+6vtU6nJhAK2o5hny35oNZT
+	3l/ViicusdQTbEWSdgKA8VPBZDI0h05W4sJN8hac2fQDWrPyQ1avz+8SCYGbmu1kiRyxCSdQQDP
+	0F60Z9/O3PSAcANQbjqQHGpdRC/F/OnifZqIs8DNy4xMVhikCbwT2NtgWw7LWDTF3grnPA91D8a
+	pB0r6ScQMWhJVY1CkZkM00KJhm7SQ=
+X-Google-Smtp-Source: AGHT+IFQTND/jr+bbPyDxEQ0kqsa49/BgX2lBGe838P97ni4aXWpdvc+e2txxEZO/Dgut5ldnfdwGQ==
+X-Received: by 2002:a17:907:1c1b:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b72652a221amr254518466b.18.1762336609662;
+        Wed, 05 Nov 2025 01:56:49 -0800 (PST)
 Received: from localhost.localdomain ([78.211.196.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fe37b7asm440266866b.60.2025.11.05.01.56.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fe37b7asm440266866b.60.2025.11.05.01.56.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 01:56:46 -0800 (PST)
+        Wed, 05 Nov 2025 01:56:49 -0800 (PST)
 From: Antoni Pokusinski <apokusinski01@gmail.com>
 To: jic23@kernel.org,
 	dlechner@baylibre.com,
@@ -82,9 +82,9 @@ To: jic23@kernel.org,
 Cc: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Antoni Pokusinski <apokusinski01@gmail.com>
-Subject: [PATCH v3 2/3] iio: mpl3115: add threshold events support
-Date: Wed,  5 Nov 2025 10:56:14 +0100
-Message-Id: <20251105095615.4310-3-apokusinski01@gmail.com>
+Subject: [PATCH v3 3/3] iio: ABI: document pressure event attributes
+Date: Wed,  5 Nov 2025 10:56:15 +0100
+Message-Id: <20251105095615.4310-4-apokusinski01@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251105095615.4310-1-apokusinski01@gmail.com>
 References: <20251105095615.4310-1-apokusinski01@gmail.com>
@@ -96,346 +96,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for pressure and temperature rising threshold events. For
-both channels *_en and *_value (in raw units) attributes are exposed.
-
-Since in write_event_config() the ctrl_reg1.active and ctrl_reg4
-are modified, accessing the data->ctrl_reg{1,4} in set_trigger_state()
-and write_event_config() needs to be now guarded by data->lock.
-Otherwise, it would be possible that 2 concurrent threads executing
-these functions would access the data->ctrl_reg{1,4} at the same time
-and then one would overwrite the other's result.
+Add sysfs pressure event attributes exposed by the mpl3115 driver. These
+allow controlling the threshold value and the enable state.
 
 Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
 ---
- drivers/iio/pressure/mpl3115.c | 218 +++++++++++++++++++++++++++++++--
- 1 file changed, 208 insertions(+), 10 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-iio | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
-index 3f1fa9fe3c76..d56f5fcd5900 100644
---- a/drivers/iio/pressure/mpl3115.c
-+++ b/drivers/iio/pressure/mpl3115.c
-@@ -14,11 +14,13 @@
- #include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/i2c.h>
-+#include <linux/limits.h>
- #include <linux/module.h>
- #include <linux/property.h>
- #include <linux/unaligned.h>
- 
- #include <linux/iio/buffer.h>
-+#include <linux/iio/events.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/iio/triggered_buffer.h>
-@@ -31,6 +33,8 @@
- #define MPL3115_WHO_AM_I 0x0c
- #define MPL3115_INT_SOURCE 0x12
- #define MPL3115_PT_DATA_CFG 0x13
-+#define MPL3115_PRESS_TGT 0x16 /* MSB first, 16 bit */
-+#define MPL3115_TEMP_TGT 0x18
- #define MPL3115_CTRL_REG1 0x26
- #define MPL3115_CTRL_REG2 0x27
- #define MPL3115_CTRL_REG3 0x28
-@@ -43,6 +47,8 @@
- #define MPL3115_STATUS_TEMP_RDY BIT(1)
- 
- #define MPL3115_INT_SRC_DRDY BIT(7)
-+#define MPL3115_INT_SRC_PTH BIT(3)
-+#define MPL3115_INT_SRC_TTH BIT(2)
- 
- #define MPL3115_PT_DATA_EVENT_ALL GENMASK(2, 0)
- 
-@@ -57,6 +63,8 @@
- #define MPL3115_CTRL3_IPOL2 BIT(1)
- 
- #define MPL3115_CTRL4_INT_EN_DRDY BIT(7)
-+#define MPL3115_CTRL4_INT_EN_PTH BIT(3)
-+#define MPL3115_CTRL4_INT_EN_TTH BIT(2)
- 
- #define MPL3115_CTRL5_INT_CFG_DRDY BIT(7)
- 
-@@ -84,6 +92,7 @@ struct mpl3115_data {
- 	struct iio_trigger *drdy_trig;
- 	struct mutex lock;
- 	u8 ctrl_reg1;
-+	u8 ctrl_reg4;
- };
- 
- enum mpl3115_irq_pin {
-@@ -307,6 +316,15 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void *p)
- 	return IRQ_HANDLED;
- }
- 
-+static const struct iio_event_spec mpl3115_temp_press_event[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_RISING,
-+		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-+				 BIT(IIO_EV_INFO_VALUE),
-+	},
-+};
-+
- static const struct iio_chan_spec mpl3115_channels[] = {
- 	{
- 		.type = IIO_PRESSURE,
-@@ -322,7 +340,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
- 			.storagebits = 32,
- 			.shift = 12,
- 			.endianness = IIO_BE,
--		}
-+		},
-+		.event_spec = mpl3115_temp_press_event,
-+		.num_event_specs = ARRAY_SIZE(mpl3115_temp_press_event),
- 	},
- 	{
- 		.type = IIO_TEMP,
-@@ -338,7 +358,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
- 			.storagebits = 16,
- 			.shift = 4,
- 			.endianness = IIO_BE,
--		}
-+		},
-+		.event_spec = mpl3115_temp_press_event,
-+		.num_event_specs = ARRAY_SIZE(mpl3115_temp_press_event),
- 	},
- 	IIO_CHAN_SOFT_TIMESTAMP(2),
- };
-@@ -348,15 +370,45 @@ static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
- 	struct iio_dev *indio_dev = private;
- 	struct mpl3115_data *data = iio_priv(indio_dev);
- 	int ret;
-+	u8 val_press[3];
-+	__be16 val_temp;
- 
- 	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
- 	if (ret < 0)
- 		return IRQ_HANDLED;
- 
--	if (!(ret & MPL3115_INT_SRC_DRDY))
-+	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
-+		     MPL3115_INT_SRC_DRDY)))
- 		return IRQ_NONE;
- 
--	iio_trigger_poll_nested(data->drdy_trig);
-+	if (ret & MPL3115_INT_SRC_DRDY)
-+		iio_trigger_poll_nested(data->drdy_trig);
-+
-+	if (ret & MPL3115_INT_SRC_PTH) {
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(IIO_PRESSURE, 0,
-+						    IIO_EV_TYPE_THRESH,
-+						    IIO_EV_DIR_RISING),
-+						    iio_get_time_ns(indio_dev));
-+
-+		/* Reset the SRC_PTH bit in INT_SOURCE */
-+		i2c_smbus_read_i2c_block_data(data->client,
-+					      MPL3115_OUT_PRESS,
-+					      sizeof(val_press), val_press);
-+	}
-+
-+	if (ret & MPL3115_INT_SRC_TTH) {
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(IIO_TEMP, 0,
-+						    IIO_EV_TYPE_THRESH,
-+						    IIO_EV_DIR_RISING),
-+						    iio_get_time_ns(indio_dev));
-+
-+		/* Reset the SRC_TTH bit in INT_SOURCE */
-+		i2c_smbus_read_i2c_block_data(data->client,
-+					      MPL3115_OUT_TEMP,
-+					      2, (u8 *)&val_temp);
-+	}
- 
- 	return IRQ_HANDLED;
- }
-@@ -377,6 +429,7 @@ static int mpl3115_config_interrupt(struct mpl3115_data *data,
- 		goto reg1_cleanup;
- 
- 	data->ctrl_reg1 = ctrl_reg1;
-+	data->ctrl_reg4 = ctrl_reg4;
- 
- 	return 0;
- 
-@@ -390,15 +443,22 @@ static int mpl3115_set_trigger_state(struct iio_trigger *trig, bool state)
- {
- 	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
- 	struct mpl3115_data *data = iio_priv(indio_dev);
--	u8 ctrl_reg1 = data->ctrl_reg1;
--	u8 ctrl_reg4 = state ? MPL3115_CTRL4_INT_EN_DRDY : 0;
-+	u8 ctrl_reg1, ctrl_reg4;
- 
--	if (state)
-+	guard(mutex)(&data->lock);
-+
-+	ctrl_reg1 = data->ctrl_reg1;
-+	ctrl_reg4 = data->ctrl_reg4;
-+
-+	if (state) {
- 		ctrl_reg1 |= MPL3115_CTRL1_ACTIVE;
--	else
--		ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
-+		ctrl_reg4 |= MPL3115_CTRL4_INT_EN_DRDY;
-+	} else {
-+		ctrl_reg4 &= ~MPL3115_CTRL4_INT_EN_DRDY;
- 
--	guard(mutex)(&data->lock);
-+		if (!ctrl_reg4)
-+			ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
-+	}
- 
- 	return mpl3115_config_interrupt(data, ctrl_reg1, ctrl_reg4);
- }
-@@ -407,10 +467,148 @@ static const struct iio_trigger_ops mpl3115_trigger_ops = {
- 	.set_trigger_state = mpl3115_set_trigger_state,
- };
- 
-+static int mpl3115_read_event_config(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     enum iio_event_type type,
-+				     enum iio_event_direction dir)
-+{
-+	struct mpl3115_data *data = iio_priv(indio_dev);
-+
-+	if (chan->type == IIO_PRESSURE)
-+		return !!(data->ctrl_reg4 & MPL3115_CTRL4_INT_EN_PTH);
-+
-+	if (chan->type == IIO_TEMP)
-+		return !!(data->ctrl_reg4 & MPL3115_CTRL4_INT_EN_TTH);
-+
-+	return -EINVAL;
-+}
-+
-+static int mpl3115_write_event_config(struct iio_dev *indio_dev,
-+				      const struct iio_chan_spec *chan,
-+				      enum iio_event_type type,
-+				      enum iio_event_direction dir,
-+				      bool state)
-+{
-+	struct mpl3115_data *data = iio_priv(indio_dev);
-+	u8 int_en_mask;
-+	u8 ctrl_reg1, ctrl_reg4;
-+
-+	switch (chan->type) {
-+	case IIO_PRESSURE:
-+		int_en_mask = MPL3115_CTRL4_INT_EN_PTH;
-+		break;
-+	case IIO_TEMP:
-+		int_en_mask = MPL3115_CTRL4_INT_EN_TTH;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	guard(mutex)(&data->lock);
-+
-+	ctrl_reg1 = data->ctrl_reg1;
-+	ctrl_reg4 = data->ctrl_reg4;
-+
-+	if (state) {
-+		ctrl_reg1 |= MPL3115_CTRL1_ACTIVE;
-+		ctrl_reg4 |= int_en_mask;
-+	} else {
-+		ctrl_reg4 &= ~int_en_mask;
-+
-+		if (!ctrl_reg4)
-+			ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
-+	}
-+
-+	return mpl3115_config_interrupt(data, ctrl_reg1, ctrl_reg4);
-+}
-+
-+static int mpl3115_read_thresh(struct iio_dev *indio_dev,
-+			       const struct iio_chan_spec *chan,
-+			       enum iio_event_type type,
-+			       enum iio_event_direction dir,
-+			       enum iio_event_info info,
-+			       int *val, int *val2)
-+{
-+	struct mpl3115_data *data = iio_priv(indio_dev);
-+	int ret;
-+	__be16 tmp;
-+
-+	if (info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	switch (chan->type) {
-+	case IIO_PRESSURE:
-+		ret = i2c_smbus_read_i2c_block_data(data->client,
-+						    MPL3115_PRESS_TGT,
-+						    sizeof(tmp), (u8 *)&tmp);
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * Target value for the pressure is 16-bit unsigned value,
-+		 * expressed in 2 Pa units
-+		 */
-+		*val = be16_to_cpu(tmp) << 1;
-+
-+		return IIO_VAL_INT;
-+	case IIO_TEMP:
-+		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Target value for the temperature is 8-bit 2's complement */
-+		*val = sign_extend32(ret, 7);
-+
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int mpl3115_write_thresh(struct iio_dev *indio_dev,
-+				const struct iio_chan_spec *chan,
-+				enum iio_event_type type,
-+				enum iio_event_direction dir,
-+				enum iio_event_info info,
-+				int val, int val2)
-+{
-+	struct mpl3115_data *data = iio_priv(indio_dev);
-+	__be16 tmp;
-+
-+	if (info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	switch (chan->type) {
-+	case IIO_PRESSURE:
-+		val >>= 1;
-+
-+		if (val < 0 || val > U16_MAX)
-+			return -EINVAL;
-+
-+		tmp = cpu_to_be16(val);
-+
-+		return i2c_smbus_write_i2c_block_data(data->client,
-+						      MPL3115_PRESS_TGT,
-+						      sizeof(tmp), (u8 *)&tmp);
-+	case IIO_TEMP:
-+		if (val < S8_MIN || val > S8_MAX)
-+			return -EINVAL;
-+
-+		return i2c_smbus_write_byte_data(data->client,
-+						 MPL3115_TEMP_TGT, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct iio_info mpl3115_info = {
- 	.read_raw = &mpl3115_read_raw,
- 	.read_avail = &mpl3115_read_avail,
- 	.write_raw = &mpl3115_write_raw,
-+	.read_event_config = mpl3115_read_event_config,
-+	.write_event_config = mpl3115_write_event_config,
-+	.read_event_value = mpl3115_read_thresh,
-+	.write_event_value = mpl3115_write_thresh,
- };
- 
- static int mpl3115_trigger_probe(struct mpl3115_data *data,
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index 352ab7b8476c..5f87dcee78f7 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -898,6 +898,7 @@ What:		/sys/.../iio:deviceX/events/in_tempY_thresh_rising_en
+ What:		/sys/.../iio:deviceX/events/in_tempY_thresh_falling_en
+ What:		/sys/.../iio:deviceX/events/in_capacitanceY_thresh_rising_en
+ What:		/sys/.../iio:deviceX/events/in_capacitanceY_thresh_falling_en
++What:		/sys/.../iio:deviceX/events/in_pressure_thresh_rising_en
+ KernelVersion:	2.6.37
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+@@ -1047,6 +1048,7 @@ What:		/sys/.../events/in_capacitanceY_thresh_rising_value
+ What:		/sys/.../events/in_capacitanceY_thresh_falling_value
+ What:		/sys/.../events/in_capacitanceY_thresh_adaptive_rising_value
+ What:		/sys/.../events/in_capacitanceY_thresh_falling_rising_value
++What:		/sys/.../events/in_pressure_thresh_rising_value
+ KernelVersion:	2.6.37
+ Contact:	linux-iio@vger.kernel.org
+ Description:
 -- 
 2.25.1
 
