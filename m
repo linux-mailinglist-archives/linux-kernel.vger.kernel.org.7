@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-886901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03E6C36BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9D9C36C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FBB754021F
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7E444F3D00
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BC634029C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B193271E9;
 	Wed,  5 Nov 2025 16:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjgCite/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCFNm+NW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638F33F8DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062E633F8D8;
 	Wed,  5 Nov 2025 16:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359567; cv=none; b=H0GZK97QxLa+Y/M3uaJZHnLH4VzzcJSKrzEJ89CDwcHaOuWEOmJUCpVAZn0K9nZEq98dm6qasfSiYAg6PXh9a9s/duLlfBgK19sen3YSAqQY0EvvWrQeQpq8b8XlrFBp7z9JQcXUc/mTs4rN4vb5eEifqDJ9PMvNmPIkrGc4Mks=
+	t=1762359567; cv=none; b=a9NOAQBC3EsSLo/6krjkupBIfNrZK7+neMxrwMQDo/JPrUxcSAL6Ju0PnE6wqbFTmq93NtV6554Fayux0VjiUyFoUQK6Q8xWSe8+IZ5EB7kMObRp37Ajrs7Mz320lbzdJCajB9r9x0sZXEa5c2rgNhZIGFRcvwPjtu8CbTHszXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762359567; c=relaxed/simple;
-	bh=TjYeLGwkVLPEXuPxOINjyyI2z1EA63ulXI1JJ2ZkSQk=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=jfc39DGXqFWZuf98fDIpvEfu92I83AfSnbCqdPVLxcnIsdto6EzqjyPYUMuv4zktmbxrhABLFW7Nkr0/JFZm8T3eIKW4zVhFCE1KFEVf7IYTWVUvS9xZGLf5N5n/CynJ+vhMui/un3PLeAAhln3qqnF8QvoYuGEZr4J5GQRtJwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjgCite/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96EDBC4CEF8;
+	bh=WfSC/Rse3xLN3P8zBrBMqCofdKiaSzH8oUlpMDX+Ilk=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=mGkMQ4AsiNKvourVhWOX6+Y+rZE0J3sVzsyO3wOeSpHgpIEokxjftzYmT5NCQIMHDX59gTg6Hz+PUpL2z/Jrf6Xp35Huz4poQ0Lx/Gvaw6p6S1u4HOZ9PAcbH0y3pATV340mWBcIs3ypqe+i18CAuo/x9fp8yMFa6aE5hLXwgBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCFNm+NW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0721C4AF0D;
 	Wed,  5 Nov 2025 16:19:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762359566;
-	bh=TjYeLGwkVLPEXuPxOINjyyI2z1EA63ulXI1JJ2ZkSQk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WjgCite/GxljyWNBe7UCrvPCfKXaTjWeaVHJXH1IghaovYhNGrHbCjRw5sGausT8D
-	 8edskZQaJxIAhUvwj/FoMd/YdmgdWIsvnZPa7yNlYju7rFkDiIuNl9Itlw5IyQHf5a
-	 wUdhAxmBbkEHrLKEUyDbHtq2w+UTQxYOKPXWs7ahtHrLXsiN8YABnsWw4/GNLHBCbe
-	 qxDOhTNzdLkthSTQS9INtAW/GlcHL4U4PnvUkU0WtmSpryphy13ny+tocWB+BrFphE
-	 F5UFIJc0L74OgWMn3PQt08vOaZ0k2Gqqqs6X6Isk37CaEu4i7I/YsCRLxjyEnwR3AF
-	 3a7fIhUe9SQ4Q==
+	bh=WfSC/Rse3xLN3P8zBrBMqCofdKiaSzH8oUlpMDX+Ilk=;
+	h=Date:From:To:Cc:Subject:References:From;
+	b=tCFNm+NWfbH5E1N+AAmEqcnUb1ysz+4A32SJcmfMshu10NONhC/Fw3svYSyamFze5
+	 TuLN9uLEHehZGLO5jHdbIfpdUDDErlCF7jhAqMXanVSprx0tN8eFjvYtWJUzY08Alc
+	 5IXBz6WoSjS0hpUG56bllNZp07GZswXe6vr21k8+QEX1VpXXWlADQZB2jGivbmHK+C
+	 Kzsp6KxWHwrKnF/y06It5IcOk7w9MHFdyzWXqpboR6A67OqVedyKf0fA1BjzC5Hxqa
+	 lBLEYPVO2bv+T8cWW8mc9ETy8RVZv5hO0L1EZ0THdO22L3gef+S5K+pW0o4eGT0AWb
+	 lT+bdEMMVJz1w==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vGgER-00000000pUh-0kEy;
+	id 1vGgER-00000000pVD-1UGa;
 	Wed, 05 Nov 2025 11:19:35 -0500
-Message-ID: <20251105161909.590008129@kernel.org>
+Message-ID: <20251105161935.206093132@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 05 Nov 2025 11:19:09 -0500
+Date: Wed, 05 Nov 2025 11:19:10 -0500
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -53,50 +54,131 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 0/5] tracing: Fix tracer options per instance
+Subject: [PATCH 1/5] tracing: Remove dummy options and flags
+References: <20251105161909.590008129@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+From: Steven Rostedt <rostedt@goodmis.org>
+
+When a tracer does not define their own flags, dummy options and flags are
+used so that the values are always valid. There's not that many locations
+that reference these values so having dummy versions just complicates the
+code. Remove the dummy values and just check for NULL when appropriate.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 48 +++++++++++++++-----------------------------
+ 1 file changed, 16 insertions(+), 32 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 0e822db5d9e4..afeaa9a164e9 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -94,17 +94,6 @@ static bool tracepoint_printk_stop_on_boot __initdata;
+ static bool traceoff_after_boot __initdata;
+ static DEFINE_STATIC_KEY_FALSE(tracepoint_printk_key);
+ 
+-/* For tracers that don't implement custom flags */
+-static struct tracer_opt dummy_tracer_opt[] = {
+-	{ }
+-};
+-
+-static int
+-dummy_set_flag(struct trace_array *tr, u32 old_flags, u32 bit, int set)
+-{
+-	return 0;
+-}
+-
+ /*
+  * To prevent the comm cache from being overwritten when no
+  * tracing is active, only save the comm when a trace event
+@@ -2356,23 +2345,9 @@ int __init register_tracer(struct tracer *type)
+ 		}
+ 	}
+ 
+-	if (!type->set_flag)
+-		type->set_flag = &dummy_set_flag;
+-	if (!type->flags) {
+-		/*allocate a dummy tracer_flags*/
+-		type->flags = kmalloc(sizeof(*type->flags), GFP_KERNEL);
+-		if (!type->flags) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
+-		type->flags->val = 0;
+-		type->flags->opts = dummy_tracer_opt;
+-	} else
+-		if (!type->flags->opts)
+-			type->flags->opts = dummy_tracer_opt;
+-
+ 	/* store the tracer for __set_tracer_option */
+-	type->flags->trace = type;
++	if (type->flags)
++		type->flags->trace = type;
+ 
+ 	ret = do_run_tracer_selftest(type);
+ 	if (ret < 0)
+@@ -5159,14 +5134,12 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
+ {
+ 	struct tracer_opt *trace_opts;
+ 	struct trace_array *tr = m->private;
++	struct tracer *trace;
+ 	u32 tracer_flags;
+ 	int i;
+ 
+ 	guard(mutex)(&trace_types_lock);
+ 
+-	tracer_flags = tr->current_trace->flags->val;
+-	trace_opts = tr->current_trace->flags->opts;
+-
+ 	for (i = 0; trace_options[i]; i++) {
+ 		if (tr->trace_flags & (1ULL << i))
+ 			seq_printf(m, "%s\n", trace_options[i]);
+@@ -5174,6 +5147,13 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
+ 			seq_printf(m, "no%s\n", trace_options[i]);
+ 	}
+ 
++	trace = tr->current_trace;
++	if (!trace->flags || !trace->flags->opts)
++		return 0;
++
++	tracer_flags = tr->current_trace->flags->val;
++	trace_opts = tr->current_trace->flags->opts;
++
+ 	for (i = 0; trace_opts[i].name; i++) {
+ 		if (tracer_flags & trace_opts[i].bit)
+ 			seq_printf(m, "%s\n", trace_opts[i].name);
+@@ -5189,9 +5169,10 @@ static int __set_tracer_option(struct trace_array *tr,
+ 			       struct tracer_opt *opts, int neg)
+ {
+ 	struct tracer *trace = tracer_flags->trace;
+-	int ret;
++	int ret = 0;
+ 
+-	ret = trace->set_flag(tr, tracer_flags->val, opts->bit, !neg);
++	if (trace->set_flag)
++		ret = trace->set_flag(tr, tracer_flags->val, opts->bit, !neg);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -5210,6 +5191,9 @@ static int set_tracer_option(struct trace_array *tr, char *cmp, int neg)
+ 	struct tracer_opt *opts = NULL;
+ 	int i;
+ 
++	if (!tracer_flags || !tracer_flags->opts)
++		return 0;
++
+ 	for (i = 0; tracer_flags->opts[i].name; i++) {
+ 		opts = &tracer_flags->opts[i];
+ 
+-- 
+2.51.0
 
 
-The tracers (like function and function_graph) have options that modify
-how they behave or how they are shown in the trace file. As these options
-were created before instances (multiple buffers), the flags variable that
-represent these options were global for the tracer.
-
-Now that a tracer may exist in multiple instances, having a global flags
-that kinda affect every instance of that tracer does not make sense.
-The reason it "kinda" affects them, is that the code that updates an option
-for an instance, only does the change for the tracer running in that instance.
-If a tracer is already running in another instance, it will not be affected.
-But because the option is saved in a global variable, if the tracer is stopped
-and restarted in the instance, then the option will take affect.
-
-Since each instance has its own interface to modify the options, the effect
-of an option should only affect the tracer for the given instance. This means
-that the state of the options for each tracer must be saved for each instance
-separately.
-
-Add a new struct tracers field in the trace_array (instance descriptor) that
-holds a descriptor that points to a tracer and contains its flags values. This
-will be used to see what tracers are available for an instance.
-
-Now when a tracer option is modified for an instance, it only affects the
-tracer in that instance and not semi-effects the tracers in other instances.
-
-Steven Rostedt (5):
-      tracing: Remove dummy options and flags
-      tracing: Have add_tracer_options() error pass up to callers
-      tracing: Have tracer option be instance specific
-      tracing: Have function tracer define options per instance
-      tracing: Have function graph tracer define options per instance
-
-----
- kernel/trace/trace.c                 | 280 ++++++++++++++++++++++-------------
- kernel/trace/trace.h                 |   3 +
- kernel/trace/trace_functions.c       |  10 +-
- kernel/trace/trace_functions_graph.c |  18 ++-
- 4 files changed, 198 insertions(+), 113 deletions(-)
 
