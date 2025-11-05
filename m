@@ -1,186 +1,186 @@
-Return-Path: <linux-kernel+bounces-885985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B89C3472D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57557C34733
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C589C4F3BE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:23:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FE694F14CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4D22D837E;
-	Wed,  5 Nov 2025 08:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDF2877E3;
+	Wed,  5 Nov 2025 08:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0rmCMxde"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="juopY66a";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WXw8o2Dh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B02128CF7C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CA0285CB6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762330986; cv=none; b=P2NwBM1SUH5ZxIPpVycMqNT7khzAXecE8j2YJI0YldcnR6nhSK6C4q7W5MBdyqeBO6XlRZMPnU1WUnwcsR6V8MtWJ5vwE8m1S0hKB3onk5dqwHPJ5VuPu0jmTTe3Rz/IYGXdKFF+dtdXX3pP/2t+L0/Lw9gb08BzXk+hy53EbgE=
+	t=1762331005; cv=none; b=VyBmOtc3BJVNRxOI6r1ACS5GvEgcMFcSFWi2m0mYSgJzWsF7fJOzyasTqT7l4ViI31ImRq3gE7oYtyAFFeqiYRj2s98Pym3ssd3AMiW7uPf+NRz60kGlBS9jF15LwrRgVPE2yzreusGfPtqQzq1mgFGNTxvyl7hr9mZ6PWlbXeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762330986; c=relaxed/simple;
-	bh=1UFFxHLngwWlfSIzQHo3B1yiskwv5UVLi/aHpHM5Dss=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=revDZSR0nQx8aKrbC7nWfkggdLSsd7Em0rL3J7qQ7zZ2LTlgPAs8s80QZHcO9JIl+USe1ouPygj/uYhCy/C9rre6uDBXVxhZFdsE/aSYWR7z63wYiCkbuTTT7bOWPgZql+H92lV54XEA0YQZLg7gK9EaDVz3QWtYsAr0LTRLYf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0rmCMxde; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 95F584E4152E;
-	Wed,  5 Nov 2025 08:23:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6AA9060693;
-	Wed,  5 Nov 2025 08:23:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0DCCA10B51983;
-	Wed,  5 Nov 2025 09:22:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762330981; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=74ihADtTOc2tE2Hs2544UzjSxwkF3iKFwI1Cs+oyQf8=;
-	b=0rmCMxdeXj2jNn4Uo7ghVfAyZEat//FyRC+TGEL8oZLvuPgDGR0ALHKl38fc/K0zIhx0EH
-	tLOWNi3/TVADbf6xirizl4HuD8leOPvmRykDN10vmy7cME9FKAgjbY2+QrTkqMneiHkAoP
-	XaetKuZcGUKvvurCWOuS5oUHslIrMixuo2Q5/527u+PtxIk8WhSEC9EOIiUjEBPIWBvO68
-	oIsMQX2ZVHY+NPwYOsjVv/qbPCG1ZtoBhH3XLTssbainupZDEJwZQfA/BsRb8iMICgEmu9
-	cAE7buuf2kAXB7Al6tXojrExflx2Y9xK4jCEEpj1J7GgucXHbpsasLE8Th6dxw==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Wed, 05 Nov 2025 09:22:49 +0100
-Subject: [PATCH bpf-next 2/2] selftests/bpf: use start_server_str rather
- than start_reuseport_server in tc_tunnel
+	s=arc-20240116; t=1762331005; c=relaxed/simple;
+	bh=OGxIuTjuT9QUth5tviNLROGJDx0BPvfd0vIUdJqNFQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n0Rfv68Mb3OLBaxxKAOmJXY6V5GZEceOKhWxlqYrXVERNGT5A8INLVEYPcd/yk/LrhfT2rsq9YsoYpm37XOQUJBLJg4A3Qf7g1UFjBoG5wbG7/4ar/xd1qVoqDCribNGAYpODCp1Cqfm6Y1uTdZRdKUEuaFLkYkCtws9cyATmmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=juopY66a; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WXw8o2Dh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A54YZvM4056177
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 08:23:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tCgTIkJgcGjREVJRipm5DUuZDPsi1flrzSwxBnkSqZU=; b=juopY66a6UdbqL8n
+	OJ8fNl7s5iZ4HP6YnenlhW1kxzJ+Iy5qFmeOHql3qvMlOsyzMY+IWk3479tHH1G+
+	shj9yCwS4K9n/rts86FBGIB4hKeVF/2pjMYbIEwWPyJmWVGVlyEzFI898Vs4zkh4
+	KAH2kCRpAjxTBoa3wV0NcK5Phwpsmzu2Z2hqsMoOeUjL8iBOYFvQNU6mAOFX8SQw
+	K4uMpao5sw/9hVjvPyvSWwSNS4gIticbDzJZmGlJNm3S8Chfw9j4Xd3njfm3kFkK
+	KB1q6WFEQZyhf5w6jpDOMAS+GSsDDX6an6XbNrlDZVPy3LYQ8KI5F1vqvkehORRg
+	hp6fXw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7yp60hsx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:23:23 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294ecd3fdd4so81226965ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:23:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762331002; x=1762935802; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tCgTIkJgcGjREVJRipm5DUuZDPsi1flrzSwxBnkSqZU=;
+        b=WXw8o2Dh5KBoMD86YGNl9m7yloi1RfmICqg9u+CituAUqFYbGYbiNkorV4VCM+FdvG
+         f3+glNo0BgX6cGOjNlIl2F7OvJmdsFeVhU6dLfCHCOnDfyVZtn3cymsF7G6sKZy2j3wV
+         E/V9pzHGX1lp9G+XETEI7vL0WzPqfQzDuNk6aTXRuQAYYiIJORCJ0EimVAmmSl5TVtLt
+         Od9LxYIAjPEwj1TnYgTnJvO8bKC1+WfuT1YEKWF7n1IqkNlq8pevwmmN8Pk1regTABsj
+         eY7UOHOsuO3ulqzpiPrAOvr1FbqXu9+SvyiSbas83oHhgRoO0Gm3TV871mJ4nm6PWMJs
+         gSjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762331002; x=1762935802;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCgTIkJgcGjREVJRipm5DUuZDPsi1flrzSwxBnkSqZU=;
+        b=L4+G9FV79TvdxrKV8vhQUyyLgemUSv8OtJOZtpwRb6B3YBtXjfhie2DvbVrH2RJQwm
+         PLsl9B2/geDIU8bJLTKWxE9nkwM9WP6MrirJApAVwqe/41LQj/VzAbRcwOWtlAM9VIKI
+         9rA/1ce/M9LKI9p30yjDMTIbDOdrj86ICDqMGWyet55kpHfksYdlyW9nCUlPUa+gOISl
+         T0KTUHiQvgBrXJ5PEIC+qcTQjYsELP8J+Mu+6n7llY5/lUY8PT6IhWlwoe/9SNt49GFK
+         qLGdbEguakbJ0w9iwFxcI7z76bYQZ6N1TBfBG4VNLUdIerxNvKrh7xEaYh/Vk7yGcufl
+         GG3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Wft8448fK0lrJkbIIdYw5mBbhWeB944+CVllh/VtzRtQzq1WAJYpcxXuxhryJ+bToEWtHGNVFVl9gaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhOewl+M2Dwpg5MEMDe+8LqRayUX4V/t/3YPy82C3LN0HUclO9
+	dUQvSwhZl0zEBE6wVwf8O6ddMhi/SDcl92zfawvQVeRm7TqStJkGqDq8v+g2/TVAv8eSpf1vkJy
+	CqkKN3myHIw56lGTFEOIVVYW7xLkFN37v5z8pngo8zVcjoYSBnxxbJmZg36h2xCscrVg=
+X-Gm-Gg: ASbGncvlwX0+1xIesRPmj4N9JHb/ckiuSHcB/5FLHsO7zGG+eRpaWND44iWb023anV9
+	JIyIaRvxXGPv3UaK7SLbQQsjR/CZQ9aP7H19sl1r9ek6FpP6iN30RquAAtjMCgeeXTsX/i1yf78
+	AnacN3wWeVHmLzNYJVk1hettW5wP0ak3Yb7F4aP/mNR4+mJUzVq0rIDgWF5KGTiBLByo+4bSyWn
+	x50v9iffbgFvJFC1xPlJNpbZ09Fp+K/U+CO6UQO+5ZWga5A/F8sl9EdftjTQ5IUGN6/bcS3KqkR
+	8aI1ordNt03iP9bpF/FNrXBAqEDmpDCKb7KCh3QBo/Nu89Lp0/GlPEGGFG+4KtQm0RXdKqoaQFE
+	hYoItS+ms3YoUs5lUxFhwA3dpXCCTBIs=
+X-Received: by 2002:a17:902:ecce:b0:294:621c:a84b with SMTP id d9443c01a7336-2962ade3a3emr41995785ad.56.1762331002094;
+        Wed, 05 Nov 2025 00:23:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH2/ml1wZTgQyjOdGBjdGCJJ3AbNiVC5lD7CGWaurnvwcR2//Zu+UgCzBWxIDLg25v0xDEA+w==
+X-Received: by 2002:a17:902:ecce:b0:294:621c:a84b with SMTP id d9443c01a7336-2962ade3a3emr41995485ad.56.1762331001599;
+        Wed, 05 Nov 2025 00:23:21 -0800 (PST)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a69d91sm51520155ad.95.2025.11.05.00.23.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 00:23:21 -0800 (PST)
+Message-ID: <ea009a8b-5a09-5c2c-8f61-7b7c7efc8b53@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 13:53:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] media: iris: Refine internal buffer reconfiguration
+ logic for resolution change
+Content-Language: en-US
+To: Val Packett <val@packett.cool>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251104-iris-seek-fix-v2-1-c9dace39b43d@oss.qualcomm.com>
+ <7d26e4e9-e298-4991-883f-ceb60f240394@packett.cool>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <7d26e4e9-e298-4991-883f-ceb60f240394@packett.cool>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251105-start-server-soreuseaddr-v1-2-1bbd9c1f8d65@bootlin.com>
-References: <20251105-start-server-soreuseaddr-v1-0-1bbd9c1f8d65@bootlin.com>
-In-Reply-To: <20251105-start-server-soreuseaddr-v1-0-1bbd9c1f8d65@bootlin.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+X-Proofpoint-GUID: UEydo9-kDFUM7BkELP4CJM41Q0nV-e64
+X-Proofpoint-ORIG-GUID: UEydo9-kDFUM7BkELP4CJM41Q0nV-e64
+X-Authority-Analysis: v=2.4 cv=TsrrRTXh c=1 sm=1 tr=0 ts=690b097b cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=k8ZG-Nafi6ezIJLqpSUA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA2MSBTYWx0ZWRfX4qTNMGpKnCky
+ OetXlucoP7/28GN/buDpEcFlnJwopDoSUSlRmjIc4OWzE0PA1a+TPX4J4zbKWv8581j2bgESgKe
+ JYubXo2UbhOrsdQTTBjEBOvf6lgp/NVnrMCRiwwdw2ZURXaVmehEJV+l28ot4OY6lXIGS8czfSO
+ gV+83HaGzm5V2zDHMw3XECq07pfkd4n/E2+kAsnjZWwZJwAXw5zaiKYzPd8ALIEZ+W85AGzsjDt
+ FrgvAFArQrDKHQX6Ln+Zf3GdhBcDmhZxKXfA2jpyf+V+JDq+Uu7Sv2cEgjzBFkuH5SHQTT1CcZK
+ LxiVncI08ieJgUjB37YSSqwC6Q8s49i1aCPkRV+0QOCKwjmIYgm7f1RqB/gIBZYmt0VG/oHtkwP
+ JzqMK5i24BNtWpnY5rMWzjQLfMzTnQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 adultscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050061
 
-Now that start_server_str enforces SO_REUSEADDR, there's no need to keep
-using start_reusport_server in tc_tunnel, especially since it only uses
-one server at a time.
 
-Replace start_reuseport_server with start_server_str in tc_tunnel test.
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
- .../selftests/bpf/prog_tests/test_tc_tunnel.c      | 27 ++++++++++++----------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+On 11/5/2025 5:20 AM, Val Packett wrote:
+> 
+> On 11/4/25 2:11 AM, Dikshita Agarwal wrote:
+>> [..]
+>> --- a/drivers/media/platform/qcom/iris/iris_common.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_common.c
+>> @@ -91,12 +91,13 @@ int iris_process_streamon_input(struct iris_inst *inst)
+>>   int iris_process_streamon_output(struct iris_inst *inst)
+>>   {
+>>       const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
+>> -    bool drain_active = false, drc_active = false;
+>>       enum iris_inst_sub_state clear_sub_state = 0;
+>>       int ret = 0;
+>>
+>> [..]
+> 
+> Somehow, you have lost the + edited line that declares the bools.. Hence
+> the CI failure reported for v1, and the kernel test robot message from just
+> a couple minutes ago.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-index deea90aaefad..4d29256d8714 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-@@ -69,7 +69,7 @@ struct subtest_cfg {
- 	int client_egress_prog_fd;
- 	int server_ingress_prog_fd;
- 	char extra_decap_mod_args[TUNNEL_ARGS_MAX_LEN];
--	int *server_fd;
-+	int server_fd;
- };
- 
- struct connection {
-@@ -135,16 +135,18 @@ static int run_server(struct subtest_cfg *cfg)
- {
- 	int family = cfg->ipproto == 6 ? AF_INET6 : AF_INET;
- 	struct nstoken *nstoken;
-+	struct network_helper_opts opts = {
-+		.timeout_ms = TIMEOUT_MS
-+	};
- 
- 	nstoken = open_netns(SERVER_NS);
- 	if (!ASSERT_OK_PTR(nstoken, "open server ns"))
- 		return -1;
- 
--	cfg->server_fd = start_reuseport_server(family, SOCK_STREAM,
--						cfg->server_addr, TEST_PORT,
--						TIMEOUT_MS, 1);
-+	cfg->server_fd = start_server_str(family, SOCK_STREAM, cfg->server_addr,
-+					  TEST_PORT, &opts);
- 	close_netns(nstoken);
--	if (!ASSERT_OK_PTR(cfg->server_fd, "start server"))
-+	if (!ASSERT_OK_FD(cfg->server_fd, "start server"))
- 		return -1;
- 
- 	return 0;
-@@ -152,7 +154,7 @@ static int run_server(struct subtest_cfg *cfg)
- 
- static void stop_server(struct subtest_cfg *cfg)
- {
--	free_fds(cfg->server_fd, 1);
-+	close(cfg->server_fd);
- }
- 
- static int check_server_rx_data(struct subtest_cfg *cfg,
-@@ -188,7 +190,7 @@ static struct connection *connect_client_to_server(struct subtest_cfg *cfg)
- 		return NULL;
- 	}
- 
--	server_fd = accept(*cfg->server_fd, NULL, NULL);
-+	server_fd = accept(cfg->server_fd, NULL, NULL);
- 	if (server_fd < 0) {
- 		close(client_fd);
- 		free(conn);
-@@ -394,29 +396,30 @@ static void run_test(struct subtest_cfg *cfg)
- 
- 	/* Basic communication must work */
- 	if (!ASSERT_OK(send_and_test_data(cfg, true), "connect without any encap"))
--		goto fail;
-+		goto fail_close_server;
- 
- 	/* Attach encapsulation program to client */
- 	if (!ASSERT_OK(configure_encapsulation(cfg), "configure encapsulation"))
--		goto fail;
-+		goto fail_close_server;
- 
- 	/* If supported, insert kernel decap module, connection must succeed */
- 	if (!cfg->expect_kern_decap_failure) {
- 		if (!ASSERT_OK(configure_kernel_decapsulation(cfg),
- 					"configure kernel decapsulation"))
--			goto fail;
-+			goto fail_close_server;
- 		if (!ASSERT_OK(send_and_test_data(cfg, true),
- 			       "connect with encap prog and kern decap"))
--			goto fail;
-+			goto fail_close_server;
- 	}
- 
- 	/* Replace kernel decapsulation with BPF decapsulation, test must pass */
- 	if (!ASSERT_OK(configure_ebpf_decapsulation(cfg), "configure ebpf decapsulation"))
--		goto fail;
-+		goto fail_close_server;
- 	ASSERT_OK(send_and_test_data(cfg, true), "connect with encap and decap progs");
- 
- fail:
- 	stop_server(cfg);
-+fail_close_server:
- 	close_netns(nstoken);
- }
- 
+Yes, I realized the mistake and have posted v3 with the fix. However, I
+missed to add your tested-by, apologies for the same.
 
--- 
-2.51.2
+Could you please review v3 and add the tag again.
 
+Thanks,
+Dikshita
+> 
+> But with `bool first_ipsc = false, drain_active = false, drc_active =
+> false;` filled in,
+> 
+> Tested-by: Val Packett <val@packett.cool>
+> 
+> finally the decoder is actually usable \o/
+> 
+> ~val
+> 
 
