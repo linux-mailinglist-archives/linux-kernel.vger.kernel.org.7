@@ -1,48 +1,54 @@
-Return-Path: <linux-kernel+bounces-885727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5118CC33C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:37:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743B8C33C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E1ED4E6FB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F113718C5B4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3290A22A4E5;
-	Wed,  5 Nov 2025 02:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D172248B4;
+	Wed,  5 Nov 2025 02:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="UgdMNdAY"
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IR9Kdhti"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CB61E98E6;
-	Wed,  5 Nov 2025 02:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C762156F20
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762310251; cv=none; b=QCUinN8zSn8CQj9B/S3e7lwST+zhr3Z+q6E2wYFC5c9WU8QA3YhvVXD9gnWpOTd2x5uDTOvuFSElWnpSbdXD0nRCd9/E9vTYfQNcBdyen/yaUoksZbPDc4AuM/qTiyeLogVybOlDg+EvPv94RIY9qrjmO2Oxbm48LZWzzn6oL8k=
+	t=1762310409; cv=none; b=Xdra6W/erHyKUOl8pmT5nWAMfayo1M/EhrhplFCvp5I2JoEQHHtCm8hjTxnxky4EGGnrHLUfVXs8MrX0RtXgsdt+14wC6VMbyhV6UFC4IF3e0XiG566G9MAU1vgUPT7lmWApYb7MlV85hDhSXei5fDcnv0GhzpSEdrn1++5QDTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762310251; c=relaxed/simple;
-	bh=70wMsudLu92iZJkhBGj/feDzySuTgiU7h7claqI58/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YQnfNiww2siAEfmhz0r8rs+0UkC4BWq65aTKq9pS4EX41E99etuQBg/aPdX8S5obV/jdG9dQIocI0mY6ST15dK/EHWbtBCRWu62BLG93yC79hHeLVnaJ6WZzP/s8MTkMtaz9sfleTxj7cUWTw4QTplGTNiFthuQM/IRFT5aCbaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=UgdMNdAY; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 286a97d94;
-	Wed, 5 Nov 2025 10:37:25 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: clm@fb.com
-Cc: dsterba@suse.com,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] btrfs: fix memory leak in data_reloc_print_warning_inode()
-Date: Wed,  5 Nov 2025 02:37:22 +0000
-Message-Id: <20251105023722.1820102-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762310409; c=relaxed/simple;
+	bh=1rDTaHNFekXE6fYEIVxyVAYs5ptPRi9ZwWsq8XdzXQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bBlYA2tMy86hWaGmIZmjFvEV2Enr8SnqTVB8+77ShiHNJFJw4UWrLnSizmol/DkB+Ai5qlpgwREyFbvtiaAoHcYSr5ft4nExypN9Gzk3RZG1sX8+LCdmO5p0v6VyfGn3aEqOOUvMYwwYwS94jL/DxGjFD568x5NTQsizPceQ4Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IR9Kdhti; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=BZ
+	pnaGngs562nOrD3YutHkLMT0eZNZA+nV/m/y76+ho=; b=IR9KdhtikcbbuVqQ6A
+	PGB/4WTyvNUzTln4jBqin4k1RNzDPVOmBwyyCqCUim0RcGb0QwiH5barC4TH0Zmy
+	5SQO2yatcIVuGH80SydTyrUn2sFTfrwfS6u6M0mZUxPwbNfHnPz45CvdksIOrSZr
+	NYDZUbl8kOLDwa40m4znHMHW4=
+Received: from zengchi (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDnb9vfuAppK7GSBg--.32612S2;
+	Wed, 05 Nov 2025 10:39:28 +0800 (CST)
+From: zeng_chi911@163.com
+To: akpm@linux-foundation.org,
+	surenb@google.com,
+	kent.overstreet@linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	zengchi@kylinos.cn
+Subject: [PATCH] alloc_tag: Use %pe format specifier
+Date: Wed,  5 Nov 2025 10:39:25 +0800
+Message-Id: <20251105023925.1447482-1-zeng_chi911@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,47 +56,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a51e04c0e03a1kunmbcd364ac6d3048
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTUtJVk4dTksfGh1PHUpMQ1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=UgdMNdAYVreH01a3WtGZZKmAyd1YDVdlZk+68dyEj/yIJCExwMr1+2vRN2uJZTmO9KzsFJ6on6Q1tQGoIMxfqfo52i/GxdlXQy95Z75mZgjRIrp02or9dypQGGBh2z9dKkwfOhLfwGUasaQw43DI4yzInyk1981d331H/UHATEA=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=CThSGH+O+26R4HaHI9rrGN9sacwSX6I+q3+J9DIYatI=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:_____wDnb9vfuAppK7GSBg--.32612S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw4fuFW3Jw4ktr15trW8WFg_yoWDCFb_G3
+	45Jr4v934DGF1v9FsYvrnYqryqkw1v9F4rCrn5uws3J3srGwn5Xr18Xrn8AF13Ar429FyD
+	KwsxWr1vva1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnEfO5UUUUU==
+X-CM-SenderInfo: 52hqws5fklmiqr6rljoofrz/1tbiRwv8u2kKtTARfAABsB
 
-data_reloc_print_warning_inode() calls btrfs_get_fs_root() to obtain
-local_root, but fails to release its reference when paths_from_inode()
-returns an error. This causes a potential memory leak.
+From: Zeng Chi <zengchi@kylinos.cn>
 
-Add a missing btrfs_put_root() call in the error path to properly
-decrease the reference count of local_root.
+The %pe format specifier is designed to print error pointers. It prints
+a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+omitting PTR_ERR();
 
-Fixes: b9a9a85059cde ("btrfs: output affected files when relocation fails")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+This patch fixes this cocci report:
+lib/alloc_tag.c:776:63-70: WARNING: Consider using %pe to print PTR_ERR()
+
+Signed-off-by: Zeng Chi <zengchi@kylinos.cn>
 ---
- fs/btrfs/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/alloc_tag.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 3df5f36185a0..6282911e536f 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -177,8 +177,10 @@ static int data_reloc_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
- 		return ret;
- 	}
- 	ret = paths_from_inode(inum, ipath);
--	if (ret < 0)
-+	if (ret < 0) {
-+		btrfs_put_root(local_root);
- 		goto err;
-+	}
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index f26456988445..27fee57a5c91 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -845,7 +845,7 @@ static int __init alloc_tag_init(void)
  
- 	/*
- 	 * We deliberately ignore the bit ipath might have been too small to
+ 	alloc_tag_cttype = codetag_register_type(&desc);
+ 	if (IS_ERR(alloc_tag_cttype)) {
+-		pr_err("Allocation tags registration failed, errno = %ld\n", PTR_ERR(alloc_tag_cttype));
++		pr_err("Allocation tags registration failed, errno = %pe\n", alloc_tag_cttype);
+ 		free_mod_tags_mem();
+ 		shutdown_mem_profiling(true);
+ 		return PTR_ERR(alloc_tag_cttype);
 -- 
-2.34.1
+2.25.1
 
 
