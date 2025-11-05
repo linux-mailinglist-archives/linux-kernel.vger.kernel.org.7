@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-885612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A55C33767
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:20:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73371C3375B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74A244F16C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:20:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 799444EEE5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6793B239562;
-	Wed,  5 Nov 2025 00:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC23A23D29F;
+	Wed,  5 Nov 2025 00:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqNZSDw5"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SctNo6F/"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6591822A4CC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD26239E7E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762301992; cv=none; b=nqoURkDWrr4sDMsZFgMZVkk1LHx1qGOTDstt5DLbMAyMLVgv4/XumD0K/O7eOd1tSjCKABHIxkIHxPqOK+LFN0snvnVsncfqy89l0brTsF18F5Uw30uFosnXa/BIyednV7AYrpDE5alyzdN053j3SInq8WXNotjn6uCbhy6BHm4=
+	t=1762301963; cv=none; b=qhgTYFMoc9na6KxspOfbtyMfmuT1za0grWtctBF9HIHE+O1jGxj5pjhwjLz+rqXS9GuRXLG3gL3vIVdoUCCfhG7stJKjkJcAOdnJK8C7tQbkWW9LJTo1uA4vTQ3OMIz/Oj6F01ah9GhLUC0iZvwefIhH5KXoaK5apnorl6IPNMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762301992; c=relaxed/simple;
-	bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rJOZkjp2If0z12edJJmn7V1DBHjkqP0rzBzMIiv50qFmcrOYEv2jXWta5bg8x+jBnYx58q6d6BC5i4JKhwT1b49xi5d4uRiyRv3B0xmzzhk5JmFTmdgeJFxbvbzGciQ7EcqkYr3sg/zk6QkLCt1z0h45Credmu4SYSZQ9vPgcZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqNZSDw5; arc=none smtp.client-ip=209.85.166.173
+	s=arc-20240116; t=1762301963; c=relaxed/simple;
+	bh=QDwYksSWVzmrhGL6bChdX4vnl8TjAu3iipcMTTMEHVw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gmkeMilo54y0m0YS8dNiAVdN/rRIbsNjDIzEqOs9fK2Yj1qeITUD86zaDx41Dg209I66v5vhU2aP5pVJmQQmtQWgzNgGlLgzCVoFd7rBg+/n8U2J/1DzAtpn2vXXnWeI05W55KG8JOMZjpiB+/LSa7iR52e1HfxbR8YrpVpvbeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SctNo6F/; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-43326c748d5so1901485ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:19:51 -0800 (PST)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so2149826a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:19:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762301990; x=1762906790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
-        b=gqNZSDw5FkB1z/vsgXvvAlmbYiI4DAoGsT1ZhX+eVrPJYEIyi0jvIvtBLywc352qj0
-         ZLlrO25aQ+QzYdegFTlh3akPMhyM8/Fz1lULTj87R2PHqgKtnu6HcytvVAN343QyimQj
-         HEmKG0W5JEeFp1FMBKy9xCyNwyphsCeE9d0oAejVx1nQLw3h/6qFj3NcemYNPgGVuu4f
-         kQZKFp1QjvRQvsca7rPJxFpoT+zV5Y+C5DbBeRVdgR189krev2t2YDoLqLE+CuGfLZQd
-         Vyi3w1LdzLqGVz/zcb74b7qjw57YmSoIqAf4ilT0Tbxm3MLR3IijQ2OS9+zzJRd58kgf
-         4tVw==
+        d=gmail.com; s=20230601; t=1762301961; x=1762906761; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PQOo5M0i6Q/NGE0WSQPjyiNe2YqX4cEHbsFV38mV+ZI=;
+        b=SctNo6F/QsJfysFeTMPqhhPpAV7IGBx2K1OG8eIsnCRYkKIrnuBDycoLxD9FMCCAqA
+         pIkC6mcmtPfeN8RYXSywm6Z61Cz5TMvBJaadQm0/4Uj5X9tT6gPEpZjnb70s5f/X2aWv
+         nJzCxq4l5YsFP5MyCET4HlQvTigi0VLWJi6vA/qqHDXu6sbTayNX0NXlgd4OtlKU7IWv
+         OulFj+4jNiVq3jigw+EZTz44C13gxv6x8YP89EhgzhgTHlcoo/4t1eNdTMtWVK8wAhW5
+         Z+QqfqBZFmEFaWdluwRGnN+00f6l47VZFGCIbQqi9JbxjaKUef5IOQXxSLTfdDGJew1D
+         5dcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762301990; x=1762906790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
-        b=BQddbTeLLxkXzUCw67cDebUm8nkruxJ+kjup12c+7QZGVk/ZNUaIeQ4tSDMBbws1b+
-         VD1p8q70/7YusJ1B5vAddk/aThZfZrYdCLDMk7lMzEkT3ELspiXQy1K2TVRJUrdUmdsX
-         BWubs/TLfHLnfE7sqIVvRKVwcWkXIwHYXlTbWUmZXXt9ta/lGxR1QHBTXX+kN6rRzSg/
-         w/qNSXuztcflI0pEYRiOE55msfciFK8e2z74wqctYf/DTkpvbc4dvHz7+wblAGdHnPlW
-         0exCHtkvW/ShAxdTifneUEUoMDE93+MjYSqVukeS2pdsZhUiXvmD0vtmG0NsHhyTiqAC
-         aYLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmVfab2qIzRSa/HzGrqemQkCDYc4HWxlsLjvYNh+R1yzWmZ+USvPZljDbREUEzG01bOxjOrZIkhlekF7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI7GrgdVJiv2CF6Rwptj8HKAkZtHZA+nbJqR+6b3KGvbOqcZmD
-	mxXGw6d9tbzrJ0SdLhNG8QP3kO6fB7TvFY0sZjR0ZV7GEBdVPyjlMmVxh6MXYspRFu7p7oUsxd9
-	SX+oDH5AgAGLHXTljeuH2xJoRMPziHzk=
-X-Gm-Gg: ASbGncup+Ai0Wxvf5FieTWhlGsS/FbGhhNSqk28ppnyI9KD6RgDkxH8rkq15fFXWyG2
-	zBMIzSEY80uDhGjyhEznjOs8dfhz52LYexwcjxPb2P2YFp32oF9dl/vVw7HKJWEIawiRdznme2k
-	fIMk6Bv3xLeOruPcTxioivTIy0avg8ktzSUB/zNqT7Z9pn/aGXQJrvDk+2+4jSfiAUfFYLYqjGt
-	t85z231DWEPWvlOsorAOi84WaNh+/kVVNEHBaQNuG0GmHP03Rvul8ZzpQbb2xA=
-X-Google-Smtp-Source: AGHT+IHlKDGDIG6BMqjPpmMiXRElX7CmlqHBVKFE5hB2vstBzsdvMVaGUbKSbC7UrpLHQfFggPSndMWaqnea6GXPLXI=
-X-Received: by 2002:a05:6e02:1fc6:b0:433:37e9:c1ff with SMTP id
- e9e14a558f8ab-433401a21c1mr24512685ab.9.1762301990514; Tue, 04 Nov 2025
- 16:19:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762301961; x=1762906761;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PQOo5M0i6Q/NGE0WSQPjyiNe2YqX4cEHbsFV38mV+ZI=;
+        b=aA0FIH6VWY+od+wuN6610gpRfWT5WucrkCh8dqfXI8+y2cPWwXGvaq4JGDMPu1NrgX
+         Y9uR1GHKS3Gy/HGolA7430BG8YFBuynX0baOqj7K54/a2M9W2VUBkb7T0DAZeutOJVZR
+         SmeSdixV4y98Wr6jcFdjK+0YYLU/EcTnZldV4uqBd68qDGGNetZsrZzTLyt3i3Rdr3Y9
+         s7jzlQppG2nM54i1VwBmbMZHRYRRz4Yeo1i7Vs534JKL+RgtM4vMvVDA9AMmT4Jn6hWh
+         GZmc5U0CPDkN/BDT2XsGVJgtOfCkkeA2rlp6iaoGXsyyTlN3v4wZ9Y5qReXcct3L+TF3
+         aPvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxDStWv3oYSF1mfgTxOIHBgQqW2kOk+B/kcGwBaXqUQffVU+cZWHm9U2LxNEIXunMug8Ch8pt2SS+wRnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsTBqSnLNK0/8+vetl/+GZjPs0v2GieCub1tRBXDbaCBR+bfac
+	bZXNGrr3kekZWjlDNSF2EenDUdWy82fRTeZJBcM8cw77atEKwfjjJjTb
+X-Gm-Gg: ASbGnctXSVei/slsTMr8B/rxRrORgVR516AZCjvFY/Ns/p88Cs//SuJWj+RRY/IeUFV
+	luDehpahYWheWuDP8aXS9Fh/CQlhzIFaYbVP5npLoeDMlYuIUfwtb1r3xJBN+RN245rCGc7xCRW
+	j3zol99S78E+YgqE1/P5g2UbRvQj5z/muihQymWneleNJ9BWZ2GCuYxybXX57RjBw+AgI0ecvIN
+	025CtQEsPxY3/UuDPNn3Q0ekleKFcZ0w12A9AAKk000KiB3NraJ3I1YeU/Vc7OAhpQsQL1xoaSG
+	5AYjm10WdvlKxj7p+B0+nJXGwbWwmCcBOJ2tfgJhvxZh1eox8AYARhJCettZCpLRD5OPBEAvHBk
+	Sw1lzAOZZSmFvlDg0QEh3v09y0mRHUl3ZqCHCHHOkWodaI3ViksFvaTley11+UuShieho/bsd1s
+	PlUICQ5OVtzd0VGDbPFClXOqI=
+X-Google-Smtp-Source: AGHT+IHD2NG1fQ3xl98wFzeuOQRvtfU5I7A4mP97EoxmWWPr5Ongqgmj+Ju/4NPWI3gyRmGoE0iydA==
+X-Received: by 2002:a05:6a20:f20:b0:34f:b660:7723 with SMTP id adf61e73a8af0-34fb6608efamr518592637.48.1762301960948;
+        Tue, 04 Nov 2025 16:19:20 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:a643:22b:eb9:c921? ([2620:10d:c090:500::5:99aa])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f87a710asm3616987a12.30.2025.11.04.16.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 16:19:20 -0800 (PST)
+Message-ID: <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
+Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
+ search for sorted BTF
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Donglin Peng
+	 <dolinux.peng@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan
+ Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
+ <pengdonglin@xiaomi.com>
+Date: Tue, 04 Nov 2025 16:19:19 -0800
+In-Reply-To: <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	 <20251104134033.344807-4-dolinux.peng@gmail.com>
+	 <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030144438.7582-1-minhquangbui99@gmail.com>
- <1762149401.6256416-7-xuanzhuo@linux.alibaba.com> <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
-In-Reply-To: <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Wed, 5 Nov 2025 08:19:14 +0800
-X-Gm-Features: AWmQ_bliMV8nE85ERHZI-EI4lokvoDwiY8yl4dOnlkgckxmIlBlgt3FBCpHKufM
-Message-ID: <CAL+tcoAnhhDn=2qDCKXf3Xnz8VTDG0HOXW8x=GSdtHUe+qipvQ@mail.gmail.com>
-Subject: Re: [PATCH net v7] virtio-net: fix received length check in big packets
-To: Lei Yang <leiyang@redhat.com>
-Cc: Bui Quang Minh <minhquangbui99@gmail.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
-	virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Lei,
+On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
 
-On Wed, Nov 5, 2025 at 12:56=E2=80=AFAM Lei Yang <leiyang@redhat.com> wrote=
-:
->
-> Tested this patch with virtio-net regression tests, everything works fine=
-.
+[...]
 
-I saw you mentioned various tests on virtio_net multiple times. Could
-you share your tools with me, I wonder? AFAIK, the stability of such
-benchmarks is not usually static, so I'm interested.
+> > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *btf, __u=
+32 type_id)
+> >         return type_id;
+> >  }
+> >=20
+> > -__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
+> > +/*
+> > + * Find BTF types with matching names within the [left, right] index r=
+ange.
+> > + * On success, updates *left and *right to the boundaries of the match=
+ing range
+> > + * and returns the leftmost matching index.
+> > + */
+> > +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf, cons=
+t char *name,
+> > +                                               __s32 *left, __s32 *rig=
+ht)
+>=20
+> I thought we discussed this, why do you need "right"? Two binary
+> searches where one would do just fine.
 
-Thanks,
-Jason
+I think the idea is that there would be less strcmp's if there is a
+long sequence of items with identical names.
 
