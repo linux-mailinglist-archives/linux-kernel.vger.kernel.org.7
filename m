@@ -1,176 +1,171 @@
-Return-Path: <linux-kernel+bounces-887445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21794C38443
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:53:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9ABC38446
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A2218873C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:52:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104384F590F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36352D5944;
-	Wed,  5 Nov 2025 22:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8bBTb0S"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E1E2F12C5;
+	Wed,  5 Nov 2025 22:52:28 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDD2242D79
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DBF242D79
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383142; cv=none; b=axDn5PuPsnsxykRjrxXvrX9Qq1q/ZlTwF0uOMJnzx4WPYdnDXEt7savO4w4zn+R25RI5s1y7y4AGwYZrpXB0J/jumD3mI9J/mNGnZ0mxx1q1iObwbhcJHmAfQlmyCVfVu/A5NNqQCJjV7ujLrtthey7dQAFeF/brCV6oXcij0L8=
+	t=1762383148; cv=none; b=UyO4g0RKCGYx05+Jczidllt4c2xuYjUZyiqNR9vKyPqxd6TGp2PzEKEvFfF+Z9gb3ny7y4xhtCEznUYtZ2yf2Ujg87bDkLbfAoHonto1J8P604fDipTsWWuTumVmdNSFazyz5ig9rnZ+UfM6HzBr/7Pj3+lPMT8OlPdZukI5SPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762383142; c=relaxed/simple;
-	bh=l5JUzmodHo5k0pjByQaXoLIRkMflBv6P4mXMmvNQqLg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BWxHSCMXsUmlE3z2Ems7PbUDC8i30FKk7mjDWmvgVQ1arQA7RUWsdC2m4wxycxddQoRwbhVPGryQHv06hlWFt+8Kh9asJ6VzMvi/VCcJ8c88SyPERvHTrFLj5gPvdbeqtVaFmnt0/ckKlIfj6+Vbw7d4w52VfsnFJQujzP4+xVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8bBTb0S; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2952048eb88so4536765ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762383140; x=1762987940; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1FJexW1JYx6DxuL3q/fhfUe6qlvpO4i0LqL1JMZwwtI=;
-        b=N8bBTb0Szaaveb3zDVpKbBvHNVCGRJ0xJ2t5we6HPGE5IHv0PkzZrfLNhHT8OxJ3e7
-         qB6DYyKeK1rfqTMjtA7I8sYMoBK/o0NgTshTJ85wLgz+Gw9T2Cy9qX5OoRuiJBl45B7p
-         PiEAqVLDqKw8GkaUDX1mGJl1Uo0yQoHrucbZI/jYViEUnCPCKYL7xzs89s1D6hDm+GUA
-         YlDcYzGJ3E0PV2cVqKSXu4STvQ/hrefVaO6meEoovcAcF/xCa4v7/Zp5bUfTVDbryDDH
-         wXsj1nXU4hM4QTm+LXsudA6SDqj/+nNUmV3V0S5gWc/xRLoGhSZM7nfVlAoFMTv7OdZi
-         YDpQ==
+	s=arc-20240116; t=1762383148; c=relaxed/simple;
+	bh=E84jzNhg13WZ9bIISgKkmAZYtstHgmEFFuunaL/mAG8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GUKQRnxgoXBudQwonCqP9LrQPp7+56r7LoWL8GlwIgHJWyEb/uP60WJq/kJWR92pxTFc1NIYM7qBZrEBBYqQYLlVPj+Ya9RGYbcBmUWNgmqJXAhkUTmHtWf4Q7z2+UVcLiheAXTalCq8ejaq1HzPP4+1mzl6pfiz5/FTBPwbS08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9486f0954daso61858739f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:52:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762383140; x=1762987940;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1762383145; x=1762987945;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1FJexW1JYx6DxuL3q/fhfUe6qlvpO4i0LqL1JMZwwtI=;
-        b=b1LT3XXmXD6nWdx4MQiRXGuZ2sjG2poFpKa+z4qWLCOcrJ5NXSbNCQ6MCIoOqlmTCt
-         9YG2mG9i8MA/xvM4WXKnAzK6r2fFmpFs4StLNGE7LpcBtj4NIoE9Tw8hTGlfyJ4vfUs1
-         f3uSHJkv18uYmXTp+mrhPcyogt/FMCp+EO6+zD4vExGp0ma8g90EtkmI62H+UqJmW7Ei
-         aA1nBtfsP7se/+BZn+ydPNlc4akIvgrRZzyhQx2wAgZv/LoOWDVEKx57Xp0QX3b/knBh
-         oW6+3tbg7rqP3XiQynvqrVdgT8XiElCZ+f7GZ4i9BL53HzDTjjOw9ndG7IFKVaidtu/L
-         UL1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXHfN86Ub15BYzkrst2wvTLtAfEJVkgdkqeNlTw/G3VqMPhGAjKb09QQZx5qtvsT9x4E3SoOMm/lZklaL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo9rt0RUr248jtbulWpB6Wk9K1pPLa1wAi0jkCPg0+j0quITVr
-	WG1RTLmGLWu/rbJXH0uJvo8w/+PwB5tWJArcqTciklTWNmDWJokNFpao
-X-Gm-Gg: ASbGnctSXozfcUMLmr7AHiWoHeEtJUsHbPmNQrszIJjSYX+Kc11crSDd7aF5g9eMdu0
-	ycdgA7UWCmzY5GkjltTJDLx3EbxYDyQq+Tyb/p+w176hh0qegG+fGf7P7DiGAuyvJrhJ+rCD/qF
-	hbENG2uEel+S0/IOajVN9AXWtqgmXGpMlbmiAS67cRtiDHoQBelAMDmO4yZklRz1sPYQlfhLbYK
-	3o46tAnHUjTtPiB6v3jbLxwuSNpYr07E41zqnpLEAPBkzR57UdgC2aKJQEF+Tnyrc0H1PjYuXXd
-	YGGkUCYvmDBDN6MdniYlVONe4RcSvNNiFekg0fJYo5N52h8hSpBfF5n+UUk5LzNnIfbX06RdCtI
-	8wCMR4G+dTc9wjp2D3VXbhfzS/SfswFZI767zzarKXMU4MkCDiLN0D4huEDZIkdUfxhDQKqc5VD
-	WG5Tm0S47Yj990XdlwQkpp+GS60h2TfSkWTdE=
-X-Google-Smtp-Source: AGHT+IFFcgx9KXj+jLf79Pju5kq5jwAVtbDiZ7dkTm0x2E6aEFwhvXO7JjhTU0TeYTFMldVIg3jsGQ==
-X-Received: by 2002:a17:902:cecd:b0:269:91b2:e9d6 with SMTP id d9443c01a7336-2962adb61b9mr78252305ad.46.1762383139845;
-        Wed, 05 Nov 2025 14:52:19 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:cdf2:29c1:f331:3e1? ([2620:10d:c090:500::6:8aee])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902c9d0d4sm346296a12.36.2025.11.05.14.52.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 14:52:19 -0800 (PST)
-Message-ID: <b3f13550169288578796548f12619e5e972c0636.camel@gmail.com>
-Subject: Re: [bpf-next] selftests/bpf: refactor snprintf_btf test to use
- bpf_strncmp
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Hoyeon Lee
-	 <hoyeon.lee@suse.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>,  bpf <bpf@vger.kernel.org>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau	 <martin.lau@linux.dev>, Song Liu
- <song@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,  "open list:KERNEL
- SELFTEST FRAMEWORK"	 <linux-kselftest@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>
-Date: Wed, 05 Nov 2025 14:52:18 -0800
-In-Reply-To: <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
-References: <20251105201415.227144-1-hoyeon.lee@suse.com>
-	 <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=4KbXaJ3kX42ZpPo9dnlXTI1wxuyuZ2N42Y5pBaHMR5o=;
+        b=pdUdIxoqcA5xTtEXB5W7yY3B9XDGIrUPZxRnpplOzpXAnnWP7KDGnD3XlGlAJ2RrrZ
+         Yc+FGRpGaSLrQpEyxv94yEjcXAXdZbWEZY2EDxSLrxmTilxYZMMpI3cbfAnoi7PaRCso
+         lCm7BWZSN0WWJW7p+wEmk3iDz15cH4fhBZgdsD9ZYxVHWKy0JRiPJ3BvtNK9Hxj7fS0l
+         HErxt1tattRtBWU0EEpVJX6a6putZDhBcl8sG6nIGRploKeiYKXfcvL6t0/T4Sb0VDol
+         k9pVzkzXDL2LtHNb8tfopb3rryROB4zAdvht2j2nrJoiiOL7NliZkjIw27jIXekAaLwG
+         bfSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdguXGQiUNIzUQ4/jM89ChoJPE5DDMMYUejNtm57YX3IjprxXWRcsUcBwHwMqXlcOIbmTUygveQOjH4rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1vmCnxZ06f9fQ5dzFEgDA0yhq6gfA4hE6oEZrTy4CmzIMvLDU
+	9TA269z6jw5HDYiCrlDlQuxV6yQPMBDONEOED8tNZgNSsXe/2WQT7Z1cWsqCg/NamFY537uWorp
+	Sn4AiAStkkEwV8C2BTr5tDIz7UUiRBqBCXJIdZ0Du2OCpdGfdi+5KQSj6OWo=
+X-Google-Smtp-Source: AGHT+IE8GD0zqnJD3kd/UsmBfw0hgp7Np/JLjD4bUq0pgRAL3OEuVhx9I0pGKvIMNpqvEbOwcJle6YbDJ4OrgTLEjULw+8m7Utvl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:27c3:b0:945:ab4f:6732 with SMTP id
+ ca18e2360f4ac-94869ce5974mr712921239f.2.1762383145508; Wed, 05 Nov 2025
+ 14:52:25 -0800 (PST)
+Date: Wed, 05 Nov 2025 14:52:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690bd529.050a0220.baf87.0079.GAE@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in reserve_bytes
+From: syzbot <syzbot+feba382c68462d76be14@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2025-11-05 at 14:45 -0800, Alexei Starovoitov wrote:
-> On Wed, Nov 5, 2025 at 12:14=E2=80=AFPM Hoyeon Lee <hoyeon.lee@suse.com> =
-wrote:
-> >=20
-> > The netif_receive_skb BPF program used in snprintf_btf test still uses
-> > a custom __strncmp. This is unnecessary as the bpf_strncmp helper is
-> > available and provides the same functionality.
-> >=20
-> > This commit refactors the test to use the bpf_strncmp helper, removing
-> > the redundant custom implementation.
-> >=20
-> > Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
-> > ---
-> >  .../selftests/bpf/progs/netif_receive_skb.c       | 15 +--------------
-> >  1 file changed, 1 insertion(+), 14 deletions(-)
-> >=20
-> > diff --git a/tools/testing/selftests/bpf/progs/netif_receive_skb.c b/to=
-ols/testing/selftests/bpf/progs/netif_receive_skb.c
-> > index 9e067dcbf607..186b8c82b9e6 100644
-> > --- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > +++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > @@ -31,19 +31,6 @@ struct {
-> >         __type(value, char[STRSIZE]);
-> >  } strdata SEC(".maps");
-> >=20
-> > -static int __strncmp(const void *m1, const void *m2, size_t len)
-> > -{
-> > -       const unsigned char *s1 =3D m1;
-> > -       const unsigned char *s2 =3D m2;
-> > -       int i, delta =3D 0;
-> > -
-> > -       for (i =3D 0; i < len; i++) {
-> > -               delta =3D s1[i] - s2[i];
-> > -               if (delta || s1[i] =3D=3D 0 || s2[i] =3D=3D 0)
-> > -                       break;
-> > -       }
-> > -       return delta;
-> > -}
-> >=20
-> >  #if __has_builtin(__builtin_btf_type_id)
-> >  #define        TEST_BTF(_str, _type, _flags, _expected, ...)          =
-         \
-> > @@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const void *m2, =
-size_t len)
-> >                                        &_ptr, sizeof(_ptr), _hflags);  =
- \
-> >                 if (ret)                                               =
- \
-> >                         break;                                         =
- \
-> > -               _cmp =3D __strncmp(_str, _expectedval, EXPECTED_STRSIZE=
-); \
-> > +               _cmp =3D bpf_strncmp(_str, EXPECTED_STRSIZE, _expectedv=
-al); \
->=20
-> Though it's equivalent, the point of the test is to be heavy
-> for the verifier with open coded __strncmp().
->=20
-> pw-bot: cr
+Hello,
 
-I double checked that before acking, the test was added as a part of [1].
-So it seems to be focused on bpf_snprintf_btf(), not on scalability.
-And it's not that heavy in terms of instructions budget:
+syzbot found the following issue on:
 
-File                     Program                  Verdict  Insns  States
------------------------  -----------------------  -------  -----  ------
-netif_receive_skb.bpf.o  trace_netif_receive_skb  success  18152     629
+HEAD commit:    98bd8b16ae57 Add linux-next specific files for 20251031
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17abfe7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=63d09725c93bcc1c
+dashboard link: https://syzkaller.appspot.com/bug?extid=feba382c68462d76be14
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/975261746f29/disk-98bd8b16.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ad565c6cf272/vmlinux-98bd8b16.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1816a55a8d5f/bzImage-98bd8b16.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+feba382c68462d76be14@syzkaller.appspotmail.com
+
+assertion failed: !(ticket->bytes == 0 && ticket->error) :: 0, in fs/btrfs/space-info.c:1671
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/space-info.c:1671!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 7313 Comm: syz.1.358 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:handle_reserve_ticket fs/btrfs/space-info.c:1671 [inline]
+RIP: 0010:reserve_bytes+0x129e/0x1410 fs/btrfs/space-info.c:1864
+Code: 0f 0b e8 15 f0 cc fd 48 c7 c7 60 c9 b0 8b 48 c7 c6 80 d5 b0 8b 31 d2 48 c7 c1 40 c6 b0 8b 41 b8 87 06 00 00 e8 f3 f8 33 fd 90 <0f> 0b f3 0f 1e fa 65 8b 1d 59 4a 80 0e bf 07 00 00 00 89 de e8 19
+RSP: 0018:ffffc9000f2ff180 EFLAGS: 00010246
+RAX: 000000000000005c RBX: 0000000000000000 RCX: 6a0e5d27bc457900
+RDX: ffffc9000d29b000 RSI: 00000000000080c9 RDI: 00000000000080ca
+RBP: ffffc9000f2ff3c0 R08: ffffc9000f2feea7 R09: 1ffff92001e5fdd4
+R10: dffffc0000000000 R11: fffff52001e5fdd5 R12: ffff88814e273000
+R13: dffffc0000000000 R14: 00000000fffffffc R15: ffffc9000f2ff220
+FS:  00007f71682106c0(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe3d8bb6d60 CR3: 0000000029df0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ btrfs_reserve_metadata_bytes+0x28/0x150 fs/btrfs/space-info.c:1887
+ btrfs_reserve_trans_metadata fs/btrfs/transaction.c:577 [inline]
+ start_transaction+0x102c/0x1610 fs/btrfs/transaction.c:658
+ btrfs_replace_file_extents+0x2b1/0x1de0 fs/btrfs/file.c:2432
+ insert_prealloc_file_extent fs/btrfs/inode.c:9004 [inline]
+ __btrfs_prealloc_file_range+0x48d/0xcf0 fs/btrfs/inode.c:9071
+ btrfs_prealloc_file_range+0x40/0x60 fs/btrfs/inode.c:9149
+ btrfs_zero_range+0xb9a/0xe00 fs/btrfs/file.c:3073
+ btrfs_fallocate+0xb95/0x1c10 fs/btrfs/file.c:3187
+ vfs_fallocate+0x669/0x7e0 fs/open.c:342
+ ksys_fallocate fs/open.c:366 [inline]
+ __do_sys_fallocate fs/open.c:371 [inline]
+ __se_sys_fallocate fs/open.c:369 [inline]
+ __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f716738efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7168210038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f71675e6090 RCX: 00007f716738efc9
+RDX: 0000000000003ffd RSI: 0000000000000010 RDI: 000000000000000a
+RBP: 00007f7167411f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f71675e6128 R14: 00007f71675e6090 R15: 00007fff6c300678
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:handle_reserve_ticket fs/btrfs/space-info.c:1671 [inline]
+RIP: 0010:reserve_bytes+0x129e/0x1410 fs/btrfs/space-info.c:1864
+Code: 0f 0b e8 15 f0 cc fd 48 c7 c7 60 c9 b0 8b 48 c7 c6 80 d5 b0 8b 31 d2 48 c7 c1 40 c6 b0 8b 41 b8 87 06 00 00 e8 f3 f8 33 fd 90 <0f> 0b f3 0f 1e fa 65 8b 1d 59 4a 80 0e bf 07 00 00 00 89 de e8 19
+RSP: 0018:ffffc9000f2ff180 EFLAGS: 00010246
+RAX: 000000000000005c RBX: 0000000000000000 RCX: 6a0e5d27bc457900
+RDX: ffffc9000d29b000 RSI: 00000000000080c9 RDI: 00000000000080ca
+RBP: ffffc9000f2ff3c0 R08: ffffc9000f2feea7 R09: 1ffff92001e5fdd4
+R10: dffffc0000000000 R11: fffff52001e5fdd5 R12: ffff88814e273000
+R13: dffffc0000000000 R14: 00000000fffffffc R15: ffffc9000f2ff220
+FS:  00007f71682106c0(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffdaa1f0eb8 CR3: 0000000029df0000 CR4: 00000000003526f0
 
 
-[1] https://lore.kernel.org/bpf/1601292670-1616-5-git-send-email-alan.magui=
-re@oracle.com/
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
