@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-886760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6370C36777
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:49:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5642C3678C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:50:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B804505FA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:37:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3BC7501907
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46913218B8;
-	Wed,  5 Nov 2025 15:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF05332ED45;
+	Wed,  5 Nov 2025 15:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cKwA9SZ1"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+DRVwMt"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377EC258CD0
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707612C0F79
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356981; cv=none; b=B6Nh/l21RpMxaxCvr90XhJL5qm/nbo9L5m3CK2OJmeibENs/zB6HRAaCU0O7N3PDaMPrXM1Y1ecZyytt6a6AnX/G8/l7C/NzE70fdsajQ69VyFVsexA+zpUtvTnKuwP0exAZ7ffe4qCjIzPfovZ/cifCFRduFhAtT5aGf63dRc4=
+	t=1762356991; cv=none; b=eVsyrFHtZUB4oIqktvWZTmitx+eIYbY6yr3q0fLi0NLT5IvFQOgh0W9/pzvnW0AiSczGKVZJMlaZ/jkQLte3cfRPUOVfBOIJ4JZB/5kQSA2xKVoNG6WGwlNRV8c/dy37psMvxySsASIzOcQxCqGzNQ6DA1xZ68AAC6Z7qgT8H6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356981; c=relaxed/simple;
-	bh=h6IY44+n9svW+bU+6obg1JzZFLK66f2qfn9IWru+JoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ECAaSRrTnjkeAis9WWEA/prz37ljgKqca0gsPtiW8YdE/SlJufUKVnih0JUajgHjTqYIB7Yj5b85JcVHVZeHLjwyJn9V7EaRTs0xCa2gXI8SpeuceEZRwwmXQBzcG8ydkOpqipKVKVYpZA8RaEWaSYALt1+RUzgH82x3ScTZmK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cKwA9SZ1; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so3577222f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:36:18 -0800 (PST)
+	s=arc-20240116; t=1762356991; c=relaxed/simple;
+	bh=DwpdGk8DQrrNe/uKiOzeaIcOB+1qcn0aryuH8E9eSzA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NF71LNg2ArXStMDGaWy/mWr89qvrPiraG5WT/Kc2RypyaHNVjIhLNhTWnt85UFeBfFycvC8pbUE3XN89XXhS1yfbS6oG8m6tg/4CGK6aJ+hgq5f3UpDUZ2/i7Cwqo2vkmYP+PaXVeIW4gMrxW/er38HopdQi6zR3D5dfhs2oMDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+DRVwMt; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47109187c32so35913795e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:36:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762356977; x=1762961777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hlm+t7ywPqSKVErvoumWaf2NiXRnADmmBeAkOgqc8tM=;
-        b=cKwA9SZ17wKgofWuP+eHT8cciozVLGMh5l3Ay/r93mWAeqR3zIYFWFS1me6sJLYjVF
-         x6lzRmvO6CJgYMY7AOCPeNvwOg8eG7+jaLdEx9fQDHMuhBTLI2UDUt4qiSBY2rKrBHqa
-         sBp6XTkSVduu/At8L97nBXBwXudLu1NLE6CCzfm6nJEJxciTZqBrUH/A9jwvjwTwNXXc
-         BoyaeB/DV6cA11oAvt4i7PlzADUR8MCqVJm+pnO+yoiNRUaFYQoi/W5iZvVyTh/BunAw
-         diGHe744CH4u+a15oRtTMFbvWXGKbv+Qi28McBbl+vdSvWPLDvebRoFOgb/7iAva1/DW
-         8xpQ==
+        d=gmail.com; s=20230601; t=1762356988; x=1762961788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYudu93GVCayz+03i6iP+9i2AlzyUJPPG/ZJivnBUPQ=;
+        b=k+DRVwMtSxnqbrAV8aLNRScFb4ZMDhPMiZa5T7/kxle59AFipkhHzl9ywZiSBkIPvE
+         /NGUlJxKavrCW00WJhHS77F4gh2evZonywzKfcd7oSjcS1JzryhXld6afNgoImfwIN3H
+         tyn5hF5i1x+IWpVRrmFcf2b0oVnbacjPZo7HV2hZLDKF+PMEl9ajBZPRbkNOEsZ8Q9FZ
+         Oc5Kmkmp+zLtsSIXqAa/wvKJVnuSK8fBMJuHANG41L1QCTIltc8ImEJH5Bbj11Z5v75w
+         vWtJJrKUBXF1xqgjkCgJO1ECBcELWWajD4/Wo11Px1bWP0C5EhnoLHgdtdLCOIAS1sIj
+         XtZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356977; x=1762961777;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlm+t7ywPqSKVErvoumWaf2NiXRnADmmBeAkOgqc8tM=;
-        b=cGqX9y+G6ITokOZs+/xoGFj2YV1FHvNncT1RVvUqV7cBwPxukm76cNHw+onpuMSifz
-         WGW7VtxmA5ssz8jV2apYJ3JvS7scW0SxRUY8XbXsXveV7OEJHPb+/9Ykw5b0mtf6WWgl
-         cP5tGLF2MWa+T9SHI0cp5Xbj3mS0yybhZl1drarkr5+ErVsa2FghN/jesqHJ6HsYzft+
-         DaAgu8H44Lje41C/CkiNj0Eh24v7M0lfqv8k6+/h4Q6dCDwXLnlQwk2vrz4fz9yZQb+6
-         12hSRjqwkd0ZKe0CYO/bj72AabQuY0kg4bee77vRNWLiwkCvwVFDN2WH3R6bcJvJjzyo
-         gmRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV62BrCVr+Ny/XJcXXrfa4BCb5WF8GAlUCwVDyz59xKlzQs9TmxNd1PnLAcwOV7An9L1iB9OAkid3EktRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWoWM9/006QM+VZufCHTm7bKx1AfFNGgd9FvHyT4cBexoamqh+
-	lkE48fqK9TZNM81oe6b7qiaCNgi3FSUaKU4sWmWU5zHJ2iv+3SOmH/32Kd2GAEMi2cE=
-X-Gm-Gg: ASbGnculksLus+jSVjhG5GyYMhW18ZV5Ck+ppq8ZDQ+HjTqR38U8eCPf/0n25vTC6gA
-	60JlWjx4UbRa6+FCDtOZnooa1Oqbo9s04VrUGEtAdA57CAggXSEBMv04+bF5B1zFMU9MCMqsvEt
-	LI27aeetL3quKk29yppY2dfElP7fQF/SlbXv65Tl58FjaxR4qr92JDje/fXktL2kz0BYnRFBZTp
-	B6dPcq8/w+Fg5UQ6b7eQimgTZCGZfvmWFeKjcvLcNFW5YgXQwppLPpgNIqgxE10PjVUyEUwUQe2
-	+cz4SVjGc7cDj/iaZgH6px7zYUj7QMhJ1voXWzZi/9BHWEB2/kPGTh9sgZmLRtfbTBja6B8NUpp
-	a9YJnxD7UMpXxE4tdCKCi4JsaaEKYLK6/TwxmEIcuv6AVdnexaSGhxAEtLJqbzewJTSFLd2fChx
-	ujqDt/pomR9+DJvbg1EI9stuCVMhsiI0x8hYgp
-X-Google-Smtp-Source: AGHT+IGc9Sr28tzgsM4FYJTg13n93hwv53wS3yAGxhmgy8eKjduRfr7nJLFOgLBuJ91Z09L6XqZX5Q==
-X-Received: by 2002:a05:6000:4212:b0:429:c7b5:ed9f with SMTP id ffacd0b85a97d-429e3333311mr3850220f8f.63.1762356977489;
-        Wed, 05 Nov 2025 07:36:17 -0800 (PST)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429dc1f9cdbsm11645493f8f.34.2025.11.05.07.36.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 07:36:16 -0800 (PST)
-Message-ID: <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
-Date: Wed, 5 Nov 2025 16:36:15 +0100
+        d=1e100.net; s=20230601; t=1762356988; x=1762961788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SYudu93GVCayz+03i6iP+9i2AlzyUJPPG/ZJivnBUPQ=;
+        b=d2fYXjP69W26+wfG+yqEk0Pm2g0bNkEgH6+pdZxS0vJAi2N1rvpAgx3HkFgdSgunup
+         Eym0aTwbyFNKBXFu+MIeYg3OhmG9mpHTzo/y9LKplW2TwRmqv0py9wlbza55SA7gh0Nz
+         vq4mZ2G1NKLHSrprY4/eVZmSv9pXVfERS6OoIxN+TfiIFoKFs4Xt/gTmkQkj0PlLyC8n
+         PtyvTn/B7X5XK/rNOA0f0eUJ/lOLiBlLIEDBya6uQiG16MItsHOyZEokaTC4JKp0br9p
+         Xg/idQ8Z/N8oftTVwrC2omJ3z+f4t8+v66+fuYCvj4y8CjjDk/rWXslESeFdckwhNarX
+         yChw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLVO92T9AHENgUrfHYM3CFbWDpi7yzKXusNLYHK27ur1/jl3V91yCqdfAAw9BWgazBn0OkRAQUfbqVExc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdt4Y1D8KBvTXlVJ8LX2O3cQoZ4nUesthE7QDXv+Wm41N9buGt
+	zMJNsOrckBWB+rJAgZi8eM6/eTAWTSiH9quQEQHXkahj82HI/u7gy4eX
+X-Gm-Gg: ASbGncs8eS51Hciq/PfRtwLg2mSdgHKnlDVUyZnlGY4d7nkon3xARTnFQqD66GjAzlY
+	6TogZloemJsB9MMuxqFBY+jWv+d/7YJJSPOlgoMXAkXZ/wBehrOLzQPESVLAA+gi4rW1cf4rDlm
+	6qBdhUuyaMMcsRRX3Jxg2x4gwXn3FEW9wd8y5KahpdFeLoHFyEn9+6BFZG2NWp+rAG8UjtihTEx
+	CZFj80ZDiIMeiGK07zlzvT+FSCdp6c4/uqG8Jj9/wmcdkdBaXG5/2KQuDWW8alv7udfSDT0vb82
+	sMmYPRgL3IndbGCAjIeEmTvgtSy97CbRy2nVj3rFN8d3QtJ8NiQ+peae1b+yLG9IycWRAprLrLl
+	k3iu45y8nF8kxAmq2CUnuCt3qDDO7cjFyJ6/soyNT3FlxJKi6VwDhWMpLWlpYxqqOHIa11hO+la
+	EiRgyqqzwjMSQdUkQLRPxJg3a+fmm4FURpb4g8DPq8yZmsRxFa
+X-Google-Smtp-Source: AGHT+IENpWtT4ZSL+H5XwM1N45FW+HboaVYJ2ML/odNVsJHMO7wJ+lEx1bxqsvFrTW/4FE6rwMMUOw==
+X-Received: by 2002:a05:600c:3b0a:b0:46e:37a7:48d1 with SMTP id 5b1f17b1804b1-4775ce401ebmr46535385e9.34.1762356987470;
+        Wed, 05 Nov 2025 07:36:27 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc2007afsm11436499f8f.44.2025.11.05.07.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 07:36:26 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: hide dentry_cache behind runtime const machinery
+Date: Wed,  5 Nov 2025 16:36:22 +0100
+Message-ID: <20251105153622.758836-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource/drivers/sh_cmt: Always leave device
- running after probe
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>, Thomas Gleixner
- <tglx@linutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/16/25 20:20, Niklas Söderlund wrote:
-> The CMT device can be used as both a clocksource and a clockevent
-> provider. The driver tries to be smart and power itself on and off, as
-> well as enabling and disabling its clock when it's not in operation.
-> This behavior is slightly altered if the CMT is used as an early
-> platform device in which case the device is left powered on after probe,
-> but the clock is still enabled and disabled at runtime.
-> 
-> This has worked for a long time, but recent improvements in PREEMPT_RT
-> and PROVE_LOCKING have highlighted an issue. As the CMT registers itself
-> as a clockevent provider, clockevents_register_device(), it needs to use
-> raw spinlocks internally as this is the context of which the clockevent
-> framework interacts with the CMT driver. However in the context of
-> holding a raw spinlock the CMT driver can't really manage its power
-> state or clock with calls to pm_runtime_*() and clk_*() as these calls
-> end up in other platform drivers using regular spinlocks to control
-> power and clocks.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/dcache.c                       | 6 ++++--
+ include/asm-generic/vmlinux.lds.h | 3 ++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-So the fix is to remove PM management in the driver ?
-
-
+diff --git a/fs/dcache.c b/fs/dcache.c
+index de3e4e9777ea..531835e8637c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -86,7 +86,8 @@ __cacheline_aligned_in_smp DEFINE_SEQLOCK(rename_lock);
+ 
+ EXPORT_SYMBOL(rename_lock);
+ 
+-static struct kmem_cache *dentry_cache __ro_after_init;
++static struct kmem_cache *__dentry_cache __ro_after_init;
++#define dentry_cache runtime_const_ptr(__dentry_cache)
+ 
+ const struct qstr empty_name = QSTR_INIT("", 0);
+ EXPORT_SYMBOL(empty_name);
+@@ -3216,9 +3217,10 @@ static void __init dcache_init(void)
+ 	 * but it is probably not worth it because of the cache nature
+ 	 * of the dcache.
+ 	 */
+-	dentry_cache = KMEM_CACHE_USERCOPY(dentry,
++	__dentry_cache = KMEM_CACHE_USERCOPY(dentry,
+ 		SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_ACCOUNT,
+ 		d_shortname.string);
++	runtime_const_init(ptr, __dentry_cache);
+ 
+ 	/* Hash may have been set up in dcache_init_early */
+ 	if (!hashdist)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index e04d56a5332e..caef183a73bc 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -955,7 +955,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+-		RUNTIME_CONST(ptr, dentry_hashtable)
++		RUNTIME_CONST(ptr, dentry_hashtable)			\
++		RUNTIME_CONST(ptr, __dentry_cache)
+ 
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.48.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
