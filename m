@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-887442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E869C38419
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:50:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69348C38425
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161713B80FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:50:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447093B89CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C0E2D7DC6;
-	Wed,  5 Nov 2025 22:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1982D5944;
+	Wed,  5 Nov 2025 22:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MihoPuc4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko6QX8fG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121BF28B7EA;
-	Wed,  5 Nov 2025 22:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB7B2D0631
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762382999; cv=none; b=Uv0oqEeisPDVGyk6fz6jDkBQ7zG4otqbco6sD5ZgeEm/wz1J+EGfpMk5HSAkHBAAxFApX+kLE3t6bgpk+3KspaZoVWLkhstLrQwPKnmBPhjlZ+zBFIhIccLqG6rozvHIvNMkdqFxmK2cBB9Yp6C7hkMa5OT46yfCLNFdJvh/zZg=
+	t=1762383022; cv=none; b=dcQBZh5D1CbZ1tpzk3vMeFdeq/eGo8lpYHkjTzTvSakL5OPgwk2blSzG3HnBfYOIrqjNauJz6OnRBQZY3hwozactiJ8w4YItJBOCZlnjyK40VZljK/KRuAQ3l8TOIpsuOcCFvQxQRpfpGZWDv4OjzYSXmbcXUeexJTkQhosffDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762382999; c=relaxed/simple;
-	bh=GpCtjN6SHyGVn3Uea1Jq3CBszKiOb3OEtVVncQOoyd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=etThl2Cvtyil17TCJmBQcHTW0NwlUJYH0uPjgyqAwXcP29CJTic8+cYK35cEacQZph6+hXfViUnDseTNgYHUtZYAg4lm2Iobu13j3ShdPfLpj/rAb0LiPIdPDDcWTL+P2Tf7uXQ32E7iR0uN74yDr3xOxzmCdMjC7sG5lJy9zcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MihoPuc4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762382992;
-	bh=CO08Trqok0EYgpaOcqtK9LwfhUfVsk9sFujvAevFW3U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MihoPuc4ZdF8TlxA/gxpWgRDt0pUxRyxrlp1zzHccNISjMBMeHrXP2ztf4fKhL7B+
-	 U4yrMZvJNzk/+HDFHpU+saKS9sqDKwSLuq+QTpASOrl9ygyBLOCw+qbHVQz265qiNH
-	 dVIemAUxOo62zR9O0a5kg8lpIJGLn+HfmY1jDAtZxvSpa7Lns+FErEA4JK6p0HBJo/
-	 B0Be2KUVYRC1sg0kRNKszlgiJIZwpZCp3iEV4kV2TpVFebDzrn7CFBn6EVHCeu/fv+
-	 xc99ysWQ5yb8n3xj3R9IkIAL3v1Ob6ziLbK7GxWbiuDqNVqM+CcMxGNKa4CSpP4TZE
-	 w2TVfSFv5GSzw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d20rc3H2mz4x4g;
-	Thu, 06 Nov 2025 09:49:52 +1100 (AEDT)
-Date: Thu, 6 Nov 2025 09:49:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20251106094951.6fe49332@canb.auug.org.au>
+	s=arc-20240116; t=1762383022; c=relaxed/simple;
+	bh=c9L/RmDqSZRKJS2TMpxVfqovIdx6B5TNr/pdfh5cdqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRsHlfAtgDZwzC86qnij6A+4CriZ2qy39Wz4b/VWzvvNZtS6ioxVN6eAlI+4e8bDYDBvHFp8n6mUJmcCYh0aB4I4mdz06POKHdFZptNWPTYvlwkwyiqk6u1AWCi/Ntdu84FZbz4Oj0x2K69M5LNt+U80IWWKNwTbQFZ8umBFu9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko6QX8fG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753FCC4CEF5;
+	Wed,  5 Nov 2025 22:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762383022;
+	bh=c9L/RmDqSZRKJS2TMpxVfqovIdx6B5TNr/pdfh5cdqc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ko6QX8fGTbZdDbsAdNEraj6h2EoNR6BCxSbXlQ9/DPy/N+czbDKQ6P3z7rnB/0O/q
+	 kkYKAZArqOYgQhqQuCI6gfTjwReggUKPEfQ8HjSmzatt2XfOejRIkZsBks4CphCPx0
+	 AS8PhSOLDjZN61AdpHIhIR9oTl2iR47O9KwAEqOvypJMVDgIijDgoOJZ1mvFqYZclE
+	 TUwuXgT9SMQZKI3QCawZGAJ1XL+eTfP8koLB79JxJtBoO+rq5U+T9/AKKdN68ohu1a
+	 gy17/moLB0aGONN9iwXAZS1ZTyOpjV9C3ktzyLVdPNvDN0Ce5Svufgzf5Vxh1nD90l
+	 pZMWXG3hdaeUA==
+Message-ID: <4d07932e-8b53-4ee3-8d08-6f49d433f005@kernel.org>
+Date: Wed, 5 Nov 2025 23:50:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/n40uXww7+pV.f6qrym.ll2T";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] drm/nouveau/uvmm: Allow larger pages
+To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+Cc: James Jones <jajones@nvidia.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Mary Guillemard <mary@mary.zone>,
+ Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul
+ <lyude@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ nouveau@lists.freedesktop.org
+References: <20251031104924.10631-1-mohamedahmedegypt2001@gmail.com>
+ <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com>
+ <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
+ <CAA+WOBtmbPHigscFQCFgDo=9WSM6V-JMXGCO7orP=01XOqTPHQ@mail.gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <CAA+WOBtmbPHigscFQCFgDo=9WSM6V-JMXGCO7orP=01XOqTPHQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/n40uXww7+pV.f6qrym.ll2T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/4/25 12:53 AM, Mohamed Ahmed wrote:
+> Thanks a lot for the shout out! Looking more at things, the logic here
+> is actually redundant. It was originally copied over directly from the
+> bo allocation code to stay on the safer side (basically the idea back
+> then was to make both the bo and vmm sides match exactly). We aren't
+> at risk of having an aligned address that is in the wrong memory type
+> because the bo allocation code (nouveau_bo.c:321) forces anything that
+> has the GART flag to have a page size of 4K. Anything getting a page
+> size higher than that is exclusively VRAM only. Additionally,
+> currently things marked VRAM only don't get evicted to host memory
+> except under high memory pressure and in that case, the context is
+> paused until the objects in question are paged back in, so we also
+> don't have to worry about memory placement there.
+> 
+> The memory placement check in the vmm code could be removed but I am
+> leaning more towards leaving it as is just to stay on the safer side.
 
-Hi all,
+If it is not necessary, please remove it. We should not carry dead code.
 
-After merging the vfs-brauner tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+> At the same time, it would be more useful to keep it for the future as
+> one of the future investigation targets that we want to look into is
+> all the memory placement rules because the "only 4K is allowed for
+> host memory" limit that nouveau imposes is a source of many pains in
+> userspace (originally thought to be a HW thing but seems it's actually
+> not), and having the checks on both bo and vmm paths would help
+> starting out with that.
 
-In file included from include/linux/compat.h:17,
-                 from arch/powerpc/kernel/asm-offsets.c:13:
-include/linux/fs.h:1431:1: error: version control conflict marker in file
- 1431 | <<<<<<< HEAD
-      | ^~~~~~~
+Please don't top-post, see also [1].
 
-and it went downhill from there :-(
-
-Caused by commit
-
-  3fef0b63fe1c ("Merge branch 'vfs-6.19.fs_header' into vfs.all")
-
-Please, the order is merge stuff, test, publish ... :-(
-
-I refetched the vfs-brauner tree (which has been updated) and tried again.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n40uXww7+pV.f6qrym.ll2T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkL1I8ACgkQAVBC80lX
-0GybuAgAoMePJqe3Q+avikUB4msK8U/tw/z2DJXSgR3HNwVB+r1G+TKS64I9aqFd
-PXNktCQYvS5UysMKBNPTTczwFimqfM1J3g2cPgCXmc2W+wmjC2QAU84m8wbXtmFc
-ZDDJ/rI96434mQUgcBoPUTJTnM326pBepQJ64tk+vR59XhwshdZcq78Bv+HJ4wsr
-9TwTULmKEw237+1e2yeukYAJiZ6/xe6C1G69+m4Dxs+trloIMpA232I5M0EwbgRA
-sEpCZC+p9si2m4DmroNue0zG1N3CBbGxk3hkcydvYFXYfqZ6mWC2khrKvk6yV5u0
-NjbC42XNZQcSopxMIG17Bumx+APSNA==
-=4iL/
------END PGP SIGNATURE-----
-
---Sig_/n40uXww7+pV.f6qrym.ll2T--
+[1] https://subspace.kernel.org/etiquette.html#do-not-top-post-when-replying
 
