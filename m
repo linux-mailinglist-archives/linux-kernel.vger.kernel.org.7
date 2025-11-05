@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-886829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EA9C36B60
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:32:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81332C36ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F7F622852
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848F266060F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736871E5207;
-	Wed,  5 Nov 2025 15:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0593A3203AA;
+	Wed,  5 Nov 2025 15:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3uwCUtr"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oICOgyYK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105483203AA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B4232939F;
+	Wed,  5 Nov 2025 15:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358263; cv=none; b=dQTnxbTBmohPhmb1wQeEo2ppgkQiZicwKCySKZX3+3xqIV08xzYQaY4YfZORWq1NehHUjVNuwXZzMJBCX0XnSCl1koGzGOafCTdlV5R+Ou5xvb4cVSbyLBKDOkqjcAFTNxZjmfAWtX+rLeAbZM7/XBc8r+rRFy2500xl2TdbLpg=
+	t=1762358271; cv=none; b=sOec3iH7g/Y8u27Pj9QlH+Omh8hAp/6M0FyOETBprcyPDCjq34p1EyxhA+cfKbZOr5EjgaUQjJzeIF/joCQcEFj8x2vwH5iS7akO8398SFe9VT/qDZYUqTyjgaetPaWVpCOJmqeuvS+UETTL0wmsbpybL7cg4Ez75FlcGP+rhGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358263; c=relaxed/simple;
-	bh=YnSUOZY4yv1wHEA4ZNPWvccnW6Q2kz+n8Nso5t/pTU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+Ahtf/vOSxeaH/UZUURxLR5MFPbBXbUxy2tI1XQwebQGSYxVsXzTpYz5mSZBeIoram5/1/qfhtPQk1qygcBxxixdE5os0+iy8HL0Vdfb6KiiomQU406ZZQZwvPacwlk0NScjJ4GFQAD5Vj9TLj1oeQWa6ZD7VY5sC2Zplq6YFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3uwCUtr; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so4637363a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762358260; x=1762963060; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gi3ulz3Ij3cW2aD1iWY/9uEnz3868+Ej+OFb25qIT1E=;
-        b=w3uwCUtr9zwYTYS+HIaCxRKDfjashVrjv0iXFeCl5/laHmeYSO1QE9ZzW9PDSiN3EP
-         RRBV4B0KOUJaleYZHqcEpuzAYeDOFXnOGYLBCmmkjZlIQIrnLpCaBouegnd+lE1bSyXy
-         4FqC770PpKLpnVD+st56EFPblasKyx885SxTRMXhgD739PiPVIyJKzBsE1V06N4SUlis
-         j98LegfTyOJijStI7duulhHFaXh4RnoKL724cV+7jzkfo3NFq/wce06fvSNfD63KvYJn
-         i+UpEHACDeeCWQ4+e2SdHMRcqOOGRMV8ZSWs0fPiWZqJea1caeBRbZXL17f1OaFfay30
-         QF+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358260; x=1762963060;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gi3ulz3Ij3cW2aD1iWY/9uEnz3868+Ej+OFb25qIT1E=;
-        b=SEo3HCZJiRaFRLBHUw028IvqfCBBy5D+0LgOi3RkOLWV6N393Hcv7EDJujKFmm25Ke
-         fRTuiJRSuOvJ3wjf/4OGNiEjrJSQzR+a5KymbcS4oG1qhKNG1cFMw/35vo9N4/Mpbp4T
-         VIdnh8ugl5+BgDsdOhibvZGNcUdV7EI4eLEr/vhZfoB4yNhR5MS4ICP22SC6bM0BHmQE
-         LxS1pOFBhIaaOz5Z5H86gYg4RTICy9D5jF7oZBFQRN9NKAMQtUaApz17SXnbF4aF2xKW
-         x8G0hVoEtpRQBFQ+qMfumuFi3A4eW5T8fxmDBXpBKx1relXJ/doluw7rruj5uV2/43Qk
-         Lwmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUosZdAXzZc5odYvRZelmigxXqK2n/yhmYHIOAH2fFjrWoL36/q9jCl6QNOInlKy6VHlonlkH5Nv8VXLfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXVurnnDhGgkyMvx8Sp/Czr4J7t7P3KXsw+IK6hnllLsjmBzes
-	LUg6SJrhX0JZbr9Aj79LyOMqMcyftSJqOUuSCDnd2XkfyX9pMt/q8oRGGBd/ErqNqtRpWDXpRNS
-	a1xznbeScdw==
-X-Gm-Gg: ASbGncsHrCKrK1Uye27tyXauvZJbfUUeBo/GSjhIvE21MzlTD2yHTT2vWQKDQTtBOj3
-	m8NrtC8DCbxl4pEIYktTnGZ3WcacrFUt0U1Kb1kSeKAdz8nThsDNxKEs3cSoSSkmOF5PtB8wy5Y
-	kvSGcKtUOvizOvgGsSPVD5EXA1e6L5OZKAEqC9T8D70WmYJqgJftwHfWp9I9UecACskAMCIZ1GV
-	oZZocB3iHJ5rdSD6JaF3LcGF0wOE72YkDVhAe/y76h+6shooZd1toPgYHuiEH1cf4mDlAvKCYJm
-	9tyMzts6GLI0fsRSWmEdTSNuaPgwWRLyJl29rROLKp3c6q5ECk31HbVKFjF8WnXGJqYJ+T5jqI3
-	D4qof5QyyGk7t805JIHgGKqRuiLtlHmusiL2PrY0SamV1Y/8chptVGUjjmGxTCCbCsalWbaIXmZ
-	CMkHKNd8uViy406LKeXxv15mM=
-X-Google-Smtp-Source: AGHT+IG8Ib7bTOk4rfnBCJBGTAFfgk2ImcjjuBmXvp18vfVvKZ16nOJ2X4KjkA2fJsMo226KrUYJSw==
-X-Received: by 2002:a17:907:6d0a:b0:b72:5983:db20 with SMTP id a640c23a62f3a-b72654f55c1mr405051366b.32.1762358260191;
-        Wed, 05 Nov 2025 07:57:40 -0800 (PST)
-Received: from [172.20.148.132] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e26adsm522473466b.43.2025.11.05.07.57.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 07:57:39 -0800 (PST)
-Message-ID: <efb8bba5-8805-4c95-ba1b-3bde46a4e528@linaro.org>
-Date: Wed, 5 Nov 2025 16:57:39 +0100
+	s=arc-20240116; t=1762358271; c=relaxed/simple;
+	bh=QE/o0Mh+dZdKXtnvDA4J2WYsUMjW6VDyfclBimdmgSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d00Q69EQPVOV0tgGcs3BpGsJmrG5h/KlGqa1/7VQR90W42m87m2fxxTh2WDfSyxajd3tonPmWDtqybQ7NNbRFPUzpd9V7uMvb1Mq0vnuvDAoMC/XhUjyXWAmi1PR95kKRMAV5AXaO+IRzWEwL1KOnxG8H4dkcbaTLv/aFhz9F0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oICOgyYK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626DAC4CEF5;
+	Wed,  5 Nov 2025 15:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762358270;
+	bh=QE/o0Mh+dZdKXtnvDA4J2WYsUMjW6VDyfclBimdmgSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oICOgyYKQxTIre82iUXxYQa+v511n78p0LH/55yOrC/qPcixKX87gwddDj+41MvaU
+	 udDR3K3EBQpgaowODsG18JDcxc/9Tm00bcjPVXc3wnknNjtgfgAbq406aWeHYZjI5z
+	 4uu77joC5oJffXn+3DZusDdh4FUBNZjP+i+b3b0F4GSCsrwLEaBgWDor4d6LqO/29r
+	 Pv3KNro8m3YZiHAE2j4eVhzRxEZTXzdKwYbom7E6szRwPYBQga2bH0zXkFLHi9b4jL
+	 AJ2ZrrbUyJI3JInBqsQp2I7DwoEBzEHAGOgWbygjatGbYoaDoSc1t79LMgiLlaLprW
+	 4ShYMDmkm4j5A==
+Date: Wed, 5 Nov 2025 16:57:48 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 13/33] cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
+Message-ID: <aQtz_ODTgiCGS_oB@localhost.localdomain>
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-14-frederic@kernel.org>
+ <20251031125951.GA430420@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/28] mtd: spinand: Fix kernel doc
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
- <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
- <20251031-winbond-v6-17-rc1-oddr-v1-4-be42de23ebf1@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-4-be42de23ebf1@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251031125951.GA430420@pauld.westford.csb>
 
-
-
-On 10/31/25 6:26 PM, Miquel Raynal wrote:
-> The @data buffer is 5 bytes, not 4, it has been extended for the need of
-> devices with an extra ID bytes.
+Le Fri, Oct 31, 2025 at 08:59:51AM -0400, Phil Auld a écrit :
+> > +int housekeeping_update(struct cpumask *mask, enum hk_type type)
+> > +{
+> > +	struct cpumask *trial, *old = NULL;
+> > +
+> > +	if (type != HK_TYPE_DOMAIN)
+> > +		return -ENOTSUPP;
+> > +
+> > +	trial = kmalloc(sizeof(*trial), GFP_KERNEL);
+> > +	if (!trial)
+> > +		return -ENOMEM;
+> > +
+> > +	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), mask);
+> > +	if (!cpumask_intersects(trial, cpu_online_mask)) {
+> > +		kfree(trial);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (!housekeeping.flags)
+> > +		static_branch_enable(&housekeeping_overridden);
+> > +
+> > +	if (!(housekeeping.flags & BIT(type)))
+> > +		old = housekeeping_cpumask_dereference(type);
+> > +	else
+> > +		WRITE_ONCE(housekeeping.flags, housekeeping.flags | BIT(type));
 > 
-> Fixes: 34a956739d29 ("mtd: spinand: Add support for 5-byte IDs")
+> Isn't this backwards?   If the bit is not set you save old to free it
+> and if the bit is set you set it again.
 
-no fixes tag for documentation.
+That's completely backward!
 
-with that:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Thanks for pointing out!
 
-(commit msg can be updated to smth like "update kernel doc comment" too)
-
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  include/linux/mtd/spinand.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> index 927c10d7876958276a841a9f1278a74deeb89944..1c741145e49717169152854718f784e0e519ea92 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -287,7 +287,7 @@ struct spinand_device;
->  
->  /**
->   * struct spinand_id - SPI NAND id structure
-> - * @data: buffer containing the id bytes. Currently 4 bytes large, but can
-> + * @data: buffer containing the id bytes. Currently 5 bytes large, but can
->   *	  be extended if required
->   * @len: ID length
->   */
-> 
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
