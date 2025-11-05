@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-885711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DC2C33BF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:17:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C125C33C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8C294E2E80
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:17:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9743BF776
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5CE20A5C4;
-	Wed,  5 Nov 2025 02:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42706233711;
+	Wed,  5 Nov 2025 02:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="DHFCDRTM"
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTlt6/mf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550181F5E6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBFD1E9919;
+	Wed,  5 Nov 2025 02:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309037; cv=none; b=BQdmmAKBf2XjdQ9SWdPamOl19RH63zMhAPp4qwtB1YmdI1VkE4H0/C8vmshijdDoEcsfX9btuiiohCjVpbWq3DIqBWxJGePFRnBENVhifhF6aH4oLdZzjlDC/wnuCMOYe1Kae5DULjyHAzTsLt+VgzTFWNL73ofMhO4GPqMUnK4=
+	t=1762309248; cv=none; b=OQfjnJDV5tBNfqqBF8LdvOgl/BIoRkV/vhptvoC1kV3BYjIyRNCPgj4KdJIf5cZu6cjiyECBmMxKfrCzzuxTEPClYCMrgP2lvCJUt09lHByZGhD/92ngGM1kiaEXsPg88FJs/evWQtWc98T+AYW1zKanScKpvxJ+WcDw4Gc/lAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309037; c=relaxed/simple;
-	bh=kCseptUFxbSlZvZ2Phsw4zdoMYwzMWDL7ZgnSRxT9qo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thGsjzr6qbUwJPHNsrQ20ubCgVf6cuIjNzlmjxnUWjAT/0j3weX0IuwvgNGACjEtgIPfWz3CyAsleJ8v702NjP+PXTH5a3aoDEIizxF1ZYn9GtAhWiBRt3+6LZiMaSKolt49sw1n35pUm3sPp48O9YoQB8Z4JpltgF5GSq6bJFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=DHFCDRTM; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2869c94a4;
-	Wed, 5 Nov 2025 10:17:01 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: dhowells@redhat.com
-Cc: marc.dionne@auristor.com,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] afs: use kvfree() to free memory allocated by kvcalloc()
-Date: Wed,  5 Nov 2025 02:16:58 +0000
-Message-Id: <20251105021658.1803652-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762309248; c=relaxed/simple;
+	bh=Zr+j+565XvfLm2SsJQls3yEiyOWPm+Rp4hCYDk/hfMQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=u4rgIpilgbMYHPwgovdV27ROJpd7+EJdBVRB2aMFgxAVETYerZWlO9u9cWMKCqmakAUBFoo6eesE9wIaWvfORdoSJovhIlbdUOoKOptPCnH5Zfb9dyQy5w1Dx5/lQOhZt70z6qmwXMScTyWaxkJC7QEa898MSNkz0fe39yX6T20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTlt6/mf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C8EC116B1;
+	Wed,  5 Nov 2025 02:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762309246;
+	bh=Zr+j+565XvfLm2SsJQls3yEiyOWPm+Rp4hCYDk/hfMQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TTlt6/mfwNYAeXcYZVsj04yfi3BxoCxKnbDh12OvrwUbwinCSls2Ya7CGR5y1z6wc
+	 L33AsUzJEkNoiKSPXmfxh0eFHmzssZI3uMzSr5XgmkP8eAOGyMu5hzJojGJ5i/CTrG
+	 LXmAsWHcL2KyCSad6aqSk8gvxKtPYQkNretC3L/J/Osc4Ztpup9Ggqa53ot/5bvnnE
+	 Xghw62eAUx2/MuSatdVi/2lTkz6R6UQH3qZxJS8dNtb+Fp2sjB+yloQ0BcteWU0GZE
+	 kmuROI8uLR/tuEt+hryeFHMcKPjUpaqhqU07S4zDEEq5bq3bzr57KjGWxltrmqMiuZ
+	 fLgyrBpuInHgA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE89380AA57;
+	Wed,  5 Nov 2025 02:20:21 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,44 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a51cd9f7c03a1kunm21076fca6d09ce
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQkMaVk1LSx4fHUJNSx1NSVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
-DKIM-Signature: a=rsa-sha256;
-	b=DHFCDRTMwfwpUPoN5N4Ri0cN4YlNHNgHdm0YCrQHS4M6ZTFeXz9T2wz5SCQSlvXjXoUhNNHWyk6aAExUiKt89O6mXIVO+6Qi/C8zVgMaU9L35IEUpvNUrRmgUrOjJD1NvYlYpwshTdjtDM0AhafcjdVUZHD2nJl+hMpegLhtZJc=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=SJJUc1UhBKizBdL83Bkhd6oYJLODgtHHo+SozLlqtcc=;
-	h=date:mime-version:subject:message-id:from;
+Subject: Re: [PATCH net-next v2 0/4] net: altera-tse: Cleanup init sequence
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176230922050.3062547.8083675540294624198.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Nov 2025 02:20:20 +0000
+References: <20251103104928.58461-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20251103104928.58461-1-maxime.chevallier@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, horms@kernel.org,
+ boon.khai.ng@altera.com, alexis.lothore@bootlin.com,
+ thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-op->more_files is allocated with kvcalloc() but released via
-afs_put_operation(), which uses kfree() internally. This mismach prevents
-the resource from being released properly and may lead to undefined
-behavior.
+Hello:
 
-Fix this by using kvfree() to free op->more_files to match its allocation
-method.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- fs/afs/fs_operation.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon,  3 Nov 2025 11:49:23 +0100 you wrote:
+> Hi, this is a V2 for Altera TSE cleanup to make sure everything is
+> properly intialized before registering the netdev.
+> 
+> When Altera TSE was converted to phylink, the PCS and phylink creation
+> were added after register_netdev(), which is wrong as this may race
+> with .ndo_open() once the netdev is registered.
+> 
+> [...]
 
-diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
-index 8418813ee043..ae0c9750c6b6 100644
---- a/fs/afs/fs_operation.c
-+++ b/fs/afs/fs_operation.c
-@@ -348,7 +348,7 @@ int afs_put_operation(struct afs_operation *op)
- 		for (i = 0; i < op->nr_files - 2; i++)
- 			if (op->more_files[i].put_vnode)
- 				iput(&op->more_files[i].vnode->netfs.inode);
--		kfree(op->more_files);
-+		kvfree(op->more_files);
- 	}
- 
- 	if (op->estate) {
+Here is the summary with links:
+  - [net-next,v2,1/4] net: altera-tse: Set platform drvdata before registering netdev
+    https://git.kernel.org/netdev/net-next/c/687452051886
+  - [net-next,v2,2/4] net: altera-tse: Warn on bad revision at probe time
+    https://git.kernel.org/netdev/net-next/c/dd2619d38d7e
+  - [net-next,v2,3/4] net: altera-tse: Don't use netdev name for the PCS mdio bus
+    https://git.kernel.org/netdev/net-next/c/9350ea63fec6
+  - [net-next,v2,4/4] net: altera-tse: Init PCS and phylink before registering netdev
+    https://git.kernel.org/netdev/net-next/c/055e554b8fff
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
