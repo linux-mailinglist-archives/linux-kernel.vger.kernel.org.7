@@ -1,199 +1,123 @@
-Return-Path: <linux-kernel+bounces-887503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B728EC3863D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:43:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8400C38649
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78D834E6740
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C5E3B1B2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5972F60D5;
-	Wed,  5 Nov 2025 23:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCA02F6597;
+	Wed,  5 Nov 2025 23:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3ixblNQ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cfli0nwc"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F552F5A06
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A85D2F5A06;
+	Wed,  5 Nov 2025 23:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762386210; cv=none; b=Qlhaak2RJuGAoGGBktGIfkpL+4PC95TZp85RIEQ0IugRzdO/tuMPH+Ugo19R0yDXrKo4CorFLDlq4wnT3kRnDSh2klV2Gf4mS0VA/N5kfFG91Q8ccxJo8A42xpqIgrGw1q9YbbhcUDXwWikavt/220sEZKbSsl2OMmZBRuMtN/Q=
+	t=1762386217; cv=none; b=ttQqMeRyxxsoOuuKvKII+4SCLC266hiN6M51jjwFdmvwbd23bXNWxf2lsCaixtIiM7aSpPvFsNeV13AfoYSjgED4mN6FGvY0Pc94aF8RJ0vtpYNKQTqqExjMVQyf+nj/1mD0LLcfWX62NwbT1E118gW4brpiyWMZOgIPVpCuhw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762386210; c=relaxed/simple;
-	bh=Ak0a/MofXeKeQ+l3St4/37wwo2EI1oYqy7US8b0zxnI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gv/CbudQ5tvxUiq+10moX5MGRHcccaEagrKeV7BKkd608ZpVzDoAe00evT4o+Hr4pVhZpVe2HuWbBWh5oPcNS6pI+z2UqkQbc3TptWRZyUicb4wSW8fxjNJ75DPYdHS0PtqQCXD7xevkchzYbkpJER/F9KJNa2bhRj3c/mWtLbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3ixblNQ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429c7e438a8so327063f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:43:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762386207; x=1762991007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IqjzYrKsdzYpWMG26lMkMc/ll/hhUuKrKyM2DREXhn8=;
-        b=N3ixblNQvBxpfJ6LwigQOd6qlBzlThhsyTAAjhyiAU1g6RZQvrm1pXEtma51wD5dqH
-         3VAuloJDwk3o0HuVegYYfokIC2/S+J+lZCvpe+iJ0V1YZ5xsiwN6SZKQDmR7qK6xaxiC
-         KkOO2dD+Gg9rJl3872bVYN1dQLgArfal6b1pQQEMfUVuxOej4t6wR808ekACKRwJFwTk
-         EJ90KVGfHGTG8YGtAt6yJz7QcplgoHsq4V3wJ1CqvREsJtrd97mTeeMGyKmRNoOQQoQw
-         Rj7xa4bB1e7R+rkvd3FfSzAxJbDEVPfDzbsdN4WS/04+jMB/rZJuA0P5j+xJqOsbFu66
-         pQzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762386207; x=1762991007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IqjzYrKsdzYpWMG26lMkMc/ll/hhUuKrKyM2DREXhn8=;
-        b=rrwnoIEKfIPPLVpVn3NlZBMUW0m8H/9Wcn6723y0vL3zFMbBZbezFoj+TxjbbHC5Sh
-         cnCE4mzfTwVxa46xrSXY+ux4eBu//mzHWH7rQULC8/zAUpbqHwanTHqLyJHs7faPK0xX
-         S1PqhEJ4vVSUxVfT+Sf4Y6lk0wirfBdJ04DENN6CrwRjZ/HT6Xo5iyFvr4nRkmYQqyAz
-         Gzlkks4Ju2GOqfyjWNlWbc7jym59jAZU2bC/vurOZrBDIRhSSLmBwhBvFaFn2WVoxGcn
-         Jkh3oVzTnzRT1SyxCC9T7nx260TiafVlMXxuW1/JfhVKKNHe3dWA1eqQA04MatjGcR60
-         92Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqVOa2uR+7xC+Uch7DwQbOj9ICySeyAsvniwi6gdXMYRl7tEWRgD7wegy+K+IiRyZdMln+GKAUz1wwH1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGml21o1Z2MAdGp5zigukQFeGrLxgyyyvd9PIlsxuT3amEs80Q
-	uDQZT58gQmmsiZ3Dpjv+fM4/kcLLGqHmPVHKha4w6jtcYF2nIPMXd3fOdFLu5W37dnw1uJG7WaO
-	I3qsswdeoNDzJckPjUnnaw4UgMjLrtWk=
-X-Gm-Gg: ASbGncunzvQthco9tblh275D3x1bFHxtPDUK2l26sgsaK+aPl/6ILWG8JWeagBzWUww
-	1JN7cxQOlXnP4CPqxQCUvMminzA8KLrdmXfirpRqJ5sjH68f9v5pDiNy7BnGM8PhmjGqEiCXRm4
-	mI4yQ+7MYYN10tcPNmBH/uNiPweEwLGVoqXgQaZasd/sgDIjzzLtv855KdS1He/Jp+RJ0sP8MdX
-	knBgvaAe+ue52LDq+CNiHXe3n5PRFVWXof829ew7kf0JM77Ju4xZoup7rjhPVI2vaBqWRCwFBjQ
-	Q4wWM9aq/RRIVqBczA==
-X-Google-Smtp-Source: AGHT+IHy2tfHNgJ6cQpCodGNfGYWTZ5F1i/eU0t3ocsIu6em6NiXgoAdtiWwWZT/GQIXmPMwErZiV6BOsWuGXGX8nJc=
-X-Received: by 2002:a05:6000:230e:b0:429:d170:b3ac with SMTP id
- ffacd0b85a97d-429e32dd82cmr5292052f8f.13.1762386207144; Wed, 05 Nov 2025
- 15:43:27 -0800 (PST)
+	s=arc-20240116; t=1762386217; c=relaxed/simple;
+	bh=X5LSadPdbxiYrUIw1dL7CsFHmVdyRdU/x3HkzDa/SmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MaR8UnE/aO0m8SnD1kD1pBwxDFTMexIHdnsfQAV4/WkW794LyzmTA2tpi5Z34fjbpz8y+nyyHt5hyGQ/yHf2xgZqgIiOZE9mDzr9hdPvl6wNqBl/vsnDFe+0HVv6RJsvbPTFGt2VD6rtfG3tOud6fkEVL0fT5EuMT/DOT3LI/c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cfli0nwc; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=vqGD0QYI7TiTsk6Wh+7QyORQeVGQ1Q1viVMxjGD/NsM=; b=cfli0nwcgYEtYaOCBzK2Fuw+we
+	hezAoitjvDzh6bFK9jUW/nj2qqVYaDTVNY1sOs/SOeFcH8JhQjbA7aZrby9THQVAGI+C0JlQNOvce
+	h4g3Sz7OcY/x78yJxDFeZ8pt1BLLt0MVb1A9TOGWFjkZ6xDSqAkIBfO9nrPuKKCeg4ZTFn8CwvoFG
+	MpD0mgzYOAsLqnW7yWE2ZRq4hr8EWFp3uomyB+EvGHHlTu0S1QWMg8dgAex5Rcqp7Nm/ymvtTFlGU
+	Q+eGzHOpp+CmMTSrrmsvX2vppJoJfUriPDuzid+V3hs3kZv/2QV1bFN+rt2LskszVrOdW/ymSePrd
+	kAHdXf8w==;
+Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vGn9z-0001MR-L9; Thu, 06 Nov 2025 00:43:27 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, michael.riesch@collabora.com
+Subject:
+ Re: [PATCH 2/3] arm64: dts: rockchip: use SCMI clock id for cpu clock on
+ rk356x
+Date: Thu, 06 Nov 2025 00:43:26 +0100
+Message-ID: <5996423.DvuYhMxLoT@phil>
+In-Reply-To: <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
+References:
+ <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-3-heiko@sntech.de>
+ <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105201415.227144-1-hoyeon.lee@suse.com> <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
- <b3f13550169288578796548f12619e5e972c0636.camel@gmail.com>
- <CAADnVQJVYDbOCuJnf9jZWdFya7-PfFfPv2=d2M=75aA+VGGayg@mail.gmail.com> <8541c5bb758bc06e8c865aaa4f95456ac3238321.camel@gmail.com>
-In-Reply-To: <8541c5bb758bc06e8c865aaa4f95456ac3238321.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 5 Nov 2025 15:43:15 -0800
-X-Gm-Features: AWmQ_bndYwW94kW--NSZQuJg-9ElD91TnXSYs-Z0mmovjayEfLI3uc8pkBOaK5I
-Message-ID: <CAADnVQL91xsujXt4GWjgCYC+PdBC-2ZH6GqefXws_YHiL7B7Sg@mail.gmail.com>
-Subject: Re: [bpf-next] selftests/bpf: refactor snprintf_btf test to use bpf_strncmp
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Hoyeon Lee <hoyeon.lee@suse.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Nov 5, 2025 at 3:38=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com>=
- wrote:
->
-> On Wed, 2025-11-05 at 15:33 -0800, Alexei Starovoitov wrote:
-> > On Wed, Nov 5, 2025 at 2:52=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
-com> wrote:
-> > >
-> > > On Wed, 2025-11-05 at 14:45 -0800, Alexei Starovoitov wrote:
-> > > > On Wed, Nov 5, 2025 at 12:14=E2=80=AFPM Hoyeon Lee <hoyeon.lee@suse=
-.com> wrote:
-> > > > >
-> > > > > The netif_receive_skb BPF program used in snprintf_btf test still=
- uses
-> > > > > a custom __strncmp. This is unnecessary as the bpf_strncmp helper=
- is
-> > > > > available and provides the same functionality.
-> > > > >
-> > > > > This commit refactors the test to use the bpf_strncmp helper, rem=
-oving
-> > > > > the redundant custom implementation.
-> > > > >
-> > > > > Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
-> > > > > ---
-> > > > >  .../selftests/bpf/progs/netif_receive_skb.c       | 15 +--------=
-------
-> > > > >  1 file changed, 1 insertion(+), 14 deletions(-)
-> > > > >
-> > > > > diff --git a/tools/testing/selftests/bpf/progs/netif_receive_skb.=
-c b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > index 9e067dcbf607..186b8c82b9e6 100644
-> > > > > --- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > +++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > @@ -31,19 +31,6 @@ struct {
-> > > > >         __type(value, char[STRSIZE]);
-> > > > >  } strdata SEC(".maps");
-> > > > >
-> > > > > -static int __strncmp(const void *m1, const void *m2, size_t len)
-> > > > > -{
-> > > > > -       const unsigned char *s1 =3D m1;
-> > > > > -       const unsigned char *s2 =3D m2;
-> > > > > -       int i, delta =3D 0;
-> > > > > -
-> > > > > -       for (i =3D 0; i < len; i++) {
-> > > > > -               delta =3D s1[i] - s2[i];
-> > > > > -               if (delta || s1[i] =3D=3D 0 || s2[i] =3D=3D 0)
-> > > > > -                       break;
-> > > > > -       }
-> > > > > -       return delta;
-> > > > > -}
-> > > > >
-> > > > >  #if __has_builtin(__builtin_btf_type_id)
-> > > > >  #define        TEST_BTF(_str, _type, _flags, _expected, ...)    =
-               \
-> > > > > @@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const void=
- *m2, size_t len)
-> > > > >                                        &_ptr, sizeof(_ptr), _hfla=
-gs);   \
-> > > > >                 if (ret)                                         =
-       \
-> > > > >                         break;                                   =
-       \
-> > > > > -               _cmp =3D __strncmp(_str, _expectedval, EXPECTED_S=
-TRSIZE); \
-> > > > > +               _cmp =3D bpf_strncmp(_str, EXPECTED_STRSIZE, _exp=
-ectedval); \
-> > > >
-> > > > Though it's equivalent, the point of the test is to be heavy
-> > > > for the verifier with open coded __strncmp().
-> > > >
-> > > > pw-bot: cr
-> > >
-> > > I double checked that before acking, the test was added as a part of =
-[1].
-> > > So it seems to be focused on bpf_snprintf_btf(), not on scalability.
-> > > And it's not that heavy in terms of instructions budget:
-> > >
-> > > File                     Program                  Verdict  Insns  Sta=
-tes
-> > > -----------------------  -----------------------  -------  -----  ---=
----
-> > > netif_receive_skb.bpf.o  trace_netif_receive_skb  success  18152     =
-629
+Am Mittwoch, 5. November 2025, 14:16:42 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Diederik de Haas:
+> Hi Heiko,
+>=20
+> On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
+> > Instead of hard-coding 0, use the more descriptive ID from the binding
+> > to reference the SCMI clock for the cpu on rk356x.
+>=20
+> Any particular reason you only did it for the cpu, but not the gpu?
+
+Didn't think of if at the time :-) .
+
+Will prepare another one for the GPU.
+
+
+Heiko
+
+>=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > Is this before or after?
-> > What is the % decrease in insn_processed?
-> > I'd like to better understand the impact of the change.
->
-> That's before, after the change it is as follows:
->
-> File                     Program                  Verdict  Insns  States
-> -----------------------  -----------------------  -------  -----  ------
-> netif_receive_skb.bpf.o  trace_netif_receive_skb  success   4353     235
-> -----------------------  -----------------------  -------  -----  ------
->
-> So, the overall impact is 18K -> 4K instructions processed.
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64=
+/boot/dts/rockchip/rk356x-base.dtsi
+> > index a3361527d4fe..d0c76401b45e 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> > @@ -53,7 +53,7 @@ cpu0: cpu@0 {
+> >  			device_type =3D "cpu";
+> >  			compatible =3D "arm,cortex-a55";
+> >  			reg =3D <0x0 0x0>;
+> > -			clocks =3D <&scmi_clk 0>;
+> > +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+>=20
+> Regardless of the above comment, feel free to add
+>=20
+> Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
+>=20
+> Cheers,
+>   Diederik
+>=20
+> >  			#cooling-cells =3D <2>;
+> >  			enable-method =3D "psci";
+> >  			i-cache-size =3D <0x8000>;
+>=20
+>=20
 
-It's large enough impact for the verifier.
-I agree that the test was mainly focusing on testing
-bpf_snprintf_btf(), but it has a nice side effect by testing
-bounded loops too.
-I prefer to keep it as-is.
+
+
+
 
