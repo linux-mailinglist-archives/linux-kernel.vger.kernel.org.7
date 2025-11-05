@@ -1,333 +1,195 @@
-Return-Path: <linux-kernel+bounces-886726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA83DC365B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A118C365AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F9C1A27425
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFD51A41E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969FB33891F;
-	Wed,  5 Nov 2025 15:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FB333342A;
+	Wed,  5 Nov 2025 15:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlA6UEYi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ENnTy7mo"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CAD3314BC;
-	Wed,  5 Nov 2025 15:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24EF32ED3C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355888; cv=none; b=AIjKl4n+mBzgQxQviyu6ty4Wm1WTOMTYMbrEhPNb7PTRMln8BaN8Puhz0ReO2Uvw0Tzg67ylTGshm8JFzkkRtW0HXYN0xuA6C92F0hGBcKqPBsSVbtG2L8e77edcHBZsLKuPoRB9rQcH8BhfvyFiWsLqCROf9bfv1RJgNrMdRfM=
+	t=1762356036; cv=none; b=shb7Ah6nAhS7WNNufUfsV3T1nWKKEX4ITGkyPQhJaoZ+CWG7XMXjVZalI8nBgkUOBanry06FYodpt8wQ4xEpvHS5T8d1JOMVLaEsxdQ6HxfV7gY4bhYS31OzXl2tqO6SnWPu7C2vMRpkI+6spHzWN8oK0jMKvxXHXlB6NTtTb1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355888; c=relaxed/simple;
-	bh=KrTmSd/KLHnmJp6uY5VjqlnOzYc3oRuRzLcvqn1keFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVQBnXI3+h2Ylt+7KrwPuN7LWEL125Ix4zWjX/ZOzTxa5NoGYzkEuNemfvMeK8BVbaax4J4tK/F9RW8j/dV03uAC9E456mzB12grK2nFkv4dDaGZELrF90F2JkVCL0BUZRPZI2djs6hIay6xxkKPmQsJ9o79a/mst+5/ZyYVFvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlA6UEYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B230C4CEF5;
-	Wed,  5 Nov 2025 15:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762355888;
-	bh=KrTmSd/KLHnmJp6uY5VjqlnOzYc3oRuRzLcvqn1keFo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VlA6UEYiwYN0luQ/4V7V5KntlUFeIZMU+NmpkL7d+M3N2iUQ1IOTeflqlF+lIm90q
-	 HiYedRgVi60NobljBr8hiMWKlKYaC0H2qpqcbgA62caHhlCZRV0lAw+K6rG/pGXCdM
-	 v2fUWpgA1cuUl7tJFOCWW5vd5SlcBeqwuZxogThAgO6JWjnfivWSGwf1FZmVbvLp51
-	 DXvXopX+g369NCQ/HianrAkrAREQeoj/7Y3X5e7jN/22+bQDoRUOUhUSyljHri7cDD
-	 BYyWmWicrYUBAv0SObOJUefhS668cWVoSkzNKG1fBJO8d3jvGpTEthtLNQuTTZy+9f
-	 X1oSJavknulag==
-Date: Wed, 5 Nov 2025 16:18:05 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Waiman Long <llong@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	s=arc-20240116; t=1762356036; c=relaxed/simple;
+	bh=8dIdbSkcxpAle4ECYuajmQXxUWr4HYu0z+pt1GG9lcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mdGfQxnCW2+8R2eAehwqk1UiLxDaSZlh8xB7VkKN/KEeZn6DgYe5F1j/gtl2Epv4rBGpqUSzhGA61O2huYOANsVSFZzkvLjhChH/T0gNdhTRLSJ4IHohBClFe1mmK3WCOAzXVeZFqEsNVA5yTUiJ7Bxv+YVAOsjuxJoUdGrkggs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ENnTy7mo; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-426f1574a14so4213473f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762356033; x=1762960833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ranMJA7nhTTLeDvlm0qxHCF2jeri90ZrthFQur/cI2M=;
+        b=ENnTy7mobWBxCy+VN5gJ4+vuzuU/GffwqNPw9byniOpr4tcQ8NKGF+S7uE8pUCdYi8
+         sg7aGLjIsVg0Fmda2UZUPrnyeblmKPzHmES5FZ8Q0vujsqFL6uHsUee2fVed2T+mBESN
+         YkBoMnEY/Xw+erETb7sEhp8Ba+b1UiP5RqkhQ2Y5khaairbLTSIZfvlZqxoK7uRsUdEu
+         oYbnrW6zY6AKRPRzKhnkJa9p/FqyTLtqHrfKQ4AQLmHtEa5aiNga2zHAIcfQrjkOqffU
+         sgQNMjQH3WB5VpH4BfMVEi9YYsNXOm3LqZX/4XXDutv/6hA5PKsgQtxZMwJzp+ntZc9F
+         XwNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762356033; x=1762960833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ranMJA7nhTTLeDvlm0qxHCF2jeri90ZrthFQur/cI2M=;
+        b=MnI5jqRhxK3OqFpIsQ8KA8jafqodoEJQ2ntLgMmKVWsP4jCPFbz6j2FIE+dTAZOQ4v
+         GfKhTX2lhurqw9CUInKHqkHk3xY+iD1/VpJbJGcYkkL+YkPhy31GElsQKLuwbU92jg9X
+         K+e6ADusROeawPA2tovWKccqtakSJO7cgD5nqiKHMJHF8hvfxvxfZy+YGwTIKrdpXU2s
+         dCC0g1mMNhESwWR+prZl+mj4MSF2j3ZiNOijet2c+XnjEsoFxt/FGrg7EgefVhMSl2rS
+         GFjGy7sQWyWWY7+xmYTanCvpXJSx5r0EII8JpTGCWZCgMsEd1LcxCM+0gK9PjCdU5tUJ
+         sYFg==
+X-Gm-Message-State: AOJu0YxzvBB9wUsewNJyCeBwVHoqfAy/YJa+X+z8IKzi2QRC+ftMzLMG
+	ntfbpXzkafTYWkfi5HUcrGwh1SALrIaGAO3aIIxMX1wH7poCSuLkFkNmyr5ZWe7CzHjetQ+Da6E
+	oBrKk
+X-Gm-Gg: ASbGncvFFbUbJrOQpIpJZJSY/tSKjNAQU4/KCicY7heUCV1T9pzMAmZn2aMzd/vaGc0
+	fqjzn6th09ELwMCYe5Yw0Or+5oHpDDG11IroXDBM2cj/iojMExoV1i2MNJ4lJ3MwKkN52MbCi9w
+	k6RGky7OtAH/lzDvadTBTOCQ6jLTJehpEYHy609ZL1mdvsFdu/d9khhmc+vJuNujd9z9IunQgIL
+	VrWPvhthUTUTTsEJCUVFKUOPcanZVKLRgS5urmDPJQ5LAdKqnggGRhsrJ765r4RwdA5ahJ7ksnd
+	ipUYPG1eGfDbnhg19iL6AxAMd67HAyC/VRvnq16TdaiHT8+yjApYtKwqcl0aajaQyz3ZkX+pcOC
+	pS94qYmjDjpuoxQFwaWuObOHBy3OMObzmPNERU++mTzoP/YY8Cjo9DRKcYRZI04ClhJBnLY4ZyM
+	lzQzkKNmveERw6HthXEyS+Ttg=
+X-Google-Smtp-Source: AGHT+IHUa1UagvSj8MVB8CHfM78Fkv+vbGeo68mTbHX615SxRGVOlXbaT5kn8JdN3BRCGmBUMVJgvw==
+X-Received: by 2002:a05:6000:22ca:b0:429:c774:dbfc with SMTP id ffacd0b85a97d-429e32c8168mr3259102f8f.12.1762356032871;
+        Wed, 05 Nov 2025 07:20:32 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc200878sm11018117f8f.45.2025.11.05.07.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 07:20:32 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Cc: Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 12/33] sched/isolation: Convert housekeeping cpumasks to
- rcu pointers
-Message-ID: <aQtqrYlvMsjX91Vn@localhost.localdomain>
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-13-frederic@kernel.org>
- <bb9a75dc-8c34-41da-b064-e31bf5fe6cb2@huaweicloud.com>
- <510b0185-51d6-44e6-8c39-dfc4c1721e03@redhat.com>
- <aQThLsnmqu8Lor6c@localhost.localdomain>
- <14cd347c-42c9-4134-9c1c-1a222b553c2f@huaweicloud.com>
+	Michal Hocko <mhocko@suse.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Subject: [PATCH] phy: sun4i-usb: replace use of system_wq with system_percpu_wq
+Date: Wed,  5 Nov 2025 16:20:23 +0100
+Message-ID: <20251105152023.259813-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <14cd347c-42c9-4134-9c1c-1a222b553c2f@huaweicloud.com>
 
-Le Mon, Nov 03, 2025 at 10:22:47AM +0800, Chen Ridong a écrit :
-> 
-> 
-> On 2025/11/1 0:17, Frederic Weisbecker wrote:
-> > Le Tue, Oct 21, 2025 at 12:03:05AM -0400, Waiman Long a écrit :
-> >> On 10/20/25 9:46 PM, Chen Ridong wrote:
-> >>>
-> >>> On 2025/10/14 4:31, Frederic Weisbecker wrote:
-> >>>> HK_TYPE_DOMAIN's cpumask will soon be made modifyable by cpuset.
-> >>>> A synchronization mechanism is then needed to synchronize the updates
-> >>>> with the housekeeping cpumask readers.
-> >>>>
-> >>>> Turn the housekeeping cpumasks into RCU pointers. Once a housekeeping
-> >>>> cpumask will be modified, the update side will wait for an RCU grace
-> >>>> period and propagate the change to interested subsystem when deemed
-> >>>> necessary.
-> >>>>
-> >>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> >>>> ---
-> >>>>   kernel/sched/isolation.c | 58 +++++++++++++++++++++++++---------------
-> >>>>   kernel/sched/sched.h     |  1 +
-> >>>>   2 files changed, 37 insertions(+), 22 deletions(-)
-> >>>>
-> >>>> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> >>>> index 8690fb705089..b46c20b5437f 100644
-> >>>> --- a/kernel/sched/isolation.c
-> >>>> +++ b/kernel/sched/isolation.c
-> >>>> @@ -21,7 +21,7 @@ DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
-> >>>>   EXPORT_SYMBOL_GPL(housekeeping_overridden);
-> >>>>   struct housekeeping {
-> >>>> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
-> >>>> +	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
-> >>>>   	unsigned long flags;
-> >>>>   };
-> >>>> @@ -33,17 +33,28 @@ bool housekeeping_enabled(enum hk_type type)
-> >>>>   }
-> >>>>   EXPORT_SYMBOL_GPL(housekeeping_enabled);
-> >>>> +const struct cpumask *housekeeping_cpumask(enum hk_type type)
-> >>>> +{
-> >>>> +	if (static_branch_unlikely(&housekeeping_overridden)) {
-> >>>> +		if (housekeeping.flags & BIT(type)) {
-> >>>> +			return rcu_dereference_check(housekeeping.cpumasks[type], 1);
-> >>>> +		}
-> >>>> +	}
-> >>>> +	return cpu_possible_mask;
-> >>>> +}
-> >>>> +EXPORT_SYMBOL_GPL(housekeeping_cpumask);
-> >>>> +
-> >>>>   int housekeeping_any_cpu(enum hk_type type)
-> >>>>   {
-> >>>>   	int cpu;
-> >>>>   	if (static_branch_unlikely(&housekeeping_overridden)) {
-> >>>>   		if (housekeeping.flags & BIT(type)) {
-> >>>> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
-> >>>> +			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
-> >>>>   			if (cpu < nr_cpu_ids)
-> >>>>   				return cpu;
-> >>>> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
-> >>>> +			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
-> >>>>   			if (likely(cpu < nr_cpu_ids))
-> >>>>   				return cpu;
-> >>>>   			/*
-> >>>> @@ -59,28 +70,18 @@ int housekeeping_any_cpu(enum hk_type type)
-> >>>>   }
-> >>>>   EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
-> >>>> -const struct cpumask *housekeeping_cpumask(enum hk_type type)
-> >>>> -{
-> >>>> -	if (static_branch_unlikely(&housekeeping_overridden))
-> >>>> -		if (housekeeping.flags & BIT(type))
-> >>>> -			return housekeeping.cpumasks[type];
-> >>>> -	return cpu_possible_mask;
-> >>>> -}
-> >>>> -EXPORT_SYMBOL_GPL(housekeeping_cpumask);
-> >>>> -
-> >>>>   void housekeeping_affine(struct task_struct *t, enum hk_type type)
-> >>>>   {
-> >>>>   	if (static_branch_unlikely(&housekeeping_overridden))
-> >>>>   		if (housekeeping.flags & BIT(type))
-> >>>> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
-> >>>> +			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
-> >>>>   }
-> >>>>   EXPORT_SYMBOL_GPL(housekeeping_affine);
-> >>>>   bool housekeeping_test_cpu(int cpu, enum hk_type type)
-> >>>>   {
-> >>>> -	if (static_branch_unlikely(&housekeeping_overridden))
-> >>>> -		if (housekeeping.flags & BIT(type))
-> >>>> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
-> >>>> +	if (housekeeping.flags & BIT(type))
-> >>>> +		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
-> >>>>   	return true;
-> >>>>   }
-> >>>>   EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
-> >>>> @@ -96,20 +97,33 @@ void __init housekeeping_init(void)
-> >>>>   	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
-> >>>>   		sched_tick_offload_init();
-> >>>> -
-> >>>> +	/*
-> >>>> +	 * Realloc with a proper allocator so that any cpumask update
-> >>>> +	 * can indifferently free the old version with kfree().
-> >>>> +	 */
-> >>>>   	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-> >>>> +		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
-> >>>> +
-> >>>> +		if (WARN_ON_ONCE(!nmask))
-> >>>> +			return;
-> >>>> +
-> >>>> +		omask = rcu_dereference(housekeeping.cpumasks[type]);
-> >>>> +
-> >>>>   		/* We need at least one CPU to handle housekeeping work */
-> >>>> -		WARN_ON_ONCE(cpumask_empty(housekeeping.cpumasks[type]));
-> >>>> +		WARN_ON_ONCE(cpumask_empty(omask));
-> >>>> +		cpumask_copy(nmask, omask);
-> >>>> +		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-> >>>> +		memblock_free(omask, cpumask_size());
-> >>>>   	}
-> >>>>   }
-> >>>>   static void __init housekeeping_setup_type(enum hk_type type,
-> >>>>   					   cpumask_var_t housekeeping_staging)
-> >>>>   {
-> >>>> +	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
-> >>>> -	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
-> >>>> -	cpumask_copy(housekeeping.cpumasks[type],
-> >>>> -		     housekeeping_staging);
-> >>>> +	cpumask_copy(mask, housekeeping_staging);
-> >>>> +	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
-> >>>>   }
-> >>>>   static int __init housekeeping_setup(char *str, unsigned long flags)
-> >>>> @@ -162,7 +176,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
-> >>>>   		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
-> >>>>   			if (!cpumask_equal(housekeeping_staging,
-> >>>> -					   housekeeping.cpumasks[type])) {
-> >>>> +					   housekeeping_cpumask(type))) {
-> >>>>   				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
-> >>>>   				goto free_housekeeping_staging;
-> >>>>   			}
-> >>>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> >>>> index 1f5d07067f60..0c0ef8999fd6 100644
-> >>>> --- a/kernel/sched/sched.h
-> >>>> +++ b/kernel/sched/sched.h
-> >>>> @@ -42,6 +42,7 @@
-> >>>>   #include <linux/ktime_api.h>
-> >>>>   #include <linux/lockdep_api.h>
-> >>>>   #include <linux/lockdep.h>
-> >>>> +#include <linux/memblock.h>
-> >>>>   #include <linux/minmax.h>
-> >>>>   #include <linux/mm.h>
-> >>>>   #include <linux/module.h>
-> >>> A warning was detected:
-> >>>
-> >>> =============================
-> >>> WARNING: suspicious RCU usage
-> >>> 6.17.0-next-20251009-00033-g4444da88969b #808 Not tainted
-> >>> -----------------------------
-> >>> kernel/sched/isolation.c:60 suspicious rcu_dereference_check() usage!
-> >>>
-> >>> other info that might help us debug this:
-> >>>
-> >>>
-> >>> rcu_scheduler_active = 2, debug_locks = 1
-> >>> 1 lock held by swapper/0/1:
-> >>>   #0: ffff888100600ce0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: walk_compone
-> >>>
-> >>> stack backtrace:
-> >>> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-next-20251009-00033-g4
-> >>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239
-> >>> Call Trace:
-> >>>   <TASK>
-> >>>   dump_stack_lvl+0x68/0xa0
-> >>>   lockdep_rcu_suspicious+0x148/0x1b0
-> >>>   housekeeping_cpumask+0xaa/0xb0
-> >>>   housekeeping_test_cpu+0x25/0x40
-> >>>   find_get_block_common+0x41/0x3e0
-> >>>   bdev_getblk+0x28/0xa0
-> >>>   ext4_getblk+0xba/0x2d0
-> >>>   ext4_bread_batch+0x56/0x170
-> >>>   __ext4_find_entry+0x17c/0x410
-> >>>   ? lock_release+0xc6/0x290
-> >>>   ext4_lookup+0x7a/0x1d0
-> >>>   __lookup_slow+0xf9/0x1b0
-> >>>   walk_component+0xe0/0x150
-> >>>   link_path_walk+0x201/0x3e0
-> >>>   path_openat+0xb1/0xb30
-> >>>   ? stack_depot_save_flags+0x41e/0xa00
-> >>>   do_filp_open+0xbc/0x170
-> >>>   ? _raw_spin_unlock_irqrestore+0x2c/0x50
-> >>>   ? __create_object+0x59/0x80
-> >>>   ? trace_kmem_cache_alloc+0x1d/0xa0
-> >>>   ? vprintk_emit+0x2b2/0x360
-> >>>   do_open_execat+0x56/0x100
-> >>>   alloc_bprm+0x1a/0x200
-> >>>   ? __pfx_kernel_init+0x10/0x10
-> >>>   kernel_execve+0x4b/0x160
-> >>>   kernel_init+0xe5/0x1c0
-> >>>   ret_from_fork+0x185/0x1d0
-> >>>   ? __pfx_kernel_init+0x10/0x10
-> >>>   ret_from_fork_asm+0x1a/0x30
-> >>>   </TASK>
-> >>> random: crng init done
-> >>>
-> >> It is because bh_lru_install() of fs/buffer.c calls cpu_is_isolated()
-> >> without holding a rcu_read_lock. Will need to add a rcu_read_lock() there.
-> > 
-> > But this is called within bh_lru_lock() which should have either disabled
-> > IRQs or preemption off. I would expect rcu_dereference_check() to automatically
-> > verify those implied RCU read-side critical sections.
-> > 
-> > Let's see, lockdep_assert_in_rcu_reader() checks preemptible(), which is:
-> > 
-> > #define preemptible()	(preempt_count() == 0 && !irqs_disabled())
-> > 
-> > Ah but if !CONFIG_PREEMPT_COUNT:
-> > 
-> > #define preemptible()	0
-> > 
-> > Chen did you have !CONFIG_PREEMPT_COUNT ?
-> > 
-> > Probably lockdep_assert_in_rcu_reader() should be fixed accordingly and consider
-> > preemption always disabled whenever !CONFIG_PREEMPT_COUNT. Let me check that...
-> > 
-> > Thanks.
-> > 
-> 
-> I compiled with CONFIG_PREEMPT_COUNT=y and CONFIG_SMP=y.
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Oh actually I think it's my fault. This should be fixed with this:
+This lack of consistency cannot be addressed without refactoring the API.
 
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 95d69c2102f6..b2cb75513336 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -56,8 +56,8 @@ static bool housekeeping_dereference_check(enum hk_type type)
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+Replace system_wq with system_percpu_wq, keeping the same behavior.
+The old wq (system_wq) will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/phy/allwinner/phy-sun4i-usb.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index 59d38d88efb0..e2fbf8ccf99e 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -359,7 +359,7 @@ static int sun4i_usb_phy_init(struct phy *_phy)
+ 		/* Force ISCR and cable state updates */
+ 		data->id_det = -1;
+ 		data->vbus_det = -1;
+-		queue_delayed_work(system_wq, &data->detect, 0);
++		queue_delayed_work(system_percpu_wq, &data->detect, 0);
+ 	}
  
- static inline struct cpumask *housekeeping_cpumask_dereference(enum hk_type type)
- {
--	return rcu_dereference_check(housekeeping.cpumasks[type],
--				     housekeeping_dereference_check(type));
-+	return rcu_dereference_all_check(housekeeping.cpumasks[type],
-+					 housekeeping_dereference_check(type));
+ 	return 0;
+@@ -482,7 +482,7 @@ static int sun4i_usb_phy_power_on(struct phy *_phy)
+ 
+ 	/* We must report Vbus high within OTG_TIME_A_WAIT_VRISE msec. */
+ 	if (phy->index == 0 && sun4i_usb_phy0_poll(data))
+-		mod_delayed_work(system_wq, &data->detect, DEBOUNCE_TIME);
++		mod_delayed_work(system_percpu_wq, &data->detect, DEBOUNCE_TIME);
+ 
+ 	return 0;
+ }
+@@ -503,7 +503,7 @@ static int sun4i_usb_phy_power_off(struct phy *_phy)
+ 	 * Vbus gpio to not trigger an edge irq on Vbus off, so force a rescan.
+ 	 */
+ 	if (phy->index == 0 && !sun4i_usb_phy0_poll(data))
+-		mod_delayed_work(system_wq, &data->detect, POLL_TIME);
++		mod_delayed_work(system_percpu_wq, &data->detect, POLL_TIME);
+ 
+ 	return 0;
+ }
+@@ -542,7 +542,7 @@ static int sun4i_usb_phy_set_mode(struct phy *_phy,
+ 
+ 	data->id_det = -1; /* Force reprocessing of id */
+ 	data->force_session_end = true;
+-	queue_delayed_work(system_wq, &data->detect, 0);
++	queue_delayed_work(system_percpu_wq, &data->detect, 0);
+ 
+ 	return 0;
+ }
+@@ -654,7 +654,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
+ 		extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
+ 
+ 	if (sun4i_usb_phy0_poll(data))
+-		queue_delayed_work(system_wq, &data->detect, POLL_TIME);
++		queue_delayed_work(system_percpu_wq, &data->detect, POLL_TIME);
  }
  
- const struct cpumask *housekeeping_cpumask(enum hk_type type)
+ static irqreturn_t sun4i_usb_phy0_id_vbus_det_irq(int irq, void *dev_id)
+@@ -662,7 +662,7 @@ static irqreturn_t sun4i_usb_phy0_id_vbus_det_irq(int irq, void *dev_id)
+ 	struct sun4i_usb_phy_data *data = dev_id;
+ 
+ 	/* vbus or id changed, let the pins settle and then scan them */
+-	mod_delayed_work(system_wq, &data->detect, DEBOUNCE_TIME);
++	mod_delayed_work(system_percpu_wq, &data->detect, DEBOUNCE_TIME);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -676,7 +676,7 @@ static int sun4i_usb_phy0_vbus_notify(struct notifier_block *nb,
+ 
+ 	/* Properties on the vbus_power_supply changed, scan vbus_det */
+ 	if (val == PSY_EVENT_PROP_CHANGED && psy == data->vbus_power_supply)
+-		mod_delayed_work(system_wq, &data->detect, DEBOUNCE_TIME);
++		mod_delayed_work(system_percpu_wq, &data->detect, DEBOUNCE_TIME);
+ 
+ 	return NOTIFY_OK;
+ }
+-- 
+2.51.1
+
 
