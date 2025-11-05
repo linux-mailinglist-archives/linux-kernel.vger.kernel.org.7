@@ -1,320 +1,110 @@
-Return-Path: <linux-kernel+bounces-885610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996BFC33755
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A55C33767
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA1D04F07B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:19:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74A244F16C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BACD233134;
-	Wed,  5 Nov 2025 00:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6793B239562;
+	Wed,  5 Nov 2025 00:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLVVHsI7";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJ/9CW9F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqNZSDw5"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D22B224B01
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6591822A4CC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762301959; cv=none; b=P3oP8NlH/fI5Y84/eIVM3se2QHEuOXHpORIQ5pdjlOHqhygjclwcpg0duv4NioaxCcaOKsoOh27oATkXzFTY/jXGRHjuAz7JR6OqWKKDbqBcJoIKypBbt8foWS4/ORIBMG0mSfA5mqXl+3bTG2f33+ryx8/ds9XISwgXBmo/pjY=
+	t=1762301992; cv=none; b=nqoURkDWrr4sDMsZFgMZVkk1LHx1qGOTDstt5DLbMAyMLVgv4/XumD0K/O7eOd1tSjCKABHIxkIHxPqOK+LFN0snvnVsncfqy89l0brTsF18F5Uw30uFosnXa/BIyednV7AYrpDE5alyzdN053j3SInq8WXNotjn6uCbhy6BHm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762301959; c=relaxed/simple;
-	bh=CXBidnbCR5ifmFwvHayw3FaO8i8qfw5gJZXUu4WTevA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2DHWUa23kokWH+WYFZ8PH81YKJrJO7nZyjVwoZRmezJKFjrtSNneA1KIuhP4aeGGlqJDSgmC5qhPH02XFqLa9RKHWpXn5Kml+VM0EQOS1/1PfyFQIxK+Uh8PsQVfOO4SRr2Pz6E2RBdbZJfGLr8/nb0JF1xa/6sSBsD6HctCcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLVVHsI7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJ/9CW9F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762301956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hF/Q0Jxg/bJ4rsgyrnW9VOMqT1HQ3E8+/Upt51gSeWM=;
-	b=hLVVHsI7bzOs9Ab3FSMinO2p7Anh3ZVRKQrtSKn6X3TmQZX9souzl+8RWOfVgkcZ0ZX+HG
-	cp7ybCK1reXl+u4sakzV00I5pCIQWqjLMP/9aHJzEya7DRXGx0h8sWzHGkY7qCwlEbiAkK
-	gN4kGwBSJupBcMU4v/5Vnhr0bhpTrq8=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-OkrzILYmP4Ksk_k2-ndFcg-1; Tue, 04 Nov 2025 19:19:15 -0500
-X-MC-Unique: OkrzILYmP4Ksk_k2-ndFcg-1
-X-Mimecast-MFC-AGG-ID: OkrzILYmP4Ksk_k2-ndFcg_1762301954
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b6ce1b57b9cso5677148a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:19:14 -0800 (PST)
+	s=arc-20240116; t=1762301992; c=relaxed/simple;
+	bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rJOZkjp2If0z12edJJmn7V1DBHjkqP0rzBzMIiv50qFmcrOYEv2jXWta5bg8x+jBnYx58q6d6BC5i4JKhwT1b49xi5d4uRiyRv3B0xmzzhk5JmFTmdgeJFxbvbzGciQ7EcqkYr3sg/zk6QkLCt1z0h45Credmu4SYSZQ9vPgcZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqNZSDw5; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-43326c748d5so1901485ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:19:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762301954; x=1762906754; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hF/Q0Jxg/bJ4rsgyrnW9VOMqT1HQ3E8+/Upt51gSeWM=;
-        b=AJ/9CW9FkoFt4RY4R2TbCGSlM2RwkBuFhDSpjIvcnUE9OvBKX6BevnF+oiTTUHAG3U
-         24zTy/IkDZ1RM068Qp1CuxDnVt/YXW8/ng9EQ8cCGo7twktx+UPs5wj+iBGIQ4q65MS2
-         ccJIMfgHuC9y/SDktzd+er5WNb0IK4GP9gWg2MrmiKA6quDJnZ7mk5A8QBq/5syNvMkt
-         jG9QScLl5Yp9gaVyphyAB4MjzKyS4ehGkWbhShzXuSbw+UCpuj5MiDQYz89+/aVVUIGP
-         wXWYv7F4fasDZ1Jp3r1om9MsuBuBIBi/qcSkFj4HDl+EhvXZJ7xx9hvSRq/lmq65qZM1
-         k9xA==
+        d=gmail.com; s=20230601; t=1762301990; x=1762906790; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
+        b=gqNZSDw5FkB1z/vsgXvvAlmbYiI4DAoGsT1ZhX+eVrPJYEIyi0jvIvtBLywc352qj0
+         ZLlrO25aQ+QzYdegFTlh3akPMhyM8/Fz1lULTj87R2PHqgKtnu6HcytvVAN343QyimQj
+         HEmKG0W5JEeFp1FMBKy9xCyNwyphsCeE9d0oAejVx1nQLw3h/6qFj3NcemYNPgGVuu4f
+         kQZKFp1QjvRQvsca7rPJxFpoT+zV5Y+C5DbBeRVdgR189krev2t2YDoLqLE+CuGfLZQd
+         Vyi3w1LdzLqGVz/zcb74b7qjw57YmSoIqAf4ilT0Tbxm3MLR3IijQ2OS9+zzJRd58kgf
+         4tVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762301954; x=1762906754;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hF/Q0Jxg/bJ4rsgyrnW9VOMqT1HQ3E8+/Upt51gSeWM=;
-        b=e2RQ8XCO9+uYzLz7WyNwch2+5De6cdqxojes0kjJMvhIX9EnSaxh1Pk24koJZyxcAr
-         yXVWY5hgoCnSs8UNE+yR8DQoxhCqwR6LdJ+/AP1Hd0M0zCG5LDQ1cDuR6bAh20fdzZEx
-         4SIxZ4yZoD6uoswU2JY1l1c92cEGNS+2kOVqP/kXejoikJ2Sn485m2QLpDiX7rYfjTta
-         F2OSZ63r10rltqRh5S2AmnoWwVmPyqIO5inGYYp8QX4jGoV/SjDoboXur5WKoLOmkoi5
-         lhxez0UDFGdzOupdk62IypWRo5pm048eRr2TVOpxisdpUaLN8rVsss6wn0hjU4KDXp3N
-         lhzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxpnitekArPcX/ux9nT+7/jn2x72t0eHJfQSZGwPhfYzTJTI4DRznTaf4L2duBVk361oh++1YbSKeiw7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8CIGq0RwzB89BVdj9dcEMZA4ks+c+dI+CfnayEPZGFYgtFlRF
-	ZsqtZRT/d8Brqyc9TYhPbAueKLZs7ciFMC8HaofKTqZb77Q+iZBCjt4kcaKYHN80G5xBOmuR4SV
-	em9vq8B5r1wuwdr5wFUWixHUhIEmj/5+ZvbssUv59FsaPbmCD9rNjyd4S1YDuw9QM0w==
-X-Gm-Gg: ASbGncsHVuiOfpqYGK+EXqnKQq9JtK/lqdS19YtaJxXAaic3jICcdkBRt7i4Hy6yWdl
-	rvQxcKiT23ug+QodVSo19KbtwY4ag9Q+EWcSmpOjunqeCAFTEhViYQrQG0VtHzZu3/u63SlRSUt
-	FvBDap8WPtue+DRlHMJHgHjGsAB3/Y90Nfcr9Oq7IKUq2W58WbJspeN2zg6qTgMeN23pWdBGujg
-	GE70/9Ht+7E6boguM0ZeAZeZiGq0IqOYkR08qTOebwqw2Hcv3kEg7sbohbpnzLjOT9rViDYADUm
-	I+BLfNJbMHepIt+lfZ/ZKNZMxY997GUjhMNSNRXtfuYRUnrhEAJH2AvQxVb03Zg+s5tiYw==
-X-Received: by 2002:a17:903:2405:b0:290:c0d7:237e with SMTP id d9443c01a7336-2962adaf2cbmr20013805ad.39.1762301953486;
-        Tue, 04 Nov 2025 16:19:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGvLsNYSLufcGqpq910+wiTcGPaxLeUOI30KPT7POMh/wI/jxby0rWhm6jQT1thiVu8Y4E3iw==
-X-Received: by 2002:a17:903:2405:b0:290:c0d7:237e with SMTP id d9443c01a7336-2962adaf2cbmr20013465ad.39.1762301952858;
-        Tue, 04 Nov 2025 16:19:12 -0800 (PST)
-Received: from localhost ([2409:8924:a812:1670:4703:63e6:48fd:865d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a69d91sm39637355ad.95.2025.11.04.16.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 16:19:12 -0800 (PST)
-Date: Wed, 5 Nov 2025 08:18:25 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	open list <linux-kernel@vger.kernel.org>, "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook
- security_kernel_module_read_file to access decompressed kernel module
-Message-ID: <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-References: <20250928030358.3873311-1-coxu@redhat.com>
- <20251031074016.1975356-1-coxu@redhat.com>
- <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
- <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
- <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1762301990; x=1762906790;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tPNyrSglXgzbTSxAtrtNr66B4b82eAkptaHPW68Y0SY=;
+        b=BQddbTeLLxkXzUCw67cDebUm8nkruxJ+kjup12c+7QZGVk/ZNUaIeQ4tSDMBbws1b+
+         VD1p8q70/7YusJ1B5vAddk/aThZfZrYdCLDMk7lMzEkT3ELspiXQy1K2TVRJUrdUmdsX
+         BWubs/TLfHLnfE7sqIVvRKVwcWkXIwHYXlTbWUmZXXt9ta/lGxR1QHBTXX+kN6rRzSg/
+         w/qNSXuztcflI0pEYRiOE55msfciFK8e2z74wqctYf/DTkpvbc4dvHz7+wblAGdHnPlW
+         0exCHtkvW/ShAxdTifneUEUoMDE93+MjYSqVukeS2pdsZhUiXvmD0vtmG0NsHhyTiqAC
+         aYLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmVfab2qIzRSa/HzGrqemQkCDYc4HWxlsLjvYNh+R1yzWmZ+USvPZljDbREUEzG01bOxjOrZIkhlekF7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI7GrgdVJiv2CF6Rwptj8HKAkZtHZA+nbJqR+6b3KGvbOqcZmD
+	mxXGw6d9tbzrJ0SdLhNG8QP3kO6fB7TvFY0sZjR0ZV7GEBdVPyjlMmVxh6MXYspRFu7p7oUsxd9
+	SX+oDH5AgAGLHXTljeuH2xJoRMPziHzk=
+X-Gm-Gg: ASbGncup+Ai0Wxvf5FieTWhlGsS/FbGhhNSqk28ppnyI9KD6RgDkxH8rkq15fFXWyG2
+	zBMIzSEY80uDhGjyhEznjOs8dfhz52LYexwcjxPb2P2YFp32oF9dl/vVw7HKJWEIawiRdznme2k
+	fIMk6Bv3xLeOruPcTxioivTIy0avg8ktzSUB/zNqT7Z9pn/aGXQJrvDk+2+4jSfiAUfFYLYqjGt
+	t85z231DWEPWvlOsorAOi84WaNh+/kVVNEHBaQNuG0GmHP03Rvul8ZzpQbb2xA=
+X-Google-Smtp-Source: AGHT+IHlKDGDIG6BMqjPpmMiXRElX7CmlqHBVKFE5hB2vstBzsdvMVaGUbKSbC7UrpLHQfFggPSndMWaqnea6GXPLXI=
+X-Received: by 2002:a05:6e02:1fc6:b0:433:37e9:c1ff with SMTP id
+ e9e14a558f8ab-433401a21c1mr24512685ab.9.1762301990514; Tue, 04 Nov 2025
+ 16:19:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+References: <20251030144438.7582-1-minhquangbui99@gmail.com>
+ <1762149401.6256416-7-xuanzhuo@linux.alibaba.com> <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
+In-Reply-To: <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Wed, 5 Nov 2025 08:19:14 +0800
+X-Gm-Features: AWmQ_bliMV8nE85ERHZI-EI4lokvoDwiY8yl4dOnlkgckxmIlBlgt3FBCpHKufM
+Message-ID: <CAL+tcoAnhhDn=2qDCKXf3Xnz8VTDG0HOXW8x=GSdtHUe+qipvQ@mail.gmail.com>
+Subject: Re: [PATCH net v7] virtio-net: fix received length check in big packets
+To: Lei Yang <leiyang@redhat.com>
+Cc: Bui Quang Minh <minhquangbui99@gmail.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 02, 2025 at 10:43:04AM -0500, Paul Moore wrote:
->On Sun, Nov 2, 2025 at 10:06 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->> On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
->> > On Fri, Oct 31, 2025 at 3:41 AM Coiby Xu <coxu@redhat.com> wrote:
->> > >
->> > > Currently, when in-kernel module decompression (CONFIG_MODULE_DECOMPRESS)
->> > > is enabled, IMA has no way to verify the appended module signature as it
->> > > can't decompress the module.
->> > >
->> > > Define a new LSM hook security_kernel_module_read_file which will be
->> > > called after kernel module decompression is done so IMA can access the
->> > > decompressed kernel module to verify the appended signature.
->> > >
->> > > Since IMA can access both xattr and appended kernel module signature
->> > > with the new LSM hook, it no longer uses the security_kernel_post_read_file
->> > > LSM hook for kernel module loading.
->> > >
->> > > Before enabling in-kernel module decompression, a kernel module in
->> > > initramfs can still be loaded with ima_policy=secure_boot. So adjust the
->> > > kernel module rule in secure_boot policy to allow either an IMA
->> > > signature OR an appended signature i.e. to use
->> > > "appraise func=MODULE_CHECK appraise_type=imasig|modsig".
->> > >
->> > > Reported-by: Karel Srot <ksrot@redhat.com>
->> > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
->> > > ---
->> > > v1: https://lore.kernel.org/linux-integrity/20250928030358.3873311-1-coxu@redhat.com/
->> > >
->> > >  include/linux/lsm_hook_defs.h       |  2 ++
->> > >  include/linux/security.h            |  7 +++++++
->> > >  kernel/module/main.c                | 10 +++++++++-
->> > >  security/integrity/ima/ima_main.c   | 26 ++++++++++++++++++++++++++
->> > >  security/integrity/ima/ima_policy.c |  2 +-
->> > >  security/security.c                 | 17 +++++++++++++++++
->> > >  6 files changed, 62 insertions(+), 2 deletions(-)
->> >
->> > We don't really need a new LSM hook for this do we?  Can't we just
->> > define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and do
->> > another call to security_kernel_post_read_file() after the module is
->> > unpacked?  Something like the snippet below ...
->>
->> Yes, this is similar to my suggestion based on defining multiple enumerations:
->> READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_MODULE.
->> With this solution, IMA would need to make an exception in the post kernel
->> module read for the READING_COMPRESSED_MODULE case, since the kernel module has
->> not yet been decompressed.
->>
->> Coiby suggested further simplification by moving the call later.  At which point
->> either there is or isn't an appended signature for non-compressed and
->> decompressed kernel modules.
->>
->> As long as you don't have a problem calling the security_kernel_post_read_file()
->> hook again, could we move the call later and pass READING_MODULE_UNCOMPRESSED?
+Hi Lei,
+
+On Wed, Nov 5, 2025 at 12:56=E2=80=AFAM Lei Yang <leiyang@redhat.com> wrote=
+:
 >
->It isn't clear from these comments if you are talking about moving
->only the second security_kernel_post_read_file() call that was
->proposed for init_module_from_file() to later in the function, leaving
->the call in kernel_read_file() intact, or something else?
+> Tested this patch with virtio-net regression tests, everything works fine=
+.
 
-Hi Paul and Mimi,
+I saw you mentioned various tests on virtio_net multiple times. Could
+you share your tools with me, I wonder? AFAIK, the stability of such
+benchmarks is not usually static, so I'm interested.
 
-Thanks for sharing your feedback! Yes, you are right, there is no need
-for a new LSM hook. Actually by not introducing a new LSM hook, we can
-have a much simpler solution!
-
->
->I think we want to leave the hook calls in kernel_read_file() intact,
->in which case I'm not certain what advantage there is in moving the
->security_kernel_post_read_file() call to a location where it is called
->in init_module_from_file() regardless of if the module is compressed
->or not.  In the uncompressed case you are calling the hook twice for
->no real benefit?  It may be helpful to submit a patch with your
->proposal as a patch can be worth a thousand words ;)
->
->
->> > diff --git a/kernel/module/main.c b/kernel/module/main.c
->> > index c66b26184936..f127000d2e0a 100644
->> > --- a/kernel/module/main.c
->> > +++ b/kernel/module/main.c
->> > @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file *f, const ch
->> > ar __user * uargs, int
->> >                        mod_stat_add_long(len, &invalid_decompress_bytes);
->> >                        return err;
->> >                }
->> > +
->> > +               err = security_kernel_post_read_file(f,
->> > +                                                    (char *)info.hdr, info.len,
->> > +                                                    READING_MODULE_DECOMPRESS);
->> > +               if (err) {
->> > +                       mod_stat_inc(&failed_kreads);
->> > +                       return err;
->> > +               }
->> >        } else {
->> >                info.hdr = buf;
->> >                info.len = len;
->>
->> == defer security_kernel_post_read_file() call to here ==
-
-By moving security_kernel_post_read_file, I think what Mimi means is to
-move security_kernel_post_read_file in init_module_from_file() to later
-in the function,
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index c66b261849362a..66725e53fef0c1 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3678,6 +3678,7 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
-  	struct load_info info = { };
-  	void *buf = NULL;
-  	int len;
-+	int err;
-  
-  	len = kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODULE);
-  	if (len < 0) {
-@@ -3686,7 +3687,7 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
-  	}
-  
-  	if (flags & MODULE_INIT_COMPRESSED_FILE) {
--		int err = module_decompress(&info, buf, len);
-+		err = module_decompress(&info, buf, len);
-  		vfree(buf); /* compressed data is no longer needed */
-  		if (err) {
-  			mod_stat_inc(&failed_decompress);
-@@ -3698,6 +3699,14 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
-  		info.len = len;
-  	}
-  
-+	err = security_kernel_post_read_file(f, (char *)info.hdr, info.len,
-+					     READING_MODULE);
-+	if (err) {
-+		mod_stat_inc(&failed_kreads);
-+		free_copy(&info, flags);
-+		return err;
-+	}
-+
-  	return load_module(&info, uargs, flags);
-  }
-
-If we only call security_kernel_post_read_file the 2nd time for a
-decompressed kernel module, IMA won't be sure what to do when
-security_kernel_post_read_file is called for the 1st time because it
-can't distinguish between a compressed module with appended signature or
-a uncompressed module without appended signature. If it permits 1st
-calling security_kernel_post_read_file, a uncompressed module without
-appended signature can be loaded. If it doesn't permit 1st calling
-security_kernel_post_read_file, there is no change to call
-security_kernel_post_read_file again for decompressed module.
-
-And you are right, there is no need to call
-security_kernel_post_read_file twice. And from the perspective of IMA,
-it simplifies reasoning if it is guaranteed that IMA will always access
-uncompressed kernel module regardless regardless of its original
-compression state. 
-
-So I think a better solution is to stop calling
-security_kernel_post_read_file in kernel_read_file for READING_MODULE.
-This can also avoiding introducing an unnecessary
-READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration and
-can make the solution even simpler,
-
-diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-index de32c95d823dbd..7c78e84def6ec7 100644
---- a/fs/kernel_read_file.c
-+++ b/fs/kernel_read_file.c
-@@ -107,7 +107,12 @@ ssize_t kernel_read_file(struct file *file, loff_t offset, void **buf,
-  			goto out_free;
-  		}
-  
--		ret = security_kernel_post_read_file(file, *buf, i_size, id);
-+		/*
-+		 * security_kernel_post_read_file will be called later after
-+		 * a read kernel module is truly decompressed
-+		 */
-+		if (id != READING_MODULE)
-+			ret = security_kernel_post_read_file(file, *buf, i_size, id);
-  	}
-
-Btw, I notice IMA is the only user of security_kernel_post_read_file so
-this change won't affect other LSMs. For a full patch, please visit
-https://github.com/coiby/linux/commit/558d85779ab5d794874749ecfae0e48b890bf3e0.patch
-
-If there are concerns that I'm unaware of and a new
-READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration is
-necessary, here's another patch
-https://github.com/coiby/linux/commit/cdd40317b6070f48ec871c6a89428084f38ca083.patch
-
-
->
->-- 
->paul-moore.com
->
-
--- 
-Best regards,
-Coiby
-
+Thanks,
+Jason
 
