@@ -1,151 +1,162 @@
-Return-Path: <linux-kernel+bounces-886644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316B8C3635C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C4FC36362
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEFE62218E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C60566A48
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD95B2F28FC;
-	Wed,  5 Nov 2025 14:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXj03Umm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lXSKymJZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41FA328B6F;
+	Wed,  5 Nov 2025 14:51:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE9223504B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A600832E14C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762354149; cv=none; b=hQn5KVwJEDw/VVhtNVEbEqWgVGtU5nflLHVukq/jWop7V1HMh5x32aVRLZPCwPc5jFu9SfgqfpCJ4PMCDWLel3cu0hZYTO+XPGv6YLDIxy2M21tz8tb+WXcOpcE1Lba5bm4AHl2lsgspa9kL32ZoVN5H4PsOdWjTEV1tsW/GRrE=
+	t=1762354314; cv=none; b=O0ZQxSdfjRRWY/ZfLFZaj49J/a28PHmhBlVJaQffoxn+Q2KfnGSEQfRO0uxPyog7dWFC04gCJx8C3Tl4oT5OSC+1znavMxTv+PjbjKmOl+IEX9NlO3F6XtLBOyaL/MaILumLdpnIGwHO3Vjj3eSA8mmlTJ7CBkBOK5fYdsF/OFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762354149; c=relaxed/simple;
-	bh=YfvMW72encoRkud0wVtm/A7j2WUacp04L3fsNBayHvo=;
+	s=arc-20240116; t=1762354314; c=relaxed/simple;
+	bh=kArMz44jDsq9lMxSADlKl6F6xCdH6Wh/a/aPNuLy9K0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYzdws3HLRfb91AfXWIasl5qtaWCC/gQNUocfu95reQWcLUlJ6MOLJYFLI0PVE54Pxs5KZrH1RpLAmFiaCg64uqbAVPadzogrQtuLbBjAXBihhL2iR9M/1H3kD1T2XQBgjW7SH4mni5YgpRrMpyDdvGCk5k7+y4eLmYUHtS2lV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXj03Umm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lXSKymJZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762354145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=43sHUCklMiFn+SiCjLKJSBqe6MedMG8UZiB50DllYfo=;
-	b=KXj03Umm5zqC78KHtiI0lrsWdn1xNo2qS0DrCilMNvvmF6ZwBQzN8DzzIJbMkVC6pXGkiy
-	d0GYO8T2HoCh4nvWFcgWJ1pNZZ5JsG4iKvVT/OuHwM0h7VRj+BVxZHzYejhkcCt+POyNVQ
-	9ZAj5GcpKgBE0zZXy9zQrbrpKnFcpgQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-45-gJ6vy20dPqiqg7Mo7nYaLg-1; Wed, 05 Nov 2025 09:49:04 -0500
-X-MC-Unique: gJ6vy20dPqiqg7Mo7nYaLg-1
-X-Mimecast-MFC-AGG-ID: gJ6vy20dPqiqg7Mo7nYaLg_1762354143
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471001b980eso52916365e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:49:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762354143; x=1762958943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=43sHUCklMiFn+SiCjLKJSBqe6MedMG8UZiB50DllYfo=;
-        b=lXSKymJZLRal60Vh76tTo85Oz6Ng9PEp/SrkcphQ9kZ7PQyiuc+90rnnuzfn3ne7/I
-         W3bc+6sREp9EkKnVgWIqvLfinym7NqMG1SW5b4isQkqah6R4F3w2yarBiutxX9/aeWqw
-         M5HuZQmfSN5rwol1BkpVuUJx7F1zLe/9SmHm/prlIoQacB68rzeImmNmKdQFOtYoma7Q
-         rnhIMZYmaGD8WdlBGq5g5Qr0jIqwf9dVxhhtX08Fjtv3RRUvGaVuOOLd7nIO9gtVGYw+
-         iHtjaHQ+bxMqxSA3vR0YTMRxEovgjgwVtWuR4fzykypPbZEGxykQJhlr7NoZiHP3Nb74
-         KwDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762354143; x=1762958943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43sHUCklMiFn+SiCjLKJSBqe6MedMG8UZiB50DllYfo=;
-        b=S4jz4N7+aH6Xx9k+WxF99Bo+F2tR2xONUP/Wc3WHOy2gr8TkJY5vQoVWg6ecE1c94V
-         TcJmrLCWYxpcF3F6AsOOc/hezR8d570ETriGLGORvek0sLe3+0hTcziX0uGMBko8I5R7
-         Uad8+ft9Agy4qWSNTeFv5QaIVVjOTjhQJaPY35WP4jB3roKUCPg3vQNRaPAjUnp397S6
-         a8v9+dToRn7zO4uGrYJULOC+nIfYx2w+wxCjPJYopy+0xMgpjflaUGxnJ1Dt2E8aLiiO
-         S5OGxBn5Tloih1nbWxhQLmqOAK9HyjjOpAXzerPymxtH/ru661gKx516ETzr160uX184
-         3Xjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZWfkQnRMoXOOodSRLx07EpBnx+f1p36m94WRvD9RlyFvlWzj8weaodZZu9tbej6eoBGA0bbhDdu27ZNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkhTStvst18v9xH3jlWUD5oUTHzNn29ZkwjchoMqvbLRWJYBGz
-	toYB+W+oZb7IOtIekawVhRVVLUTmJAl+vFKRku4MjGHInSlVQRtlKtwHR5kIJ+ym/VZmZrvla1x
-	o5VO0HDOzACeAyofg/VFBbN4Cm42cqMLbEUHeV6dggcip3zXzw9nWTIV3GOqW8ql04w==
-X-Gm-Gg: ASbGncv99/AcGZBruPMIDcLg1v5r6rirbHxujFcCFzRUN8z9IphQb6i6FusfKuvcHwY
-	twP3Twy69JEB7724RJf9pr5l5Ap/+aJ+trg+3PG9opK9y+OXxBQR7kvHwXJGmxlF38ALg6cZJp4
-	61mSIHaCzHFdzjhCPB5NdZkGXXTcsDtmiJAiKICjyU67dcyZpsu/Y1xC6cCqTgB99RUsg0YTtze
-	qlYXPhLojlAcENZWcNe9TjbSyHpnaArIe7jfE3DF8yWs274MN+2fBd6MCaHLT5D0jYaEzsmHNoV
-	J4W7/Z55LG0tnFXcaRPnMQ4suiNUDmUvaQJhHcfATTJtj4W9sw9In42CBX4lnPBFf8xUFdEfg+4
-	=
-X-Received: by 2002:a05:600c:5403:b0:477:3543:3a3b with SMTP id 5b1f17b1804b1-4775cdad69fmr30953875e9.6.1762354143235;
-        Wed, 05 Nov 2025 06:49:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEJCkXVCaYKB38WQ9mVlW2atyii43mXLtD2rPfe/M0bgqyi++PixdCT104cVwdbGCHZnaBsew==
-X-Received: by 2002:a05:600c:5403:b0:477:3543:3a3b with SMTP id 5b1f17b1804b1-4775cdad69fmr30953665e9.6.1762354142802;
-        Wed, 05 Nov 2025 06:49:02 -0800 (PST)
-Received: from sgarzare-redhat ([5.77.88.64])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc18f41bsm10751085f8f.9.2025.11.05.06.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:49:01 -0800 (PST)
-Date: Wed, 5 Nov 2025 15:48:58 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v2 11/12] selftests/vsock: add vsock_loopback
- module loading
-Message-ID: <ubfxj7koxuztrlrydfpjxenu7sdydq45rnhxkpmuurjfqvyh4j@mwzsqsioqzs5>
-References: <20251104-vsock-selftests-fixes-and-improvements-v2-0-ca2070fd1601@meta.com>
- <20251104-vsock-selftests-fixes-and-improvements-v2-11-ca2070fd1601@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=krXO9/6w0oD5CFurtwohQxIZ/1SjiFntTbcn3EplayPYXY06/GE5BQWNBY5BoBBG+Fy3homcY9fEzlntbzZglbsM2zdCOQuYYrySN2UNsN4IiaU8Cx8JZ9lpsJ6CCp0cFQkqhDdy0ZtxX3X10ls2A8CZNM72Lx8zm1bp+DD1ZJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vGerK-0005pR-VW; Wed, 05 Nov 2025 15:51:38 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vGerK-007DJ0-0B;
+	Wed, 05 Nov 2025 15:51:38 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id B84844985DB;
+	Wed, 05 Nov 2025 14:51:37 +0000 (UTC)
+Date: Wed, 5 Nov 2025 15:51:37 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	kernel@pengutronix.de, David Jander <david@protonic.nl>, 
+	David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v1 2/2] iio: adc: Add TI ADS131M0x ADC driver
+Message-ID: <20251105-refreshing-classy-koel-ecf968-mkl@pengutronix.de>
+References: <20251105143814.1807444-1-o.rempel@pengutronix.de>
+ <20251105143814.1807444-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kiei2i6q7lmfevfz"
 Content-Disposition: inline
-In-Reply-To: <20251104-vsock-selftests-fixes-and-improvements-v2-11-ca2070fd1601@meta.com>
+In-Reply-To: <20251105143814.1807444-3-o.rempel@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 04, 2025 at 02:39:01PM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Add vsock_loopback module loading to the loopback test so that vmtest.sh
->can be used for kernels built with loopback as a module.
->
->This is not technically a fix as kselftest expects loopback to be
->built-in already (defined in selftests/vsock/config). This is useful
->only for using vmtest.sh outside of kselftest.
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
-> tools/testing/selftests/vsock/vmtest.sh | 2 ++
-> 1 file changed, 2 insertions(+)
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+--kiei2i6q7lmfevfz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 2/2] iio: adc: Add TI ADS131M0x ADC driver
+MIME-Version: 1.0
 
->
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index 0657973b5067..cfb6b589bcba 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -434,6 +434,8 @@ test_vm_client_host_server() {
-> test_vm_loopback() {
-> 	local port=60000 # non-forwarded local port
->
->+	vm_ssh -- modprobe vsock_loopback &> /dev/null || :
->+
-> 	if ! vm_vsock_test "server" 1 "${port}"; then
-> 		return "${KSFT_FAIL}"
-> 	fi
->
->-- 
->2.47.3
->
+On 05.11.2025 15:38:14, Oleksij Rempel wrote:
+> +static int ads131m_probe(struct spi_device *spi)
+> +{
+> +	const struct ads131m_configuration *config;
+> +	struct iio_dev *indio_dev;
+> +	struct ads131m_priv *priv;
+> +	int ret;
+> +
+> +	spi->mode =3D SPI_MODE_1;
+> +	spi->bits_per_word =3D 8;
+> +
+> +	if (!spi->max_speed_hz || spi->max_speed_hz > ADS131M_MAX_SCLK_HZ)
+> +		spi->max_speed_hz =3D ADS131M_MAX_SCLK_HZ;
+> +
+> +	ret =3D spi_setup(spi);
+> +	if (ret < 0) {
+> +		dev_err(&spi->dev, "Error in spi setup\n");
+> +		return ret;
+> +	}
+> +
+> +	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*priv));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	priv =3D iio_priv(indio_dev);
+> +	priv->spi =3D spi;
+> +
+> +	indio_dev->name =3D spi_get_device_id(spi)->name;
+> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> +	indio_dev->info =3D &ads131m_info;
+> +
+> +	config =3D device_get_match_data(&spi->dev);
+> +	if (!config) {
+> +		const struct spi_device_id *id;
+> +
+> +		id =3D spi_get_device_id(spi);
+> +		if (!id)
+> +			return -ENODEV;
+> +
+> +		config =3D (const void *)id->driver_data;
+> +	}
+> +	priv->config =3D config;
+> +
+> +	indio_dev->channels =3D config->channels;
+> +	indio_dev->num_channels =3D config->num_channels;
+> +	priv->num_channels =3D config->num_channels;
+> +
+> +	/* Get the external clock source connected to the CLKIN pin */
+> +	priv->clk =3D devm_clk_get(&spi->dev, NULL);
 
+Can you use devm_clk_get_prepared() here? This simplifies the
+ads131m_hw_init() function.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--kiei2i6q7lmfevfz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkLZHYACgkQDHRl3/mQ
+kZxTyQf+KZP429n572RPaSeQ0vUbhSrtZM+mXkxHxuGaGruxmBphZMPoV4kjyMdP
+iw5j1SivNu7kLA46N/zHSzo6XKbUj3yB57+gnaFt1t4OpBessYF30e6mUsxKWkmf
+g2juuE/XYgvrQ95LP4DWdon2hNiMHi0gDbIAhyOZqY66rUr5E4V8eKUC0xdkQ5J8
+QScH88XdFmium7gWPfJZP3eFCA5AvQoazBNfarBwTCHP/UQCeUQvbcnj3lEI/G23
+YHMgluBBGrKthOR1ZVQ4ixQ+UYWlhfK3YR47GszflRCY58hszD9kkYuvubq0ULtZ
+yJA8PtLMqgs+xm9UHo+LCEF89HREtw==
+=pX3M
+-----END PGP SIGNATURE-----
+
+--kiei2i6q7lmfevfz--
 
