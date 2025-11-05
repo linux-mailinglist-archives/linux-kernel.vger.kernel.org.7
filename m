@@ -1,148 +1,184 @@
-Return-Path: <linux-kernel+bounces-887345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CABFC37F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:19:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05426C37FDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 477F34F8EBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137853BA111
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E0B190664;
-	Wed,  5 Nov 2025 21:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF6834D4E1;
+	Wed,  5 Nov 2025 21:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfNpKQuK"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G6EqqMOD"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A8D2BD5A7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76434E776
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377203; cv=none; b=FTo8p2NLRsuN5sVNPz0MVAHEFdvI22GLxExZhQFceYdH1NbCcAmtGyJcdMLs2hKjqGs6wFczGZZfTYEmI4PQdvMySjXMqtfdK4/J0kmjUoJgIG694kl5M9kJp4hqGmfJu7WRzbq7Pe6ZbG0wlC3HbH1lLBRAyS0WWFKGEjvy7Ls=
+	t=1762377265; cv=none; b=e+JlwpTx8hGZMP96/OFnwiYk2x8IjU9Zn0MNkmaBex9xs4oNMVe5Ic+GbTzX1eorwx2D0yVDa17maDDcLr5i83ka9oO7VnHILYdtdew3f4XEUdRq63gVArd3zfIaZg/kklbnbqEPe7SaqldAR53cvpYdu8Ix2iz60SGq5PC61+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377203; c=relaxed/simple;
-	bh=TtPX5wAsf31XsioAbGBoBPNIeRFsDJtRy/KczWb+LAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M5L9HxcttXWgkrqbQMhM3N0l99fLABFhDQSUMbwzvC/iVKizJPivsxhDjGzbpR5vP6AzMZg7kxhxAaNNK/9EVPt4a2IkBqH0rw+r1GVfOzgvUqhX5NSJfboH6xOnjSIrWdUa+P4GSNrV9cXQRnXdGENR707G90o56wA9VQMgKOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfNpKQuK; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-29555b384acso2715165ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:13:21 -0800 (PST)
+	s=arc-20240116; t=1762377265; c=relaxed/simple;
+	bh=MQvsWeDQVn/3Ah+sMEwFHizhxAHJ0b7a7QFp7wzzuLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C27Idy64UamwtlfErjDUq43JwpWUIWTFAp6eM7O/SVHwR2j6pV6/yywfgcU7b5TgPjC78kH5Ic6SSOH9Nd4RLrk4cANIt/HyXezpHD4B7emnboHWcwgDF71qJt5rm1cqbNbzlXySTrYsrnpE++bzBTHOx5dJUtx6McmunFNS40Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G6EqqMOD; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27d67abd215so38175ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:14:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762377201; x=1762982001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PYl4uAcPw2YN0ysy9XChF1hzlRCusGR8JO4Ns1lam1E=;
-        b=YfNpKQuKJ/mEIJ7k9RyfYts2N60S1QVyJxwoOXNvlWVxiFprvAr1nuLEZof7rcfcry
-         vj1eRFmcN72OMYiHk47+4r7zlmTkGXLhjNruD8o2nmmgZWs+6rUlZcV0tuZg2+sCbWIw
-         Ft1BecP9VVJIATk2OW+jfWKu2IEYVoZdcJvVIptAPU0Oo71JZwZj4wA9cX/kIbZBkBab
-         8Vc/j2uPgZWLHDDx+yCQMllejWcsi7iOJHYfnh5IgTBB+8fAQuX7ZnFIGDv5iMAHAoOi
-         9ClJLvzoSSdMYb6j6O1YbeB4DEMvHGRfD7vORjhk1GI/joX31Wq2xz/kxUVbN9DkzBmr
-         k7EQ==
+        d=google.com; s=20230601; t=1762377263; x=1762982063; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1a4Yyw4cqtm7g2w2aJJeYA13ID9gFvTcA7MB5XSqJcE=;
+        b=G6EqqMOD4IcpDZUNIFdt9tKaRuF/qFVyHDOmbKdXAUxCAZiCnndsHRisrfuCmsuXQ8
+         neDZ5gujTyEmJlgw3Zu7YcNHXzuTl3HON+nfNq+O7Cs4M2QukRERuSoBzG350bvvQsTH
+         bBIy5Vhw6Fg7nDRmWdST+1NgMC0+p0M+4ooR4FsgtCGV4E/eNhsFCMynRI4UI3yY4Q+5
+         qAE6b9U+i4jKAmfPDYx7PxFa340MlcGZZ/E1vMLWAQ77E9R84tKH+LObR55fya5G3GhY
+         WTXSEA2MiL1AwNwlhRP49LCv+3tpSt+C41OBYTWmR1E6yYyft9yVnt17VW9KVBqSdk7O
+         ppww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377201; x=1762982001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762377263; x=1762982063;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PYl4uAcPw2YN0ysy9XChF1hzlRCusGR8JO4Ns1lam1E=;
-        b=KZLZDj4ZtUV+/p2VjATyAb91e/+71qxo94boN33+5DFdJJAUpdVR+KaYwJ5Qb2kvTn
-         rGKaOy4z1fsghrvP3jGWsjArqcf+ojo3q2Igwelc5lLTk1bih4NSFBkZnHWHR2T+q2tr
-         nhx/UmzPresVHxRhkXE1qws/IMNBaFWqPqIM1K5c7ku04mHLCGi29bibb6IoUXiL+aZW
-         OPHmmt98FLRbVOtR81NP93P8pMMGnr4CN9wZ0tIGKuYXJvhTSZvENgfIIbYdopLCgByx
-         JwLURXQ9LiF0FhjM+HNmmBSJ7fiFQLH4luDCzLB36NxjlAn7Py8ahC5MBGsYkrI2XqOc
-         jCZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTYw9YitUuvMFr/G1XFVes7AWOq1/V7X2t330RWgfO10bUnbOuNtoX5Qmj3QEY3fiGY34na5mUnEB2xgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/9OkTSKfaOLaMs5F53JzoicnODIL9pz9KUa5KKYlB0SUDCpyB
-	dPHwKBjfxqYMO1kxgMxdPHnByRO03FnHeBaI2wcG8Xaa3pMGIePkBxl9c3ofNguKloy8xMJzGDL
-	s2dX4h87ozQoNLm9fXHqYGoHDow8tf70=
-X-Gm-Gg: ASbGnctYhy8hwJRmdJuoFnlQH2lujoqwtwAW+wdzgasPuJ9l/JO8kzt/uohscgW35kI
-	0vU7jeB6XLuJVDKYUF7SYtqUS1XzQJnZbK8lSCj1eyEFT2GFDsbkGnFz+CS+C8X3IxotkH59DPM
-	RTgfdulg3czDXOs6TLpyG5i9ElI/cyv8tsXKy4bIvIao2K0LtZ+bc8TGY2ccg45Slsh/pNC5AJ9
-	Kntx1WIWoD6YqQaRKn9hHJUjYE6McLhptdO/lPTT2S0LP1qKaRsmsUqimqgTV9B3YI9B6dD9D9R
-	jevYgO5H35sRGx2LvTRxI0FafBmDMe4TVyk=
-X-Google-Smtp-Source: AGHT+IHJuaCbV8Dvr3w5WGu51Kk+xXfCjwSmuvKRdYVaKJf7OUcW5sfriYB+7HI9rK4/5a+tYVgAbKZ5vZmFdHN1rt8=
-X-Received: by 2002:a17:902:e889:b0:295:5132:1a99 with SMTP id
- d9443c01a7336-2962adcfdd4mr62180385ad.44.1762377200682; Wed, 05 Nov 2025
- 13:13:20 -0800 (PST)
+        bh=1a4Yyw4cqtm7g2w2aJJeYA13ID9gFvTcA7MB5XSqJcE=;
+        b=Ucg36gtb4WyOTVM6GghkJl5+X3wLkdJz9brlbi706OyEISqS1Nh8JQ83Mm2s70F3Yv
+         UYCJlxpQLO2ghXyXA1aAnWQIpk63o5yOnhRthRDSyxvdB5ENr0jVatVIhpnnzT7huZWp
+         tbEloNVCqfhoLknBpZA+hsLjkRPB0kqmq5vAUV2FqCCmnTRwLJRp+7sc/Np9agfz7KnO
+         +/z/G5HO9QUCMFmUiS/JI/E2drxcf50T88eaqHkZEmfVcuURcrI4Xo4TN8F22WCbkhwH
+         Qp6n1FVyZSHZFZ/ojDBBeTMgWDEHew5nWmpPtRvylThGIkKjeJ73+pAiS+lVlez61US9
+         ZlLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/nFxzcXKGwARpabwTSd4BST7g4k7CypK4XlEwiC0YfLnYK5e3JeTCiKZJx34D7aCkdmCmnvQidIF7aig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyflID81JroqgdMch+ulEzVbyuqUcT4dUigRMeQiCXJ/0VE1j0E
+	bztPvC7YbjhhvbOrJKR8DH6/GkLouV/T6JFUppnJE7/ySxnzVK+dTqw9fW9PPBOj/A==
+X-Gm-Gg: ASbGncuTbO6r0W4btgwXsAPSH+JTdqxu3ZEJG3L198MeCm0igfHlE/VCrQuZKtTXAYS
+	koGR0eZcA6PYIp2Q/mkeAyrbAXZM6lZo5B6np9A9fuP8ozkjThyvhW9pYd59q+ZeT1hHJtzNOlw
+	QYrzP3mEnrNKzVxUB5hMxQ1UNLrk00qMb0ykM8sp3C5gny7ZoGK7tHssEpz1iWQiY+Gmpg7p7dt
+	Y5KDy1N24JZe3gZzCG8J0Hg2AxbPJs5l07PC25xL1p/p1IGfrzgpbROac+aZUC+gBtQTgJRlP2P
+	ODuzIPFi+cVDh+I80Ny1rbXbgnNPmeoMYYvE4em5lr4leLT2FL3Ms0smsr2iX7NKFpGfjNyHMZR
+	Mmu6Py0IHP/DZW6FuE+kfUmSCkWpcE27HNzyQZDrOrfkaIJopfRC3yBDm8VSAa13UvifxzTxKAY
+	n1kboMUWm4XAOKMQ1PyLELz1h0WKbAuP97X9arpPEXo9R5LuGo
+X-Google-Smtp-Source: AGHT+IFP1YxRkoxKG9m5uY31RvKem02MIvxx/qMo4X6r12qFFAqsYxQUQt6ctZOzHEsowBEgNB2RGA==
+X-Received: by 2002:a17:902:e74b:b0:290:8ecf:e9f9 with SMTP id d9443c01a7336-2965b17e891mr190525ad.7.1762377262520;
+        Wed, 05 Nov 2025 13:14:22 -0800 (PST)
+Received: from google.com (164.210.142.34.bc.googleusercontent.com. [34.142.210.164])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d121cf9fsm21677a91.10.2025.11.05.13.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 13:14:21 -0800 (PST)
+Date: Wed, 5 Nov 2025 21:14:15 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	kevin.tian@intel.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	skolothumtho@nvidia.com
+Subject: Re: [PATCH v2] iommu/arm-smmu-v3-iommufd: Allow attaching nested
+ domain for GBPA cases
+Message-ID: <aQu-Jy27_PzxqVvt@google.com>
+References: <20251103172755.2026145-1-nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105143851.4251-1-gautham.shenoy@amd.com>
-In-Reply-To: <20251105143851.4251-1-gautham.shenoy@amd.com>
-From: Chris H <chris.harris79@gmail.com>
-Date: Wed, 5 Nov 2025 13:13:08 -0800
-X-Gm-Features: AWmQ_bk9z1xb3CgvzyDGOVjF_ZRV-xAXTvxsOcf3VIYYEJ6ctGNF7I9zc6gJMjo
-Message-ID: <CAM+eXpe1j5=PW9AuJCJQWat=ivwViU45y0ortdiav-kX=2Hs+g@mail.gmail.com>
-Subject: Re: [PATCH 0/4] ACPI: CPPC: Fixes to limit actions to online CPUs
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Yunhui Cui <cuiyunhui@bytedance.com>, 
-	Jeremy Linton <jeremy.linton@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Ionela Voinescu <ionela.voinescu@arm.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103172755.2026145-1-nicolinc@nvidia.com>
 
-Confirming: I've tested the first two patches in the series on kernel
-v6.17.  The patches successfully resolve the issue described, allowing
-one to boot with amd-pstate + nosmt=3Dforce.  In other words: receive
-the expected amd-pstate scaling driver when SMT logical cores are
-disabled.
+On Mon, Nov 03, 2025 at 09:27:55AM -0800, Nicolin Chen wrote:
+> A vDEVICE has been a hard requirement for attaching a nested domain to the
+> device. This makes sense when installing a guest STE, since a vSID must be
+> present and given to the kernel during the vDEVICE allocation.
+> 
+> But, when CR0.SMMUEN is disabled, VM doesn't really need a vSID to program
+> the vSMMU behavior as GBPA will take effect, in which case the vSTE in the
+> nested domain could have carried the bypass or abort configuration in GBPA
+> register. Thus, having such a hard requirement doesn't work well for GBPA.
+> 
+> Skip vmaster allocation in arm_smmu_attach_prepare_vmaster() for an abort
+> or bypass vSTE. Note that device on this attachment won't report vevents.
+> 
+> Update the uAPI doc accordingly.
+> 
+> Tested-by: Shameer Kolothum <skolothumtho@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+> 
+> Changelog
+> v2
+>  * Add Tested-by from Shameer
+>  * Skip vmaster allocation instead of bypassing vsid=0
+>  * Revise the uAPI doc to note a corner case when CR0.SMMUEN=1
+> 
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 13 ++++++++++++-
+>  include/uapi/linux/iommufd.h                        |  9 +++++++++
+>  2 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> index 8cd8929bbfdf8..e5fbbdbdea242 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> @@ -99,6 +99,8 @@ static void arm_smmu_make_nested_domain_ste(
+>  int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+>  				    struct arm_smmu_nested_domain *nested_domain)
+>  {
+> +	unsigned int cfg =
+> +		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
+>  	struct arm_smmu_vmaster *vmaster;
+>  	unsigned long vsid;
+>  	int ret;
+> @@ -107,8 +109,17 @@ int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+>  
+>  	ret = iommufd_viommu_get_vdev_id(&nested_domain->vsmmu->core,
+>  					 state->master->dev, &vsid);
+> -	if (ret)
+> +	/*
+> +	 * Attaching to a translate nested domain must allocate a vDEVICE prior,
+> +	 * as CD/ATS invalidations and vevents require a vSID to work properly.
+> +	 * A abort/bypass domain is allowed to attach w/o vmaster for GBPA case.
+> +	 */
+> +	if (ret) {
+> +		if (cfg == STRTAB_STE_0_CFG_ABORT ||
+> +		    cfg == STRTAB_STE_0_CFG_BYPASS)
+> +			return 0;
+>  		return ret;
+> +	}
+>
 
-ACPI: CPPC: Detect preferred core availability on online CPUs
-ACPI: CPPC: Check _CPC validity for only the online CPUs
+Skipping the vmaster allocation entirely for the GBPA-only case (when no
+vdevice is found) is much cleaner. Thanks!
 
-Thank you Mario and Gautham for addressing this so quickly.
+>  	vmaster = kzalloc(sizeof(*vmaster), GFP_KERNEL);
+>  	if (!vmaster)
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index c218c89e0e2eb..225671603ade6 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -450,6 +450,15 @@ struct iommu_hwpt_vtd_s1 {
+>   * nested domain will translate the same as the nesting parent. The S1 will
+>   * install a Context Descriptor Table pointing at userspace memory translated
+>   * by the nesting parent.
+> + *
+> + * It's suggested to allocate a vDEVICE object carrying vSID and then re-attach
+> + * the nested domain, as soon as the vSID is available in the VMM level:
+> + * - when Cfg=translate, a vDEVICE must be allocated prior to attaching to the
+> + *   allocated nested domain, as CD/ATS invalidations and vevents need a vSID.
+> + * - when Cfg=bypass/abort, a vDEVICE is not enforced during the nested domain
+> + *   attachment, to support a GBPA case where VM sets CR0.SMMUEN=0. However, if
+> + *   VM sets CR0.SMMUEN=1 while missing a vDEVICE object, kernel would fail to
+> + *   report events to the VM. E.g. F_TRANSLATION when guest STE.Cfg=abort.
+>   */
 
-Chris Harris
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-On Wed, Nov 5, 2025 at 6:39=E2=80=AFAM Gautham R. Shenoy <gautham.shenoy@am=
-d.com> wrote:
->
-> Hello,
->
-> Christopher Harris reported a regression between v6.10 to v6.11 that
-> the amd-pstate driver failed to load even when the commandline had
-> "amd_pstate=3Dpassive"
-> (https://lore.kernel.org/lkml/CAM+eXpdDT7KjLV0AxEwOLkSJ2QtrsvGvjA2cCHvt1d=
-0k2_C4Cw@mail.gmail.com/)
->
-> On debugging the issue it was observed that when the commandline
-> contains "nosmt=3Dforce", the CPPC code fails when performing certain
-> checks such as checking for the presence of preferred cores and
-> validity of the _CPC object since it iterates through all "present"
-> CPUs while the object state was populated only for "online" CPUs.
->
-> This patchset contains fixes to address this issue.
->
-> The first two patches in the series address the issue reported by
-> Chris.
->
-> Patches 3 and 4 harden the code in a couple of more functions which
-> iterated through the present CPUs when it is more apt to restrict the
-> operations to online CPUs
->
->
->
-> Gautham R. Shenoy (4):
->   ACPI: CPPC: Detect preferred core availability on online CPUs
->   ACPI: CPPC: Check _CPC validity for only the online CPUs
->   ACPI: CPPC: Perform fast check switch only for online CPUs
->   ACPI: CPPC: Limit perf ctrs in PCC check only to online CPUs
->
->  arch/x86/kernel/acpi/cppc.c | 2 +-
->  drivers/acpi/cppc_acpi.c    | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> --
-> 2.34.1
->
+Thanks,
+Praan
 
