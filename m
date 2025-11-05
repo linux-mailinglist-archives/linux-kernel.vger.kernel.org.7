@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-886076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1918C34AA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:04:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECD3C34A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F10A562D0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095B118858AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FB22F39A4;
-	Wed,  5 Nov 2025 09:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB932F362B;
+	Wed,  5 Nov 2025 09:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQSpMrp5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWgBAFoJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2042F1FF6;
-	Wed,  5 Nov 2025 09:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555372F12DF;
+	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333217; cv=none; b=l54zp86arSGkjCC7mt+WbaO2FZW9BDGC/5MCmOVgQSIGBonUdf/IPv6WxMg71wvd+UML6DPTBX626oQqxYuc9un37403EvKZ1bIOSOaSfCm5ZSvpPz0i++a5IiLlS3/fT2qjcbt1eFbxkGy2OhZXQvlK00UY/WNehYjZssJa2DQ=
+	t=1762333333; cv=none; b=K4iMziAtQuvVqKy801gwrR7ATi1JvbfhJz7eyiu/hGQYKIgwwArROwxfBtBeOBSw8lc9x0ymkMDf4r8WMBThcpnJ9ABDclMLbHnFNOmAUKuQfHwg5QkMkPGE8qO0xbZq3muYOBOABoxvfIQEYomBPUuJVHtWOfNsoMFagIbRNHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333217; c=relaxed/simple;
-	bh=mALZctJs/9dp1bCogwM4mpUTnfClhw7K46Gj7Mnbab4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=sSa7q+Y8oX0YYNZFAJsQAUCwUFfsKjMDQEQgPCwxzX39WIqXlGetQpVIRxsfGiyMav+zxBHzwYv8BGbSFxGHhuziDZLpUKk8fgBGS/vqashRGtNfxDSrjPzClEJ7Rmu8gWEJ/2wOr5fYvrWrXNKnlO2KrzAqnqLxOORqAszB3Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQSpMrp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C117C116B1;
-	Wed,  5 Nov 2025 09:00:17 +0000 (UTC)
+	s=arc-20240116; t=1762333333; c=relaxed/simple;
+	bh=69P8E0lzJ/6R8ErkBsHZbv0lFG3IxBCu8QrGpXLxM1I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OBDdcvdTcf0O48pxErpQfY6akl3DExKU9XH8RxIhIHhBNsrojQbLHijdVcORVB4fETFEJjqoypZ5W9lNLEHGAz0KMdfL7XylwFdJrUCX65eV9g6FiruSqT8tpI5zXap2eRyxB54Pif/gS2DjLI4T25owrU0qjqs4+EXCLJdKc5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWgBAFoJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D0FCAC4CEF8;
+	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762333217;
-	bh=mALZctJs/9dp1bCogwM4mpUTnfClhw7K46Gj7Mnbab4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qQSpMrp5d8GejVnUMCtTUq+S+CG7Fiy+dV9P8kLzL52NrEgebzlTCImpwXC0FVBK/
-	 HZw6zZhvbi878frUBVJJAxMGpZIxejTFy0G5t7ebsJ7uRGoJ5PqqgRg9hBdvwZwTzY
-	 9UXXwNmxqtCkYuRuqdd1MbHA+RUF/x3ww2zSLO7Kz6yEZQ8LzfPb6Bnn17TWs4mXgJ
-	 y6psk5nuzGdNb2h5b5M7kEo+uUo7LONkzzjfMg4obPCT6fxidMc3CX/KkKnMnjJAWj
-	 axrZg6zaQ7VU3KSl7t2dMYEL61fBRnNz+gAMlwlO1tz0rguRjaL2IbElUAHYwrK/MV
-	 jdzFugz98u//Q==
-Date: Wed, 05 Nov 2025 03:00:15 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1762333332;
+	bh=69P8E0lzJ/6R8ErkBsHZbv0lFG3IxBCu8QrGpXLxM1I=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=LWgBAFoJ+EQPWyyG1QATcvY+YKPg6OpdDwXrt6boMeQQlBqKkJdQuw7tuZ8Bj1mzs
+	 3OkQ2WJLbXNj9EOy1FnZRedmPQbFoTR9I55q2agm/G+IBU2AhtKIgKaXjRCAW1Hpiq
+	 wTSkJMkE/YSzFQ+bG90cg94JSCowwUgeGTS36SVoXv+x4QYUb6xCGCvY5GTfjO0tXy
+	 Y+fgNzfx7+D+Ss9oONsjdS0MUCFv/COqnVhj+JI3Yf5cxIJMAi1/CB253dPcMnc/6V
+	 tK4tt5gHU7Abp12dVrGJZGLZO9O/E660Fj+RABBZ9R777O3t+Y2/2Dl9VtnpcJffhT
+	 1V3SEEgCtowjw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C469FCCFA07;
+	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
+From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
+Date: Wed, 05 Nov 2025 17:02:06 +0800
+Subject: [PATCH] Bluetooth: iso: Fix UAF on iso_sock_disconn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-clk@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- linux-rtc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Pavel Machek <pavel@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Mark Brown <broonie@kernel.org>, 
- Andreas Kemnade <andreas@kemnade.info>, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@linux.dev>
-In-Reply-To: <4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com>
-References: <cover.1762327887.git.mazziesaccount@gmail.com>
- <4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com>
-Message-Id: <176233321210.143104.455177775703669783.robh@kernel.org>
-Subject: Re: [PATCH v3 05/16] dt-bindings: mfd: ROHM BD72720
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAI0SC2kC/x3MQQqAIBBA0avIrBM0E6OrRIToVENhohCBePek5
+ Vv8XyBjIswwsQIJH8p0hwbZMXCHDTty8s3Qi15LKTQ/MQW81mgDOW6U9c4INYzCQ0tiwo3efzc
+ vtX43iwIZXgAAAA==
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Yang Li <yang.li@amlogic.com>
+X-Mailer: b4 0.13-dev-f0463
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762333331; l=1549;
+ i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
+ bh=S5BJh2ba2g9xJCkHYB8Rff1jMpJFLarygQDk7qfhCww=;
+ b=0Es3hP455AD3QZnhIIAzJALsD1uJ+obbNHtlx9EHEvCMso1TC5723gpPHqHVWkrPn+X5+uRtK
+ 4cb2LTUXq+wBZHpUwMkaPne7ZL6T6dmNLUZnP66TvfICrPwaP8/jMfA
+X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
+ pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
+X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
+ auth_id=180
+X-Original-From: Yang Li <yang.li@amlogic.com>
+Reply-To: yang.li@amlogic.com
 
+From: Yang Li <yang.li@amlogic.com>
 
-On Wed, 05 Nov 2025 09:37:05 +0200, Matti Vaittinen wrote:
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
-> charger, LEDs, RTC and a clock gate.
-> 
-> Add dt-binding doc for ROHM BD72720.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> ---
-> Revision history:
->  v2 => v3:
->  - Styling
->  - Document all pin functions
->  - use pattern-properties
->  - re-use existing Rsense binding
->  - correct the example
-> 
->  RFCv1 => v2:
->  - Typofixes
-> ---
->  .../bindings/mfd/rohm,bd72720-pmic.yaml       | 273 ++++++++++++++++++
->  1 file changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> 
+kernel panic: Unable to handle kernel read from unreadable
+memory at virtual address 00000000000003d8
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Call trace:
+ iso_sock_disconn+0x110/0x1c8
+ __iso_sock_close+0x50/0x164
+ iso_sock_release+0x48/0xf0
+ __sock_release+0x40/0xb4
+ sock_close+0x18/0x28
+ __fput+0xd8/0x28c
+ __fput_sync+0x50/0x5c
+ __arm64_sys_close+0x38/0x7c
+ invoke_syscall+0x48/0x118
+ el0_svc_common.constprop.0+0x40/0xe0
+ do_el0_svc_compat+0x1c/0x34
+ el0_svc_compat+0x30/0x88
+ el0t_32_sync_handler+0x90/0x140
+ el0t_32_sync+0x198/0x19c
 
-yamllint warnings/errors:
+Signed-off-by: Yang Li <yang.li@amlogic.com>
+---
+ net/bluetooth/iso.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml: Unresolvable reference: /schemas/regulator/rohm,bd77270-regulator.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.example.dtb: pmic@4b (rohm,bd71828): 'rohm,pin-dvs0', 'rohm,pin-dvs1', 'rohm,pin-exten0', 'rohm,pin-exten1', 'rohm,pin-fault_b' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/rohm,bd71828-pmic.yaml
+diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+index 74ec7d125c88..89c7700ceb81 100644
+--- a/net/bluetooth/iso.c
++++ b/net/bluetooth/iso.c
+@@ -838,14 +838,14 @@ static void __iso_sock_close(struct sock *sk)
+ 	case BT_CONNECT:
+ 	case BT_CONNECTED:
+ 	case BT_CONFIG:
+-		if (iso_pi(sk)->conn->hcon)
++		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon)
+ 			iso_sock_disconn(sk);
+ 		else
+ 			iso_chan_del(sk, ECONNRESET);
+ 		break;
+ 
+ 	case BT_CONNECT2:
+-		if (iso_pi(sk)->conn->hcon &&
++		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon &&
+ 		    (test_bit(HCI_CONN_PA_SYNC, &iso_pi(sk)->conn->hcon->flags) ||
+ 		    test_bit(HCI_CONN_PA_SYNC_FAILED, &iso_pi(sk)->conn->hcon->flags)))
+ 			iso_sock_disconn(sk);
 
-doc reference errors (make refcheckdocs):
+---
+base-commit: 2747d929617743ecba08eeeb310283b4be681383
+change-id: 20251105-kernel_panic-73adc703480d
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com
+Best regards,
+-- 
+Yang Li <yang.li@amlogic.com>
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
