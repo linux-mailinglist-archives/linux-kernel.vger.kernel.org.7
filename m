@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-885888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60BCC34244
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:06:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8876C34247
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C89A3BB00E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:06:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B9D534A81D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB782D2383;
-	Wed,  5 Nov 2025 07:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4X3IsWa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107832D0C98;
+	Wed,  5 Nov 2025 07:06:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2472C324F;
-	Wed,  5 Nov 2025 07:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DAF2C324F;
+	Wed,  5 Nov 2025 07:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762326352; cv=none; b=u85PqWT4begKDKN4YfOh+mxWFQ/Ig62R/KZD8HYfZyp5xoCh2SLBoITL+0QIxCYkUMc4vmmFpP7OntWwj6wlH06HogfVdsmoux3TN7tn3L/Y+pQiafzoyvMIkOPVXIbeqqRhWR27sAqnWMfdIRBopNypDDq90oWQPtebtz5uk4k=
+	t=1762326390; cv=none; b=ThLVTBscSBReEqRscsmXTsB/Tvbq29X+V7iqcbzldw+ZK8cRBp619+kFOHxexlZ+zLCklsR4rNuVZ6w2DH9aJf7wgTG6oB5LCi1pLL4W8R84cvhnUjl8Z9RNih1vmFzzcjJ09oRPxJXDBPIXasbITk+1FjmeA+Im2bgtlEHzM34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762326352; c=relaxed/simple;
-	bh=kPX9V0mH+TczUnYq0BMN/eI2YdpBbqz0jEK+VU5Ajks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e3VOanmkUy8mXO932l34y7ZN0hoyiJWMSFKidiLRew1xyv5wj6sejBMQoOfDyMwwFsIuoIndYRlMdTezoLDsyLKvv1leacm8Xov9VLutSC4Y7Y+UY3q+Ycbciskp32ZTZrDgLb1EmxTOJoXpsEm6bVLp3tYffCzLP0EgssyPg6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4X3IsWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA207C4CEF8;
-	Wed,  5 Nov 2025 07:05:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762326351;
-	bh=kPX9V0mH+TczUnYq0BMN/eI2YdpBbqz0jEK+VU5Ajks=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=m4X3IsWauFdhf3VenL4oXaFt8vQd1O7cZENoOOCac6EWsv1HNKEs6szPvqHFzb/m9
-	 g817Sjs80Kv5Mibkq3a72m3ZbINMvEw/DKGQt1fOJPEewZjvSknXybSG9lnpM66gkC
-	 04QGSrOwavlwNAJN1kgURXHLc5y3YoMHyPzKWveyUKUX0sLdVPNMBaAuWrEgfRmKJ5
-	 9meOxvx+fi3L5P1QApLI9bWLj5GJwuI88+TZeHvqJvMd6sbJrTDCQ3fIZ/FuD7Igo/
-	 aT+E4cYMbDUrMPcjnv5xcbgE7vkGmPAF3nbEIWuT8aoeZ/78rIjRHr3zyvOqCFtKND
-	 FeME6A1ACuCqA==
-Message-ID: <7e3c1b0b-2880-4abc-b80f-30ffc16d6158@kernel.org>
-Date: Wed, 5 Nov 2025 08:05:45 +0100
+	s=arc-20240116; t=1762326390; c=relaxed/simple;
+	bh=hj/oHee/MX5miINZCh7iap38DPL99bXKDriLoQr/CG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pNQCIX9BQ9KBMwQZxC4lBPpwJWYBjtNfSIGkWJ8oPrd4c8u5MgxAe+IDaVEatMprojA9E2OEp02IHtDoG99YWLF+FrPDVUnBWk9/4rF7u7MKQYFsTk2jomyYzJ13M+S3BBgSsQKCcclerbsSmOHQ4H8NJqo9h/9V4xT0hrHqBrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d1bvm0Z6LzKHMv2;
+	Wed,  5 Nov 2025 15:06:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id F24AF1A0359;
+	Wed,  5 Nov 2025 15:06:18 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgA3qEtp9wpp5FDvCg--.27148S2;
+	Wed, 05 Nov 2025 15:06:18 +0800 (CST)
+Message-ID: <606bbc24-53e3-4e09-b48b-d6f72f3194de@huaweicloud.com>
+Date: Wed, 5 Nov 2025 15:06:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,133 +46,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
- global-regs and transfer-mode properties
-To: Ryan Chen <ryan_chen@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>,
- "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "jk@codeconstruct.com.au" <jk@codeconstruct.com.au>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "naresh.solanki@9elements.com" <naresh.solanki@9elements.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
- <20251027061240.3427875-3-ryan_chen@aspeedtech.com>
- <93a2ff5f-2f8e-494b-9652-b93bc243c229@kernel.org>
- <TY2PPF5CB9A1BE6DCA78BEDC3178B74FD75F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
- <36e2b87f-5567-4bd6-bd1b-789623441461@kernel.org>
- <TY2PPF5CB9A1BE62BD449193B23A22DF941F2FBA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [cgroup/for-6.19 PATCH v3 2/5] cgroup/cpuset: Fail if isolated
+ and nohz_full don't leave any housekeeping
+To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+References: <20251105043848.382703-1-longman@redhat.com>
+ <20251105043848.382703-3-longman@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <TY2PPF5CB9A1BE62BD449193B23A22DF941F2FBA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251105043848.382703-3-longman@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgA3qEtp9wpp5FDvCg--.27148S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw1rCry8WFy8Zr4kAr4xJFb_yoW7KrW5pr
+	yUGFW3GFWUtr13G343t3Zruw1Fkw4ktFy2k3ZxGa4rZFy7X3WvyryUW3Z0qFWru39xW34U
+	ZrZ0gw4Iga4xAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 30/10/2025 02:48, Ryan Chen wrote:
->> Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add global-regs
->> and transfer-mode properties
->>
->> On 29/10/2025 10:25, Ryan Chen wrote:
->>>> Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
->>>> global-regs and transfer-mode properties
->>>>
->>>> On 27/10/2025 07:12, Ryan Chen wrote:
->>>>> The AST2600 I2C controller supports three transfer modes: byte,
->>>>> buffer, and DMA. To allow board designers and firmware to explicitly
->>>>> select the preferred transfer mode for each controller instance.
->>>>> "aspeed,transfer-mode" to allow device tree to specify the desired
->>>>> transfer method used by each I2C controller instance.
->>>>>
->>>>> And AST2600 i2c controller have two register mode, one is legacy
->>>>> register layout which is mix controller/target register control
->>>>> together, another is new mode which is separate controller/target
->>>>> register control.
->>>>>
->>>>
->>>> This implies your "reg" properties have now completely different
->>>> meaning and this would be quite an ABI break. We discussed this probably
->> 15 revisions ago.
->>>> Where did you document the resolution of that discussion?
->>>
->>> Let me explain more about "reg"
->>> The 'reg' property continues to describe the same register regions
->>> (bus and buffer) as in the legacy layout. The selection between the
->>> legacy and new register layout is controlled by a bit in the SoC-level
->>> global register block, referenced through the new 'aspeed,global-regs'
->> property.
->>> Therefore, the meaning of the 'reg' property does not change and no DT
->>> ABI break occurs.
->>>
->>> Should I add it in commit message about "reg" ?
->>
->> Then why does the address change from 0x40 to 0x80. If it is the same, it
->> cannot change.
->>
->> You are describing the IO address space, total address space, as defined by
->> datasheet. Not whatever is in the driver.
+
+
+On 2025/11/5 12:38, Waiman Long wrote:
+> Currently the user can set up isolated cpus via cpuset and nohz_full in
+> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
+> domain isolated nor nohz full). This can be a problem for other
+> subsystems (e.g. the timer wheel imgration).
 > 
-> Thanks for pointing that out.
+> Prevent this configuration by blocking any assignation that would cause
+> the union of domain isolated cpus and nohz_full to covers all CPUs.
 > 
-> But to clarify: the address change from 0x40 to 0x80 in the example is not
-> arbitrary. It comes directly from the AST2600 SoC datasheet, where the
+> [longman: Remove isolated_cpus_should_update() and rewrite the checking
+>  in update_prstate() and update_parent_effective_cpumask()]
+> 
+> Originally-by: Gabriele Monaco <gmonaco@redhat.com>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/cgroup/cpuset.c | 74 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 73 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index da770dac955e..99622e90991a 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1393,6 +1393,45 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+>  	return isolcpus_updated;
+>  }
+>  
+> +/*
+> + * isolated_cpus_can_update - check for isolated & nohz_full conflicts
+> + * @add_cpus: cpu mask for cpus that are going to be isolated
+> + * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
+> + * Return: false if there is conflict, true otherwise
+> + *
+> + * If nohz_full is enabled and we have isolated CPUs, their combination must
+> + * still leave housekeeping CPUs.
+> + *
+> + * TBD: Should consider merging this function into
+> + *      prstate_housekeeping_conflict().
+> + */
+> +static bool isolated_cpus_can_update(struct cpumask *add_cpus,
+> +				     struct cpumask *del_cpus)
+> +{
+> +	cpumask_var_t full_hk_cpus;
+> +	int res = true;
+> +
+> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
+> +		return true;
+> +
+> +	if (del_cpus && cpumask_weight_and(del_cpus,
+> +			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
+> +		return true;
+> +
+> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
+> +		return false;
+> +
+> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
+> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
+> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
+> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
+> +	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
+> +		res = false;
+> +
+> +	free_cpumask_var(full_hk_cpus);
+> +	return res;
+> +}
+> +
+>  static void update_isolation_cpumasks(bool isolcpus_updated)
+>  {
+>  	int ret;
+> @@ -1551,6 +1590,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>  	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
+>  	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+>  		return PERR_INVCPUS;
+> +	if ((new_prs == PRS_ISOLATED) &&
+> +	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
+> +		return PERR_HKEEPING;
+>  
+>  	spin_lock_irq(&callback_lock);
+>  	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+> @@ -1650,6 +1692,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>  		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
+>  			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
+>  			cs->prs_err = PERR_NOCPUS;
+> +		else if ((prs == PRS_ISOLATED) &&
+> +			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
+> +			cs->prs_err = PERR_HKEEPING;
+>  		if (cs->prs_err)
+>  			goto invalidate;
+>  	}
+> @@ -1750,6 +1795,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  	int part_error = PERR_NONE;	/* Partition error? */
+>  	int isolcpus_updated = 0;
+>  	struct cpumask *xcpus = user_xcpus(cs);
+> +	int parent_prs = parent->partition_root_state;
+>  	bool nocpu;
+>  
+>  	lockdep_assert_held(&cpuset_mutex);
+> @@ -1813,6 +1859,10 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  		if (prstate_housekeeping_conflict(new_prs, xcpus))
+>  			return PERR_HKEEPING;
+>  
+> +		if ((new_prs == PRS_ISOLATED) && (new_prs != parent_prs) &&
+> +		    !isolated_cpus_can_update(xcpus, NULL))
+> +			return PERR_HKEEPING;
+> +
+>  		if (tasks_nocpu_error(parent, cs, xcpus))
+>  			return PERR_NOCPUS;
+>  
+> @@ -1866,6 +1916,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  		 *
+>  		 * For invalid partition:
+>  		 *   delmask = newmask & parent->effective_xcpus
+> +		 *   The partition may become valid soon.
+>  		 */
+>  		if (is_partition_invalid(cs)) {
+>  			adding = false;
+> @@ -1880,6 +1931,23 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  			deleting = cpumask_and(tmp->delmask, tmp->delmask,
+>  					       parent->effective_xcpus);
+>  		}
+> +
+> +		/*
+> +		 * TBD: Invalidate a currently valid child root partition may
+> +		 * still break isolated_cpus_can_update() rule if parent is an
+> +		 * isolated partition.
+> +		 */
+> +		if (is_partition_valid(cs) && (old_prs != parent_prs)) {
+> +			if ((parent_prs == PRS_ROOT) &&
+> +			    /* Adding to parent means removing isolated CPUs */
+> +			    !isolated_cpus_can_update(tmp->delmask, tmp->addmask))
+> +				part_error = PERR_HKEEPING;
+> +			if ((parent_prs == PRS_ISOLATED) &&
+> +			    /* Adding to parent means adding isolated CPUs */
+> +			    !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
+> +				part_error = PERR_HKEEPING;
+> +		}
+> +
+>  		/*
+>  		 * The new CPUs to be removed from parent's effective CPUs
+>  		 * must be present.
+> @@ -2994,7 +3062,11 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>  		 * A change in load balance state only, no change in cpumasks.
+>  		 * Need to update isolated_cpus.
+>  		 */
+> -		isolcpus_updated = true;
+> +		if ((new_prs == PRS_ISOLATED) &&
+> +		    !isolated_cpus_can_update(cs->effective_xcpus, NULL))
+> +			err = PERR_HKEEPING;
+> +		else
+> +			isolcpus_updated = true;
+>  	} else {
+>  		/*
+>  		 * Switching back to member is always allowed even if it
 
-How so? Binding has an example for ast2600 with address 0x40. You now
-claim the change is to adjust to ast2600. But it is ALREADY ast2600!
+Reviewed-by: Chen Ridong <chenridong@huawei.com>
 
-
+-- 
 Best regards,
-Krzysztof
+Ridong
+
 
