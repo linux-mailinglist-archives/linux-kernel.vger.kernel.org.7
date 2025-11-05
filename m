@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-886649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10CBC36280
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:51:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48902C362D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6827E34EC27
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:51:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBEE14E475F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F413176F4;
-	Wed,  5 Nov 2025 14:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B898D32D0EA;
+	Wed,  5 Nov 2025 14:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gy70U958"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FeFHczlX"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B0E2264CD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0237245008
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762354257; cv=none; b=ufmIvuGZNdl8qE8EQInmuxLHyQhW2/RwIrbkrcHSQpNblhs2PQNXnQddXGTldjDvOC4mwbCzlR1yE1K6aXbFmyXxVxHVtMuZL2hpUEU+G+eYvK9jvzVxyfkCOKuXHsva4SGIf7DwQXCX1SVkbOw2F0uLh7hwvtYu2qU19Xq7ut4=
+	t=1762354259; cv=none; b=mEjdaZAyc3hqj8yjOHLze/NzE1Ofewo10KX4BRer7qF20IZysWR9FAnkzcJTPmTQqf2TRtHcTODRdBYjVc19o9/Dif9MVmDKsL28aour7wR5OXnWc4NSqToLBW1scTUs23ILu6mQmE15UXFgdsHWE8qEb24LTedMzWsoHrrCIG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762354257; c=relaxed/simple;
-	bh=+GvlQk06G9W39519d3jc60EuiE8rQv//MMTxBFhe96g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CYVYP2p2a463rgSuZyotI7X4rXXit3gs2LoU3aB37dcpe0ZJlULET7FLZ//vABnwdtLTThwovKuD7uG/O3qHD0VjACcRD+rprC6VVBGdO7G+WMclU6ZnF6IvnEnQqjnWbF/SAJXb9bsaxDMIpewlhREvbqKN/jXVVGM0dPSLV7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gy70U958; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1762354259; c=relaxed/simple;
+	bh=Kzf3O5Pfv0M6xSM+kEXKJUJ8D5H545XidDJ6k27PEAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WYhuAgEVFwvcZxxwm6QT3AeLf9C2hNE1S31SkvJnSCWgYcGrlR2XSKrn1AJObADBT+x+6dcNgOQx/F2Uyf0+vyyXMSgR1396NsdN9uEMgNmdz2+aYI+PqwF8tM36Ih1EvbW6+lx1eIS5mvImW76FWFWrAExKvivpqK2G5JU0h7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FeFHczlX; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee130237a8so4365121f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:50:55 -0800 (PST)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-429c2f6a580so1685184f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:50:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762354254; x=1762959054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxFsnMA9mRTRiSe0nOFLXrbbhFFoy8CeiOo3gwfHLbQ=;
-        b=gy70U9582vQB5xTbnbvQeu/ev+CARvyBRSyHPVc7Cpkggg/FZVq7VOaVwHJWdQVzJs
-         3qG4dhn1zjyNvWLQXGQmoVRbfkkKJ9h9Xam0ulgV3eSCXRrsYi9XLpFJBuDviTLZL+p4
-         m9sQSVGfevIdYJV3ZPUOxaA1qlECXMJ+2Q+vtm9ScxlF/xS5Dz6oXecUbEQQf7uqBQMQ
-         5PsUqknaGcTzKA71vx9dtWXY1q+VZmOX9y91zzF4o3LeTysArtF5h29vMg8paigi3zfp
-         btlJ9g8FS/pL1sgrsNVgvVXRNxJlX1uOIhHsaOP3sNJKz1zTn+oT6gLO84WJiowfMvzF
-         PNmA==
+        d=suse.com; s=google; t=1762354255; x=1762959055; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5iqpU7301ZddzKgkBJ5b+qets1xyPEBx6ArgKTOvQVg=;
+        b=FeFHczlXxH385gVhfQit/crSWV+w98r5GrQopgF6J8k1z2JHuflftFGcZffBvnVi93
+         orO+1P0yiNznRWjwbovh+mznlU49lLk4izxM102Ngm74DX/1rTyg7oX0shELO2psy2Sk
+         jWxTTfgTmGF+eaEZWBiL1NxahyB2WLX1gh/EbHQvu7NdeNP96ZaWmJeC0YaWPBYgupNi
+         z4rHxZ6UzgRaAxjbAOFaR6DtvC2tmdB/PZbBBDA9UcECRGg1/hjl5oFt1Gd/qm+aFIsN
+         DZJfnzitFyO8PYXuVlOut5Hr8mm9Xgk2ohGwhGfgjC//u8QBMH28d7PxvYsyGO2Zkw9A
+         iZTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762354254; x=1762959054;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OxFsnMA9mRTRiSe0nOFLXrbbhFFoy8CeiOo3gwfHLbQ=;
-        b=vwqFzeegMFbXoGw1dsKdQfYxTlMk0IxH4CimXoud7WrtqvbMf5VaWzz+u4m7qqeth8
-         ucT4311uUpcgv2nF5JjSrFFOyqqEgaJdBf910GWpVkEaQWBoMJBRNH2331UbMesRTqPW
-         lQA3lWbfTBkiXVrcizZ2tMFoispAMFb5W9s6CkFVc3zsjA3ZxwYf2BsZLOzgB7CuXXmH
-         twkJ9+n7qYyVLfjI6L3BMybfUOPacd9/MdMv6MatKqGvN7Ae0m9n3/8LLMcTXsASXiN1
-         ugNRjnHVCTdbEKHu/Irw31GCMGZGLNA27XVvL3/UafO0ujbX9U5o8BNsPWZRjit6yUoF
-         MCzA==
-X-Gm-Message-State: AOJu0YwSDRGQDOcXQTPrY6+5Savw1DSN4TAp8v/hsDm5Cjc+0sXxt3/G
-	EYnCss4cQXwMTQMwcoUavn6otWdyBNkxLYgqKCa7Wj0QnxFOT+dbfvX6cpEPhSKdI98m7W+9+l5
-	00ywp
-X-Gm-Gg: ASbGncvFMeudsveiavgJw+h2uD9l8ZGqWwholGN11s9JxFsk0/DaGx8uJs0qCENQtQE
-	bZqNdwh6vUfRDIqDwImkX4j+R7yLtX7P4xvbNoIurxXbjbDOPRkTCRuJpmd+I/51HKfrdpXjpC7
-	TJanUv6XLhhjTBEWH1T2QJMHNQlNcNPnwcdtrsPvJi3R+l0dolk6S1m1hTuvyLK8OERU9dJcL2m
-	zUF6D7KCHckdS9Tj+h7rwLyM9c2R6s47btuuEx9UaPwVf5o4bN7v4oaXs48Q3XkCXK4bL5XhQ15
-	V0yRomC5LSfYR3FbzYXJctWoKmQ9Z339YkwcTaTiRJfyn16t8Sk3ldx3sp1p4GGisz76BDQJwU9
-	RfwtjAdzgVHMyeg+SgRvmx05R73bMzF32If/aKD5SiDz1dX4Qh/8M4FIXtEfdlRQIEX/c/UXzKe
-	cATW9G/6bNVGGgi26D3CYVGtE=
-X-Google-Smtp-Source: AGHT+IHo6EfCx3qMEtwlwpO7+vL3gANNLC57V9Vp+QrpOWGUp+tf1ZuveBJQR8sQocotcTRWWlh73g==
-X-Received: by 2002:a05:6000:60f:b0:428:bb7:174f with SMTP id ffacd0b85a97d-429e32ed31emr3767404f8f.26.1762354253783;
-        Wed, 05 Nov 2025 06:50:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762354255; x=1762959055;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5iqpU7301ZddzKgkBJ5b+qets1xyPEBx6ArgKTOvQVg=;
+        b=mVdUNqyS2MI3KCOP9osFAUi+UGNSqvsntoPdfa1JHppHqc1HxiZng1G4wZl5/QgJ9c
+         U2O2slWeEnFH8alUFtick3SgPlDchubfF64J3Rk+BEdaUUBaatgxlunQC/twXRyOIfxV
+         GQzos3HBOpgfxgMX1VV2m98eRAlsjoZSthqtzaTayqO4nzyWLrRfQ341tOTnYkLer6P0
+         WK8DbRgVWbr4KvW3NETetOIOcRmI8MbX/EUvOTfMfTNZbh+EycCClYgHTI+RYTQM0lDn
+         ULkcPif6wsBHPBuaLRbXriV7RDsvYJPRqnGWDaVWSR1y8LNDK7Th8JGzuCu9+DXNiSAL
+         nZIg==
+X-Gm-Message-State: AOJu0YwEIcuzGL/5d0EDKlXCLTkWD07pLwbzNgQDa0HHaXD/egc6EQrD
+	i9lbruI0w69h9vfX/Ah8fFzU3+/I5lYFK4bKWhc/qfQ+hDkUMIt5cpDfcgFcoCWoH7rZ4nuCFzm
+	5eEer
+X-Gm-Gg: ASbGncv14WLAjHgw0A1r3aYneq8zeNwotB/rdybz0z1sGPCnfQPHIpSXPzjx8JWd4t9
+	0fIHMcATWRb24JjoQOnW8Hz+LTL5agSS7y6pl0hUKNEULeglYN07idOmHNPPBzfyKirbC4BBP3Y
+	UNN3IxgACmeI2FMm1/jT5uptrXKyoami5NrVXYobOPVPz/WISotKbcjLIwwxhfdgqgbr45LNB8m
+	2soxRjS9URpf5KKvTi3IJeg6YLPUxD+N4A/RnrgoddKRvnkFniZ/ApnPVEZAwwFYG2Hxifkc6Mz
+	q5V+SBBEQMemV9epwUmFu+hv8C5nluY8yN0TFR3PHEEyHyreUWLBVuKE25UzW1hJClGh6fFPhHa
+	proJ/PlXje6ooMlykL82pslzHHt0TTCiarx8Wm4WWmqhlGBCmXAvl8yaedN3DL4DabHuNBVvVOa
+	gF8KBrR0VNJLBpKSSb7uDiUY4=
+X-Google-Smtp-Source: AGHT+IFrhRlSR2BV3K3SsNYVanRi/LbVHaUuwWiyIlYFXbJgyiRM66Wm0VZiulUCa1X98AgblCJWxQ==
+X-Received: by 2002:a05:6000:210c:b0:429:c851:69b3 with SMTP id ffacd0b85a97d-429e3307472mr2299746f8f.30.1762354254929;
+        Wed, 05 Nov 2025 06:50:54 -0800 (PST)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5ccasm10662873f8f.25.2025.11.05.06.50.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5ccasm10662873f8f.25.2025.11.05.06.50.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:50:53 -0800 (PST)
+        Wed, 05 Nov 2025 06:50:54 -0800 (PST)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-bcache@vger.kernel.org
@@ -82,38 +84,21 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Michal Hocko <mhocko@suse.com>,
 	Coly Li <colyli@fnnas.com>,
 	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 0/2] replace system_wq with system_percpu_wq, add WQ_PERCPU to alloc_workqueue
-Date: Wed,  5 Nov 2025 15:50:41 +0100
-Message-ID: <20251105145043.231927-1-marco.crivellari@suse.com>
+Subject: [PATCH 1/2] bcache: replace use of system_wq with system_percpu_wq
+Date: Wed,  5 Nov 2025 15:50:42 +0100
+Message-ID: <20251105145043.231927-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251105145043.231927-1-marco.crivellari@suse.com>
+References: <20251105145043.231927-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an
-isolated CPU where "delay" value is 0 or greater then 0:
-        schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-        schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
-
-Currently if a user enqueue a work item using schedule_delayed_work() the
+Currently if a user enqueues a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
 WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
 schedule_work() that is using system_wq and queue_work(), that makes use
@@ -121,42 +106,108 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistency cannot be addressed without refactoring the API.
 
-=== Recent changes to the WQ API ===
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
 
-The following, address the recent changes in the Workqueue API:
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+system_wq should be the per-cpu workqueue, yet in this name nothing makes
+that clear, so replace system_wq with system_percpu_wq.
 
-The old workqueues will be removed in a future release cycle.
+The old wq (system_wq) will be kept for a few release cycles.
 
-=== Introduced Changes by this series ===
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/md/bcache/super.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-1) [P 1]  Replace uses of system_wq and system_unbound_wq
-
-    system_wq is a per-CPU workqueue, but his name is not clear.
-
-    Because of that, system_wq has been replaced with system_percpu_wq,
-    keeping the same old behavior.
-
-2) [P 2] WQ_PERCPU added to alloc_workqueue()
-
-    This change adds a new WQ_PERCPU flag to explicitly request
-    alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-
-Thanks!
-
-
-Marco Crivellari (2):
-  bcache: replace use of system_wq with system_percpu_wq
-  bcache: WQ_PERCPU added to alloc_workqueue users
-
- drivers/md/bcache/btree.c     |  3 ++-
- drivers/md/bcache/super.c     | 30 ++++++++++++++++--------------
- drivers/md/bcache/writeback.c |  2 +-
- 3 files changed, 19 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 6d250e366412..8ce50753ae28 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1388,7 +1388,7 @@ static CLOSURE_CALLBACK(cached_dev_flush)
+ 	bch_cache_accounting_destroy(&dc->accounting);
+ 	kobject_del(&d->kobj);
+ 
+-	continue_at(cl, cached_dev_free, system_wq);
++	continue_at(cl, cached_dev_free, system_percpu_wq);
+ }
+ 
+ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+@@ -1400,7 +1400,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+ 	__module_get(THIS_MODULE);
+ 	INIT_LIST_HEAD(&dc->list);
+ 	closure_init(&dc->disk.cl, NULL);
+-	set_closure_fn(&dc->disk.cl, cached_dev_flush, system_wq);
++	set_closure_fn(&dc->disk.cl, cached_dev_flush, system_percpu_wq);
+ 	kobject_init(&dc->disk.kobj, &bch_cached_dev_ktype);
+ 	INIT_WORK(&dc->detach, cached_dev_detach_finish);
+ 	sema_init(&dc->sb_write_mutex, 1);
+@@ -1513,7 +1513,7 @@ static CLOSURE_CALLBACK(flash_dev_flush)
+ 	bcache_device_unlink(d);
+ 	mutex_unlock(&bch_register_lock);
+ 	kobject_del(&d->kobj);
+-	continue_at(cl, flash_dev_free, system_wq);
++	continue_at(cl, flash_dev_free, system_percpu_wq);
+ }
+ 
+ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
+@@ -1525,7 +1525,7 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
+ 		goto err_ret;
+ 
+ 	closure_init(&d->cl, NULL);
+-	set_closure_fn(&d->cl, flash_dev_flush, system_wq);
++	set_closure_fn(&d->cl, flash_dev_flush, system_percpu_wq);
+ 
+ 	kobject_init(&d->kobj, &bch_flash_dev_ktype);
+ 
+@@ -1833,7 +1833,7 @@ static CLOSURE_CALLBACK(__cache_set_unregister)
+ 
+ 	mutex_unlock(&bch_register_lock);
+ 
+-	continue_at(cl, cache_set_flush, system_wq);
++	continue_at(cl, cache_set_flush, system_percpu_wq);
+ }
+ 
+ void bch_cache_set_stop(struct cache_set *c)
+@@ -1863,10 +1863,10 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 
+ 	__module_get(THIS_MODULE);
+ 	closure_init(&c->cl, NULL);
+-	set_closure_fn(&c->cl, cache_set_free, system_wq);
++	set_closure_fn(&c->cl, cache_set_free, system_percpu_wq);
+ 
+ 	closure_init(&c->caching, &c->cl);
+-	set_closure_fn(&c->caching, __cache_set_unregister, system_wq);
++	set_closure_fn(&c->caching, __cache_set_unregister, system_percpu_wq);
+ 
+ 	/* Maybe create continue_at_noreturn() and use it here? */
+ 	closure_set_stopped(&c->cl);
+@@ -2531,7 +2531,7 @@ static void register_device_async(struct async_reg_args *args)
+ 		INIT_DELAYED_WORK(&args->reg_work, register_cache_worker);
+ 
+ 	/* 10 jiffies is enough for a delay */
+-	queue_delayed_work(system_wq, &args->reg_work, 10);
++	queue_delayed_work(system_percpu_wq, &args->reg_work, 10);
+ }
+ 
+ static void *alloc_holder_object(struct cache_sb *sb)
+@@ -2912,11 +2912,11 @@ static int __init bcache_init(void)
+ 	/*
+ 	 * Let's not make this `WQ_MEM_RECLAIM` for the following reasons:
+ 	 *
+-	 * 1. It used `system_wq` before which also does no memory reclaim.
++	 * 1. It used `system_percpu_wq` before which also does no memory reclaim.
+ 	 * 2. With `WQ_MEM_RECLAIM` desktop stalls, increased boot times, and
+ 	 *    reduced throughput can be observed.
+ 	 *
+-	 * We still want to user our own queue to not congest the `system_wq`.
++	 * We still want to user our own queue to not congest the `system_percpu_wq`.
+ 	 */
+ 	bch_flush_wq = alloc_workqueue("bch_flush", 0, 0);
+ 	if (!bch_flush_wq)
 -- 
 2.51.1
 
