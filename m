@@ -1,181 +1,223 @@
-Return-Path: <linux-kernel+bounces-886866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28D8C36A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:19:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF725C36C98
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129871A2747A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57DD644A54
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A715541C63;
-	Wed,  5 Nov 2025 16:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5F7337B8D;
+	Wed,  5 Nov 2025 16:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B3XxEGBN"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010068.outbound.protection.outlook.com [52.101.56.68])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="baFM0iyx"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B33346BD;
-	Wed,  5 Nov 2025 16:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359140; cv=fail; b=Vh5AhVzbA+A9HSzHanPzpVa/YXAMd4fkvcer5tXFCoy5CPh6SCY5iVUOwQuionGqedtXU/n8WXAn4pIBK02jZQ8a60SJ6SbuLSJ7xhCrh7IsRTRZ7CrK0HaI4kPo1NFKISmeZYOSZ+dJeF0CaXifEoq6G/3x1MEnl8l+Zec0dnY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359140; c=relaxed/simple;
-	bh=rXLbcLyMTI63Kmkb2h/Z8n11C5dd4MMgafDQ75DgmlY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NacTrXur1VEiuxZaBCFQlTRZ3Rg+PYK7I+STVnaPz8PWWDkRRTP35b54W3WN2ktiSX2jY6A56efYymUsROu7rQgBiQaZoO45CYi09TjAwHQ3+7YEwYt1tfrSY1q57v5lpXJNM1tZDGGJwsRMoWIpGLB9APHvJQoLhSLcagdwvhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B3XxEGBN; arc=fail smtp.client-ip=52.101.56.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wsFkHZ8L2DwO4hWeyezk6UfSgcrw10wycdth8dyGr1AvPcqkxTxOOlcSKllVXzlWeUw0VzSO6mTEKK25Ge3lwH8qFPt667k3tp7jrfMO2OPMTII1KFdoxCvOtBtcLTtGdIWwixrJNkFoXhSUGep4pmF6SCelBQjNZnYy3+XrkC7IkusCfS7gX9Rm2w12fFaSSYuokFaaEmZ/ZvacErl/bWHI3XEKIARIPsXnsT6qnqm3E3uXyF5nWxu6X47o4zw8SHW83Ilquj3Bn4PlH0B8RqXSz74UzjO05ZAl8kIYd8jR/HHhDXQsCai4hg2MFe5r9tyaasdhjr/SqX6Jc96BqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=feARJwxnvGP0I3HbLSmydcDlRPqxwkDIDzTx33ZT2pY=;
- b=Nk+S4ABW6hAdjScrgYgz7QAlNvGBCjGgKKt+u8AQM0k2lWpeynh/i4isiAcvUckg1DeQav8DhEZ7KzOpTooiMkLS070GQyh4TwGbjIy/0bkwZfFPnja4a2sWaala5TOkZps33bhIkmWcRWCXEubtgeepzkHlBYfcZuV4aweZPi8kOggMooAu5ccRAcdhAjd2j176HzvaODsNYIqXcX/mCTNMTHYbtJcrn6rvfkulfs1yVgYtr071PD1Juby8+7jjf7NW6ig9ZInj0LBcxmE+sqzUPgGDP0yJOXgpAJHLgPa5sVS31o+Ohh2rTji68n9mvXeVBciPUYdBZF9vz74HzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=feARJwxnvGP0I3HbLSmydcDlRPqxwkDIDzTx33ZT2pY=;
- b=B3XxEGBNSJDlEVsIT11Qkw5y0OdLF5M+umNMwTLqtg6RaOC1l5XNM8Oq0AwVHPlnLNKnloxat+SH48GvpBxGm8+ZoCuNsPcUQZDDMj6R9m7MeS8scNKswpMEGgiGHfikwddOg3S3v1B7Re6YwEwyEz6x9XyKr3iWeXz93HyZoAQ=
-Received: from PH0P220CA0020.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:d3::34)
- by LV3PR10MB7940.namprd10.prod.outlook.com (2603:10b6:408:20f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Wed, 5 Nov
- 2025 16:12:03 +0000
-Received: from SJ1PEPF000023D7.namprd21.prod.outlook.com
- (2603:10b6:510:d3:cafe::a5) by PH0P220CA0020.outlook.office365.com
- (2603:10b6:510:d3::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.8 via Frontend Transport; Wed, 5
- Nov 2025 16:12:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SJ1PEPF000023D7.mail.protection.outlook.com (10.167.244.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.0 via Frontend Transport; Wed, 5 Nov 2025 16:12:02 +0000
-Received: from DFLE214.ent.ti.com (10.64.6.72) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
- 2025 10:11:55 -0600
-Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE214.ent.ti.com
- (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
- 2025 10:11:55 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 5 Nov 2025 10:11:55 -0600
-Received: from a-dutta.dhcp.ti.com (a-dutta.dhcp.ti.com [10.24.68.237])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A5GBldM3979508;
-	Wed, 5 Nov 2025 10:11:53 -0600
-From: Anurag Dutta <a-dutta@ti.com>
-To: <broonie@kernel.org>, <khairul.anuar.romli@altera.com>, <vigneshr@ti.com>
-CC: <u-kumar1@ti.com>, <s-k6@ti.com>, <linux-spi@vger.kernel.org>,
-	<gehariprasath@ti.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] spi: spi-cadence-quadspi: Remove duplicate pm_runtime_put_autosuspend() call
-Date: Wed, 5 Nov 2025 21:41:46 +0530
-Message-ID: <20251105161146.2019090-3-a-dutta@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251105161146.2019090-1-a-dutta@ti.com>
-References: <20251105161146.2019090-1-a-dutta@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5663370F3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762359147; cv=none; b=FC5vTuezU+0On3BXJ93neUcxwsZqfiwmgBYN4DXqLstvDvg/bd/as1ZHQDXJqArIAAR06hQNJ5B5sA/MLDe0QKGSUG4CT3AlVH15TC4vNq8Qn1cfOho1tznE/isvPpgEzeSPTGGZmm3m7x17K1bvGM+XQgM84NeDiQKRIQWfpow=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762359147; c=relaxed/simple;
+	bh=JV1piMY9FWz2kSzJwBr1bGiqxTKtVt93I5kC9mSL670=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=tt4QP7Kh5dqaGIsR20DpZ483kmoxjiOd8QA2035cWFpLKhxK2PW3saRd25Gg6EAJIWZc8FLOq8ptnVV7vJirPEmQs5EShAXVRONVGcy8M5LbAzrNYJMwNXDkSk8nvxgLreIcOgN54gYiTlwjxtcI5pxVVRjblD2o5yi5Xc+s1Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=baFM0iyx; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D7:EE_|LV3PR10MB7940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 190b7282-818a-4656-24a8-08de1c860e36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|34020700016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TyX34dbHcvKYz7bqewtN1W7SpIRmy4QxlQ+Xe6GQ7KSScMELYxfzUj7iaY+5?=
- =?us-ascii?Q?hqGnMuk//stoO9cgtzO/QiNigeI4kMWwazvMsutlZyR8ivbj1XvWL908oZ8q?=
- =?us-ascii?Q?OmAI8+r1qA4xjNXs5fBdvQZz6k2kBENAXE3ECfA0zBNPRtCInP9ZTKXeQG5g?=
- =?us-ascii?Q?nQXUN5dbPQTixOsLGsR7GzEEv8hRcgXGIY2NGGX6loSBw+iYmpcosGNLTKOz?=
- =?us-ascii?Q?WRHYudQElFmBRB87ewe/1huNAX34UFAsxjQdodL+fdPzz5SvI7KlQG1RIEoV?=
- =?us-ascii?Q?VAwLqJOTDq+uw2ZZTRxbxton3lkk/QbvEIhVZk9HmiYMpLhL2nhavrcvwSll?=
- =?us-ascii?Q?WAODRqGR70ynOqhHM0rC2wHrj9UxSu4EZTUc+iR+5O7oBLfoU9febm04IN9M?=
- =?us-ascii?Q?0wcrEh1AOZKdjznHQU2ev21IzSsyndoFfy27ekGcHN6eBNrjnycEK2tYSfum?=
- =?us-ascii?Q?uYLlHELgd+HvhNUBgjo2wwj1G123IVQO3S04Gsyy27uz7qA6rY/9tZhewXOy?=
- =?us-ascii?Q?ydInkcnZTCa+ChRvPKXagtiOnCcalR3LGa7Q8Pq2LrSI9sJiGXNsl1c8OeCw?=
- =?us-ascii?Q?jEsvQXIbAko2oobP1J7Y04hTxnSFaKb3gaFfvMB7POVFIPuCWNP4Z7K6CYM3?=
- =?us-ascii?Q?d9d71XSqawn03tAbQSRD/pMfryOlvZRz1cBBNRdzOnjJqyrljHxQ87rZSg3z?=
- =?us-ascii?Q?CnA0dRhIkUCdLeiF3nGOaScQ2tgKtCc1LBLR9Np9ql3NAVJaQJ3zE921DKIV?=
- =?us-ascii?Q?bZXFyKqgAEhsl6ZCH+V2Fr1EL/+tSslcDjlksK95xduslaWUNrZRZpsV66hb?=
- =?us-ascii?Q?4aW4HG7fptEV1y9+3/SHDI0JHRt4X0dvrlZcuHOh4Wrgw/6NcOpLa6JdLKc0?=
- =?us-ascii?Q?mCMBR8MhBGtdCrd4sFgqRbFHRJ5j4Aojx4Y+hrDKE9+o/hmNBQWEnFWLz98e?=
- =?us-ascii?Q?XUkbEMfuQaQfHLdtpbzIsZtS2uxgfuLXbo3yPPuKD8qjXDtB0yg6jbGgCxVn?=
- =?us-ascii?Q?mxagRNaBqV+PmNLdbjlDqMgG3jRfwYOCxYB067ynD399zxQg/XfhxYbX72UL?=
- =?us-ascii?Q?bPo9wIxki++4QBAIC8N8ee/DnGVbyHuiDJkk05kMGV8m3gCzRfSGcCMw2oIJ?=
- =?us-ascii?Q?GZyrA7lKlPVL0/XfouXOjWgDnAh6vvOTWH9P8OpPDF3tcQHJMn0ntYa6Itph?=
- =?us-ascii?Q?E/FytjWHuaprvegxw10OfaytIFQBitjO368keOwKGJt62w86JEMHVthdZQ7j?=
- =?us-ascii?Q?i/90yhCLemuUDXFDEDvMBsaBhXgBQVHw2KbQTsb8mYjcaE4cVewV5HuwHehq?=
- =?us-ascii?Q?oFyh3N006rzQvjaezzTyqFTkhWCBwJW++AvQ7513g64M3TD2MlDX8HfBtEfY?=
- =?us-ascii?Q?hrRMSXB7O0a+SkKzdPUDhA9nGg/fyvjW+K7jTk0rDbM6q6HTuXWH99vkUMQz?=
- =?us-ascii?Q?cP5vYkHGR0//1OqCLCzp1MIggdrpzCD+SCqO5iN1sOOAeqiGVvs5uKpsl7lF?=
- =?us-ascii?Q?QEWtxmYk4Q8POYRLi0vr2+fgObTz67QAIyHPHS5XdF3e61uzI3cYw2bDSTq1?=
- =?us-ascii?Q?olUfiSUtnpfT7NGhjNg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(34020700016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 16:12:02.1472
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 190b7282-818a-4656-24a8-08de1c860e36
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D7.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7940
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762359133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WeV2eLUSuSC3/7iM2Op1hOrd03eB07H/sYIO5UnkqUc=;
+	b=baFM0iyx/644TXbP264AjlW1hrp+adGSBbouysT9eCsZZ3ETuFrLWy9FzSI4zuuvM5TFDC
+	newPzkAqxcA7ZDBXqoi8d/E8pyATVRRdcHzCBzxWE8i87FuUGdvMC8fy061exlb2zZie0x
+	K04dxU9GXpFjCfaBg0nPGYZqRdkyrcY=
+Date: Wed, 05 Nov 2025 16:12:08 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <b5f67a681be12833efa12e68fc3139954b409446@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net v4 3/3] selftests/bpf: Add mptcp test with sockmap
+To: "Matthieu Baerts" <matttbe@kernel.org>, mptcp@lists.linux.dev
+Cc: "Mat Martineau" <martineau@kernel.org>, "Geliang Tang"
+ <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman"
+ <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong Song"
+ <yonghong.song@linux.dev>, "John Fastabend" <john.fastabend@gmail.com>,
+ "KP Singh" <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>,
+ "Hao Luo" <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Shuah
+ Khan" <shuah@kernel.org>, "Florian Westphal" <fw@strlen.de>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+In-Reply-To: <665825df-b995-45ee-9e0c-2b40cc4897ee@kernel.org>
+References: <20251105113625.148900-1-jiayuan.chen@linux.dev>
+ <20251105113625.148900-4-jiayuan.chen@linux.dev>
+ <665825df-b995-45ee-9e0c-2b40cc4897ee@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Fix runtime PM usage count underflow caused by calling
-pm_runtime_put_autosuspend() twice with only one corresponding
-pm_runtime_get_noresume() call. This triggers the warning:
-"Runtime PM usage count underflow!"
+November 5, 2025 at 22:40, "Matthieu Baerts" <matttbe@kernel.org mailto:m=
+atttbe@kernel.org?to=3D%22Matthieu%20Baerts%22%20%3Cmatttbe%40kernel.org%=
+3E > wrote:
 
-Remove the duplicate put call to balance the runtime PM reference
-counting.
 
-Fixes: 30dbc1c8d50f ("spi: cadence-qspi: defer runtime support on socfpga if reset bit is enabled")
-Signed-off-by: Anurag Dutta <a-dutta@ti.com>
----
- drivers/spi/spi-cadence-quadspi.c | 1 -
- 1 file changed, 1 deletion(-)
+>=20
+>=20Hi Jiayuan,
+>=20
+>=20Thank you for this new test!
+>=20
+>=20I'm not very familiar with the BPF selftests: it would be nice if
+> someone else can have a quick look.
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 56906dc76b34..8e0df08609c0 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -2012,7 +2012,6 @@ static int cqspi_probe(struct platform_device *pdev)
- 	}
- 
- 	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
--		pm_runtime_put_autosuspend(dev);
- 		pm_runtime_mark_last_busy(dev);
- 		pm_runtime_put_autosuspend(dev);
- 	}
--- 
-2.34.1
+Thanks for the review. I've seen the feedback on the other patches(1/3, 2=
+/3) and will fix them up.
 
+
+> On 05/11/2025 12:36, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> Add test cases to verify that when MPTCP falls back to plain TCP so=
+ckets,
+> >  they can properly work with sockmap.
+> >=20=20
+>=20>  Additionally, add test cases to ensure that sockmap correctly reje=
+cts
+> >  MPTCP sockets as expected.
+> >=20=20
+>=20>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> >  ---
+> >  .../testing/selftests/bpf/prog_tests/mptcp.c | 150 +++++++++++++++++=
++
+> >  .../selftests/bpf/progs/mptcp_sockmap.c | 43 +++++
+> >  2 files changed, 193 insertions(+)
+> >  create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
+> >=20=20
+>=20>  diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tool=
+s/testing/selftests/bpf/prog_tests/mptcp.c
+> >  index f8eb7f9d4fd2..56c556f603cc 100644
+> >  --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> >  +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> >  @@ -6,11 +6,14 @@
+> >  #include <netinet/in.h>
+> >  #include <test_progs.h>
+> >  #include <unistd.h>
+> >  +#include <error.h>
+> >=20
+>=20Do you use this new include?
+
+"EOPNOTSUPP" I used was defined in error.h.
+
+> >=20
+>=20>  +
+> >  +end:
+> >  + if (client_fd1 > 1)
+> >  + close(client_fd1);
+> >  + if (client_fd2 > 1)
+> >  + close(client_fd2);
+> >  + if (server_fd1 > 0)
+> >  + close(server_fd1);
+> >  + if (server_fd2 > 0)
+> >  + close(server_fd2);
+> >=20
+>=20Why do you check if it is above 0 or 1? Should you not always check i=
+f
+> it is >=3D 0 for each fd?
+
+My bad, ">=3D0" is correct.
+
+> >=20
+>=20> + close(listen_fd);
+> >  +}
+> >  +
+> >  +/* Test sockmap rejection of MPTCP sockets - both server and client=
+ sides. */
+> >  +static void test_sockmap_reject_mptcp(struct mptcp_sockmap *skel)
+> >  +{
+> >  + int client_fd1 =3D -1, client_fd2 =3D -1;
+> >  + int listen_fd =3D -1, server_fd =3D -1;
+> >  + int err, zero =3D 0;
+> >  +
+> >  + /* start server with MPTCP enabled */
+> >  + listen_fd =3D start_mptcp_server(AF_INET, NULL, 0, 0);
+> >  + if (!ASSERT_OK_FD(listen_fd, "start_mptcp_server"))
+> >=20
+>=20In test_sockmap_with_mptcp_fallback(), you prefixed each error with
+> 'redirect:'. Should you also have a different prefix here? 'sockmap-fb:=
+'
+> vs 'sockmap-mptcp:' eventually?
+
+I will do it.
+
+> >=20
+>=20> + return;
+> >  +
+> >  + skel->bss->trace_port =3D ntohs(get_socket_local_port(listen_fd));
+> >  + skel->bss->sk_index =3D 0;
+> >  + /* create client with MPTCP enabled */
+> >  + client_fd1 =3D connect_to_fd(listen_fd, 0);
+> >  + if (!ASSERT_OK_FD(client_fd1, "connect_to_fd client_fd1"))
+> >  + goto end;
+> >  +
+> >  + /* bpf_sock_map_update() called from sockops should reject MPTCP s=
+k */
+> >  + if (!ASSERT_EQ(skel->bss->helper_ret, -EOPNOTSUPP, "should reject"=
+))
+> >  + goto end;
+> >=20
+>=20So here, the client is connected, but sockmap doesn't operate on it,
+> right? So most likely, the connection is stalled until the userspace
+> realises that and takes an action?
+>
+
+It depends. Sockmap usually runs as a bypass. The user app (like Nginx)
+has its own native forwarding logic, and sockmap just kicks in to acceler=
+ate
+it. So in known cases, turning off sockmap falls back to the native logic=
+.
+But if there's no native logic, the connection just stalls.
+
+
+> >=20
+>=20> + /* set trace_port =3D -1 to stop sockops */
+> >  + skel->bss->trace_port =3D -1;
+> >=20
+>=20What do you want to demonstrate from here? That without the sockmap
+> injection, there are no new entries added? Is it worth checking that he=
+re?
+
+That's redundant. I'll drop it.
+
+
+[...]
+> >  + if (client_fd1 > 0)
+> >  + close(client_fd1);
+> >  + if (client_fd2 > 0)
+> >  + close(client_fd2);
+> >  + if (server_fd > 0)
+> >  + close(server_fd);
+> >=20
+>=20Same here: should it not be "*fd >=3D 0"?
+
+I will fix it.
+
+Thanks.
 
