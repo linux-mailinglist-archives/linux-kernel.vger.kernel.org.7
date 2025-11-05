@@ -1,142 +1,102 @@
-Return-Path: <linux-kernel+bounces-885913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B948C343BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:33:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3B7C343C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55691897836
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:34:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD50C4EBA89
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB082D372E;
-	Wed,  5 Nov 2025 07:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4047C2D23A4;
+	Wed,  5 Nov 2025 07:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kloU0qfy"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CK5VLrZO"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B012D2483
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5107F20E005
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762328007; cv=none; b=H6tQ2lFDLf69tWGbm4WhOuf/rtr0CyXF8Q+tJlpEWe7djHvrmuphPLO27B/FQFjFLz0xAQiFswbRnPGErRHf9X7W2WAanhpFZVVdLk4zpr35LrnzmvDlVCPZInQOBYJV1w+JqL9Vu/09eFGRankTuKlRjkeDN30sAzsHkZUQK3w=
+	t=1762328062; cv=none; b=DRPSCs5pwtjtrBPVSqW5aTDNCErzriYvzYA3OwJ9h5On5LFU3UqD3XC6DGLMmjphfFw7fDVNAWQ9unYefVNqIpFTnRT6DLuuT6GXZ2XneKpFrae+vJVbcxUctr9YX1wCdKCXMMTyY0Y2ryjeZOka7j+/9AWTprrZiRKtgVuHOgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762328007; c=relaxed/simple;
-	bh=DDaCbS5eQ5rAhivigtNpf/DuFwnezvzyln+B6kkKZXI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hmu9b7nnhwGOyU2UFHh8xR+NBXPS/tTRxLts9uHlMjbq++cD8DRS2Dzq6YJcfsULuPfM7CwArZ/ZefWGHX+KxNc4Rpsfpmbi4V4ErNW8lvuMcXRJG7Qb8EUppKSFjSQB6ZCw6ddbDzDuQjaSxYTNBlSiIJPf4DhSA1YayJxQn2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kloU0qfy; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2956d816c10so40957425ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:33:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762328005; x=1762932805; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0mgd1RgFz8T9cqpU6ApJmDoOMdsD64BrgKz2Bds3lYc=;
-        b=kloU0qfyt7942w9mk5lKk/4+qcxs6yi8+hwh6VRieq5xQX9QV9T83hlUs+JEOzDRup
-         YN+/yCp+0NlpXk9C8kndSIaYSy0HMIHtcUy5Ao2lU7Pri2GcbY1r/dHijUzKg+uDzOHA
-         ObHCZSmEZQuvoUgAaIt9P7R3mkPGpLzvCgJ2IlXC+Qi+k84Gg+TSGsIJ/Y493vOKJr5y
-         /7NB45RnhdL7HB+kPDpWiHGB+3H+yuS8gWJzvHRi69hehlCn2I6D+WZcoq9GMUGo0j0T
-         if8akd3knelatLDFjaTNffmoxnF9UhJ52/w/mN+YAXc4Fr1jP4zuHjJtuRvE9R+o72gC
-         nGiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762328005; x=1762932805;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0mgd1RgFz8T9cqpU6ApJmDoOMdsD64BrgKz2Bds3lYc=;
-        b=q1JtE74lRHKipwvLbyhdqzQvp79p6Cfw5zQBaXkF1I0HMhpiJdSBHt9R/KjhC4V6c8
-         8TSqLIreW4S/2dPdL/gm98JVT3mYswzHps4s1I98ICoY6klghKyyEBpXJ0gUbtUrDuTp
-         hmBiJo2O0ZIKLxcbWbHSDwkyYYo4W8xnJv7qZIrJnpdPnnDG3bfSvxX5u8NVVbOW0U9j
-         sAE3PWdhZfU9ZVcyZsEKSKGlCzOure7f1vUnIXTG9LGJABk2e9Ov+FXX/6FkS2ZiErOc
-         723o8rhp6SF3nlY0FZoJjXsd9FpybZWxaCUUieueIdeb2EWFQKfJP2pWj1MksebRa1Pz
-         uAJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvAsyC+erlMfRrU/t3wR6RPw10LvFXuPlzOw3bMt3VI4UAFQ+64JjIz3HeXwm37IlE4b1JRfMlPjNYMgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUpsBRh7hFH0Y2yofEIsW3ND5dKxP2GtimDi/1vmR/RJkw6e+Y
-	F5PX+YE3rp2Nt0hI/g8BVsFdn5uMMNkz2vBe01mTTtU5HonzA+fyKsvB
-X-Gm-Gg: ASbGncsPbsRkwkO/zxker96vHRRc1ZE+etExIWbWYwHyoo1i4tmRP+HxpcXnYV4UaAg
-	Kb8aps5vVoGBXTEnauZ4kvzvne2txI0J9ZZCj7LkcO7n/zjtFwmKnBGvZlzPlfx0dy4uOt/9idu
-	0Jsmcp+WEIdpF+csgj/3G9txwTZ8DfsVdgzNao2nql968v0TTPCvseu+E3nDODw7DOVXxZhp0oi
-	yREgQH2NB74TeGr4xiiuhwQ2QGHxu1qpvwjhlbaRbiPCLkD3u1/peu4djGhmMrDmvgjdnsqWDQT
-	3Ox+u1GmQ8cgQDpXzCVnIo5yCzUwv1jeSgkescF8svX7gVn+UvRZozBbCSyrYDiF6iqvp1b97gB
-	6KH0q/rAdxmr8jx9TkLoPhX3gL/7DSfYfMqAX6z0N0A1gRRzO2Qajo6u8yYfqaEyvrnKhcduVMw
-	tm2+prmzHYp9vgCgLCXvQK7gfuDD56Yl+a5q3+2vt0OmOLcA==
-X-Google-Smtp-Source: AGHT+IFubJwKuqWd8pVU5sU0Dqp6g9b5LXMrACB9qO8Ucy5yzYtRavb/690KX+eucTG0f1YcnGaOIA==
-X-Received: by 2002:a17:903:2381:b0:295:8c51:6505 with SMTP id d9443c01a7336-2962ad95597mr33842095ad.33.1762328005013;
-        Tue, 04 Nov 2025 23:33:25 -0800 (PST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp. [210.128.90.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998991sm50485145ad.32.2025.11.04.23.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 23:33:24 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: will@kernel.org,
-	bigeasy@linutronix.de
-Cc: ardb@kernel.org,
-	catalin.marinas@arm.com,
-	clrkwllms@kernel.org,
-	leitao@debian.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	mark.rutland@arm.com,
-	rostedt@goodmis.org,
-	ryotkkr98@gmail.com
-Subject: Re: [PATCH] arm64: use SOFTIRQ_ON_OWN_STACK for enabling softirq stack
-Date: Wed,  5 Nov 2025 16:33:20 +0900
-Message-Id: <20251105073320.208335-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aQoGdVYOddu9bxLg@willie-the-truck>
-References: <aQoGdVYOddu9bxLg@willie-the-truck>
+	s=arc-20240116; t=1762328062; c=relaxed/simple;
+	bh=zJa+pItKng0BXhWto1u6cdPxoM7x4Bspfd7HU6y1v1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SjmOSbxET6CVS5IG+v3V/6yoPky9YXnnYJfcobSRQnQF/2uA/B5rkydFfu5wG9e2iiexcHlf1lSGrf32lOUdpw4abI/NvdPtd6QmvJnOTML0euJf+hlSoiLFtxCZ99oX0kF/VElCVo3vkM1zOUqgiAFFY3f15zK93+4IkDb8c8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CK5VLrZO; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 49F714E4151E;
+	Wed,  5 Nov 2025 07:34:16 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 13E9F60693;
+	Wed,  5 Nov 2025 07:34:16 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC47D10B51601;
+	Wed,  5 Nov 2025 08:34:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762328055; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=FuM477eIKThQiCI0oDzUFgDYIGV14xqrDFhwTESVrWI=;
+	b=CK5VLrZOSqjoJG76MRglqgRvwIQ8n/1oMFtmXvSuyGVRfMGfDcEQKD5BmRySdjVfWwV6xR
+	wZV1ePhyX2X+MPF6sivQPIZyTplFMclDwBwHDvu4xcM1YCz4ut5z1XDYLhzv61af5Hzyqm
+	lM9HMRMGzdiecg6E501C2IXy3IFTl190b66YAzKO70nl6TYm2VmyG/A/SJJam1Jh/18it4
+	wHqYSnMubxtJJGQq06ZOaToblk0ydKJ+wgP+25ZsT9rlgCjwn6Aqx7ArcDgjnLJQ/wOsmD
+	d1nQiI31RqRTjYkXC051vw8QwjByolIMWxsZ72ahaDX026ePPD21/T7zD9hEog==
+Date: Wed, 5 Nov 2025 08:34:08 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] net: wan: framer: pef2256: Switch to
+ devm_mfd_add_devices()
+Message-ID: <20251105083408.71b8b6ee@bootlin.com>
+In-Reply-To: <20251105034716.662-1-vulab@iscas.ac.cn>
+References: <20251103111844.271-1-vulab@iscas.ac.cn>
+	<20251105034716.662-1-vulab@iscas.ac.cn>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi!
+Hi Haotian,
 
-On Tue, 4 Nov 2025 13:58:13 +0000, Will Deacon wrote:
->On Mon, Oct 13, 2025 at 01:35:08AM +0000, Ryo Takakura wrote:
->> For those architectures with HAVE_SOFTIRQ_ON_OWN_STACK use
->> their dedicated softirq stack when !PREEMPT_RT. This condition
->> is ensured by SOFTIRQ_ON_OWN_STACK.
->> 
->> Let arm64 use SOFTIRQ_ON_OWN_STACK as well to select its
->> usage of the stack.
->> 
->> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
->> ---
->>  arch/arm64/kernel/irq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/arch/arm64/kernel/irq.c b/arch/arm64/kernel/irq.c
->> index c0065a1d77cf..15dedb385b9e 100644
->> --- a/arch/arm64/kernel/irq.c
->> +++ b/arch/arm64/kernel/irq.c
->> @@ -62,7 +62,7 @@ static void __init init_irq_stacks(void)
->>  	}
->>  }
->>  
->> -#ifndef CONFIG_PREEMPT_RT
->> +#ifdef CONFIG_SOFTIRQ_ON_OWN_STACK
->>  static void ____do_softirq(struct pt_regs *regs)
->>  {
->>  	__do_softirq();
->
->Acked-by: Will Deacon <will@kernel.org>
+On Wed,  5 Nov 2025 11:47:16 +0800
+Haotian Zhang <vulab@iscas.ac.cn> wrote:
 
-Thanks Sebastian and Will for checking!
-I'll shortly send v2 with the tags.
+> The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
+> in error paths after successful MFD device registration and in the remove
+> function. This leads to resource leaks where MFD child devices are not
+> properly unregistered.
+> 
+> Replace mfd_add_devices with devm_mfd_add_devices to automatically
+> manage the device resources.
+> 
+> Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
+> Suggested-by: Herve Codina <herve.codina@bootlin.com>
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-Sincerely,
-Ryo Takakura
+Not sure that 'Suggested-by: Jakub Kicinski' was needed according to his
+comments on v2. Also, you forgot my 'Acked-by' I sent on v2.
 
->Will
+Anyway, the v3 is ok on my side
+
+Acked-by: Herve Codina <herve.codina@bootlin.com>
+
+Best regards,
+Hervé
 
