@@ -1,173 +1,116 @@
-Return-Path: <linux-kernel+bounces-886513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD38C35CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:17:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9668BC35CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A44188BE2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:18:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 582AB4E76D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9C93195E4;
-	Wed,  5 Nov 2025 13:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447F431A803;
+	Wed,  5 Nov 2025 13:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpqAVXTi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="aa6b5568"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698730C61E;
-	Wed,  5 Nov 2025 13:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64C431812E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762348653; cv=none; b=LW/NhdxU2ZMoYBKGFfq/AZvIGfzNvrlzIYcX7w6NX9wMNewTyFQXaGtTVlTmciAtehwlNyRQqVhpUZG4OARNUqV5q0Xif+YYZQ/hu5vFPlRaJb2YZm/OXR67fNP9Uy91b4W9BswpYU1S8E6z6YUdnRe7XhrhULJRWP5C14gAkr8=
+	t=1762348719; cv=none; b=gxdWqT3u5d+0BUkKvL6dBOa6xObWrBk2WNCF3xj/w5gVq/k8Gbu108+FULsNzUKr990pL6rZn2kWnBawAK8F35gvCXxMg1RD1LxcXgz81qo2GpfwNLntogzZseRaeoA41j5Tr0QPyCvpB4FELRdNZ9aioyF74+6RbbdalVqeozM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762348653; c=relaxed/simple;
-	bh=xug3FxWs/d/eOrBPa1Z165fcOCw7ZLCHRBYee2J7rJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoEj6s8zElGsKlos5sIeJrXo+kIhMfEHw3UbEFWIT4r5LOgx7YieGrFLqnzb/0hsEidi5l3CuCCgzf+ROdEn+oDod/UzU85MlCSOeGXbGX+9Ek2ZowUgnJtXCq5g2OlkuMv1pSiOEmYz39sl6iJ03C5LtvY5xDSfljyksR5sYqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpqAVXTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8310C4CEF8;
-	Wed,  5 Nov 2025 13:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762348653;
-	bh=xug3FxWs/d/eOrBPa1Z165fcOCw7ZLCHRBYee2J7rJY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rpqAVXTiHk7l4qK1MoF6D2zSvXCnSn88TIQnzinbIfaYm5Nvoz6eBDsjGVq1STANS
-	 xQKHPNLyjpGcbXd4Hu3cDTK8NKedfAZhaHtAuBWXaxEiCe7RXFZZO5ZGP0mK+EFtFZ
-	 rViV+YJUbsopJLoFmaD/Ny7wqv2z4sMRjByhU/vMU7wgyMYdwjU4g2qCEWjxxr5HiN
-	 /KBzy14eZ/0krF4Mk7P29WhYIr7R/ooyd63JokXklH0sRJHsUGA9PQeuLe6OEUBl/d
-	 XzMFjsGqaYskj5SuksaTfvEbBuQrbMb4jiDBSNO0uU3LZeHSqmVVh1R+ldFUgSM+y0
-	 FUcW/F5SGMxOw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	cgroups@vger.kernel.org
-Subject: [PATCH] genirq: Fix IRQ threads affinity VS cpuset isolated partitions
-Date: Wed,  5 Nov 2025 14:17:26 +0100
-Message-ID: <20251105131726.46364-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762348719; c=relaxed/simple;
+	bh=wl4aysANLOfX0B50JiWajRXky1BkXyekiwA8JCZUlIY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=juNgjs8tPoJMFg+8a2qNOxM0MJ3Vtk4vKYBqPwH8W53wOT9zWKEXZYJxkJxslTLsjSrRvGpYY8/HE0r9z8GSZl5g+Kuzd6ZLWssrg4UkXMOku8bKS/yYNgCnWWIXSKk3rqsZVuQodJtLMIN0jrcVDNdxScVEb1GH5RFkKaM+otA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=aa6b5568; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1762348704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=anJy0kovOnmwnKwTf1uVV5HwRBu0s+Xw6msJvdrAWkM=;
+	b=aa6b5568Qh3/bE4wzKB/hpYPvmdW4nlyMx41tGjnmZuoU64FMmoh4cXl1BRU5DJ6tuo+nI
+	3HSYeLTC7A200JHb4jozfS3Q0HgGytOBgeky7yw/BxPCMnlkdGUMCr+Xooh2VOJaWNvruP
+	BbBMVUyM3OUs1s+qs+7rdLcCskHKQe7q47xlfLhSUdGa4V0LtZvnYUjzOa+HAbeokkQGPq
+	Xe5gFcTNi0N3+crmQfPC192PhyQd03iDeVnEwTxdEwVRH2R2MCNzUfbPSO3XYuzSqXY4+i
+	IWJzneP/ljxJaSA6odMvzs1zM5cn/jb+7sYU87vOWDBcBTGBP/ObrAsTfnVg3g==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Nov 2025 14:18:21 +0100
+Message-Id: <DE0SH4UBVXBH.77ADEH3224GK@cknow-tech.com>
+Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <michael.riesch@collabora.com>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add missing clocks for cpu
+ cores on rk356x
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+To: "Heiko Stuebner" <heiko@sntech.de>
+References: <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-4-heiko@sntech.de>
+In-Reply-To: <20251103234926.416137-4-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-When a cpuset isolated partition is created / updated or destroyed,
-the IRQ threads are affine blindly to all the non-isolated CPUs. And
-this happens without taking into account the IRQ thread initial
-affinity that becomes ignored.
+On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
+> All cpu cores are supplied by the same clock, but all except the first
+> core are missing that clocks reference - add the missing ones.
 
-For example in a system with 8 CPUs, if an IRQ and its kthread are
-initially affine to CPU 5, creating an isolated partition with only
-CPU 2 inside will eventually end up affining the IRQ kthread to all
-CPUs but CPU 2 (that is CPUs 0,1,3-7), losing the kthread preference for
-CPU 5.
+I noticed it myself some time ago (but failed to sent a patch), so
 
-Besides the blind re-affinity, this doesn't take care of the actual
-low level interrupt which isn't migrated. As of today the only way to
-isolate non managed interrupts, along with their kthreads, is to
-overwrite their affinity separately, for example through /proc/irq/
+Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
 
-To avoid doing that manually, future development should focus on
-updating the IRQs affinity whenever cpuset isolated partitions are
-updated.
+Cheers,
+  Diederik
 
-In the meantime, cpuset shouldn't fiddle with IRQ threads directly.
-To prevent from that, set the PF_NO_SETAFFINITY flag to them.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/irq/manage.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 400856abf672..5ca000c9f4a7 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -176,7 +176,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
- }
- 
- /**
-- * irq_set_thread_affinity - Notify irq threads to adjust affinity
-+ * irq_thread_update_affinity - Notify irq threads to adjust affinity
-  * @desc:	irq descriptor which has affinity changed
-  *
-  * Just set IRQTF_AFFINITY and delegate the affinity setting to the
-@@ -184,7 +184,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
-  * we hold desc->lock and this code can be called from hard interrupt
-  * context.
-  */
--static void irq_set_thread_affinity(struct irq_desc *desc)
-+static void irq_thread_update_affinity(struct irq_desc *desc)
- {
- 	struct irqaction *action;
- 
-@@ -283,7 +283,7 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 		fallthrough;
- 	case IRQ_SET_MASK_OK_NOCOPY:
- 		irq_validate_effective_affinity(data);
--		irq_set_thread_affinity(desc);
-+		irq_thread_update_affinity(desc);
- 		ret = 0;
- 	}
- 
-@@ -1035,8 +1035,23 @@ static void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *a
- 		set_cpus_allowed_ptr(current, mask);
- 	free_cpumask_var(mask);
- }
-+
-+static inline void irq_thread_set_affinity(struct task_struct *t,
-+					   struct irq_desc *desc)
-+{
-+	const struct cpumask *mask;
-+
-+	if (cpumask_available(desc->irq_common_data.affinity))
-+		mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
-+	else
-+		mask = cpu_possible_mask;
-+
-+	kthread_bind_mask(t, mask);
-+}
- #else
- static inline void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action) { }
-+static inline void irq_thread_set_affinity(struct task_struct *t,
-+					   struct irq_desc *desc) { }
- #endif
- 
- static int irq_wait_for_interrupt(struct irq_desc *desc,
-@@ -1221,6 +1236,7 @@ static void wake_up_and_wait_for_irq_thread_ready(struct irq_desc *desc,
- 	if (!action || !action->thread)
- 		return;
- 
-+	irq_thread_set_affinity(action->thread, desc);
- 	wake_up_process(action->thread);
- 	wait_event(desc->wait_for_threads,
- 		   test_bit(IRQTF_READY, &action->thread_flags));
-@@ -1405,16 +1421,7 @@ setup_irq_thread(struct irqaction *new, unsigned int irq, bool secondary)
- 	 * references an already freed task_struct.
- 	 */
- 	new->thread = get_task_struct(t);
--	/*
--	 * Tell the thread to set its affinity. This is
--	 * important for shared interrupt handlers as we do
--	 * not invoke setup_affinity() for the secondary
--	 * handlers as everything is already set up. Even for
--	 * interrupts marked with IRQF_NO_BALANCE this is
--	 * correct as we want the thread to move to the cpu(s)
--	 * on which the requesting code placed the interrupt.
--	 */
--	set_bit(IRQTF_AFFINITY, &new->thread_flags);
-+
- 	return 0;
- }
- 
--- 
-2.51.0
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/b=
+oot/dts/rockchip/rk356x-base.dtsi
+> index d0c76401b45e..a1815f8a96e1 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> @@ -69,6 +69,7 @@ cpu1: cpu@100 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a55";
+>  			reg =3D <0x0 0x100>;
+> +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+>  			#cooling-cells =3D <2>;
+>  			enable-method =3D "psci";
+>  			i-cache-size =3D <0x8000>;
+> @@ -84,6 +85,7 @@ cpu2: cpu@200 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a55";
+>  			reg =3D <0x0 0x200>;
+> +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+>  			#cooling-cells =3D <2>;
+>  			enable-method =3D "psci";
+>  			i-cache-size =3D <0x8000>;
+> @@ -99,6 +101,7 @@ cpu3: cpu@300 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a55";
+>  			reg =3D <0x0 0x300>;
+> +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+>  			#cooling-cells =3D <2>;
+>  			enable-method =3D "psci";
+>  			i-cache-size =3D <0x8000>;
 
 
