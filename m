@@ -1,183 +1,156 @@
-Return-Path: <linux-kernel+bounces-887208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756CCC378D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:51:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3836DC378D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2DC3BDB34
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36CEB1881877
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AB2345726;
-	Wed,  5 Nov 2025 19:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E703344049;
+	Wed,  5 Nov 2025 19:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="C5Av/8bT"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R5Gx6yH6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iK1Ery+M";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R5Gx6yH6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iK1Ery+M"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62860344040;
-	Wed,  5 Nov 2025 19:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E41344032
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372257; cv=none; b=l40fnozqklQceajIvF8T/c5ncfKlyQURT8dxbdJmEvaMR/67vF+KF5B197xWtv76T1Htg2aVDzku+PEpkLrGQjB0YvtKhGPE5q94tsPG0S6F613G1EoBZhC6d9A1m4RvhHST8UVHMLmnZOCyRL8FLafZc37HTJYbnzWpTEP/BWA=
+	t=1762372270; cv=none; b=LieAJm7DNYAUUNwWRVp+wK19TFWWRojWK/Mr6OwVdGI5kjgZa8bj6v555xDyYigt/BwJkVSZTmaoxNhK8+vBdzeoi2D9mbWGJWaRVMgmpeyqD9mWLBx0yh5vJWT7S6hI+VNsFlf1yZuuAsHz/Adi7QiXzxhqJMccioA7bNI07eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372257; c=relaxed/simple;
-	bh=WSWEPEVlnXW5j9fG2/KzHiue4plCV0w15ej7p1hwTQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LF7DIqy5/9SQV6qtvgtvvVobqniTYpr/wVEUSDZbQkjTdT7Gk5tp/iP3+IRgbnMH4+wYT29QLKyI5WBQ0e76zoSmSfABOgi7Xdg61MTgudHBbYv0TVJnGh2jsc3BPGXgWRHN29lbSq0fsTdn5lPISGAJAd2qrNiTeFJWKDA+mNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=C5Av/8bT; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout1.routing.net (Postfix) with ESMTP id 0A716402AA;
-	Wed,  5 Nov 2025 19:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1762372247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1762372270; c=relaxed/simple;
+	bh=Tf4dNuGL3M0QC1svVEjenTpnqBG0sG1M7d8xbFvZNls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0KlvM22MJymXp7Ort1uQnzvTb9SBFLhlQUAjTyFdI7jj3WWqDeD9z66o0ke6WzFPD8YcbptdAp+9VFd+oUuFmFzUeqTR2v39rf15lbCmBUFy33OnXPIXbUVtwbf5BgACgBnrnq+WPJ3ipac6syJYqYojLXDPOBAleE+lNKi2Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R5Gx6yH6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iK1Ery+M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R5Gx6yH6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iK1Ery+M; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 291351F394;
+	Wed,  5 Nov 2025 19:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762372265;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VysT7Mn8NKFGdQhAHI7tG5Xcp6xnNIZ6sTmQJxUySJc=;
-	b=C5Av/8bTMuZnmpXeHeDhb7bh7BFAEyvDbnBvzqRgL7pLDuA2i0NlzJpOAghizqIVihdRrc
-	RXpinIa/SW9kY4IJ0ykUApxKhBYrRMbFpVLBPHodg7621tI7WR1/CXd1RdKFb17B7O+HWw
-	iA03QC8RKaGSOBkOUfmNF8oA1jSH46o=
-Received: from frank-u24.. (fttx-pool-194.15.81.38.bambit.de [194.15.81.38])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id CCDB7122700;
-	Wed,  5 Nov 2025 19:50:46 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 5/5] arm64: dts: mediatek: mt7988a-bpi-r4pro: Add mmc overlays
-Date: Wed,  5 Nov 2025 20:50:05 +0100
-Message-ID: <20251105195007.199229-6-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105195007.199229-1-linux@fw-web.de>
-References: <20251105195007.199229-1-linux@fw-web.de>
+	bh=Tf4dNuGL3M0QC1svVEjenTpnqBG0sG1M7d8xbFvZNls=;
+	b=R5Gx6yH627Xt3wpipcW3XM8jHfUry+QgDcEXtZxPeWuvB+SM+SJ7dy3yZ78M9uLR1VBbmt
+	9f0Ac04QeotcYIGnhYEghE3wFnus53+7fxDAVnDoZZ7DSBSFchvCE1WKYw5FDFWnlI/EeR
+	NeSVvgJvY9VugQbYAP+k84AZvO4GqsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762372265;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tf4dNuGL3M0QC1svVEjenTpnqBG0sG1M7d8xbFvZNls=;
+	b=iK1Ery+Mvrht7A2JtuhgBOW/6ekwfqA8yZyOxeIhb8Tea8wVg+GDk6tdcFSXlBVpOeqyWg
+	IqcbVBLalP5VVGBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=R5Gx6yH6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iK1Ery+M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762372265;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tf4dNuGL3M0QC1svVEjenTpnqBG0sG1M7d8xbFvZNls=;
+	b=R5Gx6yH627Xt3wpipcW3XM8jHfUry+QgDcEXtZxPeWuvB+SM+SJ7dy3yZ78M9uLR1VBbmt
+	9f0Ac04QeotcYIGnhYEghE3wFnus53+7fxDAVnDoZZ7DSBSFchvCE1WKYw5FDFWnlI/EeR
+	NeSVvgJvY9VugQbYAP+k84AZvO4GqsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762372265;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tf4dNuGL3M0QC1svVEjenTpnqBG0sG1M7d8xbFvZNls=;
+	b=iK1Ery+Mvrht7A2JtuhgBOW/6ekwfqA8yZyOxeIhb8Tea8wVg+GDk6tdcFSXlBVpOeqyWg
+	IqcbVBLalP5VVGBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16E5D13699;
+	Wed,  5 Nov 2025 19:51:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y0ctBamqC2ngDAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 05 Nov 2025 19:51:05 +0000
+Date: Wed, 5 Nov 2025 20:51:03 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>
+Subject: Re: odd objtool 'unreachable instruction' warning
+Message-ID: <20251105195103.GR13846@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
+ <ubqjeplvslhnspqw6pnqwo7c6sq2ygdtmkuqr4q3hjlxfkuwii@xn63k6qz22mz>
+ <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
+ <es4awalt6i63cy5kkrbz7f22cxpt4zbmq6zsbol3yafek2375e@6b6stnc6k6h2>
+ <CAHk-=wjhcrqXoTLMjTF=pH_+Zq4vRdFY3Y4c_A3TemzSvssRzQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjhcrqXoTLMjTF=pH_+Zq4vRdFY3Y4c_A3TemzSvssRzQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 291351F394
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.21
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Wed, Oct 29, 2025 at 09:17:36AM -0700, Linus Torvalds wrote:
+> Now, if objtool disassembly ever gives the kind of good disassembly
+> that 'perf report' does - with branches turned into arrows etc - that
+> would be lovely, and I'd replace my hacky alias in a heartbeat.
 
-Add MMC overlays for BPI-R4 Pro.
-
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- arch/arm64/boot/dts/mediatek/Makefile         |  2 ++
- .../mt7988a-bananapi-bpi-r4-pro-emmc.dtso     | 33 +++++++++++++++++++
- .../mt7988a-bananapi-bpi-r4-pro-sd.dtso       | 31 +++++++++++++++++
- 3 files changed, 66 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
-
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 8e99f6e33b25..776b9274e8fa 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -28,6 +28,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-4e.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-8x.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-cn15.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-cn18.dtbo
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-emmc.dtbo
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-sd.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-sd.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
-new file mode 100644
-index 000000000000..5ed2f0a6bd66
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2021 MediaTek Inc.
-+ * Author: Frank Wunderlich <frank-w@public-files.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+/ {
-+	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
-+};
-+
-+&{/soc/mmc@11230000} {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&mmc0_pins_emmc_51>;
-+	pinctrl-1 = <&mmc0_pins_emmc_51>;
-+	bus-width = <8>;
-+	max-frequency = <200000000>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	hs400-ds-delay = <0x12814>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	vmmc-supply = <&reg_3p3v>;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
-new file mode 100644
-index 000000000000..1ec1a9fbd8ba
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2023 MediaTek Inc.
-+ * Author: Frank Wunderlich <frank-w@public-files.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
-+};
-+
-+&{/soc/mmc@11230000} {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&mmc0_pins_sdcard>;
-+	pinctrl-1 = <&mmc0_pins_sdcard>;
-+	cd-gpios = <&pio 12 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	max-frequency = <48000000>;
-+	cap-sd-highspeed;
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	no-mmc;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+};
-+
--- 
-2.43.0
-
+FWIW, 'objdump --visualize-jumps' shows the arrows, with
+'--visualize-jumps=extended-color' they're colored and it's readable.
 
