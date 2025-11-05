@@ -1,118 +1,160 @@
-Return-Path: <linux-kernel+bounces-886132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88232C34C2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B21C34C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 352FA34D01B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:21:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A196034D09A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCAD313521;
-	Wed,  5 Nov 2025 09:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99B314A6D;
+	Wed,  5 Nov 2025 09:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ea1G+Cwb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mhfkYm58"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891E23128C3;
-	Wed,  5 Nov 2025 09:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF2313E36;
+	Wed,  5 Nov 2025 09:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334219; cv=none; b=u4m1AX+q95fqfGdoIJuFg+4OQw7C1kYNjb2imqMJQy2ys3k1yE7ObS0rPw8VZv7hBIfh88+qYfSdmj0+dZioSCgCxOI4PzHXXhqWW8DCrjPaf8Owgs+8ZVawpTo8bBVLbHekB5WaOZlBMSPMP2IMXWfSmlD5p+VAY/6jGF4BCkA=
+	t=1762334226; cv=none; b=QSi7iwXVrU68zgeB8VHP6ZpsMn9JYLywyCNZo6xELDROsdvmSWhfBzFH23X/XMmpMLvpAGkzNqSNVREmK16qVnejhUIYix1QzwoQ4lGzhPUzhnStvMk6NR4s9TUeYuZeM9nEyE/191S4QFdLcTcuBrcxnCJjejwMsUge6BFW2Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334219; c=relaxed/simple;
-	bh=q/m3wCulTXhTB8/LDywh9yjrxdqTuaGoDm5TZmWIuIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlXvFpY4/TMYaxFIa93Uyp0GWwbRKoFgyxufcVIJCzE17mUueDeS09q7S73iM2yOL/t6OwGBwG4kfH8Lz7A7hTkFd+l/rxOUpzmiwBeR6k2P4vN6d52x36nrYUrgHPbagDJPfCZAlb2Kjaww8vPfEgv4745FrthwR449yfPm/qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ea1G+Cwb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 588A1C116B1;
-	Wed,  5 Nov 2025 09:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762334219;
-	bh=q/m3wCulTXhTB8/LDywh9yjrxdqTuaGoDm5TZmWIuIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ea1G+CwbIiLDs+nYhhAmF9Ead5AYmRI6qHA/G3hzcjEkcOLeoktFY+u3ZedO1PBwy
-	 PQS+D4pe+MCyykbewq+yl0+vsTG4/zIed4dgCI/1+EFVx/MwqPB7kwkv+klrnhoUmT
-	 ZS1kK0556t01AgRszoK0KFwBHcBSccpc2FFJSPO1HFKdtiamU58NbyVyARnIHM99ac
-	 7rB/KcnlNjLhskl3W469prlkIvaAVM8UdnwTVJCPH5PI+QQx+p6Gi7NZ+NkjJ2twxB
-	 7Y0p9G3iPab5eNWy0gFLu012cVham/THP2w70RfqdAprmr4ywP3Ug15J43jJC22N2e
-	 oHFibyT7ISaJA==
-Date: Wed, 5 Nov 2025 09:16:53 +0000
-From: Simon Horman <horms@kernel.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Markus.Elfring@web.de,
-	pavan.chebbi@broadcom.com, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, luosifu <luosifu@huawei.com>,
-	Xin Guo <guoxin09@huawei.com>,
-	Shen Chenyang <shenchenyang1@hisilicon.com>,
-	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
-	Shi Jing <shijing34@huawei.com>,
-	Luo Yang <luoyang82@h-partners.com>,
-	Meny Yossefi <meny.yossefi@huawei.com>,
-	Gur Stavi <gur.stavi@huawei.com>
-Subject: Re: [PATCH net-next v04 5/5] hinic3: Add netdev register interfaces
-Message-ID: <aQsWBXonR4lwK6uo@horms.kernel.org>
-References: <cover.1761711549.git.zhuyikai1@h-partners.com>
- <6c69354773fd22691da74614daa391b6451b8ebe.1761711549.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1762334226; c=relaxed/simple;
+	bh=Kb9qKfyBkt0cnX3TVFiGpX766XyC34xL57bx/gjKjtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HAh1tYNMyKyeWFLmafgxh6rKVg3f3jwWXI8XX0JA09lry1hmpB4p01Up6TCPqEdx6Uf4CJ2vWemQbiOGKRT4IZOfoiVTCoKwyXuFh3Nt7Swd7pjDunhnsdDICOd+0QqKGYSNEgONq65Y7fNrpdlU/9Kn4171J9PJdgIs7POLTYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mhfkYm58; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762334224; x=1793870224;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kb9qKfyBkt0cnX3TVFiGpX766XyC34xL57bx/gjKjtI=;
+  b=mhfkYm58uPTIyEnA0PfZo8AqHDqsaNsTIe3S8dObYMr7wOReQA/+Lggr
+   aWQcYYLhu3HBkuTRWvBW2Fz/bGkPI3biwTbI7JW2o8TpyNwokwExCNzsf
+   WMMIgp3ufuqn2067W2n4h+mBt6w77xJi43aqosJkyzDMFppex9cencH0j
+   H9hpUSQGxzUbfP4UIBdpwq6yl7YCjiHkyVXW+gSy4AEC6a0aKgtCCPgIU
+   GQihZfXzuNG/0dTRBo/+VvKyN/VfEQ4F/cunrmUiVs4IQRB/Azrye34x7
+   2epUuPwd06Ym35dDSm08h82lItlEQ48Hek0RrlOVyen9XFs32mIF7RdCc
+   Q==;
+X-CSE-ConnectionGUID: wUs9r70XQW+GW0Hja+fTvA==
+X-CSE-MsgGUID: S997U/RjTGenEu4q4Ovecw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64592011"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="64592011"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:17:03 -0800
+X-CSE-ConnectionGUID: EA3mCXCERFuXcjirulnv3w==
+X-CSE-MsgGUID: UG6W8txsQ1uab85dvGIIbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187563436"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.49]) ([10.124.240.49])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:17:00 -0800
+Message-ID: <6ca6f19e-0bdd-4ad8-aaca-93a1247d2588@intel.com>
+Date: Wed, 5 Nov 2025 17:16:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c69354773fd22691da74614daa391b6451b8ebe.1761711549.git.zhuyikai1@h-partners.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] KVM: TDX: Explicitly set user-return MSRs that
+ *may* be clobbered by the TDX-Module
+To: Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov"
+ <kas@kernel.org>, kvm@vger.kernel.org, x86@kernel.org,
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>
+References: <20251030191528.3380553-1-seanjc@google.com>
+ <20251030191528.3380553-2-seanjc@google.com>
+ <aQhJol0CvT6bNCJQ@yzhao56-desk.sh.intel.com>
+ <aQmmBadeFp/7CDmH@yzhao56-desk.sh.intel.com>
+ <969d1b3a-2a82-4ff1-85c5-705c102f0f8b@intel.com>
+ <aQnH3EmN97cAKDEO@yzhao56-desk.sh.intel.com> <aQo-KhJ9nb0MMAy4@google.com>
+ <aQqt2s/Xv4jtjFFE@yzhao56-desk.sh.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aQqt2s/Xv4jtjFFE@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 02:16:29PM +0800, Fan Gong wrote:
+On 11/5/2025 9:52 AM, Yan Zhao wrote:
+> On Tue, Nov 04, 2025 at 09:55:54AM -0800, Sean Christopherson wrote:
+>> On Tue, Nov 04, 2025, Yan Zhao wrote:
+>>> On Tue, Nov 04, 2025 at 04:40:44PM +0800, Xiaoyao Li wrote:
+>>>> On 11/4/2025 3:06 PM, Yan Zhao wrote:
+>>>>> Another nit:
+>>>>> Remove the tdx_user_return_msr_update_cache() in the comment of __tdx_bringup().
+>>>>>
+>>>>> Or could we just invoke tdx_user_return_msr_update_cache() in
+>>>>> tdx_prepare_switch_to_guest()?
+>>>>
+>>>> No. It lacks the WRMSR operation to update the hardware value, which is the
+>>>> key of this patch.
+>>> As [1], I don't think the WRMSR operation to update the hardware value is
+>>> necessary. The value will be updated to guest value soon any way if
+>>> tdh_vp_enter() succeeds, or the hardware value remains to be the host value or
+>>> the default value.
+>>
+>> As explained in the original thread:
+>>
+>>   : > If the MSR's do not get clobbered, does it matter whether or not they get
+>>   : > restored.
+>>   :
+>>   : It matters because KVM needs to know the actual value in hardware.  If KVM thinks
+>>   : an MSR is 'X', but it's actually 'Y', then KVM could fail to write the correct
+>>   : value into hardware when returning to userspace and/or when running a different
+>>   : vCPU.
+>>
+>> I.e. updating the cache effectively corrupts state if the TDX-Module doesn't
+>> clobber MSRs as expected, i.e. if the current value is preserved in hardware.
+> I'm not against this patch. But I think the above explanation is not that
+> convincing, (or somewhat confusing).
+> 
+> 
+> By "if the TDX-Module doesn't clobber MSRs as expected",
+> - if it occurs due to tdh_vp_enter() failure, I think it's fine.
+>    Though KVM thinks the MSR is 'X', the actual value in hardware should be
+>    either 'Y' (the host value) or 'X' (the expected clobbered value).
+>    It's benign to preserving value 'Y', no?
 
-...
+For example, after tdh_vp_enter() failure, the state becomes
 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_main.c b/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
+     .curr == 'X'
+     hardware == 'Y'
 
-...
+and the TD vcpu thread is preempted and the pcpu is scheduled to run 
+another VM's vcpu, which is a normal VMX vcpu and it happens to have the 
+MSR value of 'X'. So in
 
-> @@ -250,7 +319,29 @@ static void netdev_feature_init(struct net_device *netdev)
->  	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_TSO))
->  		tso_fts |= NETIF_F_TSO | NETIF_F_TSO6;
->  
-> -	netdev->features |= dft_fts | cso_fts | tso_fts;
-> +	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_RX_VLAN_STRIP |
-> +				HINIC3_NIC_F_TX_VLAN_INSERT))
-> +		vlan_fts |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
-> +
-> +	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_RX_VLAN_FILTER))
-> +		vlan_fts |= NETIF_F_HW_VLAN_CTAG_FILTER;
-> +
-> +	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_VXLAN_OFFLOAD))
-> +		tso_fts |= NETIF_F_GSO_UDP_TUNNEL | NETIF_F_GSO_UDP_TUNNEL_CSUM;
-> +
-> +	/* LRO is disabled by default, only set hw features */
-> +	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_LRO))
-> +		hw_features |= NETIF_F_LRO;
-> +
-> +	netdev->features |= dft_fts | cso_fts | tso_fts | vlan_fts;
-> +	netdev->vlan_features |= dft_fts | cso_fts | tso_fts;
-> +		hw_features |= netdev->hw_features | netdev->features;
+   vmx_prepare_switch_to_guest()
+     -> kvm_set_user_return_msr()
 
-nit: The line above seems to be indented too much.
+it will skip the WRMSR because written_value == .curr == 'X', but the 
+hardware value is 'Y'. Then KVM fails to load the expected value 'X' for 
+the VMX vcpu.
 
-> +	netdev->hw_features = hw_features;
-> +	netdev->priv_flags |= IFF_UNICAST_FLT;
-> +
-> +	netdev->hw_enc_features |= dft_fts;
-> +	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_VXLAN_OFFLOAD))
-> +		netdev->hw_enc_features |= cso_fts | tso_fts | NETIF_F_TSO_ECN;
->  }
->  
->  static int hinic3_set_default_hw_feature(struct net_device *netdev)
+> - if it occurs due to TDX module bugs, e.g., if after a successful
+>    tdh_vp_enter() and VM exits, the TDX module clobbers the MSR to 'Z', while
+>    the host value for the MSR is 'Y' and KVM thinks the actual value is 'X'.
+>    Then the hardware state will be incorrect after returning to userspace if
+>    'X' == 'Y'. But this patch can't guard against this condition as well, right?
+> 
+> 
+>>> But I think invoking tdx_user_return_msr_update_cache() in
+>>> tdx_prepare_switch_to_guest() is better than in
+>>> tdx_prepare_switch_to_host().
+>>>
+>>> [1] https://lore.kernel.org/kvm/aQhJol0CvT6bNCJQ@yzhao56-desk.sh.intel.com/
+>>>   
 
-...
 
