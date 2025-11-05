@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-886929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA921C36BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:38:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D492C36DB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75561891390
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41650660448
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40593328FF;
-	Wed,  5 Nov 2025 16:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62C83358DD;
+	Wed,  5 Nov 2025 16:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XJwG80bY"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="J3kwHk50"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5933A336EE1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDD33328FF;
+	Wed,  5 Nov 2025 16:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360225; cv=none; b=f9cBzDDuEdqf+vzpSTF8RDLgrFW11ig3cHSKenvFtyP9z/MlgW0hDBX4/vCJiuOggo6LFRUCDizX5EuPJpSPYkCIiyO9c+w8odoVUFvm0B7xVPXbBTLrohzbnESSTOW6b8o+nRs4B54mmaMdhYZF5b+AiXveKEReD/YRKMDczj8=
+	t=1762360423; cv=none; b=rvZCOJa2Z7vXN+8I0AMXPPmgs2gVkldIsNmQFyAZ8XGezRoMbD9ITu0+uM3OfIG9+YXitEBMncaP7zHvKkoS1lwi7TAufT7mZxtUNyqQK9Q6LHtfscbgNabaKeTT8JyV6SMNMzg0xL8e71so6CNZ2NlnVdXJqeX6lVXt0+AyjjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360225; c=relaxed/simple;
-	bh=aLMWc2wz0lR+J9epmU7ClTbyI4cwZQ7jLjWyLp9sQaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jUIJEH5nmeMqNMc3pJP8joIWPEMvOLZ7oP+p7oY5FH4JLlImhp7JPahmlNEhQ7BBBk279LLp7SkmRwYRswejvm1eHlnTDHk3kZSvmlVSI/JDAQX46mRJr/ko9IwJTQr5m/8pycmbqNGO6BRgdRv9rMD70wCIdi717VPrLEhBVhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XJwG80bY; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b5a8184144dso949588666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:30:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762360222; x=1762965022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g0ElpEfU23zmMJp6XAE1iet2IvdsDeFlwy28hHUB1VQ=;
-        b=XJwG80bYnUdB1x5t2V1mvvxGzmfX2iReVIBu4sTdXpahTpnRhGqH2OcNhugni2L7nz
-         l14ElFYtblMAXTJxOZlHQ3tQ0rv8Wq9NIYcM9oPK6nUAJFy4E3LiSSgDzf2tfEAXs1fU
-         37/r4BCerfxdnP4OFHN2qRjJHDcLW2Fbr9M8sUfIMI2zmffNtGRAD3Gfg3xH4q9M21rx
-         lYZ6s+fZOBX8R3UvsgIqUJl2Np2cRj2+rNqsmkG/wgu/pTGiwLBQStvztTxfMM8uyQyh
-         369bk+xt8WJtIXuV20ts9iJe25fn9oe19pplIHKFSG8e35h6Hf1kfmp6fMnaXGVzBNKw
-         uyPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762360222; x=1762965022;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0ElpEfU23zmMJp6XAE1iet2IvdsDeFlwy28hHUB1VQ=;
-        b=rngRcjOBEJjmh5G1wcuB9vZuJUe2+wG1f/Li8/FNyNssk6CFr9Zhz8on2vyfjG4/pI
-         RjzpDmgJ+i1lQykCkmJ1UlRlnAxDgGnoHTY+mkxLvqKXCmUMNNMtCzFOgcWd2fnY1i7j
-         Iec/1rb4/jlYwDCA7awYXJWKKMDOqE4rQOCAduLwYpLSWvGXjlXSOIpjoHEB7tk3KHB+
-         Ty6uEeH4uLbZ7N/PZFSj2/qatJOdcWvBmzXhKcrt9kFPavIqn8tUp6KpWjQgTKUCBY6E
-         ScmztfJuQTP/V+VD/YW7KLd3+vYUguNVS2X5+AiWxBg2zrcgtbs3RIOi45oAOCls2rcJ
-         j00A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa35Q68gfQ59OgK6fGNF8fEdbWi7krwyvphJEj2s2IKKxOmovy3aUfHkmi1z+/GTusEHSF1Wzz54cYIb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7xqsatmr+cxKtHdnlmM4M8OVFNI3Z+nOYoko5mOf3Mm9ao7vA
-	TNcsfIrl4Ho58Ev49rKu86tYfzbbgPowHzJW7sAm+sb4dPVXsY9gp/PesgmX8scNF4c=
-X-Gm-Gg: ASbGncsykT+U8yPMgPcBon5qhzFts4VJLJFo03pHXxAQUiIeo1aBul/ZFel+BGuAqLr
-	SYMA0ya3FMx8ujcVv43tkp3Nxxbg7NHmZN/a/UQy0LavU9a+L9zm70jlA0k2dtLj1PrNJ3HTvkN
-	peEiYvWt/S0kPZ1ls5PcOE6SS1RJPB99sXnDzWFtVLmXW93Nj9RwdpoUtERZBnBfMs7cNkqgmdI
-	x/o+00oZ9s2GtFu0X0NzIIEJWj4DasZSbp5aWH4WoqGoUqiO2HV10dWpIHB3MivSqFjRG9EHTCI
-	dj0f/8005mWyYXxxN1ldMM8jxoCSGe8RTjGU+LxK4r4sOxdtGWVvYqSMPRn3hlHJkI+3jtUhM9z
-	iC0sgS65m/UMRgJ18+EnWVo1qQVaWAIBgxRB3DO+Rusmv6BnzKeQFZYkFlQKusUIu3dGuIhhJj2
-	NHOWwD5uWqMS2YvZNLsuNb2Gl/JX56iqmV6Q==
-X-Google-Smtp-Source: AGHT+IEsYpuKCxcTkA8jk0GtWL4UNm/KQc74RM599U6pQuabiThT7lxCazj2PKzyq5T1ntntU8gerQ==
-X-Received: by 2002:a17:907:3f24:b0:b42:9840:eac1 with SMTP id a640c23a62f3a-b726553b597mr370430566b.49.1762360221599;
-        Wed, 05 Nov 2025 08:30:21 -0800 (PST)
-Received: from [172.20.148.132] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289335c6bsm313966b.7.2025.11.05.08.30.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:30:20 -0800 (PST)
-Message-ID: <d77310d9-f865-45cf-90ae-ff542cd1140f@linaro.org>
-Date: Wed, 5 Nov 2025 17:30:20 +0100
+	s=arc-20240116; t=1762360423; c=relaxed/simple;
+	bh=ywRBhza80goh1Vu/IHS771Tl/MLD53LtC1CC4gXWxLo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u1r9ZDa3h/bxX+EY1MEI1cCaAO2nvgwiuL45xVjmgHXeHZz4zBeA9vXX/Iga1hrMI4xd2kWWGO4d+L1IOOkAimy3uXn7PImRCWiQVrTKEyWiF8sQohXHYAP9mhi7xy0hwvS1wkCmchhZlFwCkBBBuXIi8Nc46O4XEmnxMlNTBUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=J3kwHk50; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762360421;
+	bh=ywRBhza80goh1Vu/IHS771Tl/MLD53LtC1CC4gXWxLo=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=J3kwHk50A98NvxcMvNV3xf5S7Wa9z7PZ3M9e/yE/CufXnAmbh+ROwdcZPRVixvPCF
+	 cOIl1J/EVjWz0EzmlQpGWYhQ7RDMseBi5z9Cj5HUk2cae/HRZveDd7kRn79H8O44V8
+	 jz+hKaPB0Z9xr24YsRlMlRh9I2gCLyIJWa+Sfjxg=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id BF56E1C01D7;
+	Wed, 05 Nov 2025 11:33:40 -0500 (EST)
+Message-ID: <bbba0752a40859a114bac987d279a8b268e5e5eb.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Documentation: tpm: tpm-security: Demote "Null Primary
+ Key Certification in Userspace" section
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>,  Linux Integrity
+ <linux-integrity@vger.kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jason Gunthorpe
+	 <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>
+Date: Wed, 05 Nov 2025 11:33:39 -0500
+In-Reply-To: <aQtLerZYehQRWdqe@archie.me>
+References: <20251104131312.23791-1-bagasdotme@gmail.com>
+	 <50acd6bfbc8b9006bef5d7d0376b7ce4ab35f94c.camel@HansenPartnership.com>
+	 <aQqvEsdoj0El2Dq4@archie.me>
+	 <a8a5b95e06e2d5d1c04aab8933f25cd07903a3e8.camel@HansenPartnership.com>
+	 <aQtLerZYehQRWdqe@archie.me>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-S+kpVTU4tb2vwvpz/Dk3"
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/28] mtd: spinand: Convert vendor drivers to
- SPINAND_OP()
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
- <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
- <20251031-winbond-v6-17-rc1-oddr-v1-11-be42de23ebf1@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-11-be42de23ebf1@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+
+
+--=-S+kpVTU4tb2vwvpz/Dk3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2025-11-05 at 20:04 +0700, Bagas Sanjaya wrote:
+> On Tue, Nov 04, 2025 at 10:32:50PM -0500, James Bottomley wrote:
+> > On Wed, 2025-11-05 at 08:57 +0700, Bagas Sanjaya wrote:
+> > > On Tue, Nov 04, 2025 at 09:55:08AM -0500, James Bottomley wrote:
+> > > > On Tue, 2025-11-04 at 20:13 +0700, Bagas Sanjaya wrote:
+> > > > > The last section heading in TPM security docs is formatted as
+> > > > > title heading instead. As such, it shows up as TPM toctree
+> > > > > entry. Demote it to section heading as appropriate.
+> > > >=20
+> > > > It's supposed to be a separate heading.=C2=A0 It's explaining how t=
+o
+> > > > certify your booted kernel rather than describing TPM security
+> > > > within the kernel.
+> > >=20
+> > > Should I keep the whole section as-is or should I move it to
+> > > separate docs?
+> >=20
+> > Why might it need moving?
+>=20
+> Just to tidy up toctree then...
+
+I'd really rather have the files in the doc tree grouped for ease (and
+reminder of) maintenance.  The two headings belong together in one file
+because if someone updates the doc for one, there's at least a chance
+they'll notice the other might need an update as well; whereas if we do
+separate files for every heading the tree becomes very fragmented and
+the chance of something being missed increases.
+
+Regards,
+
+James
 
 
 
-On 10/31/25 6:26 PM, Miquel Raynal wrote:
-> This macro allows to silently switch bus interfaces, use it outside of
-> the core in all places that can be trivially converted.
-> 
-> At this stage there is no functional change expected, until octal DTR
-> support gets added.
-> 
 
-Shouldn't this be squashed to the previous patch?
+--=-S+kpVTU4tb2vwvpz/Dk3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABMIADkWIQTnYEDbdso9F2cI+arnQslM7pishQUCaQt8YxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQ50LJTO6YrIXOzAEAmUarb4vaiYaQUts/VDZq
+9cRtDLUGLeHLnCc1HUX8RcoA/30aV5i67oB4ZfITBFxqJbfQ0FuSOxVV2X3TVGPK
+1MHZ
+=BjV1
+-----END PGP SIGNATURE-----
+
+--=-S+kpVTU4tb2vwvpz/Dk3--
 
