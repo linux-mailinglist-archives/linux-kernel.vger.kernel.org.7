@@ -1,165 +1,221 @@
-Return-Path: <linux-kernel+bounces-886987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9108C36F45
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:10:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908E7C36FC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79DA91A23758
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:04:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B3B9500538
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2065C3321DA;
-	Wed,  5 Nov 2025 16:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498D7342177;
+	Wed,  5 Nov 2025 16:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EOfDwlEO"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkrNSQmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B816309EFC;
-	Wed,  5 Nov 2025 16:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C82339B47;
+	Wed,  5 Nov 2025 16:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762361794; cv=none; b=s9BncttxE0igG17dFKVjl6mZFwUzpx5PiE+R3CHmZxaDcStVU9s/kTFOOjgwuQbN7Jg2ck0B+oNPXKTJnRfkia9HNB8CJpvMW1cyW9weSCtInC1n2+jNYII/68EsbAg6YvKR3w02QgWqqGeb0ZHUe6cWZ/d3HINzpOpahXgfQhg=
+	t=1762361823; cv=none; b=KI42riCZ+1kvSEJWiQlcpKxeSkjsiwgXRQ2fEFbTax+ndc+t3Tq9vkXi0Mu2lH5uLDD6ky/3djDgEB23ujS+8UZWr68dEwHLRMZKvkJG+hbRkEi+GupPynq9LxMVgPCTf0kQSPtej1yoec0884LZYdWutY2S/1ifMxgaDg37yiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762361794; c=relaxed/simple;
-	bh=q831jl1cF8zNm8FS0acArMwbVgQD3zcUOSZNzIKNIHk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YGUuuqZgV/Co7BXLg7lcBU1AlCx7F4z3SlGOG3eREU6k2op+LISf+RTr8TB3Efdis35Tf2KX4UW8iSkcN6xHx0DZxwxO/Kn3Wu2YKJ+Xy3Yjkmi8JihB5Cjs+Px6B1J558ZCUXyrPNyi/3aafl541t5iGj8+kD+aNAGzBgL/yUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EOfDwlEO; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762361763; x=1762966563; i=markus.elfring@web.de;
-	bh=7F1ptUCk3mTfddI3l+U3mYybiLgR31EFJTgVwt30kZM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EOfDwlEOMkU7B5/JQb/6MdPre9HjWLBlPo665cwqw+XrfuQy+AR10267JDw9hnvv
-	 AwVRl9WwiJY+p2k2gG4Wtkycm44+h60aay7woIQTq3Ar/E3j6r9r3tbze8ud+vDNS
-	 NGx0zLeG2IWx96XgMQ90YFprVvWZ4rjCTWEFgOPTPHMiXwKc6cSDOCcU974tKZX0B
-	 dDT5oeaovvuzMefzovwRDeV3F9KRQN+R+OhX7PGunkEVCMzoueSgKudmIjGqmjaQk
-	 zTdN76CFwyxbmF6J0g1H/I3NkhRq521d4WVKYayoBkwDIatehjMXXbxhA+U9M0mm4
-	 8IlAznA4MvVl+nEhcw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.250]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mm9Va-1vyaBu3lSq-00jxTY; Wed, 05
- Nov 2025 17:56:02 +0100
-Message-ID: <70685d39-9fc4-4e1d-a6a6-bd82cac9b007@web.de>
-Date: Wed, 5 Nov 2025 17:55:56 +0100
+	s=arc-20240116; t=1762361823; c=relaxed/simple;
+	bh=nhM7jbKOW56d3hh/niEe2UapYbSyWoAGZQptKDlqI44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1hfKE5NVqdKsc4ZknTJnrLkEa4O5D5/3VygawME0wtKJojxW1IWucyeMJEDtICSvKb4zqtPZxVINLA/2eBPKGB2MsAikfy4ozndQvzrc9rM6jXtO+zuM0Ly9kaCb2XwYV76MUcG5j+GOj/v2DCjOoCVWcYNIzc3DUyyrJNeSU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkrNSQmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FC2C4CEF5;
+	Wed,  5 Nov 2025 16:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762361823;
+	bh=nhM7jbKOW56d3hh/niEe2UapYbSyWoAGZQptKDlqI44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XkrNSQmVRGDQ0lt4n06gp9o429LO1OThSwSo+tIIP2EJBJlS8ww/ro7sMmGiVdhrM
+	 t1rgH6uGlaXnjmVa+q0tT6T/wHZzevQNMI/p1TJa24pvFPEM/3OqPC7DF47OIz9o9m
+	 rS7nbd/l2kvzZuGV09bu3MD4TN55uh1avGCcK3xopWmiC5ZLktsFp0az7HaETHuJoY
+	 Vh1Stje19/PGgTlt9Jb499Vr+Bcz3Vt9T3rYp8qWR+6Y0CAW4VMy94J4OlikA0BiAP
+	 dy2pVF6eF1/01q9zF36JMleysXGqAX5oXg57tsMBxZrtmIJQPGP9L3s7oIbUpsJ6fD
+	 yvwf0f0RHi11g==
+Date: Wed, 5 Nov 2025 17:57:00 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 22/33] kthread: Include unbound kthreads in the managed
+ affinity list
+Message-ID: <aQuB3Oy7i6Z0SJlA@localhost.localdomain>
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-23-frederic@kernel.org>
+ <ba437129-062a-4a2f-a753-64945e9a13ff@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Karina Yankevich <k.yankevich@omp.ru>, linux-crypto@vger.kernel.org,
- linux-rockchip@lists.infradead.org, lvc-project@linuxtesting.org,
- Corentin Labbe <clabbe@baylibre.com>, Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-References: <20251105145204.2888978-1-k.yankevich@omp.ru>
-Subject: Re: [PATCH] crypto: rockchip - drop redundant
- crypto_skcipher_ivsize() calls
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251105145204.2888978-1-k.yankevich@omp.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VE8lofZA5E4x7hKrt/DXhN2ckemiQDEGFrgEzzWcVo0irE5d07j
- NRWoDqGKjDTSGhb0V3qy3R3NrPMPbCy6mnsxfl3O0/wvgs9/SVgg7cPrpCyv3quv72yBq32
- abaRFvskZKXMDoBtx2c5pR8MVYWZ1jw9bRlCU37iCSaAZLEGPMRJTeotYLiobtPz6uEAS46
- nyDY/uonCgNi9OS7J0mCA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZtqK/5Ww9Ac=;UezMWwWflR+Xqxz50qf+Ak3Ansc
- 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
- FcLQbwoczW6/0H99E7n40YPqus=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba437129-062a-4a2f-a753-64945e9a13ff@redhat.com>
 
-> The function already initialized the ivsize variable=20
-> at the point of declaration, let's use it instead of=20
-> calling crypto_skcipher_ivsize() extra couple times.
-=E2=80=A6
+Le Tue, Oct 21, 2025 at 06:42:59PM -0400, Waiman Long a écrit :
+> 
+> On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
+> > The managed affinity list currently contains only unbound kthreads that
+> > have affinity preferences. Unbound kthreads globally affine by default
+> > are outside of the list because their affinity is automatically managed
+> > by the scheduler (through the fallback housekeeping mask) and by cpuset.
+> > 
+> > However in order to preserve the preferred affinity of kthreads, cpuset
+> > will delegate the isolated partition update propagation to the
+> > housekeeping and kthread code.
+> > 
+> > Prepare for that with including all unbound kthreads in the managed
+> > affinity list.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >   kernel/kthread.c | 59 ++++++++++++++++++++++++------------------------
+> >   1 file changed, 30 insertions(+), 29 deletions(-)
+> > 
+> > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > index c4dd967e9e9c..cba3d297f267 100644
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -365,9 +365,10 @@ static void kthread_fetch_affinity(struct kthread *kthread, struct cpumask *cpum
+> >   	if (kthread->preferred_affinity) {
+> >   		pref = kthread->preferred_affinity;
+> >   	} else {
+> > -		if (WARN_ON_ONCE(kthread->node == NUMA_NO_NODE))
+> > -			return;
+> > -		pref = cpumask_of_node(kthread->node);
+> > +		if (kthread->node == NUMA_NO_NODE)
+> > +			pref = housekeeping_cpumask(HK_TYPE_KTHREAD);
+> > +		else
+> > +			pref = cpumask_of_node(kthread->node);
+> >   	}
+> >   	cpumask_and(cpumask, pref, housekeeping_cpumask(HK_TYPE_KTHREAD));
+> > @@ -380,32 +381,29 @@ static void kthread_affine_node(void)
+> >   	struct kthread *kthread = to_kthread(current);
+> >   	cpumask_var_t affinity;
+> > -	WARN_ON_ONCE(kthread_is_per_cpu(current));
+> > +	if (WARN_ON_ONCE(kthread_is_per_cpu(current)))
+> > +		return;
+> > -	if (kthread->node == NUMA_NO_NODE) {
+> > -		housekeeping_affine(current, HK_TYPE_KTHREAD);
+> > -	} else {
+> > -		if (!zalloc_cpumask_var(&affinity, GFP_KERNEL)) {
+> > -			WARN_ON_ONCE(1);
+> > -			return;
+> > -		}
+> > -
+> > -		mutex_lock(&kthread_affinity_lock);
+> > -		WARN_ON_ONCE(!list_empty(&kthread->affinity_node));
+> > -		list_add_tail(&kthread->affinity_node, &kthread_affinity_list);
+> > -		/*
+> > -		 * The node cpumask is racy when read from kthread() but:
+> > -		 * - a racing CPU going down will either fail on the subsequent
+> > -		 *   call to set_cpus_allowed_ptr() or be migrated to housekeepers
+> > -		 *   afterwards by the scheduler.
+> > -		 * - a racing CPU going up will be handled by kthreads_online_cpu()
+> > -		 */
+> > -		kthread_fetch_affinity(kthread, affinity);
+> > -		set_cpus_allowed_ptr(current, affinity);
+> > -		mutex_unlock(&kthread_affinity_lock);
+> > -
+> > -		free_cpumask_var(affinity);
+> > +	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL)) {
+> > +		WARN_ON_ONCE(1);
+> > +		return;
+> >   	}
+> > +
+> > +	mutex_lock(&kthread_affinity_lock);
+> > +	WARN_ON_ONCE(!list_empty(&kthread->affinity_node));
+> > +	list_add_tail(&kthread->affinity_node, &kthread_affinity_list);
+> > +	/*
+> > +	 * The node cpumask is racy when read from kthread() but:
+> > +	 * - a racing CPU going down will either fail on the subsequent
+> > +	 *   call to set_cpus_allowed_ptr() or be migrated to housekeepers
+> > +	 *   afterwards by the scheduler.
+> > +	 * - a racing CPU going up will be handled by kthreads_online_cpu()
+> > +	 */
+> > +	kthread_fetch_affinity(kthread, affinity);
+> > +	set_cpus_allowed_ptr(current, affinity);
+> > +	mutex_unlock(&kthread_affinity_lock);
+> > +
+> > +	free_cpumask_var(affinity);
+> >   }
+> >   static int kthread(void *_create)
+> > @@ -924,8 +922,11 @@ static int kthreads_online_cpu(unsigned int cpu)
+> >   			ret = -EINVAL;
+> >   			continue;
+> >   		}
+> > -		kthread_fetch_affinity(k, affinity);
+> > -		set_cpus_allowed_ptr(k->task, affinity);
+> > +
+> > +		if (k->preferred_affinity || k->node != NUMA_NO_NODE) {
+> > +			kthread_fetch_affinity(k, affinity);
+> > +			set_cpus_allowed_ptr(k->task, affinity);
+> > +		}
+> >   	}
+> 
+> My understanding of kthreads_online_cpu() is that hotplug won't affect the
+> affinity returned from kthread_fetch_affinity().
 
-* You may occasionally put more than 52 characters into text lines
-  of such a change description.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
+It should. The onlining CPU is considered online at this point and might
+be part of the returned kthread_fetch_affinity().
 
-* How do you think about to reduce the scope for such a local variable?
+> However, set_cpus_allowed_ptr() will mask out all the offline CPUs. So if the given
+> "cpu" to be brought online is in the returned affinity, we should call
+> set_cpus_allowed_ptr() to add this cpu into its affinity mask though the
+> current code will call it even it is not strictly necessary.
 
+I'm not sure I understand what you mean.
 
-Regards,
-Markus
+> This change will not do this update to NUMA_NO_NODE kthread with no preferred_affinity,
+> is this a problem?
+
+Ah, so unbound kthreads without preferred affinity are already affine to all
+possible CPUs (or housekeeping), whether those CPUs are online or not. So we
+don't need to add newly online CPUs to them.
+
+kthreads with a preferred affinity or node are different because if none of
+their preferred CPUs are online, they must be affine to housekeeping. But as
+soon as one of their preferred CPU becomes online, they must be affine to them.
+
+Hence the different treatment. I'm adding a big comment to explain that.
+
+Thanks!
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
