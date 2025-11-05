@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-886179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5434BC34EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:43:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B72C34EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B31DE18894C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C90189B14C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CF302CB8;
-	Wed,  5 Nov 2025 09:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD473043AD;
+	Wed,  5 Nov 2025 09:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="yHzR6oYW"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ec94UAmH"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758FD2F90DB;
-	Wed,  5 Nov 2025 09:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987B71EA7FF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335802; cv=none; b=SKEhhigssuiem9bBbnsClnSdehzJXK7L8oRGsrEI577WrpRxc7XVZtM+jmezc5T7Vq9ar981JYrM9EMhLW3A5FNvuc1DSecxIxdpGlrovFmNKi4cCIlVjqZxlml+Y5seYCCUf62x/+nL+XYUH4/vKuSOj25NAkVjB+Y0lUBwS9w=
+	t=1762335827; cv=none; b=auu0qQrDB0C4Iwd2ep3aiW3xu2k7Jn/CkXbJ++5qo5kBmLCug5xW1pIzYd5LACfM8Uzt1MjbVeLeCPm5AGxokc+49iAqzuN5mvqwFYCaCH2q1T3WcB9vY5AgYFgLtnfkBcS2v3UCOzcrF+4MYrh0eIbmwtfaoqHjtL0J/+Lu5dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335802; c=relaxed/simple;
-	bh=2ay3gpe+DC39Q7/4WZfpjtRkiFON/Y2iewm350cuS1Y=;
+	s=arc-20240116; t=1762335827; c=relaxed/simple;
+	bh=ZPdvryT7qhw/t3FUbdnKt8pRhR93yULtLAF828uGlRY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLQM7hs9M5cKfWXKipZihM9njP0fALCJnBHs6HqbQ82jJAOWcVj25dmIjcxCXSkcaskzx1HG/6zjPlnGC1c3IhN8Mpqwp0+qNaWz1QsUtkkk8JKt3Av7qiRRf8H0i+GhLgtAwaLSSxuWIHgerKrYb58OZex8Fkd6bTY3cIVdGVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=yHzR6oYW; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762335783;
-	bh=2kEQYPx9izy3tjn1vebxPX+DpgkknD8cSN82ocQpSH8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=yHzR6oYWpCgSinifOcI5aQQ90K2nzG4PxujeDUJ8WPf18Xt+YpAokXTFTrQlg5kxE
-	 WEo/d6hjSRspJvpEdVpZ7Dr0TJcCQum8Dv3aoRarDrHX/3L74OLU3NHZ7WdE07P32t
-	 j/TT725CHqjfcfIt++au3hcx57V+RoIKICHozC4Y=
-X-QQ-mid: esmtpsz21t1762335782t549cd986
-X-QQ-Originating-IP: COFdcai2DugJqSuJpc3w9T+h41iB4VKElqxx7YBkRS4=
-Received: from = ( [183.48.244.102])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 05 Nov 2025 17:43:00 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8610270425027163017
-EX-QQ-RecipientCnt: 14
-Date: Wed, 5 Nov 2025 17:42:59 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Lee Jones <lee@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <E205F88FB1EE06C5+aQscI0Uy7pgiMzEt@kernel.org>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
- <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
- <20251105093347.GD8064@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVWLBnro0M/lDJlxk5xzf0W0BpC+4Pp+HTrdaEcROI+LJqt+Snw8gZ4M1FrEBbCCD204uQ/OMmvwGT9kH0/PaRCpHz3lOcp8iFXLLQTHXY0xf1sOXW/YudNsaXP+rE6AL2jRansTrxNtecgN3FnKjs4WOVoxSUsUGE/jbiq35NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ec94UAmH; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=ZPdv
+	ryT7qhw/t3FUbdnKt8pRhR93yULtLAF828uGlRY=; b=ec94UAmH+VfO0dljedGk
+	I6WiKY3aoICKdt8Fc22R910vF/rt/YpoZXmZelzy/rllYeTmCbSRBh1KCHZhG5mP
+	7ALQ9ntZ2JPmw3HOKyx1DfssYHnSDR9xyPyXPyzrQYg+YGTXd5PDP2DrEDAfzNA5
+	hrkiPBhz6I8atYOdzZHg1AX5ko3hievUqIl0YDPbl7f3+aGmUapXlXoEhD24WZBe
+	qzO4Y9Vhywl/n7GWpS8rBCUIW3/bprdPGokiki6PD+oKxw1hCYYpCm1Equ6zdhxo
+	45SErOnACHSld2yb344/H2YEgMkKyDSSzjfpOyCh/PZkJZyJQzT4OJC0Q/BhB/Cu
+	lg==
+Received: (qmail 3007516 invoked from network); 5 Nov 2025 10:43:32 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Nov 2025 10:43:32 +0100
+X-UD-Smtp-Session: l3s3148p1@mgwLyNVCcIoujntX
+Date: Wed, 5 Nov 2025 10:43:31 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, kernel@pengutronix.de
+Subject: Re: [PATCH] Revert "reset: always bail out on missing RESET_GPIO
+ driver"
+Message-ID: <aQscQ11833v-AxaL@ninjato>
+References: <20251105093920.2345333-1-p.zabel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uFi3Jsp3NpXtxYvb"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105093347.GD8064@google.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MIgGCCI///JUTZf9vMBL+cj1O4cG30/f5aB285poD6O0e0mo04lrE4Ci
-	hgTAGU/WyPJ7FaZbH5nzfF0UtBIDNjal22BLcnIizNln0OSFItwc4gbqZp5yw88XN/Oei7y
-	OAnuP/o8Bgw/sUgpiXmWE7jVuRFSNLoakt7EU+a/ywZ36TVfv5BC2/DMQEJrQIMNDGtQpQy
-	1UgpCamFqjaXBtmoaNGhjuQt63D5ME3p1ByzCOx+/Amox7mM2oFVlhGV/WnqD0P+tl05RE3
-	GjwPKI3GEpsgo9RszPYQJdMmeJ/H3H6AeXkM9ldXBYEvzqGcMGvoRRSV6g8BNJWxoEyqApm
-	8gde5RTWeyoz0pnw//nIPTaFL01Vabld6nYuK0T223g4OamH1IkSg7QF12z4nYCqDZnC2gZ
-	H5VAe4OLUDlYqXdJMBKeochN80ciKwPAMvvjLcdFYc8gJ5ggltZ+b4pKgAQ2ia0oRSA2yTr
-	ooMU/tVphi3xRRdWipFSrnEdEn5FWOhs6PKdIaIeGS0w7QKN+wsecZ4oYFeIIATx94Ddo+/
-	CgFQXXmfOt4YGraRi8iFzbS+ho50ZsSB298sZwWKvOdpDdsXFgNh8f1VO+K8vcV7OzQi8ix
-	plhaXUEwn+oly7hKU4yADvl7CWV9IuBv93XMJt0yHAulgt3SD0Ba12siasuAxYIaqaCxFZc
-	OHWjO9v2iV3tFl1LJAy706+ocopZwVSbwZ0ruehGfOgVd9O/nhKDfv/Kf49Z7CJ2VAW48lB
-	gSK5HiGPSJCOxJX0dNu35u0/5GFCyALp9AuMhxIfIUVKzKcIQbFtFSCmv6IiUfJU+wi+zs6
-	VFUyGY2cZjxi+h4Pux6O5KpLlJy78g3sVlRqiyH9UotIzpAzytPX+6gF8vPIdImBzu7Qjd6
-	UCpRLfBwSXaDRe7OWZHIdOs2qljNJ6IdmHpYeJK/n54SaNqDlll4GBXq2uK6Q+KGmXWPkPV
-	m54L6EZ7PMJ/J+PfbtDQZHHdmnxaGWNhafJ05zXoqAag1giBCHEiRbvW7Z2GwTgVDNrAO9f
-	5gssc6sTD+WnhFXk3KxB/QYNdfb5lufgz7Sc8bcVyldpPa1RrqLNCKNI4bGk+hc0nPKY2cU
-	ayLAY+JTeIF43vIDkmgB6IFmv7w3f2VQJFuFTzmYzg+6waF3amT8vKDDNJs7nIAzCNA71wr
-	EvPOSSPuTzZTbra4hEGQU/D8IQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20251105093920.2345333-1-p.zabel@pengutronix.de>
 
-On Wed, Nov 05, 2025 at 09:34:21AM +0000, Lee Jones wrote:
-> On Tue, 04 Nov 2025, Troy Mitchell wrote:
-> 
-> > On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> > > 
-> > > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> > > > commonly paired with the SpacemiT K1 SoC.
-> > > > 
-> > > > Note: For reliable operation, this driver depends on a this patch that adds
-> > > > atomic transfer support to the SpacemiT I2C controller driver:
-> > > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-dependency is here.
-> > > > 
-> > > > [...]
-> > > 
-> > > Applied, thanks!
-> > > 
-> > > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-> > >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-> > Should we apply it now? The dependency patch hasn’t been merged yet...
-> 
-> What is the dependency?
-I point it out above.
-Without this patch, reboot and shutdown would end up calling the non-atomic i2c_transfer.
 
-                                  - Troy
-> 
-> -- 
-> Lee Jones [李琼斯]
-> 
+--uFi3Jsp3NpXtxYvb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 05, 2025 at 10:39:20AM +0100, Philipp Zabel wrote:
+> This reverts commit 25d4d4604d01eb0ce5254f0516826127dacb5015, which
+> caused unexpected fallout:
+>=20
+> Drivers that handle optional reset GPIOs via the reset controller API,
+> on platforms that have a reset-gpios property in the device tree node,
+> would fail to probe instead of falling back to either ignoring the reset
+> or handling it via the GPIO API, if the RESET_GPIO driver was disabled.
+>=20
+> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Thank you!
+
+
+--uFi3Jsp3NpXtxYvb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkLHEAACgkQFA3kzBSg
+KbamIQ/+N5XwQVTbhoDyyc1ntl1sOogEzBw1BPli1g5MowXfyuJ5LaA0R4g7NTX+
+svGmwpPUCH+3h/UyDAQmpys+0xm3JgpLJ9q/edLkV7daLl4t2HQkiTpUZR9xMfeb
+avtM7FG0ffceuA0F8C4QYTmQkb7icFRAxrw06hZi+w/BM/cBjtDPp+BO70Te15ZU
+mLcW9CAzqrrBlTCqqoam328nsxSWIWsX4a2IwlOzHG2+SpN+fWhQYyES7oLhRCHG
+r9qboDRHuarslk5iFmXHQoHxL3L/RxNg9FLheXBhf25K80CfjLhNvUiEqK0t6RdB
+6EXz7M+rUZp/Rjb1wKg7q9mam7c5qnyFAzxN8th0gDzBU0x4V7TSYRZpAPWFG8RN
+cTboTgBqbZTZj9j/lVtzBYvTSI8slJavYpRtmMJj0IBFSfWqTda8d6MpFho9sYQ5
+WHxEAVAp7QZF2vXnaI0FSHt9i41Ra8jzvr2HQvz/VzyI1BVzE7cTrGvr/mCdNedL
+XxyGj52ODA4ze3FteDdFKNAdu4LfPY/Ujz2lTV7GslbIMI+N5n74eTBAgwMrDSa1
+c4uKcFdQD64Dge43sZAmUlgympdf6yGie/t3Z2Ce48WAAG7uOeWST+tiT0hX3V20
+geZlDvDzjvgcAWu32L0olATal48hciaDOBhX00TR9lpQjStM7Ng=
+=jAMh
+-----END PGP SIGNATURE-----
+
+--uFi3Jsp3NpXtxYvb--
 
