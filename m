@@ -1,80 +1,49 @@
-Return-Path: <linux-kernel+bounces-886489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10D5C35BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:58:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497DEC35BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E040256613B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56C33A7016
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907943164A8;
-	Wed,  5 Nov 2025 12:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8518D3164D3;
+	Wed,  5 Nov 2025 12:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PAFMjIBt"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="X8r+4hrm"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F9A3148B2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795F42F1FD2;
+	Wed,  5 Nov 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762347468; cv=none; b=OqHfekwve6In8K7tX0s8l/7oKCHQyIWqPk/kvIXXf508OkVjlZ4Zpbz7NXr4jZuKl0IYmETpj2MF95NHMydnJY6eeRTTlHxkR7gAmSEfXZurJaD12VRQfQRxn9ZVv3PP21WJC1MFpN/5Pe2jqOTGkn0tisSdZkNTRFp+ErcBcLs=
+	t=1762347527; cv=none; b=jH0iI/RzxALhNccw94F4MqN12lpKk2KRq0D1MMi7yfOe+yP39oNyUgk9g+sBzzZC9Vh2iOirQaKRZpiZ+ebj9xp3YxyUqGEf6p2/iarbzrvshU8EAlf1ueNJ5iOpXZkyplBrf1Sh9vG4puGX2bMpjlf5M/RBkY/D2/vl3X+AuFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762347468; c=relaxed/simple;
-	bh=0LJFAwG3uKB8EtkB8F3PX6TJWOV2c6OGA4oCsggctMc=;
+	s=arc-20240116; t=1762347527; c=relaxed/simple;
+	bh=JMc0AP5EMzvMe+FQPbI0ucOETo2MjN3P040L151RHBs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6zlWXyIUNxGncRvoJCi1mtVYeOYOkXBXg1+xGQrh7actbbok2aGSwGM2/sDo2fJowXCP97WbzFV9vW+O1a0OdBMPkkbGiNQzjITUMY7flmu2Zh9tDBX9/gGUzE3IGV14sDJzVfPBmYOF0FEMgwfQ8sKErM3lbKGmNqpn8Frog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PAFMjIBt; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so6415985a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 04:57:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762347467; x=1762952267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vr6PsIqaDjxaH/cpBwS9aE8aleV9ylkOxYVPRloXRC0=;
-        b=PAFMjIBtG3CZOsJIak9CwLGWs4lLiDb+JQ/CRMXK1dXDmDs9mBGjroil/+yTkmwJkB
-         w5H2QOGjmB45r2lfZiDatpiXrMGNV6EDl3oivuszkEGndUqmoWfvXFxjoILlRW0zYQwA
-         uSoF6EpAAjorotuVKZU6VYVH36SybW8Af7yb4A9gYJFdzf0vVGC9k6fLx9wmUPJq87RF
-         11I/oGUTiZBceIv+cptDmwfIeq9/4LlA0rsq0Xcd9WhnTAAY5B7eqtTI66wYgjCz/ZPB
-         WDHMpKziTG9rSboiOmFEtcEjQApO5IOkLJjmebNmYPi0aKlUVPVw7dlLOwFx8Wlau2ap
-         hn5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762347467; x=1762952267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vr6PsIqaDjxaH/cpBwS9aE8aleV9ylkOxYVPRloXRC0=;
-        b=udCdIkDSq9oYBDjcGA7xkGC5Vhc5BOC1a3bbpMf5Zmkmo9TbVRUUoGk8YGTuKGzNmc
-         al0t09Kno8Z0NpIUO00cubueqn9E+QLMwDag6xHfxR9xLQEgUjczd98SKEEQ3mveLtEE
-         hKw7lsO7k8wj6NRNOrFkIkjChtU7Sz93LkS4rIiS5yzcYiL1XX40pOChOJvVyaWNV3Dh
-         A6s1dWVhQxjBVM9PzSKr2+7eOBli87xQ4UXFZhG4PA5EWjAsHmBuTRnhQvG2vvyKsNEx
-         AcJ4cWfsv1AkK2JyGRzvrzFwbBSHvKi2bWb6+TblHMIRtEcpjSRU2UPnw4bT6M7QB5Gm
-         Qwsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdfNZ/TB/U2L/ovzdncdgcLTaFL5/r/3qIDvKZQG+2iWnXzpEZ1+nGd6jdJV+Ou0j6DNjAFMmrDLJhm/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxkZzgWVxZ+jxD5p9WWbVWLxirVYttj6oC08VjCPuVcrV3tgyj
-	y5N1+USZ8Ld7XAsNd1pMLLyB7xeimGBI6ucLYsqp9ts6jrxBVMjdymZ0
-X-Gm-Gg: ASbGncvI9c4MMpTopx4/FRfHbbJenmG0glSlngSe1G9NzETJ4I+a495E74gwM0KGL+b
-	hxLsuX5H1A/OOpivCFgFQy0v55ZMv7jr8Zekd/RaOyK0oQBLgkVfD7cwCJwsuT4RaS/ozvBc6nV
-	15X85lTOVDan9sToDIehTT19exaeohQB48KsTViUC+7yMYdLbugauRUVHcyYx+M+ZvVDwCsLutB
-	YLA1s90UyRtiGUbhDiRdcYDPYNZFXBzBLNQgoCpkvPrHeenYg7JnsnGdI6N+LPomziGEmzdDnGT
-	M3s+YFR9/6BYsF/69JaMF8+shRvL9d5mc4AhDxMFhDnruA0XE53USi2PVLIZfX3n13vrOpLm4rO
-	AivC0rr3/fINXKySy2Cf3EFumm5eU4JkEaWMa2RvkT3nQ+Ri/UEA4T0xCEZGtV/bHVoWGNmQRNI
-	E3M4BQEbn6u6cN9rC6MkJ+sJQ=
-X-Google-Smtp-Source: AGHT+IF/tAWCYp/lgefsgtHlbqrg/hhGf8vpbe20agZqQuaywYqcLauuHDzVmD/ISXzLYKlDef5s+A==
-X-Received: by 2002:a17:90b:590b:b0:340:2a16:94be with SMTP id 98e67ed59e1d1-341a6c2c740mr3688090a91.4.1762347466974;
-        Wed, 05 Nov 2025 04:57:46 -0800 (PST)
-Received: from [172.17.49.162] ([103.218.174.2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a689ad7fsm2950374a91.2.2025.11.05.04.57.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 04:57:46 -0800 (PST)
-Message-ID: <58afe57b-68e8-4de3-841a-df3dbf04ee64@gmail.com>
-Date: Wed, 5 Nov 2025 18:27:42 +0530
+	 In-Reply-To:Content-Type; b=bTYGRp4KqdGXhvF4G61czVMIPRT8KKLAe8h1yzq3u//uI4GT+guAu9TKz/CxcF7CE0I9JQNQguR5bKDFnUtrhqlWL9a0V/x076hKF0V+QFjtKC4tF2R18a55kHl84ZcGKGG+fR7NIm8q7gygXT0hNhW5WVjlQNoOwlJxBb4YL6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=X8r+4hrm; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from [129.217.186.196] ([129.217.186.196])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A5Cwcr2002636
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 5 Nov 2025 13:58:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1762347519;
+	bh=JMc0AP5EMzvMe+FQPbI0ucOETo2MjN3P040L151RHBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=X8r+4hrmttuOg1GcPoHe6+Df17NkRCOQDpGH+pw+KOncs7GzhHEwCNbsfdmj7CbBj
+	 FsPP8Lw3qFDZQyFYvYnwQGNz+8z6ikoEBw5l2dBG/i0M/RCKGjRonIl4rS8rGNtA90
+	 IcYR+sWoeIowqlW+Hkibk5Cm9nzDBZF9FdFd89ng=
+Message-ID: <c01c12a8-c19c-4b9f-94d1-2a106e65a074@tu-dortmund.de>
+Date: Wed, 5 Nov 2025 13:58:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,91 +51,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/2] Add Qualcomm Technologies, Inc. Talos EVK SMARC
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251104125126.1006400-1-tessolveupstream@gmail.com>
- <xq4jidiffovpg3armhlzrzxloug4irumlycyyvmfaugajbtq4t@cutuj5736ayo>
+Subject: [PATCH net-next v1 1/1] usbnet: Add support for Byte Queue Limits
+ (BQL)
+To: Eric Dumazet <edumazet@google.com>
+Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
+ <20251104161327.41004-2-simon.schippers@tu-dortmund.de>
+ <CANn89iL6MjvOc8qEQpeQJPLX0Y3X0HmqNcmgHL4RzfcijPim5w@mail.gmail.com>
+ <66d22955-bb20-44cf-8ad3-743ae272fec7@tu-dortmund.de>
+ <CANn89i+oGnt=Gpo1hZh+8uaEoK3mKLQY-gszzHWC+A2enXa7Tw@mail.gmail.com>
+ <be77736d-6fde-4f48-b774-f7067a826656@tu-dortmund.de>
+ <CANn89iJVW-_qLbUehhJNJO70PRuw1SZVQX0towgZ4K-JvsPKkw@mail.gmail.com>
 Content-Language: en-US
-From: Tessolve Upstream <tessolveupstream@gmail.com>
-In-Reply-To: <xq4jidiffovpg3armhlzrzxloug4irumlycyyvmfaugajbtq4t@cutuj5736ayo>
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+In-Reply-To: <CANn89iJVW-_qLbUehhJNJO70PRuw1SZVQX0towgZ4K-JvsPKkw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 05/11/25 06:35, Dmitry Baryshkov wrote:
-> On Tue, Nov 04, 2025 at 06:21:24PM +0530, Sudarshan Shetty wrote:
->> Hi all,
+On 11/5/25 13:34, Eric Dumazet wrote:
+> On Wed, Nov 5, 2025 at 4:20 AM Simon Schippers
+> <simon.schippers@tu-dortmund.de> wrote:
 >>
->> This patch series adds device tree binding and board support for the
->> Qualcomm Technologies, Inc. Talos EVK SMARC platform based on the
->> QCS615 SoC.
+>> On 11/5/25 12:28, Eric Dumazet wrote:
+>>> On Wed, Nov 5, 2025 at 2:35 AM Simon Schippers
+>>> <simon.schippers@tu-dortmund.de> wrote:
+>>>>
+>>>> On 11/4/25 18:00, Eric Dumazet wrote:
+>>>>> On Tue, Nov 4, 2025 at 8:14 AM Simon Schippers
+>>>>> <simon.schippers@tu-dortmund.de> wrote:
+>>>>>>
+>>>>>> The usbnet driver currently relies on fixed transmit queue lengths, which
+>>>>>> can lead to bufferbloat and large latency spikes under load -
+>>>>>> particularly with cellular modems.
+>>>>>> This patch adds support for Byte Queue Limits (BQL) to dynamically manage
+>>>>>> the transmit queue size and reduce latency without sacrificing
+>>>>>> throughput.
+>>>>>>
+>>>>>> Testing was performed on various devices using the usbnet driver for
+>>>>>> packet transmission:
+>>>>>>
+>>>>>> - DELOCK 66045: USB3 to 2.5 GbE adapter (ax88179_178a)
+>>>>>> - DELOCK 61969: USB2 to 1 GbE adapter (asix)
+>>>>>> - Quectel RM520: 5G modem (qmi_wwan)
+>>>>>> - USB2 Android tethering (cdc_ncm)
+>>>>>>
+>>>>>> No performance degradation was observed for iperf3 TCP or UDP traffic,
+>>>>>> while latency for a prioritized ping application was significantly
+>>>>>> reduced. For example, using the USB3 to 2.5 GbE adapter, which was fully
+>>>>>> utilized by iperf3 UDP traffic, the prioritized ping was improved from
+>>>>>> 1.6 ms to 0.6 ms. With the same setup but with a 100 Mbit/s Ethernet
+>>>>>> connection, the prioritized ping was improved from 35 ms to 5 ms.
+>>>>>>
+>>>>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+>>>>>> ---
+>>>>>>  drivers/net/usb/usbnet.c | 8 ++++++++
+>>>>>>  1 file changed, 8 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+>>>>>> index 62a85dbad31a..1994f03a78ad 100644
+>>>>>> --- a/drivers/net/usb/usbnet.c
+>>>>>> +++ b/drivers/net/usb/usbnet.c
+>>>>>> @@ -831,6 +831,7 @@ int usbnet_stop(struct net_device *net)
+>>>>>>
+>>>>>>         clear_bit(EVENT_DEV_OPEN, &dev->flags);
+>>>>>>         netif_stop_queue (net);
+>>>>>> +       netdev_reset_queue(net);
+>>>>>>
+>>>>>>         netif_info(dev, ifdown, dev->net,
+>>>>>>                    "stop stats: rx/tx %lu/%lu, errs %lu/%lu\n",
+>>>>>> @@ -939,6 +940,7 @@ int usbnet_open(struct net_device *net)
+>>>>>>         }
+>>>>>>
+>>>>>>         set_bit(EVENT_DEV_OPEN, &dev->flags);
+>>>>>> +       netdev_reset_queue(net);
+>>>>>>         netif_start_queue (net);
+>>>>>>         netif_info(dev, ifup, dev->net,
+>>>>>>                    "open: enable queueing (rx %d, tx %d) mtu %d %s framing\n",
+>>>>>> @@ -1500,6 +1502,7 @@ netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
+>>>>>>         case 0:
+>>>>>>                 netif_trans_update(net);
+>>>>>>                 __usbnet_queue_skb(&dev->txq, skb, tx_start);
+>>>>>> +               netdev_sent_queue(net, skb->len);
+>>>>>>                 if (dev->txq.qlen >= TX_QLEN (dev))
+>>>>>>                         netif_stop_queue (net);
+>>>>>>         }
+>>>>>> @@ -1563,6 +1566,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
+>>>>>>  static void usbnet_bh(struct timer_list *t)
+>>>>>>  {
+>>>>>>         struct usbnet           *dev = timer_container_of(dev, t, delay);
+>>>>>> +       unsigned int bytes_compl = 0, pkts_compl = 0;
+>>>>>>         struct sk_buff          *skb;
+>>>>>>         struct skb_data         *entry;
+>>>>>>
+>>>>>> @@ -1574,6 +1578,8 @@ static void usbnet_bh(struct timer_list *t)
+>>>>>>                                 usb_free_skb(skb);
+>>>>>>                         continue;
+>>>>>>                 case tx_done:
+>>>>>> +                       bytes_compl += skb->len;
+>>>>>> +                       pkts_compl++;
+>>>>>>                         kfree(entry->urb->sg);
+>>>>>>                         fallthrough;
+>>>>>>                 case rx_cleanup:
+>>>>>> @@ -1584,6 +1590,8 @@ static void usbnet_bh(struct timer_list *t)
+>>>>>>                 }
+>>>>>>         }
+>>>>>>
+>>>>>> +       netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
+>>>>>> +
+>>>>>>         /* restart RX again after disabling due to high error rate */
+>>>>>>         clear_bit(EVENT_RX_KILL, &dev->flags);
+>>>>>>
+>>>>>
+>>>>> I think this is racy. usbnet_bh() can run from two different contexts,
+>>>>> at the same time (from two cpus)
+>>>>>
+>>>>> 1) From process context :
+>>>>> usbnet_bh_work()
+>>>>>
+>>>>> 2) From a timer. (dev->delay)
+>>>>>
+>>>>>
+>>>>> To use BQL, you will need to add mutual exclusion.
+>>>>
+>>>> Yeah, I missed that.
+>>>>
+>>>> I guess synchronizing with the lock of the sk_buff_head dev->done makes
+>>>> sense? The same locking is also done right before in skb_dequeue.
+>>>
+>>> Or only protect the netdev_completed_queue(dev->net, pkts_compl,
+>>> bytes_compl) call,
+>>> adding a specific/dedicated spinlock for this purpose.
+>>>
+>>> spin_lock_bh(&dev->bql_spinlock);
+>>> netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
+>>> spin_unlock_bh(&dev->bql_spinlock);
+>>>
+>>> I am assuming no usbnet driver is setting dev->lltx = true (or plan to
+>>> in the future)
+>>> so usbnet_start_xmit() is protected by HARD_TX_LOCK() already.
 >>
->> The first patch introduces the DT binding entry for the Talos EVK
->> SMARC board, and the second patch adds the corresponding DTS
->> files for the platform.
+>> Yes, I also want to only protect the netdev_completed_queue(dev->net,
+>> pkts_compl, bytes_compl) call. However, I am wondering what you mean with
 >>
->> Note:
->> USB(usb_1_dwc3) supports host-only mode based on the switch SW1 on
->> the SoM, which is purely a hardware controlled as USB-ID and USB-VBUS
->> is not connected the switching cannot be handled from SW.
->> Hence from SW Host-only mode is supported on Linux boot up.
+>> spin_lock_bh(&dev->bql_spinlock)
+>> ...
 >>
->> Changes in v5:
->>  - Updated commit message. (suggested by Krzysztof)
->>  - Introduced generic node name for can, dp, hdmi-bridge. (suggested by
->>    Krzysztof)
->>  - Introduced talos-evk-cb.dtsi, which has common carrier board
->>    interfaces.
+>>
+>> Do we want to protect against usbnet_start_xmit()? Maybe I am missing
+>> something, but other BQL implementations also do not seem to protect
+>> against their respective ndo_start_xmit.
 > 
-> Common between what?
-
-Introduced talos-evk-cb.dtsi to define carrier board–specific interfaces
-common to both HDMI and LVDS top-level DTS variants.
+> BQL has been designed so that producer/consumer can run in //
 > 
->>  - No functional change in bindings file.
->>
->> Changes in v4:
->>  - Updated product name to full form per Krzysztof’s feedback in
->>    dt-binding comment.
->>  - Hook up the ADV7535 DSI-to-HDMI bridge to base DTS file.
->>  - Add DP connector node and MDSS DisplayPort controller.
->>  - Added USB note in the cover letter for maintainers' awareness.
->>
->> Changes in v3:
->>  - Addressed comments from Dmitry regarding USB1 `dr_mode` and 
->>    added a DTS comment.
->>  - No functional change in bindings file.
->>
->> Changes in v2:
->>  - Renamed compatible to "qcom,talos-evk" (suggested by Dmitry/Bjorn)
->>  - Merged enum entry with existing `qcs615-ride` block (Krzysztof)
->>  - Fixed subject and commit message to use imperative mood.
->>
->> Thanks,
->> Sudarshan
->>
->> Sudarshan Shetty (2):
->>   dt-bindings: arm: qcom: talos-evk: Add QCS615 Talos EVK SMARC platform
->>   arm64: dts: qcom: talos-evk: Add support for QCS615 talos evk board
->>
->>  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>  arch/arm64/boot/dts/qcom/talos-evk-cb.dtsi    |  56 +++
->>  arch/arm64/boot/dts/qcom/talos-evk-som.dtsi   | 442 ++++++++++++++++++
->>  arch/arm64/boot/dts/qcom/talos-evk.dts        |  87 ++++
->>  5 files changed, 587 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-cb.dtsi
->>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-som.dtsi
->>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk.dts
->>
->> -- 
->> 2.34.1
->>
+> However, all producers need exclusion (typically done with HARD_TX_LOCK)
+> All consumers need exclusion (typically done because of NAPI sched bit)
 > 
+>>
+>>
+>> My approach would just protect against usbnet_bh calls from another
+>> context with the same locking as skb_dequeue():
+>>
+>> spin_lock_irqsave(&list->lock, flags);
+>> netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
+>> spin_unlock_irqrestore(&list->lock, flags);
+> 
+> I tend to prefer not masking hard irq unless really necessary.
+> 
+> Also, reusing  a lock for different purposes makes things confusing
+> in terms of code maintenance.
+> 
+> usbnet is hardly performance critical, I would keep list->lock only to
+> protect the list of skbs :)
 
+Thanks for the clarification!
+
+
+So in usbnet.h I will just 
+
+#include <linux/spinlock.h>
+
+and then save the new field
+
+spinlock_t bql_spinlock;
+
+in struct usbnet and will then call
+
+spin_lock_bh(&dev->bql_spinlock);
+netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
+spin_unlock_bh(&dev->bql_spinlock);
+
+in usbnet_bh. Am I right?
 
