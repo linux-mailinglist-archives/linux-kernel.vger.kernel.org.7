@@ -1,84 +1,129 @@
-Return-Path: <linux-kernel+bounces-886421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D04C3589E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:58:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC05DC3586F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130D51892167
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:57:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B94184F2335
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42865312807;
-	Wed,  5 Nov 2025 11:56:35 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF8D3126AC;
+	Wed,  5 Nov 2025 11:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPKEWJU+"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB4C305056
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D42DF3FD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343794; cv=none; b=FQKoLSAuELwCYYRVQOpU2F1vEQyuHVpmdnWtTET2lwyGzJzeTjLr8LAFmKiZLASLZvoG1EQ9e2IJ6jHQw3op+z41JDnh/xBbVlFnHUU3dG7iJ0GJNRZrUDMQ+Zwu1ABfSN/jxeR7CkjYQlWk31Ls3waNc+2k2Uh08j1cVKKSRbM=
+	t=1762343559; cv=none; b=YhlaWMNLMQYnDJUm8VYXYsapkPx7Z6HJdNyLYnuextJZbZvhtjwYr+2YG87wwcpnT+HQkffe0WBDhKWy4iNiPRVPWfdkl002v37uXlj9DKj/CVj2sbVQmG596i8X97Ngzf1IXwoLLdRei/aLdpzbZq5GZBr8MefM5dFxn2pV9T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343794; c=relaxed/simple;
-	bh=JuEAzNp5ccMag6Yvlb4mVnaVw+oCWuSEupYqMfslvDg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=StCsZ4dnz7JDXO1tJBjm3+qCXBnAnEJ2oKoHC/vH/GbYLEbnXjdBEcI0ermrUV8FG6dNR3rwDUAXCkuq44DaxRmIhUT1mvFW5WcM5nzqopp7gIgDKbcPKvuwQKdtlaU3pkuhaaSz7xvTREPyn88FbIJJv8O/VSYhZQcBR35vl+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: bc9c7204ba3d11f0a38c85956e01ac42-20251105
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:12db0465-c413-477c-a9c9-0d5df1bbaa45,IP:10,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-25
-X-CID-INFO: VERSION:1.3.6,REQID:12db0465-c413-477c-a9c9-0d5df1bbaa45,IP:10,URL
-	:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:a9d874c,CLOUDID:11b0da5992772f3a2b9da9edd14284b9,BulkI
-	D:2511051518140QDP8CZS,BulkQuantity:2,Recheck:0,SF:10|38|66|78|81|82|83|10
-	2|841|850,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:4
-	0,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE
-	:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: bc9c7204ba3d11f0a38c85956e01ac42-20251105
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.169)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 168032075; Wed, 05 Nov 2025 19:51:16 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/hist: make err_text array fully const
-Date: Wed,  5 Nov 2025 19:50:59 +0800
-Message-Id: <20251105115059.261361-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
-References: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
+	s=arc-20240116; t=1762343559; c=relaxed/simple;
+	bh=0gaX/c8zQfx44tSR/MSzqkw90P3yVYkFR83Mp3kzZfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EroOHoGv0bmdr/+ZOjHvtrCP6mMgWiF24FBZp8+yGb76Ze6LHnYteNz/K0s7xp5RasBy6poDZ7MX+Nw8SpYV2Q1zY5osQtQhHpW67O8NKMx2qX9C5RXVYf/L+M0yY4SIFokPMuQLYt384yhGVQU2UXx+Max4my+9T8bM1mLLHqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPKEWJU+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-641018845beso1658047a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:52:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762343556; x=1762948356; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iedBfjMEI/BD2OKkcDXb/6esIeABFAFipHLCvBMMLYo=;
+        b=YPKEWJU+C7AqAr9dGp2m9epNa1vPnWgPzUHuZJ/SSAMQog/jOaBOW47FKPlCrp2wnf
+         rasTWld3p/OiMNHNJ7g0k2vJ7Evm3Y/Eh+o626jDEN5ut+qJKFnSdMNRWE41gpsNsUuY
+         pdpbKKpnwwlqlDet4qAUyngYCiMIsJl6sTAVBGaVorv1B9dAkb2LkK/A+T2CgqV7tP/5
+         +X7DH0RpQbb1LTr60YBT6v7YUccmExyvma85N5s3vxL4/UQRppdjIgahTMC1j7TbI9f0
+         7SzDI25HJRXKpnKQykl1nDvmXLEl4pl6EEzLmKGILe5GtTb9yJtv7g0Xdz5pXLPxRaA9
+         Bmdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762343556; x=1762948356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iedBfjMEI/BD2OKkcDXb/6esIeABFAFipHLCvBMMLYo=;
+        b=W0iQSaktfVNCeEFKRGxPqdtymQ33u3sbznPOzvcrtnHI2bToUR0DedA/D3eQJzpFP3
+         bsgtLGSdq+CyPm68WaLSIFTp8zO8MCYH9goAaSPviDJCr/KJCaNBVY8hngu0JICPLsn7
+         ZR5zEICV+/HMH9lw4pdeuHcgRC0muP4JoBBvAtPGCMzVA/C6uZB7qbOr/VWj3226kE3X
+         V1jyerGHs4k1gtkXaJCiIXJ+XhaP0w1/yTllfZlbqEhzr2CtF1fIn/pjmAiO1SB9Wfxh
+         ZPJssZK2zQRLyHUyQ4V09G+SwD+LJXNfz+h36+xZYfqv/ukH8oXZHzfVzgmghpRvD8tg
+         UafQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULbHyr9edsXC2k9vcCq7cGUFEkUU2fqw/evJgFYgYBXZ9//V1dbHeskmuiN7ToC8xtMGdVn86tatb9taA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF8ycnee8ZYtzZB90A/iDogP/bSxK2wmBZFUWrb9HWrFy6HO8u
+	Jcntv+Z398YeivxodxMWoda30vdzniPm1aRQtKx5H5AwgRsAJlLQawMGxO6wKmIudCKw0No1UyV
+	DZsn5ue4EOeQ2c2ohNfYFOyN/HRABHNY=
+X-Gm-Gg: ASbGncugrrM0dANT7ItOiqbNYjrnqnTJdvP0VxC0Rt0rglUWTywLyzt9+Pu3NYw++f4
+	8HtIvTAoynwzZZvEpXoMV/dNg4+OpR0/cPT/PozW6Ne4bcwaU5eAARtEqf0/kdWGKxRnmdThis4
+	gy1E1zs/097yxLuGjBzxTgnZA0IpG8eagqhMuvR0Nl0e4f4nTXiSyVOALwXqr7YGzlGqYiKR0Xg
+	5xR5+rGvBHt80EWgdktRoBKBIIXA0TsSP1FgF8SmuyOHop+8yzlevc9JRc=
+X-Google-Smtp-Source: AGHT+IGoygrIy70PnDbuCu7xRhMXI84nNHjqgH0yxEIwACdXUcARjlwvw2mLsCIXLb4xjM/BO2FWbv7wlW3GA0/LjXQ=
+X-Received: by 2002:a17:907:1c2a:b0:b70:b98a:278b with SMTP id
+ a640c23a62f3a-b72654f6507mr251548066b.38.1762343555520; Wed, 05 Nov 2025
+ 03:52:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+ <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
+ <20251105103122.GL2912318@black.igk.intel.com> <aQs3ls1rKgMOufOn@smile.fi.intel.com>
+ <20251105115041.GM2912318@black.igk.intel.com>
+In-Reply-To: <20251105115041.GM2912318@black.igk.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 5 Nov 2025 13:51:58 +0200
+X-Gm-Features: AWmQ_bkmPnmrwZbGmhE1N0VXqG2zD080rJlzcWK6qJRP7OzdovZ0V10GbhzH4ws
+Message-ID: <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
+Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Steven and Masami,
+On Wed, Nov 5, 2025 at 1:50=E2=80=AFPM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Wed, Nov 05, 2025 at 01:40:06PM +0200, Andy Shevchenko wrote:
+> > On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
+> > > On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+> > > > Replace custom macro with the recently defined INTEL_GPP().
 
-Sorry, I didn’t notice this warning when building the kernel locally.
-Please ignore this patch. After further analysis, I found that unless the
-prototype of tracing_log_err() is modified, this patch has no effect. It
-might not be worth doing this, since the tracing_log_err() interface is
-already used in multiple files in the trace subsystem.
+...
 
-Best regards,
-Huiwen He
+> > > > -#define ADL_GPP(r, s, e, g)                              \
+> > > > - {                                               \
+> > > > -         .reg_num =3D (r),                         \
+> > > > -         .base =3D (s),                            \
+> > > > -         .size =3D ((e) - (s) + 1),                \
+> > > > -         .gpio_base =3D (g),                       \
+> > > > - }
+> > >
+> > > I wonder if simply doing this:
+> > >
+> > > #define ADL_GPP(r, s, e, g) INTEL_GPP(r, s, e, g)
+> >
+> > We can, but it will give a couple of lines in each driver still be left=
+.
+> > Do you think it's better?
+>
+> I think that's better because it is less changed lines but I'm fine eithe=
+r
+> way.
+
+Okay, I will try it and see how it looks like and then I'll either
+send a v2 or ask for a tag for this one. Sounds good?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
