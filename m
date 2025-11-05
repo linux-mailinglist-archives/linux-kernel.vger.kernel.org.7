@@ -1,169 +1,188 @@
-Return-Path: <linux-kernel+bounces-887055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B2FC372EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:49:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EDDC3716B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6BD66643F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B317D18966B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CD337B8D;
-	Wed,  5 Nov 2025 17:29:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4949336ED1;
-	Wed,  5 Nov 2025 17:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A414433A021;
+	Wed,  5 Nov 2025 17:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQNBG1NE"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646F822157B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363742; cv=none; b=BElujoyeYZhbPSHx26UoNzHrigXbJJPZrkuMNrW+JSmPyQrzglhXUdDsis8CfCxsG0g0Ji/Sl0AU8s1kZo9qo9wsnJsRLeqPSjgfNLTwByvWtf66YfIZ1OKHOGKkz2Q1+Y/5vPxBqMBcHeRi2U4j9MskGaCt0XupdlBSm/oNos8=
+	t=1762363800; cv=none; b=k9nI2vJFd3pQMEiEfPv6qyZFi1JXA/8pcuhT0RqYqoakTwkqCgBOBURpZ9wNeBZQ0M/fmZzSzdvhwAEx+77+Z3lvqU+maqFNJQgLTOF1SXWQm0QU2DMpQi9s24ORPZEdtR4b7Kq3ho5VVMcTFz/sdNuptsP851s3pom4Z+x9hDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363742; c=relaxed/simple;
-	bh=k2ZM3DJwll1Max1svThLctb3ZOnNVY45eztnrBFDlek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0qmxhiHC1cb+4BOuX5q3o9ILt4k185Lv1QFQ0mxnp7QYkDgPMQgqOdjabt7fSI2+/wqrF+PB6XUTpOAyb7y1iU9fIfmYeLeMensxyCiv0Q6HIAiGSkYW/2eSCbfEhki0xXk75XZyLPv3qr6SSGcK/mZXtTp+maluu0th2sYhno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61199169C;
-	Wed,  5 Nov 2025 09:28:52 -0800 (PST)
-Received: from [10.57.86.139] (unknown [10.57.86.139])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F09593F63F;
-	Wed,  5 Nov 2025 09:28:54 -0800 (PST)
-Message-ID: <0319bdf5-0a46-40fc-93f8-30d74cf6475a@arm.com>
-Date: Wed, 5 Nov 2025 17:28:51 +0000
+	s=arc-20240116; t=1762363800; c=relaxed/simple;
+	bh=RvSfWVZfvt6ZvxqcXys/+zepByojWnev0+IFDvJvzak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pta+pl5o53rSZOqW+5S3QWmk5CUwWVmeOI3+yTBm4fQ616XYgEZH9h0Tnuu0F3GR4YJU08VyfrjM6USouS0E4BcIrDtnExXP5J2DsKd8jA7CGqurjQD5/45xuzREB5bCI7zXy22LLLMH4d+Qdq5wk7NkTXKuoYjHqseKpop95c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQNBG1NE; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3408dd56b15so107784a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762363799; x=1762968599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2hQIMYQG3Hf6nYd9wO88tObbD60jSpKwJAfmQ0sEW4=;
+        b=RQNBG1NEJPSwLEnYZj1C9N2ryyjY5yZTyipLqw2liAucEx0iNOabw/9sp+SSjX6HCJ
+         Mnfwvynj/kPqm0ctoICyvamvjGiG9V6qcpqrpN8xf3u23kqIE39lsnL2fExB1pU4mqzB
+         GcoVzZfSJeuqgOCufONYBTKlgWXOfCBovtX3FzVQED1vaDyzcJAKYOG6JUKq4pu/Mr1W
+         we3cDA6XNa3wHmn1HIMh/2Widk/TB4Zyq/Q7LzQzCGg04XqKaHtzJfd9YEX+jFMRX1Br
+         M2ri8BUf1dagz/wdZxHQXPEVEUzHWPNEseIWFCRTENP46YFsOHIBMW7EGb1eOdtMwHpr
+         fHTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762363799; x=1762968599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T2hQIMYQG3Hf6nYd9wO88tObbD60jSpKwJAfmQ0sEW4=;
+        b=sahLVR7LtfgqFXmvt+El/OJ9emrZuCDQdpwyi8oNBm2oqYYGJTRugVef9lBy9XSATf
+         OVRZsmM+QBc/1MyHipBB9touqwsLwOfg4FJK/shNL6OMpP/7KoSNtKpBGh5qSSIRyhRr
+         lohR83BweYFpS1v7joC6U2Kr6sc61sL+Hb/Mc6U2XXpXCCEK5FxeYES1gcSKbYsIMAiQ
+         5T8o/v1Wuv9Qa17C6ptK5NgOA6KGtB3TlC+VS/npV6cun4JVeREoLL6+z9VTl6F3f3tU
+         QUZJjQV1dmMO4iUx2E54NV9ZCSwdvqBOu8YmLFQnqFAAlqum75reRu1CuUChjvH9hemU
+         diuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCZ01sletvamu9RfKY11NP/6lhB7hsXlif2TBrpVLX6oxR/7NbvrzsLS/YoabqMJWtGiVQx502aSs3daE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0y/t8u1xrb8HN+pbpH5FVaCR6DohjprxHBg918T2dadR8tGD/
+	JSVb1pjYKGfGDodQt81K4RMK0UrfPFjS4jpt22Qa6i5GrF0enA5oQQVSNKHCfra9LpRN/Np3Kjv
+	+4HlymcVVC1kbLf09ScKV+Z9Ch2K8rlw=
+X-Gm-Gg: ASbGncsK8DGlteZ2y1ww6YwXfOyJnkC+TzIBE+tUH4doV2jl2mchw7mhQbZPsGBcy8a
+	Jqc4Kf0XjkdoIVa1Y/QvMHyvw3/wwvrYJFuimRXdKw2NSDquEf7uJk0qUR57FkeeHppJwy/ctz2
+	n04apit5gc/qLOnG66fOWzD++Y/xIP8EPf2KS+6sqX66f49An2GpDj05Yomk1xNXYtBJ23Mx+pn
+	ZNc2qQaYxpDnoOI7Y3VHpBhEx7g2HAMgi5zZ1w+g3gQUL+FoeiGisXI6E8Ds+27H1DBdqY=
+X-Google-Smtp-Source: AGHT+IFgAXJJOk7ORU5o6YIKB0A34EpEk1PJ4V+J9E6KEas3UShp7DR4vAS7t6oA1ZcaWPHA1qFEfxUfiKX3z6blJOE=
+X-Received: by 2002:a17:902:f647:b0:295:ceaf:8d76 with SMTP id
+ d9443c01a7336-2962add07f1mr53423145ad.47.1762363798567; Wed, 05 Nov 2025
+ 09:29:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] of: iommu-map parsing for multi-cell IOMMU
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, will@kernel.org,
- joro@8bytes.org, robh@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
- konrad.dybcio@oss.qualcomm.com, bjorn.andersson@oss.qualcomm.com,
- bod@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- saravanak@google.com, prakash.gupta@oss.qualcomm.com,
- vikash.garodia@oss.qualcomm.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251026030143.23807-1-dongml2@chinatelecom.cn>
+ <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
+ <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
+ <3577705.QJadu78ljV@7950hx> <CAEf4Bzas7Or4yPzqdHqEcgVpTDx2j26dR5oRnSg7bepr-uDqHw@mail.gmail.com>
+ <CAADnVQKV_a7NxvWwXDgRab_gakwJ=VadZ0=eC5sHwutVyM0rmg@mail.gmail.com>
+In-Reply-To: <CAADnVQKV_a7NxvWwXDgRab_gakwJ=VadZ0=eC5sHwutVyM0rmg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Nov 2025 09:29:46 -0800
+X-Gm-Features: AWmQ_bnteJmeSonAy7_JuZJ4InwEV7gR1gsgI7sE1YVD_mQPjGGbTjZoahh0RKQ
+Message-ID: <CAEf4BzZcrWCyC3DhNoefJsWNUhE46_yu0d3XyJZttQ8sRRpyag@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
+ for x86_64
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Menglong Dong <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-11-04 8:50 am, Charan Teja Kalla wrote:
-> The iommu-map property has been defined for the PCIe usecase and has
-> been hardcoded to assume single cell for IOMMU specification, ignoring
-> the #iommu-cells completely. Since the initial definition the iommu-maps
-> property has been reused for other usecases and we can no longer assume
-> that the single IOMMU cell properly describes the necessary IOMMU
-> streams. Expand the iommu-map to take #iommu-cells into account, while
-> keeping the compatibility with the existing DTs, which assume single
-> argument.
-> 
-> Unlike single iommu-cell, it is complex to establish a linear relation
-> between input 'id' and output specifier for multi iommu-cells. To handle
-> such cases, rely on arch-specific drivers called through
-> of_iommu_xlate() from of_iommu layer, aswell it is expected the 'len'
-> passed is always 1. In the of_iommu layer, the below relation is
-> established before calling into vendor specific driver:
-> 
-> a) For platform devices, 'rid' defined in the iommu-map tuple indicates
-> a function, through a bit position, which is compared against passed
-> input 'id' that represents a bitmap of functions represented by the
-> device.
-> 
-> b) For others, 'rid' is compared against the input 'id' as an integer
-> value.
-> 
-> Thus the final representation when #iommu-cells=n is going to be,
-> iommu-map = <rid/functionid IOMMU_phandle cell0 .. celln len>;, where
-> len = 1.
-> 
-> The RFC for this patch set is found at [2].
-> 
-> The other motivation for this patchset is the below usecase.
-> USECASE [1]:
-> ------------
-> Video IP, 32bit, have 2 hardware sub blocks(or can be called as
-> functions) called as pixel and nonpixel blocks, that does decode and
-> encode of the video stream. These logical blocks are configured to
-> generate different stream IDs.
-> 
-> With the classical approach of representing all sids with iommus= end up
-> in using a single translation context limited to the 4GB. There are
-> video usecases which needs larger IOVA space, like higher concurrent
-> video sessions(eg: 32 session and 192MB per session) where 4GB of IOVA
-> is not sufficient.
-> 
-> For this case, each functionality is represented in the firmware(device
-> tree) by the 'rid' field of the iommu-map property and the video driver
-> creates sub platform devices for each of this functionality and call
-> into IOMMU configuration. Each rid(function id) in the dt property
-> indicates the bit that can be associated by the driver passed input id.
-> 
-> Example:
-> iommu {
-> 	#iommu-cells = 2;
-> };
-> 
-> video-codec@foobar {
-> 	compatible = "qcom,video";
-> 	iommus = <&apps_smmu 0x1234 0xca>;
-> 	iommu-map= <0x1 &iommu 0x1940 0x0 0x1>,
->                 <0x1 &iommu 0x1941 0x0 0x1>,
->                 <0x2 &iommu 0x1942 0x0 0x1>,
->                 <0x4 &iommu 0x1943 0x0 0x1>,
->                 <0x4 &iommu 0x1944 0x0 0x1>;
-> };
-> 
-> video-driver:
-> #define PIXEL_FUNC	   (1)
-> #define NON_PIXEL_FUNC	   (2)
-> #define SECURE_FUNC	   (4)
-> 
-> case1: All these functionalities requires individual contexts.
-> Create 3 subdevices for each of this function and call
-> of_dma_configure_id(..,id), id = 0x1, 0x2, 0x4.
-> 
-> Case2: Secure and non-secure functionalities require individual
-> contexts. Create 2 subdevices and call of_dma_configure_id(..,id), id =
-> 0x3(bitmap of pixel and non-pixel), 0x4 (secure).
-> 
-> Credits: to Dmitry for thorough discussions on the RFC patch and major
-> help in getting the consenus on this approach, to Konrad & Bjorn for
-> offline discussions and reviews, to Robin for his inputs on IOMMU front,
-> to Bod, Rob and Krzysztof for all valuable inputs.
-> 
-> [1] https://lore.kernel.org/all/20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com/
-> [2] https://lore.kernel.org/all/20250928171718.436440-1-charan.kalla@oss.qualcomm.com/#r
-> 
-> Charan Teja Kalla (6):
->    of: create a wrapper for of_map_id()
->    of: introduce wrapper function to query the cell count
->    of: parse #<name>-cells property to get the cell count
->    of: detect and handle legacy iommu-map parsing
->    of: add infra to parse iommu-map per IOMMU cell count
->    of: use correct iommu-map parsing logic from of_iommu layer
-> 
->   drivers/iommu/of_iommu.c |  59 +++++++--
->   drivers/of/base.c        | 269 +++++++++++++++++++++++++++++++++++----
->   include/linux/of.h       |  19 +++
->   3 files changed, 314 insertions(+), 33 deletions(-)
+On Tue, Nov 4, 2025 at 6:43=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Nov 4, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Mon, Nov 3, 2025 at 3:29=E2=80=AFAM Menglong Dong <menglong.dong@lin=
+ux.dev> wrote:
+> > >
+> > > On 2025/11/1 01:57, Alexei Starovoitov wrote:
+> > > > On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Menglong Dong <menglong8.do=
+ng@gmail.com> wrote:
+> > > > >
+> > > > > On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
+> > > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > > >
+> > > > > > On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong=
+8.dong@gmail.com> wrote:
+> > > > > > >
+> > > > > > > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_sessio=
+n_entry and
+> > > > > > > invoke_bpf_session_exit is introduced for this purpose.
+> > > > > > >
+> > > > > > > In invoke_bpf_session_entry(), we will check if the return va=
+lue of the
+> > > > > > > fentry is 0, and set the corresponding session flag if not. A=
+nd in
+> > > > > > > invoke_bpf_session_exit(), we will check if the corresponding=
+ flag is
+> > > > > > > set. If set, the fexit will be skipped.
+> > > > > > >
+> > > > > > > As designed, the session flags and session cookie address is =
+stored after
+> > > > > > > the return value, and the stack look like this:
+> > > > > > >
+> > > > > > >   cookie ptr    -> 8 bytes
+> > > > > > >   session flags -> 8 bytes
+> > > > > > >   return value  -> 8 bytes
+> > > > > > >   argN          -> 8 bytes
+> > > > > > >   ...
+> > > > > > >   arg1          -> 8 bytes
+> > > > > > >   nr_args       -> 8 bytes
+> >
+> > Let's look at "cookie ptr", "session flags", and "nr_args". We can
+> > combine all of them into a single 8 byte slot: assign each session
+> > program index 0, 1, ..., Nsession. 1 bit for entry/exit flag, few bits
+> > for session prog index, and few more bits for nr_args, and we still
+> > will have tons of space for some other additions in the future. From
+> > that session program index you can calculate cookieN address to return
+> > to user.
+> >
+> > And we should look whether moving nr_args into bpf_run_ctx would
+> > actually minimize amount of trampoline assembly code, as we can
+> > implement a bunch of stuff in pure C. (well, BPF verifier inlining is
+> > a separate thing, but it can be mostly arch-independent, right?)
+>
+> Instead of all that I have a different suggestion...
+>
+> how about we introduce this "session" attach type,
+> but won't mess with trampoline and whole new session->nr_links.
+> Instead the same prog can be added to 'fentry' list
+> and 'fexit' list.
+> We lose the ability to skip fexit, but I'm still not convinced
+> it's necessary.
+> The biggest benefit is that it will work for existing JITs and trampoline=
+s.
+> No new complex asm will be necessary.
+> As far as writable session_cookie ...
+> let's add another 8 byte space to bpf_tramp_run_ctx
+> and only allow single 'fsession' prog for a given kernel function.
+> Again to avoid changing all trampolines.
+> This way the feature can be implemented purely in C and no arch
+> specific changes.
+> It's more limited, but doesn't sound that the use case for multiple
+> fsession-s exist. All this is on/off tracing. Not something
+> that will be attached 24/7.
 
-Hmm, I did actually have a quick go at this the other week too, and 
-while I though it was a bit clunky, it was still significantly simpler 
-than this seems to be...
+I'd rather not have a feature at all, than have a feature that might
+or might not work depending on circumstances I don't control. If
+someone happens to be using fsession program on the same kernel
+function I happen to be tracing (e.g., with retsnoop), random failure
+to attach would be maddening to debug.
 
-FWIW: https://gitlab.arm.com/linux-arm/linux-rm/-/commits/iommu-map - I 
-can give it some polish and testing to post properly if you like.
-
-Thanks,
-Robin.
+If we can't implement this properly, let's just put it on hold instead
+of adding crippled implementation.
 
