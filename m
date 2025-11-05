@@ -1,197 +1,125 @@
-Return-Path: <linux-kernel+bounces-885884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD46BC34220
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:05:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24C9C34225
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237453B0785
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFFC63A54B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F952D0C79;
-	Wed,  5 Nov 2025 07:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC532D0C8B;
+	Wed,  5 Nov 2025 07:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skFxXnyu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="N2WinqET"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348DA1A23B9;
-	Wed,  5 Nov 2025 07:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D5528725C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762326296; cv=none; b=tt3pzriCFAUka0qaU5ZPMZH1/vUNHiGtI6Bzw7cCJhqU8/WrUMSPOh4/k33Actcvm4X1Z5ZPPXwq4mQTFxUS0KaN/hANnu0OSesLewtfuK/9vZelA6h1u2QAxcluwT3HHgaopdrekAQ2ToxIUnavBDD5ibxovrl4+99wpjh5iZc=
+	t=1762326334; cv=none; b=fvkfWVlqg/3RaGRdCuFcNXuItJWNYyWywCIdSnTop+x/83EVQTom3M80YeV5U7SrPB8d0KvKHcnr4ykdE8FtAR99ut49aYEUhs9GOhCOSi/mIFdkvVmAI7cqFjKV1chwtk0i9io1YxcgN2CXz7XxmB9g0BUpjZk0yfcorea2eJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762326296; c=relaxed/simple;
-	bh=fECj6oacpKXc6X6f2zYwH9Ibg6UtdahRrZWnqz/qj68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aAaSZdpIQAd/55ihpvKOtZoJnVhjvO+LrrVeH4GaUFolNfL5VgajbuMzaRRsPJHIqMMLJn+/V5Uzhlh0WRxcH+OnDzDr/wXYbivDzatXWYRmz+rW6xixS1eD7HLZy8oDbsVvD+MdtumumdsqgBtSuVaRjlX3hfNH5AZ7wy/8QEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skFxXnyu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BE4C4CEF8;
-	Wed,  5 Nov 2025 07:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762326295;
-	bh=fECj6oacpKXc6X6f2zYwH9Ibg6UtdahRrZWnqz/qj68=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=skFxXnyuvYeO9Z1N85neSH/uQ6UDgiCWVv53PRfQvNM8Ncmh1lE8/WusgFdrOCPph
-	 YBQL1w5lvDN2OrFRbX+bt1PJBmot2Fqhw4PepfH6KzWfZ0m3qwXBl1EcSnTyCBF5oC
-	 N7sJ0/KOhelMOtouPqbOUMe/2nE7wsz7mWr+gF89voniT4QliOcoemDCRin2OPjyI+
-	 BCZMgbigPpbZB4gnYzJAMnSGu/9ZNdnjEa3p74wibJwuZM9+4YmB5pJRDU7u38gBuH
-	 2HSyLtykkxr4kAnhxiOxZ6ywPY/f1q36VaddSRTd8SybAiI8Z32u5TPKypF8ZXg1AJ
-	 9LY9ciRLlmgdg==
-Message-ID: <afa2c9aa-e84c-4a42-a735-73c01b197018@kernel.org>
-Date: Wed, 5 Nov 2025 08:04:49 +0100
+	s=arc-20240116; t=1762326334; c=relaxed/simple;
+	bh=VgW6wsvMJbO2Jr7vF/WiFeIjviPMUTU56vcFLD7TFzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIaB08Ci5ajrDTR4HEOsRDiqfURV88BdKzbgnsGOPIkar5LtEvsRA7slCr53fxvFbfNwsLQRZbW562pwl86U7fZnugPXkfxggrkGAbFfv7ukSOhEIDFqkYJVw0Jf1Q27m6RgpfLCoN0h4CEeZC6PxkWSHZOYBV3oEILywzT+YBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=N2WinqET; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47114a40161so14487955e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762326329; x=1762931129; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kPFfOU42a9LX/ACTIOGykRbnsbucNZCI8/DjNyniCCo=;
+        b=N2WinqET03KavT3Uj58D+bDnE9Db6x/bZ10Np30y/b6zcA6ceDeJ24riFjvDRlZzLQ
+         vsqoo4/ZMYU3fAJPwK050S8i5xiQEC2iB5QfEaNuFMHhZc7dtJKkBCjxK24ITiBuv6+6
+         9wTZm0zh7vnngPstc2QDGABcJLUVB8ElHtow5dw2E+SzJl+qbCfiW1OzshCJMsFgPodk
+         MqgziFN98Egd93uvSxiao1lLsi4v1afUPoDDCHN6dfJ+7BcZCUQ4q+JKhfKADa6FYVa0
+         GIjhcJDi5RkQmQHT1XPk+xkfFbiillMb3sfNA16pB1GyCoFOwHKlaeIyMOhhCMEBAbmK
+         N94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762326329; x=1762931129;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kPFfOU42a9LX/ACTIOGykRbnsbucNZCI8/DjNyniCCo=;
+        b=RsgSvnfsTSYzsAKSOwkzbadrMaFOl+/85Ad5Pm1IFBoFftVXhemFpqsEVPS3bwuRim
+         g9y6fIBlx3AKN+aZlswFut9PdraBlpK1Ncrm/TSWLYgj2vCI5xi/W7KB5UzyLF3UY+uu
+         Dq/ZCkfxqJm78EgookXco+aNyFRnDS/dLm5ksQ8qOfzZj/8g2qJmrLUiNq58C6DpbljQ
+         nSNzZ+SE2QdLOSIXo0L+RCakLGHzrhjS5h+V1R5tOupgEETqbboS75/w9/melnzyEiwj
+         HlhaRp29m0MG2+in0BiOKdsnOYqqsYXrGkLjlZOvAOfWQyK9S79Hwa6YRp1ZuXbA/y3m
+         SLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkqnEpVyPjDrNUpxMiJhbshXMOED2Vjem2g2BUyVs4XQBIT+kYKKeI8X166vcAQ/oRHl61NO+caY53BIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBEP/iDPezISmxgbx+UXerZZjY9uNx/ifGhWS1rVrny0HrbHB6
+	tIszgbX7/WGLi2yiM8yDsCdALBH8/bwqovzMbZypA6UZ+8w3miwb+9xtd9xPxsAucmw=
+X-Gm-Gg: ASbGnctXKryCfuGw17bcrd/qOtfY0+VrkrHcWUC7DUtYdMOhZTu8en7DL799FXBKqTb
+	+ZRp46mIkO6pjAhaMqS6+dg+SxW6yiyvAaPz5Ulg15+6mBvr65IK5bPa7L9DsX8zRGl6X9U3xzg
+	Ty2BY2chwUDovY7A3uIzaOYEfv7KnHUwcZYp8k1kpJaYSqJUHBbdF5ck04pZOIQQ12kmPlAZNT5
+	jqkDDZeXxQCPXIhO3YgZ1tbTA4C6srKdAWR3Rb90kYhyOZ6TmMnZDED+Zz2QSdT5UTCf5VEiDdZ
+	P1/yGdkRzU38u/bRoOkEnXalrDtSsceisn/WB/7tX/jkpCLCnv88pbU0IdEORONxpsx3VDBWNMV
+	LLq1quagPBnO7Pzk49wduwZuUpsBNIlMd6d8IlTAbkbgI4UD5KOmN3rj7KozWlLtrnFZQPgNnIa
+	FbVb5jzdI+3T1ozRE22cL1zytaQEUzQw==
+X-Google-Smtp-Source: AGHT+IHSvh8+ekwxCLTZO76vzeOnZlgCUz2t3qfXI0Rb14HHoHI2UG2ksJtjK9Mg8ULpEdrsjSfU4A==
+X-Received: by 2002:a05:600c:3153:b0:46f:b42e:e3a0 with SMTP id 5b1f17b1804b1-4775ce2bf06mr14162675e9.41.1762326329397;
+        Tue, 04 Nov 2025 23:05:29 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc96edsm30520685e9.6.2025.11.04.23.05.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 23:05:28 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	john.madieu.xa@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/2] soc: renesas: rz-sysc: Fixes
+Date: Wed,  5 Nov 2025 09:05:24 +0200
+Message-ID: <20251105070526.264445-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-To: Jeremy Kerr <jk@codeconstruct.com.au>,
- Ryan Chen <ryan_chen@aspeedtech.com>, bmc-sw@aspeedtech.com,
- benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
- <20251027061240.3427875-2-ryan_chen@aspeedtech.com>
- <59d4d107-4f35-4906-8524-f45b9b85f0ff@kernel.org>
- <0b9abd87b877595c13011a3d8b4e80e05488effc.camel@codeconstruct.com.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0b9abd87b877595c13011a3d8b4e80e05488effc.camel@codeconstruct.com.au>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 30/10/2025 07:04, Jeremy Kerr wrote:
-> Hi Kyzysztof,
-> 
->>> +++ b/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
->>> @@ -0,0 +1,66 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/i2c/ast2600-i2c.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: ASPEED I2C on the AST26XX SoCs
->>> +
->>> +maintainers:
->>> +  - Ryan Chen <ryan_chen@aspeedtech.com>
->>> +
->>> +allOf:
->>> +  - $ref: /schemas/i2c/i2c-controller.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - aspeed,ast2600-i2c-bus
->>> +
->>> +  reg:
->>> +    minItems: 1
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion
->> and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
->>
->>> +    items:
->>> +      - description: address offset and range of bus
->>> +      - description: address offset and range of bus buffer
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    maxItems: 1
->>
->> Nothing improved
-> 
-> That was mostly the point - this first patch just splits out the 2600
-> definitions to the new file, with zero change.
-> 
-> That means the *actual* changes to the binding are visible via the diff
-> in 2/4, and not hidden by the copy.
-> 
-> This was mentioned on v20, and you replied saying it was irrelevant to
-> the separate discussion around the rationale for the change, but didn't
-> object to the split-patches approach.
-> 
-> If your preference is to *not* do this via a verbatim copy as an initial
-> step (and essentially squash with 2/4), that's also fine, but I'm sure
-> that knowing your preference would help Ryan out here.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Hi,
 
-The next patch did not correct issues copied from old binding, so above
-arguments are not applicable.
+Series adds 2 fixes patches for RZ-SYSC driver.
 
-I did not ask to merge the patches. I asked not to create WRONG schema
-when copying to the new file. This split should not be a verbatim copy,
-because we do not create intentionally buggy code which we are going to
-fix immediately. Also it does not make sense to make verbatim copy of
-ast2500 stuff, since new file is ONLY ast2600.
+Thank you,
+Claudiu
 
-That copy should include all necessary changes needed to make new
-binding correct. I already pointed out this and this was not fixed -
-neither here nor in a following commit (which I would still ask to squash).
+Changes in v2:
+- added patch "soc: renesas: r9a09g056-sys: Populate max_register"
+- use all possible registers in patch "soc: renesas: rz-sysc: Populate
+  readable_reg/writeable_reg in regmap config"
 
-Best regards,
-Krzysztof
+Claudiu Beznea (2):
+  soc: renesas: r9a09g056-sys: Populate max_register
+  soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap
+    config
+
+ drivers/soc/renesas/r9a08g045-sysc.c |  69 ++++++++++++++++++
+ drivers/soc/renesas/r9a09g047-sys.c  |  79 +++++++++++++++++++++
+ drivers/soc/renesas/r9a09g056-sys.c  |  69 ++++++++++++++++++
+ drivers/soc/renesas/r9a09g057-sys.c  | 101 +++++++++++++++++++++++++++
+ drivers/soc/renesas/rz-sysc.c        |   2 +
+ drivers/soc/renesas/rz-sysc.h        |   4 ++
+ 6 files changed, 324 insertions(+)
+
+-- 
+2.43.0
+
 
