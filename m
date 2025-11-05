@@ -1,50 +1,81 @@
-Return-Path: <linux-kernel+bounces-886079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECD3C34A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C78ABC34AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095B118858AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D2818C6F79
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB932F362B;
-	Wed,  5 Nov 2025 09:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53562F25F5;
+	Wed,  5 Nov 2025 09:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWgBAFoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h3zOaont"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555372F12DF;
-	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1F535965;
+	Wed,  5 Nov 2025 09:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333333; cv=none; b=K4iMziAtQuvVqKy801gwrR7ATi1JvbfhJz7eyiu/hGQYKIgwwArROwxfBtBeOBSw8lc9x0ymkMDf4r8WMBThcpnJ9ABDclMLbHnFNOmAUKuQfHwg5QkMkPGE8qO0xbZq3muYOBOABoxvfIQEYomBPUuJVHtWOfNsoMFagIbRNHw=
+	t=1762333377; cv=none; b=iyaJjTC7aQ7KtMb2EsF4+x5lgfzZ7DTdo3x4U/5ZcTO6ydyCaoNl62iFpLWeelDTGOb/rX1rSsoS3T7Dmzha85rnipYSKyxEH993Iq5bXZ8ChABuYiH7acMhrMrZhZDO6UE2fj0N+8j5o/Ya89nmcYgdN7e7VIQyiB8Myr9nw80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333333; c=relaxed/simple;
-	bh=69P8E0lzJ/6R8ErkBsHZbv0lFG3IxBCu8QrGpXLxM1I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OBDdcvdTcf0O48pxErpQfY6akl3DExKU9XH8RxIhIHhBNsrojQbLHijdVcORVB4fETFEJjqoypZ5W9lNLEHGAz0KMdfL7XylwFdJrUCX65eV9g6FiruSqT8tpI5zXap2eRyxB54Pif/gS2DjLI4T25owrU0qjqs4+EXCLJdKc5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWgBAFoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D0FCAC4CEF8;
-	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762333332;
-	bh=69P8E0lzJ/6R8ErkBsHZbv0lFG3IxBCu8QrGpXLxM1I=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=LWgBAFoJ+EQPWyyG1QATcvY+YKPg6OpdDwXrt6boMeQQlBqKkJdQuw7tuZ8Bj1mzs
-	 3OkQ2WJLbXNj9EOy1FnZRedmPQbFoTR9I55q2agm/G+IBU2AhtKIgKaXjRCAW1Hpiq
-	 wTSkJMkE/YSzFQ+bG90cg94JSCowwUgeGTS36SVoXv+x4QYUb6xCGCvY5GTfjO0tXy
-	 Y+fgNzfx7+D+Ss9oONsjdS0MUCFv/COqnVhj+JI3Yf5cxIJMAi1/CB253dPcMnc/6V
-	 tK4tt5gHU7Abp12dVrGJZGLZO9O/E660Fj+RABBZ9R777O3t+Y2/2Dl9VtnpcJffhT
-	 1V3SEEgCtowjw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C469FCCFA07;
-	Wed,  5 Nov 2025 09:02:12 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Wed, 05 Nov 2025 17:02:06 +0800
-Subject: [PATCH] Bluetooth: iso: Fix UAF on iso_sock_disconn
+	s=arc-20240116; t=1762333377; c=relaxed/simple;
+	bh=D1kXj4gtsjUnasLlwa3L0gfdoh8wYVSZBwRgpQpcno4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cTNfsyyJa/bJysDs3xtBZS0kjOJxw6DrVa8K+zjTvjewfIe7UJRPczrLJFsZ8h7extz24I4GFJVBWX8ZCUbaxk7jEDjp+hYR0ZaIya+GGVjaDQynXkBxEvfIrI5DnSkjaTUxQgd/8OXLM1TCkwGE4X5G404weWUOXrUtsSS3kKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h3zOaont; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762333373;
+	bh=D1kXj4gtsjUnasLlwa3L0gfdoh8wYVSZBwRgpQpcno4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=h3zOaontMw3gV8UO0mm/nlUz+mKiMAJ99bIKofwKyKMd/ku7pb/GREpFL28XlSSRW
+	 6QabUiN3r+QP4AGsx65Op2USw/0Iov00cLyZIeMPqY59O6xhNsIj3xGobD6ai/5suM
+	 5k8uAbunwROmwGt4grXyY3HkP+gnb8Uy2xyRAl7BJZPqggeMaXfPUfk5raLjPKNSXs
+	 0KrLHyYneizQ6UDiG4QI6ENcGQhGjmoTLZtNzeZrGpchVx6h2saSzoedBzZNFncFrJ
+	 7j8NV+Ko32UNle3d/5zC03+HIDvkrQCZNGoU3DOtiRm6U9cvZMJvL7gR1rUrAEuwo9
+	 qLBNnNUOT1d/Q==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 33AF817E0CA1;
+	Wed,  5 Nov 2025 10:02:52 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Ryder Lee <ryder.lee@mediatek.com>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
+ Sjoerd Simons <sjoerd@collabora.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org, 
+ Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+Subject: Re: (subset) [PATCH v2 00/15] arm64: dts: mediatek: Add Openwrt
+ One AP functionality
+Message-Id: <176233337214.16133.6784720310145740675.b4-ty@collabora.com>
+Date: Wed, 05 Nov 2025 10:02:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,83 +84,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-kernel_panic-v1-1-88637054c6b9@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAI0SC2kC/x3MQQqAIBBA0avIrBM0E6OrRIToVENhohCBePek5
- Vv8XyBjIswwsQIJH8p0hwbZMXCHDTty8s3Qi15LKTQ/MQW81mgDOW6U9c4INYzCQ0tiwo3efzc
- vtX43iwIZXgAAAA==
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762333331; l=1549;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=S5BJh2ba2g9xJCkHYB8Rff1jMpJFLarygQDk7qfhCww=;
- b=0Es3hP455AD3QZnhIIAzJALsD1uJ+obbNHtlx9EHEvCMso1TC5723gpPHqHVWkrPn+X5+uRtK
- 4cb2LTUXq+wBZHpUwMkaPne7ZL6T6dmNLUZnP66TvfICrPwaP8/jMfA
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+X-Mailer: b4 0.14.3
 
-From: Yang Li <yang.li@amlogic.com>
+On Sat, 01 Nov 2025 14:32:45 +0100, Sjoerd Simons wrote:
+> Significant changes in V2:
+>   * https://lore.kernel.org/lkml/20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com/
+>   * Only introduce labels in mt7981b.dtsi when required
+>   * Switch Airoha EN8811H phy irq to level rather then edge triggered
+>   * Move uart0 pinctrl from board dts to soc dtsi
+>   * Only overwrite constraints with non-default values in MT7981 bindings
+>   * Make SPI NOR nvmem cell labels more meaningfull
+>   * Seperate fixing and disable-by-default for the mt7981 in seperate
+>     patches
+> 
+> [...]
 
-kernel panic: Unable to handle kernel read from unreadable
-memory at virtual address 00000000000003d8
+Applied to v6.18-next/dts64, thanks!
 
-Call trace:
- iso_sock_disconn+0x110/0x1c8
- __iso_sock_close+0x50/0x164
- iso_sock_release+0x48/0xf0
- __sock_release+0x40/0xb4
- sock_close+0x18/0x28
- __fput+0xd8/0x28c
- __fput_sync+0x50/0x5c
- __arm64_sys_close+0x38/0x7c
- invoke_syscall+0x48/0x118
- el0_svc_common.constprop.0+0x40/0xe0
- do_el0_svc_compat+0x1c/0x34
- el0_svc_compat+0x30/0x88
- el0t_32_sync_handler+0x90/0x140
- el0t_32_sync+0x198/0x19c
+[01/15] arm64: dts: mediatek: mt7981b: Configure UART0 pinmux
+        commit: 8bc650405f4476667973b10ec58152d37cd41a99
+[02/15] arm64: dts: mediatek: mt7981b: Add reserved memory for TF-A
+        commit: c6dcf3283044533ec425eb45af3627ec8834aebe
 
-Signed-off-by: Yang Li <yang.li@amlogic.com>
----
- net/bluetooth/iso.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index 74ec7d125c88..89c7700ceb81 100644
---- a/net/bluetooth/iso.c
-+++ b/net/bluetooth/iso.c
-@@ -838,14 +838,14 @@ static void __iso_sock_close(struct sock *sk)
- 	case BT_CONNECT:
- 	case BT_CONNECTED:
- 	case BT_CONFIG:
--		if (iso_pi(sk)->conn->hcon)
-+		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon)
- 			iso_sock_disconn(sk);
- 		else
- 			iso_chan_del(sk, ECONNRESET);
- 		break;
- 
- 	case BT_CONNECT2:
--		if (iso_pi(sk)->conn->hcon &&
-+		if (iso_pi(sk)->conn && iso_pi(sk)->conn->hcon &&
- 		    (test_bit(HCI_CONN_PA_SYNC, &iso_pi(sk)->conn->hcon->flags) ||
- 		    test_bit(HCI_CONN_PA_SYNC_FAILED, &iso_pi(sk)->conn->hcon->flags)))
- 			iso_sock_disconn(sk);
-
----
-base-commit: 2747d929617743ecba08eeeb310283b4be681383
-change-id: 20251105-kernel_panic-73adc703480d
-
-Best regards,
--- 
-Yang Li <yang.li@amlogic.com>
+Cheers,
+Angelo
 
 
 
