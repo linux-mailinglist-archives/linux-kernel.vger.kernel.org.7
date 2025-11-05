@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-885878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF52BC341A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:56:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D651C341B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55CFD4E75D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B9F462ECA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E832C21FB;
-	Wed,  5 Nov 2025 06:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17492C2372;
+	Wed,  5 Nov 2025 06:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdOCfeKx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE07bM34"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FDD26CE32;
-	Wed,  5 Nov 2025 06:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437682C0F79;
+	Wed,  5 Nov 2025 06:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762325759; cv=none; b=NsrujOl2K6a0qQtMsBz4kguzGjvqE3pmzf1F8z/p7IlGaVmCR4o+OwzneCIZWCUZTmXeSmsaSbnB9JGR/d2pEJfXZqH32TdLDlofAAq6FakWm9PY8Dy+qFBuvHWvn/hWGoyWR+nL+pTjH3CtcrUcmrK4Tqbh1f8CvWaGrscBeZI=
+	t=1762325797; cv=none; b=ZwzZe0knKD8fD9FlrYdeT/u84ICiacJrQxByScI1S37Vzk7zfW5rT7wZN+78UqMTxLkp+FkZsUynXQPPA8+3v80dwibSui/G2fFLmdPifvfTk2z3d000aj+rHWOYVAniBoU2e3WEyzJfEYdCJ0kAy68IPiaZG/mvhIi07toe6DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762325759; c=relaxed/simple;
-	bh=ckgneUbTpeEuNMdYvm3uNVbdalbnfVOTsYT16lj5Pdw=;
+	s=arc-20240116; t=1762325797; c=relaxed/simple;
+	bh=hZk/ziKA9dU0hF0yxM7zFs6DpVF8BniboX8o36W3tLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J4ApTZ3L9Lqx19HyK5RaK1JrEgMluPKJsMUlROk8W9IxT5ctVWlPr9M99oXabwKpWLCMBBgZrK6EzTirZ6xzhhiCL0v37JY+PontH3nt7UBfV7jElCtUlv5kNg8ZVXZLJnxXvpy+//raMwnr/hp9B9wbY3J+7CPAn12WTgNa1iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdOCfeKx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEDAC4CEF8;
-	Wed,  5 Nov 2025 06:55:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OUtqTVnpT/CI7BzWywnL3sUjfhhY7Zi4OF5Lherahnao1Oj3dsqUG6UyCgqAPuui0pu5PCxgBA9tcwOpdmmAzljPZAqQaio9I8s+M0OArAesIYUP5Ekbr8E6ob/5cVlOlo0lJJfZ7TI/ZWMnVa9+deaZJ6b36OXjC9F2nF2JPC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE07bM34; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8FDC4CEF8;
+	Wed,  5 Nov 2025 06:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762325758;
-	bh=ckgneUbTpeEuNMdYvm3uNVbdalbnfVOTsYT16lj5Pdw=;
+	s=k20201202; t=1762325797;
+	bh=hZk/ziKA9dU0hF0yxM7zFs6DpVF8BniboX8o36W3tLs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gdOCfeKxtduUp22tMaJB7VkO6yydydvVHVpadPBijLIkAmReVl5Q1MZ/RG+YRb9nk
-	 0ooidf/hyo78s999N9HRQQcrT9k2iXqn9id71A0h968JEaGEf5Akd+0ysEPLVMc8sh
-	 ubkBlTdPoMA270DI5vdc+6OkzB/EmfTOTf/VIejYQtGgOttyQjSctWXRfnIUzqwYoQ
-	 Ffz2MMpKrh9JX7i5yNzEg+6NMm/m4aKy67UCaGNU82I/nv5U9rUREvSGG2mVGYH1h8
-	 in0Dqy64N13ibvSdcs7XiRgm4OfMHmMGlMvUolm6LGU/3WKLO3LyuLuzYTHdxrLF9y
-	 eJw6+n348T3+w==
-Message-ID: <69ed5b38-830d-46d7-a84b-86787c39df7d@kernel.org>
-Date: Wed, 5 Nov 2025 07:55:53 +0100
+	b=OE07bM34DcR3fFxbOAzm2l/14OJRCgYXo82oHK6zqCXNFJekNMNNRicvPnmVYczWo
+	 t6zSK2fUSYb2CRdcoUuJHF51KhwKlhEaA0u4rjV+5TN2/5p6F3p+kIw8CLIqK9+4eL
+	 yq19DGqQLU0hfzaYfVP+XOv21PcfvwgrRtIDIcq6D6s+5F4kiIM0g9rsJZDGj8a9js
+	 y4g9Szq8tIstcpNuaQUX2kY51jSoi8ZuAHehpiSOAiUSSw9PzMhW4K7+2G00Pu2GDX
+	 81DCO3nXWMHB0u7zej/spMLWRBljh4k2vMaKI+Mv8+Xz5h6uFMUvPaTEP2aa/0WOOT
+	 cXf6CHNPmUQwg==
+Message-ID: <7376d6a7-9e12-41ae-85ce-957294f140f6@kernel.org>
+Date: Wed, 5 Nov 2025 07:56:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus
- message-connection-id property
-To: Hardik Garg <hargar@linux.microsoft.com>
-Cc: apais@microsoft.com, cho@microsoft.com, conor+dt@kernel.org,
- decui@microsoft.com, devicetree@vger.kernel.org, haiyangz@microsoft.com,
- hargar@microsoft.com, krzk+dt@kernel.org, kys@microsoft.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- ssengar@linux.microsoft.com, wei.liu@kernel.org
-References: <6d3b5d1e-de1b-4d3b-ba14-7029c51b8e05@kernel.org>
- <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
- <94d3e709-8c8b-40cb-a829-92c2012b4e0a@kernel.org>
- <f6c01c55-8930-459a-baa5-1465c5047b3e@linux.microsoft.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: ST TSC1641 power monitor
+To: Igor Reznichenko <igor@reznichenko.net>
+Cc: conor+dt@kernel.org, corbet@lwn.net, david.hunter.linux@gmail.com,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@roeck-us.net, robh@kernel.org, skhan@linuxfoundation.org
+References: <20251104-ruddy-tuna-of-efficiency-3321d3@kuoka>
+ <20251104163048.1130482-1-igor@reznichenko.net>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,36 +102,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <f6c01c55-8930-459a-baa5-1465c5047b3e@linux.microsoft.com>
+In-Reply-To: <20251104163048.1130482-1-igor@reznichenko.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 05/11/2025 02:10, Hardik Garg wrote:
-> 
-> Each guest has a private hypervisor mailbox and cannot access any other
-> guest’s communication path. Using an incorrect connection ID does not
-> allow eavesdropping or cause interference — it only results in failed
-> VMBus initialization because the host drops messages sent to an
-> unexpected port. Thus, exposing the correct connection ID to the guest
-> is safe and necessary for correct initialization.
-> 
->> If different values are important for the host, then all guests should
->> use whatever 0 which will map to different values on host by other means
->> of your protocol.
+On 04/11/2025 17:30, Igor Reznichenko wrote:
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>> +
+>>> +    i2c {
+>>> +        #address-cells = <1>;
+>>> +        #size-cells = <0>;
+>>> +
+>>> +        power-sensor@40 {
+>>> +            compatible = "st,tsc1641";
+>>> +            reg = <0x40>;
+>>> +            interrupt-parent = <&gpio1>;
+>>> +            interrupts = <1 IRQ_TYPE_LEVEL_LOW>; /* Polarity board dependent */
+>>> +            shunt-resistor-micro-ohms = <1000>;
+>>> +            st,alert-polarity-active-high;
 >>
+>> That's wrong IMO. Either you use it as SMBus alert or as CPU interrupt.
+>> If you use as CPU interrupt, then the flag in "interrupts" defines what
+>> is the level of this interrupt. That flag is a combination of both
+>> CPU/SoC side and any inverters on the device. And actually you wrote it
+>> already - "Polarity board dependent" - so why do you:
+>> 1. Provide polarity twice
+>> 2. Provide inconsistent values - alert interrupt is level low, but
+>> alert interrupt is also active (level) high. So level low or level high?
 > 
-> Using a fixed value such as 0 for all guests would not work, because the
-> Hyper-V host differentiates between multiple control-plane contexts (for
-> example, VTL0 vs VTL2) using distinct connection IDs. The guest must use
-> the value assigned by the host, as there is no implicit mapping or
-> negotiation protocol to determine it otherwise.
+> I tried to illustrate both in one example, but I can see how this is confusing.
+> Will it work if I split the interrupt part into separate example?
+>
 
-Sorry, I am not going back to three months old discussion.
-
-Therefore I close this topic for me with: since the actual value does
-not matter for the host - it will discard all messages which are not
-intended to this guest - you can just use value 0 and your hypervisor
-will map to proper port.
+No need for another example, just drop the interrupts here.
 
 Best regards,
 Krzysztof
