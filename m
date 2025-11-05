@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-887257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57DBC37ADB
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:19:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAF1C37AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63C934E2946
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE7318C48C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70CD346760;
-	Wed,  5 Nov 2025 20:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4EF34D4EC;
+	Wed,  5 Nov 2025 20:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMn9XVIw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rneu7ILz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A89833291C;
-	Wed,  5 Nov 2025 20:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3AB34CFD2;
+	Wed,  5 Nov 2025 20:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762373993; cv=none; b=jUEsg6yN2S8sEzmQClck1OMCfss6DHQskO0fAogTNCiDcFGFm1TRWPx03Eo62fo7J+srBaeTwmTqCxPhnynvtAa8HJGBwQ69m8Si+8OPyJY5Q8u9qJPXus7U6O3tAtS6L4wGi3ROYP4gf+pC0sCvfePryBwa1EJWR0Srt9gHX2o=
+	t=1762374004; cv=none; b=pTSOBcLVydBVyZ6DGcfD/M/chq3gObImuGWN32VojWqbaqVHlPnA6ViLEtGoKTvm3TcqQR7otx4Q+PyPOKT6GqojadAuU/SFE1qmgAqtKUDqzDIpmJivZNycZwBR4VaLmT097qFJN1noy/m3fjM8Qmjx3X3j0UrnjTeRNSH0YCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762373993; c=relaxed/simple;
-	bh=5i2wOEfRBZMVtbDNLlGIv1oLd0QbaUK8gc54zHHbOnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tasm2aEyZC9ZSKQEsWCtpPFGjminQT7qXr0ms6i+4qZ/rUg7yGh3Oyk+ksAhhu9F0vJ3OyYpkoSbveF/TgsX+4nXg6QYqmhC2HOKvOiOlFjsvH3OrU9K8wfYFkvgUU9e8/DMEoa5oV0gkQpv9THV/NRg/d9a5PZm6vQ6e4mfXWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMn9XVIw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7791AC19424;
-	Wed,  5 Nov 2025 20:19:52 +0000 (UTC)
+	s=arc-20240116; t=1762374004; c=relaxed/simple;
+	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BF96o+IltziKw+TjCDrM41p5ztKvY4Ws7M7pw7lgvEnUmc1JjKmCnJDoezAN+Lejc/5nmR8VjEx3Si0t5U5kKY/rJrZ5BFlwyPHgIzEhpxw5POIm097/Grm5VyZQ+UGv9prVGd8PYfux4M49IlQJGbKkCK83Ht4hOAORedZDn5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rneu7ILz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1BAC4CEF5;
+	Wed,  5 Nov 2025 20:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762373992;
-	bh=5i2wOEfRBZMVtbDNLlGIv1oLd0QbaUK8gc54zHHbOnE=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=iMn9XVIwffuSpnQMM/6aZKEQz2bQRr7NjYxWyYHBgK2z0+hubPzzexTc2jxvNYZue
-	 kMJR0bSPh5OlgXJPY+K1nZy5t09Q2vUvExs3T+QJT8+b8IXzmPJmYuWjE+C1rcISVM
-	 cyfzBg8Ob7x6duajVhVLKLomlhPGiTsvTIDXlxwmvTS+U4NgbrfZ48vTWjKw0JHYxY
-	 yIjfVQzdReaR36/hXsfqpjGAMDQyoEZB10681XOyS0+SE3kgyw9UfcMkJi4hDU9qtb
-	 hznBjerMbc7DZ/bzM1E3d9fF6mVPjGosxQpxtqmAmAw5yHg9RuRsLSOCdSLiOLRE+2
-	 Ybv0XwlvVSSIQ==
+	s=k20201202; t=1762374003;
+	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rneu7ILzxQDORkplKIJfKvcj8v60TRP81/uyvwte9HSLfL7ka7KYQJUSzyNqeMovd
+	 TvUbLw+MwO3mA8HfJD3dcgIU0rwKDlIekpd13ZiYRb1mi42eZ16KbxseqA9BT70FUh
+	 vWztC0dPOfLhyUNqtuR1cowriYxY0mbSgBzoORqC9HZpZVYcevkRVi//BZsVnDc00U
+	 2dhQkE2KM4ZIEvSVpJor2LSlwzYbtx+Rrlf775JjapiChYOz3d223OiZ22hPcXx1ge
+	 7uNdszXznlWAylcVYJal5dWVdNVFt8j/XrJJN5yJEyTJysvKrxHPpKNZlKzGKNWyH4
+	 Mp8YkuDvOLnmg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7FA62CE0B94; Wed,  5 Nov 2025 12:19:51 -0800 (PST)
-Date: Wed, 5 Nov 2025 12:19:51 -0800
+	id 96B75CE0B94; Wed,  5 Nov 2025 12:20:02 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH v2 0/5] Miscellaneous RCU updates for v6.19
-Message-ID: <cf8b57e0-1803-45e9-a217-9c9aeb64a2f9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	Wang Liang <wangliang74@huawei.com>,
+	Zhang Changzhong <zhangchangzhong@huawei.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH v2 1/5] locktorture: Fix memory leak in param_set_cpumask()
+Date: Wed,  5 Nov 2025 12:19:56 -0800
+Message-Id: <20251105202000.2700370-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cf8b57e0-1803-45e9-a217-9c9aeb64a2f9@paulmck-laptop>
+References: <cf8b57e0-1803-45e9-a217-9c9aeb64a2f9@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+From: Wang Liang <wangliang74@huawei.com>
 
-This series provides miscellaneous RCU updates:
+With CONFIG_CPUMASK_OFFSTACK=y, the 'bind_writers' buffer is allocated via
+alloc_cpumask_var() in param_set_cpumask(). But it is not freed, when
+setting the module parameter multiple times by sysfs interface or removing
+module.
 
-1.	Fix memory leak in param_set_cpumask(), courtesy of Wang Liang.
+Below kmemleak trace is seen for this issue:
 
-2.	use WRITE_ONCE() for ->next and ->pprev of hlist_nulls, courtesy
-	of Xuanqiang Luo.
+unreferenced object 0xffff888100aabff8 (size 8):
+  comm "bash", pid 323, jiffies 4295059233
+  hex dump (first 8 bytes):
+    07 00 00 00 00 00 00 00                          ........
+  backtrace (crc ac50919):
+    __kmalloc_node_noprof+0x2e5/0x420
+    alloc_cpumask_var_node+0x1f/0x30
+    param_set_cpumask+0x26/0xb0 [locktorture]
+    param_attr_store+0x93/0x100
+    module_attr_store+0x1b/0x30
+    kernfs_fop_write_iter+0x114/0x1b0
+    vfs_write+0x300/0x410
+    ksys_write+0x60/0xd0
+    do_syscall_64+0xa4/0x260
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-3.	Add kvm-series.sh to test commit/scenario combination.
+This issue can be reproduced by:
+  insmod locktorture.ko bind_writers=1
+  rmmod locktorture
 
-4.	Permit kvm-again.sh to re-use the build directory.
+or:
+  insmod locktorture.ko bind_writers=1
+  echo 2 > /sys/module/locktorture/parameters/bind_writers
 
-5.	Remove redundant rcutorture_one_extend() from
-	rcu_torture_one_read().
+Considering that setting the module parameter 'bind_writers' or
+'bind_readers' by sysfs interface has no real effect, set the parameter
+permissions to 0444. To fix the memory leak when removing module, free
+'bind_writers' and 'bind_readers' memory in lock_torture_cleanup().
 
-Changes since v1:
+Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+Suggested-by: Zhang Changzhong <zhangchangzhong@huawei.com>
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/locking/locktorture.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-o	Make kvm-again.sh able to reuse the rcutorture res directory
-	in support of upcoming parallel execution of kvm-series.sh
-	guest OSes.  This is #3 above.
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index ce0362f0a871..6567e5eeacc0 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -103,8 +103,8 @@ static const struct kernel_param_ops lt_bind_ops = {
+ 	.get = param_get_cpumask,
+ };
+ 
+-module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0644);
+-module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0644);
++module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0444);
++module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0444);
+ 
+ long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn);
+ 
+@@ -1211,6 +1211,10 @@ static void lock_torture_cleanup(void)
+ 			cxt.cur_ops->exit();
+ 		cxt.init_called = false;
+ 	}
++
++	free_cpumask_var(bind_readers);
++	free_cpumask_var(bind_writers);
++
+ 	torture_cleanup_end();
+ }
+ 
+-- 
+2.40.1
 
-o	Remove a redundant call to rcutorture_one_extend().  This is
-	#4 above.
-
-o	Add the SPDX line to kvm-again.sh and remove a trailing space
-	character from the comment header.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- include/linux/rculist_nulls.h                        |    6 
- kernel/locking/locktorture.c                         |    8 -
- kernel/rcu/rcutorture.c                              |    4 
- tools/testing/selftests/rcutorture/bin/kvm-again.sh  |   56 ++++++---
- tools/testing/selftests/rcutorture/bin/kvm-series.sh |  116 +++++++++++++++++++
- 5 files changed, 166 insertions(+), 24 deletions(-)
 
