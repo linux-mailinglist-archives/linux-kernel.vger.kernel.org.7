@@ -1,87 +1,154 @@
-Return-Path: <linux-kernel+bounces-886712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25462C36564
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:31:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6759BC3658B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8693F1A409F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:21:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B20E84F11CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E27343D86;
-	Wed,  5 Nov 2025 15:13:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49D32D0D8;
+	Wed,  5 Nov 2025 15:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="imR9MuJp"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DD33431FC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6331CA5B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355587; cv=none; b=HbJ16voz8ZeccegGgCyCLLesstIIU+Si+Dn+Imx4E2yqcOsi0rZgK/umKlzcV2xnv245Am1C8YoY6Jj+FbyXBr8CHwJEy22rQq2nns/Hx8UkYhGUdnOW0ts1fOD1Mi6NZwOrmJ0fDu7HkId3tldWIv7utPJCuXDEE/EcAHFfbZY=
+	t=1762355768; cv=none; b=T4np/tVeR1UFdLqxzkRpoGVaYRzHP3et0BlcxDHxMZ7j9cVffOegT8TLSjikG7xtfZ7IK4YkaYB4U64IsScbauHjOFzhZHDX7OkTRjw9MOBeA0B6rHJYrmcPqVe5wShrRrOe0kqEnqQwOsAWnpl6iYK+F+lG8LVfzmNjstCX9EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355587; c=relaxed/simple;
-	bh=dLcTW1aCAzLhaJVOj5O43tCa5J2ImJgjBVYCgfVT8Ms=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=a6Rg0R6fu9Qee+XJiw/kqbwo9kDJGa0eAmgf2EpTHkFH93o+cXkNNTl8+bgfRrnHAeSXYMQI9HYEHlkqHaffYikFHnt9FugzWHUd3rNHYsykAZ7sK9mEuXrfXOhdFeQscQjTcY+JQ8vh65+vL2Ky1zKDud1ugsIu1OtMY9QZmVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945a94ceab8so663964539f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:13:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762355584; x=1762960384;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BC4CyBjhOEnXk/s/LxiIlBFL0VGpqEH5wTl9IHwuW6M=;
-        b=buVoZtL7nL7EaGzET+6BOsHZHCqreZKy8P266iIvYTrwYT1TdiCZgD8GAs6nTxTMmh
-         ICVetD2j1OYMZaDXkj7GGFS99Dak9g0euHpqE3L3YkoTNsKYug0LzUR6NA0Rjb5Fwr0U
-         uGYwytWL5XPo8bUdaUTUcpFn7WTkgx9VPbK1I+mveVuGA5+uLBvg6Sa1dnXXc5pWXFKD
-         NkhKKR3+olIaVWj/d+LZMvyd2VQoAKO+s/3p96DxN9/yal6HOXixpteiyVEHnCCvsoCA
-         O1JxnvAyCYClsQwvoMUsTcLYytwONQpP4E2jFpISDegBFsLxNfW9hEGCeuEZLkDhiWVN
-         N+fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlMmD5KQNKQbwIgEFo270tlA38fxqQOwvQ1t9NWyaM1AxuwIZmuoWn046gUxUnDglxTY+2YBliEE4eWys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmVQB30OsoMT8GGBmcwA7Rd4GgM8ND5SjaFYCicJnz8lY8urwT
-	a03aEIhAECwU5uvE8c3l5yY3NS4PoV69upmBefw82zR/tc2meggkTHbWjjYjf52NWJCfn7e7yr/
-	E4SqRr8XS+Llvu3YvzkNIsj8v9dL4ALh4ljGqaN2jwuZioGKF2y1VbVRUZSM=
-X-Google-Smtp-Source: AGHT+IHhUJ3Bi8k0fQ4Hm9e5q1z+3H2zBxC/PvIh5v0vXF3M/QMYaKkoiMGp/nhdrvxO86zbloW/c0xId6+Ug54DfmBqPMDCGS1L
+	s=arc-20240116; t=1762355768; c=relaxed/simple;
+	bh=KwVGKyItxwHcDbibJdy6RGzeEt9wjoeI1M8MUoQKS7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ot5B3S3kGGD+NpTkFznMfSl4yA+dEIA2stsPvke542hMTsxYkCSS1srIOw2duUb2A6m+/l1Tfer1M2M4atAkId34+H8t6FAr3pwlEBh7ZEU0nKtHl2IyLstKE9Q4BCzxw480ac8RDpOVJeQlR/xNFyj0R4fQtmgLij6coIK7fb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=imR9MuJp; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762355763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MJsT9hlhLTsvCKavMiWN98EUIoevbIGcLS4c0FMpc4g=;
+	b=imR9MuJpbtsgtdJyzlLIO0rXuzIEOPtTjDHCPPqsMoc3C4reloOxKTXeWx9R8R3Y9Izq49
+	X45/USNluFUT5/gEl6+OHDlCK8B9jf0eFhtykxrrax1RSEW/dm9LB0iav9FEiY6lHqQyy6
+	BXAefAoAE34JY6OF97u5dq6Dc/pltqI=
+From: Leon Hwang <leon.hwang@linux.dev>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	andrii@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	ameryhung@gmail.com,
+	linux-kernel@vger.kernel.org,
+	kernel-patches-bot@fb.com,
+	Leon Hwang <leon.hwang@linux.dev>
+Subject: [PATCH bpf-next v6 0/2] bpf: Free special fields when update [lru_,]percpu_hash maps
+Date: Wed,  5 Nov 2025 23:14:05 +0800
+Message-ID: <20251105151407.12723-1-leon.hwang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c23:b0:430:d061:d9f7 with SMTP id
- e9e14a558f8ab-433407c519amr41503085ab.23.1762355584739; Wed, 05 Nov 2025
- 07:13:04 -0800 (PST)
-Date: Wed, 05 Nov 2025 07:13:04 -0800
-In-Reply-To: <9f0a89ac-f782-4afb-8fe5-9575de76b201@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b6980.050a0220.3d0d33.0053.GAE@google.com>
-Subject: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in recv_work (3)
-From: syzbot <syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com>
-To: eslam.medhat1993@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+In the discussion thread
+"[PATCH bpf-next v9 0/7] bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"[1],
+it was pointed out that missing calls to bpf_obj_free_fields() could
+lead to memory leaks.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+A selftest was added to confirm that this is indeed a real issue - the
+refcount of BPF_KPTR_REF field is not decremented when
+bpf_obj_free_fields() is missing after copy_map_value[,_long]().
 
-Reported-by: syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com
-Tested-by: syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com
+Further inspection of copy_map_value[,_long]() call sites revealed two
+locations affected by this issue:
 
-Tested on:
+1. pcpu_copy_value()
+2. htab_map_update_elem() when used with BPF_F_LOCK
 
-commit:         84d39fb9 Add linux-next specific files for 20251105
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cd1342580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=413cf24e78b667b9
-dashboard link: https://syzkaller.appspot.com/bug?extid=56fbf4c7ddf65e95c7cc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15fc2012580000
+Similar case happens when update local storage maps with BPF_F_LOCK.
 
-Note: testing is done by a robot and is best-effort only.
+This series fixes the cases where BPF_F_LOCK is not involved by
+properly calling bpf_obj_free_fields() after copy_map_value[,_long](),
+and adds a selftest to verify the fix.
+
+The remaining cases involving BPF_F_LOCK will be addressed in a
+separate patch set after the series
+"bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"
+is applied.
+
+Changes:
+v5 -> v6:
+* Update the test name to include "refcounted_kptr".
+* Update some local variables' name in the test (per Alexei).
+* v5: https://lore.kernel.org/bpf/20251104142714.99878-1-leon.hwang@linux.dev/
+
+v4 -> v5:
+* Use a local variable to store the this_cpu_ptr()/per_cpu_ptr() result,
+  and reuse it between copy_map_value[,_long]() and
+  bpf_obj_free_fields() in patch #1 (per Andrii).
+* Drop patch #2 and #3, because the combination of BPF_F_LOCK with other
+  special fields (except for BPF_SPIN_LOCK) will be disallowed on the
+  UAPI side in the future (per Alexei).
+* v4: https://lore.kernel.org/bpf/20251030152451.62778-1-leon.hwang@linux.dev/
+
+v3 -> v4:
+* Target bpf-next tree.
+* Address comments from Amery:
+  * Drop 'bpf_obj_free_fields()' in the path of updating local storage
+    maps without BPF_F_LOCK.
+  * Drop the corresponding self test.
+  * Respin the other test of local storage maps using syscall BPF
+    programs.
+* v3: https://lore.kernel.org/bpf/20251026154000.34151-1-leon.hwang@linux.dev/
+
+v2 -> v3:
+* Free special fields when update local storage maps without BPF_F_LOCK.
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps without BPF_F_LOCK.
+* Address review from AI bot:
+  * Slow path with BPF_F_LOCK (around line 642-646) in
+    'bpf_local_storage.c'.
+* v2: https://lore.kernel.org/bpf/20251020164608.20536-1-leon.hwang@linux.dev/
+
+v1 -> v2:
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps with BPF_F_LOCK.
+* Address review from AI bot:
+  * Fast path without bucket lock (around line 610) in
+    'bpf_local_storage.c'.
+* v1: https://lore.kernel.org/bpf/20251016145801.47552-1-leon.hwang@linux.dev/
+
+Leon Hwang (2):
+  bpf: Free special fields when update [lru_,]percpu_hash maps
+  selftests/bpf: Add test to verify freeing the special fields when
+    update [lru_,]percpu_hash maps
+
+ kernel/bpf/hashtab.c                          | 10 +++-
+ .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
+ .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
+ 3 files changed, 125 insertions(+), 2 deletions(-)
+
+--
+2.51.2
+
 
