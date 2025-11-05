@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-887308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041CAC37D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2459BC37D56
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8853B47E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DC93B4DAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E934CFB4;
-	Wed,  5 Nov 2025 21:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D2634CFBA;
+	Wed,  5 Nov 2025 21:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHvEmO8F"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtbAR/JO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3852D6E5C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5C2D8783;
+	Wed,  5 Nov 2025 21:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762376618; cv=none; b=jvgKv37GMOnlTH7K2rbwHIX2On84lWj8aMto1sb4cncAtgxmqbZnWCyw1ylQ/BLfR7Q+ISOsT3X/DKtGL9WvVoEkkcDH1QI2WmBEOCmbQugU0J+HRdAkJiGfmmRo67EL6+FP4oF4NvizT47ned/w0IFP+jPVQFfM2gRJAhr3IWU=
+	t=1762376643; cv=none; b=tqTWDSiuGyPaPP9m+9xluqaj6GajjZlG8xYeoxgafDk09D4Qoo44N9x+kGgryLz1uuY6b3Snti6GqTyD/X6wXJfJxxADMhF/jb+2/Hmn0BWDfH0NkQ97c9goTz3jLuAuf2T81KftGJoiVS8HiTmj9xv98XAVMLmbSZ1f9VHFgto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762376618; c=relaxed/simple;
-	bh=dZxbC32mzy/JF02DKZ2snFfIWQ/TTrnP2h3YmTHbL8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m/NOebW4rt+tJBWklzLZPys9s4nDcGKJMC4HdgrFZb1iNBo9O+NJsYrSkqUg06rqnNR/m5RaEoIcBEdl/rfwTIz68EF6cGmhHCKRPtqDCfFfS0Eg9E6tvyHAZVf6njoG6+wYA7TDPI4ZNENbDv58c+cJoySYl7OAqRLRrPwdnEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHvEmO8F; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-341988c720aso258410a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762376616; x=1762981416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvK6qvFSDKA15whyYqvYMfPkmiZehgHvoYJ0yEG/DmU=;
-        b=UHvEmO8FDqslTM//zGwzpVTHnVnIzwxC8pLjsFNJOzG1VNAiDeY2i1v3/wuLwj5Ku6
-         s1pckZZIMwLJDpoCWYIiHl1OXgI33stdCpx455K5AaYyuyE2Q59gBJQ3Y0EVzeXVirGt
-         llQI/Q/ZFGNNhHFY1TuDBgnrIEPSVssWEaZ+H5NacwaEH9Cv9eRzq/lsPzK7uXt/rye9
-         NZjCRgg4D8AKpCHVBm74SQDY1T8t2k7GE6DwzKTDSSvINYJPKTBZc75OFReHXubHW/fm
-         jaqo1PYk8qIYhuahbxDhnSMPT3DABDQEMbV3H2qZyd3Onw6B3i31+IHnLIlYFfRPtYqa
-         2opQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762376616; x=1762981416;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvK6qvFSDKA15whyYqvYMfPkmiZehgHvoYJ0yEG/DmU=;
-        b=rdmeixzualGurc1JGftJ0vIg09p9/RNzrJF0enmuNSl7WTNHovWTQB7X/xQr3dbjaw
-         BiuPx+ISMYsVLAJfssJQcKM7HiWhVs1Xq9LC9mH5c1XI902kBJo1CQq3glSVOJ8cwHpZ
-         NwpiCq/Dd0pqK/0CeB8aMyGiEtp8Nuwqu2kW+e2fMWh0dfMxdkdFfAESV2MveEu9uqx2
-         rKskt9kcDT8NIP7RR6Ucw5HqjqNu3NR4Qa/+LbXCMJJC3lEqj4QpdOstCbI/Y9Oc6l3/
-         KalGsSD/jY3TvmOMrFASrz+Khdg6//D23SmcHfhBs/k+Sma9uV7TqTp1Adms/pii0MNz
-         2Z3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSoq1FX2iHJIHmfxsy5UZGsdEqJJY1p0EI6apbrjWqi8iaGd5R3KZcMKMT1Paddoec2DNtYfzA8Hhtex4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ0ngllitdK0ZNL8Yew5mIqIokrkS//SJlhroSQtegd6BrikDt
-	gOGscS0W85gJ/d21iTyBzwMEUvK1KuRKzhvm9KdS2jlEd8WDQqNjrwSr
-X-Gm-Gg: ASbGncvHoF/U5UdNuiKuHbhCdP3i5dqm5xqCjiGAghk98gGayV3bXgzzjYzRsACj7U8
-	usMs+oYg9v7CEXZuiQzr1VV4/QbX4/iB0R6Ro5i+Ux+unreW8kdpPOxkhPic/UCtOBSB7XaJoaQ
-	uezfw16Vmj+OgNt3P0dZifQpR0euDhHTIoZGXnHLbGzrRuAjjz2pmmR0dW8lY16piYVBsFQrZoA
-	Jni6nDujWtLMA7kjiUtG+wRoZFoRu2kQV6gJKP4pLyKWhTsSUEGLvkTDx8ywTcwclTERLguYbo2
-	8PYrWhmOehLO9tNgzchD8g970UH8tO87koilEtTzPmBcpf7/Ggv4dUSZ79UmAk2UnaqWbcav1vS
-	XI5XPmUriG/MiQNk1mCuRDRqpHdOK/FJZYEng9Y3WWK5Zt3s+11gYXw/dzQ==
-X-Google-Smtp-Source: AGHT+IHOziVsZSS5XJszgFIOI3dDfa90KKWH3MYFTR2nMejbJeWj2BTL5+TWVQ9T3SiGEY66XetT7g==
-X-Received: by 2002:a17:90b:5847:b0:340:bde5:c9e3 with SMTP id 98e67ed59e1d1-341a6dcc6admr4852945a91.23.1762376616023;
-        Wed, 05 Nov 2025 13:03:36 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d125c93fsm13626a91.14.2025.11.05.13.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:03:35 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv4 dmaengine 1/2] dmaengine: mv_xor: use devm_platform_ioremap_resource
-Date: Wed,  5 Nov 2025 13:03:16 -0800
-Message-ID: <20251105210317.18215-2-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251105210317.18215-1-rosenp@gmail.com>
-References: <20251105210317.18215-1-rosenp@gmail.com>
+	s=arc-20240116; t=1762376643; c=relaxed/simple;
+	bh=3lbd/EU2NQ8mLBwmqz/2m2jc7qv0uF70cLO4qQ/HcLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W4I3orefCSJOfTMMifWUpQgYd6rWcb4z+CAnAOfRX04Z2C3m/THvsoM7nHrg52h7tzYaQ0yOKLCagkdXqVhW3f7GumxJV1OFoMLJq121zSSLXSZRKje2ea2M4177CXd4ILfI/W0AstgS1t/oDxZgByiFnlUDcHZkU0WIK4LW95I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtbAR/JO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21204C4CEF5;
+	Wed,  5 Nov 2025 21:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762376642;
+	bh=3lbd/EU2NQ8mLBwmqz/2m2jc7qv0uF70cLO4qQ/HcLI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dtbAR/JOu+tct/pxmTcYqviFrVXO6KQL6RNEt8EvVv6P33xPHb9dgHSk9ViufUw5h
+	 kJ1uxg96GLeI8292NUvdAXLPsvexKzZTOvz/gqFR4B6Tf9OaddzbqXg2yQcuwzn5ku
+	 NZ8Sz2aQ7UWT3Uo0jQ1QoNPnzhRVhti/SyAe56tyLNPuuhK+nf+q1QjFVpUI4PCL/l
+	 xdV1u0DRnHSkyp4q84sPX72DQOu3N6R+ft0MWsYIMWFXcaMrhmv46DFunA41fPSuim
+	 VgLUQjfA+k0lz49d9bWIB9ytxdlmtWzuFUN4GpAWzvETdfY0TBnWeKp8qSygESbq3Z
+	 Ohs2vu0HGP3Lw==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Will Deacon <will@kernel.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Phil Auld <pauld@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	cgroups@vger.kernel.org,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	linux-mm@kvack.org,
+	Michal Hocko <mhocko@suse.com>,
+	linux-pci@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	linux-block@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Tejun Heo <tj@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	netdev@vger.kernel.org,
+	Muchun Song <muchun.song@linux.dev>
+Subject: [PATCH 00/31 v4] cpuset/isolation: Honour kthreads preferred affinity
+Date: Wed,  5 Nov 2025 22:03:16 +0100
+Message-ID: <20251105210348.35256-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,57 +89,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simplifies probe slightly by removing explicit struct resource pointers
-and platform_get_resource calls.
+Hi,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+The kthread code was enhanced lately to provide an infrastructure which
+manages the preferred affinity of unbound kthreads (node or custom
+cpumask) against housekeeping constraints and CPU hotplug events.
+
+One crucial missing piece is cpuset: when an isolated partition is
+created, deleted, or its CPUs updated, all the unbound kthreads in the
+top cpuset are affine to _all_ the non-isolated CPUs, possibly breaking
+their preferred affinity along the way
+
+Solve this with performing the kthreads affinity update from cpuset to
+the kthreads consolidated relevant code instead so that preferred
+affinities are honoured.
+
+The dispatch of the new cpumasks to workqueues and kthreads is performed
+by housekeeping, as per the nice Tejun's suggestion.
+
+As a welcome side effect, HK_TYPE_DOMAIN then integrates both the set
+from isolcpus= and cpuset isolated partitions. Housekeeping cpumasks are
+now modifyable with specific synchronization. A big step toward making
+nohz_full= also mutable through cpuset in the future.
+
+Changes since v3:
+
+- Spelling issues all over the place (Bjorn Helgaas, Simon Horman
+
+- Comment each HK_TYPE_* (Valentin Schneider)
+
+- Keep static branch in housekeeping_test_cpu() (Waiman Long)
+
+- Use rcu_dereference_all_check() to also check preemption disabled
+  (Chen Ridong)
+
+- Use cpumask_size() for allocation (Waiman Long)
+
+- Fix inverted branch on update (Phil Auld)
+
+- Set WQ_PERCPU to memcg workqueue (Waiman Long)
+
+- Remove linux/cpuset.h include from include/linux/sched/isolation.h
+  (Waiman Long)
+
+- Comment why unbound kthreads aren't updated on CPU online (Waiman Long)
+
+- Remove genirq related patches (handled in another patch after discussion
+  with Thomas Gleixner)
+
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
+	kthread/core-v4
+
+HEAD: 9ba457a61e09fb17a4698879367b7e6593c256d2
+
+Thanks,
+	Frederic
 ---
- drivers/dma/mv_xor.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 5e8386296046..3597ad8d1220 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1309,7 +1309,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 	const struct mbus_dram_target_info *dram;
- 	struct mv_xor_device *xordev;
- 	struct mv_xor_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	struct resource *res;
- 	unsigned int max_engines, max_channels;
- 	int i, ret;
- 
-@@ -1319,23 +1318,13 @@ static int mv_xor_probe(struct platform_device *pdev)
- 	if (!xordev)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
-+	xordev->xor_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(xordev->xor_base))
-+		return PTR_ERR(xordev->xor_base);
- 
--	xordev->xor_base = devm_ioremap(&pdev->dev, res->start,
--					resource_size(res));
--	if (!xordev->xor_base)
--		return -EBUSY;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res)
--		return -ENODEV;
--
--	xordev->xor_high_base = devm_ioremap(&pdev->dev, res->start,
--					     resource_size(res));
--	if (!xordev->xor_high_base)
--		return -EBUSY;
-+	xordev->xor_high_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(xordev->xor_high_base))
-+		return PTR_ERR(xordev->xor_high_base);
- 
- 	platform_set_drvdata(pdev, xordev);
- 
--- 
-2.51.2
+Frederic Weisbecker (30):
+      PCI: Prepare to protect against concurrent isolated cpuset change
+      cpu: Revert "cpu/hotplug: Prevent self deadlock on CPU hot-unplug"
+      memcg: Prepare to protect against concurrent isolated cpuset change
+      mm: vmstat: Prepare to protect against concurrent isolated cpuset change
+      sched/isolation: Save boot defined domain flags
+      cpuset: Convert boot_hk_cpus to use HK_TYPE_DOMAIN_BOOT
+      driver core: cpu: Convert /sys/devices/system/cpu/isolated to use HK_TYPE_DOMAIN_BOOT
+      net: Keep ignoring isolated cpuset change
+      block: Protect against concurrent isolated cpuset change
+      cpu: Provide lockdep check for CPU hotplug lock write-held
+      cpuset: Provide lockdep check for cpuset lock held
+      sched/isolation: Convert housekeeping cpumasks to rcu pointers
+      cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
+      sched/isolation: Flush memcg workqueues on cpuset isolated partition change
+      sched/isolation: Flush vmstat workqueues on cpuset isolated partition change
+      PCI: Flush PCI probe workqueue on cpuset isolated partition change
+      cpuset: Propagate cpuset isolation update to workqueue through housekeeping
+      cpuset: Remove cpuset_cpu_is_isolated()
+      sched/isolation: Remove HK_TYPE_TICK test from cpu_is_isolated()
+      PCI: Remove superfluous HK_TYPE_WQ check
+      kthread: Refine naming of affinity related fields
+      kthread: Include unbound kthreads in the managed affinity list
+      kthread: Include kthreadd to the managed affinity list
+      kthread: Rely on HK_TYPE_DOMAIN for preferred affinity management
+      sched: Switch the fallback task allowed cpumask to HK_TYPE_DOMAIN
+      sched/arm64: Move fallback task cpumask to HK_TYPE_DOMAIN
+      kthread: Honour kthreads preferred affinity after cpuset changes
+      kthread: Comment on the purpose and placement of kthread_affine_node() call
+      kthread: Document kthread_affine_preferred()
+      doc: Add housekeeping documentation
 
+Gabriele Monaco (1):
+      cgroup/cpuset: Fail if isolated and nohz_full don't leave any housekeeping
+
+ Documentation/cpu_isolation/housekeeping.rst | 111 +++++++++++++++++++
+ arch/arm64/kernel/cpufeature.c               |  18 ++-
+ block/blk-mq.c                               |   6 +-
+ drivers/base/cpu.c                           |   2 +-
+ drivers/pci/pci-driver.c                     |  71 ++++++++----
+ include/linux/cpu.h                          |   4 +
+ include/linux/cpuhplock.h                    |   1 +
+ include/linux/cpuset.h                       |   8 +-
+ include/linux/kthread.h                      |   1 +
+ include/linux/memcontrol.h                   |   4 +
+ include/linux/mmu_context.h                  |   2 +-
+ include/linux/pci.h                          |   3 +
+ include/linux/percpu-rwsem.h                 |   1 +
+ include/linux/sched/isolation.h              |  16 ++-
+ include/linux/vmstat.h                       |   2 +
+ include/linux/workqueue.h                    |   2 +-
+ init/Kconfig                                 |   1 +
+ kernel/cgroup/cpuset.c                       | 134 +++++++++++++++-------
+ kernel/cpu.c                                 |  42 +++----
+ kernel/kthread.c                             | 160 ++++++++++++++++++---------
+ kernel/sched/isolation.c                     | 138 ++++++++++++++++++-----
+ kernel/sched/sched.h                         |   4 +
+ kernel/workqueue.c                           |  17 +--
+ mm/memcontrol.c                              |  25 ++++-
+ mm/vmstat.c                                  |  15 ++-
+ net/core/net-sysfs.c                         |   2 +-
+ 26 files changed, 596 insertions(+), 194 deletions(-)
 
