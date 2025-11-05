@@ -1,104 +1,109 @@
-Return-Path: <linux-kernel+bounces-886839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508FCC369F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:16:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C853C36B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F1E1A265C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105506402D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EB2156F20;
-	Wed,  5 Nov 2025 16:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqpSPRMj"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4355321448;
+	Wed,  5 Nov 2025 16:04:48 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF8333440
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E122A320CB6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358660; cv=none; b=KG89d4m4ELfSzjN10weRVr9uCY0Y02ACf+8LZqQlpxpGDuVcy97IMNuHMBtb/9+C2a+4IyQS2JkIn6Vh/HTql0NbT1xherubn+Mk7Lgsx428wguTH5pxy1hvyyq1oqr/AJvwKbzIZBZs1gbvLrjyc7JrqKcl4QbOBGSh/+kNtEs=
+	t=1762358688; cv=none; b=BrolHl9SOW1DL84KboKSmYBAZpZkyCI8cB5kLhjVhsDhi1T2GzIytY0Z8IJIqK9zaKjrb9IoOy7PLwgQekjg0RW2z6EpY311ieM5hzF4TRi/nLFaf9NVwkgJfiU3PoqFcvWUvxcZuCPctHyktYUVIyloUtaJQKxARF+S2GQ5E74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358660; c=relaxed/simple;
-	bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YS40onc+12q1/0j0tJ5x530kolvV4PJi1KcrDMM9Grnkk1fq6HXL4K6pedrDfBhuUrNMr3J8Tryb7FSdJ0rvVu2q/djO/fYHszs1QXJwtnDWSfHe1SFSHq6LYY+DxF6D2OqBrz9Ua8+GDNUwUd8LxeBwmLzRSvjjH4rw+mj9fdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqpSPRMj; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b726997b121so133218566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762358657; x=1762963457; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-        b=bqpSPRMjCQVmrJtPa26ktK2vYMifg3gFOZuXJxHd9oO60/Jv1ztnmQTWt6Z34lNslF
-         gl7xwwDsMSi/YS6cL8ziKvu1EQRFVUakPd7LlVJZPzvkKsInJJSSJ3kz6lUcmWvdnUd4
-         RwICeq5AgDU/14dw6TMHI6mtoY3lEGE2wLEAUZlGN/7YgIeObg0MF/J6WRqiYBTMAE05
-         NgwxxRuT9In3/tm9n2cql/iJdfhgJqKwktpbPsTkBu9/ro0UEpHN3HsbF83vvfeoqrFw
-         GaxKRjLgxf5XU2rplp6f90gzidkI0gb4JZfvEqBKhllLyVuxC1xqmHBOrBDsnspTf6Dj
-         k+6w==
+	s=arc-20240116; t=1762358688; c=relaxed/simple;
+	bh=JofqSWCzl11ihkf1QS7aH5EerIGWNBW0jBvqMlbq2a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4EKlXJ1ZszkMzm8Fx21yuaO0VEI4GZyUlhA5DmKUrWBMLBS9gQFnUy7CRBuBIaRb4irBT1jdVhW/556XgUja1EWibp4Jn6a5HSApxTB1ZXB3UStyVq1iPRY/9PZgMPBeqm/o98LSuzqZVeNKOnc9gk5OkOEfywl7IGOWt/MxT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1342511566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:04:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358657; x=1762963457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
-        b=ug3SGRrd2tOMXPbAf4AEOq4BEmBQUwKmm4G+4MeoEDkPuegKd02fGzuhYllP8b4bpQ
-         zjOvXSjQ0euBoEUTRYBVMAzJd11zmD6xjr/F8CF145cym15rqv392HoiPuvW+GWOtEZE
-         KuMfp7naLEShB7rlfFyYdEj4+Yevjcsm4yNqOXCDhP2Xq8DsHJb8s7Gv5lx1j8oEJFD2
-         Z9MKp62024Tw6WbG39MXczAALu741bObC97doe2IwZm/8eEGAa3L9t0ywV88bVdb7cl0
-         M1XpnBbvvz8a5Tji+sfwJ1wwKpdafXubR7W7U/wUdSNXVCyBb2v6s3AR+hiTfej2ZABw
-         BcKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIX9jBsFAkkh74NCOF3Q+uUXLCKa9h8q5Um9ZO1X6eOcybJfL7WLXlZ1hcqV6RBiKBY/RHRueUswUzspk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhIPeDR6Pl9YccZ6WlzRnfBRh0szb05O311Ivm6yk5bBJoaBJh
-	KwEu3qggF6+YbOTleYwESQUDnd/1Dh7GR2RBQ9WVZjF++dH+7aq8fAApATptdDj60SQ=
-X-Gm-Gg: ASbGncswqpkuaLxw6tNgbkzf47fMEuZneYgIizYFbi1X0QwgjdkicmGUIJM4cUDK+LT
-	u0RtXyIdqypH7A52N6RXBpkhgg9ONRqV5Pf1kIOhYKo937e5K5+ceaE12IRAj/OdyfrHSrEnPLc
-	sBkIH2miI7g97LjYBMOzpRWO/ic9nQt9/R3JL4YXgJUHIlMYdm7j8ZnrQXdNPsVlqFcRZwHQlEy
-	51qGt5F83XEIzOgz9xOhhK5VGP+2AELTVNwREhf0wwyUgqi2Ayt3FVLM3ADHyJcO40aMIbmoD7S
-	E+v0e12Zdwcl8MFKFT1073CIGnQ0Iye+XTk5R1ELEzGKti2K93+6CYm5SAiAudB/MXPkD6YebRI
-	tmMrCo0bP6hFl88oV7C19UHa0KTZnCJRr2OhXQW7Br3o4MU6Hy586ti52T7kCEumKxjc1uAfMSp
-	c7Znptk4LC1sLaIEAVMHhmYhU=
-X-Google-Smtp-Source: AGHT+IH+8UBl88iOFcuJ5mLvs7y03FE0ImwwlDmWIzieFw+K4sIaLEleiL54hEot6DxqVBsb24f+9A==
-X-Received: by 2002:a17:906:d54f:b0:b46:57fd:8443 with SMTP id a640c23a62f3a-b726323d55cmr451555866b.24.1762358657186;
-        Wed, 05 Nov 2025 08:04:17 -0800 (PST)
-Received: from [172.20.148.132] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fa0828dsm518078166b.50.2025.11.05.08.04.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:04:16 -0800 (PST)
-Message-ID: <89fc4526-db36-4974-8a38-554315fe76ed@linaro.org>
-Date: Wed, 5 Nov 2025 17:04:15 +0100
+        d=1e100.net; s=20230601; t=1762358685; x=1762963485;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zQtbK0HPx+N0NDzFM7oR+NUAI3H2NYy2UQCcQpjJkTY=;
+        b=e/TQQdBWH6HRBAD67s/U+FTBJGyDuPZqfWuBbOAdmamh18F/fUOQ+JCUNz4GoWXY2x
+         +W1JqdSGMgL1AB2iMTwPHDmu9dQPQvGluwPZ99EKB5FXu3o99N6dXQTJ7yxgEqIvDKzO
+         1jpxRB9csPRuXoIdnFhXbZgQqQVImpxxGxWF7IyReue3JuvtA9vpjXDVxIqyAyoblwGS
+         /PFjIouGqRQ0lAzXZLLdd5sMk/qaqVFAi2CsBo6FQUYmN2E2ZT+70IH+nDkLAqy6OODP
+         pvvnrS4OFNicdKmOE1fRW6UKPSf9ED7rRORiBDpY/cxA3H+mRVGEK3csqoM8LwG17onc
+         ayXA==
+X-Gm-Message-State: AOJu0YwCPRpjP+cD93vgwbkF21BGP6Hld7zVEfGiRs/BbeXY1d2Qnuad
+	kBAv7q3yX7sST1VqpkS3ZsMaLPfZuluq4egmsV4p4WVe+syQcjMqekDG
+X-Gm-Gg: ASbGncuNwhCHiGh/FDensZ9sLuyt959wfmQe52M7/Ki4EgMjHJ7/eLWWVEJqI/HxeFs
+	9G1oTrI+DoxNHG0UTfVu7oLV+VoO7J4/+cXA5PgbK3JPEDHA+FBQiEiVYJ7CxD6zFD3p5Tb0IdR
+	mPlNQcCD7v2aeKaWPBgIvGKwowD0cVta9QSWikZNWzn4qyEoerG2AFbe/nqcKAT9iIxZaDBy2fB
+	KblJrA7y7pKL+OtZOGI5INAUX9JQ192y0wzZdUKkpm2U83SwFlSwsAOZSJllEW6RNz3j6UIREHB
+	9uSJkd5PjRxVnYQWnPZHQF1VYIOvJLRO5llQqj45bOu4rrME/UnKIGGlh1oNShCR3vvc2y+Q7r3
+	1s1DrAreWOE9/+wUeeV6rK/YLG6i+AF1GXw/Vqal/ax9dP9wibt7TUWMF7bgIIrJNXg0=
+X-Google-Smtp-Source: AGHT+IFeg0PfZi72Z71d5ee0yOEa03D5xAyx6X2QALCBR3Xeog/mqq1XoLJB5RS10SM8/uMZFbIGPg==
+X-Received: by 2002:a17:907:9815:b0:b71:854:4e49 with SMTP id a640c23a62f3a-b72655edfabmr373939666b.56.1762358685029;
+        Wed, 05 Nov 2025 08:04:45 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e2597sm528556266b.45.2025.11.05.08.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:04:44 -0800 (PST)
+Date: Wed, 5 Nov 2025 08:04:42 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Simon Horman <horms@kernel.org>, david decotigny <decot@googlers.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
+	kernel-team@meta.com, jv@jvosburgh.net
+Subject: Re: [PATCH net v8 4/4] selftest: netcons: add test for netconsole
+ over bonded interfaces
+Message-ID: <sw7wovxj7l43rj2dkvapzl3w6rrbai5qje4zswz6xrxmmkyxtm@gym66qdsivwh>
+References: <20251104-netconsole_torture-v8-0-5288440e2fa0@debian.org>
+ <20251104-netconsole_torture-v8-4-5288440e2fa0@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/28] mtd: spinand: Add missing check
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
- <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
- <20251031-winbond-v6-17-rc1-oddr-v1-5-be42de23ebf1@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-5-be42de23ebf1@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-netconsole_torture-v8-4-5288440e2fa0@debian.org>
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+On Tue, Nov 04, 2025 at 09:37:04AM -0800, Breno Leitao wrote:
+> diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
+> index 6bb290abd48bf..57f5a5d5cea67 100644
+> --- a/tools/testing/selftests/drivers/net/bonding/config
+> +++ b/tools/testing/selftests/drivers/net/bonding/config
+> @@ -1,5 +1,6 @@
+>  CONFIG_BONDING=y
+>  CONFIG_BRIDGE=y
+> +CONFIG_CONFIGFS_FS=y
+>  CONFIG_DUMMY=y
+>  CONFIG_INET_ESP=y
+>  CONFIG_INET_ESP_OFFLOAD=y
+> @@ -11,6 +12,9 @@ CONFIG_NET_CLS_FLOWER=y
+>  CONFIG_NET_CLS_MATCHALL=m
+>  CONFIG_NETDEVSIM=m
+>  CONFIG_NET_SCH_INGRESS=y
+> +CONFIG_NETCONSOLE=m
+> +CONFIG_NETCONSOLE_DYNAMIC=y
+> +CONFIG_NETCONSOLE_EXTENDED_LOG=y
 
+I've just realized that check_selftest discards the '_' when checking
+for the order. This means NETCONSOLE should come before
+CONFIG_NET_SCH_INGRESS.
+
+I will wait for additional review, before updating.
 
