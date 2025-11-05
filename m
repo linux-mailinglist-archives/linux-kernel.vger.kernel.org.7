@@ -1,161 +1,164 @@
-Return-Path: <linux-kernel+bounces-885854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAD5C340CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:29:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97981C340DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFF7189DB12
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B54464FCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700582BF005;
-	Wed,  5 Nov 2025 06:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DD72C08B0;
+	Wed,  5 Nov 2025 06:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iq6FnMH/"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="p7asJN9j";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="C7zkCbQM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539982BEC34
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233542C11D4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324115; cv=none; b=IH3SlbnzWTbzAshCwdtn8OBt7zUU4Pg3xdXB9051ZZx3J6dO8HJeGw1VwOPcQZKFejGip8DpaluHZ2AkdwDES+I5s543y9s09lNy8K53zA8r6DS6MqluVhmNpsxp2ziIs3Ucu0XFro9pIBeOZJM4RmMKFGhAXdTbi/rc70uNqvs=
+	t=1762324121; cv=none; b=jp3OEB6L46biohZBBiDhb8V8babOxnkkNqkPDkF6ZYTv5nCwYtBuJy793QiOHFpUc9fqJmElFBJapy0qfRBdZm7LLmj09SAHRMHWxRj0Vml07ASr+go+cfuqmqU3cNmQXiqZ7FQw1aSmYoh6iRKWkYjWW5HmEPPRTrKJLsRmivw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324115; c=relaxed/simple;
-	bh=3FiroJxrQIhTUXDgWPdJEs83lUs7Rhdwifkg2x3t8g4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YoFak1c5SJ+OgqVvQx1LugrVoD53uKs3fNjv5FBIB0XWG2CXXNGaKKtnxEqLkKdx+B6gVyFn3svN9AK8wCqj9YSpXDH5MavQvtcnBaTBPAu5n6p9s0HYb9AVS4fwMS4y6z8W39KsE3YODa7DoKoQ2vyygqVOWT61c8CdQOGA7gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iq6FnMH/; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34101107cc8so3063052a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 22:28:34 -0800 (PST)
+	s=arc-20240116; t=1762324121; c=relaxed/simple;
+	bh=cXMGcgMeIt0i4bxPv0vOWVNF4ZfCzQOPebJqmBRiI/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p7zLt5liMTiv8WlanckcC7BPUA7Yg5SoFljmZkzY0ZX5YnwIJlahHvhWjbcPYE31d1EceEFv6LIIs6bRm6f3NnUHoQrHc5r3ou2T2WS1lAjRdm4KDUCPbWcZYNYW18OLLcyIGVoKjOSokZgWNRJO4tzdU6orrosQQWQVdskmcmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=p7asJN9j; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=C7zkCbQM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A53sl1H3915172
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 06:28:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WgIzaXhUFyRA3Hn/FagvzSC9vo2naZyMdOTEmwHHh/4=; b=p7asJN9jrPUEsJ84
+	W8huS/UTWOj6XsmdoSAaxeBPvhzYhLfqODL+RLDUn9pRwKIBxTWeXYrmbJcmsVGF
+	t88gQ+ZrbEOqhMYEZjw5jzjGddVoIgw0tNEfBpTTGdAtDzo6D8xhz2qlcQOmDcU7
+	PfJdTcV8P2uUic4BQhz5pg979QqY1L6O9vxSVA8q/RlYiKTGuWk2Dtr/UHcSTLrA
+	4ZsKW6cUtxuD/FVUPcvEOK/i5EAwyOiH69pBVYc3EngOhUzSC/VskHbWECzJrV/6
+	QOrMeC1AroU5EPT2s2axtihAQUikZ+zSz/sTOOHuYKA4dqgUwxkXYuhOiPNjdDae
+	2aVjWg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7y378ab3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:28:38 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-33da1f30fdfso16262056a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 22:28:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762324114; x=1762928914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5H6EdMxDpSqpmsIQ4cEg0ZlQTdzaOtsaMR+Q6cSWnBg=;
-        b=iq6FnMH/OuAtEb9vxBIoCjdmrv76QSlxzb6NNHVDIFOe7RVdJ8+F8sz9Nw/7m1RlHY
-         4HLzCEyzDxpQllfhklhDllyX0m25HSyayobFMYKeposp1aEqZ4gErrpQBvM7/625a6tO
-         ClBwQCXqQbFXKGjYFe1IQmyN3UXM/Np5GlFps=
+        d=oss.qualcomm.com; s=google; t=1762324118; x=1762928918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WgIzaXhUFyRA3Hn/FagvzSC9vo2naZyMdOTEmwHHh/4=;
+        b=C7zkCbQMCvgG2k42pLKJBIP7XKkEeh3p1I923T0IX3aGdMqZ6wHWRJGmLTVShVtwYc
+         A1GCqVw4NF3MahYRrSiswt/IhMyOlGwgHE05rpbdtXaGexdqGYSdVVRTh0BBWyFiCL6t
+         TpBoZzjMYLLVxeIv03We9+Vs26JmbeSSzABxBSHRbtyp5lrMrc75rgpeMrTBSRp3fdHW
+         1jjXWQmumIPi1PFgI1ncYybr+rInA65FXtwaT5YaKbUE8+SvPwIS9ba0zAgYFIa7NHCs
+         O9aPpFOWeBgEtQcWtP1aqgaP6QaGH34tFZKPy60Xg1O/t9f5G1w9IuBJHNiwq797wLyY
+         bJVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762324114; x=1762928914;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5H6EdMxDpSqpmsIQ4cEg0ZlQTdzaOtsaMR+Q6cSWnBg=;
-        b=gt5PbbIPMR4ff3C7qoCCLzekeSRmaFu3S9/FDbPhUTDgQBMwWTwufyLKw/N6iGFKwY
-         p33bFlJpr73VGvPvZ4m8cgIM4+T0dOkMSbaONRdNrvgw3jXX9KajgqrInz3lMZ+7K/hd
-         qnk7IGygYGjSuF20Vq0FImgw/TBV25uZJArkRY1k23g+tdGU3wTKF3vdkox3YnpqIF+T
-         fbfzot+VCurHauDr5VLDDsaOPFGJnrlN5oQSuBl2qRMbygf/N4V5uJhF+Ail1oD6ISOa
-         jP3bTpx6qTxzu2pgXcOI+87UwM2TwBIw6fuoddv+tcJuo4dslTVfEXfM7FELU83IXBvi
-         +Y1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXLHsFgZSkFUHpEpAb9pdIBvY+OrawbfPVXcyvQ26Pp7cBeNMnQmQHmFBfwcRpq/LPNDpOgaV7N4l9YNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZkV3c3XkQ+dN9KHLF4ZGjNPTiRh+VMdbeKvekxEGQMtT6tePb
-	Ni8aLh2Lf/W3Ih/64aAcFGEjMZ1g5VVMUiKw3gmSF5TP4WUuS5pTy//mjq5HOZz9Lg==
-X-Gm-Gg: ASbGncvmYBjBsuEn5YF4/MEnvMK8gu07tAxXbOBjExf0bKgGkDwe4NBTCF+XfcHALs1
-	ppuJfEt133x/TS1204LxcUSipMiZO6rNpJ6eWURcCpi3raKXkFHcGCqrCsQaEi6MPbTQRV48LdP
-	Jgj527vV2cTp1ZKerxHGdYFIf7GhUfKQSwVgpJJNa/cCnM3mnJtH5kBtdclw+yaR8rt5YZZJBRW
-	A6BIMHqEtW3oovoYb2pSs0OAvwp+rKt4MxFq0tZjFNQQWyDuEcs6REXzfvN8ySOKPTDBeuI2DA5
-	njjA3I94p6B6eXw0/fK5+oHbt8ofZeP2biactdbGnFnsPIhEuxaQnXfX1lOImiC2N7LFs60ZeH2
-	g22voDKa3dAInBybl+UKZHDkIrMpk1gxkx3oahmj2HLSPJ9nkWWlrK5RPCSW07F/ESqrYbVCF1e
-	jZFCmRxEwDKvy7I72G1MgUPYBdCZ8u/6rSZpBTU/qQmlgKFlbeV4aGX5698vm6Zpu0RUv1
-X-Google-Smtp-Source: AGHT+IHcxT8eopl534bKfusC4Hown9kjuaRa6MI3B1tgGIQ3dMjZZ/a/cIEyK3gcb84dHOtYByhoug==
-X-Received: by 2002:a17:902:f542:b0:295:2d2c:1ba6 with SMTP id d9443c01a7336-2962ae10211mr34787125ad.36.1762324113674;
-        Tue, 04 Nov 2025 22:28:33 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:c3d3:7b72:a22e:7adf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296019bb9d3sm48438615ad.50.2025.11.04.22.28.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 22:28:33 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: mediatek-gen3: Ignore link up timeout
-Date: Wed,  5 Nov 2025 14:28:14 +0800
-Message-ID: <20251105062815.966716-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.2.1026.g39e6a42477-goog
+        d=1e100.net; s=20230601; t=1762324118; x=1762928918;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WgIzaXhUFyRA3Hn/FagvzSC9vo2naZyMdOTEmwHHh/4=;
+        b=u/05PPwz3nJJS83nGUcFPINtPQD+GVBuYzeX6LVxzPkn4mc1uH80N+XQPhbgVl/f44
+         GF+y5gB2dumJRGWmw+1f5PEAFgWNvtypH+L4RG+N4OcwHR1JogO4vZpoMFWhCajbbMU7
+         B+6Hnt6epAU9PxcvQsknADwbracxL6Fl63afimqIdCDkpK1ARyk9EzRgaTL49KGUpS2b
+         naxAh8Lwr3LbqIuHsOmBH0QkVaAXOUnKQGQFBg69IeuMO1ncRcny83T+vKFSFMkVHrfJ
+         ir60NbSjtBM3BvbF2QhnZwrtY1jsNI+h0lhzXjGiG1pmKoyS55zVknjdsV6/xxKTfmVe
+         xNMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl1hnbVDgEKfB3vAvK/Sf9lmksLMdKXHL+RBXBpifOOQUmPTTY9eFb/JojGmlrT9HXfaU6AwCSR1tPc4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTL0OC/AlFnzMjMLsb7IOaJNX8vY100Q/w7tJDzfomnkzDK8ff
+	y7XaqB/9cr07qVEzRnMXmOnaFMI73hK3puXo8JaNUodjriuI+t7Bae8OHSvjsQdwEfNumcqugAF
+	U8vrcBFKl2j2PJSoqM/DOZuI/SGMQytoXE60iOVBPN9rwA1WVCJp2yplLxJQlSlmyFEo0y7BLoq
+	0=
+X-Gm-Gg: ASbGncvDFpeE89Zkv8N2awOcI6SQlVclaA/KNWRC8aQbakc6WIg/prm4dKufJpSdt/g
+	9o+txXFQ6Hg22OEdocyiUtBvu4bisKIDn1Fcg0xJqmFE8yxDQNJvBKnI05nFpkSTfOGGD7VuFEy
+	6RpiEUaz0Hsy0im+jKC+515H6wUUaotdJfpkn55VliYZNwTBd62xBe6g1CVohmk4TrVN52TXACy
+	Sf4aFV/dJR0hMIeYe8AbEycqSmiOnE3Lpt79XvsmMHTKYWoEBGf7erhKv4PA1KY2HSFij0Gxjee
+	uNm+HTBRzOSIzTp+ExqhqEC2hcrH1kirge8KKHFAGpttjZ5u/KDtAs7/9oyCK87Nx8ytqQAGgaJ
+	+0J2hyrHTxQ9Jjp1jj6q4WRM3KXvOXLdDeHGJXeAODGAIGG/s70ghCsAgR4nIBz+xamlH4bU=
+X-Received: by 2002:a17:90b:1d82:b0:340:bde5:c9e8 with SMTP id 98e67ed59e1d1-341a6dc10e8mr2253719a91.22.1762324117562;
+        Tue, 04 Nov 2025 22:28:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IERgXbWss6GmB9ldrGk5vHp5OoEgMnBOclsBo5D/x2bAo2tr7rgtjLt8vU3nljGWRrtuXtsDg==
+X-Received: by 2002:a17:90b:1d82:b0:340:bde5:c9e8 with SMTP id 98e67ed59e1d1-341a6dc10e8mr2253686a91.22.1762324117007;
+        Tue, 04 Nov 2025 22:28:37 -0800 (PST)
+Received: from [10.133.33.121] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a696dfe9sm1677976a91.10.2025.11.04.22.28.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 22:28:36 -0800 (PST)
+Message-ID: <186a650b-50a7-4b29-8c00-5e0b1d9d2ecc@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 14:28:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] input: elan_i2c: Add newline to sysfs attribute outputs
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: krzk@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhongqiu.han@oss.qualcomm.com
+References: <20251030123458.1760524-1-zhongqiu.han@oss.qualcomm.com>
+ <swn2pwumb7ffpcyer6n5nn6zbdjvxtwxprddymhxzdjzx4lbr5@hkwusbsr5uks>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <swn2pwumb7ffpcyer6n5nn6zbdjvxtwxprddymhxzdjzx4lbr5@hkwusbsr5uks>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: CkTPaPQmgSjujjCUwdDDMkAr7rCW6gyE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA0NCBTYWx0ZWRfXyeP/XTSPo2fN
+ gfcndbu1Hmwu48gD2VAFYM/Vh2TroLE3fPuT8hnkhOo6O71HEn5iUWp52YhNl4fhOUrjEDninl7
+ 4hXmsfFYGpLdDHc5LaOOp2PsgbX9i6fpB/vw5lzR6t+vlLmgNC8vGPPsTt0CEIRpt+KvFQs3m+u
+ eyXbk+ZWaLyGjShYJ+TdtfD3DxCUV6aWyjPL3hTEv7szJoxjfltz7itXhIlvOimYLyZTRPlwEPQ
+ f9SWtPES7c5Wu9wz7SQn1vf5SuDcFGVoRNzMQmM+Kix2B+BZF77SQQkin01j1UoNT7JSfT3/tj+
+ rd5mMcPhOr/tByCv4KepENsabD26Jz2JcLnzqfO3yFA+4avl+8R9xk8hVv7g36EYK/Fi52cPyPu
+ 5ovt9exEovXGgXQRDPIXN73aLTnjgg==
+X-Proofpoint-ORIG-GUID: CkTPaPQmgSjujjCUwdDDMkAr7rCW6gyE
+X-Authority-Analysis: v=2.4 cv=Ev3fbCcA c=1 sm=1 tr=0 ts=690aee96 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=0orITSUJZSout5TAGxEA:9 a=QEXdDO2ut3YA:10
+ a=zZCYzV9kfG8A:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050044
 
-As mentioned in commit 886a9c134755 ("PCI: dwc: Move link handling into
-common code") come up later" in the code, it is possible for link up to
-occur later:
+On 11/5/2025 12:55 PM, Dmitry Torokhov wrote:
+> Hi Zhongqiu,
+> 
+> On Thu, Oct 30, 2025 at 08:34:58PM +0800, Zhongqiu Han wrote:
+>> Append newline characters to sysfs_emit() outputs in func min_show() and
+>> max_show(). This aligns with common kernel conventions and improves
+>> readability for userspace tools that expect newline-terminated values.
+> 
+> This format for this driver was in use for 11 years, and there might be
+> tools that do not expect newlines. I would rather leave it as is.
+> 
+> Thanks.
+> 
 
-  Let's standardize this to succeed as there are usecases where devices
-  (and the link) appear later even without hotplug. For example, a
-  reconfigured FPGA device.
+Hi Dmitry,
 
-Another case for this is the new PCIe power control stuff. The power
-control mechanism only gets triggered in the PCI core after the driver
-calls into pci_host_probe(). The power control framework then triggers
-a bus rescan. In most driver implementations, this sequence happens
-after link training. If the driver errors out when link training times
-out, it will never get to the point where the device gets turned on.
+Thanks for your review~
 
-Ignore the link up timeout, and lower the error message down to a
-warning.
+Sure, I agree that we should avoid breaking unknown userspace tools.
 
-This makes PCIe devices that have not-always-on power rails work.
-However there may be some reversal of PCIe power sequencing, since now
-the PERST# and clocks are enabled in the driver, while the power is
-applied afterwards.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-The change works to get my PCIe WiFi device working, but I wonder if
-the driver should expose more fine grained controls for the link clock
-and PERST# (when it is owned by the controller and not just a GPIO) to
-the power control framework. This applies not just to this driver.
-
-The PCI standard says that PERST# should hold the device in reset until
-the power rails are valid or stable, i.e. at their designated voltages.
----
- drivers/pci/controller/pcie-mediatek-gen3.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index 75ddb8bee168..5bdb312c9f9b 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -504,10 +504,15 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
- 		ltssm_index = PCIE_LTSSM_STATE(val);
- 		ltssm_state = ltssm_index >= ARRAY_SIZE(ltssm_str) ?
- 			      "Unknown state" : ltssm_str[ltssm_index];
--		dev_err(pcie->dev,
--			"PCIe link down, current LTSSM state: %s (%#x)\n",
--			ltssm_state, val);
--		return err;
-+		dev_warn(pcie->dev,
-+			 "PCIe link down, current LTSSM state: %s (%#x)\n",
-+			 ltssm_state, val);
-+
-+		/*
-+		 * Ignore the timeout, as the link may come up later,
-+		 * such as when the PCI power control enables power to the
-+		 * device, at which point it triggers a rescan.
-+		 */
- 	}
- 
- 	mtk_pcie_enable_msi(pcie);
 -- 
-2.51.2.1026.g39e6a42477-goog
-
+Thx and BRs,
+Zhongqiu Han
 
