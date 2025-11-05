@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-886196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C924C34F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:52:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248BDC34E85
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 383584FF20E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A9F1898FD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CB32D7DFE;
-	Wed,  5 Nov 2025 09:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FA22FCC13;
+	Wed,  5 Nov 2025 09:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQWVYUax"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="IYVrljAR"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8032DE1FE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D52C0292;
+	Wed,  5 Nov 2025 09:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336168; cv=none; b=fSZA31YsTscM0rHlWlNevxpA/Ldd3+RqXPq+WK9awvXPK1rQ6NvQRqxDkRWKzasUWt/rBE+diniufifD7fFB5Dm8wLqbA0qaJv3Mdmt+F8pkmrKfcDEzd5JL+ZU/WGxeTYpm/EIA7WilV4apPKpNLpn4RO2PJLWv423X01CDQHQ=
+	t=1762335653; cv=none; b=CZ1U/McMUqk+S0TNbvbfGPqsoOi6vZh/mYqiTC4y/7Q0W1FC54e6NM7iu+YNJFcitTKQVly8QRqE9FeYm5om24N04sluG1CjhbRYvUabvD5FdDKn/Dg4oxw90wPZUNzWPbX+CW2kQngkupyHPQqSo1OxpqiEm3pINL+TzI8las8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336168; c=relaxed/simple;
-	bh=NC6ReN0WzQGGaTyVdcbh4RmGorXBkU+fbc8xzhNkKSw=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=fS4nFw+dBZz3cVeRFRYUW1ip2eJeRu4Xx1jVnLxfUsmjWX70mO5J1tuFVtCRl4+baHcDeL9E6qDlRLaCPwUe1SwoOwefIpZV6M0pZGpE+gzalkJdcKuNf60Fgls1L0KgftrsLpktpY/Av5DyIDfawU45ul4eoLZSUsUcPrx7o2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQWVYUax; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7810289cd4bso7298566b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:49:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762336166; x=1762940966; darn=vger.kernel.org;
-        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSkImeW26wxHMAXfbe7WvrT7t//6KWteMn9Q9gZQJTU=;
-        b=RQWVYUaxEoTzw1PGOUe6ayh6KYlnYA/MLK2sT+N8I7zVI4gX3wo454Lj0dp7cuU68v
-         nFkEe5Ld2Uk1l0IoFfMp/Qv7XNRzmnOgBvSr26qvW8mcRRQLfbEhbXpxeaI8fYp9tv4a
-         hd4Twyg/cs4rBf4Rt7RNdYLmnU07TDLzW+xMhmStFUy6wh3JdgubgpucisbbLwkhFhPr
-         rkFhU7I1DBeCXaXTZF02A8fUxKp+QhUh7iUrL5+gqKnAQmavUnQHG89QvR90qGFAcmjM
-         KvKo8Kq7cIqsGRiMTLMA6P7AO3dnQLXxmG7xZpXt8+QG5d45NhqjAL2GSGzEOxxAnNkO
-         RizQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762336166; x=1762940966;
-        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSkImeW26wxHMAXfbe7WvrT7t//6KWteMn9Q9gZQJTU=;
-        b=MuwoNXMmZKCNikHMJTruU5M2Mjyg//0waElkspyOA1I+CLCeglzk/UCBQbkJ+xm8XL
-         QRxUgjURtEampKsYxfXiPuPleLR3wpkiO4QJw+TVAqsMpBYnzdT6Joo8sIPTSezcQoM4
-         3zkMF/mQujpQT+NxBdAyVzJpHBrz3+9qAvKPxaVHFyuAZNzm2DrQQROx9tz6KRMYMuw2
-         s/1T9MMlb9QCD+Ehwntpdkh+UKceSDp9edNt0XI9EKbsFU/ZtwSRbwza5S6RMyNMe5xH
-         TJGurUyoSjdTC7VO+t2XGHC2B30VockxOsf8B0DivaGU87RAevcjui81mrk37e4xEdkn
-         XWPw==
-X-Gm-Message-State: AOJu0YyFrISiZIETRXeE1fRemXQ7qDkFHVvxSEZTpcSAwJc9ygHOC48l
-	rQO4lM5GieUWAd8G9rXRmLsm/DyDG75WULjDN5W9/0y0T9yfZRwGeaci
-X-Gm-Gg: ASbGncuY+qyi54wuUhsTcMe4nJOY5G9JFqA9r6HDh/CEJXMpk9Wf1RcTwYg1Wwx0WyD
-	wwVqcob4lZ6sF/snsAhOSgh0cv9yu1JLDzAeiaEoq1mMbkkoHfkyb65Vrvz3qiiMjzbUk6HkG1o
-	ICDYuHZnbG/+xrhk3AeUpzz6j/Fb7ZLYjW1bEsdNOCN+b/tG2168XB0YJ1BtiDrZ+f9bcTl7e65
-	A5a8XYdsZ0k9r0p80zrHpT+oQ4bYA/Kz91ZEGYJWnabnLUsWKpvKRPU3MmAKg9qXW/bhvL9zOSY
-	jmrwKblXGcRmkLb1UEyy9BW18No36FbAXAJ/b0lxKve1QqpSjfLXRsryUVFxlvqXVLxCVfef58q
-	bUot+o37mWkPYDGAVroD3qDQyV37Oa3cpHaDlDGRs4KTOuWD/uIGQMKEunEjT9YB9/jWo6w==
-X-Google-Smtp-Source: AGHT+IGvXEix8Ale69u5jY13ojKwbWl3rHLnPywsClHEKGLTCQBX8z03LTjZkKtfW5wInDfRAomLmQ==
-X-Received: by 2002:a05:6a20:7283:b0:343:88b4:a722 with SMTP id adf61e73a8af0-34f862ff4a8mr3711914637.52.1762336166397;
-        Wed, 05 Nov 2025 01:49:26 -0800 (PST)
-Received: from dw-tp ([171.76.85.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f765f148sm5030694a12.24.2025.11.05.01.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 01:49:25 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	David Hildenbrand <david@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>, 
-	Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
-	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Subject: Re: [PATCH v4 09/12] powerpc/mm: replace batch->active with in_lazy_mmu_mode()
-In-Reply-To: <20251029100909.3381140-10-kevin.brodsky@arm.com>
-Date: Wed, 05 Nov 2025 15:10:20 +0530
-Message-ID: <87ldkk4y2j.ritesh.list@gmail.com>
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com> <20251029100909.3381140-10-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1762335653; c=relaxed/simple;
+	bh=YDG6GlX2MFv5Jl8zJ04Myi8+16OhyFZtXtJ9om+gJkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUyTNK4Lj8YZ75X3RL3v0rj1G3vi3/FoI2itWX2tRZr+TXrGlENZbOH4kgjNHmLehKIgLdz2GP3l+cuuKNAHFqsi7JIL5vWWYaUxhe4284In8KPdA/sS4UITwTdxTVidYXwEScS7pZubhbQbMZjojKqCCQfjcU0VCVvzqgsjz0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=IYVrljAR; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762335632;
+	bh=K9p96Az0vCcI2Emov1fVQ5bmu6QW46dlAQR5fZt//iA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=IYVrljAR8qNal8NFuc/xER3dc1nNOE3oMUf367rzpQX93lhOk2FF9yl72psSLv/we
+	 My3LzdD4NktO0pfvKLd4+Vzwbq1iNSbRUKqisKG14YWVgwf38QjOFzCWK36wznkJsL
+	 ct7IGkpKLJ2dQEPtdzUi7giCM9EmUstcMUXeP0gk=
+X-QQ-mid: zesmtpgz6t1762335631t1e862f50
+X-QQ-Originating-IP: T4f5BgaEKZsfrThhwXckLHTlcpww6njpPZICjjiO+ac=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 05 Nov 2025 17:40:29 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7969792345943648528
+EX-QQ-RecipientCnt: 14
+Date: Wed, 5 Nov 2025 17:40:29 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Lee Jones <lee@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
+ for poweroff/reboot
+Message-ID: <315F0431BCF1D233+aQsbjbI6J9OAHTaI@kernel.org>
+References: <20251102230352.914421-1-aurelien@aurel32.net>
+ <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
+ <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
+ <20251105093544.GE8064@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105093544.GE8064@google.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NVrD5uPzBHuhDfB5axg6cP4CBe+kLgxMNSCXMGcDIEZgwGrtWFgnL4Tj
+	tOziCmLnO5Ypw5Bs15iOODsaSmwCzOQYdIlh6PvvEt7P/T5Cn5nZnjvkhiKFOV5AddjlLgX
+	4oWxxRVA+zWgZg5cavocfK0POBg7AAK7Q68vtc2nQX8o3ysDdENG64DwQS4eHnSrUozmI8X
+	lLEOQf7hIXsR5HasV0sbpKZSN2eK4HNhCcJbW8Mwrxc3W9a/BcSR/Xhb5fDVeWjcSlO7dH1
+	nVaqd2YIG8Zn1Qe5OaVC79Omw0/1oEZd8rGrGAbK1Bmrm/yribfhUiw84ut1NaJozJTGKW1
+	WOvc1leXZE8e3ZA3zAfU+ejWGBu0OxCEzgBgHpQtKRBCYlhHYuTbl7rmtOdpO91109mvRCV
+	FwOmKDrssQTM5KR7Rzvhu4AwaglIswPemtAPlsx6Rup6DbVzkuKI+bsY3eNGVs63HjiFw4g
+	7j3yKDBbuDgxpKa8P7k6SgY6bTi3EVS+Br26TZVLzcX3euIb0nbzmftl4sViULargPhmSZb
+	1Lh0aGgreroHquysWkc1Bjmy867BHh9t2c5nQm+KZGs4KW2JEdt7G6n/TODSdNEe0HPKUWl
+	d/0RNcDlMc5G7Mh1JSdwsX/GDzCrcfyHMricq0zcWPV0S4yQYC3MhV/9Lad0Im8w1HYIiTE
+	2gWIBdsmZvKEY90K3toxddlMXGH6KcMpD/5ZtyDkkcaDKT12tblp59zLtGB7oIqod/5L3OZ
+	owpiXYrgYnmbxzajYnXZKdztTXWV1cdUhMsIbb5NWrSFpXoIi/jOuvpQ8D+auRJaj4pd3T+
+	pTVXIAvI1qs5C4+mnnD+jNZQ19YA3qeJG3zJoO0N87giZtZFzofNtM6V2ZgBPCrPdNaqz4m
+	+PpyqRaqq2Th0s77DkN22cHNLw2I8yISE5Bj9a1pHFujQtY3ubdpOl8iS2uSrdIHCyi6ebD
+	6O66JyBL1f8bTq+oW16KgMeawhvYqIXasmBpUMjON1iNuQr4xq4riIcpSsO7JEE+vC9w7sl
+	AHTgdJgmWOl1hdK7MFIbALXkIzGbaF59L7guZwQfxjc68pmEgl0Fm+gMAjIlMCQmHbYAcqU
+	ZEVicL4TEIUvDkEvKEfoE+tS+k32cgb6tjsc+IMCvucZ2a9SUowzu6GC6srOZ/EDfNnAjli
+	n0SEl3X5gArsfWPp3puOUC2arg==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-Kevin Brodsky <kevin.brodsky@arm.com> writes:
+On Wed, Nov 05, 2025 at 09:35:44AM +0000, Lee Jones wrote:
+> On Tue, 04 Nov 2025, Troy Mitchell wrote:
+> 
+> > On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
+> > > 
+> > > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
+> > > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
+> > > > commonly paired with the SpacemiT K1 SoC.
+> > > > 
+> > > > Note: For reliable operation, this driver depends on a this patch that adds
+> > > > atomic transfer support to the SpacemiT I2C controller driver:
+> > > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
+> > > > 
+> > > > [...]
+> > > 
+> > > Applied, thanks!
+> > > 
+> > > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
+> > >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
+> > Should we apply it now? The dependency patch hasn’t been merged yet...
+> 
+> And what is: ^[@kernel.org in your recipients list?
+Might have accidentally messed up my email...
 
-> A per-CPU batch struct is activated when entering lazy MMU mode; its
-> lifetime is the same as the lazy MMU section (it is deactivated when
-> leaving the mode). Preemption is disabled in that interval to ensure
-> that the per-CPU reference remains valid.
->
-> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> mode. We can therefore use the generic helper in_lazy_mmu_mode()
-> to tell whether a batch struct is active instead of tracking it
-> explicitly.
->
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> ---
->  arch/powerpc/include/asm/book3s/64/tlbflush-hash.h | 9 ---------
->  arch/powerpc/mm/book3s64/hash_tlb.c                | 2 +-
->  2 files changed, 1 insertion(+), 10 deletions(-)
->
-
-This looks good to me.
-
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+                      - Troy
+> 
+> -- 
+> Lee Jones [李琼斯]
+> 
 
