@@ -1,189 +1,187 @@
-Return-Path: <linux-kernel+bounces-886156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C6FC34D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:28:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3106C34DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 12DBE342A54
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC9046719C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9C82FDC35;
-	Wed,  5 Nov 2025 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3A72FC037;
+	Wed,  5 Nov 2025 09:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pcKn8+v3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V/GfKYWd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pcKn8+v3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V/GfKYWd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gr5YfO4C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFB71B21BF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221BB2C324F;
+	Wed,  5 Nov 2025 09:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334887; cv=none; b=adHfgxvG4XEzgP4p3cltjRYpyXaKGyEXt+VV1oF98jxlc/eE+IBbn5W7/2GrhJmEKeLdKrJy6+4vcaFOnqWhlCuTDZcbQNK1giwgr0oLuwI1y5s9SzWN5Q6bUUv95jWMA5g38xPqKSnYWrjcTCQXFwVg+XVQXPreadmNzmlZysI=
+	t=1762334910; cv=none; b=hcjYjURctbAPS9rJeYvEOuF8shD8JhqTSYpFynZvKxi4BziIKEyDFhLI4WDT2ijOjTwDDDo7RpV/ariU6dMecnNX6aDfvMWvoKugJx5A61OheinOVqJvG5/V6hABY8ZLngzeI6Lmz540whXC8cMUybkbxXkYDMRB8wwktxRkZ4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334887; c=relaxed/simple;
-	bh=C3QhFnHOA++HS5Y4KqI2uJ/Xj05MyqxePuqkHT6lSkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eyzn6eeN1CgzdddRnWzOqV0RlEeaXed7SYrGZ4i4RNLcUYClXuoPXUFDQ2skmHzwzXgZ+Iw2sUk682tz7+/XirmO/htPmfdZOYiLSqAhV5PuI2jflrhWKvZehlEMo2p1vouq2oFgPydonJbInsbZUV7HadRK3inwtlbkvdPFgZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pcKn8+v3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V/GfKYWd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pcKn8+v3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V/GfKYWd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7AE0921182;
-	Wed,  5 Nov 2025 09:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334883; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9eiK/n4EgZp2ORAGmnfzTUx8SD4Z3Zzb4q6XlQaVRjg=;
-	b=pcKn8+v3WOaCh6LJf36XqWId7sz0FkZNc9S9M1xluLF49a4ZTDLPmM2FaiFarkOyDtJ6ld
-	D75o7kjx+lCzgDN/hpSjyLtB9yeAv4G5npKqzzvHh4EvyCADFRAWR28S4fE1SWZQGk1QV8
-	pGYDm+MJT0p4ya4aQiKDkhbfXpgGLQE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334883;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9eiK/n4EgZp2ORAGmnfzTUx8SD4Z3Zzb4q6XlQaVRjg=;
-	b=V/GfKYWdyvA3hKkw8/iYaA6f+2rAQ8Axn3PMphVuZwBYDuMz5rj3jJwaODUgQQIKTJ2zkp
-	scrSoQdINNac4iCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334883; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9eiK/n4EgZp2ORAGmnfzTUx8SD4Z3Zzb4q6XlQaVRjg=;
-	b=pcKn8+v3WOaCh6LJf36XqWId7sz0FkZNc9S9M1xluLF49a4ZTDLPmM2FaiFarkOyDtJ6ld
-	D75o7kjx+lCzgDN/hpSjyLtB9yeAv4G5npKqzzvHh4EvyCADFRAWR28S4fE1SWZQGk1QV8
-	pGYDm+MJT0p4ya4aQiKDkhbfXpgGLQE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334883;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9eiK/n4EgZp2ORAGmnfzTUx8SD4Z3Zzb4q6XlQaVRjg=;
-	b=V/GfKYWdyvA3hKkw8/iYaA6f+2rAQ8Axn3PMphVuZwBYDuMz5rj3jJwaODUgQQIKTJ2zkp
-	scrSoQdINNac4iCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7125F132DD;
-	Wed,  5 Nov 2025 09:28:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PUmeG6MYC2kpGwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:28:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3B95DA083B; Wed,  5 Nov 2025 10:28:03 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:28:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 17/25] ext4: support large block size in
- ext4_block_write_begin()
-Message-ID: <5p7pwuf2zjf7feneef57gvxc2pa46l346igllimpdvvtnrv6v3@js75oockzrgw>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-18-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762334910; c=relaxed/simple;
+	bh=UuoXHqgYudgzf/qPfLN6fBOeF8Pt0vTEw+WX56Wkuss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQ7kgWUtUuHgfLjFE1wcnAKTD8N6ItvyUG2LUobFEqTmMFPFajA91/vhXqCt0u+WxHgKPO4by++NWYfZw2J+jKAzqQDShFGD+NcsOsTrIDGnjPRlnBS1dP/unMrfXMRdwKA7JkPFk9o2WsasHXubDjxcc83leXuSiTYNrrZKYYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gr5YfO4C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844B4C4CEF8;
+	Wed,  5 Nov 2025 09:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762334909;
+	bh=UuoXHqgYudgzf/qPfLN6fBOeF8Pt0vTEw+WX56Wkuss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gr5YfO4CInsfjgysY7nG/cjPkURzyoev2XPmebSvpxDXSib2pebYMdRw1vLdeTw62
+	 bIxqv/5XoeQDWSUvD4fyQ/KbYNGCaPKFmiq5gGH6Ym/2N7Z1YJ7Y102mrBuut/V8N7
+	 g99fGVYPN6qut/M2s/bIg2mTvuCN2DWYtQXXxUEInqMi50oOSPobMMWPShgKiGDuk1
+	 tu5q5x5SN4sRnKXTlBB1Wbz0jPRfilxvvkSepovv3XjrI3pg/cS1Fk7w+TVk/EVz4o
+	 HiGOZ07Oj58Ovo1VcIr0DJWt9nzifN5qjU4bA+x2YqXjjqnPgeRdlRIg1tHE8vEp4a
+	 cKPi41GVh9b3w==
+Message-ID: <3c5a4d02-7391-48ec-bd45-d2ccacca1df6@kernel.org>
+Date: Wed, 5 Nov 2025 10:28:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-18-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huaweicloud.com:email,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Christian Marangi <ansuelsmth@gmail.com>, Ilia Lin <ilia.lin@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251104140635.25965-1-ansuelsmth@gmail.com>
+ <20251104140635.25965-2-ansuelsmth@gmail.com>
+ <d3f2810f-7361-4a23-adb3-32a73ad50519@kernel.org>
+ <cb1ced66-8190-4462-99cf-72ec51da6536@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <cb1ced66-8190-4462-99cf-72ec51da6536@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat 25-10-25 11:22:13, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On 05/11/2025 10:12, Konrad Dybcio wrote:
+> On 11/5/25 9:05 AM, Krzysztof Kozlowski wrote:
+>> On 04/11/2025 15:06, Christian Marangi wrote:
+>>> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
+>>> case for some Google devices (the OnHub family) that can't make use of
+>>> SMEM to detect the SoC ID.
+>>>
+>>> To handle these specific case, check if the SMEM is not initialized (by
+>>> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
+>>> OF machine compatible checking to identify the SoC variant.
+>>>
+>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>>> ---
+>>>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 35 ++++++++++++++++++++++++++--
+>>>  1 file changed, 33 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>>> index 3a8ed723a23e..17c79955ff2f 100644
+>>> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>>> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>>> @@ -252,13 +252,22 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
+>>>  	return ret;
+>>>  }
+>>>  
+>>> +static const struct of_device_id qcom_cpufreq_ipq806x_match_list[] = {
+>>> +	{ .compatible = "qcom,ipq8062", .data = (const void *)QCOM_ID_IPQ8062 },
+>>> +	{ .compatible = "qcom,ipq8064", .data = (const void *)QCOM_ID_IPQ8064 },
+>>> +	{ .compatible = "qcom,ipq8065", .data = (const void *)QCOM_ID_IPQ8065 },
+>>> +	{ .compatible = "qcom,ipq8066", .data = (const void *)QCOM_ID_IPQ8066 },
+>>> +	{ .compatible = "qcom,ipq8068", .data = (const void *)QCOM_ID_IPQ8068 },
+>>> +	{ .compatible = "qcom,ipq8069", .data = (const void *)QCOM_ID_IPQ8069 },
+>>> +};
+>>> +
+>>>  static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
+>>>  					     struct nvmem_cell *speedbin_nvmem,
+>>>  					     char **pvs_name,
+>>>  					     struct qcom_cpufreq_drv *drv)
+>>>  {
+>>> +	int msm_id = -1, ret = 0;
+>>>  	int speed = 0, pvs = 0;
+>>> -	int msm_id, ret = 0;
+>>>  	u8 *speedbin;
+>>>  	size_t len;
+>>>  
+>>> @@ -275,8 +284,30 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
+>>>  	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
+>>>  
+>>>  	ret = qcom_smem_get_soc_id(&msm_id);
+>>> -	if (ret)
+>>> +	if (ret == -ENODEV) {
+>>> +		const struct of_device_id *match;
+>>> +		struct device_node *root;
+>>> +
+>>> +		root = of_find_node_by_path("/");
+>>> +		if (!root) {
+>>> +			ret = -ENODEV;
+>>> +			goto exit;
+>>> +		}
+>>> +
+>>> +		/* Fallback to compatible match with no SMEM initialized */
+>>> +		match = of_match_node(qcom_cpufreq_ipq806x_match_list, root);
+>>
+>> Aren't you re-implementing matching machine? Or actually - the socinfo
+>> driver? You are doing the matching of compatible into SOC ID second
+>> time. Just do it once - via socinfo driver.
 > 
-> Use the EXT4_P_TO_LBLK() macro to convert folio indexes to blocks to avoid
-> negative left shifts after supporting blocksize greater than PAGE_SIZE.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> The issue here is that if SMEM is absent, the socinfo driver can
+> not function and this is a contained workaround
 
-Looks good. Feel free to add:
+OK, some short paragraph about this should be in commit msg though.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 73c1da90b604..d97ce88d6e0a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1162,8 +1162,7 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  	unsigned block_start, block_end;
->  	sector_t block;
->  	int err = 0;
-> -	unsigned blocksize = inode->i_sb->s_blocksize;
-> -	unsigned bbits;
-> +	unsigned int blocksize = i_blocksize(inode);
->  	struct buffer_head *bh, *head, *wait[2];
->  	int nr_wait = 0;
->  	int i;
-> @@ -1172,12 +1171,12 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  	BUG_ON(!folio_test_locked(folio));
->  	BUG_ON(to > folio_size(folio));
->  	BUG_ON(from > to);
-> +	WARN_ON_ONCE(blocksize > folio_size(folio));
->  
->  	head = folio_buffers(folio);
->  	if (!head)
->  		head = create_empty_buffers(folio, blocksize, 0);
-> -	bbits = ilog2(blocksize);
-> -	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
-> +	block = EXT4_P_TO_LBLK(inode, folio->index);
->  
->  	for (bh = head, block_start = 0; bh != head || !block_start;
->  	    block++, block_start = block_end, bh = bh->b_this_page) {
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards,
+Krzysztof
 
