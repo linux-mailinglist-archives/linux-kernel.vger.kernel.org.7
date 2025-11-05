@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-887366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621FFC380F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 843A2C3809D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E343A421DC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A71463364
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52FB2E54B3;
-	Wed,  5 Nov 2025 21:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AFB2D9EC7;
+	Wed,  5 Nov 2025 21:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="O/FsSwO9"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10F32E2EF9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Om13Df+W"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90F286D55;
+	Wed,  5 Nov 2025 21:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377726; cv=none; b=GD4CAF9QOIElN4+LQVx3tIoLPn8VWuZY9CZk11eJsasnSP0EHHOqiwcxiB0WEBX18Ktf0r9IJ+IFR43Rf7z9phCZ1yMAunQ/lPx1BVmw5z23jhqzllPLZgUBH00McDoVTOxyTZQ3YieuY23SOpa61TzkimKorXx/cfknFXVtUKY=
+	t=1762377807; cv=none; b=R1D1HeHf5Rw1IaNW9rreSe6FLwAhPMMgpNudRhDV+CavB55GLtpdPXa1tE7ogYDA/C+D3Ydtu6Z60y7rwdhIFDmczyKZ8SGoqOFSWZkdDdCbXJf4dqdsluTZSvIv+K3+Bn+kIRSRTrae4f9+j62M02seCJ4jQH6/P8EMxXkrxH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377726; c=relaxed/simple;
-	bh=o0O19Szr2FQYPaYkftbuT/fcTYOccrWu/+zHI4bfRmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=geFI2qU4nW0Zt+xe4IAj7wC/Hqzsk8mysmhVIQXDXaMfhtzlA151G2ZWD31HH+4WMg1zIB/w1oTdmn3sH9+rD0SM58t0TpUB6kyyfSuAIiMGB9ingtrYdf8VIWtPsSXzZLAqGXxgPFO4BEM7oH2rE6X+eEx2efGpnbfuzZNuGNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=O/FsSwO9; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [20.236.11.102])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 731C7211D8B1;
-	Wed,  5 Nov 2025 13:22:03 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 731C7211D8B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762377723;
-	bh=/yyzbvKWkxQn33B8KRC6XD6kZsWxcgaTQieHG79mktQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O/FsSwO9TS+Gl4qEN7q3I9mSrMlpVDCQc+WLHtY2NCE6bjSzEA6IEkWVaBXqfYNRw
-	 cx+Lm2M2uSBgKgVp6Gs5NSt+j2Njp0kr0pU0WvAXX81tOJoDiAUoWUVoXhhTLM2Ho5
-	 VZpc+chcpUYLPt7oalIS09rWZ2HKofbtvKNZ82/A=
-Date: Wed, 5 Nov 2025 13:22:01 -0800
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
- <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
- <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
-Message-ID: <20251105132201.00004a5d@linux.microsoft.com>
-In-Reply-To: <aQupGR8QsS2h7xY/@Asurada-Nvidia>
-References: <20251105190638.23172-1-jacob.pan@linux.microsoft.com>
-	<20251105190638.23172-2-jacob.pan@linux.microsoft.com>
-	<aQupGR8QsS2h7xY/@Asurada-Nvidia>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762377807; c=relaxed/simple;
+	bh=Iai1ENAktMXeWU4EY+ZLEJyCVOvgoF5443Fx6UkTA6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sOzYjaNageI17VWIWINPdR/nhyeNPgSDLl3gpbz+nUV38Gw+QykaSCIuNp06/2qHt7Q5sCZfyfmYxCOaMjOLC5u52sUDWmYhUQFI7+bnHHV+JcqV6a1vdM+gHwpNY4uW+lgTZ8Bo//H9X4GuCAFVKo+Velij1IgZUJOIdJFkUo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Om13Df+W; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762377799;
+	bh=b2EvfYB6nTtFHDRoPeF1qEdqwv426++9ay7Hp9mJrPc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Om13Df+WfbiN48WGv0v1Pf88svzupXMpt61u3MVZ3dUxDURv9DwutNcoOf2iA4s6T
+	 S5c3UwNbGNlr6BMG2iCczY0FAbxeFeygSlM5aHBc2MCfgROtr9QY4i+peRHeIJgdJe
+	 3mF3IfHpjMqn6VTCHzL4kKb0yeVz4Glb9nmNqu5b96jpEilj5UsGbEAKwBNZcLs5/4
+	 jFlmpzMqUdxRIkkkBe1jlnauSASfmjRubwJh2usYdQOYHUhhdQaYnh97kAkdpBNzzF
+	 sshdKBnZF0piz7ppcReAxPuM0Fc3YTVc/2fLY3l0vgG4GFq/niSiLZ7SeW+XcocKh/
+	 lfVPnWXPaPbRA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1ywl3yfnz4w9q;
+	Thu, 06 Nov 2025 08:23:19 +1100 (AEDT)
+Date: Thu, 6 Nov 2025 08:23:18 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the rdma tree
+Message-ID: <20251106082318.05ae9256@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/swDgAFDZlNMCJAd2G+WhRqR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/swDgAFDZlNMCJAd2G+WhRqR
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolin,
+Hi all,
 
-On Wed, 5 Nov 2025 11:44:25 -0800
-Nicolin Chen <nicolinc@nvidia.com> wrote:
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-> On Wed, Nov 05, 2025 at 11:06:37AM -0800, Jacob Pan wrote:
-> > +	ret = queue_poll(qp);
-> > +	if (ret == -ETIMEDOUT) {
-> > +		dev_err_ratelimited(smmu->dev, "CMDQ timed out,
-> > cons: %08x, prod: 0x%08x\n",
-> > +				    llq->cons, llq->prod);
-> > +		/* Restart the timer */
-> > +		queue_poll_init(smmu, qp);
-> > +	} else if (ret) {
-> > +		dev_err_ratelimited(smmu->dev, "CMDQ poll error
-> > %d\n", ret);  
-> 
-> I don't think you need this "if (ret)", as queue_poll() returns
-> either 0 or -ETIMEOUT. And the patch that I shared with you has
-> this noted clearly.
-I agree it is not needed for now. But in general it is more robust not
-to assume return value never changes.
+  b549c24d549d ("RDMA/irdma: Fix vf_id size to u16 to avoid overflow")
 
-I can delete that.
+This is commit
 
-Thanks,
+  320258783765 ("RDMA/irdma: Fix vf_id size to u16 to avoid overflow")
 
-Jacob
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/swDgAFDZlNMCJAd2G+WhRqR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkLwEYACgkQAVBC80lX
+0GzXLQf/SwQHPPb93bb8BKQJojuFLEGpcwLwfjpSqbMWfAKWQkJhAnnG19qRUWVF
+mOw8J18aP2FmJOMl9VwBvYabkocry1oJ8pmlQl9StDSrQKL1N+DWGUMsuSlrmcWC
+raRE70i+WmbD1dzrXHKUtK/0sFeFH0L/75ehbAVVkM10jFjODY5kxzI6yzaC+jAM
+0sZ0aGh0jE9DSEIPcvlSwtCdjMRAv4ejZdSGEvAbH/Lcv2jQ/ogtl9VBoroNF8Ne
+lm4ZpCemPV+dSteyf/tt5uMPTuadFymWkGl+yzwbj7dIWAQ9tUkJOYsPA+N3roX0
+Sa20OLYAWMXUmgtyWnxhCSq+QDTbZQ==
+=tfBR
+-----END PGP SIGNATURE-----
+
+--Sig_/swDgAFDZlNMCJAd2G+WhRqR--
 
