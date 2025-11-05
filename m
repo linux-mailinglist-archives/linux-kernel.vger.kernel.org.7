@@ -1,211 +1,95 @@
-Return-Path: <linux-kernel+bounces-886562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4156CC35F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:57:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3807C35EDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AC004FC7E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:55:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5AB78349D89
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FAB326D77;
-	Wed,  5 Nov 2025 13:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379B131D386;
+	Wed,  5 Nov 2025 13:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgeecC9A"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ih7w2fgR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t5YFdliH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9229326D51
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EF130F801
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350916; cv=none; b=ruNWSARbwvxIKwlEvxkqOX+lSZ5ifC4Lj5iveoJCkI7kUOfHUjK06GhvE6xPhW2pWSLP9KaTef2CoZs6XDAWoFqiq01sIrS49KZzQZKn78cGN8SerOZQ81OgVpjfcWqvpfjg3VKuodnKKpuD9yCzOWsAjXUKTytYC1ZlGITcn1c=
+	t=1762350871; cv=none; b=mSPfzfglgG7QYKgEnTOmh6yprjcx8ajeleJamBLQ9qynaCe3Z+bsGDOOvYQTfyfY2Z4cqd27aSo1udbt+Y7vRRNBFAnsK2US0cXZzPiFTeLcofNzsu5WS1f4BN2IZc/BeYZXmUPdMDujARPpi3om2Z2lyyJHPu/YoP73hhdmah4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350916; c=relaxed/simple;
-	bh=EaFzjkrBGwr52D5y36CtwQDRYHAo0O4gChoB96JzAT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ihtvW6OATw8Isbn+d9JWn6qJIEJb+1n/cltoOcX+qrIX4J06jZ2zcyD3hBbknIr2+7P0j5i5IvbMg27pyl1VWGv6eej1LZX1E/WKImfJnKmYw3pkBPNMX/fcTYxMvoyKIpQAmcmnu2RdAQsIVItToBu5QoVBoj1yUUOs0j4LHPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgeecC9A; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a9cdf62d31so4963221b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:55:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350914; x=1762955714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NcRQ1cUZC6yZ7cVW9F+sABQZIcnrZ0hG1K1BLLGNeV8=;
-        b=PgeecC9AKxZz164QDeKyXWZU8NJtbNWmMkznBItcNxIk8KNSQvfLOofKZb2wvrq4lU
-         WdMvgYCyNKIaLxgr183eXDEhgTOApwslGth+EKR9djRFjeD1aQy6mdFM87sSW8Up7A1n
-         SW2QSvLDb4BSn0Y7HY9VPBHk6USSsDT1QEYZKExz3SpTgtPu+7AqhHR/QvjXqMJkesS8
-         48R5wRtch7xxpTiLJQ9I700SV0VDSuQS7CsTJulF7yzHZ7K+GtQyF0WXrDPHpuk0Qe78
-         gcgbwijWC/r6Uuv3owUZsWy+Xo+ConD0Ldil/PNK07x3wr0EP4CR5HBLxjoj9gOvhZL9
-         Z2Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350914; x=1762955714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NcRQ1cUZC6yZ7cVW9F+sABQZIcnrZ0hG1K1BLLGNeV8=;
-        b=DtTrrKmp6FqvvrNFL3tKTjd6A99DYNS1b97VU6wKxToNJKwNbhYZbvykqKAtVP8NmP
-         rpNPRsu4rdGSJlIV6v6o458pQgJaQNlUYnaTWE/N0RW/Weqwg3g1k6EJxAguMS3UxC2J
-         c9FUCURjrX5jZyai+Dle1sJctiH2uDSvFP7sOmExt2aXXLS67qICh9DIt7/9pQNC7KeI
-         s7aTtqlhBcvZx/zusgFDYBixulx95McK+ERiYHvg1iw3wzHcoGriBSTqr1WgG6h/w+uf
-         dPusjKHEtwIOCAh4Lp60l4XqDkZg4suHE40S+vLtxzF7KjAoBvmMieL+J1vt/htGTZhJ
-         yu3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBh3rK7IXfNttH9L/Qa/1Zg4JQjcjsQ5tEL1l4lUGhEe9P0uHzRGb9DDlwXAfyhqFKSTqsD7EJ+VAvtT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmw+u1ZVjpWVNzTkI8e5gu7aiN1fwwTXfao07rNJqnXnxvMOov
-	iPwHVEhUPWG6yur+I2NfLxPy4hl/oZeKD4Dg+lBQNaLoSvuHI6jD2fBX
-X-Gm-Gg: ASbGncu5bjatlfH4czA0WM40dw0jsSGJuT66Xl2yALKz7SmtW6EeqZEArxYFmKbyMgE
-	ZgDpYt7oZZtxHR6xArSIyv2lduU8WVjnSKz+2cDLTSvxg+sPlJohrXVcaAXj+WiHcL1y+geyVKe
-	baKPQ2XkOc0sK6SpuIdQ6HVCI6/DspUG6F8ni7pPT2sRmB8c3LPlJiqjDouUR4L3tgc1+Jdmcv1
-	ozmx3rLxqlf4wOOtEOxY2m/PX9McFaLMn918uFvuOj7Xq01f11ub39lycyBJFhgA4XSN7gUDVh9
-	jTQyQDQeafv5DdtKGXkPu9wB+dFzXSakqUCQ6Mvyi3btLH+c1C1jQjT6JM/6qctZyDhDic3BOSx
-	PElyky468l640164GhoSByAX5hy3GCpF+MWn76UovG/5A/Gbqv3ZiY1W9P4OUXBnhL7TI8JEXfN
-	m6HvC0hvJ4mRhIDQ==
-X-Google-Smtp-Source: AGHT+IGDcC3wh7/KWdmbQoENYqy/Rgl1TR7VHbu3/5Ebq1/tftdbfqSA8Jm2moAw860HITRRNLcm+A==
-X-Received: by 2002:a05:6a00:4b04:b0:7a2:7930:6854 with SMTP id d2e1a72fcca58-7ae1dcff00bmr4339146b3a.13.1762350914080;
-        Wed, 05 Nov 2025 05:55:14 -0800 (PST)
-Received: from localhost.localdomain ([129.227.63.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd3246d33sm6467321b3a.13.2025.11.05.05.55.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 05 Nov 2025 05:55:13 -0800 (PST)
-From: fuqiang wang <fuqiang.wng@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+	s=arc-20240116; t=1762350871; c=relaxed/simple;
+	bh=gxtFJeMNO44n6VBkhOR4527TgeMj6tC/2cOW4kEKPmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XO579AnAR9Fm7aM16XGXODMGSslKJJ0ndTShHa6AUrip82TxDXxY2DdX6o6OzecYY+dTaID/D3rEvbhhq8UxTOpSZsaZ8Idsbmggl0rILikuV66LaJqobSExfXEA625KMYaFbLVKnejQJqr8Jkhr3pqZlzeypjMpj7B3Q/xpK7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ih7w2fgR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t5YFdliH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 5 Nov 2025 14:54:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762350867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Annd0ihP7HHSBoBNQUUh2VGiw7tpGe4QfV008xC2V8c=;
+	b=ih7w2fgROvhLk8no40NcMxn2f9mvnwnl7pNJVbDFgTiGkpsaugyjEjnj+dPvwM1rDeNoIg
+	2/qDfi0bdNZKKClwPSM7gn/1/Wbabp4AI8oAx1TLGMaJin0EXjIAsQuSGoesmFcQ0m5aeb
+	CcvKk04Gs1rplAsbrltOh+tFX0sUTYvjBuKlM0HiWrWWkh8CM9klOmzSnu+X/v4f3cU/MT
+	Fvot9CZfzTrVFfbCTaqxXq/ghE44zzp1qQtqQ6uKkXnVBoAB2y9XfKND4ChsztVBcaQm23
+	w1iwvFDAPhKyZqNUFbTy5KDDQKNeaFrmBEoOfQPejxjYId4XScmwkk1Lc7+wkA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762350867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Annd0ihP7HHSBoBNQUUh2VGiw7tpGe4QfV008xC2V8c=;
+	b=t5YFdliHWVL7HVM9NRJgV3pBzyRgbwfPZtovT+iAxMLrCozl6yBD/2G8aZTvlNdkPrIMUO
+	/L0trny0nvtyy7Bw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
 	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: fuqiang wang <fuqiang.wng@gmail.com>,
-	yu chen <yuchen33988979@163.com>,
-	dongxu zhang <dongxuzhangxu910121@sina.com>
-Subject: [PATCH v4 1/1] fix hardlockup when waking VM after long suspend
-Date: Wed,  5 Nov 2025 21:53:38 +0800
-Message-ID: <20251105135340.33335-2-fuqiang.wng@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20251105135340.33335-1-fuqiang.wng@gmail.com>
-References: <20251105135340.33335-1-fuqiang.wng@gmail.com>
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] locking/mutex: Redo __mutex_init()
+Message-ID: <20251105135425.RJoTs_-A@linutronix.de>
+References: <20251104140023.jV9j77ld@linutronix.de>
+ <4207482b-fc63-4db7-ab98-36b31a600173@redhat.com>
+ <20251105075729.SJ4cL1rz@linutronix.de>
+ <10899bd0-09ca-4fcf-8142-3d5cd6e4fedf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <10899bd0-09ca-4fcf-8142-3d5cd6e4fedf@redhat.com>
 
-When a virtual machine uses the HV timer during suspend, the KVM timer does
-not advance. Upon waking after a long period, there may be a significant
-gap between target_expiration and the current time. Since each timer
-expiration only advances target_expiration by one period, the expiration
-handler can be invoked repeatedly to catch up.
+On 2025-11-05 08:49:05 [-0500], Waiman Long wrote:
+> > If you want __mutex_init() for the generic, regardless, we would first
+> > need to make room and then something like mutex_init_lockdep() could be
+> > the public interface replacing __mutex_init() in its current function.
+> 
+> Ah, I don't realize that there are users of __mutex_init() outside of the
+> locking subsystem. In this case, we have to maintain the semantics of
+> __mutex_init() to avoid affecting other subsystems.
 
-Additionally, if the advanced target_expiration remained less than the
-current time, tscdeadline could be set to a negative value.  This would
-cause HV timer setup to fail and fallback to the SW timer. After switching
-to SW timer, apic_timer_fn could be repeatedly executed within a single
-clock interrupt handler, resulting in a hardlockup:
+Well, we could update them to mutex_init() +
+lockdep_set_class_and_name(). Except probably for rust. But still if we
+like _generic, we like _generic ;)
 
-  NMI watchdog: Watchdog detected hard LOCKUP on cpu 45
-  ...
-  RIP: 0010:advance_periodic_target_expiration+0x4d/0x80 [kvm]
-  ...
-  RSP: 0018:ff4f88f5d98d8ef0 EFLAGS: 00000046
-  RAX: fff0103f91be678e RBX: fff0103f91be678e RCX: 00843a7d9e127bcc
-  RDX: 0000000000000002 RSI: 0052ca4003697505 RDI: ff440d5bfbdbd500
-  RBP: ff440d5956f99200 R08: ff2ff2a42deb6a84 R09: 000000000002a6c0
-  R10: 0122d794016332b3 R11: 0000000000000000 R12: ff440db1af39cfc0
-  R13: ff440db1af39cfc0 R14: ffffffffc0d4a560 R15: ff440db1af39d0f8
-  FS:  00007f04a6ffd700(0000) GS:ff440db1af380000(0000) knlGS:000000e38a3b8000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 000000d5651feff8 CR3: 000000684e038002 CR4: 0000000000773ee0
-  PKRU: 55555554
-  Call Trace:
-   <IRQ>
-   apic_timer_fn+0x31/0x50 [kvm]
-   __hrtimer_run_queues+0x100/0x280
-   hrtimer_interrupt+0x100/0x210
-   ? ttwu_do_wakeup+0x19/0x160
-   smp_apic_timer_interrupt+0x6a/0x130
-   apic_timer_interrupt+0xf/0x20
-   </IRQ>
+> Thanks for the clarification.
+> 
+> Cheers,
+> Longman
 
-We modify it as follows: if, after advancing, after advancing,
-target_expiration is still less than the current time, we set
-target_expiration directly to now. This also ensures that delta is
-non-negative.
-
-Fixes: d8f2f498d9ed ("x86/kvm: fix LAPIC timer drift when guest uses periodic mode")
-Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
----
- arch/x86/kvm/lapic.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 0ae7f913d782..307e2d6c3450 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2131,18 +2131,34 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
- 	ktime_t delta;
- 
- 	/*
--	 * Synchronize both deadlines to the same time source or
--	 * differences in the periods (caused by differences in the
--	 * underlying clocks or numerical approximation errors) will
--	 * cause the two to drift apart over time as the errors
--	 * accumulate.
-+	 * Use kernel time as the time source for both deadlines so that they
-+	 * stay synchronized.  Computing each deadline independently will cause
-+	 * the two deadlines to drift apart over time as differences in the
-+	 * periods accumulate, e.g. due to differences in the underlying clocks
-+	 * or numerical approximation errors.
- 	 */
- 	apic->lapic_timer.target_expiration =
- 		ktime_add_ns(apic->lapic_timer.target_expiration,
- 				apic->lapic_timer.period);
-+
-+	/*
-+	 * When the vm is suspend, the hv timer also stops advancing. After it
-+	 * is resumed, this may result in a large delta. If the
-+	 * target_expiration only advances by one period each time, it will
-+	 * cause KVM to frequently handle timer expirations.
-+	 */
-+	if (apic->lapic_timer.period > 0 &&
-+	    ktime_before(apic->lapic_timer.target_expiration, now))
-+		apic->lapic_timer.target_expiration = now;
-+
- 	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
--	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
--		nsec_to_cycles(apic->vcpu, delta);
-+	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl);
-+	/*
-+	 * Note: delta must not be negative. Otherwise, blindly adding a
-+	 * negative delta could cause the deadline to become excessively large
-+	 * due to the deadline being an unsigned value.
-+	 */
-+	apic->lapic_timer.tscdeadline += nsec_to_cycles(apic->vcpu, delta);
- }
- 
- static void start_sw_period(struct kvm_lapic *apic)
-@@ -2972,7 +2988,7 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
- 
- 	if (lapic_is_periodic(apic)) {
- 		advance_periodic_target_expiration(apic);
--		hrtimer_add_expires_ns(&ktimer->timer, ktimer->period);
-+		hrtimer_set_expires(&ktimer->timer, ktimer->target_expiration);
- 		return HRTIMER_RESTART;
- 	} else
- 		return HRTIMER_NORESTART;
--- 
-2.47.0
-
+Sebastian
 
