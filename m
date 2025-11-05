@@ -1,395 +1,122 @@
-Return-Path: <linux-kernel+bounces-885771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DE8C33DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:40:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EC7C33D7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89C924E761C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:39:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5706D4E5DB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E8A262FD7;
-	Wed,  5 Nov 2025 03:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="UDsz9Lxg"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50E824469E;
-	Wed,  5 Nov 2025 03:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C460F221FA0;
+	Wed,  5 Nov 2025 03:35:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817291DDA1E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762313953; cv=none; b=FgZnLOf2lDvgnOaPR/hjYTk+9pIwfGJ2b4SVBW+OQlp2vwbHKN1lkNt7mAcF3f8PtFstIXeYwL7DL9zuhwCz2ao6N95Ju9mt45PRZM5xPSRMULY0S5Ck3CDw9LllpQ2WrqDCEQqGRQIcMNMJbhH5eX86tdr9Hr5omG4WdnPX1+E=
+	t=1762313738; cv=none; b=e2O2QaLmQiTEXscx18PDS9aWRWyYjvIzahuEFyMoELD3mcmgkw/9o+y60HXj1zJaWqWZjcCCEmoYkOlDHDBoxaWeWMQwaqHmiA0fxfnjI4U03BpKzRmi1IYWMcwlWS5gYOIdM7HDDX76jsfnsizU+8KtDUcA70Z+OmKcNDX/dqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762313953; c=relaxed/simple;
-	bh=GrmqOKRaiuM2RqNqP7uxIdFrcKdHeEpB8pWJyWkZ/+g=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QUCjYjgkmEM/zKKeBEtWU/ISY/vs2JGufVrqyGkH1cSi5aJnixU7mbQKpIMCl79zGTBE6A5Uem/5wR3y6ykUfBkPV3Xsn+1RxZH33ZI6nOpDTrYA81sPyUfaYm2WA3XjaFDbC5NsldidykP6AxwEX8Tvwyt/8FfB5RNNNlOGzNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=UDsz9Lxg; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1762313641;
-	bh=cCZd4BWtWwDfl8jPRQWP6rxG9i/adWQOFxkaWuBxQ80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UDsz9Lxg/GiRjqRMXmP7JrHdmXQINm87Zk+Sr14STiXwh2kH7SvBNEw0ACuKZOpSO
-	 eXCHeTIcy8B2Ui9ImTMpx79hiIZ+hQZQg2iFH6HdKuzTPYCSM/AfmFDNTgnU/IuUG7
-	 MB8GUUVf/oE+5U+/uZ289ttBt12urhrpFFEaPPgI=
-Received: from meizu-Precision-3660.meizu.com ([14.21.33.152])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 87A08658; Wed, 05 Nov 2025 11:33:58 +0800
-X-QQ-mid: xmsmtpt1762313638tn1vfqyw8
-Message-ID: <tencent_85F14CD7BA73843CA32FF7AEB6A21A6EC907@qq.com>
-X-QQ-XMAILINFO: MBHEkxMsYPCYTvJTZVsRQ0l7cF1jmGmoPlPY6CdIxHI55vQxpPE6YJ8jycAyKl
-	 /vbrYNpvnzpz4ClZbCoCg4CZfwM81XGPvmJ03wj6srDnWSfQKHQfF2fU7HRjAnIoHePjrWjpG8LO
-	 zdR5RMV0CAXduPwW+PHmlHUKhmzoSx+qxeWQxHBGWALlmxYMMDV2T3iNEL0NsN9mDDllbKqHHbvZ
-	 dHix8jdK1nT1oEApErew9iW9QpxqUrLPq4fh5iaoP1A1XFX50p6/DPtuOkxjyK4awxRCdesi00Wc
-	 yRWIWuWrqruxi6tGJo61VaX8bKbX3Z6k2LqXtZqav6vWwzU/Lf5Zkbrg+fxu21iYPsvlwN1//bHb
-	 eyrRx+4cywi6IijkmUgWF1mV1ANTCGygQtacOqxiAt1NMqUNtP4mgcV7My1CGhfsbAFl0PJNOtrs
-	 5dSxLgsTimsCg8QQuOvpBUxrKw5OEH32Rd2bg1ihKdEw/cA2dDNSxSSyt4w9QyXIEDS6nIZ8ggHt
-	 jtxd5JN204gFiqdlPgzRkrtcKiwwY2lf/Ta72bdsqjsUHFqvSNl+ceyxVAn2jlpqlUXjMmBioH9g
-	 KVGeq+NclBPdco8Go+NO0qFwxNCKHqIv6VSjuKVC1oXCFPtljamV/jgHIyVwvRtUfNKA9/ptnf9Y
-	 cPJi9g9Teu541XDd0YXaVsKOD8X+yh5DbVdcM86aKyhrqLGom1+L6QJwmIa+1E5tznHL8fSi5Uc0
-	 4Ic8/iZlJrNT5F4mvCwBrdI+Dk8EFgc5LE2ehhVg9zBFD4jS39/8+IalqELR3SPLazXeov6CATmu
-	 VsLKuYjy6Wm7GqJjT/LRdzmWPobgGxExYdliiVBab6LS+MfzqDpuRXfJTfJY6f9fjWsU2UEQtjIO
-	 EDjf5kFdpS9EFDVwmGiSnUJ8CFxpSI1qioceCMAlGUohxBp9hYeTmQpDZxdIhAfkxMpiZCf0YsvW
-	 mAp7Y+QNz2cQK2VM3utH4QBl7Lj/NDPeSMhtjvp9RDJzSrWTQhYI6lefbFoBLHMCYu9Y1ZyjI9gU
-	 TYZi4ZclddkNz9ZvlYtXXx6h+65cfY34K9Il47gOdGuLwwDte0jVO3vu6JBLMkwY0gIHkhhw==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Yuwen Chen <ywen.chen@foxmail.com>
-To: ywen.chen@foxmail.com
-Cc: richardycc@google.com,
-	axboe@kernel.dk,
-	licayy@outlook.com,
-	linux-kernel@vger.kernel.org,
-	minchan@kernel.org,
-	senozhatsky@chromium.org,
-	akpm@linux-foundation.org,
-	bgeffon@google.com,
-	linux-block@vger.kernel.org,
-	linux-mm@kvack.org,
-	liumartin@google.com
-Subject: [PATCH v2] zram: Implement multi-page write-back
-Date: Wed,  5 Nov 2025 11:33:56 +0800
-X-OQ-MSGID: <20251105033356.2682072-1-ywen.chen@foxmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_78FC2C4FE16BA1EBAF0897DB60FCD675ED05@qq.com>
-References: <tencent_78FC2C4FE16BA1EBAF0897DB60FCD675ED05@qq.com>
+	s=arc-20240116; t=1762313738; c=relaxed/simple;
+	bh=+eRNRLSXSO9KuDn/dZ765B7NIftgANi0Xgy0mUSddAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lGIeU1+vup02qbjM+6wyBaDekPqCTucprlC/Wr9nPory66EyKKyXTBBbGXvIhddec1/NKVh0Za/oeN55OnhxXjHyudl+QbuEuWkRUdFprbTt9sXx2nXIalV1Bl+/pzjnLqdNu6rE/LdUQPKcnnmygrlxyFoWjSGn/t5JC+atgmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDFFA1655;
+	Tue,  4 Nov 2025 19:35:27 -0800 (PST)
+Received: from [10.164.18.45] (unknown [10.164.18.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 762263F66E;
+	Tue,  4 Nov 2025 19:35:33 -0800 (PST)
+Message-ID: <b5ff76a5-b068-4c6b-aa21-d932da42e1e9@arm.com>
+Date: Wed, 5 Nov 2025 09:05:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] arm64/mm: Ensure correct 48 bit PA gets into
+ TTBRx_EL1
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20251103052618.586763-1-anshuman.khandual@arm.com>
+ <20251103052618.586763-5-anshuman.khandual@arm.com>
+ <aQoZDbuBJ_2YcsyP@J2N7QTR9R3.cambridge.arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <aQoZDbuBJ_2YcsyP@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For block devices, sequential write performance is significantly
-better than random write. Currently, zram's write-back function
-only supports single-page operations, which fails to leverage
-the sequential write advantage and leads to suboptimal performance.
-This patch implements multi-page batch write-back for zram to
-leverage sequential write performance of block devices.
-After applying this patch, a large number of pages being merged
-into batch write operations can be observed via the following test
-code, which effectively improves write-back performance.
 
-mount -t debugfs none /sys/kernel/debug/
-echo "block:block_bio_frontmerge" >> /sys/kernel/debug/tracing/set_event
-echo "block:block_bio_backmerge" >> /sys/kernel/debug/tracing/set_event
-cat /sys/kernel/debug/tracing/trace_pipe &
-echo "page_indexes=1-10000" > /sys/block/zram0/writeback
 
-Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
-Reviewed-by: Fengyu Lian <licayy@outlook.com>
----
-Changes in v2:
-  - Rename some data structures.
-  - Fix an exception caused by accessing a null pointer.
----
- drivers/block/zram/zram_drv.c | 223 ++++++++++++++++++++++++++--------
- 1 file changed, 169 insertions(+), 54 deletions(-)
+On 04/11/25 8:47 PM, Mark Rutland wrote:
+> On Mon, Nov 03, 2025 at 05:26:16AM +0000, Anshuman Khandual wrote:
+>> Even though 48 bit PA representation in TTBRx_EL1 does not involve shifting
+>> partial bits like 52 bit variant does, they sill need to be masked properly
+>> for correctness. Hence mask 48 bit PA with TTBRx_EL1_BADDR_MASK.
+> 
+> There is no need for the address "to be masked properly for
+> correctness".
+> 
+> We added masking for 52-bit PAs due to the need to shuffle the bits
+> around. There is no need for that when using 48-bit PAs, since the
+> address must be below 2^48, and the address must be suitably aligned.
+> 
+> If any bits are set outside of this mask, that is a bug in the caller.
+> 
+> Mark.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 4f2824a..d2bd091 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -751,21 +751,130 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
- 	submit_bio(bio);
- }
- 
--static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
--{
--	unsigned long blk_idx = 0;
--	struct page *page = NULL;
-+enum {
-+	/* Indicate that the request has been allocated */
-+	ZRAM_WB_REQUEST_ALLOCATED = 0,
-+
-+	/* the request has been processed by the block device layer */
-+	ZRAM_WB_REQUEST_COMPLETED,
-+};
-+
-+struct zram_wb_request {
-+	struct completion *done;
-+	unsigned long blk_idx;
-+	struct page *page;
- 	struct zram_pp_slot *pps;
- 	struct bio_vec bio_vec;
- 	struct bio bio;
--	int ret = 0, err;
--	u32 index;
-+	unsigned long flags;
-+};
- 
--	page = alloc_page(GFP_KERNEL);
--	if (!page)
--		return -ENOMEM;
-+static int zram_writeback_complete(struct zram *zram, struct zram_wb_request *req)
-+{
-+	u32 index = 0;
-+	int err;
- 
--	while ((pps = select_pp_slot(ctl))) {
-+	if (!test_and_clear_bit(ZRAM_WB_REQUEST_COMPLETED, &req->flags))
-+		return 0;
-+
-+	err = blk_status_to_errno(req->bio.bi_status);
-+	if (err)
-+		return err;
-+
-+	index = req->pps->index;
-+	atomic64_inc(&zram->stats.bd_writes);
-+	zram_slot_lock(zram, index);
-+	/*
-+	 * Same as above, we release slot lock during writeback so
-+	 * slot can change under us: slot_free() or slot_free() and
-+	 * reallocation (zram_write_page()). In both cases slot loses
-+	 * ZRAM_PP_SLOT flag. No concurrent post-processing can set
-+	 * ZRAM_PP_SLOT on such slots until current post-processing
-+	 * finishes.
-+	 */
-+	if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
-+		goto next;
-+
-+	zram_free_page(zram, index);
-+	zram_set_flag(zram, index, ZRAM_WB);
-+	zram_set_handle(zram, index, req->blk_idx);
-+	req->blk_idx = 0;
-+	atomic64_inc(&zram->stats.pages_stored);
-+	spin_lock(&zram->wb_limit_lock);
-+	if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
-+		zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
-+	spin_unlock(&zram->wb_limit_lock);
-+
-+next:
-+	zram_slot_unlock(zram, index);
-+	release_pp_slot(zram, req->pps);
-+	req->pps = NULL;
-+	return 0;
-+}
-+
-+static void zram_writeback_endio(struct bio *bio)
-+{
-+	struct zram_wb_request *req = bio->bi_private;
-+
-+	set_bit(ZRAM_WB_REQUEST_COMPLETED, &req->flags);
-+	clear_bit(ZRAM_WB_REQUEST_ALLOCATED, &req->flags);
-+	complete(req->done);
-+}
-+
-+static struct zram_wb_request *zram_writeback_next_request(struct zram_wb_request *pool,
-+	int pool_cnt, int *cnt_off)
-+{
-+	struct zram_wb_request *req = NULL;
-+	int i = 0;
-+
-+	for (i = *cnt_off; i < pool_cnt + *cnt_off; i++) {
-+		req = &pool[i % pool_cnt];
-+		if (!req->page)
-+			continue;
-+
-+		if (!test_and_set_bit(ZRAM_WB_REQUEST_ALLOCATED, &req->flags)) {
-+			*cnt_off = (i + 1) % pool_cnt;
-+			return req;
-+		}
-+	}
-+	return NULL;
-+}
-+
-+#define ZRAM_WB_REQ_CNT (32)
-+static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
-+{
-+	int ret = 0, err, i = 0, off = 0;
-+	int req_pool_cnt = 0;
-+	struct zram_wb_request req_prealloc[2] = {0};
-+	struct zram_wb_request *req = NULL, *req_pool = NULL;
-+	DECLARE_COMPLETION_ONSTACK(done);
-+	u32 index = 0;
-+	struct blk_plug plug;
-+
-+	/* allocate memory for req_pool */
-+	req_pool = kzalloc(sizeof(*req) * ZRAM_WB_REQ_CNT, GFP_KERNEL);
-+	if (req_pool) {
-+		req_pool_cnt = ZRAM_WB_REQ_CNT;
-+	} else {
-+		req_pool = req_prealloc;
-+		req_pool_cnt = ARRAY_SIZE(req_prealloc);
-+	}
-+
-+	for (i = 0; i < req_pool_cnt; i++) {
-+		req_pool[i].done = &done;
-+		req_pool[i].flags = 0;
-+		req_pool[i].page = alloc_page(GFP_KERNEL);
-+		if (req_pool[i].page)
-+			req = &req_pool[i];
-+	}
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out_free_req_pool;
-+	}
-+	set_bit(ZRAM_WB_REQUEST_ALLOCATED, &req->flags);
-+
-+	blk_start_plug(&plug);
-+	while ((req->pps = select_pp_slot(ctl))) {
- 		spin_lock(&zram->wb_limit_lock);
- 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
- 			spin_unlock(&zram->wb_limit_lock);
-@@ -774,15 +883,15 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
- 		}
- 		spin_unlock(&zram->wb_limit_lock);
- 
--		if (!blk_idx) {
--			blk_idx = alloc_block_bdev(zram);
--			if (!blk_idx) {
-+		if (!req->blk_idx) {
-+			req->blk_idx = alloc_block_bdev(zram);
-+			if (!req->blk_idx) {
- 				ret = -ENOSPC;
- 				break;
- 			}
- 		}
- 
--		index = pps->index;
-+		index = req->pps->index;
- 		zram_slot_lock(zram, index);
- 		/*
- 		 * scan_slots() sets ZRAM_PP_SLOT and relases slot lock, so
-@@ -792,22 +901,32 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
- 		 */
- 		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
- 			goto next;
--		if (zram_read_from_zspool(zram, page, index))
-+		if (zram_read_from_zspool(zram, req->page, index))
- 			goto next;
- 		zram_slot_unlock(zram, index);
- 
--		bio_init(&bio, zram->bdev, &bio_vec, 1,
-+		bio_init(&req->bio, zram->bdev, &req->bio_vec, 1,
- 			 REQ_OP_WRITE | REQ_SYNC);
--		bio.bi_iter.bi_sector = blk_idx * (PAGE_SIZE >> 9);
--		__bio_add_page(&bio, page, PAGE_SIZE, 0);
--
--		/*
--		 * XXX: A single page IO would be inefficient for write
--		 * but it would be not bad as starter.
--		 */
--		err = submit_bio_wait(&bio);
-+		req->bio.bi_iter.bi_sector = req->blk_idx * (PAGE_SIZE >> 9);
-+		req->bio.bi_end_io = zram_writeback_endio;
-+		req->bio.bi_private = req;
-+		__bio_add_page(&req->bio, req->page, PAGE_SIZE, 0);
-+
-+		list_del_init(&req->pps->entry);
-+		submit_bio(&req->bio);
-+
-+		do {
-+			req = zram_writeback_next_request(req_pool, req_pool_cnt, &off);
-+			if (!req) {
-+				blk_finish_plug(&plug);
-+				wait_for_completion_io(&done);
-+				blk_start_plug(&plug);
-+			}
-+		} while (!req);
-+		err = zram_writeback_complete(zram, req);
- 		if (err) {
--			release_pp_slot(zram, pps);
-+			release_pp_slot(zram, req->pps);
-+			req->pps = NULL;
- 			/*
- 			 * BIO errors are not fatal, we continue and simply
- 			 * attempt to writeback the remaining objects (pages).
-@@ -817,43 +936,39 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
- 			 * the most recent BIO error.
- 			 */
- 			ret = err;
--			continue;
- 		}
-+		cond_resched();
-+		continue;
- 
--		atomic64_inc(&zram->stats.bd_writes);
--		zram_slot_lock(zram, index);
--		/*
--		 * Same as above, we release slot lock during writeback so
--		 * slot can change under us: slot_free() or slot_free() and
--		 * reallocation (zram_write_page()). In both cases slot loses
--		 * ZRAM_PP_SLOT flag. No concurrent post-processing can set
--		 * ZRAM_PP_SLOT on such slots until current post-processing
--		 * finishes.
--		 */
--		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
--			goto next;
--
--		zram_free_page(zram, index);
--		zram_set_flag(zram, index, ZRAM_WB);
--		zram_set_handle(zram, index, blk_idx);
--		blk_idx = 0;
--		atomic64_inc(&zram->stats.pages_stored);
--		spin_lock(&zram->wb_limit_lock);
--		if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
--			zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
--		spin_unlock(&zram->wb_limit_lock);
- next:
- 		zram_slot_unlock(zram, index);
--		release_pp_slot(zram, pps);
--
-+		release_pp_slot(zram, req->pps);
-+		req->pps = NULL;
- 		cond_resched();
- 	}
-+	blk_finish_plug(&plug);
- 
--	if (blk_idx)
--		free_block_bdev(zram, blk_idx);
--	if (page)
--		__free_page(page);
-+	if (req)
-+		clear_bit(ZRAM_WB_REQUEST_ALLOCATED, &req->flags);
-+	for (i = 0; i < req_pool_cnt; i++) {
-+		while (test_bit(ZRAM_WB_REQUEST_ALLOCATED, &req_pool[i].flags))
-+			wait_for_completion_io(&done);
-+		err = zram_writeback_complete(zram, &req_pool[i]);
-+		if (err) {
-+			release_pp_slot(zram, req_pool[i].pps);
-+			req->pps = NULL;
-+			ret = err;
-+		}
-+
-+		if (req_pool[i].blk_idx)
-+			free_block_bdev(zram, req_pool[i].blk_idx);
-+		if (req_pool[i].page)
-+			__free_page(req_pool[i].page);
-+	}
- 
-+out_free_req_pool:
-+	if (req_pool != req_prealloc)
-+		kfree(req_pool);
- 	return ret;
- }
- 
--- 
-2.34.1
+Agreed - probably should not be masking out an wrong address from the caller
+in order to proceed further with TTBRx_EL1 and then cause a problem down the
+line.
+> 
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/include/asm/assembler.h | 1 +
+>>  arch/arm64/include/asm/pgtable.h   | 2 +-
+>>  2 files changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+>> index 23be85d93348..d5eb09fc5f8a 100644
+>> --- a/arch/arm64/include/asm/assembler.h
+>> +++ b/arch/arm64/include/asm/assembler.h
+>> @@ -609,6 +609,7 @@ alternative_endif
+>>  	and	\ttbr, \ttbr, #TTBR_BADDR_MASK_52
+>>  #else
+>>  	mov	\ttbr, \phys
+>> +	and	\ttbr, \ttbr, #TTBRx_EL1_BADDR_MASK
+>>  #endif
+>>  	.endm
+>>  
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index 0944e296dd4a..c3110040c137 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -1604,7 +1604,7 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+>>  #ifdef CONFIG_ARM64_PA_BITS_52
+>>  #define phys_to_ttbr(addr)	(((addr) | ((addr) >> 46)) & TTBR_BADDR_MASK_52)
+>>  #else
+>> -#define phys_to_ttbr(addr)	(addr)
+>> +#define phys_to_ttbr(addr)	(addr & TTBRx_EL1_BADDR_MASK)
+>>  #endif
+>>  
+>>  /*
+>> -- 
+>> 2.30.2
+>>
 
 
