@@ -1,202 +1,123 @@
-Return-Path: <linux-kernel+bounces-886591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EEAC3606D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:21:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C257C36070
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F79463B55
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:21:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD71034E3EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C077E3168E5;
-	Wed,  5 Nov 2025 14:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C3E318146;
+	Wed,  5 Nov 2025 14:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="F0M5lVuL";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="TYJP8XJx"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Mz2oqLog"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CBD2D193C;
-	Wed,  5 Nov 2025 14:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352498; cv=fail; b=RCE1+GmRXZTgF9VQbt61txc9CBGdpQA6kBmN67ql99mo4uCcgUAgmWjNUfFgp4W1YsDXnpRWtTNxkTdOHTWOblKtnOF4DkN8uGiTX6xjM8WNAyJjebUAFHv9nOroStCQvbvIUzMR7raA+aLbyRnaBg6uQ9l0bMPYSj9uIwixnZc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352498; c=relaxed/simple;
-	bh=mu8nBgoouIJ9QmkcZlo41fHvkXidhNAMdNiqFq2zcnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Av+vRkYMrdIle6AwVhwtcgZ0O5t5S/LXhS8sHrfamRsAzX0jS81JGjGobMfLOzwryJ9zNWY1YrD1mu3nO3SywnqdefYqSjeJu22U3DrpS7BjDLDsm2I4z1Ma8c0yM7yTWSJKVj8w+Wvlx/6y44iJealMJdKwndzwnCCMwUZJS3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=F0M5lVuL; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=TYJP8XJx; arc=fail smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A55pu4Z2013230;
-	Wed, 5 Nov 2025 08:21:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=rtf7b4akYH6RBQjZuwzYaeeIqt31ScB379vnkCHxYgE=; b=
-	F0M5lVuLilFpDH3v0UZYGQI/wZjK5A8j4OLYRDBMzlNBVlO2h48svqy/DNw5aIwP
-	LH+2kfIB0uWR4qyTQGeD2m5uc0lsPIAkhA9O6aM6wg5pKmHeb73EMAdZg2SmSgvy
-	SMOFRb/h5kH3UUES7UQTNiG5E4kKhV2GpfSvw48w9m0saO58IyevNYbPUPbRqrBL
-	NflQhVhnvUsaP/7hvXqLgCYSW/kHOlYV3BY68X2eJoSwetBDHemgqxn/4lf4tq56
-	oX5hocMc7iFH96XqVPTjBTDH6Jnt7g8RP71v4fad13+t8fhW75Sag4n3HsP6tu6E
-	BOqMJX/XB53WbtEdVSKnBQ==
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11020079.outbound.protection.outlook.com [52.101.61.79])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4a7bwx1ygg-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 08:21:35 -0600 (CST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X8ObB/yaHjgbOHcJ3Ln4rtcHCuf7HObv79vTDrd4y6OmBy4WaepRNNvAId4Db6nH27ySnMwdRV7e0zjgnuFWicPuAvDjzSuJ4GzbR+GEYAKejY0/+eqWYB9USMwnv115P/eGWlWpf8fNUl7Cw1Hj6W6lMGGRZ5D768CR4gKbPc8X1m5hr0xfbia47QVtx64aE0EkTf3QgGZIH42JiEGCI2Q4O+ZppEcpcIsiGQt19UMz90nd4prlOcHx3RvECcUoUC3BiN9ad9y+8YmhwqaWw3YDxrJsiCQsX46LHFo6jU9UwU1241/YI3Q0/U8IbTg4Lvq3NV9QPH996YNz0EBFUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rtf7b4akYH6RBQjZuwzYaeeIqt31ScB379vnkCHxYgE=;
- b=ZWGbYaAqmcwBED8Vh+Ht53M9nLlHvgoV/jrHblmGgaS2XDlehJd9QLhRukp4vxGcn1+2DqNpvcDWVwdYPj4GO+nawiV1PnJN69V6u2dtfIHMLfR+ZSTDpP1pKrX2QxF1/evWrWBM2RyrcAHn8JHdgow3tCbQgrKu05ocEXhexlBt84wnXQ4OhezsOXJeimaFwU+cleonCoUVElWgiheAMhfqIa/gEyrchQ+1Je8rKD0bt6HBSSZunS+uFgPODr8Io9TTsv2sNy4ynN8qJnC7elDTjx1eYwAgxak4pLPoMlVDPveDNHz+I/0C4DJOoa8mtd74vVFCANj0O/O0nYdEig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rtf7b4akYH6RBQjZuwzYaeeIqt31ScB379vnkCHxYgE=;
- b=TYJP8XJxtzoZ9T0UzNX5RoMiKryCyJ3ZCItzTUTnYP4cTaDroC60Fe6PtAxaU81qssWTqNNVu4BXsrUdW1f6F3Rve4A53EB2OkfkWiU7QOaEt1IBWiULSobMgDSaqvaeO5X4YGXmmR/r+g1IHuRgove/4i/37H29A31YnUmPZSQ=
-Received: from CH2PR18CA0013.namprd18.prod.outlook.com (2603:10b6:610:4f::23)
- by LV3PR19MB8367.namprd19.prod.outlook.com (2603:10b6:408:20e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
- 2025 14:21:32 +0000
-Received: from CH1PEPF0000A34B.namprd04.prod.outlook.com
- (2603:10b6:610:4f:cafe::7f) by CH2PR18CA0013.outlook.office365.com
- (2603:10b6:610:4f::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Wed,
- 5 Nov 2025 14:21:32 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- CH1PEPF0000A34B.mail.protection.outlook.com (10.167.244.10) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.6
- via Frontend Transport; Wed, 5 Nov 2025 14:21:31 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id E0229406540;
-	Wed,  5 Nov 2025 14:21:30 +0000 (UTC)
-Received: from [198.90.208.24] (ediswws06.ad.cirrus.com [198.90.208.24])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id D2766820257;
-	Wed,  5 Nov 2025 14:21:30 +0000 (UTC)
-Message-ID: <66711258-dc14-4469-bcb4-d341f4572488@opensource.cirrus.com>
-Date: Wed, 5 Nov 2025 14:21:30 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2045921CFF6;
+	Wed,  5 Nov 2025 14:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762352509; cv=none; b=Fde1w77X1d5H9vRku4T7rCxvg1f6EjoJM/A/YKfR1m6vAFOetjyfxzoB/66FZO3bxaciGBzIb6OXtWMgn2Cv7/iyBcudSctZ8Tkr/SnZSaLYv1YhRFt4dH76BtetvYWOrf3cHRqGYpGJwq8XqahCpFzw0Bhfjyy2cGA9QNKaefg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762352509; c=relaxed/simple;
+	bh=Ym2H4+/jk+j79hwKYOrnkbeUwnboKpA4FMWUOaCnZns=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WxP6v071tEWky95b3UICXsgV7GHyUbx8MkR5EDnM+53VQZ6dKwSKEgjZ26WJ9qFyYugPT+3p+2fOLQaAgUXn80xAABW/XCq9HcE2xoRexggLsyV/xJXVrGESQJCynhaULcg0FlOWrXbx/kbpGFdjrT0HulJdF1S7ItKJMTKTdb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Mz2oqLog; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762352505;
+	bh=Ym2H4+/jk+j79hwKYOrnkbeUwnboKpA4FMWUOaCnZns=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Mz2oqLog8/ligGHxYt9ODocb3ITdEekIkxgrucSPdBh0xMw2DtGkYt+g90AcFKq2v
+	 XE65ux2tN1hbf2F6MAS5jY41rxx22amdRUhoD+ApTMmoH5zIqzUQoZ+DIxRTzK65Kc
+	 Gphw+afikYFbr8Ew/AKTsLnhDc2GQqxjM7WfD8HU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id AE1741C0325;
+	Wed, 05 Nov 2025 09:21:45 -0500 (EST)
+Message-ID: <6d199d062b16abfbf083750820d7a39cb2ebf144.camel@HansenPartnership.com>
+Subject: Re: [PATCH] scsi: fix uninitialized pointers with free attr
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Ally Heev <allyheev@gmail.com>, "Martin K. Petersen"
+	 <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter
+	 <dan.carpenter@linaro.org>
+Date: Wed, 05 Nov 2025 09:21:45 -0500
+In-Reply-To: <20251105-aheev-uninitialized-free-attr-scsi-v1-1-d28435a0a7ea@gmail.com>
+References: 
+	<20251105-aheev-uninitialized-free-attr-scsi-v1-1-d28435a0a7ea@gmail.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
+	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
+	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
+	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
+	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
+	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
+	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
+	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: failed to add SPI device CSC3556 from ACPI in v6.17.x for Cirrus
- Logic CS35L56
-To: Iakov Pustilnik <xyapus@gmail.com>, david.rhodes@cirrus.com
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org
-References: <CAHRbhAkDcYQj=VQrNdc7T7WfDfiuDWpnk2s3pjoeouptgy_K1g@mail.gmail.com>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <CAHRbhAkDcYQj=VQrNdc7T7WfDfiuDWpnk2s3pjoeouptgy_K1g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34B:EE_|LV3PR19MB8367:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5cff05c-64b9-4aa3-1b1a-08de1c769e58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|61400799027|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0Z0OGovZzI4T3lteEZ0Ry9uMXVVUkt2b25BU1RzbHhtbE1adGJCWTJMRmFw?=
- =?utf-8?B?VUdBZ0U0SW9tN1lpTG9OOFk4ejdBZ0lrVFJ4dUVqME04dmN1MkIyVmVHbzlS?=
- =?utf-8?B?RDBxTXc3d1J2VmFHOHJjWlhSemZwTExKN0RyTy8xSklDM3NsQkdtOFFXR3o3?=
- =?utf-8?B?VEdRMm1PdlpyVUJScE8wblNzR2V2cy80OHo3T3FJU0RrUnFraTg3QzcrL0hh?=
- =?utf-8?B?b082R096TGJuc051L2RlcFNVVit6OG5IcXgxdjgvQVptckRUZWJKTWRLTFho?=
- =?utf-8?B?em8wOUJyY2RqZzROTTg0V09FYkllTUd0by80N2RybU04bDMxdVpDR0pLemRq?=
- =?utf-8?B?K2xtZlpRT1ZWWWdjQkI0d2dLVmdZYy9JT3lhK1ZldnAwbHg5SVpVbFdaRndk?=
- =?utf-8?B?dWU4Vm5zNWVyM0U5ZHZOZ3M5WVh1OWZ1czZyS2RzcVpFQmJXcWV4Q1pIMUlP?=
- =?utf-8?B?aHZMOFlSZDNGMXhzeWF3S25WOXBiVXNzdmJ4RnhWY09ZRnY1NXlZRnFERkN0?=
- =?utf-8?B?Tzd4VysvRG92QjBaUHFXcWZZRHV1YklvWWVCWFNHYnNHZnc3WEVocCtPaHlZ?=
- =?utf-8?B?REZCckZoZDY0dTZObXl0WHhlejBTTEt1ZTI0ZHZWRUdTazk0dm9Kdm1mTjJq?=
- =?utf-8?B?RWJ0a1ZMRGVuRUZMd1hQOTFrZWJDM2xFY1hKWXUyNzJLRjlQTmt5YklQdTd2?=
- =?utf-8?B?WUZmRUI1eXo5M0U3dFdPc203bWp0M0p6Tk00MG9wWFEvNnF3NXJEWUhGajN3?=
- =?utf-8?B?aEUrVUwrQVpTZHh1Q0d1N05PMnd6ckE1OS9MTG1XaG5WdHB6dnhiS1F0M1dV?=
- =?utf-8?B?elBEcTJSVVFJdXlIeUtuMEVEOG51VDFpcGE0UTZSQXVwaGM2RitqenBNQnNS?=
- =?utf-8?B?UGFPR1d2VGZ5UzZKV0ViaUQyOGZHZXYvbnpJaHh5ZERLNkQ2QlNHbzgyTGk3?=
- =?utf-8?B?UzJmSHhLU1NYRWo2RWE5NTZCRERrVW44WERVRUI1Q0ZrdkUvNGFvd2VGVW4z?=
- =?utf-8?B?S3YxTHJ1UlBkZFB1c3c1RGJnOEczTzgyQWRkWlBPUjNRZUhrQnpVWE1tbGU4?=
- =?utf-8?B?UGhTN2ZaK093eE54R1psdTVYODUvOEl5Q1Y5QzBXK3gwNHJmSFZmeE1sb0JX?=
- =?utf-8?B?eThNVHZDcEpNVWhoWERyQ295K2d4QUpISGlWczVIdmZTSGlFenlYWVlpK1Yx?=
- =?utf-8?B?eGd6eFloM0FueEJVYkxpcnRSM1paWHpOTDBqeWhTQmZncmxYd0tjUHJYYWVB?=
- =?utf-8?B?UlQwQ21lNFpkSW1UUnRtRTk0L3luSjhzQ3dhZWtZSDlMWXpEaFN2OVVHY1ps?=
- =?utf-8?B?RFA2eGhLcHB4TC8rMnhmWFc1UDBCU1pIekJ5SU9UNTk1YzJXMUNkL3Z2QVBM?=
- =?utf-8?B?clExaUFrODRLeEwwWTdZbU54Q0d0WURyN3Y5K0ErWkpQSXhNZnBwSXN1cmwx?=
- =?utf-8?B?aFVXMm01WFpOdjJNNlF5ZDFiZWU4aW9FbFRLbExzUmF5OW0vL0VGWngyVXgv?=
- =?utf-8?B?TTdCemg0ZWVxVk1mZUoyQjVWSTRGelhXeThrSmk3RDlpN2p5NWJndWlwblo1?=
- =?utf-8?B?a2hKYVN3NWh6K0E2djZmZm5uVjNtdkVIblJvdklDMEhPNFNyc0hhNStNK1lN?=
- =?utf-8?B?ZUdQcWZISVp1Smp5aTdWSUFwWmlyYXU1SkUwdlhMc2o0cnlvdk9jVXV1YWVN?=
- =?utf-8?B?c1lQTmJiMjNZVllLcDJLWElFdHJQWEgxNWpGNlZDZEw1UFRwbU53Szg5b1hK?=
- =?utf-8?B?NVFZb0NnS2FlM1hVS2ZldVBYYVIvdCsvQWcyMjllYWw4T0RwU1FLb0YyVkdG?=
- =?utf-8?B?OElQVVFtZnNQRXFOSDlIYzJRQTVXOGp6MUZzRURIMDlDUk9BMk9nR09tWGhn?=
- =?utf-8?B?TjJEVmpSclNnWmEvczNrcy9SYm9NSCt5bHFQR3JSRlBYaEllVzFjYzQ0dUxP?=
- =?utf-8?B?RFFkclZTZXM5OUF5YU0xaDI2T0RqM3N3ODZhaU9FQUE5MlhwMFRPRFArQmhW?=
- =?utf-8?B?cHlCWWlzV1RtdVlNK1E3bjFkaDJaVnZFZ044czFGeloxeVNSV3Btam5VSHZH?=
- =?utf-8?B?ZEc1MHFsZXU5a1pvbW1KQXJIR1AzZ1dxK0pva0tPM0pVdG1WeS9neFNEa1FH?=
- =?utf-8?Q?M0Gw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(61400799027)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 14:21:31.9100
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5cff05c-64b9-4aa3-1b1a-08de1c769e58
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CH1PEPF0000A34B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR19MB8367
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEwOCBTYWx0ZWRfX6jEtPKxOL3NN
- j82X0rhuzXI6U2Nqz5HZ88+eCyfZOwbcxMVlSKaA4p50u0RkviFs20wC6xyiEVfaNua5Afq7N7I
- pPF0iiaA9TR1j9dn8AX/kfI6z4OJh0cWMi4EivrCyXuB3z8YW37SidwkmnjsBnyo2ASSiXlw51v
- YoJjqO1p/aW3CjKNF8LVCcsNes7QvI/Fu9hSkitX8cu9fhSrZTBEASd7AvAHM2LTwTyFafx9G1s
- 7CaP+i3ykRcKWfPbA2en/YuYnyA/Ov6sxkTmD9XTf2IpbvA+V9uvnJEtlDU8YTf2SfYJ+FIHAUm
- nB9qI7US101wivGV0iSVKPFfOvboMAihqNpP4X4mKOa8BEtJAF/OyVF+rVFvJJngBktqu5hirYM
- VQkaD9NTZLoWpN+/jR058LDnyOVGYA==
-X-Proofpoint-ORIG-GUID: 7Ol4XDM2PG-zTj2TZvxm1NhFRidpDGAu
-X-Proofpoint-GUID: 7Ol4XDM2PG-zTj2TZvxm1NhFRidpDGAu
-X-Authority-Analysis: v=2.4 cv=FpcIPmrq c=1 sm=1 tr=0 ts=690b5d6f cx=c_pps
- a=tlGIxjjmudfNB24gcMuLIA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=zWkPoKW7PBNjo0c95wkA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Reason: safe
 
-On 05/11/2025 2:13 pm, Iakov Pustilnik wrote:
-> Hello to the Maintainers!
-> 
-> I'm using an Asus G16 GU605CW laptop which has a Cirrus Logic CSC3556
-> audio subsystem.
+On Wed, 2025-11-05 at 19:44 +0530, Ally Heev wrote:
+> Uninitialized pointers with `__free` attribute can cause undefined
+> behaviour as the memory assigned(randomly) to the pointer is freed
+> automatically when the pointer goes out of scope
+>=20
+> scsi doesn't have any bugs related to this as of now, but
+> it is better to initialize and assign pointers with `__free` attr
+> in one statement to ensure proper scope-based cleanup
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes:
+> https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+> Signed-off-by: Ally Heev <allyheev@gmail.com>
+> ---
+> =C2=A0drivers/scsi/scsi_debug.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index
+> b2ab97be5db3d43d5a5647968623b8db72448379..89b36d65926bdd15c0ae93a6bd2
+> ea968e25c0e74 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -2961,11 +2961,11 @@ static int resp_mode_sense(struct scsi_cmnd
+> *scp,
+> =C2=A0	int target_dev_id;
+> =C2=A0	int target =3D scp->device->id;
+> =C2=A0	unsigned char *ap;
+> -	unsigned char *arr __free(kfree);
+> =C2=A0	unsigned char *cmd =3D scp->cmnd;
+> =C2=A0	bool dbd, llbaa, msense_6, is_disk, is_zbc, is_tape;
+> =C2=A0
+> -	arr =3D kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
+> +	unsigned char *arr __free(kfree) =3D
+> kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
+> +
 
-Duplicate of
+Moving variable assignments inside code makes it way harder to read.=20
+Given that compilers will eventually detect if we do a return before
+initialization, can't you have smatch do the same rather than trying to
+force something like this?
 
-https://bugzilla.kernel.org/show_bug.cgi?id=220152
+Regards,
 
-We have been told that Asus will release a BIOS update that includes
-a fix for this. Until then, there is a workaround on that bugzilla
-ticket to apply a custom SSDT to override the BIOS ACPI.
+James
+
 
