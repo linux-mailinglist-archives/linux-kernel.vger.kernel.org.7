@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-886741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2B4C366C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:44:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3448C36561
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D20B624A1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:29:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5FDF734EF4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6B432D0D5;
-	Wed,  5 Nov 2025 15:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D88332ECF;
+	Wed,  5 Nov 2025 15:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SuLYuNMQ"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jUpOxv5H"
+Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7757321440
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97FF332EA8
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356323; cv=none; b=oEnRnhm37D0S1NUy4dZilcK0FyYJb5x+s0ZpH4h5bfNE6XmQkLBMK7hA7eXr6Hzwj7cVSdumMkoYYATop/HtbV2+6nY3YNfWXT0vFtImLTnNJR0FlloGZouuIv3KzntBN3k8ETkUOMalq8hl5jtCWYJs4uB+3o9Qo9VBC3QBXTU=
+	t=1762356388; cv=none; b=SDWgAmpfUIUHxzDUzpo33Nd0sL1ztasd7a98PQKnGXzbeYVbphFrUgCwwE5h4ARYsdUmx5BYJSDkqCfldXFnm00lMdl6rSs9iEbccru8ctgPuX6m/7XSody5peUbB9xRKWtn7T/JP3DVO5LooZQqyDmuPvAhO1UhtKy2shtv1DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356323; c=relaxed/simple;
-	bh=jVa87eKGqVF+l20ajBfd8ThYEZLpCOEp5uPFz1FOVig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bFtBNAznedaobNa2hPVyu1EzpC116//Z9JVvM4pJarm2gUM5eGbAZ3aLsGL1OuAhw+uT7vN/xzjMVuAB7r0ku/vAy6nzzxKMxI0KIMk53vQNrWW8X8pksUVInXLOFRe3FiVGpZgoWfoc830GT/7962eRzROE3m+JWMs2/AUTD38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SuLYuNMQ; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-94868b991easo61523339f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:25:21 -0800 (PST)
+	s=arc-20240116; t=1762356388; c=relaxed/simple;
+	bh=SSQ7q/QVWOhMCqpgLPKrZUWF3IclLZF5T6er0kRCaAw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HnrkNkg5FFaUUf0McTjLic6LMpZmouNdHlB6EOZ2tCY1cUAGqvR8hL3wd6jgItA9NL3a6ljTjo8v4+qMaNmD/3GbpyyMDj8c0wh7B789pKdrPLFK3Js8GW5Un0txa4iiRzAMeFrrFhCH+dtoCZdzCDu5oyCIIWV6thRYtoefRlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jUpOxv5H; arc=none smtp.client-ip=52.28.197.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762356321; x=1762961121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=487sI5AbJzpMbYjr1CjDcFAjiYiuuI8y81LMpEqcmVA=;
-        b=SuLYuNMQsvW2Wzy7K4mLUkR0AoGJNXWXa0P0gDdbBgbZx3j0quIPnpr3upInBfCwFn
-         RPwNLHQK5wV356rmAywxjbeB9tJDB7v1cnTrIkA4STiha2ORKBmLmOQApD4kxn5kuFCQ
-         4QGrxLeifnYktJ67DjF8XFqNvklzewbeDSW3vKwsBMdWVgq9GETI6XOc72jOBotOHN13
-         OmCd57PuNi0/2jb9ryaH3q/6zjtXi51CwEQe3Cg4rCnYA6J/gGVEMpj1XD5gZ5x9ZjIL
-         kRwcPBtDaPLpwInKxWRkZnnIJs1Ej/SarM1CXuLUfvUsyKg2gbiV/lldR+HSu6QIDW6z
-         fUHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356321; x=1762961121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=487sI5AbJzpMbYjr1CjDcFAjiYiuuI8y81LMpEqcmVA=;
-        b=widnuMVWzNaNh6qrIJ/wzLkpMd2rFJkJPaCMFEIPdljEt1PrCf6ifCjPKuziylvtRQ
-         jnGiDBZPqiRuXftjHZgGvnIYhDxOKXK3xww6eszQm1vRjeA/42kArQEtS2ykGv3+BFgX
-         i/ns0Q9h9tYJeoG9htDL+YnuE1za6bBw4S4jSBCW/v5oRO7MMiRWKbI2XHfpZRKJUqJI
-         KAfqQkETzNXNJaVUz5bcs6lHrNYixU1GFpSND40dY0ku5TWaKG/d/+3YuF0BmsjQLDG2
-         QwWDL50yxKgr10/eFyr2hFytoZ1zLnfLC92RaOP8BgIkGh3AAt9XTXHRZl4XccTtTK2l
-         wJ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjPkqyoO8aie+6T8mCoKVAOjnYJjZoAFKwQ+RUgdQDC8o7/R/68BsULdCFhDc0YvidxAQ+Jwn/OFt04Gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKO34FqWE4awCqeTnDSoP3HaBgaai/uyQaQAXo1SASWfLhNykp
-	OawD5roehAowYnYE1f660h+xW9LspuP92bN7l0pxeBlW82x6dq+yNgrb9pReCLJHZRQ=
-X-Gm-Gg: ASbGncsuSZKDSAuNR6MANxz2YVJ3ZhBkBt82bs2OvanG7qL8ouHXGmRPGNfJpHT23TV
-	QuBt46iq5SbzxsDVFoWQT+LMjMcq+wwRnF242MSoBL10BnplpRh4tRbPnkru5vGnNemUBTHeoaS
-	ByW3mWCkdL7NPb3gUmCJ/npWZOuN1BVa69X57RYEWAmrfIXY1Y8lZRJR4s1Mv3pb5u0K9WPtDXb
-	r+hpggMTwSdTH7yrKKCEK2aMozPZMTBNoAwkpyKPcW8qWQ75OfAOjiGTyFewyaTtKKQs4UKqdY1
-	hcB3yAwQmcLjo9Tb9HfYEDPpCIFREEBHhE3+FQbLGGkT/SLB2UotzYGXDq1C4wVqEdiuB6YV4vP
-	CpVvYsQkJplNEjbF1QqRDui+8Ra+FIHZcQdIG8AVWEndNn5dLhMMIcA3Goow+uNrY5bHxt4Uq
-X-Google-Smtp-Source: AGHT+IGc9ECZf5jYK1jLXUdJ3FXQag+q/dzClLumbg8vy2PbyYvXZm9bHKrc58cJrzWZLVcyD9QYcw==
-X-Received: by 2002:a05:6e02:174b:b0:42d:8b25:47ed with SMTP id e9e14a558f8ab-433407a705bmr56303455ab.6.1762356320939;
-        Wed, 05 Nov 2025 07:25:20 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b72258d620sm2536362173.8.2025.11.05.07.25.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 07:25:20 -0800 (PST)
-Message-ID: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
-Date: Wed, 5 Nov 2025 08:25:19 -0700
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1762356387; x=1793892387;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xkbNmLVUT1dr514xflNSoO0g3w/dEBmsveNAP0bT4u0=;
+  b=jUpOxv5Hr7to7G4ueIXY5ui9TfCeAzQlW3X0mjtZ1p6AUcX8iL27+LYs
+   g2gi6yXz4u18qjjL0T8lta8pkhJDBBOx5FIrgI/MJB1VP26IWK2Hn3+Go
+   2yycruyklAp7UeTu1jCuMW4kscCXqdkm/Nfq2RYoRCw/xPpeeB1iWRarX
+   mqCdCizWjMrpK7tmbEKK9ywpXXtm46CU4qqWaRwllz6mupz4qbl0xn1tP
+   ljkJyzzty+cZA6bxMvDdombsZvA95M0yD0fAzTspH+EFrgQWjs6di7jep
+   fOFCOrsvBoG4AWy2mVZicDoUuGc0MbOfhrx6sS6UE2+ePOB/aAoZmqUTD
+   g==;
+X-CSE-ConnectionGUID: 8oqogEt5TvOBDtmyKHXB+A==
+X-CSE-MsgGUID: rhlpQdHxSTK1bEi/8kqXnQ==
+X-IronPort-AV: E=Sophos;i="6.19,282,1754956800"; 
+   d="scan'208";a="4618646"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 15:26:06 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.234:6235]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.3.67:2525] with esmtp (Farcaster)
+ id fd38830e-8cbe-47e2-a4e8-8e3521145a32; Wed, 5 Nov 2025 15:26:06 +0000 (UTC)
+X-Farcaster-Flow-ID: fd38830e-8cbe-47e2-a4e8-8e3521145a32
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Wed, 5 Nov 2025 15:26:06 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.223) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Wed, 5 Nov 2025 15:25:59 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: <kprateek.nayak@amd.com>
+CC: <mingo@redhat.com>, <peterz@infradead.org>,
+	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
+	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
+Subject: [PATCH] sched: Optimize core cookie matching check
+Date: Wed, 5 Nov 2025 17:25:37 +0200
+Message-ID: <20251105152538.470586-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] zram: Implement multi-page write-back
-To: Yuwen Chen <ywen.chen@foxmail.com>
-Cc: akpm@linux-foundation.org, bgeffon@google.com, licayy@outlook.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, liumartin@google.com, minchan@kernel.org,
- richardycc@google.com, senozhatsky@chromium.org
-References: <tencent_85F14CD7BA73843CA32FF7AEB6A21A6EC907@qq.com>
- <tencent_25F89AABFE39535EF957519750D107B7D406@qq.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <tencent_25F89AABFE39535EF957519750D107B7D406@qq.com>
-Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
-On 11/4/25 11:48 PM, Yuwen Chen wrote:
-> For block devices, sequential write performance is significantly
-> better than random write. Currently, zram's write-back function
-> only supports single-page operations, which fails to leverage
-> the sequential write advantage and leads to suboptimal performance.
-> This patch implements multi-page batch write-back for zram to
-> leverage sequential write performance of block devices.
-> After applying this patch, a large number of pages being merged
-> into batch write operations can be observed via the following test
-> code, which effectively improves write-back performance.
-> 
-> mount -t debugfs none /sys/kernel/debug/
-> echo "block:block_bio_frontmerge" >> /sys/kernel/debug/tracing/set_event
-> echo "block:block_bio_backmerge" >> /sys/kernel/debug/tracing/set_event
-> cat /sys/kernel/debug/tracing/trace_pipe &
-> echo "page_indexes=1-10000" > /sys/block/zram0/writeback
-> 
-> Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
-> Reviewed-by: Fengyu Lian <licayy@outlook.com>
-> ---
-> Changes in v3:
->   - Postpone the page allocation.
-> Changes in v2:
->   - Rename some data structures.
->   - Fix an exception caused by accessing a null pointer.
+Early return true if the core cookie matches. This avoids the SMT mask
+loop to check for an idle core, which might be more expensive on wide
+platforms.
 
-Please either finish the patch before sending it out, or take your
-time before posting again. Sending 3 versions in one day will just
-make people ignore you.
+Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+---
+ kernel/sched/sched.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-This commit message is in dire need of some actual performance
-results. This is a change for better performance, no? If so, you
-should have some clear numbers in there describing where it's
-better, and where it's worse (if appropriate).
-
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index adfb6e3409d7..381cd561e99b 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1432,6 +1432,9 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ 	if (!sched_core_enabled(rq))
+ 		return true;
+ 
++	if (rq->core->core_cookie == p->core_cookie)
++		return true;
++
+ 	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
+ 		if (!available_idle_cpu(cpu)) {
+ 			idle_core = false;
+@@ -1443,7 +1446,7 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ 	 * A CPU in an idle core is always the best choice for tasks with
+ 	 * cookies.
+ 	 */
+-	return idle_core || rq->core->core_cookie == p->core_cookie;
++	return idle_core;
+ }
+ 
+ static inline bool sched_group_cookie_match(struct rq *rq,
 -- 
-Jens Axboe
+2.43.0
+
+
+
+
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
 
 
