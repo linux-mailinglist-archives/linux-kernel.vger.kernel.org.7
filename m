@@ -1,131 +1,190 @@
-Return-Path: <linux-kernel+bounces-887288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2824BC37BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:35:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78DBC37C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:37:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99A718C6F81
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13BCB18C6684
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D191434FF6F;
-	Wed,  5 Nov 2025 20:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C0934886A;
+	Wed,  5 Nov 2025 20:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2bZSqg6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVCDzFWs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC39334CFDC;
-	Wed,  5 Nov 2025 20:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19848333452;
+	Wed,  5 Nov 2025 20:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762374742; cv=none; b=IEO4XDWsd8acGIPB41SGm9V7x9KzQaiafpF9gK5Zf97w6jdh+L03t8LvLBo/5oLsd/Bt7CwTjxnuBzFO6n33wNUY+vUneXLZy4cinI3SYuZqxTSl2/PB7wHNtLH4lj0VAMq1BtP0hBqfX7w+G3OQKjmZslayXb1D20XgSZxs5mg=
+	t=1762375050; cv=none; b=IVL1KT7AiPE+2FSh7rRJlz/GdJSxl7ItuUgK8i+WZJdeQsWnX4D4ka8s1cpZlezgikbjj1CAyHHvufCityMsYJN2Uji+sn9lR9AgD46L1nr3ANCw+zMVuXiRtzEGxVNnRz68NwnMqtYTwoETMahyq2CbELpc8rfQCrccRmEx5v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762374742; c=relaxed/simple;
-	bh=aJyIfG6g9+3VDV5coLmO7dbxbwXJBSKpYVjzcCHpIds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fzLEoFOMbecjSm+eV9diXkuattIGxdb+32UkcI9dhjUXKEpORUZE+HdZA+25HYb+Hdy9kfPSAng/aMZBUWAVOw0PKm0RKNz+HuzWfCOQDKkobox/c6a9fX26ZDduOVjWU3RkxAvukHQ3o28utBD92SFMgMLpkm6AxsdI1ZZE2B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2bZSqg6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70EC2C19421;
-	Wed,  5 Nov 2025 20:32:21 +0000 (UTC)
+	s=arc-20240116; t=1762375050; c=relaxed/simple;
+	bh=UTReFefAF+6gXiQ2Z4l2YL1BSXnOxNYuKlBMTtxjWIs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VMJbRKoBfog4zAy9ix2YpQq8dQeip5c34lZmj6Q7mK8oAS/aS8mS35Rj2RGU4T8chAja9MeRerPhZmqFR6IoyaQ0QyEYC3Z8Qq04veVsb7D9jL7OM8tg6CtM4HMGzxFslLkzHluYPx4kkWU3pbk0QdL9FlaZQPdFnXWQTivnu8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVCDzFWs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB13C4CEF5;
+	Wed,  5 Nov 2025 20:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762374741;
-	bh=aJyIfG6g9+3VDV5coLmO7dbxbwXJBSKpYVjzcCHpIds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G2bZSqg6l9PPM5qYpntafEwkVG4YOoE+G410qYshznWVMhYd2xKmxOqDJ3IvVF5nd
-	 bno1xlTnI1yGqkKdeV+M++pHH9/KrALffQNRjmXFGpkG2UNFvIMU+QVi1YScTuMvxy
-	 fj1Egd8MJq8GY8NzAp65ByzFF8ADdy9R7kjFbwTmi7aZ3L1w7Ovu/nW18GHuFppaSN
-	 7xc4WDcLuOZs7GET0LsfAnwPaOeHlkrtBt9RSw4qgNTMTekjb2S3pUWlhJRu0VI/vC
-	 rgPOGBM6CkgflQe5xn4x1syEFgqhm5eAkY/dPmI2j030zMyJH7CuD1yOV7eVPZj7Gp
-	 dr30vTLRW5MIA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id ADB1BCE1063; Wed,  5 Nov 2025 12:32:18 -0800 (PST)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 16/16] rcutorture: Make srcu{,d}_torture_init() announce the SRCU type
-Date: Wed,  5 Nov 2025 12:32:16 -0800
-Message-Id: <20251105203216.2701005-16-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+	s=k20201202; t=1762375049;
+	bh=UTReFefAF+6gXiQ2Z4l2YL1BSXnOxNYuKlBMTtxjWIs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HVCDzFWsS3mRiRwZ9n4zO6J8K02zYN0I+IDaIP/Qz2UQK1klAzX7Nql2a+Lq88N9S
+	 1QIAM8LMu7LN4W3ABBVxdIFeN4eP3A5H7zln5NUyCTdJdhtcJEFCzoAzjXkqNvlNZy
+	 zBGQW3SUx1QyIwIF4KPwQlGCYHquKyutKQr1CkQRqE+ETagIJLGGt2kfh+f39GN8qZ
+	 4tZaPXQTIymYqgRNXKvJYKFNVcc+H8u1atTD5WUN3YZlRMiH9cVCYzOj4oF/+u6N4m
+	 qd2tvSpxS5PDZ4df5JxMXxxQ21LeK45fJChPRSdQXeJggqljFmafCalkdLc9Ec6DXG
+	 6N4AgiuUUz45A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Shankari Anand <shankari.ak0208@gmail.com>, Jens Axboe
+ <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Shankari
+ Anand <shankari.ak0208@gmail.com>
+Subject: Re:[PATCH v2] rust: block: update ARef and AlwaysRefCounted imports
+ from sync::aref
+In-Reply-To: <20251104171316.6672-1-shankari.ak0208@gmail.com>
+References: <20251012142012.166230-1-shankari.ak0208@gmail.com>
+ <2EAsrR9pInr4r9ZEowYQNdH4LHuonKsTkjkqwn36aqxjRO7jOAlYZOaWyRzgdl-YU_bxzR50-VFWQHwcl479iA==@protonmail.internalid>
+ <20251104171316.6672-1-shankari.ak0208@gmail.com>
+Date: Wed, 05 Nov 2025 21:37:19 +0100
+Message-ID: <87tsz86wsg.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-This commit causes rcutorture's srcu_torture_init() and
-srcud_torture_init() functions to announce on the console log
-which variant of SRCU is being tortured, for example: "torture:
-srcud_torture_init fast SRCU".
+"Shankari Anand" <shankari.ak0208@gmail.com> writes:
 
-[ paulmck: Apply feedback from kernel test robot. ]
+> On Sun, Oct 12, 2025 at 07:50:12PM +0530, Shankari Anand wrote:
+>> Update call sites in the block subsystem to import `ARef` and
+>> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>>
+>> This aligns with the ongoing effort to move `ARef` and
+>> `AlwaysRefCounted` to sync.
+>>
+>> Suggested-by: Benno Lossin <lossin@kernel.org>
+>> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+>> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+>> ---
+>> Changelog:
+>> v1 -> v2:
+>> Rebased it on top of the latest linux-next upstream commit
+>> Dropped 1/7 from the subject as it might lead to confusion of it being a series
+>> Link of v1: https://lore.kernel.org/lkml/20250716090712.809750-1-shankari.ak0208@gmail.com/
+>>
+>> The original patch of moving ARef and AlwaysRefCounted to sync::aref is here:
+>> (commit 07dad44aa9a93)
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+>>
+>>
+>> Gradually the re-export from types.rs will be eliminated in the
+>> future cycle.
+>> ---
+>>
+>>  drivers/block/rnull/rnull.rs       | 3 +--
+>>  rust/kernel/block/mq.rs            | 5 ++---
+>>  rust/kernel/block/mq/operations.rs | 4 ++--
+>>  rust/kernel/block/mq/request.rs    | 8 ++++++--
+>>  4 files changed, 11 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
+>> index 1ec694d7f1a6..a9d5e575a2c4 100644
+>> --- a/drivers/block/rnull/rnull.rs
+>> +++ b/drivers/block/rnull/rnull.rs
+>> @@ -17,8 +17,7 @@
+>>      error::Result,
+>>      pr_info,
+>>      prelude::*,
+>> -    sync::Arc,
+>> -    types::ARef,
+>> +    sync::{aref::ARef, Arc},
+>>  };
+>>  use pin_init::PinInit;
+>>
+>> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
+>> index 637018ead0ab..1fd0d54dd549 100644
+>> --- a/rust/kernel/block/mq.rs
+>> +++ b/rust/kernel/block/mq.rs
+>> @@ -20,7 +20,7 @@
+>>  //! The kernel will interface with the block device driver by calling the method
+>>  //! implementations of the `Operations` trait.
+>>  //!
+>> -//! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
+>> +//! IO requests are passed to the driver as [`kernel::sync::aref::ARef<Request>`]
+>>  //! instances. The `Request` type is a wrapper around the C `struct request`.
+>>  //! The driver must mark end of processing by calling one of the
+>>  //! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
+>> @@ -61,8 +61,7 @@
+>>  //!     block::mq::*,
+>>  //!     new_mutex,
+>>  //!     prelude::*,
+>> -//!     sync::{Arc, Mutex},
+>> -//!     types::{ARef, ForeignOwnable},
+>> +//!     sync::{aref::ARef, Arc, Mutex},
+>>  //! };
+>>  //!
+>>  //! struct MyBlkDevice;
+>> diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
+>> index f91a1719886c..8ad46129a52c 100644
+>> --- a/rust/kernel/block/mq/operations.rs
+>> +++ b/rust/kernel/block/mq/operations.rs
+>> @@ -9,8 +9,8 @@
+>>      block::mq::{request::RequestDataWrapper, Request},
+>>      error::{from_result, Result},
+>>      prelude::*,
+>> -    sync::Refcount,
+>> -    types::{ARef, ForeignOwnable},
+>> +    sync::{aref::ARef, Refcount},
+>> +    types::ForeignOwnable,
+>>  };
+>>  use core::marker::PhantomData;
+>>
+>> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+>> index c5f1f6b1ccfb..ce3e30c81cb5 100644
+>> --- a/rust/kernel/block/mq/request.rs
+>> +++ b/rust/kernel/block/mq/request.rs
+>> @@ -8,8 +8,12 @@
+>>      bindings,
+>>      block::mq::Operations,
+>>      error::Result,
+>> -    sync::{atomic::Relaxed, Refcount},
+>> -    types::{ARef, AlwaysRefCounted, Opaque},
+>> +    sync::{
+>> +        aref::{ARef, AlwaysRefCounted},
+>> +        atomic::Relaxed,
+>> +        Refcount,
+>> +    },
+>> +    types::Opaque,
+>>  };
+>>  use core::{marker::PhantomData, ptr::NonNull};
+>>
+>> base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
+>> --
+>> 2.34.1
+>>
+> Hello, can this patch be reviewed?
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/rcutorture.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+I think I already ACK'ed this patch [1]. I can't apply patches for
+block. Jens or Miguel should apply this.
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index a52e21634b28..11906c927321 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -701,10 +701,18 @@ static struct rcu_torture_ops srcud_ops;
- static void srcu_torture_init(void)
- {
- 	rcu_sync_torture_init();
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
-+	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL))
-+		VERBOSE_TOROUT_STRING("srcu_torture_init normal SRCU");
-+	if (reader_flavor & SRCU_READ_FLAVOR_NMI)
-+		VERBOSE_TOROUT_STRING("srcu_torture_init NMI-safe SRCU");
-+	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
- 		srcu_ctlp = &srcu_ctlf;
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
-+		VERBOSE_TOROUT_STRING("srcu_torture_init fast SRCU");
-+	}
-+	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
- 		srcu_ctlp = &srcu_ctlfud;
-+		VERBOSE_TOROUT_STRING("srcu_torture_init fast-up/down SRCU");
-+	}
- }
- 
- static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
-@@ -920,12 +928,21 @@ static struct rcu_torture_ops srcu_ops = {
- static void srcud_torture_init(void)
- {
- 	rcu_sync_torture_init();
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
--		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
--	else if (reader_flavor & SRCU_READ_FLAVOR_FAST)
-+	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL)) {
-+		WARN_ON(init_srcu_struct(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init normal SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_NMI) {
-+		WARN_ON(init_srcu_struct(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init NMI-safe SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
- 		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
--	else
-+		VERBOSE_TOROUT_STRING("srcud_torture_init fast SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
-+		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init fast-up/down SRCU");
-+	} else {
- 		WARN_ON(init_srcu_struct(&srcu_ctld));
-+	}
- 	srcu_ctlp = &srcu_ctld;
- }
- 
--- 
-2.40.1
+Best regards,
+Andreas Hindborg
+
+
+[1] https://lore.kernel.org/r/87cy965edf.fsf@kernel.org
 
 
