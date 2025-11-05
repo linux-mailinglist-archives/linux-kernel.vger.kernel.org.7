@@ -1,235 +1,582 @@
-Return-Path: <linux-kernel+bounces-886001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E005CC347B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:32:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3F9C347B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70BC34EE42A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46F53AB61C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E72D373F;
-	Wed,  5 Nov 2025 08:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225C623B605;
+	Wed,  5 Nov 2025 08:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SQ/onGAs"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010063.outbound.protection.outlook.com [52.101.61.63])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="x0vm7l6O";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="FmL88YNS"
+Received: from esa13.fujitsucc.c3s2.iphmx.com (esa13.fujitsucc.c3s2.iphmx.com [68.232.156.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CAC23B605;
-	Wed,  5 Nov 2025 08:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B581991CB;
+	Wed,  5 Nov 2025 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.156.96
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762331461; cv=fail; b=iJyQHlMcgSLGN8G7DBaD9MhHI7PFvxFWlgzBig/8Fsb7NcQKUp/TycOVjzPCvsYQrvhG908Ya3cS6Ql5I5IpNx1YjRJFq4Ss/4pOIn14abARr87FyxUSlumJJfhm+LcyxAWqIfJebpmc8ZW3WGuD7S/SRA1eglwFdxf6/pgueyg=
+	t=1762331563; cv=fail; b=ecZ5e0Mv3TI2qxooI9qRXaX0/RWzCmXuHM/uVNHbUWLuwQW2r7lae09oCbtlVYgjp9zVEeRGERCetyoaS5w3pyDBZxXhBnQMlkB74zm5Va2Wn6QjilqeKGg8BWXu0EOxzjFxo/z5gck1kDN5Aet9WrOerk0hS8AdFSK2/hdYfaQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762331461; c=relaxed/simple;
-	bh=F2j2bN5tOORsk+UtnPU0D0N+QOhhV3r2CLmwBbmn5VM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WGRyeq/wtjlw3vh9zsq22dwHqlxIpVG4Esf55ppNBUs4IZCiJlrFjGQPSuAt4N0zCUpEHrgy5lrGtWJSKk3CYOsFRj6Bm58sMX+OQvthTG3TE65OwlpLJgeuYSG+nnnIPC7M/vKtUKHDXp/QgJ8EKIGhQOyItiqeObzPlLEU+S0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SQ/onGAs; arc=fail smtp.client-ip=52.101.61.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1762331563; c=relaxed/simple;
+	bh=e6SZ9S8LJZcI7h2O+RQP4d0IV62bgygFXQZz8IpwNP8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=S0HzUCS9Awy85QPKarwgOnjyMk/7ITYf2crKx1R6czQBdKGaydBhl6EvO42ZRkhGhfsiCBUl2m+WCmzjXnmDFHZ4+7uifl6ZqfRFosKfa6vszhxofVm56F/g07jhuE9j/7cuhROuQQDTMEbmYXFao3wI1tKHN6tJNpOYYITpKRU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=x0vm7l6O; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=FmL88YNS; arc=fail smtp.client-ip=68.232.156.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1762331561; x=1793867561;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=e6SZ9S8LJZcI7h2O+RQP4d0IV62bgygFXQZz8IpwNP8=;
+  b=x0vm7l6OlfSLwhjmsxiAqS+SKKR7NzjMLhJab04UNYEY1noTHjcCoVFj
+   IdrMTKM/PlI6pA3WdX9+u692AVSgs6aPQ+ylK8WYBf+vcTRhjS7dVfqL9
+   3vsHTlsLARutaSR/O6ol66GJomOd+k04oxE1CKyd9pS7w6PPg7lSf8/p1
+   7LEn/llm0Pcha/OPI7w+ALLMjMCRYmdx6CQbgNZoQX3wxZSX1YdeBS/OI
+   XpJFaAVDtxSlwHTQ9XwQd8J9hbdWWvDwaeU9fAn8XgDU1cdwmFiGr4rKK
+   b13lnMVf4ikt8o3bW8fgnZg3QU3s7i0APo5poH4zkfiPx821NPhhtaROD
+   w==;
+X-CSE-ConnectionGUID: tcWFhOHvSY6YokHnXw3iCg==
+X-CSE-MsgGUID: 9vK3edvGSDmWvxp3JHpXxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="172623419"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754924400"; 
+   d="scan'208";a="172623419"
+Received: from mail-japanwestazon11010025.outbound.protection.outlook.com (HELO OS0P286CU011.outbound.protection.outlook.com) ([52.101.228.25])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 17:32:24 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bums83ud3S0Uqw3B4W/NW0joCTUI+OAk530A+8HHR2RAG0dNemD5yY4z8OZ0t4T4aKFx1CS13XXC3YdMBKgzUbljVBujFwoNhV2p9TvUSFeyjHZwGZG8/xI68IWK1OM4vB9XsvNIc5AzzZASjoMCJM3kJ2LlQzPxY9TivYeEDttztcQfwk0+Ro0m14KBpGu6ZTxY+CM65hUTwhP/pGYLMZo9GH0QJsSteladcjLk+4RsOmIZSDgtCLEyd9Vmo86ioe1PqJ3pt+Z3PR5SfcCznxc5BSCdgIwEPIWeyDuKkwf+G69SpOF604TnZWx/1N7mgQ5gQe9EOxnHC3N8PM5Z8g==
+ b=I92rX/SnuGrdKRTPYt2fjgRoeqXuRRtum5QWZydoF/7d7EdgvqvYqOnPirqE55IV1pPs2YLeMgS+PBNt7k8c5oftlCK285RYxRkqeVmQDqrbBjS2PSFEPPc/mcJhBtineO2jnsuzzeEEhNfSznThpHQ8IuacyjoW97pbQCUHjyRPN+uRMAGBctOeMVz23fczj1n1Pvdn0ADjIK0Ak5PSW0/QXNho3ElP2y+Gy9dzldYiDZGhoVGIjRGWl1BpcWfv5uVPm7lOOrB358+Yu2+Z6wN3avyjKN4UUaK6cGIUUbJoV7D0xP0fef5gVDErRfvn5XSEK14FJFfXOrMgTbN6LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H4q0txgax2kuYLnBJh+SL+9ZfuwpvhxQAzBGsODDCN4=;
- b=sfgneD1PONw0xl/lMhy0HgigUrVdtYHNWvA3G8Pz9WhEJvJF7fsvELANNCVkfie8yKO+R2AhxD80E5c9hXCqY2hHBhhYnFoWCk/ykKTkVYdl3szRI7kt5BAHwAw3LX50Qn99s3EGg1kLE0oedg7Tv9rKmJYdIPxipftzzqCZBCeXiSFRPGprA2MIl5rAc/sdyz+L+4i1TmlZWrc+uCEQENl05lCR1pWSn5i3lmEFYHEHYIpKhqXNFRhNGD3xWJxu/V5oOB8FyUVMm0cfuhGXQ2BIjbE4h7IKPCTZtcGcWK8ECditYH9Me/q3H6TSGpzHN3o/57RBOKhj5DGfVCkctg==
+ bh=WYlp6GvbrHMp89MN1H7tBo0hdr2V36Lec8HKcmNpLPs=;
+ b=i4vtkMaFAXruNZxLqC5Bdv/E8BBpoHk2a6P+x/tYw/uI2ixM2ROUkLjZORkfELz0hyZAQJObyYSH72hkssyILFlIcmKwxNW46hG8tEzQNIQLItNmBh+NwczOSYpvAdRSOU5gDvQ6H+4ixsDrl8S0bVFQXMcvURpQET0V4k7dfYfioeuKJ4yBxrm+ILFcOi0HsKckdYrbAMvi51AoCEZKFrpaFdCybKKi7N27i1JQkq7JK8q6MCWktFgB82D5c9sOM+W29pRaewhY0FTNT3jnSMn9ldRpCzQlCMGdmbQox2ByL3wrbW4S+TFy8bgpQzdzIw7zJbv6tZIuwqDFrK4y6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H4q0txgax2kuYLnBJh+SL+9ZfuwpvhxQAzBGsODDCN4=;
- b=SQ/onGAsrl0mD2XaCW2mCn8E1wCRKk5uJGK1MWHVMsm/D+nPbzKQgxEx1UtL7r0CxhVFN35lL0qqbnfoIAzhOconJTspwIdjz1J2nUfvNqfCQc8J0N7VvJJectySzLA56ojKyjy9mviKBL4BQJzvIYWMuwkq6Ne7NbOyPlQDbEY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
- by PH0PR12MB7908.namprd12.prod.outlook.com (2603:10b6:510:28e::10) with
+ bh=WYlp6GvbrHMp89MN1H7tBo0hdr2V36Lec8HKcmNpLPs=;
+ b=FmL88YNSLC+7uXQZ6ro5FHWS6R4nUYjdtJv01ORcIehAVFSJ3rZyPi6FNOAE8c2CSmTD8TD/8tnvcgeuKClRAhQuyHn7KnOykohqNZqCiTEH8MDjhNQAsNQGm2T7fvbxi7CC+CKokFitbDmoLjNJTvSjuFQE9pR45uVmVggzaTCMVG+MCgzNGZCvcGVecaoM+mZi5L7bGBDMPIL3jRe1dazmxt5Ib3VsMDrMCp8fMiIcWJwucy++uBWKgHHswJgIFXub2NesL95HXl8ffJ2xGrv3IO+tCgXtaActSdBVcPaEyjC7aI+GRB17NNp6jYJsB36et3jVc3SBEz5cCJNlTQ==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by TYCPR01MB10116.jpnprd01.prod.outlook.com (2603:1096:400:1ec::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
- 2025 08:30:56 +0000
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79%5]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
- 08:30:56 +0000
-Message-ID: <142695fc-324a-4916-a569-e11d8342805b@amd.com>
-Date: Wed, 5 Nov 2025 08:30:50 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v13 13/25] cxl/pci: Update cxl_handle_cor_ras() to return
- early if no RAS errors
-Content-Language: en-US
-To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, dan.j.williams@intel.com, bhelgaas@google.com,
- shiju.jose@huawei.com, ming.li@zohomail.com,
- Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
- dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
- lukas@wunner.de, Benjamin.Cheatham@amd.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
- ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-14-terry.bowman@amd.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <20251104170305.4163840-14-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0128.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c6::16) To DM6PR12MB4202.namprd12.prod.outlook.com
- (2603:10b6:5:219::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Wed, 5 Nov
+ 2025 08:32:19 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 08:32:19 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
+	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
+	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
+	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
+	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
+	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Jeremy
+ Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>
+Subject: RE: [PATCH v3 23/29] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+Thread-Topic: [PATCH v3 23/29] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+Thread-Index: AQHcP5gi3HY59E83yESxgvOX1gpTFrTj2YYA
+Date: Wed, 5 Nov 2025 08:32:19 +0000
+Message-ID:
+ <OSZPR01MB8798C425E5A820C2E0AAA7BC8BC5A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-24-james.morse@arm.com>
+In-Reply-To: <20251017185645.26604-24-james.morse@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=a2991e45-b8b1-42d1-88f5-c8ade33ba2ae;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-11-05T08:15:33Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|TYCPR01MB10116:EE_
+x-ms-office365-filtering-correlation-id: 35466d70-c6d7-498e-64ed-08de1c45d596
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021|1580799027;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?bE1jNlpEUDd1NUNlcmJUcERDakhRU2MyQlBrWjZsYysvMXc5eEpOQ1BG?=
+ =?iso-2022-jp?B?UDkvaFhiNXVOb1NFRjBqM3UwUlZFRC9haEFkNEk4bnlUR243aWlJY2U4?=
+ =?iso-2022-jp?B?VUU0VDRxdmcyMnBRNkp2bC85UUtBSmtEL2MyWVBNM3NFN213cFAvNzlM?=
+ =?iso-2022-jp?B?VmpEczloTnhsa04rSU9JcnpPbU9SUDI5YWNHckhsbEw4QThqTGhwK1A3?=
+ =?iso-2022-jp?B?a2lBUUdlQktwWW54YlRmRzJyUTFjVCtSVmpDeGtnUTY0NzlNak5XTTFh?=
+ =?iso-2022-jp?B?dkJwRWo5UE04Y2IxeDB1TWxkL2FGeTBwTFJvc204a2ptSHNPNHQwZUNv?=
+ =?iso-2022-jp?B?L3FsK014Q0FVa1Jjci9ETnUxdDJ2NGo4S3paeUIrc1FkZGlKL3o1dVdQ?=
+ =?iso-2022-jp?B?LzVRaUM3UGdsN1NMWkZPTWhPMGFXRE43bDZ1K3p0Q3ljUllvMUZ2WEdH?=
+ =?iso-2022-jp?B?VUZnSDZXaUNvd3lxc2N1cUdCS3B5WkFjREFPOEd3QWVBUnFWWEwra212?=
+ =?iso-2022-jp?B?QWg3RW9sRjFDOEE4TTMzUGQraUd2VWJaZXpPRkowSUJ4a0pwS0N0dFBT?=
+ =?iso-2022-jp?B?S0F6ZGMzOElZTU9CQ3N1L1lKNE1jRlB2VlRZaE9tSHVOQzlYVy9RNlRy?=
+ =?iso-2022-jp?B?cnNVSGdlYU1SeFU0aUlXcllGN3laQzN0eHRlMkpobmw0a0orNjdqU0Z2?=
+ =?iso-2022-jp?B?dTgyNDhYU2RZYkJKNFcxMFF3RHRaTE1UNFNZQnlVYmZnM1ZKRFNKS244?=
+ =?iso-2022-jp?B?dnkyR09rTFdVUHdGaUppQXVoR0g0L3lMUjMxK3lvUnc3RndycDB0VXBy?=
+ =?iso-2022-jp?B?VjUwaU1GdTJkRll2V1IrTU0yczRvb05kV1F6MkFRTnJmN2ltYitTU2kz?=
+ =?iso-2022-jp?B?TVNMV3gzUE5DWE0xandOZU9melU2OVJZaFVQbll2QndKcTBZdU1qNTY0?=
+ =?iso-2022-jp?B?QUxSSG9Pbm9vRXRHM0dkSG9rZFNpb29FWEFyMDd5bWVJbnRiaXhyNGJm?=
+ =?iso-2022-jp?B?YU1aM1kvdXd3dlM0eUlML2pJbExvUGFCS1k2VHVsa1NsMG0rc2Y1NDJh?=
+ =?iso-2022-jp?B?Y3J1dmFqc1lDNkVEYW1MZVpQZ0JodlBpMWhidkpnWEd1OWFncUdwZFFt?=
+ =?iso-2022-jp?B?SlNZUEQ5MUp3b2xRN29nTDVDRy9OOHloY3pFSDUzNnp4Z295eFRUc0xX?=
+ =?iso-2022-jp?B?RFR6UDQvSnFxUzZoeXNVd0w4MW5DUHlyRXFlQWVUODVtaFV3RmZ5emQ1?=
+ =?iso-2022-jp?B?OFBlUlFJUmZUeEloRldaR1BIQjZxQm1QYTZWQVFtN25pSG5BS1RCc0Vk?=
+ =?iso-2022-jp?B?bWY3U0Y1K3AyVndkYTEyMkhWNEhXOG5scmFJeUZ5dXZxaHdlbDAzQ2lQ?=
+ =?iso-2022-jp?B?WW90MlQwdklndFgrcUZldThvYXlpbTY0emZlYkVOQ1NsQTVuTFdqRzdU?=
+ =?iso-2022-jp?B?MGdvV2RHTXFDcndvWXVNQjR1VlJZOHJrZ3hzbHdzSnVSVDIyNmZxdlo4?=
+ =?iso-2022-jp?B?L1MwUVlKbk8wTGV1QVhFRXgyNW9iU3cvVjUwMUpwaHhLTC85bnJVZG1r?=
+ =?iso-2022-jp?B?Y1J1VHhsY1ZFTEs0SGlBRUZuMHhxQVVQd29NSTcvSVZsVWU1Mzk5TDFU?=
+ =?iso-2022-jp?B?U1NRbkVmemJIdDZPWVc5SmlpVHhLNnJuSDRzN2MyNk5ySFN0empnbWEz?=
+ =?iso-2022-jp?B?RG8xVjBsOSs1TEY3RC9nUDBBNVZyYlFhSnQwZlRkaWk4cVRlMjhYbkVu?=
+ =?iso-2022-jp?B?TjNoRWxwYnNqdzZnSmU4eFZ3Qk43dG9PSlRlZXcwTnBqdk5reHc5YUgx?=
+ =?iso-2022-jp?B?NW1VVStnZHYxV04wTU1NeUpiUHkrMkNBK3VWOE9VbDJqQUY5M0FZRzVC?=
+ =?iso-2022-jp?B?ZmFNQnhhKzFRelJwTk1ESVRLdDlQeTJBS054T21CNVpYUFJyMFNpenR3?=
+ =?iso-2022-jp?B?aHlJUEJIMHRSZnE3VjNWN0FlWis5Z3JaamlzNnJWNjdrM2c2MURmaHpV?=
+ =?iso-2022-jp?B?ZDNXUUJPZk0zdm5DMStVR3BOd2JXU0U4azhIN0piZXlmTDRKZDhkMk1O?=
+ =?iso-2022-jp?B?aWFaaUxERDI0Y2dOV0ZGUWY4S0U4T3JxMTRvenU1NFJQNzQ1NFkzVzdr?=
+ =?iso-2022-jp?B?dU4yWklyTHJORmZvTHdHQ2dlcUZGU2x4alR4QTY5bmg0UzE5NkZ3SXlt?=
+ =?iso-2022-jp?B?ckYyVERiaVl2d1dBV3hsK0xKM0lmMEZnNmYrRTB5TTdmUDdvYmdpS3Zo?=
+ =?iso-2022-jp?B?TzF2bFI1ZGdGQ1pGL29wVEhzTDEvRC9Qcz0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?WTM2RmJtUlF5SjNzQUQyT2ZwM084Q3ZMVEQyaENrRitXT244c3kvWlFl?=
+ =?iso-2022-jp?B?T2JMU2NmZlpKTUxVUVhEb0hpMDFETXpENElOUUxzaDBlMWs1WmN0bWk2?=
+ =?iso-2022-jp?B?SHUwMFdxcUVmaU1CakpBS0xXcysvUS9tWFFpTGg2MjcvQW5CZGhTOUsr?=
+ =?iso-2022-jp?B?UFFNUFRLUlpNRFRZNkM2SVFoNlRNL3NoKzZlQXZlcm1lTGVCUmowdUtM?=
+ =?iso-2022-jp?B?d0dlZmxQdnJjL2dQcVZBc0xnUXVlcEQvSmUyMGc2NXlIMTVURG9GTS9Z?=
+ =?iso-2022-jp?B?RndESmpiZHlieHR1eGIycjQrbzhKdTVicXJmRnhycXBRbENWRG93Qm5I?=
+ =?iso-2022-jp?B?ME1JSHZmT1kwblB2V1Y1Q0ZsbTRYTmkwN3hsNnExOWI1TGd1SnhISzd2?=
+ =?iso-2022-jp?B?b1d5RG1FL2YzTHVvOXR1ZDcyVTZtNjVBOXNZeUNVbTNWaVJxRGZXZmZz?=
+ =?iso-2022-jp?B?dm9vMGFWdzBjMW1nM0hVOWJjWnlxQlM3a2xuQ1crVS84Skd1QmIrOEg3?=
+ =?iso-2022-jp?B?QTlpRzVoaFpKL1B0Q2pCSFpRZDFMVGgxVmQvSXcwQ2U3UGlYZkhnaDQy?=
+ =?iso-2022-jp?B?a2tlZnFoR2phTlBna0Y5TTlnTXVGcVlIUkZ2QlF4MWhvUmRUZjg2TFVs?=
+ =?iso-2022-jp?B?M21vWHZ3ZXF6aksrVTBPcnF1UjEyYTRSc2pmalpqN0dqOWhMVnlQZTNZ?=
+ =?iso-2022-jp?B?NzhYcmtYdFFObXI5cHJKZFlXMUx5K0M2VFNqUkFCdUZnYko4c1dsdC9v?=
+ =?iso-2022-jp?B?alZPNXVJRmpSdDJrRUcyUDIzTzZES21lenV0U0VaNkxpa0lRNm4zYWdK?=
+ =?iso-2022-jp?B?UHFTNS91NllROW1jT0F3ZE8vWXV2TG9OQ3k1dlpUd01LcXBYS3FnaW90?=
+ =?iso-2022-jp?B?WjIwMElCWCtMMWJTOFVRZ0VMREpud2YwUzNxT2NNYlhrdFlVZS82TmFH?=
+ =?iso-2022-jp?B?Tm1KS2tVc2dXNVQ5WW5BUE43OVFIN2RhS2NxZDlCak1UY0J6ekprdVgy?=
+ =?iso-2022-jp?B?UDdaaGlhaHJaQURyM0d2OUNoNnI0RHZnMHo5dWo1T2YrMVFhd2FiRkZx?=
+ =?iso-2022-jp?B?Um1vSlh0cDBIa3hBOStDQjlOVnptS2kwUVJLVmtYenFuNlZxbUdWS3N4?=
+ =?iso-2022-jp?B?elJsMmZDaXpBQzIvUEUwcEYrMFlWK0NGMFU0aVBjWjJRL3pZRDM4ZFls?=
+ =?iso-2022-jp?B?elhhaGs5YnM3VzUvZ3BRbWxxeXIwUnQxYUgwMU9VWFBsZ29lK3pLa2Fj?=
+ =?iso-2022-jp?B?Uk9wOTI5a1hySDNIUjZ3VkVsQ0lSazJjeit6RFUzOVZneWZnU2NmL2hx?=
+ =?iso-2022-jp?B?L3JZMVhuZlB6Vm0vUnh0dS9UZ3l5RDNXTnYxU0dHOUhzZExXelR6WHd0?=
+ =?iso-2022-jp?B?dFpMZHNIYmEzWjdIVS94TjFCdi9idUtrbkd5bUsxZGh6UFRPZ1g0ZThK?=
+ =?iso-2022-jp?B?S0JDQlBxeWlrem5DY2NhM1VLd0kyejBCa0xzL0RIUHVwRXZsdW8zaDB0?=
+ =?iso-2022-jp?B?WTFaWDVoTmhFeWVmS2w1OTNRazgvRzdqUDN5Y3NSQmtKNVBQMlpCb0xh?=
+ =?iso-2022-jp?B?L3VsQWhVY1hZU2h0NHhVWithcmVaa0FSbWxoRFh4SWFJY2tWcmlhSlJU?=
+ =?iso-2022-jp?B?dkMwaUMwclZSTmZlT0R2TkE1UXZPc3pKdEdYc0d3elh1dmFKR2s4aFRD?=
+ =?iso-2022-jp?B?V0E4Z0M0c0dzUkcvRGJKSFNWVitFSlRuVjZvbFIrR1JqZzFTK25xWXhp?=
+ =?iso-2022-jp?B?ZCt5NUN5VkNic1pwTUhNUzc4c1d4Q3NNV2xpWm5rbmZ2NERNOFZuakNC?=
+ =?iso-2022-jp?B?Nm93KytIeUJVSjZ0T0JqZDJOa1JBdDZ1S2M4YUFvKzQwSkc4eWdkaVU1?=
+ =?iso-2022-jp?B?V09JUjAxV0pzcUVLZExNL1BRbkZYZ1B1NFZDSURjdEJ2VDhKZWxsM05h?=
+ =?iso-2022-jp?B?cktBWWxxVE92MHhjVkp2OFhybW5WOUFxR3JHU3F3clY3b0FweHRzTVJD?=
+ =?iso-2022-jp?B?MnlCM1lxVEhHc0huWFRnRE9TS0hZUnlBV2VheW85aTlVR2YrSGU5Q2JQ?=
+ =?iso-2022-jp?B?UXpqMmFOZk5xWnh1K2h2a2JraXRKOC9ITE1kb0dSWEtSMmVUNU1GKzZP?=
+ =?iso-2022-jp?B?K3BiK3Bva0JYc1dRMEZpNENDclBzc04zUGJJTGVZR09hbzFoaEFMOHdY?=
+ =?iso-2022-jp?B?U3pjQUovd3ZCeTdXd3RXY010SGluWlBMRWp3TEUzR1JzT0lsckVVNG4x?=
+ =?iso-2022-jp?B?Q0Rod2ZnN1JJb2dmWnV4czBuV2hCS1IzeUJ0RkZUc2hpc2xXNFlaOHRF?=
+ =?iso-2022-jp?B?Zmd0WG1oV3NRU0IydStOd1V1Y2JGNzNvV3c9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|PH0PR12MB7908:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7dac533-b0ca-4993-5ecb-08de1c45a3f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NjkwZlY4TTdNNW82cE1mOUt3d3k0Z1dzZURFT2VwNTdrT1ZqRFBLbDBMQ29C?=
- =?utf-8?B?RUR4cE9vSUpIMGdkdHZPdWp0MWVRUVM0S0RtZHV4NVYxUElkYjVVRmY0VnRO?=
- =?utf-8?B?TFp4M1J2WVdsMDdPRGJPdUR6S09SK3VIUC9EZTlISm1RbmkzL2dLZkR5ckRF?=
- =?utf-8?B?SGI2RE9kMWdsdHM4aHpBL2prb3pDbzd3bVcyNFNGTlFDdTBwUkoyU2pOTWQ0?=
- =?utf-8?B?M2htU0owbGdRWmlRTGV2VXNDNDkraEl5blcyb1hIU0VpNFVYOHQyT1NvRnVo?=
- =?utf-8?B?ZW5KUFRDWEtnU1hNa1NqYmlJaVowUmFLU3MyN1VMSkxubFVmQ2NEeGdQd2JO?=
- =?utf-8?B?TVNCV0crK2VQdGtKd0FnVE9BVENkRVJYbmU2dzM3dDFYYjhkTGlENFFOMDlG?=
- =?utf-8?B?azdEdHc4U240bTdsQU9RajJvQS9qdnU4UkdkNzFrUzIxWkw2a1BnQ093aE9L?=
- =?utf-8?B?OE5DYnFmQnhiOFBCcEZxY2VqNnlaakpEV3ZWNjU5YUIwTWVzM0ZmcTkzSkE0?=
- =?utf-8?B?NS9sV2VYZ3l4K05OeGlpaWVGenFVK3JwTTBXTE9VQnI5b3VmLzQ1Y3N4S1hH?=
- =?utf-8?B?NzMyeGlrbTFtWmpibEhCU0o2UjlFVmtyWk15MVBwbTRWQVBPSUEwY1o2Y2lr?=
- =?utf-8?B?VThnV1VGVXYzQjlJNWx2aSs2WXo3ZGp5dTM3c1FWaEJGVkxFc0RheUtKU3Bs?=
- =?utf-8?B?QXQ3eDZBT1k0eGVnTmVkbEVCZytTRlcvYlhCZU1wZ0pXZk9hcVRGSGMyYlZY?=
- =?utf-8?B?bkt0a3RqZXI0REt5K1Nsc0hUalBMZzY1SndtSENHdzFBQjJHQnFhNUFjY01l?=
- =?utf-8?B?L0hUMVUwSFNzcG1rQlpBeEdHUzgrVEE3SW4vU0w5MXdOWDQzSkp4bUREcURL?=
- =?utf-8?B?eXNkNFRxeFJ3WERKa3NGQ0RiQmkyb1lIV2pKcTBrSS83bThZcnpadkVqN3hB?=
- =?utf-8?B?QUwrY1gxQ0l1eDF1QUpRakVQS0gwNWlITWxPVWkxeFF0ZExrRDNOT04wZ3R1?=
- =?utf-8?B?N1VoR0VYaTIwTUJ4WTFuSk5lZVdwVWtlSFphZm0rU2p6NVZaRlM1Z3p3WW8r?=
- =?utf-8?B?WmhkV3NDbmVnMHV3bFdaQ0MzK1lqMnk2WHp2djlabitmdzdGRVNEeTNWaG9i?=
- =?utf-8?B?RGFrQWw4ZGR5UC9uVG1MNStlNFJGTDM2dklPZ2ZWV2prQnE5S2lOMEZicHlr?=
- =?utf-8?B?cXFMbVFXTHZpbU1IN0NSMWozOWMxc0VhZEdKc2gwU0wzNWNyNnUzNHQ4V2pS?=
- =?utf-8?B?dVhWUlorZWxya2RMeC9XcWl0K1VrOEFyMmI5cHFMNzFHZnFoSWJpdDI2K25z?=
- =?utf-8?B?WmJRZFJHNDFTcExMN2VtRU5HQjg4Z2I2cFdIb3ZjYmVWNmozN0pwYWFSalFx?=
- =?utf-8?B?N0c4ZStBek43SFFUVkxRKzUvazNRM0RQMndQZTZBRG5LakNCTFdnaFFIMDY1?=
- =?utf-8?B?OGtzTFdscXhUamFVbXJQVlRLT3dDY0JxVUtwNFdXb2ZqSU9UeGExdjN3bnNo?=
- =?utf-8?B?WWVWZ2ZrVDhMa2U0cTV2NThDM005b2lsaVdMNkxHMENFd1J1Z1A3UlJyQWs0?=
- =?utf-8?B?RjhhaFhCWW43VzlqM3cyOVg4dXdHQjc3UldPYkUwLzBMcUFPOFpxaTJJVVU3?=
- =?utf-8?B?ekVKNGM5OG5ReGJMdjUxYXVPTFg4cjd2bnE0OEszLzZRN0wvc2Z0c3A0VmVO?=
- =?utf-8?B?UklSdVRYRG5JSjhXMXZVLy8wbW1xTlJrR0duUFpPNzBCbTU5WUZzYU8wZkI1?=
- =?utf-8?B?b3doTTNWeUQrakJmd2lWc3JNdmV6TExUVm1kN3puUlVVQkg5ZWIzQUg2SHBJ?=
- =?utf-8?B?MXo4VjFFMXBOMGlmUGdEWVg4T3JzM1RqTisxZ2J5Mld2WGZvaDUvYlF4ZmIz?=
- =?utf-8?B?dXpPcXhJQ28rVkRTYzBUNFd5Y05hYVgxV0xoVGZLMHBVRHBWQmxrQ29sTUta?=
- =?utf-8?B?TEtTUFp4L1NmM201cGxsUVpjZ2grbGFGUlBIenZOcUJrcTJkaGJ0S3NQWDZt?=
- =?utf-8?Q?GpqgiFpzAYxHGgwxwbImZK4tHkxEgo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a2QwYWpJYndiRll6dU11RW1HeFYyRTA3dE5qTXQwbXBEMjhuNUhDemZiOXQ4?=
- =?utf-8?B?QXZzTWNkNHlSU2NOQjZicFZ5aWRYOUM4VFdCL1ZBMG9CSzZnMFh1RHpGRzNv?=
- =?utf-8?B?MUxZSmZ3MnhBUzZ2dWc3aW5ML0tBSEJjWFR1VjFaMFk1cFg3TlBSSmlZUWtr?=
- =?utf-8?B?UURPYVpvdndwSGMzN0pnY3NHNWhRdDA0eHNYbjdFcVMzUGhiNk9kQlY5Z2gr?=
- =?utf-8?B?NXdTY053a3I2OStRbll6YVFkWmxDUWxpRytzVVRZRkFnUXRxbmZpaCtBYkpD?=
- =?utf-8?B?R0Q0Z0Z3SndibnhxbmplNHhCUmZ0WWtJOEhwYzlLL3FNWk1IVlBrYUZKbDUz?=
- =?utf-8?B?bXl3U2Q3MDZVNkI2SDBqd215YUl5azZVeUlCZ1dRVDdldzZmcHlNMWI0bHFY?=
- =?utf-8?B?Ty9yUnRlaC82ZHlTZFAzSUduMDBicjJJR1l3cVVMT3FtTjVxSjRJT25Sdzhp?=
- =?utf-8?B?MFNtak9LS29Xajlra0dybXNRMFF4UWpmYlIxYzdYRHlSVHVJV0lMSWdORWsr?=
- =?utf-8?B?WjFVWUxXTXhkclg2Y1dZaWRIb2t0Q2xxd3oxT3d4d3NicE5IK2FBUmQ0a2ZI?=
- =?utf-8?B?WlZVdENBWnpFRDdnMzlvNnpDcWVGb3VDS3Z6U2pMM3EyU0FQM3VVMlRDS2sx?=
- =?utf-8?B?NWRBWnhXVFh0VHVOeHNSV1pleEh6bC8xLzRWMUczdVZqK0kyS0hXaDJLTHZ1?=
- =?utf-8?B?STR2dGRoNE1Gd2w2VW44SktOYlRMaFFTSlp4a0xYa1p1N1AvL3VmWDhQYSs4?=
- =?utf-8?B?OG0vNnYvVnNUbW1KeEp2RXdNZ1Q4SVcwNTQ2bGp2T3dlZlY4UzVoUjRKcWFT?=
- =?utf-8?B?bkxFanRFN2pGZTFnZXlFNld2d2xlc1owTmRqWXpQSm1xY05xbWxreW5JR3cr?=
- =?utf-8?B?TzRTdzdHL2hsTGlNMUJBY1d4dkV3VVFMV3VXY2N6NTZhY1Zqcm82Ty81aFR2?=
- =?utf-8?B?R2ZVYkxQR25jNElpajYxSGV4dzQxak1XK1FtbjVIWm84N2xZclZmdnM1bTNQ?=
- =?utf-8?B?aFBzOTBMclJUVnVmMzR1cUZlQXdGVHh3em1KZFp5NUQxKzU2dzFMNkVUT2di?=
- =?utf-8?B?ejBseEttemh6YTFHbVFtdTdVQjhobVdqNjA0VzRWcTdIbFowWXY4MjVhbDJr?=
- =?utf-8?B?YTQ5dWRHbG9jTmtmL2Q1YS9qQXg1R3pxa1F0NmpxSjJpdUxLOTJ4MDNsUnJW?=
- =?utf-8?B?dUMrbWZWa2hXNkVpNExSeGdNMjB1dzNqcjRERkIzK3FwYWVMZktsRmNNdTd0?=
- =?utf-8?B?UURBYjJLT2d3ZXphY1JKTXp1T0VVSHFNVnZRWHVDY21zdmZxT2pZYXZ0QTVY?=
- =?utf-8?B?K0dUM1RnNWJDaThWbW83NVorbFNoVkpWWjY0U0dtSU1ZSGwrV3FZZm40bS9T?=
- =?utf-8?B?amNPU0dQSm14d0ovMkcrcUlOaEVnVVgxYnlDcWREOWdlNVdLTkJvOVR3UnNp?=
- =?utf-8?B?SnZYQW9CdzBTNW15UzlJNUIyQkRnQXdsc3lkNEVZYXlpUy9XbmdhZ1c1a1ds?=
- =?utf-8?B?UFIrblEvbWVsV3RLU0ZoSGg3YjBmODdYK0VjbUpDWWZoSVFXOFJIZWZPMS9v?=
- =?utf-8?B?N29uaFF4bG1MMm5hMjNLYjFZRVBoQzArMUxERk1pWlJ4d0puYjNFTUdOYmtM?=
- =?utf-8?B?OVhNZ2dYbzFGMjVnV2NWblVIUDl6UlE5NElhMWxsQXVEQlFLZlBaNHJxS2Js?=
- =?utf-8?B?NDVzb0ZUUjBQaytZZ3dzK3RiM2JsWGV6MlZEdnZCTFY4dGU0dWM3N2RMbUNO?=
- =?utf-8?B?MnI5bi9Td0tFRVBydlJ1d0Y2dzZEczlVY0JsS0FHa0NGdU90eWtHZmRHLzVo?=
- =?utf-8?B?U3ZKVGE4ejlmWjhZNVJtNnVEWk1jV3RudmJEZnFiU1BhSzJsS0V2YjByNmcz?=
- =?utf-8?B?ZTZ1RklrQ1VGd09ZMi9RTnJuNk9JU3hGMm03NlBVQkMwVEdlcW9nQ3BEbWRI?=
- =?utf-8?B?OFhMRlNBelZ4T3ZYaVhVL0JtR1lGcTI5K1RYN2cybFNpQWNHRm1ISXc3UUFv?=
- =?utf-8?B?QW5jSzQvSGZnem1CRkhRdWI0UzBFQ3Q4SGkwcWs2MHljTTBLRmxQYjdybjhH?=
- =?utf-8?B?Ly9ZREUybTlsTEd1bkc5MUhjeWlkK250WVRWL3IySTN3aHlGNnhSZWNqMGdL?=
- =?utf-8?Q?xSzCWWKfnGBzUy+Ck2qCMnFmm?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7dac533-b0ca-4993-5ecb-08de1c45a3f3
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	j9dwNWL2J9YDJTaIqjPimCHO0KLojFRVbkFtPsSjLHi+nTKKGSmPY9BoPWkJQz9ysDlFl9hr/KMMRaP+j5EyJOzqElC+9Do3V7olOq6s83mpheMs38HDmHSKztAOAj22ZX6h37Ka4wjx0sqrAq8ReHhYOCy2/Oi0FetYYuKN0tHnTPOqUjTCu8ICS4Qbxlg7Pzp/WmzfE4acPGjKCkKlmT4+45Z7MdX2gE0FtKCogfAfnxftT7wYlPw1/2EHu/9GcIpoE+hPb4Mnoa8u81+UOdRySc+3875ZzWYFaFiloXY1bwdL4hZdcozCmhUOiQjc3UeYyIlRxKNQ765/jUj6qM6/qp84vHKTOJvR7I+htlz8iCt4j+MPscpNnmXgZi9NoGSNhnurAEZvK8+6u/yFAo8aW2nLPzVvmsy49tlSxOVBV15WXh0+wKo8GX81DV/yubQy6opDgx1cfXyALL0rX0YNk5FqFTXr5oFfs4Ox1Q7tl/9upnHM/CZezrvM1xrxU1LOnmg44cXHsydLzWM4em/lybArFlViLbd28tdG1AksxdO4cVJ3zkZ5Kw515D43lYQ8EmhwE6CQlEyLZlyjMZiPLXMSD0yBX63J3BxCZ27jD50GRzpJJyuHbHcA6PgY
+X-OriginatorOrg: fujitsu.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 08:30:56.3838
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35466d70-c6d7-498e-64ed-08de1c45d596
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2025 08:32:19.4463
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gP43LF0g8oLef8HTKr6Umdc8+fU26cix2FYBwUJMOTcyTQxOm2t0t+hrw1e1totQy74lRS3K6Bk/IWyemxgwUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7908
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qp8yPFQXWpwLscGIIWZ/+LbZ72aCZ68289uRcJK2HrRYIq9YwR62ofZo3h0BRqA3RnxxezHM+lSgX/fxGrDHqvTyQ8Pyp3xa4dVHR0teV5U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10116
 
+Hello James,
 
-On 11/4/25 17:02, Terry Bowman wrote:
-> Update cxl_handle_cor_ras() to exit early in the case there is no RAS
-> errors detected after applying the status mask. This change will make
-> the correctable handler's implementation consistent with the uncorrectable
-> handler, cxl_handle_ras().
->
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
-
-
-Reviewed-by: Alejandro Lucero <alucerop@amd.com>
-
-
+> Reading a monitor involves configuring what you want to monitor, and read=
+ing
+> the value. Components made up of multiple MSC may need values from each
+> MSC. MSCs may take time to configure, returning 'not ready'.
+> The maximum 'not ready' time should have been provided by firmware.
+>=20
+> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns not r=
+eady,
+> then wait the full timeout value before trying again.
+>=20
+> CC: Shanker Donthineni <sdonthineni@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
->
-> Changes v12->v13:
-> - Added Ben's review-by
->
-> Changes v11->v12:
-> - None
->
-> Changes v10->v11:
-> - Added Dave Jiang and Jonathan Cameron's review-by
-> - Changes moved to core/ras.c
+> Changes since v2:
+>  * Fixed ctl_val/flt_val assignment that led to always reading counter 0.
+>  * switch to using guard() version of srcu_read_lock()
+>  * Fixed use of rcu helpers when srcu is wanted.
+>  * Use return instead of break.
+>  * Moved variable declarations into the loop.
+>  * Use struct assignment instead of memset().
+>  * Whitespace.
+>=20
+> Changes since v1:
+>  * Added XCL support.
+>  * Merged FLT/CTL constants.
+>  * a spelling mistake in a comment.
+>  * moved structrues around.
 > ---
->   drivers/cxl/core/ras.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-> index 599c88f0b376..246dfe56617a 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
-> @@ -174,10 +174,11 @@ void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
->   
->   	addr = ras_base + CXL_RAS_CORRECTABLE_STATUS_OFFSET;
->   	status = readl(addr);
-> -	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
-> -		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
-> -		trace_cxl_aer_correctable_error(dev, status, serial);
-> -	}
-> +	if (!(status & CXL_RAS_CORRECTABLE_STATUS_MASK))
-> +		return;
-> +	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+>  drivers/resctrl/mpam_devices.c  | 233
+> ++++++++++++++++++++++++++++++++
+> drivers/resctrl/mpam_internal.h |  19 +++
+>  2 files changed, 252 insertions(+)
+>=20
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_device=
+s.c
+> index a29f97cd176a..fb5414c6b3eb 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -880,6 +880,239 @@ static int mpam_msc_hw_probe(struct mpam_msc
+> *msc)
+>  	return 0;
+>  }
+>=20
+> +struct mon_read {
+> +	struct mpam_msc_ris		*ris;
+> +	struct mon_cfg			*ctx;
+> +	enum mpam_device_features	type;
+> +	u64				*val;
+> +	int				err;
+> +};
 > +
-> +	trace_cxl_aer_correctable_error(dev, status, serial);
->   }
->   
->   /* CXL spec rev3.0 8.2.4.16.1 */
+> +static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+> +				   u32 *flt_val)
+> +{
+> +	struct mon_cfg *ctx =3D m->ctx;
+> +
+> +	/*
+> +	 * For CSU counters its implementation-defined what happens when
+> not
+> +	 * filtering by partid.
+> +	 */
+> +	*ctl_val =3D MSMON_CFG_x_CTL_MATCH_PARTID;
+> +
+> +	*flt_val =3D FIELD_PREP(MSMON_CFG_x_FLT_PARTID, ctx->partid);
+> +
+> +	if (m->ctx->match_pmg) {
+> +		*ctl_val |=3D MSMON_CFG_x_CTL_MATCH_PMG;
+> +		*flt_val |=3D FIELD_PREP(MSMON_CFG_x_FLT_PMG,
+> ctx->pmg);
+> +	}
+> +
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		*ctl_val |=3D MSMON_CFG_CSU_CTL_TYPE_CSU;
+> +
+> +		if (mpam_has_feature(mpam_feat_msmon_csu_xcl,
+> &m->ris->props))
+> +			*flt_val |=3D
+> FIELD_PREP(MSMON_CFG_CSU_FLT_XCL,
+> +					       ctx->csu_exclude_clean);
+> +
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		*ctl_val |=3D MSMON_CFG_MBWU_CTL_TYPE_MBWU;
+> +
+> +		if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw,
+> &m->ris->props))
+> +			*flt_val |=3D
+> FIELD_PREP(MSMON_CFG_MBWU_FLT_RWBW, ctx->opts);
+> +
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+> +				    u32 *flt_val)
+> +{
+> +	struct mpam_msc *msc =3D m->ris->vmsc->msc;
+> +
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		*ctl_val =3D mpam_read_monsel_reg(msc, CFG_CSU_CTL);
+> +		*flt_val =3D mpam_read_monsel_reg(msc, CFG_CSU_FLT);
+> +		return;
+> +	case mpam_feat_msmon_mbwu:
+> +		*ctl_val =3D mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
+> +		*flt_val =3D mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
+> +		return;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +/* Remove values set by the hardware to prevent apparent mismatches. */
+> +static void clean_msmon_ctl_val(u32 *cur_ctl) {
+> +	*cur_ctl &=3D ~MSMON_CFG_x_CTL_OFLOW_STATUS; }
+> +
+> +static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+> +				     u32 flt_val)
+> +{
+> +	struct mpam_msc *msc =3D m->ris->vmsc->msc;
+> +
+> +	/*
+> +	 * Write the ctl_val with the enable bit cleared, reset the counter,
+> +	 * then enable counter.
+> +	 */
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		mpam_write_monsel_reg(msc, CFG_CSU_FLT, flt_val);
+> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val);
+> +		mpam_write_monsel_reg(msc, CSU, 0);
+> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val |
+> MSMON_CFG_x_CTL_EN);
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+> +		mpam_write_monsel_reg(msc, MBWU, 0);
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val |
+> MSMON_CFG_x_CTL_EN);
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +/* Call with MSC lock held */
+> +static void __ris_msmon_read(void *arg) {
+> +	u64 now;
+> +	bool nrdy =3D false;
+> +	struct mon_read *m =3D arg;
+> +	struct mon_cfg *ctx =3D m->ctx;
+> +	struct mpam_msc_ris *ris =3D m->ris;
+> +	struct mpam_props *rprops =3D &ris->props;
+> +	struct mpam_msc *msc =3D m->ris->vmsc->msc;
+> +	u32 mon_sel, ctl_val, flt_val, cur_ctl, cur_flt;
+> +
+> +	if (!mpam_mon_sel_lock(msc)) {
+> +		m->err =3D -EIO;
+> +		return;
+> +	}
+> +	mon_sel =3D FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL,
+> ctx->mon) |
+> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, ris->ris_idx);
+> +	mpam_write_monsel_reg(msc, CFG_MON_SEL, mon_sel);
+> +
+> +	/*
+> +	 * Read the existing configuration to avoid re-writing the same values.
+> +	 * This saves waiting for 'nrdy' on subsequent reads.
+> +	 */
+> +	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
+> +	clean_msmon_ctl_val(&cur_ctl);
+> +	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+> +	if (cur_flt !=3D flt_val || cur_ctl !=3D (ctl_val | MSMON_CFG_x_CTL_EN)=
+)
+> +		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
+
+When reading the CSU counter of a different control group, the counter is c=
+leared to 0 by the write_msmon_ctl_flt_vals().
+
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		now =3D mpam_read_monsel_reg(msc, CSU);
+> +		if (mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy,
+> rprops))
+> +			nrdy =3D now & MSMON___NRDY;
+> +		break;
+
+The first time read the counter(MSMON_CSU), all bits except nrdy are 0.
+
+This means when check the cache monitoring value the first time,
+cat mon_data/mon_L3_0*/llc_occupancy
+the result will be 0.
+From the second time, the result will return to normal.
+
+Best regards,
+Shaopeng TAN
+
+
+> +	case mpam_feat_msmon_mbwu:
+> +		now =3D mpam_read_monsel_reg(msc, MBWU);
+> +		if (mpam_has_feature(mpam_feat_msmon_mbwu_hw_nrdy,
+> rprops))
+> +			nrdy =3D now & MSMON___NRDY;
+> +		break;
+> +	default:
+> +		m->err =3D -EINVAL;
+> +		break;
+> +	}
+> +	mpam_mon_sel_unlock(msc);
+> +
+> +	if (nrdy) {
+> +		m->err =3D -EBUSY;
+> +		return;
+> +	}
+> +
+> +	now =3D FIELD_GET(MSMON___VALUE, now);
+> +	*m->val +=3D now;
+> +}
+> +
+> +static int _msmon_read(struct mpam_component *comp, struct mon_read
+> +*arg) {
+> +	int err,  any_err =3D 0;
+> +	struct mpam_vmsc *vmsc;
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(vmsc, &comp->vmsc, comp_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		struct mpam_msc *msc =3D vmsc->msc;
+> +		struct mpam_msc_ris *ris;
+> +
+> +		list_for_each_entry_srcu(ris, &vmsc->ris, vmsc_list,
+> +
+> srcu_read_lock_held(&mpam_srcu)) {
+> +			arg->ris =3D ris;
+> +
+> +			err =3D smp_call_function_any(&msc->accessibility,
+> +						    __ris_msmon_read, arg,
+> +						    true);
+> +			if (!err && arg->err)
+> +				err =3D arg->err;
+> +
+> +			/*
+> +			 * Save one error to be returned to the caller, but
+> +			 * keep reading counters so that get reprogrammed.
+> On
+> +			 * platforms with NRDY this lets us wait once.
+> +			 */
+> +			if (err)
+> +				any_err =3D err;
+> +		}
+> +	}
+> +
+> +	return any_err;
+> +}
+> +
+> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg
+> *ctx,
+> +		    enum mpam_device_features type, u64 *val) {
+> +	int err;
+> +	struct mon_read arg;
+> +	u64 wait_jiffies =3D 0;
+> +	struct mpam_props *cprops =3D &comp->class->props;
+> +
+> +	might_sleep();
+> +
+> +	if (!mpam_is_enabled())
+> +		return -EIO;
+> +
+> +	if (!mpam_has_feature(type, cprops))
+> +		return -EOPNOTSUPP;
+> +
+> +	arg =3D (struct mon_read) {
+> +		.ctx =3D ctx,
+> +		.type =3D type,
+> +		.val =3D val,
+> +	};
+> +	*val =3D 0;
+> +
+> +	err =3D _msmon_read(comp, &arg);
+> +	if (err =3D=3D -EBUSY && comp->class->nrdy_usec)
+> +		wait_jiffies =3D usecs_to_jiffies(comp->class->nrdy_usec);
+> +
+> +	while (wait_jiffies)
+> +		wait_jiffies =3D schedule_timeout_uninterruptible(wait_jiffies);
+> +
+> +	if (err =3D=3D -EBUSY) {
+> +		arg =3D (struct mon_read) {
+> +			.ctx =3D ctx,
+> +			.type =3D type,
+> +			.val =3D val,
+> +		};
+> +		*val =3D 0;
+> +
+> +		err =3D _msmon_read(comp, &arg);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16
+> wd)  {
+>  	u32 num_words, msb;
+> diff --git a/drivers/resctrl/mpam_internal.h
+> b/drivers/resctrl/mpam_internal.h index 96a02ea95583..0c84e945c891 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -183,6 +183,22 @@ struct mpam_props {
+>  #define mpam_set_feature(_feat, x)	set_bit(_feat, (x)->features)
+>  #define mpam_clear_feature(_feat, x)	clear_bit(_feat, (x)->features)
+>=20
+> +/* The values for MSMON_CFG_MBWU_FLT.RWBW */ enum
+> mon_filter_options {
+> +	COUNT_BOTH	=3D 0,
+> +	COUNT_WRITE	=3D 1,
+> +	COUNT_READ	=3D 2,
+> +};
+> +
+> +struct mon_cfg {
+> +	u16                     mon;
+> +	u8                      pmg;
+> +	bool                    match_pmg;
+> +	bool			csu_exclude_clean;
+> +	u32                     partid;
+> +	enum mon_filter_options opts;
+> +};
+> +
+>  struct mpam_class {
+>  	/* mpam_components in this class */
+>  	struct list_head	components;
+> @@ -325,6 +341,9 @@ void mpam_disable(struct work_struct *work);  int
+> mpam_apply_config(struct mpam_component *comp, u16 partid,
+>  		      struct mpam_config *cfg);
+>=20
+> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg
+> *ctx,
+> +		    enum mpam_device_features, u64 *val);
+> +
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32
+> cache_level,
+>  				   cpumask_t *affinity);
+>=20
+> --
+> 2.39.5
+
 
