@@ -1,303 +1,156 @@
-Return-Path: <linux-kernel+bounces-886435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FAEC35954
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:18:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A0AC3595D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:19:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F365189F5C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973AA189FD12
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5135D3101D3;
-	Wed,  5 Nov 2025 12:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E373148CD;
+	Wed,  5 Nov 2025 12:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="A65U5Qr6"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyt8YziP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB882153D4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345070; cv=pass; b=BfBeWqhNeABkR9GYzXXysllM30iU3xWKU5lMku25DCcoa0vOp/6AiQI0E+Wp/tDn2pyNcJp9hoj9g+GUTSHNRXmve0yw0LE7a24/AXGCHiz5bpxheZhLCNpmDn4Q73TyaIh6NGDPUKq9T9f+WFVTtrM7ZT/LH1bafdKTw/j/wvE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345070; c=relaxed/simple;
-	bh=1t6tV2iWzkDfvXqy3fdQFkGFrcaU9T7ElIrhfqykREo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ns9NBPOyyam0uaZuW/WROB5Qcfwcl+54zFfrTFc9i9Po/hqZLBQzU//UwrwGSz4NJW9WSrWk6PjLaYI8w6UrgsJ68mFpYIkROtjZ8A+O72YrVAGcmdsyMdE7vsFayhoy9XxHdNXw8tKV6KGbeulHZAeU7J2A5VAO4kNVCaPLZ78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=A65U5Qr6; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762345056; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CtYpgGFFlQq5hWQByru0uUaDdQsyieyoys6DD3Lsf2AIRPFZj6yuZ/MWRofK+3JOWEnDqU3OxdYZ1MaRbQnY5lmtsvlF6dncXrw7hizIw3xnSXr1L6wX4f1jtkynqlgfBNQsSP5BFsqztVU0gKcrm42J/a1RyNxZ4sctzWT+9zA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762345056; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BIgj4cvHgmzHQnoWYNjkFEq+ULZ85aLtrBrysm9AVUE=; 
-	b=N/CwR2/y0uE0OSC3BPmaYFb1m8IBXJaoirrmqFkTLiAScx4IXB7JKPSA2592pECVH8mi64zJUP3xSdNFNWW4MiiBtOBhHhRyAMW1I/FM6F3TWp7Ad4zuKe8w4ON4FMo+ccB7MrkkiDIAkhJbTwstOTk6qS0OfeviKXjeWW/rZjo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762345056;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=BIgj4cvHgmzHQnoWYNjkFEq+ULZ85aLtrBrysm9AVUE=;
-	b=A65U5Qr6F/dkgiK3DlPN8IaG/feZXQKfBhWOTnXdW9Q7fDV9niKH3mCtnwqI1SLn
-	5HlMJO5K4B6RoycIP33AL0KEQqKqZOp0TsR5qSmCGLMTKegzPsb1r56cJMto5BSixmG
-	QF7PfWLTyOXp/LixbgmQ8HeU8YbN606EN7lHni40=
-Received: by mx.zohomail.com with SMTPS id 1762345054671933.3853562090325;
-	Wed, 5 Nov 2025 04:17:34 -0800 (PST)
-Date: Wed, 5 Nov 2025 12:17:28 +0000
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] drm/panthor: Expose the panthor perf ioctls
-Message-ID: <iz3qx32cezov2dz24azht3byitp62qzx4kvssxgy2isgmln7pr@conbiuyo3scd>
-References: <cover.1753449448.git.lukas.zapolskas@arm.com>
- <727fa1ec673d45abb51a393d4772cb0a861b409d.1753449448.git.lukas.zapolskas@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7703B312815;
+	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762345153; cv=none; b=gai7qmyiWTRbKU8pzIPGdw6u5B1JDayA/nCEBUrWmp6iGa4qGb4VnX2VPYSPm/2wFiGhbyrcDr+VSYB6sc8ZXpEmpPsCQmWoh8eGY2noYq2yHSW7Ko61gaywAtcrM9giQRsRNKf6NkJYqFsXml8T3LL3o5mRjAVcs0uy7y9kVYo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762345153; c=relaxed/simple;
+	bh=WpEVUOYe+o0ODCJcitnI3R656IlVO6R4iBigsvtbubg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GVlEYQ5EG4smnyLeE1WXayDqJm4GktFXY39cIkBodZf0JjaoqRPinVFMczIrPJK9InslqudwV4X+JMM++naG7aMZb1VtXA8UlCL0iPgqTwEK+0XdQmoo0xwoYJVbeQiss0mHATljF3UV6lRfIP4NwYKgXNqxktJ4xBBc/2nhMKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyt8YziP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CB250C4CEFB;
+	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762345152;
+	bh=WpEVUOYe+o0ODCJcitnI3R656IlVO6R4iBigsvtbubg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=tyt8YziP88ZbFQ1oRBb7U2mkHwTICJ5gryp1Su4+QrBXgLzZsnZK+SrRdSVRI39EE
+	 bXVkn1id1UK7DphpAPVOUP9fyMT7WskopkSx0zw3fmVgLAqXmslfGhwYSo9nX76NzV
+	 +5cTNhPqN3mmomHMW2bY7ZaylGV6WmrqTzS5FU307xsIoKKGWhpcd9sk2iU4u+A4c1
+	 G3qW7R5GR0JR5y/r83AYzVSZePkvoBv+HDZpXXMhJClZt3HABlYwE01FxvIRwQIo5W
+	 CWWX7wDSa+TzJ7ENaFK3P5gN9RV8fng+BvlG/97pSseC/e4aKH2YhwpclNyyUAgj+o
+	 qPfZvvMzXPdPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4019CCFA0D;
+	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
+From: Prasad Kumpatla via B4 Relay <devnull+prasad.kumpatla.oss.qualcomm.com@kernel.org>
+Date: Wed, 05 Nov 2025 17:49:10 +0530
+Subject: [PATCH v4] dt-bindings: soundwire: qcom: Add SoundWire v2.2.0
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <727fa1ec673d45abb51a393d4772cb0a861b409d.1753449448.git.lukas.zapolskas@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAL1AC2kC/03MQQ6DIBCF4auYWXcIIGrtqvdoupgAVqIIBTVNj
+ Hcv6aqbl3yL9x+QbXI2w606INndZReWAnWpQI+0vCw6UwySy0ZwoXBaItJmXMBdYk911zVSGy0
+ aKJeY7OA+v9zjWTyk4HEdk6W/CO+FqlulWC37VvIrCoyJMhk2bT7SOtM95MzeG806eM/KwHl+A
+ YQekP6qAAAA
+X-Change-ID: 20251014-knp-audio-v2-9a37752cdc15
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>
+Cc: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762345151; l=2851;
+ i=prasad.kumpatla@oss.qualcomm.com; s=20251104; h=from:subject:message-id;
+ bh=c0O8eohmd+tIOQmYmE+msxYJGTgpEFCpk9Tc3tlijMA=;
+ b=ocgeixzvp6gml7lZDN8J/V00Hjhfw8/FNaA5PabRQ4bj1gT3/E+VAps1m5rUg83WZLThayGL4
+ jBRU6e7qN64DakcZMi5lNphdjqayfbOVmzC3JU2famuZ0IrrA5FI9z1
+X-Developer-Key: i=prasad.kumpatla@oss.qualcomm.com; a=ed25519;
+ pk=XN9tL2ispFX+irMtnM7RxBH6rj+awD6oEjXmk0YJodY=
+X-Endpoint-Received: by B4 Relay for
+ prasad.kumpatla@oss.qualcomm.com/20251104 with auth_id=560
+X-Original-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Reply-To: prasad.kumpatla@oss.qualcomm.com
 
-On 25.07.2025 15:57, Lukas Zapolskas wrote:
-> This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
-> a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
-> compatibility of the uAPI.
->
-> The minor version is bumped to indicate that the feature is now
-> supported.
->
-> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
-> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 142 +++++++++++++++++++++++++-
->  1 file changed, 140 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 8b1e3e38b12e..05e3c83b8129 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -31,6 +31,7 @@
->  #include "panthor_gpu.h"
->  #include "panthor_heap.h"
->  #include "panthor_mmu.h"
-> +#include "panthor_perf.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
->
-> @@ -73,6 +74,40 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
->  	return 0;
->  }
->
-> +/**
-> + * panthor_get_uobj() - Copy user object to kernel object.
-> + * @usr_ptr: Users pointer.
-> + * @usr_size: Size of the user object.
-> + * @min_size: Minimum size for this object.
-> + * @kern_size: Kernel size of the object.
-> + *
-> + * Helper automating user -> kernel object copies.
-> + *
-> + * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
-> + *
-> + * Return: valid pointer on success, an encoded error code otherwise.
-> + */
-> +static void*
-> +panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size)
-> +{
-> +	int ret;
-> +	void *out_alloc __free(kvfree) = NULL;
-> +
-> +	/* User size shouldn't be smaller than the minimal object size. */
-> +	if (usr_size < min_size)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	out_alloc = kvmalloc(kern_size, GFP_KERNEL);
-> +	if (!out_alloc)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = copy_struct_from_user(out_alloc, kern_size, u64_to_user_ptr(usr_ptr), usr_size);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return_ptr(out_alloc);
-> +}
-> +
->  /**
->   * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
->   * @in: The object array to copy.
-> @@ -176,7 +211,11 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
-> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
->
->  /**
->   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
-> @@ -191,6 +230,25 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
->  			 sizeof(_src_obj), &(_src_obj))
->
-> +/**
-> + * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
-> + * @_dest_ptr: Local variable
-> + * @_usr_size: Size of the user object.
-> + * @_usr_ptr: The pointer of the object in userspace.
-> + *
-> + * Return: Error code. See panthor_get_uobj().
-> + */
-> +#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
-> +	({ \
-> +		typeof(_dest_ptr) _tmp; \
-> +		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
-> +				PANTHOR_UOBJ_MIN_SIZE(_tmp[0]), \
-> +				sizeof(_tmp[0])); \
-> +		if (!IS_ERR(_tmp)) \
-> +			_dest_ptr = _tmp; \
-> +		PTR_ERR_OR_ZERO(_tmp); \
-> +	})
-> +
->  /**
->   * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
->   * object array.
-> @@ -1402,6 +1460,83 @@ static int panthor_ioctl_set_user_mmio_offset(struct drm_device *ddev,
->  	return 0;
->  }
->
-> +#define perf_cmd(command) \
-> +	({ \
-> +		struct drm_panthor_perf_cmd_##command *command##_args __free(kvfree) = NULL; \
-> +		int _ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
-> +		if (_ret) \
-> +			return _ret; \
-> +		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, \
-> +						      command##_args->user_data); \
-> +	})
-> +
-> +static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
-> +				      struct drm_file *file)
-> +{
-> +	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
-> +	struct panthor_file *pfile = file->driver_priv;
-> +	struct drm_panthor_perf_control *args = data;
-> +	int ret;
-> +
-> +	if (!args->pointer) {
-> +		switch (args->cmd) {
-> +		case DRM_PANTHOR_PERF_COMMAND_SETUP:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-> +			args->size = 0;
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_START:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_start);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_STOP:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
-> +			return 0;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
+From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 
-After a second look at this, now I wonder what the point of passing these command struct values
-back to UM from inside the ioctl() is, because they're still part of the uAPI. That means for
-as long as the driver uAPI header files are kept in sync between UM and KM, then a client just
-has to call sizeof(struct drm_panthor_perf_cmd_*) to compute these values.
+Add qcom,soundwire-v2.2.0 to the list of supported Qualcomm
+SoundWire controller versions. This version falls back to
+qcom,soundwire-v2.0.0 if not explicitly handled by the driver.
 
-> +	}
-> +
-> +	switch (args->cmd) {
-> +	case DRM_PANTHOR_PERF_COMMAND_SETUP:
-> +	{
-> +		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
-> +
-> +		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
-> +		if (ret)
-> +			return -EINVAL;
-> +
-> +		return panthor_perf_session_setup(file, ptdev->perf, setup_args);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-> +	{
-> +		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_START:
-> +	{
-> +		perf_cmd(start);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_STOP:
-> +	{
-> +		perf_cmd(stop);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-> +	{
-> +		perf_cmd(sample);
-> +	}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int
->  panthor_open(struct drm_device *ddev, struct drm_file *file)
->  {
-> @@ -1476,6 +1611,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
->  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(BO_SET_LABEL, bo_set_label, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(SET_USER_MMIO_OFFSET, set_user_mmio_offset, DRM_RENDER_ALLOW),
-> +	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
->  };
->
->  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-> @@ -1609,6 +1745,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
->   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
->   * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
->   * - 1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
-> + * - 1.6 - adds DEV_QUERY_PERF_INFO query
-> + *       - adds PERF_CONTROL ioctl
->   */
->  static const struct drm_driver panthor_drm_driver = {
->  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> @@ -1622,7 +1760,7 @@ static const struct drm_driver panthor_drm_driver = {
->  	.name = "panthor",
->  	.desc = "Panthor DRM driver",
->  	.major = 1,
-> -	.minor = 5,
-> +	.minor = 6,
->
->  	.gem_create_object = panthor_gem_create_object,
->  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-> --
-> 2.33.0.dirty
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+---
+Add audio support for Kaanapali MTP boards. Introduces supporting
+dependencies required to enable audio functionality on MTP platforms.
+These changes have been validated on Kaanapali MTP hardware.
+
+Changes in [v4]:
+	- Dropped merged patches.
+	- Link to v3: https://lore.kernel.org/linux-arm-msm/20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com/
+
+Changes in [v3]:
+	- Correct SoB chain, comments from Krzysztof.
+	- Link to v2: https://lore.kernel.org/linux-arm-msm/20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com/
+
+Changes in [v2]:
+	- Addressed compilation issue for lpass version check patch.
+	- Sorted compatible string in machine driver.
+	- Link to v1: https://lore.kernel.org/linux-arm-msm/20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com/
+
+Konrad Dybcio (1):
+  ASoC: codecs: va-macro: Rework version checking
+
+Prasad Kumpatla (4):
+  ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
+  ASoC: qcom: sc8280xp: Add support for Kaanapali
+  dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
+  ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
+
+ .../bindings/sound/qcom,lpass-rx-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-tx-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-va-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-wsa-macro.yaml  |  1 +
+ .../bindings/sound/qcom,sm8250.yaml           |  1 +
+ .../bindings/soundwire/qcom,soundwire.yaml    |  1 +
+ sound/soc/codecs/lpass-va-macro.c             | 90 +++++++++++++------
+ sound/soc/qcom/sc8280xp.c                     |  1 +
+ 8 files changed, 70 insertions(+), 27 deletions(-)
+
+--
+2.34.1
+---
+ Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
+index 95d947fda6a7..1c4b0bdbb044 100644
+--- a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
++++ b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
+@@ -26,6 +26,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,soundwire-v2.1.0
++              - qcom,soundwire-v2.2.0
+           - const: qcom,soundwire-v2.0.0
+ 
+   reg:
+
+---
+base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
+change-id: 20251014-knp-audio-v2-9a37752cdc15
+
+Best regards,
+-- 
+Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 
 
-Adrian Larumbe
 
