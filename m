@@ -1,259 +1,180 @@
-Return-Path: <linux-kernel+bounces-885716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253CEC33C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:24:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C77AC33C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203FC18C4915
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DF6463C5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CEC21FF48;
-	Wed,  5 Nov 2025 02:24:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C621D3EA;
+	Wed,  5 Nov 2025 02:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DgtSb4RO"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6CC1DDC35;
-	Wed,  5 Nov 2025 02:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE79231C91
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309446; cv=none; b=tpoIkxYTeLbxg0M1SR1S5kqN23PnrpYI4YVpHUQmTkBB5K7EC0z2UIYOXIkLqoJSoJic6lfpsjNXhhXmzbcryhhmk56Wt3+uWaPDHw4t8AJaFuCEL6WvfK2KyVIi00Z19u4JsqliotWsrDf+Vbri7m75RvFPkEehkIPXD/EmMbQ=
+	t=1762309580; cv=none; b=H4+T+hkbZexTvBt3zoWvtXsdlD1Q/Q7TT+5RvRc8n8lw1dqu7kZ7CdAVOpgJ8miY8L4L/3THvtaTUqG2dRdpgzmW5jiqi8yq2GAPBKFfhCSPBeYCyBc6wrgWBb46s78Asw18NbQUk3VfcEz1KxWLLrgf+2NY5ysdyVwR/ruA6L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309446; c=relaxed/simple;
-	bh=arlHga8q0D5mg7Yv/P5lB1CqQIf3t92Fcsg30jGab2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hxeh/cKgoLI+ZZrd3tC2AcWSYDJ6z6dXCi372Lz0DKxBoXEBf84CHmJ6uAaTxQ1lZgCATc7nXzf+69oxm+4OgF3C9Jk4fMzxsXJ0BKVN7fuEyGVAsCgwmROhcRZ9YXtGhx2xJvEl/yagHo1njBL0w6G9l93fQfcNNs/LCyjkZ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d1Tdm1WfWzYQtjJ;
-	Wed,  5 Nov 2025 10:23:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 324A41A0359;
-	Wed,  5 Nov 2025 10:23:56 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgAXu0M6tQppRej7Cg--.63092S2;
-	Wed, 05 Nov 2025 10:23:55 +0800 (CST)
-Message-ID: <f50cd9b8-684c-4f62-a67e-3cde74d1d324@huaweicloud.com>
-Date: Wed, 5 Nov 2025 10:23:54 +0800
+	s=arc-20240116; t=1762309580; c=relaxed/simple;
+	bh=YEhGzlYvaxknDODKk9pV+4jV9odIZpMcPlhU5BRJVSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tBahkn60nPwMRJcgpzKm+FvZw8Kb9c3+9q34EcFb3VfCEez8HyJ2m6c/qJOvD1rAoXSbUUGBj/1p99/4TCwow1H8ecqvbR6EAZNgo6KoWMnBe8NkLzf3r36LzTWmWncGJp2zkd54hEdmgUV5LLtwXFnV2UbH4pYyG6hfwPy1AKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DgtSb4RO; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/p
+	2mNp4gNAgGCW3IMGenGM2K7t6SvD8ichbCMBxhLHs=; b=DgtSb4ROT+7ZTf/2Kw
+	jBA/cNT0xndd6kmGtsY/9Y6GoESOOBLBIVJev0UhoQs26x93eJg7bIpJzu2PC/4L
+	YaxB9paFN3809Q93RC9j4ucM85eVXagvt9rvLfrysoHBjoKhqlvvRsb10u4Bt0SW
+	nTLyDpVrNcK/neROxwzkH2UIw=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDH3_GYtQppMrN8BQ--.117S2;
+	Wed, 05 Nov 2025 10:25:31 +0800 (CST)
+From: wangdich9700@163.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdich9700@163.com>,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: [PATCH v2] ALSA: hda/conexant: Fix pop noise on conexant codec
+Date: Wed,  5 Nov 2025 10:25:26 +0800
+Message-Id: <20251105022527.69770-1-wangdich9700@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-To: Pingfan Liu <piliu@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Cc: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20251028034357.11055-1-piliu@redhat.com>
- <20251028034357.11055-2-piliu@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251028034357.11055-2-piliu@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAXu0M6tQppRej7Cg--.63092S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw43GF15Cr4kCF4xtF1xGrg_yoWxCr1UpF
-	yDCr43Xr48Jr1xCay3Xw4UuFyFg3ykJF17AFnxG3yrAF9IkF1vvw1v9Fn0yr97ur9xCF4U
-	ArZF9rsI93WqyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-CM-TRANSID:_____wDH3_GYtQppMrN8BQ--.117S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZr18KF45Gr1xAF4kGFykXwb_yoW5tFyUpr
+	15Ga43GrZ3JF1I9r4fJr4fA3WYkFykWFsxJ34ft3W3Jw43Kry7Wa1jqFyI9F1fJrW7Kry2
+	vF42vrWUKrW5JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi0JPtUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/xtbCwBtwv2kKtZvLrgAA38
 
+From: wangdicheng <wangdich9700@163.com>
 
+Pop noise mitigation: When headphones are unplugged during playback,mute
+speaker DAC(0x17)immediately and restore after 20ms delay to avoid
+audible popping.
 
-On 2025/10/28 11:43, Pingfan Liu wrote:
-> *** Bug description ***
-> When testing kexec-reboot on a 144 cpus machine with
-> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> encounter the following bug:
-> 
-> [   97.114759] psci: CPU142 killed (polled 0 ms)
-> [   97.333236] Failed to offline CPU143 - error=-16
-> [   97.333246] ------------[ cut here ]------------
-> [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> [...]
-> 
-> In essence, the issue originates from the CPU hot-removal process, not
-> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
-> program that waits indefinitely on a semaphore, spawning multiple
-> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
-> one by one. When attempting this, CPU 143 failed to go offline.
->   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
-> 
-> `
-> *** Issue ***
-> Tracking down this issue, I found that dl_bw_deactivate() returned
-> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> But that is not the fact, and contributed by the following factors:
-> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
-> blocked-state deadline task (in this case, "cppc_fie"), it was not
-> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
-> points to def_root_domain instead of the one shared with CPU0.  As a
-> result, its bandwidth is wrongly accounted into a wrong root domain
-> during domain rebuild.
-> 
-> The key point is that root_domain is only tracked through active rq->rd.
-> To avoid using a global data structure to track all root_domains in the
-> system, there should be a method to locate an active CPU within the
-> corresponding root_domain.
-> 
-> *** Solution ***
-> To locate the active cpu, the following rules for deadline
-> sub-system is useful
->   -1.any cpu belongs to a unique root domain at a given time
->   -2.DL bandwidth checker ensures that the root domain has active cpus.
-> 
-> Now, let's examine the blocked-state task P.
-> If P is attached to a cpuset that is a partition root, it is
-> straightforward to find an active CPU.
-> If P is attached to a cpuset that has changed from 'root' to 'member',
-> the active CPUs are grouped into the parent root domain. Naturally, the
-> CPUs' capacity and reserved DL bandwidth are taken into account in the
-> ancestor root domain. (In practice, it may be unsafe to attach P to an
-> arbitrary root domain, since that domain may lack sufficient DL
-> bandwidth for P.) Again, it is straightforward to find an active CPU in
-> the ancestor root domain.
-> 
-> This patch groups CPUs into isolated and housekeeping sets. For the
-> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
-> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> 
-> Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: "Michal Koutný" <mkoutny@suse.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Pierre Gondois <pierre.gondois@arm.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> To: cgroups@vger.kernel.org
-> To: linux-kernel@vger.kernel.org
-> ---
-> v3 -> v4:
-> rename function with cpuset_ prefix
-> improve commit log
-> 
->  include/linux/cpuset.h  | 18 ++++++++++++++++++
->  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
->  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
->  3 files changed, 68 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> index 2ddb256187b51..d4da93e51b37b 100644
-> --- a/include/linux/cpuset.h
-> +++ b/include/linux/cpuset.h
-> @@ -12,6 +12,7 @@
->  #include <linux/sched.h>
->  #include <linux/sched/topology.h>
->  #include <linux/sched/task.h>
-> +#include <linux/sched/housekeeping.h>
->  #include <linux/cpumask.h>
->  #include <linux/nodemask.h>
->  #include <linux/mm.h>
-> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
->  
->  extern void cpuset_print_current_mems_allowed(void);
->  extern void cpuset_reset_sched_domains(void);
-> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
->  
->  /*
->   * read_mems_allowed_begin is required when making decisions involving
-> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
->  	partition_sched_domains(1, NULL, NULL);
->  }
->  
-> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
-> +		struct cpumask *cpus)
-> +{
-> +	const struct cpumask *hk_msk;
-> +
-> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> +			/* isolated cpus belong to a root domain */
-> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> +			return;
-> +		}
-> +	}
-> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
-> +}
-> +
->  static inline void cpuset_print_current_mems_allowed(void)
->  {
->  }
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 27adb04df675d..6ad88018f1a4e 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
->  	mutex_unlock(&cpuset_mutex);
->  }
->  
-> +/* caller hold RCU read lock */
-> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> +{
-> +	const struct cpumask *hk_msk;
-> +	struct cpuset *cs;
-> +
-> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> +			/* isolated cpus belong to a root domain */
-> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> +			return;
-> +		}
-> +	}
-> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
-> +	cs = task_cs(p);
-> +	while (cs != &top_cpuset) {
-> +		if (is_sched_load_balance(cs))
-> +			break;
-> +		cs = parent_cs(cs);
-> +	}
-> +
-> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
-> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> +}
-> +
+Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+---
+ sound/hda/codecs/conexant.c | 65 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-It seems cpuset_cpus_allowed functions is enough for you, no new functions need to be introduced.
-
+diff --git a/sound/hda/codecs/conexant.c b/sound/hda/codecs/conexant.c
+index 5fcbc1312c69..2c16d1930a75 100644
+--- a/sound/hda/codecs/conexant.c
++++ b/sound/hda/codecs/conexant.c
+@@ -43,6 +43,9 @@ struct conexant_spec {
+ 	unsigned int gpio_mute_led_mask;
+ 	unsigned int gpio_mic_led_mask;
+ 	bool is_cx11880_sn6140;
++
++	struct hda_codec *conexant_codec;
++	struct delayed_work change_pinctl_work;
+ };
+ 
+ 
+@@ -216,6 +219,63 @@ static void cx_remove(struct hda_codec *codec)
+ 	snd_hda_gen_remove(codec);
+ }
+ 
++static void mute_unmute_speaker(struct hda_codec *codec, hda_nid_t nid, bool mute)
++{
++	unsigned int conn_sel, dac, conn_list, gain_left, gain_right;
++
++	conn_sel = snd_hda_codec_read(codec, nid, 0, 0xf01, 0x0);
++	conn_list = snd_hda_codec_read(codec, nid, 0, 0xf02, 0x0);
++
++	dac = ((conn_list >> (conn_sel * 8)) & 0xff);
++	if (dac == 0)
++		return;
++
++	gain_left = snd_hda_codec_read(codec, dac, 0, 0xba0, 0x0);
++	gain_right = snd_hda_codec_read(codec, dac, 0, 0xb80, 0x0);
++
++	if (mute) {
++		gain_left |= 0x80;
++		gain_right |= 0x80;
++	} else {
++		gain_left &= (~(0x80));
++		gain_right &= (~(0x80));
++	}
++
++	snd_hda_codec_write(codec, dac, 0, 0x3a0, gain_left);
++	snd_hda_codec_write(codec, dac, 0, 0x390, gain_right);
++
++	if (mute) {
++		snd_hda_codec_write(codec, nid, 0, 0x707, 0);
++		codec_dbg(codec, "mute_speaker, set 0x%x  PinCtrl to 0.\n", nid);
++	} else {
++		snd_hda_codec_write(codec, nid, 0, 0x707, 0x40);
++		codec_dbg(codec, "unmute_speaker, set 0x%x  PinCtrl to 0x40.\n", nid);
++	}
++}
++
++static void change_pinctl_worker(struct work_struct *work)
++{
++	struct hda_codec *codec;
++	struct conexant_spec *spec;
++
++	spec = container_of(work, struct conexant_spec, change_pinctl_work.work);
++	codec = spec->conexant_codec;
++
++	return mute_unmute_speaker(codec, 0x17, false);
++}
++
++static void cx_auto_mute_unmute_speaker(struct hda_codec *codec, struct hda_jack_callback *event)
++{
++	struct conexant_spec *spec = codec->spec;
++	int phone_present;
++
++	phone_present = snd_hda_codec_read(codec, 0x16, 0, 0xf09, 0x0);
++	if (!(phone_present & 0x80000000)) {
++		mute_unmute_speaker(codec, 0x17, true);
++		schedule_delayed_work(&spec->change_pinctl_work, 20);
++	}
++}
++
+ static void cx_process_headset_plugin(struct hda_codec *codec)
+ {
+ 	unsigned int val;
+@@ -1178,6 +1238,10 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+ 	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
+ 	if (!spec)
+ 		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&spec->change_pinctl_work, change_pinctl_worker);
++	spec->conexant_codec = codec;
++
+ 	snd_hda_gen_spec_init(&spec->gen);
+ 	codec->spec = spec;
+ 
+@@ -1187,6 +1251,7 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+ 	case 0x14f11f87:
+ 		spec->is_cx11880_sn6140 = true;
+ 		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
++		snd_hda_jack_detect_enable_callback(codec, 0x16, cx_auto_mute_unmute_speaker);
+ 		break;
+ 	}
+ 
 -- 
-Best regards,
-Ridong
+2.25.1
 
 
