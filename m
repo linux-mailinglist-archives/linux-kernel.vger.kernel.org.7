@@ -1,163 +1,212 @@
-Return-Path: <linux-kernel+bounces-887894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4447C39525
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:04:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFF6C39666
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA9484E6081
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:02:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85AE64E48AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78FC2765DC;
-	Thu,  6 Nov 2025 07:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F06E2E36F1;
+	Thu,  6 Nov 2025 07:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HJTTxuzf"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCe0husl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B201A2BCF4C;
-	Thu,  6 Nov 2025 07:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2852DF6F5;
+	Thu,  6 Nov 2025 07:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762412547; cv=none; b=lBzgz3wzj2ZgFSILO1aK60ZjlypdYOx4uS5ewYRQ6aYqtqiPhFgSigasO6esqqDOyIunBMA5zpuThYQhH6uCF/mxRwlqasWy4nCrrUGYBjlKwmfZGfEedSmQ72rsEltB6MM7PrQ0sU84cuv6VQDaOS/dqiRWCYJCtl8dwKowaIs=
+	t=1762414118; cv=none; b=cHtmo0cvBd1BBta7kXS1FVOoo842DnNUD8BFbxkPAPVLgHTpcEw7TIrqWy2eh/cG4dZQ+4OviUvvM9gSDU6E1DBTp56ZSo7oTOS2DSOX3ksEtoa2IY/ri7rlqRk+Er/ZQFoHjYtL+iA9QMnn47IgKpSmDSXSEEz4jIYFPNBuvuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762412547; c=relaxed/simple;
-	bh=fGPLWiFY4pa2oYzVEMbw1jOnu07BWKkpz/Gs+arx8zE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWp1thnxoPWncfr7BfswPg/a0Ploqa5kvC1vFI8xDnHhEooF+o7/FxVusbFOC4d5LZjSsbH9du3Zmn6CwcXL05brcOrtaMXXm9CgqJBP8Asjb65ZT+RWP4ZZwf9w1xQCgNZu7Hepogk/BhNIul5+u5viKhdzaNjIeDHFb/lOT8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HJTTxuzf; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762412542; x=1763017342; i=markus.elfring@web.de;
-	bh=wJRRyH1biVoQpuVUMOuahV2xY2HkN9uZ9WuOiYC82es=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=HJTTxuzfxLdgb8c6b1Myhjh8Tr3DTCONApo5RD7nmPuleAzbNd6t3nrEhZ21VKYO
-	 UK9LpFhk6nPd0O3WedENt+Jso1PqnUxM7UCf8fwIwIhyvd9k8G29bYvTOaEOZOWwZ
-	 DjcegI09Qw7mBHEz7+6HpQT1D7qd2rf5W91oyEUlplm19unMcyoePfsaoqODXyRJB
-	 nV2jFdreoRbF4SVvlKDyEvfnMvYpH1uPb25VO+9OKiOYcT9emOV/+gex6uq7oAj3l
-	 pyj3E6cPY0y0vqmp8vesVN8u1MnNnd4KmaYd3l/CzD97WpN+UFTh9oz0/8D6xqrKk
-	 hM8IL5GWO5SdZBliaw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.214]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDMzM-1vPBCS2fZO-00Ccl8; Thu, 06
- Nov 2025 08:02:22 +0100
-Message-ID: <f8edb81d-f38a-4756-ab58-6bffd9ac501e@web.de>
-Date: Thu, 6 Nov 2025 08:02:17 +0100
+	s=arc-20240116; t=1762414118; c=relaxed/simple;
+	bh=1wTrCw7tH2niQnnjbLnl1ZIXBSWyC/o4xO/RZgOwT9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcUDOOQFtuPmlsb1N49pE1/KXGhyKAjm8547xDe1ky2KgNF6By0pd5CoPfWBceitToD/SfxuazSn6bDqgxGbga/EZ1NDFa5YAixzxvIWyPBvUm/gGqZsT1+ht38yekOjOAgCHnS+OvdIP0umpTR6lLOQDU9qPIocp4FMWfEvfcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCe0husl; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762414117; x=1793950117;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1wTrCw7tH2niQnnjbLnl1ZIXBSWyC/o4xO/RZgOwT9Q=;
+  b=fCe0huslffM3ABkqPVSCxVrB7skYiFgevz3swToEDhT97Ck6b55q/62q
+   xN4vRkXAQeAgUeFPHsesQ3F8GpeS6sqkyMXf/Qp2iCanmFSwM1U5JOrhB
+   GtbfsBlPvkIwQr7Ur6rlAkTceHqliYymYmfkcmVmWTTJXXi2CIvy/eEpq
+   cKscMov5np1q4uZ1qCRXjJWGIB9xDsQ4YHQu4GThCxeyWuHxvGKuQGFYP
+   NwFZFyL03ttA4zl0/7rNHdio08PGTI3OidoATisSyw+Nb6Zj1oAOLUaD6
+   Bpv5NwX7JMrYUEYYEf8jVjsbdKQAJ66JqTw+MK7r0rf4rxU2tccphuCpq
+   g==;
+X-CSE-ConnectionGUID: fgDu94gcS4eH9mGFb22/1g==
+X-CSE-MsgGUID: ayk0iFZpScmH0XgLm/OePQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="63747901"
+X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
+   d="scan'208";a="63747901"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 23:28:36 -0800
+X-CSE-ConnectionGUID: fZ57IoJRQkaBLs/kz5cTvQ==
+X-CSE-MsgGUID: cWySKE1OQGO2fBzdQv5eaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
+   d="scan'208";a="191965191"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.151])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 23:28:32 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id C5BB811F983;
+	Wed, 05 Nov 2025 22:54:31 +0200 (EET)
+Date: Wed, 5 Nov 2025 22:54:31 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v5 3/8] software node: allow referencing firmware nodes
+Message-ID: <aQu5hxGGrdPC7VOB@kekkonen.localdomain>
+References: <20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org>
+ <20251105-reset-gpios-swnodes-v5-3-1f67499a8287@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: aspeed: Use devm_iounmap() to unmap devm_ioremap()
- memory
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, linux-spi@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- openbmc@lists.ozlabs.org, =?UTF-8?Q?C=C3=A9dric_Le_Goater?=
- <clg@redhat.com>, Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Mark Brown <broonie@kernel.org>, BMC-SW@aspeedtech.com
-References: <20251105084952.1063489-1-chin-ting_kuo@aspeedtech.com>
- <1a234e96-b41e-4f6c-b23c-e57426ff6aa1@web.de>
- <TYZPR06MB5203380D58961A36922E0436B2C2A@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <TYZPR06MB5203380D58961A36922E0436B2C2A@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wPBf2YQTiaXxrbnaV2IYm9gh7k0gc/6cfk/pxby3/CaDEx+9fkv
- yEuq4IajSOXl9D9jXeJueK75jbZTAofY5DH/UBnvtprpln6OhDTnK00VdXGPtpfFG8lJj2w
- NZ3qIymA+C6O+ZkKj5EErsHPzTMD8dfHU1c5hBdhN6V6OTX4wvRwVVZqdhSYkTOHAmCA/kc
- zfHnuqtjsTQRnhKLE3Y8w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DucKiG8aLfs=;U+2xBOGRHUc0OQqeiQil5V0Cgpi
- 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
- +PHuos7ffGlrxw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-reset-gpios-swnodes-v5-3-1f67499a8287@linaro.org>
 
-> How about change the description to the below one?
->=20
-> Use devm_iounmap() to unmap memory mapped with devm_ioremap().
-> This ensures proper cleanup of device-managed resources.
+Hi Bartosz,
 
-  Thus ensure?
+Thanks for the update.
 
-Regards,
-Markus
+On Wed, Nov 05, 2025 at 09:47:34AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> At the moment software nodes can only reference other software nodes.
+> This is a limitation for devices created, for instance, on the auxiliary
+> bus with a dynamic software node attached which cannot reference devices
+> the firmware node of which is "real" (as an OF node or otherwise).
+> 
+> Make it possible for a software node to reference all firmware nodes in
+> addition to static software nodes. To that end: add a second pointer to
+> struct software_node_ref_args of type struct fwnode_handle. The core
+> swnode code will first check the swnode pointer and if it's NULL, it
+> will assume the fwnode pointer should be set.
+> 
+> Software node graphs remain the same, as in: the remote endpoints still
+> have to be software nodes.
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+But see below...
+
+> ---
+>  drivers/base/swnode.c    | 24 ++++++++++++++++++++++--
+>  include/linux/property.h | 13 ++++++++++---
+>  2 files changed, 32 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index 6b1ee75a908fbf272f29dbe65529ce69ce03a021..44710339255ffba1766f5984b2898a5fb4436557 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -535,7 +535,24 @@ software_node_get_reference_args(const struct fwnode_handle *fwnode,
+>  	ref_array = prop->pointer;
+>  	ref = &ref_array[index];
+>  
+> -	refnode = software_node_fwnode(ref->node);
+> +	/*
+> +	 * A software node can reference other software nodes or firmware
+> +	 * nodes (which are the abstraction layer sitting on top of them).
+> +	 * This is done to ensure we can create references to static software
+> +	 * nodes before they're registered with the firmware node framework.
+> +	 * At the time the reference is being resolved, we expect the swnodes
+> +	 * in question to already have been registered and to be backed by
+> +	 * a firmware node. This is why we use the fwnode API below to read the
+> +	 * relevant properties and bump the reference count.
+> +	 */
+> +
+> +	if (ref->swnode)
+> +		refnode = software_node_fwnode(ref->swnode);
+> +	else if (ref->fwnode)
+> +		refnode = ref->fwnode;
+> +	else
+> +		return -EINVAL;
+> +
+>  	if (!refnode)
+>  		return -ENOENT;
+>  
+> @@ -633,7 +650,10 @@ software_node_graph_get_remote_endpoint(const struct fwnode_handle *fwnode)
+>  
+>  	ref = prop->pointer;
+>  
+> -	return software_node_get(software_node_fwnode(ref[0].node));
+> +	if (!ref->swnode)
+> +		return NULL;
+> +
+> +	return software_node_get(software_node_fwnode(ref[0].swnode));
+
+This could be:
+
+	return software_node_get(software_node_fwnode(ref->swnode));
+
+>  }
+>  
+>  static struct fwnode_handle *
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 50b26589dd70d1756f3b8644255c24a011e2617c..272bfbdea7bf4ab1143159fa49fc29dcdde0ef9d 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -355,19 +355,26 @@ struct software_node;
+>  
+>  /**
+>   * struct software_node_ref_args - Reference property with additional arguments
+> - * @node: Reference to a software node
+> + * @swnode: Reference to a software node
+> + * @fwnode: Alternative reference to a firmware node handle
+>   * @nargs: Number of elements in @args array
+>   * @args: Integer arguments
+>   */
+>  struct software_node_ref_args {
+> -	const struct software_node *node;
+> +	const struct software_node *swnode;
+> +	struct fwnode_handle *fwnode;
+>  	unsigned int nargs;
+>  	u64 args[NR_FWNODE_REFERENCE_ARGS];
+>  };
+>  
+>  #define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
+>  (const struct software_node_ref_args) {				\
+> -	.node = _ref_,						\
+> +	.swnode = _Generic(_ref_,				\
+> +			   const struct software_node *: _ref_,	\
+> +			   default: NULL),			\
+> +	.fwnode = _Generic(_ref_,				\
+> +			   struct fwnode_handle *: _ref_,	\
+> +			   default: NULL),			\
+>  	.nargs = COUNT_ARGS(__VA_ARGS__),			\
+>  	.args = { __VA_ARGS__ },				\
+>  }
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
