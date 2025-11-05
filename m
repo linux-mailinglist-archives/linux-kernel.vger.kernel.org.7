@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-885723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBC5C33C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:29:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB730C33C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE4F462169
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA5218C4EA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F75221F13;
-	Wed,  5 Nov 2025 02:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D90F2248A4;
+	Wed,  5 Nov 2025 02:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fD7cZvDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="SgjWg6jJ"
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2270621FF48
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7521A453;
+	Wed,  5 Nov 2025 02:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309764; cv=none; b=bWtx+2UordPEWPjE1zsqwMfcgSamnnWSs8WnQrTgBN+W6csXsF3VAkav9tRKg5fQqoE9CA+z3VJ8gHSNcebFS/TeNoQse2cL0bUghhYFoziHu4iUFxT4FpnaWAtoMVF7RuR6x1OKz9XAAPNey4odzYQgZy2IlAD+LVzH5aPcVxs=
+	t=1762309789; cv=none; b=oxkcpTPpfa2Uis7jJm+f2KaSoQGyfCJLwYi9NVzuM6fWmysrveIPLebtllIyMfstAYEK9h1f1jBYqC6YQLWYVjylv2uP0W0PB6nFRNa2+8ngmVOT0zCeOYxo8NOrxs82pXs94rPP9EPV1nE0Uo68eDrbOQmBikqK9sK0Y1o78CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309764; c=relaxed/simple;
-	bh=mn58vpiShjjiSpWElNvKBxUY55kNZr0LGLdr5KI3fho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgwhtCOhD9zqi3D9zIy3EgESSYpyAMPN3/IlfBd1XbW+oZY+8Oq+EJBUBGDy+Lr4NwyhJGljtAeULptRYWmig82+KVoKR45kzbIvZ2zb8YaNtteTwKaBoMhZBRYMPAQNfeUoVbV7Z4bQQ0bQjf1lXN5UxpuT8P/O8MlU8Dc7T+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fD7cZvDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C49DC4CEF7;
-	Wed,  5 Nov 2025 02:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762309763;
-	bh=mn58vpiShjjiSpWElNvKBxUY55kNZr0LGLdr5KI3fho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fD7cZvDNvIoaszYiw58MqZARHqND+j3LSVBm1RxdjvknoIwgrnf7CE7gxC0G4ytel
-	 /tj+FpP742HIw3eLuLjcrkQyqkxHE0dPD8yrJSvjOkWEr4+Atby+AxC+jZzBddeB/Z
-	 IRXruYNBS0AoTlQ7j/0GOTG91vetacBB6UbfrBwwmxKrm007m17qUwO4IXOSmdJFvb
-	 9Mp4HIOVB8YtpfVF3HQSJ5MwLw+8FXjfz/dmhUG4+whAOM2IktoyszlxvHdmXi9HPg
-	 ghdCLgXv2OWU+a0RZusxcYglPT0n9w+qQfpLWpVjWZft6AT+uOQXjVxascfamd7Zlu
-	 SoweEcXOP2kng==
-Date: Tue, 4 Nov 2025 18:29:20 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Kaplan, David" <David.Kaplan@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 05/56] x86/bugs: Reset spectre_v2 mitigations
-Message-ID: <j2mds5vdblnhpha6oyejqcj2fgmveylgaudzzljvfwwl3fgvnw@xgmsl4f7jzv4>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-6-david.kaplan@amd.com>
- <20251103193130.GQaQkDEquEnEwb_cwC@fat_crate.local>
- <LV3PR12MB92655CEB1AF94875901E700C94C7A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251103202811.GMaQkQW54Gml6i1jQy@fat_crate.local>
+	s=arc-20240116; t=1762309789; c=relaxed/simple;
+	bh=vihv0OcwoTqfTwTZgV6Ptxqv25dxBqlI2rIR5oAbY2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hYtfkabjKFv6Vm0z72wQevUnzlx6jzoNeONrjdl+FnEhLfw1rTtynFR1Oz6PuG3KM8aZnu0rqCRI0x1KMNlXhHWkeTwEcY64d9QPSiBbHhppgZB1GS7FR42xcing9buoD1e+6SS2cRxxSzoxafiS6ytE9yP8aqVkI2FmncTthvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=SgjWg6jJ; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2869c975e;
+	Wed, 5 Nov 2025 10:29:36 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	kees@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] binfmt_misc: restore write access before closing files opened by open_exec()
+Date: Wed,  5 Nov 2025 02:29:23 +0000
+Message-Id: <20251105022923.1813587-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103202811.GMaQkQW54Gml6i1jQy@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a51d923e503a1kunm720395536d221e
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTBhDVk4aHxlITEwYHR1NGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
+	++
+DKIM-Signature: a=rsa-sha256;
+	b=SgjWg6jJ8wpyCmGsWH3WTVRLOG3JzbweeWqjDcGDpbonlNJWyIFDP4Lt0u/yuOsGM9lInXLigVcnDDepki4vvA+Nb5jyFwvqwpt10FOi/iZ3WLgu2g6HhZ5o5IV07TysvZl+wCJeOllRwbp4mBntB8hyqV7hYUVxuwshUpeGVhs=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=LcRHFkNUNb4BP3TxxcV+q8/C0VDrALX19FW40WNd0fU=;
+	h=date:mime-version:subject:message-id:from;
 
-On Mon, Nov 03, 2025 at 09:28:11PM +0100, Borislav Petkov wrote:
-> On Mon, Nov 03, 2025 at 08:10:39PM +0000, Kaplan, David wrote:
-> > Do you really want it all in one big function?  Or just to relocate all the
-> > *_reset_mitigation() functions to a single place so they can all go under
-> > one ifdef?
-> > 
-> > I can do it in one big function, but it'd probably look something like:
-> > 
-> > /* Reset spectre_v1 */
-> > setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
-> > setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_KERNEL);
-> > spectre_v1_mitigation = SPECTRE_V1_MITIGATION_AUTO;
-> > /* Reset mds */
-> > setup_clear_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
-> > static_branch_disable(&cpu_buf_idle_clear);
-> > mds_mitigation = IS_ENABLED(CONFIG_MITIGATION_MDS) ?
-> >                 MDS_MITIGATION_AUTO : MDS_MITIGATION_OFF;
-> > /* Reset spectre_v2 */
-> > Etc.
-> 
-> Yap, that's what I thought too.
-> 
-> Since there's no point to have separate functions, the comment separation is
-> perfectly sufficient, I'd say.
+bm_register_write() opens an executable file using open_exec(), which
+internally calls do_open_execat() and denies write access on the file to
+avoid modification while it is being executed.
 
-Separate functions allows each reset function to stay close to its
-select/update/apply counterparts.  That makes it easier to tell that
-it's undoing all the right things.  Plus it preserves the existing
-logical code layout/separation between mitigations.
+However, when an error occurs, bm_register_write() closes the file using
+filp_close() directly. This does not restore the write permission, which
+may cause subsequent write operations on the same file to fail.
 
+Fix this by calling exe_file_allow_write_access() before filp_close() to
+restore the write permission properly.
+
+Fixes: e7850f4d844e ("binfmt_misc: fix possible deadlock in bm_register_write")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ fs/binfmt_misc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index a839f960cd4a..a8b1d79e4af0 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -837,8 +837,10 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 	inode_unlock(d_inode(root));
+ 
+ 	if (err) {
+-		if (f)
++		if (f) {
++			exe_file_allow_write_access(f);
+ 			filp_close(f, NULL);
++		}
+ 		kfree(e);
+ 		return err;
+ 	}
 -- 
-Josh
+2.34.1
+
 
