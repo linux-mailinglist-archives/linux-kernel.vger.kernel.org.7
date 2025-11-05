@@ -1,184 +1,185 @@
-Return-Path: <linux-kernel+bounces-887346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05426C37FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:25:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AA0C380A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137853BA111
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A30F425198
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF6834D4E1;
-	Wed,  5 Nov 2025 21:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893DC2DAFB8;
+	Wed,  5 Nov 2025 21:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G6EqqMOD"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkhK4jvA"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76434E776
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C517286D55
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377265; cv=none; b=e+JlwpTx8hGZMP96/OFnwiYk2x8IjU9Zn0MNkmaBex9xs4oNMVe5Ic+GbTzX1eorwx2D0yVDa17maDDcLr5i83ka9oO7VnHILYdtdew3f4XEUdRq63gVArd3zfIaZg/kklbnbqEPe7SaqldAR53cvpYdu8Ix2iz60SGq5PC61+M=
+	t=1762377359; cv=none; b=K2fGSkHKug1RKsG0j2rmjO90z4FVVsrfU3RW3CyM+svaIQGuDpETDNSjjiEzzla0u6NaY+TEsfXhyJShSfIYOyxNvS4PpVdoKIs2Jl9+Fua+7wIaPkidApmwe2H+7Vh1v14SY6odoCXhk0OVrCpMeWf+OkyQ45xeDyDe8QLRxJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377265; c=relaxed/simple;
-	bh=MQvsWeDQVn/3Ah+sMEwFHizhxAHJ0b7a7QFp7wzzuLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C27Idy64UamwtlfErjDUq43JwpWUIWTFAp6eM7O/SVHwR2j6pV6/yywfgcU7b5TgPjC78kH5Ic6SSOH9Nd4RLrk4cANIt/HyXezpHD4B7emnboHWcwgDF71qJt5rm1cqbNbzlXySTrYsrnpE++bzBTHOx5dJUtx6McmunFNS40Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G6EqqMOD; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27d67abd215so38175ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:14:23 -0800 (PST)
+	s=arc-20240116; t=1762377359; c=relaxed/simple;
+	bh=f9gnacKKf2I1AkHrp5BqN18zRTjnCOrkCGu1EP+5wLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVR0gUS+FU7x3c6twJ1Nm83n3YfYm9/p8ULJn827MfBXcpAAO5uumPIW/iPhvYzKW/SR5yBnPKCBrkWsiQak6tkCR7E04h83TEf87UQR3CbFqIuVzoSG5UHfQhqSe+jDatzDcvsT5z0Y6drLKu/86L+ia2z1ibENb/B4SFifwXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkhK4jvA; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429b7ba208eso191930f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:15:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762377263; x=1762982063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1a4Yyw4cqtm7g2w2aJJeYA13ID9gFvTcA7MB5XSqJcE=;
-        b=G6EqqMOD4IcpDZUNIFdt9tKaRuF/qFVyHDOmbKdXAUxCAZiCnndsHRisrfuCmsuXQ8
-         neDZ5gujTyEmJlgw3Zu7YcNHXzuTl3HON+nfNq+O7Cs4M2QukRERuSoBzG350bvvQsTH
-         bBIy5Vhw6Fg7nDRmWdST+1NgMC0+p0M+4ooR4FsgtCGV4E/eNhsFCMynRI4UI3yY4Q+5
-         qAE6b9U+i4jKAmfPDYx7PxFa340MlcGZZ/E1vMLWAQ77E9R84tKH+LObR55fya5G3GhY
-         WTXSEA2MiL1AwNwlhRP49LCv+3tpSt+C41OBYTWmR1E6yYyft9yVnt17VW9KVBqSdk7O
-         ppww==
+        d=gmail.com; s=20230601; t=1762377356; x=1762982156; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8ppaE2LQfT94SEh9VKLVy8mNImdVN7dwxyvCopktHPk=;
+        b=VkhK4jvA99PG3acbgpmUypWPEdtb0MKnA5L0WDSKIpwQwS3xHnOn9s8Y0xdq3FiNAS
+         68cVm7oqgzT70gg+TPdHlJ1EijPf+hAt2zhvLNS7uPQOyBUoy9p2O9gGFTWL3zWsKRgH
+         57w/sLfa7P2x/2tlr5TUvpld/VD65YmWFqwwJAUngCXEQq0dO6P7fcgjn6a0Ece3tj3d
+         PbEX7jrRRObD7pZRGtsO6csWRKwEg9tdla8SWVrPXJvzOJKqmcCz80g0gxa9q2dGLkf4
+         X7NnPJtcJhOHU9k5JPEK2uyGjkHcbbSzvqz+wQFPCBkGDsyiQI6wZc/mV76QK2S3eBAB
+         7DNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377263; x=1762982063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1a4Yyw4cqtm7g2w2aJJeYA13ID9gFvTcA7MB5XSqJcE=;
-        b=Ucg36gtb4WyOTVM6GghkJl5+X3wLkdJz9brlbi706OyEISqS1Nh8JQ83Mm2s70F3Yv
-         UYCJlxpQLO2ghXyXA1aAnWQIpk63o5yOnhRthRDSyxvdB5ENr0jVatVIhpnnzT7huZWp
-         tbEloNVCqfhoLknBpZA+hsLjkRPB0kqmq5vAUV2FqCCmnTRwLJRp+7sc/Np9agfz7KnO
-         +/z/G5HO9QUCMFmUiS/JI/E2drxcf50T88eaqHkZEmfVcuURcrI4Xo4TN8F22WCbkhwH
-         Qp6n1FVyZSHZFZ/ojDBBeTMgWDEHew5nWmpPtRvylThGIkKjeJ73+pAiS+lVlez61US9
-         ZlLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/nFxzcXKGwARpabwTSd4BST7g4k7CypK4XlEwiC0YfLnYK5e3JeTCiKZJx34D7aCkdmCmnvQidIF7aig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyflID81JroqgdMch+ulEzVbyuqUcT4dUigRMeQiCXJ/0VE1j0E
-	bztPvC7YbjhhvbOrJKR8DH6/GkLouV/T6JFUppnJE7/ySxnzVK+dTqw9fW9PPBOj/A==
-X-Gm-Gg: ASbGncuTbO6r0W4btgwXsAPSH+JTdqxu3ZEJG3L198MeCm0igfHlE/VCrQuZKtTXAYS
-	koGR0eZcA6PYIp2Q/mkeAyrbAXZM6lZo5B6np9A9fuP8ozkjThyvhW9pYd59q+ZeT1hHJtzNOlw
-	QYrzP3mEnrNKzVxUB5hMxQ1UNLrk00qMb0ykM8sp3C5gny7ZoGK7tHssEpz1iWQiY+Gmpg7p7dt
-	Y5KDy1N24JZe3gZzCG8J0Hg2AxbPJs5l07PC25xL1p/p1IGfrzgpbROac+aZUC+gBtQTgJRlP2P
-	ODuzIPFi+cVDh+I80Ny1rbXbgnNPmeoMYYvE4em5lr4leLT2FL3Ms0smsr2iX7NKFpGfjNyHMZR
-	Mmu6Py0IHP/DZW6FuE+kfUmSCkWpcE27HNzyQZDrOrfkaIJopfRC3yBDm8VSAa13UvifxzTxKAY
-	n1kboMUWm4XAOKMQ1PyLELz1h0WKbAuP97X9arpPEXo9R5LuGo
-X-Google-Smtp-Source: AGHT+IFP1YxRkoxKG9m5uY31RvKem02MIvxx/qMo4X6r12qFFAqsYxQUQt6ctZOzHEsowBEgNB2RGA==
-X-Received: by 2002:a17:902:e74b:b0:290:8ecf:e9f9 with SMTP id d9443c01a7336-2965b17e891mr190525ad.7.1762377262520;
-        Wed, 05 Nov 2025 13:14:22 -0800 (PST)
-Received: from google.com (164.210.142.34.bc.googleusercontent.com. [34.142.210.164])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d121cf9fsm21677a91.10.2025.11.05.13.14.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:14:21 -0800 (PST)
-Date: Wed, 5 Nov 2025 21:14:15 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	kevin.tian@intel.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	skolothumtho@nvidia.com
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3-iommufd: Allow attaching nested
- domain for GBPA cases
-Message-ID: <aQu-Jy27_PzxqVvt@google.com>
-References: <20251103172755.2026145-1-nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1762377356; x=1762982156;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ppaE2LQfT94SEh9VKLVy8mNImdVN7dwxyvCopktHPk=;
+        b=MZ99FeWo8YoYChNcB00huBCGyPaFLF8gAdgu6w+F5zY/zTLuOray5km9l0a2dlz3Sb
+         KDqouMEPZMVM0w7PJ+4pRULKjy9BYRuB5IK3Kd7ib3qCSn3Jtmi3HXl3eu0qrS5reaJh
+         tr1F8lRp9Mp4YP9ydDuYk39nvVPHURG/BQByWD18erWn97+jjtydS2netD9SzZJIRUW4
+         kpBpUm4yXjqD4oMjx1UZ69YY9oVRkgmaOi0cwiuFdQoOZzLU/viYbrbSCLkk2KtqLoa+
+         ad0NT3wUkInvLWAakg3aUeTyiYhOicuujtwc8tEK+8AfL/UrW4DPr5UEK2Tv72T7jxxL
+         ZkBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJmXdu8ZFeF37NOGkWBCIQ4gX6z2ovsiz0rVZIBpqdDs+M/HdLIRZ6ArjauFTJtsSGstjegf3LR4NtjWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzreLT6mbYywBnSxPCts7HNSi2PGwKKwqtNT9N9wCnoSiLS//ag
+	j9Cl6NKCL/CWAAsXZrM/hcE9XClnCzrdBTLiG3Dl8xXelCy2mk5sQAgI
+X-Gm-Gg: ASbGncuNlxxQbfQtJ9ExwzEtMUHcsmgXtyUXNqwI8k5VIlUM/rZiusrhZSxmeSlKMVk
+	u08ZWQrykNE76TBR+B9/Ui2K7XYmsukOiLafooTP8VNtXXE3dESRLxFrQzqcZ66zdlDxW0a90eU
+	RY5JKGSh5XbbWDpiWFe4sxYJNt+6KjIcXZ254whECe4lu+w4jWwmIep0K3APpbQZ1+y5By21siF
+	zioEusleoZRMXimS07SscYXmFu87Oce6HD7Y3llKxa59fw8W2UJhn5TDvwdLawUA4xWCxSoaPyz
+	FM7D+ciIRw4DAPJC9Vh+YZy81KG3dSX03jY1OQHARJgp8Fep974n4f2UEDOZyxTMI8GD8SvBQeV
+	uEh//NSIEi8FccqVctZugx/HQTQCGMl0qryP/zQ/ZqVMDZy5E5wlKgoylbuFLpuvAETPtSUPHxz
+	oJnN5nCpcBK46NmU56PPVvLpo0fZhmJwgz+PzMP+5FpXOqHlkx2YpFZ2HxaGyj0nAHzxaehHk9n
+	R6YVMjNELQRXpHXBRm2K17Sgphy/P4=
+X-Google-Smtp-Source: AGHT+IHhnDU7C8JIw0mU7ueaGAVALbH7ZSUb6hbiggFXfD6/S5ypV4gK3TS5wjxW/SnnCtFGhSbz5Q==
+X-Received: by 2002:a5d:5f53:0:b0:427:4b0:b3e5 with SMTP id ffacd0b85a97d-429e330aed4mr4567372f8f.47.1762377355551;
+        Wed, 05 Nov 2025 13:15:55 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40617asm851462f8f.10.2025.11.05.13.15.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 13:15:54 -0800 (PST)
+Message-ID: <563246df-cca4-4d21-bad0-7269ab5a419c@gmail.com>
+Date: Wed, 5 Nov 2025 22:15:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103172755.2026145-1-nicolinc@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
+ <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+ <aQugI-F_Jig41FR9@casper.infradead.org>
+ <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
+ <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+ <aQus_MNi2gFyY_pL@gourry-fedora-PF4VCD3F>
+ <fb718e69-8827-4226-8ab4-38d80ee07043@lucifer.local>
+ <7f507cb7-f6aa-4f52-b0b5-8f0f27905122@gmail.com>
+ <2d1f420e-c391-487d-a3cc-536eb62f3518@lucifer.local>
+From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <2d1f420e-c391-487d-a3cc-536eb62f3518@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 09:27:55AM -0800, Nicolin Chen wrote:
-> A vDEVICE has been a hard requirement for attaching a nested domain to the
-> device. This makes sense when installing a guest STE, since a vSID must be
-> present and given to the kernel during the vDEVICE allocation.
+On 05.11.25 22:08, Lorenzo Stoakes wrote:
+> On Wed, Nov 05, 2025 at 09:11:45PM +0100, David Hildenbrand (Red Hat) wrote:
+>> On 05.11.25 21:05, Lorenzo Stoakes wrote:
+>>> On Wed, Nov 05, 2025 at 03:01:00PM -0500, Gregory Price wrote:
+>>>> On Wed, Nov 05, 2025 at 07:52:36PM +0000, Lorenzo Stoakes wrote:
+>>>>> On Wed, Nov 05, 2025 at 02:25:34PM -0500, Gregory Price wrote:
+>>>>>> On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
+>>>>> I thought about doing this but it doesn't really work as the type is
+>>>>> _abstracted_ from the architecture-specific value, _and_ we use what is
+>>>>> currently the swp_type field to identify what this is.
+>>>>>
+>>>>> So we would lose the architecture-specific information that any 'hardware leaf'
+>>>>> entry would require and not be able to reliably identify it without losing bits.
+>>>>>
+>>>>> Trying to preserve the value _and_ correctly identify it as a present entry
+>>>>> would be difficult.
+>>>>>
+>>>>> And I _really_ didn't want to go on a deep dive through all the architectures to
+>>>>> see if we could encode it differently to allow for this.
+>>>>>
+>>>>> Rather I think it's better to differentiate between s/w + h/w leaf entries.
+>>>>>
+>>>>
+>>>> Reasonable - names are hard, but just about anything will be better than swp_entry.
+>>>>
+>>>> SWE / sw_entry seems perfectly reasonable.
+>>>
+>>> I'm not a lover of 'sw' in there it's just... eye-stabby. Is that a word?
+>>>
+>>> I am quite fond of my suggested soft_leaf_t, softleaf_xxx()
+>>
+>> We do have soft_dirty.
+>>
+>> It will get interesting with pte_swp_soft_dirty() :)
 > 
-> But, when CR0.SMMUEN is disabled, VM doesn't really need a vSID to program
-> the vSMMU behavior as GBPA will take effect, in which case the vSTE in the
-> nested domain could have carried the bypass or abort configuration in GBPA
-> register. Thus, having such a hard requirement doesn't work well for GBPA.
-> 
-> Skip vmaster allocation in arm_smmu_attach_prepare_vmaster() for an abort
-> or bypass vSTE. Note that device on this attachment won't report vevents.
-> 
-> Update the uAPI doc accordingly.
-> 
-> Tested-by: Shameer Kolothum <skolothumtho@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
-> 
-> Changelog
-> v2
->  * Add Tested-by from Shameer
->  * Skip vmaster allocation instead of bypassing vsid=0
->  * Revise the uAPI doc to note a corner case when CR0.SMMUEN=1
-> 
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 13 ++++++++++++-
->  include/uapi/linux/iommufd.h                        |  9 +++++++++
->  2 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index 8cd8929bbfdf8..e5fbbdbdea242 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -99,6 +99,8 @@ static void arm_smmu_make_nested_domain_ste(
->  int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
->  				    struct arm_smmu_nested_domain *nested_domain)
->  {
-> +	unsigned int cfg =
-> +		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
->  	struct arm_smmu_vmaster *vmaster;
->  	unsigned long vsid;
->  	int ret;
-> @@ -107,8 +109,17 @@ int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
->  
->  	ret = iommufd_viommu_get_vdev_id(&nested_domain->vsmmu->core,
->  					 state->master->dev, &vsid);
-> -	if (ret)
-> +	/*
-> +	 * Attaching to a translate nested domain must allocate a vDEVICE prior,
-> +	 * as CD/ATS invalidations and vevents require a vSID to work properly.
-> +	 * A abort/bypass domain is allowed to attach w/o vmaster for GBPA case.
-> +	 */
-> +	if (ret) {
-> +		if (cfg == STRTAB_STE_0_CFG_ABORT ||
-> +		    cfg == STRTAB_STE_0_CFG_BYPASS)
-> +			return 0;
->  		return ret;
-> +	}
->
+> Hmm but that's literally a swap entry, and is used against an actual PTE entry
+> not an abstracted s/w leaf entry so I doubt that'd require renaming on any
+> level.
 
-Skipping the vmaster allocation entirely for the GBPA-only case (when no
-vdevice is found) is much cleaner. Thanks!
+It's used on migration entries as well. Just like pte_swp_uffd_wp().
 
->  	vmaster = kzalloc(sizeof(*vmaster), GFP_KERNEL);
->  	if (!vmaster)
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index c218c89e0e2eb..225671603ade6 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -450,6 +450,15 @@ struct iommu_hwpt_vtd_s1 {
->   * nested domain will translate the same as the nesting parent. The S1 will
->   * install a Context Descriptor Table pointing at userspace memory translated
->   * by the nesting parent.
-> + *
-> + * It's suggested to allocate a vDEVICE object carrying vSID and then re-attach
-> + * the nested domain, as soon as the vSID is available in the VMM level:
-> + * - when Cfg=translate, a vDEVICE must be allocated prior to attaching to the
-> + *   allocated nested domain, as CD/ATS invalidations and vevents need a vSID.
-> + * - when Cfg=bypass/abort, a vDEVICE is not enforced during the nested domain
-> + *   attachment, to support a GBPA case where VM sets CR0.SMMUEN=0. However, if
-> + *   VM sets CR0.SMMUEN=1 while missing a vDEVICE object, kernel would fail to
-> + *   report events to the VM. E.g. F_TRANSLATION when guest STE.Cfg=abort.
->   */
+So, it's ... tricky :)
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
-Thanks,
-Praan
+But maybe I am missing your point (my brain is exhausted from uffd code)
 
