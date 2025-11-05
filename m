@@ -1,211 +1,206 @@
-Return-Path: <linux-kernel+bounces-887139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A443C375AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:38:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5454FC375B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A1CA4E854A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60381889DC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9554E280332;
-	Wed,  5 Nov 2025 18:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aAzbRA0Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554C28489A;
+	Wed,  5 Nov 2025 18:38:38 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345EC2836B5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3DD2836A0
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762367869; cv=none; b=LQVkd0htrJ+MHCTaWJq4NuurSuY7tBypcaLDBcPuPjr9wMlkT7UFt5aJe2pmO9UEnxie/natAm5abf4/WkzuokXY+Fgb5ns3nhGhJCCl2FfRytZ9K8JAOciKLk0ROyrzGWMcM/vGSYc66K5/fljZ6tI2gROUQXcBe6k4Oj8gtHs=
+	t=1762367918; cv=none; b=VtGfG6yku4VjzHzd62krvVlnEvSUQNevtbQC9L4AZyO7qjs/ivw5gtFDbqzApOsmUXkejjIM0LMxDOs06RA+utMAt5ZWT4tR8weTjGJqPaBgFLpX8jwNYorHPAK5JTslkd7HmRXDjdO33SNGPlVMMs33pjw/8dvwli+7xYblSe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762367869; c=relaxed/simple;
-	bh=R4bFuwzCbhJ+188XUh8XwprDMEtEHFoHtrsAsGVOyD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7mZtNYSusfwaazclgxyUD2G5vMVn91k4xSZehwisG462U283vHjkobpYuTADfPtP9WQ3G2+MBWS+vAa9ctjLp+ao88n9hs6S7I//tGHOGhIycaDvV+F+UxRFLn8YsL2tlV5rBSoFzQIzO0A1K3BbntOnuIZImv0f8t1CXNZs+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aAzbRA0Q; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762367868; x=1793903868;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=R4bFuwzCbhJ+188XUh8XwprDMEtEHFoHtrsAsGVOyD8=;
-  b=aAzbRA0Q2uDurVH9NeNnjDWBPq9wy+hAj2j9oyBFR57CX9Azc4l0nd/+
-   junL5Qvfyx7Lo6F+IUK+1v54RwKGO7v3g8/jigcZ4yIjvWx5MUT4k6YBa
-   ewtsAJJ6V2GWBRXBefeLo43Mp7KCV4RZyR0+kRXpXRRtawTvCuT5DnssU
-   7Am7+Alvpp4kyvzIZHVeHZLCsSEiixVzb828laveflyNpKjKzsQM4flWh
-   C9NNsRcKi+Rz03YcaOa94U3FwZEA15edmKvKCfR3FN0eAp4lwvo2QZMAf
-   RRYLatHymNcwIJBC0Pc8iQXN1xfiP8j2Dms6hni7BrdV4fBds0u1GY3Rf
-   A==;
-X-CSE-ConnectionGUID: 68CTlI8wQcC91tRMl51C7g==
-X-CSE-MsgGUID: HPwmgyi8SuuuXJdqBlYaqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="63697954"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="63697954"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:37:47 -0800
-X-CSE-ConnectionGUID: 0xdNeHl9RUeQBFiybfJjpg==
-X-CSE-MsgGUID: XC/DnSzmQMyT3FXIJqvJ+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="191819128"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Nov 2025 10:37:46 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 5BB5296; Wed, 05 Nov 2025 19:37:45 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ira Weiny <ira.weiny@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
-Date: Wed,  5 Nov 2025 19:37:43 +0100
-Message-ID: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762367918; c=relaxed/simple;
+	bh=i7GhLJac4vonK6GWU02RBDmPuIBBSB8ckgKrfmHnlU0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AP+vXxV0DXk8ofiejNhfPEC8pGM38SnC8PJY5gFIpV2LqLlZbxqaywtylgIhq43EX7zczwRc6P18H73byHk6fsv5nFfZSY2nz/qq9oBYC+I63yKALvZMOo5Qgexq0nctfpmitnuMU79KJ1np9T9seV5ZWlCuVU49iQIvvdrFlXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-43328dcdac1so1861725ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:38:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762367915; x=1762972715;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mn+BtCh3vOD0zyKs8XLSj2XvKwZSbGcteQATczCoPMs=;
+        b=q4gLoZCh5kj4N4n7d+zAajBtMVGZhnoGvl4eMJJ80f9cQyoKmacU9eBfXCwFfKkw8o
+         rFbeQZexNwWiYG7bhtRblqsGEQSpwKH9nSngxcY51Kcp/q1jHByFhsSWwUUWxnrxt5me
+         MqJB2JDSLh4oLWeCAS3jexwDyCMr8Esn/ar6ZfV+NnDF+5B9YjrrB1NDXd5z4Kj7ltvL
+         v5MHn3SoOa5CMGqoU2GaqdEOwKgOqjYqKd0cGyErQ9UgD+e7hg6Idrk3nRSmwtBtkuIG
+         vf6tD2UCIb9fcoyeirhOevRFFs64Oi7C760NEDZn7QVRNz0gpYsX593MR+ZIJsIg+KUn
+         qnOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWs9FkVo997mp/eSU80x2kors/TEyvnyDXrQZTbLD4ns1hdWt4H/r1MytpjtcEKH47+lE5mS/XqMjECYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz20b0JpaHPcpxLRHv86MdgWPwKQKpWXQK25EWP+d9+m9W819/A
+	8+7fHRRXU/IOnwluH9xgbgikjttQETlhT0bAPfsPRf8/AxaUhAUxnHOimDUA0uiYrARxOJm+RCL
+	jwFTLvcwDk4Xoa8KDTqnuR73FU4VnsGDsJQ7ceJj278x2oXmiM8NIhXeqWu8=
+X-Google-Smtp-Source: AGHT+IFQpl8lpWxtSbzVqHE8LKdmISAAPmjAEteuXxAB51ZS87fITIQFSnOHk5W1KhqRM7pMy/U7YUh9m3ZljoGgW5JVcOkArmV1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:152d:b0:430:bfbf:4e4a with SMTP id
+ e9e14a558f8ab-433407c0a59mr61771605ab.16.1762367915570; Wed, 05 Nov 2025
+ 10:38:35 -0800 (PST)
+Date: Wed, 05 Nov 2025 10:38:35 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b99ab.050a0220.baf87.0057.GAE@google.com>
+Subject: [syzbot] [mm?] WARNING in lock_list_lru_of_memcg (2)
+From: syzbot <syzbot+c5b060ce82921a2fd500@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, david@fromorbit.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
+	roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com, 
+	zhengqi.arch@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 
-In the snippets like the following
+Hello,
 
-	if (...)
-		return / goto / break / continue ...;
-	else
-		...
+syzbot found the following issue on:
 
-the 'else' is redundant. Get rid of it.
+HEAD commit:    ba36dd5ee6fd Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16515704580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=c5b060ce82921a2fd500
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: i386
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/62471ef815ed/disk-ba36dd5e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e7a72af6e621/vmlinux-ba36dd5e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/352eec7dbce0/bzImage-ba36dd5e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c5b060ce82921a2fd500@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 13908 at mm/list_lru.c:100 lock_list_lru_of_memcg+0x30c/0x4c0 mm/list_lru.c:100
+Modules linked in:
+CPU: 0 UID: 0 PID: 13908 Comm: syz.0.1878 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:lock_list_lru_of_memcg+0x30c/0x4c0 mm/list_lru.c:100
+Code: 42 80 3c 30 00 74 0b 48 89 fb e8 2f 40 1d 00 48 89 df 48 8b 3f 48 8b 54 24 10 48 8b 74 24 28 e9 0a fe ff ff e8 e5 8a b7 ff 90 <0f> 0b 90 eb be 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 1e fe ff ff 48
+RSP: 0018:ffffc9000fb165c0 EFLAGS: 00010083
+RAX: ffffffff82087bab RBX: 0000000000000000 RCX: 0000000000080000
+RDX: ffffc9000f013000 RSI: 00000000000127d4 RDI: 00000000000127d5
+RBP: 0000000000000001 R08: ffff88801e3b8000 R09: 0000000000000002
+R10: 0000000000000406 R11: 0000000000000002 R12: ffffffff997ec9a0
+R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88812613e000(0063) knlGS:00000000f541bb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000f74089b4 CR3: 000000002ef4a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ list_lru_add+0x58/0x270 mm/list_lru.c:167
+ list_lru_add_obj+0x191/0x270 mm/list_lru.c:190
+ workingset_update_node+0x1d5/0x260 mm/workingset.c:629
+ xas_update lib/xarray.c:357 [inline]
+ update_node lib/xarray.c:765 [inline]
+ xas_store+0xac4/0x1880 lib/xarray.c:852
+ page_cache_delete mm/filemap.c:141 [inline]
+ __filemap_remove_folio+0x3c7/0x500 mm/filemap.c:227
+ __remove_mapping+0xb06/0xe40 mm/vmscan.c:811
+ shrink_folio_list+0x2896/0x4c70 mm/vmscan.c:1553
+ reclaim_folio_list+0xeb/0x500 mm/vmscan.c:2233
+ reclaim_pages+0x454/0x520 mm/vmscan.c:2270
+ madvise_cold_or_pageout_pte_range+0x1974/0x1d00 mm/madvise.c:565
+ walk_pmd_range mm/pagewalk.c:130 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0xfe9/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_vma+0x393/0x440 mm/pagewalk.c:717
+ madvise_pageout_page_range mm/madvise.c:624 [inline]
+ madvise_pageout mm/madvise.c:649 [inline]
+ madvise_vma_behavior+0x311f/0x3a10 mm/madvise.c:1352
+ madvise_walk_vmas+0x51c/0xa30 mm/madvise.c:1669
+ madvise_do_behavior+0x38e/0x550 mm/madvise.c:1885
+ do_madvise+0x1bc/0x270 mm/madvise.c:1978
+ __do_sys_madvise mm/madvise.c:1987 [inline]
+ __se_sys_madvise mm/madvise.c:1985 [inline]
+ __ia32_sys_madvise+0xa7/0xc0 mm/madvise.c:1985
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf706d539
+Code: 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f541b55c EFLAGS: 00000206 ORIG_RAX: 00000000000000db
+RAX: ffffffffffffffda RBX: 0000000080000000 RCX: 0000000000600000
+RDX: 0000000000000015 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   4:	10 07                	adc    %al,(%rdi)
+   6:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   a:	10 08                	adc    %cl,(%rax)
+   c:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  20:	00 51 52             	add    %dl,0x52(%rcx)
+  23:	55                   	push   %rbp
+  24:	89 e5                	mov    %esp,%ebp
+  26:	0f 34                	sysenter
+  28:	cd 80                	int    $0x80
+* 2a:	5d                   	pop    %rbp <-- trapping instruction
+  2b:	5a                   	pop    %rdx
+  2c:	59                   	pop    %rcx
+  2d:	c3                   	ret
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	90                   	nop
+  31:	90                   	nop
+  32:	90                   	nop
+  33:	90                   	nop
+  34:	90                   	nop
+  35:	90                   	nop
+  36:	90                   	nop
+  37:	90                   	nop
+  38:	90                   	nop
+  39:	90                   	nop
+  3a:	90                   	nop
+  3b:	90                   	nop
+  3c:	90                   	nop
+  3d:	90                   	nop
+  3e:	90                   	nop
+  3f:	90                   	nop
+
+
 ---
- drivers/nvdimm/label.c | 60 ++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 31 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 04f4a049599a..b129f3a55a70 100644
---- a/drivers/nvdimm/label.c
-+++ b/drivers/nvdimm/label.c
-@@ -734,13 +734,13 @@ static enum nvdimm_claim_class guid_to_nvdimm_cclass(guid_t *guid)
- {
- 	if (guid_equal(guid, &nvdimm_btt_guid))
- 		return NVDIMM_CCLASS_BTT;
--	else if (guid_equal(guid, &nvdimm_btt2_guid))
-+	if (guid_equal(guid, &nvdimm_btt2_guid))
- 		return NVDIMM_CCLASS_BTT2;
--	else if (guid_equal(guid, &nvdimm_pfn_guid))
-+	if (guid_equal(guid, &nvdimm_pfn_guid))
- 		return NVDIMM_CCLASS_PFN;
--	else if (guid_equal(guid, &nvdimm_dax_guid))
-+	if (guid_equal(guid, &nvdimm_dax_guid))
- 		return NVDIMM_CCLASS_DAX;
--	else if (guid_equal(guid, &guid_null))
-+	if (guid_equal(guid, &guid_null))
- 		return NVDIMM_CCLASS_NONE;
- 
- 	return NVDIMM_CCLASS_UNKNOWN;
-@@ -751,13 +751,13 @@ static enum nvdimm_claim_class uuid_to_nvdimm_cclass(uuid_t *uuid)
- {
- 	if (uuid_equal(uuid, &nvdimm_btt_uuid))
- 		return NVDIMM_CCLASS_BTT;
--	else if (uuid_equal(uuid, &nvdimm_btt2_uuid))
-+	if (uuid_equal(uuid, &nvdimm_btt2_uuid))
- 		return NVDIMM_CCLASS_BTT2;
--	else if (uuid_equal(uuid, &nvdimm_pfn_uuid))
-+	if (uuid_equal(uuid, &nvdimm_pfn_uuid))
- 		return NVDIMM_CCLASS_PFN;
--	else if (uuid_equal(uuid, &nvdimm_dax_uuid))
-+	if (uuid_equal(uuid, &nvdimm_dax_uuid))
- 		return NVDIMM_CCLASS_DAX;
--	else if (uuid_equal(uuid, &uuid_null))
-+	if (uuid_equal(uuid, &uuid_null))
- 		return NVDIMM_CCLASS_NONE;
- 
- 	return NVDIMM_CCLASS_UNKNOWN;
-@@ -768,20 +768,20 @@ static const guid_t *to_abstraction_guid(enum nvdimm_claim_class claim_class,
- {
- 	if (claim_class == NVDIMM_CCLASS_BTT)
- 		return &nvdimm_btt_guid;
--	else if (claim_class == NVDIMM_CCLASS_BTT2)
-+	if (claim_class == NVDIMM_CCLASS_BTT2)
- 		return &nvdimm_btt2_guid;
--	else if (claim_class == NVDIMM_CCLASS_PFN)
-+	if (claim_class == NVDIMM_CCLASS_PFN)
- 		return &nvdimm_pfn_guid;
--	else if (claim_class == NVDIMM_CCLASS_DAX)
-+	if (claim_class == NVDIMM_CCLASS_DAX)
- 		return &nvdimm_dax_guid;
--	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
--		/*
--		 * If we're modifying a namespace for which we don't
--		 * know the claim_class, don't touch the existing guid.
--		 */
--		return target;
--	} else
-+	if (claim_class == NVDIMM_CCLASS_NONE)
- 		return &guid_null;
-+
-+	/*
-+	 * If we're modifying a namespace for which we don't
-+	 * know the claim_class, don't touch the existing guid.
-+	 */
-+	return target;
- }
- 
- /* CXL labels store UUIDs instead of GUIDs for the same data */
-@@ -790,20 +790,20 @@ static const uuid_t *to_abstraction_uuid(enum nvdimm_claim_class claim_class,
- {
- 	if (claim_class == NVDIMM_CCLASS_BTT)
- 		return &nvdimm_btt_uuid;
--	else if (claim_class == NVDIMM_CCLASS_BTT2)
-+	if (claim_class == NVDIMM_CCLASS_BTT2)
- 		return &nvdimm_btt2_uuid;
--	else if (claim_class == NVDIMM_CCLASS_PFN)
-+	if (claim_class == NVDIMM_CCLASS_PFN)
- 		return &nvdimm_pfn_uuid;
--	else if (claim_class == NVDIMM_CCLASS_DAX)
-+	if (claim_class == NVDIMM_CCLASS_DAX)
- 		return &nvdimm_dax_uuid;
--	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
--		/*
--		 * If we're modifying a namespace for which we don't
--		 * know the claim_class, don't touch the existing uuid.
--		 */
--		return target;
--	} else
-+	if (claim_class == NVDIMM_CCLASS_NONE)
- 		return &uuid_null;
-+
-+	/*
-+	 * If we're modifying a namespace for which we don't
-+	 * know the claim_class, don't touch the existing uuid.
-+	 */
-+	return target;
- }
- 
- static void reap_victim(struct nd_mapping *nd_mapping,
-@@ -990,9 +990,7 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
- 		mutex_unlock(&nd_mapping->lock);
- 	}
- 
--	if (ndd->ns_current == -1 || ndd->ns_next == -1)
--		/* pass */;
--	else
-+	if (ndd->ns_current != -1 && ndd->ns_next != -1)
- 		return max(num_labels, old_num_labels);
- 
- 	nsindex = to_namespace_index(ndd, 0);
--- 
-2.50.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
