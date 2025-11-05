@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-885862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF945C34115
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:39:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138E4C34118
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9592346147E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6841E18C157E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0842D2C0274;
-	Wed,  5 Nov 2025 06:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F772C0274;
+	Wed,  5 Nov 2025 06:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxxwByMW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Us1gacYF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210A121FF2E;
-	Wed,  5 Nov 2025 06:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89D621FF2E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324735; cv=none; b=Vb85TGg+LWdrTa23h3hqfMzJymK//ZQQ0y2USJZ3Z306gnOKpQNuDt7nGstv5wuFAHA8JdTP3aSXvK/08f+pYT0AleoMxx16aPnyAQ28yL7mRT4Xg73rukpktRpX8B3Af+NUodWd4DFYi66Iog93dmAx+aa4oeGn24OJYF2KUGA=
+	t=1762324806; cv=none; b=s1iAcVPCd6aRial7gyf4P4SJah7+aLPELpf12ftnNY39h6zLKQi+ZbtdcJQOcG7mGD+sEXRAyEGdK94h0TnPX4iijGQQzW1rqkfRSQPHdg8rljFBi8cNsz0iYeaVEdSfNPaC+exiS9yu3Tyq3uxkWNieYtqBMSQZnutRcZSF0Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324735; c=relaxed/simple;
-	bh=fPumA7eDGaOvjZ5e3hO4AGXGDpfqEcmICsMsMtt8SQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GG3cRUllF1B/vCM53nuHrdjgKEMYMCaT25NaVnUMqf5J0669jxN2C/6i7JY/amTZ1c8iflRXMc3kqcEso4om/fOCfAIegIz4ZFdLG0c2rlIXvTt+gm2MoYH1d/OUP8mbH49lfgDKOXckNNNMhCVlKN4Vco9jbASBrVgenrtgbQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxxwByMW; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762324733; x=1793860733;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fPumA7eDGaOvjZ5e3hO4AGXGDpfqEcmICsMsMtt8SQM=;
-  b=TxxwByMWuNQ9NglFltTLQq+Hg8TKbnw2MUS003gfXSgH8rOGZwu/s+dT
-   ytIOisXuOG8WX/iIPdSwHzTzCZoGONPiN3isZ5sjQHvAecdZGPHAo35Cy
-   R758x+PK7p7eFExisFJMmunUWaPYAQofGC7bGhkvEtJS7biR/cTpiwnIq
-   Ie0Tm3pD43QzodlygfogWoSVgh7rahZNKZI+RNFwrE8E1be16oBZQsk61
-   GfjWMv/pBq+49BJT6p7ZyK7GFzGBUzXYZBMFhq0r3IgTjWwi9TcFVD3J3
-   SackBF0hseo8zKg6O8oHcbg6hUTEz6VvYlSeWeDmPt7/8aS7g3UFu0FFP
-   g==;
-X-CSE-ConnectionGUID: diEMPirLQVybd/uKieUkiQ==
-X-CSE-MsgGUID: NAQ4/EhXRWOuJJcCBd2KRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="68084123"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="68084123"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 22:38:52 -0800
-X-CSE-ConnectionGUID: BJNVXZDmR7arjquA4TSKhw==
-X-CSE-MsgGUID: v4/ZZh3xSTqLobQrs/fNEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="218016196"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 22:38:50 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vGXAM-00000005gwS-1Co9;
-	Wed, 05 Nov 2025 08:38:46 +0200
-Date: Wed, 5 Nov 2025 08:38:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
- discarded
-Message-ID: <aQrw9fWt8SS9cE2u@smile.fi.intel.com>
-References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
- <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
+	s=arc-20240116; t=1762324806; c=relaxed/simple;
+	bh=7MyMohdL4vje2UQTXitZN/YA7WqXAUZWxXiwLGPRqX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VmbmqQ6jTqFS81B3v5njt4oCaEcBG6FWrW2Ar4rRhFfyfIiCP+MlPt9GIsQOJNdSKwkTbfWUBRsDqzSQKvAWWHhFDY7FZTqyMMQypkkOlLUGaVCVZ6XyHXYyBYYFsydErJwY6sPmbkVtlrBnM4BL15YkceF2KBKy8jX2UnPFdWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Us1gacYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5E7C4CEF8;
+	Wed,  5 Nov 2025 06:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762324806;
+	bh=7MyMohdL4vje2UQTXitZN/YA7WqXAUZWxXiwLGPRqX4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Us1gacYFYV5Fqu6WmXKH3IYS5vQu+hsZjykgWS2ddk1yHxPL5RVdkM4HJwmqYMG6E
+	 A2QWPDZFM2CiULgvBJ+kaZcdSIsfxdSy4qnrd8FbT/FMBZa40Eemu59nP7kap+F7Os
+	 3vlvSbgnofMrPCsmdpN4tB9uGevQyelt+c05X/MqisqQdsqGL0kwGPZtSHbr/LuSQ3
+	 EWcR4oRbUTn60aMVccRhXAZNPKsPOdfyjLM/eq+GO+1WYw3SIl7g1J2rTD4g4UI619
+	 j7PgDj/MGvs7aDtP7IHBZRCXwmfRvW2VN2RufUj5Vx8WvTJyKZdnH3rT+LbjsZxzU6
+	 Qo3hw5hNjcmFA==
+Message-ID: <e6aad100-d338-4c51-9fa4-7a2415042b49@kernel.org>
+Date: Wed, 5 Nov 2025 07:40:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0dfa2a07-cc84-4f04-ad2b-ab88cd08d974@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc: 82xx: fix uninitialized pointers with free attr
+To: Ally Heev <allyheev@gmail.com>, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20251104-aheev-uninitialized-free-attr-km82xx-v1-1-903be69f2cd4@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251104-aheev-uninitialized-free-attr-km82xx-v1-1-903be69f2cd4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 04, 2025 at 03:18:18PM -0800, Randy Dunlap wrote:
-> On 11/4/25 1:55 PM, Andy Shevchenko wrote:
-> > When kernel-doc parses the sections for the documentation some errors
-> > may occur. In many cases the warning is simply stored to the current
-> > "entry" object. However, in the most of such cases this object gets
-> > discarded and there is no way for the output engine to even know about
-> > that. To avoid that, check if the "entry" is going to be discarded and
-> > if there warnings have been collected, issue them to the current logger
-> > as is and then flush the "entry". This fixes the problem that original
-> > Perl implementation doesn't have.
-> > 
-> > As of Linux kernel v6.18-rc4 the reproducer can be:
-> > 
-> > $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
-> > ...
-> > Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
-> > ...
-> > 
-> > while with the proposed change applied it gives one more line:
-> > 
-> > $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
-> > ...
-> > Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
-> > Warning: include/linux/util_macros.h:144 expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
-> > ...
-> > 
-> > And with the original Perl script:
-> > 
-> > $ scripts/kernel-doc.pl -v -none -Wall include/linux/util_macros.h
-> > ...
-> > include/linux/util_macros.h:139: info: Scanning doc for function to_user_ptr
-> > include/linux/util_macros.h:149: warning: expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
-> > ...
-> > 
-> > Fixes: 9cbc2d3b137b ("scripts/kernel-doc.py: postpone warnings to the output plugin")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 04/11/2025 12:28, Ally Heev wrote:
+> Uninitialized pointers with `__free` attribute can cause undefined
+> behaviour as the memory allocated to the pointer is freed automatically
+> when the pointer goes out of scope
 > 
-> Oh, thank you. I knew that I had been missing some warnings
+> powerpc/km82xx doesn't have any bugs related to this as of now, but,
+> it is better to initialize and assign pointers with `__free` attribute
+> in one statement to ensure proper scope-based cleanup
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+> Signed-off-by: Ally Heev <allyheev@gmail.com>
+> ---
+> Testing:
+> Successfully compiled the kernel with `allmodconfig`
+> ---
+>  arch/powerpc/platforms/82xx/km82xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/82xx/km82xx.c b/arch/powerpc/platforms/82xx/km82xx.c
+> index 99f0f0f4187672614f4f8ad46ab7906f7ad8078b..4ad223525e893c0de15540db2b2c4d239d6d841e 100644
+> --- a/arch/powerpc/platforms/82xx/km82xx.c
+> +++ b/arch/powerpc/platforms/82xx/km82xx.c
+> @@ -27,8 +27,8 @@
+>  
+>  static void __init km82xx_pic_init(void)
+>  {
+> -	struct device_node *np __free(device_node);
+> -	np = of_find_compatible_node(NULL, NULL, "fsl,pq2-pic");
+> +	struct device_node *np __free(device_node) = of_find_compatible_node(NULL,
+> +		NULL, "fsl,pq2-pic");
+>  
 
-You're welcome! I Cc'ed to you a couple of 0day reports for the missed
-warnings.
 
-> since I still compare outputs from the 2 kernel-docs (perl vs. python).
+Original patch was correct:
+https://lore.kernel.org/all/20240709143553.117053-1-david.hunter.linux@gmail.com/
 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+It is the maintainer who decided to break it while applying, not
+following clear cleanup.h recommendations and not giving a chance to
+object to people. :/
 
-Thank you! Jon, can we apply this rather sooner to prevent more missing
-warnings, please? If the solution is not good enough, we may amend it
-later.
+So now we have a fixing commit.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
 
