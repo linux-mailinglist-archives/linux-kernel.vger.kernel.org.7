@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-886540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92595C35E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:40:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6749DC35E29
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32B854E8C82
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:40:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86F554EA0FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696B7322DB7;
-	Wed,  5 Nov 2025 13:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xr1AKjrA"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ACC322DB7;
+	Wed,  5 Nov 2025 13:41:29 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B21253F13
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1773148D5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350043; cv=none; b=pQiK1U39J4MJblBIdyQHf6xNxxjVaJl52nu2t6Lfkg73Xv45/w7GfZoLL5z8pgUKF5EyDJGl+rz0J+89x46IPdeMpyw/jogRWiVTeEzv1VsR0KIfllrgvyEduSPz2xb7I08Js1LO/nEysZZexAID7dRTrQNkL6jRzNowXAPZlaQ=
+	t=1762350089; cv=none; b=K1myx1fWnUk3djD41dSE0LwaNxNbm2fnaY/D8wzV/uzBAuHD2zckhMBNtUS13F49a5N3Xxm9SX3JAvGOvBCM+v5jg7DBfsU6oDAVS3nMWoWSrrwKC4uNc5LiOMUE7kwhatdIzagsiecvk7ysb6VsSQHri0gHv+9PyVK7lNaBVeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350043; c=relaxed/simple;
-	bh=IfJpl7p8Eyo9EYu7HKE2ENdcDGvvdi1k9xcJF8YzUwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QXrvM2F+/04OT3KOA8R/aaFPm2zDno+Obt91ONfLk18UjmX8RnE+65OOiIlrtkVPxJXz3k/gaA83SJXKeLuytKguL6cQBeICvbKLfVH2BXW0ccITm/hyiuhjEdNwYR+mg0eC4N5NOm2USwQ3hxtEEegZi8+vlCUB5N5K9cU/y0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xr1AKjrA; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7adc44440c6so142041b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:40:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350042; x=1762954842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IfJpl7p8Eyo9EYu7HKE2ENdcDGvvdi1k9xcJF8YzUwc=;
-        b=Xr1AKjrAqoxget3o0WmPm8cxbimj1o1cPv3a4Lh614G6EsiYu+xhyLQxLZoWSjvY/6
-         lqXTtwdTAkx1/lomv+JJlDt8F92EpqQ3BrOgghvdf9010CqhfsMlsIPUP0Ihvh6umMR5
-         XGI3JGXOK8gaiM10Tjzzxs3E97Q2FvCc+WectkYIiBApb9ncgm7OUO24RFHhKLttcU5/
-         TH/Noc1c7TMb1SVDtlVMNjuqkGINyuythgXoR+lDu2uDx4s7NJM/c29GFy8MFBiqxVEM
-         SKF5d+9+V9I7fj1KThbo4oghFfnfc6H6ZmKslTRVesevfQErfYZ37jHgrTdAc4+P1MhP
-         R1mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350042; x=1762954842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IfJpl7p8Eyo9EYu7HKE2ENdcDGvvdi1k9xcJF8YzUwc=;
-        b=S+nEDZMZ0a/2mIbBPr/pXLeLd46bkKH7MoCGTbx9NH6w2WzAsoiBUJi9d2YDd2r7L4
-         7Bq7ULuXgu6XNUMlrEbiSo7Q0OXOmZajNcwcubBHfJv1Pvh2GIwmDn10JLN8m6QSt/03
-         B7xarzjGaDuGyFnSTo53dfZt9yKb+f/BJPfAeLMvZpUk2aNEr7hGYSrS1ukSfjhVHRA9
-         gBMKO12YhRLglAqsUDCsWz7TZb2e46KO9OUVZVPg9v3R0aOlgQdABN9WgEelZ+PZKxs1
-         0F/94GWCFjIJhk25WkZxV7kjFYyrM9Zvg8dIs9vbE6YZBwJVD+EEV8GoGgxlk9PvVlvH
-         c/1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVpVZ+R2htuyVMVB23XlKZ2NMwTKmowTjHXk80nxxGwMPyewjxPIRS2vLg0E7NmvjnYKKHFDMl5/cpMXuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi2XdQzIRyCgnxVG/9WJLfr3CA9KlM2Yn/7A4wctxnCgAOGIG8
-	9viZu1BxVEPGZClh6njQVfXY6fZyrHBsskyFk2zCiKK4z5N2wShtm+f9Ri34PZFPg61a+aJUH9p
-	fDbKkLPMZIe6N6m7j1L47BGuPnTnh0Rs=
-X-Gm-Gg: ASbGncuwlvNKf+eqFecno4ciHT3j0MxY3dk3oij5QjnAaCYZnqMQkOlTeaWGcRZmhTY
-	/RhPxtUYD53uk8TYgjjOBhUWk5JAxuVXPLnkL5fD9G833QFuKzBGeuoqw7g86GTYvE7U235nmg2
-	egAULjgXe+6YzJXBBkDZ5AjJq4cnrewkojCPZN7juOepGKsbgvskswtEcIa3QOp0qjbykZWAdKk
-	VDsM1KKlcQ1mq257g4hgdyefxBTigj1OpkLLQ6P6O4nCfIPVjqjWfuB6AQkiiXxiORE60uW4aad
-	xQAiu0fMKtiP2nD5aOipQaB/3U+lWeqEGKiAyKEB9aEEgNj2G005xoUEWob3iQfIrBueYYjFZeH
-	nWOE=
-X-Google-Smtp-Source: AGHT+IF6J5XKQIh5lvr1phXMqKtXh65G/ocWfAYSngWfTSEeBXF/cRzivlt4tvYKH1TgBVYnuLE+h/PQqLxNVfW0pnk=
-X-Received: by 2002:a05:6a20:7484:b0:34f:5e79:d1af with SMTP id
- adf61e73a8af0-34f86af92ebmr2206267637.5.1762350041793; Wed, 05 Nov 2025
- 05:40:41 -0800 (PST)
+	s=arc-20240116; t=1762350089; c=relaxed/simple;
+	bh=bfdALSr3deXmp0lyQVG7MZh3VjiMH/EzHy4oWwL56vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B36ehI5IL/N/QS/FXX5U3fnpF/utdhax/sxMJ4DpqpIFk9Jyz/6LWU0Ghy+LIssN/Hz+2UbaLujZk7iOYNYapO7m6OLBVYSYJ9n4ZHNfgqTrYyi5F7UxzGAJmKIxfL7SnIjztdbeMkLAesG4LKXYbBV4sGx3SLfJZpejESodyEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B40C21195;
+	Wed,  5 Nov 2025 13:41:20 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89B98132DD;
+	Wed,  5 Nov 2025 13:41:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HUsfH/9TC2liHAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Wed, 05 Nov 2025 13:41:19 +0000
+Message-ID: <dc641a92-51bb-4740-8aec-e6fd1ef988fa@suse.de>
+Date: Wed, 5 Nov 2025 15:41:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club>
- <CANiq72=WZJ5=UACpFLWCVJ7mcXbc93X9MyYAZP8-0F==2b0adw@mail.gmail.com> <8d865a46-82c8-428d-a371-407889eefb62@openatom.club>
-In-Reply-To: <8d865a46-82c8-428d-a371-407889eefb62@openatom.club>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 5 Nov 2025 14:40:26 +0100
-X-Gm-Features: AWmQ_bkkdd1TITNlXEXZk4E4kPCOhviuiBsqHVQwAGIH7Lk_3rk5UsX4g08ILZ4
-Message-ID: <CANiq72=OE3JNpemanR-r1efbgKqQrZCiQ7hY2-=_bvxLyJZ-HQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: kernel: Support more jump_label api
-To: Chen Miao <chenmiao@openatom.club>
-Cc: ojeda@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, 
-	"open list:RUST" <rust-for-linux@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] Add watchdog support for bcm2712
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ Stanimir Varbanov <svarbanov@suse.de>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Lee Jones <lee@kernel.org>,
+ Willow Cunningham <willow.e.cunningham@gmail.com>,
+ Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20251031183309.1163384-1-svarbanov@suse.de>
+ <CAPDyKFqHizQKSDCuPopNBWtt1mNCNuWegv9c=PcXEEVaUaP3cw@mail.gmail.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CAPDyKFqHizQKSDCuPopNBWtt1mNCNuWegv9c=PcXEEVaUaP3cw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: 8B40C21195
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[dt]
 
-On Wed, Nov 5, 2025 at 2:35=E2=80=AFPM Chen Miao <chenmiao@openatom.club> w=
-rote:
->
-> I can understand, but I'd like to make a brief explanation here. "Chen Mi=
-ao"
-> is my name, so the prefix of all my email addresses is "chenmiao." Theref=
-ore,
-> "Chen Miao" and "chenmiao" are equivalent.
+Hi,
 
-That is fine, but what I was trying to say is that, in that case the
-Signed-off-by should be "Chen Miao".
+On 11/5/25 2:52 PM, Ulf Hansson wrote:
+> On Fri, 31 Oct 2025 at 19:33, Stanimir Varbanov <svarbanov@suse.de> wrote:
+>>
+>> Hello,
+>>
+>> Changes since v2:
+>>  * 2/4 - Use maxItems instead of wrong minItems in else clause (Conor).
+>>
+>> Comments are welcome!
+>>
+>> regards,
+>> ~Stan
+>>
+>> Stanimir Varbanov (4):
+>>   pmdomain: bcm: bcm2835-power: Prepare to support BCM2712
+>>   dt-bindings: soc: bcm: Add bcm2712 compatible
+>>   mfd: bcm2835-pm: Add support for BCM2712
+>>   arm64: dts: broadcom: bcm2712: Add watchdog DT node
+>>
+>>  .../bindings/soc/bcm/brcm,bcm2835-pm.yaml     | 38 ++++++++++++++++---
+>>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     |  9 +++++
+>>  drivers/mfd/bcm2835-pm.c                      |  1 +
+>>  drivers/pmdomain/bcm/bcm2835-power.c          | 17 +++++++--
+>>  4 files changed, 55 insertions(+), 10 deletions(-)
+>>
+>> --
+>> 2.47.0
+>>
+> 
+> Patch 1->3 applied for next, thanks!
+> 
+> Note the dt patch (patch2) is also available on the immutable dt branch.
 
-Please see https://docs.kernel.org/process/submitting-patches.html#sign-you=
-r-work-the-developer-s-certificate-of-origin
--- thanks!
+Ulf, Florian, Conor, thank you for the help!
 
-Cheers,
-Miguel
+~Stan
+
 
