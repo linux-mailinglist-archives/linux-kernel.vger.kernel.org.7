@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-885801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BF9C33F06
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:40:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A78C33F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E9414E48EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C50A4234EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062DF27380A;
-	Wed,  5 Nov 2025 04:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5582773E9;
+	Wed,  5 Nov 2025 04:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J3AK/u5V"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ljf5b1Cg"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC2326F29C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05E0270ED2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762317564; cv=none; b=B0C3yKDPA+5xqxwuIkXTHuuhueBSsbfRvrQj869vsz9RoF9bt8e+nxp9Rk09Tpf8ubqGl6tnIInGuEbB/M3INZ2vjlQHMYqyy5xklYUu0JZD+KJ+1SWYWcY700XhKkN8J3jykavm0QvsNmbzv3sdWiDKfuDjIaSItt1N9G3sgKk=
+	t=1762317565; cv=none; b=S1E0Rm0tOzD3K6JpnLbuFZiAMgKJnWiJdXBN0akVOhLVG66b0bgTAVYwG/psiPbOz0BbAME4fjxbWNjoO8zl+ZOYlE3nFFvbeP+lR8RxS7zpr1QfdNdMi1BIePdx5hgXTegCAplueMBTXMIkaynplqyvRTMzUx0oyKzP0wowgas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762317564; c=relaxed/simple;
-	bh=lksMERBV1ushFLKX6VsS5voiCsPgNY/nOBWjYiN++aE=;
+	s=arc-20240116; t=1762317565; c=relaxed/simple;
+	bh=PRMJcyYJl61mZBeSGGgiHzEd0shtT9jlqiAi1ex1Arw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eyadypWh12J/n91e3xH0EmQVJBhojWVsN+rcM3YMNAftWRE+ORZ5dDGA3SoJaa3d/ItxI6snHZR8eewuJpjKwj8cAwrLOua3yl7pAC/KqbD/uHYyD359zUH8Hcz+PKTGISGHHR6IYTWw+z9TvTpDJevROPduxXKhq+JqSV6N+OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J3AK/u5V; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=ZDuNz8kE/O7uILabthSuF2utGRr7iJ5M/+Qi3FXnPQMygZr/bf3Vir1GuKttAw+TkyAd9CnIqWLbR9xHJRcnTMsoM/K+Ri2rb284//3xn12o9czZWGCVCnISS1V1eAUGujP7wDUy8jrHuYwqlPYbBCyiOcANgavVagTecvsIwRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ljf5b1Cg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762317561;
+	s=mimecast20190719; t=1762317563;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IPEm3+lCvSFTomkEaqugdFQCEEtIwhV9OiG9EpvN3L4=;
-	b=J3AK/u5VnvGmRugHR3Hc5Ou3uGvZsSw4ztlG+2EYsjA+VxBQL/pVenYl1onax/pGT0L0sm
-	0ouq580QDqFXZo2S5acSVinY46BTTPP8NYp9GjcZm8XvAHr2+ZueKbjhlhMkS1cgrru0E6
-	OXB4Ks9ITzq2Y8ekHdCLmINsJ1wEeJQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=wQG5O0jywdiZSfV+8D+TD6Dmb/AbN0MrtQRlMhnkX3c=;
+	b=Ljf5b1CgNc9nFnlNzj3nyi2MHwaQsL/Ik0IkoEnyk8rOUxkIuoPMP/PpTOo1n5b6U8Q72Y
+	LSEE4SiR4MVNvZUMd8KIuEB2puICuHzUHB16/KiIanScMfHGERTnZunrC5S0LX/xFnXgue
+	PMA8OoOLcWHngEcWr7SGLE4C6EyMsF4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-295-fjv1-XboNpGD31spmWZB8g-1; Tue,
- 04 Nov 2025 23:39:17 -0500
-X-MC-Unique: fjv1-XboNpGD31spmWZB8g-1
-X-Mimecast-MFC-AGG-ID: fjv1-XboNpGD31spmWZB8g_1762317556
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517--pHnmFIJO1CImlX9mI_A5w-1; Tue,
+ 04 Nov 2025 23:39:19 -0500
+X-MC-Unique: -pHnmFIJO1CImlX9mI_A5w-1
+X-Mimecast-MFC-AGG-ID: -pHnmFIJO1CImlX9mI_A5w_1762317558
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E2B98195606D;
-	Wed,  5 Nov 2025 04:39:15 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAB1118011EF;
+	Wed,  5 Nov 2025 04:39:17 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.34])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0452F195608E;
-	Wed,  5 Nov 2025 04:39:13 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 33E18195608E;
+	Wed,  5 Nov 2025 04:39:16 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Tejun Heo <tj@kernel.org>,
 	Johannes Weiner <hannes@cmpxchg.org>,
@@ -66,9 +66,9 @@ Cc: cgroups@vger.kernel.org,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Waiman Long <longman@redhat.com>
-Subject: [cgroup/for-6.19 PATCH v3 4/5] cgroup/cpuset: Ensure domain isolated CPUs stay in root or isolated partition
-Date: Tue,  4 Nov 2025 23:38:47 -0500
-Message-ID: <20251105043848.382703-5-longman@redhat.com>
+Subject: [cgroup/for-6.19 PATCH v3 5/5] cgroup/cpuset: Globally track isolated_cpus update
+Date: Tue,  4 Nov 2025 23:38:48 -0500
+Message-ID: <20251105043848.382703-6-longman@redhat.com>
 In-Reply-To: <20251105043848.382703-1-longman@redhat.com>
 References: <20251105043848.382703-1-longman@redhat.com>
 Precedence: bulk
@@ -80,79 +80,255 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Commit 4a74e418881f ("cgroup/cpuset: Check partition conflict with
-housekeeping setup") is supposed to ensure that domain isolated CPUs
-designated by the "isolcpus" boot command line option stay either in
-root partition or in isolated partitions. However, the required check
-wasn't implemented when a remote partition was created or when an
-existing partition changed type from "root" to "isolated".
+The current cpuset code passes a local isolcpus_updated flag around in a
+number of functions to determine if external isolation related cpumasks
+like wq_unbound_cpumask should be updated. It is a bit cumbersome and
+makes the code more complex. Simplify the code by using a global boolean
+flag "isolated_cpus_updating" to track this. This flag will be set in
+isolated_cpus_update() and cleared in update_isolation_cpumasks().
 
-Even though this is a relatively minor issue, we still need to add the
-required prstate_housekeeping_conflict() call in the right places to
-ensure that the rule is strictly followed.
+No functional change is expected.
 
-The following steps can be used to reproduce the problem before this
-fix.
-
-  # fmt -1 /proc/cmdline | grep isolcpus
-  isolcpus=9
-  # cd /sys/fs/cgroup/
-  # echo +cpuset > cgroup.subtree_control
-  # mkdir test
-  # echo 9 > test/cpuset.cpus
-  # echo isolated > test/cpuset.cpus.partition
-  # cat test/cpuset.cpus.partition
-  isolated
-  # cat test/cpuset.cpus.effective
-  9
-  # echo root > test/cpuset.cpus.partition
-  # cat test/cpuset.cpus.effective
-  9
-  # cat test/cpuset.cpus.partition
-  root
-
-With this fix, the last few steps will become:
-
-  # echo root > test/cpuset.cpus.partition
-  # cat test/cpuset.cpus.effective
-  0-8,10-95
-  # cat test/cpuset.cpus.partition
-  root invalid (partition config conflicts with housekeeping setup)
-
-Reported-by: Chen Ridong <chenridong@huawei.com>
 Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Chen Ridong <chenridong@huawei.com>
 ---
- kernel/cgroup/cpuset.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/cgroup/cpuset.c | 73 ++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 38 deletions(-)
 
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index cc9c3402f16b..2daf58bf0bbb 100644
+index 2daf58bf0bbb..90288efe5367 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -1610,8 +1610,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
- 	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
- 	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
- 		return PERR_INVCPUS;
--	if ((new_prs == PRS_ISOLATED) &&
--	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
-+	if (((new_prs == PRS_ISOLATED) &&
-+	     !isolated_cpus_can_update(tmp->new_cpus, NULL)) ||
-+	    prstate_housekeeping_conflict(new_prs, tmp->new_cpus))
+@@ -81,6 +81,13 @@ static cpumask_var_t	subpartitions_cpus;
+  */
+ static cpumask_var_t	isolated_cpus;
+ 
++/*
++ * isolated_cpus updating flag (protected by cpuset_mutex)
++ * Set if isolated_cpus is going to be updated in the current
++ * cpuset_mutex crtical section.
++ */
++static bool isolated_cpus_updating;
++
+ /*
+  * Housekeeping (HK_TYPE_DOMAIN) CPUs at boot
+  */
+@@ -1327,6 +1334,8 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
+ 		cpumask_or(isolated_cpus, isolated_cpus, xcpus);
+ 	else
+ 		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
++
++	isolated_cpus_updating = true;
+ }
+ 
+ /*
+@@ -1334,15 +1343,12 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
+  * @new_prs: new partition_root_state
+  * @parent: parent cpuset
+  * @xcpus: exclusive CPUs to be added
+- * Return: true if isolated_cpus modified, false otherwise
+  *
+  * Remote partition if parent == NULL
+  */
+-static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
++static void partition_xcpus_add(int new_prs, struct cpuset *parent,
+ 				struct cpumask *xcpus)
+ {
+-	bool isolcpus_updated;
+-
+ 	WARN_ON_ONCE(new_prs < 0);
+ 	lockdep_assert_held(&callback_lock);
+ 	if (!parent)
+@@ -1352,13 +1358,11 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
+ 	if (parent == &top_cpuset)
+ 		cpumask_or(subpartitions_cpus, subpartitions_cpus, xcpus);
+ 
+-	isolcpus_updated = (new_prs != parent->partition_root_state);
+-	if (isolcpus_updated)
++	if (new_prs != parent->partition_root_state)
+ 		isolated_cpus_update(parent->partition_root_state, new_prs,
+ 				     xcpus);
+ 
+ 	cpumask_andnot(parent->effective_cpus, parent->effective_cpus, xcpus);
+-	return isolcpus_updated;
+ }
+ 
+ /*
+@@ -1366,15 +1370,12 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
+  * @old_prs: old partition_root_state
+  * @parent: parent cpuset
+  * @xcpus: exclusive CPUs to be removed
+- * Return: true if isolated_cpus modified, false otherwise
+  *
+  * Remote partition if parent == NULL
+  */
+-static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
++static void partition_xcpus_del(int old_prs, struct cpuset *parent,
+ 				struct cpumask *xcpus)
+ {
+-	bool isolcpus_updated;
+-
+ 	WARN_ON_ONCE(old_prs < 0);
+ 	lockdep_assert_held(&callback_lock);
+ 	if (!parent)
+@@ -1383,14 +1384,12 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+ 	if (parent == &top_cpuset)
+ 		cpumask_andnot(subpartitions_cpus, subpartitions_cpus, xcpus);
+ 
+-	isolcpus_updated = (old_prs != parent->partition_root_state);
+-	if (isolcpus_updated)
++	if (old_prs != parent->partition_root_state)
+ 		isolated_cpus_update(old_prs, parent->partition_root_state,
+ 				     xcpus);
+ 
+ 	cpumask_and(xcpus, xcpus, cpu_active_mask);
+ 	cpumask_or(parent->effective_cpus, parent->effective_cpus, xcpus);
+-	return isolcpus_updated;
+ }
+ 
+ /*
+@@ -1452,17 +1451,24 @@ static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
+ 	return false;
+ }
+ 
+-static void update_isolation_cpumasks(bool isolcpus_updated)
++/*
++ * update_isolation_cpumasks - Update external isolation related CPU masks
++ *
++ * The following external CPU masks will be updated if necessary:
++ * - workqueue unbound cpumask
++ */
++static void update_isolation_cpumasks(void)
+ {
+ 	int ret;
+ 
+-	lockdep_assert_cpus_held();
+-
+-	if (!isolcpus_updated)
++	if (!isolated_cpus_updating)
+ 		return;
+ 
++	lockdep_assert_cpus_held();
++
+ 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
+ 	WARN_ON_ONCE(ret < 0);
++	isolated_cpus_updating = false;
+ }
+ 
+ /**
+@@ -1587,8 +1593,6 @@ static inline bool is_local_partition(struct cpuset *cs)
+ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 				   struct tmpmasks *tmp)
+ {
+-	bool isolcpus_updated;
+-
+ 	/*
+ 	 * The user must have sysadmin privilege.
+ 	 */
+@@ -1616,11 +1620,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
  		return PERR_HKEEPING;
  
  	spin_lock_irq(&callback_lock);
-@@ -3062,8 +3063,9 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 		 * A change in load balance state only, no change in cpumasks.
- 		 * Need to update isolated_cpus.
- 		 */
--		if ((new_prs == PRS_ISOLATED) &&
--		    !isolated_cpus_can_update(cs->effective_xcpus, NULL))
-+		if (((new_prs == PRS_ISOLATED) &&
-+		     !isolated_cpus_can_update(cs->effective_xcpus, NULL)) ||
-+		    prstate_housekeeping_conflict(new_prs, cs->effective_xcpus))
- 			err = PERR_HKEEPING;
- 		else
- 			isolcpus_updated = true;
+-	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
++	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+ 	list_add(&cs->remote_sibling, &remote_children);
+ 	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_isolation_cpumasks(isolcpus_updated);
++	update_isolation_cpumasks();
+ 	cpuset_force_rebuild();
+ 	cs->prs_err = 0;
+ 
+@@ -1643,15 +1647,12 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+  */
+ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+ {
+-	bool isolcpus_updated;
+-
+ 	WARN_ON_ONCE(!is_remote_partition(cs));
+ 	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
+ 
+ 	spin_lock_irq(&callback_lock);
+ 	list_del_init(&cs->remote_sibling);
+-	isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
+-					       NULL, cs->effective_xcpus);
++	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
+ 	if (cs->prs_err)
+ 		cs->partition_root_state = -cs->partition_root_state;
+ 	else
+@@ -1661,7 +1662,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+ 	compute_excpus(cs, cs->effective_xcpus);
+ 	reset_partition_data(cs);
+ 	spin_unlock_irq(&callback_lock);
+-	update_isolation_cpumasks(isolcpus_updated);
++	update_isolation_cpumasks();
+ 	cpuset_force_rebuild();
+ 
+ 	/*
+@@ -1686,7 +1687,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ {
+ 	bool adding, deleting;
+ 	int prs = cs->partition_root_state;
+-	int isolcpus_updated = 0;
+ 
+ 	if (WARN_ON_ONCE(!is_remote_partition(cs)))
+ 		return;
+@@ -1722,9 +1722,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 
+ 	spin_lock_irq(&callback_lock);
+ 	if (adding)
+-		isolcpus_updated += partition_xcpus_add(prs, NULL, tmp->addmask);
++		partition_xcpus_add(prs, NULL, tmp->addmask);
+ 	if (deleting)
+-		isolcpus_updated += partition_xcpus_del(prs, NULL, tmp->delmask);
++		partition_xcpus_del(prs, NULL, tmp->delmask);
+ 	/*
+ 	 * Need to update effective_xcpus and exclusive_cpus now as
+ 	 * update_sibling_cpumasks() below may iterate back to the same cs.
+@@ -1733,7 +1733,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 	if (xcpus)
+ 		cpumask_copy(cs->exclusive_cpus, xcpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_isolation_cpumasks(isolcpus_updated);
++	update_isolation_cpumasks();
+ 	if (adding || deleting)
+ 		cpuset_force_rebuild();
+ 
+@@ -1794,7 +1794,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 	int deleting;	/* Deleting cpus from parent's effective_cpus	*/
+ 	int old_prs, new_prs;
+ 	int part_error = PERR_NONE;	/* Partition error? */
+-	int isolcpus_updated = 0;
+ 	struct cpumask *xcpus = user_xcpus(cs);
+ 	int parent_prs = parent->partition_root_state;
+ 	bool nocpu;
+@@ -2073,14 +2072,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 	 * and vice versa.
+ 	 */
+ 	if (adding)
+-		isolcpus_updated += partition_xcpus_del(old_prs, parent,
+-							tmp->addmask);
++		partition_xcpus_del(old_prs, parent, tmp->addmask);
+ 	if (deleting)
+-		isolcpus_updated += partition_xcpus_add(new_prs, parent,
+-							tmp->delmask);
++		partition_xcpus_add(new_prs, parent, tmp->delmask);
+ 
+ 	spin_unlock_irq(&callback_lock);
+-	update_isolation_cpumasks(isolcpus_updated);
++	update_isolation_cpumasks();
+ 
+ 	if ((old_prs != new_prs) && (cmd == partcmd_update))
+ 		update_partition_exclusive_flag(cs, new_prs);
+@@ -3103,7 +3100,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+ 	else if (isolcpus_updated)
+ 		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_isolation_cpumasks(isolcpus_updated);
++	update_isolation_cpumasks();
+ 
+ 	/* Force update if switching back to member & update effective_xcpus */
+ 	update_cpumasks_hier(cs, &tmpmask, !new_prs);
 -- 
 2.51.1
 
