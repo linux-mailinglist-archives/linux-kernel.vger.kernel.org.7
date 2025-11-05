@@ -1,231 +1,226 @@
-Return-Path: <linux-kernel+bounces-885866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CA0C34136
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:44:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B95AC3414B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0164F4F115B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6EAB461B42
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C882C11CC;
-	Wed,  5 Nov 2025 06:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F292C08C4;
+	Wed,  5 Nov 2025 06:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bOYb6YRI";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jptRB8De"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vTASjm2/"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012029.outbound.protection.outlook.com [52.101.53.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462AE2C027B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324983; cv=none; b=IsMn7k1ox93U8pZ3az2aOV6/KL85GkwzFpkJM9cKESQ2jyJEGq6BlXCN/6Sprz4lnInNIDPzRHkhwzJHhPQSvvZmFNnsdJTaTvBLkNxCgY0MsQUIuV3xmkLUO6HhE3gL6AgarYaRqUJEiXA0nbxUNJD0jjDUuGNQDvCOBqM5Vwg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324983; c=relaxed/simple;
-	bh=UZ8lKWzIInTuNEvQSGulSIDHuHRj0ZFxre0FKSLVoos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfeikZgHk7GCLKznPxKyA+4njgmUIFTKprarEmjQhtT/zDdTFZNfYICdrKcPiWxGpSwbKHgfMfh1pFX4+Rm/yyBJXnOkx3Amy6qJCqp7adraV3Ur2BKVAA5aygkG/dd9xXmpP6u/aK5whEXIG9iOsYwI6PScTkICrqCV2vvRURg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bOYb6YRI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jptRB8De; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A53s9013913777
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 06:43:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=nq89DQUCXDu/1+0vbCTDrhxB
-	9KHzFo3yWxIPRMSmuSE=; b=bOYb6YRIlaKl+sYH1DhFv4rrQoTtcNpvvik7wMMu
-	FYdZFWIGpPbc4NuOhOkyDwr7MlxjXIONlMYhT4Lbu/53MsGD474PGd6vAaSBPHsE
-	bTQCTVua321zkxQBchS9cvdfKolU6jehRhv2LrnGy34pMV/f8ycqAInHwUXtFRrz
-	16oW96ipXENInuz/75T6jE701BuskBKqxLUIWAgWwiwm0ArakGAuMYtDnsm4LbTA
-	Q/CywheHFNhvMZMaxKyANQaR80z0RL4n/FKalYZ0GGaloLr3B/U3nRpyXoHyYVUu
-	zqcfjQCgSNzk495bN0vioU42YO3MWvcSVsofDMA9mqGHPQ==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7y378bju-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:43:00 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b6ceeea4addso6427518a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 22:43:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762324979; x=1762929779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nq89DQUCXDu/1+0vbCTDrhxB9KHzFo3yWxIPRMSmuSE=;
-        b=jptRB8De7cmYligLs3X6mIsCGLw4ZbTCoS93Hcr2+7St+fQABqmlD0lLWRrn35Iq8+
-         LULeL0Cs8E5gIpG430Y38ThzIQikKikRVVfPRK5FszIKrIqjKUL0ahjnfKkrFLGvFs7r
-         8sVH46BJXu8mHbEXPz/FgAn7HQnEZ8/LyElkaj2UKo7RcsYy1D6ZqLShxsXoO3b7zTWk
-         t8IDnWlYlx9OETHGHhllClyrs9jTIt5fmIL8aD/KdqbxCYMKz3+hjKLv6wcT8UvpFV97
-         Dvk5yzW7e6KE07na/TGkWnx11gt9NxWP5H3YGitgMyO2kwwCYtfG6lYc77rq0H90fd8Y
-         w5+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762324979; x=1762929779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nq89DQUCXDu/1+0vbCTDrhxB9KHzFo3yWxIPRMSmuSE=;
-        b=XXsXUF4K8YdCN8ar8sPPHp2AhTgwqYhi9poYLqDxkSuKA0SiY29rsQyerEhUheGJQU
-         k8BDQJO3UxBauqjRyi3O3yBD80jxorHswRA4wHITZRWGBgpLSBHY46Uo3AIHWAW9p0VE
-         G51T0ZC0C10bFUTqqa4SCQvD2hWjD77bsuHTmt9f8Nl2uBZVbAhfcJ10wjvQ9B9n30x4
-         lsUxacnRJCN1Oip1ANE4CP7OCyTdcKYHNnmRAoY2aVTAMukmkNhZL32S1CdQycMIELnX
-         JjJy3YRcg1Mxfcob541AkIdhx8ejsjWEP2p9UxxcnSwW0vAP6C4C/IpqeBiZq0SaKXoX
-         x1xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvTIKdlB1WVBx68GSHv6B/yJqXC6Ayd814FfLLQvjFlI315OhuTNHiWSVWUs76/Jgh5NS7to2c7ye0RP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoQNCalh9P0Ib9ukbnledvUcn4yeLqjhZ2kCZhPzLYYsQwB11E
-	KNYRsnBNXnPH9lCJQGrb7G2+trsLsqg6eeysQ1vovlGXv4J05Xt3La7zICzBIABFz/tQ+Q1biPh
-	URyDKWEAzOzxwcdz2UpuAbYjQkSDXmusLKKfPb0R9A2xfANwB+9Y1txNzickif9eckkU=
-X-Gm-Gg: ASbGncshAVPnMSAGfQn6vwbZ/W2LlS5MuhVRZw+0P8LGDKm7KtaxnuEIFcJL7dljok4
-	YjlkRNQ5/IZwDRKcPi5w1nB4bJJqUyjvB0Tiezh88wtqJ17FlYDhjFd4l2buimzJhnohmo+I+Zi
-	UsRQl0JgOEOLkk0jodRcANB0/5rCkwSIsfnFt6xQ+Mp8Gz1CF3FeBSE/DiFTIWP9VNA+Huu/JRV
-	Ld7zG+eTSbkBz2Th1USLVqUy7OPLQjgLn0ajMFJvevYMhsMzWrSLwYZFFQvGrHR/QSLNGaynPTU
-	ypVL9uaZKYUicHb2F3nOhnFbmkH5zFJJsuwZXWezpOnLYMfmCKlvFgcgaAazqpr5o/CR13XLHki
-	ryfDSzomowYxklIbwmXDJz5glKg==
-X-Received: by 2002:a05:6a20:4313:b0:341:2fea:6b5 with SMTP id adf61e73a8af0-34f83b1c031mr2987578637.20.1762324979218;
-        Tue, 04 Nov 2025 22:42:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGoQyYyFGTve5SA+Qgr5cO14BdLR7ffiUWGwJzX7Tsya0oH95BQSrMh+zSTJlO2QCSGsxsnRw==
-X-Received: by 2002:a05:6a20:4313:b0:341:2fea:6b5 with SMTP id adf61e73a8af0-34f83b1c031mr2987525637.20.1762324978520;
-        Tue, 04 Nov 2025 22:42:58 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f98fb670sm4377296a12.38.2025.11.04.22.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 22:42:58 -0800 (PST)
-Date: Wed, 5 Nov 2025 12:12:52 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 05/14] remoteproc: pas: Replace metadata context with
- PAS context structure
-Message-ID: <20251105064252.qxqkno4xqwfrhmlf@hu-mojha-hyd.qualcomm.com>
-References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
- <20251104-kvm_rproc_v6-v6-5-7017b0adc24e@oss.qualcomm.com>
- <fc8beead-566d-463b-aebe-407429adf156@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CF02C21D1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762325043; cv=fail; b=nuQMzX1QtaPElB/+SMNGBpilw9oa4egwlarmfyaVoJdot/tuQAfmPfoMO59bWQuCecuwFBjL82ytf+amHYTMKYV6ywKd6om7PRIqua842V2f3Cwjv6uPZmOpCoy0d6wJyK9RzxkWn1tA4CxpEGuMqZIFIWwJZVlAlTWHJybvPG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762325043; c=relaxed/simple;
+	bh=T54w/+dxHWQCRrMn0fYPouOoZ6a/33XUM2frzcmq/+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ry5CqVIUNX2SkRMg8SJ30IDorkXV0dMvC9t6dQ8C5MT+H0jNsQFsJ9ux9mBZsG3/bmpaxRrsrKfhnLGqf0RcIrlB3SeelTJluUrMDa6g5nrgUJDvoDkstU3G9yN8j0H0i8mtaSQEro1uY1M/OUGcFVaeCc++blIUOdxDdVNYgm0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vTASjm2/; arc=fail smtp.client-ip=52.101.53.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p7Y00O7KybBfgRpxXB6gJM92eBKBaoW8rAMPIiCcPzegHBdF8IBmG4dyS2QfmVP/Uomu1+TDLIVowhzgDBVyH1yIM9TqUoN//cPACUr+HuMgJrlzisVDd4zH/oHZiPP5T4KZQ22KE/2RW8IgXldbsP3Fpmt4hRh7K5UtGxZ06PZuVsotGSM6+KyBa8kctENwCRnBYRxa0nfB63q914EZ65rB/ZUs81SEn+vFnHB+supS2rBSrnJNgD8WB3iSpRWT3XjsqUHAvgThfP1CnL5W2J8UNRGU8Ur9S7V2xdlh7HjZROQSf8xnX+fzDdgLuKP6mRisMRZ3N5HjHVAS9FBvww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uV1x5xP7F1n+FIx2kmtOQgh1pW9PMoYNhyJugQgbw0A=;
+ b=KHjT1h5lVaDMOc/uTdDIFh2eFA7fXLy+hsxNs0PpIE2+qp6krHVLFUM0WleuErGi70LFvdpe40A22WD69q2Kdb4xVCQCubr1Id0wZAElcvF4B4A9zEAJANTE35o51p+Z3KfIVVe1d01DjL6ezdTkUHx7owGbZyAl4fsxQczmQXVs5TPoR23FDaiMmbieXkaaTGJL0uL0JrTf9s3ejNpyyNmpVR6Tm6v9Fz5oryLnbkrKBRPo05GpYUH/zfs4TS9TtF/sKn5rtUk5I4gnWph3YEaXCXz5pRKok726V6775ORIvGi+rpjN3ZUBwk3BVEFTi4EKXPbABAhNWUodclFR2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uV1x5xP7F1n+FIx2kmtOQgh1pW9PMoYNhyJugQgbw0A=;
+ b=vTASjm2/UsbFXxtJUu9U5uRbiGyFPDlFn0CX0NISAa/7jPNz6COSxk0oKSd9fPfB4KInD5TdZzD7+whuO0V5RnQm30s2IzRVv3n8BxRbdxdtbisnHjHjCBWPIfWzB8FqnZSVMSLpht+sckrMAzX80J9D6K2uA61+eT7UGBbIeSk=
+Received: from SA0PR11CA0091.namprd11.prod.outlook.com (2603:10b6:806:d1::6)
+ by SJ5PPFE4FC9FAB3.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9a7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
+ 2025 06:43:53 +0000
+Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
+ (2603:10b6:806:d1:cafe::18) by SA0PR11CA0091.outlook.office365.com
+ (2603:10b6:806:d1::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Wed,
+ 5 Nov 2025 06:43:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Wed, 5 Nov 2025 06:43:52 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 4 Nov
+ 2025 22:43:52 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 4 Nov
+ 2025 22:43:51 -0800
+Received: from [10.252.212.85] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 4 Nov 2025 22:43:49 -0800
+Message-ID: <eb0624df-3cae-46ec-9f7e-b45bea46a345@amd.com>
+Date: Wed, 5 Nov 2025 12:13:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc8beead-566d-463b-aebe-407429adf156@oss.qualcomm.com>
-X-Proofpoint-GUID: z8PJqKVEF25RgAh9j43mgf-0-U4qZK2y
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA0NyBTYWx0ZWRfXwO3bE5VLnER6
- iACYzuTK9ST5Dj46FMchMBE7V4g0l/GORElNJiKz+yjE0YDj5UTlBt53ucKgjrC/dC5jm20PWrx
- KCUYREBHTHxGJravJF2feMph9iVhsmTaHqCNqdyPcIecgdgwf7VE+atvWdpOO+iO/55ldRgPHVN
- TS1oZ5E8YEV3AmvnWV4i5rmc5A0opYSZxldoNrUXBIHyRJ/4ylx3f5aIPEZ7Yy1wd6C7Lni61zy
- 9j3A0iLHmuilgpTIy6Y2pSCwV/D5+1Snh3gaTzQNDbZdHGBVNRC+pTydPDaGt3fwIwvyfXcRe75
- svSA6k68zyP/1SS41a55+vV+Dr3UQSgjoHzTh6ljXvtG9DFAhlDaZl5wwiHH4r15+79KrV+aVuk
- whuY9Bl399ssPL9Shfa8fPu72CF+4w==
-X-Proofpoint-ORIG-GUID: z8PJqKVEF25RgAh9j43mgf-0-U4qZK2y
-X-Authority-Analysis: v=2.4 cv=Ev3fbCcA c=1 sm=1 tr=0 ts=690af1f4 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=gAF1yXKuUJ3Ueu62ksEA:9
- a=CjuIK1q_8ugA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050047
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/amd: Enhance "Completion-wait Time-out" error
+ message
+To: =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <suravee.suthikulpanit@amd.com>,
+	<Vasant.Hegde@amd.com>, <Santosh.Shukla@amd.com>
+References: <20251016150809.5465-1-dheerajkumar.srivastava@amd.com>
+ <tgugv7ebuxtnp6ou5jnt7od7jmccsipblqityiinhkgratosu6@bxsr73hpiiny>
+Content-Language: en-US
+From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+In-Reply-To: <tgugv7ebuxtnp6ou5jnt7od7jmccsipblqityiinhkgratosu6@bxsr73hpiiny>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|SJ5PPFE4FC9FAB3:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b658c08-4d3b-452e-84c2-08de1c36af20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UCtLVE1pS0ZKbVErWkdyRjNsQWJ0MVE3eXY5NFUralEvcGdCV3FnclRtZThZ?=
+ =?utf-8?B?dXY0Q05yUWs2UWgxQURFcXJWNjVKSC9FVFJCZUQ3ck0rcFUrcWlYMGd3RExX?=
+ =?utf-8?B?M3dLejRmZDJGbWYyTWN5YzNrcWVOWk1Rd0xuemxUU3ZLN0VRMk51YXFxMTQr?=
+ =?utf-8?B?UlA4NkdPdThvUTVVNkRlcGFDMS9MbnRvZHRkVDFwVTl1eTR4NUFKaTZ4L3Rq?=
+ =?utf-8?B?NmxJeTdyckw1SE5Ra0ZQVUNYS0pMZnJzbTBlMGdVNjNpM2dNUis4dTBlcTM3?=
+ =?utf-8?B?RWVlL0JubkRCc1BEUDNJdUhxYS9Zbm1aaG5Mckx3VzZHeUhyemtKQ0tIR3BJ?=
+ =?utf-8?B?VXBPOWNJK3BIZGtONllrdG4xdW5YM1NtOW9hUHJQeGN3NnVQeGs4RnFSc3NF?=
+ =?utf-8?B?OGNDbXJCa21JT1d4N1BtYXpJb3NLNTFRay9RNVozc0VDVlNKbGNiVWVNenNW?=
+ =?utf-8?B?Szk5emZydlMzdzZ6VHdyN1hubjlTcWplSVNZQmcxVklpTEtCbWlycDl6N05a?=
+ =?utf-8?B?MGR5MVIySjhjVlhGa2MwRENGUGR1VEpJUHE2cDNiR1V4MTNDUm1ETXdzUW9N?=
+ =?utf-8?B?THNCVUgyK0ZGUkRXYWZSWVRpVjRQVGN2aXBqT2NxdGd3TDE5ajUxZ3RUaWw2?=
+ =?utf-8?B?d2NTN1BuVmZ5M1dZVWc4NEdyYktjMUpGQjFEd1FLeUZUOFF5VTVUUnpONkY3?=
+ =?utf-8?B?OFZOVUw1eVh2VnEzT1RDQ2crbENpdWRGU2o5N1hERGIxOW9mM0RSTHY4b3hX?=
+ =?utf-8?B?aXI0QS82VER1MFBLcWZCVFFOV0FUZHZ2SFBkanhjb1RpTitVSFJSNjhWdm11?=
+ =?utf-8?B?dHRzeUkybmlFQ296TXorYWgrOEo4YXhBMWY1dUdPL1V6ZzZmTkpNOTNhZ2kx?=
+ =?utf-8?B?a0lCU0lMVTFUd3d1am1mRUxwYWRLL1NDQzE4cHB1SUtPb2l0dlNTajNtZXoz?=
+ =?utf-8?B?OTZWVHo4ajNtSFQyb0Y1ZFV0dXBJZFFXOGR0KzhCbFBZRGtoREVJeHNRcmNt?=
+ =?utf-8?B?QllBTG5TNGpLS3VLcDNwcDVZdno3cUVCWnFNSi9admtIUEZob0ZWd1p3eVV0?=
+ =?utf-8?B?b1B3dnVEQ05CQ1UxZldLY25RNU5qeCtLSjFCWVQwWUhORHhUanp2Q0tHY2kv?=
+ =?utf-8?B?d1BmUGVOc2RkYjJJNkdZcHo2dHJiSENjMk43RGREd3JtRjBmZFREekFHdVEr?=
+ =?utf-8?B?S2xZN1VybEhxZjZ5TVZSRnlIcWJMdFYvRWJlRE5uY0l2VWc3WFErV0tuaEpl?=
+ =?utf-8?B?eEJoRSs5N0x4dkhXY3ROMXFkK0dtTjkzZnIzLzRaVTU4eVNnU3F1TXVvWGpn?=
+ =?utf-8?B?NDQ4NXN0S1NueFRqOHRSTVRRZTJHcEJzaWxMZ1J6akExT3Zlc3BxbjJRbURX?=
+ =?utf-8?B?dDRwK1FBVmo1NndTVTVIbG4yemh2MWk0S1loQWhjSlVSaHExUjd6Y0xzYTZQ?=
+ =?utf-8?B?ZDVKdDFNcFRkZDdoSkJZNWo5Sng4VjNnL2lEZ1dNYk5LNE00UXZ0Q2Y5OXVW?=
+ =?utf-8?B?cWlERk9hZWRaQ0ErNTRiT2NGNThtTGhCNjBHRkhLYVBRVndQYXQ5ajlsM0kx?=
+ =?utf-8?B?Z3hmYy9ibW1QaElpbnRwbWFVZjMwemtZa2k2Tlh0cURYT3V1VjFUaVgrVlBF?=
+ =?utf-8?B?Q2xjR3VHOG8wR1FNZVh4QjJUQ29lUmEzUzh6MkZNb0xvWjArRGxESTNUR0Y0?=
+ =?utf-8?B?QmxrNVZBWjhzeUh0cmhlQVAycEwweUQxZEd3Qm9VcnhsOUVFTXhXN1A5UWpu?=
+ =?utf-8?B?VGdtcUMxcHZaUmJ1U1B4RS9URHJOdSt5YjFQWmJFemFZQnd6akpFV0pWVktC?=
+ =?utf-8?B?TlM4L1pPbWlLTVRhbzJDZ1ZobkhxM2h5SWdaRlBzaDJwczErdFFOWnNUeUNo?=
+ =?utf-8?B?QjlaV1dpNFlteWszNE5lVWtGcEYzaC9LbmUrR1pXNEVLamJQeFhhN1lQaTU0?=
+ =?utf-8?B?UVlIRmx1UUdzWjZ3aCs1NW13RkhZMkpFUEJWaXphZmN6ODR3SXRlbWIwbWVn?=
+ =?utf-8?B?aG9rNVRwOHJxazJDMERXS0RFcXJmOG1TUGE3UVpjc2ZtTm9VQnVqd0wxRzRx?=
+ =?utf-8?B?YU1FNnNpVWdWRGt4cVdDTjlYL1AyMnBYa2NVVkhtL1hlMEs1a0paQTVJamVD?=
+ =?utf-8?Q?k/MA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 06:43:52.4497
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b658c08-4d3b-452e-84c2-08de1c36af20
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F68.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFE4FC9FAB3
 
-On Tue, Nov 04, 2025 at 06:33:49PM +0100, Konrad Dybcio wrote:
-> On 11/4/25 8:35 AM, Mukesh Ojha wrote:
-> > As a superset of the existing metadata context, the PAS context
-> > structure enables both remoteproc and non-remoteproc subsystems to
-> > better support scenarios where the SoC runs with or without the Gunyah
-> > hypervisor. To reflect this, relevant SCM and metadata functions are
-> > updated to incorporate PAS context awareness.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> >  drivers/firmware/qcom/qcom_scm.c       | 25 +++++++++++++---------
-> >  drivers/remoteproc/qcom_q6v5_pas.c     | 38 ++++++++++++++++++++++++----------
-> >  drivers/soc/qcom/mdt_loader.c          |  4 ++--
-> >  include/linux/firmware/qcom/qcom_scm.h |  4 ++--
-> >  include/linux/soc/qcom/mdt_loader.h    |  6 +++---
-> >  5 files changed, 49 insertions(+), 28 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > index 5a525dbd0a2e..9cdd152da592 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -603,7 +603,7 @@ EXPORT_SYMBOL_GPL(devm_qcom_scm_pas_context_init);
-> >   *		and optional blob of data used for authenticating the metadata
-> >   *		and the rest of the firmware
-> >   * @size:	size of the metadata
-> > - * @ctx:	optional metadata context
-> > + * @ctx:	optional pas context
-> >   *
-> >   * Return: 0 on success.
-> >   *
-> > @@ -612,8 +612,9 @@ EXPORT_SYMBOL_GPL(devm_qcom_scm_pas_context_init);
-> >   * qcom_scm_pas_metadata_release() by the caller.
-> >   */
-> >  int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> > -			    struct qcom_scm_pas_metadata *ctx)
-> > +			    struct qcom_scm_pas_context *ctx)
-> >  {
-> > +	struct qcom_scm_pas_metadata *mdt_ctx;
-> 
-> This is never initialized
-> 
-> >  	dma_addr_t mdata_phys;
-> >  	void *mdata_buf;
-> >  	int ret;
-> > @@ -665,9 +666,10 @@ int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> >  	if (ret < 0 || !ctx) {
-> >  		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
-> >  	} else if (ctx) {
-> > -		ctx->ptr = mdata_buf;
-> > -		ctx->phys = mdata_phys;
-> > -		ctx->size = size;
-> > +		mdt_ctx = ctx->metadata;
-> > +		mdt_ctx->ptr = mdata_buf;
-> > +		mdt_ctx->phys = mdata_phys;
-> > +		mdt_ctx->size = size;
-> 
-> So this will always cause stack corruption
-> 
-> >  	}
-> >  
-> >  	return ret ? : res.result[0];
-> > @@ -676,16 +678,19 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_init_image);
-> >  
-> >  /**
-> >   * qcom_scm_pas_metadata_release() - release metadata context
-> > - * @ctx:	metadata context
-> > + * @ctx:	pas context
-> >   */
-> > -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
-> > +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_context *ctx)
-> >  {
-> > -	if (!ctx->ptr)
-> > +	struct qcom_scm_pas_metadata *mdt_ctx;
-> 
-> Is the existence of this struct any useful after you introduced
-> pas_context?
+Hey Joerg,
 
-Yes, it is still useful, mdt_ctx is only relevant for remoteproc based
-subsystem like adsp, cdsp, modem while they are not required for video,
-ipa, gpu etc. but the superset which is pas_context is needed by
-whosoever need to support secure PAS method Linux at EL2.
+On 10/27/2025 6:19 PM, Jörg Rödel wrote:
+> Hey Dheeraj,
+> 
+> On Thu, Oct 16, 2025 at 08:38:09PM +0530, Dheeraj Kumar Srivastava wrote:
+>>   static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+>>   {
+>> -	int i = 0;
+>> +	struct iommu_cmd *cmd;
+>> +	int i = 0, j;
+>>   
+>>   	while (*iommu->cmd_sem != data && i < LOOP_TIMEOUT) {
+>>   		udelay(1);
+>> @@ -1166,7 +1167,33 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+>>   	}
+>>   
+>>   	if (i == LOOP_TIMEOUT) {
+>> -		pr_alert("Completion-Wait loop timed out\n");
+>> +		int head, tail;
+>> +
+>> +		head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
+>> +		tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
+>> +
+>> +		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
+>> +			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
+>> +			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
+> 
+> Better use dev_err(&amd_iommu->dev->dev, ...) here.
+
+In the early boot process, the command buffer is used but 
+iommu->dev->dev is not set, which can lead to a kernel crash with dev_err.
+
+Thanks
+Dheeraj
 
 > 
-> Konrad
+>> +		if (!amd_iommu_dump) {
+>> +			/*
+>> +			 * On command buffer completion timeout, step back by 2 commands
+>> +			 * to locate the actual command that is causing the issue.
+>> +			 */
+>> +			tail = (MMIO_CMD_BUFFER_TAIL(tail) - 2) & (CMD_BUFFER_ENTRIES - 1);
+>> +			cmd = (struct iommu_cmd *)(iommu->cmd_buf + tail * sizeof(*cmd));
+>> +			dump_command(iommu_virt_to_phys(cmd));
+>> +		} else {
+>> +			/* Dump entire command buffer along with head and tail indices */
+>> +			pr_alert("CMD Buffer head=%d tail=%d\n", (int)(MMIO_CMD_BUFFER_HEAD(head)),
+>> +				 (int)(MMIO_CMD_BUFFER_TAIL(tail)));
+>> +			for (j = 0; j < CMD_BUFFER_ENTRIES; j++) {
+>> +				cmd = (struct iommu_cmd *)(iommu->cmd_buf + j * sizeof(*cmd));
+>> +				pr_err("%3d: %08x %08x %08x %08x\n", j, cmd->data[0], cmd->data[1],
+>> +				       cmd->data[2], cmd->data[3]);
+>> +			}
+>> +		}
+> 
+> I don't think it makes much sense to just print the command before the failed
+> completion wait. In case of a timeout and amd_iommu_dump == true, just dump the
+> whole pending command buffer, from head to tail.
+> 
+> Also, please put all the parsing/dumping code into a separate function.
+> 
+> Regards,
+> 
+> 	Joerg
 
--- 
--Mukesh Ojha
 
