@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-886191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03F7C34EF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:47:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161DDC34F00
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6217818C0D5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:48:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5D2A34DE09
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9894330B52A;
-	Wed,  5 Nov 2025 09:47:41 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DD43043D9;
+	Wed,  5 Nov 2025 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qa5GOtGl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02071304BC2;
-	Wed,  5 Nov 2025 09:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5352DE1FE;
+	Wed,  5 Nov 2025 09:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336061; cv=none; b=DTcp9Yz9XN3PaSQjP5hr8rDDzjDJCwFOYLYIYZ7IVoq53G2W9MOe2GxP+/YrNxA9oFjdt5qk4a86vg7FKDspuZJQi2q34U0oziN7DkuzwXxkR/o5QnG8aDelSwc+qivacnSraEgD83kl9rbRPn/asNS+UPgBKArHL87KPuO7H/Y=
+	t=1762336075; cv=none; b=np4UHmV8/MwZUYQs7Oyxo3K/4BtSdoJl1h8s0PGCSI8kyIVB9bEX3vao0YQJq65oCzWkuQ0L88/bXrGcLzdUzhW/7Wr4WRENX4ATRN5zg3nZGl/7iKwKLKLYNU4FYUIqHl8at+FsIzoopCQKdXCI/VEC8nLzGIgAU5gCtog9Gjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336061; c=relaxed/simple;
-	bh=k1tWbrj9M+uHbTZs67mYDrUUfWBdzxbLBbr+U38sZc0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=lckR/IhPznOlet7635Nno0160KbImZY8vmE2pbWY5+aq+LWe+IQnCZkwXQ6vuw+JgFqmy6k5GuXGR69zrWIWumKkfBaHchT+LANEa7v9A1g1DHWbMbNMLr+NdSNwo8vDK6f5IZSMLTsguGkJsdC3wx5B1HZr857UjOwHvKL0c+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowADXQWwjHQtp27SKAQ--.284S2;
-	Wed, 05 Nov 2025 17:47:23 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	error27@gmail.com
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] iio: trigger: Fix error handling in viio_trigger_alloc
-Date: Wed,  5 Nov 2025 17:47:14 +0800
-Message-Id: <20251105094714.28117-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowADXQWwjHQtp27SKAQ--.284S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFy3uryUKFyUJw4DAr13Arb_yoWkCFgE9a
-	na9rn7uw1UAw4kKF1fAr4rZFWIkrW7Kr92yr4SqasYgry3Xrs5XFnrWrsxtF4UWr45GFn8
-	X3WY9rykJ3W3CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbDkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67
-	AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjWxR3UU
-	UUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1762336075; c=relaxed/simple;
+	bh=ySGhnOUMYFqMwlZyV5LmPNhzt0pa0RzBTyYNhheS5JI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NC2UBHyEYrqLgH1fskoTi0w5jCbY9UpH99HUC6otxtkO7Sf9fFK2F7n706KbHDdoIBVlRrikHSacoXwNjT7IiOntikW0mdQagTXD32oKRnVwgMnjhThbSIeU9QJ0AmHTlr3R+222Iq9MBzTYmNl2xb5d9/n9Ri44XLMA3mVuAuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qa5GOtGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24309C4CEFB;
+	Wed,  5 Nov 2025 09:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762336075;
+	bh=ySGhnOUMYFqMwlZyV5LmPNhzt0pa0RzBTyYNhheS5JI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qa5GOtGlexoSohDB2aktLNqqIbUBxG/ArmlFM/ysoV3bD3qS6SAB0hLmMHDboD8ze
+	 0bU6eCZTPruNxM/oyc7CNG1JGe/8yRnkx3cOFGBOhPNiywMHl/XYuAimTYETTN/d7+
+	 mj+mR+WPmQc1poBBzpcbHt2cAddQi/sMMnjY6hKNfL8YRzutTGju+IyWSCnQeVsCUc
+	 h2n32MH7CxWioYoNZ17zdxohNUFcRluaYfejlz/aJ62/mjgu2hiKhdcBme8EDJl5g2
+	 Bxvhk+hu3rOJDCzPXbtsVjGHIO/dRlaxDmUm4GCMKB9K2JRR1HCmDBZu5LkpocOYKg
+	 ei4BA83foEQ/w==
+Date: Wed, 5 Nov 2025 09:47:50 +0000
+From: Lee Jones <lee@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Corey Minyard <corey@minyard.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the mfd-fixes tree
+Message-ID: <20251105094750.GF8064@google.com>
+References: <20251027080835.04e0a4c2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251027080835.04e0a4c2@canb.auug.org.au>
 
-viio_trigger_alloc() initializes the device with device_initialize()
-but uses kfree() directly in error paths, which bypasses the device's
-release callback iio_trig_release(). This could lead to memory leaks
-and inconsistent device state.
+On Mon, 27 Oct 2025, Stephen Rothwell wrote:
 
-Replace kfree(trig) with put_device(&trig->dev) in error paths to
-ensure proper cleanup through the device's release callback.
+> Hi all,
+> 
+> The following commits are also in Linus Torvalds' tree as different
+> commits (but the same patches):
+> 
+>   91a3e1f5453a ("mfd: ls2kbmc: Check for devm_mfd_add_devices() failure")
+>   fdff3cadeea9 ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
+> 
+> These are commits
+> 
+>   4af66c2bcab0 ("mfd: ls2kbmc: check for devm_mfd_add_devices() failure")
+>   0892507f4a0b ("mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()")
+> 
+> in Linus' tree.
 
-Found by code review.
+This is because Corey applied patches that they shouldn't have done,
+despite being expressively requested not to!
 
-Cc: stable@vger.kernel.org
-Fixes: 2c99f1a09da3 ("iio: trigger: clean up viio_trigger_alloc()")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/iio/industrialio-trigger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://lore.kernel.org/all/20251009095611.GC8757@google.com/
 
-diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
-index 54416a384232..981e19757870 100644
---- a/drivers/iio/industrialio-trigger.c
-+++ b/drivers/iio/industrialio-trigger.c
-@@ -597,7 +597,7 @@ struct iio_trigger *viio_trigger_alloc(struct device *parent,
- free_descs:
- 	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
- free_trig:
--	kfree(trig);
-+	put_device(&trig->dev);
- 	return NULL;
- }
- 
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
 
