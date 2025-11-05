@@ -1,171 +1,92 @@
-Return-Path: <linux-kernel+bounces-887446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9ABC38446
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:54:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA3EC38452
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104384F590F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:52:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6B934E8559
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E1E2F12C5;
-	Wed,  5 Nov 2025 22:52:28 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECCD2E36F8;
+	Wed,  5 Nov 2025 22:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSd9bzCT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DBF242D79
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D252D0631;
+	Wed,  5 Nov 2025 22:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383148; cv=none; b=UyO4g0RKCGYx05+Jczidllt4c2xuYjUZyiqNR9vKyPqxd6TGp2PzEKEvFfF+Z9gb3ny7y4xhtCEznUYtZ2yf2Ujg87bDkLbfAoHonto1J8P604fDipTsWWuTumVmdNSFazyz5ig9rnZ+UfM6HzBr/7Pj3+lPMT8OlPdZukI5SPo=
+	t=1762383372; cv=none; b=etmqCDfw+8imrjQrjzN8QV0ZEcbybfVn3wMZMYX2T1mcJhjHkmnM+7r4SquXbGz2eIaKPha2nNVj1Ej8YfjeVop2qI67O8i5D5DYAPjoYDRqF2idP9P8n0b7T310eMyKLfPdfT0QkM8gskLogPImP6Y7H0mlIPNFTq8MLCRSNfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762383148; c=relaxed/simple;
-	bh=E84jzNhg13WZ9bIISgKkmAZYtstHgmEFFuunaL/mAG8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GUKQRnxgoXBudQwonCqP9LrQPp7+56r7LoWL8GlwIgHJWyEb/uP60WJq/kJWR92pxTFc1NIYM7qBZrEBBYqQYLlVPj+Ya9RGYbcBmUWNgmqJXAhkUTmHtWf4Q7z2+UVcLiheAXTalCq8ejaq1HzPP4+1mzl6pfiz5/FTBPwbS08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9486f0954daso61858739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:52:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762383145; x=1762987945;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4KbXaJ3kX42ZpPo9dnlXTI1wxuyuZ2N42Y5pBaHMR5o=;
-        b=pdUdIxoqcA5xTtEXB5W7yY3B9XDGIrUPZxRnpplOzpXAnnWP7KDGnD3XlGlAJ2RrrZ
-         Yc+FGRpGaSLrQpEyxv94yEjcXAXdZbWEZY2EDxSLrxmTilxYZMMpI3cbfAnoi7PaRCso
-         lCm7BWZSN0WWJW7p+wEmk3iDz15cH4fhBZgdsD9ZYxVHWKy0JRiPJ3BvtNK9Hxj7fS0l
-         HErxt1tattRtBWU0EEpVJX6a6putZDhBcl8sG6nIGRploKeiYKXfcvL6t0/T4Sb0VDol
-         k9pVzkzXDL2LtHNb8tfopb3rryROB4zAdvht2j2nrJoiiOL7NliZkjIw27jIXekAaLwG
-         bfSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdguXGQiUNIzUQ4/jM89ChoJPE5DDMMYUejNtm57YX3IjprxXWRcsUcBwHwMqXlcOIbmTUygveQOjH4rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1vmCnxZ06f9fQ5dzFEgDA0yhq6gfA4hE6oEZrTy4CmzIMvLDU
-	9TA269z6jw5HDYiCrlDlQuxV6yQPMBDONEOED8tNZgNSsXe/2WQT7Z1cWsqCg/NamFY537uWorp
-	Sn4AiAStkkEwV8C2BTr5tDIz7UUiRBqBCXJIdZ0Du2OCpdGfdi+5KQSj6OWo=
-X-Google-Smtp-Source: AGHT+IE8GD0zqnJD3kd/UsmBfw0hgp7Np/JLjD4bUq0pgRAL3OEuVhx9I0pGKvIMNpqvEbOwcJle6YbDJ4OrgTLEjULw+8m7Utvl
+	s=arc-20240116; t=1762383372; c=relaxed/simple;
+	bh=000gXNvubZXtwKQCdVdjoEnT3fa/nqgkb/qx5r3C8t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6TFYbK4CMViMW5dtbCetHbCZKRP8oOe6jWpc5PFj8MNMH9BBUqbgPk1wnNltge9Ty2iS/2+k40zwFPRXEtWd3V7+bFF759eRO+8obP0V8QJK8Z3lrg2c5w5NvhOEde4MQUczopXz++BUmEmqunCO2wLy1vLcKGjlB65152JxTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSd9bzCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7608C4CEF5;
+	Wed,  5 Nov 2025 22:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762383372;
+	bh=000gXNvubZXtwKQCdVdjoEnT3fa/nqgkb/qx5r3C8t0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DSd9bzCT8Gqop1D49QBUXCpwqceT6wfW7U8uTSEGF/9AFDpwnxKLfRlEj2jgl9l9v
+	 3k/vVwyRtfkp7uvDZI4EVmK8xPyPSxhFbWezTvJ5fT0EEO2+WfTb431oE45W+5lIhZ
+	 Krelhha8oHvUAHXKOw/cXkksted3CLnGmpKZz9UpbHCbsEbfxAZcE3X6+zv4V5ljA9
+	 y2EzKOr5sPsPnZTwe9LaZRpmFWBBZ+VFG+vuQ79tKlzlxlsypt3NtD85X+rvXkNqYa
+	 6tHwTle+1V+UcBQ5/jk9XwZqkrA4jbL2P655WY8iPnEHAge7CoJYq5Lj/QJjkRn58P
+	 nJq6854ZfQYsw==
+Date: Wed, 5 Nov 2025 23:56:09 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH 0/8] refscale updates for v6.19
+Message-ID: <aQvWCaUWTDvfIUiE@pavilion.home>
+References: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:27c3:b0:945:ab4f:6732 with SMTP id
- ca18e2360f4ac-94869ce5974mr712921239f.2.1762383145508; Wed, 05 Nov 2025
- 14:52:25 -0800 (PST)
-Date: Wed, 05 Nov 2025 14:52:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690bd529.050a0220.baf87.0079.GAE@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in reserve_bytes
-From: syzbot <syzbot+feba382c68462d76be14@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
 
-Hello,
+Hi Paul,
 
-syzbot found the following issue on:
+Le Sun, Nov 02, 2025 at 02:49:34PM -0800, Paul E. McKenney a écrit :
+> Hello!
+> 
+> This series contains additions of microbenchmarks to the refscale suite,
+> and depends on the SRCU series.
+> 
+> 1.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+> 
+> 2.	Add local_irq_disable() and local_irq_save() readers.
+> 
+> 3.	Add local_bh_disable() readers.
+> 
+> 4.	Add preempt_disable() readers.
+> 
+> 5.	Add this_cpu_inc() readers.
+> 
+> 6.	Add non-atomic per-CPU increment readers.
+> 
+> 7.	Do not diable interrupts for tests involving local_bh_enable().
+> 
+> 8.	Add SRCU-fast-updown readers.
 
-HEAD commit:    98bd8b16ae57 Add linux-next specific files for 20251031
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17abfe7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=63d09725c93bcc1c
-dashboard link: https://syzkaller.appspot.com/bug?extid=feba382c68462d76be14
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+But this series depends on the "RCU Tasks Trace in terms of SRCU-fast"
+patchset which isn't for 6.19, right?
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/975261746f29/disk-98bd8b16.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ad565c6cf272/vmlinux-98bd8b16.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1816a55a8d5f/bzImage-98bd8b16.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+feba382c68462d76be14@syzkaller.appspotmail.com
-
-assertion failed: !(ticket->bytes == 0 && ticket->error) :: 0, in fs/btrfs/space-info.c:1671
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/space-info.c:1671!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 7313 Comm: syz.1.358 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:handle_reserve_ticket fs/btrfs/space-info.c:1671 [inline]
-RIP: 0010:reserve_bytes+0x129e/0x1410 fs/btrfs/space-info.c:1864
-Code: 0f 0b e8 15 f0 cc fd 48 c7 c7 60 c9 b0 8b 48 c7 c6 80 d5 b0 8b 31 d2 48 c7 c1 40 c6 b0 8b 41 b8 87 06 00 00 e8 f3 f8 33 fd 90 <0f> 0b f3 0f 1e fa 65 8b 1d 59 4a 80 0e bf 07 00 00 00 89 de e8 19
-RSP: 0018:ffffc9000f2ff180 EFLAGS: 00010246
-RAX: 000000000000005c RBX: 0000000000000000 RCX: 6a0e5d27bc457900
-RDX: ffffc9000d29b000 RSI: 00000000000080c9 RDI: 00000000000080ca
-RBP: ffffc9000f2ff3c0 R08: ffffc9000f2feea7 R09: 1ffff92001e5fdd4
-R10: dffffc0000000000 R11: fffff52001e5fdd5 R12: ffff88814e273000
-R13: dffffc0000000000 R14: 00000000fffffffc R15: ffffc9000f2ff220
-FS:  00007f71682106c0(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe3d8bb6d60 CR3: 0000000029df0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- btrfs_reserve_metadata_bytes+0x28/0x150 fs/btrfs/space-info.c:1887
- btrfs_reserve_trans_metadata fs/btrfs/transaction.c:577 [inline]
- start_transaction+0x102c/0x1610 fs/btrfs/transaction.c:658
- btrfs_replace_file_extents+0x2b1/0x1de0 fs/btrfs/file.c:2432
- insert_prealloc_file_extent fs/btrfs/inode.c:9004 [inline]
- __btrfs_prealloc_file_range+0x48d/0xcf0 fs/btrfs/inode.c:9071
- btrfs_prealloc_file_range+0x40/0x60 fs/btrfs/inode.c:9149
- btrfs_zero_range+0xb9a/0xe00 fs/btrfs/file.c:3073
- btrfs_fallocate+0xb95/0x1c10 fs/btrfs/file.c:3187
- vfs_fallocate+0x669/0x7e0 fs/open.c:342
- ksys_fallocate fs/open.c:366 [inline]
- __do_sys_fallocate fs/open.c:371 [inline]
- __se_sys_fallocate fs/open.c:369 [inline]
- __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f716738efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7168210038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f71675e6090 RCX: 00007f716738efc9
-RDX: 0000000000003ffd RSI: 0000000000000010 RDI: 000000000000000a
-RBP: 00007f7167411f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f71675e6128 R14: 00007f71675e6090 R15: 00007fff6c300678
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:handle_reserve_ticket fs/btrfs/space-info.c:1671 [inline]
-RIP: 0010:reserve_bytes+0x129e/0x1410 fs/btrfs/space-info.c:1864
-Code: 0f 0b e8 15 f0 cc fd 48 c7 c7 60 c9 b0 8b 48 c7 c6 80 d5 b0 8b 31 d2 48 c7 c1 40 c6 b0 8b 41 b8 87 06 00 00 e8 f3 f8 33 fd 90 <0f> 0b f3 0f 1e fa 65 8b 1d 59 4a 80 0e bf 07 00 00 00 89 de e8 19
-RSP: 0018:ffffc9000f2ff180 EFLAGS: 00010246
-RAX: 000000000000005c RBX: 0000000000000000 RCX: 6a0e5d27bc457900
-RDX: ffffc9000d29b000 RSI: 00000000000080c9 RDI: 00000000000080ca
-RBP: ffffc9000f2ff3c0 R08: ffffc9000f2feea7 R09: 1ffff92001e5fdd4
-R10: dffffc0000000000 R11: fffff52001e5fdd5 R12: ffff88814e273000
-R13: dffffc0000000000 R14: 00000000fffffffc R15: ffffc9000f2ff220
-FS:  00007f71682106c0(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdaa1f0eb8 CR3: 0000000029df0000 CR4: 00000000003526f0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Frederic Weisbecker
+SUSE Labs
 
