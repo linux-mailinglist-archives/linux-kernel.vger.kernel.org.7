@@ -1,116 +1,202 @@
-Return-Path: <linux-kernel+bounces-886411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C316C35817
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DC2C35805
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B91F54FB191
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:50:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 573AE4F757D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDEF311961;
-	Wed,  5 Nov 2025 11:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EFE311958;
+	Wed,  5 Nov 2025 11:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZPVq/dkN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMADRWc7"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143202FA0DD;
-	Wed,  5 Nov 2025 11:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCC22FA0DD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343425; cv=none; b=LfuoZe9W5/pSRG0SuCliWjZxtzE2BcyipzC+aY90FLhoEg/cyKqru2SQraOUFWDhLdfYh2kUpR/ULOS9blL5PxneiCU3GVwaA0JxQYMfm7+Mn5GvKYIIGQL/18R81RfeSQsso1elhZOFbpr2eWdkHYyrYfYYUNadDcP8PPX61SQ=
+	t=1762343411; cv=none; b=iCfetwG30gyNS9jCwdpmpLfU/c5gpsuUkFQcUy2iZvEpFwNuQl6J2WbgrZlMcy9MN4tiofcWxcnOTXOdNPbkPGcFXjqFs48/w4FnRfkct2NHTYHr6i9ic0oBnsnnTjV8blbqDuAdrOLqDTI0cm8MgR39e6jLGyuhSBEhWBf8tUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343425; c=relaxed/simple;
-	bh=VOMloqnyogODO4RAovI8U+2QdcgAASCJp7cCXx0YnO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5PLMP91tk/kVKPcIDqZLeqw1TxF3/zvwxshGsLQQiP6isNEMbp0YJMtJdbUPClImmxKXBRQfE+pIwqaIItbbqfr7djRQqQ7C9xPGw9A/LtFe4f7H/3+aizdGep77o0+i5jDPxDQ8r6FdWg+5cvkTTPYTaYa2g4mMdfhXe0nHfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZPVq/dkN; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D3F1740E021A;
-	Wed,  5 Nov 2025 11:50:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id B0YTNYx1HnJ2; Wed,  5 Nov 2025 11:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762343418; bh=nRo8TOnOgXeg6iUb+BAN+icb++7nkjDnWMyA+oE0JCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZPVq/dkNxYTiN/0MvlLGrVYjuugOuqND3m1nZXZvWgdexfkZodVa4SnFZn20UPesp
-	 5tBJRIHmSCycCB1SRqnWJ8xct3dkSarcpYlQaem1AK04qa3vpfo6WLgBlv3i5H3/By
-	 gdsVdxRVT1WRwqHszW5QKPMeBcamWgEfM6TaclHmfggk1V3ff5Vcl27nlkBulBYszA
-	 OPRgpufccKr3EGqqGYCc4/rl05Ks/Tho7HAHnYZ0eWzI1xHl3mjfka3ly//RL1bt1O
-	 RVWNTJQGWd6Az1YoU5v8Yc3rTgVMeLqt7e7mW6pta8NsBWHXitH8EDEGKsIC3mhTMF
-	 hMqP7fQeXgwk1oSa8JUraGBDX4fi88pToU+oOR7CDDXAx+poZXhzBtHcotgB5LpUJK
-	 nWwxqCplPprDQDPe49zj1uJSdN7rPZhbZA79HdJ+faGse+KttXK2MNHI9oHD7UCY8G
-	 8O15Wrd1rpcoI4mghD1Ia/UHJdhYFSUtIanfW5oAi7swzLFskYh8DFHwFtoOjwFN6J
-	 jei5mU0hQYn/21mg4Iw1dUzVWfWAnOUyg0XTiGKJmqxGDWNl9ms0yXscH65YgZudn+
-	 8qJdlZHcBKuCIEOeKp9wGFVHhU32MV27BeOeKetjBjT8xLz+2FlnjltfPDXJtC6EM1
-	 EXnecaGRhxyBKqOJKgtTvBC4=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 3B05740E00DA;
-	Wed,  5 Nov 2025 11:50:05 +0000 (UTC)
-Date: Wed, 5 Nov 2025 12:49:59 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Tom Lendacky <thomas.lendacky@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	the arch/x86 maintainers <x86@kernel.org>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
-Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
- wrong USER_PTR_MAX in modules
-Message-ID: <20251105114959.GCaQs556YmafFX_s2o@fat_crate.local>
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com>
- <20251031174220.43458-2-mjguzik@gmail.com>
- <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
- <aQozS2ZHX4x1APvb@google.com>
- <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
- <20251104201752.GEaQpfcJtiI_IxeLVq@fat_crate.local>
- <CAHk-=wgoajqRhtYi=uS0UpmH61qE=tBCwb8x3GG6ywZUqWY6zg@mail.gmail.com>
+	s=arc-20240116; t=1762343411; c=relaxed/simple;
+	bh=MHbng6srjLWyY3isFngCuEsAZy+dOOpmHyWZUgmX/bk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B/lyfl/CG0I11PqzV893xFb5cz2JBa7/M+i9Z3B4kOyZcF3V3FM9dhMVyJ31p8LiKVsYAKe/CzWRfMeoJJUIiY2vXN4dlhK4yavIuL56K6gKL4Mw040TaTBXpd/nWL5FRdVyxBRo/YQVxjrIiKV+OnlD96FYGnaV6xn6M3vAi6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMADRWc7; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29570bcf220so49843085ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:50:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762343409; x=1762948209; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pjlBcVA0fwgfcOgXPYN9Hid6rAR5JqFICSTBhL/k5AU=;
+        b=CMADRWc7R1lfs0D662kXOGv83isuKKIwJaTZj8NhDhxLySJ0vumTRWpupG8WETe6Jb
+         X5aybOOuMKFkSyHOTKrF8FXqvBRsG2SG3BGv+2xuSB+WG+y5UiDiMRPWDTm34L65qiCl
+         tSIhdF383JFPIjj777ICM/YhKV7FpbE/b5QhcUGtRBu6fl35yUMsAPsLStPfQJocC13P
+         qCTbm4MzgBaE2pgUEXWKT/BO+5FXdqY+4akc5JVxw4e93/nIMPMjWsZ0CnbrBQoeuqpU
+         2FgmloRVtiJm4hiWNuW2rjO8RDNHWEwuyGn9vPq86q+LwEVRtPqwzExEU43g9E8w9/Yk
+         VKjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762343409; x=1762948209;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pjlBcVA0fwgfcOgXPYN9Hid6rAR5JqFICSTBhL/k5AU=;
+        b=eyN8tzdhMS99PLQCAbynKC0xV+w5CxfXm8k/8mWwk7s19fz1nCDKnjogL+tnS0lHXP
+         c21WoTdw2E0Fr6mrkHSy4MpP0+iBN3mDRElK7Jiph0HbzOaGF3JPO2sB+6JHBN+HszTI
+         TiVTY3Wfg8pDXQBGmGifQB8J4bv9502yONSPbJOlJXDI18XAGP/urKzQSQqlooJDkPDw
+         jHF4ypGa6gK86IZZQh2Freismb5DeKjSoCXO/PvvWtVNYkw1HRPlh/4lOa5HdwBMmfZT
+         HFWcF92YiXD1ZDQoxf6fQC+FTG0ZRNDbXTzluTrfj4QwiLqHinBnGgeaqsYB3M2Mm70M
+         AZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUY3qwbKojQzOu/WaJtdkhZqALDtcZ4xlPE1PDwchHZBH401TZYxX0seP2OfLkbZ5wcg0ispuLyfljJzBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBSWnDsdHIlSvwwe5WPaE+UobE6ouDwGBcgE0TuyBD9cFpFjQa
+	WGoJ7696geHaOtfItfaDel+n4TrjjMPznadIVzfQ5233LuQ7YAUTxU4M
+X-Gm-Gg: ASbGnctSZ/ZyVLDJSr9/0K1/UfyVSgRpOd4ihHFgX+hMoCBB9+KkGbCR4jyNjYt91F5
+	/NFK6PdED5jzog/5pjR1pM+z6moSYhUyQd9ScJUhGUg8ACcpZ4taOWzUKZZSO7k3JbyvFLaxYTr
+	U9B89x7+mxtAbzcN+xcIb6i+uy8zEB5kTTV2sAgWGqhKUQGej6qoYvuXqEtNi0iVl3VqZr3qoqq
+	TvBg2H09c/IiUiLEsYkpbCvseZ3bf2+7nd1l0f2g8RO3DsMFfwyTZzR7fLAH6CiKBc3YDvK7qRz
+	fGnhPHdVHuF4vlKykTE65YvsGdZ3c5lmHMfUD5cEUeeWjkzuD2z6HXaT7nPjXWd1tWbF+H2aXwo
+	oCfzw2YhmfiVfR4nMAw6svOKC71Dficv932Rm+W4dEPpboxiUy/P3zEGxC5Cu/QM4k3Vx9cDsFo
+	hG
+X-Google-Smtp-Source: AGHT+IHdUXKuWWISPi0q/licRMZ6Bx4YcC7Akip5kI5n3mrpw2TZuTHVRv+6VFth21ABY/rXx6TKUA==
+X-Received: by 2002:a17:902:dad1:b0:295:8da5:c634 with SMTP id d9443c01a7336-2962ad835bemr33691215ad.9.1762343408930;
+        Wed, 05 Nov 2025 03:50:08 -0800 (PST)
+Received: from aheev.home ([2401:4900:88f4:f6c4:54cc:cfa8:7cce:97b5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f2893bc6sm5254850a12.10.2025.11.05.03.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 03:50:08 -0800 (PST)
+From: Ally Heev <allyheev@gmail.com>
+Date: Wed, 05 Nov 2025 17:20:01 +0530
+Subject: [PATCH] net: wireless: fix uninitialized pointers with free attr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgoajqRhtYi=uS0UpmH61qE=tBCwb8x3GG6ywZUqWY6zg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOg5C2kC/x3NwQrCMBBF0V8ps3agKVbFXxEXafNiH5Qok7SKp
+ f9ucHk2926SYUSWa7OJYWXmM1W4QyPj5NMDylAtXdv1zrW9+glYdUlMLPQzvwgaDVBfiumbhhk
+ 56xBwPh3jgIsbpcZehsjPf3S77/sPO1TKEHgAAAA=
+X-Change-ID: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4084; i=allyheev@gmail.com;
+ h=from:subject:message-id; bh=MHbng6srjLWyY3isFngCuEsAZy+dOOpmHyWZUgmX/bk=;
+ b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDK5Ld/yJc1rO3l93pqEQosd+hcCzIMv1W7IffB8n3LY3
+ 3upilPedpSyMIhxMciKKbIwikr56W2SmhB3OOkbzBxWJpAhDFycAjCRDbaMDOeT3l/c0rcirn7C
+ 81NXPf4r9IdWrz5jZKwQtICRR+X3kvcM/yNWyLFNNHfn+NMTeKtG8OBdrrCsRTc3mSVfOSYunsF
+ 9mhMA
+X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
+ fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
 
-On Wed, Nov 05, 2025 at 07:06:05AM +0900, Linus Torvalds wrote:
-> but any other users of __get_user() that aren't in x86-specific code
-> can't do that, so I do think it's probably better to just migrate the
-> *good* cases - the ones known to actually be about user space - away
-> from __get_user() and just leave these turds alone.
+Uninitialized pointers with `__free` attribute can cause undefined
+behaviour as the memory assigned(randomly) to the pointer is freed
+automatically when the pointer goes out of scope
 
-We probably should think of a scheme to stop __get_user() from spreading
-around by hiding it in an arch-specific header which doesn't get exposed to
-modules/drivers/etc and then once that is in place, take care of the existing
-offenders and convert them slowly.
+wireless doesn't have any bugs related to this as of now, but
+it is better to initialize and assign pointers with `__free` attr
+in one statement to ensure proper scope-based cleanup
 
-It'll need careful conversion and testing, I'd say but at least we'll have
-a finite, non-growing number of occurrences to convert:
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+Signed-off-by: Ally Heev <allyheev@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/uefi.c |  6 +++---
+ drivers/net/wireless/intel/iwlwifi/mld/d3.c  | 16 ++++++----------
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
-$ git grep -w __get_user *.c | grep -v arch | wc -l
-43
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
+index 4ae4d215e633e0d51194d818d479349e7c502201..7fcd76f2ef8e373f16c09ed16ade1ef16ccf6bed 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
+@@ -818,11 +818,11 @@ int iwl_uefi_get_dsbr(struct iwl_fw_runtime *fwrt, u32 *value)
+ 
+ int iwl_uefi_get_phy_filters(struct iwl_fw_runtime *fwrt)
+ {
+-	struct uefi_cnv_wpfc_data *data __free(kfree);
+ 	struct iwl_phy_specific_cfg *filters = &fwrt->phy_filters;
+ 
+-	data = iwl_uefi_get_verified_variable(fwrt->trans, IWL_UEFI_WPFC_NAME,
+-					      "WPFC", sizeof(*data), NULL);
++	struct uefi_cnv_wpfc_data *data __free(kfree) = iwl_uefi_get_verified_variable(fwrt->trans,
++		IWL_UEFI_WPFC_NAME, "WPFC", sizeof(*data), NULL);
++
+ 	if (IS_ERR(data))
+ 		return -EINVAL;
+ 
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/d3.c b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+index 1d4282a21f09e0f90a52dc02c8287ecc0e0fafe1..515728b8cacf4004a121183cc93ab28b17b3bdc8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+@@ -592,7 +592,6 @@ iwl_mld_handle_wowlan_info_notif(struct iwl_mld *mld,
+ 				 struct iwl_rx_packet *pkt)
+ {
+ 	const struct iwl_wowlan_info_notif *notif;
+-	struct iwl_wowlan_info_notif *converted_notif __free(kfree) = NULL;
+ 	u32 len = iwl_rx_packet_payload_len(pkt);
+ 	int wowlan_info_ver = iwl_fw_lookup_notif_ver(mld->fw,
+ 						      PROT_OFFLOAD_GROUP,
+@@ -609,10 +608,10 @@ iwl_mld_handle_wowlan_info_notif(struct iwl_mld *mld,
+ 							5))
+ 			return true;
+ 
+-		converted_notif = kzalloc(struct_size(converted_notif,
+-						      mlo_gtks,
+-						      notif_v5->num_mlo_link_keys),
+-					  GFP_ATOMIC);
++		struct iwl_wowlan_info_notif *converted_notif __free(kfree) =
++			kzalloc(struct_size(converted_notif, mlo_gtks, notif_v5->num_mlo_link_keys),
++				GFP_ATOMIC);
++
+ 		if (!converted_notif) {
+ 			IWL_ERR(mld,
+ 				"Failed to allocate memory for converted wowlan_info_notif\n");
+@@ -996,8 +995,6 @@ static void iwl_mld_mlo_rekey(struct iwl_mld *mld,
+ 			      struct iwl_mld_wowlan_status *wowlan_status,
+ 			      struct ieee80211_vif *vif)
+ {
+-	struct iwl_mld_old_mlo_keys *old_keys __free(kfree) = NULL;
+-
+ 	IWL_DEBUG_WOWLAN(mld, "Num of MLO Keys: %d\n", wowlan_status->num_mlo_keys);
+ 
+ 	if (!wowlan_status->num_mlo_keys)
+@@ -1785,7 +1782,8 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
+ 			   struct ieee80211_vif *vif,
+ 			   u8 ap_sta_id)
+ {
+-	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree);
++	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree) = kzalloc(sizeof(*cmd),
++		GFP_KERNEL);
+ 	struct iwl_host_cmd hcmd = {
+ 		.id = PROT_OFFLOAD_CONFIG_CMD,
+ 		.dataflags[0] = IWL_HCMD_DFL_NOCOPY,
+@@ -1793,8 +1791,6 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
+ 	};
+ 	u32 enabled = 0;
+ 
+-	cmd = kzalloc(hcmd.len[0], GFP_KERNEL);
+-
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
+ 	struct iwl_mld_wowlan_data *wowlan_data = &mld_vif->wowlan_data;
 
-Not a lot. (The headers are mostly macro definitions AFAICT).
+---
+base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
+change-id: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
 
-The arches would then be a separate deal...
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Ally Heev <allyheev@gmail.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
