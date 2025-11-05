@@ -1,219 +1,154 @@
-Return-Path: <linux-kernel+bounces-887048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F92C37120
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:28:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA10C371B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 935C334F917
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:28:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C46F5013FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAC333EB0D;
-	Wed,  5 Nov 2025 17:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6EF325499;
+	Wed,  5 Nov 2025 17:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1vlJoEoC"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="e9Q2i3qm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBC833A000;
-	Wed,  5 Nov 2025 17:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCDD334C25;
+	Wed,  5 Nov 2025 17:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363653; cv=none; b=ZAOjZLfxhkdCFz7pB+jJDlAFt4sP3nDhkXly6zJ7G3HZkjq1X+Lm0flDiNS7nHEhJ8CqjCrNJRB//kuLyJ02djQUDZERJ6GcMF8WDf8FtHYD4ER0D9XawFpQDWBlLimb0eYQZQ4Wddq1j23RCfN57YPW3ghMBioQ4We3BKYZDV4=
+	t=1762363631; cv=none; b=n0w/ALlS72SrfmvTI1UDlMJf4po6NdOHbYxixgSo59q0U1XRaOcGvNq44OlDpVobA+Ku8GlfvR73ty6VkkleljM1+39W53JjBbUQh3h0AwDlA6eE1hnqEQEgPgwW3LJPPKT3aY71QIZztVbnolkUAv/sAMq0tRyR2IYeeuxMzUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363653; c=relaxed/simple;
-	bh=tGO2kgsXQe//qcx2Nw4bXMT9zrKWeUfu6t8Kgzqm9cw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JCqXCEyw2IN06nXpqqSOzE+8YzOO+ztKXW3RaXgx+eWKnBFUnmEwJrKykppQi+/edjSXTKWJnRhyQj+9zAh5QlpSS2SKOm7iYF8Ru2VR6LZGFJ7H90HiypauD3ownROmQzpdlZV6Yv9zdKc0QzF7ggT3oR4z0anEr4/UJZcuDr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1vlJoEoC; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 82CF31A18C6;
-	Wed,  5 Nov 2025 17:27:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5327A60693;
-	Wed,  5 Nov 2025 17:27:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9CFDE10B50A77;
-	Wed,  5 Nov 2025 18:27:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762363649; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wJ40tELRwlfdzsxlDdza2G/jyyYMbFpPSrFFQEx532o=;
-	b=1vlJoEoCgQUpBhp/0awSNb5kDoJH1iWIoAn3JNdzg9/j34C8mKAV0lsYA3pqptWOOK53YA
-	RxRnsxImC1kNcy+/wYI0ehjlU8/s7LsxmTJtjSK5h1AbocjmXrLvSPRWUvKaaKI9AW7hx8
-	hUIVcYFzBUUEZYdW6nqyx0H+c6a/0g4A9tAH0pLYLvNIwOdRahJByMKOR8n3o9azy3Vz8B
-	K1cIvbjFcyTyqo8NOoozuZdEilKRbUxOt41w3kFYzydcB6Msc2i7znalkS/c64mw3+nP0g
-	joF6sJWEsnnnQ6H7HsoWEi8QF9mj4LxbJE9fQqkJrGgSyoo8dqkQb4kv2yJgBw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 05 Nov 2025 18:27:03 +0100
-Subject: [PATCH 4/6] mtd: spi-nor: winbond: Add support for W25H512NWxxAM
- chips
+	s=arc-20240116; t=1762363631; c=relaxed/simple;
+	bh=0zh7mU6+Q2DgrXPwAM6Mbt58/5XP2Rm18IkdrvGTcKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmYzVSNXeua2QIWU6mjIL4+/dBAxi0265Jjbng/OrttpaNYA0QvLQqGkCqn6DIavs51p477vHowaGU6JquTF4fIn8SpXtXLW9cEwCPCh6jyrCHGnUaontLrB8NiIk3EZDIFluiWjOaK3Sw3Y+bWyte/gZaZ8xH+CsGSD9YULcTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=e9Q2i3qm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0F214B5;
+	Wed,  5 Nov 2025 18:25:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762363513;
+	bh=0zh7mU6+Q2DgrXPwAM6Mbt58/5XP2Rm18IkdrvGTcKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e9Q2i3qmyZ20IOL7SdDM+WwB9D19VYgM5hqbItih+ttfImYlnN/blGMLwogAQtYPB
+	 bsrjefm/q4T1d3In/NUbRQrX4xYlYUtZu3BoGa5DzLIpv61oBNlzJkkAah0NPR1Mvr
+	 4geXc6/x8mJ2K/8w8L8Bl8RkgGyZi8B5hpa7hh4k=
+Date: Wed, 5 Nov 2025 19:27:03 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v3 1/3] media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI
+ compatible string
+Message-ID: <20251105172703.GC6046@pendragon.ideasonboard.com>
+References: <20251105-isi_imx95-v3-0-3987533cca1c@nxp.com>
+ <20251105-isi_imx95-v3-1-3987533cca1c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-winbond-v6-18-rc1-spi-nor-v1-4-42cc9fb46e1b@bootlin.com>
-References: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
-In-Reply-To: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251105-isi_imx95-v3-1-3987533cca1c@nxp.com>
 
-These chips must be described as none of the block protection
-information are discoverable. This chip supports 4 bits plus the
-top/bottom addressing capability to identify the protected blocks.
+Hi Guoniu,
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/partname
-cat: can't open '/sys/bus/spi/devices/spi0.0/spi-nor/partname': No such file or directory
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
-efa020
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
-winbond
-$ xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-53464450060101ff00060110800000ff84000102d00000ffffffffffffff
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffe520fbffffffff1f44eb086b083b42bbfeffffffffff
-0000ffff40eb0c200f5210d800003302a60081e714d9e96376337a757a75
-f7bdd55c19f75dffe970f9a5ffffffffffffffffffffffffffffffffff0a
-f0ff21ffdcff
-$ sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-07b7eff0cc6e637cbe3282c0ee75bd23e0da622ca26319238c07bcb4d677fb34  /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-$ cat /sys/kernel/debug/spi-nor/spi0.0/params
-name		(null)
-id		ef a0 20 00 00 00
-size		64.0 MiB
-write size	1
-page size	256
-address nbytes	4
-flags		HAS_SR_TB | 4B_OPCODES | HAS_4BAIT | HAS_LOCK | HAS_16BIT_SR | HAS_SR_TB_BIT6 | HAS_4BIT_BP | SOFT_RESET | NO_WP
+Thank you for the patch.
 
-opcodes
- read		0xec
-  dummy cycles	6
- erase		0xdc
- program	0x34
- 8D extension	none
+On Wed, Nov 05, 2025 at 01:55:10PM +0800, Guoniu Zhou wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+> 
+> The ISI module on i.MX95 supports up to eight channels and four link
+> sources to obtain the image data for processing in its pipelines. It
+> can process up to eight image sources at the same time.
+> 
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 
-protocols
- read		1S-4S-4S
- write		1S-1S-4S
- register	1S-1S-1S
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-erase commands
- 21 (4.00 KiB) [1]
- dc (64.0 KiB) [3]
- c7 (64.0 MiB)
-
-sector map
- region (in hex)   | erase mask | overlaid
- ------------------+------------+---------
- 00000000-03ffffff |     [   3] | no
-$ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-Supported read modes by the flash
- 1S-1S-1S
-  opcode	0x13
-  mode cycles	0
-  dummy cycles	0
- 1S-1S-2S
-  opcode	0x3c
-  mode cycles	0
-  dummy cycles	8
- 1S-2S-2S
-  opcode	0xbc
-  mode cycles	2
-  dummy cycles	2
- 1S-1S-4S
-  opcode	0x6c
-  mode cycles	0
-  dummy cycles	8
- 1S-4S-4S
-  opcode	0xec
-  mode cycles	2
-  dummy cycles	4
- 4S-4S-4S
-  opcode	0xec
-  mode cycles	2
-  dummy cycles	0
-
-Supported page program modes by the flash
- 1S-1S-1S
-  opcode	0x12
- 1S-1S-4S
-  opcode	0x34
-$ dd if=/dev/urandom of=./spi_test bs=1M count=2
-2+0 records in
-2+0 records out
-$ mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ hexdump spi_read
-0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-*
-0200000
-$ sha256sum spi_read
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-$ mtd_debug write /dev/mtd0 0 2097152 spi_test
-Copied 2097152 bytes from spi_test to address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ sha256sum spi*
-40a9f42f218c8f909eb9f13e5edb964be55d5a962a91ad54f6b1dcf51ca637ad  spi_read
-40a9f42f218c8f909eb9f13e5edb964be55d5a962a91ad54f6b1dcf51ca637ad  spi_test
-$ mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ sha256sum spi*
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-40a9f42f218c8f909eb9f13e5edb964be55d5a962a91ad54f6b1dcf51ca637ad  spi_test
-$ mtd_debug info /dev/mtd0
-mtd.type = MTD_NORFLASH
-mtd.flags = MTD_CAP_NORFLASH
-mtd.size = 67108864 (64M)
-mtd.erasesize = 65536 (64K)
-mtd.writesize = 1
-mtd.oobsize = 0
-regions = 0
----
- drivers/mtd/spi-nor/winbond.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index a65cbbccbbac64c83227c8158ff85abfa3441868..781ca0abfcdca2dc883e33bfa5c164623cf0905d 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -355,6 +355,10 @@ static const struct flash_info winbond_nor_parts[] = {
- 		/* W25Q02NWxxIM */
- 		.id = SNOR_ID(0xef, 0x80, 0x22),
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
-+	}, {
-+		/* W25H512NWxxAM */
-+		.id = SNOR_ID(0xef, 0xa0, 0x20),
-+		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
- 	},
- };
- 
+> ---
+>  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 27 +++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..c5cf4a9787ee7f31273bd097d2200402fb346773 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> @@ -23,6 +23,7 @@ properties:
+>        - fsl,imx8mp-isi
+>        - fsl,imx8ulp-isi
+>        - fsl,imx93-isi
+> +      - fsl,imx95-isi
+>  
+>    reg:
+>      maxItems: 1
+> @@ -49,7 +50,7 @@ properties:
+>    interrupts:
+>      description: Processing pipeline interrupts, one per pipeline
+>      minItems: 1
+> -    maxItems: 2
+> +    maxItems: 8
+>  
+>    power-domains:
+>      maxItems: 1
+> @@ -98,6 +99,7 @@ allOf:
+>      then:
+>        properties:
+>          interrupts:
+> +          minItems: 2
+>            maxItems: 2
+>          ports:
+>            properties:
+> @@ -109,6 +111,29 @@ allOf:
+>              - port@0
+>              - port@1
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,imx95-isi
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 8
+> +        ports:
+> +          properties:
+> +            port@0:
+> +              description: Pixel Link Slave 0
+> +            port@1:
+> +              description: Pixel Link Slave 1
+> +            port@2:
+> +              description: MIPI CSI-2 RX 0
+> +            port@3:
+> +              description: MIPI CSI-2 RX 1
+> +          required:
+> +            - port@2
+> +            - port@3
+> +
+>  additionalProperties: false
+>  
+>  examples:
 
 -- 
-2.51.0
+Regards,
 
+Laurent Pinchart
 
