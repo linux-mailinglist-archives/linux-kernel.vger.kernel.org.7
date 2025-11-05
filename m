@@ -1,118 +1,207 @@
-Return-Path: <linux-kernel+bounces-886923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD5BC36B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:28:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C58BC36D64
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 86F4234DB64
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E0E3B901A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1ED32ED57;
-	Wed,  5 Nov 2025 16:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07190332ED1;
+	Wed,  5 Nov 2025 16:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/F0JTWb"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXy3o1HA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F1825E469
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3156C310777;
+	Wed,  5 Nov 2025 16:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360114; cv=none; b=P/FGGh2p9pVcDEQaELTCBcX8bREpiSikeNkuA4kJN0rFd5YH1iBmH5ZVmyTGQ41L/8ZuaaK76SjmSkPR4Y2uIoPIlhTBNBhb48ePTisJvU5DNCRBLeq5bisnCGsyFy63dlRIk9c/laQvygsUoOhw3qit1bh4IAi8uaHM9W4Vpbk=
+	t=1762360150; cv=none; b=fO03+xFI8Z1UjJsVySogj3L4hIUZ4rNA0w8UVDHEkRLeiaIEBM9HvPBQWOM4cvVb9S91wQplrIVxLllf+oq45m5ByfOAQ7Z909ehJYmni9Sn7R8Wg3yOTTOd/K0kIEo8QDxZ7l3nzUv7l312hoAd1sAdEdzyBuBPWEJRoklg8zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360114; c=relaxed/simple;
-	bh=aJ1f5V0uew9Za4nsW1MyDwJoEjJKM36x0hfHj12g8Ak=;
+	s=arc-20240116; t=1762360150; c=relaxed/simple;
+	bh=E2LyBpj7sEAtFQd7gW1xNRb7UeJ1t4NfeX3b6rOxki0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PMHaXLj+IW6ZIocYNnnOSNlz/TrBEq+KY2EFVa52oL81AVy/tk8zpOOF8O3qFdJliJD9eWJbHZGi14mljst/Q5PaCdNmutcnQJddUqwDIpIKSeHgk8joavFoZq1F2V2hTlfK7qxyx7kap9WUX+6ELMsFpezrzjlMBFNeL2/T5b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/F0JTWb; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7260fc0f1aso327832166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:28:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762360111; x=1762964911; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tI1w+zRHNjqYgYKUw8eqjf6yQpSJ+H6WAlDRjf6NeDY=;
-        b=j/F0JTWbqrHuHz6LJTbjXx7b4dVSDCaBdofPJBsUHdKCgfT63rha7QKOLh+jpWkdJa
-         N7Zbo49aYpUr0H2KI7uYzUZCaP7l+go2kuSHdkduVVxgIKA/O754tDG8oskNFBZ4qvsu
-         m11gAH7KmOEbIONpjaSdVcjvH5uu8b2Vum23ITuDGlCkhTPAJjnvpL2Yr0UKpubygod9
-         36Fr2zxaxTB93GqkfRHh1vqRvD8Sd3TrSMdmUbHGQ69Cy11DkJ2ArkYZ0hjdAisxFRnW
-         bR041+MeAu7AYzscYFwWvN1wbqKJCaj+euKWe2/N9UlL3PDUqet3zHKdkLZ7OJTFunP/
-         5xqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762360111; x=1762964911;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tI1w+zRHNjqYgYKUw8eqjf6yQpSJ+H6WAlDRjf6NeDY=;
-        b=SWMB7i+mYkU04HCCeCZep1ZBDmQ0z5rPOoCxb7eVEKnsEoYeHy3N0HR/3T1m7EMAHC
-         o5XL79oabrQZVQdwTBkeAHsKFXWIhToT03ADR6VtLtv+Tf7rK6bQYRKz9dtc19n/5Fk/
-         cMcfmVh2jsjKEItYoa9OTzsIs6XwIkg+XOvQG66/o+Qitc7VDi5eRogevrZsNGzBeFPg
-         nPO+PWo84sVhundVsEbMixuBbpW/yEY2T61tMqheIdR1upYP6eSLqphrbQDKGfHcfZc7
-         L5O8UjPu6LdM7pulWysrq0otkniArwH5Q9siYu8Zz0pWoY0nW0s2yE0c+KQZEVDAprk1
-         Ki8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQE4LzHY7x5zOxIl5ulEWZc+UnjIG3urwPnBKY+w4uf2AKV3nKbNNyJD6bALZ+e4RP982BjkRCI+3AIOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx90OU0EJFdFmZtkHgS5JUCB0bpo8634YrES2C3Blk8FGmSrzC7
-	ETjjkMJAtvvjijNFZV6nhld4jPhvwCLoH/F0x+e7kNajpkU2X/+uXbJQ+3iGsKRLGuU=
-X-Gm-Gg: ASbGncvAJ/ndkD+WNrvC5egG/rLpGQIY/xkxdF5Yn25Ibj9DnCnvyQMJzOQhebOSgYx
-	86A4ifFerMDg4EUcfw4SWT/NJB//FW+3/0XkBX+joupzOSTcSxSQHtp85mclzTFSC2If84dqca5
-	BS4bge4YZhtYpGXqWmL/5gMp3rA4LYcMKNKguw7vCsLnSlC1MP3BtiCo/MVV4igIdJvVjOTZtU+
-	xIxJw3zSmQPeQ1FShWX4kpmbRDozNQjT0oVx3KLC+RZ24IQK7Ezgvcdmw8kvbwLY35sau/uW2Ea
-	DEIIYmijQI1LcVFeefyuN3YYJrcZCow8MNlupGh22AnZ35ywpg8+akUgBd5hwDQEK9Hd4M69bfY
-	GzxMSmHnL+95noP44O+uheYhSH8Diij32GQ2dZHi3Wn4jRMEMAJ+CGMo0YuurmNvSjHxkrZYjbL
-	TMglSblXUybB+U6ZrjA1vWfk0=
-X-Google-Smtp-Source: AGHT+IHUIt7T9pXuVmpVYaL9XQ6GnLTYW2Usq+9EdzSRSWz7ihtMq4nQ0SqhbWd8MSLFCOpnH9FH5w==
-X-Received: by 2002:a17:906:40d:b0:b72:6728:5bb1 with SMTP id a640c23a62f3a-b7267287f28mr269900866b.56.1762360111222;
-        Wed, 05 Nov 2025 08:28:31 -0800 (PST)
-Received: from [172.20.148.132] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723db0f1besm522399366b.31.2025.11.05.08.28.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:28:30 -0800 (PST)
-Message-ID: <5680a2a8-aeb3-4274-a264-4ff658cc9246@linaro.org>
-Date: Wed, 5 Nov 2025 17:28:29 +0100
+	 In-Reply-To:Content-Type; b=M8B/ORUAsuTrZBmdcxqGU2dZAYxvdWR8zzEZwCXjcG23lIGtdY6nuXe/BiUwatpOfMIz09wwlj2bUA+Rufzyg1aLxE+PfZg5DnDsXtJcbKFpL+z/+LU6TwbwLO+fbYDUdtaxTFrLNB9KdJfPyJOge+/24ieQAu7nkmkcChzwQ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXy3o1HA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB4AC4CEF5;
+	Wed,  5 Nov 2025 16:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762360147;
+	bh=E2LyBpj7sEAtFQd7gW1xNRb7UeJ1t4NfeX3b6rOxki0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uXy3o1HAc6d9NI/8sxdtsN8Od/IF2mKpBo2M1OC8+7a3rPFFJIZE/1xZhMQdHrQgp
+	 B5ceNVcaf6DRseXBTphigutFYu/etkAPJ7PfbuTl8mE2KfMCBcFGj2Wz4qhUc5bryP
+	 NT43pikoDUCd7b8GznCic56vIWh/SXcB2c6HrjnwL+WV18Z8WsrLyE3BT2geKicNmH
+	 p3HjuaYnQzdgCDq7btUjfzN9ArS3DsgRn67LpXTmd4vyCZNw5kUHmVg6YDWHz/0UB9
+	 zAk3ljAqawT4zm3+WCQ+u8HBOx5H7bnBFEsQ7ZnTLC2afkeaZnZyr4DTRzxDE9mDEW
+	 ubpy0w4WfFllg==
+Message-ID: <cc5017b8-5802-4cf5-93b1-18b1e2bd8ae5@kernel.org>
+Date: Wed, 5 Nov 2025 17:28:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/28] mtd: spinand: Make use of the operation templates
- through SPINAND_OP()
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
- <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
- <20251031-winbond-v6-17-rc1-oddr-v1-10-be42de23ebf1@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-10-be42de23ebf1@bootlin.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net v4 3/3] selftests/bpf: Add mptcp test with sockmap
+Content-Language: en-GB, fr-BE
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20251105113625.148900-1-jiayuan.chen@linux.dev>
+ <20251105113625.148900-4-jiayuan.chen@linux.dev>
+ <665825df-b995-45ee-9e0c-2b40cc4897ee@kernel.org>
+ <b5f67a681be12833efa12e68fc3139954b409446@linux.dev>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <b5f67a681be12833efa12e68fc3139954b409446@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 05/11/2025 17:12, Jiayuan Chen wrote:
+> November 5, 2025 at 22:40, "Matthieu Baerts" <matttbe@kernel.org mailto:matttbe@kernel.org?to=%22Matthieu%20Baerts%22%20%3Cmatttbe%40kernel.org%3E > wrote:
+> 
+> 
+>>
+>> Hi Jiayuan,
+>>
+>> Thank you for this new test!
+>>
+>> I'm not very familiar with the BPF selftests: it would be nice if
+>> someone else can have a quick look.
+> 
+> Thanks for the review. I've seen the feedback on the other patches(1/3, 2/3) and will fix them up.
 
+Thanks!
 
-On 10/31/25 6:26 PM, Miquel Raynal wrote:
-> index 4afebaf5f0195b9bc617ea1f125f637f76fff9f8..a8fd04a67cfa9925bd68c57539d86e0816b76274 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -701,6 +701,93 @@ struct spinand_device {
->  			     unsigned int retry_mode);
->  };
->  
-> +static inline struct spi_mem_op
+>> On 05/11/2025 12:36, Jiayuan Chen wrote:
+>>
+>>>
+>>> Add test cases to verify that when MPTCP falls back to plain TCP sockets,
+>>>  they can properly work with sockmap.
+>>>  
+>>>  Additionally, add test cases to ensure that sockmap correctly rejects
+>>>  MPTCP sockets as expected.
+>>>  
+>>>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+>>>  ---
+>>>  .../testing/selftests/bpf/prog_tests/mptcp.c | 150 ++++++++++++++++++
+>>>  .../selftests/bpf/progs/mptcp_sockmap.c | 43 +++++
+>>>  2 files changed, 193 insertions(+)
+>>>  create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
+>>>  
+>>>  diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>>>  index f8eb7f9d4fd2..56c556f603cc 100644
+>>>  --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>>>  +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>>>  @@ -6,11 +6,14 @@
+>>>  #include <netinet/in.h>
+>>>  #include <test_progs.h>
+>>>  #include <unistd.h>
+>>>  +#include <error.h>
+>>>
+>> Do you use this new include?
+> 
+> "EOPNOTSUPP" I used was defined in error.h.
 
-Do we still do inlines?
+Ah OK. I usually only include 'error.h' to use 'error()'.
+Is it not 'errno.h' (or 'linux/errno.h') you want instead?
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+I'm just surprised it is not already included but another one above. But
+OK if it is not.
+
+(...)
+
+>>> + return;
+>>>  +
+>>>  + skel->bss->trace_port = ntohs(get_socket_local_port(listen_fd));
+>>>  + skel->bss->sk_index = 0;
+>>>  + /* create client with MPTCP enabled */
+>>>  + client_fd1 = connect_to_fd(listen_fd, 0);
+>>>  + if (!ASSERT_OK_FD(client_fd1, "connect_to_fd client_fd1"))
+>>>  + goto end;
+>>>  +
+>>>  + /* bpf_sock_map_update() called from sockops should reject MPTCP sk */
+>>>  + if (!ASSERT_EQ(skel->bss->helper_ret, -EOPNOTSUPP, "should reject"))
+>>>  + goto end;
+>>>
+>> So here, the client is connected, but sockmap doesn't operate on it,
+>> right? So most likely, the connection is stalled until the userspace
+>> realises that and takes an action?
+>>
+> 
+> It depends. Sockmap usually runs as a bypass. The user app (like Nginx)
+> has its own native forwarding logic, and sockmap just kicks in to accelerate
+> it. So in known cases, turning off sockmap falls back to the native logic.
+> But if there's no native logic, the connection just stalls.
+
+Good to know, thanks!
+
+So MPTCP request might still be handled by the "native logic" if any?
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
