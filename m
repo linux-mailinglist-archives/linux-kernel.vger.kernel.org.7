@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-886398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06575C35761
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:49:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28996C35712
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DE733BC7D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:43:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F9964FD8E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D86310647;
-	Wed,  5 Nov 2025 11:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC94F31195D;
+	Wed,  5 Nov 2025 11:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XRYe8JjT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IkvOSa7r"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LGJbevnC";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jAZjwInq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A22C08B0
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333BE2C08B0
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343017; cv=none; b=QuLY0bmL+jzJ3Ob58jo1wNd1qylPJbMi4TwJpwdxlUHFE1N47TbplPFdi3aDpjNjm9y7Kyr/yNTuNSHVQXemvIiUnkoBoi9G9ZlH0ZfdqEmJPvvBQ2HRUVvVedx4gRdTOQg8bxIgdtB3eZW7/xjcJY7bA16VHlnl02uPK2I5DNY=
+	t=1762343036; cv=none; b=m6vc9UWxwoIvT83xupjE4OigcK9sKC1LCpJpuwXrKzfZYi9Fto1PE7LnVerOfGB66Rz3YBGLEWvVGs/L0mUeFs9xovbd/JovuuO5Wn/60pTiOJjGryvzTS8tHZJSF9Uut22irdTJays6lVgVR/q5mQd8ux14KyMp/VJEgQX0Qec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343017; c=relaxed/simple;
-	bh=BdMm81xYZiuBh40gc0Ua6efd+2dzC13cTYSHrMpRHXs=;
+	s=arc-20240116; t=1762343036; c=relaxed/simple;
+	bh=FjSBFrFK6vQr258PJBQglftj1YX33rYk17AwEBtK9IM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=erQWJ0hTaMXB2UNd4KzCuKwzDPIx+tWl9BsQfpFNbgxzmW/zjdnCVfQglmwJwHxqwmaXpAi/D9Q29uDoUzyXuz49RjBro+vPyHi5Tu7/e1Uo472icAbv+6wEorDgMa/jsAzSg5NOFzZlex3miCYt6e/CTYT6/4TPm4i3q7hxiG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XRYe8JjT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IkvOSa7r; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5818BS3114616
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 11:43:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BdMm81xYZiuBh40gc0Ua6efd+2dzC13cTYSHrMpRHXs=; b=XRYe8JjTZQm1XQ36
-	tOSvxyaCtjVUS+hp0JU7p//fVMX4o814+BAQqNrsA/OAtHGZyUJBRdCsRgXMrQ92
-	SWKAfVFYjftXjI1DEN7w12Hs0wqpeQuVd23XPILKiQv8XgfpcsKT6tw4arsBDu5B
-	1tsyCDJ/uZLfkzHlXqZgU4RiMOPgkvSFgcWFFR3E1OHiRwXKT2RATUwViNnBrjwo
-	imVZbC1C6wDZ88co3jBOqeEuuGqk1BvQC4kwmhkTFkt+P/rQs/rmxn5dkTqblIoI
-	492cEHvrFBrIIbs3v1c1ApiSRId2Zb/TSg9lSTEkga3awJ28WKRKok5kWO6Q8b72
-	8kh+xg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7sfdt3s7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:43:34 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b993eb2701bso3420041a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:43:34 -0800 (PST)
+	 In-Reply-To:Content-Type; b=Wk0WtkWCyrySYUIUnCzP9ZoSZNTIkUaElFzwdC3djYzmZ5794g+wtWwuT/NVNj5F6lRS9cO66QpcZZvHgqS9g0JFmp6QLXU7ljByJUg8U26f0ubI4gYDR+FNmwd1Oo/A38y8oZ65ygM8rKqnC7d/DclHt5BMwCHassRbBpGtVM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LGJbevnC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jAZjwInq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762343034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=klnCOqdIdlHY6mc/bR248n8wJUIpm2Vh5Q48weSXZPE=;
+	b=LGJbevnCt+0GbzikKP4aC7Qnxlo2zo/9J0ITKpX/i3ct+BpM2hAWlA4xh8EjtO8q4W7nvp
+	rT0Hr8Eg767bnPwkP5Kim0aSa9yjN+om59Facmm7CsExzkoQ0MYJCRjjQP8ewXj8g44coX
+	zQUQddxcfRIrGKLP7J/fCetR8l+PRWU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-OsjWxaPRNxaOIDtsyTQTpw-1; Wed, 05 Nov 2025 06:43:53 -0500
+X-MC-Unique: OsjWxaPRNxaOIDtsyTQTpw-1
+X-Mimecast-MFC-AGG-ID: OsjWxaPRNxaOIDtsyTQTpw_1762343032
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-427015f63faso3680853f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:43:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762343014; x=1762947814; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=redhat.com; s=google; t=1762343032; x=1762947832; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BdMm81xYZiuBh40gc0Ua6efd+2dzC13cTYSHrMpRHXs=;
-        b=IkvOSa7rdK/5qjP/opy4dQuLCC7xg9tY48bEIT/PGJL9k/2xkN7IxRjtWaR444rD+p
-         tRwioC5M4JNfa+wQmttuPxudsPJgV0TGpEs2LkOoqZ5tLDeVe1G/dsNPckzXb5rk2QVu
-         2fBtKUhJUTldzxSv9MmEUaR7DRmgzc0QxczEyMyWUhvsPZaiJfzMpElIHvlY6A+iY0EN
-         sZvFlVWG1iacTXbPgGzVYsVcNCW3QZ/2yOIrwhf7Sm77hiRhymCLHd8BiQk1E3ew7PWo
-         s2Z0R7Dp/Qhi1olSnPzKIoUHto4I2RCOGXaZr5/J3Pfsv6mfVbmlc/VqRTG4wvZ+9I0R
-         /cdw==
+        bh=klnCOqdIdlHY6mc/bR248n8wJUIpm2Vh5Q48weSXZPE=;
+        b=jAZjwInqIzlCKoWvxmYdO3bACYSwMZfsF8mOit+wcv/uOWN1Qkr0EarN41zFhFgJxD
+         ab/6wQMTkv4r+cOzH/kgQREIti27vzg0zkCDC+ULsnWar57zGQFFKueUpAA29AImMgHa
+         CWl3VbGRddk8+q1lsh2buLu3V6n1v2zaU++W81eKdo2nor/gJ7gM03QyrQGi3myR1Zrg
+         y7Nvsi9qeOhNyE7O3wpvMR32Y1jhtvJ7b6Njxam1yA+OF8YyZ4/6P5SpbCa1Km6AB9C1
+         bmoxYfdZtXJRim0tR9S3A2jTsEnDaqibMfc9sU2F2tdvIoq2JMugAhQlgVC2In9JnJ0+
+         0XgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762343014; x=1762947814;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1762343032; x=1762947832;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BdMm81xYZiuBh40gc0Ua6efd+2dzC13cTYSHrMpRHXs=;
-        b=VMIrN20XYHZfJAkxgJcF3Ljq+j87T+YdOgdy/CWN/FPhS6LENj5/UqJcAzUEw0JIuw
-         Z91zEPS8nk49Zqn9Bt5d8nALDlRkF/JtO9YO2ffQT7XxTyrl85r+amuVw/pYH9E3tiTN
-         Fc/fpgc75zQRJT0uw16kKQOU5/2Kq9VIM6It/kISksyyMC/4i4yjrreJ3/bCy4F/qNpk
-         j7Y0/BTVpGA+lCTSaTojRQ7PVLYTmlMStczg6i5ZW0hZF5o7uzrwazT6D9oOjy99osvG
-         AbvhHER5fuKFlD19CCh4oPbloaXWFRGDJMaa5Ha/6xoaBDhgU5h2jHi/WZ7ymLC1Ib1V
-         otxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIvthLg20om7usL9iKmlhOWrSay6hvyVADWBjOUmkwx3v8hqFOu58UuC/RXaImdCyA3fL8Tve9Y1+9TTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxptafbVZ46ZNIdAinUbdjR5GzoO5naWBEsVgDp5/lJ1vybtTHZ
-	51NBqc83aXx9JeQBp85QesQbqYdhEf7iD1+zRdtS8p795FGmtNDi3L0eWP7JTOUXcNa0mOwPdNd
-	K6XW5uBMO2NWJpSmyI/Ddr8FEPCnuYoUiTafAk1zgheFCGUT2UEs32C1rsG84t8jNVmM=
-X-Gm-Gg: ASbGncvcFQIqQdbvAfFpP2ueXRp651FGGhFXGpgoarlRCydIv37hrXXc9DGDkC627L2
-	mVrwOAMcFelEXI62ETOwcQ3xlzx4eBdKtu4kj7ztXTeazh9IFCi7gFoNZMRkE2HtcUDxnmrT9nZ
-	db2hdR2qOqU5Zxt+XG3ljPP0jE9GMfSUuUAjGMMvdzu1uBM/mYympmNl1h6YHeVl9fWKKf1PJek
-	3W1YdTUM4NW9bfbT7fhbVST/JfQ7WvfetKUhnnPhOqE5sfNzLlJouzjfn0lFp3axrYW1yoSaWF3
-	vPsKXoY1Uu5DMOukPnwZi54dCNU5hGC0aByjACERlAbI6chy0Dgvsj3sAt5MpoUJeEdhRj5SyP6
-	6yQ5KxcA/tIA3Vt86VD/g8TZcr5EJSfV0
-X-Received: by 2002:a05:6a21:338a:b0:344:97a7:8c68 with SMTP id adf61e73a8af0-34f86114a51mr3703186637.54.1762343014259;
-        Wed, 05 Nov 2025 03:43:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHq1fw6AQRlBdqYRnyUSOmKR0xWysU4bHGiCWZGyF2QQLzwtoZWe/qua4VlMjRvlHnlxSRLyw==
-X-Received: by 2002:a05:6a21:338a:b0:344:97a7:8c68 with SMTP id adf61e73a8af0-34f86114a51mr3703149637.54.1762343013781;
-        Wed, 05 Nov 2025 03:43:33 -0800 (PST)
-Received: from [192.168.0.171] ([49.205.248.32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f765eda9sm5265961a12.18.2025.11.05.03.43.30
+        bh=klnCOqdIdlHY6mc/bR248n8wJUIpm2Vh5Q48weSXZPE=;
+        b=f6/2Ptj/u9Zb6xCzCuUl1/AUSrqBrn/3oZnEJItvJ/9A3X7VYTu75/WQ5584BtJ57c
+         bfUqLSx5V5mbTOq+0gmsDMoCERSJOj2A3xLKFWstCKQsXGVeGzKulhh5h+4PY5zXtEgp
+         AyZGrkvdSIqto70gPLiABZbxFAlI3cYR6a1CuNtpkwyixJrSV0jgPclDZY1GW14ddij3
+         qMnkecTUMB8nMauT8u2SGtVPcMUJw/P7AY/Rk/GAxRfuSf+bTZU/wAq36dKfpoio7+Eq
+         ws8LAg257Et5glVCxct610ae0aGq2DEjrfWoXE1O8AqIz1Ds6WVk8L5YgMwFZwHQ9HYM
+         ZBLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE1KjXFVjaiA0rQvlBo9+JET1Vehk2+oZlh9AUyJZthoG2m/MpvLosN1p+C00858zM2iwIhHZEPoi68+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGrRqf/UT2HecsmfyMOHgV4VOya21Boboy5Zg2LXBnmc3yuTOS
+	6va8Mbrz32WYDpeRUgrCoVgO9rAhYrbjxnOt5tWYQQU983VeFrZ9P/pJYoPNreShfEBVEJ8bGd6
+	UCGcEYGK3rIO+XLM0d8ufe0f3tv4tPuzW6krHUSfuitJyHMXGyJ3KCdUPNRYL2zhqpfmy5+u6fA
+	==
+X-Gm-Gg: ASbGncv6jPjSk7I5mSCsr1sWdA1HUWNT/YsJpGzV43/cCD3PNgnZ+t+KjLh3QhZPchW
+	hfds2hepIJs0x855+HkPO9cJ/gfYlywJD3SDPsjSqFgb8sfPsNjnTCiEtfQIbBD7zypVhwx4Llw
+	X+84/tK3bHqou7MVoJBzY6oUz03SdPfPVOUkOzaAyijTBiqMJ3uOWdVAcm1ycb9s44S/+ct4Hgj
+	H0wd0zkHyOIcGbV9LUkfrNhsAmQ/oG81Fd4fgEaApHKlJgpHPHvVpBuYce2yAzd0qd6ouNlShZc
+	9QydR2T2VfXiZQFbZ4mYjqPoVO3cuKMu0cgZnELt6aq4vSYq0eYXdYQ9JYi2dXdick9uESLxL0U
+	JfVxb6RZC/1Twt0YsoZjo+YPIPXSxOJLkSqOteBXgTltHFpG03IQOn9bXMSRCmzFaV/Zypd1oFG
+	UrxnGaDnOAEavrTPXpPKpt7js=
+X-Received: by 2002:a5d:5d0a:0:b0:429:d2a9:5dea with SMTP id ffacd0b85a97d-429e32e1778mr2767704f8f.15.1762343031802;
+        Wed, 05 Nov 2025 03:43:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFd+fmDakXbZEyKRhdg87mxQDe9DRgIxrMqS8HdOHW3oWAXWsvoavSh7hxbMrysYBkKGmrGpg==
+X-Received: by 2002:a5d:5d0a:0:b0:429:d2a9:5dea with SMTP id ffacd0b85a97d-429e32e1778mr2767679f8f.15.1762343031390;
+        Wed, 05 Nov 2025 03:43:51 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc18efbesm10423127f8f.8.2025.11.05.03.43.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 03:43:33 -0800 (PST)
-Message-ID: <ba589a5d-65b8-4980-937a-29598e891dd8@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 17:13:27 +0530
+        Wed, 05 Nov 2025 03:43:50 -0800 (PST)
+Message-ID: <58d3c50f-2b4a-4053-a846-613434d5bcd9@redhat.com>
+Date: Wed, 5 Nov 2025 12:43:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,68 +103,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] media: iris: Refine internal buffer reconfiguration
- logic for resolution change
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Val Packett <val@packett.cool>
-References: <20251105-iris-seek-fix-v3-1-279debaba37a@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
+To: Andrew Morton <akpm@linux-foundation.org>, Hui Zhu <hui.zhu@linux.dev>
+Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hui Zhu <zhuhui@kylinos.cn>
+References: <cover.1762245157.git.zhuhui@kylinos.cn>
+ <20251104150618.0606afefb2a9e226aaa6ce77@linux-foundation.org>
+From: David Hildenbrand <dhildenb@redhat.com>
 Content-Language: en-US
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251105-iris-seek-fix-v3-1-279debaba37a@oss.qualcomm.com>
+In-Reply-To: <20251104150618.0606afefb2a9e226aaa6ce77@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: gnuZwP_jzTMfKrnGRafyZBKHuA_neznR
-X-Authority-Analysis: v=2.4 cv=MMFtWcZl c=1 sm=1 tr=0 ts=690b3866 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=AzyGrR4UViKNxLVuAS9Z9g==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=srhs0GdQF8B2Dv3X-aYA:9 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
- a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-GUID: gnuZwP_jzTMfKrnGRafyZBKHuA_neznR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA4OCBTYWx0ZWRfX8s0S9aon00uW
- E1xCeNz7DmKdrn6oIax73jkvIBBEDk5FUeOT6LMWm5ztG2lX81+1Se9yOHRh4fwgwNtmIpdcmIa
- BJUpv9HNtA4bLAAc9bTQRViIC54p7gM9UxQe2kkxxg3ZJAuSNMs15WIh73SSvc7n53Ww52EYGEh
- NoyItQoHuroH1Bw0mRJAz38HLq+Eq8jD7SElc6C1lJCVztXg+Q94QtldXvaWb/3ih4bFuCo1RIt
- fhSb5+gKAcCZYT2n3vuw62jdl3w59BjPIvuzW2B+yk0dBLHg4jkCwx+6zn3KXrs8fA7MSqknKSP
- O1PFOPQWZIbDjfU7o/UzqP+tPkF1UL5DEARvGA6x21Pa7F8nB1SPml9IHcp2hIsmeGFWcUuArlK
- 33wLP3wAaYoB57A+gslwPzgH7byo2g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_04,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050088
 
-On 11/5/2025 11:17 AM, Dikshita Agarwal wrote:
-> Improve the condition used to determine when input internal buffers need
-> to be reconfigured during streamon on the capture port. Previously, the
-> check relied on the INPUT_PAUSE sub-state, which was also being set
-> during seek operations. This led to input buffers being queued multiple
-> times to the firmware, causing session errors due to duplicate buffer
-> submissions.
->
-> This change introduces a more accurate check using the FIRST_IPSC and
-> DRC sub-states to ensure that input buffer reconfiguration is triggered
-> only during resolution change scenarios, such as streamoff/on on the
-> capture port. This avoids duplicate buffer queuing during seek
-> operations.
->
-> Fixes: c1f8b2cc72ec ("media: iris: handle streamoff/on from client in dynamic resolution change")
-> Cc:stable@vger.kernel.org
-> Reported-by: Val Packett<val@packett.cool>
-> Closes:https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4700
-> Signed-off-by: Dikshita Agarwal<dikshita.agarwal@oss.qualcomm.com>
+On 05.11.25 00:06, Andrew Morton wrote:
+> On Tue,  4 Nov 2025 16:37:41 +0800 Hui Zhu <hui.zhu@linux.dev> wrote:
+> 
+>> From: Hui Zhu <zhuhui@kylinos.cn>
+>>
+>> The hugetlb.c file has grown significantly and become difficult to
+>> maintain. This patch series extracts the sysfs and sysctl interface
+>> code into separate dedicated files to improve code organization.
+>>
+>> The refactoring includes:
+>> - Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
+>> - Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
+>>
+>> No functional changes are introduced in this series. The code is moved
+>> as-is, with only minor formatting adjustments for code style
+>> consistency. This should make future maintenance and enhancements to
+>> the hugetlb subsystem easier.
+>>
+>> Testing: The patch series has been compile-tested and maintains the
+>> same functionality as the original code.
+> 
+> Thanks.
+> 
+>>   MAINTAINERS           |   2 +
+>>   mm/Makefile           |   2 +-
+>>   mm/hugetlb.c          | 852 +-----------------------------------------
+>>   mm/hugetlb_internal.h | 113 ++++++
+>>   mm/hugetlb_sysctl.c   | 133 +++++++
+>>   mm/hugetlb_sysfs.c    | 629 +++++++++++++++++++++++++++++++
+>>   6 files changed, 887 insertions(+), 844 deletions(-)
+>>   create mode 100644 mm/hugetlb_internal.h
+>>   create mode 100644 mm/hugetlb_sysctl.c
+>>   create mode 100644 mm/hugetlb_sysfs.c
+> 
+> Seems a reasonable thing to do, although those who work on this code
+> should have the final call.
 
-Reviewed-by: Vikash Garodia<vikash.garodia@oss.qualcomm.com>
+If we limit the move to the core sysctl+sysfs code, leaving most of the 
+actual logic in hugetlb.c, I assume there won't be too many conflicts in 
+the near future.
 
+Hoping for some comments from the hugetlb maintainers.
+
+-- 
+Cheers
+
+David
 
 
