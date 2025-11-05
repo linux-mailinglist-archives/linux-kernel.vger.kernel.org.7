@@ -1,101 +1,166 @@
-Return-Path: <linux-kernel+bounces-886042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642C4C34955
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:52:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDABC3498B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2751560AFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5924E18C8690
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5262E7BBB;
-	Wed,  5 Nov 2025 08:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166752E92D6;
+	Wed,  5 Nov 2025 08:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mu4bSgU6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OOhAvgeb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="LAEhZPW0"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8342E8B7A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E332DCC1F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332494; cv=none; b=XDyEWLb3J2+YE0ILnatNeEh/hco/vnaKJv5XU3GU3jg8LYf2wdN2CsaaE+isEQVAtaY8McaJkaYDbS2+dG1R3x7pwbyzx/N/SH/alt7r5rIXL0f4VqenPAR1HIPSlNqYbImyXpqw+aaJOHS0lY/TFds2PK6wp0jkdtgy43LQ79E=
+	t=1762332602; cv=none; b=m4HeDr8P2chO2P6DAUWkimpW43DVoESVIW3sJJxlKADa0tbey5Pot/G80h043hsOrzamnF2zeH5pZNmnZIfUEsvVWR83Ow/zvsHjiAJysiO4v3GQoR//m8YoR0kjP3jGa9M74b/BiQM0dnkitC3AfdXFJB17BiK7BGagad4GTuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332494; c=relaxed/simple;
-	bh=JKqnqsg+ieMpZzGXlmdAj98/tbFIzoe6OozVEOZiSls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjXr5FbYdpvIzBlFd8xfU5uY9NF4HFbz0FOEPfS2QmohPl847KQIoEjqSyKyOt5+L4YEHU9/7TNqqk1+zBZ0BaWpUI/qrtiomZAvD5SXWBcmBw5tNkUF2D4+j6r3NbyabZ18TdiDdNsNOSJtlbd7katLB0jMe2G4u7xgBuZenv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mu4bSgU6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OOhAvgeb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 5 Nov 2025 09:48:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762332490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLnzghnI+Iy/ceP5DulbWqbXB/m5x6Y1ztoDof79w=;
-	b=Mu4bSgU68HQGFb/rRoYRjXYTXmPYcurCjVjtS34Zy82s2mTFtakwmSvN4TTa/SnpaqOdxR
-	31xwdDiPU2C7c72KuePG0JkzuRPV/LhwtAnSpkFBao9fMWmVjh7NvseXbJwoQkC8TdsiD6
-	j6AFSmWSun3TNOTNSqs+zIfLzfgdZY7qpPtJpu0osKV2kjY+X9FpGixZxf5WI3tRLNoDiR
-	7IpPR1o03f1LsakPMcr+qdRipl65dpkG10XHxe9CunfPyELHX1VklgpsUnQt5bsiRZ/Dfi
-	/aSefElH2SaH5PhTOFcw3DSDZsay0aJhqBPA1JlKr3Uqkzg1d8gxD/PF1+j13g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762332490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLnzghnI+Iy/ceP5DulbWqbXB/m5x6Y1ztoDof79w=;
-	b=OOhAvgebpPt83108HwN0QQauQXcKoCNoPW2ahuhKlx7Qb4BqQA0NdssMnjLENRLcY+Moz7
-	NZQ6YFKlrzcOMXBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] smp: Suppress false DEBUG_PREEMPT warning in
- smp_call_on_cpu()
-Message-ID: <20251105084808.7-nsQ6lT@linutronix.de>
-References: <20251024070714.4047816-1-namcao@linutronix.de>
- <20251024140832.46JNLRvL@linutronix.de>
- <87ikfolvjx.fsf@yellow.woof>
+	s=arc-20240116; t=1762332602; c=relaxed/simple;
+	bh=KYMSEi+x4Ph9Mf4/Xmg12soIZ8Q3aLVOaRJoVNCiTRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JFWJDQTRsTrdYa3rh70y+AnR6D7udOFIN2b813X4xzrIJPuD9Mgz1xPWs/62n7N+SYiGruMKOmIkLmfwRhYjJYSFK59NwoS2UoUaj4uCOfb6sQHwp/gWymY8PUsMKjMFxf3PGNRUhDlz1+rKE3C2Q+P//YmN8qVrm7z06gdJ9dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=LAEhZPW0; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1762332548;
+	bh=iVqrq56E8a6It2LUC2VqfE5x0rebyt4RKFqZqMTt6mE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=LAEhZPW06us6lDV7UBrPRxfvKo3WTPEcWwxS+5gDesSoH+dfyw1dlQRMJmcwZ2xTs
+	 vUuv0PhIE3PlKJwoFR7B7uSiLcdCsYJRtKJkpzP+nipdNBpZ20EsWCEkU9dKk4v5XN
+	 ygUW17QRs8I9YhnPxulatVr/6muu+NiqsdJjQsh0=
+X-QQ-mid: esmtpsz19t1762332541t9d3718e3
+X-QQ-Originating-IP: iCgHtChRiGkfZ8y9WrLswYcW/+GR3Gf9Qpjbjb0GJSs=
+Received: from [10.10.74.117] ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 05 Nov 2025 16:48:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6779642171559248315
+Message-ID: <02A386F1B9701FED+a0b3ab16-3f23-4d69-9fb8-ab4d9f918bad@uniontech.com>
+Date: Wed, 5 Nov 2025 16:48:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87ikfolvjx.fsf@yellow.woof>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] kexec: print out debugging message if required for
+ kexec_load
+To: Baoquan He <bhe@redhat.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <20251103063440.1681657-1-maqianga@uniontech.com>
+ <20251103063440.1681657-4-maqianga@uniontech.com>
+ <aQq97iGeYvZdr3SX@MiWiFi-R3L-srv>
+ <5FC4A8D79744B238+97288be4-6c1a-4c0d-ae7d-be2029ec87f3@uniontech.com>
+ <aQsCaeTx0WduSjSz@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Qiang Ma <maqianga@uniontech.com>
+In-Reply-To: <aQsCaeTx0WduSjSz@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: NV9lVvsB36OpBKK/tj+EHuOzyE/Uuh845ZW55yELg9bvMvgvjTCuSlyX
+	TDNMsToGBRRO0DeLcxLKYWGkKPsB3Tbe27N4P60FK9ih5XxPQl25lVlgxuodFovCXZm+UzU
+	gK6WPzri28ncTi7Q8RGP1D890tmx6uoTQd4mPHffikjtxU/s/UctCNwa8wloxIw+enFdIXI
+	KYkLcsMV48ocpXNKdluKzA2za0QtK186SJCJzxHY4JFJlHTA+hvPhsKtYSD1b/RNJuwLdZd
+	Ia23lRPKhnOm47++mytKBdsPEsry4+AvfGyrpNmvp2PVGKEYF+vmH0sjDOpyhozv7Tlo67o
+	4ISqmwB6CQPZayZ8eJbZOV+iJGtaI80X851me9bRafJFJrSrHbaVxC5u2xuX3nVwkHr0tKr
+	S9y04EtVSJuOtHtrK3rxRtwYEZHmDA9qWxFBjFm8XJfdd8RzhP7nn84jsiglXotITD87r4c
+	R/x/0XqmntM/W0tSK8m9TPI7C0dESNdJiq0n9vHU5FSWn08KUTOTRSjTdhUa34oQ93IAw6P
+	kaoKvZueGz/+8Z575nbMvgQcTE4PRjiWDTOLPyYedUe0Qx7ythUVSKZY/kofKD72/HADRy2
+	ooV1PDxxXseZugdns1PMIQWx804itegii7m/9ax+IMiU7a4N8xu7Ggt78Ty7VKVl3rHHwcZ
+	ZIMqyxXxnAUyNH9zpGk11JvAgaj026IVerOKHIkPeY/rQOllENscaGRsv2TRYan4aRQilPz
+	LsrEVWrHTGKl4oeZDmGBL8ErIdMuMbh89px6xY0SPyYe3UuVGs5ZHAVGWzsSZsw35ZGh84A
+	5RwC99tAV555I0AugulAa3/pefcyRIBoC0xIqMRTri9QZhmnZeJMjYZAs0nDEIrLMwtvzIe
+	V8hoRzHWSSaIfRK33GD+pEla7/mWejGzens10Gwrb6hs5CQjaPcmXar+z2ZlWYAWHKIrev5
+	4i6061nls3xzrgmLKCD3kW02/BVVCaybyCn2Mj1RvFT34PvAEwTW+HyOBSFDNRkp9/YDpAp
+	G1VKr8q/ybduwko/Ai5ybJR7EW8mIyQcS8zEtn8G3s2jqSsCy79sCL5hb441Lwqva9sIE9i
+	5T2KqCQWZqW
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 2025-11-05 09:42:42 [+0100], Nam Cao wrote:
-> >> +
-> >> +	/* suppress warnings from debug_smp_processor_id() */
-> >
-> > If you want to add a comment, what about something like
-> >
-> >   /* Preserve not being migratable such as SMP variant does */ 
-> 
-> Wouldn't it be a bit misleading? It's true that technically SMP variant
-> is not migratable, but that's because it is a per-cpu thread, not
-> because of migrate_disable(). To me, the comment sounds like that there
-> is also a migrate_disable() in SMP variant.
 
-A per-cpu thread ensures that the control flow can not migrate to
-another CPU. This is also what stops debug_smp_processor_id() warnings
-from work invoked from queue_work_on() vs queue_work().
+在 2025/11/5 15:53, Baoquan He 写道:
+> On 11/05/25 at 11:41am, Qiang Ma wrote:
+>> 在 2025/11/5 11:01, Baoquan He 写道:
+>>> On 11/03/25 at 02:34pm, Qiang Ma wrote:
+>>>> The commit a85ee18c7900 ("kexec_file: print out debugging message
+>>>> if required") has added general code printing in kexec_file_load(),
+>>>> but not in kexec_load().
+>>>>
+>>>> Especially in the RISC-V architecture, kexec_image_info() has been
+>>>> removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
+>>>> message if required")). As a result, when using '-d' for the kexec_load
+>>>> interface, print nothing in the kernel space. This might be helpful for
+>>>> verifying the accuracy of the data passed to the kernel. Therefore,
+>>>> refer to this commit a85ee18c7900 ("kexec_file: print out debugging
+>>>> message if required"), debug print information has been added.
+>>>>
+>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+>>>> Reported-by: kernel test robot <lkp@intel.com>
+>>>> Closes: https://lore.kernel.org/oe-kbuild-all/202510310332.6XrLe70K-lkp@intel.com/
+>>>> ---
+>>>>    kernel/kexec.c | 11 +++++++++++
+>>>>    1 file changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/kernel/kexec.c b/kernel/kexec.c
+>>>> index c7a869d32f87..9b433b972cc1 100644
+>>>> --- a/kernel/kexec.c
+>>>> +++ b/kernel/kexec.c
+>>>> @@ -154,7 +154,15 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>>>>    	if (ret)
+>>>>    		goto out;
+>>>> +	kexec_dprintk("nr_segments = %lu\n", nr_segments);
+>>>>    	for (i = 0; i < nr_segments; i++) {
+>>>> +		struct kexec_segment *ksegment;
+>>>> +
+>>>> +		ksegment = &image->segment[i];
+>>>> +		kexec_dprintk("segment[%lu]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+>>>> +			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+>>>> +			      ksegment->memsz);
+>>> There has already been a print_segments() in kexec-tools/kexec/kexec.c,
+>>> you will get duplicated printing. That sounds not good. Have you tested
+>>> this?
+>> I have tested it, kexec-tools is the debug message printed
+>> in user space, while kexec_dprintk is printed
+>> in kernel space.
+>>
+>> This might be helpful for verifying the accuracy of
+>> the data passed to the kernel.
+> Hmm, that's not necessary with a debug printing to verify value passed
+> in kernel. We should only add debug pringing when we need but lack it.
+> I didn't check it carefully, if you add the debug printing only for
+> verifying accuracy, that doesn't justify the code change.
+>
+Also, adding these prints here is helpful for debugging the 
+kimage_load_segment().
+>>>> +
+>>>>    		ret = kimage_load_segment(image, i);
+>>>>    		if (ret)
+>>>>    			goto out;
+>>>> @@ -166,6 +174,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>>>>    	if (ret)
+>>>>    		goto out;
+>>>> +	kexec_dprintk("kexec_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
+>>>> +		      image->type, image->start, image->head, flags);
+>>>> +
+>>>>    	/* Install the new kernel and uninstall the old */
+>>>>    	image = xchg(dest_image, image);
+>>>> -- 
+>>>> 2.20.1
+>>>>
+>
 
-> Nam
-
-Sebastian
 
