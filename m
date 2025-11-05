@@ -1,196 +1,117 @@
-Return-Path: <linux-kernel+bounces-886803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D57C36AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F5EC36981
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801A2643078
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09FA6437FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12BD3431F4;
-	Wed,  5 Nov 2025 15:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1C23346BC;
+	Wed,  5 Nov 2025 15:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qW/SfRcZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QzKMq9fl"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851D341AD0;
-	Wed,  5 Nov 2025 15:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33410343D93
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357360; cv=none; b=QtZDRBdX3Ki1EoqK0ujLYcyzdjUU5YHZPv5QFujZUkk0fKqbjQmeQkc6ljtrJImKeqAaGvQX+NY0ST44FP5413taGTKVLpaHdP1b3r0W3MXEOWh0SO3+pjWmioxBV1o0FsZP53JlMCr5FdWI3fhmRCfRJMDbsHrV1CJZQFxsk0U=
+	t=1762357367; cv=none; b=nA5+nFEUO0XUmtXV7NXbSCvJLLRjwdYvn2vAVTLgf5E1nwqQeih0vkVbthzG3ywsBsJpONlbtaySV70tgoi3Ssk96xscQTsilMHB+3crfv5rE+yv+15hyoZDMnWdrooZP/SBPEHC6LeX9lzrzXfHc+XPiWlnd/diog81BzoTSxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357360; c=relaxed/simple;
-	bh=boPYeqvdKW7/3CnEhFVgNn0FsAC8XrMy6K95gzM+WjE=;
+	s=arc-20240116; t=1762357367; c=relaxed/simple;
+	bh=B29cpqgV7/CYrmcutw7aOHNZMRlEALCnsPM+JLqqYcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcljYRw4sDGQfyH1RhyXPozjNOcLxUBE509iyZLCdacf9HrVYRbn5DDnCnOGi60+7q9EFLB1urREoiV3BCEpThepLFGusQQfYznTSmQGr1X77Rm7BeUbX58BZFo5wq4YjDf42Je/hpFJOYb+jNKOFeMBdGivLzJ4B4u+hmEqqew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qW/SfRcZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C476DC4CEF5;
-	Wed,  5 Nov 2025 15:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762357360;
-	bh=boPYeqvdKW7/3CnEhFVgNn0FsAC8XrMy6K95gzM+WjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qW/SfRcZancAa0hsqKFnQRd29sYyNjQPo/6bgXUIdWQkQrCQ8SrjNfLEv2gd6QIbJ
-	 KNvHuiS8u4kGDpix1rUv2FrtZNIpRj8+YRbgkYtOcqokgdP5Lelomta91mDjj2utK2
-	 pJNN+t5ySqiy5B4IWOvfB+wUu7vtmplfUpxRFlJl/ItWWlSKTIKtO8NPw3lyVBm6hy
-	 PX81LQiCi7jb6e0lest8AkXP8Ttp7CHR2CEtZJBks+yM2bue/m166kiurBIXHdyHQN
-	 xXNTc0DdAqJPwKz19FVfa5KCbSwDOT4ZdNrwR2USJYY4x2nd++Gx+PqPUsZ/tGWHsn
-	 0JuvFbPfX+vtQ==
-Date: Wed, 5 Nov 2025 16:42:37 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 13/33] cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
-Message-ID: <aQtwbRrFBCUoQ2Yj@localhost.localdomain>
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-14-frederic@kernel.org>
- <0e02915f-bde7-4b04-b760-89f34fb0a436@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gO35M/6ELocXzS9DmLyGcv2t6l29zjuoQJM2tjLFndja1x8kCGVKW5jsP9aNLoIO1nteXfCAMiqaR7c72hl6/PyJvJ7KqyVz0snUwlmhUDkhpoknjAmR4oOfJ8XZc3laLzdLmfJXTm4Kgos4dTRGr6Tcz7MXF8Mv2sdlows+GNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QzKMq9fl; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b726f913150so102530266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:42:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762357363; x=1762962163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDwsC7iCiMWGLnONAY/ghLYICyEQIZ3pAEFgsRz5/EE=;
+        b=QzKMq9fl4uvAJv6x3ONrC+liT7NCtPkzSnKrflFBCUTs6xX3gFyzEaM7kCg7Hfe9JD
+         hx6pCxsS60fZ2GkKx0nQra/j8TbRYdcrS13lAHy/r+CkdKr0evgp2bHOERKYR6Shak8p
+         3mD2Pc6ViKcWnDJAAHnoPOqeEzxmoU3BgJdkmo+xRBzaQqNu852+xGlnhOGp3+0u1Vev
+         hwMz9INl2/NpekDCD5K+uuNw/A1RebUaUICPv0ppy9K4QTnOampG/IPbw9z9fYRDJF8R
+         OCB2V05e5ymL3SEg4XeJFfyE7OyM23nqpmmVUTZRIHFWm9v66YXelaPGT1yM4G3NwguJ
+         6kIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762357363; x=1762962163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tDwsC7iCiMWGLnONAY/ghLYICyEQIZ3pAEFgsRz5/EE=;
+        b=BY+2dTyvsLe7VVYL2sdQ2rPvcrC7ZefTsN2xxS1xGdgrz216a7szuXMIRX1DqNj7wM
+         nI1+p/z2/fxd59ObLpTYDim2sySpeidT3uoKUlRYVzs5fm3t2/9osNw34i12JK0HomcC
+         AnNS03DRSiVoTFQcUtzU3ea9S8g7Pk/+j2/Ozr9IPF8G2a/hb88Iv5x3LEA9nZ2okqgg
+         Asz+T/Pa1ODwYh23m3iiuItyfPvOHWiimlt7OQkWSBs/OXFDZIZPdGgHj8Urz4yP5vlA
+         STFqrmDzqolKYJ2CTor/noKH2+xLyM1D8IOnZOinmB7wbaz0wdJzXvFWwbzp6StMl29f
+         PqTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIDN7Nsm3FrxUq+gRsdHO4MsZe50cMgI6qORsdYfOImjHM4+hajpThYO1pJNBDNGSEV3yFnhgkrV/3FXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRbkZABZpxPXnM7wjc2+1SgDHLQ37lnxMp2DX0wtBfLvHudDSu
+	PBXss5qcpruCcOeR4qfgsTaEdfiwo9Mmu04gH/NCouon/samBOAY43ATeLf/DKs44jU=
+X-Gm-Gg: ASbGncu+b+0GWR7iVRnsWbSuf3tL4/dY/PSAGXLbNtwBEes52TUxZcO/1PnD2GqZlNx
+	/eIV41WoEYjWJ/xN6yXj96joP9CSxvS0FakUlOuPn0B98QH4GdkMlLYaBxLbHLDpF6WV1U9+pE2
+	RJ7fplFscBhmLMRYgyS9GD4KtqcdhOgLWJ0NO2lykTvvqRnQA+qdQ0Wm9HaFYdJRe0x7mIH2Xms
+	I/Uz73bpVQ8cxc+UgDv5/Hhhj9qyKahSy9jPPdOE5vcl1f9u6QdiOUpmOSZf5Pmk7IeZlpNdWB+
+	hPlXw5I5Bbq5W9Y45T09MGtoCXGKSabzycoIL/HXk29HVRbOX4zSyjCcQmkP70nVeiq6PRy5zG3
+	mVoK4/asmj2z6PU/oez9pCqE7+xStW7Vux73fCjGMWCi83O84E4YNhd/QtN3RA18IesAUZTZfu7
+	WTplc=
+X-Google-Smtp-Source: AGHT+IH+mLKaSwB//vN2vHtJqqPgGGlkQnNoDP2deaGEAiC8O4LKEY17zUAUwu1Ex6pi40F1pyUiig==
+X-Received: by 2002:a17:907:9449:b0:b6d:671d:8814 with SMTP id a640c23a62f3a-b7263246b5dmr495188066b.27.1762357363593;
+        Wed, 05 Nov 2025 07:42:43 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7270b56f18sm145395066b.33.2025.11.05.07.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 07:42:43 -0800 (PST)
+Date: Wed, 5 Nov 2025 16:42:41 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: add printk core-api doc file to PRINTK
+Message-ID: <aQtwcU-EEQAwrgDe@pathway.suse.cz>
+References: <20251105102832.155823-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e02915f-bde7-4b04-b760-89f34fb0a436@redhat.com>
+In-Reply-To: <20251105102832.155823-1-lukas.bulwahn@redhat.com>
 
-Le Tue, Oct 21, 2025 at 12:10:16AM -0400, Waiman Long a écrit :
-> On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
-> > Until now, HK_TYPE_DOMAIN used to only include boot defined isolated
-> > CPUs passed through isolcpus= boot option. Users interested in also
-> > knowing the runtime defined isolated CPUs through cpuset must use
-> > different APIs: cpuset_cpu_is_isolated(), cpu_is_isolated(), etc...
-> > 
-> > There are many drawbacks to that approach:
-> > 
-> > 1) Most interested subsystems want to know about all isolated CPUs, not
-> >    just those defined on boot time.
-> > 
-> > 2) cpuset_cpu_is_isolated() / cpu_is_isolated() are not synchronized with
-> >    concurrent cpuset changes.
-> > 
-> > 3) Further cpuset modifications are not propagated to subsystems
-> > 
-> > Solve 1) and 2) and centralize all isolated CPUs within the
-> > HK_TYPE_DOMAIN housekeeping cpumask.
-> > 
-> > Subsystems can rely on RCU to synchronize against concurrent changes.
-> > 
-> > The propagation mentioned in 3) will be handled in further patches.
-> > 
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > ---
-> >   include/linux/sched/isolation.h |  2 +
-> >   kernel/cgroup/cpuset.c          |  2 +
-> >   kernel/sched/isolation.c        | 75 ++++++++++++++++++++++++++++++---
-> >   kernel/sched/sched.h            |  1 +
-> >   4 files changed, 74 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> > index da22b038942a..94d5c835121b 100644
-> > --- a/include/linux/sched/isolation.h
-> > +++ b/include/linux/sched/isolation.h
-> > @@ -32,6 +32,7 @@ extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
-> >   extern bool housekeeping_enabled(enum hk_type type);
-> >   extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
-> >   extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
-> > +extern int housekeeping_update(struct cpumask *mask, enum hk_type type);
-> >   extern void __init housekeeping_init(void);
-> >   #else
-> > @@ -59,6 +60,7 @@ static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
-> >   	return true;
-> >   }
-> > +static inline int housekeeping_update(struct cpumask *mask, enum hk_type type) { return 0; }
-> >   static inline void housekeeping_init(void) { }
-> >   #endif /* CONFIG_CPU_ISOLATION */
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index aa1ac7bcf2ea..b04a4242f2fa 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -1403,6 +1403,8 @@ static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
-> >   	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
-> >   	WARN_ON_ONCE(ret < 0);
-> > +	ret = housekeeping_update(isolated_cpus, HK_TYPE_DOMAIN);
-> > +	WARN_ON_ONCE(ret < 0);
-> >   }
-> >   /**
-> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> > index b46c20b5437f..95d69c2102f6 100644
-> > --- a/kernel/sched/isolation.c
-> > +++ b/kernel/sched/isolation.c
-> > @@ -29,18 +29,48 @@ static struct housekeeping housekeeping;
-> >   bool housekeeping_enabled(enum hk_type type)
-> >   {
-> > -	return !!(housekeeping.flags & BIT(type));
-> > +	return !!(READ_ONCE(housekeeping.flags) & BIT(type));
-> >   }
-> >   EXPORT_SYMBOL_GPL(housekeeping_enabled);
-> > +static bool housekeeping_dereference_check(enum hk_type type)
-> > +{
-> > +	if (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
-> > +		/* Cpuset isn't even writable yet? */
-> > +		if (system_state <= SYSTEM_SCHEDULING)
-> > +			return true;
-> > +
-> > +		/* CPU hotplug write locked, so cpuset partition can't be overwritten */
-> > +		if (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
-> > +			return true;
-> > +
-> > +		/* Cpuset lock held, partitions not writable */
-> > +		if (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
-> > +			return true;
+On Wed 2025-11-05 11:28:32, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> I have some doubt about this condition as the cpuset_mutex may be held in
-> the process of making changes to an isolated partition that will impact
-> HK_TYPE_DOMAIN cpumask.
-
-Indeed and therefore if the current process is holding the cpuset mutex,
-it is guaranteed that no other process will update the housekeeping cpumask
-concurrently.
-
-So the housekeeping mask is guaranteed to be stable, right? Of course
-the current task may be changing it but while it is changing it, it is
-not reading it.
-
-Thanks.
-
+> The files in Documentation/core-api/ are by virtue of their top-level
+> directory part of the Documentation section in MAINTAINERS. Each file in
+> Documentation/core-api/ should however also have a further section in
+> MAINTAINERS it belongs to, which fits to the technical area of the
+> documented API in that file.
 > 
-> Cheers,
-> Longman
+> The printk.rst provides some explanation to the printk API defined in
+> include/linux/printk.h, which itself is part of the PRINTK section.
 > 
+> Add this core-api document to PRINTK.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
--- 
-Frederic Weisbecker
-SUSE Labs
+JFYI, the patch has been committed into printk/linux.git,
+branch for-6.19.
+
+Best Regards,
+Petr
 
