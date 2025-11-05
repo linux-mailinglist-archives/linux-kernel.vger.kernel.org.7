@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-887459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB4EC384A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:04:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CE7C384AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35C904F8889
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:03:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 488044F3A5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE65F2F5A06;
-	Wed,  5 Nov 2025 23:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112042DC357;
+	Wed,  5 Nov 2025 23:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uuytsrba"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f21KwWxz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35EC2F5A13
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066752F5319
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383756; cv=none; b=UTOvhj5rX4Xb6a3PGE4IIxoiRWnnXYgJUMqc/rem3yCgkLSA314oLUaSJ9OBrSn3AOz4g3IIcUdAzwmhWm6YB1mBzx4/DXY5VDoPkT9GM5ny/5/CVcmbwBx2JOGZ9zc9E0PQHUMPArZChL2SxClVF2moMMm/G1fMJkagxgjqLgE=
+	t=1762383757; cv=none; b=eHjCphvSsT3eF6+r5hTPBUdXSBcn3Mwzf8qDnpNJBWJU9jsPvkNX7rp8ZOsRt1HDWkyi0at5ThYM6sgCIIpTiT8PY92eGoZ1vmRrg0CNxVcoBnTr2NrqzN6dXm/77LGuyavQN4batHTVWBKTiTB+ZM0+kKhXxZfhR8eC5xKAKAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762383756; c=relaxed/simple;
-	bh=ZGvpIhEgvWXGktZnhxfrMhN6hR7bkbAJOIhXp5Aq0Rs=;
+	s=arc-20240116; t=1762383757; c=relaxed/simple;
+	bh=BqnHuY+j+zWWmGsgTf4cjhQ+rYxxpT17fToJwK3G2cU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ojLsDGYJ/oNeqju5P6vj87cCbgL4NobPvO70IiO11m8J3qmFjqwHvCvPQS/zjNqT2AdNyKIJmJRQX5DvHXl1wVJjBFcwz7dCSejcNR5mrMOq58jskJtKedVbCBTBz8tUFNnxVbykorMFZEZhpmY6bxlQD7MAGHK3ACgJEe86G1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uuytsrba; arc=none smtp.client-ip=209.85.214.181
+	 In-Reply-To:To:Cc; b=K0qySab9XcMX7mTE2BBbG6ts37bunAsxQBqLQy6gVaaj6qr3q9uz0y3RKHa19zq+aKXbOdsdY0FRHLBDW3cOsv29m0v7AyYiZpaXhkRmIuP2jgSEddxkMT2PNIkR+55L7eXNtvoUrohhWnKFaT2Sq+oMuZBTEqlyl2Asx9tLmEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f21KwWxz; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2958db8ae4fso3308715ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:02:34 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-29555b384acso3355915ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762383754; x=1762988554; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762383755; x=1762988555; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=haGIr4TbAT28iZId1iIOWFqS56QerIllmXw1VE5QblA=;
-        b=UuytsrbaALw8Q5my2uOdnsTlCl7N3PwpZgL1QKU9gzr2mDh+ngFN9PS0mYe+ixJ1Li
-         GcXRXU43zsoSSx3SjBg0hhOj0vJ54NeTDGUdlcNfVYZK/ZTmNoIHais+uc3Qas479OuO
-         orRtwpyKxE1xesyYc2jUb3GSeBKyyTZ+9lqF5qkFEImtkDGH4njnN27xDIybicFIaqIK
-         qLQm5soW3ECVa3WvG8Yv0bLitxwgwOOB/VLKtiGevttZoLo77B8FEXjVJ7MNmbKNj0tZ
-         ka+WoHqCe4T1tC368mSo2dLzo210tAU8JoJMgZQ8jz1ETY6iE54td43AQawKlwo/PWH+
-         zfHw==
+        bh=JlEVe7ZQ+3aZbaXo/QWkECKjdoOcpAx/m3mobBviog0=;
+        b=f21KwWxzPINkqh5S72/Tte/NS38rv3H9Y9JRxtefnCfwUyVWZ4hoI7aFuomForMQrU
+         yO6FFEeDMG4AvJw3gR2oDtqd6DKi7eXuw178rBscx1x85s9iNRiy9j28oFAAHbDHKO7T
+         +JARdr45ZX4bPGDidEj5EVozyZFBNlIfOYcVPBN1x5IgLodwjd1lx6ACNjcgB6cb62O/
+         cTIDsx/cFF21uYGfA9hA/paKic2tCqYGH/egxRZdhpNKc8KGYd1F3Q4zuQizf9D81dQW
+         T/AMEFjAE+JgSbkykFKzzi5IdxiH7unbB9jWAAZFLaSbAEhxwADNDSgmWnTfNPn68zsp
+         PVvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762383754; x=1762988554;
+        d=1e100.net; s=20230601; t=1762383755; x=1762988555;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=haGIr4TbAT28iZId1iIOWFqS56QerIllmXw1VE5QblA=;
-        b=tA4ORuXAClPaWD98pXNgh9rOcCmtSx2dJ7qytEVwBtLZf9D5dTibH4qMnUP9yfT7cS
-         OaWY1gypfBaS2BmhPYyecPYWEdHharV9i/m83nwOJD8eYkAoUTn06TuRbJCJ98JogFrK
-         vUM81vd4A3BEOVUZFYUxqbPnLZujHwGtlBcddaBYt2Xmg/Rc+rie48t2RRupUmfJ9ATs
-         W5v5lK4S13DKZePOgqM+ZZ3iUAXhkyrtiBgvdPTKliD3kFu7IiUK26dZJY5r6Qr2OsU/
-         k9/Yc00QjQ1buxk8705Ysx99cwTUS5vkoMidcjyEGyjGsSxiBLkCL9vePVZ06QyJGb0R
-         9Z5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjz8GUOEwIOqrQvSxWk51jlKCmrFj3RpgZR8BUAu7aQJpDSI4WwjqT5LLfMLMr2mB5dTpaHIYzycVtvq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcb9fPQkAJimGoJfAkjLkgRQo03+z8PCuCl6PrlKEF8pGJKoEk
-	hudv0h0dXKevj6NSzflQX4oGLAx18fuxib0ibdvwS1wMbOE/ys9/PoDj
-X-Gm-Gg: ASbGnctgnXE/BeHmCuV4ghLMfOZS0cZGEdZVCsx3mUu3Ou07WH5t0incwnqc0qEeNhc
-	QZeQIxMjsyjs4fUkBgD2NgvesE1iSTcu560PbpN8uLLyGhY924DK9/4/1vMaDzbFoy0GFbt+He+
-	7q23wskUP0TCJaG57agmnEHy7OTrkLt+6E5zeZGv7ijFcFKDtDIc2j5lUmCDFikEws2UuanW0CZ
-	dukMHNEq4sJRc2HCJJpRjw1FiiU6SDwgc/YnDQR48ONRuCvLe7CqqNmJhSjTFHwiH563iYMeF+f
-	kW6zq0+JppzsknCZMWmyo3D0Gd5vqjROaGFkUu1IQtwBXctXjAFSl7UH5snTBQtv3Ciw/czKNoJ
-	9XJCFEDIcwonwGsGmECgivx9okLOpsybzgxQHFf29vm2vErqNystmO4qFqRt3wwcMCnYrSj6+AM
-	UZoGJfocAQ3uEMBS8AcfKCmnQ=
-X-Google-Smtp-Source: AGHT+IFzjVuv6+fLc44rVR+754fMYDUlRbQZwzak3bXpRrpiq+jgHmjdZ9t766A4/ZV9UsiO7XyL/w==
-X-Received: by 2002:a17:902:f647:b0:295:ceaf:8d76 with SMTP id d9443c01a7336-2962add07f1mr64418025ad.47.1762383753899;
-        Wed, 05 Nov 2025 15:02:33 -0800 (PST)
+        bh=JlEVe7ZQ+3aZbaXo/QWkECKjdoOcpAx/m3mobBviog0=;
+        b=ZZzo+qMF3GgNxE234OYlSAGL/51zRnIei9kdUmReNJQWK0G7snCR/6sFlWJw+dhPPT
+         W8NKOB/HinKj0x5Wy/wiiRf6EdH7Eg7u/dfLsczH3aWziVy0rMe7cvZrF26k1bEHNgdJ
+         bO15V9m9PjOzDadzlEmwmBDNh7hphv8QI3ZWl4Ie/eJF8TgINIKla5SBAZYLduNotOUz
+         WN4ojvhqyjvjnAm7osj4jU19asHMpHXm8y7H07kcMCJ6md1vIRL6cMcAak1EiVMuLQaf
+         co3a8S2t6hnnTnsriSjA3tAqkPW77J+JQA1VynzaJOHwweI7Ns2PMTfTNto7OL+5uuwx
+         efDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyKfPXaMEGitCcSS0bVGk6sdcHoANkGqm0RBAVHahP+RMYZgQWvvGZ5qsBI57grvOPKeyjhXUiS6ubwR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1qvmagjeZVAcgPHPf8ctY5eLxZ52SFXesM4HhtgWDoEgxwcKL
+	G/55UmIZT6bmY4Yj7K/4Lpi3Cue7fCn5dti3Wz/FOdwjbT2H5jTEBra+
+X-Gm-Gg: ASbGnctsqoqOcVNde+SW78D2O5OmqXmo3250Pg+K2ywS6Pn3VRpZExEZhZSB+aeayOO
+	ld1zrSouWC928upXMfdrZWkYQ3m04sRlMyDHwsmWTxH7wnOUw+1JQZXeKCTfHpbeB2pxBzvrGhO
+	YcoQngvrUSsOdROE9DNV3Zc6G9U6/FyaZz52ePySKg9OYOZfp/ixNn0kMIb3hcCI2ajlPqUD09z
+	7Cgoe7YF3PvodJusUeX6FqTlKdB9R+IqjsGD8K7pM1gtui002QKecwQSMEToRRFugmTRwD6uAWc
+	1UBr3P6vp4sc3JJfNOnSoq2CPheCeF0wzXluQM6qD7uxx0DERHLeBoOhOkXWMtdwtQ0WFDOUSgl
+	gK5ZiMyrJE3i56gcomKi7yXamW6xT7uHqTWd9GvRaMZYVIwBjaazW3gOq3oYVYSsQFEFVtqNJku
+	cm4lBlc7P5tmj+nI2l3tx1IljkOdGx4+cWAg==
+X-Google-Smtp-Source: AGHT+IGL90UCdSoq8ldn75N4+7GWkkl8BPXpNVrFKQinz3VwFnZfYaDmILgoDXuV49BzxLMOOrniRg==
+X-Received: by 2002:a17:902:e751:b0:295:1277:7926 with SMTP id d9443c01a7336-2962ad2b031mr67951235ad.23.1762383754797;
+        Wed, 05 Nov 2025 15:02:34 -0800 (PST)
 Received: from mitchelllevy.localdomain ([131.107.147.147])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096839asm6325645ad.13.2025.11.05.15.02.32
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096839asm6325645ad.13.2025.11.05.15.02.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 15:02:32 -0800 (PST)
+        Wed, 05 Nov 2025 15:02:34 -0800 (PST)
 From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Wed, 05 Nov 2025 15:01:18 -0800
-Subject: [PATCH v4 6/9] rust: percpu: add a rust per-CPU variable sample
+Date: Wed, 05 Nov 2025 15:01:19 -0800
+Subject: [PATCH v4 7/9] rust: percpu: Support non-zeroable types for
+ DynamicPerCpu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-rust-percpu-v4-6-984b1470adcb@gmail.com>
+Message-Id: <20251105-rust-percpu-v4-7-984b1470adcb@gmail.com>
 References: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
 In-Reply-To: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -100,173 +101,138 @@ Cc: Tyler Hicks <code@tyhicks.com>, Allen Pais <apais@linux.microsoft.com>,
  linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  linux-mm@kvack.org, Mitchell Levy <levymitchell0@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762383744; l=8909;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762383744; l=10112;
  i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=ZGvpIhEgvWXGktZnhxfrMhN6hR7bkbAJOIhXp5Aq0Rs=;
- b=ozCkxX8AZS18Od5RqpDdJAKT5PuC+PMadw19K3gHEt4Arzb8pfY48uoQC0iTTZKu5yH9GvgEW
- af2cVxSKoMTDgAGQOQCroH9OOVN/z/g6/S42VKg++yjX4kPceoA4rk9
+ bh=BqnHuY+j+zWWmGsgTf4cjhQ+rYxxpT17fToJwK3G2cU=;
+ b=kTPf2rF1bKOOsD6lCvyiNpGrvnXPjibUxkDPtlxWNqeA6HklvELVCnpq28MLWOYvQwBQQswYj
+ r6Ije0nlQwZCQZtslxG/M/AMyLX3SwifpWpGi+UEShOEycvwWb6obHp
 X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
  pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-Add a short exercise for Rust's per-CPU variable API, modelled after
-lib/percpu_test.c
+Add functionality to `PerCpuPtr` to compute pointers to per-CPU variable
+slots on other CPUs. Use this facility to initialize per-CPU variables
+on all possible CPUs when a dynamic per-CPU variable is created with a
+non-zeroable type. Since `RefCell` and other `Cell`-like types fall into
+this category, `impl CheckedPerCpu` on `DynamicPerCpu` for these
+`InteriorMutable` types since they can now be used. Add examples of
+these usages to `samples/rust/rust_percpu.rs`. Add a test to ensure
+dynamic per-CPU variables properly drop their contents, done here since
+non-trivially dropped types often aren't `Zeroable`.
 
 Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 ---
- rust/helpers/percpu.c       |   1 +
- rust/kernel/percpu.rs       |   2 +-
- samples/rust/Kconfig        |   9 +++
- samples/rust/Makefile       |   1 +
- samples/rust/rust_percpu.rs | 163 ++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 175 insertions(+), 1 deletion(-)
+ rust/kernel/percpu/dynamic.rs |  44 +++++++++++++++++
+ samples/rust/rust_percpu.rs   | 109 +++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 146 insertions(+), 7 deletions(-)
 
-diff --git a/rust/helpers/percpu.c b/rust/helpers/percpu.c
-index 35656333dfae..8d83b6b86106 100644
---- a/rust/helpers/percpu.c
-+++ b/rust/helpers/percpu.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/rust/kernel/percpu/dynamic.rs b/rust/kernel/percpu/dynamic.rs
+index 1863f31a2817..a74c8841aeb2 100644
+--- a/rust/kernel/percpu/dynamic.rs
++++ b/rust/kernel/percpu/dynamic.rs
+@@ -89,6 +89,36 @@ pub fn new_zero(flags: Flags) -> Option<Self> {
+     }
+ }
  
- #include <linux/percpu.h>
-+#include <linux/smp.h>
- 
- void __percpu *rust_helper_alloc_percpu(size_t sz, size_t align)
- {
-diff --git a/rust/kernel/percpu.rs b/rust/kernel/percpu.rs
-index 294b8ffc4f62..2db670c87fae 100644
---- a/rust/kernel/percpu.rs
-+++ b/rust/kernel/percpu.rs
-@@ -2,7 +2,7 @@
- //! Per-CPU variables.
- //!
- //! See the [`crate::define_per_cpu!`] macro, the [`DynamicPerCpu`] type, and the [`PerCpu<T>`]
--//! trait.
-+//! trait. Example usage can be found in `samples/rust/rust_percpu.rs`.
- 
- pub mod cpu_guard;
- mod dynamic;
-diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-index 7f7371a004ee..23e35d64ac78 100644
---- a/samples/rust/Kconfig
-+++ b/samples/rust/Kconfig
-@@ -105,6 +105,15 @@ config SAMPLE_RUST_DRIVER_AUXILIARY
- 
- 	  If unsure, say N.
- 
-+config SAMPLE_RUST_PERCPU
-+	tristate "Per-CPU support"
-+	depends on m
-+	help
-+	  Enable this option to build a module which demonstrates Rust per-CPU
-+	  operations.
++impl<T: Clone> DynamicPerCpu<T> {
++    /// Allocates a new per-CPU variable
++    ///
++    /// # Arguments
++    /// * `val` - The initial value of the per-CPU variable on all CPUs.
++    /// * `flags` - Flags used to allocate an [`Arc`] that keeps track of the underlying
++    ///   [`PerCpuAllocation`].
++    pub fn new_with(val: &T, flags: Flags) -> Option<Self> {
++        let alloc: PerCpuAllocation<T> = PerCpuAllocation::new_uninit()?;
++        let ptr = alloc.0;
 +
-+	  If unsure, say N.
++        for cpu in Cpumask::possible_cpus().iter() {
++            let remote_ptr = ptr.get_remote_ptr(cpu);
++            // SAFETY: `remote_ptr` is valid because `ptr` points to a live allocation and `cpu`
++            // appears in `Cpumask::possible_cpus()`.
++            //
++            // Each CPU's slot corresponding to `ptr` is currently uninitialized, and no one else
++            // has a reference to it. Therefore, we can freely write to it without worrying about
++            // the need to drop what was there or whether we're racing with someone else.
++            unsafe {
++                (*remote_ptr).write(val.clone());
++            }
++        }
 +
- config SAMPLE_RUST_HOSTPROGS
- 	bool "Host programs"
- 	help
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index bd2faad63b4f..8a34d9d74754 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
- obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
-+obj-$(CONFIG_SAMPLE_RUST_PERCPU)		+= rust_percpu.o
- 
- rust_print-y := rust_print_main.o rust_print_events.o
- 
-diff --git a/samples/rust/rust_percpu.rs b/samples/rust/rust_percpu.rs
-new file mode 100644
-index 000000000000..98ca1c781b6b
---- /dev/null
-+++ b/samples/rust/rust_percpu.rs
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//! A simple demonstration of the rust per-CPU API.
++        let arc = Arc::new(alloc, flags).ok()?;
 +
-+use core::cell::RefCell;
-+use core::ffi::c_void;
-+
-+use kernel::{
-+    bindings::on_each_cpu,
-+    cpu::CpuId,
-+    define_per_cpu, get_static_per_cpu,
-+    percpu::{cpu_guard::*, *},
-+    pr_info,
-+    prelude::*,
-+};
-+
-+module! {
-+    type: PerCpuMod,
-+    name: "rust_percpu",
-+    authors: ["Mitchell Levy"],
-+    description: "Sample to demonstrate the Rust per-CPU API",
-+    license: "GPL v2",
++        Some(Self { alloc: Some(arc) })
++    }
 +}
 +
-+struct PerCpuMod;
+ impl<T> PerCpu<T> for DynamicPerCpu<T> {
+     unsafe fn get_mut(&mut self, guard: CpuGuard) -> PerCpuToken<'_, T> {
+         // SAFETY:
+@@ -105,6 +135,20 @@ unsafe fn get_mut(&mut self, guard: CpuGuard) -> PerCpuToken<'_, T> {
+     }
+ }
+ 
++impl<T: InteriorMutable> CheckedPerCpu<T> for DynamicPerCpu<T> {
++    fn get(&mut self, guard: CpuGuard) -> CheckedPerCpuToken<'_, T> {
++        // SAFETY:
++        // 1. Invariants of this type assure that `alloc` is `Some`.
++        // 2. The invariants of `DynamicPerCpu` ensure that the contents of the allocation are
++        //    initialized on each CPU.
++        // 3. The existence of a reference to the `PerCpuAllocation` ensures that the allocation is
++        //    live.
++        // 4. The invariants of `DynamicPerCpu` ensure that the allocation is sized and aligned for
++        //    a `T`.
++        unsafe { CheckedPerCpuToken::new(guard, &self.alloc.as_ref().unwrap_unchecked().0) }
++    }
++}
 +
-+define_per_cpu!(PERCPU: i64 = 0);
-+define_per_cpu!(UPERCPU: u64 = 0);
-+define_per_cpu!(CHECKED: RefCell<u64> = RefCell::new(0));
+ impl<T> Drop for DynamicPerCpu<T> {
+     fn drop(&mut self) {
+         // SAFETY: This type's invariant ensures that `self.alloc` is `Some`.
+diff --git a/samples/rust/rust_percpu.rs b/samples/rust/rust_percpu.rs
+index 98ca1c781b6b..be70ee2e513f 100644
+--- a/samples/rust/rust_percpu.rs
++++ b/samples/rust/rust_percpu.rs
+@@ -11,6 +11,7 @@
+     percpu::{cpu_guard::*, *},
+     pr_info,
+     prelude::*,
++    sync::Arc,
+ };
+ 
+ module! {
+@@ -130,13 +131,81 @@ fn init(_module: &'static ThisModule) -> Result<Self, Error> {
+ 
+         // SAFETY: No prerequisites for on_each_cpu.
+         unsafe {
+-            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
+-            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
+-            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
+-            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 1);
+-            on_each_cpu(Some(check_percpu), (&raw mut test).cast(), 1);
++            on_each_cpu(Some(inc_percpu_u64), (&raw mut test).cast(), 0);
++            on_each_cpu(Some(inc_percpu_u64), (&raw mut test).cast(), 0);
++            on_each_cpu(Some(inc_percpu_u64), (&raw mut test).cast(), 0);
++            on_each_cpu(Some(inc_percpu_u64), (&raw mut test).cast(), 1);
++            on_each_cpu(Some(check_percpu_u64), (&raw mut test).cast(), 1);
+         }
+ 
++        let mut checked: DynamicPerCpu<RefCell<u64>> =
++            DynamicPerCpu::new_with(&RefCell::new(100), GFP_KERNEL).unwrap();
 +
-+impl kernel::Module for PerCpuMod {
-+    fn init(_module: &'static ThisModule) -> Result<Self, Error> {
-+        pr_info!("rust percpu test start\n");
++        // SAFETY: No prerequisites for on_each_cpu.
++        unsafe {
++            on_each_cpu(Some(inc_percpu_refcell_u64), (&raw mut checked).cast(), 0);
++            on_each_cpu(Some(inc_percpu_refcell_u64), (&raw mut checked).cast(), 0);
++            on_each_cpu(Some(inc_percpu_refcell_u64), (&raw mut checked).cast(), 0);
++            on_each_cpu(Some(inc_percpu_refcell_u64), (&raw mut checked).cast(), 1);
++            on_each_cpu(Some(check_percpu_refcell_u64), (&raw mut checked).cast(), 1);
++        }
 +
-+        let mut native: i64 = 0;
-+        let mut pcpu: StaticPerCpu<i64> = get_static_per_cpu!(PERCPU);
-+
-+        // SAFETY: We only have one PerCpu that points at PERCPU
-+        unsafe { pcpu.get_mut(CpuGuard::new()) }.with(|val: &mut i64| {
-+            pr_info!("The contents of pcpu are {}\n", val);
-+
-+            native += -1;
-+            *val += -1;
-+            pr_info!("Native: {}, *pcpu: {}\n", native, val);
-+            assert!(native == *val && native == -1);
-+
-+            native += 1;
-+            *val += 1;
-+            pr_info!("Native: {}, *pcpu: {}\n", native, val);
-+            assert!(native == *val && native == 0);
-+        });
-+
-+        let mut unative: u64 = 0;
-+        let mut upcpu: StaticPerCpu<u64> = get_static_per_cpu!(UPERCPU);
-+
-+        // SAFETY: We only have one PerCpu pointing at UPERCPU
-+        unsafe { upcpu.get_mut(CpuGuard::new()) }.with(|val: &mut u64| {
-+            unative += 1;
-+            *val += 1;
-+            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
-+            assert!(unative == *val && unative == 1);
-+
-+            unative = unative.wrapping_add((-1i64) as u64);
-+            *val = val.wrapping_add((-1i64) as u64);
-+            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
-+            assert!(unative == *val && unative == 0);
-+
-+            unative = unative.wrapping_add((-1i64) as u64);
-+            *val = val.wrapping_add((-1i64) as u64);
-+            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
-+            assert!(unative == *val && unative == (-1i64) as u64);
-+
-+            unative = 0;
-+            *val = 0;
-+
-+            unative = unative.wrapping_sub(1);
-+            *val = val.wrapping_sub(1);
-+            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
-+            assert!(unative == *val && unative == (-1i64) as u64);
-+            assert!(unative == *val && unative == u64::MAX);
-+        });
-+
-+        let mut checked_native: u64 = 0;
-+        let mut checked: StaticPerCpu<RefCell<u64>> = get_static_per_cpu!(CHECKED);
 +        checked.get(CpuGuard::new()).with(|val: &RefCell<u64>| {
++            assert!(*val.borrow() == 104);
++
++            let mut checked_native = 0;
++            *val.borrow_mut() = 0;
++
 +            checked_native += 1;
 +            *val.borrow_mut() += 1;
 +            pr_info!(
@@ -308,43 +274,65 @@ index 000000000000..98ca1c781b6b
 +            assert!(checked_native == *val.borrow() && checked_native == u64::MAX);
 +        });
 +
-+        pr_info!("rust static percpu test done\n");
-+
-+        pr_info!("rust dynamic percpu test start\n");
-+        let mut test: DynamicPerCpu<u64> = DynamicPerCpu::new_zero(GFP_KERNEL).unwrap();
-+
-+        // SAFETY: No prerequisites for on_each_cpu.
-+        unsafe {
-+            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
-+            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
-+            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 0);
-+            on_each_cpu(Some(inc_percpu), (&raw mut test).cast(), 1);
-+            on_each_cpu(Some(check_percpu), (&raw mut test).cast(), 1);
++        let arc = Arc::new(0, GFP_KERNEL).unwrap();
++        {
++            let _arc_pcpu: DynamicPerCpu<Arc<u64>> =
++                DynamicPerCpu::new_with(&arc, GFP_KERNEL).unwrap();
 +        }
++        // `arc` should be unique, since all the clones on each CPU should be dropped when
++        // `_arc_pcpu` is dropped
++        assert!(arc.into_unique_or_drop().is_some());
 +
-+        pr_info!("rust dynamic percpu test done\n");
+         pr_info!("rust dynamic percpu test done\n");
+ 
+         // Return Err to unload the module
+@@ -144,7 +213,7 @@ fn init(_module: &'static ThisModule) -> Result<Self, Error> {
+     }
+ }
+ 
+-extern "C" fn inc_percpu(info: *mut c_void) {
++extern "C" fn inc_percpu_u64(info: *mut c_void) {
+     // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
+     let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
+     pr_info!("Incrementing on {}\n", CpuId::current().as_u32());
+@@ -153,7 +222,7 @@ extern "C" fn inc_percpu(info: *mut c_void) {
+     unsafe { pcpu.get_mut(CpuGuard::new()) }.with(|val: &mut u64| *val += 1);
+ }
+ 
+-extern "C" fn check_percpu(info: *mut c_void) {
++extern "C" fn check_percpu_u64(info: *mut c_void) {
+     // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
+     let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
+     pr_info!("Asserting on {}\n", CpuId::current().as_u32());
+@@ -161,3 +230,29 @@ extern "C" fn check_percpu(info: *mut c_void) {
+     // SAFETY: We don't have multiple clones of pcpu in scope
+     unsafe { pcpu.get_mut(CpuGuard::new()) }.with(|val: &mut u64| assert!(*val == 4));
+ }
 +
-+        // Return Err to unload the module
-+        Result::Err(EINVAL)
-+    }
-+}
-+
-+extern "C" fn inc_percpu(info: *mut c_void) {
-+    // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
-+    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
++extern "C" fn inc_percpu_refcell_u64(info: *mut c_void) {
++    // SAFETY: We know that info is a void *const DynamicPerCpu<RefCell<u64>> and
++    // DynamicPerCpu<RefCell<u64>> is Send.
++    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<RefCell<u64>>)).clone() };
++    // SAFETY: smp_processor_id has no preconditions
 +    pr_info!("Incrementing on {}\n", CpuId::current().as_u32());
 +
-+    // SAFETY: We don't have multiple clones of pcpu in scope
-+    unsafe { pcpu.get_mut(CpuGuard::new()) }.with(|val: &mut u64| *val += 1);
++    pcpu.get(CpuGuard::new()).with(|val: &RefCell<u64>| {
++        let mut val = val.borrow_mut();
++        *val += 1;
++    });
 +}
 +
-+extern "C" fn check_percpu(info: *mut c_void) {
-+    // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
-+    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
++extern "C" fn check_percpu_refcell_u64(info: *mut c_void) {
++    // SAFETY: We know that info is a void *const DynamicPerCpu<RefCell<u64>> and
++    // DynamicPerCpu<RefCell<u64>> is Send.
++    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<RefCell<u64>>)).clone() };
++    // SAFETY: smp_processor_id has no preconditions
 +    pr_info!("Asserting on {}\n", CpuId::current().as_u32());
 +
-+    // SAFETY: We don't have multiple clones of pcpu in scope
-+    unsafe { pcpu.get_mut(CpuGuard::new()) }.with(|val: &mut u64| assert!(*val == 4));
++    pcpu.get(CpuGuard::new()).with(|val: &RefCell<u64>| {
++        let val = val.borrow();
++        assert!(*val == 104);
++    });
 +}
 
 -- 
