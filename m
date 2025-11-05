@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-885847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24865C34092
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:15:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB303C340A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:18:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2683BE392
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:15:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2CCD4E539F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1F52BE034;
-	Wed,  5 Nov 2025 06:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmiLw97F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26292BEFF8;
+	Wed,  5 Nov 2025 06:18:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE83176ADE;
-	Wed,  5 Nov 2025 06:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D6176ADE;
+	Wed,  5 Nov 2025 06:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762323348; cv=none; b=jtNyNkir8j5I79DcpXWo9DM7AnXL93Qfib0FyuqJXvkUMj55MJ1/h7W4QI+mVUROmUphengsqVj9qizs/Fs0A0xlUiE4r0Srb7qRxTAft8V9qynLGidsNp8KZQ/yUFhxvlXqDquJ4NiNr4MFXGHjmbUA2jkbuTNk+9hAcgRL0RY=
+	t=1762323506; cv=none; b=MES3av3CBkccDXRwZaSZdEMyuvk3bPOS4hWx6yoWcY5n14DIadl6/Yk2C8jg5DvWwCafHGi/+1QASAqqcDYr4VydPy57ajM8bJCN/bCc7gAMOIPPf2BsfNlWWMzu8bx6Gt1dVPlKcOcYevUsCBzXUj2ouOT8dpCJtYZEdWXT0Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762323348; c=relaxed/simple;
-	bh=KpjbRQFxIyOisY/LHVDMX3+nkTP7nXBhrrbtyUKrUnw=;
+	s=arc-20240116; t=1762323506; c=relaxed/simple;
+	bh=oNItNYXlIl55ks6BNKsiGDZADO2Xd45pgssSZji7J0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z+Q5KSFB+IsoZjvEuxPyUnshiqbmbywXa4ydaT510lUvOiUlpVM4rjIKW+tUItzzm5jWwOF+vj8T/BAJIGNEjasg2rq58HQOENMJd0A4IDuNcBrqxNVJgDPeQPmOqrLdBdt5BAkdCHTgO882mwQYGqVEPE1Gn7/ZXMkxLWUhj0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmiLw97F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0791DC4CEF8;
-	Wed,  5 Nov 2025 06:15:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762323347;
-	bh=KpjbRQFxIyOisY/LHVDMX3+nkTP7nXBhrrbtyUKrUnw=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QmiLw97FVTSk2yo00R9099r4Iro/AIHUvZymgMWaIQMkM5E1LZSdWl3dkzevw7WiH
-	 XFyZi0u6+2eaHZPdFi0jv/NXLu18I5aNEPrC2h99uI3L0/00Uz9xW8jDdXVOi6aHLT
-	 WcLjlv5wTBx+T06U8/u4cl8+YxDi5ni6EvkVfh4xa+iv6UeaHoMILyNWiCZcTXVEZV
-	 e2ZxXuHy/BOtcv3o9jizA5IUlV3PL1XEnN3KI45Z4aYTR5kercsIXfOibHsdC9g2yu
-	 BlqKuJyynG9DAe+EWZqHO++gnKMlyJ+dy9hJgM8rRk5ZXkcIm9mk60OBY3zqv9haTg
-	 7OULro1uigftw==
-Message-ID: <4df805bf-10fd-4fb3-ae34-44185c305d47@kernel.org>
-Date: Wed, 5 Nov 2025 07:15:42 +0100
+	 In-Reply-To:Content-Type; b=hhpEodpYqU4muxko1YUtviIKjYcWinN+r9smL4pK47gIgMO5/YhKOVHs7MJibG43EJsjJPI3IW/zQnLx5yl3zb2zomtXMsIU58Pyjnfa6RDIGMKbT1fgrIrPpnVU0Yyl7G2jY6P/lVjbAoIbcQYtnJoEhmfjlu5k1PVlXmoT3jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d1ZrP3ws8zKHMn1;
+	Wed,  5 Nov 2025 14:18:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 6931E1A12C3;
+	Wed,  5 Nov 2025 14:18:20 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgBHnUUr7App4GgOCw--.12693S2;
+	Wed, 05 Nov 2025 14:18:20 +0800 (CST)
+Message-ID: <165437cc-d104-4b10-8efb-3da87ed5aa51@huaweicloud.com>
+Date: Wed, 5 Nov 2025 14:18:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,123 +46,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: linux-next: build failure after merge of the modules tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Tamir Duberstein <tamird@gmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20251104154500.5acb5340@canb.auug.org.au>
- <20251105155109.1b3fc7d8@canb.auug.org.au>
+Subject: Re: [cgroup/for-6.19 PATCH v3 3/5] cgroup/cpuset: Move up
+ prstate_housekeeping_conflict() helper
+To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+References: <20251105043848.382703-1-longman@redhat.com>
+ <20251105043848.382703-4-longman@redhat.com>
 Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20251105155109.1b3fc7d8@canb.auug.org.au>
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251105043848.382703-4-longman@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBHnUUr7App4GgOCw--.12693S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4xKF43CFyruF43ZF47Jwb_yoW8tw1kpF
+	43WrW3GrZ5Xa15G3sxX3WkuwnYgws7JF10yasxGrn5tF17Xw4vvFWq939avFWrXas7WryU
+	ZFZ0kr43uF4xArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
 
-On 05/11/2025 05.51, Stephen Rothwell wrote:
-> Hi all,
+On 2025/11/5 12:38, Waiman Long wrote:
+> Move up the prstate_housekeeping_conflict() helper so that it can be
+> used in remote partition code.
 > 
-> On Tue, 4 Nov 2025 15:45:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the modules tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> error[E0308]: mismatched types
->>   --> rust/kernel/module_param.rs:75:47  
->>    |
->> 75 |         let new_value = T::try_from_param_arg(arg)?;
->>    |                         --------------------- ^^^ expected `&BStr`, found `&CStr`
->>    |                         |
->>    |                         arguments to this function are incorrect
->>    |
->>    = note: expected reference `&BStr`
->>               found reference `&ffi::CStr`
->> note: associated function defined here
->>   --> rust/kernel/module_param.rs:32:8  
->>    |
->> 32 |     fn try_from_param_arg(arg: &BStr) -> Result<Self>;
->>    |        ^^^^^^^^^^^^^^^^^^
->>
->> error: aborting due to 1 previous error
->>
->> For more information about this error, try `rustc --explain E0308`.
->>
->> Caused by commit
->>
->>   0b08fc292842 ("rust: introduce module_param module")
->>
->> This is some interaction with something later in linux-next - presumably
->> commit
->>
->>   3b83f5d5e78a ("rust: replace `CStr` with `core::ffi::CStr`")
->>
->> from the rust tree.
->>
->> Hopefully someone can provide a resolution for me tomorrow.
->>
->> I have used the modules tree from next-20251103 for today.
-> 
-> I have used the modules tree as is and applied the below merge
-> resolution patch (supplied by Andreas) to the merge of the rust tree.
-
-Yes, that is the correct resolution. I tested that yesterday when I contacted
-Andreas and Tamir.
-
-Thanks
-
-
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 5 Nov 2025 14:52:29 +1100
-> Subject: [PATCH] fix up for "rust: replace `CStr` with `core::ffi::CStr`"
-> 
-> interacting with commit
-> 
->   0b08fc292842 ("rust: introduce module_param module")
-> 
-> from the modules tree.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  rust/kernel/module_param.rs | 1 +
->  rust/macros/module.rs       | 4 ++--
->  2 files changed, 3 insertions(+), 2 deletions(-)
+>  kernel/cgroup/cpuset.c | 40 ++++++++++++++++++++--------------------
+>  1 file changed, 20 insertions(+), 20 deletions(-)
 > 
-> diff --git a/rust/kernel/module_param.rs b/rust/kernel/module_param.rs
-> index e7d5c930a467..6a8a7a875643 100644
-> --- a/rust/kernel/module_param.rs
-> +++ b/rust/kernel/module_param.rs
-> @@ -70,6 +70,7 @@ pub trait ModuleParam: Sized + Copy {
->      // SAFETY: By function safety requirement, val is non-null, null-terminated
->      // and valid for reads for the duration of this function.
->      let arg = unsafe { CStr::from_char_ptr(val) };
-> +    let arg: &BStr = arg.as_ref();
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 99622e90991a..cc9c3402f16b 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1432,6 +1432,26 @@ static bool isolated_cpus_can_update(struct cpumask *add_cpus,
+>  	return res;
+>  }
 >  
->      crate::error::from_result(|| {
->          let new_value = T::try_from_param_arg(arg)?;
-> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-> index 1a22de73d512..f6a94712384f 100644
-> --- a/rust/macros/module.rs
-> +++ b/rust/macros/module.rs
-> @@ -133,10 +133,10 @@ fn emit_params(&mut self, info: &ModuleInfo) {
->                          ::kernel::module_param::KernelParam::new(
->                              ::kernel::bindings::kernel_param {{
->                                  name: if ::core::cfg!(MODULE) {{
-> -                                    ::kernel::c_str!(\"{param_name}\").as_bytes_with_nul()
-> +                                    ::kernel::c_str!(\"{param_name}\").to_bytes_with_nul()
->                                  }} else {{
->                                      ::kernel::c_str!(\"{module_name}.{param_name}\")
-> -                                        .as_bytes_with_nul()
-> +                                        .to_bytes_with_nul()
->                                  }}.as_ptr(),
->                                  // SAFETY: `__this_module` is constructed by the kernel at load
->                                  // time and will not be freed until the module is unloaded.
+> +/*
+> + * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
+> + * @prstate: partition root state to be checked
+> + * @new_cpus: cpu mask
+> + * Return: true if there is conflict, false otherwise
+> + *
+> + * CPUs outside of boot_hk_cpus, if defined, can only be used in an
+> + * isolated partition.
+> + */
+> +static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
+> +{
+> +	if (!have_boot_isolcpus)
+> +		return false;
+> +
+> +	if ((prstate != PRS_ISOLATED) && !cpumask_subset(new_cpus, boot_hk_cpus))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  static void update_isolation_cpumasks(bool isolcpus_updated)
+>  {
+>  	int ret;
+> @@ -1727,26 +1747,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>  	remote_partition_disable(cs, tmp);
+>  }
+>  
+> -/*
+> - * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
+> - * @prstate: partition root state to be checked
+> - * @new_cpus: cpu mask
+> - * Return: true if there is conflict, false otherwise
+> - *
+> - * CPUs outside of boot_hk_cpus, if defined, can only be used in an
+> - * isolated partition.
+> - */
+> -static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
+> -{
+> -	if (!have_boot_isolcpus)
+> -		return false;
+> -
+> -	if ((prstate != PRS_ISOLATED) && !cpumask_subset(new_cpus, boot_hk_cpus))
+> -		return true;
+> -
+> -	return false;
+> -}
+> -
+>  /**
+>   * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
+>   * @cs:      The cpuset that requests change in partition root state
+
+Reviewed-by: Chen Ridong <chenridong@huawei.com>
+
+-- 
+Best regards,
+Ridong
+
 
