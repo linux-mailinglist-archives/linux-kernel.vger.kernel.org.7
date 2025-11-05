@@ -1,215 +1,396 @@
-Return-Path: <linux-kernel+bounces-886102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53773C34B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:14:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB59C34B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640B41887D99
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:13:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93D1434C248
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C212FB619;
-	Wed,  5 Nov 2025 09:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831632FDC57;
+	Wed,  5 Nov 2025 09:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YltbPON3";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IejCqM7+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aPZG6BRr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6050B2FB0B5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BA12FD7CF;
+	Wed,  5 Nov 2025 09:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333936; cv=none; b=I13zDlf7RxBm8HS6JXXhUutZrxikevWiMN4TWsprozDiGxCpDJnRK7ew7WLyfkbbUFfZKS86ReuZV88TavrvDYUfujJJM0bqBi0QjY7pf2g246UMf/klJDLSXg1BBPqi2Abc4Vxs2zqBwqNY/fmup6QAvXy0s8KDjl+d0fTE0PM=
+	t=1762334083; cv=none; b=J6by31d3ToBr+09Cl03OkbSZZZvV8rg1RxJnglcasODaWIoegMaGcNMLeMBr8F4EM7HR3BURSZQ6QFPDmed/2zY8/iOwWexejXX2UidNhH7MR1D85pEnVes/2CLLrJ3Gswa22yLIRUR6vrsUmwodnUnmH+PRDHL9ZTGZxt4lxjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333936; c=relaxed/simple;
-	bh=rhJnISfruwgCtMzDAp2gVfMmqk8wOwH4w/JXlP7TUAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7WZVxrXbp8qfpm5CuRHY3p8Hl/LZekgsn4rMoBsvAA+UCt14pqGz/i1Sq4RKxWDf9xR4YuJhQBDVz+wR6gu2VF0odl3hYeV1C9cjMH5p+Vr6AbQUQXCQsHYO7oyKYjjM5bfjQMukPpArSeZttf1uaOoZ6hP3Qf330CvZ6fkQEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YltbPON3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IejCqM7+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A58K3XC3164678
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 09:12:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Z+6KNSa/c84U6Pn9MoZGbo7B95YVHxLE9mFgR/bY4NE=; b=YltbPON3Kb5XGvfB
-	AGfZh7VVPxBzKSx9NquvfafRy7kuzVRXWu0MAHYXLNazg7kAnE8MHJzpj7Wjv0yt
-	lgJ0diI5FVyzvJch2XxqtzCJftkY2tQDBjnctzNLepvQZVWnivMcDx7nUdeFvb70
-	bedjeeHi65EhOBE3Ek/hQru+qrpe95TcXQeN9LN9x2DDPDfYe++Kd4hBK9AFZnuP
-	5qPsJUG++c4KtGgTE2Hc04blCojlNUHGEkN+85LzOLB5O5sc6vN01QumcYgcP9uq
-	V9pgYmNYg720QDg58Ogd2S+Emy4c8X/RFKgmyejkpb/ENWqLUJZFT4MDOrPH8Qn0
-	gojqHQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7ketk1qf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:12:12 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b22253132cso24593285a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:12:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762333931; x=1762938731; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+6KNSa/c84U6Pn9MoZGbo7B95YVHxLE9mFgR/bY4NE=;
-        b=IejCqM7+oxC3TO/ySi0+13z26VXc9WOdhvM2KVrdpbIezQxl2wxwuXDlBaMQJCtoMt
-         2BnOKFAgGKSkdlqRUWCBmFF1l4KSZjJX4+6x5SZWnyUVHqPptXf2NlZVdzKQSNIm9ARy
-         pqpAUrul8QYX8z+m4LGp+5p/MuFLhhk6MLE6GDk+Vz5br1FpKeK0XbTp3A5U+19s+PZA
-         jrhRaQpCUay+TssRzZBetn322fGZjltgsp6UZ2ns5NEQSIbPy2E7n6PF1hHvK1HapLy7
-         MeJL/Lj5A8KHZGJU5WOPZM6M0qWRGVgCxLJvLygaXWKa6XJHhuzoSf+m9b6z8wU3NG9k
-         /hdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762333931; x=1762938731;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+6KNSa/c84U6Pn9MoZGbo7B95YVHxLE9mFgR/bY4NE=;
-        b=XyUczplRRwQPP2xHzJ26rx9mFJgTzcBU0L98msz3urzVQ+Y35y9OOR1Ra1BCm+zRiV
-         fKUQgZLlw5P8NgU2kPhPBR4xWy5fjKrfmzBFcpjMXljlP85PZfUMbdzsP7nWcbf5U9u+
-         h2Z8p7A1C1Ct3qxS0oCgJRx439wYp96cctNc+IGbV40hUOHy7yDOcUbRuzD/dMpcU3Et
-         o+CxV+2xyHrHpBwjKcbGPD+pLPuBCPjJXCyAQMDQyjBYDpDaBPnOoRLhdUD6XR6rRJqD
-         6SFFKy/5KZkNHYSvJB6Mz9FQOdFI6mGgMlmHA814L7/2x0cCr3MdKmgJiMGNFfg/hJG4
-         MfFw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3V2y1Hw2Xtd4umHD2OOv9YbQtt+bkd6hxcgtmIS9HfpeOKWWZX58UX0vLUch4RBJIPZlqM/qM0QHjcUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypZinEfjh2V+4/y+wJJsgdpS9jTcpWJLrz/efPpN6kXlYv2qWI
-	4FHmr/tfs/YPwC7fYmHnlM6q4cJdJfWUKfcxV7nr7EgKAomq2848Gmz24ius8p5HeBXGFE0y9kY
-	APcT0Ra6B+NMn0zhrZsZlwAI1Ut+Z7573pMayk/kzN7JJDeUb+qxn8aucV1XubzDmfp0=
-X-Gm-Gg: ASbGncsTqzEyndqU3LouO1qfYyr81DOcjrFeJVbQ5v0fZU8HM4Qmd7VJ4OYr5IxC3jI
-	YZgEQunEUxcj8FBVc32JSMaPabFn3E1u4q182WO1bkYLcteUA0mf4xADv1O+DmWDmJ04TPA2rC9
-	ULIIXbj3+/yNOb1/xb0RubtZVwi2+DdOqpfCRP5IfjbiErItJt0TN5WHJsVoEvEpKllPhGRnZ1I
-	LBUrhCBGEYghV+89c1gIrCSbOc7XBfiuh0lusEmQu5E1D/ISC3QmRApbbRn6DRAyVhctw75BVuL
-	JMXSGoUZECy4vzCQf50Xxfx8B3y478n8f5lZxwvU8pT4KinYwKotuXaXIcu+sT24g45i1Z5wTe7
-	HD3GptP+v6oZRPtoKkJ9HI5GUG/gKsIUxrSdkYxiE2iLy95GBwkviDq7a
-X-Received: by 2002:a05:620a:4416:b0:8a1:a5c5:ef18 with SMTP id af79cd13be357-8b220b1d713mr213872385a.7.1762333931444;
-        Wed, 05 Nov 2025 01:12:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEGJ9wkyXw8sJ2xb7871IJGD1FzGWrKC1uMfjebX8VCApHvBSwyXgL4BOJndaBNFQvahb8afg==
-X-Received: by 2002:a05:620a:4416:b0:8a1:a5c5:ef18 with SMTP id af79cd13be357-8b220b1d713mr213871085a.7.1762333930898;
-        Wed, 05 Nov 2025 01:12:10 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72406568a2sm430577166b.73.2025.11.05.01.12.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 01:12:10 -0800 (PST)
-Message-ID: <cb1ced66-8190-4462-99cf-72ec51da6536@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 10:12:08 +0100
+	s=arc-20240116; t=1762334083; c=relaxed/simple;
+	bh=RSHsbeFdKhC8QvY9ApXm+WcOtBpu6BQxsCPQZgDqEhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oH4b7VUrxNv5pzrfxQTEP/tW63sizCAxyZ6MnlQfArBMiUxYV0nL3iikk79rmyPholqnMZANWskG2V+dNq0xkQv3y9DYI2ynjUqJsv4qvcb3i+MvdXv4YLGmRDM8J/TRpP2EphM6BG0tifKJAD5UPtgNY1Q99rr9maRdpvRMTzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aPZG6BRr; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762334079; x=1793870079;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RSHsbeFdKhC8QvY9ApXm+WcOtBpu6BQxsCPQZgDqEhY=;
+  b=aPZG6BRrtxOkU/ghtJXWPfbZJITDxRW8G3BebAazwNCfUSny83e1cbmA
+   Vu6ymSo6RnajZ6SPkyNU8KUGGwB9aH++kjizEz0MnNj/ijIDNEaHzZ6I0
+   bagTw9JJucPKFgKRIvJpu+mv4bWzZaPRoxUJncj/r8ZTiVpzZnX2FZASY
+   5EeSth47kYM7jdMGsPS0fF0XMXK9BUr/mhQLHfTp7DjWfghQ7/cgPTIbX
+   OxkmfBT+4RMjWMeouJ3imk4KNpqBtqC7lIq2Q6BbNZXs4mUMVqZWpuUqG
+   z75qdhVhCKkUq7UF6t736/WvomkJ1us6UH1l1XqqXh0vqp2UMIAHkxwgS
+   A==;
+X-CSE-ConnectionGUID: 2Zgkeb6BSzq+TTMm7GWknQ==
+X-CSE-MsgGUID: WBSVypItT42lgk0X6XzrIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="63450992"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="63450992"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:14:38 -0800
+X-CSE-ConnectionGUID: or3Ko7iPQ8KDAiX8KKlOPQ==
+X-CSE-MsgGUID: 0ClDQbJVRTuSh7f5aYa58g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187562652"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 05 Nov 2025 01:14:37 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGZb8-000SLw-0b;
+	Wed, 05 Nov 2025 09:14:34 +0000
+Date: Wed, 5 Nov 2025 17:13:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ian Abbott <abbotti@mev.co.uk>, linux-fpga@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH 2/4] fpga: bridge: Add dummy definitions of API functions
+Message-ID: <202511051756.m53LZeZi-lkp@intel.com>
+References: <20251104153013.154463-3-abbotti@mev.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251104140635.25965-1-ansuelsmth@gmail.com>
- <20251104140635.25965-2-ansuelsmth@gmail.com>
- <d3f2810f-7361-4a23-adb3-32a73ad50519@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <d3f2810f-7361-4a23-adb3-32a73ad50519@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA2OCBTYWx0ZWRfXzCdodtNVSCgS
- KGo1qb2SUbZ9vOIeyVfcYqXkbAlFj+dffWn30gk8LQ9de0/5EsPr52yQZP2WCAF4TUypDPYDAtb
- 9Ska8k6pANN3A1c2R/cpkov015HLyVOVgfhfnAr/t2MxWdvB1ko338g9jAl3jR75koLUSPkHcUp
- yumRwRXRnq76aXMqkjLGD5wBzi16f3IpfuSl1rGCBDp8eQBUEaZJfg8Zal1h6nRRbeihFh4KFdx
- mDxmpsYeIrNluRg4ojE1MwEbNd1pCSZvDSWgs/2zFSoyaGoT7ovM1GbQiEUyvnrEiozWIiwXiYA
- ziIL73mWGIq9eieGhPctIIPgZuvVq/dH7jo+PAipE8j2t6Y9gZ/KH80n0sSQ9eLrXwGmqfDY1vi
- eWWvmHmGFvIbeW04UOrCUAmS0/j/KQ==
-X-Proofpoint-GUID: wLFMLNXNimyua7vnrCQxwTxlle6Cl_GA
-X-Authority-Analysis: v=2.4 cv=IdSKmGqa c=1 sm=1 tr=0 ts=690b14ec cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8
- a=6tCzVfzfn33JckLbtDwA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: wLFMLNXNimyua7vnrCQxwTxlle6Cl_GA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 impostorscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104153013.154463-3-abbotti@mev.co.uk>
 
-On 11/5/25 9:05 AM, Krzysztof Kozlowski wrote:
-> On 04/11/2025 15:06, Christian Marangi wrote:
->> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
->> case for some Google devices (the OnHub family) that can't make use of
->> SMEM to detect the SoC ID.
->>
->> To handle these specific case, check if the SMEM is not initialized (by
->> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
->> OF machine compatible checking to identify the SoC variant.
->>
->> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->> ---
->>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 35 ++++++++++++++++++++++++++--
->>  1 file changed, 33 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
->> index 3a8ed723a23e..17c79955ff2f 100644
->> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
->> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
->> @@ -252,13 +252,22 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
->>  	return ret;
->>  }
->>  
->> +static const struct of_device_id qcom_cpufreq_ipq806x_match_list[] = {
->> +	{ .compatible = "qcom,ipq8062", .data = (const void *)QCOM_ID_IPQ8062 },
->> +	{ .compatible = "qcom,ipq8064", .data = (const void *)QCOM_ID_IPQ8064 },
->> +	{ .compatible = "qcom,ipq8065", .data = (const void *)QCOM_ID_IPQ8065 },
->> +	{ .compatible = "qcom,ipq8066", .data = (const void *)QCOM_ID_IPQ8066 },
->> +	{ .compatible = "qcom,ipq8068", .data = (const void *)QCOM_ID_IPQ8068 },
->> +	{ .compatible = "qcom,ipq8069", .data = (const void *)QCOM_ID_IPQ8069 },
->> +};
->> +
->>  static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->>  					     struct nvmem_cell *speedbin_nvmem,
->>  					     char **pvs_name,
->>  					     struct qcom_cpufreq_drv *drv)
->>  {
->> +	int msm_id = -1, ret = 0;
->>  	int speed = 0, pvs = 0;
->> -	int msm_id, ret = 0;
->>  	u8 *speedbin;
->>  	size_t len;
->>  
->> @@ -275,8 +284,30 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->>  	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
->>  
->>  	ret = qcom_smem_get_soc_id(&msm_id);
->> -	if (ret)
->> +	if (ret == -ENODEV) {
->> +		const struct of_device_id *match;
->> +		struct device_node *root;
->> +
->> +		root = of_find_node_by_path("/");
->> +		if (!root) {
->> +			ret = -ENODEV;
->> +			goto exit;
->> +		}
->> +
->> +		/* Fallback to compatible match with no SMEM initialized */
->> +		match = of_match_node(qcom_cpufreq_ipq806x_match_list, root);
-> 
-> Aren't you re-implementing matching machine? Or actually - the socinfo
-> driver? You are doing the matching of compatible into SOC ID second
-> time. Just do it once - via socinfo driver.
+Hi Ian,
 
-The issue here is that if SMEM is absent, the socinfo driver can
-not function and this is a contained workaround
+kernel test robot noticed the following build errors:
 
-Konrad
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.18-rc4 next-20251105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Abbott/fpga-altera-pr-ip-Add-dummy-definitions-of-API-functions/20251105-000956
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251104153013.154463-3-abbotti%40mev.co.uk
+patch subject: [PATCH 2/4] fpga: bridge: Add dummy definitions of API functions
+config: parisc-randconfig-001-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051756.m53LZeZi-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511051756.m53LZeZi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511051756.m53LZeZi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/fpga/fpga-bridge.c:29:5: error: redefinition of 'fpga_bridge_enable'
+      29 | int fpga_bridge_enable(struct fpga_bridge *bridge)
+         |     ^~~~~~~~~~~~~~~~~~
+   In file included from drivers/fpga/fpga-bridge.c:8:
+   include/linux/fpga/fpga-bridge.h:112:19: note: previous definition of 'fpga_bridge_enable' with type 'int(struct fpga_bridge *)'
+     112 | static inline int fpga_bridge_enable(struct fpga_bridge *bridge)
+         |                   ^~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:47:5: error: redefinition of 'fpga_bridge_disable'
+      47 | int fpga_bridge_disable(struct fpga_bridge *bridge)
+         |     ^~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:117:19: note: previous definition of 'fpga_bridge_disable' with type 'int(struct fpga_bridge *)'
+     117 | static inline int fpga_bridge_disable(struct fpga_bridge *bridge)
+         |                   ^~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:91:21: error: redefinition of 'of_fpga_bridge_get'
+      91 | struct fpga_bridge *of_fpga_bridge_get(struct device_node *np,
+         |                     ^~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:97:1: note: previous definition of 'of_fpga_bridge_get' with type 'struct fpga_bridge *(struct device_node *, struct fpga_image_info *)'
+      97 | of_fpga_bridge_get(struct device_node *node, struct fpga_image_info *info)
+         | ^~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:123:21: error: redefinition of 'fpga_bridge_get'
+     123 | struct fpga_bridge *fpga_bridge_get(struct device *dev,
+         |                     ^~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:103:1: note: previous definition of 'fpga_bridge_get' with type 'struct fpga_bridge *(struct device *, struct fpga_image_info *)'
+     103 | fpga_bridge_get(struct device *dev, struct fpga_image_info *info)
+         | ^~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:147:6: error: redefinition of 'fpga_bridge_put'
+     147 | void fpga_bridge_put(struct fpga_bridge *bridge)
+         |      ^~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:108:20: note: previous definition of 'fpga_bridge_put' with type 'void(struct fpga_bridge *)'
+     108 | static inline void fpga_bridge_put(struct fpga_bridge *bridge)
+         |                    ^~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:166:5: error: redefinition of 'fpga_bridges_enable'
+     166 | int fpga_bridges_enable(struct list_head *bridge_list)
+         |     ^~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:122:19: note: previous definition of 'fpga_bridges_enable' with type 'int(struct list_head *)'
+     122 | static inline int fpga_bridges_enable(struct list_head *bridge_list)
+         |                   ^~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:190:5: error: redefinition of 'fpga_bridges_disable'
+     190 | int fpga_bridges_disable(struct list_head *bridge_list)
+         |     ^~~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:127:19: note: previous definition of 'fpga_bridges_disable' with type 'int(struct list_head *)'
+     127 | static inline int fpga_bridges_disable(struct list_head *bridge_list)
+         |                   ^~~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:213:6: error: redefinition of 'fpga_bridges_put'
+     213 | void fpga_bridges_put(struct list_head *bridge_list)
+         |      ^~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:132:20: note: previous definition of 'fpga_bridges_put' with type 'void(struct list_head *)'
+     132 | static inline void fpga_bridges_put(struct list_head *bridge_list)
+         |                    ^~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:239:5: error: redefinition of 'of_fpga_bridge_get_to_list'
+     239 | int of_fpga_bridge_get_to_list(struct device_node *np,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:143:19: note: previous definition of 'of_fpga_bridge_get_to_list' with type 'int(struct device_node *, struct fpga_image_info *, struct list_head *)'
+     143 | static inline int of_fpga_bridge_get_to_list(struct device_node *np,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:269:5: error: redefinition of 'fpga_bridge_get_to_list'
+     269 | int fpga_bridge_get_to_list(struct device *dev,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:136:19: note: previous definition of 'fpga_bridge_get_to_list' with type 'int(struct device *, struct fpga_image_info *, struct list_head *)'
+     136 | static inline int fpga_bridge_get_to_list(struct device *dev,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:332:1: error: redefinition of '__fpga_bridge_register'
+     332 | __fpga_bridge_register(struct device *parent, const char *name,
+         | ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:151:1: note: previous definition of '__fpga_bridge_register' with type 'struct fpga_bridge *(struct device *, const char *, const struct fpga_bridge_ops *, void *, struct module *)'
+     151 | __fpga_bridge_register(struct device *parent, const char *name,
+         | ^~~~~~~~~~~~~~~~~~~~~~
+>> drivers/fpga/fpga-bridge.c:403:6: error: redefinition of 'fpga_bridge_unregister'
+     403 | void fpga_bridge_unregister(struct fpga_bridge *bridge)
+         |      ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/fpga/fpga-bridge.h:158:20: note: previous definition of 'fpga_bridge_unregister' with type 'void(struct fpga_bridge *)'
+     158 | static inline void fpga_bridge_unregister(struct fpga_bridge *br)
+         |                    ^~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/fpga_bridge_enable +29 drivers/fpga/fpga-bridge.c
+
+21aeda950c5f84 Alan Tull      2016-11-01   21  
+21aeda950c5f84 Alan Tull      2016-11-01   22  /**
+21aeda950c5f84 Alan Tull      2016-11-01   23   * fpga_bridge_enable - Enable transactions on the bridge
+21aeda950c5f84 Alan Tull      2016-11-01   24   *
+21aeda950c5f84 Alan Tull      2016-11-01   25   * @bridge: FPGA bridge
+21aeda950c5f84 Alan Tull      2016-11-01   26   *
+21aeda950c5f84 Alan Tull      2016-11-01   27   * Return: 0 for success, error code otherwise.
+21aeda950c5f84 Alan Tull      2016-11-01   28   */
+21aeda950c5f84 Alan Tull      2016-11-01  @29  int fpga_bridge_enable(struct fpga_bridge *bridge)
+21aeda950c5f84 Alan Tull      2016-11-01   30  {
+21aeda950c5f84 Alan Tull      2016-11-01   31  	dev_dbg(&bridge->dev, "enable\n");
+21aeda950c5f84 Alan Tull      2016-11-01   32  
+b1a91ca25f15b6 Marco Pagani   2024-02-01   33  	if (bridge->br_ops->enable_set)
+21aeda950c5f84 Alan Tull      2016-11-01   34  		return bridge->br_ops->enable_set(bridge, 1);
+21aeda950c5f84 Alan Tull      2016-11-01   35  
+21aeda950c5f84 Alan Tull      2016-11-01   36  	return 0;
+21aeda950c5f84 Alan Tull      2016-11-01   37  }
+21aeda950c5f84 Alan Tull      2016-11-01   38  EXPORT_SYMBOL_GPL(fpga_bridge_enable);
+21aeda950c5f84 Alan Tull      2016-11-01   39  
+21aeda950c5f84 Alan Tull      2016-11-01   40  /**
+21aeda950c5f84 Alan Tull      2016-11-01   41   * fpga_bridge_disable - Disable transactions on the bridge
+21aeda950c5f84 Alan Tull      2016-11-01   42   *
+21aeda950c5f84 Alan Tull      2016-11-01   43   * @bridge: FPGA bridge
+21aeda950c5f84 Alan Tull      2016-11-01   44   *
+21aeda950c5f84 Alan Tull      2016-11-01   45   * Return: 0 for success, error code otherwise.
+21aeda950c5f84 Alan Tull      2016-11-01   46   */
+21aeda950c5f84 Alan Tull      2016-11-01  @47  int fpga_bridge_disable(struct fpga_bridge *bridge)
+21aeda950c5f84 Alan Tull      2016-11-01   48  {
+21aeda950c5f84 Alan Tull      2016-11-01   49  	dev_dbg(&bridge->dev, "disable\n");
+21aeda950c5f84 Alan Tull      2016-11-01   50  
+b1a91ca25f15b6 Marco Pagani   2024-02-01   51  	if (bridge->br_ops->enable_set)
+21aeda950c5f84 Alan Tull      2016-11-01   52  		return bridge->br_ops->enable_set(bridge, 0);
+21aeda950c5f84 Alan Tull      2016-11-01   53  
+21aeda950c5f84 Alan Tull      2016-11-01   54  	return 0;
+21aeda950c5f84 Alan Tull      2016-11-01   55  }
+21aeda950c5f84 Alan Tull      2016-11-01   56  EXPORT_SYMBOL_GPL(fpga_bridge_disable);
+21aeda950c5f84 Alan Tull      2016-11-01   57  
+1da11f822042eb Marco Pagani   2024-03-22   58  static struct fpga_bridge *__fpga_bridge_get(struct device *bridge_dev,
+21aeda950c5f84 Alan Tull      2016-11-01   59  					     struct fpga_image_info *info)
+21aeda950c5f84 Alan Tull      2016-11-01   60  {
+21aeda950c5f84 Alan Tull      2016-11-01   61  	struct fpga_bridge *bridge;
+21aeda950c5f84 Alan Tull      2016-11-01   62  
+1da11f822042eb Marco Pagani   2024-03-22   63  	bridge = to_fpga_bridge(bridge_dev);
+21aeda950c5f84 Alan Tull      2016-11-01   64  
+21aeda950c5f84 Alan Tull      2016-11-01   65  	bridge->info = info;
+21aeda950c5f84 Alan Tull      2016-11-01   66  
+1da11f822042eb Marco Pagani   2024-03-22   67  	if (!mutex_trylock(&bridge->mutex))
+1da11f822042eb Marco Pagani   2024-03-22   68  		return ERR_PTR(-EBUSY);
+21aeda950c5f84 Alan Tull      2016-11-01   69  
+1da11f822042eb Marco Pagani   2024-03-22   70  	if (!try_module_get(bridge->br_ops_owner)) {
+1da11f822042eb Marco Pagani   2024-03-22   71  		mutex_unlock(&bridge->mutex);
+1da11f822042eb Marco Pagani   2024-03-22   72  		return ERR_PTR(-ENODEV);
+1da11f822042eb Marco Pagani   2024-03-22   73  	}
+21aeda950c5f84 Alan Tull      2016-11-01   74  
+21aeda950c5f84 Alan Tull      2016-11-01   75  	dev_dbg(&bridge->dev, "get\n");
+21aeda950c5f84 Alan Tull      2016-11-01   76  
+21aeda950c5f84 Alan Tull      2016-11-01   77  	return bridge;
+21aeda950c5f84 Alan Tull      2016-11-01   78  }
+9c1c4b2753fea3 Alan Tull      2017-11-15   79  
+9c1c4b2753fea3 Alan Tull      2017-11-15   80  /**
+e7555cf6c263d9 Tom Rix        2021-06-08   81   * of_fpga_bridge_get - get an exclusive reference to an fpga bridge
+9c1c4b2753fea3 Alan Tull      2017-11-15   82   *
+8e665c9c1affcb Marco Pagani   2023-07-06   83   * @np: node pointer of an FPGA bridge.
+8e665c9c1affcb Marco Pagani   2023-07-06   84   * @info: fpga image specific information.
+9c1c4b2753fea3 Alan Tull      2017-11-15   85   *
+8e665c9c1affcb Marco Pagani   2023-07-06   86   * Return:
+8e665c9c1affcb Marco Pagani   2023-07-06   87   * * fpga_bridge struct pointer if successful.
+8e665c9c1affcb Marco Pagani   2023-07-06   88   * * -EBUSY if someone already has a reference to the bridge.
+8e665c9c1affcb Marco Pagani   2023-07-06   89   * * -ENODEV if @np is not an FPGA Bridge or can't take parent driver refcount.
+9c1c4b2753fea3 Alan Tull      2017-11-15   90   */
+9c1c4b2753fea3 Alan Tull      2017-11-15  @91  struct fpga_bridge *of_fpga_bridge_get(struct device_node *np,
+9c1c4b2753fea3 Alan Tull      2017-11-15   92  				       struct fpga_image_info *info)
+9c1c4b2753fea3 Alan Tull      2017-11-15   93  {
+1da11f822042eb Marco Pagani   2024-03-22   94  	struct fpga_bridge *bridge;
+1da11f822042eb Marco Pagani   2024-03-22   95  	struct device *bridge_dev;
+9c1c4b2753fea3 Alan Tull      2017-11-15   96  
+1da11f822042eb Marco Pagani   2024-03-22   97  	bridge_dev = class_find_device_by_of_node(&fpga_bridge_class, np);
+1da11f822042eb Marco Pagani   2024-03-22   98  	if (!bridge_dev)
+9c1c4b2753fea3 Alan Tull      2017-11-15   99  		return ERR_PTR(-ENODEV);
+9c1c4b2753fea3 Alan Tull      2017-11-15  100  
+1da11f822042eb Marco Pagani   2024-03-22  101  	bridge = __fpga_bridge_get(bridge_dev, info);
+1da11f822042eb Marco Pagani   2024-03-22  102  	if (IS_ERR(bridge))
+1da11f822042eb Marco Pagani   2024-03-22  103  		put_device(bridge_dev);
+1da11f822042eb Marco Pagani   2024-03-22  104  
+1da11f822042eb Marco Pagani   2024-03-22  105  	return bridge;
+9c1c4b2753fea3 Alan Tull      2017-11-15  106  }
+21aeda950c5f84 Alan Tull      2016-11-01  107  EXPORT_SYMBOL_GPL(of_fpga_bridge_get);
+21aeda950c5f84 Alan Tull      2016-11-01  108  
+9c1c4b2753fea3 Alan Tull      2017-11-15  109  static int fpga_bridge_dev_match(struct device *dev, const void *data)
+9c1c4b2753fea3 Alan Tull      2017-11-15  110  {
+9c1c4b2753fea3 Alan Tull      2017-11-15  111  	return dev->parent == data;
+9c1c4b2753fea3 Alan Tull      2017-11-15  112  }
+9c1c4b2753fea3 Alan Tull      2017-11-15  113  
+9c1c4b2753fea3 Alan Tull      2017-11-15  114  /**
+e7555cf6c263d9 Tom Rix        2021-06-08  115   * fpga_bridge_get - get an exclusive reference to an fpga bridge
+9c1c4b2753fea3 Alan Tull      2017-11-15  116   * @dev:	parent device that fpga bridge was registered with
+7ef1a2c1c9dffa Marco Pagani   2023-03-01  117   * @info:	fpga image specific information
+9c1c4b2753fea3 Alan Tull      2017-11-15  118   *
+e7555cf6c263d9 Tom Rix        2021-06-08  119   * Given a device, get an exclusive reference to an fpga bridge.
+9c1c4b2753fea3 Alan Tull      2017-11-15  120   *
+b4d9a0e5ca1396 Alan Tull      2018-09-12  121   * Return: fpga bridge struct or IS_ERR() condition containing error code.
+9c1c4b2753fea3 Alan Tull      2017-11-15  122   */
+9c1c4b2753fea3 Alan Tull      2017-11-15 @123  struct fpga_bridge *fpga_bridge_get(struct device *dev,
+9c1c4b2753fea3 Alan Tull      2017-11-15  124  				    struct fpga_image_info *info)
+9c1c4b2753fea3 Alan Tull      2017-11-15  125  {
+1da11f822042eb Marco Pagani   2024-03-22  126  	struct fpga_bridge *bridge;
+9c1c4b2753fea3 Alan Tull      2017-11-15  127  	struct device *bridge_dev;
+9c1c4b2753fea3 Alan Tull      2017-11-15  128  
+7bb2d2190d4326 Ivan Orlov     2023-08-11  129  	bridge_dev = class_find_device(&fpga_bridge_class, NULL, dev,
+9c1c4b2753fea3 Alan Tull      2017-11-15  130  				       fpga_bridge_dev_match);
+9c1c4b2753fea3 Alan Tull      2017-11-15  131  	if (!bridge_dev)
+9c1c4b2753fea3 Alan Tull      2017-11-15  132  		return ERR_PTR(-ENODEV);
+9c1c4b2753fea3 Alan Tull      2017-11-15  133  
+1da11f822042eb Marco Pagani   2024-03-22  134  	bridge = __fpga_bridge_get(bridge_dev, info);
+1da11f822042eb Marco Pagani   2024-03-22  135  	if (IS_ERR(bridge))
+1da11f822042eb Marco Pagani   2024-03-22  136  		put_device(bridge_dev);
+1da11f822042eb Marco Pagani   2024-03-22  137  
+1da11f822042eb Marco Pagani   2024-03-22  138  	return bridge;
+9c1c4b2753fea3 Alan Tull      2017-11-15  139  }
+9c1c4b2753fea3 Alan Tull      2017-11-15  140  EXPORT_SYMBOL_GPL(fpga_bridge_get);
+9c1c4b2753fea3 Alan Tull      2017-11-15  141  
+21aeda950c5f84 Alan Tull      2016-11-01  142  /**
+21aeda950c5f84 Alan Tull      2016-11-01  143   * fpga_bridge_put - release a reference to a bridge
+21aeda950c5f84 Alan Tull      2016-11-01  144   *
+21aeda950c5f84 Alan Tull      2016-11-01  145   * @bridge: FPGA bridge
+21aeda950c5f84 Alan Tull      2016-11-01  146   */
+21aeda950c5f84 Alan Tull      2016-11-01 @147  void fpga_bridge_put(struct fpga_bridge *bridge)
+21aeda950c5f84 Alan Tull      2016-11-01  148  {
+21aeda950c5f84 Alan Tull      2016-11-01  149  	dev_dbg(&bridge->dev, "put\n");
+21aeda950c5f84 Alan Tull      2016-11-01  150  
+21aeda950c5f84 Alan Tull      2016-11-01  151  	bridge->info = NULL;
+1da11f822042eb Marco Pagani   2024-03-22  152  	module_put(bridge->br_ops_owner);
+21aeda950c5f84 Alan Tull      2016-11-01  153  	mutex_unlock(&bridge->mutex);
+21aeda950c5f84 Alan Tull      2016-11-01  154  	put_device(&bridge->dev);
+21aeda950c5f84 Alan Tull      2016-11-01  155  }
+21aeda950c5f84 Alan Tull      2016-11-01  156  EXPORT_SYMBOL_GPL(fpga_bridge_put);
+21aeda950c5f84 Alan Tull      2016-11-01  157  
+21aeda950c5f84 Alan Tull      2016-11-01  158  /**
+21aeda950c5f84 Alan Tull      2016-11-01  159   * fpga_bridges_enable - enable bridges in a list
+21aeda950c5f84 Alan Tull      2016-11-01  160   * @bridge_list: list of FPGA bridges
+21aeda950c5f84 Alan Tull      2016-11-01  161   *
+21aeda950c5f84 Alan Tull      2016-11-01  162   * Enable each bridge in the list. If list is empty, do nothing.
+21aeda950c5f84 Alan Tull      2016-11-01  163   *
+8e665c9c1affcb Marco Pagani   2023-07-06  164   * Return: 0 for success or empty bridge list or an error code otherwise.
+21aeda950c5f84 Alan Tull      2016-11-01  165   */
+21aeda950c5f84 Alan Tull      2016-11-01 @166  int fpga_bridges_enable(struct list_head *bridge_list)
+21aeda950c5f84 Alan Tull      2016-11-01  167  {
+21aeda950c5f84 Alan Tull      2016-11-01  168  	struct fpga_bridge *bridge;
+21aeda950c5f84 Alan Tull      2016-11-01  169  	int ret;
+21aeda950c5f84 Alan Tull      2016-11-01  170  
+c37235cce31d5e Moritz Fischer 2017-03-10  171  	list_for_each_entry(bridge, bridge_list, node) {
+21aeda950c5f84 Alan Tull      2016-11-01  172  		ret = fpga_bridge_enable(bridge);
+21aeda950c5f84 Alan Tull      2016-11-01  173  		if (ret)
+21aeda950c5f84 Alan Tull      2016-11-01  174  			return ret;
+21aeda950c5f84 Alan Tull      2016-11-01  175  	}
+21aeda950c5f84 Alan Tull      2016-11-01  176  
+21aeda950c5f84 Alan Tull      2016-11-01  177  	return 0;
+21aeda950c5f84 Alan Tull      2016-11-01  178  }
+21aeda950c5f84 Alan Tull      2016-11-01  179  EXPORT_SYMBOL_GPL(fpga_bridges_enable);
+21aeda950c5f84 Alan Tull      2016-11-01  180  
+21aeda950c5f84 Alan Tull      2016-11-01  181  /**
+21aeda950c5f84 Alan Tull      2016-11-01  182   * fpga_bridges_disable - disable bridges in a list
+21aeda950c5f84 Alan Tull      2016-11-01  183   *
+21aeda950c5f84 Alan Tull      2016-11-01  184   * @bridge_list: list of FPGA bridges
+21aeda950c5f84 Alan Tull      2016-11-01  185   *
+21aeda950c5f84 Alan Tull      2016-11-01  186   * Disable each bridge in the list. If list is empty, do nothing.
+21aeda950c5f84 Alan Tull      2016-11-01  187   *
+8e665c9c1affcb Marco Pagani   2023-07-06  188   * Return: 0 for success or empty bridge list or an error code otherwise.
+21aeda950c5f84 Alan Tull      2016-11-01  189   */
+21aeda950c5f84 Alan Tull      2016-11-01 @190  int fpga_bridges_disable(struct list_head *bridge_list)
+21aeda950c5f84 Alan Tull      2016-11-01  191  {
+21aeda950c5f84 Alan Tull      2016-11-01  192  	struct fpga_bridge *bridge;
+21aeda950c5f84 Alan Tull      2016-11-01  193  	int ret;
+21aeda950c5f84 Alan Tull      2016-11-01  194  
+c37235cce31d5e Moritz Fischer 2017-03-10  195  	list_for_each_entry(bridge, bridge_list, node) {
+21aeda950c5f84 Alan Tull      2016-11-01  196  		ret = fpga_bridge_disable(bridge);
+21aeda950c5f84 Alan Tull      2016-11-01  197  		if (ret)
+21aeda950c5f84 Alan Tull      2016-11-01  198  			return ret;
+21aeda950c5f84 Alan Tull      2016-11-01  199  	}
+21aeda950c5f84 Alan Tull      2016-11-01  200  
+21aeda950c5f84 Alan Tull      2016-11-01  201  	return 0;
+21aeda950c5f84 Alan Tull      2016-11-01  202  }
+21aeda950c5f84 Alan Tull      2016-11-01  203  EXPORT_SYMBOL_GPL(fpga_bridges_disable);
+21aeda950c5f84 Alan Tull      2016-11-01  204  
+21aeda950c5f84 Alan Tull      2016-11-01  205  /**
+21aeda950c5f84 Alan Tull      2016-11-01  206   * fpga_bridges_put - put bridges
+21aeda950c5f84 Alan Tull      2016-11-01  207   *
+21aeda950c5f84 Alan Tull      2016-11-01  208   * @bridge_list: list of FPGA bridges
+21aeda950c5f84 Alan Tull      2016-11-01  209   *
+21aeda950c5f84 Alan Tull      2016-11-01  210   * For each bridge in the list, put the bridge and remove it from the list.
+21aeda950c5f84 Alan Tull      2016-11-01  211   * If list is empty, do nothing.
+21aeda950c5f84 Alan Tull      2016-11-01  212   */
+21aeda950c5f84 Alan Tull      2016-11-01 @213  void fpga_bridges_put(struct list_head *bridge_list)
+21aeda950c5f84 Alan Tull      2016-11-01  214  {
+c37235cce31d5e Moritz Fischer 2017-03-10  215  	struct fpga_bridge *bridge, *next;
+21aeda950c5f84 Alan Tull      2016-11-01  216  	unsigned long flags;
+21aeda950c5f84 Alan Tull      2016-11-01  217  
+c37235cce31d5e Moritz Fischer 2017-03-10  218  	list_for_each_entry_safe(bridge, next, bridge_list, node) {
+21aeda950c5f84 Alan Tull      2016-11-01  219  		fpga_bridge_put(bridge);
+21aeda950c5f84 Alan Tull      2016-11-01  220  
+21aeda950c5f84 Alan Tull      2016-11-01  221  		spin_lock_irqsave(&bridge_list_lock, flags);
+21aeda950c5f84 Alan Tull      2016-11-01  222  		list_del(&bridge->node);
+21aeda950c5f84 Alan Tull      2016-11-01  223  		spin_unlock_irqrestore(&bridge_list_lock, flags);
+21aeda950c5f84 Alan Tull      2016-11-01  224  	}
+21aeda950c5f84 Alan Tull      2016-11-01  225  }
+21aeda950c5f84 Alan Tull      2016-11-01  226  EXPORT_SYMBOL_GPL(fpga_bridges_put);
+21aeda950c5f84 Alan Tull      2016-11-01  227  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
