@@ -1,177 +1,95 @@
-Return-Path: <linux-kernel+bounces-885964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBA6C3464D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:06:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DCCC3465A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91F834EFB0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1CC1881771
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA42C21C5;
-	Wed,  5 Nov 2025 08:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247FB2BFC8F;
+	Wed,  5 Nov 2025 08:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHiP+mHE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZGq89TI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CBE19D093;
-	Wed,  5 Nov 2025 08:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D43919D093;
+	Wed,  5 Nov 2025 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762329962; cv=none; b=OjjrFB2ynEn1sQtjvqUkPA0RwS7v8YF/rI8YjXYyTUlgBd1lkzzz5JPtX5KCEzSasig5ign4O7In4B3llx63TKKegLraDiqHtRUYVzQ9QjmR824ZDHKJFRvaDV2BookGjk+Y++9n61ueNDyAwS1yqGE7iaJGHa5uizNuGH2zRE8=
+	t=1762330030; cv=none; b=Xz497IU79gVt/LVGCXKgV0EKXHhtrFh9wWkz/FfvI12EZTSFQqv0a24zWg+/QUPWyWY69II5xJW2gPS6OnQsxhyPSzLTlJXcCeEJKkVEkCy+tk3o9/0uDCD5ESzG6s/ZQTu3U1DGRks2Miky9bRUIxcB/q6RZGKjfYmvlibXb+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762329962; c=relaxed/simple;
-	bh=CxAJ3KccY2zae38rhawiCFbJ66QYrjoRUmz87TLzoo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fSAySg2GJFxsIiJFxYqv90Wv1wwmp9P+1nTBgwgdkI3w47adV42/UxM3jAFO05nsKmd4Oe0rgDo7ZbZ5uHhVy7HUatx0/akuTZ4HnAyDNM4/LxFfoP6h56+hp1SRAGm/ykFK0xOkxYNWJEEmWqJsMvS2TsFSzcfz6orIbjLVXq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHiP+mHE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE10FC4CEFB;
-	Wed,  5 Nov 2025 08:05:58 +0000 (UTC)
+	s=arc-20240116; t=1762330030; c=relaxed/simple;
+	bh=ysdaCTaAgAss4/GsTrN52AKA2BxvM2SH97zvlE6w+YU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alEvkj/0IGfg96Yi5iChFnB61W/KMiCFBRW6TIOGwNwK1sgnBUEjBePRCUeIYPDejrn2BsPNAGG3opT3lURcGc98+yaQl0Xw1ovk9GFFDikQFOo9MI5lvJHZL+oRIFY63ch4+scwUjtb+AUMigY2IOfBBre9eW9+519HpguNhNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZGq89TI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C75C4CEF8;
+	Wed,  5 Nov 2025 08:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762329960;
-	bh=CxAJ3KccY2zae38rhawiCFbJ66QYrjoRUmz87TLzoo0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sHiP+mHEW8anzc5JEStyDPbaOWOHRf4eTzHGAo9eQ3Ki9ozyyaAJtv/Dvd822zJ+K
-	 pnHZxXnz3ROfAe/cdXJIG7i8OlnVqckVikd0JbtkPDsqK1dxaUtaP6z1Wdz5SEQwgE
-	 S5D+kFFpkjhJRpVyhS7CllzteeYSPuvKw9Mc4+rNOctscU4e13NcCY1bANMQvuk23J
-	 qjv0H7mb6B119OtSCEydDD5Behe8usMvmv22tHcIDaVAalqWUHEWR3F54IOI4sEgua
-	 Z067ylMnz5CkAAGCLpu3F3GZ6ZypHFVSR3DviT8nFIuzgyGuuWphgofAnhYWUR5+yW
-	 VEK+EeAhEeJ0Q==
-Message-ID: <d3f2810f-7361-4a23-adb3-32a73ad50519@kernel.org>
-Date: Wed, 5 Nov 2025 09:05:57 +0100
+	s=k20201202; t=1762330030;
+	bh=ysdaCTaAgAss4/GsTrN52AKA2BxvM2SH97zvlE6w+YU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eZGq89TIXF5jVACh67jprFUvkT789XJgr1728AnIv90SRnE2erOC2+GS9k1mZ2Cqr
+	 /5TwLpSx4Q674iV1MyRjTUJ6F4jPzIKRj0BEZLUMr5yfpitbHJOsbINCrIekDDJX0Q
+	 wlHyVZOvixujHbaGsjty6L7ia/9IxcasojcgwQxZyRLKQedsBbPaBawTfqnq8Zqb6T
+	 YrS31qjL8Nz0LvZPAQpd1UCheROL+7XFDlelNj5fueMnsdWCZMnZDP+qZCuaLUAMa/
+	 T8XMdwMG/mCBz0u2MzIpteeAY1ggDejkTzeqa7orL8/gvZk3pq4o0PtADInXMU2xDR
+	 3lJI04UaXoZZA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vGYXv-000000004tG-1gIA;
+	Wed, 05 Nov 2025 09:07:11 +0100
+Date: Wed, 5 Nov 2025 09:07:11 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Nicolas Dufresne <nicolas@ndufresne.ca>,
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v2 0/2] media: mediatek: fix VPU device leaks on probe
+Message-ID: <aQsFrx_wHor7CAPD@hovoldconsulting.com>
+References: <20251028100454.4086-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-To: Christian Marangi <ansuelsmth@gmail.com>, Ilia Lin <ilia.lin@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251104140635.25965-1-ansuelsmth@gmail.com>
- <20251104140635.25965-2-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251104140635.25965-2-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028100454.4086-1-johan@kernel.org>
 
-On 04/11/2025 15:06, Christian Marangi wrote:
-> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
-> case for some Google devices (the OnHub family) that can't make use of
-> SMEM to detect the SoC ID.
+On Tue, Oct 28, 2025 at 11:04:52AM +0100, Johan Hovold wrote:
+> This series fixes VPU device leaks during probe of the mdp driver.
 > 
-> To handle these specific case, check if the SMEM is not initialized (by
-> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
-> OF machine compatible checking to identify the SoC variant.
+> Included is also a minor documentation update to make it clear that the
+> VPU lookup helper returns the device with an incremented refcount.
 > 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 35 ++++++++++++++++++++++++++--
->  1 file changed, 33 insertions(+), 2 deletions(-)
+> Johan
 > 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> index 3a8ed723a23e..17c79955ff2f 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> @@ -252,13 +252,22 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
->  	return ret;
->  }
->  
-> +static const struct of_device_id qcom_cpufreq_ipq806x_match_list[] = {
-> +	{ .compatible = "qcom,ipq8062", .data = (const void *)QCOM_ID_IPQ8062 },
-> +	{ .compatible = "qcom,ipq8064", .data = (const void *)QCOM_ID_IPQ8064 },
-> +	{ .compatible = "qcom,ipq8065", .data = (const void *)QCOM_ID_IPQ8065 },
-> +	{ .compatible = "qcom,ipq8066", .data = (const void *)QCOM_ID_IPQ8066 },
-> +	{ .compatible = "qcom,ipq8068", .data = (const void *)QCOM_ID_IPQ8068 },
-> +	{ .compatible = "qcom,ipq8069", .data = (const void *)QCOM_ID_IPQ8069 },
-> +};
-> +
->  static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->  					     struct nvmem_cell *speedbin_nvmem,
->  					     char **pvs_name,
->  					     struct qcom_cpufreq_drv *drv)
->  {
-> +	int msm_id = -1, ret = 0;
->  	int speed = 0, pvs = 0;
-> -	int msm_id, ret = 0;
->  	u8 *speedbin;
->  	size_t len;
->  
-> @@ -275,8 +284,30 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->  	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
->  
->  	ret = qcom_smem_get_soc_id(&msm_id);
-> -	if (ret)
-> +	if (ret == -ENODEV) {
-> +		const struct of_device_id *match;
-> +		struct device_node *root;
-> +
-> +		root = of_find_node_by_path("/");
-> +		if (!root) {
-> +			ret = -ENODEV;
-> +			goto exit;
-> +		}
-> +
-> +		/* Fallback to compatible match with no SMEM initialized */
-> +		match = of_match_node(qcom_cpufreq_ipq806x_match_list, root);
+> 
+> Changes in v2
+>  - drop incorrect vcodec patch since that reference leak has already
+>    been fixed by commit bf1d556ad4e0 ("media: mtk-vcodec: abstract
+>    firmware interface") which added the codec release callback
+> 
+> 
+> Johan Hovold (2):
+>   media: mediatek: mdp: fix device leak on probe
+>   media: mediatek: amend vpu_get_plat_device() documentation
 
-Aren't you re-implementing matching machine? Or actually - the socinfo
-driver? You are doing the matching of compatible into SOC ID second
-time. Just do it once - via socinfo driver.
+Looks like I forgot to add Chen-Yu's reviewed-by when respinning:
 
-Best regards,
-Krzysztof
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
