@@ -1,96 +1,132 @@
-Return-Path: <linux-kernel+bounces-886226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9090BC3506F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:04:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85646C350BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DABC4ED664
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24B7560A6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE02C17A0;
-	Wed,  5 Nov 2025 10:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2AmnFIt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9722F3611;
+	Wed,  5 Nov 2025 10:10:11 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3137424A046;
-	Wed,  5 Nov 2025 10:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0482C17B3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762337063; cv=none; b=TT7oxa5MrDz348TYEaEERtdaRFbt0JJStXJyrL73CefbSmProinwDtPSLl0mP8g64RagammuUn9I0NNhh40G/KpoQT+pJeQdN1Qa6j8N1XwF3f+QZ9BQYm0JBgirY/jg+KmoH3pEilFFGVe+FTdtzJcAImkD4k4omH6tMpfg4Ug=
+	t=1762337410; cv=none; b=XTWfwQxvoHxp1Tr1oQP+B4auyY12Ruen8Ke2ejnDtY1/nwRIHjztoTWXn5gcSpya6A++38jiC7NdTqAmNWd3Oz4Wt8VDH2iR0RJc+5t7lmd7OWja4hnDZ4wYpXKZ8oNeyTFLfcLnTXcdynxhHtMcvAyLu2I+FZ+2SZFNDjxBdx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762337063; c=relaxed/simple;
-	bh=LV3t/IbA2SVXHaJRkMqjkj3Vdf3L+S6/Be9lXX1Puy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbDpyKhN3XFc3t5vgf+/SWIyRTUqUajAuy0U1urT965Q7al+9aQunQeIQERc21ndRZT//6Of9BcIUAKfAYiI1vbhn7yPHK4u9p/y/JJSlClNUleZGn0OYfuVAySVxxlq13bqvNiBW2ti0DZ6DQAXRBwkd6oaHh4J00AWGWPtfjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2AmnFIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0218C116D0;
-	Wed,  5 Nov 2025 10:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762337062;
-	bh=LV3t/IbA2SVXHaJRkMqjkj3Vdf3L+S6/Be9lXX1Puy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q2AmnFIt05I4ahJ0WeLdgJvZjP69WlHitoml9mqrsQoZ+EboW6pTCx+v/kRoNG/jJ
-	 TeEV0m+NPo8ECIhr9PmgPKm0ZmW0uvuG1aNOCnymRwwdRzp6zixEKDUpMLY55FvU/q
-	 pc/a//r0CwUk7OMfbsunQHxNPFAfDLDpuNL12+XP7n4xr3NnRphlV61BvSr2QNAfqd
-	 674MqeN7p2GuFNIzj5YdIw5DxzjE47ikwOezjh29gI27Lb3XAeaS2n7+FnKNFIn39q
-	 Bsv5PN+n8pY9928YCZdqnDQ4efwV7STXscbCT+HLcydmjLIbscMzHI5zd8uq1oyIYP
-	 BUoTIlgLmS4bA==
-Date: Wed, 5 Nov 2025 10:04:17 +0000
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net V2 3/3] net/mlx5e: SHAMPO, Fix header formulas for
- higher MTUs and 64K pages
-Message-ID: <aQshIZ88cxfSSNPo@horms.kernel.org>
-References: <1762238915-1027590-1-git-send-email-tariqt@nvidia.com>
- <1762238915-1027590-4-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1762337410; c=relaxed/simple;
+	bh=rzaWTvEZ+GvPQjWgFis8VB8tviMQ0ztqRHkDpGV4jHo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G1yxWKqar50EvZhG7qaqXLrZGOs/5J6SZLNjf8wiHaA7WdiHU9RCyi1cgJQvY4mkDKP5R1pJdUY86DdOAiQU2vwJG4WF+W0+GlKPRbvdwV1rwM4lFlOd84El34EpqSYkhdgvOTl7dTm/BaQG8/Vm6GeW3EEjMZCPRafS0Lniet8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from spb1wst022.omp.ru (87.226.253.162) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Nov
+ 2025 13:09:42 +0300
+From: Karina Yankevich <k.yankevich@omp.ru>
+To: Sandy Huang <hjc@rock-chips.com>
+CC: Karina Yankevich <k.yankevich@omp.ru>, =?UTF-8?q?Heiko=20St=C3=BCbner?=
+	<heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH] drm/rockchip: gem: Fix memory leak when drm object init failed
+Date: Wed, 5 Nov 2025 13:04:39 +0300
+Message-ID: <20251105100439.2780370-1-k.yankevich@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1762238915-1027590-4-git-send-email-tariqt@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/05/2025 09:53:46
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 197782 [Nov 05 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: k.yankevich@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 74 0.3.74
+ 076026cf5b16801374fbd5d19166f5aeefca6115
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;87.226.253.162:7.1.2;spb1wst022.omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 87.226.253.162
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/05/2025 09:55:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/5/2025 9:03:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Tue, Nov 04, 2025 at 08:48:35AM +0200, Tariq Toukan wrote:
-> From: Dragos Tatulea <dtatulea@nvidia.com>
-> 
-> The MLX5E_SHAMPO_WQ_HEADER_PER_PAGE and
-> MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE macros are used directly in
-> several places under the assumption that there will always be more
-> headers per WQE than headers per page. However, this assumption doesn't
-> hold for 64K page sizes and higher MTUs (> 4K). This can be first
-> observed during header page allocation: ksm_entries will become 0 during
-> alignment to MLX5E_SHAMPO_WQ_HEADER_PER_PAGE.
-> 
-> This patch introduces 2 additional members to the mlx5e_shampo_hd struct
-> which are meant to be used instead of the macrose mentioned above.
-> When the number of headers per WQE goes below
-> MLX5E_SHAMPO_WQ_HEADER_PER_PAGE, clamp the number of headers per
-> page and expand the header size accordingly so that the headers
-> for one WQE cover a full page.
-> 
-> All the formulas are adapted to use these two new members.
-> 
-> Fixes: 945ca432bfd0 ("net/mlx5e: SHAMPO, Drop info array")
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+If drm_gem_object_init() call in rockchip_gem_alloc_object() fails
+then rk_obj isn't freed. Fix this by checking drm_gem_object_init()'s
+result.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 6fd0bfe2f7ea ("drm/rockchip: support prime import sg table")
+Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index 6330b883efc3..ad888f9379db 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -284,6 +284,7 @@ static struct rockchip_gem_object *
+ {
+ 	struct rockchip_gem_object *rk_obj;
+ 	struct drm_gem_object *obj;
++	int ret;
+ 
+ 	size = round_up(size, PAGE_SIZE);
+ 
+@@ -295,7 +296,12 @@ static struct rockchip_gem_object *
+ 
+ 	obj->funcs = &rockchip_gem_object_funcs;
+ 
+-	drm_gem_object_init(drm, obj, size);
++	ret = drm_gem_object_init(drm, obj, size);
++	if (ret) {
++		DRM_ERROR("failed to initialize gem object: %d\n", ret);
++		kfree(rk_obj);
++		return ERR_PTR(ret);
++	}
+ 
+ 	return rk_obj;
+ }
+-- 
+2.34.1
 
 
