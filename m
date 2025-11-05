@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-885848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB303C340A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:18:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA43CC340AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2CCD4E539F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FFA425314
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26292BEFF8;
-	Wed,  5 Nov 2025 06:18:26 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799BE2BFC8F;
+	Wed,  5 Nov 2025 06:23:28 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D6176ADE;
-	Wed,  5 Nov 2025 06:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35948263F30;
+	Wed,  5 Nov 2025 06:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762323506; cv=none; b=MES3av3CBkccDXRwZaSZdEMyuvk3bPOS4hWx6yoWcY5n14DIadl6/Yk2C8jg5DvWwCafHGi/+1QASAqqcDYr4VydPy57ajM8bJCN/bCc7gAMOIPPf2BsfNlWWMzu8bx6Gt1dVPlKcOcYevUsCBzXUj2ouOT8dpCJtYZEdWXT0Js=
+	t=1762323808; cv=none; b=ruOKlYp1f0yjAhyazfceR44D3E+x19uMjg1bByRyRnvrYiQ9LGwfhoXPJYlCHh+A1AeNHNnwoxohoROeEadomD9rGIvlGUX9BQqFeUTY85RwVAkqL8WXMi2wvsTC4tiiafVVXqN+VxysaKvHr16idmqh19dc01UZdul63kgvCFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762323506; c=relaxed/simple;
-	bh=oNItNYXlIl55ks6BNKsiGDZADO2Xd45pgssSZji7J0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhpEodpYqU4muxko1YUtviIKjYcWinN+r9smL4pK47gIgMO5/YhKOVHs7MJibG43EJsjJPI3IW/zQnLx5yl3zb2zomtXMsIU58Pyjnfa6RDIGMKbT1fgrIrPpnVU0Yyl7G2jY6P/lVjbAoIbcQYtnJoEhmfjlu5k1PVlXmoT3jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d1ZrP3ws8zKHMn1;
-	Wed,  5 Nov 2025 14:18:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 6931E1A12C3;
-	Wed,  5 Nov 2025 14:18:20 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnUUr7App4GgOCw--.12693S2;
-	Wed, 05 Nov 2025 14:18:20 +0800 (CST)
-Message-ID: <165437cc-d104-4b10-8efb-3da87ed5aa51@huaweicloud.com>
-Date: Wed, 5 Nov 2025 14:18:18 +0800
+	s=arc-20240116; t=1762323808; c=relaxed/simple;
+	bh=VIR9Whq88jpa6u58Lv1evNfzNn7yH1nAJgRyFqo6ot8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TcbPqzMPDJ+PqWcrDZkybrxkHvMigHlXhZeXblfFbB8BCkwJXcaT1Xo5mpuoX6cF2c2EiqnM2vGYO9tLHLZ6yal602er6uo2ZBeja8kqLo2n3MPF6J8Ism4kzFSm5gvw5tdCiSD7yR7pfHaGsRq8XjBBdlQqXgfPvhvK9KQlCUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowABHxexD7QppON+RAQ--.24686S2;
+	Wed, 05 Nov 2025 14:23:01 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: david.rhodes@cirrus.com,
+	rf@opensource.cirrus.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] ASoC: cs4271: Fix regulator leak on probe failure
+Date: Wed,  5 Nov 2025 14:22:46 +0800
+Message-ID: <20251105062246.1955-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH v3 3/5] cgroup/cpuset: Move up
- prstate_housekeeping_conflict() helper
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251105043848.382703-1-longman@redhat.com>
- <20251105043848.382703-4-longman@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251105043848.382703-4-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHnUUr7App4GgOCw--.12693S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF4xKF43CFyruF43ZF47Jwb_yoW8tw1kpF
-	43WrW3GrZ5Xa15G3sxX3WkuwnYgws7JF10yasxGrn5tF17Xw4vvFWq939avFWrXas7WryU
-	ZFZ0kr43uF4xArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABHxexD7QppON+RAQ--.24686S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJrW5KrWDuw1DZryxGr43GFg_yoW8AFy3pr
+	n0qrZYkryUZFyrAr4vyr1fZ3WkurWfta1xG3s7G342vw15t3Z7uF1fKa4YvF97CrWkG3Zr
+	ArW2yrW8CF18CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRARA2kK3AiJOQABsN
 
+The probe function enables regulators at the beginning
+but fails to disable them in its error handling path.
+If any operation after enabling the regulators fails,
+the probe will exit with an error, leaving the regulators
+permanently enabled, which could lead to a resource leak.
 
+Add a proper error handling path to call regulator_bulk_disable()
+before returning an error.
 
-On 2025/11/5 12:38, Waiman Long wrote:
-> Move up the prstate_housekeeping_conflict() helper so that it can be
-> used in remote partition code.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset.c | 40 ++++++++++++++++++++--------------------
->  1 file changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 99622e90991a..cc9c3402f16b 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1432,6 +1432,26 @@ static bool isolated_cpus_can_update(struct cpumask *add_cpus,
->  	return res;
->  }
->  
-> +/*
-> + * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
-> + * @prstate: partition root state to be checked
-> + * @new_cpus: cpu mask
-> + * Return: true if there is conflict, false otherwise
-> + *
-> + * CPUs outside of boot_hk_cpus, if defined, can only be used in an
-> + * isolated partition.
-> + */
-> +static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
-> +{
-> +	if (!have_boot_isolcpus)
-> +		return false;
-> +
-> +	if ((prstate != PRS_ISOLATED) && !cpumask_subset(new_cpus, boot_hk_cpus))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
->  static void update_isolation_cpumasks(bool isolcpus_updated)
->  {
->  	int ret;
-> @@ -1727,26 +1747,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  	remote_partition_disable(cs, tmp);
->  }
->  
-> -/*
-> - * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
-> - * @prstate: partition root state to be checked
-> - * @new_cpus: cpu mask
-> - * Return: true if there is conflict, false otherwise
-> - *
-> - * CPUs outside of boot_hk_cpus, if defined, can only be used in an
-> - * isolated partition.
-> - */
-> -static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
-> -{
-> -	if (!have_boot_isolcpus)
-> -		return false;
-> -
-> -	if ((prstate != PRS_ISOLATED) && !cpumask_subset(new_cpus, boot_hk_cpus))
-> -		return true;
-> -
-> -	return false;
-> -}
-> -
->  /**
->   * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
->   * @cs:      The cpuset that requests change in partition root state
+Fixes: 9a397f473657 ("ASoC: cs4271: add regulator consumer support")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ sound/soc/codecs/cs4271.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Reviewed-by: Chen Ridong <chenridong@huawei.com>
-
+diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
+index 6a3cca3d26c7..ead447a5da7f 100644
+--- a/sound/soc/codecs/cs4271.c
++++ b/sound/soc/codecs/cs4271.c
+@@ -581,17 +581,17 @@ static int cs4271_component_probe(struct snd_soc_component *component)
+ 
+ 	ret = regcache_sync(cs4271->regmap);
+ 	if (ret < 0)
+-		return ret;
++		goto err_disable_regulator;
+ 
+ 	ret = regmap_update_bits(cs4271->regmap, CS4271_MODE2,
+ 				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN,
+ 				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN);
+ 	if (ret < 0)
+-		return ret;
++		goto err_disable_regulator;
+ 	ret = regmap_update_bits(cs4271->regmap, CS4271_MODE2,
+ 				 CS4271_MODE2_PDN, 0);
+ 	if (ret < 0)
+-		return ret;
++		goto err_disable_regulator;
+ 	/* Power-up sequence requires 85 uS */
+ 	udelay(85);
+ 
+@@ -601,6 +601,10 @@ static int cs4271_component_probe(struct snd_soc_component *component)
+ 				   CS4271_MODE2_MUTECAEQUB);
+ 
+ 	return 0;
++
++err_disable_regulator:
++	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->supplies);
++	return ret;
+ }
+ 
+ static void cs4271_component_remove(struct snd_soc_component *component)
 -- 
-Best regards,
-Ridong
+2.50.1.windows.1
 
 
