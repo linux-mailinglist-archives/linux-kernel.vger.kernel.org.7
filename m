@@ -1,253 +1,153 @@
-Return-Path: <linux-kernel+bounces-887405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6552C3824D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB90C38253
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543D31A205CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A161A2069F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56E32EFDAF;
-	Wed,  5 Nov 2025 22:08:26 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A81E2EF65C;
+	Wed,  5 Nov 2025 22:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZuzTvvau"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803F62ECD2E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796AD2ECD2E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762380506; cv=none; b=eDtx/uzKp17is+oP3F2raPcHQTaYm8no0c/6MxQ2r90K34octR7NZfjrfcDeykAUreIynSSh/8rFGalNwPp8pBI56/aO+msR/tOSXFKwF/1NkkxOymdcJViDKmFu6NLAjgnnlQwQFzyyfTueVQXvhXsKbQgJwRNDoCmBWsakHB4=
+	t=1762380534; cv=none; b=UPeZ6IYRkR99UUQ7KKiRdcJqvUwAX5Jfu3Lp5dnhiXDYLXlwXQUEJsrnGXvT/1JMIC0ansPzNSdeXHdc3JegFwuCrvTkf65XNut2OSOw0Bv0af7lzKT+SBMjJCtvWEAgNS8dl92fv2RBp+DVJ0fka9y8iPZpqXBXEtSE4IPt3Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762380506; c=relaxed/simple;
-	bh=jO5A6/0emAC0ankZQl2hqCF6Fyqyn2kff+AFOGzMyds=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nrifhJ7r01Moy+9r8PtKoA8M6IVF9HDVzC6wC/Qo88+rAWecogq4SsjWhmPcO1AB+QxyRVXULXN7pQrWw81eTv8oSyX02uqDEPmtANspadyK9FN0H5+NjEty593cJXGpMdconOD9qbNJzt+EUbjVi76umEOpY75WwXRQiHmKnXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-945c705df24so34923039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:08:24 -0800 (PST)
+	s=arc-20240116; t=1762380534; c=relaxed/simple;
+	bh=V0/4LMEQqLF2yl5mIVJKhC4q1kmRpoVSyzvqC/CD7YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5rqg3Hwwo/fgVWLOckA/g+7aK7SbDiC/9V6vddGPqyP5ztDeN7Lm3/oqv2S1pIrh9KJ7iKi5iUpf6JgkVvuSiCU/IUhFTEW3Rfd2pcxQNBMAuTPsMDsk/vhRpvzS4bPu0B09KzTkvieM7UvIjAZ1lTtmNBHVots4tQJxb66uWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZuzTvvau; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295f937d4c3so2676515ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:08:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762380533; x=1762985333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EeAE9TWlCe7Bgnu8xk3HUgUd+4rmdoqy7XlGmj4hRfU=;
+        b=ZuzTvvau0+25KUiVWzRltWYmOayfBgs6v3zuezgfpMmtGe6orEIU8BqucevBLgbKV4
+         pRdvmtU8wjXsIU4KuQ+MmwM4G0KadmRNOvbcFsPOEtZuUOOSrFmnbohHJ7Bw9ezYSASY
+         tz6EfFwKAIb0/DMx0Tl/3LJjiQCSypfahCXibHKdw6oSZAfkvNsZQe+7HqiXJivMHIrC
+         QvDSJdipdcwDiQLYpKwZb0tJgjGE8S0NCH3WnHZb3q2orcRR0vqdv4vHy/W7mxpSl/Qz
+         QLmlQd2xFFnt8Bzr4Blf03Z3IYM/iXD2bSjt551M+dpOzCURDdvoGGICi/jk+bWwKXQx
+         G1FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762380503; x=1762985303;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rqMwYr3BjHdzinG8ZFoCorMwCsBmiueglpCVzEdIyys=;
-        b=WRFh7a5mF6Xqk6vcLIY1RSf21Qe6kuLi7gTqwR8E3U7EpaZNXVCAdGd0S8P5drvrUh
-         jOz2jBRSLlZgWJp1cGM6QPcYwrnUJTloPR3VsY50Xh2bwlJxo5RnP6lKvYFwexyfS0MM
-         rnVazvsAcJ/Zz2HK5o5ivhetit4YfMlIdzFF0jKSVMaK0XtY7Z4T0qdcMUVdn4G4Shoh
-         R3qMPZ17A8kqRySpOgFD1Qa8IGBwo6cb5EoJ78zZHQAlp+riC798rTVdMtbXhq2chXrl
-         LlfpxeOaGnFcMAbEEOUpjXDBrF0gNv40sf4Eo0uKfYcE17rSTNL/GZ/oWxNAieX+VU+X
-         na0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLIzVIv9Gixo0k4VRsndap9CbXYkZ9l+0QcOFNszwC7J0PY55FrR39fOTlOLPsS56HADnaMMIqnc3ILuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+nTyNv/Ago5nkghJy0INpvdgQ8l9CiExVDESos0Yif3PAKw0Q
-	Buk1JaWjjulDJebJ3GIw//agxRANOMyQSFyP/t5HdAA5gSC0Lf21c1b+WsUeKezBv0QKh+FFSP8
-	s0d3pzEwHjYPSmbZkdYD+c6ITzvQhE2lPetZXiC6hNhFWYMtnzJU6/G70wk4=
-X-Google-Smtp-Source: AGHT+IFxZr/UvsGMSHTbKllzwqi/KTdS3u96fHeL+YXXSHHMTOgS48FzCeJ/mj1UNbG1bd9iomrxlgngiWKK6yE/RxDFQWPYbgyY
+        d=1e100.net; s=20230601; t=1762380533; x=1762985333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EeAE9TWlCe7Bgnu8xk3HUgUd+4rmdoqy7XlGmj4hRfU=;
+        b=d4OUFu6B6jce1K1ZCfshO6oPZNBtK3sIaQQuaqIJFUvtK+F7f4hBjO7NwNYCmlyf6E
+         gpduBMiiGRhJ3GTPYKIPOjkZM3Ez50z8G7PCd3AOVXue7cKGQFHPVVxujssyGFqRAOMz
+         DTE1LPihn5gTFjqtLluePFiwDhMAfb7pknnE0J8ZT2JNEpE0130lcPhmyVLngpk4cZfi
+         AG0bAy2TyOOsrm27HFKCiiJ5dW1eVIjyuyzcMSTqg2nNGZ47RfNfi/yhplSfzF2Smaya
+         3V0F+d7CvLIOcZ72YMo0FWTJa8hpzI25zy7iKBZFMf+MtxXAJciaAKB/+pd5597RkrIE
+         bR5w==
+X-Gm-Message-State: AOJu0YySASgMrdtAditt5Nq6DsBOP2iR0XBQ1JUbxfsvBjruohpy1dv9
+	BpDd6ywGpJ2zNF62MglqOh9j2BhkMtO5ulUxrgeWrI90dm5+aVX8cxTy
+X-Gm-Gg: ASbGncsXpDETxy6RvJu8Kq8Cv+sU5fC4gaVVw8SR0T3bCPrIpvriawDv5jeecNuzzex
+	CXCVS05lPT3SUURD9JhNNCFmfr52wpLCSXyq8xttfhs+pp46uxZRvQ+6YeyM1ql2Fj+h6fKbBLa
+	Q45SXx5w6zixRdhi+j8g2lbVD07so3bVfQFO8GM3Jwcxd0suVByrukhz34eWHa4/zxTUXKvr668
+	6aqTEyCZdtrR0Yu7HRSiWTRalb2RrYBeO1by/WZrczKdEf0xyeiecNLza3l8NjPnyG9oLMKHDUX
+	/7UWRKDIG7lfodQhgQC8Wac19m4dkDvHri87+avIHSGkGaSNlxPQuSwaktb2rcQsK+tiiaR+ppF
+	+QUHuUxiHugBaYsH6mnxjQBaVCpEf0BQMQSdcpIOFiblRY+YNveGjTWhCWTXONMPf7OmSwBhSDA
+	foqWVkobYYvpQQSMwf8QDNiBFsK7g5hg+0JLb9JCPhDQ==
+X-Google-Smtp-Source: AGHT+IGpDqCQ7uz7BDDzSdTdMKF9K0Lqi2UCONpFEXHzAzmBkfXTFSJUaXVOnXLxgtg3uh96KSsmbg==
+X-Received: by 2002:a17:903:1247:b0:290:dc5d:c0d0 with SMTP id d9443c01a7336-2962adb293bmr62585825ad.49.1762380532773;
+        Wed, 05 Nov 2025 14:08:52 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:35dd:7def:e1d1:adfe])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d121cc68sm53191a91.9.2025.11.05.14.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 14:08:52 -0800 (PST)
+Date: Wed, 5 Nov 2025 14:08:49 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 0/4] replace system_wq with system_percpu_wq, added
+ WQ_PERCPU to alloc_workqueue
+Message-ID: <wmsyc3b55efl6wiouxtk6bqwdfeqso35ngv7aaqi6es7vph5xj@u5rwq6cggp6s>
+References: <20251105103523.103622-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdae:0:b0:433:2dd5:f573 with SMTP id
- e9e14a558f8ab-4334ee28845mr20651065ab.3.1762380503691; Wed, 05 Nov 2025
- 14:08:23 -0800 (PST)
-Date: Wed, 05 Nov 2025 14:08:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690bcad7.050a0220.baf87.0076.GAE@google.com>
-Subject: [syzbot] [ext4?] possible deadlock in ext4_destroy_inline_data (2)
-From: syzbot <syzbot+bb2455d02bda0b5701e3@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105103523.103622-1-marco.crivellari@suse.com>
 
-Hello,
+Hi Marco,
 
-syzbot found the following issue on:
+On Wed, Nov 05, 2025 at 11:35:19AM +0100, Marco Crivellari wrote:
+> Hi,
+> 
+> === Current situation: problems ===
+> 
+> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+> 
+> This leads to different scenarios if a work item is scheduled on an
+> isolated CPU where "delay" value is 0 or greater then 0:
+>         schedule_delayed_work(, 0);
+> 
+> This will be handled by __queue_work() that will queue the work item on the
+> current local (isolated) CPU, while:
+> 
+>         schedule_delayed_work(, 1);
+> 
+> Will move the timer on an housekeeping CPU, and schedule the work there.
+> 
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> 
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> === Recent changes to the WQ API ===
+> 
+> The following, address the recent changes in the Workqueue API:
+> 
+> - commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> - commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+> 
+> The old workqueues will be removed in a future release cycle.
+> 
+> === Introduced Changes by this series ===
+> 
+> 1) [P 1-2-3]  Replace uses of system_wq and system_unbound_wq
+> 
+>     system_wq is a per-CPU workqueue, but his name is not clear.
+> 
+>     Because of that, system_wq has been replaced with system_percpu_wq.
+> 
+> 2) [P 4] add WQ_PERCPU to alloc_workqueue()
+> 
+>     This change adds a new WQ_PERCPU flag to explicitly request
+>     alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
 
-HEAD commit:    1c353dc8d962 Merge tag 'media/v6.18-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f3a17c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=bb2455d02bda0b5701e3
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+So neither of these 4 need percpu workqueue and instead are fine to use
+"whatever is free". Maybe we can switch them to use unbound workqueues
+instead?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f64756196024/disk-1c353dc8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c1384c2077fb/vmlinux-1c353dc8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cfa64f995332/bzImage-1c353dc8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bb2455d02bda0b5701e3@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-kworker/u8:8/30962 is trying to acquire lock:
-ffff88807e672708 (&ei->xattr_sem){++++}-{4:4}, at: ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
-ffff88807e672708 (&ei->xattr_sem){++++}-{4:4}, at: ext4_destroy_inline_data+0x28/0xe0 fs/ext4/inline.c:1787
-
-but task is already holding lock:
-ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
-ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
-ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&sbi->s_writepages_rwsem){++++}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
-       percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
-       ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
-       ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
-       do_writepages+0x32e/0x550 mm/page-writeback.c:2604
-       __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
-       writeback_single_inode+0x1f9/0x6a0 fs/fs-writeback.c:1840
-       write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2903
-       iput_final fs/inode.c:1901 [inline]
-       iput+0x830/0xc50 fs/inode.c:1966
-       ext4_xattr_block_set+0x1fce/0x2ac0 fs/ext4/xattr.c:2199
-       ext4_xattr_move_to_block fs/ext4/xattr.c:2664 [inline]
-       ext4_xattr_make_inode_space fs/ext4/xattr.c:2739 [inline]
-       ext4_expand_extra_isize_ea+0x12da/0x1ea0 fs/ext4/xattr.c:2827
-       __ext4_expand_extra_isize+0x30d/0x400 fs/ext4/inode.c:6364
-       ext4_try_to_expand_extra_isize fs/ext4/inode.c:6407 [inline]
-       __ext4_mark_inode_dirty+0x46c/0x700 fs/ext4/inode.c:6485
-       ext4_evict_inode+0x80d/0xee0 fs/ext4/inode.c:254
-       evict+0x504/0x9c0 fs/inode.c:810
-       ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
-       __ext4_fill_super fs/ext4/super.c:5617 [inline]
-       ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
-       get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
-       vfs_get_tree+0x92/0x2b0 fs/super.c:1751
-       fc_mount fs/namespace.c:1208 [inline]
-       do_new_mount_fc fs/namespace.c:3651 [inline]
-       do_new_mount+0x302/0xa10 fs/namespace.c:3727
-       do_mount fs/namespace.c:4050 [inline]
-       __do_sys_mount fs/namespace.c:4238 [inline]
-       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ei->xattr_sem){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
-       ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
-       ext4_destroy_inline_data+0x28/0xe0 fs/ext4/inline.c:1787
-       ext4_do_writepages+0x526/0x4610 fs/ext4/inode.c:2810
-       ext4_writepages+0x205/0x350 fs/ext4/inode.c:3025
-       do_writepages+0x32e/0x550 mm/page-writeback.c:2604
-       __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
-       writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:2015
-       wb_writeback+0x43b/0xaf0 fs/fs-writeback.c:2195
-       wb_do_writeback fs/fs-writeback.c:2342 [inline]
-       wb_workfn+0x409/0xef0 fs/fs-writeback.c:2382
-       process_one_work kernel/workqueue.c:3263 [inline]
-       process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
-       worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
-       kthread+0x711/0x8a0 kernel/kthread.c:463
-       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&sbi->s_writepages_rwsem);
-                               lock(&ei->xattr_sem);
-                               lock(&sbi->s_writepages_rwsem);
-  lock(&ei->xattr_sem);
-
- *** DEADLOCK ***
-
-3 locks held by kworker/u8:8/30962:
- #0: ffff88801c69b948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88801c69b948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc9000b36fba0 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc9000b36fba0 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
- #2: ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
- #2: ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
- #2: ffff8880277c4b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 30962 Comm: kworker/u8:8 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: writeback wb_workfn (flush-7:4)
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
- ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
- ext4_destroy_inline_data+0x28/0xe0 fs/ext4/inline.c:1787
- ext4_do_writepages+0x526/0x4610 fs/ext4/inode.c:2810
- ext4_writepages+0x205/0x350 fs/ext4/inode.c:3025
- do_writepages+0x32e/0x550 mm/page-writeback.c:2604
- __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
- writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:2015
- wb_writeback+0x43b/0xaf0 fs/fs-writeback.c:2195
- wb_do_writeback fs/fs-writeback.c:2342 [inline]
- wb_workfn+0x409/0xef0 fs/fs-writeback.c:2382
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-EXT4-fs error (device loop4): ext4_mb_generate_buddy:1289: group 0, block bitmap and bg descriptor inconsistent: 25 vs 4128793 free clusters
-EXT4-fs (loop4): Delayed block allocation failed for inode 15 at logical offset 0 with max blocks 1 with error 28
-EXT4-fs (loop4): This should not happen!! Data will be lost
-
-EXT4-fs (loop4): Total free blocks count 0
-EXT4-fs (loop4): Free/Dirty block details
-EXT4-fs (loop4): free_blocks=66060288
-EXT4-fs (loop4): dirty_blocks=64
-EXT4-fs (loop4): Block reservation details
-EXT4-fs (loop4): i_reserved_data_blocks=4
-EXT4-fs (loop4): Delayed block allocation failed for inode 15 at logical offset 65537 with max blocks 44 with error 28
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Dmitry
 
