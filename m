@@ -1,182 +1,153 @@
-Return-Path: <linux-kernel+bounces-886342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6D4C354B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:08:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693A6C35533
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11BC3B0674
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:05:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34BE24F1599
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C3330F813;
-	Wed,  5 Nov 2025 11:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="hHOQqHd4"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A4E309F08;
-	Wed,  5 Nov 2025 11:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355EB30FC03;
+	Wed,  5 Nov 2025 11:20:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B483081D5;
+	Wed,  5 Nov 2025 11:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762340707; cv=none; b=dpa9dScnrprIG/vIibDve3KYtCYENaYNHZ1s0OgZvatBVdWAp3Ovb+tDfWCIrFL62ZZUTFiY9JjvCd7LLhZMilcA435D2y8ue527nuHXNYVk7TuQEs1dogNDk648djDAkMYud5Kqz5EK6Gr7pJkaxChpPBj8OyJzrkaegrzD9q4=
+	t=1762341605; cv=none; b=UypRIg85de/LjlVU4EylER7g80BhgC9TuCaapE7PvS4KFfG7xfISRDG4cCNTiV/p1aHqWmVrp2zCQXTkFkA09SdarXoxz/d+hqMnWl3Vqz7sT5ckyY8OmiOgvv8lEBNGxNThT45puseXFDCLFKCQs4NI7FE6Xx8g/jMohzVkPlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762340707; c=relaxed/simple;
-	bh=Fbrkx2MhU9lvTEzh05dOhsEKES26ch45OyV5zMyNgMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pVXNod+QGrCcq8dE4RIrKZMzbcoPSeebS9CzN8HC9sXbLIVaM6j4u/N2PaFjZW4lPJuX/sT1oKZvXme1LU6DCbQoN/zexvSMsmHEpZIubThdOT8+Kz348lHIJ2MXZbgmogpYS4DQO6y7Lt3lJO4FjQ0gGPlK08ibuFbtTye9AuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=hHOQqHd4; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [129.217.186.196] ([129.217.186.196])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A5B4xbN012832
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 5 Nov 2025 12:04:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1762340700;
-	bh=Fbrkx2MhU9lvTEzh05dOhsEKES26ch45OyV5zMyNgMA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hHOQqHd46ywJlGrOjkw4ZGuyd/a+qflaNOEERuKc4UyJdpTNzc0JmATSFUhgd8zQZ
-	 hCFEltifg3wb18xnLufVue3ya2r9dU+N6CaxDmn8vbgiwYBNGHVmSEmteKyI3hHtTQ
-	 Wmv/FKRWXa1v4Na6wUJGfFmh3fmVU+4Sm0Bd8XUE=
-Message-ID: <c29f8763-6e0e-4601-90be-e88769d23d2a@tu-dortmund.de>
-Date: Wed, 5 Nov 2025 12:04:59 +0100
+	s=arc-20240116; t=1762341605; c=relaxed/simple;
+	bh=TapBhVgQzm2A+wV0+EICT9kNVYEysKeqSw5mgwHSFA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvOo9RcvKS+oZ47/BjYjN9FAeT1NUwwkgREswvpRafiTmNS52XHu755hq7VMiB3YMYPhXj3/xK45npdyqKx3drfOCmqUTly4kkg0uHFJ4DtjWb816p1aMUCwP3xozj4Rs8uNxXrEUoX7zbcMbaU76qMLG1jTkyfyg+8WHBwmtdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d1jHd2Y2rz9sSf;
+	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id y4uEqxYbuSVd; Wed,  5 Nov 2025 12:08:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d1jHd1Pgxz9sSb;
+	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1E3F68B76E;
+	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id x-YBUja5U7Aw; Wed,  5 Nov 2025 12:08:45 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 76C418B76D;
+	Wed,  5 Nov 2025 12:08:44 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Peter Xu <peterx@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Paul Walmsley <pjw@kernel.org>
+Subject: [PATCH RESEND v2] asm-generic: Remove pud_user() from pgtable-nopmd.h
+Date: Wed,  5 Nov 2025 12:08:07 +0100
+Message-ID: <ae329757996213171c92495e4e4ad698c24f9d42.1762340395.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v1 0/1] usbnet: Add support for Byte Queue Limits
- (BQL)
-To: Daniele Palmas <dnlplm@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, oneukum@suse.com,
-        andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
- <CANn89iLLwWvbnCKKRrV2c7eo+4UduLVgZUWR=ZoZ+SPHRGf=wg@mail.gmail.com>
- <f2a363d3-40d7-4a5f-a884-ec147a167ef5@tu-dortmund.de>
- <CAGRyCJERd93kE3BsoXCVRuRAVuvubt5udcyNMuEZBTcq2r+hcw@mail.gmail.com>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <CAGRyCJERd93kE3BsoXCVRuRAVuvubt5udcyNMuEZBTcq2r+hcw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2987; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=TapBhVgQzm2A+wV0+EICT9kNVYEysKeqSw5mgwHSFA8=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWRyG4hv2mLy/4if7bKly48+d1CtzVdk/3JzVc7i9B/9/ QJPa2dEdZSyMIhxMciKKbIc/8+9a0bXl9T8qbv0YeawMoEMYeDiFICJMJxgZOhZ2VexMVfobuPp 3m1vTzlHujFxKxYs5V94XuDiBfNXNfkM/3S3n/334qvct9N2J/xrHmnNLT7BpmYSlZAhsGuH0ZE 7yhwA
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
 Content-Transfer-Encoding: 8bit
 
-On 11/5/25 11:35, Daniele Palmas wrote:
-> Hello Simon,
-> 
-> Il giorno mer 5 nov 2025 alle ore 11:40 Simon Schippers
-> <simon.schippers@tu-dortmund.de> ha scritto:
->>
->> On 11/4/25 18:02, Eric Dumazet wrote:
->>> On Tue, Nov 4, 2025 at 8:14 AM Simon Schippers
->>> <simon.schippers@tu-dortmund.de> wrote:
->>>>
->>>> During recent testing, I observed significant latency spikes when using
->>>> Quectel 5G modems under load. Investigation revealed that the issue was
->>>> caused by bufferbloat in the usbnet driver.
->>>>
->>>> In the current implementation, usbnet uses a fixed tx_qlen of:
->>>>
->>>> USB2: 60 * 1518 bytes = 91.08 KB
->>>> USB3: 60 * 5 * 1518 bytes = 454.80 KB
->>>>
->>>> Such large transmit queues can be problematic, especially for cellular
->>>> modems. For example, with a typical celluar link speed of 10 Mbit/s, a
->>>> fully occupied USB3 transmit queue results in:
->>>>
->>>> 454.80 KB / (10 Mbit/s / 8 bit/byte) = 363.84 ms
->>>>
->>>> of additional latency.
->>>
->>> Doesn't 5G need to push more packets to the driver to get good aggregation ?
->>>
->>
->> Yes, but not 455 KB for low speeds. 5G requires a queue of a few ms to
->> aggregate enough packets for a frame but not of several hundred ms as
->> calculated in my example. And yes, there are situations where 5G,
->> especially FR2 mmWave, reaches Gbit/s speeds where a big queue is
->> required. But the dynamic queue limit approach of BQL should be well
->> suited for these varying speeds.
->>
-> 
-> out of curiosity, related to the test with 5G Quectel, did you test
-> enabling aggregation through QMAP (kernel module rmnet) or simply
-> qmi_wwan raw_ip ?
-> 
-> Regards,
-> Daniele
-> 
+Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
 
-Hi Daniele,
+But pud_user() only exists on ARM64 and RISCV and is not expected
+by any part of MM.
 
-I simply used qmi_wwan. I actually never touched rmnet before.
-Is the aggregation through QMAP what you and Eric mean with aggregation?
-Because then I misunderstood it, because I was thinking about aggregating
-enough (and not too many) packets in the usbnet queue.
+Add the missing definition in arch/riscv/include/asm/pgtable-32.h
+and remove it from asm-generic/pgtable-nopmd.h
 
-Thanks
+A stub pud_user() is also required for ARM64 after
+commit ed928a3402d8 ("arm64/mm: fix page table check compile
+error for CONFIG_PGTABLE_LEVELS=2")
 
->>>>
->>>> To address this issue, this patch introduces support for
->>>> Byte Queue Limits (BQL) [1][2] in the usbnet driver. BQL dynamically
->>>> limits the amount of data queued in the driver, effectively reducing
->>>> latency without impacting throughput.
->>>> This implementation was successfully tested on several devices as
->>>> described in the commit.
->>>>
->>>>
->>>>
->>>> Future work
->>>>
->>>> Due to offloading, TCP often produces SKBs up to 64 KB in size.
->>>
->>> Only for rates > 500 Mbit. After BQL, we had many more improvements in
->>> the stack.
->>> https://lwn.net/Articles/564978/
->>>
->>>
->>
->> I also saw these large SKBs, for example, for my USB2 Android tethering,
->> which advertises a network speed of < 500 Mbit/s.
->> I saw these large SKBs by looking at the file:
->>
->> cat /sys/class/net/INTERFACE/queues/tx-0/byte_queue_limits/inflight
->>
->> For UDP-only traffic, inflight always maxed out at MTU size.
->>
->> Thank you for your replies!
->>
->>>> To
->>>> further decrease buffer bloat, I tried to disable TSO, GSO and LRO but it
->>>> did not have the intended effect in my tests. The only dirty workaround I
->>>> found so far was to call netif_stop_queue() whenever BQL sets
->>>> __QUEUE_STATE_STACK_XOFF. However, a proper solution to this issue would
->>>> be desirable.
->>>>
->>>> I also plan to publish a scientific paper on this topic in the near
->>>> future.
->>>>
->>>> Thanks,
->>>> Simon
->>>>
->>>> [1] https://medium.com/@tom_84912/byte-queue-limits-the-unauthorized-biography-61adc5730b83
->>>> [2] https://lwn.net/Articles/469652/
->>>>
->>>> Simon Schippers (1):
->>>>   usbnet: Add support for Byte Queue Limits (BQL)
->>>>
->>>>  drivers/net/usb/usbnet.c | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> --
->>>> 2.43.0
->>>>
->>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Paul Walmsley <pjw@kernel.org> # riscv
+---
+Resend of https://lore.kernel.org/all/c2c9fc69871a7caaa205e237ff73557f19f5e176.1755509286.git.christophe.leroy@csgroup.eu/
+
+I was expecting Arnd to take this patch as it is on asm-generic, but maybe Andrew should take it as it is linked to mmu management ?
+
+v2: Change ARM64 pud_user macro to pud_user(pud)
+---
+ arch/arm64/include/asm/pgtable.h    | 1 +
+ arch/riscv/include/asm/pgtable-32.h | 5 +++++
+ include/asm-generic/pgtable-nopmd.h | 1 -
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index aa89c2e67ebc8..256ce4a6162e9 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -960,6 +960,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
+ 
+ #define pud_valid(pud)		false
+ #define pud_page_paddr(pud)	({ BUILD_BUG(); 0; })
++#define pud_user(pud)		false /* Always 0 with folding */
+ #define pud_user_exec(pud)	pud_user(pud) /* Always 0 with folding */
+ 
+ /* Match pmd_offset folding in <asm/generic/pgtable-nopmd.h> */
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index 00f3369570a83..37878ef374668 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -36,4 +36,9 @@
+ static const __maybe_unused int pgtable_l4_enabled;
+ static const __maybe_unused int pgtable_l5_enabled;
+ 
++static inline int pud_user(pud_t pud)
++{
++	return 0;
++}
++
+ #endif /* _ASM_RISCV_PGTABLE_32_H */
+diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
+index 8ffd64e7a24cb..b01349a312fa7 100644
+--- a/include/asm-generic/pgtable-nopmd.h
++++ b/include/asm-generic/pgtable-nopmd.h
+@@ -30,7 +30,6 @@ typedef struct { pud_t pud; } pmd_t;
+ static inline int pud_none(pud_t pud)		{ return 0; }
+ static inline int pud_bad(pud_t pud)		{ return 0; }
+ static inline int pud_present(pud_t pud)	{ return 1; }
+-static inline int pud_user(pud_t pud)		{ return 0; }
+ static inline int pud_leaf(pud_t pud)		{ return 0; }
+ static inline void pud_clear(pud_t *pud)	{ }
+ #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
+-- 
+2.49.0
+
 
