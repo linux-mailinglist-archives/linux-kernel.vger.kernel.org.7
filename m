@@ -1,146 +1,304 @@
-Return-Path: <linux-kernel+bounces-886604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF8CC360A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:25:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3A8C360AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41DAE34EAC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:25:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 300724F6E8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA4532D7F9;
-	Wed,  5 Nov 2025 14:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24408326D42;
+	Wed,  5 Nov 2025 14:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mVAGaCwc";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mVAGaCwc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HJp4djmW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nFXvyqis"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB01E32A3E5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7B322A1F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352694; cv=none; b=BiKxkB96MHC4pCvLOx/C/9eRZ+zCbuzQ69i5anu7qWKmExLXNkw+8Nt+WWmZexovCF7xXWhImWBLLfvHwoAwLN3QHm40kwECDv09saVZX5Xqseui7o8CsWadnt7d1lEnWJlvigmMY1t4/bFiaPfrTpKCKU/1HuVKp8CWmNWbebc=
+	t=1762352635; cv=none; b=DLtk9zb+DrsWQ6IO1FQFCzDXykegLEUYRUWR66lCX1u9AlgCkV2PQgxbLMkO85+JcgOhdXuZ/8XhAFNgyrBIIYVON2PRdODF5IVNfyY0iPAmn8Qe4XJ6/r8Dd2+cYnizMvYTIJ4a8WExhJ2HmV9uGz8/675xHVqzy/ETurvGqdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352694; c=relaxed/simple;
-	bh=RP9/Pa7uZjadz5VS6K6Zhwhg0tGtMF7soZM7ynErla8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZcG4iW5YqscM2qX4LzuqeT7p+woJNYu4R0+dcyGKtXI75A3GQxh3WYNGhjaCitmrtv3ss5Vnjj25LXTY0wLOGyJIV9DeAP0bWVXpWwDUkalV/Wy5JukatraHCYg44M6LnWzhcssnu5S3p7z0dC5i+T29cjVlzd6nJxFPdc+iKgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mVAGaCwc; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mVAGaCwc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from pathway.suse.cz (unknown [10.100.201.202])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 2044B1F78C;
-	Wed,  5 Nov 2025 14:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762352688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	s=arc-20240116; t=1762352635; c=relaxed/simple;
+	bh=ORa2mc535ki4VMcqM25iJIzQMzqPwUPst2CgyjSCA9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdPHpjuT7/yXpj92r8ZT5ivSvKzD5vFysH+4sTpATOuwAD3I6LB7902K1sXKLeWx02Vk2aqhgipicSHW26dqWgS0CaLDnkt6ONfO6DLV0/eMprszq4g9BR+DiIa2PDX0Fs5ZcQwf8Vg/ulOloIoase/dmKKDYmqdZwDfekCJCqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HJp4djmW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nFXvyqis; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 5 Nov 2025 15:23:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762352631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlN6ktgHSU/f8xH1FiBJde/pat8uEOiShatc5EeBNHs=;
-	b=mVAGaCwcbsJpndDfUnlSuIcgdhIek4f/E7+V6Yc6PvrDAcnQ5eqSHbT2gjbR4qNcL7iJJd
-	sExiflclqJoQRuQ96t6mQscJ0k2ySEwMCNw1Mv1lolANBTUTHKCXaTOnNgwYgcVtboqVD2
-	iEgRYj0JjHme7pep4TteiPW4O/6wr7A=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762352688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	bh=+juK1+gRSqfbuSXsQTPBdpEKeJJQ3k7UNEjWqXNTIcM=;
+	b=HJp4djmW5iRlZBVpPJHJx6Eu/jzjLq+gk75Qs6XZKavssYsXAQgIfOhKumQjqlmaTX/3fN
+	5nVTwBlqOjoQpjajyXr/kv8BNE7mcxDSIcWiej8aWm0XVznTjl/qtuhb0n2cUxeLxvKjPa
+	HygRJTMXGv1RtZS5uTZ+znsMnwapehDZSmZIxoHNGCsh/T88ceNYagkvpmJbAkGGc5BCQU
+	f9KXEZJkIyzQNKveh/Zew3o+piC/1sVCZnsHC2OuF/ujDqBjaC1RHgkpGTR4F8UcYThJ7D
+	mqTejTBLdm0332AwqLkSg6s2veOtertzMBponFBiCfYGtGezol8JWAFyq38NYw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762352631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlN6ktgHSU/f8xH1FiBJde/pat8uEOiShatc5EeBNHs=;
-	b=mVAGaCwcbsJpndDfUnlSuIcgdhIek4f/E7+V6Yc6PvrDAcnQ5eqSHbT2gjbR4qNcL7iJJd
-	sExiflclqJoQRuQ96t6mQscJ0k2ySEwMCNw1Mv1lolANBTUTHKCXaTOnNgwYgcVtboqVD2
-	iEgRYj0JjHme7pep4TteiPW4O/6wr7A=
-From: Petr Mladek <pmladek@suse.com>
-To: Petr Pavlu <petr.pavlu@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 6/6] kallsyms: Prevent module removal when printing module name and buildid
-Date: Wed,  5 Nov 2025 15:23:18 +0100
-Message-ID: <20251105142319.1139183-7-pmladek@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251105142319.1139183-1-pmladek@suse.com>
-References: <20251105142319.1139183-1-pmladek@suse.com>
+	bh=+juK1+gRSqfbuSXsQTPBdpEKeJJQ3k7UNEjWqXNTIcM=;
+	b=nFXvyqisiUNtbl00k/3i3smaai3wygnP+kWYhqDuRY5ggUIUZwESfB9OQ4d5AeKzfjBe9G
+	p9zod+Jrl9118wAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Waiman Long <llong@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v2] locking/mutex: Redo __mutex_init()
+Message-ID: <20251105142350.Tfeevs2N@linutronix.de>
+References: <20251104140023.jV9j77ld@linutronix.de>
+ <4207482b-fc63-4db7-ab98-36b31a600173@redhat.com>
+ <20251105075729.SJ4cL1rz@linutronix.de>
+ <10899bd0-09ca-4fcf-8142-3d5cd6e4fedf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_CC(0.00)[iogearbox.net,gmail.com,kernel.org,arm.com,google.com,vger.kernel.org,suse.com];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
-	R_RATELIMIT(0.00)[to_ip_from(RLh88t7rzwwfj8wh1imqozhtme)];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
-X-Spam-Score: -5.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <10899bd0-09ca-4fcf-8142-3d5cd6e4fedf@redhat.com>
 
-kallsyms_lookup_buildid() copies the symbol name into the given buffer
-so that it can be safely read anytime later. But it just copies pointers
-to mod->name and mod->build_id which might get reused after the related
-struct module gets removed.
+mutex_init() invokes __mutex_init() providing the name of the lock and
+a pointer to a the lock class. With LOCKDEP enabled this information is
+useful but without LOCKDEP it not used at all. Passing the pointer
+information of the lock class might be considered negligible but the
+name of the lock is passed as well and the string is stored. This
+information is wasting storage.
 
-The lifetime of struct module is synchronized using RCU. Take the rcu
-read lock for the entire __sprint_symbol().
+Split __mutex_init() into a _genereic() variant doing the initialisation
+of the lock and a _lockdep() version which does _genereic() plus the
+lockdep bits. Restrict the lockdep version to lockdep enabled builds
+allowing the compiler to remove the unused parameter.
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+This results in the following size reduction:
+
+      text     data       bss        dec  filename
+| 30237599  8161430   1176624   39575653  vmlinux.defconfig
+| 30233269  8149142   1176560   39558971  vmlinux.defconfig.patched
+   -4.2KiB   -12KiB
+
+| 32455099  8471098  12934684   53860881  vmlinux.defconfig.lockdep
+| 32455100  8471098  12934684   53860882  vmlinux.defconfig.patched.lockdep
+
+| 27152407  7191822   2068040   36412269  vmlinux.defconfig.preempt_rt
+| 27145937  7183630   2067976   36397543  vmlinux.defconfig.patched.preempt=
+_rt
+   -6.3KiB    -8KiB
+
+| 29382020  7505742  13784608   50672370  vmlinux.defconfig.preempt_rt.lock=
+dep
+| 29376229  7505742  13784544   50666515  vmlinux.defconfig.patched.preempt=
+_rt.lockdep
+   -5.6KiB
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/kallsyms.c | 3 +++
- 1 file changed, 3 insertions(+)
+v1=E2=80=A6v2:
+  - s/_init_ld/_init_lockep/
+  - s/_init_plain/_init_generic/
 
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index ff7017337535..1fda06b6638c 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -468,6 +468,9 @@ static int __sprint_symbol(char *buffer, unsigned long address,
- 	unsigned long offset, size;
- 	int len;
- 
-+	/* Prevent module removal until modname and modbuildid are printed */
-+	guard(rcu)();
+ include/linux/mutex.h        | 45 ++++++++++++++++++++++++++++--------
+ kernel/locking/mutex.c       | 22 +++++++++++++-----
+ kernel/locking/rtmutex_api.c | 19 +++++++++++----
+ 3 files changed, 66 insertions(+), 20 deletions(-)
+
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 847b81ca64368..bf535f0118bb8 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -86,8 +86,23 @@ do {									\
+ #define DEFINE_MUTEX(mutexname) \
+ 	struct mutex mutexname =3D __MUTEX_INITIALIZER(mutexname)
+=20
+-extern void __mutex_init(struct mutex *lock, const char *name,
+-			 struct lock_class_key *key);
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++void mutex_init_lockep(struct mutex *lock, const char *name, struct lock_c=
+lass_key *key);
 +
- 	address += symbol_offset;
- 	len = kallsyms_lookup_buildid(address, &size, &offset, &modname, &buildid,
- 				       buffer);
--- 
-2.51.1
++static inline void __mutex_init(struct mutex *lock, const char *name,
++				struct lock_class_key *key)
++{
++	mutex_init_lockep(lock, name, key);
++}
++#else
++extern void mutex_init_generic(struct mutex *lock);
++
++static inline void __mutex_init(struct mutex *lock, const char *name,
++				struct lock_class_key *key)
++{
++	mutex_init_generic(lock);
++}
++#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
+=20
+ /**
+  * mutex_is_locked - is the mutex locked
+@@ -111,17 +126,27 @@ extern bool mutex_is_locked(struct mutex *lock);
+ #define DEFINE_MUTEX(mutexname)						\
+ 	struct mutex mutexname =3D __MUTEX_INITIALIZER(mutexname)
+=20
+-extern void __mutex_rt_init(struct mutex *lock, const char *name,
+-			    struct lock_class_key *key);
+-
+ #define mutex_is_locked(l)	rt_mutex_base_is_locked(&(l)->rtmutex)
+=20
+-#define __mutex_init(mutex, name, key)			\
+-do {							\
+-	rt_mutex_base_init(&(mutex)->rtmutex);		\
+-	__mutex_rt_init((mutex), name, key);		\
+-} while (0)
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++extern void mutex_rt_init_lockdep(struct mutex *mutex, const char *name,
++			     struct lock_class_key *key);
+=20
++static inline void __mutex_init(struct mutex *lock, const char *name,
++				struct lock_class_key *key)
++{
++	mutex_rt_init_lockdep(lock, name, key);
++}
++
++#else
++extern void mutex_rt_init_generic(struct mutex *mutex);
++
++static inline void __mutex_init(struct mutex *lock, const char *name,
++				struct lock_class_key *key)
++{
++	mutex_rt_init_generic(lock);
++}
++#endif /* !CONFIG_LOCKDEP */
+ #endif /* CONFIG_PREEMPT_RT */
+=20
+ #ifdef CONFIG_DEBUG_MUTEXES
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index de7d6702cd96c..f3bb352a368d9 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -43,8 +43,7 @@
+ # define MUTEX_WARN_ON(cond)
+ #endif
+=20
+-void
+-__mutex_init(struct mutex *lock, const char *name, struct lock_class_key *=
+key)
++static void __mutex_init_generic(struct mutex *lock)
+ {
+ 	atomic_long_set(&lock->owner, 0);
+ 	raw_spin_lock_init(&lock->wait_lock);
+@@ -52,10 +51,7 @@ __mutex_init(struct mutex *lock, const char *name, struc=
+t lock_class_key *key)
+ #ifdef CONFIG_MUTEX_SPIN_ON_OWNER
+ 	osq_lock_init(&lock->osq);
+ #endif
+-
+-	debug_mutex_init(lock, name, key);
+ }
+-EXPORT_SYMBOL(__mutex_init);
+=20
+ static inline struct task_struct *__owner_task(unsigned long owner)
+ {
+@@ -142,6 +138,11 @@ static inline bool __mutex_trylock(struct mutex *lock)
+  * There is nothing that would stop spreading the lockdep annotations outw=
+ards
+  * except more code.
+  */
++void mutex_init_generic(struct mutex *lock)
++{
++	__mutex_init_generic(lock);
++}
++EXPORT_SYMBOL(mutex_init_generic);
+=20
+ /*
+  * Optimistic trylock that only works in the uncontended case. Make sure to
+@@ -166,7 +167,16 @@ static __always_inline bool __mutex_unlock_fast(struct=
+ mutex *lock)
+=20
+ 	return atomic_long_try_cmpxchg_release(&lock->owner, &curr, 0UL);
+ }
+-#endif
++
++#else /* !CONFIG_DEBUG_LOCK_ALLOC */
++
++void mutex_init_lockep(struct mutex *lock, const char *name, struct lock_c=
+lass_key *key)
++{
++	__mutex_init_generic(lock);
++	debug_mutex_init(lock, name, key);
++}
++EXPORT_SYMBOL(mutex_init_lockep);
++#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
+=20
+ static inline void __mutex_set_flag(struct mutex *lock, unsigned long flag)
+ {
+diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
+index bafd5af98eaec..59dbd29cb219b 100644
+--- a/kernel/locking/rtmutex_api.c
++++ b/kernel/locking/rtmutex_api.c
+@@ -515,13 +515,11 @@ void rt_mutex_debug_task_free(struct task_struct *tas=
+k)
+=20
+ #ifdef CONFIG_PREEMPT_RT
+ /* Mutexes */
+-void __mutex_rt_init(struct mutex *mutex, const char *name,
+-		     struct lock_class_key *key)
++static void __mutex_rt_init_generic(struct mutex *mutex)
+ {
++	rt_mutex_base_init(&mutex->rtmutex);
+ 	debug_check_no_locks_freed((void *)mutex, sizeof(*mutex));
+-	lockdep_init_map_wait(&mutex->dep_map, name, key, 0, LD_WAIT_SLEEP);
+ }
+-EXPORT_SYMBOL(__mutex_rt_init);
+=20
+ static __always_inline int __mutex_lock_common(struct mutex *lock,
+ 					       unsigned int state,
+@@ -542,6 +540,13 @@ static __always_inline int __mutex_lock_common(struct =
+mutex *lock,
+ }
+=20
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
++void mutex_rt_init_lockdep(struct mutex *mutex, const char *name, struct l=
+ock_class_key *key)
++{
++	__mutex_rt_init_generic(mutex);
++	lockdep_init_map_wait(&mutex->dep_map, name, key, 0, LD_WAIT_SLEEP);
++}
++EXPORT_SYMBOL(mutex_rt_init_lockdep);
++
+ void __sched mutex_lock_nested(struct mutex *lock, unsigned int subclass)
+ {
+ 	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, subclass, NULL, _RET_IP_);
+@@ -598,6 +603,12 @@ int __sched _mutex_trylock_nest_lock(struct mutex *loc=
+k,
+ EXPORT_SYMBOL_GPL(_mutex_trylock_nest_lock);
+ #else /* CONFIG_DEBUG_LOCK_ALLOC */
+=20
++void mutex_rt_init_generic(struct mutex *mutex)
++{
++	__mutex_rt_init_generic(mutex);
++}
++EXPORT_SYMBOL(mutex_rt_init_generic);
++
+ void __sched mutex_lock(struct mutex *lock)
+ {
+ 	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, 0, NULL, _RET_IP_);
+--=20
+2.51.0
 
 
