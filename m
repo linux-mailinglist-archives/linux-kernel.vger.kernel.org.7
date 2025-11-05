@@ -1,198 +1,162 @@
-Return-Path: <linux-kernel+bounces-887151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A3EC3765B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:54:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D033C3761F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709901A227FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:53:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A64E91D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A5433C51A;
-	Wed,  5 Nov 2025 18:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD530311966;
+	Wed,  5 Nov 2025 18:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXyOXnbM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmSSc534"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599DA3346A6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312652BE7D9
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762368719; cv=none; b=t2FLqsAKDUMym3oLjVMoH4N2RGKJ+Iv8hzQVjF8X9e0+LfR5ymPA9Dh1kqFeW2dbVKx+oJ5TIEWCawb1OCJd3gvjM/aUgKIJzFZqFK9drJhPgqbp9eZccFvPf+0DBlO1VTF9NkmiE9eiphUWhHNBaCWmso7yfhVQOYEirnUVXy8=
+	t=1762368653; cv=none; b=IUkiGYVmbDKyxqzG7e+x+9O8FodFBetDuZpizJscEueKzp8G+WcTbngBxGj3EzXZhUsRIoHOpdPl68vSedAyDwibdK2wvmfaLFB7tVzhrKzPXUsqIRrO1DzdQ6yqgoddCaPF2CI46kaQxWhC1WZ6XNmVEol6UobqAVnxt4EOmYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762368719; c=relaxed/simple;
-	bh=u/gAyqSUxMX8K7Hu0QsI/GxoItfu1jrZOjfT1JOwcTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hhDVo/B80N6uuCSXLz2jdJGyN3qnG+kmbDLX+IrR8DDelOIsIVdl9W2dmmD+ZXo4a9FKsD73e+pUgG4XdlZ7nrKNWuKd4Tre4x7qqwwTcUQDsqzc5sy5v7UYcMupDVOENYYE1KP6SDkF1A9pC0v8i5mYhmAIso7kyPALW6spMbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXyOXnbM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so190281b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:51:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762368718; x=1762973518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMA7sw10zzBGTRnd6W864RCQYC44z+Ca26/lGGYhhvE=;
-        b=EXyOXnbMnHU6FjpX+iJlLJx/7cCewfa7674wxIvklsYiEL7rETLaEO5JSv/S2z+PDt
-         qGnMLH0BT0mWpd35Dz73tVRs6z5Y+cjIlOAf/SrwT6/d0/nZ4Qq911LW2CkHWypNHKm+
-         wnQfRpFZvhXlrdQlSIw1lf2uSix0/LDuwoFwc5hLc9/sobqMNOQYYkhF7QTLvCsru3Kh
-         Jw5udl+fZdgguvax/7QvYAyaHkaqALjQbQ/1nX4vFifLUmoIg7n9M11RuxXJRUG0PX7l
-         jbMGZ+Jr+7gyW3teNb/m0HKliQUd1g+6B9UEX25urhs2QgxBo0VDI/x05pxDJpqkMpf2
-         cVYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762368718; x=1762973518;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hMA7sw10zzBGTRnd6W864RCQYC44z+Ca26/lGGYhhvE=;
-        b=DjuxLTwGtr4HIVL7HYFKzYA1nnJ+8MG1Pj8kZf7rRTCoGJ79qOrfgTlD+Moa2M3dSp
-         zkvYQSsIQ104JJL2QBicIdDpIPgkxlM7jS3++ygnl1fwk2oB0gL9UWQ6V1++UWDmegiy
-         /9CucZyJI5KBSKAVe0CdqYw3C4YY8d7s4Q7/CvYtUSManKp1oliHURhHwEE6m/1bp4KF
-         GWujyEpr1ufsQX2bYyvgGdQJqnzJIbu09ehd8hC2QIg4lqrexMrgSu7dg2Et1v9MIPOO
-         ZAkw6xbjWVKGMx0mQdSe30lv0DGfLK1YaSR2taE8CWR7VhwEbCl68zL613CuCvnyDNA5
-         jycw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcM/N6E0NExZ0WpZ8G/CdWa3DCaHiY5eOQDvvS6zhtJKoKzUO/Ifgl+L6FlNf8B0wOaMG/FoqbEu5Rrek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8+0NZeIqZeWoCmPCK1WMKUNqf6BGiQ6LOHq5cOGQ3lyYFRsUF
-	zrSBwOWNpJT4x/tFWlgClBVVysLvJU15vXBl4nkvVa/n6QUFoAW0ozol
-X-Gm-Gg: ASbGncu3iAiERS87GlPIo9XC7vPyL2hLQogkIbLHFTCgYewb8iD8PFzi6stKi1UoTOP
-	TnE+gpfOVGz9I2J87e4SRs1zkgrDHR7mr4RbOejf8L4/0nucGPXXBKYxqno1rTz2WNRG1HaThF9
-	yzlg8rWSSSJwdVZcqu81czGuY3/egGepjXHKTabqDpPqlzoJJ1rS6uaO1f56S0fj1BbvxCh++j9
-	SjT26LADmOzhRBYXtQkUC1aJIRn/DboK+8mOyLqjp17DxUfu0dTBmMAD95f59HZjmI7t6Ar37QE
-	+4axEhBzaH9cUt+zl3ugf6g1tjoAmR889cNP32ny83nE4kWU5jAcVcA6MHZyw1vaHpfuuUFh38Z
-	I86Z2zrH8w7C3Srt08jtBZe1+XnJp780FRM+vwy2PgT1hgCf56Ave5x8viFc6MEz8IAOs/r+2mw
-	/96fWh4fyyVpsiwXtQz2ftCZvgw0Gv9vRq7As416fLLDpy8v+mLs9ilcdz
-X-Google-Smtp-Source: AGHT+IE9rlhZBTu82T34zVJihWBAXwztYFNYRmxAoUK+dv/am6Ed9EkYnrQ4cegPPtTom5w0PIT93Q==
-X-Received: by 2002:a05:6a00:10c7:b0:7aa:1e36:207 with SMTP id d2e1a72fcca58-7af71c668abmr500474b3a.15.1762368717560;
-        Wed, 05 Nov 2025 10:51:57 -0800 (PST)
-Received: from weg-ThinkPad-P16v-Gen-2.. ([177.73.136.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af827effebsm118409b3a.57.2025.11.05.10.51.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 10:51:57 -0800 (PST)
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
-	David Hildenbrand <david@kernel.org>
-Subject: [PATCH v4 3/3] ksm: replace function unmerge_ksm_pages with break_ksm
-Date: Wed,  5 Nov 2025 15:49:12 -0300
-Message-ID: <20251105184912.186329-4-pedrodemargomes@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105184912.186329-1-pedrodemargomes@gmail.com>
-References: <20251105184912.186329-1-pedrodemargomes@gmail.com>
+	s=arc-20240116; t=1762368653; c=relaxed/simple;
+	bh=ZChi0j6lBzCHHjSk+YTfvl679jHfaKLTr4YuNjjvvxI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ITphUth7fPSCl+dqW79E4soeOq/kcinQIkR7Tfe3HuZF5X/1gsChnFOFeP+IlFLImxKXvZeOKSURQd8ennHqHeo0I/8ohcQDzQKg5Rj3Y5NTnRZZ/EQugmYgAXf1cvep3y9BXtsuUOjVDBNUTaTF6QiRJL5DirPckZo1tPxrjT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmSSc534; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80664C116B1;
+	Wed,  5 Nov 2025 18:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762368652;
+	bh=ZChi0j6lBzCHHjSk+YTfvl679jHfaKLTr4YuNjjvvxI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=MmSSc534JRhVLXFvlaHy1cfyvZyzmoZLxA6tM96GQqoS1iQxUkcEHiy1FK/mHkM+3
+	 /+Kdx8itml6V6voNojcJ0/Z1RvHMZx/kuf/1uMP2mox3V+jW34Z+XbuwowZHLDpVpF
+	 hFVlPsYDyQhVXZrwXyFmg8B1/Aft0N81D24xc9OZpSPnPpSY985vYFwvNl5MvJq5y1
+	 uRm/MiCA64BqbxyeBETM5NaSpRhrkCZyraeCAKDH2b2Dl0d/oECzTSR4nw/8TkckFR
+	 YST4zR+YWvtMu9I9JyCsN/b+p8+JELCZO8m9BciV009EmOaE7fEdSwj9V9VDHVQcze
+	 5rAKymvrXSZzA==
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 79978F40068;
+	Wed,  5 Nov 2025 13:50:51 -0500 (EST)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-04.internal (MEProxy); Wed, 05 Nov 2025 13:50:51 -0500
+X-ME-Sender: <xms:i5wLaa_WwnXtfYyRsnrXMo7pVxhRSF8DpHg42nv3_YFDgmLdVvDPXA>
+    <xme:i5wLaVh2ubeNpXj59Cs1uGvXlWK-mSCSU1ctQ_G5rfOq7RtNB4hw2VUtoVRGs0uKg
+    DQceZX2zhBl23TTA4m2xeRmVWefmY3AV2kDTr9sw9ZYR8xW3Vaj8Lo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegieejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthejre
+    dtredttdenucfhrhhomhepfdfnvghonhcutfhomhgrnhhovhhskhihfdcuoehlvghonhes
+    khgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpefgueeghedttdevheetgffgvd
+    ffudeuteehjeeukeffheelgfehffelieekvdduteenucffohhmrghinhepghhithhhuhgs
+    rdgtohhmpdhshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhgvohhnodhmvghsmhhtphgr
+    uhhthhhpvghrshhonhgrlhhithihqdduvdeftdehfeelkeegqddvjeejleejjedvkedqlh
+    gvohhnpeepkhgvrhhnvghlrdhorhhgsehlvghonhdrnhhupdhnsggprhgtphhtthhopeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiikhgrlhhlvghrqdgsuhhgsh
+    esghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohephigrnhhjuhhnrdiihhhu
+    sehlihhnuhigrdguvghvpdhrtghpthhtohepshihiigsohhtodgstdgurgekfegriegttd
+    gvvdgvvdgsuggusggugeesshihiihkrghllhgvrhdrrghpphhsphhothhmrghilhdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehjghhgseiiihgvphgvrdgtrg
+X-ME-Proxy: <xmx:i5wLaZJP6O9wJk0bLroBZ4pFllLTaEUutzMw0CKZGGMnzNZo2e1uLQ>
+    <xmx:i5wLaeFm-9etm-cOuQA9UKrpKCgOp7zcgVPWfW8Q92bzJRGoOa20Sw>
+    <xmx:i5wLadQ7HiBn__vHrjBIui17oRf7K_1nf0fEmvmyz0b4l4ER5n1h5Q>
+    <xmx:i5wLaacygc2_88dQrN-pNI_zSfd8LPXauYMQomkR7k-e49GMOle2ag>
+    <xmx:i5wLacr1O2AE3abtew1k8N71cEHXeJs45UoYQosEpplms4-RGY3cIGGs>
+Feedback-ID: i927946fb:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3A4512CE0067; Wed,  5 Nov 2025 13:50:51 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Ar1NWyDjluCN
+Date: Wed, 05 Nov 2025 20:50:25 +0200
+From: "Leon Romanovsky" <leon@kernel.org>
+To: "Jason Gunthorpe" <jgg@ziepe.ca>,
+ syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ "yanjun.zhu@linux.dev" <yanjun.zhu@linux.dev>
+Message-Id: <b65f327e-446f-4388-9b77-0256943d0596@app.fastmail.com>
+In-Reply-To: <20251105171457.GO1204670@ziepe.ca>
+References: <185e135e-0e17-4ef8-91a2-15e69897cd01@linux.dev>
+ <690b83fc.050a0220.3d0d33.006c.GAE@google.com>
+ <20251105171457.GO1204670@ziepe.ca>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Function unmerge_ksm_pages() is unnecessary since now break_ksm() walks
-an address range. So replace it with break_ksm().
 
-Suggested-by: David Hildenbrand (Red Hat) <david@kernel.org>
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
-Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
----
- mm/ksm.c | 40 ++++++++++++++++------------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 43be57a6a3fd..f9a1a3658ead 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -665,6 +665,18 @@ static const struct mm_walk_ops break_ksm_lock_vma_ops = {
- };
- 
- /*
-+ * Though it's very tempting to unmerge rmap_items from stable tree rather
-+ * than check every pte of a given vma, the locking doesn't quite work for
-+ * that - an rmap_item is assigned to the stable tree after inserting ksm
-+ * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
-+ * rmap_items from parent to child at fork time (so as not to waste time
-+ * if exit comes before the next scan reaches it).
-+ *
-+ * Similarly, although we'd like to remove rmap_items (so updating counts
-+ * and freeing memory) when unmerging an area, it's easier to leave that
-+ * to the next pass of ksmd - consider, for example, how ksmd might be
-+ * in cmp_and_merge_page on one of the rmap_items we would be removing.
-+ *
-  * We use break_ksm to break COW on a ksm page by triggering unsharing,
-  * such that the ksm page will get replaced by an exclusive anonymous page.
-  *
-@@ -1071,25 +1083,6 @@ static void remove_trailing_rmap_items(struct ksm_rmap_item **rmap_list)
- 	}
- }
- 
--/*
-- * Though it's very tempting to unmerge rmap_items from stable tree rather
-- * than check every pte of a given vma, the locking doesn't quite work for
-- * that - an rmap_item is assigned to the stable tree after inserting ksm
-- * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
-- * rmap_items from parent to child at fork time (so as not to waste time
-- * if exit comes before the next scan reaches it).
-- *
-- * Similarly, although we'd like to remove rmap_items (so updating counts
-- * and freeing memory) when unmerging an area, it's easier to leave that
-- * to the next pass of ksmd - consider, for example, how ksmd might be
-- * in cmp_and_merge_page on one of the rmap_items we would be removing.
-- */
--static int unmerge_ksm_pages(struct vm_area_struct *vma,
--			     unsigned long start, unsigned long end, bool lock_vma)
--{
--	return break_ksm(vma, start, end, lock_vma);
--}
--
- static inline
- struct ksm_stable_node *folio_stable_node(const struct folio *folio)
- {
-@@ -1227,8 +1220,7 @@ static int unmerge_and_remove_all_rmap_items(void)
- 		for_each_vma(vmi, vma) {
- 			if (!(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
- 				continue;
--			err = unmerge_ksm_pages(vma,
--						vma->vm_start, vma->vm_end, false);
-+			err = break_ksm(vma, vma->vm_start, vma->vm_end, false);
- 			if (err)
- 				goto error;
- 		}
-@@ -2855,7 +2847,7 @@ static int __ksm_del_vma(struct vm_area_struct *vma)
- 		return 0;
- 
- 	if (vma->anon_vma) {
--		err = unmerge_ksm_pages(vma, vma->vm_start, vma->vm_end, true);
-+		err = break_ksm(vma, vma->vm_start, vma->vm_end, true);
- 		if (err)
- 			return err;
- 	}
-@@ -3007,7 +2999,7 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 			return 0;		/* just ignore the advice */
- 
- 		if (vma->anon_vma) {
--			err = unmerge_ksm_pages(vma, start, end, true);
-+			err = break_ksm(vma, start, end, true);
- 			if (err)
- 				return err;
- 		}
-@@ -3389,7 +3381,7 @@ static int ksm_memory_callback(struct notifier_block *self,
- 		 * Prevent ksm_do_scan(), unmerge_and_remove_all_rmap_items()
- 		 * and remove_all_stable_nodes() while memory is going offline:
- 		 * it is unsafe for them to touch the stable tree at this time.
--		 * But unmerge_ksm_pages(), rmap lookups and other entry points
-+		 * But break_ksm(), rmap lookups and other entry points
- 		 * which do not need the ksm_thread_mutex are all safe.
- 		 */
- 		mutex_lock(&ksm_thread_mutex);
--- 
-2.43.0
+On Wed, Nov 5, 2025, at 19:14, Jason Gunthorpe wrote:
+> On Wed, Nov 05, 2025 at 09:06:04AM -0800, syzbot wrote:
+>> Hello,
+>> 
+>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> WARNING in gid_table_release_one
+>> 
+>> ------------[ cut here ]------------
+>> GID entry ref leak for dev syz1 index 2 ref=363, state: 3
+>> WARNING: CPU: 1 PID: 50 at drivers/infiniband/core/cache.c:827 release_gid_table drivers/infiniband/core/cache.c:824 [inline]
+>> WARNING: CPU: 1 PID: 50 at drivers/infiniband/core/cache.c:827 gid_table_release_one+0x5ae/0x6c0 drivers/infiniband/core/cache.c:904
+>> Modules linked in:
+>> CPU: 1 UID: 0 PID: 50 Comm: kworker/u8:3 Not tainted syzkaller #0 PREEMPT(full) 
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+>> Workqueue: ib-unreg-wq ib_unregister_work
+>> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:824 [inline]
+>> RIP: 0010:gid_table_release_one+0x5ae/0x6c0 drivers/infiniband/core/cache.c:904
+>> Code: e8 03 0f b6 04 28 84 c0 0f 85 cc 00 00 00 44 8b 03 48 c7 c7 60 7c 2b 8c 48 8b 74 24 28 44 89 fa 8b 4c 24 50 e8 73 e7 35 f9 90 <0f> 0b 90 90 44 8b 74 24 04 4c 8b 7c 24 20 4c 8b 64 24 48 e9 15 fe
+>> RSP: 0018:ffffc90000bb78f8 EFLAGS: 00010246
+>> RAX: 124fa0acf3bf2700 RBX: ffff8880268c1990 RCX: ffff888020289e40
+>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+>> RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+>> R10: dffffc0000000000 R11: fffffbfff1b7a678 R12: ffff88802ed4e2d8
+>> R13: 00000000000001a8 R14: ffff88806a158010 R15: 0000000000000002
+>> FS:  0000000000000000(0000) GS:ffff88812646a000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00005555712ce808 CR3: 000000006b6c8000 CR4: 00000000003526f0
+>> Call Trace:
+>>  <TASK>
+>>  ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+>>  device_release+0x9c/0x1c0 drivers/base/core.c:-1
+>>  kobject_cleanup lib/kobject.c:689 [inline]
+>>  kobject_release lib/kobject.c:720 [inline]
+>>  kref_put include/linux/kref.h:65 [inline]
+>>  kobject_put+0x22b/0x480 lib/kobject.c:737
+>>  process_one_work kernel/workqueue.c:3263 [inline]
+>>  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+>>  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+>>  kthread+0x711/0x8a0 kernel/kthread.c:463
+>>  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>  </TASK>
+>> 
+>> 
+>> Tested on:
+>> 
+>> commit:         ad2cc78b RDMA/core: Fix WARNING in gid_table_release_one
+>> git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=11dfa17c580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>
+> I think this disproves the theory that the the gid is sitting in a
+> work queue waiting to be cleaned up..
 
+Yes, this is makes more sense to me when multiple ib_wq flush.
+
+>
+> So we still need to find out what is holding on to the reference...
+>
+> Jason
 
