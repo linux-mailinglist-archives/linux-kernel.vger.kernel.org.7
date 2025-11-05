@@ -1,238 +1,234 @@
-Return-Path: <linux-kernel+bounces-886748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF73C3675C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:48:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07890C3657A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C501A40AEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:32:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8086234D2D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC6C331A53;
-	Wed,  5 Nov 2025 15:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVwiSsN+"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030662C3247;
+	Wed,  5 Nov 2025 15:32:09 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A7432D0E6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68773258CD0
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356667; cv=none; b=GqJMcXdE5P9ZX53R9Ab4Xnmv2FZaMHg2aIcZujrE5eFmlUPMMjFI99JXFnt0mBsBny5S3dq4weAj9u4SEBcbf7ECR7omWAktfBljzG+Sved261S6Ax42rgs17THt55DmSFIMYNJMvZkXqpwC3hflkd3RE3OLCZQmzeSSPlDcXnM=
+	t=1762356728; cv=none; b=dqVVpGaM2iKc8qYqh9TykLNKRqmyKnDPWHhyiGogJ/upx4eivlzy7V1jiodWpo5T6KLUExGKkPOYTt3RblUpMizKE0IAlO/Ex6gAJmYJ/ayFHxQ7sk7GuHzLqz1aRGmuMKFfAha2aOqOXJC1LGlc24IetlRzVV6LXwFSK6RLJM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356667; c=relaxed/simple;
-	bh=yEbFUxhU5133fiA2wgh8p34cECSDXHmt2efF/soZEWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnqygN8F617nRLyizuYQlXhf29B2yrj3yNb/QzEc5NhJdzfuhNNf6msifP9oXXXaMGOp5raEpro1tDCL2MCWX+AL5l6kIISa2VFxw9DexLtgHCjaBSYY/kxR/T9b7osMAM8Tyb2yGspdIl8SXSxzwtwfY8ERGHmoIpli2AvLLiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVwiSsN+; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640b9c7eab9so6017352a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762356664; x=1762961464; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
-        b=eVwiSsN+GH8oJYCNas3zxtrCrX0AUwANIXnNhcBdE3wS/5BM00oSTOodxUCLpvEFwr
-         KvT48Ugzrtk28loE5qXKQajpXmSphrPQhUiOwXJFC9VbDpVfDvVWI8KiygUsJKs3i3/a
-         S7a1bD1/QuVIPOyK7HJBzf1V9msgScbN35whwg2x4Wzhh7hR27icBViCLS2zQmEP43lY
-         tOARD1Sowew6P50lMybQ82ANtCv8Bf1zNLKKys51qhzuz4kmf8A0RIV6C4Ww5vew/CY5
-         bwU9qr79jEUq/XE3np9X5wSiOBDrfCkLhRHPCgEWrVG1K8ormbxmZzQS6EplQc4moY/L
-         y1Ug==
+	s=arc-20240116; t=1762356728; c=relaxed/simple;
+	bh=SE4Y7zIEvDTvgMPnqssjtS/i/V33pNxKul1GV9QQAWo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VUaHJXP3ELOpp0321JPBYdC4iEDobgbN0Eo0ZhywgjSIEansW24f3yOMZZ+uV5ZI37tfSZxzaz7a4QOIxOGH49azpn9hTHogOta1h/7bTg+wUT9UNR8xITTb6uwzGZM829w7igEUXcIbRZ1UYsTP4NdRIDDnOeW7lYZfemgppwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-43323ffc26bso29227245ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:32:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356664; x=1762961464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
-        b=tYDS1zMRXZM4AzJlUnJIEdGiqdNh0dYuZvXB342L4sSTZ5LnDAy7aKZ3P9PjQu0p2f
-         Mvyd3wocYKidr9FMibAP/+oOXXHEwee74VPkLIVpqm7pDtyDOJVee3Vz5VMMNYpMN+7s
-         izKT8Rc7xvzrvFJY3P1j78IZa60A0PhO8WClqhqbVwnSfwaswLGs/U4nm09QBpkzlBaQ
-         AQxQBVvz9Psh2aslVmAjxLehYDqrcWiq8AYeEgtgcmzv3h9xYA+x+bqdYGA65ifplmHk
-         SdTz/aTljRnXf/i0FU377iBq+G90/Cwni3HUjolBOlm19fFafRzoL4qZV5ITvmN3cVSm
-         7b7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUS7/ihxNZf9Ea+s3ntCiMq8gaO+S82Hg6I4fvOiGMNc/8spHjgEm+B5eW+nFobAEHpTpONxVaOlPfUccQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHBXXi9OfHVFl/wI1z3ekcDywkohaOtgas/aL+JE2BqTFSIRyq
-	pWobFUOaKETiKvXd0e5gKA2rBPkoBvZr9p8v68mHZWT/AWbJUSoJzfxBNNtWPNbi9cVIiSNGYHL
-	VTlwF8O4O9epPgvt4slYyftoiHPVZRac=
-X-Gm-Gg: ASbGncsaKNyCXEzLuSGCGk8vMYJJYVIWtn/hNbXtlhz5FXxdppzW8RTRfQ9/EK5SKAz
-	iq+SGHUD5vIL8Al2KfLVDnU+/Ew8sFgwxmGZzLKR6dj6DIz0YCds8Q6WmzPTai2iPZ/i6AjyNEY
-	8DNB9PtuAkbtFFuOb3psqt/LX3W/ZHNYysoC8NM/PKa9lrb2eqcF+GIWaHEM37BHGLVaQkmBy7b
-	hRxfoDKn/2yV6W5VkkXtnWIdxLaNrhwjv3eMeoIg0fj1G5WeNHxcJeGUWCs5C7be0Bjwj8QCO7M
-	yXmGwgurI/HENGCntuw=
-X-Google-Smtp-Source: AGHT+IFeTdBoWoUyL5OJBj6ctpxjIzpxH5YSlDQbMjLCXNftce5Xam58H6eehckj8yuunQCZvowB+AKwBvBeUXEftyg=
-X-Received: by 2002:a05:6402:1462:b0:640:b978:efdb with SMTP id
- 4fb4d7f45d1cf-64105b80a61mr3309961a12.25.1762356663555; Wed, 05 Nov 2025
- 07:31:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762356723; x=1762961523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q64NjM+kTylbraOWBksP6a/iofbPGIEsY+Llzint0+A=;
+        b=j/Ivy6cJS5S1Dv2m5jkGuZlcuZ3xA+CYNrvVA+Y3r8zfPtwvkbrmhpaOXs8LursV4Y
+         MP1ZuEqDJ1ovzlt7Vr7Ybx5sVHJSwX4j1EkMJuCozneXGy3nyY/R46RkQQJWvXBv4lLs
+         zVa+gXhJc7bboRFMYYgE5pPPpCexHqS0mRziahy0CNszGo1P3zN4qd8RjD1oITOXBOKB
+         VvLWHj8RLFXDWhzAS9eRhQj/cth6ZYYh+x6m37drZ73LvdkyP2Lqngfi+v/sFnmAtrtd
+         bRQKXea8KmvmEk78ojFD6OBgQ3/D0kWxX9e1ZqGmGVsWCEo0AQgM3Y8lJNrxUfwr/dUP
+         VQlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxC7j3XyYktTQ3kCs2fVDh5ufMTwxztEkuxKFollA53IrC+om4S94EpwGE8iW/2XGLWDCWNE0XqRanIEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpgxySpclwNnCUM2PHi41BsnekvKXGTmrcrgGeLxn8zf0KdKwU
+	teDhzSCHFoISgfDrKZHObu/msu9AYmn65+UdgeU0Ugq64wBzXUl7YHuf2yfhRKTpIrcDyNLuS39
+	h5dHsqdlMRMjo14inspvMus68a3IN3J4rX/e0AdL/P9C8iEFioGNcdTpmguQ=
+X-Google-Smtp-Source: AGHT+IEE15Gbc4OLmnsLhFh6w650mBIEUt7w+UFhtpiuK+xZTLR4cyKjwq9HmYgb9WLHmuOb88sdtKIhB5+HmMeFEouNt6WXIwiU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
- <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com> <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
- <87cy5x7sud.fsf@wotan.olymp> <CAOQ4uxjZ0B5TwV+HiWsUpBuFuZJZ_e4Bm_QfNn4crDoVAfkA9Q@mail.gmail.com>
- <87ecqcpujw.fsf@wotan.olymp>
-In-Reply-To: <87ecqcpujw.fsf@wotan.olymp>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 5 Nov 2025 16:30:51 +0100
-X-Gm-Features: AWmQ_bllL0jRg0lG2IquSuf9WxK56YqDrwheMrE1Nh3n-OXTi4UNNbtnbhoiVQo
-Message-ID: <CAOQ4uxg+w5LHnVbYGLc_pq+zfAw5UXbfo0M2=dxFGKLmBvJ+5Q@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Luis Henriques <luis@igalia.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>, 
-	Matt Harvey <mharvey@jumptrading.com>
+X-Received: by 2002:a05:6e02:2703:b0:433:31ff:f885 with SMTP id
+ e9e14a558f8ab-433407a9417mr50770375ab.9.1762356723422; Wed, 05 Nov 2025
+ 07:32:03 -0800 (PST)
+Date: Wed, 05 Nov 2025 07:32:03 -0800
+In-Reply-To: <5ff5d1d0-192d-4aaa-8ef4-e1bfe2fdf6bb@ee.vjti.ac.in>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b6df3.050a0220.2e3c35.000a.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_unregister_user
+From: syzbot <syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, marcel@holtmann.org, ssranevjti@gmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 5, 2025 at 12:50=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
-ote:
->
-> Hi Amir,
->
-> On Wed, Nov 05 2025, Amir Goldstein wrote:
->
-> > On Tue, Nov 4, 2025 at 3:52=E2=80=AFPM Luis Henriques <luis@igalia.com>=
- wrote:
->
-> <...>
->
-> >> > fuse_entry_out was extended once and fuse_reply_entry()
-> >> > sends the size of the struct.
-> >>
-> >> So, if I'm understanding you correctly, you're suggesting to extend
-> >> fuse_entry_out to add the new handle (a 'size' field + the actual hand=
-le).
-> >
-> > Well it depends...
-> >
-> > There are several ways to do it.
-> > I would really like to get Miklos and Bernd's opinion on the preferred =
-way.
->
-> Sure, all feedback is welcome!
->
-> > So far, it looks like the client determines the size of the output args=
-.
-> >
-> > If we want the server to be able to write a different file handle size
-> > per inode that's going to be a bigger challenge.
-> >
-> > I think it's plenty enough if server and client negotiate a max file ha=
-ndle
-> > size and then the client always reserves enough space in the output
-> > args buffer.
-> >
-> > One more thing to ask is what is "the actual handle".
-> > If "the actual handle" is the variable sized struct file_handle then
-> > the size is already available in the file handle header.
->
-> Actually, this is exactly what I was trying to mimic for my initial
-> attempt.  However, I was not going to do any size negotiation but instead
-> define a maximum size for the handle.  See below.
->
-> > If it is not, then I think some sort of type or version of the file han=
-dles
-> > encoding should be negotiated beyond the max handle size.
->
-> In my initial stab at this I was going to take a very simple approach and
-> hard-code a maximum size for the handle.  This would have the advantage o=
-f
-> allowing the server to use different sizes for different inodes (though
-> I'm not sure how useful that would be in practice).  So, in summary, I
-> would define the new handle like this:
->
-> /* Same value as MAX_HANDLE_SZ */
-> #define FUSE_MAX_HANDLE_SZ 128
->
-> struct fuse_file_handle {
->         uint32_t        size;
->         uint32_t        padding;
+Hello,
 
-I think that the handle type is going to be relevant as well.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in l2cap_unregister_user
 
->         char            handle[FUSE_MAX_HANDLE_SZ];
-> };
->
-> and this struct would be included in fuse_entry_out.
->
-> There's probably a problem with having this (big) fixed size increase to
-> fuse_entry_out, but maybe that could be fixed once I have all the other
-> details sorted out.  Hopefully I'm not oversimplifying the problem,
-> skipping the need for negotiating a handle size.
->
+==================================================================
+BUG: KASAN: slab-use-after-free in __mutex_waiter_is_first kernel/locking/mutex.c:183 [inline]
+BUG: KASAN: slab-use-after-free in __mutex_lock_common+0xd18/0x2678 kernel/locking/mutex.c:678
+Read of size 8 at addr ffff0000d69a80a0 by task khidpd_05c25886/7548
 
-Maybe this fixed size is reasonable for the first version of FUSE protocol
-as long as this overhead is NOT added if the server does not opt-in for the
-feature.
+CPU: 1 UID: 0 PID: 7548 Comm: khidpd_05c25886 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ print_address_description+0xa8/0x238 mm/kasan/report.c:378
+ print_report+0x68/0x84 mm/kasan/report.c:482
+ kasan_report+0xb0/0x110 mm/kasan/report.c:595
+ __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
+ __mutex_waiter_is_first kernel/locking/mutex.c:183 [inline]
+ __mutex_lock_common+0xd18/0x2678 kernel/locking/mutex.c:678
+ __mutex_lock kernel/locking/mutex.c:760 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+ l2cap_unregister_user+0x74/0x190 net/bluetooth/l2cap_core.c:1728
+ hidp_session_thread+0x3d0/0x46c net/bluetooth/hidp/core.c:1304
+ kthread+0x5fc/0x75c kernel/kthread.c:463
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
 
-IOW, allow the server to negotiate FUSE_MAX_HANDLE_SZ or 0,
-but keep the negotiation protocol extendable to another value later on.
+Allocated by task 7442:
+ kasan_save_stack mm/kasan/common.c:56 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:77
+ kasan_save_alloc_info+0x44/0x54 mm/kasan/generic.c:573
+ poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
+ __kasan_kmalloc+0x9c/0xb4 mm/kasan/common.c:417
+ kasan_kmalloc include/linux/kasan.h:262 [inline]
+ __do_kmalloc_node mm/slub.c:5642 [inline]
+ __kmalloc_noprof+0x3fc/0x728 mm/slub.c:5654
+ kmalloc_noprof include/linux/slab.h:961 [inline]
+ kzalloc_noprof include/linux/slab.h:1094 [inline]
+ hci_alloc_dev_priv+0x2c/0x1b84 net/bluetooth/hci_core.c:2448
+ hci_alloc_dev include/net/bluetooth/hci_core.h:1751 [inline]
+ __vhci_create_device drivers/bluetooth/hci_vhci.c:421 [inline]
+ vhci_create_device+0x108/0x638 drivers/bluetooth/hci_vhci.c:479
+ vhci_get_user drivers/bluetooth/hci_vhci.c:536 [inline]
+ vhci_write+0x314/0x3d4 drivers/bluetooth/hci_vhci.c:616
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x540/0xa3c fs/read_write.c:686
+ ksys_write+0x120/0x210 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
-> >> That's probably a good idea.  I was working towards having the
-> >> LOOKUP_HANDLE to be similar to LOOKUP, but extending it so that it wou=
-ld
-> >> include:
-> >>
-> >>  - An extra inarg: the parent directory handle.  (To be honest, I'm no=
-t
-> >>    really sure this would be needed.)
-> >
-> > Yes, I think you need extra inarg.
-> > Why would it not be needed?
-> > The problem is that you cannot know if the parent node id in the lookup
-> > command is stale after server restart.
->
-> Ah, of course.  Hence the need for this extra inarg.
->
-> > The thing is that the kernel fuse inode will need to store the file han=
-dle,
-> > much the same as an NFS client stores the file handle provided by the
-> > NFS server.
-> >
-> > FYI, fanotify has an optimized way to store file handles in
-> > struct fanotify_fid_event - small file handles are stored inline
-> > and larger file handles can use an external buffer.
-> >
-> > But fuse does not need to support any size of file handles.
-> > For first version we could definitely simplify things by limiting the s=
-ize
-> > of supported file handles, because server and client need to negotiate
-> > the max file handle size anyway.
->
-> I'll definitely need to have a look at how fanotify does that.  But I
-> guess that if my simplistic approach with a static array is acceptable fo=
-r
-> now, I'll stick with it for the initial attempt to implement this, and
-> eventually revisit it later to do something more clever.
->
+Freed by task 7595:
+ kasan_save_stack mm/kasan/common.c:56 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:77
+ __kasan_save_free_info+0x58/0x70 mm/kasan/generic.c:587
+ kasan_save_free_info mm/kasan/kasan.h:406 [inline]
+ poison_slab_object mm/kasan/common.c:252 [inline]
+ __kasan_slab_free+0x74/0xa4 mm/kasan/common.c:284
+ kasan_slab_free include/linux/kasan.h:234 [inline]
+ slab_free_hook mm/slub.c:2539 [inline]
+ slab_free mm/slub.c:6630 [inline]
+ kfree+0x184/0x600 mm/slub.c:6837
+ hci_release_dev+0xf48/0x1060 net/bluetooth/hci_core.c:2776
+ bt_host_release+0x70/0x8c net/bluetooth/hci_sysfs.c:87
+ device_release+0x8c/0x1ac drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x2b0/0x438 lib/kobject.c:737
+ put_device+0x28/0x40 drivers/base/core.c:3797
+ hci_free_dev+0x24/0x34 net/bluetooth/hci_core.c:2579
+ vhci_release+0x134/0x17c drivers/bluetooth/hci_vhci.c:691
+ __fput+0x340/0x75c fs/file_table.c:468
+ ____fput+0x20/0x58 fs/file_table.c:496
+ task_work_run+0x1dc/0x260 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x524/0x1a14 kernel/exit.c:966
+ do_group_exit+0x194/0x22c kernel/exit.c:1107
+ get_signal+0x11dc/0x12f8 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x274/0x4414 arch/arm64/kernel/signal.c:1619
+ exit_to_user_mode_loop+0x7c/0x178 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+ el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
-What you proposed is the extension of fuse_entry_out for fuse
-protocol.
+Last potentially related work creation:
+ kasan_save_stack+0x40/0x6c mm/kasan/common.c:56
+ kasan_record_aux_stack+0xb0/0xc8 mm/kasan/generic.c:559
+ insert_work+0x54/0x2cc kernel/workqueue.c:2186
+ __queue_work+0xc88/0x1210 kernel/workqueue.c:2345
+ queue_work_on+0xdc/0x18c kernel/workqueue.c:2392
+ queue_work include/linux/workqueue.h:669 [inline]
+ hci_cmd_timeout+0x178/0x1c8 net/bluetooth/hci_core.c:1480
+ process_one_work+0x7e8/0x155c kernel/workqueue.c:3263
+ process_scheduled_works kernel/workqueue.c:3346 [inline]
+ worker_thread+0x958/0xed8 kernel/workqueue.c:3427
+ kthread+0x5fc/0x75c kernel/kthread.c:463
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
 
-My reference to fanotify_fid_event is meant to explain how to encode
-a file handle in fuse_inode in cache, because the fuse_inode_cachep
-cannot have variable sized inodes and in most of the cases, a short
-inline file handle should be enough.
+Second to last potentially related work creation:
+ kasan_save_stack+0x40/0x6c mm/kasan/common.c:56
+ kasan_record_aux_stack+0xb0/0xc8 mm/kasan/generic.c:559
+ insert_work+0x54/0x2cc kernel/workqueue.c:2186
+ __queue_work+0xdb0/0x1210 kernel/workqueue.c:2341
+ delayed_work_timer_fn+0x74/0x90 kernel/workqueue.c:2487
+ call_timer_fn+0x1b4/0x818 kernel/time/timer.c:1747
+ expire_timers kernel/time/timer.c:1793 [inline]
+ __run_timers kernel/time/timer.c:2372 [inline]
+ __run_timer_base+0x54c/0x76c kernel/time/timer.c:2384
+ run_timer_base kernel/time/timer.c:2393 [inline]
+ run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2403
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:622
+ __do_softirq+0x14/0x20 kernel/softirq.c:656
 
-Therefore, if you limit the support in the first version to something like
-FANOTIFY_INLINE_FH_LEN, you can always store the file handle
-in fuse_inode and postpone support for bigger file handles to later.
+The buggy address belongs to the object at ffff0000d69a8000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 160 bytes inside of
+ freed 8192-byte region [ffff0000d69a8000, ffff0000d69aa000)
 
-Thanks,
-Amir.
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1169a8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0x5ffc00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 05ffc00000000040 ffff0000c0002280 0000000000000000 0000000000000001
+raw: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 05ffc00000000040 ffff0000c0002280 0000000000000000 0000000000000001
+head: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 05ffc00000000003 fffffdffc35a6a01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff0000d69a7f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff0000d69a8000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff0000d69a8080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff0000d69a8100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff0000d69a8180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         8d59fba4 Bluetooth: MGMT: Fix OOB access in parse_adv_..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a52084580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5eeb63aaf73b06da
+dashboard link: https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+
+Note: no patches were applied.
 
