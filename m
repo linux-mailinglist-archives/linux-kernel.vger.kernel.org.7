@@ -1,262 +1,116 @@
-Return-Path: <linux-kernel+bounces-887403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D830C3823B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:06:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8712C38241
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC8118C80B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A0A1A20063
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45182EF65C;
-	Wed,  5 Nov 2025 22:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060D32ECD2E;
+	Wed,  5 Nov 2025 22:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="3njmQrny";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WRO9tFQP"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mauupxhK"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F22221CC6A;
-	Wed,  5 Nov 2025 22:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6D92ED848
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762380377; cv=none; b=Kc2Ejg+VU3iDSkdmnvnvR5VOsPCcK9E1p55je6Kmi7xWRvCIeE1XZEctA6DahFcLVYvG+W1a696/yX0SMOsgeoQN6bJ8OHHHsSoWtlAogLz25Q5Zm0G61iCKjMdwDHpq8gLABtqfp7AnoHczgIGyrvGafkJYDaQPyLIgR820bcg=
+	t=1762380410; cv=none; b=uk19rAIiuSQukZ6qYhRPRNwCcw2rlxYQM8ecmgTOyqS5DfUM+HhR0m8bZc1PRuABsJVyjUuBFxDAW+STCnfbvmX97iIBSMWazTIu6CbGtOxaOb/Jo5UkpdHiHatUpfEHE7/CC7RvWOqyRYJM8ASOCb1Uys1/jfIlU/LQzg9X9cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762380377; c=relaxed/simple;
-	bh=DzQh4kxg/4ygyLP3ZVccFl3kjnSCQtYKQw4Js/JV5jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHR/AB/buHiW+6BpwKDaGmuGAQEGK1H8HFpdWT4RygeYGhxw0z6yT1P1/mX14nYy1U9Yll9xTzp5MoAXtzYfxZMQKYCoB//QRe6GUpHW1OnjYQ8MuVv1jJDvX+EZC2N35NwuG6xkA6v9CaBfyo6GGi1w1TK3gH7yhAKgK+/z3wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=3njmQrny; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WRO9tFQP; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D6BE7140017A;
-	Wed,  5 Nov 2025 17:06:12 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 17:06:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1762380372;
-	 x=1762466772; bh=v+Aj5i40+XHx8nMoLGrv2roa2VgMjDCHFpJIsN+G8gg=; b=
-	3njmQrnyOM8vqtgatf92767AIQ1ydfzpuToHrnDLirDdl8uGonJpTrw5jr5Yzrdm
-	7yUh+kE2zbIh0RkM0Z+YMrtNcLFuLRPChYvkUSCD1tEx7T/zQCU0kfgnqBXmWL21
-	qtKoX0APsOYAfKMs4T1pvRBIVO0PLPLAAmm+94T5/onuELe5csZWqTQP5Ljv8kf8
-	7N3aEs14VcWB6iUSpc164npbK9yCAN6NcL/UjPTYLH9diw7H6Nqk4XFc3yNazIVT
-	8lCipKLwE+AGIhpTyZFg8qXCcjtAi3LVtUqg12qX0/zRKfz8Ec1U6FibZyIp8qFS
-	so/ivflvS5yWIDrDQLhuUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762380372; x=
-	1762466772; bh=v+Aj5i40+XHx8nMoLGrv2roa2VgMjDCHFpJIsN+G8gg=; b=W
-	RO9tFQPl71wnYQC4PpicXSPuk4iu+nFg47EBgskYxna74OKbdM60uy7PXZhwRYRK
-	bmcKOFxpg76OpzEcziowdKbM0NxWvUpgC9v3cQ6pjUU5wVI4Y/RfvhZ7FgU1cuGp
-	OmQM7goF+GPaBL45M6kxVwJVFUsJ+BIyCrfPLHkrn7Wqkqqt46qvPeKJaVxIWe7/
-	GkGSLf+ufs8RKVYZAVbDCVNrJCf+Ph/3g7piFIJDOTLjn6/Vp+ydvc2EsqU3Udp1
-	1UQTbGnquqMfjZ4kWrzSyUqA7hTzN7qAg5Mb81cAAr+/wkfP4wk4WU1y+4DR60z1
-	ouBvLwlNTkTnhpT8RpEeg==
-X-ME-Sender: <xms:VMoLaSEFvMPdtZUiPnYrTW9B-olCuwpAQkHSbSbqF8y9gt5LFXkRlg>
-    <xme:VMoLaWbWiswKj3_4PqxNftWtcYpeC7D_Pf9sC3O7VZRmUqK663Z9Ds75dhA4V4lUg
-    IIKa11-vcWqwz5MKQqaRSD3CYTlTOn_yZYADY8Mk01RpG007QsReQ>
-X-ME-Received: <xmr:VMoLaWzF4kmnURSfqK-IQxgtyJgaLW-jo2Dv7yIZgvEJDgQ9ir9QxpfUTpDvq475jkhToH-qaPpkJqoRjxlzfj9IS-6LXsSvw7NAG31i8SZmKYdLP7qn>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehtdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeefgeegfeffkeduudelfeehleelhefgffehudejvdfgteevvddtfeeiheef
-    lefgvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprh
-    gtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhr
-    jeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtg
-    homhdprhgtphhtthhopehthihtshhosehmihhtrdgvughupdhrtghpthhtohepmhhikhhl
-    ohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgthhgvnhesuggunhdrtg
-    homh
-X-ME-Proxy: <xmx:VMoLaYSOf7MLucSIjm6_P9FlfIgXvmnlcTul1D2onfMtkFQHhqYtbw>
-    <xmx:VMoLaTKvynQzflbKST642-rNkjG_-T_iqEvdex0-NHS2fmENfSMEmw>
-    <xmx:VMoLafWUPXSXhqFM9IDvw-oUnaqVnxZJqNTeTKqKxqfANe6J2B_I5w>
-    <xmx:VMoLaXRMYyNv8yKK8Yi8g4KZu1rWxV8nUTl5pWqW6qwW4RzCvu1c9Q>
-    <xmx:VMoLaQc1Y53Skwb_V-ilLISMlUZTyHeq5ljwSRh1-54_5f0VOL0aVzP4>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 17:06:11 -0500 (EST)
-Message-ID: <ed5084e4-af1c-4185-b66f-2b42d56d37a3@bsbernd.com>
-Date: Wed, 5 Nov 2025 23:06:09 +0100
+	s=arc-20240116; t=1762380410; c=relaxed/simple;
+	bh=SHOTNhnSxMeE28Gt8h+QmahNR+MdQ5fncUYSEMPwl2g=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BTf6jsG2IKX1//hnxzwAcdUjUNlxss+stBjY52qxMV+vfcmmPUN/s/5AzLaMyE3fW27FdtdtPB0tDMVgAtHW+NMUS1TIPqw/Ksc3Z7YCz1AcOrYALHbCoDPZyMj/mnDd0sL8oDnVMUfeqnr2OXQfb5xi0Qwmu01K7JzMLo/5EXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mauupxhK; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-295548467c7so3489775ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762380407; x=1762985207; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:to:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iBkyGpcDemQpY2M094SqDLojxus+6NpH3+OHJK4/jHI=;
+        b=mauupxhKu2X5nVOip/SHS/ZiJFkwECjYVSkX7/T7o+JoCNk4VZv4dFeiY2Pt9qIZu+
+         YbVsAsOpkwhnGK8d/SNImyjrAwrCUNFECKt4cz7cLH4OoT11kW4gVVILvPmd/8Ds7VR0
+         cO3fgSfOI8bwIOlREs9CZ8BhiRdPz8HNBFzTIwCo3iAGVA9plrN53UjJRHH5h82pqWz0
+         fq+h7bLffacpa/Fid5Fg/+V73CheWbIb/F5MeK5zar21l0UvQtD8LTJsDg+5iZ/3nUTb
+         XdrKHZj4OzEEL3je5R5caOy9Z0loBi3BIp9gvgyVET71iA4D44KD5NLTU/1kTh/I+vTk
+         8e4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762380407; x=1762985207;
+        h=mime-version:message-id:date:references:in-reply-to:subject:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBkyGpcDemQpY2M094SqDLojxus+6NpH3+OHJK4/jHI=;
+        b=b3tEr1zD9Yn2/GTKQzGqk0kHNsYmUSLdIEQGEQ3LcocJHO/+xLYsnbmsArpeRFQotd
+         ZsYhnSLZPoEC0n6lGJdXJUV41AgTrxJF0znvr+d3Vjozv1anhat78APBiGevm0FddV0A
+         GthPIf/SHJjzSs9w9NAElNt0UQcW/jUVkSTc9FOdoBEscDr8CYUYMXLTa1K1uVq0sFdw
+         kpT2UCnKrQFtSzfiGuvL49OgxkJ+0XKGtaPqwLPBrX1oVdgumDiQKEY5FfFcxSqLI4Ty
+         iDatGCC/m8ldQDyohV6C/ZfokiS/jl6RhGEmF42TLELPzqNTXYBMvMOfBit2WEoQ5JRl
+         k2rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVIqwytJel+QGWSI+oYBT6f2SO7y6fmScD9XP1Q65b6IqQh1r0r1L2/BM7ReQT52mQDGafMnGJjrv2Lm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Deb5U3WMSrraIOi0ZivxL0ejjSjR5W9x9RSyY6Hew8oJzHsV
+	EHauMiq7Y3QUimNwqNl51YY1wNzuZF2PtdDkMIcNkWvIHurq295exIA5iXoNiRVsapg=
+X-Gm-Gg: ASbGncu4i1swdcRkJxM3ea6MKdUQuoSKKYx6aUz8x7vdciMad01yyzwndTaROot2wUa
+	U6LwitY/HuziuRt4zCvFU8JEdyL7sBhGyG2DqwYTwm56BQ+QzO9BzDv2vOvMkBaRee2LknSiu6+
+	JwGTl5QtjEMy5+sPOK4eblg8RfIClseDqG92gYezTyFjVEGWQwklE3THBtgEGnYaHue4OGtlVLe
+	gmOWDL9/oqp6oPecduXQVhNg1kL2v7ttiFLPw6Kj4h1BP28hrTgO8z9QUC4SnmEA8xom7oI7Z/K
+	8NAe0pD3c7YBUwgeU4JBHGaSCJGnaN/b8D7a0kBLgo9MjSHMyvIrbrQ6yaIKyKhZgN/hiCEi6Vj
+	n11JkEng0dgg96qh3V/+4kGnoarvnXY0tW9u21qGXGOkLVdgiH7w5vkfoDyg8uof9CyxTKEyOQw
+	==
+X-Google-Smtp-Source: AGHT+IHXI8ToUsXPn1H/3Ag+W1Lf4830EcbI35NKWBjF1weadPXztynkJTg8EPbjmSTpnwucHe3dOA==
+X-Received: by 2002:a17:902:ce90:b0:295:8da6:24b6 with SMTP id d9443c01a7336-2962adb1280mr71683995ad.40.1762380407441;
+        Wed, 05 Nov 2025 14:06:47 -0800 (PST)
+Received: from localhost ([71.212.208.158])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096dbe4sm5587205ad.11.2025.11.05.14.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 14:06:46 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: aaro.koskinen@iki.fi, rogerq@kernel.org, tony@atomide.com,
+ linux@armlinux.org.uk, tytso@mit.edu, lukas.bulwahn@redhat.com,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH] arm: omap2plus_defconfig: enable ext4 directly
+In-Reply-To: <176229761977.2840692.1048568589731485574.b4-ty@baylibre.com>
+References: <20251013120753.101582-1-andreas@kemnade.info>
+ <176229761977.2840692.1048568589731485574.b4-ty@baylibre.com>
+Date: Wed, 05 Nov 2025 14:06:46 -0800
+Message-ID: <7h7bw4i16x.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Bernd Schubert <bschubert@ddn.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-Cc: Luis Henriques <luis@igalia.com>, Theodore Ts'o <tytso@mit.edu>,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>,
- Matt Harvey <mharvey@jumptrading.com>
-References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
- <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs>
- <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp>
- <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
- <87cy5x7sud.fsf@wotan.olymp>
- <CAOQ4uxjZ0B5TwV+HiWsUpBuFuZJZ_e4Bm_QfNn4crDoVAfkA9Q@mail.gmail.com>
- <87ecqcpujw.fsf@wotan.olymp>
- <CAOQ4uxg+w5LHnVbYGLc_pq+zfAw5UXbfo0M2=dxFGKLmBvJ+5Q@mail.gmail.com>
- <20251105213855.GL196362@frogsfrogsfrogs>
- <cb7c4237-74b4-4220-90f7-caf59d673bc4@ddn.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <cb7c4237-74b4-4220-90f7-caf59d673bc4@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Kevin Hilman <khilman@baylibre.com> writes:
 
+> On Mon, 13 Oct 2025 14:07:53 +0200, Andreas Kemnade wrote:
+>> In former times, ext4 was enabled implicitely by enabling ext3 but with
+>> the ext3 fs gone, it does not get enabled, which lets devices fail to
+>> mount root on non-initrd based boots with an ext4 root.
+>> 
+>> 
+>
+> Applied, thanks!
+>
+> [1/1] arm: omap2plus_defconfig: enable ext4 directly
+>       commit: 810c5ef6efe9a2be3203a50de781d9050e8b9920
 
-On 11/5/25 22:46, Bernd Schubert wrote:
-> 
-> 
-> On 11/5/25 22:38, Darrick J. Wong wrote:
->> On Wed, Nov 05, 2025 at 04:30:51PM +0100, Amir Goldstein wrote:
->>> On Wed, Nov 5, 2025 at 12:50 PM Luis Henriques <luis@igalia.com> wrote:
->>>>
->>>> Hi Amir,
->>>>
->>>> On Wed, Nov 05 2025, Amir Goldstein wrote:
->>>>
->>>>> On Tue, Nov 4, 2025 at 3:52 PM Luis Henriques <luis@igalia.com> wrote:
->>>>
->>>> <...>
->>>>
->>>>>>> fuse_entry_out was extended once and fuse_reply_entry()
->>>>>>> sends the size of the struct.
->>>>>>
->>>>>> So, if I'm understanding you correctly, you're suggesting to extend
->>>>>> fuse_entry_out to add the new handle (a 'size' field + the actual handle).
->>>>>
->>>>> Well it depends...
->>>>>
->>>>> There are several ways to do it.
->>>>> I would really like to get Miklos and Bernd's opinion on the preferred way.
->>>>
->>>> Sure, all feedback is welcome!
->>>>
->>>>> So far, it looks like the client determines the size of the output args.
->>>>>
->>>>> If we want the server to be able to write a different file handle size
->>>>> per inode that's going to be a bigger challenge.
->>>>>
->>>>> I think it's plenty enough if server and client negotiate a max file handle
->>>>> size and then the client always reserves enough space in the output
->>>>> args buffer.
->>>>>
->>>>> One more thing to ask is what is "the actual handle".
->>>>> If "the actual handle" is the variable sized struct file_handle then
->>>>> the size is already available in the file handle header.
->>>>
->>>> Actually, this is exactly what I was trying to mimic for my initial
->>>> attempt.  However, I was not going to do any size negotiation but instead
->>>> define a maximum size for the handle.  See below.
->>>>
->>>>> If it is not, then I think some sort of type or version of the file handles
->>>>> encoding should be negotiated beyond the max handle size.
->>>>
->>>> In my initial stab at this I was going to take a very simple approach and
->>>> hard-code a maximum size for the handle.  This would have the advantage of
->>>> allowing the server to use different sizes for different inodes (though
->>>> I'm not sure how useful that would be in practice).  So, in summary, I
->>>> would define the new handle like this:
->>>>
->>>> /* Same value as MAX_HANDLE_SZ */
->>>> #define FUSE_MAX_HANDLE_SZ 128
->>>>
->>>> struct fuse_file_handle {
->>>>         uint32_t        size;
->>>>         uint32_t        padding;
->>>
->>> I think that the handle type is going to be relevant as well.
->>>
->>>>         char            handle[FUSE_MAX_HANDLE_SZ];
->>>> };
->>>>
->>>> and this struct would be included in fuse_entry_out.
->>>>
->>>> There's probably a problem with having this (big) fixed size increase to
->>>> fuse_entry_out, but maybe that could be fixed once I have all the other
->>>> details sorted out.  Hopefully I'm not oversimplifying the problem,
->>>> skipping the need for negotiating a handle size.
->>>>
->>>
->>> Maybe this fixed size is reasonable for the first version of FUSE protocol
->>> as long as this overhead is NOT added if the server does not opt-in for the
->>> feature.
->>>
->>> IOW, allow the server to negotiate FUSE_MAX_HANDLE_SZ or 0,
->>> but keep the negotiation protocol extendable to another value later on.
->>>
->>>>>> That's probably a good idea.  I was working towards having the
->>>>>> LOOKUP_HANDLE to be similar to LOOKUP, but extending it so that it would
->>>>>> include:
->>>>>>
->>>>>>  - An extra inarg: the parent directory handle.  (To be honest, I'm not
->>>>>>    really sure this would be needed.)
->>>>>
->>>>> Yes, I think you need extra inarg.
->>>>> Why would it not be needed?
->>>>> The problem is that you cannot know if the parent node id in the lookup
->>>>> command is stale after server restart.
->>>>
->>>> Ah, of course.  Hence the need for this extra inarg.
->>>>
->>>>> The thing is that the kernel fuse inode will need to store the file handle,
->>>>> much the same as an NFS client stores the file handle provided by the
->>>>> NFS server.
->>>>>
->>>>> FYI, fanotify has an optimized way to store file handles in
->>>>> struct fanotify_fid_event - small file handles are stored inline
->>>>> and larger file handles can use an external buffer.
->>>>>
->>>>> But fuse does not need to support any size of file handles.
->>>>> For first version we could definitely simplify things by limiting the size
->>>>> of supported file handles, because server and client need to negotiate
->>>>> the max file handle size anyway.
->>>>
->>>> I'll definitely need to have a look at how fanotify does that.  But I
->>>> guess that if my simplistic approach with a static array is acceptable for
->>>> now, I'll stick with it for the initial attempt to implement this, and
->>>> eventually revisit it later to do something more clever.
->>>>
->>>
->>> What you proposed is the extension of fuse_entry_out for fuse
->>> protocol.
->>>
->>> My reference to fanotify_fid_event is meant to explain how to encode
->>> a file handle in fuse_inode in cache, because the fuse_inode_cachep
->>> cannot have variable sized inodes and in most of the cases, a short
->>> inline file handle should be enough.
->>>
->>> Therefore, if you limit the support in the first version to something like
->>> FANOTIFY_INLINE_FH_LEN, you can always store the file handle
->>> in fuse_inode and postpone support for bigger file handles to later.
->>
->> I suggest that you also provide a way for the fuse server to tell the
->> kernel that it can construct its own handles from {fuse_inode::nodeid,
->> inode::i_generation} if they want something more efficient than
->> uploading 128b blobs.
-> 
-> Isn't that covered by handle size defined in FUSE_INIT reply? I.e.
-> handle size would be 0B in this case? 
+I ended up dropping this patch because it conflicted with patches
+already in Linus' tree
 
-Sorry my fault, yeah, this needs a special flag.
+  c065b6046b34 ("Use CONFIG_EXT4_FS instead of CONFIG_EXT3_FS in all of the defconfigs")
+
+If this is still needed, please respin.
+
+Kevin
+
 
