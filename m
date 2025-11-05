@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-887149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2EAC37632
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:52:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A3EC3765B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3EE6F4E6208
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709901A227FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F9F315D57;
-	Wed,  5 Nov 2025 18:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A5433C51A;
+	Wed,  5 Nov 2025 18:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVL6Sfc1"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXyOXnbM"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDCA3346A6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599DA3346A6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762368714; cv=none; b=VP7hzNtGuiyo4kv8eqpZl0LL9ANLHKkv9Yf/BoK1jdWxYbBgXzTr7oReAQ8epgHh4dDUZgIgFV8MKp3LFC8lGDTbC4aYUCkWRVIn7dzva8QD8NAAokEy5yEWXPzeNRu0zH8n8eyUkt49Hhl6jXVspY1YygQ4bdLWYuTqxWRM9Nw=
+	t=1762368719; cv=none; b=t2FLqsAKDUMym3oLjVMoH4N2RGKJ+Iv8hzQVjF8X9e0+LfR5ymPA9Dh1kqFeW2dbVKx+oJ5TIEWCawb1OCJd3gvjM/aUgKIJzFZqFK9drJhPgqbp9eZccFvPf+0DBlO1VTF9NkmiE9eiphUWhHNBaCWmso7yfhVQOYEirnUVXy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762368714; c=relaxed/simple;
-	bh=iXRXSc72+ck9biCOnsDQfDxVH6sbHMPGL3oEaKrwgYs=;
+	s=arc-20240116; t=1762368719; c=relaxed/simple;
+	bh=u/gAyqSUxMX8K7Hu0QsI/GxoItfu1jrZOjfT1JOwcTg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJ1S3e6BrU7SnguBnfaFOx3ljTxhT8zfHwgDYRHCcPcj4VYBmuF0z553rQauCE7tTq7mWhVieV5ZOPJbDYrKzS/tF54QEQcizfIuKr1ysx0PKYXq3hZWQzxQp/udJnmWbmOruXXgPeg8IobkmAAavVqm7r6EB+Ylps2GQJeGm0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVL6Sfc1; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=hhDVo/B80N6uuCSXLz2jdJGyN3qnG+kmbDLX+IrR8DDelOIsIVdl9W2dmmD+ZXo4a9FKsD73e+pUgG4XdlZ7nrKNWuKd4Tre4x7qqwwTcUQDsqzc5sy5v7UYcMupDVOENYYE1KP6SDkF1A9pC0v8i5mYhmAIso7kyPALW6spMbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXyOXnbM; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso215640b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:51:52 -0800 (PST)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so190281b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:51:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762368712; x=1762973512; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762368718; x=1762973518; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IUaQOSDeSY3xlmWNT6LRyPB2LIv5pFA+AQBxwZjm9KA=;
-        b=MVL6Sfc12fnrNm4FAZ9HLD5sJceLMT6TBFiQi/rUDVBlfVgUA1hDMwaidrPmBAYSsm
-         U8QdB1Bzng5vVEn0hrKCTiOusuG/zM2b4Yp1K39obU2EdvmUpumtTPvtfuMZ2pXvoZUm
-         suBncw7F+p/QRSmByP6q04Wz+kiPWAkqsM5wbtriByDYRfDcVcHrrHNTff20rOd3iC9a
-         //aI0UfY2ZVqtaB2cOr6Pn935OHa/eVq4yIpN4QoJCedqu5wCyW4ugjXdzRXbXL51+Ua
-         mahz5mW+9mGn/QcmoBr4sefTmna0F9pRO5gfBsZfzp/BuuSBK9lHLTh6ZQj3XI/9f3eg
-         Vizg==
+        bh=hMA7sw10zzBGTRnd6W864RCQYC44z+Ca26/lGGYhhvE=;
+        b=EXyOXnbMnHU6FjpX+iJlLJx/7cCewfa7674wxIvklsYiEL7rETLaEO5JSv/S2z+PDt
+         qGnMLH0BT0mWpd35Dz73tVRs6z5Y+cjIlOAf/SrwT6/d0/nZ4Qq911LW2CkHWypNHKm+
+         wnQfRpFZvhXlrdQlSIw1lf2uSix0/LDuwoFwc5hLc9/sobqMNOQYYkhF7QTLvCsru3Kh
+         Jw5udl+fZdgguvax/7QvYAyaHkaqALjQbQ/1nX4vFifLUmoIg7n9M11RuxXJRUG0PX7l
+         jbMGZ+Jr+7gyW3teNb/m0HKliQUd1g+6B9UEX25urhs2QgxBo0VDI/x05pxDJpqkMpf2
+         cVYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762368712; x=1762973512;
+        d=1e100.net; s=20230601; t=1762368718; x=1762973518;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IUaQOSDeSY3xlmWNT6LRyPB2LIv5pFA+AQBxwZjm9KA=;
-        b=vvaRl7mCtSGGiysqR1n+eA0tjX94e6f9YmsNj4sS28NnYGww8Dqbin2vn2VWeifC8+
-         VSCiSnus6MoPY/Fm6CZalQWno/3yOAXinyI2Oum1TnoDxszRuYmxQ5kMDM1y/OtaKqmJ
-         +GzZ91KpIeGRcd5hVmPPSFiti3/EMWoQHtreLr/LQRH58s06LuMa96WLx2Y+3lrx6IGs
-         EHHdkk4gPOfzxbHa2os4jCzPZ1sNyO7NwkLZnD/TNueKrhQbWyAfTwiBU2IDV9fJxOkn
-         Zk9u4qxBbumvKeRnovLSLhWloh521BZQGsOcopm/9gPrCfwsz6aJNA68/nPAicDzA1+l
-         Tfcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVPw77ychfqn0XiLrg9IvBgOkYxe2MJid4GgIsIQUGPhixG+UjoqhKLtZznu4ccQWNgxaUId5ofgwQRkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWVBg0AMD4QwcZycZZk3fcHEDxJHQUOHYAL1q4i76HV2odiN0C
-	sm5Uy++alIAaWCj4h+7l9fi8Mr5zQNvz4CXDPzzjaHTQ/kcixkdmn4rj
-X-Gm-Gg: ASbGncuL01sCDluoyuaAoy8iM0ML6ZJLWsM/IbAlhhkEoOjWDnUuWRihDUZs8u0bz/j
-	zzVnMN3sr7+Dk5OTewWMMo2HPppg3DOvNfOIl1HTjbxmQ1ejROzvL5PpDiEvPxQzgMvj4I+JnLY
-	GWxrgzN74LzyPrw7Bt2Rmf0fezsJ0FSJhTX8VYFMl5BBMmJd76ikyVhp68TCNcB2HyS+FrGd7IT
-	GxZDy8dDgeX0BFLfwBNoz+Q0Q0Zg+Lv9F45qhD95w6821vHyCXNrbBW2inQ/2pRchAAUDWcogvI
-	WsmgF8MmMRqPlespqdXxx7SG4hrEVEoTeUQxRw38utqJ9dQKkEnGbuDqAdsKX5el74nVH6oN8IG
-	91IwVn/0kR7k8n874csPWvkRI1LkTOebK+BqoNuaFFK9+lOfaGf8NiKcZ63LVJj8mXqWobYYu9R
-	s/9fwmNAq2FjsSSisHMzqks0GUFSxxWQpquLhc9IHoh5BsS73B7+4veoSqLhOX86rBUBc=
-X-Google-Smtp-Source: AGHT+IHxASxsK8vTXLXO/0PsN4EEUlCT4YiPJmJu56rmIQqT4YnWndf+GkwmJcPBmnTEv82AgRzXbw==
-X-Received: by 2002:aa7:8891:0:b0:781:be:277e with SMTP id d2e1a72fcca58-7ae1cb61439mr4730826b3a.4.1762368711955;
-        Wed, 05 Nov 2025 10:51:51 -0800 (PST)
+        bh=hMA7sw10zzBGTRnd6W864RCQYC44z+Ca26/lGGYhhvE=;
+        b=DjuxLTwGtr4HIVL7HYFKzYA1nnJ+8MG1Pj8kZf7rRTCoGJ79qOrfgTlD+Moa2M3dSp
+         zkvYQSsIQ104JJL2QBicIdDpIPgkxlM7jS3++ygnl1fwk2oB0gL9UWQ6V1++UWDmegiy
+         /9CucZyJI5KBSKAVe0CdqYw3C4YY8d7s4Q7/CvYtUSManKp1oliHURhHwEE6m/1bp4KF
+         GWujyEpr1ufsQX2bYyvgGdQJqnzJIbu09ehd8hC2QIg4lqrexMrgSu7dg2Et1v9MIPOO
+         ZAkw6xbjWVKGMx0mQdSe30lv0DGfLK1YaSR2taE8CWR7VhwEbCl68zL613CuCvnyDNA5
+         jycw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcM/N6E0NExZ0WpZ8G/CdWa3DCaHiY5eOQDvvS6zhtJKoKzUO/Ifgl+L6FlNf8B0wOaMG/FoqbEu5Rrek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8+0NZeIqZeWoCmPCK1WMKUNqf6BGiQ6LOHq5cOGQ3lyYFRsUF
+	zrSBwOWNpJT4x/tFWlgClBVVysLvJU15vXBl4nkvVa/n6QUFoAW0ozol
+X-Gm-Gg: ASbGncu3iAiERS87GlPIo9XC7vPyL2hLQogkIbLHFTCgYewb8iD8PFzi6stKi1UoTOP
+	TnE+gpfOVGz9I2J87e4SRs1zkgrDHR7mr4RbOejf8L4/0nucGPXXBKYxqno1rTz2WNRG1HaThF9
+	yzlg8rWSSSJwdVZcqu81czGuY3/egGepjXHKTabqDpPqlzoJJ1rS6uaO1f56S0fj1BbvxCh++j9
+	SjT26LADmOzhRBYXtQkUC1aJIRn/DboK+8mOyLqjp17DxUfu0dTBmMAD95f59HZjmI7t6Ar37QE
+	+4axEhBzaH9cUt+zl3ugf6g1tjoAmR889cNP32ny83nE4kWU5jAcVcA6MHZyw1vaHpfuuUFh38Z
+	I86Z2zrH8w7C3Srt08jtBZe1+XnJp780FRM+vwy2PgT1hgCf56Ave5x8viFc6MEz8IAOs/r+2mw
+	/96fWh4fyyVpsiwXtQz2ftCZvgw0Gv9vRq7As416fLLDpy8v+mLs9ilcdz
+X-Google-Smtp-Source: AGHT+IE9rlhZBTu82T34zVJihWBAXwztYFNYRmxAoUK+dv/am6Ed9EkYnrQ4cegPPtTom5w0PIT93Q==
+X-Received: by 2002:a05:6a00:10c7:b0:7aa:1e36:207 with SMTP id d2e1a72fcca58-7af71c668abmr500474b3a.15.1762368717560;
+        Wed, 05 Nov 2025 10:51:57 -0800 (PST)
 Received: from weg-ThinkPad-P16v-Gen-2.. ([177.73.136.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af827effebsm118409b3a.57.2025.11.05.10.51.48
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af827effebsm118409b3a.57.2025.11.05.10.51.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 10:51:51 -0800 (PST)
+        Wed, 05 Nov 2025 10:51:57 -0800 (PST)
 From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
 To: David Hildenbrand <david@redhat.com>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -82,9 +82,9 @@ Cc: Xu Xin <xu.xin16@zte.com.cn>,
 	linux-kernel@vger.kernel.org,
 	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
 	David Hildenbrand <david@kernel.org>
-Subject: [PATCH v4 2/3] ksm: perform a range-walk in break_ksm
-Date: Wed,  5 Nov 2025 15:49:11 -0300
-Message-ID: <20251105184912.186329-3-pedrodemargomes@gmail.com>
+Subject: [PATCH v4 3/3] ksm: replace function unmerge_ksm_pages with break_ksm
+Date: Wed,  5 Nov 2025 15:49:12 -0300
+Message-ID: <20251105184912.186329-4-pedrodemargomes@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251105184912.186329-1-pedrodemargomes@gmail.com>
 References: <20251105184912.186329-1-pedrodemargomes@gmail.com>
@@ -96,155 +96,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make break_ksm() receive an address range and change
-break_ksm_pmd_entry() to perform a range-walk and return the address of
-the first ksm page found.
-
-This change allows break_ksm() to skip unmapped regions instead of
-iterating every page address. When unmerging large sparse VMAs, this
-significantly reduces runtime.
-
-In a benchmark unmerging a 32 TiB sparse virtual address space where
-only one page was populated, the runtime dropped from 9 minutes to less
-then 5 seconds.
+Function unmerge_ksm_pages() is unnecessary since now break_ksm() walks
+an address range. So replace it with break_ksm().
 
 Suggested-by: David Hildenbrand (Red Hat) <david@kernel.org>
 Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
 Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
 ---
- mm/ksm.c | 83 +++++++++++++++++++++++++++++---------------------------
- 1 file changed, 43 insertions(+), 40 deletions(-)
+ mm/ksm.c | 40 ++++++++++++++++------------------------
+ 1 file changed, 16 insertions(+), 24 deletions(-)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 9f74baf01e46..43be57a6a3fd 100644
+index 43be57a6a3fd..f9a1a3658ead 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -607,35 +607,50 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
- 	return atomic_read(&mm->mm_users) == 0;
- }
+@@ -665,6 +665,18 @@ static const struct mm_walk_ops break_ksm_lock_vma_ops = {
+ };
  
--static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
-+static int break_ksm_pmd_entry(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 			struct mm_walk *walk)
- {
--	struct folio *folio = NULL;
-+	unsigned long *found_addr = (unsigned long *) walk->private;
-+	struct mm_struct *mm = walk->mm;
-+	pte_t *start_ptep, *ptep;
- 	spinlock_t *ptl;
--	pte_t *pte;
--	pte_t ptent;
--	int found;
-+	int found = 0;
- 
--	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
--	if (!pte)
-+	if (ksm_test_exit(walk->mm))
- 		return 0;
--	ptent = ptep_get(pte);
--	if (pte_present(ptent)) {
--		folio = vm_normal_folio(walk->vma, addr, ptent);
--	} else if (!pte_none(ptent)) {
--		swp_entry_t entry = pte_to_swp_entry(ptent);
-+	if (signal_pending(current))
-+		return -ERESTARTSYS;
- 
--		/*
--		 * As KSM pages remain KSM pages until freed, no need to wait
--		 * here for migration to end.
--		 */
--		if (is_migration_entry(entry))
--			folio = pfn_swap_entry_folio(entry);
-+	start_ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-+	if (!start_ptep)
-+		return 0;
-+
-+	for (ptep = start_ptep; addr < end; ptep++, addr += PAGE_SIZE) {
-+		pte_t pte = ptep_get(ptep);
-+		struct folio *folio = NULL;
-+
-+		if (pte_present(pte)) {
-+			folio = vm_normal_folio(walk->vma, addr, pte);
-+		} else if (!pte_none(pte)) {
-+			swp_entry_t entry = pte_to_swp_entry(pte);
-+
-+			/*
-+			 * As KSM pages remain KSM pages until freed, no need to wait
-+			 * here for migration to end.
-+			 */
-+			if (is_migration_entry(entry))
-+				folio = pfn_swap_entry_folio(entry);
-+		}
-+		/* return 1 if the page is an normal ksm page or KSM-placed zero page */
-+		found = (folio && folio_test_ksm(folio)) ||
-+			(pte_present(pte) && is_ksm_zero_pte(pte));
-+		if (found) {
-+			*found_addr = addr;
-+			goto out_unlock;
-+		}
+ /*
++ * Though it's very tempting to unmerge rmap_items from stable tree rather
++ * than check every pte of a given vma, the locking doesn't quite work for
++ * that - an rmap_item is assigned to the stable tree after inserting ksm
++ * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
++ * rmap_items from parent to child at fork time (so as not to waste time
++ * if exit comes before the next scan reaches it).
++ *
++ * Similarly, although we'd like to remove rmap_items (so updating counts
++ * and freeing memory) when unmerging an area, it's easier to leave that
++ * to the next pass of ksmd - consider, for example, how ksmd might be
++ * in cmp_and_merge_page on one of the rmap_items we would be removing.
++ *
+  * We use break_ksm to break COW on a ksm page by triggering unsharing,
+  * such that the ksm page will get replaced by an exclusive anonymous page.
+  *
+@@ -1071,25 +1083,6 @@ static void remove_trailing_rmap_items(struct ksm_rmap_item **rmap_list)
  	}
--	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
--	found = (folio && folio_test_ksm(folio)) ||
--		(pte_present(ptent) && is_ksm_zero_pte(ptent));
--	pte_unmap_unlock(pte, ptl);
-+out_unlock:
-+	pte_unmap_unlock(ptep, ptl);
- 	return found;
  }
  
-@@ -662,7 +677,8 @@ static const struct mm_walk_ops break_ksm_lock_vma_ops = {
-  * of the process that owns 'vma'.  We also do not want to enforce
-  * protection keys here anyway.
-  */
--static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_vma)
-+static int break_ksm(struct vm_area_struct *vma, unsigned long addr,
-+		unsigned long end, bool lock_vma)
- {
- 	vm_fault_t ret = 0;
- 	const struct mm_walk_ops *ops = lock_vma ?
-@@ -672,11 +688,9 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_v
- 		int ksm_page;
- 
- 		cond_resched();
--		ksm_page = walk_page_range_vma(vma, addr, addr + 1, ops, NULL);
--		if (WARN_ON_ONCE(ksm_page < 0))
-+		ksm_page = walk_page_range_vma(vma, addr, end, ops, &addr);
-+		if (ksm_page <= 0)
- 			return ksm_page;
--		if (!ksm_page)
--			return 0;
- 		ret = handle_mm_fault(vma, addr,
- 				      FAULT_FLAG_UNSHARE | FAULT_FLAG_REMOTE,
- 				      NULL);
-@@ -762,7 +776,7 @@ static void break_cow(struct ksm_rmap_item *rmap_item)
- 	mmap_read_lock(mm);
- 	vma = find_mergeable_vma(mm, addr);
- 	if (vma)
--		break_ksm(vma, addr, false);
-+		break_ksm(vma, addr, addr + PAGE_SIZE, false);
- 	mmap_read_unlock(mm);
- }
- 
-@@ -1073,18 +1087,7 @@ static void remove_trailing_rmap_items(struct ksm_rmap_item **rmap_list)
- static int unmerge_ksm_pages(struct vm_area_struct *vma,
- 			     unsigned long start, unsigned long end, bool lock_vma)
- {
--	unsigned long addr;
--	int err = 0;
+-/*
+- * Though it's very tempting to unmerge rmap_items from stable tree rather
+- * than check every pte of a given vma, the locking doesn't quite work for
+- * that - an rmap_item is assigned to the stable tree after inserting ksm
+- * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
+- * rmap_items from parent to child at fork time (so as not to waste time
+- * if exit comes before the next scan reaches it).
+- *
+- * Similarly, although we'd like to remove rmap_items (so updating counts
+- * and freeing memory) when unmerging an area, it's easier to leave that
+- * to the next pass of ksmd - consider, for example, how ksmd might be
+- * in cmp_and_merge_page on one of the rmap_items we would be removing.
+- */
+-static int unmerge_ksm_pages(struct vm_area_struct *vma,
+-			     unsigned long start, unsigned long end, bool lock_vma)
+-{
+-	return break_ksm(vma, start, end, lock_vma);
+-}
 -
--	for (addr = start; addr < end && !err; addr += PAGE_SIZE) {
--		if (ksm_test_exit(vma->vm_mm))
--			break;
--		if (signal_pending(current))
--			err = -ERESTARTSYS;
--		else
--			err = break_ksm(vma, addr, lock_vma);
--	}
--	return err;
-+	return break_ksm(vma, start, end, lock_vma);
- }
- 
  static inline
+ struct ksm_stable_node *folio_stable_node(const struct folio *folio)
+ {
+@@ -1227,8 +1220,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+ 		for_each_vma(vmi, vma) {
+ 			if (!(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
+ 				continue;
+-			err = unmerge_ksm_pages(vma,
+-						vma->vm_start, vma->vm_end, false);
++			err = break_ksm(vma, vma->vm_start, vma->vm_end, false);
+ 			if (err)
+ 				goto error;
+ 		}
+@@ -2855,7 +2847,7 @@ static int __ksm_del_vma(struct vm_area_struct *vma)
+ 		return 0;
+ 
+ 	if (vma->anon_vma) {
+-		err = unmerge_ksm_pages(vma, vma->vm_start, vma->vm_end, true);
++		err = break_ksm(vma, vma->vm_start, vma->vm_end, true);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -3007,7 +2999,7 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+ 			return 0;		/* just ignore the advice */
+ 
+ 		if (vma->anon_vma) {
+-			err = unmerge_ksm_pages(vma, start, end, true);
++			err = break_ksm(vma, start, end, true);
+ 			if (err)
+ 				return err;
+ 		}
+@@ -3389,7 +3381,7 @@ static int ksm_memory_callback(struct notifier_block *self,
+ 		 * Prevent ksm_do_scan(), unmerge_and_remove_all_rmap_items()
+ 		 * and remove_all_stable_nodes() while memory is going offline:
+ 		 * it is unsafe for them to touch the stable tree at this time.
+-		 * But unmerge_ksm_pages(), rmap lookups and other entry points
++		 * But break_ksm(), rmap lookups and other entry points
+ 		 * which do not need the ksm_thread_mutex are all safe.
+ 		 */
+ 		mutex_lock(&ksm_thread_mutex);
 -- 
 2.43.0
 
