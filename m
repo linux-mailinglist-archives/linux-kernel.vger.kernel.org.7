@@ -1,184 +1,123 @@
-Return-Path: <linux-kernel+bounces-885625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3811EC337EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:42:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F293FC337EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F2004F2AA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:41:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1525F34932B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DB523BF9B;
-	Wed,  5 Nov 2025 00:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEA92253EE;
+	Wed,  5 Nov 2025 00:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZ+N2tMt"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZ7hMFdR"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9F7239E7D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBD91A238F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762303265; cv=none; b=VxH2MR6nGvEpXZkq8Bkj585qJyPX9E6Zv9+7IRx+HwaRLcoEvfdSoXmUeUsNn6a6h8t517UWoszKbGN2BI9nv3xNnCyR0Sum13xR1obDAtgSR8J6Y3reWmm5/ckhY2NNLag/eCsF4rXurfOWl+BfdT4pQ36o+iipqGQHEKC2bm8=
+	t=1762303324; cv=none; b=HAd24L9vFQtZZ94w8/lCZ4NRYLKnEMOKZNTsT7LpkwehMP3fb3/HbciAiIFxbpvWvmzrDKF7eH5m+QYTKoDNiOq3Xi+dcd8WkUh+OnvBqefCfnwYS6iuR5pgCwrv+WlrVk81y/dSHHFuXsyphPlUnZVNECeOHYLdaezm9rpAc14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762303265; c=relaxed/simple;
-	bh=iB2rxoQs6LHNjhiJgmkA5Yc78itROwORHlUrfQFQHXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ewEmAGhd3X4s1HxY/CnHKbyM2UoWVu41gBEIJ6unPk5K0ddpPRZITkH76EJ2h2cT6zVK81TjeYbtNMHiHVo8vgmzYxz7dle9/7oi9/wt80ShBjK8TYBcneZJBIBaHsAxb7oGtalxKjwRBgiC/R9Pmvbjqe/8rIaQ5vMfKJ9JkBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZ+N2tMt; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1762303324; c=relaxed/simple;
+	bh=gYVZhOYMPRfGjFaaFVkRzh6eCeopTRT/VpSmpXPD5EA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iA3mBbpzpXjDDvUVL+oNm++RiQLo2VxUzDyi+dfLZmpaxGM10YKLfe8PrpIauJTOHaeuLDFBTEq7dcg2InKpu1hfVlOhjonXmKmX+OkshQYIMhD3QeB8cfwDwlTT8jslhiuOg44Uy0mnPSiEb1O5+uuMJh0KubsHxBqHFKtesKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZ7hMFdR; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2951a817541so68906875ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:41:03 -0800 (PST)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso2856240b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762303263; x=1762908063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0lY3hUxzseeyKTtHC+1V232znjyrt/mx43bxK4gMo3E=;
-        b=AZ+N2tMtFMDYsxGQgMMAAS5kLBe9euC9xNNBygxInEDAHINlgZTpzyxbDH7F33y83G
-         R6XiohF5bRaEhtQsXIq0LusqrK1SLLH2I/yZ5p4XW4/GUoPd0kJcjzwzgWDIex3bVnoG
-         caFWi8tNlqf/gGsUG7YfAoeZE0PxkMBf5HtwWrf7HVPaCqKwNizW5f2IAePaGX9ygODO
-         st71Wd//W8o+nYOWoLXzNiJXSKd/cvTQwT42Fw8wGcSWHE6eXTjrTPTSy+P0nnVFvqXX
-         HHC+qGXO1IrU+9JCSSfVluhLQXFN1uvLs6QXrYvIHmcvC3KL4Keu3easK8EP8zXGyt3Y
-         YxAQ==
+        d=gmail.com; s=20230601; t=1762303322; x=1762908122; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gYVZhOYMPRfGjFaaFVkRzh6eCeopTRT/VpSmpXPD5EA=;
+        b=QZ7hMFdRf+Q/1/9qybHlMyZ5VjIHB0em7ndf4TfQDqIWJwVDlKOu42R9XwYE+rFdVj
+         h/MXNf7ffJrwKQqnaqTYT5tdMm6wTURIu4zTC8V2wJixay/9SyfkiCaCQ+qRAMf8K8bG
+         K7kQmMbcOmOJ1xsLCP4hpGl9muO/CJNj4NMwKXndtZ2AvESDHUOBnjx5yi4wiAUKRVSM
+         SO/D30S1nsZkmRzQskZ1C2uHh8lDa5kpmoggHqiTogjKkrqjOKM67AQ3QTi7hxqF6X3X
+         /LK9FasJ+QxZjczX2Zcsc4ZTw762yZZ3JT6EHTMnqanG5EfO211NK6glANZUR0a4E28S
+         30cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762303263; x=1762908063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0lY3hUxzseeyKTtHC+1V232znjyrt/mx43bxK4gMo3E=;
-        b=dwqttF4yGXInbCMHEiqrq+TK8hZNRqyA7yr0PZbujHgh68mkOJfNiBhXSuXpZzVH/8
-         wyy+cSZWQ5QfLT3/01OnGb5+6ovGwmYTEQzeeunyHVeGYPtrlWqrNh2z06seaFB1+pB8
-         IYdVjTGWzr9jpqIReaEYDY0ohCzxU2uCBCb7tIeueLM+rafoQ3gEeTmN+KmBV8lef2IZ
-         SptFNOwT6rsiWJwfOl3RyRzwFmoFAjORQVaX4LKlXOU8iqGcHS5/hG7UzBdzOteriw3L
-         SA4WOZd9ixR1pwBrxvs9WrwrNp1lVJwv9V/URmKDCwA/PPKdCj2eWT1hI3f4kX7CyLPK
-         r7jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcC9dzXQvWELTYYzarrgjkHNXgOu+B7TPlmDzPLJHprMdVfxFSxisQRdo6KcBmNz8uSFGmC8Ivzgpn4Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVOCLktQKh0qv+N+6/FyK19XhpOcONiiqmyiDe6m+SDfMCJD3S
-	MHWou2Go48N7f6ooWyPTMyQE4gHuQ9zUuaNEO8MC3mUf/+BaCxhAECBYEw4oM7rm/C9uqhEkr5L
-	ZAdTT5R97j4WifPBYJM0dxOl+AjJ2tHU=
-X-Gm-Gg: ASbGnctJZPOYJ7n8oF1tTmFdgxvFa+1u8ChIKNpF113KySdnoSjngnoqOW/dCkST1bR
-	xmPyHyq/MBgk1zrHE+9cVsJtnoF4dRxnw821nChRKguT6AvYNwo9hpbFhXBs9zY82Ea2NBo5vfD
-	zCEs7FVQcArWaljIa0ZX1QLpMxwiOuVzVUvueE77q/9jHA/W/LpOK4J5waBBDge9b29kc3k4Wgr
-	5IWJ+17dhD4qfiqqoiChc8zCnkt9E/lKsHmXmp8HbijMYJruOJ6oX8WI274FRc57+SFuREbo6oe
-X-Google-Smtp-Source: AGHT+IEU1E4MP5M572+waRD//phAEiALlYub9Hv2jmIr2Y/tWZXbS9wfZ+oS4MlVnNllbjwb8B0DR0MpRyvGDsfjouk=
-X-Received: by 2002:a17:902:e5c5:b0:28d:18d3:46ca with SMTP id
- d9443c01a7336-2962adb62f9mr24024215ad.49.1762303263212; Tue, 04 Nov 2025
- 16:41:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762303322; x=1762908122;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gYVZhOYMPRfGjFaaFVkRzh6eCeopTRT/VpSmpXPD5EA=;
+        b=YgRKYaKM+HSjwiSbQyXxcRAQy7cHgyxSU7vzGHzXftsO4VyTqpmAhwU6s41pJ0O+VG
+         F7/ZXGmjLPvL226Ray6dTqJC9+cgR8p859c6F8iAZvp/LiSiWqk2UhnqrAr8cY1C9cKk
+         TFU4bY6+IVzXjSi1HsMemMvIZVnBj0B2KhPymXb0tGvXDZE0DZbtbrgROdcP48Kmi7jy
+         WEwGw03mAGJhY+Cv1sBjcZ53Le8gH2LeeKTrzKr1/y1YEHfjfDUqMvZRE1dFYm1FuwcZ
+         +y7bM0tmO2QQCx3oDNmLVUFJ7BMTxx6g5157r6UA68X9jFJXTSGYPftOHwMaqL2bYX7r
+         rVww==
+X-Gm-Message-State: AOJu0YzmkBrRkbTu9azCq/f8ay/rC36TdcfsMTLhKjwsXmuvfiouSYdW
+	Q7Bb5y59e84JvLuCUiDOMJ3O/lbSWKMnK0lxv5lurtU2gVvoENkWNc5/
+X-Gm-Gg: ASbGncsXT62KDPfPz4hZTKL5JpEV712NrHDd3dI1vaEaqWXdngKAG2tUDwklZ0Z6n7f
+	yBwaIV4/TBLT01Sj7uveoXLhRFH2bDxX5tli9gW5lU4iJc+YFU8rVIwzuU7KDqWZe5E6P+HnhLk
+	3gFrwE1b31yM9KJsO2Oa8JhHdKwpA8x/XseEqQiMObphXyIg/09cIveVlXmCcRhKP5B6h4SF5tF
+	KDdaFIdvRCChpO9OARR5EDqA5iqSDyQyPxWTuAgYqXDsZiPRmyk1CWyHk7xsin2/mEYlJjoSKfc
+	1K1M8mHqjbWlEkDPHtppTspFIMZPVtocVlTOL/5i1IIYRCNV1PC8Oz6AFuL1K+rw7I77mkvh50Z
+	UiZyAAC5hcBdoPMhVWM1JMURyVIitpX7AuRu5VpMHsClb6/yNzuWtDobGNpefuqn5cdDFzD2VT+
+	/H7b0m8aXSfoEV/eze8LYzWaA=
+X-Google-Smtp-Source: AGHT+IGlCkp2SIrycBjc/coGvTISsaGEuTwt9MlilZThVHmTxGZjjFRoJ/A4sutmB2eGMGsbS6qnYA==
+X-Received: by 2002:aa7:8891:0:b0:781:be:277e with SMTP id d2e1a72fcca58-7ae1cb61439mr1442287b3a.4.1762303322289;
+        Tue, 04 Nov 2025 16:42:02 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:a643:22b:eb9:c921? ([2620:10d:c090:500::5:99aa])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd586cfb4sm4367000b3a.46.2025.11.04.16.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 16:42:02 -0800 (PST)
+Message-ID: <81753c119e02d3a8158328ec5d3cc6fd128e68b0.camel@gmail.com>
+Subject: Re: [RFC PATCH v4 7/7] selftests/bpf: Add test cases for
+ btf__permute functionality
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Andrii Nakryiko	
+ <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song
+ Liu	 <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Date: Tue, 04 Nov 2025 16:41:59 -0800
+In-Reply-To: <20251104134033.344807-8-dolinux.peng@gmail.com>
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	 <20251104134033.344807-8-dolinux.peng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026030143.23807-1-dongml2@chinatelecom.cn> <20251026030143.23807-3-dongml2@chinatelecom.cn>
-In-Reply-To: <20251026030143.23807-3-dongml2@chinatelecom.cn>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 4 Nov 2025 16:40:48 -0800
-X-Gm-Features: AWmQ_blOfoM_l2r0lt4A2bvCtaXDmFSafOTdKDG85Hyl1uiyuVpe-mxuHnQsoBo
-Message-ID: <CAEf4Bzbgqse2mSmGWd5ibJaDYgPw-WpLQp_XiF3fguw147qgPA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 2/7] bpf: add two kfunc for TRACE_SESSION
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: ast@kernel.org, jolsa@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	leon.hwang@linux.dev, jiang.biao@linux.dev, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.dong@gmail=
-.com> wrote:
->
-> If TRACE_SESSION exists, we will use extra 8-bytes in the stack of the
-> trampoline to store the flags that we needed, and the 8-bytes lie after
-> the return value, which means ctx[nr_args + 1]. And we will store the
-> flag "is_exit" to the first bit of it.
->
-> Introduce the kfunc bpf_tracing_is_exit(), which is used to tell if it
-> is fexit currently. Meanwhile, inline it in the verifier.
->
-> Add the kfunc bpf_fsession_cookie(), which is similar to
-> bpf_session_cookie() and return the address of the session cookie. The
-> address of the session cookie is stored after session flags, which means
-> ctx[nr_args + 2]. Inline this kfunc in the verifier too.
->
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> Co-developed-by: Leon Hwang <leon.hwang@linux.dev>
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+On Tue, 2025-11-04 at 21:40 +0800, Donglin Peng wrote:
+> From: pengdonglin <pengdonglin@xiaomi.com>
+>=20
+> This patch introduces test cases for the btf__permute function to ensure
+> it works correctly with both base BTF and split BTF scenarios.
+>=20
+> The test suite includes:
+> - test_permute_base: Validates permutation on standalone BTF
+> - test_permute_split: Tests permutation on split BTF with base dependenci=
+es
+>=20
+> Each test verifies that type IDs are correctly rearranged and type
+> references are properly updated after permutation operations.
+>=20
+> Cc: Eduard Zingerman <eddyz87@gmail.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Alan Maguire <alan.maguire@oracle.com>
+> Cc: Song Liu <song@kernel.org>
+> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
 > ---
-> v3:
-> - merge the bpf_tracing_is_exit and bpf_fsession_cookie into a single
->   patch
->
-> v2:
-> - store the session flags after return value, instead of before nr_args
-> - inline the bpf_tracing_is_exit, as Jiri suggested
-> ---
->  include/linux/bpf.h      |  1 +
->  kernel/bpf/verifier.c    | 33 ++++++++++++++++++++--
->  kernel/trace/bpf_trace.c | 59 ++++++++++++++++++++++++++++++++++++++--
->  3 files changed, 88 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 6b5855c80fa6..ce55d3881c0d 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -1736,6 +1736,7 @@ struct bpf_prog {
->                                 enforce_expected_attach_type:1, /* Enforc=
-e expected_attach_type checking at attach time */
->                                 call_get_stack:1, /* Do we call bpf_get_s=
-tack() or bpf_get_stackid() */
->                                 call_get_func_ip:1, /* Do we call get_fun=
-c_ip() */
-> +                               call_session_cookie:1, /* Do we call bpf_=
-fsession_cookie() */
->                                 tstamp_type_access:1, /* Accessed __sk_bu=
-ff->tstamp_type */
->                                 sleepable:1;    /* BPF program is sleepab=
-le */
->         enum bpf_prog_type      type;           /* Type of BPF program */
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 818deb6a06e4..6f8aa4718d6f 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -12293,6 +12293,8 @@ enum special_kfunc_type {
->         KF___bpf_trap,
->         KF_bpf_task_work_schedule_signal,
->         KF_bpf_task_work_schedule_resume,
-> +       KF_bpf_tracing_is_exit,
 
-we have bpf_session_is_return(), can't we just implement it for
-fsession program type? Is that because we need ctx access? But we can
-get bpf_run_ctx without that, can't we store this flag in run_ctx?
-
-> +       KF_bpf_fsession_cookie,
-
-same, we have bpf_session_cookie, can we support that? And again, we
-can just make sure that session cookie is put into run_ctx.
-
-And if not, let's at least use consistent naming then?
-bpf_fsession_is_return() and bpf_fsession_cookie() as one more
-consistent example?
-
-
->  };
->
->  BTF_ID_LIST(special_kfunc_list)
-> @@ -12365,6 +12367,8 @@ BTF_ID(func, bpf_res_spin_unlock_irqrestore)
->  BTF_ID(func, __bpf_trap)
->  BTF_ID(func, bpf_task_work_schedule_signal)
->  BTF_ID(func, bpf_task_work_schedule_resume)
-> +BTF_ID(func, bpf_tracing_is_exit)
-> +BTF_ID(func, bpf_fsession_cookie)
->
->  static bool is_task_work_add_kfunc(u32 func_id)
->  {
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
 
 [...]
 
