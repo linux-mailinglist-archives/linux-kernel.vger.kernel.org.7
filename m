@@ -1,203 +1,189 @@
-Return-Path: <linux-kernel+bounces-887171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1320FC3771F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:16:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCE7C37768
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F9918C4496
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:17:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99BBE4E5EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7841733E349;
-	Wed,  5 Nov 2025 19:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27233507F;
+	Wed,  5 Nov 2025 19:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y2i5oL0R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XC+A+6ae"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2A133DEF8
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762370188; cv=fail; b=k+R4kZVkWo0QtXEIEB2WtjJlh/rWfZE4innNRhoAL9kLfLDUnnZWgfOyaq+/s6m1eEJIF80l7+n58stQwfzbeUdF1OsdMBRDrldkFnwo4beHGZG6H/ITUrRE3oI+Gcfb92ARTDP1vsGfEplnx14VrmgYYBDYS4Yjg897Xfw7t3E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762370188; c=relaxed/simple;
-	bh=As7k2M3SGRRD1x/dy2vqbkKn6/+s7Ck5dMuy5llf99s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mn+5QMRe2netYrLvFqFYzmUKbW150U3VKSVU4miuD0NixQkrjBrPjZiSmmKD33Rg5wsbYmhj/jWdinwY6Dmy0bVQ5KR4Kgnm6jP/CMq86IGDwtw3lEnrruGAIPvBouK/TD6osw2gqbX2xMDdK8nufpNNOwOCc5RzeiYHtygjYGY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y2i5oL0R; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762370187; x=1793906187;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=As7k2M3SGRRD1x/dy2vqbkKn6/+s7Ck5dMuy5llf99s=;
-  b=Y2i5oL0RaFaW6w1wbZ5qPdfU3K3nrCWtvNZOVjlD8fqYDFE9A9cnmE9a
-   ZXlb8U0SrI7BCXVu/+U95BtBGQiiMw2L1SL2WbvwZayVWrtCFKSgi/2P6
-   Ouptg7Q5PAz3nbiZPVxHd3HzvrttuIK7iXz0zucHFxdy71JyJLfT/41VY
-   skCsiu0RGwqlg8LeoUgbLZ218w5GfCJxmS9VjbUhJNiChckTRC73Lj5iD
-   nDpBPkx8JlCjy3lKzKzr1+XSaVfGIg6pyoq1EmzPeRDsIXXV+CzFv1LqF
-   EpR4N4xDRjFbxWvYWYBNDotHm/8L4W4+QpYm1r1Yg2xx3Hg2WuE9yMrON
-   w==;
-X-CSE-ConnectionGUID: T6EBUnhvRGmijFJYKa42Pw==
-X-CSE-MsgGUID: YyxTkxQQSwGaT+uWDWFJJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64531265"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="64531265"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 11:16:23 -0800
-X-CSE-ConnectionGUID: YOxFiSjbScKQI7wpudYsYw==
-X-CSE-MsgGUID: IFhiUnOBTN+nChZqdp/MQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="187705696"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 11:16:23 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 5 Nov 2025 11:16:22 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 5 Nov 2025 11:16:22 -0800
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.3) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 5 Nov 2025 11:16:22 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bbSv+Hx/ecdKENAjtG7lygMkUtqWXXNh8oBT/9X56K0pnT9Eu/g49NQaYVkozbH6Q9nOatUE/LId6kVKz2FhY2lLiq1Dv6F/Gk+2K9YidrbD4LWe68xI1eqvE34a9WFjm/ey0SOELyerTb6m2wIM/YnjJhIxx1bzBweWkuIcuhSDGn5y4Ou0tKfG48f7AeXsilZvxt11f97b2BiaoA1kdR3FBP/+GjUICZJx8AeHPuBgn3SLEeh+wn4O1eVLmqhnQW3+8OxrZATTwyO9gfwgrjxVEvIUQ0GWT0LH1CslYUnCUx0x2P7sbgG5mrEIJkR67aLEiwxPu5mAGF4cZFToCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HskZJHd688IOy11IliyC9F7CKxnqopiwMqM6mGS/idk=;
- b=li/ds1T6aNC1di4ZduFv/PdqgyrxXAjkDGCX1P1y1dXIwOsv4YLZpWu83kXOTQck/ujmHW0ZhCbh+z7bhnQ3uNGiO64dL4H4Aju1B3ncTuLLjPmg3mmeLz9bST64zH+zlKkM6ul5cQ5Neq8C4hDoKt0r7IXpF60RgEWtKfAfS3YMdasM6UcrpHdahKfHopEeiP9PxREJhKkTEY+++PVeXxeRZrBpj6Hx0WMiO6MWsrU4qhzwWfxolvDKLQzM2Z2f/+G8talWQCPgg/LTURlrl6wPPsn42ySLaEibsDNQoLXEWynJC3+yUMRws+9cNtr096/FogHoWycLjigaUu60qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by DM4PR11MB6041.namprd11.prod.outlook.com
- (2603:10b6:8:60::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Wed, 5 Nov
- 2025 19:16:19 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c%8]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
- 19:16:19 +0000
-Date: Wed, 5 Nov 2025 13:18:46 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-CC: Dan Williams <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
-Message-ID: <690ba316b541c_2848c61001f@iweiny-mobl.notmuch>
-References: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
-X-ClientProxiedBy: BYAPR07CA0048.namprd07.prod.outlook.com
- (2603:10b6:a03:60::25) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E369D279DCD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762370636; cv=none; b=do9/M9nag4XK9Mu3FbuTyiVzO9AVRu1mENJMqNSGT9vgqwTrfdVWNvxDhA+ms31LtX8kMaFdfvJGZ7V1FvbMGMnIOiV0Y9f8hTPia8JjBzB998mQ5PldmFK34tyKYRDGqAem5WSBZqJp75J5tv4VsZDy1DFZpmLgEj6Bw9v/fqM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762370636; c=relaxed/simple;
+	bh=xumo1NJjI1tSArbHaxlVI/vTMt0zSW0N/aOr2WFfe5c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UWYOuxkVtHCegnw5Z12dwSFTcr8TrX1cn8Wd3TnDUVmX1GLoK8pFsQid3M+USz9OMmk2yPkhj2/Q+GVPSijWggLnYxJwoYDDzz3mdHeoXkNKjqBCg8j2/XTFKKDrJPmTnTaefnu+/fAlcmxcLeZaU6HtewxCXjcOPAAztW4ij2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XC+A+6ae; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7a1603a098eso153586b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762370634; x=1762975434; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RREx40hV5tyq0dYa5rX5oC5Z4Ah1UHImj4yHSS+0TPM=;
+        b=XC+A+6aeXtaikgEIpbmvDPTvFpCq7olfeVKY6QWw6ZOD/x6WXKvWRCt8C3sOSf5RQN
+         QWXairb9JaU7Gpgx93CCihV1/aW194smY2aRvujhTin+dTR8PORPiyOPM5hkk6D3FjZc
+         QjAq5Ll1fNNwUJ8zQPADxTOouQ0yfELWUdzfuRFw0oNICrwl6VzINLOG020DNwd1nYo5
+         RVylP6NGmRRXrYSOQphlJUoUYJ20ejY96ppEInqIvAmATOnzPIj9VT2JerdArG0oNJ2L
+         juM5y86njPE7l6v5ZVvmve0Xmdzt+vZuYu60W+xRLpl5orDv5TTc0VPsMH31631U7mvM
+         6XAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762370634; x=1762975434;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RREx40hV5tyq0dYa5rX5oC5Z4Ah1UHImj4yHSS+0TPM=;
+        b=oSIernwdIeGkFtZutIaHyh1erE3qpreGiOMtzEDOy7uKxTcyWLd8+pUnBL7eZOg/Ca
+         JH6YUbUybqM1+2RUhh4B8kndBw4JPH+eRb1Zp9pWU7yukD5w4mloXrKofiyVkIfXkajW
+         pkdUOo3sCQJQ4F7r8jUa7sfdJG2/sCiVoB/kmH1wu41L/W3sV4tNGDjn5JafV5dw+x8T
+         ApeAB0UbfA/UTxkpWEk6xN2axEkKk9Zg/zLr7nSbzvnYoTYE9jX1LfFKPRbCx2oTy3wN
+         HffmO+pSJ20TP97Ge2FhlxRZuxTTvbHxT6DL4iFYFjj+VGiZ9Obsml+Xgh2lHztYgUvx
+         M48Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXtZMIs51arQ6xXVma4n507k4gkftUKNROWycT5TSPNTa8OqeasFp19VvNfBikPl9iNFRyYJnda53it7nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYpRubGso3r7cYVhQU8kYW8TIHKyrWZIqIV7P9PGVZnXONH89k
+	6UMODoafdfEYupBDF5BsXKRPgACXpF05H0hqvT/Wkyg4uN16BDYI3jEt
+X-Gm-Gg: ASbGncuuNFpbGRNbu/z0a3cZHZn2SnFebhWsk7i7yj8WS4dUZSe8K96RsNiVdGJbEVE
+	2XdTqdW6w4i+poL4F0Wsh7wwxDUVasCrusC+wgt8T/NIHi43l26b3ZCIIveytcJmRUnaeBLeVg/
+	Cf6/4Dsuw8fu+UBPyR8pIaUiXDCTJ3Z2knyBKWxPC9pQ+FjwSszpOYMYqfKB/z3BUEgKYIq4f32
+	aJIN2EUe7V3IyzPG9CJO+mTguPZwvy53NoICGRRXrbzqFSs7ks1+gRkgtpvlkYlOOj/aG8LgRIT
+	67zuaK/aCViqKhW8yAHiEI3DQnadq707tHLTkqDIirFFUtUo9rq59r854rZvK8RfQ74jP2yQ98H
+	YiXFM4JAhIEDjqtVNhK/6x/YbH3rF6ROSb6DJnL9kxqa8Z0Rj9pidklaQIuILBVveAibUcz3xJJ
+	Z2XvEhD8QVSaCsA84rNjcVYL1W4anzxdXHeVM=
+X-Google-Smtp-Source: AGHT+IEF1f46SRcectCdqICEP1eNEqVAI9FbwInYUxhpGA0Pisokd6E6G3WgcwMjG2n50Dr7nHIlyg==
+X-Received: by 2002:a05:6a00:2e11:b0:7a2:73a9:97e with SMTP id d2e1a72fcca58-7ae1f5937c6mr4969623b3a.26.1762370634009;
+        Wed, 05 Nov 2025 11:23:54 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:cdf2:29c1:f331:3e1? ([2620:10d:c090:500::6:8aee])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af82204713sm187026b3a.36.2025.11.05.11.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 11:23:53 -0800 (PST)
+Message-ID: <2ba0561a653254254a0fa1709bffb3704488f33b.camel@gmail.com>
+Subject: Re: [RFC PATCH v4 2/7] libbpf: Add BTF permutation support for type
+ reordering
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan Maguire
+	 <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
+	 <pengdonglin@xiaomi.com>
+Date: Wed, 05 Nov 2025 11:23:52 -0800
+In-Reply-To: <CAEf4BzbVU2sBw4aSOB1+SdKN0Qe-WEtDKo3wn21C6UjfSKiBdQ@mail.gmail.com>
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	 <20251104134033.344807-3-dolinux.peng@gmail.com>
+	 <CAEf4BzaQ9k=_JwpmkjnbN8o0XaA=EGcP-=CBxmXLc3kzh3aY3A@mail.gmail.com>
+	 <3986a6b863be2ec62820ea5d2cf471f7e233fac0.camel@gmail.com>
+	 <CAEf4BzaLmVuPRL4V1VKBmaXtrvT=oLwo=M7sLURgoYU34BkpMQ@mail.gmail.com>
+	 <627795f165b1e66500b9f032ed7474125938f33a.camel@gmail.com>
+	 <CAEf4BzbVU2sBw4aSOB1+SdKN0Qe-WEtDKo3wn21C6UjfSKiBdQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|DM4PR11MB6041:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44bebb96-a564-4fd9-dfaa-08de1c9fccd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sM+vx8973k3tRLgZ0er0fQ6Rk570TPdD+GERnH3S19PbFamN2G7TO0rE9ic8?=
- =?us-ascii?Q?meIRqi9FCHIiIPTRngozDYBAszw8TflrU1duPveh0nonGscdwzCDQS134V0n?=
- =?us-ascii?Q?G9fX7Zw957nN/aYuWWszDzo4qugcOaj+S38Kxdg7kor4mBRWrNRohJ1wJHeN?=
- =?us-ascii?Q?8nPdk2tsdhyrxA5n862KfIguoEuaIHeugbs27rFsK5xaILhbJftDQ0xLdEQS?=
- =?us-ascii?Q?fPit7fOgjn4hbpTtp106kVwTmOC0J7OQWNUFo1aWJmo3G3eC2LDkk9VKLdkW?=
- =?us-ascii?Q?KA0M8BSf2VgidnGrJHLEXg3xWLZzYyEMzTEMYn8Smd5CGPLGVu/XyjsP2hEb?=
- =?us-ascii?Q?w6qIr7VoKeghsF6GzCFjMvsyB6jY3Xe4TiiKFfQbLQcjKqjLVfAiYxDANi5J?=
- =?us-ascii?Q?aGbMuv7DucsoPtOgR2BS+OEwldvG5xGW6q8kMpRtsbOBCajt8ciMzQ37tnrF?=
- =?us-ascii?Q?D7rvso7imrU4IrGy/6uFT3jeFbDiZELaaXENwiSp8Fj5iuCfHaBM/bRMYQRY?=
- =?us-ascii?Q?7AYbn7UrB93AFkd8sUTnEUPYM27PnAjJckvfeVHi2ZmTFyQPBwMQIYC7ReAo?=
- =?us-ascii?Q?AqxcYWAFXO8JHwB9OKy0TWXqZ6w9Hy+lT4863hc5XKka5g7Pkvy23Moezagy?=
- =?us-ascii?Q?y7nfh5SkvImPX+JokrobL2t/g+RZ41aGCkf0EGo1qc8t/nrpvtK60k5JZAus?=
- =?us-ascii?Q?BeSqkm1CqGAxiU0YJiUZiThgCp0hBZavhAwhnsyNnYfuEomsghTZDTHgbcyn?=
- =?us-ascii?Q?WGmkFQU6hA2taYTATEdLmb6VUDYmLGRZ1moNNT4qF5zV/vSi0oSYsInpGYkn?=
- =?us-ascii?Q?lTadOG6opolhTGzvjYvO+rzUPBCoeUATFXLRIZkVw/OUoaxAqr5UgrrSOmHn?=
- =?us-ascii?Q?A9GgsUq6dEu8JHmx+YYLuJXvKFQ6PT574T0EoVpqX53d74CM1/J71pzTeuND?=
- =?us-ascii?Q?iqGq3bd0zLj4+qDAd4pmQRz04NcFjINrg5A7LUQPLpbwbYN9s19iJvZgd+4z?=
- =?us-ascii?Q?0lRbVHIiPRz3E4AJS5W1B+KSuRWQFo3fHbDzrpoqjFQrL24qU6bOQoZZ1T+O?=
- =?us-ascii?Q?oVfzEs7R8BkRfFZGx/wQIX0DY2OebKaWjSRNndF5O3pfs3TRZtBH18smoG1k?=
- =?us-ascii?Q?Xih4kvPl2wpyDmNvFsf/8tO3b6ist1ll4SELblQCK/n1+LOU8ZVB4wZgFM0c?=
- =?us-ascii?Q?NF+rQGn4Lj8Nwb7HnddZ+BRB94e6P1I/W30gQ+fuYLSAYI1s/w/2itlly0bA?=
- =?us-ascii?Q?PZpyn5M9PNP5m2sMasS88kyEQqKP+4aUbNZoIBqsqSF+Lr6Nnw9AMRKm+Pbi?=
- =?us-ascii?Q?ztJ05ezMb4y2hBrUhv0j6hj3JOo/blizXPuD6L5uKYyIjl7VDwLt0FrvV2r+?=
- =?us-ascii?Q?BAnntjmJHmjsgP0bmotAaFxo5x7h4u5o6rPi3dcUSo9nF6bSpvKerGuWT6sy?=
- =?us-ascii?Q?SjThLPURu88KyHZte2hhn+cZV9X5Zg5D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GzjbTMb1hb8pdlDS71zz/oMEFhmSFOn4BPpXyn9AFDiqQHzKjAPp0PhB+00L?=
- =?us-ascii?Q?lmsRhkfkn0azCYYtyiDdMWMFq+HsqvaPwITicF/WixvHAy4EeJ2kmWwh9Kx5?=
- =?us-ascii?Q?9JDaktUGCCwwx2pHIrV9+U7ufyjJUWzAnWiqJ2j7eS1Y9AJ7844ypHQCr7kP?=
- =?us-ascii?Q?DrLHABQccP4ONvAM1OMDvMUbVSsdywtxB+LjyKHv3lAZWVDS3pkqJ33qz6tA?=
- =?us-ascii?Q?Lq8draoGPY/yL6SQMXIWooU6heGysLBieiwLHQaPrNejWUS8BZfFo2HPUURU?=
- =?us-ascii?Q?rHm5qLT4Mfl7LIef7XLHyj+okyNFSjIqWvLNIwAOh5ZBGfcDaidLJPmBFQ4Z?=
- =?us-ascii?Q?YXgfvisEL+JCy7eQjstwlZl1euMEjKER2BicBCrm9QOFoHzUx1eLShMS3s6G?=
- =?us-ascii?Q?FBxnUaduv9s+bt2rDFCfjR04eWQwz9hHo8KxDA6grwUogWBI2uR8vrfyaZoo?=
- =?us-ascii?Q?BmjJDuITik74uvQUrv3JTBCdFN2w4yquTKcORtUFbKBTDx/lsHV9JTN3nx2h?=
- =?us-ascii?Q?+DyrpoDaP3+NZ8OeZlPAKwdXDEreVLvQ0XS5a+8h2EuAk0O62fv9lHAACcHP?=
- =?us-ascii?Q?cGAG9zBLxT73B0NyMSRVMLQgo0+JiYN3OoPi1MuBbVJiSZBgs5v9uTh97iI8?=
- =?us-ascii?Q?SZZTamGbpyJK6y11WjkI+bMYOaugZM69fpXjrPTWQR8NUdvMI7t3ZHVtYa4J?=
- =?us-ascii?Q?yp+Fq33h9CmMFwIRo/Oqh1nh59MHnPklCZ509mIRdpoiDKyRETbuknspCc7P?=
- =?us-ascii?Q?0iB9aVkmevRqHg00aJq+tIlZzRUuyfAZynTOIYJmg29I72HfFYuZ46irwM8j?=
- =?us-ascii?Q?8sTliHB14+pBhIEHxYB556WK/568lRCyA3JOHmYiRc2NASNgh4SuFM8erkSf?=
- =?us-ascii?Q?gp6UrkQzbRfjMFI/VSGVghdqfkmhDrtO5ORxy9I61aNi38GZty73Rh/5BErU?=
- =?us-ascii?Q?yVqaAgQw1zMiebfFxY3uM2vQj/TdNlVo/U/8qi4uKQ5omea3pK1U+7ugntSr?=
- =?us-ascii?Q?Fb09bIjEa6T6mzmgV30J/sSStJ1CiykUJixk2hlXPI9K6bMND1G5xTyiR+w1?=
- =?us-ascii?Q?D5X6D2yfqvXpZJSzcgePT5tzpdz1ZbOC28mi9QqyTnYlqBlXKm40+Zwxgrkb?=
- =?us-ascii?Q?Ic5+sCsAFkKXWgFSsITT6YAWcY7nSWCujC6pW+FztnT8UiNjlvZu7xjEyEa6?=
- =?us-ascii?Q?pNR8SAcmDjGh+RKREZC7l6P2yN22SvwDrtuWHsKo+5/NrXi6KQxbX1AYsTBw?=
- =?us-ascii?Q?cVN8nXPMSPpfiq8fU0cXi8+kg6GDEe8DfgRT4VN64q3PN5New/GwvpGWR2bH?=
- =?us-ascii?Q?/17O3ZAdvH9d9n8qt5D/tT1puUejXQ2wlSL/Ac/Q4JhVoQRQDC7Jpp0LkZnA?=
- =?us-ascii?Q?S+Q6HzuJfgNDciF5ZcvDefuxgRZOeIgCFBUAhzuyTco6Ah4WcvEv+Tk18t9p?=
- =?us-ascii?Q?Cz64rhiltpG/EFfCmNQU8cwQxiL12ZID+JTYwhpt9d8//oLl23xkDLK8GEeI?=
- =?us-ascii?Q?5/n904RnGYBqJAP+8C9cEugCPO33I2uOs67lK3FJWXYkWLg4bN4qcI9aPcbr?=
- =?us-ascii?Q?awDAV1CyCR6nuQ6fCnKhUQdMQ70fetYCHyBol33y?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44bebb96-a564-4fd9-dfaa-08de1c9fccd5
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 19:16:19.6968
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FJHLbjNe0cddbDLfUUD5XjlNqEJ7S0WzOBY9SxPT5OwHQM3dRZ08qjZjDE1ZU6vpvZTj/aXWz95+nU6vqRPl6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6041
-X-OriginatorOrg: intel.com
 
-Andy Shevchenko wrote:
-> In the snippets like the following
-> 
-> 	if (...)
-> 		return / goto / break / continue ...;
-> 	else
-> 		...
-> 
-> the 'else' is redundant. Get rid of it.
+On Wed, 2025-11-05 at 10:23 -0800, Andrii Nakryiko wrote:
+> On Tue, Nov 4, 2025 at 5:20=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
+m> wrote:
+> >=20
+> > On Tue, 2025-11-04 at 17:04 -0800, Andrii Nakryiko wrote:
+> > > On Tue, Nov 4, 2025 at 4:16=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
+l.com> wrote:
+> > > >=20
+> > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > > >=20
+> > > > [...]
+> > > >=20
+> > > > > > +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx=
+)
+> > > > > > +{
+> > > > > > +       struct btf_permute *p =3D ctx;
+> > > > > > +       __u32 new_type_id =3D *type_id;
+> > > > > > +
+> > > > > > +       /* skip references that point into the base BTF */
+> > > > > > +       if (new_type_id < p->btf->start_id)
+> > > > > > +               return 0;
+> > > > > > +
+> > > > > > +       new_type_id =3D p->map[*type_id - p->btf->start_id];
+> > > > >=20
+> > > > > I'm actually confused, I thought p->ids would be the mapping from
+> > > > > original type ID (minus start_id, of course) to a new desired ID,=
+ but
+> > > > > it looks to be the other way? ids is a desired resulting *sequenc=
+e* of
+> > > > > types identified by their original ID. I find it quite confusing.=
+ I
+> > > > > think about permutation as a mapping from original type ID to a n=
+ew
+> > > > > type ID, am I confused?
+> > > >=20
+> > > > Yes, it is a desired sequence, not mapping.
+> > > > I guess its a bit simpler to use for sorting use-case, as you can j=
+ust
+> > > > swap ids while sorting.
+> > >=20
+> > > The question is really what makes most sense as an interface. Because
+> > > for sorting cases it's just the matter of a two-line for() loop to
+> > > create ID mapping once types are sorted.
+> > >=20
+> > > I have slight preference for id_map approach because it is easy to
+> > > extend to the case of selectively dropping some types. We can just
+> > > define that such IDs should be mapped to zero. This will work as a
+> > > natural extension. With the desired end sequence of IDs, it's less
+> > > natural and will require more work to determine which IDs are missing
+> > > from the sequence.
+> > >=20
+> > > So unless there is some really good and strong reason, shall we go
+> > > with the ID mapping approach?
+> >=20
+> > If the interface is extended with types_cnt, as you suggest, deleting
+> > types is trivial with sequence interface as well. At-least the way it
+> > is implemented by this patch, you just copy elements from 'ids' one by
+> > one.
+>=20
+> But it is way less explicit and obvious way to delete element. With ID
+> map it is obvious, that type will be mapped to zero. With list of IDs,
+> you effectively search for elements that are missing, which IMO is way
+> less optimal an interface.
+>=20
+> So I still favor the ID map approach.
 
-What is the reason for this change?  This results in 0.6% code size
-reduction.  Is that really worth this effort?
+You don't need to search for deleted elements with current
+implementation (assuming the ids_cnt parameter is added).
+Suppose there are 4 types + void in BTF and the 'ids' sequence looks
+as follows: {1, 3, 4}, current implementation will:
+- iterate over 'ids':
+  - copy 1 to new_types, remember to remap 1 to 1
+  - copy 3 to new_types, remember to remap 3 to 2
+  - copy 4 to new_types, remember to remap 4 to 3
+- do the remapping.
 
-Ira
+Consider the sorting use-case:
+- If 'ids' is the desired final order of types, libbpf needs to
+  allocate the mapping from old id to new id, as described above.
+- If 'ids' is a map from old id to new id:
+  - libbpf will have to allocate a temporary array to hold the desired
+    id sequence, to know in which order to copy the types;
+  - user will have to allocate the array for mapping.
 
-[snip]
+So, for id map approach it is one more allocation for no benefit.
 
