@@ -1,204 +1,135 @@
-Return-Path: <linux-kernel+bounces-886164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039D1C34E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:39:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5809C34DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68659565940
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:33:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40B0C4FB347
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B001A30CDAF;
-	Wed,  5 Nov 2025 09:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F152FD7A4;
+	Wed,  5 Nov 2025 09:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aFsG9XOx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9nFT0QKk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aFsG9XOx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9nFT0QKk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7rkv/Rg"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6342FFF86
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC32FD1BB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335111; cv=none; b=jIhr6WMncpz1qm+ZUEMxXaBalFpoJl0giydUrc952T+ncuT4GtMU3HY7gF8E4NrPa5LhQCsZgj4wO3O2e73AmeZ67d22QMGvW3c+odj2WzeBwTmyU/gxPgX6gCp9o57U0wP1NXgFJ8k6qKzTwTSHSBJgi2fheCyWGPStezeVXUI=
+	t=1762334966; cv=none; b=KOF64pN4StiNa9iaOrauNABc5HvvRlTfwiLJEKbmeydFWC88gVp/QCb/ozlQ+nqHBtJXQDS5pyGbw3KpMW56wR02ebZsm6DxwDhmH6q0Dfo2P/urPo3FKsGioK0t49wXG7rRe7tWKx8KEgqQjcJiyHcHm01K4CfWURjK4bwpzV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335111; c=relaxed/simple;
-	bh=GDB21ai+kCMmgIslapYk1wk+NMXv8CUnfEY2zyE44rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E9nJ9sGHwKcfogXzWhlShwyPHIMNPCVP96tx0qHKCByKDD8NQS0Q5D02AjWfLtAu2/fYwuqtuYtDDEWDpz8nDojESCp/aG0VdRMyMR+Cfoukwe0v+IgCq85sieU0RNhG3H6mmxF/V/NdfyX0P3iGyrQjiiFkUWTOpXXof3eygf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aFsG9XOx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9nFT0QKk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aFsG9XOx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9nFT0QKk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0A65A211CD;
-	Wed,  5 Nov 2025 09:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7dhBI3wtUUGN8VYMC+NN1TmUWEPtpBQKbvGkUzp4Vn4=;
-	b=aFsG9XOxNgfZjqF1+TZq/aUlkyMAiG05LcrvqPnchHr6sZXxbpALmJkaW7aGCADJxPrk5n
-	RuN8RRXOzucWiSgNK2gBI2JAUjD4iXGWsG6Aa2+Im3OGLAJKF5HG7lRJniHhBZAvgCGngn
-	o3m72mdRxiE0fpM5Jxcz8fFg4dty6P0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335108;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7dhBI3wtUUGN8VYMC+NN1TmUWEPtpBQKbvGkUzp4Vn4=;
-	b=9nFT0QKkG7hMvQYQz1w+N4wRwdOEX10tqjL851bdA15QjLQ7JVXzRO2WuQFuVL9qqHMar/
-	5HzjHwYO4GhrbgDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=aFsG9XOx;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=9nFT0QKk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7dhBI3wtUUGN8VYMC+NN1TmUWEPtpBQKbvGkUzp4Vn4=;
-	b=aFsG9XOxNgfZjqF1+TZq/aUlkyMAiG05LcrvqPnchHr6sZXxbpALmJkaW7aGCADJxPrk5n
-	RuN8RRXOzucWiSgNK2gBI2JAUjD4iXGWsG6Aa2+Im3OGLAJKF5HG7lRJniHhBZAvgCGngn
-	o3m72mdRxiE0fpM5Jxcz8fFg4dty6P0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335108;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7dhBI3wtUUGN8VYMC+NN1TmUWEPtpBQKbvGkUzp4Vn4=;
-	b=9nFT0QKkG7hMvQYQz1w+N4wRwdOEX10tqjL851bdA15QjLQ7JVXzRO2WuQFuVL9qqHMar/
-	5HzjHwYO4GhrbgDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00BF9132DD;
-	Wed,  5 Nov 2025 09:31:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nEssAIQZC2n6HgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:31:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AD641A083B; Wed,  5 Nov 2025 10:31:47 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:31:47 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 19/25] ext4: support large block size in
- mpage_prepare_extent_to_map()
-Message-ID: <fgyzoczbfupsdkstxojoodxnny3mjoqj4jn7k26lq7barrtq72@zvw2p5pvglnk>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-20-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762334966; c=relaxed/simple;
+	bh=0XgQsaPK8SkvjG5BCRqme8oV5Z9wnVFe1B2vfhJEqDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7B8uhYhKn1wSemulK/6xYVAkwLvcbl10yajTJIZEJsltwXv+wQyQrpC8NvCdpx3R1ZJfJDYa0o3M4o2/gQ/s1q5dWhMdoRtGz+x4EvwSnmW+DJblEL9QJ7+/E1B/aOjeajdQjiv1WSu3m3kNe1hplttrQTsByUb/xxNXIrqcn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7rkv/Rg; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b9f1d0126e6so488053a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:29:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762334963; x=1762939763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=txxoHQsD9SBr+0uAjaOafgKfJPgFXKi5Q4JCWLCgjxk=;
+        b=m7rkv/Rg4DJ8+H5Lq0alWzH7EgyJogKwn7XwBm8Q4KJIdS2fntBw30W9FWzRLSdMoV
+         f9SLhchR3SD41H/R2HaAL4IVQ1UwhEYi2af2Uu2Q8IFVW9uViUIBJhmxTDU36vZUHRp3
+         YlqR+rlW8e4uuQkGY/QIRrnZGTFlArsBBm2sh30nbuqOiJf3peuD4zj9A7qlvSKp5V0F
+         tkqF4x4p+IY2EvsIy010NLyk/pdSDO7Sw/aX1egJEla4dJebO4cV/IYvhqUb1adfQOLk
+         +p9L0OyieXOg3pYnWVirKsQ6Fs7gE5gGBZh/X1cjFJ0AOjuVWbux6JutGulYfyWQeDUT
+         6CZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762334963; x=1762939763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=txxoHQsD9SBr+0uAjaOafgKfJPgFXKi5Q4JCWLCgjxk=;
+        b=LFmjah+igUGHugmb9bPcGW7FwW8gSDKMm17KvBUxkVir/4cn626hCPptU/tc+Jp7fR
+         KdjI9ZCkCY4mhhnsyEOi0NLWaWAFOtR1hJDYPHphAGOACngm1whXdmGM9AuDAMvRowkj
+         ryL0UVCBhMHuTIY6vR5w4ptlUsIGME1onxAz4PzZKdBEyiH+BXbdAAzb0zZ2VIk/iWvB
+         acAtw6guRhVgbX5npJCN0Bfz9L7MjUoPMRmo/TMJw6WrRLHXza2qgMRLHe25t4mkWIeT
+         iCY1IiWeNbUu6KIsW3AnezLmpj2B8dkAyLMD6dy2UdlE6v4P8VRTUwtmq4RkKawxyM9r
+         PPMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBntPw5/yKSOqvptT+pWV1+z04emyGlxoJ+OuxrGlyEHmHNLG/XBs+zvFkCZ0pS9O2bCr+uBmUTxOIVlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz03gwRCcJ+9GYHAsBPM9dINg26AZ6q2M8i07vfKr1GewJrgaVh
+	S4I7SFQeL+KK1eqHnqEZqbfJVCfbur51Hq9gX1TXuT60mqLjdefEwF+sh3D31ixKJuAZKT3jqoh
+	WN7kUkcH8+/Q0Ij9n8EMe3rFUnU1CA8Y=
+X-Gm-Gg: ASbGncsBbHDiPgIpHSSa2Q605G1cjL+qhmllta+iBvkXMoNpj6ucslwG5KMBFSNobOI
+	l/Je3GOXNUJvoDmGd+tijbNKDSlO1eq3Ry+Y5V3Jwnpjj4NlmJMEqIdieKDNAIfeOtIwgBc5RkE
+	ph7wjpw8NN2ZnxARHBUO/LZOecIkxYoBt2a1ZHLqBRblRMjArAvihre795m0cze06ONW6+Ogbdw
+	eK5rzSjJXH4dGNzsUOgFWVOmmhFTDGLJ8/JVzczBPCrmCdfChoLiPHYjg==
+X-Google-Smtp-Source: AGHT+IGkCxRvJh3fC5yidm37chqdIHgljJdYABqu7mHMgdmlemqRQI0lkZmwfrypszqAHRlZ8j+gATWb4FCpIOGaggI=
+X-Received: by 2002:a05:6a21:999f:b0:334:7e78:7030 with SMTP id
+ adf61e73a8af0-34e278f99b1mr8298964637.8.1762334962544; Wed, 05 Nov 2025
+ 01:29:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-20-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: 0A65A211CD
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Spamd-Bar: /
+References: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
+In-Reply-To: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 5 Nov 2025 11:31:49 +0200
+X-Gm-Features: AWmQ_bkrt0ospuWqleJ6w_sx1LCaBE7SCRpsPmV7R0cWe73tR0hYLHwUvfH1Zeg
+Message-ID: <CAEnQRZAOTFw=sBppHTYQAdfDBuNqkqk6gVO4FyP0EBsva3Oi+Q@mail.gmail.com>
+Subject: Re: [PATCH 00/11] remoteproc: imx_dsp_rproc: Refactor to use new ops
+ and remove switch-case logic
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+	Frank Li <frank.li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat 25-10-25 11:22:15, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Use the EXT4_P_TO_LBLK/EXT4_LBLK_TO_P macros to complete the conversion
-> between folio indexes and blocks to avoid negative left/right shifts after
-> supporting blocksize greater than PAGE_SIZE.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Fri, Oct 31, 2025 at 11:20=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> This patchset aligns imx_dsp_rproc with the cleanup and modernization
+> previously applied to imx_rproc.c. The goal is to simplify the driver by
+> transitioning to the new ops-based method, eliminating the legacy
+> switch-case logic for a cleaner and more maintainable design.
+>
+> Patches 1=E2=80=935: General cleanup, including code simplification and a=
+doption
+>              of the devres API.
+> Patches 6=E2=80=9310: Transition to the new ops-based approach, removing =
+the
+>               switch-case structure.
+> Patch 11: Remove the obsolete enum imx_rproc_method.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  fs/ext4/inode.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index cbf04b473ae7..ce48cc6780a3 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2610,7 +2610,6 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  	pgoff_t end = mpd->end_pos >> PAGE_SHIFT;
->  	xa_mark_t tag;
->  	int i, err = 0;
-> -	int blkbits = mpd->inode->i_blkbits;
->  	ext4_lblk_t lblk;
->  	struct buffer_head *head;
->  	handle_t *handle = NULL;
-> @@ -2649,7 +2648,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  			 */
->  			if (mpd->wbc->sync_mode == WB_SYNC_NONE &&
->  			    mpd->wbc->nr_to_write <=
-> -			    mpd->map.m_len >> (PAGE_SHIFT - blkbits))
-> +			    EXT4_LBLK_TO_P(mpd->inode, mpd->map.m_len))
->  				goto out;
->  
->  			/* If we can't merge this page, we are done. */
-> @@ -2727,8 +2726,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  				mpage_folio_done(mpd, folio);
->  			} else {
->  				/* Add all dirty buffers to mpd */
-> -				lblk = ((ext4_lblk_t)folio->index) <<
-> -					(PAGE_SHIFT - blkbits);
-> +				lblk = EXT4_P_TO_LBLK(mpd->inode, folio->index);
->  				head = folio_buffers(folio);
->  				err = mpage_process_page_bufs(mpd, head, head,
->  						lblk);
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Peng Fan (11):
+>       remoteproc: imx_dsp_rproc: simplify power domain attach and error h=
+andling
+>       remoteproc: imx_dsp_rproc: Use devm_rproc_add() helper
+>       remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable() helper
+>       remoteproc: imx_dsp_rproc: Use dev_err_probe() for firmware and mod=
+e errors
+>       remoteproc: imx_dsp_rproc: Drop extra space
+>       remoteproc: imx_dsp_rproc: Use start/stop/detect_mode ops from imx_=
+rproc_dcfg
+>       remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg closer to imx_ds=
+p_rproc_of_match
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_SCU_API switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_RESET_CONTROLLER swit=
+ch case
+>       remoteproc: imx_rproc: Remove enum imx_rproc_method
+
+Thanks Peng patchseries looks good to me.
+
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
