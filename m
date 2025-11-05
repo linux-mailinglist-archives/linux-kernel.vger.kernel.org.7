@@ -1,164 +1,184 @@
-Return-Path: <linux-kernel+bounces-886607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4937C36112
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:29:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32765C36109
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBDF55646D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:26:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE9334F4320
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF0E3277BA;
-	Wed,  5 Nov 2025 14:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49422EDD7C;
+	Wed,  5 Nov 2025 14:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uLWiJu/C"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJxhTk1I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A3C3164BB
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D66322C67
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352796; cv=none; b=gXcUuc+91BzSnFhz1TzicHPd2eYThXhLbvHFHyz2vJIeMucdw6vYaw7ksc+7vtpivn0MAjhit1OOcsoCVhC1930eTtyPy3sF9kIZ8eWl3b/y3UQoVMgkfci6bjoLu+VDVrHFSMo+8D9kae4unBj1iu7JAlSJ/bB6GZPqMwP7fpw=
+	t=1762352867; cv=none; b=RKzQFwrzHGnKDCuV7u39C2sWDQpLJ7ZrhG8vMEPextm0ZXGKwk67dIcHiU+iGGop+vo8HxmQBOYd0GiVYZAVHFQODbJD6QHwbsfwUYPzvuEbm1yJGVJBpjNVquNNRvwfEv/npfOKCkw/3PKV9DDMUJvNQpkODQKvnMPxP5k2fek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352796; c=relaxed/simple;
-	bh=UNLeQYL51m+DVasBcWR7PNTrx8XW9tm4YcPbq3YJCTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rtbahLkNCcO+WfnME3U/86BmUDKb9LCDnMGfPhTI1hGefeFq06Gs/i3pIB/zlpRQTjBvDqMfNuYALgnOcsM2OMx2qbR1B1vy6mZyYQaVsC2IkiNEiC2v+BUFfOvDCm6FbnhiCrRofl7y1Q63iAv2s8saLX/tLHosuzio/mUuJbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uLWiJu/C; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ed612ac7a7so22507341cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:26:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762352794; x=1762957594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yn1Akn56TAK9vxYVpNAmwzoyFjP8WhPaxNLUGZGYjkM=;
-        b=uLWiJu/CoXQzzp40yTT9Q02+Yr46Xz5hL6nHYdW8LNVCbBaT1XWa/CmfAcBlhLb1bg
-         77lz7tMA5pk12nds7S0eNIJ8PnapTj6d2LYNkYSTWSpfttWWg4UOGRsAKg/kv9XfIDq+
-         Zfd42QumaLkTDJD3dQ4PSmehIKfKkPfV2TiWLRenRLUMKS+oEBbsvaPWdfiPm9EDnhG0
-         uJzLbhoyha2mQOqitlyEjw8K9UEXFhdGUjWj6DuW7CHIj/2BxX1UQQexRkjfzg/WxI5W
-         Yt2IGmhBYbE8LqTJzbmWfFC15/a/xj/RhLDs8w7sBS5yFWu/klp4Ld4ciVlctYE5X6DH
-         tlbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762352794; x=1762957594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yn1Akn56TAK9vxYVpNAmwzoyFjP8WhPaxNLUGZGYjkM=;
-        b=urx+d3tNRtVnwSKDDfCX0lgCjiq/iN27Gevrzb+bmVNku1V6HQ3wpy2ibkf3yhJ+sB
-         FUaKOXZyq2YL+I6lBOSqHMUzoxuN9zoNKEDlOFKVK09ZSs2sPWUAfx8hO5BPn1H4FHrQ
-         NqzS6pvh6Qc9aEc2Me9TQt3YNgZueSM0tfStgElk0hspcv2SNSLKh/ayCLqnfTq/rKdd
-         KYMDEdeuT0ivH7v5bITSbUfsan7C6gIwjJSTiA+QVi3bYjdSD7MS7XJnhSbmZvLI/faN
-         0uzopZBvpvu2S/KgEFc8S30LmH8BQh6ZEhGrfA1UiLmNLbpdkl51PrDYioxddc92mNAH
-         R3Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGgGNQLjX9hAMyJLy22yf2AN0Eigsk8BYVg3iG9rtyzWgWXMVBWjNGYI6VWQBNnG8BP2Sk5lWdITQT1jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXEfrhnqln+wNefBUmBDKs7koibxdkoa9DHBgefs2RbZAEJiRv
-	crI90ifjeyG5LA1voHtAH33DAWIlriCxFziVdh7mWalADFTRAP7f2ZNkfjiV6W24mDQV+hAkhog
-	bDPOj7RgHK9aANHpjPhnaWOpqWesXU7+WManOCz4N
-X-Gm-Gg: ASbGncv1qj03XvKggWePMIbUnoVTQtdQHf59dMOrJH2fgrzrkIpNUp31ihb/Wyipmcw
-	sIVEz345NadG/O7j/aQhmzbo4M0QYpsQtUgCw2UWWsNWst8DI4SL4JKyUQR2OstAm2cCUNQIzG5
-	skZSGm9BU0tLgydMXvXKtKrc19oT1G2AbzvbdENMkdVs4xy1uE8ufmkSvSZ654joDSgfvfOLKi/
-	HXHgORyWQ2xE8m05OSNtGKSBLobexwvcFkOoJd1qtE/OBcSWoZLDP7Z+uRS/A3/RuzywDc6wziV
-	b3rvGQ==
-X-Google-Smtp-Source: AGHT+IEyRyguqmLTVuV/+p4rWmG9dIhs2YGO8hfZ3uT7d0TjJn2hFD71728jqAvX+zyf0Qlwg6ZcF52UU2ueLDMEGK4=
-X-Received: by 2002:a05:622a:1cc3:b0:4ed:42ba:9bd5 with SMTP id
- d75a77b69052e-4ed7262edbcmr35915681cf.72.1762352793343; Wed, 05 Nov 2025
- 06:26:33 -0800 (PST)
+	s=arc-20240116; t=1762352867; c=relaxed/simple;
+	bh=Kx5HjbExlotfx9BFsIQjbMPKUFyTph67j1jO1h0KIOA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HENMuFHm9LPPmCefyhr4Xr6tmAd4+/+qc2aD1nvfR22nwQI4IqTIDd+AbRI3K/siUtTRlU9FwbfGtJ0FwLBsQEGqz41is1gjEf0FpfFMX11fz4Wt10mJn74gMmVehHbuaqYsHvgx9x6fkJkKa/MEjg6TUtQ2srHQiGJswANvJKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJxhTk1I; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762352864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iEE2UforngC+1b7eNTw5Y+Y6g1pOkzaHLNr1gL9KqPY=;
+	b=CJxhTk1IJphgARRsNLC9wCokkifi+DH14G5d5CTqKW/kuGlmxy4Ci2YccTOCj3SXIhPPA0
+	ohWY/rGGuW7np4MXasY5ewU9rB2iVQ57dow2ZG0vT7hj/hIyk0j7YlP2N0B9fKazB5nXQz
+	ZYvmCA2U+XPF6WmJnSSKj2jB9d7Y74c=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-537-ylVNauNeMGeXAXE8hSmzeg-1; Wed,
+ 05 Nov 2025 09:27:39 -0500
+X-MC-Unique: ylVNauNeMGeXAXE8hSmzeg-1
+X-Mimecast-MFC-AGG-ID: ylVNauNeMGeXAXE8hSmzeg_1762352857
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 306091955DBA;
+	Wed,  5 Nov 2025 14:27:36 +0000 (UTC)
+Received: from [10.45.225.163] (unknown [10.45.225.163])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A60619560A2;
+	Wed,  5 Nov 2025 14:27:32 +0000 (UTC)
+Date: Wed, 5 Nov 2025 15:27:28 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Shubhankar Mishra <shubhankarm@google.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    Jonathan Corbet <corbet@lwn.net>, dm-devel@lists.linux.dev, 
+    linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Eric Biggers <ebiggers@google.com>, 
+    Sami Tolvanen <samitolvanen@google.com>, kernel-team@android.com
+Subject: Re: [PATCH] dm verity fec: Expose corrected block count via status
+In-Reply-To: <20251105140645.2150719-1-shubhankarm@google.com>
+Message-ID: <074e1ecc-6690-1c22-0dba-454e191e1b6f@redhat.com>
+References: <20251105140645.2150719-1-shubhankarm@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACueBy7yNo4jq4HbiLXn0ez14w8CUTtTpPHmpSB-Ou6jhhNypA@mail.gmail.com>
-In-Reply-To: <CACueBy7yNo4jq4HbiLXn0ez14w8CUTtTpPHmpSB-Ou6jhhNypA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 5 Nov 2025 06:26:22 -0800
-X-Gm-Features: AWmQ_bkdl5RhKS829nQ2M5b3RoWq2JzXUH6E0i1Wig8_xYGoL3cCA0DzQqGNDNg
-Message-ID: <CANn89iL9e9TZoOZ8KG66ea37bo=WztPqRPk8A9i0Ntx2KidYBw@mail.gmail.com>
-Subject: Re: [PATCH net] ipv4: route: Prevent rt_bind_exception() from
- rebinding stale fnhe
-To: chuang <nashuiliang@gmail.com>
-Cc: stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Networking <netdev@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Nov 3, 2025 at 7:09=E2=80=AFPM chuang <nashuiliang@gmail.com> wrote=
-:
->
-> From 35dbc9abd8da820007391b707bd2c1a9c99ee67d Mon Sep 17 00:00:00 2001
-> From: Chuang Wang <nashuiliang@gmail.com>
-> Date: Tue, 4 Nov 2025 02:52:11 +0000
-> Subject: [PATCH net] ipv4: route: Prevent rt_bind_exception() from rebind=
-ing
->  stale fnhe
->
-> A race condition exists between fnhe_remove_oldest() and
-> rt_bind_exception() where a fnhe that is scheduled for removal can be
-> rebound to a new dst.
->
-> The issue occurs when fnhe_remove_oldest() selects an fnhe (fnheX)
-> for deletion, but before it can be flushed and freed via RCU,
-> CPU 0 enters rt_bind_exception() and attempts to reuse the entry.
->
-> CPU 0                             CPU 1
-> __mkroute_output()
->   find_exception() [fnheX]
->                                   update_or_create_fnhe()
->                                     fnhe_remove_oldest() [fnheX]
->   rt_bind_exception() [bind dst]
->                                   RCU callback [fnheX freed, dst leak]
->
-> If rt_bind_exception() successfully binds fnheX to a new dst, the
-> newly bound dst will never be properly freed because fnheX will
-> soon be released by the RCU callback, leading to a permanent
-> reference count leak on the old dst and the device.
->
-> This issue manifests as a device reference count leak and a
-> warning in dmesg when unregistering the net device:
->
->   unregister_netdevice: waiting for ethX to become free. Usage count =3D =
-N
->
-> Fix this race by clearing 'oldest->fnhe_daddr' before calling
-> fnhe_flush_routes(). Since rt_bind_exception() checks this field,
-> setting it to zero prevents the stale fnhe from being reused and
-> bound to a new dst just before it is freed.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 67d6d681e15b ("ipv4: make exception cache less predictible")
+Accepted, thanks.
 
-I do not see how this commit added the bug you are looking at ?
+Mikulas
 
-> Signed-off-by: Chuang Wang <nashuiliang@gmail.com>
+On Wed, 5 Nov 2025, Shubhankar Mishra wrote:
+
+> Enhance visibility into dm-verity Forward Error Correction (FEC)
+> activity. While FEC can correct on-disk corruptions, the number of
+> successful correction events is not readily exposed through a standard
+> interface.
+> 
+> This change integrates FEC statistics into the verity target's
+> .status handler for STATUSTYPE_INFO. The info output now
+> includes count of corrected block by FEC.
+> 
+> The counter is a per-device instance atomic64_t, maintained within
+> the struct dm_verity_fec, tracking blocks successfully repaired by FEC
+> on this specific device instance since it was created.
+> 
+> This approach aligns with the standard Device Mapper mechanism for
+> targets to report runtime information, as used by other targets like
+> dm-integrity.
+> 
+> This patch also updates Documentation/admin-guide/device-mapper/verity.rst
+> to reflect the new status information.
+> 
+> Tested:
+>   Induced single-bit errors on a block device protected by dm-verity
+>   with FEC on android phone. Confirmed 'dmctl status <device>' on Android
+>   reports an incrementing 'fec_corrected_blocks' count after the
+>   corrupted blocks were accessed.
+> 
+> Signed-off-by: Shubhankar Mishra <shubhankarm@google.com>
 > ---
->  net/ipv4/route.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> index 6d27d3610c1c..b549d6a57307 100644
-> --- a/net/ipv4/route.c
-> +++ b/net/ipv4/route.c
-> @@ -607,6 +607,11 @@ static void fnhe_remove_oldest(struct
-> fnhe_hash_bucket *hash)
->                         oldest_p =3D fnhe_p;
->                 }
->         }
-> +
-> +       /* Clear oldest->fnhe_daddr to prevent this fnhe from being
-> +        * rebound with new dsts in rt_bind_exception().
-> +        */
-> +       oldest->fnhe_daddr =3D 0;
->         fnhe_flush_routes(oldest);
->         *oldest_p =3D oldest->fnhe_next;
->         kfree_rcu(oldest, rcu);
-> --
+>  Documentation/admin-guide/device-mapper/verity.rst | 6 ++++--
+>  drivers/md/dm-verity-fec.c                         | 4 +++-
+>  drivers/md/dm-verity-fec.h                         | 1 +
+>  drivers/md/dm-verity-target.c                      | 4 ++++
+>  4 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/device-mapper/verity.rst b/Documentation/admin-guide/device-mapper/verity.rst
+> index 8c3f1f967a3c..3ecab1cff9c6 100644
+> --- a/Documentation/admin-guide/device-mapper/verity.rst
+> +++ b/Documentation/admin-guide/device-mapper/verity.rst
+> @@ -236,8 +236,10 @@ is available at the cryptsetup project's wiki page
+>  
+>  Status
+>  ======
+> -V (for Valid) is returned if every check performed so far was valid.
+> -If any check failed, C (for Corruption) is returned.
+> +1. V (for Valid) is returned if every check performed so far was valid.
+> +   If any check failed, C (for Corruption) is returned.
+> +2. Number of corrected blocks by Forward Error Correction.
+> +   '-' if Forward Error Correction is not enabled.
+>  
+>  Example
+>  =======
+> diff --git a/drivers/md/dm-verity-fec.c b/drivers/md/dm-verity-fec.c
+> index 301a9c01bf86..d792eaed0792 100644
+> --- a/drivers/md/dm-verity-fec.c
+> +++ b/drivers/md/dm-verity-fec.c
+> @@ -177,9 +177,11 @@ static int fec_decode_bufs(struct dm_verity *v, struct dm_verity_io *io,
+>  	if (r < 0 && neras)
+>  		DMERR_LIMIT("%s: FEC %llu: failed to correct: %d",
+>  			    v->data_dev->name, (unsigned long long)rsb, r);
+> -	else if (r > 0)
+> +	else if (r > 0) {
+>  		DMWARN_LIMIT("%s: FEC %llu: corrected %d errors",
+>  			     v->data_dev->name, (unsigned long long)rsb, r);
+> +		atomic64_inc(&v->fec->corrected);
+> +	}
+>  
+>  	return r;
+>  }
+> diff --git a/drivers/md/dm-verity-fec.h b/drivers/md/dm-verity-fec.h
+> index a6689cdc489d..dd55037377b6 100644
+> --- a/drivers/md/dm-verity-fec.h
+> +++ b/drivers/md/dm-verity-fec.h
+> @@ -48,6 +48,7 @@ struct dm_verity_fec {
+>  	mempool_t extra_pool;	/* mempool for extra buffers */
+>  	mempool_t output_pool;	/* mempool for output */
+>  	struct kmem_cache *cache;	/* cache for buffers */
+> +	atomic64_t corrected; /* corrected errors */
+>  };
+>  
+>  /* per-bio data */
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index bf0aee73b074..52a0e052a5e8 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -848,6 +848,10 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+>  	switch (type) {
+>  	case STATUSTYPE_INFO:
+>  		DMEMIT("%c", v->hash_failed ? 'C' : 'V');
+> +		if (verity_fec_is_enabled(v))
+> +			DMEMIT(" %lld", atomic64_read(&v->fec->corrected));
+> +		else
+> +			DMEMIT(" -");
+>  		break;
+>  	case STATUSTYPE_TABLE:
+>  		DMEMIT("%u %s %s %u %u %llu %llu %s ",
+> -- 
+> 2.51.2.1006.ga50a493c49-goog
+> 
+
 
