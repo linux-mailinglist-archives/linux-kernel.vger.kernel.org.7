@@ -1,241 +1,118 @@
-Return-Path: <linux-kernel+bounces-887020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934E9C37141
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 536DFC37093
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E830B5088A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:13:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1E8750867A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78162FC013;
-	Wed,  5 Nov 2025 17:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00281322537;
+	Wed,  5 Nov 2025 17:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lxRV1Whf"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011012.outbound.protection.outlook.com [52.101.70.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SKjBZKV8"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B433328FF;
-	Wed,  5 Nov 2025 17:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762362817; cv=fail; b=skb4lEBZaD75ntAqR1LONeWqrKdvszD8c6s+iNXqMmxEnc/KvfXj/OYkqf794uLH0d6E4Muq3PKSNXqS8b3lAF2PKDtTtJrWC7ObTx2mJ5vre9pZYYpX4KvEEb2zd/h4a1CkaVOPCL35azuXry4i5jY8qKABq9Gr3X0FWu+3RKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762362817; c=relaxed/simple;
-	bh=MXEYEGTSI4PO0I7nzTNkxT5pTWSINjPFklecraiD5Hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eR95JDNoiNaWdIdBcfT3MTtmGHXyDqliIsSPHhCUVE9VI+tSXhMfdlaFGSspNNj5AcRWZ/9mCMxJnbuROzgHVLv3iDDYSzFm6xV4ZB7TBeKyeVUuyEcfGsFwsBC7yxKp9VzbMxyuuXxofVim39CZJ5XXeeOo42A09Sx8imWj2+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lxRV1Whf; arc=fail smtp.client-ip=52.101.70.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lPsY++LSD+kc+NQ8E/O0MvaoC6CqdUvuzpf6jikVGa1o+Wd7jj/M4lhrQHlGMH1OVORHQ5j4AWQRfC31oOLgSwXVjY1JRcasrSK3Xm/wiJf/kvS2Cnv0WKy3YHW0P4R0s7TkU9QOmk7AHw4B/WedH92X11JG/3uMPDCk7IQYf4YiHCEq2+rSAHRv4gaf0j75WtnoHIiKDgXFh2+a0g3haE9iksH4BFwoQ+7X6SR2v5rb+/QwkQJQ4oVGhyYZ3Dax9gW58alC5ieYaNQSgOgdatEJzpaLEF+qQzkRmdtAY07u9EspUErwy62xYjpdoJPHU3hqc4QFTtOsfLgMuI7mLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r2FSTrJohZ+jzN4cP92zeViuBYYvl3CIiguoHMCiGIU=;
- b=ely4a1JVkB7k4X/xxgyKvVVGvi3qGsmho2k/p8mqJSfupleoHXUjeLbXkC2pzhWmHq/DDU4rpXGNRZQmT5RVVwNsFwVXIcDH4ZERhN7k6qDPpK1qiCt0O+QB3JUPJ86Sn536XLCj7XsVrt3q0ldLIIK2v7z87JcoNDlEpkn8SW6DGfC1xTeBsTiY/Gu7IgDdJLZ8tu81UYo252yaMrloCf/qfeWvN++vBPQvONKLtpVqAF19POce9pNv8wJZrXWakyEXKgiepQ4xTemRiuvcDAHK0sDoIoLVU/tA6ipvPl25t5xjL5NmfMOspOoPA8jMMDB2iZkePmXC+5s71HQuRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r2FSTrJohZ+jzN4cP92zeViuBYYvl3CIiguoHMCiGIU=;
- b=lxRV1WhfS+y3MLuwz36X6S8tz7xtjt0eqVVBmH/p5pcmP8VKgtcM4WtHMhFP7F/S5jrfvhMJ2eUZaspza40kK6WxhzRL/8fU/+cgz9x+TH83cME0jGVcty6Om0QPzUlaZ5IXDVZbyckGcPeJS0EN7RpUPlrFOLyHjv+juNopxVBV+d5i7yRQ+2kbVSHCllihkTwBwEeNWpSnveCya/jBgliXA8vGjMx7AEqd7F/T7WbFA+TEB8gswCP/cwYhlm795JWq/dcWG4Rfl0k2b6qW/EcyGlAqI/OQZ/Gubo/K3nH3OmKWtaqCoBfjISpHuTv44f3f2w3HSEEjFdmJe0VAZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by DBBPR04MB7884.eurprd04.prod.outlook.com (2603:10a6:10:1f2::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Wed, 5 Nov
- 2025 17:13:33 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
- 17:13:33 +0000
-Date: Wed, 5 Nov 2025 12:13:25 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical Key
- M connector
-Message-ID: <aQuFtfmzbNoyHwG1@lizhi-Precision-Tower-5810>
-References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
- <20251105-pci-m2-v1-1-84b5f1f1e5e8@oss.qualcomm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105-pci-m2-v1-1-84b5f1f1e5e8@oss.qualcomm.com>
-X-ClientProxiedBy: PH2PEPF00003858.namprd17.prod.outlook.com
- (2603:10b6:518:1::7a) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F631353B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762362813; cv=none; b=KPwLFJhdYsAJt4PPf+q3RttyNhl1zxqI6vrOL170wl3WbL70IBF+mknwm/wwILqfgpRLVHPCmEDIAM8BNKth1aNpNvCIR2Y3C8OviUzfNXpZlfPDKVKdnUl2etF7xIY1l3t6/dSazMUW5j1AcK+IW8DaPbBJrFD7iyXkPCSh7JE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762362813; c=relaxed/simple;
+	bh=fJ1j5M4Uzh7dF9QWtRSTcy7soZzpyFOdthif8hR356s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AiV3O4/q6mVqupetnLpWW1XnB79bCm+qjSHnA3aZxE7cn0gw0EZmOvlf4xEZB2FlKtHDJr9155VKu4Ncz7R93fMhPwR9/PL1yl9j3bYezHtGDfLPZphb+C5aytdmyqrCBsi81UcmSHPS5+UHXb1R5Uyx7HhTKlWe8IlwgG+HVUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SKjBZKV8; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-9483e51d774so48710439f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:13:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1762362809; x=1762967609; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Krh+lHfAiaYuFIm9yjGcUPl8AxxSVocyBSJOh5XMOss=;
+        b=SKjBZKV8jJCix6HNRd0gx2gA3yhE39IyELIHgTZW9LO/4mQFAvpge6IdMoXTygKsrS
+         X0TkenbBo60SlHst5d6GCl+C9rxASyeT53H1Qn4xlJUIIGqswXN09DXcFZv+R/LJ5gNH
+         E9GPwXB5PfEAUCr4aMPDeeCGnKFwEGQUli/Wk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762362809; x=1762967609;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Krh+lHfAiaYuFIm9yjGcUPl8AxxSVocyBSJOh5XMOss=;
+        b=khDMuje/vnpLX1CRb6wGsP3gIEamO5ND/TBtDC37nAf1Gsw8aLHHpvNacHXrrr6/oQ
+         mDsPUHSKk7hAMdmBKqTrLsuhNsxL1TVBz60vKw+PTBxi8JWnQsV8xN5T3cwfcdeL1QTY
+         kD5OwfzIJImF6XycdnbrNomq3hKDofG7kdACtPnmVJDKYMGjMn6xIPMTwdoEP99N4Imw
+         NMMV3tVwIaMrOrjcmY0TPYFhto1TAZXcXk7Lzqwriora0BS5vIu+5YUahAuYosgdXV0H
+         fWgL50GK4jPU+Jgn8Tr0rlIn5CdrNVgNiUqxfJmYulcBtr/8wyXow0WZIrO4W68r/wg3
+         z9hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0DGS9W/FWzhRuaPtsYBp6YAfaWbKxThSAuQqYFlvb7EG3z53mEz7Mp0i+YeDJZtgcDs50CH5nnahD3kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/pY6C+s4Qx/AkZ3beNBj3bCQ8coZqzphdZFfmfsTa8AmgaTLc
+	4R2hbI0Exh52e7A3DEFsTracaoxjmcELOnvKi5wn8zIGL3JB9LCKKNOrvrcq7IJcWgI=
+X-Gm-Gg: ASbGncvtNyhJoxmdIWaxEx+kUHVuD9q4f1biONDDGGArMtvNxqBCxbEoeZY+abtKmQs
+	w8XpRqH6GC16qTZOJNyabXXIXB25oKaQg8olTvPM2E7ffn3ZY4yXl3tJ24rWO20+gr7KYRwEX0Q
+	g892rD144OZWDgpyJd6cUQCZQOpe8zLHCoTfYC+GkYPQSPyVNdaaLoOki/mEnKfxy/aRkv+HC4+
+	u//0V08+Jhd8BWKarZDI48sfAAcmAJTUtZ3s0kOM77pcnIDXfKzO++v821AYVVUA0PgcIxuhMt0
+	Mzj++9ZAt3bIRmZ0NH+X6QO48bHzztnaesrJJ3A3QQdR3SQvJBdCbRaqcjHncUf60IuDmP52fyH
+	MyMwLLCOZLCUtIHyqpoIYwX2nSNrFiJA3Vjhipvxb7Exai3KX/tWDEaHdStK09PPc1ry/95CrOo
+	6cOAT7wVTq1SSk
+X-Google-Smtp-Source: AGHT+IEnWfjpMUpFTXcYKkaNwF3Yr8kygQ3Z8/qPeVCdcw+B5jrsWpOIkGJ2g0TLDrdKnsnMYU/Nxw==
+X-Received: by 2002:a05:6e02:3cc9:b0:430:da51:95f3 with SMTP id e9e14a558f8ab-4334ee1fca4mr3032785ab.3.1762362809273;
+        Wed, 05 Nov 2025 09:13:29 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b73e5f4021sm464454173.53.2025.11.05.09.13.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 09:13:28 -0800 (PST)
+Message-ID: <959ac74b-a8b7-4d4e-9d34-3b3d971f9f8a@linuxfoundation.org>
+Date: Wed, 5 Nov 2025 10:13:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DBBPR04MB7884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70a61d9e-36b2-4295-95aa-08de1c8ea5f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|52116014|366016|7416014|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j1yXtNcFt4t9ftylkCzouqBu4MAkOh7nbAa0x6QLbzVMWHtgPpVHg/1yOg07?=
- =?us-ascii?Q?QKB2WdijR5Eq/Q1545cl68/HNzMcpXbtr/UU+Svi+p6ZPSmMt2MtdlvugrGM?=
- =?us-ascii?Q?Aev4PxiuhRoRO+elE7+hTDvFm6Qct2uylfN2OJIZHyjayt/eA0OU3FGPrvDF?=
- =?us-ascii?Q?ubOzOMFD+IynlS/pcXrRLP97DpNmlIDGWLXyUbfWqsf+mmXlFQxoGy8GWeXP?=
- =?us-ascii?Q?u6sWyWG3IwA3qGJUTcfw2X7WMtSHefXGH36qbb+UpQ5Fg1fF1rwtUVRbgAKJ?=
- =?us-ascii?Q?jrfLDobydBDgGQS8uI6oLzvjdNsUA2JdQEO60jlazEqLaXQMHn4bNOJbcUpT?=
- =?us-ascii?Q?YrBZC/bV7nrwi9mYgai62vCXc9Q4/DHZblfMsMEso8Fxe1KE+kTdBukIxRqj?=
- =?us-ascii?Q?06cCNRVmiZhs6WHWzCZ65fGyauLH3L92E+CbyFP7a5aN/PPYdFNa0Puxx4Af?=
- =?us-ascii?Q?y6NYpVrbLofKCeGU1B4M+A88YnSHC26JHjXy8VbrMkKTMW/IEjHmgWHuQkil?=
- =?us-ascii?Q?qij9A13XSW7V7j6MtxOdY5xwz+yi24kk/019ib8j0yRP60YWvBdT/8utFJBg?=
- =?us-ascii?Q?MQ4pknKTGxBIPyAbMdNeiSInu/WJ1NPmfjfaV23JKmql6BZKIF47Rr5fpSUG?=
- =?us-ascii?Q?QGkESNEsH9Oa/+RDtG0+ftdImEFrRu+2PYMXtgsQRsHM7WIx7xGB+CqQP9a4?=
- =?us-ascii?Q?LBLIchiuei/7N8bU32eEyRE2qQffftKWVwkYy7xj9JtBF2pc1D9Y9A7xFh+Q?=
- =?us-ascii?Q?3VI7mCvfsouBTDLp2oTlLK/GAy57zwp+TiSO55mY0iiFZTUZqI39mYIM+g5C?=
- =?us-ascii?Q?M+qrVauJ8NFfNLiSylMcLCZYA0+cX/BaGly0QodZf5Z91WpXLx1/64sDeXmS?=
- =?us-ascii?Q?lr8PWQhobpIh14wyAAMCOqL1yLGmo8tNXY0G8e5QQVVLVymZ/YyXBGVQXM3O?=
- =?us-ascii?Q?tO9hDa3JxbNvN2SDCc+oRDEYK3rKUGk0l7+AiicjsBhDXy3qtoDserTXm7Ap?=
- =?us-ascii?Q?3VODlLfTcE3UWBadrPTg3gkH45SzgXPFQgcYfzoFKmeYnwvcAqwB2F5WAX5h?=
- =?us-ascii?Q?BIDPjWmGkZ9NRMWhYCn71tjvC+DsGNFVUVYOAM51aJ+qc2+yARHRx0EQz7w7?=
- =?us-ascii?Q?BMl4wxruRPA51cLazeVCpuKSyWD6/1Naprid+fhsrAPEpyykxC/8zQWNk+p4?=
- =?us-ascii?Q?j86/m7lYRGPfjA3faE+MCeSVzEB5LbbQ/TvsnlG0XhoE23b4XcHzKxymfjUr?=
- =?us-ascii?Q?uPl3Q0PRkus6qSGvZlCVZveR5Aadc2DS0jmGpJEZnWn7vOcqmQCbjuJAPdCI?=
- =?us-ascii?Q?I49HBSD13NQHGIW+JDiXkl8dNYFWhqzDjKV/qgpZ2cb+LtPSdBdHV7Rk/LEZ?=
- =?us-ascii?Q?ab/Wgbz5Zsvn/hrCE0qDPoUolQuKDuiVLraEexyX8PVjGyBVynWHJD1S75SC?=
- =?us-ascii?Q?WaMPCxXmWEuvpCKyZ7CBbTc+TzJooNGbftd2DdBuPWfiH00ScP+m+9AClq9C?=
- =?us-ascii?Q?OJVJNhcsa6/vwa9azjlclTEzVhCjazKSzLrZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(52116014)(366016)(7416014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xMYFWhkxoW31JzkflsqPfp3XvauFMYTds3+DmYEnCqi+g6mjq4nlBUrGPpEy?=
- =?us-ascii?Q?pszzG7Hn1hLJt7fSXKVAl28TuSeoC1UDPJp7xfQWV5M2BcwWkjx49Cf5Jl06?=
- =?us-ascii?Q?9hg5p/Rlqn48wfG3o88J/46nu5Ng5RGajEoFgiglcrjvCnrfTdytiZ61x6P2?=
- =?us-ascii?Q?J25B/OEZDO4jXNSCD0phgNCkvvbrdMSaKXeASkxrJQhXFaqCa8B0IotnvCTW?=
- =?us-ascii?Q?hZbDDUngg9Z7S1ctcXKTWTI3X49BvCczK+ky1pbL47gP2lKGB3zDg5cN5Jt8?=
- =?us-ascii?Q?NcOEq/lSmBhCCGesiuzm37dscWCJ94p9bDFxH3kP1Jnc2QLBml/L2lHo4yV5?=
- =?us-ascii?Q?hiNASo9r92KBvAQAPfVdCCLe//EGUaa1qME9yuHWLbDeSftNbnhTqPpEC/G+?=
- =?us-ascii?Q?B/Ue8rESE8eBrXnbJTRD66Wrv8fsfQ6GetpMq+o/RpnkMWxmMhozvwQqnV/s?=
- =?us-ascii?Q?1yqOZrEHUeIdnyjJh6QuWw0ebeLxFNY8ivmqeFz6o3kxi6MKA+i/d+fbDWJi?=
- =?us-ascii?Q?+GeNec1DU43eKxdz6Qei7KqHk6AIGZ53jjsKz+GvLt5265BC5uQYqcYfNcBp?=
- =?us-ascii?Q?maBR/AJCZRVnSOlb5ZKuzcgyhsKLkKmEZyifbUWpmzpYiepeLX5uwJbPfh5b?=
- =?us-ascii?Q?UTo1D087oAnRuFiN0NhIZSMxViOVUPTZlmL+BGM/p7Rzn26IogUguBvDyZdU?=
- =?us-ascii?Q?k9uKcWD5EWZiC9KJrfu8VTgFE6NBOaNLAR77Enc3oHHMBkvgHmT8AnUhkIOp?=
- =?us-ascii?Q?2xG6bmKnUOLzHOw9fkoPQU/SEzVlF///tVFb+H4K3OknobYl8n9xvUc3QXu6?=
- =?us-ascii?Q?HUcttLjaLJQS6USj5MdZwxGxWJUCDRAfJNYz9iEmZnUK3719Up9/gL+k1e3d?=
- =?us-ascii?Q?eDxC+nM7BtkINSP6iP2iP5vb6tiYr+yJcR6id9M/q4L67LNxBPJTtE7QQwQK?=
- =?us-ascii?Q?mP8QXKpAktaAa2XTHVKGa8ibu+S58yi5aW5JBD1Mj2yzsGHnc4+6rDbp2AaF?=
- =?us-ascii?Q?EHRR8nQFE4CmiRphmkiWK585mwIn1I3ycTiQqW4waOuQHrW48fosv63oCMjX?=
- =?us-ascii?Q?L6YFfvNXs7qdxsBVOO57rfeTYwX+x5bbmPlgZrCPkZMwUvV8kCK83EJEtK4o?=
- =?us-ascii?Q?Ar7Zpi9t5AN5wMmjHJ5fnYPjn9RRjfh9lvEsUlfw4OAcvLpJTyyVmkEWnGji?=
- =?us-ascii?Q?GNuMBqhB1rbVIEWyaY4vyqcQ+IhvEgFTPK/jl14ooOnncteK0vMe85NVC9cO?=
- =?us-ascii?Q?D/mhUBCwvBzZXSRiNSzVzXUy4yjh5ZE5DrW3D6cpErcQ/0UTN4tJ3jyQ2Ajd?=
- =?us-ascii?Q?ECm4xJFij7M8fx3kQmAcjbtvbpbXxdkt7dVVNED30k5BTqPxkirzwfDislso?=
- =?us-ascii?Q?nayta2GUsczCSZSCOoJTJ6U2z8XCQNmsWVDQAqeyGm5Br65V0LgOtASEpwx5?=
- =?us-ascii?Q?o8sMY9lwTTILsMgLAum/Va4lUCrssDbkKvgMspbMDy0Tt4NfzHAZ4p7j/BwI?=
- =?us-ascii?Q?gZdpSPiQ9aLBNfF6x18RoqCDRwOtYbIG9Ef2fuHs+n+FAHb6pXn+BqggMsNY?=
- =?us-ascii?Q?E+B3sXi4581CjXxgtD4=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70a61d9e-36b2-4295-95aa-08de1c8ea5f6
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 17:13:32.9651
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WSHP1n1dB8uhtRegdzJKlHKXyTTBGUFzxN26KQ8r1BFqFqJlTlF8go/cSQ42nmpmi1J96AoNsBoM5pMVP2xd1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7884
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: vimc: add RGB/YUV input entity implementation
+To: Pavan Bobba <opensource206@gmail.com>, kieran.bingham@ideasonboard.com,
+ mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251101052651.6197-1-opensource206@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251101052651.6197-1-opensource206@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 05, 2025 at 02:45:49PM +0530, Manivannan Sadhasivam wrote:
-> Add the devicetree binding for PCIe M.2 Mechanical Key M connector. This
-> connector provides interfaces like PCIe and SATA to attach the Solid State
-> Drives (SSDs) to the host machine along with additional interfaces like
-> USB, and SMB for debugging and supplementary features. At any point of
-> time, the connector can only support either PCIe or SATA as the primary
-> host interface.
->
-> The connector provides a primary power supply of 3.3v, along with an
-> optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> 1.8v sideband signaling.
->
-> The connector also supplies optional signals in the form of GPIOs for fine
-> grained power management.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->  .../bindings/connector/pcie-m2-m-connector.yaml    | 121 +++++++++++++++++++++
->  1 file changed, 121 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2db23e60fdaefabde6f208e4ae0c9dded3a513f6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> @@ -0,0 +1,121 @@
-...
+On 10/31/25 23:26, Pavan Bobba wrote:
+> Introduce a new vimc-input entity to simulate a color frame source in the
+> Virtual Media Controller (VIMC) pipeline. This entity outputs RGB888 frames
+> and allows testing of pipelines that start from a pre-processed RGB/YUV
+> source instead of a raw Bayer sensor.
+> 
+> The patch adds vimc-input.c with basic pad operations for format
+> enumeration, get/set, and stream enable/disable handlers. The entity is
+> registered in the VIMC core configuration, replacing the previous temporary
+> use of vimc-sensor. Frame generation is not yet implemented and remains a
+> TODO for future work.
+> 
+> This change enables link validation and format negotiation for the
+> RGB/YUV input path, paving the way for software frame injection and
+> test-pattern generation.
+> 
+> Signed-off-by: Pavan Bobba <opensource206@gmail.com>
 
-> +  plas3-gpios:
-> +    description: GPIO controlled connection to Power Loss Acknowledge (PLA_S3#)
-> +      signal. This signal is used by the M.2 card to notify the host system, the
-> +      status of the M.2 card's preparation for power loss.
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - vpcie3v3-supply
-> +
-> +unevaluatedProperties: false
+I see 4 patches - are they dependent then gerenrate a sries
+with cover letter explaining the changes you are making.
 
-No ref to other yaml, so it should be
-
-additionalProperties: false
-
-> +
-> +examples:
-> +  # PCI M.2 Key M connector for SSDs with PCIe interface
-> +  - |
-> +    connector {
-> +        compatible = "pcie-m2-m-connector";
-> +        vpcie3v3-supply = <&vreg_nvme>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-
-Need space line here.
-
-> +                m2_pcie_ep: endpoint {
-
-Needn't label m2_pcie_ep.
-
-Frank
-
-> +                    remote-endpoint = <&pcie6_port0_ep>;
-> +                };
-> +            };
-> +        };
-> +    };
->
-> --
-> 2.48.1
->
+thanks,
+-- Shuah
 
