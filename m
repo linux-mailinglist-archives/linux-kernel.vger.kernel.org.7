@@ -1,116 +1,147 @@
-Return-Path: <linux-kernel+bounces-886091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC36C34B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:10:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8B4C34B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201F6562E41
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:06:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D0A24FDADD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23612FB990;
-	Wed,  5 Nov 2025 09:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6E32FABFF;
+	Wed,  5 Nov 2025 09:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="digW+BM2"
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twZ2xhRO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8CE2FB616;
-	Wed,  5 Nov 2025 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9063A21D3F2;
+	Wed,  5 Nov 2025 09:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333547; cv=none; b=nBLE1sHstwEXrfSvywFO232MWf/yA0L2J/FBhSd4lwSz+pauvZNzTzu+kCwwG3RnlnsFETd3mHX993ieECO1orf3jv5kl5dVQxj4/zzRbIdc/QgTPa8TJSpSQodrUCun26B4v1yvxwNn6kRXEUAWrY6kDa30B06lZEDcO1dbQyY=
+	t=1762333567; cv=none; b=pJhT9tYdE4p0xN+eREFWTpzoJJSkZXNw5Gqymekd7AhODzwYdq6tRAYBPIgUvYHoTysqAO5U2H9lSMWKXX7QB+sqN5MS2cRB4RE7KL1iXyG4f2hJjeLe9h69HpDDBp7vR7O1x6QtCZFjCOB9I0tcrNrJkvEyDyReWD4IbNYWAiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333547; c=relaxed/simple;
-	bh=3FlapW31xUvlYGcS13O4QYIQ+CVaiW6UdQ4SgpkTZtM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RK4U0LkBWAtsRNy5S/Xpjwe5/HOykzymDY/mHPHz2FSiTQscCbl/wYxQHnDgZCh8ySPAzhAGZ0c6u9xIVb7h/SF8a/vAQIXQ6wQTd8tAkUJ4K05b7aCVRuk/170szmnByKwI7F/cpqIe4jMmlCyJ5ORzHHlLMMD4ptbzdsm9vrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=digW+BM2; arc=none smtp.client-ip=113.46.200.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=3FlapW31xUvlYGcS13O4QYIQ+CVaiW6UdQ4SgpkTZtM=;
-	b=digW+BM2jXGFYwMb+mh0hAvtN8QXWjSh/9jUJARGrMOqr+6QkXTRwADjHW4rgn3BecgoYOiH2
-	8W91ZtvQtFeDl+WNHrvGjlaXTaaGndQ9MPCidMcblqSTMDdrJHj6+w6FM/GUabQYh+OiDVH0CJB
-	nPvXSZyvX5s+5/k65fCTts8=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4d1fWr1FwPz1K96G;
-	Wed,  5 Nov 2025 17:04:08 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id B94E1180044;
-	Wed,  5 Nov 2025 17:05:41 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 17:05:40 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <david@kernel.org>, <dave.hansen@intel.com>
-CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <linmiaohe@huawei.com>, <linux-edac@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<lorenzo.stoakes@oracle.com>, <luto@kernel.org>, <mhocko@suse.com>,
-	<mingo@redhat.com>, <nao.horiguchi@gmail.com>, <peterz@infradead.org>,
-	<rppt@kernel.org>, <surenb@google.com>, <tglx@linutronix.de>,
-	<tony.luck@intel.com>, <vbabka@suse.cz>, <will@kernel.org>, <x86@kernel.org>,
-	<xieyuanbin1@huawei.com>
-Subject: Re: [PATCH v2 0/2] x86/mm: support memory-failure on 32-bits with SPARSEMEM
-Date: Wed, 5 Nov 2025 17:05:36 +0800
-Message-ID: <20251105090536.11676-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <57936358-69b0-4028-a0df-b5f5acc32ca9@kernel.org>
-References: <57936358-69b0-4028-a0df-b5f5acc32ca9@kernel.org>
+	s=arc-20240116; t=1762333567; c=relaxed/simple;
+	bh=ZD5azKHvw0PZPSJq2qS7q/xJk5AQrGcPEbBQCh7ll8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gss5fO/vYconarVTLm+/dfcmH0PIPU7oo338dDm2G9d9khxnhSU0Sh4xSUtIahAKGA59OO7etiuqr29drc5j/XoOi7vyOUr84wDIvP6iM9UaaGLUCeUtuDoCuSn01YlCS9kQY1sQc62UJeTU+rE+F6QibKyD25rIiInOC8DKXtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twZ2xhRO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9783EC4CEF8;
+	Wed,  5 Nov 2025 09:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762333567;
+	bh=ZD5azKHvw0PZPSJq2qS7q/xJk5AQrGcPEbBQCh7ll8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=twZ2xhROt8QLVBUdNQk5rOXFyW4cVEZxdzIgrh8DbVN1yl9LA16Qqfsix4nneZPVD
+	 5lXezOIKqiDRjqoXNeeJWwTMKL+gEEj1GIptalyQuqNQQUT6WZafpa3RZhsvR2mblx
+	 bgh8ME78gSFwy8mvWw3nPkSIcJDZi09qphe0wHWFlTRi90GpoGj8WMh6tq0Q9S8WH6
+	 TujLlJxZ7gIxPKdwKTiYLz8HADYsN0KiDPoxW3nhgevZbYqmvmaFHq5mA7CrhBXNTg
+	 z/zK58AHa1qBAY01R8+JRIHMWvmNmjs+rUjr7YHLecYQ1b7ShvUOjS9KU5FWJbPAHV
+	 dDVQTghMWI/0A==
+Message-ID: <17c3ee70-66e3-418f-8c79-926c8a139d16@kernel.org>
+Date: Wed, 5 Nov 2025 10:06:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/7] dt-bindings: arm: Add support for Qualcomm TGU
+ trace
+To: Songwei Chai <songwei.chai@oss.qualcomm.com>
+Cc: andersson@kernel.org, alexander.shishkin@linux.intel.com,
+ kernel@oss.qualcomm.com, mike.leach@linaro.org, suzuki.poulose@arm.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+ devicetree@vger.kernel.org
+References: <20251104064043.88972-1-songwei.chai@oss.qualcomm.com>
+ <20251104064043.88972-2-songwei.chai@oss.qualcomm.com>
+ <20251105-industrious-oxpecker-of-valor-af17fa@kuoka>
+ <746b292f-fc3a-43a8-89b1-76f61ccc0630@oss.qualcomm.com>
+ <7ba7e32b-f00a-4f77-88da-047126a8c3f9@kernel.org>
+ <b9e7f8ba-a629-4316-a6dd-d765ed0037ee@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <b9e7f8ba-a629-4316-a6dd-d765ed0037ee@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemj100009.china.huawei.com (7.202.194.3)
 
-On Wed, 5 Nov 2025 09:12:04 +0100, Dave Hansen wrote:
-> Let me clarify what we need to know:
->
-> Will you (or your employer) be running such updated 32bit kernels on
-> hardware that supports MCEs.
->
-> In other words: is this change driver by *real demand*
+On 05/11/2025 09:49, Songwei Chai wrote:
 
-Thanks! Asking like this, I completely understand now.
+> Once again, I apologize for not including these modifications in the 
+> changelog.
+> 
+>> All qcom coresight bindings are called coresight and I do not see reason
+>> why this is being changed.
+> 
+> The reason for removing the |coresight| keywords is that this patch 
+> series was not
+> 
+> accepted by the maintainers of the Coresight subsystem (as explained in 
+> the cover letter).
+> 
+> Therefore, we decided to make it a Qualcomm-specific driver.
 
-We won't directly upgrade the kernel to 6.18.x (or later versions) to use
-this feature, but if Linux community approves these patches, we will
-backport it to 5.10.x and use it. I know that the page-flags in 5.10.x
-have been exhausted, but we can work around them by adjusting
-SECTION_SIZE_BITS/MAX_PHYSMEM_BITS to free up a page flag.
-Another patch I submitted for arm32:
-Link: https://lore.kernel.org/20250922021453.3939-1-xieyuanbin1@huawei.com
-, follows the same logic.
+Use standard email paragraphs
 
-Currently, there is a clear demand for ARM32, while the demand for x86 is
-still under discussion.
+not
 
-> or just by "oh
-> look, we can enable that now, I can come up with a theoretical use case
-> but I don't know if anybody would actually care"?
+broken
 
-It can also be said that way. In fact, when developing the demand
-"support MEMORY_FAILURE for 32-bit OS" in version 5.10.x, I found that the
-latest version already supported this feature, so I submitted these
-patches, and hope others can benefit from it as well.
+by
 
-> Cheers
->
-> David
+two lines each.
 
-Thanks!
+Anyway, above discussion explains nothing about compatible. I might be
+missing something, so please quote here Mike the part where he asks to
+*change the compatible and hardware name*. Please quote EXACTLY that part.
 
-Xie Yuanbin
+Best regards,
+Krzysztof
 
