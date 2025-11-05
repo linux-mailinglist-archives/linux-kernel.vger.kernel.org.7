@@ -1,87 +1,89 @@
-Return-Path: <linux-kernel+bounces-887309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EFBC37D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:04:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D206C37D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC34C18C813D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:04:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201A83B69A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7240F34CFD8;
-	Wed,  5 Nov 2025 21:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9CF34D4F7;
+	Wed,  5 Nov 2025 21:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXbST3Ij"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJURCUSi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500F34CFAA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F734CFD4;
+	Wed,  5 Nov 2025 21:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762376619; cv=none; b=Wre2PQnBARih/muYjugMyg+kwKndVp0mYxeskpSu374XAJ8q6MDE/g/rmrQzsZR3Vjnqbblz5EsS5LPgCYI9mmDLzldc65YsRFn7FGeOXCNy5MCmd2bFBu6oTPsV9JFmEhc/mCNRRWa3HcRa2zQTYAfaw0tfGpRU3wRl5QQ2HZw=
+	t=1762376652; cv=none; b=SIlCGA7xZ0CzsyYKnQ728bvfhfX6sV3ukYJsipuyGI0JmHqc7iEPMXAd7ajqww1JbDBeFNll7VnrLbmY+n2CLHRSF93E4YqbwbI0vSY1BKK9yGlAVHPkNhl9XVOZp6S39R3LgDyYMeMKSlA7iPKacQp8LPiUYWL1e6YovW6qMow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762376619; c=relaxed/simple;
-	bh=7zfVMY8XIGnKYdGtLUi3KWKuh80GmnankiFSdnvKcoI=;
+	s=arc-20240116; t=1762376652; c=relaxed/simple;
+	bh=8Q71EO557AK60zUjy5zJPPkN07FPtYd1UuHTAzHqsFk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=spp/ipjiI5BI/Kan2Xd2zZLNW25Ju9okUkYO4EJ9SwepTGxLl7q4Hcxf4S/4CtSE4UCU1s/+52nvsgMcwt/HWv1nNcDO9grHbgo4z7aQ0VtZH07GoktByJS9wJGVQ4rdruGFUkR1XPK24XcfpjHxIDVl8p6TEhI+hndSV1AfOvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXbST3Ij; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2947d345949so2456335ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:03:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762376618; x=1762981418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MkrJkdba1xSje2XMh2x048aEOPt8IqS+4z2rOIVGwVs=;
-        b=NXbST3IjoD8sTIj1lwmrdm+jAfpfgZ0h/oSYjlEJbcPW6kpqnXfYyrGE9rKplh83XO
-         1QGiipHr9u9eC3Waxb0dvg5bOCG8hCTNuC2CZQMCkX1Xj8MhmO6yG0zMlPHGW0lP4Kup
-         yTOFCbmW2eVkCbXo2tRX5XuRDwuA3LkSnUSrgjIpOjbekw+UqF66RJWTowotrMYQvdUs
-         ZeZRR51KZbN5jywzWWeKi0MAWE32CDEDDuEPSmQ31SoDSOcpVSKUnAUKGD2WKCuu7WhQ
-         svyX65mM722LsL7YPHg3LpJ0p3sfBZjF7dbCGSV84rSJeiYPlHps3NXZOTrqXxJ6WOHl
-         joKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762376618; x=1762981418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MkrJkdba1xSje2XMh2x048aEOPt8IqS+4z2rOIVGwVs=;
-        b=sZ2aRAKOMR0jpPoLFoEFdF30C+dkwUu0wpG8R2TggMUkJrvz8dlx37LWHYFLZPSVAR
-         GIZrQa8JJRziAdLyVeKho+vn2QOuAOHgw49bgZHKwx4ejactJei36BuVXH8gGmUYhWCF
-         djxF8cKvZMYJVRSr3L8Vkj6pr5nEH+QQeJ1ZTMbZJRz/mFtxamTEp3sOsUqaDeSlBwR0
-         7dYZG+QgXXNXieq4RLRZl2XROo1iCUbUiOtiLVwXAdjTH0I6KkFdiwz877arv/VjvshL
-         Wl+iFkZaGpXIfJT3jUEM530Pm00fQ8ElQL7CtUkN7Z65DJAzZchJxmlE6HTKhTgwWrru
-         bI9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSHgTh5ILJurXAritkVDtC/6g5WWNcds6CWtjjiRq2bEBWcF0gKjC9N6TdH5H1EZg4xiBLxj45RDqAsOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM76n3Qf+118TSaf976D5QLAyzgOW8k6t4SwbO4tGkop1RrNGp
-	Gfs4Ig8YxJoxrlRgstaZnZpN6SdmtSXb11lhR1bRyODTlhDN7FhzVw5z
-X-Gm-Gg: ASbGnculV1tXNaOQcPjtikyXuJqpvbOsa8Q5qLXnMv/cwY5m348SeXvzP6lSXyKeQK5
-	fPQEJgHTojritQlnzSZhStkBiI9qwxod5D+p3AqN+XROD6GmtRDRV7/SEo4g7JEpws7aQ0Vkmoz
-	hZ3c0jjHN1ePboN+nLZoBZwRuhkd/oc92P7b/4ioSuVLKy5DEFs/v+QUOjcjZlv+QYqjMhw1L3D
-	PC6SOYOwhX/2qUcjB94La5fnboK6kJYCW3Jv3NBFP6hVn+0aamuGynwW+Z9lIjp/mGkNW6qEStJ
-	+RiY1q+AnMaT91ixG3S1F0sh9d7/+ZuJkymQDUpJyLR8WnJ1x2wjblaKfcpQIGRotUYxq99u02O
-	j8h+0jG8ce8P10nieqTqphT8f+zc94FTub9V9z1gYYQzW4gIHw0Ok/MXJGw==
-X-Google-Smtp-Source: AGHT+IE+n66VzklfbAOrQrgUIqTmTgKBWIWBX+BwQFs7o7CvfPqTM+UfY6E430xCte9cNWMIOyPm9g==
-X-Received: by 2002:a17:902:fc44:b0:296:2b7a:90cd with SMTP id d9443c01a7336-2962b7a9106mr49267945ad.32.1762376617589;
-        Wed, 05 Nov 2025 13:03:37 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d125c93fsm13626a91.14.2025.11.05.13.03.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:03:36 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv4 dmaengine 2/2] dmaengine: mv_xor: use devm_clk_get_optional_enabled
-Date: Wed,  5 Nov 2025 13:03:17 -0800
-Message-ID: <20251105210317.18215-3-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251105210317.18215-1-rosenp@gmail.com>
-References: <20251105210317.18215-1-rosenp@gmail.com>
+	 MIME-Version; b=AziKYoli+ok5+UGMKOm+eJ1IuFyKk0hz67fCC1R+Bj80r/oQM8Uzux4AzvNv7NQfeEYo3c3TPi8AmVDcSUYU/IUCGz1nW0ybEx+gxioDQsMFR5LRkEUKGth68r6fjitQHmzoc1+D6m1GjMlIQjHPVfAxlNHq5sNKAH2ibB1Llhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJURCUSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13AB5C116D0;
+	Wed,  5 Nov 2025 21:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762376650;
+	bh=8Q71EO557AK60zUjy5zJPPkN07FPtYd1UuHTAzHqsFk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AJURCUSilbHUliUZRLrgr+YTl80lHSkFVtDFlHcKKO/sO5PBq/MhEJUXJz916fP81
+	 wAbJ8Yy5s6zsZm9lBVZoeQXrmyCrVMNai4ryobrKlPGWI6PI6p6Jep72D7ahE5dvcd
+	 k4C/l6tC0UJksuZsxtngb12Gs/wAUhM8HZr8RudMlyYPQQHJ6z+N1Fiqf5+++lztgm
+	 sINWjeiVCtGxC9uvySEPj5+spW1J3KjyQn3Fa6fEASxYDs+prWyAMn68bY/cKaaxjd
+	 txBp5Oc4fioT76vUk0O5Kgl+uyh1HTeyhNjK41/nevk/wEXq14ugto76jhLUchVfJp
+	 9jeOdMslbHixg==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	cgroups@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 01/31] PCI: Prepare to protect against concurrent isolated cpuset change
+Date: Wed,  5 Nov 2025 22:03:17 +0100
+Message-ID: <20251105210348.35256-2-frederic@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251105210348.35256-1-frederic@kernel.org>
+References: <20251105210348.35256-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,46 +92,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Driver was written before this was available. Simplifies code slightly.
+HK_TYPE_DOMAIN will soon integrate cpuset isolated partitions and
+therefore be made modifiable at runtime. Synchronize against the cpumask
+update using RCU.
 
-Actually also a bugfix. clk_disable_unprepare is missing in _remove,
-which is also missing.
+The RCU locked section includes both the housekeeping CPU target
+election for the PCI probe work and the work enqueue.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+This way the housekeeping update side will simply need to flush the
+pending related works after updating the housekeeping mask in order to
+make sure that no PCI work ever executes on an isolated CPU. This part
+will be handled in a subsequent patch.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- drivers/dma/mv_xor.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/pci/pci-driver.c | 47 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 3597ad8d1220..d15a1990534b 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1351,9 +1351,9 @@ static int mv_xor_probe(struct platform_device *pdev)
- 	/* Not all platforms can gate the clock, so it is not
- 	 * an error if the clock does not exists.
- 	 */
--	xordev->clk = clk_get(&pdev->dev, NULL);
--	if (!IS_ERR(xordev->clk))
--		clk_prepare_enable(xordev->clk);
-+	xordev->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(xordev->clk))
-+		return PTR_ERR(xordev->clk);
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 302d61783f6c..7b74d22b20f7 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -302,9 +302,8 @@ struct drv_dev_and_id {
+ 	const struct pci_device_id *id;
+ };
  
- 	/*
- 	 * We don't want to have more than one channel per CPU in
-@@ -1441,11 +1441,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 				irq_dispose_mapping(xordev->channels[i]->irq);
- 		}
- 
--	if (!IS_ERR(xordev->clk)) {
--		clk_disable_unprepare(xordev->clk);
--		clk_put(xordev->clk);
--	}
--
- 	return ret;
+-static long local_pci_probe(void *_ddi)
++static int local_pci_probe(struct drv_dev_and_id *ddi)
+ {
+-	struct drv_dev_and_id *ddi = _ddi;
+ 	struct pci_dev *pci_dev = ddi->dev;
+ 	struct pci_driver *pci_drv = ddi->drv;
+ 	struct device *dev = &pci_dev->dev;
+@@ -338,6 +337,19 @@ static long local_pci_probe(void *_ddi)
+ 	return 0;
  }
  
++struct pci_probe_arg {
++	struct drv_dev_and_id *ddi;
++	struct work_struct work;
++	int ret;
++};
++
++static void local_pci_probe_callback(struct work_struct *work)
++{
++	struct pci_probe_arg *arg = container_of(work, struct pci_probe_arg, work);
++
++	arg->ret = local_pci_probe(arg->ddi);
++}
++
+ static bool pci_physfn_is_probed(struct pci_dev *dev)
+ {
+ #ifdef CONFIG_PCI_IOV
+@@ -362,34 +374,51 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+ 	dev->is_probed = 1;
+ 
+ 	cpu_hotplug_disable();
+-
+ 	/*
+ 	 * Prevent nesting work_on_cpu() for the case where a Virtual Function
+ 	 * device is probed from work_on_cpu() of the Physical device.
+ 	 */
+ 	if (node < 0 || node >= MAX_NUMNODES || !node_online(node) ||
+ 	    pci_physfn_is_probed(dev)) {
+-		cpu = nr_cpu_ids;
++		error = local_pci_probe(&ddi);
+ 	} else {
+ 		cpumask_var_t wq_domain_mask;
++		struct pci_probe_arg arg = { .ddi = &ddi };
++
++		INIT_WORK_ONSTACK(&arg.work, local_pci_probe_callback);
+ 
+ 		if (!zalloc_cpumask_var(&wq_domain_mask, GFP_KERNEL)) {
+ 			error = -ENOMEM;
+ 			goto out;
+ 		}
++
++		/*
++		 * The target election and the enqueue of the work must be within
++		 * the same RCU read side section so that when the workqueue pool
++		 * is flushed after a housekeeping cpumask update, further readers
++		 * are guaranteed to queue the probing work to the appropriate
++		 * targets.
++		 */
++		rcu_read_lock();
+ 		cpumask_and(wq_domain_mask,
+ 			    housekeeping_cpumask(HK_TYPE_WQ),
+ 			    housekeeping_cpumask(HK_TYPE_DOMAIN));
+ 
+ 		cpu = cpumask_any_and(cpumask_of_node(node),
+ 				      wq_domain_mask);
++		if (cpu < nr_cpu_ids) {
++			schedule_work_on(cpu, &arg.work);
++			rcu_read_unlock();
++			flush_work(&arg.work);
++			error = arg.ret;
++		} else {
++			rcu_read_unlock();
++			error = local_pci_probe(&ddi);
++		}
++
+ 		free_cpumask_var(wq_domain_mask);
++		destroy_work_on_stack(&arg.work);
+ 	}
+-
+-	if (cpu < nr_cpu_ids)
+-		error = work_on_cpu(cpu, local_pci_probe, &ddi);
+-	else
+-		error = local_pci_probe(&ddi);
+ out:
+ 	dev->is_probed = 0;
+ 	cpu_hotplug_enable();
 -- 
-2.51.2
+2.51.0
 
 
