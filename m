@@ -1,207 +1,136 @@
-Return-Path: <linux-kernel+bounces-886742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02566C36759
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2B4C366C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A871A4051B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D20B624A1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46067337B9C;
-	Wed,  5 Nov 2025 15:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6B432D0D5;
+	Wed,  5 Nov 2025 15:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0p7rc+n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SuLYuNMQ"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEA01A3172;
-	Wed,  5 Nov 2025 15:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7757321440
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356327; cv=none; b=iIOIQqq38KohUCLdZbu/IumZzVAVkUZNwBJ0XYY9m4KDQFoqmc76gJZKMiHMoG/TT7Ngk2WPDuoUkaQG0OGCUvKh+HzacPWC7jdh3fOPu5RVYw7PobeU70xy0XGsichE9KEH2OAAfrC2hBYTDroJo7/Zmm//A61so8iUUi67uks=
+	t=1762356323; cv=none; b=oEnRnhm37D0S1NUy4dZilcK0FyYJb5x+s0ZpH4h5bfNE6XmQkLBMK7hA7eXr6Hzwj7cVSdumMkoYYATop/HtbV2+6nY3YNfWXT0vFtImLTnNJR0FlloGZouuIv3KzntBN3k8ETkUOMalq8hl5jtCWYJs4uB+3o9Qo9VBC3QBXTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356327; c=relaxed/simple;
-	bh=HfvjEZ8zyKUtba01cWxDWXLISHrgdAAOlZhIhHId5TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r91uJb7WQlTpOPQyfuxy2RPu+oZ5XLS2r7H8N5ogaO8ICQux8EGjp4XpZwKBJguXJxa095ymDPqzc420kvTIUFzSvhv/9DY1zW5NHZ8nmzeWSUwFKy+KjrX33vhYSunBsbZAoEd8FA3yXrady23nry3R2CaKX0dsClmkdkZFpNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0p7rc+n; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762356326; x=1793892326;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HfvjEZ8zyKUtba01cWxDWXLISHrgdAAOlZhIhHId5TU=;
-  b=T0p7rc+npoi32U4SdKb/xiybwfkzYujBDdb3R0fOKaocsBPx6/zVEz3Z
-   1+5PpBAKru/DCgHgv8rUq0N5x2O0lwXtr6j/jqGm4F6TVaQF/lOq/wyso
-   bTzxZ3VXcS91bfgS6G13jo9bfitCD3nSfyqG/LJN0kFzcBe8KH9bhTMYz
-   mwZ4IM+2wegeuNoNqslXw4pnJYutE5vNFviJbqW0RjMzckcj8ghqGJk5M
-   eyVPzSCzHDjS9FB2iWJ/dLzQappOcp128PMdeASCvpMKUV3JgQF2REzlz
-   KMMjhWVjyYdTDIeFUvpvkmfm7q+SGXElBSgvn7YGC+/O5BDYVMrLtGc4V
-   A==;
-X-CSE-ConnectionGUID: gMMTVAN0Sv6jbeIk8rhekQ==
-X-CSE-MsgGUID: pfHeXYF1S32JyQxu+7KSug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64507954"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="64507954"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:25:25 -0800
-X-CSE-ConnectionGUID: A7SgvF8rRdaIXVCFqgPLsA==
-X-CSE-MsgGUID: sVKbbyk8R02GBNDNiNxmsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="224728796"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:25:24 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vGfNu-00000005pB7-2qhR;
-	Wed, 05 Nov 2025 17:25:18 +0200
-Date: Wed, 5 Nov 2025 17:25:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: mpl3115: add threshold events support
-Message-ID: <aQtsXcf_rHVdwqeZ@smile.fi.intel.com>
-References: <20251105095615.4310-1-apokusinski01@gmail.com>
- <20251105095615.4310-3-apokusinski01@gmail.com>
+	s=arc-20240116; t=1762356323; c=relaxed/simple;
+	bh=jVa87eKGqVF+l20ajBfd8ThYEZLpCOEp5uPFz1FOVig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bFtBNAznedaobNa2hPVyu1EzpC116//Z9JVvM4pJarm2gUM5eGbAZ3aLsGL1OuAhw+uT7vN/xzjMVuAB7r0ku/vAy6nzzxKMxI0KIMk53vQNrWW8X8pksUVInXLOFRe3FiVGpZgoWfoc830GT/7962eRzROE3m+JWMs2/AUTD38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SuLYuNMQ; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-94868b991easo61523339f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762356321; x=1762961121; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=487sI5AbJzpMbYjr1CjDcFAjiYiuuI8y81LMpEqcmVA=;
+        b=SuLYuNMQsvW2Wzy7K4mLUkR0AoGJNXWXa0P0gDdbBgbZx3j0quIPnpr3upInBfCwFn
+         RPwNLHQK5wV356rmAywxjbeB9tJDB7v1cnTrIkA4STiha2ORKBmLmOQApD4kxn5kuFCQ
+         4QGrxLeifnYktJ67DjF8XFqNvklzewbeDSW3vKwsBMdWVgq9GETI6XOc72jOBotOHN13
+         OmCd57PuNi0/2jb9ryaH3q/6zjtXi51CwEQe3Cg4rCnYA6J/gGVEMpj1XD5gZ5x9ZjIL
+         kRwcPBtDaPLpwInKxWRkZnnIJs1Ej/SarM1CXuLUfvUsyKg2gbiV/lldR+HSu6QIDW6z
+         fUHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762356321; x=1762961121;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=487sI5AbJzpMbYjr1CjDcFAjiYiuuI8y81LMpEqcmVA=;
+        b=widnuMVWzNaNh6qrIJ/wzLkpMd2rFJkJPaCMFEIPdljEt1PrCf6ifCjPKuziylvtRQ
+         jnGiDBZPqiRuXftjHZgGvnIYhDxOKXK3xww6eszQm1vRjeA/42kArQEtS2ykGv3+BFgX
+         i/ns0Q9h9tYJeoG9htDL+YnuE1za6bBw4S4jSBCW/v5oRO7MMiRWKbI2XHfpZRKJUqJI
+         KAfqQkETzNXNJaVUz5bcs6lHrNYixU1GFpSND40dY0ku5TWaKG/d/+3YuF0BmsjQLDG2
+         QwWDL50yxKgr10/eFyr2hFytoZ1zLnfLC92RaOP8BgIkGh3AAt9XTXHRZl4XccTtTK2l
+         wJ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXjPkqyoO8aie+6T8mCoKVAOjnYJjZoAFKwQ+RUgdQDC8o7/R/68BsULdCFhDc0YvidxAQ+Jwn/OFt04Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKO34FqWE4awCqeTnDSoP3HaBgaai/uyQaQAXo1SASWfLhNykp
+	OawD5roehAowYnYE1f660h+xW9LspuP92bN7l0pxeBlW82x6dq+yNgrb9pReCLJHZRQ=
+X-Gm-Gg: ASbGncsuSZKDSAuNR6MANxz2YVJ3ZhBkBt82bs2OvanG7qL8ouHXGmRPGNfJpHT23TV
+	QuBt46iq5SbzxsDVFoWQT+LMjMcq+wwRnF242MSoBL10BnplpRh4tRbPnkru5vGnNemUBTHeoaS
+	ByW3mWCkdL7NPb3gUmCJ/npWZOuN1BVa69X57RYEWAmrfIXY1Y8lZRJR4s1Mv3pb5u0K9WPtDXb
+	r+hpggMTwSdTH7yrKKCEK2aMozPZMTBNoAwkpyKPcW8qWQ75OfAOjiGTyFewyaTtKKQs4UKqdY1
+	hcB3yAwQmcLjo9Tb9HfYEDPpCIFREEBHhE3+FQbLGGkT/SLB2UotzYGXDq1C4wVqEdiuB6YV4vP
+	CpVvYsQkJplNEjbF1QqRDui+8Ra+FIHZcQdIG8AVWEndNn5dLhMMIcA3Goow+uNrY5bHxt4Uq
+X-Google-Smtp-Source: AGHT+IGc9ECZf5jYK1jLXUdJ3FXQag+q/dzClLumbg8vy2PbyYvXZm9bHKrc58cJrzWZLVcyD9QYcw==
+X-Received: by 2002:a05:6e02:174b:b0:42d:8b25:47ed with SMTP id e9e14a558f8ab-433407a705bmr56303455ab.6.1762356320939;
+        Wed, 05 Nov 2025 07:25:20 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b72258d620sm2536362173.8.2025.11.05.07.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 07:25:20 -0800 (PST)
+Message-ID: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
+Date: Wed, 5 Nov 2025 08:25:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105095615.4310-3-apokusinski01@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] zram: Implement multi-page write-back
+To: Yuwen Chen <ywen.chen@foxmail.com>
+Cc: akpm@linux-foundation.org, bgeffon@google.com, licayy@outlook.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, liumartin@google.com, minchan@kernel.org,
+ richardycc@google.com, senozhatsky@chromium.org
+References: <tencent_85F14CD7BA73843CA32FF7AEB6A21A6EC907@qq.com>
+ <tencent_25F89AABFE39535EF957519750D107B7D406@qq.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <tencent_25F89AABFE39535EF957519750D107B7D406@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 05, 2025 at 10:56:14AM +0100, Antoni Pokusinski wrote:
-> Add support for pressure and temperature rising threshold events. For
-> both channels *_en and *_value (in raw units) attributes are exposed.
+On 11/4/25 11:48 PM, Yuwen Chen wrote:
+> For block devices, sequential write performance is significantly
+> better than random write. Currently, zram's write-back function
+> only supports single-page operations, which fails to leverage
+> the sequential write advantage and leads to suboptimal performance.
+> This patch implements multi-page batch write-back for zram to
+> leverage sequential write performance of block devices.
+> After applying this patch, a large number of pages being merged
+> into batch write operations can be observed via the following test
+> code, which effectively improves write-back performance.
 > 
-> Since in write_event_config() the ctrl_reg1.active and ctrl_reg4
-> are modified, accessing the data->ctrl_reg{1,4} in set_trigger_state()
-> and write_event_config() needs to be now guarded by data->lock.
-> Otherwise, it would be possible that 2 concurrent threads executing
-> these functions would access the data->ctrl_reg{1,4} at the same time
-> and then one would overwrite the other's result.
+> mount -t debugfs none /sys/kernel/debug/
+> echo "block:block_bio_frontmerge" >> /sys/kernel/debug/tracing/set_event
+> echo "block:block_bio_backmerge" >> /sys/kernel/debug/tracing/set_event
+> cat /sys/kernel/debug/tracing/trace_pipe &
+> echo "page_indexes=1-10000" > /sys/block/zram0/writeback
+> 
+> Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
+> Reviewed-by: Fengyu Lian <licayy@outlook.com>
+> ---
+> Changes in v3:
+>   - Postpone the page allocation.
+> Changes in v2:
+>   - Rename some data structures.
+>   - Fix an exception caused by accessing a null pointer.
 
-...
+Please either finish the patch before sending it out, or take your
+time before posting again. Sending 3 versions in one day will just
+make people ignore you.
 
-> static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
-
->  	struct iio_dev *indio_dev = private;
->  	struct mpl3115_data *data = iio_priv(indio_dev);
->  	int ret;
-> +	u8 val_press[3];
-> +	__be16 val_temp;
-
-s/_temp/$SOMETHING meaningful/ ?
-
->  	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
->  	if (ret < 0)
->  		return IRQ_HANDLED;
->  
-> -	if (!(ret & MPL3115_INT_SRC_DRDY))
-> +	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
-> +		     MPL3115_INT_SRC_DRDY)))
->  		return IRQ_NONE;
->  
-> -	iio_trigger_poll_nested(data->drdy_trig);
-> +	if (ret & MPL3115_INT_SRC_DRDY)
-> +		iio_trigger_poll_nested(data->drdy_trig);
-> +
-> +	if (ret & MPL3115_INT_SRC_PTH) {
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_PRESSURE, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_RISING),
-> +						    iio_get_time_ns(indio_dev));
-> +
-> +		/* Reset the SRC_PTH bit in INT_SOURCE */
-> +		i2c_smbus_read_i2c_block_data(data->client,
-> +					      MPL3115_OUT_PRESS,
-> +					      sizeof(val_press), val_press);
-> +	}
-> +
-> +	if (ret & MPL3115_INT_SRC_TTH) {
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_TEMP, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_RISING),
-> +						    iio_get_time_ns(indio_dev));
-> +
-> +		/* Reset the SRC_TTH bit in INT_SOURCE */
-> +		i2c_smbus_read_i2c_block_data(data->client,
-> +					      MPL3115_OUT_TEMP,
-> +					      2, (u8 *)&val_temp);
-
-Why not sizeof() here ?
-
-> +	}
->  
->  	return IRQ_HANDLED;
->  }
-
-...
-
-> +static int mpl3115_read_thresh(struct iio_dev *indio_dev,
-> +			       const struct iio_chan_spec *chan,
-> +			       enum iio_event_type type,
-> +			       enum iio_event_direction dir,
-> +			       enum iio_event_info info,
-> +			       int *val, int *val2)
-> +{
-> +	struct mpl3115_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +	__be16 tmp;
-
-Also name can be improved. And notice confusion between temp
-(temporary?  temperature?) and tmp.
-
-> +	if (info != IIO_EV_INFO_VALUE)
-> +		return -EINVAL;
-> +
-> +	switch (chan->type) {
-> +	case IIO_PRESSURE:
-> +		ret = i2c_smbus_read_i2c_block_data(data->client,
-> +						    MPL3115_PRESS_TGT,
-> +						    sizeof(tmp), (u8 *)&tmp);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/*
-> +		 * Target value for the pressure is 16-bit unsigned value,
-> +		 * expressed in 2 Pa units
-> +		 */
-> +		*val = be16_to_cpu(tmp) << 1;
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_TEMP:
-> +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* Target value for the temperature is 8-bit 2's complement */
-> +		*val = sign_extend32(ret, 7);
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
+This commit message is in dire need of some actual performance
+results. This is a change for better performance, no? If so, you
+should have some clear numbers in there describing where it's
+better, and where it's worse (if appropriate).
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Jens Axboe
 
 
