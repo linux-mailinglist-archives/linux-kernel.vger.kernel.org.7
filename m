@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-885951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3618AC345CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:55:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF7EC345C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8076B463DA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:53:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3AAF4E2CBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C027C2D3A69;
-	Wed,  5 Nov 2025 07:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A142D47E9;
+	Wed,  5 Nov 2025 07:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GsQVfuKa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxGCzZS0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A296322068F;
-	Wed,  5 Nov 2025 07:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20332C2365
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762329207; cv=none; b=W4LTuxpgLSgS2dgZkkY7iVgV+6GX5RcYUp/lMKtClNUjyUn4NHKDSQMzDl7myaIe/Uxc/3cR97nt7FzGYk/dMf0oKgOyRFIPzNrYRdySk7wWuewA8p6QDJiftt64a+F9Uv2UwyZAD9ju1YWC66uki72u73CqVpbDVgmTP4vCZ7w=
+	t=1762329209; cv=none; b=gNcQscHUDV4SFIoM3WobjcWYQM1onVfTXtSYL8lo62FnU0xj+EF2YA1TjkoLruWOvjg1mvkCOJa6PmTyLeglSH//ewAE+MKzUDEZZcTHawL+bNDBqs7BdpSd1HOWCpOzeyufe6gP8vz1PwJQIgP8L5E6HSc1Cv6R7oGDONuUJf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762329207; c=relaxed/simple;
-	bh=JWnuy2QJ9LYP+KmfWcfCIvf7AMu8rGfQCOVCcklh5vs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GflbhWF7ERGYTru0a1OTV10mgsxEYVs9Qv2dZQQ1mk59HGYSJtJkqKyP7TT2IO6ggx04PEL5VJTFs1cUkSD34+ysYymosc83Q8oTA9F0HRAKZ7MZ7ZnQzOMwuw/8d1uOWxraXrw8A3p8+FfsNyT1P3KWjyKZGLrwJTjZggC2vxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GsQVfuKa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A57q7Tr2904354;
-	Wed, 5 Nov 2025 07:53:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=WfHcdCY+e08e/1Qn/B+3vs4cSNT1ySicRxT
-	SQHw1zs4=; b=GsQVfuKaQ+AAR0NNWC05x78NmnmrMinprOBr2h3fRX6kzdEzEmK
-	/Q3pUN6hzSxkOGaLL6Rn/EwwChCMkhIIBqu8XqUhivKVTdWya+U7HYzfvloXOwPl
-	elJqfz4QYIyt92zOJ9/NxE5FgNd+BF/isJazKwRR3h0F2VXiUHGIIAZ2uH5exkf0
-	uT0ZEypWsBkMMGYgT3SDyrVZh/PSDEeZ/NoFYdv/Pw3c9m2BZrZL6kYO5TMKQ/++
-	eH9PTUiCeGjl/JFGt6Y5iLvznLM0EZXXitmP0M6IePslR9+Bcq6SbsdqrKWteidb
-	Jk0H+VDrnaWTBFqAWgiBGf7DRZPMOmQ/YBQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7mbbtgwb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 07:53:14 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A57rB3P016283;
-	Wed, 5 Nov 2025 07:53:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9mbfw9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 07:53:11 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A57p76q014357;
-	Wed, 5 Nov 2025 07:53:11 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-charante-hyd.qualcomm.com [10.213.97.134])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A57rBp4016277
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 07:53:11 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 389980)
-	id B2C435DA; Wed,  5 Nov 2025 13:23:09 +0530 (+0530)
-From: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-To: robin.clark@oss.qualcomm.com, will@kernel.org, robin.murphy@arm.com,
-        joro@8bytes.org, dmitry.baryshkov@oss.qualcomm.com
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Subject: [PATCH] iommu/arm-smmu: add actlr settings for mdss and fastrpc
-Date: Wed,  5 Nov 2025 13:23:07 +0530
-Message-Id: <20251105075307.1658329-1-charan.kalla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762329209; c=relaxed/simple;
+	bh=DqRdHLu8YZpMW0jF0RrigZyNDK0NVBhX/cdRxxvp6S8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ki1ZhHN5o3RajWkJUK8wrDkIOTEU46NWxZ/1snWjVGR/bbpsnbNuQsoOmz9u08Q/lIYE5cEM3GawEsaq5/a0o6ueYwtcm8UTLw6KxxSAeWeYLOtYnsBDft0PyIzzPqG1AuykXhKVw0B3E480NHj/aHqauoyWrlNdANPTx0xAX7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxGCzZS0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762329205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ROFoOenJg5dQLwe7jDFuQ2CPZm8re5K1Y0RzrsdP5PY=;
+	b=IxGCzZS0RbAsyVO1c1XepL7CXQl13DjGye/VfDobiXmAu8gIRToBUC5ZMLxLsea9AQQ/+6
+	wuOy6LIx1Aw5MrsMPdlRxr25uyxtmDkUtdvXvpsEzYfC/kW7j5RLq/oDy0XF+QoAeNppnY
+	4yOGNP9RZXtQH8CpnDLJBN/fSqPAVMc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-eoNnlLuxNJ6s1FfhmwnFUA-1; Wed,
+ 05 Nov 2025 02:53:22 -0500
+X-MC-Unique: eoNnlLuxNJ6s1FfhmwnFUA-1
+X-Mimecast-MFC-AGG-ID: eoNnlLuxNJ6s1FfhmwnFUA_1762329201
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 455171956059;
+	Wed,  5 Nov 2025 07:53:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.190])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED60D3000198;
+	Wed,  5 Nov 2025 07:53:17 +0000 (UTC)
+Date: Wed, 5 Nov 2025 15:53:13 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 3/4] kexec: print out debugging message if required
+ for kexec_load
+Message-ID: <aQsCaeTx0WduSjSz@MiWiFi-R3L-srv>
+References: <20251103063440.1681657-1-maqianga@uniontech.com>
+ <20251103063440.1681657-4-maqianga@uniontech.com>
+ <aQq97iGeYvZdr3SX@MiWiFi-R3L-srv>
+ <5FC4A8D79744B238+97288be4-6c1a-4c0d-ae7d-be2029ec87f3@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g_pz8dCGrU-BSQYq5IksI9jId3nMmTI4
-X-Proofpoint-GUID: g_pz8dCGrU-BSQYq5IksI9jId3nMmTI4
-X-Authority-Analysis: v=2.4 cv=MK1tWcZl c=1 sm=1 tr=0 ts=690b026a cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=KZ8tkDdTZV_0uGpIK1sA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA1NyBTYWx0ZWRfX1frM+T4RaKlk
- oKRbbTZZBfqjpfVr8oqLBvfEcO6f9ZxUYr0Bh2PnHT3fb3NhpJI5yR1WeR/JkwFKw+ZKdRPibhx
- Y2kvxViI3+i9KUv9v9fFVw9K/MXL6U7vFNCUYt/sQQbz0bIW1eUCLCLXPw4kcN0kxAjbm7TINJy
- V+CW7TSOdDgbIjBEeyHD56sE/lnVJdpLYgmrl/B+i5mohblH5Fwns1dcYT0Tz/CynP/splgJI4t
- TY3TV+82/mX918IwXM0dhb2JnZhJPFeQpoX5CWCzVaT2e6i6g4TDSddS1d7BCRgkygo2iN/hXOZ
- AS5qwa3nHu1z7T6c7x1/orCAYUMIGgNEvmXC/q+FESTu8jqEPReWUDB7+Rftv1qeellNj/Qk5P0
- 5mzaJP3nX2iLrDYma7p3Stqwxam85g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 bulkscore=0 clxscore=1011 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511050057
+In-Reply-To: <5FC4A8D79744B238+97288be4-6c1a-4c0d-ae7d-be2029ec87f3@uniontech.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add ACTLR settings for the device nodes with below compatibility
-and is mainly targeted for sa8775p:
-1) sa8775p-mdss
-2) qcom,fastrpc-compute-cb
+On 11/05/25 at 11:41am, Qiang Ma wrote:
+> 
+> 在 2025/11/5 11:01, Baoquan He 写道:
+> > On 11/03/25 at 02:34pm, Qiang Ma wrote:
+> > > The commit a85ee18c7900 ("kexec_file: print out debugging message
+> > > if required") has added general code printing in kexec_file_load(),
+> > > but not in kexec_load().
+> > > 
+> > > Especially in the RISC-V architecture, kexec_image_info() has been
+> > > removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
+> > > message if required")). As a result, when using '-d' for the kexec_load
+> > > interface, print nothing in the kernel space. This might be helpful for
+> > > verifying the accuracy of the data passed to the kernel. Therefore,
+> > > refer to this commit a85ee18c7900 ("kexec_file: print out debugging
+> > > message if required"), debug print information has been added.
+> > > 
+> > > Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202510310332.6XrLe70K-lkp@intel.com/
+> > > ---
+> > >   kernel/kexec.c | 11 +++++++++++
+> > >   1 file changed, 11 insertions(+)
+> > > 
+> > > diff --git a/kernel/kexec.c b/kernel/kexec.c
+> > > index c7a869d32f87..9b433b972cc1 100644
+> > > --- a/kernel/kexec.c
+> > > +++ b/kernel/kexec.c
+> > > @@ -154,7 +154,15 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> > >   	if (ret)
+> > >   		goto out;
+> > > +	kexec_dprintk("nr_segments = %lu\n", nr_segments);
+> > >   	for (i = 0; i < nr_segments; i++) {
+> > > +		struct kexec_segment *ksegment;
+> > > +
+> > > +		ksegment = &image->segment[i];
+> > > +		kexec_dprintk("segment[%lu]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+> > > +			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+> > > +			      ksegment->memsz);
+> > There has already been a print_segments() in kexec-tools/kexec/kexec.c,
+> > you will get duplicated printing. That sounds not good. Have you tested
+> > this?
+> I have tested it, kexec-tools is the debug message printed
+> in user space, while kexec_dprintk is printed
+> in kernel space.
+> 
+> This might be helpful for verifying the accuracy of
+> the data passed to the kernel.
 
-As a side note, "qcom,fastrpc" compatibility is already defined but that
-seems inept as the devices that will be attached to the SMMU is going to
-be with "qcom,fastrpc-compute-cb" compat string.
+Hmm, that's not necessary with a debug printing to verify value passed
+in kernel. We should only add debug pringing when we need but lack it. 
+I didn't check it carefully, if you add the debug printing only for
+verifying accuracy, that doesn't justify the code change.
 
-Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index c21a401c71eb..c76f6076f487 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -47,6 +47,10 @@ static const struct of_device_id qcom_smmu_actlr_client_of_match[] = {
- 			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
- 	{ .compatible = "qcom,sm8550-mdss",
- 			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
-+	{ .compatible = "qcom,sa8775p-mdss",
-+			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
-+	{ .compatible = "qcom,fastrpc-compute-cb",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
- 	{ }
- };
- 
--- 
-2.34.1
+> > > +
+> > >   		ret = kimage_load_segment(image, i);
+> > >   		if (ret)
+> > >   			goto out;
+> > > @@ -166,6 +174,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> > >   	if (ret)
+> > >   		goto out;
+> > > +	kexec_dprintk("kexec_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
+> > > +		      image->type, image->start, image->head, flags);
+> > > +
+> > >   	/* Install the new kernel and uninstall the old */
+> > >   	image = xchg(dest_image, image);
+> > > -- 
+> > > 2.20.1
+> > > 
+> > 
+> 
 
 
