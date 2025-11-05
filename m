@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-886359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693A6C35533
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBE9C354BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34BE24F1599
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:20:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5C7B4E9253
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355EB30FC03;
-	Wed,  5 Nov 2025 11:20:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B483081D5;
-	Wed,  5 Nov 2025 11:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFF730F941;
+	Wed,  5 Nov 2025 11:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TduNVMCw"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C1630C633
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341605; cv=none; b=UypRIg85de/LjlVU4EylER7g80BhgC9TuCaapE7PvS4KFfG7xfISRDG4cCNTiV/p1aHqWmVrp2zCQXTkFkA09SdarXoxz/d+hqMnWl3Vqz7sT5ckyY8OmiOgvv8lEBNGxNThT45puseXFDCLFKCQs4NI7FE6Xx8g/jMohzVkPlY=
+	t=1762340999; cv=none; b=gXoQhyEFh6gowhc10e66iOtSX2ffqMhrv00B3Dem4MrFt4vwvZZKti1AdeIK105iGGBUh9sT2i3lNgv0yYqDYfCAYuRruL5lv0hgrFwhQSmHVl1GANMGHEZo9A/y0A3ZoIixP0zIY9kXZumNM4QMWHseuOFdy8Hce+t3PyzrX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341605; c=relaxed/simple;
-	bh=TapBhVgQzm2A+wV0+EICT9kNVYEysKeqSw5mgwHSFA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvOo9RcvKS+oZ47/BjYjN9FAeT1NUwwkgREswvpRafiTmNS52XHu755hq7VMiB3YMYPhXj3/xK45npdyqKx3drfOCmqUTly4kkg0uHFJ4DtjWb816p1aMUCwP3xozj4Rs8uNxXrEUoX7zbcMbaU76qMLG1jTkyfyg+8WHBwmtdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d1jHd2Y2rz9sSf;
-	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id y4uEqxYbuSVd; Wed,  5 Nov 2025 12:08:45 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d1jHd1Pgxz9sSb;
-	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1E3F68B76E;
-	Wed,  5 Nov 2025 12:08:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id x-YBUja5U7Aw; Wed,  5 Nov 2025 12:08:45 +0100 (CET)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 76C418B76D;
-	Wed,  5 Nov 2025 12:08:44 +0100 (CET)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Peter Xu <peterx@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Paul Walmsley <pjw@kernel.org>
-Subject: [PATCH RESEND v2] asm-generic: Remove pud_user() from pgtable-nopmd.h
-Date: Wed,  5 Nov 2025 12:08:07 +0100
-Message-ID: <ae329757996213171c92495e4e4ad698c24f9d42.1762340395.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1762340999; c=relaxed/simple;
+	bh=qOUc++FbpRH9EOOvQa4AZbyk8wXb82NantRb8isyR/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q0vBY6thmCnPBtywMgLkVVj5NgJbsuunQ3YXLoCnErKAgm0pxpnXzhv6jFzmTUKsqlAzlRwExxOTxE0H6I65T5N4zqFs0ydxr8yZFAy3vwPRZUgrQq2StP2PWw6JnGn6Dbw6hqDazRCEb0o/qiqS7ujfmfaQc732lNojdsNml6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TduNVMCw; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-477563bcbbcso8762875e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:09:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762340996; x=1762945796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fNljkoDjcu+DjVHFlm8hZRjkzJt0yBrV07jD/iI+rkk=;
+        b=TduNVMCwhdBHVm/hHMNAQ3yiCJWgjvrRCdIYTUfZy4gRb8Z1QoBLyoTJtoYReYnt0Y
+         +yeNIndKDPn7v1bsVJiFPwqylor/wAoBgZBitR1GPN374erNlxg7i5CDIOWi1mK++BBG
+         2VygmVmgJSjq7/2S8JT8gwkWarmZm2eHxSxe/n3xZeymN1scYyaeILWm7Pzo66fR5TXC
+         dNO6coOqpngS17YUuLbb2FaxdEE8Bz0atBJL8T4hc76IpdrASD+srIh3r9vrbqEhAclO
+         8FX7+w11HeLZWzFvbJCKDDVO5c5Kvf0NJrsD5ieGRUpnWIUaw6S6EgErKPm40OXfYwLd
+         IF7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762340996; x=1762945796;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fNljkoDjcu+DjVHFlm8hZRjkzJt0yBrV07jD/iI+rkk=;
+        b=d1NLTsWVxVd90crYV3Vpdva7riMtCLBPRz5xGkRQEBvykHYM1AVdKJLbAYK90JOlnY
+         6zsmUxV4ASCj1dMS3q/1O5HF1ezXYV27ocNP8ryc31ZeRir3vZI+gIjWsd3fmD2E78mY
+         3UrEGtJfSxrLxkPBENaS9dhyOXKY1yWgnDZqGr661Oq2/znvVod5PQ8ozaibxRYCteUk
+         gOIw3ZDqXOo3Cl6mYHn3vZDpSAasSJ6pYt8tucFKQ8SDG+Uae8xhx3fZHbpeDPIo2qm1
+         RlZKALUbd4KaKBWXK0PoypKgwvqqQOKNq9nn6J4uMpxopP9BCUYGNq3svOC18UfN1xN3
+         i8UA==
+X-Gm-Message-State: AOJu0YxB2Cj3sJckf62hcC1qdYBHKea8Qt2aDChL1sn9pQ9oN5/aCzdu
+	UF+XxzDCwMxunZHIshtySWTlFgobs72YHEjtlFSgfoVhItSqT5i5kmKX
+X-Gm-Gg: ASbGnctL8dD9J+qZ8no2vwGpJLr3L3ZDBU21j5aKtdJx5KjuWywNk9uubGEuLbuxhWH
+	fhMDee1McOSm7QPo9WBUUriMgDiENMZW+1dV683VNw7j9GOXszZZyMzQbugw4NN0HXmDFJ6AwcR
+	HloFVpCVRBI4h73NJAlOtoTzWJt0j2z1lQBTLOo2E2T93K5OK3TnRExFTlJ730KH6UeIrnEPVut
+	poPDGayiG+zEEPuryeSayrW2bJEuwDDZB+gmpCgtDq7xSIlvesroN4tRB+EH3BrYs+sw4+URKSR
+	uN0wrL1R28+UfKWCE8I/gB4BdalJ/eMDtgb/quPtub2k3roKQtVikgOeJAt7WYyTBxYfNkoI1KW
+	UIiV+LvHMlpd428sMM9mo8yL5BEhZ5E3Q+TPxVGQAuXrqlyxVYTgs/BSNp7BJ+MEA7F02tSSDc7
+	DbsKfMnUCsX2s=
+X-Google-Smtp-Source: AGHT+IF2UxLPAaLgLuHgbIyHft9aPDsEhxD/4ZlCe6k4ng4kCQPn8kS2+g0dONw0r1xUVMNFLgkTpw==
+X-Received: by 2002:a05:600d:8381:b0:46e:376c:b1f0 with SMTP id 5b1f17b1804b1-4775ce9bc74mr15632625e9.7.1762340996155;
+        Wed, 05 Nov 2025 03:09:56 -0800 (PST)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558c42adsm39728415e9.4.2025.11.05.03.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 03:09:55 -0800 (PST)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	khalid@kernel.org,
+	stable@kernel.org,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>
+Subject: [PATCH v4 0/2] f2fs: Add sanity checks before unlinking and loading inodes
+Date: Wed,  5 Nov 2025 13:09:41 +0200
+Message-ID: <cover.1762339963.git.zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2987; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=TapBhVgQzm2A+wV0+EICT9kNVYEysKeqSw5mgwHSFA8=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWRyG4hv2mLy/4if7bKly48+d1CtzVdk/3JzVc7i9B/9/ QJPa2dEdZSyMIhxMciKKbIc/8+9a0bXl9T8qbv0YeawMoEMYeDiFICJMJxgZOhZ2VexMVfobuPp 3m1vTzlHujFxKxYs5V94XuDiBfNXNfkM/3S3n/334qvct9N2J/xrHmnNLT7BpmYSlZAhsGuH0ZE 7yhwA
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
 Content-Transfer-Encoding: 8bit
 
-Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
-issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
+This series is provoked by syzbot warnings caused by corrupted directory
+inode with i_nlink == 1 that passes the initial sanity check which will
+only mark the filesystem as corrupted in case i_nlink == 0.
 
-But pud_user() only exists on ARM64 and RISCV and is not expected
-by any part of MM.
+Tests:
+- fio/fsmark parallel create/unlink on VM with f2fs root filesystem.
+- syzbot
 
-Add the missing definition in arch/riscv/include/asm/pgtable-32.h
-and remove it from asm-generic/pgtable-nopmd.h
+Changelog:
+  Changes from v1:
+  - Rename exit label in f2fs_unlink().
+  - Add sanity check in sanity_check_inode() and remove it from f2fs_iget()
+    as suggested by Chao Yu in order to detect on-disk corruption early.
+  https://lore.kernel.org/linux-f2fs-devel/d4b7c03c-6554-4407-b823-aecfcdf7dc3f@kernel.org/T/#t
 
-A stub pud_user() is also required for ARM64 after
-commit ed928a3402d8 ("arm64/mm: fix page table check compile
-error for CONFIG_PGTABLE_LEVELS=2")
+  Changes from v2:
+  - Remove i_nlink == 0 check from sanity_check_inode.
+  - Wrap i_nlink == 1 in unlikely() marco.
+  https://lore.kernel.org/linux-f2fs-devel/1f519357-a489-41fe-8159-a8e319aedd17@kernel.org/T/#u
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Paul Walmsley <pjw@kernel.org> # riscv
----
-Resend of https://lore.kernel.org/all/c2c9fc69871a7caaa205e237ff73557f19f5e176.1755509286.git.christophe.leroy@csgroup.eu/
+  Changes from v3:
+  - Replace F2FS_I_SB(inode) with already obtained f2fs_sb_info pointer.
+  https://lore.kernel.org/linux-f2fs-devel/4de88613-54a2-4ef3-9b56-7963cd3e42e6@kernel.org/T/#u
 
-I was expecting Arnd to take this patch as it is on asm-generic, but maybe Andrew should take it as it is linked to mmu management ?
+Nikola Z. Ivanov (2):
+  f2fs: Rename f2fs_unlink exit label
+  f2fs: Add sanity checks before unlinking and loading  inodes
 
-v2: Change ARM64 pud_user macro to pud_user(pud)
----
- arch/arm64/include/asm/pgtable.h    | 1 +
- arch/riscv/include/asm/pgtable-32.h | 5 +++++
- include/asm-generic/pgtable-nopmd.h | 1 -
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ fs/f2fs/inode.c |  6 ++++++
+ fs/f2fs/namei.c | 29 ++++++++++++++++++-----------
+ 2 files changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index aa89c2e67ebc8..256ce4a6162e9 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -960,6 +960,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
- 
- #define pud_valid(pud)		false
- #define pud_page_paddr(pud)	({ BUILD_BUG(); 0; })
-+#define pud_user(pud)		false /* Always 0 with folding */
- #define pud_user_exec(pud)	pud_user(pud) /* Always 0 with folding */
- 
- /* Match pmd_offset folding in <asm/generic/pgtable-nopmd.h> */
-diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
-index 00f3369570a83..37878ef374668 100644
---- a/arch/riscv/include/asm/pgtable-32.h
-+++ b/arch/riscv/include/asm/pgtable-32.h
-@@ -36,4 +36,9 @@
- static const __maybe_unused int pgtable_l4_enabled;
- static const __maybe_unused int pgtable_l5_enabled;
- 
-+static inline int pud_user(pud_t pud)
-+{
-+	return 0;
-+}
-+
- #endif /* _ASM_RISCV_PGTABLE_32_H */
-diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-index 8ffd64e7a24cb..b01349a312fa7 100644
---- a/include/asm-generic/pgtable-nopmd.h
-+++ b/include/asm-generic/pgtable-nopmd.h
-@@ -30,7 +30,6 @@ typedef struct { pud_t pud; } pmd_t;
- static inline int pud_none(pud_t pud)		{ return 0; }
- static inline int pud_bad(pud_t pud)		{ return 0; }
- static inline int pud_present(pud_t pud)	{ return 1; }
--static inline int pud_user(pud_t pud)		{ return 0; }
- static inline int pud_leaf(pud_t pud)		{ return 0; }
- static inline void pud_clear(pud_t *pud)	{ }
- #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
 -- 
-2.49.0
+2.51.0
 
 
