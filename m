@@ -1,179 +1,222 @@
-Return-Path: <linux-kernel+bounces-887028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21472C3718F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:33:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF12FC37246
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16CB24FBEC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004D3566E4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45852335086;
-	Wed,  5 Nov 2025 17:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C191329388;
+	Wed,  5 Nov 2025 17:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SH8jp2DI"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ivMvtIxW";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kk8bYQMg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D361432D0C6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1C8315764
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363279; cv=none; b=Fgs9IZgNtjC9SD9vWWKT6q1WHzy9uwTyf8EHR6fc2zCsnVqY5W6vfT/toylstyUQK1BzLORKdmlRc5LQEB9ZQ9/huatTkwRp00H7hMYRREZJdordfrssdKKbC7a6bxhr6eXBSMElL54kaRn6vKj6KmjEy2KDLDVARVt3w5qEt+Q=
+	t=1762363351; cv=none; b=qmYA+P+0Ftbxz75ZIbiEzlUAAsskEXZddUdSofb1fGRzXbuteKFtalhx13a8A9ORL48lVvbqEOPt/wll7fRhPOz3eK2iFGtWNuYAh+NxVBUyjAuLlqwKD3QOER54Z8MVl/L+bQ6Yf4TKP03NcNgUceTihh1Du3on685/Uq7KVXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363279; c=relaxed/simple;
-	bh=R+scxNFIJ7A2QKHZGih1Ehc3wdUpOLgJ/krGtFdCacU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dn0nKN0yTvwbVZqco0P35lnzOigeaA1tZpcq8sGD5cP1QJNJW3m889pBNgn394rbuUCpEXY3DcGwig5SU0OPpNMLdtNoK+k32SjJtkpF3zFqiuwg4HY8nHMGEQHI0/7bOI+U2jkZ/Cm2D+BAnmk8PAuemOVgbfA+0FTdrrXqWLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=SH8jp2DI; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-87bb66dd224so1173426d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:21:17 -0800 (PST)
+	s=arc-20240116; t=1762363351; c=relaxed/simple;
+	bh=gTzO9ZLz/gkWRMxADXfShEqG8Uk4ovzbXbxRfh2LddY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ds+cqP1zVhH730Yjv5IqfXT6gLKL1sqXtIxhC7lRfsEgonpCSD6ja5Xy0t9S6QDdqp2kQ4IGr2dA7DImquK8/WXDoGXh0Y55QY5SV5ix+9wFcsoPF17DbXqESPtqJqaC37+teEfExho15S8mwBL4/aGmjcs9S2gWotO1WwDNVPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ivMvtIxW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kk8bYQMg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5Eo6KK995722
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 17:22:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U+YUYIU9pHv3xXIvUkPp9A
+	DNA4qZc7XK8z6vznVXTVs=; b=ivMvtIxWESCNmyu/GgAvo+qFhK8pZqvjYvrtdW
+	KrdvKIBoFeSy2hEs+JxyxzBr5LVIPA8oT3Ec/LZ7G/co7yQFti07gc11vvqbgG0S
+	8rcDLsG6FuI7DgeD2wWFv85FlcfEo3j3tQNy/cZnuCOCXJVUBU8TpVd7y4kl7fR6
+	s0myNNww2eXyC5rYO8HovjgIjPWK6oQ+Hsn4V1QthzwXsfYqJ4E0SwYYPPBJaBcM
+	N1d29lOKmtk2ZHrbBcU4wXA6VYaFpsFpgrT1FlTAwlz7OsSEa34BpHF6PaM4HT3G
+	9yYL8MiQ5DgCM0vbn9LPrH+wFknzpUDaB8vpJW+iNCZh4FrQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a88pj8guk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:22:29 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so16754a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:22:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1762363277; x=1762968077; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2cq2mS+yWhZev0zm4YEm/j+lSP0FbcQSTW4gUm6tSNU=;
-        b=SH8jp2DIufEX3vRN+bltek/lJi75b+p+z6AIN9nyUDWTVYCvATPDIaqoM3LESvI4FD
-         8nquf5IVH6r6cI33uAXnizUpTqbHvleYQT9kAAY4b0ZbCwQlwYzE3GQuW2Y6sut/vNOW
-         o3iLPOiHZJM+c3dlQjap/e5ySWpcEqF+1Rfwrb/26DtOzWcSjuSoveArv3xqAA9c56eX
-         Wf8nxoHDCzeCmeLzkzXWAQ7WhGjvqn8Wk7ZgL3TfZvDJRS8xIeJ2VQMyPMS2Q/xKQqPz
-         hHDtgt+7wOO5Flg+YPcQTR+oqDeKyusFE0U4bnVdqJ4pi9l3rGcyGzEmTGvr1ZnLdMkg
-         U/QQ==
+        d=oss.qualcomm.com; s=google; t=1762363348; x=1762968148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+YUYIU9pHv3xXIvUkPp9ADNA4qZc7XK8z6vznVXTVs=;
+        b=kk8bYQMg1zsFHNJyZOvOY9buXj35GjhrJ55lLl0A94nn/l9pj73m18GzIEcjre/dPI
+         R6vKGu+j2EU1wirhpiE7lfVgoHIDTko/7A4QrQxjVl+n/eLshbXRiC4O9hKiYqtGGHFS
+         kBztg19ScHimjR/SeRs01UgGrRl8wDsP7WpRXJ7KZTxWIKfHHYwr72TPBuZxngI+CATv
+         S5G3yE+/A9Agoni02j47sw9vKfryrMQ7jsWYKTOGEbhnKLbkxPD9zg2H8jejxsM3WbLZ
+         xsBV0ilV4fn+mcMAvI2JE4U7AEvnLXo2Pc1hGs+wd69HrHeEPlmVP091ZmR1KCemP86H
+         LIBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762363277; x=1762968077;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2cq2mS+yWhZev0zm4YEm/j+lSP0FbcQSTW4gUm6tSNU=;
-        b=NCL5I/8Gd0sHKUIDuU/s0ieO/Tv9mus1/pyuOP9LoaEzwE2jguJQk3GR5NVN/kvtS2
-         Jgpj0CBsHC6jbiztFdQvWMSYr7QIsW6DnywLiVUjHPuZ7wLgiC8tEC1YTmmwnNFvwj3c
-         0PjPw2uA/DKkC7f0xUe7H1I8ZTg3Ud9QBbvnehkOtS0FenKDW5+XEJ29CJdM22Nk+Nlw
-         pM8nxhPCbSrivpx+gPErLQdhLC5qM7eoelRhHHr7uZrkctU0gRg+0LKde1gj/N+E3hwW
-         hQo+sByn0TOfs7YtPpjHCseZoqro73sbZF3yshvDUdA1Pai27cx3wOrjboWSyw/rTcmr
-         4OKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT31Cy0T4JVhhcRUdV4Nr9zuxBtDL/hzOgiIkrtnfa2BnpA2k5yntLBWlkzMCPM1JSCloOlh5yG65i2Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnlXV/L0sqCG9sf53MjXCgW/mKqksYGWsBya90ShEOraHtjSv3
-	tlgjQeHgj2KB0dV1VdPwTGub+LLDu/dzVSgZ6Tj8QSPTz519tD79zPL1j4m/RViqf3A=
-X-Gm-Gg: ASbGncuGeS/3p3rkvzrw9wpj2e3X2HC2/u4GtKY4xqlT9S42Oe5us5ijk432/3XL+SV
-	9Z6adyC9b/sQMDYrMRfQfRTiyaALkNx2QBwZ9DcssAyPmnTqA5UAxTbYhgi/mJPwa1ixRM1ADgX
-	Ar6a8tPO57QfRcAq/Pw8Sx1O5Sdh6C80faBUsBewXb+PBNmHuqfCqLKuTG0s8FV67k7X2kx3hAS
-	UnJNXcCTh0TW/Qd9R+WBeGRHiyzxfNlCosTypmaAeJVfID8RZzL4MfdCT9wOSRtQ7P+OdvRRRr4
-	cFyeA/1QErIXq6shEGMmf0oQ2jhhUWtwAFbRP9UV9FV6Bwpg5+2+yXdlsUxHctr0tntwbD9WVbZ
-	+TX7uwezb+I12bW8cyZEe/11E3eDIGMbN5qsOuZhKbmv+rZHZcVGZRR6X6ei6rBwNAu1NtoVMbR
-	xMBFnP+DgNMPxL87loS/t7AAjcwJa+iIJTOTkEiT/VjgrZQA==
-X-Google-Smtp-Source: AGHT+IGCK5Ht7P6eoqM7YgVZ6ef4jlofMTj5LlbxF9x0JfdkYp0y/H774e8UOGf7CmqXFow5BgQdlA==
-X-Received: by 2002:ad4:576e:0:b0:880:5779:d489 with SMTP id 6a1803df08f44-88071095623mr52524556d6.3.1762363276490;
-        Wed, 05 Nov 2025 09:21:16 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880828c457bsm996916d6.5.2025.11.05.09.21.15
+        d=1e100.net; s=20230601; t=1762363348; x=1762968148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U+YUYIU9pHv3xXIvUkPp9ADNA4qZc7XK8z6vznVXTVs=;
+        b=R6cB70FqOGDJOm9E0m8GnC5faZ7ZkHyil2/eN4D93c9x6V7quq8pM5r5vKbAH3gNCm
+         NUWhrjzJ7AOpRcn/6vesBhcKQlNYxAnpK9auioeTrp3QxThkrGZnAPwJCw8krU657/FC
+         Ey7lDYuoxCYlLdVSdYURo0UiJX0ioNWx/4b2/6OCqh9wJaW01JMFCgT46j2jET2av68w
+         PueoeKbX631ZTkGRejUmOTDVidtVIqgQjzdcTNxDrU1qPYV9Qd9SDPyi01S3eIi8KuKi
+         mC3RB5cAOJwc+VZemjon5VEz9IDKjxO1C711WOOV42Jhd5Cya3hD45cbIJ3lzi17ceOm
+         alKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMVRlDBe4I6ku6nA1LetwU+QUO/9UndLb9x9afnV0m7/N8eMWuP+CsXbZFZWzWemLcMCDQ8kph2pThhsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNwY0YyJCvfgnyyknJW6B8h6Kn8S5vmrA3eRIt3mQded1a3jly
+	TuDWY0gmt+lKiMi2KaW4T9UluMEwLNoFmJgh4Tk9pWj7UZHoACfBhnpxuWmyvDkwztD/anopXWo
+	//LaKkcgHC0WqoJ5mbvQT2K8e04XjQbYoSRFks3Q4NzpfYnSbMR3P6ex+iWcP32k+Q50=
+X-Gm-Gg: ASbGncu+rlR1HEdwi6YxRQN0tmB/IrNXdK47qavLj2v/an2z3X1fHY2k0ZunB0qeaQl
+	RyA3t7h8137z5GDt1Pjbquk63GiVaZt5fi4CH/4MNGPOei6RaDPKJYRWQxloShrRJ4KhfL8k2Og
+	DAMUX4zmV5d2Lcd5rYKXsacPvMUzvZ8Rmfj+ndw7LRYMAn7izcCJsPbsaQhf9DnuuyOUM1lhsfN
+	W/gg+hGE28SGbHVea2smsr6qBY4ehFlNODWZ3R+77mqP/ahJQNJp9BCknqdNEVVe0AVw12qI96f
+	q/p9zD6Mn5EWoszjk8YsU3AL3H+8+EaWuuacvZWErKyDaXJ3bO+HCr653BCzhcWIi/MvG+bu6y5
+	VoE5IxZ1PqsFVcqJCAAiGMT+AzKRU2s+cubkBso1SZHSz
+X-Received: by 2002:a05:6a20:7484:b0:33e:eb7a:4473 with SMTP id adf61e73a8af0-34f846fdc8bmr5054423637.23.1762363348397;
+        Wed, 05 Nov 2025 09:22:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEZwVfSw3eIQPRT1N/Rx23JfWFgBnMquNlKK4SWJ6as0e82cODYlNwm+u4AWn0nKCkC7l45OQ==
+X-Received: by 2002:a05:6a20:7484:b0:33e:eb7a:4473 with SMTP id adf61e73a8af0-34f846fdc8bmr5054375637.23.1762363347827;
+        Wed, 05 Nov 2025 09:22:27 -0800 (PST)
+Received: from hu-yuzha-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af48d83c20sm518014b3a.62.2025.11.05.09.22.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 09:21:15 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vGhC7-00000007Bv7-1e20;
-	Wed, 05 Nov 2025 13:21:15 -0400
-Date: Wed, 5 Nov 2025 13:21:15 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Gregory Price <gourry@gourry.net>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
- leaf entry logic
-Message-ID: <20251105172115.GQ1204670@ziepe.ca>
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
- <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
- <aQtiUPwhY5brDrna@gourry-fedora-PF4VCD3F>
+        Wed, 05 Nov 2025 09:22:27 -0800 (PST)
+From: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>
+To: jjohnson@kernel.org
+Cc: baochen.qiang@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Subject: [PATCH ath-next v3 0/6] wifi: ath11k: Add single shot/periodic CFR capture support
+Date: Wed,  5 Nov 2025 09:22:20 -0800
+Message-Id: <20251105172226.3182968-1-yu.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQtiUPwhY5brDrna@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: IJgeU2K4sCOtECVkza4Dy6GHrfe9wbv0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzNSBTYWx0ZWRfXzAGhTTj1MGb1
+ m0bEKfz+oVrFm2Bzwmp+ausraGZja55Xy2u5G2KzhfWYIf6wUxPOiTllOtZUavWDKuMiM58sTxn
+ j3XEUueqKn34qdZrZDniZ3JfDMpN+b8qnDEikxrypD9ih7dbwnFkglSvHjfTp53XLywGd749xHh
+ zofaPnOIoA+2nvZtdGN7qWxmQnSMRbNzYrJVZDjlZT1En++7wXwgQ4zHbLmNC+CKAaoR3OGhwFe
+ gqQQZy9Q0sKFdr5Csa3MAsgvL5TOiw4Q2tOeU44RNEe9bgYXqYn77It1sGx1cspf8BMiDFs/h1o
+ xFbTeSaAj/RnXDz0GutVP89zaeds2ReZb5WRw9IoFyQZX8XgOulDAfzmJ6+CteiPn3fyJxz2RPN
+ qUJWoMS/vZ9k3ginP4eLgFg8pyKQaA==
+X-Proofpoint-ORIG-GUID: IJgeU2K4sCOtECVkza4Dy6GHrfe9wbv0
+X-Authority-Analysis: v=2.4 cv=ZODaWH7b c=1 sm=1 tr=0 ts=690b87d5 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=DEz-XpLMnQOtgUD9lTEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 phishscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511050135
 
-On Wed, Nov 05, 2025 at 09:42:24AM -0500, Gregory Price wrote:
-> On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
-> > +typedef swp_entry_t leaf_entry_t;
-> > +
-> > +#ifdef CONFIG_MMU
-> > +
-> > +/* Temporary until swp_entry_t eliminated. */
-> > +#define LEAF_TYPE_SHIFT SWP_TYPE_SHIFT
-> > +
-> > +enum leaf_entry_type {
-> > +	/* Fundamental types. */
-> > +	LEAFENT_NONE,
-> > +	LEAFENT_SWAP,
-> > +	/* Migration types. */
-> > +	LEAFENT_MIGRATION_READ,
-> > +	LEAFENT_MIGRATION_READ_EXCLUSIVE,
-> > +	LEAFENT_MIGRATION_WRITE,
-> > +	/* Device types. */
-> > +	LEAFENT_DEVICE_PRIVATE_READ,
-> > +	LEAFENT_DEVICE_PRIVATE_WRITE,
-> > +	LEAFENT_DEVICE_EXCLUSIVE,
-> > +	/* H/W posion types. */
-> > +	LEAFENT_HWPOISON,
-> > +	/* Marker types. */
-> > +	LEAFENT_MARKER,
-> > +};
-> > +
-> 
-> Have been browsing the patch set again, will get around a deeper review,
-> but just wanted to say this is a thing of beauty :]
+To enable/disable cfr feature use command,
 
-+1 I thought the same thing. So much clearer what is going on here,
-and I didn't realize we had so many types already..
+echo <val> > /sys/kernel/debug/ieee80211/phyX/ath11k/enable_cfr
 
-Jason
+where, val: 0 to disable CFR and 1 to enable CFR.
+
+To enable CFR capture for associated peers,
+
+echo "<val> <bw> <periodicity> <method>"
+ >
+/sys/kernel/debug/ieee80211/phyX/netdev\:wlanx/stations/<mac>/cfr_capture
+
+val: 0 - stop CFR capture
+     1 - start CFR capture
+bw: CFR capture bandwidth
+     0 - 20MHZ
+     1 - 40MHZ
+     2 - 80MHZ
+Periodicity: Periodicity at which hardware is expceted to collect CFR
+dump.
+     0 - single shot capture.
+     non zero - for Periodic captures (value should be multiple of 10
+ms)
+method: Method used by hardware to collect the CFR dump.
+     0 - from the ACKs of QOS NULL packets.
+
+To enable CFR capture for unassociated clients,
+
+echo “<mac address> <val> <periodicity>”
+ > /sys/kernel/debug/ieee80211/phyX/ath11k/cfr_unassoc
+
+Mac address: mac address of the client.
+Val: 0 - start CFR capture
+     1 – stop CFR capture
+Periodicity: Periodicity at which hardware is expceted to collect CFR
+dump.
+     0 - single shot capture.
+     non zero - for Periodic captures (value should be multiple of 10
+ms)
+
+To collect the cfr dump,
+cat /sys/kernel/debug/ieee80211/phy0/ath11k/cfr_capture0 > /tmp/cfr.bin
+
+Previous link:
+https://lore.kernel.org/all/1645005922-7252-1-git-send-email-quic_vnaralas@quicinc.com/
+
+Signed-off-by: Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com>
+
+---
+Changes in v3:
+ - Update related comments. 
+Changes in v2:
+ - Update related comments. 
+---
+
+Venkateswara Naralasetty (6):
+  wifi: ath11k: Add initialization and deinitialization sequence for CFR
+    module
+  wifi: ath11k: Register debugfs for CFR configuration
+  wifi: ath11k: Add support unassociated client CFR
+  wifi: ath11k: Register relayfs entries for CFR dump
+  wifi: ath11k: Register DBR event handler for CFR data
+  wifi: ath11k: Register handler for CFR capture event
+
+ drivers/net/wireless/ath/ath11k/Kconfig       |   11 +
+ drivers/net/wireless/ath/ath11k/Makefile      |    1 +
+ drivers/net/wireless/ath/ath11k/cfr.c         | 1007 +++++++++++++++++
+ drivers/net/wireless/ath/ath11k/cfr.h         |  302 +++++
+ drivers/net/wireless/ath/ath11k/core.c        |   41 +-
+ drivers/net/wireless/ath/ath11k/core.h        |   19 +-
+ drivers/net/wireless/ath/ath11k/dbring.c      |   50 +-
+ drivers/net/wireless/ath/ath11k/dbring.h      |    8 +-
+ drivers/net/wireless/ath/ath11k/debug.h       |    8 +-
+ drivers/net/wireless/ath/ath11k/debugfs_sta.c |  143 ++-
+ drivers/net/wireless/ath/ath11k/hal.c         |    3 +-
+ drivers/net/wireless/ath/ath11k/hw.h          |    5 +-
+ drivers/net/wireless/ath/ath11k/mac.c         |   17 +-
+ drivers/net/wireless/ath/ath11k/wmi.c         |  147 ++-
+ drivers/net/wireless/ath/ath11k/wmi.h         |   97 +-
+ 15 files changed, 1833 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/net/wireless/ath/ath11k/cfr.c
+ create mode 100644 drivers/net/wireless/ath/ath11k/cfr.h
+
+
+base-commit: 059ca8fd692b67a77fb89e9d4e8f57cf08e32b08
+-- 
+2.34.1
+
 
