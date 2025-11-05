@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-887280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D741CC37C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:35:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB93DC37C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CB2B4F74C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014364219B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F734D938;
-	Wed,  5 Nov 2025 20:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D388634FF73;
+	Wed,  5 Nov 2025 20:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAvkoYk2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQqWGwL2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FFB34B1A3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E4D34B661;
 	Wed,  5 Nov 2025 20:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762374740; cv=none; b=lNu2xDmxh7aU4nxd7B0uV/gA5xuKJ0X/ZjfqzAGlYccXNEyoV4Chi24CcycURCXEXbBuEXbeo4yv35d/euS8aSR0cUFnfVA2GE5X5Zsz/rG/AzFbUJlA3qf9DK28aIp5HBLwpvy/8B1PPSawSc9wjZVXpIj5kQTa0Q5lSaRGYsY=
+	t=1762374741; cv=none; b=N+ivOAElpW7nOw1WyanHPx//1KMhLSa20o8wylXB+Zq2Ia+yVn/pGIfwBYzlbFTB60Am6bgiz/vhGR7mErwlK9Y1m1+XVFX9KkNpxhSnhmUBlr9/QKNk3mPDQ9arWKDw+G+RW2ynJ1cvINV0RUKi/duvQgQihpG0bCIJ9lX2y6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762374740; c=relaxed/simple;
-	bh=BK4yD7eyeQ0mHbL7KbeZ8Mx12t+bQxDXJ6lt6IBpXBE=;
+	s=arc-20240116; t=1762374741; c=relaxed/simple;
+	bh=SxM5obABZJXPt/ymairqXuBar3neaMVGlr0dx2kNeSw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F388LORCc04P/wM2WCcqKJuOz+b4gO5Sy275UCg5xpkC9yS253R4Ujshif5V/uLDdu6Xim/edyo+2S6Mn/Xf0sj1rYzRiZ/Cai7cuBTvmjvtrzUpBXzRe+389XzrMbs+W+20XVve6Loq5ebZe1GkmGjc0Jt007l+9n1qarIPo5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAvkoYk2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7263BC116C6;
+	 MIME-Version; b=SdEmfr+2r2Z9S3G+CBgNRwOVghXJsVmgIjBojwkDjvLVfSmnyH6fUN/31cNtCBojEaIOPFD1Fj+0yZeRdJc4NSE96RwUPlbXuTaua1PbWvLppmtd0KroLZ5r9LhZxfBORAVYvu4akGmJuzn3/uRjHlGpMujDciJ7G2+OfQlyhkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQqWGwL2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C961C2BC9E;
 	Wed,  5 Nov 2025 20:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762374740;
-	bh=BK4yD7eyeQ0mHbL7KbeZ8Mx12t+bQxDXJ6lt6IBpXBE=;
+	bh=SxM5obABZJXPt/ymairqXuBar3neaMVGlr0dx2kNeSw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vAvkoYk2CcJVzgorkbzUvypit15MwLpUqJl/7tfiunIa12HGN5nZgFfkphZhk2KEu
-	 jfODpm1TqXr6qQzQ0AuTlMwkQ/uqj6GE7uXaoJvAjRWbbNzY45GHVkczETgoEbVdPV
-	 1rucAZpM7ChQ6Wuo5gZBLApOaupy3wsh7yvylFbeFcTNnfN3co3HtEffizhBD3qcAt
-	 VEszxKC9IO1QKa51+tjuYUF2z89qyGbilox7Do0yjyR3F8bXjeisshIWj1bXXUvJL2
-	 e26umtlPglL9G16iTKEo7nJBX2vpuGgaGvChJwZ94JXy19utTaxin9FqV0hLlNN5c2
-	 ba2/5UlwhCnOA==
+	b=rQqWGwL2o9drFtCx5CpwBGO7KB4JNdBRaUaq84ybIBhIli6XjwarMA25lLOonojmp
+	 hoMPAou4EpsZfVBlw6m0o2ir8YNHMNhJCqWjSaj+uCwe9f/lNG8OtBjpWo2YEijvuA
+	 8uHihImeTRkCBPpjlRKCVuOX/YZJcH0DNCyviZr3JwGITXptP45s2qXZEhRBrbfy5j
+	 0P0V4tkauD/K8qEim1Uld8pS+uDyHl+1TT6SFf1TcSj5ZF70TmW+OXc9GuXjfCRXgP
+	 Tk5emLbiN3J4KK+H2i5s5M3RdsLZLLyUDmC9tOmBe23MITswn59ephbHAtLYKvtzUD
+	 WS/Z0yMLdAGXQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A133ACE0F8F; Wed,  5 Nov 2025 12:32:18 -0800 (PST)
+	id A3B00CE0F98; Wed,  5 Nov 2025 12:32:18 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	Leon Hwang <leon.hwang@linux.dev>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH v2 11/16] rcu: Mark diagnostic functions as notrace
-Date: Wed,  5 Nov 2025 12:32:11 -0800
-Message-Id: <20251105203216.2701005-11-paulmck@kernel.org>
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	bpf@vger.kernel.org
+Subject: [PATCH v2 12/16] srcu: Add SRCU_READ_FLAVOR_FAST_UPDOWN CPP macro
+Date: Wed,  5 Nov 2025 12:32:12 -0800
+Message-Id: <20251105203216.2701005-12-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
 References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
@@ -64,72 +65,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The rcu_lockdep_current_cpu_online(), rcu_read_lock_sched_held(),
-rcu_read_lock_held(), rcu_read_lock_bh_held(), rcu_read_lock_any_held()
-are used by tracing-related code paths, so putting traces on them is
-unlikely to make anyone happy.  This commit therefore marks them all
-"notrace".
+This commit adds the SRCU_READ_FLAVOR_FAST_UPDOWN=0x8 macro
+and adjusts rcutorture to make use of it.  In this commit, both
+SRCU_READ_FLAVOR_FAST=0x4 and the new SRCU_READ_FLAVOR_FAST_UPDOWN
+test SRCU-fast.  When the SRCU-fast-updown is added, the new
+SRCU_READ_FLAVOR_FAST_UPDOWN macro will test it when passed to the
+rcutorture.reader_flavor module parameter.
 
-Reported-by: Leon Hwang <leon.hwang@linux.dev>
-Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+The old SRCU_READ_FLAVOR_FAST macro's value changed from 0x8 to 0x4.
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: <bpf@vger.kernel.org>
 ---
- kernel/rcu/tree.c   | 2 +-
- kernel/rcu/update.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ include/linux/srcu.h    | 16 +++++++++-------
+ kernel/rcu/rcutorture.c | 24 ++++++++++++++++++------
+ 2 files changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 31690ffa452a..8ddd07fed363 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4021,7 +4021,7 @@ bool rcu_cpu_online(int cpu)
-  * RCU on an offline processor during initial boot, hence the check for
-  * rcu_scheduler_fully_active.
-  */
--bool rcu_lockdep_current_cpu_online(void)
-+bool notrace rcu_lockdep_current_cpu_online(void)
- {
- 	struct rcu_data *rdp;
- 	bool ret = false;
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index c912b594ba98..dfeba9b35395 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -117,7 +117,7 @@ static bool rcu_read_lock_held_common(bool *ret)
- 	return false;
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 41e27c1d917d..1dd6812aabe7 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -56,13 +56,15 @@ int init_srcu_struct_fast(struct srcu_struct *ssp);
+ #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+ 
+ /* Values for SRCU Tree srcu_data ->srcu_reader_flavor, but also used by rcutorture. */
+-#define SRCU_READ_FLAVOR_NORMAL	0x1		// srcu_read_lock().
+-#define SRCU_READ_FLAVOR_NMI	0x2		// srcu_read_lock_nmisafe().
+-//				0x4		// SRCU-lite is no longer with us.
+-#define SRCU_READ_FLAVOR_FAST	0x8		// srcu_read_lock_fast().
+-#define SRCU_READ_FLAVOR_ALL   (SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_NMI | \
+-				SRCU_READ_FLAVOR_FAST) // All of the above.
+-#define SRCU_READ_FLAVOR_SLOWGP	SRCU_READ_FLAVOR_FAST
++#define SRCU_READ_FLAVOR_NORMAL		0x1		// srcu_read_lock().
++#define SRCU_READ_FLAVOR_NMI		0x2		// srcu_read_lock_nmisafe().
++//					0x4		// SRCU-lite is no longer with us.
++#define SRCU_READ_FLAVOR_FAST		0x4		// srcu_read_lock_fast().
++#define SRCU_READ_FLAVOR_FAST_UPDOWN	0x8		// srcu_read_lock_fast().
++#define SRCU_READ_FLAVOR_ALL		(SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_NMI | \
++					 SRCU_READ_FLAVOR_FAST | SRCU_READ_FLAVOR_FAST_UPDOWN)
++						// All of the above.
++#define SRCU_READ_FLAVOR_SLOWGP		(SRCU_READ_FLAVOR_FAST | SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 						// Flavors requiring synchronize_rcu()
+ 						// instead of smp_mb().
+ void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases(ssp);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 8022d32be351..70ee838cab55 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -702,6 +702,8 @@ static void srcu_torture_init(void)
+ 	rcu_sync_torture_init();
+ 	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
+ 		srcu_ctlp = &srcu_ctlf;
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
++		srcu_ctlp = &srcu_ctlf;
  }
  
--int rcu_read_lock_sched_held(void)
-+int notrace rcu_read_lock_sched_held(void)
+ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
+@@ -728,6 +730,12 @@ static int srcu_torture_read_lock(void)
+ 		ret += idx << 1;
+ 	}
+ 	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
++		scp = srcu_read_lock_fast(srcu_ctlp);
++		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
++		WARN_ON_ONCE(idx & ~0x1);
++		ret += idx << 2;
++	}
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
+ 		scp = srcu_read_lock_fast(srcu_ctlp);
+ 		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
+ 		WARN_ON_ONCE(idx & ~0x1);
+@@ -758,8 +766,10 @@ srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
+ static void srcu_torture_read_unlock(int idx)
  {
- 	bool ret;
- 
-@@ -342,7 +342,7 @@ EXPORT_SYMBOL_GPL(debug_lockdep_rcu_enabled);
-  * Note that rcu_read_lock() is disallowed if the CPU is either idle or
-  * offline from an RCU perspective, so check for those as well.
-  */
--int rcu_read_lock_held(void)
-+int notrace rcu_read_lock_held(void)
+ 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 		srcu_read_unlock_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 3));
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++		srcu_read_unlock_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 2));
+ 	if (reader_flavor & SRCU_READ_FLAVOR_NMI)
+ 		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
+ 	if ((reader_flavor & SRCU_READ_FLAVOR_NORMAL) || !(reader_flavor & SRCU_READ_FLAVOR_ALL))
+@@ -793,7 +803,7 @@ static int srcu_torture_down_read(void)
+ 		WARN_ON_ONCE(idx & ~0x1);
+ 		return idx;
+ 	}
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
+ 		scp = srcu_down_read_fast(srcu_ctlp);
+ 		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
+ 		WARN_ON_ONCE(idx & ~0x1);
+@@ -806,7 +816,7 @@ static int srcu_torture_down_read(void)
+ static void srcu_torture_up_read(int idx)
  {
- 	bool ret;
+ 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 		srcu_up_read_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 3));
+ 	else if ((reader_flavor & SRCU_READ_FLAVOR_NORMAL) ||
+ 		 !(reader_flavor & SRCU_READ_FLAVOR_ALL))
+@@ -901,14 +911,16 @@ static struct rcu_torture_ops srcu_ops = {
+ 	.no_pi_lock	= IS_ENABLED(CONFIG_TINY_SRCU),
+ 	.debug_objects	= 1,
+ 	.have_up_down	= IS_ENABLED(CONFIG_TINY_SRCU)
+-				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST,
++				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST_UPDOWN,
+ 	.name		= "srcu"
+ };
  
-@@ -367,7 +367,7 @@ EXPORT_SYMBOL_GPL(rcu_read_lock_held);
-  * Note that rcu_read_lock_bh() is disallowed if the CPU is either idle or
-  * offline from an RCU perspective, so check for those as well.
-  */
--int rcu_read_lock_bh_held(void)
-+int notrace rcu_read_lock_bh_held(void)
+ static void srcud_torture_init(void)
  {
- 	bool ret;
- 
-@@ -377,7 +377,7 @@ int rcu_read_lock_bh_held(void)
- }
- EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
- 
--int rcu_read_lock_any_held(void)
-+int notrace rcu_read_lock_any_held(void)
- {
- 	bool ret;
+ 	rcu_sync_torture_init();
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
++		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
++	else if (reader_flavor & SRCU_READ_FLAVOR_FAST)
+ 		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
+ 	else
+ 		WARN_ON(init_srcu_struct(&srcu_ctld));
+@@ -953,7 +965,7 @@ static struct rcu_torture_ops srcud_ops = {
+ 	.no_pi_lock	= IS_ENABLED(CONFIG_TINY_SRCU),
+ 	.debug_objects	= 1,
+ 	.have_up_down	= IS_ENABLED(CONFIG_TINY_SRCU)
+-				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST,
++				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST_UPDOWN,
+ 	.name		= "srcud"
+ };
  
 -- 
 2.40.1
