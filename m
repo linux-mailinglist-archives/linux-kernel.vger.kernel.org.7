@@ -1,91 +1,116 @@
-Return-Path: <linux-kernel+bounces-887137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F20C3756B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C3FC3757A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B76BB34F966
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:36:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E8F6C34FBE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280682F28FC;
-	Wed,  5 Nov 2025 18:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3CE334691;
+	Wed,  5 Nov 2025 18:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="dvbVUEqo"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMYmejB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0952BE65B;
-	Wed,  5 Nov 2025 18:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60D82749DF;
+	Wed,  5 Nov 2025 18:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762367629; cv=none; b=jrbSJFAlVDrCUqZkmGCgzMbmpy5BjNhAKq7gT7jNQMYPG/+ICyR7Y7qbaJLY9he5fYG1iK1BPtUAn3REuhi3ZwtHOUIhZ8WWA+QxhGDghVLek641rDSONqyfK5K8o08gCMH0TdjDLHRTYAu1QTmrCTZ0Q5KdfWz601p/47e1tQY=
+	t=1762367637; cv=none; b=E65DdY3gDahmITL1XXt40MFVQI2L55um21QVNz1GGp7kqrpC8iTu4VEuxlkWKrouDATY60W1zJEORpph4Ov9KNujh91JrNB9szCFZ0u3ujYoVEbw9A9b2L2LJ9o8oKYPReXvqHRmRo32c0+GUFwr4pTbH1XOiCvzbH4ywu+Mvso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762367629; c=relaxed/simple;
-	bh=YFKxyVuZsM6HG/F3t9FdW5b8FwJjSF73kfhyb4pt/yY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ejQNPyPPA8AqMZO2y+tA9xDT1JtYboU6E0teRguM0dUxphR6z5pFT2+PXQn1IzXny7J61K2d493fLsbdwyEMUlEPPR4WRki6HnVzul1/+zoxjfGzymBpQXsP3hQcZPSiC1xExyI9F36t8SSd5ppWmwAyia2a3lXcGwryKjbjms4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=dvbVUEqo; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0712F40AFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762367627; bh=+q7RrWIX3Mh1raymNV5H/DL9H5Mk4ZR5qtm5taZ3fIw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dvbVUEqo52D5NCcbZaRNq6y20lKi0tMvABZaZU2HxEA1UDulJ9nJcO9Mhi/PlFjSa
-	 ksfs86gahV0eMG6yLwoA+rmBqqd3QllaKVET8YiKyzuY7wZZcTBt8hsBPRu0nC2XxG
-	 PZnA6KK5i6jiaSO7cXu27dAw9eb2dROeCG9ko+HmoIxviHvXCCDiHiBiiianIWjAt0
-	 3Xugkt4Le9vdEC4vsegFNEOAkacdyJmRoxdFOr5soCunPBdZrFE29ZATbK2sKbAgUV
-	 t/hSKD9Ng8L6tluhY9PSK9UFhxfArXHkZ/+M/+uj3kjCiFADyA8Tu3BLALAV0pyT4t
-	 CKPgb1K5dg1dA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0712F40AFB;
-	Wed,  5 Nov 2025 18:33:46 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Petr Pavlu <petr.pavlu@suse.com>, Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-doc@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Daniel
- Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: ABI: sysfs-module: update modules taint flags
-In-Reply-To: <7301b0fa-5463-498f-82a0-f40bfee462ba@suse.com>
-References: <20251102060458.517911-1-rdunlap@infradead.org>
- <7301b0fa-5463-498f-82a0-f40bfee462ba@suse.com>
-Date: Wed, 05 Nov 2025 11:33:46 -0700
-Message-ID: <87tsz85nxx.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762367637; c=relaxed/simple;
+	bh=VqJ/IL8uu6HWDCb5Th4A/p6/Q7MW/MOdOkxfXjuZ508=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuA6Vd6jZNqfR5y6M6826hhe0vRBM4qx802V09cY1kB3+tKicoY0nyJDKhtRm13wRbnJBh2lDkeIFSNzzYyQvq5Rbc0RAbqM8e9yY5vBeb0tetkar/YQeEPTbGfBH6E3aujXKjCZpMg6YtBMIhZENgCvD4Ra3leQUKAMhvCWraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMYmejB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94CCC4CEF5;
+	Wed,  5 Nov 2025 18:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762367636;
+	bh=VqJ/IL8uu6HWDCb5Th4A/p6/Q7MW/MOdOkxfXjuZ508=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nMYmejB+OHlG15Yqp+E5CyvGnWcmKcmGDM6ePgcearwJ2eVrXQmfnJfwsQk24Qk17
+	 w3To2pmXOBfxST4oYDr25BgcQrf7x18OjilkteWtk7dnrwFxZxRMrOoKpI4YwJ2Cpm
+	 aVt3YTWrJhTN/XOqq9Wcnes0yAYam3vth8FT4Q4lZX9j6uLRQ7jyGwo9kKZq7rVubF
+	 Kx9ciUb2S4O3yKINr1yKjjRcAJfgSh3G4LamjzCa8JM/3GHd2NJkJxNXoihN5SVOOA
+	 Wsvcw7yG9TJL4lwjVr7kRR1i88Ihxvaqvz9jyvGS4FReOVzTsidb1aPJZTsm2/+0JH
+	 pPcwCKxoVW63Q==
+Date: Wed, 5 Nov 2025 18:33:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
+	claudiu.beznea.uj@bp.renesas.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
+ support
+Message-ID: <20251105-gradually-commode-0b5269ec0aa5@spud>
+References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
+ <20251103121848.6539-2-ovidiu.panait.rb@renesas.com>
+ <20251104-magnitude-deodorant-be607e3ff4be@spud>
+ <2025110420204948103c2f@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wjGAGSw+cWS2iRHG"
+Content-Disposition: inline
+In-Reply-To: <2025110420204948103c2f@mail.local>
 
-Petr Pavlu <petr.pavlu@suse.com> writes:
 
-> On 11/2/25 7:04 AM, Randy Dunlap wrote:
->> Add missing taint flags for loadable modules, as pointed out by
->> Petr Pavlu [1].
->> 
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> [1] https://lore.kernel.org/all/c58152f1-0fbe-4f50-bb61-e2f4c0584025@suse.com/
->> ---
->
-> Looks ok to me. I would only move the "[1]" line before the
-> "Signed-off-by" tag in the commit message and separate them by an empty
-> line. Some tooling might rely on the tags being separately at the end.
-> I guess this can be directly adjusted by a maintainer that picks up the
-> patch and there is no need to resend it.
->
-> Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+--wjGAGSw+cWS2iRHG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I went to do that, and was amused to find that b4 already took care of
-it for me ...  applied, thanks.
+On Tue, Nov 04, 2025 at 09:20:49PM +0100, Alexandre Belloni wrote:
+> On 04/11/2025 17:28:27+0000, Conor Dooley wrote:
+> > On Mon, Nov 03, 2025 at 12:18:45PM +0000, Ovidiu Panait wrote:
+> > > The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
+> > > (r9a08g045), with the following differences:
+> > > - It lacks the time capture functionality
+> > > - The maximum supported periodic interrupt frequency is 128Hz instead
+> > >   of 256Hz
+> > > - It requires two reset lines instead of one
+> > >=20
+> > > Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and up=
+date
+> > > the binding accordingly:
+> > > - Allow "resets" to contain one or two entries depending on the SoC.
+> > > - Add "reset-names" property, but make it required only for RZ/V2H.
+> > >=20
+> > > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > > +        reset-names:
+> > > +          items:
+> > > +            - const: rtc
+> > > +            - const: rtc_rtest
+> >=20
+> > If you respin, just make this second one rtest.
+>=20
+> I already applied it as it had your ack but I can still change it
 
-jon
+It's fine.
+
+--wjGAGSw+cWS2iRHG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQuYiwAKCRB4tDGHoIJi
+0pV5AQCMb1whhgz4XaSwKDaQRvxE4X1649f5YLbH3+at2WuUkQD/SvrJ/V092Ypk
+DdpJUfwHoVXCJjEgMy3WdDZ5BXNHbAQ=
+=6z5D
+-----END PGP SIGNATURE-----
+
+--wjGAGSw+cWS2iRHG--
 
