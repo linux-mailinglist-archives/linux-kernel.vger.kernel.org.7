@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-886572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2A2C35FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:10:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB09C35FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6509E4E57F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:10:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3D775342E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD0F329369;
-	Wed,  5 Nov 2025 14:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A456E329381;
+	Wed,  5 Nov 2025 14:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v2VoqFwH"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kb/TH+y9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86094311955
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3801B32936D;
+	Wed,  5 Nov 2025 14:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762351812; cv=none; b=nNUDOHWe/gFSxTSF79qYoU3tWIzOa4mkHMd2jrIOVpBWQ0TB64nK/x82yxRcxt+2Eudmfrlpf0krKhYTUZ4lxvAg7tSGgQxWESy+CDfgevDUg1rt1AVVKju/uFrTDGho2b9QmGBVAGyMcsisRHAaf/XFqy9ux69aKHu3ah7oERM=
+	t=1762351839; cv=none; b=SqpezRikEXYapF4nT072nst6bFiCsb9nt/WPZypo5gsd9DfGZ4l2aaLFfQtXnd/jyR+0nzqZIALTzNDbVLMf45+psaefAJI2jTYFV5YPRhcViOhf+NxkiR6zeJPET0DQ+9UZ9z7zRXVSdTWCBSoLajrVa212DkBj7sfbBHTVYx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762351812; c=relaxed/simple;
-	bh=GuO5f1PITMKK40xOY8hKZBftofSvfoaoksU+3KNxcE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRauyx9dMjqXpDU/hGdCJX5glHcf5PD6CEsgakSnm3Ra8xK72appixwe13pTHKqudR2c/0l1eZYrzYDLL4nVCNyoIASyBNX+TZupO5XRpqo83j/i9N7E4P3wHk5HRixQKTr+FrqnMPnoX9YJArwg2BMfWdiQDzFEky+NcU+Y9OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v2VoqFwH; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ca11cc02-0cf6-48aa-8840-1662fa61dbbc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762351807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KxhfdDNOoN0RhEK/rbfglH/AWsOBbZHhZn3FyhV0K/Q=;
-	b=v2VoqFwHDODgvbSmiSJXsBDSRax9kankVfjlgFFBipFw3Rb7OjTqf8QMFNaQ27UOJ9lgjQ
-	/+OcW0uFbg8GnbQhwsqg7MBHnqmcsml6aQfglscx4xEOu3mu6KASCAMNOMmZGswijUrcJD
-	AxnPkN8wj38hldREuf5Q0oWgdO1uv1Y=
-Date: Wed, 5 Nov 2025 22:09:49 +0800
+	s=arc-20240116; t=1762351839; c=relaxed/simple;
+	bh=RvaksF7Hq1kN7fGENv4I4RcGzJ9u3o9W9L1twZmYgos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfQeARdu03EwWmKJ1DWcADQ2sizTTTIgr5RWjihJ5QU7JdN/JFyzafPQS6kygPYd0POov3UlVt7xSs7CSr5/KMSQlRn/u+vn29zVW7wXLoot6wDMSNIKIsZs1Qp/vw7ddk7gdTCkbLYEBO9osNoZktBn4/NM8WHG9c171gob+Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kb/TH+y9; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762351837; x=1793887837;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RvaksF7Hq1kN7fGENv4I4RcGzJ9u3o9W9L1twZmYgos=;
+  b=Kb/TH+y9sUjE369El/iwLp1BshgWsREkJICGyJZmzJOyq5WCM/BLfK4j
+   m2sra/B/kGZaPegWkAFQ97CJLiqPSuB/tMHdJmHw9lE9zLerBcB2m2ihc
+   OP4/aNMO3CWgVX3VVJEZqMmmiCWfzfBdNKF5OaFN60dg5pPNhlDzQOrtj
+   o5C7M06dYbaE8S61n2T2w5b7UsgxiVwJrtarOkn8khhc74DAF02st8XUF
+   Lonlvtmc1N+een0wRG8QEqqkwjq6mDKoFjTEfIqeeOV4K5gJtyKC3WpXC
+   AbzzSPh4IWl/3iuyGUO1mD3XtEn33+copefavlvNfZk0a7+T/PiZOj2jK
+   A==;
+X-CSE-ConnectionGUID: q6Cg3kSqTjK/Cl/gwfRMbQ==
+X-CSE-MsgGUID: N9G9gGqARCeQxLBiPdLtCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="74758546"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="74758546"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 06:10:37 -0800
+X-CSE-ConnectionGUID: pnbL2JC5SG65MWsR3XaRqg==
+X-CSE-MsgGUID: guoSZJ7oQ5KDgZIc3XT28A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="224711896"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 06:10:34 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vGeDU-00000005nu9-0auL;
+	Wed, 05 Nov 2025 16:10:28 +0200
+Date: Wed, 5 Nov 2025 16:10:27 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v5 8/8] reset: gpio: use software nodes to setup the GPIO
+ lookup
+Message-ID: <aQta01b_PyeHirxu@smile.fi.intel.com>
+References: <20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org>
+ <20251105-reset-gpios-swnodes-v5-8-1f67499a8287@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v5 2/2] selftests/bpf: Add test to verify freeing
- the special fields when update [lru_,]percpu_hash maps
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bot+bpf-ci@kernel.org
-Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Amery Hung <ameryhung@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-patches-bot@fb.com, Martin KaFai Lau <martin.lau@kernel.org>,
- Chris Mason <clm@meta.com>, Ihor Solodrai <ihor.solodrai@linux.dev>
-References: <20251104142714.99878-3-leon.hwang@linux.dev>
- <6099162df8322a2198497a8a27e1b0e1e5c017aeb74b20fc1eecde1e67826900@mail.kernel.org>
- <CAADnVQJZbyQWaUTzB0=82mq+hSVqxGb679cW1=t=OFCRuCVdXQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leon Hwang <leon.hwang@linux.dev>
-In-Reply-To: <CAADnVQJZbyQWaUTzB0=82mq+hSVqxGb679cW1=t=OFCRuCVdXQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-reset-gpios-swnodes-v5-8-1f67499a8287@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-
-
-On 2025/11/5 01:37, Alexei Starovoitov wrote:
-> On Tue, Nov 4, 2025 at 6:52 AM <bot+bpf-ci@kernel.org> wrote:
->>
->>> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
->>> index 893a4fdb4..87b0cc018 100644
->>> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
->>> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
->>
->> [ ... ]
->>
->>> @@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
->>>       return 0;
->>>  }
->>>
->>> +private(kptr_ref) u64 ref;
->>> +
->>> +static int probe_read_refcount(void)
->>> +{
->>> +     u32 refcount;
->>> +
->>> +     bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
->>> +     return refcount;
->>> +}
->>> +
->>> +static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
->>> +                         struct node_data __kptr **node)
->>> +{
->>> +     struct node_data *n, *m;
->>> +
->>> +     n = bpf_obj_new(typeof(*n));
->>> +     if (!n)
->>> +             return -1;
->>> +
->>> +     m = bpf_refcount_acquire(n);
->>> +     n = bpf_kptr_xchg(node, n);
->>> +     if (n) {
->>> +             bpf_obj_drop(n);
->>> +             bpf_obj_drop(m);
->>> +             return -2;
->>> +     }
->>
->> In __insert_in_list(), after bpf_kptr_xchg() stores the new object in
->> the map and returns the old value in n, can the error path drop both
->> n and m? At this point, the new object (pointed to by m) is already
->> referenced by the map. Dropping m here would free an object that the
->> map still points to, leaving a dangling pointer.
+On Wed, Nov 05, 2025 at 09:47:39AM +0100, Bartosz Golaszewski wrote:
 > 
-> AI is wrong, but I bet it got confused by reuse of variable 'n'.
-> It's hard for humans too.
-> Leon,
-> please use a different var.
-> n = bpf_kptr_xchg(node, n); is a head scratcher.
+> GPIO machine lookup is a nice mechanism for associating GPIOs with
+> consumers if we don't know what kind of device the GPIO provider is or
+> when it will become available. However in the case of the reset-gpio, we
+> are already holding a reference to the device and so can reference its
+> firmware node. Let's setup a software node that references the relevant
+> GPIO and attach it to the auxiliary device we're creating.
 
-No problem.
+...
 
-I'll update the variable names in the next revision.
+>  static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
+>  {
+> +	struct property_entry properties[] = { {}, {} };
 
-> 
-> Also see Yonghong's comment on v4 which I suspect applies to v5.
+It's an interesting way of saying this?
 
-That was actually a misunderstanding — he didn't run the newly added tests.
+	struct property_entry properties[2] = { };
 
-Still, I'll update the test name to include "refcounted_kptr" to make it
-clearer and help avoid such confusion in the future.
+>  	struct reset_gpio_lookup *rgpio_dev;
+> +	unsigned int offset, of_flags;
+> +	struct device *parent;
+> +	int id, ret, lflags;
 
-Thanks,
-Leon
+I assumed that lflags shouldn't be signed. And IIRC they are unsigned long
+elsewhere (yes, just confirmed).
+
+...
+
+> +	rgpio_dev->swnode = fwnode_create_software_node(properties, NULL);
+> +	if (IS_ERR(rgpio_dev->swnode)) {
+> +		ret = PTR_ERR(rgpio_dev->swnode);
+> +		goto err_put_of_node;
+> +	}
+
+Can save 1 LoC?
+
+	rgpio_dev->swnode = fwnode_create_software_node(properties, NULL);
+	ret = PTR_ERR_OR_ZERO(rgpio_dev->swnode);
+	if (ret)
+		goto err_put_of_node;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
