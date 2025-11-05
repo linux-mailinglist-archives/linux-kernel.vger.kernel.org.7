@@ -1,159 +1,153 @@
-Return-Path: <linux-kernel+bounces-887143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C41DC375F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:48:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E986EC37613
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952951A21B88
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A57A3B81B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F0C2BEC44;
-	Wed,  5 Nov 2025 18:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3A131CA7B;
+	Wed,  5 Nov 2025 18:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mmPfOgXS"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ls6BkYyp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665F3258CED
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9FC29D27E;
+	Wed,  5 Nov 2025 18:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762368511; cv=none; b=VkcNl8q1aIH4k9/SjJYbr4mIO+BYyVavREjmjrt4UYKhj3d6GMN7oKwmFtsfkXgXDTNZ0tJ/MqZJEqJWJVONT0j+xt4K2nlhVarGgpuylsXZEAlvc5Uy3zBgQFXsP8HrkFEgfNucV2mEACzyeL0BWOKUA3tswCaEIjPY/DyetTQ=
+	t=1762368521; cv=none; b=GKCiOiyqmQBpEr5HvEhb6bVPKDz29OQMA/YjXoGYzv+OroG4PqYw79j5chRkZVzK7iZZ6DheEW1pDfI1KPip7kjwwl945W2QoeQuNlP3uaPGGstv2D6RkXjrVNxrOzcoVmgARBsOUCzeuHy6wJ3l5pNoetd6vu5fF8bPZnrjpek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762368511; c=relaxed/simple;
-	bh=6VX/MaVGYB8nnDcW+9XMWl4yI03AMMC4TwfOr1Tb1bU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EPZhW+dPN0A6STKDdHnW2zsxEut6ZfW0u79bP1C/V9vaTLb09QaOU539kl77lYs6w7lnPXD/Si5S9DZrpIwe/9vsi3r8sOm/Z2DZqmbgmpMZ4RiM2jsFncJFa5MoI0HMqVc96LTvHZRt9cKhW3hmOfhMbPGMzUZ/oTz0K/02cG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mmPfOgXS; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3407734d98bso210258a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:48:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762368510; x=1762973310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uwldtlJsW8UutEA5JzxFh14mKn4uh9aSlx+yupLBCtg=;
-        b=mmPfOgXSi+CKRuqTpqKQwQIhMjo5ZiwafiHeahLMvTOfevN+4WK9pMuh7XQ7xdxusk
-         +/82y0yU9DfGTWEhP3lF69f3bKAclHaxmogFGqtTxWGsqyHF/EtlXcA3qVJ0BA4pO606
-         xDsEAZDozSpqumzaDFDKPG+3OxVm0p8yB/AagLzzeT6Q0KDKiMg2d1Bt3jP1QD4l//Qs
-         HR19ZAN0nnr4wJaD7UzIddQjrwFPGfklbvYHUklHlUQiTfpis2lj1oo0VRmOBTyU14hc
-         2BBYJdmFL4gcvGApzet7FJrHO8Kp/aL4b5aGmdKInRehRedAbogwbNLy9uWtIpz9ZyMA
-         MmWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762368510; x=1762973310;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uwldtlJsW8UutEA5JzxFh14mKn4uh9aSlx+yupLBCtg=;
-        b=AHbBNJ4vS+9M0R4UydEdJKqUWM5pKGetWFdLKIpdTox6Ue8uCIcJgt4FoUQwsckcvw
-         ZjcaZp2czAV47FWH3do2n22lzwNCr87x/3+ioCliVab8VC+eWmxm976Tmz/zSaUfb1h6
-         1yDwOM0ESSXQ1AZtIyPRox6F5JqB+qr/cS6dc4yYyyvcZwgYbClQX/UEvhuiUpiKW9I7
-         XTXAgdUTxkfanXfu2Y5HTZMUt4Ed7E5660DiAS/AQ3iwp6lEUS13Pj+aU2/dimWKhaU3
-         Yc1phfX+oMoAxdjamyRWmgpCpOut/DVmt1DEsC0dX+1IUFNMea5Wa5MmzXsPwgLp6wjB
-         sF6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXearPZorC+PzGyEiJTkE8pAbJVLG+uoZKxmhkUB0BIpxRktuI4RaA/ziedjaKDPcFEHRTJU+DFjJkgL2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyed4m6ozJz8xE2NmHQnakrorxWd31QSceGXPVJ1ZipI6+7H7eZ
-	1Xf+/kKMKNnHAwGbrubwtv8RDzo9YFjG45A+RuhYH9cLdLAQJncr1eOgXiUUxsf5UqxgbCdCasn
-	78pq3Kg==
-X-Google-Smtp-Source: AGHT+IFLaNnoj3qggxHJas4K5ftn8LNDGyunMGhaWQS5bBqsth8bncL9oJPd1LFrTN+cPLAJBX0FF/cK8TA=
-X-Received: from plbku7.prod.google.com ([2002:a17:903:2887:b0:24c:966a:4a6b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88b:b0:295:5138:10f9
- with SMTP id d9443c01a7336-2962ae9408bmr60414175ad.54.1762368509678; Wed, 05
- Nov 2025 10:48:29 -0800 (PST)
-Date: Wed, 5 Nov 2025 10:48:28 -0800
-In-Reply-To: <20251104195949.3528411-4-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1762368521; c=relaxed/simple;
+	bh=QpAk4E6BGFif1XF3W70SXRZPyO+sXGIfN3AUjg8WOro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d4UctUxAN+lHNmqMAb34dt1W0vqCQVr5uVH66rbg7oqMe446iO/T4uSoskRqhSeLejnlttS2zr75/UVqkvMTwlRdxQlbReZ3VA/HUYorWjfXgOmrriqmv+2ivhSiykQnCyianNVMzNS3FprzvwBRy+HvpYK9J5PNnOrj6UrK+Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ls6BkYyp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597D9C4CEF5;
+	Wed,  5 Nov 2025 18:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762368520;
+	bh=QpAk4E6BGFif1XF3W70SXRZPyO+sXGIfN3AUjg8WOro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ls6BkYyp/6FP75ZGgQ207aC8eZckuU4XR1qRbSNT8HlQAadjHGF00GBc/40GwG1RU
+	 xG8nvLZW6LlEHGodtR3NrkVPcEuqxAp6BzTArrd6qrCHY4bysMhzbEeX5qxPV2jsXq
+	 AlRDRsfSojvI5M4jKOC94Uly3RFI5MVN7HMHz7u/P24VE1PM9HZhDa1Vg/Ro3GDY8F
+	 K4DM1Yj3MiNNcASKXn+tZ33u80kfNBwF6oEKGFFa/GiGGjHNBi5wQDVVJ3kCZYDPsn
+	 fzK5w2HwfqPUdoO0NWhZn+zLtwPgVG1gIixLE+mHYoYowDQDaLEb2K9CufccqKYIor
+	 YcNAt2HB/9/0g==
+Date: Wed, 5 Nov 2025 18:48:32 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jh Hsu =?utf-8?B?KOioseW4jOWtnCk=?= <Jh.Hsu@mediatek.com>
+Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"ukleinek@kernel.org" <ukleinek@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andrew-CT Chen =?utf-8?B?KOmZs+aZuui/qik=?= <Andrew-CT.Chen@mediatek.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"jirislaby@kernel.org" <jirislaby@kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+	"nuno.sa@analog.com" <nuno.sa@analog.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chunfeng Yun =?utf-8?B?KOS6keaYpeWzsCk=?= <Chunfeng.Yun@mediatek.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	Zhiyong Tao =?utf-8?B?KOmZtuW/l+WLhyk=?= <Zhiyong.Tao@mediatek.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"andy@kernel.org" <andy@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	Sean Wang <Sean.Wang@mediatek.com>,
+	Lala Lin =?utf-8?B?KOael+engOiKrCk=?= <Lala.Lin@mediatek.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"dlechner@baylibre.com" <dlechner@baylibre.com>,
+	"srini@kernel.org" <srini@kernel.org>,
+	Jitao Shi =?utf-8?B?KOefs+iusOa2myk=?= <jitao.shi@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"linux@roeck-us.net" <linux@roeck-us.net>
+Subject: Re: [PATCH v6 00/11] Add mt8189 dts evaluation board and Makefile
+Message-ID: <20251105-unbolted-kosher-8812a5349106@spud>
+References: <20251030134541.784011-1-jh.hsu@mediatek.com>
+ <20251030-deodorant-unglazed-190cbfb4a69b@spud>
+ <d75decc54a4fc129e5f011cd6e91191896203b48.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251104195949.3528411-1-yosry.ahmed@linux.dev> <20251104195949.3528411-4-yosry.ahmed@linux.dev>
-Message-ID: <aQub_AbP6l6BJlB2@google.com>
-Subject: Re: [PATCH 03/11] KVM: nSVM: Add missing consistency check for event_inj
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZsHRXwF3s1ooiJYk"
+Content-Disposition: inline
+In-Reply-To: <d75decc54a4fc129e5f011cd6e91191896203b48.camel@mediatek.com>
+
+
+--ZsHRXwF3s1ooiJYk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025, Yosry Ahmed wrote:
-> According to the APM Volume #2, 15.20 (24593=E2=80=94Rev. 3.42=E2=80=94Ma=
-rch 2024):
+On Wed, Nov 05, 2025 at 07:06:50AM +0000, Jh Hsu (=E8=A8=B1=E5=B8=8C=E5=AD=
+=9C) wrote:
+> On Thu, 2025-10-30 at 19:49 +0000, Conor Dooley wrote:
+> > On Thu, Oct 30, 2025 at 09:44:32PM +0800, Jack Hsu wrote:
+> > > In this patch series,=20
+> > > we add Mediatek MT8189 evaluation board dts, dtsi and Makefile,
+> > > and also related dt-binding documents.
+> > > Jack Hsu (11):
+> > > =C2=A0 dt-bindings: arm: Add compatible for MediaTek MT8189
+> > > =C2=A0 dt-bindings: iio: adc: Support MediaTek MT8189 evb board auxadc
+> > > =C2=A0 dt-bindings: nvmem: Support MediaTek MT8189 evb board efuse
+> > > =C2=A0 dt-bindings: pwm: Support MediaTek MT8189 evb board disp-pwm
+> > > =C2=A0 dt-bindings: serial: Support MediaTek MT8189 evb board uart
+> > > =C2=A0 dt-bindings: timer: Support MediaTek MT8189 evb board timer
+> > > =C2=A0 dt-bindings: usb: Support MediaTek MT8189 evb board xhci
+> > > =C2=A0 dt-bindings: watchdog: Support MediaTek MT8189 evb board wdt
+> >=20
+> > Please drop mention of the evb from all of these commit messages. The
+> > compatible has nothing to do with the evb board, it's going to be
+> > common
+> > across all boards using an mt8189.
+> >=20
+> > > =C2=A0 arm64: dts: mediatek: Add MT6319 PMIC Support
+> > > =C2=A0 arm64: dts: mediatek: add properties for MT6359
+> >=20
+> > Wait a minute, what are these two patches even doing in this series
+> > in
+> > the first place, when it is otherwise about the mt8189?
 >=20
->   VMRUN exits with VMEXIT_INVALID error code if either:
->   =E2=80=A2 Reserved values of TYPE have been specified, or
->   =E2=80=A2 TYPE =3D 3 (exception) has been specified with a vector that =
-does not
->     correspond to an exception (this includes vector 2, which is an NMI,
->     not an exception).
->=20
-> Add the missing consistency checks to KVM. For the second point, inject
-> VMEXIT_INVALID if the vector is anything but the vectors defined by the
-> APM for exceptions. Reserved vectors are also considered invalid, which
-> matches the HW behavior.
+> mt8189 evb board include mt63xx.dtsi,=C2=A0
+> and the dtsi files maybe for other boards in the future,=C2=A0
+> ie. mt8189/81xx custom/OEM/ODM boards.
+> Should i separate those two patches as a new patch series ?
 
-Ugh.  Strictly speaking, that means KVM needs to match the capabilities of =
-the
-virtual CPU.  E.g. if the virtual CPU predates SEV-ES, then #VC should be r=
-eserved
-from the guest's perspective.
+They seemed unrelated to your series and poor quality to the point that
+they looked like an accidental inclusions, given there's no mention of
+them in the cover letter. Since they do appear to be related, sure keep
+them. That said, the "add properties for MT6359" patch is in need of
+major rework, so you'll have to rework it.
 
-> Vector 9 (i.e. #CSO) is considered invalid because it is reserved on mode=
-rn
-> CPUs, and according to LLMs no CPUs exist supporting SVM and producing #C=
-SOs.
->=20
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/include/asm/svm.h |  5 +++++
->  arch/x86/kvm/svm/nested.c  | 33 +++++++++++++++++++++++++++++++++
->  2 files changed, 38 insertions(+)
->=20
-> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-> index e69b6d0dedcf0..3a9441a8954f3 100644
-> --- a/arch/x86/include/asm/svm.h
-> +++ b/arch/x86/include/asm/svm.h
-> @@ -633,6 +633,11 @@ static inline void __unused_size_checks(void)
->  #define SVM_EVTINJ_VALID (1 << 31)
->  #define SVM_EVTINJ_VALID_ERR (1 << 11)
-> =20
-> +/* Only valid exceptions (and not NMIs) are allowed for SVM_EVTINJ_TYPE_=
-EXEPT */
-> +#define SVM_EVNTINJ_INVALID_EXEPTS (NMI_VECTOR | BIT_ULL(9) | BIT_ULL(15=
-) | \
-> +				    BIT_ULL(20) | GENMASK_ULL(27, 22) | \
-> +				    BIT_ULL(31))
+--ZsHRXwF3s1ooiJYk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-As above, hardcoding this won't work.  E.g. if a VM is migrated from a CPU =
-where
-vector X is reserved to a CPU where vector X is valid, then the VM will obs=
-erve
-a change in behavior.=20
+-----BEGIN PGP SIGNATURE-----
 
-Even if we're ok being overly permissive today (e.g. by taking an erratum),=
- this
-will create problems in the future when one of the reserved vectors is defi=
-ned,
-at which point we'll end up changing guest-visible behavior (and will have =
-to
-take another erratum, or maybe define the erratum to be that KVM straight u=
-p
-doesn't enforce this correctly?)
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQub/wAKCRB4tDGHoIJi
+0ir6AP90xu+aGanLuoK0WwBJq4K8acOpc3uO0VRr/ryQ3e1A0AD8DQUJX5vyOEmp
+5sMx4n5jdewxF92Mn27H8usu0gybwAQ=
+=oepw
+-----END PGP SIGNATURE-----
 
-And if we do throw in the towel and don't try to enforce this, we'll still =
-want
-a safeguard against this becoming stale, e.g. when KVM adds support for new
-feature XYZ that comes with a new vector.
-
-Off the cuff, the best idea I have is to define the positive set of vectors
-somewhere common with a static assert, and then invert that.  E.g. maybe so=
-mething
-shared with kvm_trace_sym_exc()?
+--ZsHRXwF3s1ooiJYk--
 
