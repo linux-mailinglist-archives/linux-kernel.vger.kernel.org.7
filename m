@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-886656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7047C362B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:53:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15F0C36301
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9383189DDA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:53:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 262134FC952
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97DD314B8E;
-	Wed,  5 Nov 2025 14:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Dnrkr9pg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7A332145E;
+	Wed,  5 Nov 2025 14:52:48 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10DC24397A;
-	Wed,  5 Nov 2025 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762354350; cv=pass; b=CEJGxM49SidWEOCPLU2oWmkz6uebBparCvuN74Z7zATYJAK5A0HrA28Mu/rGJAzx5s4nBHWrlZHWWuPQAFDf4Zdg8LhhIea69TzLR24UjAc/XSpvjV9KIyigJEr8clCocyL2sJpckuuxc28WV7IgnCS6jBkj9EDuLU3XyJAjPgY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762354350; c=relaxed/simple;
-	bh=N/+AptUDxv4RzSiPU4SlqiAinbOqK98FjBLq6d33WFw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=XF+8yQJh2j03qaCnra/5ecpuJ5FUnLVYlN8m9d2O6sDbWB0b7iXbZ0mUrbZDd7pJ/Zk+O+AitLBbbmsXfZ/vMvrz3yDVhf45LQ4T4CxzvDCo/GB9pGBQqCAshoNE+MyZwiZExMYb4EfSH6VzswOj8XijEzlWPr0H1V2d1lo34wk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Dnrkr9pg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1762354327; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=h1c4izKjdZM14VrLx59UITU/r7SSEWDP87dd2zM1slOF0n2Gx599itT8K4COQ8ycNsr0Vqjj9rszFEy9tPdNcwDc7V8Ddq65DJYXcxk9PPVEpKfZIzfZo/CwWAaBnZmr0p59XFXB8LNmDZ7V08ioodaj1HKxOAk+o67Pubpa9XM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762354327; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tOoe7gYvP3slaG0QuqOo5ZEF9LAHVbJ54ULIoNkd7O0=; 
-	b=iKbgNk4bXgpVX9fxJrnb1YHAbb0kXAVOFienxKLYCzQN5XCL/2mc/VNZUgdoEgUJOLirQMvhjt5qwpjrvS9By+gu60PfJdqVgVnKCpI7c1/IUVanHOhx1LF8o10tEEoHyReG0X8W5IFvPKYbbQTMSZvcP+6AKQvqefMntpgxXsU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762354327;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=tOoe7gYvP3slaG0QuqOo5ZEF9LAHVbJ54ULIoNkd7O0=;
-	b=Dnrkr9pgtFGXrIx5dAXVPo6GO/BcQd0BQJ12LIFqK7SwcB0MGCg4xxO+bjPri/+q
-	qHIeZDwx7mwyEGfHSkCfJ+rfmec9dfKEuc/uk2+lifrprqKePkrRv+BcdD5Sd7O6eM6
-	RhGBm/SQuQBmuRbEwL8TK1gx0+vGvY7LchAGvBvc=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1762354324320452.12311002295587; Wed, 5 Nov 2025 06:52:04 -0800 (PST)
-Date: Wed, 05 Nov 2025 22:52:04 +0800
-From: Li Chen <me@linux.beauty>
-To: "Peter Zijlstra" <peterz@infradead.org>
-Cc: "Kees Cook" <kees@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
-	"Nicolas Schier" <nicolas.schier@linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-hardening" <linux-hardening@vger.kernel.org>,
-	"linux-kbuild" <linux-kbuild@vger.kernel.org>,
-	"Dan Williams" <dan.j.williams@intel.com>,
-	"Bjorn Helgaas" <bhelgaas@google.com>
-Message-ID: <19a5480e34c.81108d211707508.5372983468552631527@linux.beauty>
-In-Reply-To: <20251105094904.GL3245006@noisy.programming.kicks-ass.net>
-References: <20251105084733.3598704-1-me@linux.beauty>
- <20251105084733.3598704-5-me@linux.beauty>
- <19a53424397.26d1e5f01471331.8175059524177790573@linux.beauty> <20251105094904.GL3245006@noisy.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH 0/2] Add cleanup_plugin for detecting problematic
- cleanup patterns
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9E32DC332;
+	Wed,  5 Nov 2025 14:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762354368; cv=none; b=EfnvGUpOL8wCQT/VZoYuEVLkek1tOj6e+NBDHju6J8KS2C5Okir8ttvR8AiVTfrC26XKMk+5QfcPXbTyVErHtN4KYQvxkPFF/26T7vDWO4uZS3iKNdoV+OcvWecnVSlzNZPGKqNmtTkVU396lt5n0cHF+1SAlO6Y/DbFiqYjc9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762354368; c=relaxed/simple;
+	bh=9gw1fRNEgUEyLwOYb2BA2vCkFpQAcbdbeE3Y/HO2sYA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QOGFtmbSvP6+rK+t4fIdLUmEWNu1W0AwN8MN+U4b6uaThTpfega9xwy27uJ97rp50M44/pO+x85ARHlOwAVb7S8uAf/arqbTYYi11dqm36d0+P1unw+2RzKcffCT5KgTgbThy6iUQPG1zCXQ6RGIyuqc+M622O1OFJH1lEhtAeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from spb1wst022.omp.ru (87.226.253.162) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Nov
+ 2025 17:52:31 +0300
+From: Karina Yankevich <k.yankevich@omp.ru>
+To: Corentin Labbe <clabbe@baylibre.com>
+CC: Karina Yankevich <k.yankevich@omp.ru>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	<linux-crypto@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Sergey
+ Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH] crypto: rockchip - drop redundant crypto_skcipher_ivsize() calls
+Date: Wed, 5 Nov 2025 17:52:04 +0300
+Message-ID: <20251105145204.2888978-1-k.yankevich@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/05/2025 14:42:52
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 197802 [Nov 05 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: k.yankevich@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
+ aab2175a55dcbd410b25b8694e49bbee3c09cdde
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;87.226.253.162:7.1.2;omp.ru:7.1.1;spb1wst022.omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 87.226.253.162
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/05/2025 14:45:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/5/2025 1:23:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Hi Peter,
+The function already initialized the ivsize variable 
+at the point of declaration, let's use it instead of 
+calling crypto_skcipher_ivsize() extra couple times.
 
- ---- On Wed, 05 Nov 2025 17:49:04 +0800  Peter Zijlstra <peterz@infradead.=
-org> wrote ---=20
- > On Wed, Nov 05, 2025 at 05:04:02PM +0800, Li Chen wrote:
- > > +Peter, Dan, and Bjorn
- > >=20
- > > (My apologies for the oversight)
- > >=20
- > >  ---- On Wed, 05 Nov 2025 16:46:55 +0800  Li Chen <me@linux.beauty> wr=
-ote ---=20
- > >  > From: Li Chen <chenl311@chinatelecom.cn>
- > >  >=20
- > >  > Hello,
- > >  >=20
- > >  > This patch series introduces a new GCC plugin called cleanup_plugin=
- that
- > >  > warns developers about problematic patterns when using variables wi=
-th
- > >  > __attribute__((cleanup(...))). The plugin addresses concerns docume=
-nted
- > >  > in include/linux/cleanup.h regarding resource leaks and interdepend=
-ency
- > >  > issues.
- > >  >=20
- > >  > The cleanup attribute helpers (__free, DEFINE_FREE, etc.) are desig=
-ned
- > >  > to automatically clean up resources when variables go out of scope,
- > >  > following LIFO (last in first out) ordering. However, certain patte=
-rns
- > >  > can lead to subtle bugs:
- > >  >=20
- > >  > 1. Uninitialized cleanup variables: Variables declared with cleanup
- > >  >    attributes but not initialized can cause issues when cleanup fun=
-ctions
- > >  >    are called on undefined values.
- > >  >=20
- > >  > 2. NULL-initialized cleanup variables: The "__free(...) =3D NULL" p=
-attern
- > >  >    at function top can cause interdependency problems, especially w=
-hen
- > >  >    combined with guards or multiple cleanup variables, as the clean=
-up
- > >  >    may run in unexpected contexts.
- > >  >=20
- > >  > The plugin detects both of these problematic patterns and provides =
-clear
- > >  > warnings to developers, helping prevent  incorrect cleanup ordering=
-.
- > >  > Importantly, the plugin's warnings are not converted
- > >  > to errors by -Werror, allowing builds to continue while still alert=
-ing
- > >  > developers to potential issues.
- > >  >=20
- > >  > The plugin is enabled by default as it provides valuable compile-ti=
-me
- > >  > feedback without impacting build performance.
- >=20
- > IIRC GCC also allow dumb stuff like gotos into the scope of a cleanup
- > variable, where clang will fail the compile. Does this plugin also fix
- > this?
- >=20
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-I'm sorry, but I don't fully understand what you mean by "gotos into the=20
-scope of a cleanup variable". Could you please provide a sample to illustra=
-te this issue?
-And I would try to fix it here if I can.
+Fixes: 57d67c6e8219 ("crypto: rockchip - rework by using crypto_engine")
+Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+---
+ drivers/crypto/rockchip/rk3288_crypto_skcipher.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
-
-Li=E2=80=8B
+diff --git a/drivers/crypto/rockchip/rk3288_crypto_skcipher.c b/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
+index 9393e10671c2..e80f9148c012 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
+@@ -321,8 +321,7 @@ static int rk_cipher_run(struct crypto_engine *engine, void *async_req)
+ 	algt->stat_req++;
+ 	rkc->nreq++;
+ 
+-	ivsize = crypto_skcipher_ivsize(tfm);
+-	if (areq->iv && crypto_skcipher_ivsize(tfm) > 0) {
++	if (areq->iv && ivsize > 0) {
+ 		if (rctx->mode & RK_CRYPTO_DEC) {
+ 			offset = areq->cryptlen - ivsize;
+ 			scatterwalk_map_and_copy(rctx->backup_iv, areq->src,
+-- 
+2.34.1
 
 
