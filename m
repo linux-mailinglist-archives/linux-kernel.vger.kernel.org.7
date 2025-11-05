@@ -1,46 +1,57 @@
-Return-Path: <linux-kernel+bounces-886517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E796C35CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:20:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8EAC35CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E82D560CCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EA71A2242E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5392531BCBC;
-	Wed,  5 Nov 2025 13:20:37 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFAB31D372;
+	Wed,  5 Nov 2025 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ncdGqJhk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1E22E62D4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456531D362;
+	Wed,  5 Nov 2025 13:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762348837; cv=none; b=Sye1k2ojnnIqIcBbXZzpRBHR1MYAtX5M0N1GtaYBu+jww5XQfcFDaahxW7zorPhL/XJcjWMnQhWs2jTMUyVZobdwFJjKbRcvlJ84VT1FM/OfHXHhJN8OYUPIb3RYCGuVTZ6pr0Swz+DMbJJZq5r74PKT6E8y4VfAD4JKTxKhOM8=
+	t=1762348872; cv=none; b=KUjyMcJYr1a4X4qGQDUsNbjXsD2aBUQdcGNu2mZCIaXB3x7RDPzO4lcJNrTRIRy4Qo/qYmCcwtVvfg3ULfG4exkvarKGfbX7iikqEkUUcZAUUPH/5IqCTYaquJEkKTAzJ07nbhAO7uDxAf1LPEhKmG8vdbFtHo7S2EBjay0i/uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762348837; c=relaxed/simple;
-	bh=WMCSDA99bKnGUne3ckWxyqvNPl6HTTZOpcaLnW4wIE4=;
+	s=arc-20240116; t=1762348872; c=relaxed/simple;
+	bh=o5m/BgT+CLLta6IIQi0NDjRSxYzIHuFhf9FXQjKJqsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5WyZH0qCSisLVvRUjJQgMbUT394tcFAP0kXCzBKhYb9APe+I2o/R6+/BTJDQSkPxjUL0XwylL4uNCtVeuRhTiRbNx6cMNyWTPbaChgjWmciX63ZpGH1uMlEzq0RII05QYBM1H5Z3Q6zmqaKciY/ugQ0KguJFD6k/z1WM45Rq4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 4A727227AAA; Wed,  5 Nov 2025 14:20:24 +0100 (CET)
-Date: Wed, 5 Nov 2025 14:20:24 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: alistair23@gmail.com
-Cc: hare@suse.de, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, kch@nvidia.com, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v2] nvmet-auth: update sc_c in target host hash
- calculation
-Message-ID: <20251105132023.GC19044@lst.de>
-References: <20251104231414.1150771-1-alistair.francis@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+T5J0m2KdffKwUXuwvb7rXdpFGgSdfabYtd/DAwsgrCXH9li6IMxoq1Wb+wj0bQBu8C41JMD86Gjd+3p6/5aDlFu7P6rA8PGNUeKV0Nk/RT2HkzXigwCwEJxl4p0p1SJuORkFIuKrmrNW6wPtKjUorjmVOFUkTcIG70t+nPfuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ncdGqJhk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=n2ftvDFaNKu3PV0gvMROlDobM/rsO8FfbTNJXo4q7oU=; b=ncdGqJhkUD86UBjzI66zO+L3UO
+	Ejf4lR5budRHvMhoQxAnpyMOTnjxReJxs0ILoouTU2WOY7Ry2YtlQc8WYina+ZNifSw7pAGZhlKZP
+	9vEELqULrcoRuXkB0WzeKVfzlNML2z1DUxwoRNtVccRJ1uR1zGCpJn/Zu0eW6Pp4mjGg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vGdRU-00D040-6l; Wed, 05 Nov 2025 14:20:52 +0100
+Date: Wed, 5 Nov 2025 14:20:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chang Junzheng <guagua210311@qq.com>
+Cc: rafal@milecki.pl, bcm-kernel-feedback-list@broadcom.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: broadcom: bgmac: add SPDX license
+ identifier
+Message-ID: <eb006531-4c4a-4dce-a3ba-aeffddf8fcad@lunn.ch>
+References: <tencent_DCA505773DEBA2EC5F3B04526C606AD6A608@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,51 +60,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251104231414.1150771-1-alistair.francis@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <tencent_DCA505773DEBA2EC5F3B04526C606AD6A608@qq.com>
 
->  4 files changed, 6 insertions(+), 2 deletions(-)
+On Wed, Nov 05, 2025 at 07:28:20PM +0800, Chang Junzheng wrote:
+> Add missing SPDX-License-Identifier tag to bgmac-bcma.c.
 > 
-> diff --git a/drivers/nvme/host/auth.c b/drivers/nvme/host/auth.c
-> index a01178caf15b..19980122d3d5 100644
-> --- a/drivers/nvme/host/auth.c
-> +++ b/drivers/nvme/host/auth.c
-> @@ -492,6 +492,7 @@ static int nvme_auth_dhchap_setup_host_response(struct nvme_ctrl *ctrl,
->  	ret = crypto_shash_update(shash, buf, 2);
->  	if (ret)
->  		goto out;
-> +	memset(buf, 0, sizeof(buf));
->  	*buf = chap->sc_c;
->  	ret = crypto_shash_update(shash, buf, 1);
+> The license is GPL-2.0 as indicated by the existing license text
+> in the file.
 
-I'm really confused about both the existing code and this fixup.
+It is normal to remove such license text when adding an SPDX header.
 
-Why isn't chap->sc_c directly passed to crypto_shash_update here?
-Why do we need to memset buf when only a single byte is passed to
-crypto_shash_update?
+Please also read:
 
->  	ret = crypto_shash_update(shash, buf, 2);
->  	if (ret)
->  		goto out;
-> -	*buf = sc_c;
-> +	*buf = req->sq->sc_c;
->  	ret = crypto_shash_update(shash, buf, 1);
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-Just pass it directly here?
-
->  	if (ret)
->  		goto out;
-> @@ -378,6 +378,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req, u8 *response,
->  	ret = crypto_shash_update(shash, ctrl->hostnqn, strlen(ctrl->hostnqn));
->  	if (ret)
->  		goto out;
-> +	memset(buf, 0, sizeof(buf));
->  	ret = crypto_shash_update(shash, buf, 1);
-
-just have a
-
-	sttic const u8 zero = 0;
-
-and use that here instead of the memset?
-
+	Andrew
 
