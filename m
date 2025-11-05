@@ -1,53 +1,131 @@
-Return-Path: <linux-kernel+bounces-886640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A55AC3620E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:44:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9688C36205
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5E41A22EFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:45:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2E8C2341322
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD83E3148D8;
-	Wed,  5 Nov 2025 14:44:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0344E2FD1AD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407C332ED39;
+	Wed,  5 Nov 2025 14:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gCDf5z05"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAD332E13B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762353875; cv=none; b=ghN1kQVBI7GpJIAu7dtqantloK+hs83OI91jqJ/lm9NppNXwR/1EAUzIGVn1hvST2d2DF/I3PwxnaRb9uzTSW4irt6EuPRMPdrgJTlwppc6cPBCZCsbMS6OB2Y5A8nEkPWRGyqwDBHcOoC/t7AftgDm0feYfN9XsE5QBtzO9mAY=
+	t=1762353751; cv=none; b=ZQHqjrWoaKRAxp7MMljavSrAbV/axAgSO0nrFQ1vUjG1yQpZ22sVKj6fl0h0JA7Ktl/ikmWhQy9xOtZgDyCRQHNh1k5jMXDlg0AYSEtznBkOoMntwtwDab4ujIKyHaOTSVhJIimEENPgLlE+AMfoWJNUQKofh8LvMB/k473lTH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762353875; c=relaxed/simple;
-	bh=aloNZC+lYx0sTvaPm2rmlqf6ESr4WRivTHN4sJh+6lY=;
+	s=arc-20240116; t=1762353751; c=relaxed/simple;
+	bh=ij2iHrslX/5yNAV81WvwyiP5ZRrrhcDqQSgtHEa9ZoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDScNcM7qrZQWt1m/zipebrIG8w8DqWKfafrHSyDVkyt9XkHWEjFQTQ/+TWbSIGfoZ/I/YiJcaII1sINaaNbY9Ghq3bkpSdsJ8k/DRKk91msuKgUxPuwulZguwPbVlQrARnsEX0iGRzU2VsMvrfkhcF7+IS9wP/Gp9AjOc9Z8uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A1562B;
-	Wed,  5 Nov 2025 06:44:17 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36C4B3F694;
-	Wed,  5 Nov 2025 06:44:23 -0800 (PST)
-Date: Wed, 5 Nov 2025 14:42:18 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>, Chen Yu <yu.c.chen@intel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
- event counters
-Message-ID: <aQtiSmZ14b+U/J4U@e133380.arm.com>
-References: <20251029162118.40604-1-tony.luck@intel.com>
- <20251029162118.40604-13-tony.luck@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrobb3pDFGpIjxtRmqqUZrYscLHFGtr5w2XuNgpA42b8PtJXhnxaDgSUJD5NMVvhh67YysERw1FEUpWgDtubLdCKVF6hxZEaEkNyf1udN8cPoAzx8hxeTyJ4deGmS4ovHMt8zoc8TSaLCfxHE/Pg+XQKUMpic2Z73f6j/CX65HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gCDf5z05; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8b220ddc189so162590385a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:42:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1762353748; x=1762958548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCP0hsq/q40gFxNmjoVFcp0QbOx89aTWebuusBQgCaY=;
+        b=gCDf5z05uYtlJggKnF95ezS3J3umvz7sQMNDZDnGK8dtKLvayu7kdaLUtT1vMZ6cHs
+         1GrwbtfIe7scOFlP2tQeblKFtqfnBbDDvWuaerJCvF4fbX4Iuw1jMMO5qNBS6ZY5ORf7
+         wlXA8FlARkhwl3/zBiBwJU4aOeCxfoymxp+HA7s9/gBrOxzS0LNRs3+Mbv6zW6wrbKgS
+         Vw1NtjBOiZPKJ476QYp/x9lkuvghR476RYKYUJr6/ygsD+kVyEil9ToZF0qbl82FpAPl
+         jncikulGE0TeNC1J/5fCUZfNhIKnf6FldJa+Hdi7S90irvpaNARjjyogJGnYymejeFSJ
+         J/Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762353748; x=1762958548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gCP0hsq/q40gFxNmjoVFcp0QbOx89aTWebuusBQgCaY=;
+        b=k+Ts2DETQOowhopUYOBBbeiDO5ufWC6XrEOrhu63WDlqoU5bXwV2XhaDcfKWtA/8+0
+         Jwp3a/YqYwlHEoW6TdCWeTK8+TVOndJ86voVP6uLBWcn7YPdX62S12VGc39S6aYtDT4G
+         A1mMohq622x6or+ZevkJAPRWancsZfvTybIT0KufL2oA8bu7jNFJHsys6KF33VJhKomP
+         JiyXE/I6u5tJuiL0o/hdQV/vxwOSC8A/CsgY7dyz5IAcm71TMEm8jgQxcaXgNm7e3VYB
+         61rMOjFUOJCXHD5A6qynL397a9ApnAJX0ZW/Q1QqjggzKnjU0taFaRzaPicch0mCsi85
+         ajRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5z9CQtoqg9uc2F3AKE226VtkLZySOT4svFeC8z3Bet61c/kyfnQl6u/v5Mt816zB7hof6m5OBl9h20Fg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwVY8HaWmmCzsZNOttmpInJ+bWtRADxCNtitr20FwKsn7sDyQl
+	JM7hMDbJMdMaew1+fBSQlMmNo8CNnLpikRDwoi+UnYkBt8kbTHqlRwDU27ugZwYQVGc=
+X-Gm-Gg: ASbGnctyIAQpVUYbBz/ksZorDZVmfMLRjJMrmjEZg/QyFPM98QjvHG/WoOHkSnBOH1J
+	BS5Fs/5fWv6GgpQ40L8dcga47dadBv9y/2AbBwInkapfQK5ne/9jEFV+DSSyy3bI/xe7yIunO9E
+	165uKLNUrUSb8rGSsHT7IHmIClouZJoViPrWVxrp+LD1ouFm7YoHc3Bog5gFLKvVpnEDL8ouj6K
+	XV/ZXHZDC/N36z4GeOVGNSJ5Hg+Waqx2Mcqefd3voT1TVE29IrJWux+0SQ8hBS8ipFPNWs0mww6
+	/vZY2By9tkc4Na0nHdHwvqhi2fICEhhQtrddTE5KwvUoBkQeOHG/p8M3hKYiM9KKh1C37NPappo
+	bohVnDDJQLy0ETRuNc/KTz7Fqs+0Iuu25A7pWW5WCaXb4hHgtUiuZbLOuQwZrqcjaYBAvXWe1us
+	B9v1hNG2Irb/dIJ5SGpNoZtcVgMowwqTqFOcPSbnrMoUTmj4X83JmgbwUTlXj1rrg5Rwmzwg==
+X-Google-Smtp-Source: AGHT+IFOPmymxkVWTStAmI1fSxsEHrX8n+cH3NR2hrKHNMeSwi6zTbwFsDY5mjtR5/Zbzi6pU1fUXg==
+X-Received: by 2002:a05:620a:4416:b0:8ab:4ada:9b2f with SMTP id af79cd13be357-8b220b7f441mr375892585a.56.1762353748298;
+        Wed, 05 Nov 2025 06:42:28 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b21fc36dbasm239867985a.19.2025.11.05.06.42.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 06:42:27 -0800 (PST)
+Date: Wed, 5 Nov 2025 09:42:24 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+Message-ID: <aQtiUPwhY5brDrna@gourry-fedora-PF4VCD3F>
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,302 +134,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029162118.40604-13-tony.luck@intel.com>
+In-Reply-To: <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
 
-Hi Tony,
-
-A few drive-by nits from me -- apologies, I hadn't looked at this in a
-while.
-
-On Wed, Oct 29, 2025 at 09:20:55AM -0700, Tony Luck wrote:
-> resctrl assumes that all monitor events can be displayed as unsigned
-> decimal integers.
-> 
-> Hardware architecture counters may provide some telemetry events with
-> greater precision where the event is not a simple count, but is a
-> measurement of some sort (e.g. Joules for energy consumed).
-> 
-> Add a new argument to resctrl_enable_mon_event() for architecture code
-> to inform the file system that the value for a counter is a fixed-point
-> value with a specific number of binary places.
-> Only allow architecture to use floating point format on events that the
-> file system has marked with mon_evt::is_floating_point.
-> 
-> Display fixed point values with values rounded to an appropriate number
-> of decimal places for the precision of the number of binary places
-> provided. Add one extra decimal place for every three additional binary
-
-(Is this just informal wording?  If not, it's wrong...)
-
-> places, except for low precision binary values where exact representation
-> is possible:
-> 
->   1 binary place is 0.0 or 0.5			=> 1 decimal place
->   2 binary places is 0.0, 0.25, 0.5, 0.75	=> 2 decimal places
->   3 binary places is 0.0, 0.125, etc.		=> 3 decimal places
-
-What's the rationale for this special treatment?  I don't see any
-previous discussion (apologies if I missed it).
-
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
->  include/linux/resctrl.h            |  3 +-
->  fs/resctrl/internal.h              |  8 +++
->  arch/x86/kernel/cpu/resctrl/core.c |  6 +--
->  fs/resctrl/ctrlmondata.c           | 84 ++++++++++++++++++++++++++++++
->  fs/resctrl/monitor.c               | 10 +++-
->  5 files changed, 105 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index 702205505dc9..a7e5a546152d 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -409,7 +409,8 @@ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
->  u32 resctrl_arch_system_num_rmid_idx(void);
->  int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
->  
-> -void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu);
-> +void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu,
-> +			      unsigned int binary_bits);
->  
->  bool resctrl_is_mon_event_enabled(enum resctrl_event_id eventid);
->  
-> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-> index 40b76eaa33d0..f5189b6771a0 100644
-> --- a/fs/resctrl/internal.h
-> +++ b/fs/resctrl/internal.h
-> @@ -62,6 +62,9 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
->   *			Only valid if @evtid is an MBM event.
->   * @configurable:	true if the event is configurable
->   * @any_cpu:		true if the event can be read from any CPU
-> + * @is_floating_point:	event values are displayed in floating point format
-
-Nit: Maybe rebrand this as is_fixed_point, or is_fractional, or similar?
-
-The print syntax is just a decimal fraction, and the hardware
-representation is fixed-point.  Nothing floats.
-
-> + * @binary_bits:	number of fixed-point binary bits from architecture,
-> + *			only valid if @is_floating_point is true
->   * @enabled:		true if the event is enabled
->   */
->  struct mon_evt {
-> @@ -71,6 +74,8 @@ struct mon_evt {
->  	u32			evt_cfg;
->  	bool			configurable;
->  	bool			any_cpu;
-> +	bool			is_floating_point;
-> +	unsigned int		binary_bits;
->  	bool			enabled;
->  };
->  
-> @@ -79,6 +84,9 @@ extern struct mon_evt mon_event_all[QOS_NUM_EVENTS];
->  #define for_each_mon_event(mevt) for (mevt = &mon_event_all[QOS_FIRST_EVENT];	\
->  				      mevt < &mon_event_all[QOS_NUM_EVENTS]; mevt++)
->  
-> +/* Limit for mon_evt::binary_bits */
-> +#define MAX_BINARY_BITS	27
+On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
+> +typedef swp_entry_t leaf_entry_t;
 > +
-
-Could this be up to 30?
-
-(The formatting code relies on the the product of the maximum fraction
-value with 10^decplaces[] not exceeding a u64, so I think 30 bits
-fits?  But this only has to be as large as the largest value required
-by some supported piece of hardware... I didn't go check on that.)
-
->  /**
->   * struct mon_data - Monitoring details for each event file.
->   * @list:            Member of the global @mon_data_kn_priv_list list.
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index 78ad493dcc01..c435319552be 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -893,15 +893,15 @@ static __init bool get_rdt_mon_resources(void)
->  	bool ret = false;
->  
->  	if (rdt_cpu_has(X86_FEATURE_CQM_OCCUP_LLC)) {
-> -		resctrl_enable_mon_event(QOS_L3_OCCUP_EVENT_ID, false);
-> +		resctrl_enable_mon_event(QOS_L3_OCCUP_EVENT_ID, false, 0);
->  		ret = true;
->  	}
->  	if (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL)) {
-> -		resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID, false);
-> +		resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID, false, 0);
->  		ret = true;
->  	}
->  	if (rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL)) {
-> -		resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID, false);
-> +		resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID, false, 0);
->  		ret = true;
->  	}
->  	if (rdt_cpu_has(X86_FEATURE_ABMC))
-> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-> index 883be6f0810f..290a959776de 100644
-> --- a/fs/resctrl/ctrlmondata.c
-> +++ b/fs/resctrl/ctrlmondata.c
-> @@ -17,6 +17,7 @@
->  
->  #include <linux/cpu.h>
->  #include <linux/kernfs.h>
-> +#include <linux/math.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/tick.h>
-> @@ -597,6 +598,87 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
->  		resctrl_arch_mon_ctx_free(r, evt->evtid, rr->arch_mon_ctx);
->  }
->  
-> +/*
-> + * Decimal place precision to use for each number of fixed-point
-> + * binary bits.
-> + */
-> +static unsigned int decplaces[MAX_BINARY_BITS + 1] = {
-
-^ const
-
-
-Also, maybe explicitly initialise
-
-	[0]  =	1,
-
-here?  (See print_event_value().)
-		
-> +	[1]  =  1,
-> +	[2]  =  2,
-> +	[3]  =  3,
-> +	[4]  =  3,
-> +	[5]  =  3,
-> +	[6]  =  3,
-> +	[7]  =  3,
-> +	[8]  =  3,
-> +	[9]  =  3,
-> +	[10] =  4,
-
-Why these specific values?
-
-ceil(binary_bits * log10(2)) makes sense if we want to expose all
-available hardware precision with as few digits as possible.
-
-floor(binary_bits * log10(2)) makes sense if we want expose as many
-digits as possible without advertising spurious precision.
-
-Disregarding the special-casing for binary_bits <= 3, still neither
-option quite seems to match this list.
-
-
-Rounding up means that the hardware value can be reconstructed, but
-only if userspace knows the value of binary_bits.  Should that be
-exposed?
-
-> +	[11] =  4,
-> +	[12] =  4,
-> +	[13] =  5,
-> +	[14] =  5,
-> +	[15] =  5,
-> +	[16] =  6,
-> +	[17] =  6,
-> +	[18] =  6,
-> +	[19] =  7,
-> +	[20] =  7,
-> +	[21] =  7,
-> +	[22] =  8,
-> +	[23] =  8,
-> +	[24] =  8,
-> +	[25] =  9,
-> +	[26] =  9,
-> +	[27] =  9
-
-Documenting the rule for generating these may be a good idea unless we
-are sure that no more entries will never be added.
-
+> +#ifdef CONFIG_MMU
+> +
+> +/* Temporary until swp_entry_t eliminated. */
+> +#define LEAF_TYPE_SHIFT SWP_TYPE_SHIFT
+> +
+> +enum leaf_entry_type {
+> +	/* Fundamental types. */
+> +	LEAFENT_NONE,
+> +	LEAFENT_SWAP,
+> +	/* Migration types. */
+> +	LEAFENT_MIGRATION_READ,
+> +	LEAFENT_MIGRATION_READ_EXCLUSIVE,
+> +	LEAFENT_MIGRATION_WRITE,
+> +	/* Device types. */
+> +	LEAFENT_DEVICE_PRIVATE_READ,
+> +	LEAFENT_DEVICE_PRIVATE_WRITE,
+> +	LEAFENT_DEVICE_EXCLUSIVE,
+> +	/* H/W posion types. */
+> +	LEAFENT_HWPOISON,
+> +	/* Marker types. */
+> +	LEAFENT_MARKER,
 > +};
 > +
-> +static void print_event_value(struct seq_file *m, unsigned int binary_bits, u64 val)
-> +{
-> +	unsigned long long frac;
-> +	char buf[10];
 
-In place of the magic number 10, how about
-decplaces[MAX_BINARY_BITS] + 1 ?
+Have been browsing the patch set again, will get around a deeper review,
+but just wanted to say this is a thing of beauty :]
 
-(I think the compiler should accept that as an initialiser if the array
-is const.)
-
-> +
-> +	if (!binary_bits) {
-> +		seq_printf(m, "%llu.0\n", val);
-> +		return;
-> +	}
-
-Can an initialiser for decplaces[0] reduce the special-casing for
-binary_bits == 0?
-
-> +
-> +	/* Mask off the integer part of the fixed-point value. */
-> +	frac = val & GENMASK_ULL(binary_bits, 0);
-
-Should this be GENMASK_ULL(binary_bits - 1, 0)?
-
-Should we be telling userspace the binary_bits value?  It is not
-(exactly) deducible from the number of decimal places printed.
-
-It depends on the use cases and what the code is trying to achieve, but
-this does not seem to be described in detail, unless I've missed it
-somewhere.
-
-> +
-> +	/*
-> +	 * Multiply by 10^{desired decimal places}. The integer part of
-> +	 * the fixed point value is now almost what is needed.
-> +	 */
-> +	frac *= int_pow(10ull, decplaces[binary_bits]);
-> +
-> +	/*
-> +	 * Round to nearest by adding a value that would be a "1" in the
-> +	 * binary_bits + 1 place.  Integer part of fixed point value is
-> +	 * now the needed value.
-> +	 */
-> +	frac += 1ull << (binary_bits - 1);
-> +
-> +	/*
-> +	 * Extract the integer part of the value. This is the decimal
-> +	 * representation of the original fixed-point fractional value.
-> +	 */
-> +	frac >>= binary_bits;
-> +
-> +	/*
-> +	 * "frac" is now in the range [0 .. 10^decplaces).  I.e. string
-> +	 * representation will fit into chosen number of decimal places.
-> +	 */
-> +	snprintf(buf, sizeof(buf), "%0*llu", decplaces[binary_bits], frac);
-> +
-> +	/* Trim trailing zeroes */
-
-Why?
-
-Would it be better to present the values with consistent precision?
-
-There's no reason why a telemetry counter should settle for any length
-of time at a tidy value, so the precision represented by the trailing
-zeros is always significant.
-
-The hardware precision doesn't go up and down depending on the precise
-value of the counter...
-
-> +	for (int i = decplaces[binary_bits] - 1; i > 0; i--) {
-> +		if (buf[i] != '0')
-> +			break;
-> +		buf[i] = '\0';
-> +	}
-> +	seq_printf(m, "%llu.%s\n", val >> binary_bits, buf);
-> +}
-> +
-
-[...]
-
-Cheers
----Dave
+~Gregory
 
