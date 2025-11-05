@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-885818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307B6C33F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:13:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E7CC33F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF371898494
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:13:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 861FB4E227C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E07263F30;
-	Wed,  5 Nov 2025 05:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A11625744D;
+	Wed,  5 Nov 2025 05:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yQ42XAmV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkMFxPK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C74258CDC;
-	Wed,  5 Nov 2025 05:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5A260569
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762319586; cv=none; b=YINuZLr9fnbW9V2KB66RVwOSR/v43f6k3C8mbOKrtzkFwJYq3z5TGXoOjNB4wJyCHu4FUifhwBWwxZ9a4Qw9V9/ShtLpdr9Ltduvw5/2AN5ZFlrf43zScaDTvQg8meHBe4u0VSguPBom3regZsLRf7UCBROpKWQ+9rwZPqyNcbY=
+	t=1762319709; cv=none; b=DkYg4lam96h8jbL1U4IJVfRMpQPsm5wrgGDJIOi5pmf9SmyoGDJaAtZ0rQw92hTDufm82zdiQUxPmmA+fXm5feX4+OI1vWozdDo68JrhK9VWPAKIYr2jBt8WnKmMYr+/7WHg82baMHxsAH31HrKrUXj66MFV/pj2JXoZddRevO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762319586; c=relaxed/simple;
-	bh=UiCXCmmRXk/In03RORdudlXDVnjIUdeWxJZhXWrtps0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pt1gyPI0zq7MjLoj+eAz6wakXLN3De9uUXXWQ8G4qOQAHbBvZN21fGSc4uRXH0sp6G9CM75JcFBBPDFzQEgprCZZlng+o220ZVrXp3Wf8iBN0AVyDio2J7fSAsT9LnDWzJ156JXCZ8h4Hjb5YsFrrXfCbj2mbsm2jcbLbPTsyxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yQ42XAmV; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762319584; x=1793855584;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=UiCXCmmRXk/In03RORdudlXDVnjIUdeWxJZhXWrtps0=;
-  b=yQ42XAmVQtDpNZMAUXo4Ca7ScDOedxrt2tXfbYKwsIzzqZEGzvHviezK
-   Gy9ezNW/CKGDmmsv9Y1pBf8ORi4XWQ/YEzJ3oTllXzSuG5c3kguhmkFnz
-   8SUL0M6Km8Y0iFv1Vi0y1FQMbAYhi/sSI36JjaKZJ+Nc36I4cWtkNVAjr
-   u7tDw0SruUWlWji7Zlaidvl6K/HONgrz39oeR94SErfTsF2C4//hJ2waK
-   lWkeQ0uZBydNMPF2f5Ye+Pv97exzeXIXVbuw8E5NinDqmxne2qeqG9FBx
-   5khfpNVk5Jqij2IO/lE9EzOJy6sCsd8s+p1weaHcPyNLX1u75F72iFWbm
-   w==;
-X-CSE-ConnectionGUID: QvDqlsI0RlKjbcCMavUb1Q==
-X-CSE-MsgGUID: UKsa+TftSdKRZSZCWTevhA==
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="55067910"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 22:13:03 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 4 Nov 2025 22:12:30 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 4 Nov 2025 22:12:26 -0700
-From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-To: <Parthiban.Veerasooran@microchip.com>, <piergiorgio.beruto@gmail.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
- Veerasooran" <parthiban.veerasooran@microchip.com>
-Subject: [PATCH net-next v3 2/2] net: phy: microchip_t1s:: add cable diagnostic support for LAN867x Rev.D0
-Date: Wed, 5 Nov 2025 10:42:13 +0530
-Message-ID: <20251105051213.50443-3-parthiban.veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251105051213.50443-1-parthiban.veerasooran@microchip.com>
-References: <20251105051213.50443-1-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1762319709; c=relaxed/simple;
+	bh=U1gcHYEs9i1aYxKKaiMBpSNsLLBtCBGwKROrVszwRYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9jjz0WZ0Pf3Ui+rLXhd5k//6NJunZoqtU1V42sM1oMVTOMqH0yjMqTa49SlBsTXrcYdP0kmj6l/rJHX4WsHCSwmyLYRz4acnWFufO2LOc1KRNwg+7Pnrh21Ck0C8exj3RrYcNiUCv3Yw6ieYZMeQHa7mZH547NCw69hr+dGbPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkMFxPK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27BD8C19422
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762319709;
+	bh=U1gcHYEs9i1aYxKKaiMBpSNsLLBtCBGwKROrVszwRYc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kkMFxPK62VIsB9OfmQqvzhME4k+ydiNyvaGbgBGvbqCoGu0UxzgSGliq8e+B7PMxs
+	 D6DedIDFkHSgmDoguZdy8dIZ3OZ4C8eNA0shL5VLrRagW2zjDpr38TIkLrQH4yF26u
+	 43eRILXak4Zwt+3uPbVx9RTaslXSum/fMtmrm+242VV3m56amavNR7NLdZ4HydpNtp
+	 /bzgXTFfe1o9gaHgDy5vG8+wjm5HvINTOtTWQDO9n3jxZydxMX6fMYJud5FeMons7a
+	 hPucUEYzTm83YrPIAyin3Y6Bx25ucjioIGlC7mObKmQTPja1HDcj3v5wWDuBtCG1QP
+	 YgvVor0Fz4CSw==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640f627d01dso1961300a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 21:15:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUmtvkVIYCXeSYumsxpNoPw5sOxrVODW8Zu+8MbB3ND5/XtQhod3zXh8NQKvTk4vHi/K5AYeNqMZk2Q8Ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/ggJmal9/s9CiCIGf8/IjCdDg+A/Z7YHPTIFIl60qGhlG3sRz
+	htE4lhNCkCaWk3ZCpbELGMJlCUC5fjJ8HgX+OyWqNqfMzzDndu+1TRJ8QuT/lp+2wfBT4z5SnZi
+	tBJAgFllWt8HAGkVyWybwptZAjulcofg=
+X-Google-Smtp-Source: AGHT+IFC37S1oyDl/UFRyqOhTM6lpKE7vOb4Rois7WuNYgcmNYNdTXbXGcT2OjA1QYiPpBNetwu+J2hwSLldIctFzqo=
+X-Received: by 2002:a05:6402:5193:b0:640:baed:f675 with SMTP id
+ 4fb4d7f45d1cf-64105b77b62mr1432647a12.33.1762319707657; Tue, 04 Nov 2025
+ 21:15:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <2025110432-maimed-polio-c7b4@gregkh> <20251104141214.345175-1-pioooooooooip@gmail.com>
+In-Reply-To: <20251104141214.345175-1-pioooooooooip@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 5 Nov 2025 14:14:55 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_ORc86pHr66OVhCAXWbvPy7Y2DVAH_ubipOXufQGD4dQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bneHOhxu7T1nX-P1IRNUTalF5hYblatzPqzqhor9kRyW5EvYEalAbVSk9A
+Message-ID: <CAKYAXd_ORc86pHr66OVhCAXWbvPy7Y2DVAH_ubipOXufQGD4dQ@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: fix leak of transform buffer on encrypt_resp() failure
+To: Qianchang Zhao <pioooooooooip@gmail.com>
+Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	gregkh@linuxfoundation.org, Zhitong Liu <liuzhitong1993@gmail.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable Open Alliance TC14 (OATC14) 10Base-T1S cable diagnostic feature
-for Microchip LAN867x Rev.D0 PHY by implementing `cable_test_start` and
-`cable_test_get_status` using the generic C45 functions. This allows the
-`ethtool` utility to perform cable diagnostic tests directly on the PHY,
-improving network troubleshooting and maintenance.
-
-Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
----
- drivers/net/phy/microchip_t1s.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-index bce5cf087b19..5a0a66778977 100644
---- a/drivers/net/phy/microchip_t1s.c
-+++ b/drivers/net/phy/microchip_t1s.c
-@@ -573,6 +573,8 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
- 		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
-+		.cable_test_start   = genphy_c45_oatc14_cable_test_start,
-+		.cable_test_get_status = genphy_c45_oatc14_cable_test_get_status,
- 	},
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB),
--- 
-2.34.1
-
+On Tue, Nov 4, 2025 at 11:12=E2=80=AFPM Qianchang Zhao <pioooooooooip@gmail=
+.com> wrote:
+>
+> When encrypt_resp() fails at the send path, we only set
+> STATUS_DATA_ERROR but leave the transform buffer allocated (work->tr_buf
+> in this tree). Repeating this path leaks kernel memory and can lead to
+> OOM (DoS) when encryption is required.
+>
+> Reproduced on: Linux v6.18-rc2 (self-built test kernel)
+>
+> Fix by freeing the transform buffer and forcing plaintext error reply.
+>
+> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> ---
+>  fs/smb/server/server.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+> index 40420544c..15dd13e76 100644
+> --- a/fs/smb/server/server.c
+> +++ b/fs/smb/server/server.c
+> @@ -244,8 +244,14 @@ static void __handle_ksmbd_work(struct ksmbd_work *w=
+ork,
+>         if (work->sess && work->sess->enc && work->encrypted &&
+>             conn->ops->encrypt_resp) {
+>                 rc =3D conn->ops->encrypt_resp(work);
+> -               if (rc < 0)
+> +               if (rc < 0) {
+>                         conn->ops->set_rsp_status(work, STATUS_DATA_ERROR=
+);
+> +                       work->encrypted =3D false;
+> +                       if (work->tr_buf) {
+> +                               kvfree(work->tr_buf);
+->tr_buf is freed in ksmbd_free_work_struct(). How can tr_buf not be freed?
+Thanks.
+> +                               work->tr_buf =3D NULL;
+> +                       }
+> +               }
+>         }
+>         if (work->sess)
+>                 ksmbd_user_session_put(work->sess);
+> --
+> 2.34.1
+>
 
