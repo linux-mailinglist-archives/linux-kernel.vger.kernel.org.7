@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-887455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E20C384BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:05:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D0BC3849E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4193AAD6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4028018C28DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9AF2F39B7;
-	Wed,  5 Nov 2025 23:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C202F066D;
+	Wed,  5 Nov 2025 23:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdlFPIIK"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xurdhus7"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6A62D12EE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C039FCE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383751; cv=none; b=jgf0aVGWYfuMVMs0yy3m07SUVGggNn7x7xhBXUxga7z74U45QVZXh10FEs7kLDjt6XdShn5tpCVEmt6lsL1j9PI4cuGfEZWxTtlNZpZNDAeZoHNEN1ELqIzSRL55e8za00QFZvOjKlbZgv4GNE5q16C6fRxnLvu8tLTMqyGJOCQ=
+	t=1762383751; cv=none; b=Srqll95P98EpStnmFsouSGZ7ILovDfZBQt5dWgR9KBqKBmra0uFfjT3qgpR73J046dJ/QR1shblnFCUY2ryDDiXe4GAN1rz26vlpE03dMrq6gH1KkZshKhVCv7ExC1mj2/heCLrrZBL5qx5IdoE1ox6Gc1yPA0Idwhr/GP0uCFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762383751; c=relaxed/simple;
-	bh=YISdcADBQqzuvoNcCs3nt3kan2jGJvuSVytELmc4hYw=;
+	bh=RzgX0CxF7lpE2xBLdNMOZqdleGvbOwroWvnQQx0XUzQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eayEoYEyWJ3qRukMSqXt3uDoJOv6RKGQEU/rZcekQxjuP7DIenlmUG5j3YxVDPRf2UaqYU1e06yciTVtthwhvaO5kAKWqG5hO/52iNNjMMH7ADyKgpHyw1A9UItf6QPVjL8Du8wvWseHoiY0l7w2n+FpYv7/Rqf9d/m4Ok372so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdlFPIIK; arc=none smtp.client-ip=209.85.214.176
+	 In-Reply-To:To:Cc; b=KRkoIvf82BhzZ0ALtZMjIUaXFS0/uYHExEPcx9ptEOABQ3kamQowz50N5C77Yk0afL64HcwJ8mKb/4/pIObd542lADPY5GBWLlFSOSuyEZzOHBrOjHFVBshKt8OSeMBQk2qGtoiiMHXkgQ8FjcRmEpFwbCNLD1I8Mf9tS5t/m3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xurdhus7; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-294fd2ca6acso11323465ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:02:29 -0800 (PST)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b8c0c0cdd61so262087a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:02:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762383749; x=1762988549; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762383750; x=1762988550; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N6ObyT3Tt6gveKOeNa7NjmSIElr//qB7g+FJoPS22Qs=;
-        b=CdlFPIIKw8nPl77hy9x+De6I2lF5QOHNGi/f6NxtdwGA7td/FlTk9Zfqz+4C3x16j7
-         sivq/Ywzk8a1R/VMA2J+0lk4EbdHb/c/aVcnCGaFVshtxuhWdAVXnmZr+YPAgQh6aVxi
-         d41yWYmZMJffnFvyA3UN2IsbsfXbZ/cjJa2wR+v4+VJgrrXC9MjnNJ+O/skV06NGw5fK
-         OpnRAhaTc0KmzJFsBogDMDMTURzPfZN2FFRbQ0BbaSXG0F6SjL1SYzouh0Czci9LMp4t
-         A53y+wzfg8x5lJHGH0v49uuavIyK0lBG0FucmgyJOlGFhDZFWQp3JYrOcjM2rHPCW6K5
-         nFYg==
+        bh=8tDmiGouP/lZqmqIQ4xLpqbP6meWUNvUiS6WQT0r7JQ=;
+        b=Xurdhus7wqBhpTZcVHR93kfwVS1H+7KsZWpsGgxkOAkdu9lACI3zr74u0+YTjuT+ys
+         +2W8p5ou8jJRooQeg3djL18LayhG7izB7+47B6z+f83dEkvT7ZvnE9Zfj81Rj38zRwmk
+         J7rVfXLuUKym2sN72RUZyH+MxP06gs/VSE+wu6cBSbzVSVJjFnCC/E/qaC91lq9yKr/7
+         Zy5pGjDt3689V4Om3uLBTO3y8XnGOSL0KOg/4iDuoONYPpYjU5dsdWKDNnnw0SXDopR9
+         S/rPJ3hokmoCB2evS9JrerCaJuUi+jLXolYA016U2BC0y9lN10ER4onGttsU6yrgxdBy
+         7Jbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762383749; x=1762988549;
+        d=1e100.net; s=20230601; t=1762383750; x=1762988550;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N6ObyT3Tt6gveKOeNa7NjmSIElr//qB7g+FJoPS22Qs=;
-        b=Ixtc8bKK8/rGjgya3+ijCriquUDzF1tNsLK1IZdhiAq+ulrSgJh4DGzC9DzGUMui0b
-         yZS7Zb64774Kib18MQ+1L+ZxKpKQ326lsfuh2fvPflydagH38jlGNqdV6Uo50px8FTCH
-         B2vLIVUCZaGyi7ZguzBgWev3YP2Dk5C0G+5bxkYxBUckKQfzXPgXmSsmp2uK9BRc9qs8
-         pqudiKkeBpWxKv9XHnHOhjx34kb18ljTUaZMqj3kmjZoAHgXOv55otwI6mx+at9YLIVZ
-         Ajfkgt0OFB0zEp2tz154SKx4Z0JV3QOhRKxHGX8uv7N/ft6PJuUlLc9KJTyhriXbfFMo
-         +WhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVISzOlEJa3i4DtBL8A6gK/qqwifdveInp4B/nYJhHtJz8d66mJnzq22f5f0SRkSloSjixohIhxiu+3AfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye56dzzV28EW9n1cBt/Kabje9wyjSGOY9LJ/NxGOZ0/YsrFqBm
-	5tq7++KCt/2iUzAzRflPquVgj9VN1ER+DnNRZO/OAJhfCwY9ghkUUOBL
-X-Gm-Gg: ASbGnctfYX1FAxmrqD/UTc3pumP7uBOJvhabDfmBhhRfShTk7T/9NY0L6ZMTDs7RqXR
-	FpqKLnRoT5uy7Rl7nvCNBeTwZFTrA5Ews93yzFvRCixEl/hQhtBdd3455Lcj12Y9cbMSDXXMfyG
-	thT4M5wPHefELIpcApAeMbW3eCOdAUGx4YPqxRnGBvzM1P3ZJTO4t4NYcqnGFENPRseq4tnrUfx
-	+sG59kRgYfTQrwizym/aiPsfo2YMvZoCize1hak1k1/jU7G/qQ0fVGL5JOqccDqE9OXMuGnIbFB
-	wRPhFlDrahRt3Ro3/UxDeO4Av8ym+iXov+z1ypcpCB9qfiHA7/8euSQBhJdwCY/OeqpmGciBwPJ
-	OYYDu2n4vrDgs4DfYVYQFelsD03gnfVgnM0iQy6XmyaaIl+SXgZVFUp6j2VkGd+/L4sUgKqetA7
-	2fbyDUEhPqp0bl6nDi0ndOz+4=
-X-Google-Smtp-Source: AGHT+IGQIBe/+YtHTkbz7bKrh6tH5nkd3eR2+Az8/eXaBw/mQbeZbYIkMzrirQWpuRr+NTG9Wz3U+w==
-X-Received: by 2002:a17:903:3ba4:b0:271:9b0e:54c7 with SMTP id d9443c01a7336-296509646ecmr14131025ad.11.1762383748599;
-        Wed, 05 Nov 2025 15:02:28 -0800 (PST)
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8tDmiGouP/lZqmqIQ4xLpqbP6meWUNvUiS6WQT0r7JQ=;
+        b=TPpe6UUHKkD9HAj3rEuyH8n7RvMJnAcwMf40jDbwTsCGTT4PtDQNoTN+JDeanhSk4R
+         N4SV+ED0o/Qsmj8/4O4N4h+eSDQbBHrCRIUnphtNkQe+syALLo2qEUpfmmUpOk2CTgHZ
+         cu68j/iZnpg1A1oM2cTPMuB777HHxGoa6mpyKEJx4PS+aGNIpe5sy1VMX1NYeBzuAfA5
+         UH3wJqEq0VCde/kysXssfsOzBCdKYkxM32d4JI6hVqxScxlLYu9cpyLwm3SfMed60Iq8
+         HceMwJkERMkT3uwKyEioJeOZKTbCgqipgM4kX5gOFwggOYXAVx8rmnziZsW50uaGoZye
+         EdCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhKU826/utthJh57cqeLgNiX5gvTVJMswdQePMlkf9iHyuZ8dLHa1j0D13gTTM85UUr+Jec1xv7snIpoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU5hXexw8ZCyJEK+8KRIbhsWA0iVeLuDvWpwK0lsuyVsn8qEoB
+	wxOmQrGyLfF2f70zZbdSlQ8VWdSKI2ajaFM3fnpPdWvCJWmRE/irAyu5
+X-Gm-Gg: ASbGncuwQ2ELix5/Yw09cUVkCzfVGDz5daDCH0KiD/beaal4MpCWGxtF//O0hoK222d
+	AQhOJIQL+qII8oMcWnONzjRkhX++n3K8V4LmNl5yFWEnMFJqcoFuM6lA9bspVdf0U14eQkMMGcA
+	PHnaTnL6AyEQxWFTPKskrwWeQbCY6JmnD8tCSAKi8tEmetjN0QzclKCRsgHHKGj7IrIsoZ6ZpYJ
+	GqAVVBX4su+obZBW/4Dv9kQnpRgb744GsOZHAYOrzAxxBBsfphwMtoydDvOWFicJ6HTpst/zoGw
+	3vbZQKUL3ptXJ6WvEaZ2ais4GAbpLJ/+8FfXWSgN0AGysrgleY2OxL7Mf5/PobGIt2C0ISzI78C
+	iTxeFUbZ6lOqEVogFA+Ar0Q/y5PzsWhVdP+G6+NwFIBsGbbDHeSmDBRT7PR2cseBYXfUw50fgkp
+	5Mlnr+nyZ6t+SMbtokNe1q79U=
+X-Google-Smtp-Source: AGHT+IE8H0NdUg/c/thzQbZRKZeZtzM2gt17e0QQN2RbXKr1KgVctPF1CYPo5o3JzV+1jhxViXCLvA==
+X-Received: by 2002:a17:902:d501:b0:295:34ba:7b0b with SMTP id d9443c01a7336-2962ae0fba9mr72522505ad.35.1762383749590;
+        Wed, 05 Nov 2025 15:02:29 -0800 (PST)
 Received: from mitchelllevy.localdomain ([131.107.147.147])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096839asm6325645ad.13.2025.11.05.15.02.27
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096839asm6325645ad.13.2025.11.05.15.02.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 15:02:27 -0800 (PST)
+        Wed, 05 Nov 2025 15:02:29 -0800 (PST)
 From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Wed, 05 Nov 2025 15:01:14 -0800
-Subject: [PATCH v4 2/9] rust: cpumask: Add getters for globally defined
- cpumasks
+Date: Wed, 05 Nov 2025 15:01:15 -0800
+Subject: [PATCH v4 3/9] rust: percpu: Add C bindings for per-CPU variable
+ API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-rust-percpu-v4-2-984b1470adcb@gmail.com>
+Message-Id: <20251105-rust-percpu-v4-3-984b1470adcb@gmail.com>
 References: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
 In-Reply-To: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -101,86 +101,76 @@ Cc: Tyler Hicks <code@tyhicks.com>, Allen Pais <apais@linux.microsoft.com>,
  linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  linux-mm@kvack.org, Mitchell Levy <levymitchell0@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762383744; l=3255;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762383744; l=1564;
  i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=YISdcADBQqzuvoNcCs3nt3kan2jGJvuSVytELmc4hYw=;
- b=2O8l3qrtYhENMJ4ZqlEU7sc/NrZB0x6OGnOnA5sdLydLEIj+Vo8YliGfFxguuE1tvcxcUt3d7
- 91hJBW1anFIDRnuwpi6vwLUehbr2kbnrL4UdQbknVNHrFetNwdFUNHM
+ bh=RzgX0CxF7lpE2xBLdNMOZqdleGvbOwroWvnQQx0XUzQ=;
+ b=BeCtd9F7suE7Dhq3+o6ebU7TlEj99UaBn9HqDmYOGvEIlw2BwbjQ9A9aTMEUtVsnUSdALbpNh
+ qiE95luFKqoDYzljVg+qh0guvKUgr5gg+ZhgEeKyQjxdMCVh5yTgo9e
 X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
  pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-Add getters for the global cpumasks documented in
-`include/linux/cpumask.h`, specifically:
-- cpu_possible_mask
-- cpu_online_mask
-- cpu_enabled_mask
-- cpu_present_mask
-- cpu_active_mask
+Add bindings necessary to implement a Rust per-CPU variable API,
+specifically per-CPU variable allocation and management of CPU
+preemption.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
 Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 ---
- rust/kernel/cpumask.rs | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ rust/helpers/helpers.c |  2 ++
+ rust/helpers/percpu.c  |  9 +++++++++
+ rust/helpers/preempt.c | 14 ++++++++++++++
+ 3 files changed, 25 insertions(+)
 
-diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-index b7401848f59e..a6a130092fcb 100644
---- a/rust/kernel/cpumask.rs
-+++ b/rust/kernel/cpumask.rs
-@@ -77,6 +77,52 @@ pub unsafe fn as_ref<'a>(ptr: *const bindings::cpumask) -> &'a Self {
-         unsafe { &*ptr.cast() }
-     }
- 
-+    /// Get a CPU mask representing possible CPUs; has bit `cpu` set iff cpu is populatable
-+    #[inline]
-+    pub fn possible_cpus() -> &'static Self {
-+        // SAFETY: `__cpu_possible_mask` is a valid global provided by the kernel that lives
-+        // forever.
-+        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_possible_mask) }
-+    }
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 7cf7fe95e41d..2fc8d26cfe66 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -31,9 +31,11 @@
+ #include "of.c"
+ #include "page.c"
+ #include "pci.c"
++#include "percpu.c"
+ #include "pid_namespace.c"
+ #include "platform.c"
+ #include "poll.c"
++#include "preempt.c"
+ #include "property.c"
+ #include "rbtree.c"
+ #include "rcu.c"
+diff --git a/rust/helpers/percpu.c b/rust/helpers/percpu.c
+new file mode 100644
+index 000000000000..a091389f730f
+--- /dev/null
++++ b/rust/helpers/percpu.c
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+    /// Get a CPU mask representing online CPUs; has bit `cpu` set iff cpu available to the
-+    /// scheduler
-+    #[inline]
-+    pub fn online_cpus() -> &'static Self {
-+        // SAFETY: `__cpu_online_mask` is a valid global provided by the kernel that lives forever.
-+        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_online_mask`
-+        // may change its value.
-+        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_online_mask) }
-+    }
++#include <linux/percpu.h>
 +
-+    /// Get a CPU mask representing enabled CPUs; has bit `cpu` set iff cpu can be brought online
-+    #[inline]
-+    pub fn enabled_cpus() -> &'static Self {
-+        // SAFETY: `__cpu_enabled_mask` is a valid global provided by the kernel that lives forever.
-+        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_enabled_mask`
-+        // may change its value.
-+        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_enabled_mask) }
-+    }
++void __percpu *rust_helper_alloc_percpu(size_t sz, size_t align)
++{
++	return __alloc_percpu(sz, align);
++}
 +
-+    /// Get a CPU mask representing present CPUs; has bit `cpu` set iff cpu is populated
-+    #[inline]
-+    pub fn present_cpus() -> &'static Self {
-+        // SAFETY: `__cpu_present_mask` is a valid global provided by the kernel that lives
-+        // forever. Since we wrap the returned pointer in an `Opaque`, it's ok that
-+        // `__cpu_present_mask` may change its value.
-+        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_present_mask) }
-+    }
+diff --git a/rust/helpers/preempt.c b/rust/helpers/preempt.c
+new file mode 100644
+index 000000000000..2c7529528ddd
+--- /dev/null
++++ b/rust/helpers/preempt.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+    /// Get a CPU mask representing active CPUs; has bit `cpu` set iff cpu is available to
-+    /// migration.
-+    #[inline]
-+    pub fn active_cpus() -> &'static Self {
-+        // SAFETY: `__cpu_active_mask` is a valid global provided by the kernel that lives forever.
-+        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_active_mask`
-+        // may change its value.
-+        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_active_mask) }
-+    }
++#include <linux/preempt.h>
 +
-     /// Obtain the raw `struct cpumask` pointer.
-     pub fn as_raw(&self) -> *mut bindings::cpumask {
-         let this: *const Self = self;
++void rust_helper_preempt_disable(void)
++{
++	preempt_disable();
++}
++
++void rust_helper_preempt_enable(void)
++{
++	preempt_enable();
++}
++
 
 -- 
 2.34.1
