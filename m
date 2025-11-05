@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-887057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73CFC372A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:45:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAF3C3721F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 522E06E08E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EF9F5078EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AB33358AA;
-	Wed,  5 Nov 2025 17:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2519338912;
+	Wed,  5 Nov 2025 17:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzQVUyXg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hA0RpS2s"
 Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E34133BBD7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776612D9481
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363809; cv=none; b=I/G9dR0Bl64imhI4qmoaQHc/XFJxnkCJQLo9y4y4ZUhFao8g1fgMIhKcaEe1v3jzqcJjaAq3sdsYBs7x6eWVnysDItu5clTj2UxoRDWFXT7wxzkPGmh7yhlMNRQSDpvBpYm0Thfja+Is79FCyNvA1JpJ1nRt2P/2VmHMixggAFg=
+	t=1762363822; cv=none; b=QU85WA83Vl1YlSMKLacnh7PzUB4RHirFE8drUQrxRUYQDc5cpdfFewYVwmgya/aXicEAHOVmiAaDxlTiMFjGiKqk85+9ABkfrruOCkygme3yLkgwSfUzEjJ2VSp19CkNb2TFxFbJLAkOktjVUivHptVEyMravRj14LEMx+UGc80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363809; c=relaxed/simple;
-	bh=Uu7dpBjXjSMpPZJYtKEgjOA6WR8IM4iTqwL54hJ8Cao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V/1bR+CkHmurRPhPbFKox8JHh6ieH9XItCsrTxXzJ+hAIgPiRY05REZgIweIjPp6xsbLSPh2IHSA6woBrnLKWXLn5zPyJ0JaVbyLL2vKmQ8xnKtYM4pjAES+qNMBx73EnawzcIa0CEdlGDwNI0ptVR8Sfc0IU7m1f3bx+msrqlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzQVUyXg; arc=none smtp.client-ip=209.85.210.54
+	s=arc-20240116; t=1762363822; c=relaxed/simple;
+	bh=Vw3oDB87MEUxRUWFvQMjoC2affq/wtOrOfd1yATVqF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kSJRRFueokUO76bW1B95JaSgGz5HzM4xni4T46/alnAP9eK26citGYE0jrEtInIUQMJyYldLE7VsUm/z91rslyuGNggs/46+OPTW3TZ42E4WLhK2WfAr2CI2mL+WmPZ6HPEqKZUTemtfmk6yKSehUhK8ndJo0w3dvsgDM+jVSME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hA0RpS2s; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7c2878bdf27so3927711a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:30:06 -0800 (PST)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7c284d4867eso1945965a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:30:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762363806; x=1762968606; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECvbQOCleXWV41glKff6TwUAo/ctHSkBw2CY6tJdeAU=;
-        b=jzQVUyXg4+cc7mSRhVbZ8wATr4zHNSyy72lXaDILEmPgw9oCo5/FYbECtTok490a9e
-         JGa3rdYPGArCM0kaHJ2Mt+S7hAJQxK+XWFiVWFGnWNeTRokNXWzvyoqjg1VLmy8uRYTv
-         rkvf+hJNYvzKNEwf+dlnkWmUaOBq8+r0J/BWdExNe7Q0MWRQemzw5jrTMjscEmlh7cde
-         RWk7JzJTtiR4J+sjQ+5SdkMC5UzyXrMzYkm3SmN+rv7ot5hGw1A+8aHOXjxR4wVay3Om
-         lyy/yROD1HpGcj/ZI8u7mGt0BVmJM3GxX0BpqBFiz3RGhof617IujniDrvyLNpDMXvmj
-         qwvQ==
+        d=gmail.com; s=20230601; t=1762363819; x=1762968619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G/i7MZkNHnwcGwYWKTXHoQSCF+TqXVB+QQ7fHjYAukA=;
+        b=hA0RpS2s3Y6gRNhwvn2lmC+jUO4VqBA+x2gOtqe3r3rOMy2D6Q/ETxCkd+fn683lhI
+         a/LpUwDSPBn2mNmHKwLaXT/XLCH4uYwGQO4Z4wz5rGCtm307Y0VStdSTfB+I48VFmCbI
+         Zi4psZXVDY5d3C4Xz4d5CIjpcPEvOAO1J41oDU5mVu2rWLukzu87FRc0MOxCmcYnPqtC
+         H/GGWx7X3mOhmPD2q0Tpy09E8oJCvOa7GurHBDG5ybafKGwW/flezz6Rq5WlRi7LHVJX
+         N0g4yuL3kIyGmfC37LZVbeO9sQBaQwBPFrqHm2UJmB9AgUiyKjxFUt+MDn8hmAPCawSk
+         YM9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762363806; x=1762968606;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ECvbQOCleXWV41glKff6TwUAo/ctHSkBw2CY6tJdeAU=;
-        b=RtQvAc1PwgwMeh6YtF7mY7cFUo2neTfQyQlrkkNng2gaFH/tQyuB11myROAqk3VnYM
-         M1gi2Tu4cq0F8iBES91SP9kuuQKZ5Ca+rPPDKd2+68WL+7liT/+RdYB/VGSBA/+cSpSn
-         3MQRTnCbtyAi7xqxdwsm35zcmmpDO6GXgUhAmPP04AzAYlXgex5s7ser9r+0m66qrVfc
-         4Za4BcvVrjcacH6TTIF0Z7NwOUBT6BH02Zqo4zdZBCU4Uw2Ky/v+xQXD4Dad+Em41N0i
-         NMXBtgg37ekInptFDfgXPcnaY1gBBFlEgpD4u7yQoOMxNbnShSBokq4a8GnmekiZMvio
-         jR5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQCm1lcgp+jf3KoVkj+QG+kmpEJqBYiBwTrLwYhXQt4NeBPB9CalNL0+/5xKwaWDGpo44y+5GdeLLq+Jk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqdI+3HU/nMi0YyiSJev5ZEGNbImIj45+aYjjgAIYBG9V2lIkp
-	9gNhlUUEC40OuYFJQc0E9d+n+aPVrFhj55WyZ75rt2nE9IFvgh23q1MBPgF+/poUOus=
-X-Gm-Gg: ASbGncuy8ayVRP9O0yQJODQF8NWASE40GF++JuQazOhJphEppz9kgGhs5c/M4TxwcCL
-	svKisBgZozCQ8JfhehHa6B2+aT7NNRV5T5LGDRAy/ghqgwyeKNygjF1GQRrMyV6ZW9uHwV+a/Fg
-	jNyQwLzVlilb3I8tGO0q5HmY1oXcVRCwpj7qWS/Zcv8V7V3DlfNA4GxDcbW5SCF3NChn5oEjXZo
-	cFuGtbN3jiMHCebk+mBe8WeE1ZHDQOyKs5cInDthx5k4XerNeHX+1dYFPtTDX7iYOHslwDoFlS2
-	dGjFwz/7AarUYWVY0/H90t6GI7vjbjMNTH2L/Tehil481NQcF/JVwCkBrvfOEIyD8hgLZ75TOnO
-	DzcUkhkjDfQ05ZEVb3wMc7rLtGtAeBUx0qxbRc+rRrp17sx9t+0rV6jblyni1FRy5JZop+NlkGU
-	X60kGB0qs8S7ayPPymxosgq110nVZ72NKV863YoDYDRKo9IXDodkQPcK9aN+5wCHOGuu8=
-X-Google-Smtp-Source: AGHT+IEEGoBFr8oSk1ZccH795h94yD/tdE3zaD5H9+9COL+gtAHu17GIo7aa9d7OyusPpetKtRbniQ==
-X-Received: by 2002:a05:6830:63cb:b0:7c6:a6fd:fcd6 with SMTP id 46e09a7af769-7c6d132f342mr2506695a34.11.1762363806080;
-        Wed, 05 Nov 2025 09:30:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762363819; x=1762968619;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G/i7MZkNHnwcGwYWKTXHoQSCF+TqXVB+QQ7fHjYAukA=;
+        b=c2UUjiDFO8VngJ9smg0DVXCpnplh7JXxcNmT8BE1Mjn2uhGsAikIXGCzuetmA25wIx
+         RcfrN4twRrENGiqLEMBpVBME38Ilo221TZ5iv73HC4Dor4IlXU3yF+hAOr30XhkKcWbH
+         0R/DARTkUygPOdLX/PDQt//kJJiuVf1r30X4maaUw+SW0Th4eUVY6kfu3VQzuLgaMvVN
+         dpWCvsGBZp5WEJJ10tU5EEav8KgpnsnJfLBm/KaUQi/JOfWKh1dX/hI4l4VwmpDxChe9
+         9tK/48w5QqB5N/FyGQPyru15u0kfo/SZ1cEJzSAdEUqG5kbhJNpPyrGKSd7sRVUNEJrZ
+         bIOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXERdgKNXH1P4GAKHHIR9+XwXO82blNG9VgsI+ZX7PgY4QWGSAxO6Zbi3+1S4A9oqCPXcXKF95zsfjygto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAGWqMQu7jjRjBVSDAOPsPZTrlGjkdPka2RaXn7jvfatLRzuM7
+	DCs3pZ6vlWfV6QHGOAeXCPG3bVfipyBycvh9Ej+h1AKHErhjW9YWyi6/HS8Vhf1tDyc=
+X-Gm-Gg: ASbGnctMlCjjawcwKd+lkGdWhl2IauaMBoLhgDDDnp8t/BOWitsSRcBEMbtptn2JMHn
+	cIwWAZt8KpicMj6CG0TAoUOVuNWIFKenO42wbD7qcxdnNbmDSAyA6oUAvdfJaVsC/EWIAgfUbHL
+	hQOJiYYpc9spEEyO+sF8vr4KnTXkKnMspJ9o/+FxxQn/IPv8bng78pSkcGUSoBvcGc//GGmep8J
+	DaB3alPfJ1UlDCAVQ/kOMPuYcDrYHWZfwx4rrIrS69WkhpdJ5rlII3avVUpQT7W2GQdEgbyWZBa
+	Cnny56WyhalOy9nk6XenE584l5oaqA5euZDo9oRxq6jeoset9jgZLIOsoWl309pFg3llznJkdq4
+	KrnKGwhfzmoi2Bdxo4po7pZexWXrL4jnSpOBG6SCWhXAoWcYfw2iFE1K7hKQ/V1ypO7uJYmlVV8
+	sIbfZbtMTM0gWd1Dl6jKPH8yQXmQPHcP1hyT62f36mZtyzn97NP+Ag0t+T
+X-Google-Smtp-Source: AGHT+IGbfNFoEK9x1jFcWstI6BiHgzpe4FTe/whRBvh9s/FjxTvOCYLIbaIAvuJbi6r52ipnPV3d7Q==
+X-Received: by 2002:a05:6830:620c:b0:7c6:8c48:924a with SMTP id 46e09a7af769-7c6d1498595mr2812045a34.25.1762363819369;
+        Wed, 05 Nov 2025 09:30:19 -0800 (PST)
 Received: from weg-ThinkPad-P16v-Gen-2.. ([177.73.136.69])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c6c25108b3sm2248313a34.30.2025.11.05.09.30.02
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c6c25108b3sm2248313a34.30.2025.11.05.09.30.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 09:30:05 -0800 (PST)
+        Wed, 05 Nov 2025 09:30:18 -0800 (PST)
 From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
 To: David Hildenbrand <david@redhat.com>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -79,10 +81,12 @@ Cc: Xu Xin <xu.xin16@zte.com.cn>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Subject: [PATCH v3 0/3] ksm: perform a range-walk to jump over holes in break_ksm
-Date: Wed,  5 Nov 2025 14:27:53 -0300
-Message-ID: <20251105172756.167009-1-pedrodemargomes@gmail.com>
+Subject: [PATCH v3 1/3] Revert "mm/ksm: convert break_ksm() from walk_page_range_vma() to folio_walk"
+Date: Wed,  5 Nov 2025 14:27:54 -0300
+Message-ID: <20251105172756.167009-2-pedrodemargomes@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251105172756.167009-1-pedrodemargomes@gmail.com>
+References: <20251105172756.167009-1-pedrodemargomes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,90 +95,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When unmerging an address range, unmerge_ksm_pages function walks every
-page address in the specified range to locate ksm pages. This becomes
-highly inefficient when scanning large virtual memory areas that contain
-mostly unmapped regions, causing the process to get blocked for several
-minutes.
+This reverts commit e317a8d8b4f600fc7ec9725e26417030ee594f52 and changes
+function break_ksm_pmd_entry() to use folios.
 
-This patch makes break_ksm, function called by unmerge_ksm_pages for
-every page in an address range, perform a range walk, allowing it to skip
-over entire unmapped holes in a VMA, avoiding unnecessary lookups.
-
-As pointed by David Hildenbrand in [1], unmerge_ksm_pages() is called
-from:
-
-* ksm_madvise() through madvise(MADV_UNMERGEABLE). There are not a lot
-of users of that function.
-
-* __ksm_del_vma() through ksm_del_vmas(). Effectively called when
-disabling KSM for a process either through the sysctl or from s390x gmap
-code when enabling storage keys for a VM.
-
-Consider the following test program which creates a 32 TiB mapping in
-the virtual address space but only populates a single page:
-
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/mman.h>
-
-/* 32 TiB */
-const size_t size = 32ul * 1024 * 1024 * 1024 * 1024;
-
-int main() {
-        char *area = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                          MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
-
-        if (area == MAP_FAILED) {
-                perror("mmap() failed\n");
-                return -1;
-        }
-
-        /* Populate a single page such that we get an anon_vma. */
-        *area = 0;
-
-        /* Enable KSM. */
-        madvise(area, size, MADV_MERGEABLE);
-        madvise(area, size, MADV_UNMERGEABLE);
-        return 0;
-}
-
-
-Without this patch, this program takes 9 minutes to finish, while with
-this patch it finishes in less then 5 seconds.
-
-[1] https://lore.kernel.org/linux-mm/e0886fdf-d198-4130-bd9a-be276c59da37@redhat.com/
-
-Changelog:
-
-v3:
-  - Remove leftover code from previous version
-  - Call is_ksm_zero_pte() only if the folio is present
-  - Rename variable ret to found in first patch
-
-v2: https://lore.kernel.org/all/20251031174625.127417-1-pedrodemargomes@gmail.com/
-  - Use folios in break_ksm_pmd_entry
-  - Pass address pointer to walk_page_range_vma private parameter
-    instead of struct break_ksm_arg
-  - Do not unnecessarily initialize start_ptep
-  - Order local variable declarations from longest to shortest line
-  - Improve patch 2 description (do not reference the cover letter)
-  - Quite a few styling fixes and improvements as suggested by reviewer
-
-v1: https://lore.kernel.org/all/20251028131945.26445-1-pedrodemargomes@gmail.com/
+This reverts break_ksm() to use walk_page_range_vma() instead of
+folio_walk_start().
+Change break_ksm_pmd_entry() to call is_ksm_zero_pte() only if we know
+the folio is present, and also rename variable ret to found.
+This will make it easier to later modify break_ksm() to perform a proper
+range walk.
 
 Suggested-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ mm/ksm.c | 64 ++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 48 insertions(+), 16 deletions(-)
 
-Pedro Demarchi Gomes (3):
-  Revert "mm/ksm: convert break_ksm() from walk_page_range_vma() to
-    folio_walk"
-  ksm: perform a range-walk in break_ksm
-  ksm: replace function unmerge_ksm_pages with break_ksm
-
- mm/ksm.c | 137 +++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 82 insertions(+), 55 deletions(-)
-
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 4f672f4f2140..de10ebcf3509 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -607,6 +607,48 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
+ 	return atomic_read(&mm->mm_users) == 0;
+ }
+ 
++static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
++			struct mm_walk *walk)
++{
++	struct folio *folio = NULL;
++	spinlock_t *ptl;
++	pte_t *pte;
++	pte_t ptent;
++	int found;
++
++	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
++	if (!pte)
++		return 0;
++	ptent = ptep_get(pte);
++	if (pte_present(ptent)) {
++		folio = vm_normal_folio(walk->vma, addr, ptent);
++	} else if (!pte_none(ptent)) {
++		swp_entry_t entry = pte_to_swp_entry(ptent);
++
++		/*
++		 * As KSM pages remain KSM pages until freed, no need to wait
++		 * here for migration to end.
++		 */
++		if (is_migration_entry(entry))
++			folio = pfn_swap_entry_folio(entry);
++	}
++	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
++	found = (folio && folio_test_ksm(folio)) || (pte_present(ptent)
++		&& is_ksm_zero_pte(ptent));
++	pte_unmap_unlock(pte, ptl);
++	return found;
++}
++
++static const struct mm_walk_ops break_ksm_ops = {
++	.pmd_entry = break_ksm_pmd_entry,
++	.walk_lock = PGWALK_RDLOCK,
++};
++
++static const struct mm_walk_ops break_ksm_lock_vma_ops = {
++	.pmd_entry = break_ksm_pmd_entry,
++	.walk_lock = PGWALK_WRLOCK,
++};
++
+ /*
+  * We use break_ksm to break COW on a ksm page by triggering unsharing,
+  * such that the ksm page will get replaced by an exclusive anonymous page.
+@@ -623,26 +665,16 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
+ static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_vma)
+ {
+ 	vm_fault_t ret = 0;
+-
+-	if (lock_vma)
+-		vma_start_write(vma);
++	const struct mm_walk_ops *ops = lock_vma ?
++				&break_ksm_lock_vma_ops : &break_ksm_ops;
+ 
+ 	do {
+-		bool ksm_page = false;
+-		struct folio_walk fw;
+-		struct folio *folio;
++		int ksm_page;
+ 
+ 		cond_resched();
+-		folio = folio_walk_start(&fw, vma, addr,
+-					 FW_MIGRATION | FW_ZEROPAGE);
+-		if (folio) {
+-			/* Small folio implies FW_LEVEL_PTE. */
+-			if (!folio_test_large(folio) &&
+-			    (folio_test_ksm(folio) || is_ksm_zero_pte(fw.pte)))
+-				ksm_page = true;
+-			folio_walk_end(&fw, vma);
+-		}
+-
++		ksm_page = walk_page_range_vma(vma, addr, addr + 1, ops, NULL);
++		if (WARN_ON_ONCE(ksm_page < 0))
++			return ksm_page;
+ 		if (!ksm_page)
+ 			return 0;
+ 		ret = handle_mm_fault(vma, addr,
 -- 
 2.43.0
 
