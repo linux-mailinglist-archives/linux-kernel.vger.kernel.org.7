@@ -1,116 +1,178 @@
-Return-Path: <linux-kernel+bounces-887449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F315C38467
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D70AC38478
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0913B0250
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC7B3B5A1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864B22E8B8A;
-	Wed,  5 Nov 2025 22:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523322F0690;
+	Wed,  5 Nov 2025 22:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S4sjxIiI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aL0FbEEv"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A137221E097;
-	Wed,  5 Nov 2025 22:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA2A2E7F25
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383458; cv=none; b=L8AODyAXzH21rG9NazM1lgPx3kx+sVAHsjGo8tjdvL4YKaPUbcKBFfRe1Zv8TuYiW7av8C+KQGNSer4fFteJEJSQCO1GXxqus3cHFiTO6ygxO/2SyDJ/1E/421EG8XS1WQFcIP9/xAOs2/eFVgls9baB3TX8f+XUmTc6e1pTmSU=
+	t=1762383556; cv=none; b=BMAhSi+QlDf1ss9spaQpI5BrTzNdITfWE4C4qB2CB8S3jwSUv/AdB6/d2YuVzkA4JEYKLcS1HJ97WACheoKGB2A4GanpqqsZJHbNiJdWfXB8xBkNjLAbKZgQyXU2eFLXk9+D1DzfIkDey56LkBHM7eQARf0BNu+KtMYWAA2Q/tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762383458; c=relaxed/simple;
-	bh=x51yxZlocmKAau7KzNbXEWRC72v3R6X/CvktHFU2SgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hGdp+rEidYcHhAJCYhBcKi5YyD1QwPvzbdwxzxBSZHnCOzZZKxH+HXQC3d+FFtcFYrQb+p9qMWLIHz61rAdDwL92CYOnvft24q8lryA2iQnEEhIG+ZTmBAzbJpFujIIxtiQkoVGV3zRli7/+A5pBS0F78TVUgXrldMKufpNr+mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=S4sjxIiI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762383454;
-	bh=631tuPGIl23yj2vuwaJdVnoz3vCH9pK1JA0ISYyDuxs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=S4sjxIiIIxN12oxOBNGNsiQcnL+z3P/KCbakEH2IDBze724Kk4tTKGs4E3kO9WnZ6
-	 gBUPtluqyiVHluhsijTVDW6xr+HrGlqWq9smCQTPvam28VDdZOLnDraQkSCQJTDnW5
-	 QNJyFnjdYPBvkZkYdJPzR1xyrtjwh8POYd1CfiBEcbewoq7Wa+RpV8YiS34K6HQ66X
-	 OAW8dU6aaagKfmNc0MAFbDhAvl3Yje+G5M3YXpHwURzh2ytqr66AvEtHY3y7z2rfGn
-	 p1y96w/D1bl92OiocL3RuwWPzsZWJN9HW4frxxOc3uFE3xNOUe72Xcfv1cLiXiEkQ1
-	 A2K49FO/zbIXg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d211V3M0hz4w1h;
-	Thu, 06 Nov 2025 09:57:34 +1100 (AEDT)
-Date: Thu, 6 Nov 2025 09:57:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
- Yongpeng Yang <yangyongpeng@xiaomi.com>
-Subject: linux-next: build failure after merge of the ntfs3 tree
-Message-ID: <20251106095733.600e04ac@canb.auug.org.au>
+	s=arc-20240116; t=1762383556; c=relaxed/simple;
+	bh=7o4gklFKgw28N/dVqpBVUUA3tE6+AIDPwGnxJE5MArU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOLHzrNqO35fvqipHUzIZt6FrJUPJXxxypvol0XP9+sIF7x5C2o28W/MH82r0CJy7e/5MTKsOPCnxQjhN24A7l5DhhRmdAAQTAtry+zQta/rZqUn6ojKJc0hmVnIAYob+Wkc2Tl5brbBZ0HzQS70wj5QEJMK46TZ6bexW2u0GII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aL0FbEEv; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29633fdb2bcso3351205ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762383553; x=1762988353; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HQiotgLAs4MrXnB3VRmkq1wlWPqo2nwCq+tDH85GcKw=;
+        b=aL0FbEEvg4WU4iPT2FxSlQVbTV/pHIgWZnParEY8dWfG5HkCYkp6TOZHKJqHcgfGj+
+         X7mwRQjCM7GHSUq2VKaknM5sUGNMZ1DhLi7KC/oNf3QfvVWu+ieFpNxAuVd/e2dlNg1s
+         Gw+XhxRMSIYSdzHkFRbx3DLqfrvPagTpK+VEyNsPYsK92P58rJ5XbZAW5v+J0ig1Kfho
+         xzO6YAs8RbPZP9IDDpxtnm0O27i/3oGvtE8b4L1cC7vio9ut2x2CZ8YfcpCblez/CR22
+         K7lf0zOSf+j+lTsNLdy5Cd4djupvnlg7a+bjVe7fwBaV5laD3AuguXPbvuwwCVF1ut0A
+         x2Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762383553; x=1762988353;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQiotgLAs4MrXnB3VRmkq1wlWPqo2nwCq+tDH85GcKw=;
+        b=qMkh20yWtfMAicaSP/I9PwI6v/7yT9yvEzWQPxNQSdO0TLYdLmKE+ObhDVyTd07EEJ
+         +zjqdR7uCY/OYv2kYYWkQHqHDz7BS9/R8k4o1+l61K+9VBfnrZD+ytLcpZqRUC5dED7n
+         gzbMAObnqBOD+nhg9ELfe0r13K0rG5txH1BYuxa+XoT5hbe1OW4Rvh6KNL09N0UCKf0+
+         7XmuUeekcCapc2IdCCPh5nMDCiAGpAenEhzBK5ZkJjMWlBRPtfRL4dupOzEGmbpSUP9T
+         dxtzO4qjXn1FD/msHE92+z7nySS+Q9EuaorVAaxZZl2rDvzGHqT07HiyMUq48aq5S5S4
+         QjsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsEAC8ihgNQnMk3EoejVEQO8km34WAC+RXsbg5zp92rVeQMw2FIuemC82H0ir2eJSKogB8w50fJtyMsmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIejmkA2JJJHUr7b/djgEtPsZ1MBrq9XvwgR+ZzNrZ8Zl4cl/f
+	+uxOh7GKdVGfPUPGj/s+JM+/FCd4SP5lxFVuASXYsVZdxAwD0zGHR0jE
+X-Gm-Gg: ASbGnct4+h26jisRaqtFxIhSok+S9YDUE50vcNNkWppxxbfFiaB+GplX6dyneEn9Wv0
+	J9D25zYXlych3D2xl/PtKiPjkYRR2alx9rbgbXGxDWndfWGeleLXMbggqPzOWk/c7c61eIZCT3p
+	JG3iiERJTN0ZcEdzVp3gZSBlr81Yd6VeX2C89zlIlTEXDptL0iY9GhzeSNQS+QqP6XyuI2WoUhP
+	jdVh93RZQHOFGK9D6UOJuZMzh+l4+FJY6REcUc4J7/mJSxOKSPNZkZAUBGivkKfBYANgOxGt8j/
+	wqBRPr3QciZpRDR/ktAhJXGLqEXgWhakWM6+9iV+w4XtFyuYX2DPfAY8YZrkV6YeSVtkZAd3Fm5
+	/aGlfaJEMztGxj0qSp30i99RuIHVFEJHIlgSkHaZen0DMjWwd/XJHjEUSHBImn4asaEHJuDzS58
+	RRZC3GLkEVm2sL3OvYyMG2iAcSdHmapQm+J3/IiwiMSQ==
+X-Google-Smtp-Source: AGHT+IFTIY5OSw2SJzl+Lc+/ugAeApcqWxgLSu0PU/TlO81MTYbE7Gh60ilrKYJ2KHuXdZUzvJKI9Q==
+X-Received: by 2002:a17:903:1a8f:b0:295:b7a3:30e6 with SMTP id d9443c01a7336-2962ad1a9c0mr66312205ad.18.1762383553239;
+        Wed, 05 Nov 2025 14:59:13 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:35dd:7def:e1d1:adfe])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c74264sm6056065ad.68.2025.11.05.14.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 14:59:12 -0800 (PST)
+Date: Wed, 5 Nov 2025 14:59:09 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jonathan Denose <jdenose@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Input: Create input notifier chain in input.c
+Message-ID: <h6nfc5amtqsfbka5n36i4hldcpomyped66xbvtaes3y6p3dctv@3j5iiyky6o44>
+References: <20251030-lid-switch-notifier-v1-0-c58dc9b1439d@google.com>
+ <20251030-lid-switch-notifier-v1-1-c58dc9b1439d@google.com>
+ <a4zd7uzo3aigyrhturbpgtcsm2slmtqefivky2bfhqiupcc5aj@iorbkwz6ief4>
+ <CAMCVhVP+LW27iLXttyFegRj_HMHheYrZtj4uuERLN0uqUjkR6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Pc0anj90vUvdQXam3kjG947";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMCVhVP+LW27iLXttyFegRj_HMHheYrZtj4uuERLN0uqUjkR6Q@mail.gmail.com>
 
---Sig_/Pc0anj90vUvdQXam3kjG947
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 05, 2025 at 04:40:29PM -0600, Jonathan Denose wrote:
+> Hi Dmitry,
+> 
+> Thanks for your feedback.
+> 
+> On Wed, Nov 5, 2025 at 3:55 PM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >
+> > Hi Jonathan,
+> >
+> > On Thu, Oct 30, 2025 at 02:10:40PM +0000, Jonathan Denose wrote:
+> > > To expose input events to other kernel modules, add a blocking notifier
+> > > chain. Publish LID_SWITCH_OPEN/LID_SWITCH_CLOSE events through this
+> > > notifier chain when input_handle_event detects events signaling the lid
+> > > switch has opened or closed.
+> > >
+> > > Additionally, export a function which allows other kernel modules to
+> > > register notifier_block structs against this notifier chain.
+> > >
+> > > Signed-off-by: Jonathan Denose <jdenose@google.com>
+> > > ---
+> > >  drivers/input/input.c | 13 +++++++++++++
+> > >  include/linux/input.h |  7 +++++++
+> > >  2 files changed, 20 insertions(+)
+> > >
+> > > diff --git a/drivers/input/input.c b/drivers/input/input.c
+> > > index a500e1e276c211d1146dbfea421a3402084007f8..b342b1ff138ccc58d4623edcf1152bd85d7054bf 100644
+> > > --- a/drivers/input/input.c
+> > > +++ b/drivers/input/input.c
+> > > @@ -26,6 +26,7 @@
+> > >  #include <linux/kstrtox.h>
+> > >  #include <linux/mutex.h>
+> > >  #include <linux/rcupdate.h>
+> > > +#include <linux/notifier.h>
+> > >  #include "input-compat.h"
+> > >  #include "input-core-private.h"
+> > >  #include "input-poller.h"
+> > > @@ -62,6 +63,8 @@ static const unsigned int input_max_code[EV_CNT] = {
+> > >       [EV_FF] = FF_MAX,
+> > >  };
+> > >
+> > > +static struct blocking_notifier_head input_notifier_head;
+> > > +
+> > >  static inline int is_event_supported(unsigned int code,
+> > >                                    unsigned long *bm, unsigned int max)
+> > >  {
+> > > @@ -367,10 +370,20 @@ void input_handle_event(struct input_dev *dev,
+> > >               if (type != EV_SYN)
+> > >                       add_input_randomness(type, code, value);
+> > >
+> > > +             if (type == EV_SW && code == SW_LID && !value)
+> > > +                     blocking_notifier_call_chain(&input_notifier_head, value ?
+> > > +                             LID_SWITCH_CLOSE : LID_SWITCH_OPEN, dev);
+> >
+> > I would prefer not having this directly in the input core but rather
+> > have a lid handler that can then use notifier chain to forward the
+> > events further.
+> 
+> Ok, that makes sense to me. In that case, do you have a recommendation
+> for where the lid handler should go?
+> 
+> It looks like drivers/acpi/button.c initializes and handles the lid switch, so
+> would it make sense for it to go there?
 
-Hi all,
+drivers/acpi/button.c is not the only source of SW_LID events (we also
+have cros-ec-keyb.c and others), so I'd recommend putting it into
+drivers/input, maybe as lid-notifier.c
 
-After merging the ntfs3 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> 
+> > Also, here you are running in atomic context, so you need atomic
+> > notifier, not blocking (or you need to involve a workqueue).
+> 
+> I'll use an atomic notifier in the next version.
 
-fs/ntfs3/super.c: In function 'ntfs_init_from_boot':
-fs/ntfs3/super.c:951:9: error: ignoring return value of 'sb_min_blocksize' =
-declared with attribute 'warn_unused_result' [-Werror=3Dunused-result]
-  951 |         sb_min_blocksize(sb, PAGE_SIZE);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+Another option would be to schedule work and then use blocking notifier.
 
-Caused by commit
+Thanks.
 
-  c1b61f715e4d ("ntfs: set dummy blocksize to read boot_block when mounting=
-")
-
-Exposed by commit
-
-  8637fa89e678 ("block: add __must_check attribute to sb_min_blocksize()")
-
-from the vfs-brauner-fixes tree.
-
-I have reverted that commit from the ntfs3 tree for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Pc0anj90vUvdQXam3kjG947
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkL1l0ACgkQAVBC80lX
-0GzeYggAgW5fhXrThmb28sNH0O/xoqyeM0/WCAgLESn3wzEfNenpcI1G/JCBu8rv
-BBluxNfk1WLfB2SN5KCk4wY4SP+L44bGO4UokhZvQ9raOtsjBLhRscnxW9Iy05Wp
-kSGFGexADQeJsLLN3Lmcua3Drgdl7Wcp3Znd5oxVE8VD+khMkPF+PVzOjxahi0vQ
-A2UpbO2HA4TymzuxFGwSwN6kHmYziZ11of4Fex07JV044jK8lNtEEanNXIxqx5xK
-QDHWlRhcNnGUEDCCxVXvuYyErN0/owKh4155ah9zI5/CHuQ8C9+7yG9AVjZk3GQK
-kPsVUuxjGSA24ZWCyPGGikn3uNqHcQ==
-=iA1O
------END PGP SIGNATURE-----
-
---Sig_/Pc0anj90vUvdQXam3kjG947--
+-- 
+Dmitry
 
