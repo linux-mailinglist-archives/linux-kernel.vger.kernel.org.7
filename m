@@ -1,164 +1,158 @@
-Return-Path: <linux-kernel+bounces-885844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDF5C3406E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:02:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BC0C34080
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:06:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCD814E29E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E5F3B801F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5290A2BDC2B;
-	Wed,  5 Nov 2025 06:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD112BEC41;
+	Wed,  5 Nov 2025 06:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="ERQZDNRN"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="vkuw5WQJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SRjH57sT"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EFE34D383
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 06:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF81A34D383;
+	Wed,  5 Nov 2025 06:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762322533; cv=none; b=AuXpoW5kvvFTECc7NBb62PDRuwjMGvy9MPakfHCbOe+u4U3WHAtZg5IKtwVvjkSj+ZpWtzTQSfHtgOQ8omFZs6EZcb74Bp0PioRkO9e+SX8ifdWP8T547W3b/5oERbl8icJGc2/0+83MJNABRSXh1jdC4O9vlErkoVvHRjNYIBI=
+	t=1762322801; cv=none; b=M2lSVASgNQRBXlBzbVcL7fXL6YHtA/nFUfRXUt6j/WOsbPkvK70uxT30sUBtZ+iEJya7lTe+owXxgK91pmmouQiwhcW0k2Vjy7MpokRR2HZfvA48tkwHRkk4K7ySVWaayHUv7oCjg3egnZhV7VVQbSCbVlhEmjtDOy1H3lYq9+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762322533; c=relaxed/simple;
-	bh=rB26i8gg+y3xFbXaOX+BukR99gcLLiKA6P6pz/n0flQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MeoI53fJ5htCDhZeUWjFDRFwoY5QBMn2fBU9JbyhPJdyTT5dHwX4PgZP49rj5vFd8wOKygj8Am77MfMw27op2qbeArisK/GrfvRMvjfn1MfTeWZVEzu6L0/1YOZibzY/qLwRm1JmIbfzB/E5+2Urxrl19pa5KYsGMLcvKYPa9L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=ERQZDNRN; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso1217857466b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 22:02:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762322530; x=1762927330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ko+h2HHqIfyVkiIdgqbGuzIvxFEpCvepvxTD0kgHwio=;
-        b=ERQZDNRN2PWRX1/EMYpLuryhsJePx8dLLR6HMR0G3StPlHyHMNU7tcKcLOyfEbhW+h
-         inS0O8sMbszfsihBBXG23K3YUSpzE/cpyukL9MgARfVI23ILr3fgyUb9m+9wjPyfUjpr
-         wESlDLbSGtW3SV79L89Zts97LY+pJ0xTfv2xbo0DT8rZk8DWo1KVR7RPR4Ar/1/E6Rp2
-         3xfyFvxW6HODP/jEsVW/+vidb6+BhJvkqnjAmx0YQ90goj94gvaZQ0ewRGMb2yEVMP8w
-         FQfUny5NtEVDkQQP4rfVLYLsnebR6QjNwv0PMkY6ELdHjyGt558Ke61gGTmqBUQEScTb
-         yTwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762322530; x=1762927330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ko+h2HHqIfyVkiIdgqbGuzIvxFEpCvepvxTD0kgHwio=;
-        b=lr5bVKKRf99NaLQW1/mzPkoHV+DiXo7Z3p9V7pMHsJKbY6Pr8mnMJDAAoRUNkm7IJF
-         qyt9rwZkrXLCTqXP4M5l37HWr1OSui/j4/xZZXImEDthS1Vn1jyEARlQUGbmTyERZfXt
-         i6BYG6vTjPsPl86w5qN2zeU6tFF/vvVvv49iEYiDYgjsm1Rbq+9yB1DnDZTyrL3IPZ6i
-         4FvFy3EKx+rPkJ3oVwOkzvRpzkMoxyAb0tcCQQ/hAkRES59HAeKmcA3Qh25SCdaMUPH/
-         XUbqrmKOQyJ4v45tI5JQAvtPthLX36viI5C4UpwaS7nbOOcNP2glS4ZNHDyAMVydnn5S
-         x7Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWW/2DOD4MDQx1hwYnWHwAK+9PnJvjnAYxPdjbDFPZMJakFEj4Ha+ste3V/qDJ3Xa5QsutWaxCmGc83XuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBM6p/QV1PSacUB16OOvA7PLGz4wPo2RScvFBeUns3Lz/28V+8
-	bk8DTfUiHezUtUaM8NVv/0+0BQmK0+CeIb6i5uvT86eHW2B3lMF0UK8lets/6BWHptCK2RC8VzU
-	26rV2pfJN7I6xRl7vVhZ38SWhFvsWCxZLmiEu+6pGzw==
-X-Gm-Gg: ASbGncvLcyaHC+oL3WyCCpwoTGxx80A+ivDyjffxZsK8kj8qCsCN99h5Cy0e80np8gS
-	AcRgwmkokox1dNmkO4bryF752OO6x4FEyzUGiqT4djCspKIubTA4iFt1nR3c71w4giRFc/v2kUj
-	b3ZIeUFteP9IIoU8ujgx3jHIyOg+ki1m4qXsIBdypdBMXse6kh/7Ye8L5IpuesSLE0YulpoHGAT
-	QJ+KocooWbf3qSHN83JNhU297/nmanC1qoBBV+aQ+WUH75RxLTCMeHe0EI=
-X-Google-Smtp-Source: AGHT+IGhzBDN0J2xo0zgTrF8hoLMoPjH/0yoSaTiCKabdffwkstVhE2JzObLLjxmM0V2ZK+kJ0pjRcykFQushFkcK04=
-X-Received: by 2002:a17:907:94d2:b0:b71:ee24:8a3d with SMTP id
- a640c23a62f3a-b7265154e9bmr164396666b.12.1762322529791; Tue, 04 Nov 2025
- 22:02:09 -0800 (PST)
+	s=arc-20240116; t=1762322801; c=relaxed/simple;
+	bh=qAsXPQ8tPOYOrXJQ+JhV+X3Go8QN3AZCEU3AG+kB7uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2X7vjrkdvvGzogfmbtTO5s2s4KvFjchMidMfD5zEIMQQ/PQ4B+bxb6ejH+iVwKybONTU6tLVijST6q1WRucERWhqbUHyX3DrQoETcqt66f/pcBpTbg2/+ZEgwNi2XFNt4EyewH+aC0lmPAHAz6JdEixzkufMMJQsXuFrvUFEHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=vkuw5WQJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SRjH57sT; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 740071D0016A;
+	Wed,  5 Nov 2025 01:06:38 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 05 Nov 2025 01:06:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1762322798; x=1762409198; bh=Uo/zdGm8+c
+	RvE/8H7Cf5eMs2BH9++xthPjBsEvZkuvo=; b=vkuw5WQJRvKETLhyZwKaP++/LU
+	Gl7hHaqY3hT6HyDxWVB/gl0Cwyu0ImpDss3BdYdS43dZQ3KVzrk3D9BAE1Fbh6yF
+	R6M1ilClvIj+bl3nChk1GFYcIAqZNltJjwhhd6FABbHKeqCwqmI7AGDzW5YJ0Eeu
+	hiDbY3s10kmioQSzYJz3/4FmFVDRD9AKmCRz4VpohdIPsC8vX17IMgIaEA5eJFml
+	+9EtQ5tGxT2nSKOutl/1nYuDdz4g12LRmwNofk7cnYHOLrndbX/SO0ZA7uiHGaV1
+	2CoLFrg0XbcwJ3G92tFlBKoNQLMlB04TPr6iZYSG0a9Ig98ULbCDzWDXdeGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762322798; x=1762409198; bh=Uo/zdGm8+cRvE/8H7Cf5eMs2BH9++xthPjB
+	sEvZkuvo=; b=SRjH57sTvxV3NgG67XAJ2R4CiCqAV0fnkRk4NRbpk6pz+3wekfG
+	PXV9O/3hfgigUwgZU1OKi9niFqIByx8ZwV2gHqueVuOfO6FHpSHBUtPtCdt//QK9
+	cGRTSglt3V3chAx9n8A3i1yrKzYhbejiL9TPe/iaEpDqZmwaIX5/Aw8YJz4B3jxi
+	xAUCCMMw8sYsxwWxIncP3q4uc+e19P6c97khtExDPfJ6+VA3OvfkJ1SXnUpt2RFC
+	haq5Yyo9hC4cV3EOWpY3CUWdFCsWQb4ETUYF2dKxqhBHzC90l+gma2oHoy2l5bX0
+	BOAXQAf3OXi+8IJGOQJjVXq7PwOsl3chbkg==
+X-ME-Sender: <xms:bekKaQmYoPboJ4lrQ1tF5j_GI2PaJBSFaXuYIz2SYB1uFA6cXhzR7w>
+    <xme:bekKaX-jQ2zACrZXqcOcSN2sV15jbKce5UXRAe2eYhMXpkwdTpXKaEcsNF3ijKLDM
+    iERTY9JKyBHu2RND25N6Xh8E1r6bePbkSumixhsSMdl5e2emXhB8nI>
+X-ME-Received: <xmr:bekKaeLEXYIoDiEnjDLAdbwNIVT3PBWy4JVDOo4aQQOrtJ4aoStQcL3R1ogO13DgYivGb985DCtiDTFEgVkZUNqxP6yGiijmrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefudegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheprfgvthgvrhcu
+    jfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvghtqe
+    enucggtffrrghtthgvrhhnpeekvdekgeehfeejgfdvudffhfevheejffevgfeigfekhfdu
+    ieefudfgtedugfetgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvthdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegumhhithhrhi
+    drthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhguvghnohhsvges
+    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptgho
+    rhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoheprhihuggsvghrghessghithhmrghthh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:bekKacheko_TuNKEXY8n0vOd-B12WyVlM7YtgZR_ObLDQCZiYXaDZA>
+    <xmx:bekKaa8syu_Tcf6jB7-yrGWt6k2QsVy8q34WNgVNc8nej_JM8RT_sA>
+    <xmx:bekKaRPg-xUvLTdAtriSWy3WeXi8-KlbCJM4I7aoccYLZqP7kIGHWw>
+    <xmx:bekKaeCE_Utfzz-ZMMq7UoHIrqT3fPsqlDNOpM5hdefD87jm4MjTYQ>
+    <xmx:bukKaf44TMl8lVL2fblallwNYaCNrMvQnVCSWuZ8GRd48n2-slFIN2F0>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 01:06:33 -0500 (EST)
+Date: Wed, 5 Nov 2025 16:03:33 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Angela Czubak <aczubak@google.com>,
+	Sean O'Brien <seobrien@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2] Documentation: input: expand
+ INPUT_PROP_HAPTIC_TOUCHPAD to all pressure pads
+Message-ID: <20251105060333.GA2615904@quokka>
+References: <20251030011735.GA969565@quokka>
+ <20251031041245.GA1316325@quokka>
+ <ueksimssfw7eqxa5mfmxruj2ghtuncznhbgdxvoorjf6jhjfhk@hsuapbn3kie3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104031908.77313-1-leon.huangfu@shopee.com> <aQnFn6vPQ5D6STGw@tiehlicka>
-In-Reply-To: <aQnFn6vPQ5D6STGw@tiehlicka>
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-Date: Wed, 5 Nov 2025 14:01:33 +0800
-X-Gm-Features: AWmQ_bkS8mFduVj_GZzMUe3ULkR8btNSr45nec1ttI4iNP0pSA8_ELWgHC8BzUM
-Message-ID: <CAPV86rrt0YT-npNSBJ_eHvAYdr_j1qkN7H+J4QLN8zsfi5TJ4w@mail.gmail.com>
-Subject: Re: [PATCH mm-new] mm/memcontrol: Introduce sysctl vm.memcg_stats_flush_threshold
-To: Michal Hocko <mhocko@suse.com>
-Cc: linux-mm@kvack.org, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com, 
-	mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net, 
-	lance.yang@linux.dev, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ueksimssfw7eqxa5mfmxruj2ghtuncznhbgdxvoorjf6jhjfhk@hsuapbn3kie3>
 
-On Tue, Nov 4, 2025 at 5:21=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrote=
-:
->
-> On Tue 04-11-25 11:19:08, Leon Huang Fu wrote:
-> > The current implementation uses a flush threshold calculated as
-> > MEMCG_CHARGE_BATCH * num_online_cpus() for determining when to
-> > aggregate per-CPU memory cgroup statistics. On systems with high core
-> > counts, this threshold can become very large (e.g., 64 * 256 =3D 16,384
-> > on a 256-core system), leading to stale statistics when userspace reads
-> > memory.stat files.
-> >
-> > This is particularly problematic for monitoring and management tools
-> > that rely on reasonably fresh statistics, as they may observe data that
-> > is thousands of updates out of date.
-> >
-> > Introduce a new sysctl, vm.memcg_stats_flush_threshold, that allows
-> > administrators to override the flush threshold specifically for
-> > userspace reads of memory.stat. When set to 0 (default), the behavior
-> > remains unchanged, using the automatic calculation. When set to a
-> > non-zero value, userspace reads will use the custom threshold for more
-> > frequent flushing.
->
-> How are admins supposed to know how to tune this? Wouldn't it make more
-> sense to allow explicit flushing on write to the file? That would allow
-> admins to implement their preferred accuracy tuning by writing to the fil=
-e
-> when the precision is required.
+On Tue, Nov 04, 2025 at 09:09:09PM -0800, Dmitry Torokhov wrote:
+> Hi Peter,
+> 
+> On Fri, Oct 31, 2025 at 02:12:45PM +1000, Peter Hutterer wrote:
+> > Definition: "pressure pad" used here as all touchpads that use physical
+> > pressure to convert to click without physical hinges. Also called haptic
+> > touchpads in general parlance, Synaptics calls them ForcePads.
+> > 
+> > Most (all?) pressure pads are currently advertised as
+> > INPUT_PROP_BUTTONPAD. The suggestion to identify them as pressure pads
+> > by defining the resolution on ABS_MT_PRESSURE has been in the docs since
+> > commit 20ccc8dd38a3 ("Documentation: input: define
+> > ABS_PRESSURE/ABS_MT_PRESSURE resolution as grams") but few devices
+> > provide this information.
+> > 
+> > In userspace it's thus impossible to determine whether a device is a
+> > true pressure pad (pressure equals pressure) or a normal clickpad with
+> > (pressure equals finger size).
+> > 
+> > Commit 7075ae4ac9db ("Input: add INPUT_PROP_HAPTIC_TOUCHPAD") introduces
+> > INPUT_PROP_HAPTIC_TOUCHPAD but restricted it to those touchpads that
+> > have support for userspace-controlled effects. Let's expand that
+> > definition to include all haptic touchpads (pressure pads) since those
+> > that do support FF effects can be identified by the presence of the
+> > FF_HAPTIC bit.
+> > 
+> > This means:
+> > - clickpad: INPUT_PROP_BUTTONPAD
+> > - pressurepad: INPUT_PROP_BUTTONPAD + INPUT_PROP_HAPTIC_TOUCHPAD
+> > - pressurepad with haptics:
+> >   INPUT_PROP_BUTTONPAD + INPUT_PROP_HAPTIC_TOUCHPAD + FF_HAPTIC
+> 
+> Should we maybe rename it to INPUT_PROP_PRESSURE_TOUCHPAD? We are within
+> a release of introducing it, so we should be able to rename it without
+> much fallout.
 
-Thank you for the feedback. Let me clarify the use case and design rational=
-e.
+I'd be happy with a rename too. Want me to send a patch for that or do
+you want to rename it locally during applying?
 
-The threshold approach is intended for scenarios where administrators want =
-to
-improve accuracy for existing monitoring tools on high core-count systems. =
-On
-such systems, the default threshold (MEMCG_CHARGE_BATCH * num_cpus) can rea=
-ch
-16K+ updates, causing monitoring dashboards to display stale data.
-
-Regarding tunability: while the exact threshold value requires some
-understanding, the principle is straightforward - lower values mean fresher
-stats but higher overhead. Administrators can start conservatively (e.g.,
-1/4 of the default: num_cpus * 16) and adjust based on observed overhead.
-
-Your suggestion about allowing writes to memory.stat to trigger explicit
-flushing is interesting. Comparing the two approaches:
-
-- Threshold (this patch):
-  - Administrator sets once system-wide via sysctl
-  - Affects all memory.stat reads automatically
-  - Tradeoff: harder to tune, always-on overhead
-
-- Write-to-flush (your suggestion):
-  - Tools write to memory.stat before reading: echo 1 > memory.stat
-  - Per-cgroup, on-demand control
-  - Tradeoff: requires tool modifications, but more precise control
-
-Actually, your approach may be more elegant - tools pay the flush cost only
-when they need accuracy, rather than imposing a system-wide policy. The
-write-to-flush pattern is also more discoverable and self-documenting.
-
-Let me try your approach in the next revision.
-
-Thanks,
-Leon
-
->
-> --
-> Michal Hocko
-> SUSE Labs
+Cheers,
+  Peter
 
