@@ -1,76 +1,60 @@
-Return-Path: <linux-kernel+bounces-886744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3448C36561
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DF5C365C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5FDF734EF4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F83134F187
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D88332ECF;
-	Wed,  5 Nov 2025 15:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF3532E149;
+	Wed,  5 Nov 2025 15:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jUpOxv5H"
-Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="ahmy7OJE"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97FF332EA8
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53EC2FD660;
+	Wed,  5 Nov 2025 15:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356388; cv=none; b=SDWgAmpfUIUHxzDUzpo33Nd0sL1ztasd7a98PQKnGXzbeYVbphFrUgCwwE5h4ARYsdUmx5BYJSDkqCfldXFnm00lMdl6rSs9iEbccru8ctgPuX6m/7XSody5peUbB9xRKWtn7T/JP3DVO5LooZQqyDmuPvAhO1UhtKy2shtv1DM=
+	t=1762356946; cv=none; b=PjcRb6vvraeCj85w0numu8ol+Bda43ev3bnl3D9d4ahQAFAFj/mgj8oDQBPDEHFNBndFv2ctsLji1V6k/ry80Jm8DbAsYa2x6HSTcGlZy064zGwGV3QLn6fuAdCcFWzohFxqIfpwPYOzIVbRub5576KTdO193z57y8QEIJkbU8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356388; c=relaxed/simple;
-	bh=SSQ7q/QVWOhMCqpgLPKrZUWF3IclLZF5T6er0kRCaAw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HnrkNkg5FFaUUf0McTjLic6LMpZmouNdHlB6EOZ2tCY1cUAGqvR8hL3wd6jgItA9NL3a6ljTjo8v4+qMaNmD/3GbpyyMDj8c0wh7B789pKdrPLFK3Js8GW5Un0txa4iiRzAMeFrrFhCH+dtoCZdzCDu5oyCIIWV6thRYtoefRlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jUpOxv5H; arc=none smtp.client-ip=52.28.197.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762356387; x=1793892387;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xkbNmLVUT1dr514xflNSoO0g3w/dEBmsveNAP0bT4u0=;
-  b=jUpOxv5Hr7to7G4ueIXY5ui9TfCeAzQlW3X0mjtZ1p6AUcX8iL27+LYs
-   g2gi6yXz4u18qjjL0T8lta8pkhJDBBOx5FIrgI/MJB1VP26IWK2Hn3+Go
-   2yycruyklAp7UeTu1jCuMW4kscCXqdkm/Nfq2RYoRCw/xPpeeB1iWRarX
-   mqCdCizWjMrpK7tmbEKK9ywpXXtm46CU4qqWaRwllz6mupz4qbl0xn1tP
-   ljkJyzzty+cZA6bxMvDdombsZvA95M0yD0fAzTspH+EFrgQWjs6di7jep
-   fOFCOrsvBoG4AWy2mVZicDoUuGc0MbOfhrx6sS6UE2+ePOB/aAoZmqUTD
-   g==;
-X-CSE-ConnectionGUID: 8oqogEt5TvOBDtmyKHXB+A==
-X-CSE-MsgGUID: rhlpQdHxSTK1bEi/8kqXnQ==
-X-IronPort-AV: E=Sophos;i="6.19,282,1754956800"; 
-   d="scan'208";a="4618646"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 15:26:06 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.234:6235]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.3.67:2525] with esmtp (Farcaster)
- id fd38830e-8cbe-47e2-a4e8-8e3521145a32; Wed, 5 Nov 2025 15:26:06 +0000 (UTC)
-X-Farcaster-Flow-ID: fd38830e-8cbe-47e2-a4e8-8e3521145a32
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 15:26:06 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.223) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 15:25:59 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <kprateek.nayak@amd.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>,
-	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
-	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
-Subject: [PATCH] sched: Optimize core cookie matching check
-Date: Wed, 5 Nov 2025 17:25:37 +0200
-Message-ID: <20251105152538.470586-1-sieberf@amazon.com>
+	s=arc-20240116; t=1762356946; c=relaxed/simple;
+	bh=iYV/0gxlfsnY/0FDjlyewNo1A9AIsLgh3s2Ej2a9ycY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SqNeXbo1bP2dHy07Ge4nG+cYq1OaiLnY28d4Lq4M2loupbAPTdyzgjbqCirPpnw2bongcxCc3hrp21Ij7tV71lIdNwry8d39a5bn14ooRx6k3Fo/VgwZsr4qdC1fzrneqUj0UKp+LDMRe+bomX0eqOrSgFl4WxTujBsKA1IlZTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=ahmy7OJE; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1762356407;
+	bh=/3nfux16ZKQG2m9VQWPawdpfD+7ff1vFtMyoP8aJnbw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ahmy7OJElGvW+VWqcGKDd7BljNCRMBG3J3Yj+OMXH3WQOJY9n76Ytzzb80Lgt/YV6
+	 0ZpDQEHZb75zGY6vE0m5HkyLMqwhyE/2iksjc73v7G5V8QUx0JXj1Bs5XSgGuQuYAe
+	 JORaRFJzODjLuw/SvqUeWwGXPMIM7nb0U9sOmSSc=
+Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id 05B17A0364;
+	Wed,  5 Nov 2025 16:26:47 +0100 (CET)
+From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+Subject: [PATCH 1/2] ARM: dts: imx6dl-yapp43: Enable pwm-beeper on boards with speaker
+Date: Wed,  5 Nov 2025 16:25:53 +0100
+Message-ID: <20251105152555.1992513-1-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,51 +62,144 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Early return true if the core cookie matches. This avoids the SMT mask
-loop to check for an idle core, which might be more expensive on wide
-platforms.
+Lynx, Pegasus and Pegasus+ boards have a speaker connected to the PWM3.
+Enable a pwm-beeper on these boards so the system can produce simple
+sounds.
 
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 ---
- kernel/sched/sched.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../boot/dts/nxp/imx/imx6dl-yapp4-lynx.dts    |  8 ++++++++
+ .../dts/nxp/imx/imx6dl-yapp43-common.dtsi     | 19 +++++++++++++++++++
+ .../boot/dts/nxp/imx/imx6q-yapp4-pegasus.dts  |  8 ++++++++
+ .../dts/nxp/imx/imx6qp-yapp4-pegasus-plus.dts |  8 ++++++++
+ 4 files changed, 43 insertions(+)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index adfb6e3409d7..381cd561e99b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1432,6 +1432,9 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
- 	if (!sched_core_enabled(rq))
- 		return true;
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-yapp4-lynx.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-yapp4-lynx.dts
+index 5c2cd517589b..0a6b668428a3 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6dl-yapp4-lynx.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6dl-yapp4-lynx.dts
+@@ -21,6 +21,10 @@ &backlight {
+ 	status = "okay";
+ };
  
-+	if (rq->core->core_cookie == p->core_cookie)
-+		return true;
++&beeper {
++	status = "okay";
++};
 +
- 	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
- 		if (!available_idle_cpu(cpu)) {
- 			idle_core = false;
-@@ -1443,7 +1446,7 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
- 	 * A CPU in an idle core is always the best choice for tasks with
- 	 * cookies.
- 	 */
--	return idle_core || rq->core->core_cookie == p->core_cookie;
-+	return idle_core;
- }
+ &lcd_display {
+ 	status = "okay";
+ };
+@@ -37,6 +41,10 @@ &pwm1 {
+ 	status = "okay";
+ };
  
- static inline bool sched_group_cookie_match(struct rq *rq,
++&pwm3 {
++	status = "okay";
++};
++
+ &reg_usb_h1_vbus {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-yapp43-common.dtsi b/arch/arm/boot/dts/nxp/imx/imx6dl-yapp43-common.dtsi
+index 2f42c56c21f6..6f9bd163ffbe 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6dl-yapp43-common.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6dl-yapp43-common.dtsi
+@@ -26,6 +26,12 @@ backlight: backlight {
+ 		status = "disabled";
+ 	};
+ 
++	beeper: beeper {
++		compatible = "pwm-beeper";
++		pwms = <&pwm3 0 500000 0>;
++		status = "disabled";
++	};
++
+ 	gpio_keys: gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+@@ -466,6 +472,13 @@ MX6QDL_PAD_GPIO_9__PWM1_OUT	0x8
+ 		>;
+ 	};
+ 
++	pinctrl_sound: soundgrp {
++		fsl,pins = <
++			MX6QDL_PAD_SD1_DAT0__GPIO1_IO16	0x1b0b0
++			MX6QDL_PAD_SD1_DAT1__PWM3_OUT	0x8
++		>;
++	};
++
+ 	pinctrl_touch: touchgrp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_GPIO_19__GPIO4_IO05	0x1b098
+@@ -551,6 +564,12 @@ &pwm1 {
+ 	status = "disabled";
+ };
+ 
++&pwm3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sound>;
++	status = "disabled";
++};
++
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart1>;
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-yapp4-pegasus.dts b/arch/arm/boot/dts/nxp/imx/imx6q-yapp4-pegasus.dts
+index ec6651ba4ba2..7332f2718982 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-yapp4-pegasus.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-yapp4-pegasus.dts
+@@ -17,6 +17,10 @@ memory@10000000 {
+ 	};
+ };
+ 
++&beeper {
++	status = "okay";
++};
++
+ &gpio_oled {
+ 	status = "okay";
+ };
+@@ -37,6 +41,10 @@ &oled_1309 {
+ 	status = "okay";
+ };
+ 
++&pwm3 {
++	status = "okay";
++};
++
+ &reg_pu {
+ 	regulator-always-on;
+ };
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6qp-yapp4-pegasus-plus.dts b/arch/arm/boot/dts/nxp/imx/imx6qp-yapp4-pegasus-plus.dts
+index 4a961a33bf2d..770a85e0561c 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6qp-yapp4-pegasus-plus.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6qp-yapp4-pegasus-plus.dts
+@@ -17,6 +17,10 @@ memory@10000000 {
+ 	};
+ };
+ 
++&beeper {
++	status = "okay";
++};
++
+ &gpio_oled {
+ 	status = "okay";
+ };
+@@ -37,6 +41,10 @@ &oled_1309 {
+ 	status = "okay";
+ };
+ 
++&pwm3 {
++	status = "okay";
++};
++
+ &reg_pu {
+ 	regulator-always-on;
+ };
 -- 
 2.43.0
-
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
 
 
