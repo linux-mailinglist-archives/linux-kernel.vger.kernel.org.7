@@ -1,135 +1,239 @@
-Return-Path: <linux-kernel+bounces-885643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CACC33951
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:04:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83310C33954
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CB584E55A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:04:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B973BD6D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B5523ABA9;
-	Wed,  5 Nov 2025 01:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329122AE65;
+	Wed,  5 Nov 2025 01:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTx0A90K"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="YyPBOKz8"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C673D561
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 01:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386442B9BA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 01:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762304671; cv=none; b=SC2/mO36TRzua1VhownmLtlX3MowcNX9QmoHJX+niXX6F0FInkzpOPZzBnI9j3fayoie3eNdPdVckF2l7cFX/Ud7hNlZ9qAIQWmVqbryTKXt3IH1ngW3Uxwf77nnEUZXTke14Eowc5LZkm6ilkgLS9beKwS770vu28Sd5ul3SQ0=
+	t=1762304698; cv=none; b=ar136rYaxdZaFICPjQKkRr3YdR8j4+aQHiCumcU7NebUH3k9fm9r9EHM4vYb7LI1sVZtmPm1ziN6OvBeCmA8K4CRm+pzM9zjNKe19MaKzsb7+giBlobeAz/jKBTZ394GlVrDOexEj73hcNxME3CYW2ylW5QTvF1mjpnt9Rz3Hvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762304671; c=relaxed/simple;
-	bh=Z3ggOd79JIfVyZEfAZAtw3TjnsZLdnZxlRzWgxmQzaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rRIs3uv7iw/RzJMwlo17NKjKWJifLL7sm6hIUOXPu8Iblzjw7liISinxDQ36eikGIvjTH2g9so8TrgO2K9GnV7uovUs//+R6M47ttY548vbPq4x4m6GmkppeHJLuaQX2pzrN7DgJoBG0N3TkVxH7/Swjl3yeMRGCqdj6ox/VKfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTx0A90K; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7ae1557db07so356601b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 17:04:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762304669; x=1762909469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dyIWyvuzANIOMw4QMzwwGGDQv3dBT6iTuP4G+fMtDdA=;
-        b=PTx0A90KIoDFyq2FG3Ie5oFJzWQDabFoCSrHbp4Qs1sN5vy+mQ+Nrs2UAxuWT0A6DO
-         crnVRHNvkSf0bf/hQYCV1yWjpjSg+R9MXc62HTPq5FS2EM6VJOZ4CDNFpZp/yLg7+NVv
-         UcZNlubmduFSX4hD3WRTf5WxP4ZhQIMkE7EQj+ETqh+JEsLqogCj+gxJ4OBcDxVYM4Pf
-         QZQIDzPon6K6HdmkjtMNqgTxlXuH5Gjqb8mg17591gzF66Vg+JriuUGSxPzkVmGdpnF7
-         P9qme9u4hKE7FXfZzM9cpOTIAjtkpRToWleyNyGhvIclTDzlkR1/u0lH4Tyn5dPfmddX
-         XHSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762304669; x=1762909469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dyIWyvuzANIOMw4QMzwwGGDQv3dBT6iTuP4G+fMtDdA=;
-        b=a0qBKCNPZUpP8HSBLrVCz6Ncp5BUNwpYyk8+tN+1CUxT3GmO0AvtaHahxF/CUn/m/T
-         xkERVseFOhiAwoZRPPbksIYvdawpSj05kNsDNG+JCCwjE0phtCA0uMqWvXtxsR1qb3KQ
-         U2taI4xQneIUTr2bLvaMfFJf6S2AZVyws5lPzJ9x6dImGFHUEDuW+RzNDMnDhwGdi4pE
-         YovkArALq/KFaT7d3c8im0XMaWpkCTI4b0AQk25Xg1jGBJwZWzmFTu3d6A2GY32yfbVX
-         Zcfa6pgt2mjVVC+uA3gS3MNOpNtI669ck67FUitrHIbBDyUPpt7GU7nrmvgEK9QZbOEL
-         uJUA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3RVWUZ7drarjd77YueDn9KP3vS8tpeHbdODqRCQg7369JuElb2YH7Tg8u2xBlthNFHb2T4odUnDlg/wM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJsMbQx+oS+239QYWcuZZcW9hl9IaW3EdGGr0G3gh7DwFQ3dyZ
-	z0ZmeU4hGOEWGHWHiL/EUcSW7qYXMkQ2X0wBHiOSIndq5AADs9Hq+XXFNMTi8LyDDNDrujJDuQ2
-	gNDCyRR5R1FHxS55Pf40AHuWaShyfbEM=
-X-Gm-Gg: ASbGncvvu66r2t8fO/WytGNkjJAiXtTgkAigv1Dm1fNMjVUnRbiHV2n5tmE9Ow9thBE
-	PtNREPUFxOn7gLW/rXBX+fTz8oizdtMSZykQGr6E+9P9bEuNm26cOrIJYuQiZP1DNtsc8c7aH2m
-	s7wNOovyp+9sCvyHd1mBH72jRnoViIwd5xSHQz12DzQxr9O+7LcwxrSjirl9+LMRqm4warC2XQz
-	989P8fv3sw76p57bw7ILSssLA3sg8v8f/Cat7hyHYvmT8dvV9jd5FdyfK34r5KjOp1wB0MV0Ktd
-X-Google-Smtp-Source: AGHT+IHN9o9P5gsHic+cho4sct0SlI6+Z01PLaJzI6naRoeHnQGt1ns3gsNXfqNGaPUEo7GbL2ekFCXyO4fl6JANjM4=
-X-Received: by 2002:a05:6a20:3d23:b0:342:1aab:4c71 with SMTP id
- adf61e73a8af0-34f839f5a40mr1651389637.4.1762304668722; Tue, 04 Nov 2025
- 17:04:28 -0800 (PST)
+	s=arc-20240116; t=1762304698; c=relaxed/simple;
+	bh=UXn4iY2R/X0kBs5ZUFjV3YRJpoVod5+1VOjzkKrq2dM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B/8jvV9ZF2Fr6Dvv1+HQHQYMuzPQb2S29MASQh7uQIVm0lmcQUkct+XyF1U/SpNrNVPDtMFtM9u3jmPrvKaKhtdLk8LTmsF2vFVXNIdDp+rrQb6yjbswCISvn0+/uUUbrjrtyg7p9d18U6wLqfha37+tCJYI3nWZ2/Pgm9PbUVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=YyPBOKz8; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=CwhJO6D1YRqJyWqNTP219TL5jK04SEJ2/5eraLPP68E=;
+	b=YyPBOKz8KlSTPlZmtrXSfd1exx5/7AM8+l+NIdMItrrelTblzNAr/vAe6rMUT2v10CWlSjnPd
+	NSg5NGaqmsITjCQhW0kn3dQHSzSKg+hObriQq4alXHUBlo5BaSaLrfJTjaw2L06a4mvCxeUaLoS
+	hTy5terBnIr/JV3RPhkoql0=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d1Rrw2HVYzRhxs;
+	Wed,  5 Nov 2025 09:03:12 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id CE120180080;
+	Wed,  5 Nov 2025 09:04:46 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Nov 2025 09:04:45 +0800
+Message-ID: <545c6e40-db22-4964-868a-74893d6ad03f@huawei.com>
+Date: Wed, 5 Nov 2025 09:04:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-3-dolinux.peng@gmail.com> <CAEf4BzaQ9k=_JwpmkjnbN8o0XaA=EGcP-=CBxmXLc3kzh3aY3A@mail.gmail.com>
- <3986a6b863be2ec62820ea5d2cf471f7e233fac0.camel@gmail.com>
-In-Reply-To: <3986a6b863be2ec62820ea5d2cf471f7e233fac0.camel@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 4 Nov 2025 17:04:14 -0800
-X-Gm-Features: AWmQ_bmQV6kvOsH5MHQ6mKpg2Ftv3sZCOkYRFAWo0YOCNhpEqpNzsfdyfIrVm9Y
-Message-ID: <CAEf4BzaLmVuPRL4V1VKBmaXtrvT=oLwo=M7sLURgoYU34BkpMQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/7] libbpf: Add BTF permutation support for type reordering
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: Barry Song <21cnbao@gmail.com>, <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>, Suren Baghdasaryan <surenb@google.com>,
+	<linux-kernel@vger.kernel.org>, Barry Song <v-songbaohua@oppo.com>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Lokesh Gidra
+	<lokeshgidra@google.com>, Tangquan Zheng <zhengtangquan@oppo.com>, Qi Zheng
+	<zhengqi.arch@bytedance.com>
+References: <20250607220150.2980-1-21cnbao@gmail.com>
+ <efeb3350-fbdf-408c-92ef-c6eada4a5755@huawei.com>
+ <564941f2-b538-462a-ac55-f38d3e8a6f2e@lucifer.local>
+ <c9925b2e-207b-447e-afce-07873406a853@huawei.com>
+ <7998c1f1-fd53-45e9-b748-55043522f1c7@lucifer.local>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <7998c1f1-fd53-45e9-b748-55043522f1c7@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-On Tue, Nov 4, 2025 at 4:16=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com>=
- wrote:
->
-> On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
->
-> [...]
->
-> > > +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx)
-> > > +{
-> > > +       struct btf_permute *p =3D ctx;
-> > > +       __u32 new_type_id =3D *type_id;
-> > > +
-> > > +       /* skip references that point into the base BTF */
-> > > +       if (new_type_id < p->btf->start_id)
-> > > +               return 0;
-> > > +
-> > > +       new_type_id =3D p->map[*type_id - p->btf->start_id];
-> >
-> > I'm actually confused, I thought p->ids would be the mapping from
-> > original type ID (minus start_id, of course) to a new desired ID, but
-> > it looks to be the other way? ids is a desired resulting *sequence* of
-> > types identified by their original ID. I find it quite confusing. I
-> > think about permutation as a mapping from original type ID to a new
-> > type ID, am I confused?
->
-> Yes, it is a desired sequence, not mapping.
-> I guess its a bit simpler to use for sorting use-case, as you can just
-> swap ids while sorting.
 
-The question is really what makes most sense as an interface. Because
-for sorting cases it's just the matter of a two-line for() loop to
-create ID mapping once types are sorted.
 
-I have slight preference for id_map approach because it is easy to
-extend to the case of selectively dropping some types. We can just
-define that such IDs should be mapped to zero. This will work as a
-natural extension. With the desired end sequence of IDs, it's less
-natural and will require more work to determine which IDs are missing
-from the sequence.
+On 2025/11/4 23:21, Lorenzo Stoakes wrote:
+> On Tue, Nov 04, 2025 at 08:09:58PM +0800, Kefeng Wang wrote:
+>>
+>>
+>> On 2025/11/4 17:01, Lorenzo Stoakes wrote:
+>>> On Tue, Nov 04, 2025 at 04:34:35PM +0800, Kefeng Wang wrote:
+>>>>> +static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavior)
+>>>>>     {
+>>>>> +	int behavior = madv_behavior->behavior;
+>>>>> +
+>>>>>     	if (is_memory_failure(behavior))
+>>>>> -		return 0;
+>>>>> +		return MADVISE_NO_LOCK;
+>>>>> -	if (madvise_need_mmap_write(behavior)) {
+>>>>> +	switch (behavior) {
+>>>>> +	case MADV_REMOVE:
+>>>>> +	case MADV_WILLNEED:
+>>>>> +	case MADV_COLD:
+>>>>> +	case MADV_PAGEOUT:
+>>>>> +	case MADV_FREE:
+>>>>> +	case MADV_POPULATE_READ:
+>>>>> +	case MADV_POPULATE_WRITE:
+>>>>> +	case MADV_COLLAPSE:
+>>>>> +	case MADV_GUARD_INSTALL:
+>>>>> +	case MADV_GUARD_REMOVE:
+>>>>> +		return MADVISE_MMAP_READ_LOCK;
+>>>>> +	case MADV_DONTNEED:
+>>>>> +	case MADV_DONTNEED_LOCKED:
+>>>>> +		return MADVISE_VMA_READ_LOCK;
+>>>>
+>>>> I have a question, we will try per-vma lock for dontneed,
+>>>> but there is a mmap_assert_locked() during madvise_dontneed_free(),
+>>>
+>>> Hmm, this is only in the THP PUD huge case, and MADV_FREE is only valid for
+>>> anonymous memory, and I think only DAX can have some weird THP PUD case.
+>>>
+>>> So I don't think we can hit this.
+>>
+>> Yes, we don't support pud THP for anonymous pages.
+> 
+> Right, so we can't hit this.
+> 
+>>
+>>>
+>>> In any event, I think this mmap_assert_locked() is mistaken, as we should
+>>> only need a VMA lock here.
+>>>
+>>> So we could replace with a:
+>>>
+>>> 	if (!rwsem_is_locked(&tlb->mm->mmap_lock))
+>>> 		vma_assert_locked(vma);
+>>>
+>>> ?
+>>>
+>>
+>> The pmd dax/anon split don't have assert, for PUD dax, we maybe remove this
+>> assert?
+> 
+> Well, we probably do want to assert that we hold a lock.
 
-So unless there is some really good and strong reason, shall we go
-with the ID mapping approach?
+OK, let's convert to vma_assert_locked.
+> 
+>>
+>>
+>>
+>>
+>>>>
+>>>> madvise_dontneed_free
+>>>>     madvise_dontneed_single_vma
+>>>>       zap_page_range_single_batched
+>>>>         unmap_single_vma
+>>>>            unmap_page_range
+>>>>              zap_pud_range
+>>>>                mmap_assert_locked
+>>>>
+>>>> We could fix it by passing the lock_mode into zap_detial and then check
+>>>> the right lock here, but I'm not sure whether it is safe to zap page
+>>>> only with vma lock?
+>>>
+>>> It's fine to zap with the VMA lock. You need only hold the VMA stable which
+>>> a VMA lock achieves.
+>>>
+>>> See https://docs.kernel.org/mm/process_addrs.html
+>>
+>> Thanks, I will learn it.
+> 
+> Hopefully useful, I made it to remind myself of these things as they're very
+> fiddly + otherwise I find myself constantly forgetting these details :)
+
+That should be definitely useful :)
+
+> 
+>>
+>>>
+>>>>
+>>>> And another about 4f8ba33bbdfc （"mm: madvise: use per_vma lock
+>>>> for MADV_FREE"）, it called walk_page_range_vma() in
+>>>> madvise_free_single_vma(),  but from link[1] and 5631da56c9a8
+>>>> ("fs/proc/task_mmu: read proc/pid/maps under per-vma lock"), it saids
+>>>>
+>>>>     "Note that similar approach would not work for /proc/pid/smaps
+>>>>     reading as it also walks the page table and that's not RCU-safe"
+>>>>
+>>>> We could use walk_page_range_vma() instead of walk_page_range() in
+>>>> smap_gather_stats(), and same question, why 4f8ba33bbdfc(for MADV_FREEE)
+>>>> is safe but not for show_numa_map()/show_smap()?
+>>>
+>>> We only use walk_page_range() there in case 4 listed in show_smaps_rollup()
+>>> where the mmap lock is dropped on contention.
+>>
+>> Sorry, I mean the walk_page_range() in smap_gather_stats() called by
+>> show_smap()  from /proc/pid/smaps, not the walk_page_range() in
+>> show_smaps_rollup() from /proc/pid/smaps_rollup.
+> 
+> show_smaps()
+> -> smap_gather_stats(..., start = 0)
+> -> walk_page_vma()
+> 
+> Because:
+> 
+> 	if (!start)
+> 		walk_page_vma(vma, ops, mss);
+> 
+> The only case where start is non-zero is show_smaps_rollup() case 4. So we are
+> already using walk_page_vma() here right?
+> 
+> I may be missing something here :)
+
+You are right, I don't check start value :(
+
+> 
+>>
+>>
+>>>
+>>>>
+>>>> Thanks.
+>>>>
+>>>> [1] https://lkml.kernel.org/r/20250719182854.3166724-1-surenb@google.com
+>>>
+>>> AFAICT That's referring to a previous approach that tried to walk
+>>> /proc/$pid/swaps under RCU _alone_ without VMA locks. This is not safe as
+>>> page tables can be yanked from under you not under RCU.
+>>
+>> But for now it tries per-vma lock or fallback to mmap lock, not lockless, so
+>> do you mean we could try per-vma lock for /proc/pid/numa_maps or
+>> /proc/pid/smaps ?
+> 
+> Probably we could, but I'm not sure if it'd be really worth it, since traversing
+> page tables is a very heavy operation and so optimising it against contention
+> like this seems probably not all that worth it?
+> 
+> Suren maybe could comment on this.
+
+They only operate a single vma(walk_page_vma), I think it is always 
+better if we could only hold the vma lock, but wait for Suren comment on it.
+
 
