@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-886859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F4FC36A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:21:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EBBC36AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CFF664842
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:10:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2B24501230
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F5A335558;
-	Wed,  5 Nov 2025 16:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1319B324B09;
+	Wed,  5 Nov 2025 16:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fEwgo+LU"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOFjUCwX"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76C335547
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB650303A32
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358913; cv=none; b=HXseOa+06cCv4dmzcP+d8RHn00LiDDZ4E8ifT1m8O5b337BFNO1WQIEUBrJBjcsgUhA8OEiTbv6nFlWW//wzjo05Wnv8PqhD4rYgJWhyBprUWZafYn91a9zLDQsXaczRWG38LdjjfmH2oAlbhxsmZgjdEpUwAokwy8eKOPS56zA=
+	t=1762358990; cv=none; b=fX0Z0mLPah7PBsBz6ul2FI72bUug9tJRzoe2tL5ISljXd3B5rrC7+Mi9wlCv4YlJ328tNnz2EExNssSBEIWc/tv7uTsYzK0riaPk5Q+tyucNuC1IJAqn706toLtov+YfRw8pZjE2o6hZ9U6OosPhHUJ0OZvjI/KTHDrApzC/5CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358913; c=relaxed/simple;
-	bh=qhthCQOxbmIIKyNheM8Rnhvvbyw9VuqTjkGB1Gw9Shs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cSj544NYnLh6EYzUIvql2IOfGNMV20B5n/aMwoiiqs8HU0N+OxdWRMj52JrXAma2r9P4lqHgIEFcpT4JzdE66uh6YsiNNThCUNpoOsAXYiV/rOc3S3ZlARHn6Sd2yJCeppcVnOAl5eRUt08Unl0iiEThxMTptGgh6BcUmnKJ14I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fEwgo+LU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477563bcaacso15404405e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:08:30 -0800 (PST)
+	s=arc-20240116; t=1762358990; c=relaxed/simple;
+	bh=QMcBFIVhysiDwfVypM194suTaK7RnPDTjd6DwYRaffA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AamZr3qT4nQOzSkFyNV5YM8I6XtlWtDrpiKxVcNEDS9BqnJBnaaCexvAYKUPLJ7DVFmLXtNnrnNAFWzwtuI2ESExzXJiv42/Z861B1OC2ncYBLAy7OxGwnFXBWyLanDE0GfGB80gWj0pyMIZ2NIdwYGbPYGMQZ8NbYK6L5pvxAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOFjUCwX; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29524abfba3so49885ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:09:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762358909; x=1762963709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f1yBP/HblraJDKUqDJbJpnQ6bTQTPKGimKm7/HBY3uI=;
-        b=fEwgo+LUn1JIcmd4fOYUTwR/jPimwMGMx0wEX7Hc/CiCGID2bxFmLcRF2vAQ4ixGRD
-         v3W1vhr9T+VMgKDSjrCOBPRBdMs6oEnvAu2TCnPt2wHuReJC6P2H5f4kQ1cCQFTFmuxR
-         55Ri/CMrj548FjVwNuP7XLbojQoAVmpE8o4j8++vWLBbPz6yMpvQHX0pYQTYL4c+7n5H
-         3c4HFURCYdWYEvexECi5lh4/xTFl0ZWasKshkkVFH0PjKBQ8MWwTBqJvMZzFcQe56fJw
-         m2y4P9oKPtz4n+dT2IsktVgBKz6X/9zn/cq+edt0c7U8+0o68UmmgHaRJ04J4tewnpwp
-         NHGw==
+        d=gmail.com; s=20230601; t=1762358988; x=1762963788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=onKFYxz3qx1mgItW1GE5HTsCNQVbyGrPrKl8Wr6AIZk=;
+        b=GOFjUCwXn+EmopcCsa8h9zcnsnEpl/6Dh7wZjwkbdZqU0CuHZbzJnmIHjCNKXXpBsK
+         2ZP94u+rGHfUngCvS28fYAj+z6K3TkD//HTFjkPwfsEjJC9mnHJEzVwzpK2gA4TG9Flg
+         DLCtcaPCdBJQqvm3Qq1JmHZgMY4rcpFaRExMgAbjXg8zCKRx38vPC+4mEUlnz4Mj1C7Z
+         ny1ytqW3eLo+7yIeTSc7utjXuV7EDbkvI33ywZwNuC7uLUOoAfCuvx6RWwXHBfcThfPl
+         AXKJt5zzrP0KuY8bQ9KfyPrY/xVf1QJiv+rgV+ugHSqjxgLAQfZqH2Iofq49u6iE/3Ry
+         mpnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358909; x=1762963709;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f1yBP/HblraJDKUqDJbJpnQ6bTQTPKGimKm7/HBY3uI=;
-        b=sAMNZ2zJIlHtv+VZChhbR3ZDgMK/Dv/UboAtYvHvrASe4fzWs1r2i27Dkn4IkvqkNl
-         RDuTHe2hnk9hb72qaR6Yyh6p+mvttQ9uIsZKyz6W83wyViyyUdNd9AFks5OS+OGQTQo/
-         +qUKorJKtFA5w2mLYuqHJA2OnNn5PnLMaxWM6xo6gwhkW7XBThcHe1tBmsfBFOSzhWG1
-         DbJH1A46m87bJmQzACQ+tP7IvNEHgixm3Tl15KFeQ7A4D+xwttNTedxOCeIDUFVS0wEl
-         RcMvuUQPtRzvvtLIA3nppkU81qAoypU5Wy1H8xB/0NBe4aJI4hn/FvB/eFCVATcUuuBB
-         p4HQ==
-X-Gm-Message-State: AOJu0YxmmR34Iti60R/P5NvjG4n692FQ6+YqtORDLr9Krn035SdwM8bK
-	Jx1AAITPzeL5T07L0Wkze+unnlymfWtGrJ0mzFuoLuJEEyfcAVwj54oT+wx196VSM1Ksa5Nr8pG
-	OlG6U
-X-Gm-Gg: ASbGncvwxRXTZmMpU6ZST9WqZac7tIgnsDc8KQwzCYl6FwU1szksr4gUHS6PA3a2Oy6
-	Z99hSlx6jX6n4yyUxp2A8UwJ3C2dfenTvl01pZ7Oj8+I9mYCZtNNutuTiCc94XHZ0yRysGr20uy
-	/7AD86z94ru90tKXlkYInyqMuasr7D38ptl37bI+o6QBbwRo7VRFlucy3GzyV94egx8du0q7OFg
-	oiFg0fPmyUpM2R7O4ihv7eIDF+orFm5YuTMM8OILgYIyzGKGd7aEvui9rzGmHuyaT9FbtTtfzca
-	xihnxowUshToF6+pH3nxUuqO8NTEb/7Ra2SX7ZcS88A008erjheBF6bhncPAxbVj+4/yhOruri4
-	RsFqRaF/Of8W9BKfUfNeS0cjXN8yeJveqJX6KJFG1k8qG6hZWLjbx+/RU6T0B5v0FbWR8ZL65D/
-	kx0O4S96zDWmiXQzguAr9q/0o=
-X-Google-Smtp-Source: AGHT+IEXc55RGqBKbQMEgoEC9e3feBi0MKsyQiqEKNba7Kuda4jmUF2LBb9/lCW7e1CfbTQzDss9Iw==
-X-Received: by 2002:a05:600c:621b:b0:477:fad:acd9 with SMTP id 5b1f17b1804b1-4775ce7dfcfmr49120665e9.34.1762358908612;
-        Wed, 05 Nov 2025 08:08:28 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc552sm58255715e9.6.2025.11.05.08.08.27
+        d=1e100.net; s=20230601; t=1762358988; x=1762963788;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=onKFYxz3qx1mgItW1GE5HTsCNQVbyGrPrKl8Wr6AIZk=;
+        b=sDibnVZv9sgiNcH+WMBi2VALVW5rHyr5+VyqoY43i2a3b93Z8H/vjdLixe7qlM7ovX
+         KceZklPtUfnzFjCsq1UKDufXQMcda0aE0p2ztCXRBxUWWZDxyBE4NwuWinSmv0dMWtvn
+         xxa/A6yueVAZ+RWgyTr36lRyOJtct/RdqLvO5Kfemi2URHhtrtbfoUf8Plt4dCNJp67X
+         ODFLL0ll/p9uSCUn+7Cgi+JBpMfjEr9RpkcGUvjazho+rlMUgho9wG7aIF8eK5ysTloB
+         eZawfAEpSqeO1UP0Iw8bJofgghxC9fTgohPnos7ffxq+nmz3Fc46wZU0G7PngXLylIIG
+         Z95g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMOALhsF9HoaOWPVYoDmjlb4w6McZWepL/dASQ1Xgjiv7b6b8Wx/D0EdDyIu8sntyTxo1N/gl2jOGlyWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe8JFl2O1ptfCpgfxV+f8Om6uIiXFlwMUEPcCJ0JznyCoAFYMX
+	m+1zZKHTq19rQMohdEv9ovDMvI57U39/ai+GxZYRkkPn21gNkeRLy+yB
+X-Gm-Gg: ASbGncv3JHU39QMZBbCCwPelFSvnUNoTCpAilS/zfTM932AmJnO3bopYyJzduqcMmF9
+	ly0hlNslwiP+TbBClbN93uE/PrUuHGUGY5fexBxUeDwzZ7klnNi6ViDC/sIkFzzauF3rrKm0Xs9
+	B2b+624Y6UCzCMS0nyIAIOkg4Pr1+N5m8LrTZpacoyKs75fKjtDQdnCJiRQKYrT97fy7ctPml5+
+	WLqRu9qGDiEYSyiGG2bIhFPo6ZfplbUejvrMh4ijsrHOUomR4vWVgAEewped3oJcXsF88dPsFXu
+	9t6t8U5pGYDYqduTrC1jttoXgKPJ8C1vKDSU/d93ZpkzmKP1oJfH/4HamxDDylGpOe07uOnQoc/
+	T3N2ehgXSFd0+FxegO+vWzQWuNp/tFcqtiiAfGWKH84lJuYMGFpDggsYLAwVrCsIkUln086PSwm
+	4kIQ==
+X-Google-Smtp-Source: AGHT+IFWoDv0xrc92js3LrPGZwOO07MytOUirYTiZ8qgebRNd+iZk6XliDM2euyp4xDmvx2GbYt9Sg==
+X-Received: by 2002:a17:903:240e:b0:295:3a79:e7e5 with SMTP id d9443c01a7336-2962ad88638mr48773485ad.34.1762358988099;
+        Wed, 05 Nov 2025 08:09:48 -0800 (PST)
+Received: from archlinux ([36.255.84.59])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a3a941sm64888105ad.57.2025.11.05.08.09.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:08:28 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] RAS/CEC: replace use of system_wq with system_percpu_wq
-Date: Wed,  5 Nov 2025 17:08:19 +0100
-Message-ID: <20251105160819.302988-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        Wed, 05 Nov 2025 08:09:47 -0800 (PST)
+From: Madhur Kumar <madhurkumar004@gmail.com>
+To: yongqin.liu@linaro.org
+Cc: airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	jstultz@google.com,
+	kong.kongxinwei@hisilicon.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	simona@ffwll.ch,
+	sumit.semwal@linaro.org,
+	tiantao6@hisilicon.com,
+	tzimmermann@suse.de,
+	xinliang.liu@linaro.org,
+	Madhur Kumar <madhurkumar004@gmail.com>
+Subject: [PATCH RESEND] drm/hisilicon: kirin: Convert to drmm_mode_config_init() and drop manual cleanup
+Date: Wed,  5 Nov 2025 21:39:31 +0530
+Message-ID: <20251105160931.466664-1-madhurkumar004@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251022114438.1096382-1-madhurkumar004@gmail.com>
+References: <20251022114438.1096382-1-madhurkumar004@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,43 +102,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+switch mode_config initialization to drmm_mode_config_init() so that the
+lifetime is tied to drm_device. Remove explicit drm_mode_config_cleanup()
+from error and cleanup path since cleanup is now managed by DRM.
 
-This lack of consistency cannot be addressed without refactoring the API.
-
-This patch continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-Replace system_wq with system_percpu_wq, keeping the old behavior.
-The old wq (system_wq) will be kept for a few release cycles.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
 ---
- drivers/ras/cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index e440b15fbabc..15f7f043c8ef 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -166,7 +166,7 @@ static void cec_mod_work(unsigned long interval)
- 	unsigned long iv;
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+index 1e1c87be1204..47f682097615 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+@@ -160,7 +160,10 @@ static int kirin_drm_kms_init(struct drm_device *dev,
+ 	int ret;
  
- 	iv = interval * HZ;
--	mod_delayed_work(system_wq, &cec_work, round_jiffies(iv));
-+	mod_delayed_work(system_percpu_wq, &cec_work, round_jiffies(iv));
+ 	/* dev->mode_config initialization */
+-	drm_mode_config_init(dev);
++	ret = drmm_mode_config_init(dev);
++	if (ret)
++		return ret;
++	
+ 	dev->mode_config.min_width = 0;
+ 	dev->mode_config.min_height = 0;
+ 	dev->mode_config.max_width = driver_data->config_max_width;
+@@ -170,8 +173,7 @@ static int kirin_drm_kms_init(struct drm_device *dev,
+ 	/* display controller init */
+ 	ret = kirin_drm_private_init(dev, driver_data);
+ 	if (ret)
+-		goto err_mode_config_cleanup;
+-
++		return ret;
+ 	/* bind and init sub drivers */
+ 	ret = component_bind_all(dev->dev, dev);
+ 	if (ret) {
+@@ -198,8 +200,6 @@ static int kirin_drm_kms_init(struct drm_device *dev,
+ 	component_unbind_all(dev->dev, dev);
+ err_private_cleanup:
+ 	kirin_drm_private_cleanup(dev);
+-err_mode_config_cleanup:
+-	drm_mode_config_cleanup(dev);
+ 	return ret;
  }
  
- static void cec_work_fn(struct work_struct *work)
+@@ -208,7 +208,6 @@ static int kirin_drm_kms_cleanup(struct drm_device *dev)
+ 	drm_kms_helper_poll_fini(dev);
+ 	drm_atomic_helper_shutdown(dev);
+ 	kirin_drm_private_cleanup(dev);
+-	drm_mode_config_cleanup(dev);
+ 
+ 	return 0;
+ }
 -- 
-2.51.1
+2.51.1.dirty
 
 
