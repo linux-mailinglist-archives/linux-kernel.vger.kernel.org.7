@@ -1,183 +1,141 @@
-Return-Path: <linux-kernel+bounces-886841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54314C36CB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:49:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17EDC369BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5BF6426A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766221A20414
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AC334C0C;
-	Wed,  5 Nov 2025 16:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B9F320A24;
+	Wed,  5 Nov 2025 16:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WWxLLBhl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bx7IIG4j"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71305333745;
-	Wed,  5 Nov 2025 16:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E171D237180
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358705; cv=none; b=iFdFlfEDF9UgJtoo5HwmIYEJl63+VRCDcPIUdtZj+r6QhgsIzrmWjWEQ9X8NslnQvtdS4WBOBFXyjH1+em4WEDp9Dqht//a4MY4n2vVYCNtsi0ZOFUuTP5X8ukjr0ig3ptAe6Ptg2Zej5OJlRnpRsALsD1b1Q2YwNGSX5fuFGkI=
+	t=1762358611; cv=none; b=Be3PMUpnLBuL9bOxDocj8aUpMh0bYzQeXZH05n/wXJwZ1OxGcpE3+lrT9sBPuWOrepDHJUqazZh2Q9YKWsTrx3n+3oQdJDyLhT/T8TY+StPYdTXlvN4fBXawMgBztt1yFYsooidGrfs58ZowlfxYwg7LsKaO7gaHgejREARGCP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358705; c=relaxed/simple;
-	bh=Vc8K3MrTyVwbjqp/DCwioUL/LWadEWrFyl8zAIAawBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZjnpqfxb6jukRNbpicOg5pcCcfM0cC/zMR/vPHisCqezO4J+SOUHVfMPVKpZQx7joK6SrBKswVJtuTEDnrmIEMpuWYTRZq5MK08ZlfVscLzyU3t4kyG2In30X4s5YzhnAWpejyGtx98/6qFIBQ46hN3G4sp6cFZtFJD5ecF1O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WWxLLBhl; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762358704; x=1793894704;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vc8K3MrTyVwbjqp/DCwioUL/LWadEWrFyl8zAIAawBA=;
-  b=WWxLLBhl7yIK6JGmib04vE0mFhsfXn2YkEfHDIn3tYvE3K9Vb6Oll/Z0
-   52aZM8r060HRaAgwsy0C293rkhEsYxTLAV9Et6yH4NoJMjkqELH8cUIuX
-   AS3bCtrJA9vzvOD62VtMbkgxgsvKfOX0DP9pGp6IqVPdaty5Kq/jIqS8R
-   UacmOIcLvF6LSK5gAj9mO9Ezw01YoPQbS+hG9D+dRqrk96LEEGQbXtAuU
-   e0VgAVJD2RZ0wEkSfgRfJ4jXKO9JESZqV3TkdzmfdvoU/nkNW5sRgpZBO
-   r6oscRlb3jhPYu/wJLvBmyov8F94I7fsSmT/Ug8FY9M4r7Wz00fZ8MTvm
-   w==;
-X-CSE-ConnectionGUID: LuP+QlqfRtKVDcQsAF6BJw==
-X-CSE-MsgGUID: 4FKFNoJUQd+veTUGGHjH/g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75829680"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="75829680"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 08:04:45 -0800
-X-CSE-ConnectionGUID: uKDzES6cQJ+/2F/g+UvqTw==
-X-CSE-MsgGUID: reYSz8GhRLO04UAr3rNsZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="210969542"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 05 Nov 2025 08:04:40 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGfzS-000SoS-0u;
-	Wed, 05 Nov 2025 16:04:24 +0000
-Date: Thu, 6 Nov 2025 00:02:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Mina Almasry <almasrymina@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx
- token management
-Message-ID: <202511052307.doTV8fDn-lkp@intel.com>
-References: <20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3@meta.com>
+	s=arc-20240116; t=1762358611; c=relaxed/simple;
+	bh=l0Nk7GVBJ1qI7KNylnbSMpoEa3nN+cyLJ8/L2EcFb0c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T86uURcf+A6knIWbBA4SiwTtLBQUmrX5cE1O4W15jIfzjzfhPran9a1isXoAhrDnDf9IKrKNTPuZAdxQXNOANVm2lbzQWhX8CZbKozdy1eYgE3C/5RHQOfQ+hYjeNWbZaTNBj4xUJYpSlaxnM3nOzgBroeC1gMxUwtOhdc78mgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bx7IIG4j; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a9c64dfa8aso20125b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:03:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762358609; x=1762963409; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yQYfiOpDWl0sTNTx1hCAEQfYbuDMN8nzIM3Ra+ul0vg=;
+        b=Bx7IIG4j/E4yaZYGmuQ5xX/zbhEK/nWPnOv6VfWQd/m2ip7V6gpd5RUWdyB+eiOjpg
+         GfT27+qFz+2gi0Pb5DZ3JkM3eqP9oedgT+VidU9IR1cZ4gjQR2aMg7Dod67uUFcMJ8kc
+         OuO84d/Dibq++txeq1/bJxxszUrN48toUVP8KLKhN2fN3o9RVkPVoFZezoP7RgTgooOf
+         McVrtJmDHBbXZIdicwUjEb8EdkxETLR7zNsW32V58yH2HxIrhXcdo6qNQ4ltsRiIqPTy
+         Gs1XV01pck8BOt4F0/ZLgYCk9o0C3N9+O6ja1qXXgbLGqFz0svDeckz2Tlt+fgM7pLhK
+         lJDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762358609; x=1762963409;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yQYfiOpDWl0sTNTx1hCAEQfYbuDMN8nzIM3Ra+ul0vg=;
+        b=dGBEmXakM6o5MJFvr4X5El+L3JF18zetQmJ28ABotISz+FvInTic/REEGQiSjxX0AS
+         eC9VRYk2PDN47V0VK8nDOszYHWneO384bd48F2QvvNp4M/Fr3+3vERtSWuZNtt/5AiBH
+         ROWSTvOlNYD4RqR9/LOrnUTCnVakfu8rfLVoO5HWi+66aNEye31esCB7P2LHWq1E3a4V
+         emNy9a5tNkXI0JgENkbodgWPJStgwdbNRO4rBQ/3xR6kn+IX2VOiSWgOKwuPq+EDl0ib
+         w3KDe0PEHHQ6Fg/NMzNhQDmquP+9RZp/D+M7+dHYaxFdaJJiA7F1FMKKO0ZdS/3wABoy
+         1Hpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXN883/EwDep0kSJOiTmCb4RlcV/62W9VzCp6dyTjBBb1CwIpCQCHm/W9oojOQTACo2U26piGNaClRkrxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsKoSvyO69VNKSdl87U8sQf4KRcbFnhE6YwCOhEkk/sOE5eg/R
+	PX62LAAx1kLw7nUIOmhQ7b4TxhmwqvWF2LmZun1wSE4n3QK6Ao5HNupY
+X-Gm-Gg: ASbGncuzOxZj1ID8OdwfojwRZLO5fC8LUqZpE9wkrSrA1IIE1HUzSerttrd23T3EuOA
+	53thps262GC0lUpGclc9KwbHPA62dE5uvLjaLGlh6ypDcFGQEZhzQdh2tPdBaK84aCb+8XbkxBB
+	k/0QkiX/ZjmuM1tWmt24W0+3bSwQUrinRnRt8sapzKeNThY0bvk5Hu8Z8ceIpyFfyBue/WOtE6O
+	wc+lxLkKobkejeKJa96YMdwxEXwr5bJLeVEeBi8yvHlGkWgY1YSJnjuBujrhZ81aB7REo5pafb7
+	oDCggGT8FUpCsO0hegBTLg/IvaP4jrj4HX79SxSLmLuUgq6bnUBAjFD3zROZsVonaRZlqXAhyTk
+	X2vRrc4uZBiAElgPpXTtz/k1LfYp9bxCOyBH8t6AoObKpYF24kXTA+T03WGKgnIC+lGveIqS35U
+	XLlcJKv464VZg=
+X-Google-Smtp-Source: AGHT+IHJwjnUIGI8gDNaxibj4sXg44XjKfIRuSM7Iw8kysNt9Y+apm7udBv6IooCou81dlnb75b3uA==
+X-Received: by 2002:a05:6a00:a03:b0:7ab:2fd6:5d42 with SMTP id d2e1a72fcca58-7ae1ed9f9femr4377537b3a.16.1762358608506;
+        Wed, 05 Nov 2025 08:03:28 -0800 (PST)
+Received: from [192.168.72.66] ([240e:441:9718:7c7:b13e:ed12:9e56:bf18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd6823f78sm6638331b3a.63.2025.11.05.08.03.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:03:28 -0800 (PST)
+From: Goko Mell <goku.sonxin626@gmail.com>
+Date: Thu, 06 Nov 2025 00:03:16 +0800
+Subject: [PATCH] ASoC: spacemit: fix incorrect error check for sspa clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3@meta.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-spacemit-i2s-fix-v1-1-ee2cedcdda23@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEN1C2kC/x2MywqAIBAAf0X23IJaBvUr0cF0qz30wI0Iwn9PO
+ s7AzAtCiUmgVy8kuln42AuYSkFY/b4QciwMVltnjHYopw+08YVsBWd+kNo6ts75qWsClOxMVPS
+ /HMacPytboKhiAAAA
+X-Change-ID: 20251105-spacemit-i2s-fix-e63d655ab94c
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Yixun Lan <dlan@gentoo.org>
+Cc: linux-sound@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Goko Mell <goku.sonxin626@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762358601; l=1364;
+ i=goku.sonxin626@gmail.com; s=20250522; h=from:subject:message-id;
+ bh=l0Nk7GVBJ1qI7KNylnbSMpoEa3nN+cyLJ8/L2EcFb0c=;
+ b=XpqASyQW0RdHbCLkEf2XfIsntbTBZK8hH71TYZgySwP0P0jIrF2a24Krhc5ELR/kzKnFBR+nV
+ WhQD04oBe62Dg+xi0OVCFhFRVVymT8BGqaaQW3Tdd9/O3KDLSgKAMh1
+X-Developer-Key: i=goku.sonxin626@gmail.com; a=ed25519;
+ pk=YAEtp1QQ+5hMv+clz+l2GN5MRRfR5AvnzZi99Qxamqc=
 
-Hi Bobby,
+Fix a wrong IS_ERR() check in spacemit_i2s_probe() where `clk` was used
+instead of `i2s->sspa_clk`.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Goko Mell <goku.sonxin626@gmail.com>
+---
+This patch fixes a wrong IS_ERR() check in spacemit_i2s_probe() where
+`clk` was used instead of the correct `i2s->sspa_clk`.
+---
+ sound/soc/spacemit/k1_i2s.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[auto build test WARNING on 255d75ef029f33f75fcf5015052b7302486f7ad2]
+diff --git a/sound/soc/spacemit/k1_i2s.c b/sound/soc/spacemit/k1_i2s.c
+index 8af05e1604f518b63cbbbaa66b73cfee8262d87f..1cb99f1abc7cde3370ca643c8b955132d8a1013a 100644
+--- a/sound/soc/spacemit/k1_i2s.c
++++ b/sound/soc/spacemit/k1_i2s.c
+@@ -414,8 +414,9 @@ static int spacemit_i2s_probe(struct platform_device *pdev)
+ 		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa_bus clock\n");
+ 
+ 	i2s->sspa_clk = devm_clk_get_enabled(i2s->dev, "sspa");
+-	if (IS_ERR(clk))
+-		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa clock\n");
++	if (IS_ERR(i2s->sspa_clk))
++		return dev_err_probe(i2s->dev, PTR_ERR(i2s->sspa_clk),
++				     "failed to enable sspa clock\n");
+ 
+ 	i2s->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(i2s->base))
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/net-devmem-rename-tx_vec-to-vec-in-dmabuf-binding/20251105-092703
-base:   255d75ef029f33f75fcf5015052b7302486f7ad2
-patch link:    https://lore.kernel.org/r/20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3%40meta.com
-patch subject: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx token management
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251105/202511052307.doTV8fDn-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511052307.doTV8fDn-lkp@intel.com/reproduce)
+---
+base-commit: 84d39fb9d529f27d2f3d295430d1be0abdae7a6d
+change-id: 20251105-spacemit-i2s-fix-e63d655ab94c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511052307.doTV8fDn-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> net/core/sock.c:1107:12: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-    1107 |                                 return ret;
-         |                                        ^~~
-   net/core/sock.c:1095:9: note: initialize the variable 'ret' to silence this warning
-    1095 |         int ret;
-         |                ^
-         |                 = 0
-   1 warning generated.
---
->> net/ipv4/tcp.c:2626:6: warning: variable 'refs' is uninitialized when used here [-Wuninitialized]
-    2626 |                                         refs++;
-         |                                         ^~~~
-   net/ipv4/tcp.c:2496:10: note: initialize the variable 'refs' to silence this warning
-    2496 |         int refs;
-         |                 ^
-         |                  = 0
-   1 warning generated.
-
-
-vim +/ret +1107 net/core/sock.c
-
-  1085	
-  1086	static noinline_for_stack int
-  1087	sock_devmem_dontneed_manual_release(struct sock *sk, struct dmabuf_token *tokens,
-  1088					    unsigned int num_tokens)
-  1089	{
-  1090		struct net_iov *niov;
-  1091		unsigned int i, j;
-  1092		netmem_ref netmem;
-  1093		unsigned int token;
-  1094		int num_frags = 0;
-  1095		int ret;
-  1096	
-  1097		if (!sk->sk_devmem_info.binding)
-  1098			return -EINVAL;
-  1099	
-  1100		for (i = 0; i < num_tokens; i++) {
-  1101			for (j = 0; j < tokens[i].token_count; j++) {
-  1102				token = tokens[i].token_start + j;
-  1103				if (token >= sk->sk_devmem_info.binding->dmabuf->size / PAGE_SIZE)
-  1104					break;
-  1105	
-  1106				if (++num_frags > MAX_DONTNEED_FRAGS)
-> 1107					return ret;
-  1108	
-  1109				niov = sk->sk_devmem_info.binding->vec[token];
-  1110				if (atomic_dec_and_test(&niov->uref)) {
-  1111					netmem = net_iov_to_netmem(niov);
-  1112					WARN_ON_ONCE(!napi_pp_put_page(netmem));
-  1113				}
-  1114				ret++;
-  1115			}
-  1116		}
-  1117	
-  1118		atomic_sub(ret, &sk->sk_devmem_info.outstanding_urefs);
-  1119	
-  1120		return ret;
-  1121	}
-  1122	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Goko Mell <goku.sonxin626@gmail.com>
+
 
