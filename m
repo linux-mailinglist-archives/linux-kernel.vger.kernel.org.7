@@ -1,197 +1,74 @@
-Return-Path: <linux-kernel+bounces-885806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5658BC33F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:51:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978F0C33F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C75425A0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:51:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62DEC4E2D58
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695FC246BCD;
-	Wed,  5 Nov 2025 04:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FR4+ndTE"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC732561D9;
+	Wed,  5 Nov 2025 04:53:49 +0000 (UTC)
+Received: from smtps.ntu.edu.tw (smtps.ntu.edu.tw [140.112.2.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C52B1FC7C5;
-	Wed,  5 Nov 2025 04:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDACD225408
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.112.2.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762318278; cv=none; b=J5q1fzfseowhqJ8mv7PcMiTZS4gVzu1yT4hObERFCnydIq+6jd1wUxWUYZ/6pAsVeturdF+tehvhnnqWFXJBrBHedSknDfWOiJ4WizniyvQlp9g6EjPAXNpPD5sSQ1N16c/zyyBG9CPVncChAjQ8PJT9pGEl2ckeFYpOxm2mxLk=
+	t=1762318429; cv=none; b=bru/IESnA4JsYLxhCcuy+y1nHl+lQA+oLtyq72m4lR3v8a/QRouy5t1yL7HygDXD6BEsnFhdGFDracT2wl0QaeVEcRTvB5i7/9ZXgdRBvfzpDqiMt4yhQyzBFUGiKveX8kIGCllGweQ8dt/x8mOFd06ZqOa5IqlBBKJv9cvYNmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762318278; c=relaxed/simple;
-	bh=Rqt0rfJ9DyJDcUVxDeKKcSB70SdKUoesL1eeCo73ZcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rjrPEKoVFpuCuVeCGvZ96fDBqYA/hIzLEnjJvgGinlSiW8PVGx3QrgHI25CgaXO47QKQQ8JZmJNaNm23NvI+BdIR6b+NgGG4d1GiGxjINM4MV1hLzViDdBHX5+unKrOULGHExIGkaY5sc0P6WRfi/DByyCPovcrPZ4XkldYdhFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FR4+ndTE; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762318270;
-	bh=qhseKDsy4MSygtMUL1tZlcg8MsXp00Z4IjsBDJqxj3Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FR4+ndTEBhwOG/Rj1+CefDf0WqihgR3LSW0mu6LTCauNg4pCJYpXjBamlQgv3Dr8b
-	 RJox4VNkBCd1aYkEMOJcoz60/54U0Wk2+ADcmdH6FZNalOmZvpKUB4wqMfzOy8QitW
-	 uiMUCt04xd3CKJ2pbReCNmJ3BZKaFZ0VdSn3yrPkGMmUPqdBiBf3A1Z+cc2I9mpj79
-	 DFxYMeymMSoZoVNMP3w8GvLD6f8Im+d67i08e6K/5U3NonybfNZIpUQoKNGTGPexWE
-	 9ruYl8x05hpVanTdY861Du/6UOgLYgfSE1xhLZdGq3aP/swyrJRoUVqHvSMphXhL8J
-	 G4SOWhagXYYuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1762318429; c=relaxed/simple;
+	bh=KL7ZKaYNv/bzLovyJbNjasz/Zqv0zzGXIAt912Kig/g=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Ra9fVXEZLY8kPFN0Pb+m9cKmxLhWcdnzq2J5uIuKxPEz6LVaFrfmQ8AavbTTlUhON+GocqoVuGuwWHasITauPxI4pBkMIkppggQRfu+ThRc93ZO6oxD5t7YW6YkpCvBBLIavGTToZekuy2/OGybB331yL1AFftXi8x/QAR2fiSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw; spf=pass smtp.mailfrom=ntu.edu.tw; arc=none smtp.client-ip=140.112.2.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ntu.edu.tw
+Received: from wmail1.cc.ntu.edu.tw (wmail1.cc.ntu.edu.tw [140.112.2.161])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1Xvx4ZJhz4wBD;
-	Wed, 05 Nov 2025 15:51:09 +1100 (AEDT)
-Date: Wed, 5 Nov 2025 15:51:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg
- <a.hindborg@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Message-ID: <20251105155109.1b3fc7d8@canb.auug.org.au>
-In-Reply-To: <20251104154500.5acb5340@canb.auug.org.au>
-References: <20251104154500.5acb5340@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtps.ntu.edu.tw (Postfix) with ESMTPSA id 088813201F;
+	Wed,  5 Nov 2025 12:53:36 +0800 (CST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6VnHqlZ6EvRBuZsD/tpUQB.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Date: Wed, 05 Nov 2025 12:53:36 +0800
+From: Bill Tsui <b10902118@ntu.edu.tw>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, oleg@redhat.com, kernel@xen0n.name,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: ptrace: Merge ptrace_hbp_set_*()
+In-Reply-To: <429e94ee-ee77-3a5c-a2f7-c0d027fb7c4c@loongson.cn>
+References: <20251029153649.33345-1-b10902118@ntu.edu.tw>
+ <CAAhV-H5E79jZ9rMYyP3h+KLX5rDGcB-Ec8WqyAhPC-pvuvv5UQ@mail.gmail.com>
+ <429e94ee-ee77-3a5c-a2f7-c0d027fb7c4c@loongson.cn>
+User-Agent: Roundcube Webmail/1.4
+Message-ID: <34516b92c4e5be92e3f740f167f65431@ntu.edu.tw>
+X-Sender: b10902118@ntu.edu.tw
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/6VnHqlZ6EvRBuZsD/tpUQB.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Tiezhu,
 
-Hi all,
+> If there is no functional change, just to refactor the code or
+> avoid the potential issues, please give a explicit description.
+> We will test GDB to see whether there is a regression.
 
-On Tue, 4 Nov 2025 15:45:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the modules tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> error[E0308]: mismatched types
->   --> rust/kernel/module_param.rs:75:47 =20
->    |
-> 75 |         let new_value =3D T::try_from_param_arg(arg)?;
->    |                         --------------------- ^^^ expected `&BStr`, =
-found `&CStr`
->    |                         |
->    |                         arguments to this function are incorrect
->    |
->    =3D note: expected reference `&BStr`
->               found reference `&ffi::CStr`
-> note: associated function defined here
->   --> rust/kernel/module_param.rs:32:8 =20
->    |
-> 32 |     fn try_from_param_arg(arg: &BStr) -> Result<Self>;
->    |        ^^^^^^^^^^^^^^^^^^
->=20
-> error: aborting due to 1 previous error
->=20
-> For more information about this error, try `rustc --explain E0308`.
->=20
-> Caused by commit
->=20
->   0b08fc292842 ("rust: introduce module_param module")
->=20
-> This is some interaction with something later in linux-next - presumably
-> commit
->=20
->   3b83f5d5e78a ("rust: replace `CStr` with `core::ffi::CStr`")
->=20
-> from the rust tree.
->=20
-> Hopefully someone can provide a resolution for me tomorrow.
->=20
-> I have used the modules tree from next-20251103 for today.
+Yeah, just a refactor without functional change. I should have been
+more explicit about the intent and that LoongArch doesn't share the
+bug.
 
-I have used the modules tree as is and applied the below merge
-resolution patch (supplied by Andreas) to the merge of the rust tree.
+Let me resent the patch with clearer commit message.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 5 Nov 2025 14:52:29 +1100
-Subject: [PATCH] fix up for "rust: replace `CStr` with `core::ffi::CStr`"
-
-interacting with commit
-
-  0b08fc292842 ("rust: introduce module_param module")
-
-from the modules tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- rust/kernel/module_param.rs | 1 +
- rust/macros/module.rs       | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/rust/kernel/module_param.rs b/rust/kernel/module_param.rs
-index e7d5c930a467..6a8a7a875643 100644
---- a/rust/kernel/module_param.rs
-+++ b/rust/kernel/module_param.rs
-@@ -70,6 +70,7 @@ pub trait ModuleParam: Sized + Copy {
-     // SAFETY: By function safety requirement, val is non-null, null-termi=
-nated
-     // and valid for reads for the duration of this function.
-     let arg =3D unsafe { CStr::from_char_ptr(val) };
-+    let arg: &BStr =3D arg.as_ref();
-=20
-     crate::error::from_result(|| {
-         let new_value =3D T::try_from_param_arg(arg)?;
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index 1a22de73d512..f6a94712384f 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -133,10 +133,10 @@ fn emit_params(&mut self, info: &ModuleInfo) {
-                         ::kernel::module_param::KernelParam::new(
-                             ::kernel::bindings::kernel_param {{
-                                 name: if ::core::cfg!(MODULE) {{
--                                    ::kernel::c_str!(\"{param_name}\").as_=
-bytes_with_nul()
-+                                    ::kernel::c_str!(\"{param_name}\").to_=
-bytes_with_nul()
-                                 }} else {{
-                                     ::kernel::c_str!(\"{module_name}.{para=
-m_name}\")
--                                        .as_bytes_with_nul()
-+                                        .to_bytes_with_nul()
-                                 }}.as_ptr(),
-                                 // SAFETY: `__this_module` is constructed =
-by the kernel at load
-                                 // time and will not be freed until the mo=
-dule is unloaded.
---=20
-2.51.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6VnHqlZ6EvRBuZsD/tpUQB.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkK170ACgkQAVBC80lX
-0GzrCAf/cLu6vLUP9wtMFD7QMIN5HOMabsD21HuABrU9jQvBAzEVMWXrLJmb7t7g
-gyLiTo6TpfpUGsSqTsdLCG7+4cO3KVkquV4QvG6cojDuesbP6eKq78TfM0Pt90MY
-2PEf98L7S4FU6lvz8t7aWrSWiU8uiNGNJ8maodZmdlh2m5BgbDhCzSIeHLbSyu0w
-ADGkpwJHvKElSRQmAeKvJgxSVKziIBaHJm4rPgdXukSB8TsDqe8C7faQN+xWZX5s
-AtsB2S07FbXX68h7rHh0/+tsv58aYrVQfigyL1TDy/bCpPJWzHw7ZrEfPXc3dTOI
-eDihBSnBWD3+Vc+rw3F651jdKjFGvg==
-=jV7k
------END PGP SIGNATURE-----
-
---Sig_/6VnHqlZ6EvRBuZsD/tpUQB.--
+Thanks,
+Bill
 
