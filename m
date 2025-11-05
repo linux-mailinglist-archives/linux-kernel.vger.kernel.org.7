@@ -1,146 +1,186 @@
-Return-Path: <linux-kernel+bounces-886582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C2C3600F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC70C36015
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C326234EE8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09213A71DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EE7329E63;
-	Wed,  5 Nov 2025 14:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93881A9FB6;
+	Wed,  5 Nov 2025 14:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBjdmEZt"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZAgnZp1b";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jco2c2Ts";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZAgnZp1b";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jco2c2Ts"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6157329396
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C83312CDBE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352093; cv=none; b=mPDhHB9PKDNJtyEenQ8pYc/P1u5g8XiFwwMnYuyR1PNVsYyTzyTli/eOGO9dZjHAZCRub382tn1ZPlsg17uJlyUEvBAqNZoPxaadUDqJ9qQYNNZhsF4mCvcaO3DxShBr9khS0iXe40P3aI3/Ed92u/PqlzeJ//T0LkggqlsToNU=
+	t=1762352184; cv=none; b=MuOT3IGeNa0xtv7ueeDrV9CDR+9deavfM0KCHklXzTQUzNzK3fj5s0VGuiAC/4h/5bqUDIsO8sVyZE0iIAoZrC+NaS8jVNXkuACpYFBKgEikqc7BldkfOj2g72n2wL08FThDQsWx47KEkTt4tPpRlU81k6AyikPNaSKaXNUvmmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352093; c=relaxed/simple;
-	bh=mJxls0L6MjDLzDQonIfLUUpMj8pgWbeFfC6UPwa7zxU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mWbTfi7GE/+PrX0qZp9S+s+2fUGHVjdYdwN8eiS9KmMPc/JjmUHYJJezjgmlhtQIKXqUO6XwwX0T4xUDkjkImXjUqfTjVFcpCthBSPDwc/3oZTQgoeyEMXbbOqmc5G6OY2XZR0t5Ise3Im4+AqMWsYDUvMb8PlNQXHEVIFuci4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBjdmEZt; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso6565668b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762352090; x=1762956890; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVOvJXaWSxDtfYehskh8E4BDAZD7pJCUnmkX9Zw9K7k=;
-        b=iBjdmEZt+REbVkvwmKIN22/5yfjx1gwgxoHyVbSwu+Zp/q6TvTAv2CqURZ6Qk7mT4/
-         ZSH0hFC3mTJDUvHO6gF8d80A1TtROWyK5r/sWL+UgjPY3CPRCpJ5GWE6DHqE9bJ0+d1T
-         vJzRan4jzzgih4ClZO5upYrvqjzIDHc3C4BUi6B6nzxptIZMUGtX0WgUsDIXxveli3Um
-         eqAzZ7I07DEYqRzAYSrhrP5NVreJH7lEjMc0FiBgeA1ySkEG/y2ryoO9zXXcbSez/3DT
-         Rj2nH92tnA3J3CTH9o/Gj5TcboVQGGpi2gUygtPHY4nv68QGj024YJ79Hdhi3qB7akbb
-         mzoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762352090; x=1762956890;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uVOvJXaWSxDtfYehskh8E4BDAZD7pJCUnmkX9Zw9K7k=;
-        b=i6G0DHTqbn5XX4hdpaEVaHLwbZqoDQgiWc2t9pD+sWpb0jMPMZCyl7ZERporRUAJwS
-         Dz7Sy8Wv4JenfV0Jl/ty8kZXDm8MzQNHOwwRW/2lCz2LYUiRUztzUrNAXwR8nzc4UXPQ
-         xdLfKaWIDA7urjcQgX0WizJB3ww/P4g9lld0D7mINXig1ShHcbHyq7UgMUkAD5akFwkt
-         aay5qdd1YOJSV0ZxI+z6KnrkBDj8DZwpYjEzITlGBlkd0r0cLyL71iov5+qgMmUahNzS
-         X/ukhCJeVoSGzG4bwgGrUXTRsos0NdkNTm8E9eD575hX/KDeLSv7CRGv/SboIrnlpnOP
-         dL+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEUoDHIaJp6cZ+J0+75PwOqnPPuaUMEkC1LFQogB3MTg+x6i328s+sR8LN8y+o2ihDX8qWz3ABTqWM05Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqYa8qOItWwXSuHykEar4Pf55+bTYUSoAVosQhEvqzqakmc+8q
-	lWdbdOThIJKw9Ib7jthfA2PF8Bhf8dhHx3CQFT884Ugig8MkdBdnXxYJ
-X-Gm-Gg: ASbGncvh/k7rQGiJEsh84WFo3ONs6Q1TliZB55YJU4hs3lsLPozOKsPw0k+yEiMnGyJ
-	MmAKHHBtayqomQJLMMsiqvYLVREUAJwmVwiJLWB6zfKRLT6ZuZS4N8Z9F2KjMESx/MSb1VHubPa
-	JtbBkd2mcOrZJx3BNHrwP6+bQof1SCcrtUMY96FYRuYLm3HsL1a3KKR7a5qRWF89FqjctuK05Hi
-	0fOwQ+q3g1hjEwUjWvBqGXz/cPNcQYl8u0xkRK3v1yI7Ey+jOxHatw8eEdNwGvjUHAWAq2YRk72
-	af/d00vBfodzBqhnx4JxsgrG1VfMW4J4Ad4G0QIyftT0pDTDEJtX4HvHAKNpwjFY93f2XEvkIcC
-	JbffBiUCFBaGojVG+xZ3EokzucBj9jF8KDjbkOumni1dwl8cj27ha07jL+PC6xxS+6kpTUmQifv
-	U=
-X-Google-Smtp-Source: AGHT+IEPkfZnunnyTLP4kMjyBd6sKE6DJzNwoAB7AKeujS0KY5CfB36Ljlq3waBtxiMTG8JdaqBBKw==
-X-Received: by 2002:a05:6a20:12c3:b0:341:8609:3bb4 with SMTP id adf61e73a8af0-34f83d0f7afmr4219467637.21.1762352089969;
-        Wed, 05 Nov 2025 06:14:49 -0800 (PST)
-Received: from aheev.home ([2401:4900:88f4:f6c4:1d39:8dd:58db:2cee])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd382ab30sm6518754b3a.24.2025.11.05.06.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:14:49 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Wed, 05 Nov 2025 19:44:43 +0530
-Subject: [PATCH] scsi: fix uninitialized pointers with free attr
+	s=arc-20240116; t=1762352184; c=relaxed/simple;
+	bh=wCHN5H9mchP1y9fkZJjQxB8pWxo4aGOEsmVIwaBLFLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnGf7/ng7YFZ85rmMSpUBF4od+FN5Md2IM6BLAWteZzeIOp/6Rvit1IVkM1h8hYaVycdoDcNVwHidNzHtJEjjCBw49xA619e6jHGHW+BBdELmIv6QEphSyVPK2sFn3Jth2KwRKXh2S8fovdiilqQEYeXry6xvM7SHhhNTEEjTPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZAgnZp1b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jco2c2Ts; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZAgnZp1b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jco2c2Ts; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4F0D11F443;
+	Wed,  5 Nov 2025 14:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762352180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
+	b=ZAgnZp1beMCDQuPib8hLvJz5oCykZmr6ck6Ej/Nhdxtb+z+12++QaMDxGcyG/L3DJn2yl2
+	tqa/wT8kM3RDINdiMAua9A1d74/H2TpsRoLEJ3ycvxFUEqse0CnvV9W/ewuK17MdpJOgLx
+	9FZykxZ9cikAYKOERiwE9l85Hw7cOR0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762352180;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
+	b=jco2c2TsE1GvQjlBUxLKyXGvVE4Ef/jz0HVJ8IitvIor3aznOWSQ7I+FaCIdZMwU43atBk
+	Spa1RB0ytSTVoPDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762352180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
+	b=ZAgnZp1beMCDQuPib8hLvJz5oCykZmr6ck6Ej/Nhdxtb+z+12++QaMDxGcyG/L3DJn2yl2
+	tqa/wT8kM3RDINdiMAua9A1d74/H2TpsRoLEJ3ycvxFUEqse0CnvV9W/ewuK17MdpJOgLx
+	9FZykxZ9cikAYKOERiwE9l85Hw7cOR0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762352180;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
+	b=jco2c2TsE1GvQjlBUxLKyXGvVE4Ef/jz0HVJ8IitvIor3aznOWSQ7I+FaCIdZMwU43atBk
+	Spa1RB0ytSTVoPDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEBAF13A88;
+	Wed,  5 Nov 2025 14:16:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id q5rPLzNcC2kzQAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 05 Nov 2025 14:16:19 +0000
+Date: Wed, 5 Nov 2025 15:16:18 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Hui Zhu <hui.zhu@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Hui Zhu <zhuhui@kylinos.cn>
+Subject: Re: [PATCH v4 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
+Message-ID: <aQtcMkivdFHbW2lK@localhost.localdomain>
+References: <cover.1762310125.git.zhuhui@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-aheev-uninitialized-free-attr-scsi-v1-1-d28435a0a7ea@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANJbC2kC/x3NQQrCMBBG4auUWTuQpAmoVxEXofnTDkiUSSzF0
- rsbuvw27+1UoYJK92EnxSpV3qXDXgaallhmsKRucsYFa03guAArf4sUaRJf8kPirADH1pTrVIV
- TyM7fxuvojace+iiybOfk8TyOP4VFxIZ0AAAA
-X-Change-ID: 20251105-aheev-uninitialized-free-attr-scsi-d5f249383404
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1567; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=mJxls0L6MjDLzDQonIfLUUpMj8pgWbeFfC6UPwa7zxU=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDK5o6+tlV1zbfFK+c9Lxa5/4Jk2Ny5PW8UwXbU4oo1NU
- ihWoN+8o5SFQYyLQVZMkYVRVMpPb5PUhLjDSd9g5rAygQxh4OIUgIksVWJkeJYbcfzVjs/z/98x
- +x0uwrOP9xjTCmPPpsi1e+6mvavovsHI0HDky7W4AG/GiX2Tb8kIq5SGmma9YNfJlZqT6Zx6et4
- 0bgA=
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1762310125.git.zhuhui@kylinos.cn>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behaviour as the memory assigned(randomly) to the pointer is freed
-automatically when the pointer goes out of scope
+On Wed, Nov 05, 2025 at 10:42:42AM +0800, Hui Zhu wrote:
+> From: Hui Zhu <zhuhui@kylinos.cn>
+> 
+> The hugetlb.c file has grown significantly and become difficult to
+> maintain. This patch series extracts the sysfs and sysctl interface
+> code into separate dedicated files to improve code organization.
+> 
+> The refactoring includes:
+> - Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
+> - Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
+> 
+> No functional changes are introduced in this series. The code is moved
+> as-is, with only minor formatting adjustments for code style
+> consistency. This should make future maintenance and enhancements to
+> the hugetlb subsystem easier.
+> 
+> Testing: The patch series has been compile-tested and maintains the
+> same functionality as the original code.
+> 
+> Changelog:
+> v4:
+> According to the comments of David Hildenbrand, add copyright of
+> hugetlb.c to hugetlb_internal.h, hugetlb_sysctl.c and hugetlb_sysfs.c.
+> v3:
+> According to the comments of SeongJae Park, updated MAINTAINERS to
+> add new files.
+> Removed the wrong copyright in hugetlb_internal.h.
+> v2:
+> According to the comments of David Hildenbrand, removed the wrong
+> copyright in the file headers.
+> 
+> Hui Zhu (2):
+>   mm/hugetlb: extract sysfs into hugetlb_sysfs.c
+>   mm/hugetlb: extract sysctl into hugetlb_sysctl.c
 
-scsi doesn't have any bugs related to this as of now, but
-it is better to initialize and assign pointers with `__free` attr
-in one statement to ensure proper scope-based cleanup
+I am replying here as a response to https://lore.kernel.org/linux-mm/58d3c50f-2b4a-4053-a846-613434d5bcd9@redhat.com/T/#mf694af3f5a6ca56b76adf66352cbb88d022fe36c
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
- drivers/scsi/scsi_debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So, taking a look at patch#1 as an example,which moves sysfs stuff into hugetlb_sysfs.c.
+I have the feeling we are moving too much stuff. It is true that drawing a line
+is not easy, but e.g: you mention
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index b2ab97be5db3d43d5a5647968623b8db72448379..89b36d65926bdd15c0ae93a6bd2ea968e25c0e74 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -2961,11 +2961,11 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	int target_dev_id;
- 	int target = scp->device->id;
- 	unsigned char *ap;
--	unsigned char *arr __free(kfree);
- 	unsigned char *cmd = scp->cmnd;
- 	bool dbd, llbaa, msense_6, is_disk, is_zbc, is_tape;
+The following components are moved to mm/hugetlb_sysfs.c:
+- hugetlb page demote functions (demote_free_hugetlb_folios,
+  demote_pool_huge_page)
+
+I __think__ that moving demote_store() into hugetlb_sysfs.c is fine, but although
+demote_pool_huge_page and demote_free_hugetlb_folios are only called from there,
+they look more than a sysfs interface and more like hugetlb generic code.
+
+Again, drawing a like might be difficult, but I think that e.g: we should only move
+sysfs entry points functions into hugetlb_sysfs.c
+
+Does that make sense?
  
--	arr = kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
-+	unsigned char *arr __free(kfree) = kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
-+
- 	if (!arr)
- 		return -ENOMEM;
- 	dbd = !!(cmd[1] & 0x8);		/* disable block descriptors */
 
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251105-aheev-uninitialized-free-attr-scsi-d5f249383404
-
-Best regards,
 -- 
-Ally Heev <allyheev@gmail.com>
-
+Oscar Salvador
+SUSE Labs
 
