@@ -1,227 +1,153 @@
-Return-Path: <linux-kernel+bounces-887269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8ADC37BB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:31:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D196C37BB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D0B64ED5A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9992C18C4602
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34ADD346799;
-	Wed,  5 Nov 2025 20:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFD832D0D5;
+	Wed,  5 Nov 2025 20:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="EIOjqxkG"
-Received: from mail-wr1-f102.google.com (mail-wr1-f102.google.com [209.85.221.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZiEwVyJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97835346FBA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647BD2D3EEE;
+	Wed,  5 Nov 2025 20:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762374517; cv=none; b=p2E5P1+ntyM80NM0aFkm/AaqgPDdAfk40CaR3pKGBU5/3qAEiQt7lJVqDbM86VdiRdvMaRCTGcez7NrQKRRopNF5uFcBlx1M+LWJzKIrQGD4mrHGwd+gfr9rMzE3UkfOTgvAsqpObg5ccF9qbl6s4FvaPBi9lVYuOsV78X/yz5Y=
+	t=1762374661; cv=none; b=uZNk0PjFL70ktYAy71uTIoz+qp97yajCZnSgKLGsbxy1DYX2s8lRo/sO8F6GBEzNliFUH1GgKimLnE8tIkX/JwRyz84ncVDlYjlx/H8js4tByns/OoQc6HCsRvDXlF4pwqrJMOCatkqpUll6FtDWXlkYbbauTi4xzCf5pSutWRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762374517; c=relaxed/simple;
-	bh=ZNQBWF5E/kCd66vnCIEh1pwOhtP6knbpleihD38HzT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=svXMZwblX64BQryIYJumB+tCQ+5iW3DjkVfV3W5+CI/HBqhfMRoKRBMBdIob6NZbSxLkWoBiKpcmv9MD5F1xzmzwShja8Hl1SBZ2L0+nOCC2Uq3L9DUKDbogAYwW0JNusB1SiBQ3PlOb39goGDtmWgUlB06e++DssRklVYg+510=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=EIOjqxkG; arc=none smtp.client-ip=209.85.221.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-wr1-f102.google.com with SMTP id ffacd0b85a97d-429bfa1d3f8so27904f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:28:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1762374514; x=1762979314; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=piuezMo/+nJvsS63m8MZriLez8iEvJ7btVwHROt2ogA=;
-        b=EIOjqxkGKrivEbXDb9Hzqr+XKgCZu9uLXAO52ajIC1d5bU5D+wKp8UPN/eTqZhUoh2
-         jVwjznhDeZgD5NtVc75BcA68M1csx86CihXWniV9cwT4Zx7k4tN7B2zR/CFQRavzOOt+
-         +vAn2TExCUJcCbb1b7egXbmLVa+oC+nAeuiDXnh71N16FtrltrvQugt1BkU+IgHOJxGf
-         ydDxP14jYMripXPKDke84T4JHvEIbjiqurMgNCsIH/wdhTdgtvKLBrxl2Gq+EuSqaQIz
-         TyRbpv7WBYXsUOQUr9CnJ5Q12AXnGS/VmgCyMaEw4KI3tXLRRw5YVdVZwRP5ILHGt4jU
-         KJnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762374514; x=1762979314;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=piuezMo/+nJvsS63m8MZriLez8iEvJ7btVwHROt2ogA=;
-        b=k3j/u6spKpkUbZRZtSTgNVEP1LYnFU+mNGUZUOBXtJBbcIMbgC43mIMu7zjlFKsGJE
-         q+3hq8oEHSh0svS1THhCMLmr9cnXYNzz21gzzOe+bGi293gAnbo5rP966cbF5A+iR8vc
-         j7sopN/1m8EmOFZd6+sURw7AJvEr4rksaW9W+PcrCcf3dlaSUBymrDQMgqfGf9qdrX8w
-         Nyhwo0AWJjJOkfjAwtagf7BjhPw+pYLbTEkXytH9Bs7KXE5OziXITIjIdKrfOvYeC1n0
-         9SFCjW8KB278UrF4/yxCsuVivwheKtBJk/oOFjh+rHa/kdY1Wjl1dwEOwZgqQw+e1rGl
-         vBlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHLJEdu2F7cji2j3I8s31NEE9VLKrplec36JncP8ILzWYQ8dmEiO0NVkpj59s5cGnJvGYEr9SBdbKGkR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB1+Z/XECSfPurqofEOmNAlFY+nl6s8IdLDsETn5C07vRvrqeS
-	GVNANbQOB7rnGyrrQYOJp1LrpcRIhs+zX5M9XGTkRlNn/sTA59vJ3NN9Ug0ly2upOSYTk8EBksq
-	GY6yMO7y2lGaULfR0YcQ42Z8PLfFhkfEyvWzW
-X-Gm-Gg: ASbGncuMXPWmimyrLWYQNyP153Cl8S7zvwp4WM+QmrYizgOu7xrIMyz3O5Ami+0rRlD
-	r5MLam0BKoOQ9zCDo/x71pOST/u9Qwdo8rZDJOE6uXVvNSs68U2ByKljDnL6F6jEaDQ3tBICvAq
-	A4sEGxYBC6v+bGlpmKxTrqXVROjBgUpQ2yA8Fob24Qvk+MPeJ9U1jDPcg9iqH1n0a8cTjT0G8w+
-	jhc6UZygih/KkPyBzWZpmK7nH1grx+lFkDhYtk4wgrjNPwrC0cRwNI5LLjod5CWMJZ9D4wXB9ZF
-	WbZJUtW6cL6lLHao5ousBGA+zReCaaTSHyhfBYKYyiVspS7GyD/RqYBKV6f+Xno5p+j2KqbDC+/
-	Q/hthZGQr5obg2uDnhwy3tRwiLW0rfiQ=
-X-Google-Smtp-Source: AGHT+IF3HJ9NqzHMzyJZYtlBawCznKJ3NSlqmqxl8ss4jfLNnF2OITyYlaRDgdmSnz2QY8Aul6AHUCVP6eiM
-X-Received: by 2002:a5d:64c9:0:b0:429:b697:1fa with SMTP id ffacd0b85a97d-429e32c53fcmr2205430f8f.2.1762374513766;
-        Wed, 05 Nov 2025 12:28:33 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id ffacd0b85a97d-429eb3d499bsm24593f8f.19.2025.11.05.12.28.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 12:28:33 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E416934057A;
-	Wed,  5 Nov 2025 13:28:30 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 10591E413BB; Wed,  5 Nov 2025 13:28:31 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v2 2/2] ublk: use rq_for_each_bvec() for user copy
-Date: Wed,  5 Nov 2025 13:28:23 -0700
-Message-ID: <20251105202823.2198194-3-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251105202823.2198194-1-csander@purestorage.com>
-References: <20251105202823.2198194-1-csander@purestorage.com>
+	s=arc-20240116; t=1762374661; c=relaxed/simple;
+	bh=sxQuvX/WV2W1bappBx9oI1NpveSp6sJBwxr5rH6PSHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g+7Q2t2lNwYjD1NONfTMeUC+ftqd2rfH2mt2eKJjQ8HmXfS6qkl9driKHxQUIiR15lDGROBKwVL6gpMB5xwpq/9Jsl8zlE8kt2Kwx+6btUu718surHEWuhnZJCAsfytcv9wTLVv8xCWzXsWTCAFCAf3XbiWujaWZIO1+ntOPzY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZiEwVyJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1793C4CEF5;
+	Wed,  5 Nov 2025 20:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762374661;
+	bh=sxQuvX/WV2W1bappBx9oI1NpveSp6sJBwxr5rH6PSHs=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=eZiEwVyJDTEyCYZxAevGrmcfmMuYYrdwYUHIH+XfO8mjWvZ6o4Mbt53hHFLvUrOZT
+	 XiZxA74KrN/Fvsx1PmJjXFOt/hx8f6G0vlBC2owXZWLQL/R9lExCV47bTBW8dJ+D6v
+	 T7ApQI0d7oRjfwyHZbGIcuumUDylDFiR0nny1wIHKrsrrI1P1TSieTCYgotbiCVDuk
+	 9XFMcdkooAYtZA/RxmkaIXkESNiXLKcySYH39w7l2MgrxNqPBiX/vYdTUs49U5CbaI
+	 FwyGGpykJfAjCy59XjiUFH3UBcKIvxmQnHmtOKKfwW8642P/ZoVKalM9VkyVuLIE9h
+	 xSZiiDsvdvYdg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 058F5CE0B94; Wed,  5 Nov 2025 12:31:00 -0800 (PST)
+Date: Wed, 5 Nov 2025 12:31:00 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH v2 0/16] SRCU updates for v6.19
+Message-ID: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ublk_advance_io_iter() and ublk_copy_io_pages() currently open-code the
-iteration over request's bvecs. Switch to the rq_for_each_bvec() macro
-provided by blk-mq to avoid reaching into the bio internals and simplify
-the code. Unlike bio_iter_iovec(), rq_for_each_bvec() can return
-multi-page bvecs. So switch from copy_{to,from}_iter() to
-copy_page_{to,from}_iter() to map and copy each page in the bvec.
+Hello!
 
-Suggested-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/block/ublk_drv.c | 78 ++++++++++++----------------------------
- 1 file changed, 23 insertions(+), 55 deletions(-)
+This series creates an srcu_expedite_current() function that allows
+after-the-fact expediting of SRCU grace periods, adds a DEFINE_SRCU_FAST()
+that further speeds things up by removing a conditional branch from
+srcu_read_lock_fast*(), updates documentation, uses SRCU-fast to guard
+event traces in PREEMPT_RT kernel (thus making such kernels safe for
+event tracing), adds srcu_read_{,un}lock_fast_updown() functions that are
+compatible with srcu_down_read() and srcu_up_read(), but do not permit
+use in NMI handlers (to permit further optimization of SRCU-fast readers
+by relieving them of the need to deal with irq/softirq/NMI handlers with
+unbalanced lock/unlock calls), and optimizes SRCU-fast-updown for large
+ARM servers that use LSE.  It is expected that this optimization will be
+obsoleted by some arm64 architecture-specific work:
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 40eee3e15a4c..929d40fe0250 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -911,81 +911,49 @@ static const struct block_device_operations ub_fops = {
- 	.open =		ublk_open,
- 	.free_disk =	ublk_free_disk,
- 	.report_zones =	ublk_report_zones,
- };
- 
--struct ublk_io_iter {
--	struct bio *bio;
--	struct bvec_iter iter;
--};
--
--/* return how many bytes are copied */
--static size_t ublk_copy_io_pages(struct ublk_io_iter *data,
--		struct iov_iter *uiter, int dir)
-+/*
-+ * Copy data between request pages and io_iter, and 'offset'
-+ * is the start point of linear offset of request.
-+ */
-+static size_t ublk_copy_user_pages(const struct request *req,
-+		unsigned offset, struct iov_iter *uiter, int dir)
- {
-+	struct req_iterator iter;
-+	struct bio_vec bv;
- 	size_t done = 0;
- 
--	for (;;) {
--		struct bio_vec bv = bio_iter_iovec(data->bio, data->iter);
--		void *bv_buf = bvec_kmap_local(&bv);
-+	rq_for_each_bvec(bv, req, iter) {
- 		size_t copied;
- 
-+		if (offset >= bv.bv_len) {
-+			offset -= bv.bv_len;
-+			continue;
-+		}
-+
-+		bv.bv_offset += offset;
-+		bv.bv_len -= offset;
-+		bv.bv_page += bv.bv_offset / PAGE_SIZE;
-+		bv.bv_offset %= PAGE_SIZE;
- 		if (dir == ITER_DEST)
--			copied = copy_to_iter(bv_buf, bv.bv_len, uiter);
-+			copied = copy_page_to_iter(
-+				bv.bv_page, bv.bv_offset, bv.bv_len, uiter);
- 		else
--			copied = copy_from_iter(bv_buf, bv.bv_len, uiter);
--
--		kunmap_local(bv_buf);
-+			copied = copy_page_from_iter(
-+				bv.bv_page, bv.bv_offset, bv.bv_len, uiter);
- 
- 		done += copied;
- 		if (copied < bv.bv_len)
- 			break;
- 
--		/* advance bio */
--		bio_advance_iter_single(data->bio, &data->iter, copied);
--		if (!data->iter.bi_size) {
--			data->bio = data->bio->bi_next;
--			if (data->bio == NULL)
--				break;
--			data->iter = data->bio->bi_iter;
--		}
-+		offset = 0;
- 	}
- 	return done;
- }
- 
--static bool ublk_advance_io_iter(const struct request *req,
--		struct ublk_io_iter *iter, unsigned int offset)
--{
--	struct bio *bio = req->bio;
--
--	for_each_bio(bio) {
--		if (bio->bi_iter.bi_size > offset) {
--			iter->bio = bio;
--			iter->iter = bio->bi_iter;
--			bio_advance_iter(iter->bio, &iter->iter, offset);
--			return true;
--		}
--		offset -= bio->bi_iter.bi_size;
--	}
--	return false;
--}
--
--/*
-- * Copy data between request pages and io_iter, and 'offset'
-- * is the start point of linear offset of request.
-- */
--static size_t ublk_copy_user_pages(const struct request *req,
--		unsigned offset, struct iov_iter *uiter, int dir)
--{
--	struct ublk_io_iter iter;
--
--	if (!ublk_advance_io_iter(req, &iter, offset))
--		return 0;
--
--	return ublk_copy_io_pages(&iter, uiter, dir);
--}
--
- static inline bool ublk_need_map_req(const struct request *req)
- {
- 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_WRITE;
- }
- 
--- 
-2.45.2
+	https://lore.kernel.org/all/aQU7l-qMKJTx4znJ@arm.com/
 
+The patches are as follows:
+
+1.	Permit Tiny SRCU srcu_read_unlock() with interrupts disabled.
+
+2.	Create an srcu_expedite_current() function.
+
+3.	Test srcu_expedite_current().
+
+4.	Create a DEFINE_SRCU_FAST().
+
+5.	Make grace-period determination use ssp->srcu_reader_flavor.
+
+6.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+
+7.	Require special srcu_struct define/init for SRCU-fast readers.
+
+8.	Make SRCU-fast readers enforce use of SRCU-fast definition/init.
+
+9.	Update for SRCU-fast definitions and initialization.
+
+10.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
+
+11.	Mark diagnostic functions as notrace.
+
+12.	Add SRCU_READ_FLAVOR_FAST_UPDOWN CPP macro.
+
+13.	Permit negative kvm.sh --kconfig numberic arguments.
+
+14.	Create an SRCU-fast-updown API.
+
+15.	Optimize SRCU-fast-updown for arm64.
+
+16.	Make srcu{,d}_torture_init() announce the SRCU type.
+
+Changes since v1:
+
+o	Merge addition and testing of SRCU-fast-updown for bisectability.
+
+https://lore.kernel.org/all/082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop/
+
+Many of these patches were previously associated with another series
+that re-implemented RCU tasks trace in terms of SRCU-fast.  This work
+is being deferred pending resolution of the ARM LSE situation on the one
+hand or full debugging of the all-too-clever workaround optimization on
+the other.  ;-)
+
+https://lore.kernel.org/all/7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop/
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/Documentation/RCU/Design/Requirements/Requirements.rst |   33 +--
+ b/Documentation/RCU/checklist.rst                        |   12 -
+ b/Documentation/RCU/whatisRCU.rst                        |    3 
+ b/include/linux/notifier.h                               |    2 
+ b/include/linux/srcu.h                                   |   16 +
+ b/include/linux/srcutiny.h                               |    1 
+ b/include/linux/srcutree.h                               |    8 
+ b/include/linux/tracepoint.h                             |   45 ++--
+ b/include/trace/perf.h                                   |    4 
+ b/include/trace/trace_events.h                           |    4 
+ b/kernel/rcu/rcutorture.c                                |   12 +
+ b/kernel/rcu/srcutiny.c                                  |   13 -
+ b/kernel/rcu/srcutree.c                                  |   58 +++++
+ b/kernel/rcu/tree.c                                      |    2 
+ b/kernel/rcu/update.c                                    |    8 
+ b/kernel/tracepoint.c                                    |   21 +-
+ b/tools/testing/selftests/rcutorture/bin/kvm.sh          |    2 
+ include/linux/srcu.h                                     |  133 ++++++++++---
+ include/linux/srcutiny.h                                 |   30 ++
+ include/linux/srcutree.h                                 |  152 +++++++++++----
+ kernel/rcu/rcutorture.c                                  |   84 ++++++--
+ kernel/rcu/srcutree.c                                    |   78 +++++++
+ 22 files changed, 575 insertions(+), 146 deletions(-)
 
