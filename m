@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-887046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AAD8C371DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:36:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5074C3711D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C324650552A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:27:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4708634F8B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C43533A02B;
-	Wed,  5 Nov 2025 17:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E07E33C51B;
+	Wed,  5 Nov 2025 17:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ieje6ZAr"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hHxBlpEQ"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2043009DD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F44B334C25
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363651; cv=none; b=fp+LXgPmIEYEZnZleEQ6qjBswi0oyUfebDYNAQ1SnFKLho3sxpequuuek7wRCocF1E0eWH2hWfRq1itn547LyIMJX0+4sUq4+QKamDiv9nxujmIFJKmEKtuqPNcHQVYEbTCqcbhOnEsBd8pJ8lkKVPZQb8qwCYfDmx1/dadrn9s=
+	t=1762363652; cv=none; b=ppz/BTCBHiLmM9JDh1z2lljo29ep4kSo4djr3C5OAYZdMuqNp4FM11D3RsOS9lqHg4eT1nTLnSIt6v4cBg7UZulT1JI85h3dLI/EFpS0WJc2BE3fZN8i3wV6rUsSfaEIi5JgipauFh/Azxj6e7K+0puet848BGC2UgXSJD3d540=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363651; c=relaxed/simple;
-	bh=qI2DNXrKlZW9Os0KvlW7/iuslM+6wJk/KayLdCCbiRY=;
+	s=arc-20240116; t=1762363652; c=relaxed/simple;
+	bh=eThQIE/jvXOT4DOWR+X/o1T5PCOa2qjzsppR3EBwd9M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kZubLE1TFuVjd+WRAOjjZsezJ0EJ8scJpaUFF1MuRaLhcNSB0+3Sj0tNnm3DG84a+qLKuxZIycIa8q5r44R0fyOzNJ1UBBkcyx8gxyBvtoYa4EuJXFMcZlV8kVnW4Ph4U7oHhdcUHbvKUOwY9E1odahHy5Pmf9eGMlnc2q6+t1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ieje6ZAr; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=kFkp3M4Odc08rFCHodq32xVhzpG0fkoVZdbJuMxXlBIIkma2ktosu1eq0jnKGwOPry6FnqeUM57yv+pPgtXFBjbZ+dhcGDchLDaz30Am/5wl5h/2ieoW1UivmTMWnQcfJZs/8nXKF2PzO2mK0YuW0Yp0LBZIN8qsrPgUpT1jg7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hHxBlpEQ; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B1FE3C0E63C;
-	Wed,  5 Nov 2025 17:27:06 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2DB074E4153C;
+	Wed,  5 Nov 2025 17:27:29 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B1E3F60693;
-	Wed,  5 Nov 2025 17:27:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F16F010B50A78;
-	Wed,  5 Nov 2025 18:27:25 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 051C860693;
+	Wed,  5 Nov 2025 17:27:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 585CC10B50864;
+	Wed,  5 Nov 2025 18:27:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762363647; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1762363648; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RpAQM7b8Qix65CMI/sBmP05P46NUJ0wMgmRJ/77M2f4=;
-	b=Ieje6ZArOtDrNr9myXRx80Rdu+BsDqjTzqSmxKpm9f0BpB7n2QCcLCODmdofF0NJtXgguM
-	rJL4w0OM626xA2mwirk3nzXVfCrBPAtmC5//6wO8BS150xf1/apGEaz3Z+JN/7FUeKBvWD
-	Zp9rLmY5AXpsgcTpWd5rEYJAD1i6Z7X1zcrf6ib9j0CJtRgBXtyN/lzfXBDGLKcnyVeRye
-	YVU0uGd1PArMMfOudEFGacfAGhER7KXy+sh6zuS5G0yptmhgxON6jybTTqFYztuBj03wdM
-	hB0dj6ZSRuKbVjS3UPpSNvzKZ7VfABBvxBzBk5/TPt3FsLIsZ9ft04THYxXc3w==
+	bh=wwGaYNz99ZwGjnDc7GOe6i79irbzdaxgzSs6VbSV9+E=;
+	b=hHxBlpEQnkUHEjmN2EBgImPfeIdn4+Qi9TRm9IAgZo6jimne/zYs9HeX2P2eg0+O5QmNXg
+	jjFmXewAyaUnL0lVHXoYRY2oUJNPEjzlxAuUkerLIxikcUnT8hLNy5A9iB6HJFPIxGOQYI
+	yGc0ubbmATflDupMpAlev74SrLkkfjcJEYjpUl+w729Fxdb0LiV9hktve/LvYlbIaKcy9h
+	vQlLK5NLuluDWyYTPL9UQxmBZceYmdYIETJFq7ZMMNpUnHyZtwxULK1fVUYCCZe1nCY6pA
+	syF0lYcHNiM94pseYh+uScMBTkMl0fOdAO8UNq9Loe0TtAeTxZscDmVXyfKQHw==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 05 Nov 2025 18:27:01 +0100
-Subject: [PATCH 2/6] mtd: spi-nor: winbond: Add support for W25Q01NWxxIM
+Date: Wed, 05 Nov 2025 18:27:02 +0100
+Subject: [PATCH 3/6] mtd: spi-nor: winbond: Add support for W25Q02NWxxIM
  chips
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-winbond-v6-18-rc1-spi-nor-v1-2-42cc9fb46e1b@bootlin.com>
+Message-Id: <20251105-winbond-v6-18-rc1-spi-nor-v1-3-42cc9fb46e1b@bootlin.com>
 References: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
 In-Reply-To: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -82,20 +82,50 @@ Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 $ cat /sys/bus/spi/devices/spi0.0/spi-nor/partname
 cat: can't open '/sys/bus/spi/devices/spi0.0/spi-nor/partname': No such file or directory
 $ cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
-ef8021
+ef8022
 $ cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
 winbond
 $ xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-53464450060101ff00060110800000ff84000102d00000ffffffffffffff
+53464450060101ff00060110800000ff84000102d00000ff03000102f000
+00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffe520fbffffffff3f44eb086b083b42bbfeffffffffff
+ffffffffffffffffe520fbffffffff7f44eb086b083b42bbfeffffffffff
 0000ffff40eb0c200f5210d800003652b50082ea14e2e96376337a757a75
-f7bdd55c19f75dffe970f9a5ffffffffffffffffffffffffffffffffff0a
+f7a2d55c199148ffe970f8a1ffffffffffffffffffffffffffffffffff0a
 f0ff21ffdcff
 $ sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-d70b64bfa72dad202ff6881f92676b3a79b1e634b60653cd15f1820b7f3acaea  /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+679145368f2188ac975ec3f4c9b691e7e250147c13b6f18a28a9192700925d95  /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+$ cat /sys/kernel/debug/spi-nor/spi0.0/params
+name		(null)
+id		ef 80 22 00 00 00
+size		256 MiB
+write size	1
+page size	256
+address nbytes	4
+flags		HAS_SR_TB | 4B_OPCODES | HAS_4BAIT | HAS_LOCK | HAS_16BIT_SR | NO_READ_CR | HAS_SR_TB_BIT6 | HAS_4BIT_BP | SOFT_RESET | NO_WP
+
+opcodes
+ read		0xec
+  dummy cycles	6
+ erase		0xdc
+ program	0x34
+ 8D extension	none
+
+protocols
+ read		1S-4S-4S
+ write		1S-1S-4S
+ register	1S-1S-1S
+
+erase commands
+ 21 (4.00 KiB) [1]
+ dc (64.0 KiB) [3]
+ c7 (256 MiB)
+
+sector map
+ region (in hex)   | erase mask | overlaid
+ ------------------+------------+---------
+ 00000000-0fffffff |     [   3] | no
 $ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
 Supported read modes by the flash
  1S-1S-1S
@@ -128,36 +158,6 @@ Supported page program modes by the flash
   opcode	0x12
  1S-1S-4S
   opcode	0x34
-$ cat /sys/kernel/debug/spi-nor/spi0.0/params
-name		(null)
-id		ef 80 21 00 00 00
-size		128 MiB
-write size	1
-page size	256
-address nbytes	4
-flags		HAS_SR_TB | 4B_OPCODES | HAS_4BAIT | HAS_LOCK | HAS_16BIT_SR | HAS_SR_TB_BIT6 | HAS_4BIT_BP | SOFT_RESET | NO_WP
-
-opcodes
- read		0xec
-  dummy cycles	6
- erase		0xdc
- program	0x34
- 8D extension	none
-
-protocols
- read		1S-4S-4S
- write		1S-1S-4S
- register	1S-1S-1S
-
-erase commands
- 21 (4.00 KiB) [1]
- dc (64.0 KiB) [3]
- c7 (128 MiB)
-
-sector map
- region (in hex)   | erase mask | overlaid
- ------------------+------------+---------
- 00000000-07ffffff |     [   3] | no
 $ dd if=/dev/urandom of=./spi_test bs=1M count=2
 2+0 records in
 2+0 records out
@@ -166,7 +166,6 @@ Erased 2097152 bytes from address 0x00000000 in flash
 $ mtd_debug read /dev/mtd0 0 2097152 spi_read
 Copied 2097152 bytes from address 0x00000000 in flash to spi_read
 $ hexdump spi_read
-
 0000000 ffff ffff ffff ffff ffff ffff ffff ffff
 *
 0200000
@@ -177,19 +176,19 @@ Copied 2097152 bytes from spi_test to address 0x00000000 in flash
 $ mtd_debug read /dev/mtd0 0 2097152 spi_read
 Copied 2097152 bytes from address 0x00000000 in flash to spi_read
 $ sha256sum spi*
-900fef48fdac362ce15d4608acfd9d733b514751423ae8d26e94036531198fb8  spi_read
-900fef48fdac362ce15d4608acfd9d733b514751423ae8d26e94036531198fb8  spi_test
+5cff8d15609f3eab8d8008699191d5418da5b346e4f98ab67d5d89702b584042  spi_read
+5cff8d15609f3eab8d8008699191d5418da5b346e4f98ab67d5d89702b584042  spi_test
 $ mtd_debug erase /dev/mtd0 0 2097152
 Erased 2097152 bytes from address 0x00000000 in flash
 $ mtd_debug read /dev/mtd0 0 2097152 spi_read
 Copied 2097152 bytes from address 0x00000000 in flash to spi_read
 $ sha256sum spi*
 4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-900fef48fdac362ce15d4608acfd9d733b514751423ae8d26e94036531198fb8  spi_test
+5cff8d15609f3eab8d8008699191d5418da5b346e4f98ab67d5d89702b584042  spi_test
 $ mtd_debug info /dev/mtd0
 mtd.type = MTD_NORFLASH
 mtd.flags = MTD_CAP_NORFLASH
-mtd.size = 134217728 (128M)
+mtd.size = 268435456 (256M)
 mtd.erasesize = 65536 (64K)
 mtd.writesize = 1
 mtd.oobsize = 0
@@ -199,16 +198,16 @@ regions = 0
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index a13a1201eae92233091dde644d590baa57e97046..580c9cb37958136e7e9fbc71152de55ab008812e 100644
+index 580c9cb37958136e7e9fbc71152de55ab008812e..a65cbbccbbac64c83227c8158ff85abfa3441868 100644
 --- a/drivers/mtd/spi-nor/winbond.c
 +++ b/drivers/mtd/spi-nor/winbond.c
-@@ -347,6 +347,10 @@ static const struct flash_info winbond_nor_parts[] = {
- 		/* W25Q01NWxxIQ */
- 		.id = SNOR_ID(0xef, 0x60, 0x21),
+@@ -351,6 +351,10 @@ static const struct flash_info winbond_nor_parts[] = {
+ 		/* W25Q01NWxxIM */
+ 		.id = SNOR_ID(0xef, 0x80, 0x21),
  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
 +	}, {
-+		/* W25Q01NWxxIM */
-+		.id = SNOR_ID(0xef, 0x80, 0x21),
++		/* W25Q02NWxxIM */
++		.id = SNOR_ID(0xef, 0x80, 0x22),
 +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
  	},
  };
