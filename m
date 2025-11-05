@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-886800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEECDC36A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:17:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B30EAC36918
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59806426DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882056260AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8EB333751;
-	Wed,  5 Nov 2025 15:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336CB342C9E;
+	Wed,  5 Nov 2025 15:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="g0YOnPay"
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="JBe5meR9"
 Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D66340275;
-	Wed,  5 Nov 2025 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5D4331A44;
+	Wed,  5 Nov 2025 15:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357354; cv=none; b=qSvradCtitxDFjT/XuPaI3T/JeaMh1qgMO4bPXoC8WT/d9oZbQh81w8yl92TkppmhrhV+94vUAY37BObJckY+9q/sBDhYbZnUtyNXDGDdzgqPlBrQYvQZULpw/jsSU+poOa6rA512HLdfTei7bZGXhI02K1U+8ePDxpYmJp0RQE=
+	t=1762357360; cv=none; b=uGTBel/FRzZnQfm+hxZgAHvk/oQInmQJLrU//aZMed2WXa6ikT9rGutgqR/0GEKr/AHB/8bwbAwJn+2rZXgSW6qgL7EljjW3hu7i9i1Lb6MEglGGwFkXupokjCg5BoRiZrLPEDjaXhRzzduGWdR0h10ALN6gAL1RhR5psNKKkPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357354; c=relaxed/simple;
-	bh=9Z8iED0ggAJ+e1iktXMaoFZe/kV14RG1cshK/41q3tE=;
+	s=arc-20240116; t=1762357360; c=relaxed/simple;
+	bh=vC1IXW+Q+R3B8fujpesL23O2Gp2Qcrnr4XmZroBeNQE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jT2TBrRjOa04U5SB9YwAUgIGsI372j0YrXhGYs6N2nOZTZHJaNVmYMs4BYNdhjm/gJQwf9qscEGUHgHr2XKlILKiqyuETAJVkUocd+B+jP+ReJqet9sW20JigciXV+M0KI3cnE/FgKsO+kKFARXI8u/ATM/hout0oBw/jnB7FTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=g0YOnPay; arc=none smtp.client-ip=157.90.84.7
+	 MIME-Version; b=ldKWPKy+vvywoxmEgXDLR5cyDekVVqg1qTpbLBGRZi7lipYsQg/DewIZmOTgnjFkHEFtqpuG0ijNu/rhBswP6simOnkAB2tUkoB9dXe7L6pRw/jsACIXCbz9ng43fCjGnD0ixN466QkZDJkNCRUcutbyyrrtv2xvt+k5Pg3rSPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=JBe5meR9; arc=none smtp.client-ip=157.90.84.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
 Received: from ggottleuber-tuxedo.fritz.box (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
 	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 8C37D2FC0057;
-	Wed,  5 Nov 2025 16:42:30 +0100 (CET)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id AE15E2FC005B;
+	Wed,  5 Nov 2025 16:42:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762357351;
+	s=default; t=1762357357;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LDIemGWrh3fDiu7DVELiLf94Wt7NnP5t2Qg5/o0LAhU=;
-	b=g0YOnPayeX96+vgIzpF6rBot5r3HQaMTPh2yApSQbL5elACWuDRYIpYSyVkkE1h+yqYawB
-	UZIgHzweSqQNom3awAa48xLd16ktsdLsKmaD9j7Tee5Q+/5Xtp1EnvJEOaXmsIz9W8uC/f
-	3xzQu1HtNV5LtxbuZwB5mKq5alRDIuA=
+	bh=vEgRYmBA72E0nNL7wzXfQ6WN1IE9GIFqVGJKvH23sMU=;
+	b=JBe5meR9w7LODo/hJcMlWZeAtsGnC4bzl+8lsa5PlN06c0HIq865UGlgoBthyspMWR0M9g
+	jLlwuIbXmFio4SVrWpliLPpy9fUM+0lnnng7x7YYPWYl/bo9UbMIP7c5MivN1jmUT5ucnL
+	vZ97yHtpeMf5u0YxzSbWIgRmCFWRZFA=
 Authentication-Results: mail.tuxedocomputers.com;
 	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
 From: Georg Gottleuber <ggo@tuxedocomputers.com>
@@ -62,9 +62,9 @@ Cc: linux-arm-msm@vger.kernel.org,
 	wse@tuxedocomputers.com,
 	cs@tuxedo.de,
 	Georg Gottleuber <ggo@tuxedocomputers.com>
-Subject: [PATCH v2 3/7] drm/bridge: simple: add ASL CS5263 DP-to-HDMI bridge
-Date: Wed,  5 Nov 2025 16:41:03 +0100
-Message-ID: <20251105154107.148187-4-ggo@tuxedocomputers.com>
+Subject: [PATCH v2 4/7] dt-bindings: vendor-prefixes: Add prefix for TUXEDO Computers GmbH
+Date: Wed,  5 Nov 2025 16:41:04 +0100
+Message-ID: <20251105154107.148187-5-ggo@tuxedocomputers.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251105154107.148187-1-ggo@tuxedocomputers.com>
 References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
@@ -76,31 +76,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ettore Chimenti <ettore.chimenti@linaro.org>
+TUXEDO Computers GmbH is a german supplier for computers.
 
-Add support for the transparent ASL CS5263 DP-to-HDMI bridge.
-
-Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
 ---
- drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-index e4d0bc2200f8..cff7cf3d7a33 100644
---- a/drivers/gpu/drm/bridge/simple-bridge.c
-+++ b/drivers/gpu/drm/bridge/simple-bridge.c
-@@ -261,6 +261,11 @@ static const struct of_device_id simple_bridge_match[] = {
- 			.timings = &default_bridge_timings,
- 			.connector_type = DRM_MODE_CONNECTOR_VGA,
- 		},
-+	}, {
-+		.compatible = "asl,cs5263",
-+		.data = &(const struct simple_bridge_info) {
-+			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
-+		},
- 	}, {
- 		.compatible = "radxa,ra620",
- 		.data = &(const struct simple_bridge_info) {
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 278cb879781f..a841fe12c9e5 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1677,6 +1677,8 @@ patternProperties:
+     description: Theobroma Systems Design und Consulting GmbH
+   "^turing,.*":
+     description: Turing Machines, Inc.
++  "^tuxedo,.*":
++    description: TUXEDO Computers GmbH
+   "^tyan,.*":
+     description: Tyan Computer Corporation
+   "^tyhx,.*":
 -- 
 2.43.0
 
