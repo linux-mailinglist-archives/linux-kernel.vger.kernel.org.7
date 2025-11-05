@@ -1,184 +1,145 @@
-Return-Path: <linux-kernel+bounces-886673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79133C363CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:11:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26239C36499
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A37B4F8CBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2966C626511
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6811832E6B1;
-	Wed,  5 Nov 2025 15:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE0A32E155;
+	Wed,  5 Nov 2025 15:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCx/ljgr"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PeecVev+";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="E+VhSKs5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0681F314B8E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4F322172C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355202; cv=none; b=ilpxha3bPQCEliCzdPQT3a0BvDw6rPe5pNAr4rHza6lSuSRn/sZiSmAI68D88nlFcX3D2yGEndbnPIRcyQwFT5hWBxj41rGLpkhVMHLDoYaCO7izH00qBAPZoNYd3jIvphFRZaUOY4pKSjoBjt7uRLp+3fU4G5cAqrHpASE8J4I=
+	t=1762355287; cv=none; b=am8XXe6NqtX0ca6UVgVqrwQavLyND+rJt++yuprtOIHf/zzDB9vVcNLCQpLHsrf4cTn66B4tG5JITEZ1bCsywZ5VgZKuba4GwWlyaCh7liEgG1Mv5jXm4df0ys/ejKRvfu3wnY3glATOLJpmCQeGBMVBbZm/Ie3i6IYzjiQ0jj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355202; c=relaxed/simple;
-	bh=hMflwBi1rbNrSzKhcf3HQbcg4uOMTpc+2wqfNATMZB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ncoSaPgcda98vwFJK2Ju97XG6sqx9dL0DyttJC330rOyNRj4hdsybSa2Cvn0VnVg9idX8u2/ZxH7VHJJsjFpjPRO+tyCllP9L4C1GBD94aVlHvHn/DkECh3FMHAaqS40RxyTqzhWmO7q/sfjJVou/zoNdWztlbEQIxVVJKrVUbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCx/ljgr; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4283be7df63so3762756f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:06:40 -0800 (PST)
+	s=arc-20240116; t=1762355287; c=relaxed/simple;
+	bh=zddzhOg8X1nKlNluFiKuPj0/7ElZvDoM9lEwBP40PIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JRw9ttR7+cORvWsmTDPjtte+1c/f3/DFkNXsp6Jo+4tnY8xFuG3hy69Dp2OflJ4MP0KflT9aeUFTMb/BwNdFF06g827kmalWTWyXPiUeItoVNfmUjgbz3LyZHaiPJEMaQ7pXIDvOhgmnignsTpWp6HnlXyZ0FvhC7znNulMtV0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PeecVev+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=E+VhSKs5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762355285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zddzhOg8X1nKlNluFiKuPj0/7ElZvDoM9lEwBP40PIo=;
+	b=PeecVev+3s9fakJdP3mprGvod2Kw5Qd0zUzoQD5ST0EAJX2kY/qNI/NRPS/6Mx48nXXcv6
+	Nur9n98KtT4mMzDyQjeZ/zo1AwFKn5sfR+fTuJVVl3VEwU2UQf5dQDrvsDTPIKv0s4UH8l
+	sNz8QcMACGVegVviN+ubmEbD2vkjl64=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-eq8ULoHON_m06P9HXOnxSg-1; Wed, 05 Nov 2025 10:08:03 -0500
+X-MC-Unique: eq8ULoHON_m06P9HXOnxSg-1
+X-Mimecast-MFC-AGG-ID: eq8ULoHON_m06P9HXOnxSg_1762355282
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b70be4f20deso291061166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:08:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762355199; x=1762959999; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MagQcWlTriY+Z8puqAxWVOt94EHVEjLFKqb7wFV2fUw=;
-        b=YCx/ljgrBk5PS9pnV52beQfxekgl8yCTsthpcGg3fakNqfNB+xHAojinSa0kmX6pb4
-         uZuy1Ref85GK213fNCOG4s2rZDtnlZycCtgkOGpTWqVH4ZaAnSzAIcxS1rQSMQpEmMFX
-         q86oSZ57S61oHoalHqCbHBaXNHOjMZH1SYPo2pm43YhWeL7b36/QoyMApNCGhNuzF1K+
-         IJSKBoy2JIE+GIByEPt9Mu9cXpZ7TzD21cHEzHivd3c97M3piS5zE7fwqI+OjITLOEu/
-         G85Ek5TnZg0Ir99qzUhMfyOEg5mWQrpdA/v2cR/Dy+djTwks11Ck56anGUUmcbeq5/HK
-         QBgQ==
+        d=redhat.com; s=google; t=1762355282; x=1762960082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zddzhOg8X1nKlNluFiKuPj0/7ElZvDoM9lEwBP40PIo=;
+        b=E+VhSKs5SJh45HFSv2dfh4byTipz3JBUuXq2cmafniGyY1LOU2Y/5Hfm2O+5q6xElQ
+         MpZ8hXEgAx+hKxFiItQqf2EPRWpLqZ/KDhWPjnBl8ShEqGkyqusem0EJx+Ke0SrKROPT
+         dZaVWrN/J+oxW+dDGB/UpEvjBQ9I+GeNZIaXON4wEsVEVUbrKCtkQtQPI4jcUhvXhGJw
+         eCCOSId/EcvAbpl5TEhLVby2jDhtpub7Xd49lH9pc4D8L7IUoIlmfaGgxU055bot6ltl
+         ybDsIFwnRZdgWIzVYuKp0Ve8jQqtAp1PqyFLnvrq7cbuGA7PsmemCOhyckjgsbERpVAK
+         TQYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762355199; x=1762959999;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MagQcWlTriY+Z8puqAxWVOt94EHVEjLFKqb7wFV2fUw=;
-        b=bBXnABM6ob7Try5r5EV/fkRvm74KXj/zf+9ZqEeKml8scrYFbytA1EHuNh+63o4Grr
-         vUIoa4Czkz8Xnmu1RfVA8kb0YZexu8w0RfKYec1gC8JWhGBNuRzdw/97U/k/5xRvD2IA
-         zljWe4InGzBAZG7ssXX5+Mq9vB3Cctrq0ZmSSS3epW0mXLlAYIWkuO4dsq1Tuhgt7zOH
-         zPwhgGVa0tPThIOK3zGLCIygkJs7HCOGNAL5S+BRdG1AEzBydrp35Eg9fqAzqs5UZEDg
-         6dvBfMWornIOFFh/u4zq3Wie049cK9s2anTNBTj9iHK5qapIKXgF7BVRKsd9Ccr4pcIB
-         +pyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYlMSUnAk4tSEzyuCS0xsgcA/iApV+9zDff8aySNLHMBLj0y/bMoPW+jcrB6NK4U9GewO3Ijrz76suMMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhakF/2GPLCpQWa4gole1jKy6hrqMd33MAp9tFD2gi/y0QyKIE
-	cOftSJz6O+62hb1QIOiclML1Z1mi3GIVzxiZhu4RwC0SOLTK6max/dIo
-X-Gm-Gg: ASbGncvbjE3MzPgYduweEvX7ZV1oG6y6eONPg+bg/avIbsfi5TFisgM5zABRF3quMXw
-	rqxh+ui2O7aXKRQzZj2AyPW7gVkMvJmnaMg7bMCY/+GTia8g6oLtU8rFdsujWNsnS1oWpg0f77V
-	d549zN05bMPb10L3/ET0/bnQmW4ASyCVmFA0FZ466pAB09cHlJOd5lwdgb0iknY8ChQJBcRmSKz
-	E4TxBAwUDz0XMOq1BMhaydE3grlBgcV/D859wzwk8RSxMcZuiSe+nae5zuvRRVPTZjzFI7oJWDx
-	brkukywCByWLR4FvIXGnq6N4dl4GoCv2UJuLtu4QE4LhvNosxbGAaMruqbjALCPEGLZk2Tt30g1
-	j26jx9ZjpNlhq5hfjTZbVGetot5lr755sZ4BztIajGMcXsafw7Ug998xZ42RF2tbCLeRFAJTVVM
-	X3uK1YUip570/3DkaK+ezpSqYop8LEdM7J98KB2+2U0/KK2r/L
-X-Google-Smtp-Source: AGHT+IH6VE9rvxlDzTCdDohrrzJOds8A7rfSL643h36YHCfh8XGC8GC923hwtKU3u5u4FsC8gTEryg==
-X-Received: by 2002:a05:6000:4013:b0:429:d3c9:b889 with SMTP id ffacd0b85a97d-429e32c81d5mr2904464f8f.1.1762355196516;
-        Wed, 05 Nov 2025 07:06:36 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc18ef89sm11179556f8f.6.2025.11.05.07.06.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 07:06:35 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: touch up predicts in path lookup
-Date: Wed,  5 Nov 2025 16:06:30 +0100
-Message-ID: <20251105150630.756606-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762355282; x=1762960082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zddzhOg8X1nKlNluFiKuPj0/7ElZvDoM9lEwBP40PIo=;
+        b=V6P8fNNP2qgbVf1fegAdZI0jNxo4+NVm1iV/5Bm8HrZqU5UExIwbyjosOnn/onX7of
+         MXQcyVdjS6Fjf88KGjm+iIBy5MVtrPi9skBnJXYkNfi1ZZDy/a8zEaFsM26TUqkfDdTL
+         0rgiRTg+NszMc4Y4k/QYMuMeVL6ooemp7DbkFeP0T/92TS4FXs0hra97KSaaTtL/4vVb
+         qPzAOd8qcogSMHKb06da+5oUVN/AwvJ00+3VONEFuEF38oYfY3qDbZdxIPurJO31oHdF
+         QuDULPKD6X0qC5F2MXL4cUMaHlPtlXnXryj/PyuoGMXEp0yWipVnan4zT239XcOMo5qi
+         5Iqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd33+EL2/2Zn4TReigCoKSh5S5USV2ig3wTCJfqYz58tLUzOVP3qaePlqAoHAKHfDra2wDc+npzHlry0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxTqEDKmt3Wke3ruSHPgckhhqZFu9yJy3EFyEwYTw5jk/KtH6O
+	GG1gm/6fSrMN9v6r16ksDfBObNLFlO+oOOwPf0llOFDX5RE3WG6ejWIKEizqLgtRSJoG4c/cgOu
+	GN4Qb9YqF9HKigh6Jk7LoTCyYdacGSQGGv0Qosxy9Mio4Jw3X3XYZAGIkFgVjlLyEWbumSu5BvC
+	YqCydc5rHFaOevUqUzDjfD1+I1C4q5vsgZprK9Sf+e
+X-Gm-Gg: ASbGncs1dqfQX8QBaNcupPwsAhZ8ZCUzEjFT4rGegi7XPMciQ6alQ9mA3FyBchHEyZ7
+	sUAo917d0k/YIzGewA6C3N/fiOpOnaEhYGylhKZ+waxXM4r9MZqmSE2SA5+ZFvqpOxfLfG5tdzR
+	fX1Nsw9ZC3ni1pjipVt50m4f1bwYpM4eNtuYbU4M3BCHtzheQX3qRCh9+5
+X-Received: by 2002:a17:906:9c83:b0:b70:b3e8:a35e with SMTP id a640c23a62f3a-b7265568be1mr330079866b.50.1762355282309;
+        Wed, 05 Nov 2025 07:08:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHVOQsjYVyVVrNvkq8akL5ZkGRlDA5wjcsUyQMOyzqYmrxUAS+dfw/oU0IlQDgyfAtyrlbYChyW3M7kMF0tLDI=
+X-Received: by 2002:a17:906:9c83:b0:b70:b3e8:a35e with SMTP id
+ a640c23a62f3a-b7265568be1mr330075866b.50.1762355281900; Wed, 05 Nov 2025
+ 07:08:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251030144438.7582-1-minhquangbui99@gmail.com>
+ <1762149401.6256416-7-xuanzhuo@linux.alibaba.com> <CAPpAL=x-fVOkm=D_OeVLjWwUKThM=1FQFQBZyyBOrH30TEyZdA@mail.gmail.com>
+ <CAL+tcoAnhhDn=2qDCKXf3Xnz8VTDG0HOXW8x=GSdtHUe+qipvQ@mail.gmail.com>
+In-Reply-To: <CAL+tcoAnhhDn=2qDCKXf3Xnz8VTDG0HOXW8x=GSdtHUe+qipvQ@mail.gmail.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Wed, 5 Nov 2025 23:07:25 +0800
+X-Gm-Features: AWmQ_bn6PCV_WZmKEJ3xHMkBMOhvHDcRetwwHLmBCefOcZy0CYLo96d-gGmw7e8
+Message-ID: <CAPpAL=xDpqCT9M6AWHTfNuai=3ih-452sW4g43gduiw7TptToQ@mail.gmail.com>
+Subject: Re: [PATCH net v7] virtio-net: fix received length check in big packets
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: Bui Quang Minh <minhquangbui99@gmail.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rationale:
-- ND_ROOT_PRESET is only set in a condition already marked unlikely
-- LOOKUP_IS_SCOPED already has unlikely on it, but inconsistently
-  applied
-- set_root() only fails if there is a bug
-- most names are not empty (see !*s)
-- most of the time path_init() does not encounter LOOKUP_CACHED without
-  LOOKUP_RCU
-- LOOKUP_IN_ROOT is a rarely seen flag
+On Wed, Nov 5, 2025 at 8:19=E2=80=AFAM Jason Xing <kerneljasonxing@gmail.co=
+m> wrote:
+>
+> Hi Lei,
+>
+> On Wed, Nov 5, 2025 at 12:56=E2=80=AFAM Lei Yang <leiyang@redhat.com> wro=
+te:
+> >
+> > Tested this patch with virtio-net regression tests, everything works fi=
+ne.
+>
+Hi Jason
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/namei.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> I saw you mentioned various tests on virtio_net multiple times. Could
+> you share your tools with me, I wonder? AFAIK, the stability of such
+> benchmarks is not usually static, so I'm interested.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 39c4d52f5b54..a9f9d0453425 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -951,8 +951,8 @@ static int complete_walk(struct nameidata *nd)
- 		 * We don't want to zero nd->root for scoped-lookups or
- 		 * externally-managed nd->root.
- 		 */
--		if (!(nd->state & ND_ROOT_PRESET))
--			if (!(nd->flags & LOOKUP_IS_SCOPED))
-+		if (likely(!(nd->state & ND_ROOT_PRESET)))
-+			if (likely(!(nd->flags & LOOKUP_IS_SCOPED)))
- 				nd->root.mnt = NULL;
- 		nd->flags &= ~LOOKUP_CACHED;
- 		if (!try_to_unlazy(nd))
-@@ -1034,7 +1034,7 @@ static int nd_jump_root(struct nameidata *nd)
- 	}
- 	if (!nd->root.mnt) {
- 		int error = set_root(nd);
--		if (error)
-+		if (unlikely(error))
- 			return error;
- 	}
- 	if (nd->flags & LOOKUP_RCU) {
-@@ -2101,7 +2101,7 @@ static const char *handle_dots(struct nameidata *nd, int type)
- 
- 		if (!nd->root.mnt) {
- 			error = ERR_PTR(set_root(nd));
--			if (error)
-+			if (unlikely(error))
- 				return error;
- 		}
- 		if (nd->flags & LOOKUP_RCU)
-@@ -2543,10 +2543,10 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	const char *s = nd->pathname;
- 
- 	/* LOOKUP_CACHED requires RCU, ask caller to retry */
--	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
-+	if (unlikely((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED))
- 		return ERR_PTR(-EAGAIN);
- 
--	if (!*s)
-+	if (unlikely(!*s))
- 		flags &= ~LOOKUP_RCU;
- 	if (flags & LOOKUP_RCU)
- 		rcu_read_lock();
-@@ -2560,7 +2560,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->r_seq = __read_seqcount_begin(&rename_lock.seqcount);
- 	smp_rmb();
- 
--	if (nd->state & ND_ROOT_PRESET) {
-+	if (unlikely(nd->state & ND_ROOT_PRESET)) {
- 		struct dentry *root = nd->root.dentry;
- 		struct inode *inode = root->d_inode;
- 		if (*s && unlikely(!d_can_lookup(root)))
-@@ -2579,7 +2579,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->root.mnt = NULL;
- 
- 	/* Absolute pathname -- fetch the root (LOOKUP_IN_ROOT uses nd->dfd). */
--	if (*s == '/' && !(flags & LOOKUP_IN_ROOT)) {
-+	if (*s == '/' && likely(!(flags & LOOKUP_IN_ROOT))) {
- 		error = nd_jump_root(nd);
- 		if (unlikely(error))
- 			return ERR_PTR(error);
-@@ -2632,7 +2632,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	}
- 
- 	/* For scoped-lookups we need to set the root to the dirfd as well. */
--	if (flags & LOOKUP_IS_SCOPED) {
-+	if (unlikely(flags & LOOKUP_IS_SCOPED)) {
- 		nd->root = nd->path;
- 		if (flags & LOOKUP_RCU) {
- 			nd->root_seq = nd->seq;
--- 
-2.48.1
+My test cases are based on an internal test framework, so I can not
+share it with you. Thank you for your understanding :). But I think I
+can share with you my usual test scenarios: ping, file transfer
+stress, netperf stress, migrate, hotplug/unplug as regression tests.
+
+Thanks
+Lei
+>
+> Thanks,
+> Jason
+>
 
 
