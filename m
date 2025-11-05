@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-886927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA6EC36B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:30:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6C4C36CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7779F34DFDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:30:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24726503CC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6E63358D9;
-	Wed,  5 Nov 2025 16:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480C63328FF;
+	Wed,  5 Nov 2025 16:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iQKcGWnv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mcB+7zNm"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945D831B113;
-	Wed,  5 Nov 2025 16:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA8E31B113
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360202; cv=none; b=eSfFHVYR+dxjFluka9rwGSg9Um8GwOnov3dGlKOKjdBnsKMwha4Dg0jYscfSlGbmA9dtq7WhtqSRVULPa6yuNrJtI0At3WoSz3kFjskLdQsoVU3Uy+85nXbW89CtvZdd03dkVfmLJgiqvowxzMrULpRzdTRoEBV722ubJ2AVzGk=
+	t=1762360195; cv=none; b=iyRg9O/F+3OUWuMuGRtDOoEyGf0KVuzlNFdQIMaezqTB1NOC49bF2t4C5DZqfBA9K4R0cqGM72sh3ePyOWM46QBQwzzUcfXVPk7wd9KLiLV2TBU3gmtfnGcPUzRB3asdGjQcrZuJiNlX1xNLeBW0AFYCXeV1qcYw0sJOv7fVYKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360202; c=relaxed/simple;
-	bh=xmMPnx3YKPcWp71Ul44Dt6CmZiCIfCfg+fQ7k9riRuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1vo1KUWw4J52Oinx7kN/mmY5dsM/FZ6TbDEK4tT+9oFZcnbDHFpUoL7JjH9NrLi3yX+lTtG/GRsxZTTGF6mToNQQRiovGMo19h0rMm6DSuF8gmKZjrg0077ZFDee+z/lfH5y6cameE8P/3ysUF2NL3ZWQYg0Sqzk4EEBG/m8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iQKcGWnv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 09CAF40E015B;
-	Wed,  5 Nov 2025 16:29:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Jpqhu7UYiidN; Wed,  5 Nov 2025 16:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762360188; bh=N9KnH9xbtC4+g6m0PqksYjhsKL3Pdx7HzuaxpMw7t28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iQKcGWnv1O4CfnJFptzv9rMOWKEGH8XPbyKXEqcYYcX7OP7vkp0fGnCA10ydw2Q7o
-	 0PzLZr/DUyAqsZ/z8S1q17DvfkcFPKTWQSUq/04jOx/loylNZcU6hreeIjqMthbmA9
-	 qHpMODyr/M1JsGKrQby1k9lwiq3LWP5mlNZH7rTnmDKTs299HNyDo0vA6t6kRaXmrg
-	 KP9hr/uOPoVoSzQ3kQIeMWMrti4YDrmkrYA4EJ6K5plGmFSQnkGdou3Rypviarzisc
-	 0IgIYssckEG1KpCyOREC85l+RjG9ROLfIUFGzCUxfq3dI3K9paZP1ZDXWohycy+7zr
-	 DmxfQm3hE+6pB7f8pUmop8Xc7H2o5udpGO49BZicWOjHFuAHwWHo2inMk/awYPj3Sw
-	 4CznaPIIFRtQQ70lVbdNI4cgjocEousTeiNjg64HKUU8rP6Ld4dTMhODCEdHXECUPQ
-	 WWPTcyTu04dXryXsXZEOddBu3xXtsUJUSsoeUAUNZlsOGUmBjkx9Lkk3LtY7xBjiN1
-	 qL9Nyy6nUvHsUy/my4jEmRXtquhPJFuoUzgJWiH2e9UVsjsdx3AcdrlJp5Gs6Jz84P
-	 +HaLkogYbLtVx/89pqw1lz6OzY05j0cbn0kJcQSRFXPKNyv7YN8VkTN8R/s0UExMgR
-	 c+XFqeyqSwUp5JVwK3J38doQ=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 696B940E00DA;
-	Wed,  5 Nov 2025 16:29:39 +0000 (UTC)
-Date: Wed, 5 Nov 2025 17:29:32 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH] RAS/CEC: replace use of system_wq with system_percpu_wq
-Message-ID: <20251105162932.GAaQt7bON4FtSmxQ3Z@fat_crate.local>
-References: <20251105160819.302988-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1762360195; c=relaxed/simple;
+	bh=jkgNn1+4jXuwy+ixaN/rtdNFuxUuVeolHm9PhEbPJDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=quNHJQJy1NUcTfmltxZhYMRs4AH8KHKYIeIDWVOfaixwDPZBXjTv1Tru7OYdrWN1wA6DkZtU9Pvq1rduHIq/S6CaqyJUcYHU1bwAfXgL8AS7DL2vfsD03ONJUDGE7k9otCplKnDmQLl3lo4gMQ9SnwSwVXKc49QgVCLYLwMw9Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mcB+7zNm; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ed7a7ddc27so5838071cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:29:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762360193; x=1762964993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jkgNn1+4jXuwy+ixaN/rtdNFuxUuVeolHm9PhEbPJDw=;
+        b=mcB+7zNmAFbFw8VRbC/5zhE1reiZfvmRLnX/FHGT9RcKwHrB1V2sVLz/HGvA0ZI2G7
+         lDaGtoyzA2FdHLSmEGtHSQ40ewjPTOpNIU4Eg9hyWFXqUjFhQp+sKAUbWVLLFxLeQ8+l
+         Xd30Rd1UHABTEtqgrm5ACN9nQfq/m/gdHtKG9YIw2Bv8Slql1g/SEvcnz9jM530P5h7W
+         b2ulslLTr+nvLikQCxZRvbM3Ys+Z/SQ1srmDTc0FqLVrC/HbUKdf+/yb49nW748lyg6N
+         fj3+U/0pIhWcvXokkMD3es1g48bxCn0LuGRXNXYzWPBoAqCRgawExIMoqnjL4jqVT+9W
+         F4aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762360193; x=1762964993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jkgNn1+4jXuwy+ixaN/rtdNFuxUuVeolHm9PhEbPJDw=;
+        b=r+Y3biXPqExuglFiY1a0UqLDBbHQQq7qnKuz1aKmVPilt2AqhxxQYstEeKmnMBWGuH
+         mX7z4ybbLmB6Z/N/VmYFJxYOPS5Z0eB+DxJAl3+8C36Tl1vCElS4XY35a0srzdRmDsW7
+         FlosjSvpMTIWGskTj3bHo/3NVVz2mqGofVfEvEcDYyVTshqRIDJKOJNsFYRbuSdwwpbO
+         nCj0d0gjhFdfS8654jwdl+85QW/uNf2fJs2cIgXCcrQlcCVZ5e/pP/8+TrMGSCj7qJ0z
+         r0ZDIP2Iglp7sLguYCv1YNKjO9axYLeAkd357YaIikviCx236Fs0NxjToWiq/vmc5a2h
+         uCnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiS6upfZIpc0S7JWWy3wG+JpHVFAu2sTkZPUrgS5B5c/Bc2AFHfY5dxwljQTIfCTEDnhJM/9pUe+JUzyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyBK2YkOEr2WI4Cig6D/8/8gBXvasqQtjMKR3RyerXkszXS8D5
+	fMCK83kndYHFzm2lJKqtfB0nRN3S0m2q2QuFD9iIQy+4mFw8ONhtPsEZBAkoVZg9ha0iNA/5Fck
+	xvV4m+V4jBdCrihhWDoBxCULtTGQ9iIW7A6GzqzEM
+X-Gm-Gg: ASbGnct7vUtvpAIniZhAVA99iaRx7haXUrAvDD5fQtT+ZeP2x9U5yE8/nMEDD81ZAR+
+	nKByOfwrIJ7bYRq9Od5R0UM+OnN8M+j7nHliFmm4vLkD9vOMPQfCuqWUSthD6/dHci3ibHlz5rE
+	/CP/F9erejWpue1BQJhDjb81UbuNC5bytET8MhO1IObmADVexLYFZzwtxz+CH9DHctRZFYmV3DZ
+	Vcl/fVMARS0Bzh2bjF+bx1As6MDbbmWyQrIP5XQMKK4PKa88JB6RKVA0W3RlQhM31ieM28=
+X-Google-Smtp-Source: AGHT+IEIZjVxK95nJsAKgH1Nu820ZsQt/RsaIyZg90c7rumoFU/fQN7xKpn07wzaK1Nz9W308QqU7P8ohGXGb5TtlTQ=
+X-Received: by 2002:a05:622a:1455:b0:4ed:2f02:ab15 with SMTP id
+ d75a77b69052e-4ed72602641mr43913211cf.55.1762360192504; Wed, 05 Nov 2025
+ 08:29:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251105160819.302988-1-marco.crivellari@suse.com>
+References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com> <20251105161450.1730216-7-skorodumov.dmitry@huawei.com>
+In-Reply-To: <20251105161450.1730216-7-skorodumov.dmitry@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 5 Nov 2025 08:29:40 -0800
+X-Gm-Features: AWmQ_bm-inBtiHZ-i-Ji7OzkBeuhYj48CizrYi-xeimRs0Xoxc8_UArrOGxV_kU
+Message-ID: <CANn89i+iq3PVz6_maSeGJT4DxcYfP8sN0_v=DTkin+AMhV-BNA@mail.gmail.com>
+Subject: Re: [PATCH net-next 06/14] ipvlan: Support GSO for port -> ipvlan
+To: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	andrey.bokhanko@huawei.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 05:08:19PM +0100, Marco Crivellari wrote:
-> Currently if a user enqueues a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+On Wed, Nov 5, 2025 at 8:15=E2=80=AFAM Dmitry Skorodumov
+<skorodumov.dmitry@huawei.com> wrote:
+>
+> If main port interface supports GSO, we need manually segment
+> the skb before forwarding it to ipvlan interface.
 
-Please write out "wq" - the commit message should be for humans and not
-contain variables or entities from the code.
+Why ?
 
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+I think you need to explain much more than a neutral sentence,
 
-s/cpu/CPU/
+Also I do not see any tests, for the whole series ?
 
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistency cannot be addressed without refactoring the API.
-> 
-> This patch continues the effort to refactor worqueue APIs, which has begun
+I have not seen the cover letter.
 
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
-
-Also, do
-
-$ git grep 'This patch' Documentation/process
-
-for more details.
-
-> with the change introducing new workqueues and a new alloc_workqueue flag:
-> 
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-> 
-> Replace system_wq with system_percpu_wq, keeping the old behavior.
-
-What is the new behavior?
-
-Should this driver be converted to it?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Also you sent the series twice today :/
 
