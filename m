@@ -1,84 +1,102 @@
-Return-Path: <linux-kernel+bounces-886899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2887C36C80
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:47:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03E6C36BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F2585002D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:21:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FBB754021F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D2533E37B;
-	Wed,  5 Nov 2025 16:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BC634029C;
+	Wed,  5 Nov 2025 16:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIS7pvJI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjgCite/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5053385A0;
-	Wed,  5 Nov 2025 16:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638F33F8DD;
+	Wed,  5 Nov 2025 16:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359544; cv=none; b=ZC5Vou4/8aptBxYH4NjbbXwfoHwp1MrKLzwYpy+exmj8wGaY51vC+nFB4ihmEAydX/0o76pBL1wMQ5nXXuKgQ6DuJs0n5jTDuCaACtRPe3loLDiHwsT/uoVo4uHaqEiOsuUpj+LVB3TmG5RDJyiCbAmiUmXcI/VMqMSqYhsVERU=
+	t=1762359567; cv=none; b=H0GZK97QxLa+Y/M3uaJZHnLH4VzzcJSKrzEJ89CDwcHaOuWEOmJUCpVAZn0K9nZEq98dm6qasfSiYAg6PXh9a9s/duLlfBgK19sen3YSAqQY0EvvWrQeQpq8b8XlrFBp7z9JQcXUc/mTs4rN4vb5eEifqDJ9PMvNmPIkrGc4Mks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359544; c=relaxed/simple;
-	bh=NCcAa0pDfh+8ix09a1OPmKTAjDiOwhgcNW3yTAqYn9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5n0Ba6X0UYv+HrNBzZeQexvjTPXUIUG2frkMYE9fjztJaQxJxMMptzQgEaLhlow205XTjSWdpsH5D14i0LWIPMFP1idBD8mWeWoJerlAd/TJngpu9WlW7MzsTpmnV2xWHpAi8RqajXjxQ1UF6va6Z06+gd2z1xY0CDs5Kj40fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIS7pvJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FA7C2BCB0;
-	Wed,  5 Nov 2025 16:19:03 +0000 (UTC)
+	s=arc-20240116; t=1762359567; c=relaxed/simple;
+	bh=TjYeLGwkVLPEXuPxOINjyyI2z1EA63ulXI1JJ2ZkSQk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=jfc39DGXqFWZuf98fDIpvEfu92I83AfSnbCqdPVLxcnIsdto6EzqjyPYUMuv4zktmbxrhABLFW7Nkr0/JFZm8T3eIKW4zVhFCE1KFEVf7IYTWVUvS9xZGLf5N5n/CynJ+vhMui/un3PLeAAhln3qqnF8QvoYuGEZr4J5GQRtJwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjgCite/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96EDBC4CEF8;
+	Wed,  5 Nov 2025 16:19:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762359543;
-	bh=NCcAa0pDfh+8ix09a1OPmKTAjDiOwhgcNW3yTAqYn9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hIS7pvJIikT/daVfuiV6hOw8rowj5kF2jyQbPmqVAFcLSi/BrVw3VOFQj8kzc8LQZ
-	 BcEJjyvW51mn/gil4UEklR2UCI7uWz2xoeiwgAfIwwPnKAy/ClBPGF/Qx6MEs6DQnn
-	 fk5w3ty+2y3OhZ3BzMg0uhahAgno29sYHwIT0yJwUeNHjP1cxmUz2yweGOJmL5ARGE
-	 F8Y3XmHwKHl/HbDapWAEsr+p4YXenBiXqPsHNr/e5dBpT4m2GdekcoFdO+kTLUs0W9
-	 e6KlIWXhRo4IbK2XzltdkrC1u4ykAP4tvHNHE8h8yAxmCcbVZF/awAFDG6g6V61wyx
-	 vfvp1Co3/C2CQ==
-Date: Wed, 5 Nov 2025 06:19:02 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Calvin Owens <calvin@wbinvd.org>, linux-kernel@vger.kernel.org,
-	Dan Schatzberg <dschatzberg@meta.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, cgroups@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH cgroup/for-6.19 1/2] cgroup: Convert css_set_lock from
- spinlock_t to raw_spinlock_t
-Message-ID: <aQt49uB4lEDPqVYE@slm.duckdns.org>
-References: <20251104181114.489391-1-calvin@wbinvd.org>
- <d03d2a6e0d0a09e9da6a54370f253c00@kernel.org>
- <20251105073009.xNtOAM_u@linutronix.de>
+	s=k20201202; t=1762359566;
+	bh=TjYeLGwkVLPEXuPxOINjyyI2z1EA63ulXI1JJ2ZkSQk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WjgCite/GxljyWNBe7UCrvPCfKXaTjWeaVHJXH1IghaovYhNGrHbCjRw5sGausT8D
+	 8edskZQaJxIAhUvwj/FoMd/YdmgdWIsvnZPa7yNlYju7rFkDiIuNl9Itlw5IyQHf5a
+	 wUdhAxmBbkEHrLKEUyDbHtq2w+UTQxYOKPXWs7ahtHrLXsiN8YABnsWw4/GNLHBCbe
+	 qxDOhTNzdLkthSTQS9INtAW/GlcHL4U4PnvUkU0WtmSpryphy13ny+tocWB+BrFphE
+	 F5UFIJc0L74OgWMn3PQt08vOaZ0k2Gqqqs6X6Isk37CaEu4i7I/YsCRLxjyEnwR3AF
+	 3a7fIhUe9SQ4Q==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vGgER-00000000pUh-0kEy;
+	Wed, 05 Nov 2025 11:19:35 -0500
+Message-ID: <20251105161909.590008129@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 05 Nov 2025 11:19:09 -0500
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/5] tracing: Fix tracer options per instance
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105073009.xNtOAM_u@linutronix.de>
 
-On Wed, Nov 05, 2025 at 08:30:09AM +0100, Sebastian Andrzej Siewior wrote:
-> This one has a kfree(link) and kfree takes spinlock_t so not working.
-...
-> 
-> I am also a bit worried about all these list iterations which happen
-> under the lock. There is no upper limit meaning the list can grow with
-> limits affecting the time the lock is held.
 
-Good points. Let me think of something else.
+The tracers (like function and function_graph) have options that modify
+how they behave or how they are shown in the trace file. As these options
+were created before instances (multiple buffers), the flags variable that
+represent these options were global for the tracer.
 
-Thanks.
+Now that a tracer may exist in multiple instances, having a global flags
+that kinda affect every instance of that tracer does not make sense.
+The reason it "kinda" affects them, is that the code that updates an option
+for an instance, only does the change for the tracer running in that instance.
+If a tracer is already running in another instance, it will not be affected.
+But because the option is saved in a global variable, if the tracer is stopped
+and restarted in the instance, then the option will take affect.
 
--- 
-tejun
+Since each instance has its own interface to modify the options, the effect
+of an option should only affect the tracer for the given instance. This means
+that the state of the options for each tracer must be saved for each instance
+separately.
+
+Add a new struct tracers field in the trace_array (instance descriptor) that
+holds a descriptor that points to a tracer and contains its flags values. This
+will be used to see what tracers are available for an instance.
+
+Now when a tracer option is modified for an instance, it only affects the
+tracer in that instance and not semi-effects the tracers in other instances.
+
+Steven Rostedt (5):
+      tracing: Remove dummy options and flags
+      tracing: Have add_tracer_options() error pass up to callers
+      tracing: Have tracer option be instance specific
+      tracing: Have function tracer define options per instance
+      tracing: Have function graph tracer define options per instance
+
+----
+ kernel/trace/trace.c                 | 280 ++++++++++++++++++++++-------------
+ kernel/trace/trace.h                 |   3 +
+ kernel/trace/trace_functions.c       |  10 +-
+ kernel/trace/trace_functions_graph.c |  18 ++-
+ 4 files changed, 198 insertions(+), 113 deletions(-)
 
