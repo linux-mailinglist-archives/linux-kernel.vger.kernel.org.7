@@ -1,170 +1,325 @@
-Return-Path: <linux-kernel+bounces-887430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774DEC38371
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:40:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007C6C38389
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF6E1A23730
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28F0188A244
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA2A2F25F4;
-	Wed,  5 Nov 2025 22:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAC72F1FE6;
+	Wed,  5 Nov 2025 22:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxRa6ZtC"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um8kvRLz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC88A2EAD10
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 22:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FB6291C3F;
+	Wed,  5 Nov 2025 22:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762382443; cv=none; b=LLaAvcrq4vD4E8+xE5n3ENo9KJPJFechizZmyCrtjRPjV0PGmZoRH0evTi2kPIMZQqRZmuoJqfSPXUqefm2dNikJ1ApPhzG9bCNfluYN3Etcj4kMjrozalLHGQitil/WewOSXndf8KXcC43gOlyLPUoIBFHkd4Mz/n4M9doT/ZM=
+	t=1762382566; cv=none; b=sgFQRNcZVlrS7XXoU6Ri8tgSp9Mdwjp6lxsDnJRtHmKo4ri9UMsLaa6QeGRddqOmhU6Yup9jog0w5geriCwOCD5Dw1x6uz5pV/NL0BBEkzAqugLqxCbUQ/nVN6QNwLMuzHsetflCKww/frcoE5d3oCQD95j4+Q0O703NqFw6u9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762382443; c=relaxed/simple;
-	bh=3hkKug39+4TR4kkH+vcZdCG4VPG2upJqx/o/C7wpd00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MbVWQHG8I/wQkBdbDjoB3wsOAnpJAAH+j7wFs7Wzl8dsE6XoKJqznAaNCRR+jidf3TbX9n6/EatybvLZuYG40+ONDVeSfbgyS0f7VxJ1i2uUG1ZGC5F9ja8wZnqZRoAS24tELl2pZ+SxXgt7ikjgTxrSB8NmjFIhTTa8V0zkwy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxRa6ZtC; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4e896e91368so4205661cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 14:40:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762382441; x=1762987241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=21qXQLNolzTFs72n7I5BKiJh68f8xT8gJueGc1dJJD4=;
-        b=VxRa6ZtCzV+zt07vfnfPMV+vIf0aiHjWdM0Bc0Qxjfm9w/+vca4DDEXC4+RU92H83Z
-         97JoncfaGwE3Wboe29SFoxDJLJdJhS4HQo7cN+LQBGJJIp2NnqAyYbugFi02Ma3CYnhv
-         qXWfcHAib1C9vYm1bxIh8gleG81U5/hIUvXnmCqlzK6VCBYhwqUTHrQzKVTja72q49+W
-         Ljj8CSwwgNGzNh2vf9dEQ8ZZTVNMEdGSkmLioe0KklQyEWv0/WX7AKxKjT6HcwwzlIYw
-         LiqaruRrX6MXtkfA4oVWgM+VBIlUoPcDFbAlZupMMrL+JbHkPlzsLRsmAb79jbaQhkZY
-         szYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762382441; x=1762987241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=21qXQLNolzTFs72n7I5BKiJh68f8xT8gJueGc1dJJD4=;
-        b=JiD1MHVYgilW4v4iEwZrqaSU8XUYbfyD83PzYm4Nqd849x2H2MYutuC8JLwueb4pYc
-         XhaW9UiQ6MUxGkE/hWokY22sRZayXMJE5g8uQJCgkGKOsKbajEPnTNcEEc7WzGBy1N47
-         RZxO8dIeiH7ejuaF3ETWnUgVuuARIFykpGVlrBaHkiupq5fZnGJoNyto2w/7YVwaX55+
-         i1tpbI4rURLsXttpHzo4CJVWaoFz7F3KkAo4Bt9D4F2Wufxzc0EzJfJMkckHCoKfh6qa
-         yejvb2zXeZTcR7KzibJ8ru/57Rhe1EQ2T5FZL4bdHAybW5SsWJibmbzrBSnFmJSUckFO
-         lw9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWs0uOh6zJwj/gHHrX55GjRk113fx9LzWbslnFzTKm0hz30zNFSy4qrG2A3Bo1gUBdiiuV27xGu2r8t7/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysksiKotZ2U/CcA2e69WXq9W2Ihh/9HKH1cSa+IffFzzCJycvz
-	Va6zLtrGzQhKKy7D1rEIBSZiqkpzC/Ua0teQ0MegzMJzecMiu209CpqCzqc7/yj44tMdzUrAz6s
-	QuXJJHdnihqzesI96krg9cFxm0vwK/kFyxXzbzNwW
-X-Gm-Gg: ASbGncs+E5jRErcues6Nf7p2t1P13+SJoT9nWjuk/vv/5nYM0j87e6KqXFiKxLoReYP
-	fnGTdJ0AVwYC6NaH221P6H68ae3O8BYZjrKI3tK6U+UvI8/SL7SVty9lXRidwKg7rbQZDYR/WAa
-	/4c2bhVQIsP4lqSZkKtKdpe5+6DBzWi6bN1lN/0bDf8XX3Hu/pLW+WPoLkq2bOApb0Ndovs15uM
-	qb/XpTwxYRx75JwLK5QCgw5IIUAV/yyGlomMmoHTncP1Kj+84c71ZMUws/qGng0L2D83Jklwwth
-	0Zt7ZM2PuYNQY39EozRnwSAJhV3U
-X-Google-Smtp-Source: AGHT+IFg+F2Ata6x8dN1l6gIoGdg4pDHv2N8V5ZQ7hPdvjQ3qX8P61Yda6M7LKoKh7JHKEcIv79ez6Ma5pah8Xu0zFc=
-X-Received: by 2002:ac8:5ace:0:b0:4e8:aa15:c96d with SMTP id
- d75a77b69052e-4ed7262dd8bmr60160061cf.55.1762382440446; Wed, 05 Nov 2025
- 14:40:40 -0800 (PST)
+	s=arc-20240116; t=1762382566; c=relaxed/simple;
+	bh=x96aWo+3oxcfwhk54dst6GQHHvDiaJBKXdpyxACDSKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=copv0r27bEbaKbWxwNvjnnQBukoPZG3UznG/wCD3+NNxChzStojCfh1PoqvpTeQiS+Wsv13k9H+yZnxQtySFwJzUguz7koLBqSgG1q91e9wZN4R67KqIjnq/yy1+aAStHnRmsXCXgf6Pr00n+INU3TWw7Ra38wVnGfk3HQrlYGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um8kvRLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7EE0C4CEFB;
+	Wed,  5 Nov 2025 22:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762382565;
+	bh=x96aWo+3oxcfwhk54dst6GQHHvDiaJBKXdpyxACDSKk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=um8kvRLzl4Ueyn1plegw1+3eFPM+1buAwb2HuOTXQP7Gi/1pzk/uMFOyUZsh/1dXb
+	 TisvxISn5xQsYI/HmbNG2BNnyfv9H9iE6YAU7930ViFQCEm8DuUT9JekBs/fM4QELa
+	 d7toxbDYElDsbdD8oh2HuQPvcmxp8zGBguFwF7gdFQvnennJmglm7DW9pqUeVc7H+y
+	 pp9cOn4JiHz5S88AWU2ds77HTEXkdY2VTXA8r9UqTodRAwjjCpz4QzrusnUD4zkIfX
+	 RljBAU2UmDEzpCwDEz5gqBm+1JbDc9h9g9I+tCHVPAEYz/kSRe9tIQgvOAG7hYlVuA
+	 sGxpgdzd9nO+Q==
+Date: Wed, 5 Nov 2025 14:42:45 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
+	Bernd Schubert <bernd@bsbernd.com>, Theodore Ts'o <tytso@mit.edu>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20251105224245.GP196362@frogsfrogsfrogs>
+References: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
+ <20250912145857.GQ8117@frogsfrogsfrogs>
+ <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+ <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+ <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs>
+ <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp>
+ <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030-lid-switch-notifier-v1-0-c58dc9b1439d@google.com>
- <20251030-lid-switch-notifier-v1-1-c58dc9b1439d@google.com> <a4zd7uzo3aigyrhturbpgtcsm2slmtqefivky2bfhqiupcc5aj@iorbkwz6ief4>
-In-Reply-To: <a4zd7uzo3aigyrhturbpgtcsm2slmtqefivky2bfhqiupcc5aj@iorbkwz6ief4>
-From: Jonathan Denose <jdenose@google.com>
-Date: Wed, 5 Nov 2025 16:40:29 -0600
-X-Gm-Features: AWmQ_blBi6SaJ6LdIS9vwxJQp5_1zspGepznYlOnd7E2qDS8FYULJpsyRNqnRec
-Message-ID: <CAMCVhVP+LW27iLXttyFegRj_HMHheYrZtj4uuERLN0uqUjkR6Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Input: Create input notifier chain in input.c
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
 
-Hi Dmitry,
+On Wed, Nov 05, 2025 at 11:24:01PM +0100, Bernd Schubert wrote:
+> 
+> 
+> On 11/4/25 14:10, Amir Goldstein wrote:
+> > On Tue, Nov 4, 2025 at 12:40 PM Luis Henriques <luis@igalia.com> wrote:
+> >>
+> >> On Tue, Sep 16 2025, Amir Goldstein wrote:
+> >>
+> >>> On Tue, Sep 16, 2025 at 4:53 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>
+> >>>> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
+> >>>>> On Mon, Sep 15, 2025 at 10:27 AM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> On 9/15/25 09:07, Amir Goldstein wrote:
+> >>>>>>> On Fri, Sep 12, 2025 at 4:58 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>>>>>
+> >>>>>>>> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> On 9/12/25 13:41, Amir Goldstein wrote:
+> >>>>>>>>>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 8/1/25 12:15, Luis Henriques wrote:
+> >>>>>>>>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
+> >>>>>>>>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> >>>>>>>>>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
+> >>>>>>>>>>>>>>> to clear the condition that caused the failure in the first place, but I
+> >>>>>>>>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> >>>>>>>>>>>>>>> aren't totally crazy.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> I'm trying to understand what the failure scenario is here.  Is this
+> >>>>>>>>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
+> >>>>>>>>>>>>>> is supposed to happen with respect to open files, metadata and data
+> >>>>>>>>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
+> >>>>>>>>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
+> >>>>>>>>>>>>>> potentally to be out of sync, right?
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> What are the recovery semantics that we hope to be able to provide?
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> <echoing what we said on the ext4 call this morning>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
+> >>>>>>>>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
+> >>>>>>>>>>>>> would initiate GETATTR requests on all the cached inodes to validate
+> >>>>>>>>>>>>> that they still exist; and then resend all the unacknowledged requests
+> >>>>>>>>>>>>> that were pending at the time.  It might be the case that you have to
+> >>>>>>>>>>>>> that in the reverse order; I only know enough about the design of fuse
+> >>>>>>>>>>>>> to suspect that to be true.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Anyhow once those are complete, I think we can resume operations with
+> >>>>>>>>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
+> >>>>>>>>>>>>> fuse_make_bad'd, which effectively revokes them.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
+> >>>>>>>>>>>> but probably GETATTR is a better option.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> So, are you currently working on any of this?  Are you implementing this
+> >>>>>>>>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
+> >>>>>>>>>>>> look at fuse2fs too.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Sorry for joining the discussion late, I was totally occupied, day and
+> >>>>>>>>>>> night. Added Kevin to CC, who is going to work on recovery on our
+> >>>>>>>>>>> DDN side.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
+> >>>>>>>>>>> server restart we want kernel to recover inodes and their lookup count.
+> >>>>>>>>>>> Now inode recovery might be hard, because we currently only have a
+> >>>>>>>>>>> 64-bit node-id - which is used my most fuse application as memory
+> >>>>>>>>>>> pointer.
+> >>>>>>>>>>>
+> >>>>>>>>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
+> >>>>>>>>>>> outstanding requests. And that ends up in most cases in sending requests
+> >>>>>>>>>>> with invalid node-IDs, that are casted and might provoke random memory
+> >>>>>>>>>>> access on restart. Kind of the same issue why fuse nfs export or
+> >>>>>>>>>>> open_by_handle_at doesn't work well right now.
+> >>>>>>>>>>>
+> >>>>>>>>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
+> >>>>>>>>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
+> >>>>>>>>>>> And then FUSE_REVALIDATE_FH on server restart.
+> >>>>>>>>>>> The file handles could be stored into the fuse inode and also used for
+> >>>>>>>>>>> NFS export.
+> >>>>>>>>>>>
+> >>>>>>>>>>> I *think* Amir had a similar idea, but I don't find the link quickly.
+> >>>>>>>>>>> Adding Amir to CC.
+> >>>>>>>>>>
+> >>>>>>>>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
+> >>>>>>>>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>>>>>>>
+> >>>>>>>>> Thanks for the reference Amir! I even had been in that thread.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
+> >>>>>>>>>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
+> >>>>>>>>>>> Any objections against that?
+> >>>>>>>>
+> >>>>>>>> What if you actually /can/ reuse a nodeid after a restart?  Consider
+> >>>>>>>> fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
+> >>>>>>>> you can reconnect the fuse_inode to the ondisk inode, assuming recovery
+> >>>>>>>> didn't delete it, obviously.
+> >>>>>>>
+> >>>>>>> FUSE_LOOKUP_HANDLE is a contract.
+> >>>>>>> If fuse4fs can reuse nodeid after restart then by all means, it should sign
+> >>>>>>> this contract, otherwise there is no way for client to know that the
+> >>>>>>> nodeids are persistent.
+> >>>>>>> If fuse4fs_handle := nodeid, that will make implementing the lookup_handle()
+> >>>>>>> API trivial.
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> I suppose you could just ask for refreshed stat information and either
+> >>>>>>>> the server gives it to you and the fuse_inode lives; or the server
+> >>>>>>>> returns ENOENT and then we mark it bad.  But I'd have to see code
+> >>>>>>>> patches to form a real opinion.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> You could make fuse4fs_handle := <nodeid:fuse_instance_id>
+> >>>>>>> where fuse_instance_id can be its start time or random number.
+> >>>>>>> for auto invalidate, or maybe the fuse_instance_id should be
+> >>>>>>> a native part of FUSE protocol so that client knows to only invalidate
+> >>>>>>> attr cache in case of fuse_instance_id change?
+> >>>>>>>
+> >>>>>>> In any case, instead of a storm of revalidate messages after
+> >>>>>>> server restart, do it lazily on demand.
+> >>>>>>
+> >>>>>> For a network file system, probably. For fuse4fs or other block
+> >>>>>> based file systems, not sure. Darrick has the example of fsck.
+> >>>>>> Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
+> >>>>>> fuse-server gets restarted, fsck'ed and some files get removed.
+> >>>>>> Now reading these inodes would still work - wouldn't it
+> >>>>>> be better to invalidate the cache before going into operation
+> >>>>>> again?
+> >>>>>
+> >>>>> Forgive me, I was making a wrong assumption that fuse4fs
+> >>>>> was using ext4 filehandle as nodeid, but of course it does not.
+> >>>>
+> >>>> Well now that you mention it, there /is/ a risk of shenanigans like
+> >>>> that.  Consider:
+> >>>>
+> >>>> 1) fuse4fs mount an ext4 filesystem
+> >>>> 2) crash the fuse4fs server
+> >>>> <fuse4fs server restart stalls...>
+> >>>> 3) e2fsck -fy /dev/XXX deletes inode 17
+> >>>> 4) someone else mounts the fs, makes some changes that result in 17
+> >>>>    being reallocated, user says "OOOOOPS", unmounts it
+> >>>> 5) fuse4fs server finally restarts, and reconnects to the kernel
+> >>>>
+> >>>> Hey, inode 17 is now a different file!!
+> >>>>
+> >>>> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
+> >>>> everything's (potentially) fine because fuse4fs supplied i_generation to
+> >>>> the kernel, and fuse_stale_inode will mark it bad if that happens.
+> >>>>
+> >>>> Hm ok then, at least there's a way out. :)
+> >>>>
+> >>>
+> >>> Right.
+> >>>
+> >>>>> The reason I made this wrong assumption is because fuse4fs *can*
+> >>>>> already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
+> >>>>> which is what my fuse passthough library [1] does.
+> >>>>>
+> >>>>> My claim was that although fuse4fs could support safe restart, which
+> >>>>> cannot read from recycled inode number with current FUSE protocol,
+> >>>>> doing so with FUSE_HANDLE protocol would express a commitment
+> >>>>
+> >>>> Pardon my naïvete, but what is FUSE_HANDLE?
+> >>>>
+> >>>> $ git grep -w FUSE_HANDLE fs
+> >>>> $
+> >>>
+> >>> Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
+> >>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>
+> >>> Which means to communicate a variable sized "nodeid"
+> >>> which can also be declared as an object id that survives server restart.
+> >>>
+> >>> Basically, the reason that I brought up LOOKUP_HANDLE is to
+> >>> properly support NFS export of fuse filesystems.
+> >>>
+> >>> My incentive was to support a proper fuse server restart/remount/re-export
+> >>> with the same fsid in /etc/exports, but this gives us a better starting point
+> >>> for fuse server restart/re-connect.
+> >>
+> >> Sorry for resurrecting (again!) this discussion.  I've been thinking about
+> >> this, and trying to get some initial RFC for this LOOKUP_HANDLE operation.
+> >> However, I feel there are other operations that will need to return this
+> >> new handle.
+> >>
+> >> For example, the FUSE_CREATE (for atomic_open) also returns a nodeid.
+> >> Doesn't this means that, if the user-space server supports the new
+> >> LOOKUP_HANDLE, it should also return an handle in reply to the CREATE
+> >> request?
+> > 
+> > Yes, I think that's what it means.
+> > 
+> >> The same question applies for TMPFILE, LINK, etc.  Or is there
+> >> something special about the LOOKUP operation that I'm missing?
+> >>
+> > 
+> > Any command returning fuse_entry_out.
+> > 
+> > READDIRPLUS, MKNOD, MKDIR, SYMLINK
+> 
+> Btw, checkout out <libfuse>/doc/libfuse-operations.txt for these
+> things. With double checking, though, the file was mostly created by AI
+> (just added a correction today). With that easy to see the missing
+> FUSE_TMPFILE.
+> 
+> 
+> > 
+> > fuse_entry_out was extended once and fuse_reply_entry()
+> > sends the size of the struct.
+> 
+> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+> 
+> > However fuse_reply_create() sends it with fuse_open_out
+> > appended and fuse_add_direntry_plus() does not seem to write
+> > record size at all, so server and client will need to agree on the
+> > size of fuse_entry_out and this would need to be backward compat.
+> > If both server and client declare support for FUSE_LOOKUP_HANDLE
+> > it should be fine (?).
+> 
+> If max_handle size becomes a value in fuse_init_out, server and
+> client would use it? I think appended fuse_open_out could just
+> follow the dynamic actual size of the handle - code that
+> serializes/deserializes the response has to look up the actual
+> handle size then. For example I wouldn't know what to put in
+> for any of the example/passthrough* file systems as handle size - 
+> would need to be 128B, but the actual size will be typically
+> much smaller.
 
-Thanks for your feedback.
+name_to_handle_at ?
 
-On Wed, Nov 5, 2025 at 3:55=E2=80=AFPM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> Hi Jonathan,
->
-> On Thu, Oct 30, 2025 at 02:10:40PM +0000, Jonathan Denose wrote:
-> > To expose input events to other kernel modules, add a blocking notifier
-> > chain. Publish LID_SWITCH_OPEN/LID_SWITCH_CLOSE events through this
-> > notifier chain when input_handle_event detects events signaling the lid
-> > switch has opened or closed.
-> >
-> > Additionally, export a function which allows other kernel modules to
-> > register notifier_block structs against this notifier chain.
-> >
-> > Signed-off-by: Jonathan Denose <jdenose@google.com>
-> > ---
-> >  drivers/input/input.c | 13 +++++++++++++
-> >  include/linux/input.h |  7 +++++++
-> >  2 files changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/input/input.c b/drivers/input/input.c
-> > index a500e1e276c211d1146dbfea421a3402084007f8..b342b1ff138ccc58d4623ed=
-cf1152bd85d7054bf 100644
-> > --- a/drivers/input/input.c
-> > +++ b/drivers/input/input.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/kstrtox.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/rcupdate.h>
-> > +#include <linux/notifier.h>
-> >  #include "input-compat.h"
-> >  #include "input-core-private.h"
-> >  #include "input-poller.h"
-> > @@ -62,6 +63,8 @@ static const unsigned int input_max_code[EV_CNT] =3D =
-{
-> >       [EV_FF] =3D FF_MAX,
-> >  };
-> >
-> > +static struct blocking_notifier_head input_notifier_head;
-> > +
-> >  static inline int is_event_supported(unsigned int code,
-> >                                    unsigned long *bm, unsigned int max)
-> >  {
-> > @@ -367,10 +370,20 @@ void input_handle_event(struct input_dev *dev,
-> >               if (type !=3D EV_SYN)
-> >                       add_input_randomness(type, code, value);
-> >
-> > +             if (type =3D=3D EV_SW && code =3D=3D SW_LID && !value)
-> > +                     blocking_notifier_call_chain(&input_notifier_head=
-, value ?
-> > +                             LID_SWITCH_CLOSE : LID_SWITCH_OPEN, dev);
->
-> I would prefer not having this directly in the input core but rather
-> have a lid handler that can then use notifier chain to forward the
-> events further.
+I guess the problem here is that technically speaking filesystems could
+have variable sized handles depending on the file.  Sometimes you encode
+just the ino/gen of the child file, but other times you might know the
+parent and put that in the handle too.
 
-Ok, that makes sense to me. In that case, do you have a recommendation
-for where the lid handler should go?
+--D
 
-It looks like drivers/acpi/button.c initializes and handles the lid switch,=
- so
-would it make sense for it to go there?
-
-> Also, here you are running in atomic context, so you need atomic
-> notifier, not blocking (or you need to involve a workqueue).
-
-I'll use an atomic notifier in the next version.
-
-> Thanks.
->
-> --
-> Dmitry
---=20
-Jonathan
+> 
+> Thanks,
+> Bernd
+> 
 
