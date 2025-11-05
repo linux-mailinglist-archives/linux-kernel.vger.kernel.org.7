@@ -1,164 +1,101 @@
-Return-Path: <linux-kernel+bounces-886452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC8DC35A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:30:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531AFC35A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:30:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC23A3B6664
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7143A879E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E85313E0E;
-	Wed,  5 Nov 2025 12:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79870313E0E;
+	Wed,  5 Nov 2025 12:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uU2jGNff"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO/3M89k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B703321146C;
-	Wed,  5 Nov 2025 12:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DF321146C;
+	Wed,  5 Nov 2025 12:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345831; cv=none; b=YLIxf4QcyzmDqs1Xvzoln0ovZgbIBe3EoXMxoUZmDYeogx4mtTVkeYmjxWfIzdj+hGJCpy5GYcR4gqQXoy7/pEueblDCg+mmHFJN3XTK/wwnnsQ8wRX6vvjzOdSEn6VGlkrvSTkbnPqrrxXccvnPzeXcIM9dO1y+IjLEOGix1A8=
+	t=1762345843; cv=none; b=HRpXhJ/48veJucddFuSZLTcppaiSBCHMR8YRnABwRpa6KSGY4sqjnhgL5GiBgXfCmIXp1V5HGwnjYdUvtU4Ged2oXJ/k4gardnuCX9iD4XQxqX0J2NmAbM0apgMxYzZcsGITOBxbPuUUn52qzofoCUo30hcZ8nJHR6Qna0bsnoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345831; c=relaxed/simple;
-	bh=525xIYhnqs6gU0i43TmewTm6+Cpp9ybaLuwXK2KBlks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+GWLtD+lOct1pk06SjYo7pcqyb3z+1NblAlKQoQGbmsERqjGFuSmLIWfK+srdDCdoqnhT2HEVpMBq43RmEL60DlttT/PeAksOXMJwywd0ZAk2cSGTLDk13VHJWImI1ktMLvb1Usi880X0IbuYjgBZjOWvChqgSFecW0mi/m5iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uU2jGNff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAA8C4CEFB;
-	Wed,  5 Nov 2025 12:30:27 +0000 (UTC)
+	s=arc-20240116; t=1762345843; c=relaxed/simple;
+	bh=sOca8qlDfIBDsxvVAIy7C2EdJfQ9Z0/Cd6qn0qL0vGA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=l+T5uJYZh1K1sort/oBSAXReLj4TlUlo22HwP1Nx2kcYR02dSk2usBExQOsommzmO2a6v7Fu5sBSIniLRcSfPHRJcrKXCag+x4Plr9049lfynZthMnHEKxdoHDvJMSIhIGwxVox62DRoJ4C1MYBtwGNQRnOR1A5JxbL9BEkkg94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO/3M89k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E4F9C4CEFB;
+	Wed,  5 Nov 2025 12:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762345831;
-	bh=525xIYhnqs6gU0i43TmewTm6+Cpp9ybaLuwXK2KBlks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uU2jGNffhWp6PpiTw1kv8C4LS8KSEJ+m3+958NRPn71F67CuaAn6j2hddjjAT2nVB
-	 KwKQTUmb0Lt6S79/mg87FUDYSn2Vm7SZYGiXOpi9oVAw04exHv7BxkN98VGu+yFdSt
-	 3I1zhERvSZGSwUUdBlBPUD2haRJeQlQTmEWDz/xNXY3vf61zim9U/g22KMxg+A0CNG
-	 ufZCjVR86XBviXe+ubV7jNL0rMkG2z+ile3WNTz910ZatYq0D3n15+u7U1ol+HJOHp
-	 pVMcTpOZOWnK8dZORtUIdAgNMQxHg6vJcor3Ko/ROALzwCmQTWen6XxVLc1m/6GDmx
-	 DGSrizQXVt9Kg==
-Date: Wed, 5 Nov 2025 13:30:24 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-block@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	guanghuifeng@linux.alibaba.com, zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-Message-ID: <20251105-elstern-wippen-3af38a8f40f3@brauner>
-References: <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
- <2025103155-definite-stays-ebfe@gregkh>
- <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
- <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
- <2025103106-proposal-jogging-a076@gregkh>
- <83b9dac8-815e-4990-8cc7-5aaf4ba85f42@linux.alibaba.com>
+	s=k20201202; t=1762345843;
+	bh=sOca8qlDfIBDsxvVAIy7C2EdJfQ9Z0/Cd6qn0qL0vGA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=aO/3M89k+D6Jfli9zFpP/uHdguxuGFk9TJ4fhmXgVR6oXi1V7UqFQ0N8eeZsXACWi
+	 ACGLD5bTZ2vlUaztBCPptZFADukmoXcsaFTcBbZiiV57G/KUvIH29XWZPIfNK1/prG
+	 agPGjb8hiZf0Kfz99IIKsgKOGYDIJAzhzEfI3yhU+3O8BdsuomK3CSTRl7t5TtF6t5
+	 4J+6EFwuTAWZlJtdiZSPQyTWOTEvWtaAqoIsWHocA0UGZRkAh57lFfD9Wrz7f/jJ1O
+	 L2DWX9zWYCF83Lqih5a08c8BUoopZfutNpsOKslICZ6TWsGobmem9nvrWQdmjkLF3S
+	 4iA354oZx9ZnA==
+Date: Wed, 05 Nov 2025 06:30:41 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <83b9dac8-815e-4990-8cc7-5aaf4ba85f42@linux.alibaba.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ conor+dt@kernel.org, cy.huang@realtek.com, afaerber@suse.de, 
+ linux-arm-kernel@lists.infradead.org, james.tai@realtek.com, 
+ linux-realtek-soc@lists.infradead.org, stanley_chang@realtek.com, 
+ krzk+dt@kernel.org, lee@kernel.org
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+In-Reply-To: <20251105104452.6336-3-eleanor.lin@realtek.com>
+References: <20251105104452.6336-1-eleanor.lin@realtek.com>
+ <20251105104452.6336-3-eleanor.lin@realtek.com>
+Message-Id: <176234584170.562648.2189277623860888038.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: Add Realtek ISO system
+ controller
 
-On Fri, Oct 31, 2025 at 10:44:53PM +0800, Gao Xiang wrote:
-> 
-> 
-> On 2025/10/31 22:34, Greg Kroah-Hartman wrote:
-> > On Fri, Oct 31, 2025 at 08:23:32PM +0800, Gao Xiang wrote:
-> > > 
-> > > 
-> > > On 2025/10/31 18:12, Gao Xiang wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 2025/10/31 17:45, Christoph Hellwig wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > > > But why does the device node
-> > > > > > > get created earlier?  My assumption was that it would only be
-> > > > > > > created by the KOBJ_ADD uevent.  Adding the device model maintainers
-> > > > > > > as my little dig through the core drivers/base/ code doesn't find
-> > > > > > > anything to the contrary, but maybe I don't fully understand it.
-> > > > > > 
-> > > > > > AFAIK, device_add() is used to trigger devtmpfs file
-> > > > > > creation, and it can be observed if frequently
-> > > > > > hotpluging device in the VM and mount.  Currently
-> > > > > > I don't have time slot to build an easy reproducer,
-> > > > > > but I think it's a real issue anyway.
-> > > > > 
-> > > > > As I say above, that's not normal, and you have to be root to do this,
-> > > I just spent time to reproduce with dynamic loop devices and
-> > > actually it's easy if msleep() is located artificiallly,
-> > > the diff as below:
-> > > 
-> > > diff --git a/block/bdev.c b/block/bdev.c
-> > > index 810707cca970..a4273b5ad456 100644
-> > > --- a/block/bdev.c
-> > > +++ b/block/bdev.c
-> > > @@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
-> > >   	struct inode *inode;
-> > > 
-> > >   	inode = ilookup(blockdev_superblock, dev);
-> > > -	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
-> > > +	if (0) {
-> > >   		blk_request_module(dev);
-> > >   		inode = ilookup(blockdev_superblock, dev);
-> > >   		if (inode)
-> > > diff --git a/block/genhd.c b/block/genhd.c
-> > > index 9bbc38d12792..3c9116fdc1ce 100644
-> > > --- a/block/genhd.c
-> > > +++ b/block/genhd.c
-> > > @@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
-> > >   	set_bit(GD_ADDED, &disk->state);
-> > >   }
-> > > 
-> > > +#include <linux/delay.h>
-> > > +
-> > >   static int __add_disk(struct device *parent, struct gendisk *disk,
-> > >   		      const struct attribute_group **groups,
-> > >   		      struct fwnode_handle *fwnode)
-> > > @@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
-> > >   	if (ret)
-> > >   		goto out_free_ext_minor;
-> > > 
-> > > +	if (disk->major == LOOP_MAJOR)
-> > > +		msleep(2500);           // delay 2.5s for all loops
-> > > +
-> > 
-> > Yes, so you need to watch for the uevent to happen, THEN it is safe to
-> > access the block device.  Doing it before then isn't a good idea :)
-> > 
-> > But, if you think this is an issue, do you have a patch that passes your
-> > testing to fix it?
-> 
-> I just raise it up for some ideas, and this change is
-> buried into the code refactor and honestly I need to
-> look into the codebase and related patchsets first.
-> 
-> Currently I have dozens of other development stuffs
-> on hand, if it's really a regression, I do hope
-> Christoph or other folks who are familiar with the code
-> could try to address this.
 
-If it's easy to do without much of a regression or performance risk then
-the device node should only show up once the device is actually ready.
-It's certainly best-practive to wait for the uevent though.
+On Wed, 05 Nov 2025 18:44:51 +0800, Yu-Chun Lin wrote:
+> Add DT binding schema for Realtek system controller.
+> 
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> ---
+>  .../bindings/mfd/realtek,iso-system.yaml      | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,iso-system.yaml
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/arm/realtek.yaml:76:1: [warning] too many blank lines (2 > 1) (empty-lines)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251105104452.6336-3-eleanor.lin@realtek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
