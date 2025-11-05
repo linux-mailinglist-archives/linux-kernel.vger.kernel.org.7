@@ -1,556 +1,181 @@
-Return-Path: <linux-kernel+bounces-885887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2641C3423B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:06:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60BCC34244
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C783426CA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C89A3BB00E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EFC2D29C7;
-	Wed,  5 Nov 2025 07:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB782D2383;
+	Wed,  5 Nov 2025 07:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Q9hNz3FJ"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4X3IsWa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D641A23B9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2472C324F;
+	Wed,  5 Nov 2025 07:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762326336; cv=none; b=FYtCc/JIzLXdiXKSCU0qvEL1UQsooZ1fYAojr1dnqFAyGHZM0ICep7JblTrd+kqugT/kbCccjeq92AlJRydZi+hYsbyCVByV3K4x8EKqMHhSWVmueIAtDlCkTwH4fOAg2zWsOM1JpiX/SAqnnCcffw4TNnVPl7bmLgYtyIPnqi0=
+	t=1762326352; cv=none; b=u85PqWT4begKDKN4YfOh+mxWFQ/Ig62R/KZD8HYfZyp5xoCh2SLBoITL+0QIxCYkUMc4vmmFpP7OntWwj6wlH06HogfVdsmoux3TN7tn3L/Y+pQiafzoyvMIkOPVXIbeqqRhWR27sAqnWMfdIRBopNypDDq90oWQPtebtz5uk4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762326336; c=relaxed/simple;
-	bh=lhDkAQ4kr78D99O0a7na/KEqoaXqKwoajkeCwTiMOrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HI4LTeuq2Ysr4fQ88n26KPJEsVaBoVdd/GHxb8VBHMz+1rc1X5I/k3ULLPFNHYXyCcICFdgfFprAyag3rib6SPf87NOeumrLBFfvSF1R1+yaQrS7L1MLtT2ISf/ofs+ZAVjWgwAHXPOEpoT0ZjReGlcrg27nVbqNuIGmUs4stA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Q9hNz3FJ; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47117f92e32so51203315e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:05:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762326332; x=1762931132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ks9fyBm/fH9vLCyV5g4+RxI0CfJjx/IAJ59IrtxkkEM=;
-        b=Q9hNz3FJFOt9uVfiZdqhFDRt9Z3QMG95LM47Vv+UXgsDM1T/IEsgnPEa4ZflEmGcjC
-         t5xKtKiXe6/bzwnJYBZemCarhSNQVnbHQiDv0jcPvEOiFV22LHP3NJx/A/dTCbye4FWn
-         Kw0pG8lpPyoPYQQA+BWfrziWlhz/LXRLpYSbPnxj4SVpOdCKSca7e4DSUlm7PiC3divB
-         TSxsruF1abKFSI+Mdcux4D2NyvjBvey2pPLE/eY7QeHDO9PoqMxBB/vOgeAeZU9fOKAd
-         HSQKB6AY9ZbgcB2dZHEyrhR5XRAFWANOHjCgUNCawukZ5JgJUoUVmkRqqKvkR8pmVDu6
-         ifUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762326332; x=1762931132;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ks9fyBm/fH9vLCyV5g4+RxI0CfJjx/IAJ59IrtxkkEM=;
-        b=rPTzSbZHF/LdeaOGNuOWxW9weOmk/n1yln7eIuc/f62E0o9n5SqGMbuB/0v+RUOpOd
-         F4uL7v7upflDS02PwmGtNH0PRRJh+jUMctkpcjwrv66xMe37YSgct7zrdwKlcA35PylH
-         S1bD/gNbM/2cqdfdZCU+oYHBGdfBrJUPEJuwmpcu8OVvG39XZjZN32WIdNmltyw0861F
-         jNfIoMppL5tNC0GuMtb9AuMQHe3qkZMgqHKnhWS19FQtXQXEaJbhE6CVGOi5BW7ivrKD
-         n67zgxAc0ljt0/EuX1LVV+NO+Wx93u8+EUN9ITwNTXOT/ajQNa+KCiq2N9OQH0tIkBUB
-         6pBg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5oDh4elee6lIZ4NOkST5K9DBYqABKpSJtT4Mc1JrLMiUCk/Ef0u3jZSb30G/06hr84dtsiTQ51tfVZ5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmB16TisVUieo4tynqDFsgpAUrh6msyBDFdHkI9I3yT4XVFMgs
-	UhcqfkEp5ShClzBptzTRynHYyoQaac2x+ZOqA7HJihDT03kQ8FFv1SijRVL/WPp45Ag=
-X-Gm-Gg: ASbGnctaosEuJ9a3iI6GG3rWFNNY3mFRQRvoxoP6oOJcWgqpfZk3+Ro0eVq2pllC7iy
-	Jwwkx5i15mMWKs9HlpuJqwlLShhZbK8b9hH2jX/dhj3mhE2iLPib5oUsupjAX1acx7b+8tS1FlE
-	wS4PV/85N2xfjlcSK2xjsQ23XmE2pZUxxG5sr9C48B0eGx3H3VTvtvm3sE9uDuxBLl3BrITtwt4
-	dtfPVVIHwpt0Gqw/tTfFRgT9p+CRJEaW7+PRhCGZRf7Gnt7Yc2a2FA6yxSkbIqg6kvU4CLg/y57
-	TJaEdvb7AECs0C7V2oRiCVPk8EsE7fTHVtqDaE/1Gy5gH8ZJW+h5siUTvNNH8e2yhL9v2FH8Ipd
-	Hc4tT14E68MStnBq8rDA4lKUxREebVmH+qGJISBjSu/+zIDbGqZVy2R5gd9PxM1QUViKqGDxjTs
-	h/mjWteOnCqWBOm2026hrdW1AWOnYoMfg/IwuRCJ+m
-X-Google-Smtp-Source: AGHT+IFSpPVrk0ZVV5rw7VKNVJsWgnPoyMMmE7Fk75vIi2jqyWdy565dG6nXK4RZwZjxWn7VQoK9Jw==
-X-Received: by 2002:a05:600d:8315:b0:477:55c9:c0c2 with SMTP id 5b1f17b1804b1-4775cdbfb96mr8429375e9.12.1762326332083;
-        Tue, 04 Nov 2025 23:05:32 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc96edsm30520685e9.6.2025.11.04.23.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 23:05:31 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	john.madieu.xa@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 2/2] soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap config
-Date: Wed,  5 Nov 2025 09:05:26 +0200
-Message-ID: <20251105070526.264445-3-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105070526.264445-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251105070526.264445-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1762326352; c=relaxed/simple;
+	bh=kPX9V0mH+TczUnYq0BMN/eI2YdpBbqz0jEK+VU5Ajks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=e3VOanmkUy8mXO932l34y7ZN0hoyiJWMSFKidiLRew1xyv5wj6sejBMQoOfDyMwwFsIuoIndYRlMdTezoLDsyLKvv1leacm8Xov9VLutSC4Y7Y+UY3q+Ycbciskp32ZTZrDgLb1EmxTOJoXpsEm6bVLp3tYffCzLP0EgssyPg6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4X3IsWa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA207C4CEF8;
+	Wed,  5 Nov 2025 07:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762326351;
+	bh=kPX9V0mH+TczUnYq0BMN/eI2YdpBbqz0jEK+VU5Ajks=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=m4X3IsWauFdhf3VenL4oXaFt8vQd1O7cZENoOOCac6EWsv1HNKEs6szPvqHFzb/m9
+	 g817Sjs80Kv5Mibkq3a72m3ZbINMvEw/DKGQt1fOJPEewZjvSknXybSG9lnpM66gkC
+	 04QGSrOwavlwNAJN1kgURXHLc5y3YoMHyPzKWveyUKUX0sLdVPNMBaAuWrEgfRmKJ5
+	 9meOxvx+fi3L5P1QApLI9bWLj5GJwuI88+TZeHvqJvMd6sbJrTDCQ3fIZ/FuD7Igo/
+	 aT+E4cYMbDUrMPcjnv5xcbgE7vkGmPAF3nbEIWuT8aoeZ/78rIjRHr3zyvOqCFtKND
+	 FeME6A1ACuCqA==
+Message-ID: <7e3c1b0b-2880-4abc-b80f-30ffc16d6158@kernel.org>
+Date: Wed, 5 Nov 2025 08:05:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
+ global-regs and transfer-mode properties
+To: Ryan Chen <ryan_chen@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>,
+ "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+ "joel@jms.id.au" <joel@jms.id.au>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "jk@codeconstruct.com.au" <jk@codeconstruct.com.au>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "naresh.solanki@9elements.com" <naresh.solanki@9elements.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
+ <20251027061240.3427875-3-ryan_chen@aspeedtech.com>
+ <93a2ff5f-2f8e-494b-9652-b93bc243c229@kernel.org>
+ <TY2PPF5CB9A1BE6DCA78BEDC3178B74FD75F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <36e2b87f-5567-4bd6-bd1b-789623441461@kernel.org>
+ <TY2PPF5CB9A1BE62BD449193B23A22DF941F2FBA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <TY2PPF5CB9A1BE62BD449193B23A22DF941F2FBA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 30/10/2025 02:48, Ryan Chen wrote:
+>> Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add global-regs
+>> and transfer-mode properties
+>>
+>> On 29/10/2025 10:25, Ryan Chen wrote:
+>>>> Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
+>>>> global-regs and transfer-mode properties
+>>>>
+>>>> On 27/10/2025 07:12, Ryan Chen wrote:
+>>>>> The AST2600 I2C controller supports three transfer modes: byte,
+>>>>> buffer, and DMA. To allow board designers and firmware to explicitly
+>>>>> select the preferred transfer mode for each controller instance.
+>>>>> "aspeed,transfer-mode" to allow device tree to specify the desired
+>>>>> transfer method used by each I2C controller instance.
+>>>>>
+>>>>> And AST2600 i2c controller have two register mode, one is legacy
+>>>>> register layout which is mix controller/target register control
+>>>>> together, another is new mode which is separate controller/target
+>>>>> register control.
+>>>>>
+>>>>
+>>>> This implies your "reg" properties have now completely different
+>>>> meaning and this would be quite an ABI break. We discussed this probably
+>> 15 revisions ago.
+>>>> Where did you document the resolution of that discussion?
+>>>
+>>> Let me explain more about "reg"
+>>> The 'reg' property continues to describe the same register regions
+>>> (bus and buffer) as in the legacy layout. The selection between the
+>>> legacy and new register layout is controlled by a bit in the SoC-level
+>>> global register block, referenced through the new 'aspeed,global-regs'
+>> property.
+>>> Therefore, the meaning of the 'reg' property does not change and no DT
+>>> ABI break occurs.
+>>>
+>>> Should I add it in commit message about "reg" ?
+>>
+>> Then why does the address change from 0x40 to 0x80. If it is the same, it
+>> cannot change.
+>>
+>> You are describing the IO address space, total address space, as defined by
+>> datasheet. Not whatever is in the driver.
+> 
+> Thanks for pointing that out.
+> 
+> But to clarify: the address change from 0x40 to 0x80 in the example is not
+> arbitrary. It comes directly from the AST2600 SoC datasheet, where the
 
-Not all system controller registers are accessible from Linux. Accessing
-such registers generates synchronous external abort. Populate the
-readable_reg and writeable_reg members of the regmap config to inform the
-regmap core which registers can be accessed. The list will need to be
-updated whenever new system controller functionality is exported through
-regmap.
+How so? Binding has an example for ast2600 with address 0x40. You now
+claim the change is to adjust to ast2600. But it is ALREADY ast2600!
 
-Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
 
-Changes in v2:
-- added all SYSC registers IP specific, except the SPI
-  registers on RZ/V2H and RZ/V2N as these are accessible only from EL3
-
- drivers/soc/renesas/r9a08g045-sysc.c |  69 ++++++++++++++++++
- drivers/soc/renesas/r9a09g047-sys.c  |  79 +++++++++++++++++++++
- drivers/soc/renesas/r9a09g056-sys.c  |  68 ++++++++++++++++++
- drivers/soc/renesas/r9a09g057-sys.c  | 101 +++++++++++++++++++++++++++
- drivers/soc/renesas/rz-sysc.c        |   2 +
- drivers/soc/renesas/rz-sysc.h        |   4 ++
- 6 files changed, 323 insertions(+)
-
-diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
-index 0504d4e68761..03d653d5cde5 100644
---- a/drivers/soc/renesas/r9a08g045-sysc.c
-+++ b/drivers/soc/renesas/r9a08g045-sysc.c
-@@ -6,10 +6,29 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/device.h>
- #include <linux/init.h>
- 
- #include "rz-sysc.h"
- 
-+#define SYS_XSPI_MAP_STAADD_CS0		0x348
-+#define SYS_XSPI_MAP_ENDADD_CS0		0x34c
-+#define SYS_XSPI_MAP_STAADD_CS1		0x350
-+#define SYS_XSPI_MAP_ENDADD_CS1		0x354
-+#define SYS_GETH0_CFG			0x380
-+#define SYS_GETH1_CFG			0x390
-+#define SYS_PCIE_CFG			0x3a0
-+#define SYS_PCIE_MON			0x3a4
-+#define SYS_PCIE_ERR_MON		0x3ac
-+#define SYS_PCIE_PHY			0x3b4
-+#define SYS_I2C0_CFG			0x400
-+#define SYS_I2C1_CFG			0x410
-+#define SYS_I2C2_CFG			0x420
-+#define SYS_I2C3_CFG			0x430
-+#define SYS_I3C_CFG			0x440
-+#define SYS_USB_PWRRDY			0xd70
-+#define SYS_PCIE_RST_RSM_B		0xd74
-+
- static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initconst = {
- 	.family = "RZ/G3S",
- 	.id = 0x85e0447,
-@@ -18,7 +37,57 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
- 	.specific_id_mask = GENMASK(27, 0),
- };
- 
-+static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_GETH0_CFG:
-+	case SYS_GETH1_CFG:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_MON:
-+	case SYS_PCIE_ERR_MON:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3s_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
- 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
-+	.readable_reg = rzg3s_regmap_readable_reg,
-+	.writeable_reg = rzg3s_regmap_writeable_reg,
- 	.max_register = 0xe20,
- };
-diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
-index 2e8426c03050..e413b0eff9bf 100644
---- a/drivers/soc/renesas/r9a09g047-sys.c
-+++ b/drivers/soc/renesas/r9a09g047-sys.c
-@@ -29,6 +29,27 @@
- #define SYS_LSI_PRR_CA55_DIS		BIT(8)
- #define SYS_LSI_PRR_NPU_DIS		BIT(1)
- 
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_SPI_STAADDCS0		0x900
-+#define SYS_SPI_ENDADDCS0		0x904
-+#define SYS_SPI_STAADDCS1		0x908
-+#define SYS_SPI_ENDADDCS1		0x90c
-+#define SYS_VSP_CLK			0xe00
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzg3e_sys_print_id(struct device *dev,
- 				void __iomem *sysc_base,
- 				struct soc_device_attribute *soc_dev_attr)
-@@ -62,7 +83,65 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
- 	.print_id = rzg3e_sys_print_id,
- };
- 
-+static bool rzg3e_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_SPI_STAADDCS0:
-+	case SYS_SPI_ENDADDCS0:
-+	case SYS_SPI_STAADDCS1:
-+	case SYS_SPI_ENDADDCS1:
-+	case SYS_VSP_CLK:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3e_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_SPI_STAADDCS0:
-+	case SYS_SPI_ENDADDCS0:
-+	case SYS_SPI_STAADDCS1:
-+	case SYS_SPI_ENDADDCS1:
-+	case SYS_VSP_CLK:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3e_sys_init_data = {
- 	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
-+	.readable_reg = rzg3e_regmap_readable_reg,
-+	.writeable_reg = rzg3e_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/r9a09g056-sys.c b/drivers/soc/renesas/r9a09g056-sys.c
-index 16b4e433c337..42f5eff291fd 100644
---- a/drivers/soc/renesas/r9a09g056-sys.c
-+++ b/drivers/soc/renesas/r9a09g056-sys.c
-@@ -34,6 +34,24 @@
- #define SYS_RZV2N_FEATURE_C55		BIT(1)
- #define SYS_RZV2N_FEATURE_SEC		BIT(2)
- 
-+#define SYS_LSI_OTPTSU0TRMVAL0		0x320
-+#define SYS_LSI_OTPTSU0TRMVAL1		0x324
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzv2n_sys_print_id(struct device *dev,
- 			       void __iomem *sysc_base,
- 			       struct soc_device_attribute *soc_dev_attr)
-@@ -70,7 +88,57 @@ static const struct rz_sysc_soc_id_init_data rzv2n_sys_soc_id_init_data __initco
- 	.print_id = rzv2n_sys_print_id,
- };
- 
-+static bool rzv2n_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU0TRMVAL0:
-+	case SYS_LSI_OTPTSU0TRMVAL1:
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzv2n_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzv2n_sys_init_data = {
- 	.soc_id_init_data = &rzv2n_sys_soc_id_init_data,
-+	.readable_reg = rzv2n_regmap_readable_reg,
-+	.writeable_reg = rzv2n_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
-index e3390e7c7fe5..827c718ac7c5 100644
---- a/drivers/soc/renesas/r9a09g057-sys.c
-+++ b/drivers/soc/renesas/r9a09g057-sys.c
-@@ -29,6 +29,35 @@
- #define SYS_LSI_PRR_GPU_DIS		BIT(0)
- #define SYS_LSI_PRR_ISP_DIS		BIT(4)
- 
-+#define SYS_LSI_OTPTSU0TRMVAL0		0x320
-+#define SYS_LSI_OTPTSU0TRMVAL1		0x324
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_PCIE_INTX_CH1		0x1030
-+#define SYS_PCIE_MSI1_CH1		0x1034
-+#define SYS_PCIE_MSI2_CH1		0x1038
-+#define SYS_PCIE_MSI3_CH1		0x103c
-+#define SYS_PCIE_MSI4_CH1		0x1040
-+#define SYS_PCIE_MSI5_CH1		0x1044
-+#define SYS_PCIE_PME_CH1		0x1048
-+#define SYS_PCIE_ACK_CH1		0x104c
-+#define SYS_PCIE_MISC_CH1		0x1050
-+#define SYS_PCIE_MODE_CH1		0x1054
-+#define SYS_PCIE_MODE			0x1060
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzv2h_sys_print_id(struct device *dev,
- 				void __iomem *sysc_base,
- 				struct soc_device_attribute *soc_dev_attr)
-@@ -62,7 +91,79 @@ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initco
- 	.print_id = rzv2h_sys_print_id,
- };
- 
-+static bool rzv2h_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU0TRMVAL0:
-+	case SYS_LSI_OTPTSU0TRMVAL1:
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_PCIE_INTX_CH1:
-+	case SYS_PCIE_MSI1_CH1:
-+	case SYS_PCIE_MSI2_CH1:
-+	case SYS_PCIE_MSI3_CH1:
-+	case SYS_PCIE_MSI4_CH1:
-+	case SYS_PCIE_MSI5_CH1:
-+	case SYS_PCIE_PME_CH1:
-+	case SYS_PCIE_ACK_CH1:
-+	case SYS_PCIE_MISC_CH1:
-+	case SYS_PCIE_MODE_CH1:
-+	case SYS_PCIE_MODE:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzv2h_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_PCIE_INTX_CH1:
-+	case SYS_PCIE_MSI1_CH1:
-+	case SYS_PCIE_MSI2_CH1:
-+	case SYS_PCIE_MSI3_CH1:
-+	case SYS_PCIE_MSI4_CH1:
-+	case SYS_PCIE_MSI5_CH1:
-+	case SYS_PCIE_PME_CH1:
-+	case SYS_PCIE_ACK_CH1:
-+	case SYS_PCIE_MISC_CH1:
-+	case SYS_PCIE_MODE_CH1:
-+	case SYS_PCIE_MODE:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzv2h_sys_init_data = {
- 	.soc_id_init_data = &rzv2h_sys_soc_id_init_data,
-+	.readable_reg = rzv2h_regmap_readable_reg,
-+	.writeable_reg = rzv2h_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-index 9f79e299e6f4..19c1e666279b 100644
---- a/drivers/soc/renesas/rz-sysc.c
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -140,6 +140,8 @@ static int rz_sysc_probe(struct platform_device *pdev)
- 	regmap_cfg->val_bits = 32;
- 	regmap_cfg->fast_io = true;
- 	regmap_cfg->max_register = data->max_register;
-+	regmap_cfg->readable_reg = data->readable_reg;
-+	regmap_cfg->writeable_reg = data->writeable_reg;
- 
- 	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
- 	if (IS_ERR(regmap))
-diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-index 8eec355d5d56..88929bf21cb1 100644
---- a/drivers/soc/renesas/rz-sysc.h
-+++ b/drivers/soc/renesas/rz-sysc.h
-@@ -34,10 +34,14 @@ struct rz_sysc_soc_id_init_data {
- /**
-  * struct rz_sysc_init_data - RZ SYSC initialization data
-  * @soc_id_init_data: RZ SYSC SoC ID initialization data
-+ * @writeable_reg: Regmap writeable register check function
-+ * @readable_reg: Regmap readable register check function
-  * @max_register: Maximum SYSC register offset to be used by the regmap config
-  */
- struct rz_sysc_init_data {
- 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
-+	bool (*writeable_reg)(struct device *dev, unsigned int reg);
-+	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	u32 max_register;
- };
- 
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
