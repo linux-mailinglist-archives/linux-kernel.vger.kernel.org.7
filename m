@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-886827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E50C368E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:05:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E73C36B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040521A41656
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C13A188B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C993203AA;
-	Wed,  5 Nov 2025 15:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5943320A1A;
+	Wed,  5 Nov 2025 15:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zxw1LtPs"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LcEauCLy"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49A322258C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C466B30F92D;
+	Wed,  5 Nov 2025 15:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358140; cv=none; b=LePQAv+7I0L/vrbepL2fqNuzLjx3PHTtxshu3lnRzTEn9jBnw0DSG7ejpc2pK9vAlHi/ka8AIwVxSwia3JbpZl3jL4cCt05gIjENAy54J/SdqWRBPbx0W2DWW/95HdtWVFJ9EnRJ70nzb4OUalJFS0fM6MLZWiQYz9/pme4vblA=
+	t=1762358201; cv=none; b=ivgs4KL/XegvXjbpNXmqOeYFiqJZhthhHAPt1usTlrpJJxShQSwWbwYW8qHSMWf+QW+UY1mOhhSSQ93JOKEaFe03OpI1iXJWfhvIsJXXGSrh4McG4bk7WhWN84iVnHqz6yILL/f23ENOa5oJKU+dNoTq6HHYXWWtlU8IyVs/L/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358140; c=relaxed/simple;
-	bh=Io1VyLd1gRAuF4noSMJeCvamZeFl5b2WHdevUDZuHy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=urjEJ5PWtjyqfKkBT708qP5HgbeAUXWQj6cZavnQorO4WUfy0xJk3t+uNDHJNcdfa/qxIjTvGfQdrj+4mvqYJmrJh0XbCunpZcmzySrqTNM8TOT1H0BJqeBF8ZLWbub2u+PA6ER0svOs10MbdlJQP4JlhnJBp7f9saqSO7UdG9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zxw1LtPs; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-594259bc5f1so3188115e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762358137; x=1762962937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Io1VyLd1gRAuF4noSMJeCvamZeFl5b2WHdevUDZuHy0=;
-        b=Zxw1LtPsMpzOhdk9lrETJIHdaZWGVdK6jFv4ltJuoNHJuYa88DqL0iDz2g06ouRaz6
-         KYIV4YNVRrHhT1wNqSU2ie8of67ZmMvnS6Qi10B/Qh3xIBTACGBfUCDuDLAehGviHtyI
-         ziBGFBLs3WRsvrN8Q4W/dgJTY3wRDDV4dWudqOuJFd0P3cqk5gf3JG/biO0ejav6Dn03
-         S5Kte/Du0CI9I46smJUZcD7Bg76yUa3V6SIG3iTvCE7QkY3lQM6kiQ21XClf/cXadFhJ
-         2dXZ/T7Z3WAIp7WKkkfyCfW8XX7TnU+bD6sQib1S1J9qg9JskJxBPPon4JXxGf+z+Le7
-         RnzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358137; x=1762962937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Io1VyLd1gRAuF4noSMJeCvamZeFl5b2WHdevUDZuHy0=;
-        b=p3MrQowkrV+32L7pQ0W4HqHcBXEy2I3JdVNv8MzWeeWAUXxfVBipMd6qo7Lr+3gazL
-         SeYcwkqAvYRtgH9JL1BlxV0kURuQzX6HbLF6Li8FY1Dln/S/sFGFdIkuLEE7/uKVdarc
-         CRam70E4ucGoquk6Kz2fFRzNxirT1BV3YEyiky+W3I6Qllfuv+qcRTT7BRGbbqFwIxWT
-         IhpMWdcX9VimUHc8KNf2g/PBqOviPbTOGQNAbueGX2LorrDcAVxwYkHLcakIHbPMRdPq
-         Kbwm6vJd8SZ8hpy5pX2EHk7E4XZo4BzC9w4G/YgNqkROAwFj2BeKy1Ew2SxCjxFv2qo2
-         O1Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMl9C9+bxJmyT65B1wGLNhvQfqdFpmyWz9569eQOmC5mHQrz5ZUlO3jAKM1hUZcqwuug/wIkvp2BZEuCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/9MhJWOFVL8rpr+x16NHdSUgH66Uoq6WLv3RNJ2DEkoOmbCxr
-	Dx9QrlNqY9/LMM1ARmCTb+YjD9AzZhwy3lBMMqwvy8Owo3sYJ4mOU8KBhaiPX/gli0HexhUEUP5
-	ltsQq1WjrCJRaP+A9Hho95qUTd9dk5QA=
-X-Gm-Gg: ASbGncuvzshGQ8uZmWbzVvoOWAFadh7OKbWZKtcUKLQIQJCogC78xPmDSpmAq9YPVA7
-	GYaI862Rh5UGx2bHF+jyxG/RzyN5eUckRiwbYasACVRvoubMPOYld5FV4cBxrcP3znq+CvRTjlr
-	k7nUhZvFLmh7nIqgbJlnNpT5+EXHnNqajcbnKS3qoWnCBzUY6ng1dh49XXo3ejsInzHB6CpiL6n
-	0gr3+n0x0a06AocFHcWEyJyaS0yuaWYBqSNhnQnYYSa72bmB8PYNQM7JTVP9BQVIAlyrl6p2t8a
-	qFg96UQXjdqQuxCp
-X-Google-Smtp-Source: AGHT+IEKZD2r+A6glfOrMrg4LC6QbMe/1oJABd/0/CzvD1LhjWBFWqHF/ZzZ6hEZaZ4L0CrW3eHh11z1a5+Hf0RYLbg=
-X-Received: by 2002:a05:6512:1390:b0:592:fc68:5b9d with SMTP id
- 2adb3069b0e04-5943d55dbe3mr1269961e87.10.1762358136484; Wed, 05 Nov 2025
- 07:55:36 -0800 (PST)
+	s=arc-20240116; t=1762358201; c=relaxed/simple;
+	bh=0S9XzOld/wJ83Z34NVYi9AzMSHoRV7uYj8ovgqz8T7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T3D5a2lFVxWUNu+Eigg/JLX8/KzKqQeIXevZbjQted8nCkoiyi5MiCzxs2okVWLkelPFS8HH1pMCLePThxjxbOMh7Iyd8ikQ3i+/soq4WbwjCa4TXv2DlUusFOdIAcMPNzR9J79bKK3qnwWWAtg0gACiMGfeC3r9bJqy/Du5xmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LcEauCLy; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=iYNG2+m0hR4ggoPbQGjiXanwJnvQb6SZARxGOrR8rZc=;
+	b=LcEauCLySztn59Q0zQh2Iw2XHW9NRRmvnLoVJOzlMG0sHid1PLL1a5cL1ru25a
+	Z4ZX8n+jWzq+o2wOcB2qz48wLYJbZzXGlTFphnGkjkJ0Sc08mPNLGR2fZH4nFcAu
+	kJSPs6ThcuaXh7BK41GZ68pTpz0wfDanH4vzHuqSAt5as=
+Received: from [IPV6:240e:b8f:927e:1000:c17c:cb22:ae30:df94] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCnnLqfcwtpaFZGBw--.16628S2;
+	Wed, 05 Nov 2025 23:56:16 +0800 (CST)
+Message-ID: <9ad5a25e-04b6-48b6-b1e0-b9f51e49f8e6@163.com>
+Date: Wed, 5 Nov 2025 23:56:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105152555.1992513-1-michal.vokac@ysoft.com> <20251105152555.1992513-2-michal.vokac@ysoft.com>
-In-Reply-To: <20251105152555.1992513-2-michal.vokac@ysoft.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 5 Nov 2025 12:55:25 -0300
-X-Gm-Features: AWmQ_bkzywn6dkKu5hKn_kdsHkqaeTB3gPh3L9WBztucxEsOta2CD1J3nctobCE
-Message-ID: <CAOMZO5AKmKWciyF7-f_mVfJWdLB1rjh_Xi=BhkBAcmV=cJ-nyg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx6dl-yapp4: Model the RGB LED as a single
- multi-led part
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] PCI: Add macro for secondary bus reset delay
+To: bhelgaas@google.com, helgaas@kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251101160538.10055-1-18255117159@163.com>
+ <20251101160538.10055-2-18255117159@163.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20251101160538.10055-2-18255117159@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCnnLqfcwtpaFZGBw--.16628S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF15Zw1DCr4DJw18CrW3Jrb_yoW8Ww4rpF
+	Z0kFykAr1rJay8Xan5Aa1Uury5W3ZIkFW0kF48K3sa9F1S9FyDCa1YgFWYgrnFqrWxXr1f
+	Aas8C34UJay5trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U8kusUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgj8o2kLcM4xqwAAsr
 
-On Wed, Nov 5, 2025 at 12:26=E2=80=AFPM Michal Vok=C3=A1=C4=8D <michal.voka=
-c@ysoft.com> wrote:
->
-> Describe the RGB LED indicator according to the reality - it is a single
-> part containing all the three R,G and B LEDs in one package.
-> With this description the chan-name property becomes useless, remove it.
->
-> issue: HWOS-816
+Hi Bjorn,
 
-This issue notation appears to be an internal matter. Please remove it.
+I wonder if this is still necessary? If not, please drop it as well. Thanks.
+
+Best regards,
+Hans
+
+On 2025/11/2 00:05, Hans Zhang wrote:
+> Add PCI_T_RST_SEC_BUS_DELAY_MS macro for the secondary bus reset
+> delay value according to PCIe r7.0 spec, section 7.5.1.3.13.
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>   drivers/pci/pci.c | 7 ++-----
+>   drivers/pci/pci.h | 3 +++
+>   2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b14dd064006c..86449f2d627b 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4912,11 +4912,8 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
+>   	ctrl |= PCI_BRIDGE_CTL_BUS_RESET;
+>   	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
+>   
+> -	/*
+> -	 * PCI spec v3.0 7.6.4.2 requires minimum Trst of 1ms.  Double
+> -	 * this to 2ms to ensure that we meet the minimum requirement.
+> -	 */
+> -	msleep(2);
+> +	/* Double this to 2ms to ensure that we meet the minimum requirement */
+> +	msleep(2 * PCI_T_RST_SEC_BUS_DELAY_MS);
+>   
+>   	ctrl &= ~PCI_BRIDGE_CTL_BUS_RESET;
+>   	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 4492b809094b..31f975619774 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -63,6 +63,9 @@ struct pcie_tlp_log;
+>   #define PCIE_LINK_WAIT_MAX_RETRIES	10
+>   #define PCIE_LINK_WAIT_SLEEP_MS		90
+>   
+> +/* PCIe r7.0, sec 7.5.1.3.13, requires minimum Trst of 1ms */
+> +#define PCI_T_RST_SEC_BUS_DELAY_MS	1
+> +
+>   /* Message Routing (r[2:0]); PCIe r6.0, sec 2.2.8 */
+>   #define PCIE_MSG_TYPE_R_RC	0
+>   #define PCIE_MSG_TYPE_R_ADDR	1
+
 
