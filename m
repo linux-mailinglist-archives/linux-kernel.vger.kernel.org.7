@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-886022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CF5C34877
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:44:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8649CC34865
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA9C4674C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:42:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794D5427764
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E2E2D8DD0;
-	Wed,  5 Nov 2025 08:42:48 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D077B2D7DFE;
+	Wed,  5 Nov 2025 08:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="moqdvVrF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bwa4XoJ2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B92D595D;
-	Wed,  5 Nov 2025 08:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3382D6E4F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332167; cv=none; b=NyM0HHen6c2pPIqR2CiHwZ3pknZFYrnAajKRrJ6fxrJOKf25l5+0V4Af2zz1ck2SFzR2FCSr9xzEiKLXlek7hSHhB1UAF9mlvoiby/crhMSBsVIj+sUXuXqg197P51TSywuy3EeiHG1cDSa66AW7uq2xfwsfMYNLGb5gEK/cgnw=
+	t=1762332166; cv=none; b=mDwOy46fkyPmAsgP9yd/FiXktbc3WRxpyZtGA4St0ctbssciDSHA583jJthOgptCGZpgSOTTrSnSEsj/JjDv/DSvJQYaON02ydtB711hOa/zzqqhEXMvOKRjyj2RWHk1G9wOTnHtPs4TOz+9sRNpCUAj85Puq7ipeMcwMC3jD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332167; c=relaxed/simple;
-	bh=MynJdN+q0tQCspRsA/Y2l/tUwetCPLe9L2/rq1X6uFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VaPKJnCn+U3RJhZrDWsEqd0g23+sYvurvAhwEmww/os1VP6LaQjD+iESAAz6riEtdvzzY6NL1yz7aZLqCI7Za460//q/49Rdh3RzjRmbuEHsmUotBcoEDEKDjZy/weNHikU73rlfFKo71vpehleI4g9oHrlxHgenhCb+ESV8xRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowAA3sun6DQtp4wiWAQ--.25976S2;
-	Wed, 05 Nov 2025 16:42:36 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: linux-watchdog@vger.kernel.org,
-	xingyu.wu@starfivetech.com,
-	ziv.xu@starfivetech.com,
-	wim@linux-watchdog.org
-Cc: linux@roeck-us.net,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] watchdog: starfive: Fix resource leak in probe error path
-Date: Wed,  5 Nov 2025 16:42:20 +0800
-Message-ID: <20251105084220.1334-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762332166; c=relaxed/simple;
+	bh=dNDKDe1el1Fy5qpKhQukmgyHlhfNQ712+a+Pi2KbykM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ii+aHZKxlw10s63lv/WrSX9+GUNRnoRaPxR5uIyjeLfab7lAgznKCzwcTS6h2VsLTII1jx+eFxXBDpeBpusPL3XrUqMqv51jaIYqhe99yvUXtPl4R1Cz6AQ29QieuZyCO8Hon9n+0KOOw+yxFLMA5fe1Pb2hFq763LszXVmnipQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=moqdvVrF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bwa4XoJ2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762332162;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E2+RHG/sHfe7Kc0FCzIGlIE8f++XmIso7puKodenZBU=;
+	b=moqdvVrFM1Efsn/yhr0jYiDif1LZnTr1mK5bDkKfBKk9cugGOqD0lnOCPCDdpH7sXYRJCF
+	5Ys9IGDpjS7i1IVpO8OQ/6ypU8GtBFpjiEZzF822fJU/FbREM6Dx5FGz6MBrQSRMohglkD
+	22YCTwASFh+kXwKpFuz78ROZ+W4m9rbmsbPyEh5omhIrITeKePnQoMZpwbqYoSS6CY/+Rz
+	WvHvUxphaR5TsS4ZRWY8T1GeTCuAMmlPTIL8lzJtrMXegyC92oBCBz9fDGQOR7hQWAN2lH
+	QSl9JUGPZEUIGEeCTkuPl1xI/TxcU+JsruFnq6dEzaOWWGu8xNsdGGkiilnfDw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762332162;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E2+RHG/sHfe7Kc0FCzIGlIE8f++XmIso7puKodenZBU=;
+	b=bwa4XoJ2e7NDMZWNNB4iaugk+CkW1tTqTyqCmLE79dSDKJ65BF905PEV0F0vS7uowi0r0v
+	4+/VET3EKBQFjtBQ==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Mel Gorman <mgorman@suse.de>, Shrikanth Hegde <sshegde@linux.ibm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Valentin Schneider
+ <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] smp: Suppress false DEBUG_PREEMPT warning in
+ smp_call_on_cpu()
+In-Reply-To: <20251024140832.46JNLRvL@linutronix.de>
+References: <20251024070714.4047816-1-namcao@linutronix.de>
+ <20251024140832.46JNLRvL@linutronix.de>
+Date: Wed, 05 Nov 2025 09:42:42 +0100
+Message-ID: <87ikfolvjx.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAA3sun6DQtp4wiWAQ--.25976S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWrGF1rAF1DAr45tFy7Jrb_yoW8JF4Dpw
-	4Skasakr10qr429r47Ja1DZa45Cayxt347ArW8Ga4F9rs8Cw4rtw4vyFyYga1DJr93Ga17
-	ta1qq3y8uayakr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7
-	UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAURA2kK8b6plAAAsK
+Content-Type: text/plain
 
-If pm_runtime_put_sync() fails after watchdog_register_device()
-succeeds, the probe function jumps to err_exit without
-unregistering the watchdog device. This leaves the watchdog
-registered in the subsystem while the driver fails to load,
-resulting in a resource leak.
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+>> This appears after commit 06ddd17521bf ("sched/smp: Always define
+>> is_percpu_thread() and scheduler_ipi()"). Before this commit,
+>> is_percpu_thread() always returns true on UP kernel and thus
+>> debug_smp_processor_id() always sees a per-cpu thread and never warns. But
+>> now is_percpu_thread() returns false for this case.
+>> 
+>> Suppress this warning with a migrate_disable()+migrate_enable() pair.
+>
+> Right. This is one of the possibilities. The other one would be to also
+> workqueue on UP and preserve the same semantic.
+> I don't mind this.
 
-Add a new error label err_unregister_wdt to properly unregister
-the watchdog device.
+Yeah it's a tradeoff. I'm not sure if someone will be bothered by the
+overhead that workqueue introduces, so I use this cheap solution.
 
-Fixes: 8bc22a2f1bf0 ("watchdog: starfive: Check pm_runtime_enabled() before decrementing usage counter")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/watchdog/starfive-wdt.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>> +
+>> +	/* suppress warnings from debug_smp_processor_id() */
+>
+> If you want to add a comment, what about something like
+>
+>   /* Preserve not being migratable such as SMP variant does */ 
 
-diff --git a/drivers/watchdog/starfive-wdt.c b/drivers/watchdog/starfive-wdt.c
-index 355918d62f63..ed71d3960a0f 100644
---- a/drivers/watchdog/starfive-wdt.c
-+++ b/drivers/watchdog/starfive-wdt.c
-@@ -500,12 +500,14 @@ static int starfive_wdt_probe(struct platform_device *pdev)
- 		if (pm_runtime_enabled(&pdev->dev)) {
- 			ret = pm_runtime_put_sync(&pdev->dev);
- 			if (ret)
--				goto err_exit;
-+				goto err_unregister_wdt;
- 		}
- 	}
- 
- 	return 0;
- 
-+err_unregister_wdt:
-+	watchdog_unregister_device(&wdt->wdd);
- err_exit:
- 	starfive_wdt_disable_clock(wdt);
- 	pm_runtime_disable(&pdev->dev);
--- 
-2.50.1.windows.1
+Wouldn't it be a bit misleading? It's true that technically SMP variant
+is not migratable, but that's because it is a per-cpu thread, not
+because of migrate_disable(). To me, the comment sounds like that there
+is also a migrate_disable() in SMP variant.
 
+Nam
 
