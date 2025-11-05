@@ -1,156 +1,84 @@
-Return-Path: <linux-kernel+bounces-886436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A0AC3595D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:19:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD085C35963
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:20:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973AA189FD12
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCB23B3661
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E373148CD;
-	Wed,  5 Nov 2025 12:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3033148C4;
+	Wed,  5 Nov 2025 12:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyt8YziP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CRM65WrD"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7703B312815;
-	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E71312815;
+	Wed,  5 Nov 2025 12:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345153; cv=none; b=gai7qmyiWTRbKU8pzIPGdw6u5B1JDayA/nCEBUrWmp6iGa4qGb4VnX2VPYSPm/2wFiGhbyrcDr+VSYB6sc8ZXpEmpPsCQmWoh8eGY2noYq2yHSW7Ko61gaywAtcrM9giQRsRNKf6NkJYqFsXml8T3LL3o5mRjAVcs0uy7y9kVYo=
+	t=1762345193; cv=none; b=cnscp/XIJsjyFdwJfGjfT6cCwvxRMAoaEMbA77yVLuQ8i0DIuIOZsx9/S+5r4tyd3roEEAFOayu2W7QSFunvL4R0QKuVH/7sJNrePVXWp/OAdApw0XQp9rzhqMhDlOGAhTw4cvt4jiLA4tG4/l10u5O+a4Pg5y2qk7NX13Prf6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345153; c=relaxed/simple;
-	bh=WpEVUOYe+o0ODCJcitnI3R656IlVO6R4iBigsvtbubg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GVlEYQ5EG4smnyLeE1WXayDqJm4GktFXY39cIkBodZf0JjaoqRPinVFMczIrPJK9InslqudwV4X+JMM++naG7aMZb1VtXA8UlCL0iPgqTwEK+0XdQmoo0xwoYJVbeQiss0mHATljF3UV6lRfIP4NwYKgXNqxktJ4xBBc/2nhMKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyt8YziP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB250C4CEFB;
-	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762345152;
-	bh=WpEVUOYe+o0ODCJcitnI3R656IlVO6R4iBigsvtbubg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=tyt8YziP88ZbFQ1oRBb7U2mkHwTICJ5gryp1Su4+QrBXgLzZsnZK+SrRdSVRI39EE
-	 bXVkn1id1UK7DphpAPVOUP9fyMT7WskopkSx0zw3fmVgLAqXmslfGhwYSo9nX76NzV
-	 +5cTNhPqN3mmomHMW2bY7ZaylGV6WmrqTzS5FU307xsIoKKGWhpcd9sk2iU4u+A4c1
-	 G3qW7R5GR0JR5y/r83AYzVSZePkvoBv+HDZpXXMhJClZt3HABlYwE01FxvIRwQIo5W
-	 CWWX7wDSa+TzJ7ENaFK3P5gN9RV8fng+BvlG/97pSseC/e4aKH2YhwpclNyyUAgj+o
-	 qPfZvvMzXPdPQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4019CCFA0D;
-	Wed,  5 Nov 2025 12:19:12 +0000 (UTC)
-From: Prasad Kumpatla via B4 Relay <devnull+prasad.kumpatla.oss.qualcomm.com@kernel.org>
-Date: Wed, 05 Nov 2025 17:49:10 +0530
-Subject: [PATCH v4] dt-bindings: soundwire: qcom: Add SoundWire v2.2.0
- compatible
+	s=arc-20240116; t=1762345193; c=relaxed/simple;
+	bh=v+cOKLS0mXGI3qhe4fSNa1rYmF2ZqvmWdVpVTHz/8rs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S4UyAeR6GqnjR2FwPZx8yDhNOLq7nNorHm6awfas1yHBrOfuBD5LBRk3IPWzxjLWPBuewwwB/dDV+wvhOIBFR54RbqBS5+C6NiBeuhVJke05jvfj9TJYuyXOaesd9fcfeZ1LK94Ayw+r168Np7gWX2KhGTF/Ll9hz/9WK030XdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CRM65WrD; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=v+cOKLS0mXGI3qhe4fSNa1rYmF2ZqvmWdVpVTHz/8rs=;
+	t=1762345191; x=1763554791; b=CRM65WrDCi6ij1mGWY1VLpU9ULsJ6zF0AhY1NcJD6J/w3id
+	fIp5rli8UiATLImtdeHKsbglrcs8LCLlKUycEjD0I/EanOO1FbY5aHClzVmkHHqXBElDN4w+B8oDR
+	w6AY4vkltj0NJVodpz7GzJa8szYlJMan/RhvPYhRWbwxpLEcb8e4HfE2b5eKUPF5fKL2ULLvaRhS+
+	5AGOil2CPHxIbHS1SxekrpuwGs7cxS7yGKjKsUaAihEeCBOyap1+uDvMs0B7tFsQQ4NYyifWhgSKx
+	JxPUJpiMgqsWAWDiXs2/uDS+U1zn6Vh2bA91NRBV25m+SJ3qXAJye+MmE5pdGHlQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vGcUI-0000000Ey2O-0HBi;
+	Wed, 05 Nov 2025 13:19:42 +0100
+Message-ID: <6156fd13fab5131c13b76acc84cb72e3c8b69271.camel@sipsolutions.net>
+Subject: Re: [PATCH] net: wireless: fix uninitialized pointers with free attr
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Ally Heev <allyheev@gmail.com>, Miri Korenblit
+	 <miriam.rachel.korenblit@intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Dan
+ Carpenter	 <dan.carpenter@linaro.org>
+Date: Wed, 05 Nov 2025 13:19:41 +0100
+In-Reply-To: <20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com>
+References: 
+	<20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAL1AC2kC/03MQQ6DIBCF4auYWXcIIGrtqvdoupgAVqIIBTVNj
- Hcv6aqbl3yL9x+QbXI2w606INndZReWAnWpQI+0vCw6UwySy0ZwoXBaItJmXMBdYk911zVSGy0
- aKJeY7OA+v9zjWTyk4HEdk6W/CO+FqlulWC37VvIrCoyJMhk2bT7SOtM95MzeG806eM/KwHl+A
- YQekP6qAAAA
-X-Change-ID: 20251014-knp-audio-v2-9a37752cdc15
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>
-Cc: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762345151; l=2851;
- i=prasad.kumpatla@oss.qualcomm.com; s=20251104; h=from:subject:message-id;
- bh=c0O8eohmd+tIOQmYmE+msxYJGTgpEFCpk9Tc3tlijMA=;
- b=ocgeixzvp6gml7lZDN8J/V00Hjhfw8/FNaA5PabRQ4bj1gT3/E+VAps1m5rUg83WZLThayGL4
- jBRU6e7qN64DakcZMi5lNphdjqayfbOVmzC3JU2famuZ0IrrA5FI9z1
-X-Developer-Key: i=prasad.kumpatla@oss.qualcomm.com; a=ed25519;
- pk=XN9tL2ispFX+irMtnM7RxBH6rj+awD6oEjXmk0YJodY=
-X-Endpoint-Received: by B4 Relay for
- prasad.kumpatla@oss.qualcomm.com/20251104 with auth_id=560
-X-Original-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Reply-To: prasad.kumpatla@oss.qualcomm.com
+X-malware-bazaar: not-scanned
 
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-
-Add qcom,soundwire-v2.2.0 to the list of supported Qualcomm
-SoundWire controller versions. This version falls back to
-qcom,soundwire-v2.0.0 if not explicitly handled by the driver.
-
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
----
-Add audio support for Kaanapali MTP boards. Introduces supporting
-dependencies required to enable audio functionality on MTP platforms.
-These changes have been validated on Kaanapali MTP hardware.
-
-Changes in [v4]:
-	- Dropped merged patches.
-	- Link to v3: https://lore.kernel.org/linux-arm-msm/20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com/
-
-Changes in [v3]:
-	- Correct SoB chain, comments from Krzysztof.
-	- Link to v2: https://lore.kernel.org/linux-arm-msm/20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com/
-
-Changes in [v2]:
-	- Addressed compilation issue for lpass version check patch.
-	- Sorted compatible string in machine driver.
-	- Link to v1: https://lore.kernel.org/linux-arm-msm/20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com/
-
-Konrad Dybcio (1):
-  ASoC: codecs: va-macro: Rework version checking
-
-Prasad Kumpatla (4):
-  ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
-  ASoC: qcom: sc8280xp: Add support for Kaanapali
-  dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
-  ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
-
- .../bindings/sound/qcom,lpass-rx-macro.yaml   |  1 +
- .../bindings/sound/qcom,lpass-tx-macro.yaml   |  1 +
- .../bindings/sound/qcom,lpass-va-macro.yaml   |  1 +
- .../bindings/sound/qcom,lpass-wsa-macro.yaml  |  1 +
- .../bindings/sound/qcom,sm8250.yaml           |  1 +
- .../bindings/soundwire/qcom,soundwire.yaml    |  1 +
- sound/soc/codecs/lpass-va-macro.c             | 90 +++++++++++++------
- sound/soc/qcom/sc8280xp.c                     |  1 +
- 8 files changed, 70 insertions(+), 27 deletions(-)
-
---
-2.34.1
----
- Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-index 95d947fda6a7..1c4b0bdbb044 100644
---- a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-+++ b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-@@ -26,6 +26,7 @@ properties:
-       - items:
-           - enum:
-               - qcom,soundwire-v2.1.0
-+              - qcom,soundwire-v2.2.0
-           - const: qcom,soundwire-v2.0.0
- 
-   reg:
-
----
-base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
-change-id: 20251014-knp-audio-v2-9a37752cdc15
-
-Best regards,
--- 
-Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+On Wed, 2025-11-05 at 17:20 +0530, Ally Heev wrote:
+> Uninitialized pointers with `__free` attribute can cause undefined
+> behaviour as the memory assigned(randomly) to the pointer is freed
+> automatically when the pointer goes out of scope
+>=20
+> wireless doesn't have any bugs related to this as of now, but
+> it is better to initialize and assign pointers with `__free` attr
+> in one statement to ensure proper scope-based cleanup
 
 
+Yeah but ... eww. Please read things like coding style guidelines before
+you post patches.
+
+johannes
 
