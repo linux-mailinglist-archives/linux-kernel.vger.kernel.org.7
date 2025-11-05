@@ -1,59 +1,95 @@
-Return-Path: <linux-kernel+bounces-887154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233E1C37692
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:03:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F1BC3769B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D28BE4E569B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E793BADC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE85B314A93;
-	Wed,  5 Nov 2025 19:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85027314A82;
+	Wed,  5 Nov 2025 19:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rcUF9Jqx"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E895D8F0;
-	Wed,  5 Nov 2025 19:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VA0aPRXP"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC12C08DA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762369386; cv=none; b=ixMe4gAX3JdavBU/ovn695VzkYCf8yfOttm+sUwCTxwMB795Smrc8xH7hSnf/zN+aocIMW1OQlL2xKLk+G4ms/X00Z7KQkIrrV9GZLbjdyJUkl8qbss2er1k60cVJ/QqORMpu9uZgk6KvEqYoyaUoXc4ORrCCMv5nvjFTpDUqz8=
+	t=1762369419; cv=none; b=BrjzpwovzSmvUQoOUoKz3Z0rJ22tCxsRLelDEsEgyrMuVjP+wsGkxqDKA6Osj6iJmnl/QBdjIqUKtLju/+41xMpHH0RrwkT7+7DzfMmH7ZfPOXiMVm6+9n/zImpwrwMR/MoZ/syH0ewWapiH1KdnhBTEJKxii/xqICmSd3Ey1Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762369386; c=relaxed/simple;
-	bh=GDAevW6w/y+3rqc0Ck1EDJiUVmQOGyeWqjKim6BaXQ4=;
+	s=arc-20240116; t=1762369419; c=relaxed/simple;
+	bh=PZ6fOoCOFzuuftIdxLfo9ZcdanHH16wdQ4uKtiHl2CY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spv3mPsrYA8jSES+a0VvXepapu1co7oknZiLu7L6N6nm/vAj45nlUsFjr7CXWU4tS8x0NI9tTH+Wp3dcYu2jGdwnXV+FeD7Qk/5r8q5XdLUaJEfkc6f/hPkfskeu96Hy2IYgthOfgZcHFFYV9PzAtPUwcNQ3oqn49GnDeR4od7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rcUF9Jqx; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 65C3820120AA; Wed,  5 Nov 2025 11:03:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 65C3820120AA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762369384;
-	bh=YbKE89r8BFgFqnTov8DjL11BVscXMrXLQpMT89FgTrw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rcUF9Jqxft8mXl0OqK+b+Bzb1TfUqlgMRgXfUsS5uZ3XafnuqE3VJNrerKFyO5hM1
-	 b9ngONkIhESsolb7EwxnimROCJeaA6zlK4rWFYMvIr31l8b6bp92o1QFxHXqAMg0e0
-	 JntEvcvewDmPo0eeHRz7V3NphN4lp/KXlXV1Q4eE=
-Date: Wed, 5 Nov 2025 11:03:04 -0800
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
-	kotaranov@microsoft.com, longli@microsoft.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: mana: Fix incorrect speed reported by
- debugfs
-Message-ID: <20251105190304.GA31854@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1761735154-3593-1-git-send-email-ernis@linux.microsoft.com>
- <20251029185228.0c2da909@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=liI4u+cHWcaHP7IWWQSM5/VWgE9OI30B6FCMsxveiIUmj9t4WXtMzN6Cviiwev3hnZtsvJmyrb9RAWu6AqTwVgtBmOczt084cgQAsCf+motVjuRKukvI3yzmaj5ZKF66082LGXyb3gAMQNx6iPX6vgsSZ9JRJrVYMQjhEliZtm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VA0aPRXP; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-88f2b29b651so17600885a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:03:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1762369415; x=1762974215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pkL4FKIhP6Ehebj2t+yWaZ1SkFSBXZJ6OHio2cMXcNM=;
+        b=VA0aPRXP3DrdGlRq1n8tiTXTu7vcPVWJQYQC272tesb6SdIYqWrVyQZS77r/EX/DXm
+         hsn8HIJOYYeiXEJ1Ah1WcPzD1ArgF3EKbTloX4dGTM0rfY61dwL/1pYd38jBI4I/JY3l
+         tAvu1XMu8cNW77qqzYHGOa/n/CrYDru1g7bA6+OecEE8QIeB7grGt6SKOC3kvEHlgpot
+         nRRK6H31ufX/W3TH5Fg+95zpI3gkfjDxM5jYoJ4vQzWLLa0BtBG7Ww2hxxwMBRGAJRJh
+         tYz4q3IyabA1/s1UdM37uNsmm0tRlfX1ULsZ4qovaXexFSPkRQcrxdPCQDLpMxj8q3im
+         /WSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762369415; x=1762974215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pkL4FKIhP6Ehebj2t+yWaZ1SkFSBXZJ6OHio2cMXcNM=;
+        b=r8MPvDCB3+a3RMpPgBmgjj22R3farzjG7SFjlFbeVuqECY29rSezVmNNQGHhW+G7yF
+         +ouEulDK9ZVlvCHNv+eum1YYJH7UrpO6uLyTiFpemnCH2TnmohCkRAGxC6atar2HGXPg
+         mnIFEQwHP6oiMW6fPK6CFRZCPvOMd9wdpQzAwX4vPU0riuAYZdp52YnmyBYQ+Vz+Eqbl
+         51BREjTZUBQNonU1d7Zx3F1D5TQVlFbze7V5LUZKEq/M/gFu+4ks7RF04X6Eip8g+5GW
+         KzFtO4lgnDkulcpk2pOjGlmBSLALJ/sDkQeH2ooV/gM7OYzwQRKwV+JdTJilkSGh70D5
+         9kQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/68DAYuLbJ2cTBJkBkzO0TSkMIbZN4wAu2xlL+59tvLbPp6rxQP5phbTj2eMsnZG66y0vkvZ1b85TAhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOzcs2YGMqDuqRIijVTFOl0SPi742krhxiBtKkaygzCdjW5Lw+
+	Nn/itzqx67BgpVCwFS1YsHxAFyoBERY+14VIHHPUBFhKrVc0lIkJqt+CuO877thBEp8=
+X-Gm-Gg: ASbGncuPZ1TFQIf4erOCH/MBgV1l1fu3HrM1V7dpd/sta4C9c3wbbBOPw7SENWVyLhr
+	6x8LamfwRggbFlzXRRnD54P+4yxkJTgsT4IfeN292YKmCRoaQM0/EFE/eRJSSSZX9uqzo2GvhX7
+	E7IaIiA9ii5m/MSfOE1p1UhX9UV0lDsLGVe69gpumfKXDPDmJJmYCHx3pQ3TKCNZN14o8athjGt
+	GEpDvYyxoDM3I5LSnT0EeukBIQDycQm44BVCf+XGRBsoCYxyArn8goALylq83ayX/UupIDn5DwD
+	iuB5v5JsWavqn/UUs8RIHbCGvPInmaOqdtHi1C0Zj8MOnNYGpXPTXZ/HCKybBWUs3OTha7zKoBS
+	l0gy59oIAv/WwgIpQiGakn43xYLgCyoOSHJVsHeqVCu/KnN2vqa2IjrMHuIZPp0/nGom9jG3L/N
+	47inftzSC+qRFNEbTgI2gSToIrtkaipTSs9iT5SHEJ0y7RRv1xt3XAvyPGTnY=
+X-Google-Smtp-Source: AGHT+IE5V/WtcWnffysPIf/k2M0HgfBpWIauzXvLJZtWgsovo179L03Km10ymeu7JR1a7HWgRpdnqA==
+X-Received: by 2002:a05:620a:2a10:b0:89a:3233:db11 with SMTP id af79cd13be357-8b220afee3cmr496686485a.81.1762369415363;
+        Wed, 05 Nov 2025 11:03:35 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b235809f79sm20649785a.47.2025.11.05.11.03.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 11:03:34 -0800 (PST)
+Date: Wed, 5 Nov 2025 14:03:31 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+	lukas@wunner.de, Benjamin.Cheatham@amd.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [RESEND v13 17/25] cxl: Introduce cxl_pci_drv_bound() to check
+ for bound driver
+Message-ID: <aQufg2Nfq8YqkwHl@gourry-fedora-PF4VCD3F>
+References: <20251104170305.4163840-1-terry.bowman@amd.com>
+ <20251104170305.4163840-18-terry.bowman@amd.com>
+ <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +98,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029185228.0c2da909@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
 
-On Wed, Oct 29, 2025 at 06:52:28PM -0700, Jakub Kicinski wrote:
-> On Wed, 29 Oct 2025 03:52:34 -0700 Erni Sri Satya Vennela wrote:
-> > Fixes: 75cabb46935b ("net: mana: Add support for net_shaper_ops") 
+On Wed, Nov 05, 2025 at 12:51:04PM -0500, Gregory Price wrote:
+> On Tue, Nov 04, 2025 at 11:02:57AM -0600, Terry Bowman wrote:
+> > CXL devices handle protocol errors via driver-specific callbacks rather
+> > than the generic pci_driver::err_handlers by default. The callbacks are
+> > implemented in the cxl_pci driver and are not part of struct pci_driver, so
+> > cxl_core must verify that a device is actually bound to the cxl_pci
+> > module's driver before invoking the callbacks (the device could be bound
+> > to another driver, e.g. VFIO).
+> > 
+> > However, cxl_core can not reference symbols in the cxl_pci module because
+> > it creates a circular dependency. This prevents cxl_core from checking the
+> > EP's bound driver and calling the callbacks.
+> > 
+> > To fix this, move drivers/cxl/pci.c into drivers/cxl/core/pci_drv.c and
+> > build it as part of the cxl_core module. Compile into cxl_core using
+> > CXL_PCI and CXL_CORE Kconfig dependencies. This removes the standalone
+> > cxl_pci module, consolidates the cxl_pci driver code into cxl_core, and
+> > eliminates the circular dependency so cxl_core can safely perform
+> > bound-driver checks and invoke the CXL PCI callbacks.
+> > 
+> > Introduce cxl_pci_drv_bound() to return boolean depending on if the PCI EP
+> > parameter is bound to a CXL driver instance. This will be used in future
+> > patch when dequeuing work from the kfifo.
+> > 
+> > Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> > Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> > Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
+> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> > 
+> > ---
 > 
-> I've preferred this without the fixes tag, TBH.
-> It's debugfs, nobody is supposed to be using it in production.
-> -- 
-> pw-bot: cr
-I'll send v3 without the fixes tag.
-Thankyou for the pointer.
+> This commit causes my QEMU basic expander setup and a real device setup
+> to fail to probe the cxl_core driver.
+> 
+> [    2.697094] cxl_core 0000:0d:00.0: BAR 0 [mem 0xfe800000-0xfe80ffff 64bit]: not claimed; can't enable device
+> [    2.697098] cxl_core 0000:0d:00.0: probe with driver cxl_core failed with error -22
+> 
+> Probe order issue when CXL drivers are built-in maybe?
+> 
+
+I've narrowed it down to:
+
+Works
+-----
+CONFIG_CXL_BUS=m
+CONFIG_CXL_MEM=m
+
+Fails
+-----
+CONFIG_CXL_BUS=y
+CONFIG_CXL_MEM=y
+or BUS ^ MEM
+
+this commit moves pci -> pci_drv.o and moves it ahead of cxl_mem into
+cxl_core into core, but note the comment in the Makefile:
+
+# Order is important here for the built-in case:
+# - 'core' first for fundamental init
+# - 'port' before platform root drivers like 'acpi' so that CXL-root ports
+#   are immediately enabled
+# - 'mem' and 'pmem' before endpoint drivers so that memdevs are
+#   immediately enabled
+# - 'pci' last, also mirrors the hardware enumeration hierarchy
+
+~Gregory
 
