@@ -1,153 +1,179 @@
-Return-Path: <linux-kernel+bounces-885703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5E1C33B89
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 594E4C33B8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2181896DA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC12818917E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BA3218596;
-	Wed,  5 Nov 2025 01:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB59F21E097;
+	Wed,  5 Nov 2025 02:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jcKP9fZD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RG6996gE"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130471E9B22;
-	Wed,  5 Nov 2025 01:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9341E9B22
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 01:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762307924; cv=none; b=hmkJe+Wa6t7VA8S2ic+eiz+BAeyNXyVarHE8umHUYjfzYY4Nl9tbTdeTMQ9EuvA4b31hsAa8GpvVU+p5wWBHDDpiXPcHDLjBOejaAUEPTGu8mEG1z7y+DYsdm+eVvMZ53gwzNOhyuiV8upgBrIHubrS3b9hF94WGHNv3yaCeRs8=
+	t=1762308004; cv=none; b=I4rLStbSYP8wi9f74PccuICrYVqfkMhGn0UiGOzbivCmeKWdJzp/+pQ3isLpgA7gGwU8WSbza1xZnFppSEHrkbRFcbmWgSoPUUS+ZEGZL6k1L4kGGsWnlukSiFfpmDUjr6CLxYmYujSwOdCyjuCGasmRpKLj5LH/VxPhUyBYK5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762307924; c=relaxed/simple;
-	bh=VPYu2jHMeTFAL2Ca8RFhnXAPTrsOM+oGtBaDIawiTu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bc6XEJP2xJAxFZj9GbPelyBLymPzCiCUNT9l6QY3Bf1Wu59hu0SIedfsDIJGvzXWreER24Z+DgVeedJxg2g2f9Nlvgk1iNJW9sM/3V1E6+HVX9kAB+6rQtQyLHMrpMmOP7WfNMPyIASPhKrcBJdA7FkmTVbQdFMbnK/UH7VGvd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=jcKP9fZD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD5BC4CEF7;
-	Wed,  5 Nov 2025 01:58:41 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jcKP9fZD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1762307920;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E1W4BFa1Qz5mykz9ujHDqCac4DPwHMFuXNbvBRSzVbw=;
-	b=jcKP9fZD876gi9ls2EDPOZcJzRzM6GdwmB1za1pToJt9TRekRhsXxzPdo8oFQCZI+wOZg5
-	vmmhwgZln01JELesNDn6YQUN+H9nn+X62OsYg4Go1qfmp1wmcHqo1Btd3qUgSQ99H/VfTu
-	0jd+18NmQLl5mMyOeQMYWFqFAoAJCv8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 68a20046 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 5 Nov 2025 01:58:39 +0000 (UTC)
-Date: Wed, 5 Nov 2025 02:58:36 +0100
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Thiago Macieira <thiago.macieira@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Christopher Snowhill <chris@kode54.net>,
-	Gregory Price <gourry@gourry.net>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
-	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
-	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
-	darwi@linutronix.de, stable@vger.kernel.org
-Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
- error.
-Message-ID: <aQqvTGblMoKkRK1j@zx2c4.com>
-References: <aPT9vUT7Hcrkh6_l@zx2c4.com>
- <1964951.LkxdtWsSYb@tjmaciei-mobl5>
- <CAHmME9o+Sc7kh8NAxQ6Kr49-58hNXbvSkw_7JTLhObOLgEavBA@mail.gmail.com>
- <4632322.0HT0TaD9VG@tjmaciei-mobl5>
+	s=arc-20240116; t=1762308004; c=relaxed/simple;
+	bh=ltchXPMv96JdPyCrTc0ftaYXloAglH6tv2WFEm/8NWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nmIw2gHse5AWxZblu51kd3V6HtSkYF3rLikf0wWWM+PuSNhskGqfvwMUE8nrG8BApx9V1u6rRCUw9gAC0dClqZV4T6o8zbVuZDoE7cPWHmyCQvtvR22X6h9yZXpzmL6zxdvKlyvI+O+qhH4jAw+2JpWLYVOzsXrr0JrvIBIF7d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RG6996gE; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Fy
+	fi61jM2svcV8LogP79yM0QO8FIFwLxqSWXYdFojMQ=; b=RG6996gE6cIYRcld1j
+	Oc5N692OgZ+R+H88ndUGCw78Cc9u2FPYq35WJ4lZ+UPNq5p5vijJxcWH80PV+JLW
+	8s0kk8Sq/EZauahf76L7iq3XZ3P3hhUNwsAwpRi6ZRga6i3V8yjhnmZzDBYS3FLh
+	RETk8mkdwanxzFCoPV+axH8dg=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgDn7w9xrwppK5sjCw--.36001S2;
+	Wed, 05 Nov 2025 09:59:14 +0800 (CST)
+From: wangdich9700@163.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdich9700@163.com>,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: [PATCH] ALSA: hda/conexant: Fix pop noise on conexant codec
+Date: Wed,  5 Nov 2025 09:59:11 +0800
+Message-Id: <20251105015911.26309-1-wangdich9700@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4632322.0HT0TaD9VG@tjmaciei-mobl5>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgDn7w9xrwppK5sjCw--.36001S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGw4fXFWxZryxKw15Wr1xXwb_yoW5tryDpr
+	15Ga43GrZ3JF1I9r4fJr4fA3WrKFykWFsxJw1Sy3W3Jw43Kry7Wa1jqFyI9F1xJrW7Kry2
+	vF42vFWUKrW5JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi0D7xUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/xtbCvxPkNGkKr3MNewAA31
 
-Hi Thiago,
+From: wangdicheng <wangdich9700@163.com>
 
-On Tue, Nov 04, 2025 at 03:50:37PM -0800, Thiago Macieira wrote:
-> Strictly speaking, if you don't have getentropy(), the fallback will be 
-> compiled in, in case someone runs the application is a messed up environment 
-> with /dev improperly populated. In practice, that never happens and 
-> getentropy() appeared in glibc 2.25, which is now older than the oldest distro 
-> we still support.
+Pop noise mitigation: When headphones are unplugged during playback,mute
+speaker DAC(0x17)immediately and restore after 20ms delay to avoid
+audible popping.
 
-Great, so I suppose you can entirely remove /dev/[u]random support then.
+Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+---
+ sound/hda/codecs/conexant.c | 64 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-
-
-> But I don't want to deal with bug reports for the other operating systems Qt 
-> still supports (QNX, VxWorks, INTEGRITY) for which I have no SDK and for which 
-> even finding man pages is difficult. I don't want to spend time on them, 
-> including that of checking if they always have /dev/urandom. There are people 
-> being paid to worry about those. They can deal with them.
-
-Ahhh. It'd be nice to gate this stuff off carefully, and maybe use a
-real hash function too.
-
-> Indeed. Linux is *impressively* fast in transitioning to kernel mode and back. 
-> Your numbers above are showing getrandom() taking about 214 ns, which is about 
-> on par what I'd expect for a system call that does some non-trivial work. 
-> Other OSes may be an order of magnitude slower, placing them on the other side 
-> of RDRAND (616 ns).
-> 
-> Then I have to ask myself if I care. I've been before in the situation where I 
-> just say, "Linux can do it (state of the art), so complain to your OS vendor 
-> that yours can't". Especially as it also simplifies my codebase.
-
-Well, if you want performance consistency, use arc4random() on the BSDs,
-and you'll avoid syscalls. Same for RtlGenRandom on Windows. These will
-all have similar performance as vDSO getrandom() on Linux, because they
-live in userspace. Or use the getentropy() syscall on the BSDs and trust
-that it's still probably faster than RDRAND, and certainly faster than
-RDSEED.
-
-
-> QRandomGenerator *can* be used as a deterministic generator, but that's 
-> neither global() nor system(). Even though global() uses a DPRNG, it's always 
-> seeded from system(), so the user can never control the initial seed and thus 
-> should never rely on a particular random sequence.
-> 
-> The question remaining is whether we should use the system call for global() 
-> or if we should retain the DPRNG. This is not about performance any more, but 
-> about the system-wide impact that could happen if someone decided to fill in a 
-> couple of GB of of random data. From your data, that would only take a couple 
-> of seconds to achieve.
-
-Oh yea, good question. Well, with every major OS now having a mechanism
-to skip syscalls for random numbers, I guess you could indeed just alias
-global() to system() and call it a day. Then users really cannot shoot
-themselves in the foot. That would be simpler too. Seems like the best
-option.
+diff --git a/sound/hda/codecs/conexant.c b/sound/hda/codecs/conexant.c
+index 5fcbc1312c69..641cb738901d 100644
+--- a/sound/hda/codecs/conexant.c
++++ b/sound/hda/codecs/conexant.c
+@@ -43,6 +43,8 @@ struct conexant_spec {
+ 	unsigned int gpio_mute_led_mask;
+ 	unsigned int gpio_mic_led_mask;
+ 	bool is_cx11880_sn6140;
++
++	struct delayed_work change_pinctl_work;
+ };
  
-> From everything I could read at the time, the MT was cryptographically-secure 
-> so long as it had been cryptographically-securely seeded in the first place. I 
-> have a vague memory of reading a paper somewhere that the MT state can be 
-> predicted after a few entries, but given that it has a 624*32 = 10368 bit 
-> internal state I find that hard to believe.
+ 
+@@ -216,6 +218,63 @@ static void cx_remove(struct hda_codec *codec)
+ 	snd_hda_gen_remove(codec);
+ }
+ 
++static void mute_unmute_speaker(struct hda_codec *codec, hda_nid_t nid, bool mute)
++{
++	unsigned int conn_sel, dac, conn_list, gain_left, gain_right;
++
++	conn_sel = snd_hda_codec_read(codec, nid, 0, 0xf01, 0x0);
++	conn_list = snd_hda_codec_read(codec, nid, 0, 0xf02, 0x0);
++
++	dac = ((conn_list >> (conn_sel * 8)) & 0xff);
++	if (dac == 0)
++		return;
++
++	gain_left = snd_hda_codec_read(codec, dac, 0, 0xba0, 0x0);
++	gain_right = snd_hda_codec_read(codec, dac, 0, 0xb80, 0x0);
++
++	if (mute) {
++		gain_left |= 0x80;
++		gain_right |= 0x80;
++	} else {
++		gain_left &= (~(0x80));
++		gain_right &= (~(0x80));
++	}
++
++	snd_hda_codec_write(codec, dac, 0, 0x3a0, gain_left);
++	snd_hda_codec_write(codec, dac, 0, 0x390, gain_right);
++
++	if (mute) {
++		snd_hda_codec_write(codec, nid, 0, 0x707, 0);
++		codec_dbg(codec, "mute_speaker, set 0x%x  PinCtrl to 0.\n", nid);
++	} else {
++		snd_hda_codec_write(codec, nid, 0, 0x707, 0x40);
++		codec_dbg(codec, "unmute_speaker, set 0x%x  PinCtrl to 0x40.\n", nid);
++	}
++}
++
++static void change_pinctl_worker(struct work_struct *work)
++{
++	struct hda_codec *codec;
++	struct conexant_spec *spec;
++
++	spec = container_of(work, struct conexant_spec, change_pinctl_work.work);
++	codec = spec->conexant_codec;
++
++	return mute_unmute_speaker(codec, 0x17, false);
++}
++
++static void cx_auto_mute_unmute_speaker(struct hda_codec *codec, struct hda_jack_callback *event)
++{
++	struct conexant_spec *spec = codec->spec;
++	int phone_present;
++
++	phone_present = snd_hda_codec_read(codec, 0x16, 0, 0xf09, 0x0);
++	if (!(phone_present & 0x80000000)) {
++		mute_unmute_speaker(codec, 0x17, true);
++		schedule_delayed_work(&spec->change_pinctl_work, 20);
++	}
++}
++
+ static void cx_process_headset_plugin(struct hda_codec *codec)
+ {
+ 	unsigned int val;
+@@ -1178,6 +1237,10 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+ 	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
+ 	if (!spec)
+ 		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&spec->change_pinctl_work, change_pinctl_worker);
++	spec->conexant_codec = codec;
++
+ 	snd_hda_gen_spec_init(&spec->gen);
+ 	codec->spec = spec;
+ 
+@@ -1187,6 +1250,7 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+ 	case 0x14f11f87:
+ 		spec->is_cx11880_sn6140 = true;
+ 		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
++		snd_hda_jack_detect_enable_callback(codec, 0x16, cx_auto_mute_unmute_speaker);
+ 		break;
+ 	}
+ 
+-- 
+2.25.1
 
-I suppose it's linear in F2.
-
-> >       1) New microcode
-> >       
-> >       2) Fix all source code to either use the 64bit variant of RDSEED
-> >          or check the result for 0 and treat it like RDSEED with CF=0
-> >          (fail) or make it check the CPUID bit....
-> 
-> Or 3) recompile the code with the runtime detection enabled.
-> 
-> It's a pity that Qt always uses the 64-bit variant, so it would have worked 
-> just fine.
-
-4) Fix Qt to use getrandom().
-
-Jason
 
