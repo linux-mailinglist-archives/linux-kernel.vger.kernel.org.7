@@ -1,118 +1,182 @@
-Return-Path: <linux-kernel+bounces-885953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C16C345DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:57:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2EAC345E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 712DF4E17C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADF01898501
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C1F2D0C62;
-	Wed,  5 Nov 2025 07:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hEKvgYq/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7zBADfMi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4258E2D3A69;
+	Wed,  5 Nov 2025 07:58:43 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6400154BF5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72186154BF5;
+	Wed,  5 Nov 2025 07:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762329454; cv=none; b=kHiDuTStOEW294Eqy8mfPrDRNxlBsHQHtzcAjUg8mAZWrj27J0WOcO7x5xGNUIZfYk+sFzea7fgKUmTppXZkZzoLqRHg4Uizr/nS6pd85+gTkdVyOa38B8JvHTSmragOMK4WyIccLN+RHcbhNllkndx+QA/2/lvkKaGVJHLxflE=
+	t=1762329522; cv=none; b=ZWnFGlLmlTRndHHspaVVo6GLewvkMFRkmBUmgoO1PdcW9IwOS5ZY+o8JHJ4rgtXMODzsSCgctkf3OdsfOTWZbOrm+20FaNNDANwR0IchnEQgPC30+U/RtsJuf1KzbRgoKGtHLllpGjD4mTbOfMUMxYNCSvm9tghsVIBSZlpwY0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762329454; c=relaxed/simple;
-	bh=E5Ki4vzBHbSj1LvWJd5z0IXG2apyZbX8koQWcuq1xa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fs5peC8B8oo3kJDUUkJk/LG+NJSK3J+svkjD9uq2WpmwflX1kJAjV2N7wXyI8beviK+ELlkt1ZLuh3VB28pMJcIUy9KB501134NbnE36vpUOTjfQluNOC6e/zZ607AXcfwbJb8m/HOutGbWyjzCPREILepZxO2CIHDAakXCNZOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hEKvgYq/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7zBADfMi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 5 Nov 2025 08:57:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762329450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fnH9f6P0T39G/alpUyVBKmPv5X17u1TsyuzY3sKEf/s=;
-	b=hEKvgYq/TZsVqzUZs6OyFLuu/N07MWHHwK2joeHT7FlOF/rAhqwNuRJiSyj3Le5J7wwu+f
-	dAgq4G5Hr2Y1LJAmW/bbn0JCIlRq1iBgJPhj7sdSz13iriWDXI74popnhad1a0OaiE4E1m
-	5bSjOE8bqLRppxZV6/SpDTzWaVneOaXU8O0BhH0guzkH2Z/ienZX9vTEtGnkSX5LddWoVo
-	QKaHCwKTg/CBsBMl082Aziv4HHiDbk6o92nQWHJpEO0M7TulVBpi7XpoEcP5KmPhc3e5Vo
-	IJFMrErMY8y3Mwmg9FuOvyyrnTioq0GUKgXflufF9k2jjNgETjT13d8Iv6Ai1A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762329450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fnH9f6P0T39G/alpUyVBKmPv5X17u1TsyuzY3sKEf/s=;
-	b=7zBADfMiViL13sl2wFyahFPtAV/FOA9ZV1EPfnFVRlimNGKnHPfghiPu1XL7A0+/KgUN4n
-	Yfq6JDVQe6JtQLAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] locking/mutex: Redo __mutex_init()
-Message-ID: <20251105075729.SJ4cL1rz@linutronix.de>
-References: <20251104140023.jV9j77ld@linutronix.de>
- <4207482b-fc63-4db7-ab98-36b31a600173@redhat.com>
+	s=arc-20240116; t=1762329522; c=relaxed/simple;
+	bh=Syh8dDnBg61J/SEPoYaxYPBxwlEOZnpJNQRe+g/f6UU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o4QCTdzWt2b61COXQ9JFjfRB/jtzHlyS7kCJMHJpoIx1G9u92/gencG/+iZmpwWQ7p3dpHo/JsNa+9Ti++bxm0HxOsBTqOoe0hXSUSPT2pMEyPGZ+S1TcUDpTDuMSXKqoGzi4bDQdQZnTaY3KrprCU0RWHRkxSQKcUOJlbF+62U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af0d3.dynamic.kabel-deutschland.de [95.90.240.211])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AD4DD61B48447;
+	Wed, 05 Nov 2025 08:58:13 +0100 (CET)
+Message-ID: <08601ca9-e038-45a7-bd98-4ab24013a84f@molgen.mpg.de>
+Date: Wed, 5 Nov 2025 08:58:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4207482b-fc63-4db7-ab98-36b31a600173@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btrtl: Avoid loading the config file on
+ security chips
+To: Max Chou <max.chou@realtek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+ niall_ni@realsil.com.cn, KidmanLee <kidman@realtek.com>
+References: <20251105063736.456618-1-max.chou@realtek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251105063736.456618-1-max.chou@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025-11-04 11:21:27 [-0500], Waiman Long wrote:
-> > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > +void mutex_init_ld(struct mutex *lock, const char *name, struct lock_class_key *key);
-> > +
-> > +static inline void __mutex_init(struct mutex *lock, const char *name,
-> > +				struct lock_class_key *key)
-> > +{
-> > +	mutex_init_ld(lock, name, key);
-> > +}
-> > +#else
-> > +extern void mutex_init_plain(struct mutex *lock);
-> > +
-> > +static inline void __mutex_init(struct mutex *lock, const char *name,
-> > +				struct lock_class_key *key)
-> > +{
-> > +	mutex_init_plain(lock);
-> > +}
-> > +#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
+Dear Max,
+
+
+Thank you for your patch.
+
+Am 05.11.25 um 07:37 schrieb Max Chou:
+> For chips with security enabled, it's only possible to load firmware
+> with a valid signature pattern.
+
+How can security be enabled?
+
+What is currently logged? An error?
+
+Please go into the changes. What is the vendor command 0xAD over 0x0D?
+
+> - Example log for a security chip.
 > 
-> I think it is a good idea to eliminate useless strings in non-lockdep
-> kernel. However, the function names are kind of awkward to me. First of all,
-> it is hard to associate "ld" with lockdep as ld is also the name of the GNU
-> linker. I would prefer to fully spell out as "lockdep". The "_plain" suffix
-> also looks odd to me. How about using the original __mutex_init for the
-> plain version and __mutex_init_lockdep as the lockdep version which calls
-> __mutex_init and use similar naming scheme for the RT versions. What do you
-> think?
+> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+>    lmp_ver=0c lmp_subver=8922
+> Bluetooth: hci0: RTL: rom_version status=0 version=1
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+> Bluetooth: hci0: RTL: cfg_sz 0, total sz 71301
+> Bluetooth: hci0: RTL: fw version 0x41c0c905
+> 
+> - Example log for a normal chip.
+> 
+> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+>    lmp_ver=0c lmp_subver=8922
+> Bluetooth: hci0: RTL: rom_version status=0 version=1
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_config.bin
+> Bluetooth: hci0: RTL: cfg_sz 6, total sz 71307
+> Bluetooth: hci0: RTL: fw version 0x41c0c905
+> 
+> Tested-by: Hilda Wu <hildawu@realtek.com>
+> Signed-off-by: Nial Ni <niall_ni@realsil.com.cn>
+> Signed-off-by: Max Chou <max.chou@realtek.com>
+> ---
+>   drivers/bluetooth/btrtl.c | 24 +++++++++++++-----------
+>   1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 8290932b8f7b..f6fccc6fdf22 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -50,7 +50,7 @@
+>   
+>   #define	RTL_CHIP_SUBVER (&(struct rtl_vendor_cmd) {{0x10, 0x38, 0x04, 0x28, 0x80}})
+>   #define	RTL_CHIP_REV    (&(struct rtl_vendor_cmd) {{0x10, 0x3A, 0x04, 0x28, 0x80}})
+> -#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0x0D, 0x00, 0xb0}})
+> +#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0xAD, 0x00, 0xb0}})
+>   
+>   #define RTL_PATCH_SNIPPETS		0x01
+>   #define RTL_PATCH_DUMMY_HEADER		0x02
+> @@ -544,7 +544,6 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+>   {
+>   	struct rtl_epatch_header_v2 *hdr;
+>   	int rc;
+> -	u8 reg_val[2];
+>   	u8 key_id;
+>   	u32 num_sections;
+>   	struct rtl_section *section;
+> @@ -559,14 +558,7 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+>   		.len  = btrtl_dev->fw_len - 7, /* Cut the tail */
+>   	};
+>   
+> -	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
+> -	if (rc < 0)
+> -		return -EIO;
+> -	key_id = reg_val[0];
+> -
+> -	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
+> -
+> -	btrtl_dev->key_id = key_id;
+> +	key_id = btrtl_dev->key_id;
+>   
+>   	hdr = rtl_iov_pull_data(&iov, sizeof(*hdr));
+>   	if (!hdr)
+> @@ -1081,6 +1073,8 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   	u16 hci_rev, lmp_subver;
+>   	u8 hci_ver, lmp_ver, chip_type = 0;
+>   	int ret;
+> +	int rc;
+> +	u8 key_id;
+>   	u8 reg_val[2];
+>   
+>   	btrtl_dev = kzalloc(sizeof(*btrtl_dev), GFP_KERNEL);
+> @@ -1191,6 +1185,14 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   		goto err_free;
+>   	}
+>   
+> +	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
+> +	if (rc < 0)
+> +		goto err_free;
+> +
+> +	key_id = reg_val[0];
+> +	btrtl_dev->key_id = key_id;
+> +	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
+> +
+>   	btrtl_dev->fw_len = -EIO;
+>   	if (lmp_subver == RTL_ROM_LMP_8852A && hci_rev == 0x000c) {
+>   		snprintf(fw_name, sizeof(fw_name), "%s_v2.bin",
+> @@ -1213,7 +1215,7 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   		goto err_free;
+>   	}
+>   
+> -	if (btrtl_dev->ic_info->cfg_name) {
+> +	if (btrtl_dev->ic_info->cfg_name && !btrtl_dev->key_id) {
 
-What about
-	mutex_init_plain() -> mutex_init_generic()
-	mutex_init_ld() -> mutex_init_lockdep()
+So on non-security enabled chips, key_id is 0? It’d be great if that 
+could be made clear in the commit message.
 
-Using __mutex_init() for the basic/ generic init could work but we have
-already users 13 users (drivers/ mm/ net/) and the rust bindings are
-also attached to it. I would prefer the generic/ lockdep suffix.
+>   		if (postfix) {
+>   			snprintf(cfg_name, sizeof(cfg_name), "%s-%s.bin",
+>   				 btrtl_dev->ic_info->cfg_name, postfix);
 
-If you want __mutex_init() for the generic, regardless, we would first
-need to make room and then something like mutex_init_lockdep() could be
-the public interface replacing __mutex_init() in its current function.
 
-> Cheers,
-> Longman
+Kind regards,
 
-Sebastian
+Paul
 
