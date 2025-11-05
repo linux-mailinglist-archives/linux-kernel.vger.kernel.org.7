@@ -1,249 +1,269 @@
-Return-Path: <linux-kernel+bounces-885618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32379C33791
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:27:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795A8C33797
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB5964ED9BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4573B40C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AAB22D785;
-	Wed,  5 Nov 2025 00:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1552356BE;
+	Wed,  5 Nov 2025 00:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GWI+IW+O"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010016.outbound.protection.outlook.com [52.101.56.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6eZUR2+"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49BEEAB
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762302452; cv=fail; b=trjAIKw4DNv3rGJj5bbuufEIWEqMTc/RjaeKSfCBhmb+BeapQw4KbeSVOzcsDOyIes7Neg14Vsr1I5EmcDca7+WCI9qolca/rIG8yhQJ0dPhXB8qs+JhYvNs2xgND2Sb6Y2erpEwODo9N6XteOkm/N8ArIZjNfwYFIqEqS8FprA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762302452; c=relaxed/simple;
-	bh=vZ44/NV+Hw8vvXFuTeX8E34m7OmtHpxXRpGykWZENnw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y6LGkpuNRLWzZfVIfnue77Omgllh3Ri08PNRMMlatxwtlgYYAaFC1sstj8dOpo71cIcNFOw229S5bBTW8JwQlmyS7owLrTTbOhvSAlAjM2TMvsACrIZvcpJbxZzaBNNJa++CJee5kDNKaRH1KSephdS8FmqJLMKcnEkBO9bWX64=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GWI+IW+O; arc=fail smtp.client-ip=52.101.56.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rHgSFjXKFztozdLpEOxPnlFDd4ocEOThun5O1L0sD1buJb72lDnF6bt16mhB5gXXqbCoRMWBKGCD9cCEEywJMLNvbchDAmj4LfhnAzBmpd0mBwFaIflpfTQp61lIsKxDSOQnq/ykKe6v2AgyAEmSTxI0VkG/ScKCpSXssOmdLYu6H6OwA0N8Q5BpjfYvshogzF1N4sZzQDjMgB8yivpmEtOyn033K3T0AJ4iSIrqTWY7UwBMy2tIdNC8TFBb8gaos+oNggdeZl3CD4W247+rppv4h3eXlgb/vDNhAe8+WF/xaubhWBQrC4f72NlsL+9CnHKGcKWmZyTYZ6wVsKDFPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IToTSLr6TSiZDunUKUZoIZ/sQH8yARhrEyvZHSbwyuc=;
- b=gPQkiVtNRq+HTSLlLWgaK/1LRRzW6i33j+eQBesmW9vDkeA6yDEClD73B2bNF2ZPOrTTp1jrqc95yVA5FoMGB6fx1DpYS5oDnzcrDxTgvCILjxUQ7Dlv02d4n1DPPRYe2GHWnQZ5NLsTuSAL+iTEKIGqEcmam8usy5g7C1d6UduNr4Wug3t9SXVlzQ8c3Xd2iSdK+OFUB00dnevke8Q/ha5GFWiMmcCreWvFn6q3xV7cjOdgmWvhDa+YpV5lgEMPvNMN8Hpqw4OP8sTH1BjDEtxgjGo9iRLPJf45Ovr9yLl1it8pVlc2q/WFqcDwT66cAZx23BCtCsxll8ZPgBiqJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IToTSLr6TSiZDunUKUZoIZ/sQH8yARhrEyvZHSbwyuc=;
- b=GWI+IW+OAUJ9bkpSKWBXlmVhFM9uRoWF45+Ml04n0gdka9GqFBUQMNV5lQlcLJDZ/I/b75LkGsKHSLjs2amzx7Hfu/1Pm8ebuHVEoVS8csLM9w6sbb0sEVUfG+0RCAOaHgw9eYjRV7znK0I9q8ZGVdPceLkumV3Iw6yImJUrAwVI+PNDM826VIcufbQTh1ZOFuNYkXH/KqumiibyUDSth/YTOQq9egeESAZr1jK6cAGsG1o4gjbBxc7skWdUsNc/9TXqdIEPpvFLVC6UbHlvN9WzIHo79OWvNiTLzKStX1jTybBTKK5FXqninhBLjjkO//+a3rqlZ9zYUL7rXNfY7g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by DM6PR12MB4371.namprd12.prod.outlook.com (2603:10b6:5:2a3::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
- 2025 00:27:22 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
- 00:27:22 +0000
-Message-ID: <8f0722c5-203f-4f2b-8654-e77811aee7d3@nvidia.com>
-Date: Wed, 5 Nov 2025 11:27:18 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arch/arm64/mm/fault: Implement exceptions tracepoints
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Will Deacon <will@kernel.org>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-References: <20251013035532.1793181-1-balbirs@nvidia.com>
- <aQjlzbkdzzYL2xJR@arm.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <aQjlzbkdzzYL2xJR@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0196.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::21) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27418EEAB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762302565; cv=none; b=d3AkquYW+4eF1XCFUSBj4ddtJU9L4uuiLi28byR+tVGkTP6zdcTgrFQfmlXG0PiYWhq5octezcCJbI9chppllqAa45trIUGCGIi+e4Fg5az4RDQu+cqtCOSfG1YPGkoJwU0Ks/URLtV0cRznkyQKMYhmDyHk8wZucvxK3/tu7Kg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762302565; c=relaxed/simple;
+	bh=f5aIiFy5mSzEtHXYFs8wRFblnfTWk3IdBkJ2/t5G3Qg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K0gWE+n7ouEDB+yB3GPQw8zewSSiuLeHnGG181v/jjUYgSBm8u7/iWWiFamdhMoJLyD8bbmUGTaSk9oHakCxh4mqxUgsK1ijRe85yOj2BVc2KjxblixzNGO6swRu3D8KvIvYJZuHxJBr3NU+IWuSDxsPvheKu1k8pPpVlC7WdEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6eZUR2+; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-340c1c05feeso3354329a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:29:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762302563; x=1762907363; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hMhLnyIfG7UbkKgdpPmZtvjp99PUyucsrPbWxECJVAc=;
+        b=U6eZUR2+7fKGnXSvEaLO60nR6gkubM58I9bV0UuE8Mk/zuwNRxlG4YpnTtnFLRpRW/
+         gEprhj+xy1nIwcOjIdbaU3K1d2fXiPQt0hFQ+2D43Cu0bcMYv2q9vnqwPceTVEHUBGGR
+         BzdwQVQtD6botKTfySSj9a3wWquk1uZhfwkxO9I0ozlmARd+LJcAL72+BDNgZMRjygjm
+         18aJWB1t8+W1WTiFOIgxRI5JOheSOQra9FNMuM43l3KdluaEup1O5ae+z+0byQn0Hz1Q
+         BnMBf+w1w1COTHJpyf09r1SKQp5exyFI9IQdhuRbfR6rW5VTu5EvYyKUCn/hUTvuYs+I
+         3z5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762302563; x=1762907363;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hMhLnyIfG7UbkKgdpPmZtvjp99PUyucsrPbWxECJVAc=;
+        b=UFk3mZ8VDkNL3tDBSfxdYfa9dpi7YlqBeFj9dTYzpREhUFBkmIXcdkk7FRu2CDZyas
+         YQLRlX6/BZc4tlmoKd/Vn708/Y9fwJLuPOx3PpmRkpJRXvJXnJxmr9Uy0Krl/ESAwwck
+         sI7A8Rr5p+mlpozspxAh733c10ilLdLIEEpLS2RglmkJSm/8783CNhbFnhTvIVkbb5Ew
+         6zUFn4OuqVZvhQUjmxvKRH/bd1j3L6/6xDS5GHw1IwXgvL1zV9sklfXVNzwbxA+f+D5k
+         OgEyX/dJt6YdyYq9N6zkNCGPZeTkHRp3FMUXq6KmZooKFUVioizMVY0oelF7yCeG7w9N
+         gZNQ==
+X-Gm-Message-State: AOJu0YxNaAHqeC7R3dDMKRGHGyQWAfNCG2VY2OSu1zgFsy5C2yhCEiL+
+	DjS3Usif71LR9ZeaBw3wN3KacWsyx6ADIEGTpFBFebSZCCcZfS7GVHSX
+X-Gm-Gg: ASbGncvAnozYZG59mK8Ut2zJHFubSbj9K+HEF+Lv1w/SBJGa3/ef2SaLCnHec2ekUcl
+	vXSE7p7S4nq2qDcHcchkKANg8Qq/JnKBm1emoxtH5wtZpdm65DdgZ7Q2N+mk84H8WRAVt9bS6o8
+	gAkcLYO1dugWZbiFEranJRaDG1Kg3sdI6D6t9GEFUpJMYWtbdAkXcTEoiKFH6OZEn5PH/OIwY5H
+	Np56Tkz/+E0DjP9INBzhfbDYFaLQQWNnHj3wG3UE4CO4ItSnHaM5kgGL8smGVYres5l+dtVmT31
+	YYE/kccIT+rbWK+LxdjXLecGOehPHEq3KaC/dl0AbPASkQQM2Z3YTxTEsgwIZyWLe41HywTh3jm
+	ok4D9+2ef1IdAlPWrYfXUTyn0a9Tk5SOIEty0DLSqooUDxEoqs6aCf3nXPnX20DRLMHsa7Rfdpe
+	LTCsy3jArhrHfHArhhlCfyuIy2sdaobjN+QQ==
+X-Google-Smtp-Source: AGHT+IEur4L3kpgPLQKd1EkackNoAVMpsy7agVybkv3A/vREqnQw12q4zI6TWGxQu61ecJlnrazP+A==
+X-Received: by 2002:a17:90b:6cf:b0:340:2a38:d45f with SMTP id 98e67ed59e1d1-341a6c5f60fmr1508831a91.16.1762302563233;
+        Tue, 04 Nov 2025 16:29:23 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:a643:22b:eb9:c921? ([2620:10d:c090:500::5:99aa])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a9e845a4sm526091a91.21.2025.11.04.16.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 16:29:22 -0800 (PST)
+Message-ID: <123fde84e56aaa2dcccc16a2eac00d0e28a0823e.camel@gmail.com>
+Subject: Re: [RFC PATCH v4 4/7] libbpf: Implement lazy sorting validation
+ for binary search optimization
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Andrii Nakryiko	
+ <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song
+ Liu	 <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Date: Tue, 04 Nov 2025 16:29:21 -0800
+In-Reply-To: <20251104134033.344807-5-dolinux.peng@gmail.com>
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	 <20251104134033.344807-5-dolinux.peng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|DM6PR12MB4371:EE_
-X-MS-Office365-Filtering-Correlation-Id: ccd822e9-8d7e-4ee9-2a55-08de1c02163c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VVY3ZFhRSHJuK0hvMGNNM01XTWxPNzBhb1RxK2E5R0pyVTZCWHBtQURMTFpL?=
- =?utf-8?B?cTRRYVlCUmdhNHlmV0l5ZTUzaVF5ZERpdk1VYmlpcFNuK2cvWlVPeGRsU3da?=
- =?utf-8?B?U3Y5R01Vb3llMEpLbXdKNzYxTUw0YkdTYUozMFlVeTlDamdPMEw1RWxWMnNp?=
- =?utf-8?B?QkMwaDUyQ0IyaFVpV3ZBenFtOGNxR0FidVphdUJ1R3FuM3hZZEx0Sm1Yellr?=
- =?utf-8?B?NFJWSVFDUWZnanEwRmsyczF5ZjZGaEd5NlZONXhMQzlCd3dvVDh1S1A2Z1Uw?=
- =?utf-8?B?SnpQUStyNms5aUdKZTI5WkR5dHdXODBIQm9kNzRRK0d4dmNIL2xWTlBGTFBV?=
- =?utf-8?B?dHZPai80aVJUNE5DR1BCZDVlQlArMy9kaExHdXluclNoT3ZyOFU3U25xdEUr?=
- =?utf-8?B?bXRJY1p1OHVzRkpITlBPa1VCRzVjWkYvU0dtb0pTQWQ3U0VWQnNwZXFlc0pv?=
- =?utf-8?B?U3VBb0toNk8rcHdoM1R4M1lncFRmZkxxZG9zcXRiNlNIeFYwYzB5aGMraU5i?=
- =?utf-8?B?NUJTQWxTY3pqY1plOGFFYWtFeFdpMllmLzdrTzVMT2Y1MWw4VHNocWlaOTEy?=
- =?utf-8?B?L0JXMmxnR0hjMUs1cmQvZDZZVmIzSDg5TkRnaVNtM1hRR1JDUjlsTGRQalk0?=
- =?utf-8?B?M0l6cVJOQVU2QTNZUG9qNTg3ZUNBZ3RaQW1jbk4vbVQ4OWRXOUVDSDFIQ3py?=
- =?utf-8?B?cGprd2JITmRoK1pEOUVpVlR2eEx0RWl5Uml6djZ5dnhDK2FlWXRYbUtubnUv?=
- =?utf-8?B?QXRHOEUyd3pVb1I0M1JHT1pnczhpangwRS9MNHZpNGpPVEl6QkVZbGRNaXNy?=
- =?utf-8?B?MkxSeVBwM1hZL0dCTWFJUTdaUlhTa3pNY00ySXVnYWVaSTQzRXJuN1gwV1pz?=
- =?utf-8?B?amRFRkZPV2RwVm9EcytmSmNGOW9BbnJNTC8zM2VrRGgxN1JnL3o3RDhpeStI?=
- =?utf-8?B?V2hpUTFrd3kyMmFBM2NvQlJ4dGQ2WGZDeWM5aUdwaXFCbmM3ZEZEdncwU1Vm?=
- =?utf-8?B?a2kyakZpcUFJVEhBSkRKL2twVGVzbTRDYkZ0bTNhbG5PcU1YRWhOakxxSXhF?=
- =?utf-8?B?Rk1Mc0phNGR1bzBkUVNBS1RpTWF3RThsWlAyT1lOQkN5L21NOWZOamdVekhh?=
- =?utf-8?B?eUl1dFdNd21GNUdlaHZYVUNON0hZVmN5OHZNVXZMLzJubS9CTnRlRWVPM0wr?=
- =?utf-8?B?ZlIxQkxLREdRMDIwaG1vMFRnSEkyQUIrMGZPb1hLdVRrWEZOcTQ1WnhubktX?=
- =?utf-8?B?YWFFVkY2ckFmNkFhT1hOYmZGZ1hTV2VKVEs4ZzdHeklIVzRaemZYcEhLM2Ex?=
- =?utf-8?B?U2J2bDZVTXN4aFU0cDZhcEYraFNtVFVYTU01TThXWUYwKzg1czE0RUdsNm80?=
- =?utf-8?B?Zmw3QjcrbEJDamJWeE14ellhWmtTQmVaNy9XVmJUcjZSSjA3K3FWR1FkZysw?=
- =?utf-8?B?ZWpEZC83TWlHZ1ljYmo1NW1mOXdVY1ltM3o1NVhlMWFlVXBlaEtDcExPVXVa?=
- =?utf-8?B?UGRYTm1lck5ZbGJnZ0o2MEwwZlhKcjM1a3JYbGgvUTBQcVJjNlIxVWg2SlRD?=
- =?utf-8?B?ZTZQa0poTTlRM2JYZ1d2YVhhbnYySnluWjV3THFNSDd5dUFFU1VvM2wzYTVL?=
- =?utf-8?B?V2daUFhsUi9HZGxtdE10dVlITjZ6dVQwMUhHUVpiSzVER0g0SmJhY0xVS1Fs?=
- =?utf-8?B?MG9nalhockxza2xWbzJYbk5HbG92VWZ4aS9SUjJGeEg2L2toam9mVUF3OFpB?=
- =?utf-8?B?QTdnWDl3MkxCQ2hEcVBHSUI4cURYaVBhWjJpTktqaEVQRGw3cklSZTdJeDRr?=
- =?utf-8?B?TU5zTU84ZkI0NEs5YXoxSnI3MFpQWm5IZjRWZTZCNzFXQ1pXMnJ4MnluR2FO?=
- =?utf-8?B?ZC9sSTRMaXFibWNqcHVnVWpCYks1U0lraDR2ZlZ3NXo3WmpXTjM2YTJTeWVN?=
- =?utf-8?Q?WIe/JGRxoHZ+/8WWeQQO7COM0HZojZhV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ejVFSUYwcWVQL0YvMDRFeWFiV0Y5cVN4RVk4MGZEQU1OUjd1Wk1JTzVKZlFr?=
- =?utf-8?B?WHBJQTdPOVEzQ0pRT1ZWWGEwNmNPclQ1SUc3TW0yalZsdnpzd1RYMVE5eWFp?=
- =?utf-8?B?QklFcHM2MWhJUmFSM1I2bGVoaVBZVlEzUFJobFRSeFdMTUs5dkJIUlppdXE1?=
- =?utf-8?B?bXl0QnpQOEdENThVbzVscG14RXJIYzNxVlpFQjdSR1NFVFEyaWVOVG1wdENn?=
- =?utf-8?B?SFc0bzlPSXJZNjFrMU8zV1dsTkVBa0FtcGM5TUFmcXJJN1FlQ0I5bjR6aU5U?=
- =?utf-8?B?c0tyWitOcW5iRnZyUUcxYU5PSVRWOVUrWWszd0h3c1BFRXlzRW5OV0cvV3VM?=
- =?utf-8?B?WWcxaDgvK09IVHhiU0MraWpldkhZdWtXMjA5Ym9Fc3k0c05tZERnVFZraGdO?=
- =?utf-8?B?eWhGQ0F3SEJycklONXREd1g4NkVmRGpSQ25xVkF4bW9XZDBlNmMxdzJ6S1ZJ?=
- =?utf-8?B?N0JqMitNeWJMVzd4VVY5aCtQYXBQV1k2NmJEYTNLb3VINjJmUmh4WERUR2RM?=
- =?utf-8?B?TSt0Sm0zMnN6czdxTmFDTUxKNk9iOGRZNU1BQy9KUkpEQzV0M3Z5NTJYWjBp?=
- =?utf-8?B?dEtpeTZBRmxESFFFVHlvVXVlYnY2U3NQTVBuTlVZdlBIUVI0dUhxTE9yOVVy?=
- =?utf-8?B?ZVRUWEZoLzhENzBFNmFvUnFlaTNObHBadHlNM3Y1Vjd4MEptL1hwODB4QitZ?=
- =?utf-8?B?NzdWb2p5YmMyVCszNU84R2Y2OCs4a1NkUjBCUTJlV2dZZHJ1LzFFLzd0cTVJ?=
- =?utf-8?B?d0lJUVJTS1AwNks3QWk4S0JoeWJsRk5JdXBNcDBxM1k5cm1WMEZxNnlScXYz?=
- =?utf-8?B?anBkWGwxSGZ0ZURXZG5mbXVRQkdEMjBPVE5NL0MvdXJQYXc5TU5PbUFQVEpJ?=
- =?utf-8?B?bmN1VS9MRFBJY0lHYWJyVFh0SkdleEpiR2Exc1l4djNOdTJpMW10T2Q1MERp?=
- =?utf-8?B?Mkw3TFdvVkZVa0VvaHdDMk5vVGZlMnpPQ0x4R0ptWWI4YVVMTkF6OXNEdFhT?=
- =?utf-8?B?TVNQTk0vZzI0NW9TTEJBSDhLNDNLdXdLc0psaERjT0JoZUxDbit6S2JmL0Q4?=
- =?utf-8?B?QUVzWC93YmExNjREcmFmQi9WOWV4MFBrVnE4STRZb0xaYlk1b0ppYldHUXpv?=
- =?utf-8?B?L0Z1RHNMZDc5VTZsVkplbEpPV3ptc0dRcThRNnFjeWVhc2g3bC9ISHVUSnZJ?=
- =?utf-8?B?N09oakNIbW5Zam1BWmtmZjRnVmpsTnZyTGxtTHEzbFRzWGloQjNLbzBKcGdR?=
- =?utf-8?B?UzlMblZyVUVNZ1JxTDlsV3ByZktNdldKYWJUbytwR0I5KzRJRjRPZ0JyNzdr?=
- =?utf-8?B?V1FDdGpNeE1yM3NiaWZGVFo1dXAxM01PYmFRaFlJWXZLVFhndWhOYlA0QUJT?=
- =?utf-8?B?MWV0V3FQNTV0QUVWWlpaeTJWQmFGejRhSms4WEVzdkd3cFU5cVlMSzRqeEJn?=
- =?utf-8?B?SWYvdTZBOFlVWEpHeGUyMHRHQS9EWmZ1dFhUYUpGaFdOaTczR00rTWdhS0dX?=
- =?utf-8?B?VzA2OVhyZzJuRlVPTk5CRWFWb0VaOWVEY1ZQNS9EeFlUdFd3dGFoYTlHRHA0?=
- =?utf-8?B?RkdCNG1RS0NjNUphYUdXSUNraEVJbEJXUzh1QytsRm9GZUJLbjFwSnJtYVFy?=
- =?utf-8?B?QnhLemticUttdTZnUGc3Ykpaa29IZi95NTE0WUlpaUFWaGxZNzVFQjhjSjZx?=
- =?utf-8?B?SkR4aDJvcFFFc1lCeWJ0V3dOVmNzM2tYbEpKR09NelJ2OVJMWHltYTNZdkE5?=
- =?utf-8?B?REZPOU5ZaE96bVFZaEJLQWhudkp5aE1iMWVIUC9IaDg1cURoSjlLNWJmejZV?=
- =?utf-8?B?RUZHWGtFY1o1R2d3bURGdC81SWpYRm1EZlVSUlVoUWZaendGMVR6Kzhia3Ex?=
- =?utf-8?B?RVFHayttd1A5WGluQmhwRnY4NWFLUlFyQjBaZXRWbDVrVzljdlFTSm0vVlly?=
- =?utf-8?B?NzZ3NFBQYkRGVlJNUGFsQ3N0dDQ1VUVYWkw1Snl3a0JBMXVyMElMS1hwYXo1?=
- =?utf-8?B?Tk5DVnA2dnI4T05OTFZ3cjNnc2FNZCtqNGovenZnem5nelBtVkJ3ZTFTZUZq?=
- =?utf-8?B?aERWMnlxcURUdy9xd1pHeVlteFhtVXd2RjZ6YlhYY1hodGwxK241WFg2NHRz?=
- =?utf-8?B?WnRtUFZSVW81eEN1WGRnem9IUnd0bytpeU5BWVlGam5Yb3gxcUVMVDFLUGZE?=
- =?utf-8?Q?laubM3LDXHskg91gbRD09NlHgy++zLQ6AB8z0oLsQP2o?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccd822e9-8d7e-4ee9-2a55-08de1c02163c
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 00:27:22.3719
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tXOjJ8HKaS2NmWW2k5QPKtD418kDRNLFuwR+Wa90ouD+EROKrPTo7PzjS2njcQPNY3i62sap4hqURCtfUVZixQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4371
 
-On 11/4/25 04:26, Catalin Marinas wrote:
-> On Mon, Oct 13, 2025 at 02:55:32PM +1100, Balbir Singh wrote:
->> x86 and riscv provide trace points for page-faults (user and kernel
->> tracepoints). Some scripts [1],[2] rely on these trace points. The
->> tracepoint is useful for tracking faults and their reasons.
->>
->> Adding the tracepoints is simple and straight-forward. For arm64
->> use esr as error code and untagged memory address as addr.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Paul Walmsley <pjw@kernel.org>
->> Cc: Palmer Dabbelt <palmer@dabbelt.com>
->> Cc: Albert Ou <aou@eecs.berkeley.edu>
->> Cc: Alexandre Ghiti <alex@ghiti.fr>
->>
->> [1] https://www.brendangregg.com/FlameGraphs/memoryflamegraphs.html
->> [2] https://taras.glek.net/posts/ebpf-mmap-page-fault-tracing/
->> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->> ---
->>
->> Tested at my end with a kernel-compile and running a user space
->> program to check that the trace points are indeed reported.
->>
->>  arch/arm64/mm/fault.c | 9 ++++++++-
->>  1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->> index d816ff44faff..9d7b86e92434 100644
->> --- a/arch/arm64/mm/fault.c
->> +++ b/arch/arm64/mm/fault.c
->> @@ -44,6 +44,9 @@
->>  #include <asm/tlbflush.h>
->>  #include <asm/traps.h>
->>  
->> +#define CREATE_TRACE_POINTS
->> +#include <trace/events/exceptions.h>
->> +
->>  struct fault_info {
->>  	int	(*fn)(unsigned long far, unsigned long esr,
->>  		      struct pt_regs *regs);
->> @@ -572,8 +575,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->>  	if (faulthandler_disabled() || !mm)
->>  		goto no_context;
->>  
->> -	if (user_mode(regs))
->> +	if (user_mode(regs)) {
->>  		mm_flags |= FAULT_FLAG_USER;
->> +		trace_page_fault_user(addr, regs, esr);
->> +	} else {
->> +		trace_page_fault_kernel(addr, regs, esr);
->> +	}
-> 
-> This has come up before and rejected:
-> 
-> https://lore.kernel.org/all/aG0aIKzxApp9j7X0@willie-the-truck/
-> 
+On Tue, 2025-11-04 at 21:40 +0800, Donglin Peng wrote:
+> From: pengdonglin <pengdonglin@xiaomi.com>
+>=20
+> This patch adds lazy validation of BTF type ordering to determine if type=
+s
+> are sorted by name. The check is performed on first access and cached,
+> enabling efficient binary search for sorted BTF while maintaining linear
+> search fallback for unsorted cases.
+>=20
+> Cc: Eduard Zingerman <eddyz87@gmail.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Alan Maguire <alan.maguire@oracle.com>
+> Cc: Song Liu <song@kernel.org>
+> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> ---
+>  tools/lib/bpf/btf.c | 76 +++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 74 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> index 5af14304409c..0ee00cec5c05 100644
+> --- a/tools/lib/bpf/btf.c
+> +++ b/tools/lib/bpf/btf.c
+> @@ -26,6 +26,10 @@
+> =20
+>  #define BTF_MAX_NR_TYPES 0x7fffffffU
+>  #define BTF_MAX_STR_OFFSET 0x7fffffffU
+> +/* sort verification occurs lazily upon first btf_find_type_by_name_kind=
+()
+> + * call
+> + */
+> +#define BTF_NEED_SORT_CHECK ((__u32)-1)
+> =20
+>  static struct btf_type btf_void;
+> =20
+> @@ -96,6 +100,10 @@ struct btf {
+>  	 *   - doesn't include special [0] void type;
+>  	 *   - for split BTF counts number of sorted and named types added on
+>  	 *     top of base BTF.
+> +	 *   - BTF_NEED_SORT_CHECK value indicates sort validation will be perf=
+ormed
+> +	 *     on first call to btf_find_type_by_name_kind.
+> +	 *   - zero value indicates applied sorting check with unsorted BTF or =
+no
+> +	 *     named types.
 
+And this can be another flag.
 
-Thanks for the pointer, since it's been five to six months since the discussion, I don't
-see the kprobe handler being merged with the trace point. The real issue is that while
-we fix the issue some scripts are broken by default on arm64, see [1] and [2] above and a simple
-search for exceptions:page_fault will show up many more. It's just hard to be have all of
-those break and fix them as and when needed.
+>  	 */
+>  	__u32 nr_sorted_types;
+>  	/* if not NULL, points to the base BTF on top of which the current
+> @@ -903,8 +911,67 @@ int btf__resolve_type(const struct btf *btf, __u32 t=
+ype_id)
+>  	return type_id;
+>  }
+> =20
+> -/*
+> - * Find BTF types with matching names within the [left, right] index ran=
+ge.
+> +static int btf_compare_type_names(const void *a, const void *b, void *pr=
+iv)
+> +{
+> +	struct btf *btf =3D (struct btf *)priv;
+> +	struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
+> +	struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
+> +	const char *na, *nb;
+> +	bool anon_a, anon_b;
+> +
+> +	na =3D btf__str_by_offset(btf, ta->name_off);
+> +	nb =3D btf__str_by_offset(btf, tb->name_off);
+> +	anon_a =3D str_is_empty(na);
+> +	anon_b =3D str_is_empty(nb);
+> +
+> +	if (anon_a && !anon_b)
+> +		return 1;
+> +	if (!anon_a && anon_b)
+> +		return -1;
+> +	if (anon_a && anon_b)
+> +		return 0;
+> +
+> +	return strcmp(na, nb);
+> +}
+> +
+> +/* Verifies BTF type ordering by name and counts named types.
+> + *
+> + * Checks that types are sorted in ascending order with named types
+> + * before anonymous ones. If verified, sets nr_sorted_types to the
+> + * number of named types.
+> + */
+> +static void btf_check_sorted(struct btf *btf, int start_id)
+> +{
+> +	const struct btf_type *t;
+> +	int i, n, nr_sorted_types;
+> +
+> +	if (likely(btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK))
+> +		return;
+> +	btf->nr_sorted_types =3D 0;
+> +
+> +	if (btf->nr_types < 2)
+> +		return;
+> +
+> +	nr_sorted_types =3D 0;
+> +	n =3D btf__type_cnt(btf);
+> +	for (n--, i =3D start_id; i < n; i++) {
+             ^^^
+     why not -1 one line before?
 
-Can we please have this fixed, so that trace-points scripts can work on arm64
+> +		int k =3D i + 1;
+> +
+> +		if (btf_compare_type_names(&i, &k, btf) > 0)
+> +			return;
+> +		t =3D btf_type_by_id(btf, k);
+> +		if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
+> +			nr_sorted_types++;
+> +	}
+> +
+> +	t =3D btf_type_by_id(btf, start_id);
+> +	if (!str_is_empty(btf__str_by_offset(btf, t->name_off)))
+> +		nr_sorted_types++;
+> +	if (nr_sorted_types)
+> +		btf->nr_sorted_types =3D nr_sorted_types;
 
-Balbir
+I think that maintaining nr_sorted_types only for named types is an
+unnecessary complication. Binary search will skip those anyway,
+probably in one iteration.
 
-
-
+> +}
+> +
+> +/* Find BTF types with matching names within the [left, right] index ran=
+ge.
+>   * On success, updates *left and *right to the boundaries of the matchin=
+g range
+>   * and returns the leftmost matching index.
+>   */
+> @@ -978,6 +1045,8 @@ static __s32 btf_find_type_by_name_kind(const struct=
+ btf *btf, int start_id,
+>  	}
+> =20
+>  	if (err =3D=3D -ENOENT) {
+> +		btf_check_sorted((struct btf *)btf, btf->start_id);
+> +
+>  		if (btf->nr_sorted_types) {
+>  			/* binary search */
+>  			__s32 l, r;
+> @@ -1102,6 +1171,7 @@ static struct btf *btf_new_empty(struct btf *base_b=
+tf)
+>  	btf->fd =3D -1;
+>  	btf->ptr_sz =3D sizeof(void *);
+>  	btf->swapped_endian =3D false;
+> +	btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
+> =20
+>  	if (base_btf) {
+>  		btf->base_btf =3D base_btf;
+> @@ -1153,6 +1223,7 @@ static struct btf *btf_new(const void *data, __u32 =
+size, struct btf *base_btf, b
+>  	btf->start_id =3D 1;
+>  	btf->start_str_off =3D 0;
+>  	btf->fd =3D -1;
+> +	btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
+> =20
+>  	if (base_btf) {
+>  		btf->base_btf =3D base_btf;
+> @@ -1811,6 +1882,7 @@ static void btf_invalidate_raw_data(struct btf *btf=
+)
+>  		free(btf->raw_data_swapped);
+>  		btf->raw_data_swapped =3D NULL;
+>  	}
+> +	btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
+>  }
+> =20
+>  /* Ensure BTF is ready to be modified (by splitting into a three memory
 
