@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-886188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF268C34EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:47:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB47C34EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6403BC903
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E764F3BC66D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96F830BBB3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B832E30BB8C;
 	Wed,  5 Nov 2025 09:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgdP4Hxl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0cvidc4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212F03090E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0998304BC2;
 	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336006; cv=none; b=K/mUqY6zQrB3R81JY8jVnvwXXqy6ZL+8usO6zjoGyfcFiI/Qo+YNhKGPhRBgyorVF4Doa5272y3Bgy/CH9B4iXYk9bAHy7WCtQra/i1m3ebvaT4TtKo2EsYrUhaolTnNPO2Un8SUgdqA+sB1YbuVd89sfh0cYDZHxkhvrpfEw1k=
+	t=1762336006; cv=none; b=GS/bCU1dFoEu1rU9xwGtMwfNZt6782eUwpC/NsSWP7XCPr+T4dMTn0L+v4kQy6mwluN/d9A6iuTIY8zkbqbeg5x90G4M+pIkKwcRTZlDFR81nk/4UFXIqcKhC51T4Jg+RNxT8JTfE0jCZYE8g1LcMn6L8/dXysbLwjKC3It9ncw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762336006; c=relaxed/simple;
-	bh=bR/dJ1W1oedY8nMUkn3wXTEnnnKlSOlK+osXYyo7NIo=;
+	bh=99fVqQTCZBU9q5RiQ5PSykLF8wyOcIjkV7EDXi3gtDo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ns2ZVtg5l22t3haLFewhbYkhQdCPDPcg4cTv91C8JpxJga+z/9hnr7rB4mMsx09TsPn9FhD+gaY9/lnEUCud/Sbf4E0l+QerNsJlGEuwzYzYC0BywnSvF5uU1K98HYXbIyZERZJ/abZlrgfYk4vgmHsbmODRzoUl5b7czDj5xIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgdP4Hxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B21D4C19421;
+	 In-Reply-To:To:Cc; b=EOoAHM3RGbuCWcsR8M7Elhox0aKkIIauebDs9bFAfNBH1sG3RT2XSNVyPuaWnsj8XcIJ0YyieT9+/CoEWQMHSz8YHAC+ExOWLJTu9ppAe9btOhnUFMvIexXOccswTOKGpqDceDvrpETQ7cMPTzZUff5Td6iapBsSxSCSktZ6CrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0cvidc4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BEC1FC19424;
 	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762336005;
-	bh=bR/dJ1W1oedY8nMUkn3wXTEnnnKlSOlK+osXYyo7NIo=;
+	bh=99fVqQTCZBU9q5RiQ5PSykLF8wyOcIjkV7EDXi3gtDo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bgdP4HxlQLYR+a3xo+pzZqlMPDrJ+pYv5l6JkDj2A1Lw6FeXRZqCkVZfPhs5Jg8mi
-	 eky7l0xuEO6NtcYMt9/gHxfJF/gu0zpX0PbfBFnDP3qDpUy/qyPpGxY7Tz1KA9KRGN
-	 IGW7epwrujMitPTDdr9lbH1PYt1+U99p/WtH4DhPWggQi7CV1L49ZqktrdGECgid81
-	 iRp7nitBovz/pJNQfIdVdjroSHHhXRuhVtK+kqhH9Neg7pfei9F8AbWTceZoQKIZxV
-	 VmETRvgUucvYlbOCaGa1gis6voqFLGn6Phlq4FOAz20ziWR+rqHiJqmEFQp0MMG0bd
-	 kxqPRHuyqJZqg==
+	b=V0cvidc48untLCOIe0dsVO4llOu1xbYpPEp6xyO4M6Av56tPwhRTRCBd4k7uf9/t0
+	 QCDTWiknhOlg+y9mVY4sdGNPBSLfV/ZpndL94mXBtRwX6Pi1ttx50f9re2wXVJ+7cm
+	 /ho1sATEQOOJyKC0isDlXA2xMz6PIYfcuVYM3/oULigePrDA8edhWyqhNgU59TYvfj
+	 zh0Nhkhi3xrdHbJw51hrf6AXMsuHCPEIX2W9MPvj2O401Bek6CTXgvPDX5YPFstKQT
+	 AXvLnD1RRnGfoZoa4+RUhNy0LvecnOf0fk+CrXOtd4M22r79sCoVDLC8rpn5YZenJA
+	 817jXuMX6NSsw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9778CCF9F8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B875CCCFA18;
 	Wed,  5 Nov 2025 09:46:45 +0000 (UTC)
 From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Wed, 05 Nov 2025 17:45:34 +0800
-Subject: [PATCH 3/5] arm64: dts: Add gpio_intc node for Amlogic S6 SoCs
+Date: Wed, 05 Nov 2025 17:45:35 +0800
+Subject: [PATCH 4/5] arm64: dts: Add gpio_intc node for Amlogic S7 SoCs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-irqchip-gpio-s6-s7-s7d-v1-3-b4d1fe4781c1@amlogic.com>
+Message-Id: <20251105-irqchip-gpio-s6-s7-s7d-v1-4-b4d1fe4781c1@amlogic.com>
 References: <20251105-irqchip-gpio-s6-s7-s7d-v1-0-b4d1fe4781c1@amlogic.com>
 In-Reply-To: <20251105-irqchip-gpio-s6-s7-s7d-v1-0-b4d1fe4781c1@amlogic.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
@@ -70,9 +70,9 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.12.4
 X-Developer-Signature: v=1; a=ed25519-sha256; t=1762336003; l=916;
  i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=oWh7wvbC9VgUKpiFroFm8xAgEe2wFf5o1v5W8FxUUPA=;
- b=QBpdhMRZhusJtyBrfbf8YB99VZxECB/uM95mLRKI2xqDeHFlAVga5ul9RMsQNWaQN9xRopQK4
- PLK1yDsXhqkCyoU1yG7yrpBQ3QLQy0Y4hEr/LyOYRdztI3X6WY49f44
+ bh=epwwC+3IrP75yFrjS6QYa+JuNwM3q8u7ctb1sF519+k=;
+ b=9g12a7vCOUn6deBMg7xiDglM5u2DDjHNnX7gk6tSKw3Oz6vdJimIXuAuJ7zb4mu6Jgvs0PGe4
+ DRwarPvJw0sCrFT3VpNbh5xHGHAVXNjVelV/aI6s1rM4aDdcNy2ansG
 X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
  pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
 X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
@@ -86,20 +86,20 @@ Add GPIO interrupt controller device.
 
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-index 0dca64a2ef9e..3ee1b563a34a 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-@@ -199,6 +199,16 @@ gpiocc: gpio@300 {
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi
+index d0b63d3fc953..aef7aad95667 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi
+@@ -221,6 +221,16 @@ gpiocc: gpio@300 {
  					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_CC<<8) 2>;
  				};
  			};
 +
 +			gpio_intc: interrupt-controller@4080 {
-+				compatible = "amlogic,s6-gpio-intc",
++				compatible = "amlogic,s7-gpio-intc",
 +					     "amlogic,meson-gpio-intc";
 +				reg = <0x0 0x4080 0x0 0x20>;
 +				interrupt-controller;
