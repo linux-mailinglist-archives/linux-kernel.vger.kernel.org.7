@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-887261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5727C37B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:23:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AE9C37B1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:23:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6FB3BFF8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6133BF303
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9544934D4FD;
-	Wed,  5 Nov 2025 20:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66F34D4D7;
+	Wed,  5 Nov 2025 20:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlfkDqB0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m61cMLNa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CE434D4C9;
-	Wed,  5 Nov 2025 20:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E9134CFC5;
+	Wed,  5 Nov 2025 20:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762374004; cv=none; b=ibAKkkjdvEf5uSN19ywfoP0xWtaRqxL4RraM/tsG4xK3zgPs8NNJ4CpNqvYiQFWbViZu25X3j/yplCexWsls5bfdFu3N+Ie4d/N45c5QS5nZbzrf/kFcc+Y1KOdbAZAZ7vz7nRFzBLDtCf6Wd5SfDLThXi7SWnbmrNANuVtGHBk=
+	t=1762374004; cv=none; b=FREBE3gKph3+8yF2/jTgdx36AVhTwMmJuzNUnJojlI3hDMdjuLtPxOPNRHQG9SB873GRp8JXCSm5QY+cpMaDnDyZJBJkj+rwnmMdcmNzukQlWGk5ncYcXIC65MkKsh0LhKq/ewxAo1MEUz3XuS3rExkJVuHtNPZVHyMUcmZk52c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762374004; c=relaxed/simple;
-	bh=kfsztBfcKFsvKvbfLAh7TIlp4bddlBjidIMtrTwFxeg=;
+	bh=bdRaLOeGRlaNeOitkkHmPDSe++KDC1F2xKdPiknDIIg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FXlWdI3f3weYT8AMXsL2/WvoVDXjyC7BsTYyFUI40r89ohsBS1EtS9entb22GvOpqSFrZ+IoQmoW1k8GXoJKfJgvumXwvHqPQC+6uaSQlC2zFn1h/DYghSJJguIU1LjWYAR2O5BvP+WFZp9Z/NWp428fiU4R4oG66IPygjjh+rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlfkDqB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0254C19423;
+	 MIME-Version; b=Pvt0ETBtK3y1hkkuZRcNy8+l4QdBdIHcTh3vBGaGXojWdZpg38avMl45kiKHQHfPjqEz9lVPP3j/rehG4A9pxxNyi5zD5JT2s2N+8lnVzYDb4qNYSG11x4ly0xHhUeEH6jdgljCPmUYwF2CXg3RVTAdQHDdGGe0OHibozMYT4Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m61cMLNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8AE8C19422;
 	Wed,  5 Nov 2025 20:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762374003;
-	bh=kfsztBfcKFsvKvbfLAh7TIlp4bddlBjidIMtrTwFxeg=;
+	bh=bdRaLOeGRlaNeOitkkHmPDSe++KDC1F2xKdPiknDIIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rlfkDqB0dlbtCOGwCXrccwa/5Q1tFyZGAN5WGx2gDKE2Y/xaJQfo8zQ+Mh3EulK2e
-	 ztSEtQNkscIjX1j8g+Q7jts+ZrDzAqr/4CksxxoBxM8rMFy6og3caQJsl7hgtfbOql
-	 IDBrjgKBQF3n29TtkN9CRI9j8ktx6me9GhDnKpKcn8ZClK0d7gx7wie7debrsA+j4H
-	 qQPBimRQT0os0XpmT4QDtCTfAKfe9zNrB3gqNxfEVi2xirzQpuyjz9Yf5cpdjFfm7r
-	 vyycT8Bcn8mvWWf7RVI1RLucUeCb8sTPcbVIDeGO6HzpwhnARNJlqyCjMQhMBdvFPK
-	 6ElmklujOC/cQ==
+	b=m61cMLNaNRBOR7OpXtaa+GnElsOxvM51SYy4reL2KulVYABvzbW0xARnO2WSsLSeY
+	 PWhHa9X+MYLfWAHKYxIubiZXWRYutLvH2h8hXM84/Df0HaWO88lMtTQckF31hYGJz6
+	 ll1wnjydgyLcfOq4hXZXZeclLrtrWhfuH1Dgt28f8gjPiCkTu5rTmcv3G+ZZVnQFky
+	 Fe10YO1H531j+aVDE8FdL5+lkcHmobdAL5qNJrSh8qUHdVQJeMG7efg+kKpVObUCDZ
+	 YkNFpk1GzvTAwyPhFKmEibww+tNWEFf5ljYsfhvLzD8hCnBYleRyPkNzND1ChimCNG
+	 tfHS6zFcZibbg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9C4C5CE0CA7; Wed,  5 Nov 2025 12:20:02 -0800 (PST)
+	id 9F0ACCE0D1C; Wed,  5 Nov 2025 12:20:02 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 3/5] torture: Add kvm-series.sh to test commit/scenario combination
-Date: Wed,  5 Nov 2025 12:19:58 -0800
-Message-Id: <20251105202000.2700370-3-paulmck@kernel.org>
+Subject: [PATCH v2 4/5] rcutorture: Permit kvm-again.sh to re-use the build directory
+Date: Wed,  5 Nov 2025 12:19:59 -0800
+Message-Id: <20251105202000.2700370-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cf8b57e0-1803-45e9-a217-9c9aeb64a2f9@paulmck-laptop>
 References: <cf8b57e0-1803-45e9-a217-9c9aeb64a2f9@paulmck-laptop>
@@ -62,140 +62,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds a kvm-series.sh script that takes a list of scenarios and
-a list of commits, and then runs each scenario on all of the commits.
-A given scenario is run on all the commits before advancing to the
-next scenario to minimize build times.  The successes and failures are
-summarized at the end of the run.
+This commit adds "inplace" and "inplace-force" values to the kvm-again.sh
+"--link" argument, which causes the run's output to be placed into the
+build directory.  This could be used to save build time if the machine
+went down partway into a run, but it can also be used to do a large
+number of builds, and run the resulting kernels concurrently even if the
+builds are based on different commits.  A later commit will add this
+latter capability to kvm-series.sh in order to produce large speedups
+for branch-checking operations.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- .../selftests/rcutorture/bin/kvm-series.sh    | 116 ++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100755 tools/testing/selftests/rcutorture/bin/kvm-series.sh
+ .../selftests/rcutorture/bin/kvm-again.sh     | 56 +++++++++++++------
+ 1 file changed, 40 insertions(+), 16 deletions(-)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-series.sh b/tools/testing/selftests/rcutorture/bin/kvm-series.sh
-new file mode 100755
-index 000000000000..2ff905a1853b
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-series.sh
-@@ -0,0 +1,116 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Usage: kvm-series.sh config-list commit-id-list [ kvm.sh parameters ]
-+#
-+# Tests the specified list of unadorned configs ("TREE01 SRCU-P" but not
-+# "CFLIST" or "3*TRACE01") and an indication of a set of commits to test,
-+# then runs each commit through the specified list of commits using kvm.sh.
-+# The runs are grouped into a -series/config/commit directory tree.
-+# Each run defaults to a duration of one minute.
-+#
-+# Run in top-level Linux source directory.  Please note that this is in
-+# no way a replacement for "git bisect"!!!
-+#
-+# This script is intended to replace kvm-check-branches.sh by providing
-+# ease of use and faster execution.
-+
-+T="`mktemp -d ${TMPDIR-/tmp}/kvm-series.sh.XXXXXX`"
-+trap 'rm -rf $T' 0
-+
-+scriptname=$0
-+args="$*"
-+
-+config_list="${1}"
-+if test -z "${config_list}"
-+then
-+	echo "$0: Need a quoted list of --config arguments for first argument."
-+	exit 1
-+fi
-+if test -z "${config_list}" || echo "${config_list}" | grep -q '\*'
-+then
-+	echo "$0: Repetition ('*') not allowed in config list."
-+	exit 1
-+fi
-+
-+commit_list="${2}"
-+if test -z "${commit_list}"
-+then
-+	echo "$0: Need a list of commits (e.g., HEAD^^^..) for second argument."
-+	exit 2
-+fi
-+git log --pretty=format:"%h" "${commit_list}" > $T/commits
-+ret=$?
-+if test "${ret}" -ne 0
-+then
-+	echo "$0: Invalid commit list ('${commit_list}')."
-+	exit 2
-+fi
-+sha1_list=`cat $T/commits`
-+
-+shift
-+shift
-+
-+RCUTORTURE="`pwd`/tools/testing/selftests/rcutorture"; export RCUTORTURE
-+PATH=${RCUTORTURE}/bin:$PATH; export PATH
-+. functions.sh
-+
-+ret=0
-+nfail=0
-+nsuccess=0
-+faillist=
-+successlist=
-+cursha1="`git rev-parse --abbrev-ref HEAD`"
-+ds="`date +%Y.%m.%d-%H.%M.%S`-series"
-+startdate="`date`"
-+starttime="`get_starttime`"
-+
-+echo " --- " $scriptname $args | tee -a $T/log
-+echo " --- Results directory: " $ds | tee -a $T/log
-+
-+for config in ${config_list}
-+do
-+	sha_n=0
-+	for sha in ${sha1_list}
-+	do
-+		sha1=${sha_n}.${sha} # Enable "sort -k1nr" to list commits in order.
-+		echo Starting ${config}/${sha1} at `date` | tee -a $T/log
-+		git checkout "${sha}"
-+		time tools/testing/selftests/rcutorture/bin/kvm.sh --configs "$config" --datestamp "$ds/${config}/${sha1}" --duration 1 "$@"
-+		curret=$?
-+		if test "${curret}" -ne 0
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm-again.sh b/tools/testing/selftests/rcutorture/bin/kvm-again.sh
+index 88ca4e368489..b5239b52cb5d 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm-again.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm-again.sh
+@@ -31,7 +31,7 @@ fi
+ if ! cp "$oldrun/scenarios" $T/scenarios.oldrun
+ then
+ 	# Later on, can reconstitute this from console.log files.
+-	echo Prior run batches file does not exist: $oldrun/batches
++	echo Prior run scenarios file does not exist: $oldrun/scenarios
+ 	exit 1
+ fi
+ 
+@@ -68,7 +68,7 @@ usage () {
+ 	echo "       --datestamp string"
+ 	echo "       --dryrun"
+ 	echo "       --duration minutes | <seconds>s | <hours>h | <days>d"
+-	echo "       --link hard|soft|copy"
++	echo "       --link hard|soft|copy|inplace|inplace-force"
+ 	echo "       --remote"
+ 	echo "       --rundir /new/res/path"
+ 	echo "Command line: $scriptname $args"
+@@ -121,7 +121,7 @@ do
+ 		shift
+ 		;;
+ 	--link)
+-		checkarg --link "hard|soft|copy" "$#" "$2" 'hard\|soft\|copy' '^--'
++		checkarg --link "hard|soft|copy|inplace|inplace-force" "$#" "$2" 'hard\|soft\|copy\|inplace\|inplace-force' '^--'
+ 		case "$2" in
+ 		copy)
+ 			arg_link="cp -R"
+@@ -132,6 +132,14 @@ do
+ 		soft)
+ 			arg_link="cp -Rs"
+ 			;;
++		inplace)
++			arg_link="inplace"
++			rundir="$oldrun"
++			;;
++		inplace-force)
++			arg_link="inplace-force"
++			rundir="$oldrun"
++			;;
+ 		esac
+ 		shift
+ 		;;
+@@ -172,21 +180,37 @@ fi
+ 
+ echo ---- Re-run results directory: $rundir
+ 
+-# Copy old run directory tree over and adjust.
+-mkdir -p "`dirname "$rundir"`"
+-if ! $arg_link "$oldrun" "$rundir"
+-then
+-	echo "Cannot copy from $oldrun to $rundir."
+-	usage
+-fi
+-rm -f "$rundir"/*/{console.log,console.log.diags,qemu_pid,qemu-pid,qemu-retval,Warnings,kvm-test-1-run.sh.out,kvm-test-1-run-qemu.sh.out,vmlinux} "$rundir"/log
+-touch "$rundir/log"
+-echo $scriptname $args | tee -a "$rundir/log"
+-echo $oldrun > "$rundir/re-run"
+-if ! test -d "$rundir/../../bin"
++if test "$oldrun" != "$rundir"
+ then
+-	$arg_link "$oldrun/../../bin" "$rundir/../.."
++	# Copy old run directory tree over and adjust.
++	mkdir -p "`dirname "$rundir"`"
++	if ! $arg_link "$oldrun" "$rundir"
++	then
++		echo "Cannot copy from $oldrun to $rundir."
++		usage
++	fi
++	rm -f "$rundir"/*/{console.log,console.log.diags,qemu_pid,qemu-pid,qemu-retval,Warnings,kvm-test-1-run.sh.out,kvm-test-1-run-qemu.sh.out,vmlinux} "$rundir"/log
++	touch "$rundir/log"
++	echo $scriptname $args | tee -a "$rundir/log"
++	echo $oldrun > "$rundir/re-run"
++	if ! test -d "$rundir/../../bin"
++	then
++		$arg_link "$oldrun/../../bin" "$rundir/../.."
++	fi
++else
++	# Check for a run having already happened.
++	find "$rundir" -name console.log -print > $T/oldrun-console.log
++	if test -s $T/oldrun-console.log
++	then
++		echo Run already took place in $rundir
++		if test "$arg_link" = inplace
 +		then
-+			nfail=$((nfail+1))
-+			faillist="$faillist ${config}/${sha1}(${curret})"
-+		else
-+			nsuccess=$((nsuccess+1))
-+			successlist="$successlist ${config}/${sha1}"
-+			# Successful run, so remove large files.
-+			rm -f ${RCUTORTURE}/$ds/${config}/${sha1}/{vmlinux,bzImage,System.map,Module.symvers}
++			usage
 +		fi
-+		if test "${ret}" -eq 0
-+		then
-+			ret=${curret}
-+		fi
-+		sha_n=$((sha_n+1))
-+	done
-+done
-+git checkout "${cursha1}"
++	fi
+ fi
 +
-+echo ${nsuccess} SUCCESSES: | tee -a $T/log
-+echo ${successlist} | fmt | tee -a $T/log
-+echo | tee -a $T/log
-+echo ${nfail} FAILURES: | tee -a $T/log
-+echo ${faillist} | fmt | tee -a $T/log
-+if test -n "${faillist}"
-+then
-+	echo | tee -a $T/log
-+	echo Failures across commits: | tee -a $T/log
-+	echo ${faillist} | tr ' ' '\012' | sed -e 's,^[^/]*/,,' -e 's/([0-9]*)//' |
-+		sort | uniq -c | sort -k2n | tee -a $T/log
-+fi
-+echo Started at $startdate, ended at `date`, duration `get_starttime_duration $starttime`. | tee -a $T/log
-+echo Summary: Successes: ${nsuccess} Failures: ${nfail} | tee -a $T/log
-+cp $T/log tools/testing/selftests/rcutorture/res/${ds}
-+
-+exit "${ret}"
++# Find runs to be done based on their qemu-cmd files.
+ for i in $rundir/*/qemu-cmd
+ do
+ 	cp "$i" $T
 -- 
 2.40.1
 
