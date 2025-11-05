@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-885876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A471BC34196
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:52:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF52BC341A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 599C64F0903
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:51:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55CFD4E75D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099872C15A2;
-	Wed,  5 Nov 2025 06:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E832C21FB;
+	Wed,  5 Nov 2025 06:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g3IvUDxE"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdOCfeKx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB82C11E8;
-	Wed,  5 Nov 2025 06:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FDD26CE32;
+	Wed,  5 Nov 2025 06:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762325494; cv=none; b=Nd23lz/27nhvBNJsEx08aR4m/yCG3kTjjop99QzWvmEsvmBl9zmWFxcGQCr+heKZHkjLoEaopJmVoOlNSpGep21oRo+XgOYYMCxsRGfYNS775odn8vpTAg5TJh4lVWGPTWmlBtBpqHM9OzKS98uF/o6QSBPfDmdiXsV1Jfvdoqg=
+	t=1762325759; cv=none; b=NsrujOl2K6a0qQtMsBz4kguzGjvqE3pmzf1F8z/p7IlGaVmCR4o+OwzneCIZWCUZTmXeSmsaSbnB9JGR/d2pEJfXZqH32TdLDlofAAq6FakWm9PY8Dy+qFBuvHWvn/hWGoyWR+nL+pTjH3CtcrUcmrK4Tqbh1f8CvWaGrscBeZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762325494; c=relaxed/simple;
-	bh=28fwD/DeHigm3/oxHExJ1zgx8z4FLlzDSl8G0AySjY8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=QpCWj0nkcljiPgEVNulvoSfm+cNjSUaaap+d9sc/7kf/z+Vs2J04fYdLDaO37S0SIH/UgRQ1Ko5rl0KKK5B0dQ4JuAdkoTPJ/ZUmCOyGS8U/QPyrsQgiGwXPRq70qB8/RRHwDMrxQvofmkri5Um/iuSG28h8RI1Y1AOlhISZaPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=g3IvUDxE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c67:1e6b:c21c:d386:b74e:e876])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53DE3446;
-	Wed,  5 Nov 2025 07:49:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762325374;
-	bh=28fwD/DeHigm3/oxHExJ1zgx8z4FLlzDSl8G0AySjY8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=g3IvUDxEb1PbSXQm9Kgk3dE8t7oCPugrK4wVg5SS6cq3hvKwwKBC38U4eBt9Fudyk
-	 7QAfPQLJhV0UOKe31uBeAA9TYfbqnPavatyZ+hX2p+zHde9qD9R/8q6zCK45+BnFCp
-	 eOx5AB2sJHzV8t0yb1haLYa5Hr+4HW5V9iRfHXMc=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762325759; c=relaxed/simple;
+	bh=ckgneUbTpeEuNMdYvm3uNVbdalbnfVOTsYT16lj5Pdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J4ApTZ3L9Lqx19HyK5RaK1JrEgMluPKJsMUlROk8W9IxT5ctVWlPr9M99oXabwKpWLCMBBgZrK6EzTirZ6xzhhiCL0v37JY+PontH3nt7UBfV7jElCtUlv5kNg8ZVXZLJnxXvpy+//raMwnr/hp9B9wbY3J+7CPAn12WTgNa1iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdOCfeKx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEDAC4CEF8;
+	Wed,  5 Nov 2025 06:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762325758;
+	bh=ckgneUbTpeEuNMdYvm3uNVbdalbnfVOTsYT16lj5Pdw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gdOCfeKxtduUp22tMaJB7VkO6yydydvVHVpadPBijLIkAmReVl5Q1MZ/RG+YRb9nk
+	 0ooidf/hyo78s999N9HRQQcrT9k2iXqn9id71A0h968JEaGEf5Akd+0ysEPLVMc8sh
+	 ubkBlTdPoMA270DI5vdc+6OkzB/EmfTOTf/VIejYQtGgOttyQjSctWXRfnIUzqwYoQ
+	 Ffz2MMpKrh9JX7i5yNzEg+6NMm/m4aKy67UCaGNU82I/nv5U9rUREvSGG2mVGYH1h8
+	 in0Dqy64N13ibvSdcs7XiRgm4OfMHmMGlMvUolm6LGU/3WKLO3LyuLuzYTHdxrLF9y
+	 eJw6+n348T3+w==
+Message-ID: <69ed5b38-830d-46d7-a84b-86787c39df7d@kernel.org>
+Date: Wed, 5 Nov 2025 07:55:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3e538ec1-37f6-416c-bc04-6f21a4d31748@broadcom.com>
-References: <20251028-rpi-isp-clk-v1-1-2a54fecb495c@ideasonboard.com> <3e538ec1-37f6-416c-bc04-6f21a4d31748@broadcom.com>
-Subject: Re: [PATCH] clk: bcm: rpi: Mark ISP clock as critical
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, =?utf-8?q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Michael Turquette <mturquette@baylibre.com>, Stefan Wahren <wahrenst@gmx.net>, Stephen Boyd <sboyd@kernel.org>
-Date: Wed, 05 Nov 2025 12:21:23 +0530
-Message-ID: <176232548379.1167490.1126479868042439951@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus
+ message-connection-id property
+To: Hardik Garg <hargar@linux.microsoft.com>
+Cc: apais@microsoft.com, cho@microsoft.com, conor+dt@kernel.org,
+ decui@microsoft.com, devicetree@vger.kernel.org, haiyangz@microsoft.com,
+ hargar@microsoft.com, krzk+dt@kernel.org, kys@microsoft.com,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ ssengar@linux.microsoft.com, wei.liu@kernel.org
+References: <6d3b5d1e-de1b-4d3b-ba14-7029c51b8e05@kernel.org>
+ <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
+ <94d3e709-8c8b-40cb-a829-92c2012b4e0a@kernel.org>
+ <f6c01c55-8930-459a-baa5-1465c5047b3e@linux.microsoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <f6c01c55-8930-459a-baa5-1465c5047b3e@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Florian,
+On 05/11/2025 02:10, Hardik Garg wrote:
+> 
+> Each guest has a private hypervisor mailbox and cannot access any other
+> guest’s communication path. Using an incorrect connection ID does not
+> allow eavesdropping or cause interference — it only results in failed
+> VMBus initialization because the host drops messages sent to an
+> unexpected port. Thus, exposing the correct connection ID to the guest
+> is safe and necessary for correct initialization.
+> 
+>> If different values are important for the host, then all guests should
+>> use whatever 0 which will map to different values on host by other means
+>> of your protocol.
+>>
+> 
+> Using a fixed value such as 0 for all guests would not work, because the
+> Hyper-V host differentiates between multiple control-plane contexts (for
+> example, VTL0 vs VTL2) using distinct connection IDs. The guest must use
+> the value assigned by the host, as there is no implicit mapping or
+> negotiation protocol to determine it otherwise.
 
-Quoting Florian Fainelli (2025-11-05 03:50:23)
-> On 10/28/25 04:46, Jai Luthra wrote:
-> > The ISP clock should also be marked critical to prevent the clock
-> > framework from disabling it on boot, which can lead to bus lockups when
-> > the kernel tries to submit buffers to the VC4 ISP firmware.
->=20
-> The commit message suggests that the driver that interfaces with the VC4 =
+Sorry, I am not going back to three months old discussion.
 
-> ISP firmware is not ensuring that the clock remains enabled for the=20
-> duration of the transactions. That would be a driver bug, would not it?
->=20
+Therefore I close this topic for me with: since the actual value does
+not matter for the host - it will discard all messages which are not
+intended to this guest - you can just use value 0 and your hypervisor
+will map to proper port.
 
-Yes, from https://github.com/raspberrypi/linux/issues/7100#issuecomment-346=
-7699055
-the VC4 firmware should be responsible for stopping and starting that clock
-when necessary.
-
-The downstream bcm2835-isp linux driver currently does not consume this
-clock at all, so I'm not sure if the cleaner solution is to drop this
-altogether from linux, or mark it as a consumer, along with fixing the
-firmware driver.
-
-> >=20
-> > Link: https://github.com/raspberrypi/linux/issues/7100
-> > Fixes: 919d6924ae9b ("clk: bcm: rpi: Turn firmware clock on/off when pr=
-eparing/unpreparing")
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >   drivers/clk/bcm/clk-raspberrypi.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-ra=
-spberrypi.c
-> > index 1a9162f0ae31e330c46f6eafdd00350599b0eede..dcc3ae5fb91650b042d52f0=
-2499922786b43afde 100644
-> > --- a/drivers/clk/bcm/clk-raspberrypi.c
-> > +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> > @@ -151,6 +151,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =
-=3D {
-> >       [RPI_FIRMWARE_ISP_CLK_ID] =3D {
-> >               .export =3D true,
-> >               .minimize =3D true,
-> > +             .flags =3D CLK_IS_CRITICAL,
-> >       },
-> >       [RPI_FIRMWARE_PIXEL_BVB_CLK_ID] =3D {
-> >               .export =3D true,
-> >=20
-> > ---
-> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> > change-id: 20251028-rpi-isp-clk-eb5c48346e51
-> >=20
-> > Best regards,
->=20
->=20
-> --=20
-> Florian
-
-Thanks,
-Jai
+Best regards,
+Krzysztof
 
