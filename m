@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-886227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5674BC3507B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:06:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5967C35096
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EB3E4EAB67
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F03467313
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952B92EBDFA;
-	Wed,  5 Nov 2025 10:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185A22BEC27;
+	Wed,  5 Nov 2025 10:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fp4OO9+7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEEheCSj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096FC2BE7C3;
-	Wed,  5 Nov 2025 10:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7385724A046
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762337166; cv=none; b=MOCqJ3jBT3Fm5LKwu98jtz+N53WXuMmxEMY1u8h/yswL7DqPhlciiFfJWUjrANEKHGq/t5VsmghyIQqm0NAp0hZ6uC+s6l5/atJBgr5ACNdkVPsfGDt5rPZwcSGwwOuI3LLw3JqS5YnA13hVNdwi5NWWx9nV+DQyFfUM9KkXI6U=
+	t=1762337176; cv=none; b=X3akPRNaufpaYOmb+/jXMryZAYirO3XJucbLq1TK6BF98oarPMrjmTTPj1go3yTJU02hacha2zW2+MTbEAgwQnri9W37lIn/SAi9N7W0azgyOQ9zP3vBAO+0/43n8/lCSiZ5d5ae2TkJGZxAyNUDoczm7GgVg9cKK08G7Eq0f38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762337166; c=relaxed/simple;
-	bh=rhnNMaNldpuuY6bLfPKspqW4HOto/k+qhHYtxszFafw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4/wF9MhK0HDU69/huTer9YTi/wMsxtVK4J5tDZDnew+5nzqCOzKQcTxmMR/Su5/fpKWtNays9NNjUzJXwpRYFe4zPM6iWa8LA1zFtEs00n1W+KAztYfRMobOnIQsEuM9ENV0rHrP2Kd4IYdyKEImY8g/Nu6CJoV6MqZ+hjOokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp4OO9+7; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762337164; x=1793873164;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rhnNMaNldpuuY6bLfPKspqW4HOto/k+qhHYtxszFafw=;
-  b=fp4OO9+7zOHu4z1plVbSbxu+5Uqv4e++whK9hCJJb5GQ0WPdZfc8shmu
-   j2nDkQQzxOBk192b2Z33enSBQuv1ekA5vxbOl80xaB8Wpeeo1i3z/6hCt
-   nxzXLamWIK6tol2Q80wkziJfR35q9Q9cqB6aDWZK+7LA9CyDoi4PjDxG0
-   sMEsZusI03TuSDMPs9FHRF4DVygXyKmrJy2iIkeEsXD3NQ8MCYmKYSwEZ
-   x3lc8onwIP7Twanj0IttO0t6FSPZto9jVSFjBIduVeDOUjfmJF1Au7g/M
-   cEYX5ZooRiJi/dbUr+02iTqvpymPE/ocPVSBI/hQK6AxZuPvwcvjQoEbb
-   A==;
-X-CSE-ConnectionGUID: Y+oPjlIeRl2QjaaNldLQFw==
-X-CSE-MsgGUID: BO6ccbxzRxGnRzPFI9+mXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="87076076"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="87076076"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 02:06:04 -0800
-X-CSE-ConnectionGUID: eGsYSZUDTvuiBTUsFe/q/w==
-X-CSE-MsgGUID: YEUFJmhwQw6HC3yWhgzY/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="218059658"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 05 Nov 2025 02:06:02 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGaOt-000SP4-1E;
-	Wed, 05 Nov 2025 10:05:59 +0000
-Date: Wed, 5 Nov 2025 18:05:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huiwen He <hehuiwen@kylinos.cn>, Steven Rostedt <rostedt@goodmis.org>
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: Re: [PATCH] tracing/hist: make err_text array fully const
-Message-ID: <202511051755.CU1HPYCx-lkp@intel.com>
-References: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
+	s=arc-20240116; t=1762337176; c=relaxed/simple;
+	bh=7xelL80uD+mmTJR2hN24e9Ymu3C2gxHRvhahEaLbF7Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ieY7CaCDI9lCps6pe625PbqPlIRVihJgZpzjfvLCby4aaIX5K5Jmay92HX2vSgAA+U8JHkG0mXr4iFzYwmSus1uxhOQxLnqsj7YZOWs1/PBFyK5D0Y3+f9qluA5VmO9i09HCVRIkqWK5C0Z4BCWp6m9g1eBxlInxJ2hT+ak1kIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEEheCSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F501C116D0;
+	Wed,  5 Nov 2025 10:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762337176;
+	bh=7xelL80uD+mmTJR2hN24e9Ymu3C2gxHRvhahEaLbF7Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XEEheCSjZlHYcaoorplt0rQp5cepQJdG9XPrkjpeRyZZNwsZTULh6DAKX/St3FlgR
+	 05qjxYR5hoyxzpKI0tkyeXyoPLZOrMLelfjfvga4J+Wqzgw9+cKAso7+9avEAGSqEo
+	 KwP5hf+BMCbGBeTb8892UAId7TL283+yLGI68VNqK/1GeUG4WGOWlqf9LDaY04j6sM
+	 CvUJKAjPFgu0qIvUzjbO/q0itD0EEx29Z/BxgZED0mPeUpbmjzPQFhZYsEphXtB1if
+	 qoWBeQ6ISiFlZQMOvlya8ylHlu4VKKSo1zn5sT4Q6NX2PB4OAbv9nx4dPoCIIqvRrU
+	 Ie9jRbkH4fySg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Baoquan He <bhe@redhat.com>,
+  Alexander Graf <graf@amazon.com>,  Mike Rapoport <rppt@kernel.org>,
+  Pasha Tatashin <pasha.tatashin@soleen.com>,  kexec@lists.infradead.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] kho: misc fixes
+In-Reply-To: <20251103172321.689294e48c2fae795e114ce6@linux-foundation.org>
+	(Andrew Morton's message of "Mon, 3 Nov 2025 17:23:21 -0800")
+References: <20251103180235.71409-1-pratyush@kernel.org>
+	<20251103162020.ac696dbc695f9341e7a267f7@linux-foundation.org>
+	<20251103172321.689294e48c2fae795e114ce6@linux-foundation.org>
+Date: Wed, 05 Nov 2025 11:06:13 +0100
+Message-ID: <mafs0tsz8bxpm.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
+Content-Type: text/plain
 
-Hi Huiwen,
+On Mon, Nov 03 2025, Andrew Morton wrote:
 
-kernel test robot noticed the following build warnings:
+> On Mon, 3 Nov 2025 16:20:20 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+>> On Mon,  3 Nov 2025 19:02:30 +0100 Pratyush Yadav <pratyush@kernel.org> wrote:
+>> 
+>> > This series has a couple of misc fixes for KHO I discovered during code
+>> > review and testing.
+>> > 
+>> > The series is based on top of [0] which has another fix for the function
+>> > touched by patch 1. I spotted these two after sending the patch. If that
+>> > one needs a reroll, I can combine the three into a series.
+>> >
+>> 
+>> Things appear to be misordered here.
+>> 
+>> [1/2] "kho: fix unpreservation of higher-order vmalloc preservations"
+>> 	fixes a667300bd53f2, so it's wanted in 6.18-rcX
+>> 
+>> [2/2] "kho: warn and exit when unpreserved page wasn't preserved"
+>> 	fixes fc33e4b44b271, so it's wanted in 6.16+
+>> 
+>> So can we please have [2/2] as a standalone fix against latest -linus,
+>> with a cc:stable?
+>> 
+>> And then [1/2] as a standalone fix against latest -linus without a
+>> cc:stable.
+>> 
+>
+> OK, I think I figured it out.
+>
+> In mm-hotfixes-unstable I have
+>
+> kho-fix-out-of-bounds-access-of-vmalloc-chunk.patch
+> kho-fix-unpreservation-of-higher-order-vmalloc-preservations.patch
+> kho-warn-and-exit-when-unpreserved-page-wasnt-preserved.patch
+>
+> The first two are applicable to 6.18-rcX and the third is applicable to
+> 6.18-rcX, with a cc:stable for backporting.
 
-[auto build test WARNING on trace/for-next]
-[also build test WARNING on linus/master v6.18-rc4 next-20251105]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Huiwen-He/tracing-hist-make-err_text-array-fully-const/20251104-125932
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20251104045558.1644671-1-hehuiwen%40kylinos.cn
-patch subject: [PATCH] tracing/hist: make err_text array fully const
-config: sh-randconfig-r121-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051755.CU1HPYCx-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511051755.CU1HPYCx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511051755.CU1HPYCx-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> kernel/trace/trace_events_hist.c:808:53: sparse: sparse: incorrect type in argument 4 (different modifiers) @@     expected char const **errs @@     got char const *const * @@
-   kernel/trace/trace_events_hist.c:808:53: sparse:     expected char const **errs
-   kernel/trace/trace_events_hist.c:808:53: sparse:     got char const *const *
-
-vim +808 kernel/trace/trace_events_hist.c
-
-4b147936fa5096 Tom Zanussi      2018-01-15  802  
-edfeed318d59ff Tom Zanussi      2022-01-28  803  static void hist_err(struct trace_array *tr, u8 err_type, u16 err_pos)
-7bbab38d07f318 Masami Hiramatsu 2018-11-05  804  {
-edfeed318d59ff Tom Zanussi      2022-01-28  805  	if (!last_cmd)
-edfeed318d59ff Tom Zanussi      2022-01-28  806  		return;
-edfeed318d59ff Tom Zanussi      2022-01-28  807  
-726721a51838e3 Tom Zanussi      2020-05-28 @808  	tracing_log_err(tr, last_cmd_loc, last_cmd, err_text,
-726721a51838e3 Tom Zanussi      2020-05-28  809  			err_type, err_pos);
-7bbab38d07f318 Masami Hiramatsu 2018-11-05  810  }
-7bbab38d07f318 Masami Hiramatsu 2018-11-05  811  
+Right. Sorry for the confusion. I see that on mm-hotfixes-unstable you
+already updated the third patch with Cc: stable. Thanks.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Pratyush Yadav
 
