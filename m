@@ -1,186 +1,172 @@
-Return-Path: <linux-kernel+bounces-886120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BADEC34BCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:18:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AB8C34CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2848034CA19
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:18:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F37F4F682F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A1230C35C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C4330DED7;
+	Wed,  5 Nov 2025 09:15:35 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3747C30C638;
 	Wed,  5 Nov 2025 09:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="igi/fcA2"
-Received: from fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.132.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780B5302CCD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.132.221
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334131; cv=none; b=c3ZBpSGjGu4F1LW//p67yKkAVqE4r3tiwU/22tuLXH2XdKgbT7U9ZzvlKc2bJ3ezk73XWj4Mc25oCIIAjmmknfxYGgd6Gsx2vBj/mlFpehjucjTUMAVEdPBZr6KPhcmnhuCmKNHBaYZe/lhqUUmskURkzhQbyfpmv5v3E2yAuWQ=
+	t=1762334135; cv=none; b=VtTdoK9OvhVrMQ42ABl5es3AAVE1VBQcA0bKJCIhJN4qX5XthkHa45LcK8Tm3uTHml5HfyK8uGZswr3oTHs3B1bru9ioMOd7MrZMUuS68HzvR0XSbcvirsTnBdwEZMshXJ8Vyse1XgU8LkO+0LoBbAZDl8fqiCnNfqSDn01pkf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334131; c=relaxed/simple;
-	bh=+4wjSNsGsraben5B6RgCiIrIJmfwiTepmm7RTMQE78s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ndm5VdFIyPK/GBtlfqHXuNzQ2XwcRtzNNL4223PfMWvgIfubw+6yREiVdcsE29fibOzfPre/XAtK2GDaet2Pe2cauS0jDx3z7STIM8FEPv/ES6ZHYWaepxoMOs/HGwFTKA1SvMRYViKu52QWwYDYH1KTnoKf8A7SrKvZv9lWSzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=igi/fcA2; arc=none smtp.client-ip=63.178.132.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762334129; x=1793870129;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=n4sbWJpGvn2fw9EQ1+WoQbXpN5F4CUL+hpYXN7zaJXs=;
-  b=igi/fcA2x9ZlN3/putAdknLjv7Mw3MJdFVrCBpr7LTjjlJo0nEIUYVbZ
-   lYfvd5BH0B+yMxfKpZxCmXNp8C55qN104yzw/hAKHiah1T6GnFD1hgLJV
-   3MFrbevULHFLQ/iZQjx36EKs8Li2YHUt1ob6mqGpBdArvuICFP2VFdYey
-   BN1nloIOzgbjRK5BlPbkSnoNG/WRG2bR8sdRUGhZWJnMVjFR0FWnyVETn
-   Y9iaREQcZkqxaHgYosakdOPscx8k3r/IipwDzcR+fBRKEZc5ab1XB5RbO
-   hho5nqk/hqTlswE2TV+q9VeCuXaqW0ZN6jEWB1rvC2S6lT11Sw8W8YZUd
-   w==;
-X-CSE-ConnectionGUID: ubPYmedJQcG5AHEDfkk1KA==
-X-CSE-MsgGUID: I8IL4iQ5Sd2ptaexGhq0QQ==
-X-IronPort-AV: E=Sophos;i="6.19,281,1754956800"; 
-   d="scan'208";a="4593339"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 09:15:10 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:19815]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.23.30:2525] with esmtp (Farcaster)
- id 6d8bd803-b198-468e-9dfc-86aa1889e214; Wed, 5 Nov 2025 09:15:10 +0000 (UTC)
-X-Farcaster-Flow-ID: 6d8bd803-b198-468e-9dfc-86aa1889e214
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 09:15:09 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.223) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Wed, 5 Nov 2025 09:15:02 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <peterz@infradead.org>
-CC: <bsegall@google.com>, <dietmar.eggemann@arm.com>, <dwmw@amazon.co.uk>,
-	<graf@amazon.com>, <jschoenh@amazon.de>, <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>, <sieberf@amazon.com>,
-	<tanghui20@huawei.com>, <vincent.guittot@linaro.org>,
-	<vineethr@linux.ibm.com>, <wangtao554@huawei.com>, <zhangqiao22@huawei.com>
-Subject: [PATCH v4] sched/fair: Forfeit vruntime on yield
-Date: Wed, 5 Nov 2025 11:13:52 +0200
-Message-ID: <20251105091355.206240-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250918150528.292620-1-sieberf@amazon.com>
-References: <20250918150528.292620-1-sieberf@amazon.com>
+	s=arc-20240116; t=1762334135; c=relaxed/simple;
+	bh=iNt+UByLS1p4mmq8Ne8O9fSkCv7FAE27pUrEsEvK3Mc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VTsTSyHZi4fZ/3L456HKFcsuSszrappgEdve/h/mYbBdhNPA1bt22iApY95s5wfp44LuRfOplCR8Hz8SkwQRZjA41kGFVrfxoha+MOcH6/6iifD8ipNltJq0JDXQNIJRpUChw2sHIBNybM81Na1OZtL7vmRRU80Kcf17Ge0zk4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: Mjo51KR0Se67+pRm9zIRCQ==
+X-CSE-MsgGUID: sMs/HKOHQzCkFtqC5Ctvdg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Nov 2025 18:15:31 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.38])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CC31041763F1;
+	Wed,  5 Nov 2025 18:15:26 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-spi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 08/14] spi: rzv2h-rspi: add support for using PCLK for transfer clock
+Date: Wed,  5 Nov 2025 11:13:52 +0200
+Message-ID: <20251105091401.1462985-9-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D046UWB004.ant.amazon.com (10.13.139.164) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-If a task yields, the scheduler may decide to pick it again. The task in
-turn may decide to yield immediately or shortly after, leading to a tight
-loop of yields.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs support
+generating the SPI transfer clock from PCLK, with the quirk that SPR 0
+is not supported, causing the highest achievable SPI transfer frequency
+to be 31.25MHz.
 
-If there's another runnable task as this point, the deadline will be
-increased by the slice at each loop. This can cause the deadline to runaway
-pretty quickly, and subsequent elevated run delays later on as the task
-doesn't get picked again. The reason the scheduler can pick the same task
-again and again despite its deadline increasing is because it may be the
-only eligible task at that point.
+Add support for generating the SPI transfer clock from PCLK.
 
-Fix this by making the task forfeiting its remaining vruntime and pushing
-the deadline one slice ahead. This implements yield behavior more
-authentically.
+Renesas RZ/V2H (R9A09G057) also has the BPEN bit used to enable this
+option in the datasheet, but it is not explicitly documented and there's
+no details about its limitations as there are on RZ/T2H.
 
-We limit the forfeiting to eligible tasks. This is because core scheduling
-prefers running ineligible tasks rather than force idling. As such, without
-the condition, we can end up on a yield loop which makes the vruntime
-increase rapidly, leading to anomalous run delays later down the line.
-
-Fixes: 147f3efaa241 ("sched/fair: Implement an EEVDF-like scheduling policy")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.com
-Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.com
-Link: https://lore.kernel.org/r/20250916140228.452231-1-sieberf@amazon.com
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-
-Changes in v2:
-- Implement vruntime forfeiting approach suggested by Peter Zijlstra
-- Updated commit name
-- Previous Reviewed-by tags removed due to algorithm change
-
-Changes in v3:
-- Only increase vruntime for eligible tasks to avoid runaway vruntime with
-  core scheduling
-
-Changes in v4:
-- Handle proxy tasks by dequeuing/enqueuing entities when modifying vruntime
-  to maintain RB-tree consistency
-
-Link: https://lore.kernel.org/r/20250916140228.452231-1-sieberf@amazon.com
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- kernel/sched/fair.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ drivers/spi/spi-rzv2h-rspi.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb279..dd68605cb8af 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8993,9 +8993,10 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
-  */
- static void yield_task_fair(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
--	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
--	struct sched_entity *se = &curr->se;
-+	struct task_struct *rq_curr = rq->curr;
-+	struct cfs_rq *cfs_rq = task_cfs_rq(rq_curr);
-+	struct sched_entity *se = &rq_curr->se;
-+	bool curr = cfs_rq->curr == se;
+diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
+index f59bcadf5e38..e9d8ee919261 100644
+--- a/drivers/spi/spi-rzv2h-rspi.c
++++ b/drivers/spi/spi-rzv2h-rspi.c
+@@ -34,6 +34,7 @@
+ #define RSPI_SPFCR		0x6c
  
- 	/*
- 	 * Are we the only task in the tree?
-@@ -9017,7 +9018,23 @@ static void yield_task_fair(struct rq *rq)
- 	 */
- 	rq_clock_skip_update(rq);
+ /* Register SPCR */
++#define RSPI_SPCR_BPEN		BIT(31)
+ #define RSPI_SPCR_MSTR		BIT(30)
+ #define RSPI_SPCR_SPRIE		BIT(17)
+ #define RSPI_SPCR_SCKASE	BIT(12)
+@@ -41,6 +42,7 @@
  
--	se->deadline += calc_delta_fair(se->slice, se);
+ /* Register SPBR */
+ #define RSPI_SPBR_SPR_MIN	0
++#define RSPI_SPBR_SPR_PCLK_MIN	1
+ #define RSPI_SPBR_SPR_MAX	255
+ 
+ /* Register SPCMD */
+@@ -79,6 +81,8 @@ struct rzv2h_rspi_best_clock {
+ struct rzv2h_rspi_info {
+ 	void (*find_tclk_rate)(struct clk *clk, u32 hz, u8 spr_min, u8 spr_max,
+ 			       struct rzv2h_rspi_best_clock *best_clk);
++	void (*find_pclk_rate)(struct clk *clk, u32 hz, u8 spr_low, u8 spr_high,
++			       struct rzv2h_rspi_best_clock *best_clk);
+ 	const char *tclk_name;
+ 	unsigned int fifo_size;
+ 	unsigned int num_clks;
+@@ -90,6 +94,7 @@ struct rzv2h_rspi_priv {
+ 	const struct rzv2h_rspi_info *info;
+ 	void __iomem *base;
+ 	struct clk *tclk;
++	struct clk *pclk;
+ 	wait_queue_head_t wait;
+ 	unsigned int bytes_per_word;
+ 	u32 last_speed_hz;
+@@ -97,6 +102,7 @@ struct rzv2h_rspi_priv {
+ 	u16 status;
+ 	u8 spr;
+ 	u8 brdv;
++	bool use_pclk;
+ };
+ 
+ #define RZV2H_RSPI_TX(func, type)					\
+@@ -306,9 +312,18 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_priv *rspi, u32 hz)
+ 	rspi->info->find_tclk_rate(rspi->tclk, hz, RSPI_SPBR_SPR_MIN,
+ 				   RSPI_SPBR_SPR_MAX, &best_clock);
+ 
 +	/*
-+	 * Forfeit the remaining vruntime, only if the entity is eligible. This
-+	 * condition is necessary because in core scheduling we prefer to run
-+	 * ineligible tasks rather than force idling. If this happens we may
-+	 * end up in a loop where the core scheduler picks the yielding task,
-+	 * which yields immediately again; without the condition the vruntime
-+	 * ends up quickly running away.
++	 * T2H and N2H can also use PCLK as a source, which is 125MHz, but not
++	 * when both SPR and BRDV are 0.
 +	 */
-+	if (entity_eligible(cfs_rq, se)) {
-+		if (!curr)
-+			__dequeue_entity(cfs_rq, se);
-+		se->vruntime = se->deadline;
-+		se->deadline += calc_delta_fair(se->slice, se);
-+		if (!curr)
-+			__enqueue_entity(cfs_rq, se);
-+		update_min_vruntime(cfs_rq);
-+	}
- }
++	if (best_clock.error && rspi->info->find_pclk_rate)
++		rspi->info->find_pclk_rate(rspi->pclk, hz, RSPI_SPBR_SPR_PCLK_MIN,
++					   RSPI_SPBR_SPR_MAX, &best_clock);
++
+ 	if (!best_clock.clk_rate)
+ 		return -EINVAL;
  
- static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
++	rspi->use_pclk = best_clock.clk == rspi->pclk;
+ 	rspi->spr = best_clock.spr;
+ 	rspi->brdv = best_clock.brdv;
+ 
+@@ -361,6 +376,9 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
+ 	/* SPI receive buffer full interrupt enable */
+ 	conf32 |= RSPI_SPCR_SPRIE;
+ 
++	/* Bypass synchronization circuit */
++	conf32 |= FIELD_PREP(RSPI_SPCR_BPEN, rspi->use_pclk);
++
+ 	writel(conf32, rspi->base + RSPI_SPCR);
+ 
+ 	/* Use SPCMD0 only */
+@@ -433,7 +451,9 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	for (i = 0; i < rspi->info->num_clks; i++) {
+ 		if (!strcmp(clks[i].id, rspi->info->tclk_name)) {
+ 			rspi->tclk = clks[i].clk;
+-			break;
++		} else if (rspi->info->find_pclk_rate &&
++			   !strcmp(clks[i].id, "pclk")) {
++			rspi->pclk = clks[i].clk;
+ 		}
+ 	}
+ 
 -- 
-2.43.0
-
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
+2.51.2
 
 
