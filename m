@@ -1,87 +1,274 @@
-Return-Path: <linux-kernel+bounces-886610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEEFC36124
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:32:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53EFC36136
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155E24670D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:29:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC56F4F150D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DFC32D0C8;
-	Wed,  5 Nov 2025 14:29:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764F8325718;
+	Wed,  5 Nov 2025 14:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hiQjTgvU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1958B32C95F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4304231826
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352945; cv=none; b=Ohp1/3RCjR1VSEauJ2zCrns37Twsoj9X3nXr0PQEvY1dj4KCmJY7jC7R2MQPnUvZMMprFdRG9KyAuxi0Gzb3nUyJbFQKhze/6FLL/ZUp/bZsa4lNgasLsInmOJHwmCwJbHgxMltOXZrED+a9jj9927n1lsXEmIZ4LppCBvdIC7Q=
+	t=1762353241; cv=none; b=ow2zQwe/Fs6IuYP+oclqGPPXZEVx3q4aAh87SwXQX8A9KX4gEYfV24EbFf4jG/MPa0xoYVIz6IGUAPnXZvOoP7fjwov1y0w6M4nHRBh3TJtdLqNtpeW4CE7R5qKzISlpYvDe5pSsZ+C2j2Z37dlRz+ltmhpX87A3Az8SalCHCGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352945; c=relaxed/simple;
-	bh=d58MPcCmO5/nfbGHA8dpyWynJTnUOiUfoKpngFofkNQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N5xqRmSMpAJyUYG8g7W2JXerouJCG+O238jmqcB3PYQBD+PMcbJJopnJCG1AqubDiFs36/2lXh0Lorx/pGx6t7EsXoNdR4kM2FZsjoG6vxXyQucxKiHJLUc7T+7EiH4Nwo0BNOk2s3alikx5QhUHA7NboIjGy4iJ6e6/pL45HjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-433154d39abso182246675ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:29:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762352943; x=1762957743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dX2RQNHe86RB5dnmPGjo5mNf73NYEp5cSo5zaYG0okM=;
-        b=DyTtRuK9UvfNdd5IMLic1i6gdBFKr1S160o5UEMWVYsPh6EMzN9gS1UcITkFnVFwjl
-         wt1m2VkAHQJufbk45/u2h9Wb7yomjHaAv4oyhnIxE0ucfvpy5vq/6wYsuGRf4Lqyc8Dq
-         gpd52/KBYNv0/phpDkJB+2aB+cXmLAYVZIW4II0IQ59JUbFIb8NGLWfdYTwvK2T+lX+T
-         cL4WtTIGfmokFa/Px6Vr+AzzVPYdyA/BYkE1QQesoIefhkCQj4RK6Wz7Sp4rh6qMQzud
-         bQ8Li27sEjxvw4Y5fBRB7GoM+jCoIaaGrqtOy0ffRKljQm8jWuDaEFx4ducVuf8H+oyP
-         NLEg==
-X-Gm-Message-State: AOJu0YyVU/7YI4TXP6RGKgPg0M3uLTfZmSiVBuvbm6rKwhaqay+caOBo
-	pc05dzdntURplwkWqgmMX5Ax/GTF8XJvd+XwelmS1ziZp3TKsuY5wKMATmlf9Ma9R89+5Gac3nt
-	4jDa/+6P7f2tXxyku4ewMueKbljKIjRjHYtwA4GzyWB4VXuH1408iouOWUUU=
-X-Google-Smtp-Source: AGHT+IF9Fz3+ZUIxRImgwljlIHSp5dob6QnTgGALAFEljsTs7c0cvhdCwRrTBI6mmIj1jjf3FyejwBOWiNBhRtgNFSrHkXJYO2Ok
+	s=arc-20240116; t=1762353241; c=relaxed/simple;
+	bh=KFCBX1MYnJq2fTO13szb1kI/C2Hc+wr41HxRFWuqHhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDsA4heoAfVI+HiauurCGdnak7V+EvbPr/wUBRhjt+0dxipTUFIaUextb76FCQUmTbuqnhqzh8qGAzg3T5RK9dV6KehLgdSnpESXOJEhnMR05HGJQMVk4oeMzraHlbzso5C5uoputU/OXY5gAY6jRQ1yj4wTBsMF8l0q9SNoEao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hiQjTgvU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762353239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ElYGIlkPKzTybpsHtstaGauKroEiTfyK75ipBsehUhk=;
+	b=hiQjTgvUcKKC/ubKDN4U5yCnqsqirhO0T905sdr2cskiSruNkolGSEoSU8wusboX2irCdT
+	0u+/f7zuqyvfB4JlZuvUE2Y/oS3aQA3O3UnDg2c7wQsn+stgtZwZFskeFz/snQN8SHuSgO
+	8itfpeMiXXinflyrmfI4Ax8SMlI+spo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-631-ONJ9TyxoOGyURfFJlmVhEg-1; Wed,
+ 05 Nov 2025 09:33:57 -0500
+X-MC-Unique: ONJ9TyxoOGyURfFJlmVhEg-1
+X-Mimecast-MFC-AGG-ID: ONJ9TyxoOGyURfFJlmVhEg_1762353232
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7691519560A1;
+	Wed,  5 Nov 2025 14:33:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.124])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5DEDA180049F;
+	Wed,  5 Nov 2025 14:33:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Nov 2025 15:32:31 +0100 (CET)
+Date: Wed, 5 Nov 2025 15:32:10 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <20251105143210.GA25535@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8e:b0:433:2882:dafe with SMTP id
- e9e14a558f8ab-433407a3d7dmr48883475ab.9.1762352943232; Wed, 05 Nov 2025
- 06:29:03 -0800 (PST)
-Date: Wed, 05 Nov 2025 06:29:03 -0800
-In-Reply-To: <CAHjv_as4YzF0mBcTt-RR6MauSzEnhFJrN8Z0hm-9yUeeVhaKzA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b5f2f.050a0220.baf87.002c.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry (2)
-From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zlatistiv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello,
+I am still thinking about another approach, will write another email.
+But let me take a closer look at your patch.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+First of all, can you split it? See below.
 
-Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+On 08/21, Bernd Edlinger wrote:
+>
+> -static int de_thread(struct task_struct *tsk)
+> +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
+>  {
+>  	struct signal_struct *sig = tsk->signal;
+>  	struct sighand_struct *oldsighand = tsk->sighand;
+>  	spinlock_t *lock = &oldsighand->siglock;
+> +	struct task_struct *t;
+> +	bool unsafe_execve_in_progress = false;
+>
+>  	if (thread_group_empty(tsk))
+>  		goto no_thread_group;
+> @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
+>  	if (!thread_group_leader(tsk))
+>  		sig->notify_count--;
+>
+> +	for_other_threads(tsk, t) {
+> +		if (unlikely(t->ptrace)
+> +		    && (t != tsk->group_leader || !t->exit_state))
+> +			unsafe_execve_in_progress = true;
 
-Tested on:
+you can add "break" into the "if ()" block...
 
-commit:         dcb6fa37 Linux 6.18-rc3
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=162a9bcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5eeb63aaf73b06da
-dashboard link: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133da17c580000
+But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
+If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
+unconditionally.
 
-Note: testing is done by a robot and is best-effort only.
+If you really think it makes sense, please make another patch with the
+changelog.
+
+I'd certainly prefer to avoid this boolean at least for the start. If nothing
+else to catch the potential problems earlier.
+
+> +	if (unlikely(unsafe_execve_in_progress)) {
+> +		spin_unlock_irq(lock);
+> +		sig->exec_bprm = bprm;
+> +		mutex_unlock(&sig->cred_guard_mutex);
+> +		spin_lock_irq(lock);
+
+I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+
+> @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	 */
+>  	trace_sched_prepare_exec(current, bprm);
+>
+> +	/* If the binary is not readable then enforce mm->dumpable=0 */
+> +	would_dump(bprm, bprm->file);
+> +	if (bprm->have_execfd)
+> +		would_dump(bprm, bprm->executable);
+> +
+> +	/*
+> +	 * Figure out dumpability. Note that this checking only of current
+> +	 * is wrong, but userspace depends on it. This should be testing
+> +	 * bprm->secureexec instead.
+> +	 */
+> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+> +	    is_dumpability_changed(current_cred(), bprm->cred) ||
+> +	    !(uid_eq(current_euid(), current_uid()) &&
+> +	      gid_eq(current_egid(), current_gid())))
+> +		set_dumpable(bprm->mm, suid_dumpable);
+> +	else
+> +		set_dumpable(bprm->mm, SUID_DUMP_USER);
+> +
+
+OK, we need to do this before de_thread() drops cred_guard_mutex.
+But imo this too should be done in a separate patch, the changelog should
+explain this change.
+
+> @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
+>  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+>  		return -ERESTARTNOINTR;
+>
+> +	if (unlikely(current->signal->exec_bprm)) {
+> +		mutex_unlock(&current->signal->cred_guard_mutex);
+> +		return -ERESTARTNOINTR;
+> +	}
+
+OK, if signal->exec_bprm != NULL, then current is already killed. But
+proc_pid_attr_write() and ptrace_traceme() do the same. So how about
+something like
+
+	int lock_current_cgm(void)
+	{
+		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+			return -ERESTARTNOINTR;
+
+		if (!current->signal->group_exec_task)
+			return 0;
+
+		WARN_ON(!fatal_signal_pending(current));
+		mutex_unlock(&current->signal->cred_guard_mutex);
+		return -ERESTARTNOINTR;
+	}
+
+?
+
+Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
+come in a separate patch too, but I won't insist.
+
+> @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
+>  				return retval;
+>  		}
+>
+> +		if (unlikely(task == task->signal->group_exec_task)) {
+> +			retval = down_write_killable(&task->signal->exec_update_lock);
+> +			if (retval)
+> +				return retval;
+> +
+> +			scoped_guard (task_lock, task) {
+> +				struct linux_binprm *bprm = task->signal->exec_bprm;
+> +				const struct cred __rcu *old_cred = task->real_cred;
+> +				struct mm_struct *old_mm = task->mm;
+> +
+> +				rcu_assign_pointer(task->real_cred, bprm->cred);
+> +				task->mm = bprm->mm;
+> +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+> +				rcu_assign_pointer(task->real_cred, old_cred);
+> +				task->mm = old_mm;
+> +			}
+
+This is the most problematic change which I can't review...
+
+Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
+looks dangerous to me.
+
+Say, current_is_single_threaded() called by another CLONE_VM process can
+miss group_exec_task and falsely return true. Probably not that bad, in
+this case old_mm should go away soon, but still...
+
+And I don't know if this can fool the users of task_cred_xxx/__task_cred
+somehow.
+
+Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
+ptrace the execing task after that? I have no idea what the security hooks
+can do...
+
+Again, can't review this part.
+
+Oleg.
+
 
