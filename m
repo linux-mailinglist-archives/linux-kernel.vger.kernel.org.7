@@ -1,92 +1,84 @@
-Return-Path: <linux-kernel+bounces-886907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CD0C36CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:51:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2887C36C80
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025E7646587
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:23:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F2585002D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C2320A00;
-	Wed,  5 Nov 2025 16:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D2533E37B;
+	Wed,  5 Nov 2025 16:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IX5UN3AF"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIS7pvJI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0153446A1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5053385A0;
+	Wed,  5 Nov 2025 16:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359586; cv=none; b=p5aode+H1V7dplOvCp6gaR0iC5KrrShenEAZdONI3Ad7lwIlSzF9/JSwVQvLYKGFgLBgHkSzy23T8m1zI2EO4e0ozo0/Flhwzd/CLyXrQ/s/cjfydGxIXNHpaAmdfqlrDCmO3S1HCSmT6pU6pieEiFh70fwY7tRA4U+bPiEjjUQ=
+	t=1762359544; cv=none; b=ZC5Vou4/8aptBxYH4NjbbXwfoHwp1MrKLzwYpy+exmj8wGaY51vC+nFB4ihmEAydX/0o76pBL1wMQ5nXXuKgQ6DuJs0n5jTDuCaACtRPe3loLDiHwsT/uoVo4uHaqEiOsuUpj+LVB3TmG5RDJyiCbAmiUmXcI/VMqMSqYhsVERU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359586; c=relaxed/simple;
-	bh=HQz5SnnVBBmIr9NFy4bOMWNIthX6lBxyXHlG+m12DvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lZ4ImP86SerBUASmILPu3UYKitwrWlqGcQuTVDQWMLo+aUP7JFoM5/7lF+6C431dTJfyUmD/nobfa9GmOHiQAfPYuQ4Gi2Tm8VKzHj5oBvBxC+5uvjau9w05qN/NukBbZUjqmP2KOfYpiGYjuQSDyBuk7/ha0TxxRad7MqY5/LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IX5UN3AF; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762359582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vQHE6vE7vCyQo0ohgxZYSqnQcVATDtIwkrBLkp2T8As=;
-	b=IX5UN3AFK+J0MfvH2INvbIQRjzd+2GO36Uk+V4M02bci6pMGL2PVOGAsjVdsLmV1zjqecH
-	HVv811YMR2iX7eCnYdlSXKWAr2olgQglhFPf3BLshvW8DumHWxVIGZPcHip2ygV3Zsjdb1
-	XLNfuxwozk4fEDXq/zNT99muMG19/jc=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Huisong Li <lihuisong@huawei.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] w1: therm: Use str_yes_no helper in w1_slave_show
-Date: Wed,  5 Nov 2025 17:18:56 +0100
-Message-ID: <20251105161900.43042-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762359544; c=relaxed/simple;
+	bh=NCcAa0pDfh+8ix09a1OPmKTAjDiOwhgcNW3yTAqYn9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5n0Ba6X0UYv+HrNBzZeQexvjTPXUIUG2frkMYE9fjztJaQxJxMMptzQgEaLhlow205XTjSWdpsH5D14i0LWIPMFP1idBD8mWeWoJerlAd/TJngpu9WlW7MzsTpmnV2xWHpAi8RqajXjxQ1UF6va6Z06+gd2z1xY0CDs5Kj40fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIS7pvJI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FA7C2BCB0;
+	Wed,  5 Nov 2025 16:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762359543;
+	bh=NCcAa0pDfh+8ix09a1OPmKTAjDiOwhgcNW3yTAqYn9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hIS7pvJIikT/daVfuiV6hOw8rowj5kF2jyQbPmqVAFcLSi/BrVw3VOFQj8kzc8LQZ
+	 BcEJjyvW51mn/gil4UEklR2UCI7uWz2xoeiwgAfIwwPnKAy/ClBPGF/Qx6MEs6DQnn
+	 fk5w3ty+2y3OhZ3BzMg0uhahAgno29sYHwIT0yJwUeNHjP1cxmUz2yweGOJmL5ARGE
+	 F8Y3XmHwKHl/HbDapWAEsr+p4YXenBiXqPsHNr/e5dBpT4m2GdekcoFdO+kTLUs0W9
+	 e6KlIWXhRo4IbK2XzltdkrC1u4ykAP4tvHNHE8h8yAxmCcbVZF/awAFDG6g6V61wyx
+	 vfvp1Co3/C2CQ==
+Date: Wed, 5 Nov 2025 06:19:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Calvin Owens <calvin@wbinvd.org>, linux-kernel@vger.kernel.org,
+	Dan Schatzberg <dschatzberg@meta.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, cgroups@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH cgroup/for-6.19 1/2] cgroup: Convert css_set_lock from
+ spinlock_t to raw_spinlock_t
+Message-ID: <aQt49uB4lEDPqVYE@slm.duckdns.org>
+References: <20251104181114.489391-1-calvin@wbinvd.org>
+ <d03d2a6e0d0a09e9da6a54370f253c00@kernel.org>
+ <20251105073009.xNtOAM_u@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105073009.xNtOAM_u@linutronix.de>
 
-Replace hard-coded strings with the str_yes_no() helper function. This
-unifies the output and helps the linker with deduplication, which can
-result in a smaller binary.
+On Wed, Nov 05, 2025 at 08:30:09AM +0100, Sebastian Andrzej Siewior wrote:
+> This one has a kfree(link) and kfree takes spinlock_t so not working.
+...
+> 
+> I am also a bit worried about all these list iterations which happen
+> under the lock. There is no upper limit meaning the list can grow with
+> limits affecting the time the lock is held.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/w1/slaves/w1_therm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Good points. Let me think of something else.
 
-diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
-index 9ccedb3264fb..0b54ab7f237e 100644
---- a/drivers/w1/slaves/w1_therm.c
-+++ b/drivers/w1/slaves/w1_therm.c
-@@ -17,6 +17,7 @@
- #include <linux/delay.h>
- #include <linux/hwmon.h>
- #include <linux/string.h>
-+#include <linux/string_choices.h>
- #include <linux/jiffies.h>
- 
- #include <linux/w1.h>
-@@ -1609,7 +1610,7 @@ static ssize_t w1_slave_show(struct device *device,
- 	for (i = 0; i < 9; ++i)
- 		c -= snprintf(buf + PAGE_SIZE - c, c, "%02x ", info.rom[i]);
- 	c -= snprintf(buf + PAGE_SIZE - c, c, ": crc=%02x %s\n",
--		      info.crc, (info.verdict) ? "YES" : "NO");
-+		      info.crc, str_yes_no(info.verdict));
- 
- 	if (info.verdict)
- 		memcpy(family_data, info.rom, sizeof(info.rom));
+Thanks.
+
 -- 
-2.51.1
-
+tejun
 
