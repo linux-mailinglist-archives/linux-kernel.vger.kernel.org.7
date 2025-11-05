@@ -1,105 +1,333 @@
-Return-Path: <linux-kernel+bounces-886725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09D5C364EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:24:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA83DC365B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3817834F00E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F9C1A27425
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4251233710C;
-	Wed,  5 Nov 2025 15:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969FB33891F;
+	Wed,  5 Nov 2025 15:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="nyG6B6bi"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlA6UEYi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B73A331A78;
-	Wed,  5 Nov 2025 15:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CAD3314BC;
+	Wed,  5 Nov 2025 15:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355856; cv=none; b=V00CSUkQr0H4twbtiH1nVYKN/kWzB49gMpl+zYV6Mq6ENp2kJt7KWt8ucczIBM99oPs7kZ80Szew611lhrue4o7IvOyxgP5yOwyV269PCbjl4qAG52dTw7D6g29ba+Jb9fMYFBUdahSiY2UinAqKgfdMrkFtEkU5CHb/Rxq8SnU=
+	t=1762355888; cv=none; b=AIjKl4n+mBzgQxQviyu6ty4Wm1WTOMTYMbrEhPNb7PTRMln8BaN8Puhz0ReO2Uvw0Tzg67ylTGshm8JFzkkRtW0HXYN0xuA6C92F0hGBcKqPBsSVbtG2L8e77edcHBZsLKuPoRB9rQcH8BhfvyFiWsLqCROf9bfv1RJgNrMdRfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355856; c=relaxed/simple;
-	bh=K5iaoQEKz/o4zms9Kr7FKaUEi9heCgc1KWqtMtMA/lE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LA2xwI3CxIDKYXo5cTPwsTq9N+JDgUfnp/XPTf48srQn+6t7npyd40rVvBBEIEAzvs7jQjxSdvmQ4iPp5d7pabw//cK/sSxIT2hu3NRlYkA0E/ah8pmVPW4s0btwDksMmh1PLIIChvonrQt64Pjd8qjwnk2NkglQTWycjtmh+cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=nyG6B6bi; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=k36qJsWOKynkgtj8i9oEs1iXLy+s8j18nvPV2TKncW8=;
-	t=1762355855; x=1763565455; b=nyG6B6bix3QamAuX7aSq+ZTyJqNsgVXgV4Y04i0pdnG2iD2
-	mdoK0XbvfsJMHGiKU7TEqG3CV8lePWhYmNaZfjAV8KC6fkaj8uKWS8YEcC6w51bKLu0p7XLATmZIB
-	UFl/+e0gnhpMFl2pvU1IRpNqdxQTjRPVDCyu2vpPGPraE8Pdkg+HfAcbUwqr1atTOgfo35icx7D4A
-	TjO/Kf2SbZIbAHqcKUb9YI3myp5w0xU/pOHhTO6C/99mIA/NEbRQVgtk15iThJX8xP4VhnLeaY5vp
-	tSqGHgNp0lOWNNs8ak8CuaKM7jZeYUOLFaG8t+DtfzWFUW2q3Wxiu4dST3BHwYRg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vGfGO-0000000FI1u-1z1l;
-	Wed, 05 Nov 2025 16:17:33 +0100
-Message-ID: <546543a04e7e06a822bb0dccc10227e614a59cb6.camel@sipsolutions.net>
-Subject: Re: [PATCH] net: wireless: util: Fix uninitialized header access in
- cfg80211_classify8021d
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Ranganath V N <vnranganath.20@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 05 Nov 2025 16:17:31 +0100
-In-Reply-To: <20251103-fifth-v1-1-4a221737ddfe@gmail.com>
-References: <20251103-fifth-v1-1-4a221737ddfe@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762355888; c=relaxed/simple;
+	bh=KrTmSd/KLHnmJp6uY5VjqlnOzYc3oRuRzLcvqn1keFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVQBnXI3+h2Ylt+7KrwPuN7LWEL125Ix4zWjX/ZOzTxa5NoGYzkEuNemfvMeK8BVbaax4J4tK/F9RW8j/dV03uAC9E456mzB12grK2nFkv4dDaGZELrF90F2JkVCL0BUZRPZI2djs6hIay6xxkKPmQsJ9o79a/mst+5/ZyYVFvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlA6UEYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B230C4CEF5;
+	Wed,  5 Nov 2025 15:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762355888;
+	bh=KrTmSd/KLHnmJp6uY5VjqlnOzYc3oRuRzLcvqn1keFo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VlA6UEYiwYN0luQ/4V7V5KntlUFeIZMU+NmpkL7d+M3N2iUQ1IOTeflqlF+lIm90q
+	 HiYedRgVi60NobljBr8hiMWKlKYaC0H2qpqcbgA62caHhlCZRV0lAw+K6rG/pGXCdM
+	 v2fUWpgA1cuUl7tJFOCWW5vd5SlcBeqwuZxogThAgO6JWjnfivWSGwf1FZmVbvLp51
+	 DXvXopX+g369NCQ/HianrAkrAREQeoj/7Y3X5e7jN/22+bQDoRUOUhUSyljHri7cDD
+	 BYyWmWicrYUBAv0SObOJUefhS668cWVoSkzNKG1fBJO8d3jvGpTEthtLNQuTTZy+9f
+	 X1oSJavknulag==
+Date: Wed, 5 Nov 2025 16:18:05 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Waiman Long <llong@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+	cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 12/33] sched/isolation: Convert housekeeping cpumasks to
+ rcu pointers
+Message-ID: <aQtqrYlvMsjX91Vn@localhost.localdomain>
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-13-frederic@kernel.org>
+ <bb9a75dc-8c34-41da-b064-e31bf5fe6cb2@huaweicloud.com>
+ <510b0185-51d6-44e6-8c39-dfc4c1721e03@redhat.com>
+ <aQThLsnmqu8Lor6c@localhost.localdomain>
+ <14cd347c-42c9-4134-9c1c-1a222b553c2f@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14cd347c-42c9-4134-9c1c-1a222b553c2f@huaweicloud.com>
 
-On Mon, 2025-11-03 at 00:02 +0530, Ranganath V N wrote:
-> Fix an issue detected by  syzbot with KMSAN
-> BUG: KMSAN: uninit-value in cfg80211_classify8021d+0x99d/0x12b0
-> net/wireless/util.c:1027
->=20
-> The function accessed DSCP fields from IP and IPv6 headers without first
-> verifying that sufficient header data was present in the skb. When a
-> packet reaches this path, the header dereference could access
-> uninitialized memory, as reported by KMSAN under fuzzing with syzkaller.
->=20
-> Add explicit pskb_may_pull() checks for both IPv4 and IPv6 headers to
-> ensure that the required header data is available before extracting the
-> DSCP field. This prevents uninitialized memory reads while preserving
-> existing behavior for valid packets
->=20
-> This fix has been tested and validated by syzbot. This patch closes the
-> bug reported at the following syzkaller link.Fixes the uninitialized
-> header access.
->=20
-> Reported-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com./bug?extid=3D878ddc3962f792e9af59
-> Tested-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
-> Fixes: b156579b1404 ("Treat IPv6 diffserv the same as IPv4 for 802.11e")
+Le Mon, Nov 03, 2025 at 10:22:47AM +0800, Chen Ridong a écrit :
+> 
+> 
+> On 2025/11/1 0:17, Frederic Weisbecker wrote:
+> > Le Tue, Oct 21, 2025 at 12:03:05AM -0400, Waiman Long a écrit :
+> >> On 10/20/25 9:46 PM, Chen Ridong wrote:
+> >>>
+> >>> On 2025/10/14 4:31, Frederic Weisbecker wrote:
+> >>>> HK_TYPE_DOMAIN's cpumask will soon be made modifyable by cpuset.
+> >>>> A synchronization mechanism is then needed to synchronize the updates
+> >>>> with the housekeeping cpumask readers.
+> >>>>
+> >>>> Turn the housekeeping cpumasks into RCU pointers. Once a housekeeping
+> >>>> cpumask will be modified, the update side will wait for an RCU grace
+> >>>> period and propagate the change to interested subsystem when deemed
+> >>>> necessary.
+> >>>>
+> >>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> >>>> ---
+> >>>>   kernel/sched/isolation.c | 58 +++++++++++++++++++++++++---------------
+> >>>>   kernel/sched/sched.h     |  1 +
+> >>>>   2 files changed, 37 insertions(+), 22 deletions(-)
+> >>>>
+> >>>> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> >>>> index 8690fb705089..b46c20b5437f 100644
+> >>>> --- a/kernel/sched/isolation.c
+> >>>> +++ b/kernel/sched/isolation.c
+> >>>> @@ -21,7 +21,7 @@ DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
+> >>>>   EXPORT_SYMBOL_GPL(housekeeping_overridden);
+> >>>>   struct housekeeping {
+> >>>> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
+> >>>> +	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
+> >>>>   	unsigned long flags;
+> >>>>   };
+> >>>> @@ -33,17 +33,28 @@ bool housekeeping_enabled(enum hk_type type)
+> >>>>   }
+> >>>>   EXPORT_SYMBOL_GPL(housekeeping_enabled);
+> >>>> +const struct cpumask *housekeeping_cpumask(enum hk_type type)
+> >>>> +{
+> >>>> +	if (static_branch_unlikely(&housekeeping_overridden)) {
+> >>>> +		if (housekeeping.flags & BIT(type)) {
+> >>>> +			return rcu_dereference_check(housekeeping.cpumasks[type], 1);
+> >>>> +		}
+> >>>> +	}
+> >>>> +	return cpu_possible_mask;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+> >>>> +
+> >>>>   int housekeeping_any_cpu(enum hk_type type)
+> >>>>   {
+> >>>>   	int cpu;
+> >>>>   	if (static_branch_unlikely(&housekeeping_overridden)) {
+> >>>>   		if (housekeeping.flags & BIT(type)) {
+> >>>> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
+> >>>> +			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
+> >>>>   			if (cpu < nr_cpu_ids)
+> >>>>   				return cpu;
+> >>>> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
+> >>>> +			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
+> >>>>   			if (likely(cpu < nr_cpu_ids))
+> >>>>   				return cpu;
+> >>>>   			/*
+> >>>> @@ -59,28 +70,18 @@ int housekeeping_any_cpu(enum hk_type type)
+> >>>>   }
+> >>>>   EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+> >>>> -const struct cpumask *housekeeping_cpumask(enum hk_type type)
+> >>>> -{
+> >>>> -	if (static_branch_unlikely(&housekeeping_overridden))
+> >>>> -		if (housekeeping.flags & BIT(type))
+> >>>> -			return housekeeping.cpumasks[type];
+> >>>> -	return cpu_possible_mask;
+> >>>> -}
+> >>>> -EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+> >>>> -
+> >>>>   void housekeeping_affine(struct task_struct *t, enum hk_type type)
+> >>>>   {
+> >>>>   	if (static_branch_unlikely(&housekeeping_overridden))
+> >>>>   		if (housekeeping.flags & BIT(type))
+> >>>> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
+> >>>> +			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
+> >>>>   }
+> >>>>   EXPORT_SYMBOL_GPL(housekeeping_affine);
+> >>>>   bool housekeeping_test_cpu(int cpu, enum hk_type type)
+> >>>>   {
+> >>>> -	if (static_branch_unlikely(&housekeeping_overridden))
+> >>>> -		if (housekeeping.flags & BIT(type))
+> >>>> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
+> >>>> +	if (housekeeping.flags & BIT(type))
+> >>>> +		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
+> >>>>   	return true;
+> >>>>   }
+> >>>>   EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
+> >>>> @@ -96,20 +97,33 @@ void __init housekeeping_init(void)
+> >>>>   	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
+> >>>>   		sched_tick_offload_init();
+> >>>> -
+> >>>> +	/*
+> >>>> +	 * Realloc with a proper allocator so that any cpumask update
+> >>>> +	 * can indifferently free the old version with kfree().
+> >>>> +	 */
+> >>>>   	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
+> >>>> +		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
+> >>>> +
+> >>>> +		if (WARN_ON_ONCE(!nmask))
+> >>>> +			return;
+> >>>> +
+> >>>> +		omask = rcu_dereference(housekeeping.cpumasks[type]);
+> >>>> +
+> >>>>   		/* We need at least one CPU to handle housekeeping work */
+> >>>> -		WARN_ON_ONCE(cpumask_empty(housekeeping.cpumasks[type]));
+> >>>> +		WARN_ON_ONCE(cpumask_empty(omask));
+> >>>> +		cpumask_copy(nmask, omask);
+> >>>> +		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
+> >>>> +		memblock_free(omask, cpumask_size());
+> >>>>   	}
+> >>>>   }
+> >>>>   static void __init housekeeping_setup_type(enum hk_type type,
+> >>>>   					   cpumask_var_t housekeeping_staging)
+> >>>>   {
+> >>>> +	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
+> >>>> -	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
+> >>>> -	cpumask_copy(housekeeping.cpumasks[type],
+> >>>> -		     housekeeping_staging);
+> >>>> +	cpumask_copy(mask, housekeeping_staging);
+> >>>> +	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
+> >>>>   }
+> >>>>   static int __init housekeeping_setup(char *str, unsigned long flags)
+> >>>> @@ -162,7 +176,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
+> >>>>   		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
+> >>>>   			if (!cpumask_equal(housekeeping_staging,
+> >>>> -					   housekeeping.cpumasks[type])) {
+> >>>> +					   housekeeping_cpumask(type))) {
+> >>>>   				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
+> >>>>   				goto free_housekeeping_staging;
+> >>>>   			}
+> >>>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> >>>> index 1f5d07067f60..0c0ef8999fd6 100644
+> >>>> --- a/kernel/sched/sched.h
+> >>>> +++ b/kernel/sched/sched.h
+> >>>> @@ -42,6 +42,7 @@
+> >>>>   #include <linux/ktime_api.h>
+> >>>>   #include <linux/lockdep_api.h>
+> >>>>   #include <linux/lockdep.h>
+> >>>> +#include <linux/memblock.h>
+> >>>>   #include <linux/minmax.h>
+> >>>>   #include <linux/mm.h>
+> >>>>   #include <linux/module.h>
+> >>> A warning was detected:
+> >>>
+> >>> =============================
+> >>> WARNING: suspicious RCU usage
+> >>> 6.17.0-next-20251009-00033-g4444da88969b #808 Not tainted
+> >>> -----------------------------
+> >>> kernel/sched/isolation.c:60 suspicious rcu_dereference_check() usage!
+> >>>
+> >>> other info that might help us debug this:
+> >>>
+> >>>
+> >>> rcu_scheduler_active = 2, debug_locks = 1
+> >>> 1 lock held by swapper/0/1:
+> >>>   #0: ffff888100600ce0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: walk_compone
+> >>>
+> >>> stack backtrace:
+> >>> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-next-20251009-00033-g4
+> >>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239
+> >>> Call Trace:
+> >>>   <TASK>
+> >>>   dump_stack_lvl+0x68/0xa0
+> >>>   lockdep_rcu_suspicious+0x148/0x1b0
+> >>>   housekeeping_cpumask+0xaa/0xb0
+> >>>   housekeeping_test_cpu+0x25/0x40
+> >>>   find_get_block_common+0x41/0x3e0
+> >>>   bdev_getblk+0x28/0xa0
+> >>>   ext4_getblk+0xba/0x2d0
+> >>>   ext4_bread_batch+0x56/0x170
+> >>>   __ext4_find_entry+0x17c/0x410
+> >>>   ? lock_release+0xc6/0x290
+> >>>   ext4_lookup+0x7a/0x1d0
+> >>>   __lookup_slow+0xf9/0x1b0
+> >>>   walk_component+0xe0/0x150
+> >>>   link_path_walk+0x201/0x3e0
+> >>>   path_openat+0xb1/0xb30
+> >>>   ? stack_depot_save_flags+0x41e/0xa00
+> >>>   do_filp_open+0xbc/0x170
+> >>>   ? _raw_spin_unlock_irqrestore+0x2c/0x50
+> >>>   ? __create_object+0x59/0x80
+> >>>   ? trace_kmem_cache_alloc+0x1d/0xa0
+> >>>   ? vprintk_emit+0x2b2/0x360
+> >>>   do_open_execat+0x56/0x100
+> >>>   alloc_bprm+0x1a/0x200
+> >>>   ? __pfx_kernel_init+0x10/0x10
+> >>>   kernel_execve+0x4b/0x160
+> >>>   kernel_init+0xe5/0x1c0
+> >>>   ret_from_fork+0x185/0x1d0
+> >>>   ? __pfx_kernel_init+0x10/0x10
+> >>>   ret_from_fork_asm+0x1a/0x30
+> >>>   </TASK>
+> >>> random: crng init done
+> >>>
+> >> It is because bh_lru_install() of fs/buffer.c calls cpu_is_isolated()
+> >> without holding a rcu_read_lock. Will need to add a rcu_read_lock() there.
+> > 
+> > But this is called within bh_lru_lock() which should have either disabled
+> > IRQs or preemption off. I would expect rcu_dereference_check() to automatically
+> > verify those implied RCU read-side critical sections.
+> > 
+> > Let's see, lockdep_assert_in_rcu_reader() checks preemptible(), which is:
+> > 
+> > #define preemptible()	(preempt_count() == 0 && !irqs_disabled())
+> > 
+> > Ah but if !CONFIG_PREEMPT_COUNT:
+> > 
+> > #define preemptible()	0
+> > 
+> > Chen did you have !CONFIG_PREEMPT_COUNT ?
+> > 
+> > Probably lockdep_assert_in_rcu_reader() should be fixed accordingly and consider
+> > preemption always disabled whenever !CONFIG_PREEMPT_COUNT. Let me check that...
+> > 
+> > Thanks.
+> > 
+> 
+> I compiled with CONFIG_PREEMPT_COUNT=y and CONFIG_SMP=y.
 
-Commit: 6132cdec43a5 ("net: wireless: util: Fix uninitialized header
-access in cfg80211_classify8021d")
-	Fixes tag: Fixes: b156579b1404 ("Treat IPv6 diffserv the same as IPv4 for =
-802.11e")
-	Has these problem(s):
-		- Subject does not match target commit subject
-		  Just use
-			git log -1 --format=3D'Fixes: %h ("%s")'
+Oh actually I think it's my fault. This should be fixed with this:
 
-
-Subject also needs to be adjusted.
-
-johannes
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index 95d69c2102f6..b2cb75513336 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -56,8 +56,8 @@ static bool housekeeping_dereference_check(enum hk_type type)
+ 
+ static inline struct cpumask *housekeeping_cpumask_dereference(enum hk_type type)
+ {
+-	return rcu_dereference_check(housekeeping.cpumasks[type],
+-				     housekeeping_dereference_check(type));
++	return rcu_dereference_all_check(housekeeping.cpumasks[type],
++					 housekeeping_dereference_check(type));
+ }
+ 
+ const struct cpumask *housekeeping_cpumask(enum hk_type type)
 
