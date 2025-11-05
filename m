@@ -1,185 +1,193 @@
-Return-Path: <linux-kernel+bounces-886355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA336C35549
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:21:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C603C3550F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0F05652D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:17:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34D224F5900
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDBE30FC2F;
-	Wed,  5 Nov 2025 11:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C282F30FC2E;
+	Wed,  5 Nov 2025 11:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X+ePOXKd";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qq/LViCL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzuYDp1w"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AF030F947
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F2530F929
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341451; cv=none; b=MlbkWqIK1rJnF5ueREZ8WVBAAahdBDTcr3w9ZFFZAqY62ZmA2uNKS1OyqvkbPQ93JikCoEqUw4vAgL6GQnJjIV8+aP8Tg2CqGwsof+wGlwvW/9RnyVbQGFXQGhFBBO/zX7Fxv8/jXE6P5CZEE97pXdKKjxBTbvFnbpRGxZg6D/8=
+	t=1762341460; cv=none; b=q/Po0zOubv727JnUTM18+0pyFx9qZfyCR+G77y558wG6b2GU4Tf8JPlHe6WT4AnxpeMSD0iLxS2AXmeXqu+TYFdBr/k1CxUh1+JPfvbEKQZvuR9WoaAz1ePC1MKMY3oL/SOYZQHU0A3mi/fuFHnqRdB2yjL5XBY2gECPkJHsqUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341451; c=relaxed/simple;
-	bh=EIruf+q68s7Apk3JnbRaT8nDbQ4uqSCgVg4dKHFgp3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5gHMohLzLbbyFHGFrNS7ityNv5Oeg3RAP/b38myiZz19/2nxEN0cm7wxbRbJwp7RW3XfqtqPJX85NnxfE6PtmDZAXRTmHMEG1ZpgnaMCb4v3NDBtS4hRJpkkgPsxFHvfQpknKUNeYix2zPbQJ8efBpCZqJucvdjBdGm/3sDKy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X+ePOXKd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qq/LViCL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762341448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oJvv5ndjic3rP/0jjQlvKlNTvtUhgk3xpudTBbq2U1A=;
-	b=X+ePOXKdmLtsFp7/FVpYIz9iNXKZip1juRKWC8gbR9KQLOtHpVO/0hPULbzlvKznsYow+O
-	VeWcBQT9ji7rtIVDlYjvJYSqEvGr1deICfCw/kCDNEnIqUNY56uqK+bEP8DnUrhrGzGG8M
-	QVBRSwCquFDJdf51q2ylpGt2RcOKrO8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-yGYMLlTcMrmgdMiWS6lxeA-1; Wed, 05 Nov 2025 06:17:25 -0500
-X-MC-Unique: yGYMLlTcMrmgdMiWS6lxeA-1
-X-Mimecast-MFC-AGG-ID: yGYMLlTcMrmgdMiWS6lxeA_1762341444
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4775d8428e8so5111465e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:17:25 -0800 (PST)
+	s=arc-20240116; t=1762341460; c=relaxed/simple;
+	bh=K0CJ52aXaW30yOkXOm79Sjwlq8KF0ufVGkRrUk+tqGg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z2OigFmsf00CoGrhZ58rFNhXLT2nSi4FlJ1yIegJmafImitVLePVPdCki6X2KEzX2Z6lKHhcZJZyk4zFEIfVswaf4a79dYTOv2dzEVJRHTRm75/1UrNHSHa2DJOSfnX5QhqcXsixI8o+PPcPXDne3khUx6axPaotVhUe4cEtG9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzuYDp1w; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a9e8a15502so3231707b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:17:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762341444; x=1762946244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJvv5ndjic3rP/0jjQlvKlNTvtUhgk3xpudTBbq2U1A=;
-        b=Qq/LViCLXgEpV6/U0lNiB38+T1C0AH91AyA+6diE5t0rLt+LO5uloDj5+joYGYvCy0
-         pS7hjMtsA4IJXAJ9BGY6OY1D+W/odH2TJaI8nNAXxLylTw1U+y+s553GwVDh+66nKQeG
-         vvys8xUwzdPN8/nLD/7bB14GTa78MPz1hVqFfYidHa5GsYl+g6nKnGcPl/PFdabm7qUL
-         W2EwGtBYZDAytDCGDmf1aOsr4BgehqrpselKyYp0HGWLp9Yn4M9tIaQ2ce5NMrjEI+Wq
-         V7KcLqhmbiV29oGc3AFtRqBLkzPy9iSNH/0H+EqE25FwJU4QWa537G3PrhDE7VwmXGZ5
-         rVsQ==
+        d=gmail.com; s=20230601; t=1762341458; x=1762946258; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4cPUaZ1vu8lY7gSxHHPShFsBPH7l58KtQzSSmUne/Kw=;
+        b=bzuYDp1wLcOMG/+Fp/vDm9KoQFVQF02SVnzTyQhTWQHwQNe0gFA820lpG0f2yyGR0g
+         TvPCe/c7lhI0pbEaHmo6KN9IAwfP1hDzVyQMPlRXoyrIbgbuBzdYclUDFpLlDAXeNiJ/
+         p+XqQug9HUR7PalQZA26chhYQ0dcvx6esENuXAZgQBbBFqIWqEm4y/91MjPhCLBfRuhR
+         UAn75qQHFQZhFBUOZD37cltocNbFxpjkPMuol/tBV/11SYG/NTtCI/l6AtepRYV28Y5L
+         Rk3kRqPXkZONiVLGvh8l9K7FEWRedzcpf2M1aa/dGObgzzYP5BS13qOqGV4wnx8hmfd8
+         MFFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762341444; x=1762946244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJvv5ndjic3rP/0jjQlvKlNTvtUhgk3xpudTBbq2U1A=;
-        b=oLC6DEIMihk/h3IjkYpRZZ2wvqZQfDqesXX7gyUF9nRvUNKh9Y0XDSo2cei1S6kB1m
-         ikjXxEPc36pvn5uKCdiODNtUm8EXnv6GlPU/gMlL3p8BEW+lRG+LysxMFviro5ckhTCE
-         ciA6TpT1DO/vOPB+cjGXmLQ8GUo4MvOhBsvd7Y8+cOiMZwWvVJHjSoF57EcPvuaLZR9o
-         5I1x/sWHcEbXOqqaY6Wd/BgnZ+r8YNRFDyQD+MR61u4+JDji6VWB8A3Sz7HnibcNQUYY
-         D1NXFKDex4ZhzKhhMHcfuyh8XvsCgiAVBQvPxlafUW9amk4vYdjHcq+QuiSUPKlHWeqI
-         vYVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4De1GUQXJ0LuiXo84cxw+HYIjSf7PZTXR6r832W0cZj95kSYRJxuB55mxHgXpIklQhDWe93MNaCbueRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw22m6+1k1Uw1q5UNX5pxqZnDMkp/fag+cCPJCOHG8Rqg2GuIS6
-	1wsRtbduax900hJrP/XsgyM6keL70v5WeX+JcPERYAnvXlUY2o36GIU7z5jtS8WzfrmpbQBJPpc
-	XVaTZZkwG0CanfZxqTFnOspFH4KmQ6QN9VrP6vj9M6lCCJ2YUpEatbMQKLrl8X6l5EA==
-X-Gm-Gg: ASbGncuxD/MrX51SLX1aniwrDect5MwCQGFgWjpNRS3tsCndoEu50Lx2G1j9dJ9ixeO
-	1f+Wgw6ehrkAHOpoErQrlsDbsz8aoa2znLaToG/u1s/NRcUoqX+UMtgg6UYieOVW5x5jQ7L6T3P
-	ONlWITcward2D7PgylbNqTOykvW4lt4TxucACHQezMbkUGERaNV+QH55XUCOUVd6t1EZOrjBI52
-	mZIt9XMcsuzLE30aXXcLZD/SzJsc0Ls6mQXfEOz8aUECK04IJU7MA4R+xhLjwWU0YiL15ohIG8n
-	m8xZ4v9ahx746nmNyNkbMhxV0ZvFV5OUjoA4n3EXcU+DIoJ9gZA87JPSIYEnAkJIAXKDqrMahZz
-	F2ocR
-X-Received: by 2002:a05:600c:1c18:b0:471:1702:f41c with SMTP id 5b1f17b1804b1-4775ce26b5bmr35419295e9.35.1762341444075;
-        Wed, 05 Nov 2025 03:17:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNzHvCUGAag3+wrnkfdKLHqAtmgiZqn0Kpfqlpb4QSMfUNSwUxHezyd0VrzCOLaf/mXC1/LA==
-X-Received: by 2002:a05:600c:1c18:b0:471:1702:f41c with SMTP id 5b1f17b1804b1-4775ce26b5bmr35418935e9.35.1762341443637;
-        Wed, 05 Nov 2025 03:17:23 -0800 (PST)
-Received: from sgarzare-redhat ([78.211.197.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755942772sm42323005e9.5.2025.11.05.03.17.22
+        d=1e100.net; s=20230601; t=1762341458; x=1762946258;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4cPUaZ1vu8lY7gSxHHPShFsBPH7l58KtQzSSmUne/Kw=;
+        b=BHADdWtyC0piVScAkZYiZDwTpIhFL2SMywX8sGHj0cwBQwhvF4tEt6vuxeM6Yc7fBo
+         s1Uli1u40hNiNIwEWQicytt2/tRzLA79chxnWAeoal11PiHvRLAFxHaVVHsL1mhL4Til
+         E+hIQv6rZpE1Mhd/v+Cf9E0R9nvDTMioXwlKAUQ9E4mgPZXzV+oda/EqF30va6yiNCMR
+         l3Vxu8Iy3C064Ur6BzHYGrrXx3z3QSHzcmxWn2QKQDIBKysjAkHRKkOQ1gF5V+6OFQGu
+         pR5aiA8AltHVPWZsp1LXxb8AO4Txs7//vfZF0zC2ycqtZu8rqZHsRR31u2x+ILiaOQpq
+         Fphw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQZ4CpDk4ZuKdlAQBhrHEIGNerBVCbWQInwDE/RbzDgxLP8a1lCj+pQ6ZV1PQHYB+BG4nKZMfdE0fEIPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv9Z+6PAut3jkwFZMldiVfb08Qn/cwWXRD0mjQr5wDuRh1UD0T
+	/Rev7oIMsA/qNH6nj3yyoM7DUbs+47ToDVuT1OoqLSgKK6SB0WKFXZxP
+X-Gm-Gg: ASbGncvOUDzr68SUyNCuk9P70sjHcsCZ66T0elYCkCoTy9DX2BAaYp5N/nGc3iZ3LM8
+	qoPHoY4V0RM/bWhu/bZt/XkVAzu1si+cBWzQc7lcHJ6MdjGK40yGgRS+gX+JxRb1QPyXOtXbAsF
+	Zt4jhlMDMjQ8Fya7FsyHKXBsln4Br/6Quq8kEckp2CuAtjr0lqUGeztcG3BPFuSYSCpw7iOBrdf
+	mVIjbC0lik09Rn0VQHqBK27I6mGi8/b4oYKuZftGlBizHm/U5PpSWOlqWT7382o6TXKLN+0IyMa
+	/ZEwdtTFLXlFXbM4c20jtHS2t8tsESlLpC+4EceXcpnAoa7aIKEBHlXC704mzNuWx7lmfmdfbh/
+	VeLIG34ktGAxsKEMvcnvYeoo87eed0x3Yk8hdMndW0ALIr5NUTr2QYrzOmKendht8cu89zk0967
+	Dd
+X-Google-Smtp-Source: AGHT+IFZaWbZGtAjGdCfp4O+yDRRSOyspGYsQrG3GxUOnvH5XrXZUNFKqmpRaeacRw4JF67zTIEhLQ==
+X-Received: by 2002:a05:6a20:3d96:b0:34e:e0ba:7bf with SMTP id adf61e73a8af0-34f839e0a8cmr3972462637.1.1762341457709;
+        Wed, 05 Nov 2025 03:17:37 -0800 (PST)
+Received: from aheev.home ([2401:4900:88f4:f6c4:54cc:cfa8:7cce:97b5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd586cec1sm5914971b3a.38.2025.11.05.03.17.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 03:17:22 -0800 (PST)
-Date: Wed, 5 Nov 2025 12:16:42 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bobby Eshleman <bobbyeshleman@meta.com>, 
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net] selftests/vsock: avoid false-positives when checking
- dmesg
-Message-ID: <oqglacowaadnhai4ts4pn4khaumxyoedqb5pieiwsvkqtk7cpr@ltjbthajbxyq>
-References: <20251104-vsock-vmtest-dmesg-fix-v1-1-80c8db3f5dfe@meta.com>
+        Wed, 05 Nov 2025 03:17:37 -0800 (PST)
+From: Ally Heev <allyheev@gmail.com>
+Date: Wed, 05 Nov 2025 16:47:21 +0530
+Subject: [PATCH] net: ethernet: fix uninitialized pointers with free attr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251104-vsock-vmtest-dmesg-fix-v1-1-80c8db3f5dfe@meta.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-aheev-uninitialized-free-attr-net-ethernet-v1-1-f6ea84bbd750@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEAyC2kC/x2NwQrCMBAFf6Xs2YWktRb8FfGQmhezIKts0iKW/
+ rvR28xlZqMCExQ6dxsZViny1Cb+0NEtB72DJTan3vWj927kkIGVFxWVKuEhH0ROBnCo1VhRGTX
+ DfjBF7044hnlIE7Xgy5Dk/Z9drvv+BeWgZBJ8AAAA
+X-Change-ID: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ "K. Y. Srinivasan" <kys@microsoft.com>, 
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+ Dexuan Cui <decui@microsoft.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+ Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3554; i=allyheev@gmail.com;
+ h=from:subject:message-id; bh=K0CJ52aXaW30yOkXOm79Sjwlq8KF0ufVGkRrUk+tqGg=;
+ b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDK5jbzeLrarrTJbv8jhoV1Uz+lgBfPeJ9Lhc15/n1e81
+ zz/wcWWjhIWBjEuBlkxRRZGUSk/vU1SE+IOJ32DmcPKBDKEgYtTACayso7hf5rCe93pl8x+tb/O
+ miN6XWDtImevtV8Ef7QoJU5fuvajwGmGrxJvLt9rqLFNFHtgXvzgCk/7goaFaTxWh7LW7v37+gc
+ HHwA=
+X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
+ fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
 
-On Tue, Nov 04, 2025 at 01:50:50PM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Sometimes VMs will have some intermittent dmesg warnings that are
->unrelated to vsock. Change the dmesg parsing to filter on strings
->containing 'vsock' to avoid false positive failures that are unrelated
->to vsock. The downside is that it is possible for some vsock related
->warnings to not contain the substring 'vsock', so those will be missed.
->
->Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
->Reviewed-by: Simon Horman <horms@kernel.org>
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Previously was part of the series:
->https://lore.kernel.org/all/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com/
->---
-> tools/testing/selftests/vsock/vmtest.sh | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index edacebfc1632..e1732f236d14 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -389,9 +389,9 @@ run_test() {
-> 	local rc
->
-> 	host_oops_cnt_before=$(dmesg | grep -c -i 'Oops')
->-	host_warn_cnt_before=$(dmesg --level=warn | wc -l)
->+	host_warn_cnt_before=$(dmesg --level=warn | grep -c -i 'vsock')
-> 	vm_oops_cnt_before=$(vm_ssh -- dmesg | grep -c -i 'Oops')
->-	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | wc -l)
->+	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | grep -c -i 'vsock')
->
-> 	name=$(echo "${1}" | awk '{ print $1 }')
-> 	eval test_"${name}"
->@@ -403,7 +403,7 @@ run_test() {
-> 		rc=$KSFT_FAIL
-> 	fi
->
->-	host_warn_cnt_after=$(dmesg --level=warn | wc -l)
->+	host_warn_cnt_after=$(dmesg --level=warn | grep -c -i vsock)
+Uninitialized pointers with `__free` attribute can cause undefined
+behaviour as the memory assigned(randomly) to the pointer is freed
+automatically when the pointer goes out of scope
 
-In the previous hunk we quoted 'vsock', but here and in the next we did
-not. Can we be consistent at least in the same patch ?
+net/ethernet doesn't have any bugs related to this as of now,
+but it is better to initialize and assign pointers with `__free` attr
+in one statement to ensure proper scope-based cleanup
 
-The rest LGTM.
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+Signed-off-by: Ally Heev <allyheev@gmail.com>
+---
+ drivers/net/ethernet/intel/ice/ice_flow.c       | 5 +++--
+ drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 5 +++--
+ drivers/net/ethernet/microsoft/mana/gdma_main.c | 2 +-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-Stefano
+diff --git a/drivers/net/ethernet/intel/ice/ice_flow.c b/drivers/net/ethernet/intel/ice/ice_flow.c
+index 6d5c939dc8a515c252cd2b77d155b69fa264ee92..3590dacf3ee57879b3809d715e40bb290e40c4aa 100644
+--- a/drivers/net/ethernet/intel/ice/ice_flow.c
++++ b/drivers/net/ethernet/intel/ice/ice_flow.c
+@@ -1573,12 +1573,13 @@ ice_flow_set_parser_prof(struct ice_hw *hw, u16 dest_vsi, u16 fdir_vsi,
+ 			 struct ice_parser_profile *prof, enum ice_block blk)
+ {
+ 	u64 id = find_first_bit(prof->ptypes, ICE_FLOW_PTYPE_MAX);
+-	struct ice_flow_prof_params *params __free(kfree);
+ 	u8 fv_words = hw->blk[blk].es.fvw;
+ 	int status;
+ 	int i, idx;
+ 
+-	params = kzalloc(sizeof(*params), GFP_KERNEL);
++	struct ice_flow_prof_params *params __free(kfree) =
++		kzalloc(sizeof(*params), GFP_KERNEL);
++
+ 	if (!params)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+index cbb5fa30f5a0ec778c1ee30470da3ca21cc1af24..368138715cd55cd1dadc686931cdda51c7a5130d 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+@@ -1012,7 +1012,6 @@ static int idpf_send_get_caps_msg(struct idpf_adapter *adapter)
+  */
+ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
+ {
+-	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree);
+ 	struct idpf_vc_xn_params xn_params = {
+ 		.vc_op = VIRTCHNL2_OP_GET_LAN_MEMORY_REGIONS,
+ 		.recv_buf.iov_len = IDPF_CTLQ_MAX_BUF_LEN,
+@@ -1023,7 +1022,9 @@ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
+ 	ssize_t reply_sz;
+ 	int err = 0;
+ 
+-	rcvd_regions = kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
++	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree) =
++		kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
++
+ 	if (!rcvd_regions)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index 43f034e180c41a595ff570b886569685a56f9fee..8dcba7ee36130d94ba3436c99a5cd5f792a2962e 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -1505,7 +1505,7 @@ static int irq_setup(unsigned int *irqs, unsigned int len, int node,
+ 		     bool skip_first_cpu)
+ {
+ 	const struct cpumask *next, *prev = cpu_none_mask;
+-	cpumask_var_t cpus __free(free_cpumask_var);
++	cpumask_var_t cpus __free(free_cpumask_var) = NULL;
+ 	int cpu, weight;
+ 
+ 	if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
 
-> 	if [[ ${host_warn_cnt_after} -gt ${host_warn_cnt_before} ]]; then
-> 		echo "FAIL: kernel warning detected on host" | log_host "${name}"
-> 		rc=$KSFT_FAIL
->@@ -415,7 +415,7 @@ run_test() {
-> 		rc=$KSFT_FAIL
-> 	fi
->
->-	vm_warn_cnt_after=$(vm_ssh -- dmesg --level=warn | wc -l)
->+	vm_warn_cnt_after=$(vm_ssh -- dmesg --level=warn | grep -c -i vsock)
-> 	if [[ ${vm_warn_cnt_after} -gt ${vm_warn_cnt_before} ]]; then
-> 		echo "FAIL: kernel warning detected on vm" | log_host "${name}"
-> 		rc=$KSFT_FAIL
->
->---
->base-commit: 255d75ef029f33f75fcf5015052b7302486f7ad2
->change-id: 20251104-vsock-vmtest-dmesg-fix-b2c59e1d9c38
->
->Best regards,
->-- 
->Bobby Eshleman <bobbyeshleman@meta.com>
->
+---
+base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
+change-id: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
+
+Best regards,
+-- 
+Ally Heev <allyheev@gmail.com>
 
 
