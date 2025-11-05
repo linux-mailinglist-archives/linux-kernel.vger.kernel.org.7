@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-886353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80C6C354F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:16:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4E9C354A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AD2E4E06CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111F956628B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1330F7F8;
-	Wed,  5 Nov 2025 11:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DAC30F7EE;
+	Wed,  5 Nov 2025 11:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="WIB9Yl0W"
-Received: from smtp86.iad3b.emailsrvr.com (smtp86.iad3b.emailsrvr.com [146.20.161.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tb1higuk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0088F3016E2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D630F539;
+	Wed,  5 Nov 2025 11:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341396; cv=none; b=nj18dkbA3698UXMD3Y+rgT/J7K/IxO/W/LLm0H25/uaqJARAMEjk1qzSRd8AECxWtIamdZLGNELSCBRx5asp3VDR2wNE7a+FQygWbP3Ocksruq7CiWucd8iRx2g4eFcGqT1fs6gAm/LkrkASINNBMxUtn08rA0m2v+qXLkcF408=
+	t=1762340419; cv=none; b=GjjFeQBzZBiDUrK1kAUjXCBi2yo+eUqHZWS3ejG+RrvzlLfQCOtdel5TVt1EnyzhgakiYGb+d0FODaz+9REWFfovJMlNQ2jn4Ig7wL+E+P6BthS3LtyUyYIIiSe7bCx2ScWL1I9uJrhEpb5MuGh1cImNu+1ls7fArUqEg0gjP50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341396; c=relaxed/simple;
-	bh=gmrLDFWIcFEh0KvbnxCeN7ggLLHUJBDVEAKb2UpLZVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ii8pqR2Dn9LeOzol0Cm14pNqtZHI5l1ITEe75nfLCGGSuHUhAEH3RRqLwdTYySTswX/5nSoZG2VvPD4PXrj0BuWic9ECtORQYxZVtl8/R0UqFXJqNAPLxa3UIx8UI+o3XR/0XGq3Fh9K/7a8uVI70DJDz+mmc0cw1wQgmH+1/Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=WIB9Yl0W; arc=none smtp.client-ip=146.20.161.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1762339061;
-	bh=gmrLDFWIcFEh0KvbnxCeN7ggLLHUJBDVEAKb2UpLZVs=;
-	h=Date:Subject:To:From:From;
-	b=WIB9Yl0WLbne2ba/EbDcR8hvmkBLPu3P9tUJXDUfGuBWGZyE8ZSCPCfHby8Ps5EiK
-	 5pg0bNdpL//RNxxKHOR9cvcpx7164ljYF5c96DymehkxBorl8BbQ2oEIIJ5g7GaaLr
-	 F0B5oQ5VCT9UHZFRWAh8gYSjavaMLtZ7lOlHSzbk=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp3.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id CD318403C0;
-	Wed,  5 Nov 2025 05:37:40 -0500 (EST)
-Message-ID: <22148db9-3579-4298-b641-91cc98dc1c5c@mev.co.uk>
-Date: Wed, 5 Nov 2025 10:37:39 +0000
+	s=arc-20240116; t=1762340419; c=relaxed/simple;
+	bh=B+4pOh83F8unCV02t+zRv+dq7jLqx/Ju8WvlRa4iwIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXDL/He0W0LCmxbR9/Ok+JXPiSiB8+0bqtma1khx8QOVHUpIJeVA5I4IuMSv9QhDe+hBVLlOFvWX50iGApFKrRlD1yyTKjMtN4Ad4VQKPVkHPG521bqts/a2J2TVvFxERn8hc1kaBOygUkg+E1FEH4rc41+LqSfHegvsHgKZWY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tb1higuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D59EC4CEF8;
+	Wed,  5 Nov 2025 11:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762340419;
+	bh=B+4pOh83F8unCV02t+zRv+dq7jLqx/Ju8WvlRa4iwIA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tb1higukqPOJoexZHUEDVn6rdv63fY6hwZ3LV4uK9zfaqjIuKOMWH7LZ4d0ei9f6i
+	 +Egjj7f7HKarz2VVvZFrRKdipbZCs+gjsHMTO/1Q8LUrz0zUhTV5XVBL3pohY5XmHu
+	 RysFQqMm2Isu9fWxUx2TjLmXekMKFPGNnX0QFn3oEI7OyfZt3sv6P0bdlxlGaO0i9V
+	 P/E4gdoX5HoPqW2RoSwNAE9CLBeXGYyQl+5WI6HlAHVwhNjGJDIdAQEsDQLbnfQzBZ
+	 qTAvA4Jc11XR+uK5HGEm/v7qUH+IwW7fYLF3eo0KdMaV6ttUikGFpjQCV0FDT5y/9P
+	 Sis0E2ZpiD/0A==
+Date: Wed, 5 Nov 2025 12:00:11 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Bjorn Helgaas <helgaas@kernel.org>, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
+	bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
+	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+	Frank.li@nxp.com, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
+Message-ID: <aQsuO5WaYPK0KbVw@ryzen>
+References: <20251022174309.1180931-4-vincent.guittot@linaro.org>
+ <20251022190402.GA1262472@bhelgaas>
+ <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
+ <aQsmtKsTEmf7e7Sd@ryzen>
+ <bf3b2d2a-ce3e-87af-4154-abd022c6a3b4@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] fpga: Add dummy definitions of API functions
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
- Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20251104153013.154463-1-abbotti@mev.co.uk>
- <aQqsnFl8uakMAsH+@yilunxu-OptiPlex-7050>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <aQqsnFl8uakMAsH+@yilunxu-OptiPlex-7050>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: e93dd03d-3b13-4ec7-81ac-1f36f800238a-1-1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf3b2d2a-ce3e-87af-4154-abd022c6a3b4@linux.intel.com>
 
-On 2025-11-05 01:47, Xu Yilun wrote:
-> On Tue, Nov 04, 2025 at 03:27:01PM +0000, Ian Abbott wrote:
->> Add dummy definitions of the FPGA API functions for build testing
->>
->> 1) fpga: altera-pr-ip: Add dummy definitions of API functions
->> 2) fpga: bridge: Add dummy definitions of API functions
->> 3) fpga: manager: Add dummy definitions of API functions
->> 4) fpga: region: Add dummy definitions of API functions
+On Wed, Nov 05, 2025 at 12:43:09PM +0200, Ilpo Järvinen wrote:
+> On Wed, 5 Nov 2025, Niklas Cassel wrote:
 > 
-> Sorry I don't get the idea. Why should someone use FPGA APIs without
-> selecting CONIG_FPGA_XXX? Better make the changes along with the use
-> case patches.
-
-Projects using FPGAs often have custom devices with custom, out-of-tree 
-drivers, so it's quite useful to be able to build test those drivers 
-against later kernel versions on the host to keep up with kernel API 
-drift, prior to possible later adoption of the kernel version on the target.
-
-> Thanks,
-> Yilun
+> > On Fri, Oct 24, 2025 at 08:50:46AM +0200, Vincent Guittot wrote:
+> > > On Wed, 22 Oct 2025 at 21:04, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > > +     dw_pcie_dbi_ro_wr_en(pci);
+> > > > > +
+> > > > > +     val = dw_pcie_readl_dbi(pci, PCIE_PORT_FORCE);
+> > > > > +     val |= PORT_FORCE_DO_DESKEW_FOR_SRIS;
+> > > > > +     dw_pcie_writel_dbi(pci, PCIE_PORT_FORCE, val);
+> > > > > +
+> > > > > +     /*
+> > > > > +      * Set max payload supported, 256 bytes and
+> > > > > +      * relaxed ordering.
+> > > > > +      */
+> > > > > +     val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
+> > > > > +     val &= ~(PCI_EXP_DEVCTL_RELAX_EN |
+> > > > > +              PCI_EXP_DEVCTL_PAYLOAD |
+> > > > > +              PCI_EXP_DEVCTL_READRQ);
+> > > > > +     val |= PCI_EXP_DEVCTL_RELAX_EN |
+> > > > > +            PCI_EXP_DEVCTL_PAYLOAD_256B |
+> > > > > +            PCI_EXP_DEVCTL_READRQ_256B;
+> > > > > +     dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
+> > > >
+> > > > MPS and relaxed ordering should be configured by the PCI core.  Is
+> > > > there some s32g-specific restriction about these?
+> > > 
+> > > I will check with the team why they did that
+> > 
+> > Most likely, the reason is that, the PCI core does not set the MPS to the
+> > maximum supported MPS for the root port.
 > 
->>
->>   include/linux/fpga/altera-pr-ip-core.h |  8 ++-
->>   include/linux/fpga/fpga-bridge.h       | 75 ++++++++++++++++++++++++++-
->>   include/linux/fpga/fpga-mgr.h          | 95 +++++++++++++++++++++++++++++++---
->>   include/linux/fpga/fpga-region.h       | 44 ++++++++++++++--
->>   4 files changed, 207 insertions(+), 15 deletions(-)
-However, I messed up the patches, because I only built them without the 
-FPGA configure options defined.  I plan to submit a v2 patch series 
-unless it is deemed a complete waste of effort by the maintainers.
+> PCI core set/doesn't set MPS based on config. Perhaps try with 
+> CONFIG_PCIE_BUS_PERFORMANCE.
 
-Cheers,
-Ian
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+Sorry, I should have been more clear.
 
+Since a lot of PCIe controller drivers have similar code to the above,
+it is obvious that a lot of controller drivers want to increase the MPS
+regardless of PCIE_BUS_* bus config value.
+
+With the current PCI code, MPS for root ports will not be touched if
+PCIE_BUS_TUNE_OFF or PCIE_BUS_DEFAULT.
+
+After the above series, MPS for root ports will be set to max supported
+also for PCIE_BUS_DEFAULT.
+
+
+Kind regards,
+Niklas
 
