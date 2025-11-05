@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-886466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C49C35AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:42:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEEFC35AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B408618C7C38
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665CA56040A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6D93148BE;
-	Wed,  5 Nov 2025 12:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3519B3126CD;
+	Wed,  5 Nov 2025 12:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="aZW7GAG3"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Pxs0hYXh"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D1314D10;
-	Wed,  5 Nov 2025 12:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762346539; cv=pass; b=pRv0WG+29oHZduZWooClFdVJKQSMbbKiDjpBSL7g6mQu+rRmnN3OSBnB3IjQNQsM/9QiXMiLXwapiWIQGquGChJDhWVF2HXc9VisfQfmztbcH0RH5JWeCxbZCigSo6+PpRsBnnaEUp2qGYJHAUzxiY3SbMjSw0bktG1UMcJXb0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762346539; c=relaxed/simple;
-	bh=T+mqXgxFpuLdLRbCoxR94vhutevJ5uNPTklPTzr1li8=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=k7DJmtlRwMT8UswQ7P+jqfzNlQUgc5uwkPI2hA3kea6Y4MGk8HWTJAZZS5/p6I8Ogq9ia1YK66Bkp61iUdjLDk0PgK1o2ylve4nhIlKdy2gAQpTgYlmzSAMhSb5orJAmI6Pm87mfkCZhMPU39w0P23X+Er5+r7ALDEyJ8ucCAeI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=aZW7GAG3; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1762346523; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CT+lb2SyI1ylNuAdK9QT5mmY56WjeDWLh2NYex0Fii5rzvz9SnMew+ATHTQmCRBmQ8uzvy8wjj4Z/+YQhETOAgyF6U9QKeDmliHoDdRWpfp/quBVA79TO0FXchUDJ03tQjY/0PDch/0bQyg1Mdu9Y9CaP8k02NwHmW/c0wX8ggY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762346523; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=CqObBGu2WsyCYawJI/cjd9hX91dFgtxqhrF/3mbLMqo=; 
-	b=VMynOv6vHFH6x84lFJa6sBBRZlNdRqV52VpNEuRV/yte5drKeK/M+gQSe4NZvqKS0+qxvruJF3alJQBcWOhOgEfNMRC0lJxpAlwKhyG5WOnkZAf6Cjl2i6SdvkTfiIqVEcceZBcMghJEkOr+NOpJmn/RlO2fC5JV+4Ni5SCyz1s=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762346523;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=CqObBGu2WsyCYawJI/cjd9hX91dFgtxqhrF/3mbLMqo=;
-	b=aZW7GAG3Fk9fa4ruSJoTs0COjavWlthtJt0/4dSjLqV4Xp3keNmg09G9vl04MPuP
-	9OMX3oWuaPdPwxlVnOCnDQyMbBmRO8t7L3kw12ThKC7GvhTUw+3Xs+TGuz5Y3WK1pL6
-	MKhBhX0MsizwUH4dY5qWJmnmBQN4nykDaadvXkjU=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1762346509276602.5493781665645; Wed, 5 Nov 2025 04:41:49 -0800 (PST)
-Date: Wed, 05 Nov 2025 20:41:49 +0800
-From: Li Chen <me@linux.beauty>
-To: "Kees Cook" <kees@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
-	"Nicolas Schier" <nicolas.schier@linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-hardening" <linux-hardening@vger.kernel.org>,
-	"linux-kbuild" <linux-kbuild@vger.kernel.org>
-Message-ID: <19a5409a3bf.50871c0e1607989.1264040958211475507@linux.beauty>
-In-Reply-To: <20251105084733.3598704-1-me@linux.beauty>
-References: <20251105084733.3598704-1-me@linux.beauty>
-Subject: Re: [PATCH 0/3] dm-pcache: built-in support and metadata hardening
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB2731328A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762346734; cv=none; b=ReMkiPV30dQUBFgA1kj6CXSUcxvIrcmfIPd7fqBXS5SrtdokaLKZgrNaCAng1SyJp9bdl1aGIkiYlc0vCfyzFGBvODGrq7meAcNZTmXszUv58h1+LLBAVYWehLhUt7bZqA0oXFrNSOpgfj6avX7pYOKnrHQ0FSZ90OyX2AywrBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762346734; c=relaxed/simple;
+	bh=vr58Rxv58WIV+Na4NCCrbGSjfMLysQWOnLWdBpGAA30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=F8AGblSxxxeNVpnYmCpTmg1ds1sqgzM+qgbrgmXEjqr74acNOkkkgoYGHqJv/1lbHTP+yq308J4ws77cP/1m9n+nuYH7oxzyTWhWbWuOZCMAub1KdsCKqsBPtnN9N7NOwcSw5oGB/yg9Wj7S28/uiz4VDpMt/f3ynphVQMwZgnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Pxs0hYXh; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251105124525euoutp026a3e42b2e6fb9c11c8f695a6690f6537~1HQJshRc82277722777euoutp02a
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:45:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251105124525euoutp026a3e42b2e6fb9c11c8f695a6690f6537~1HQJshRc82277722777euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762346725;
+	bh=CG8DxT5IJUW0aZvaLpIKID3K5WMSr0E4K4/UlToBMNQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Pxs0hYXhhWVS3JIqECUp53TObJGZ3LK3HZZ5K2o4JtVkCn/F7S6HMzRlpu/EmHIBb
+	 jKq49ty2FlJVhNgfWrTscjqoMMnIHCoiTn+tJ92dthmsfjczQB9qoNkeeFl/GtwgXZ
+	 yywilQQp+dUrhYQa1moaxDuVWE9wRrekFu/8eHzo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251105124525eucas1p1cb8af8e425097de995b73445aac08729~1HQJUFBPp1324313243eucas1p1Z;
+	Wed,  5 Nov 2025 12:45:25 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251105124524eusmtip1430c65842a4994e78ca9a6ccfd56dfa9~1HQIbSPoN1476314763eusmtip17;
+	Wed,  5 Nov 2025 12:45:24 +0000 (GMT)
+Message-ID: <ae76317f-6ea2-4413-adf9-2260db49b658@samsung.com>
+Date: Wed, 5 Nov 2025 13:45:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] dma-mapping: Allow use of DMA_BIT_MASK(64) in global
+ scope
+To: James Clark <james.clark@linaro.org>, Robin Murphy
+	<robin.murphy@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick
+	Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Stephen Rothwell
+	<sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Guodong Xu
+	<guodong@riscstar.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251030-james-fix-dma_bit_mask-v1-1-ad1ce7cfab6e@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251105124525eucas1p1cb8af8e425097de995b73445aac08729
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251030140656eucas1p1db40ecf9e84bcabee73b9cfb0b777c4a
+X-EPHeader: CA
+X-CMS-RootMailID: 20251030140656eucas1p1db40ecf9e84bcabee73b9cfb0b777c4a
+References: <CGME20251030140656eucas1p1db40ecf9e84bcabee73b9cfb0b777c4a@eucas1p1.samsung.com>
+	<20251030-james-fix-dma_bit_mask-v1-1-ad1ce7cfab6e@linaro.org>
 
-My apologies, please disregard the dm-pcache portion of this series. This s=
-eries will focus solely on gcc-plugin.
+On 30.10.2025 15:05, James Clark wrote:
+> Clang doesn't like that (1ULL<<(64)) overflows when initializing a
+> global scope variable, even if that part of the ternary isn't used when
+> n = 64. The same initialization can be done without warnings in function
+> scopes, and GCC doesn't mind either way.
+>
+> The build failure that highlighted this was already fixed in a different
+> way [1], which also has detailed links to the Clang issues. However it's
+> not going to be long before the same thing happens again, so it's better
+> to fix the root cause.
+>
+> Fix it by using GENMASK_ULL() which does exactly the same thing, is much
+> more readable anyway, and doesn't have a shift that overflows.
+>
+> [1]: https://lore.kernel.org/all/20250918-mmp-pdma-simplify-dma-addressing-v1-1-5c2be2b85696@riscstar.com/
+>
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
- ---- On Wed, 05 Nov 2025 16:46:51 +0800  Li Chen <me@linux.beauty> wrote -=
---=20
- > From: Li Chen <chenl311@chinatelecom.cn>
- >=20
- > This three-patch series tidies dm-pcache=E2=80=99s build glue and tighte=
-ns the metadata scan.
- >=20
- > Patch 1 allow dm-pcache to be linked into vmlinux and avoids clashing wi=
-th the sunrpc
- > cache_flush() by using obj-$(CONFIG_DM_PCACHE) and renaming the helper a=
-cross the tree.
- >=20
- > Patch 2 drops a redundant recomputation of the metadata slot pointer whi=
-le walking headers.
- >=20
- > Patch 3 zero-allocates a temporary buffer so callers never see stale met=
-adata,
- > relies on __free(kvfree) for cleanup, and only copies back once a valid =
-record is found.
- >=20
- > Thanks for your review.
- >=20
- > Li Chen (3):
- >   dm-pcache: allow built-in build and rename flush helper
- >   dm-pcache: reuse meta_addr in pcache_meta_find_latest
- >   dm-pcache: avoid leaking invalid metadata in pcache_meta_find_latest()
- >=20
- >  drivers/md/dm-pcache/Makefile          |  2 +-
- >  drivers/md/dm-pcache/cache.c           |  2 +-
- >  drivers/md/dm-pcache/cache.h           |  2 +-
- >  drivers/md/dm-pcache/cache_req.c       |  6 +++---
- >  drivers/md/dm-pcache/pcache_internal.h | 15 ++++++++++-----
- >  5 files changed, 16 insertions(+), 11 deletions(-)
- >=20
- > --=20
- > 2.51.0
- >=20
- >=20
-Regards,
+Thanks, applied to dma-mapping-fixes branch.
 
-Li=E2=80=8B
+> ---
+>   include/linux/dma-mapping.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 8248ff9363ee..2ceda49c609f 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -90,7 +90,7 @@
+>    */
+>   #define DMA_MAPPING_ERROR		(~(dma_addr_t)0)
+>   
+> -#define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+> +#define DMA_BIT_MASK(n)	GENMASK_ULL(n - 1, 0)
+>   
+>   struct dma_iova_state {
+>   	dma_addr_t addr;
+>
+> ---
+> base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+> change-id: 20251030-james-fix-dma_bit_mask-624dbeb89afa
+>
+> Best regards,
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
