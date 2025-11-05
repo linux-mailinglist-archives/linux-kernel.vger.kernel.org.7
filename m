@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-886254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0EAC3519C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:30:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F01C3517E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756833B0318
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8F9188768C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5CF30170E;
-	Wed,  5 Nov 2025 10:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E69302CC1;
+	Wed,  5 Nov 2025 10:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4NOZ3+F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVk2cw91"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A5F301007;
-	Wed,  5 Nov 2025 10:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6545330217A;
+	Wed,  5 Nov 2025 10:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762338485; cv=none; b=KAAUkeROiV+Dv3hSKF6AING1r2OnaWItr3YMXKilFBAPnnaUSn8kFVZf0haU8X+lrMdX0INXRAXCVGfj+3GLjJ2juoGdDub2DsaogfkVP9qAERk3rFIxio3REX++xJav/vHbffT/pj4sTMSQQL7nvrbKWuesPB0HD4exxRJ1uGo=
+	t=1762338492; cv=none; b=OjzDe8Neur2oDq5c5+e0m1hKIYkhcz7ea5MW9m9UxIvpqFS8k5tpPD/RCVw4kjyhccqaTEXo/Nv+tyI5xnLdJPGhBmDXN3Uzc7ILZoIdFJIhHOwOJBvB9Ck+aJfFTd4j3tkDAVcZpFCM7K0o7zKGETaddTsp1FxJepNXN16Epdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762338485; c=relaxed/simple;
-	bh=iGm3ztCoHBoiX+8pTAlhDOq1wez0F7WKLBUyQq+ZXxo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TUmnCw07RZyUPzc9hIV+DPmCX7sNFmQ6K/6je1dS9O9XQkcQy8x0dOqbiixtukhvRvtBsfdsB3qLSMA4IOn2Hm6qHrCT9UVlkJAgR+OEzdLaQtYN7AUQS5bOuCVUlGt6C7f2y/i2gE7iZ77GxGESj/6NGo08bIme9V+J/BsNG3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4NOZ3+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36D3C4CEFB;
-	Wed,  5 Nov 2025 10:28:02 +0000 (UTC)
+	s=arc-20240116; t=1762338492; c=relaxed/simple;
+	bh=sATlqbfCMquHAhiGt98UAjhO81tc66fm/b5s3xZ+bT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzhM+9vu8FefAwsU0hEFpKvJ3iIcUcOR1YNdpG4i1A3XkF2ZJvBBZEs3QvBI3oVQUx7zcQ6xav8jOTNBq3i4xW3gn8dCl3SDmAD0wqOzSQMTM4i+8svGF93qJBdkp8+r7m8Vp23AG5lRH55hBgtwaubzGIvArN9PVT1GpQ+iodA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVk2cw91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271F4C4CEF8;
+	Wed,  5 Nov 2025 10:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762338485;
-	bh=iGm3ztCoHBoiX+8pTAlhDOq1wez0F7WKLBUyQq+ZXxo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=J4NOZ3+F/wcCmEWLMyxtMF9GufxOdiPWEJI8FjD81Zi0epu/A0mcp8gt23izr6n4f
-	 86B1xrYhjtkwryopz9jIVKj4zX0kBJ0++ccJSdXCtujeMEIYOh3dvGUfB2ntWo3AAb
-	 kF/D7CDVvSaaGZpJuCFOkJEDRVWoHv39Vumf2zgRucUeJZVAADKyFzNS7hP23fCrCB
-	 HMHVLNFXfG3g0z0Z+9Ozuw6YB354HaP/w5eoPMvA3vJFuURb7VS+JlBokheQDS5HKG
-	 1hxJusWy8nEyoTDgDLLFEHYSTikww4QzLbCjZ90tylGShH+rC5VsGgNYutNKeRwAPC
-	 5k7ucS2PrYDHQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
-  yanjun.zhu@linux.dev
-Subject: Re: [PATCH v9 6/9] kho: don't unpreserve memory during abort
-In-Reply-To: <20251101142325.1326536-7-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Sat, 1 Nov 2025 10:23:22 -0400")
-References: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
-	<20251101142325.1326536-7-pasha.tatashin@soleen.com>
-Date: Wed, 05 Nov 2025 11:28:01 +0100
-Message-ID: <mafs0ldkkbwpa.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1762338491;
+	bh=sATlqbfCMquHAhiGt98UAjhO81tc66fm/b5s3xZ+bT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aVk2cw91xb3rYUDPFcGEtjuOOgvOL7LPdFKi9Ek3C8A3pJKShz5NSz1ygG7990U70
+	 5MKPxs/CwWggCZ4NBUoVASSOYENYZskX4+KO9mC8L1RewpnSZj56X8WFBZDNFPpUfy
+	 YCNph4JFxwP9Up1f+JrWSvK82fQiSY22vGOxTCP6iLTvLpbHlddw5Nn4D6qLqZDe18
+	 A0Oj6TSleOyym73rw53E1sx7OYY8l/oHNN3z842GkfoKpnsiK0i2CxbV/gyf2DmldO
+	 cFy/IYkMMWOVXppMcDDu5pu2Fn3ak95UF3m2BmecxYlu57lWhbPod+Xmu+3QfoThOH
+	 18Og5nj9EJS4w==
+Date: Wed, 5 Nov 2025 11:28:04 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
+	bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
+	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+	Frank.li@nxp.com, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
+Message-ID: <aQsmtKsTEmf7e7Sd@ryzen>
+References: <20251022174309.1180931-4-vincent.guittot@linaro.org>
+ <20251022190402.GA1262472@bhelgaas>
+ <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
 
-On Sat, Nov 01 2025, Pasha Tatashin wrote:
+On Fri, Oct 24, 2025 at 08:50:46AM +0200, Vincent Guittot wrote:
+> On Wed, 22 Oct 2025 at 21:04, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > +     dw_pcie_dbi_ro_wr_en(pci);
+> > > +
+> > > +     val = dw_pcie_readl_dbi(pci, PCIE_PORT_FORCE);
+> > > +     val |= PORT_FORCE_DO_DESKEW_FOR_SRIS;
+> > > +     dw_pcie_writel_dbi(pci, PCIE_PORT_FORCE, val);
+> > > +
+> > > +     /*
+> > > +      * Set max payload supported, 256 bytes and
+> > > +      * relaxed ordering.
+> > > +      */
+> > > +     val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
+> > > +     val &= ~(PCI_EXP_DEVCTL_RELAX_EN |
+> > > +              PCI_EXP_DEVCTL_PAYLOAD |
+> > > +              PCI_EXP_DEVCTL_READRQ);
+> > > +     val |= PCI_EXP_DEVCTL_RELAX_EN |
+> > > +            PCI_EXP_DEVCTL_PAYLOAD_256B |
+> > > +            PCI_EXP_DEVCTL_READRQ_256B;
+> > > +     dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
+> >
+> > MPS and relaxed ordering should be configured by the PCI core.  Is
+> > there some s32g-specific restriction about these?
+> 
+> I will check with the team why they did that
 
-> KHO allows clients to preserve memory regions at any point before the
-> KHO state is finalized. The finalization process itself involves KHO
-> performing its own actions, such as serializing the overall
-> preserved memory map.
->
-> If this finalization process is aborted, the current implementation
-> destroys KHO's internal memory tracking structures
-> (`kho_out.ser.track.orders`). This behavior effectively unpreserves
-> all memory from KHO's perspective, regardless of whether those
-> preservations were made by clients before the finalization attempt
-> or by KHO itself during finalization.
->
-> This premature unpreservation is incorrect. An abort of the
-> finalization process should only undo actions taken by KHO as part of
-> that specific finalization attempt. Individual memory regions
-> preserved by clients prior to finalization should remain preserved,
-> as their lifecycle is managed by the clients themselves. These
-> clients might still need to call kho_unpreserve_folio() or
-> kho_unpreserve_phys() based on their own logic, even after a KHO
-> finalization attempt is aborted.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Most likely, the reason is that, the PCI core does not set the MPS to the
+maximum supported MPS for the root port.
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+So without that change, the port will use use 128B instead of 256B.
 
-[...]
+I assume that you should be able to drop (at least the MPS part) if this
+change gets accepted:
+https://lore.kernel.org/linux-pci/20251104165125.174168-1-18255117159@163.com/
 
--- 
-Regards,
-Pratyush Yadav
+
+Kind regards,
+Niklas
 
