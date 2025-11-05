@@ -1,158 +1,191 @@
-Return-Path: <linux-kernel+bounces-886960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A82C36D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:57:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5994BC36D91
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26E564EC528
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:52:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EC4A4F4CA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04B931C56F;
-	Wed,  5 Nov 2025 16:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFD03385A0;
+	Wed,  5 Nov 2025 16:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVpbhQKs"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dn68VZJz"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71762FFFBE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E428316919
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762361527; cv=none; b=QpqAFgm6I5tgaq23qSd2XnEzs+xB8fAJUXD4B8vhzs76iGHw6I2/+Q+9bJr1S+RzrKKFCB8erAeq9+2Jwnh8Bk5sKb30L+mcAAcn/pb1G0H9NvjT0az4muP6YwjdJXwjASscbDEy/k6APS/Flfq8Jc3K0dm1d46E/RAaoscPrAo=
+	t=1762361561; cv=none; b=fH99zLa51zl4OMv/jt33ePJ/lgLa3OeRgyi1umvYAtiaqBAcaI6PnsMjLggqw3Ntgzlj2ooG34Qhv/5WxbzSAS58jZS9cIgtRBUljxkco9nSTw2kmxBisJxafG8BvTHaMiND5BJ89WmIDwymUsN+5CEPghe3bpGscjW00wk+VXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762361527; c=relaxed/simple;
-	bh=esO8jRq9uTUw55PJsW3htw0zar+bIhexF73TArzHxxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxgf9f0zPxVxTOXWrNdexrOasw5SrknBSBxc+49hp8tIGcEj1tZH34K2Fq4QaEugsqosda02aJMsB1WMMfzMheb/l+thJonIBjKUpd9PunMs+2DVkwDHkud3EqgEu0RImf4fV8tICOVANUU2zRW3XkMEM9+jc4VEn1oNJmEPosI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVpbhQKs; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1762361561; c=relaxed/simple;
+	bh=6wlmdmjnSpQU9fRc7lN675cJD65XkkBg2XnCXVvTink=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V1tUODd9kOIg273qrRe4KQzlj3n2uBk4PUVzQssEhtJjLepM17PZSdXjYUj8HXRBH67bUtI++75QaJS3uVO8jdSz4UpI5IUAXP9DNgywSoFrfbkuHjfMzm+6jX+6IIZ8az/3PwfxnEVWs87a4Lw2jiD258lS9iDXmkLBXnrF3C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dn68VZJz; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47755a7652eso173185e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:52:05 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7930132f59aso141304b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:52:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762361524; x=1762966324; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=esO8jRq9uTUw55PJsW3htw0zar+bIhexF73TArzHxxk=;
-        b=AVpbhQKsWHsJPurkBtpFjS569EuYKUxy0Ewl5KvxLz11TynIudTMz6x27b6A6doKWz
-         ip2xD5KKY1oMJCK0Dweum3CzpsfSfe5Azmrly9qy+6lx5DTGxHpK2A+42y5Z3pqNqWXK
-         5oMVmrIxCr+TXfau1fOpH55Ds8Gfkw+SKMup3+25IM0tOOtYD8mCPcmX3YHevXG3I9fS
-         voKjd3O+6JkWCl7xwg0Uy4qskOwo95lmPAQUzNV1zgopuIouOGjmjNsUQ0iiplG4NNw3
-         pJwe6bLtD5Fb+hz4cFTbQ+dE2Dx8twHim57o5xVAlYBYEkIZ+8VVi9pnTa3HqwZj4o61
-         JDfw==
+        d=gmail.com; s=20230601; t=1762361559; x=1762966359; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=St/YlSF/6HVAUWQqHTUl+fK8jNSN2VE1+U7dKILtNmc=;
+        b=dn68VZJzJ5GP9rJXzmNvjgEyPN89FdMLJJ30b9qsVrokmj/Wu5fU/tEsXhVPxcjdEQ
+         dJJygETU28Ca+DBzyaWH8aWABsi8kDYyXXkIcnkc0VQNhhwUSkcZ4rZnhHjX4gT1LgBe
+         F//Q/ELK6ZOeuJ3bealosxzX4K0AxMxp5ofQIhhAYBV37ffQv3JD6rRtzYV29pNGObd0
+         8eQemK8/gpsC12AEaWcgtfN4m0tmiPrsDcnNqHOhsG8XFrHc6+QeqeTH4b9hnGGQ9gU8
+         kBx6lhILl6PZOVsx2Cy867fZOsvwXde1ahMzZOqrJ+TykPmeyUq1Xy+gPpYh4KPfZQ7s
+         yqFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762361524; x=1762966324;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=esO8jRq9uTUw55PJsW3htw0zar+bIhexF73TArzHxxk=;
-        b=CVB6m9tyDVbHfkvYOUW00daX4rqO+Jeu5bbRsGcfpvYBDMYEbqdj+M3n9fUzJz9g1f
-         GIJS4tRu2lCMfAiN1ZC9OwFfjg43C6/HWYd2kEZGP0b4m5JPA1cl6Ds6EngKl+DopFEQ
-         BfOfBFFkYoFGZJ9IK2EP01wtJyQh4aHjSrQ/XgWUjodSt2TmgT/ZaFkaxE3VhtIc3Ttz
-         7/0CkBp25xU7rKMgx/Tte37Za7tvdiL+7ncq8h5zNwAWceJIiWKKKaf17bUQnOalsOBX
-         a6gra442n7CqhNw4L1YXO7REDVMztFg9tSMZY+k2PLc7Kl37YFwAWv/PAmqL4Egdnhjf
-         jE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLugSCNOa7XBK56IIyVDw0DgmbxO0Wk1YgBOAjLIOyVLHnzOJ3Cdmn0e6pxrNhYR1QHGCzbCYxM67apo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTNt0jG6aQmk95BCKcnHjB6Qws1tTVFHXoyvlE10CxB/hFO0Bo
-	cuSPdp86817UhnuGzulJLAFBB3x32nZimWchmMhwKsfM4BIkK7f8Fhq+
-X-Gm-Gg: ASbGnctkfmvP17OrwMgNokEUWYyIk6TxNEH3gy9dIssvhXg2ltqELY+erf+ZLtvFkGt
-	/TORwYec8zW22FVTWH8uYfDwB2ua9j+xn66CIzPy1kUnYuyyQDfSZg4WZD9Xn6eoZ7ANYoE3nsY
-	ABx4W4YGq6khkKe+iG1SbY3MH3wESWU9KEF1EIcDYJJAnR39+ocFhfAXn72/Ef05Ldx4Rv35mUu
-	pwbsiU8HBMf27YWR79XPiN9ZzGOxdwlQqa6Z5rmREjPWjdzIBhKcvDbzPBg0AA0lvlp3DRuPNOa
-	2leBnK6XzcWr95539OnM455x7FWiwZFnN1csJIxP/L1rEs8eKrXDM9orBq4dZFlPwIDRCyMfRJe
-	EprB8/XdJyj3Nlc/mNaaBcBRbZ/SEYAH5+E8Eb6zw5Ohz24OU47ALnFTHuXNRGn6m1hcGprV60R
-	A+K3w0+zQVpPuMd2JpH18dVPNtEeQgaexW9bjzNDHh5Jk2yiQpAjouqqL+H/Weegk=
-X-Google-Smtp-Source: AGHT+IF1eT04urNHEfsD9kdCj32CNL1YcHJ6oGuMVK3cU2BLT/aQRFRmm7ox5OYZe77ML31HK9v5ow==
-X-Received: by 2002:a05:600c:1c94:b0:477:fcb:2256 with SMTP id 5b1f17b1804b1-4775ce23efemr42468465e9.17.1762361524090;
-        Wed, 05 Nov 2025 08:52:04 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce210a7sm59725725e9.12.2025.11.05.08.52.02
+        d=1e100.net; s=20230601; t=1762361559; x=1762966359;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=St/YlSF/6HVAUWQqHTUl+fK8jNSN2VE1+U7dKILtNmc=;
+        b=MXw6ybWQy0C6LLAOwbNGRG/oyXOXeQ9mjzdWcrSK3s468Z3hJ2jX7W6Hc4+q1wKUSN
+         YcdwuAxmdit5K8XHVYHDp1bO78DkezywrqNSE5RuiyCBs4aiooP76ZxujT795E/7cbGy
+         T40HUhW3Rc5ZeG8Lauk9fc8KnwbxZZlSIUS0SGwkiu9XzbkTKXEXMxOzFc6LozuvBGqC
+         OCD0CUmjinwlZeDE2iN6y01GP9lMbjb/nS3NSiYaUBGWTuxxFj0lUBKKFXJCgorWWOPF
+         SlQE7+f6pjPmWVT7UsNQEo6KY1JgXQzWyVVEELrKvUt31y6JkFH3h6R14AsotGCBdmS3
+         mjug==
+X-Forwarded-Encrypted: i=1; AJvYcCUcvFptC03i+PYjBA/7qAs8RMYJkrRz9oOAYk/Ul2Z2JSGubK36YnV8weDu77WuxNq5584pZYNhny22ntw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0PXajUEGODdegC4kJQCsGsUnRMG4AwiOnARia/AYvKxwS88Hg
+	ERdAHlY3e4blf6GIQvErris8Kel2xlFql+rMVre6tsQvXSwBd9pRZOiI
+X-Gm-Gg: ASbGnctfwQwrL88gQXlsu7tMykbcS/nKVb5N06EIOLR5Tucat58izKeLJ8ADBbozSJv
+	BTRWiA4UBA6IJmeqNEp9HSHBDvaXUaYaRkOtPjMBc4yGtAuw1aCe4s6HlBlt4uDldAXFg+OOQl+
+	MQPvjPE9cK2UFcGpEpLItXJYkxS88st9o5s/ck21c0hZp10qmSgGsYiBqBwNpdZxPMzwLH8kHFK
+	IXCVTg7aeynD8A8c6E4dsPHR0igiwt7PotgRbDxFkVdlUNiwe/Gn35FYURaDyBxsGaEM1BWx+/g
+	6l9abb4UIEvZL3fu7z6pzqAor9UA+PEkJP775noF0NLerfMMNolV8mRZHYu3RSRDxFaEBkUBaZZ
+	HgBErslIkVnMpzCvWrj+quhfYRr9Gdfar/yIwXm75cmyC3JtOTDKyjnI5rzrIe8V0ouIOkqkDc8
+	6TVLUlJ8C/Db1NtSsy31WVWfZA/99TImdwXnA=
+X-Google-Smtp-Source: AGHT+IHR2B6DtDaHzOI4A23z85FIW2164BTIShW+IpjXW96KXD/wdqkXo75vpTMPhnVKAlOTsJ7Iyg==
+X-Received: by 2002:a05:6a00:3926:b0:7aa:a8b6:73fe with SMTP id d2e1a72fcca58-7ae1f8804aemr4060602b3a.25.1762361559242;
+        Wed, 05 Nov 2025 08:52:39 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:cdf2:29c1:f331:3e1? ([2620:10d:c090:500::6:8aee])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd586f857sm6958895b3a.45.2025.11.05.08.52.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:52:02 -0800 (PST)
-Date: Wed, 5 Nov 2025 17:52:01 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org, loongarch@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] syscore: Pass context data to callbacks
-Message-ID: <3dzha4qyqdrbutxby3n5nkvihnxrhniqr6w726eumhzgln2w5l@fbu72mzmjz4m>
-References: <20251029163336.2785270-1-thierry.reding@gmail.com>
- <20251029163336.2785270-2-thierry.reding@gmail.com>
- <CAJZ5v0igMJ12KoYCmrWauvOfdxaNP5-XVKoSxUroaKFN7S-rTQ@mail.gmail.com>
+        Wed, 05 Nov 2025 08:52:38 -0800 (PST)
+Message-ID: <f6b2596eadf032516b81c19c6f9a8fd85c8ff195.camel@gmail.com>
+Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
+ search for sorted BTF
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, Andrii Nakryiko
+	 <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan
+ Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
+ <pengdonglin@xiaomi.com>
+Date: Wed, 05 Nov 2025 08:52:37 -0800
+In-Reply-To: <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+	 <20251104134033.344807-4-dolinux.peng@gmail.com>
+	 <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+	 <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
+	 <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
+	 <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
+	 <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ykyajizgfjgayrmb"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0igMJ12KoYCmrWauvOfdxaNP5-XVKoSxUroaKFN7S-rTQ@mail.gmail.com>
 
-
---ykyajizgfjgayrmb
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/7] syscore: Pass context data to callbacks
-MIME-Version: 1.0
-
-On Mon, Nov 03, 2025 at 05:18:08PM +0100, Rafael J. Wysocki wrote:
-> On Wed, Oct 29, 2025 at 5:33=E2=80=AFPM Thierry Reding <thierry.reding@gm=
-ail.com> wrote:
-> >
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Several drivers can benefit from registering per-instance data along
-> > with the syscore operations. To achieve this, move the modifiable fields
-> > out of the syscore_ops structure and into a separate struct syscore that
-> > can be registered with the framework. Add a void * driver data field for
-> > drivers to store contextual data that will be passed to the syscore ops.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Wed, 2025-11-05 at 21:48 +0800, Donglin Peng wrote:
+> On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.co=
+m> wrote:
+> >=20
+> > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
+> > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
+l.com> wrote:
+> > > >=20
+> > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > > >=20
+> > > > [...]
+> > > >=20
+> > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *=
+btf, __u32 type_id)
+> > > > > >         return type_id;
+> > > > > >  }
+> > > > > >=20
+> > > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *typ=
+e_name)
+> > > > > > +/*
+> > > > > > + * Find BTF types with matching names within the [left, right]=
+ index range.
+> > > > > > + * On success, updates *left and *right to the boundaries of t=
+he matching range
+> > > > > > + * and returns the leftmost matching index.
+> > > > > > + */
+> > > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf *b=
+tf, const char *name,
+> > > > > > +                                               __s32 *left, __=
+s32 *right)
+> > > > >=20
+> > > > > I thought we discussed this, why do you need "right"? Two binary
+> > > > > searches where one would do just fine.
+> > > >=20
+> > > > I think the idea is that there would be less strcmp's if there is a
+> > > > long sequence of items with identical names.
+> > >=20
+> > > Sure, it's a tradeoff. But how long is the set of duplicate name
+> > > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
+> > > with high likelihood will take more comparisons.
+> >=20
+> > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sort =
+| uniq -c | sort -k1nr | head
+> >   51737 '(anon)'
+> >     277 'bpf_kfunc'
+> >       4 'long
+> >       3 'perf_aux_event'
+> >       3 'workspace'
+> >       2 'ata_acpi_gtm'
+> >       2 'avc_cache_stats'
+> >       2 'bh_accounting'
+> >       2 'bp_cpuinfo'
+> >       2 'bpf_fastcall'
+> >=20
+> > 'bpf_kfunc' is probably for decl_tags.
+> > So I agree with you regarding the second binary search, it is not
+> > necessary.  But skipping all anonymous types (and thus having to
+> > maintain nr_sorted_types) might be useful, on each search two
+> > iterations would be wasted to skip those.
 >=20
-> This change is fine with me, so I can apply it unless somebody has any
-> specific heartburn related to it (Greg?), but in case you want to
-> route it differently
+> Thank you. After removing the redundant iterations, performance increased
+> significantly compared with two iterations.
 >=20
-> Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+> Test Case: Locate all 58,719 named types in vmlinux BTF
+> Methodology:
+> ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
+>=20
+> Two iterations:
+> > Condition          | Lookup Time | Improvement |
+> > --------------------|-------------|-------------|
+> > Unsorted (Linear)  | 17,282 ms   | Baseline    |
+> > Sorted (Binary)    | 19 ms       | 909x faster |
+>=20
+> One iteration:
+> Results:
+> > Condition          | Lookup Time | Improvement |
+> > --------------------|-------------|-------------|
+> > Unsorted (Linear)  | 17,619 ms   | Baseline    |
+> > Sorted (Binary)    | 10 ms       | 1762x faster |
+>=20
+> Here is the code implementation with a single iteration approach.
 
-I have a few follow-up patches for the Tegra PMC driver that depend on
-this. 6.19 is what I was targetting, so if we could put this into a
-stable branch that'd be the best solution. I can set that up via the
-Tegra tree if you and Greg are okay with it.
+Could you please also check if there is a difference between having
+nr_sorted_types as is and having it equal to nr_types?
+Want to understand if this optimization is necessary.
 
-If that's all too complicated, I can probably wait until the next cycle
-to merge the PMC changes.
-
-Thierry
-
---ykyajizgfjgayrmb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkLgLAACgkQ3SOs138+
-s6F0Lg//dTn1/PUCYHRhF8cm1xB6JKggiLC40TRct49fcf9eF5gAdCqXm44qKoaF
-67aqiXAiwzovTctJIu3rz8p71/FeXp/qGWDdPm/+wI7yD+BoCcVO0nmvXuPwCzhd
-ZMwqeaRVm57JX4M9S5BdkOGtDLgAjyZ/6Qq/2isiQSPiWWl/IT3YiLyzw8vq8mcY
-VoepQGK5hm7CHFf8FOBs+sMt6q5JJDm0VjNi+seVcCNg9U25GaXCRc2D9ztAqRib
-3768/KMhlftnoJKsizCwWq2Gyw0Se7ifz66djjf51sHd064LLDv7OZpfeGyiFK01
-MvVGXoPFuIJB0yqIoMRBbeRULm4kq+dkUkt1JWwYAMw9ZJnhXPJJI8bal2IASj8/
-E6NADiYd9HS8kAXWYvLkm0xHv4FN5WXWG2a+Gf6K2vpBm07zG2xnI+eVjYQSnb9W
-O9TcZf3jDWvgEQ31plH5JFY32sI4vjLAdcKS2oRfkbxFDJvTS+RRjj3EPqFshNXf
-B5E6pXTCltOkUepuhbGDzIifVWzYgg/GyXNfwzdnJUXcAz7QPPJySfMraf/dn+8S
-hggVgAivRFDEtaNEqKU6iqoePR3HIUJe/Ebjrb199RV9t4FcnVYOpviJRf5EWpsF
-2YEUJPiA7neiac9fPLwCoRh33bJTIzanmWVxmFF1nQ2vozIt68U=
-=3Mmd
------END PGP SIGNATURE-----
-
---ykyajizgfjgayrmb--
+[...]
 
