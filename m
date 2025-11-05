@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-886417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93907C3588B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:56:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A8DC358B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B9324E9C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9945F3B0569
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8093126B4;
-	Wed,  5 Nov 2025 11:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1680F312805;
+	Wed,  5 Nov 2025 11:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hM/cY5Ki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QCpE1+Bx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B684B311977;
-	Wed,  5 Nov 2025 11:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A002D305056;
+	Wed,  5 Nov 2025 11:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343685; cv=none; b=KlS9hYaXvAURUokyKH84vYf1/LBGAs9/qrPRIdpCyxm6p0puUyJgAiZ7Iu0Dts1pbopU9/7DLaQlpOsGLb55/QSbYfMuNEo8vV0mzv3gA7JVwCHVmn8XoFBjoTgE5dqWjj7xde/FjZKgZpDerQIOkyq/5zmSb7ohGxecrxbM/C4=
+	t=1762343739; cv=none; b=pVjkAW377OwG07kR5xdcgjqJy6Rqb3ZRIUGpeuLqEFyi7JBUgvFkHrLGSDFhNHme8JSNaRwD8vv1ZyJMHXypSerH5EJzBHJAlp4AZtroe9w0HXDXVim2zmsAAmRMrf4xeRdlvRtq8d6dwGK63Tj6fb8X6gPxknDiyLxXDDmwsEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343685; c=relaxed/simple;
-	bh=fWXEEpra3JSRXtn+vmC3wMzG+TNvV4eqDMvW3p5wny4=;
+	s=arc-20240116; t=1762343739; c=relaxed/simple;
+	bh=xleMpf9eLjAIINZmqYv0qCRdyeKHgj00vprlXbZ8yXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j21MnrxpjSzuXzAgvPeysA7Bi1J2TB1FnhQQ1ooL6X69WoUXi3dFfE1cfoXXthZ6phz5dDZBOzyP5Vwelq5A0d6VJdNYccMw8xf5QP4cZGQR+tPLTtesO4X65+FFPWm7GvQFVv3cA0spVmIQ7EmmiOQazQHBkqrasA9ybKX0ILQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hM/cY5Ki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE7ABC4CEFB;
-	Wed,  5 Nov 2025 11:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762343685;
-	bh=fWXEEpra3JSRXtn+vmC3wMzG+TNvV4eqDMvW3p5wny4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hM/cY5KiggonlBpQS6r6aUbQCzmxqedMYrNiw5nWJDwLW7yBuvTNF6tQNZiH7Ckn+
-	 AEYM+Y5ZDtiyvsPWGsEqGdLsWThkVadOzZOHGYNr4Nb8t4zgnG37geJk90dvTyOVKU
-	 z348htJf6XzkaDyjJGeQdOMhsjsmZ2pBQzCUAziWSobwrrtx+WnsiwyQ3/b0diYn0G
-	 /t0xqWMxPL8V6LoPxnz5eTKOnLflY0clYziscaVqc0TK4y/Hg7orWHNaWcLW8CvIQw
-	 9yZybJdJc3+kFYnMZUtjBLfCmIh0O2topDLZMrF3hFx9bYXd8yRRadBTMwDAF4rAQf
-	 6OfWiXyemUoXQ==
-Date: Wed, 5 Nov 2025 11:54:41 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: vulab@iscas.ac.cn, linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com, LKML <linux-kernel@vger.kernel.org>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH] ASoC: cs4271: Fix regulator leak on probe failure
-Message-ID: <aQs7Ae99uxewgQyk@finisterre.sirena.org.uk>
-References: <20251105062246.1955-1-vulab@iscas.ac.cn>
- <2f31c494-b655-43e3-aa6b-90c4594d1d44@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iymhoqybl0GoxKHHSQUd4HcK75cUFpcV6PxCGMURM2ey5utWA5qDU5jippM5707pR9/nkVWwJvKVfmlAX9Wju3vKDz7ubYUDOdQqGizht2E3N3TjUOT1LcJjRIMWIalrZFgqyF6IdFTOn8hqF57A4oHCLwkjvOZrf5lTgRiMA5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QCpE1+Bx; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762343738; x=1793879738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=xleMpf9eLjAIINZmqYv0qCRdyeKHgj00vprlXbZ8yXk=;
+  b=QCpE1+BxDnP7el3X5fHLcY/AeXc4tXY3LVKCRhdUzT3o0lPUOUa21Dmv
+   FeTdE23oZb1DoXWXzGCN6E3i7AwkF6Mfe7iBPgRR1kcQhrs20vti5A1b+
+   JJn8JHujK4soM/glAqnm4r1gkQqkfvhLLmEjK8ixBMKkntbhWN9EkAey1
+   b74JcFAJT49iO9ELFI2Xfodh/LTozaxbAH424ZqkJPEqmNfKan6ddUi5a
+   JklidMmksmn36Vw/+m2ZiVcAn6OkDdn6sNnsxSxZujDi8ofXSvALnzN7O
+   C42bzu674YSQYmAaX6tjdmii8TMaZxb5tImJgOFcxzX5eRC2NCF9XeEyT
+   A==;
+X-CSE-ConnectionGUID: JF3h8zykRxOkQ7rgHK4d+w==
+X-CSE-MsgGUID: MbUc6YiRQHWrVucvbUC3jQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64371513"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="64371513"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:55:37 -0800
+X-CSE-ConnectionGUID: 0SvE+Wc2TtK0+ia7GDkdxg==
+X-CSE-MsgGUID: j2ElpzjyQyK+vtQHtSkFdg==
+X-ExtLoop1: 1
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa003.fm.intel.com with ESMTP; 05 Nov 2025 03:55:35 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 0B2F696; Wed, 05 Nov 2025 12:55:35 +0100 (CET)
+Date: Wed, 5 Nov 2025 12:55:35 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
+Message-ID: <20251105115535.GN2912318@black.igk.intel.com>
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+ <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
+ <20251105103122.GL2912318@black.igk.intel.com>
+ <aQs3ls1rKgMOufOn@smile.fi.intel.com>
+ <20251105115041.GM2912318@black.igk.intel.com>
+ <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sW4N0oa2V8v1biPX"
-Content-Disposition: inline
-In-Reply-To: <2f31c494-b655-43e3-aa6b-90c4594d1d44@web.de>
-X-Cookie: If in doubt, mumble.
-
-
---sW4N0oa2V8v1biPX
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
 
-On Wed, Nov 05, 2025 at 09:43:13AM +0100, Markus Elfring wrote:
-> > The probe function enables regulators at the beginning
-> > but fails to disable them in its error handling path.
-> =E2=80=A6
->=20
-> Would an other word wrapping be a bit nicer for such a change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
+On Wed, Nov 05, 2025 at 01:51:58PM +0200, Andy Shevchenko wrote:
+> On Wed, Nov 5, 2025 at 1:50 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Wed, Nov 05, 2025 at 01:40:06PM +0200, Andy Shevchenko wrote:
+> > > On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
+> > > > On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+> > > > > Replace custom macro with the recently defined INTEL_GPP().
+> 
+> ...
+> 
+> > > > > -#define ADL_GPP(r, s, e, g)                              \
+> > > > > - {                                               \
+> > > > > -         .reg_num = (r),                         \
+> > > > > -         .base = (s),                            \
+> > > > > -         .size = ((e) - (s) + 1),                \
+> > > > > -         .gpio_base = (g),                       \
+> > > > > - }
+> > > >
+> > > > I wonder if simply doing this:
+> > > >
+> > > > #define ADL_GPP(r, s, e, g) INTEL_GPP(r, s, e, g)
+> > >
+> > > We can, but it will give a couple of lines in each driver still be left.
+> > > Do you think it's better?
+> >
+> > I think that's better because it is less changed lines but I'm fine either
+> > way.
+> 
+> Okay, I will try it and see how it looks like and then I'll either
+> send a v2 or ask for a tag for this one. Sounds good?
 
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
-
---sW4N0oa2V8v1biPX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkLOwAACgkQJNaLcl1U
-h9Axrwf/ZbaZPe7ifA+WMRLQD/vYPTfcBcrWPWr4z4T3PNb2HSND6RAyVvLHA7M0
-EQ525OQfSzF9bk9d8D70+9cEQzrOwIiBbMuCpJcv69YrLZAmisH97pCWeAJpZB6D
-DgOGBva1ttqvFMfyvRdVKpcG/PgxOYUBE3t+qVmrkzmgPJPRS3roBbwh2KFWlWPe
-epwfDTT/jqINVXzfzaZaoK1w/50WlGFxtS98uthISX2iwU3K2Z+5OU1UfZVS+zRo
-pasY/KP02BgR5W+nFpa7x3o9IJaO0shOiv4xrVhfW+yEALY42dDklazj4ss80194
-d8znrqtF9DS7OirN+6HvL7o5WnoOIg==
-=tMB3
------END PGP SIGNATURE-----
-
---sW4N0oa2V8v1biPX--
+Yes.
 
