@@ -1,214 +1,238 @@
-Return-Path: <linux-kernel+bounces-886747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE8FC3670A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:46:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF73C3675C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53AB621CDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C501A40AEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23BD33030C;
-	Wed,  5 Nov 2025 15:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC6C331A53;
+	Wed,  5 Nov 2025 15:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ab3nb7Nv"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011062.outbound.protection.outlook.com [52.101.65.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVwiSsN+"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7F232F766;
-	Wed,  5 Nov 2025 15:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356557; cv=fail; b=IQYTZURfp8W68ZnT/C10uamGcuF8QMBSI1/EXUMJoZooqkrzJxmbAsWhU/lvd3xavvx3pMhnPc8FSPa1s9aPMMziWSKBlNRoSceFC+v23rGiGeYGOBqLmWBImxQDLs273oZZIo9pjdjEjHjv9Cm7RsnPAVVDK7sQ6gBgksbg17A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356557; c=relaxed/simple;
-	bh=Qn7PN4GQeVKws6B+WvPgsNfD/+MdDnHU4hP/Fm21Vhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gzUQe0eYmYXWVM1D6yMe/yGZEYEKADfLN2IfOtiho3pW+oVteAsLnDhJT8NaMg4YC1Vsm4qg3EahcNaLYDLJ6wv7HnroPvWeJQ4EDfdpKKbIPpEnt/3nDYf8r898Kqw8lkl1G3pRvn5cT701SNkwXZuJ7siMg4yz0ThU4XMMNgk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ab3nb7Nv; arc=fail smtp.client-ip=52.101.65.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ve1UFjsBdyq4LPLKUkyfE2+5xA4T/87r1LNFX3Wf0ULQB5r3vAJEN5q0KOcvpryD1BlmIL7YZeRjbwZl0iOAPI0Z4lSGRt39yIiz55VmHMLjPOtw1F/9/WvVvNZyoNQdsaxtPSWnew4lR2KxrNujwuTGLWoGiD5kx7EcZaO8l9wpY4MGxiJqPzMmRGY6xsbedIBFBRApDCum1aWZ2Z2exUH0Yqw0DDykqRbKy2mT/9ICwHgw8uEMJ58uvI3GlGxt4XNiwPpUQVrt84VRW3X5QBINuAYInaZXh68rHiYQ4aPuNO0bJLKIghAdDEVTf9OI4QAbgICvSy2KKHb2XgwHyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ETyxeNJA58ZLhc4Z3bQ7nC6bmEJtQCNo9t1Gb30otwo=;
- b=vhKpQfHO4XKQshXM4UESVn6cHRN5Q4cEn9I2vgY/lLNd11EuBjXTg06OZ3Q4BcyJ1axJ6jUKiBB9Bsm8PlnoLyACsi/dPE56CSti79G4DqmUvHs3NFI4LfJyBCw35nyu8GJ8M2JeZ3X+Nkh36B+gQlU1dTORea/S8c0mtsBJGTOqXjB4Hl5KpVzwCal3m9fY5fe87JPg1HL03A4ktO2RLpDyfCdMMOffbkAqDXQgh/jHlOu2MXkNjc8awUnnJtErJAAJdYX1XXbP3ckFxlhkdAO2HNQ1WiPpOsvGUgdbYzR0M9nDeW1OV3o32U24wpQWZWDYFgO1t1HkaNABM0A57w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ETyxeNJA58ZLhc4Z3bQ7nC6bmEJtQCNo9t1Gb30otwo=;
- b=ab3nb7Nveus+oiQIL7eSeh+hXqUSPwNKnN8dQ7rl5XP+2ADFAw1e0WewICWVKHQjtUQgKfSaslz2J5vqeLAEO8x1PGrI/GEhPQV1pfOU+Fo58JZYRdzraJRdm8ApXBYgMNlcwbKR9pumSp+kvwLoifzymqZTGnTJKxIhAu2pOklRhHVFywpx84DQ/9vzsUqVPHI2HW8tPfU008Prs/wEGMtvROYFi+PctKYroexWEmC+6b3bPvxHON4PyTM3R1fC3mQkLXjVnCSDurwWQKyEHmVUAUaWY1bin5DuV8Hem5w8kiektNXUof5EbHPoREHQERFsIMBqo1MfLi6qSOSZtQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AS8PR04MB9173.eurprd04.prod.outlook.com (2603:10a6:20b:448::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Wed, 5 Nov
- 2025 15:29:12 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
- 15:29:12 +0000
-Date: Wed, 5 Nov 2025 10:29:05 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: imx: move nand related property under
- nand@0
-Message-ID: <aQttQb5GesjUtBw6@lizhi-Precision-Tower-5810>
-References: <20251104-gpmi_dts-v1-0-886865393d0f@nxp.com>
- <20251104-gpmi_dts-v1-3-886865393d0f@nxp.com>
- <20251105115538.GA17091@francesco-nb>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105115538.GA17091@francesco-nb>
-X-ClientProxiedBy: PH7P220CA0069.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:32c::18) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A7432D0E6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762356667; cv=none; b=GqJMcXdE5P9ZX53R9Ab4Xnmv2FZaMHg2aIcZujrE5eFmlUPMMjFI99JXFnt0mBsBny5S3dq4weAj9u4SEBcbf7ECR7omWAktfBljzG+Sved261S6Ax42rgs17THt55DmSFIMYNJMvZkXqpwC3hflkd3RE3OLCZQmzeSSPlDcXnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762356667; c=relaxed/simple;
+	bh=yEbFUxhU5133fiA2wgh8p34cECSDXHmt2efF/soZEWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QnqygN8F617nRLyizuYQlXhf29B2yrj3yNb/QzEc5NhJdzfuhNNf6msifP9oXXXaMGOp5raEpro1tDCL2MCWX+AL5l6kIISa2VFxw9DexLtgHCjaBSYY/kxR/T9b7osMAM8Tyb2yGspdIl8SXSxzwtwfY8ERGHmoIpli2AvLLiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVwiSsN+; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640b9c7eab9so6017352a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762356664; x=1762961464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
+        b=eVwiSsN+GH8oJYCNas3zxtrCrX0AUwANIXnNhcBdE3wS/5BM00oSTOodxUCLpvEFwr
+         KvT48Ugzrtk28loE5qXKQajpXmSphrPQhUiOwXJFC9VbDpVfDvVWI8KiygUsJKs3i3/a
+         S7a1bD1/QuVIPOyK7HJBzf1V9msgScbN35whwg2x4Wzhh7hR27icBViCLS2zQmEP43lY
+         tOARD1Sowew6P50lMybQ82ANtCv8Bf1zNLKKys51qhzuz4kmf8A0RIV6C4Ww5vew/CY5
+         bwU9qr79jEUq/XE3np9X5wSiOBDrfCkLhRHPCgEWrVG1K8ormbxmZzQS6EplQc4moY/L
+         y1Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762356664; x=1762961464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
+        b=tYDS1zMRXZM4AzJlUnJIEdGiqdNh0dYuZvXB342L4sSTZ5LnDAy7aKZ3P9PjQu0p2f
+         Mvyd3wocYKidr9FMibAP/+oOXXHEwee74VPkLIVpqm7pDtyDOJVee3Vz5VMMNYpMN+7s
+         izKT8Rc7xvzrvFJY3P1j78IZa60A0PhO8WClqhqbVwnSfwaswLGs/U4nm09QBpkzlBaQ
+         AQxQBVvz9Psh2aslVmAjxLehYDqrcWiq8AYeEgtgcmzv3h9xYA+x+bqdYGA65ifplmHk
+         SdTz/aTljRnXf/i0FU377iBq+G90/Cwni3HUjolBOlm19fFafRzoL4qZV5ITvmN3cVSm
+         7b7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUS7/ihxNZf9Ea+s3ntCiMq8gaO+S82Hg6I4fvOiGMNc/8spHjgEm+B5eW+nFobAEHpTpONxVaOlPfUccQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHBXXi9OfHVFl/wI1z3ekcDywkohaOtgas/aL+JE2BqTFSIRyq
+	pWobFUOaKETiKvXd0e5gKA2rBPkoBvZr9p8v68mHZWT/AWbJUSoJzfxBNNtWPNbi9cVIiSNGYHL
+	VTlwF8O4O9epPgvt4slYyftoiHPVZRac=
+X-Gm-Gg: ASbGncsaKNyCXEzLuSGCGk8vMYJJYVIWtn/hNbXtlhz5FXxdppzW8RTRfQ9/EK5SKAz
+	iq+SGHUD5vIL8Al2KfLVDnU+/Ew8sFgwxmGZzLKR6dj6DIz0YCds8Q6WmzPTai2iPZ/i6AjyNEY
+	8DNB9PtuAkbtFFuOb3psqt/LX3W/ZHNYysoC8NM/PKa9lrb2eqcF+GIWaHEM37BHGLVaQkmBy7b
+	hRxfoDKn/2yV6W5VkkXtnWIdxLaNrhwjv3eMeoIg0fj1G5WeNHxcJeGUWCs5C7be0Bjwj8QCO7M
+	yXmGwgurI/HENGCntuw=
+X-Google-Smtp-Source: AGHT+IFeTdBoWoUyL5OJBj6ctpxjIzpxH5YSlDQbMjLCXNftce5Xam58H6eehckj8yuunQCZvowB+AKwBvBeUXEftyg=
+X-Received: by 2002:a05:6402:1462:b0:640:b978:efdb with SMTP id
+ 4fb4d7f45d1cf-64105b80a61mr3309961a12.25.1762356663555; Wed, 05 Nov 2025
+ 07:31:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB9173:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fa14c80-23f8-4d47-a79a-08de1c80128e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ymx3ocpop12WE7Hy8rGTC1iXWfk8vvWJplS8+aFbzeHL1cN2a+0CjseCFnMB?=
- =?us-ascii?Q?8pA7qpMH0BxUkWEYQhZGplnm1BoThFLdD+nJYCufKioLIxQJXY2ju+xf0JE6?=
- =?us-ascii?Q?GdTWs85iXTA9p38vofHP8LPHQcfIsnYR3h7Z0e0QK81By9aqYKuL22zR/2a0?=
- =?us-ascii?Q?tsxo89Iiy6IICzcb+PeuIkdizK7J2wItcnhDfCIJox5dgaIGIJnSjuXgHx0f?=
- =?us-ascii?Q?0LG4LsGF8lufa5fxqkgHzi/LIFocSKi/dzPk8Qm2mmPsIxWdX3pzqahJp672?=
- =?us-ascii?Q?0vno0NJetTOVXvFPfnF9vgiXQ5qRjVrJGgRRpden21e+vXXTVDfqhNX+Fua1?=
- =?us-ascii?Q?DFLRGdV4KX02RWCDR1xI+PKDH4PbnMCWzqy6Y00tWOByRKJUXxNT0AQ0Uvls?=
- =?us-ascii?Q?BCVzgHAhRYRW9c3lg3X7xBrBFFp46ZiOnB2Jp4wM4RdS3HdcOdqnp2gawDTh?=
- =?us-ascii?Q?/SsEcuV9ZNFONQhhroOu5nOKpEl3/Kh6TblgU9ARAeS8gYhmjaFd2uQXLlYi?=
- =?us-ascii?Q?FjlkydBGWHIStWMXVq3S/90w1ZqBUe/HvCAnMs70gRIFlf+DoswdkvW983w6?=
- =?us-ascii?Q?wZpvDV2LVce6kDD8js6yMG4f/14VA9Dq9Rju0AS88iRsckoOLg7tKC52pwX9?=
- =?us-ascii?Q?sLR/qq7+/01ojf5Bg9hO9tO8Mklq3oJKX0fYd1PvVN7H9pW8/WFpFYxKrPGP?=
- =?us-ascii?Q?7mUYWYVqMOcyqzOSHLn82Y7oCHZoEEFOcqH3eR6hWPCyn2VJIkYa0nR9zMOk?=
- =?us-ascii?Q?FHR0mv2OaBtgEgKwLPtpKDSn678KIt/ukFhZ/gMFy5xUsG06h8sF11k/aZXz?=
- =?us-ascii?Q?/mTWEi8aSQB5C1+nE09ox8fZ2dBwnzbEzMD8ppegqf7Yd7qOEoVSz13FNSfe?=
- =?us-ascii?Q?/ZmK52h6dqG2BXIqHEtgQ0IN0OdRSx8i6vMPB5Gg6xZ91iroQ51wcpDb/t6c?=
- =?us-ascii?Q?5xdCRxe8YRn+S6VRbP7UsyphdHTMBZqTFddgWSy1l+iQgEcVZeVsIXwmDJLZ?=
- =?us-ascii?Q?9OiphIlBbobdMNnsLgnmbj651vnRifEA88E8Yf36ZL18cr96xq079X+TBFop?=
- =?us-ascii?Q?417johyDY9my/C5pn/7XM9B6wTAQHQFLP/dx7x6EqAhXM0KOTLPvsUcYIhx1?=
- =?us-ascii?Q?7DAhFaa9OpwWJm0uDHw4B/amb0slRDTW5VII0ghkdL20DY1rT0zPIyeK18UE?=
- =?us-ascii?Q?462p9DBZl9o8FKoVKqNNoPfQTfUHbokM5gvNMGy4IuBcpcPWN7qzuYzGUAwT?=
- =?us-ascii?Q?3AxciY9zv8gCys6QeyO3Qikd7ftrwrULiZgc3W0nXUVxxVBnZQ4XiF17nrXm?=
- =?us-ascii?Q?g4Ytk27qIMXOA9D7LXSmjGcK/SF8iy5shgqYFILxHtvxfH8OyuIidtcGud6C?=
- =?us-ascii?Q?AofRqbJ57RUs++5B2MCE5/1i6hAN2XjubZcKrSculRyzlmgwor54CfwpNqeO?=
- =?us-ascii?Q?zDwySe9e9otzxusINsx3Nk1bTbOQoT2j?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BdyfNuY7kReJwpXnay4FcjYQEGOTSz10VX2QbZ5/JsBEO+p2W4osGqYvOnRz?=
- =?us-ascii?Q?fDbu73C20ncZrWe2fVRUCXmkMkkWNjx0jczuRV5kbqpuUNe87JTId8xfeAi6?=
- =?us-ascii?Q?f1SIbGfHvB3lMEgL0tQdcsEva56upIGLRFFgzIJc497U50H8sPTCK+vi3+Lu?=
- =?us-ascii?Q?OUBFqNnGLHRyT5K99Y9nkr2UcW8QsxwDu/HCQQAq1wLE+in1FOdA7abarlMU?=
- =?us-ascii?Q?E/Cf9rCJ2ux4Ik8GNMZTRoJ9ooaUxy2YiLaxNrVrosJxogBi71kRyy3PTeRg?=
- =?us-ascii?Q?uV6p3vOj0jHg3UgkkzU5G73/9If25Bli20W3SJrva1HzDzHK/MFxcdxN/8K5?=
- =?us-ascii?Q?6oGzFzil4WkDl5EYGF+Cc8FNyXfQr71x/1eAV07YA0uaXGqKaJndBEctHlsq?=
- =?us-ascii?Q?F828FFUuLCfNjd4QHO3TvtLmKSQOWPJj+Y/SF3bj+xS3l9hM7bHAe/t33uFj?=
- =?us-ascii?Q?hZ5lsXy5yfwjI6vMq0XXsmhYBKcL3DcDP67eC7HhlAmM3OWWsDW069SL/TIK?=
- =?us-ascii?Q?kfuzRjogNhQflCI3yFKUNFoxOEkQsZdV9JuWp0pYHtWnK02W7d8t82th+Q43?=
- =?us-ascii?Q?N+xnDOuSd6AsQwk+YqRphTcUEODeD2tM4FEjX3MxRHAbBAUZVin4ka2qhQQ6?=
- =?us-ascii?Q?bzGBMxByMLBftuuxUh0HFhvGWbNt1a8JRshCFAv4S0wZAvjGI1FDYz+uo9w5?=
- =?us-ascii?Q?GGtRIBBleSSPcwEH7fVOwF9Nm+LaDl02gAHa18ylXw1ZinlHCDF9tZJrY/NS?=
- =?us-ascii?Q?B04hh21E/FSHN+5K/ls3IlW50YsD8yne6qikAHHX/oTHwVqIdNgigJQBkL7n?=
- =?us-ascii?Q?Eb8R7qU3hHXED91bDG1XVx90LWX3bSIIrDwkxdWNcwEDi1Z2jG+A98ZXKwd/?=
- =?us-ascii?Q?nL1+QTv+ocxD72zVYgSMxJulapMMrgi2Ydf+1fI24DVjgDq+szNhdkLiESwd?=
- =?us-ascii?Q?fVbr5ScSKmXOKg1gEKMsPiRYSbpymmVDtIzZkcUuEfBOPDKgr4pujccvhyFn?=
- =?us-ascii?Q?Eg72Sk+paQLeYmWAiWJgeM2R25LTmALBT2WKJWpu0cR82LvkzbsZH7L8vCCW?=
- =?us-ascii?Q?YkegZEwCxXnSsKSqPwzM+qphKmAGQXQwE5YWDWIjXBj4Z2WkCixsLDzbx+7l?=
- =?us-ascii?Q?RC/wnMTrMjiHdoksxSOYBQyat85N/Gi/3A54czZqcK0kwsoAh+qUFXsXPIfr?=
- =?us-ascii?Q?5+NO5NyjtzVFXMmTOogf+jfYqXrcoC4Bc4/fYX8I3UYCgY1L5TkuStqLAslg?=
- =?us-ascii?Q?C8MRufk6w89vQjmknMjfRssKbwJ+cRazEFZL5tF5yxmW0q8po6nxwhyBuaFe?=
- =?us-ascii?Q?+B8V6khht0Y0jgKjIY3kzPjNYGuEhmu0v7+Wx7ASEhtt7DmLgGWGnyYA24ST?=
- =?us-ascii?Q?HFcFlmViq4ZjyzlSmjG0U98d4DPly68XZ/Z3LTABDOJ32VWBreCiuAzYvSAW?=
- =?us-ascii?Q?s1x+TJZJsgopbkXalTxHiKpKgVAnflS3MmwJ23J8Lt46sGEeGKbtVKsNFf/E?=
- =?us-ascii?Q?jc2dh0pUmpt3sNEvBjGv2lcNJG7wgdKrcee9fB4wC6cXwo+ckhZCbevjzgYS?=
- =?us-ascii?Q?yB9fwld7Y7fSob6ctsc=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fa14c80-23f8-4d47-a79a-08de1c80128e
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 15:29:12.7595
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aAu3bz66A9Ngk8aMPbrdWN3Jp8QGEWZspBWnqDNEHsDv0C2Yibar7TtDLXpsltQUp2rX8mPuMowLnUSuW/n6Rw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9173
+References: <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
+ <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
+ <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
+ <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
+ <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+ <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com> <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <87cy5x7sud.fsf@wotan.olymp> <CAOQ4uxjZ0B5TwV+HiWsUpBuFuZJZ_e4Bm_QfNn4crDoVAfkA9Q@mail.gmail.com>
+ <87ecqcpujw.fsf@wotan.olymp>
+In-Reply-To: <87ecqcpujw.fsf@wotan.olymp>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 5 Nov 2025 16:30:51 +0100
+X-Gm-Features: AWmQ_bllL0jRg0lG2IquSuf9WxK56YqDrwheMrE1Nh3n-OXTi4UNNbtnbhoiVQo
+Message-ID: <CAOQ4uxg+w5LHnVbYGLc_pq+zfAw5UXbfo0M2=dxFGKLmBvJ+5Q@mail.gmail.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+To: Luis Henriques <luis@igalia.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>, 
+	Matt Harvey <mharvey@jumptrading.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 12:55:38PM +0100, Francesco Dolcini wrote:
-> Hello Frank,
+On Wed, Nov 5, 2025 at 12:50=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
+ote:
 >
-> On Tue, Nov 04, 2025 at 05:27:14PM -0500, Frank Li wrote:
-> > Add child node nand@0 and move NAND related property under it to align
-> > modern nand-controller.yaml.
+> Hi Amir,
+>
+> On Wed, Nov 05 2025, Amir Goldstein wrote:
+>
+> > On Tue, Nov 4, 2025 at 3:52=E2=80=AFPM Luis Henriques <luis@igalia.com>=
+ wrote:
+>
+> <...>
+>
+> >> > fuse_entry_out was extended once and fuse_reply_entry()
+> >> > sends the size of the struct.
+> >>
+> >> So, if I'm understanding you correctly, you're suggesting to extend
+> >> fuse_entry_out to add the new handle (a 'size' field + the actual hand=
+le).
 > >
-> > Fix below CHECK_DTBS warnings:
-> >   arch/arm/boot/dts/nxp/imx/imx6ull-colibri-aster.dtb: nand-controller@1806000 (fsl,imx6q-gpmi-nand): Unevaluated properties are not allowed ('nand-ecc-mode', 'nand-ecc-step-size', 'nand-ecc-strength', 'nand-on-flash-bbt' were unexpected)
-> >         from schema $id: http://devicetree.org/schemas/mtd/gpmi-nand.yaml#
+> > Well it depends...
 > >
-> > Since 2019 year, commit
-> > (212e496935929 dt-bindings: mtd: Add YAML schemas for the generic NAND options)
-> > NAND related property is preferred located under nand@<n> even though only
-> > one NAND chip supported.
+> > There are several ways to do it.
+> > I would really like to get Miklos and Bernd's opinion on the preferred =
+way.
+>
+> Sure, all feedback is welcome!
+>
+> > So far, it looks like the client determines the size of the output args=
+.
 > >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  arch/arm/boot/dts/nxp/imx/imx6-logicpd-som.dtsi           |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6qdl-icore.dtsi              |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi      |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6qdl-skov-cpu.dtsi           |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi                |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ul-geam.dts                 |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi               |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ul-phytec-phycore-som.dtsi  |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi               |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ull-colibri.dtsi            | 12 ++++++++----
-> >  arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea.dtsi   | 12 ++++++++----
-> >  arch/arm/boot/dts/nxp/imx/imx6ull-myir-mys-6ulx.dtsi      |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts          |  6 +++++-
-> >  arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi               |  8 ++++++--
-> >  15 files changed, 82 insertions(+), 22 deletions(-)
+> > If we want the server to be able to write a different file handle size
+> > per inode that's going to be a bigger challenge.
 > >
+> > I think it's plenty enough if server and client negotiate a max file ha=
+ndle
+> > size and then the client always reserves enough space in the output
+> > args buffer.
+> >
+> > One more thing to ask is what is "the actual handle".
+> > If "the actual handle" is the variable sized struct file_handle then
+> > the size is already available in the file handle header.
 >
-> Was any of these changes tested? Is the driver able to cope with the
-> binding change?
-
-I have not board to do direct test. This format is used at imx8 platform,
-which use the same gpmi driver.
-
-This properties are parsed at mtd common part
-drivers/mtd/nand/raw/nand_base.c
-
-If you have one of above board to test it, it will be appericated.
-
-Frank
+> Actually, this is exactly what I was trying to mimic for my initial
+> attempt.  However, I was not going to do any size negotiation but instead
+> define a maximum size for the handle.  See below.
 >
-> Francesco
+> > If it is not, then I think some sort of type or version of the file han=
+dles
+> > encoding should be negotiated beyond the max handle size.
 >
+> In my initial stab at this I was going to take a very simple approach and
+> hard-code a maximum size for the handle.  This would have the advantage o=
+f
+> allowing the server to use different sizes for different inodes (though
+> I'm not sure how useful that would be in practice).  So, in summary, I
+> would define the new handle like this:
 >
+> /* Same value as MAX_HANDLE_SZ */
+> #define FUSE_MAX_HANDLE_SZ 128
+>
+> struct fuse_file_handle {
+>         uint32_t        size;
+>         uint32_t        padding;
+
+I think that the handle type is going to be relevant as well.
+
+>         char            handle[FUSE_MAX_HANDLE_SZ];
+> };
+>
+> and this struct would be included in fuse_entry_out.
+>
+> There's probably a problem with having this (big) fixed size increase to
+> fuse_entry_out, but maybe that could be fixed once I have all the other
+> details sorted out.  Hopefully I'm not oversimplifying the problem,
+> skipping the need for negotiating a handle size.
+>
+
+Maybe this fixed size is reasonable for the first version of FUSE protocol
+as long as this overhead is NOT added if the server does not opt-in for the
+feature.
+
+IOW, allow the server to negotiate FUSE_MAX_HANDLE_SZ or 0,
+but keep the negotiation protocol extendable to another value later on.
+
+> >> That's probably a good idea.  I was working towards having the
+> >> LOOKUP_HANDLE to be similar to LOOKUP, but extending it so that it wou=
+ld
+> >> include:
+> >>
+> >>  - An extra inarg: the parent directory handle.  (To be honest, I'm no=
+t
+> >>    really sure this would be needed.)
+> >
+> > Yes, I think you need extra inarg.
+> > Why would it not be needed?
+> > The problem is that you cannot know if the parent node id in the lookup
+> > command is stale after server restart.
+>
+> Ah, of course.  Hence the need for this extra inarg.
+>
+> > The thing is that the kernel fuse inode will need to store the file han=
+dle,
+> > much the same as an NFS client stores the file handle provided by the
+> > NFS server.
+> >
+> > FYI, fanotify has an optimized way to store file handles in
+> > struct fanotify_fid_event - small file handles are stored inline
+> > and larger file handles can use an external buffer.
+> >
+> > But fuse does not need to support any size of file handles.
+> > For first version we could definitely simplify things by limiting the s=
+ize
+> > of supported file handles, because server and client need to negotiate
+> > the max file handle size anyway.
+>
+> I'll definitely need to have a look at how fanotify does that.  But I
+> guess that if my simplistic approach with a static array is acceptable fo=
+r
+> now, I'll stick with it for the initial attempt to implement this, and
+> eventually revisit it later to do something more clever.
+>
+
+What you proposed is the extension of fuse_entry_out for fuse
+protocol.
+
+My reference to fanotify_fid_event is meant to explain how to encode
+a file handle in fuse_inode in cache, because the fuse_inode_cachep
+cannot have variable sized inodes and in most of the cases, a short
+inline file handle should be enough.
+
+Therefore, if you limit the support in the first version to something like
+FANOTIFY_INLINE_FH_LEN, you can always store the file handle
+in fuse_inode and postpone support for bigger file handles to later.
+
+Thanks,
+Amir.
 
