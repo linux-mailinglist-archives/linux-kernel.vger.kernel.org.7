@@ -1,127 +1,93 @@
-Return-Path: <linux-kernel+bounces-885611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73371C3375B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:19:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A8EC33776
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 799444EEE5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:19:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CD4D4F0BAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC23A23D29F;
-	Wed,  5 Nov 2025 00:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF59E23D7C3;
+	Wed,  5 Nov 2025 00:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SctNo6F/"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+bAC1oC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD26239E7E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4666023BCFD;
+	Wed,  5 Nov 2025 00:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762301963; cv=none; b=qhgTYFMoc9na6KxspOfbtyMfmuT1za0grWtctBF9HIHE+O1jGxj5pjhwjLz+rqXS9GuRXLG3gL3vIVdoUCCfhG7stJKjkJcAOdnJK8C7tQbkWW9LJTo1uA4vTQ3OMIz/Oj6F01ah9GhLUC0iZvwefIhH5KXoaK5apnorl6IPNMs=
+	t=1762302052; cv=none; b=XklwBCcsKEDdYm6y0V+rlVxVfFAyMBh1fm/mhYReRDWBFVCRYhzsJNJf9MMJH8R6VOLhJ2LZDpv3QSOpPiFrm+stV1TgcGkOlbq0YOrAQ5+RseZZ9WVtJkz8nIruDn/byinRFjQ5NVA0n0EjeFjtkSQzkC5cN5nP0ORyU9d7cWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762301963; c=relaxed/simple;
-	bh=QDwYksSWVzmrhGL6bChdX4vnl8TjAu3iipcMTTMEHVw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gmkeMilo54y0m0YS8dNiAVdN/rRIbsNjDIzEqOs9fK2Yj1qeITUD86zaDx41Dg209I66v5vhU2aP5pVJmQQmtQWgzNgGlLgzCVoFd7rBg+/n8U2J/1DzAtpn2vXXnWeI05W55KG8JOMZjpiB+/LSa7iR52e1HfxbR8YrpVpvbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SctNo6F/; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so2149826a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:19:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762301961; x=1762906761; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PQOo5M0i6Q/NGE0WSQPjyiNe2YqX4cEHbsFV38mV+ZI=;
-        b=SctNo6F/QsJfysFeTMPqhhPpAV7IGBx2K1OG8eIsnCRYkKIrnuBDycoLxD9FMCCAqA
-         pIkC6mcmtPfeN8RYXSywm6Z61Cz5TMvBJaadQm0/4Uj5X9tT6gPEpZjnb70s5f/X2aWv
-         nJzCxq4l5YsFP5MyCET4HlQvTigi0VLWJi6vA/qqHDXu6sbTayNX0NXlgd4OtlKU7IWv
-         OulFj+4jNiVq3jigw+EZTz44C13gxv6x8YP89EhgzhgTHlcoo/4t1eNdTMtWVK8wAhW5
-         Z+QqfqBZFmEFaWdluwRGnN+00f6l47VZFGCIbQqi9JbxjaKUef5IOQXxSLTfdDGJew1D
-         5dcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762301961; x=1762906761;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PQOo5M0i6Q/NGE0WSQPjyiNe2YqX4cEHbsFV38mV+ZI=;
-        b=aA0FIH6VWY+od+wuN6610gpRfWT5WucrkCh8dqfXI8+y2cPWwXGvaq4JGDMPu1NrgX
-         Y9uR1GHKS3Gy/HGolA7430BG8YFBuynX0baOqj7K54/a2M9W2VUBkb7T0DAZeutOJVZR
-         SmeSdixV4y98Wr6jcFdjK+0YYLU/EcTnZldV4uqBd68qDGGNetZsrZzTLyt3i3Rdr3Y9
-         s7jzlQppG2nM54i1VwBmbMZHRYRRz4Yeo1i7Vs534JKL+RgtM4vMvVDA9AMmT4Jn6hWh
-         GZmc5U0CPDkN/BDT2XsGVJgtOfCkkeA2rlp6iaoGXsyyTlN3v4wZ9Y5qReXcct3L+TF3
-         aPvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxDStWv3oYSF1mfgTxOIHBgQqW2kOk+B/kcGwBaXqUQffVU+cZWHm9U2LxNEIXunMug8Ch8pt2SS+wRnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsTBqSnLNK0/8+vetl/+GZjPs0v2GieCub1tRBXDbaCBR+bfac
-	bZXNGrr3kekZWjlDNSF2EenDUdWy82fRTeZJBcM8cw77atEKwfjjJjTb
-X-Gm-Gg: ASbGnctXSVei/slsTMr8B/rxRrORgVR516AZCjvFY/Ns/p88Cs//SuJWj+RRY/IeUFV
-	luDehpahYWheWuDP8aXS9Fh/CQlhzIFaYbVP5npLoeDMlYuIUfwtb1r3xJBN+RN245rCGc7xCRW
-	j3zol99S78E+YgqE1/P5g2UbRvQj5z/muihQymWneleNJ9BWZ2GCuYxybXX57RjBw+AgI0ecvIN
-	025CtQEsPxY3/UuDPNn3Q0ekleKFcZ0w12A9AAKk000KiB3NraJ3I1YeU/Vc7OAhpQsQL1xoaSG
-	5AYjm10WdvlKxj7p+B0+nJXGwbWwmCcBOJ2tfgJhvxZh1eox8AYARhJCettZCpLRD5OPBEAvHBk
-	Sw1lzAOZZSmFvlDg0QEh3v09y0mRHUl3ZqCHCHHOkWodaI3ViksFvaTley11+UuShieho/bsd1s
-	PlUICQ5OVtzd0VGDbPFClXOqI=
-X-Google-Smtp-Source: AGHT+IHD2NG1fQ3xl98wFzeuOQRvtfU5I7A4mP97EoxmWWPr5Ongqgmj+Ju/4NPWI3gyRmGoE0iydA==
-X-Received: by 2002:a05:6a20:f20:b0:34f:b660:7723 with SMTP id adf61e73a8af0-34fb6608efamr518592637.48.1762301960948;
-        Tue, 04 Nov 2025 16:19:20 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:a643:22b:eb9:c921? ([2620:10d:c090:500::5:99aa])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f87a710asm3616987a12.30.2025.11.04.16.19.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 16:19:20 -0800 (PST)
-Message-ID: <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
- search for sorted BTF
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Donglin Peng
-	 <dolinux.peng@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Alan
- Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, pengdonglin
- <pengdonglin@xiaomi.com>
-Date: Tue, 04 Nov 2025 16:19:19 -0800
-In-Reply-To: <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
-	 <20251104134033.344807-4-dolinux.peng@gmail.com>
-	 <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1762302052; c=relaxed/simple;
+	bh=7DyAlec1xWCVNfF5OX01I6lH9WD9w558h5r3Ww1gBdE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gmDU7K1SJuVKv5fcAUrDgGisosi0fdJpaWP+NxOik7WcFSuUUDSIZnP5pzqFXjFw/k4KJoRBuNKQ/C3mDmGJJLMQ/gSixT7aRgbHyhI3TXi1Y8kOt2kKIPseTyvxCrI9II1lAsfhY//nnAK+OBdaaF+1U6EYDpy6xdgLEkNxSWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+bAC1oC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC808C116B1;
+	Wed,  5 Nov 2025 00:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762302051;
+	bh=7DyAlec1xWCVNfF5OX01I6lH9WD9w558h5r3Ww1gBdE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=H+bAC1oClEuze5WlYEP3EiaLxxqE2Z84NDcK30LtRMXZH3n3kiaNP01ax9o4xiVAE
+	 5uavSlChZl588zDEti4ynxrOPEAq/p2sWABSXaGCVVyVK87iYQDr2XO2PgBz54U0j/
+	 WBGvkOvFVGRHMP7QbsUy4xKr2Y3phGuhOK1gHcSOiHaAFpKmO7hKrBQayHeHH7yo36
+	 p7poNmHcK1Ht20XAIRRs1EV3nYnk7agHxkgfQ0+jkaYGRoPqR2nW1ngfT9MHLtGwUY
+	 VrGsiQHfP2DsatVRUco47W3kX17q6dnLBiHffCAHp5MFGjBRYnRG3KKY4pGx5WN1ES
+	 s15TGN8c/axQQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0B0380AA54;
+	Wed,  5 Nov 2025 00:20:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in
+ IFLA_STATS
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176230202574.3035250.1803056015244340569.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Nov 2025 00:20:25 +0000
+References: <20251103154006.1189707-1-amorenoz@redhat.com>
+In-Reply-To: <20251103154006.1189707-1-amorenoz@redhat.com>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org, kuba@kernel.org, nicolas.dichtel@6wind.com,
+ toke@redhat.com, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, kuniyu@google.com, sdf@fomichev.me, shaw.leon@gmail.com,
+ cong.wang@bytedance.com, linux-kernel@vger.kernel.org
 
-On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+Hello:
 
-[...]
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *btf, __u=
-32 type_id)
-> >         return type_id;
-> >  }
-> >=20
-> > -__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
-> > +/*
-> > + * Find BTF types with matching names within the [left, right] index r=
-ange.
-> > + * On success, updates *left and *right to the boundaries of the match=
-ing range
-> > + * and returns the leftmost matching index.
-> > + */
-> > +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf, cons=
-t char *name,
-> > +                                               __s32 *left, __s32 *rig=
-ht)
->=20
-> I thought we discussed this, why do you need "right"? Two binary
-> searches where one would do just fine.
+On Mon,  3 Nov 2025 16:40:04 +0100 you wrote:
+> Gathering interface statistics can be a relatively expensive operation
+> on certain systems as it requires iterating over all the cpus.
+> 
+> RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
+> statistics from interface dumps and it was then extended [2] to
+> also exclude IFLA_VF_INFO.
+> 
+> [...]
 
-I think the idea is that there would be less strcmp's if there is a
-long sequence of items with identical names.
+Here is the summary with links:
+  - [net-next,v3] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in IFLA_STATS
+    https://git.kernel.org/netdev/net-next/c/105bae321862
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
