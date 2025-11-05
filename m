@@ -1,198 +1,103 @@
-Return-Path: <linux-kernel+bounces-886843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432D2C36966
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:11:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31519C36BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F30E4FD0D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D01D3A5F27
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11063335579;
-	Wed,  5 Nov 2025 16:05:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADD6334692;
+	Wed,  5 Nov 2025 16:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hENwCIhG"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9B334C33
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47446333755
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358725; cv=none; b=Brz8HUgfbhI3egdfkON3y+iI5Fe4diEaDokIS6bkl6yuaDjs1mBO8Z0HFnoGBICRVb4f+Pi1F9G5B8JNrA19RRAlJJEmQQYeACKANKnpS444SpILdPb4NLb3XNDq11jIfFPR/cyjKtYSS/citnMTT2B9CWkc3Y3J9h7JH+o7tYg=
+	t=1762358717; cv=none; b=U5GIkyTqm4xF+9WzJ8TZ3ia/JOWDccvTREzrgQXsXBNJfO1kIg0BCpMaVwFYNRCDukjdLjaNN6wsZV+gLeykT5+oeEgALjY0kECDRFs/Pmti68levH82ZTv/wMLJWKNf0APU9N2Q2CJqL2pHXnbL6kD2Y61DGBwmdYt8pZXXsrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358725; c=relaxed/simple;
-	bh=Uapyn0o1PFsF4p87jzmRukDDVz/hXCiKLFKttO5iEUE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qoA23jtyz68fVbwve1J+aWIe0nWIgrBRd2cYzD09mP4RtDAPObEmWdQwcBBby3X0IwYsuWnk8bJ923KcEnmokQ/R5INhnqVct/yNgfXsXUEWy5vguWtPWm6vfVLzM9qg3dRHB+fwPE5AECJKjA/+gcXTZLx+Wo6GaIJZ4FUdR1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGg0F-0001Ma-RR; Wed, 05 Nov 2025 17:04:55 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGg0E-007Dp6-3D;
-	Wed, 05 Nov 2025 17:04:55 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGg0E-00000000Cj1-3ksp;
-	Wed, 05 Nov 2025 17:04:54 +0100
-Message-ID: <4857ace4d241d3a0de4fe7247312ff07c930b11e.camel@pengutronix.de>
-Subject: Re: [PATCH v2 06/21] reset: rzv2h-usb2phy: Add support for VBUS mux
- controller registration
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, Vinod
- Koul	 <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob
- Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Peter Rosin <peda@axentia.se>,
- Yoshihiro Shimoda	 <yoshihiro.shimoda.uh@renesas.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman	 <gregkh@linuxfoundation.org>,
- linux-phy@lists.infradead.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 05 Nov 2025 17:04:54 +0100
-In-Reply-To: <39923e450f1ce220cbca28dcf6b215dd9fa79dde.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
-	 <39923e450f1ce220cbca28dcf6b215dd9fa79dde.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762358717; c=relaxed/simple;
+	bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Me9FGS6lMt7I/LkTsk1YED0w9I53iz/03omo4aZymQ/e2VGHgixLbXqPD3eShhbo4F6zX/7Rs4Ux3ee/iNZDCCgp3Gio8OdVux/a7wV5ptfKQ9HYGCZLNYjZ1rQPVBcp+nGxeDbhOOyhfHjNmx1ccoyzRXvKto2rCKtbsT5S3XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hENwCIhG; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso11521636a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:05:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762358714; x=1762963514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
+        b=hENwCIhGKqCzd8LgQc0blP4zGkTKatUNzALQjiKSsQkn5oJZf4hai0EhW4B57cdFv6
+         K0626mapCt3Tzx0jL6fcl8Xo/9BVxqMMrHUZnHBV6GD5ru8rqyraqivim7bKk4gZdlnh
+         Bc5eLWAEj8dC3Kvt66ucKR5qOyTn84l+57FauCvoJ4uxB4WBhzZqQ13GYQVTkznXsm8n
+         1M7/VsgH4tjexnc8v4QiXXa2/2fv0J3XDdEt5gRUnySgk0QzFCHxLUsn9gFsJ1XjzRSi
+         DxAoKH82W94dGtTLEdtldzNZjolWVJZbfj5VP/LGwHdT8NIBpQlkgEblYuIbe+6au9rr
+         wSsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762358714; x=1762963514;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
+        b=oLfMawwJ4vajCC7kOTmu+6ItN/QTV74rnGtmUx1V9JM6frIs8CnKMy0i6oL/Q20gSC
+         aGulxEymO0l6REEt/KsnnXjYXPn/r3XQqcHoAPQsRJyVsdKpBk7ypNqVpGT3lhZB9l3Y
+         me8y4wjJeI15Zs8LM9NXVIKWe0hloGlWaR7XFECU4/jWw11LNlaemTusq+i0E8BkUDrg
+         sr3FjPJaFLWa1qrjS7pNGhTFOJQxMfpcxDtch9x01jTacPOGdnKQ3lPGTttffeoPao2g
+         OcwmWZr50oL0jKYHT8RuehU5sg61YTPvzLfn2lpCrzoS4k6z8sob1glvRoXh9590jsZ+
+         7NDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE++SYf3zF/POAEeB4OUpk4rXJr7d4WqL4lxw2L56c2gN0A8X6lpNXVpmyECNf5LlN+ybO7+fRHCLOpVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyioQ+LaDs6HHSDkl39b1cP+ddKmVnmG+sBFiCM/JLRfQeWPTWP
+	upl1NNiol0wCsFaQU/pPw8YpPHSPOkN2aPYTYM5CV8BguQOy+934NN+tZIzw09oTFf4=
+X-Gm-Gg: ASbGnctDktcmybu0vYdRPFWW9aA7jnkqv4Fxr0No0mdI0CGChPBm+5J8MnLg4xonJ2E
+	vgfUt3XGp/7K1OEvF89YmiqSW+xm9oX9bSYA9eZUg1BBWkB271sacbNYF1bwAXinkeGVvUL6AHh
+	q0Fd62hGT12P0/rwBHAUYvKdeUiouBXXMVaJ8tpQR+WQf/7z9IErtS82HiQK4F6eCrVm6L+ULhf
+	/sf1/DHAs5m+dbvt21o/awP73Q/KzvyucWgTR9H6xTZxFjo0mq4Tq5aw7dQCb/APZEbYvoPyLg2
+	7gjUn5ZQmc4DHE5gHivNTlmqR+/4O/KYo++B9hDclGweshuoAAJWcdynBwoy8ayBcKqp4FGrqr7
+	mo/9OkFWFWz40O7KBWU0jPCWqSMZrbArEB6y7mvN8fxE/ITaMFcJyKsp8VcrVz5VnaPRvjdBwhO
+	vXDYHoYfa4lqswshYBjwdg5iM=
+X-Google-Smtp-Source: AGHT+IEZ4jSMqgU1j3ShuBTWV7Zpy421hTwNR5u92fURxhF1PiKkkzbDZyzXF4ZYvCapBIQeuCyJsA==
+X-Received: by 2002:a05:6402:3247:10b0:63c:4da1:9a10 with SMTP id 4fb4d7f45d1cf-64105b9d03cmr2682548a12.31.1762358714583;
+        Wed, 05 Nov 2025 08:05:14 -0800 (PST)
+Received: from [172.20.148.132] ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e680578esm4903569a12.10.2025.11.05.08.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 08:05:14 -0800 (PST)
+Message-ID: <fbe28f12-b462-4620-80ef-b6ba5ff3e0a3@linaro.org>
+Date: Wed, 5 Nov 2025 17:05:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/28] mtd: spinand: Remove stale definitions
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
+ <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+ <20251031-winbond-v6-17-rc1-oddr-v1-6-be42de23ebf1@bootlin.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-6-be42de23ebf1@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2025-11-05 at 16:39 +0100, Tommaso Merciai wrote:
-> The RZ/V2H USB2 PHY requires control of the VBUS selection line
-> (VBENCTL) through a mux controller described in the device tree as
-> "mux-controller". This change adds support for registering
-> vbus-sel-mux auxiliary driver during probe.
->=20
-> This enables proper management of USB2.0 VBUS source selection on
-> platforms using the RZ/V2H SoC.
->=20
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> v1->v2:
->  - New patch
->=20
->  drivers/reset/Kconfig               |  1 +
->  drivers/reset/reset-rzv2h-usb2phy.c | 65 +++++++++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index e1ae624661f3..f54e216ca7f6 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -255,6 +255,7 @@ config RESET_RZG2L_USBPHY_CTRL
->  config RESET_RZV2H_USB2PHY
->  	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY Reset driver"
->  	depends on ARCH_RENESAS || COMPILE_TEST
-> +	select AUXILIARY_BUS
->  	help
->  	  Support for USB2PHY Port reset Control found on the RZ/V2H(P) SoC
->  	  (and similar SoCs).
-> diff --git a/drivers/reset/reset-rzv2h-usb2phy.c b/drivers/reset/reset-rz=
-v2h-usb2phy.c
-> index 5bdd39274612..6074aa8cc13a 100644
-> --- a/drivers/reset/reset-rzv2h-usb2phy.c
-> +++ b/drivers/reset/reset-rzv2h-usb2phy.c
-> @@ -5,8 +5,10 @@
->   * Copyright (C) 2025 Renesas Electronics Corporation
->   */
-> =20
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/cleanup.h>
->  #include <linux/delay.h>
-> +#include <linux/idr.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> @@ -14,6 +16,9 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  #include <linux/reset-controller.h>
-> +#include <linux/reset/reset_rzv2h_usb2phy.h>
-> +
-> +static DEFINE_IDA(auxiliary_ids);
-> =20
->  struct rzv2h_usb2phy_regval {
->  	u16 reg;
-> @@ -104,6 +109,62 @@ static int rzv2h_usb2phy_reset_of_xlate(struct reset=
-_controller_dev *rcdev,
->  	return 0;
->  }
-> =20
-> +static void rzv2h_usb2phy_reset_adev_unregister(void *data)
-> +{
-> +	struct auxiliary_device *adev =3D data;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void rzv2h_usb2phy_reset_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> +
-> +	ida_free(&auxiliary_ids, adev->id);
-> +}
-> +
-> +static int rzv2h_usb2phy_reset_mux_register(struct device *dev,
-> +					    void __iomem *base,
-> +					    const char *mux_name)
-> +{
-> +	struct reset_rzv2h_usb2phy_adev *rdev;
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	rdev =3D devm_kzalloc(dev, sizeof(*rdev), GFP_KERNEL);
-> +	if (!rdev)
-> +		return -ENOMEM;
-> +
-> +	rdev->base =3D base;
-> +
-> +	adev =3D &rdev->adev;
-> +	adev->name =3D mux_name;
-> +	adev->dev.parent =3D dev->parent;
-> +	adev->dev.release =3D rzv2h_usb2phy_reset_adev_release;
-> +	adev->dev.of_node =3D dev->of_node;
-> +	ret =3D ida_alloc(&auxiliary_ids, GFP_KERNEL);
-> +	if (ret < 0)
-> +		return ret;
-> +	adev->id =3D ret;
-> +
-> +	ret =3D auxiliary_device_init(adev);
-> +	if (ret)
-> +		goto cleanup_ida;
-> +
-> +	ret =3D auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		goto cleanup_ida;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, rzv2h_usb2phy_reset_adev_unregiste=
-r, adev);
-
-Can't you use __devm_auxiliary_device_create()?
-
-regards
-Philipp
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
