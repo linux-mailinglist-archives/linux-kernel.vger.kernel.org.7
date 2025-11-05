@@ -1,287 +1,173 @@
-Return-Path: <linux-kernel+bounces-887073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEE0C372B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:46:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B73DC372BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7233E34E89B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:46:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AB7EF34F177
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3A4326D5E;
-	Wed,  5 Nov 2025 17:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D161821885A;
+	Wed,  5 Nov 2025 17:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWtZebVb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7Mf6l0a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5839361FFE;
-	Wed,  5 Nov 2025 17:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16169239E88;
+	Wed,  5 Nov 2025 17:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762364773; cv=none; b=mfuXPVfLYAaIwurxFnL6bs0+NRwHqAikxstO2LyliSugrj5LWtWbttD10aLdF8gY02libahUfdB9z+82sW9irVGZIFc+3hcPe/b0uFjk2CBhtbEK72DI3zhk3kLFwmdxpd2Tfe6G4cFfqlGhbn9zfXPV/QQRgo0TA6Mn1fX3+ig=
+	t=1762364792; cv=none; b=Vq09r7z4GTrmB6srJ89qtod2uxtJGGmFzdNRAOvsd9NAOIBV3Srda7wlTNpscHhNRKnCKyDKzPh9v/x+TUfI5CGlJx76RXFz+F4ThjwFQQaUm23op1RlXxfYbWCZeDI4MuwlIewG7UpThnd7lX0I7yHfITvYHM/y86+RQwvP27o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762364773; c=relaxed/simple;
-	bh=sw7fLlwjYSgMMb0oFo0C0ODvBLjiCP98aYAsVuX5Urc=;
+	s=arc-20240116; t=1762364792; c=relaxed/simple;
+	bh=woawi0pKo/kryyYybe6UTBTWMoVsh5qziqijASjnREk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2clnopb2vMlo/yKFDscqBapiOXEfjLCtDN1yf0K03Bof6bJqnmYM6nEkQC6vFdMlYvQHl8OmQB3zsLNGs0uBx6nRBVX6DotiarX3VCbuNjCBNcjfOClbQXQzRIKr1IkNQ6CAbMvPvlL3pyhzu35vFrvas/Dv7aVBxpQ+sfqkx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWtZebVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43385C4CEF5;
-	Wed,  5 Nov 2025 17:46:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bvz8rShcpQbPzWdjrT7/BwbIt492YUOY5iCXSQyaUdsoPc3VH7Ix3IGdSAgimoUIztvsKiV1T89l4wb98+21lezcizqcIeSZtoQWFVG8Zof6+YhGrQvE8B+/KNd+Q0ANpK4EJKzfRkuQhqtgA1/7CoYC1x52te/UWdH6gs+kTI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7Mf6l0a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1533CC4CEF5;
+	Wed,  5 Nov 2025 17:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762364773;
-	bh=sw7fLlwjYSgMMb0oFo0C0ODvBLjiCP98aYAsVuX5Urc=;
+	s=k20201202; t=1762364791;
+	bh=woawi0pKo/kryyYybe6UTBTWMoVsh5qziqijASjnREk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWtZebVbb8dV6bR2TqfpdwQfsVhTU12SVFZgoOKfcv4Pekr6VwzBxdk8+u1hS90Gl
-	 cUU+klhozq++y/oGwMKvBBswBY132SmW6JMOsXj33T/BRVa9u1joeC3NrFrtks+AYg
-	 MKlkurI2fCkypUb9GJKq2Kcbgtb9WIx3rcEbSk/oFMrTH5t2p5LM7QhDI6HQu8zvRz
-	 Fi6jpsYSdn9/ITLlEKlF7pxYltgS+qBkfC7ce/t4tilCNBNTS5AT0OhDGn9qZCGGS0
-	 lBBhL3+8oUdFJHetbmRI9wz3Lc7wYCJK1j91dhnA/r3MftoXcF1YZmUje1dob1HoVA
-	 lMd7xXFElPJjw==
-Date: Wed, 5 Nov 2025 23:16:00 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 4/4] power: sequencing: Add the Power Sequencing driver
- for the PCIe M.2 connectors
-Message-ID: <tc2r2mme4wtre7vb7xj22vz55pks4fbdabyl62mgutyhcjxnlx@qn4jvx3jqhie>
-References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
- <20251105-pci-m2-v1-4-84b5f1f1e5e8@oss.qualcomm.com>
- <CAMRc=McB4Zk8WuSPL=7+7kX4RJbdFBNReWZyiFnH8vfVx3DxAg@mail.gmail.com>
+	b=X7Mf6l0akmdIq5iKgqrPQJacdZIwvZNDplWJ7ZFAiTj1m5jo/r4RZiwBnuufL7FJz
+	 rvjLuH5kIUsBewW58/KIJ4AtGpjFM65vgcq5Mq40hqFViVaFYaMO3B+3S2DJBgREr8
+	 Ydhgli/Ewi5GXUbKU7XplIRtFLKzGALUr+LrfoBKdNnCob1uuo8LERCMDso+bO1Ogb
+	 2kFxvq6vNnlZJHsASSZyjiY4DFFHKnlLj9M1sIw8Xs7M5lI6s7rwKH+tP57RLGeYQo
+	 I7shlbbDQcR6rzKbVlqZcx0moVDvOcKmF1aICmG6LscQYeQvqFcaYK64Yfrix1vGrk
+	 oPe9jn359SAFw==
+Date: Wed, 5 Nov 2025 18:46:28 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Phil Auld <pauld@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, rcu@vger.kernel.org, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
+	Jann Horn <jannh@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [PATCH v6 00/29] context_tracking,x86: Defer some IPIs until a
+ user->kernel transition
+Message-ID: <aQuNdOEmPYkI03my@localhost.localdomain>
+References: <20251010153839.151763-1-vschneid@redhat.com>
+ <aQDuY3rgOK-L8D04@localhost.localdomain>
+ <xhsmhzf9aov51.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <aQJLpSYz3jdazzdb@localhost.localdomain>
+ <xhsmh8qgk5txe.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McB4Zk8WuSPL=7+7kX4RJbdFBNReWZyiFnH8vfVx3DxAg@mail.gmail.com>
+In-Reply-To: <xhsmh8qgk5txe.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On Wed, Nov 05, 2025 at 05:21:46PM +0100, Bartosz Golaszewski wrote:
-> On Wed, Nov 5, 2025 at 10:17 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@oss.qualcomm.com> wrote:
+Le Wed, Nov 05, 2025 at 05:24:29PM +0100, Valentin Schneider a �crit :
+> On 29/10/25 18:15, Frederic Weisbecker wrote:
+> > Le Wed, Oct 29, 2025 at 11:32:58AM +0100, Valentin Schneider a �crit :
+> >> I need to have a think about that one; one pain point I see is the context
+> >> tracking work has to be NMI safe since e.g. an NMI can take us out of
+> >> userspace. Another is that NOHZ-full CPUs need to be special cased in the
+> >> stop machine queueing / completion.
+> >>
+> >> /me goes fetch a new notebook
 > >
-> > This driver is used to control the PCIe M.2 connectors of different
-> > Mechanical Keys attached to the host machines and supporting different
-> > interfaces like PCIe/SATA, USB/UART etc...
-> >
-> > Currently, this driver supports only the Mechanical Key M connectors with
-> > PCIe interface. The driver also only supports driving the mandatory 3.3v
-> > and optional 1.8v power supplies. The optional signals of the Key M
-> > connectors are not currently supported.
+> > Something like the below (untested) ?
 > >
 > 
-> I'm assuming you followed some of the examples from the existing WCN
-> power sequencing driver. Not all of them are good or matching this
-> one, please see below.
+> Some minor nits below but otherwise that looks promising.
 > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  MAINTAINERS                               |   7 ++
-> >  drivers/power/sequencing/Kconfig          |   8 ++
-> >  drivers/power/sequencing/Makefile         |   1 +
-> >  drivers/power/sequencing/pwrseq-pcie-m2.c | 138 ++++++++++++++++++++++++++++++
-> >  4 files changed, 154 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..9b3f689d1f50c62afa3772a0c6802f99a98ac2de 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -20474,6 +20474,13 @@ F:     Documentation/driver-api/pwrseq.rst
-> >  F:     drivers/power/sequencing/
-> >  F:     include/linux/pwrseq/
-> >
-> > +PCIE M.2 POWER SEQUENCING
-> > +M:     Manivannan Sadhasivam <mani@kernel.org>
-> > +L:     linux-pci@vger.kernel.org
-> > +S:     Maintained
-> > +F:     Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > +F:     drivers/power/sequencing/pwrseq-pcie-m2.c
-> > +
-> >  POWER STATE COORDINATION INTERFACE (PSCI)
-> >  M:     Mark Rutland <mark.rutland@arm.com>
-> >  M:     Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
-> > index 280f92beb5d0ed524e67a28d1c5dd264bbd6c87e..f5fff84566ba463b55d3cd0c07db34c82f9f1e31 100644
-> > --- a/drivers/power/sequencing/Kconfig
-> > +++ b/drivers/power/sequencing/Kconfig
-> > @@ -35,4 +35,12 @@ config POWER_SEQUENCING_TH1520_GPU
-> >           GPU. This driver handles the complex clock and reset sequence
-> >           required to power on the Imagination BXM GPU on this platform.
-> >
-> > +config POWER_SEQUENCING_PCIE_M2
-> > +       tristate "PCIe M.2 connector power sequencing driver"
-> > +       depends on OF || COMPILE_TEST
+> One problem I'm having however is reasoning about the danger zone; what
+> forbidden actions could a NO_HZ_FULL CPU take when entering the kernel
+> while take_cpu_down() is happening?
 > 
-> The OF dependency in the WCN driver is there because we're doing some
-> phandle parsing and inspecting the parent-child relationships of the
-> associated nodes. It doesn't look like you need it here. On the other
-> hand, if you add more logic to the match() callback, this may come
-> into play.
+> I'm actually not familiar with why we actually use stop_machine() for CPU
+> hotplug; I see things like CPUHP_AP_SMPCFD_DYING::smpcfd_dying_cpu() or
+> CPUHP_AP_TICK_DYING::tick_cpu_dying() expect other CPUs to be patiently
+> spinning in multi_cpu_stop(), and I *think* nothing in the entry code up to
+> context_tracking entry would disrupt that, but it's not a small thing to
+> reason about.
 > 
+> AFAICT we need to reason about every .teardown callback from
+> CPUHP_TEARDOWN_CPU to CPUHP_AP_OFFLINE and their explicit & implicit
+> dependencies on other CPUs being STOP'd.
 
-For sure the driver will build fine for !CONFIG_OF, but it is not going to work.
-And for the build coverage, COMPILE_TEST is already present. Maybe I was wrong
-to enforce functional dependency in Kconfig.
+You're raising a very interesting question. The initial point of stop_machine()
+is to synchronize this:
 
-> > +       help
-> > +         Say Y here to enable the power sequencing driver for PCIe M.2
-> > +         connectors. This driver handles the power sequencing for the M.2
-> > +         connectors exposing multiple interfaces like PCIe, SATA, UART, etc...
-> > +
-> >  endif
-> > diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
-> > index 96c1cf0a98ac54c9c1d65a4bb4e34289a3550fa1..0911d461829897c5018e26dbe475b28f6fb6914c 100644
-> > --- a/drivers/power/sequencing/Makefile
-> > +++ b/drivers/power/sequencing/Makefile
-> > @@ -5,3 +5,4 @@ pwrseq-core-y                           := core.o
-> >
-> >  obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)        += pwrseq-qcom-wcn.o
-> >  obj-$(CONFIG_POWER_SEQUENCING_TH1520_GPU) += pwrseq-thead-gpu.o
-> > +obj-$(CONFIG_POWER_SEQUENCING_PCIE_M2) += pwrseq-pcie-m2.o
-> > diff --git a/drivers/power/sequencing/pwrseq-pcie-m2.c b/drivers/power/sequencing/pwrseq-pcie-m2.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..b9f68ee9c5a377ce900a88de86a3e269f9c99e51
-> > --- /dev/null
-> > +++ b/drivers/power/sequencing/pwrseq-pcie-m2.c
-> > @@ -0,0 +1,138 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pwrseq/provider.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/slab.h>
-> > +
-> > +struct pwrseq_pcie_m2_pdata {
-> > +       const struct pwrseq_target_data **targets;
-> > +};
-> > +
-> > +struct pwrseq_pcie_m2_ctx {
-> > +       struct pwrseq_device *pwrseq;
-> > +       const struct pwrseq_pcie_m2_pdata *pdata;
-> > +       struct regulator_bulk_data *regs;
-> > +       size_t num_vregs;
-> > +       struct notifier_block nb;
-> > +};
-> > +
-> > +static int pwrseq_pcie_m2_m_vregs_enable(struct pwrseq_device *pwrseq)
-> > +{
-> > +       struct pwrseq_pcie_m2_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-> > +
-> > +       return regulator_bulk_enable(ctx->num_vregs, ctx->regs);
-> > +}
-> > +
-> > +static int pwrseq_pcie_m2_m_vregs_disable(struct pwrseq_device *pwrseq)
-> > +{
-> > +       struct pwrseq_pcie_m2_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-> > +
-> > +       return regulator_bulk_disable(ctx->num_vregs, ctx->regs);
-> > +}
-> > +
-> > +static const struct pwrseq_unit_data pwrseq_pcie_m2_vregs_unit_data = {
-> > +       .name = "regulators-enable",
-> > +       .enable = pwrseq_pcie_m2_m_vregs_enable,
-> > +       .disable = pwrseq_pcie_m2_m_vregs_disable,
-> > +};
-> > +
-> > +static const struct pwrseq_unit_data *pwrseq_pcie_m2_m_unit_deps[] = {
-> > +       &pwrseq_pcie_m2_vregs_unit_data,
-> > +       NULL
-> > +};
-> > +
-> > +static const struct pwrseq_unit_data pwrseq_pcie_m2_m_pcie_unit_data = {
-> > +       .name = "pcie-enable",
-> > +       .deps = pwrseq_pcie_m2_m_unit_deps,
-> > +};
-> > +
-> > +static const struct pwrseq_target_data pwrseq_pcie_m2_m_pcie_target_data = {
-> > +       .name = "pcie",
-> > +       .unit = &pwrseq_pcie_m2_m_pcie_unit_data,
-> > +};
-> > +
-> > +static const struct pwrseq_target_data *pwrseq_pcie_m2_m_targets[] = {
-> > +       &pwrseq_pcie_m2_m_pcie_target_data,
-> > +       NULL
-> > +};
-> > +
-> > +static const struct pwrseq_pcie_m2_pdata pwrseq_pcie_m2_m_of_data = {
-> > +       .targets = pwrseq_pcie_m2_m_targets,
-> > +};
-> > +
-> > +static int pwrseq_pcie_m2_match(struct pwrseq_device *pwrseq,
-> > +                                struct device *dev)
-> > +{
-> > +       return PWRSEQ_MATCH_OK;
-> 
-> Eek! That will match any device we check. I'm not sure this is what
-> you want. Looking at the binding example, I assume struct device *
-> here will be the endpoint? If so, you should resolve it and confirm
-> it's the one referenced from the connector node.
-> 
+    set_cpu_online(cpu, 0)
+    migrate timers;
+    migrate hrtimers;
+    flush IPIs;
+    etc...
 
-I was expecting this question, so returned PWRSEQ_MATCH_OK on purpose. I feel it
-is redundant to have match callback that just does link resolution and matches
-the of_node of the caller. Can't we have a default match callback that does just
-this?
+against this pattern:
 
-> > +}
-> > +
-> > +static int pwrseq_pcie_m2_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device *dev = &pdev->dev;
-> > +       struct pwrseq_pcie_m2_ctx *ctx;
-> > +       struct pwrseq_config config;
-> > +       int ret;
-> > +
-> > +       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> > +       if (!ctx)
-> > +               return -ENOMEM;
-> > +
-> > +       ctx->pdata = of_device_get_match_data(dev);
-> 
-> I should probably address it in the WCN driver - you don't need to use
-> the OF variant, use device_get_match_data().
-> 
+    preempt_disable()
+    if (cpu_online(cpu))
+        queue something; // could be timer, IPI, etc...
+    preempt_enable()
 
-Ok.
+There have been attempts:
 
-> > +       if (!ctx->pdata)
-> > +               return dev_err_probe(dev, -ENODEV,
-> > +                                    "Failed to obtain platform data\n");
-> > +
-> > +       ret = of_regulator_bulk_get_all(dev, dev_of_node(dev), &ctx->regs);
-> 
-> Same here, you already have the device, no need to get the regulators
-> through the OF node. Just use devm_regulator_bulk_get()
-> 
+      https://lore.kernel.org/all/20241218171531.2217275-1-costa.shul@redhat.com/
 
-I used it on purpose. This is the only regulator API that just gets all
-regulators defined in the devicetree node without complaining. Here, 3.3v is
-mandatory and 1.8v is optional. There could be other supplies in the future and
-I do not want to hardcode the supply names in the driver. IMO, the driver should
-trust devicetree to supply enough supplies and it should just consume them
-instead of doing validation. I proposed to add a devm_ variant for this, but
-Mark was against that idea.
+And really it should be fine to just do:
 
-- Mani
+    set_cpu_online(cpu, 0)
+    synchronize_rcu()
+    migrate / flush stuff
+
+Probably we should try that instead of the busy loop I proposed
+which only papers over the problem.
+
+Of course there are other assumptions. For example the tick
+timekeeper is migrated easily knowing that all online CPUs are
+not idle (cf: tick_cpu_dying()). So I expect a few traps, with RCU
+for example and indeed all these hotplug callbacks must be audited
+one by one.
+
+I'm not entirely unfamiliar with many of them. Let me see what I can do...
+
+Thanks.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Frederic Weisbecker
+SUSE Labs
 
