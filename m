@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-886718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6759BC3658B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:33:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E222C36645
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B20E84F11CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E8F3B672C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49D32D0D8;
-	Wed,  5 Nov 2025 15:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2A3346A9;
+	Wed,  5 Nov 2025 15:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="imR9MuJp"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c6LuRRBW"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6331CA5B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42204314B8E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355768; cv=none; b=T4np/tVeR1UFdLqxzkRpoGVaYRzHP3et0BlcxDHxMZ7j9cVffOegT8TLSjikG7xtfZ7IK4YkaYB4U64IsScbauHjOFzhZHDX7OkTRjw9MOBeA0B6rHJYrmcPqVe5wShrRrOe0kqEnqQwOsAWnpl6iYK+F+lG8LVfzmNjstCX9EM=
+	t=1762355774; cv=none; b=KYxJ2fbOdmcFs0rUAqZ+qJ7xbUK4OX9j47b9sjUXk5S9Lm/b0gZYaXVOoIvfkqT0jMv+U2LFHY0oQncIqJHogPUF0cINjvoH2Zqhxs/kx1RSAaWMqfUOdclWA4Jal+ZCwildtv2At0oVqkCRAiidRbD6DKQwy6q9k581Iie721Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355768; c=relaxed/simple;
-	bh=KwVGKyItxwHcDbibJdy6RGzeEt9wjoeI1M8MUoQKS7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ot5B3S3kGGD+NpTkFznMfSl4yA+dEIA2stsPvke542hMTsxYkCSS1srIOw2duUb2A6m+/l1Tfer1M2M4atAkId34+H8t6FAr3pwlEBh7ZEU0nKtHl2IyLstKE9Q4BCzxw480ac8RDpOVJeQlR/xNFyj0R4fQtmgLij6coIK7fb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=imR9MuJp; arc=none smtp.client-ip=95.215.58.174
+	s=arc-20240116; t=1762355774; c=relaxed/simple;
+	bh=b4xw3O7UfnfiZD5pTNztiPpsuje/8itnpv5WUO8bWHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dcJcAc0+os3/iJswDtO1PyP7pXcdKD/HBtaI4DDp5FxCjtTPXEuscilVgsMADYP41Gl65u3dWSweurtXfOL8fqz4kbtwu4Q+fHh8SZnF2CiTOzDw/n+LqDFYjWjX7nTd+sS5Ms/a6V4af/vInuRfLGrFcnCTdiUDg/rvVbIUE5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c6LuRRBW; arc=none smtp.client-ip=95.215.58.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762355763;
+	t=1762355769;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MJsT9hlhLTsvCKavMiWN98EUIoevbIGcLS4c0FMpc4g=;
-	b=imR9MuJpbtsgtdJyzlLIO0rXuzIEOPtTjDHCPPqsMoc3C4reloOxKTXeWx9R8R3Y9Izq49
-	X45/USNluFUT5/gEl6+OHDlCK8B9jf0eFhtykxrrax1RSEW/dm9LB0iav9FEiY6lHqQyy6
-	BXAefAoAE34JY6OF97u5dq6Dc/pltqI=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wU180lrRJICTjdwwgpbUzGgOxt6kCHg/rdbuIH1C8eU=;
+	b=c6LuRRBWkmBVXZiiIytDQFBpjqH2rAsY9fwzsKgHqkXXpVyrkbQvdJNo/s3AQc8CUQjdeW
+	i2zW1paLZ3q+RvSMkmAYNznL3FUmJysbU+wptS8EO4TVZDAmcT4esMeSnyRnh/RSfW5G6n
+	ffdba//qJpxl1lDzo9U5ijG5bDF7Yi8=
 From: Leon Hwang <leon.hwang@linux.dev>
 To: bpf@vger.kernel.org
 Cc: ast@kernel.org,
@@ -58,9 +60,11 @@ Cc: ast@kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-patches-bot@fb.com,
 	Leon Hwang <leon.hwang@linux.dev>
-Subject: [PATCH bpf-next v6 0/2] bpf: Free special fields when update [lru_,]percpu_hash maps
-Date: Wed,  5 Nov 2025 23:14:05 +0800
-Message-ID: <20251105151407.12723-1-leon.hwang@linux.dev>
+Subject: [PATCH bpf-next v6 1/2] bpf: Free special fields when update [lru_,]percpu_hash maps
+Date: Wed,  5 Nov 2025 23:14:06 +0800
+Message-ID: <20251105151407.12723-2-leon.hwang@linux.dev>
+In-Reply-To: <20251105151407.12723-1-leon.hwang@linux.dev>
+References: <20251105151407.12723-1-leon.hwang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,85 +74,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-In the discussion thread
-"[PATCH bpf-next v9 0/7] bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"[1],
-it was pointed out that missing calls to bpf_obj_free_fields() could
-lead to memory leaks.
+As [lru_,]percpu_hash maps support BPF_KPTR_{REF,PERCPU}, missing
+calls to 'bpf_obj_free_fields()' in 'pcpu_copy_value()' could cause the
+memory referenced by BPF_KPTR_{REF,PERCPU} fields to be held until the
+map gets freed.
 
-A selftest was added to confirm that this is indeed a real issue - the
-refcount of BPF_KPTR_REF field is not decremented when
-bpf_obj_free_fields() is missing after copy_map_value[,_long]().
+Fix this by calling 'bpf_obj_free_fields()' after
+'copy_map_value[,_long]()' in 'pcpu_copy_value()'.
 
-Further inspection of copy_map_value[,_long]() call sites revealed two
-locations affected by this issue:
+Fixes: 65334e64a493 ("bpf: Support kptrs in percpu hashmap and percpu LRU hashmap")
+Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+---
+ kernel/bpf/hashtab.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-1. pcpu_copy_value()
-2. htab_map_update_elem() when used with BPF_F_LOCK
-
-Similar case happens when update local storage maps with BPF_F_LOCK.
-
-This series fixes the cases where BPF_F_LOCK is not involved by
-properly calling bpf_obj_free_fields() after copy_map_value[,_long](),
-and adds a selftest to verify the fix.
-
-The remaining cases involving BPF_F_LOCK will be addressed in a
-separate patch set after the series
-"bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"
-is applied.
-
-Changes:
-v5 -> v6:
-* Update the test name to include "refcounted_kptr".
-* Update some local variables' name in the test (per Alexei).
-* v5: https://lore.kernel.org/bpf/20251104142714.99878-1-leon.hwang@linux.dev/
-
-v4 -> v5:
-* Use a local variable to store the this_cpu_ptr()/per_cpu_ptr() result,
-  and reuse it between copy_map_value[,_long]() and
-  bpf_obj_free_fields() in patch #1 (per Andrii).
-* Drop patch #2 and #3, because the combination of BPF_F_LOCK with other
-  special fields (except for BPF_SPIN_LOCK) will be disallowed on the
-  UAPI side in the future (per Alexei).
-* v4: https://lore.kernel.org/bpf/20251030152451.62778-1-leon.hwang@linux.dev/
-
-v3 -> v4:
-* Target bpf-next tree.
-* Address comments from Amery:
-  * Drop 'bpf_obj_free_fields()' in the path of updating local storage
-    maps without BPF_F_LOCK.
-  * Drop the corresponding self test.
-  * Respin the other test of local storage maps using syscall BPF
-    programs.
-* v3: https://lore.kernel.org/bpf/20251026154000.34151-1-leon.hwang@linux.dev/
-
-v2 -> v3:
-* Free special fields when update local storage maps without BPF_F_LOCK.
-* Add test to verify decrementing refcount when update cgroup local
-  storage maps without BPF_F_LOCK.
-* Address review from AI bot:
-  * Slow path with BPF_F_LOCK (around line 642-646) in
-    'bpf_local_storage.c'.
-* v2: https://lore.kernel.org/bpf/20251020164608.20536-1-leon.hwang@linux.dev/
-
-v1 -> v2:
-* Add test to verify decrementing refcount when update cgroup local
-  storage maps with BPF_F_LOCK.
-* Address review from AI bot:
-  * Fast path without bucket lock (around line 610) in
-    'bpf_local_storage.c'.
-* v1: https://lore.kernel.org/bpf/20251016145801.47552-1-leon.hwang@linux.dev/
-
-Leon Hwang (2):
-  bpf: Free special fields when update [lru_,]percpu_hash maps
-  selftests/bpf: Add test to verify freeing the special fields when
-    update [lru_,]percpu_hash maps
-
- kernel/bpf/hashtab.c                          | 10 +++-
- .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
- .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
- 3 files changed, 125 insertions(+), 2 deletions(-)
-
---
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index f876f09355f0d..c8a9b27f8663b 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -934,15 +934,21 @@ static void free_htab_elem(struct bpf_htab *htab, struct htab_elem *l)
+ static void pcpu_copy_value(struct bpf_htab *htab, void __percpu *pptr,
+ 			    void *value, bool onallcpus)
+ {
++	void *ptr;
++
+ 	if (!onallcpus) {
+ 		/* copy true value_size bytes */
+-		copy_map_value(&htab->map, this_cpu_ptr(pptr), value);
++		ptr = this_cpu_ptr(pptr);
++		copy_map_value(&htab->map, ptr, value);
++		bpf_obj_free_fields(htab->map.record, ptr);
+ 	} else {
+ 		u32 size = round_up(htab->map.value_size, 8);
+ 		int off = 0, cpu;
+ 
+ 		for_each_possible_cpu(cpu) {
+-			copy_map_value_long(&htab->map, per_cpu_ptr(pptr, cpu), value + off);
++			ptr = per_cpu_ptr(pptr, cpu);
++			copy_map_value_long(&htab->map, ptr, value + off);
++			bpf_obj_free_fields(htab->map.record, ptr);
+ 			off += size;
+ 		}
+ 	}
+-- 
 2.51.2
 
 
