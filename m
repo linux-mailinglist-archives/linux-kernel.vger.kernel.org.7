@@ -1,335 +1,222 @@
-Return-Path: <linux-kernel+bounces-885623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3897C337D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840F7C337DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 01:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E83B42825F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E53E4283C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 00:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD669221FDA;
-	Wed,  5 Nov 2025 00:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA622253EE;
+	Wed,  5 Nov 2025 00:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hP3HVb6O";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="g8MYuSrS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCrTr+VL"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461491A238F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E049E1A238F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 00:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762303170; cv=none; b=qRwwsvMHFQnx+SXevn0z+/RY3t7jq4eyOb5Ymr4QisvYHTHcNmVHgRcd9/NCN+oIt/9ror6OS4IJywsrO15onfR6KChX2hTRnQCqspTL2Wers9jRuwSIEyfjx5qX8q+zSOfNk/OPZSXWEsRWyrdsCBbyHJ4e853kiOQUdWZAFw8=
+	t=1762303260; cv=none; b=pni1Q93iHjoxk4FlWUJ39EvPNOMlveCXtBPBvrjsnArP/9kWhp/fqg3PtqzpsuqnfIl5H0tBLgzEJ6HN9AWif+6+Q9NPUcnUtJ3cSMMhh+VeVnaZJ5Vu3L6qE1rSpDPs9opj14Iz++75q2PKvJsuByAWE1frJkRky7uR0Orvfkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762303170; c=relaxed/simple;
-	bh=lDk02qC5u1ro9HbXlcRBn/dzxEt1Og8Og6FOlhRc6lk=;
+	s=arc-20240116; t=1762303260; c=relaxed/simple;
+	bh=eQSojdtgLVR7/Kw+4EOTYx2+5jfhiuoErGVSlDeTdfw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sEG1JZsID0rYx+Npmp9+HjrN+Ij6kY1L27SzL6xi/addlbr4EyGfUuTDPAee85nwtwc7DnxiMR8LOrwaxvAj/lcRYbVn3R2vQ/2rm0hB8po40d7lVIEn6SMdcR7j/jmS7D6gP9CR1wG/+OmG9dvj6+HtyPN1+hyqbSGlTpCFTvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hP3HVb6O; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=g8MYuSrS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4Kfk642927605
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 00:39:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=BzFWrus5ToDQoAoDgYGAeJvj
-	7pPGBO5zh4BEeX+7e1M=; b=hP3HVb6OLtaKhgMbJqnE9uY/1P3GcyuUhB9Tpu7t
-	JKMWJRQLZV4KabicOMHfnJ2J1/jYp/VwM1ITWplYb1YReCw9g78TTi5dNe1ETy0R
-	XBGR8s1w7k8BHU4Q09IwMre9VhU6k205H3AVJ1ASYRETQ7GwG7fGaHVYl1tt3dl3
-	9VnlUhzoMAaYpijecthL4JMzlb3xZQEOeNsUPYNfWIzPydDwpUAMpZpqs34LmrfE
-	3buMGCUGFJmV33iR75mc+4Cq6eKHtQ/jKQ1r6Y7mk9voAKBYhIr/DZKv7LlSG3Ye
-	ulLB5H1e5oONvebQrBxvv82X2DTMEwWEojZTcnVmGr7RVA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7me5sfs4-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:39:28 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b92bdc65593so4750473a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:39:28 -0800 (PST)
+	 To:Cc:Content-Type; b=moUWL4fdX0bwybVGNLuiEBwjyu/rYkvJ9bnLuausY1ruMNau4pSDyFROrB8Kl9vohu2dgYjy3Blgtpnls/c6lQODFm5XjQBkFhEbE7DIqJiYVFLOzjltR37ZMtOYqFXZ+Pq/r9GZAgESyh2dqqdWKYKRRAammycTQN4T5U+IDNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCrTr+VL; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3418ac74bffso776708a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 16:40:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762303167; x=1762907967; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BzFWrus5ToDQoAoDgYGAeJvj7pPGBO5zh4BEeX+7e1M=;
-        b=g8MYuSrScYq1kmeLWZOpfP9Ysn1c4CIe1DRbHKuLReqs9XKb4ngRVpUlOFfYqVfe5W
-         EGQnSN++3A0s7bO8BffJVkTiKWuutvBBJRx0fSsNZX/LhKD1nL6QsH2GfOfpIZOUDDk2
-         GhOKDfpSCYXOvS4ZOrvlmeFBQPGW0c6sUY0QInNim+y88i+N40552dHEAO4G0pKhthp+
-         GGoJ4Q6OEnybvDYMSoXIs6SzG1/N20spd3zRuAwZ0SoD7mZiz90RauvrEnGCFI6Q/nuP
-         xZwDx62FEkJ27lQ0AzfSj5Gx3lHS/k2FH9VBZrLvPPkgWYyIgQLqoRsGLvPvGy0ymSny
-         QjrA==
+        d=gmail.com; s=20230601; t=1762303258; x=1762908058; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5pH0elYSV9fHZGweJNo1sTUp7pNpnKPw4ARHFUWVRcc=;
+        b=hCrTr+VLmiTyWWxf6FlbvFe6pvIUqN1fl8qyvENNvzJW43XoxRUkF3rl77i93W0IY/
+         DBh53vLNtNvNgXBfl+Hw40h1W/FTCSDBMb9HCdIgLElz1UlApf0qGNBIjDZRTOAJa9VM
+         uErApLM7Yj6XyAOKcjusa0QEvC8J76VdjVHyMppwTekG/hqazKOMVqk4BASx82fb1HtC
+         2XhxCIVqTXEEy7DR0EeBmKWyzCaR5/YwQkeEp26uafbx7JgzwIZEp7uRWxkWzB7yzwLm
+         wz8Bxyu2DxAGZ0zS0W8d06ui4s8+W2xKPndTkjbM8urpXnHQIbAHJEGsPfW19Hd25Tg6
+         ZDFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762303167; x=1762907967;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BzFWrus5ToDQoAoDgYGAeJvj7pPGBO5zh4BEeX+7e1M=;
-        b=wZ1ZCJWbpghZlxdHAlb3qtn/kZlM/2XKUxFs1dX8/dg1sHAmjVDOtRMu67/Bp4jbYZ
-         kh8wO74ahGMgbPnKIiKKQ+XKZKYJVKgfPTlr8M1+Ji8lFMonhU2Jroibxn/POAjjYw58
-         DJ8ja8Mn0kASbLPjsKMJxr53TQoxSUvP10KmOYLrWUMAYiNVz3LKhRWW33Tw9RSjs/2w
-         b/yNOLAQxdesjbuydW9xels8wFoAUNFOB613DWkX6gGoLCHc4XfQB/x1boWPE7RL4bCv
-         qnDcL2goWhIeIjcZk7mPzVWxHaSMZm4VpTTQa9QD4HCjiMllCJWOhG5YVQb3emw+JgsW
-         ITJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHfuCwkjjxIX/ZXq+QO891x+DgOKy6gYR237CGUrHpG5vFCBZHIWDY7iz7jR1mBOKblYHciSNUygUdJNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY1/vHGPuVMJFWZzF6xTe/JoSr6liHGDhQb8g+WOZts1vcN3Jc
-	lrNe8axxkNAbyZE4eMrwxuMLwjMIe4qSca4LzBO8ZO8+1IXvIuz4C1crYIyXy7TLpeRRN9ZTNyL
-	0MWYG8Ng9VbuhXjNw7caArknc2cCqLk6Erjw9vtQrzK+GMVnRX8GC3+yTLuTX5LBwU3kXhcucXM
-	54ppxlcniUH+rzskQtewSRuSPqLSupSlJoa4r3jqKuEw==
-X-Gm-Gg: ASbGncu0wrBZCMIzCTAfmhvxGBrBKeKj0BprOaMlOg6yrtczCXU8o+8M9vLcXuhTqzN
-	4EBrHMbpRLyl6Bijewxc7viD5cE7DNgylt0qlx/utVGna2Su407sxdOWOqSRiZlLrXuU8e/C1P8
-	QzKElY4OQ1d80E8ZeU9btu+ZlLzsTg7bL86rKCLLp1/5DZUCzO66goFXNnOdaIBxqahGV58NiVA
-	5TioVyvo5aYoGc=
-X-Received: by 2002:a05:6a20:9144:b0:34a:1da8:b8e8 with SMTP id adf61e73a8af0-34f86408f07mr1550678637.50.1762303167228;
-        Tue, 04 Nov 2025 16:39:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEzaGLmiKsrRvSr4jPvA6a7wSEG94Y+iLXfyMLNCyUN32mroWfowJJT4oHvtGc87ilU+o9AHrd1pUJDCgsX280=
-X-Received: by 2002:a05:6a20:9144:b0:34a:1da8:b8e8 with SMTP id
- adf61e73a8af0-34f86408f07mr1550611637.50.1762303166627; Tue, 04 Nov 2025
- 16:39:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762303258; x=1762908058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5pH0elYSV9fHZGweJNo1sTUp7pNpnKPw4ARHFUWVRcc=;
+        b=hAErQfGCFbRGezMPZxfIriq2zoib0c4t3x7QwZOk9eDixfIUS5SEo9yEBShkeVZ59l
+         vhhrCoN7PaLg23hSfwEUAkC3WIZUvrBzaHQnUpv8U5ztYdh+2z7JhcFVHMIdVu9qmZVx
+         swsAvEMBz20Pu9x9PjSFstDJ8Pqa8+xUdj5t+YFjNXmlgwgNYI8bRG2S+cQCZOtDJmtH
+         4qxA9mtQfOi/CbURBR8015VoWCu3iTYTQg2nXa/B2fM+hEt/mp5IWE8iX4iaAtL73adF
+         dO13ckChYEfCvcbQnTlOANdmxC6oDWOvLJUuRDHCQj1SQT3YmWOHbtPw0YoblYeNcEuh
+         2RNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP+0vI01NhIMJ8IgzO4Dnf3Alm3Fjzo97iY/o7Otp8ziODS9eigpq6+yGygm7WEc56A/TxvQBvmRYgU4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNeoaDpXc72XLFA38fqOxa6T/1yOuyN5HIFUwYqzVS+q8HZUq2
+	nyZERY/MQ2dQcFdt/h1Hh8Dl8m+1gojcmlZ0+lq+OPbEIvfWhWdf2UmJe19Yy+T0bzlpKXu6lmp
+	R1O/hrNmA6Ci/xz4XuXiBGVqopVwC6BQ=
+X-Gm-Gg: ASbGnctvMHnHteXaQpGbRX51ije5O5ZGYVPFRsGVVs46HbW6mzFIHfDtEb8ey70Jr51
+	g7NDrXQIAvtLpkiaLSa16wY18akM8ZaQ0EAh4e62mQ4PW2wm0aw6zrfh0oGKMreAkbGNvtP1OYr
+	5D6aKRwscBBd+Ikfvik8lWRGiAZbhfV5l/mIN/01IPIPRvNH87debsKaUaz9U51Z5QyQldaVEJC
+	b+LotcFo3Kf6ppLZAMzjAhUBPTcdk+dkBYm2+Xx9RjyhCtfPjVrUOicxLAX/h3xUfitDuwz4Jog
+X-Google-Smtp-Source: AGHT+IH9I9hiPSdGirkpxUD9Q91UxnbQt7srf4hv2bz+O5oUIH8hTOKqw/mh5p6X8l4L3pU16XyWHwFeTmNF35qvvNc=
+X-Received: by 2002:a17:90b:5281:b0:340:5b6a:5bb0 with SMTP id
+ 98e67ed59e1d1-341a6def359mr1525214a91.26.1762303258061; Tue, 04 Nov 2025
+ 16:40:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
- <20251007054528.2900905-2-suraj.kandpal@intel.com> <aQjDejhzGRYJT614@e110455-lin.cambridge.arm.com>
- <DM3PPF208195D8D5DDD56AA88E006E66AD9E3C4A@DM3PPF208195D8D.namprd11.prod.outlook.com>
- <aQoIBroBqQc3B-RD@e110455-lin.cambridge.arm.com>
-In-Reply-To: <aQoIBroBqQc3B-RD@e110455-lin.cambridge.arm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 02:39:15 +0200
-X-Gm-Features: AWmQ_bnEJwcu6XSjUjTu8rMBuA8ieKzJYCA5nkQvWatiwJBc8AoL_uq6o3M1DN8
-Message-ID: <CAO9ioeX2qEyjwi9LsnUh-cRv88iaRcdZtFr_yidf55A9_ZbLWw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor drm_writeback_connector structure
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: "Kandpal, Suraj" <suraj.kandpal@intel.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
-        "Murthy, Arun R" <arun.r.murthy@intel.com>,
-        "Shankar, Uma" <uma.shankar@intel.com>,
-        "Nikula, Jani" <jani.nikula@intel.com>,
-        "harry.wentland@amd.com" <harry.wentland@amd.com>,
-        "siqueira@igalia.com" <siqueira@igalia.com>,
-        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        "airlied@gmail.com" <airlied@gmail.com>,
-        "simona@ffwll.ch" <simona@ffwll.ch>,
-        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
-        "abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "marijn.suijten@somainline.org" <marijn.suijten@somainline.org>,
-        "laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>,
-        "mcanal@igalia.com" <mcanal@igalia.com>,
-        "dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>,
-        "tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>,
-        "kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>,
-        "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+References: <20251026030143.23807-1-dongml2@chinatelecom.cn>
+ <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
+ <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com> <3577705.QJadu78ljV@7950hx>
+In-Reply-To: <3577705.QJadu78ljV@7950hx>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 4 Nov 2025 16:40:43 -0800
+X-Gm-Features: AWmQ_blJIoxjnat4nYQEP4--m4bEcKCdlXG0h1PFwD7EYD3Nc5RBayfWiCPvzpA
+Message-ID: <CAEf4Bzas7Or4yPzqdHqEcgVpTDx2j26dR5oRnSg7bepr-uDqHw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
+ for x86_64
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-GUID: Luo8B5e7RgfXfmkoo6ke5BDOyb-F6nZW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAwMyBTYWx0ZWRfX8ZzTDBWak8fB
- CN0b7i0oCqCp3MHFg3zgXzWX2FHSXSKy+v3opdBhRfL7ee5Zj9dMRmuZxdC2bil89mgNEeEs8Ee
- dQ1M4Dze0DDE8EvPi9O4zp6yegBvfWOIdIxg11D2q1xTAGpO8VfoNQjkwTIR2x7ec6B+BjtgjOf
- 9l8SOYUQ+K1c7joSORsN6v2r+06v02fxH5F01aoBl9VMH6kzTkUFz5Auj1qUWWuRMR7T5UT80By
- 4Ug4zJe1+E4JI6VtuRIA9AN8spoGBhoFWaEkenK/Lpa4bNku2vloZxzTXzC2oNEJNYZERH1vjIp
- EZiqa5ClQcBlWGAfIM3VJKGoPADQCq2efJiQDEAOXwV/5tYZy5Y6SraB8PLtzRPKafRTfAHih8w
- wsoAG455cDtjKKWkQM++MoXT4m/WeQ==
-X-Proofpoint-ORIG-GUID: Luo8B5e7RgfXfmkoo6ke5BDOyb-F6nZW
-X-Authority-Analysis: v=2.4 cv=IpsTsb/g c=1 sm=1 tr=0 ts=690a9cc0 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7CQSdrXTAAAA:8 a=QyXUC8HyAAAA:8
- a=cwjfTKyZ_bUBt8LYXKAA:9 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
- a=a-qgeE7W1pNrGK8U0ZQC:22 a=HhbK4dLum7pmb74im6QT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511050003
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 4 Nov 2025 at 16:05, Liviu Dudau <liviu.dudau@arm.com> wrote:
+On Mon, Nov 3, 2025 at 3:29=E2=80=AFAM Menglong Dong <menglong.dong@linux.d=
+ev> wrote:
 >
-> On Tue, Nov 04, 2025 at 05:11:25AM +0000, Kandpal, Suraj wrote:
-> > > Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor
-> > > drm_writeback_connector structure
+> On 2025/11/1 01:57, Alexei Starovoitov wrote:
+> > On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Menglong Dong <menglong8.dong@g=
+mail.com> wrote:
 > > >
-> > > On Tue, Oct 07, 2025 at 11:15:23AM +0530, Suraj Kandpal wrote:
-> > > > Some drivers cannot work with the current design where the connector
-> > > > is embedded within the drm_writeback_connector such as Intel and some
-> > > > drivers that can get it working end up adding a lot of checks all
-> > > > around the code to check if it's a writeback conenctor or not, this is
-> > > > due to the limitation of inheritance in C.
-> > > > To solve this move the drm_writeback_connector within the
-> > > > drm_connector and remove the drm_connector base which was in
-> > > > drm_writeback_connector. Make this drm_writeback_connector a union
-> > > > with hdmi connector to save memory and since a connector can never be
-> > > > both writeback and hdmi it should serve us well.
-> > > > Do all other required modifications that come with these changes along
-> > > > with addition of new function which returns the drm_connector when
-> > > > drm_writeback_connector is present.
-> > > > Modify drivers using the drm_writeback_connector to allow them to use
-> > > > this connector without breaking them.
-> > > > The drivers modified here are amd, komeda, mali, vc4, vkms, rcar_du,
-> > > > msm
+> > > On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
 > > > >
-> > > > Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> > > > ---
-> > > > V1 -> V2: Use &connector->writeback, make commit message imperative
-> > > > (Dmitry)
-> > > > ---
-> > > >  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 +-
-> > > > .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
-> > > > .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  |  8 +--
-> > > > .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  6 +-
-> > > >  .../gpu/drm/arm/display/komeda/komeda_kms.h   |  6 +-
-> > > >  .../arm/display/komeda/komeda_wb_connector.c  |  8 +--
-> > > >  drivers/gpu/drm/arm/malidp_crtc.c             |  2 +-
-> > > >  drivers/gpu/drm/arm/malidp_drv.h              |  2 +-
-> > > >  drivers/gpu/drm/arm/malidp_hw.c               |  6 +-
-> > > >  drivers/gpu/drm/arm/malidp_mw.c               |  8 +--
-> > > >  drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
-> > > >  drivers/gpu/drm/drm_writeback.c               | 35 ++++++----
-> > >
-> > > For the komeda and malidp drivers, as well as for the drm_writeback.c
-> > > changes:
-> > >
-> > > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> > >
-> > >
-> > > [snip]
-> > >
-> > >
-> > > > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> > > > index 8f34f4b8183d..1b090e6bddc1 100644
-> > > > --- a/include/drm/drm_connector.h
-> > > > +++ b/include/drm/drm_connector.h
-> > > > @@ -1882,6 +1882,61 @@ struct drm_connector_cec {
-> > > >   void *data;
-> > > >  };
+> > > > On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.do=
+ng@gmail.com> wrote:
+> > > > >
+> > > > > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_en=
+try and
+> > > > > invoke_bpf_session_exit is introduced for this purpose.
+> > > > >
+> > > > > In invoke_bpf_session_entry(), we will check if the return value =
+of the
+> > > > > fentry is 0, and set the corresponding session flag if not. And i=
+n
+> > > > > invoke_bpf_session_exit(), we will check if the corresponding fla=
+g is
+> > > > > set. If set, the fexit will be skipped.
+> > > > >
+> > > > > As designed, the session flags and session cookie address is stor=
+ed after
+> > > > > the return value, and the stack look like this:
+> > > > >
+> > > > >   cookie ptr    -> 8 bytes
+> > > > >   session flags -> 8 bytes
+> > > > >   return value  -> 8 bytes
+> > > > >   argN          -> 8 bytes
+> > > > >   ...
+> > > > >   arg1          -> 8 bytes
+> > > > >   nr_args       -> 8 bytes
+
+Let's look at "cookie ptr", "session flags", and "nr_args". We can
+combine all of them into a single 8 byte slot: assign each session
+program index 0, 1, ..., Nsession. 1 bit for entry/exit flag, few bits
+for session prog index, and few more bits for nr_args, and we still
+will have tons of space for some other additions in the future. From
+that session program index you can calculate cookieN address to return
+to user.
+
+And we should look whether moving nr_args into bpf_run_ctx would
+actually minimize amount of trampoline assembly code, as we can
+implement a bunch of stuff in pure C. (well, BPF verifier inlining is
+a separate thing, but it can be mostly arch-independent, right?)
+
+> > > > >   ...
+> > > > >   cookieN       -> 8 bytes
+> > > > >   cookie1       -> 8 bytes
+> > > > >
+> > > > > In the entry of the session, we will clear the return value, so t=
+he fentry
+> > > > > will always get 0 with ctx[nr_args] or bpf_get_func_ret().
+> > > > >
+> > > > > Before the execution of the BPF prog, the "cookie ptr" will be fi=
+lled with
+> > > > > the corresponding cookie address, which is done in
+> > > > > invoke_bpf_session_entry() and invoke_bpf_session_exit().
 > > > >
-> > > > +/**
-> > > > + * struct drm_writeback_connector - DRM writeback connector  */
-> > > > +struct drm_writeback_connector {
-> > > > + /**
-> > > > +  * @pixel_formats_blob_ptr:
-> > > > +  *
-> > > > +  * DRM blob property data for the pixel formats list on writeback
-> > > > +  * connectors
-> > > > +  * See also drm_writeback_connector_init()
-> > > > +  */
-> > > > + struct drm_property_blob *pixel_formats_blob_ptr;
-> > > > +
-> > > > + /** @job_lock: Protects job_queue */
-> > > > + spinlock_t job_lock;
-> > > > +
-> > > > + /**
-> > > > +  * @job_queue:
-> > > > +  *
-> > > > +  * Holds a list of a connector's writeback jobs; the last item is the
-> > > > +  * most recent. The first item may be either waiting for the hardware
-> > > > +  * to begin writing, or currently being written.
-> > > > +  *
-> > > > +  * See also: drm_writeback_queue_job() and
-> > > > +  * drm_writeback_signal_completion()
-> > > > +  */
-> > > > + struct list_head job_queue;
-> > > > +
-> > > > + /**
-> > > > +  * @fence_context:
-> > > > +  *
-> > > > +  * timeline context used for fence operations.
-> > > > +  */
-> > > > + unsigned int fence_context;
-> > > > + /**
-> > > > +  * @fence_lock:
-> > > > +  *
-> > > > +  * spinlock to protect the fences in the fence_context.
-> > > > +  */
-> > > > + spinlock_t fence_lock;
-> > > > + /**
-> > > > +  * @fence_seqno:
-> > > > +  *
-> > > > +  * Seqno variable used as monotonic counter for the fences
-> > > > +  * created on the connector's timeline.
-> > > > +  */
-> > > > + unsigned long fence_seqno;
-> > > > + /**
-> > > > +  * @timeline_name:
-> > > > +  *
-> > > > +  * The name of the connector's fence timeline.
-> > > > +  */
-> > > > + char timeline_name[32];
-> > > > +};
-> > > > +
-> > > >  /**
-> > > >   * struct drm_connector - central DRM connector control structure
-> > > >   *
-> > > > @@ -2291,10 +2346,16 @@ struct drm_connector {
-> > > >    */
-> > > >   struct llist_node free_node;
-> > > >
-> > > > - /**
-> > > > -  * @hdmi: HDMI-related variable and properties.
-> > > > -  */
-> > > > - struct drm_connector_hdmi hdmi;
-> > > > + union {
-> > >
-> > > This is a surprising choice. Before this patch one had to have a separate
-> > > writeback connector besides the HDMI connector. Going forward it looks like
-> > > you still need two connectors, one that uses the writeback member and one
-> > > that uses the hdmi one. Is that intended?
-> > >
-> > > I was expecting that you're going to declare the writeback member next to the
-> > > hdmi, without overlap. If you do that, then you also don't need to move the
-> > > struct drm_writeback declaration from the header file and it should be enough
-> > > to include the drm_writeback.h file.
+
+[...]
+
+> I have to maintain a hash table "m_context" to check if
+> the exit of skb_clone() is what I want. It works, but it has
+> extra overhead in the hash table lookup and deleting. What's
+> more, it's not stable on some complex case.
+>
+> The problem is that we don't has a way to pair the
+> fentry/fexit on the stack(do we?).
+>
 > >
-> > Hi,
-> > Thanks for the review
-> > The reason for this came from the discussion on previous patches and was suggested by Dmitry.
-> > The idea is that a connector can never be both an HDMI and writeback connector at the same time
-> > Hence we save space if we pack them together.
+> > > AFAIT, the mast usage of session cookie in kprobe is passing the
+> > > function arguments to the exit. For tracing, we can get the args
+> > > in the fexit. So the session cookie in tracing is not as important as
+> > > in kprobe.
+> >
+> > Since kprobe_multi was introduced, retsnoop and tetragon adopted
+> > it to do mass attach, and both use bpf_get_attach_cookie().
+> > While both don't use bpf_session_cookie().
+> > Searching things around I also didn't find a single real user
+> > of bpf_session_cookie() other than selftests/bpf and Jiri's slides :)
+> >
+> > So, doing all this work in trampoline for bpf_session_cookie()
+> > doesn't seem warranted, but with that doing session in trampoline
+> > also doesn't look useful, since the only benefit vs a pair
+> > of fentry/fexit is skip of fexit, which can be done already.
+> > Plus complexity in all JITs... so, I say, let's shelve the whole thing =
+for now.
 >
-> Hmm, but you can still have all the CEC and HDMI codecs data in that connector,
-> which feels strange.  Also, what's the issue with having a connector that has
-> both a valid HDMI state and an associated writeback at the same time (i.e.
-> don't use the union)? Writing back the memory the output that goes to HDMI is
-> valid, right?
+> Yeah, the session cookie is not useful in my case too, I'm OK to
+> skip it.
 
-Writing back to memory requires a separate connector (with separate
-setup). The CRTC should also support outputting data to both HDMI
-_and_ Writeback connectors at the same time (aka cloning). Not all
-configurations are possible, writeback requires additional bandwidth,
-etc., etc.
+hmm, in my view session cookie is one of the main reasons why
+"session" concept is useful :) that's certainly the case for
+multi-kprobe session, IMO (and yes, I haven't yet used it in retsnoop,
+but it's just because I'm lazy, not because it's not useful... )
 
 >
-> Maybe that is not something that you considered, but with this patch (without union)
-> we can drop the need to have a separate connector just for writeback. We're breaking
-> user space compatibility, true, but it feels like a good change to be able to
-> attach a writeback to any connector and get its output. The drivers that don't support
-> that can reject the commit that attaches the writeback to the existing connector.
-
-Well... No. It's not how it is being handled in the (existing)
-hardware. Nor does it make it easier to handle resources for the
-writeback.
-
--- 
-With best wishes
-Dmitry
+> The pair of fentry/fexit have some use cases(my nettrace and
+> Leon's bpfsnoop, at least). Not sure if the reason above is sufficient,
+> please ignore the message if it is not :)
+>
+> The way we implement the trampoline makes it arch related and
+> complex. I tried to rewrite it with C code, but failed. It's too difficul=
+t
+> and I suspect it's impossible :/
+>
+> Thanks!
+> Menglong Dong
+>
+> >
+> >
+>
+>
+>
+>
 
