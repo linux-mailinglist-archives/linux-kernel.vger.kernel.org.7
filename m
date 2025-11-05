@@ -1,175 +1,77 @@
-Return-Path: <linux-kernel+bounces-887038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FBCC37198
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:33:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971D4C371E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CFA5502DF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:25:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F9BF503521
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1207733C50C;
-	Wed,  5 Nov 2025 17:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8xESqtB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA3C31577E;
+	Wed,  5 Nov 2025 17:24:12 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E7A23EAA4;
-	Wed,  5 Nov 2025 17:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C875331A4B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363439; cv=none; b=uwAmI/BIpicFyJoS+duzk1UXR01nFXOYqUcbZdmV7n9wAHgxj7CCiNZsEyyrv4h20bsVltP3uBPvsMr+Py2DBBrajJSTeUpwmQvdximtz42QpgtiAAr9UDcQFmokOXWg6DPDybhfBdcJ8m7OVGixqmVPWWzwoNektPaYVuQrfFA=
+	t=1762363452; cv=none; b=KLv1DmWwnI0/U5434SkmKgUq0zvGX/JYSjMysdnIUNxuc7r0SO8ZPMBz5Sk3KExrG0stqpZz4M9M3mYmd9DUwPP/SLJeS/4Umkf3qa2AQwrjnmDiNdoWSsCvlOOesLx2GtKqyqwc3Y6Y05VaJFTYkLreHa6aMEyG6QTedzz6UTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363439; c=relaxed/simple;
-	bh=zYzES0C46I5oaK/IMxZNYFdLG7G3HDGtdUjOFFV3sZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVnaLK0w76tJRdEbwcCdANzRy5LngQjayE1Qyo3eU8x/t/aNu1F2qKkYhssZMTJzDIAf0CpWBLmP0gP0g4TtYfQCPls27qTX56r9Qk7diI7FFPvJQHbDLmsaEPMlYPLqRnYfjB2O274BJTDEEFoPrZDxV1bYM6p1Cs3FnWt9YV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8xESqtB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F78C4CEF8;
-	Wed,  5 Nov 2025 17:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762363438;
-	bh=zYzES0C46I5oaK/IMxZNYFdLG7G3HDGtdUjOFFV3sZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s8xESqtBwpjaZ4m9f2ZDJN5gPsDifp+UfvU3rzrsSEnf0GikBshBw5nFVFuwF07ck
-	 0yBwVY6pmNe9jJeH5oxPaak/+/+HEtErZOVBL1DJnyC0fOcFQs0ygwLPSeu3u03xd5
-	 4w0ngjerQEEghhRcnm6x70rCECwLZMn6n5NIp8BCXudGSoXeeOjtOyVOggqmhpUs/g
-	 ehWHzELGJtAT9FMLNfUPsYTM6sZqtSYbRFZmEG9QHb2YTdZDrMAzvoOZWhzcrIXnk0
-	 EZnAjCx00Jjnj3+Ioa134/nk/7XNVcOWRrmMmmB6+RR8iuCs/ml3MUzfyn1bbfnRSD
-	 eLhcmZU6qIgwQ==
-Date: Wed, 5 Nov 2025 22:53:44 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
-	krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com, shradha.t@samsung.com, 
-	thippeswamy.havalige@amd.com, inochiama@gmail.com, fan.ni@samsung.com, cassel@kernel.org, 
-	kishon@kernel.org, 18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v5 4/4] PCI: keystone: Add support to build as a loadable
- module
-Message-ID: <fkzokskbjklt6atqrpwc46zsjr5ptpuynzhx4kvfurr4h37kae@rwcqljsjvzl6>
-References: <20251029080547.1253757-1-s-vadapalli@ti.com>
- <20251029080547.1253757-5-s-vadapalli@ti.com>
+	s=arc-20240116; t=1762363452; c=relaxed/simple;
+	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WL6r+Vrv/lnFNa5RwF9D3AASRDnDaR4WerQdjpuRewz4O2MWYN9vWwok6hFtIFQ4g55eFv6QB8ufs7SxrQQoPhs72Ug8k1O/dSDcQRZggrV5Edygirf8BIA2C0FTo7O8GkNOZ5FduIb9EYFlNGfRod1DIxN4erlDMn83L0oM0+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43327c30cb1so79445ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:24:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762363450; x=1762968250;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
+        b=ojTtcqgTdFdzMHp5J4JaIlOCAtDe97abNLNcCNnrPYJIftk/numDOOIyXLOHOJrETU
+         kDii98BLC91qWPAGpi05YN8Vc6uS/wSNXl6j+MY+zeykp/Hn29c3ejqe9rRlyPeOThsO
+         DP2CykuHuoTpw+KsdE8BRwyaC2W83EsLw0AA0yFGCN/64FQZAptTkgmx0LWOV8GPrJra
+         b+0px4eMZxSwXGzEH49Qyacs/socPCB3wJbhVREBBZqH5PY5aJeWH+KzsTuucvaeMcp8
+         QvWazk17ZMOHX6W/yFbvUuLc8MLDVCHKAw202kCkVKhBFfwe3rOmQ0Wjle6KoqQGYqui
+         k4Vw==
+X-Gm-Message-State: AOJu0YxQbtago71gfFzbw00pjFB9dBQ1VDzAlaOl2OPlGju2Jvk/K92Z
+	mw6iU0Bxa+t+swctTdUiLP3OS68/sGiZW/vdd68h6UojTw+xz5/Nqi1yZfa22vRpg6RmexaCZXc
+	8stbKn+5EZi8x5oFldVkQvSHf0RjKzFeLp28IRXPUGo7ZiTHuCCC1gF7+cDk=
+X-Google-Smtp-Source: AGHT+IHbAUiGmf5WPycpZxCF1KkQt/SlRlRWOG6dVueu9Z+H3pNoq00AmbjsEg9ZGnRC+LIC1tX3KOWtaMHwyJLR2gsayUut3Nz9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251029080547.1253757-5-s-vadapalli@ti.com>
+X-Received: by 2002:a05:6e02:1fe9:b0:430:af13:accc with SMTP id
+ e9e14a558f8ab-433407600cemr53429315ab.7.1762363450212; Wed, 05 Nov 2025
+ 09:24:10 -0800 (PST)
+Date: Wed, 05 Nov 2025 09:24:10 -0800
+In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b883a.050a0220.3d0d33.0075.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 29, 2025 at 01:34:52PM +0530, Siddharth Vadapalli wrote:
-> The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-> Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-> that the 'pci-keystone.c' driver depends upon have been exported for use,
-> enable support to build the driver as a loadable module.
-> 
-> Additionally, the functions marked by the '__init' keyword may be invoked:
-> a) After a probe deferral
-> OR
-> b) During a delayed probe - Delay attributed to driver being built as a
->    loadable module
-> 
-> In both of the cases mentioned above, the '__init' memory will be freed
-> before the functions are invoked. This results in an exception of the form:
-> 
-> 	Unable to handle kernel paging request at virtual address ...
-> 	Mem abort info:
-> 	...
-> 	pc : ks_pcie_host_init+0x0/0x540
-> 	lr : dw_pcie_host_init+0x170/0x498
-> 	...
-> 	ks_pcie_host_init+0x0/0x540 (P)
-> 	ks_pcie_probe+0x728/0x84c
-> 	platform_probe+0x5c/0x98
-> 	really_probe+0xbc/0x29c
-> 	__driver_probe_device+0x78/0x12c
-> 	driver_probe_device+0xd8/0x15c
-> 	...
-> 
-> To address this, introduce a new function namely 'ks_pcie_init()' to
-> register the 'fault handler' while removing the '__init' keyword from
-> existing functions.
-> 
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> 
-> v4:
-> https://lore.kernel.org/r/20251022095724.997218-5-s-vadapalli@ti.com/
-> Changes since v4:
-> - To fix the build error on ARM32 platforms as reported at:
->   https://lore.kernel.org/r/202510281008.jw19XuyP-lkp@intel.com/
->   patch 4 in the series has been updated by introducing a new config
->   named "PCI_KEYSTONE_TRISTATE" which allows building the driver as
->   a loadable module. Additionally, this newly introduced config can
->   be enabled only for non-ARM32 platforms. As a result, ARM32 platforms
->   continue using the existing PCI_KEYSTONE config which is a bool, while
->   ARM64 platforms can use PCI_KEYSTONE_TRISTATE which is a tristate, and
->   can optionally enabled loadable module support being enabled by this
->   series.
-> 
-> Regards,
-> Siddharth.
-> 
->  drivers/pci/controller/dwc/Kconfig        | 15 +++--
->  drivers/pci/controller/dwc/Makefile       |  3 +
->  drivers/pci/controller/dwc/pci-keystone.c | 78 +++++++++++++----------
->  3 files changed, 59 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 349d4657393c..c5bc2f0b1f39 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -482,15 +482,21 @@ config PCI_DRA7XX_EP
->  	  to enable device-specific features PCI_DRA7XX_EP must be selected.
->  	  This uses the DesignWare core.
->  
-> +# ARM32 platforms use hook_fault_code() and cannot support loadable module.
->  config PCI_KEYSTONE
->  	bool
->  
-> +# On non-ARM32 platforms, loadable module can be supported.
-> +config PCI_KEYSTONE_TRISTATE
-> +	tristate
-> +
->  config PCI_KEYSTONE_HOST
-> -	bool "TI Keystone PCIe controller (host mode)"
-> +	tristate "TI Keystone PCIe controller (host mode)"
->  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
->  	depends on PCI_MSI
->  	select PCIE_DW_HOST
-> -	select PCI_KEYSTONE
-> +	select PCI_KEYSTONE if ARM
-> +	select PCI_KEYSTONE_TRISTATE if !ARM
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Wouldn't below change work for you?
+***
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 349d4657393c..b1219e7136c9 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -486,8 +486,9 @@ config PCI_KEYSTONE
-        bool
- 
- config PCI_KEYSTONE_HOST
--       bool "TI Keystone PCIe controller (host mode)"
-+       tristate "TI Keystone PCIe controller (host mode)"
-        depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-+       default y if ARCH_KEYSTONE
-        depends on PCI_MSI
-        select PCIE_DW_HOST
-        select PCI_KEYSTONE
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Author: yanjun.zhu@linux.dev
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+#syz test: https://github.com/zhuyj/linux.git 
+v6.17_fix_gid_table_release_one
 
