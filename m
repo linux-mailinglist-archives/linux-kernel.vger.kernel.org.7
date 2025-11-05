@@ -1,174 +1,422 @@
-Return-Path: <linux-kernel+bounces-886678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587E2C36396
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:10:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFB1C36429
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF98834ED33
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522E81A22A86
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE20D31577E;
-	Wed,  5 Nov 2025 15:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC4A32D0D5;
+	Wed,  5 Nov 2025 15:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="zLSVH+cp"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KoJsCt6+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B47221578
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355391; cv=none; b=WhmfFNYGPscYwtHmV73AKaeTlcVG+51N2H35pt6eL4wW8MNVkMScVbjHmvXUayBldOue1yZ506wC3XukJYGRUjpDd8q2JGpzr8G7o7rc8OmCGXQ5/j7kquYdRIokBwH/KJZnoHaxzzOkjMI2E12EMbgY9Dwz7RTwnuQ13uV+Vps=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355391; c=relaxed/simple;
-	bh=pkzDDAuu5FnbyLu1BGgHTr/rHEA+02rAzTZAHJGNYkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L5j6BL2CTt4zBFtqS+W5Xcz1B3Cc8eUhEAhgevxbjLHsH3sdUU8iRZx0eAlM4vOrmNswLhdMIe93v3//ArjX0zNynT2FXHRty75qOf39Y4FSodFQYxSuOhOawsmlijTfjf/K64hx4JbLCDmoTFPBIIHL4f0A+kbtZ2MlX3sMAfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=zLSVH+cp; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-29555415c5fso58656355ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:09:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1762355388; x=1762960188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=npKJdQ/SFEjnsTgPu5T82klgRkrk6WAaS5E6NxS8cDA=;
-        b=zLSVH+cpbs1qR5NQ2o43wKSdaOVaS1VtdhnlDEjIX8/9Ajn4HwN6wKHZ6uOD+ynKqZ
-         rFTmElrFEmRgMW7OSLqFBHrgnI69SzNmrJhkAGhTk0oAvDWfl0qh+tUGsuwqzgyBkk1K
-         ZcpqZR8ls6O0FkaofhQt0cj8b9sYOWUsgrneIQe/qf1DPZKkkkv0B3rg8U8WFEWifI1x
-         hQtLuePdI1a8F1YLaQvRLqy9XsOywtP5mPyY8V4Ecyd6yH8NzgRqa3V+PAdNEr4nJu1Q
-         2AEp8oyE79PeRWYxy5fkRCZTrIMGdso9ivrUurV5lg0tdWSZDNj8xia4WY0ZIc74/UVq
-         Xusw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762355388; x=1762960188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=npKJdQ/SFEjnsTgPu5T82klgRkrk6WAaS5E6NxS8cDA=;
-        b=hDsphHh81CYizFrT9tr7PK/lqjYPZuGab5JmQOxV/0dLGwJ1lid3TScLpJqbTz+PbB
-         deLLHCH6r5Nj4Bjwbo3fPGjLDXgaG88qZ0XyZ3Z5nKls60NPtFggrVeHfZOki5jUAbZK
-         PxScz8svzQwZm8E8rBoOZeu3QjCB2Veoh7Nc7Cetxfk4POgBAflko2uPOYHUddshFfUw
-         vVjUVFhL/F3n+4sAddv7r90AeN4BV+dVg1lE3T0JbrZ4xVQ5I7XYabXJstr5/8GG4KfB
-         na9VL2pi8ZyHo3wQNxAjY3Fw9zv3qyogCFoxTHZWvn7D9jC7q2aksiJ+CngR0diqrQ86
-         VAFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXWYvmsYLs2RvRwP0/qnOnTEs/hLnKpyJnIr6cHl7SOWUzZM5c6rcBoZtddkBseAhGZEs+FkQEe26Xf8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS7+WzxAwaLF+oYK0eCFVDqEyV288aGAcp8eqxn1K0CYj8okI8
-	yiHFc/LoS/nSSHNLrt3isQUmWLPL9naHI+aGMjq3PoonRM/9UFqGt8YWB9mRJBCF4rg1NfLGRSA
-	IBwbQJRJSR1BqQ61P/kHQFlokz308UPyaColRIB6+
-X-Gm-Gg: ASbGncv+rclbZ6TY8ISGv/KEPeM3+t+ILO/kTP3Rl8E8surktyrHx7QuITsaua2K1CW
-	wkXNtQI6hR+TlkScBe2jOBifkS/M+1JRNVaKjc+yS/XmZsK3XN49UWp6BzUmdu3XiS8+FaltviQ
-	HUs8mSvcUVri/avI8YXJUFNGvdOZi3M4u8C/qQggPiM6WiwXHIaWQoxeBoIpmQEMYsKgyd3iUen
-	9b8niVEolIZtio+bB7NXqLdobKSZetTBkyomoV4JvKovhgkDCbjtAYavg0ctXRADcKAvNiX7Uld
-	ITHl/F+HyIx5Pcaa93Q3qHcEbe9DocYF/IX1
-X-Google-Smtp-Source: AGHT+IES6bIx3iRmi6TnNQThdacyfXUn2MC8E/Eb3foVxURjYD3jCFL4B2OtVSRN6RcZ3uuhcllKhvneK9OOZ9vCQ9U=
-X-Received: by 2002:a17:902:e943:b0:273:ab5f:a507 with SMTP id
- d9443c01a7336-2962ad3b1a3mr50683155ad.21.1762355388147; Wed, 05 Nov 2025
- 07:09:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D1721CC55;
+	Wed,  5 Nov 2025 15:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762355457; cv=fail; b=tqrDUiRs9KR0sTBzd6moa2MF+LdpXDjE9QoGqxuxS/WlxMklvsLuJ97H7DQfkJJszpUXoszZ/PO5YY0Gi/M8oTi9zdv/eWH45QMz6cAEOI9NwG1p7UbIWeVrorgoMZoIuKL9+LVLFR+cah8/g6Z90lOkCFAwsoL52ysTQnpqZQc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762355457; c=relaxed/simple;
+	bh=dJlU9UyLALFeGAGKpcdC7Em1yDDhKkRR0BdvDURrt1o=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gbPE8p3u5TzhbbMRoT5djzzVRIBZtk0pG8yaTNmlQDq03U3xPnR5EbnnbhJDhV/dCd2q4FqnP1FPRxuZfp4C1ZgzCHC0pSqebpZzSf8/7v8IQXt79FLvAiSeHHhJYXUYZJTOoitj7cu1MweTlt9phQFZ6VZWczZT2yv+PGaA2dA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KoJsCt6+; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762355455; x=1793891455;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=dJlU9UyLALFeGAGKpcdC7Em1yDDhKkRR0BdvDURrt1o=;
+  b=KoJsCt6+d9HtqEtCIyG8Eip1WV+qPyEjzUFTkbsIa0mg0NhpfFzvjEDm
+   5PkZGcFDDd4TmRVdY+WGNsy7YZw+VCmZseIUgauMKuvfUZLGMOHub/V7C
+   w/ecqwjCqoqHWTelG4+n9qIsX84sQcJnVbkxtY2Ns2OTU4E8AW6uhSZIU
+   LbtCYiClzyagTu+I/sobT43qTsu6+N0eHAQolHufrni9C82J7v25ntoej
+   5HYzw95bC50t3EniZNx9vRVpMES0UKQSD7/my18Gqs12gYALH2QGTJWqi
+   MXh15YFU1jJ5ZieuoQ/orS2qqGBsdss44EgFZMMSJFSFeSawhwj2UlXLF
+   w==;
+X-CSE-ConnectionGUID: muxAFIiMTYOiPbiq0Pb9ZA==
+X-CSE-MsgGUID: u0fHiaAfTsmmCE3exoIlsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="67088181"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="67088181"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:10:55 -0800
+X-CSE-ConnectionGUID: pMXcvsNMR3ekNLmcseSxqw==
+X-CSE-MsgGUID: XcQSOLUQR8yXQJxaLE+EQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="187173841"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:10:55 -0800
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 07:10:53 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 5 Nov 2025 07:10:53 -0800
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.11) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 5 Nov 2025 07:10:53 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zVZyDuacO3uds0l4OMBWvJ5MJrpJBl+F5A65PUJHNrk6GC1HRWP4bH0B2vizBw6px2KE6ptk0KT3UbUjRU1dXpQnBWBgd4fynEmnTV542iLHqs6tqwcshr4ybKnNQ3x/gxE+gxoarSpcsrlm0C1tun0IGuKy/PdTErUtbSf2B6oIPh1p5jQ8oP2w8EE/LbsWBZNH/bAEj6O/DmFcZPy9NlGQNGbpe2qT+QIbLGPh0nV7VjbhSA6E7NdyxnhlTE6xfVYdCMTz3Lzr9hOpNJcbN2Tj81k9zqVftr05Mk53Dh2BvRpGomRzAQKA4r8qlHmhThlG9lEBLSt4zfv23JUubA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IuuKpPT2DYV0a7CHFiWWNrKMEl38Lm+Coz0ZfbF5XfQ=;
+ b=eeiTa146Hd8iT0hvzuX47/kh8472qqqQ/liGK7/nsGqAhhw3yt+qEfkZT03lkvB+IW9/W1VbNCq3/GqAcE0Hi1NKFnFCTQUjXCG2krq6PFd8nxTgwfjBI/TXlFsB7eGWSezqmqxeRIp31Zu30LiwujRdmKb1bh6ZB3DvXQ1jxNmibKXFKbNOXB4cttG6GJFvgTIapC1qtgNaWYjiYWAfCg61miSYZqNBbdYUrmmFo07VhULeJKBDh8XNdB7xS0mpVwzEyZ9wU9v8O66OhPSvfX0IXJJNTXizYBYnPwgBI5X3kXht5XaJmRDBaEgGi5ed7AOs16Ilc9wS5vSUOxBDbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ PH7PR11MB8123.namprd11.prod.outlook.com (2603:10b6:510:236::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.8; Wed, 5 Nov 2025 15:10:43 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9298.007; Wed, 5 Nov 2025
+ 15:10:43 +0000
+From: =?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
+To: Alex Williamson <alex@shazbot.org>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?q?Thomas=20Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
+	<intel-xe@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, Matthew Brost <matthew.brost@intel.com>, "Michal
+ Wajdeczko" <michal.wajdeczko@intel.com>
+CC: <dri-devel@lists.freedesktop.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
+ Laguna" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
+Subject: [PATCH v4 00/28] vfio/xe: Add driver variant for Xe VF migration
+Date: Wed, 5 Nov 2025 16:09:58 +0100
+Message-ID: <20251105151027.540712-1-michal.winiarski@intel.com>
+X-Mailer: git-send-email 2.51.2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1PR07CA0159.eurprd07.prod.outlook.com
+ (2603:10a6:802:16::46) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aQoIygv-7h4m21SG@horms.kernel.org> <20251105100403.17786-1-vnranganath.20@gmail.com>
- <aQtKFtETfGBOPpCV@horms.kernel.org>
-In-Reply-To: <aQtKFtETfGBOPpCV@horms.kernel.org>
-From: Jamal Hadi Salim <jhs@mojatatu.com>
-Date: Wed, 5 Nov 2025 10:09:37 -0500
-X-Gm-Features: AWmQ_blU6XcDEnFl20FbnBbH6b7zO2BsFs-Y_L7D1GiklwITbV2JeRK3k2GQLkI
-Message-ID: <CAM0EoMnvjitf-+YFt-qsFHXOnZ4gW3mnXBzMT_-Z6M_XSvWbhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] net: sched: act_ife: initialize struct tc_ife to
- fix KMSAN kernel-infoleak
-To: Simon Horman <horms@kernel.org>
-Cc: Ranganath V N <vnranganath.20@gmail.com>, davem@davemloft.net, 
-	david.hunter.linux@gmail.com, edumazet@google.com, jiri@resnulli.us, 
-	khalid@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, skhan@linuxfoundation.org, 
-	syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|PH7PR11MB8123:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3597201-bb11-4559-023a-08de1c7d7ca0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MmRpSUdyeHNQeXhOUG41c056NFMrSSt4Yk1ZVzJVVSs3VjlPcmxyNnY3Sy8w?=
+ =?utf-8?B?KzJRUjA5Z1d5UE93TW00c1I0MWJSWFpGYWc4d3h5eDIvaFdRZ1U2YlJLdncz?=
+ =?utf-8?B?akE2QmlkWkZ3TVRsRE9OaStTdG1idnZJd3BxRzR6YnFkU29pQ1hDOEdhcDkv?=
+ =?utf-8?B?c1BQeGN4RWIrTE90WVNRTDlhSmFUaklLUW4xeGpaSXovZUgrckVuUVJJZ2pu?=
+ =?utf-8?B?ZEtxMC9VeFVqQlJnYkl4MGx1bklXOThDM0JDMTBmd2oxLzBPTWYxd3c2djAy?=
+ =?utf-8?B?MmRTU3REYm5xOTdhOWdPWlhicEtXVW80QjNHWEgwWjRBUGlCYUFiZENYZEZF?=
+ =?utf-8?B?dW01SnBSV3EyaWRYa1R3c1BvUGVWbWJYTkphbGI1b1FNZTJkSHZKMzNwMlBW?=
+ =?utf-8?B?bFoxenpEK2QyUUhQbE9xMXcwYkZXWWpselNxV1VWZVBoZko3QW84dm1IM3Zi?=
+ =?utf-8?B?QXhrZUQ5K0lIY1puSjNXSGU2VzlXYlg2Zk1BQ2Y1eEV4ejU1S1R2R0I4SHE5?=
+ =?utf-8?B?SnUyalpFZVhRUjVyQm1RTi8zY3BtMzVEV1BOc3kzWk1acHhMUjFGVTRJb0ZO?=
+ =?utf-8?B?NTc3QW9KdWdQMzVPVU9WQ0tOVDlpRjMwUnJJcFkxWVh4MUVEL1BBSDR1eWdG?=
+ =?utf-8?B?MDVaQ1A3WWZVV1FueW5SL0FKRmtreVVlcUpNcUdreHlhOFJ2MHRaeTZITlJy?=
+ =?utf-8?B?TTUxUnovWXZHbzI0UzJZdmRLOU8xVUQ3ZDE4Z29UenB0RFlVNjVnd0pPTmVL?=
+ =?utf-8?B?RWNCWnlNY3phaTIwUnBNWW5CcUxaendWWTVqZDBGQTdYeHRKblZ4cVdRZ094?=
+ =?utf-8?B?SjhaM2Nuak5MOWluQVBqdVB1aXhpVlBNa3RvSFppZ0xua1VUVHV0aUlEbFZi?=
+ =?utf-8?B?QnJpbTNUU2wxTCs4VTYvL1lEMGNqRGlyRkFOcnhmQndNQTloWGdHbHhzUHQw?=
+ =?utf-8?B?SlBRVUI1ZkVrd0s4RGoxZGhvZHVGQ1dWUy9NMFRpME1Wb0U2S2crS2hLb1Vi?=
+ =?utf-8?B?ekZBVjFJV3NYM3krUU5raXA1VUVibDI5MlYvVWF2WjRVYk9pK0QvUmplZWU2?=
+ =?utf-8?B?eUkwSGZpZFpsOGJRczRzbUYxQ0xkaGNDZUxQcldTZ3BXUEpnODY4bXE4RDk2?=
+ =?utf-8?B?cTBKLzE3cjNGTkh5ZEVQVnVHQ2JFVy9odjMzQ2tCR3RocThXSnBERHJzbW9m?=
+ =?utf-8?B?UWRiMVdXWlFRQzd1SkVwWnlWaElmeUhmRk5RNDRtOUhDVURnakxmWk4wcmNQ?=
+ =?utf-8?B?aVJ6Q0M2YWh2T1RUc2dOMWJISHd6aFR3ajlxL1dBR0U1U3RCSkFOUHduTlFD?=
+ =?utf-8?B?YkFpWit3eVlkWVNjUnU3QWpZcVIrZVRCWjBOeUVtR1BnVzV5aVlFOVZqTzdY?=
+ =?utf-8?B?R3JUeERUUzNMY3ZWTW15M1FlcHljY3VOZnpjRnJuRUZYQkZSK3pNVkZ0TzhT?=
+ =?utf-8?B?V3hYU0hob2VZWlZycWJGUXg5NHJjYmRxZlpyN2hNYkgwWTFYa1B2ZkRwaXNa?=
+ =?utf-8?B?aVdBZnV0TEQzeWt3U1c1QlBic1dpdVo1K2wzU0RjTHFVS3N0SmFrSngxYzdL?=
+ =?utf-8?B?VUppNXpqZi9uL3E1N1FuM09jemZhQ283WXphY3VuL2orSXhkajlWWEtaNEhw?=
+ =?utf-8?B?MXF2TStobFNndEZqaVpYNG9YdzR0QzBwc0Y0R0VOZ21SK1lvSzlRZlg3QXI0?=
+ =?utf-8?B?cWhsYkg3QW53MjArM1hUb3hlZlJ2ZFJVSDlxRjE4UjhXZllNS29kUDE4dzNm?=
+ =?utf-8?B?c2J1NDRMcm8xNHhjam5xeXE1Q1hySm9wU2FHV3FyTjlNN0tVdTFsY1h6TXln?=
+ =?utf-8?B?Y2dwUDFQaDAwYnRXSFdFUnNxM2JySXZjdkFaYWhwNEM2dmpFa2JUSmM5N0lE?=
+ =?utf-8?B?ODFGb3owd3U2bnh5ZGxEWEQyWnhoNmxaTk1rRGFoa3V2dHU4NGluem05c2tL?=
+ =?utf-8?B?bWpvbWRrQ01qMzZBREdSak5wWjFlNDRRczJBc0lnUGdZT3FpOG12OFBBaXlX?=
+ =?utf-8?B?MlpHTW1NeWt4OU52TTlUY1BsMGMyYjhPQnJrTm1yY2ZBZ1M3Mk1UdmhudmtB?=
+ =?utf-8?Q?hIIfl7?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QmMrdlJGQjFqcjk0SzRESE5lUmcwTHZONWZSSFdLTCtCWVh4eGZ0ZjFuMncv?=
+ =?utf-8?B?dTBGZXF6WkV3a1FwR2RiRlZGYnRDMWlNeFFhb3BCQTIxVXdJN1pVaHZuRlM1?=
+ =?utf-8?B?UjBRRU5MaFJYU0dWdU1Gc3hQVDNld1ZIWEtYS1V3TUNoejExMVdQWFRvOHFz?=
+ =?utf-8?B?UGxmK0ZwLzJCVnU0dXdaUzl1M3hzeW9WdUM3bkNia1dTYlRGa3d2ZjJMeXg3?=
+ =?utf-8?B?cjlyZ2o4aE5ScUNveXdyV2RLclNCeHZwNU13STJ3YjFyTlRiamdSQXQrRFFE?=
+ =?utf-8?B?KzFLTk0ydU9jbzd3dGM1RlZLdmFRaE9rZ1NhekorRFVGcXZaM0U3T3VyaWlh?=
+ =?utf-8?B?UGRsSng3bXUxQVd2bm9KcmFaanVqMndINTB1ekQ2WkhXOW05SW9ybEg0K3lm?=
+ =?utf-8?B?NmM1TS81QytEdnF3Z1JOOVBDMXIyVWtXeS85OGJvYTFZNkF2RTVHWE5xejc2?=
+ =?utf-8?B?MCtHcTJ0UlZKWi9jZ3BGK0U4V1R1SHpzVzZSRGI2WkVGOEVvNHZ4UlpVS0N1?=
+ =?utf-8?B?YjFMRjQ0TGtpaHlhWkhKdVVsRjdZeUp4UXlnNUhQek54NDFZNC96UGxSU3h1?=
+ =?utf-8?B?dGYvdExhSkRrQmRqOTlDd1BPUVRzd0o2eXRRaGxxQ1Y4WEYrZURxNjNBNDB3?=
+ =?utf-8?B?bkJPcDJJczgyektRNnU2RHJkakkxVHJVT0NVTUtmQXRmOU1OekcxMWJNRGl5?=
+ =?utf-8?B?MWU5MjVXaG5YNC80YSs4MytDVE9TaHJZeWU3N0s2RVdYRjNlQXZKRE5EK0xM?=
+ =?utf-8?B?cnlzRmZFV0I3NVFPbWUrb3M2MjZDVXRkVTR2bkhKSjROWURlSU95Y1hxY1dL?=
+ =?utf-8?B?aUFmVlhNQjFqcXcvRWtMU1Z6cUtIRkVMSGU3Uk1xZE94SWsxelRjaUlqMWZR?=
+ =?utf-8?B?VitTQ2hTVi9wenJVUmN4MXBIS3B5eGZGWWQwQlMzVTRLM3laRUhtdmFDSzJh?=
+ =?utf-8?B?bzdIWm9XNERQcm10SWh1eEFzL05ZRWg2MlFQZTNaNHVoeGxmTUJwQ253SU1s?=
+ =?utf-8?B?RFJMVXJtWWgxODEyZVl0UjN4bW1JSVpnSE5OTm5BZjBuQTgrNEJvTEdoWWxI?=
+ =?utf-8?B?ZzVVaEZlSmdYOUN0RzFNSEZublBTWm5nMUpiY091bUhQQzhudWZnalhiTlQ3?=
+ =?utf-8?B?TEI5Rk1lcXlpMVN2c0xWSTk1dkhtdDBhZCtIa2ZLOXlKcDV1bmV4REdPOEFX?=
+ =?utf-8?B?Z2ZqMnVTL29vblYzZHpiRzVIZzlJWisybkpISG9UbkhTbmtROXRIK04zb0lX?=
+ =?utf-8?B?dmNrTGNmZDB5dWxDeTVzME5OMzUreXJXZ0Vmcy9JMWlXcFFKbnA2Yi8xcDRl?=
+ =?utf-8?B?N2w0amxVM3lZWERTQVluWWczRXlOY3prcnFONysyWnNSbWg0bURTcWFmb0dv?=
+ =?utf-8?B?aEJhNnpCNzFENFVCeGkxL1VNRzhNY1haZVR0a0s4Q2hlZEx6S0Qwa050ZFVZ?=
+ =?utf-8?B?aVhXbXpQV0JpSVJRRXA2TmtVcU5xc213Q05MR0cxYnBWSlg4VVVOWCt6b0FQ?=
+ =?utf-8?B?Ui9CQmJOaEIwNVV4R1VjaStlT2k1Ukdub0x3Uk5GM1JkSEcrTE03cDBwZDNI?=
+ =?utf-8?B?L0NZcHp1NUNEbnN3Vmlza2hNSXZUbUN5bGNsVXRid2V5Q0VTVzlKcStSNmFV?=
+ =?utf-8?B?RENnYUlWUFhQOFMvUlgvQWNzdmswNjJEc2JHYlA2a2JGeithUHlsbTc4R0N5?=
+ =?utf-8?B?eXJBT3FoN3ZncGhFYW5ydEtVdmdvbFNZcm5FUUIvUnhPU1A4YnZ6ckFPNCtO?=
+ =?utf-8?B?R0M5NVlRRStuYXhqYzFOSmhLamI2YjZac0N1NWo5cVlkK2srdkVJZ1BqOEIz?=
+ =?utf-8?B?MUt3YWxPRGQ2Q1QvbDNrallJVVkxV2gwU0puWHUya2h4ZzBzTXdkSjM2ZElY?=
+ =?utf-8?B?K3FKbUhrNFdQRk03cFM3WnRuWjR6YkMwcWF1OE4zREpGOU9Bb2ovaDNyWVRa?=
+ =?utf-8?B?UjlmQmlSQUJ4Z3R2R0hsM2NqYUl6b29uckcrV3F2UUhwL0c1SlE3NkFxOEpk?=
+ =?utf-8?B?aXZ0bkJaSHc3RloxWG5PajU0VFlrNjlyeldHdlQrZ1daVnY0Wk02QnJqcFQ0?=
+ =?utf-8?B?cEU2dFM3ME50NW0yUytLRzNjK3BTZ0xuaVZ5WDFnNnQ2VUFmenFGak9jaDZ0?=
+ =?utf-8?B?ZXJLUzVpRUhBWEtXZVhEbVh1bUFoUC9RU3NXRElRbWE2QUVqYkZuMEVPZ3Fu?=
+ =?utf-8?B?VUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3597201-bb11-4559-023a-08de1c7d7ca0
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 15:10:42.9595
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2lUQYGfLbDzS1ijBMKO6ZQSfQXXTcnaJbwaQLZylRDY8SFU6M5jTwM/tTxx1sxplrU5BcDScelaad3YyzYXPislkS99gFzulFAN8bp7ybzk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8123
+X-OriginatorOrg: intel.com
 
-On Wed, Nov 5, 2025 at 7:59=E2=80=AFAM Simon Horman <horms@kernel.org> wrot=
-e:
->
-> On Wed, Nov 05, 2025 at 03:33:58PM +0530, Ranganath V N wrote:
-> > On 11/4/25 19:38, Simon Horman wrote:
-> > > On Sat, Nov 01, 2025 at 06:04:46PM +0530, Ranganath V N wrote:
-> > >> Fix a KMSAN kernel-infoleak detected  by the syzbot .
-> > >>
-> > >> [net?] KMSAN: kernel-infoleak in __skb_datagram_iter
-> > >>
-> > >> In tcf_ife_dump(), the variable 'opt' was partially initialized usin=
-g a
-> > >> designatied initializer. While the padding bytes are reamined
-> > >> uninitialized. nla_put() copies the entire structure into a
-> > >> netlink message, these uninitialized bytes leaked to userspace.
-> > >>
-> > >> Initialize the structure with memset before assigning its fields
-> > >> to ensure all members and padding are cleared prior to beign copied.
-> > >
-> > > Perhaps not important, but this seems to only describe patch 1/2.
-> > >
-> > >>
-> > >> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
-> > >
-> > > Sorry for not looking more carefully at v1.
-> > >
-> > > The presence of this padding seems pretty subtle to me.
-> > > And while I agree that your change fixes the problem described.
-> > > I wonder if it would be better to make things more obvious
-> > > by adding a 2-byte pad member to the structures involved.
-> >
-> > Thanks for the input.
-> >
-> > One question =E2=80=94 even though adding a 2-byte `pad` field silences=
- KMSAN,
-> > would that approach be reliable across all architectures?
-> > Since the actual amount and placement of padding can vary depending on
-> > structure alignment and compiler behavior, I=E2=80=99m wondering if thi=
-s would only
-> > silence the report on certain builds rather than fixing the root cause.
-> >
-> > The current memset-based initialization explicitly clears all bytes in =
-the
-> > structure (including any compiler-inserted padding), which seems safer =
-and
-> > more consistent across architectures.
-> >
-> > Also, adding a new member =E2=80=94 even a padding field =E2=80=94 coul=
-d potentially alter
-> > the structure size or layout as seen from user space. That might
-> > unintentionally affect existing user-space expectations.
-> >
-> > Do you think relying on a manual pad field is good enough?
->
-> I think these are the right questions to ask.
->
-> My thinking is that structures will be padded to a multiple
-> of either 4 or 8 bytes, depending on the architecture.
->
-> And my observation is that that the unpadded length of both of the struct=
-ures
-> in question are 22 bytes. And that on x86_64 they are padded to 24 bytes.
-> Which is divisible by both 4 and 8. So I assume this will be consistent
-> for all architectures. If so, I think this would address the questions yo=
-u
-> raised.
->
-> I do, however, agree that your current memset-based approach is safer
-> in the sense that it carries a lower risk of breaking things because
-> it has fewer assumptions (that we have thought of so far).
+Hi,
 
-+1
-My view is lets fix the immediate leak issue with the memset, and a
-subsequent patch can add the padding if necessary.
+This is a fourth round of patches introducing support for Xe SR-IOV VF
+migration.
+Thanks for all the review feedback.
+The most impactful functional change in this revision is a small fix in
+GGTT save/restore code, which fixes a regression introduced in v2.
+Additionally, error handling is improved on data read/data write path.
+On VFIO side, we're now using PCI_DRIVER_OVERRIDE_DEVICE_VFIO as a match
+(not using PCI VGA class).
+From lines-of-code changed perspective, renaming xe_sriov_migration_data
+to xe_sriov_packet caused a bit of churn across multiple patches.
 
-cheers,
-jamal
+Full changelog can be found below.
+
+Cover letter from the previous revision:
+
+Xe is a DRM driver supporting Intel GPUs and for SR-IOV capable
+devices, it enables the creation of SR-IOV VFs.
+This series adds xe-vfio-pci driver variant that interacts with Xe
+driver to control VF device state and read/write migration data,
+allowing it to extend regular vfio-pci functionality with VFIO migration
+capability.
+The driver doesn't expose PRE_COPY support, as currently supported
+hardware lacks the capability to track dirty pages.
+
+While Xe driver already had the capability to manage VF device state,
+management of migration data was something that needed to be implemented
+and constitutes the majority of the series.
+
+The migration data is processed asynchronously by the Xe driver, and is
+organized into multiple migration data packet types representing the
+hardware interfaces of the device (GGTT / MMIO / GuC FW / VRAM).
+Since the VRAM can potentially be larger than available system memory,
+it is copied in multiple chunks. The metadata needed for migration
+compatibility decisions is added as part of descriptor packet (currently
+limited to PCI device ID / revision).
+Xe driver abstracts away the internals of packet processing and takes
+care of tracking the position within individual packets.
+The API exported to VFIO is similar to API exported by VFIO to
+userspace, a simple .read()/.write().
+
+Note that some of the VF resources are not virtualized (e.g. GGTT - the
+GFX device global virtual address space). This means that the VF driver
+needs to be aware that migration has occurred in order to properly
+relocate (patching or reemiting data that contains references to GGTT
+addresses) before resuming operation.
+The code to handle that is already present in upstream Linux and in
+production VF drivers for other OSes.
+
+Links to previous revisions for reference.
+v1:
+https://lore.kernel.org/lkml/20251011193847.1836454-1-michal.winiarski@intel.com/
+v2:
+https://lore.kernel.org/lkml/20251021224133.577765-1-michal.winiarski@intel.com/
+v3:
+https://lore.kernel.org/lkml/20251030203135.337696-1-michal.winiarski@intel.com/
+
+v3 -> v4:
+* Add error handling on data_read / data_write path
+* Don't match on PCI class, use PCI_DRIVER_OVERRIDE_DEVICE_VFIO helper
+  instead (Lucas De Marchi)
+* Use proper node VMA size inside GGTT save / restore helper (Michał)
+* Improve data tracking set_bit / clear_bit wrapper names (Michał)
+* Improve packet dump helper (Michał)
+* Use drmm for migration mutex init (Michał)
+* Rename the pf_device access helper (Michał)
+* Use non-interruptible sleep in VRAM copy (Matt)
+* Rename xe_sriov_migration_data to xe_sriov_packet along with relevant
+  functions (Michał)
+* Rename per-vf device-level data to xe_sriov_migration_state (Michał)
+* Use struct name that matches component name instead of anonymous
+  struct (Michał)
+* Don't add XE_GT_SRIOV_STATE_MAX to state enum, use a helper macro
+  instead (Michał)
+* Kernel-doc fixes (Michał)
+
+v2 -> v3:
+* Bind xe-vfio-pci to specific devices instead of using vendor and
+  class (Christoph Hellwig / Jason Gunthorpe)
+* Don't refer to the driver as "vendor specific" (Christoph)
+* Use pci_iov_get_pf_drvdata and change the interface to take xe_device
+  (Jason)
+* Update the RUNNING_P2P comment (Jason / Kevin Tian)
+* Add state_mutex to protect device state transitions (Kevin)
+* Implement .error_detected (Kevin)
+* Drop redundant comments (Kevin)
+* Explain 1-based indexing and wait_flr_done (Kevin)
+* Add a missing get_file() (Kevin)
+* Drop redundant state transitions when p2p is supported (Kevin)
+* Update run/stop naming to match other drivers (Kevin)
+* Fix error state handling (Kevin)
+* Fix SAVE state diagram rendering (Michał Wajdeczko)
+* Control state machine flipping PROCESS / WAIT logic (Michał Wajdeczko)
+* Drop GUC / GGTT / MMIO / VRAM from SAVE control state machine
+* Use devm instead of drmm for migration-related allocations (Michał)
+* Use GGTT node for size calculations (Michał)
+* Use mutex guards consistently (Michał)
+* Fix build break on 32-bit (lkp)
+* Kernel-doc updates (Michał)
+* And other, more minor changes
+
+v1 -> v2:
+* Do not require debug flag to support migration on PTL/BMG
+* Fix PCI class match on VFIO side
+* Reorganized PF Control state machine (Michał Wajdeczko)
+* Kerneldoc tidying (Michał Wajdeczko)
+* Return NULL instead of -ENODATA for produce/consume (Michał Wajdeczko)
+* guc_buf s/sync/sync_read (Matt Brost)
+* Squash patch 03 (Matt Brost)
+* Assert on PM ref instead of taking it (Matt Brost)
+* Remove CCS completely (Matt Brost)
+* Return ptr on guc_buf_sync_read (Michał Wajdeczko)
+* Define default guc_buf size (Michał Wajdeczko)
+* Drop CONFIG_PCI_IOV=n stubs where not needed (Michał Wajdeczko)
+* And other, more minor changes
+
+Lukasz Laguna (2):
+  drm/xe/pf: Add helper to retrieve VF's LMEM object
+  drm/xe/migrate: Add function to copy of VRAM data in chunks
+
+Michał Winiarski (26):
+  drm/xe/pf: Remove GuC version check for migration support
+  drm/xe: Move migration support to device-level struct
+  drm/xe/pf: Convert control state to bitmap
+  drm/xe/pf: Add save/restore control state stubs and connect to debugfs
+  drm/xe/pf: Add data structures and handlers for migration rings
+  drm/xe/pf: Add helpers for migration data packet allocation / free
+  drm/xe/pf: Add support for encap/decap of bitstream to/from packet
+  drm/xe/pf: Add minimalistic migration descriptor
+  drm/xe/pf: Expose VF migration data size over debugfs
+  drm/xe: Add sa/guc_buf_cache sync interface
+  drm/xe: Allow the caller to pass guc_buf_cache size
+  drm/xe/pf: Increase PF GuC Buffer Cache size and use it for VF
+    migration
+  drm/xe/pf: Remove GuC migration data save/restore from GT debugfs
+  drm/xe/pf: Don't save GuC VF migration data on pause
+  drm/xe/pf: Switch VF migration GuC save/restore to struct migration
+    data
+  drm/xe/pf: Handle GuC migration data as part of PF control
+  drm/xe/pf: Add helpers for VF GGTT migration data handling
+  drm/xe/pf: Handle GGTT migration data as part of PF control
+  drm/xe/pf: Handle MMIO migration data as part of PF control
+  drm/xe/pf: Handle VRAM migration data as part of PF control
+  drm/xe/pf: Add wait helper for VF FLR
+  drm/xe/pf: Enable SR-IOV VF migration
+  drm/xe/pci: Introduce a helper to allow VF access to PF xe_device
+  drm/xe/pf: Export helpers for VFIO
+  drm/intel/bmg: Allow device ID usage with single-argument macros
+  vfio/xe: Add device specific vfio_pci driver variant for Intel
+    graphics
+
+ MAINTAINERS                                   |    7 +
+ drivers/gpu/drm/xe/Makefile                   |    4 +
+ drivers/gpu/drm/xe/xe_ggtt.c                  |  104 ++
+ drivers/gpu/drm/xe/xe_ggtt.h                  |    4 +
+ drivers/gpu/drm/xe/xe_ggtt_types.h            |    2 +
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c    |   78 ++
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_config.h    |    6 +
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c   |  648 ++++++++++-
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_control.h   |   10 +
+ .../gpu/drm/xe/xe_gt_sriov_pf_control_types.h |   34 +-
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c   |   47 -
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 1001 +++++++++++++----
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |   48 +-
+ .../drm/xe/xe_gt_sriov_pf_migration_types.h   |   34 +-
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h     |    5 +-
+ drivers/gpu/drm/xe/xe_guc.c                   |   13 +-
+ drivers/gpu/drm/xe/xe_guc_buf.c               |   57 +-
+ drivers/gpu/drm/xe/xe_guc_buf.h               |    2 +
+ drivers/gpu/drm/xe/xe_migrate.c               |  128 ++-
+ drivers/gpu/drm/xe/xe_migrate.h               |    8 +
+ drivers/gpu/drm/xe/xe_pci.c                   |   17 +
+ drivers/gpu/drm/xe/xe_pci.h                   |    3 +
+ drivers/gpu/drm/xe/xe_sa.c                    |   21 +
+ drivers/gpu/drm/xe/xe_sa.h                    |    1 +
+ drivers/gpu/drm/xe/xe_sriov_packet.c          |  510 +++++++++
+ drivers/gpu/drm/xe/xe_sriov_packet.h          |   38 +
+ drivers/gpu/drm/xe/xe_sriov_pf.c              |    5 +
+ drivers/gpu/drm/xe/xe_sriov_pf_control.c      |  128 +++
+ drivers/gpu/drm/xe/xe_sriov_pf_control.h      |    5 +
+ drivers/gpu/drm/xe/xe_sriov_pf_debugfs.c      |  101 ++
+ drivers/gpu/drm/xe/xe_sriov_pf_migration.c    |  343 ++++++
+ drivers/gpu/drm/xe/xe_sriov_pf_migration.h    |   29 +
+ .../gpu/drm/xe/xe_sriov_pf_migration_types.h  |   75 ++
+ drivers/gpu/drm/xe/xe_sriov_pf_types.h        |    6 +
+ drivers/gpu/drm/xe/xe_sriov_vfio.c            |  247 ++++
+ drivers/vfio/pci/Kconfig                      |    2 +
+ drivers/vfio/pci/Makefile                     |    2 +
+ drivers/vfio/pci/xe/Kconfig                   |   12 +
+ drivers/vfio/pci/xe/Makefile                  |    3 +
+ drivers/vfio/pci/xe/main.c                    |  556 +++++++++
+ include/drm/intel/pciids.h                    |    2 +-
+ include/drm/intel/xe_sriov_vfio.h             |   30 +
+ 42 files changed, 4048 insertions(+), 328 deletions(-)
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_packet.c
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_packet.h
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_pf_migration.c
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_pf_migration.h
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_pf_migration_types.h
+ create mode 100644 drivers/gpu/drm/xe/xe_sriov_vfio.c
+ create mode 100644 drivers/vfio/pci/xe/Kconfig
+ create mode 100644 drivers/vfio/pci/xe/Makefile
+ create mode 100644 drivers/vfio/pci/xe/main.c
+ create mode 100644 include/drm/intel/xe_sriov_vfio.h
+
+-- 
+2.51.2
+
 
