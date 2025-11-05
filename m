@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-886096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6D0C34B4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:11:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF149C34B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09982189907C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:08:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 874394FAC92
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A3D2FB0AB;
-	Wed,  5 Nov 2025 09:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761122F998D;
+	Wed,  5 Nov 2025 09:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="aQkDEf0o"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="Zqe6BIiU"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877EE2F9DBD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BA7296BA9;
+	Wed,  5 Nov 2025 09:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333633; cv=none; b=DUbnk8/xHSVBL+/5nDQUVQ7uOk0CT2kLROhwu0qWTdoif/VARutukLdphxr/U5Fj6DfXezx2Cfg0u0rCZ2xadujPdLuMLol7GASWYqLv2a/TcbFI27lO5uREnraQmiJ3a98vszFTPjb3HcL5ZJAkBoxqUTSimgzSHkwzs0+UlG0=
+	t=1762333623; cv=none; b=KvyJlX6tWg0dxMAfI+yM7LqpL9tSjSBwrbJdSEKFrmjw4lLc84ZB32amdtxWf8YDZX7TCdm6nQPj3zNsTC0d/Hzrzud/9V5WBB0X7V6z02FAfcjijqaWQc5Jfo5L/c1n5a2juwf+zvpw9/YhdUjRtCphcuFA+0y1MYEvHTjJn1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333633; c=relaxed/simple;
-	bh=p+xlPEEIT60PvRFxaXDOjwppSGNh4m6IA68mgt+Ffd4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=e7nkKwX0okpKqwAuhjzrBrukJnXsTDwfI0uIfjmDMj2s2SRwZ/3Js/mxH7EJpXZ9HUZfEkdGDP6b82ot8qEaQG2yGO4u+yHlIVXUlRYK5b1eSlbqdCM9eX7qwJmU9Qio4Pr6U9QtBJvK24vuK30+E/jCKSIYYTCjM0zpsKOpbjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=aQkDEf0o; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1762333623; c=relaxed/simple;
+	bh=G3mXvrrysdRF1DEi+b4mjgB9uEBy3UbZMEhO9DUx0lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=txrlrdnlv25UVI6Bkbhh5qb0zHl2nbWehUTOVt/2DbMSBImemcPubjVl8/+Pyx+icsMSDHpYofIiBnVBgmDbPUIINVe2RbOyBqBsUzq6avvc4nicdjCQ4yTbc0QT7yn/1UpFY4o/uYL8vzqi/RmdPwaU1UPMvf+ao+AhNwfAGk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=Zqe6BIiU; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=Vj/Wfm557RNXCs1yIGAz+txNLRH3xhaa459WlTk0izU=;
+	b=Zqe6BIiUDRIo19BTyg7d5Ejf4o1SEtwJFR2Mx2SugMZ7dHpMDmnLQ52F26FevUvBS+1Cfyl/5
+	rkqQtDmwwyZ9KHz1eVjVxPitLz/q15ixGxWLmi3fgjmshslsWRbwLM5eht4HiJkxlkbI435PHXx
+	0jBEvLVwtIw/5WkN98aiPN8=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d1fYG2LQrzmV6n;
+	Wed,  5 Nov 2025 17:05:22 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id ADF641A016C;
+	Wed,  5 Nov 2025 17:06:57 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Nov 2025 17:06:57 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Nov
+ 2025 17:06:56 +0800
+Message-ID: <aad95665-fb6a-477a-b419-4ad88c5db7d2@huawei.com>
+Date: Wed, 5 Nov 2025 17:06:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762333619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=20X0FggjNIZtK2wTcA0T98MzwYS7d/pU6xJcudRoIkA=;
-	b=aQkDEf0o1hZDlA0jt/SAK7d1jIzuk83Wctvw7Khhjx221G75fVkjY6y1QChQga2p0H/gx7
-	jb80JscYaEXymno4WJMr7sszvCliTv/kGLD5aPpkUxXzuRqF+LkkqfxPFih1rr28zE2J5F
-	Nj4j+BNbr3lDj3fzWXfFiSEnTYem1pnhUR9c9vbgezDW3NOmMRyx8jOQBlK+rwIJRQ5dn4
-	cPCszNjP4TFptEs6ceoB1Ye5Vpg52GLT54a2vP6c7ydi7ZQ3/JmqQEDGRhGO6hyULD+3U+
-	nFWJc2Q+h1lvn//Uu3Vn7Ypoy5RnrjIoRappU70Tf1Txx5KyWKhpEUk1DdPkTw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 10:06:53 +0100
-Message-Id: <DE0N4LA8MOJD.236O12UZ3I3C4@cknow-tech.com>
-Cc: <linux-rockchip@lists.infradead.org>, "Shawn Lin"
- <shawn.lin@rock-chips.com>, "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Manivannan
- Sadhasivam" <mani@kernel.org>, "Rob Herring" <robh@kernel.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, "Heiko Stuebner" <heiko@sntech.de>,
- <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Johan Jonker" <jbx6244@gmail.com>
-Subject: Re: [RFC PATCH 2/2] PCI: rockchip-host: drop wait on PERST# toggle
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Geraldo Nascimento" <geraldogabriel@gmail.com>, "Bjorn Helgaas"
- <helgaas@kernel.org>
-References: <d3d0c3a387ff461e62bbd66a0bde654a9a17761e.1762150971.git.geraldogabriel@gmail.com> <20251103181038.GA1814635@bhelgaas> <aQrKtFT0ldc70gKj@geday>
-In-Reply-To: <aQrKtFT0ldc70gKj@geday>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] ACPI: processor: idle: Disable ACPI idle if get
+ power information failed in power notify
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20251103084244.2654432-1-lihuisong@huawei.com>
+ <20251103084244.2654432-5-lihuisong@huawei.com>
+ <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
+ <339a202a-86aa-46f5-b45d-aea653f3e382@huawei.com>
+ <CAJZ5v0ii=ZJeCisXx3EOOMfqe8rRn=FvKBDsNuBucxvM0WXvgg@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0ii=ZJeCisXx3EOOMfqe8rRn=FvKBDsNuBucxvM0WXvgg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Wed Nov 5, 2025 at 4:55 AM CET, Geraldo Nascimento wrote:
-> On Mon, Nov 03, 2025 at 12:10:38PM -0600, Bjorn Helgaas wrote:
->> On Mon, Nov 03, 2025 at 03:27:25AM -0300, Geraldo Nascimento wrote:
->> > With this change PCIe will complete link-training with a known quirky
->> > device - Samsung OEM PM981a SSD. This is completely against the PCIe
->
-> Something in my intuition kept telling me this was PERST# related,
-> and so I followed that rabbit-hole.
->
-> It seems the following change will allow the SSD to work with the
-> Rockchip-IP PCIe core without any other changes. So it is purely
-> a DT change and we are able to keep the mandatory 100ms delay
-> after driving PERST# low, as well as the always-on/boot-on
-> properties of the 3v3 power regulator.
->
-> This time everything is within the PCIe spec AFAICT, PERST# indeed
-> is an Open Drain signal, and indeed it does requires pull-up resistor
-> to maintain the drive after driving it high.
->
-> I'm still testing the overall stability of this, let's hope for the
-> best!
 
-I have a Samsung PM981 (without the 'a') and AFAICT it works fine.
-I had noticed that the PERST# (pinctrl) was missing, but 'ep-gpios'
-was/is new to me and I hadn't had time to research that properly yet.
-Good to see you already found it yourself :-)
-
-Cheers,
-  Diederik
-
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch=
-/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> index aa70776e898a..1c5afc0413bc 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> @@ -383,13 +383,14 @@ &pcie_phy {
->  };
-> =20
->  &pcie0 {
-> -	ep-gpios =3D <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> +	ep-gpios =3D <&gpio0 RK_PB4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->  	num-lanes =3D <4>;
-> -	pinctrl-0 =3D <&pcie_clkreqnb_cpm>;
-> +	pinctrl-0 =3D <&pcie_clkreqnb_cpm>, <&pcie_perst>;
->  	pinctrl-names =3D "default";
->  	vpcie0v9-supply =3D <&vcca_0v9>;	/* VCC_0V9_S0 */
->  	vpcie1v8-supply =3D <&vcca_1v8>;	/* VCC_1V8_S0 */
->  	vpcie3v3-supply =3D <&vcc3v3_pcie>;
-> +	max-link-speed =3D <2>;
->  	status =3D "okay";
->  };
-> =20
-> @@ -408,6 +409,10 @@ pcie {
->  		pcie_pwr: pcie-pwr {
->  			rockchip,pins =3D <4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_up>;
->  		};
-> +		pcie_perst: pcie-perst {
-> +			rockchip,pins =3D <0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +
->  	};
-> =20
->  	pmic {
+在 2025/11/5 0:19, Rafael J. Wysocki 写道:
+> On Tue, Nov 4, 2025 at 10:54 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>
+>> 在 2025/11/4 2:09, Rafael J. Wysocki 写道:
+>>> On Mon, Nov 3, 2025 at 9:42 AM Huisong Li <lihuisong@huawei.com> wrote:
+>>>> The old states may not be usable any more if get power information
+>>>> failed in power notify. The ACPI idle should be disabled entirely.
+>>> How does it actually disable anything?  It only changes the
+>>> acpi_processor_power_state_has_changed() return value AFAICS, but that
+>>> return value isn't checked.
+>> The acpi_processor_power_state_has_changed() will disable all cpuidle
+>> device first.
+>> AFAICS, the disabled cpuidle_device would not do cpuidle, please see
+>> cpuidle_not_available() and cpuidle_idle_call().
+>> It's enough for this?
+> Well, not really.
+>
+> acpi_processor_register_idle_driver() has been changed to call
+> acpi_processor_get_power_info() for each CPU before registering the
+> idle driver and if that is successful, it will set
+> flags.power_setup_done for the given processor and call
+> acpi_processor_setup_cpuidle_states().  That processor need not be
+> CPU0.
+>
+> However, the code updated by the $subject patch calls
+> acpi_processor_get_power_info() for CPU0 and the patch would make it
+> skip re-enabling cpuidle for all CPUs if it failed.
+>
+> It essentially needs to do what is done in
+> acpi_processor_register_idle_driver(): find a CPU for which
+> acpi_processor_get_power_info() does not fail, then call
+> acpi_processor_setup_cpuidle_states() and re-enable cpuidle for all
+> CPUs unless acpi_processor_get_power_info() fails for all of them.
+ From the initialization perspective, I also think this approach is 
+appropriate.
+>
+> But there is still a question of whether or not this addresses any
+> breakage seen in the field.  If not, maybe it's better to leave this
+> code as is for the time being?
+AFAICS, this power notify can be received on each CPU.
+It may be appropriate to update cpuidle state of this CPU if ACPI idle 
+supports per-cpu idle state.
+Now that all CPUs have the same idle state.
+I think it is ok to keep here the same as the initialization logic as 
+you said above.
+>
+> I don't see why it is part of this series to be honest.  It is not a cleanup.
+Yes, now it's more like a bugfix.
 >
 
