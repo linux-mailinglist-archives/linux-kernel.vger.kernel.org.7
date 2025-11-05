@@ -1,257 +1,116 @@
-Return-Path: <linux-kernel+bounces-886092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABC1C34B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:10:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC36C34B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C0894FC5E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201F6562E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BFC2F39AF;
-	Wed,  5 Nov 2025 09:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23612FB990;
+	Wed,  5 Nov 2025 09:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MDolg0SQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XoHMwYvX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MDolg0SQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XoHMwYvX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="digW+BM2"
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A92FB637
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8CE2FB616;
+	Wed,  5 Nov 2025 09:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333547; cv=none; b=iCXMy+KbG2YH5mNmcotZaWKnj9zX9R/7eh4t8vj0O5x2hymk5UZ9DZEi2wB3o0GAH9YT/Pnx2n82KL7ERQpdmCV4Eglj7FiV37ifC8aFzKNd1LJ8K7hS5IO7Z5LL18fhtL4srVYeFtslRRPRrgXgRDMy16TrQ1IV3oiEP5xOXXY=
+	t=1762333547; cv=none; b=nBLE1sHstwEXrfSvywFO232MWf/yA0L2J/FBhSd4lwSz+pauvZNzTzu+kCwwG3RnlnsFETd3mHX993ieECO1orf3jv5kl5dVQxj4/zzRbIdc/QgTPa8TJSpSQodrUCun26B4v1yvxwNn6kRXEUAWrY6kDa30B06lZEDcO1dbQyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762333547; c=relaxed/simple;
-	bh=Ds5E8YUfVGEiLtu9vtgEbdEnV8amusxVZnRQhGaKrts=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=syQa9XIUfunbbqLseyvQkCfhYsf4qePP6pVt/B1PDbXjKWtoyX44NuLdT8/N+N8EUqYF8ibKBbAaFRVTzlBcRK0bdKmcKJv4vmYq95MXZrQnWJ7ClRCvKS2LMabMbWTgyChS9a3KF9ulfF/UKaEWpFB8IGd7MVMV9onEOKP0NmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MDolg0SQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XoHMwYvX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MDolg0SQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XoHMwYvX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0549E21195;
-	Wed,  5 Nov 2025 09:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762333531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bv7EzbHF/HHIgUO7NDMRC4WExXuoyCIClo0HWu7ZlNQ=;
-	b=MDolg0SQbwuDoM6mlTAPFBYki3+2lcZXpjza4oXFaO8af1dKPJD4zcsxEt1xLLuucYmzvz
-	u4AMz3y9hvUQZxH2Xh4gSRTwWJVccP5gs+Q7vOPdj3pFAf3rqjG6/4Fld6BBb+s9dF74fN
-	v+Runu7B4uBflwhYnlGrBgjaatb2Lrs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762333531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bv7EzbHF/HHIgUO7NDMRC4WExXuoyCIClo0HWu7ZlNQ=;
-	b=XoHMwYvXMYHg7Sxh7pcRF41N0mdzvf6rRdQtCPTObp8uh1WgNZDtGe8q50a/HrPNeK0KBE
-	Vq3MS4TmXWfaYFBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MDolg0SQ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XoHMwYvX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762333531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bv7EzbHF/HHIgUO7NDMRC4WExXuoyCIClo0HWu7ZlNQ=;
-	b=MDolg0SQbwuDoM6mlTAPFBYki3+2lcZXpjza4oXFaO8af1dKPJD4zcsxEt1xLLuucYmzvz
-	u4AMz3y9hvUQZxH2Xh4gSRTwWJVccP5gs+Q7vOPdj3pFAf3rqjG6/4Fld6BBb+s9dF74fN
-	v+Runu7B4uBflwhYnlGrBgjaatb2Lrs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762333531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bv7EzbHF/HHIgUO7NDMRC4WExXuoyCIClo0HWu7ZlNQ=;
-	b=XoHMwYvXMYHg7Sxh7pcRF41N0mdzvf6rRdQtCPTObp8uh1WgNZDtGe8q50a/HrPNeK0KBE
-	Vq3MS4TmXWfaYFBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDA6213C02;
-	Wed,  5 Nov 2025 09:05:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iPalNVoTC2lSBAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 05 Nov 2025 09:05:30 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 05 Nov 2025 10:05:33 +0100
-Subject: [PATCH 5/5] slab: prevent recursive kmalloc() in
- alloc_empty_sheaf()
+	bh=3FlapW31xUvlYGcS13O4QYIQ+CVaiW6UdQ4SgpkTZtM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RK4U0LkBWAtsRNy5S/Xpjwe5/HOykzymDY/mHPHz2FSiTQscCbl/wYxQHnDgZCh8ySPAzhAGZ0c6u9xIVb7h/SF8a/vAQIXQ6wQTd8tAkUJ4K05b7aCVRuk/170szmnByKwI7F/cpqIe4jMmlCyJ5ORzHHlLMMD4ptbzdsm9vrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=digW+BM2; arc=none smtp.client-ip=113.46.200.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=3FlapW31xUvlYGcS13O4QYIQ+CVaiW6UdQ4SgpkTZtM=;
+	b=digW+BM2jXGFYwMb+mh0hAvtN8QXWjSh/9jUJARGrMOqr+6QkXTRwADjHW4rgn3BecgoYOiH2
+	8W91ZtvQtFeDl+WNHrvGjlaXTaaGndQ9MPCidMcblqSTMDdrJHj6+w6FM/GUabQYh+OiDVH0CJB
+	nPvXSZyvX5s+5/k65fCTts8=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4d1fWr1FwPz1K96G;
+	Wed,  5 Nov 2025 17:04:08 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id B94E1180044;
+	Wed,  5 Nov 2025 17:05:41 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Nov 2025 17:05:40 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <david@kernel.org>, <dave.hansen@intel.com>
+CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <liaohua4@huawei.com>,
+	<lilinjie8@huawei.com>, <linmiaohe@huawei.com>, <linux-edac@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<lorenzo.stoakes@oracle.com>, <luto@kernel.org>, <mhocko@suse.com>,
+	<mingo@redhat.com>, <nao.horiguchi@gmail.com>, <peterz@infradead.org>,
+	<rppt@kernel.org>, <surenb@google.com>, <tglx@linutronix.de>,
+	<tony.luck@intel.com>, <vbabka@suse.cz>, <will@kernel.org>, <x86@kernel.org>,
+	<xieyuanbin1@huawei.com>
+Subject: Re: [PATCH v2 0/2] x86/mm: support memory-failure on 32-bits with SPARSEMEM
+Date: Wed, 5 Nov 2025 17:05:36 +0800
+Message-ID: <20251105090536.11676-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <57936358-69b0-4028-a0df-b5f5acc32ca9@kernel.org>
+References: <57936358-69b0-4028-a0df-b5f5acc32ca9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-sheaves-cleanups-v1-5-b8218e1ac7ef@suse.cz>
-References: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
-In-Reply-To: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Suren Baghdasaryan <surenb@google.com>, Alexei Starovoitov <ast@kernel.org>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- kasan-dev@googlegroups.com, Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.3
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0549E21195
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-We want to expand usage of sheaves to all non-boot caches, including
-kmalloc caches. Since sheaves themselves are also allocated by
-kmalloc(), we need to prevent excessive or infinite recursion -
-depending on sheaf size, the sheaf can be allocated from smaller, same
-or larger kmalloc size bucket, there's no particular constraint.
+On Wed, 5 Nov 2025 09:12:04 +0100, Dave Hansen wrote:
+> Let me clarify what we need to know:
+>
+> Will you (or your employer) be running such updated 32bit kernels on
+> hardware that supports MCEs.
+>
+> In other words: is this change driver by *real demand*
 
-This is similar to allocating the objext arrays so let's just reuse the
-existing mechanisms for those. __GFP_NO_OBJ_EXT in alloc_empty_sheaf()
-will prevent a nested kmalloc() from allocating a sheaf itself - it will
-either have sheaves already, or fallback to a non-sheaf-cached
-allocation (so bootstrap of sheaves in a kmalloc cache that allocates
-sheaves from its own size bucket is possible). Additionally, reuse
-OBJCGS_CLEAR_MASK to clear unwanted gfp flags from the nested
-allocation.
+Thanks! Asking like this, I completely understand now.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/gfp_types.h |  6 ------
- mm/slub.c                 | 36 ++++++++++++++++++++++++++----------
- 2 files changed, 26 insertions(+), 16 deletions(-)
+We won't directly upgrade the kernel to 6.18.x (or later versions) to use
+this feature, but if Linux community approves these patches, we will
+backport it to 5.10.x and use it. I know that the page-flags in 5.10.x
+have been exhausted, but we can work around them by adjusting
+SECTION_SIZE_BITS/MAX_PHYSMEM_BITS to free up a page flag.
+Another patch I submitted for arm32:
+Link: https://lore.kernel.org/20250922021453.3939-1-xieyuanbin1@huawei.com
+, follows the same logic.
 
-diff --git a/include/linux/gfp_types.h b/include/linux/gfp_types.h
-index 65db9349f905..3de43b12209e 100644
---- a/include/linux/gfp_types.h
-+++ b/include/linux/gfp_types.h
-@@ -55,9 +55,7 @@ enum {
- #ifdef CONFIG_LOCKDEP
- 	___GFP_NOLOCKDEP_BIT,
- #endif
--#ifdef CONFIG_SLAB_OBJ_EXT
- 	___GFP_NO_OBJ_EXT_BIT,
--#endif
- 	___GFP_LAST_BIT
- };
- 
-@@ -98,11 +96,7 @@ enum {
- #else
- #define ___GFP_NOLOCKDEP	0
- #endif
--#ifdef CONFIG_SLAB_OBJ_EXT
- #define ___GFP_NO_OBJ_EXT       BIT(___GFP_NO_OBJ_EXT_BIT)
--#else
--#define ___GFP_NO_OBJ_EXT       0
--#endif
- 
- /*
-  * Physical address zone modifiers (see linux/mmzone.h - low four bits)
-diff --git a/mm/slub.c b/mm/slub.c
-index a7c6d79154f8..f729c208965b 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2031,6 +2031,14 @@ static bool freelist_corrupted(struct kmem_cache *s, struct slab *slab,
- }
- #endif /* CONFIG_SLUB_DEBUG */
- 
-+/*
-+ * The allocated objcg pointers array is not accounted directly.
-+ * Moreover, it should not come from DMA buffer and is not readily
-+ * reclaimable. So those GFP bits should be masked off.
-+ */
-+#define OBJCGS_CLEAR_MASK	(__GFP_DMA | __GFP_RECLAIMABLE | \
-+				__GFP_ACCOUNT | __GFP_NOFAIL)
-+
- #ifdef CONFIG_SLAB_OBJ_EXT
- 
- #ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-@@ -2081,14 +2089,6 @@ static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
- 
- #endif /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
- 
--/*
-- * The allocated objcg pointers array is not accounted directly.
-- * Moreover, it should not come from DMA buffer and is not readily
-- * reclaimable. So those GFP bits should be masked off.
-- */
--#define OBJCGS_CLEAR_MASK	(__GFP_DMA | __GFP_RECLAIMABLE | \
--				__GFP_ACCOUNT | __GFP_NOFAIL)
--
- static inline void init_slab_obj_exts(struct slab *slab)
- {
- 	slab->obj_exts = 0;
-@@ -2596,8 +2596,24 @@ static void *setup_object(struct kmem_cache *s, void *object)
- 
- static struct slab_sheaf *alloc_empty_sheaf(struct kmem_cache *s, gfp_t gfp)
- {
--	struct slab_sheaf *sheaf = kzalloc(struct_size(sheaf, objects,
--					s->sheaf_capacity), gfp);
-+	struct slab_sheaf *sheaf;
-+	size_t sheaf_size;
-+
-+	if (gfp & __GFP_NO_OBJ_EXT)
-+		return NULL;
-+
-+	gfp &= ~OBJCGS_CLEAR_MASK;
-+
-+	/*
-+	 * Prevent recursion to the same cache, or a deep stack of kmallocs of
-+	 * varying sizes (sheaf capacity might differ for each kmalloc size
-+	 * bucket)
-+	 */
-+	if (s->flags & SLAB_KMALLOC)
-+		gfp |= __GFP_NO_OBJ_EXT;
-+
-+	sheaf_size = struct_size(sheaf, objects, s->sheaf_capacity);
-+	sheaf = kzalloc(sheaf_size, gfp);
- 
- 	if (unlikely(!sheaf))
- 		return NULL;
+Currently, there is a clear demand for ARM32, while the demand for x86 is
+still under discussion.
 
--- 
-2.51.1
+> or just by "oh
+> look, we can enable that now, I can come up with a theoretical use case
+> but I don't know if anybody would actually care"?
 
+It can also be said that way. In fact, when developing the demand
+"support MEMORY_FAILURE for 32-bit OS" in version 5.10.x, I found that the
+latest version already supported this feature, so I submitted these
+patches, and hope others can benefit from it as well.
+
+> Cheers
+>
+> David
+
+Thanks!
+
+Xie Yuanbin
 
