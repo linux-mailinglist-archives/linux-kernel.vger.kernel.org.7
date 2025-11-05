@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-887078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E568DC37361
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:54:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDF1C37399
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B444EE8F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0CC3A6B8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752333358AA;
-	Wed,  5 Nov 2025 17:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3304D3328FF;
+	Wed,  5 Nov 2025 17:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="p+qg5rB9"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bn6l5ujV";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="stTszuMi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047E4325707
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BB03346BC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762365070; cv=none; b=n+R+05TUdWg2R1u6ZeR4ew4nPcp6RHVYa/0oerPtvLkHqKNfRmyT5tuwlTVjJMdo9zeqoHOFXKhRNgANuD63/vZW5KDw3k+bB6VkFJ7AfR3BDXazNV9ckqdlB0G3sr+ykCWil1QnglRVLNup1zCnqp7Tb7QxZ0p6jTROpaf0NcU=
+	t=1762365141; cv=none; b=bJ7fBHdHVw48UxTYq73I93vSPK/LbC5783UV1edgLguF8SdqgkfAztk6bpONE9Zt4GLojy97TQ9tiXV3lQi+fzdYWU1GAeXbQ0e3q1O/a+/kBH1RngfYxTaEqUCANwjzMSAkJ6cTWDkCmAtvG2IakYmFOAfNwLnLFKh88TOHabk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762365070; c=relaxed/simple;
-	bh=tIgDGOVX99OdQ7xUMrv9gmtn1EgXPokG3WTHA51WYa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OX4LBjQUAPjtkvHcCYlJgTNY6VWQfjBz+RuhIHaAzhQk2GvowF7OOHpgeClNaSp7hmmg9gKMjPzm2+PtiSfTbPi9RJDvUVb6wylS4E4Xork7erkLQaMfU+r5fhjMeE2lj2dtnPScGoey6DdhsKvq8DNTSb6pCCQ1ceDvVVrJ/Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=p+qg5rB9; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-88058103dcfso1452006d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:51:07 -0800 (PST)
+	s=arc-20240116; t=1762365141; c=relaxed/simple;
+	bh=GFA/SoCKJte+TY4BR1jlCSTL+wlK2FwfkRdHB61GmkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZEcjekxOlyCLp9UfdPaCnhycZmEm6tJWz5+mCm5j7Em19TadUgxhyXIFi4YxwFTOpJP+MewidbJ3/iIb1mYOCuovHh1Asl5+t0IG/2xc0soZCIOs7zjUR9bfk0htU8UOkC3uf3aRgJRfbK9Haw/sgtiuxzWJzqmYemyrXYIym4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bn6l5ujV; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=stTszuMi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762365134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=22J/h+lLE1UxeOHhi0cAJU/qaxgcN4DGatLlI0jWwtY=;
+	b=bn6l5ujVKtT86oyM5aTI1Srdfk93Kcya5c/URSLQPQ+E+ZBOvIS2rb2IxJ/rxcHxH9vp1d
+	Ufdp42h05X1qWBc0efMad7roJPYt3GyOZoOVo3ROC6a7xm8GYZpqKAu4VJiMK4Wnb1b6uM
+	YQPZHttOYUZDjRztWFGDLh/usyLlqTE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-495-WFeOMBTrOsW07ulYctYOZg-1; Wed, 05 Nov 2025 12:52:13 -0500
+X-MC-Unique: WFeOMBTrOsW07ulYctYOZg-1
+X-Mimecast-MFC-AGG-ID: WFeOMBTrOsW07ulYctYOZg_1762365132
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-477563a0c75so473245e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:52:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762365067; x=1762969867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDrtj0a1qY5KhyImx5VYDzDX8bVcvGFBBUFmZLDCfSw=;
-        b=p+qg5rB9I7ZEesolYhegQvv+t3d5zVArOc803nNlc6FndePPV+FkJZcu3/Aes5Pp/Q
-         X0ah9qDlM1DIWuF4f1p5bsaIT1tLGT7UWcyDVGoAPiVHbUnMXSxfIVCEjj0oRLJk379w
-         p/rzpZ4fDcYZKEkw33V0VPCNUQ4/pi2eogoRNG1ZH6WHP2NhnV2h05wlrc1CZSLqOwkc
-         DXK41s6HRPF3u2PWmqfiE6LZnSq5yNNsAhqvv9WT160BVNEGav2pR25CWDNdNHenpEnI
-         7zkXHCUotnxhOIqCqWl2rBZ6EUjpdKjIuVCY7eyxPWpdyS6CBPdvA0fGAriHMuFQbp/K
-         JsFQ==
+        d=redhat.com; s=google; t=1762365132; x=1762969932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=22J/h+lLE1UxeOHhi0cAJU/qaxgcN4DGatLlI0jWwtY=;
+        b=stTszuMisofJDPEodkxvNXsgRu09DWPIb3GXTbSpXlbgsVXQZx+RuI4FyYYM2DblCL
+         LmoUU63JZP/7tEDqsUoENTaKnTo49I0GaxAsv7KF/z27ZuLl2Jv+cwv0imN99wRQC+kU
+         Mjhax5vCAhqKj1F007czVFFyYa6pw2NYM/uvos5xBidLcgLDLECxybIlKfdHNtk/4oIk
+         0tZpxdYwwxikI5I4ONRIu6I/dPFan3gBnrLXDMosK0jBE2ag/kAuDp+0nwq95s6auGYr
+         imtCzVcApuyYSki8TqToNElGQh3CpoT2Pz5Zsuk86oALwCPftJVuYEZZr01GWn84eToL
+         l2qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762365067; x=1762969867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LDrtj0a1qY5KhyImx5VYDzDX8bVcvGFBBUFmZLDCfSw=;
-        b=Qnd/Y47zjN8vSxraUfYZ0qxYNdT+fCNCkOH8PoTsRkQ0VF3LPgX73gcx/USbnmb2KD
-         3Cy71+f6HfkM/ZCjsxil72vzjHrLuoxokC23bBU5to0A5vOvp4VIbdvI2SdcjhR0yRS5
-         433oUMUpzdbbghSITRibGH2msQSpSwIbrHdtcxhYYRPHGLdd//CXXyxOBfrxS8DLeD+L
-         Wm2UPcWuYkCFDELXv8vGHT/fY/wDOYilcP5EnIt0qNt1R+XNgj2BmFO8XnPuG/leKCQO
-         8jdXPfHfRa+MxDGj5I+wc5YJTx7zyr4htKnUTcANUzngy6k3jBL4y0SMi48TFA7uS5Pl
-         T94w==
-X-Forwarded-Encrypted: i=1; AJvYcCW0NwmLvd540ctvs4ltO+atmmUBGgy1cU0hPjQ7eE4MVKMYgCcRfhxky+zeEkcv4m+yHNKt1KiJdxvanLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhYrXKUp9XKjiAh7/4d0SZPjJ3DMhFCJWoWqfcv1iyf5yZ4GbL
-	k8Dty5BlUjE0KnIIwge0jMJhRFNzWtsCP4tgaCwZvwGRc3OOBMd9o9Jv8YK8kMTrJ/Q=
-X-Gm-Gg: ASbGncvGDpzgyu16PVstSDOFS/847Z4sjFAz+YuiAAnWAem7gVmKIafZLfwhiwCTaId
-	B4BIDrFR2DBaVRpUKT0MnUmAai+7R2pm1/oi5DyECq7ciJU1NcFyaPfy3aqwNWRw2gbxYMfsRLU
-	AydmpbY8Cs2OJaHoBwdXeXbtBa5nr5wdnEzkmLJS2kZDm3o1OyH7d6Kbf+978by1Mfm39Db3DJf
-	vEAuvARi20sGDs5E9lsBFjcb9XLOso2noL7UBWzLINlYPZuTpQBFMCunn1jUzDf3XGE5JXHoM+9
-	7/t+nGaNUHDhmaZrOoJtgWAAhfTsWhVijWfJD4FsEMpC0l0d4M7XjEYVsC1VrOJmyeZ8bY5MF5t
-	BKvbLu26o9FUaY6JX6u6MZQBpjUpyZKEXsYIAdj7yL3c+B4tRRTmDHesz9MDxuWaQliynVxJOQr
-	nmeX09qY59+Oe3pFjTG+UH8wtRZL3+1avdpVTiGBC7hbFNtSWCtMOMOZoyxvA=
-X-Google-Smtp-Source: AGHT+IFbubKK7RHluWy72s0vGay11LKV+jA/RxKZTdEkayr9i/UfiWmuCSryIaOc1e9CcrXX+Lj9EA==
-X-Received: by 2002:a05:6214:2686:b0:87d:e456:4786 with SMTP id 6a1803df08f44-8807119644emr57736286d6.45.1762365066850;
-        Wed, 05 Nov 2025 09:51:06 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8808290d03asm1375476d6.26.2025.11.05.09.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 09:51:06 -0800 (PST)
-Date: Wed, 5 Nov 2025 12:51:04 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
-	lukas@wunner.de, Benjamin.Cheatham@amd.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND v13 17/25] cxl: Introduce cxl_pci_drv_bound() to check
- for bound driver
-Message-ID: <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-18-terry.bowman@amd.com>
+        d=1e100.net; s=20230601; t=1762365132; x=1762969932;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=22J/h+lLE1UxeOHhi0cAJU/qaxgcN4DGatLlI0jWwtY=;
+        b=KHWoF7An781byttL7he3kXSYwS+FBlyrfcq/3KmnpRPS4KSJMXsl3KT1XbawpSEEJX
+         DV73I+XvzqpLZw/DPdt2u4OtY7nUXij01EL0vx0/xJXD2j6WKxYknz6mPdXkhA+hM+PH
+         MweFSN0aSieJGfMWy3IEs+VcTERhyEblVnZloyLQeMezPlnOn+7baOGsPsPvDZeLb2KG
+         /76uEX8k7aOx4T70d0H2cKT5xBWdD65RvyoZx9QB5Lp8z9Ve7OufxUswzhINRbDS2R6D
+         AgHXxYSacADBPjoWLD/kX+OkTLsEUujUdqzKnB2A+7LhUYETx1guICrhPw+olAFdyoSg
+         wWXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx/dK6dkP031j/RheHl0wArYq78emYvDZ7epyNPgHeXoCukvSFvY02EnQBV45IRFVftX2YcpRptKfHSMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW3ZtT+DMSOmCJJMPuebTzFn1fogq6egUNYqYNZkR2R5ytXSVC
+	AzA9G0lv7DKoz516O/R5Jv9AuagCTyz6SULxNZPYDKbZtN40bNWiV2+Z7hBIxf/bEWVacVbIc3n
+	N3jHcDGookdraj2qLq45x9xs8m8Ys+GZE4tDsVJvkn8hFgivrZjRgQFpsFUIfjj/jDA==
+X-Gm-Gg: ASbGnctF5zYmL+ORIJrsweHx1/iNI7fCmd+dK3E48zqn636FykSHNV8DuMRZOjo9oiQ
+	gEqRs0b34defKwddyaPWl6LjL1e/x7N0TkGq6g8f8psfDrHWwFEiLm4Yb6iTUo91ndEXFh/n/rl
+	BxcfaIj1JIvKLYa2a78Z1bgOhFVx/vyo2OBY8RN5qWvEnAjVqf6FaBYmIwsCMqRrF+/qk/HAKE2
+	OcQDPJT/6ZtB/6hQRZqHDnwrENVsPIgsv7UN3TqX9fUKdrN6MF1csLY9p3TYk/h3TClUgGqgJZ/
+	daUyPc+bQKBg1UhSA6LyArS19HnnQSv8Ng4+36FKIKSBXABV5CFW03cpm2mO8wblxxp9TmxJzFN
+	xeKtFeidpzJPafj3y4Epyh9FuqGl/rfdIXmnPSS/v511EY2fFtkZF04UVZhKWrynf9mBlXQLmnM
+	NyZJjzBlp1wkQhz0uH6v+Rf/E=
+X-Received: by 2002:a05:600c:6388:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-4775ce1874bmr31530265e9.29.1762365131860;
+        Wed, 05 Nov 2025 09:52:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGoDD6xbgf1IJR1sJkj4i5jcg9ZQmi10dSKftCfvD4xCVv4EPQ4q7rEAGjS7V5F+bOGJZiydw==
+X-Received: by 2002:a05:600c:6388:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-4775ce1874bmr31530145e9.29.1762365131454;
+        Wed, 05 Nov 2025 09:52:11 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558b826bsm47438195e9.3.2025.11.05.09.52.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 09:52:10 -0800 (PST)
+Message-ID: <63653e44-3a30-46e6-8a3e-f62d73f3f6a8@redhat.com>
+Date: Wed, 5 Nov 2025 18:52:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104170305.4163840-18-terry.bowman@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] ksm: perform a range-walk in break_ksm
+To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20251105172756.167009-1-pedrodemargomes@gmail.com>
+ <20251105172756.167009-3-pedrodemargomes@gmail.com>
+From: David Hildenbrand <dhildenb@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20251105172756.167009-3-pedrodemargomes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 04, 2025 at 11:02:57AM -0600, Terry Bowman wrote:
-> CXL devices handle protocol errors via driver-specific callbacks rather
-> than the generic pci_driver::err_handlers by default. The callbacks are
-> implemented in the cxl_pci driver and are not part of struct pci_driver, so
-> cxl_core must verify that a device is actually bound to the cxl_pci
-> module's driver before invoking the callbacks (the device could be bound
-> to another driver, e.g. VFIO).
-> 
-> However, cxl_core can not reference symbols in the cxl_pci module because
-> it creates a circular dependency. This prevents cxl_core from checking the
-> EP's bound driver and calling the callbacks.
-> 
-> To fix this, move drivers/cxl/pci.c into drivers/cxl/core/pci_drv.c and
-> build it as part of the cxl_core module. Compile into cxl_core using
-> CXL_PCI and CXL_CORE Kconfig dependencies. This removes the standalone
-> cxl_pci module, consolidates the cxl_pci driver code into cxl_core, and
-> eliminates the circular dependency so cxl_core can safely perform
-> bound-driver checks and invoke the CXL PCI callbacks.
-> 
-> Introduce cxl_pci_drv_bound() to return boolean depending on if the PCI EP
-> parameter is bound to a CXL driver instance. This will be used in future
-> patch when dequeuing work from the kfifo.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> 
-> ---
+> +			folio = vm_normal_folio(walk->vma, addr, pte);
+> +		} else if (!pte_none(pte)) {
+> +			swp_entry_t entry = pte_to_swp_entry(pte);
+> +
+> +			/*
+> +			 * As KSM pages remain KSM pages until freed, no need to wait
+> +			 * here for migration to end.
+> +			 */
+> +			if (is_migration_entry(entry))
+> +				folio = pfn_swap_entry_folio(entry);
+> +		}
+> +		/* return 1 if the page is an normal ksm page or KSM-placed zero page */
+> +		found = (folio && folio_test_ksm(folio)) || (pte_present(pte)
+> +			&& is_ksm_zero_pte(pte));
 
-This commit causes my QEMU basic expander setup and a real device setup
-to fail to probe the cxl_core driver.
+Same NIT as for previous patch.
 
-[    2.697094] cxl_core 0000:0d:00.0: BAR 0 [mem 0xfe800000-0xfe80ffff 64bit]: not claimed; can't enable device
-[    2.697098] cxl_core 0000:0d:00.0: probe with driver cxl_core failed with error -22
+Apart from that LGTM, thanks!
 
-Probe order issue when CXL drivers are built-in maybe?
+Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
 
-~Gregory
+-- 
+Cheers
+
+David
+
 
