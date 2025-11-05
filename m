@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-886073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26553C34A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:00:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657FAC34A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CB91895962
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F3C561C06
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1A82EFD8C;
-	Wed,  5 Nov 2025 08:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421DD2F0C6D;
+	Wed,  5 Nov 2025 09:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5rEvPgL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/KPLMib"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A15C2ECD13;
-	Wed,  5 Nov 2025 08:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F1F2D948F;
+	Wed,  5 Nov 2025 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333162; cv=none; b=UpziSOQt+WxOGMOgOltsoNI9MEeBAwmCptSpIPthFvAIc0DOXzamD2A+o+QnIy0pVOs4ImxsDzT3/oCTqmO4eDJ08x7PqM2AKoju4JBByUtJACCgkNm88bc4Ww55ks/4hBtTA2Hnh1cqsSSfjLIYTOWkCmD5TjYkYf9rToqnQOI=
+	t=1762333214; cv=none; b=VUKYo2ZXWM52f0468T7qTXYE9CPfDHbAV7ub72dd2t8c6bBeDEPWmirj03D+SNMKN3csl+eolWAKGarGoLgdjk/xS5WL1xF6+CMpvt0j6cT2nx+YAa2nxFti4/ftdIqqKkJzkYvcTQMfJCiReYkgQBhUWUUC+82UJtNJZqzOzqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333162; c=relaxed/simple;
-	bh=R+46XLhZWIOTOB+yJZKWT6BNdn0bZgAdYGeql5q9uo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9nX50q1MdzINLIx9wbFCxWfdNF+Sk215KhdJtnpp1pdKd9go2KY9v3Ac+0vp0rtD3DmeGyvchcmDqgyeXfOGCgepjK6bw1We+2JEhja4ggvZMQnFyO+ldx9CH3ib242hkH8HOn8dgBGfLtWyjqaLEs/cyTCZPe0VDc/tILpBjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5rEvPgL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293A8C4CEF8;
-	Wed,  5 Nov 2025 08:59:20 +0000 (UTC)
+	s=arc-20240116; t=1762333214; c=relaxed/simple;
+	bh=yKua4EFf/iQ9wqQ49OIZDbWZGZXzrKwgI56kqg8U9bI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=K6SA7ZJH5J7h8nm6rYCRxDzELqlc57STgrLLN9Oc1H5DmzaH4/qiNAuGtln5GQSyR1NLXCnevvAJtlvHrpVZkaUG02Q9PJ3/bVnVBHf3MqXsE+Hh6JrwkCpG7P3DDvUeRFQB+p3S9skMVxdRfgWRKsRWL1bUuGwCX2nlLQw29Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/KPLMib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79F8C4CEFB;
+	Wed,  5 Nov 2025 09:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762333161;
-	bh=R+46XLhZWIOTOB+yJZKWT6BNdn0bZgAdYGeql5q9uo8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5rEvPgLtiZgP6Drgj1xMpWAfIAzfKbYkr3fpk4qAAzc5VjqmLyczNxDurdaYR/K3
-	 UksMDbqrw0cy3j6yrfRwu2kEZVAOCjh3E4e7Xz0xe0HNjZoiA0KoffiNfDeEl0v0JS
-	 P9enYt94d8Esy5hI82o/52SjygMoJx+pBK7tqREk63xs+T2gwIhXavGj0kLQu30EYK
-	 Y7KFegE+Bb+WRnALIf/Ms06M77X7F7h9WqmfCY+rN4AW8D7tBfAn7mLDWvZh7JGUJ8
-	 qkT3MLdw24aIm4tSOC6Rc4494yEZDB6iTr95beNjt6mph5UWe3JS+4rJj1e1V7aPm7
-	 bq71HEiRZjdRg==
-Date: Wed, 5 Nov 2025 09:59:19 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>, 
-	Mao Jinlong <jinlong.mao@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-binding: arm: add CTCU device for hamoa
-Message-ID: <20251105-proud-pearl-gorilla-8a40db@kuoka>
-References: <20251104-enable-etr-and-ctcu-for-hamoa-v1-0-af552cfb902c@oss.qualcomm.com>
- <20251104-enable-etr-and-ctcu-for-hamoa-v1-1-af552cfb902c@oss.qualcomm.com>
+	s=k20201202; t=1762333214;
+	bh=yKua4EFf/iQ9wqQ49OIZDbWZGZXzrKwgI56kqg8U9bI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=A/KPLMibnINLMRVsLQd1DDnNoe1f70o5j/npukAxp624gpaLMEFr1GG5t5Qr6yMG3
+	 4lPC2a/HqEEgJZl5V7ejjH6R1BA7k5VGLp7OQ3vV47Rcr3QX87SdMomgh51/beWmla
+	 KPgFroOOHq8IDKVSwIaWt0YYmgLoFNaO5hsYvp3eUjFDoGBWGbb45v/729t6Kg0xF3
+	 vK/fbHBOfS/NdiBlqUN5uFz7zBwiN+0+gbVc2l22YXjn63HvMcRWjdNQPV+1aiv6qR
+	 Jv1zMzDA75P4njxJqP1ESuKho+8bvsIgWb3CHRTOouEFgIP3VzO2jGSD3O9LDIK9W2
+	 hm4fSJ+7Y7/sA==
+Date: Wed, 05 Nov 2025 03:00:12 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104-enable-etr-and-ctcu-for-hamoa-v1-1-af552cfb902c@oss.qualcomm.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Sebastian Reichel <sre@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-leds@vger.kernel.org, 
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+ Michael Turquette <mturquette@baylibre.com>, linux-rtc@vger.kernel.org, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@linux.dev>
+In-Reply-To: <48fe6e2642db4484640b173cd71be1b245929122.1762327887.git.mazziesaccount@gmail.com>
+References: <cover.1762327887.git.mazziesaccount@gmail.com>
+ <48fe6e2642db4484640b173cd71be1b245929122.1762327887.git.mazziesaccount@gmail.com>
+Message-Id: <176233320981.143013.4115240062372455834.robh@kernel.org>
+Subject: Re: [PATCH v3 01/16] dt-bindings: regulator: ROHM BD72720
 
-On Tue, Nov 04, 2025 at 04:10:17PM +0800, Jie Gan wrote:
-> Document the CTCU compatible for Hamoa, enabling support for the
-> CTCU device on the Hamoa platform.
+
+On Wed, 05 Nov 2025 09:35:59 +0200, Matti Vaittinen wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
 > 
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> The ROHM BD72720 is a new PMIC with 10 BUCk and 11 LDO regulators.
+> 
+> The BD72720 is designed to support using the BUCK10 as a supply for
+> the LDOs 1 to 4. When the BUCK10 is used for this, it can be set to a
+> LDON_HEAD mode. In this mode, the BUCK10 voltage can't be controlled by
+> software, but the voltage is adjusted by PMIC to match the LDO1 .. LDO4
+> voltages with a given offset. Offset can be 50mV .. 300mV and is
+> changeable at 50mV steps.
+> 
+> Add 'ldon-head-microvolt' property to denote a board which is designed
+> to utilize the LDON_HEAD mode.
+> 
+> All other properties are already existing.
+> 
+> Add dt-binding doc for ROHM BD72720 regulators to make it usable.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
 > ---
->  Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Revision history:
+>  v2 => v3:
+>  - drop unnecessary descriptions
+>  - use microvolts for the 'ldon-head' dt-property
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> index 460f38ddbd73..57dede7a90e9 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> @@ -29,6 +29,7 @@ properties:
->      oneOf:
->        - items:
->            - enum:
-> +              - qcom,hamoa-ctcu
+>  RFCv1 => v2:
+>  - No changes
+> ---
+>  .../regulator/rohm,bd72720-regulator.yaml     | 149 ++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml
+> 
 
-There is no such hunk. Dependency should be noted here, anyway, this
-cannot be tested by tooling so no review. Please be sure your patches
-can be actually tested.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Best regards,
-Krzysztof
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml: patternProperties:^buck[1-10]$:properties:rohm,ldon-head-microvolt: '$ref' should not be valid under {'const': '$ref'}
+	hint: Standard unit suffix properties don't need a type $ref
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
+Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml: Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/48fe6e2642db4484640b173cd71be1b245929122.1762327887.git.mazziesaccount@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
