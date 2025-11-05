@@ -1,266 +1,129 @@
-Return-Path: <linux-kernel+bounces-886213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1D6C34FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:59:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57EDC3501B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFD818C169B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:00:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B79014E848F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4BF30BB96;
-	Wed,  5 Nov 2025 09:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CE21BE871;
+	Wed,  5 Nov 2025 10:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kI0QejRy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m415Ww6m";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kI0QejRy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m415Ww6m"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eVffDEvv"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEA82FD1DA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3790B1A2392
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336781; cv=none; b=A7DhgaGkcpoEACuK2W6S6yAwipbpDMB9FQvUCJPRAiCLDi4Na+9lRAJqkK7oTbMtokXHJZMNMohXxNsrJyO8Z+REzz6dqmFwlnHEWgsGIh+hCflYN4L0roqH73y+BEGLdhpkTpFcBW76RIg6QbtTKSNofKjGzDCAon2Beu7DGzA=
+	t=1762336862; cv=none; b=gHco7+X8bOzR+Z74pD+SP3lXe8ZOpjamubdsSvHZfgNExXBfF1L6RuBZjH9mTFRJqRXOGqZIpk+6qAjLGpp6GGxOwFuCMHbnMSHuBQco8oZm5jdpQ9fIYh10uMGbzs2lc+AQj3fgw51Ujl4f0eoStPXpv7S8B+F9IL4qEfkDL6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336781; c=relaxed/simple;
-	bh=qNKq8m60y/OwLLO7jRETtlYhLR0ar0wXCsRyTlawI2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dvz/frC7KeB1YVUBpkKl5hlrB6B1CLNqZgPoFUnf+He7kBfuA9a4sP5AF7wO8tfCl60HFIf67w3W7bRgfOiL+ODpf3wXF+J0HOCPgD9alPxKB0ABpFz/rdQTL9BqZCU+zRPkVI9nY449wDp6Kv1xrwYO8JvHZu8JOIi/qeq+J38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kI0QejRy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m415Ww6m; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kI0QejRy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m415Ww6m; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 64B542116F;
-	Wed,  5 Nov 2025 09:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762336777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1Ss//4cSgMvifGeWImkl64oHq4TXjdrB0of3t6e6oo=;
-	b=kI0QejRy1xQMo6/OlQcZ/X1tRn0MFaHDbTEU7srbrDJ5m8CqwFoxjrEA5qNMv3kcwW6pyo
-	2hIybOCZzJkELbu7gmzmz8KIqaVgzg5vEzTgo+sHldpBWvYhfLit+xb1Fiu6JA6/aqQdaF
-	7rPrDUb/RLq64PjxJDTdrGRy9aSO3uA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762336777;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1Ss//4cSgMvifGeWImkl64oHq4TXjdrB0of3t6e6oo=;
-	b=m415Ww6mKZ1x8BvTd7SrZRtqgGp5HzBCazCYjdlSnSWJHQTIki9uPWO6uWwVsZIIvOXEvD
-	DjDDVVmycJCtKFAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kI0QejRy;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=m415Ww6m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762336777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1Ss//4cSgMvifGeWImkl64oHq4TXjdrB0of3t6e6oo=;
-	b=kI0QejRy1xQMo6/OlQcZ/X1tRn0MFaHDbTEU7srbrDJ5m8CqwFoxjrEA5qNMv3kcwW6pyo
-	2hIybOCZzJkELbu7gmzmz8KIqaVgzg5vEzTgo+sHldpBWvYhfLit+xb1Fiu6JA6/aqQdaF
-	7rPrDUb/RLq64PjxJDTdrGRy9aSO3uA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762336777;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1Ss//4cSgMvifGeWImkl64oHq4TXjdrB0of3t6e6oo=;
-	b=m415Ww6mKZ1x8BvTd7SrZRtqgGp5HzBCazCYjdlSnSWJHQTIki9uPWO6uWwVsZIIvOXEvD
-	DjDDVVmycJCtKFAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B2EC13699;
-	Wed,  5 Nov 2025 09:59:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pnBBFgkgC2l+OgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:59:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1C8C8A083B; Wed,  5 Nov 2025 10:59:37 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:59:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 24/25] ext4: add checks for large folio incompatibilities
- when BS > PS
-Message-ID: <arj5yptdhk2tptkqu6q2kwbyhh5cx4ncfyz3hfhlfikx57yf4a@nolkehxy2kqs>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-25-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762336862; c=relaxed/simple;
+	bh=JRcZdufUobS/wLUpkimw9bd/B/icJ/w+TWZhNQNNupc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r88cP1NEiv+/VyoQQT+58ZTgrzaO0yEdH4zgG6dPEG0EQkjwLARJE583yvRdYW2v2u2GABep7CsnYnXHk1/liXa9EdTpoM4fVQMyr4qYjgjwbg6G4yEo8r0IajS46vrN7K9SzW0Ef/fOB6LqqugplKkl08moegBWHupbOBrxg9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eVffDEvv; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0o
+	qYcgD1EzIirl58iMQvoqnGgi3NMDegKGUvdi6XerM=; b=eVffDEvvmZdfFpglg1
+	qKPM8Qm5q/VGK4WqhFzeBgcTS2Hw7cKyq3TQ+HAKZQyJPlV9WhUeeBJntbB1rQSJ
+	GvNj5xeSvoMmNl/oHqyrThIA8zdoJK4od1oz6tiOeKXjBTDuDRnBuKLk/HyjyWhH
+	L1cmDGc0pbXmW4BCLLt4WUV/4=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnqzQNIAtpg78HBw--.45341S2;
+	Wed, 05 Nov 2025 17:59:42 +0800 (CST)
+From: oushixiong1025@163.com
+To: Dave Airlie <airlied@redhat.com>
+Cc: Sean Paul <sean@poorly.run>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/udl: Increase GET_URB_TIMEOUT
+Date: Wed,  5 Nov 2025 17:59:39 +0800
+Message-Id: <20251105095939.293366-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-25-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 64B542116F
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnqzQNIAtpg78HBw--.45341S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFyUtrWDtr4rAFW3Gw1xZrb_yoW8ZryUpF
+	47Z3yjyrWFyF4Dta17tFWvya43Aa13KFWkGrZ7Ca93u3WYyrn8JrykAFyYgFyUX3sxCF1a
+	qrs2vr909FW5Cr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBrWwUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXBP8D2kLFJqbnwABsV
 
-On Sat 25-10-25 11:22:20, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Supporting a block size greater than the page size (BS > PS) requires
-> support for large folios. However, several features (e.g., verity, encrypt)
-> and mount options (e.g., data=journal) do not yet support large folios.
-> 
-> To prevent conflicts, this patch adds checks at mount time to prohibit
-> these features and options from being used when BS > PS. Since the data
-> mode cannot be changed on remount, there is no need to check on remount.
-> 
-> A new mount flag, EXT4_MF_LARGE_FOLIO, is introduced. This flag is set
-> after the checks pass, indicating that the filesystem has no features or
-> mount options incompatible with large folios. Subsequent checks can simply
-> test for this flag to avoid redundant verifications.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Looks good. Feel free to add:
+[WHY]
+A situation has occurred where udl_handle_damage() executed successfully
+and the kernel log appears normal, but the display fails to show any output.
+This is because the call to udl_get_urb() in udl_crtc_helper_atomic_enable()
+failed without generating any error message.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[HOW]
+1. Increase GET_URB_TIMEOUT.
+2. Add error messages when calling udl_get_urb() failed in
+udl_crtc_helper_atomic_enable().
 
-								Honza
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/udl/udl_main.c    | 2 +-
+ drivers/gpu/drm/udl/udl_modeset.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-> ---
->  fs/ext4/ext4.h  |  3 ++-
->  fs/ext4/inode.c | 10 ++++------
->  fs/ext4/super.c | 26 ++++++++++++++++++++++++++
->  3 files changed, 32 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 8223ed29b343..f1163deb0812 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1859,7 +1859,8 @@ static inline int ext4_get_resgid(struct ext4_super_block *es)
->  enum {
->  	EXT4_MF_MNTDIR_SAMPLED,
->  	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
-> -	EXT4_MF_JOURNAL_DESTROY	/* Journal is in process of destroying */
-> +	EXT4_MF_JOURNAL_DESTROY,/* Journal is in process of destroying */
-> +	EXT4_MF_LARGE_FOLIO,	/* large folio is support */
->  };
->  
->  static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index b3fa29923a1d..04f9380d4211 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5143,14 +5143,12 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
->  {
->  	struct super_block *sb = inode->i_sb;
->  
-> -	if (!S_ISREG(inode->i_mode))
-> -		return false;
-> -	if (test_opt(sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
-> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
-> +	if (!ext4_test_mount_flag(sb, EXT4_MF_LARGE_FOLIO))
->  		return false;
-> -	if (ext4_has_feature_verity(sb))
-> +
-> +	if (!S_ISREG(inode->i_mode))
->  		return false;
-> -	if (ext4_has_feature_encrypt(sb))
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
->  		return false;
->  
->  	return true;
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 7338c708ea1d..fdc006a973aa 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5034,6 +5034,28 @@ static const char *ext4_has_journal_option(struct super_block *sb)
->  	return NULL;
->  }
->  
-> +static int ext4_check_large_folio(struct super_block *sb)
-> +{
-> +	const char *err_str = NULL;
-> +
-> +	if (test_opt(sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA)
-> +		err_str = "data=journal";
-> +	else if (ext4_has_feature_verity(sb))
-> +		err_str = "verity";
-> +	else if (ext4_has_feature_encrypt(sb))
-> +		err_str = "encrypt";
-> +
-> +	if (!err_str) {
-> +		ext4_set_mount_flag(sb, EXT4_MF_LARGE_FOLIO);
-> +	} else if (sb->s_blocksize > PAGE_SIZE) {
-> +		ext4_msg(sb, KERN_ERR, "bs(%lu) > ps(%lu) unsupported for %s",
-> +			 sb->s_blocksize, PAGE_SIZE, err_str);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
->  			   int silent)
->  {
-> @@ -5310,6 +5332,10 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->  
->  	ext4_apply_options(fc, sb);
->  
-> +	err = ext4_check_large_folio(sb);
-> +	if (err < 0)
-> +		goto failed_mount;
-> +
->  	err = ext4_encoding_init(sb, es);
->  	if (err)
->  		goto failed_mount;
-> -- 
-> 2.46.1
-> 
+diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+index bc58991a6f14..dd9576fd4ff0 100644
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -285,7 +285,7 @@ static struct urb *udl_get_urb_locked(struct udl_device *udl, long timeout)
+ 	return unode->urb;
+ }
+ 
+-#define GET_URB_TIMEOUT	HZ
++#define GET_URB_TIMEOUT	(HZ * 2)
+ struct urb *udl_get_urb(struct udl_device *udl)
+ {
+ 	struct urb *urb;
+diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
+index 231e829bd709..647af04f194e 100644
+--- a/drivers/gpu/drm/udl/udl_modeset.c
++++ b/drivers/gpu/drm/udl/udl_modeset.c
+@@ -21,6 +21,7 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_vblank.h>
+ 
+@@ -342,8 +343,10 @@ static void udl_crtc_helper_atomic_enable(struct drm_crtc *crtc, struct drm_atom
+ 		return;
+ 
+ 	urb = udl_get_urb(udl);
+-	if (!urb)
++	if (!urb) {
++		DRM_ERROR("Udl get urb failed when enabling crtc");
+ 		goto out;
++	}
+ 
+ 	buf = (char *)urb->transfer_buffer;
+ 	buf = udl_vidreg_lock(buf);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
