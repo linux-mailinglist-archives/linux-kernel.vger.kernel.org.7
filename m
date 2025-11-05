@@ -1,150 +1,135 @@
-Return-Path: <linux-kernel+bounces-886745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65737C366BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:44:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C2BC36567
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 286714FE120
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9E3934F0FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BF0338937;
-	Wed,  5 Nov 2025 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED27325CC79;
+	Wed,  5 Nov 2025 15:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ILGDIP5O"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIPDW3Zo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D53385BC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B7321CFF6;
+	Wed,  5 Nov 2025 15:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356397; cv=none; b=uxh2sHG1+/vVaAuH0mZgk734+TEUOjGcNn35HbZEdrWr4Yvi5s96km/HPdWtaXpEZ/TdQwg+x9zYgv+HwlXa9+3NTRYQikuIKMfhrsjXd0So11SIGh6ytzzjs6a3r0l6WaODLXOciBj/wvzDsVtlhviOpDkG0Ex2fCPFCvnDGXY=
+	t=1762356480; cv=none; b=D7P+lSGqPyvHFgCh2CJ3dANgGrGzVGnnIuuOlMKDi7v7OSyS9fJXC9swE6dOCxp4NmAcO+gIwRy1v9EPmrWoAqCOewZwOgQGXAfBd9QcGGRNVvhL8yUPvqkudO+DRK6Oz1i/ECA1Qw9nHxr7xhQt/qWrY+yXbiHCLUhKYGCd0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356397; c=relaxed/simple;
-	bh=d8JWxeRGmjq8jXPHzr0bSzSADeEyMQIUeCD2xQhaO6I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F0XSCCFgeiRDKFyA+7WCfYTUm/kMnBoaOdtG3Gs4LGHY5+nFihQxSnKHEFG1QqSPdP20gr/2kLmjteJXGVYE8zWJdE88JMBDkRyVfEpZK9zBv5ATSeUC5YFEJzFpvSnobSlc/0QZawdr4RSC+QDJag+P7eNLeDbcb5HPSR5+xoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ILGDIP5O; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3418ada9e6cso1978170a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:26:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762356395; x=1762961195; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmjmfo22QwufKip+RFN2GwcKXDk7+fDMohFzNqFh1wo=;
-        b=ILGDIP5O5BP+SYZYgKaOIaimg87TU8QKC8EJF/uP7rDmTzgvxHRnjh26J0McWVE2tX
-         xjdiyiYpL9TXxeCED6TAeEs8jD6PIIhWiDvgW1l4mcsTpVDqohWa8u8IQD8dOmuRI9Td
-         uDNxLQRlPc1dydrRYVGUNHzgHi3xAr5yNki7VN6iKVXwlAx1pN1l999r5o3knbR0QoT4
-         Z2ImKQQjei9H+0BOVHp7DXRQ1IgTVPloVQk3p9UjN3JreJpiEQt3YYxwp6cbLRpB639k
-         AzbBvE8/jpXoFZPNwmqGculRqBCQzzCh7DC6qg7Qt8aZZQ14Z5eDxix6hs1K8iTqhfqx
-         YhAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356395; x=1762961195;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmjmfo22QwufKip+RFN2GwcKXDk7+fDMohFzNqFh1wo=;
-        b=SGnFGL3GQcdq7VcaOcZ4zfVreHW9BJdyCF0Dz+jL/2MUA+Qphvcfoqke7S5iIW6kn9
-         XmROqLK7abu9dbtBVx2Q3S9ac7Jx/OX8Pa00a69eKNRapQC2o16LzWBM/E/c8oqXlvfK
-         uMhHzI0e228V8t9+Cy5tseZb1kPjp1PBDVHFV9Q1d5iQNp2NiQqmd2v2aN0HsHNgQsy1
-         bG1DNDqj0zrR10WVGQusRIas5AEM+H+8xHNbUk4dM1JTid9pSv3qr3EKSw1YNFDrXvuu
-         fJcoUCxJbUQwPnt2v4xYJ6QZa2LbeWbO0Y30/eyV8pR4pf8CUxfpeFbKRiSjBwCQjCkC
-         /54Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8N9IHTqHDcRRC2iUmJIEmJdAj8SqzAzBjIXbCDxvp+THiEPlmTtsMu5mkw6PN7HknwgRqmdIQCe0ApAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy08nS/unAg5iF6NL2i2+4ENa2AwaqbmpzDPrDR3YGPixn9H94u
-	9m1z3nY3NB7VSfXruuzRSDZnolDGD/ZGSnBXciVUVhFHw0N/6p8p6b6FE16Z4OWJ/YbnZ4EPHSw
-	EuwwgXw==
-X-Google-Smtp-Source: AGHT+IEksiko2nLkYHDcuQoizh41Xk4dhEPlLcSxUswEaWhydqjlp9gNPv6q5VYl/pXem0FsGEVxprPZGIk=
-X-Received: from pjbtc7.prod.google.com ([2002:a17:90b:5407:b0:340:b503:505f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:384d:b0:340:9cf1:54d0
- with SMTP id 98e67ed59e1d1-341a6c08e65mr4623520a91.1.1762356395074; Wed, 05
- Nov 2025 07:26:35 -0800 (PST)
-Date: Wed, 5 Nov 2025 07:26:33 -0800
-In-Reply-To: <aQsBI1/SIXGbf9nA@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1762356480; c=relaxed/simple;
+	bh=mbTlga28qUCVVj27wEcGJhoz+SMneLpcOnAeAYlxULw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czkC24WLHyxaPRAfUkV5h65ig/JJEve+Elq3IyRoqFQxmt2Xk+WegHBOBmEgJM9zEOv3I1MXBx2f6KRerfGOYmotRKG3UP9hkyEtbmNDP/nizPmRU4rISLWPI+bhjxLoD1RRBzWfnLpooYk+ymhfjfEVSiq3Xjo4ZMnQ7I1h4LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIPDW3Zo; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762356478; x=1793892478;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mbTlga28qUCVVj27wEcGJhoz+SMneLpcOnAeAYlxULw=;
+  b=iIPDW3Zo/4XgCvil5tTe/KhXx8ja1ySdTm+3vO0h1P1XyhJ6B6HYt5lk
+   RnzHnIU3iZhvCAb8AuTiOlXZAQTCyaBp03nn7wyyTjoXjRPayihCIxfyP
+   zqWCnlTYVuZm8nuujjtnMtB/sMH5oT6lZltey7FIbK/Hs8sgekD8aTgNc
+   xJhAbeZqmkaF6j0VQMU2v2r3Qt5xwPUQ28mU3v/TOknBG24iKoeplrvSi
+   8y1TScBI8Nt3l0JViVkD0q3n5JdBC3tIjztyCZNdqYYWmR/csxuyFH20y
+   5ejYI4AjYrQypTiNJ0Oa9WwstXBjtoHvhT2pWYBieoJSBi87flx5nwXLf
+   g==;
+X-CSE-ConnectionGUID: ntMz2CpFRCmaA4z7kcbwEg==
+X-CSE-MsgGUID: 3rSgGDygQESnMAvABQQ5zA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="67089815"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="67089815"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:27:40 -0800
+X-CSE-ConnectionGUID: 4Le2k0x6Q9eo1/p65WAbnA==
+X-CSE-MsgGUID: KLIgVi9nRPCM8ZRXtz8m/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="192654288"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:27:39 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vGfQ6-00000005pDF-2qdF;
+	Wed, 05 Nov 2025 17:27:34 +0200
+Date: Wed, 5 Nov 2025 17:27:33 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
+Message-ID: <aQts5fqrNaEhHQyp@smile.fi.intel.com>
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+ <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
+ <20251105103122.GL2912318@black.igk.intel.com>
+ <aQs3ls1rKgMOufOn@smile.fi.intel.com>
+ <20251105115041.GM2912318@black.igk.intel.com>
+ <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
+ <20251105115535.GN2912318@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-5-seanjc@google.com>
- <aPhjYcOFjL1Z8m2s@yzhao56-desk.sh.intel.com> <aQMi/n9DVyeaWsVH@yzhao56-desk.sh.intel.com>
- <aQo-hus99rE7WBgb@google.com> <aQr9jW/7zwWJaDFf@yzhao56-desk.sh.intel.com> <aQsBI1/SIXGbf9nA@yzhao56-desk.sh.intel.com>
-Message-ID: <aQtsqXPaZo2SMdJU@google.com>
-Subject: Re: [PATCH v3 04/25] KVM: x86/mmu: Add dedicated API to map
- guest_memfd pfn into TDP MMU
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Ackerley Tng <ackerleytng@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105115535.GN2912318@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 05, 2025, Yan Zhao wrote:
-> On Wed, Nov 05, 2025 at 03:32:29PM +0800, Yan Zhao wrote:
-> > On Tue, Nov 04, 2025 at 09:57:26AM -0800, Sean Christopherson wrote:
-> > > On Thu, Oct 30, 2025, Yan Zhao wrote:
-> > > > On Wed, Oct 22, 2025 at 12:53:53PM +0800, Yan Zhao wrote:
-> > > > > On Thu, Oct 16, 2025 at 05:32:22PM -0700, Sean Christopherson wrote:
-> > > > > > Link: https://lore.kernel.org/all/20250709232103.zwmufocd3l7sqk7y@amd.com
-> > > > > 
-> > > > > Hi Sean,                                                                         
-> > > > > 
-> > > > > Will you post [1] to fix the AB-BA deadlock issue for huge page in-place
-> > > > > conversion as well?
-> > > 
-> > > If you (or anyone) has the bandwidth, please pick it up.  I won't have cycles to
-> > > look at that for many weeks (potentially not even this calendar year).
-> > Got it!
-> > On the other hand, do you think we can address the warning as below?
-> > The code is based on [2].
-> Hmm, updated the diff.
+On Wed, Nov 05, 2025 at 12:55:35PM +0100, Mika Westerberg wrote:
+> On Wed, Nov 05, 2025 at 01:51:58PM +0200, Andy Shevchenko wrote:
+> > On Wed, Nov 5, 2025 at 1:50 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > > On Wed, Nov 05, 2025 at 01:40:06PM +0200, Andy Shevchenko wrote:
+> > > > On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
+> > > > > On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+> > > > > > Replace custom macro with the recently defined INTEL_GPP().
+
+...
+
+> > > > > > -#define ADL_GPP(r, s, e, g)                              \
+> > > > > > - {                                               \
+> > > > > > -         .reg_num = (r),                         \
+> > > > > > -         .base = (s),                            \
+> > > > > > -         .size = ((e) - (s) + 1),                \
+> > > > > > -         .gpio_base = (g),                       \
+> > > > > > - }
+> > > > >
+> > > > > I wonder if simply doing this:
+> > > > >
+> > > > > #define ADL_GPP(r, s, e, g) INTEL_GPP(r, s, e, g)
+> > > >
+> > > > We can, but it will give a couple of lines in each driver still be left.
+> > > > Do you think it's better?
+> > >
+> > > I think that's better because it is less changed lines but I'm fine either
+> > > way.
+> > 
+> > Okay, I will try it and see how it looks like and then I'll either
+> > send a v2 or ask for a tag for this one. Sounds good?
 > 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 7b4a4474d468..543e1eb9db65 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -853,6 +853,9 @@ static int kvm_gmem_init_inode(struct inode *inode, loff_t size, u64 flags)
->         inode->i_size = size;
->         mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
->         mapping_set_inaccessible(inode->i_mapping);
-> +       if (flags &GUEST_MEMFD_FLAG_MMAP)
-> +               lockdep_set_subclass(&inode->i_mapping->invalidate_lock, 1);
-> +
->         /* Unmovable mappings are supposed to be marked unevictable as well. */
->         WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> 
->  
-> > As noted in [3], the only scenario can trigger the warning after [2] is when a
-> > process creates a TDX VM with non-in-place-conversion guest_memfd and a normal
-> > VM with in-place-conversion guest_memfd. The two invalidate_lock's don't contend
-> > with each other theoretically.
+> Yes.
 
-Hmm, no, I think we need to hoist gup() call outside of filemap_invalidate_lock(),
-because I don't think this is strictly limited to TDX VMs without in-place
-conversion.  Even with in-place conversion, I think KVM should allow the source
-page to be shared memory, at which point I believe this becomes a legimate AB-BA
-issue.
+After more thinking I guess I want it as is (here in v1). In cases
+when we define some parameters differently it will make sense to have
+an intermediate definition, but here. Can you give your Ack, please?
 
-In general, playing lockdep games with so many subsystems involved terrifies me.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> > [2] https://lore.kernel.org/all/cover.1760731772.git.ackerleytng@google.com/
-> > [3] https://lore.kernel.org/all/aQMi%2Fn9DVyeaWsVH@yzhao56-desk.sh.intel.com/
+
 
