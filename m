@@ -1,161 +1,88 @@
-Return-Path: <linux-kernel+bounces-887092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0A2C37410
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:11:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE62DC37422
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 878E234F616
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA753B4702
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E2B325720;
-	Wed,  5 Nov 2025 18:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BF1285060;
+	Wed,  5 Nov 2025 18:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DR+QvzPa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CGGZMa0B"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7625533BBDD;
-	Wed,  5 Nov 2025 18:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE015D8F0;
+	Wed,  5 Nov 2025 18:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762366297; cv=none; b=S4CnTbvd9+CMvRDpHAsphZKw/uootQnPmGlUfYOI4Q9tqLJujf0bo6KgqMnFE9xnR3z8UoHY2MouPn1+kUkE3/jqJ19IyqlY3REArVoa7zoNEn5lHesIfd1kVIDqxgYDReIZV3UuveJM4htvt6V4uS6BSYrtMcIugzSu5BscmqY=
+	t=1762366347; cv=none; b=dVMDIyBxtzrRv+jfjpgGOJyT7gs/+7bKG02aO0Lxb7J0G13doKRQiIwFrWHe1dbNjemQK7P/ocmmZDdyBolYagf0pgKJV/ydZWkRHu0O4ruXvqqujHO8uxmHNvsLNOkELYnRbxs0ClNdfCjnA9aStZ+XD4jvl6psC2Wv5pr5MBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762366297; c=relaxed/simple;
-	bh=HJOrasHsdzKL7ziY1rWiO7Xa8XG99NhpujbH+jMlO2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1DyzfcLiiD6pFi1VoCv5ppHX+OdKCjfR/fcsEqB1wooOZWe2cvIjmcihz/QBKemVnD+W9skB0TzGTkHmk3MSRUh0Zwd9BOKnK0k60kXIgkoyfYGw+vJuLhrFQyjW50LugOR+RKfCFgsr7XxBIRuhIZtE37gh42pD82/btoYYUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DR+QvzPa; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762366294; x=1793902294;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HJOrasHsdzKL7ziY1rWiO7Xa8XG99NhpujbH+jMlO2A=;
-  b=DR+QvzPakGHWMVjqD5o9EIXAEHi7qHUkEf6LWefdFJHhqTvWV06NI4U/
-   ROccsmJk173WuBiBt0ht1NYGqitQKYSUhnF3rCT8idj1haYcIJmtt62Va
-   53XnWzM37Nm8/2dNCPW0O9bfu/xFM16XEUb7aMCVBC8OWP/FTxB389bqN
-   zBIXVlomeG1vMuQcl4il9krzb0UpepEoDB5QRGv0I3OD9Pt768pR33rAT
-   FxXfObVhydMVpgrA+FHwb+axupcGumpfDxtGCjoVML0pTnMUBQTBokAdk
-   4P2Q+iiyw7ST4BQo0WE2Pd1NOcRP6lljKZokg7Edtj3BZ3Co2EcvOhZNp
-   A==;
-X-CSE-ConnectionGUID: vG8rY7k2RpiZhg2BJD6uxg==
-X-CSE-MsgGUID: VF6SMOYlTGSnTU1bEplntQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64528331"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="64528331"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:11:32 -0800
-X-CSE-ConnectionGUID: 3DPG09umSY+ohClMC7vdIA==
-X-CSE-MsgGUID: 9ED2FR+aRBiht1pB9uzO2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="211000706"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.26])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:11:27 -0800
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org, kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>, Robert Richter <rrichter@amd.com>,
- Cheatham Benjamin <benjamin.cheatham@amd.com>
-Subject:
- Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes on x86
-Date: Wed, 05 Nov 2025 19:11:25 +0100
-Message-ID: <5072006.vqk35OSZvh@fdefranc-mobl3>
-In-Reply-To: <202510101555.zofjGvZF-lkp@intel.com>
-References:
- <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
- <202510101555.zofjGvZF-lkp@intel.com>
+	s=arc-20240116; t=1762366347; c=relaxed/simple;
+	bh=Kr4AUg5c8tYA0fSxDJXGDbo7ezUmg1Xn/Iw0mevV2CY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=awPV9Ha7B8pWBcEaSYNf/qO+S/PybWGcr2GC4A1Jgnlg7QBunBChoTsu6J4JnnAk49mLQ+eH5iie2vv/JhITTwSfjLQgJrhh0vKEhDz+cdpyAmBn5hlxSLSEKy7yWTmXhTasz73BT7/vZdfaX/ln37hv+9jeg8txPo137vREh1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CGGZMa0B; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 42C4E40AFB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1762366339; bh=nbMZFueQZmHBRLNRoW9wQ+q3tHwKsMZwDfsDwdImn9M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CGGZMa0BAxjYip2v8SgEXyWKzUZO1N0kg9G65YMUFQiJQB3GxJb9z5w9Snzwi9uju
+	 Jmea0aMHUIptB7LhlktHKECBHhdLNszMJUfG0YogtCul+9MQ6hD/yaEL6J/s7SrANr
+	 jK8aBw+ihAwV0HhokC8fgPQV8nVYcQ/UZ/71H4afXINGrF2sF4UAN+12RIUVW7guP+
+	 e7vF+NiVsEHrI5ZWOv6KohIrKuxuHE7P3uUTbg+2Jq5HhiZ3eu56j17SMNqb7xf3b5
+	 3s0NNUKw9+iGYd0IrLV52AQlXQjXn7NdOR+TVZ+MHgNrGQOcnfWMYFjsG1pT3syLAY
+	 7O0gZAlsG2jMw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 42C4E40AFB;
+	Wed,  5 Nov 2025 18:12:19 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mauro Carvalho
+ Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell
+ <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+In-Reply-To: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+Date: Wed, 05 Nov 2025 11:12:18 -0700
+Message-ID: <87sees73i5.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 
-On Friday, October 10, 2025 9:38:02=E2=80=AFAM Central European Standard Ti=
-me kernel test robot wrote:
-> Hi Fabio,
->=20
-> kernel test robot noticed the following build errors:
->=20
-> [auto build test ERROR on 46037455cbb748c5e85071c95f2244e81986eb58]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Fabio-M-De-Frances=
-co/cxl-core-Change-match_-_by_range-signatures/20251010-111627
-> base:   46037455cbb748c5e85071c95f2244e81986eb58
-> patch link:    https://lore.kernel.org/r/20251006155836.791418-3-fabio.m.=
-de.francesco%40linux.intel.com
-> patch subject: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory =
-Holes on x86
-> config: i386-buildonly-randconfig-005-20251010 (https://download.01.org/0=
-day-ci/archive/20251010/202510101555.zofjGvZF-lkp@intel.com/config)
-> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251010/202510101555.zofjGvZF-lkp@intel.com/reproduce)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510101555.zofjGvZF-lkp=
-@intel.com/
->=20
-> All errors (new ones prefixed by >>):
->=20
->    ld: drivers/cxl/core/platform_quirks.o: in function `platform_res_adju=
-st':
-> >> drivers/cxl/core/platform_quirks.c:95:(.text+0x1f1): undefined referen=
-ce to `__udivdi3'
->=20
->=20
-> vim +95 drivers/cxl/core/platform_quirks.c
->=20
->     76=09
->     77	void platform_res_adjust(struct resource *res,
->     78				 struct cxl_endpoint_decoder *cxled,
->     79				 const struct cxl_root_decoder *cxlrd)
->     80	{
->     81		if (!platform_cxlrd_matches_cxled(cxlrd, cxled))
->     82			return;
->     83=09
->     84		guard(rwsem_write)(&cxl_rwsem.dpa);
->     85		dev_dbg(cxled_to_memdev(cxled)->dev.parent,
->     86			"Low Memory Hole detected. Resources were (%s: %pr, %pr)\n",
->     87			dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
->     88		if (res) {
->     89			/* Trim region resource overlap with LMH */
->     90			res->end =3D cxlrd->res->end;
->     91		}
->     92		/* Match endpoint decoder's DPA resource to root decoder's */
->     93		cxled->dpa_res->end =3D
->     94			cxled->dpa_res->start +
->   > 95			resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
->=20
-I think that the use of udiv_64() (per Alison suggestion) will fix this=20
-error.
+[Heads up to Stephen: this change will add a bunch of warnings that had
+been dropped before.]
 
-=46abio
->
-> --=20
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->=20
->=20
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
+> When kernel-doc parses the sections for the documentation some errors
+> may occur. In many cases the warning is simply stored to the current
+> "entry" object. However, in the most of such cases this object gets
+> discarded and there is no way for the output engine to even know about
+> that. To avoid that, check if the "entry" is going to be discarded and
+> if there warnings have been collected, issue them to the current logger
+> as is and then flush the "entry". This fixes the problem that original
+> Perl implementation doesn't have.
 
+I would really like to redo how some of that logging is done, but that
+is an exercise for another day.  For now, I have applied this one,
+thanks.
 
-
+jon
 
