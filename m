@@ -1,146 +1,96 @@
-Return-Path: <linux-kernel+bounces-886487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAE2C35BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:57:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BE6C35BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:58:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9435C34C9B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:57:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6276F4F9501
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36012E62B3;
-	Wed,  5 Nov 2025 12:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2A13164A8;
+	Wed,  5 Nov 2025 12:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n/UecF4j"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UCEL5Tyc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D03315D30;
-	Wed,  5 Nov 2025 12:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1E02E62B3;
+	Wed,  5 Nov 2025 12:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762347423; cv=none; b=Vv4XJ96X/RW0Rbulvf/4yQWVNvgmQ6TmfHWYbw/MUyoNDJqxY7Hz9Ikon+brtcCeloupZZXL+mjIbx55ntH9UM5TWNpngHg31eP3zLAXm1DdMq3v6oSJGKUAVL/V6cVrN56+1gJW//eTlpfbLc7z7yMJ6elbT9g3xuRti8LReGg=
+	t=1762347409; cv=none; b=IXe/R+1ivktl4uk3wBBM0gHsLaQ/aqbedTYTALbwSLmQfamNTuFULoLxdDmbu5S1z7UcAN2k9VmRLWnRysGuz+47LEkTCpi+aO5hlPghU/Zp3CcktFaI3EQXums/JizcuRXKLoBPHoTD7yfkhjWynmzzTrUTkzWjiX9CZgwxMng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762347423; c=relaxed/simple;
-	bh=TMVcjv6ylBRWeupfYltSfKi9Shjr039Xwp9alCg8YPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZYX2TX6OYBBcck+Zu2AXmtyfClAb4LJj9lwuP+s3fXYLlWwM3W4DZuEK+9fq0LAV4FsWqSZYaiTTz5MiP/nGaKbwSWWuG8WQfKuyNfu7CSZnhUaqM8ButoS7zSo4g4rHtrZ65JyHRb07YF1z3XHx+1+4mSFlZQQ2cT2Q66G4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n/UecF4j; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5BiENJ016813;
-	Wed, 5 Nov 2025 12:56:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rfF8Lv
-	dew6AeZgP1jAJDIjiNUY9T2rz41ibqR1SGGsA=; b=n/UecF4jgt2vk2eFDm3qsY
-	wYY1yFriKk85PuujX6JeD3FbnDjBbmNvb11PX1lqmkRgxUXpETI637q2nYEuBypO
-	jtd1/xk2PLuJiT/MtGMS6dqPXDK5fX2dM3773TUGD3AFWJtkUglfuEUsKoCP+3zK
-	yAbVRO4Clq+Hq76VwuX2QcxPX4zIo7KqDLRrgfbm7EtastVllhGynTbA+7caimYf
-	6IcBIAqmWvQ2zvFmFpu3Fr+sr+TF8KJLMgChqkrOfjFhjBs+fG8U8F+xDH/zcSRn
-	PckdgVNsp3J6nanA8FyWYwTNtVCvEKiijp+F+e/6bpC2w5uwZZKQEhB7kGPzIggA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v20vc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 12:56:48 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A5CqlAx010518;
-	Wed, 5 Nov 2025 12:56:48 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v20vc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 12:56:48 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5CW4Y4009822;
-	Wed, 5 Nov 2025 12:56:47 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1kg2ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 12:56:47 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5Cul8t25231930
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Nov 2025 12:56:47 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D6D358054;
-	Wed,  5 Nov 2025 12:56:47 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F2ABE5805D;
-	Wed,  5 Nov 2025 12:56:43 +0000 (GMT)
-Received: from [9.61.241.252] (unknown [9.61.241.252])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Nov 2025 12:56:43 +0000 (GMT)
-Message-ID: <526693da-9947-4874-ac7b-3548403925d6@linux.ibm.com>
-Date: Wed, 5 Nov 2025 18:26:41 +0530
+	s=arc-20240116; t=1762347409; c=relaxed/simple;
+	bh=zsnwty4DLcrZ2EUkS8MJ4pcrgNIbrvhUP3gBR7CEr5Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=F4WmnfwV/yWgYRleLdXYFgr5vBRXGUAfbanE2OQ3uWzRtpPpkqHnf9ueHrD669ggtmhvOi4MAEldmwMRgrG+T1ctjdWMjZ0GMPrguI0ex9QkVsr+8iIdY0TCuBB/VhydUPUR0BX2DT0UzToMGNaZ+eL1S3P8cLLwZgOKxEF5nFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UCEL5Tyc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762347406;
+	bh=zsnwty4DLcrZ2EUkS8MJ4pcrgNIbrvhUP3gBR7CEr5Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UCEL5Tyc+WmgK+8W7uwi4S4i+54SOTgymbKDKUO9kLVNg2pCje+jeIW5t8osCuFmp
+	 ZK1CbG4eG3vtGhrz2FUfdaV9kjl1fvxsRyjmw9su9G6iU+7e9XSq9b2mihiW2QZXFk
+	 o+7X280FWB7c/ZOrZ4kpRalhlacenF74cxlWJP8hYdF2Fpr2fXidaRpTtI+yA4NM8p
+	 YSXMLDluJMiIeK09OS8OSv9zEMEc++8N1KhIDEHOj3PzjZpkEOG3cKYZ1Cmf6imBjD
+	 sgPBNCC1rwlebjn6mMdr1w0F27kuq9f1WOehIOa/EkqIMoG53LWRy+NB05hRoYnSZa
+	 fz2eTOoidP7eA==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7B37417E128C;
+	Wed,  5 Nov 2025 13:56:45 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Frank Wunderlich <linux@fw-web.de>
+Cc: Frank Wunderlich <frank-w@public-files.de>, 
+ Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+In-Reply-To: <20251027132817.212534-1-linux@fw-web.de>
+References: <20251027132817.212534-1-linux@fw-web.de>
+Subject: Re: (subset) [PATCH v1 0/6] Add Bananapi R4 Pro support
+Message-Id: <176234740545.29963.12296506699287860071.b4-ty@collabora.com>
+Date: Wed, 05 Nov 2025 13:56:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next20251103] Boot Fail on IBM Power Server
-Content-Language: en-GB
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <5fb6199f-7077-45a2-9a54-2ef731d8a606@linux.ibm.com>
- <87seet45z0.ritesh.list@gmail.com> <20251105144506.01ba08c8@canb.auug.org.au>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <20251105144506.01ba08c8@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: u7uLKll4GlECw2gd8BssjgHiqV1KZIwG
-X-Proofpoint-ORIG-GUID: 3SIj0pX1vDi5nSR6Nkwm-e39DCcT_lLg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX0hzDNaCa8g7+
- OiYoTkz+MNtlvg8KpCkf90GXoGAY8uxpZtyA39c6rEBrpO4Zp7lF8z6cR+Q665udqgvL2II79Mk
- Zoma/ki6w0I553hgmq0GJOfwoYbKJXvi/lPJNi0v7GPWxd5U/OoX776rASkL8d/6RpiMD/Ewn8E
- yNWnIeh4ZD4e3cew6ix03h6JnyRMD3u4nX/Vn9ploTMu6BfKY7AcuZjiLlQEilljKMltGZ6sEq0
- McqstLt0XvZkCXZfLS80fdngr/yM9nGIGlTZzFGt0PcWuf708EYctYEZP+PSnvMppp/TJIaSaGY
- XlrsWEQtEGisrAn88k1NdXYSuMzFGBuSH1TQ8VHgPKUY9/KuEHMk7GlrIp5nDIXNB9P9F5bsdwN
- 6HkY4En+8pyMDyHLdGd4NPaL80sp3Q==
-X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=690b4990 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=pGLkceISAAAA:8 a=p5uzZ3Qg-5NE2dxgmsoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_05,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+X-Mailer: b4 0.14.3
 
+On Mon, 27 Oct 2025 14:28:10 +0100, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> BananaPi R4 Pro is a MT7988A based board which exists in 2 different
+> hardware versions:
+> 
+> - 4E: 4 GB RAM and using internal 2.5G Phy for WAN-Combo
+> - 8X: 8 GB RAM and 2x Aeonsemi AS21010P 10G phys
+> 
+> [...]
 
-On 05/11/25 9:15 am, Stephen Rothwell wrote:
-> Hi all,
->
-> On Wed, 05 Nov 2025 07:04:59 +0530 Ritesh Harjani (IBM) <ritesh.list@gmail.com> wrote:
->> Since you must have the previous linux-next tag which was working for
->> you - do you think you can git bisect to identify the problem patch
->> (which if reverted boots fine?)
-> You are better off bisecting from Linus' tree (which was SHA
-> 6146a0f1dfae for next-20251103) to the linux-next tag - assuming that
-> Linus' tree is OK.
->
-> Also, please cut down on what you quote in replies.
+Applied to v6.18-next/dts64, thanks!
 
+[2/6] dt-bindings: arm: mediatek: add BPI-R4 Pro board
+      commit: b88827cb0bd1a192855db40494970bbdd7aad939
 
-With next-20251105 kernel, this issue is not seen. I am able to boot to 
-OS, with out this issue.
+Cheers,
+Angelo
 
-
-Regards,
-
-Venkat.
 
 
