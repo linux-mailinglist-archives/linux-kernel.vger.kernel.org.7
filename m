@@ -1,115 +1,245 @@
-Return-Path: <linux-kernel+bounces-886389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F873C35689
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:41:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD32C356B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0873B1A208AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:41:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B15E44F6561
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3103F313264;
-	Wed,  5 Nov 2025 11:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dy0D/IrY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FDD310636;
+	Wed,  5 Nov 2025 11:40:37 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FC83128B6;
-	Wed,  5 Nov 2025 11:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF20311955
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762342815; cv=none; b=J0L4ElKHrGOBc+6BRGDIy0eW3MhvawO809EMGQMjg/ykGGhCMSicmD6CkSwbOuy1k27yHwiMSKJsOs3xGVh4JVu3XTN51ypE3X68jZWGnVFV3QKrKjnQ9s2uRtynqZKmN597RBRXnLyUky44R7OXVIFxF/fPSYamSdEN9leKWLE=
+	t=1762342836; cv=none; b=aWgyaK4B+AZahUE0T6WZRLP7S58Bblba8JYFG1OCU1K99e5UFpThDfgNrrwVFk0Wsj9DMA2Pd+GDDm1PQyR+FVhMPwC+66geXtKJzoaepAw5xuNt5foyAG7tPr+xSsEuCpik6usw9J1pfraS8fFY1OhBcURjcTpbRcpYaqHGG84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762342815; c=relaxed/simple;
-	bh=J5jd0puVUAfWLqGEvwc7EkjWTKA9EkmzPRe/Umh4DwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXbuM7itszKNwRwEppkXD2KMmQN1Xd6lB1z9JxGZMGcVsQxgJgsTmXpFNWs82EI8cTVX2rlZ9lgP2jB/H/2YKNl8ytJgoTFh+wh31uW5LTq3UcR7PxNopXGel+kF8MGVI06M3GTv6oWd5h2l3bfS+siR6e+CinKYF5nDCy57ZCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dy0D/IrY; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762342814; x=1793878814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J5jd0puVUAfWLqGEvwc7EkjWTKA9EkmzPRe/Umh4DwE=;
-  b=Dy0D/IrYxGCsGIKUtdCBshyKAJe661qabiTfdXYYvfbXBLYafCeOSdNo
-   b4nVjgKLQ7kILoyYIDivsCYgNNHpmhCTYfxEmktg+dCHaURQa4NLI1o2+
-   VzJctedcWLkt+8cQtUdnFovJoqOmcDrCzIWKBVqhZ84VzuZpXZXQvXde1
-   yjpqvvm/agOwDm12pq4CUufToI0aiAuNC8Mrn/U7bIGOYip5YoI3WfyTU
-   uDUGWeLjFEcm4pK5l5fTCTIctqb9CqzbonkFnUkCoyaUTVMaB/mUVvKil
-   4KkBOCcr6vNkkZt8BLLbR+wER0J318G13+7aLQS5hQjFQH/z+vTJ5WYSp
-   Q==;
-X-CSE-ConnectionGUID: 7WPpBFQOR0qMfcIBwAfoMg==
-X-CSE-MsgGUID: i3yeASUmRdmOBYVhbxisbw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64554357"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="64554357"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:40:13 -0800
-X-CSE-ConnectionGUID: ydchh+yDQ3KvfX8IWvuW9Q==
-X-CSE-MsgGUID: aeqTmRixSzGhT2bUgChG5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="187593748"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:40:11 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vGbrz-00000005lHg-1qLE;
-	Wed, 05 Nov 2025 13:40:07 +0200
-Date: Wed, 5 Nov 2025 13:40:06 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
-Message-ID: <aQs3ls1rKgMOufOn@smile.fi.intel.com>
-References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
- <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
- <20251105103122.GL2912318@black.igk.intel.com>
+	s=arc-20240116; t=1762342836; c=relaxed/simple;
+	bh=yqwY/afYV+ckN/oCAO8lFiv7v396StoxoLhmZSZGq7Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lLPg0Dv2v6fwCsNYly20a1Lmk72IXrUJ6NkhFfx8C6HO4mVCYlBBegMLPhXZ88iHvuzLx7yoGETV2FzRKJpMTmZUH2+tkcCQ0dJCMROo1AvOKTwV5Y0N5OyFad7GNEMdG/uCb9ekmI98HDoDhcOkF4SKzaYJ2vb0YaXUKmlm+5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9486e1db3d9so171591339f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:40:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762342834; x=1762947634;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YBBe2JCcXBqTzvOjhwhihXnJkzzKxXLL3JvbiMRzWDk=;
+        b=O6ROC5kvrQSFqPQav9TVjJ5HVxGAu6WGi3JcY7fUaVmsYRkH+SSgG7Vuurq0W+sv5F
+         zzJqvZBHXtvIyRdzQfT1Mrlpr1pn+IrpUS6ArX85iusdj84dnA3hfrXMeHVN8Wirt+z7
+         4h5gE8oy7D7tig3kNp7P/KH4yH1uscRw7yySe5j5N9sdg1Kh5sBxQDmbdf8N6O4Q/c3B
+         5gzM3hvXD1NwL7rnpzrt4jPFJf1d+AjtBW03TVXpUmNaKJDtpPsdsh70/gkU+9s+Vd+W
+         GTv3kzSf154CzswwelpYrMj3TeWA03je0L7VIJG8oOSoDz6oHcEihzSn8/kX6krjjsB3
+         ch8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIdfDnqalPTSM0mgkjUKw1q7wB0WSc66ste+xbRWu4mKiTDHR+dpD8IVVYY/B3UpSSFATPX0B2MMfCMm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJLzL5Y1ttl824ZuFJbrhRZcdaNccCatgC+zSgjIf4hvEwzzdJ
+	DXVPe7Ktn/6nAdL2s3B8A/HQ6gMXHGphmAvOWBXw6DzyXdvLvDKL1nHUXpo/JbKkjtsnBuWzrJK
+	JAsvZWR/ujnF38EUnN9r/OZ83/alol/f8llTx2VbPYq3AV36NAXm83Pcyg/c=
+X-Google-Smtp-Source: AGHT+IHBjUr8KCPc9cpYYCappo2BfgB3itMng7ncMGGo3MwQsjd0u3XpzayT+1m2ijArdo5W2FYIgq31WmWMmy1MHLWJQr88a7b3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105103122.GL2912318@black.igk.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:3c05:b0:42f:8b0f:bad2 with SMTP id
+ e9e14a558f8ab-433407a3e4dmr44035875ab.10.1762342833842; Wed, 05 Nov 2025
+ 03:40:33 -0800 (PST)
+Date: Wed, 05 Nov 2025 03:40:33 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b37b1.050a0220.3d0d33.0030.GAE@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in ext4_evict_inode (5)
+From: syzbot <syzbot+212e8f62790f8e0bc63b@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
-> On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
-> > Replace custom macro with the recently defined INTEL_GPP().
+Hello,
 
-...
+syzbot found the following issue on:
 
-> > -#define ADL_GPP(r, s, e, g)				\
-> > -	{						\
-> > -		.reg_num = (r),				\
-> > -		.base = (s),				\
-> > -		.size = ((e) - (s) + 1),		\
-> > -		.gpio_base = (g),			\
-> > -	}
-> 
-> I wonder if simply doing this:
-> 
-> #define ADL_GPP(r, s, e, g)	INTEL_GPP(r, s, e, g)
+HEAD commit:    8bb886cb8f3a Merge tag 'edac_urgent_for_v6.18_rc5' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cea292580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=212e8f62790f8e0bc63b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-We can, but it will give a couple of lines in each driver still be left.
-Do you think it's better?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> is better? Then the amount of changes are smaller.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/addfade563b0/disk-8bb886cb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1254c89ad16b/vmlinux-8bb886cb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3123c5319b7e/bzImage-8bb886cb.xz
 
--- 
-With Best Regards,
-Andy Shevchenko
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+212e8f62790f8e0bc63b@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.256/7158 is trying to acquire lock:
+ffff88802fee4610 (sb_internal){.+.+}-{0:0}, at: percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ffff88802fee4610 (sb_internal){.+.+}-{0:0}, at: __sb_start_write include/linux/fs.h:1916 [inline]
+ffff88802fee4610 (sb_internal){.+.+}-{0:0}, at: sb_start_intwrite include/linux/fs.h:2099 [inline]
+ffff88802fee4610 (sb_internal){.+.+}-{0:0}, at: ext4_evict_inode+0x2d6/0xee0 fs/ext4/inode.c:215
+
+but task is already holding lock:
+ffff88802fee2b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
+ffff88802fee2b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
+
+which lock already depends on the new lock.
 
 
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sbi->s_writepages_rwsem){++++}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
+       percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
+       ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
+       ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
+       do_writepages+0x32e/0x550 mm/page-writeback.c:2604
+       __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
+       writeback_single_inode+0x1f9/0x6a0 fs/fs-writeback.c:1840
+       write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2903
+       iput_final fs/inode.c:1901 [inline]
+       iput+0x830/0xc50 fs/inode.c:1966
+       ext4_xattr_block_set+0x1fce/0x2ac0 fs/ext4/xattr.c:2199
+       ext4_xattr_move_to_block fs/ext4/xattr.c:2664 [inline]
+       ext4_xattr_make_inode_space fs/ext4/xattr.c:2739 [inline]
+       ext4_expand_extra_isize_ea+0x12da/0x1ea0 fs/ext4/xattr.c:2827
+       __ext4_expand_extra_isize+0x30d/0x400 fs/ext4/inode.c:6364
+       ext4_try_to_expand_extra_isize fs/ext4/inode.c:6407 [inline]
+       __ext4_mark_inode_dirty+0x46c/0x700 fs/ext4/inode.c:6485
+       ext4_evict_inode+0x80d/0xee0 fs/ext4/inode.c:254
+       evict+0x504/0x9c0 fs/inode.c:810
+       ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
+       __ext4_fill_super fs/ext4/super.c:5617 [inline]
+       ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
+       get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
+       vfs_get_tree+0x92/0x2b0 fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x302/0xa10 fs/namespace.c:3727
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sb_internal){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs.h:1916 [inline]
+       sb_start_intwrite include/linux/fs.h:2099 [inline]
+       ext4_evict_inode+0x2d6/0xee0 fs/ext4/inode.c:215
+       evict+0x504/0x9c0 fs/inode.c:810
+       ext4_ext_migrate+0xd23/0x1010 fs/ext4/migrate.c:588
+       __ext4_ioctl fs/ext4/ioctl.c:1694 [inline]
+       ext4_ioctl+0x204b/0x48e0 fs/ext4/ioctl.c:1923
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:597 [inline]
+       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_writepages_rwsem);
+                               lock(sb_internal);
+                               lock(&sbi->s_writepages_rwsem);
+  rlock(sb_internal);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.256/7158:
+ #0: ffff88802fee4420 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write_file+0x60/0x200 fs/namespace.c:552
+ #1: ffff88807caa9700 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #1: ffff88807caa9700 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: __ext4_ioctl fs/ext4/ioctl.c:1693 [inline]
+ #1: ffff88807caa9700 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: ext4_ioctl+0x2043/0x48e0 fs/ext4/ioctl.c:1923
+ #2: ffff88802fee2b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
+ #2: ffff88802fee2b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 7158 Comm: syz.0.256 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
+ percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ __sb_start_write include/linux/fs.h:1916 [inline]
+ sb_start_intwrite include/linux/fs.h:2099 [inline]
+ ext4_evict_inode+0x2d6/0xee0 fs/ext4/inode.c:215
+ evict+0x504/0x9c0 fs/inode.c:810
+ ext4_ext_migrate+0xd23/0x1010 fs/ext4/migrate.c:588
+ __ext4_ioctl fs/ext4/ioctl.c:1694 [inline]
+ ext4_ioctl+0x204b/0x48e0 fs/ext4/ioctl.c:1923
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f70e578f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f70e65e9038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f70e59e5fa0 RCX: 00007f70e578f6c9
+RDX: 0000000000000000 RSI: 0000000000006609 RDI: 0000000000000004
+RBP: 00007f70e5811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f70e59e6038 R14: 00007f70e59e5fa0 R15: 00007ffe88ccf978
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
