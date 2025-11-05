@@ -1,162 +1,184 @@
-Return-Path: <linux-kernel+bounces-887363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBE7C37FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:25:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0806C37FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:26:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF9574F178C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:23:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B0564FC89B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3000834CFBB;
-	Wed,  5 Nov 2025 21:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748D2DAFB0;
+	Wed,  5 Nov 2025 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKu0yIcn"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OalmWR9G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4F34A797
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBB428726E;
+	Wed,  5 Nov 2025 21:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377529; cv=none; b=ZyZyyAgRAeulMUBQCY1/AbU+ehJy1H6dO/PCStpByScBFCbG/PzGRP3KNe77XNNs2iOPraGjVMrcnQa19yPanol5h9+NjkjzW8pKKmoFRCeitCh7Ix+x2p7nS58uDKnZ6m79BwkrUlF15fkYsXoqXVWQS4Ob1J4Nlb5fnoi2iHc=
+	t=1762377551; cv=none; b=NrUbxxs8VkD6PjUVDKnRlrEneL10RvFZFUeYCq21ch/oArPUWqTbJ1UBcFvAfTxresiz3cVig8UvUpJOK9sZhQGEUc19SqdQN8CAjisraizoXWic+35s3ZjDJYlsnzl8jde3XFyYb+J4fGnrSLPnBLDDE7Vi/khrTAuukKyPLNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377529; c=relaxed/simple;
-	bh=oPQYRyMF1pypwbrV2bfRFWBdMbkQqKT1Ffj4kqPzSb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XlkhTdTquu16T4079ASqMihaM42l1xp6ab0uTubTdx5L3p+yJka7HNtjazQe3/yRVrwI44LIauTOMasYeVwXPLlwDRf5kpqngEZejwB1HlCFuMh74wmEYmHsTflTIyEmJ8dZdnEIsGRkwGrCEqHJCUCZsfb4kAbErjsi/sbe2Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKu0yIcn; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640e9f5951aso2297217a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:18:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762377526; x=1762982326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DF0sydupouCelQ7a8hDVtjvfRn0GwCGA2yXi7RlWEjc=;
-        b=VKu0yIcnrSC7Mjbvvjwj5n9EAQb4kgrRdztf/hlY5NLO/IrMfmRDPIxoCY7aD5x0w2
-         G9zeFdqrV1MeLQeo8VMJDl9u27Rlt8qckREdf3sPNMUUmxaj6edp4Rd9JxOGMJnlzZk/
-         lLm80g9EY29C594NXeG4gg/xKmI4c/Y7HIPxDI45VAuzR9V8W4TIKrIgtSO5AoetNcB/
-         T5t0FaNJtIiX3AIxUsa7vYIFDrVKmeu6uXWRMzTf+7Ll+d8knzbi6UYLWVP6gTKj6I9N
-         kLEBoF6ZBbo2Uskic0bmjqT76T836jEgtZYUEkiKYENt7UadmbAd/h9gcuWGTTe5QdIu
-         66hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377526; x=1762982326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DF0sydupouCelQ7a8hDVtjvfRn0GwCGA2yXi7RlWEjc=;
-        b=wHa6ofUZydwL59Nqobon/Tm/0bBCMYwZxwA9eDYwfvGaigMTzNxmYA2tdhfx2PjDSC
-         98USREgLrfkbRN/pLBkUE84yC5Gm4fqrvXYiegbejQ2o92ktBuR0XjxX/3EVuANAet/S
-         fT3kbdCBa+H7XgS3rtWn+8FV5wsj7Gdtj5XXPpyfyNTaChNxgGqD1aiNWbvzcQd2fFmN
-         uXlU6McnzqWnsyqgr0vsoEnWit2n4+08OjGzIUPFSIXXK560yZmIb34xAOYG+QGOIMvL
-         +zkcN4RUVNzrZBmU0MBkEFKSEAHGITP1IFFm8ZaangvnbdxhDZurAb31j8OQcYOqT3qW
-         F2KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPry5CGz/3W2iWduKC+2YyKrUOWxLBEKsW3MglJmsskYvvzuXFyAvWAcuIx1pu8ueBLrJcDLplILfyiRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsqiBR4AUfSI0uaVF5WK/FW8E4HoZp1KAsnQiZDdIaGQpNL5ic
-	EV/aeplkAi7ZPE7FT0VrZKKzJdTQJmdOz5FVC5UF0+KzeysPT4GxEILN
-X-Gm-Gg: ASbGncu1vCIWNSYf6utDwlvInrGiq4AAQ4DXhJb1B/vP57aoXT+g/PzKOyFT78Tm5Wp
-	EHZTjNzKvZtKmQC71OaCGhZLKuSmBG7493zBbrPmNK1CEkyknhkkD5W6I5S/GQW4hgTZCZIaDAr
-	SF6P5FRLfrdAtsgIjIapEMEGSbL/5fvuyXLWaFzeFfqax4Xzr/FjmCj243UhJLiQYyArUmz1MTZ
-	hvHgIsWylighuCj4798Sm/NG0eGNNfvJJChqYMANzRAMZh00ddPjK+vFDnPmbX11S8HGk67AjZq
-	nkcbU+PqvRlwxxgHLHdd0Ua2vGk+G5mD3h0YMPLOuxzYG/3hBqyyknn024kymb2CU6l8ttXpa8z
-	cg0c8UGRjRNFikLA2Mf9cdWFFLUbLgLD6hZ0oBXCyx2GGN6kcusj59bQLypCgFInrUgj5nUyg8u
-	AZstrsDJo1iir2dfyNcf5Sp5knVhvNfu7f2GTTBi92tzVAj52pr3e/CAlCFFSBiWyRRzdkxVIEd
-	7TVmTlCcwQVo2bDCal1LUhwTY2NzU4=
-X-Google-Smtp-Source: AGHT+IGiz9VN3EwGclfE2mM2roTXLFXItqHPPpfh2E0/oV854mv2wjZ6x4OeB6U7GyRrVN+rgMV2Yg==
-X-Received: by 2002:a17:907:2d94:b0:b70:b161:b9a8 with SMTP id a640c23a62f3a-b72892ac5acmr90989366b.2.1762377525586;
-        Wed, 05 Nov 2025 13:18:45 -0800 (PST)
-Received: from localhost.localdomain (host194.safe-lock.net. [195.20.212.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b728964480esm52226166b.38.2025.11.05.13.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:18:44 -0800 (PST)
-From: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Bartlomiej Kubik <kubik.bartlomiej@gmail.com>,
-	syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com,
-	syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
-Subject: [PATCH linux-next] fs/ntfs3: Initialize allocated memory before use
-Date: Wed,  5 Nov 2025 22:18:08 +0100
-Message-Id: <20251105211808.260893-1-kubik.bartlomiej@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1762377551; c=relaxed/simple;
+	bh=1/KqV2b3zTTN2lwKtCoOJBgUyT+KNbZzoIYtgpw+4qA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hHG0uaXTpzlpZF88z45Y3JWf0vzryCns6Xm2kDw5YqL0ru2Wyq9VIxptlxQCupyRo6i+TXHi/ToJYBG7Iu2dlyrYJLKWgrHQ3R7ioAcQCP9T4ImI4zkcIwCKl1Xu+BHPQaxhs9F7V7Hf9y58lOzhXTV1YTlp8B7xXZ0fWO3kgGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OalmWR9G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57585C4CEF5;
+	Wed,  5 Nov 2025 21:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762377551;
+	bh=1/KqV2b3zTTN2lwKtCoOJBgUyT+KNbZzoIYtgpw+4qA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OalmWR9GKhFxQuVFflfPRWBKKRIIruipMj2xDv0EsyfOQj3d7qgoQu8Swygr73Z53
+	 TDAsw7DgrIR3CgKWCkpLdgeBYo16Q6JpIU2ilcZABnj5Rb505rj1+iGMNvYHq8Jgvz
+	 btQpPeD//HTiniZzA/5k5EIiXFI9P7Tovr+FnBW25Gjk5Ow76WPAVq1RwJSCOBQfzw
+	 E3M6ITiJDTvu1VRXFG9SJwMf5/+35GVw1zJo7YxumzuUKB/p9RBfoDpiSHfBaLzfQE
+	 qagvVGBAKNOF8DsonK01hR20MDyMuUBFl7Ofi7ifMGcNojF6bT3jrIEVN1eW/PRIb1
+	 Oz/UI7HQKh07A==
+Date: Wed, 5 Nov 2025 22:19:07 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+Message-ID: <20251105221907.0c8c388b@foz.lan>
+In-Reply-To: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-KMSAN reports: Multiple uninitialized values detected:
+Em Tue,  4 Nov 2025 22:55:02 +0100
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> escreveu:
 
-- KMSAN: uninit-value in ntfs_read_hdr (3)
-- KMSAN: uninit-value in bcmp (3)
+> When kernel-doc parses the sections for the documentation some errors
+> may occur. In many cases the warning is simply stored to the current
+> "entry" object. However, in the most of such cases this object gets
+> discarded and there is no way for the output engine to even know about
+> that. To avoid that, check if the "entry" is going to be discarded and
+> if there warnings have been collected, issue them to the current logger
+> as is and then flush the "entry". This fixes the problem that original
+> Perl implementation doesn't have.
+> 
+> As of Linux kernel v6.18-rc4 the reproducer can be:
+> 
+> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> ...
+> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> ...
+> 
+> while with the proposed change applied it gives one more line:
+> 
+> $ scripts/kernel-doc -v -none -Wall include/linux/util_macros.h
+> ...
+> Info: include/linux/util_macros.h:138 Scanning doc for function to_user_ptr
+> Warning: include/linux/util_macros.h:144 expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> ...
+> 
+> And with the original Perl script:
+> 
+> $ scripts/kernel-doc.pl -v -none -Wall include/linux/util_macros.h
+> ...
+> include/linux/util_macros.h:139: info: Scanning doc for function to_user_ptr
+> include/linux/util_macros.h:149: warning: expecting prototype for to_user_ptr(). Prototype was for u64_to_user_ptr() instead
+> ...
+> 
+> Fixes: 9cbc2d3b137b ("scripts/kernel-doc.py: postpone warnings to the output plugin")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index ee1a4ea6e725..f7dbb0868367 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -451,6 +451,13 @@ class KernelDoc:
+>          variables used by the state machine.
+>          """
+>  
+> +        #
+> +        # Flush the warnings out before we proceed further
+> +        #
+> +        if self.entry and self.entry not in self.entries:
+> +            for log_msg in self.entry.warnings:
+> +                self.config.log.warning(log_msg)
+> +
+>          self.entry = KernelEntry(self.config, self.fname, ln)
+>  
+>          # State flags
 
-Memory is allocated by __getname(), which is a wrapper for
-kmem_cache_alloc(). This memory is used before being properly
-cleared. Change kmem_cache_alloc() to kmem_cache_zalloc() to
-properly allocate and clear memory before use.
+No objection of this one, but this breaks the behavior of the -W
+flags.
 
-Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
-Fixes: 78ab59fee07f ("fs/ntfs3: Rework file operations")
-Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
-Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
+See, the way kernel-doc.pl worked is that:
 
-Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
-Fixes: 78ab59fee07f ("fs/ntfs3: Rework file operations")
-Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
-Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
+1. Warnings are controlled via several -W flags:
 
-Signed-off-by: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
----
- fs/ntfs3/inode.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+  -Wreturn, --wreturn   Warns about the lack of a return markup on functions.
+  -Wshort-desc, -Wshort-description, --wshort-desc
+                        Warns if initial short description is missing
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index ab61388f819c..13720baf079d 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1281,7 +1281,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 		fa |= FILE_ATTRIBUTE_READONLY;
+                        This option is kept just for backward-compatibility, but it does nothing,
+                        neither here nor at the original Perl script.
+  -Wall, --wall         Enable all types of warnings
+  -Werror, --werror     Treat warnings as errors.
 
- 	/* Allocate PATH_MAX bytes. */
--	new_de = __getname();
-+	new_de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
- 	if (!new_de) {
- 		err = -ENOMEM;
- 		goto out1;
-@@ -1723,10 +1723,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
- 	struct NTFS_DE *de;
+  Those affect running kernel-doc manually.
 
- 	/* Allocate PATH_MAX bytes. */
--	de = __getname();
-+	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
- 	if (!de)
- 		return -ENOMEM;
--	memset(de, 0, PATH_MAX);
+2. Warnings are affected by the filtering commands:
 
- 	/* Mark rw ntfs as dirty. It will be cleared at umount. */
- 	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
-@@ -1762,7 +1761,7 @@ int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
- 		return -EINVAL;
+  -e, -export, --export
+                        
+                        Only output documentation for the symbols that have been
+                        exported using EXPORT_SYMBOL() and related macros in any input
+                        FILE or -export-file FILE.
+  -i, -internal, --internal
+                        
+                        Only output documentation for the symbols that have NOT been
+                        exported using EXPORT_SYMBOL() and related macros in any input
+                        FILE or -export-file FILE.
+  -s, -function, --symbol SYMBOL
+                        
+                        Only output documentation for the given function or DOC: section
+                        title. All other functions and DOC: sections are ignored.
+                        
+                        May be used multiple times.
 
- 	/* Allocate PATH_MAX bytes. */
--	de = __getname();
-+	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
- 	if (!de)
- 		return -ENOMEM;
 
---
-2.39.5
+  Those affect both running kernel-doc manually or when called via make htmldocs,
+  as the kerneldoc Sphinx markup supports them.
 
+As the filters are only applied at kdoc/kdoc_output.py, printing warnings
+early at kdoc_parser means that, even ignored symbols will be warned. It might
+also make the same warning to appear more than once, for C files that are listed
+on multiple kerneldoc entries(*).
+
+(*) There is a logic at kerneldoc.py Sphinx extension and inside kdoc_files
+    to avoid parsing the same file twice, but I didn't test adding a hack
+    similar to this one to double-check that the warning won't appear multiple
+    times when export is used. Maybe it is working fine.
+
+-
+
+In summary, if warnings are suppressed, my suggestion would be to check at 
+kdoc_output to see what is filtering them out. 
+
+Alternatively, if the idea is to always print warnings, get rid of all
+-W<option> flags, except for -Werror.
+
+Thanks,
+Mauro
 
