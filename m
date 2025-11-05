@@ -1,116 +1,211 @@
-Return-Path: <linux-kernel+bounces-887138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C3FC3757A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:36:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A443C375AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E8F6C34FBE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:36:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A1CA4E854A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3CE334691;
-	Wed,  5 Nov 2025 18:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9554E280332;
+	Wed,  5 Nov 2025 18:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMYmejB+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aAzbRA0Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60D82749DF;
-	Wed,  5 Nov 2025 18:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345EC2836B5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762367637; cv=none; b=E65DdY3gDahmITL1XXt40MFVQI2L55um21QVNz1GGp7kqrpC8iTu4VEuxlkWKrouDATY60W1zJEORpph4Ov9KNujh91JrNB9szCFZ0u3ujYoVEbw9A9b2L2LJ9o8oKYPReXvqHRmRo32c0+GUFwr4pTbH1XOiCvzbH4ywu+Mvso=
+	t=1762367869; cv=none; b=LQVkd0htrJ+MHCTaWJq4NuurSuY7tBypcaLDBcPuPjr9wMlkT7UFt5aJe2pmO9UEnxie/natAm5abf4/WkzuokXY+Fgb5ns3nhGhJCCl2FfRytZ9K8JAOciKLk0ROyrzGWMcM/vGSYc66K5/fljZ6tI2gROUQXcBe6k4Oj8gtHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762367637; c=relaxed/simple;
-	bh=VqJ/IL8uu6HWDCb5Th4A/p6/Q7MW/MOdOkxfXjuZ508=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuA6Vd6jZNqfR5y6M6826hhe0vRBM4qx802V09cY1kB3+tKicoY0nyJDKhtRm13wRbnJBh2lDkeIFSNzzYyQvq5Rbc0RAbqM8e9yY5vBeb0tetkar/YQeEPTbGfBH6E3aujXKjCZpMg6YtBMIhZENgCvD4Ra3leQUKAMhvCWraE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMYmejB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94CCC4CEF5;
-	Wed,  5 Nov 2025 18:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762367636;
-	bh=VqJ/IL8uu6HWDCb5Th4A/p6/Q7MW/MOdOkxfXjuZ508=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMYmejB+OHlG15Yqp+E5CyvGnWcmKcmGDM6ePgcearwJ2eVrXQmfnJfwsQk24Qk17
-	 w3To2pmXOBfxST4oYDr25BgcQrf7x18OjilkteWtk7dnrwFxZxRMrOoKpI4YwJ2Cpm
-	 aVt3YTWrJhTN/XOqq9Wcnes0yAYam3vth8FT4Q4lZX9j6uLRQ7jyGwo9kKZq7rVubF
-	 Kx9ciUb2S4O3yKINr1yKjjRcAJfgSh3G4LamjzCa8JM/3GHd2NJkJxNXoihN5SVOOA
-	 Wsvcw7yG9TJL4lwjVr7kRR1i88Ihxvaqvz9jyvGS4FReOVzTsidb1aPJZTsm2/+0JH
-	 pPcwCKxoVW63Q==
-Date: Wed, 5 Nov 2025 18:33:51 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
-	claudiu.beznea.uj@bp.renesas.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-Message-ID: <20251105-gradually-commode-0b5269ec0aa5@spud>
-References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
- <20251103121848.6539-2-ovidiu.panait.rb@renesas.com>
- <20251104-magnitude-deodorant-be607e3ff4be@spud>
- <2025110420204948103c2f@mail.local>
+	s=arc-20240116; t=1762367869; c=relaxed/simple;
+	bh=R4bFuwzCbhJ+188XUh8XwprDMEtEHFoHtrsAsGVOyD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7mZtNYSusfwaazclgxyUD2G5vMVn91k4xSZehwisG462U283vHjkobpYuTADfPtP9WQ3G2+MBWS+vAa9ctjLp+ao88n9hs6S7I//tGHOGhIycaDvV+F+UxRFLn8YsL2tlV5rBSoFzQIzO0A1K3BbntOnuIZImv0f8t1CXNZs+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aAzbRA0Q; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762367868; x=1793903868;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=R4bFuwzCbhJ+188XUh8XwprDMEtEHFoHtrsAsGVOyD8=;
+  b=aAzbRA0Q2uDurVH9NeNnjDWBPq9wy+hAj2j9oyBFR57CX9Azc4l0nd/+
+   junL5Qvfyx7Lo6F+IUK+1v54RwKGO7v3g8/jigcZ4yIjvWx5MUT4k6YBa
+   ewtsAJJ6V2GWBRXBefeLo43Mp7KCV4RZyR0+kRXpXRRtawTvCuT5DnssU
+   7Am7+Alvpp4kyvzIZHVeHZLCsSEiixVzb828laveflyNpKjKzsQM4flWh
+   C9NNsRcKi+Rz03YcaOa94U3FwZEA15edmKvKCfR3FN0eAp4lwvo2QZMAf
+   RRYLatHymNcwIJBC0Pc8iQXN1xfiP8j2Dms6hni7BrdV4fBds0u1GY3Rf
+   A==;
+X-CSE-ConnectionGUID: 68CTlI8wQcC91tRMl51C7g==
+X-CSE-MsgGUID: HPwmgyi8SuuuXJdqBlYaqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="63697954"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="63697954"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:37:47 -0800
+X-CSE-ConnectionGUID: 0xdNeHl9RUeQBFiybfJjpg==
+X-CSE-MsgGUID: XC/DnSzmQMyT3FXIJqvJ+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
+   d="scan'208";a="191819128"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Nov 2025 10:37:46 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 5BB5296; Wed, 05 Nov 2025 19:37:45 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ira Weiny <ira.weiny@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>
+Subject: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
+Date: Wed,  5 Nov 2025 19:37:43 +0100
+Message-ID: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wjGAGSw+cWS2iRHG"
-Content-Disposition: inline
-In-Reply-To: <2025110420204948103c2f@mail.local>
+Content-Transfer-Encoding: 8bit
 
+In the snippets like the following
 
---wjGAGSw+cWS2iRHG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	if (...)
+		return / goto / break / continue ...;
+	else
+		...
 
-On Tue, Nov 04, 2025 at 09:20:49PM +0100, Alexandre Belloni wrote:
-> On 04/11/2025 17:28:27+0000, Conor Dooley wrote:
-> > On Mon, Nov 03, 2025 at 12:18:45PM +0000, Ovidiu Panait wrote:
-> > > The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-> > > (r9a08g045), with the following differences:
-> > > - It lacks the time capture functionality
-> > > - The maximum supported periodic interrupt frequency is 128Hz instead
-> > >   of 256Hz
-> > > - It requires two reset lines instead of one
-> > >=20
-> > > Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and up=
-date
-> > > the binding accordingly:
-> > > - Allow "resets" to contain one or two entries depending on the SoC.
-> > > - Add "reset-names" property, but make it required only for RZ/V2H.
-> > >=20
-> > > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> > > +        reset-names:
-> > > +          items:
-> > > +            - const: rtc
-> > > +            - const: rtc_rtest
-> >=20
-> > If you respin, just make this second one rtest.
->=20
-> I already applied it as it had your ack but I can still change it
+the 'else' is redundant. Get rid of it.
 
-It's fine.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/nvdimm/label.c | 60 ++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 31 deletions(-)
 
---wjGAGSw+cWS2iRHG
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 04f4a049599a..b129f3a55a70 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -734,13 +734,13 @@ static enum nvdimm_claim_class guid_to_nvdimm_cclass(guid_t *guid)
+ {
+ 	if (guid_equal(guid, &nvdimm_btt_guid))
+ 		return NVDIMM_CCLASS_BTT;
+-	else if (guid_equal(guid, &nvdimm_btt2_guid))
++	if (guid_equal(guid, &nvdimm_btt2_guid))
+ 		return NVDIMM_CCLASS_BTT2;
+-	else if (guid_equal(guid, &nvdimm_pfn_guid))
++	if (guid_equal(guid, &nvdimm_pfn_guid))
+ 		return NVDIMM_CCLASS_PFN;
+-	else if (guid_equal(guid, &nvdimm_dax_guid))
++	if (guid_equal(guid, &nvdimm_dax_guid))
+ 		return NVDIMM_CCLASS_DAX;
+-	else if (guid_equal(guid, &guid_null))
++	if (guid_equal(guid, &guid_null))
+ 		return NVDIMM_CCLASS_NONE;
+ 
+ 	return NVDIMM_CCLASS_UNKNOWN;
+@@ -751,13 +751,13 @@ static enum nvdimm_claim_class uuid_to_nvdimm_cclass(uuid_t *uuid)
+ {
+ 	if (uuid_equal(uuid, &nvdimm_btt_uuid))
+ 		return NVDIMM_CCLASS_BTT;
+-	else if (uuid_equal(uuid, &nvdimm_btt2_uuid))
++	if (uuid_equal(uuid, &nvdimm_btt2_uuid))
+ 		return NVDIMM_CCLASS_BTT2;
+-	else if (uuid_equal(uuid, &nvdimm_pfn_uuid))
++	if (uuid_equal(uuid, &nvdimm_pfn_uuid))
+ 		return NVDIMM_CCLASS_PFN;
+-	else if (uuid_equal(uuid, &nvdimm_dax_uuid))
++	if (uuid_equal(uuid, &nvdimm_dax_uuid))
+ 		return NVDIMM_CCLASS_DAX;
+-	else if (uuid_equal(uuid, &uuid_null))
++	if (uuid_equal(uuid, &uuid_null))
+ 		return NVDIMM_CCLASS_NONE;
+ 
+ 	return NVDIMM_CCLASS_UNKNOWN;
+@@ -768,20 +768,20 @@ static const guid_t *to_abstraction_guid(enum nvdimm_claim_class claim_class,
+ {
+ 	if (claim_class == NVDIMM_CCLASS_BTT)
+ 		return &nvdimm_btt_guid;
+-	else if (claim_class == NVDIMM_CCLASS_BTT2)
++	if (claim_class == NVDIMM_CCLASS_BTT2)
+ 		return &nvdimm_btt2_guid;
+-	else if (claim_class == NVDIMM_CCLASS_PFN)
++	if (claim_class == NVDIMM_CCLASS_PFN)
+ 		return &nvdimm_pfn_guid;
+-	else if (claim_class == NVDIMM_CCLASS_DAX)
++	if (claim_class == NVDIMM_CCLASS_DAX)
+ 		return &nvdimm_dax_guid;
+-	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
+-		/*
+-		 * If we're modifying a namespace for which we don't
+-		 * know the claim_class, don't touch the existing guid.
+-		 */
+-		return target;
+-	} else
++	if (claim_class == NVDIMM_CCLASS_NONE)
+ 		return &guid_null;
++
++	/*
++	 * If we're modifying a namespace for which we don't
++	 * know the claim_class, don't touch the existing guid.
++	 */
++	return target;
+ }
+ 
+ /* CXL labels store UUIDs instead of GUIDs for the same data */
+@@ -790,20 +790,20 @@ static const uuid_t *to_abstraction_uuid(enum nvdimm_claim_class claim_class,
+ {
+ 	if (claim_class == NVDIMM_CCLASS_BTT)
+ 		return &nvdimm_btt_uuid;
+-	else if (claim_class == NVDIMM_CCLASS_BTT2)
++	if (claim_class == NVDIMM_CCLASS_BTT2)
+ 		return &nvdimm_btt2_uuid;
+-	else if (claim_class == NVDIMM_CCLASS_PFN)
++	if (claim_class == NVDIMM_CCLASS_PFN)
+ 		return &nvdimm_pfn_uuid;
+-	else if (claim_class == NVDIMM_CCLASS_DAX)
++	if (claim_class == NVDIMM_CCLASS_DAX)
+ 		return &nvdimm_dax_uuid;
+-	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
+-		/*
+-		 * If we're modifying a namespace for which we don't
+-		 * know the claim_class, don't touch the existing uuid.
+-		 */
+-		return target;
+-	} else
++	if (claim_class == NVDIMM_CCLASS_NONE)
+ 		return &uuid_null;
++
++	/*
++	 * If we're modifying a namespace for which we don't
++	 * know the claim_class, don't touch the existing uuid.
++	 */
++	return target;
+ }
+ 
+ static void reap_victim(struct nd_mapping *nd_mapping,
+@@ -990,9 +990,7 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+ 		mutex_unlock(&nd_mapping->lock);
+ 	}
+ 
+-	if (ndd->ns_current == -1 || ndd->ns_next == -1)
+-		/* pass */;
+-	else
++	if (ndd->ns_current != -1 && ndd->ns_next != -1)
+ 		return max(num_labels, old_num_labels);
+ 
+ 	nsindex = to_namespace_index(ndd, 0);
+-- 
+2.50.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQuYiwAKCRB4tDGHoIJi
-0pV5AQCMb1whhgz4XaSwKDaQRvxE4X1649f5YLbH3+at2WuUkQD/SvrJ/V092Ypk
-DdpJUfwHoVXCJjEgMy3WdDZ5BXNHbAQ=
-=6z5D
------END PGP SIGNATURE-----
-
---wjGAGSw+cWS2iRHG--
 
