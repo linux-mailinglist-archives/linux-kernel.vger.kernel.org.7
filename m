@@ -1,699 +1,451 @@
-Return-Path: <linux-kernel+bounces-886559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C2CC35EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:56:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3621C35EEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564C44FACFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3201C18C79CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5937325496;
-	Wed,  5 Nov 2025 13:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDDC326D6E;
+	Wed,  5 Nov 2025 13:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="HFeaG6UB"
-Received: from mx-relay47-hz3.antispameurope.com (mx-relay47-hz3.antispameurope.com [94.100.134.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6RjlWu4"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3256030F801
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.236
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350910; cv=pass; b=q5vhHqFvvYB3dY7P/p9IMxNlI9DPpR1UpRYdRMcc0TeVwZ8p3ntKVlY5Y61l9U9WFV0uXQNeqIzoLBTH8ZyM7PVM1fytHwRqddvER75YJCh9ypfxCjmxJv/jWjhnlUD/aNIMPlfVUTcWrhSOC++ICvvg9qAp0lZxdpA37EAs8QQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350910; c=relaxed/simple;
-	bh=sPbTPFhkg1P4tHw5a7lZTOH+EaxQhdTi/hfhik1Xkag=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M3bEynBT8DlkmNgT58BlPUuLZ/MOUuJQ/+dUZSsPOcKmURi4MUMl4o32PxF3Mcipa7zby/7DFr+uJrtECOydvXGk3aYXMJ5ZLjQfrVRO0gSRUYY9Sa7xeae7OzRYxFNwZK1dzsEj71q4txSABnxCX3Mu8HFABAZ5Rg2T5mjObuo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=HFeaG6UB; arc=pass smtp.client-ip=94.100.134.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate47-hz3.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=yFtiMDOoeh/HekdFMijc4CHEieKebU/Qqg67yLRppnQ=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1762350886;
- b=KJWO/9u8OrwVjPUnAmd4pyZ8xonHLNnszccr27umhXZ2PytX9POvbDaPaFjeS/NfaorRrVn0
- NsyWy07PJD6c7Oot+8gALn5O+ldo7YKveHZdOwJbrue+6P38dilGmH16HNPfIosOUUBfVH2CjT8
- VrTzPmswvOEnJEUb/aVPjcB+bAm5h0Kc3P++1bk4CNLHTjCCCn/T8l8srV3hc0QV9kG0jWg5S0m
- /uTp+lM1WJNuGlfyJtUYYdIzvtyUeHtM9wnlDbSJcXRX4icj2E1EB/ypu6+9y2h68KNVw5s9/si
- nHS78J2aKmqNDNGYo32b6R3FbRmBuWQunkWv/ny6vngjw==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1762350886;
- b=c+EdcCMY8hx0mdLf7Y141TW8DqU6I0dYlZU8F2y0bGJTJggAH23d7I/gcogGw/I9feo7Idzl
- r4h0NukRSFZc5p7sVPAFxAG6AF+5GhqGQjygrHbFqqU6pALrIlhOdwjrn7gVv8ps7vcNCe7yApJ
- MmSyiZQs9JZfwH4gPovaphgwBbL16izvELPZbFl84Wi6XKFkldWPBTpysmc/JkeRPeyOUy+Rs7/
- Cf+E7x+kT+2wV8mQjpbKpWqT/tHTcdlv5B2Mw9WbYioyERQUhC0Usw2M7XXN2XIwjvztkleaRWM
- 4wmSq98cp64U7w4OIkCNQmn+mSsxr5Sju8tznDUfBs/og==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay47-hz3.antispameurope.com;
- Wed, 05 Nov 2025 14:54:46 +0100
-Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id B6DFBCC0E8A;
-	Wed,  5 Nov 2025 14:54:31 +0100 (CET)
-Message-ID: <1931ce21959846272e3adf4487597286616baba4.camel@ew.tq-group.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-*: Replace rgmii-rxid with rgmii-id
- for CPSW ports
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com, 
-	kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com, linux@ew.tq-group.com
-Date: Wed, 05 Nov 2025 14:54:31 +0100
-In-Reply-To: <20251025073802.1790437-1-s-vadapalli@ti.com>
-References: <20251025073802.1790437-1-s-vadapalli@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F33254AF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762350915; cv=none; b=imGpoZk8Ttm2i6L3aZJS5Zb11Y1ognTGo2IT5Pry8JfgL2u5IrYgiSbGDP4podgl18GpxJYsr3UmKMLlhNhoNovLH5TPaiM9mL5/ZGqGoLYh952YC/OSaeGOowlujlSr9MSJXgsO8YFlllqJjUyJj+J4jXvVn1Mk9GoQu277wuc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762350915; c=relaxed/simple;
+	bh=xOAkdwx5XMPuZBweonSMuobYigRFLMCprX2fUOYbHWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6U0chfzxEdFa1yUH27og1tR/k7Simc5aj8zDBLJWpizvB0mQ1GEjsGlrnyj1nbchSJT1RCqOm2XNS1Q7EAhZWEwfsVuoePEGlncCJnm5FdOm/WV7xlcPzeEJFDZIO2O6mQ8X8CSeJTeqgZinmSXH0OrLCrbo7OEdlW28Zu1oXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6RjlWu4; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477563bcbbcso9685815e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:55:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762350910; x=1762955710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
+        b=H6RjlWu4V15Cmhb4HdlaEGyPLHGQ+7c5808dkeB6fdPy3MK8TGCXen8JcxEN1fqj9f
+         r9MxqMHHRhYlrjzA1ixVoJZBuNhR82vkVN7VR6LtOwQh7U71ud7uAQVqnydFOyN9g7eO
+         6tRID8nXP5V1qZI8GF6rdVwwQReu3vDwUDN2HmA/oxBTAxVa/7PREWALRjj6M2U1qS2u
+         wfwK62JQA/MKAHhyFMJFNrlk+TcHGrgWeH/Q9ZOvxpcgFawijw3abb13cDktbH8r0QhR
+         ruvm2a0hO1lDftSbJ/wHPl7BDOm0HCHrvi6GzHn6HoXuqX+I36rJOhjQSz3jKiEZRJwV
+         +tbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762350910; x=1762955710;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
+        b=H48/h0p8scbVjJpfx0VeXz+iDHmaBnK+TFexmz5FENHy1sYiMkHB7PxG6b2EfrVL5V
+         S5t3TeOT2xn4W77P9XLEF6rZ/sV7Bg97ND0JkCVi/1N5cMky8j+5NExNWc5D9vxK/BxH
+         AYQ0Vv+rYt10fMzT0klK+qrObp7IUen2HatFEE+KUrdZ04Adadi3rtH8uts/nodAOWof
+         gBoyOEazRjLkG1iAw6iqZKEalXp5YqWXS3D4wNd8599wvczrjDE1EwBG1Uy5icN4ownr
+         kDpBX3UPM4ftbGc/+Y6R81wdYreCm7iQ302YwcjVXdkBFWuE0HSg5tatI7E79h4w554x
+         YNew==
+X-Forwarded-Encrypted: i=1; AJvYcCWBiaRBYOq5DHkz4Rh+WFs5I2BrfOqP18zzPsVN7kzAE9YkAJ2ZmzuxolxdqmsaPWB56B3W+lhR50hZOJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWIKqDDZvt9KbJ81+PK7KlyghVHSExHfuPO3aNrfhgVebRWerV
+	COXdQ/8aYpFfgHtF1ARJYshGjTLn+A2z2JYfZRrINIf7O3xsnt9lOa9r
+X-Gm-Gg: ASbGnctLo0PN1TWZ05clOSv8seZZ5zGG/zauFjPsm006Ax8N90QSgKqNMe2phoDoVof
+	+PVKzwsuC5MhE3pJ3CI8scoQiPM4CJLqIfmwfQJdCsJICxvV5WBmDjE6yIKdXAHJeogRgcAwNSh
+	up3gg/wD0hB8ZZWQc8QbwSInOL1Fq4hZbYFVJGRBcbAae3iYtvCG18tl5BC+ukrcABeD5weLi0M
+	hLdS4ubSr7NZ75GmIYvHmJvCaIpFF49F3/aC42+0asFuR+baGZpRE+Jp+4nZQgWdOm6HzfrQ3jV
+	qYG1efdXUMItGJzuygx686K++dRYykbwQ1M+quDbA294AfTegopYam1JpPG97U8Lt3zQSiwKgI7
+	ieklN1yR8pbyup9n2mWuTcNA1K0fcG5jVdReQQwlDOUEWU7w5P6+h5OZbg8Nkko03oIxVOfUZH0
+	PE5gMGBOI9FqgfEpnfRcosjKL1Yn+wm0EOTvLp9fj9vP7XOgYl
+X-Google-Smtp-Source: AGHT+IFbrMOkwHlj7tzUq3CNHRE0pCkUygQWliDIrQ/V6eJXbLgxVBRh+H6LBamQYBVrY23ibi9f2w==
+X-Received: by 2002:a05:600c:3ba0:b0:475:e007:baf1 with SMTP id 5b1f17b1804b1-4775ce207a3mr42747085e9.34.1762350910176;
+        Wed, 05 Nov 2025 05:55:10 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc193e27sm10797646f8f.18.2025.11.05.05.55.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 05:55:09 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	tytso@mit.edu,
+	torvalds@linux-foundation.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [WIP PATCH] fs: speed up path lookup with cheaper MAY_EXEC checks
+Date: Wed,  5 Nov 2025 14:55:05 +0100
+Message-ID: <20251105135505.751454-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay47-hz3.antispameurope.com with 4d1myw2qmLz4MJLx
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:9adfe7759d99a9eb5707402ae1888998
-X-cloud-security:scantime:2.572
-DKIM-Signature: a=rsa-sha256;
- bh=yFtiMDOoeh/HekdFMijc4CHEieKebU/Qqg67yLRppnQ=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1762350885; v=1;
- b=HFeaG6UBIP7i6DDUV/GkygG0e5YYdJlq4dG68MnI0MmUVY2s/dl/wo7sZQG7W1tflcfybKkq
- XizOeSFpcUxpFpvLmthA/4IDempEJhJDCfd9rh1i72DUFBGaa01LFSIPO5+MaDP7SysKAKSJItd
- Pe9GLQx9j3s2tMYltWyv2S9uBBSfjA+xCJn/PuSEcRztx3x9Vzlv6AuK7czYakWRBWrIir3nb2C
- FbzHVf3hA15JE++4k+8pWYq0+yZXVB6WeGTH0HPZa/imBtFlDNB69gmfaMJtwRxDXZC9Es802t1
- AaeijFYp49gyzgQSNmBTPAEyMYwD8rDqNOhCtnBmYYwnQ==
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-10-25 at 13:07 +0530, Siddharth Vadapalli wrote:
-> The MAC Ports across all of the CPSW instances (CPSW2G, CPSW3G, CPSW5G an=
-d
-> CPSW9G) present in various K3 SoCs only support the 'RGMII-ID' mode. This
-> correction has been implemented/enforced by the updates to:
-> a) Device-Tree binding for CPSW [0]
-> b) Driver for CPSW [1]
-> c) Driver for CPSW MAC Port's GMII [2]
->=20
-> To complete the transition from 'RGMII-RXID' to 'RGMII-ID', update the
-> 'phy-mode' property for all CPSW ports by replacing 'rgmii-rxid' with
-> 'rgmii-id'.
->=20
-> [0]: commit 9b357ea52523 ("dt-bindings: net: ti: k3-am654-cpsw-nuss: upda=
-te phy-mode in example")
-> [1]: commit ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode f=
-or fixed RGMII TX delay")
-> [2]: commit a22d3b0d49d4 ("phy: ti: gmii-sel: Always write the RGMII ID s=
-etting")
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
->=20
-> Hello,
->=20
-> This patch is based on linux-next tagged next-20251024.
->=20
-> Regards,
-> Siddharth.
+WARNING:
+This is not a real submission yet, will need to do more testing for
+correctness.
 
-Tested-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com> # k3-am642=
--tqma64xxl-mbax4xxl
+Also I slapped ext4 support into this patch as opposed to posting it
+separately. The no_acl caching was written by Linus, also see the
+necroed thread here:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
+and full thread:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
 
+Not pointing fingers, but someone promised to get that bit in. ;)
 
->=20
->  arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi          | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi               | 2 +-
->  arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi           | 3 +--
->  arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi         | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts                  | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi          | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi          | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi              | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                  | 4 ++--
->  arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi       | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi          | 2 +-
->  arch/arm64/boot/dts/ti/k3-am642-evm.dts                  | 4 ++--
->  arch/arm64/boot/dts/ti/k3-am642-sk.dts                   | 4 ++--
->  arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts   | 2 +-
->  arch/arm64/boot/dts/ti/k3-am654-base-board.dts           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts           | 2 +-
->  arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts         | 2 +-
->  arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi          | 2 +-
->  arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts         | 2 +-
->  arch/arm64/boot/dts/ti/k3-am69-sk.dts                    | 2 +-
->  arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts    | 2 +-
->  arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts       | 2 +-
->  arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts    | 2 +-
->  arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso  | 8 ++++----
->  arch/arm64/boot/dts/ti/k3-j721e-sk.dts                   | 2 +-
->  arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts   | 2 +-
->  arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso | 2 +-
->  arch/arm64/boot/dts/ti/k3-j722s-evm.dts                  | 2 +-
->  arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi  | 4 ++--
->  33 files changed, 40 insertions(+), 41 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am62-phycore-som.dtsi
-> index eeca643fedbe..985963774c00 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-> @@ -214,7 +214,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  	bootph-all;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi b/arch/arm64/=
-boot/dts/ti/k3-am62-verdin-dev.dtsi
-> index 5c1284b802ad..3d1406acf680 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-dev.dtsi
-> @@ -74,7 +74,7 @@ &cpsw_port1 {
->  /* Verdin ETH_2_RGMII */
->  &cpsw_port2 {
->  	phy-handle =3D <&cpsw3g_phy1>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "okay";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi b/arch/arm64/=
-boot/dts/ti/k3-am62-verdin-ivy.dtsi
-> index 71c29eab0eee..844f59f772e1 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
-> @@ -268,7 +268,7 @@ &cpsw_port1 {
->  /* Verdin ETH_2_RGMII */
->  &cpsw_port2 {
->  	phy-handle =3D <&cpsw3g_phy1>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "okay";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot=
-/dts/ti/k3-am62-verdin.dtsi
-> index dc4b228a9fd7..2a7242a2fef8 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> @@ -845,7 +845,7 @@ &cpsw3g {
->  /* Verdin ETH_1 (On-module PHY) */
->  &cpsw_port1 {
->  	phy-handle =3D <&cpsw3g_phy0>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "disabled";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/=
-boot/dts/ti/k3-am625-beagleplay.dts
-> index 7028d9835c4a..7b9ae467e95a 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-> @@ -593,7 +593,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi b/arch/arm64/=
-boot/dts/ti/k3-am625-sk-common.dtsi
-> index fe0b98e1d105..7eb9066bff82 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-> @@ -215,8 +215,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port2 {
-> -	/* PCB provides an internal delay of 2ns */
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi b/arch/arm6=
-4/boot/dts/ti/k3-am62a-phycore-som.dtsi
-> index b3d012a5a26a..b24a63feeab8 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
-> @@ -192,7 +192,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  	bootph-all;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dt=
-s/ti/k3-am62a7-sk.dts
-> index af591fe6ae4f..de850307912c 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> @@ -731,7 +731,7 @@ &phy_gmii_sel {
-> =20
->  &cpsw_port1 {
->  	status =3D "okay";
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	bootph-all;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-> index 0679d76f31bd..a0d5b15fc147 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin-dev.dtsi
-> @@ -78,7 +78,7 @@ &cpsw_port1 {
->  /* Verdin ETH_2_RGMII */
->  &cpsw_port2 {
->  	phy-handle =3D <&carrier_eth_phy>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "okay";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-> index 317c8818f9ee..04f13edcb166 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin-ivy.dtsi
-> @@ -275,7 +275,7 @@ &cpsw_port1 {
->  /* Verdin ETH_2_RGMII */
->  &cpsw_port2 {
->  	phy-handle =3D <&carrier_eth_phy>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "okay";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boo=
-t/dts/ti/k3-am62p-verdin.dtsi
-> index 99810047614e..5e050cbb9eaf 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-> @@ -813,7 +813,7 @@ som_eth_phy: ethernet-phy@0 {
->  /* Verdin ETH_1 (On-module PHY) */
->  &cpsw_port1 {
->  	phy-handle =3D <&som_eth_phy>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "disabled";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dt=
-s/ti/k3-am62p5-sk.dts
-> index a064a632680e..f04cf2d23d84 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> @@ -541,14 +541,14 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  	bootph-all;
->  };
-> =20
->  &cpsw_port2 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi b/arch/ar=
-m64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> index aab74d6019b0..d6e70ee15938 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> @@ -291,7 +291,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port2 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy3>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/=
-boot/dts/ti/k3-am62x-sk-common.dtsi
-> index 58f78c0de292..50ed859ae06c 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> @@ -438,7 +438,7 @@ &cpsw3g {
-> =20
->  &cpsw_port1 {
->  	bootph-all;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am64-phycore-som.dtsi
-> index 02ef1dd92eaa..d64fb81b04e2 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-> @@ -178,7 +178,7 @@ cpsw3g_phy1: ethernet-phy@1 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  	bootph-all;
->  	status =3D "okay";
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dt=
-s/ti/k3-am642-evm.dts
-> index 85dcff104936..80c52e06b4ce 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-> @@ -579,13 +579,13 @@ &cpsw3g {
-> =20
->  &cpsw_port1 {
->  	bootph-all;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  };
-> =20
->  &cpsw_port2 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy3>;
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts=
-/ti/k3-am642-sk.dts
-> index 1fb1b91a1bad..34bfa99bd4b8 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-> @@ -499,13 +499,13 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  };
-> =20
->  &cpsw_port2 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy1>;
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arc=
-h/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> index 8f64d6272b1b..e5f2f20fdb11 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> @@ -185,7 +185,7 @@ &cpsw3g {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/=
-boot/dts/ti/k3-am654-base-board.dts
-> index 0c42c486d83a..961287b6a3ed 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> @@ -586,7 +586,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/=
-boot/dts/ti/k3-am67a-beagley-ai.dts
-> index b697035df04e..5255e04b9ac7 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
-> @@ -249,7 +249,7 @@ cpsw3g_phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts b/arch/arm6=
-4/boot/dts/ti/k3-am68-phyboard-izar.dts
-> index 41c8f8526e15..edc9f9b12f0e 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dts
-> @@ -281,7 +281,7 @@ J721S2_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (D27) WKUP=
-_UART0_TXD */
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi b/arch/arm64=
-/boot/dts/ti/k3-am68-phycore-som.dtsi
-> index adef02bd8040..911007778bc6 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am68-phycore-som.dtsi
-> @@ -175,7 +175,7 @@ phy1: ethernet-phy@0 {
-> =20
->  &main_cpsw_port1 {
->  	phy-handle =3D <&phy1>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	status =3D "okay";
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm6=
-4/boot/dts/ti/k3-am68-sk-base-board.dts
-> index 75a107456ce1..b8400cba832b 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> @@ -705,7 +705,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  	bootph-all;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/=
-ti/k3-am69-sk.dts
-> index 5896e57b5b9e..3a870b9b984d 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-> @@ -771,7 +771,7 @@ mcu_phy0: ethernet-phy@0 {
-> =20
->  &mcu_cpsw_port1 {
->  	status =3D "okay";
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&mcu_phy0>;
->  	bootph-all;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch=
-/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> index f684ce6ad9ad..4608828512d1 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> @@ -334,7 +334,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts b/arch/ar=
-m64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-> index 352fb60e6ce8..2e9455ab0bfa 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-> @@ -677,7 +677,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch=
-/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-> index 45311438315f..317cd0bfa406 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-> @@ -780,7 +780,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso b/ar=
-ch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-> index f84aa9f94547..3bfe6036a8e6 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-> +++ b/arch/arm64/boot/dts/ti/k3-j721e-evm-gesi-exp-board.dtso
-> @@ -37,7 +37,7 @@ &rgmii3_default_pins
->  &cpsw0_port1 {
->  	status =3D "okay";
->  	phy-handle =3D <&cpsw9g_phy12>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	mac-address =3D [00 00 00 00 00 00];
->  	phys =3D <&cpsw0_phy_gmii_sel 1>;
->  };
-> @@ -45,7 +45,7 @@ &cpsw0_port1 {
->  &cpsw0_port2 {
->  	status =3D "okay";
->  	phy-handle =3D <&cpsw9g_phy15>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	mac-address =3D [00 00 00 00 00 00];
->  	phys =3D <&cpsw0_phy_gmii_sel 2>;
->  };
-> @@ -53,7 +53,7 @@ &cpsw0_port2 {
->  &cpsw0_port3 {
->  	status =3D "okay";
->  	phy-handle =3D <&cpsw9g_phy0>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	mac-address =3D [00 00 00 00 00 00];
->  	phys =3D <&cpsw0_phy_gmii_sel 3>;
->  };
-> @@ -61,7 +61,7 @@ &cpsw0_port3 {
->  &cpsw0_port4 {
->  	status =3D "okay";
->  	phy-handle =3D <&cpsw9g_phy3>;
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	mac-address =3D [00 00 00 00 00 00];
->  	phys =3D <&cpsw0_phy_gmii_sel 4>;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts=
-/ti/k3-j721e-sk.dts
-> index 5e5784ef6f85..febbac9262de 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-> @@ -1045,7 +1045,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts b/arc=
-h/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> index 9e43dcff8ef2..24f57f02588f 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> @@ -469,7 +469,7 @@ phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&phy0>;
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso b/a=
-rch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-> index 8583178fa1f3..6869a95c6214 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-> @@ -80,6 +80,6 @@ main_cpsw_phy0: ethernet-phy@0 {
-> =20
->  &main_cpsw_port1 {
->  	status =3D "okay";
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&main_cpsw_phy0>;
->  };
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dt=
-s/ti/k3-j722s-evm.dts
-> index e0e303da7e15..5e7767e45130 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> @@ -388,7 +388,7 @@ cpsw3g_phy0: ethernet-phy@0 {
->  };
-> =20
->  &cpsw_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&cpsw3g_phy0>;
->  	status =3D "okay";
->  	bootph-all;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/ar=
-ch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-> index 419c1a70e028..4221f172779b 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-> @@ -920,7 +920,7 @@ mcu_phy0: ethernet-phy@0 {
-> =20
->  &mcu_cpsw_port1 {
->  	status =3D "okay";
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&mcu_phy0>;
->  };
-> =20
-> @@ -944,7 +944,7 @@ main_cpsw1_phy0: ethernet-phy@0 {
->  };
-> =20
->  &main_cpsw1_port1 {
-> -	phy-mode =3D "rgmii-rxid";
-> +	phy-mode =3D "rgmii-id";
->  	phy-handle =3D <&main_cpsw1_phy0>;
->  	status =3D "okay";
->  };
+Now to business:
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Vast majority of real-world traversals happen on directories which are
+traversable by anyone. The patch below adds support for pre-computing
+that state and branching on it during lookup, avoiding tons of work.
+
+Stats from calls to security_inode_permission during kernel build:
+missing: 6097127
+present: 60579018
+
+Or just above 90% of all lookups on my debian install benefited from it.
+
+A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
+on Sapphire Rapids (ops/s):
+before: 3640352
+after:	3797258 (+4%)
+
+Note the speed up would be higher if it was not for stat itself being
+dog slow (to be addressed separately).
+
+Filesystems interested in participating call
+inode_enable_fast_may_exec() when instatianating an inode.
+
+Explicit opt-in is necessary as some filesystems have custom inode
+permission check hooks which happen to be of no significance for
+MAY_EXEC. With an opt-in we now it can be safely ignored. Otherwise any
+inode with such a func present would need to be excluded.
+
+---
+ fs/attr.c          |   1 +
+ fs/ext4/inode.c    |   6 +++
+ fs/ext4/namei.c    |   1 +
+ fs/file_table.c    |  12 +++++
+ fs/namei.c         | 106 +++++++++++++++++++++++++++++++++++++++++++--
+ fs/posix_acl.c     |   1 +
+ fs/xattr.c         |   1 +
+ include/linux/fs.h |  20 ++++++---
+ mm/shmem.c         |   2 +
+ 9 files changed, 141 insertions(+), 9 deletions(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index 795f231d00e8..572363ff9c6d 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -549,6 +549,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 
+ 	if (!error) {
+ 		fsnotify_change(dentry, ia_valid);
++		inode_recalc_fast_may_exec(inode);
+ 		security_inode_post_setattr(idmap, dentry, ia_valid);
+ 	}
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index a163c0871373..ce2bfe3167e7 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5519,6 +5519,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		goto bad_inode;
+ 	brelse(iloc.bh);
+ 
++	/* Initialize the "no ACL's" state for the simple cases */
++	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_acl)
++		cache_no_acl(inode);
++
++	inode_enable_fast_may_exec(inode);
++
+ 	unlock_new_inode(inode);
+ 	return inode;
+ 
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 2cd36f59c9e3..bedd9bfca440 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3042,6 +3042,7 @@ static struct dentry *ext4_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	ext4_fc_track_create(handle, dentry);
+ 	if (IS_DIRSYNC(dir))
+ 		ext4_handle_sync(handle);
++	inode_enable_fast_may_exec(inode);
+ 
+ out_stop:
+ 	if (handle)
+diff --git a/fs/file_table.c b/fs/file_table.c
+index cd4a3db4659a..de1ef700d144 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -109,6 +109,8 @@ static int proc_nr_files(const struct ctl_table *table, int write, void *buffer,
+ 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+ }
+ 
++unsigned long magic_tunable;
++
+ static const struct ctl_table fs_stat_sysctls[] = {
+ 	{
+ 		.procname	= "file-nr",
+@@ -126,6 +128,16 @@ static const struct ctl_table fs_stat_sysctls[] = {
+ 		.extra1		= SYSCTL_LONG_ZERO,
+ 		.extra2		= SYSCTL_LONG_MAX,
+ 	},
++	{
++		.procname	= "magic_tunable",
++		.data		= &magic_tunable,
++		.maxlen		= sizeof(magic_tunable),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++		.extra1		= SYSCTL_LONG_ZERO,
++		.extra2		= SYSCTL_LONG_MAX,
++	},
++
+ 	{
+ 		.procname	= "nr_open",
+ 		.data		= &sysctl_nr_open,
+diff --git a/fs/namei.c b/fs/namei.c
+index 39c4d52f5b54..ac7252c0a428 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -123,6 +123,9 @@
+  * PATH_MAX includes the nul terminator --RR.
+  */
+ 
++static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
++		     struct inode *inode, int mask);
++
+ #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+ 
+ static inline void initname(struct filename *name, const char __user *uptr)
+@@ -574,7 +577,7 @@ int inode_permission(struct mnt_idmap *idmap,
+ 	if (unlikely(retval))
+ 		return retval;
+ 
+-	if (unlikely(mask & MAY_WRITE)) {
++	if (mask & MAY_WRITE) {
+ 		/*
+ 		 * Nobody gets write access to an immutable file.
+ 		 */
+@@ -601,6 +604,103 @@ int inode_permission(struct mnt_idmap *idmap,
+ 	return security_inode_permission(inode, mask);
+ }
+ EXPORT_SYMBOL(inode_permission);
++extern unsigned long magic_tunable;
++
++/**
++ * inode_permission_may_exec - Check traversal right for given inode
++ *
++ * This is a special case routine for may_lookup(). Use inode_permission()
++ * instead even if MAY_EXEC is the only thing you want to check for.
++ */
++static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
++	struct inode *inode, int mask)
++{
++	mask |= MAY_EXEC;
++
++#if 1
++	if (!magic_tunable || !(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
++		return inode_permission(idmap, inode, mask);
++#else
++	if (!(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
++		return inode_permission(idmap, inode, mask);
++#endif
++
++#ifdef CONFIG_DEBUG_VFS
++	/*
++	 * We expect everyone has the execute permission and that there are no
++	 * acls. We assert the filesystem at hand complies by validating it
++	 * below.
++	 *
++	 * However, We may be racing against setattr and/or setacl, in which case
++	 * we will have to redo the check with the appropriate lock held to avoid
++	 * false-positives.
++	 */
++	unsigned int mode = READ_ONCE(inode->i_mode);
++
++	VFS_BUG_ON_INODE(!S_ISDIR(mode), inode);
++	if (((mode & 0111) != 0111) || !no_acl_inode(inode)) {
++		/*
++		 * If we are in RCU mode may_lookup() will unlazy and try again.
++		 * Worst case if we are still racing the lock will be taken below.
++		 */
++		if (mask & MAY_NOT_BLOCK)
++			return -ECHILD;
++		inode_lock(inode);
++		if (inode->i_opflags & IOP_FAST_MAY_EXEC) {
++			VFS_BUG_ON_INODE((inode->i_mode & 0111) != 0111, inode);
++			VFS_BUG_ON_INODE(!no_acl_inode(inode), inode);
++		}
++		inode_unlock(inode);
++		return inode_permission(idmap, inode, mask);
++	}
++#endif
++	return security_inode_permission(inode, mask);
++}
++
++/**
++ * inode_recalc_fast_may_exec - recalc IOP_FAST_MAY_EXEC
++ * @inode: Inode to set/unset the bit on
++ *
++ * To be called if the fs considers the inode eligible for short-circuited
++ * permission checks.
++ */
++void inode_recalc_fast_may_exec(struct inode *inode)
++{
++	unsigned int mode;
++	bool wantbit = false;
++
++	if (!(inode_state_read(inode) & I_NEW))
++		lockdep_assert_held_write(inode->i_rwsem);
++
++	if (!(inode->i_flags & S_CAN_FAST_EXEC)) {
++		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
++		return;
++	}
++
++	mode = inode->i_mode;
++	if (!S_ISDIR(mode)) {
++		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
++		return;
++	}
++
++	if (((mode & 0111) == 0111) && no_acl_inode(inode))
++		wantbit = true;
++
++	if (wantbit) {
++		if (inode->i_opflags & IOP_FAST_MAY_EXEC)
++			return;
++		spin_lock(&inode->i_lock);
++		inode->i_opflags |= IOP_FAST_MAY_EXEC;
++		spin_unlock(&inode->i_lock);
++	} else {
++		if (!(inode->i_opflags & IOP_FAST_MAY_EXEC))
++			return;
++		spin_lock(&inode->i_lock);
++		inode->i_opflags &= ~IOP_FAST_MAY_EXEC;
++		spin_unlock(&inode->i_lock);
++	}
++}
++EXPORT_SYMBOL(inode_recalc_fast_may_exec);
+ 
+ /**
+  * path_get - get a reference to a path
+@@ -1855,7 +1955,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
+ 	int err, mask;
+ 
+ 	mask = nd->flags & LOOKUP_RCU ? MAY_NOT_BLOCK : 0;
+-	err = inode_permission(idmap, nd->inode, mask | MAY_EXEC);
++	err = inode_permission_may_exec(idmap, nd->inode, mask);
+ 	if (likely(!err))
+ 		return 0;
+ 
+@@ -1870,7 +1970,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
+ 	if (err != -ECHILD)	// hard error
+ 		return err;
+ 
+-	return inode_permission(idmap, nd->inode, MAY_EXEC);
++	return inode_permission_may_exec(idmap, nd->inode, 0);
+ }
+ 
+ static int reserve_stack(struct nameidata *nd, struct path *link)
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 4050942ab52f..da27dd536058 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -1135,6 +1135,7 @@ int vfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		error = -EIO;
+ 	if (!error) {
+ 		fsnotify_xattr(dentry);
++		inode_recalc_fast_may_exec(inode);
+ 		security_inode_post_set_acl(dentry, acl_name, kacl);
+ 	}
+ 
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 8851a5ef34f5..917946a7f367 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -235,6 +235,7 @@ int __vfs_setxattr_noperm(struct mnt_idmap *idmap,
+ 				       size, flags);
+ 		if (!error) {
+ 			fsnotify_xattr(dentry);
++			inode_recalc_fast_may_exec(inode);
+ 			security_inode_post_setxattr(dentry, name, value,
+ 						     size, flags);
+ 		}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a8ffab9d4a64..41c855ef0594 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -659,13 +659,14 @@ is_uncached_acl(struct posix_acl *acl)
+ 	return (long)acl & 1;
+ }
+ 
+-#define IOP_FASTPERM	0x0001
+-#define IOP_LOOKUP	0x0002
+-#define IOP_NOFOLLOW	0x0004
+-#define IOP_XATTR	0x0008
++#define IOP_FASTPERM		0x0001
++#define IOP_LOOKUP		0x0002
++#define IOP_NOFOLLOW		0x0004
++#define IOP_XATTR		0x0008
+ #define IOP_DEFAULT_READLINK	0x0010
+-#define IOP_MGTIME	0x0020
+-#define IOP_CACHED_LINK	0x0040
++#define IOP_MGTIME		0x0020
++#define IOP_CACHED_LINK		0x0040
++#define IOP_FAST_MAY_EXEC	0x0080
+ 
+ /*
+  * Inode state bits.  Protected by inode->i_lock
+@@ -2607,6 +2608,7 @@ struct super_operations {
+ #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
+ #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
+ #define S_ANON_INODE	(1 << 19) /* Inode is an anonymous inode */
++#define S_CAN_FAST_EXEC	(1 << 20) /* Inode is eligible for IOP_FAST_MAY_EXEC */
+ 
+ /*
+  * Note that nosuid etc flags are inode-specific: setting some file-system
+@@ -3395,6 +3397,12 @@ static inline int inode_init_always(struct super_block *sb, struct inode *inode)
+ {
+ 	return inode_init_always_gfp(sb, inode, GFP_NOFS);
+ }
++void inode_recalc_fast_may_exec(struct inode *);
++static inline void inode_enable_fast_may_exec(struct inode *inode)
++{
++	inode->i_flags |= S_CAN_FAST_EXEC;
++	inode_recalc_fast_may_exec(inode);
++}
+ 
+ extern void inode_init_once(struct inode *);
+ extern void address_space_init_once(struct address_space *mapping);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index c819cecf1ed9..15d769882371 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3105,6 +3105,8 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+ 		break;
+ 	}
+ 
++	inode_recalc_fast_may_exec(inode);
++
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	return inode;
+ }
+-- 
+2.48.1
+
 
