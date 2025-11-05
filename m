@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-886589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F91CC36061
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:21:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D66C36067
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9EC1A21845
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD04462388
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2689E3195E8;
-	Wed,  5 Nov 2025 14:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966CE315D3F;
+	Wed,  5 Nov 2025 14:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="alEaJXtS";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mPgO2B92"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMVDDg6Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10B0313E14
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3721CFF6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352459; cv=none; b=ZTJA3imR/UizCasrKEbBn0xZCPCrPDMkhIlvHvgF/s0gKj8N50nNQBxzj0A7kCxcoZf+M696F+dI+1QsIo+YB6X/NcDkYPuocVXxHxdumBN+ZMYhdONUSrTg7IqCwluf5d8Vs8ExKFj4xMCFMfPP0gOqJVzRxsmCTBiLrBDsHHo=
+	t=1762352484; cv=none; b=pRH3usBrZwm7iKBpnj7MIzemRkVNqgNGckEoUF4WgUVYlGTdwNv+p834BVcEsL+EP+W9xhoFNPdk5MT8vAm3aNVIdqsVIZy9I4U4XeTBznoVwu0Jsq08BUFAWcvDv2jLBn96yE0B/4XgXGyPrNtdfE56Mc0au2Yt4m1NTKagGhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352459; c=relaxed/simple;
-	bh=nu4doHrXZq6HHEdqAu78Ax8NqoZY5xgxh+gqivufsTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rR6Pkf6ZBpsyYJjYuExbMSXcMWwlGFjD6Qyvxfah029S4ZjjdiVq30E9RmXLevV4Ukox7S/6BOnIQbX7orLP71QHQrMxZU09lp2Gj87sd2DhKzT+ZWKXo1G3y3GkGBCjL3za7T2MYgnbYn6MnPu/t5qccy0uNjnzc3K7GbdO7gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=alEaJXtS; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mPgO2B92; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762352456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G2VtDGz1DOqvvFYKW79um0LglA9g/B0whzTAe9JWcYQ=;
-	b=alEaJXtS//QnOtIayKntPbmqo9nkuUK4SWosxQjo5v7KP+LD7CwpVxCZvlOqv2X/K9OyNh
-	Yl7X+llYECvVLVoZGpd3dZwXOqsCEG0D/dSrN9ZXP7BWjldtI895fPUxKc33heG4CmmqVQ
-	1dGiJf30NVTM4B4R4Gj3UBpSDkLy1sE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-XyfvPwTuPvSmMmkxlmu5ig-1; Wed, 05 Nov 2025 09:20:55 -0500
-X-MC-Unique: XyfvPwTuPvSmMmkxlmu5ig-1
-X-Mimecast-MFC-AGG-ID: XyfvPwTuPvSmMmkxlmu5ig_1762352454
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471201dc0e9so65386625e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762352454; x=1762957254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G2VtDGz1DOqvvFYKW79um0LglA9g/B0whzTAe9JWcYQ=;
-        b=mPgO2B92PDF3lGPa8LyEyyaVsD+fIfj/ambGFrS5+OiomVH0r6DnpLautu/XMNsS6P
-         NamliZgSdh/2iNrBtpHuFxKhvXF/tK4+vhP3WaPReCOLZ2etDYJTg8fNhykWWSZyvuLG
-         j0TkCcLAYvQyhUSS5/Pqa2qeOe01ObSLwhOrmXXDtDtBpvZSFB0ifF2LX0QANiL6WpwM
-         O+3gkmZafh+uWAsIwl5BwkYvuZs1HSmvtq4MU3tE7lrRsruQ3bytxSP7npPB2JBWWS+8
-         28eic8gYh1NWOLkfErKUL2QI1AzYr3/cT9mVXecmZpxEJCVfc55rZh96+Zwajq0CuILv
-         yIZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762352454; x=1762957254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G2VtDGz1DOqvvFYKW79um0LglA9g/B0whzTAe9JWcYQ=;
-        b=f/REs2KPNnVeFnT0SpEJsUBs2ABAbjYqgtiqs8hC5/AGT/UFhIfU1tBs4iq9WNLE8L
-         jN9k7DpiuhOhxU7DyfP5DTMnt+gT5NWuVXC/+CUOmjfwEn6n9BHAQUfRtBAZwBylvpOT
-         6jQkmuKd+EdRwYLKE3RIihQO9rlnn+HZi0uBercCNGlyRAdm9GqUXU7alXZ8kS7tuz6u
-         y067ta+Q9s8lAo+h+ZbJopq4SwXIylXEjl8Z7a9R1IVAHk+XQObbe3t0cq3P0zns5eAX
-         cjjtl2u+qFpyb938lS+4wkOwJVp/cSzJSc/vdf6Eb+5zTtCGc7etcXIWovZdGBGnK0fa
-         YZUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOlihx19jIjBbmIhQtCSS3HqzSvDD3BqLlwEz+YtD6UyqcxGn0wFyJ/Jf+ld+GM7p+TxtPDB3DCMWEAnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx39I5gwwRHd7W7jY26yqHOTNWusz5FE75slCBBc5jQfzyDlAFt
-	ObJxqVGOYkpFt21OHYtYh5fvN5JL67RPMk2sAcvJJT8Y2FlG0HmxyO4P4BjPV8lQq++/NF3QPfQ
-	UlmpgOFqz3zD9FayZhZ6aHb3I1BsMGACSnrX4UdmWkM4KVQc1CjbGjQi5VMhsihELqg==
-X-Gm-Gg: ASbGncuqy8aDuc/VXtdqV5reC7AYH3Z1aSU9cDGJOzODMXCpet3eOexlu0e0kNB5B/x
-	is473Wq06l05p2vhptBbOfj1J7zgmUBu1E44Fyi0xTGNzdULL8vvwchO6eLxy0cAcHc4tYXbGmi
-	E4b9xJJBvQw8hYq0IwOjDe4ki/6n8UCK6sDwY5NTvfACqD2PyG2kk/Vj0fRS43G16yzBAvr2cZ0
-	RieQCA4/9jh/xCe6U1zrLbfQb7d6kVsFHGBoImorHyA/o0arbJGvlN3UOHz+nCYVUeUlAcNQqQR
-	HEOrssYQLdFFJz15ou9LgMsJWZ5J34ERQ6K7orC97WXXosfvifwZREYUyDTgNPITUxFNwh81MY4
-	oSLmpqUVzo+r2QA+B7jsNEfGppkel3g==
-X-Received: by 2002:a05:600d:8312:b0:475:de55:9304 with SMTP id 5b1f17b1804b1-4775ce9bc9amr22409285e9.19.1762352454093;
-        Wed, 05 Nov 2025 06:20:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGD225S8D0eAzSRqCZNY8jiiXPUZkIB3X3AaRb7e9hIqiHytYJtBJefyIehRQDx2ycUxkcH5w==
-X-Received: by 2002:a05:600d:8312:b0:475:de55:9304 with SMTP id 5b1f17b1804b1-4775ce9bc9amr22408905e9.19.1762352453617;
-        Wed, 05 Nov 2025 06:20:53 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.129.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc192a96sm11270694f8f.13.2025.11.05.06.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:20:53 -0800 (PST)
-Date: Wed, 5 Nov 2025 15:20:50 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	John Stultz <jstultz@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHSET v10 sched_ext/for-6.19] Add a deadline server for
- sched_ext tasks
-Message-ID: <aQtdQnLxnh7z7a0w@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251029191111.167537-1-arighi@nvidia.com>
- <aQtVe9LKuQ_W3qwY@gpd4>
- <20251105135911.GQ4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1762352484; c=relaxed/simple;
+	bh=KDZATPE9X1vCi/Nk0hVLycBqSpHsTQBD3TNCN9EBGvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDP75lVYfkx9YVvN43YC7ukUn7B/5XIrqC2GmG9yQWmWfwvKCj/rlXTFCeZm09vf/KY5OYJtIVyhH1gKWY/c/rLUim4j2avJaLocCaPDL7ykj1uxtvPzFDfU0uxpqY84RlGfZrUGh2+vuBkLLp1BIIsqnSqIe3SMSP25Cu4aRXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMVDDg6Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54263C4CEF5;
+	Wed,  5 Nov 2025 14:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762352483;
+	bh=KDZATPE9X1vCi/Nk0hVLycBqSpHsTQBD3TNCN9EBGvs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PMVDDg6Yo0t9IjFgm+3etBRD3hShAzZ9ImdsaRXGGOvEvjYmA6Nozb10N0c5kZcAe
+	 mnkdv70xnmcmKC/RqRSkW0SqYq5TSHISco8uy0uAX8TUPzIT1Ih/Ize61KenaBCkwE
+	 azc9KHtUkxkzSu4ibpfRFAFXUe9tnO8AyZppkCJY1kxEGb9iU/GdLTsK2Elwrr7Zr9
+	 9Njk6NccBQtvPdDUqoQ0ZJbz9VdLad6ogrzujuSLQ4lam4sA7IR6yy6idCbWRHsfCV
+	 i66ttLJBjKY9iIAveH3CtdGHE987+oH08DpPjCPDCmUh/OWJoPA8kXbC2BGe9rKdBQ
+	 evLb1C6Sj+TiQ==
+Message-ID: <c6e5aa34-25ab-44f9-b6dc-127f3084adc8@kernel.org>
+Date: Wed, 5 Nov 2025 15:21:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105135911.GQ4067720@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] Revert "mm/ksm: convert break_ksm() from
+ walk_page_range_vma() to folio_walk"
+To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251031174625.127417-1-pedrodemargomes@gmail.com>
+ <20251031174625.127417-2-pedrodemargomes@gmail.com>
+ <a6574561-02bc-4ba6-9fb4-418dcb07cd5f@kernel.org>
+ <42byvvz55omaszu6ep3g7n2dj5z7mfxy5h3zbc3xjdnslemkpp@kvdzrjz423mb>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <42byvvz55omaszu6ep3g7n2dj5z7mfxy5h3zbc3xjdnslemkpp@kvdzrjz423mb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 05/11/25 14:59, Peter Zijlstra wrote:
-> On Wed, Nov 05, 2025 at 02:47:39PM +0100, Andrea Righi wrote:
-> > On Wed, Oct 29, 2025 at 08:08:37PM +0100, Andrea Righi wrote:
-> > > sched_ext tasks can be starved by long-running RT tasks, especially since
-> > > RT throttling was replaced by deadline servers to boost only SCHED_NORMAL
-> > > tasks.
-> > > 
-> > > Several users in the community have reported issues with RT stalling
-> > > sched_ext tasks. This is fairly common on distributions or environments
-> > > where applications like video compositors, audio services, etc. run as RT
-> > > tasks by default.
-> > > 
-> > > Example trace (showing a per-CPU kthread stalled due to the sway Wayland
-> > > compositor running as an RT task):
-> > > 
-> > >  runnable task stall (kworker/0:0[106377] failed to run for 5.043s)
-> > >  ...
-> > >  CPU 0   : nr_run=3 flags=0xd cpu_rel=0 ops_qseq=20646200 pnt_seq=45388738
-> > >            curr=sway[994] class=rt_sched_class
-> > >    R kworker/0:0[106377] -5043ms
-> > >        scx_state/flags=3/0x1 dsq_flags=0x0 ops_state/qseq=0/0
-> > >        sticky/holding_cpu=-1/-1 dsq_id=0x8000000000000002 dsq_vtime=0 slice=20000000
-> > >        cpus=01
-> > > 
-> > > This is often perceived as a bug in the BPF schedulers, but in reality
-> > > schedulers can't do much: RT tasks run outside their control and can
-> > > potentially consume 100% of the CPU bandwidth.
-> > > 
-> > > Fix this by adding a sched_ext deadline server, so that sched_ext tasks are
-> > > also boosted and do not suffer starvation.
-> > > 
-> > > Two kselftests are also provided to verify the starvation fixes and
-> > > bandwidth allocation is correct.
-> > 
-> > Peter, Juri, this has now been tested quite extensively on our side and
-> > we're considering applying these patches to Tejun's sched_ext branch.
-> > 
-> > Do you have any objections or concerns?
+On 05.11.25 14:28, Pedro Demarchi Gomes wrote:
+> On Mon, Nov 03, 2025 at 06:00:08PM +0100, David Hildenbrand (Red Hat) wrote:
+>> On 31.10.25 18:46, Pedro Demarchi Gomes wrote:
+>>> This reverts commit e317a8d8b4f600fc7ec9725e26417030ee594f52 and changes
+>>> function break_ksm_pmd_entry() to use folios.
+>>>
+>>> This reverts break_ksm() to use walk_page_range_vma() instead of
+>>> folio_walk_start().
+>>> This will make it easier to later modify break_ksm() to perform a proper
+>>> range walk.
+>>>
+>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+>>> ---
+>>>    mm/ksm.c | 63 ++++++++++++++++++++++++++++++++++++++++++--------------
+>>>    1 file changed, 47 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/mm/ksm.c b/mm/ksm.c
+>>> index 4f672f4f2140..922d2936e206 100644
+>>> --- a/mm/ksm.c
+>>> +++ b/mm/ksm.c
+>>> @@ -607,6 +607,47 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
+>>>    	return atomic_read(&mm->mm_users) == 0;
+>>>    }
+>>> +static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
+>>> +			struct mm_walk *walk)
+>>> +{
+>>> +	struct folio *folio = NULL;
+>>> +	spinlock_t *ptl;
+>>> +	pte_t *pte;
+>>> +	pte_t ptent;
+>>> +	int ret;
+>>> +
+>>> +	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+>>> +	if (!pte)
+>>> +		return 0;
+>>> +	ptent = ptep_get(pte);
+>>> +	if (pte_present(ptent)) {
+>>> +		folio = vm_normal_folio(walk->vma, addr, ptent);
+>>> +	} else if (!pte_none(ptent)) {
+>>> +		swp_entry_t entry = pte_to_swp_entry(ptent);
+>>> +
+>>> +		/*
+>>> +		 * As KSM pages remain KSM pages until freed, no need to wait
+>>> +		 * here for migration to end.
+>>> +		 */
+>>> +		if (is_migration_entry(entry))
+>>> +			folio = pfn_swap_entry_folio(entry);
+>>> +	}
+>>> +	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
+>>> +	ret = (folio && folio_test_ksm(folio)) || is_ksm_zero_pte(ptent);
+>>
+>> Staring again, we should really call is_ksm_zero_pte() only if we know the
+>> folio is present.
+>>
+>> It's not super dangerous in the old code (because we would only look at
+>> present an migration entries), but now you are making it possible to call it
+>> on even more non-present ptes.
+>>
 > 
-> Yeah, I want to finish this first:
-> 
->   https://lkml.kernel.org/r/20251101000057.GA2184199@noisy.programming.kicks-ass.net
-> 
-> Because as is, the whole dl_server stuff isn't quite right.
-> 
+> IIUC vm_normal_folio will return NULL in the case of a ksm zero pte, so
+> we can not do
+> 	found = folio && (folio_test_ksm(folio) || is_ksm_zero_pte(pte))
+> because it will always be false for a ksm zero pte.
+> So we should do
+> 	found = (folio && folio_test_ksm(folio)) || (pte_present(ptent)
+> 		&& is_ksm_zero_pte(ptent));
+> since if the pte is present and is a zero pte we can guarantee that
+> the folio is present.
 
-And I'm spending time on "[PATCH 04/11] sched/deadline: Add support to
-initialize and remove dl_server bandwidth" which I am still not 100%
-sure is correct (or that is correct how we handle setting runtime to 0
-for fair_server today). Apologies, had some travelling and pto, but
-should be able to write something more about it in the next few days.
+Yes exactly.
 
-Thanks,
-Juri
 
+-- 
+Cheers
+
+David
 
