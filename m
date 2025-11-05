@@ -1,234 +1,125 @@
-Return-Path: <linux-kernel+bounces-886149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38354C34CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:25:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16A9C34CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ADB2034D3B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:25:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BBAD34D221
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DD62FD7A4;
-	Wed,  5 Nov 2025 09:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65192FF65A;
+	Wed,  5 Nov 2025 09:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="o97F46Ku"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFloza97"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9852DECA5;
-	Wed,  5 Nov 2025 09:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815862FC00E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334601; cv=none; b=AWZZNQ1gapS2WGvZ21Vd/0KYH/NNF+zswaaG0jlovUvjozA7I3vr++uwoAypCI4aQvOwYe8tTSvonHsYsuxfcyTn+X66CB365lReD6oM9mWCMHra4vZaiVZibo/MQan9Zd9FxHpigvWaHdvmTdOY+lwsDOydUK8CzDqdEH8oeyU=
+	t=1762334498; cv=none; b=DwCaVM25zX8d5c4hdZN65wCOvvhXee5eYhPa4S4Zr5HrxABwk3PC5iAa9JVy+DB1wGJJSbRCFy2E99XxJB5ch22OeL9iUnWzNhSnSUx1Q/UqOsNrcIbZgE5w/4PzQlJ3eFNjxVKFrwXuvsy+Bxx8cL3ciwVqVj4okFFodsuaPLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334601; c=relaxed/simple;
-	bh=N9dWILn4hN4THF4ahomobTJmWFwCF45StfwOvKHZ56w=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lvwxuD+GOUZla0ZgUoEEhxWp4i9Ki2KRYRKpJICaAtYnWEzXD352XCPOe02cnXn4kkGd89HlpLLcQe+SaJJfUrYnJtuahdYHYtiDws11NlanZgm+qlNZGe9+YLn5da05Y6IDsj0IQtBTBB7wNaTVHgsePxjRcTxJwUC+wyJy6TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=o97F46Ku; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762334596;
-	bh=N9dWILn4hN4THF4ahomobTJmWFwCF45StfwOvKHZ56w=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=o97F46KuQxMrI2i4GULi4wp8iIPJC8rme3KHpmcsaKxWN5HizF2mDY3LmcKygYoIH
-	 py0ykPI30VwrsGFmk1hL1ABUg0+3sUJLaREvz6IwQLRdvY15OTrZHfmXN+32VOH532
-	 JTdZivQTGJL6QfTTj0bUrr9U+7LnyaPdJZqOfOs0KE8yXzffyLiuB6sH8LoDmRO19u
-	 YrQjh419zxvnu0IhLQ0BpPk9Hx3exRxZ/2X9gwuQm2GWl74G9jMqTVouy0E4FXMhZB
-	 sX3ddo+Zel3TJ3PhiEM64VnAG7Tr4N5D1LFZ7eDmq5hHM/807nrkoc3up5q6xeBSNT
-	 RmPPszDUC+fYA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E3ACF17E128C;
-	Wed,  5 Nov 2025 10:23:15 +0100 (CET)
-Message-ID: <9e0bbcfd-b468-42ab-8e92-7e059c67e564@collabora.com>
-Date: Wed, 5 Nov 2025 10:23:15 +0100
+	s=arc-20240116; t=1762334498; c=relaxed/simple;
+	bh=r6IAr6ThWrXT0VQC+S0LBlsjUYHMVkUu3AebSU18ydI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ffZnIjt08uHegXuxWTW3rRTUHWWly5HhbO0eP8MWqXmvv3NNW5yYXoeipMt3aBGmXkzLRqUvIzHzy5RhBACQkHLa8YeNnHCOVkYLEt6Bz5Z0juOKr6gMtnmsAJGuY3WT1vIZ1s7Ga8vp9fKU07etjEJ1YXgQY+G+yMNE6Ksgqtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFloza97; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-794e300e20dso531858b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:21:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762334497; x=1762939297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r6IAr6ThWrXT0VQC+S0LBlsjUYHMVkUu3AebSU18ydI=;
+        b=hFloza97B5w7DsfQRSi4Mjmbe20uloSJ7wYu1EimKgZ6DZ3Na5V6ADVnzVomaUu6u6
+         mD1l3vSGK80x7M8o1hqNS7Kz5vx1s4PwdNPc2T3YQwEii5ZmhXRXNXhsur+Ud+lIKhV5
+         xwkFUK1aJPCYAGf+2+ty92lkFxC3UMTu4TKnlDTroYeZk9PB6s35t4XWsJJCe1A563RD
+         GLfOuHwGXxRxbkh25qjzZdueFH0lvzkdhdcIEtOoHBwsKyLVVFvtFK47Q7sDGuEb//4i
+         dNGfA5t5cq+V1oHpm3m49A8ja5DRWu/jz3nne+JTCF/cRM9zb9u61eeghGllBBq9ng7k
+         CZ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762334497; x=1762939297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r6IAr6ThWrXT0VQC+S0LBlsjUYHMVkUu3AebSU18ydI=;
+        b=T/KFarmkjMe+3U447Q43vpa3KOT4rtf4zLIQO7Yohgwbpypo9f18Y7zWkeFpMIyybI
+         tGUFpPnp6bCwLox4kPDqFii0bT04ymWI9ZytdcnMwLspYDcRru0jYWxjcD3gx9Cz96Dh
+         /NN2cgETSFN49LDZhrFiKfN3AQtpAIhFt5e9Ds9qKt1ipVyGI1UN5qm436VKd8mW3/TM
+         /hPHJD3mohhsxKL73NB5zOVil8XQtsFBElhE/nTZBG4aZkjBXWIY0st+TlVjinjU/gqO
+         kdfxGJp+RxqSWzW+1aAX+/qweshoPkHE7jnVh1rwi+2uE3UCZn9QS2Dl94kXtui0pNvj
+         oAIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP8lykJrw/p3JggNbGuBfY5stTT/oiNEIV5NM/kqttezEsLgaRwJecfvQZFheXMK02djE0tr8vsK+/0Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznYr80bfBR94o4JM7mroCjPY68V//8j9xE7kbSZCMuiYa3R9Kk
+	dcJNb41ikjgUoSopqTYWrIx3xY3iCn+HJqN6MwNVH3Ja6YLQS0728I113Z4BD0/FVwwS/6hBiBP
+	g7cy9vdNFK7j5hliP8Sxcf2Tt94/Dt2s=
+X-Gm-Gg: ASbGncvOa9PaDVguEBHY3QzmmZ7sMV8xX+PWdPArQIozENmYylVUxdRldB7MqhjmZO8
+	BpY8HhPooXmP4wqxRrxN75w3KQHen23rV9z0kls9a42lIPbb2FaSoHEEif5Zz+WQDJcL65mzG4a
+	uKbJksZ1XKIDhma2fBt1cjBQmY1tXWMaGv7iPHvbYZvBDziByAyz+R4kVNOxeMD4BZ278ZDPI+0
+	c2xaaOJsVkoKH1A6y47NYb6tYwk8VEEW3lDmfqg4VqhD0BO9UJFEc4WrA==
+X-Google-Smtp-Source: AGHT+IEhLgnnarruJw6eIIB+8bTnN8uYAF3Chn6W7iyK13efG69zCQaoyAaLYmuTmnpZholD6kqVshKjrwpDBWN3vSI=
+X-Received: by 2002:a05:6a20:d049:b0:345:4b5a:16b7 with SMTP id
+ adf61e73a8af0-34e278f999bmr7748938637.11.1762334496625; Wed, 05 Nov 2025
+ 01:21:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/10] SPMI: Implement sub-devices and migrate drivers
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: sboyd@kernel.org
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
- krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
- casey.connolly@linaro.org
-References: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
- <2cb49197-6588-4e89-8b37-29477bfc7e98@collabora.com>
-Content-Language: en-US
-In-Reply-To: <2cb49197-6588-4e89-8b37-29477bfc7e98@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
+ <20251031-imx-dsp-2025-10-31-v1-3-282f66f55804@nxp.com> <aQUEzx6sobI4Yes5@lizhi-Precision-Tower-5810>
+In-Reply-To: <aQUEzx6sobI4Yes5@lizhi-Precision-Tower-5810>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 5 Nov 2025 11:24:04 +0200
+X-Gm-Features: AWmQ_blaxwVbzKBmJKN_0Fj3HFefT03QXEkDQ4Lh8h-h3RbucXTuRrqR5o2qb58
+Message-ID: <CAEnQRZBNzo6RKjNf4JxxxjxtLCFfEGMMt2fSK4MdVeSjtF5aag@mail.gmail.com>
+Subject: Re: [PATCH 03/11] remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable()
+ helper
+To: Frank Li <Frank.li@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 29/10/25 12:50, AngeloGioacchino Del Regno ha scritto:
-> Il 21/10/25 10:32, AngeloGioacchino Del Regno ha scritto:
->> Changes in v7:
->>   - Added commit to cleanup redundant dev_name() in the pre-existing
->>     spmi_device_add() function
->>   - Added commit removing unneeded goto and improving spmi_device_add()
->>     readability by returning error in error path, and explicitly zero
->>     for success at the end.
-> 
-> Any further comments on this series?
-> Any chance we can get it picked in this merge window please?
-> 
-> Please note that this series either needs two cycles or an immutable branch
-> because of the driver migration commits.
-> 
+On Fri, Oct 31, 2025 at 8:50=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Oct 31, 2025 at 05:08:32PM +0800, Peng Fan wrote:
+> > Replace manual pm_runtime_enable() with devm_pm_runtime_enable() to
+> > leverage device-managed cleanup and simplify resource handling.
+> >
+> > pm_runtime_disable_action() not only calls pm_runtime_disable(), but
+> > also calls pm_runtime_dont_use_autosuspend(). The current driver
+> > only calls pm_runtime_disable(). But this should be fine here to use
+> > devm_pm_runtime_enable().
+>
+> looks like this paragaph is reduntant.
 
-Gentle ping.
+This is not redundant! But it can be phrased better.
 
-Cheers
+```
+Current code on the cleanup path just disables runtime PM for a device.
 
-> Thanks,
-> Angelo
-> 
->>
->> Changes in v6:
->>   - Added commit to convert spmi.c to %pe error format and used
->>     %pe error format in spmi_subdevice code as wanted by Uwe Kleine-Konig
->>
->> Changes in v5:
->>   - Changed dev_err to dev_err_probe in qcom-spmi-sdam (and done
->>     that even though I disagree - because I wanted this series to
->>     *exclusively* introduce the minimum required changes to
->>     migrate to the new API, but okay, whatever....!);
->>   - Added missing REGMAP dependency in Kconfig for qcom-spmi-sdam,
->>     phy-qcom-eusb2-repeater and qcom-coincell to resolve build
->>     issues when the already allowed COMPILE_TEST is enabled
->>     as pointed out by the test robot's randconfig builds.
->>
->> Changes in v4:
->>   - Added selection of REGMAP_SPMI in Kconfig for qcom-coincell and
->>     for phy-qcom-eusb2-repeater to resolve undefined references when
->>     compiled with some randconfig
->>
->> Changes in v3:
->>   - Fixed importing "SPMI" namespace in spmi-devres.c
->>   - Removed all instances of defensive programming, as pointed out by
->>     jic23 and Sebastian
->>   - Removed explicit casting as pointed out by jic23
->>   - Moved ida_free call to spmi_subdev_release() and simplified error
->>     handling in spmi_subdevice_alloc_and_add() as pointed out by jic23
->>
->> Changes in v2:
->>   - Fixed missing `sparent` initialization in phy-qcom-eusb2-repeater
->>   - Changed val_bits to 8 in all Qualcomm drivers to ensure
->>     compatibility as suggested by Casey
->>   - Added struct device pointer in all conversion commits as suggested
->>     by Andy
->>   - Exported newly introduced functions with a new "SPMI" namespace
->>     and imported the same in all converted drivers as suggested by Andy
->>   - Added missing error checking for dev_set_name() call in spmi.c
->>     as suggested by Andy
->>   - Added comma to last entry of regmap_config as suggested by Andy
->>
->> While adding support for newer MediaTek platforms, featuring complex
->> SPMI PMICs, I've seen that those SPMI-connected chips are internally
->> divided in various IP blocks, reachable in specific contiguous address
->> ranges... more or less like a MMIO, but over a slow SPMI bus instead.
->>
->> I recalled that Qualcomm had something similar... and upon checking a
->> couple of devicetrees, yeah - indeed it's the same over there.
->>
->> What I've seen then is a common pattern of reading the "reg" property
->> from devicetree in a struct member and then either
->>   A. Wrapping regmap_{read/write/etc}() calls in a function that adds
->>      the register base with "base + ..register", like it's done with
->>      writel()/readl() calls; or
->>   B. Doing the same as A. but without wrapper functions.
->>
->> Even though that works just fine, in my opinion it's wrong.
->>
->> The regmap API is way more complex than MMIO-only readl()/writel()
->> functions for multiple reasons (including supporting multiple busses
->> like SPMI, of course) - but everyone seemed to forget that regmap
->> can manage register base offsets transparently and automatically in
->> its API functions by simply adding a `reg_base` to the regmap_config
->> structure, which is used for initializing a `struct regmap`.
->>
->> So, here we go: this series implements the software concept of an SPMI
->> Sub-Device (which, well, also reflects how Qualcomm and MediaTek's
->> actual hardware is laid out anyway).
->>
->>                 SPMI Controller
->>                       |                ______
->>                       |               /       Sub-Device 1
->>                       V              /
->>                SPMI Device (PMIC) ----------- Sub-Device 2
->>                                      \
->>                                       \______ Sub-Device 3
->>
->> As per this implementation, an SPMI Sub-Device can be allocated/created
->> and added in any driver that implements a... well.. subdevice (!) with
->> an SPMI "main" device as its parent: this allows to create and finally
->> to correctly configure a regmap that is specific to the sub-device,
->> operating on its specific address range and reading, and writing, to
->> its registers with the regmap API taking care of adding the base address
->> of a sub-device's registers as per regmap API design.
->>
->> All of the SPMI Sub-Devices are therefore added as children of the SPMI
->> Device (usually a PMIC), as communication depends on the PMIC's SPMI bus
->> to be available (and the PMIC to be up and running, of course).
->>
->> Summarizing the dependency chain (which is obvious to whoever knows what
->> is going on with Qualcomm and/or MediaTek SPMI PMICs):
->>      "SPMI Sub-Device x...N" are children "SPMI Device"
->>      "SPMI Device" is a child of "SPMI Controller"
->>
->> (that was just another way to say the same thing as the graph above anyway).
->>
->> Along with the new SPMI Sub-Device registration functions, I have also
->> performed a conversion of some Qualcomm SPMI drivers and only where the
->> actual conversion was trivial.
->>
->> I haven't included any conversion of more complex Qualcomm SPMI drivers
->> because I don't have the required bandwidth to do so (and besides, I think,
->> but haven't exactly verified, that some of those require SoCs that I don't
->> have for testing anyway).
->>
->> AngeloGioacchino Del Regno (10):
->>    spmi: Print error status with %pe format
->>    spmi: Remove redundant dev_name() print in spmi_device_add()
->>    spmi: Remove unneeded goto in spmi_device_add() error path
->>    spmi: Implement spmi_subdevice_alloc_and_add() and devm variant
->>    nvmem: qcom-spmi-sdam: Migrate to devm_spmi_subdevice_alloc_and_add()
->>    power: reset: qcom-pon: Migrate to devm_spmi_subdevice_alloc_and_add()
->>    phy: qualcomm: eusb2-repeater: Migrate to
->>      devm_spmi_subdevice_alloc_and_add()
->>    misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
->>    iio: adc: qcom-spmi-iadc: Migrate to
->>      devm_spmi_subdevice_alloc_and_add()
->>    iio: adc: qcom-spmi-iadc: Remove regmap R/W wrapper functions
->>
->>   drivers/iio/adc/qcom-spmi-iadc.c              | 109 ++++++++----------
->>   drivers/misc/Kconfig                          |   2 +
->>   drivers/misc/qcom-coincell.c                  |  38 ++++--
->>   drivers/nvmem/Kconfig                         |   1 +
->>   drivers/nvmem/qcom-spmi-sdam.c                |  36 ++++--
->>   drivers/phy/qualcomm/Kconfig                  |   2 +
->>   .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  53 ++++++---
->>   drivers/power/reset/qcom-pon.c                |  34 ++++--
->>   drivers/spmi/spmi-devres.c                    |  24 ++++
->>   drivers/spmi/spmi.c                           |  95 +++++++++++++--
->>   include/linux/spmi.h                          |  16 +++
->>   11 files changed, 289 insertions(+), 121 deletions(-)
->>
-> 
-> 
+Using resource managed version devm_pm_runtime_enable registers a
+cleanup callback that
+sets autosuspend to false and then disables runtime PM for a device.
+So, basically the same
+functionality as we don't use autosuspend anyway.
+```
 
+thanks,
+Daniel.
 
