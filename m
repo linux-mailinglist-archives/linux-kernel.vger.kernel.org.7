@@ -1,129 +1,249 @@
-Return-Path: <linux-kernel+bounces-886176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248BDC34E85
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:41:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B959EC34E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A9F1898FD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:41:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 44CA1347918
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FA22FCC13;
-	Wed,  5 Nov 2025 09:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292FB302750;
+	Wed,  5 Nov 2025 09:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="IYVrljAR"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1f5KIWt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D52C0292;
-	Wed,  5 Nov 2025 09:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392F93002B0;
+	Wed,  5 Nov 2025 09:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335653; cv=none; b=CZ1U/McMUqk+S0TNbvbfGPqsoOi6vZh/mYqiTC4y/7Q0W1FC54e6NM7iu+YNJFcitTKQVly8QRqE9FeYm5om24N04sluG1CjhbRYvUabvD5FdDKn/Dg4oxw90wPZUNzWPbX+CW2kQngkupyHPQqSo1OxpqiEm3pINL+TzI8las8=
+	t=1762335703; cv=none; b=OnRu5Q7dfjEFoI4Yjz9NG+e+fT8lMviIGgKEtBwiXkgdORI4IcyZwdkJFftVNceTXDhCJK9tJ5HQiy7wr/dVTgEiCUHDD1MbvP5pZb/QQoyw+XoomBcGM8iRePvDtVFNOgbSeISnnci5gMQ0hmSam5zI+huxKjaPaiRAMglavXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335653; c=relaxed/simple;
-	bh=YDG6GlX2MFv5Jl8zJ04Myi8+16OhyFZtXtJ9om+gJkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUyTNK4Lj8YZ75X3RL3v0rj1G3vi3/FoI2itWX2tRZr+TXrGlENZbOH4kgjNHmLehKIgLdz2GP3l+cuuKNAHFqsi7JIL5vWWYaUxhe4284In8KPdA/sS4UITwTdxTVidYXwEScS7pZubhbQbMZjojKqCCQfjcU0VCVvzqgsjz0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=IYVrljAR; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762335632;
-	bh=K9p96Az0vCcI2Emov1fVQ5bmu6QW46dlAQR5fZt//iA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=IYVrljAR8qNal8NFuc/xER3dc1nNOE3oMUf367rzpQX93lhOk2FF9yl72psSLv/we
-	 My3LzdD4NktO0pfvKLd4+Vzwbq1iNSbRUKqisKG14YWVgwf38QjOFzCWK36wznkJsL
-	 ct7IGkpKLJ2dQEPtdzUi7giCM9EmUstcMUXeP0gk=
-X-QQ-mid: zesmtpgz6t1762335631t1e862f50
-X-QQ-Originating-IP: T4f5BgaEKZsfrThhwXckLHTlcpww6njpPZICjjiO+ac=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 05 Nov 2025 17:40:29 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7969792345943648528
-EX-QQ-RecipientCnt: 14
-Date: Wed, 5 Nov 2025 17:40:29 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Lee Jones <lee@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <315F0431BCF1D233+aQsbjbI6J9OAHTaI@kernel.org>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
- <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
- <20251105093544.GE8064@google.com>
+	s=arc-20240116; t=1762335703; c=relaxed/simple;
+	bh=5tXtCUIfRqWrWbLKsdxhcyUYXlvRPrVVqFxnnUlJGjQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=heqCAa7n/TnnY2vnqPZiylZaCK7sKhWuDr+rwsTOjviqFcTg55fGAbKtIjCcOK4Aq0k6DdJ5+5gEQZJ29ixZvVs9aZQ8PB8SoNROmM76yWAgBUfy072T7z5tayOvIBwG3tOLW6ksv2iS0oN5egfHdoMYXlCFiy03shl2WXa0MyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1f5KIWt; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762335701; x=1793871701;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=5tXtCUIfRqWrWbLKsdxhcyUYXlvRPrVVqFxnnUlJGjQ=;
+  b=Y1f5KIWtQDm5jVeWzvJAxvWJZfz29vcoozcJdO1FJDpi4G4wg4cvpoY5
+   g3uAYGoMjpwztqGz4WWtDs7kjboQ/9swezqr4f1ukr9ES3Uif6oMonegi
+   1t84r9C+Fz+NgYaErCV4rcZO4mM4ge089ywQlVNw8LkRUW01PVbDn8n/U
+   Nrl0PuWYhjh5y2GtWfRwM7OH78QNcRXwsi6MNTEGLskF33BtqgnTlNBN8
+   OpoGER8ZwxgBpNpef6SnFscM1m364oYWiXwkHLHJwzzrYhcHgvWMEKQRZ
+   RlHQ2yNCcS43pRlVN8tMIlFul9Q6Y9DOZy1WNRpCLNqyjalPxMnxJM6lT
+   w==;
+X-CSE-ConnectionGUID: nFA3uAfHSHepTC5aSHaqoA==
+X-CSE-MsgGUID: AfK+miADSlSfaiG9Ypm9bQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="74738820"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="74738820"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:41:40 -0800
+X-CSE-ConnectionGUID: Bu8yP39LREG8PeNXmrKQIg==
+X-CSE-MsgGUID: dlRRebcJTSGLmClil0Aagg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="186697438"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 01:41:38 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 5 Nov 2025 11:41:34 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: viro@zeniv.linux.org.uk, brauner@kernel.org, 
+    Hans de Goede <hansg@kernel.org>, jack@suse.cz, 
+    linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 4/4] platform/x86: wmi: Move WMI core code into a separate
+ directory
+In-Reply-To: <20251104204540.13931-5-W_Armin@gmx.de>
+Message-ID: <7d0b6d80-4061-9eb5-5aa3-6a37bac3e2b1@linux.intel.com>
+References: <20251104204540.13931-1-W_Armin@gmx.de> <20251104204540.13931-5-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105093544.GE8064@google.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NVrD5uPzBHuhDfB5axg6cP4CBe+kLgxMNSCXMGcDIEZgwGrtWFgnL4Tj
-	tOziCmLnO5Ypw5Bs15iOODsaSmwCzOQYdIlh6PvvEt7P/T5Cn5nZnjvkhiKFOV5AddjlLgX
-	4oWxxRVA+zWgZg5cavocfK0POBg7AAK7Q68vtc2nQX8o3ysDdENG64DwQS4eHnSrUozmI8X
-	lLEOQf7hIXsR5HasV0sbpKZSN2eK4HNhCcJbW8Mwrxc3W9a/BcSR/Xhb5fDVeWjcSlO7dH1
-	nVaqd2YIG8Zn1Qe5OaVC79Omw0/1oEZd8rGrGAbK1Bmrm/yribfhUiw84ut1NaJozJTGKW1
-	WOvc1leXZE8e3ZA3zAfU+ejWGBu0OxCEzgBgHpQtKRBCYlhHYuTbl7rmtOdpO91109mvRCV
-	FwOmKDrssQTM5KR7Rzvhu4AwaglIswPemtAPlsx6Rup6DbVzkuKI+bsY3eNGVs63HjiFw4g
-	7j3yKDBbuDgxpKa8P7k6SgY6bTi3EVS+Br26TZVLzcX3euIb0nbzmftl4sViULargPhmSZb
-	1Lh0aGgreroHquysWkc1Bjmy867BHh9t2c5nQm+KZGs4KW2JEdt7G6n/TODSdNEe0HPKUWl
-	d/0RNcDlMc5G7Mh1JSdwsX/GDzCrcfyHMricq0zcWPV0S4yQYC3MhV/9Lad0Im8w1HYIiTE
-	2gWIBdsmZvKEY90K3toxddlMXGH6KcMpD/5ZtyDkkcaDKT12tblp59zLtGB7oIqod/5L3OZ
-	owpiXYrgYnmbxzajYnXZKdztTXWV1cdUhMsIbb5NWrSFpXoIi/jOuvpQ8D+auRJaj4pd3T+
-	pTVXIAvI1qs5C4+mnnD+jNZQ19YA3qeJG3zJoO0N87giZtZFzofNtM6V2ZgBPCrPdNaqz4m
-	+PpyqRaqq2Th0s77DkN22cHNLw2I8yISE5Bj9a1pHFujQtY3ubdpOl8iS2uSrdIHCyi6ebD
-	6O66JyBL1f8bTq+oW16KgMeawhvYqIXasmBpUMjON1iNuQr4xq4riIcpSsO7JEE+vC9w7sl
-	AHTgdJgmWOl1hdK7MFIbALXkIzGbaF59L7guZwQfxjc68pmEgl0Fm+gMAjIlMCQmHbYAcqU
-	ZEVicL4TEIUvDkEvKEfoE+tS+k32cgb6tjsc+IMCvucZ2a9SUowzu6GC6srOZ/EDfNnAjli
-	n0SEl3X5gArsfWPp3puOUC2arg==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Nov 05, 2025 at 09:35:44AM +0000, Lee Jones wrote:
-> On Tue, 04 Nov 2025, Troy Mitchell wrote:
-> 
-> > On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> > > 
-> > > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> > > > commonly paired with the SpacemiT K1 SoC.
-> > > > 
-> > > > Note: For reliable operation, this driver depends on a this patch that adds
-> > > > atomic transfer support to the SpacemiT I2C controller driver:
-> > > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
-> > > > 
-> > > > [...]
-> > > 
-> > > Applied, thanks!
-> > > 
-> > > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-> > >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-> > Should we apply it now? The dependency patch hasn’t been merged yet...
-> 
-> And what is: ^[@kernel.org in your recipients list?
-Might have accidentally messed up my email...
+On Tue, 4 Nov 2025, Armin Wolf wrote:
 
-                      - Troy
+> Move the WMI core code into a separate directory to prepare for
+> future additions to the WMI driver.
 > 
-> -- 
-> Lee Jones [李琼斯]
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  Documentation/driver-api/wmi.rst           |  2 +-
+>  MAINTAINERS                                |  2 +-
+>  drivers/platform/x86/Kconfig               | 30 +------------------
+>  drivers/platform/x86/Makefile              |  2 +-
+>  drivers/platform/x86/wmi/Kconfig           | 34 ++++++++++++++++++++++
+>  drivers/platform/x86/wmi/Makefile          |  8 +++++
+>  drivers/platform/x86/{wmi.c => wmi/core.c} |  0
+>  7 files changed, 46 insertions(+), 32 deletions(-)
+>  create mode 100644 drivers/platform/x86/wmi/Kconfig
+>  create mode 100644 drivers/platform/x86/wmi/Makefile
+>  rename drivers/platform/x86/{wmi.c => wmi/core.c} (100%)
+> 
+> diff --git a/Documentation/driver-api/wmi.rst b/Documentation/driver-api/wmi.rst
+> index 4e8dbdb1fc67..66f0dda153b0 100644
+> --- a/Documentation/driver-api/wmi.rst
+> +++ b/Documentation/driver-api/wmi.rst
+> @@ -16,5 +16,5 @@ which will be bound to compatible WMI devices by the driver core.
+>  .. kernel-doc:: include/linux/wmi.h
+>     :internal:
+>  
+> -.. kernel-doc:: drivers/platform/x86/wmi.c
+> +.. kernel-doc:: drivers/platform/x86/wmi/core.c
+>     :export:
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 46126ce2f968..abc0ff6769a8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -402,7 +402,7 @@ S:	Maintained
+>  F:	Documentation/ABI/testing/sysfs-bus-wmi
+>  F:	Documentation/driver-api/wmi.rst
+>  F:	Documentation/wmi/
+> -F:	drivers/platform/x86/wmi.c
+> +F:	drivers/platform/x86/wmi/
+>  F:	include/uapi/linux/wmi.h
+>  
+>  ACRN HYPERVISOR SERVICE MODULE
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 46e62feeda3c..ef59425580f3 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -16,35 +16,7 @@ menuconfig X86_PLATFORM_DEVICES
+>  
+>  if X86_PLATFORM_DEVICES
+>  
+> -config ACPI_WMI
+> -	tristate "WMI"
+> -	depends on ACPI
+> -	help
+> -	  This driver adds support for the ACPI-WMI (Windows Management
+> -	  Instrumentation) mapper device (PNP0C14) found on some systems.
+> -
+> -	  ACPI-WMI is a proprietary extension to ACPI to expose parts of the
+> -	  ACPI firmware to userspace - this is done through various vendor
+> -	  defined methods and data blocks in a PNP0C14 device, which are then
+> -	  made available for userspace to call.
+> -
+> -	  The implementation of this in Linux currently only exposes this to
+> -	  other kernel space drivers.
+> -
+> -	  This driver is a required dependency to build the firmware specific
+> -	  drivers needed on many machines, including Acer and HP laptops.
+> -
+> -	  It is safe to enable this driver even if your DSDT doesn't define
+> -	  any ACPI-WMI devices.
+> -
+> -config ACPI_WMI_LEGACY_DEVICE_NAMES
+> -	bool "Use legacy WMI device naming scheme"
+> -	depends on ACPI_WMI
+> -	help
+> -	  Say Y here to force the WMI driver core to use the old WMI device naming
+> -	  scheme when creating WMI devices. Doing so might be necessary for some
+> -	  userspace applications but will cause the registration of WMI devices with
+> -	  the same GUID to fail in some corner cases.
+> +source "drivers/platform/x86/wmi/Kconfig"
+>  
+>  config WMI_BMOF
+>  	tristate "WMI embedded Binary MOF driver"
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index c7db2a88c11a..c9f6e9275af8 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -5,7 +5,7 @@
+>  #
+>  
+>  # Windows Management Interface
+> -obj-$(CONFIG_ACPI_WMI)		+= wmi.o
+> +obj-y				+= wmi/
+
+Is there a good reason for the first part of the change?
+That is, do you anticipate need for something outside of what this would 
+cover:
+
+obj-$(CONFIG_ACPI_WMI)               += wmi/
+
+Other than that, this series looks fine.
+
+-- 
+ i.
+
+
+>  obj-$(CONFIG_WMI_BMOF)		+= wmi-bmof.o
+>  
+>  # WMI drivers
+> diff --git a/drivers/platform/x86/wmi/Kconfig b/drivers/platform/x86/wmi/Kconfig
+> new file mode 100644
+> index 000000000000..9e7c84876ef5
+> --- /dev/null
+> +++ b/drivers/platform/x86/wmi/Kconfig
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# ACPI WMI Core
+> +#
+> +
+> +config ACPI_WMI
+> +	tristate "WMI"
+> +	depends on ACPI
+> +	help
+> +	  This driver adds support for the ACPI-WMI (Windows Management
+> +	  Instrumentation) mapper device (PNP0C14) found on some systems.
+> +
+> +	  ACPI-WMI is a proprietary extension to ACPI to expose parts of the
+> +	  ACPI firmware to userspace - this is done through various vendor
+> +	  defined methods and data blocks in a PNP0C14 device, which are then
+> +	  made available for userspace to call.
+> +
+> +	  The implementation of this in Linux currently only exposes this to
+> +	  other kernel space drivers.
+> +
+> +	  This driver is a required dependency to build the firmware specific
+> +	  drivers needed on many machines, including Acer and HP laptops.
+> +
+> +	  It is safe to enable this driver even if your DSDT doesn't define
+> +	  any ACPI-WMI devices.
+> +
+> +config ACPI_WMI_LEGACY_DEVICE_NAMES
+> +	bool "Use legacy WMI device naming scheme"
+> +	depends on ACPI_WMI
+> +	help
+> +	  Say Y here to force the WMI driver core to use the old WMI device naming
+> +	  scheme when creating WMI devices. Doing so might be necessary for some
+> +	  userspace applications but will cause the registration of WMI devices with
+> +	  the same GUID to fail in some corner cases.
+> diff --git a/drivers/platform/x86/wmi/Makefile b/drivers/platform/x86/wmi/Makefile
+> new file mode 100644
+> index 000000000000..71b702936b59
+> --- /dev/null
+> +++ b/drivers/platform/x86/wmi/Makefile
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for linux/drivers/platform/x86/wmi
+> +# ACPI WMI core
+> +#
+> +
+> +wmi-y			:= core.o
+> +obj-$(CONFIG_ACPI_WMI)	+= wmi.o
+> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi/core.c
+> similarity index 100%
+> rename from drivers/platform/x86/wmi.c
+> rename to drivers/platform/x86/wmi/core.c
 > 
 
