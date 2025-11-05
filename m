@@ -1,117 +1,164 @@
-Return-Path: <linux-kernel+bounces-886014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D1FC34823
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BCAC3482C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF55A18999F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C2E1895B32
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF80C2C11C6;
-	Wed,  5 Nov 2025 08:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9CA2C11C6;
+	Wed,  5 Nov 2025 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Pyx6Ff5c"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RKckWx8v"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F6121ADB7;
-	Wed,  5 Nov 2025 08:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A7421ADB7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762331970; cv=none; b=TQk5ueopZxpjLvzkWa+zqdTyg1xnEMoLJDjkzGOy6XCZLRlV7Wv4Le5ezpiihnFfKKUIL+9jjFw3bWwHIWmUhLjpZmcYSwdeaZ295tKaNoEOAGPF03YEAmGi5h07qr9KEsrTGwg4ryQL9e9wwqJGSXFfJvrM+84kLuFl9rKRyTE=
+	t=1762332000; cv=none; b=Svya2S2lA9wgPP3VXsOIG1ucpyxzvvRf7oo1yur+yBCBNs/EQaM15h61jqSEQb3JzhLZk2IrTB1katjnypDg9j0SqVpwdWogaXnar3ewAS0Xz1Rk1LzO4TNvqb82VVPeKH2GXpvmfmZMJIrrZnz5UlpR72uV5VO7LzM+8uDXlrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762331970; c=relaxed/simple;
-	bh=4q7MWOot5oujdh0jICrS9cF5T9tqDRdkxJ6+IOJjOh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfL2FDzQttgzCXpj/weZ7hp710K5G6V5DnH3oTVMPTyyU+DPhLwbHZZ0zPRoQPMEWlZnA6tVBOGEeWKNgD7YkaIxkpxf/GqGBE6mT23jPhgcWJwWV60SCFtKATDuhm8AyFwSbsrMDD+erBFNql5jAHEJWtK9u53kKohktddP9ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Pyx6Ff5c; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <19986584-885b-4754-b98c-948e4bf9716b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762331965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1762332000; c=relaxed/simple;
+	bh=R/qHXAEVOHE3d1dWBODBSjYaMxmDe0e2rTQH8K7PDFs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=foB9b7UvdxLJHvfoKxm8NxrUmTT8I5ZEv9QnPWdddlri/jdpvpSSV8nvkClceotlKlOohbB9EdeaoeU9wY71bMshCyLhuIlElg1QFw3jIwK8Tk7C/ipHECsQrBa8D7Bmksd1KbDu9il6CECRuQ7sMiLTn8XYx1TnLgBNsoovUMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RKckWx8v; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d1dzt5kTRz9vCR;
+	Wed,  5 Nov 2025 09:39:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762331994; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iACYjLabBUF6JiLupF4Suvn3LPuLCNXMAQpDmoncQDw=;
-	b=Pyx6Ff5cbTDxh6bFMoG56H+cQ6sG/0QG4qgsZ9U/tgGmlWxDHgKBH8LRRuc/D04Dzw5pNX
-	g6ZfVel4yEKJAW2CjwpU6eKy7U0KdoQjwCfCxRL/M8IrFCSUtUTNNFJd6uaN19l7qnpWJF
-	MThr76Zp+1t0ReNALTjfAzsXQoS1c1Y=
-Date: Wed, 5 Nov 2025 16:39:18 +0800
+	bh=yWwJvJiQhpOXo2m19sGkCSOjZ04ykFuMGX6vhFuj3tE=;
+	b=RKckWx8vDdQTusdYmMivfYpC8pyNxVxxyRQaZJGr1jrSW/C3l0nzoM4XYcmW8Cy1J7rC5r
+	HYRjERxE9IwNErXsSuZ6HYdm1VGQweiq4T+z5ezEk5NRT8GgPlMjeH/ESD2P6nNAkIhqjd
+	wDCJYEAyMduhm1TPBf0SIV+qSECt8/H5bm1x/UiArma2hA+Eo3tvgJaAcE7/0hwRhg+VGH
+	S82Y2vOPgnk+JxHKpJ8yc34csNtsmbj3HX3APcn9rYv9oDJKCgGITFE70aKz080LL/C4Au
+	Uum9s4JpN6OR1jMthMT0zlERq48Mpt4MRjvHs993szUW2H68wM8ogY4WnwsF5A==
+Message-ID: <7808bc5fcac1236640f481733d1c8aaaf8accb02.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: replace use of system_wq with
+ system_percpu_wq
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Marco Crivellari <marco.crivellari@suse.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>,  Michal Hocko <mhocko@suse.com>, Matthew Brost
+ <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Philipp
+ Stanner <phasta@kernel.org>, Christian Konig
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Date: Wed, 05 Nov 2025 09:39:46 +0100
+In-Reply-To: <20251104165209.309545-1-marco.crivellari@suse.com>
+References: <20251104165209.309545-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-Content-Language: en-US
-To: Michal Hocko <mhocko@suse.com>, Leon Huang Fu <leon.huangfu@shopee.com>
-Cc: linux-mm@kvack.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org,
- joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
- mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-References: <20251105074917.94531-1-leon.huangfu@shopee.com>
- <aQsIq_zQXMfNNo6G@tiehlicka>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <aQsIq_zQXMfNNo6G@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-MBO-RS-META: 6798g4q11qanmdn67zdf7c735ufzcbt6
+X-MBO-RS-ID: ca2565784354206ff6b
+
+nit: s/replace/Replace
+
+On Tue, 2025-11-04 at 17:52 +0100, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+
+s/enqueue/enqueues
+
+Also: maybe start the sentence with something like "In the general
+workqueue implementation, if a user [=E2=80=A6]". Otherwise it at first rea=
+ds
+as if we're talking about a drm/sched user here.
+
+In general, the commit message should focus more on drm/sched. See
+below, too.
+
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>=20
+> This lack of consistentcy cannot be addressed without refactoring the API=
+.
+>=20
+> This patch continues the effort to refactor worqueue APIs, which has begu=
+n
+> with the change introducing new workqueues and a new alloc_workqueue flag=
+:
+>=20
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+From my POV it would be enough if you provide these commits in this
+commit message and maybe a Link: to the overall discussion in the
+workqueue subsystem / implementation.
+
+You can give the details above if you want, but I think drm/sched
+doesn't care too much about them. The drm/sched users who really care
+about the timeout_wq's exact behavior use one they allocate themselves
+anyways.
+
+>=20
+> system_wq should be the per-cpu workqueue, yet in this name nothing makes
+> that clear, so replace system_wq with system_percpu_wq.
+>=20
+> The old wq (system_wq) will be kept for a few release cycles.
+
+Please state in your commit message what you're actually doing to
+drm/sched. Like:
+
+"Use the successor of system_wq, system_percpu_wq, for the scheduler's
+default timeout_wq. system_wq will be removed in a few release cycles."
+
+>=20
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index c39f0245e3a9..13192e99637a 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,=
+ const struct drm_sched_init_
+> =C2=A0	sched->name =3D args->name;
+> =C2=A0	sched->timeout =3D args->timeout;
+> =C2=A0	sched->hang_limit =3D args->hang_limit;
+> -	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_wq;
+> +	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_perc=
+pu_wq;
+
+Actual change looks fine by me.
 
 
+Thanks for your patch,
+P.
 
-On 2025/11/5 16:19, Michal Hocko wrote:
-> On Wed 05-11-25 15:49:16, Leon Huang Fu wrote:
->> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
->> index 6eed14bff742..8cab6b52424b 100644
->> --- a/mm/memcontrol-v1.c
->> +++ b/mm/memcontrol-v1.c
->> @@ -2040,6 +2040,7 @@ struct cftype mem_cgroup_legacy_files[] = {
->>   	{
->>   		.name = "stat",
->>   		.seq_show = memory_stat_show,
->> +		.write_u64 = memory_stat_write,
->>   	},
->>   	{
->>   		.name = "force_empty",
->> @@ -2078,6 +2079,7 @@ struct cftype mem_cgroup_legacy_files[] = {
->>   	{
->>   		.name = "numa_stat",
->>   		.seq_show = memcg_numa_stat_show,
->> +		.write_u64 = memory_stat_write,
->>   	},
-> 
-> Any reason you are not using .write like others? Also is there any
-> reason why a specific value is required. /proc/sys/vm/stat_refresh which does
-> something similar ignores the value. Also memcg.peak write handler which
-> resets the peak value ignores it. It is true that a specific value
-> allows for future extensions but I guess it would be better to be
-> consistent with others here.
-> 
-> One last thing to consider is whether this should follow
-> /proc/sys/vm/stat_refresh path and have a single file to flush them all
-> or have a per file flushing. I do not have a strong preference but
-> considering both are doing the same thing it makes sense to go
-> stat_refresh path.
-
-+1
-
-IMHO, a dedicated file like memory.stat_refresh is a much better approach ;)
-
-It's cleaner, simpler to use, and much more intuitive for users.
-
-> 
-> In any case, thanks for considering the explicit flushing path which is
-> IMHO much better than flushing tunning which would become really hard
-> for admins to wrap their heads around. Especially when dealing with
-> large fleets of machines to maintain.
+> =C2=A0	sched->score =3D args->score ? args->score : &sched->_score;
+> =C2=A0	sched->dev =3D args->dev;
+> =C2=A0
 
 
