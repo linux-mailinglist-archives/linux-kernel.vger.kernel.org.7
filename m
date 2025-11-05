@@ -1,245 +1,211 @@
-Return-Path: <linux-kernel+bounces-886422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A6AC358B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AEFC358BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7556188184C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E041896292
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571AF3128AB;
-	Wed,  5 Nov 2025 11:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC973128B6;
+	Wed,  5 Nov 2025 11:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gydHe1az"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TosDpwPb"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132EF31282A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AFC24DCED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343913; cv=none; b=Sj3FF4fRuEClJ0Wc0Z9e9zYbJmCrCyaojPaeWvmDRiEaSTaYLTHkJB8LH4C9hwtd41zvOJ4IzjLrB3b9gC1NpZQj/W/fJAZDMMG037g5tWWnOsispqZYFH/ISHxZhh5ImULxRazAVECg7U3X4DDwc/qQErFJ4AP8ACuxs3jfJmM=
+	t=1762343973; cv=none; b=PhgNUSrrbOEC9Vni4g9FUCwYBI2GVyrwXIl/z67kr6CRr3KYbM95YdRRZgV6QBQ74yD92rbwJd9DCwYHl2QIeOeF8fFub9f9XhcU37+ykjSUKZcMfbTpa+8zvBS0DZXudospsknFG+EW0NlYIyFbkZyie+sFDUNpJx2HN+bu4/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343913; c=relaxed/simple;
-	bh=eIENOMVlvTgUtIsFQ/3obVK+KyypwShHtyRs/gUjiDk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CCSoLIWVf3C9gpsp6PAm4IXNduk/GeL8NuEIRvCTweFc8z6G6VbWoBKJYThIjMstKRldfulJjWzgRBy17MtmEMiTHlNEch/0i3gTHtGF/LuRGhC3zwmA23q04J13tlEe8Ccckd50/QrJ4i0Vh/Uux8m2AB5zL8d8XBysvAx8Py4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gydHe1az; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1762343973; c=relaxed/simple;
+	bh=6+3jnfjqn43oyAtQe2q78IhrxJm5fdTl7F8JDNsbcgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PWtOLcQ9WEXTaohLZ/xj4uc2M9Totvb1fN2+ls3oNiZ0OCOoEQIIQMK7PKOrqVs6IEt7pou/75oPvtQc8v5Qq6wRMRdErf5C2y7GLfXjY1nqMpcjLMd+tLBEwIzp/YZQJZq71sV3/pMRhiYupytr52hctgZ+RXqOj17I5E/oGKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TosDpwPb; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b95cdcacd95so2798687a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:58:31 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so7421179a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:59:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762343911; x=1762948711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/RiNKBRmnkSJkzhhg8RJuuCLAED/PQy6gI5C9KpT30=;
-        b=gydHe1az50+GWb8EE76fA3sA0QyFxJjB/omqfJSkcu1xaYMf1DcTM9Pb3pttFlq7Pl
-         FLRps5s9Or8CX5EW1G5NC5fZsO+j+jB7QgcZJbhIVb7fTB9bQqWm7yVvFEF+98cWwtyS
-         CMBr39b+ad7hzF8SmqVLSKeQXvt38eKIE0xT3HbyoIPTuAX6uj1SxpXrHVygqoiloNqf
-         OEXBsUK5mnzNaBXskzbhWnbcgpIg+ZwHMvXbqfyQp3M0dDDVMBZZaiLPQtbO8mtDtddr
-         xtgwBqI6nu7b6hfLiQeZ9lNlSWTm8kMGqvED+zx6zONdr+SedEkazdaCSF3DF+n55EFw
-         XmfA==
+        d=gmail.com; s=20230601; t=1762343970; x=1762948770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZGA4yt8JGp+St6is/Io1asPfAbg43aJnzQEEcQdlRFo=;
+        b=TosDpwPbqkLe/8dQSzaeZK1VpZ1JqDNj/D/gsLCgU8zAW/z8q3ghRezuEz47BnrSdB
+         a3VrAOvVrRXtPFF/BUW8sNARqzk4Tmfj83//vBAFWRB/tGh94Zu7EwzbcLE0Wqs+oGBH
+         P+gUaSC8RjmnCYl5/QhXNsNWARIdOfHGM+W9De8T3xUFMzgTO87P5NXkXWaOEXeWsxF/
+         ociG1Dg6QUtlBKcXqkn6pKHJypdpYTxuZlm+cKm6B2Y4qO23viexKpOhWtBkl11h9sMB
+         /ddYlnjHZqEwUosQO8yikybqyzPxb0fiqB47SkDSPnDnX5jn48qzPc/xizzwCXfnGrcN
+         71HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762343911; x=1762948711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/RiNKBRmnkSJkzhhg8RJuuCLAED/PQy6gI5C9KpT30=;
-        b=cTKusno/I/qIl+3Lq4JWzfDL5JWXxnLdq3Tw+nROiOxdA/SbEvcEw6ytmwkRaTWluo
-         uYI4BATSwv4yWfIslITDzLJqmZt7dAJsyzgr5iYNC1PA9CAZZ6qy50ppz1c31ZTqX4Wy
-         py+o8MfK9EEPQkjonYF1JE1RHe1crcROJd9Qm0FTlOolOBMloUlNC3hEG/FGg3iRor0p
-         vrR47MBYMr/E26dlkyOxLGZnHAUdvaWWN2XUGpMBz0leIW0Hs2ND+Jj2XxRUC51dKVki
-         9bX9Z+Qs0sbJWcv6fOUhstPKxZSQMfoBEqXE6dD4E7apYAdjwEAEpu8C0Vlr6tCmYmto
-         SP2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWv99ZUpAIdVv6a6OYbK14nRlABLXC1y/bWzVHj8vXRRrsIPdVCEg0ZdeGXYwOI+uB3D7quJMT116XIW9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT3Rfcn/3056av6Zc6gy9wZlXm9uYEG4Ed5OKlzSBbTwRZtKF/
-	CXrRVCeUaddAV/Dim/mhz+wrjSTg3d3jdW/Kwsj3LLPqRmRTAogQkfsIEO82sEMNKAecoA==
-X-Gm-Gg: ASbGncuFeJw+Hlm8LbREdACMmFkAqKhW5TBogNxhjbvYP4Nu/waW3wALmXIw34Mpsvz
-	vU8xMCWvIAQKA85YUX6MD0pjYlMfWAKsnBTLHum19ta/Vwd++7vYB6QBBxVlxzQ0w94d9vSNWHW
-	h3/qNzzgCRHxHNMyx4fCV0U1Wbh9UNETWHsuPrX8U0R4gAwCywmYl2bWlQQhz8mYSQKQRnQzaie
-	fIGWAYRHI3JPOPXLs5cU8WpxiuFA9qxQp3+kNPaTHZN58JMIebxQIUgUrPxbQU63Rl07QeN55RE
-	CJD2PJWYUbs9DCPy5L5NvKYtunfn7oYxeN9eIujVQvZLqszJ2GgcB3uixyVsnJ5cCiTserWCfvi
-	3IxQtRCiWSoXxStzBtZTxjZeBsek939JBK6GsJnlwZ+gHgH02U7ncnPrv0WzE0a+xNcFAnrAwv9
-	1ebA==
-X-Google-Smtp-Source: AGHT+IGZ2HWIY2B6TdrBgHFBIW+Q/qnLcYpDWz/gdPqE3sljXu8cOFt0VQuunzihT+evp6YD/wP+RA==
-X-Received: by 2002:a17:903:2c0f:b0:295:a1a5:bb0f with SMTP id d9443c01a7336-2962add9f39mr39434405ad.18.1762343911172;
-        Wed, 05 Nov 2025 03:58:31 -0800 (PST)
-Received: from lgs.. ([103.86.77.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a5070fsm60041855ad.75.2025.11.05.03.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 03:58:30 -0800 (PST)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Stefan Richter <stefanr@s5r6.in-berlin.de>,
-	linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] firewire: nosy: break circular locking with misc_mtx in ->open()
-Date: Wed,  5 Nov 2025 19:58:18 +0800
-Message-ID: <20251105115819.1083201-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762343970; x=1762948770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZGA4yt8JGp+St6is/Io1asPfAbg43aJnzQEEcQdlRFo=;
+        b=wtyyC4yu4HgffcGmltm1dW719RI2FS7TvdsKwWa0+T6mwHjTyK68ejvF2piYRtTt7Y
+         0j2hrYB6PeVODU0r2W8b6r5S7h7eQdlxjhjWQQJsg9OJbcpI1hUJDDyvXRZdealWb25z
+         34B9oXAtV2m6+5mDmG6aYwzwj+EVmrNBE+6HpK0OWIQ1P3lpYZ80e7Xzh2U8iQDhNdkA
+         mLxhvXnp+tdhpZ8Umoj0BG66PnEeWmFejJRautbWYioJ66/mMrG19elYH1AAQCHJTO+o
+         tEgrPD3mXZ9kQRukFEzga/0r+6TfwxJCR4autPZJS/brIEd1DNBTNI/mVfRtRfEtwZ2I
+         2w5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ0wb2HADIt0RwT5d5vT8AOJzV6mhvgRT16XWSbOZh5jZkxRAUDXtCcJLXEvk5COii4UdeLJ7csiz4P1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk/uNlq9OS6pTmvsncycnZW/KJ27EilSEN2hnfyuwz793T/YjI
+	t1ePndx1KRG0iNGGJllfF9Ne6dvn9ONc0Fww8NVebkiOiIvmC4KdReegwNBaPYAMw28vLqTYGvB
+	Sgv/jTFVMePDt0i4/aMsZs+CIi1irFXuLoawy
+X-Gm-Gg: ASbGncu2tRpMjLq+ldwa4KlwtplQ6ZV97W33v0KSi9FUyUA5Ph5dR4AjczVNd+JkqJ9
+	/us7H7xKurCaYz6YLcH+E1NYeYoCTIMLnJ2OCDrTp06/uO/MxZsAO/R4B5B8TTQ4SlBjSMPjLuJ
+	MU4NKO/meqzr7LMtmuNsV4f4VA0MhE8IIaHZO3ORj38jII3mxQiVJP8aZRD5w3keDL4vxjI5Sma
+	TafjPX/ZXA6FyjUiunKBMNrRDJin7iF009Ji5BxZjbzbzOA7hZ1lihpc8I=
+X-Google-Smtp-Source: AGHT+IHz+PW+hI6DHk/+yycP53/owJKFK51FLmbG3Xn9iePHYqTjIDevvgVm2fd1OHm0B5cu1KiyF7i4XCTMNvcSxeY=
+X-Received: by 2002:a05:6402:50c8:b0:63c:1e15:b9fb with SMTP id
+ 4fb4d7f45d1cf-64105a4c967mr2540436a12.22.1762343970155; Wed, 05 Nov 2025
+ 03:59:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251017073954.130710-1-cnsztl@gmail.com> <08911ae2-fef3-432d-a236-d820c9cb67ac@gmail.com>
+ <5af928c4-4b6e-489c-ad39-26cef3dd7473@gmail.com> <10751338.nUPlyArG6x@phil> <e52de2b5-bf10-ce0e-66b7-66b1c46525f3@manjaro.org>
+In-Reply-To: <e52de2b5-bf10-ce0e-66b7-66b1c46525f3@manjaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 5 Nov 2025 17:29:12 +0530
+X-Gm-Features: AWmQ_bkTo815Ekf1XKwqKW52Tftmcvjv3vglHmEOmCXrknL0gcm_NsK2eBkal2U
+Message-ID: <CANAwSgRXwozYr8sYtV8RRb1jJAb=9VNPfsLGMmW=f38XV-u=MQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
+ with A3A444 chips
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Tianling Shen <cnsztl@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Grzegorz Sterniczuk <grzegorz@sternicz.uk>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jianfeng Liu <liujianfeng1994@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Lockdep reports a circular dependency between card_mutex and misc_mtx:
+Hi All,
 
-  misc_open() holds misc_mtx and calls ->open():
-    misc_mtx -> nosy_open()
+On Sat, 1 Nov 2025 at 18:21, Dragan Simic <dsimic@manjaro.org> wrote:
+>
+> Hello Heiko,
+>
+> On Saturday, November 01, 2025 12:54 CET, Heiko Stuebner <heiko@sntech.de=
+> wrote:
+> > Am Montag, 27. Oktober 2025, 18:34:25 Mitteleurop=C3=A4ische Normalzeit=
+ schrieb Tianling Shen:
+> > > On 2025/10/20 12:44, Tianling Shen wrote:
+> > > > On 2025/10/20 9:53, Shawn Lin wrote:
+> > > >> On 2025/10/17 Friday 15:39, Tianling Shen wrote:
+> > > >>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+> > > >>>
+> > > >>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O error=
+s and
+> > > >>> corruption when using HS400 mode. Downgrade to HS200 mode to ensu=
+re
+> > > >>> stable operation.
+> > > >>
+> > > >> May I ask you to test another patch I just posted to see if it fix=
+es
+> > > >> your issue?
+> > > >>
+> > > >> https://patchwork.kernel.org/project/linux-mmc/
+> > > >> patch/1760924981-52339-1- git-send-email-shawn.lin@rock-chips.com/
+> > > >
+> > > > Thank you for the patch! I will ask my friend to test it but he use=
+s
+> > > > this board as a home router, so it may take a few days or weeks to
+> > > > report the result.
+> > >
+> > > Hi all, sorry for the late. My friend has tested this patch and it wo=
+rks
+> > > fine after 50 times dd operation. A big thanks to Shawn!
+> >
+> > So I guess, we don't need the patch reducing the speed anymore, right?
+>
+> Exactly, the approach of lowering the speed of eMMC to improve
+> its reliability is no longer needed, thanks to Shawn correcting
+> the DLL_STRBIN_TAPNUM_DEFAULT value in the above-linked patch.
+>
+> We just need to test does HS400 work on the ROCK 5 ITX reliably
+> as well, so the previous lowering to HS200 in commit b36402e4a077
+> ("arm64: dts: rockchip: slow down emmc freq for rock 5 itx", 2025-
+> 02-28) could be reverted as no longer needed.
+>
+> > > And hi Jianfeng, I found you made a similiar patch[1] for the ROCK 5 =
+ITX
+> > > board to lower down the mmc speed, could you please check if this pat=
+ch
+> > > also fixes your issue?
+> > >
+> > > [1] https://lore.kernel.org/linux-rockchip/20250228143341.70244-1-liu=
+jianfeng1994@gmail.com/
+> > >
+> > > >>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+> > > >>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+> > > >>> ---
+> > > >>>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
+> > > >>>   1 file changed, 1 insertion(+), 2 deletions(-)
+> > > >>>
+> > > >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b=
+/
+> > > >>> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > > >>> index fafeabe9adf9..5f63f38f7326 100644
+> > > >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > > >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > > >>> @@ -717,8 +717,7 @@ &sdhci {
+> > > >>>       no-sd;
+> > > >>>       non-removable;
+> > > >>>       max-frequency =3D <200000000>;
+> > > >>> -    mmc-hs400-1_8v;
+> > > >>> -    mmc-hs400-enhanced-strobe;
+> > > >>> +    mmc-hs200-1_8v;
+> > > >>>       status =3D "okay";
+> > > >>>   };
+>
+You can also try this patch, which enables stober in the eMMC controller..
 
-  add_card()/remove_card() hold card_mutex and (de)register the miscdev:
-    card_mutex -> misc_register()/misc_deregister() -> misc_mtx
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c
+b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index eebd45389956..62c9faf8ec85 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -77,6 +77,10 @@
+ #define CV18XX_RETRY_TUNING_MAX                        50
 
-nosy_open() only used card_mutex to map the minor to the pcilynx instance
-by scanning card_list. However, misc_open() already sets file->private_data
-to the struct miscdevice of the opened minor, so we can obtain the pcilynx
-pointer via container_of() and take a kref, without taking card_mutex in
-the open path.
+ /* Rockchip specific Registers */
++#define DWCMSHC_EMMC_CTRL              0x52c
++#define  EMMC_CTRL_CARD_IS_EMMC        BIT(0)
++#define  EMMC_CTRL_ENH_STROBE_ENABLE   BIT(8)
++
+ #define DWCMSHC_EMMC_DLL_CTRL          0x800
+ #define DWCMSHC_EMMC_DLL_RXCLK         0x804
+ #define DWCMSHC_EMMC_DLL_TXCLK         0x808
+@@ -660,6 +664,12 @@ static void dwcmshc_rk3568_set_clock(struct
+sdhci_host *host, unsigned int clock
+                        DLL_CMDOUT_TAPNUM_90_DEGREES |
+                        DLL_CMDOUT_TAPNUM_FROM_SW;
+                sdhci_writel(host, extra, DECMSHC_EMMC_DLL_CMDOUT);
++
++               extra =3D sdhci_readl(host, DWCMSHC_EMMC_CTRL);
++               if (extra & EMMC_CTRL_CARD_IS_EMMC) {
++                       extra |=3D EMMC_CTRL_ENH_STROBE_ENABLE;
++                       sdhci_writel(host, extra, DWCMSHC_EMMC_CTRL);
++               }
+        }
 
-This removes the misc_mtx -> card_mutex edge and breaks the cycle.
+        extra =3D DWCMSHC_EMMC_DLL_DLYENA |
 
-The crash info is below：
-======================================================
-WARNING: possible circular locking dependency detected
-5.18.0-rc1 #1 Not tainted
-------------------------------------------------------
-syz-executor.1/1374 is trying to acquire lock:
-ffffffff8f8bb4e8 (card_mutex#2){+.+.}-{3:3}, at: nosy_open+0x55/0x480
-
-but task is already holding lock:
-ffffffff8ef78a88 (misc_mtx){+.+.}-{3:3}, at: misc_open+0x5a/0x3f0
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
--> #1 (misc_mtx){+.+.}-{3:3}:
-       __mutex_lock_common+0x138/0x2450
-       mutex_lock_nested+0x17/0x20
-       misc_register+0x95/0x490
-       foo_misc_register+0x3a/0x50
-       add_card+0xd38/0x1250
-       local_pci_probe+0x140/0x200
-       pci_device_probe+0x345/0x770
-       really_probe+0x2d1/0x990
-       __driver_probe_device+0x1a7/0x270
-       driver_probe_device+0x54/0x370
-       __driver_attach+0x430/0x590
-       bus_for_each_dev+0x125/0x190
-       bus_add_driver+0x32c/0x530
-       driver_register+0x309/0x410
-       do_one_initcall+0x104/0x250
-       do_initcall_level+0x102/0x132
-       do_initcalls+0x46/0x74
-       kernel_init_freeable+0x28f/0x393
-       kernel_init+0x14/0x1a0
-       ret_from_fork+0x22/0x30
--> #0 (card_mutex#2){+.+.}-{3:3}:
-       __lock_acquire+0x3607/0x7930
-       lock_acquire+0xff/0x2d0
-       __mutex_lock_common+0x138/0x2450
-       mutex_lock_nested+0x17/0x20
-       nosy_open+0x55/0x480
-       misc_open+0x363/0x3f0
-       chrdev_open+0x407/0x490
-       do_dentry_open+0x5b4/0xc20
-       path_openat+0x1d7a/0x2300
-       do_filp_open+0x1cb/0x3e0
-       do_sys_openat2+0x96/0x350
-       __x64_sys_openat+0x186/0x1b0
-       do_syscall_64+0x43/0x90
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(misc_mtx);
-                               lock(card_mutex#2);
-                               lock(misc_mtx);
-  lock(card_mutex#2);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.1/1374:
- #0: ffffffff8ef78a88 (misc_mtx){+.+.}-{3:3}, at: misc_open+0x5a/0x3f0
-
-stack backtrace:
-CPU: 0 PID: 1374 Comm: syz-executor.1 Not tainted 5.18.0-rc1 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5a/0x74
- check_noncircular+0x223/0x2d0
- __lock_acquire+0x3607/0x7930
- lock_acquire+0xff/0x2d0
- __mutex_lock_common+0x138/0x2450
- mutex_lock_nested+0x17/0x20
- nosy_open+0x55/0x480
- misc_open+0x363/0x3f0
- chrdev_open+0x407/0x490
- do_dentry_open+0x5b4/0xc20
- path_openat+0x1d7a/0x2300
- do_filp_open+0x1cb/0x3e0
- do_sys_openat2+0x96/0x350
- __x64_sys_openat+0x186/0x1b0
- do_syscall_64+0x43/0x90
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7fbaab4abbcd
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbaaac1cbe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fbaab5c9f80 RCX: 00007fbaab4abbcd
-RDX: 0000000000062803 RSI: 0000000020003080 RDI: ffffffffffffff9c
-RBP: 00007fbaab519edb R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe62540a6f R14: 00007ffe62540c10 R15: 00007fbaaac1cd80
- </TASK>
-======================================================
-Fixes: 424d66cedae8 ("firewire: nosy: fix device shutdown with active client")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/firewire/nosy.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
-index b0d671db178a..726d5f15ff08 100644
---- a/drivers/firewire/nosy.c
-+++ b/drivers/firewire/nosy.c
-@@ -263,19 +263,13 @@ set_phy_reg(struct pcilynx *lynx, int addr, int val)
- static int
- nosy_open(struct inode *inode, struct file *file)
- {
--	int minor = iminor(inode);
-+	struct miscdevice *misc = file->private_data;
- 	struct client *client;
--	struct pcilynx *tmp, *lynx = NULL;
-+	struct pcilynx *lynx;
- 
--	mutex_lock(&card_mutex);
--	list_for_each_entry(tmp, &card_list, link)
--		if (tmp->misc.minor == minor) {
--			lynx = lynx_get(tmp);
--			break;
--		}
--	mutex_unlock(&card_mutex);
--	if (lynx == NULL)
--		return -ENODEV;
-+	/* misc_open() set file->private_data to the miscdevice already. */
-+	lynx = container_of(misc, struct pcilynx, misc);
-+	lynx_get(lynx);
- 
- 	client = kmalloc(sizeof *client, GFP_KERNEL);
- 	if (client == NULL)
--- 
-2.43.0
-
+Thamks
+-Anand
 
