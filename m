@@ -1,209 +1,99 @@
-Return-Path: <linux-kernel+bounces-886439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8AC6C35981
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:21:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD3BC359F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6707A18C116B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:21:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8BD1B34D793
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946A01DF256;
-	Wed,  5 Nov 2025 12:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DB6314A74;
+	Wed,  5 Nov 2025 12:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="NWaEqdOq"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdOdN2N7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84A0313E31;
-	Wed,  5 Nov 2025 12:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20536298CC7;
+	Wed,  5 Nov 2025 12:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345253; cv=none; b=VR/icKdtiJbJI9nd0w7vAclBHb7E5joouPZvlwqyATzZgjox3OQnlUXg9Ew4oxK6kY7pqCiUIIQSsUtoScBdZpqO6yYiP3doW+8zfrWaooxdpQxuqlG15ku6uBQ/BoZ3AzGLMxwM2WnXwRO82NVKeI+t8Ncz7t0dFR/uvv97DMY=
+	t=1762345430; cv=none; b=kMtzFuiNduP7cwklnfLRWzkGOpBepA2tdcdnWki39s6ssmfisgbWnL8sciWFof/7xVxJGgFPkj150BbziDfq7s6jRR4gjbw+lKWexhJktfXi/Bev3qmlaamqkKWRL8i9o5coManret6LYBeIdrXVGXy1t4w98WNWK2ge16OdcXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345253; c=relaxed/simple;
-	bh=pyj7qmTNusavoGNLjBlRIX6WmyKsA8DEisK3Oj50t1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VKTfZJJcnvAjqnuDGzPCbH4PeVs5dG9F8EobtcDVdYVKE42TyJ8e9pkA2N6Ph/s6kwcPv2/7cfSz+76of94m/A0Qjeanm/UM88dy+3iC0aLfk0Kj2HXbFPYPE7VHgoM+R+ZlHejEtzpAriA5wvxxq/1X4BTHecENlEkPyeLOLOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=NWaEqdOq; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [129.217.186.196] ([129.217.186.196])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A5CKhKS015951
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 5 Nov 2025 13:20:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1762345244;
-	bh=pyj7qmTNusavoGNLjBlRIX6WmyKsA8DEisK3Oj50t1Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NWaEqdOqA55eD06DUC/Xu7qlP3AN/sellLyO/Udk+lUeTnVtfol793XYfhiwXhhSU
-	 sWEKT/jtMunSqDkg/WC/VoyJPa6T7w2OyNuvSFu1Poa7DT4nqRHHFQM7/IGgs/vjSL
-	 Yicj0pgwwkn58JUD3j+cQrZu6WE1Pz2kExpUjRZU=
-Message-ID: <be77736d-6fde-4f48-b774-f7067a826656@tu-dortmund.de>
-Date: Wed, 5 Nov 2025 13:20:43 +0100
+	s=arc-20240116; t=1762345430; c=relaxed/simple;
+	bh=5yetftzuDJzcSZ8yMglkCk474RStpiW7y+BOBVaYRpg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PWxFbWP2h8i+8KgEQiWx0WSkEi2+hxGT6kx+/BVISIIsUyoMDEWxKWo5v13lxUQVtNi/7T7oEp/wsmNjxiQfu/Eeb+DSPqc78oQeX0Eim5Kjm9Ef/wNwyoq1gioaOkdsUOQ4EotNLrmtN/P8h6bMSGKP+kG29R7kiK5kl4xIMW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdOdN2N7; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762345429; x=1793881429;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=5yetftzuDJzcSZ8yMglkCk474RStpiW7y+BOBVaYRpg=;
+  b=bdOdN2N7Q/NPP/noBWwBBSixrW9FXkxH6hdsCtnfzcx0EHIIZYaf+lBE
+   MmHtZr+ylJcOdnxbaZEj2FikBk73naoBM/tHyzZ6kPENuTG0lGh3ZzWxE
+   B9wlwx1TEFP9SBzxY6Kj11i5AaQ2VicT7JBTfHMJA1vqZIgaTChGboBaZ
+   mjPltpgGeFVq+mLATDQ0r/9/u4HIWly3/bvhPXVUdiScTLU7RWZE9abgs
+   8EcfRYsDJLuMoziZ5tT2rJh31dnAlb5Fc8f3rGgjwowJYi93JI0B9MNv0
+   LiqGomSSIj0fJFE6p2Dowz+XTgfGtSxSIcqlR4pS/C9hkFdr10XAVaFrh
+   A==;
+X-CSE-ConnectionGUID: YxcuLJLvSX+NvZx59S7G+g==
+X-CSE-MsgGUID: nYTokxZiTs6BQAqd5gtpsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75808530"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="75808530"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 04:23:48 -0800
+X-CSE-ConnectionGUID: 8Qb3nSgJQkCsc4qIjZkb0w==
+X-CSE-MsgGUID: Mkr3LIuGRr2NeviblboXRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="210924155"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 04:23:46 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: hansg@kernel.org, kuba@kernel.org, edip@medip.dev
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251015181042.23961-3-edip@medip.dev>
+References: <20251015181042.23961-3-edip@medip.dev>
+Subject: Re: [PATCH] platform/x86: hp-wmi: mark Victus 16-r0 and 16-s0 for
+ victus_s fan and thermal profile support
+Message-Id: <176234542081.15175.5226902403695078034.b4-ty@linux.intel.com>
+Date: Wed, 05 Nov 2025 14:23:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v1 1/1] usbnet: Add support for Byte Queue Limits
- (BQL)
-To: Eric Dumazet <edumazet@google.com>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
- <20251104161327.41004-2-simon.schippers@tu-dortmund.de>
- <CANn89iL6MjvOc8qEQpeQJPLX0Y3X0HmqNcmgHL4RzfcijPim5w@mail.gmail.com>
- <66d22955-bb20-44cf-8ad3-743ae272fec7@tu-dortmund.de>
- <CANn89i+oGnt=Gpo1hZh+8uaEoK3mKLQY-gszzHWC+A2enXa7Tw@mail.gmail.com>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <CANn89i+oGnt=Gpo1hZh+8uaEoK3mKLQY-gszzHWC+A2enXa7Tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 11/5/25 12:28, Eric Dumazet wrote:
-> On Wed, Nov 5, 2025 at 2:35 AM Simon Schippers
-> <simon.schippers@tu-dortmund.de> wrote:
->>
->> On 11/4/25 18:00, Eric Dumazet wrote:
->>> On Tue, Nov 4, 2025 at 8:14 AM Simon Schippers
->>> <simon.schippers@tu-dortmund.de> wrote:
->>>>
->>>> The usbnet driver currently relies on fixed transmit queue lengths, which
->>>> can lead to bufferbloat and large latency spikes under load -
->>>> particularly with cellular modems.
->>>> This patch adds support for Byte Queue Limits (BQL) to dynamically manage
->>>> the transmit queue size and reduce latency without sacrificing
->>>> throughput.
->>>>
->>>> Testing was performed on various devices using the usbnet driver for
->>>> packet transmission:
->>>>
->>>> - DELOCK 66045: USB3 to 2.5 GbE adapter (ax88179_178a)
->>>> - DELOCK 61969: USB2 to 1 GbE adapter (asix)
->>>> - Quectel RM520: 5G modem (qmi_wwan)
->>>> - USB2 Android tethering (cdc_ncm)
->>>>
->>>> No performance degradation was observed for iperf3 TCP or UDP traffic,
->>>> while latency for a prioritized ping application was significantly
->>>> reduced. For example, using the USB3 to 2.5 GbE adapter, which was fully
->>>> utilized by iperf3 UDP traffic, the prioritized ping was improved from
->>>> 1.6 ms to 0.6 ms. With the same setup but with a 100 Mbit/s Ethernet
->>>> connection, the prioritized ping was improved from 35 ms to 5 ms.
->>>>
->>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
->>>> ---
->>>>  drivers/net/usb/usbnet.c | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
->>>> index 62a85dbad31a..1994f03a78ad 100644
->>>> --- a/drivers/net/usb/usbnet.c
->>>> +++ b/drivers/net/usb/usbnet.c
->>>> @@ -831,6 +831,7 @@ int usbnet_stop(struct net_device *net)
->>>>
->>>>         clear_bit(EVENT_DEV_OPEN, &dev->flags);
->>>>         netif_stop_queue (net);
->>>> +       netdev_reset_queue(net);
->>>>
->>>>         netif_info(dev, ifdown, dev->net,
->>>>                    "stop stats: rx/tx %lu/%lu, errs %lu/%lu\n",
->>>> @@ -939,6 +940,7 @@ int usbnet_open(struct net_device *net)
->>>>         }
->>>>
->>>>         set_bit(EVENT_DEV_OPEN, &dev->flags);
->>>> +       netdev_reset_queue(net);
->>>>         netif_start_queue (net);
->>>>         netif_info(dev, ifup, dev->net,
->>>>                    "open: enable queueing (rx %d, tx %d) mtu %d %s framing\n",
->>>> @@ -1500,6 +1502,7 @@ netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
->>>>         case 0:
->>>>                 netif_trans_update(net);
->>>>                 __usbnet_queue_skb(&dev->txq, skb, tx_start);
->>>> +               netdev_sent_queue(net, skb->len);
->>>>                 if (dev->txq.qlen >= TX_QLEN (dev))
->>>>                         netif_stop_queue (net);
->>>>         }
->>>> @@ -1563,6 +1566,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
->>>>  static void usbnet_bh(struct timer_list *t)
->>>>  {
->>>>         struct usbnet           *dev = timer_container_of(dev, t, delay);
->>>> +       unsigned int bytes_compl = 0, pkts_compl = 0;
->>>>         struct sk_buff          *skb;
->>>>         struct skb_data         *entry;
->>>>
->>>> @@ -1574,6 +1578,8 @@ static void usbnet_bh(struct timer_list *t)
->>>>                                 usb_free_skb(skb);
->>>>                         continue;
->>>>                 case tx_done:
->>>> +                       bytes_compl += skb->len;
->>>> +                       pkts_compl++;
->>>>                         kfree(entry->urb->sg);
->>>>                         fallthrough;
->>>>                 case rx_cleanup:
->>>> @@ -1584,6 +1590,8 @@ static void usbnet_bh(struct timer_list *t)
->>>>                 }
->>>>         }
->>>>
->>>> +       netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
->>>> +
->>>>         /* restart RX again after disabling due to high error rate */
->>>>         clear_bit(EVENT_RX_KILL, &dev->flags);
->>>>
->>>
->>> I think this is racy. usbnet_bh() can run from two different contexts,
->>> at the same time (from two cpus)
->>>
->>> 1) From process context :
->>> usbnet_bh_work()
->>>
->>> 2) From a timer. (dev->delay)
->>>
->>>
->>> To use BQL, you will need to add mutual exclusion.
->>
->> Yeah, I missed that.
->>
->> I guess synchronizing with the lock of the sk_buff_head dev->done makes
->> sense? The same locking is also done right before in skb_dequeue.
+On Wed, 15 Oct 2025 21:10:44 +0300, edip@medip.dev wrote:
+
+> This patch adds Victus 16-r0 (8bbe) and Victus 16-s0(8bd4, 8bd5) laptop
+> DMI board name into existing list
 > 
-> Or only protect the netdev_completed_queue(dev->net, pkts_compl,
-> bytes_compl) call,
-> adding a specific/dedicated spinlock for this purpose.
 > 
-> spin_lock_bh(&dev->bql_spinlock);
-> netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
-> spin_unlock_bh(&dev->bql_spinlock);
-> 
-> I am assuming no usbnet driver is setting dev->lltx = true (or plan to
-> in the future)
-> so usbnet_start_xmit() is protected by HARD_TX_LOCK() already.
-
-Yes, I also want to only protect the netdev_completed_queue(dev->net,
-pkts_compl, bytes_compl) call. However, I am wondering what you mean with
-
-spin_lock_bh(&dev->bql_spinlock)
-...
 
 
-Do we want to protect against usbnet_start_xmit()? Maybe I am missing
-something, but other BQL implementations also do not seem to protect
-against their respective ndo_start_xmit.
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
+The list of commits applied:
+[1/1] platform/x86: hp-wmi: mark Victus 16-r0 and 16-s0 for victus_s fan and thermal profile support
+      commit: 55b6ece2213f60fcd822904162fa58c36b8307e0
 
-My approach would just protect against usbnet_bh calls from another
-context with the same locking as skb_dequeue():
+--
+ i.
 
-spin_lock_irqsave(&list->lock, flags);
-netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
-spin_unlock_irqrestore(&list->lock, flags);
-
-Thanks!
 
