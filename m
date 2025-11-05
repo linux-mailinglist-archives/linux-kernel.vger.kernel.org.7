@@ -1,54 +1,94 @@
-Return-Path: <linux-kernel+bounces-886069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41918C34A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4730DC34A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 259FC4FD791
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:56:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42EB04F8A1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157FF2ED848;
-	Wed,  5 Nov 2025 08:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7640B2E888C;
+	Wed,  5 Nov 2025 08:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ip5xis/3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="REKofunG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fi9iXzf4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="REKofunG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fi9iXzf4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4C82EBDE5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95CC2DC792
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333003; cv=none; b=EzImGU6HkOcRiMdSK7Qn1xdybkeRODz4gNZnF394ZH8ATyten1URqBsXF1QzUPpElXpikgpKugBpVyogoVR5iAer3aD0otY6yt9aS5c868Z1gCj2+TNJJoNsX33kFdtl8QeYgNYK1lt2/zkd2xmcQrILEZjUHq1pgAuqMvd7QUs=
+	t=1762333038; cv=none; b=WyzFWc9bLX6Fxv1XSw6aI3vkgZhmgBVjGqlypuNnGbdUKa8Ubby84Vhm+bOBkz43UMKXzJ75wjzV2bk9Mw64Us5z1OTrOqEvLcxvQ3kdrkNky/xX+/kV8d8OYx1BhaSMgMeqSNN5GF+FL07oNIAEw0GFzBNOBNsQZ0F5R6gpVoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333003; c=relaxed/simple;
-	bh=kBp4Td7c7VXvdJdflYb0aWyuRBLxQrptcQOf2UCMU7E=;
+	s=arc-20240116; t=1762333038; c=relaxed/simple;
+	bh=KvaMmp6DLKFkmGJN1c/jqzPNuPRJotTXmJ+CGP2+EhY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F4rC5dTjwE6mFOjmX6XDX/jznaJyf7T9/4txQK5pIMyrqlLSJcqg98aqLenLJPsT22s0x4WznwtzctzsJ5OyO+dx0m1c7+oddmpEe/kO4+hRjfutO5CX6H0cbEy/ToRlXc7wfaFx2H4RAmaVnAu7ECSW93q8GahC+rQGRGuPu5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ip5xis/3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762332999;
-	bh=kBp4Td7c7VXvdJdflYb0aWyuRBLxQrptcQOf2UCMU7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ip5xis/3G2I0Atgv3TPwLeesXyCBzCZNyX+tpF7mDwEnOSEI7RG+vQw6lE0wIsUds
-	 6nxpdrDz7CnDqSmUkkqb2m9Ib6xPz2+QIbC4xVPRQLPM+kUHNmx0jqZspwjornd4sY
-	 xmY9Jwl6MATfCL+9bVf1V3YNiNiNccGUeD71BH09hM1SOFT5oYwiVTDLc6gLjQnvfC
-	 cyIIbsTGTavWkn0c449imX25A/VBZurd9QnrdHLfhfEtJJs32R7eCK4Wehz3K0eYRL
-	 f3kuDzDiSuQ3RmSsg75OqlGnh7fi3r8Y7VH5zaW+H1/fXPoL63bCUS/eqy/RzfPOkI
-	 fiRJtfvCT3feg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 In-Reply-To:Content-Type; b=M2X4R97REGz0TNuGI4iUFl+hOjhnKVHv5ySJDn+K2stcSyky2/e5SH2+8b04+zu5LnYPI+kHJjnXfF/Dk+FCDqnO5IIL0q/CPiCaSqThmHVQIDsyuhMRpPCDV8cEUQft5357PSZAtQA0RZVx6FbWu+jed9jX+U22O2g/Zu2Snj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=REKofunG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fi9iXzf4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=REKofunG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fi9iXzf4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EBD3B17E12AA;
-	Wed,  5 Nov 2025 09:56:38 +0100 (CET)
-Message-ID: <7d67d78e-3d97-4551-8fde-01667f2ca260@collabora.com>
-Date: Wed, 5 Nov 2025 09:56:38 +0100
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 01F1321153;
+	Wed,  5 Nov 2025 08:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762333035; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
+	b=REKofunGAkZy4HSr+2sT2LcIC+JmOyb6KxRxfz0HAXVkfGOe80yI0nuM3c1rPya6Vc/C83
+	y9ZiaIXYHBSCgMgHEcWEJbDtGkCnu3rwo3+W7pbIvoBihjzHUz1ukbdgSwnG2NYs/Fj2cK
+	Mx7n/uDxuTK8sJrH4wltzv6F1Cw+/R8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762333035;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
+	b=fi9iXzf4bfkZzM3o7qlsm3Q8NDEqg+bXSI2y7Y+R4m83PbHswrnVmgWxppewpmRa+8O8D5
+	hzAShJUvnBfhspCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762333035; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
+	b=REKofunGAkZy4HSr+2sT2LcIC+JmOyb6KxRxfz0HAXVkfGOe80yI0nuM3c1rPya6Vc/C83
+	y9ZiaIXYHBSCgMgHEcWEJbDtGkCnu3rwo3+W7pbIvoBihjzHUz1ukbdgSwnG2NYs/Fj2cK
+	Mx7n/uDxuTK8sJrH4wltzv6F1Cw+/R8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762333035;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m2+JqlrBRbbkwTb6yqQdhY2PXr1Aq2H/iiE8dk6sZE0=;
+	b=fi9iXzf4bfkZzM3o7qlsm3Q8NDEqg+bXSI2y7Y+R4m83PbHswrnVmgWxppewpmRa+8O8D5
+	hzAShJUvnBfhspCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8B73132DD;
+	Wed,  5 Nov 2025 08:57:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id l777J2oRC2npegAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 05 Nov 2025 08:57:14 +0000
+Message-ID: <38110178-0f27-44ba-9925-5bbe74a1bf9b@suse.de>
+Date: Wed, 5 Nov 2025 09:57:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,98 +96,207 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: "niklaus.liu" <Niklaus.Liu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com, zhigang.qin@mediatek.com,
- sen.chu@mediatek.com
-References: <20251105033817.20427-1-Niklaus.Liu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] drm/udl: Increase get urb timeout for modeset
+To: oushixiong1025@163.com, Dave Airlie <airlied@redhat.com>
+Cc: Sean Paul <sean@poorly.run>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+References: <20251105083037.237925-1-oushixiong1025@163.com>
 Content-Language: en-US
-In-Reply-To: <20251105033817.20427-1-Niklaus.Liu@mediatek.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251105083037.237925-1-oushixiong1025@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[163.com,redhat.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[poorly.run,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[suse.com:url,suse.de:mid,imap1.dmz-prg2.suse.org:helo,kylinos.cn:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,suse.com:url]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Il 05/11/25 04:38, niklaus.liu ha scritto:
-> Refer to the discussion in the link:
-> v3: https://patchwork.kernel.org/project/linux-mediatek/patch/20251104071252.12539-2-Niklaus.Liu@mediatek.com/
-> 
-> Subject: [PATCH v4 0/1] soc: mediatek: mtk-regulator-coupler: Add support for MT8189
+Hi
 
-The subject of this email is .. empty. That's really bad, and it's the second time
-that it happens. Please make sure that you're sending emails the right way, and/or
-fix your client.
+Am 05.11.25 um 09:30 schrieb oushixiong1025@163.com:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> [WHY]
+> There is a situation where udl_handle_damage() was running successfully
+> but the screen was black. it was because udl_crtc_helper_atomic_enable() failed,
+> and there were no error messages.
+>
+> [HOW]
+> The priority for mode settings needs to be higher than damage handle, requiring
+> a higher success rate than ordinary operations.
+> Increase get urb timeout for modeset.
+>
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+> ---
+>   drivers/gpu/drm/udl/udl_drv.h      |  5 ++++-
+>   drivers/gpu/drm/udl/udl_main.c     |  5 ++---
+>   drivers/gpu/drm/udl/udl_modeset.c  | 11 +++++++----
+>   drivers/gpu/drm/udl/udl_transfer.c |  2 +-
+>   4 files changed, 14 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+> index 145bb95ccc48..38b3bdf1ae4a 100644
+> --- a/drivers/gpu/drm/udl/udl_drv.h
+> +++ b/drivers/gpu/drm/udl/udl_drv.h
+> @@ -31,6 +31,9 @@ struct drm_mode_create_dumb;
+>   #define DRIVER_MINOR		0
+>   #define DRIVER_PATCHLEVEL	1
+>   
+> +#define GET_URB_TIMEOUT	HZ
+> +#define MODESET_GET_URB_TIMEOUT	(HZ*2)
+> +
 
-While at it, please also fix your name, as it should appear as "Niklaus Liu" and
-not as "niklaus.liu".
+Just increase the regular GET_URB_TIMEOUT for all operations.
 
-> 
-> changes in v4:
->   - reply comment:
+Best regards
+Thomas
 
-Niklaus, please just reply inline to the emails instead of sending an entirely new
-version just for a reply: it's easier for everyone to follow, and it's also easier
-for me to read, and for you to send a reply by clicking one button :-)
+>   struct udl_device;
+>   
+>   struct urb_node {
+> @@ -72,7 +75,7 @@ static inline struct usb_device *udl_to_usb_device(struct udl_device *udl)
+>   int udl_modeset_init(struct udl_device *udl);
+>   struct drm_connector *udl_connector_init(struct drm_device *dev);
+>   
+> -struct urb *udl_get_urb(struct udl_device *udl);
+> +struct urb *udl_get_urb(struct udl_device *udl, long timeout);
+>   
+>   int udl_submit_urb(struct udl_device *udl, struct urb *urb, size_t len);
+>   void udl_sync_pending_urbs(struct udl_device *udl);
+> diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+> index bc58991a6f14..891996f0f74b 100644
+> --- a/drivers/gpu/drm/udl/udl_main.c
+> +++ b/drivers/gpu/drm/udl/udl_main.c
+> @@ -285,13 +285,12 @@ static struct urb *udl_get_urb_locked(struct udl_device *udl, long timeout)
+>   	return unode->urb;
+>   }
+>   
+> -#define GET_URB_TIMEOUT	HZ
+> -struct urb *udl_get_urb(struct udl_device *udl)
+> +struct urb *udl_get_urb(struct udl_device *udl, long timeout)
+>   {
+>   	struct urb *urb;
+>   
+>   	spin_lock_irq(&udl->urbs.lock);
+> -	urb = udl_get_urb_locked(udl, GET_URB_TIMEOUT);
+> +	urb = udl_get_urb_locked(udl, timeout);
+>   	spin_unlock_irq(&udl->urbs.lock);
+>   	return urb;
+>   }
+> diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
+> index 231e829bd709..6adca5e3e471 100644
+> --- a/drivers/gpu/drm/udl/udl_modeset.c
+> +++ b/drivers/gpu/drm/udl/udl_modeset.c
+> @@ -21,6 +21,7 @@
+>   #include <drm/drm_gem_framebuffer_helper.h>
+>   #include <drm/drm_gem_shmem_helper.h>
+>   #include <drm/drm_modeset_helper_vtables.h>
+> +#include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+>   #include <drm/drm_vblank.h>
+>   
+> @@ -217,7 +218,7 @@ static int udl_handle_damage(struct drm_framebuffer *fb,
+>   		return ret;
+>   	log_bpp = ret;
+>   
+> -	urb = udl_get_urb(udl);
+> +	urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+>   	if (!urb)
+>   		return -ENOMEM;
+>   	cmd = urb->transfer_buffer;
+> @@ -341,9 +342,11 @@ static void udl_crtc_helper_atomic_enable(struct drm_crtc *crtc, struct drm_atom
+>   	if (!drm_dev_enter(dev, &idx))
+>   		return;
+>   
+> -	urb = udl_get_urb(udl);
+> -	if (!urb)
+> +	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
+> +	if (!urb) {
+> +		DRM_ERROR("Udl get urb failed when enabling crtc");
+>   		goto out;
+> +	}
+>   
+>   	buf = (char *)urb->transfer_buffer;
+>   	buf = udl_vidreg_lock(buf);
+> @@ -374,7 +377,7 @@ static void udl_crtc_helper_atomic_disable(struct drm_crtc *crtc, struct drm_ato
+>   	if (!drm_dev_enter(dev, &idx))
+>   		return;
+>   
+> -	urb = udl_get_urb(udl);
+> +	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
+>   	if (!urb)
+>   		goto out;
+>   
+> diff --git a/drivers/gpu/drm/udl/udl_transfer.c b/drivers/gpu/drm/udl/udl_transfer.c
+> index 7d670b3a5293..858b47522d78 100644
+> --- a/drivers/gpu/drm/udl/udl_transfer.c
+> +++ b/drivers/gpu/drm/udl/udl_transfer.c
+> @@ -202,7 +202,7 @@ int udl_render_hline(struct udl_device *udl, int log_bpp, struct urb **urb_ptr,
+>   			int ret = udl_submit_urb(udl, urb, len);
+>   			if (ret)
+>   				return ret;
+> -			urb = udl_get_urb(udl);
+> +			urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+>   			if (!urb)
+>   				return -EAGAIN;
+>   			*urb_ptr = urb;
 
-> 1. MTK hardware requires that vsram_gpu must be higher than vgpu; this rule must be satisfied.
-> 
-> 2. When the GPU powers on, the mtcmos driver first calls regulator_enable to turn on vgpu, then calls regulator_enable to
-> turn on vsram_gpu. When enabling vgpu, mediatek_regulator_balance_voltage sets the voltages for both vgpu and vsram_gpu.
-> However, when enabling vsram_gpu, mediatek_regulator_balance_voltage is also executed, and at this time, the vsram_gpu voltage
-> is set to the minimum voltage specified in the DTS, which does not comply with the requirement that vsram_gpu must be higher than vgpu.
-> 
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
 
-2. -> There's your problem! VSRAM_GPU has to be turned on *first*, VGPU has to be
-turned on *last* instead.
 
-Logically, you need SRAM up before the GPU is up as if the GPU tries to use SRAM
-it'll produce unpowered access issues: even though it's *very* unlikely for that
-to happen on older Mali, it's still a logical mistake that might, one day, come
-back at us and create instabilities.
-
-Now, the easy fix is to just invert the regulators in MFG nodes. As I explained
-*multiple* times, you have a misconfiguration in your DT.
-
-GPU subsystem main MFG -> VSRAM
-GPU core complex MFG -> VGPU
-GPU per-core MFG -> nothing
-
-> 3.During suspend, the voltages of vgpu and vsram_gpu should remain unchanged, and when resuming, vgpu and vsram_gpu should be
-> restored to their previous voltages. When the vgpu voltage is adjusted, mediatek_regulator_balance_voltage already synchronizes the
-> adjustment of vsram_gpu voltage. Therefore, adjusting the vsram_gpu voltage again in mediatek_regulator_balance_voltage is redundant.
-
-If you fix your DT, N.3 won't happen.
-
-Regards,
-Angelo
-
-> 
-> 
-> changes in v3:
->   - modify for comment[add the new entry by alphabetical order]
-> 
-> changes in v2:
->   - change title for patch
->   - reply comment: This is a software regulator coupler mechanism, and the regulator-coupled-with
-> configuration has been added in the MT8189 device tree. This patchaddresses an issue reported by a
-> Chromebook customer. When the GPU regulator is turned on, mediatek_regulator_balance_voltage already
-> sets both the GPU and GPU_SRAM voltages at the same time, so there is no need to adjust the GPU_SRAM
-> voltage again in a second round. Therefore, a return is set for MT8189.
-> If the user calls mediatek_regulator_balance_voltage again for GPU_SRAM, it may cause abnormal behavior of GPU_SRAM.
-> 
-> 
-> changes in v1:
->   - mediatek-regulator-coupler mechanism for platform MT8189
-> 
-> *** BLURB HERE ***
-> 
-> Niklaus Liu (1):
->    soc: mediatek: mtk-regulator-coupler: Add support for MT8189
-> 
->   drivers/soc/mediatek/mtk-regulator-coupler.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
 
