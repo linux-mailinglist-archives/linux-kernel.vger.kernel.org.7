@@ -1,209 +1,169 @@
-Return-Path: <linux-kernel+bounces-887054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8B9C3727F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:44:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B2FC372EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B18F500A83
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6BD66643F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550EE3431F0;
-	Wed,  5 Nov 2025 17:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKwF4yxa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FE42874FF;
-	Wed,  5 Nov 2025 17:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CD337B8D;
+	Wed,  5 Nov 2025 17:29:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4949336ED1;
+	Wed,  5 Nov 2025 17:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363705; cv=none; b=lhUmHhK8xPVvC/5E6+pmo8hewBZ677mgsoF1c8abUyc8KgpAnYCW5CB3VQvLQcw2AbOJ2nHFnWzhgSFGxqcL7+50bWRiLNZ07kfQRBO4JaYZyC6LSe+lrLrqnyaMoCyrwBM8q3Teafx7vmLcSttNNEfw8HqUH+mW6J2EPYd429Q=
+	t=1762363742; cv=none; b=BElujoyeYZhbPSHx26UoNzHrigXbJJPZrkuMNrW+JSmPyQrzglhXUdDsis8CfCxsG0g0Ji/Sl0AU8s1kZo9qo9wsnJsRLeqPSjgfNLTwByvWtf66YfIZ1OKHOGKkz2Q1+Y/5vPxBqMBcHeRi2U4j9MskGaCt0XupdlBSm/oNos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363705; c=relaxed/simple;
-	bh=WWE2CREpUzxVd4OeFKJZqcU5pHWBrpeeWrzbApa8odI=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LANLwoqddASX9VBMHDa/Zw3Z/ojOchimQqUU8T7pV7aCZcGgPC9WX9+nrB4LzMQKO4BFUbVSjqAxHVgddIznxXLWRmVGvdc2vNmGgZB5UEW/LLLc/cZX/758dXFYOZYA3n2Mi5lvRCgRUu0B8bdkvd5dW2DZcN35yCK3EfcLqco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKwF4yxa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8162C4CEF5;
-	Wed,  5 Nov 2025 17:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762363704;
-	bh=WWE2CREpUzxVd4OeFKJZqcU5pHWBrpeeWrzbApa8odI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=uKwF4yxaIv4QWdphUhmGifSGdXZBIih2SHH2a5iWmRJtly/l7sfYy+RQqrIDljc6X
-	 DtzEOjKsEQdYDhLm1xg5mVZ34slmu6iONSYbNl+bNJ7iOpcVbPC8UnZy1vlEH4wp8d
-	 DpACOVww4l+67On3PVkaJEkzW+8Bk9RVRrhkugFArDp3qt26GWPlC3lXO5ZNseg5M/
-	 jYIE4vcAQZbijTc3UG6+z4M4slB7M8p/RharMBF+ElW+GETuysURTRYH2KIlapGTa3
-	 DoX0TikPCRMGCWrVieRifoWZfT46N2gGW2eWH3AC0Z1wMQSlA6ElzpKd+5zdwQoObc
-	 aXrjKs4hqGWeQ==
-Subject: [PATCH net V3 2/2] veth: more robust handing of race to avoid txq
- getting stuck
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-To: netdev@vger.kernel.org,
- =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
- Eric Dumazet <eric.dumazet@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
- "Michael S. Tsirkin" <mst@redhat.com>, makita.toshiaki@lab.ntt.co.jp,
- toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel-team@cloudflare.com
-Date: Wed, 05 Nov 2025 18:28:19 +0100
-Message-ID: <176236369968.30034.1538535221816777531.stgit@firesoul>
-In-Reply-To: <176236363962.30034.10275956147958212569.stgit@firesoul>
-References: <176236363962.30034.10275956147958212569.stgit@firesoul>
-User-Agent: StGit/1.5
+	s=arc-20240116; t=1762363742; c=relaxed/simple;
+	bh=k2ZM3DJwll1Max1svThLctb3ZOnNVY45eztnrBFDlek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0qmxhiHC1cb+4BOuX5q3o9ILt4k185Lv1QFQ0mxnp7QYkDgPMQgqOdjabt7fSI2+/wqrF+PB6XUTpOAyb7y1iU9fIfmYeLeMensxyCiv0Q6HIAiGSkYW/2eSCbfEhki0xXk75XZyLPv3qr6SSGcK/mZXtTp+maluu0th2sYhno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61199169C;
+	Wed,  5 Nov 2025 09:28:52 -0800 (PST)
+Received: from [10.57.86.139] (unknown [10.57.86.139])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F09593F63F;
+	Wed,  5 Nov 2025 09:28:54 -0800 (PST)
+Message-ID: <0319bdf5-0a46-40fc-93f8-30d74cf6475a@arm.com>
+Date: Wed, 5 Nov 2025 17:28:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] of: iommu-map parsing for multi-cell IOMMU
+To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, will@kernel.org,
+ joro@8bytes.org, robh@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+ konrad.dybcio@oss.qualcomm.com, bjorn.andersson@oss.qualcomm.com,
+ bod@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ saravanak@google.com, prakash.gupta@oss.qualcomm.com,
+ vikash.garodia@oss.qualcomm.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Commit dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to
-reduce TX drops") introduced a race condition that can lead to a permanently
-stalled TXQ. This was observed in production on ARM64 systems (Ampere Altra
-Max).
+On 2025-11-04 8:50 am, Charan Teja Kalla wrote:
+> The iommu-map property has been defined for the PCIe usecase and has
+> been hardcoded to assume single cell for IOMMU specification, ignoring
+> the #iommu-cells completely. Since the initial definition the iommu-maps
+> property has been reused for other usecases and we can no longer assume
+> that the single IOMMU cell properly describes the necessary IOMMU
+> streams. Expand the iommu-map to take #iommu-cells into account, while
+> keeping the compatibility with the existing DTs, which assume single
+> argument.
+> 
+> Unlike single iommu-cell, it is complex to establish a linear relation
+> between input 'id' and output specifier for multi iommu-cells. To handle
+> such cases, rely on arch-specific drivers called through
+> of_iommu_xlate() from of_iommu layer, aswell it is expected the 'len'
+> passed is always 1. In the of_iommu layer, the below relation is
+> established before calling into vendor specific driver:
+> 
+> a) For platform devices, 'rid' defined in the iommu-map tuple indicates
+> a function, through a bit position, which is compared against passed
+> input 'id' that represents a bitmap of functions represented by the
+> device.
+> 
+> b) For others, 'rid' is compared against the input 'id' as an integer
+> value.
+> 
+> Thus the final representation when #iommu-cells=n is going to be,
+> iommu-map = <rid/functionid IOMMU_phandle cell0 .. celln len>;, where
+> len = 1.
+> 
+> The RFC for this patch set is found at [2].
+> 
+> The other motivation for this patchset is the below usecase.
+> USECASE [1]:
+> ------------
+> Video IP, 32bit, have 2 hardware sub blocks(or can be called as
+> functions) called as pixel and nonpixel blocks, that does decode and
+> encode of the video stream. These logical blocks are configured to
+> generate different stream IDs.
+> 
+> With the classical approach of representing all sids with iommus= end up
+> in using a single translation context limited to the 4GB. There are
+> video usecases which needs larger IOVA space, like higher concurrent
+> video sessions(eg: 32 session and 192MB per session) where 4GB of IOVA
+> is not sufficient.
+> 
+> For this case, each functionality is represented in the firmware(device
+> tree) by the 'rid' field of the iommu-map property and the video driver
+> creates sub platform devices for each of this functionality and call
+> into IOMMU configuration. Each rid(function id) in the dt property
+> indicates the bit that can be associated by the driver passed input id.
+> 
+> Example:
+> iommu {
+> 	#iommu-cells = 2;
+> };
+> 
+> video-codec@foobar {
+> 	compatible = "qcom,video";
+> 	iommus = <&apps_smmu 0x1234 0xca>;
+> 	iommu-map= <0x1 &iommu 0x1940 0x0 0x1>,
+>                 <0x1 &iommu 0x1941 0x0 0x1>,
+>                 <0x2 &iommu 0x1942 0x0 0x1>,
+>                 <0x4 &iommu 0x1943 0x0 0x1>,
+>                 <0x4 &iommu 0x1944 0x0 0x1>;
+> };
+> 
+> video-driver:
+> #define PIXEL_FUNC	   (1)
+> #define NON_PIXEL_FUNC	   (2)
+> #define SECURE_FUNC	   (4)
+> 
+> case1: All these functionalities requires individual contexts.
+> Create 3 subdevices for each of this function and call
+> of_dma_configure_id(..,id), id = 0x1, 0x2, 0x4.
+> 
+> Case2: Secure and non-secure functionalities require individual
+> contexts. Create 2 subdevices and call of_dma_configure_id(..,id), id =
+> 0x3(bitmap of pixel and non-pixel), 0x4 (secure).
+> 
+> Credits: to Dmitry for thorough discussions on the RFC patch and major
+> help in getting the consenus on this approach, to Konrad & Bjorn for
+> offline discussions and reviews, to Robin for his inputs on IOMMU front,
+> to Bod, Rob and Krzysztof for all valuable inputs.
+> 
+> [1] https://lore.kernel.org/all/20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com/
+> [2] https://lore.kernel.org/all/20250928171718.436440-1-charan.kalla@oss.qualcomm.com/#r
+> 
+> Charan Teja Kalla (6):
+>    of: create a wrapper for of_map_id()
+>    of: introduce wrapper function to query the cell count
+>    of: parse #<name>-cells property to get the cell count
+>    of: detect and handle legacy iommu-map parsing
+>    of: add infra to parse iommu-map per IOMMU cell count
+>    of: use correct iommu-map parsing logic from of_iommu layer
+> 
+>   drivers/iommu/of_iommu.c |  59 +++++++--
+>   drivers/of/base.c        | 269 +++++++++++++++++++++++++++++++++++----
+>   include/linux/of.h       |  19 +++
+>   3 files changed, 314 insertions(+), 33 deletions(-)
 
-The race occurs in veth_xmit(). The producer observes a full ptr_ring and
-stops the queue (netif_tx_stop_queue()). The subsequent conditional logic,
-intended to re-wake the queue if the consumer had just emptied it (if
-(__ptr_ring_empty(...)) netif_tx_wake_queue()), can fail. This leads to a
-"lost wakeup" where the TXQ remains stopped (QUEUE_STATE_DRV_XOFF) and
-traffic halts.
+Hmm, I did actually have a quick go at this the other week too, and 
+while I though it was a bit clunky, it was still significantly simpler 
+than this seems to be...
 
-This failure is caused by an incorrect use of the __ptr_ring_empty() API
-from the producer side. As noted in kernel comments, this check is not
-guaranteed to be correct if a consumer is operating on another CPU. The
-empty test is based on ptr_ring->consumer_head, making it reliable only for
-the consumer. Using this check from the producer side is fundamentally racy.
+FWIW: https://gitlab.arm.com/linux-arm/linux-rm/-/commits/iommu-map - I 
+can give it some polish and testing to post properly if you like.
 
-This patch fixes the race by adopting the more robust logic from an earlier
-version V4 of the patchset, which always flushed the peer:
-
-(1) In veth_xmit(), the racy conditional wake-up logic and its memory barrier
-are removed. Instead, after stopping the queue, we unconditionally call
-__veth_xdp_flush(rq). This guarantees that the NAPI consumer is scheduled,
-making it solely responsible for re-waking the TXQ.
-  This handles the race where veth_poll() consumes all packets and completes
-NAPI *before* veth_xmit() on the producer side has called netif_tx_stop_queue.
-The __veth_xdp_flush(rq) will observe rx_notify_masked is false and schedule
-NAPI.
-
-(2) On the consumer side, the logic for waking the peer TXQ is moved out of
-veth_xdp_rcv() and placed at the end of the veth_poll() function. This
-placement is part of fixing the race, as the netif_tx_queue_stopped() check
-must occur after rx_notify_masked is potentially set to false during NAPI
-completion.
-  This handles the race where veth_poll() consumes all packets, but haven't
-finished (rx_notify_masked is still true). The producer veth_xmit() stops the
-TXQ and __veth_xdp_flush(rq) will observe rx_notify_masked is true, meaning
-not starting NAPI.  Then veth_poll() change rx_notify_masked to false and
-stops NAPI.  Before exiting veth_poll() will observe TXQ is stopped and wake
-it up.
-
-Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
-Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
- drivers/net/veth.c |   40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 7b1a9805b270..127dab275896 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -392,14 +392,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
- 		}
- 		/* Restore Eth hdr pulled by dev_forward_skb/eth_type_trans */
- 		__skb_push(skb, ETH_HLEN);
--		/* Depend on prior success packets started NAPI consumer via
--		 * __veth_xdp_flush(). Cancel TXQ stop if consumer stopped,
--		 * paired with empty check in veth_poll().
--		 */
- 		netif_tx_stop_queue(txq);
--		smp_mb__after_atomic();
--		if (unlikely(__ptr_ring_empty(&rq->xdp_ring)))
--			netif_tx_wake_queue(txq);
-+		/* Makes sure NAPI peer consumer runs. Consumer is responsible
-+		 * for starting txq again, until then ndo_start_xmit (this
-+		 * function) will not be invoked by the netstack again.
-+		 */
-+		__veth_xdp_flush(rq);
- 		break;
- 	case NET_RX_DROP: /* same as NET_XMIT_DROP */
- drop:
-@@ -900,17 +898,9 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
- 			struct veth_xdp_tx_bq *bq,
- 			struct veth_stats *stats)
- {
--	struct veth_priv *priv = netdev_priv(rq->dev);
--	int queue_idx = rq->xdp_rxq.queue_index;
--	struct netdev_queue *peer_txq;
--	struct net_device *peer_dev;
- 	int i, done = 0, n_xdpf = 0;
- 	void *xdpf[VETH_XDP_BATCH];
- 
--	/* NAPI functions as RCU section */
--	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
--	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
--
- 	for (i = 0; i < budget; i++) {
- 		void *ptr = __ptr_ring_consume(&rq->xdp_ring);
- 
-@@ -959,11 +949,6 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
- 	rq->stats.vs.xdp_packets += done;
- 	u64_stats_update_end(&rq->stats.syncp);
- 
--	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
--		txq_trans_cond_update(peer_txq);
--		netif_tx_wake_queue(peer_txq);
--	}
--
- 	return done;
- }
- 
-@@ -971,12 +956,20 @@ static int veth_poll(struct napi_struct *napi, int budget)
- {
- 	struct veth_rq *rq =
- 		container_of(napi, struct veth_rq, xdp_napi);
-+	struct veth_priv *priv = netdev_priv(rq->dev);
-+	int queue_idx = rq->xdp_rxq.queue_index;
-+	struct netdev_queue *peer_txq;
- 	struct veth_stats stats = {};
-+	struct net_device *peer_dev;
- 	struct veth_xdp_tx_bq bq;
- 	int done;
- 
- 	bq.count = 0;
- 
-+	/* NAPI functions as RCU section */
-+	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
-+	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
-+
- 	xdp_set_return_frame_no_direct();
- 	done = veth_xdp_rcv(rq, budget, &bq, &stats);
- 
-@@ -998,6 +991,13 @@ static int veth_poll(struct napi_struct *napi, int budget)
- 		veth_xdp_flush(rq, &bq);
- 	xdp_clear_return_frame_no_direct();
- 
-+	/* Release backpressure per NAPI poll */
-+	smp_rmb(); /* Paired with netif_tx_stop_queue set_bit */
-+	if (peer_txq && netif_tx_queue_stopped(peer_txq)) {
-+		txq_trans_cond_update(peer_txq);
-+		netif_tx_wake_queue(peer_txq);
-+	}
-+
- 	return done;
- }
- 
-
-
+Thanks,
+Robin.
 
