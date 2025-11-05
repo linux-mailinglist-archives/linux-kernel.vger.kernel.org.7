@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-886230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03ED5C350AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:11:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C64C350A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6AF3BFDE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:09:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767C618C6F9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1824E2EFD86;
-	Wed,  5 Nov 2025 10:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F78C2EFD95;
+	Wed,  5 Nov 2025 10:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQOL2lY+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ESmxx5WK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAB12C17B3;
-	Wed,  5 Nov 2025 10:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ED32EA171;
+	Wed,  5 Nov 2025 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762337343; cv=none; b=XB3cE4YpVqmUkbwQOIvepD4UaansXI4AiZV0WV2rNm1re9BR3O3MsYyc07eJe2gUr4xqZOEaTMIQ7pTPcQ0BYGTN+fZyteYRP7JaAN8/FeO6H/4Kg5FWSr7Eeb7X1+sntQK+UL/c2M9eu3qYSQ3kDfyGAxcIIpMMs6fSINd3r1Q=
+	t=1762337416; cv=none; b=BMTvbrCaVPd9GiZO8hNXTcpMezvmal4WMMbhLb8Zwoj1fWe0gArFDl3dVIFkCj8BCqyd8uZim02nVvW8BSsriCNAe30wGv2kht3hWOV8kw4KmnZqrngsfR8VULgNK3t/2/WcETcbWQnujZvzW8DFLv10AjepAT5t8L0LVNemsZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762337343; c=relaxed/simple;
-	bh=cBgHojw5RM6tgrcR7jae+abslHQ0IK3ynWrHb++wOTs=;
+	s=arc-20240116; t=1762337416; c=relaxed/simple;
+	bh=pEHq23DTK9plrekMdZIjwAiPfgbJQh5bAa7K8rvaR5s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgBIU8vcUh4dslo73mnQVRPLo4ETGku9IPRJyY6z0PpJRUdugD5Gpnu9vX1ad1oV2YJL8srJEpiwV0PMfRWU5tc1obEJ5LEIN51k7eY11XK2hW4ZRVXrfJ7zA2IWROS26os+QdsZOihLidIf3Uhd1p5ZPGAOprOgp4lBhSYHpJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQOL2lY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE23DC4CEF8;
-	Wed,  5 Nov 2025 10:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762337343;
-	bh=cBgHojw5RM6tgrcR7jae+abslHQ0IK3ynWrHb++wOTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EQOL2lY+WAFqDzkNhAEc0y7ZWmhpolFDBHNwVYGaP/1ce24yaW7mRUqQNklQKzIpr
-	 1ewdESlf2FTCp/A5iTwyeJRk8BqdxmoteGZtSkOLZxJV0TVi9SjBJtBQtzFIYNkI+k
-	 lx7Bxc4H8PMstQ90f4aBJKvRXQLC0DBzNJB7WJbulllLlIt0/+3Ae1GZAbL5zzCuS3
-	 qD5kglj6rpngbcuP5XrghEF+URMH0sVzPcBdbAIxrZ6J3p8KvHyQmUEtWzKV9bKT7a
-	 YFQSuKePREKPkmxxLhQD6c/AcCvVUGs5ZwvihLhlltTRuzxmeCJFe8DpvBLwyvOcpP
-	 ynkVQmUkNvJog==
-Date: Wed, 5 Nov 2025 10:08:56 +0000
-From: Lee Jones <lee@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Aurelien Jarno <aurelien@aurel32.net>, linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-ID: <20251105100856.GG8064@google.com>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
- <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
- <FA447DF1D2398A79+aQlVuEbrLMCiGMpc@kernel.org>
- <20251105093347.GD8064@google.com>
- <E205F88FB1EE06C5+aQscI0Uy7pgiMzEt@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZBxMHtzl8vqXx2T7wFxkb9tPw4RB3XokkwaNlvTivyb1o7Oxqy7b0d9OAYwTritASw2H9sNPMxX0JD7+6cN340WXxO49cHPAT5WSFD5oTGT1b+cw9TlrKek1lnKBvXhd6hUjm2l8aFxydSWVPiIkDjtmeaprTqsWuBEWy2OFPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ESmxx5WK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nt39HxPM8LLaNNK+bTw52CtFLk7Av+K6+6gKwldjM1U=; b=ESmxx5WKfKSb2Hu24mTO8usLTA
+	9y4wgE1xDI9NFkGiFxQLZk3ssga+EARhQBkgiL07hOkSkUAzX5nNv5nYQOfJp9VqAynNsOr4eiba/
+	99PvBEPGmS8MykQEcY21kdfaZFfSrJXE4FrjIT9CHIywwq5V+jBO1yL0EFqkcKp1wuEpNLyZZFt+P
+	+Hp8Prie+1idMJ/mPl8rGvizYbOJ2tZi9sK2impWEgiHNpaF8eDdOz+5VXg/Ab3lK03yV09GamgYA
+	MG1eGw6OxYS/HV3N6sBm19qNvjmSHhzWhR3zieGwpAPngwwUoXTsHdY4wsjVNgJMxWwDunn9pAbEJ
+	s95NQvPQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGaSw-00000002U7b-3h4J;
+	Wed, 05 Nov 2025 10:10:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EC29F300230; Wed, 05 Nov 2025 11:10:10 +0100 (CET)
+Date: Wed, 5 Nov 2025 11:10:10 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, nathan@kernel.org
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: new objtool warnings
+Message-ID: <20251105101010.GA4068168@noisy.programming.kicks-ass.net>
+References: <20251031111515.09c9a4ed@canb.auug.org.au>
+ <20251103091006.GV3245006@noisy.programming.kicks-ass.net>
+ <20251103203256.5ac39302@canb.auug.org.au>
+ <20251103093804.GY3245006@noisy.programming.kicks-ass.net>
+ <20251105143027.214f491c@canb.auug.org.au>
+ <20251105085637.GO4067720@noisy.programming.kicks-ass.net>
+ <20251105100014.GY4068168@noisy.programming.kicks-ass.net>
+ <20251105100202.GZ4068168@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E205F88FB1EE06C5+aQscI0Uy7pgiMzEt@kernel.org>
+In-Reply-To: <20251105100202.GZ4068168@noisy.programming.kicks-ass.net>
 
-On Wed, 05 Nov 2025, Troy Mitchell wrote:
++ Nathan
 
-> On Wed, Nov 05, 2025 at 09:34:21AM +0000, Lee Jones wrote:
-> > On Tue, 04 Nov 2025, Troy Mitchell wrote:
+On Wed, Nov 05, 2025 at 11:02:02AM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 05, 2025 at 11:00:14AM +0100, Peter Zijlstra wrote:
+> > On Wed, Nov 05, 2025 at 09:56:37AM +0100, Peter Zijlstra wrote:
+> > > On Wed, Nov 05, 2025 at 02:30:27PM +1100, Stephen Rothwell wrote:
+> > > 
+> > > > These objtool messages have returned today.  No change in compiler.
+> > > 
+> > > Yes, Ingo also reported them on IRC, let me go investigate!
 > > 
-> > > On Mon, Nov 03, 2025 at 01:48:33AM +0100, Sebastian Reichel wrote:
-> > > > 
-> > > > On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> > > > > This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> > > > > commonly paired with the SpacemiT K1 SoC.
-> > > > > 
-> > > > > Note: For reliable operation, this driver depends on a this patch that adds
-> > > > > atomic transfer support to the SpacemiT I2C controller driver:
-> > > > >   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> dependency is here.
-> > > > > 
-> > > > > [...]
-> > > > 
-> > > > Applied, thanks!
-> > > > 
-> > > > [1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-> > > >       commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
-> > > Should we apply it now? The dependency patch hasn’t been merged yet...
-> > 
-> > What is the dependency?
-> I point it out above.
-> Without this patch, reboot and shutdown would end up calling the non-atomic i2c_transfer.
-
-Okay, thanks.  I was mostly checking that you weren't referring to the
-MFD patch, which doesn't represent a true dependency.
-
--- 
-Lee Jones [李琼斯]
+> > The below cures things, but I'm not quite sure why they show up now and
+> > not before. Let me poke more.
+> 
+> Also, someone wrecked the build system.
+> 
+> vmlinux.o is no longer a valid build target, and the vmlinux target
+> seems to build a ton of module stuff :/
 
