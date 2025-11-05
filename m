@@ -1,129 +1,213 @@
-Return-Path: <linux-kernel+bounces-886193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0559C34F42
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA07AC34F81
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D835B4F1D8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:48:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46F614FD0AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B32F3093CB;
-	Wed,  5 Nov 2025 09:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EEF270557;
+	Wed,  5 Nov 2025 09:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XB+bE+Y0"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eu9KieHv"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A53B3074A7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1F20DD52
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762336095; cv=none; b=XMkGIlOZkbGiijkegKpSsJ5ZmvkWj/glRSlQXWYitLqeyhnmKOPXLiJEYnP46R4qVgLO5DBw43askLOvelESUVlyEhd4K06ncpxc6UU1ei2jBiG392Ruf5uaDry7GyEzlWBzoRz5YZj1D8VC2RHH/8O7r5yC8g/GSTjcqHiSWiM=
+	t=1762336114; cv=none; b=BSUvtFWBrS8y0wylOnng3B4miS2/m1wyy1H9ZUHuQMl0EqT1w4iq8R8cRnNypkkslh18uVLxDT8qILEEioqJQr07+xpVIitV1g0dqcpKHZ4sHvwzy7yn18gTkctquFqjTocXrX7q4+2WF2ywt9cGbz9TdHrvlqMtVajh2poC7pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762336095; c=relaxed/simple;
-	bh=/l+lXyfzVl6LoJLldUXhYWWqz0KRyomsRBLp59Bxgkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t5Sjdfgkjr5cnCrxmrw6yrDfeY8pIinzdxfGG9cF1NR34qRAGLmTDnjidOP8IQqvHApu/cJE3Yw4bVv4Jxe4QvWu0sHAQRyfLV8NPX0Al99VrLvgRY3xkjSK25oEVcYIU/FnVeZ0AIMcKsuTcBmYwnN2uA4S/OgIxxs3eeXMadI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XB+bE+Y0; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1762336114; c=relaxed/simple;
+	bh=WpbqLe6mspDexwSEWOmQtR2K4XKM/1s8lyFPl9hxm1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mPFqaLuRtaCk8s6sSbfR3Dpq/O9Cfp6Hv7/Oqilp0aNOWj5TBYEDPlS7uOs+bWT/fffdBdgRL8TWw87D5tFPiF2aV6xt2lhXOxx9eZiyuUDG+M4C1uxrPYsvBKH4FR7fknPjsosOJPLgIXOL3w1y/U9Ra7+TvfL+sX9r7jmYqb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eu9KieHv; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640e9f5951aso1178353a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:48:12 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429b7ba208eso4042835f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:48:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762336091; x=1762940891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762336111; x=1762940911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/l+lXyfzVl6LoJLldUXhYWWqz0KRyomsRBLp59Bxgkw=;
-        b=XB+bE+Y06AS8BNhpo2uYGd7LytKhc/uhMLC5fll0M2/GlI/cDwtuLVd4FlqF25n1t7
-         NNKAO2nJZRtMQjZ5IVXI8Bq1UH5saMwN4jF5X1OEjE92B6B+mTTWYaCl8hWX5GsUCLFo
-         j4zBsNSW3Dl+qkEDA8ih3OOGDw0aMh9P0JXYPaZI5RK+D/75UygWGO4GTtDpJ6btzP+3
-         yMzVIFV1W0fNSChYaaEcczrkViJpbVeq5l8x96KElzpEVVHnAkL0p257I9O/+2bQr9zV
-         nlZE8lprh8kscwPJ2kXeGbku/4dewS+2/qBjj0RJ5/2oB9FSayx/LH86t8bGNQBAy0eV
-         TzUg==
+        bh=/eC1//SZtzXCJ9VDP38XGpX45I3TMA2WSmv1Cg2gDD4=;
+        b=eu9KieHvQh2LWbiGCDvcFKC0+MN5LeKK52xOuS/N0C/zt6MAsxE5Yx+yKtKo4T3a8f
+         y1qyCo/t28c/udWVXEoXXOuALau7vQQVbuOe9KY4w5BTK7fuPwdVcmDd2YqkA0XwRKl9
+         1ju7wzLBP3RrN7SsG1Wu9e/adcYgbpkj4bNzEcU3tHTSPzYUPxUdClTEV+2gnPH5Tv3f
+         pldpPeHkSB9CLbU+36p4w7MqZlGXjQ0MUuPtiWvfK5Sp4Ru/iRl6WPzncDmWDMGEvVa/
+         ZLM6AgtlybWal1iBSbEiVJ2Z0kD0gZ/Kb8O8eHGDbwLIH0lPKZgwe0GLtkVvfZt8jwp3
+         7iNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762336091; x=1762940891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762336111; x=1762940911;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/l+lXyfzVl6LoJLldUXhYWWqz0KRyomsRBLp59Bxgkw=;
-        b=PmxrYlAewRQww8ekne0DooZObnn3bD4M1BoT4joKJiD6+6qcFSTpDd/vuXL7cPI5mc
-         zKRZ3398tAl3RgvaOf0M0dzu22QK0yFAGsTFOwuQkEyDCz5rPrf2jSNjoOZ/iyCZT9XQ
-         3ee/jBauc+oiqwY24jwgiULd7ToI9dHtLpbLF+sxzpVkxD34EPxnKLFKOEMWsjx4oI/s
-         9z9kkH7KjZ9amdtBBUT9OdkK92CZ1BNomAbNt+HID7Xtw9ZyQQSKCHs3RznUPpjsZlMj
-         gbz+nVKx419WlMvQ7mu2VOzzOl8m6BObdbVlknyxKPmMjRx/jhbrcsLnol4WUo/OXBCK
-         AWHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmJgCVPrU/jlEsb4kRignx5S3SvHB3HepznSe2G/zFIdk2nGh0SOU92UhCgSmxoVmiVOglyfQco+4YRVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQpKYEtf47N6/LtZ+oKxSxc+g1fhBPS/RUqAu8iXT3rN1RIDPO
-	1tRjNmHUF2vGHmk3+USw/5veBnZY0nOGA6bLFlq2jQSQBf1DD8YVg3/ilIEK7uoY8+Pe4Txa7WT
-	0r0DWIMY0+brIC7Jxv8yNWNpX8dJW0xzRlw==
-X-Gm-Gg: ASbGncugJukEAwI+/AOOSjVaw3/AMU9+EbAsVmrYAZFgFnHDg5wnjMMncmbdJkrvKEo
-	XQoIouV04Zya3ayCLMsEe4wiH4WmKsQFejlvVn0Ke3zaZ85EF4YvQGUup06RxwO+qI7rgw/A66S
-	6vBltlOq9v/n3TW2vmN8x5aDM9B0jac9GR1zXT7qGKc3fXP5cv6PIZLBC7ysrdWl7r/EJS64uzT
-	ksbA95lNyF+whEi0DVpJH2xlCfOh8Tw3SbD+UTB+RGklGW27MB4E4VNolOqPg==
-X-Google-Smtp-Source: AGHT+IGVsthsIcYwTwTgwWV+wSwobemUM7g9CUnvEROrtiQpLrSDOge7liSIr6ymz0Gt/7YlK7M8KLcJX8SXOdMnDNI=
-X-Received: by 2002:a17:906:6a25:b0:b70:e107:1918 with SMTP id
- a640c23a62f3a-b7263023887mr303545366b.3.1762336091308; Wed, 05 Nov 2025
- 01:48:11 -0800 (PST)
+        bh=/eC1//SZtzXCJ9VDP38XGpX45I3TMA2WSmv1Cg2gDD4=;
+        b=XI/F98M4jxrWF1qmb7GlJJZFzPuOcdvgsln0kQILosqlFkoi9Wagt0sT+M6+wXN8Y5
+         0yRiGrT/cl8bdYOaRMl/UJnYGcXs8mqZ/R8YeGzZOB1+lR287HCTG3N2FCFbh50bwkQ6
+         SDodWJr27fPXpnSKPph0Hx361BE7lpaKI21Tzqkx30OOkHEmq9L4kZo4xUaUud9Mguwj
+         YyZy6RafoAZzjZRDi69mzKKE8inAXmAK+3WMmbI5F6W9dU6WxpyGtMG89GVRx4d54Ri8
+         UM76423gpcVo64TPYPkhSRGh0gsi7YxnxqxY98VK2ol0FpI+WRL9+9jPEC2hZvSKVKlg
+         C83Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxIWO3DU8dHKJpxbVxhjHUSy/euotFxeSDBZwNm3RH0zW2Nd1xfLuS/zpB5s5Jv7sXLO32PDPCjg+zA4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXLIP8qZDrYx38SoEhVMX0gPPim/A0OdbNxegutCXsiOUScxyF
+	gQe+OsaAJDWIAoXf0tFsMuQDwzU8mRROcRVYd02zrROe0xIjNZJu53Mq
+X-Gm-Gg: ASbGncs93rSYdLdMs7Mab6pIBqZTF1N/Wacp021ugsvlcp0ULTblujK/V/MLNY5sV7W
+	/PgdU3JG5418tsZG8PQBGsTlau6Qwr0cih796bj9mi66igHO0W+/e5vdjIvlq7edfWzMhZiubC9
+	ofBCa/7xTq+xgC8xLWsxrft0keVxvJpT34bMivJbbPBUlkzJkQw3cIbvqLbWeoSRpkt+gQQnuje
+	89rjmh/qYEaH590dSQ+rHWGR8TyMSxW9sGBih8Ksdn7xJ9gcyO0qFLnJo73s25W5506/mXr1nDK
+	Ft+VLjlFF4j0Ay7zO7MwCXIPwLLjXbV99ytsEc5eQEZ/YPozKD5bKHUO6WUoo7zFcDZTcMJWUyX
+	ONRgQh4AkZAgTAW1QUO23OmQjRpiICTymRNVQ3VEy7N8oJiIfEBmuS9VmkXtNTwfBby808HtFzh
+	JGKpkwE0HyUaxKuvBArO16HzYKukIq2IIWS1crsfuCzg==
+X-Google-Smtp-Source: AGHT+IEkpFxLVpMLxH+nTe91ZvHCIlFgTDwSuHknsPOjs1KqbNBabtxkQXZcHtDrGMnxK6gDuS+BvQ==
+X-Received: by 2002:a05:600c:34d0:b0:471:6f4:601f with SMTP id 5b1f17b1804b1-4775cdf54aemr21466965e9.19.1762336110467;
+        Wed, 05 Nov 2025 01:48:30 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdee965sm38069125e9.17.2025.11.05.01.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 01:48:29 -0800 (PST)
+Date: Wed, 5 Nov 2025 09:48:27 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Guan-Chun Wu
+ <409411716@gms.tku.edu.tw>, Andrew Morton <akpm@linux-foundation.org>,
+ ebiggers@kernel.org, tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+ idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+ sagi@grimberg.me, home7438072@gmail.com, linux-nvme@lists.infradead.org,
+ linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <20251105094827.10e67b2d@pumpkin>
+In-Reply-To: <aQnMCVYFNpdsd-mm@smile.fi.intel.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+	<20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+	<aQiC4zrtXobieAUm@black.igk.intel.com>
+	<aQiM7OWWM0dXTT0J@google.com>
+	<20251104090326.2040fa75@pumpkin>
+	<aQnMCVYFNpdsd-mm@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOuPNLh4R=H0BfQ4f13woGzc82jX9LGB+kxAGeGVkhwYqKcg4w@mail.gmail.com>
- <19a481a7843.53422ba121754.4867625372707455852@siddh.me> <CAOuPNLhMcPJ_vkvyDKTW1c4TcSYusrzrAdu8khazHoy3txJGDw@mail.gmail.com>
- <c40a0a35-ac43-4079-80ca-361bc8c9ae8a@app.fastmail.com>
-In-Reply-To: <c40a0a35-ac43-4079-80ca-361bc8c9ae8a@app.fastmail.com>
-From: Pintu Kumar Agarwal <pintu.ping@gmail.com>
-Date: Wed, 5 Nov 2025 15:17:58 +0530
-X-Gm-Features: AWmQ_bmTKhAJwTtUvsl5qzrCsYkE1h8QiWBS6tfk3vaj9PoAWXaG5DDEqgnunsI
-Message-ID: <CAOuPNLh5O0YuRi6=oOSCbaH0zy-kkKUcD__G0Ncw5yAFtko7=Q@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=C2=A0Query=3A_Y2038_patch_series_for_3=2E18_Kernel?=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Siddh Raman Pant <sanganaka@siddh.me>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	kernelnewbies <kernelnewbies@kernelnewbies.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 4 Nov 2025 at 15:18, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Nov 4, 2025, at 06:02, Pintu Kumar Agarwal wrote:
-> > On Mon, 3 Nov 2025 at 10:35, Siddh Raman Pant <sanganaka@siddh.me> wrot=
-e:
-> >>
-> >> Mon, 03 Nov 2025 09:57:18 +0530 =E0=A4=95=E0=A5=8B Pintu Kumar Agarwal=
- =E0=A4=A8=E0=A5=87 =E0=A4=B2=E0=A4=BF=E0=A4=96=E0=A4=BE :
-> >> > We have an arm32 based embedded product which is based on the 3.18
-> >> > kernel and a simple busybox.
-> >> > We wanted to support the Y2038 issue on this older kernel.
-> >> > Is this feasible
-> >> > Do we have the Y2038 separate patches available for both kernel and =
-userspace
-> >> > ?
-> >> > Or upgrading the kernel is the only option ?
-> >>
-> >> Upgrading is a much much better option.
-> >>
-> > Yes, I understand, but upgrading the kernel on this older SoC brings
-> > more complexities, challenges and time taking.
-> > Customers also do not agree for the upgrade at this stage and they are
-> > looking for alternatives.
-> > So, we are exploring both the options right now.
-> >
-> > Are there any patchset maintained separately for this Y2038 issue for
-> > each kernel version to have a look ?
->
-> I used to maintain a 5.4 kernel with backports from the 5.6 patches,
-> but I would not recommend using that. Anything earlier than 5.4
-> is completely hopeless for 2038 because one would have to essentially
-> redo the changes from scratch.
->
-OK thanks.
+On Tue, 4 Nov 2025 11:48:57 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> Which chip exactly are you using?
-This request is for one of the legacy QC MDM 9K chipset.
+> On Tue, Nov 04, 2025 at 09:03:26AM +0000, David Laight wrote:
+> > On Mon, 3 Nov 2025 19:07:24 +0800
+> > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:  
+> > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:  
+> 
+> ...
+> 
+> > > Since I believe many people test and care about W=1 builds, I think we
+> > > need to find another way to avoid this warning? Perhaps we could
+> > > consider what you suggested:
+> > > 
+> > > #define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
+> > > 	[ 0 ... '+'-1 ] = -1, \
+> > > 	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
+> > > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
+> > > 	[ '9'+1 ... 'A'-1 ] = -1, \
+> > > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
+> > > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
+> > > 	[ 'Z'+1 ... '_'-1 ] = -1, \
+> > > 	[ '_' ] = val_under, \
+> > > 	[ '_'+1 ... 'a'-1 ] = -1, \
+> > > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
+> > > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+> > > 	[ 'z'+1 ... 255 ] = -1 \
+> > > }  
+> > 
+> > I've a slightly better version:
+> > 
+> > #define INIT_62_63(ch, ch_62, ch_63) \
+> > 	[ ch ] = ch == ch_62 ? 62 : ch == ch_63 ? 63 : -1
+> > 
+> > #define BASE64_REV_INIT(ch_62, ch_63) { \
+> > 	[ 0 ... '0' - 6 ] = -1, \
+> > 	INIT_62_63('+', ch_62, ch_63), \
+> > 	INIT_62_63(',', ch_62, ch_63), \
+> > 	INIT_62_63('-', ch_62, ch_63), \
+> > 	INIT_62_63('.', ch_62, ch_63), \
+> > 	INIT_62_63('/', ch_62, ch_63), \
+> > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
+> > 	[ '9' + 1 ... 'A' - 1 ] = -1, \
+> > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
+> > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
+> > 	[ 'Z' + 1 ... '_' - 1 ] = -1, \
+> > 	INIT_62_63('_', ch_62, ch_63), \
+> > 	[ '_' + 1 ... 'a' - 1 ] = -1, \
+> > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
+> > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+> > 	[ 'z' + 1 ... 255 ] = -1 \
+> > }
+> > 
+> > that only requires that INIT_62_63() be used for all the characters
+> > that are used for 62 and 63 - it can be used for extra ones (eg '.').
+> > If some code wants to use different characters; the -1 need replacing
+> > with INIT_62_63() but nothing else has to be changed.
+> > 
+> > I used '0' - 6 (rather than '+' - 1 - or any other expression for 0x2a)
+> > to (possibly) make the table obviously correct without referring to the
+> > ascii code table.  
+> 
+> Still it's heavily depends on the values of '+,-./_' as an index that
+> makes it not so flexible.
+
+How about this one?
+#define INIT_1(v, ch_lo, ch_hi, off, ch_62, ch_63) \
+	[ v ] = ((v) >= ch_lo && (v) <= ch_hi) ? (v) - ch_lo + off \
+		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
+#define INIT_2(v, ...) INIT_1(v, __VA_ARGS__), INIT_1((v) + 1, __VA_ARGS__)
+#define INIT_4(v, ...) INIT_2(v, __VA_ARGS__), INIT_2((v) + 2, __VA_ARGS__)
+#define INIT_8(v, ...) INIT_4(v, __VA_ARGS__), INIT_4((v) + 4, __VA_ARGS__)
+#define INIT_16(v, ...) INIT_8(v, __VA_ARGS__), INIT_8((v) + 8, __VA_ARGS__)
+#define INIT_32(v, ...) INIT_16(v, __VA_ARGS__), INIT_16((v) + 16, __VA_ARGS__)
+
+#define BASE64_REV_INIT(ch_62, ch_63) { \
+	[ 0 ... 0x1f ] = -1, \
+	INIT_32(0x20, '0', '9', 0, ch_62, ch_63), \
+	INIT_32(0x40, 'A', 'Z', 10, ch_62, ch_63), \
+	INIT_32(0x60, 'a', 'z', 26, ch_62, ch_63), \
+	[ 0x80 ... 0xff ] = -1 }
+
+which gets the pre-processor to do all the work.
+ch_62 and ch_63 can be any printable characters.
+
+Note that the #define names are all in a .c file - so don't need any
+kind of namespace protection.
+They can also all be #undef after the initialiser.
+
+> Moreover this table is basically a dup of the strings in the first array.
+> Which already makes an unnecessary duplication.
+
+That is what the self tests are for.
+
+> That's why I prefer to
+> see a script (one source of data) to generate the header or something like
+> this to have the tables and strings robust against typos.
+
+We have to differ on that one.
+Especially in cases (like this) where generating that data is reasonably trivial.
+
+	David
+
+> 
+> The above is simply an unreadable mess.
+> 
+
 
