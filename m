@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-887310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2459BC37D56
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:05:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EFBC37D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DC93B4DAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC34C18C813D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D2634CFBA;
-	Wed,  5 Nov 2025 21:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7240F34CFD8;
+	Wed,  5 Nov 2025 21:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtbAR/JO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXbST3Ij"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5C2D8783;
-	Wed,  5 Nov 2025 21:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500F34CFAA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762376643; cv=none; b=tqTWDSiuGyPaPP9m+9xluqaj6GajjZlG8xYeoxgafDk09D4Qoo44N9x+kGgryLz1uuY6b3Snti6GqTyD/X6wXJfJxxADMhF/jb+2/Hmn0BWDfH0NkQ97c9goTz3jLuAuf2T81KftGJoiVS8HiTmj9xv98XAVMLmbSZ1f9VHFgto=
+	t=1762376619; cv=none; b=Wre2PQnBARih/muYjugMyg+kwKndVp0mYxeskpSu374XAJ8q6MDE/g/rmrQzsZR3Vjnqbblz5EsS5LPgCYI9mmDLzldc65YsRFn7FGeOXCNy5MCmd2bFBu6oTPsV9JFmEhc/mCNRRWa3HcRa2zQTYAfaw0tfGpRU3wRl5QQ2HZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762376643; c=relaxed/simple;
-	bh=3lbd/EU2NQ8mLBwmqz/2m2jc7qv0uF70cLO4qQ/HcLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W4I3orefCSJOfTMMifWUpQgYd6rWcb4z+CAnAOfRX04Z2C3m/THvsoM7nHrg52h7tzYaQ0yOKLCagkdXqVhW3f7GumxJV1OFoMLJq121zSSLXSZRKje2ea2M4177CXd4ILfI/W0AstgS1t/oDxZgByiFnlUDcHZkU0WIK4LW95I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtbAR/JO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21204C4CEF5;
-	Wed,  5 Nov 2025 21:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762376642;
-	bh=3lbd/EU2NQ8mLBwmqz/2m2jc7qv0uF70cLO4qQ/HcLI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dtbAR/JOu+tct/pxmTcYqviFrVXO6KQL6RNEt8EvVv6P33xPHb9dgHSk9ViufUw5h
-	 kJ1uxg96GLeI8292NUvdAXLPsvexKzZTOvz/gqFR4B6Tf9OaddzbqXg2yQcuwzn5ku
-	 NZ8Sz2aQ7UWT3Uo0jQ1QoNPnzhRVhti/SyAe56tyLNPuuhK+nf+q1QjFVpUI4PCL/l
-	 xdV1u0DRnHSkyp4q84sPX72DQOu3N6R+ft0MWsYIMWFXcaMrhmv46DFunA41fPSuim
-	 VgLUQjfA+k0lz49d9bWIB9ytxdlmtWzuFUN4GpAWzvETdfY0TBnWeKp8qSygESbq3Z
-	 Ohs2vu0HGP3Lw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Will Deacon <will@kernel.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Phil Auld <pauld@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	cgroups@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	linux-mm@kvack.org,
-	Michal Hocko <mhocko@suse.com>,
-	linux-pci@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-block@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	netdev@vger.kernel.org,
-	Muchun Song <muchun.song@linux.dev>
-Subject: [PATCH 00/31 v4] cpuset/isolation: Honour kthreads preferred affinity
-Date: Wed,  5 Nov 2025 22:03:16 +0100
-Message-ID: <20251105210348.35256-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762376619; c=relaxed/simple;
+	bh=7zfVMY8XIGnKYdGtLUi3KWKuh80GmnankiFSdnvKcoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=spp/ipjiI5BI/Kan2Xd2zZLNW25Ju9okUkYO4EJ9SwepTGxLl7q4Hcxf4S/4CtSE4UCU1s/+52nvsgMcwt/HWv1nNcDO9grHbgo4z7aQ0VtZH07GoktByJS9wJGVQ4rdruGFUkR1XPK24XcfpjHxIDVl8p6TEhI+hndSV1AfOvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXbST3Ij; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2947d345949so2456335ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:03:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762376618; x=1762981418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MkrJkdba1xSje2XMh2x048aEOPt8IqS+4z2rOIVGwVs=;
+        b=NXbST3IjoD8sTIj1lwmrdm+jAfpfgZ0h/oSYjlEJbcPW6kpqnXfYyrGE9rKplh83XO
+         1QGiipHr9u9eC3Waxb0dvg5bOCG8hCTNuC2CZQMCkX1Xj8MhmO6yG0zMlPHGW0lP4Kup
+         yTOFCbmW2eVkCbXo2tRX5XuRDwuA3LkSnUSrgjIpOjbekw+UqF66RJWTowotrMYQvdUs
+         ZeZRR51KZbN5jywzWWeKi0MAWE32CDEDDuEPSmQ31SoDSOcpVSKUnAUKGD2WKCuu7WhQ
+         svyX65mM722LsL7YPHg3LpJ0p3sfBZjF7dbCGSV84rSJeiYPlHps3NXZOTrqXxJ6WOHl
+         joKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762376618; x=1762981418;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MkrJkdba1xSje2XMh2x048aEOPt8IqS+4z2rOIVGwVs=;
+        b=sZ2aRAKOMR0jpPoLFoEFdF30C+dkwUu0wpG8R2TggMUkJrvz8dlx37LWHYFLZPSVAR
+         GIZrQa8JJRziAdLyVeKho+vn2QOuAOHgw49bgZHKwx4ejactJei36BuVXH8gGmUYhWCF
+         djxF8cKvZMYJVRSr3L8Vkj6pr5nEH+QQeJ1ZTMbZJRz/mFtxamTEp3sOsUqaDeSlBwR0
+         7dYZG+QgXXNXieq4RLRZl2XROo1iCUbUiOtiLVwXAdjTH0I6KkFdiwz877arv/VjvshL
+         Wl+iFkZaGpXIfJT3jUEM530Pm00fQ8ElQL7CtUkN7Z65DJAzZchJxmlE6HTKhTgwWrru
+         bI9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSHgTh5ILJurXAritkVDtC/6g5WWNcds6CWtjjiRq2bEBWcF0gKjC9N6TdH5H1EZg4xiBLxj45RDqAsOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM76n3Qf+118TSaf976D5QLAyzgOW8k6t4SwbO4tGkop1RrNGp
+	Gfs4Ig8YxJoxrlRgstaZnZpN6SdmtSXb11lhR1bRyODTlhDN7FhzVw5z
+X-Gm-Gg: ASbGnculV1tXNaOQcPjtikyXuJqpvbOsa8Q5qLXnMv/cwY5m348SeXvzP6lSXyKeQK5
+	fPQEJgHTojritQlnzSZhStkBiI9qwxod5D+p3AqN+XROD6GmtRDRV7/SEo4g7JEpws7aQ0Vkmoz
+	hZ3c0jjHN1ePboN+nLZoBZwRuhkd/oc92P7b/4ioSuVLKy5DEFs/v+QUOjcjZlv+QYqjMhw1L3D
+	PC6SOYOwhX/2qUcjB94La5fnboK6kJYCW3Jv3NBFP6hVn+0aamuGynwW+Z9lIjp/mGkNW6qEStJ
+	+RiY1q+AnMaT91ixG3S1F0sh9d7/+ZuJkymQDUpJyLR8WnJ1x2wjblaKfcpQIGRotUYxq99u02O
+	j8h+0jG8ce8P10nieqTqphT8f+zc94FTub9V9z1gYYQzW4gIHw0Ok/MXJGw==
+X-Google-Smtp-Source: AGHT+IE+n66VzklfbAOrQrgUIqTmTgKBWIWBX+BwQFs7o7CvfPqTM+UfY6E430xCte9cNWMIOyPm9g==
+X-Received: by 2002:a17:902:fc44:b0:296:2b7a:90cd with SMTP id d9443c01a7336-2962b7a9106mr49267945ad.32.1762376617589;
+        Wed, 05 Nov 2025 13:03:37 -0800 (PST)
+Received: from ryzen ([2601:644:8000:8e26::ea0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d125c93fsm13626a91.14.2025.11.05.13.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 13:03:36 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: dmaengine@vger.kernel.org
+Cc: Vinod Koul <vkoul@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv4 dmaengine 2/2] dmaengine: mv_xor: use devm_clk_get_optional_enabled
+Date: Wed,  5 Nov 2025 13:03:17 -0800
+Message-ID: <20251105210317.18215-3-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251105210317.18215-1-rosenp@gmail.com>
+References: <20251105210317.18215-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,123 +90,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Driver was written before this was available. Simplifies code slightly.
 
-The kthread code was enhanced lately to provide an infrastructure which
-manages the preferred affinity of unbound kthreads (node or custom
-cpumask) against housekeeping constraints and CPU hotplug events.
+Actually also a bugfix. clk_disable_unprepare is missing in _remove,
+which is also missing.
 
-One crucial missing piece is cpuset: when an isolated partition is
-created, deleted, or its CPUs updated, all the unbound kthreads in the
-top cpuset are affine to _all_ the non-isolated CPUs, possibly breaking
-their preferred affinity along the way
-
-Solve this with performing the kthreads affinity update from cpuset to
-the kthreads consolidated relevant code instead so that preferred
-affinities are honoured.
-
-The dispatch of the new cpumasks to workqueues and kthreads is performed
-by housekeeping, as per the nice Tejun's suggestion.
-
-As a welcome side effect, HK_TYPE_DOMAIN then integrates both the set
-from isolcpus= and cpuset isolated partitions. Housekeeping cpumasks are
-now modifyable with specific synchronization. A big step toward making
-nohz_full= also mutable through cpuset in the future.
-
-Changes since v3:
-
-- Spelling issues all over the place (Bjorn Helgaas, Simon Horman
-
-- Comment each HK_TYPE_* (Valentin Schneider)
-
-- Keep static branch in housekeeping_test_cpu() (Waiman Long)
-
-- Use rcu_dereference_all_check() to also check preemption disabled
-  (Chen Ridong)
-
-- Use cpumask_size() for allocation (Waiman Long)
-
-- Fix inverted branch on update (Phil Auld)
-
-- Set WQ_PERCPU to memcg workqueue (Waiman Long)
-
-- Remove linux/cpuset.h include from include/linux/sched/isolation.h
-  (Waiman Long)
-
-- Comment why unbound kthreads aren't updated on CPU online (Waiman Long)
-
-- Remove genirq related patches (handled in another patch after discussion
-  with Thomas Gleixner)
-
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-	kthread/core-v4
-
-HEAD: 9ba457a61e09fb17a4698879367b7e6593c256d2
-
-Thanks,
-	Frederic
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
+ drivers/dma/mv_xor.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-Frederic Weisbecker (30):
-      PCI: Prepare to protect against concurrent isolated cpuset change
-      cpu: Revert "cpu/hotplug: Prevent self deadlock on CPU hot-unplug"
-      memcg: Prepare to protect against concurrent isolated cpuset change
-      mm: vmstat: Prepare to protect against concurrent isolated cpuset change
-      sched/isolation: Save boot defined domain flags
-      cpuset: Convert boot_hk_cpus to use HK_TYPE_DOMAIN_BOOT
-      driver core: cpu: Convert /sys/devices/system/cpu/isolated to use HK_TYPE_DOMAIN_BOOT
-      net: Keep ignoring isolated cpuset change
-      block: Protect against concurrent isolated cpuset change
-      cpu: Provide lockdep check for CPU hotplug lock write-held
-      cpuset: Provide lockdep check for cpuset lock held
-      sched/isolation: Convert housekeeping cpumasks to rcu pointers
-      cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
-      sched/isolation: Flush memcg workqueues on cpuset isolated partition change
-      sched/isolation: Flush vmstat workqueues on cpuset isolated partition change
-      PCI: Flush PCI probe workqueue on cpuset isolated partition change
-      cpuset: Propagate cpuset isolation update to workqueue through housekeeping
-      cpuset: Remove cpuset_cpu_is_isolated()
-      sched/isolation: Remove HK_TYPE_TICK test from cpu_is_isolated()
-      PCI: Remove superfluous HK_TYPE_WQ check
-      kthread: Refine naming of affinity related fields
-      kthread: Include unbound kthreads in the managed affinity list
-      kthread: Include kthreadd to the managed affinity list
-      kthread: Rely on HK_TYPE_DOMAIN for preferred affinity management
-      sched: Switch the fallback task allowed cpumask to HK_TYPE_DOMAIN
-      sched/arm64: Move fallback task cpumask to HK_TYPE_DOMAIN
-      kthread: Honour kthreads preferred affinity after cpuset changes
-      kthread: Comment on the purpose and placement of kthread_affine_node() call
-      kthread: Document kthread_affine_preferred()
-      doc: Add housekeeping documentation
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 3597ad8d1220..d15a1990534b 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1351,9 +1351,9 @@ static int mv_xor_probe(struct platform_device *pdev)
+ 	/* Not all platforms can gate the clock, so it is not
+ 	 * an error if the clock does not exists.
+ 	 */
+-	xordev->clk = clk_get(&pdev->dev, NULL);
+-	if (!IS_ERR(xordev->clk))
+-		clk_prepare_enable(xordev->clk);
++	xordev->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
++	if (IS_ERR(xordev->clk))
++		return PTR_ERR(xordev->clk);
+ 
+ 	/*
+ 	 * We don't want to have more than one channel per CPU in
+@@ -1441,11 +1441,6 @@ static int mv_xor_probe(struct platform_device *pdev)
+ 				irq_dispose_mapping(xordev->channels[i]->irq);
+ 		}
+ 
+-	if (!IS_ERR(xordev->clk)) {
+-		clk_disable_unprepare(xordev->clk);
+-		clk_put(xordev->clk);
+-	}
+-
+ 	return ret;
+ }
+ 
+-- 
+2.51.2
 
-Gabriele Monaco (1):
-      cgroup/cpuset: Fail if isolated and nohz_full don't leave any housekeeping
-
- Documentation/cpu_isolation/housekeeping.rst | 111 +++++++++++++++++++
- arch/arm64/kernel/cpufeature.c               |  18 ++-
- block/blk-mq.c                               |   6 +-
- drivers/base/cpu.c                           |   2 +-
- drivers/pci/pci-driver.c                     |  71 ++++++++----
- include/linux/cpu.h                          |   4 +
- include/linux/cpuhplock.h                    |   1 +
- include/linux/cpuset.h                       |   8 +-
- include/linux/kthread.h                      |   1 +
- include/linux/memcontrol.h                   |   4 +
- include/linux/mmu_context.h                  |   2 +-
- include/linux/pci.h                          |   3 +
- include/linux/percpu-rwsem.h                 |   1 +
- include/linux/sched/isolation.h              |  16 ++-
- include/linux/vmstat.h                       |   2 +
- include/linux/workqueue.h                    |   2 +-
- init/Kconfig                                 |   1 +
- kernel/cgroup/cpuset.c                       | 134 +++++++++++++++-------
- kernel/cpu.c                                 |  42 +++----
- kernel/kthread.c                             | 160 ++++++++++++++++++---------
- kernel/sched/isolation.c                     | 138 ++++++++++++++++++-----
- kernel/sched/sched.h                         |   4 +
- kernel/workqueue.c                           |  17 +--
- mm/memcontrol.c                              |  25 ++++-
- mm/vmstat.c                                  |  15 ++-
- net/core/net-sysfs.c                         |   2 +-
- 26 files changed, 596 insertions(+), 194 deletions(-)
 
