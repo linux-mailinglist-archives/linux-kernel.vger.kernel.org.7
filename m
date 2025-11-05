@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-885789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A73C33EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:03:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AC4C33E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:03:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8120E3B53B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:02:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABE724F0AFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA24A21CC58;
-	Wed,  5 Nov 2025 04:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356B825291B;
+	Wed,  5 Nov 2025 04:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DOVKNPI6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eRNmz8V+"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAD71BD9CE;
-	Wed,  5 Nov 2025 04:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF571F5437;
+	Wed,  5 Nov 2025 04:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762315350; cv=none; b=jvroBZoy/gUmIfgOXfx2Py1oQYWIaZb1OdJIc78Mu80aOiip2yY73dcdJq1bFNNVazQhzP7RF/OemBpAOcOP/nmQdqb1YGWS47aI0kWOS9/B8beZv+H8J8E8csP5UqoXEli5HE97PcJxHBxNeKo18r9A+ZCv/jUOGikV1BfyD4M=
+	t=1762315368; cv=none; b=sC0iNKO14ByTdhnoXq+f9Q1WUZkCkSnB8/L1k0kUfBj1osZs1ZqQFzO2Oh1urEfDTH4pXt8q+xqrSDJ070K85yBzqnzAAnjnLgvZeNgn2NXYJ3nzrSvTyUhnu94ckaxqxiA5Oz/Z67Z2gkMoN0/JKWFeVpxCQiQD//y/0z5t6oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762315350; c=relaxed/simple;
-	bh=yQXSY/WrQVDYfWdO0SbyUMhuGmS/rYRQpjuHxFCtNFI=;
+	s=arc-20240116; t=1762315368; c=relaxed/simple;
+	bh=jqf3fkA6oX0rwGlsrVbUrrG09tiatuuy3zH4FgSa0dE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VDSD2Dz1i2qd3Z8uiDk0E94mNjcJrkhV9kuoxKRvZSv3WLBclpYJsLC2FftNHZ9xK4INr6fNiX2k+zyNT4wxgw/bv2GRqCdG/VqPFGAr6GL02iySiUdn/CF/GBPiXXQgKarnPBd5lKUkgV3Q0px4KxWnwkNv8+6QdZV5/eDCuqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DOVKNPI6; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version:Content-Type; b=umyhUyd1qjnE4ArPNzP8sHcmRP8HBsGF7TUnug7MGyelyXiFuYgihyEnQdcjLtfd63zDfDVG7Fy4LXdbe1Cx8YDmXr57zLSVA9KOQe+zuxSfKoGy6lG0Zkzyi45pewFR4f1irUZLGBjuAg0L4dPcCy92CXICsvMTfrjkYRSrgFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eRNmz8V+; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A53ivCW028361;
-	Wed, 5 Nov 2025 04:02:27 GMT
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A53GHPb022581;
+	Wed, 5 Nov 2025 04:02:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=lyooww/8Fnw1zaMTJvQpvCmFyUNEz2aBTccHlIHYh5E=; b=
-	DOVKNPI6jBE+UqXCDl/KEJNlSewD8o9L7O0OYKEwRufuTDh8Isgf4sYF8VxQXVFc
-	zh72H9FYMaEZrKFwlmP4LoaZEJUHAlci5BFeBv21PTImeI59BTXpfDgGM80p3FH7
-	i9cTf/S1Ch3KSpducNVAJ4gRv97H+6olZKnqlB+Ez078l67JC3z/puPW0XS4zyh2
-	dUQBgbkW4OiGf/cG2o9gQnf0Sq530QR7qLRFybO3lW+M8xuNWdhkhnd98E+UPfs1
-	v3mAzmjuYZr9UAfH2gzrwsu+g+KLheaCJJQlAdzy46p8L8UVlxWW5KdAozBiEBwb
-	OiMpO9/1Vy5p6j/79vuxmA==
+	corp-2025-04-25; bh=YsH5r/6vzUJZtwJSh4laP2CRaInCJhfRCw+nEMpXmAE=; b=
+	eRNmz8V+0wX2p5FgaNbOxo00KhVqq1gHlRmxlqb3zqjm9QNZ4FD/U6Qesc2EaGBX
+	XtLNinPDiyA4p4a+7oSTIjhespG4pAoA6DwDlAl5frJNSxLQjnkVj3pPLq+Fs9tR
+	tuZWGKWt0rLNN2xoLrLgNj1XkXR0DpkFMYvJlO19oBKltbAQa8mWgqRkE6AC0mlT
+	ZQehWWNOMN5aVmOyiemakDaWMSljpmbYr147zPAr7jNddUm7/QS2CENI7lcXosXv
+	3T7M0lm6sdRU88oWuTvC8BJ7Y7MeuL5B3cDJ78a7KMGwyijUphEWNgrw2DLu0ilt
+	T0fsKwkMheSX0utflxaxug==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a7xxk00t3-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a7xhdg201-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 04:02:27 +0000 (GMT)
+	Wed, 05 Nov 2025 04:02:28 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A51hgIE024836;
-	Wed, 5 Nov 2025 04:02:26 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A524FLm024893;
+	Wed, 5 Nov 2025 04:02:28 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ne15hn-1
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ne15j1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 04:02:26 +0000
+	Wed, 05 Nov 2025 04:02:28 +0000
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A542Prj005395;
-	Wed, 5 Nov 2025 04:02:26 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A542Pro005395;
+	Wed, 5 Nov 2025 04:02:27 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a58ne15gy-4;
-	Wed, 05 Nov 2025 04:02:26 +0000
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a58ne15gy-6;
+	Wed, 05 Nov 2025 04:02:27 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: John Garry <john.g.garry@oracle.com>
+To: linux-scsi@vger.kernel.org, peter.wang@mediatek.com
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, michael.christie@oracle.com
-Subject: Re: [PATCH v3 0/7] scsi: target: Add WRITE_ATOMIC_16 support
-Date: Tue,  4 Nov 2025 23:02:18 -0500
-Message-ID: <176231440746.2306382.5588735953059411316.b4-ty@oracle.com>
+        alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jejb@linux.ibm.com, lgirdwood@gmail.com,
+        broonie@kernel.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, wenst@chromium.org,
+        michael@walle.cc, conor.dooley@microchip.com, chu.stanley@gmail.com,
+        chun-hung.wu@mediatek.com, alice.chao@mediatek.com,
+        naomi.chu@mediatek.com, ed.tsai@mediatek.com
+Subject: Re: [PATCH v1] dt-bindings: ufs: mediatek,ufs: Update maintainer information in mediatek,ufs.yaml
+Date: Tue,  4 Nov 2025 23:02:20 -0500
+Message-ID: <176231440764.2306382.16356889887368434971.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251020103820.2917593-1-john.g.garry@oracle.com>
-References: <20251020103820.2917593-1-john.g.garry@oracle.com>
+In-Reply-To: <20251031122008.1517549-1-peter.wang@mediatek.com>
+References: <20251031122008.1517549-1-peter.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,53 +91,35 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-05_02,2025-11-03_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=921 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
  definitions=main-2511050024
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAyMyBTYWx0ZWRfX2pUx9P+mFv9A
- 1sTLj19nPCOmqEN30R5wHhaXMuht4tg1zqOPkXCOV6Z/ej00aL6TqFYkow1GLzrQ4Oa5eTXsCnt
- Y2KxsdkXHjOWyYYdzO4NMpFvsGSB1d5XcqVewd95MArKPnDh2tvyFXm+yXKQxoZu6Yu4I/Uq+1C
- viRqRzg5wI1c7s5q5QWw6lFtJL4ytg9ignJRd7Mi1OCukuAcw7OEBHRZqHnW/pHeUmUvdVyYdD7
- fMCvzR0MVKUpVVADBZVdBmbWHiUZd6xNGcpEgToyUhRwkvcOuPk3zSqvN3do/0HVlRQVtFvv158
- 8f5tIbAfepHCSB7FYBW2ilvu429vlAHv4uZk/QoZwY82sRkZegDwxjjABjfq8ACD9lWepALH9Z/
- G2NGDzCqP2AieBC5fQ8dlGP8T7MGShyW0oRUGOPofnyc69n0WI8=
-X-Proofpoint-GUID: PpZaBKnNKcMWaG7cfPMX3ta8d36SOTxo
-X-Authority-Analysis: v=2.4 cv=PIgCOPqC c=1 sm=1 tr=0 ts=690acc53 b=1 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxOSBTYWx0ZWRfX+uE1GIt984Gq
+ 4/GHMEsw9maJTT375X+rmpBf5mLpXxua/eTTSKpNLnEGcmns2VLHp2v9fHVEKAuCzVnrZEIhCAm
+ 9erOZPx6vRi8KgbnS5iMXT7ojITDj7WqJIhCMqjRDbhxvkl48Ketl+YjXTZBbJXi1NvKBWfROxS
+ R9+x+365zLpzU0Kc9H3sN5IOs7RnKfkXkSPm8gphNh+OWhLvU8Xzi3R4WlKDRSTnpm6rXQzx/UN
+ WBNqsTx46cDHbk9eLm/CevyLK+0U696VVxkQgeaFv0RP/zgIWVtLUV5dGpyNwtBNrkAA6tYoyIK
+ 5sl+8AiW5T7FuuQEdusv+qDnDi3IxTt7kEF+yilQJt4fhSJus6YP+qnGHDLYG8UxJTHd/qVC/kL
+ 6MqSTyfIHUsbn3KOwsKN3RhLYgVVuP4P3bp8Df7TMnj4uqM9uXs=
+X-Authority-Analysis: v=2.4 cv=ZpDg6t7G c=1 sm=1 tr=0 ts=690acc54 b=1 cx=c_pps
  a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
  a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=YyQzooh1NaLyuLBRQGEA:9 a=QEXdDO2ut3YA:10 cc=ntf
- awl=host:13657
-X-Proofpoint-ORIG-GUID: PpZaBKnNKcMWaG7cfPMX3ta8d36SOTxo
+ a=VwQbUJbxAAAA:8 a=mpaa-ttXAAAA:8 a=8d0GUG1h20LVvl_VnrYA:9 a=QEXdDO2ut3YA:10
+ cc=ntf awl=host:13657
+X-Proofpoint-ORIG-GUID: HuzLGcL3yYhgijfTvd2LcY2rHs5jwfRD
+X-Proofpoint-GUID: HuzLGcL3yYhgijfTvd2LcY2rHs5jwfRD
 
-On Mon, 20 Oct 2025 10:38:13 +0000, John Garry wrote:
+On Fri, 31 Oct 2025 20:19:12 +0800, peter.wang@mediatek.com wrote:
 
-> This is a reposting of Mike's atomic writes support for the SCSI target.
+> Replace Stanley Chu with me and Chaotian in the maintainers field,
+> since his email address is no longer active.
 > 
-> Again, we are now only supporting target_core_iblock. It's implemented
-> similar to UNMAP where we do not do any emulation and instead pass the
-> operation to the block layer.
 > 
-> Changes since v2:
-> - Fix 32b build error
-> 
-> [...]
 
 Applied to 6.19/scsi-queue, thanks!
 
-[1/7] scsi: target: Rename target_configure_unmap_from_queue
-      https://git.kernel.org/mkp/scsi/c/3434be392051
-[2/7] scsi: target: Add atomic se_device fields
-      https://git.kernel.org/mkp/scsi/c/d505447b8d78
-[3/7] scsi: target: Add helper to setup atomic values from block_device
-      https://git.kernel.org/mkp/scsi/c/c486634fe2b1
-[4/7] scsi: target: Add WRITE_ATOMIC_16 handler
-      https://git.kernel.org/mkp/scsi/c/526145725106
-[5/7] scsi: target: Report atomic values in INQUIRY
-      https://git.kernel.org/mkp/scsi/c/710ad826e300
-[6/7] scsi: target: Add WRITE_ATOMIC_16 support to RSOC
-      https://git.kernel.org/mkp/scsi/c/2d9668883bba
-[7/7] scsi: target: Add atomic support to target_core_iblock
-      https://git.kernel.org/mkp/scsi/c/8e62d8f4b159
+[1/1] dt-bindings: ufs: mediatek,ufs: Update maintainer information in mediatek,ufs.yaml
+      https://git.kernel.org/mkp/scsi/c/480ca7954664
 
 -- 
 Martin K. Petersen
