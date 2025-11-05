@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-886387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7DAC3567D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:41:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F873C35689
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC1F74ED75E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0873B1A208AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087E0312824;
-	Wed,  5 Nov 2025 11:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3103F313264;
+	Wed,  5 Nov 2025 11:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYFG5s+b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dy0D/IrY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF9310627;
-	Wed,  5 Nov 2025 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FC83128B6;
+	Wed,  5 Nov 2025 11:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762342799; cv=none; b=RLopNuQxjS4TMhAj2lQLS8QjEs40XFTNhnk8J3gkXJAwjt/HGzw86f2cXgXWXN/HmoyhJ5cq1TZKImzUNE/yHdJYUDPOOaryfcDXM1wc4jrL9pA8+ib1obqqGxAH5cl1TGRWCdsN+hCrnU1Eaum5hmVls+A/fJTmJuEDCt7UFNQ=
+	t=1762342815; cv=none; b=J0L4ElKHrGOBc+6BRGDIy0eW3MhvawO809EMGQMjg/ykGGhCMSicmD6CkSwbOuy1k27yHwiMSKJsOs3xGVh4JVu3XTN51ypE3X68jZWGnVFV3QKrKjnQ9s2uRtynqZKmN597RBRXnLyUky44R7OXVIFxF/fPSYamSdEN9leKWLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762342799; c=relaxed/simple;
-	bh=Kn5k+II7Q6PI7eUOxy9uvtx5B6RUC+vCItw+ue1K0W8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=YVaMB7ZO3JwVVHB5q9ey5yaP5KfegiZAC2T59SpnaGg7jZd3h/I2UV7WRENB0bLtgoAeIFEYRwAbVKekOT1cprTINd5prZUssHMm4WegzkH+1RBl0VBPdihvMnSRq1iPjGp5yRSzSd2xaMr/JNwMxmqKG6muojxi+O2KBQd6fOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYFG5s+b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A53CC4CEF8;
-	Wed,  5 Nov 2025 11:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762342799;
-	bh=Kn5k+II7Q6PI7eUOxy9uvtx5B6RUC+vCItw+ue1K0W8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=iYFG5s+bxCf3LLlWZhzGZSgteNY4Ud7oI0ag26CDRUGPAVW8NzniKIXEmVVXQMoPV
-	 E2eWBUDD2fZkq4v2z0/aITAXEEa/JJXPceejW+kaoW0NeaDCeIMTwEEWK/fdZLq+/3
-	 k2LAhGn+e2Fit/fceI0qF38ljdyn6kBw3j+NBz2mqAHgeBQbt/EFrhm3Ta8APaVM2J
-	 BkJBFPahEzhR6LR5c647RBFA1uL/xPwu5FaxhE7DDNEnBPuuS/TKSxplu4OeBGwGk4
-	 ikbxTqC2nf5dIgaOzC0thdFzg2RMO+Wactbn+M/h9t0/PcsYU7gOBOUCCy/4H8YVwZ
-	 xLpczcFewJhcw==
+	s=arc-20240116; t=1762342815; c=relaxed/simple;
+	bh=J5jd0puVUAfWLqGEvwc7EkjWTKA9EkmzPRe/Umh4DwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXbuM7itszKNwRwEppkXD2KMmQN1Xd6lB1z9JxGZMGcVsQxgJgsTmXpFNWs82EI8cTVX2rlZ9lgP2jB/H/2YKNl8ytJgoTFh+wh31uW5LTq3UcR7PxNopXGel+kF8MGVI06M3GTv6oWd5h2l3bfS+siR6e+CinKYF5nDCy57ZCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dy0D/IrY; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762342814; x=1793878814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J5jd0puVUAfWLqGEvwc7EkjWTKA9EkmzPRe/Umh4DwE=;
+  b=Dy0D/IrYxGCsGIKUtdCBshyKAJe661qabiTfdXYYvfbXBLYafCeOSdNo
+   b4nVjgKLQ7kILoyYIDivsCYgNNHpmhCTYfxEmktg+dCHaURQa4NLI1o2+
+   VzJctedcWLkt+8cQtUdnFovJoqOmcDrCzIWKBVqhZ84VzuZpXZXQvXde1
+   yjpqvvm/agOwDm12pq4CUufToI0aiAuNC8Mrn/U7bIGOYip5YoI3WfyTU
+   uDUGWeLjFEcm4pK5l5fTCTIctqb9CqzbonkFnUkCoyaUTVMaB/mUVvKil
+   4KkBOCcr6vNkkZt8BLLbR+wER0J318G13+7aLQS5hQjFQH/z+vTJ5WYSp
+   Q==;
+X-CSE-ConnectionGUID: 7WPpBFQOR0qMfcIBwAfoMg==
+X-CSE-MsgGUID: i3yeASUmRdmOBYVhbxisbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64554357"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="64554357"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:40:13 -0800
+X-CSE-ConnectionGUID: ydchh+yDQ3KvfX8IWvuW9Q==
+X-CSE-MsgGUID: aeqTmRixSzGhT2bUgChG5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187593748"
+Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:40:11 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vGbrz-00000005lHg-1qLE;
+	Wed, 05 Nov 2025 13:40:07 +0200
+Date: Wed, 5 Nov 2025 13:40:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
+Message-ID: <aQs3ls1rKgMOufOn@smile.fi.intel.com>
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+ <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
+ <20251105103122.GL2912318@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 12:39:53 +0100
-Message-Id: <DE0QDQKZUONC.Q9H00WGX8YCO@kernel.org>
-Subject: Re: [PATCH 1/3] rust: fs: add a new type for file::Offset
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <viro@zeniv.linux.org.uk>,
- <jack@suse.cz>, <arnd@arndb.de>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>, "Alexandre
- Courbot" <acourbot@nvidia.com>
-To: "Christian Brauner" <brauner@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251105002346.53119-1-dakr@kernel.org>
- <20251105-begibt-gipfel-cf2718233888@brauner>
- <DE0PXYNG8O8W.19MUQ9TGA6C04@kernel.org>
-In-Reply-To: <DE0PXYNG8O8W.19MUQ9TGA6C04@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105103122.GL2912318@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed Nov 5, 2025 at 12:19 PM CET, Danilo Krummrich wrote:
-> On Wed Nov 5, 2025 at 11:59 AM CET, Christian Brauner wrote:
->> On Wed, Nov 05, 2025 at 01:22:48AM +0100, Danilo Krummrich wrote:
->>> Replace the existing file::Offset type alias with a new type.
->>>=20
->>> Compared to a type alias, a new type allows for more fine grained
->>> control over the operations that (semantically) make sense for a
->>> specific type.
->>>=20
->>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->>> Cc: Christian Brauner <brauner@kernel.org>
->>> Cc: Jan Kara <jack@suse.cz>
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->>> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
->>> Link: https://github.com/Rust-for-Linux/linux/issues/1198
->>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->>> ---
->>
->> What's the base for this?
->> If it's stuff that belongs to fs/ I'd prefer if it always uses a stable
->> -rc* version as base where possible.
->
-> Please see [1]; the base is [2] from the driver-core tree.
+On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
+> On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+> > Replace custom macro with the recently defined INTEL_GPP().
 
-For more context, when I picked up the debugfs patch series from [1] I pick=
-ed up
-the patch that only introduced the file::Offset type alias for loff_t as a
-dependency and sent this series as a follow-up.
+...
 
-Hence, I can either take this one through the driver-core tree as well, or,=
- if
-you prefer we can also wait for a cycle, so you can pick it up through the =
-FS
-tree.
+> > -#define ADL_GPP(r, s, e, g)				\
+> > -	{						\
+> > -		.reg_num = (r),				\
+> > -		.base = (s),				\
+> > -		.size = ((e) - (s) + 1),		\
+> > -		.gpio_base = (g),			\
+> > -	}
+> 
+> I wonder if simply doing this:
+> 
+> #define ADL_GPP(r, s, e, g)	INTEL_GPP(r, s, e, g)
 
-> [1] https://lore.kernel.org/lkml/DE0C1KA14PDQ.Q2CJDDTQPWOK@kernel.org/
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-co=
-re.git/tree/?id=3D1bf5b90cd2f984e5d6ff6fd30d5d85f9f579b6f0
+We can, but it will give a couple of lines in each driver still be left.
+Do you think it's better?
+
+> is better? Then the amount of changes are smaller.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
