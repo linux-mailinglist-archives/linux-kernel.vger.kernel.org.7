@@ -1,82 +1,118 @@
-Return-Path: <linux-kernel+bounces-887158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1FDC37698
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:04:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A21C376CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2B51899200
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E359D3BB65C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE86321422;
-	Wed,  5 Nov 2025 19:04:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F6B2C11F9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811DD318151;
+	Wed,  5 Nov 2025 19:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SSiqPsXP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EB4299AB5;
+	Wed,  5 Nov 2025 19:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762369448; cv=none; b=rqd50KLqG3rc/XE6SysPe0JRGHIoSLXRiXeHsmbIsSnIH3c4sAwammVVm7tum5cFj2TQiBv+uVa8jiy1gpxUPwDbo0EPHFN8EqAjoqW0C0eURJPgEqtgtazBjQtjL6orCHZm3Tvue4vJlMuf4wijeD0o+X9j3bKhffo1z+n9Pjo=
+	t=1762369471; cv=none; b=s0GoO1Y6MCE0iqVrTzM4sgc1fqF/Bfkrsl/yyb9gy0Q565HIK4ANnRunuKi+ZUBf3uYGZlWMftsRecYprVHeCwZSpqq2yYBXj1sVT45Jm6aUUP4JIBkI5V+HggDTS1gR9ckWDklrAMEXygquhWCtFEygUrvNqmDBdELZIh+j/RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762369448; c=relaxed/simple;
-	bh=foAD3VAp5D7YieYlBATJtz5KKRvnEtO8TJhnZDOQw0E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=OpiOgEnEIZvAHNUcfV3th0VOo8eW3YXKrSqVvvK2t/oXv4Wql6GbcbDG+7nACQcMV/P88+EXeFFBqfag4/ktTVusZv2vPFxi2H8/C4l7UAczinxbn/IFiQHgjKdH2WaNioZrxSffOhOzN6Zmblhq9lW68aoHWkcfwuclskyqwqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4331d49b5b3so3870725ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:04:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762369444; x=1762974244;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yRRzlP2SUfiESziI9LEaCdshMF/xNXFnIzUbHvATzWQ=;
-        b=EY5UnFOv9Ey0NijjDFqjQhEVxKxLf/ODUVTO0GsPd1oevk+mP3nOl3+5g8BXb9iEpM
-         acQd9WLljBiIaBjFHqZ2/3oifYL7KCdFHtzSMMqWUrslg99L9DxNbEY9R4Bb+Sq92T9b
-         A9PIn+pE18qYZ4XugPSpNQ19ob8BLutL0NA9pzaTJzYHF8zkHvLeqJ4OacbZvugb0E+0
-         VMhOS5OZcMerKRn2QPKHak+nHcBDYNO+hCMUwcuNljeMQ4uITANFwGMqtYqBQz5P1393
-         zSEyU3WJsNYgLasD1DNBp5BtdsdtLSbl+vanq0FXgE4AVrOCeM/Dk1AEvuAQ2x6lucRD
-         4rFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWTa5HstrIvnGguYn/S8ajhxvwwEG/XZYgJdHwFMCsQbSHbgg5cv9te6sjwA1iz8C+Vl/rNz2xRamywuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrHTYBVT1jRIFCTvZmmkDxZkI0m2RTQxZsWzSMqUs7k5R0YPuy
-	pwypDlEr2RcAQ5R8x2TvFVPWi3lnejzUF/oxaoLpjw9dj5UgcIIy/IKVNFuw7QCgq9Qttj/iQMK
-	2ni81p8LekhaReaJF3n0ykQ7LNG1joLp63zegxvEuJXSa8tlBncmO2ys+BLo=
-X-Google-Smtp-Source: AGHT+IHc2NID+f3wxoc2C6njAHWuBl+T8sz7NoKzzIOo8RC/YSjusT/IcfAH8i0LQQx3fH7zUDHvFRLQ4+XstPweDk8nR0LX1mNb
+	s=arc-20240116; t=1762369471; c=relaxed/simple;
+	bh=RZ9HGuKLUFkmQgMJugWxZNIxILZWaInhLoFzpg9EyaA=;
+	h=From:To:Subject:Date:Message-Id; b=P1GtjUbHmVNu0eyVTu4Aa2x4pU91DLvqTceJIIbyY10PBc9E9zdZpp8cR7fat+M6OkCyyCKyY6UIGRVVpZEkY4tfx3jRAXZKzFUIYVYNyEU9SQOTl4at7bnY34y0NZiNT8OLXo4+7YFpT5hjw83tVk7HLwhgxkf5zsftZ7qKrp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SSiqPsXP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 179CD20120AA; Wed,  5 Nov 2025 11:04:30 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 179CD20120AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762369470;
+	bh=gJLOitnzxxUpLudr21FKrp1Qu36nwEjF5k1Lhwin6lQ=;
+	h=From:To:Subject:Date:From;
+	b=SSiqPsXPSx8IpkFJfI1QcYbQ3o39SqjGLjweOUcgFKE4YsCDyvE7OskcNIbOpRddz
+	 76W5SySqfGV34S1pZNcWMSD+umXhgc9aWSkKPlKrCC73O9F15+g4dfIU/3RlfkHThe
+	 0yIOwirwFxE00at6fCRzVvhSKADNfvuFkyS5j0g4=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shradhagupta@linux.microsoft.com,
+	ssengar@linux.microsoft.com,
+	ernis@linux.microsoft.com,
+	dipayanroy@linux.microsoft.com,
+	shirazsaleem@microsoft.com,
+	kotaranov@microsoft.com,
+	longli@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3] net: mana: Fix incorrect speed reported by debugfs
+Date: Wed,  5 Nov 2025 11:04:28 -0800
+Message-Id: <1762369468-32570-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8b:b0:433:2a39:1b96 with SMTP id
- e9e14a558f8ab-433407cc96emr57471205ab.23.1762369444660; Wed, 05 Nov 2025
- 11:04:04 -0800 (PST)
-Date: Wed, 05 Nov 2025 11:04:04 -0800
-In-Reply-To: <ecb7b4e7-5006-4642-8807-01b764cd4b2b@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b9fa4.050a0220.baf87.0059.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_unregister_user
-From: syzbot <syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com>
-To: ssranevjti@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, ssranevjti@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-> #syz test: 
+Once the netshaper is created for MANA, the current bandwidth
+is reported in debugfs like this:
 
-I've failed to parse your command.
-Did you perhaps forget to provide the branch name, or added an extra ':'?
-Please use one of the two supported formats:
-1. #syz test
-2. #syz test: repo branch-or-commit-hash
-Note the lack of ':' in option 1.
+$ sudo ./tools/net/ynl/pyynl/cli.py \
+  --spec Documentation/netlink/specs/net_shaper.yaml \
+  --do set \
+  --json '{"ifindex":'3',
+           "handle":{ "scope": "netdev", "id":'1' },
+           "bw-max": 200000000 }'
+None
 
-> https://lore.kernel.org/all/20251105142251.101852-1-ssranevjti@gmail.com/T/
->
+$ sudo cat /sys/kernel/debug/mana/1/vport0/current_speed
+200
+
+After the shaper  is deleted, it is expected to report
+the maximum speed supported by the SKU. But currently it is
+reporting 0, which is incorrect.
+
+Fix this inconsistency, by resetting apc->speed to apc->max_speed
+during deletion of the shaper object. This will improve
+readability and debuggability.
+
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+---
+Changes in v3:
+* Remove Fixes tag.
+Changes in v2:
+* Add Fixes tag.
+---
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index 0142fd98392c..9d56bfefd755 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -814,7 +814,7 @@ static int mana_shaper_del(struct net_shaper_binding *binding,
+ 		/* Reset mana port context parameters */
+ 		apc->handle.id = 0;
+ 		apc->handle.scope = NET_SHAPER_SCOPE_UNSPEC;
+-		apc->speed = 0;
++		apc->speed = apc->max_speed;
+ 	}
+ 
+ 	return err;
+-- 
+2.43.0
+
 
