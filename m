@@ -1,284 +1,143 @@
-Return-Path: <linux-kernel+bounces-886612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223C6C36128
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:32:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30528C36130
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:33:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB1F04F296C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B991E189FCBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA17532D0E4;
-	Wed,  5 Nov 2025 14:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B5F323414;
+	Wed,  5 Nov 2025 14:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0OheZnm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lX/HD8u9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGOwQrcM"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872DE32D0CC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ED42E7F2D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762353155; cv=none; b=V9swBHrExC1ps36byPXWMi0WEdGN3HX8X2nMAyx5QuJvDh/KLzqih6OHyDaUru1ulBQc4jDbE0iugvY9NB9qserYMj7ZTV46m9O9msCIp+FGcp1YlwxxaYH0dPDB9AW591M7qRmuXqiAOkAIjVHFY55cQpIIwUkjVvGtWhA35VM=
+	t=1762353233; cv=none; b=Bp9rw66V+RsMqB+kvHcNWPPDvGTtqFuOJSIQ6YZGSrUPGOjf8ix7hmbiBjaAOz+fjvNPD7jWLt2GTnyRsA9yuh2/U5KN7QYkCvqj7y9jPUAl9WjDP6zc81H+8yuYQ4r/y+389D/znA6bf/SMQSR5qq70IhOV6Gg6Z+mJ5WFj7+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762353155; c=relaxed/simple;
-	bh=RRH8LLT4tnEW2zr9zEsEkvqzLS8Y6JH+rXqaTOe68tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYHNlOv2eLOCZRyQIbGeslXs21unl5Wyovp0JATrGxlJxRExmX8POHIoDm259PVzD9+hRviuHi7gljfPbpj+rTu1cxQRDSZnmqCrW10KCCloXrNXdz1E+oJJ7X2WFz/i8Ls91idxsV2KkBOew7Mj0HjY9BIjU13gF6lAeyJ9/xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0OheZnm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lX/HD8u9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762353150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kX3VzHZS/HGSzq6tZ4+jI+/5hajDd1Zm9Mx0FurYGLQ=;
-	b=F0OheZnmnw2i69VJQ+GoiBpWNETegL6m6jdyt5u0pN9BsfcAgwwPRkXxGPasw4VCNWJVnZ
-	nojR6AXNnpLm08DwxtDTvm68YKccQk1e++3CvWRudR80UhiQY5fHvIoizpOE4CH2qPnNS3
-	4Vf48YE5QIb46Ru4DwNleBdqCLJ4a04=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-385-3hj0GXBuOAWRIewBUPv_GA-1; Wed, 05 Nov 2025 09:32:28 -0500
-X-MC-Unique: 3hj0GXBuOAWRIewBUPv_GA-1
-X-Mimecast-MFC-AGG-ID: 3hj0GXBuOAWRIewBUPv_GA_1762353147
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-477171bbf51so39769245e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:32:28 -0800 (PST)
+	s=arc-20240116; t=1762353233; c=relaxed/simple;
+	bh=vg/RXprrlsVjtXM2tQTWZW5NZf2Zc1PI2BcwO3b4knc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D3k1jwk+Va5GKQ3ARarBi9VvWJ+HtRtRiVlLQYdCvqTnLQptq1176N7y5HgRWoEnyVczae2dnDosDNfd+f6tWRwbQVwQCbJEJQziblbJenylNt0Qtxg3otEjz1PihAW+Iokpv+x5BY24lhdVA0w9tJq3310pcUWXR48PTxaILOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGOwQrcM; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-341b2e98486so622739a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762353147; x=1762957947; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kX3VzHZS/HGSzq6tZ4+jI+/5hajDd1Zm9Mx0FurYGLQ=;
-        b=lX/HD8u9AR9U/Ep9PpVlNwmA1tKoTONwTzUbF4DXMYq5vPRzCkhGBibl3cOt7lS7CP
-         QfcBFq6bfYtNnefmPtWkCMLIYZMJn3m35vmS+7q9ehqDVeN+riMZ1X5TzlingFIRx7pS
-         SoYsjxjXtxERIvpGHe3xMX2Jaxj2s7T6C13l/TK6ZTPjv2XI7yntrgWRNv37QFk/mmWf
-         Fmuf8dAfC2qIHFLOVHhfv1cIrzxJwKv7v+cTIQffqeWISuWWKi1WLIyuePG+GsV85vcl
-         2USWT2kBufXZ2ml5nYvm7aJ3WC7bp4wnpSJtU/GuVFWCwwmy/pNLZQdNliLOoyqYOpWb
-         8XaQ==
+        d=gmail.com; s=20230601; t=1762353231; x=1762958031; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vpdMK/DRKVWAvOOWNiPRhZVNRMFfL3v2YgNMmVkwG6w=;
+        b=gGOwQrcMlodBbKVVOiUBinmksNozEiX0dcbzLhJ6uSG87tTZnIMj4BnmEKMB7UBEdU
+         VSTLj/BqJKuK34oeXzfw27+HAjeNlQXcpPxNHzru6AquGh1m+U+WWvtV0AbQhkiEMdZj
+         4grP+Z/LdiRwUEESDOyYmmKNHLZMYBr08Zip3Qa0XNyiT7JNXtxJ+33ISpoI2AOiGtNd
+         I7VYkj/iichxosgAvkOXMdENvSg3ggSHO9tMcBBoYDr0tLRU1D4OnkT/CpI4MOkzIjOS
+         MRv9Rl5ni2iab9xQcAX+Afxs7zuDhCkZ7TO/xPYLLwKjyOsF3ccFysduXX98+YYATUxq
+         wExQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762353147; x=1762957947;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kX3VzHZS/HGSzq6tZ4+jI+/5hajDd1Zm9Mx0FurYGLQ=;
-        b=IUTfj9zgEuj1V6EaDDaYcLW7mistoPccOiQ281GTb//UR5LAvXDaSf8TPeqJj5LobT
-         3b8w+GTme1rnLMtXBN8oFddB776OOBseks+SJQ4UXr4MKh/3VUMKmnQ8if7u/XDkIcyk
-         Z4EttXYap5ItAahqGIllR7qdFH6/gjCWYMAbkuQWf6TuYAlJVWvePR2VzVJ1bpxqpd49
-         0Ct1OcBBdY3YC2SldYiSpozmN8wFjbhL8zV7vIYe/bPi3mUoNly/ZSFd0tVE2PeM93ku
-         dgpuR4xkjFew66eoxlOXNE7PLZRjswiGDckwJfgLHwNkq+DCaloMOg4lcMACrl7t3yKp
-         97Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBmQrcEUxvfHbJPOkDj8Ie6Zhx5OC4epsgH3bTZCJU1udqYlDoHk982YNm/p7t5atAtB/KzAfhmwebl+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3vREix30p1YuNeTAJQyD5emH8nBwl9CJsYtBZuFUeMZlGG3qf
-	tm8YiayEPd+qAiwwekGi/v6lONHoF3umjcpx3HXku26RdG22uhFTNkVb8bx2bsql5r7F7eDPz91
-	1ZG0f4Jt+LUnHaPdyYbCOAd9RVeFp93QeDl4GN0eLfaTup1BV1yZvW55OSjFz8FBXpg==
-X-Gm-Gg: ASbGnctuovFVKsTvnpdvwxAn8mP/Bslf0Xl2TyijMnYZK/OIufhGsQte0Pn/5L9ibch
-	+oO+4ggEFUMULGSgopkWwdwxdB8YiSvFVy53u2HXGz73H33ZqG6Vz1TUzDp4Za7PmfBLdfolIEa
-	u0QTowcBDFboOk7D/2/eOFfw0h8IjUH3ljCjBIFrDJYQ7wbz3hCCvbZp1yWIznruUsqLg+/q25p
-	9G7cq9Ggaw0q3oLh4CB0MleBekzPznxE3Fqq2m7cGfBy9mrSy/0YwoSOr8l4+aIJ/IZwNWnCcWs
-	0oBTVPz2EdKfXLTkftMWMLZk9ozSX/GlmOjdhpAsT4Yg0byqaygMTeYX5UdU2UgRl68JUb5+mGk
-	=
-X-Received: by 2002:a05:600c:8b88:b0:471:145b:dd0d with SMTP id 5b1f17b1804b1-4775cde3b1cmr24454565e9.24.1762353147134;
-        Wed, 05 Nov 2025 06:32:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHWyogJkKQrbfKs51nTFgSZd3l651tt4j8gql/Hcm4StJEJE6IWfnkUPmlhXIXKjxU9KUzKHg==
-X-Received: by 2002:a05:600c:8b88:b0:471:145b:dd0d with SMTP id 5b1f17b1804b1-4775cde3b1cmr24454345e9.24.1762353146660;
-        Wed, 05 Nov 2025 06:32:26 -0800 (PST)
-Received: from sgarzare-redhat ([5.77.88.64])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558d983fsm43454025e9.8.2025.11.05.06.32.23
+        d=1e100.net; s=20230601; t=1762353231; x=1762958031;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vpdMK/DRKVWAvOOWNiPRhZVNRMFfL3v2YgNMmVkwG6w=;
+        b=fgfV5onscT+OsfXKNz8gozfev8V4rFVdHua/ByJaPz08lmDuNrItlfWEFdoY6NS5wi
+         zU39ZFYUP9IBjk4111u37o2AL67xs2d3JBttdtV+AiBzlUkwUNUeheFTYIGsLP08Gcub
+         oDMfr+/sXA3bGpNSgGcRWDdOJN/c2Bpx9GPhW581UCrTu98VTNPdimCn99q8v0dsbvYZ
+         a232tI2jsy2RQU8oLTzCv1b/JCZOzyEZvQ14S2VRT9CEyiDDhjxcWhBy9eNiLA8jMJ9J
+         Tb5iIr2GQKizBBMrKfrRdMIQABzq1KkflHtsC6l2VHuindvkbXlCF438bsqKjOWrKgWV
+         5JCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfNFgFRqoSHswV4KXRIwwRcHR5+OXMayH8hYGFeWPNA+rn0p/yGd7gp5Y2xhGvk9ktdwxfNlq6HcPCL5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6ao4CDkXezUnIvBjB7vViMnYeeQF85YNb/Dw+gWXYmScAc6zk
+	vvx8Fs679MeFzAJoB8mFEPl72W1t3mov8J0kGdF7AV2IWgtu4jpFjnJX
+X-Gm-Gg: ASbGncvFiwozm0skV1Woa9sQjSsPqhyeyxGo+sR9fTxkFi1OZHU/ip6dMYGdecOd/17
+	grYbF1mY5m0yk7yZ71ba86EnbG+bHgbSS0hZcpxKBoMx6UQ/4Gf2lGjYEz4TjgPyef6AE4/nLpT
+	dDSkxmCQf82ywyUYAukNoZW9PTAtTowFkbLJs/TqHDZ1oO4qGCCkXX9BSmvu9uKOLogHCSi+Nnd
+	/DUf3+/zCH4ehmsPacSWGuKofS3tHpE8EB21qDBYwvGFZuonIubY32IEljsm46EFUdL0F6uPd7A
+	zwa5269SJ8XmT0Sx0GWyRs9sRNAYGGNlczJ0cl6OQq9CbHnbnNH3wWy8+POK91Yd7r5h91WJ3y/
+	5V1HiqNHw+OLeWylMDHhuym8MvSjFdWmtQZulnVF4FpLGEYFaUKgiXjr2QpCihv7J0SMpMG/skw
+	Q=
+X-Google-Smtp-Source: AGHT+IFhgXKJ4vhkJNxXbe74Kq1mJjWs4yqe0dw+xDqXwgk8gyjw+XNt0LDe6GfLNBlv2sqKPJa/Lg==
+X-Received: by 2002:a17:90b:55c3:b0:340:b152:efe7 with SMTP id 98e67ed59e1d1-341a6c4d3b5mr4552306a91.11.1762353231054;
+        Wed, 05 Nov 2025 06:33:51 -0800 (PST)
+Received: from aheev.home ([2401:4900:88f4:f6c4:1d39:8dd:58db:2cee])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a696d978sm3132190a91.11.2025.11.05.06.33.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:32:25 -0800 (PST)
-Date: Wed, 5 Nov 2025 15:32:18 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v2 04/12] selftests/vsock: avoid multi-VM
- pidfile collisions with QEMU
-Message-ID: <3osszz3giogog7jzs37pdqhakcrveayrqu6xduztuwrftkwrad@gjj3cyvmypw3>
-References: <20251104-vsock-selftests-fixes-and-improvements-v2-0-ca2070fd1601@meta.com>
- <20251104-vsock-selftests-fixes-and-improvements-v2-4-ca2070fd1601@meta.com>
+        Wed, 05 Nov 2025 06:33:50 -0800 (PST)
+From: Ally Heev <allyheev@gmail.com>
+Date: Wed, 05 Nov 2025 20:03:44 +0530
+Subject: [PATCH] overlayfs: fix uninitialized pointers with free attr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251104-vsock-selftests-fixes-and-improvements-v2-4-ca2070fd1601@meta.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-aheev-uninitialized-free-attr-overlayfs-v1-1-6ae4624655db@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEdgC2kC/x3NywrCMBBG4Vcps3YgSS9aX0VcBPvHDpRUJjFYS
+ 9/d4PLbnLNTggoSXZudFEWSrLHCnhp6zD4+wTJVkzOut9b07Geg8DtKlCx+kS8mDgqwz1l5LdD
+ FbyHxcDm349B1boShWnspgnz+p9v9OH4fFA/BeQAAAA==
+X-Change-ID: 20251105-aheev-uninitialized-free-attr-overlayfs-6873964429e0
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1461; i=allyheev@gmail.com;
+ h=from:subject:message-id; bh=vg/RXprrlsVjtXM2tQTWZW5NZf2Zc1PI2BcwO3b4knc=;
+ b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDK5E7x/mmaYJghHbb161vBg2pXXuVO+iX5v/hVhFlOyi
+ W3TjUd3OkpZGMS4GGTFFFkYRaX89DZJTYg7nPQNZg4rE8gQBi5OAZiIHD8jwxMjm3+J234vm5rD
+ b3vynJmj9XmVBYeXJwUvc107f/1bjnWMDFPLfO/uupf24b/z0+LKuFsS7af+VDFrV6oxuM7lb5n
+ qww0A
+X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
+ fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
 
-On Tue, Nov 04, 2025 at 02:38:54PM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Change QEMU to use generated pidfile names instead of just a single
->globally-defined pidfile. This allows multiple QEMU instances to
->co-exist with different pidfiles. This is required for future tests that
->use multiple VMs to check for CID collissions.
->
->Additionally, this also places the burden of killing the QEMU process
->and cleaning up the pidfile on the caller of vm_start(). To help with
->this, a function terminate_pidfiles() is introduced that callers use to
->perform the cleanup. The terminate_pidfiles() function supports multiple
->pidfile removals because future patches will need to process two
->pidfiles at a time.
->
->Change QEMU_OPTS to be initialized inside the vm_start(). This allows the
->generated pidfile to passed to the string assignment, and prepares for
->future vm-specific options as well (e.g., cid).
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Changes in v2:
->- mention QEMU_OPTS changes in commit message (Simon)
->---
-> tools/testing/selftests/vsock/vmtest.sh | 53 +++++++++++++++++++--------------
-> 1 file changed, 30 insertions(+), 23 deletions(-)
->
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index 03dc4717ac3b..5637c98d5fe8 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -23,7 +23,7 @@ readonly VSOCK_CID=1234
-> readonly WAIT_PERIOD=3
-> readonly WAIT_PERIOD_MAX=60
-> readonly WAIT_TOTAL=$(( WAIT_PERIOD * WAIT_PERIOD_MAX ))
->-readonly QEMU_PIDFILE=$(mktemp /tmp/qemu_vsock_vmtest_XXXX.pid)
->+readonly PIDFILE_TEMPLATE=/tmp/vsock_vmtest_XXXX.pid
->
-> # virtme-ng offers a netdev for ssh when using "--ssh", but we also need a
-> # control port forwarded for vsock_test.  Because virtme-ng doesn't support
->@@ -33,12 +33,6 @@ readonly QEMU_PIDFILE=$(mktemp /tmp/qemu_vsock_vmtest_XXXX.pid)
-> # add the kernel cmdline options that virtme-init uses to setup the interface.
-> readonly QEMU_TEST_PORT_FWD="hostfwd=tcp::${TEST_HOST_PORT}-:${TEST_GUEST_PORT}"
-> readonly QEMU_SSH_PORT_FWD="hostfwd=tcp::${SSH_HOST_PORT}-:${SSH_GUEST_PORT}"
->-readonly QEMU_OPTS="\
->-	 -netdev user,id=n0,${QEMU_TEST_PORT_FWD},${QEMU_SSH_PORT_FWD} \
->-	 -device virtio-net-pci,netdev=n0 \
->-	 -device vhost-vsock-pci,guest-cid=${VSOCK_CID} \
->-	 --pidfile ${QEMU_PIDFILE} \
->-"
-> readonly KERNEL_CMDLINE="\
-> 	virtme.dhcp net.ifnames=0 biosdevname=0 \
-> 	virtme.ssh virtme_ssh_channel=tcp virtme_ssh_user=$USER \
->@@ -89,17 +83,6 @@ vm_ssh() {
-> 	return $?
-> }
->
->-cleanup() {
->-	if [[ -s "${QEMU_PIDFILE}" ]]; then
->-		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
->-	fi
->-
->-	# If failure occurred during or before qemu start up, then we need
->-	# to clean this up ourselves.
->-	if [[ -e "${QEMU_PIDFILE}" ]]; then
->-		rm "${QEMU_PIDFILE}"
->-	fi
->-}
->
-> check_args() {
-> 	local found
->@@ -188,10 +171,26 @@ handle_build() {
-> 	popd &>/dev/null
-> }
->
->+terminate_pidfiles() {
->+	local pidfile
->+
->+	for pidfile in "$@"; do
->+		if [[ -s "${pidfile}" ]]; then
->+			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
->+		fi
->+
->+		if [[ -e "${pidfile}" ]]; then
->+			rm -f "${pidfile}"
->+		fi
->+	done
->+}
->+
-> vm_start() {
->+	local pidfile=$1
-> 	local logfile=/dev/null
-> 	local verbose_opt=""
-> 	local kernel_opt=""
->+	local qemu_opts=""
-> 	local qemu
->
-> 	qemu=$(command -v "${QEMU}")
->@@ -201,6 +200,13 @@ vm_start() {
-> 		logfile=/dev/stdout
-> 	fi
->
->+	qemu_opts="\
->+		 -netdev user,id=n0,${QEMU_TEST_PORT_FWD},${QEMU_SSH_PORT_FWD} \
->+		 -device virtio-net-pci,netdev=n0 \
->+		 -device vhost-vsock-pci,guest-cid=${VSOCK_CID} \
->+		--pidfile ${pidfile}
->+	"
->+
-> 	if [[ "${BUILD}" -eq 1 ]]; then
-> 		kernel_opt="${KERNEL_CHECKOUT}"
-> 	fi
->@@ -209,14 +215,14 @@ vm_start() {
-> 		--run \
-> 		${kernel_opt} \
-> 		${verbose_opt} \
->-		--qemu-opts="${QEMU_OPTS}" \
->+		--qemu-opts="${qemu_opts}" \
-> 		--qemu="${qemu}" \
-> 		--user root \
-> 		--append "${KERNEL_CMDLINE}" \
-> 		--rw  &> ${logfile} &
->
-> 	if ! timeout ${WAIT_TOTAL} \
->-		bash -c 'while [[ ! -s '"${QEMU_PIDFILE}"' ]]; do sleep 1; done; exit 0'; then
->+		bash -c 'while [[ ! -s '"${pidfile}"' ]]; do sleep 1; done; exit 0'; then
-> 		die "failed to boot VM"
-> 	fi
-> }
->@@ -480,8 +486,6 @@ do
-> done
-> shift $((OPTIND-1))
->
->-trap cleanup EXIT
->-
+Uninitialized pointers with `__free` attribute can cause undefined
+behaviour as the memory assigned(randomly) to the pointer is freed
+automatically when the pointer goes out of scope
 
-Why avoiding the cleanup on exit?
-Should we mention this change in commit description?
+overlayfs doesn't have any bugs related to this as of now, but
+it is better to initialize and assign pointers with `__free` attr
+in one statement to ensure proper scope-based cleanup
 
-Thanks,
-Stefano
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+Signed-off-by: Ally Heev <allyheev@gmail.com>
+---
+ fs/overlayfs/params.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> if [[ ${#} -eq 0 ]]; then
-> 	ARGS=("${TEST_NAMES[@]}")
-> else
->@@ -496,7 +500,8 @@ handle_build
-> echo "1..${#ARGS[@]}"
->
-> log_host "Booting up VM"
->-vm_start
->+pidfile="$(mktemp -u $PIDFILE_TEMPLATE)"
->+vm_start "${pidfile}"
-> vm_wait_for_ssh
-> log_host "VM booted up"
->
->@@ -520,6 +525,8 @@ for arg in "${ARGS[@]}"; do
-> 	cnt_total=$(( cnt_total + 1 ))
-> done
->
->+terminate_pidfiles "${pidfile}"
->+
-> echo "SUMMARY: PASS=${cnt_pass} SKIP=${cnt_skip} FAIL=${cnt_fail}"
-> echo "Log: ${LOG}"
->
->
->-- 
->2.47.3
->
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index 63b7346c5ee1c127a9c33b12c3704aa035ff88cf..56d5906e1e41ae6581911cbd269d0fb085db4516 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -448,10 +448,9 @@ static int ovl_parse_layer(struct fs_context *fc, struct fs_parameter *param,
+ 		err = ovl_do_parse_layer(fc, param->string, &layer_path, layer);
+ 		break;
+ 	case fs_value_is_file: {
+-		char *buf __free(kfree);
+ 		char *layer_name;
++		char *buf __free(kfree) = kmalloc(PATH_MAX, GFP_KERNEL_ACCOUNT);
+ 
+-		buf = kmalloc(PATH_MAX, GFP_KERNEL_ACCOUNT);
+ 		if (!buf)
+ 			return -ENOMEM;
+ 
+
+---
+base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
+change-id: 20251105-aheev-uninitialized-free-attr-overlayfs-6873964429e0
+
+Best regards,
+-- 
+Ally Heev <allyheev@gmail.com>
 
 
