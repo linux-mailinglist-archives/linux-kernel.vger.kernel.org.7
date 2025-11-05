@@ -1,91 +1,132 @@
-Return-Path: <linux-kernel+bounces-887179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24230C37777
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:25:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6613CC37780
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E1774EE3F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:24:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E02634E8EF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD32D33CEB2;
-	Wed,  5 Nov 2025 19:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC30433F389;
+	Wed,  5 Nov 2025 19:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOvPxOeW"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HsKyD+db"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81486279DCD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5501231D37A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762370647; cv=none; b=OsaVvKF/+j5EU3dlOpmla0WklgnFrys5pao8/7NDqjZw9oFxoH1PeW7hJcFvgbe9Ye81G/mUgu0Jo5LOGg2NxuVSPua4aFpt0fVuyzcvJrpHDBMx+PfPnTNPHIe9ZpEk0IBda86jD0ANm8IAG3OYchKMFClfbTLMXQnhl/NeP88=
+	t=1762370742; cv=none; b=uvrn3lG7SQ/97MXiQc4cwXs4vEvVorleMJk+PgwToPHHjHvHlazXk70WKEi/7cJlvHsLhxVY+n/0uElEWW04KRVTmW0NaJATj3Ilb0cycXV18krs1j6A5uZAAaYigt6nRMM/sdCyv6nT2FWTR+6nhaTldI7Udw01M5IF1yOnvhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762370647; c=relaxed/simple;
-	bh=z2ZuAl6m8mQF8bCGTrIOO7EDrjCj2YFxDmYFrGwTZ88=;
+	s=arc-20240116; t=1762370742; c=relaxed/simple;
+	bh=Nu03Bte3QnL2ZmTAQ8EJFRG0YuAObGrFfyjxidVrgGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggnNqWMSHIwYgMkdg4HFmaHK/FKncjVmwm33nZ26hHzVXgvaOqPmZjDEmC74+9PZmHaIb1Vjno9jsFXseRuOhVHbmb8RdMA8uWdxjw7xUCbOsthLhsP/XhKw7YBPalPQpfaft5sbEdYlZvCNg4AmTsvjjeWHA13pR4xo9deyolo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOvPxOeW; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-786d1658793so1462327b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:24:04 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/ogsXm2+wj6zICJDo3SO5rjHW0c3ggZhUn0gQZjtw2Ptnd6ZwzA3TbS+MjP7hdZwKVeM9/YdfbTmLCf6/Laj522nPG2KLj0719G6zPBPFc8qSueQfFwYUjpSUP0KW+mNIILCjL86NV4xE73EVZaeOpWhw0UgAbxZcBUsvp3pi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HsKyD+db; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8b145496cc1so22095785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762370643; x=1762975443; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1762370739; x=1762975539; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCfZbCx1ZjFQUpQxhvpq9tTfc/hY+795vC8k5TIfi5U=;
-        b=TOvPxOeWbNiSApawo+YHmwxouYBYo8ZqYZuOEzZ+ITc1CUWtCoRUQ/lr1DzgPoQiB7
-         HxWmzzUT5AqskIjyw271EZGQLmVtgsXuWTg0I9KiP3ijIwHsEJH155nBvBla2uwVwtBi
-         IDuzL2j0SQDNkDciFyUSF9kxqDKSwrBfo0+WWeMeFQsEW6cdDSdvjANMLQTdxi0xOjvh
-         OP9P2RBiSf9tF7RiSP0/ddoMYB2jhxpBD+bcLvaSIKrLxlHFyqvvSfqlQOQtAuMbf67H
-         GzSKHZuo1MKh/ZE0HCFFsTsnKb0t9uQsmfsuv8ABNSqMcDPoMjWopcuy1DOs6t9XbccG
-         OuUg==
+        bh=z3c7ISS42F3tYlBvNOZmQXpwFtE1e4tCRa3nMbV4lv0=;
+        b=HsKyD+dbblu5fR8+XfO4QDYF3ZU96k25c0OR5LKNuo8ojUSKZDUwyc1VK1IVw5aIh4
+         sQye0FP2b5ay1oBbWg0HzhJTNlDvYyWqm4PY6CYN5fk+JMKmstLH3AarRKSdzK/KfHfV
+         fRtvhSmQ/ppueWx8O/OKrHcQBTkE9Sh7OiSXd8dB8VV/7WnJJ3M1ip1F0FoauUNesHNU
+         NNjhxsRXmUbzqsCFzhec+11IuhUQDpLY+Jo8HzLKUk5vaHIzZJzY91iScXWWOeROi3mo
+         bw5KGFMf+w8cwElcAKOVYS7jUkRg5KDpkHXrC6OMVtHTCBVYNujMi5b+hVTfhvdU27JV
+         pIFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762370643; x=1762975443;
+        d=1e100.net; s=20230601; t=1762370739; x=1762975539;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SCfZbCx1ZjFQUpQxhvpq9tTfc/hY+795vC8k5TIfi5U=;
-        b=IKx5ky1WQbpu+D9f7gh6GNfT7JDJOHrDkyeWQAHK21qZh/4/HRGnxifOAN5FzK3b14
-         Q3mKcCUgVB88wTS75EoK+3vlc7eD+ej1hVIkwAsO0pRnkSfKaS2YbuKQmO3ev9GLW0G8
-         36mb0Kp6BwebBygMYkpKf4Vbf2YnXPWxAocPxJtDK5cVQcVyz2l6/s/g21UJrxC08uLr
-         SBXJkGBtOijbVHUXDK7x+TXqRjpZAcOMebxfS0v0waVX/Y8e8Abo3aMbbk0yLc7xmNFr
-         MoF9+Z7gtubqD9fi7Y5fjGPzIlKXkuNiNAS6Jj0L30mS1l3U9rSGQzjN3rrLCoioEOcq
-         +IrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjyiBd6hUOG2q1zUmrWcJSXjqhwDQkv2fwi6wAxtW5Q84WHWsL1kYTdfGHdb/inusnMVS9vJHBC1GuoRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRULzUdTmGT1nNk1vEZE/Sn3hknT2vMrCXhDUbkj9t9QXWE3/N
-	Kf4iWBHblJYYNwgDo6V0qwSECcWT+TQpo/O8tTCFdPMjqvyKG/Tv48bg
-X-Gm-Gg: ASbGnctUr/hlv56NkhP/9YWHFxtqf8muhrHP6+i77fGVGCgxTimYjN1v2nGcvCfVBIa
-	5JqLtC35EFHdSQrkd/EaGcg/hNDNn1mZhFpoyhXAEkD6a1aio9d8i5mokeUN19GAZLT27+gd23/
-	T1T3+c+0GXX4WX2xjHkgxUTx5sRjt1dPhy9fczCS/aKIUMjKFOY+IB/LAcsjVnV9MxwUnbdgW+z
-	YtPlIWCp4yBTfOo1iZMSSXR5VzfHy+Wr+lBTUCXtECcmEBhTaKgMWv2rf7HCQufYz9puWLWu8lF
-	nRx7y4N8NXasOGlMBNDLvDGEQTbmhYtr+41OdKhhQWapXER6gUZPXv3yQBKyIwzYjc3DunQ6N4h
-	iG+OM+MOU0bDbwkMx6KmoRp0N2RRgExre+lkvoc0iGpTmoBar2fE4Am0GgHFdU7JWw1EfxvJ4Yx
-	ZJcxcUQl/+5ip68O58LmpO+Fk3XcZh/Zpxs70/
-X-Google-Smtp-Source: AGHT+IGzkMph0aR1AuSLsLz+NyiUmW9UyqgkXIKscDfhGHTikd7KQOHT6TykmLaTJLeIJUZrZX00oA==
-X-Received: by 2002:a05:690c:61c5:b0:786:a774:e415 with SMTP id 00721157ae682-786a774e5d7mr54395367b3.56.1762370643208;
-        Wed, 05 Nov 2025 11:24:03 -0800 (PST)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:74::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-640b5ca403asm61413d50.8.2025.11.05.11.24.01
+        bh=z3c7ISS42F3tYlBvNOZmQXpwFtE1e4tCRa3nMbV4lv0=;
+        b=ExzPL8xSPM9X9fLNzYjgu5Xvx1umFXcMeH0gxdlzGfT91d05bE7GmiJOUzC6yLxm76
+         bPeU6TIEjZqyrs3o1ZUw57kixnDsRt8pRbVBIzMTqcUE/qsIAMkaZG6IRdgzQJJ5dfem
+         bm+y7fiCEkdAJyg1gyrCfmPoP7RsMrzBAvITBZx8IxGbhB0aKmJW4z/0Ol00bHbM83AF
+         y7znPuUhHXa5GYVE9VdnpSOuL6m737ZJ7TK30/Nk8TCfEJZXnj383BdDLpX3A50QiCXe
+         OD+rimLqtQpD7z0KEK8htCQZ+TpI7xi9ukdbwVEFwa4EhG4Te4XQRU9wP5RAyb3pQKU9
+         0YLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkXMJtwmexvQdjv1he8JMmh85slKO3deN7l3jnNmFjUvThdAcbvQR/0oBRNsCf2G7sgf+iZ6+1L8tw7h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgLCmANvFCnXcf5ggBgAShdZ90Y6s/y7M50Ezut/PB3OVxWiI/
+	8LIx79uyaswYu0Ko2yeipH5O4RXNtPojt5Ida5Sue1fQm77aorTLrWxj9bXogBxTU0Q=
+X-Gm-Gg: ASbGncuHjhsWaPwu7hzcq0w02+j3Q2Qe5jdBXzi8WMOwbgHZpfNPVsm1VAZknfBHa4J
+	/FqNla21VQWTVf2CSJ+wHoL80p5yqKa0wpg6nC2rMVfx7YhBGcYWG7oy3LEKkvPozlIUxj82CHz
+	0Spm1gv/poQt0p6QbIa/Nk8wk1I3rA6meIY75g0GULccNoasQqs+uDFNcIJkF5/KwPaa8iGIaIo
+	RKXmAwvqsP/akj8eVBR0lN6wKdiUyX91PfIlYt5Z7u7TZVfGktyiQNhEYA7TeHRewI9/S8tDwqT
+	M1SkKdcDAUXdsWOt/heKBkijUM2wZ00QevFHJFY4IIIR6XOx4Omoomrm7drldy+s/AygMVGvBwQ
+	XJnB8DIIRlipYLYUCIstOjTzZ4Em0x4jBm+F+8FzA3m6DrPOJVwaQT8lr0nxdUZ/zGsV5Erzj7p
+	lCR1Od69xh934OXDtdjX1jSSCFftm88mHHcxhE92bDCN+cGziLcjRX9eUTHYI=
+X-Google-Smtp-Source: AGHT+IE93lZWq2OeBwVItF8pvYDXcfH6WZ0IIQ5p6JNn6wR82KcxAzEptz788KT3rDLJ0XOoUhNeCw==
+X-Received: by 2002:a05:620a:4887:b0:8b1:a624:17b1 with SMTP id af79cd13be357-8b220b03a22mr560424085a.27.1762370739005;
+        Wed, 05 Nov 2025 11:25:39 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355e7208sm27162885a.18.2025.11.05.11.25.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 11:24:02 -0800 (PST)
-Date: Wed, 5 Nov 2025 11:24:00 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v2 10/12] selftests/vsock: add 1.37 to tested
- virtme-ng versions
-Message-ID: <aQukUFyuN+iJ1zv9@devvm11784.nha0.facebook.com>
-References: <20251104-vsock-selftests-fixes-and-improvements-v2-0-ca2070fd1601@meta.com>
- <20251104-vsock-selftests-fixes-and-improvements-v2-10-ca2070fd1601@meta.com>
- <csgl7tb7jxlmbkn5jqjoiraa4a5vatmd3t4fv4duue5ftukphy@tem4fwdinmti>
+        Wed, 05 Nov 2025 11:25:38 -0800 (PST)
+Date: Wed, 5 Nov 2025 14:25:34 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+Message-ID: <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+ <aQugI-F_Jig41FR9@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,37 +135,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <csgl7tb7jxlmbkn5jqjoiraa4a5vatmd3t4fv4duue5ftukphy@tem4fwdinmti>
+In-Reply-To: <aQugI-F_Jig41FR9@casper.infradead.org>
 
-On Wed, Nov 05, 2025 at 03:48:09PM +0100, Stefano Garzarella wrote:
-> On Tue, Nov 04, 2025 at 02:39:00PM -0800, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
+> On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
+> > The kernel maintains leaf page table entries which contain either:
 > > 
-> > Testing with 1.37 shows all tests passing but emits the warning:
-> > 
-> > warning: vng version 'virtme-ng 1.37' has not been tested and may not function properly.
-> > 	The following versions have been tested: 1.33 1.36
-> > 
-> > This patch adds 1.37 to the virtme-ng versions to get rid of the above
-> > warning.
-> > 
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > ---
-> > tools/testing/selftests/vsock/vmtest.sh | 2 +-
-> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > - Nothing ('none' entries)
+> > - Present entries (that is stuff the hardware can navigate without fault)
+> > - Everything else that will cause a fault which the kernel handles
 > 
-> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> I'm just worried that the list will explode. Perhaps in the future we should
-> just define the minimum version that we are sure we can support and the
-> maximum that we have tested.
-> 
-> Stefano
-> 
+> The problem is that we're already using 'pmd leaf entries' to mean "this
+> is a pointer to a PMD entry rather than a table of PTEs".
 
-Sounds like a good approach.
+Having not looked at the implications of this for leafent_t prototypes
+...
+Can't this be solved by just adding a leafent type "Pointer" which
+implies there's exactly one leaf-ent type which won't cause faults?
 
-Best,
-Bobby
+is_present() => (table_ptr || leafent_ptr)
+else():      => !leafent_ptr
+
+if is_none()
+	do the none-thing
+if is_present()
+	if is_leafent(ent)  (== is_leafent_ptr)
+		do the pointer thing
+	else
+		do the table thing
+else() 
+	type = leafent_type(ent)
+	switch(type)
+		do the software things
+		can't be a present entry (see above)
+
+
+A leaf is a leaf :shrug:
+
+~Gregory
 
