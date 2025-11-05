@@ -1,291 +1,124 @@
-Return-Path: <linux-kernel+bounces-885765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6CFC33D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:38:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1E5C33DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB5A42843A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:38:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7AE54F603A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A2260569;
-	Wed,  5 Nov 2025 03:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD3A280318;
+	Wed,  5 Nov 2025 03:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0UUPHrVy"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Md5J2gHu"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A81DED42;
-	Wed,  5 Nov 2025 03:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E03926CE3A;
+	Wed,  5 Nov 2025 03:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762313877; cv=none; b=NoOuVui29YPpCdhK9HPEDCgVlegaMtROB7sbqMXvUZywFYQ9NRVF2xxyY6l/PZXpls9VgWRcO4qhVwxIGQlR/IyBIdH8WDCsMVDGntPGr2/D4Mt0hQUas089tNvSHu+u1e2clymaq8RirjWQZU5BqmDhhJm1GVvI48Q2kkXl/1A=
+	t=1762313917; cv=none; b=BRsSaPfmmnDi71RuQ9kdvBU2B+2phMg1TyQUHnYb051n4LhRQs5kEzwYQypkBlOwFQTZ4sWmZFmb78NDkVGVR6zrn3I9zRVl25+afH6SGItgexYvoZ2gAsisHuEvZL/gl7g8G/42ABcBmE2p54CYEoh8XPNfdKyZiKN/+cs7Dq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762313877; c=relaxed/simple;
-	bh=5APbX8nC0EgqBYBRur3ANJ9lbqie0uPkIEEM+6nXuZk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UQ2K4n6TWoG/iSN9JTN7C85UnSmJlv2KDgpMePpbo6TzvMlk8YBHUzgH5gx8XX/aULetIkMT6h6hmfeyg0Rnf7D5lE1EISggx/CLotfHptiGAnbJB/bDyP3OxNR5Q7NG7PasiJcyu4S9ZUGfChaK2bQOfdbiG2PXJ+feduA4RAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0UUPHrVy; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762313875; x=1793849875;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5APbX8nC0EgqBYBRur3ANJ9lbqie0uPkIEEM+6nXuZk=;
-  b=0UUPHrVyPa9QBYZldU4qWdF6O+248KvmT8zrJQce9eQhglJrA+CL5Is/
-   Y7fK2nQ0g79TyODffl5Hi/yBFBotVB3YaferrBfEpVPFD4S+2Szv1ugnb
-   qXM3QT4zZ5T98cgXBsjsCTxDzuEK+aVdKnCpeyH6w+TMoErgNZctG3pfQ
-   vI3/tef8WieyKWnSLuiflG/BGe30j2bODTq2/JkrB7B4S9gtgaNJ7LmAm
-   5cE1HfMDIGKuqPJ8oDkQkoGmq1KWCWvyiBYyOfufJSUIq06bMK+pLgsl6
-   knKT+El3tm0T7eitkDqJfcioctr12T7FMLJUhfgWPzAT2i7kcSudaTiIf
-   A==;
-X-CSE-ConnectionGUID: MH33LE4+R32TIjAv3cJ5zw==
-X-CSE-MsgGUID: TIj8QXDtQJOnnxY6qhiT5w==
-X-IronPort-AV: E=Sophos;i="6.19,280,1754982000"; 
-   d="scan'208";a="48697233"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 20:37:55 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 4 Nov 2025 20:37:14 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 4 Nov 2025 20:37:13 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, Arun Ramadoss
-	<arun.ramadoss@microchip.com>, Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean
-	<olteanv@gmail.com>
-CC: Oleksij Rempel <linux@rempel-privat.de>,
-	=?UTF-8?q?=C5=81ukasz=20Majewski?= <lukma@nabladev.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Tristram Ha <tristram.ha@microchip.com>
-Subject: [PATCH net v2] net: dsa: microchip: Fix reserved multicast address table programming
-Date: Tue, 4 Nov 2025 19:37:41 -0800
-Message-ID: <20251105033741.6455-1-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762313917; c=relaxed/simple;
+	bh=xiZjpDy3EAXqW0w4u5A4HJBPYdwJ/UmEUk25ogsrIqs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kN27x/jcjbzNTWixYuUYnMoNe1nRHqLI+T1nvWVo1LYug3x8+igi2pBPZk0Al6jl7Cgsxjdpj7ry7tJlZaTbbIF6MtvgwMe3uWdfQl26qYhwlxgtEWLNrWmEw3iHGEhZODr9h9dVmSZPF1zDmf4JlOR1sVrrSTW5JIOpiLJMKgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Md5J2gHu; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762313874;
+	bh=dLRrQ1i7ZuvOR380K25xa+U2XNncx0jGHzRRhBIJiZw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=Md5J2gHuaAUCZ7sjEgMYU27SvcJb0hRCKIRfURBKlRXNRizW/ccvkyAdjtbxHo/T3
+	 7D8YfNOLMm3G1iQbp+nVyBlUO1YVfcTsyuYu/+mB5PrtFJ9cK/wZ029weQSdVU7Omo
+	 9goLvWOkLPbCzO0kGiBnsTNzCEvTIfIJecF+kX9Q=
+X-QQ-mid: esmtpsz10t1762313869t8b875169
+X-QQ-Originating-IP: VTNhh+X1bUuazguRm/WjXFuDmMP9yaF6AZ6vdFDmMhY=
+Received: from = ( [183.48.244.102])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 05 Nov 2025 11:37:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13385157105176269560
+EX-QQ-RecipientCnt: 14
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH 0/2] riscv: dts: spacemit: define all missing I2C
+ controller nodes
+Date: Wed, 05 Nov 2025 11:37:42 +0800
+Message-Id: <20251105-k1-add-i2c-node-v1-0-d18dae246137@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIbGCmkC/x3MQQqAIBBA0avErBtQyYquEi20GWsINBQiiO6et
+ HyL/x8onIULTM0DmS8pkmKFbhtYdxc3RqFqMMpYrZXFQ6MjQjErxkSMFEZvle87DgPU6swc5P6
+ P8/K+H++XFuVhAAAA
+X-Change-ID: 20251105-k1-add-i2c-node-df8b50b64ef7
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Yixun Lan <dlan@gentoo.org>, 
+ Encrow Thorne <jyc0019@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762313866; l=648;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=xiZjpDy3EAXqW0w4u5A4HJBPYdwJ/UmEUk25ogsrIqs=;
+ b=vxtr0o72DIl8ORZBrMCYT6gEVCmnr934Hy5aIBBkYpcIOREfIIbk7+cs1nn295z7OPFLEqRNi
+ 8HCFtKkb4AGCIbdKRl9krO/wrZXGBEq4ldHVkOdDDA7NyJ24o4Atl1s
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NvDL1eqiYsCVtGrDjeZNV5ydHHueFs6Qm2Dto6JbQDORyERrasPfJbDK
+	odchbFejJdL3UIhsMFuu3Dymnq6oLokK6bc0MtuieP6CsY1FBEmZOR6iVd0ML61aDxo6fyk
+	sCFu0C+8Q7EZFQmsbnvbzrQgcro9pd+wpQpHcuAeHlHcxAIxtcV9Dl2YBDJEkph92mBm1kt
+	tGbeRoDC8SG4/OrsDKZBWyhmgbfEgaOUK39Ab04JEIdpRtDzn5YhGFSi+ZryamAtzn7Zy3l
+	wUm00WST0zyRtgDCf0JZgVG5dKpEzKIOz8zmusxJwvsie4xPismyTp/WkOaM8C24Z677bQm
+	je+YuaX3xHJ54V0OZGJu36o62oaD20w+gP0kYedzyEhMP5PRHqoJ0iSpodxpKUzbWyPRvdO
+	QPkH1k/uXpoAjcqYItDFuw18oKUrkPGogI4lRiPVdfM3x5X1KYoM6Iot4dBgKsyMlGpsBbc
+	LeuD0oPMHiy2WzLF6kIJtK4Qmjj+u14nSV2IF5LRd82gZw20Uvpso9sPG/pd9/k5IFkWBJj
+	d3ENsGHos929vS8EZEV6XHkKB/xKkDZ/LbqHGY+4jyqrNKk4c/iByENik1JCdsJQs1eZhNo
+	lwbQiJbAbZQ8vX2SF48kQ2LKv9yxDGcAmw99Fc6ECZS2QDI5R4jjuCmUCb8pKIqfBeu17X4
+	4aHyQ7YGDKbnOu96pKubAU66S4aK9v7F3Y2ycJ2oj7UT/MOIc1O+bxTEH1s/dDEjIfPsP9s
+	PI7D6ZmQB3a9y+AjNFcT7CdBKH4UDG0ycVHdlxXaXa7E7ba/wfB9AuqFv/NmM5vy3g3Yd3W
+	gt5L+iU44mTQjbU3cX+R6mFup7Yq3pQTCTJxyw5qBLphCYcb28VeWDENQpLoPpcPMmzcrSG
+	RMrKyXF8OvnJBhaKLfnZZowr/nrpMpHeJ1U6YWRSunFijjzUnqsfP7ft/yM6g3fp4ijHZww
+	NxMRa2sDpXEGTZzubQik7uLPAzXyA20ykDAuprXpSzrv+s9YD3CAvC0wF4teXiNJLofpPqi
+	O1WyTmUlO2WA8DoomX9l60OSdiNwf3i6qKcrwKuQRnvIwOTqgS5YuF/KhRKkmXN/OgI3BUK
+	ukojkV6xj7LmdjSIKhcvNjo8xOOJiPZeOF4dej0Fqi431hK3XPkEuIA2wruyjXfOA==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-From: Tristram Ha <tristram.ha@microchip.com>
+Some I2C controllers exist in the hardware but are missing in the dtsi
+file.
 
-KSZ9477/KSZ9897 and LAN937X families of switches use a reserved multicast
-address table for some specific forwarding with some multicast addresses,
-like the one used in STP.  The hardware assumes the host port is the last
-port in KSZ9897 family and port 5 in LAN937X family.  Most of the time
-this assumption is correct but not in other cases like KSZ9477.
-Originally the function just setups the first entry, but the others still
-need update, especially for one common multicast address that is used by
-PTP operation.
+This series adds the corresponding nodes.
 
-LAN937x also uses different register bits when accessing the reserved
-table.
-
-Fixes: 457c182af597 ("net: dsa: microchip: generic access to ksz9477 static and reserved table")
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-Tested-by: Łukasz Majewski <lukma@nabladev.com>
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- v2
-  - use a define for the multicast table entry count
-  - do not check entries for portmap as software knows the final mapping
+Troy Mitchell (2):
+      riscv: dts: spacemit: reorder i2c2 node
+      riscv: dts: spacemit: define all missing I2C controller nodes
 
- drivers/net/dsa/microchip/ksz9477.c     | 98 +++++++++++++++++++++----
- drivers/net/dsa/microchip/ksz9477_reg.h |  3 +-
- drivers/net/dsa/microchip/ksz_common.c  |  4 +
- drivers/net/dsa/microchip/ksz_common.h  |  2 +
- 4 files changed, 91 insertions(+), 16 deletions(-)
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 90 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 85 insertions(+), 5 deletions(-)
+---
+base-commit: 17490bd0527f59d841168457b245581f314b5fa0
+change-id: 20251105-k1-add-i2c-node-df8b50b64ef7
 
-diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
-index d747ea1c41a7..5df8f153d511 100644
---- a/drivers/net/dsa/microchip/ksz9477.c
-+++ b/drivers/net/dsa/microchip/ksz9477.c
-@@ -1355,9 +1355,15 @@ void ksz9477_config_cpu_port(struct dsa_switch *ds)
- 	}
- }
- 
-+#define RESV_MCAST_CNT	8
-+
-+static u8 reserved_mcast_map[RESV_MCAST_CNT] = { 0, 1, 3, 16, 32, 33, 2, 17 };
-+
- int ksz9477_enable_stp_addr(struct ksz_device *dev)
- {
-+	u8 i, ports, update;
- 	const u32 *masks;
-+	bool override;
- 	u32 data;
- 	int ret;
- 
-@@ -1366,23 +1372,87 @@ int ksz9477_enable_stp_addr(struct ksz_device *dev)
- 	/* Enable Reserved multicast table */
- 	ksz_cfg(dev, REG_SW_LUE_CTRL_0, SW_RESV_MCAST_ENABLE, true);
- 
--	/* Set the Override bit for forwarding BPDU packet to CPU */
--	ret = ksz_write32(dev, REG_SW_ALU_VAL_B,
--			  ALU_V_OVERRIDE | BIT(dev->cpu_port));
--	if (ret < 0)
--		return ret;
-+	/* The reserved multicast address table has 8 entries.  Each entry has
-+	 * a default value of which port to forward.  It is assumed the host
-+	 * port is the last port in most of the switches, but that is not the
-+	 * case for KSZ9477 or maybe KSZ9897.  For LAN937X family the default
-+	 * port is port 5, the first RGMII port.  It is okay for LAN9370, a
-+	 * 5-port switch, but may not be correct for the other 8-port
-+	 * versions.  It is necessary to update the whole table to forward to
-+	 * the right ports.
-+	 * Furthermore PTP messages can use a reserved multicast address and
-+	 * the host will not receive them if this table is not correct.
-+	 */
-+	for (i = 0; i < RESV_MCAST_CNT; i++) {
-+		data = reserved_mcast_map[i] <<
-+			dev->info->shifts[ALU_STAT_INDEX];
-+		data |= ALU_STAT_START |
-+			masks[ALU_STAT_DIRECT] |
-+			masks[ALU_RESV_MCAST_ADDR] |
-+			masks[ALU_STAT_READ];
-+		ret = ksz_write32(dev, REG_SW_ALU_STAT_CTRL__4, data);
-+		if (ret < 0)
-+			return ret;
- 
--	data = ALU_STAT_START | ALU_RESV_MCAST_ADDR | masks[ALU_STAT_WRITE];
-+		/* wait to be finished */
-+		ret = ksz9477_wait_alu_sta_ready(dev);
-+		if (ret < 0)
-+			return ret;
- 
--	ret = ksz_write32(dev, REG_SW_ALU_STAT_CTRL__4, data);
--	if (ret < 0)
--		return ret;
-+		ret = ksz_read32(dev, REG_SW_ALU_VAL_B, &data);
-+		if (ret < 0)
-+			return ret;
- 
--	/* wait to be finished */
--	ret = ksz9477_wait_alu_sta_ready(dev);
--	if (ret < 0) {
--		dev_err(dev->dev, "Failed to update Reserved Multicast table\n");
--		return ret;
-+		override = false;
-+		ports = data & dev->port_mask;
-+		switch (i) {
-+		case 0:
-+		case 6:
-+			/* Change the host port. */
-+			update = BIT(dev->cpu_port);
-+			override = true;
-+			break;
-+		case 2:
-+			/* Change the host port. */
-+			update = BIT(dev->cpu_port);
-+			break;
-+		case 4:
-+		case 5:
-+		case 7:
-+			/* Skip the host port. */
-+			update = dev->port_mask & ~BIT(dev->cpu_port);
-+			break;
-+		default:
-+			update = ports;
-+			break;
-+		}
-+		if (update != ports || override) {
-+			data &= ~dev->port_mask;
-+			data |= update;
-+			/* Set Override bit to receive frame even when port is
-+			 * closed.
-+			 */
-+			if (override)
-+				data |= ALU_V_OVERRIDE;
-+			ret = ksz_write32(dev, REG_SW_ALU_VAL_B, data);
-+			if (ret < 0)
-+				return ret;
-+
-+			data = reserved_mcast_map[i] <<
-+			       dev->info->shifts[ALU_STAT_INDEX];
-+			data |= ALU_STAT_START |
-+				masks[ALU_STAT_DIRECT] |
-+				masks[ALU_RESV_MCAST_ADDR] |
-+				masks[ALU_STAT_WRITE];
-+			ret = ksz_write32(dev, REG_SW_ALU_STAT_CTRL__4, data);
-+			if (ret < 0)
-+				return ret;
-+
-+			/* wait to be finished */
-+			ret = ksz9477_wait_alu_sta_ready(dev);
-+			if (ret < 0)
-+				return ret;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/net/dsa/microchip/ksz9477_reg.h b/drivers/net/dsa/microchip/ksz9477_reg.h
-index ff579920078e..61ea11e3338e 100644
---- a/drivers/net/dsa/microchip/ksz9477_reg.h
-+++ b/drivers/net/dsa/microchip/ksz9477_reg.h
-@@ -2,7 +2,7 @@
- /*
-  * Microchip KSZ9477 register definitions
-  *
-- * Copyright (C) 2017-2024 Microchip Technology Inc.
-+ * Copyright (C) 2017-2025 Microchip Technology Inc.
-  */
- 
- #ifndef __KSZ9477_REGS_H
-@@ -397,7 +397,6 @@
- 
- #define ALU_RESV_MCAST_INDEX_M		(BIT(6) - 1)
- #define ALU_STAT_START			BIT(7)
--#define ALU_RESV_MCAST_ADDR		BIT(1)
- 
- #define REG_SW_ALU_VAL_A		0x0420
- 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index a962055bfdbd..933ae8dc6337 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -808,6 +808,8 @@ static const u16 ksz9477_regs[] = {
- static const u32 ksz9477_masks[] = {
- 	[ALU_STAT_WRITE]		= 0,
- 	[ALU_STAT_READ]			= 1,
-+	[ALU_STAT_DIRECT]		= 0,
-+	[ALU_RESV_MCAST_ADDR]		= BIT(1),
- 	[P_MII_TX_FLOW_CTRL]		= BIT(5),
- 	[P_MII_RX_FLOW_CTRL]		= BIT(3),
- };
-@@ -835,6 +837,8 @@ static const u8 ksz9477_xmii_ctrl1[] = {
- static const u32 lan937x_masks[] = {
- 	[ALU_STAT_WRITE]		= 1,
- 	[ALU_STAT_READ]			= 2,
-+	[ALU_STAT_DIRECT]		= BIT(3),
-+	[ALU_RESV_MCAST_ADDR]		= BIT(2),
- 	[P_MII_TX_FLOW_CTRL]		= BIT(5),
- 	[P_MII_RX_FLOW_CTRL]		= BIT(3),
- };
-diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
-index a1eb39771bb9..c65188cd3c0a 100644
---- a/drivers/net/dsa/microchip/ksz_common.h
-+++ b/drivers/net/dsa/microchip/ksz_common.h
-@@ -294,6 +294,8 @@ enum ksz_masks {
- 	DYNAMIC_MAC_TABLE_TIMESTAMP,
- 	ALU_STAT_WRITE,
- 	ALU_STAT_READ,
-+	ALU_STAT_DIRECT,
-+	ALU_RESV_MCAST_ADDR,
- 	P_MII_TX_FLOW_CTRL,
- 	P_MII_RX_FLOW_CTRL,
- };
+Best regards,
 -- 
-2.34.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
