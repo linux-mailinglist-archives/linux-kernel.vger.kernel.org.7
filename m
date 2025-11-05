@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-886232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85646C350BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:12:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5674BC3507B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24B7560A6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:10:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EB3E4EAB67
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9722F3611;
-	Wed,  5 Nov 2025 10:10:11 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952B92EBDFA;
+	Wed,  5 Nov 2025 10:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fp4OO9+7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0482C17B3
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096FC2BE7C3;
+	Wed,  5 Nov 2025 10:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762337410; cv=none; b=XTWfwQxvoHxp1Tr1oQP+B4auyY12Ruen8Ke2ejnDtY1/nwRIHjztoTWXn5gcSpya6A++38jiC7NdTqAmNWd3Oz4Wt8VDH2iR0RJc+5t7lmd7OWja4hnDZ4wYpXKZ8oNeyTFLfcLnTXcdynxhHtMcvAyLu2I+FZ+2SZFNDjxBdx8=
+	t=1762337166; cv=none; b=MOCqJ3jBT3Fm5LKwu98jtz+N53WXuMmxEMY1u8h/yswL7DqPhlciiFfJWUjrANEKHGq/t5VsmghyIQqm0NAp0hZ6uC+s6l5/atJBgr5ACNdkVPsfGDt5rPZwcSGwwOuI3LLw3JqS5YnA13hVNdwi5NWWx9nV+DQyFfUM9KkXI6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762337410; c=relaxed/simple;
-	bh=rzaWTvEZ+GvPQjWgFis8VB8tviMQ0ztqRHkDpGV4jHo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G1yxWKqar50EvZhG7qaqXLrZGOs/5J6SZLNjf8wiHaA7WdiHU9RCyi1cgJQvY4mkDKP5R1pJdUY86DdOAiQU2vwJG4WF+W0+GlKPRbvdwV1rwM4lFlOd84El34EpqSYkhdgvOTl7dTm/BaQG8/Vm6GeW3EEjMZCPRafS0Lniet8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from spb1wst022.omp.ru (87.226.253.162) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Nov
- 2025 13:09:42 +0300
-From: Karina Yankevich <k.yankevich@omp.ru>
-To: Sandy Huang <hjc@rock-chips.com>
-CC: Karina Yankevich <k.yankevich@omp.ru>, =?UTF-8?q?Heiko=20St=C3=BCbner?=
-	<heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH] drm/rockchip: gem: Fix memory leak when drm object init failed
-Date: Wed, 5 Nov 2025 13:04:39 +0300
-Message-ID: <20251105100439.2780370-1-k.yankevich@omp.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762337166; c=relaxed/simple;
+	bh=rhnNMaNldpuuY6bLfPKspqW4HOto/k+qhHYtxszFafw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4/wF9MhK0HDU69/huTer9YTi/wMsxtVK4J5tDZDnew+5nzqCOzKQcTxmMR/Su5/fpKWtNays9NNjUzJXwpRYFe4zPM6iWa8LA1zFtEs00n1W+KAztYfRMobOnIQsEuM9ENV0rHrP2Kd4IYdyKEImY8g/Nu6CJoV6MqZ+hjOokI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp4OO9+7; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762337164; x=1793873164;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rhnNMaNldpuuY6bLfPKspqW4HOto/k+qhHYtxszFafw=;
+  b=fp4OO9+7zOHu4z1plVbSbxu+5Uqv4e++whK9hCJJb5GQ0WPdZfc8shmu
+   j2nDkQQzxOBk192b2Z33enSBQuv1ekA5vxbOl80xaB8Wpeeo1i3z/6hCt
+   nxzXLamWIK6tol2Q80wkziJfR35q9Q9cqB6aDWZK+7LA9CyDoi4PjDxG0
+   sMEsZusI03TuSDMPs9FHRF4DVygXyKmrJy2iIkeEsXD3NQ8MCYmKYSwEZ
+   x3lc8onwIP7Twanj0IttO0t6FSPZto9jVSFjBIduVeDOUjfmJF1Au7g/M
+   cEYX5ZooRiJi/dbUr+02iTqvpymPE/ocPVSBI/hQK6AxZuPvwcvjQoEbb
+   A==;
+X-CSE-ConnectionGUID: Y+oPjlIeRl2QjaaNldLQFw==
+X-CSE-MsgGUID: BO6ccbxzRxGnRzPFI9+mXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="87076076"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="87076076"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 02:06:04 -0800
+X-CSE-ConnectionGUID: eGsYSZUDTvuiBTUsFe/q/w==
+X-CSE-MsgGUID: YEUFJmhwQw6HC3yWhgzY/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="218059658"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 05 Nov 2025 02:06:02 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGaOt-000SP4-1E;
+	Wed, 05 Nov 2025 10:05:59 +0000
+Date: Wed, 5 Nov 2025 18:05:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huiwen He <hehuiwen@kylinos.cn>, Steven Rostedt <rostedt@goodmis.org>
+Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Huiwen He <hehuiwen@kylinos.cn>
+Subject: Re: [PATCH] tracing/hist: make err_text array fully const
+Message-ID: <202511051755.CU1HPYCx-lkp@intel.com>
+References: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/05/2025 09:53:46
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 197782 [Nov 05 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: k.yankevich@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 74 0.3.74
- 076026cf5b16801374fbd5d19166f5aeefca6115
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;87.226.253.162:7.1.2;spb1wst022.omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 87.226.253.162
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/05/2025 09:55:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/5/2025 9:03:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104045558.1644671-1-hehuiwen@kylinos.cn>
 
-If drm_gem_object_init() call in rockchip_gem_alloc_object() fails
-then rk_obj isn't freed. Fix this by checking drm_gem_object_init()'s
-result.
+Hi Huiwen,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+kernel test robot noticed the following build warnings:
 
-Fixes: 6fd0bfe2f7ea ("drm/rockchip: support prime import sg table")
-Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on linus/master v6.18-rc4 next-20251105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index 6330b883efc3..ad888f9379db 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -284,6 +284,7 @@ static struct rockchip_gem_object *
- {
- 	struct rockchip_gem_object *rk_obj;
- 	struct drm_gem_object *obj;
-+	int ret;
- 
- 	size = round_up(size, PAGE_SIZE);
- 
-@@ -295,7 +296,12 @@ static struct rockchip_gem_object *
- 
- 	obj->funcs = &rockchip_gem_object_funcs;
- 
--	drm_gem_object_init(drm, obj, size);
-+	ret = drm_gem_object_init(drm, obj, size);
-+	if (ret) {
-+		DRM_ERROR("failed to initialize gem object: %d\n", ret);
-+		kfree(rk_obj);
-+		return ERR_PTR(ret);
-+	}
- 
- 	return rk_obj;
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Huiwen-He/tracing-hist-make-err_text-array-fully-const/20251104-125932
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20251104045558.1644671-1-hehuiwen%40kylinos.cn
+patch subject: [PATCH] tracing/hist: make err_text array fully const
+config: sh-randconfig-r121-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051755.CU1HPYCx-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511051755.CU1HPYCx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511051755.CU1HPYCx-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> kernel/trace/trace_events_hist.c:808:53: sparse: sparse: incorrect type in argument 4 (different modifiers) @@     expected char const **errs @@     got char const *const * @@
+   kernel/trace/trace_events_hist.c:808:53: sparse:     expected char const **errs
+   kernel/trace/trace_events_hist.c:808:53: sparse:     got char const *const *
+
+vim +808 kernel/trace/trace_events_hist.c
+
+4b147936fa5096 Tom Zanussi      2018-01-15  802  
+edfeed318d59ff Tom Zanussi      2022-01-28  803  static void hist_err(struct trace_array *tr, u8 err_type, u16 err_pos)
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  804  {
+edfeed318d59ff Tom Zanussi      2022-01-28  805  	if (!last_cmd)
+edfeed318d59ff Tom Zanussi      2022-01-28  806  		return;
+edfeed318d59ff Tom Zanussi      2022-01-28  807  
+726721a51838e3 Tom Zanussi      2020-05-28 @808  	tracing_log_err(tr, last_cmd_loc, last_cmd, err_text,
+726721a51838e3 Tom Zanussi      2020-05-28  809  			err_type, err_pos);
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  810  }
+7bbab38d07f318 Masami Hiramatsu 2018-11-05  811  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
