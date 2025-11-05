@@ -1,100 +1,80 @@
-Return-Path: <linux-kernel+bounces-886940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EE2C37017
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AC6C37033
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F11624C19
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E45660A28
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3790732E13D;
-	Wed,  5 Nov 2025 16:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6D93009DD;
+	Wed,  5 Nov 2025 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A+rOhbrv";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ke1Yvf6t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jDCjcipF"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99463271E9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A590F32E13D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360748; cv=none; b=mJK+znPqzxkh2Y/QJdOQWFGDqI0M6i0T0x7YrMtkLRDYsnSJTMZAX7OvhyFRWjQRRy/SjwxBnkTXoFquQbDFiWQw03RIOMiuE6HYtix0JRK8UzognAJr/jFjIXy4BHB6mg05l5VH0WINn1TmL6ca6LTfFGqy++xAbWaihWfrRpI=
+	t=1762360760; cv=none; b=Un+nYGd0F3kxMgToamjC034PiTvTA6BuEwJvwtKLQlj3exUY653+LdncDf49wR0xXhEJtioJYv4YYL0ZWEwZ5a71hPs9TxEc8HypZskGh3aG42BPgw/sORreFcZ4q/aa0wuATP+2kWnGyyZlRqs0bKRQY7I132lLd90iIIQ1+g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360748; c=relaxed/simple;
-	bh=vLBraTI6rz3ehteTYXuZDN6G+xGvXqdX47LCRqe+UJ8=;
+	s=arc-20240116; t=1762360760; c=relaxed/simple;
+	bh=RtdcZleg562HB1IKBfzH1CRAYXHe+ayzn3QiyTSYBgA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cP3L3MpyiPMkO8EcuIaYZIknVmhC5FExKf6GomtMiz/Sd464dvrRRWfWeE/zJrOxBJravGjwmPG8hU+EI3+plAfECpCNGtmpT1cHcH3Pt7TVCnAMlj75sGzFsp0mDA0pdpvIAH+hzTLfvnVRf3Ptv9dZ0Z0nMngftJtV9XX8aAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A+rOhbrv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ke1Yvf6t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762360745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5DDwUEanHIf5XFFvGb0OEC6nQuQQ0S85vv2/8gZzaqA=;
-	b=A+rOhbrv29XjS/gTBK72bVMCflf09UMf6E6wd/wr/qUmJV8u3b1M0UWQkPdWMqioejl51r
-	R9U+ChCDjGp+a/ljVzV3Ysc0B+Nsa0XyubCnqDGGoK7Itcki1FsbJqQiFXfI04OhTU8MLU
-	/1Xod/WVSbQlfc9d+aQwQHiZEm1kRuw=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-82-ygTfPKMNMeO6a1WY293P0w-1; Wed, 05 Nov 2025 11:39:04 -0500
-X-MC-Unique: ygTfPKMNMeO6a1WY293P0w-1
-X-Mimecast-MFC-AGG-ID: ygTfPKMNMeO6a1WY293P0w_1762360743
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-429cd1d0d98so17321f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:39:04 -0800 (PST)
+	 In-Reply-To:Content-Type; b=tnHxh6PCZSf+ymxqoMb71tgJpFt/DxZbaa+HOflLPK+0IsIj6yEon18tDtjJN/6mDvvO8g35g/yU8V+8ZZhjcq8jYKrDDNmJmGEy6M+szRz0kJGAcSa7R3/YNHPTxkpBlTGQmMB6zwQ7TxloSt6bi4JPUZBNrjx1JxJxQL8eSuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jDCjcipF; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4710665e7deso32325485e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:39:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762360743; x=1762965543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=linaro.org; s=google; t=1762360757; x=1762965557; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5DDwUEanHIf5XFFvGb0OEC6nQuQQ0S85vv2/8gZzaqA=;
-        b=ke1Yvf6tLd4l6FE6x17wMxPi46NlFH5MNvI3lcFcLWJnWVQxOg6Hjd+E4for0hK8gg
-         EPZpqZtEbrLFPnCkcaWLdrFUOD2SDe+EP/TbQm8rLLoFGSq0WZ1nK3NQpf3Q7qh3h7PY
-         zvvzVuk/n0REqR1NsUJcI0agmRnIAIEWSEeLBxuIGMaNEUsjNNQ1wWa2zVx5IM07/ggH
-         OGAndIiHw1+E4JNTddtID/r3xsnH0BeeptcQCPXpiEC23VnQ99H0xp5yOkapRK6QuEbi
-         +g4fxLVtsf3y+6+XFNAUar6TDf4dGql1epIditX7EkCUZttdvHVdFxbbFBHazaVeHoko
-         cCpA==
+        bh=6coJB5FIrKoPs69WVrPxR7daBhZI0zVIi12O0/0kVm4=;
+        b=jDCjcipFDmsdp3g/k4gfsx2xGHUuKxsZRx6WJBlXRitQb/6QxkXCcFfdwKwFUHrbPJ
+         qeSzyS3VhvNy+p00GUk7JK3OqHk4909tYXSMD54HtYwFhFNtdoZTYtWJZ/ylFRxrPO3M
+         /aul8I+mINYVsGPFPgMpzolMNbI5lJyaWTqd2lTNW+PjQ1/T5+xreee6v77FIklauHw+
+         /zyLqBdceHHuN7n3FSqqpkh4YFEROYzNheQTXxf/0Hd/h1Cw+oD6+XvNYdfOt1B7cdMR
+         ze9MmTe4Fr6CseTCVIQyvpW+tT9XAOGb+E5b17QxVa7mAkW96ZCp05kVhC7NyHRO6aBQ
+         vc6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762360743; x=1762965543;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1762360757; x=1762965557;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5DDwUEanHIf5XFFvGb0OEC6nQuQQ0S85vv2/8gZzaqA=;
-        b=mCICK/LRvNUPHldECL/1uXZr/NR3U8OaxaI1EoUbJdM8+BMfdWqHdTOOG83IZdhLIL
-         GMG7/2eVGk7DCWDR8uFsB+0JJQzTImizOfi9xxROGsV4bTah4JQ/jyRHt+vHVAwAZzd7
-         D0ba3a5jTme+SXUtCQ0uSBN13MTpt8FSunQVGiPNGC+ylt6F0EXTtId2Htak3sO5aSuk
-         CzUeXyXpSq9iyysme+FzH5C6OFX4EGBxca4yOe8uIAYKgMMk6ZxM9RyfZPvz9+9o9pEy
-         6pEG5aaJwxro2nJWWqQbmgxXLDGMJeFA55omMK13VxNm0s7bur2bt3RM2yoCn6CSrHWy
-         kTGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzAS8BRm5D01zRT0zY1Kx28oS1u6Q/nS1HxZTWFqjmzE2x2i3vo8OpnWCnuGEy+n/ynCEP7MBv4PqmnkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJZ70bMrkYiSAfCjvsiDSbbEGpQ87Lom2Q57ZshZgFOCOdIajy
-	Qz2WyzTRNLjoXuAYIvSQnQOEjeg23/zQc3OzzhzDWaWz5qJVxftTNjxW2H+OWhCXRU+0MhjDpoV
-	F7q6Wm8CbddRuL/dUqbzl38qfxheJOqEHTvvM7bVovIa9D8zMUzdM9w5/TqqpO7IpEg==
-X-Gm-Gg: ASbGnctcTe/+SEBe25jYAYo+zkf1xyNReqwToEzTmCus51/ZPGloF7vlaNHRDDYWqzU
-	rM01wC4C+ef1O++U/KYVSmrD1W+V0P92nOQ8h5qMTMXwzDJENXE5zdnKCY/L2KttN0MhBF8WDIX
-	khLLkGAoK/4R+aVrsk4rjQKWByYBSQkOWYLiffJlIUpemxKVURqFb78t3k97pwcPHnuHvYQ/TWp
-	IruozzxnEWA+xi28K2knsCqHojwMgxNxcTQL7Mz8kZVC+aKMNuXuQraa3W69vMl85KX8DSZJxo8
-	ZtIdyTdkbIWhYJoyartOvG874+q6iSP0lSwD6telPv9I+w1pDFSgDTuVyWBG9DyvwK/xZeFS3j7
-	AcKY/ymeVf+cIiHz2F9wQI1z36KNEiPvHnllGnhd5BciDm2OAWZ7DxOdnMwuu5IH9kt4nI++rRW
-	uKMUlMEkdwQnji/1x4/ele2Y0=
-X-Received: by 2002:a05:6000:144e:b0:429:cf03:8b1a with SMTP id ffacd0b85a97d-429e3309cbemr3444646f8f.45.1762360742894;
-        Wed, 05 Nov 2025 08:39:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEuh/61JxchnbvDD3t9otzAnckg9PYa/U28Sk++DnkiTdkTuxAxX+B0W7YZV5+JgZgZiAf29Q==
-X-Received: by 2002:a05:6000:144e:b0:429:cf03:8b1a with SMTP id ffacd0b85a97d-429e3309cbemr3444613f8f.45.1762360742399;
-        Wed, 05 Nov 2025 08:39:02 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc18f40bsm11263373f8f.1.2025.11.05.08.39.01
+        bh=6coJB5FIrKoPs69WVrPxR7daBhZI0zVIi12O0/0kVm4=;
+        b=LlJqdKegVgc8ix6s9BuLYdg00bcFBfswQsdi24O/a78RlZWmmTodE1EpcAQyugEoML
+         uZDmtUAEiOFKk76NFHyzINBoM9/0kyyfU8WUdRa4baAtOjRouBNPXDWK7/I9sejZPnG9
+         3LKsMKjQBMgcCIoGpQgU7a7YV/eQNwmYHRh+ENLK+UruGxgMk7egb/RC1UWY5U1nFeYM
+         2X0qbQrbTdU20pq3xiF3DU+qyou+MTVKOMNFUHl3ecB55cwRsZpqgdptPcfCOU1c23DK
+         r7OegTiUAlfNWqpNRPYBR3GDkc+FqljozVn4mm9RjMp+V3BWSJ/cVZFQKSOOulzItfP9
+         9xug==
+X-Forwarded-Encrypted: i=1; AJvYcCWcivuMHALcZimJ47zhzI1brJIEgeUARMqjBfyKz0pkawGmqvU2e1iFp3Ul2CNm22rweGxmBM4jc/pixbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBajfK5Cr7PV/+FKvFIEwVkSM4vRf4El92GKYUoh/niEaLkRyx
+	Lm6EvlkDm5YC6iF126bETv+7BSEk5P7I+27CO6Oc1nEYkcQE5DTwTpRNu0hABGHjU88=
+X-Gm-Gg: ASbGncso1vfWnBrh1Q+ZTDidVXdqEIYjQbq3zQ6bDIGHVPAMCwKIoOAOGxnuQx4kPNN
+	Y8TIdEKEDKj3dfmteChgMAwSoJqgORRix5a62s7v0N5irXPMu4OKdQ30Vf3J4lXS0ZftzFC26GO
+	l+jpD1Y668x+8ODPFrKpPXNB6SW1lDZRBl0wpRduCYZ4KiRLHkAzuRNkLd108At2pt3vpbUchSs
+	p9kcxrbbH6OzyloKNU+0E1M8Jn/YK+KhhDZfuDgQ0A0xPeabnnTEDcNbHEUGzVusBYDa/jahrnn
+	DB2cOavCOEAK3eJSSSsnYJqGm8d1fdTZj5JFYSFcyFpwjBd3XwOjxGowEy5KJI5kWevA9b99Pzp
+	wHpypHeGwt8rhDsUoFs3/9/H0dS03aqzPdgJobuhZo8Jwjmn1X2u9jE+rC6SMO14Qp9JWa8J3Xv
+	Na7kSLeknHNARBa+S3AQYw/ZrbiR7LlczgpKSwlOc+AWCmB3o=
+X-Google-Smtp-Source: AGHT+IGKn9VjDmuchF50NhQmU9mYE2Yck3wWRt8JlnYOZfg/al72/4vJ9FLsGjEMxlxPqq49jUr7Xw==
+X-Received: by 2002:a05:600c:821b:b0:471:b5d:2db9 with SMTP id 5b1f17b1804b1-4775cdf26edmr39700985e9.21.1762360756845;
+        Wed, 05 Nov 2025 08:39:16 -0800 (PST)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc528sm57365575e9.7.2025.11.05.08.39.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:39:01 -0800 (PST)
-Message-ID: <547b6ad3-fb62-4549-b1e9-8bbfb246fbd4@redhat.com>
-Date: Wed, 5 Nov 2025 17:39:00 +0100
+        Wed, 05 Nov 2025 08:39:16 -0800 (PST)
+Message-ID: <ae167c7f-c32f-422b-9eb2-72889cbafef0@linaro.org>
+Date: Wed, 5 Nov 2025 17:39:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,81 +82,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
-To: Oscar Salvador <osalvador@suse.de>, Hui Zhu <hui.zhu@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Hui Zhu <zhuhui@kylinos.cn>
-References: <cover.1762310125.git.zhuhui@kylinos.cn>
- <aQtcMkivdFHbW2lK@localhost.localdomain>
-From: David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v2] clocksource/drivers/sh_cmt: Always leave device
+ running after probe
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
+ <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
+ <20251105160627.GA3684509@ragnatech.se>
 Content-Language: en-US
-In-Reply-To: <aQtcMkivdFHbW2lK@localhost.localdomain>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251105160627.GA3684509@ragnatech.se>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05.11.25 15:16, Oscar Salvador wrote:
-> On Wed, Nov 05, 2025 at 10:42:42AM +0800, Hui Zhu wrote:
->> From: Hui Zhu <zhuhui@kylinos.cn>
+On 11/5/25 17:06, Niklas Söderlund wrote:
+> On 2025-11-05 16:36:15 +0100, Daniel Lezcano wrote:
+>> On 10/16/25 20:20, Niklas Söderlund wrote:
+>>> The CMT device can be used as both a clocksource and a clockevent
+>>> provider. The driver tries to be smart and power itself on and off, as
+>>> well as enabling and disabling its clock when it's not in operation.
+>>> This behavior is slightly altered if the CMT is used as an early
+>>> platform device in which case the device is left powered on after probe,
+>>> but the clock is still enabled and disabled at runtime.
+>>>
+>>> This has worked for a long time, but recent improvements in PREEMPT_RT
+>>> and PROVE_LOCKING have highlighted an issue. As the CMT registers itself
+>>> as a clockevent provider, clockevents_register_device(), it needs to use
+>>> raw spinlocks internally as this is the context of which the clockevent
+>>> framework interacts with the CMT driver. However in the context of
+>>> holding a raw spinlock the CMT driver can't really manage its power
+>>> state or clock with calls to pm_runtime_*() and clk_*() as these calls
+>>> end up in other platform drivers using regular spinlocks to control
+>>> power and clocks.
 >>
->> The hugetlb.c file has grown significantly and become difficult to
->> maintain. This patch series extracts the sysfs and sysctl interface
->> code into separate dedicated files to improve code organization.
->>
->> The refactoring includes:
->> - Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
->> - Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
->>
->> No functional changes are introduced in this series. The code is moved
->> as-is, with only minor formatting adjustments for code style
->> consistency. This should make future maintenance and enhancements to
->> the hugetlb subsystem easier.
->>
->> Testing: The patch series has been compile-tested and maintains the
->> same functionality as the original code.
->>
->> Changelog:
->> v4:
->> According to the comments of David Hildenbrand, add copyright of
->> hugetlb.c to hugetlb_internal.h, hugetlb_sysctl.c and hugetlb_sysfs.c.
->> v3:
->> According to the comments of SeongJae Park, updated MAINTAINERS to
->> add new files.
->> Removed the wrong copyright in hugetlb_internal.h.
->> v2:
->> According to the comments of David Hildenbrand, removed the wrong
->> copyright in the file headers.
->>
->> Hui Zhu (2):
->>    mm/hugetlb: extract sysfs into hugetlb_sysfs.c
->>    mm/hugetlb: extract sysctl into hugetlb_sysctl.c
+>> So the fix is to remove PM management in the driver ?
 > 
-> I am replying here as a response to https://lore.kernel.org/linux-mm/58d3c50f-2b4a-4053-a846-613434d5bcd9@redhat.com/T/#mf694af3f5a6ca56b76adf66352cbb88d022fe36c
-> 
-> So, taking a look at patch#1 as an example,which moves sysfs stuff into hugetlb_sysfs.c.
-> I have the feeling we are moving too much stuff. It is true that drawing a line
-> is not easy, but e.g: you mention
-> 
-> The following components are moved to mm/hugetlb_sysfs.c:
-> - hugetlb page demote functions (demote_free_hugetlb_folios,
->    demote_pool_huge_page)
-> 
-> I __think__ that moving demote_store() into hugetlb_sysfs.c is fine, but although
-> demote_pool_huge_page and demote_free_hugetlb_folios are only called from there,
-> they look more than a sysfs interface and more like hugetlb generic code.
-> 
-> Again, drawing a like might be difficult, but I think that e.g: we should only move
-> sysfs entry points functions into hugetlb_sysfs.c
-
-That matches my comments from [1], right?
+> Yes. As I understand it we can't do runtime pm in these drivers as the
+> core calls into the functions with the raw spinlock held. I hope we can
+> improve this in future.
 
 
-[1] 
-https://lore.kernel.org/linux-mm/58d3c50f-2b4a-4053-a846-613434d5bcd9@redhat.com/T/#mda7f5c2ea07233857af094367b573475011bf0d4
+IIUC, the changes done for PREEMPT_RT prevent to use pm_runtime by 
+functions running in atomic context because the spinlocks are actually 
+mutexes.
+
+But if PREEMPT_RT is not set, then everything is running as usual.
+
+This change drops the PM while it should be working for kernel compiled 
+without PREEMPT_RT.
+
+I suggest to handle the case with/out PREEMPT_RT.
+
+Hopefully pm_runtime will be fixed with PREEMPT_RT and you won't have to 
+reintroduce pm_runtime in this driver but just remove the PREEMPT_RT case.
+
 
 -- 
-Cheers
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-David
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
