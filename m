@@ -1,74 +1,67 @@
-Return-Path: <linux-kernel+bounces-886434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E89C3594A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:16:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FAEC35954
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF9C18925C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F365189F5C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B993148C5;
-	Wed,  5 Nov 2025 12:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5135D3101D3;
+	Wed,  5 Nov 2025 12:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS9wsXtX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="A65U5Qr6"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FAC147C9B;
-	Wed,  5 Nov 2025 12:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762344950; cv=none; b=eL6M9qbiYBoPt/rQLfyFpY7ENHNgPA/8h3YOcBqlF8gjbzVEllj+a4JgVwhRPHjj24vd8F8ER9vRLkubxBHKUxTuZsgGmvOR7E+DSaxaCXW4g+V+SDd7kgJdiHOrF18jhZDaSdZ3A7fTPletI0o+S16jy/TMTt23AT5xUVmbIks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762344950; c=relaxed/simple;
-	bh=j6nt+b2fOshIZ+T+ki5rUhiMWr57o6/QciYlKMH8SN4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB882153D4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762345070; cv=pass; b=BfBeWqhNeABkR9GYzXXysllM30iU3xWKU5lMku25DCcoa0vOp/6AiQI0E+Wp/tDn2pyNcJp9hoj9g+GUTSHNRXmve0yw0LE7a24/AXGCHiz5bpxheZhLCNpmDn4Q73TyaIh6NGDPUKq9T9f+WFVTtrM7ZT/LH1bafdKTw/j/wvE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762345070; c=relaxed/simple;
+	bh=1t6tV2iWzkDfvXqy3fdQFkGFrcaU9T7ElIrhfqykREo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oy9akNY38Nueh7dHg4jggNb3473MZUtvkJfetfei3rQuZKqP1BKdZG61ltZE3PUF2yka2Go9pFlKIaJKe5K3J27ASn5JqhRPq6PPVp2J5ryHxdNfPI9tXiLOdLbVXtzRZGoew/YuZvMC/ROdwEjHV2IOPULvzt9pXmls3hOLV4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NS9wsXtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE995C4CEF8;
-	Wed,  5 Nov 2025 12:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762344949;
-	bh=j6nt+b2fOshIZ+T+ki5rUhiMWr57o6/QciYlKMH8SN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NS9wsXtXeg83J4YkDH8mQGdfGeGp3fYVvsVuRb2YFXCr9gg7zr2E8d5qLGHlzD0T9
-	 g0joBJEt/8wJYQwe1mmYw+Q404f9DdrfC55hzAoMVswnD7yGxZG/6kxn5HLFPcQkaD
-	 i0MkivAt2W1JCI7Pcf+hAGPttUlQ/azzKoFM9cyU6lVCro2L0in3QA2i40f7qu51Py
-	 84549oeilWi63mHbfBDkbClenojZhj7uLqIA6Mw933WfrbPuYWHB93sBAQS66SB7ea
-	 KfY8pXUuvVsObS2yZgrAtlj952qoNi+ocfRIDcqtj+fk9DUiRMH7XiYaZmIVV5Zm1k
-	 bqjk/PMisUGEg==
-Date: Wed, 5 Nov 2025 13:15:38 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Bharath SM <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 10/17] vfs: make vfs_create break delegations on
- parent directory
-Message-ID: <20251105-lamawolle-strom-bcd659e0b66a@brauner>
-References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
- <20251103-dir-deleg-ro-v4-10-961b67adee89@kernel.org>
- <176221525113.1793333.253208063990645256@noble.neil.brown.name>
- <6021e64ed25c3b3e7880f17accb0f7a7b89fac0e.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ns9NBPOyyam0uaZuW/WROB5Qcfwcl+54zFfrTFc9i9Po/hqZLBQzU//UwrwGSz4NJW9WSrWk6PjLaYI8w6UrgsJ68mFpYIkROtjZ8A+O72YrVAGcmdsyMdE7vsFayhoy9XxHdNXw8tKV6KGbeulHZAeU7J2A5VAO4kNVCaPLZ78=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=A65U5Qr6; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762345056; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CtYpgGFFlQq5hWQByru0uUaDdQsyieyoys6DD3Lsf2AIRPFZj6yuZ/MWRofK+3JOWEnDqU3OxdYZ1MaRbQnY5lmtsvlF6dncXrw7hizIw3xnSXr1L6wX4f1jtkynqlgfBNQsSP5BFsqztVU0gKcrm42J/a1RyNxZ4sctzWT+9zA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762345056; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BIgj4cvHgmzHQnoWYNjkFEq+ULZ85aLtrBrysm9AVUE=; 
+	b=N/CwR2/y0uE0OSC3BPmaYFb1m8IBXJaoirrmqFkTLiAScx4IXB7JKPSA2592pECVH8mi64zJUP3xSdNFNWW4MiiBtOBhHhRyAMW1I/FM6F3TWp7Ad4zuKe8w4ON4FMo+ccB7MrkkiDIAkhJbTwstOTk6qS0OfeviKXjeWW/rZjo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762345056;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=BIgj4cvHgmzHQnoWYNjkFEq+ULZ85aLtrBrysm9AVUE=;
+	b=A65U5Qr6F/dkgiK3DlPN8IaG/feZXQKfBhWOTnXdW9Q7fDV9niKH3mCtnwqI1SLn
+	5HlMJO5K4B6RoycIP33AL0KEQqKqZOp0TsR5qSmCGLMTKegzPsb1r56cJMto5BSixmG
+	QF7PfWLTyOXp/LixbgmQ8HeU8YbN606EN7lHni40=
+Received: by mx.zohomail.com with SMTPS id 1762345054671933.3853562090325;
+	Wed, 5 Nov 2025 04:17:34 -0800 (PST)
+Date: Wed, 5 Nov 2025 12:17:28 +0000
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] drm/panthor: Expose the panthor perf ioctls
+Message-ID: <iz3qx32cezov2dz24azht3byitp62qzx4kvssxgy2isgmln7pr@conbiuyo3scd>
+References: <cover.1753449448.git.lukas.zapolskas@arm.com>
+ <727fa1ec673d45abb51a393d4772cb0a861b409d.1753449448.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,130 +70,234 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6021e64ed25c3b3e7880f17accb0f7a7b89fac0e.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <727fa1ec673d45abb51a393d4772cb0a861b409d.1753449448.git.lukas.zapolskas@arm.com>
 
-On Mon, Nov 03, 2025 at 07:30:57PM -0500, Jeff Layton wrote:
-> On Tue, 2025-11-04 at 11:14 +1100, NeilBrown wrote:
-> > On Mon, 03 Nov 2025, Jeff Layton wrote:
-> > > In order to add directory delegation support, we need to break
-> > > delegations on the parent whenever there is going to be a change in the
-> > > directory.
-> > > 
-> > > Add a delegated_inode parameter to struct createdata. Most callers just
-> > > leave that as a NULL pointer, but do_mknodat() is changed to wait for a
-> > > delegation break if there is one.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/namei.c         | 26 +++++++++++++++++---------
-> > >  include/linux/fs.h |  2 +-
-> > >  2 files changed, 18 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index fdf4e78cd041de8c564b7d1d89a46ba2aaf79d53..e8973000a312fb05ebb63a0d9bd83b9a5f8f805d 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -3487,6 +3487,9 @@ int vfs_create(struct createdata *args)
-> > >  
-> > >  	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
-> > >  	error = security_inode_create(dir, dentry, mode);
-> > > +	if (error)
-> > > +		return error;
-> > > +	error = try_break_deleg(dir, args->delegated_inode);
-> > >  	if (error)
-> > >  		return error;
-> > >  	error = dir->i_op->create(idmap, dir, dentry, mode, args->excl);
-> > > @@ -4359,6 +4362,8 @@ static int may_mknod(umode_t mode)
-> > >  static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> > >  		unsigned int dev)
-> > >  {
-> > > +	struct delegated_inode delegated_inode = { };
-> > > +	struct createdata cargs = { };
-> > 
-> > If we must have 'createdata', can it have a 'struct delegated_inode'
-> > rather than a pointer to it?
-> > 
-> 
-> If we do that, then we'd need some way to signal that the caller
-> doesn't want to wait on the delegation break. Currently that's
-> indicated by setting cargs.delegated_inode to NULL. I suppose we could
-> add a bool for this or something.
-> 
-> I confess that I too am lukewarm on struct createdata. I can live with
-> it, but it's not clearly a win to me either.
-> 
-> Christian, thoughts?
+On 25.07.2025 15:57, Lukas Zapolskas wrote:
+> This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
+> a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
+> compatibility of the uAPI.
+>
+> The minor version is bumped to indicate that the feature is now
+> supported.
+>
+> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 142 +++++++++++++++++++++++++-
+>  1 file changed, 140 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 8b1e3e38b12e..05e3c83b8129 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -31,6 +31,7 @@
+>  #include "panthor_gpu.h"
+>  #include "panthor_heap.h"
+>  #include "panthor_mmu.h"
+> +#include "panthor_perf.h"
+>  #include "panthor_regs.h"
+>  #include "panthor_sched.h"
+>
+> @@ -73,6 +74,40 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
+>  	return 0;
+>  }
+>
+> +/**
+> + * panthor_get_uobj() - Copy user object to kernel object.
+> + * @usr_ptr: Users pointer.
+> + * @usr_size: Size of the user object.
+> + * @min_size: Minimum size for this object.
+> + * @kern_size: Kernel size of the object.
+> + *
+> + * Helper automating user -> kernel object copies.
+> + *
+> + * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
+> + *
+> + * Return: valid pointer on success, an encoded error code otherwise.
+> + */
+> +static void*
+> +panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size)
+> +{
+> +	int ret;
+> +	void *out_alloc __free(kvfree) = NULL;
+> +
+> +	/* User size shouldn't be smaller than the minimal object size. */
+> +	if (usr_size < min_size)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	out_alloc = kvmalloc(kern_size, GFP_KERNEL);
+> +	if (!out_alloc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = copy_struct_from_user(out_alloc, kern_size, u64_to_user_ptr(usr_ptr), usr_size);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return_ptr(out_alloc);
+> +}
+> +
+>  /**
+>   * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
+>   * @in: The object array to copy.
+> @@ -176,7 +211,11 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
+> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
+>
+>  /**
+>   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
+> @@ -191,6 +230,25 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
+>  			 sizeof(_src_obj), &(_src_obj))
+>
+> +/**
+> + * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
+> + * @_dest_ptr: Local variable
+> + * @_usr_size: Size of the user object.
+> + * @_usr_ptr: The pointer of the object in userspace.
+> + *
+> + * Return: Error code. See panthor_get_uobj().
+> + */
+> +#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
+> +	({ \
+> +		typeof(_dest_ptr) _tmp; \
+> +		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
+> +				PANTHOR_UOBJ_MIN_SIZE(_tmp[0]), \
+> +				sizeof(_tmp[0])); \
+> +		if (!IS_ERR(_tmp)) \
+> +			_dest_ptr = _tmp; \
+> +		PTR_ERR_OR_ZERO(_tmp); \
+> +	})
+> +
+>  /**
+>   * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
+>   * object array.
+> @@ -1402,6 +1460,83 @@ static int panthor_ioctl_set_user_mmio_offset(struct drm_device *ddev,
+>  	return 0;
+>  }
+>
+> +#define perf_cmd(command) \
+> +	({ \
+> +		struct drm_panthor_perf_cmd_##command *command##_args __free(kvfree) = NULL; \
+> +		int _ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
+> +		if (_ret) \
+> +			return _ret; \
+> +		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, \
+> +						      command##_args->user_data); \
+> +	})
+> +
+> +static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
+> +				      struct drm_file *file)
+> +{
+> +	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+> +	struct panthor_file *pfile = file->driver_priv;
+> +	struct drm_panthor_perf_control *args = data;
+> +	int ret;
+> +
+> +	if (!args->pointer) {
+> +		switch (args->cmd) {
+> +		case DRM_PANTHOR_PERF_COMMAND_SETUP:
+> +			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
+> +			return 0;
+> +
+> +		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
+> +			args->size = 0;
+> +			return 0;
+> +
+> +		case DRM_PANTHOR_PERF_COMMAND_START:
+> +			args->size = sizeof(struct drm_panthor_perf_cmd_start);
+> +			return 0;
+> +
+> +		case DRM_PANTHOR_PERF_COMMAND_STOP:
+> +			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
+> +			return 0;
+> +
+> +		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
+> +			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
+> +			return 0;
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
 
-If two stable voices of the community seem to have consensus that this
-isn't worth it then it's obviously fine to not do it.
+After a second look at this, now I wonder what the point of passing these command struct values
+back to UM from inside the ioctl() is, because they're still part of the uAPI. That means for
+as long as the driver uAPI header files are kept in sync between UM and KM, then a client just
+has to call sizeof(struct drm_panthor_perf_cmd_*) to compute these values.
 
-> 
-> > 
-> > >  	struct mnt_idmap *idmap;
-> > >  	struct dentry *dentry;
-> > >  	struct path path;
-> > > @@ -4383,18 +4388,16 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> > >  	switch (mode & S_IFMT) {
-> > >  		case 0:
-> > >  		case S_IFREG:
-> > > -		{
-> > > -			struct createdata args = { .idmap = idmap,
-> > > -						   .dir = path.dentry->d_inode,
-> > > -						   .dentry = dentry,
-> > > -						   .mode = mode,
-> > > -						   .excl = true };
-> > > -
-> > > -			error = vfs_create(&args);
-> > > +			cargs.idmap = idmap,
-> > > +			cargs.dir = path.dentry->d_inode,
-> > > +			cargs.dentry = dentry,
-> > > +			cargs.delegated_inode = &delegated_inode;
-> > > +			cargs.mode = mode,
-> > > +			cargs.excl = true,
-> > > +			error = vfs_create(&cargs);
-> > >  			if (!error)
-> > >  				security_path_post_mknod(idmap, dentry);
-> > >  			break;
-> > > -		}
-> > >  		case S_IFCHR: case S_IFBLK:
-> > >  			error = vfs_mknod(idmap, path.dentry->d_inode,
-> > >  					  dentry, mode, new_decode_dev(dev));
-> > > @@ -4406,6 +4409,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> > >  	}
-> > >  out2:
-> > >  	end_creating_path(&path, dentry);
-> > > +	if (is_delegated(&delegated_inode)) {
-> > > +		error = break_deleg_wait(&delegated_inode);
-> > > +		if (!error)
-> > > +			goto retry;
-> > > +	}
-> > >  	if (retry_estale(error, lookup_flags)) {
-> > >  		lookup_flags |= LOOKUP_REVAL;
-> > >  		goto retry;
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index b61873767b37591aecadd147623d7dfc866bef82..cfcb20a7c4ce4b6dcec98b3eccbdb5ec8bab6fa9 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -2116,12 +2116,12 @@ struct createdata {
-> > >  	struct mnt_idmap *idmap;	// idmap of the mount the inode was found from
-> > >  	struct inode *dir;		// inode of parent directory
-> > >  	struct dentry *dentry;		// dentry of the child file
-> > > +	struct delegated_inode *delegated_inode; // returns parent inode, if delegated
-> > >  	umode_t mode;			// mode of the child file
-> > >  	bool excl;			// whether the file must not yet exist
-> > >  };
-> > >  
-> > >  int vfs_create(struct createdata *);
-> > > -
-> > >  struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
-> > >  			 struct dentry *, umode_t, struct delegated_inode *);
-> > >  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
-> > > 
-> > > -- 
-> > > 2.51.1
-> > > 
-> > > 
-> 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+> +	}
+> +
+> +	switch (args->cmd) {
+> +	case DRM_PANTHOR_PERF_COMMAND_SETUP:
+> +	{
+> +		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
+> +
+> +		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
+> +		if (ret)
+> +			return -EINVAL;
+> +
+> +		return panthor_perf_session_setup(file, ptdev->perf, setup_args);
+> +	}
+> +	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
+> +	{
+> +		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
+> +	}
+> +	case DRM_PANTHOR_PERF_COMMAND_START:
+> +	{
+> +		perf_cmd(start);
+> +	}
+> +	case DRM_PANTHOR_PERF_COMMAND_STOP:
+> +	{
+> +		perf_cmd(stop);
+> +	}
+> +	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
+> +	{
+> +		perf_cmd(sample);
+> +	}
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static int
+>  panthor_open(struct drm_device *ddev, struct drm_file *file)
+>  {
+> @@ -1476,6 +1611,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
+>  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
+>  	PANTHOR_IOCTL(BO_SET_LABEL, bo_set_label, DRM_RENDER_ALLOW),
+>  	PANTHOR_IOCTL(SET_USER_MMIO_OFFSET, set_user_mmio_offset, DRM_RENDER_ALLOW),
+> +	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
+>  };
+>
+>  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
+> @@ -1609,6 +1745,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+>   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
+>   * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
+>   * - 1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
+> + * - 1.6 - adds DEV_QUERY_PERF_INFO query
+> + *       - adds PERF_CONTROL ioctl
+>   */
+>  static const struct drm_driver panthor_drm_driver = {
+>  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1622,7 +1760,7 @@ static const struct drm_driver panthor_drm_driver = {
+>  	.name = "panthor",
+>  	.desc = "Panthor DRM driver",
+>  	.major = 1,
+> -	.minor = 5,
+> +	.minor = 6,
+>
+>  	.gem_create_object = panthor_gem_create_object,
+>  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
+> --
+> 2.33.0.dirty
+
+
+Adrian Larumbe
 
