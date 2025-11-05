@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-887253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93509C37AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:15:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D72C37AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 059ED4F7571
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF09188ECE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4B32FB0AB;
-	Wed,  5 Nov 2025 20:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9A1345CD0;
+	Wed,  5 Nov 2025 20:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gDUuJ/02"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVjlLypv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C54311C17
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECC7257AD1;
+	Wed,  5 Nov 2025 20:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762373676; cv=none; b=sty5WEHXKrRxEHNjW5ZuglAQOPf1JswDSu+4V9WJn/edL34UUO4CLayQzoPvXnLtme1raVY8qQro/Bu7+8UMsNRh5GleVage3YAN0etHhUiDdmKGrbg09CsFS97e7BsOzcJPunms42YTHVpjbDz7uirqPP5REXFRPUYc/ca99Hs=
+	t=1762373732; cv=none; b=QTpmSOUMp8likNFzDMoiZ+5WbNTjQOCphgmRi0C5RNe4r/uPlNiaU1IMOE14cDIkOM4K1J0lbmjcEbQ5EN2ssYGh4XxdcitLOlQQOW4ZAK8+mGYFJGrzBCH/rSWI6s2rXpqmEozUgvNOgseXo2p0qZcJRCmW10pvXEd49zFbOQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762373676; c=relaxed/simple;
-	bh=FQzNj/iI21StuEtNBXSJB93avwyumsTpx259DhyFqdM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QzK23EsaYgfHCE5JZNHqTuIAW+ubZhbpsxKgHH6yKMthd+i7G67la9baEKnRrJTDTvcB+wmlM8IhslDweVkMwfQe+e9+q92vVP1mWzG3rCWURMDhYOgzne4mTn66cqxPX+V2ONzNuCr19g4dU+TSGLwRBYeCWH1uHfAUmeYXnAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gDUuJ/02; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b728a43e410so26035866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:14:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762373672; x=1762978472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6YOD+qBBkgg+BsuL1SBWq+3Z34YLCPMyV0Nnl+sTk3w=;
-        b=gDUuJ/02vYyIgH7+jip+SvAFgZlGAZhJAvoSC6XhRPgbvjLFMk4otFzmw7laZ5gzmc
-         icMR/h6bQUqZucrXoqSou/cptL7ThV6lcO5Tfio6cUmp7RnPoKUz70whgjdx1JAdiwNj
-         aNuqfHkxG6dVhf5msmPfD99s5YUhip+HNIs9d2+nk41F3YiV918UvYhdpa19kePTiiDf
-         SgwUM52q/7SBI+DllLta5VWv2C166YCEJifho6MyeqBt7YTONgj8Jae4YVrngWYqt8F4
-         dYxyFQ6nZlqShgQqnbzMXdPu4RoiqMIJT33SkVfPXBO3SXV7LfbPK7lTKbFbITB3S+3m
-         FO6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762373672; x=1762978472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6YOD+qBBkgg+BsuL1SBWq+3Z34YLCPMyV0Nnl+sTk3w=;
-        b=fhT/Gt6QOcvTIgHFUB2q1vcT9zBrKG9GZUURBJgBJPr3ST36YKofcscl4QaZ7nZ5qm
-         t4D8YqpSPSnI+kwnv9tBwT9kcSTFnM0vYrTUvpPBaPrnJtoUkg4E2/I6e1wx/9i6OJgp
-         JVUUkHVCgniD+ZZcYNXsuarwV8rrVt3Z6gujxiEAPkMlJ2bBjghGgv4V+tDNCqQIlE+6
-         /hZ7kuuGH1dg+eAff1NnkLvRIFO3+GVnsvLHZawZjN0CZ/Z0BDH1k7Ugx8oxDahW/Nki
-         9UA9LSgVtCw4i2myE+vS0CL5RnJnGsTuAopDD8ckMhzIAyeeeKfKWp2isfbIHqcVUd+B
-         4eWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeDjF4ADMJsIgOcGgvlZjnL0guQLt4tAD/O6DbTt60wIShp3W8zvMLlyHmgFAuE/Xibo5ahnETVVUHPK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8FW7icPrL5YS3vsPGwDyz74hbttMZEaLUiqrferXqzRsEZaFK
-	loAuGzjLWYUcE1LEvau/mxBIQ2ciMta+fiYMsKCMbfXvF3/NHyN9lQF3YaiRYXh8phM=
-X-Gm-Gg: ASbGncs7SuLJtu3uhKSb6cGNh6B2vy7T98b/dStn9YmMd8Uj4IQzKL5N1fN12tfUThI
-	+oNulrFBBPjl1hcCdMozg7pCKVmq5xZa3HepAipuyH+ZMzHc96be/bJCgN2GCYXeOwCo1aXPgQw
-	CUuUNBWs2+LN/0/wCyfsecoiM6mzgl2m6wXqbmXa9zKMSWGSWHTYDp4XPXUPLP8CU4zrxxXrnUJ
-	ItatW6oOa0wSbjuK/HezHxyj9Hmll1Hydzt3+Y0WRFKiempiKmSmLLUi522nItNCRntbWl2L6S8
-	sbgcv67dHywINNUCsAVg+kwZdjvVn5H2YwN0cEy4Dmc3guyZMeRwItg4M1ulTiv4uTzl8t7TQ7k
-	bDfWlzS1D/ggUkcpTrsLSI6K1lg2bSjKnO2Jtb+t5k8P+7pBZMIWpA/ghDp1sOFq9Ckuq21tXC2
-	rV69DuKyf7l7mHZAZZK4Q5/GDRmAI1uVTDP1Oqonw=
-X-Google-Smtp-Source: AGHT+IHz4N+UDv5hA7YHGT9ZSBnETebYj3ZBuTUrybneyCPcbhb+U0L/RcjMsnvhLc9I+xf3WZ6OKw==
-X-Received: by 2002:a17:907:9815:b0:b71:854:4e49 with SMTP id a640c23a62f3a-b72655edfabmr463264966b.56.1762373672395;
-        Wed, 05 Nov 2025 12:14:32 -0800 (PST)
-Received: from F15.localdomain ([121.167.230.140])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650967e11sm4101625ad.8.2025.11.05.12.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 12:14:31 -0800 (PST)
-From: Hoyeon Lee <hoyeon.lee@suse.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	bpf@vger.kernel.org
-Cc: Hoyeon Lee <hoyeon.lee@suse.com>,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [bpf-next] selftests/bpf: refactor snprintf_btf test to use bpf_strncmp
-Date: Thu,  6 Nov 2025 05:14:13 +0900
-Message-ID: <20251105201415.227144-1-hoyeon.lee@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762373732; c=relaxed/simple;
+	bh=Lw++o2HELy2ZtWzBIbekYFJktkL5pR/Om2RKn74v1rQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwa9dJBs/dZIfKLSShxxH4njezKg7jC/hwlP49ycynaVW5nusOQyk7HZI8VZdIWE5Q4V4ZDKUV1m9wPT/YHgir+fOjomf6h2A89tqGm/hQRk2EoBm39QPfoPn/I0QshSE/HmfKKFFsiZ187wEnIhEu0tuo46Wapckp3oQpb1Sjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVjlLypv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A94C4CEF5;
+	Wed,  5 Nov 2025 20:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762373731;
+	bh=Lw++o2HELy2ZtWzBIbekYFJktkL5pR/Om2RKn74v1rQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tVjlLypvxp3tK6h3M4G7McwvdI6gA8sxm/UocCXG0mBUTsqUSzgrjT87E1jK3B7rE
+	 ibU2ywmazXPh8J10A3IxweVZ8xaZofARrlwX0OlWkDzUJKqErx5FjL0EPddsf91/NQ
+	 3oPru8Psy5xRWnEgEShymCYgSetPXqw72puMPnE6ccAIz+Fu5j6x1iwibexdQ9zoiS
+	 fe18mkKCL625LUctrbKaESMKZ7GPUJftYZvZ2rxKR4a+sJN2uJfeLNcoyICvtUikQi
+	 PLh4WhrsOD8YLyih3t766j/ZSJe7NBsghwm5c25JoUzABBadcnwyLdEVVQJ7W553rD
+	 0eOxjwkaepv7Q==
+Date: Wed, 5 Nov 2025 13:15:22 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-efi@vger.kernel.org, llvm@lists.linux.dev,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] kbuild: Add '-fms-extensions' to areas with dedicated
+ CFLAGS
+Message-ID: <20251105201522.GB3787308@ax162>
+References: <20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org>
+ <aQtUujos2ADVs-_O@gate>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQtUujos2ADVs-_O@gate>
 
-The netif_receive_skb BPF program used in snprintf_btf test still uses
-a custom __strncmp. This is unnecessary as the bpf_strncmp helper is
-available and provides the same functionality.
+On Wed, Nov 05, 2025 at 07:44:26AM -0600, Segher Boessenkool wrote:
+> On Sat, Nov 01, 2025 at 12:35:47PM -0400, Nathan Chancellor wrote:
+> > There are many places within the kernel that use their own CFLAGS
+> > instead of the main KBUILD_CFLAGS, meaning code written with the main
+> > kernel's use of '-fms-extensions' in mind that may be tangentially
+> > included in these areas will result in "error: declaration does not
+> > declare anything" messages from the compiler.
+> 
+> Please fix such non-standard code then, instead?  The only (documented)
+> thing -fms-extensions does for C code is give meaning to something that
+> otherwise is a syntax error (and it is for a good reason!)
 
-This commit refactors the test to use the bpf_strncmp helper, removing
-the redundant custom implementation.
+Right, the kernel would like to start taking advantage of one of those
+extensions. See these other threads for more information.
 
-Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
----
- .../selftests/bpf/progs/netif_receive_skb.c       | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+https://lore.kernel.org/20251020142228.1819871-1-linux@rasmusvillemoes.dk/
+https://lore.kernel.org/20251023082142.2104456-1-linux@rasmusvillemoes.dk/
 
-diff --git a/tools/testing/selftests/bpf/progs/netif_receive_skb.c b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-index 9e067dcbf607..186b8c82b9e6 100644
---- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-+++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-@@ -31,19 +31,6 @@ struct {
- 	__type(value, char[STRSIZE]);
- } strdata SEC(".maps");
- 
--static int __strncmp(const void *m1, const void *m2, size_t len)
--{
--	const unsigned char *s1 = m1;
--	const unsigned char *s2 = m2;
--	int i, delta = 0;
--
--	for (i = 0; i < len; i++) {
--		delta = s1[i] - s2[i];
--		if (delta || s1[i] == 0 || s2[i] == 0)
--			break;
--	}
--	return delta;
--}
- 
- #if __has_builtin(__builtin_btf_type_id)
- #define	TEST_BTF(_str, _type, _flags, _expected, ...)			\
-@@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const void *m2, size_t len)
- 				       &_ptr, sizeof(_ptr), _hflags);	\
- 		if (ret)						\
- 			break;						\
--		_cmp = __strncmp(_str, _expectedval, EXPECTED_STRSIZE);	\
-+		_cmp = bpf_strncmp(_str, EXPECTED_STRSIZE, _expectedval); \
- 		if (_cmp != 0) {					\
- 			bpf_printk("(%d) got %s", _cmp, _str);		\
- 			bpf_printk("(%d) expected %s", _cmp,		\
--- 
-2.51.1
-
+Cheers,
+Nathan
 
