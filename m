@@ -1,349 +1,205 @@
-Return-Path: <linux-kernel+bounces-886043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DF5C3494C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B42FC34902
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 631FB4F508E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4973A738A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26592DCF6C;
-	Wed,  5 Nov 2025 08:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465DE2DE70A;
+	Wed,  5 Nov 2025 08:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qtO7Sb8g"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BMaeGFSr"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013025.outbound.protection.outlook.com [52.101.72.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CE92E2679
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332494; cv=none; b=e7hn56zL8P5xAxe6RfXwbf61/MMOS+k0PVXHyre4edZlmxdHg+60h0U2kiP9F5H3Td3FmlNJTx0XNVZWjNNuj7ET6HsoxYKKmWLnCNhuGPk/ZqHgw1orkQ+r/5lJBI+VkmO1ZGjgQSU6o4nfOEIAeYn6uQkz3F8N2d2XedPbPxU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332494; c=relaxed/simple;
-	bh=SGEipYyBFPCCyVC6q8YgOSs4LCXD3vaIIQV9W9NaxB4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=toBr7/eA8iiE+I7LROV9gcK/eTimoB7+6hJCULTMxjpXfCY1X9ymvYizGpSrlmQmkUymhE3dDbQBXSyv51RL+oQNfauflCTC9UWam/Ba6SZjPYxZ64q0n/0KsKLoJbBciPFRJlJazXHqhya4eiKxgfGi4/U3DQPgoltt3JgpOFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qtO7Sb8g; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ece1102998so4387135f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:48:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762332491; x=1762937291; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DkhhDNpmKZjGJKpspl88pg7px7XG43dcD6b9QvYDK5U=;
-        b=qtO7Sb8gg3JwQxi9AazobilbIhGG9+btvldMINwfkCRsQN2X4ODwsFY16FnjQSSIms
-         kPyoOXE4GgYEvU61UrKdnNrIUCKRFn1nZCc6h4yQdXYHkpvR6RHiR+shmNVntOGydRK1
-         06Eboa3SJ418r1JauJYYI5azGLhvd4c45n6jrkQ7Afqio3s9NgYOsFztIh+BoqYPULzu
-         ZcwTGJGhvcAmeqiB5mYDSd52e/3qPtPbJG5cSkaM0tobtE80hlxMVb0Psw+MQAv3Sgqq
-         Nqqa7IFUHNdpLXVPuiRdwdWEM1ECegivBZ2tcDv1WGVmmK5vVS2y1j/6PU8VD+39q/Ps
-         eXTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762332491; x=1762937291;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DkhhDNpmKZjGJKpspl88pg7px7XG43dcD6b9QvYDK5U=;
-        b=rsfVgarZxqrftqv7KBhyxVfUkwOis23EH10zoyHNLZs395aB7xPdFhQpWv3YdJB4wB
-         nH/6JwOyLrovNe/eRGT3ASd4UWTMUAwc0fVcUJ8ozT7/NlXdzSAmzGj1dYbW9iqTNvZp
-         rLYSCg+UhnbNiKEm6pEprqbWJjvqmJT/dsq2FgHdT9Drz5KyqCa/GU1L6Bl6NFlkBvfq
-         ogXpOLM9D9eFzN1mWDrRztb+uBN4jy1vmqq3BXko4NnwEiNtU6puFQRKEcGrYniMLCdx
-         NtG04G8dyhYeGIyNlXdiLihMH/XCPB7CtymhiBxG/GQet47++93HxNWbgMH4BB5zJcNq
-         T1Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdTDsk2wL9mBFwsz2z1P82XBb51+9jnA4iy9esdqnZ4bLEXHZC9YjdhMeipvJLLYCg1Uyfvuik6OoUSUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu+OGmz/dAFs9SUooPGeoPnYbnr3f5auZ+wtF9MlTeM5PFeNDC
-	P9ddzGFZqOC1AUqZa5pDGveflXWGZzcfthxKxNCKAWSTkFotLoj588+9qHWNxxV+YzEIAL6Bl87
-	W4gkPoebdYw==
-X-Gm-Gg: ASbGncuyMtgL6NyPpvu3bhhl78TrCT5xPALKJsUvVkgtN2VOtmCL90r1KJioVvp66e6
-	VgUZXIa6fYCDKXd7rO25hDygL2TUUuolosLPpO2sSZL3X4Ap07ltCo/D4cyLYMRQL1Y8kfk/x+n
-	BOx0xH/CkM2PKxZw1GIFazqXws5540qNuFocIVjriAd3u80AJ8jqbX/ns0VWvzt8PsgWmNHQpFR
-	iGMzQ1fpL2cOsnC4qnxKhIBw6BLNdwDBCS3E8faSh/zoLlPvqNp/6bKTSpA19lJmzTf3q9eKP0t
-	wsnZB0aTOaQxkKxsU6l2LH9eboA9WPg7x7xTSpQLzmu5k+uzBZHvIU+6W/s2uLohINEJEYLtM1/
-	IFALHAKpwNlxZM9/udy10NS0FkfKgXDp9VsLL0ebOsHcTxPNYxTzGK9EN1cseG0WqKcphow==
-X-Google-Smtp-Source: AGHT+IGTUfxyJN5QHNOp0FTOnoLQgzs14kVKOEtC+nMrHYH+LcVaxtpywpF6tGJ9j4zAjwjvArwqFw==
-X-Received: by 2002:a05:6000:458f:b0:429:cbba:b242 with SMTP id ffacd0b85a97d-429e3306470mr1523705f8f.41.1762332490686;
-        Wed, 05 Nov 2025 00:48:10 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4e71:8371:5a52:77e4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f9cdbsm9315936f8f.34.2025.11.05.00.48.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 00:48:09 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 05 Nov 2025 09:47:39 +0100
-Subject: [PATCH v5 8/8] reset: gpio: use software nodes to setup the GPIO
- lookup
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F252DAFCC;
+	Wed,  5 Nov 2025 08:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762332477; cv=fail; b=OPzi0UHMhEsWVRfo7Cv04LqJtTh2fqy1S5gBFDdcRNlK/mhzqvXxBI3t1IuovPs9/ciVpEUGn6mgvM30Ddb1clMAgKQczwEf9toj3a6MJ1MyR5rpxZTt9Varvw2CvCfhwwKapd+j787JnUY4wl7CWxPA4t9tyiQxvGG6Y4MazSY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762332477; c=relaxed/simple;
+	bh=rTrbidWAKgNG+d83+ATGr6DlBNcao+ePBioQu7zy+lg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jTdC3tps2yPreIgdIIhDc8vdc8UC8MK0+oarJWsy0HUizm4c6gRx/doLD6SDiHqImvzHvHlT3uvWlFSRI4WzIv/lU6/Zmsbv4t6eOmxK4wovrYpztKh6+cqirGSrYccV6JJS/wdSzAPejXcZ9la91zp0nVZfOguS2ofThpHr6NI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BMaeGFSr; arc=fail smtp.client-ip=52.101.72.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aUQ8VcLWxxd44oB7V/3vimtwdleASBGfTYW7aS/ILoFO94Hq9kTSFrdFAbghQTmoZKKKI8h+pvr5HzkC38pWBhTQci+o98vrdW2leGjQlQ1c4wi6DXnlLgjyxUljhnxVxC4/q8e2V9dewjSIqip/ayJXhnkSTEQ6sEjunCXqZDXcBFKKdh6PU8Y2QDayl88OGTOaOmsTuS1ZX4YiG5i8UCycSJl5eRPAuyvwpV6+RvntnX/GyJKFrDUS29ewzYhCH3NH+kkOqrmSMjF0BUyw0pR+VnEeaTv8CKyj7qhYx+EIhcyTybMQbASZbu4XKm4EDXf7YAC02GzYc9FDTkbcmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rTrbidWAKgNG+d83+ATGr6DlBNcao+ePBioQu7zy+lg=;
+ b=c1adH3P6q2kGvfASWowrEjtpFD6G2DNTo17SFIKwWvE16CzkcdJY/Qwle9U1ZR19mBz7BciAvII6t2GnR11d1xYrjPAv+f93C1MV1U39EQMzbSonocCimw04eg/gthBQtRNoTrOgz/Zk3rFwJ32q5t5KNMO/CeSGNpnoySvHDuC9bhm2+VXF5sA832Mb0vcBSMwYvEl9yH/WW7UtTipOyFL+UtS2LqNSycEO3gJ0wcpCqEqtMZ1XDjfMEgV+oeX2XqSbpzkWJxvEZT8i/LExnjHvTAPVIw2wX8ZuzTbBl3SF4wXGchYiuY1jusd3QAeYJbV+qcX4dNMjn/6FghJAgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rTrbidWAKgNG+d83+ATGr6DlBNcao+ePBioQu7zy+lg=;
+ b=BMaeGFSrbJdQLaq8L1cQSmwR6rhv5f2n5NarwaxUXA5OFL81qywVYq+enDAi4D4Q1SY2/bEACEObKx45fexsUBDb3pMwgcq0Tl3FLAOMwB9KTI1sMlmP4I/eoGAg0BFb0Bf7sTc+rgE8UL+rDOd3lYnzSidATWfMIGcAqwrtkqcNufN0hHMu/CcF8iD56LcZPOggrP3+O4lhAMrY4QerucfP0dDxb438ENCsaASv8sS+DdQ1J5x3wfq5DdP/msCXY+WU3X35nyooNj7xRVnk51v1xLdXzeBT7vBjIpmzkbNRNcmIpNs9Dxabi1f/vmqYPII8ye9XrjTSUtkS924rwg==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DU0PR04MB9276.eurprd04.prod.outlook.com (2603:10a6:10:357::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
+ 2025 08:47:49 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9298.007; Wed, 5 Nov 2025
+ 08:47:47 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Iuliana Prodan <iuliana.prodan@nxp.com>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	Frank Li <frank.li@nxp.com>
+CC: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/5] remoteproc: imx_rproc: Add runtime ops copy to
+ support dynamic behavior
+Thread-Topic: [PATCH v2 2/5] remoteproc: imx_rproc: Add runtime ops copy to
+ support dynamic behavior
+Thread-Index: AQHcSg2lUSQc/XeJN0uWVLPLm4so+bTiStQAgAGCVpA=
+Date: Wed, 5 Nov 2025 08:47:47 +0000
+Message-ID:
+ <PAXPR04MB84592657431777C58019A8C588C5A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20251031-imx95-rproc-2025-10-31-v2-0-758b2e547a55@nxp.com>
+ <20251031-imx95-rproc-2025-10-31-v2-2-758b2e547a55@nxp.com>
+ <b20cf557-8bde-4435-8a84-290bba1b68e4@nxp.com>
+In-Reply-To: <b20cf557-8bde-4435-8a84-290bba1b68e4@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|DU0PR04MB9276:EE_
+x-ms-office365-filtering-correlation-id: 4f81a86e-771f-4c13-a3ad-08de1c47febd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|19092799006|366016|1800799024|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?RUVwUHErSWFPWkRZUmUxbDRRNnpnanZCU25NNmZZRzZGTmNMOVduUnduZG4z?=
+ =?utf-8?B?bndzR1ltbi9sbGhqL2hwUnNjTitnai9lQ3JRK2cvL2R6cnZucmdOaTQ5ejdD?=
+ =?utf-8?B?cDJRa24yTjBteHgwL2tYV3dIamV4b1p4L2RXNStMWEVWSk42d2YzVTBSa29j?=
+ =?utf-8?B?ZzhDWXYrYnd5Nnl2Q1NjUDZIam5uOGp5TlBxSm01RXQ0YTJmMnlsWlhBMnA3?=
+ =?utf-8?B?R3lWdlBocUZmT3hxVURLRDdqSDMvUGZ4N0xVeUQyZzh3eGVub0RKdkI4RUtJ?=
+ =?utf-8?B?clBqa1k5QzB6U0t0VGp3QjVobGRpeEVLa2h2clAxYW9kN1FkdkNUL0c0UVNm?=
+ =?utf-8?B?WTlvVDdmSHp0WHBhaThDY3RzZkt0blpJTVViaEJMVkVBSWdBZ2FveGNzM28y?=
+ =?utf-8?B?UVJWUDZERGo5TGFhamN0QmVsSGFKS0N1N0RiTUVaaDNTNWZYSnpxTURNMlow?=
+ =?utf-8?B?R3p5d0NFOHBnY09KbDczS0p1TlF1Qzh2RWxTaURxbGwveTRsei9Da3hrUy90?=
+ =?utf-8?B?a2xiZDlNczVOY2FKVUtrVGlPMWQzTkdlV01MTWxtM0J1M0N5YXphRGdleFpl?=
+ =?utf-8?B?SXVJZGlkUnVRT0FjY2tVOXA1aXEvcFVncGNTZlVneUZ1cVlTQ0NySy9FbnFJ?=
+ =?utf-8?B?ZGUyS2p0aVdCMmpWNnpKTklDQlFQV21oQlRvbG9lVFZFN2pud1FGM3p4NkZj?=
+ =?utf-8?B?U2p4Rit0SUJDQlp3VHpkODhZbk80Tk5aelZOd3FRY0tWZnlQN0c5aVZCdC9y?=
+ =?utf-8?B?aCt2aTczN0ZwTFExMC8zdXVzTzVET1BsVjZDVU9TVFNTVmRkamFoZlRWcWQ1?=
+ =?utf-8?B?VjdzdzFPZUZiZDllQUsrYnJwU2lFY1BhOSswenl5QndNWEdSVXhMMmRDVFcv?=
+ =?utf-8?B?clVKKzRkdE16VWliUDB6eDJZcHN4emZMYnVSRTVwQmVVbzlSQUJKZWtnc3dk?=
+ =?utf-8?B?Q0huV01DbGNBZnFNejdBMXJHTUZZYmp1U0dFNjZ5akZ4Y1Rod1pVd3ZubHlm?=
+ =?utf-8?B?d0F1M3VoWkdSRzIzK2FOU1lRblZ1NS8xT2lMSjMyay9KMWIrOXhrdk9hNWE4?=
+ =?utf-8?B?UU1YS1Y5OG5ESy9WQ0krejJ1cTdBT0JZNDlGcE8wZkxBNU5aZHljUS9KVjFY?=
+ =?utf-8?B?RVVSUWxxVkJjL08xWVU0U1Y3d1ZUU0dSRXVseGd1dDl4ZDZiSUpvU0FuMFlt?=
+ =?utf-8?B?b1FHckJhMFBSbE56Zjk1QUNnVHRVMlgxeGRUU3k0ZGtteHZIeUdXbFpKVXh0?=
+ =?utf-8?B?cytMNlhvL045K1ZuZXlKYm1NZk9xVnRDaWdjS3ZMVTNVdTZJWHZqOHN2dGxD?=
+ =?utf-8?B?YnN5N09xZE9rWFVQdXlvVVE3Q0toZytBOG9KN0loZWNRL2JWdVNFM1B4WDh6?=
+ =?utf-8?B?Ry9Ib0F0NHRnN2puWE5CMkpRWlhuSmRST2pKWEVCeUovMEdXSVlWbjNQVHRw?=
+ =?utf-8?B?VlZBblF4WWRDb3FBNndYZStWY2JXYUFva09hZXQyR0RtMFdsTWpPSVhEazJz?=
+ =?utf-8?B?RlJaaFg2NjlXNXljRjBVaDhUWjg3aHFsRDhZMWxXWUtYREcwTmYvUi9VY0g5?=
+ =?utf-8?B?T0ZUVWNoVUpaaXAzWi8xUjZjQUNDdmdVcmdnR1lzODArTGQzZWg5MG1JVW1h?=
+ =?utf-8?B?UVA0YndVWVd1aEZyOVVBNHE3U29GWGpyQmFkUGZhZkYrKzlUZnk0ckdZSUUv?=
+ =?utf-8?B?VXE1VDdDV21Da2cxWmJrUnVPZVBNUmYyYzRDY3BqS3BaL2p1TUx4cU9JY00y?=
+ =?utf-8?B?Y3k5WlFDUVp6ajY5OUFyd0dsRFF3NWRCTWtwNHlmNEZDNHl1aGJtOWxtQTJW?=
+ =?utf-8?B?RnZ5c2xvWjQ0bHRXeE1MQlNYZjAxQVkxVm45b0x0a29sQmdPd3RBTzUyQUs5?=
+ =?utf-8?B?UDlRMVFtU3R1Q1o3aWNBeGdtVFprMWQrU2hxNCs3RkNaQTFvUXJxcU1ZUWh1?=
+ =?utf-8?B?NHFBQkR2OFNTdFVSa1pXSWM2Rnk5cStYTnNMYzNDMlRTWSs3MGhBYSsxREl3?=
+ =?utf-8?B?K0NIdmNWWmo3THFHYllLdnU2TVF5NGovRVpjN05CVFVKdm83TUlOdm1JTFpO?=
+ =?utf-8?B?YjFXNlZBVnZoSmxDWi9kNUZnNjBaMEdEMWVYQT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(19092799006)(366016)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YW50RHN2cHpSejlaUjJqaUlhaHBqMXN5VjRGbm1jWGZwVTRHNGk1VXNUQnBT?=
+ =?utf-8?B?bUxiRkdrRjd0NVlXaFBrM3Y5UUVHcmk3WVNIbWVEZEpKNGxBTzJXRzlYQUc2?=
+ =?utf-8?B?ZGswdUVvV01Zb1lpL3VsaFJWWHlzOW5ST2FralNzWlpSODVRc3dzUTRrck1W?=
+ =?utf-8?B?enQ2VXF0TkRFV213NE5jVGdiYUFNdnVRLzlnLzl1WHd1OUw4RTY4aVpiNEIw?=
+ =?utf-8?B?bFBqdUxuWW1FL01lRW9DZ1UzM2pLM01aV0xuMjI0Z25kM1d3eUJLTkZLdm5k?=
+ =?utf-8?B?OXN0NGczQnZJTTJyWHBvbUE1Vk54d3RvUXRXMElvTkh5MXhqYW0wRyttY09h?=
+ =?utf-8?B?SGl3YWNVVGFURTNVeDROY20yMEI3TFZCV1BldjFRaXB0YlM1WXpsUVJLazJP?=
+ =?utf-8?B?UENwblBqNTBEL2RzRSt0SC9STFU0S0gvNlk1NGUzR2ZkRjZBL2FIVUNGcHF6?=
+ =?utf-8?B?UXp2WSt0UnFuWVFZQUR5RnBwd0t4SjV5Yk0yNkJPMXBiU1ZqQ0hycEtjSmND?=
+ =?utf-8?B?Y0dEaWQwK3BETmJGUEJGRDdRUThha3ZVUW13M0t3TFg2dDA3d1FOWFVibVkx?=
+ =?utf-8?B?WWxLVWRLRWpmeDQ2V2JCTXcwRFBGUzNrMXNqYnI1amdiNUFaM3JrTThsN3NM?=
+ =?utf-8?B?d3dmMWptWGhxZXNGeWxKZ0liMWI1QTlxckdHcEEwOFNWZGU3dEZlTzQrOU1r?=
+ =?utf-8?B?U1pTUVJGNnFVQ2Y2ZHYzelN0NjNJaE5PRWs2aW1hR0M1YzhJV2FpOXRSNDAx?=
+ =?utf-8?B?eERuT3lpcWI2Ym1ET0tBbUJJb2kzYlBHL2RUYThlQWlEQmFVd0dsbjFKRVIx?=
+ =?utf-8?B?ZFNtWitPNEF4K05rR0tZVUZzbXh3TmFnTWdJdGtpbU94VklOYWJpYkI4bXZ4?=
+ =?utf-8?B?dDd3WDROTkxnNzltaXhUd09FNkFMdy82WWMxdGV6YXBYMnFvUzZqd05BRng4?=
+ =?utf-8?B?dDRCUFJUODN3aTNqZTlsTXc4c2NDdWJOY1o1cVcvejFCdDNQYTFUQStUam9H?=
+ =?utf-8?B?ZDk4bkJwRDNOQVdSWm94WlBsWU5zVzZwd2Q5MU9OWm1nQ1pHWlRSZDFPeUZP?=
+ =?utf-8?B?Q0dDczdwUlNJSGtmSXU0SW5HUVNzVm8yWTdCVW8vT25LcUVTUDBPM1dseW04?=
+ =?utf-8?B?MWJCaWZWenVoNkk4alZiSVN6UjZObFZkNitYVmhCYVhGaUlvNzJjVGlyUHJr?=
+ =?utf-8?B?K0s5ZkNVVnJaaFJteDAyb0VUeVdUWTl6aXJ3cmZtd0lWQkllR0xvYTVqTklZ?=
+ =?utf-8?B?cDlVcnBzdHFwazUwRG1mQkpyeGdTNmZHcExaam5ZVHVGNlNMaXJJVzl4MWdz?=
+ =?utf-8?B?Y1pwNW1EUDlScC9qSDdvL2lYd2w4VUF4MVgrSzBMUFEvdi9HNEpGOTlaTkZ4?=
+ =?utf-8?B?SHo1dEErRjJyaXJpTVhDZjJ5SUxFNDB3cUZ6VkZNekZqTG5SWFhJUFg4Zjcv?=
+ =?utf-8?B?OU1RTXBaK2xOYVFESGlJbWZ3WlRvU0xNT05hdmN5NUtrOEtEenUyZXdYM1lW?=
+ =?utf-8?B?RDE0dHhSakNLK1VBRFJNQUNESFdTRkxtOVcvSWlWWG0zMS9Gb0NlRHhpdUo3?=
+ =?utf-8?B?eEVoQjcyS0N2U0czVCtpampoOW5IOUtJd1NxSUdNV0dBWVp4MFBvazh5aTJB?=
+ =?utf-8?B?b0w1dnB2cHBpN0ZsdWhCNTBKcWg0bGQrSCtYSDVlTEs4ODd4SmY0YUhqdU9j?=
+ =?utf-8?B?cTlCYW9ydkZrOEdEZkpURUYwcXVwN1BDS0JncXNCelB3RVVTV3NLWjFUMkRX?=
+ =?utf-8?B?RVJMcHBMR1NkRUVMSHlHK0RtT3RyV0lKd2ZmWDZ5ZFE1TEFQMUR0ZXg2WHFY?=
+ =?utf-8?B?MXdTWHA1UCsrakZSTkRLMzVvSURVZnpEbmhOVkswUlB0dlRJYnZXMVUrMkJI?=
+ =?utf-8?B?dVlNYmdNV2NrR05HOUNKTWZiRFluWkYrWHAwekNPa1F5UHJwSEdtZk1xVE01?=
+ =?utf-8?B?WVhleVAxSXVjdG5SMnlnbEdPNmY1RjRqU2tISnZIaUdvZ0V6SkJEbThVcEpz?=
+ =?utf-8?B?Y28yM0R1ZmdzZ2ZZZVJ2RkZ6L0tVSno3KzBwZkhESjVSN2s5NWRIdkdJYytL?=
+ =?utf-8?B?M3dxOEsyZGVhWElBVW44VW94bmdLY1FydGhiN3Rnazd6ZTg0UWxBNENIUTVU?=
+ =?utf-8?Q?I2Ik=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-reset-gpios-swnodes-v5-8-1f67499a8287@linaro.org>
-References: <20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org>
-In-Reply-To: <20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7132;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=NNQdvThjugcgWNXPcBcBS6gI52byrFAWIB9wM4h8qXg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpCw8yu1+tDlfSt4WuUulr+TLFSJdB3g8qziixY
- B74F11UPXuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQsPMgAKCRARpy6gFHHX
- cr1ND/9zeaDEMfSGJ6sFnCXa81JnjVuhcR/lMtxHf4udsqyjNAXIcSXpxXHKffLYaG8Fr39Xxd1
- EydW+kJbY6qoaZDS5iXNm8aXsZl990kvC1or3OWfVvL226s3ZUOXL/Dmagok6Yo6VdYj54gMuOd
- /I0Fy45FfGNXMn4CJZczIWZC8qFYa398RWzQdmYxTIiSeJiLjBbCbboFqWKzOBAmVvTg5wF40Pu
- 3vCU2pBUT5DVJoh7HHYiB5BJ59axl4ycnXbf97Q+03sNPXakO7mKAIgCsxUrl7HBCuZt/TpiQiT
- B0dqiIbzIs+kwk4hvDuhvgFkSc64bGxpA+CvWctGtLLAZG2lmm3tTSZjjGk/NOzCdiK6taFXQHh
- 9VtL6y18Fnv97p8M1Q15bWZB3jKe5f5ERhlRI0pbpI5Ia4guNu3a+Tw9wtfXQpwqAuOJViy5qXl
- 7S+4VMLHJbsHTfrjP9Fbic++ocS83Bu5ZIUNd3M4KjlpQB0RSfGGepSiR5Ooq9izM8s3gciyBE9
- h+KXawiFy4us4GwQ7CJ+3Nabw+VxjUC/4v+mjlRRVj5bth1J73Y7opJ46yFsReWYXYWyoe8l2FO
- 7hjwcPqI2m0M0B5FrqWDVhz+DqUHyCCnAxgztV/ffn+2wjevtkFt0pUcCpxYanR7j8lgyAlx+ov
- yWEQj8EO+3TUSHA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f81a86e-771f-4c13-a3ad-08de1c47febd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2025 08:47:47.3958
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: clEGNDQPHiqslxoouBjR963+2d3tn8gw5gRW9v6F4sKnnoJfJiaYkqUqv9lz8UPWWZ8Vcbd6UeAAEnhG4ecWaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9276
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-GPIO machine lookup is a nice mechanism for associating GPIOs with
-consumers if we don't know what kind of device the GPIO provider is or
-when it will become available. However in the case of the reset-gpio, we
-are already holding a reference to the device and so can reference its
-firmware node. Let's setup a software node that references the relevant
-GPIO and attach it to the auxiliary device we're creating.
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/reset/core.c | 129 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 75 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index fcf1c24086e565015b0956fdd40334274a1edb00..66a99bdfb7093232d169c92d49cb953c4b1033e6 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -14,6 +14,7 @@
- #include <linux/export.h>
- #include <linux/gpio/driver.h>
- #include <linux/gpio/machine.h>
-+#include <linux/gpio/property.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
- #include <linux/kref.h>
-@@ -77,10 +78,12 @@ struct reset_control_array {
- /**
-  * struct reset_gpio_lookup - lookup key for ad-hoc created reset-gpio devices
-  * @of_args: phandle to the reset controller with all the args like GPIO number
-+ * @swnode: Software node containing the reference to the GPIO provider
-  * @list: list entry for the reset_gpio_lookup_list
-  */
- struct reset_gpio_lookup {
- 	struct of_phandle_args of_args;
-+	struct fwnode_handle *swnode;
- 	struct list_head list;
- };
- 
-@@ -822,52 +825,45 @@ static void __reset_control_put_internal(struct reset_control *rstc)
- 	kref_put(&rstc->refcnt, __reset_control_release);
- }
- 
--static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int id,
--					 struct device_node *np,
--					 unsigned int gpio,
--					 unsigned int of_flags)
-+static void reset_gpio_aux_device_release(struct device *dev)
- {
--	unsigned int lookup_flags;
--	const char *label_tmp;
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
- 
--	/*
--	 * Later we map GPIO flags between OF and Linux, however not all
--	 * constants from include/dt-bindings/gpio/gpio.h and
--	 * include/linux/gpio/machine.h match each other.
--	 */
--	if (of_flags > GPIO_ACTIVE_LOW) {
--		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
--		       of_flags, gpio);
--		return -EINVAL;
-+	kfree(adev);
-+}
-+
-+static int reset_add_gpio_aux_device(struct device *parent,
-+				     struct fwnode_handle *swnode,
-+				     int id, void *pdata)
-+{
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return -ENOMEM;
-+
-+	adev->id = id;
-+	adev->name = "gpio";
-+	adev->dev.parent = parent;
-+	adev->dev.platform_data = pdata;
-+	adev->dev.release = reset_gpio_aux_device_release;
-+	device_set_node(&adev->dev, swnode);
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret) {
-+		kfree(adev);
-+		return ret;
- 	}
- 
--	label_tmp = gpio_device_get_label(gdev);
--	if (!label_tmp)
--		return -EINVAL;
-+	ret = __auxiliary_device_add(adev, "reset");
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		kfree(adev);
-+		return ret;
-+	}
- 
--	char *label __free(kfree) = kstrdup(label_tmp, GFP_KERNEL);
--	if (!label)
--		return -ENOMEM;
--
--	/* Size: one lookup entry plus sentinel */
--	struct gpiod_lookup_table *lookup __free(kfree) = kzalloc(struct_size(lookup, table, 2),
--								  GFP_KERNEL);
--	if (!lookup)
--		return -ENOMEM;
--
--	lookup->dev_id = kasprintf(GFP_KERNEL, "reset.gpio.%d", id);
--	if (!lookup->dev_id)
--		return -ENOMEM;
--
--	lookup_flags = GPIO_PERSISTENT;
--	lookup_flags |= of_flags & GPIO_ACTIVE_LOW;
--	lookup->table[0] = GPIO_LOOKUP(no_free_ptr(label), gpio, "reset",
--				       lookup_flags);
--
--	/* Not freed on success, because it is persisent subsystem data. */
--	gpiod_add_lookup_table(no_free_ptr(lookup));
--
--	return 0;
-+	return ret;
- }
- 
- /*
-@@ -875,9 +871,11 @@ static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int id,
-  */
- static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- {
-+	struct property_entry properties[] = { {}, {} };
- 	struct reset_gpio_lookup *rgpio_dev;
--	struct auxiliary_device *adev;
--	int id, ret;
-+	unsigned int offset, of_flags;
-+	struct device *parent;
-+	int id, ret, lflags;
- 
- 	/*
- 	 * Currently only #gpio-cells=2 is supported with the meaning of:
-@@ -895,6 +893,23 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 	 */
- 	lockdep_assert_not_held(&reset_list_mutex);
- 
-+	offset = args->args[0];
-+	of_flags = args->args[1];
-+
-+	/*
-+	 * Later we map GPIO flags between OF and Linux, however not all
-+	 * constants from include/dt-bindings/gpio/gpio.h and
-+	 * include/linux/gpio/machine.h match each other.
-+	 *
-+	 * FIXME: Find a better way of translating OF flags to GPIO lookup
-+	 * flags.
-+	 */
-+	if (of_flags > GPIO_ACTIVE_LOW) {
-+		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
-+		       of_flags, offset);
-+		return -EINVAL;
-+	}
-+
- 	struct gpio_device *gdev __free(gpio_device_put) =
- 		gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
- 	if (!gdev)
-@@ -909,6 +924,10 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 		}
- 	}
- 
-+	lflags = GPIO_PERSISTENT | (of_flags & GPIO_ACTIVE_LOW);
-+	parent = gpio_device_to_device(gdev);
-+	properties[0] = PROPERTY_ENTRY_GPIO("reset-gpios", parent->fwnode, offset, lflags);
-+
- 	id = ida_alloc(&reset_gpio_ida, GFP_KERNEL);
- 	if (id < 0)
- 		return id;
-@@ -920,11 +939,6 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 		goto err_ida_free;
- 	}
- 
--	ret = __reset_add_reset_gpio_lookup(gdev, id, args->np, args->args[0],
--					    args->args[1]);
--	if (ret < 0)
--		goto err_kfree;
--
- 	rgpio_dev->of_args = *args;
- 	/*
- 	 * We keep the device_node reference, but of_args.np is put at the end
-@@ -932,19 +946,26 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 	 * Hold reference as long as rgpio_dev memory is valid.
- 	 */
- 	of_node_get(rgpio_dev->of_args.np);
--	adev = auxiliary_device_create(gpio_device_to_device(gdev), "reset",
--				       "gpio", &rgpio_dev->of_args, id);
--	ret = PTR_ERR_OR_ZERO(adev);
-+
-+	rgpio_dev->swnode = fwnode_create_software_node(properties, NULL);
-+	if (IS_ERR(rgpio_dev->swnode)) {
-+		ret = PTR_ERR(rgpio_dev->swnode);
-+		goto err_put_of_node;
-+	}
-+
-+	ret = reset_add_gpio_aux_device(parent, rgpio_dev->swnode, id,
-+					&rgpio_dev->of_args);
- 	if (ret)
--		goto err_put;
-+		goto err_del_swnode;
- 
- 	list_add(&rgpio_dev->list, &reset_gpio_lookup_list);
- 
- 	return 0;
- 
--err_put:
-+err_del_swnode:
-+	fwnode_remove_software_node(rgpio_dev->swnode);
-+err_put_of_node:
- 	of_node_put(rgpio_dev->of_args.np);
--err_kfree:
- 	kfree(rgpio_dev);
- err_ida_free:
- 	ida_free(&reset_gpio_ida, id);
-
--- 
-2.51.0
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDIvNV0gcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBBZGQg
+cnVudGltZSBvcHMNCj4gY29weSB0byBzdXBwb3J0IGR5bmFtaWMgYmVoYXZpb3INCj4gDQo+ID4g
+LTEwNTYsNiArMTA1Miw5IEBAIHN0YXRpYyBpbnQgaW14X3Jwcm9jX3Byb2JlKHN0cnVjdA0KPiBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gICAJcHJpdi0+ZGNmZyA9IGRjZmc7DQo+ID4gICAJ
+cHJpdi0+ZGV2ID0gZGV2Ow0KPiA+DQo+ID4gKwlpZiAoZGNmZy0+b3BzKQ0KPiA+ICsJCXByaXYt
+Pm9wcyA9IGRjZmctPm9wczsNCj4gDQo+IFdpbGwgcHJpdi0+b3BzIGV2ZXIgYmUgbW9kaWZpZWQg
+YWZ0ZXIgaW5pdGlhbGl6YXRpb24gaW4gYSBtdWx0aS10aHJlYWRlZA0KPiBjb250ZXh0Pw0KPiBJ
+ZiBzbywgeW91IG1pZ2h0IG5lZWQgc3luY2hyb25pemF0aW9uLg0KDQpUaGlzIGlzIGluIHByb2Jl
+IHBoYXNlLCBubyBtdWx0aS10aHJlYWQgY29udGV4dC4NCg0KPiANCj4gQWxzbywgeW91IGNhbiBy
+ZW1vdmUgdGhlIE5VTEwgY2hlY2sgc2luY2UgaXQncyBzYWZlIHRvIGFzc2lnbiBOVUxMLg0KDQpZ
+ZXMuDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+IEl1bGlhDQo+IA0KPiA+ICsNCj4gPiAgIAlk
+ZXZfc2V0X2RydmRhdGEoZGV2LCBycHJvYyk7DQo+ID4gICAJcHJpdi0+d29ya3F1ZXVlID0gY3Jl
+YXRlX3dvcmtxdWV1ZShkZXZfbmFtZShkZXYpKTsNCj4gPiAgIAlpZiAoIXByaXYtPndvcmtxdWV1
+ZSkgew0KPiA+DQoNCg==
 
