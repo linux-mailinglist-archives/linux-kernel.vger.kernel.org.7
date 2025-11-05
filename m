@@ -1,156 +1,211 @@
-Return-Path: <linux-kernel+bounces-886332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7489CC35439
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:59:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C71C35427
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9B9F4F6729
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921B618C047E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AACC30E847;
-	Wed,  5 Nov 2025 10:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D5430BBA4;
+	Wed,  5 Nov 2025 10:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjMcy7OW"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQroHIh4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB963081D8
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF09C26ED3F;
+	Wed,  5 Nov 2025 10:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762340057; cv=none; b=qfCD5+1YLIvJGG0bQ44Z+FtWyJvx8uOAe3XiyRY2bJN9FZlK6oSL2dXZs/8AaIogbpMdkjJfsNXRL5g3OO8INY7z8zZaU4KLG0litFNR/qR8YHeimVWnhiOC704vF2Dw09DEJtpEbGvUpz1LkSONRwBTZrFSPVDNne690A6WqWM=
+	t=1762340307; cv=none; b=vAoKis8Iy2NicPgyktIQ0ObwPyuQKbP48yH921+QxpKKMvRm6wJyTe7OJsvcriRHjCrlab+BpsBfxP8OrqaVH5KD9xf4UzHSb1x7pP42PCvhvDpEK2dEqqzuFtgtCsThrm/Ad5z0cQ6YN+AC7Rs9O/+Ndyhw7aa4apu8Der2l/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762340057; c=relaxed/simple;
-	bh=rLYGShjvH0ii87qREH3WO35v8IHXOBPLvlHQQ38IJz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOj68o30QcGUh6wLwkXMpqVNN+kZBIdwaAj+/YT+E4wc/IA5x1JgVwY33+dCTKyOamyBjByLeceQGRAzBVKl7AEhsdS05wE2WJmNGnCeEC8eJGr7/9gXtlAP3o7hFoBZTBfvZlmVdt0hPlJWRYDIXH5RC+7rSBsUYgOwA75lHpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UjMcy7OW; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7c28c21aba1so4008921a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 02:54:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762340055; x=1762944855; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UI+zvnrKdhRN8SIehVxo9mkD9QgvEwvxC3LXtBEgkQ0=;
-        b=UjMcy7OWjWCaW/DCk7GTJ1FQ67cT7FkJi1DDY8H6kgwpZmbp582osfW1a/6LLO/vz6
-         96Njttx+wh8KMTeGERtKg2chOONmr1/XY3r5s03kP4MWfe5x9K6k6Vi2tUJCpDJljUae
-         g44mr2LtI/IpJ7VzpNq55ie/c3HN5CFj07V4pnSVMDhruUPdo9anhAc5YUPJFJF3WudR
-         uQaBrFr0i4WJB8TJo3Z2HFyuv8CA3yUfw3Km2Oq2xxpvvCrQjLBm3uepCFNGffJ1+Sfi
-         erCEZF6zygeE9tvy1VtCIAPxe126MSk4HO/XYhf1RLN/dfCSPGIjd2anFtxnG42uMGz8
-         zg5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762340055; x=1762944855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UI+zvnrKdhRN8SIehVxo9mkD9QgvEwvxC3LXtBEgkQ0=;
-        b=qBwHapaCvOdoMr1IiGRQQnhVYgCbdaL32sDh/UZTwtYAjf1DqF0U/3dQKJdHjnhjrW
-         ZuJUnE4hisI45h5ocqWzpDTJccCsOmKEgEYAlwP6yD3lInkQxNRSB4tEU8xdYzDrcj9x
-         9EyQ2Hys1QPwCmUGkJ6Apcskg+eLCa3OagiXQW4PoFcWrlxSzARu5QHrZCA7xa9ZG/jD
-         SXFUJKchExy9TWVnvWGjx80u0DZDXonMIByeVubB7vzYsmmsl/whCHyQGFhIhma1RpDE
-         uor/5MrqlCrQw26HsvNN09SuHmIfh+2IvDymoP6jITVHxB/LngyZ1Q8JOd0HTf8HiVXw
-         v/Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOjxRhNDeb4pkyUqE7yAI5YQYc/bwAGxeuLeRGPVmEZf4m7xnIzUGg5WDkFoyyocaKJkWNjaHbTDm65PA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAxtN2E4f7rg694NJwqUp44dXHw44d1dkuafOIbawQbQOo9m0o
-	a2n7d3XgcPFuJfCB+GnupMz0+ufP4HR/mnHaP1gDdikLZZ0SKeSJfO2CYXnCaIWVLHQ+ZvbrAdm
-	EPkYX9DacUz91XMF9zfPAwWTfdSTcIQ4=
-X-Gm-Gg: ASbGnct6S1LInju9Wn3b9kzz+wLA9Us1irwafMUnssdSUv6ZogBg2cvHZ7AqNDslhZw
-	8Le7egtcqd5s/F3hrQKeuvPDY8LAVFT6kCFizR8RTXhzfUrgaySabHoZRXbDJbtafo0f3XP5P0f
-	097PZV8txfCbdMA3a4h4yXhlXapAvaK1RjiNw7D66iwmwN0xehEOecMabZWAhDsagEpdLqxzda8
-	T+nqW2Ed31jm6qb9O5nVH0uA8JI1NqydNoX5boc6uNHhF4MrZS/B9nLzsiXq4Ez7OGQnpg=
-X-Google-Smtp-Source: AGHT+IGOrCYrmHNMLavSyZ02ydICrKRBss+q8PZq/0Rzc5ZPlgYctyKGHcxtmk3f5rN9LiTKlT/v4xGFjERNNmxuico=
-X-Received: by 2002:a05:6808:21a3:b0:43f:5e91:d556 with SMTP id
- 5614622812f47-44fed48970cmr1063735b6e.44.1762340054900; Wed, 05 Nov 2025
- 02:54:14 -0800 (PST)
+	s=arc-20240116; t=1762340307; c=relaxed/simple;
+	bh=EBZaFUsb0LGLT3N/+97ZuMVNIb2xJKv8Qr6rGHYveD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kXq2iYc8ZqITACft5hl5xITUHrgPG1jOhji72hyavnqiwPrMs5Cvr8hJNVgqSO3HC2U+3vaK6aeDY2M8vrAT890eEaFc0gCpLNriPXu8j1ibPQsjUapCr+M8Njf5GWZ6C9uU9rqV8N6AY9SqSwBHlqjSmhVuOExS8s62JX55Tjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQroHIh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBF9C4CEFB;
+	Wed,  5 Nov 2025 10:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762340306;
+	bh=EBZaFUsb0LGLT3N/+97ZuMVNIb2xJKv8Qr6rGHYveD0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oQroHIh4RLBHKLMICPQARgXqbxvWN/YmMqr7XEvgMrCl260OXc1RXL3inToH4Q6uV
+	 vS8KoaVzJGWoQEeN251PSXl4ScD8KR+chJzak52s9t5We8dKqRMNKw3+MSQPzG31/l
+	 mFU/ynfcl8bFvkNhJSHcZyElRj9pQ+kCQus3HbI7jbgtxvgQBSGDlA8waBmIZCnObq
+	 5B7G0m3b/oVKect8my7caeCADKGbmVv1QyQhyuWlQXuf7zAfoMCRP1HPWgKYHqH83l
+	 7NDROThLy2GDJHuSFq/assOFEtP4PEZrfyysiO8sJ0K5n75eBm2nZk4ApM2m4iqs41
+	 GSqRRJd+ZPbmA==
+Message-ID: <88d90e44-88d9-4b5c-ba76-1e27dd28f78b@kernel.org>
+Date: Wed, 5 Nov 2025 11:58:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-2-joelagnelf@nvidia.com> <DDX1WYWQNTAB.BBEICMO8NM30@nvidia.com>
- <20251104005812.GA2101511@joelbox2> <DDZYCRCPYMOL.RMTIF0R404Q4@nvidia.com>
- <CANiq72=Cj_gJ27+EAiytxYGYk1dMwu7M3xQpLGByD4QstgDsHw@mail.gmail.com>
- <CAAOQCfQ_d_C7oZ9uq2siJHn1+m+j059qYUMBvTWOnQ5Etk91ug@mail.gmail.com>
- <CANiq72nLzuCXh0r5W0HMM36f9yTSQfP9yCxXbzH+wS7VxFM2Eg@mail.gmail.com> <CANiq72kYYu9C94aY72HK1ELSmvktF3nq+G4+smdAW_Xaxw1kqw@mail.gmail.com>
-In-Reply-To: <CANiq72kYYu9C94aY72HK1ELSmvktF3nq+G4+smdAW_Xaxw1kqw@mail.gmail.com>
-From: Guillaume Gomez <guillaume1.gomez@gmail.com>
-Date: Wed, 5 Nov 2025 11:54:03 +0100
-X-Gm-Features: AWmQ_bkMmilAyN1uUJZCacC-4Uedu5I4tT8-UDX7Z-O78YpFpr8K3EAt082H5zI
-Message-ID: <CAAOQCfSRVqFZAJN_m-kGLe6fnqKYyhLUf_WOKdHHMW-C6NShkA@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] rust: clist: Add abstraction for iterating over C
- linked lists
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, dakr@kernel.org, 
-	David Airlie <airlied@gmail.com>, Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org, 
-	Elle Rhumsaa <elle@weathered-steel.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>, nouveau@lists.freedesktop.org, 
-	Nouveau <nouveau-bounces@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: Add Realtek ISO system controller
+To: Yu-Chun Lin <eleanor.lin@realtek.com>, afaerber@suse.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ james.tai@realtek.com
+Cc: linux-arm-kernel@lists.infradead.org,
+ linux-realtek-soc@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cy.huang@realtek.com, stanley_chang@realtek.com
+References: <20251105104452.6336-1-eleanor.lin@realtek.com>
+ <20251105104452.6336-3-eleanor.lin@realtek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251105104452.6336-3-eleanor.lin@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-You can add your own tags in the doctests, and with our patch waiting
-to use the new rustdoc doctests extraction, it should be pretty easy
-to plug such a feature into it. We can check it together if you want
-when the patch is merged to see if we already have everything needed
-or if I need to add more things on rustdoc side.
+On 05/11/2025 11:44, Yu-Chun Lin wrote:
+> Add DT binding schema for Realtek system controller.
+> 
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> ---
+>  .../bindings/mfd/realtek,iso-system.yaml      | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,iso-system.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/realtek,iso-system.yaml b/Documentation/devicetree/bindings/mfd/realtek,iso-system.yaml
+> new file mode 100644
+> index 000000000000..6fbdedd3ee5b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/realtek,iso-system.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/realtek,iso-system.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Realtek ISO System Controller
+> +
+> +description: |
 
-Le mar. 4 nov. 2025 =C3=A0 20:06, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> a =C3=A9crit :
->
-> On Tue, Nov 4, 2025 at 7:35=E2=80=AFPM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > Orthogonally, the script that generates the doctests could perhaps
-> > help to automate some of that. For instance, we could have a way to
-> > specify an "environment" for a given Rust file or Rust `mod` or
-> > similar, and then every doctests would have the code prefixed to them.
->
-> I guess this could probably best generalized as "tagging" doctests
-> with custom tags that `rustdoc` just forwards in the generated JSON.
->
-> Something like:
->
->     /// ```tag:foo,tag:bar
->
-> would give us a:
->
->     "tags": ["foo", "bar"]
->
-> in the JSON. Then a custom generator like the one we have could do
-> whatever it needs with it, including prepending code or other things.
->
-> Now, I see there is already an `unknown` field in the attributes which
-> already give us the unrecognized ones, which is great and we could
-> potentially use that.
->
-> However, should there be a particular way/namespace we should create
-> our custom tags so that we don't conflict in the future with `rustdoc`
-> ones?
->
-> I have added it to the usual list:
->
->     https://github.com/Rust-for-Linux/linux/issues/350
->
-> (There is also the question about supporting the old non-JSON way for
-> things like this, but I am ignoring that for now)
->
-> Cheers,
-> Miguel
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The Realtek ISO System Controller is a register area that contains
+> +  miscellaneous system registers for the SoC and serves as a parent node
+> +  for other functions.
+> +
+> +maintainers:
+> +  - James Tai <james.tai@realtek.com>
+> +  - Yu-Chun Lin <eleanor.lin@realtek.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - realtek,iso-system
+
+No clue what is "iso system", neither commit msg, nor title nor
+description explain me that. Please add first bindings for the iso soc
+or if this is not soc, then use only soc-specific compatibles (see
+writing bindings doc).
+
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ranges:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+> +  reg-io-width:
+> +    const: 4
+> +
+> +patternProperties:
+> +  "^.*@[0-9a-f]+$":
+> +    type: object
+> +    description: Catch-all for other sub-devices in the ISO area.
+
+Nope, sorry. Define exact children. All of them.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ranges
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - reg-io-width
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    iso: syscon@7000 {
+
+Drop label.
+
+> +        compatible = "realtek,iso-system", "syscon", "simple-mfd";
+> +        reg = <0x7000 0x1000>;
+> +        ranges = <0x0 0x7000 0x1000>;
+> +        reg-io-width = <4>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+
+No children here, so drop simple-mfd and all these fake child stuff.
+
+
+Best regards,
+Krzysztof
 
