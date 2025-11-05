@@ -1,287 +1,193 @@
-Return-Path: <linux-kernel+bounces-885994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013C2C3477E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:29:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28536C347D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0784670AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:28:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6E124F4547
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A15B2C0275;
-	Wed,  5 Nov 2025 08:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505372D23A8;
+	Wed,  5 Nov 2025 08:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l7VgSVQF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rokhlFLS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l7VgSVQF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rokhlFLS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="F0qdPWZd"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66EE299943
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D664C21CC6A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762331294; cv=none; b=LC2BfdRX8DS5YbebOXFlZJTxxlMlnHy1dI6OaQFmk5C+FnBzACxw7g3ymTH26J4kEg+XNaZm/uLSxAgamR6etmf9qYUi7HyeCBjHpIIWsqrYDlTdeOAwAGFaWn7WRawysstriP46AKGW6z6O2iOhBobICVooUNRyEAUGTXu2vEc=
+	t=1762331495; cv=none; b=CX6XoKjI2+aKIActa6clthK1aaIXOf8jhqYv0a6SWsYpn32onAjWSjMVh0jC4Xa/vKWjgLuL1KwP+skh+BWKOZ/g5jdVstZwlt6D/K1xTAlhyWkgl27vQskMN0ESb0X5ngK89y5plyXG4bVJmmTx8mWbKJ2mAqgvOqo6V/dYVAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762331294; c=relaxed/simple;
-	bh=faCQStMkOzA8zWUIOPOfGFoLZt44wjXUp3R37OxqcaY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LDhac59nSmvr3A/MpRgnkSmTm0z6YyvkG2fNPn/5C7f0RIaqwqhbP3ew50M9s9ysl4MPEAYDZHKs1JzdQujeZdIg2wS4qO4Kl6RrS6BH/Feb+WUusX4SYXMJ72jAOVw5MR6nnXgEDw4yuOkGXocC+EzbP03hqFoRdZczNAnWvkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l7VgSVQF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rokhlFLS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l7VgSVQF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rokhlFLS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B63EB1F397;
-	Wed,  5 Nov 2025 08:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762331290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7oii3fj4FPa14vqGcQpAC6z5WVWuDxUvBuwGwCnSlQ=;
-	b=l7VgSVQFDqnP1rPIaIGLYRMyVwWBSZWwVz5C6HMn/6SNE9iapwJ6kOHxIFp3NpXbdRzX+8
-	5C67LTcZ9hS9VyCxb5ru66cB29e3UwDv0QVOYcSSjxRCaJYKPuj9ZX2IQZ+uSgNRQBkZOo
-	cge7SQVmbSvVplMzT3UpYyZtbc4erNg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762331290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7oii3fj4FPa14vqGcQpAC6z5WVWuDxUvBuwGwCnSlQ=;
-	b=rokhlFLS8bg2rtGYEUHhXlglGC6XBMImPssofgomA0UShs4zeIQRjKxNUzGZJXVgHLwPCx
-	fN0vXP5l3RUZ47Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=l7VgSVQF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rokhlFLS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762331290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7oii3fj4FPa14vqGcQpAC6z5WVWuDxUvBuwGwCnSlQ=;
-	b=l7VgSVQFDqnP1rPIaIGLYRMyVwWBSZWwVz5C6HMn/6SNE9iapwJ6kOHxIFp3NpXbdRzX+8
-	5C67LTcZ9hS9VyCxb5ru66cB29e3UwDv0QVOYcSSjxRCaJYKPuj9ZX2IQZ+uSgNRQBkZOo
-	cge7SQVmbSvVplMzT3UpYyZtbc4erNg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762331290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7oii3fj4FPa14vqGcQpAC6z5WVWuDxUvBuwGwCnSlQ=;
-	b=rokhlFLS8bg2rtGYEUHhXlglGC6XBMImPssofgomA0UShs4zeIQRjKxNUzGZJXVgHLwPCx
-	fN0vXP5l3RUZ47Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6BBE213699;
-	Wed,  5 Nov 2025 08:28:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4639GJoKC2kMXgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 05 Nov 2025 08:28:10 +0000
-Date: Wed, 05 Nov 2025 09:28:10 +0100
-Message-ID: <87tsz8hoit.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: 222 Summ <moonafterrain@outlook.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Yuhao Jiang
-	<danisjiang@gmail.com>
-Subject: Re: [PATCH v2] ALSA: wavefront: use scnprintf for longname construction
-In-Reply-To: <SYBPR01MB7881D2110FD5E269FF682327AFC5A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-References: <SYBPR01MB7881987D79C62D8122B655FEAFC6A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-	<874irai0ag.wl-tiwai@suse.de>
-	<SYBPR01MB7881D2110FD5E269FF682327AFC5A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762331495; c=relaxed/simple;
+	bh=Zj29buxV9UE58RRYx4vjaHVHQJ2Ut1m4MAuaFIdFLfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p244KwC25jcVfRmYjD5orir+miazbmrHYvBlHrIbWlyZDV5mqte+rG3FbIEI9t/tPdlrzPiqMX/fQ+c6Wwf/ksSYrCl5na1dWzNUvVULz3CiRpLv6ypoTY9UQmHcQr0xNU0lJu+roWlDMBoUNCUtpf2aSGXtoRNP9v+2AOMQAqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=F0qdPWZd; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=D4
+	gIXUhipj0yGP5qt0R8CsZJghJ3C1a01ZBrksuDTcI=; b=F0qdPWZdl9pJjyfJqP
+	rdRDyT0Pf5D92AvjmBDYQza2OA2C491uPk14OnYPx17eQj1yQXNVMT/tXSm7Pojq
+	5Fn17y/R1Pi4P6+bic2+nAkdaA7qHh9Jwo613MW9kFtQFFgbm1n3eLM+XSbVVWfZ
+	eeyeVrB9iFvQgQ/dORRsmxxME=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXjwIuCwtpxglOBw--.41821S2;
+	Wed, 05 Nov 2025 16:30:40 +0800 (CST)
+From: oushixiong1025@163.com
+To: Dave Airlie <airlied@redhat.com>
+Cc: Sean Paul <sean@poorly.run>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/udl: Increase get urb timeout for modeset
+Date: Wed,  5 Nov 2025 16:30:37 +0800
+Message-Id: <20251105083037.237925-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B63EB1F397
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[outlook.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,outlook.com];
-	FREEMAIL_CC(0.00)[suse.de,perex.cz,suse.com,vger.kernel.org,gmail.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:mid,suse.de:dkim,suse.com:email]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.51
-X-Spam-Level: 
+X-CM-TRANSID:_____wDXjwIuCwtpxglOBw--.41821S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWkXF1kZF4fKrWUXr18Zrb_yoWrCr4DpF
+	4UJ3yjyrWUAF4jgF1UtF4kAw43J3W3Ka97K3yxC39a93WDKry5Jas5AryYgFyDJry7GF1a
+	grn2vrWY9F4UCw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0pB-UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXA78D2kLChsbMAAAs5
 
-On Wed, 05 Nov 2025 05:28:27 +0100,
-222 Summ wrote:
-> 
-> Hi Takashi,
-> 
-> Thank you for your detailed feedback on the v2 patch. I've prepared a v3
-> patch series that incorporates your suggestions.
-> 
-> Based on your comments, I've made the following changes:
-> 
-> 1. Split the patch into two parts:
->    - Patch 1/2: Adds `scnprintf_append()` to `lib/vsprintf.c`
->    - Patch 2/2: Converts `wavefront.c` to use it
-> 2. Fixed the return value you pointed out
-> 3. Used strnlen() instead of strlen() for safety
-> 
-> I plan to submit this as a two-patch series. However, before I send it, I'd like to confirm a few things:
-> 
-> 1. Is this approach (adding the helper to lib/vsprintf.c) what you had in
->    mind? Or would you prefer a different location?
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-IMO lib/vsprintf.c should be fine.
+[WHY]
+There is a situation where udl_handle_damage() was running successfully
+but the screen was black. it was because udl_crtc_helper_atomic_enable() failed,
+and there were no error messages.
 
-> 2. Would you recommend sending both patches together, or waiting until
-> patch 1/2 is reviewed and accepted before submitting patch 2/2?
+[HOW]
+The priority for mode settings needs to be higher than damage handle, requiring
+a higher success rate than ordinary operations.
+Increase get urb timeout for modeset.
 
-You can try patching not only wavefront.c but covering a few others in
-the series at first for showing that it really makes sense to be a
-generic helper function.  And, submitting the whole might be better to
-understand what's the use and effect, too.
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/udl/udl_drv.h      |  5 ++++-
+ drivers/gpu/drm/udl/udl_main.c     |  5 ++---
+ drivers/gpu/drm/udl/udl_modeset.c  | 11 +++++++----
+ drivers/gpu/drm/udl/udl_transfer.c |  2 +-
+ 4 files changed, 14 insertions(+), 9 deletions(-)
 
-Note that there can be suggestions for other forms, e.g. there have
-been some progresses for the continuous string processing, IIRC.
-So this is merely one example to achieve the goal.
+diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+index 145bb95ccc48..38b3bdf1ae4a 100644
+--- a/drivers/gpu/drm/udl/udl_drv.h
++++ b/drivers/gpu/drm/udl/udl_drv.h
+@@ -31,6 +31,9 @@ struct drm_mode_create_dumb;
+ #define DRIVER_MINOR		0
+ #define DRIVER_PATCHLEVEL	1
+ 
++#define GET_URB_TIMEOUT	HZ
++#define MODESET_GET_URB_TIMEOUT	(HZ*2)
++
+ struct udl_device;
+ 
+ struct urb_node {
+@@ -72,7 +75,7 @@ static inline struct usb_device *udl_to_usb_device(struct udl_device *udl)
+ int udl_modeset_init(struct udl_device *udl);
+ struct drm_connector *udl_connector_init(struct drm_device *dev);
+ 
+-struct urb *udl_get_urb(struct udl_device *udl);
++struct urb *udl_get_urb(struct udl_device *udl, long timeout);
+ 
+ int udl_submit_urb(struct udl_device *udl, struct urb *urb, size_t len);
+ void udl_sync_pending_urbs(struct udl_device *udl);
+diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+index bc58991a6f14..891996f0f74b 100644
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -285,13 +285,12 @@ static struct urb *udl_get_urb_locked(struct udl_device *udl, long timeout)
+ 	return unode->urb;
+ }
+ 
+-#define GET_URB_TIMEOUT	HZ
+-struct urb *udl_get_urb(struct udl_device *udl)
++struct urb *udl_get_urb(struct udl_device *udl, long timeout)
+ {
+ 	struct urb *urb;
+ 
+ 	spin_lock_irq(&udl->urbs.lock);
+-	urb = udl_get_urb_locked(udl, GET_URB_TIMEOUT);
++	urb = udl_get_urb_locked(udl, timeout);
+ 	spin_unlock_irq(&udl->urbs.lock);
+ 	return urb;
+ }
+diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
+index 231e829bd709..6adca5e3e471 100644
+--- a/drivers/gpu/drm/udl/udl_modeset.c
++++ b/drivers/gpu/drm/udl/udl_modeset.c
+@@ -21,6 +21,7 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_vblank.h>
+ 
+@@ -217,7 +218,7 @@ static int udl_handle_damage(struct drm_framebuffer *fb,
+ 		return ret;
+ 	log_bpp = ret;
+ 
+-	urb = udl_get_urb(udl);
++	urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+ 	if (!urb)
+ 		return -ENOMEM;
+ 	cmd = urb->transfer_buffer;
+@@ -341,9 +342,11 @@ static void udl_crtc_helper_atomic_enable(struct drm_crtc *crtc, struct drm_atom
+ 	if (!drm_dev_enter(dev, &idx))
+ 		return;
+ 
+-	urb = udl_get_urb(udl);
+-	if (!urb)
++	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
++	if (!urb) {
++		DRM_ERROR("Udl get urb failed when enabling crtc");
+ 		goto out;
++	}
+ 
+ 	buf = (char *)urb->transfer_buffer;
+ 	buf = udl_vidreg_lock(buf);
+@@ -374,7 +377,7 @@ static void udl_crtc_helper_atomic_disable(struct drm_crtc *crtc, struct drm_ato
+ 	if (!drm_dev_enter(dev, &idx))
+ 		return;
+ 
+-	urb = udl_get_urb(udl);
++	urb = udl_get_urb(udl, MODESET_GET_URB_TIMEOUT);
+ 	if (!urb)
+ 		goto out;
+ 
+diff --git a/drivers/gpu/drm/udl/udl_transfer.c b/drivers/gpu/drm/udl/udl_transfer.c
+index 7d670b3a5293..858b47522d78 100644
+--- a/drivers/gpu/drm/udl/udl_transfer.c
++++ b/drivers/gpu/drm/udl/udl_transfer.c
+@@ -202,7 +202,7 @@ int udl_render_hline(struct udl_device *udl, int log_bpp, struct urb **urb_ptr,
+ 			int ret = udl_submit_urb(udl, urb, len);
+ 			if (ret)
+ 				return ret;
+-			urb = udl_get_urb(udl);
++			urb = udl_get_urb(udl, GET_URB_TIMEOUT);
+ 			if (!urb)
+ 				return -EAGAIN;
+ 			*urb_ptr = urb;
+-- 
+2.25.1
 
-The merit of this way would be its simplicity, though: you can replace
-the code with a single function call without keeping anything else,
-and the handling logic is quite straightforward.
-
-> The implementation of scnprintf_append() is shown below:
-> +int scnprintf_append(char *buf, size_t size, const char *fmt, ...)
-> +{
-> +	va_list args;
-> +	size_t len;
-> +
-> +	len = strnlen(buf, size);
-> +	if (len >= size)
-> +		return len;
-> +	va_start(args, fmt);
-> +	len += vscnprintf(buf + len, size - len, fmt, args);
-> +	va_end(args);
-> +	return len;
-> +}
-
-This should be with EXPORT_SYMBOL_GPL() (or EXPORT_SYMBOL() is any
-user is non-GPL).
-
-
-thanks,
-
-Takashi
-
-> 
-> Thanks again for your guidance.
-> 
-> Best regards,
-> Junrui
-> 
-> ________________________________________
-> From: Takashi Iwai <tiwai@suse.de>
-> Sent: Tuesday, November 4, 2025 18:01
-> To: moonafterrain@outlook.com <moonafterrain@outlook.com>
-> Cc: Jaroslav Kysela <perex@perex.cz>; Takashi Iwai <tiwai@suse.com>; linux-sound@vger.kernel.org <linux-sound@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; stable@vger.kernel.org <stable@vger.kernel.org>; Yuhao Jiang <danisjiang@gmail.com>
-> Subject: Re: [PATCH v2] ALSA: wavefront: use scnprintf for longname construction
->  
-> On Sun, 02 Nov 2025 16:32:39 +0100,
-> moonafterrain@outlook.com wrote:
-> >
-> > From: Junrui Luo <moonafterrain@outlook.com>
-> >
-> > Replace sprintf() calls with scnprintf() and a new scnprintf_append()
-> > helper function when constructing card->longname. This improves code
-> > readability and provides bounds checking for the 80-byte buffer.
-> >
-> > While the current parameter ranges don't cause overflow in practice,
-> > using safer string functions follows kernel best practices and makes
-> > the code more maintainable.
-> >
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Junrui Luo <moonafterrain@outlook.com>
-> > ---
-> > Changes in v2:
-> > - Replace sprintf() calls with scnprintf() and a new scnprintf_append()
-> > - Link to v1: https://lore.kernel.org/all/ME2PR01MB3156CEC4F31F253C9B540FB7AFFDA@ME2PR01MB3156.ausprd01.prod.outlook.com/
-> 
-> Well, my suggestion was that we can apply such conversions once if a
-> *generic* helper becomes available; that is, propose
-> scnprintf_append() to be put in include/linux/string.h or whatever (I
-> guess better in *.c instead of inline), and once if it's accepted, we
-> can convert the relevant places (there are many, not only
-> wavefront.c).
-> 
-> BTW:
-> 
-> > +__printf(3, 4) static int scnprintf_append(char *buf, size_t size, const char *fmt, ...)
-> > +{
-> > +     va_list args;
-> > +     size_t len = strlen(buf);
-> > +
-> > +     if (len >= size)
-> > +             return len;
-> > +     va_start(args, fmt);
-> > +     len = vscnprintf(buf + len, size - len, fmt, args);
-> > +     va_end(args);
-> > +     return len;
-> 
-> The above should be
->         len += vscnprintf(buf + len, size - len, fmt, args);
-> so that it returns the full size of the string.
-> If it were in user-space, I'd check a negative error code, but the
-> Linux kernel implementation doesn't return a negative error code, so
-> far.
-> I see it's a copy from a code snipped I suggested which already
-> contained the error :)
-> 
-> Also, it might be safer to use strnlen() instead of strlen() for
-> avoiding a potential out-of-bound access.
-> 
-> 
-> thanks,
-> 
-> Takashi
 
