@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-885758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40E2C33D6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:30:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C24C33D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 668B234C7B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC18B424606
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887CE2153E7;
-	Wed,  5 Nov 2025 03:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2D82459CF;
+	Wed,  5 Nov 2025 03:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dyDMjZCf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PcPGvXc2"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B138F4A;
-	Wed,  5 Nov 2025 03:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90601E5201;
+	Wed,  5 Nov 2025 03:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762313434; cv=none; b=QIF4nmmjAsf9mjCgjmOW4JGOW+EqLhGeRbWsELXqE+DaosOu+OGL2EmOBWwyAReGn1gkLf8YKJIS5EN98XechzK+40Ws7Dgl89JnGhjD5ljMgKovmZI57BYcBBHYRnAVEBX6lr1UcJ3PKb5+IYbBySRRicICu0NllaSAlsoqKPs=
+	t=1762313576; cv=none; b=OScmN5O9bprJdBrDAXWBaqLFwl4xEu352NVIFGg3je6a4vjguUDGR50A0V2qTkg3OTzZx48iC9yoVrc5CWxnNYlamJKUAqwjwjtETnUJu+lX5SzXoBUW6sNseNJmnidFpzKMOR0R+Bj/vAf68zBbx5SDLEYuA5RzpiKB/ATIjAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762313434; c=relaxed/simple;
-	bh=eT3BZi+5sPqFB4z9Rk311qAkkCUr6WTNyCKVTm1XJE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KgbTMX4H5AQKJvJ9b5RvtaKG4nLC06Qj8cknOaw2aV6YqyQSsQqeIvGtQcE6Af9Y/dCjHg3MoxcZy6zyP5Wh4rWRzCYsdqaTftRZzGuyn9zNpVQ+4J6Eb8n8ppgdxg3WV+iEQk7x1ZxG9qFrf6FFdEnM3/gBJLNITByWqkEhHIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dyDMjZCf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762313428;
-	bh=NoX0TaXICTAckgNWU+qmhek9oO8LZUr7AiAd0doE5r0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dyDMjZCfyJXUBWTyRUhKeRYT0xH3sJ+Q3TaJAhCEQnI1/LMeNnz8oaxSOShnakCuU
-	 OaItlP9UiOGgylw6sipbngNWVKBLnDK65K/qfR6oYTatA40SP9JGQ7OcJcRlmQAcba
-	 QsjLRRV4sU2ep9HYYRpVSMFUQvzx4Vmn7enaX6AYBjJXIn+kWxZBKrLycpxAfYYbAr
-	 8Ax9mntjbGI7UiAJbd/R9+n++WFOGcFtw2hhUUETUiD3XgPWTq5RyUKQoOJvyXc6XV
-	 e7k/H3Ra3Ojb+0oGmZSAJ6TCuJkSq6Z65VUAh4AlJizC9WpVVX7fKMduzKg4wuycA9
-	 IrMqgduto7LFg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1762313576; c=relaxed/simple;
+	bh=IPnb7zLnABNQF7s3ZwkGaoLjOxdUPD3X6hd4dt5J8t4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cCj/JkRUPd12Qz0j5kqHUNwHyfv7IWzhrnTSVNvm29dwoSrOVlcU3bXy/oE0AMNapFk8vqD1OkzFcJtxAZAt/2uXnRRzbHA0fATjAcr9PlXgaK5pgKEqnsTh+5CjFuUT3qwXDBklz3ajWfWC+LHz8PTKwBge/tbZl57C8x1iEDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PcPGvXc2; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762313572;
+	bh=IPnb7zLnABNQF7s3ZwkGaoLjOxdUPD3X6hd4dt5J8t4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=PcPGvXc24uEikLV2E/6UA9e7te6H8dR7wRuRzVokSRmDsUEHZf7On9JBsET81Qds6
+	 6zZFz8kIZ1/Pln64OnKNw6uU/aEEHuM0uXavkK39UBC/Q+Xxn/vT18vnw+cPKSunLv
+	 4Ahj6m4LHrMPHTs7T0peL8GU7Pl72+lp95+cL8Vk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d1W6r4BYHz4w0L;
-	Wed, 05 Nov 2025 14:30:28 +1100 (AEDT)
-Date: Wed, 5 Nov 2025 14:30:27 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: new objtool warnings
-Message-ID: <20251105143027.214f491c@canb.auug.org.au>
-In-Reply-To: <20251103093804.GY3245006@noisy.programming.kicks-ass.net>
-References: <20251031111515.09c9a4ed@canb.auug.org.au>
-	<20251103091006.GV3245006@noisy.programming.kicks-ass.net>
-	<20251103203256.5ac39302@canb.auug.org.au>
-	<20251103093804.GY3245006@noisy.programming.kicks-ass.net>
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 9885A1C0311;
+	Tue, 04 Nov 2025 22:32:52 -0500 (EST)
+Message-ID: <a8a5b95e06e2d5d1c04aab8933f25cd07903a3e8.camel@HansenPartnership.com>
+Subject: Re: [PATCH] Documentation: tpm: tpm-security: Demote "Null Primary
+ Key Certification in Userspace" section
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>,  Linux Integrity
+ <linux-integrity@vger.kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jason Gunthorpe
+	 <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>
+Date: Tue, 04 Nov 2025 22:32:50 -0500
+In-Reply-To: <aQqvEsdoj0El2Dq4@archie.me>
+References: <20251104131312.23791-1-bagasdotme@gmail.com>
+	 <50acd6bfbc8b9006bef5d7d0376b7ce4ab35f94c.camel@HansenPartnership.com>
+	 <aQqvEsdoj0El2Dq4@archie.me>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-xbEXTed3K2avN912VLcX"
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3sk+RQrI_4wm/uJ7qnL=.54";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/3sk+RQrI_4wm/uJ7qnL=.54
-Content-Type: text/plain; charset=US-ASCII
+
+--=-xbEXTed3K2avN912VLcX
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
-
-On Mon, 3 Nov 2025 10:38:04 +0100 Peter Zijlstra <peterz@infradead.org> wro=
-te:
->
-> On Mon, Nov 03, 2025 at 08:32:56PM +1100, Stephen Rothwell wrote:
+On Wed, 2025-11-05 at 08:57 +0700, Bagas Sanjaya wrote:
+> On Tue, Nov 04, 2025 at 09:55:08AM -0500, James Bottomley wrote:
+> > On Tue, 2025-11-04 at 20:13 +0700, Bagas Sanjaya wrote:
+> > > The last section heading in TPM security docs is formatted as
+> > > title heading instead. As such, it shows up as TPM toctree entry.
+> > > Demote it to section heading as appropriate.
 > >=20
-> > On Mon, 3 Nov 2025 10:10:06 +0100 Peter Zijlstra <peterz@infradead.org>=
- wrote: =20
-> > >
-> > > On Fri, Oct 31, 2025 at 11:15:15AM +1100, Stephen Rothwell wrote: =20
-> > > >=20
-> > > > My x86_64 allmodconfig builds started producing these warnings toda=
-y:
-> > > >=20
-> > > > vmlinux.o: warning: objtool: user_exc_vmm_communication+0x15a: call=
- to __kasan_check_read() leaves .noinstr.text section
-> > > > vmlinux.o: warning: objtool: exc_debug_user+0x182: call to __kasan_=
-check_read() leaves .noinstr.text section
-> > > > vmlinux.o: warning: objtool: exc_int3+0x123: call to __kasan_check_=
-read() leaves .noinstr.text section
-> > > > vmlinux.o: warning: objtool: noist_exc_machine_check+0x17a: call to=
- __kasan_check_read() leaves .noinstr.text section
-> > > > vmlinux.o: warning: objtool: fred_exc_machine_check+0x17e: call to =
-__kasan_check_read() leaves .noinstr.text section
-> > > >=20
-> > > > I can't easily tell what caused this change, sorry.   =20
-> > >=20
-> > > What compiler? This smells like a broken compiler, these are all
-> > > noinstr and that very much has __no_sanitize_address. =20
-> >=20
-> > And today I didn't get them.  So who knows?  I did *not* change compiler
-> > since Friday. =20
+> > It's supposed to be a separate heading.=C2=A0 It's explaining how to
+> > certify your booted kernel rather than describing TPM security
+> > within the kernel.
 >=20
-> Oh well, lets chalk it up to gremlins for now. I'll have a look if it
-> happens again/reliably.
+> Should I keep the whole section as-is or should I move it to separate
+> docs?
 
-These objtool messages have returned today.  No change in compiler.
+Why might it need moving?
 
---=20
-Cheers,
-Stephen Rothwell
+Regards,
 
---Sig_/3sk+RQrI_4wm/uJ7qnL=.54
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+James
+
+--=-xbEXTed3K2avN912VLcX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkKxNMACgkQAVBC80lX
-0GwtTQf8DsXHQzbVJC0VmaAERoYUZAqyiMPpLzd/ZP5M0VLXypPJlvgPc/hROpz4
-rP1KSxuL8HdQC+T63QQMUlxWamPOnLndfzAzmELTwHoyTGOBn4M9+6OcrIBkTJ2b
-XogHUXjx1060pDl73PYNHuN4ISxXUskejKOVg1JzkX+ozCQQax9gmQ1iRUzOlA2I
-GKUNjR+UioJeTWdPtHfZcl5ApFq1bKustbJZs6XUI/0gUkv/4yCTgYDNufRRTIoC
-VRLYixTVYMKn5FRACm3RaL1XlUKNk3NV8FKbB8PDcCVXf+p3J0kM6Ddkt2DTWVfu
-eoponhdSqdSOh6fPUW06nfuDCCeyGA==
-=k4Ti
+iJEEABMIADkWIQTnYEDbdso9F2cI+arnQslM7pishQUCaQrFYxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQ50LJTO6YrIUGbQD/dsCSKKgh3brwWK3Ju+BF
+W1yXm+E8hrR6KryuLhKD3UcBALLCeRu/unO3k30Wqws+yQ8e4FbzOY/70RNoX+St
+fHaE
+=U46x
 -----END PGP SIGNATURE-----
 
---Sig_/3sk+RQrI_4wm/uJ7qnL=.54--
+--=-xbEXTed3K2avN912VLcX--
 
