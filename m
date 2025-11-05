@@ -1,164 +1,187 @@
-Return-Path: <linux-kernel+bounces-886015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BCAC3482C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:40:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5184DC34839
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C2E1895B32
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:40:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EDF54E84BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9CA2C11C6;
-	Wed,  5 Nov 2025 08:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143EA2D6E5C;
+	Wed,  5 Nov 2025 08:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RKckWx8v"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Im6GYJFp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="39kiMXuo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Im6GYJFp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="39kiMXuo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A7421ADB7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC9E2D2493
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332000; cv=none; b=Svya2S2lA9wgPP3VXsOIG1ucpyxzvvRf7oo1yur+yBCBNs/EQaM15h61jqSEQb3JzhLZk2IrTB1katjnypDg9j0SqVpwdWogaXnar3ewAS0Xz1Rk1LzO4TNvqb82VVPeKH2GXpvmfmZMJIrrZnz5UlpR72uV5VO7LzM+8uDXlrQ=
+	t=1762332069; cv=none; b=qaWlvux0na8eJ74MbKsP2utt1qvir8n+73jZ46q9T+L7lCjIu+bnVZlnIaNUVFvO8YRM86tLAiTUrKMuYXBMFk1q8LYs43dRfiJ25bpYgjP16VYhJv0F1Aie81FEe6c7Ezixomdf/dzEGQrjQljqrAoQBsWCdDVGgOAZsc2SVJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332000; c=relaxed/simple;
-	bh=R/qHXAEVOHE3d1dWBODBSjYaMxmDe0e2rTQH8K7PDFs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=foB9b7UvdxLJHvfoKxm8NxrUmTT8I5ZEv9QnPWdddlri/jdpvpSSV8nvkClceotlKlOohbB9EdeaoeU9wY71bMshCyLhuIlElg1QFw3jIwK8Tk7C/ipHECsQrBa8D7Bmksd1KbDu9il6CECRuQ7sMiLTn8XYx1TnLgBNsoovUMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RKckWx8v; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	s=arc-20240116; t=1762332069; c=relaxed/simple;
+	bh=p2IE8S5iu4o1eFXTxW5Ox2xSl7vHnJRt8M6JCIv+LKQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QeRU6CH6Z+/cgjB4kcX0qoCE8IW0kEpNnwz/Ijo1cz/xzr/Gq6WxT/OiAvDuv+9i30o6pP7x+DWOH3zXV61rhkjWMi64WMggv4ImJxzUxuIGyZ0HqetoYlPXkDlrslbXczALk9JHSsk3tw5r7lQFMvqxaAd+dC2CBMFZHGjG2GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Im6GYJFp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=39kiMXuo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Im6GYJFp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=39kiMXuo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d1dzt5kTRz9vCR;
-	Wed,  5 Nov 2025 09:39:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762331994; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2859221157;
+	Wed,  5 Nov 2025 08:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762332065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yWwJvJiQhpOXo2m19sGkCSOjZ04ykFuMGX6vhFuj3tE=;
-	b=RKckWx8vDdQTusdYmMivfYpC8pyNxVxxyRQaZJGr1jrSW/C3l0nzoM4XYcmW8Cy1J7rC5r
-	HYRjERxE9IwNErXsSuZ6HYdm1VGQweiq4T+z5ezEk5NRT8GgPlMjeH/ESD2P6nNAkIhqjd
-	wDCJYEAyMduhm1TPBf0SIV+qSECt8/H5bm1x/UiArma2hA+Eo3tvgJaAcE7/0hwRhg+VGH
-	S82Y2vOPgnk+JxHKpJ8yc34csNtsmbj3HX3APcn9rYv9oDJKCgGITFE70aKz080LL/C4Au
-	Uum9s4JpN6OR1jMthMT0zlERq48Mpt4MRjvHs993szUW2H68wM8ogY4WnwsF5A==
-Message-ID: <7808bc5fcac1236640f481733d1c8aaaf8accb02.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: replace use of system_wq with
- system_percpu_wq
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Marco Crivellari <marco.crivellari@suse.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>,  Michal Hocko <mhocko@suse.com>, Matthew Brost
- <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Philipp
- Stanner <phasta@kernel.org>, Christian Konig
- <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Date: Wed, 05 Nov 2025 09:39:46 +0100
-In-Reply-To: <20251104165209.309545-1-marco.crivellari@suse.com>
-References: <20251104165209.309545-1-marco.crivellari@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	bh=mSMYe//EOTaLznd/zZzMEH7S+N9AWhw/FeUS4JtYOjk=;
+	b=Im6GYJFpEjVy3aqg9Yy+ZYQTt6MhUfSr2oNkIczxDasVmCXUJ8u8fRN+K32jUQeKIDLU/a
+	adasQF9ELp4MwRS8NfHfVkY/+t+jNBsmazMeWPJoPXp+OlivmotpUy33FfoBNTosKsc8vt
+	UzQuTPDW/e6zzxnPHuz5lxjzx44OidI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762332065;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mSMYe//EOTaLznd/zZzMEH7S+N9AWhw/FeUS4JtYOjk=;
+	b=39kiMXuojVbZHzl+l0O1pOzhSjUcMY7v02uLiUY6ESmjQo5TtT9J2zbmq5jwk1+vv23bQb
+	9UyF7TOEokNBpsDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762332065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mSMYe//EOTaLznd/zZzMEH7S+N9AWhw/FeUS4JtYOjk=;
+	b=Im6GYJFpEjVy3aqg9Yy+ZYQTt6MhUfSr2oNkIczxDasVmCXUJ8u8fRN+K32jUQeKIDLU/a
+	adasQF9ELp4MwRS8NfHfVkY/+t+jNBsmazMeWPJoPXp+OlivmotpUy33FfoBNTosKsc8vt
+	UzQuTPDW/e6zzxnPHuz5lxjzx44OidI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762332065;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mSMYe//EOTaLznd/zZzMEH7S+N9AWhw/FeUS4JtYOjk=;
+	b=39kiMXuojVbZHzl+l0O1pOzhSjUcMY7v02uLiUY6ESmjQo5TtT9J2zbmq5jwk1+vv23bQb
+	9UyF7TOEokNBpsDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9A7713699;
+	Wed,  5 Nov 2025 08:41:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t9/GN6ANC2koawAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 05 Nov 2025 08:41:04 +0000
+Date: Wed, 05 Nov 2025 09:41:04 +0100
+Message-ID: <87qzuchnxb.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: moonafterrain@outlook.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Yuhao Jiang <danisjiang@gmail.com>
+Subject: Re: [PATCH] ALSA: wavefront: Fix use-after-free in MIDI operations
+In-Reply-To: <SYBPR01MB78812BAD18C71593392C2C31AFC4A@SYBPR01MB7881.ausprd01.prod.outlook.com>
+References: <SYBPR01MB78812BAD18C71593392C2C31AFC4A@SYBPR01MB7881.ausprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MBO-RS-META: 6798g4q11qanmdn67zdf7c735ufzcbt6
-X-MBO-RS-ID: ca2565784354206ff6b
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[outlook.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,outlook.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,vger.kernel.org,gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[outlook.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-nit: s/replace/Replace
+On Tue, 04 Nov 2025 15:11:55 +0100,
+moonafterrain@outlook.com wrote:
+> 
+> From: Junrui Luo <moonafterrain@outlook.com>
+> 
+> Clear substream pointers in close functions to prevent use-after-free
+> when timer callbacks or interrupt handlers access them after close.
 
-On Tue, 2025-11-04 at 17:52 +0100, Marco Crivellari wrote:
-> Currently if a user enqueue a work item using schedule_delayed_work() the
+There can be no actual access done because MPU401_MODE_INPUT_TRIGGER
+is guaranteed to be off before closing the stream.  That is, the
+variable stream is assigned to an old pointer, but it's not accessed.
+So, this is not really a use-after-free bug, per se.
 
-s/enqueue/enqueues
+Other than that, the fix itself looks good.  Please resubmit after
+rephrasing the patch description.
 
-Also: maybe start the sentence with something like "In the general
-workqueue implementation, if a user [=E2=80=A6]". Otherwise it at first rea=
-ds
-as if we're talking about a drm/sched user here.
 
-In general, the commit message should focus more on drm/sched. See
-below, too.
+thanks,
 
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
->=20
-> This lack of consistentcy cannot be addressed without refactoring the API=
-.
->=20
-> This patch continues the effort to refactor worqueue APIs, which has begu=
-n
-> with the change introducing new workqueues and a new alloc_workqueue flag=
-:
->=20
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+Takashi
 
-From my POV it would be enough if you provide these commits in this
-commit message and maybe a Link: to the overall discussion in the
-workqueue subsystem / implementation.
 
-You can give the details above if you want, but I think drm/sched
-doesn't care too much about them. The drm/sched users who really care
-about the timeout_wq's exact behavior use one they allocate themselves
-anyways.
-
->=20
-> system_wq should be the per-cpu workqueue, yet in this name nothing makes
-> that clear, so replace system_wq with system_percpu_wq.
->=20
-> The old wq (system_wq) will be kept for a few release cycles.
-
-Please state in your commit message what you're actually doing to
-drm/sched. Like:
-
-"Use the successor of system_wq, system_percpu_wq, for the scheduler's
-default timeout_wq. system_wq will be removed in a few release cycles."
-
->=20
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+> Reported-by: Junrui Luo <moonafterrain@outlook.com>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Junrui Luo <moonafterrain@outlook.com>
 > ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
-eduler/sched_main.c
-> index c39f0245e3a9..13192e99637a 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,=
- const struct drm_sched_init_
-> =C2=A0	sched->name =3D args->name;
-> =C2=A0	sched->timeout =3D args->timeout;
-> =C2=A0	sched->hang_limit =3D args->hang_limit;
-> -	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_wq;
-> +	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_perc=
-pu_wq;
-
-Actual change looks fine by me.
-
-
-Thanks for your patch,
-P.
-
-> =C2=A0	sched->score =3D args->score ? args->score : &sched->_score;
-> =C2=A0	sched->dev =3D args->dev;
-> =C2=A0
-
+>  sound/isa/wavefront/wavefront_midi.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/sound/isa/wavefront/wavefront_midi.c b/sound/isa/wavefront/wavefront_midi.c
+> index 1250ecba659a..69d87c4cafae 100644
+> --- a/sound/isa/wavefront/wavefront_midi.c
+> +++ b/sound/isa/wavefront/wavefront_midi.c
+> @@ -278,6 +278,7 @@ static int snd_wavefront_midi_input_close(struct snd_rawmidi_substream *substrea
+>  	        return -EIO;
+>  
+>  	guard(spinlock_irqsave)(&midi->open);
+> +	midi->substream_input[mpu] = NULL;
+>  	midi->mode[mpu] &= ~MPU401_MODE_INPUT;
+>  
+>  	return 0;
+> @@ -300,6 +301,7 @@ static int snd_wavefront_midi_output_close(struct snd_rawmidi_substream *substre
+>  	        return -EIO;
+>  
+>  	guard(spinlock_irqsave)(&midi->open);
+> +	midi->substream_output[mpu] = NULL;
+>  	midi->mode[mpu] &= ~MPU401_MODE_OUTPUT;
+>  	return 0;
+>  }
+> -- 
+> 2.51.1.dirty
+> 
 
