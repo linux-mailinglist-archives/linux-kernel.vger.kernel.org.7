@@ -1,99 +1,71 @@
-Return-Path: <linux-kernel+bounces-885948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D12C3459C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:51:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DCDC345C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51646465E8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9372D4224E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB452D6E73;
-	Wed,  5 Nov 2025 07:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1AE2D3739;
+	Wed,  5 Nov 2025 07:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="KUTsAUSv"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kKSUZjOz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4872C21E5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2012BEFEF;
+	Wed,  5 Nov 2025 07:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762329003; cv=none; b=nqebWOhLy46dzFVf9cI4Srh+5esnA24Koa5I+4+/ux36JLY92efdIJsiy4OLDDsdv4uUMOLIV/dfSdONRZYqjTRkJCW3iUEg1W9KOYUJ+oPGMqNIw8gMuX4UnGd9NOtWWYF93IGQFlpxMCbO6aV2a8znjaNtSPt/OrCL5lFkSB0=
+	t=1762329158; cv=none; b=JmaT82DszwMiY4mJMCfLj5j/C06SHYkNOwUezXl8//n1Zr0inLjg19NfHOXzUcPgk2YPvFu3GUIKC1TM+/VsK2U/X0Hv1EzxF5LHnXI/HOG+t2tGLIJywuWv29LKzXTvnWMsp2GfZxFiNS0j6mYQ9xsgqpdLuOeXCtadFHCyeVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762329003; c=relaxed/simple;
-	bh=d9ZQQw6oADUCSvtmaACwRX9dnlraJPsGIprhB01RZmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tqxiMSebAo2g8V49p21rXiHcF94RlCnQGWDPDxTHFpKU/yww6eYF2uyRtdFM2wdfnDC+Q4RgifMpFHsKvBWewESR4ZxZGfZzFZDZdwbbR87E1cEsDD3ZxdjUXJnPagcnffQFnhyZBKDlEBF43iaPS/ldETvyyyEEdyLIRlJ73Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=KUTsAUSv; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-295ceaf8dacso30287955ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:50:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762329001; x=1762933801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6ZDRkftaiRuIaXsVQnD3pYoLoBZQe+K8uOwtjlQzE0=;
-        b=KUTsAUSvAybNmxW+w/6W047A16WFq8fql4aKH9Qq7WZxPqH/VA1BWPJRpYeIHKAr08
-         oPqkxRktV3vi21CDWYS4drscHMV8x782omwy+ibmdS86nsmiW70ba6lwqh10HROMdfMJ
-         oYUeMWW5iVm3c6IqcY6HIu7OaOs9EZHthKXW2DwSlpd/JNGY+Y/suVwAYTCUayYd8Mt1
-         DKSBuTWwtj+GzEF9bm7XfSLocB4mMP4CW/O5JWGSxtnW6L8cuiSlKZD8vQ5OEtgwcm2L
-         YVn9VsN1lop126W97GhLElBmFdrLF0Vn1g0th4SSglu5zwVvGssnzkzzJJIcp7IFm94N
-         LUXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762329001; x=1762933801;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h6ZDRkftaiRuIaXsVQnD3pYoLoBZQe+K8uOwtjlQzE0=;
-        b=PAbJHBeU0ILiV4yQUFhDWBzUUT3zUumBqFNYs08TdpG72hp0rVep49WX5txik0wL+2
-         YSQLXRCj4Dun5c2c4leBef5rJqrxlHSH01mIfrJ9CEL+EMb9vj+aooQCGof7jfclGAPH
-         w5Yyk9Ylws3aKVc6ixoc830IPJ4llZH4yT10pRsI62h9oFLVmO/IvhjVjl+fxt0NlSYx
-         YA2LuvzUA7daqVAKANrsY1kEw3wkMfwjUgbBoKCW6gbvHvYp39iYlYCwGIy0SIqKQCBr
-         Rv6AiO+XNrw0M2U0LXdkESpyE4u7gTGLKo0CaA9y5EPFK4+6ybsJ2TNV3Y4ZpudtOvBN
-         jgkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4I1DnArmoh7P2Pv5kELv58dUZY/0p3zTeq7suYCKdqhjxG18LOdbSRc0LJGmZJQZkClMUjdROD6ezMAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycLj8I7hA8LSMPVzHsL2Ri+3sFjZlVA7MzeXX9j21oEOiYNw/Q
-	XcOVePDohJInttaorrpuGq8LqQAeBbd0koEGPL3WlIBno1BY15oG+GLi8XUpQf3tp5A=
-X-Gm-Gg: ASbGncuaeXQHukhGhmBHSY8G9x7/8uJ465RTM2HZkANg94yIr6zqgYxxl6zPC1QSkKT
-	KNwWRoXaHFLHR9J8Vsqp3I6xToLenx9I/GlHnmo4woGQJsMg4QfMHPqfb8FeYREMCcKNvsHpOes
-	dD2McPUYBUXij6qVjqs50LzqxwdvV48Y34tM/8UhMrDnQRinFtWYNRagaVQNnaMAhg/jmTOMsps
-	FPgslyyz68Nq8LMXvqXdZEuDaeuxAhInp4uj64ec1l5TiJ6gpuY0C+njbVH9yo7B6Y5X+I5mazl
-	0uzhqkJGMZAx+1BR17yXumyYDj/ZCu2y++BG7qaRDpxxT4HJJncJ+NuEnc/ITa8BSwXcNYGWfUt
-	rvaaHHE68rQTkbkHCIfLXNFVx1BqwoTXURFP3x/RQh9an2FJB98RJtBDeABqyIdyJOryf6b4Rn+
-	mQedZt9893kmsmlg2L4XwZw8ta
-X-Google-Smtp-Source: AGHT+IHKjbv/6sAUPJqMP9Dl0+FTFfNEli/mX7VCSD5WGbBzuqeNeE5PeGE+njoNMn23lIVIEk6Frg==
-X-Received: by 2002:a17:902:ef49:b0:295:4620:3e18 with SMTP id d9443c01a7336-2962ad2b255mr39869055ad.24.1762328999123;
-        Tue, 04 Nov 2025 23:49:59 -0800 (PST)
-Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd6a10f8fsm5295564b3a.68.2025.11.04.23.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 23:49:58 -0800 (PST)
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-To: linux-mm@kvack.org
-Cc: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	joel.granados@kernel.org,
-	jack@suse.cz,
-	laoar.shao@gmail.com,
-	mclapinski@google.com,
-	kyle.meyer@hpe.com,
-	corbet@lwn.net,
-	lance.yang@linux.dev,
-	leon.huangfu@shopee.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-Date: Wed,  5 Nov 2025 15:49:16 +0800
-Message-ID: <20251105074917.94531-1-leon.huangfu@shopee.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762329158; c=relaxed/simple;
+	bh=AP6iw/C+qSN0VhEoNPlaRqVGq/0omuQEYyq9jskelWo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WYxSI3vqU1AAOEOs79Rm3ShiumcQhn+KyPEB97gihYhIQlrQTvzRX1jVkRoSJRe77CrwuH8FtAJnJc2nBMitcc/RiLZzdeTMeOctqAirUEdNx2qBVc3jtOzy84DEddi/Dlzay1U9eCN5aBfWhORlBUFYamjxuO1Wtd9HtU/x+/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kKSUZjOz; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762329156; x=1793865156;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AP6iw/C+qSN0VhEoNPlaRqVGq/0omuQEYyq9jskelWo=;
+  b=kKSUZjOzED1TmCye/v1WFJ2CnZpO3ou1oZ1qHdRVE/R+E6ljaW9+ueuh
+   q25XXc/pAe2HHQVi2jaEIQ4ciPN/COyFjpEOoYW2US1zhXQDPFiRFNNsO
+   mLlzThOC5cqJxA5SAB/z8DpJeERAxXcDif1dx35ENbJ2+EG7BFDyGUw/H
+   OOZcjcCLA3vmPXyigUIQJNAC4/LDi/sOm64KtSAPuz6m9U+kyARbVHtDk
+   0RE/sjimYJ4HXOM1gtlQhGoH5+ZrZteh1+YUHjVQFKb36shl7hSNaV0/t
+   Pd1/JhISjrjMy1H58P89yuTia9yxJo3ZLwwjk5cHdCddGo/lM6BvGDqIn
+   A==;
+X-CSE-ConnectionGUID: vGo73ZIDT7+RbrhE2gduWw==
+X-CSE-MsgGUID: AnOy/bNYRP6oDyB9RL62Fg==
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="48068506"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:52:35 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Wed, 5 Nov 2025 00:52:24 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 5 Nov 2025 00:52:22 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <UNGLinuxDriver@microchip.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net] lan966x: Fix sleeping in atomic context
+Date: Wed, 5 Nov 2025 08:49:55 +0100
+Message-ID: <20251105074955.1766792-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,191 +73,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On high-core count systems, memory cgroup statistics can become stale
-due to per-CPU caching and deferred aggregation. Monitoring tools and
-management applications sometimes need guaranteed up-to-date statistics
-at specific points in time to make accurate decisions.
+The following warning was seen when we try to connect using ssh to the device.
 
-This patch adds write handlers to both memory.stat and memory.numa_stat
-files to allow userspace to explicitly force an immediate flush of
-memory statistics. When "1" is written to either file, it triggers
-__mem_cgroup_flush_stats(memcg, true), which unconditionally flushes
-all pending statistics for the cgroup and its descendants.
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:575
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 104, name: dropbear
+preempt_count: 1, expected: 0
+INFO: lockdep is turned off.
+CPU: 0 UID: 0 PID: 104 Comm: dropbear Tainted: G        W           6.18.0-rc2-00399-g6f1ab1b109b9-dirty #530 NONE
+Tainted: [W]=WARN
+Hardware name: Generic DT based system
+Call trace:
+ unwind_backtrace from show_stack+0x10/0x14
+ show_stack from dump_stack_lvl+0x7c/0xac
+ dump_stack_lvl from __might_resched+0x16c/0x2b0
+ __might_resched from __mutex_lock+0x64/0xd34
+ __mutex_lock from mutex_lock_nested+0x1c/0x24
+ mutex_lock_nested from lan966x_stats_get+0x5c/0x558
+ lan966x_stats_get from dev_get_stats+0x40/0x43c
+ dev_get_stats from dev_seq_printf_stats+0x3c/0x184
+ dev_seq_printf_stats from dev_seq_show+0x10/0x30
+ dev_seq_show from seq_read_iter+0x350/0x4ec
+ seq_read_iter from seq_read+0xfc/0x194
+ seq_read from proc_reg_read+0xac/0x100
+ proc_reg_read from vfs_read+0xb0/0x2b0
+ vfs_read from ksys_read+0x6c/0xec
+ ksys_read from ret_fast_syscall+0x0/0x1c
+Exception stack(0xf0b11fa8 to 0xf0b11ff0)
+1fa0:                   00000001 00001000 00000008 be9048d8 00001000 00000001
+1fc0: 00000001 00001000 00000008 00000003 be905920 0000001e 00000000 00000001
+1fe0: 0005404c be9048c0 00018684 b6ec2cd8
 
-The write operation validates the input and only accepts the value "1",
-returning -EINVAL for any other input.
+It seems that we are using a mutex in a atomic context which is wrong.
+Change the mutex with a spinlock.
 
-Usage example:
-  # Force immediate flush before reading critical statistics
-  echo 1 > /sys/fs/cgroup/mygroup/memory.stat
-  cat /sys/fs/cgroup/mygroup/memory.stat
-
-This provides several benefits:
-
-1. On-demand accuracy: Tools can flush only when needed, avoiding
-   continuous overhead
-
-2. Targeted flushing: Allows flushing specific cgroups when precision
-   is required for particular workloads
-
-3. Integration flexibility: Monitoring scripts can decide when to pay
-   the flush cost based on their specific accuracy requirements
-
-The implementation is shared between cgroup v1 and v2 interfaces,
-with memory_stat_write() providing the common validation and flush
-logic. Both memory.stat and memory.numa_stat use the same write
-handler since they both benefit from forcing accurate statistics.
-
-Documentation is updated to reflect that these files are now read-write
-instead of read-only, with clear explanation of the write behavior.
-
-Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
+Fixes: 12c2d0a5b8e2 ("net: lan966x: add ethtool configuration and statistics")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 ---
-v1 -> v2:
-  - Flush stats when write the file (per Michal).
-  - https://lore.kernel.org/linux-mm/20251104031908.77313-1-leon.huangfu@shopee.com/
+ .../microchip/lan966x/lan966x_ethtool.c        | 18 +++++++++---------
+ .../ethernet/microchip/lan966x/lan966x_main.c  |  2 --
+ .../ethernet/microchip/lan966x/lan966x_main.h  |  4 ++--
+ .../microchip/lan966x/lan966x_vcap_impl.c      |  8 ++++----
+ 4 files changed, 15 insertions(+), 17 deletions(-)
 
- Documentation/admin-guide/cgroup-v2.rst | 31 +++++++++++++++++--------
- mm/memcontrol-v1.c                      |  2 ++
- mm/memcontrol-v1.h                      |  1 +
- mm/memcontrol.c                         | 13 +++++++++++
- 4 files changed, 37 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 3345961c30ac..2a4a81d2cc2f 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1337,7 +1337,7 @@ PAGE_SIZE multiple when read back.
- 	cgroup is within its effective low boundary, the cgroup's
- 	memory won't be reclaimed unless there is no reclaimable
- 	memory available in unprotected cgroups.
--	Above the effective low	boundary (or
-+	Above the effective low	boundary (or
- 	effective min boundary if it is higher), pages are reclaimed
- 	proportionally to the overage, reducing reclaim pressure for
- 	smaller overages.
-@@ -1525,11 +1525,17 @@ The following nested keys are defined.
- 	generated on this file reflects only the local events.
-
-   memory.stat
--	A read-only flat-keyed file which exists on non-root cgroups.
-+	A read-write flat-keyed file which exists on non-root cgroups.
-
--	This breaks down the cgroup's memory footprint into different
--	types of memory, type-specific details, and other information
--	on the state and past events of the memory management system.
-+	Reading this file breaks down the cgroup's memory footprint into
-+	different types of memory, type-specific details, and other
-+	information on the state and past events of the memory management
-+	system.
-+
-+	Writing the value "1" to this file forces an immediate flush of
-+	memory statistics for this cgroup and its descendants, improving
-+	the accuracy of subsequent reads. Any other value will result in
-+	an error.
-
- 	All memory amounts are in bytes.
-
-@@ -1786,11 +1792,16 @@ The following nested keys are defined.
- 		cgroup is mounted with the memory_hugetlb_accounting option).
-
-   memory.numa_stat
--	A read-only nested-keyed file which exists on non-root cgroups.
-+	A read-write nested-keyed file which exists on non-root cgroups.
-+
-+	Reading this file breaks down the cgroup's memory footprint into
-+	different types of memory, type-specific details, and other
-+	information per node on the state of the memory management system.
-
--	This breaks down the cgroup's memory footprint into different
--	types of memory, type-specific details, and other information
--	per node on the state of the memory management system.
-+	Writing the value "1" to this file forces an immediate flush of
-+	memory statistics for this cgroup and its descendants, improving
-+	the accuracy of subsequent reads. Any other value will result in
-+	an error.
-
- 	This is useful for providing visibility into the NUMA locality
- 	information within an memcg since the pages are allowed to be
-@@ -2173,7 +2184,7 @@ of the two is enforced.
-
- cgroup writeback requires explicit support from the underlying
- filesystem.  Currently, cgroup writeback is implemented on ext2, ext4,
--btrfs, f2fs, and xfs.  On other filesystems, all writeback IOs are
-+btrfs, f2fs, and xfs.  On other filesystems, all writeback IOs are
- attributed to the root cgroup.
-
- There are inherent differences in memory and writeback management
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 6eed14bff742..8cab6b52424b 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -2040,6 +2040,7 @@ struct cftype mem_cgroup_legacy_files[] = {
- 	{
- 		.name = "stat",
- 		.seq_show = memory_stat_show,
-+		.write_u64 = memory_stat_write,
- 	},
- 	{
- 		.name = "force_empty",
-@@ -2078,6 +2079,7 @@ struct cftype mem_cgroup_legacy_files[] = {
- 	{
- 		.name = "numa_stat",
- 		.seq_show = memcg_numa_stat_show,
-+		.write_u64 = memory_stat_write,
- 	},
- #endif
- 	{
-diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
-index 6358464bb416..1c92d58330aa 100644
---- a/mm/memcontrol-v1.h
-+++ b/mm/memcontrol-v1.h
-@@ -29,6 +29,7 @@ void drain_all_stock(struct mem_cgroup *root_memcg);
- unsigned long memcg_events(struct mem_cgroup *memcg, int event);
- unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
- int memory_stat_show(struct seq_file *m, void *v);
-+int memory_stat_write(struct cgroup_subsys_state *css, struct cftype *cft, u64 val);
-
- void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
- struct mem_cgroup *mem_cgroup_id_get_online(struct mem_cgroup *memcg);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c34029e92bab..d6a5d872fbcb 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4531,6 +4531,17 @@ int memory_stat_show(struct seq_file *m, void *v)
- 	return 0;
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_ethtool.c b/drivers/net/ethernet/microchip/lan966x/lan966x_ethtool.c
+index 2474dfd330f46..fe4e614052840 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_ethtool.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_ethtool.c
+@@ -294,7 +294,7 @@ static void lan966x_stats_update(struct lan966x *lan966x)
+ {
+ 	int i, j;
+ 
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 
+ 	for (i = 0; i < lan966x->num_phys_ports; i++) {
+ 		uint idx = i * lan966x->num_stats;
+@@ -310,7 +310,7 @@ static void lan966x_stats_update(struct lan966x *lan966x)
+ 		}
+ 	}
+ 
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
  }
-
-+int memory_stat_write(struct cgroup_subsys_state *css, struct cftype *cft, u64 val)
-+{
-+	if (val != 1)
-+		return -EINVAL;
-+
-+	if (css)
-+		css_rstat_flush(css);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_NUMA
- static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
- 						     int item)
-@@ -4666,11 +4677,13 @@ static struct cftype memory_files[] = {
- 	{
- 		.name = "stat",
- 		.seq_show = memory_stat_show,
-+		.write_u64 = memory_stat_write,
- 	},
- #ifdef CONFIG_NUMA
- 	{
- 		.name = "numa_stat",
- 		.seq_show = memory_numa_stat_show,
-+		.write_u64 = memory_stat_write,
- 	},
- #endif
- 	{
---
-2.51.2
+ 
+ static int lan966x_get_sset_count(struct net_device *dev, int sset)
+@@ -365,7 +365,7 @@ static void lan966x_get_eth_mac_stats(struct net_device *dev,
+ 
+ 	idx = port->chip_port * lan966x->num_stats;
+ 
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 
+ 	mac_stats->FramesTransmittedOK =
+ 		lan966x->stats[idx + SYS_COUNT_TX_UC] +
+@@ -416,7 +416,7 @@ static void lan966x_get_eth_mac_stats(struct net_device *dev,
+ 		lan966x->stats[idx + SYS_COUNT_RX_LONG] +
+ 		lan966x->stats[idx + SYS_COUNT_RX_PMAC_LONG];
+ 
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
+ }
+ 
+ static const struct ethtool_rmon_hist_range lan966x_rmon_ranges[] = {
+@@ -442,7 +442,7 @@ static void lan966x_get_eth_rmon_stats(struct net_device *dev,
+ 
+ 	idx = port->chip_port * lan966x->num_stats;
+ 
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 
+ 	rmon_stats->undersize_pkts =
+ 		lan966x->stats[idx + SYS_COUNT_RX_SHORT] +
+@@ -500,7 +500,7 @@ static void lan966x_get_eth_rmon_stats(struct net_device *dev,
+ 		lan966x->stats[idx + SYS_COUNT_TX_SZ_1024_1526] +
+ 		lan966x->stats[idx + SYS_COUNT_TX_PMAC_SZ_1024_1526];
+ 
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
+ 
+ 	*ranges = lan966x_rmon_ranges;
+ }
+@@ -603,7 +603,7 @@ void lan966x_stats_get(struct net_device *dev,
+ 
+ 	idx = port->chip_port * lan966x->num_stats;
+ 
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 
+ 	stats->rx_bytes = lan966x->stats[idx + SYS_COUNT_RX_OCT] +
+ 		lan966x->stats[idx + SYS_COUNT_RX_PMAC_OCT];
+@@ -685,7 +685,7 @@ void lan966x_stats_get(struct net_device *dev,
+ 
+ 	stats->collisions = lan966x->stats[idx + SYS_COUNT_TX_COL];
+ 
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
+ }
+ 
+ int lan966x_stats_init(struct lan966x *lan966x)
+@@ -701,7 +701,7 @@ int lan966x_stats_init(struct lan966x *lan966x)
+ 		return -ENOMEM;
+ 
+ 	/* Init stats worker */
+-	mutex_init(&lan966x->stats_lock);
++	spin_lock_init(&lan966x->stats_lock);
+ 	snprintf(queue_name, sizeof(queue_name), "%s-stats",
+ 		 dev_name(lan966x->dev));
+ 	lan966x->stats_queue = create_singlethread_workqueue(queue_name);
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+index 7001584f1b7a6..47752d3fde0b1 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+@@ -1261,7 +1261,6 @@ static int lan966x_probe(struct platform_device *pdev)
+ 
+ 	cancel_delayed_work_sync(&lan966x->stats_work);
+ 	destroy_workqueue(lan966x->stats_queue);
+-	mutex_destroy(&lan966x->stats_lock);
+ 
+ 	debugfs_remove_recursive(lan966x->debugfs_root);
+ 
+@@ -1279,7 +1278,6 @@ static void lan966x_remove(struct platform_device *pdev)
+ 
+ 	cancel_delayed_work_sync(&lan966x->stats_work);
+ 	destroy_workqueue(lan966x->stats_queue);
+-	mutex_destroy(&lan966x->stats_lock);
+ 
+ 	lan966x_mac_purge_entries(lan966x);
+ 	lan966x_mdb_deinit(lan966x);
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+index 4f75f06883693..eea286c29474f 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+@@ -295,8 +295,8 @@ struct lan966x {
+ 	const struct lan966x_stat_layout *stats_layout;
+ 	u32 num_stats;
+ 
+-	/* workqueue for reading stats */
+-	struct mutex stats_lock;
++	/* lock for reading stats */
++	spinlock_t stats_lock;
+ 	u64 *stats;
+ 	struct delayed_work stats_work;
+ 	struct workqueue_struct *stats_queue;
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c b/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
+index a1471e38d1189..2a37fc1ba4bcd 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
+@@ -403,11 +403,11 @@ static void lan966x_es0_read_esdx_counter(struct lan966x *lan966x,
+ 	u32 counter;
+ 
+ 	id = id & 0xff; /* counter limit */
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 	lan_wr(SYS_STAT_CFG_STAT_VIEW_SET(id), lan966x, SYS_STAT_CFG);
+ 	counter = lan_rd(lan966x, SYS_CNT(LAN966X_STAT_ESDX_GRN_PKTS)) +
+ 		  lan_rd(lan966x, SYS_CNT(LAN966X_STAT_ESDX_YEL_PKTS));
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
+ 	if (counter)
+ 		admin->cache.counter = counter;
+ }
+@@ -417,14 +417,14 @@ static void lan966x_es0_write_esdx_counter(struct lan966x *lan966x,
+ {
+ 	id = id & 0xff; /* counter limit */
+ 
+-	mutex_lock(&lan966x->stats_lock);
++	spin_lock(&lan966x->stats_lock);
+ 	lan_wr(SYS_STAT_CFG_STAT_VIEW_SET(id), lan966x, SYS_STAT_CFG);
+ 	lan_wr(0, lan966x, SYS_CNT(LAN966X_STAT_ESDX_GRN_BYTES));
+ 	lan_wr(admin->cache.counter, lan966x,
+ 	       SYS_CNT(LAN966X_STAT_ESDX_GRN_PKTS));
+ 	lan_wr(0, lan966x, SYS_CNT(LAN966X_STAT_ESDX_YEL_BYTES));
+ 	lan_wr(0, lan966x, SYS_CNT(LAN966X_STAT_ESDX_YEL_PKTS));
+-	mutex_unlock(&lan966x->stats_lock);
++	spin_unlock(&lan966x->stats_lock);
+ }
+ 
+ static void lan966x_vcap_cache_write(struct net_device *dev,
+-- 
+2.34.1
 
 
