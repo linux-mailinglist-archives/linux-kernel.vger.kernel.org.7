@@ -1,462 +1,329 @@
-Return-Path: <linux-kernel+bounces-887090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766A7C37401
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:08:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDF2C3740A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5165E3B1B99
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:03:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CC4F4E133D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D7832D0C6;
-	Wed,  5 Nov 2025 18:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FAF32D0E3;
+	Wed,  5 Nov 2025 18:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtg+HGYO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYYUlkq3"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1C6225408;
-	Wed,  5 Nov 2025 18:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68E433B6D2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762365785; cv=none; b=ETOXbJy1o8BuKD/llByJHq14G0SaH4p5RiCNZaDpNA/7CyVI52zO7MR67acZUXiAj6IK0R9VgqDDk10+gELjjamAmEFJHxrVkPMmVH9eiWNHg4A/i6u0lmqs4NYnTgoS0Iwdk/tPTOj9omHTZ5VB+PED+xkTllpeDBZJQHhRi40=
+	t=1762366289; cv=none; b=T999YLgLAh9SWIQDptgqo10Y0pQd7MNVvfjSApuM65wIXIdMyeFNGZRuIShRP+V2qxw4KwE35OW4yT7/Ab1jhPUowCsjOfY40zE+iSG/TcNbMYmJeEKRKZcgxIhOkrj11I8+VjQQk5GWsGP3B/uONZd9HB+zEEfDwlc0bsxw+nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762365785; c=relaxed/simple;
-	bh=neSGDU255RNQS5Ebldb9NMJGcXmLZPRkci4Eeusewo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pPFETjovxB1270UDCrrvK+1vgpv264ZkcekW23fSzS/JXhdFfi6DXp+RKVgbC/nrKi5lhX1pzMorgFuy91fZ/eT3Tcc0dO05QsvLijLYDlJfLS4By860MadM3sD4JovJqW+7Ze8Rg3k+9DpTtOR9BFoXkjj6q7kzPTyyBmPZUHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtg+HGYO; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762365784; x=1793901784;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=neSGDU255RNQS5Ebldb9NMJGcXmLZPRkci4Eeusewo0=;
-  b=mtg+HGYO9+KykXmFgPFHgIyXVmq+zmp9wHa5H76BpxPmPRqZ5S0GDTE4
-   Tl1kQFGA/VawW54ZSp0tvOwbRWgIn9MrSjnHmQmkTvvmtVrR9pDTrKJv6
-   4APtwdeVQBrDx0IkzLH+X2BKJOLj12mKGUsHL1AWSqzEJDm8a/04NkU8y
-   DPEG3oZjtqnDEIPzPDwEoHLrgGw2zIBO1K9QVC+/CGb5At41lFI7tL6/x
-   GjBGmaK+ovaUBzqL333Jy9ZHNyiuCfXXmiJm/ky9dirkEUnLawymWhJnx
-   u+l3I+aqY9yyi62mpnKPKQZgmT2+1XycXxl2Ktn+r92L+uTqGSQ0gdHkG
-   w==;
-X-CSE-ConnectionGUID: zUfXrs/XS420pcKdCeerPg==
-X-CSE-MsgGUID: gcCUGamTQgGFI0wFVC/Ycg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="68348848"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="68348848"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:03:03 -0800
-X-CSE-ConnectionGUID: NVqcURMnRxu5KGTce+GcGg==
-X-CSE-MsgGUID: 42FW5LohTNai3JYkRmHRKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="187189515"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.26])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 10:02:58 -0800
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
- Robert Richter <rrichter@amd.com>,
- Cheatham Benjamin <benjamin.cheatham@amd.com>
-Subject:
- Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes on x86
-Date: Wed, 05 Nov 2025 19:02:55 +0100
-Message-ID: <13188657.hb0ThOEGa2@fdefranc-mobl3>
-In-Reply-To: <aOco9dzjzcWJBNYh@aschofie-mobl2.lan>
-References:
- <20251006155836.791418-1-fabio.m.de.francesco@linux.intel.com>
- <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
- <aOco9dzjzcWJBNYh@aschofie-mobl2.lan>
+	s=arc-20240116; t=1762366289; c=relaxed/simple;
+	bh=pIEoMImbfmFv1VQ8NFEqaIHCi19n/tF8mrFzfb2ekJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+zNMqItmU4mOHAHCbiukvqkaSBXlfB0Ev37h9V/ODNwCll/GTWprXUCUf6BqxDYLdTnbGV9KZuad81WvsL+RA0AqBdWJTrV0ltygSMI3Q7rr2U+TTWI8kB1ziOu4Kg4rfZ53sHw6idT7z1ejEHLOij1PlOtoaaWse20DrXSZIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYYUlkq3; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-330b4739538so155895a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:11:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762366285; x=1762971085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kmw/L1MiFhMAbgh9WFlcUnoGsXLmqR25URVgTg+0nQg=;
+        b=aYYUlkq3YPmt8ynjGsnHjMbfZ91gsfeHB/JPV7w+jx+4EcI/TCoZbgqJ49OwGjTfaZ
+         iXESn7xcIFW64QJNDGVNAOhqNiiZLmqD5LKf326/X88+0PPNhMrcise3dI0n886rYPF0
+         OAkn2FNdCXO8kwBdoeb23ZvNVGIeSWjPIZ4qljKAVc67Elg52t87frraPCjiLgAUyGvT
+         61UzNvL9i76Tg+gADYMmzQQt6VD6/xdN9eEQhMi+vZTCEHdWDXWL+G/WIET1hJ0n6i/5
+         Z6hcJDZPYQ3zBDDdezw+D+jgpHFEjJkkZLO5KRKgDDr/FCGYQOho9BuyYfmjlpohHDpw
+         wyVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762366285; x=1762971085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kmw/L1MiFhMAbgh9WFlcUnoGsXLmqR25URVgTg+0nQg=;
+        b=KZJs45peoZztIEY2Z22eiF8k+n4TFgeggKxCp5Jbr3/3MCwB4XdUmeJ/waVGE1MWhP
+         vlTJ+qSyzDvkjSGt7acmYMpp90qVT+W8kb9gPzUdCy7/2cO9H3+Sq1DRr+/iXoLH7wpi
+         P3cohXlQ7su40YBxdecwDpc01j5k3ZR8N+KKtEMnMnsNwGbUI1FkEGjCtgYC7lH2Aces
+         zl736DKGBHKP5mRcgU0o1cHQrX3ABshTNM2WsgWB/HQgCiyzJfxGANbU9VJK7lk2nBu6
+         dKpJg/JPq4Ku+TxbyOTpkUmPjOzNG7OUWUaSXZ8pHhpC0pFGnzAoW+pylG0riVB1rURY
+         aoVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhx5sJBcuvGG0nzONjBfQIZ6E+9dY7TkWbZ6mVGaB2biHaz1Ea6TC4kXJgtdoVDrX0wH7ksiNxkWcwUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvfTRmqDuDh7fP5/dskknyRPjTPu1XmutbteCihEIEBFtimmzz
+	mwJflTDhcD9NDAdKI5HnEcjRxBZJdH1CrPv8vLQhPe4+WF/rLj5WXDL2awOypcJfiUdokepzvas
+	rb5YjhSFoTn65DO+XV5gkWZ6pkKfhnGc=
+X-Gm-Gg: ASbGncu4Yw1WixTB7fKt+UVAGjy2jYpGmEZ5XZHfKC4TZ4m4HX/B9MMsVpTPLdTR+Ag
+	okJxVfU3KNWlcbhSYdiC2BH8GwfyTe0AJOOU8LJHLl6ginY8KPkSPD2UhX27m0+QiXyWz2uxk05
+	H0JUHz6coAbOSRZ48t++uvclmFTxlWlRNkzOdRzcfwPNe8Z2XpJWmJhJvr7b7FjmgiHSCNwCcr7
+	JgwvMBLoo8g5CgouLYeXNyH3O97W+gTHEbISO8VJqFGX/yOb6/xcw9l6TMN
+X-Google-Smtp-Source: AGHT+IE3pH14Mzw70YOzPiLwkuFh1R0gxgX2TyQhNiM9gIVa/WbUBcqZGYOV9py+BA/y6Dd0DdDRlcfIJrEvUnmC9CU=
+X-Received: by 2002:a17:90b:1844:b0:340:c151:2d6c with SMTP id
+ 98e67ed59e1d1-341a6deaf38mr5036226a91.29.1762366285478; Wed, 05 Nov 2025
+ 10:11:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+ <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+ <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
+ <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
+ <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com> <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
+In-Reply-To: <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Nov 2025 10:11:13 -0800
+X-Gm-Features: AWmQ_bkvEnz3AMDh59gnBVByLzHCuD0_tXvTHG5Sqjd27rI1PE_lsl9_xEnYCNA
+Message-ID: <CAEf4Bzb3Eu0J83O=Y4KA-LkzBMjtx7cbonxPzkiduzZ1Pedajg@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
+ search for sorted BTF
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Thursday, October 9, 2025 5:16:05=E2=80=AFAM Central European Standard T=
-ime Alison Schofield wrote:
-> On Mon, Oct 06, 2025 at 05:58:05PM +0200, Fabio M. De Francesco wrote:
-> > On a x86 platform with a low memory hole (LHM), the BIOS may publish
-> > CFMWS that describes a system physical address (SPA) range that
-> > typically is only a subset of the corresponding CXL intermediate switch
-> > and endpoint decoder's host physical address (HPA) ranges. The CFMWS
-> > range never intersects the LHM and so the driver instantiates a root
-> > decoder whose HPA range size doesn't fully contain the matching switch
-> > and endpoint decoders' HPA ranges.[1]
-> >=20
-> > To construct regions and attach decoders, the driver needs to match root
-> > decoders and regions with endpoint decoders. The process fails and
-> > returns errors because the driver is not designed to deal with SPA
-> > ranges which are smaller than the corresponding hardware decoders HPA
-> > ranges.
-> >=20
-> > Introduce two functions that indirectly detect the presence of x86 LMH
-> > and allow the matching between a root decoder or an already constructed
-> > region with a corresponding intermediate switch or endpoint decoder to
-> > enable the construction of a region and the subsequent attachment of the
-> > same decoders to that region.
-> >=20
-> > These functions return true when SPA/HPA misalignments due to LMH's are
-> > detected under specific conditions:
-> >=20
-> > - Both the SPA and HPA ranges must start at LMH_CFMWS_RANGE_START (i.e.,
-> >   0x0 on x86 with LMH's).
-> > - The SPA range's size is less than HPA's.
-> > - The SPA range's size is less than 4G.
-> > - The HPA range's size is aligned to the NIW * 256M rule.
-> >=20
-> > Also introduce a function that adjusts the range end of a region to be
-> > constructed and the DPA range's end of the endpoint decoders that will
-> > be later attached to that region.
->=20
-> Hi Fabio,
->=20
-> Your getting some fresh eyes on some of this with my review.
-> The adjustment of resources is what caught my eye, and I looked at
-> platform_res_adjust() in this patch and it's usage in the next patch.
->=20
-Hi Alison,
-
-Thanks for looking at this version with fresh eyes.=20
-
-As always, your reviews catch details that others miss and go well beyond=20
-what's typical - providing working code and demonstrating the results is=20
-very helpful.
-> >=20
-> > [1] commit 7a81173f3 ("cxl: Documentation/driver-api/cxl: Describe the =
-x86 Low Memory Hole solution")
-> >=20
-> > Cc: Alison Schofield <alison.schofield@intel.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Cc: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/cxl/Kconfig                |  4 ++
-> >  drivers/cxl/core/Makefile          |  1 +
-> >  drivers/cxl/core/platform_quirks.c | 99 ++++++++++++++++++++++++++++++
-> >  drivers/cxl/core/platform_quirks.h | 33 ++++++++++
-> >  4 files changed, 137 insertions(+)
-> >  create mode 100644 drivers/cxl/core/platform_quirks.c
-> >  create mode 100644 drivers/cxl/core/platform_quirks.h
-> >=20
-> > diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> > index 48b7314afdb8..03c0583bc9a3 100644
-> > --- a/drivers/cxl/Kconfig
-> > +++ b/drivers/cxl/Kconfig
-> > @@ -211,6 +211,10 @@ config CXL_REGION
-> > =20
-> >  	  If unsure say 'y'
-> > =20
-> > +config CXL_PLATFORM_QUIRKS
-> > +	def_bool y
-> > +	depends on CXL_REGION
-> > +
->=20
-> Why no help text for the new CONFIG option?
+On Wed, Nov 5, 2025 at 5:48=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.com=
+> wrote:
 >
-Good catch. Below I'll show you the help text I'm thinking to add. =20
+> On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.co=
+m> wrote:
+> >
+> > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
+> > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
+l.com> wrote:
+> > > >
+> > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *=
+btf, __u32 type_id)
+> > > > > >         return type_id;
+> > > > > >  }
+> > > > > >
+> > > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *typ=
+e_name)
+> > > > > > +/*
+> > > > > > + * Find BTF types with matching names within the [left, right]=
+ index range.
+> > > > > > + * On success, updates *left and *right to the boundaries of t=
+he matching range
+> > > > > > + * and returns the leftmost matching index.
+> > > > > > + */
+> > > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf *b=
+tf, const char *name,
+> > > > > > +                                               __s32 *left, __=
+s32 *right)
+> > > > >
+> > > > > I thought we discussed this, why do you need "right"? Two binary
+> > > > > searches where one would do just fine.
+> > > >
+> > > > I think the idea is that there would be less strcmp's if there is a
+> > > > long sequence of items with identical names.
+> > >
+> > > Sure, it's a tradeoff. But how long is the set of duplicate name
+> > > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
+> > > with high likelihood will take more comparisons.
+> >
+> > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sort =
+| uniq -c | sort -k1nr | head
+> >   51737 '(anon)'
+> >     277 'bpf_kfunc'
+> >       4 'long
+> >       3 'perf_aux_event'
+> >       3 'workspace'
+> >       2 'ata_acpi_gtm'
+> >       2 'avc_cache_stats'
+> >       2 'bh_accounting'
+> >       2 'bp_cpuinfo'
+> >       2 'bpf_fastcall'
+> >
+> > 'bpf_kfunc' is probably for decl_tags.
+> > So I agree with you regarding the second binary search, it is not
+> > necessary.  But skipping all anonymous types (and thus having to
+> > maintain nr_sorted_types) might be useful, on each search two
+> > iterations would be wasted to skip those.
+
+fair enough, eliminating a big chunk of anonymous types is useful, let's do=
+ this
+
 >
-> That text will probably answer my next question: why do we have the
-> option?
+> Thank you. After removing the redundant iterations, performance increased
+> significantly compared with two iterations.
 >
-=46or now, PLATFORM_QUIRKS enables only region creation and endpoint
-attachment support on x86 with LMH. In the future, it's intended to be
-selected by other platforms that need quirks.[1]
-
-I think we should allow users to choose whether to enable it - they can
-leave it disabled, or select it if they know it's needed or are unsure
-about potential platform issues. The overhead from running quirks should
-be minimal.
-
-All that said, how about this?
-
-diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-index 03c0583bc9a3..5ab8d5c23187 100644
-=2D-- a/drivers/cxl/Kconfig
-+++ b/drivers/cxl/Kconfig
-@@ -212,8 +212,15 @@ config CXL_REGION
-          If unsure say 'y'
-=20
- config CXL_PLATFORM_QUIRKS
-=2D       def_bool y
-+       bool "CXL: Region Platform Quirks"
-        depends on CXL_REGION
-+       help
-+         Enable support for the following platform quirks:
-+
-+               - Region creation / Endpoint Decoders attach in x86 with Low
-+                 Memory Holes (Documentation/driver-api/cxl/conventions.rs=
-t).
-+
-+         If unsure say 'y'
-=20
- config CXL_REGION_INVALIDATION_TEST
-        bool "CXL: Region Cache Management Bypass (TEST)"
-
->=20
-> I have comments for the callsites of platform_res_adjust() in the next
-> patch, but I'll pull some of that back into this patch to keep it all
-> in one, more logical, place.
->=20
-> There are 2 callsites, and one passes in NULL for 'res' because
-> at that site we know that the regions struct res has been adjusted.
-> I felt that was subtle, and that it may be better to just pass in
-> the 'res' all the time and let the function adjust if needed,
-> ignore if not needed.
+> Test Case: Locate all 58,719 named types in vmlinux BTF
+> Methodology:
+> ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
 >
-I'll implement your suggestion in v6.
-> =20
-> The name platform_res_adjust() suggested that the 'res' as in the
-> region 'res' was getting adjusted. This is adjusting multiple resources
-> - the region resource and the endpoint decoder dpa resource. If it's
-> meant to be kind of opaque, that's ok, but by using _res_ it sure sounds
-> like it's adjusting the the region resource (when viewed from the call si=
-te).
->=20
-> I might have done this in 2 helpers for crispness:
-> res =3D platform_adjust_region_resource()
-> cxled =3D platform_adjust_endpoint_decoder()
->=20
-> Then you could adjust the region resource once when the region
-> is constructed, and the endpoint regions every time in=20
-> cxl_add_to_region().
->=20
-> If you are settled with one adjust routine, perhaps just a=20
-> rename to platform_adjust_resources() will make it sound as
-> broad as it is.
+> Two iterations:
+> | Condition          | Lookup Time | Improvement |
+> |--------------------|-------------|-------------|
+> | Unsorted (Linear)  | 17,282 ms   | Baseline    |
+> | Sorted (Binary)    | 19 ms       | 909x faster |
 >
-I prefer not to introduce more than one platform_adjust_*(), so I'll rename=
-=20
-platform_res_adjust() to platform_adjust_resources().
->=20
-> > +void platform_res_adjust(struct resource *res,
-> > +			 struct cxl_endpoint_decoder *cxled,
-> > +			 const struct cxl_root_decoder *cxlrd)
-> > +{
-> > +	if (!platform_cxlrd_matches_cxled(cxlrd, cxled))
-> > +		return;
-> > +
-> > +	guard(rwsem_write)(&cxl_rwsem.dpa);
-> > +	dev_dbg(cxled_to_memdev(cxled)->dev.parent,
-> > +		"Low Memory Hole detected. Resources were (%s: %pr, %pr)\n",
-> > +		dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> > +	if (res) {
-> > +		/* Trim region resource overlap with LMH */
-> > +		res->end =3D cxlrd->res->end;
-> > +	}
->=20
-> Prefer dev_info so always appears.
-> Prefer to see the region name.
+> One iteration:
+> Results:
+> | Condition          | Lookup Time | Improvement |
+> |--------------------|-------------|-------------|
+> | Unsorted (Linear)  | 17,619 ms   | Baseline    |
+> | Sorted (Binary)    | 10 ms       | 1762x faster |
 >
-Okay to both suggestions.
+> Here is the code implementation with a single iteration approach.
+> I believe this scenario differs from find_linfo because we cannot
+> determine in advance whether the specified type name will be found.
+> Please correct me if I've misunderstood anything, and I welcome any
+> guidance on this matter.
 >
-> I'm guessing the dev_dbg() above and the dev_info() below are written
-> with the idea that we want the before view only in dev_dbg() and the
-> after view only in dev_info().
->=20
-> Looks like this now:
-> [] cxl_core:platform_res_adjust:90: cxl_mock_mem cxl_mem.0: Low Memory Ho=
-le detected. Resources were (decoder12.0: [mem 0x3ff010000000-0x3ff04ffffff=
-f flags 0x200], [mem 0x00000000-0x1fffffff flags 0x80000200])
-> [] cxl_mock_mem cxl_mem.0: Resources have been adjusted for LMH (decoder1=
-2.0: [mem 0x3ff010000000-0x3ff03fffffff flags 0x200], [mem 0x00000000-0x17f=
-fffff flags 0x80000200])
-> [] cxl_core:platform_res_adjust:90: cxl_mock_mem cxl_mem.4: Low Memory Ho=
-le detected. Resources were (decoder13.0: (null), [mem 0x00000000-0x1ffffff=
-f flags 0x80000200])
-> [] cxl_mock_mem cxl_mem.4: Resources have been adjusted for LMH (decoder1=
-3.0: (null), [mem 0x00000000-0x17ffffff flags 0x80000200])
->=20
-> I'll suggest this to emit explicitly what is changing:
-> [] cxl region0: LMH Low memory hole trims region resource [mem 0x3ff01000=
-0000-0x3ff04fffffff flags 0x200] to [mem 0x3ff010000000-0x3ff03fffffff flag=
-s 0x200])
-> [] cxl decoder13.0: LMH Low memory hole trims DPA resource [mem 0x0000000=
-0-0x1fffffff flags 0x80000200] to [mem 0x00000000-0x17ffffff flags 0x800002=
-00])
-> [] cxl decoder17.0: LMH Low memory hole trims DPA resource [mem 0x0000000=
-0-0x1fffffff flags 0x80000200] to [mem 0x00000000-0x17ffffff flags 0x800002=
-00])
+> static __s32 btf_find_type_by_name_bsearch(const struct btf *btf,
+> const char *name,
+>                                                 __s32 start_id)
+> {
+>         const struct btf_type *t;
+>         const char *tname;
+>         __s32 l, r, m, lmost =3D -ENOENT;
+>         int ret;
 >
-I'll make platform_adjust_resources() output the messages you just showed.=
-=20
->=20
-> > +	/* Match endpoint decoder's DPA resource to root decoder's */
-> A 'Match' would be if the the endpoint and root decoder resource were
-> same. This is more of adjustment or recalculation of the DPA length.
->=20
-> > +	cxled->dpa_res->end =3D
-> > +		cxled->dpa_res->start +
-> > +		resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
->=20
-> I'm cautious about the use of division and suggest this as the more
-> bullet-proof kernel style:
->=20
-> 	slice =3D div_u64(resource_size(cxlrd->res), cxled->cxld.interleave_ways=
-);
-> 	cxled->dpa_res->end =3D cxled->dpa_res->start + slice - 1;
->=20
-div_u64() is the safer choice. =20
->=20
-> > +	dev_info(cxled_to_memdev(cxled)->dev.parent,
-> > +		 "Resources have been adjusted for LMH (%s: %pr, %pr)\n",
-> > +		 dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> > +}
->=20
-> Here's the diff showing how I emmited the that messaging above. I really
-> wanted to have that region name to emit. This was done keeping the
-> adjust in one function, but maybe you'll choose to split :)
+>         /* found the leftmost btf_type that matches */
+>         l =3D start_id;
+>         r =3D btf__type_cnt(btf) - 1;
+>         while (l <=3D r) {
+>                 m =3D l + (r - l) / 2;
+>                 t =3D btf_type_by_id(btf, m);
+>                 if (!t->name_off) {
+>                         ret =3D 1;
+>                 } else {
+>                         tname =3D btf__str_by_offset(btf, t->name_off);
+>                         ret =3D !tname ? 1 : strcmp(tname, name);
+>                 }
+>                 if (ret < 0) {
+>                         l =3D m + 1;
+>                 } else {
+>                         if (ret =3D=3D 0)
+>                                 lmost =3D m;
+>                         r =3D m - 1;
+>                 }
+>         }
 >
-Thank you,
+>         return lmost;
+> }
 
-=46abio
+There are different ways to implement this. At the highest level,
+implementation below just searches for leftmost element that has name
+>=3D the one we are searching for. One complication is that such element
+might not event exists. We can solve that checking ahead of time
+whether the rightmost type satisfied the condition, or we could do
+something similar to what I do in the loop below, where I allow l =3D=3D r
+and then if that element has name >=3D to what we search, we exit
+because we found it. And if not, l will become larger than r, we'll
+break out of the loop and we'll know that we couldn't find the
+element. I haven't tested it, but please take a look and if you decide
+to go with such approach, do test it for edge cases, of course.
 
-[1] https://lore.kernel.org/linux-cxl/67ee07cd4f8ec_1c2c6294d5@dwillia2-xfh=
-=2Ejf.intel.com.notmuch/
->=20
-> ---
->  drivers/cxl/core/platform_quirks.c | 32 ++++++++++++++++++------------
->  drivers/cxl/core/platform_quirks.h |  6 ++++--
->  drivers/cxl/core/region.c          | 15 ++++++++------
->  3 files changed, 32 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/cxl/core/platform_quirks.c b/drivers/cxl/core/platfo=
-rm_quirks.c
-> index aecd376f2766..aa25770c088a 100644
-> --- a/drivers/cxl/core/platform_quirks.c
-> +++ b/drivers/cxl/core/platform_quirks.c
-> @@ -81,24 +81,30 @@ EXPORT_SYMBOL_NS_GPL(__platform_region_matches_cxld, =
-"CXL");
-> =20
->  void platform_res_adjust(struct resource *res,
->  			 struct cxl_endpoint_decoder *cxled,
-> -			 const struct cxl_root_decoder *cxlrd)
-> +			 const struct cxl_root_decoder *cxlrd,
-> +			 const struct device *region_dev)
->  {
-> +	struct resource dpa_res_orig =3D *cxled->dpa_res;
-> +	u64 slice;
-> +
->  	if (!platform_cxlrd_matches_cxled(cxlrd, cxled))
->  		return;
-> =20
->  	guard(rwsem_write)(&cxl_rwsem.dpa);
-> -	dev_dbg(cxled_to_memdev(cxled)->dev.parent,
-> -		"Low Memory Hole detected. Resources were (%s: %pr, %pr)\n",
-> -		dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> -	if (res) {
-> -		/* Trim region resource overlap with LMH */
-> +
-> +	/* Region resource will need a trim at first endpoint attach only */
-> +	if ((res) && (res->end !=3D cxlrd->res->end)) {
-> +		dev_info(region_dev,
-> +			 "LMH Low memory hole trims region resource %pr to %pr)\n",
-> +			 res, cxlrd->res);
->  		res->end =3D cxlrd->res->end;
->  	}
-> -	/* Match endpoint decoder's DPA resource to root decoder's */
-> -	cxled->dpa_res->end =3D
-> -		cxled->dpa_res->start +
-> -		resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
-> -	dev_info(cxled_to_memdev(cxled)->dev.parent,
-> -		 "Resources have been adjusted for LMH (%s: %pr, %pr)\n",
-> -		 dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> +
-> +	/* Adjust the endpoint decoder DPA resource end */
-> +	slice =3D div_u64(resource_size(cxlrd->res), cxled->cxld.interleave_way=
-s);
-> +	cxled->dpa_res->end =3D cxled->dpa_res->start + slice - 1;
-> +
-> +	dev_info(&cxled->cxld.dev,
-> +		 "LMH Low memory hole trims DPA resource %pr to %pr)\n",
-> +		 &dpa_res_orig, cxled->dpa_res);
->  }
-> diff --git a/drivers/cxl/core/platform_quirks.h b/drivers/cxl/core/platfo=
-rm_quirks.h
-> index bdea00365dad..55647711cdb4 100644
-> --- a/drivers/cxl/core/platform_quirks.h
-> +++ b/drivers/cxl/core/platform_quirks.h
-> @@ -17,7 +17,8 @@ bool __platform_region_matches_cxld(const struct cxl_re=
-gion_params *p,
->  				    const struct cxl_decoder *cxld);
->  void platform_res_adjust(struct resource *res,
->  			 struct cxl_endpoint_decoder *cxled,
-> -			 const struct cxl_root_decoder *cxlrd);
-> +			 const struct cxl_root_decoder *cxlrd,
-> +			 const struct device *region_dev);
->  #else
->  static inline bool
->  platform_cxlrd_matches_cxled(const struct cxl_root_decoder *cxlrd,
-> @@ -35,7 +36,8 @@ platform_region_matches_cxld(const struct cxl_region_pa=
-rams *p,
-> =20
->  inline void platform_res_adjust(struct resource *res,
->  				struct cxl_endpoint_decoder *cxled,
-> -				const struct cxl_root_decoder *cxlrd)
-> +				const struct cxl_root_decoder *cxlrd,
-> +				const struct device *region_dev);
->  {
->  }
->  #endif /* CONFIG_CXL_PLATFORM_QUIRKS */
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 9a499bfca23d..d4298a61b912 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3502,7 +3502,7 @@ static int __construct_region(struct cxl_region *cx=
-lr,
->  	 * Trim the HPA retrieved from hardware to fit the SPA mapped by the
->  	 * platform
->  	 */
-> -	platform_res_adjust(res, cxled, cxlrd);
-> +	platform_res_adjust(res, cxled, cxlrd, &cxlr->dev);
-> =20
->  	rc =3D cxl_extended_linear_cache_resize(cxlr, res);
->  	if (rc && rc !=3D -EOPNOTSUPP) {
-> @@ -3611,14 +3611,17 @@ int cxl_add_to_region(struct cxl_endpoint_decoder=
- *cxled)
->  	mutex_lock(&cxlrd->range_lock);
->  	struct cxl_region *cxlr __free(put_cxl_region) =3D
->  		cxl_find_region_by_range(cxlrd, cxled);
-> -	if (!cxlr)
-> +	if (!cxlr) {
->  		cxlr =3D construct_region(cxlrd, cxled);
-> -	else
-> +	} else {
->  		/*
-> -		 * Adjust the Endpoint Decoder's dpa_res to fit the Region which
-> -		 * it has to be attached to
-> +		 * Platform adjustments are done in construct_region()
-> +		 * for first target, and here for additional targets.
->  		 */
-> -		platform_res_adjust(NULL, cxled, cxlrd);
-> +		p =3D &cxlr->params;
-> +		platform_res_adjust(p->res, cxled, cxlrd, &cxlr->dev);
-> +	}
-> +
->  	mutex_unlock(&cxlrd->range_lock);
-> =20
->  	rc =3D PTR_ERR_OR_ZERO(cxlr);
-> --=20
-> 2.37.3
->=20
-> >=20
->=20
+/*
+ * We are searching for the smallest r such that type #r's name is >=3D nam=
+e.
+ * It might not exist, in which case we'll have l =3D=3D r + 1.
+ */
+l =3D start_id;
+r =3D btf__type_cnt(btf) - 1;
+while (l < r) {
+    m =3D l + (r - l) / 2;
+    t =3D btf_type_by_id(btf, m);
+    tname =3D btf__str_by_offset(btf, t->name_off);
+
+    if (strcmp(tname, name) >=3D 0) {
+        if (l =3D=3D r)
+            return r; /* found it! */
+        r =3D m;
+    } else {
+        l =3D m + 1;
+    }
+}
+/* here we know given element doesn't exist, return index beyond end of typ=
+es */
+return btf__type_cnt(btf);
 
 
+We could have checked instead whether strcmp(btf__str_by_offset(btf,
+btf__type_by_id(btf, btf__type_cnt() - 1)->name_off), name) < 0 and
+exit early. That's just a bit more code duplication of essentially
+what we do inside the loop, so that if (l =3D=3D r) seems fine to me, but
+I'm not married to this.
 
-
+>
+> static __s32 btf_find_type_by_name_kind(const struct btf *btf, int start_=
+id,
+>                                    const char *type_name, __u32 kind)
+> {
+>         const struct btf_type *t;
+>         const char *tname;
+>         int err =3D -ENOENT;
+>         __u32 total;
+>
+>         if (!btf)
+>                 goto out;
+>
+>         if (start_id < btf->start_id) {
+>                 err =3D btf_find_type_by_name_kind(btf->base_btf, start_i=
+d,
+>                                                  type_name, kind);
+>                 if (err =3D=3D -ENOENT)
+>                         start_id =3D btf->start_id;
+>         }
+>
+>         if (err =3D=3D -ENOENT) {
+>                 if (btf_check_sorted((struct btf *)btf)) {
+>                         /* binary search */
+>                         bool skip_first;
+>                         int ret;
+>
+>                         /* return the leftmost with maching names */
+>                         ret =3D btf_find_type_by_name_bsearch(btf,
+> type_name, start_id);
+>                         if (ret < 0)
+>                                 goto out;
+>                         /* skip kind checking */
+>                         if (kind =3D=3D -1)
+>                                 return ret;
+>                         total =3D btf__type_cnt(btf);
+>                         skip_first =3D true;
+>                         do {
+>                                 t =3D btf_type_by_id(btf, ret);
+>                                 if (btf_kind(t) !=3D kind) {
+>                                         if (skip_first) {
+>                                                 skip_first =3D false;
+>                                                 continue;
+>                                         }
+>                                 } else if (skip_first) {
+>                                         return ret;
+>                                 }
+>                                 if (!t->name_off)
+>                                         break;
+>                                 tname =3D btf__str_by_offset(btf, t->name=
+_off);
+>                                 if (tname && !strcmp(tname, type_name))
+>                                         return ret;
+>                                 else
+>                                         break;
+>                         } while (++ret < total);
+>                 } else {
+>                         /* linear search */
+> ...
+>                 }
+>         }
+>
+> out:
+>         return err;
+> }
 
