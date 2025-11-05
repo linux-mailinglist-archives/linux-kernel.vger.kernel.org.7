@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-886719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E222C36645
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:41:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB54C365BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E8F3B672C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BA41A262FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2A3346A9;
-	Wed,  5 Nov 2025 15:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB23335067;
+	Wed,  5 Nov 2025 15:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c6LuRRBW"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GsIrZWgA"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42204314B8E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45773334698
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355774; cv=none; b=KYxJ2fbOdmcFs0rUAqZ+qJ7xbUK4OX9j47b9sjUXk5S9Lm/b0gZYaXVOoIvfkqT0jMv+U2LFHY0oQncIqJHogPUF0cINjvoH2Zqhxs/kx1RSAaWMqfUOdclWA4Jal+ZCwildtv2At0oVqkCRAiidRbD6DKQwy6q9k581Iie721Q=
+	t=1762355778; cv=none; b=KzNPpAI9OcXjgJAFn65rz/tVV1eHQj+cTHNwpvT4ODhvqCD/TNjkrxYbN4q3ccF8Oo/BnZ5X5Xd53831oOboHrpL1q8F3hT/xUE2k/pPJWybvgav0j7QPim9/WX9ocDOnKVO/dcstnASy3BJI+Cve7fT+tQ2RoKs8CRs/dI8kRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355774; c=relaxed/simple;
-	bh=b4xw3O7UfnfiZD5pTNztiPpsuje/8itnpv5WUO8bWHk=;
+	s=arc-20240116; t=1762355778; c=relaxed/simple;
+	bh=rJTtHrK1MQ6wRfBIm0WngyG0NegtLpRqfoH9sizKqvk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dcJcAc0+os3/iJswDtO1PyP7pXcdKD/HBtaI4DDp5FxCjtTPXEuscilVgsMADYP41Gl65u3dWSweurtXfOL8fqz4kbtwu4Q+fHh8SZnF2CiTOzDw/n+LqDFYjWjX7nTd+sS5Ms/a6V4af/vInuRfLGrFcnCTdiUDg/rvVbIUE5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c6LuRRBW; arc=none smtp.client-ip=95.215.58.183
+	 MIME-Version; b=vGVCgWk45HbX6v+2Z5EvWLAzSNFTqr5TzSEzjHjXFP2YSSr16rkroeRBe5WqeWNhPkdc1ZWPmeFJ4aRy5upH1zFL4pYEUc+tydtxU5btz1SCTX5ErI7FxKyPBxQtdqcozKNQFgLgF3e0zobrZ7LZyh5dK80oZHzspXA3uvKiClo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GsIrZWgA; arc=none smtp.client-ip=95.215.58.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762355769;
+	t=1762355774;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wU180lrRJICTjdwwgpbUzGgOxt6kCHg/rdbuIH1C8eU=;
-	b=c6LuRRBWkmBVXZiiIytDQFBpjqH2rAsY9fwzsKgHqkXXpVyrkbQvdJNo/s3AQc8CUQjdeW
-	i2zW1paLZ3q+RvSMkmAYNznL3FUmJysbU+wptS8EO4TVZDAmcT4esMeSnyRnh/RSfW5G6n
-	ffdba//qJpxl1lDzo9U5ijG5bDF7Yi8=
+	bh=gGk84jQ2XkxWi5Eq+6YQXJlTeelSrNDS1DJNo0IH9Lw=;
+	b=GsIrZWgAELCkW+My7cw2E3qDRz8e36W1QnxgBb5fwGfs3SolTJs1BrJ8/JGQ26Lj90cVHc
+	HVgqDK18YBWL1g47wlW4uyLwltX/vrm32uI8YOAd23FJxChBbds9s+juMP9P3Zq/MM6tn7
+	O4FuGTKksDufPed440ymftsbY6PvfC0=
 From: Leon Hwang <leon.hwang@linux.dev>
 To: bpf@vger.kernel.org
 Cc: ast@kernel.org,
@@ -60,9 +60,9 @@ Cc: ast@kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-patches-bot@fb.com,
 	Leon Hwang <leon.hwang@linux.dev>
-Subject: [PATCH bpf-next v6 1/2] bpf: Free special fields when update [lru_,]percpu_hash maps
-Date: Wed,  5 Nov 2025 23:14:06 +0800
-Message-ID: <20251105151407.12723-2-leon.hwang@linux.dev>
+Subject: [PATCH bpf-next v6 2/2] selftests/bpf: Add test to verify freeing the special fields when update [lru_,]percpu_hash maps
+Date: Wed,  5 Nov 2025 23:14:07 +0800
+Message-ID: <20251105151407.12723-3-leon.hwang@linux.dev>
 In-Reply-To: <20251105151407.12723-1-leon.hwang@linux.dev>
 References: <20251105151407.12723-1-leon.hwang@linux.dev>
 Precedence: bulk
@@ -74,48 +74,159 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-As [lru_,]percpu_hash maps support BPF_KPTR_{REF,PERCPU}, missing
-calls to 'bpf_obj_free_fields()' in 'pcpu_copy_value()' could cause the
-memory referenced by BPF_KPTR_{REF,PERCPU} fields to be held until the
-map gets freed.
+Add test to verify that updating [lru_,]percpu_hash maps decrements
+refcount when BPF_KPTR_REF objects are involved.
 
-Fix this by calling 'bpf_obj_free_fields()' after
-'copy_map_value[,_long]()' in 'pcpu_copy_value()'.
+The tests perform the following steps:
 
-Fixes: 65334e64a493 ("bpf: Support kptrs in percpu hashmap and percpu LRU hashmap")
+1. Call update_elem() to insert an initial value.
+2. Use bpf_refcount_acquire() to increment the refcount.
+3. Store the node pointer in the map value.
+4. Add the node to a linked list.
+5. Probe-read the refcount and verify it is *2*.
+6. Call update_elem() again to trigger refcount decrement.
+7. Probe-read the refcount and verify it is *1*.
+
 Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
 ---
- kernel/bpf/hashtab.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
+ .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
+ 2 files changed, 117 insertions(+)
 
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index f876f09355f0d..c8a9b27f8663b 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -934,15 +934,21 @@ static void free_htab_elem(struct bpf_htab *htab, struct htab_elem *l)
- static void pcpu_copy_value(struct bpf_htab *htab, void __percpu *pptr,
- 			    void *value, bool onallcpus)
- {
-+	void *ptr;
+diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+index d6bd5e16e6372..086f679fa3f61 100644
+--- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
++++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+@@ -44,3 +44,60 @@ void test_refcounted_kptr_wrong_owner(void)
+ 	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
+ 	refcounted_kptr__destroy(skel);
+ }
 +
- 	if (!onallcpus) {
- 		/* copy true value_size bytes */
--		copy_map_value(&htab->map, this_cpu_ptr(pptr), value);
-+		ptr = this_cpu_ptr(pptr);
-+		copy_map_value(&htab->map, ptr, value);
-+		bpf_obj_free_fields(htab->map.record, ptr);
- 	} else {
- 		u32 size = round_up(htab->map.value_size, 8);
- 		int off = 0, cpu;
++void test_percpu_hash_refcounted_kptr_refcount_leak(void)
++{
++	struct refcounted_kptr *skel;
++	int cpu_nr, fd, err, key = 0;
++	struct bpf_map *map;
++	size_t values_sz;
++	u64 *values;
++	LIBBPF_OPTS(bpf_test_run_opts, opts,
++		    .data_in = &pkt_v4,
++		    .data_size_in = sizeof(pkt_v4),
++		    .repeat = 1,
++	);
++
++	cpu_nr = libbpf_num_possible_cpus();
++	if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
++		return;
++
++	values = calloc(cpu_nr, sizeof(u64));
++	if (!ASSERT_OK_PTR(values, "calloc values"))
++		return;
++
++	skel = refcounted_kptr__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
++		free(values);
++		return;
++	}
++
++	values_sz = cpu_nr * sizeof(u64);
++	memset(values, 0, values_sz);
++
++	map = skel->maps.percpu_hash;
++	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
++	if (!ASSERT_OK(err, "bpf_map__update_elem"))
++		goto out;
++
++	fd = bpf_program__fd(skel->progs.percpu_hash_refcount_leak);
++	err = bpf_prog_test_run_opts(fd, &opts);
++	if (!ASSERT_OK(err, "bpf_prog_test_run_opts"))
++		goto out;
++	if (!ASSERT_EQ(opts.retval, 2, "opts.retval"))
++		goto out;
++
++	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
++	if (!ASSERT_OK(err, "bpf_map__update_elem"))
++		goto out;
++
++	fd = bpf_program__fd(skel->progs.check_percpu_hash_refcount);
++	err = bpf_prog_test_run_opts(fd, &opts);
++	ASSERT_OK(err, "bpf_prog_test_run_opts");
++	ASSERT_EQ(opts.retval, 1, "opts.retval");
++
++out:
++	refcounted_kptr__destroy(skel);
++	free(values);
++}
++
+diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+index 893a4fdb4b6e9..1aca85d86aebc 100644
+--- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
++++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+@@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
+ 	return 0;
+ }
  
- 		for_each_possible_cpu(cpu) {
--			copy_map_value_long(&htab->map, per_cpu_ptr(pptr, cpu), value + off);
-+			ptr = per_cpu_ptr(pptr, cpu);
-+			copy_map_value_long(&htab->map, ptr, value + off);
-+			bpf_obj_free_fields(htab->map.record, ptr);
- 			off += size;
- 		}
- 	}
++private(kptr_ref) u64 ref;
++
++static int probe_read_refcount(void)
++{
++	u32 refcount;
++
++	bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
++	return refcount;
++}
++
++static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
++			    struct node_data __kptr **node)
++{
++	struct node_data *node_new, *node_ref, *node_old;
++
++	node_new = bpf_obj_new(typeof(*node_new));
++	if (!node_new)
++		return -1;
++
++	node_ref = bpf_refcount_acquire(node_new);
++	node_old = bpf_kptr_xchg(node, node_new);
++	if (node_old) {
++		bpf_obj_drop(node_old);
++		bpf_obj_drop(node_ref);
++		return -2;
++	}
++
++	bpf_spin_lock(lock);
++	bpf_list_push_front(head, &node_ref->l);
++	ref = (u64)(void *) &node_ref->ref;
++	bpf_spin_unlock(lock);
++	return probe_read_refcount();
++}
++
++struct {
++	__uint(type, BPF_MAP_TYPE_PERCPU_HASH);
++	__type(key, int);
++	__type(value, struct map_value);
++	__uint(max_entries, 1);
++} percpu_hash SEC(".maps");
++
++SEC("tc")
++int percpu_hash_refcount_leak(void *ctx)
++{
++	struct map_value *v;
++	int key = 0;
++
++	v = bpf_map_lookup_elem(&percpu_hash, &key);
++	if (!v)
++		return 0;
++
++	return __insert_in_list(&head, &lock, &v->node);
++}
++
++SEC("tc")
++int check_percpu_hash_refcount(void *ctx)
++{
++	return probe_read_refcount();
++}
++
+ char _license[] SEC("license") = "GPL";
 -- 
 2.51.2
 
