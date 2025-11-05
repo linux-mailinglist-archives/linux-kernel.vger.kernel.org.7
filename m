@@ -1,77 +1,153 @@
-Return-Path: <linux-kernel+bounces-886070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8BB6C34A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:59:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41918C34A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ECA6560D9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:56:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 259FC4FD791
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F472DFA24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157FF2ED848;
 	Wed,  5 Nov 2025 08:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cu6/Vn7f"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ip5xis/3"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0244D2EA479;
-	Wed,  5 Nov 2025 08:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4C82EBDE5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333003; cv=none; b=LbjtTwA7mi/8H2IHhLA8Zbw7mLoHPCYblwCO3ObYNiNTPUnXXSJ3PAnacKYo81Cvq2XzHjZMHtxxM0e50U7bC7br8HwaS9fwWioFsXPtHwcR3vf8FmjdMZcLW6FAhaonKODbIDqXnUz1Id/bs5dvIUbQ/wBCmZ7gCf6IFUoKKsw=
+	t=1762333003; cv=none; b=EzImGU6HkOcRiMdSK7Qn1xdybkeRODz4gNZnF394ZH8ATyten1URqBsXF1QzUPpElXpikgpKugBpVyogoVR5iAer3aD0otY6yt9aS5c868Z1gCj2+TNJJoNsX33kFdtl8QeYgNYK1lt2/zkd2xmcQrILEZjUHq1pgAuqMvd7QUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762333003; c=relaxed/simple;
-	bh=FtZ09HnczsfmJHeK6VIVud5Z/XyydU0A4O4OKqEko4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GM8yjT0+KNTm/jy8PlYrgBmquwRXLkWFTwD1LAGH+YoOIlJ7NL2fjZe4V+1Egf0L+y0SNRbGdyhhI0F4MtlOBjyfBLWjeUVOxCgNJUwbEmFF7fbyKH8Fca2VKpgjmA1j1Jv722YJxJzAqLDRz3pv/EfG1AUyFTC/ity7kbW8UZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cu6/Vn7f; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DNtjIJAbQBBDXsPnvWJF1LFx1X0S2xH9jOEKzFxstX8=; b=cu6/Vn7fJHea1LIJw+1AtjP3/M
-	QJoCbtTtTox9zQOTmbiBjmOP4hGZlDg3vWhfigaPMzCOTgjWDhZpbZOs1qhPPuOdPJvJuGwtDCfYU
-	TlJ9MaJJbFtBLXySkUxy75819eLf29UAUerzwaziMOxxGek3Cj7u9p4JmMa7UlpJv4VYWmpgi8Jxk
-	PeGce4n8G1uV/Es4lKUfx4bUZLal44tMwMUtpkAisCLSSciPtz9SLNnW4I7vhVJxpm2iC97dLsIPR
-	OaMJYn7JdaLGALdsADnNIr9W+2hSjS3QZlM1/IMNfu0NhlS3/PouT+6fwN4Df6Pci+L0Mzb4tN3b4
-	QFeDEodg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGYS5-00000001fyW-0AEF;
-	Wed, 05 Nov 2025 08:01:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 308BA300230; Wed, 05 Nov 2025 09:56:37 +0100 (CET)
-Date: Wed, 5 Nov 2025 09:56:37 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: new objtool warnings
-Message-ID: <20251105085637.GO4067720@noisy.programming.kicks-ass.net>
-References: <20251031111515.09c9a4ed@canb.auug.org.au>
- <20251103091006.GV3245006@noisy.programming.kicks-ass.net>
- <20251103203256.5ac39302@canb.auug.org.au>
- <20251103093804.GY3245006@noisy.programming.kicks-ass.net>
- <20251105143027.214f491c@canb.auug.org.au>
+	bh=kBp4Td7c7VXvdJdflYb0aWyuRBLxQrptcQOf2UCMU7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F4rC5dTjwE6mFOjmX6XDX/jznaJyf7T9/4txQK5pIMyrqlLSJcqg98aqLenLJPsT22s0x4WznwtzctzsJ5OyO+dx0m1c7+oddmpEe/kO4+hRjfutO5CX6H0cbEy/ToRlXc7wfaFx2H4RAmaVnAu7ECSW93q8GahC+rQGRGuPu5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ip5xis/3; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762332999;
+	bh=kBp4Td7c7VXvdJdflYb0aWyuRBLxQrptcQOf2UCMU7E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ip5xis/3G2I0Atgv3TPwLeesXyCBzCZNyX+tpF7mDwEnOSEI7RG+vQw6lE0wIsUds
+	 6nxpdrDz7CnDqSmUkkqb2m9Ib6xPz2+QIbC4xVPRQLPM+kUHNmx0jqZspwjornd4sY
+	 xmY9Jwl6MATfCL+9bVf1V3YNiNiNccGUeD71BH09hM1SOFT5oYwiVTDLc6gLjQnvfC
+	 cyIIbsTGTavWkn0c449imX25A/VBZurd9QnrdHLfhfEtJJs32R7eCK4Wehz3K0eYRL
+	 f3kuDzDiSuQ3RmSsg75OqlGnh7fi3r8Y7VH5zaW+H1/fXPoL63bCUS/eqy/RzfPOkI
+	 fiRJtfvCT3feg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EBD3B17E12AA;
+	Wed,  5 Nov 2025 09:56:38 +0100 (CET)
+Message-ID: <7d67d78e-3d97-4551-8fde-01667f2ca260@collabora.com>
+Date: Wed, 5 Nov 2025 09:56:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105143027.214f491c@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re:
+To: "niklaus.liu" <Niklaus.Liu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
+ vince-wl.liu@mediatek.com, jh.hsu@mediatek.com, zhigang.qin@mediatek.com,
+ sen.chu@mediatek.com
+References: <20251105033817.20427-1-Niklaus.Liu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251105033817.20427-1-Niklaus.Liu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 05, 2025 at 02:30:27PM +1100, Stephen Rothwell wrote:
+Il 05/11/25 04:38, niklaus.liu ha scritto:
+> Refer to the discussion in the link:
+> v3: https://patchwork.kernel.org/project/linux-mediatek/patch/20251104071252.12539-2-Niklaus.Liu@mediatek.com/
+> 
+> Subject: [PATCH v4 0/1] soc: mediatek: mtk-regulator-coupler: Add support for MT8189
 
-> These objtool messages have returned today.  No change in compiler.
+The subject of this email is .. empty. That's really bad, and it's the second time
+that it happens. Please make sure that you're sending emails the right way, and/or
+fix your client.
 
-Yes, Ingo also reported them on IRC, let me go investigate!
+While at it, please also fix your name, as it should appear as "Niklaus Liu" and
+not as "niklaus.liu".
+
+> 
+> changes in v4:
+>   - reply comment:
+
+Niklaus, please just reply inline to the emails instead of sending an entirely new
+version just for a reply: it's easier for everyone to follow, and it's also easier
+for me to read, and for you to send a reply by clicking one button :-)
+
+> 1. MTK hardware requires that vsram_gpu must be higher than vgpu; this rule must be satisfied.
+> 
+> 2. When the GPU powers on, the mtcmos driver first calls regulator_enable to turn on vgpu, then calls regulator_enable to
+> turn on vsram_gpu. When enabling vgpu, mediatek_regulator_balance_voltage sets the voltages for both vgpu and vsram_gpu.
+> However, when enabling vsram_gpu, mediatek_regulator_balance_voltage is also executed, and at this time, the vsram_gpu voltage
+> is set to the minimum voltage specified in the DTS, which does not comply with the requirement that vsram_gpu must be higher than vgpu.
+> 
+
+2. -> There's your problem! VSRAM_GPU has to be turned on *first*, VGPU has to be
+turned on *last* instead.
+
+Logically, you need SRAM up before the GPU is up as if the GPU tries to use SRAM
+it'll produce unpowered access issues: even though it's *very* unlikely for that
+to happen on older Mali, it's still a logical mistake that might, one day, come
+back at us and create instabilities.
+
+Now, the easy fix is to just invert the regulators in MFG nodes. As I explained
+*multiple* times, you have a misconfiguration in your DT.
+
+GPU subsystem main MFG -> VSRAM
+GPU core complex MFG -> VGPU
+GPU per-core MFG -> nothing
+
+> 3.During suspend, the voltages of vgpu and vsram_gpu should remain unchanged, and when resuming, vgpu and vsram_gpu should be
+> restored to their previous voltages. When the vgpu voltage is adjusted, mediatek_regulator_balance_voltage already synchronizes the
+> adjustment of vsram_gpu voltage. Therefore, adjusting the vsram_gpu voltage again in mediatek_regulator_balance_voltage is redundant.
+
+If you fix your DT, N.3 won't happen.
+
+Regards,
+Angelo
+
+> 
+> 
+> changes in v3:
+>   - modify for comment[add the new entry by alphabetical order]
+> 
+> changes in v2:
+>   - change title for patch
+>   - reply comment: This is a software regulator coupler mechanism, and the regulator-coupled-with
+> configuration has been added in the MT8189 device tree. This patchaddresses an issue reported by a
+> Chromebook customer. When the GPU regulator is turned on, mediatek_regulator_balance_voltage already
+> sets both the GPU and GPU_SRAM voltages at the same time, so there is no need to adjust the GPU_SRAM
+> voltage again in a second round. Therefore, a return is set for MT8189.
+> If the user calls mediatek_regulator_balance_voltage again for GPU_SRAM, it may cause abnormal behavior of GPU_SRAM.
+> 
+> 
+> changes in v1:
+>   - mediatek-regulator-coupler mechanism for platform MT8189
+> 
+> *** BLURB HERE ***
+> 
+> Niklaus Liu (1):
+>    soc: mediatek: mtk-regulator-coupler: Add support for MT8189
+> 
+>   drivers/soc/mediatek/mtk-regulator-coupler.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
 
