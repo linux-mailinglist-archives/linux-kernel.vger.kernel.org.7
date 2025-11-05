@@ -1,198 +1,140 @@
-Return-Path: <linux-kernel+bounces-887365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFD6C37FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:26:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035A6C3808D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 028794F1D74
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF3A462FCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932B92DBF4B;
-	Wed,  5 Nov 2025 21:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2C92E7650;
+	Wed,  5 Nov 2025 21:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DO+8g1we"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012032.outbound.protection.outlook.com [40.93.195.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9e+3DCJ"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173792DECAA;
-	Wed,  5 Nov 2025 21:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377584; cv=fail; b=Z9lBjskS1H1yDlhRBVYynwia4d9FinQ/oQADxlXZL+UZUGW4qdw51VDqB0BWJYVGgMM5TCDWU1BrH9rHjjdpFleHl2445DXx0Q0osogUWg0F9PLP8PTFsRDeiN5WQ0LjzEArjTcSnVqs7D0pRLYpxQ54It20u7CMMDbhq/94hgM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377584; c=relaxed/simple;
-	bh=dakl426/UoMP/1WAr4hltoMftA4Lmu8wjBHyCBhWOOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Yhn1GaxnbnZAUARgcYGDd6EoTO5QAE4lpJ/OirSm1b8xdtGcrVBEfPM9GfYLXyrhliAf3qHGssIFsaep3YEd8ltFsgbFpJK3yA87hTdEtcGMatMgkVkDuhXx5Uthci4Kw1cMfbx/cq2lA8UjowC4kb+grRw3IG5MZYUXcWADtIg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DO+8g1we; arc=fail smtp.client-ip=40.93.195.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C4moWwMDeq7+VZIKq1P7zp1PsXi50HLtvw3DNJk2kipHwDXbK9n3tgo+cwENSzIyr3/0Mch8Jc5iM4cWDNYso54Ub6yYzpmxx2EHy5/kQusw1C1sHJJDxCov2DQEW26vOQsh8VlKrDOEhwguzZ5FhR04tomMWC2UfJjHJRolQ35PerKFrXKiMEIsG6uWHaShaIaucHFgbo7q9WAq2KjY6Zcd2eY2TXzeWq5ddYJtOw1R/bOZncP4ulteBEoFFoe2zZA2+4mXyw4EyNeDgdTuhejm6wVdOYVG6rdEQ4uIHMetxNlmk+7hnD1jlV9dwhDeCCDxn85Qvfm7+wrMMxXhZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZFd/EJVCjrzEjhWYuI8VXtLezj/79/v6q7Z80Z3JG4=;
- b=SkAKe+9RVhk4LO3ZxMoAgfIUiXfPVUrxGIQ3l4hoxxIU6ZMk3jqtOOawNzEWBkRhLX54p1YAz3+qVRw3UgQSOKV5L/psw7CuzlGQk9lz5Yv8KKS8V8hp92UF/cD5N6RVpmnP4x26i9oEeRocbjrpxoirGSl9EuQWJT3VacfmGc4rrBF183BdYZ15qplp568Jkw5hGWYcSPBF0ZiOJTsbXpGOLt1xBc+pzbp6zEUlHjnKpqWr0lNLpoLq8Rjq1ENmoSQWNsU59u0j37WUj3/xUD6hC27vm4OZuO/TNJDUHQeKh+VftEA4erOSt6424pyHmSgbD3kHX0OcSw2s4Nev5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZFd/EJVCjrzEjhWYuI8VXtLezj/79/v6q7Z80Z3JG4=;
- b=DO+8g1wedQrj62OCDS9zUmW7JTAtUQSpPsOZtsF1gT27L47S5gFZwk17jQuI5Zn1rwZlJE7Kbd5J3w5Zu4NGKVrL/cMuxqFiNhs+rKAPQgFvPwTzFFMKnCl4S9qiNjZ5JElHxYp9jzWA6mzz9wWnB5dP6MZNgVf5WZRQ6vtF4OE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- DS5PPF482CFEB7D.namprd12.prod.outlook.com (2603:10b6:f:fc00::64a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
- 2025 21:19:34 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9298.007; Wed, 5 Nov 2025
- 21:19:33 +0000
-Date: Wed, 5 Nov 2025 16:19:24 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, Andi Kleen <andi.kleen@intel.com>
-Subject: Re: [PATCH] ACPI: APEI: GHES: Improve ghes_notify_nmi() status check
-Message-ID: <20251105211924.GA1264471@yaz-khff2.amd.com>
-References: <20251103230547.8715-1-tony.luck@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103230547.8715-1-tony.luck@intel.com>
-X-ClientProxiedBy: BN9PR03CA0421.namprd03.prod.outlook.com
- (2603:10b6:408:113::6) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AA02E7623
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762377736; cv=none; b=OiFak4sWmU/g4Uq3xC0swPvKcFgIC8ouIVKEMfyHQxnca7qplIEC5H+SCWrcq5Rfg6DmQO6FWvlyxhiRLKUFnBAjtTegTFYcQ3RPDSLd1oJNDOQpgw9uBZEQkzrUfBEWimUQUiF2RnJMH933qfgwv2NMSNb9/jVVkEk0fJbc+no=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762377736; c=relaxed/simple;
+	bh=Lafdol5XjqXTtVc0qIPRZEgOnZ0fzaAxiat2QX2gQzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXG2+mR8siGV8D4lN5n+v8s1ss83RlxGPsyLHORLChiXJ4NGuej6pCVZIt3LnzMRBpmVOqHqN6YQYQ7SQSYebw6JCTCbDi/0dOI1PLKtXb0xmh4RODT6y8Cn1Gf9ndJi3bwkj1wcea4K+Nvut5GjiGhGk5GFU3uKOjhZdCgQ4Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9e+3DCJ; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-3c9991e6ad1so221642fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:22:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762377733; x=1762982533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0/FBmebtO0Vkrgh/mrFAUBv/BWvq5VVY9yGcMnDDP8s=;
+        b=E9e+3DCJ0j5sfxz499Vg7oEXRwgD6fQAAyNuumlwkbVIkJk6WLW4evKbElH+pG+Z9x
+         OTsXGP1EVRQKemKgVfTCOla+zxG/thdtf1Rh1rqxRgMyqRlrew6tr2oOFHM+o3CDik5+
+         rk+sc2XcwQ4YapCE7NC9ZcbR347xZHaSMijpxotGPvid3RZwgqvyx44djkMHOTP7TXA/
+         YZNMiUBmxSwDvupSrRxnFGwSvrhj7bc1KUKah7ZIW+rEGLhaH1ZsaixodVu/3eNZOznA
+         phq4xuWAbpzIH+Ac+HBvFubaj2BXYYAystNgPfYd8YU9muNWgzo3a5dGfx/ptDWM70o3
+         Y8kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762377733; x=1762982533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0/FBmebtO0Vkrgh/mrFAUBv/BWvq5VVY9yGcMnDDP8s=;
+        b=FxmoeRe6Uc5v6fkvpM/CtpVHFK3a9uXrO0XrSJShEtzWd+fsEJ9OIhngFUQ+isPqqt
+         zgYk7N89dW7TEevVJzPjO+P6MUYNgxJYM1v0ir3QoyLIgHrLal8SHX5X3vwzD5igb7Lp
+         qCCaCVrUBtCwoGNJS3KqkoEzT6a59sS8V8fOjY8VVz1Z5EuVlpN2gGYa96zvPc7eSXb6
+         YLjS8UjneDiHhsRLAb6uHwXaT5wRZU7rx10oqOJ7ORnA/8+7ujf0+5JmFvn0J5HXlXzl
+         bns7zs01o/F0NU7TcXKBChi/DnVem5EiZoYsDezHckpynC2gCfEIhk8HXh3nrr+cQggn
+         a8og==
+X-Forwarded-Encrypted: i=1; AJvYcCURehj6YXB/Tqn5SUrxCvlIelVShJ/q5+gFvMuvCsQk3+u8UikfZYCVseTLEapPE5lmHUJn6GWy+vwNYeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1BKPat9OeTWtxweOvfc6f6/B4C3tt9hjNN/JK4LneKYR+ihFs
+	GsKT72lxL19ISIdomyalP+6JIFMdn9BN2WYcWCfaTikADBziLRSrhT8Y
+X-Gm-Gg: ASbGncttX9SKEU++3kIF5NLFDwpF9gmbG5KOE535ZVYf1uTEGe6mhsWfoNHO/BQuF9O
+	CNmPI1PiIYtlKTgC+MT/B3t/8DK+CkzHW2CkccLeXPyY0+BW1p+i31MOMF/wl764tRNsIxXl8iY
+	zRzK2n2ZnE8Nzy1xbtgb5d7spYTJUOQGvwNYxY7FrHsLvxdwU5PgsTbv09MXGknVwdZqRY4XWSf
+	D94dflPCZ30Wj0X3g4nVqmRSBnDxLnENKfGm5R1gIxLRdWnhnLYYgZn0E2x1GMqzOtvTZ+71tJw
+	OdF0+C4XvUKrplxdqqSe7OPEMJLmVDRojVxo0OzCfJOB36eCmdxJMB+sAL8aETt/sii9VX0GngJ
+	xMSebDz3L0/vaRMdRCF3R9++egFj3BqTNbpMuaZMAC51qUNnKYvchfBQ3htLjBsp30c19isBeqw
+	PYJ+Z3tdCT
+X-Google-Smtp-Source: AGHT+IH6bmLILBlZkClZJKGGVOQMJ8uDofSrhNGHs3xLSaav5plph/1k0YKtCJFMX/UFHGhYB7B7Sg==
+X-Received: by 2002:a05:6870:1484:b0:3d2:e6a7:e938 with SMTP id 586e51a60fabf-3e2e3d8c98amr572130fac.15.1762377732693;
+        Wed, 05 Nov 2025 13:22:12 -0800 (PST)
+Received: from geday ([2804:7f2:800b:2ebb::dead:c001])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e30847fe83sm153392fac.6.2025.11.05.13.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 13:22:12 -0800 (PST)
+Date: Wed, 5 Nov 2025 18:22:00 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-rockchip@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Jonker <jbx6244@gmail.com>
+Subject: Re: [RFC PATCH 2/2] PCI: rockchip-host: drop wait on PERST# toggle
+Message-ID: <aQu_-JDy7qqeviUm@geday>
+References: <d3d0c3a387ff461e62bbd66a0bde654a9a17761e.1762150971.git.geraldogabriel@gmail.com>
+ <20251103181038.GA1814635@bhelgaas>
+ <aQrKtFT0ldc70gKj@geday>
+ <DE0N4LA8MOJD.236O12UZ3I3C4@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS5PPF482CFEB7D:EE_
-X-MS-Office365-Filtering-Correlation-Id: 672a576b-2bd5-4410-1338-08de1cb10394
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+HYMXVUc96f+AMtNPgR8FnJ8dpWGpAsQVMHlaqD9zo8SumrH/VqpMy3tS9Bu?=
- =?us-ascii?Q?/FHF+0wxZvnIoPovoqALMHcQv4mGJVABt7FcNLshZVoMXsU9g8MbrtdM3WU3?=
- =?us-ascii?Q?IMGWyZEHjteU5ZTVr6YzjUeUDVmKzC3e+yKvqvzG01zlQmT4o53uF/jnfCh6?=
- =?us-ascii?Q?CNFHwxhtBC+a9t4inY/jZgGVGInT3LxxucMLdSuIdrc7T6ihK1/VDADDGW8N?=
- =?us-ascii?Q?U5Cap3syyfU7YcNbtQKgpn60Kq1YOnBbctKuEcQE3xWhQzezYjnVMPjtSIuz?=
- =?us-ascii?Q?dc1oDE1qMB+CkHxrMfVVwAyNg7fP+Imge0f0F1PwhcDQ3W3yQTRV2r0F9HQY?=
- =?us-ascii?Q?Qgis37w3ouyNYWesROGUNgIdVG0n//P5jVAoUVALCYXDgBdAaShXbyUV7ufh?=
- =?us-ascii?Q?YpAidkXRdZmQRiBD6zQW3Og5SWZvYrJnKlJYyFzuc99kks89Zp3tgS8peh2L?=
- =?us-ascii?Q?oyrPJZjmhO1UFvjDeMgE1ICCLIcNp43Q//a71ruGHWkm5O0QaX/OMa3X35Sd?=
- =?us-ascii?Q?MAM05D0FeHkQ684D2OHR+cGY9/keZ8Ct5feQW6ErFAidg+2VJ4Booz0Jo5lO?=
- =?us-ascii?Q?0YRwKYn6+7qz4lRsHCv841rCq/w4Wg929/5rNDwLPech/OqW6yLFFXMCDQmH?=
- =?us-ascii?Q?9xMVjm5fV9zQkaB4+6mgDbYmatnhu+TwN9g0qk9NnAQViAxaoZbH52dYhkYO?=
- =?us-ascii?Q?p5DM4otF2CLna3hA5Xv8W5/fILkpHGBF4dUcjzjNVLscHuCTUW6c3gAqKIzr?=
- =?us-ascii?Q?LHftexdTAfWbiQN5kNr4tDF4xobQLHR0nTU0v5U92c1CM2Rj49zqCA5Jdtgi?=
- =?us-ascii?Q?4fEFpEI0Zmya/DF/KNwi2jk9s0f+6zbxMco7v+gjVgF6OLb4jRabgSyNEN4G?=
- =?us-ascii?Q?ii4kA18bLKAVxg5U12+nVip5+7Fz9ZDMEILlPuFETM69AvcDWxJnWvKBqCjl?=
- =?us-ascii?Q?0AvON4EcHeXe/T0H5zOF+Bx5jGzJw9njjzdXzqv4Tj2mhYR3aZew1N6W1t4q?=
- =?us-ascii?Q?wsaBHzx8zNnkJ5CgJUcPkNyeKW/ff2QvANxqvXD4y7o1lPR9rgSCpgeHnRif?=
- =?us-ascii?Q?ICZXoM2JxK7DrbLhEKbZU129vx1YiZ+aOCAw/SuDuUMvz6DQcSW8Tw8nupBD?=
- =?us-ascii?Q?zLBBwC8JSOygU3zB8957ZtnKvRCzOcIkMrufx53RZN6GUd1KHdkLvUVGT40a?=
- =?us-ascii?Q?GmAFtQVNPTFfFpuz6KYUtryycuvFRwW6nwYh2i7QUTn+E+PQVDMtSogVMPcm?=
- =?us-ascii?Q?5z9jqG1gmd0wInXXbkwZA86uwrj7h+8M4n/HAE29Z5nojRma3+X9om8tLV/D?=
- =?us-ascii?Q?YkN1ZjIhldge+FMAES7b2EGJ9gRrji2pemwhSwGb1aXtyMpFhqxYdVvip7zf?=
- =?us-ascii?Q?6DSlYC61WCcCjOYqOqP1+/YCI5hyirzYQx2e9+p5fzJWzaxxG8+v+JecGw/A?=
- =?us-ascii?Q?xaDF07olfhIuR8TvRwYsORSPtjC8/dZSmKedCuRPO2stQKkX7tyZyg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Sccz8IBLrDnaBoFmlAjAtYA1i6lIcBV/ymfZ3pbnQctJWpR6q379FJNePd6k?=
- =?us-ascii?Q?QVFQlk30KcPipr6Hg6H0FL6Yimo6Bb1CowuuvLYhO8wE1zGV2T4DwpZ0oZPe?=
- =?us-ascii?Q?BIZ6usKCYy9PzqiPYJj04yxZnNOQp2qRN0DJc6nihH+i8fQ8gQrodxglLmWo?=
- =?us-ascii?Q?dH7wCT3C0AJUfT8SSObTQ+i7BW5xbHqVLAiEY4IOXiYTVDBJeCpihs+njLDd?=
- =?us-ascii?Q?ukRLUnwf6ag8FsoDF2ERrPob85UTZAIiQ3oPHDII3sm9egkCUnoX1xxjTqP2?=
- =?us-ascii?Q?8YQrjTTZsK2LwNupZF86pSalEhNPQ+5CzQWplCcbGGammysSAntYS5cjTRhq?=
- =?us-ascii?Q?JabWBdKKY8Fv1I7JaofXlOsA77zkKCCVNRVBmNP1TXDnA/c9Sv+q/fmGnqhR?=
- =?us-ascii?Q?oNiOd6Ub+0iD1SyEZIURotjM97YMpEBeE6p6pK7wHHbeht7ZbbWyL6WRgVxu?=
- =?us-ascii?Q?4NDzkSse8VuHnrn1FyxATfRMkCdlVMAZ/EExkASGyS9r+3Y5OqQSIoEXDOGG?=
- =?us-ascii?Q?M+fsmmlToLZj9IXvMGxn47QVaqIQ9hgm/rN66q0yv/wouZbknz1Go9rVy8lS?=
- =?us-ascii?Q?nMoX4jStcHfpCD3fKrz//Xj6WNRrmH6It6EdPILpspEcmapgMgM3twiiTr3x?=
- =?us-ascii?Q?of5bn4Rv1LalQeSEICaZHR3nmianWj6CENhnekxt7yEZ5vCsep+Wpkf3vJg1?=
- =?us-ascii?Q?LcCybURHUWzoLq8TDsRn8r6ySwneNDjAiOKG6A8aaJ6P2jN/5fpN+I41skiQ?=
- =?us-ascii?Q?vNTFYxFKF5/YLwd60fSgtTWH3MYL5dBnrP+cM96HrTDmHBd6bRvcPAUy9McB?=
- =?us-ascii?Q?XXF/qnX1WafDYQSsNJrW7EH3xrZjuN3GZbmtvguPGXmmWJHcUb3yBL51Jac3?=
- =?us-ascii?Q?skBF/SKZRV4hZjD+PcRkuvs3IND2rRm8fnEWUdHUP0rsisMbT9jzs9oyLP2c?=
- =?us-ascii?Q?DwAgNnTg0jw8kNf7pag7Q2xlwH0KYPeHv1rznLuIcv2pSOHdBDAn6OeNNrt9?=
- =?us-ascii?Q?wTm3JRz/xzv84w8FTZ7Z/iYaVGwh4kjOhdLMaSl8P/uWqE7EVU37bKZPWIIr?=
- =?us-ascii?Q?/8g+ci7DRJ4/PQsHNNsLc3ubxFcyCfqcx5KqVhRkGPXDq5LMYKE47KswrSeo?=
- =?us-ascii?Q?gkmb/YoaTVH7uMCyQihdl04gXQbFpvqzFkTGrC6AUmWJApcRJaZqpHDbDEaS?=
- =?us-ascii?Q?TatM6dLjn51qO3WZGL+DPTGWhP8HfP2vP3k8uYfRkrTBaT7EHYQu9tyBVR6N?=
- =?us-ascii?Q?5qmrMrwsLAI7TWtH3E0n0/onkz/5j9kKk56ftoApLiHSR4x8cgvW7V7JmPkV?=
- =?us-ascii?Q?00cXHNqHfxgwpSP/n5ZyEn8J1AIuQJx3y4egCXZb1A4rG19iySzwBcSlUfb3?=
- =?us-ascii?Q?n003kdp9jfMqksIOaOKI2LYAPt33909CVcZWuSpS8YOc96ywRTULEwST7IAS?=
- =?us-ascii?Q?5cwQ29KPqn1uZCdfNZH6140KTfvPRrGx3wEk/RvbgkGLL5nH+AQkb8Fo+CWH?=
- =?us-ascii?Q?iyB+r6qmm2fVKieeo8j5IOqrAgqj0QikY1L+J2nBWYI0s3c6OSloH3CYPvwX?=
- =?us-ascii?Q?oAb84qpTMr5DMoOIiYyu8h6DjsD11L2SnEh6ixCr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 672a576b-2bd5-4410-1338-08de1cb10394
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 21:19:33.0922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LoAD4Wreo5hQkYIAmbaSdG58ic4vt1OtZEFD7hIKSrn/jLKRYjhiSu9lt1/stq9oK8dB5aeirc/inwhfQE96zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF482CFEB7D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DE0N4LA8MOJD.236O12UZ3I3C4@cknow-tech.com>
 
-On Mon, Nov 03, 2025 at 03:05:47PM -0800, Tony Luck wrote:
-> ghes_notify_nmi() is called for every NMI and must check whether the NMI was
-> generated because an error was signalled by platform firmware.
+On Wed, Nov 05, 2025 at 10:06:53AM +0100, Diederik de Haas wrote:
+> I have a Samsung PM981 (without the 'a') and AFAICT it works fine.
+> I had noticed that the PERST# (pinctrl) was missing, but 'ep-gpios'
+> was/is new to me and I hadn't had time to research that properly yet.
+> Good to see you already found it yourself :-)
 > 
-> This check is very expensive as for each registered GHES NMI source it reads
-> from the acpi generic address attached to this error source to get the physical
-> address of the acpi_hest_generic_status block.  It then checks the "block_status"
-> to see if an error was logged.
-> 
-> The ACPI/APEI code must create virtual mappings for each of those physical
-> addresses, and tear them down afterwards. On an Icelake system this takes around
-> 15,000 TSC cycles. Enough to disturb efforts to profile system performance.
-> 
-> If that were not bad enough, there are some atomic accesses in the code path
-> that will cause cache line bounces between CPUs. A problem that gets worse as
-> the core count increases.
-> 
-> But BIOS changes neither the acpi generic address nor the physical address of
-> the acpi_hest_generic_status block. So this walk can be done once when the NMI is
-> registered to save the virtual address (unmapping if the NMI is ever unregistered).
-> The "block_status" can be checked directly in the NMI handler. This can be done
-> without any atomic accesses.
-> 
-> Resulting time to check that there is not an error record is around 900 cycles.
-> 
-> Reported-by: Andi Kleen <andi.kleen@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> 
-> ---
-> N.B. I only talked to an Intel BIOS expert about this. GHES code is shared by
-> other architectures, so it would be wise to get confirmation on whether this
-> assumption applies to all, or is Intel (or X86) specific.
+> Cheers,
+>   Diederik
 
-I think that is how the ACPI spec describes it.
-https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html?highlight=hest#error-source-discovery
+Hello Diederik,
 
-The HEST and other tables are fixed at init time. There's an ACPI notify
-event for if/when a device method needs to be re-evaluted, but I don't
-think anything in APEI expects that.
+Thanks for the heads up!
 
-Thanks,
-Yazen
+Would you mind testing the following DT change to make sure your PM981
+continues to work fine?
+
+Thank you,
+Geraldo Nascimento
+
+---
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+index aa70776e898a..b3d19dce539f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+@@ -383,7 +383,7 @@ &pcie_phy {
+ };
+ 
+ &pcie0 {
+-	ep-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
++	ep-gpios = <&gpio0 RK_PB4 (GPIO_ACTIVE_HIGH | GPIO_SINGLE_ENDED)>;
+ 	num-lanes = <4>;
+ 	pinctrl-0 = <&pcie_clkreqnb_cpm>;
+ 	pinctrl-names = "default";
 
