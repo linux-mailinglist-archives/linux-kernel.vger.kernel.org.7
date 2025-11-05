@@ -1,451 +1,167 @@
-Return-Path: <linux-kernel+bounces-886561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3621C35EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:55:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662D7C35F0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3201C18C79CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:56:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45CF74FCF11
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDDC326D6E;
-	Wed,  5 Nov 2025 13:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EFD31D370;
+	Wed,  5 Nov 2025 13:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6RjlWu4"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="lg5PiINu"
+Received: from sg-1-19.ptr.blmpb.com (sg-1-19.ptr.blmpb.com [118.26.132.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F33254AF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E85931D386
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350915; cv=none; b=imGpoZk8Ttm2i6L3aZJS5Zb11Y1ognTGo2IT5Pry8JfgL2u5IrYgiSbGDP4podgl18GpxJYsr3UmKMLlhNhoNovLH5TPaiM9mL5/ZGqGoLYh952YC/OSaeGOowlujlSr9MSJXgsO8YFlllqJjUyJj+J4jXvVn1Mk9GoQu277wuc=
+	t=1762350940; cv=none; b=nNv9KmNBC8alqI3W55Hx580iV28XVgi4fSP2f8S0mnmyonQuYHAGc2qgWfEg3M3i7NZDqWHvRvEllmRKadJ9cSHXMp+OhX4PRnI+EdC60I4I7xycz2UHPSONEu33UztoaYbBFmvufwisoeAvDJJiLVVMafLJ7QJMME0o/Ugl2Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350915; c=relaxed/simple;
-	bh=xOAkdwx5XMPuZBweonSMuobYigRFLMCprX2fUOYbHWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6U0chfzxEdFa1yUH27og1tR/k7Simc5aj8zDBLJWpizvB0mQ1GEjsGlrnyj1nbchSJT1RCqOm2XNS1Q7EAhZWEwfsVuoePEGlncCJnm5FdOm/WV7xlcPzeEJFDZIO2O6mQ8X8CSeJTeqgZinmSXH0OrLCrbo7OEdlW28Zu1oXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6RjlWu4; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477563bcbbcso9685815e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:55:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350910; x=1762955710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
-        b=H6RjlWu4V15Cmhb4HdlaEGyPLHGQ+7c5808dkeB6fdPy3MK8TGCXen8JcxEN1fqj9f
-         r9MxqMHHRhYlrjzA1ixVoJZBuNhR82vkVN7VR6LtOwQh7U71ud7uAQVqnydFOyN9g7eO
-         6tRID8nXP5V1qZI8GF6rdVwwQReu3vDwUDN2HmA/oxBTAxVa/7PREWALRjj6M2U1qS2u
-         wfwK62JQA/MKAHhyFMJFNrlk+TcHGrgWeH/Q9ZOvxpcgFawijw3abb13cDktbH8r0QhR
-         ruvm2a0hO1lDftSbJ/wHPl7BDOm0HCHrvi6GzHn6HoXuqX+I36rJOhjQSz3jKiEZRJwV
-         +tbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350910; x=1762955710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
-        b=H48/h0p8scbVjJpfx0VeXz+iDHmaBnK+TFexmz5FENHy1sYiMkHB7PxG6b2EfrVL5V
-         S5t3TeOT2xn4W77P9XLEF6rZ/sV7Bg97ND0JkCVi/1N5cMky8j+5NExNWc5D9vxK/BxH
-         AYQ0Vv+rYt10fMzT0klK+qrObp7IUen2HatFEE+KUrdZ04Adadi3rtH8uts/nodAOWof
-         gBoyOEazRjLkG1iAw6iqZKEalXp5YqWXS3D4wNd8599wvczrjDE1EwBG1Uy5icN4ownr
-         kDpBX3UPM4ftbGc/+Y6R81wdYreCm7iQ302YwcjVXdkBFWuE0HSg5tatI7E79h4w554x
-         YNew==
-X-Forwarded-Encrypted: i=1; AJvYcCWBiaRBYOq5DHkz4Rh+WFs5I2BrfOqP18zzPsVN7kzAE9YkAJ2ZmzuxolxdqmsaPWB56B3W+lhR50hZOJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWIKqDDZvt9KbJ81+PK7KlyghVHSExHfuPO3aNrfhgVebRWerV
-	COXdQ/8aYpFfgHtF1ARJYshGjTLn+A2z2JYfZRrINIf7O3xsnt9lOa9r
-X-Gm-Gg: ASbGnctLo0PN1TWZ05clOSv8seZZ5zGG/zauFjPsm006Ax8N90QSgKqNMe2phoDoVof
-	+PVKzwsuC5MhE3pJ3CI8scoQiPM4CJLqIfmwfQJdCsJICxvV5WBmDjE6yIKdXAHJeogRgcAwNSh
-	up3gg/wD0hB8ZZWQc8QbwSInOL1Fq4hZbYFVJGRBcbAae3iYtvCG18tl5BC+ukrcABeD5weLi0M
-	hLdS4ubSr7NZ75GmIYvHmJvCaIpFF49F3/aC42+0asFuR+baGZpRE+Jp+4nZQgWdOm6HzfrQ3jV
-	qYG1efdXUMItGJzuygx686K++dRYykbwQ1M+quDbA294AfTegopYam1JpPG97U8Lt3zQSiwKgI7
-	ieklN1yR8pbyup9n2mWuTcNA1K0fcG5jVdReQQwlDOUEWU7w5P6+h5OZbg8Nkko03oIxVOfUZH0
-	PE5gMGBOI9FqgfEpnfRcosjKL1Yn+wm0EOTvLp9fj9vP7XOgYl
-X-Google-Smtp-Source: AGHT+IFbrMOkwHlj7tzUq3CNHRE0pCkUygQWliDIrQ/V6eJXbLgxVBRh+H6LBamQYBVrY23ibi9f2w==
-X-Received: by 2002:a05:600c:3ba0:b0:475:e007:baf1 with SMTP id 5b1f17b1804b1-4775ce207a3mr42747085e9.34.1762350910176;
-        Wed, 05 Nov 2025 05:55:10 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc193e27sm10797646f8f.18.2025.11.05.05.55.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 05:55:09 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	tytso@mit.edu,
-	torvalds@linux-foundation.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [WIP PATCH] fs: speed up path lookup with cheaper MAY_EXEC checks
-Date: Wed,  5 Nov 2025 14:55:05 +0100
-Message-ID: <20251105135505.751454-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762350940; c=relaxed/simple;
+	bh=Ne/x6WAUXKDBEfToF/9H1xkD2gW0oBLfEwKvnZaFfsI=;
+	h=From:Date:In-Reply-To:Content-Type:Subject:Mime-Version:
+	 Message-Id:References:To:Cc; b=dd+JKkEpAyZdWOdmzHoBtj1o5mdfF5iCfoAqj5aWqAqDTaOM0dy0f3ETpMreWt0eEbbh42DqDV6YERHZlj4JvdtZeBa5yH7P06QsRe5j5o63eXkWVxRTi0XB7aXcTGisy/Qjq01SK16XICLmp8q2ksxPnksnLwq5m+arGscuPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=lg5PiINu; arc=none smtp.client-ip=118.26.132.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762350931;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=c6Fob5GKK2EFqfF+QqeezHuK3XYr7a3QAGL+sni9S9w=;
+ b=lg5PiINuFJXchz+Fc4dF/6Oxh/cm+cGm5WIOE8YS+cEe0OaCX63Kpb/uk7NdJxhsjXzRJA
+ FgzRMzya9XAMfHYj1nxk+S8+Pf6J44zfBgcEmzi/5mAcyuhoF8vRCd4/Wu7+Fm+egm261p
+ 210kCs5dmxwvc2W5cQCEEr4Pv8Lw7KXchRBCbyBR93GYiX3QQfC7niG7Y/ZBsQjGWmUuq0
+ jPvh1N70c8JKv8w1vZUdkL+HuNVg9zu+ajVUveKYAhAQDqP660DGgr1nqE3nWP10+2xBW6
+ PPs+owxIY0BEexBzqtmNbi0vWa4LqHhNbwG9iRXf8Z43TVqnjo4yxZ03Gt33+g==
+Content-Transfer-Encoding: quoted-printable
+X-Lms-Return-Path: <lba+2690b5751+bbe982+vger.kernel.org+chenmiao@openatom.club>
+From: "Chen Miao" <chenmiao@openatom.club>
+Date: Wed, 5 Nov 2025 21:55:27 +0800
+In-Reply-To: <aQtTRUMUaaUmTAWZ@google.com>
+X-Original-From: Chen Miao <chenmiao@openatom.club>
+Received: from [198.18.0.1] ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Wed, 05 Nov 2025 21:55:28 +0800
+Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] rust: kernel: Support more jump_label api
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Message-Id: <90bfcb3e-dee1-4f78-a1b2-02ce99db4997@openatom.club>
+References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club> <aQoIliAbrn0Re7E3@google.com> <b3f50745-5351-4e69-b3e2-ede99511e8dc@openatom.club> <aQtTRUMUaaUmTAWZ@google.com>
+User-Agent: Mozilla Thunderbird
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, 
+	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	"Benno Lossin" <lossin@kernel.org>, 
+	"Andreas Hindborg" <a.hindborg@kernel.org>, 
+	"Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	"open list" <linux-kernel@vger.kernel.org>, 
+	<hust-os-kernel-patches@googlegroups.com>
 
-WARNING:
-This is not a real submission yet, will need to do more testing for
-correctness.
+On 11/5/2025 9:38 PM, Alice Ryhl wrote:
+> On Wed, Nov 05, 2025 at 09:28:39PM +0800, Chen Miao wrote:
+>> On 11/4/2025 10:07 PM, Alice Ryhl wrote:
+>>> On Tue, Nov 04, 2025 at 02:04:17AM +0000, chenmiao wrote:
+>>>> The initial implementation of arch_static_branch was achieved by acces=
+sing
+>>>> the offset from the original type. However, this approach extended the
+>>>> path and introduced redundant calculations when dealing with types lik=
+e
+>>>> `static_key_true/false`, as shown below:
+>>>>
+>>>> ```
+>>>> static_brach_unlikely(tp, tracepoint, key)
+>>>>     =3D> tracepoint->key->key
+>>>>     =3D> &tracepoint->key(static_key_false) =3D=3D &tracepoint->key.ke=
+y(static_key)
+>>>>     =3D> off: tracepoint->key - tracepoint
+>>>> ```
+>>>>
+>>>> In practice, the implementation of `arch_static_branch` overlooked man=
+y
+>>>> detailed descriptions. To improve clarity, additional comments have be=
+en
+>>>> added to the original logic. The approach has been modified to directl=
+y
+>>>> locate the corresponding `static_key` instead of using offsets, thereb=
+y
+>>>> reducing  computational overhead.
+>>>>
+>>>> If finding the offset from the primitive type is necessary for this
+>>>> implementation, I will abandon this change.
+>>>>
+>>>> Additionally, support for the `static_branch_enable/disable` APIs has =
+been
+>>>> introduced.
+>>>>
+>>>> Signed-off-by: chenmiao <chenmiao@openatom.club>
+>>>> +    ($basety:ty, $branch:expr, $key:path, $keytyp:ty, $field:ident) =
+=3D> {{
+>>>>            let _key: *const $keytyp =3D ::core::ptr::addr_of!($key);
+>>>> -        let _key: *const $crate::bindings::static_key_false =3D ::cor=
+e::ptr::addr_of!((*_key).$field);
+>>>> +        let _key: *const $basety =3D ::core::ptr::addr_of!((*_key).$f=
+ield);
+>>>>            let _key: *const $crate::bindings::static_key =3D _key.cast=
+();
+>>>>   =20
+>>>>            #[cfg(not(CONFIG_JUMP_LABEL))]
+>>>> @@ -30,7 +71,88 @@ macro_rules! static_branch_unlikely {
+>>>>            }
+>>>>   =20
+>>>>            #[cfg(CONFIG_JUMP_LABEL)]
+>>>> -        $crate::jump_label::arch_static_branch! { $key, $keytyp, $fie=
+ld, false }
+>>>> +        {
+>>>> +            $crate::jump_label::arch_static_branch! { _key, $branch }
+>>>> +        }
+>>> So ... this is changing from $key to _key. That's replacing the global
+>>> variable with a local variable holding a pointer to the global variable=
+.
+>>> However, the arch_static_branch! macro uses the `sym` operand which
+>>> requires you to pass it the global directly.
+>>>
+>>> Did you try this code? I don't believe it will work.
+>>>
+>>> Alice
+>> I'm very sorry for making a fatal mistake. My misunderstanding of sym le=
+d to
+>> this issue, so I shouldn't make any changes to that part. However, regar=
+ding
+>> the other modifications, I believe it is necessary to support the direct
+>> passing of structures similar to `static_key_false`, just as in C langua=
+ge.
+> It sounds like you are adding a new use-case for this macro. Can you
+> provide more information for this new feature? It is currently unclear
+> to me exactly how this will be used.
+>
+> Alice
 
-Also I slapped ext4 support into this patch as opposed to posting it
-separately. The no_acl caching was written by Linus, also see the
-necroed thread here:
-https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
-and full thread:
-https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
+If there's a binding-required driver implementation in the future where a k=
+ey=20
+function uses if (static_branch_unlikely(&zoned_enabled))=E2=80=94 defined =
+by=20
+DEFINE_STATIC_KEY_FALSE(zoned_enabled);=E2=80=94 then in Rust we can direct=
+ly=20
+implement it using if static_branch_unlikely!(zoned_enabled), without havin=
+g=20
+to call it via if static_branch_unlikely!(zoned_enabled,=20
+bindings::static_key_false, key).
 
-Not pointing fingers, but someone promised to get that bit in. ;)
+static_branch_unlikely!(zoned_enabled) instead of=20
+static_branch_unlikely!(zoned_enabled, bindings::static_key_false, key).
 
-Now to business:
-
-Vast majority of real-world traversals happen on directories which are
-traversable by anyone. The patch below adds support for pre-computing
-that state and branching on it during lookup, avoiding tons of work.
-
-Stats from calls to security_inode_permission during kernel build:
-missing: 6097127
-present: 60579018
-
-Or just above 90% of all lookups on my debian install benefited from it.
-
-A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
-on Sapphire Rapids (ops/s):
-before: 3640352
-after:	3797258 (+4%)
-
-Note the speed up would be higher if it was not for stat itself being
-dog slow (to be addressed separately).
-
-Filesystems interested in participating call
-inode_enable_fast_may_exec() when instatianating an inode.
-
-Explicit opt-in is necessary as some filesystems have custom inode
-permission check hooks which happen to be of no significance for
-MAY_EXEC. With an opt-in we now it can be safely ignored. Otherwise any
-inode with such a func present would need to be excluded.
-
----
- fs/attr.c          |   1 +
- fs/ext4/inode.c    |   6 +++
- fs/ext4/namei.c    |   1 +
- fs/file_table.c    |  12 +++++
- fs/namei.c         | 106 +++++++++++++++++++++++++++++++++++++++++++--
- fs/posix_acl.c     |   1 +
- fs/xattr.c         |   1 +
- include/linux/fs.h |  20 ++++++---
- mm/shmem.c         |   2 +
- 9 files changed, 141 insertions(+), 9 deletions(-)
-
-diff --git a/fs/attr.c b/fs/attr.c
-index 795f231d00e8..572363ff9c6d 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -549,6 +549,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
-+		inode_recalc_fast_may_exec(inode);
- 		security_inode_post_setattr(idmap, dentry, ia_valid);
- 	}
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index a163c0871373..ce2bfe3167e7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5519,6 +5519,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		goto bad_inode;
- 	brelse(iloc.bh);
- 
-+	/* Initialize the "no ACL's" state for the simple cases */
-+	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_acl)
-+		cache_no_acl(inode);
-+
-+	inode_enable_fast_may_exec(inode);
-+
- 	unlock_new_inode(inode);
- 	return inode;
- 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 2cd36f59c9e3..bedd9bfca440 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3042,6 +3042,7 @@ static struct dentry *ext4_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	ext4_fc_track_create(handle, dentry);
- 	if (IS_DIRSYNC(dir))
- 		ext4_handle_sync(handle);
-+	inode_enable_fast_may_exec(inode);
- 
- out_stop:
- 	if (handle)
-diff --git a/fs/file_table.c b/fs/file_table.c
-index cd4a3db4659a..de1ef700d144 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -109,6 +109,8 @@ static int proc_nr_files(const struct ctl_table *table, int write, void *buffer,
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
- 
-+unsigned long magic_tunable;
-+
- static const struct ctl_table fs_stat_sysctls[] = {
- 	{
- 		.procname	= "file-nr",
-@@ -126,6 +128,16 @@ static const struct ctl_table fs_stat_sysctls[] = {
- 		.extra1		= SYSCTL_LONG_ZERO,
- 		.extra2		= SYSCTL_LONG_MAX,
- 	},
-+	{
-+		.procname	= "magic_tunable",
-+		.data		= &magic_tunable,
-+		.maxlen		= sizeof(magic_tunable),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+		.extra1		= SYSCTL_LONG_ZERO,
-+		.extra2		= SYSCTL_LONG_MAX,
-+	},
-+
- 	{
- 		.procname	= "nr_open",
- 		.data		= &sysctl_nr_open,
-diff --git a/fs/namei.c b/fs/namei.c
-index 39c4d52f5b54..ac7252c0a428 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -123,6 +123,9 @@
-  * PATH_MAX includes the nul terminator --RR.
-  */
- 
-+static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
-+		     struct inode *inode, int mask);
-+
- #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
- 
- static inline void initname(struct filename *name, const char __user *uptr)
-@@ -574,7 +577,7 @@ int inode_permission(struct mnt_idmap *idmap,
- 	if (unlikely(retval))
- 		return retval;
- 
--	if (unlikely(mask & MAY_WRITE)) {
-+	if (mask & MAY_WRITE) {
- 		/*
- 		 * Nobody gets write access to an immutable file.
- 		 */
-@@ -601,6 +604,103 @@ int inode_permission(struct mnt_idmap *idmap,
- 	return security_inode_permission(inode, mask);
- }
- EXPORT_SYMBOL(inode_permission);
-+extern unsigned long magic_tunable;
-+
-+/**
-+ * inode_permission_may_exec - Check traversal right for given inode
-+ *
-+ * This is a special case routine for may_lookup(). Use inode_permission()
-+ * instead even if MAY_EXEC is the only thing you want to check for.
-+ */
-+static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
-+	struct inode *inode, int mask)
-+{
-+	mask |= MAY_EXEC;
-+
-+#if 1
-+	if (!magic_tunable || !(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
-+		return inode_permission(idmap, inode, mask);
-+#else
-+	if (!(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
-+		return inode_permission(idmap, inode, mask);
-+#endif
-+
-+#ifdef CONFIG_DEBUG_VFS
-+	/*
-+	 * We expect everyone has the execute permission and that there are no
-+	 * acls. We assert the filesystem at hand complies by validating it
-+	 * below.
-+	 *
-+	 * However, We may be racing against setattr and/or setacl, in which case
-+	 * we will have to redo the check with the appropriate lock held to avoid
-+	 * false-positives.
-+	 */
-+	unsigned int mode = READ_ONCE(inode->i_mode);
-+
-+	VFS_BUG_ON_INODE(!S_ISDIR(mode), inode);
-+	if (((mode & 0111) != 0111) || !no_acl_inode(inode)) {
-+		/*
-+		 * If we are in RCU mode may_lookup() will unlazy and try again.
-+		 * Worst case if we are still racing the lock will be taken below.
-+		 */
-+		if (mask & MAY_NOT_BLOCK)
-+			return -ECHILD;
-+		inode_lock(inode);
-+		if (inode->i_opflags & IOP_FAST_MAY_EXEC) {
-+			VFS_BUG_ON_INODE((inode->i_mode & 0111) != 0111, inode);
-+			VFS_BUG_ON_INODE(!no_acl_inode(inode), inode);
-+		}
-+		inode_unlock(inode);
-+		return inode_permission(idmap, inode, mask);
-+	}
-+#endif
-+	return security_inode_permission(inode, mask);
-+}
-+
-+/**
-+ * inode_recalc_fast_may_exec - recalc IOP_FAST_MAY_EXEC
-+ * @inode: Inode to set/unset the bit on
-+ *
-+ * To be called if the fs considers the inode eligible for short-circuited
-+ * permission checks.
-+ */
-+void inode_recalc_fast_may_exec(struct inode *inode)
-+{
-+	unsigned int mode;
-+	bool wantbit = false;
-+
-+	if (!(inode_state_read(inode) & I_NEW))
-+		lockdep_assert_held_write(inode->i_rwsem);
-+
-+	if (!(inode->i_flags & S_CAN_FAST_EXEC)) {
-+		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
-+		return;
-+	}
-+
-+	mode = inode->i_mode;
-+	if (!S_ISDIR(mode)) {
-+		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
-+		return;
-+	}
-+
-+	if (((mode & 0111) == 0111) && no_acl_inode(inode))
-+		wantbit = true;
-+
-+	if (wantbit) {
-+		if (inode->i_opflags & IOP_FAST_MAY_EXEC)
-+			return;
-+		spin_lock(&inode->i_lock);
-+		inode->i_opflags |= IOP_FAST_MAY_EXEC;
-+		spin_unlock(&inode->i_lock);
-+	} else {
-+		if (!(inode->i_opflags & IOP_FAST_MAY_EXEC))
-+			return;
-+		spin_lock(&inode->i_lock);
-+		inode->i_opflags &= ~IOP_FAST_MAY_EXEC;
-+		spin_unlock(&inode->i_lock);
-+	}
-+}
-+EXPORT_SYMBOL(inode_recalc_fast_may_exec);
- 
- /**
-  * path_get - get a reference to a path
-@@ -1855,7 +1955,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
- 	int err, mask;
- 
- 	mask = nd->flags & LOOKUP_RCU ? MAY_NOT_BLOCK : 0;
--	err = inode_permission(idmap, nd->inode, mask | MAY_EXEC);
-+	err = inode_permission_may_exec(idmap, nd->inode, mask);
- 	if (likely(!err))
- 		return 0;
- 
-@@ -1870,7 +1970,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
- 	if (err != -ECHILD)	// hard error
- 		return err;
- 
--	return inode_permission(idmap, nd->inode, MAY_EXEC);
-+	return inode_permission_may_exec(idmap, nd->inode, 0);
- }
- 
- static int reserve_stack(struct nameidata *nd, struct path *link)
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 4050942ab52f..da27dd536058 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -1135,6 +1135,7 @@ int vfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		error = -EIO;
- 	if (!error) {
- 		fsnotify_xattr(dentry);
-+		inode_recalc_fast_may_exec(inode);
- 		security_inode_post_set_acl(dentry, acl_name, kacl);
- 	}
- 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 8851a5ef34f5..917946a7f367 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -235,6 +235,7 @@ int __vfs_setxattr_noperm(struct mnt_idmap *idmap,
- 				       size, flags);
- 		if (!error) {
- 			fsnotify_xattr(dentry);
-+			inode_recalc_fast_may_exec(inode);
- 			security_inode_post_setxattr(dentry, name, value,
- 						     size, flags);
- 		}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a8ffab9d4a64..41c855ef0594 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -659,13 +659,14 @@ is_uncached_acl(struct posix_acl *acl)
- 	return (long)acl & 1;
- }
- 
--#define IOP_FASTPERM	0x0001
--#define IOP_LOOKUP	0x0002
--#define IOP_NOFOLLOW	0x0004
--#define IOP_XATTR	0x0008
-+#define IOP_FASTPERM		0x0001
-+#define IOP_LOOKUP		0x0002
-+#define IOP_NOFOLLOW		0x0004
-+#define IOP_XATTR		0x0008
- #define IOP_DEFAULT_READLINK	0x0010
--#define IOP_MGTIME	0x0020
--#define IOP_CACHED_LINK	0x0040
-+#define IOP_MGTIME		0x0020
-+#define IOP_CACHED_LINK		0x0040
-+#define IOP_FAST_MAY_EXEC	0x0080
- 
- /*
-  * Inode state bits.  Protected by inode->i_lock
-@@ -2607,6 +2608,7 @@ struct super_operations {
- #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
- #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
- #define S_ANON_INODE	(1 << 19) /* Inode is an anonymous inode */
-+#define S_CAN_FAST_EXEC	(1 << 20) /* Inode is eligible for IOP_FAST_MAY_EXEC */
- 
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-system
-@@ -3395,6 +3397,12 @@ static inline int inode_init_always(struct super_block *sb, struct inode *inode)
- {
- 	return inode_init_always_gfp(sb, inode, GFP_NOFS);
- }
-+void inode_recalc_fast_may_exec(struct inode *);
-+static inline void inode_enable_fast_may_exec(struct inode *inode)
-+{
-+	inode->i_flags |= S_CAN_FAST_EXEC;
-+	inode_recalc_fast_may_exec(inode);
-+}
- 
- extern void inode_init_once(struct inode *);
- extern void address_space_init_once(struct address_space *mapping);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c819cecf1ed9..15d769882371 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3105,6 +3105,8 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 		break;
- 	}
- 
-+	inode_recalc_fast_may_exec(inode);
-+
- 	lockdep_annotate_inode_mutex_key(inode);
- 	return inode;
- }
--- 
-2.48.1
-
+Chen Miao
 
