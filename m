@@ -1,103 +1,73 @@
-Return-Path: <linux-kernel+bounces-885910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4D7C343B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AC5C343B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B719618884A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76CB218974C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F37325C80D;
-	Wed,  5 Nov 2025 07:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13EF265CDD;
+	Wed,  5 Nov 2025 07:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FNLlsFmo"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EbwQJck8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494F8265CDD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D3520E005
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762327845; cv=none; b=SIqmB3ywGxCYUfaQfkmhbf2j+k605PTGwh+Se9xwQfIf8y/DLNdt/tUDQw7mKcOcx+AJAfB8TbQ4UcNsOv+szii0eOibi+NREns8Dg0AT4PisdJBaL/AfS3Hq5ttV2f64KG3ZCIrLCsI4Jgs0aqB//1wF5Xwul72C95z5gSzAHg=
+	t=1762327968; cv=none; b=hRQxQlnCziJ9BND3poqyG1Ild04SFQQGvIXQtlzfZc6oB2ltMhN4cvNOqzLaMAhDVXEkqaGUmmkfVuZqtDn9Htfra6+YeZuEgo4BcO7BROziJylbpDBwiV071IoPExe5+bMgdxMFeACVFHsFejp+DAu4adCrDcgOtXskHDfce7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762327845; c=relaxed/simple;
-	bh=E1dOHEET+fuMIcpW2X+DT//mWVo0l6r5A9sIRy7IIxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7Xr44d5Lp9H/LqP+RD01dfn43GQ5PPzALN/rMNtawksCQIRwLSRPJNawUUfgE1cI/i/Um9kstDapjcaEnMQoyXN0ZYytuo35OEW0Y8olj/fFyNfDJs3SPf3q/KAZ1vwDA6ERCsEKXDLUK1pa+l4ioFZDXyhlDe3h+6rF9PQA1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FNLlsFmo; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b4736e043f9so253047166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:30:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762327841; x=1762932641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ux6+i1bmVIFWhQiGDp7l9kTwV5Ptw+dOTwT3koSlg34=;
-        b=FNLlsFmomleac0MTdyvsazTsZeqkPpYGC5NOEbOajvZ7ZKLfLg/5N1+b6vVEQWIzbq
-         wGg1Kkc9s4bklbMYsKHUbGIxXnil5iElofoxsxTmIoQgCXABt44xbKRRXE6VRzIxysn9
-         GBZN5ini0+W6srpl4zj2Yf9kqlmvdP2s1E5dCu7i1SQ+QeBMEpahKs24U+HUrBnD1sXn
-         tye+jr3Sb0II/9o9bf3naF7h6az2TA6cmxfc/HaL0gPlYCeSKu2eYN9k7AUL35pZIf1z
-         Ll8NTyzSMPz75aC54jJyrby+5QvTb3sHMxD3FfDKMJ4+18u0o0GttQXc2b4p7QFy7Mim
-         O+RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762327841; x=1762932641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ux6+i1bmVIFWhQiGDp7l9kTwV5Ptw+dOTwT3koSlg34=;
-        b=tE6TAweXnZa3LWA4XaBhLcA5RTp9zdQ4FRF1KdVs7r190AVmbOMcNIMhR1pRMAz74w
-         BUVi/8mgSIkr6EO8Om0X+29KIBVrvjiKtKskOIjbBw6SQA7rLlpN0PJ2EWr4AWOamQ6G
-         AdVqSJp5iPXa3McMIE/r30SExCls3/GKUHpJ7JujVWnkWtHEBrfYATuJtIISZ7OmFT9l
-         9lLV//MDYuzIggPFJu5h7E8qCvzYG8lbkf9f90JZT0KTbv+GWokBwTlypkv+LIkFMEPN
-         my7wCyolewFdnxmYcEub/X61vc3OWm3VjoB0T6SE3/oIH2Mp9aXt9egh9lb9dYjmCmof
-         bctw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUwDuWPdo7YfixZggUSJ7Jy0rjXAgqeG8kWO5iX+pi3DMpgklj11jB3uL8Lrm0anZsIB11ZbKOEZmnuNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgQ3sBLLxWKE+gv2DM3XE9Ze2HCTEhuO/LxZSMfRJQX0HAl+0S
-	/XtK5f5nc7sIBynvKhgsABsF1OdznY4/5c6U2T1cl4EYNUGVc62xcdo0vKjqsJVOdpk=
-X-Gm-Gg: ASbGnctvvO5m7pc35/qkOfmNZHdyfwwpjALvRXNFgxG7qIJNAtVU4DaxfTav13NhtiM
-	w1qZkTerIF62fyLWnHsilxKAJdfAU9eHyOoMVJzqmSyrjbHC48dmc2J4a/yuHWSAwBw6Pi7otNS
-	OyL6Ioe0OqFrAGWBz5fEe5YRiMIX/R2yvv1M78YP0rv8HvvDpLCS7bDkFGLTijLLD5QkluWCwop
-	gnJsnyrJIS9JvNSQ9j/Z6p44tfYZiEhx11yrt3SZSp9UDa86+OX4/Iuy6JHxFfdcLD8Kzc3x/Fb
-	rV+eJacPv3loGbUsSMA9JGko6HMb14e2Hbghun2oetsjLIrlj/xfI7VyuLnK+ThFkO4zLE2rxbB
-	XA9wzw4dFzyX1UsZgN451UFDcEU76SAeTXai1exo0Ih9w560b1XwkkZ59ZRU3ol2mEBk4uOpO3W
-	ekArBAKQRWPMmvpA==
-X-Google-Smtp-Source: AGHT+IF4Z39tdBwbbzTMRpDJUt9P/ptkzqi1eF1iOdtCWCbeCbOmCHd88OE2YgBLVLBryIJTdoazkw==
-X-Received: by 2002:a17:907:2d0e:b0:b6d:7742:c20c with SMTP id a640c23a62f3a-b72654e1f17mr170440066b.36.1762327841465;
-        Tue, 04 Nov 2025 23:30:41 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b724034ade7sm414148866b.69.2025.11.04.23.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 23:30:41 -0800 (PST)
-Date: Wed, 5 Nov 2025 08:30:38 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sherry Sun <sherry.sun@nxp.com>, "esben@geanix.com" <esben@geanix.com>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"ryotkkr98@gmail.com" <ryotkkr98@gmail.com>,
-	"kkartik@nvidia.com" <kkartik@nvidia.com>,
-	"fj6611ie@aa.jp.fujitsu.com" <fj6611ie@aa.jp.fujitsu.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [BUG] Suspend failure with nbcon + pm_debug_messages (Linux
- 6.18-rc4)
-Message-ID: <aQr9Hgx-AAP9i1Td@pathway.suse.cz>
-References: <DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <87tszamcaz.fsf@jogness.linutronix.de>
- <DB9PR04MB842977523C92FDE8AF4B714A92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <87qzuem7bo.fsf@jogness.linutronix.de>
- <DB9PR04MB8429F50811DDC648DD8A7B8792C4A@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <87bjlhz8pw.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762327968; c=relaxed/simple;
+	bh=DmjVjaWiMY8UpTL9hVPonUUHOiMkNbCHM5Gk66euzD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JI5GbqD92ZZIXMxmkK8DTik3CvLGLkJMykBPCwQHnazanZTiEHF9+dmcxgTe7itFsmteCk9tT033HWpU4JVmxavibmw/Zh4f1+64zQSN4rQHeXfImDls0IrjCKn9Wt/ib8YxTRCej15ZgMcA3u6UI6XePNqooL0KLTX4XC8Cwfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EbwQJck8; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762327964; x=1793863964;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DmjVjaWiMY8UpTL9hVPonUUHOiMkNbCHM5Gk66euzD0=;
+  b=EbwQJck85m7VmvRosQO2UAcTCzXNROvyPxqPcA0PYVNN8lAjdSx+vPGJ
+   iIlu0/hooX/99MoHX2T4hV19F7RTA1S7UijsaVV4oddjFvWBUjNyOrZZ9
+   jlg9Ge7aDA2B2qRPjUT9HOvbPjHmn/aSzlcoubJRCq6erSknpTrODmhx2
+   JzzzBUfDH4p1r2rjekRB4Tw0gss9JtrChK114KIYQtR9lVW4grA1nw9Gv
+   Y63BhZx9c/KfhL5unH54tNf4qsBz2jnmxgKRn1Y5016DYRc7h9XeO8yKr
+   Cs2p7escXO4QVkntQ2K6Y4PBTBz7eTN3Vhw6M+Qk4JBW3Io4lJSZ1VSiW
+   g==;
+X-CSE-ConnectionGUID: Ku6sD3Y1QuiWnsGjBtFg6A==
+X-CSE-MsgGUID: XNDVbowTSGWHOAwJpqWPzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75114860"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="75114860"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 23:32:43 -0800
+X-CSE-ConnectionGUID: ogA1tFEvToGeTv9J/+ZXtA==
+X-CSE-MsgGUID: Scejnz2vS3i2axp8k4DHfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187830309"
+Received: from igk-lkp-server01.igk.intel.com (HELO c2fcd27ee2f4) ([10.211.93.152])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Nov 2025 23:32:41 -0800
+Received: from kbuild by c2fcd27ee2f4 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vGY0V-000000002U4-1TJL;
+	Wed, 05 Nov 2025 07:32:39 +0000
+Date: Wed, 5 Nov 2025 08:32:26 +0100
+From: kernel test robot <lkp@intel.com>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: failed
+ to match any schema with compatible: ['loongson,loongson64-2core-2k1000']
+Message-ID: <202511050803.aw2cBm3y-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,51 +76,719 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87bjlhz8pw.fsf@jogness.linutronix.de>
 
-On Wed 2025-11-05 00:25:55, John Ogness wrote:
-> Hi Sherry,
-> 
-> On 2025-11-04, Sherry Sun <sherry.sun@nxp.com> wrote:
-> >> Thanks for confirming the fix. I will make an official post on LKML
-> >> with the patch today. Since the i.MX nbcon-driver is already
-> >> mainline, I will CC stable. I will CC you as well.
-> >
-> > I'll keep an eye on any fixes you send later and verify them if
-> > necessary. Hope this fix can be applied to the mainline and the stable
-> > tree ASAP.
-> 
-> Even with this patch [1] I am able to reproduce the problem on one of my
-> test boards. I am using the following extra boot arguments:
-> 
-> no_console_suspend loglevel=8 initcall_debug
-> 
-> And then:
-> 
-> # echo 1 > /sys/power/pm_debug_messages
-> # echo mem > /sys/power/state
-> 
-> This generates a lot of output and leads to the same suspend
-> failure. This may be due to the out-of-tree nbcon-8250 driver I am
-> using, which introduces extra irq_work usage within the driver.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   284922f4c563aa3a8558a00f2a05722133237fe8
+commit: 6428fcf27f0248b076b381408c98102f88564926 MIPS: dts: loongson: Add LS1B-DEMO board
+date:   10 weeks ago
+config: mips-randconfig-2052-20251031 (https://download.01.org/0day-ci/archive/20251105/202511050803.aw2cBm3y-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 20c323aa0e5dea6f3d340c721c5cee30801db850)
+dtschema version: 2025.9.dev13+gc72762e0c
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511050803.aw2cBm3y-lkp@intel.com/reproduce)
 
-Great catch!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511050803.aw2cBm3y-lkp@intel.com/
 
-> Could you please try the above boot arguments with your i.MX board?
->
-> I am wondering if blocking the queueing of irq_work during suspend
-> should be generally implemented rather than just printk avoiding it. It
-> also seems to only be a problem for ARM32 so perhaps it needs to be
-> addressed at the architecture level.
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: failed to match any schema with compatible: ['loongson,loongson64-2core-2k1000']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: / (loongson,loongson64-2core-2k1000): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: cpu@0 (loongson,gs264): Unevaluated properties are not allowed ('#clock-cells' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ehci@4,1:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ehci@4,1:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ohci@4,2:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ohci@4,2:interrupts:0: [19, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): sata@8,0:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): sata@8,0:interrupts:0: [19, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@9,0:interrupts:0:0: 0 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@9,0:interrupts:0: [0, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@a,0:interrupts:0: [1, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@b,0:interrupts:0: [2, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@c,0:interrupts:0: [3, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@d,0:interrupts:0: [4, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@e,0:interrupts:0:0: 5 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@e,0:interrupts:0: [5, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'device_type', 'ehci@4,1', 'gmac@3,0', 'gmac@3,1', 'ohci@4,2', 'pcie@9,0', 'pcie@a,0', 'pcie@b,0', 'pcie@c,0', 'pcie@d,0', 'pcie@e,0', 'sata@8,0' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ehci@4,1:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ehci@4,1:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ohci@4,2:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): ohci@4,2:interrupts:0: [19, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): sata@8,0:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): sata@8,0:interrupts:0: [19, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@9,0:interrupts:0:0: 0 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@9,0:interrupts:0: [0, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@a,0:interrupts:0: [1, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@b,0:interrupts:0: [2, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@c,0:interrupts:0: [3, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@d,0:interrupts:0: [4, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@e,0:interrupts:0:0: 5 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000 (loongson,ls2k-pci): pcie@e,0:interrupts:0: [5, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: gmac@3,1 (pci0014,7a03.0): compatible:4: 'loongson, pci-gmac' does not match '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+--
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: / (loongson,loongson64c-4core-ls7a): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0:0: 49 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0: [49, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0:0: 48 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0: [48, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0:0: 51 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0: [51, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0:0: 50 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0: [50, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0:0: 16 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0: [16, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0:0: 17 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0: [17, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0:0: 29 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0: [29, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0:0: 28 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0: [28, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0:0: 58 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0: [58, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0:0: 32 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0: [32, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0:0: 33 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0: [33, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0:0: 34 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0: [34, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0:0: 35 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0: [35, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0:0: 36 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0: [36, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0:0: 37 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0: [37, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0:0: 40 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0: [40, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0:0: 41 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0: [41, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0:0: 42 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0: [42, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0:0: 43 is not one of [1, 2, 3, 4]
+--
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0: [43, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0:0: 38 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0: [38, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0:0: 39 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0: [39, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dc@6,1', 'device_type', 'ehci@4,1', 'ehci@5,1', 'gmac@3,0', 'gmac@3,1', 'gpu@6,0', 'hda@7,0', 'msi-parent', 'ohci@4,0', 'ohci@5,0', 'pcie@10,0', 'pcie@11,0', 'pcie@12,0', 'pcie@13,0', 'pcie@14,0', 'pcie@9,0', 'pcie@a,0', 'pcie@b,0', 'pcie@c,0', 'pcie@d,0', 'pcie@e,0', 'pcie@f,0', 'sata@8,0', 'sata@8,1', 'sata@8,2' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0:0: 49 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0: [49, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0:0: 48 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0: [48, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0:0: 51 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0: [51, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0:0: 50 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0: [50, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0:0: 16 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0: [16, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0:0: 17 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0: [17, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0:0: 29 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0: [29, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0:0: 28 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0: [28, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0:0: 58 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0: [58, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0:0: 32 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0: [32, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0:0: 33 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0: [33, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0:0: 34 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0: [34, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0:0: 35 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0: [35, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0:0: 36 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0: [36, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0:0: 37 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0: [37, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0:0: 40 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0: [40, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0:0: 41 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0: [41, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0:0: 42 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0: [42, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0:0: 43 is not one of [1, 2, 3, 4]
+--
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0: [43, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0:0: 38 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0: [38, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0:0: 39 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0: [39, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: gmac@3,1 (pci0014,7a03.0): compatible:4: 'loongson, pci-gmac' does not match '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64c_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+--
+>> arch/mips/boot/dts/loongson/loongson64c_4core_rs780e.dtb: / (loongson,loongson64c-4core-rs780e): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_4core_rs780e.dtb: /bus@10000000/isa@18000000/rtc@70: failed to match any schema with compatible: ['motorola,mc146818']
+--
+>> arch/mips/boot/dts/loongson/loongson64c_8core_rs780e.dtb: / (loongson,loongson64c-8core-rs780e): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64c_8core_rs780e.dtb: /bus@10000000/isa@18000000/rtc@70: failed to match any schema with compatible: ['motorola,mc146818']
+--
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: / (loongson,loongson64g-4core-ls7a): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0:0: 49 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0: [49, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0:0: 48 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0: [48, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0:0: 51 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0: [51, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0:0: 50 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0: [50, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0:0: 16 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0: [16, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0:0: 17 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0: [17, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0:0: 29 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0: [29, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0:0: 28 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0: [28, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0:0: 58 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0: [58, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0:0: 32 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0: [32, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0:0: 33 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0: [33, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0:0: 34 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0: [34, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0:0: 35 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0: [35, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0:0: 36 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0: [36, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0:0: 37 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0: [37, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0:0: 40 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0: [40, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0:0: 41 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0: [41, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0:0: 42 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0: [42, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0:0: 43 is not one of [1, 2, 3, 4]
+--
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0: [43, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0:0: 38 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0: [38, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0:0: 39 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0: [39, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dc@6,1', 'device_type', 'ehci@4,1', 'ehci@5,1', 'gmac@3,0', 'gmac@3,1', 'gpu@6,0', 'hda@7,0', 'msi-parent', 'ohci@4,0', 'ohci@5,0', 'pcie@10,0', 'pcie@11,0', 'pcie@12,0', 'pcie@13,0', 'pcie@14,0', 'pcie@9,0', 'pcie@a,0', 'pcie@b,0', 'pcie@c,0', 'pcie@d,0', 'pcie@e,0', 'pcie@f,0', 'sata@8,0', 'sata@8,1', 'sata@8,2' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0:0: 49 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@4,0:interrupts:0: [49, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0:0: 48 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@4,1:interrupts:0: [48, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0:0: 51 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ohci@5,0:interrupts:0: [51, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0:0: 50 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): ehci@5,1:interrupts:0: [50, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0:0: 16 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,0:interrupts:0: [16, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0:0: 17 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,1:interrupts:0: [17, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): sata@8,2:interrupts:0: [18, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0:0: 29 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gpu@6,0:interrupts:0: [29, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0:0: 28 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): dc@6,1:interrupts:0: [28, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0:0: 58 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): hda@7,0:interrupts:0: [58, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts:0: [12, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,0:interrupts: [[12, 4], [13, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts:0: [14, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): gmac@3,1:interrupts: [[14, 4], [15, 4]] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0:0: 32 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@9,0:interrupts:0: [32, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0:0: 33 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@a,0:interrupts:0: [33, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0:0: 34 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@b,0:interrupts:0: [34, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0:0: 35 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@c,0:interrupts:0: [35, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0:0: 36 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@d,0:interrupts:0: [36, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0:0: 37 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@e,0:interrupts:0: [37, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0:0: 40 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@f,0:interrupts:0: [40, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0:0: 41 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@10,0:interrupts:0: [41, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0:0: 42 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@11,0:interrupts:0: [42, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0:0: 43 is not one of [1, 2, 3, 4]
+--
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@12,0:interrupts:0: [43, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0:0: 38 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@13,0:interrupts:0: [38, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0:0: 39 is not one of [1, 2, 3, 4]
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: pci@1a000000 (loongson,ls7a-pci): pcie@14,0:interrupts:0: [39, 4] is too long
+   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@4,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ohci@5,0: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/ehci@5,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,1: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/sata@8,2: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gpu@6,0: failed to match any schema with compatible: ['pci0014,7a15.0', 'pci0014,7a15', 'pciclass030200', 'pciclass0302']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/dc@6,1: failed to match any schema with compatible: ['pci0014,7a06.0', 'pci0014,7a06', 'pciclass030000', 'pciclass0300']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/hda@7,0: failed to match any schema with compatible: ['pci0014,7a07.0', 'pci0014,7a07', 'pciclass040300', 'pciclass0403']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass020000', 'pciclass0200', 'loongson, pci-gmac']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: gmac@3,1 (pci0014,7a03.0): compatible:4: 'loongson, pci-gmac' does not match '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.1', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@f,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@10,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+>> arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@11,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@12,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@13,0: failed to match any schema with compatible: ['pci0014,7a29.1', 'pci0014,7a29', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+   arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: /bus@10000000/pci@1a000000/pcie@14,0: failed to match any schema with compatible: ['pci0014,7a19.1', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
+--
+>> arch/mips/boot/dts/loongson/loongson64v_4core_virtio.dtb: / (loongson,loongson64v-4core-virtio): 'model' is a required property
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml
+>> arch/mips/boot/dts/loongson/loongson64v_4core_virtio.dtb: /hypervisor: failed to match any schema with compatible: ['linux,kvm']
 
-IMHO, we could not _quietly_ block irq_work during the suspend a
-generic way. We would need to warn about it so that the callers are
-aware of it. Then the callers would need to explicitly block it
-to avoid the warning.
-
-I want to say that explicitly blocking the irq_work in printk() looks
-like the right way to go. I think that it would be needed anyway.
-
-Best Regards,
-Petr
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
