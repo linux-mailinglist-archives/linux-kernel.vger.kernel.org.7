@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-885738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04323C33CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:47:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62128C33D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859DF3AE3B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:47:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCDAA34C68D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC6E254B03;
-	Wed,  5 Nov 2025 02:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF022571C5;
+	Wed,  5 Nov 2025 02:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y6Irj+iW";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Wtbe4q4+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItAc5J/9"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451121D3E2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D42214228
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762310825; cv=none; b=Rad2vJTLaoUh6dEATNH7hnzY+WuNWRX3bGvau/nWvGmpQIH2F3YzQUJ0uGc5EvEqGUZK0hwjFjtjrZfkv29crl/GUQcgi8v497uu+Uf36hoCmsw/XqPS1xwp+PrPX8Cjb6ieiSJiOgurk8whAfT3FQGl4Q7L+D1AI7x8znlulDc=
+	t=1762311319; cv=none; b=DKZXmZeIKnU5fJ09xls5Ezv8BW8npGhbjKTcCKwC4xuddsUxXdBre9UND2nCcdR8Wz5iDLSwV6/8D4AH5xX6Tb47OHFlwqJJEWc2GrGyHdQdALHb5lIMIogSSI2MFgcnZrMXLdHVmJdmmtTVrLFBtOltvPgHsL1lt/tTjtZ5BxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762310825; c=relaxed/simple;
-	bh=dkLYJehyR9lg3oijQsJr+ApeZ1eMMGVXQWsn/CtkOAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K05QyjdHH8Fu95qTvdEORKPTD7bgt8BYlCjENjTGHT0I/GJjqtLopg12cIVJj/71D2KZhpZ0Qzs75sJbGBHtqhXQqurihkfQ66I3Yb8LkNETrvP1nStPSjhY3fTNMvb4aOK8BTX/AAWbzEy4auqcDr7Aq78J1mqIbVumyLeWQhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y6Irj+iW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Wtbe4q4+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KfeXe2927473
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 02:47:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xEgKxTzFP5wtiwCINthvDjzT8DEp1xPRg4SO6G8xn2c=; b=Y6Irj+iWoATxQYrG
-	5Z+y9o7SE6YyPNcWVGkCzJQ0hlISPUcVdUzTQYQEQfv68RRYHxq5XC+ELN5HUZ2z
-	4RToSObOufxg52mH4xH8HvoXQ6Z/Vsvd09WiPazfe+jE1/T1uHQnCcnudBnNu2kn
-	9LTM6BNf1FUQ2Rk21Rg0z7WkDvxvq4b+Lt2myXhsOiCfRErf6Gknc+wGmx7HuSCw
-	IIoX9LLxKfdbw8tf2avcC9EqYCg0zF0RUn6kPEV1pONE1XPfEy6hB2VBUEIaBh1J
-	XEqKP1NiNgC5EbpeNf3PnNCIbjzE/gray0HDbVwQw20HyCti4z08R/FML6oMBpvq
-	gYwSWQ==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7me5ss5s-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 02:47:02 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3408686190eso11120684a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 18:47:02 -0800 (PST)
+	s=arc-20240116; t=1762311319; c=relaxed/simple;
+	bh=rkO2Yspx/oAGhWJycTuPZ1CZiQCqrc9YcX1q9+omYEA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=YJAo7ovG5vdw8KfTgcC3Qur+t+8B/Nv6iYCEzMJ/bWYF5oLvNA9ZqwVa/baEjxz5EtTUg1eWj1C6OqSvsnqye1fgimGbC5Mx11oAWqwZR3EdCiaG8s2W/LzJMr7bF+keA8IS+CMk6cHDBLm4Ms/wxYWzAC5z+7zGN6EG8iBMTxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItAc5J/9; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-295247a814bso68681435ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 18:55:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762310822; x=1762915622; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xEgKxTzFP5wtiwCINthvDjzT8DEp1xPRg4SO6G8xn2c=;
-        b=Wtbe4q4+wuNJPIGCmAQiI7Hkh36EqUgqf2Dyl3WudzK4DWditiG1YHajr4ACNId+e8
-         U/l6n/mm6Zdzf9s3OHCIJvCvRktVRQ+Fu5Fe/kLCEbuhvouzFokltdqgd63ebmiEK7fz
-         fBrdCL3A83fyDc6nlixL/pCWiQue+ojKhsbEGesUbhHAW2E8B0yLUscwb7pmMtAX1S0f
-         u1lMA9iY6vv84J84wLLt9rwU+x00O8e2d7+jniKirjz0qk1YClwHm3CJP98VWuyNJaXQ
-         mNzKlkK3dJTh8xmEETvrqDS6/cRid6vpZWbts87On5Sr8rqlPxSFXQyJ19unQBxkmSXh
-         mMZw==
+        d=gmail.com; s=20230601; t=1762311317; x=1762916117; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RzRgxKaFFDli8ftuhQFfyH2ObKCMh7+2PDYIIzQvueg=;
+        b=ItAc5J/9oOOo4X6ReVED7moF5N+INunHILgjV8ulSa68FrFis7qvkGzK6TDhJPtWOA
+         8gcRVCo4bJR3m2EM2KeDYetxd72fdll5bDIozGuXjN1D3z0TaKw0Rc/ksaiIubQC00wV
+         nNZAUontGG+nZ985AGDCyvyK/yaBKkNcSqFVczLy2k7UcATBoKyeH+kmAAwJomhIj59g
+         BmKyTPI9EfGLoOEUPDOw9bPc6ThUtrpAviuAYZZ7ojVWCoYN6RAsk/iMpMHEwnw8afHK
+         1GEST6KdK8mdpoDlfEVaYan75StU3PXGg1DhJpsRJ7c1cpr6rCotxtF/MD7T/7+ewCQf
+         iemw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762310822; x=1762915622;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xEgKxTzFP5wtiwCINthvDjzT8DEp1xPRg4SO6G8xn2c=;
-        b=CfhChQVQ/23AS7Vg5IdHKDc3ozeOA1f/FLdkZ2iy2VE9ibzYn0o2xZdLEjREdve22X
-         ajAuHgJFcWFj8JBUcDqedXmG+AMvrwG28jiEBkoKbSAkvcZEpgUT70vERkkUBh1TJssE
-         6k62oDwM1DIlbps/ALk7t6Vjl1Him54VD4VNvAn51pXV4o+0jSZIcZMsUYRBdXJ2KZVD
-         IL+/1Zy+2zgaYeDGGjPg0vKN2GOsaculJJ3cZgqavVuAClL1eWzlpxKolUuzJJRIJe5S
-         Let8fFcsoq9fiLvXlml1x/gQCtpKGRQBryTQFWgya4dJjPkh9DbdyHYXTDfK/JBgY0O8
-         TSiA==
-X-Gm-Message-State: AOJu0YyNGU3tED9fIqrSKm7Q6+d8RPcDikbocUW0lmEF3gztkawbnV9v
-	hrZjBvRsaVhRxzEI0mXGzkQWcZZKQoosZBjKmdIZVSkYYzKYVBeRuAWJmcaOf/6TbzX+76t3aNK
-	pi2uKAWoS00NDoZbHL54+h7nPizwbFv4eQqIVJ84rhWRVOP1k3SvKBznOHc7UGd3G4O+qkckuGp
-	Q=
-X-Gm-Gg: ASbGncvIYBBYHBSngWqpACrNXMz7VyQPrQGpxgXCoC5XfjLbbw1z13ZhGPPtijwpkuD
-	Or0HH60s9DEkoiaUCQT89anYT1aMN3WSf7+4YYDGMr0WIHV3g2ikhc7oaaxPrVIv5QoY9/oxrIJ
-	/uah/5UF2v+Mdp1/OCr89U+zuNTxHO38kEEjlyNz6tgCKdV3sqvBjZEcltOcqvR2WXywfm10tSZ
-	xJv1nEYmyB170G2UEYwDYHpJu/+pvbs2TLJ2YSjUMwHrLgaJ1PXbwljdmdUOw9ZBGEOyp3w684v
-	g7bF7Rz7IWNOhxsKiKId8j0ZYQtCXJ7gYzPDuGH1J7Xt7Ilkwtly/oXyX62BAPdptbieGaODocb
-	SGojYTTdEzZq4FC8vKN7Ygn/JbbQZnNxjCrLk7xHH466kkxoNYgo6V3p7OeQ3H7ZME0/i28A=
-X-Received: by 2002:a17:90b:5350:b0:340:776d:f4ca with SMTP id 98e67ed59e1d1-341a6de83a1mr1783542a91.26.1762310821993;
-        Tue, 04 Nov 2025 18:47:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGuwMno/jN7iUuFKpQ58L3wuOLckMwb2hS/UjoC4WxCpQxVIypLOXTOb+caLCW75bcojVp0Yg==
-X-Received: by 2002:a17:90b:5350:b0:340:776d:f4ca with SMTP id 98e67ed59e1d1-341a6de83a1mr1783499a91.26.1762310821509;
-        Tue, 04 Nov 2025 18:47:01 -0800 (PST)
-Received: from [10.133.33.42] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f942a9d9sm3829624a12.33.2025.11.04.18.46.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 18:47:01 -0800 (PST)
-Message-ID: <9830e3fb-3f08-4343-bae8-07d446f86173@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 10:46:55 +0800
+        d=1e100.net; s=20230601; t=1762311317; x=1762916117;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RzRgxKaFFDli8ftuhQFfyH2ObKCMh7+2PDYIIzQvueg=;
+        b=ZriHDOm8ipBJW8+12cym64GNVZ9qD4+kIvHT6VjrDp0XO1vGcigLfFr6vdrWkqNLpI
+         GXIPtXgj8ICqoJBp+t9l/mwU7fk8sWzW7JA2ronFCQnSyBjQ3aHEdpyiyiY+SD3Rbn6v
+         /6bHebgsICVB9lwIKV2aTV+/hv1Ay0a9Zc2/XbW+VGP+yO9H9VySO35Ka0+J7I5N5iL+
+         gqoIqwu417Ga0+DQ/5uCBTRnqrmJazMfqAJHy3Qxbmh0a7nTr3phLaiG3NAmauoQ0qDh
+         hV05sGrp+0uZ4Pbde7UQ32qKV+6E3fmWtIyz4LBHVIJSqZ81t488Infks1H7CMvy2X3R
+         H6qw==
+X-Gm-Message-State: AOJu0YwgUMG5flfqHDRUm+oJW4Nn9TiukJqNldZZZCILULxnlHCq+5aR
+	9IGOfrhu/BflTwooHo5xHUSEW+Ca9cWcrguknEwoijcVIVxhHAh56vYa
+X-Gm-Gg: ASbGncuaCpfKDmpQ6TJAwr6e63OhoYDbcyymwIqqoaXuW65vA1IEuV6ZRWuMABpY45H
+	zng9yvedrRW1o7DHGq/catUZ56WS0HxEZzWjgmdX41YM6HqCyWWa1u9pZR6Cd64DRbKB9Ko3sOl
+	f0miQXKJ8M0a0ixHIqpHfh2+EVUfzLQCKsW/6q9ml1XD/BcdtUoYszwmwrp18NYOZKl/p596Uq+
+	BPdjR1h0DgCi9gPOV4XyLHYbb9sCdiFU2m7l6nAkBRhzQ499Jvexxbo9Ha9Dnw5cAi1yahj45s7
+	cceRk8Rnklh7ntRuPqFDqsrqQL3DTruE79Br1Bs1ssn/fpQ7L1VjVszAYTJe80v9MlCk6mqgyZO
+	uZG3PVBPlggRMVXI0QPWJG8HeCM3IZ+b8fMVLdt6JIbCyK1jIjhuwvZbZBSWJ5rPFXzN+lg==
+X-Google-Smtp-Source: AGHT+IGwTm7URkxWPNS/uaQT82VrA80foZj+Jgsm9GWgCIbhw60EG5vfai2y+vo+uSLgfxHG3bwlGg==
+X-Received: by 2002:a17:903:3c4b:b0:293:33b:a9b0 with SMTP id d9443c01a7336-2962ae10998mr22075795ad.32.1762311317247;
+        Tue, 04 Nov 2025 18:55:17 -0800 (PST)
+Received: from dw-tp ([171.76.85.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601b8f28esm43621645ad.5.2025.11.04.18.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 18:55:16 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Hildenbrand <david@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>, 
+	Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org, 
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB flush
+In-Reply-To: <20251029100909.3381140-2-kevin.brodsky@arm.com>
+Date: Wed, 05 Nov 2025 08:16:58 +0530
+Message-ID: <87qzud42n1.ritesh.list@gmail.com>
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com> <20251029100909.3381140-2-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next v2 5/6] wifi: ath11k: Register DBR event handler
- for CFR data
-To: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>, jjohnson@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-References: <20251104162633.3007874-1-yu.zhang@oss.qualcomm.com>
- <20251104162633.3007874-6-yu.zhang@oss.qualcomm.com>
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20251104162633.3007874-6-yu.zhang@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: mL6smPerQLKqjjf8xQHYLc48sfMcwQGE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxNiBTYWx0ZWRfXxg3/FYV2y4vc
- Xs1qUs2l0ubZ0qgbRQxztHJkop4/jwOO7MZgjNcrLrZ7EqyoJDEguU7nfXYo97ubKksa0cpfVyt
- SMWSorsa/AHYSJPsOIL5rCKAHs3W8Jrd1iBIaiK0NI6FJKoOwIg0E1MzCST5AhD51NJ22BjKz9e
- YGjsHkukx1g+cawEkTDLOhpzOwcHi9XevhPGgVoBkY4+NLGvIHXNe/nGBGQbKXpQA7Ponev1ykN
- mPCNMCnish+8o/vXJDRY0Lgp1uLc0++fnUnqYGEW9sJ3kxECP9RV/hrgcOSR760rpH0NKUl56wn
- KpkIU3jOghOyL7+2LtADatLZx4V5t+1BWmQyVsblO5o3lKRrxh2Xgoi7ZvMzzRDsBdc3Dn92tLO
- vCcF02b+moDtuDQxTXSOz/dF4ck9DQ==
-X-Proofpoint-ORIG-GUID: mL6smPerQLKqjjf8xQHYLc48sfMcwQGE
-X-Authority-Analysis: v=2.4 cv=IpsTsb/g c=1 sm=1 tr=0 ts=690abaa6 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=wcWF3zN8gqulG0AiaMQA:9 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511050016
+Content-Type: text/plain
+
+Kevin Brodsky <kevin.brodsky@arm.com> writes:
+
+> From: Alexander Gordeev <agordeev@linux.ibm.com>
+>
+> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
+> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
+> Therefore, the batch re-activation code is never called, so remove it.
+>
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>  arch/powerpc/include/asm/thread_info.h |  2 --
+>  arch/powerpc/kernel/process.c          | 25 -------------------------
+>  2 files changed, 27 deletions(-)
+>
+
+Since the commit referenced in above disables the preemption in
+arch_enter_lazy_mmu(), so the expectation is that we will never be
+context switched while in lazy_mmu, hence the code changes in
+switch_to() around __flush_tlb_pending() should ideally never be called.
+
+With this analysis - the patch looks good to me. I will give this entire
+patch series a try on Power HW with Hash mmu too (which uses lazy mmu and
+let you know the results of that)!
+
+For this patch please feel free to add:
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
 
+CC: Venkat who also runs CI on linux Power HW for upstream testing :)
 
-On 11/5/2025 12:26 AM, Yu Zhang(Yuriy) wrote:
+-ritesh
 
-> +static enum ath11k_cfr_correlate_status
-> +ath11k_cfr_correlate_and_relay(struct ath11k *ar,
-> +			       struct ath11k_look_up_table *lut,
-> +			       u8 event_type)
-> +{
-> +	enum ath11k_cfr_correlate_status status;
-> +	struct ath11k_cfr *cfr = &ar->cfr;
-> +	u64 diff;
-> +
-> +	if (event_type == ATH11K_CORRELATE_TX_EVENT) {
-> +		if (lut->tx_recv)
-> +			cfr->cfr_dma_aborts++;
-> +		cfr->tx_evt_cnt++;
-> +		lut->tx_recv = true;
-> +	} else if (event_type == ATH11K_CORRELATE_DBR_EVENT) {
-> +		cfr->dbr_evt_cnt++;
-> +		lut->dbr_recv = true;
-> +	}
-> +
-> +	if (lut->dbr_recv && lut->tx_recv) {
-> +		if (lut->dbr_ppdu_id == lut->tx_ppdu_id) {
-> +			/* 64-bit counters make wraparound highly improbable,
-> +			 * wraparound handling is omitted.
-> +			 */
 
-I was meaning that we need to change to the common Linux comment style which starts with
-an empty line:
-
-	/*
-	 * your comments start here
-	 */
-
-> +			cfr->last_success_tstamp = lut->dbr_tstamp;
-> +			if (lut->dbr_tstamp > lut->txrx_tstamp) {
-> +				diff = lut->dbr_tstamp - lut->txrx_tstamp;
-> +				ath11k_dbg(ar->ab, ATH11K_DBG_CFR,
-> +					   "txrx event -> dbr event delay = %u ms",
-> +					   jiffies_to_msecs(diff));
-> +			} else if (lut->txrx_tstamp > lut->dbr_tstamp) {
-> +				diff = lut->txrx_tstamp - lut->dbr_tstamp;
-> +				ath11k_dbg(ar->ab, ATH11K_DBG_CFR,
-> +					   "dbr event -> txrx event delay = %u ms",
-> +					   jiffies_to_msecs(diff));
-> +			}
-> +
-> +			ath11k_cfr_free_pending_dbr_events(ar);
-> +
-> +			cfr->release_cnt++;
-> +			status = ATH11K_CORRELATE_STATUS_RELEASE;
-> +		} else {
-> +			/* Discard TXRX event on PPDU ID mismatch because multiple PPDUs
-> +			 * may share the same DMA address due to ucode aborts.
-> +			 */
-> +
-
-same here
-
-> +			ath11k_dbg(ar->ab, ATH11K_DBG_CFR,
-> +				   "Received dbr event twice for the same lut entry");
-> +			lut->tx_recv = false;
-> +			lut->tx_ppdu_id = 0;
-> +			cfr->clear_txrx_event++;
-> +			cfr->cfr_dma_aborts++;
-> +			status = ATH11K_CORRELATE_STATUS_HOLD;
-> +		}
-> +	} else {
-> +		status = ATH11K_CORRELATE_STATUS_HOLD;
-> +	}
-> +
-> +	return status;
-> +}
-> +
+> diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+> index b0f200aba2b3..97f35f9b1a96 100644
+> --- a/arch/powerpc/include/asm/thread_info.h
+> +++ b/arch/powerpc/include/asm/thread_info.h
+> @@ -154,12 +154,10 @@ void arch_setup_new_exec(void);
+>  /* Don't move TLF_NAPPING without adjusting the code in entry_32.S */
+>  #define TLF_NAPPING		0	/* idle thread enabled NAP mode */
+>  #define TLF_SLEEPING		1	/* suspend code enabled SLEEP mode */
+> -#define TLF_LAZY_MMU		3	/* tlb_batch is active */
+>  #define TLF_RUNLATCH		4	/* Is the runlatch enabled? */
+>  
+>  #define _TLF_NAPPING		(1 << TLF_NAPPING)
+>  #define _TLF_SLEEPING		(1 << TLF_SLEEPING)
+> -#define _TLF_LAZY_MMU		(1 << TLF_LAZY_MMU)
+>  #define _TLF_RUNLATCH		(1 << TLF_RUNLATCH)
+>  
+>  #ifndef __ASSEMBLER__
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index eb23966ac0a9..9237dcbeee4a 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1281,9 +1281,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  {
+>  	struct thread_struct *new_thread, *old_thread;
+>  	struct task_struct *last;
+> -#ifdef CONFIG_PPC_64S_HASH_MMU
+> -	struct ppc64_tlb_batch *batch;
+> -#endif
+>  
+>  	new_thread = &new->thread;
+>  	old_thread = &current->thread;
+> @@ -1291,14 +1288,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  	WARN_ON(!irqs_disabled());
+>  
+>  #ifdef CONFIG_PPC_64S_HASH_MMU
+> -	batch = this_cpu_ptr(&ppc64_tlb_batch);
+> -	if (batch->active) {
+> -		current_thread_info()->local_flags |= _TLF_LAZY_MMU;
+> -		if (batch->index)
+> -			__flush_tlb_pending(batch);
+> -		batch->active = 0;
+> -	}
+> -
+>  	/*
+>  	 * On POWER9 the copy-paste buffer can only paste into
+>  	 * foreign real addresses, so unprivileged processes can not
+> @@ -1369,20 +1358,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  	 */
+>  
+>  #ifdef CONFIG_PPC_BOOK3S_64
+> -#ifdef CONFIG_PPC_64S_HASH_MMU
+> -	/*
+> -	 * This applies to a process that was context switched while inside
+> -	 * arch_enter_lazy_mmu_mode(), to re-activate the batch that was
+> -	 * deactivated above, before _switch(). This will never be the case
+> -	 * for new tasks.
+> -	 */
+> -	if (current_thread_info()->local_flags & _TLF_LAZY_MMU) {
+> -		current_thread_info()->local_flags &= ~_TLF_LAZY_MMU;
+> -		batch = this_cpu_ptr(&ppc64_tlb_batch);
+> -		batch->active = 1;
+> -	}
+> -#endif
+> -
+>  	/*
+>  	 * Math facilities are masked out of the child MSR in copy_thread.
+>  	 * A new task does not need to restore_math because it will
+> -- 
+> 2.47.0
 
