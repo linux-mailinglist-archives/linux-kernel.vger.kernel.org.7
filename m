@@ -1,340 +1,300 @@
-Return-Path: <linux-kernel+bounces-885917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43779C343EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:36:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAED9C34404
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B67A18C51C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:36:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C5B34EFEBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3812D2483;
-	Wed,  5 Nov 2025 07:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C770E2D239B;
+	Wed,  5 Nov 2025 07:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHXe7M6i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qf5XMvI8"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912DB19A2A3;
-	Wed,  5 Nov 2025 07:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6992522BA;
+	Wed,  5 Nov 2025 07:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762328149; cv=none; b=I6zF1xO828DX9RYAwTmC3lXgwfvVrpL6gfnCkfRI2TbFhj9QIRj7KEvrSGJbGO5IC/vDV5BzzlIkXgrd8C4ZDXEjyz8hFr8r3UEshV90JrapJEZZAVoKCVOOyVlmDrohvdPxhEjHhyehoR6BtiJi2HQHckojV3KodkJUf07lHEg=
+	t=1762328182; cv=none; b=dvGQJ+C/h9woZi1a1I6+zPGMzPQS0QP+Re+y2TSLhp2WgIdfGG0K6Bts3hhQ40DqM6FJ4pStUPI9DJeoLt6rTAG9P+tQReuWcMxGnJPKOOuZCgnSmm8EyadopY7VkFLAxwsVNICSRciG2KKWT7s3eDlOoL24ZvS1M7RNFhg3vqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762328149; c=relaxed/simple;
-	bh=BrWa/lzA23oyRXVpHd04uUOezDwX9GRDHz8VGSC/tcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvA3EhF2849MmB8M3huCsVeUo7JiQvCsPr9d1xGC1cd641EAJcfoKAKc9Gm7rWLv9Rc7X0kR6D5zhnp04KSHDtzIYMZNa9tHDJQFAV3QTEjyb6BYnnlwdU7hPanl8o/oNxiQA0CzZs03X14e6J6A4AeeZIWq6mUWpezQtwk/snU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHXe7M6i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F404C4CEFB;
-	Wed,  5 Nov 2025 07:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762328148;
-	bh=BrWa/lzA23oyRXVpHd04uUOezDwX9GRDHz8VGSC/tcQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FHXe7M6i3Dyl1CPBdWHLGb9KKKCS8oXugkm38c2A3fTh3YhLjTYU/CAu8wHLUwcwH
-	 zi+xnCqG0E7kWGZJoQ6i6cpF3It6QIwNsRmqoS5mmCteAvvApyI4kr1Aud1c352JKf
-	 uijzo0EOaz+Gx77HT0PNhWjAbnVlibJoH/VtP5KjTt/wBR/K45KhEmb8o81EPHrWRl
-	 1Zg9G54lW8qXUt+Yo6F1Amue7aiQu9MuVLAALUXVnMZd9FhknV7Xvs0uvQCIkdHEZz
-	 VBntuwXrx8FzKUNf/bNFK47I3SPNdJNPwqNI7t4/i7C8xNaes42Z924KoLT7BWutpW
-	 SOt4sOsgK15fw==
-Message-ID: <89733ddf-8af3-42d0-b6e5-20b7a4ef588c@kernel.org>
-Date: Wed, 5 Nov 2025 08:35:41 +0100
+	s=arc-20240116; t=1762328182; c=relaxed/simple;
+	bh=kZBCLwNROGbeAQkOTm/92ZIfE1c0ggotdphJdDb6934=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Td/Q7y21dUOydoYZdqikXPnUiSYb1dzqQE55zGpozczcFWu7fQTnNNeCaRY5Q9rgCP0G1rVvLj4ku7YzrqqlDh3jQ5l60gftLodfmchoLxm6UZCg7oaBRSAqSAWeUqSCj8g9WkYbwuBjfa06/glFSx4GjuivilTkWJi4H72fe2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qf5XMvI8; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 5 Nov 2025 09:35:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762328168; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
+	bh=EtPU1NFthqKkahcjBAXUOVz4dmxuIJ+cwvTL2ptvuCU=;
+	b=qf5XMvI8lPhQn73losxLv4OcmTCP7ULI3dv2WyQYhxmfWasof7RU05jfeS1NeQlDnA5L9p
+	atxPDOY2j9BSYGIohTEZufpG6Uqvco3M+fchFmoeyd4ikweVaz4UC9+XuPwkA+x8TeuLtR
+	1DSi54rGCoM1RY6nnCaPEtpsGPHm0is=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Matti Vaittinen <matti.vaittinen@linux.dev>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 01/16] dt-bindings: regulator: ROHM BD72720
+Message-ID: <48fe6e2642db4484640b173cd71be1b245929122.1762327887.git.mazziesaccount@gmail.com>
+Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
+References: <cover.1762327887.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Doug Anderson
- <dianders@google.com>, Joy Chakraborty <joychakr@google.com>,
- Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan
- <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251029214032.3175261-1-royluo@google.com>
- <20251029214032.3175261-2-royluo@google.com>
- <20251030-cunning-copper-jellyfish-1b5f3b@kuoka>
- <CA+zupgxV7SH8Jmghg7HUkWi63dN3m6KLQNBbf+BOQPFbRsiKiw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgxV7SH8Jmghg7HUkWi63dN3m6KLQNBbf+BOQPFbRsiKiw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 01/11/2025 00:45, Roy Luo wrote:
-> On Thu, Oct 30, 2025 at 12:37 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Wed, Oct 29, 2025 at 09:40:31PM +0000, Roy Luo wrote:
->>> Document the device tree bindings for the USB PHY interfaces integrated
->>> with the DWC3 controller on Google Tensor SoCs, starting with G5
->>> generation. The USB PHY on Tensor G5 includes two integrated Synopsys
->>> PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
->>>
->>> Due to a complete architectural overhaul in the Google Tensor G5, the
->>> existing Samsung/Exynos USB PHY binding for older generations of Google
->>> silicons such as gs101 are no longer compatible, necessitating this new
->>> device tree binding.
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/phy/google,gs5-usb-phy.yaml      | 127 ++++++++++++++++++
->>>  1 file changed, 127 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->>> new file mode 100644
->>> index 000000000000..8a590036fbac
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->>> @@ -0,0 +1,127 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +# Copyright (C) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google Tensor Series (G5+) USB PHY
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description: |
->>> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
->>> +  Google Tensor SoCs, starting with the G5 generation.
->>> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
->>> +  and USB 3.2/DisplayPort combo PHY IP.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: google,gs5-usb-phy
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: USB3.2/DisplayPort combo PHY core registers.
->>> +      - description: USB3.2/DisplayPort combo PHY Type-C Assist registers.
->>> +      - description: USB2 PHY configuration registers.
->>> +      - description: USB3.2/DisplayPort combo PHY top-level registers.
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: usb3_core
->>> +      - const: usb3_tca
->>> +      - const: usb2_cfg
->>> +      - const: usb3_top
->>
->> These prefixes are redundant. Also, you are still referencing here
->> completely different devices. MMIO of IP blocks do not have size of 0xc
->> and they do not span over other blocks (0x0c410000 and then next one is
->> 0x0c637000).
-> 
-> I'd like to explain why MMIO of IP blocks looks discontinuous.
-> As outlined in the description, this device contains two SNPS PHY IPs
-> including eUSB2 PHY and USB3.2/DP combo PHY, and is integrated
-> with the SNPS DWC3 USB controller. A top-level subsystem wrapper
-> sits above the PHYs and controller. This wrapper integrates these IPs
-> and is where the Tensor-specific implementation resides. It's essential
-> to touch these wrapper registers to control the underlying SNSP IPs.
-> Unfortunately, the top-level wrapper's MMIO space lacks a clear
-> boundary between these IPs. Specifically, the registers required to
-> configure a particular IP are not always adjacent to that IP, and in
-> some cases, multiple IPs may even share the same address space.
-> 
-> The following is the register layout overview:
-> - 0xc400000: Dedicated address space for DWC3 controller IP.
-> - 0xc410000: Dedicated address space for USB3.2/DP combo PHY IP.
-> - 0cc440000: Dedicated address space for the eUSB2 PHY IP.
->                       While this is not in use, it should perhaps be
-> called out in
->                       the binding for completeness.
-> - 0xc450000: This address range contains top-level wrapper registers
->                       and its space is shared by two devices: the DWC3
->                       controller and the eUSB2 PHY.
->                       It includes control registers for the DWC3 controller
->                       (e.g. hibernation control and interrupt registers) and
->                       the eUSB2 PHY (e.g. registers for USB2 PHY
->                       frequency configuration).
->                       Because the space is shared, the MMIO range for the
->                       PHY becomes fragmented and is only allocated a size
->                       of 0xc, as the remaining registers in this range are
->                       assigned to the DWC3 controller.
-> - 0xc460000: This address range contains registers for other blocks
->                       within the same top-level wrapper (such as PCIe PHY
->                       and DP controller) which are not relevant to USB.
-> - 0xc637000: Another region of top-level wrapper registers.
->                       This area is relevant to both the eUSB2 PHY IP
->                       (e.g. control register for vbus valid) and USB3.2/DP
->                       combo PHY (e.g. registers relevant to PHY firmware).
-
-To me it all feels like you pick up individual registers from the
-common, miscellaneous register region aka syscon.
-
-And if that's the case then you create a narrowly constrained binding
-which won't work with next generations where hardware engineers decide
-to make that shared region a bigger syscon.
-
-> 
-> Thanks for taking the time to go through this wall of text.
-> This is definitely not an ideal register layout, but I'm open
-> to any suggestions on how best to address this fragmentation.
-> If discontinuous MMIO space is a concern, does it make sense to
-> make the wrapper registers a syscon node so that it can be
-> shared by multiple devices?
-
-0xc450014 looks like that. 0x0c637000, depends how other devices really
-use it.
-
-You should post somewhere full DTS for clarity. It's not a requirement
-but it actually can answer several questions.
-
-> 
->>
->>
->>> +            reg = <0 0x0c410000 0 0x20000>,
->>> +                  <0 0x0c430000 0 0x1000>,
->>> +                  <0 0x0c450014 0 0xc>,
->>> +                  <0 0x0c637000 0 0xa0>;
->>> +
->>> +  "#phy-cells":
->>> +    description: |
->>> +      The phandle's argument in the PHY specifier selects one of the three
->>> +      following PHY interfaces.
->>> +      - 0 for USB high-speed.
->>> +      - 1 for USB super-speed.
->>> +      - 2 for DisplayPort.
->>> +    const: 1
->>> +
->>> +  clocks:
->>> +    minItems: 2
->>> +    items:
->>> +      - description: USB2 PHY clock.
->>> +      - description: USB2 PHY APB clock.
->>> +      - description: USB3.2/DisplayPort combo PHY clock.
->>> +      - description: USB3.2/DisplayPort combo PHY firmware clock.
->>> +    description:
->>> +      USB3 clocks are optional if the device is intended for USB2-only
->>> +      operation.
->>
->> No, they are not. SoCs are not made that internal wires are being
->> disconnected when you solder it to a different board.
->>
->> I stopped reviewing here.
->>
->> You are making unusual, unexpected big changes after v4. At v4 you
->> received only few nits because the review process was about to finish.
->>
->> Now you rewrite everything so you ask me to re-review from scratch.
-> 
-> Apologies for the trouble, my intent was to address your feedback on v4
-> by describing the USB3/DP PHY block for completeness.
-> Like mentioned earlier, this device contains two underlying IPs: eUSB2
-> PHY and USB3.2/DP combo PHY. The device can operate in USB2-only
-> mode by initializing just the eUSB2 block without touching the USB3
-> PHY block - but not the other way around. The v4 patch reflected this
-> USB2-only configuration.
-
-You describe the device in your SoC. This SoC either has both or has
-not. The case of "can operate in USB2-only mode" is simply not real.
-
-> I tried to support the USB 2.0-only configuration in the binding by
-> making the USB 3.0 clocks and resets optional. However, if I
-> understand your comment correctly, the binding should describe
-> FULL hardware capability. I will make USB3 resources mandatory
-> in the next version, please let me know if I've misunderstood it.
-
-Yes, binding should describe complete hardware picture, so with USB3 and
-all wires/signals being required.
-
-> 
->>
->>> +
->>> +  clock-names:
->>> +    minItems: 2
->>> +    items:
->>> +      - const: usb2
->>> +      - const: usb2_apb
->>> +      - const: usb3
->>> +      - const: usb3_fw
->>
->> Again, what's with the prefixes? apb is bus clock, so how you could have
->> bus clock for usb2 and usb3? This means you have two busses, so two
->> devices.
-> 
-> The prefixes are to differentiate the clocks and resets for the
-> underlying two SNPS IP as outlined in the device description.
-> - eUSB2 PHY IP needs clocks and resets for the phy itself
->   and its apb bus.
-> - USB3.2/DP combo PHY has its own clocks and resets for
->   the phy, plus it needs a clock for its PHY firmware.
-
-If you have two bus clocks I think you have two separate devices...
-
-> Technically these are two separate IPs, but they're deeply
-> integrated together so that they share top-level wrapper
-> register space (see the register layout above), and they
-> have implicit hardware dependency like mentioned earlier
-> (USB2 PHY can work without USB3 PHY, but not vice-versa),
-> hence I'm describing them in the same device.
-
-But okay, if that's the case naming is fine.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nntmtfO2as3iM+5L"
+Content-Disposition: inline
+In-Reply-To: <cover.1762327887.git.mazziesaccount@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-Best regards,
-Krzysztof
+--nntmtfO2as3iM+5L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+
+The ROHM BD72720 is a new PMIC with 10 BUCk and 11 LDO regulators.
+
+The BD72720 is designed to support using the BUCK10 as a supply for
+the LDOs 1 to 4. When the BUCK10 is used for this, it can be set to a
+LDON_HEAD mode. In this mode, the BUCK10 voltage can't be controlled by
+software, but the voltage is adjusted by PMIC to match the LDO1 .. LDO4
+voltages with a given offset. Offset can be 50mV .. 300mV and is
+changeable at 50mV steps.
+
+Add 'ldon-head-microvolt' property to denote a board which is designed
+to utilize the LDON_HEAD mode.
+
+All other properties are already existing.
+
+Add dt-binding doc for ROHM BD72720 regulators to make it usable.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+---
+Revision history:
+ v2 =3D> v3:
+ - drop unnecessary descriptions
+ - use microvolts for the 'ldon-head' dt-property
+
+ RFCv1 =3D> v2:
+ - No changes
+---
+ .../regulator/rohm,bd72720-regulator.yaml     | 149 ++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7272=
+0-regulator.yaml
+
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd72720-regul=
+ator.yaml b/Documentation/devicetree/bindings/regulator/rohm,bd72720-regula=
+tor.yaml
+new file mode 100644
+index 000000000000..e8f51c770cd2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.ya=
+ml
+@@ -0,0 +1,149 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/rohm,bd72720-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BD72720 Power Management Integrated Circuit regulators
++
++maintainers:
++  - Matti Vaittinen <mazziesaccount@gmail.com>
++
++description: |
++  This module is part of the ROHM BD72720 MFD device. For more details
++  see Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml.
++
++  The regulator controller is represented as a sub-node of the PMIC node
++  on the device tree.
++
++  Regulator nodes should be named to BUCK_<number> and LDO_<number>.
++  The valid names for BD72720 regulator nodes are
++  buck1, buck2, buck3, buck4, buck5, buck6, buck7, buck8, buck9, buck10
++  ldo1, ldo2, ldo3, ldo4, ldo5, ldo6, ldo7, ldo8, ldo9, ldo10, ldo11
++
++patternProperties:
++  "^ldo[1-11]$":
++    type: object
++    description:
++      Properties for single LDO regulator.
++    $ref: regulator.yaml#
++
++    properties:
++      regulator-name:
++        pattern: "^ldo[1-11]$"
++
++      rohm,dvs-run-voltage:
++        description:
++          PMIC default "RUN" state voltage in uV. See below table for
++          LDOs which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-idle-voltage:
++        description:
++          PMIC default "IDLE" state voltage in uV. See below table for
++          LDOs which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-suspend-voltage:
++        description:
++          PMIC default "SUSPEND" state voltage in uV. See below table for
++          LDOs which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-lpsr-voltage:
++        description:
++          PMIC default "deep-idle" state voltage in uV. See below table for
++          LDOs which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++        # Supported default DVS states:
++        #     ldo        |    run     |   idle    | suspend   | lpsr
++        # --------------------------------------------------------------
++        # 1, 2, 3, and 4 | supported  | supported | supported | supported
++        # --------------------------------------------------------------
++        # 5 - 11         |                    supported (*)
++        # --------------------------------------------------------------
++        #
++        # (*) All states use same voltage but have own enable / disable
++        #      settings. Voltage 0 can be specified for a state to make
++        #      regulator disabled on that state.
++
++    unevaluatedProperties: false
++
++  "^buck[1-10]$":
++    type: object
++    description:
++      Properties for single BUCK regulator.
++    $ref: regulator.yaml#
++
++    properties:
++      regulator-name:
++        pattern: "^buck[1-10]$"
++
++      rohm,ldon-head-microvolt:
++        description:
++          Set this on boards where BUCK10 is used to supply LDOs 1-4. The =
+bucki
++          voltage will be changed by the PMIC to follow the LDO output vol=
+tages
++          with the offset voltage given here. This will improve the LDO ef=
+ficiency.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 50000
++        maximum: 300000
++
++      rohm,dvs-run-voltage:
++        description:
++          PMIC default "RUN" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-idle-voltage:
++        description:
++          PMIC default "IDLE" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-suspend-voltage:
++        description:
++          PMIC default "SUSPEND" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++      rohm,dvs-lpsr-voltage:
++        description:
++          PMIC default "deep-idle" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 3300000
++
++        # Supported default DVS states:
++        #     buck       |    run     |   idle    | suspend   | lpsr
++        # --------------------------------------------------------------
++        # 1, 2, 3, and 4 | supported  | supported | supported | supported
++        # --------------------------------------------------------------
++        # 5 - 10    |                    supported (*)
++        # --------------------------------------------------------------
++        #
++        # (*) All states use same voltage but have own enable / disable
++        #      settings. Voltage 0 can be specified for a state to make
++        #      regulator disabled on that state.
++
++    required:
++      - regulator-name
++
++    unevaluatedProperties: false
++
++additionalProperties: false
+--=20
+2.51.0
+
+
+--nntmtfO2as3iM+5L
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkK/l8ACgkQeFA3/03a
+ocVslAf9GiQAjfENfrMjkdDb0v/Ya8WTB8SLd2z0aFt1x8bzAdoH3WCzncecF4h5
+52sSmJFIcA2dMeF4WbmtjLTdqzdHH7+B7RDDosipOF1qXvnN+xU+wvHwkIiDyP+q
+r6Os2quJhu6+jp/JeDsueYVKOXWXfDKkOR4ngMdqjGGEELcwDQCUcYqZlPJejRv9
+zf0sylM+3fI0pmyMUoItn9ra91Qg5o6oiKJtWwlDj4vEHJ7ViV7wQC/ZMUMZGKcS
+lNTNRo+DlfkPhlTUbhJ3CY8aRrpTFodDW5LbAGOuc6cMaO19KTQjRWUeh+l/7Fl8
+DISr8VBMZ5Rz1b4DjJd0UQG8SH244A==
+=Hzfm
+-----END PGP SIGNATURE-----
+
+--nntmtfO2as3iM+5L--
 
