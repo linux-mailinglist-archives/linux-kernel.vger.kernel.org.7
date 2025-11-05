@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-886418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A8DC358B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:59:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E012C35899
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9945F3B0569
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:55:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7ED54F863D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1680F312805;
-	Wed,  5 Nov 2025 11:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDC33128D7;
+	Wed,  5 Nov 2025 11:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QCpE1+Bx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="kNpqG3G4"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A002D305056;
-	Wed,  5 Nov 2025 11:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA08C30216F;
+	Wed,  5 Nov 2025 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343739; cv=none; b=pVjkAW377OwG07kR5xdcgjqJy6Rqb3ZRIUGpeuLqEFyi7JBUgvFkHrLGSDFhNHme8JSNaRwD8vv1ZyJMHXypSerH5EJzBHJAlp4AZtroe9w0HXDXVim2zmsAAmRMrf4xeRdlvRtq8d6dwGK63Tj6fb8X6gPxknDiyLxXDDmwsEk=
+	t=1762343746; cv=none; b=FNDSCGmuWyHUD55mRZDUHTRGBcoyYLgip8hhk7Uktc6P5UcPry537Vso4VUWllp9NFTrX+LZ97gh2K1nfRB+dHh3k7qUodVb1ASta9t/x7iQhkb30ZQw7NFQu1KuBjWV++XrCvFTFat1ZfYTP/qrNbM+uW3PkuO4kpIOddwwu74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343739; c=relaxed/simple;
-	bh=xleMpf9eLjAIINZmqYv0qCRdyeKHgj00vprlXbZ8yXk=;
+	s=arc-20240116; t=1762343746; c=relaxed/simple;
+	bh=DvN0RKWA+eilY5co1nbi5PahhEXS/9e51XhcakcWZ1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iymhoqybl0GoxKHHSQUd4HcK75cUFpcV6PxCGMURM2ey5utWA5qDU5jippM5707pR9/nkVWwJvKVfmlAX9Wju3vKDz7ubYUDOdQqGizht2E3N3TjUOT1LcJjRIMWIalrZFgqyF6IdFTOn8hqF57A4oHCLwkjvOZrf5lTgRiMA5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QCpE1+Bx; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762343738; x=1793879738;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=xleMpf9eLjAIINZmqYv0qCRdyeKHgj00vprlXbZ8yXk=;
-  b=QCpE1+BxDnP7el3X5fHLcY/AeXc4tXY3LVKCRhdUzT3o0lPUOUa21Dmv
-   FeTdE23oZb1DoXWXzGCN6E3i7AwkF6Mfe7iBPgRR1kcQhrs20vti5A1b+
-   JJn8JHujK4soM/glAqnm4r1gkQqkfvhLLmEjK8ixBMKkntbhWN9EkAey1
-   b74JcFAJT49iO9ELFI2Xfodh/LTozaxbAH424ZqkJPEqmNfKan6ddUi5a
-   JklidMmksmn36Vw/+m2ZiVcAn6OkDdn6sNnsxSxZujDi8ofXSvALnzN7O
-   C42bzu674YSQYmAaX6tjdmii8TMaZxb5tImJgOFcxzX5eRC2NCF9XeEyT
-   A==;
-X-CSE-ConnectionGUID: JF3h8zykRxOkQ7rgHK4d+w==
-X-CSE-MsgGUID: MbUc6YiRQHWrVucvbUC3jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64371513"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="64371513"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 03:55:37 -0800
-X-CSE-ConnectionGUID: 0SvE+Wc2TtK0+ia7GDkdxg==
-X-CSE-MsgGUID: j2ElpzjyQyK+vtQHtSkFdg==
-X-ExtLoop1: 1
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa003.fm.intel.com with ESMTP; 05 Nov 2025 03:55:35 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 0B2F696; Wed, 05 Nov 2025 12:55:35 +0100 (CET)
-Date: Wed, 5 Nov 2025 12:55:35 +0100
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
-Message-ID: <20251105115535.GN2912318@black.igk.intel.com>
-References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
- <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
- <20251105103122.GL2912318@black.igk.intel.com>
- <aQs3ls1rKgMOufOn@smile.fi.intel.com>
- <20251105115041.GM2912318@black.igk.intel.com>
- <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phZMlOu0VRD6H4kmesfsrJEpha1WS6/0SnkCrf9jCacWm4zEw7rHemgrQTXGYmvDd5HY04VpZydqK5ZvRSujdC5Ik9hxCeSemadP5iPTZjtXzvHlb5ddYkdWFvvq+J2izC92nB77nblxxIeuQhIydNS/4sRu0GQpoPL/J1/wNKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=kNpqG3G4; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 94AD01F842;
+	Wed,  5 Nov 2025 12:55:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1762343743;
+	bh=5jbA9aezDlJiuk2X1xT0BLwTokZ2YLI3EDgl9yTbOXQ=; h=From:To:Subject;
+	b=kNpqG3G4Hsyvb9z4ilOi6Dy803JvAxDoY+VekOn3c4RdY4SWM9QzdABbvQ7z/qVt8
+	 cuLeVHLAvpOUNdF4eHpe+7auA0bG1W524fOCsCIb1zt8wXpakNWFzbyAO6qt4OldsJ
+	 8WYWJHgZGe+kTafoVoElL46+3KoDT/a2bVqL2pC0iSxKIHU9dRQJdT+G2qGQM6jibd
+	 u2YMHAT0RqBeFasTjDKmcEnvH3TBGzFZG4peHu4eOxQHFn6MYnAnnceDkq5r35+za9
+	 tH4wnP+es9awN8snj2ycAjQPur22vqIU0RBPJOhRhUbXV+tJVNMw5McPeHA+0tU3IC
+	 M+xqXL2e8vxrg==
+Date: Wed, 5 Nov 2025 12:55:38 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: dts: imx: move nand related property under
+ nand@0
+Message-ID: <20251105115538.GA17091@francesco-nb>
+References: <20251104-gpmi_dts-v1-0-886865393d0f@nxp.com>
+ <20251104-gpmi_dts-v1-3-886865393d0f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
+In-Reply-To: <20251104-gpmi_dts-v1-3-886865393d0f@nxp.com>
 
-On Wed, Nov 05, 2025 at 01:51:58PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 5, 2025 at 1:50 PM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Wed, Nov 05, 2025 at 01:40:06PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
-> > > > On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
-> > > > > Replace custom macro with the recently defined INTEL_GPP().
-> 
-> ...
-> 
-> > > > > -#define ADL_GPP(r, s, e, g)                              \
-> > > > > - {                                               \
-> > > > > -         .reg_num = (r),                         \
-> > > > > -         .base = (s),                            \
-> > > > > -         .size = ((e) - (s) + 1),                \
-> > > > > -         .gpio_base = (g),                       \
-> > > > > - }
-> > > >
-> > > > I wonder if simply doing this:
-> > > >
-> > > > #define ADL_GPP(r, s, e, g) INTEL_GPP(r, s, e, g)
-> > >
-> > > We can, but it will give a couple of lines in each driver still be left.
-> > > Do you think it's better?
-> >
-> > I think that's better because it is less changed lines but I'm fine either
-> > way.
-> 
-> Okay, I will try it and see how it looks like and then I'll either
-> send a v2 or ask for a tag for this one. Sounds good?
+Hello Frank,
 
-Yes.
+On Tue, Nov 04, 2025 at 05:27:14PM -0500, Frank Li wrote:
+> Add child node nand@0 and move NAND related property under it to align
+> modern nand-controller.yaml.
+> 
+> Fix below CHECK_DTBS warnings:
+>   arch/arm/boot/dts/nxp/imx/imx6ull-colibri-aster.dtb: nand-controller@1806000 (fsl,imx6q-gpmi-nand): Unevaluated properties are not allowed ('nand-ecc-mode', 'nand-ecc-step-size', 'nand-ecc-strength', 'nand-on-flash-bbt' were unexpected)
+>         from schema $id: http://devicetree.org/schemas/mtd/gpmi-nand.yaml#
+> 
+> Since 2019 year, commit
+> (212e496935929 dt-bindings: mtd: Add YAML schemas for the generic NAND options)
+> NAND related property is preferred located under nand@<n> even though only
+> one NAND chip supported.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm/boot/dts/nxp/imx/imx6-logicpd-som.dtsi           |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-icore.dtsi              |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi      |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-skov-cpu.dtsi           |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi                |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ul-geam.dts                 |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi               |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ul-phytec-phycore-som.dtsi  |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi               |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ull-colibri.dtsi            | 12 ++++++++----
+>  arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea.dtsi   | 12 ++++++++----
+>  arch/arm/boot/dts/nxp/imx/imx6ull-myir-mys-6ulx.dtsi      |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts          |  6 +++++-
+>  arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi               |  8 ++++++--
+>  15 files changed, 82 insertions(+), 22 deletions(-)
+> 
+
+Was any of these changes tested? Is the driver able to cope with the
+binding change?
+
+Francesco
+
+
 
