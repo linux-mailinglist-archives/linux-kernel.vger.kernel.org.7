@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-886875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00ADC36EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:07:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B121C36F8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2BA6668F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E88667DC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF849335064;
-	Wed,  5 Nov 2025 16:14:48 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660BA33FE05;
+	Wed,  5 Nov 2025 16:15:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C62A333445
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADE33A01A;
+	Wed,  5 Nov 2025 16:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359288; cv=none; b=lHxHFlNnK0QuJi9CclpA2oDG5fxRllHaAox8c5HVVIg5QyOg7JQKfMyRsgGWEbAtygNLV4U9dLhBV1357ah4eOP6N24KuJO9jHZUNS1khs0M2q8ywbMNz9Rp0j23Rq9W0mSnG08l4K+SD5IbAUkDdW8T3bRKFH4WbBvOgb97o2s=
+	t=1762359306; cv=none; b=WvHNEZc+slzGvEr+N7Ij+tvjcHSnqZ8kmz5w+dA2sOhA4E6279kyAA3lbtMskF4Tok8c4Nl3Rd7ryILRdw6YlYyHKY5InwPtohFnx23ERNYr+L1cWW98Jrnkt4/7cmIhq/DdTuHj+xDyWpWis8QLlIUt9KDrJM8Yz2Xfxzlvo3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359288; c=relaxed/simple;
-	bh=G4Ea1aWe9+s9dH73P45akAacFOqvJ9EMtveBH/pcarM=;
+	s=arc-20240116; t=1762359306; c=relaxed/simple;
+	bh=u9YpyQlwindyhEri1ZWLiSQPKv7WiPv8mZHXYF/4aEw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aWEJTDD+4Jb4ZAYn5EvqHAIGjrJB9bAcbcqhXx7LBVrYzzKWJB+vUujHSTbPAXnVwDDTeia0euK6gz8QTeZY7FGVHfJ/Pt421ZQgM1SqouBTlLWvK9I4C1PNifIQhtSr0XbLEyGjiIf2GaOBWJA8mctsNGekyHnrHBRuIeS9Buc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from spb1wst022.omp.ru (87.226.253.162) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Nov
- 2025 19:14:39 +0300
-From: Karina Yankevich <k.yankevich@omp.ru>
-To: Sandy Huang <hjc@rock-chips.com>
-CC: Karina Yankevich <k.yankevich@omp.ru>, =?UTF-8?q?Heiko=20St=C3=BCbner?=
-	<heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Sergey
- Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH 2/3] drm/rockchip: vop: avoid overflow of clock rate in vop_crtc_atomic_enable()
-Date: Wed, 5 Nov 2025 19:07:18 +0300
-Message-ID: <20251105160719.2917175-3-k.yankevich@omp.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251105160719.2917175-1-k.yankevich@omp.ru>
-References: <20251105160719.2917175-1-k.yankevich@omp.ru>
+	 MIME-Version:Content-Type; b=cwmi7D3hD4/CGRgXlfBNvEtWJVHc36hM5pOw4HWzTN0CrC9g3I3Za/IA4LStPe/cByLeN4yCcWPTVB/UP6FvYB6zDKMNFwcXmLvaMnNkKZXJMotk5vrtZ4NDjWBXpLc+sTs7cNdzp0zTyKSTP4XaCeWoS8w2zMELgrtJaCzTckI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4d1r0Y3jyNz6L4wl;
+	Thu,  6 Nov 2025 00:11:09 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2BFD01400D9;
+	Thu,  6 Nov 2025 00:15:02 +0800 (CST)
+Received: from huawei-ThinkCentre-M920t.huawei.com (10.123.122.223) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Nov 2025 19:15:01 +0300
+From: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <andrey.bokhanko@huawei.com>, Dmitry Skorodumov
+	<skorodumov.dmitry@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net-next 07/14] ipvlan: Support IPv6 for learnable l2-bridge
+Date: Wed, 5 Nov 2025 19:14:43 +0300
+Message-ID: <20251105161450.1730216-8-skorodumov.dmitry@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
+References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,75 +58,189 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/05/2025 15:59:09
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 197810 [Nov 05 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: k.yankevich@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
- aab2175a55dcbd410b25b8694e49bbee3c09cdde
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 87.226.253.162 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	87.226.253.162:7.1.2;127.0.0.199:7.1.2;spb1wst022.omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 87.226.253.162
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/05/2025 16:00:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/5/2025 2:40:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-ClientProxiedBy: mscpeml100003.china.huawei.com (10.199.174.67) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-Conversion of clock frequency from kHz to Hz in vop_crtc_atomic_enable()
-can lead to integer overflow, since type of drm_display_mode::clock 
-is 'int'. Fix it by using 1000UL multiplier to avoid overflow 
-at least on 64-bit arches.
+To make IPv6 work with learnable l2-bridge, need to
+process the TX-path:
+* Replace Source-ll-addr in Solicitation ndisc,
+* Replace Target-ll-addr in Advertisement ndisc
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+No need to do anything in RX-path
 
-Fixes: 2048e3286f34 ("drm: rockchip: Add basic drm driver")
-Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Signed-off-by: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ipvlan/ipvlan_core.c | 129 +++++++++++++++++++++++++++----
+ 1 file changed, 115 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index b1e2ca84c26d..9a6395db455d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1473,7 +1473,7 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
+diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_core.c
+index 547016e3ca8c..659aed8fc4ff 100644
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -4,6 +4,7 @@
  
- 	VOP_REG_SET(vop, intr, line_flag_num[0], vact_end);
+ #include <net/flow.h>
+ #include <net/ip.h>
++#include <net/ip6_checksum.h>
  
--	clk_set_rate(vop->dclk, adjusted_mode->clock * 1000);
-+	clk_set_rate(vop->dclk, adjusted_mode->clock * 1000UL);
+ #include "ipvlan.h"
  
- 	VOP_REG_SET(vop, common, standby, 0);
- 	mutex_unlock(&vop->vop_lock);
+@@ -769,13 +770,122 @@ static int ipvlan_xmit_mode_l3(struct sk_buff *skb, struct net_device *dev)
+ 	return ipvlan_process_outbound(skb);
+ }
+ 
++static void ipvlan_macnat_patch_tx_arp(struct ipvl_dev *ipvlan,
++				       struct sk_buff *skb)
++{
++	struct arphdr *arph;
++	int addr_type;
++
++	arph = (struct arphdr *)ipvlan_get_L3_hdr(ipvlan->port, skb,
++						 &addr_type);
++	ether_addr_copy((u8 *)(arph + 1), ipvlan->phy_dev->dev_addr);
++}
++
++#if IS_ENABLED(CONFIG_IPV6)
++
++static u8 *ipvlan_search_icmp6_ll_addr(struct sk_buff *skb, u8 icmp_option)
++{
++	/* skb is ensured to pullable for all ipv6 payload_len by caller */
++	struct ipv6hdr *ip6h = ipv6_hdr(skb);
++	struct icmp6hdr *icmph;
++	int ndsize, curr_off;
++
++	icmph = (struct icmp6hdr *)(ip6h + 1);
++	ndsize = (int)htons(ip6h->payload_len);
++	curr_off = sizeof(*icmph);
++
++	if (icmph->icmp6_type != NDISC_ROUTER_SOLICITATION)
++		curr_off += sizeof(struct in6_addr);
++
++	while ((curr_off + 2) < ndsize) {
++		u8  *data = (u8 *)icmph + curr_off;
++		u32 opt_len = data[1] << 3;
++
++		if (unlikely(opt_len == 0))
++			return NULL;
++
++		if (data[0] != icmp_option) {
++			curr_off += opt_len;
++			continue;
++		}
++
++		if (unlikely(opt_len < ETH_ALEN + 2))
++			return NULL;
++
++		if (unlikely(curr_off + opt_len > ndsize))
++			return NULL;
++
++		return data + 2;
++	}
++
++	return NULL;
++}
++
++static void ipvlan_macnat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
++					struct sk_buff *skb)
++{
++	struct ipv6hdr *ip6h;
++	struct icmp6hdr *icmph;
++	u8 icmp_option;
++	u8 *lladdr;
++	u16 ndsize;
++
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h))))
++		return;
++
++	if (ipv6_hdr(skb)->nexthdr != NEXTHDR_ICMP)
++		return;
++
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + sizeof(*icmph))))
++		return;
++
++	ip6h = ipv6_hdr(skb);
++	icmph = (struct icmp6hdr *)(ip6h + 1);
++
++	/* Patch Source-LL for solicitation, Target-LL for advertisement */
++	if (icmph->icmp6_type == NDISC_NEIGHBOUR_SOLICITATION ||
++	    icmph->icmp6_type == NDISC_ROUTER_SOLICITATION)
++		icmp_option = ND_OPT_SOURCE_LL_ADDR;
++	else if (icmph->icmp6_type == NDISC_NEIGHBOUR_ADVERTISEMENT)
++		icmp_option = ND_OPT_TARGET_LL_ADDR;
++	else
++		return;
++
++	ndsize = (int)htons(ip6h->payload_len);
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + ndsize)))
++		return;
++
++	lladdr = ipvlan_search_icmp6_ll_addr(skb, icmp_option);
++	if (!lladdr)
++		return;
++
++	ether_addr_copy(lladdr, ipvlan->phy_dev->dev_addr);
++
++	ip6h = ipv6_hdr(skb);
++	icmph = (struct icmp6hdr *)(ip6h + 1);
++	icmph->icmp6_cksum = 0;
++	icmph->icmp6_cksum = csum_ipv6_magic(&ip6h->saddr, &ip6h->daddr,
++					     ndsize,
++					     IPPROTO_ICMPV6,
++					     csum_partial(icmph,
++							  ndsize,
++							  0));
++	skb->ip_summed = CHECKSUM_COMPLETE;
++}
++#else
++static void ipvlan_macnat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
++					struct sk_buff *skb)
++{
++}
++#endif
++
+ static int ipvlan_xmit_mode_l2(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ipvl_dev *ipvlan;
+ 	struct ipvl_addr *addr;
+ 	struct ethhdr *eth;
+ 	bool same_mac_addr;
+-	int addr_type;
++	int addr_type = -1;
+ 	void *lyr3h;
+ 
+ 	ipvlan = netdev_priv(dev);
+@@ -862,8 +972,6 @@ static int ipvlan_xmit_mode_l2(struct sk_buff *skb, struct net_device *dev)
+ 		}
+ 	} else {
+ 		/* Packet to outside on learnable. Fix source eth-addr. */
+-		struct sk_buff *orig_skb = skb;
+-
+ 		skb = skb_unshare(skb, GFP_ATOMIC);
+ 		if (!skb)
+ 			return NET_XMIT_DROP;
+@@ -872,17 +980,10 @@ static int ipvlan_xmit_mode_l2(struct sk_buff *skb, struct net_device *dev)
+ 		ether_addr_copy(skb_eth_hdr(skb)->h_source,
+ 				ipvlan->phy_dev->dev_addr);
+ 
+-		/* ToDo: Handle ICMPv6 for neighbours discovery.*/
+-		if (lyr3h && addr_type == IPVL_ARP) {
+-			struct arphdr *arph;
+-			/* must reparse new skb */
+-			if (skb != orig_skb && lyr3h && addr_type == IPVL_ARP)
+-				lyr3h = ipvlan_get_L3_hdr(ipvlan->port, skb,
+-							  &addr_type);
+-			arph = (struct arphdr *)lyr3h;
+-			ether_addr_copy((u8 *)(arph + 1),
+-					ipvlan->phy_dev->dev_addr);
+-		}
++		if (addr_type == IPVL_ARP)
++			ipvlan_macnat_patch_tx_arp(ipvlan, skb);
++		else if (addr_type == IPVL_ICMPV6 || addr_type == IPVL_IPV6)
++			ipvlan_macnat_patch_tx_ipv6(ipvlan, skb);
+ 	}
+ 
+ tx_phy_dev:
 -- 
-2.34.1
+2.25.1
 
 
