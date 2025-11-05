@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-887492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2450C385BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:28:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C91C385C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E58F3B035A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B43834F6ADB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C906A2F658F;
-	Wed,  5 Nov 2025 23:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182862F60D6;
+	Wed,  5 Nov 2025 23:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LX5iBlkR"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="z6DV5tbd"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE02F5A33;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEE82F5A34;
 	Wed,  5 Nov 2025 23:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762385202; cv=none; b=WROLFxHYdzzNB2wyBkTOJWBuXQ30W++v2pdhK59cy3kptybuqFYlOjCCK2niRzCvCyY7FOszw75uScVphm+Qsfr3hernxH8Kz/oenkmtEyQJC/YgO31Sw4zTbJgwtgI3mumhpSG3yeMhUQqzPkpeyUcyMLjQ1bUPkC27o4LTdME=
+	t=1762385202; cv=none; b=CwBPNoZY2YSxHxT/g525LLpETDLPezokxvILu4B/bC1VtItWHuGq/+iaDQeMuM/u9fUpDTPpOK6TkLWCFSY3dW0c9gr9frjMzyZDf6IhwXCJ+LPrElVv/XrlwqgWJ5RXB13CHohchXjMGOnugRgvodKPJK0Yqwysr9ugjswL1SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762385202; c=relaxed/simple;
-	bh=PIMhTwuVjXBk97J04AF7ttzGsns0vWw8LEqI5Oe/Y7g=;
+	bh=8Y8zXnhTAD7Fw9x7SklREnVNca5N1r1NY3A4jE2jDTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sBv9gLPk4RTdaFLYwSGQJfPbY2iwp2Ag1oOVR79U4aczSqYxm7GR2q8x8uzQj5gy8I33VMTAnnNLUcChJcT5vYdxZCoEMKmAYR00DqDP5uMA8+/Z9ooFCYQ1LFjXl+vJBvJBDlBYmMXl/6UjQeMtpQ7O2US7QkEDFhLvrqgp22I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LX5iBlkR; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=d8UBVxLaCPzJE3OGVu13eD/BOU/gUpEFOPJ9asqkaElXHSoHCQOCiQgNYIYluusivS5d1tkrb4rXWejkynsjlq9ZnOjoJ5VeL733ZCVh0mVo6egwA8ts+e6+H60tusajQNB4vz8QD3aGV0F0CLS4Ri91idNX6/qJ+sQvyVlZxiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=z6DV5tbd; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=wuFVci0OU2fN9OEAMkFdaSsZ4Y0TcQDJ7JJBOCcok8A=; b=LX5iBlkRbRi0vlWqwXCQ19fKzd
-	PHiS9qvugmYaEiXl/VFD5u79R8DBHhkPPU7xiwOQ/p1yMwU9ZEpGRHg5l3P9Ota3u/XbA6C7Bd6qw
-	bJXdjlDsmsgpCBTbeSTB030wIhy5ryWXtcBdhL2qKqw8wrDL2GIMsIzDesWCtvredOEKixoI0RZvM
-	EiXJgRTHQwko2nq8WBYtNfSAv2CW5bIJp7sYFwLC1Rr68fFJ8Yq8iu4kcFTTAlgbI78jsXo3u7LWP
-	9j0qZHZtwP8Lypfsqv+cX6S1UXqH1i7M9IjnVUdgIuuXFLaclY8uNbxwU1T2D1kX1H/Bq51Ww7kmD
-	NVzwMjSg==;
+	bh=hvqWhgq6E9yIB8u3zsh04lPjz8o3zonnYZU1K7EJUgc=; b=z6DV5tbdOsfeSMjMAfXbHs/8My
+	NXwEqvACRlFCms94Wu6NvxfSPC1rd2g5ahqikshqIpgsylZreaZ3onosBto0Moe7LnDMplW39kwC4
+	OFwTDnHb37ks2Y1oeJV4q3rCANfyzqa/4yewEqIiX+kYc7NL8VtRxjov05bD0nB+vYevyFfVefNNa
+	TnYonKLAyLyFonw790VLuLDGxG6zL1wtfLwBiw6fbFYoZn5iZ8HT+rZ8nSlUnx6t74gleKdOI2t8Y
+	PsS4aDwFS2vb4PmJLmS0nXPeMt2m081CZ1dDibd/Xd2rM9OitiUxQLcQIf8wisIPExFcR+dLBQDLF
+	3ehSkZYw==;
 Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1vGmtf-0001FA-Bj; Thu, 06 Nov 2025 00:26:35 +0100
+	id 1vGmtf-0001FA-Qo; Thu, 06 Nov 2025 00:26:35 +0100
 From: Heiko Stuebner <heiko@sntech.de>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: mturquette@baylibre.com,
@@ -56,12 +56,12 @@ Cc: mturquette@baylibre.com,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	michael.riesch@collabora.com
-Subject: Re: [PATCH 0/2] Drop RK3568's variant of the CLK_NR_CLKS constant
-Date: Thu,  6 Nov 2025 00:26:32 +0100
-Message-ID: <176238518188.156498.3345794880564705981.b4-ty@sntech.de>
+Subject: Re: [PATCH 0/3] SCMI clocks on RK356x
+Date: Thu,  6 Nov 2025 00:26:33 +0100
+Message-ID: <176238518187.156498.15783284183828303705.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251103234032.413563-1-heiko@sntech.de>
-References: <20251103234032.413563-1-heiko@sntech.de>
+In-Reply-To: <20251103234926.416137-1-heiko@sntech.de>
+References: <20251103234926.416137-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,23 +72,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 04 Nov 2025 00:40:30 +0100, Heiko Stuebner wrote:
-> This drops the use of the CLK_NR_CLKS constant from the rk3568 clock
-> driver and after that, drops the constant from the binding that should
-> not have been part of it in the first place.
+On Tue, 04 Nov 2025 00:49:23 +0100, Heiko Stuebner wrote:
+> This cleans up the existing use of SCMI clocks on the RK356x SoCs.
 > 
-> Heiko Stuebner (2):
->   clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
->   dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
+> 
+> Heiko Stuebner (3):
+>   dt-bindings: clock: rk3568: Add SCMI clock ids
+>   arm64: dts: rockchip: use SCMI clock id for cpu clock on rk356x
+>   arm64: dts: rockchip: add missing clocks for cpu cores on rk356
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
-      commit: 2a42e3210d4331dddfb04b020050bd774cf99659
-[2/2] dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
-      commit: ca38f0f65eefd79889b409c89c6932d7e2fe0993
+[1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
+      commit: 88b6a93af4345e901206d0576bdb4e88ea3eaeb8
+[2/3] arm64: dts: rockchip: use SCMI clock id for cpu clock on rk356x
+      commit: ff8912700f31782021ec28c530de1482fa99eab3
+[3/3] arm64: dts: rockchip: add missing clocks for cpu cores on rk356x
+      commit: e06a419eaab9cee7cd5bbb0cfcfbe49e443a9d75
 
 Best regards,
 -- 
