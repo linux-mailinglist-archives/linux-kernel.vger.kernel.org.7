@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-886080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A71C34AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:07:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3931C34B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E58744FD65B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:02:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 689C94FAF8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C27B2F7AB4;
-	Wed,  5 Nov 2025 09:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZkIuuX+S"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B2E2F39C2;
+	Wed,  5 Nov 2025 09:03:18 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E43C2F39A4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2C92F363A;
+	Wed,  5 Nov 2025 09:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333338; cv=none; b=fVR4x7/I6fxqkJoJcjrW4WF+adTqSSf8OOy38PqaVYt0f6k4f/2qc3ipvkwNgPrS+fqeh4rJVf6posFXfYyx1Fbuu4JNKBR/4BgKtcKw0Pu60MkAEZHJTM8KgyxCJvwSjWKkAqI+2PKa/71BIIrU36qH+gwhLdLvN2t/EDvIzrg=
+	t=1762333397; cv=none; b=P5bjP/a/Jiqpf440/dbMk0hia5DQlRHEGLrnQMQmkKoA3baWmaDTE6X/jjHff23YmS+rliNjYd8+8/sK2nSgOmxtv6dyY5wpULBYDTQVrBQb3bF88gj4iM4RJ0mACJgDlZpG8u3Ve+tVyT/YsCerxVWLcClwMCGSns1e7I7nAg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333338; c=relaxed/simple;
-	bh=JNmGv0ptKeTdBvC5Z+R3bK63SY8BCP5AbkGot9KL6+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hffgji3apfcG8tRYjd1JvNVvfIejpWxb4XQCDT4tiW943+mNHf29FhESertbpZd8WjuhLP+TPiUU9MuHfDXjlHzopjB8ldWJYmArG35wKyCHuDq4fWyEs9DG4hTVwdSQThnsl7TTUWDlirgIeQjUoEX6MxZ5t6cQRHg9AP+DVJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZkIuuX+S; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762333323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WhmvUOw/TY0labFA2ZlYeFDTsWuyGaxzAd4QjXKfVE0=;
-	b=ZkIuuX+Srx4uYGW8ohjjJH9G9d3OUtD6VVyoEqre93kauW5C1QTDCUKWYpdpqocmdSPljA
-	trxvJT1c7QcYLbOo5jjpq14GbsJZP9RpfHTI3nBQm/Df78j0aBO9QTorTA1O9Jo13IBZjH
-	IYmOGTnwHO44dKF+UWW2sTNNzM7FVg0=
-From: Yuntao Wang <yuntao.wang@linux.dev>
-To: geert@linux-m68k.org,
-	robh@kernel.org,
-	saravanak@google.com
-Cc: devicetree@vger.kernel.org,
-	geert+renesas@glider.be,
+	s=arc-20240116; t=1762333397; c=relaxed/simple;
+	bh=1z0E1EqV54kBm5lPnndQe9topYrOFX9VD5Q5Pr4k0XE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=aCwvHw5JgGDUlDpAVVFAcz9rC68Dyqp+pYc/hCqUDzw7XXCEow5+l10R1cOlpLV5dGkPc+8L31Dcw8+zDSI0Wk4aB/aJtUSnhJRqVl3EXHELnkFaZ3L1ukLLzxuMHTKem8Be7AuAFzA9O6Ee87jKa75vuIymqrzfNWHH4G0lXGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowAAXg_G1EgtpNtOdAQ--.11647S2;
+	Wed, 05 Nov 2025 17:02:54 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: tony.luck@intel.com,
+	qiuxu.zhuo@intel.com,
+	bp@alien8.de
+Cc: linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	yuntao.wang@linux.dev
-Subject: [PATCH v2] of: fdt: Fix the len check in early_init_dt_check_for_elfcorehdr()
-Date: Wed,  5 Nov 2025 17:00:04 +0800
-Message-ID: <20251105090004.83119-1-yuntao.wang@linux.dev>
-In-Reply-To: <CAMuHMdW0mLsZmJsWmQEaN=g-kRMMVHaBpRZmQW1VFRqyDvK6UQ@mail.gmail.com>
-References: <CAMuHMdW0mLsZmJsWmQEaN=g-kRMMVHaBpRZmQW1VFRqyDvK6UQ@mail.gmail.com>
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v2] EDAC/igen6: Fix error handling in igen6_edac driver
+Date: Wed,  5 Nov 2025 17:02:44 +0800
+Message-Id: <20251105090244.23327-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowAAXg_G1EgtpNtOdAQ--.11647S2
+X-Coremail-Antispam: 1UD129KBjvJXoWruw4kCw4kXr1kXF1fAw4DXFb_yoW8Jr4Upr
+	4Ygas7Cr43trZ2ga18Awn5ZFyYganxta4qv3yqy393GFy3ZF9YqFWvyFWUtFyDArWv9F4a
+	ya15X3yruF1DCF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU0_-BDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The len value is in bytes, while `dt_root_addr_cells + dt_root_size_cells`
-is in cells (4 bytes per cell).
+The igen6_edac driver calls device_initialize() for all memory
+controllers in igen6_register_mci(), but misses corresponding
+put_device() calls in error paths and during normal shutdown in
+igen6_unregister_mcis().
 
-Comparing them directly is incorrect. Convert units before comparison.
+Adding the missing put_device() calls improves code readability and
+ensures proper reference counting for the device structure.
 
-Fixes: f7e7ce93aac1 ("of: fdt: Add generic support for handling elf core headers property")
-Fixes: e62aaeac426ab1dd ("arm64: kdump: provide /proc/vmcore file")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+Found by code review.
+
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
-v1 -> v2: Add a new Fixes tag as suggested by Geert Uytterhoeven
+Changes in v2:
+- modified the patch, thanks for developer's suggestions;
+- removed Fixes line.
+---
+ drivers/edac/igen6_edac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/of/fdt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 0edd639898a6..f79461f5cffc 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -812,6 +812,7 @@ static void __init early_init_dt_check_for_initrd(unsigned long node)
-  */
- static void __init early_init_dt_check_for_elfcorehdr(unsigned long node)
- {
-+	int t_len = (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
- 	const __be32 *prop;
- 	int len;
- 
-@@ -821,7 +822,7 @@ static void __init early_init_dt_check_for_elfcorehdr(unsigned long node)
- 	pr_debug("Looking for elfcorehdr property... ");
- 
- 	prop = of_get_flat_dt_prop(node, "linux,elfcorehdr", &len);
--	if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
-+	if (!prop || len < t_len)
- 		return;
- 
- 	elfcorehdr_addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
+diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
+index 2fc59f9eed69..553c31a2d922 100644
+--- a/drivers/edac/igen6_edac.c
++++ b/drivers/edac/igen6_edac.c
+@@ -1300,6 +1300,7 @@ static int igen6_register_mci(int mc, void __iomem *window, struct pci_dev *pdev
+ 	imc->mci = mci;
+ 	return 0;
+ fail3:
++	put_device(&imc->dev);
+ 	mci->pvt_info = NULL;
+ 	kfree(mci->ctl_name);
+ fail2:
+@@ -1326,6 +1327,7 @@ static void igen6_unregister_mcis(void)
+ 		kfree(mci->ctl_name);
+ 		mci->pvt_info = NULL;
+ 		edac_mc_free(mci);
++		put_device(&imc->dev);
+ 		iounmap(imc->window);
+ 	}
+ }
 -- 
-2.51.0
+2.17.1
+
 
