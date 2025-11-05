@@ -1,305 +1,384 @@
-Return-Path: <linux-kernel+bounces-887293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBCAC37C5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:45:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DC4C37C6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C40C3B05E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A42218C6AC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F66A26ED55;
-	Wed,  5 Nov 2025 20:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE2F2D4B71;
+	Wed,  5 Nov 2025 20:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jOWw9QaQ"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LrBvm8C9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B1F17993
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3388E17993;
+	Wed,  5 Nov 2025 20:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762375539; cv=none; b=nBlS5yJzWeej1FPbAi+6kgqZ4QVGt699YagZwf2gWkRJDixHCVZxtRzoNBnyzgSOWrw/ljTrVEwI5cKAxJhZryv1nRC14HGqZzSB5/xTqxmhJFzXVrC0hYurNNJaiHa01eSGnuRn+58q/C61Mwbn7ynrN4ZbSdOVVSkoNj/uvwg=
+	t=1762375679; cv=none; b=OlYpYNRhVGgsMLW5L2Meh3KldktxPci9P7OT+1aW6OYAnz4VnmYbgYWvcwpOjhFzy06va4SlHArw0CphSU9HuoVHwoNR+9RqeboheiURc1DR5oT8mt5lp147bD2sJDTRf8dqSCLfmiJXMH6HWtmAC1hu5eHJ4KkOdpR6uno+f3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762375539; c=relaxed/simple;
-	bh=usZuEfgTiQjSdoGWOEKccGdEdjv0wfrgaBT3Xw39F64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n0EnGkeFF1nFRUsfCZVdFvmlcOeXYt70Pokb2oVD+d6+yPafs2O4sq2CW9sSYgVnLEbj5wadj0O8aB2P4jZtdCiob0sLN88pIaRIZ2ik/uZDSdlq6bJfz/G/n+aIH1wsTt7YFR0rvqYNodkA42WT4kZuNUrvi/ViTIiwJAwsVi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jOWw9QaQ; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c686a971-1483-42c0-8199-376d4d4b3875@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762375525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYHtYxEt0GXZ3t+T7LTvPbBdGxB31zAaoF7FHEzvEl8=;
-	b=jOWw9QaQmnq5H+hRmtWbA7Vh0xUKS3kjcTe5QtO3EKzUJ56iraZUg3nrHnfDUIzV+7Y/Dl
-	1sy5XiClQxWwcKjELrQJclqX/onQ8y4Pm4OkYP5mKlEtUYB+0M9wK9MUNJkTtYXzQRsLbL
-	4I+ZUAqpT5KU8hJYOaoAWdXd0YFdIIg=
-Date: Wed, 5 Nov 2025 12:45:15 -0800
+	s=arc-20240116; t=1762375679; c=relaxed/simple;
+	bh=0TYl3AZvZEI/AkAGjZ6giIv2/6S5nXZsOrWvVJnEDBs=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=BpVUJvjB9J8L0xkq68pPhX6SsTp1bdHMxM7O33o1eTlz2dsTRu8lyTJaeFTy3FVaMOsy6z4kbkQjoWP4G/y0rNJqWAWSywoJd+TaQ0VVZ54aYTN3hezr62YKNS9A2hdp2BHU5gOL6b4oXytkLb7AyeERZtKeQliesDJu/uuUlrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LrBvm8C9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5FsMQ7030815;
+	Wed, 5 Nov 2025 20:47:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kUZr3O
+	ADl2t4OXiwaArYRj8Lg0CEqw+z2RxxKoklc10=; b=LrBvm8C9vHOD99MFZ2xgzY
+	8yWrDNiGZ9D3YOSz1z02cJ+mrHQueApRsDd1fGVliQ8DT2s2aoz5MK9Nh85iZN7J
+	nrAezjZIVRDUUuQiwixZ2o+GYgBYaKF/ZwgTKukNuzU2LUHFU8NRA66TbqUJ36Db
+	0GlmTH0KJJVukG3ZPyyR98Rn3qENG1zaBx74/D+Uw6cBr3NTKDO7xi9HbEsX6PMX
+	jn/O9QIJlq6D2WyLHHAADWE6eSc6/8dZTqL4O7nMAg1tDtlFtUu+M9IA5FBs9cop
+	aatmtL8fErSajsp8oiZEqcnBdMgxqENd0jKngNH+NEAMfMrF0nE27w3/m7WcrXgw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v232e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 20:47:41 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A5KfaFE012630;
+	Wed, 5 Nov 2025 20:47:40 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v232dj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 20:47:40 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5HvxEl025556;
+	Wed, 5 Nov 2025 20:47:28 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vhstb5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 20:47:28 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5KlRbR27001450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 20:47:27 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CF34E58058;
+	Wed,  5 Nov 2025 20:47:27 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43D0858059;
+	Wed,  5 Nov 2025 20:47:26 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.187.69])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Nov 2025 20:47:26 +0000 (GMT)
+Message-ID: <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook
+ security_kernel_module_read_file to access decompressed kernel module
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>, Paul Moore <paul@paul-moore.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn" <serge@hallyn.com>,
+        Luis Chamberlain	 <mcgrof@kernel.org>,
+        Petr
+ Pavlu <petr.pavlu@suse.com>, Daniel Gomez	 <da.gomez@kernel.org>,
+        Sami
+ Tolvanen <samitolvanen@google.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        open list
+ <linux-kernel@vger.kernel.org>,
+        "open list:MODULE SUPPORT"
+ <linux-modules@vger.kernel.org>
+In-Reply-To: <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <20251031074016.1975356-1-coxu@redhat.com>
+	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+	 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+	 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+	 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 05 Nov 2025 15:47:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v4 1/2] perf: Refactor get_perf_callchain
-Content-Language: en-GB
-To: Tao Chen <chen.dylane@linux.dev>, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20251028162502.3418817-1-chen.dylane@linux.dev>
- <20251028162502.3418817-2-chen.dylane@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20251028162502.3418817-2-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bLKHmUeFUral6ZPVEZVjuKVkO_ooWOAU
+X-Proofpoint-ORIG-GUID: _26o0JY9VQtY3hxer9tcSuh1jF9L0cgh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX1V8n0MHdB8tw
+ 1vnFVl4U1zZNO7q6Q7lvxKM6OzkxWuA8yyaM/+LQecpgqiQqMp+S8NN6+VYlQQCdZmS0mF343Tl
+ SDRiUBaK0uOiD5093P+X5fVHBwSqtpZ5VEsOpPoDJDXKRh/bEU8DblB+6j1QDLfG8fauWYmWn/+
+ 1+bkqhOgyJs9aNQHTMHer1nHe3Td6KXbqcyOwEjgYt/tNGR5mFJd+80+P1/W2HIoR4isAGHv+3n
+ s/TGuq/g4h6ugExNlMJ2IussKNQ+n+HsJ1LOu2/8f71ewfaymMdlw8dHowPMnDzBeit2MkKtTfa
+ R5y4Ct1dph0oAdfSrTJ4zSgjsuAPH6pF9xL4wxb8I8i4nAxKKPiflmE2RwcFiNOW2FbSGWJDQdT
+ nfwnJEVzA7jNrQWJuemPuBYHxxYMxw==
+X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=690bb7ed cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8
+ a=guW0fOh7C9lSObWThwYA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_08,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-
-
-On 10/28/25 9:25 AM, Tao Chen wrote:
->  From BPF stack map, we want to use our own buffers to avoid
-> unnecessary copy and ensure that the buffer will not be
-> overwritten by other preemptive tasks. Peter suggested
-> provide more flexible stack-sampling APIs, which can be used
-> in BPF, and we can still use the perf callchain entry with
-> the help of these APIs. The next patch will modify the BPF part.
->
-> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->   include/linux/perf_event.h | 11 +++++-
->   kernel/bpf/stackmap.c      |  4 +-
->   kernel/events/callchain.c  | 75 ++++++++++++++++++++++++--------------
->   kernel/events/core.c       |  2 +-
->   4 files changed, 61 insertions(+), 31 deletions(-)
->
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index fd1d91017b9..14a382cad1d 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
->   	u32				nr;
->   	short				contexts;
->   	bool				contexts_maxed;
-> +	bool				add_mark;
->   };
->   
->   typedef unsigned long (*perf_copy_f)(void *dst, const void *src,
-> @@ -1718,9 +1719,17 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
->   
->   extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
->   extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
-> +
-> +extern void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
-> +				      struct perf_callchain_entry *entry,
-> +				      u32 max_stack, bool add_mark);
-> +
-> +extern void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
-> +extern void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
-> +
->   extern struct perf_callchain_entry *
->   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-> -		   u32 max_stack, bool crosstask, bool add_mark);
-> +		   u32 max_stack, bool crosstask);
->   extern int get_callchain_buffers(int max_stack);
->   extern void put_callchain_buffers(void);
->   extern struct perf_callchain_entry *get_callchain_entry(int *rctx);
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 4d53cdd1374..e28b35c7e0b 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -315,7 +315,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->   		max_depth = sysctl_perf_event_max_stack;
->   
->   	trace = get_perf_callchain(regs, kernel, user, max_depth,
-> -				   false, false);
-> +				   false);
-
-This is not a refactor. Here, the add_mark parameter is removed. The 'add_mark'
-value here is expected to be false, but later get_perf_callchain(...) has 'add_mark'
-is true in __init_perf_callchain_ctx().
-
-Applying this patch only on top of bpf-next master branch, we will have the
-following crash:
-
-[  457.730077] bpf_testmod: oh no, recursing into test_1, recursion_misses 1
-[  460.221871] BUG: unable to handle page fault for address: fffa3bfffffff000
-[  460.221912] #PF: supervisor read access in kernel mode
-[  460.221912] #PF: error_code(0x0000) - not-present page
-[  460.221912] PGD 1e0ef1067 P4D 1e0ef0067 PUD 1e0eef067 PMD 1e0eee067 PTE 0
-[  460.221912] Oops: Oops: 0000 [#1] SMP KASAN NOPTI
-[  460.221912] CPU: 2 UID: 0 PID: 2012 Comm: test_progs Tainted: G        W  OE       6.18.0-rc4-gafe2e8
-[  460.221912] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-[  460.221912] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-pr4
-[  460.221912] RIP: 0010:kasan_check_range+0x183/0x2c0
-[  460.221912] Code: 41 bf 08 00 00 00 41 29 ef 4d 01 fb 4d 29 de 4d 89 f4 4d 8d 6c 24 07 4d 85 e4 4d 0fd
-[  460.221912] RSP: 0018:ff110001193bfc78 EFLAGS: 00010206
-[  460.221912] RAX: ffd1ffffffd5b301 RBX: dffffc0000000001 RCX: ffffffff819a2ecb
-[  460.221912] RDX: 0000000000000001 RSI: 00000000ffffffb0 RDI: ffd1ffffffd5b360
-[  460.221912] RBP: 0000000000000004 R08: ffd20000ffd5b30f R09: 1ffa40001ffab661
-[  460.221912] R10: dffffc0000000000 R11: fffa3bfffffab670 R12: 000000001ffffff2
-[  460.221912] R13: 0000000003ff58cc R14: 0000000000053990 R15: 0000000000000000
-[  460.221912] FS:  00007f358c6460c0(0000) GS:ff110002384b4000(0000) knlGS:0000000000000000
-[  460.221912] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  460.221912] CR2: fffa3bfffffff000 CR3: 000000011468c006 CR4: 0000000000371ef0
-[  460.221912] Call Trace:
-[  460.221912]  <TASK>
-[  460.221912]  __asan_memset+0x22/0x50
-[  460.221912]  __bpf_get_stack+0x6eb/0x7a0
-[  460.221912]  ? bpf_perf_event_output_raw_tp+0x58c/0x6c0
-[  460.221912]  bpf_get_stack+0x1d/0x30
-[  460.221912]  bpf_get_stack_raw_tp+0x148/0x180
-[  460.221912]  bpf_prog_40e346a03dc2914c_bpf_prog1+0x169/0x1af
-[  460.221912]  bpf_trace_run2+0x1bc/0x350
-[  460.221912]  ? bpf_trace_run2+0x104/0x350
-[  460.221912]  ? trace_sys_enter+0x6b/0xf0
-[  460.221912]  __bpf_trace_sys_enter+0x38/0x60
-[  460.221912]  trace_sys_enter+0xa7/0xf0
-[  460.221912]  syscall_trace_enter+0xfc/0x160
-[  460.221912]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  460.221912]  do_syscall_64+0x5a/0xfa0
-[  460.221912]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[  460.221912]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
->   
->   	if (unlikely(!trace))
->   		/* couldn't fetch the stack trace */
-> @@ -452,7 +452,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->   		trace = get_callchain_entry_for_task(task, max_depth);
->   	else
->   		trace = get_perf_callchain(regs, kernel, user, max_depth,
-> -					   crosstask, false);
-> +					   crosstask);
->   
->   	if (unlikely(!trace) || trace->nr < skip) {
->   		if (may_fault)
-> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-> index 808c0d7a31f..2c36e490625 100644
-> --- a/kernel/events/callchain.c
-> +++ b/kernel/events/callchain.c
-> @@ -216,13 +216,54 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
->   #endif
->   }
->   
-> +void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
-> +			       struct perf_callchain_entry *entry,
-> +			       u32 max_stack, bool add_mark)
-> +
-> +{
-> +	ctx->entry		= entry;
-> +	ctx->max_stack		= max_stack;
-> +	ctx->nr			= entry->nr = 0;
-> +	ctx->contexts		= 0;
-> +	ctx->contexts_maxed	= false;
-> +	ctx->add_mark		= add_mark;
-> +}
-> +
-> +void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
-> +{
-> +	if (user_mode(regs))
-> +		return;
-> +
-> +	if (ctx->add_mark)
-> +		perf_callchain_store_context(ctx, PERF_CONTEXT_KERNEL);
-> +	perf_callchain_kernel(ctx, regs);
-> +}
-> +
-> +void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
-> +{
-> +	int start_entry_idx;
-> +
-> +	if (!user_mode(regs)) {
-> +		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
-> +			return;
-> +		regs = task_pt_regs(current);
+On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
+> On Sun, Nov 02, 2025 at 10:43:04AM -0500, Paul Moore wrote:
+> > On Sun, Nov 2, 2025 at 10:06=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com=
+> wrote:
+> > > On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
+> > > > On Fri, Oct 31, 2025 at 3:41=E2=80=AFAM Coiby Xu <coxu@redhat.com> =
+wrote:
+> > > > >=20
+> > > > > Currently, when in-kernel module decompression (CONFIG_MODULE_DEC=
+OMPRESS)
+> > > > > is enabled, IMA has no way to verify the appended module signatur=
+e as it
+> > > > > can't decompress the module.
+> > > > >=20
+> > > > > Define a new LSM hook security_kernel_module_read_file which will=
+ be
+> > > > > called after kernel module decompression is done so IMA can acces=
+s the
+> > > > > decompressed kernel module to verify the appended signature.
+> > > > >=20
+> > > > > Since IMA can access both xattr and appended kernel module signat=
+ure
+> > > > > with the new LSM hook, it no longer uses the security_kernel_post=
+_read_file
+> > > > > LSM hook for kernel module loading.
+> > > > >=20
+> > > > > Before enabling in-kernel module decompression, a kernel module i=
+n
+> > > > > initramfs can still be loaded with ima_policy=3Dsecure_boot. So a=
+djust the
+> > > > > kernel module rule in secure_boot policy to allow either an IMA
+> > > > > signature OR an appended signature i.e. to use
+> > > > > "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
+> > > > >=20
+> > > > > Reported-by: Karel Srot <ksrot@redhat.com>
+> > > > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > > > > ---
+> > > > > v1: https://lore.kernel.org/linux-integrity/20250928030358.387331=
+1-1-coxu@redhat.com/
+> > > > >=20
+> > > > >  include/linux/lsm_hook_defs.h       |  2 ++
+> > > > >  include/linux/security.h            |  7 +++++++
+> > > > >  kernel/module/main.c                | 10 +++++++++-
+> > > > >  security/integrity/ima/ima_main.c   | 26 +++++++++++++++++++++++=
++++
+> > > > >  security/integrity/ima/ima_policy.c |  2 +-
+> > > > >  security/security.c                 | 17 +++++++++++++++++
+> > > > >  6 files changed, 62 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > We don't really need a new LSM hook for this do we?  Can't we just
+> > > > define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and d=
+o
+> > > > another call to security_kernel_post_read_file() after the module i=
+s
+> > > > unpacked?  Something like the snippet below ...
+> > >=20
+> > > Yes, this is similar to my suggestion based on defining multiple enum=
+erations:
+> > > READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_M=
+ODULE.
+> > > With this solution, IMA would need to make an exception in the post k=
+ernel
+> > > module read for the READING_COMPRESSED_MODULE case, since the kernel =
+module has
+> > > not yet been decompressed.
+> > >=20
+> > > Coiby suggested further simplification by moving the call later.  At =
+which point
+> > > either there is or isn't an appended signature for non-compressed and
+> > > decompressed kernel modules.
+> > >=20
+> > > As long as you don't have a problem calling the security_kernel_post_=
+read_file()
+> > > hook again, could we move the call later and pass READING_MODULE_UNCO=
+MPRESSED?
+> >=20
+> > It isn't clear from these comments if you are talking about moving
+> > only the second security_kernel_post_read_file() call that was
+> > proposed for init_module_from_file() to later in the function, leaving
+> > the call in kernel_read_file() intact, or something else?
+>=20
+> Hi Paul and Mimi,
+>=20
+> Thanks for sharing your feedback! Yes, you are right, there is no need
+> for a new LSM hook. Actually by not introducing a new LSM hook, we can
+> have a much simpler solution!
+>=20
+> >=20
+> > I think we want to leave the hook calls in kernel_read_file() intact,
+> > in which case I'm not certain what advantage there is in moving the
+> > security_kernel_post_read_file() call to a location where it is called
+> > in init_module_from_file() regardless of if the module is compressed
+> > or not.  In the uncompressed case you are calling the hook twice for
+> > no real benefit?  It may be helpful to submit a patch with your
+> > proposal as a patch can be worth a thousand words ;)
+> >=20
+> >=20
+> > > > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > > > index c66b26184936..f127000d2e0a 100644
+> > > > --- a/kernel/module/main.c
+> > > > +++ b/kernel/module/main.c
+> > > > @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file=
+ *f, const ch
+> > > > ar __user * uargs, int
+> > > >                        mod_stat_add_long(len, &invalid_decompress_b=
+ytes);
+> > > >                        return err;
+> > > >                }
+> > > > +
+> > > > +               err =3D security_kernel_post_read_file(f,
+> > > > +                                                    (char *)info.h=
+dr, info.len,
+> > > > +                                                    READING_MODULE=
+_DECOMPRESS);
+> > > > +               if (err) {
+> > > > +                       mod_stat_inc(&failed_kreads);
+> > > > +                       return err;
+> > > > +               }
+> > > >        } else {
+> > > >                info.hdr =3D buf;
+> > > >                info.len =3D len;
+> > >=20
+> > > =3D=3D defer security_kernel_post_read_file() call to here =3D=3D
+>=20
+> By moving security_kernel_post_read_file, I think what Mimi means is to
+> move security_kernel_post_read_file in init_module_from_file() to later
+> in the function,
+>=20
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index c66b261849362a..66725e53fef0c1 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3678,6 +3678,7 @@ static int init_module_from_file(struct file *f, co=
+nst char __user * uargs, int
+>   	struct load_info info =3D { };
+>   	void *buf =3D NULL;
+>   	int len;
+> +	int err;
+>  =20
+>   	len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODULE);
+>   	if (len < 0) {
+> @@ -3686,7 +3687,7 @@ static int init_module_from_file(struct file *f, co=
+nst char __user * uargs, int
+>   	}
+>  =20
+>   	if (flags & MODULE_INIT_COMPRESSED_FILE) {
+> -		int err =3D module_decompress(&info, buf, len);
+> +		err =3D module_decompress(&info, buf, len);
+>   		vfree(buf); /* compressed data is no longer needed */
+>   		if (err) {
+>   			mod_stat_inc(&failed_decompress);
+> @@ -3698,6 +3699,14 @@ static int init_module_from_file(struct file *f, c=
+onst char __user * uargs, int
+>   		info.len =3D len;
+>   	}
+>  =20
+> +	err =3D security_kernel_post_read_file(f, (char *)info.hdr, info.len,
+> +					     READING_MODULE);
+> +	if (err) {
+> +		mod_stat_inc(&failed_kreads);
+> +		free_copy(&info, flags);
+> +		return err;
 > +	}
 > +
-> +	if (ctx->add_mark)
-> +		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
-> +
-> +	start_entry_idx = ctx->nr;
-> +	perf_callchain_user(ctx, regs);
-> +	fixup_uretprobe_trampoline_entries(ctx->entry, start_entry_idx);
-> +}
-> +
->   struct perf_callchain_entry *
->   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-> -		   u32 max_stack, bool crosstask, bool add_mark)
-> +		   u32 max_stack, bool crosstask)
->   {
->   	struct perf_callchain_entry *entry;
->   	struct perf_callchain_entry_ctx ctx;
-> -	int rctx, start_entry_idx;
-> +	int rctx;
->   
->   	/* crosstask is not supported for user stacks */
->   	if (crosstask && user && !kernel)
-> @@ -232,34 +273,14 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
->   	if (!entry)
->   		return NULL;
->   
-> -	ctx.entry		= entry;
-> -	ctx.max_stack		= max_stack;
-> -	ctx.nr			= entry->nr = 0;
-> -	ctx.contexts		= 0;
-> -	ctx.contexts_maxed	= false;
-> +	__init_perf_callchain_ctx(&ctx, entry, max_stack, true);
->   
-> -	if (kernel && !user_mode(regs)) {
-> -		if (add_mark)
-> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
-> -		perf_callchain_kernel(&ctx, regs);
-> -	}
-> -
-> -	if (user && !crosstask) {
-> -		if (!user_mode(regs)) {
-> -			if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
-> -				goto exit_put;
-> -			regs = task_pt_regs(current);
-> -		}
-> +	if (kernel)
-> +		__get_perf_callchain_kernel(&ctx, regs);
->   
-> -		if (add_mark)
-> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
-> -
-> -		start_entry_idx = entry->nr;
-> -		perf_callchain_user(&ctx, regs);
-> -		fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
-> -	}
-> +	if (user && !crosstask)
-> +		__get_perf_callchain_user(&ctx, regs);
->   
-> -exit_put:
->   	put_callchain_entry(rctx);
->   
->   	return entry;
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 7541f6f85fc..eb0f110593d 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8218,7 +8218,7 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
->   		return &__empty_callchain;
->   
->   	callchain = get_perf_callchain(regs, kernel, user,
-> -				       max_stack, crosstask, true);
-> +				       max_stack, crosstask);
->   	return callchain ?: &__empty_callchain;
+>   	return load_module(&info, uargs, flags);
 >   }
->   
+>=20
+> If we only call security_kernel_post_read_file the 2nd time for a
+> decompressed kernel module, IMA won't be sure what to do when
+> security_kernel_post_read_file is called for the 1st time because it
+> can't distinguish between a compressed module with appended signature or
+> a uncompressed module without appended signature. If it permits 1st
+> calling security_kernel_post_read_file, a uncompressed module without
+> appended signature can be loaded. If it doesn't permit 1st calling
+> security_kernel_post_read_file, there is no change to call
+> security_kernel_post_read_file again for decompressed module.
+>=20
+> And you are right, there is no need to call
+> security_kernel_post_read_file twice. And from the perspective of IMA,
+> it simplifies reasoning if it is guaranteed that IMA will always access
+> uncompressed kernel module regardless regardless of its original
+> compression state.=20
+>=20
+> So I think a better solution is to stop calling
+> security_kernel_post_read_file in kernel_read_file for READING_MODULE.
+> This can also avoiding introducing an unnecessary
+> READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration and
+> can make the solution even simpler,
+>=20
+> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
+> index de32c95d823dbd..7c78e84def6ec7 100644
+> --- a/fs/kernel_read_file.c
+> +++ b/fs/kernel_read_file.c
+> @@ -107,7 +107,12 @@ ssize_t kernel_read_file(struct file *file, loff_t o=
+ffset, void **buf,
+>   			goto out_free;
+>   		}
+>  =20
+> -		ret =3D security_kernel_post_read_file(file, *buf, i_size, id);
+> +		/*
+> +		 * security_kernel_post_read_file will be called later after
+> +		 * a read kernel module is truly decompressed
+> +		 */
+> +		if (id !=3D READING_MODULE)
+> +			ret =3D security_kernel_post_read_file(file, *buf, i_size, id);
+>   	}
+>=20
+> Btw, I notice IMA is the only user of security_kernel_post_read_file so
+> this change won't affect other LSMs. For a full patch, please visit
+> https://github.com/coiby/linux/commit/558d85779ab5d794874749ecfae0e48b890=
+bf3e0.patch
+>=20
+> If there are concerns that I'm unaware of and a new
+> READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration is
+> necessary, here's another patch
+> https://github.com/coiby/linux/commit/cdd40317b6070f48ec871c6a89428084f38=
+ca083.patch
 
+Hi Coiby,
+
+Based on the conversation with Paul, there is no reason to remove the exist=
+ing
+security_kernel_post_read_file() call.
+
+The changes are similar to the 2nd link, but a bit different.
+- Define a single enumeration named READING_MODULE_COMPRESSED.
+
+- In module/main.c add a new security_kernel_post_read_file() call immediat=
+ely
+after decompressing the kernel module.  Like a previous version of this pat=
+ch,
+call kernel_read_file() with either READING_MODULE or READING_MODULE_COMPRE=
+SSED
+based on MODULE_INIT_COMPRESSED_FILE.
+
+- In ima_post_read_file() defer verifying the signature when the enumeratio=
+n is
+READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kernel_mod=
+ule.)
+
+thanks,
+
+Mimi
 
