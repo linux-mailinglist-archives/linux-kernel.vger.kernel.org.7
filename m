@@ -1,161 +1,98 @@
-Return-Path: <linux-kernel+bounces-886587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913A5C36055
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:20:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC02C35E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50E0D4E92E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:20:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 234BD34C3CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B34313E2F;
-	Wed,  5 Nov 2025 14:20:08 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7163E1DC997
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED1D324B20;
+	Wed,  5 Nov 2025 13:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="TTxyY3lE"
+Received: from sg-1-17.ptr.blmpb.com (sg-1-17.ptr.blmpb.com [118.26.132.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B1F311971
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352407; cv=none; b=g4ulwvLNopJR8FKoaSambdT0aNfhG4IHA7FQkuKgp660GVa9y7Am84mV3YkhWM5SkjtqllJZlzjhd+QnAxjr0oqTRxLPYM/a0Uiay8lsn6hVHkxUmH5BJF9GYW9ucsKydL1W33nXFwU73bGTydFUiIZZNqCtB1K7Y9DaafKFdHw=
+	t=1762350382; cv=none; b=nLWfgO4DdmthSCLw7jihpkOiGsaWRMyJIvtuMuEVfgIVAVosPpxAeRyjhlHx8iqOVNGsOIm5qwo4reTachzQy4dUbC+tRJWxvLnGZ/iGZRSW7jlCg83CKX9uKzlxrjm9Gqn0M4j9jJaT3oSSXuLJ44OgUs+HVUsmYjxfEtCEqSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352407; c=relaxed/simple;
-	bh=4XfEkLJsjVtuGxghOdJ23OsMRT4RAKbyJUUVZqSXMpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jdeO4viurDBw1o6jx9zjvxfrXJPWfbInHxgQnPc/1Owgbuq2o5eAWvdnk5lmKv/VI4mgxkeBoXq3VPHoxUzeTr+LCQWGE6zOppB7t215C/nCsTubE7uYaTjKsIEzI4cCQdj768CamxaTsomRWGsPuqC4Ywqb3Z/IQlpkggCUWuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d1mmj0Ysfz9sRy;
-	Wed,  5 Nov 2025 14:45:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lCEyzqt3JgUV; Wed,  5 Nov 2025 14:45:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d1mmh6Whcz9sRh;
-	Wed,  5 Nov 2025 14:45:40 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CE11D8B76E;
-	Wed,  5 Nov 2025 14:45:40 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id uCc9lE3z-fx3; Wed,  5 Nov 2025 14:45:40 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 86D2A8B76D;
-	Wed,  5 Nov 2025 14:45:40 +0100 (CET)
-Message-ID: <18dd8200-6a8c-449e-9fb8-56874342defb@csgroup.eu>
-Date: Wed, 5 Nov 2025 14:45:40 +0100
+	s=arc-20240116; t=1762350382; c=relaxed/simple;
+	bh=8+E+wvcxBVM0MPG0WH1f2Ay5kSxXX3yb3qO1FxQOTls=;
+	h=Mime-Version:In-Reply-To:To:Cc:From:Subject:Date:Message-Id:
+	 Content-Type:References; b=nh4IqJ5mFdu1ZNzMvPbZz8EW8t6A7SRrF4/iR3pPYToiURPEIIeIU1z7hanGQu00ZF+PHoVzixAMPDlpbFDchYZBpeBm4A5Y5TOZ67Be8HwuS7lMT1Nzjb5l+qkTinfe21eOmyFDYOhnlMF9p2b2rTp9d7B2NUmPhFTEUXbbb+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=TTxyY3lE; arc=none smtp.client-ip=118.26.132.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762350367;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=8+E+wvcxBVM0MPG0WH1f2Ay5kSxXX3yb3qO1FxQOTls=;
+ b=TTxyY3lEsgB/ruiv12o5h9soSJW+ZDCU82keg4+yJJctTVzAv06sP3lQ4f3pUi9pGZf+kJ
+ 70W8OchN4+pHhQ0bOCiosqc9Wz4cSMZyURaI/ED8ZnKpMYF3F/7nSWLUozgxFCYG3cjj8p
+ iCLlDB6n39Fziu1w4/s3i6WPdtuWSOoyyUfTjxiyNZKJMjhScIj0vPTxui6txfHJs7HDUN
+ z2WGKlga3x4pgkX6lrdoZrguKykgxDy9ur5GQ+vp1itYOYMc6dhaSkPW/+gQZ1hZmJpBuI
+ JE+rkDmp5XKCk1NO7xv539CkHx8mh5oiJ2Tuw+WGn0xZrjNuNrvbzsP0uPaMrw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-Lms-Return-Path: <lba+2690b551d+de204c+vger.kernel.org+chenmiao@openatom.club>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CANiq72=OE3JNpemanR-r1efbgKqQrZCiQ7hY2-=_bvxLyJZ-HQ@mail.gmail.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, 
+	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	"Benno Lossin" <lossin@kernel.org>, 
+	"Andreas Hindborg" <a.hindborg@kernel.org>, 
+	"Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, 
+	"Danilo Krummrich" <dakr@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	"open list" <linux-kernel@vger.kernel.org>
+From: "Chen Miao" <chenmiao@openatom.club>
+Subject: Re: [PATCH] rust: kernel: Support more jump_label api
+Date: Wed, 5 Nov 2025 21:46:02 +0800
+X-Original-From: Chen Miao <chenmiao@openatom.club>
+Received: from [198.18.0.1] ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Wed, 05 Nov 2025 21:46:04 +0800
+Message-Id: <282bd8d5-afde-4a96-b294-bbd7b69ce684@openatom.club>
 User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline] Kernel OOPs while running powerpc/mce/ selftest
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Ganesh Goudar <ganeshgr@linux.ibm.com>, Nathan Lynch <nathanl@linux.ibm.com>
-References: <4b107285-57d7-482d-9fdf-8499e5fdbebb@linux.ibm.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <4b107285-57d7-482d-9fdf-8499e5fdbebb@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club> <CANiq72=WZJ5=UACpFLWCVJ7mcXbc93X9MyYAZP8-0F==2b0adw@mail.gmail.com> <8d865a46-82c8-428d-a371-407889eefb62@openatom.club> <CANiq72=OE3JNpemanR-r1efbgKqQrZCiQ7hY2-=_bvxLyJZ-HQ@mail.gmail.com>
 
+On 11/5/2025 9:40 PM, Miguel Ojeda wrote:
+> On Wed, Nov 5, 2025 at 2:35=E2=80=AFPM Chen Miao <chenmiao@openatom.club>=
+ wrote:
+>> I can understand, but I'd like to make a brief explanation here. "Chen M=
+iao"
+>> is my name, so the prefix of all my email addresses is "chenmiao." There=
+fore,
+>> "Chen Miao" and "chenmiao" are equivalent.
+> That is fine, but what I was trying to say is that, in that case the
+> Signed-off-by should be "Chen Miao".
+>
+> Please see https://docs.kernel.org/process/submitting-patches.html#sign-y=
+our-work-the-developer-s-certificate-of-origin
+> -- thanks!
+>
+> Cheers,
+> Miguel
 
+Well, I will follow this rule and change the Signed-off-by to "Chen Miao"=
+=20
+before the next push.
 
-Le 23/10/2025 à 06:54, Venkat Rao Bagalkote a écrit :
-> Greetings!!!
-> 
-> 
-> IBM CI has reported a kernel crash while running mce selftests on 
-> mainline kernel, from tools/testing/selftests/powerpc/mce/.
-> 
-> 
-> This issue is hit when CONFIG_KASAN is enabled. If its disabled, test 
-> passes.
-> 
-> 
-> Traces:
-> 
-> 
-> [ 8041.225432] BUG: Unable to handle kernel data access on read at 
-> 0xc00e0001a1ad6103
-> [ 8041.225453] Faulting instruction address: 0xc0000000008c54d8
-> [ 8041.225461] Oops: Kernel access of bad area, sig: 11 [#1]
-> [ 8041.225467] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-> [ 8041.225475] Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 
-> nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct 
-> nft_chain_nat nf_nat nf_conntrack bonding tls nf_defrag_ipv6 
-> nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink pseries_rng vmx_crypto 
-> dax_pmem fuse ext4 crc16 mbcache jbd2 nd_pmem papr_scm sd_mod libnvdimm 
-> sg ibmvscsi ibmveth scsi_transport_srp pseries_wdt
-> [ 8041.225558] CPU: 17 UID: 0 PID: 877869 Comm: inject-ra-err Kdump: 
-> loaded Not tainted 6.18.0-rc2+ #1 VOLUNTARY
-> [ 8041.225569] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [ 8041.225576] NIP:  c0000000008c54d8 LR: c00000000004e464 CTR: 
-> 0000000000000000
-> [ 8041.225583] REGS: c0000000fff778d0 TRAP: 0300   Not tainted (6.18.0- 
-> rc2+)
-> [ 8041.225590] MSR:  8000000000001003 <SF,ME,RI,LE>  CR: 48002828  XER: 
-> 00000000
-> [ 8041.225607] CFAR: c00000000004e460 DAR: c00e0001a1ad6103 DSISR: 
-> 40000000 IRQMASK: 3
-> [ 8041.225607] GPR00: c0000000019d0598 c0000000fff77b70 c00000000244a400 
-> c000000d0d6b0818
-> [ 8041.225607] GPR04: 0000000000004d43 0000000000000008 c00000000004e464 
-> 004d424900000000
-> [ 8041.225607] GPR08: 0000000000000001 18000001a1ad6103 a80e000000000000 
-> 0000000003000048
-> [ 8041.225607] GPR12: 0000000000000000 c000000d0ddf3300 0000000000000000 
-> 0000000000000000
-> [ 8041.225607] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [ 8041.225607] GPR20: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [ 8041.225607] GPR24: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [ 8041.225607] GPR28: c000000d0d6b0888 c000000d0d6b0800 0000000000004d43 
-> c000000d0d6b0818
-> [ 8041.225701] NIP [c0000000008c54d8] __asan_load2+0x54/0xd8
-> [ 8041.225712] LR [c00000000004e464] pseries_errorlog_id+0x20/0x3c
-> [ 8041.225722] Call Trace:
-> [ 8041.225726] [c0000000fff77b90] [c0000000001f8748] 
-> fwnmi_get_errinfo+0xd4/0x104
-> [ 8041.225738] [c0000000fff77bc0] [c0000000019d0598] 
-> get_pseries_errorlog+0xa8/0x110
-> [ 8041.225750] [c0000000fff77c00] [c0000000001f8f68] 
-> pseries_machine_check_realmode+0x11c/0x214
-> [ 8041.225762] [c0000000fff77ce0] [c000000000049ca4] 
-> machine_check_early+0x74/0xc0
-> [ 8041.225771] [c0000000fff77d30] [c0000000000084a4] 
-> machine_check_early_common+0x1b4/0x2c0
+Regards,
 
-Is it a new problem or has it always been there ?
-
-The problem is because KASAN is not compatible with realmode (MMU 
-translation is OFF).
-
-pseries_machine_check_realmode() is located in 
-arch/powerpc/platforms/pseries/ras.c built with KASAN_SANITIZE_ras.o := n
-
-But pseries_machine_check_realmode() calls mce_handle_error() which 
-calls get_pseries_errorlog().
-
-get_pseries_errorlog() is in arch/powerpc/kernel/rtas.c which is _not_ 
-built with KASAN_SANITIZE disabled hence the Oops.
-
-Unrelated, but it looks like there is also a problem with commit 
-cc15ff327569 ("powerpc/mce: Avoid using irq_work_queue() in realmode"), 
-which removed the re-enabling of translation but left the call to 
-mce_handle_err_virtmode().
-
-Christophe
+Chen Miao
 
