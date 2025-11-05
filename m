@@ -1,207 +1,203 @@
-Return-Path: <linux-kernel+bounces-886924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C58BC36D64
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:56:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAB4C36B93
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E0E3B901A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3A6188AE83
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07190332ED1;
-	Wed,  5 Nov 2025 16:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDCF32ED56;
+	Wed,  5 Nov 2025 16:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXy3o1HA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Hve1sORT"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010003.outbound.protection.outlook.com [52.101.46.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3156C310777;
-	Wed,  5 Nov 2025 16:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360150; cv=none; b=fO03+xFI8Z1UjJsVySogj3L4hIUZ4rNA0w8UVDHEkRLeiaIEBM9HvPBQWOM4cvVb9S91wQplrIVxLllf+oq45m5ByfOAQ7Z909ehJYmni9Sn7R8Wg3yOTTOd/K0kIEo8QDxZ7l3nzUv7l312hoAd1sAdEdzyBuBPWEJRoklg8zs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360150; c=relaxed/simple;
-	bh=E2LyBpj7sEAtFQd7gW1xNRb7UeJ1t4NfeX3b6rOxki0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M8B/ORUAsuTrZBmdcxqGU2dZAYxvdWR8zzEZwCXjcG23lIGtdY6nuXe/BiUwatpOfMIz09wwlj2bUA+Rufzyg1aLxE+PfZg5DnDsXtJcbKFpL+z/+LU6TwbwLO+fbYDUdtaxTFrLNB9KdJfPyJOge+/24ieQAu7nkmkcChzwQ2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXy3o1HA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB4AC4CEF5;
-	Wed,  5 Nov 2025 16:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762360147;
-	bh=E2LyBpj7sEAtFQd7gW1xNRb7UeJ1t4NfeX3b6rOxki0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uXy3o1HAc6d9NI/8sxdtsN8Od/IF2mKpBo2M1OC8+7a3rPFFJIZE/1xZhMQdHrQgp
-	 B5ceNVcaf6DRseXBTphigutFYu/etkAPJ7PfbuTl8mE2KfMCBcFGj2Wz4qhUc5bryP
-	 NT43pikoDUCd7b8GznCic56vIWh/SXcB2c6HrjnwL+WV18Z8WsrLyE3BT2geKicNmH
-	 p3HjuaYnQzdgCDq7btUjfzN9ArS3DsgRn67LpXTmd4vyCZNw5kUHmVg6YDWHz/0UB9
-	 zAk3ljAqawT4zm3+WCQ+u8HBOx5H7bnBFEsQ7ZnTLC2afkeaZnZyr4DTRzxDE9mDEW
-	 ubpy0w4WfFllg==
-Message-ID: <cc5017b8-5802-4cf5-93b1-18b1e2bd8ae5@kernel.org>
-Date: Wed, 5 Nov 2025 17:28:57 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF75325E469;
+	Wed,  5 Nov 2025 16:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762360172; cv=fail; b=crSmFVU7nA5Tt0nQkobIlTrJkB4lFbUUMVqdSR32P75whGO0BcT+rxcJhtQbaRFmC72UEu1yrn5Qq8yxwsyLyT6KBV5aYj723vBjrCzF352dUi2stId+rtJOrbV1ZhLcyuHYOHZHNTZ6RZpzpJt8m73+IdAzUV8j9FLtIlHHV0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762360172; c=relaxed/simple;
+	bh=osdJhF0wvj8IbX1lfyQ4rGNy0c8Na52FbMaGciYtDE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=o5mebBvg/D6e1zI0sqRMCG19MvBwBX9YdTZIUM8kZAwFE6tuM6mcE8lFASO+R2jr3kjXlPzasKONBlsJ0J7haiCq7PZQk+Ln/7bKRqQWB/G3haU7RStcEUuTheANgJa3GbOqdzNCOoaPDU/9rwSwhOfyFUA/0VkyGgCOw5h7ddI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Hve1sORT; arc=fail smtp.client-ip=52.101.46.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yD+KrchdxN7f+ABWdS0y5EEdMHeV3mcZaztKNJkiU2FQkvC11W8+4gDqw8i4ogPzgy4XDF0UGLMa3+k7qMO53nglf9puMm/yoiRMsK5jhQkMH+m6VRF6+tmwU+R0BRqNkJlTWPX28gWfexQ3+rWrR2BYww+pf83QsG//E85QVjQtnwDNvnas15rc5y/11cDULC/oxzqi8XcN+oH0Z1NKHck25Zm+qS+i60PMubhUJ6gxdMMhoojFP/IeaOSW7RD361vegxHQ2KcGSZXXlME237wGxpfnmIbcqc2NA0NFUMwYlf55vUljJFbNMrVCLlGx9KrArZJTk/osSN/SIdV1Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M6zpwSWAAhnWx6LCcs0yKnZV8KbCMv2XVDMCccguS3w=;
+ b=ZHzhhbg4j9d3ast85D7G1JD2Ob30lzWmDqjjZKP6HAvpFCiFFzHTTdANJ1+qFW5GkTmeDH8LOn/Lazfv6l7bVjRGKS/E3Fa+HIASExWrYwtHAgF3Smvu6XCGemnIkvX6iPlTuZayv7RA0e/opW+pp7nhnS/R4dPsoPwBgsJn/ZjkLQdaEJYReDtnJQ060PGZPKesFXX3oloF3zQvSWyve9y8Q4HPy7N/iVTrMc9cooqt6CHEVL1IBawUXvIMrL8D2N1zDAVOlaOu5KVxzQloNvvBfnGwZYLMPmcwJvVV86TGIqMJ1s0tM2f7Y64hfpc1AIfhGJAQY5QL+Glnui/nEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M6zpwSWAAhnWx6LCcs0yKnZV8KbCMv2XVDMCccguS3w=;
+ b=Hve1sORTMJWkKYkWU4mAN3pH/6VFewkxF/3Non/19aglw88aq8zGhF5p/dkE/rd0MQPcq5NquVlBIbWmR7CM7NKnUeRb6y9HkuCZwMtjr38rN2FBrrvZBz13FO6IrFXNB77CgdgNE+/I2Oqb974eeO1G1fKs76vyQO0Cd42xDXNyWho/8vN1dAuu7j9XGouObo80ZWixZYgK4neeW27zG7rx8blxe2EZ/7o/AMkRnn7b00RzouCaV5dOvJNt/3IQSJJ5qUpe43WSMDVBvPVP4OS8H2C5YNIUQKlVIzxfjqsnQn7BIVZYw6Z8ZYsm/as+6SLhnr2n2+HLRPdeZvW+Ow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH7PR12MB7330.namprd12.prod.outlook.com (2603:10b6:510:20d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
+ 2025 16:29:27 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 16:29:27 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] mm/huge_memory: fix folio split check for anon folios in swapcache.
+Date: Wed,  5 Nov 2025 11:29:10 -0500
+Message-ID: <20251105162910.752266-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0333.namprd13.prod.outlook.com
+ (2603:10b6:208:2c6::8) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net v4 3/3] selftests/bpf: Add mptcp test with sockmap
-Content-Language: en-GB, fr-BE
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
-Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251105113625.148900-1-jiayuan.chen@linux.dev>
- <20251105113625.148900-4-jiayuan.chen@linux.dev>
- <665825df-b995-45ee-9e0c-2b40cc4897ee@kernel.org>
- <b5f67a681be12833efa12e68fc3139954b409446@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <b5f67a681be12833efa12e68fc3139954b409446@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB7330:EE_
+X-MS-Office365-Filtering-Correlation-Id: bde60493-f7cc-4aa1-220b-08de1c887d20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?twX25E5iZOoCFpBE+en3X0+4jYZkn16VEtwhc2N+9qPy6QjBAROf2ccuTMT2?=
+ =?us-ascii?Q?q2mRidAt1CcLkTzZwPNvm4sWnRtK6De0ZBxAwLKtHLMQ7+/zHbPuZGDRKpLs?=
+ =?us-ascii?Q?bGlYwTSbQOilXMGpYpw1pCfK0J9w/lNPikaN+I/ro7OkGQMta/dZSAW+lilJ?=
+ =?us-ascii?Q?X5qsoinruCsh1kYQWIeQKepHkP/Kvo7mFJfgfrQSK9uhbo9fohk8ll8BuKf7?=
+ =?us-ascii?Q?RUiEafHA28f5fkGXHcFduqoDS5zolcopvoBM0TKMcjLzvWdi99I5YgFPEB91?=
+ =?us-ascii?Q?8WUzi7RgfiJnHLpD02uw71u9awhKkFRDX9YGikIrHyzacwpfuVxC0oi7hRTR?=
+ =?us-ascii?Q?khyqsRedCWOqxN+zluBCzIONf4j72IqpxvJPcYb0QBgkhD6Ul4MlWeSXN/HO?=
+ =?us-ascii?Q?Bii9DfNQBYdO0IYjEGiYuW5a01HqZs+VGXqmXFUh+aRLmFZtbMVFhccG7kbQ?=
+ =?us-ascii?Q?0rkDdAlqD2AhA9i83d5QQbrGGX3FQe1/Qw2Bt50Awg3cASmErapVKpZJP1GW?=
+ =?us-ascii?Q?XEiGVY39UIcKVD1iPb98fi6wv/pCkTQGiKmPKlxP32JokhUDl1+Ktba8+89j?=
+ =?us-ascii?Q?9us20v1Wqrk++s8jt+RPh44x8iBjVf627KHqDo4rqk01eoGfg0Ck7uVcOeYX?=
+ =?us-ascii?Q?MgJEMJdy+prc3KfcrR/0wFMHsA+1PEG0fOLCxz3W26cwZfBEJG7s/Mn+1nXW?=
+ =?us-ascii?Q?xVOBcQVkLw0mA5ofatTKsOyRy8VWHs5xeMoBDhjIuMUOivWhicKOCzdDO5Uj?=
+ =?us-ascii?Q?tnnTRSlzdI5MmW+MNCPFdFM1ALnaHO390U+kPvYCQzK/KCVpVWU2P2BiVzuQ?=
+ =?us-ascii?Q?UW9r243GiTUexqdceagmZpjlhSuGoPYaYwc9WZa+4E/x1T6SHJFyKcLqypV/?=
+ =?us-ascii?Q?OhhMWIIlcTYCMWy58r9m3qS3cxqsQ0NxR6Stzeu1rWGpVTt/bfvp93jomY/Q?=
+ =?us-ascii?Q?dNz3yAFv6k14Hxxs/AWzFmBVJmskt4xpPGhn7Te4ytEYm0rFKLvPNkN3I6Q/?=
+ =?us-ascii?Q?AoOAQOUfSMSaOWVQGG6o1Py2CZ200XPbJ9xpPQFf+wQUJkXR1pWaX092o+Kd?=
+ =?us-ascii?Q?TcC4AmOSoVAHsmmdOCAliwo++vDRRGe2ECBoSxKlAVPx6AlOvY8DFDlKEb+D?=
+ =?us-ascii?Q?PjAcmXtK/JqpO4puoCuzhqk3IW5/AloZD9Z/5D1ZDuOFPqyFa6QmV3kCZpKE?=
+ =?us-ascii?Q?o6EzVbAE+zEGmFnrWW0qNgYLNBA/QHUtI4nOSFMEBjIA4V5VSIoVd8840n0Z?=
+ =?us-ascii?Q?nS9R5G4xHymf9u5YbeLYPZzwmrr1slBzWGn/TAzhlM1gQnAl1Un+XZrR8xcT?=
+ =?us-ascii?Q?q+GwQjHnkKM95Dn6TDDF6HvMk0k8Wogv3QpyehPfYyWYQEw9k8nYaVfgK8gc?=
+ =?us-ascii?Q?1xM2/+xgPr7el8+EyjaU+Me9796a2q2q8at9YrcUNQhMuCRH09mQtBfHDK/2?=
+ =?us-ascii?Q?9Nn3MdV1YwKi1tPVmex6R5EI1OIFCmQo3cBGOaW+hZPp6BLqlCDbZw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WYUvBnfkjl8+qwJJVABqhmVJJQIsKyXmezqoq8MKUJu86+M0Yr+gKXSkn6v4?=
+ =?us-ascii?Q?Hl4nOEHku4Gn8THJJKKVmN+eVcafUbkL3lsQaESSReM1oAFSsjhCyK51lO+q?=
+ =?us-ascii?Q?3upFqNAvAv7CfgJ4cvl71Yrmhyp7tv63NIuSQnj4utHhUFiwviZURIGbpG4y?=
+ =?us-ascii?Q?ZOUCIHHQGELMYsXLXqv693+iBVasApzYuWtXQCWMSoRdcpPxIHZhUEgfboW+?=
+ =?us-ascii?Q?LvWW2EHcQl+x5j0d07AjgTXW497XVNZVBlom5brSkDqBnE8OG/YNSoioI0D3?=
+ =?us-ascii?Q?1tKFFhAOdY7XDNRvXTIAFTf42dplWz7x4j0JOiIxU+PAXfcLoReil1xw8cM3?=
+ =?us-ascii?Q?QrwMlYfCK5VI/NWQfT7oV6awp/vZPUn47+SPOgAHxj6bXsJMnA6PFmQt67pO?=
+ =?us-ascii?Q?bdZNCJSTZ8YMXSq4GEQTuemOpSZjbuXEQygSumgShDPG/pTZOk3LE1axl4FO?=
+ =?us-ascii?Q?gCItwWf1x3zSUa6mFqw1YtO/ckzrHkEtzEhWnRqqismTuK2oGbXoAfRo27zZ?=
+ =?us-ascii?Q?gpmQMerDuywbISDkpcU3mB8FYUFerewHGQdu8BVszwPkY+DoOoxWEGc97AoP?=
+ =?us-ascii?Q?Cf0gTyAFWKBFvBQG7v0U/DT+XlhzNMLQsRguD/mHUEFkapo5r4s1j2W0SE1J?=
+ =?us-ascii?Q?FKdduDDTWqhWLen2F+gIGLikCa8yPqbRKpQai6B2/wtm8gTp9rDT35kZuO3N?=
+ =?us-ascii?Q?ytFo9SAN/1Llk39LPMd0y0TQI3lqyw8Oq1ZF0wWA44xpIBSaVwJL8LM0m6KS?=
+ =?us-ascii?Q?SUNwYAkBE/kDasVKC1pX4hEY1kQ6lphhLk6s9ns345Z09gpaj7VGQIy7hQWI?=
+ =?us-ascii?Q?sMYsYKSAEiSdpR2NrQSc3UXPkfWoBNXMqAaJa14wrywWMSLHct8y2Bn5aWh5?=
+ =?us-ascii?Q?0vxWZqbYW87sibflsLxq5g172FkmyMCFDx7pOCrAUCct2jO6lGDW3be+9c0U?=
+ =?us-ascii?Q?HFVhoQs8VPl/8fg7V3xmvzGp74MZoeUqU6OUttIoBgltwDzTOFr9dNfQAogw?=
+ =?us-ascii?Q?YrjZ9xqhLcRc3L1vfuhM0InrrP0uweddn//mcgh7gaBGkzvfLIX+WSINuvOp?=
+ =?us-ascii?Q?ZYyzUSf8gq6m5Q5cDmydeYwc3rk6+JLdauWv5iiQMOa9ZLPNPmQWXJueCOMk?=
+ =?us-ascii?Q?+AsnbE1EufhcXK5Adc/LTpcLicD8DKrlbS3E6g3mEm7lRuxOTtxom2NkBfGx?=
+ =?us-ascii?Q?ftM5UNKsj/x+iKaADnjz8GW4QiCOQ4UUWK27JVft8QAbRXlzPGq3o259cfOZ?=
+ =?us-ascii?Q?dwQldVNntvl2200u/lues2U7n3TPp+TpJi5k3qcmfcE889cvtM76dYnkh2Le?=
+ =?us-ascii?Q?yal5YcAewW9U7w8sPldwWQab9HEmZoSrzHmA1y3NQFsKeapvSkg+2BobmQoF?=
+ =?us-ascii?Q?X4hRy4gJKmh+f8t2ktNZilxldtQWcMSqgzjZJuHX0v3JrB/W5DXrHDJSBTwt?=
+ =?us-ascii?Q?wFvEKc1x3H+SP8XRNoxQ7tfMhOdiNP/RWX9i1IyeqDXIj+r85C2KjTJDF0lm?=
+ =?us-ascii?Q?7au2C1RVwmYPtkAT4Izh8g5ad8vj0XkxZna4/I3GpwBzwEbGxElDGLYnVMf7?=
+ =?us-ascii?Q?7wn2QTl3lczjsTEI0qlUPUMc4gcYCmyqN7MAPl9Y?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bde60493-f7cc-4aa1-220b-08de1c887d20
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 16:29:27.4976
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NVtC2EEaOrb5PUzBC8DdBbQkDgAA1WXM9z/EzZS82AnqTv9AOJ9eQiC85z0Ls6wC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7330
 
-On 05/11/2025 17:12, Jiayuan Chen wrote:
-> November 5, 2025 at 22:40, "Matthieu Baerts" <matttbe@kernel.org mailto:matttbe@kernel.org?to=%22Matthieu%20Baerts%22%20%3Cmatttbe%40kernel.org%3E > wrote:
-> 
-> 
->>
->> Hi Jiayuan,
->>
->> Thank you for this new test!
->>
->> I'm not very familiar with the BPF selftests: it would be nice if
->> someone else can have a quick look.
-> 
-> Thanks for the review. I've seen the feedback on the other patches(1/3, 2/3) and will fix them up.
+Both uniform and non uniform split check missed the check to prevent
+splitting anon folios in swapcache to non-zero order. Fix the check.
 
-Thanks!
+Fixes: 58729c04cf10 ("mm/huge_memory: add buddy allocator like (non-uniform) folio_split()")
+Reported-by: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Closes: https://lore.kernel.org/all/dc0ecc2c-4089-484f-917f-920fdca4c898@kernel.org/
+Cc: stable@vger.kernel.org
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ mm/huge_memory.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->> On 05/11/2025 12:36, Jiayuan Chen wrote:
->>
->>>
->>> Add test cases to verify that when MPTCP falls back to plain TCP sockets,
->>>  they can properly work with sockmap.
->>>  
->>>  Additionally, add test cases to ensure that sockmap correctly rejects
->>>  MPTCP sockets as expected.
->>>  
->>>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
->>>  ---
->>>  .../testing/selftests/bpf/prog_tests/mptcp.c | 150 ++++++++++++++++++
->>>  .../selftests/bpf/progs/mptcp_sockmap.c | 43 +++++
->>>  2 files changed, 193 insertions(+)
->>>  create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
->>>  
->>>  diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->>>  index f8eb7f9d4fd2..56c556f603cc 100644
->>>  --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
->>>  +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->>>  @@ -6,11 +6,14 @@
->>>  #include <netinet/in.h>
->>>  #include <test_progs.h>
->>>  #include <unistd.h>
->>>  +#include <error.h>
->>>
->> Do you use this new include?
-> 
-> "EOPNOTSUPP" I used was defined in error.h.
-
-Ah OK. I usually only include 'error.h' to use 'error()'.
-Is it not 'errno.h' (or 'linux/errno.h') you want instead?
-
-I'm just surprised it is not already included but another one above. But
-OK if it is not.
-
-(...)
-
->>> + return;
->>>  +
->>>  + skel->bss->trace_port = ntohs(get_socket_local_port(listen_fd));
->>>  + skel->bss->sk_index = 0;
->>>  + /* create client with MPTCP enabled */
->>>  + client_fd1 = connect_to_fd(listen_fd, 0);
->>>  + if (!ASSERT_OK_FD(client_fd1, "connect_to_fd client_fd1"))
->>>  + goto end;
->>>  +
->>>  + /* bpf_sock_map_update() called from sockops should reject MPTCP sk */
->>>  + if (!ASSERT_EQ(skel->bss->helper_ret, -EOPNOTSUPP, "should reject"))
->>>  + goto end;
->>>
->> So here, the client is connected, but sockmap doesn't operate on it,
->> right? So most likely, the connection is stalled until the userspace
->> realises that and takes an action?
->>
-> 
-> It depends. Sockmap usually runs as a bypass. The user app (like Nginx)
-> has its own native forwarding logic, and sockmap just kicks in to accelerate
-> it. So in known cases, turning off sockmap falls back to the native logic.
-> But if there's no native logic, the connection just stalls.
-
-Good to know, thanks!
-
-So MPTCP request might still be handled by the "native logic" if any?
-
-Cheers,
-Matt
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 36fc4ff002c9..595811c78f42 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3674,7 +3674,8 @@ bool non_uniform_split_supported(struct folio *folio, unsigned int new_order,
+ 		/* order-1 is not supported for anonymous THP. */
+ 		VM_WARN_ONCE(warns && new_order == 1,
+ 				"Cannot split to order-1 folio");
+-		return new_order != 1;
++		if (new_order == 1)
++			return false;
+ 	} else if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+ 	    !mapping_large_folio_support(folio->mapping)) {
+ 		/*
+@@ -3705,7 +3706,8 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+ 	if (folio_test_anon(folio)) {
+ 		VM_WARN_ONCE(warns && new_order == 1,
+ 				"Cannot split to order-1 folio");
+-		return new_order != 1;
++		if (new_order == 1)
++			return false;
+ 	} else  if (new_order) {
+ 		if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+ 		    !mapping_large_folio_support(folio->mapping)) {
 -- 
-Sponsored by the NGI0 Core fund.
+2.51.0
 
 
