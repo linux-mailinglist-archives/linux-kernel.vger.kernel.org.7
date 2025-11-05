@@ -1,169 +1,245 @@
-Return-Path: <linux-kernel+bounces-886420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FCFC358AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:58:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A6AC358B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A414F4FA120
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7556188184C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A1A3081A6;
-	Wed,  5 Nov 2025 11:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571AF3128AB;
+	Wed,  5 Nov 2025 11:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ndBn0Llf";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iYmfvH9r"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gydHe1az"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665330216F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132EF31282A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343778; cv=none; b=ApXdEtDfuel1YPFcQgG9l509oW1cnx2VGIEePbF+AyEzS42UoAcFuShfdX61CjPgzJD/jKqdPRmgekltSITa2NIjhSa8xbncYQ2y6gkKnyAp5GhUrDdWHJgQCWU/28Qe4wy/QplNbOtdhelaJp82N+xbOWgmKCb6/qC/Sb1MZuA=
+	t=1762343913; cv=none; b=Sj3FF4fRuEClJ0Wc0Z9e9zYbJmCrCyaojPaeWvmDRiEaSTaYLTHkJB8LH4C9hwtd41zvOJ4IzjLrB3b9gC1NpZQj/W/fJAZDMMG037g5tWWnOsispqZYFH/ISHxZhh5ImULxRazAVECg7U3X4DDwc/qQErFJ4AP8ACuxs3jfJmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343778; c=relaxed/simple;
-	bh=Jh202HqNC+EPrs7/EkTqu9T+iE/XddP+3hQSSI9HUdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDmIc7Y837Z9q8RgsiqzjIgtdfK+oXeoP2iZe70qE3MvluYF47+MGQiaH/4Gh4sX114/BjOLJwo7Ls/AvaCrxRs+5oC5CMPRM81OuM73CfovGLj1fOiyvel0fGuq2dlb08fCPchwmqvs/pgr02jXiGb7hSRsC2T38QUH6XYqiOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ndBn0Llf; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iYmfvH9r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A58F4QF3091509
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 11:56:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Jh202HqNC+EPrs7/EkTqu9T+iE/XddP+3hQSSI9HUdk=; b=ndBn0LlfsYBxqEZE
-	DFiLvnTnyEwfeQaVtBdoLPk1V3IE7DUzz4ueCnarB2GOxZ/YmMj24SBd2kLPPOZF
-	tAgOBF7qFoIwspXb1twWuw4NrnkkPSqMc2Yf5D5YZ6DhN1RkhvASIIN7d0iXmSrG
-	7cW2m2p5nRBI2MmsxrDjSkavfH8ia4jxvYGOjhmBrzkUWNnBYbI5aHzkmGk1LgJt
-	6GfsBgtQtyMjTt447mhQjolFX+2Mb0mIALJg9sAomTENxT00JlfvA1w1/g+Gvc5w
-	RJewWJ7zSrK34EjCmHj1RSvjPLlnv809RGHDY8c4Z95wFQupo/t91HT0KCUdeEU2
-	97uv9w==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7s5ea7yb-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:56:15 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b99dc8f439bso3594214a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:56:15 -0800 (PST)
+	s=arc-20240116; t=1762343913; c=relaxed/simple;
+	bh=eIENOMVlvTgUtIsFQ/3obVK+KyypwShHtyRs/gUjiDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CCSoLIWVf3C9gpsp6PAm4IXNduk/GeL8NuEIRvCTweFc8z6G6VbWoBKJYThIjMstKRldfulJjWzgRBy17MtmEMiTHlNEch/0i3gTHtGF/LuRGhC3zwmA23q04J13tlEe8Ccckd50/QrJ4i0Vh/Uux8m2AB5zL8d8XBysvAx8Py4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gydHe1az; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b95cdcacd95so2798687a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:58:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762343775; x=1762948575; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh202HqNC+EPrs7/EkTqu9T+iE/XddP+3hQSSI9HUdk=;
-        b=iYmfvH9rO3HN2/K0hvxZALreD4LuoAxFw6ppzL0zdrextxzTDnezOF/5alhbRaC0y8
-         rx+Fse8o4qcIxmehZ4c08LqxhGiw8Xm4SeGMIk240V2h5SPx5p3NoD6Zh+BOsx/xHhN3
-         IMzVyo7jxo6GIiyIEYNZUPWLlu6gh86UYQ8W/fPwyu2hhe8d451V4bv13EusvOQoRWX/
-         Nq+A5R8H27yEZ48Y0WX5EG25KNRBXSXGc1gg33z+2AvbQ/4y6lzs3VLVzH1WMDVyp6Tr
-         Lq891Exy/SxsQOZ7MNmWqZE2+aWbFt2i9T50Uz+b5GQQKE8nNKZOIo5w0TxzLK6Hf2Qc
-         dXjg==
+        d=gmail.com; s=20230601; t=1762343911; x=1762948711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/RiNKBRmnkSJkzhhg8RJuuCLAED/PQy6gI5C9KpT30=;
+        b=gydHe1az50+GWb8EE76fA3sA0QyFxJjB/omqfJSkcu1xaYMf1DcTM9Pb3pttFlq7Pl
+         FLRps5s9Or8CX5EW1G5NC5fZsO+j+jB7QgcZJbhIVb7fTB9bQqWm7yVvFEF+98cWwtyS
+         CMBr39b+ad7hzF8SmqVLSKeQXvt38eKIE0xT3HbyoIPTuAX6uj1SxpXrHVygqoiloNqf
+         OEXBsUK5mnzNaBXskzbhWnbcgpIg+ZwHMvXbqfyQp3M0dDDVMBZZaiLPQtbO8mtDtddr
+         xtgwBqI6nu7b6hfLiQeZ9lNlSWTm8kMGqvED+zx6zONdr+SedEkazdaCSF3DF+n55EFw
+         XmfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762343775; x=1762948575;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh202HqNC+EPrs7/EkTqu9T+iE/XddP+3hQSSI9HUdk=;
-        b=SedUo9PejKjVU1rsaDi3Ra3sCb2cLjEhBrcWAoX9OFe/f0m1XfiLCIUa//M2lz5Egz
-         5xt5eL4x8rMNotvC/Q+i8LWr0yeAOWxWGXLIFo+DusUKmhHAGbqTTjMVFffiMA2j2NFh
-         Glh0WFkHTpMYmj3de6GRmm6C1xyZmHLaxqJh3deFjibTym6qJNwKBeTkLud4WfgWiegJ
-         AAlQA80iOAClHBP3XDfO5aHc3jXiTNoG6TjukD37w2ejCyFlnsx5kjsvAULkQkGXEXoa
-         40rImOdUS+954lcU5ZNJiR+X3vY727ARFGNTIH8CAAvi2LufQXZ0gluviRZhVqHyW143
-         CC9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVUByH37hBQpYysF9J05oN/jg8KA2eglYYvilkT+wmTxACZEbochS6lEsYhRCisZj9vL9RdgFCFiwUaqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFH9xu6YirYzjAw3lIboKcRK3SEoOfODi+u1T+sE/YU4LZt4PE
-	IWM91Hug0KbJcnNw9S+jK7OiGMY73WKP3Tp42rRDystDklxRf1KDKgTdHsOd6XICu4u4K1ojifg
-	IeGuVIGDaOBYE6NXou83PTGkO4Fjc6o/tmq9BOL3nuuCaa8glHbv4vd8yTbii9FFrCGw=
-X-Gm-Gg: ASbGncsXc+0b05Uao+BUVtt8dXpQNKSbFqjQwaXOU6lR/I2Ac5hsM94x0Yi//6mnCOI
-	vrSkC6d+dRXcOGCb6vv3NnGvjEHgVj636WsssIQj9G5NadM6jZxzWUW1q3ANb+rpxh5V2bl9mnQ
-	07LApK4FUUG3av0xHstTG1ItmCyssmxodcU8lsFw2WwzGd3522eEe+Xu/CXsXjx+aqV6AjE6M6H
-	CDgmOAm/BscGeHBOk/R4CNP/KbUj1mU+xAuF5uDqx0V54uOFE6O4iDkYt1QdBB4vmDfriKBdxBv
-	BBfkpjQCnOUepnoQdLRLEF36piS8zVs9MFYmRhxDrFkNzDK8LgOnx2ml8mnst8LG/H9mZdS0WBH
-	Z0EM4s5lYWS62JcCwuRKHcJoqsPxC1D9R
-X-Received: by 2002:a17:902:ce90:b0:295:8da6:24b6 with SMTP id d9443c01a7336-2962adb1280mr45846125ad.40.1762343774835;
-        Wed, 05 Nov 2025 03:56:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEOBsqvLMifwTLJfIVrISOe7SUcmVBxPtLp04AS/Y3A0SYFQlxN4DHs37cl3B63FjppLnIf9A==
-X-Received: by 2002:a17:902:ce90:b0:295:8da6:24b6 with SMTP id d9443c01a7336-2962adb1280mr45845155ad.40.1762343773563;
-        Wed, 05 Nov 2025 03:56:13 -0800 (PST)
-Received: from [192.168.0.171] ([49.205.248.32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f18310easm5428984a12.1.2025.11.05.03.56.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 03:56:13 -0800 (PST)
-Message-ID: <ca6313d1-b5c8-466d-8ed1-ab9ac6d8a803@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 17:26:08 +0530
+        d=1e100.net; s=20230601; t=1762343911; x=1762948711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9/RiNKBRmnkSJkzhhg8RJuuCLAED/PQy6gI5C9KpT30=;
+        b=cTKusno/I/qIl+3Lq4JWzfDL5JWXxnLdq3Tw+nROiOxdA/SbEvcEw6ytmwkRaTWluo
+         uYI4BATSwv4yWfIslITDzLJqmZt7dAJsyzgr5iYNC1PA9CAZZ6qy50ppz1c31ZTqX4Wy
+         py+o8MfK9EEPQkjonYF1JE1RHe1crcROJd9Qm0FTlOolOBMloUlNC3hEG/FGg3iRor0p
+         vrR47MBYMr/E26dlkyOxLGZnHAUdvaWWN2XUGpMBz0leIW0Hs2ND+Jj2XxRUC51dKVki
+         9bX9Z+Qs0sbJWcv6fOUhstPKxZSQMfoBEqXE6dD4E7apYAdjwEAEpu8C0Vlr6tCmYmto
+         SP2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWv99ZUpAIdVv6a6OYbK14nRlABLXC1y/bWzVHj8vXRRrsIPdVCEg0ZdeGXYwOI+uB3D7quJMT116XIW9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT3Rfcn/3056av6Zc6gy9wZlXm9uYEG4Ed5OKlzSBbTwRZtKF/
+	CXrRVCeUaddAV/Dim/mhz+wrjSTg3d3jdW/Kwsj3LLPqRmRTAogQkfsIEO82sEMNKAecoA==
+X-Gm-Gg: ASbGncuFeJw+Hlm8LbREdACMmFkAqKhW5TBogNxhjbvYP4Nu/waW3wALmXIw34Mpsvz
+	vU8xMCWvIAQKA85YUX6MD0pjYlMfWAKsnBTLHum19ta/Vwd++7vYB6QBBxVlxzQ0w94d9vSNWHW
+	h3/qNzzgCRHxHNMyx4fCV0U1Wbh9UNETWHsuPrX8U0R4gAwCywmYl2bWlQQhz8mYSQKQRnQzaie
+	fIGWAYRHI3JPOPXLs5cU8WpxiuFA9qxQp3+kNPaTHZN58JMIebxQIUgUrPxbQU63Rl07QeN55RE
+	CJD2PJWYUbs9DCPy5L5NvKYtunfn7oYxeN9eIujVQvZLqszJ2GgcB3uixyVsnJ5cCiTserWCfvi
+	3IxQtRCiWSoXxStzBtZTxjZeBsek939JBK6GsJnlwZ+gHgH02U7ncnPrv0WzE0a+xNcFAnrAwv9
+	1ebA==
+X-Google-Smtp-Source: AGHT+IGZ2HWIY2B6TdrBgHFBIW+Q/qnLcYpDWz/gdPqE3sljXu8cOFt0VQuunzihT+evp6YD/wP+RA==
+X-Received: by 2002:a17:903:2c0f:b0:295:a1a5:bb0f with SMTP id d9443c01a7336-2962add9f39mr39434405ad.18.1762343911172;
+        Wed, 05 Nov 2025 03:58:31 -0800 (PST)
+Received: from lgs.. ([103.86.77.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a5070fsm60041855ad.75.2025.11.05.03.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 03:58:30 -0800 (PST)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>,
+	linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Cc: Guangshuo Li <lgs201920130244@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] firewire: nosy: break circular locking with misc_mtx in ->open()
+Date: Wed,  5 Nov 2025 19:58:18 +0800
+Message-ID: <20251105115819.1083201-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: iris: remove v4l2_m2m_ioctl_{de,en}coder_cmd API
- usage during STOP handling
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251102-iris-drain-fix-v1-1-7f88d187fb48@oss.qualcomm.com>
-Content-Language: en-US
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251102-iris-drain-fix-v1-1-7f88d187fb48@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: U00DfwJhB7HKZq2er7K0OuNZ8mFHEk-k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA4OSBTYWx0ZWRfX9G4RZu4EXgGT
- vodTIqOIMIUL10w+TZnxoIHEMEihpwcnKclnQAJVmON9Y/Z/quu4MSeQPvzFfBx1S44js3XVdiH
- F9+jzEzi6m5fj/HYxf17Ovq4AjM57AK2SWcGDU68AXkJiVyMlrBKpJYAteo8aPpxinMGutpRWC/
- vP/NTBzSmr2ulCEX9tFuBafMUe8D8nU/g319kEayppngzDQLAJnVdjvYZ0O+ZjZIJPLbxbBRwAL
- O6ZuqYi7TjF8FRbZ2rfGgjQYzv4yLOIUTMm3VN4Tnq9DajqxS7Nx3Pgz219hHCaKLm0O06HBQUg
- IR2sHFLKbUkLJFUHFt6Wna/BZYdOGG+2a+4H2cbEFLvsyxy7D1wjeWZsly8nC1xAU40/dMCYFM5
- HMT60/UYoJqd+p67y9Bhjy6NU/3iqA==
-X-Authority-Analysis: v=2.4 cv=OayVzxTY c=1 sm=1 tr=0 ts=690b3b5f cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=AzyGrR4UViKNxLVuAS9Z9g==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=kD5szkbDwA3gxkcKNYwA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: U00DfwJhB7HKZq2er7K0OuNZ8mFHEk-k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_04,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050089
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/2/2025 9:10 AM, Dikshita Agarwal wrote:
-> Currently v4l2_m2m_ioctl_{de,enc}coder_cmd is being invoked during STOP
-> command handling. However, this is not required as the iris driver has
-> its own drain and stop handling mechanism in place.
->
-> Using the m2m command API in this context leads to incorrect behavior,
-> where the LAST flag is prematurely attached to a capture buffer,
-> when there are no buffers in m2m source queue. But, in this scenario
-> even though the source buffers are returned to client, hardware might
-> still need to process the pending capture buffers.
->
-> Attaching LAST flag prematurely can result in the capture buffer being
-> removed from the destination queue before the hardware has finished
-> processing it, causing issues when the buffer is eventually returned by
-> the hardware.
->
-> To prevent this, remove the m2m API usage in stop handling.
->
-> Fixes: d09100763bed ("media: iris: add support for drain sequence")
-> Fixes: 75db90ae067d ("media: iris: Add support for drain sequence in encoder video device")
-> Signed-off-by: Dikshita Agarwal<dikshita.agarwal@oss.qualcomm.com>
+Lockdep reports a circular dependency between card_mutex and misc_mtx:
 
-Reviewed-by: Vikash Garodia<vikash.garodia@oss.qualcomm.com>
+  misc_open() holds misc_mtx and calls ->open():
+    misc_mtx -> nosy_open()
 
+  add_card()/remove_card() hold card_mutex and (de)register the miscdev:
+    card_mutex -> misc_register()/misc_deregister() -> misc_mtx
+
+nosy_open() only used card_mutex to map the minor to the pcilynx instance
+by scanning card_list. However, misc_open() already sets file->private_data
+to the struct miscdevice of the opened minor, so we can obtain the pcilynx
+pointer via container_of() and take a kref, without taking card_mutex in
+the open path.
+
+This removes the misc_mtx -> card_mutex edge and breaks the cycle.
+
+The crash info is below：
+======================================================
+WARNING: possible circular locking dependency detected
+5.18.0-rc1 #1 Not tainted
+------------------------------------------------------
+syz-executor.1/1374 is trying to acquire lock:
+ffffffff8f8bb4e8 (card_mutex#2){+.+.}-{3:3}, at: nosy_open+0x55/0x480
+
+but task is already holding lock:
+ffffffff8ef78a88 (misc_mtx){+.+.}-{3:3}, at: misc_open+0x5a/0x3f0
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+-> #1 (misc_mtx){+.+.}-{3:3}:
+       __mutex_lock_common+0x138/0x2450
+       mutex_lock_nested+0x17/0x20
+       misc_register+0x95/0x490
+       foo_misc_register+0x3a/0x50
+       add_card+0xd38/0x1250
+       local_pci_probe+0x140/0x200
+       pci_device_probe+0x345/0x770
+       really_probe+0x2d1/0x990
+       __driver_probe_device+0x1a7/0x270
+       driver_probe_device+0x54/0x370
+       __driver_attach+0x430/0x590
+       bus_for_each_dev+0x125/0x190
+       bus_add_driver+0x32c/0x530
+       driver_register+0x309/0x410
+       do_one_initcall+0x104/0x250
+       do_initcall_level+0x102/0x132
+       do_initcalls+0x46/0x74
+       kernel_init_freeable+0x28f/0x393
+       kernel_init+0x14/0x1a0
+       ret_from_fork+0x22/0x30
+-> #0 (card_mutex#2){+.+.}-{3:3}:
+       __lock_acquire+0x3607/0x7930
+       lock_acquire+0xff/0x2d0
+       __mutex_lock_common+0x138/0x2450
+       mutex_lock_nested+0x17/0x20
+       nosy_open+0x55/0x480
+       misc_open+0x363/0x3f0
+       chrdev_open+0x407/0x490
+       do_dentry_open+0x5b4/0xc20
+       path_openat+0x1d7a/0x2300
+       do_filp_open+0x1cb/0x3e0
+       do_sys_openat2+0x96/0x350
+       __x64_sys_openat+0x186/0x1b0
+       do_syscall_64+0x43/0x90
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(misc_mtx);
+                               lock(card_mutex#2);
+                               lock(misc_mtx);
+  lock(card_mutex#2);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.1/1374:
+ #0: ffffffff8ef78a88 (misc_mtx){+.+.}-{3:3}, at: misc_open+0x5a/0x3f0
+
+stack backtrace:
+CPU: 0 PID: 1374 Comm: syz-executor.1 Not tainted 5.18.0-rc1 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x5a/0x74
+ check_noncircular+0x223/0x2d0
+ __lock_acquire+0x3607/0x7930
+ lock_acquire+0xff/0x2d0
+ __mutex_lock_common+0x138/0x2450
+ mutex_lock_nested+0x17/0x20
+ nosy_open+0x55/0x480
+ misc_open+0x363/0x3f0
+ chrdev_open+0x407/0x490
+ do_dentry_open+0x5b4/0xc20
+ path_openat+0x1d7a/0x2300
+ do_filp_open+0x1cb/0x3e0
+ do_sys_openat2+0x96/0x350
+ __x64_sys_openat+0x186/0x1b0
+ do_syscall_64+0x43/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fbaab4abbcd
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbaaac1cbe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fbaab5c9f80 RCX: 00007fbaab4abbcd
+RDX: 0000000000062803 RSI: 0000000020003080 RDI: ffffffffffffff9c
+RBP: 00007fbaab519edb R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe62540a6f R14: 00007ffe62540c10 R15: 00007fbaaac1cd80
+ </TASK>
+======================================================
+Fixes: 424d66cedae8 ("firewire: nosy: fix device shutdown with active client")
+Cc: stable@vger.kernel.org
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+ drivers/firewire/nosy.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
+index b0d671db178a..726d5f15ff08 100644
+--- a/drivers/firewire/nosy.c
++++ b/drivers/firewire/nosy.c
+@@ -263,19 +263,13 @@ set_phy_reg(struct pcilynx *lynx, int addr, int val)
+ static int
+ nosy_open(struct inode *inode, struct file *file)
+ {
+-	int minor = iminor(inode);
++	struct miscdevice *misc = file->private_data;
+ 	struct client *client;
+-	struct pcilynx *tmp, *lynx = NULL;
++	struct pcilynx *lynx;
+ 
+-	mutex_lock(&card_mutex);
+-	list_for_each_entry(tmp, &card_list, link)
+-		if (tmp->misc.minor == minor) {
+-			lynx = lynx_get(tmp);
+-			break;
+-		}
+-	mutex_unlock(&card_mutex);
+-	if (lynx == NULL)
+-		return -ENODEV;
++	/* misc_open() set file->private_data to the miscdevice already. */
++	lynx = container_of(misc, struct pcilynx, misc);
++	lynx_get(lynx);
+ 
+ 	client = kmalloc(sizeof *client, GFP_KERNEL);
+ 	if (client == NULL)
+-- 
+2.43.0
 
 
