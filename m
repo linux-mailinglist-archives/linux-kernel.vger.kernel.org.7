@@ -1,95 +1,57 @@
-Return-Path: <linux-kernel+bounces-887155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F1BC3769B
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD75BC3769C
 	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E793BADC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:03:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 461164E6789
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85027314A82;
-	Wed,  5 Nov 2025 19:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4FD2C11CD;
+	Wed,  5 Nov 2025 19:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VA0aPRXP"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjjLFvke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC12C08DA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30B82957B6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762369419; cv=none; b=BrjzpwovzSmvUQoOUoKz3Z0rJ22tCxsRLelDEsEgyrMuVjP+wsGkxqDKA6Osj6iJmnl/QBdjIqUKtLju/+41xMpHH0RrwkT7+7DzfMmH7ZfPOXiMVm6+9n/zImpwrwMR/MoZ/syH0ewWapiH1KdnhBTEJKxii/xqICmSd3Ey1Lc=
+	t=1762369436; cv=none; b=C+O89nbKpsmsc2AQ5uKelLC7reCIiM4IZN3x7EIbm+iWofyoNVNC3MtWkEBmw/1O+2/46ofIaSUR6MPsJt98CRuS4JBPXHDa8z7GUAJgt1ZFUF2aK/EnmWwsM0mRgRm6TcVQLIxKf2N39ZuiC/VQYaTrmI07NhOJLsGysYQZ8kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762369419; c=relaxed/simple;
-	bh=PZ6fOoCOFzuuftIdxLfo9ZcdanHH16wdQ4uKtiHl2CY=;
+	s=arc-20240116; t=1762369436; c=relaxed/simple;
+	bh=niYhEoHRhZUPBk11GJXa5Sq99AdxbtJMFQAmOBGX3ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=liI4u+cHWcaHP7IWWQSM5/VWgE9OI30B6FCMsxveiIUmj9t4WXtMzN6Cviiwev3hnZtsvJmyrb9RAWu6AqTwVgtBmOczt084cgQAsCf+motVjuRKukvI3yzmaj5ZKF66082LGXyb3gAMQNx6iPX6vgsSZ9JRJrVYMQjhEliZtm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VA0aPRXP; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-88f2b29b651so17600885a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762369415; x=1762974215; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pkL4FKIhP6Ehebj2t+yWaZ1SkFSBXZJ6OHio2cMXcNM=;
-        b=VA0aPRXP3DrdGlRq1n8tiTXTu7vcPVWJQYQC272tesb6SdIYqWrVyQZS77r/EX/DXm
-         hsn8HIJOYYeiXEJ1Ah1WcPzD1ArgF3EKbTloX4dGTM0rfY61dwL/1pYd38jBI4I/JY3l
-         tAvu1XMu8cNW77qqzYHGOa/n/CrYDru1g7bA6+OecEE8QIeB7grGt6SKOC3kvEHlgpot
-         nRRK6H31ufX/W3TH5Fg+95zpI3gkfjDxM5jYoJ4vQzWLLa0BtBG7Ww2hxxwMBRGAJRJh
-         tYz4q3IyabA1/s1UdM37uNsmm0tRlfX1ULsZ4qovaXexFSPkRQcrxdPCQDLpMxj8q3im
-         /WSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762369415; x=1762974215;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pkL4FKIhP6Ehebj2t+yWaZ1SkFSBXZJ6OHio2cMXcNM=;
-        b=r8MPvDCB3+a3RMpPgBmgjj22R3farzjG7SFjlFbeVuqECY29rSezVmNNQGHhW+G7yF
-         +ouEulDK9ZVlvCHNv+eum1YYJH7UrpO6uLyTiFpemnCH2TnmohCkRAGxC6atar2HGXPg
-         mnIFEQwHP6oiMW6fPK6CFRZCPvOMd9wdpQzAwX4vPU0riuAYZdp52YnmyBYQ+Vz+Eqbl
-         51BREjTZUBQNonU1d7Zx3F1D5TQVlFbze7V5LUZKEq/M/gFu+4ks7RF04X6Eip8g+5GW
-         KzFtO4lgnDkulcpk2pOjGlmBSLALJ/sDkQeH2ooV/gM7OYzwQRKwV+JdTJilkSGh70D5
-         9kQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/68DAYuLbJ2cTBJkBkzO0TSkMIbZN4wAu2xlL+59tvLbPp6rxQP5phbTj2eMsnZG66y0vkvZ1b85TAhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOzcs2YGMqDuqRIijVTFOl0SPi742krhxiBtKkaygzCdjW5Lw+
-	Nn/itzqx67BgpVCwFS1YsHxAFyoBERY+14VIHHPUBFhKrVc0lIkJqt+CuO877thBEp8=
-X-Gm-Gg: ASbGncuPZ1TFQIf4erOCH/MBgV1l1fu3HrM1V7dpd/sta4C9c3wbbBOPw7SENWVyLhr
-	6x8LamfwRggbFlzXRRnD54P+4yxkJTgsT4IfeN292YKmCRoaQM0/EFE/eRJSSSZX9uqzo2GvhX7
-	E7IaIiA9ii5m/MSfOE1p1UhX9UV0lDsLGVe69gpumfKXDPDmJJmYCHx3pQ3TKCNZN14o8athjGt
-	GEpDvYyxoDM3I5LSnT0EeukBIQDycQm44BVCf+XGRBsoCYxyArn8goALylq83ayX/UupIDn5DwD
-	iuB5v5JsWavqn/UUs8RIHbCGvPInmaOqdtHi1C0Zj8MOnNYGpXPTXZ/HCKybBWUs3OTha7zKoBS
-	l0gy59oIAv/WwgIpQiGakn43xYLgCyoOSHJVsHeqVCu/KnN2vqa2IjrMHuIZPp0/nGom9jG3L/N
-	47inftzSC+qRFNEbTgI2gSToIrtkaipTSs9iT5SHEJ0y7RRv1xt3XAvyPGTnY=
-X-Google-Smtp-Source: AGHT+IE5V/WtcWnffysPIf/k2M0HgfBpWIauzXvLJZtWgsovo179L03Km10ymeu7JR1a7HWgRpdnqA==
-X-Received: by 2002:a05:620a:2a10:b0:89a:3233:db11 with SMTP id af79cd13be357-8b220afee3cmr496686485a.81.1762369415363;
-        Wed, 05 Nov 2025 11:03:35 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b235809f79sm20649785a.47.2025.11.05.11.03.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 11:03:34 -0800 (PST)
-Date: Wed, 5 Nov 2025 14:03:31 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
-	lukas@wunner.de, Benjamin.Cheatham@amd.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND v13 17/25] cxl: Introduce cxl_pci_drv_bound() to check
- for bound driver
-Message-ID: <aQufg2Nfq8YqkwHl@gourry-fedora-PF4VCD3F>
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-18-terry.bowman@amd.com>
- <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsnLxP0Bhg4TCHW6JeoBNM32dFjf/N4YclMnHM3JxeeXcVGBmuklaSPtyZMvXacm55rqaNqqzPR9cNhyl4Gh1Waej0u6ANnFq2oe+5yfjO3NK4sppz4L+OZB4r4oYtECVUl4DG9KJL9tDNiLWTTVYQqrC83c/3ikJ2WYB1PrWXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjjLFvke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3317EC4CEF5;
+	Wed,  5 Nov 2025 19:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762369436;
+	bh=niYhEoHRhZUPBk11GJXa5Sq99AdxbtJMFQAmOBGX3ic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MjjLFvkeXZdDGdpGDznA/H9Wyw2PfqXbMA0/iCcdQkTJBCQs6Ye8BeGGRVKzYrrH1
+	 fJFTssTBzysAGWBXnu4OVhehvsk2jCVCMllFRMzwxajbeuz0AzL7dcDpi5oySNcv4i
+	 UYgtPJiXWcj+BGnELgzJtFsxs1YevAUD/RMRWj5RSaRdBaP2/7gwJ6/rKvs9E/P191
+	 RW95B2bln02IP2v2jX1dofNnN2/beiRUA3Ue3KsQ6Ktf11TTo/GyaY4LMcAs9QrwZM
+	 fLOOTfDuH7Z1jAA2/SZejtcG+MQ/Y11w6qhXBdJbZbyrqsOKot7DxaZa2NREDHED7L
+	 Lu39pXlamXJRg==
+Date: Wed, 5 Nov 2025 09:03:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, Dan Schatzberg <dschatzberg@meta.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH cgroup/for-6.19] cgroup: Fix sleeping from invalid context
+ warning on PREEMPT_RT
+Message-ID: <aQufmyZ7X7NdfiCL@slm.duckdns.org>
+References: <20251104181114.489391-1-calvin@wbinvd.org>
+ <aQpUY7fEp6_ZqGel@slm.duckdns.org>
+ <aQtqXfMfy8SWjS67@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,71 +60,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
+In-Reply-To: <aQtqXfMfy8SWjS67@mozart.vkv.me>
 
-On Wed, Nov 05, 2025 at 12:51:04PM -0500, Gregory Price wrote:
-> On Tue, Nov 04, 2025 at 11:02:57AM -0600, Terry Bowman wrote:
-> > CXL devices handle protocol errors via driver-specific callbacks rather
-> > than the generic pci_driver::err_handlers by default. The callbacks are
-> > implemented in the cxl_pci driver and are not part of struct pci_driver, so
-> > cxl_core must verify that a device is actually bound to the cxl_pci
-> > module's driver before invoking the callbacks (the device could be bound
-> > to another driver, e.g. VFIO).
-> > 
-> > However, cxl_core can not reference symbols in the cxl_pci module because
-> > it creates a circular dependency. This prevents cxl_core from checking the
-> > EP's bound driver and calling the callbacks.
-> > 
-> > To fix this, move drivers/cxl/pci.c into drivers/cxl/core/pci_drv.c and
-> > build it as part of the cxl_core module. Compile into cxl_core using
-> > CXL_PCI and CXL_CORE Kconfig dependencies. This removes the standalone
-> > cxl_pci module, consolidates the cxl_pci driver code into cxl_core, and
-> > eliminates the circular dependency so cxl_core can safely perform
-> > bound-driver checks and invoke the CXL PCI callbacks.
-> > 
-> > Introduce cxl_pci_drv_bound() to return boolean depending on if the PCI EP
-> > parameter is bound to a CXL driver instance. This will be used in future
-> > patch when dequeuing work from the kfifo.
-> > 
-> > Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> > Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> > Reviewed-by: Ben Cheatham <benjamin.cheatham@amd.com>
-> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> > 
-> > ---
-> 
-> This commit causes my QEMU basic expander setup and a real device setup
-> to fail to probe the cxl_core driver.
-> 
-> [    2.697094] cxl_core 0000:0d:00.0: BAR 0 [mem 0xfe800000-0xfe80ffff 64bit]: not claimed; can't enable device
-> [    2.697098] cxl_core 0000:0d:00.0: probe with driver cxl_core failed with error -22
-> 
-> Probe order issue when CXL drivers are built-in maybe?
-> 
+cgroup_task_dead() is called from finish_task_switch() which runs with
+preemption disabled and doesn't allow scheduling even on PREEMPT_RT. The
+function needs to acquire css_set_lock which is a regular spinlock that can
+sleep on RT kernels, leading to "sleeping function called from invalid
+context" warnings.
 
-I've narrowed it down to:
+css_set_lock is too large in scope to convert to a raw_spinlock. However,
+the unlinking operations don't need to run synchronously - they just need
+to complete after the task is done running.
 
-Works
------
-CONFIG_CXL_BUS=m
-CONFIG_CXL_MEM=m
+On PREEMPT_RT, defer the work through irq_work.
 
-Fails
------
-CONFIG_CXL_BUS=y
-CONFIG_CXL_MEM=y
-or BUS ^ MEM
+Fixes: d245698d727a ("cgroup: Defer task cgroup unlink until after the task is done switching out")
+Reported-by: Calvin Owens <calvin@wbinvd.org>
+Link: https://lore.kernel.org/r/20251104181114.489391-1-calvin@wbinvd.org
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Hello,
 
-this commit moves pci -> pci_drv.o and moves it ahead of cxl_mem into
-cxl_core into core, but note the comment in the Makefile:
+Calvin, this seems to work fine here but can you please try it out?
+Sebastian, Peter, does this look okay to you guys?
 
-# Order is important here for the built-in case:
-# - 'core' first for fundamental init
-# - 'port' before platform root drivers like 'acpi' so that CXL-root ports
-#   are immediately enabled
-# - 'mem' and 'pmem' before endpoint drivers so that memdevs are
-#   immediately enabled
-# - 'pci' last, also mirrors the hardware enumeration hierarchy
+Thanks.
 
-~Gregory
+ include/linux/sched.h  |    5 +++-
+ kernel/cgroup/cgroup.c |   53 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 56 insertions(+), 2 deletions(-)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1324,7 +1324,10 @@ struct task_struct {
+ 	struct css_set __rcu		*cgroups;
+ 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
+ 	struct list_head		cg_list;
+-#endif
++#ifdef CONFIG_PREEMPT_RT
++	struct llist_node		cg_dead_lnode;
++#endif	/* CONFIG_PREEMPT_RT */
++#endif	/* CONFIG_CGROUPS */
+ #ifdef CONFIG_X86_CPU_RESCTRL
+ 	u32				closid;
+ 	u32				rmid;
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -290,6 +290,7 @@ static void kill_css(struct cgroup_subsy
+ static int cgroup_addrm_files(struct cgroup_subsys_state *css,
+ 			      struct cgroup *cgrp, struct cftype cfts[],
+ 			      bool is_add);
++static void cgroup_rt_init(void);
+ 
+ #ifdef CONFIG_DEBUG_CGROUP_REF
+ #define CGROUP_REF_FN_ATTRS	noinline
+@@ -6360,6 +6361,7 @@ int __init cgroup_init(void)
+ 	BUG_ON(ss_rstat_init(NULL));
+ 
+ 	get_user_ns(init_cgroup_ns.user_ns);
++	cgroup_rt_init();
+ 
+ 	cgroup_lock();
+ 
+@@ -6990,7 +6992,7 @@ void cgroup_task_exit(struct task_struct
+ 	} while_each_subsys_mask();
+ }
+ 
+-void cgroup_task_dead(struct task_struct *tsk)
++static void do_cgroup_task_dead(struct task_struct *tsk)
+ {
+ 	struct css_set *cset;
+ 	unsigned long flags;
+@@ -7016,6 +7018,55 @@ void cgroup_task_dead(struct task_struct
+ 	spin_unlock_irqrestore(&css_set_lock, flags);
+ }
+ 
++#ifdef CONFIG_PREEMPT_RT
++/*
++ * cgroup_task_dead() is called from finish_task_switch() which doesn't allow
++ * scheduling even in RT. As the task_dead path requires grabbing css_set_lock,
++ * this lead to sleeping in the invalid context warning bug. css_set_lock is too
++ * big to become a raw_spinlock. The task_dead path doesn't need to run
++ * synchronously. Bounce through irq_work instead.
++ */
++static DEFINE_PER_CPU(struct llist_head, cgrp_dead_tasks);
++static DEFINE_PER_CPU(struct irq_work, cgrp_dead_tasks_iwork);
++
++static void cgrp_dead_tasks_iwork_fn(struct irq_work *iwork)
++{
++	struct llist_node *lnode;
++	struct task_struct *task, *next;
++
++	lnode = llist_del_all(this_cpu_ptr(&cgrp_dead_tasks));
++	llist_for_each_entry_safe(task, next, lnode, cg_dead_lnode) {
++		do_cgroup_task_dead(task);
++		put_task_struct(task);
++	}
++}
++
++static void __init cgroup_rt_init(void)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		init_llist_head(per_cpu_ptr(&cgrp_dead_tasks, cpu));
++		init_irq_work(per_cpu_ptr(&cgrp_dead_tasks_iwork, cpu),
++			      cgrp_dead_tasks_iwork_fn);
++	}
++}
++
++void cgroup_task_dead(struct task_struct *task)
++{
++	get_task_struct(task);
++	llist_add(&task->cg_dead_lnode, this_cpu_ptr(&cgrp_dead_tasks));
++	irq_work_queue(this_cpu_ptr(&cgrp_dead_tasks_iwork));
++}
++#else	/* CONFIG_PREEMPT_RT */
++static void __init cgroup_rt_init(void) {}
++
++void cgroup_task_dead(struct task_struct *task)
++{
++	do_cgroup_task_dead(task);
++}
++#endif	/* CONFIG_PREEMPT_RT */
++
+ void cgroup_task_release(struct task_struct *task)
+ {
+ 	struct cgroup_subsys *ss;
 
