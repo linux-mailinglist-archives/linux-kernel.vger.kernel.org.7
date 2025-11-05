@@ -1,146 +1,213 @@
-Return-Path: <linux-kernel+bounces-886258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC2FC351A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04078C351B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375874622C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEC23A4378
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26D7302CC9;
-	Wed,  5 Nov 2025 10:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1E3303A1C;
+	Wed,  5 Nov 2025 10:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ds6kPG7i";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ib856Rdn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O/e/sh//"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0B0303A02
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7F7301007;
+	Wed,  5 Nov 2025 10:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762338523; cv=none; b=LYciRtm79U+UJ5Q/KpvLLveJnrOuhmT8wipVaCuzlnJQ+rVJRyAWi1oQyQoNzKyfYiAxnIqmPD5aqyqBv7RgQUQMVVBltKGEKt7CTDdYVNTtOTSEODRfsXw7beHpDWuDXT0vrWIQF5t1IRK2/ynlgyEoFklghI5S68OZ2sVmMms=
+	t=1762338687; cv=none; b=AuTUJziKZxYTLmYTN/thiYKj+0cW+ddvM+tW5Kwza5R67yYncde2PhcCeTQCvofx0RzyqVRt0kLCgnwmByoc++YN6dIDQz2MfqQDpUGCivXQ+yTRAEy9FmME26iFJ6Y+9kLax+TbgrKRFFGnXM1xWS0abNNq+0+FFc+QjDYWoTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762338523; c=relaxed/simple;
-	bh=2g3Wq4c97gj933lxG9X1AENf5UzQvkiM4ATmI5KeWkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxgGftdCvQL3LhoSFbRSGoIhe+ZQy/nUtvzC76UiwhhPU4u8StyA4QwHXCHd346JnizpZtLMAwe9dHVLLCgDQkhM/74NIHlX+KRJa1KLaDV9KhCljF6h24lCdvfrUyPeDOkwkxSl/el9xCh/hTMxHaSuzs2rF+9rKdfEK6vnAEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ds6kPG7i; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ib856Rdn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762338520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/VUtH1lMTAvDzvRlcMfC41+492vEghGBhl70lNg8bcE=;
-	b=Ds6kPG7iTR4J+56Xc+3YfLaJB5n9KyEqjSLAifH9W7ecN1Yvw5ZX2K7ByNJvrkzlt3Vhex
-	hv/Hes2WJM06rLCCpQWJVSyrpH0Qxew0qoj4BtXArxF7fs4zhnjC9CrVOBPyKFUsATaRbl
-	wwszZHnAv9VTGsdH52HyvqVYYbe1g5g=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-SVF3HCAjPFiQq7FLjpeCXw-1; Wed, 05 Nov 2025 05:28:39 -0500
-X-MC-Unique: SVF3HCAjPFiQq7FLjpeCXw-1
-X-Mimecast-MFC-AGG-ID: SVF3HCAjPFiQq7FLjpeCXw_1762338518
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471168953bdso6046815e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 02:28:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762338518; x=1762943318; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VUtH1lMTAvDzvRlcMfC41+492vEghGBhl70lNg8bcE=;
-        b=Ib856Rdn+mHKalC27oXtAHEgjdSjrTwV3KziHRXmq7BCIySIM57MWEvmyIN71TbZVP
-         Xj54jR2v42yW+jJTVARMh6DCPf+kye9bJ7KQ5hb1jz9Ct4+T/d6hKys19h0XfCI5vdkv
-         HuMVQKNw70F8e2cEA4NBFam6xIYha2fAhru4MfZ6JCpwbxxybG0jFb7SwYy5fS60g4cP
-         f8NM7sMq5K6WkHjXQzR+USlqSXxjKbVIAdRwiYw41lNZ/xhrV+YxqewOcjAcAe2rRb+x
-         wRLY9a+V6MuAMDQ4xZIbwGWtcMF+R1Be9D8rgg1A5I6GP8jA2wSLEoaIHUHf4Cq6jdyR
-         dAbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762338518; x=1762943318;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/VUtH1lMTAvDzvRlcMfC41+492vEghGBhl70lNg8bcE=;
-        b=tiQ+3SNoIKKV+MEsFf5U7+FPFagA0cl+QZdfevVozw85fBHh7E7Zs3vzr2kuNEaJgo
-         O9Ptm41DvPakc06ovalewtTMJMOykG8W+/59N5q0J+eeK1HR/g2tVw2LG0nLHAvHsC7V
-         Qg4bzZAgHqsEuygySuVcWR6Nv9/SYisutNoUwWJD/4JJfZNJqpfhprAEXpOikc4fdxIZ
-         pr9zzBaHumraxGDEeP/KWco/K+2g3x31baTdD0mZ1PFE9x7v0zO7J27tlb8baCG5vZTR
-         19bUEwr2R1xOXo7ZKWKgX9PCaRTsbWC+CJBUbYHy3ucctzKyQmzsc6sGDKSr1JHdDxyg
-         yXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQzgJnI88yuAngSAVMX11LE+Jy+mRkI9xzAN0yjxbbRxV6gv9H3j9KkgqRATlksypBd29uhAjlQery+W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0/9+n+SOps7+F2Ct31f5qDln0imuipIaKWgqSB3PxYGp3cwHn
-	2OqAVmGkzoJaWlmJrzqgX5UfQP9x6XY++Co996tKlfEQMJfyDpVXjVJ2khNEbAe96OVhJTkjHMK
-	iPu+4lJqVMcL+pqxZ5nffzOVNc3OsaZpIPhLa9DWJ3bX+RAHO5RfTLdgvGicznV1GFA==
-X-Gm-Gg: ASbGncuN2sy8+/vOULfO2bZAA8dqUlwXD8dNIU56gnmf/qi7VT5QPowJLzX7omxm85R
-	UbzESBeZWaqMwq7H/qqedtF270PHKwPB61/HnauAzooxoYTEMIh5MAHAV5SlkZrz+FR9N8OeuAe
-	qQPUYGO2vEpacSCX5YE2C+EbxY4ECEdrccPV5J3N6vE13SnCBeM4n4NkzrHLQCi3SQi4iNZL7KS
-	ixBGf3nRL24A2YtWyzm4hyDSeDYhGQNkvrHt/9k9RanbplaDHJhsMSJRg74SFPxbyhdXljDv5LC
-	6VQLirN45rCyAeDnSgaU4KKcQpZAx7Dl5M4zzSn6fly45LQ+jGRb9Dz705r0ZIBXDYdkWlXOZIw
-	fDCvULinGHEkY+kTtNHXn9M4dl2PQbOaQoMOZTRptwYsPHtqv
-X-Received: by 2002:a05:600c:468f:b0:476:8ce0:a737 with SMTP id 5b1f17b1804b1-4775c8a174amr22510545e9.14.1762338518095;
-        Wed, 05 Nov 2025 02:28:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxircFOf0rNRre+DrFhO4ILR1mp/CcibmKKLMg9H2yNUp6Yh1vehKqZ63e3ywj4w2w9Bp4jA==
-X-Received: by 2002:a05:600c:468f:b0:476:8ce0:a737 with SMTP id 5b1f17b1804b1-4775c8a174amr22510345e9.14.1762338517729;
-        Wed, 05 Nov 2025 02:28:37 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47755922591sm38354495e9.10.2025.11.05.02.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 02:28:36 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: add printk core-api doc file to PRINTK
-Date: Wed,  5 Nov 2025 11:28:32 +0100
-Message-ID: <20251105102832.155823-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762338687; c=relaxed/simple;
+	bh=Vn35hLkwmnD21sGOZtp7Ty/VQ60HoGsF3YK6VqmliLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkVUi4W6gbbcPg7a1p8erdWSgdRLF56/KJ+WhsEkSP0IAomnCW1OUYw+/gIwJq0AJo0dhOXcsv/hXkwOvPHqtCMslIQUBeYMrsDrkM/+aEaQgQTbwqMPRtJHWJcD6+TkwOmJlyA0ojPrL3fnEZR9Sco713kaXPQ41Q2tz0gtdFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O/e/sh//; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762338685; x=1793874685;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Vn35hLkwmnD21sGOZtp7Ty/VQ60HoGsF3YK6VqmliLI=;
+  b=O/e/sh//hulmEOst5GzSLh1rfEsAYI6jjmYKyfIeLNaVr+6hxR4l0kaU
+   H7v2ShaqODVtN6BJWmBN6EQDi6lsLm5PdMKM8/sQm04qX/RH+90XvLv5F
+   9S4Ssi9C4dRxll1ibfjaJYJQcV0MAkvYTzFY8uYGSQVC7VSCUQd0AYmc4
+   VN52PGb4tdfFea4b1/vuuAcS7r/XJhEcVK6vfZ+CqeYOk7UTX5JaqPJ8s
+   0IwZYlUgbcCQSxxxpwAkUK2DMGZv+dVSI2B4jqu+O6XgthOa50DS/Gtd9
+   NZMxuGSvG2GY0VNc97TZYPR1c2lJu5t2VVfRpKIRezyd/BJk+5IMTLjfm
+   A==;
+X-CSE-ConnectionGUID: AzBDp94RTkWt4IFHjt1VUg==
+X-CSE-MsgGUID: +B7SDcNnTTeQJadAoh3DFw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="64486010"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="64486010"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 02:31:25 -0800
+X-CSE-ConnectionGUID: zsw8o8U1Qn2QkxfWw4NeNA==
+X-CSE-MsgGUID: zGieOCinSo2ALkqP8TNdIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187089686"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Nov 2025 02:31:23 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 569FE95; Wed, 05 Nov 2025 11:31:22 +0100 (CET)
+Date: Wed, 5 Nov 2025 11:31:22 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
+Message-ID: <20251105103122.GL2912318@black.igk.intel.com>
+References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
+ <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+> Replace custom macro with the recently defined INTEL_GPP().
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-alderlake.c | 68 ++++++++++-------------
+>  1 file changed, 30 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-alderlake.c b/drivers/pinctrl/intel/pinctrl-alderlake.c
+> index 108eac205aa9..7bf1d5c285a0 100644
+> --- a/drivers/pinctrl/intel/pinctrl-alderlake.c
+> +++ b/drivers/pinctrl/intel/pinctrl-alderlake.c
+> @@ -27,14 +27,6 @@
+>  #define ADL_S_GPI_IS		0x200
+>  #define ADL_S_GPI_IE		0x220
+>  
+> -#define ADL_GPP(r, s, e, g)				\
+> -	{						\
+> -		.reg_num = (r),				\
+> -		.base = (s),				\
+> -		.size = ((e) - (s) + 1),		\
+> -		.gpio_base = (g),			\
+> -	}
+> -
 
-The files in Documentation/core-api/ are by virtue of their top-level
-directory part of the Documentation section in MAINTAINERS. Each file in
-Documentation/core-api/ should however also have a further section in
-MAINTAINERS it belongs to, which fits to the technical area of the
-documented API in that file.
+I wonder if simply doing this:
 
-The printk.rst provides some explanation to the printk API defined in
-include/linux/printk.h, which itself is part of the PRINTK section.
+#define ADL_GPP(r, s, e, g)	INTEL_GPP(r, s, e, g)
 
-Add this core-api document to PRINTK.
+is better? Then the amount of changes are smaller.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 297358d26bbb..2b5f86dcf898 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20689,6 +20689,7 @@ R:	John Ogness <john.ogness@linutronix.de>
- R:	Sergey Senozhatsky <senozhatsky@chromium.org>
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
-+F:	Documentation/core-api/printk-basics.rst
- F:	include/linux/printk.h
- F:	kernel/printk/
- 
--- 
-2.51.1
-
+>  #define ADL_N_COMMUNITY(b, s, e, g)			\
+>  	INTEL_COMMUNITY_GPPS(b, s, e, g, ADL_N)
+>  
+> @@ -316,28 +308,28 @@ static const struct pinctrl_pin_desc adln_pins[] = {
+>  };
+>  
+>  static const struct intel_padgroup adln_community0_gpps[] = {
+> -	ADL_GPP(0, 0, 25, 0),				/* GPP_B */
+> -	ADL_GPP(1, 26, 41, 32),				/* GPP_T */
+> -	ADL_GPP(2, 42, 66, 64),				/* GPP_A */
+> +	INTEL_GPP(0, 0, 25, 0),				/* GPP_B */
+> +	INTEL_GPP(1, 26, 41, 32),			/* GPP_T */
+> +	INTEL_GPP(2, 42, 66, 64),			/* GPP_A */
+>  };
+>  
+>  static const struct intel_padgroup adln_community1_gpps[] = {
+> -	ADL_GPP(0, 67, 74, 96),				/* GPP_S */
+> -	ADL_GPP(1, 75, 94, 128),			/* GPP_I */
+> -	ADL_GPP(2, 95, 118, 160),			/* GPP_H */
+> -	ADL_GPP(3, 119, 139, 192),			/* GPP_D */
+> -	ADL_GPP(4, 140, 168, 224),			/* vGPIO */
+> +	INTEL_GPP(0, 67, 74, 96),			/* GPP_S */
+> +	INTEL_GPP(1, 75, 94, 128),			/* GPP_I */
+> +	INTEL_GPP(2, 95, 118, 160),			/* GPP_H */
+> +	INTEL_GPP(3, 119, 139, 192),			/* GPP_D */
+> +	INTEL_GPP(4, 140, 168, 224),			/* vGPIO */
+>  };
+>  
+>  static const struct intel_padgroup adln_community4_gpps[] = {
+> -	ADL_GPP(0, 169, 192, 256),			/* GPP_C */
+> -	ADL_GPP(1, 193, 217, 288),			/* GPP_F */
+> -	ADL_GPP(2, 218, 223, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
+> -	ADL_GPP(3, 224, 248, 320),			/* GPP_E */
+> +	INTEL_GPP(0, 169, 192, 256),			/* GPP_C */
+> +	INTEL_GPP(1, 193, 217, 288),			/* GPP_F */
+> +	INTEL_GPP(2, 218, 223, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
+> +	INTEL_GPP(3, 224, 248, 320),			/* GPP_E */
+>  };
+>  
+>  static const struct intel_padgroup adln_community5_gpps[] = {
+> -	ADL_GPP(0, 249, 256, 352),			/* GPP_R */
+> +	INTEL_GPP(0, 249, 256, 352),			/* GPP_R */
+>  };
+>  
+>  static const struct intel_community adln_communities[] = {
+> @@ -680,35 +672,35 @@ static const struct pinctrl_pin_desc adls_pins[] = {
+>  };
+>  
+>  static const struct intel_padgroup adls_community0_gpps[] = {
+> -	ADL_GPP(0, 0, 24, 0),				/* GPP_I */
+> -	ADL_GPP(1, 25, 47, 32),				/* GPP_R */
+> -	ADL_GPP(2, 48, 59, 64),				/* GPP_J */
+> -	ADL_GPP(3, 60, 86, 96),				/* vGPIO */
+> -	ADL_GPP(4, 87, 94, 128),			/* vGPIO_0 */
+> +	INTEL_GPP(0, 0, 24, 0),				/* GPP_I */
+> +	INTEL_GPP(1, 25, 47, 32),			/* GPP_R */
+> +	INTEL_GPP(2, 48, 59, 64),			/* GPP_J */
+> +	INTEL_GPP(3, 60, 86, 96),			/* vGPIO */
+> +	INTEL_GPP(4, 87, 94, 128),			/* vGPIO_0 */
+>  };
+>  
+>  static const struct intel_padgroup adls_community1_gpps[] = {
+> -	ADL_GPP(0, 95, 118, 160),			/* GPP_B */
+> -	ADL_GPP(1, 119, 126, 192),			/* GPP_G */
+> -	ADL_GPP(2, 127, 150, 224),			/* GPP_H */
+> +	INTEL_GPP(0, 95, 118, 160),			/* GPP_B */
+> +	INTEL_GPP(1, 119, 126, 192),			/* GPP_G */
+> +	INTEL_GPP(2, 127, 150, 224),			/* GPP_H */
+>  };
+>  
+>  static const struct intel_padgroup adls_community3_gpps[] = {
+> -	ADL_GPP(0, 151, 159, INTEL_GPIO_BASE_NOMAP),	/* SPI0 */
+> -	ADL_GPP(1, 160, 175, 256),			/* GPP_A */
+> -	ADL_GPP(2, 176, 199, 288),			/* GPP_C */
+> +	INTEL_GPP(0, 151, 159, INTEL_GPIO_BASE_NOMAP),	/* SPI0 */
+> +	INTEL_GPP(1, 160, 175, 256),			/* GPP_A */
+> +	INTEL_GPP(2, 176, 199, 288),			/* GPP_C */
+>  };
+>  
+>  static const struct intel_padgroup adls_community4_gpps[] = {
+> -	ADL_GPP(0, 200, 207, 320),			/* GPP_S */
+> -	ADL_GPP(1, 208, 230, 352),			/* GPP_E */
+> -	ADL_GPP(2, 231, 245, 384),			/* GPP_K */
+> -	ADL_GPP(3, 246, 269, 416),			/* GPP_F */
+> +	INTEL_GPP(0, 200, 207, 320),			/* GPP_S */
+> +	INTEL_GPP(1, 208, 230, 352),			/* GPP_E */
+> +	INTEL_GPP(2, 231, 245, 384),			/* GPP_K */
+> +	INTEL_GPP(3, 246, 269, 416),			/* GPP_F */
+>  };
+>  
+>  static const struct intel_padgroup adls_community5_gpps[] = {
+> -	ADL_GPP(0, 270, 294, 448),			/* GPP_D */
+> -	ADL_GPP(1, 295, 303, INTEL_GPIO_BASE_NOMAP),	/* JTAG */
+> +	INTEL_GPP(0, 270, 294, 448),			/* GPP_D */
+> +	INTEL_GPP(1, 295, 303, INTEL_GPIO_BASE_NOMAP),	/* JTAG */
+>  };
+>  
+>  static const struct intel_community adls_communities[] = {
+> -- 
+> 2.50.1
 
