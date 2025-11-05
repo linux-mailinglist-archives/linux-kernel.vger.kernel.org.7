@@ -1,222 +1,192 @@
-Return-Path: <linux-kernel+bounces-886426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF1DC358E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:04:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CEEC358F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC56F1A23AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:04:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22F884E40E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629B631329B;
-	Wed,  5 Nov 2025 12:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BCB30DEB1;
+	Wed,  5 Nov 2025 12:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC++mp3V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VeZNMbj7";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Tep2Ahbx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3987191493;
-	Wed,  5 Nov 2025 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399C98BEC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762344240; cv=none; b=G3h5hrfBs/Ea59b8C8On81PR/jy9MKkcngIQXcw8asJjzuGnRdMC3Ufurkt3YMoo/jnRkOfl0rF1SDELR1CNwFGoN+xWXwIUKJKowpHxG8icGvC6RGOeWJ6dXov3zM6U2mR71G124U+M+pH1kHFHGggPXAP5X0GHGnCQNNZ0IGw=
+	t=1762344453; cv=none; b=f91NDAXLrl59qEg351eCQB30VcANzzaxhSFGgFIqq/TcwTc19zgnCnA9UFf7/m6vJL1YBwyEj2tuaVzcZ0qynM4LtTXA7hHJzMqkqtdWkO1hZMcivDHiEATjgKWJbUQex8BdTQ9iYJp05Ja7RiFnpOq4UFJjCNJp4brkV3vnFAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762344240; c=relaxed/simple;
-	bh=vVjkFqMn+W5n5cpfuAnp/22J3xKdZiS5J37+DLKCOJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sb8S+u28yD3pR3N/b89akfvpse3jFC1K5QMvZMMBxGWSzwmEOohNce1Lp9Jdn20ow3lpSI7gkYKObN+Xp2EgNWWKM7W2mdx5eOwTixMf2SORY5hNd5qepGF4m5pLEhC8Qj4sqTAYp/kqchAXQmWNQPD3MoLlBwDazbuCLAqp7uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC++mp3V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D42C4CEFB;
-	Wed,  5 Nov 2025 12:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762344239;
-	bh=vVjkFqMn+W5n5cpfuAnp/22J3xKdZiS5J37+DLKCOJI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pC++mp3VmLTRf9EkgkAJ40QiGemTjOoC34TIzbWpKep0r2siBsUpg9r7BIpEl0jrf
-	 vgJKTqb0RGazjpdvqW4XEpn/lcoxvmmNNbiJTo9FQEveOP67jdKHqXRiCYq8/ISqeE
-	 g0Gz72aPuC4ctZg3Dghznwap00dtAXOEIiUoBK12T7apKfvUfA0M9xntovLeA4B/BQ
-	 wyL87TW7iRlFIctklU5zofj1I8y9KCA359HyUcP/8w1c6C8ZifJnicL5Ua4vdyDOta
-	 6zy/ZeheHv94CBZz7+lk3F/gPLImyQZ5RPZPIhMymvrUmF2IefkGQuJnuslGh3/YJC
-	 WiEuNoI1bOrEA==
-From: Danilo Krummrich <dakr@kernel.org>
-To: bhelgaas@google.com,
-	kwilczynski@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu
-Cc: linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH] rust: pci: use "kernel vertical" style for imports
-Date: Wed,  5 Nov 2025 13:03:28 +0100
-Message-ID: <20251105120352.77603-1-dakr@kernel.org>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762344453; c=relaxed/simple;
+	bh=RTxAiWbCYnmuSlubEQApk4uXdRkkwOzQvA4tE1Dn98c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UeEAfbQnRZI74v0x6cfHo89XZruuEzhT5hSTFL2P+iH1oI9H2vSHsEjnVVZNvD/DcRBWyoY2+9LBl9mVLjPbQW75CGsKCIfPpbxCeoiaUc+ahhGGdU9wjowSSZb9zh2cI6sgnUfps4vil0T58lSxFCimhila10YwQl+99S53jto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VeZNMbj7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Tep2Ahbx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A57uPAs159399
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 12:07:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HbPQWgEoA7Jyobb97U2v8f
+	8cNOeEfglRmJGY4yPlDt8=; b=VeZNMbj7TisLPxa4EZ8ZCtT0mT0az1bTwn5YkQ
+	92u75t2N+M/3yZPN+2iAZnR6eusD3KTU7TuS4v3PyRQ9EXG7ZPLNAAYoBYKcbx/f
+	/GbL7E2za+XbaTtYzMh97uTTdbji/jYyytikSOAvAHH7sakrO+nZ/6tpWOqOVYtR
+	Wraqd7TiOFnx496rso5ZPmDr6eHxhBZueQ+13nI6TJt3G5mJkn7RWb8yYh6j7L3v
+	ozZwWdeY10eJOcJ3ky42PZG3GPQc/+JHHcYWe/A03HJJufPrNim+sW5UgVheFikO
+	QwLTdJIWTcneLIYitYJwaf5I+ZLIzNPw0721X8eqVG54bhAQ==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a82mt0pbc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:07:31 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7aa148105a2so3238360b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 04:07:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762344451; x=1762949251; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbPQWgEoA7Jyobb97U2v8f8cNOeEfglRmJGY4yPlDt8=;
+        b=Tep2Ahbx4sFxDoVNmFSYdgm6T6R401Vf7DDel64YL74s4d4jI69GjuMaIHOydbr5MV
+         ++OyLrHAxuB2kn3dlcUxwzu1KmTrts1kl1y8rL0/+p4eY+yu4Tp7c9YQZMPqGWLtfr7S
+         La/bWp44EluY/mJZD/eHR7hpfJmBegwI+HQunbyVqhBvHz6NA2vDvJb8ZW7REMXnrweZ
+         e2tjNYxrQHpO+QcUxtUO43gLj8W+sBJbRa2gRf59TmjPTDPtDfkRJ/Xb56JN9KwSnj1w
+         tL1AQFs7AL7NGKF4W38qXNNTGuVuG2T8v0Q9+N3USbgoTbuGrE+r9l/AflfP2tKIXMlj
+         OVFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762344451; x=1762949251;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HbPQWgEoA7Jyobb97U2v8f8cNOeEfglRmJGY4yPlDt8=;
+        b=nDb1WQvBDLT7VImvBCxcC+CWfIcsS8ej6pZKWdJFCBoDvowoJRCGJxHil4npNLYEM2
+         63gICFv9xIZyVOhIkKaCn/KV1LWCd6BIyU6s4a6uGPz1qzv98q5tK0fjCytDnbSHgXUb
+         7wl1oAXSGHUpOnTzw55/y0apC5sd2EClkIsXEcgV/IMBxi779KDSZzk3cgL0NilEvZFY
+         Z+zNKwooII8nAgc9SbBIF+frtRliDQnkDFqBnirTPDgYqO+wDCpLM4RvCUHadrX7Z4K5
+         y1eXpijZNn+yGlBX8Z8Xum8qr87LIWJebg7v3U6wTVnafTtnYvokraH5g6aUMjWPBovl
+         Gbag==
+X-Gm-Message-State: AOJu0YyovWVfYNbl8h3r+Ek63sBQ/33H9wzLXz/oAJJjhsHJBJVNHuRs
+	22zIF0tlUhh0He+8jTpz9bM5i+w3Zjx0qw2jLSSuRipF6bx97V3KhjGnARkSsbIqg0LoCOOACg2
+	X6VDn2CQ/4uQz8rkeR4Ahz3x7b0Y/EPdywCE8DQRGuEDJn9cXoGRrENrgZfr8P3YoPlI=
+X-Gm-Gg: ASbGnctya11pxUHsWBfORPfybvncKUgKivmOXjKSNGuvbh6+n55EEtqu+iRDNsM0OvS
+	Rw39Z2jr4soknl6S9N9RbFo4/vkn0Y0odpdnRd9GM1r2bJcIMueRHaffQv1XwrEZ4Ecju39eZbF
+	czNEWZMcURecndB/lZdTQ7TQXDdLuSuBp2PgME4BtU8TFdrHStjS9elHEzzNhjZOdxBhAu4vmZf
+	A1Z4XQq8fY3zogVAK6tRtVBXyJFYzlpJ9nfv9qYLSlrpf5XFgFUwI73ZZvK5avhuutygDZ+6Os7
+	aWqTtyOSzErneJClTNOD2Q1pwwBIzPEP1F3jKO8Do3LEGEgTrAnWXshKyUnRoevMsGEygLCn7pl
+	3fSEWJlI0YrZE7Xah8vrQY7nk00pZ0zBIhR51V09O2ud5GR+RXCnvwI+PPgfxLrNGuYxw4+5ig9
+	E2GBE3th5NtQDu+WM=
+X-Received: by 2002:a05:6a00:94d3:b0:7a3:455e:3fa5 with SMTP id d2e1a72fcca58-7ae1a1c9b6emr3985983b3a.0.1762344450776;
+        Wed, 05 Nov 2025 04:07:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGMQdr5x/9iI3vYuG4ZuMO+2YZfH0pT2forauVm0krErs9MLeNMB2uTuaN9s9CvxLIbWw5OtQ==
+X-Received: by 2002:a05:6a00:94d3:b0:7a3:455e:3fa5 with SMTP id d2e1a72fcca58-7ae1a1c9b6emr3985946b3a.0.1762344450231;
+        Wed, 05 Nov 2025 04:07:30 -0800 (PST)
+Received: from sziotdisp01-gv.qualcomm.com.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd623c55csm6004624b3a.52.2025.11.05.04.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 04:07:29 -0800 (PST)
+From: Fange Zhang <fange.zhang@oss.qualcomm.com>
+Date: Wed, 05 Nov 2025 20:06:14 +0800
+Subject: [PATCH v3] arm64: defconfig: Enable SX150x GPIO expander driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-enable-sx150x-gpio-expander-v3-1-2ec8dfde2c9e@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIALY9C2kC/4XNsQ6CMBDG8VcxnT1zPYKAk+9hHEq5ShOg2AqpG
+ t7dyuSgcbnkf8Pve4rA3nIQh81TeJ5tsG5IkW03QrdquDDYJrUgpFxKzIEHVXcMIcocI1xG64D
+ jqIaGPRhd1ZXOpSkoE0kYPRsbV/10Tt3acHP+vo7N8v1dXSxlCb1rpk55+/hhzxIQNCmkghANN
+ 0cXwu46qU67vt+lI94TM32whP9ZAgm851oRGVRovrDLsrwAeIL61CgBAAA=
+X-Change-ID: 20251105-enable-sx150x-gpio-expander-fc9b9c51f723
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
+        dmitry.baryshkov@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        xiangxu.yin@oss.qualcomm.com,
+        Fange Zhang <fange.zhang@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762344447; l=1680;
+ i=fange.zhang@oss.qualcomm.com; s=20250714; h=from:subject:message-id;
+ bh=RTxAiWbCYnmuSlubEQApk4uXdRkkwOzQvA4tE1Dn98c=;
+ b=cxiXE6aeYEExQLJRyDIIjw0EEeCcBklbcR47OxJoF5oNhq+h8wmgZTYDSpmSjTFI+9T4QMQxU
+ VeTdvXs0ZLfDu0Ehqr9CRX/IxWDyLSQ3fLdP85aYhSqYvMb/BOCe0R9
+X-Developer-Key: i=fange.zhang@oss.qualcomm.com; a=ed25519;
+ pk=tn190A7bjF3/EyH7AYy/eNzPoS9lwXGznYamlMv6TE0=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA5MSBTYWx0ZWRfX8mNRmjcWwKhJ
+ xZ5ruoBKOmUOn5uFrRaVH452VEdnnNblGQRbH1aW/exHAastNhzoOFWmTMaDWna0RzUcYBU9hJb
+ eDsRrHtxhM71KQebSCUHrQqdHDyMBgx6MgelUtcfTN8RfmfPeaXuRkBw+pJgl7yFxwP1/LUPfjE
+ /bHJziYz3dK6WdhfD9/WJL0OnBCSMFJG+ESRUUfsRTgHsTZeoXZ8nY74dnp91p3bN6v7QnrR9u8
+ 9MuZ2/kU35Cj08x4cbUGs6PYL9kak+5jciwXl8jy99AZEJ2rSJC4qUJmlXPtTFd/7ZYpUBOrAWd
+ OTdxnxPDu0Wk2lANv6VjxvPEUmJafDhj3G2K03te7/XCN80GVq2usU0e+lpSLNAiBemhMLzdeu/
+ FtEdjODecsD7TCNwvSqXJxx31we3vQ==
+X-Proofpoint-GUID: _5U3akLaggE65Myoc7qk2-0phfc-FMI6
+X-Authority-Analysis: v=2.4 cv=LLtrgZW9 c=1 sm=1 tr=0 ts=690b3e03 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=i1AFPchbKC_G9XLO_8YA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-ORIG-GUID: _5U3akLaggE65Myoc7qk2-0phfc-FMI6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_04,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511050091
 
-Convert all imports in the PCI Rust module to use "kernel vertical"
-style.
+The ANX7625 bridge on the Qualcomm QCS615 Ride reference board is connected
+to a Semtech SX150x GPIO expander. Enable the SX150x driver to make the
+display on boards built following this design functional.
 
-With this subsequent patches neither introduce unrelated changes nor
-leave an inconsistent import pattern.
-
-While at it, drop unnecessary imports covered by prelude::*.
-
-Link: https://docs.kernel.org/rust/coding-guidelines.html#imports
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
 ---
- rust/kernel/pci.rs     | 35 +++++++++++++++++++++++++++--------
- rust/kernel/pci/id.rs  |  5 ++++-
- rust/kernel/pci/io.rs  | 13 ++++++++-----
- rust/kernel/pci/irq.rs | 14 +++++++++-----
- 4 files changed, 48 insertions(+), 19 deletions(-)
+The SX150X GPIO expander is used on the Qualcomm QCS615 Ride to support the ANX7625 bridge.
+Enable the driver as a kernel module
 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index b68ef4e575fc..410b79d46632 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -5,27 +5,46 @@
- //! C header: [`include/linux/pci.h`](srctree/include/linux/pci.h)
- 
- use crate::{
--    bindings, container_of, device,
--    device_id::{RawDeviceId, RawDeviceIdIndex},
-+    bindings,
-+    container_of,
-+    device,
-+    device_id::{
-+        RawDeviceId,
-+        RawDeviceIdIndex, //
-+    },
-     driver,
--    error::{from_result, to_result, Result},
-+    error::{
-+        from_result,
-+        to_result, //
-+    },
-+    prelude::*,
-     str::CStr,
-     types::Opaque,
--    ThisModule,
-+    ThisModule, //
- };
- use core::{
-     marker::PhantomData,
--    ptr::{addr_of_mut, NonNull},
-+    ptr::{
-+        addr_of_mut,
-+        NonNull, //
-+    },
- };
--use kernel::prelude::*;
- 
- mod id;
- mod io;
- mod irq;
- 
--pub use self::id::{Class, ClassMask, Vendor};
-+pub use self::id::{
-+    Class,
-+    ClassMask,
-+    Vendor, //
-+};
- pub use self::io::Bar;
--pub use self::irq::{IrqType, IrqTypes, IrqVector};
-+pub use self::irq::{
-+    IrqType,
-+    IrqTypes,
-+    IrqVector, //
-+};
- 
- /// An adapter for the registration of PCI drivers.
- pub struct Adapter<T: Driver>(T);
-diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
-index 7f2a7f57507f..a1de70b2176a 100644
---- a/rust/kernel/pci/id.rs
-+++ b/rust/kernel/pci/id.rs
-@@ -4,7 +4,10 @@
- //!
- //! This module contains PCI class codes, Vendor IDs, and supporting types.
- 
--use crate::{bindings, error::code::EINVAL, error::Error, prelude::*};
-+use crate::{
-+    bindings,
-+    prelude::*, //
-+};
- use core::fmt;
- 
- /// PCI device class codes.
-diff --git a/rust/kernel/pci/io.rs b/rust/kernel/pci/io.rs
-index 3684276b326b..0d55c3139b6f 100644
---- a/rust/kernel/pci/io.rs
-+++ b/rust/kernel/pci/io.rs
-@@ -4,14 +4,17 @@
- 
- use super::Device;
- use crate::{
--    bindings, device,
-+    bindings,
-+    device,
-     devres::Devres,
--    io::{Io, IoRaw},
--    str::CStr,
--    sync::aref::ARef,
-+    io::{
-+        Io,
-+        IoRaw, //
-+    },
-+    prelude::*,
-+    sync::aref::ARef, //
- };
- use core::ops::Deref;
--use kernel::prelude::*;
- 
- /// A PCI BAR to perform I/O-Operations on.
- ///
-diff --git a/rust/kernel/pci/irq.rs b/rust/kernel/pci/irq.rs
-index 782a524fe11c..063b6a5101ff 100644
---- a/rust/kernel/pci/irq.rs
-+++ b/rust/kernel/pci/irq.rs
-@@ -4,16 +4,20 @@
- 
- use super::Device;
- use crate::{
--    bindings, device,
-+    bindings,
-+    device,
-     device::Bound,
-     devres,
--    error::{to_result, Result},
--    irq::{self, IrqRequest},
-+    error::to_result,
-+    irq::{
-+        self,
-+        IrqRequest, //
-+    },
-+    prelude::*,
-     str::CStr,
--    sync::aref::ARef,
-+    sync::aref::ARef, //
- };
- use core::ops::RangeInclusive;
--use kernel::prelude::*;
- 
- /// IRQ type flags for PCI interrupt allocation.
- #[derive(Debug, Clone, Copy)]
+Please note that this driver has been updated from bool to tristate:
+https://lore.kernel.org/all/20250818-modularize-sx150x-gpio-expander-v1-1-c2a027200fed@oss.qualcomm.com/
+---
+Changes in v3:
+- Update commit message only 
+- Link to v2: https://lore.kernel.org/all/20250820-modularize-sx150x-gpio-expander-v2-1-e6eba22f0a0f@oss.qualcomm.com
+
+Changes in v2:
+- Drop patch 1/2, which have already been merged upstream
+- Link to v1: https://lore.kernel.org/r/20250818-modularize-sx150x-gpio-expander-v1-0-c2a027200fed@oss.qualcomm.com
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 30001ddf57e7f5cc0aff880527dd683627bae255..337a8f6a9343566ff818c18fd54eb2aeda0873c8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -618,6 +618,7 @@ CONFIG_PINCTRL_DA9062=m
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_RK805=m
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_SX150X=m
+ CONFIG_PINCTRL_OWL=y
+ CONFIG_PINCTRL_S700=y
+ CONFIG_PINCTRL_S900=y
+
+---
+base-commit: 17490bd0527f59d841168457b245581f314b5fa0
+change-id: 20251105-enable-sx150x-gpio-expander-fc9b9c51f723
+
+Best regards,
 -- 
-2.51.2
+Fange Zhang <fange.zhang@oss.qualcomm.com>
 
 
