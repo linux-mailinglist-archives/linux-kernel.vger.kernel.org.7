@@ -1,44 +1,40 @@
-Return-Path: <linux-kernel+bounces-885858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D7FC340E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:30:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F73FC34103
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0E91F34A284
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:30:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4B1434A16B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DE62C0F64;
-	Wed,  5 Nov 2025 06:30:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CE72C027B;
+	Wed,  5 Nov 2025 06:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="OMV8z0tr"
+Received: from mail-m49219.qiye.163.com (mail-m49219.qiye.163.com [45.254.49.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539112C0276;
-	Wed,  5 Nov 2025 06:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D1927462;
+	Wed,  5 Nov 2025 06:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324202; cv=none; b=UATP/Gk/esx1aGnxwz9dcXpddRFzcdZq69RfDTX1xchSLLMGTq/CbzNKmU/HwQdAlVNnEMwKlRVkR+1pmXx6lZanBm0etQUQqiOp48gN1nJ44MeX/+v+IEgMvbDYTJZ0Gn4ubz0YqweD0tWVBcoQkXTrVhQReAbQXq/6iqQPwnk=
+	t=1762324541; cv=none; b=fxmbxHQvc86ihZ8pRxcA69zdSmyr97bZ8MnBGiouRz2AHGVqNZIZ5EAEriXzlIHGH9wVWZoxjAWm1AIFyz88O1IaNHjEacB/j1wEU3GCaLuGUv8wghuDIAFi+vsV7VF9LubRTxB4VHWpQYqIx3Mu48SrA60+s06IUeCRBY/FaZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324202; c=relaxed/simple;
-	bh=+sjbq3hSIRJJOCJlSyIYGY4niIf1RklwToUJJv5n3hc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4k8RwwtsRGwX2TDYo70AoljFUeLUug2/VBbU7WO5AZWgvwe+DFX2iedrJTovjzbUgmtnm8qv+zEbgY0f+f5rm0Ai/yLTTbw+yyukIe9mYmnvS/jynZ+6ZCknfkoWkN3GQrnIFEcfxluT1BSHNa+NOC55RfRBj98XHSvqWybAkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d1b5c5QzqzYQv7l;
-	Wed,  5 Nov 2025 14:29:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0CA5F1A0A22;
-	Wed,  5 Nov 2025 14:29:57 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgB3GkPj7gppiVIPCw--.2186S2;
-	Wed, 05 Nov 2025 14:29:56 +0800 (CST)
-Message-ID: <c1104fa0-10b6-4878-8296-8502c0105b83@huaweicloud.com>
-Date: Wed, 5 Nov 2025 14:29:55 +0800
+	s=arc-20240116; t=1762324541; c=relaxed/simple;
+	bh=+WSDh17Zv85nz4BHwvp/umpSXDxSRKSSoXtXj2T9uyA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QbmRl5xwcCizEHnauOaUjIwX74xms5f1nmWfXS8YnJMwPkBj8MyoACDfXZlCVdVEAdUrl/+pCftME4gaAUb/qSq5Y5h/jfzQd4YKhVxuSZLDzgTImnGZ0ATZN5rbYqERRZXTOHOkEpgsFABGSOhslD1DCAb/ckSfDCziTaMf5k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=OMV8z0tr; arc=none smtp.client-ip=45.254.49.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28738ad08;
+	Wed, 5 Nov 2025 14:35:29 +0800 (GMT+08:00)
+Message-ID: <ba120577-42da-424d-8102-9d085c1494c8@rock-chips.com>
+Date: Wed, 5 Nov 2025 14:35:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,120 +42,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH v3 4/5] cgroup/cpuset: Ensure domain
- isolated CPUs stay in root or isolated partition
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251105043848.382703-1-longman@redhat.com>
- <20251105043848.382703-5-longman@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251105043848.382703-5-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgB3GkPj7gppiVIPCw--.2186S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr45Cr47WF15Gw4fKF17Wrg_yoW5AFWUpF
-	yjkry3J3y5tr13C3sIq3Z29ryFga1DJF12krs8Gw1rX3ZFq3WvkFyj9ws8Xr15Xa9rWr1U
-	Zay5ur4SgasrArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Cc: shawn.lin@rock-chips.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Johan Jonker <jbx6244@gmail.com>,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: rockchip: align bindings to PCIe spec
+To: Geraldo Nascimento <geraldogabriel@gmail.com>
+References: <4b5ffcccfef2a61838aa563521672a171acb27b2.1762321976.git.geraldogabriel@gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <4b5ffcccfef2a61838aa563521672a171acb27b2.1762321976.git.geraldogabriel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a52ba413509cckunmc2aaee18cb0988
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk9CSVYaTENLQx8YT0gYQ0xWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=OMV8z0tr5MTsd4IVw0FOfwUChjbcdL35pQsXtIjZ5ru+eWExEIhbd2fGG14g2NLimccEK4Hdkh+ROPo2UcnU+xSjp2L831Arzc99lmfLqETzC8isZ2mtWUL5kNS1US4NePVDmO5r/aLHP/3MJvGfiVOVyH3VN1uh0hc5r0MUSAE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=w3jBEw7Jy/T28wSQc6c2W5ztuhx1BYHAtBcKXgni9Oc=;
+	h=date:mime-version:subject:message-id:from;
 
+Hi Geraldo,
 
+在 2025/11/05 星期三 13:55, Geraldo Nascimento 写道:
+> The PERST# side-band signal is defined by PCIe spec as an open-drain
 
-On 2025/11/5 12:38, Waiman Long wrote:
-> Commit 4a74e418881f ("cgroup/cpuset: Check partition conflict with
-> housekeeping setup") is supposed to ensure that domain isolated CPUs
-> designated by the "isolcpus" boot command line option stay either in
-> root partition or in isolated partitions. However, the required check
-> wasn't implemented when a remote partition was created or when an
-> existing partition changed type from "root" to "isolated".
+I couldn't find any clue that says PERST# is an open-drain signal. Could
+you quote it from PCI Express Card Electromechanical Specification?
+
+> active-low signal that depends on a pull-up resistor to keep the
+> signal high when deasserted. Align bindings to the spec.
+
+This is not true from my POV. An open-drain PCIe side-band  signal
+is used for both of EP and RC to achieve some special work-flow, like
+CLKREQ# for L1ss, etc. Since both ends could control it. But PERST# is a
+fundamental reset signal driven by RC which should be in sure state,
+high or low, has nothing to do with open-drain.
+
 > 
-> Even though this is a relatively minor issue, we still need to add the
-> required prstate_housekeeping_conflict() call in the right places to
-> ensure that the rule is strictly followed.
+> Note that the relevant driver hacks the active-low signal as
+> active-high and switches the normal polarity of PERST#
+> assertion/deassertion, 1 and 0 in that order, and instead uses
+> 0 to signal low (assertion) and 1 to signal deassertion.
 > 
-> The following steps can be used to reproduce the problem before this
-> fix.
+> Incidentally, this change makes hardware that refused to work
+> with the Rockchip-IP PCIe core working for me, which was the
+> object of many fool's errands.
 > 
->   # fmt -1 /proc/cmdline | grep isolcpus
->   isolcpus=9
->   # cd /sys/fs/cgroup/
->   # echo +cpuset > cgroup.subtree_control
->   # mkdir test
->   # echo 9 > test/cpuset.cpus
->   # echo isolated > test/cpuset.cpus.partition
->   # cat test/cpuset.cpus.partition
->   isolated
->   # cat test/cpuset.cpus.effective
->   9
->   # echo root > test/cpuset.cpus.partition
->   # cat test/cpuset.cpus.effective
->   9
->   # cat test/cpuset.cpus.partition
->   root
-> 
-> With this fix, the last few steps will become:
-> 
->   # echo root > test/cpuset.cpus.partition
->   # cat test/cpuset.cpus.effective
->   0-8,10-95
->   # cat test/cpuset.cpus.partition
->   root invalid (partition config conflicts with housekeeping setup)
-> 
-> Reported-by: Chen Ridong <chenridong@huawei.com>
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
 > ---
->  kernel/cgroup/cpuset.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>   arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index cc9c3402f16b..2daf58bf0bbb 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1610,8 +1610,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->  	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
->  	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->  		return PERR_INVCPUS;
-> -	if ((new_prs == PRS_ISOLATED) &&
-> -	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
-> +	if (((new_prs == PRS_ISOLATED) &&
-> +	     !isolated_cpus_can_update(tmp->new_cpus, NULL)) ||
-> +	    prstate_housekeeping_conflict(new_prs, tmp->new_cpus))
->  		return PERR_HKEEPING;
->  
->  	spin_lock_irq(&callback_lock);
-> @@ -3062,8 +3063,9 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->  		 * A change in load balance state only, no change in cpumasks.
->  		 * Need to update isolated_cpus.
->  		 */
-> -		if ((new_prs == PRS_ISOLATED) &&
-> -		    !isolated_cpus_can_update(cs->effective_xcpus, NULL))
-> +		if (((new_prs == PRS_ISOLATED) &&
-> +		     !isolated_cpus_can_update(cs->effective_xcpus, NULL)) ||
-> +		    prstate_housekeeping_conflict(new_prs, cs->effective_xcpus))
->  			err = PERR_HKEEPING;
->  		else
->  			isolcpus_updated = true;
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> index aa70776e898a..8dcb03708145 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> @@ -383,9 +383,9 @@ &pcie_phy {
+>   };
+>   
+>   &pcie0 {
+> -	ep-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+> +	ep-gpios = <&gpio0 RK_PB4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 
-Reviewed-by: Chen Ridong <chenridong@huawei.com>
+So my biggest guess is we don't need this change at all.
+gpio0b4 is used as gpio function, the problem you faced is that it
+didn't set gpio0b4 as pull-up, because the defaut state is pull-down.
 
--- 
-Best regards,
-Ridong
+Maybe the drive current of this IO is too weak, making it unable to 
+fully drive high in the pull-down state? If that's the case, can you see 
+a half-level signal on the oscilloscope?
+
+>   	num-lanes = <4>;
+> -	pinctrl-0 = <&pcie_clkreqnb_cpm>;
+> +	pinctrl-0 = <&pcie_clkreqnb_cpm>, <&pcie_perst>;
+>   	pinctrl-names = "default";
+>   	vpcie0v9-supply = <&vcca_0v9>;	/* VCC_0V9_S0 */
+>   	vpcie1v8-supply = <&vcca_1v8>;	/* VCC_1V8_S0 */
+> @@ -408,6 +408,10 @@ pcie {
+>   		pcie_pwr: pcie-pwr {
+>   			rockchip,pins = <4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_up>;
+>   		};
+> +		pcie_perst: pcie-perst {
+> +			rockchip,pins = <0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +
+>   	};
+>   
+>   	pmic {
 
 
