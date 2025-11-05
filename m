@@ -1,295 +1,135 @@
-Return-Path: <linux-kernel+bounces-885893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F127C342F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:14:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0034C3431D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9355618C43F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:14:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 642B34EA713
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66262D322E;
-	Wed,  5 Nov 2025 07:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D124E2D0C8B;
+	Wed,  5 Nov 2025 07:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G8dt1cMj"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/QBF14b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4562D23BF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2037C34D3B9;
+	Wed,  5 Nov 2025 07:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762326853; cv=none; b=qonS1mEZw18sWehE5iIlyhRed9KZ7rhN4fIqZ2oPmmdUnroYO37Agg0S3ei/ev/k8uT+iVuJraWUl7LlIG2bntDPl7Syl6s3iFrd1dC9VFgDtc5xDWwtYQjSYHDPh7thrtr7wCa8B4vIDQnK0t7v+X+MKen3gMumA1MVFYbTcwY=
+	t=1762327040; cv=none; b=ea13nFYrBnbbH+aIXG+MSWYRd4nSfNpLArkeIBmEHMT7TbEMXzhAE8Xx3vnXgQUVSvC8/pmlvVgKE7Z7M7OYVjKtYPCtWhwer32uy+jDURL31dXskw1ml4uac5Lt2JyhVj3Qcg7XjwOJHTG3A94XuvXxep/IhGeHvhRNY+hKdFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762326853; c=relaxed/simple;
-	bh=7lWv1Lbyp1KL6LhHGzX+dIbc3TmF9sT/YjApLREzoDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OUZ+3zK7vf5W9Jyh1RbA7nZt66bKWiuL61nWaWFlfjhkGl0NGvqLquMoIu0aFhY+yOg35fbL9sIdwRXLA33Bl7IlvZzxSUWlNQAFBGrwpEshrmvUEFUOIXhqVRBvxg9xYxazRYybB1YCSsfV6Tlvau3GJA2mT7+1i0K+MfzVWRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G8dt1cMj; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762326838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NfK/agWz/0WkcTINCFySDbMfKDM1u8l6Zttpn4bCw/c=;
-	b=G8dt1cMj9yQ0VdniTzxzBnpH0c0iYXvq2nqFWGjbWP9PZh7a5xW564NdFfkBuR7OJmgM1O
-	rIhNwaguElgYYk5yXJ09ajYWNq2IbEMyj9qk+15h9rBmG+BAtoPOW+/meJjiWpdf/7KFQd
-	go7BXb2SLpbbglhz+ciqHe8HI0JzaIk=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, peterz@infradead.org
-Cc: Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- David Ahern <dsahern@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev,
- bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
-Date: Wed, 05 Nov 2025 15:13:42 +0800
-Message-ID: <4465519.ejJDZkT8p0@7950hx>
-In-Reply-To:
- <CAADnVQKQXcUxjJ2uYNu1nvhFYt=KhN8QYAiGXrt_YwUsjMFOuA@mail.gmail.com>
-References:
- <20251104104913.689439-1-dongml2@chinatelecom.cn> <5029485.GXAFRqVoOG@7950hx>
- <CAADnVQKQXcUxjJ2uYNu1nvhFYt=KhN8QYAiGXrt_YwUsjMFOuA@mail.gmail.com>
+	s=arc-20240116; t=1762327040; c=relaxed/simple;
+	bh=M7tMkYTWiCdwe38qzTslPdBkq5O8fsXakxhQCCBfrlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wi5P5xUDgJAq4tfCq9ZQShn5SNA1ZZwWcRCr2o7ZgOBzxT1N9ThbhsNQiUHwisTPKPDXocTp6Xl/ynpuNoqsKMMMbUwhSzG7GuZtgUmCBB9eiwjq2Bri3Eacq9YgYM0QP/gR/5mTxa6PHiT8OVciPd+OwEv8rMfNMepdG7bonJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/QBF14b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC3FC116B1;
+	Wed,  5 Nov 2025 07:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762327039;
+	bh=M7tMkYTWiCdwe38qzTslPdBkq5O8fsXakxhQCCBfrlQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S/QBF14bPtG+sof0XDN3JtbP4h682cMYVM3j2Z7cO3uPvNMMfoPOplisB7ovgpZlH
+	 p+imlmHWGCVaYwf4e+XqpCUk6ydxgRo0jeWm2nzSvS0wGNpipNlodsx67pUvZWIQV8
+	 vAMYLWrdfX9JWhKOlQRdk0SH6aSX2uQM47+cV0FoVOab/4fodi6940VdvaR86u30VV
+	 K10va7d4bPdmY2A75tYqvZFsv80oX1X+bFX6nQ33O98DxZ/dlselz/8UiXLd0GqYvV
+	 f+257t07fqH+vImtGktLMZ0dw8wyEoak9gGhNAVrIBbGb8EOSFH4M/tdqxqkW+QIRP
+	 HVUvmZ9SFxBcg==
+Message-ID: <0608ca9b-083c-4929-a4e5-7d76b2590637@kernel.org>
+Date: Wed, 5 Nov 2025 08:17:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/14] dt-bindings: remoteproc: qcom,pas: Add iommus
+ property
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
+ <20251104-kvm_rproc_v6-v6-1-7017b0adc24e@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251104-kvm_rproc_v6-v6-1-7017b0adc24e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025/11/5 10:12, Alexei Starovoitov wrote:
-> On Tue, Nov 4, 2025 at 5:30=E2=80=AFPM Menglong Dong <menglong.dong@linux=
-=2Edev> wrote:
-> >
-> > On 2025/11/5 02:56, Alexei Starovoitov wrote:
-> > > On Tue, Nov 4, 2025 at 2:49=E2=80=AFAM Menglong Dong <menglong8.dong@=
-gmail.com> wrote:
-> > > >
-> > > > In origin call case, we skip the "rip" directly before we return, w=
-hich
-> > > > break the RSB, as we have twice "call", but only once "ret".
-> > >
-> > > RSB meaning return stack buffer?
-> > >
-> > > and by "breaks RSB" you mean it makes the cpu less efficient?
-> >
-> > Yeah, I mean it makes the cpu less efficient. The RSB is used
-> > for the branch predicting, and it will push the "rip" to its hardware
-> > stack on "call", and pop it from the stack on "ret". In the origin
-> > call case, there are twice "call" but once "ret", will break its
-> > balance.
->=20
-> Yes. I'm aware, but your "mov [rbp + 8], rax" screws it up as well,
-> since RSB has to be updated/invalidated by this store.
-> The behavior depends on the microarchitecture, of course.
-> I think:
-> add rsp, 8
-> ret
-> will only screw up the return prediction, but won't invalidate RSB.
->=20
-> > Similar things happen in "return_to_handler" in ftrace_64.S,
-> > which has once "call", but twice "ret". And it pretend a "call"
-> > to make it balance.
->=20
-> This makes more sense to me. Let's try that approach instead
-> of messing with the return address on stack?
+On 04/11/2025 08:35, Mukesh Ojha wrote:
+> Most Qualcomm platforms feature Gunyah hypervisor which handles IOMMU
 
-The way here is similar to the "return_to_handler". For the ftrace,
-the origin stack before the "ret" of the traced function is:
+I don't think that's true. Washn't Gunyah something new? Like since
+SM8550? Look how many Qualcomm platforms we have in the arm/qcom.yaml
+bindings - for sure most of them are not post SM8550.
 
-    POS:
-    rip   ---> return_to_handler
+> configuration for remote processor and when it is not present, the
+> operating system must perform these configurations instead and for that
+> firmware stream should be presented to the operating system. Hence, add
+> iommus property as optional property for PAS supported devices.
 
-And the exit of the traced function will jump to return_to_handler.
-In return_to_handler, it will query the real "rip" of the traced function
-and the it call a internal function:
+So which platforms actually need to do this?
 
-    call .Ldo_rop
-
-And the stack now is:
-
-    POS:
-    rip   ----> the address after "call .Ldo_rop", which is a "int3"
-
-in the .Ldo_rop, it will modify the rip to the real rip to make
-it like this:
-
-    POS:
-    rip   ---> real rip
-
-And it return. Take the target function "foo" for example, the logic
-of it is:
-
-    call foo -> call ftrace_caller -> return ftrace_caller ->
-    return return_to_handler -> call Ldo_rop -> return foo
-
-As you can see, the call and return address for ".Ldo_rop" is
-also messed up. So I think it works here too. Compared with
-a messed "return address", a missed return maybe have
-better influence?
-
-And the whole logic for us is:
-
-    call foo -> call trampoline -> call origin ->
-    return origin -> return POS -> return foo
-
-=46ollowing is the partial code of return_to_handler:
-
-	/*
-	 * Jump back to the old return address. This cannot be JMP_NOSPEC rdi
-	 * since IBT would demand that contain ENDBR, which simply isn't so for
-	 * return addresses. Use a retpoline here to keep the RSB balanced.
-	 */
-	ANNOTATE_INTRA_FUNCTION_CALL
-	call .Ldo_rop
-	int3
-=2ELdo_rop:
-	mov %rdi, (%rsp)
-	ALTERNATIVE __stringify(RET), \
-		    __stringify(ANNOTATE_UNRET_SAFE; ret; int3), \
-		    X86_FEATURE_CALL_DEPTH
-
->=20
-> > I were wandering why the overhead of fexit is much higher
-> > than fentry. I added the percup-ref-get-and-put stuff to the
-> > fentry, and the performance of it still can be 130M/s. However,
-> > the fexit only has 76M/s. And the only difference is the origin
-> > call.
-> >
-> > The RSB balancing mitigate it, but there are still gap. I
-> > suspect it's still the branch predicting things.
->=20
-> If you have access to intel vtune profiler, check what is
-
-Let me have a study on the "intel vtune profiler" stuff :)
-
-I did a perf stat, and the branch miss increase seriously,
-and the IPC(insn per cycle) decrease seriously.
-
-> actually happening. It can show micro arch details.
-> I don't think there is an open source alternative.
->=20
-> > > Or you mean call depth accounting that is done in sw ?
-> > >
-> > > > Do the RSB balance by pseudo a "ret". Instead of skipping the "rip"=
-, we
-> > > > modify it to the address of a "ret" insn that we generate.
-> > > >
-> > > > The performance of "fexit" increases from 76M/s to 84M/s. Before th=
-is
-> > > > optimize, the bench resulting of fexit is:
-> > > >
-> > > > fexit          :   76.494 =C2=B1 0.216M/s
-> > > > fexit          :   76.319 =C2=B1 0.097M/s
-> > > > fexit          :   70.680 =C2=B1 0.060M/s
-> > > > fexit          :   75.509 =C2=B1 0.039M/s
-> > > > fexit          :   76.392 =C2=B1 0.049M/s
-> > > >
-> > > > After this optimize:
-> > > >
-> > > > fexit          :   86.023 =C2=B1 0.518M/s
-> > > > fexit          :   83.388 =C2=B1 0.021M/s
-> > > > fexit          :   85.146 =C2=B1 0.058M/s
-> > > > fexit          :   85.646 =C2=B1 0.136M/s
-> > > > fexit          :   84.040 =C2=B1 0.045M/s
-> > >
-> > > This is with or without calldepth accounting?
-> >
-> > The CONFIG_MITIGATION_CALL_DEPTH_TRACKING is enabled, but
-> > I did the testing with "mitigations=3Doff" in the cmdline, so I guess
-> > "without"?
->=20
-> Pls benchmark both. It sounds like call_depth_tracking
-> miscounting stuff ?
-
-Sadly, the performance decrease from 28M/s to 26M/s with
-mitigation enabled. I think the addition "ret" increase the
-overhead with "return-thunks" enabled.
-
-Things is not as simple as I thought, let me do more testing,
-and see if ftrace has similar performance decreasing.
-
-Hi, @Peter. Do you have any advice on this ting?
-
-Thanks!
-Menglong Dong
-
->=20
-> > >
-[......]
-> >                            const u32 imm32_hi, const u32 imm32_lo)
-> > {
-> >         u64 imm64 =3D ((u64)imm32_hi << 32) | (u32)imm32_lo;
-> >         u8 *prog =3D *pprog;
-> >
-> >         if (is_uimm32(imm64)) {
-> >                 /*
-> >                  * For emitting plain u32, where sign bit must not be
-> >                  * propagated LLVM tends to load imm64 over mov32
-> >                  * directly, so save couple of bytes by just doing
-> >                  * 'mov %eax, imm32' instead.
-> >                  */
-> >                 emit_mov_imm32(&prog, false, dst_reg, imm32_lo);
-> >         } else if (is_simm32(imm64)) {
-> >                 emit_mov_imm32(&prog, true, dst_reg, imm32_lo);
-> >         } else {
-> >                 /* movabsq rax, imm64 */
-> >                 EMIT2(add_1mod(0x48, dst_reg), add_1reg(0xB8, dst_reg));
-> >                 EMIT(imm32_lo, 4);
-> >                 EMIT(imm32_hi, 4);
->=20
-> This part could be factored out as a separate helper.
-> Then sizeof(movabsq) will be constant.
-> Note, in the verifier we do:
-> #if defined(MODULES_VADDR)
->                         u64 addr =3D MODULES_VADDR;
-> #else
->                         u64 addr =3D VMALLOC_START;
-> #endif
->                         /* jit (e.g. x86_64) may emit fewer instructions
->                          * if it learns a u32 imm is the same as a u64 im=
-m.
->                          * Set close enough to possible prog address.
->                          */
->                         insn[0].imm =3D (u32)addr;
->                         insn[1].imm =3D addr >> 32;
->=20
-> do mitigate this issue.
-> So you could have done:
-> emit_mov_imm64(&prog, BPF_REG_0, VMALLOC_START >> 32, 0);
->=20
-> since 'ret_addr' math is incorrect at that point anyway.
-> But prog +=3D sizeof is imo cleaner.
-
-Great! This make things much more clear. After I figure out all
-the stuff, (which I'm not sure if I'm able), I'll do this way.
-
-Thanks!
-Menglong Dong
-
-> The whole thing might not be necessary with extra call approach.
-> I suspect it should be faster than this approach.
->=20
+I really do not understand why you are adding this to SDX55 and several
+others.
 
 
 
-
+Best regards,
+Krzysztof
 
