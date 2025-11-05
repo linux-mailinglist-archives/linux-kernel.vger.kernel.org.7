@@ -1,313 +1,184 @@
-Return-Path: <linux-kernel+bounces-886893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80DDC36B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:28:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8043C36C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C6F45083DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:20:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0426B5082B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9FB3370F4;
-	Wed,  5 Nov 2025 16:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279FC33555B;
+	Wed,  5 Nov 2025 16:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ABBMehgU"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OGiEhwta";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8aOGak9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8267324B1D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84522322DCB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359400; cv=none; b=KEez5FqJYTLQQJrcsqyTNHCn+3MJ9mj9rOQ3lDytZGLiWiAzu8Qi7oB419o8N+DMz+Z311wUlUe6Nuh3U6/9KrX6v5TpxTzb1sTXX7LtkJ7bgLMHRMBRh35di8J3RGzKzwKP92WZxFAZrmB3yC6Pf9NUxRY4Cp0OeZQwOI+iJBI=
+	t=1762359399; cv=none; b=sHfKKzoab1vwDGBuKI3S4UFxR8yR9xp6MyFqRJgPU1lRfkwoMqtdRUbhPAGFBTBJu3Ae1l30C17L7ZMK4MqfqTLOsk8KI3lsggdJ1N772I7CUBRAE8QfRcr+pA932lSl9hBtUqSqVRo1Px6LQeYAfDSuDtlfoMjIcFl0I6rzCa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359400; c=relaxed/simple;
-	bh=0mW1b+073J2WkpEQgSQKQ1fM7vUG/qFsJY90DxjuK3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hUiaML3/8ChPDeNDLquSHt5f7SutYpP9Ndbc6Vdv9O6okoC6POqhF3CjwUXZ7B5bFA3Rxp6k5ROb8ZmB2ixzqJUPQEoW4TOFUgYoKUuv/N5snMnxib4b5XIXQEBj7Sn1mnFxM0gBSBIy4FKqm97OwSCsI+OsbB3AIYT9eZPchH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ABBMehgU; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-43320988dcfso14995545ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:16:38 -0800 (PST)
+	s=arc-20240116; t=1762359399; c=relaxed/simple;
+	bh=Z7eZPun2oefAkSM3+F0++XPUVNTkIWBrwjzNYiRkZK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTod/mmNL9PHDKauyyP8OEvIAAZoCtKodzKemtKd7uJHY1O5TwGDqsKCwtcdNCCBGgcVRkzzHtof91Re5D5+NNf/5TcD+eK6PQN7z3XrlJZz44MnuINCQdUiQMGPRVDoQzesqOBrK2IkYUg4fJUpKcVq5Ymt/nnGP4CQ5UE65cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OGiEhwta; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8aOGak9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762359395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Du/r5ksOWZtDfSJI4YOsWmAPKYTxSvBd3w3sn3Syt2A=;
+	b=OGiEhwta/SVUOFStPYurh0GkafrhS9FdNMbzoBBcD36fi8J/NDiHHc6VRGdygkd4lwwAIG
+	IZMk2gRtolOwliCV8JE/1zTBjLTnwzxo/Wr4thnG71tEHK0r0DqkGqL7myB8ZfEpYisJ9a
+	zFR44943wJdmW0Q+GuEGro88qE0qXlQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-505-CK9ACQRfPd2HSF8K0NlbXw-1; Wed, 05 Nov 2025 11:16:34 -0500
+X-MC-Unique: CK9ACQRfPd2HSF8K0NlbXw-1
+X-Mimecast-MFC-AGG-ID: CK9ACQRfPd2HSF8K0NlbXw_1762359393
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47106a388cfso52210205e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762359398; x=1762964198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ACs9ehJB3oUkzpqGylHL7GURPnmGaEVz6xiN6ORjiWI=;
-        b=ABBMehgUwkZhVIo1+hLrwrvLisbWg0FCHrESyyNmmQCC8N2yXkdsC8GSGGE84D6wDm
-         w3jM9d7Vq1duUa8kv6wORSI4JvOCCkBMGHA0loPbg+GwdyE9xX4zepkitVOK9sNfa2mY
-         65QMKy/9bQi0PB+rH9WdQJlf8P39ESyPR73P92/W6vKvY6mquaWnZ3AcJz2D1T8MGK9i
-         ObdLgbka2bMwAU+OmCzEXUmEUDCD1kXOUm4MvWXFpmYi4ChDugPbFJq5GEVCShTsyCs4
-         t2kOlI2Ifphf0CX7UG9l0KTp9yb8/VaXtPocaU1qVoyHLR5NA8eT83RvT29dXpGpPp0e
-         oAoA==
+        d=redhat.com; s=google; t=1762359393; x=1762964193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Du/r5ksOWZtDfSJI4YOsWmAPKYTxSvBd3w3sn3Syt2A=;
+        b=d8aOGak9u1t2OiNCqVmiW5WUQk/pefp2soSF1/PSBHpRnHYPIp6u/1kLlDmR0Ce4/B
+         GD60rr1gue63FdJ03HRwTt5GhKYBNbaNI2h8Qh/j8z8lf2taO31ubQjQQszQE3C2lpEP
+         A30K1hVwDS2P5XWilErfs6qTMxtW0GV4enyCuLqYMWlnG0zrL7stGJXGMtytfkmCq/XG
+         ilbnOPkwq9ga57gD3ozMy3xxDvSjdjG+qVpsHOEiLIqKectvQiLBidjxERsqOlhLPoAm
+         Vee7oFIc8AIgIrJHZMgBtEYMIp9W+3eRxzN6lYQjO5FFxWxae947Q3Pg0GEnSDyrjD2G
+         cVQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762359398; x=1762964198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ACs9ehJB3oUkzpqGylHL7GURPnmGaEVz6xiN6ORjiWI=;
-        b=AkYkS7Y/x7011qweg4XSR+CVTyPfIto+tcASICzMm99YDEQahPF2FXKEl86lwkPKlv
-         FeMrIXKZx0kpZvwRhkTNnjl/vhdwomZSC1jteiHYCnLJs/EIwHoxTJKZC3BwzmSW40S3
-         b27AzqBCL7me8j6yow8/nVuHbG+gohPSJu3+aawXOouVePVcNcmMbX1ayHNqccjTP5Gu
-         e3FelBxcgwtlDoCg2EoCt0x9Cpw4/MwsM4yFiqqbcaklrdTq0wDaarr32CpSpI1dUUJO
-         VrK/hIDKsYQmYI7ei9p5u4JoVoiW/xWU1xocXJ9M45YBykKCrTl3tsM+MrMYZQizfL32
-         P9ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUt9vSt+wADduZ2irLGY71bMbfXskJJdr2XKtwObpdRHR5G3211th2KxaDZHzLTLI73tHsWXjB0LP2hByI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFkHSq3IpbwemRsYHNPA/sv5CtjiF2t7pCgMrdRipTsSGJXStD
-	UQdkLDYDv7awdo//epW5NMoSuaxoBwHTOgs6P+yu4Vm9p2JP0YWNF+WkDZV58QHWUu5NKvx+DGv
-	CNv9H5+EQiyib5sdobHtU2JlUiMoFkFhVtgUkGXge
-X-Gm-Gg: ASbGncsoBhsl2xn3hUNFesrxTqtpaiP2LY1Y2NLzrADx2CM2wpjFk9bIfsiOStuBQnl
-	GoRshSeU6IxpXNab9jqZwEDQAvaCf/e7Ujm0IySl+oZyEploSxN2ByOLUSdi34xaqNufsPLkkvZ
-	sKYbQ5ANv6S1r5mvwl7ZyfMO+rLdoRhcIHH43tRh4yIV96r9nLFfWEnTE6NpZWySwtOmfJBSI0p
-	8YQ8SXlJf9HhgF5OxoFSd4XIkuBMFlaDujYF3Yps08HBxeeZsT9kVB+qCtYaa4QVFVYv8RDIL2q
-	RGdrC5z9trS9hHQ31lboJrOzCw==
-X-Google-Smtp-Source: AGHT+IFrsuFMA1TSlPF6UPOqwRKI3S1TVMUqjqGwbsvSlZ623YeZIKO2ZUxGfz3c2g6/ooCxqi5U/+HTdvc4VcOqieE=
-X-Received: by 2002:a05:6e02:1805:b0:430:b994:3bd1 with SMTP id
- e9e14a558f8ab-433407698c4mr55204705ab.1.1762359397327; Wed, 05 Nov 2025
- 08:16:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762359393; x=1762964193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Du/r5ksOWZtDfSJI4YOsWmAPKYTxSvBd3w3sn3Syt2A=;
+        b=juivNj1ECA2AHrGWp8e9+6GL+AofuPk4me30AvPTylDGhw5mFDfB+z895e7J6sV7FC
+         rZK2SUQz7PIsPl/NiwxKu3/37iTJ7WIO74gotxLQtfivP5UkFDumzcHJL4nQ37YguRcu
+         aSkqtUSrVuf6DH9RlbpIv5vl2Uk+46F+WM5b9fPkw6PrvSf0w3BmB8SxhZ2FLZjcLSl0
+         ikpfZaxQA4lvz+5T8ikQ/v8rgpmU2RUizMKIHtsAwduT9UMksKng+mzRsNkCn9wu4IQV
+         KBhZFyTRPRcC1vIS2K9PJy5vP/SHq6loYc6n3KhhKtelbd9a9j/q61dfnVBe7psOCdqB
+         sgvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmaSFpSsN5AOgkbzQUU5dXIIw8Kr17kFmfuTgzU6O8/e2FKL3wpHylNMQdkXEKmA4c4X856AzBhQibegw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpW4hEZ0nwTX+YLbP+Bfr9KtEfXWe0ahX8g3kYfU9AhyYb0ja5
+	KfHDT+ni9Qm+asVH/pkjRpMBs2y9A/wvypA3fhJKtRgUroOkiD1Dd04JWusf2AmIVwQhi1Pg1PS
+	4+b6B9hk8AydA10iMtkULYP0LstRkJXg7nGwWmYwBvnXd7gVOZG+Gm8y3BR6FnRXANw==
+X-Gm-Gg: ASbGncsezqDwYKFD1rB6BItWjPsWzFVgSjctRz/XMSU09sTUxH0IiBtYvpNtFmeO83G
+	6gvB0MVzKEDdf+0ll3crBK496sMFcbZulpvYSPUetJRxV6Tf0QS+uM5y2eHooSgaPFOhO+jFTL4
+	WGYB5IWVGAkOwTF3qoc1mzTDth4kftPEzMilXGuGN61YY8l/N7b/hCwVfomDChfpp5dnrapiX8T
+	MhhOnhDJsjADLQJWorkf7BbzCLz6jwCx+WKUgnRVK5/1fjRwlb7e/Xy36l1z0qkEeVawBxofYES
+	AgAahBstJLEyX8WkJLAOUgRZazT5QjujyfXD9IzMGbI7RgOa4nNOjF0raPMYqhq7GulttKFVNZI
+	6dIA=
+X-Received: by 2002:a05:600c:458d:b0:45d:f81d:eae7 with SMTP id 5b1f17b1804b1-4775ce2b680mr30986305e9.28.1762359392887;
+        Wed, 05 Nov 2025 08:16:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG1zaF9xjh7lShdpMKxs0x1j37UBOgMCZm7D8elWZkrx4hb3LonHqe/99De4jJ82rRpyZFkSA==
+X-Received: by 2002:a05:600c:458d:b0:45d:f81d:eae7 with SMTP id 5b1f17b1804b1-4775ce2b680mr30985775e9.28.1762359392381;
+        Wed, 05 Nov 2025 08:16:32 -0800 (PST)
+Received: from sgarzare-redhat ([78.209.227.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5af7sm12313106f8f.28.2025.11.05.08.16.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:16:31 -0800 (PST)
+Date: Wed, 5 Nov 2025 17:16:29 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bobby Eshleman <bobbyeshleman@meta.com>, 
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net v2] selftests/vsock: avoid false-positives when
+ checking dmesg
+Message-ID: <5dkiqiatpxuq3wnizyq25c4hmiztglefh5icdcxpkvmej775nn@qw4gmh2bheyf>
+References: <20251105-vsock-vmtest-dmesg-fix-v2-1-1a042a14892c@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017185645.26604-1-james.morse@arm.com> <20251017185645.26604-21-james.morse@arm.com>
- <OSZPR01MB8798162B444DA35707A4E3798BFCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSZPR01MB8798162B444DA35707A4E3798BFCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-From: Peter Newman <peternewman@google.com>
-Date: Wed, 5 Nov 2025 17:16:24 +0100
-X-Gm-Features: AWmQ_bn_GHMcQLM6dMy9FTsbSXlRMr5a1a_4wB6ts3RgPX1XxSVdyRM8ndMU0uE
-Message-ID: <CALPaoChLKRQqjZO+O92WQ=MsWjV+q=hVE8=BXCOdkta6ZEXNMQ@mail.gmail.com>
-Subject: Re: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
- restored during cpu online
-To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
-Cc: James Morse <james.morse@arm.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	D Scott Phillips OS <scott@os.amperecomputing.com>, 
-	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>, "lcherian@marvell.com" <lcherian@marvell.com>, 
-	"bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>, 
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, 
-	Xin Hao <xhao@linux.alibaba.com>, "dfustini@baylibre.com" <dfustini@baylibre.com>, 
-	"amitsinght@marvell.com" <amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, 
-	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, 
-	Shanker Donthineni <sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>, 
-	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, 
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, 
-	Ben Horgan <ben.horgan@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20251105-vsock-vmtest-dmesg-fix-v2-1-1a042a14892c@meta.com>
 
-On Mon, Oct 27, 2025 at 9:48=E2=80=AFAM Shaopeng Tan (Fujitsu)
-<tan.shaopeng@fujitsu.com> wrote:
+On Wed, Nov 05, 2025 at 07:59:19AM -0800, Bobby Eshleman wrote:
+>From: Bobby Eshleman <bobbyeshleman@meta.com>
 >
-> Hello James,
+>Sometimes VMs will have some intermittent dmesg warnings that are
+>unrelated to vsock. Change the dmesg parsing to filter on strings
+>containing 'vsock' to avoid false positive failures that are unrelated
+>to vsock. The downside is that it is possible for some vsock related
+>warnings to not contain the substring 'vsock', so those will be missed.
 >
-> > When CPUs come online the MSC's original configuration should be restor=
-ed.
-> >
-> > Add struct mpam_config to hold the configuration. This has a bitmap of
-> > features that were modified. Once the maximum partid is known, allocate=
- a
-> > configuration array for each component, and reprogram each RIS configur=
-ation
-> > from this.
-> >
-> > CC: Dave Martin <Dave.Martin@arm.com>
-> > Signed-off-by: James Morse <james.morse@arm.com>
-> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> > Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> > Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> > ---
-> > Changes since v2:
-> >  * Call mpam_init_reset_cfg() on alloated config as 0 is not longer cor=
-rect.
-> >  * init_garbage() on each config - the array has to be freed in one go,=
- but
-> >    otherwise this looks weird.
-> >  * Use struct initialiser in mpam_init_reset_cfg(),
-> >  * Moved int err definition.
-> >  * Removed srcu lock taking based on squinting at the only caller.
-> >  * Moved config reset to mpam_reset_component_cfg() for re-use in
-> >    mpam_reset_component_locked(), previous memset() was not enough
-> > since zero
-> >    no longer means reset.
-> >
-> > Changes since v1:
-> >  * Switched entry_rcu to srcu versions.
-> >
-> > Changes since RFC:
-> >  * Added a comment about the ordering around max_partid.
-> >  * Allocate configurations after interrupts are registered to reduce ch=
-urn.
-> >  * Added mpam_assert_partid_sizes_fixed();
-> >  * Make reset use an all-ones instead of zero config.
-> > ---
-> >  drivers/resctrl/mpam_devices.c  | 284
-> > +++++++++++++++++++++++++++++---
-> > drivers/resctrl/mpam_internal.h |  23 +++
-> >  2 files changed, 287 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devi=
-ces.c
-> > index ab37ed1fb5de..e990ef67df5b 100644
-> > --- a/drivers/resctrl/mpam_devices.c
-> > +++ b/drivers/resctrl/mpam_devices.c
-> > @@ -118,6 +118,17 @@ static inline void init_garbage(struct mpam_garbag=
-e
-> > *garbage)  {
-> >       init_llist_node(&garbage->llist);
-> >  }
-> > +
-> > +/*
-> > + * Once mpam is enabled, new requestors cannot further reduce the
-> > +available
-> > + * partid. Assert that the size is fixed, and new requestors will be
-> > +turned
-> > + * away.
-> > + */
-> > +static void mpam_assert_partid_sizes_fixed(void)
-> > +{
-> > +     WARN_ON_ONCE(!partid_max_published);
-> > +}
-> > +
-> >  static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)  {
-> >       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
-> > &msc->accessibility)); @@ -366,12 +377,16 @@ static void
-> > mpam_class_destroy(struct mpam_class *class)
-> >       add_to_garbage(class);
-> >  }
-> >
-> > +static void __destroy_component_cfg(struct mpam_component *comp);
-> > +
-> >  static void mpam_comp_destroy(struct mpam_component *comp)  {
-> >       struct mpam_class *class =3D comp->class;
-> >
-> >       lockdep_assert_held(&mpam_list_lock);
-> >
-> > +     __destroy_component_cfg(comp);
-> > +
-> >       list_del_rcu(&comp->class_list);
-> >       add_to_garbage(comp);
-> >
-> > @@ -812,48 +827,102 @@ static void mpam_reset_msc_bitmap(struct
-> > mpam_msc *msc, u16 reg, u16 wd)
-> >       __mpam_write_reg(msc, reg, bm);
-> >  }
-> >
-> > -static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid=
-)
-> > +/* Called via IPI. Call while holding an SRCU reference */ static void
-> > +mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
-> > +                                   struct mpam_config *cfg)
-> >  {
-> >       struct mpam_msc *msc =3D ris->vmsc->msc;
-> >       struct mpam_props *rprops =3D &ris->props;
-> >
-> > -     WARN_ON_ONCE(!srcu_read_lock_held((&mpam_srcu)));
-> > -
-> >       mutex_lock(&msc->part_sel_lock);
-> >       __mpam_part_sel(ris->ris_idx, partid, msc);
-> >
-> > -     if (mpam_has_feature(mpam_feat_cpor_part, rprops))
-> > -             mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM,
-> > rprops->cpbm_wd);
-> > +     if (mpam_has_feature(mpam_feat_cpor_part, rprops) &&
-> > +         mpam_has_feature(mpam_feat_cpor_part, cfg)) {
-> > +             if (cfg->reset_cpbm)
-> > +                     mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM,
-> > +                                           rprops->cpbm_wd);
-> > +             else
-> > +                     mpam_write_partsel_reg(msc, CPBM, cfg->cpbm);
-> > +     }
-> >
-> > -     if (mpam_has_feature(mpam_feat_mbw_part, rprops))
-> > -             mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM,
-> > rprops->mbw_pbm_bits);
-> > +     if (mpam_has_feature(mpam_feat_mbw_part, rprops) &&
-> > +         mpam_has_feature(mpam_feat_mbw_part, cfg)) {
-> > +             if (cfg->reset_mbw_pbm)
-> > +                     mpam_reset_msc_bitmap(msc,
-> > MPAMCFG_MBW_PBM,
-> > +                                           rprops->mbw_pbm_bits);
-> > +             else
-> > +                     mpam_write_partsel_reg(msc, MBW_PBM,
-> > cfg->mbw_pbm);
-> > +     }
-> >
-> > -     if (mpam_has_feature(mpam_feat_mbw_min, rprops))
-> > +     if (mpam_has_feature(mpam_feat_mbw_min, rprops) &&
-> > +         mpam_has_feature(mpam_feat_mbw_min, cfg))
-> >               mpam_write_partsel_reg(msc, MBW_MIN, 0);
-> >
-> > -     if (mpam_has_feature(mpam_feat_mbw_max, rprops))
-> > -             mpam_write_partsel_reg(msc, MBW_MAX,
-> > MPAMCFG_MBW_MAX_MAX);
-> > +     if (mpam_has_feature(mpam_feat_mbw_max, rprops) &&
-> > +         mpam_has_feature(mpam_feat_mbw_max, cfg))
-> > +             mpam_write_partsel_reg(msc, MBW_MAX, cfg->mbw_max);
-> >
-> >       mutex_unlock(&msc->part_sel_lock);
-> >  }
-> >
-> > +struct reprogram_ris {
-> > +     struct mpam_msc_ris *ris;
-> > +     struct mpam_config *cfg;
-> > +};
-> > +
-> > +/* Call with MSC lock held */
-> > +static int mpam_reprogram_ris(void *_arg) {
-> > +     u16 partid, partid_max;
-> > +     struct reprogram_ris *arg =3D _arg;
-> > +     struct mpam_msc_ris *ris =3D arg->ris;
-> > +     struct mpam_config *cfg =3D arg->cfg;
-> > +
-> > +     if (ris->in_reset_state)
-> > +             return 0;
-> > +
-> > +     spin_lock(&partid_max_lock);
-> > +     partid_max =3D mpam_partid_max;
-> > +     spin_unlock(&partid_max_lock);
-> > +     for (partid =3D 0; partid <=3D partid_max + 1; partid++)
-> > +             mpam_reprogram_ris_partid(ris, partid, cfg);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void mpam_init_reset_cfg(struct mpam_config *reset_cfg) {
-> > +     *reset_cfg =3D (struct mpam_config) {
-> > +             .cpbm =3D ~0,
-> > +             .mbw_pbm =3D ~0,
-> > +             .mbw_max =3D MPAMCFG_MBW_MAX_MAX,
+>Fixes: a4a65c6fe08b ("selftests/vsock: add initial vmtest.sh for vsock")
+>Reviewed-by: Simon Horman <horms@kernel.org>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+>---
+>Previously was part of the series:
+>https://lore.kernel.org/all/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com/
+>---
+>Changes in v2:
+>- use consistent quoting for vsock string
+>- Link to v1: https://lore.kernel.org/r/20251104-vsock-vmtest-dmesg-fix-v1-1-80c8db3f5dfe@meta.com
+>---
+> tools/testing/selftests/vsock/vmtest.sh | 8 ++++----
+> 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
 >
-> When rdtgroup_schemata_show() is called, the "cpbm" value is output to th=
-e schema file.
-> Since bitmap lengths are chip-dependent, I think we just need to reset th=
-e bitmap length portion.
-> Otherwise, 0xffffffff(u32) will be output from the schemata file.
+>diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+>index edacebfc1632..8ceeb8a7894f 100755
+>--- a/tools/testing/selftests/vsock/vmtest.sh
+>+++ b/tools/testing/selftests/vsock/vmtest.sh
+>@@ -389,9 +389,9 @@ run_test() {
+> 	local rc
+>
+> 	host_oops_cnt_before=$(dmesg | grep -c -i 'Oops')
+>-	host_warn_cnt_before=$(dmesg --level=warn | wc -l)
+>+	host_warn_cnt_before=$(dmesg --level=warn | grep -c -i 'vsock')
+> 	vm_oops_cnt_before=$(vm_ssh -- dmesg | grep -c -i 'Oops')
+>-	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | wc -l)
+>+	vm_warn_cnt_before=$(vm_ssh -- dmesg --level=warn | grep -c -i 'vsock')
+>
+> 	name=$(echo "${1}" | awk '{ print $1 }')
+> 	eval test_"${name}"
+>@@ -403,7 +403,7 @@ run_test() {
+> 		rc=$KSFT_FAIL
+> 	fi
+>
+>-	host_warn_cnt_after=$(dmesg --level=warn | wc -l)
+>+	host_warn_cnt_after=$(dmesg --level=warn | grep -c -i 'vsock')
+> 	if [[ ${host_warn_cnt_after} -gt ${host_warn_cnt_before} ]]; then
+> 		echo "FAIL: kernel warning detected on host" | log_host "${name}"
+> 		rc=$KSFT_FAIL
+>@@ -415,7 +415,7 @@ run_test() {
+> 		rc=$KSFT_FAIL
+> 	fi
+>
+>-	vm_warn_cnt_after=$(vm_ssh -- dmesg --level=warn | wc -l)
+>+	vm_warn_cnt_after=$(vm_ssh -- dmesg --level=warn | grep -c -i 'vsock')
+> 	if [[ ${vm_warn_cnt_after} -gt ${vm_warn_cnt_before} ]]; then
+> 		echo "FAIL: kernel warning detected on vm" | log_host "${name}"
+> 		rc=$KSFT_FAIL
+>
+>---
+>base-commit: 89aec171d9d1ab168e43fcf9754b82e4c0aef9b9
+>change-id: 20251104-vsock-vmtest-dmesg-fix-b2c59e1d9c38
+>
+>Best regards,
+>-- 
+>Bobby Eshleman <bobbyeshleman@meta.com>
+>
 
-When I apply additional patches to add the mpam_resctrl.c stuff I
-notice this too:
-
-# grep L3 schemata
-L3:1=3Dffffffff
-# cat info/L3/shareable_bits
-ffff
-
-I noticed that new groups also get a too-long cbm as long as any other
-groups have a too-long cbm. Maybe this out-of-range value is bleeding
-into new groups in __init_one_rdt_domain() when it calls
-resctrl_arch_get_config() on all other groups.
-
--Peter
 
