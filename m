@@ -1,137 +1,173 @@
-Return-Path: <linux-kernel+bounces-885979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9859C346F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:20:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F57C34706
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3E618C06CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:20:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F36324E8620
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73AB283CBF;
-	Wed,  5 Nov 2025 08:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8150F285074;
+	Wed,  5 Nov 2025 08:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QNtqji7Z"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Obs/NTMD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B912566E2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1551F8723;
+	Wed,  5 Nov 2025 08:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762330801; cv=none; b=l7MGt9F0C3Y7UgugId+sYHPNNzRJQeGhE81b+tsuLaAN9uu/arEXZSX+emcZLI9TCyQj69Y0ZdUTjpBYVnraqyOLCpHVwn/kZWB+HYl4a6Lw1mAynWdjjXyzmjj0DjSUX1/Mja6p1DjQeF+rDQQ3WSVhcTj/SspsS3ung+PqlWg=
+	t=1762330833; cv=none; b=N55aHgL9kbpVVwPMTwzmN+3jnho/SPnh8DxkXM11oykmGCTyTmPiUn+1MC+qzbFcaMhw8DMk5mMKQQY5Cal0+OmoBGKhsODMyQaRg9aNuA01nuUqXJ4DZQrLK2CznqDOex8U0IRWkXetiN/D2nDgefhjy0C0l860G+vrLX/7qXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762330801; c=relaxed/simple;
-	bh=iGlHjbSVKGGym3U23i7SdjhPDqTMOthBoaOervoF05M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAEwPjtsuECRuzEWzE1OWN6y6Spxeqk69p5dZ/FvkIJw4+ki9FnX8TCz28ce3vVGbuz1XjkQilUqRz/rZzy1zQY3GkPPN2F2oMpYPG6rRcOpA4U0PVqi3Y7xZU/qBpb9i7SUucUpC9u2uDjlaN6XVNm8TwWUg113CtyN7l+LS/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QNtqji7Z; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b725ead5800so125508166b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762330797; x=1762935597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQrBXNgrEH7DGm+hsPHKmGk/jGaaI76D+GIvDvjNENU=;
-        b=QNtqji7ZsJkeLhXsxMUghte8cMXJTYocdx8sM7jeqmU3PIDKrSxGpQevN7OC2PyRfP
-         FWrOm4dOC1cbzw9JNDVICzngTKDKIgjbyWBzBEnUscNdxdGWW42Czx6HxS+EDD564HKK
-         eZMz24NFtgeqUTDYYGlt2HcLkNxT/CetGp97pjCejsKsB5VA8G6FW8SU+M1Uj1nR/faG
-         HTWAsXun2zEh6Dc7cawkVCeAQ7o2GKnEMDHLwf7P6pn581v2yecGwukPU+asFxeiiKvW
-         YJ0I7ght3Dz3Pn7nEOSyxDpzZVOADjmVA7gJwB0O+bIwJ9fZeiA+wFXVJqgflhv4cfH9
-         hqbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762330797; x=1762935597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qQrBXNgrEH7DGm+hsPHKmGk/jGaaI76D+GIvDvjNENU=;
-        b=eetFo1CU71ZMqSzVMp8PhHcWpuMJi2hDL7HwGxIsHqFeK2lUMmlF/Ei6HmOKxZgQEo
-         u2kBOErH+usltaVjLx6oSc0Y0EjH1o1gjKvtwM/jM0d3E+fpudXGZtKYx0dAonzj/4Bo
-         fIC+aY8dX9D8z4hOMS0tJZFhcW5oCZFexpT8x1/3v4CkIxd85z3gDuYvGEWxkYxDXwOI
-         FC2H/8PMH4ASf9C/9dpzOlFlDOyKoddSIWI4tOU3q9bs6vIg6SVmVEJ2KLVTzl7x5ofR
-         mOWVnJjAaDQYUgKcyoCs2W+3TX5OOYZK+7/nuu7mMsh11wuws5o4SoZdArxrbt1EAX1G
-         wR4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJF+Mvcwp+6w+OKj6juWJu/AgMRdWqa3glRIUE4GQ2QMSjLIfHJorLV4i9N+020xb1uGUav2J+2Rxpm+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4R8zIn3Llj/h5LuiuIKHIA8RRkH5tBRIpwRtctBW4EIaiMyh/
-	2bmRvOc13Re603zzIuAlDiys1DHzrlBqPQYuXgaW7I5xaeKYvdh+WyXgICM1c7UKuFs=
-X-Gm-Gg: ASbGncsr8CDPUZr1Xz+IXzomM3SBWjZ3mnq6adtS3fKF63NqzMOlU3hKEmjlv+8zd0f
-	B1mXXZDUVBWlNXjj/5/O8vjM62h4xUiiEU5t+MSiBM/WwsWgvVFRN+HN98/Xb7lI+qUQ95s7BwW
-	GmJAr6LpJyM09bpGbxUVnZRrlmARTD/ZXjfAe/4VuGkaWSaegqbXpWf0SuWujiRVLn/tmKE/tTV
-	S/IrN6ZZ+HEb6lAOeyLrxL0mZxaHaiirYrCakYR4KcgIm/iv+TXMmQxq9rMv/FrVnj4VnzBgGyG
-	dihGYYNbl8Ronh6ioESpQ+ENPgm9bHnDiShjTVIBM4kyEDTg7rhB62iAiX+igJtug8rJ2Olzr95
-	XXIR9kFca0HtND/SVh3vosJ96aGQcUy3FMbhlxk5gP/vRdPjMZwDwl8tdnvuZES3zOR4/qB/ZEV
-	DGuclnTQuC3tVfkg==
-X-Google-Smtp-Source: AGHT+IEXHVZLvJt37T+Or0zq36XdlBJ5vgi75Kr1QEZUdY14YccQtqD44O4+t6LmVKBw9ksebwzytg==
-X-Received: by 2002:a17:907:6ea6:b0:b6d:8e29:8f67 with SMTP id a640c23a62f3a-b72653eac19mr201927966b.26.1762330797054;
-        Wed, 05 Nov 2025 00:19:57 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b725d86b9b1sm269126066b.25.2025.11.05.00.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 00:19:56 -0800 (PST)
-Date: Wed, 5 Nov 2025 09:19:55 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Leon Huang Fu <leon.huangfu@shopee.com>
-Cc: linux-mm@kvack.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	akpm@linux-foundation.org, joel.granados@kernel.org, jack@suse.cz,
-	laoar.shao@gmail.com, mclapinski@google.com, kyle.meyer@hpe.com,
-	corbet@lwn.net, lance.yang@linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-Message-ID: <aQsIq_zQXMfNNo6G@tiehlicka>
-References: <20251105074917.94531-1-leon.huangfu@shopee.com>
+	s=arc-20240116; t=1762330833; c=relaxed/simple;
+	bh=0M+R2+DmnukaFATQy9kB0vDjA0hW6zSfLQJSFybEGrg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tN1l32Ylm1/8gHV+CT4QGw7/1uUqa8saulpDRb9FsdUXoVXIrgL9uZSa8IR5wF/OkOGblKqRTQ2bdab4ILKCR5/3Z8jl05hLf6LDXZtQNb6idXpBVVhfyDZgpBJGs3U8sdG1r7+9sXTrOhkJ9OBqb2HAftfhFbx2Vj08Fw9V42Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Obs/NTMD; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762330832; x=1793866832;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=0M+R2+DmnukaFATQy9kB0vDjA0hW6zSfLQJSFybEGrg=;
+  b=Obs/NTMD+LhYAHm9BnT0igdMMbgCRgK3UPmeUjg6thxTLcWcntlVq/Xl
+   Zv0kuOukkXg8kXId06E4BDElSZhYZvYREHF86qBbJtz0h48jt1mKdz6tq
+   LDJDIlIz4pa1xcDFOnHiopQfsG/ft5WVWIlNJQcmr1ICBwkl/4kvye+Ef
+   tab9Qsfq/ANlEObW3R5QNB0IprKHv3L8xUQwiSV7UiH37Ut3/N5sFqVUx
+   BclP4ohhrkudmIfEOMY+0Sl/Tk9N5/6NuD6XYO6R5pp54isJ3dciNOiLu
+   BRJsPTrCc8peWeOUIs06CGr/INHPaM0UG+g96fQb816slwz0z3I2PHHAP
+   A==;
+X-CSE-ConnectionGUID: /4PvmQGyR9Wcjv203zZrPw==
+X-CSE-MsgGUID: bISFOcOUScq0G50W2oteUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="75787420"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="75787420"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:20:31 -0800
+X-CSE-ConnectionGUID: 4jG+jyGmS8SbnIz1fUaBOQ==
+X-CSE-MsgGUID: 7TBVQ5uSRPqQAMaFhontoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187081224"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:20:27 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 5 Nov 2025 10:20:24 +0200 (EET)
+To: Rong Zhang <i@rong.moe>
+cc: Ike Panhc <ikepanhc@gmail.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+    Hans de Goede <hansg@kernel.org>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>, 
+    Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [PATCH] platform/x86: ideapad-laptop: Use str_on_off() helper
+In-Reply-To: <20251031184435.44819-1-i@rong.moe>
+Message-ID: <b533597c-a2ba-4446-70fa-5a88926d5fd3@linux.intel.com>
+References: <20251031184435.44819-1-i@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105074917.94531-1-leon.huangfu@shopee.com>
+Content-Type: multipart/mixed; boundary="8323328-322173085-1762330824=:33477"
 
-On Wed 05-11-25 15:49:16, Leon Huang Fu wrote:
-> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> index 6eed14bff742..8cab6b52424b 100644
-> --- a/mm/memcontrol-v1.c
-> +++ b/mm/memcontrol-v1.c
-> @@ -2040,6 +2040,7 @@ struct cftype mem_cgroup_legacy_files[] = {
->  	{
->  		.name = "stat",
->  		.seq_show = memory_stat_show,
-> +		.write_u64 = memory_stat_write,
->  	},
->  	{
->  		.name = "force_empty",
-> @@ -2078,6 +2079,7 @@ struct cftype mem_cgroup_legacy_files[] = {
->  	{
->  		.name = "numa_stat",
->  		.seq_show = memcg_numa_stat_show,
-> +		.write_u64 = memory_stat_write,
->  	},
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Any reason you are not using .write like others? Also is there any
-reason why a specific value is required. /proc/sys/vm/stat_refresh which does
-something similar ignores the value. Also memcg.peak write handler which
-resets the peak value ignores it. It is true that a specific value
-allows for future extensions but I guess it would be better to be
-consistent with others here.
+--8323328-322173085-1762330824=:33477
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-One last thing to consider is whether this should follow
-/proc/sys/vm/stat_refresh path and have a single file to flush them all
-or have a per file flushing. I do not have a strong preference but
-considering both are doing the same thing it makes sense to go
-stat_refresh path.
+On Sat, 1 Nov 2025, Rong Zhang wrote:
 
-In any case, thanks for considering the explicit flushing path which is
-IMHO much better than flushing tunning which would become really hard
-for admins to wrap their heads around. Especially when dealing with
-large fleets of machines to maintain.
--- 
-Michal Hocko
-SUSE Labs
+> Use the str_on_off() helper instead of open-coding the same operation.
+> This improves code readability.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> Closes: https://lore.kernel.org/r/202510311551.xjWbHTrm-lkp@intel.com/
+> Suggested-by: "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linux.intel.com>
+> Link: https://lore.kernel.org/r/2bae2ea7-2ef9-0cfa-0c2c-39a7043b2aa5@linu=
+x.intel.com/
+> Signed-off-by: Rong Zhang <i@rong.moe>
+> ---
+> This patch is based on 'review-ilpo-next' of pdx86/platform-drivers-x86,
+> hence depends on my previous patch ("platform/x86: ideapad-laptop:
+> Protect GBMD/SBMC calls with mutex").
+> ---
+>  drivers/platform/x86/lenovo/ideapad-laptop.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platf=
+orm/x86/lenovo/ideapad-laptop.c
+> index d2bfaa532020..931a72a2a487 100644
+> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> @@ -475,25 +475,25 @@ static int debugfs_status_show(struct seq_file *s, =
+void *data)
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL, &value))
+>  =09=09=09seq_printf(s, "Backlight now:  %lu\n", value);
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_POWER, &value))
+> -=09=09=09seq_printf(s, "BL power value: %s (%lu)\n", value ? "on" : "off=
+", value);
+> +=09=09=09seq_printf(s, "BL power value: %s (%lu)\n", str_on_off(value), =
+value);
+
+This change should also add the include for str_on_off().
+
+--
+ i.
+
+> =20
+>  =09=09seq_puts(s, "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D\n");
+> =20
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_RF, &value))
+> -=09=09=09seq_printf(s, "Radio status: %s (%lu)\n", value ? "on" : "off",=
+ value);
+> +=09=09=09seq_printf(s, "Radio status: %s (%lu)\n", str_on_off(value), va=
+lue);
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_WIFI, &value))
+> -=09=09=09seq_printf(s, "Wifi status:  %s (%lu)\n", value ? "on" : "off",=
+ value);
+> +=09=09=09seq_printf(s, "Wifi status:  %s (%lu)\n", str_on_off(value), va=
+lue);
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_BT, &value))
+> -=09=09=09seq_printf(s, "BT status:    %s (%lu)\n", value ? "on" : "off",=
+ value);
+> +=09=09=09seq_printf(s, "BT status:    %s (%lu)\n", str_on_off(value), va=
+lue);
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_3G, &value))
+> -=09=09=09seq_printf(s, "3G status:    %s (%lu)\n", value ? "on" : "off",=
+ value);
+> +=09=09=09seq_printf(s, "3G status:    %s (%lu)\n", str_on_off(value), va=
+lue);
+> =20
+>  =09=09seq_puts(s, "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D\n");
+> =20
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value))
+> -=09=09=09seq_printf(s, "Touchpad status: %s (%lu)\n", value ? "on" : "of=
+f", value);
+> +=09=09=09seq_printf(s, "Touchpad status: %s (%lu)\n", str_on_off(value),=
+ value);
+>  =09=09if (!read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &value))
+> -=09=09=09seq_printf(s, "Camera status:   %s (%lu)\n", value ? "on" : "of=
+f", value);
+> +=09=09=09seq_printf(s, "Camera status:   %s (%lu)\n", str_on_off(value),=
+ value);
+>  =09}
+> =20
+>  =09seq_puts(s, "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D\n");
+>=20
+> base-commit: ba06b928f05bfd2785260819f6b34b658a04a4e6
+>=20
+--8323328-322173085-1762330824=:33477--
 
