@@ -1,112 +1,256 @@
-Return-Path: <linux-kernel+bounces-886732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662DEC36613
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:39:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DAFC3661C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D2A622DFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E44F3501E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FEB32ED57;
-	Wed,  5 Nov 2025 15:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204332E739;
+	Wed,  5 Nov 2025 15:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jIKnVS9e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="QwTeXWUX"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazolkn19010005.outbound.protection.outlook.com [52.103.13.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D9332ED43;
-	Wed,  5 Nov 2025 15:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356063; cv=none; b=U8eD1l7nLdRWJILoSzaB8MBzfSVSBa1FEAI4Nn8KR+hvEVi4DIXPOOSEtIkj173P9IurtVR94ZQqKSqOsPj/Isw3BX5At6yVbvjfXRaoRDD0+YC/2e75Pclx4ztCXP3R+2aQpU+5ZsiOLVgPXHyOIV/mgy7gVr7ZVymMEWfaQWs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356063; c=relaxed/simple;
-	bh=s9x9qnNTXmFHL0/OJXGem8OC5QAEeRr8cOIRJg2Ibbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ivzHWsE4FFIEQUYLkN/1ewfnvtp9/tshz0uoG3BI4MTPCMCvbJZy72kIKujU9VQmCl+Dr0YFE4kYwdbDKxLgsJzI2TTX4iOgiqQdwuFcnGh44KbjVSZ/LX3sG9bPNWXUzTGjUkQ1m2thX9H0s5No4133dKvtkIyqW3oOkbINx5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jIKnVS9e; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762356062; x=1793892062;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s9x9qnNTXmFHL0/OJXGem8OC5QAEeRr8cOIRJg2Ibbg=;
-  b=jIKnVS9eMzmbv0ozAB3P5bW1tBRzDZt3JlZaeM33pMeKjPTb+If3Mn4B
-   5jeP0AlH6CjIJGEsHCMApP3x1Gdv1ICUmwOBHaFoGIFWtQwzBRdcYuiPR
-   lW5njYWHJ50QAaoXMjCi3KL04WXMiKSp1SbtRhCOzvMXLrsmyi2OqZsrQ
-   W+BhqFcsTb3fJOjE60V5KPJ4HaWik7xDro+5OjDaAcAgaQFvIYwJqf7L2
-   AXRPOTAlgPV8d+stdk45fv32bdCa36VaAVTehFWpkv0ABMGXBgSsqsVfa
-   jz3+MWhoVZq0MLAq9G8Jntt3TmsGacieKJWfnY7HA/Hp+qpmsOvB7K+g4
-   w==;
-X-CSE-ConnectionGUID: UnzS3xdKSTmdfFq/V5xMLg==
-X-CSE-MsgGUID: hXRHs9dfRPic2oe8fMI6sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68311400"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="68311400"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:21:00 -0800
-X-CSE-ConnectionGUID: xH8ZQIgwQfOcO8WI3NBpxw==
-X-CSE-MsgGUID: joWrVgYySOGNIN+j6koxhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="192550628"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 07:20:57 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vGfJd-00000005p7L-1IMG;
-	Wed, 05 Nov 2025 17:20:53 +0200
-Date: Wed, 5 Nov 2025 17:20:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] iio: mpl3115: use get_unaligned_be24 to retrieve
- pressure data
-Message-ID: <aQtrVNktJcNrFOdx@smile.fi.intel.com>
-References: <20251105095615.4310-1-apokusinski01@gmail.com>
- <20251105095615.4310-2-apokusinski01@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2E22D9ED;
+	Wed,  5 Nov 2025 15:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762356184; cv=fail; b=TD/847q6ctXZnTBQB6ZbDHKyS2Jmsv7RT33RCjRlNtpBB6RmJZz+ClCCdQTnXkWkeeSEwK+pErV+tdqmOZF0ZZecHWFmlZlIsuuAO7WC+dgYfNWyWY0ZyGf5/u4ehdMybFxE9gApvLUk+Ck7WMOjTdOkeSQd5m3lX00zntiKcwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762356184; c=relaxed/simple;
+	bh=7vi2J64LH2wLvKs6Rn33WnPOoJe7QwMfRqY88orm1pQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nzOtfrSxQRqHXzJIAnArJpmPiNft/pVmhyoZYreHuBtIIXn+a9vF+aQuEbOYZkzKdf1IyZ4Dd4S5FMu7q7tSd9Q5gLe6AaZOSOJsGUcmh0FWVy+I7HziNl/6c/qh/hZ2im5o9l19rHMvIaO8jWHNluYb0mfiXZ4fFmRLR8+NEkQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=QwTeXWUX; arc=fail smtp.client-ip=52.103.13.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EPMRyAjN+W8qFnLxjJMIIPIfpsC2gRNU004SPlW6OQwTneYFfTeI+3qE71Og0ZRFyIPx+b5XIUXeDEaRyYtgSuIhEkjstSaZmjEyUlrbulYelctwnDfnC8SnN7zeJOnSh0ef38pLWLshJeURPlYpr3lCl/ptCV3KFc6iz1mVBMp51RjFFPmp6KEjA3dKQkWv2i+4nviUp7/zzShPB4pAllHfYs6fvaNZWsTja6I9n4OKLy/VI+aFY06fjnlXq91nITTZ1KS/TIIX3r4AbtscXp1nU8CLoayi/EufvFq1JcAzgzYed4DRto8C9IpApZqsaSRAddNMeK//V8yJ5zHTWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OZHm05Q34DhxEHNbbuGXfaw7J/tQ6yPdt35vO0/AiPo=;
+ b=JaBX/RGku3/P17vmyi3tDu/GAz2cfbP1xfG07yRNT8fIUzKg+ZqqdbsPQNKz4ZOq925VDgujYIbQRxlJY7YAeFNATqjdrXCwYzG+zsY9X+DRriakroGR7dNocNp0/oBAep2UHc4rcrSofBMtxeDEhk9HSvX/h3lAO/xeKHq3vGtSSCNfPHOgbn8C3RBbWu2KKUW1L5pszBH5WLcfsxMJ3/av+wlEJrzqNfD4wv7WW4GONAencAedHMjPKmnQ608GPtTe4m/t2v9+YgEANUIZPBngeQk2cnlkAU1euOT05pmdr5rQISKrZihW+Mbyy1jmQX1EHNmrZuGiFLuzTqWstA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OZHm05Q34DhxEHNbbuGXfaw7J/tQ6yPdt35vO0/AiPo=;
+ b=QwTeXWUXQPpEwmUnGQUqHlk7zIQggitcPxYiM2kSPpmzc/qrPoJsUEf0PBsww2Ha0J7oN4qkr0RwrDwPfoeCKNwvpjXIu+/Z3uNbffYyF0ZE1oG+/8xkuMuQrweKwETYRZoJchRraMZOqmjkC+oYwpXxZkFBIdK+b0YkkynZ1XRjgL9tn4zm+uJCsdxDqQEoTZca42F4Q7qLdGyPff5oWUShovVDteW3dXnHXZ30FlwQ5msfRUOjCixyJR6epGREsaGAAk4po8FBDmWID1/KDEzPOezq9GDdPBeW35Ia2ectQ/2WUK8xFb2dCBCI1U1/G3g0FYwXy/Dt4v60mD4Vug==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH0PR02MB7397.namprd02.prod.outlook.com (2603:10b6:510:1d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Wed, 5 Nov
+ 2025 15:22:58 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 15:22:58 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Miroslav
+ Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+	"live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, Song Liu
+	<song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>,
+	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin
+	<chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch
+	<dylanbhatch@google.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: RE: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
+ per-function checksums
+Thread-Topic: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
+ per-function checksums
+Thread-Index: AQHcJ+6qpEmfJskj+02bf6oIo51EqLTUFK6ggAK7zwCAAjZrQA==
+Date: Wed, 5 Nov 2025 15:22:58 +0000
+Message-ID:
+ <SN6PR02MB41574AD398AD3DE26DB3D23BD4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <cover.1758067942.git.jpoimboe@kernel.org>
+ <1bc263bd69b94314f7377614a76d271e620a4a94.1758067943.git.jpoimboe@kernel.org>
+ <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
+In-Reply-To: <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7397:EE_
+x-ms-office365-filtering-correlation-id: 6af2aea8-cd43-4cc3-7c87-08de1c7f33b9
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|13091999003|15080799012|8062599012|31061999003|19110799012|8060799015|41001999006|10092599007|12121999013|3412199025|440099028|39105399003|41105399003|102099032|40105399003|56899033;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hu7O4IxBza4Pg4DBMBFcjeT7gbw4m9GooVc1rO4/bO4Omqlv/x+n8d1p6lKz?=
+ =?us-ascii?Q?6bXgv2EMWnkSzlU5IL5PMSZjSnCXApbb1qyUEl0wjrxztosSbrMc0vyrYy3G?=
+ =?us-ascii?Q?LE9ptfu8yqEu1k1wXDTz9lGB5m3J/OTlh0c5UnpnVDI0f+4lbCh6dyn2g83/?=
+ =?us-ascii?Q?uOhauJlWZa0TcSFnPqoq7IfyEUQqgzacj4TT9LpNERuY/6ndLDI3tuQj9puq?=
+ =?us-ascii?Q?vRr2in7uKZ5o3LuygX7QSwe/4BiWiYmPU8GUu1enr74QoElPFmY7BNcNhwfE?=
+ =?us-ascii?Q?RxF7sfY9AxOSvBoYR0vEhgsuczIT0soC8wljHpaZ7izcTZeYXOrl92XvITwB?=
+ =?us-ascii?Q?0s6yy1G1STIumdJ8oa4ex+LiBI7DtLgojNWY0ERAFG8C9h/pI2aS7Rj1L8FH?=
+ =?us-ascii?Q?DIQOUlrM/0g1Pzscuq+zxwTb2g/CKyQOgqoK/O0hkRCOOLhvXz9E4WcAXJ9M?=
+ =?us-ascii?Q?6pcw0eFzbLDoYTU35X+dj8+QNWurIP9fvAGC5Av+95B3znxYevTajvGWxr4n?=
+ =?us-ascii?Q?3cDXDLfXAVos70LjXFn4CvjWMldyropshuklfJnXenrGoAGCaIPJqOFdwJpN?=
+ =?us-ascii?Q?rZKYn7aE5caFQatVrPACZA0P3na6ZxO539gILVYAlD/PP3RBTkjVUS367tuj?=
+ =?us-ascii?Q?ScgUuVFlKXJ5qY+Jk6eUTGHaGSFK0vqKSvWBxVWLJF3YFqRh9mg7l6YZvnFe?=
+ =?us-ascii?Q?pnq2Rrd0xtAE8gyxWgDVOYFAwK8dKAEf0qY+S+EPkHxh6j02Kc7zM685FRp6?=
+ =?us-ascii?Q?rXhg9FAXn4PV8JDlgE2WRSh5BeJApRHfl3cDgTj1+wvDct4t6ANJTsWVUdPy?=
+ =?us-ascii?Q?LxV1874mt6zlKh5WgNUkGWSOCAUCSoecp1gY19CEooYKgnRVwSPgk59udKuY?=
+ =?us-ascii?Q?mtg8SeK09cMOhrDWhKVo+9+vRmzBoi1fhqDEypqH6+T7DBKsI+22ssx6MPS5?=
+ =?us-ascii?Q?ojz76Q3tGOSidil5t9jZKZE56x1SfXfYL6E8C/t1mhe109IyOVwqK5xNVxsS?=
+ =?us-ascii?Q?aKl2jZid6U+Wa63ONHbXFQfnYSEStNJLsak6AirHc3UfOJ2pDaMB9TomDTdq?=
+ =?us-ascii?Q?RCMG5nV8fjBZdJGIJMo+dj4JP1LYSwo+UFED/os9wWKndE5JC6nNWeC6b2fB?=
+ =?us-ascii?Q?uvcJliTOZ96q8UM1bqSMeZbSR9EcFDR3pFFp4n8/gaY7mUWk/3+sEGIP7p4T?=
+ =?us-ascii?Q?3sq7+DWT7ADqkfhIO1E3UjCntyECoOrufZ+0EzsAMdJX3hNKVCY9hkGcmXks?=
+ =?us-ascii?Q?pDdkJcy7KYGcXjomO6gVM0Q9gG25gOfoMsCMOdWXbI2JQnMRENO3gUV88ibx?=
+ =?us-ascii?Q?SXgWPXZcBCTlIuhaGDQMbU0PC715GnK+Jo2AgMLvqKifXQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?xoa63Z8WfRSYwH8QuvETMZv3nPOju3Tezr/fZfPld5z5IvX+cokkl+sPhFEH?=
+ =?us-ascii?Q?ABtQtSPmoLp1VN/02zeS21y0vy36JNAR/xD4/zCy4gLJxWJoGxwswmJbMeWo?=
+ =?us-ascii?Q?l17Dl4FRufuNXYHE4H4m75gQuWjt05NkwHQ5rx4hBO7iIhm1C4GJ+tvIbJPE?=
+ =?us-ascii?Q?Y3d0sYF1f7nRYQXJFWQHGJanq8oJGPpLfgB/TVW8hXC8iMWDtlyuZJZXwjun?=
+ =?us-ascii?Q?FS0oQwj0S7PvhJTYJQp9KiKxMDH2i/ZTiA80/p/und67AnoR3o/Ew/ly4SBG?=
+ =?us-ascii?Q?mSf3YFqMq3gnBOHOgQ4jUdXZFiQxj/FrepO7XBjVp3NmBtANbiigyiskTApr?=
+ =?us-ascii?Q?Tp3zJWZh2NPYU+w0rFXzDMpnfJXP5UxHkhE89NCDTwHqQSMbxRa0491u3/Vl?=
+ =?us-ascii?Q?9DTkmDbrfHUXhzGi9dCyQ/oc3dPbxrZr6gSvd0csudl0LlyJ5fl0Szi+w8lx?=
+ =?us-ascii?Q?FTksHUiWxXc8s3bHFGTRVXUxVwb8peCmDeGrQYWeiWfX9khN1X65tHngirYG?=
+ =?us-ascii?Q?amXnhtkVWi8hbW5WGYdnvUnrBf4gnI/QTewpWUck1xCcugpztfCsprEADL4O?=
+ =?us-ascii?Q?ZH8wqDs0H4c49eZRwTqwN72P4z3wysTELwH24KAr2vWJiSGCAwfOMS38FCPY?=
+ =?us-ascii?Q?c5BgxbTn6StwX+W0MfCPFsR7qYsifvToKp+7Y5Lf0g0tHJikKQIdPDy1QpnG?=
+ =?us-ascii?Q?0zZRR0UieziBrsXrPDTZhkErGzYstMsutkn2JCKM+NuXmt4hY2ucftUQRTkI?=
+ =?us-ascii?Q?JGFxqXu1O2v4kVvERlKbuPtOmdg6bytbKfc25NoKP/XThffkMXQ5RYvWGVAS?=
+ =?us-ascii?Q?yv3zg6PqHSfCnozmCo3pxoB7kYDfvZYgoycT2PBaCjt5svq/2Ml7XTEG8Hod?=
+ =?us-ascii?Q?W+Qw0+w244/tyh9KnIaMAlbMWiWFspyNmS+fWg4slef/ZdZQVqkzHPRofVk5?=
+ =?us-ascii?Q?LnhOne0YpV1GBnCApk3CUfe2fKoADNuMrRSYOGn02PKiWgMwU3pL6gtayECf?=
+ =?us-ascii?Q?bsZ9o5s8QHJ4fMlzGRojHXyiqVU+wTtVh6m4KDDezqrS++jk+kKr51YK1vOI?=
+ =?us-ascii?Q?kPc4djycE1RrlvMg/YrcVB2Hs09nhHlul8v78jogB1Ez1lisVj6n4rlKQY8t?=
+ =?us-ascii?Q?cwlMYfNHNdhAXHlFo52rEnjKK8kVhnBalBflizb7TDUUNRQApv4X2iykb/Cv?=
+ =?us-ascii?Q?gYqbcpFJfWc8OgUZES1cP6ab21kND6ruXrAPYZMvOIYLBmVuow0ShwROEJc?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105095615.4310-2-apokusinski01@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6af2aea8-cd43-4cc3-7c87-08de1c7f33b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2025 15:22:58.6795
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7397
 
-On Wed, Nov 05, 2025 at 10:56:13AM +0100, Antoni Pokusinski wrote:
-> The pressure measurement result is arranged as 20-bit unsigned value
-> residing in three 8-bit registers. Hence, it can be retrieved using
-> get_unaligned_be24 and by applying 4-bit shift.
+From: Josh Poimboeuf <jpoimboe@kernel.org> Sent: Monday, October 27, 2025 3=
+:22 PM
+>=20
 
-get_unaligned_be24()
+Sorry for the delay in my follow-up.  I've been travelling the past 10 days=
+.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-independently on the below.
+> On Mon, Oct 27, 2025 at 01:19:10AM +0000, Michael Kelley wrote:
+> > It turns out that Ubuntu 20.04 installed the 0.7.3-1 version of libxxha=
+sh. But from a
+> > quick look at the README on the xxhash github site, XXH3 is first suppo=
+rted by the
+> > 0.8.0 version, so the compile error probably makes sense. I found a PPA=
+ that offers
+> > the 0.8.3 version of xxhash for Ubuntu 20.04, and that solved the probl=
+em.
+> >
+> > So the Makefile steps above that figure out if xxhash is present probab=
+ly aren't
+> > sufficient, as the version of xxhash matters. And the "--checksum not s=
+upported"
+> > error message should be more specific about the required version.
+> >
+> > I reproduced the behavior on two different Ubuntu 20.04 systems, but
+> > someone who knows this xxhash stuff better than I do should confirm
+> > my conclusions. Maybe the way to fix the check for the presence of xxha=
+sh is
+> > to augment the inline test program to include a reference to XXH3_state=
+, but
+> > I haven't tried to put together a patch to do that, pending any further=
+ discussion
+> > or ideas.
+>=20
+> Thanks for reporting that.  I suppose something like the below would work=
+?
+>=20
+> Though, maybe the missing xxhash shouldn't fail the build at all.  It's
+> really only needed for people who are actually trying to run klp-build.
+> I may look at improving that.
 
-...
+Yes, that would probably be better.
 
-> +		u8 tmp[3];
+>=20
+> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> index 48928c9bebef1..8b95166b31602 100644
+> --- a/tools/objtool/Makefile
+> +++ b/tools/objtool/Makefile
+> @@ -12,7 +12,7 @@ ifeq ($(SRCARCH),loongarch)
+>  endif
+>=20
+>  ifeq ($(ARCH_HAS_KLP),y)
+> -	HAVE_XXHASH =3D $(shell echo "int main() {}" | \
+> +	HAVE_XXHASH =3D $(shell echo -e "#include <xxhash.h>\nXXH3_state_t *sta=
+te;int main() {}" | \
+>  		      $(HOSTCC) -xc - -o /dev/null -lxxhash 2> /dev/null && echo y || =
+echo n)
+>  	ifeq ($(HAVE_XXHASH),y)
+>  		BUILD_KLP	 :=3D y
 
-While at it, you also may rename it to something better
+Indeed this is what I had in mind for the enhanced check. But the above
+gets a syntax error:
 
-${foo}_be24;
+Makefile:15: *** unterminated call to function 'shell': missing ')'.  Stop.
+make[4]: *** [Makefile:73: objtool] Error 2
 
-where ${foo} should be replaced to the meaningful name.
+As a debugging experiment, adding only the -e option to the existing code
+like this shouldn't affect anything,=20
 
--- 
-With Best Regards,
-Andy Shevchenko
+	HAVE_XXHASH =3D $(shell echo -e "int main() {}" | \
 
+but it causes HAVE_XXHASH to always be 'n' even if the xxhash library
+is present. So the -e option is somehow fouling things up.
 
+Running the equivalent interactively at a 'bash' prompt works as expected.
+And your proposed patch works correctly in an interactive bash. So
+something weird is happening in the context of make's shell function,
+and I haven't been able to figure out what it is.
+
+Do you get the same failures? Or is this some kind of problem with
+my environment?  I've got GNU make version 4.2.1.
+
+Michael
+
+> diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.=
+c
+> index 1e1ea8396eb3a..aab7fa9c7e00a 100644
+> --- a/tools/objtool/builtin-check.c
+> +++ b/tools/objtool/builtin-check.c
+> @@ -164,7 +164,7 @@ static bool opts_valid(void)
+>=20
+>  #ifndef BUILD_KLP
+>  	if (opts.checksum) {
+> -		ERROR("--checksum not supported; install xxhash-devel/libxxhash-dev an=
+d recompile");
+> +		ERROR("--checksum not supported; install xxhash-devel/libxxhash-dev (v=
+ersion >=3D 0.8) and recompile");
+>  		return false;
+>  	}
+>  #endif
 
