@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-887194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2D0C3782B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:38:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38E0C37837
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D05BE344307
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533F718C80F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CEB334C0C;
-	Wed,  5 Nov 2025 19:38:09 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ABF341660;
+	Wed,  5 Nov 2025 19:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCo8aa7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFFE25EF87
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB6230F81F;
+	Wed,  5 Nov 2025 19:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762371489; cv=none; b=LBsUNeCIqVFD3dESMxbhztylto5CowEC8urwv+nUyN9xylUx44DK749uUp9yA99m0fauKbhwSgDVnvYq/gbabpFYoFNNqQSVkTY6QHG530rJOk28ggwssoORw/ipziZdkD6dBHzcx4wKuqK60ruxlu+qPuJWn0AGl85P4s2/SDk=
+	t=1762371580; cv=none; b=f9kY/wG4g7dFUnunIP/tWtSM/qk+JooLmKubyXVzJv22ENSHY4sRSSxpXbQPgyvQfTrq6H3RB048lRP7Aq+oZoEqmZ5JfWEhVBXGwhW2QE4Yu8WSH2riH14KBgm+nr7hUGY6t+inZrh/jsO4n5DDcSwi/qPDlkLa45N152avtJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762371489; c=relaxed/simple;
-	bh=1PDg1CmlO+cVhtIKINwtYqMmJ/UcTCIKmaELE7ch+Ds=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=c6CpH9S/3WkesiGW9ydX0/5lve6A7l7LTL1HSvRzzYtPgx6gOJPSinV2nzz5+rIuLqF9bEl0Hbewrjh7H5wp5dBTHttsEpIApnC5W+HdpKtnpl6HYa9aQSuykv/YhYEoRuJKzxzYUu/YCPBOBXm+IjFbMnHxnkRoZbrGtkVG7tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43328dcdac1so3380825ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:38:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762371486; x=1762976286;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qEUWlEwRjtU8+wKvFtOCXhD2/qfkw3QweZwrBKzGL7w=;
-        b=krfiMG4u2pAuznPT1YMUVY9UcsfRG0klmKee3x4wypcX8mFmPkAR28EieJ7YhsIHyz
-         tuNYHCAEFzN/LF+TsbRDmnmfYy29Pgi0TqVNzdC7kb21P6jzRmDwasKe8hc6BCaW1JJz
-         AAJpR1lQ/vARFwM69N5bmoAQkLRBEQ4RdHhd3U6tL1bvpwzLp1ZETcstABCIXuP2yjaD
-         QIyohvgsWbvaut0yRNw+mvrW/RUlOh0Oip8Te8fPCm2qVQSwg0d50pXXs383mrIb5YNe
-         0cVJIC+oxgDuCCL3b8ZzyxwFEuAGLg7If8P3JJb0Yo4uOxfMY1szhpwkzCuh1Umk56vp
-         kvlg==
-X-Gm-Message-State: AOJu0YxVzYCFBtm0Ihub9rXH0Pxnm+VLsI8/U6NPJikQoHwNw1znDOpK
-	Xbd+C13unJUJj57aTURw2Kd9kRQIjFCFICwmXGfAVkZ2lz7PUJMpttYHrym4OUcloPByx7OIsBJ
-	6BjTPPT9kybrp4TtDqgnPShnltFG5AJOF951pSczzs6ov7zk0XjAnC06b/cc=
-X-Google-Smtp-Source: AGHT+IGJXQCBdk2d794CVebmpenWZ9Hh1DaxkPUu8H494+GPrzH8zeWc+ECx92J/y/4NG9BNUlQDl8g7K0+nbyvCRVyBamBJk/2/
+	s=arc-20240116; t=1762371580; c=relaxed/simple;
+	bh=msHJOFVV1OB3Fpzsq8IVbuj9UIdZOpLQ1nNFvVBvM9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aebIiUNqRPOy5gO5W6oS2XNf8X3Ef65H+jYBFnbFWgcIFJZZSYlCl9c35y/ar9n/wPcfwsBqE5DY1STTE4iPpM95A+Prx1YooQJKhT6NYcagBVM/UzRya6B7ziD/TEJ7Fcz/Q/XpTcTnZmJXb7/hP9gsRwZJEkkTnlOUUNiTnBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCo8aa7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F408C4CEF5;
+	Wed,  5 Nov 2025 19:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762371580;
+	bh=msHJOFVV1OB3Fpzsq8IVbuj9UIdZOpLQ1nNFvVBvM9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DCo8aa7tr6qCXCAwbmbfBQHe6+J1XQ92v/dEdS0D1RmsTXvTBe2y4QWq3i4ntmkp4
+	 hCwptFye8pcPGdiXeKcVMxkeZBrhHluCYl/vU6sn2vu9+WiYI0AQa71hlYpPJp+uwk
+	 nLmGphbfV4NSrG1Ku28gkrTDNfaJG1ZzoKebd314vXufpylTRn3P6E0nSQVUMFx+/G
+	 nEygicNERiduVcddaetu2bZdLTIFFi4RDC/xSKeOjPk8imNyFUelcn9MA6scQFhpbq
+	 naUiHjcZXZDebrmf1ZMmCKbSsI1gDu42pHY/3/s/yeqOxXjPKqA78jz/c32pbgcTEw
+	 rVKRvBK26YgJQ==
+Date: Wed, 5 Nov 2025 12:39:31 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-efi@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] kbuild: Add '-fms-extensions' to areas with dedicated
+ CFLAGS
+Message-ID: <20251105193931.GA2480016@ax162>
+References: <20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org>
+ <20251105-amnesie-eisig-277559b69bae@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:10:b0:431:d951:ab9b with SMTP id
- e9e14a558f8ab-4334061d166mr66057575ab.0.1762371486536; Wed, 05 Nov 2025
- 11:38:06 -0800 (PST)
-Date: Wed, 05 Nov 2025 11:38:06 -0800
-In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690ba79e.050a0220.3d0d33.008a.GAE@google.com>
-Subject: Forwarded: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
-From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-amnesie-eisig-277559b69bae@brauner>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Nov 05, 2025 at 01:56:02PM +0100, Christian Brauner wrote:
+> On Sat, Nov 01, 2025 at 12:35:47PM -0400, Nathan Chancellor wrote:
+> > This is a follow up to commit c4781dc3d1cf ("Kbuild: enable
+> > -fms-extensions") but in a separate change due to being substantially
+> > different from the initial submission.
+> > 
+> > There are many places within the kernel that use their own CFLAGS
+> > instead of the main KBUILD_CFLAGS, meaning code written with the main
+> > kernel's use of '-fms-extensions' in mind that may be tangentially
+> > included in these areas will result in "error: declaration does not
+> > declare anything" messages from the compiler.
+> > 
+> > Add '-fms-extensions' to all these areas to ensure consistency, along
+> > with -Wno-microsoft-anon-tag to silence clang's warning about use of the
+> > extension that the kernel cares about using. parisc does not build with
+> > clang so it does not need this warning flag. LoongArch does not need it
+> > either because -W flags from KBUILD_FLAGS are pulled into cflags-vdso.
+> > 
+> > Reported-by: Christian Brauner <brauner@kernel.org>
+> > Closes: https://lore.kernel.org/20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner/
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> > I am taking the original '-fms-extensions' change [1] via a shared
+> > branch in kbuild [2] so I would appreciate acks. I plan to finalize that
+> > branch so that other maintainers can safely pull it on Thursday.
+> > 
+> > [1]: https://git.kernel.org/kbuild/c/c4781dc3d1cf0e017e1f290607ddc56cfe187afc
+> > [2]: https://git.kernel.org/kbuild/l/kbuild-ms-extensions
+> > ---
+> 
+> I'll give my ack:
+> 
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> 
+> but don't invalidate the branch just to add my RvB if you've already had
+> it stable.
 
-***
+I was planning to make it stable tomorrow to give folks time to chime in
+at the beginning of the week. I have your tag and Ard's to add. After
+that, we will just have to rely on the link to this submission for
+follow ups.
 
-Subject: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
-Author: mic@digikod.net
-
-iput() don't directly call any sleepable code but mostly checks flags
-and decrement a reference counter before calling iput_final() and then
-evict().
-
-Some code might call iput() with guarantees that iput_final() will not
-be called.  This is the case for Landlock's hook_sb_delete() where the
-inode counter must de decremented while holding it with another
-reference, see comment above the first iput() call.
-
-Move the new might_sleep() call from iput() to iput_final().  The
-alternative would be to manually decrement the counter without calling
-iput(), but it doesn't seem right.
-
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Edward Adam Davis <eadavis@qq.com>
-Cc: G=C3=BCnther Noack <gnoack@google.com>
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jann Horn <jannh@google.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Cc: Tingmao Wang <m@maowtm.org>
-Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.=
-com/
-Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
-Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
----
-
-From hook_sb_delete():
-
-	/*
-	 * At this point, we own the ihold() reference that was
-	 * originally set up by get_inode_object() and the
-	 * __iget() reference that we just set in this loop
-	 * walk.  Therefore the following call to iput() will
-	 * not sleep nor drop the inode because there is now at
-	 * least two references to it.
-	 */
-	iput(inode);
-
-#syz test
-
----
- fs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 84f539497857..64120cb21e8b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1917,6 +1917,7 @@ static void iput_final(struct inode *inode)
- 	const struct super_operations *op =3D inode->i_sb->s_op;
- 	int drop;
-=20
-+	might_sleep();
- 	WARN_ON(inode_state_read(inode) & I_NEW);
- 	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
-=20
-@@ -1969,7 +1970,6 @@ static void iput_final(struct inode *inode)
-  */
- void iput(struct inode *inode)
- {
--	might_sleep();
- 	if (unlikely(!inode))
- 		return;
-=20
---=20
-2.51.0
-
+Cheers,
+Nathan
 
