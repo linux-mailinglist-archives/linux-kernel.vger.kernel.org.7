@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-886660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5298C3631F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46312C3632C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7B5E4FF12F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:54:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 739034F9DC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7155D32E6B4;
-	Wed,  5 Nov 2025 14:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722BC32ED25;
+	Wed,  5 Nov 2025 14:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mtPOEdY5"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ixdPaQRV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2m96Jera"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE728308F25
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496CE32145E;
+	Wed,  5 Nov 2025 14:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762354465; cv=none; b=Q2JbEQi3d3jGBbx4VbsOsQUSTYmvhWyAsYma1PlyI+IzKIxCNi+zGAvouKV6mqhY5azRuwggsXLVv7uzcHgBKHNg1j8c5XHK4+otBQlZ0B/heqjysqhU1hO4d8WpzhXmruu5HqZKfqf1mij+t153MV0Vhj4xeHbYLfE3YlRDXsQ=
+	t=1762354472; cv=none; b=j/ulP0OE9pnEs/znBp5+pu6I+lE8FkOXuzRJFt607z1P4iZKpRDoh+npxs5VgJWlAw4ytaQZN+mX2c3DWG7l5nRJ7cMfktS2yQgxpnyMfQnCYnoGAg2yTpADzjfvMdcQlDCgrsC0MvTYhBT4e7zjj4tvf0lNSitzIpVrLeX52PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762354465; c=relaxed/simple;
-	bh=9PR9Ui8ToTKXxDFeyWEbNhS/TV+0W0qENUAbZTNpHkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIhRBHID9MI+xpOt2YTDb+18K9KEU/dNftzm35YOhZ78aZiId2v4WhpjRIML0CrjNQppJDApzS1RHdkOP8Gtx8OuR4d/LLvf5//7YD2/XRKeMC/0hRcPtoYLPcdx0e3En9NgCK3v3NBssY1B4NwjYwlhWy8NMH9EzXEI0a0bx+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mtPOEdY5; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b7277324054so83046766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 06:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762354462; x=1762959262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rso48ZLUTdUYb/Ey0UMY/9I863vsAkEssUt/OOSP5Kw=;
-        b=mtPOEdY5WrA+l6F9pJVWZLxJYaYdcKJmW7ejXOLSsbQKdEZ8b8MvBZacDazpIREqn7
-         eeAEJf0+kDBo08qmJD+dnw6ogkc4U8pph8GkPHwzRQj/CLbFyXn11p7RfgH5aBxTDUlu
-         vEXp8VvGGQ+sa30j5uvkB5MtMMRUXhjU5EuLn+IE6NOCtw8JApJLfML6Zkp93rfyupiv
-         Uo4h+bQE+qBcUFpTwChc3hTvp2KWT2OLtJklrV6n0TVvopS0F/hw2VwsvPNZU2U2drj/
-         V5UUD9NPuN/1p/jFQHiwbRAXhR7mhcKSOPIEne+cbzmDZ9Ei8W2e0sUyL8kjjM3cJAkY
-         L50Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762354462; x=1762959262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rso48ZLUTdUYb/Ey0UMY/9I863vsAkEssUt/OOSP5Kw=;
-        b=QCxhP5Rgd7I96i/5e0dr2hjJQN5ZkzmmWhmQYkUp37YfK7knuX9aBisWYEwf04D9Ch
-         aLFHSlyoFp9xZYOYxEoA+B0wHjSKSaIKrqXxgavM4n4KlOVYSjOs9/PGhR0Ny8KcFTcF
-         ODBvlF3hGTkkJCqBBstqA5J4yrGbhTvwo7MMHnfaoAJx5TS9jYlTSkpHPxpL+ALTqDHy
-         KC3CJVSW2eykVSmhNvBdRihvqZKgGDFQiVEpty2NagKf+Pq9soeiny088h9BCSnKBCP6
-         1rcKIkWVQL2cCc/4AWkZYx++NfUFerG/c+zY+uVQQdwcf+CV5YwGjZTIWlatI/971h5R
-         Rc1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVs7KAKXkTZ3JjabVJauvOFKyGQccoL3fjuVyGxe+D5X+hcE6cduRdy5wq3oYvn/weXrHc9ETrrON++uzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE9i2Qj7oZG00HgqheiyGm2ZrWlp3S1K8X/Rx0g9tF4vl0Fd4J
-	Q5xNCN3LS+3eRqN3nqFN2MhrTAHslNVIjafhLXZqWCFCkRKd67K64oh+v/DN40Mn/JKH3HzE/oy
-	dkIQ+
-X-Gm-Gg: ASbGncsqLW/8Vdl1VYs4LiksNbQ2GpkWyknw0VT/C6P2mmVaZ3ZfxTARyZknKszJFX0
-	Iq914yCz8cGH//oAR+hWRXn1fDR6ZpBJRy4r0wktOUpCVFlLDAnuhaN7rHWgnHIaAQsKr4HHRls
-	M0tG+JRMAnn1mPe//Nia/YRWm/inILOQ211VKzn/dc9ldMQaeMh/43nHgsYxagqNZThuGK2eQDO
-	kejgr3fCdFwaS5tcRxtNC9JtQqxeu5vSHViuGOSpJTnUxaNLXmuuuFfYJVQgshzgWXaS+CDR6Jl
-	hEQCTKmxoSzTe4o6+xpC4aPdDQgL2OYDG9KrnrLsPoRB/kNONk4exm8lMMMVH03o/sLTfswfNfH
-	aAw1t03K4yaBoE4KPIEETF6V/kShKJvbh+gsA8THSTEszh8mMf5rrPfSbD+idmngBhBkqXaAWfG
-	Ev4fUXmL5gTNbRT/1zpMEJEoM=
-X-Google-Smtp-Source: AGHT+IE9D6VKvyalRSJfPC3AIpQXjSXQIzyul0MgV+vBwHPjqR1hb6Z5sp0y8RViBXTUBYLh7S3xVw==
-X-Received: by 2002:a17:907:d649:b0:b71:5079:9702 with SMTP id a640c23a62f3a-b7265298431mr364006466b.21.1762354462083;
-        Wed, 05 Nov 2025 06:54:22 -0800 (PST)
-Received: from localhost ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b724034ade7sm507488066b.69.2025.11.05.06.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:54:21 -0800 (PST)
-Date: Wed, 5 Nov 2025 17:54:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
-Message-ID: <5c992936-4e7b-4c0a-abfc-0ec0fb9ef9fd@suswa.mountain>
-References: <aQSz3KnK4wFIJoe3@stanley.mountain>
- <8d6962531a9545fd8279fbc7cd04340c@realtek.com>
+	s=arc-20240116; t=1762354472; c=relaxed/simple;
+	bh=wg6hvq1fDEKKHo+ksANPIzinuZ9SiV9KbZGzhCFjZa4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k9yX+fOEw4IWS7ZB18LhlbUYaFA2CrstnZ1FotGIeSr+OLabvCbXZ3sE1UajNeqF3/JYpEX0xF53S155t27EfUhXiEEjdZcoGJJ5YbmjD/BicNO99fMtv7aJeyuww6Qum4RRdYym0+JWm/sfev5+gJw6/obzYUQ9yyM8kMmdgR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ixdPaQRV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2m96Jera; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762354469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4WxYZ+JeksWx9qzLRbdr/qx4v36wWsQth6BFNnfgxlQ=;
+	b=ixdPaQRVOB+Vf/Rjjt9TIHFHfrqbSTg3oXt1SBrY/0vcLZ3MY87d7ex88vzn9l3lEIuIr4
+	SYOhn1zLfUUR9JxPwjeVT3ocT2rGfFH9s0+WhzF8+55J3QdyYj0GGo9OxBGtgCLzc3cEB4
+	j+7huapGfATu6aXcGZx3HvIVIRJd2rx361EYoZ4iWJww4qISDNV+YhQMhfuIfwD9zpD4EU
+	0vfvDqS4xB2aOQCu29sG8SGr4nzHqkpKmfxGlwBIaWjcQXMCYgdpWNJH4BD4eRd+S5GU80
+	LcUK6NbiRXQLTibQHLucRQq7kjLOW/8GAhso1ChYyGhbENo+5sYW9hDGQAAu6A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762354469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4WxYZ+JeksWx9qzLRbdr/qx4v36wWsQth6BFNnfgxlQ=;
+	b=2m96Jera/0TPmblmwvx8TPXahXVuSgKJFttdj9F8sJkbbeCoeN5f4LoITxROKlrWQVRSFQ
+	9nPJhdCcdzIbFODw==
+To: Petr Mladek <pmladek@suse.com>, Joanne Koong <joannelkoong@gmail.com>
+Cc: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
+ "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
+ brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+In-Reply-To: <aQpFLJM96uRpO4S-@pathway.suse.cz>
+References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+ <69096836.a70a0220.88fb8.0006.GAE@google.com>
+ <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+ <aQpFLJM96uRpO4S-@pathway.suse.cz>
+Date: Wed, 05 Nov 2025 16:00:28 +0106
+Message-ID: <87ldkk34yj.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d6962531a9545fd8279fbc7cd04340c@realtek.com>
+Content-Type: text/plain
 
-On Mon, Nov 03, 2025 at 01:17:07AM +0000, Ping-Ke Shih wrote:
-> Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > Sent: Friday, October 31, 2025 9:04 PM
-> > The "->allstasleep" variable is a 1 bit bitfield.  It can only be
-> > 0 or 1.  This "= -1" assignement was supposed to be "= 1".  This
-> > doesn't change how the code works, it's just a cleanup.
-> 
-> Yes, this patch doesn't change logic at all. However, it looks like existing
-> code is wrong, since other places in the same pattern in this driver set to 0.
-> More, I check vendor driver which also sets this value to 0.
-> 
+On 2025-11-04, Petr Mladek <pmladek@suse.com> wrote:
+> Adding John into Cc.
 
-Ah.  Good.  Thanks.
+Thanks.
 
-Could you send that patch and give me a Reported-by tag?
+> It rather looks like an internal bug in the printk_ringbuffer code.
+> And there is only one recent patch:
+>
+>    https://patch.msgid.link/20250905144152.9137-2-d-tatianin@yandex-team.ru
+>
+> The scenario leading to the WARN() is not obvious to me. But the patch
+> touched this code path. So it is a likely culprit. I have to think
+> more about it.
 
-regards,
-dan carpenter
+I have been digging into this all day and I can find no explanation.
 
+The patch you refer to brings a minor semantic change: is_blk_wrapped()
+returns false if begin_lpos and next_lpos are the same, whereas before
+we would have true. However, these values are not allowed to be the same
+(except for the data-less special case values).
+
+> Anyway, I wonder if the WARNING is reproducible and if it happens even after
+> reverting the commit 67e1b0052f6bb82be84e3 ("printk_ringbuffer: don't
+> needlessly wrap data blocks around")
+
+Note that a quick search on lore shows another similar report:
+
+https://lore.kernel.org/all/69078fb6.050a0220.29fc44.0029.GAE@google.com/
+
+We may want to revert the commit until we can take a closer look at
+this.
+
+I will divert my energies from code-reading to trying to reproduce this.
+
+John
 
