@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-886498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C8EC35C09
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:05:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B720C35C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0F2460D78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:04:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9127A4FAC15
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A583164D2;
-	Wed,  5 Nov 2025 13:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964313164DE;
+	Wed,  5 Nov 2025 13:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6oGVhuU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CzFOvzAm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721792F2619;
-	Wed,  5 Nov 2025 13:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBC43081B3;
+	Wed,  5 Nov 2025 13:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762347846; cv=none; b=a0DavKA7lTnfW7ynuoZxL/pmDE/F8Us4JKsD8QYZX+9KRr64lfnsm70vojRARvyGSI03oZe0144G/HkwdFaWLZxJpSp7tIErf94zEAYGQnIUyAuSnW6FA2l72XbiHf4DhP/1XWTdofPHDLR1irK6lg/Q1AHWkUOnqInO2N8rZd4=
+	t=1762347901; cv=none; b=YxFuTTtXlWASGYnsrkrK5PVAkN6wYTbiURCrjaYwA7tTvEGDbAG5b+5gjA12kMEalvC9DOpJ8Hzw2+z/1aQdrmWxSfi0XyPF1FeG8xQaftZ2OqNQ7wUBi6FA7M1b+Ly5yqdkuoVwVIBwMOA+6jwbIiESn9FAuzv6LDCxdrVuVLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762347846; c=relaxed/simple;
-	bh=yMMEvCFvy1D/FLf8ZdEsUZE9AALFl5pwluhKlPDJ97Y=;
+	s=arc-20240116; t=1762347901; c=relaxed/simple;
+	bh=/lcv0CRLqvhN1u0t7OFVDn+bvcyVjciZS0ifR6L0Ymo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCoixstqBQiN6k6Sqo82okvKMlviNXlgURLHl/ClcOd9xOzYnJt4kvQyogBFkJy9rBc01TU8bXlzxhmSPDqGRiFajJYBJdn5kz8cr7Affhl48lECbWRMXxHpBAB2IPW3VKflnsqABslJhCVGMrPDbX5h4ecoaVauUcPo7fSRQz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6oGVhuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C604C4CEFB;
-	Wed,  5 Nov 2025 13:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762347843;
-	bh=yMMEvCFvy1D/FLf8ZdEsUZE9AALFl5pwluhKlPDJ97Y=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C6oGVhuUB1w/3E69QFhrG+4ya4gA+b/fGIculz/ZcL48cooSrZrSlxjmTQ335ouUX
-	 +Q7oJNdJ+BlQa0pZ4455dhVmh1HGLXdDRyB1VuMUT/BtEARRAunHZNXLnjcPXDQDwA
-	 iKLV6qkBafUcRzevKYXFgB5LugK+XDfIZBrWZdZQupHwnaRTn3RALu3lKYI0bUgL3j
-	 M0eImLnm6h/lI6fqPChirCmU/VVxyOxH+OHiJDZbrmbYdvQhHTcT5YC5fpNvi9WYjI
-	 5bwZZJspHV14G/HcNHBoR7AONB5C1Ek1wBcwZr5QS771esAHjjaqBFaOeSYzSztzQv
-	 UYh3mSvPvq6kw==
-Message-ID: <3dd1a00d-08f7-4801-a9f7-d6db61c0e0f3@kernel.org>
-Date: Wed, 5 Nov 2025 14:03:59 +0100
+	 In-Reply-To:Content-Type; b=YHKCeyyNr16Q6Tenk1v7EszLTTcB2dkVczdQQH8AXuFbk95Bq/o1vDUK/CuWhhRKw/hkXLsP0fkLOcOwbq0T6wBCOYVVzb6ZtmbhiQVpfr/+D7DVE4z5sjE6ZUO+CYgtYlO7vgLFdZmNWHiFXUqL0AZ+Kb8N/A30wcY7aMr+ets=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CzFOvzAm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762347897;
+	bh=/lcv0CRLqvhN1u0t7OFVDn+bvcyVjciZS0ifR6L0Ymo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CzFOvzAmTBrDXgxrOwrrqIx7gs/r5A98UFhUYqc3e1yH1jxo+Y/O9bdF6Pqij5DdB
+	 sVH3pO1h7Bp0sl9UjCg+IyxSZdL5RarAZ+Gdh6F/GAqkSo6tHx4pykUci3gtZQFct0
+	 0h3sBhu7RIncDqqNnF+MkL7xhBSjk0WdordJsMCcCbkTD8prf2H5ww+7ERPsttCEbD
+	 9Ias+BPY+6HeyUUq4YaVyzhT3NFP4vxcstuuAYWIYMgh7Sl2/CrWx5UsiXZHCFymRB
+	 sGv4Vnl35s3mrNcDW71Hy2UaoS6Csp1xRZvNfC6h79qkfxMP3bIJMi3UCjH1xcLhro
+	 +WnIVH7unOwug==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 055C217E0062;
+	Wed,  5 Nov 2025 14:04:56 +0100 (CET)
+Message-ID: <46e8ec8e-977d-4e7c-9f65-0c5d9c517825@collabora.com>
+Date: Wed, 5 Nov 2025 14:04:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +56,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
- characters
-To: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: Hans Verkuil <hverkuil+cisco@kernel.org>,
- Malcolm Priestley <tvboxspy@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20251010030348.it.784-kees@kernel.org>
+Subject: Re: [PATCH v4 0/5] SPMI: MediaTek: Add support for multi-bus
+To: sboyd@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, hsin-hsiung.wang@mediatek.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20251024083247.25814-1-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20251010030348.it.784-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251024083247.25814-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/10/2025 05.06, Kees Cook wrote:
->  v2:
->  - use static_assert instead of _Static_assert
->  - add Hans's Reviewed-by's
->  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
+Il 24/10/25 10:32, AngeloGioacchino Del Regno ha scritto:
+> Changes in v4:
+
+Gentle ping for this series.
+
+Cheers,
+Angelo
+
+>   - Refactored IRQ domain handling due to deprecation of function
+>     irq_domain_add_tree() to use the new irq_domain_create_tree()
+>   - Added .irq_eoi() callback for rcs_irq as that better reflects
+>     the actual functionality of this interrupt controller (as its
+>     SLV_x_y_EINT registers are really signaling "EOI", not "ACK")
+>   - Fixed to use generic_handle_domain_irq_safe() to avoid races
+>   - Tested again on MT8196 Chromebook
 > 
-> Hi!
+> Changes in v3:
+>   - Added Fixes tag to commit 3, collected R-b tag from wenst
 > 
-> A long time ago we had an issue with embedded NUL bytes in MODULE_INFO
-> strings[1]. While this stands out pretty strongly when you look at the
-> code, and we can't do anything about a binary module that just plain lies,
-> we never actually implemented the trivial compile-time check needed to
-> detect it.
+> Changes in v2:
+>   - Fixed indentation error in dt-bindings
 > 
-> Add this check (and fix 2 instances of needless trailing semicolons that
-> this change exposed).
+> This series adds basic support for multi-bus (multi-master) SPMI
+> controllers, as found in the MediaTek MT8196 Chromebook SoC and
+> the MediaTek MT6991 Dimensity 9400 Smartphone SoC, including RCS
+> interrupt handling and per-bus registration.
 > 
-> Note that these patches were produced as part of another LLM exercise.
-> This time I wanted to try "what happens if I ask an LLM to go read
-> a specific LWN article and write a patch based on a discussion?" It
-> pretty effortlessly chose and implemented a suggested solution, tested
-> the change, and fixed new build warnings in the process.
+> AngeloGioacchino Del Regno (5):
+>    dt-bindings: spmi: Add MediaTek MT8196 SPMI 2 Arbiter/Controllers
+>    spmi: mtk-pmif: Add multi-bus support for SPMI 2.0
+>    spmi: mtk-pmif: Keep spinlock until read is fully done
+>    spmi: mtk-pmif: Implement Request Capable Slave (RCS) interrupt
+>    spmi: mtk-pmif: Add support for MT8196 SPMI Controller
 > 
-> Since this was a relatively short session, here's an overview of the
-> prompts involved as I guided it through a clean change and tried to see
-> how it would reason about static_assert vs _Static_assert. (It wanted
-> to use what was most common, not what was the current style -- we may
-> want to update the comment above the static_assert macro to suggest
-> using _Static_assert directly these days...)
-> 
->   I want to fix a weakness in the module info strings. Read about it
->   here: https://lwn.net/Articles/82305/
-> 
->   Since it's only "info" that we need to check, can you reduce the checks
->   to just that instead of all the other stuff?
-> 
->   I think the change to the comment is redundent, and that should be
->   in a commit log instead. Let's just keep the change to the static assert.
-> 
->   Is "static_assert" the idiomatic way to use a static assert in this
->   code base? I've seen _Static_assert used sometimes.
-> 
->   What's the difference between the two?
-> 
->   Does Linux use C11 by default now?
-> 
->   Then let's not use the wrapper any more.
-> 
->   Do an "allmodconfig all -s" build to verify this works for all modules
->   in the kernel.
-> 
-> 
-> Thanks!
-> 
-> -Kees
-> 
-> [1] https://lwn.net/Articles/82305/
-> 
-> Kees Cook (3):
->   media: dvb-usb-v2: lmedm04: Fix firmware macro definitions
->   media: radio: si470x: Fix DRIVER_AUTHOR macro definition
->   module: Add compile-time check for embedded NUL characters
-> 
->  include/linux/moduleparam.h                   |  3 +++
->  drivers/media/radio/si470x/radio-si470x-i2c.c |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        | 12 ++++++------
->  3 files changed, 10 insertions(+), 7 deletions(-)
+>   .../bindings/spmi/mediatek,mt8196-spmi.yaml   | 138 +++++
+>   drivers/spmi/spmi-mtk-pmif.c                  | 472 +++++++++++++++---
+>   2 files changed, 530 insertions(+), 80 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/spmi/mediatek,mt8196-spmi.yaml
 > 
 
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
-
-I have also tested a build of v6.18-rc3 + patches using allmodconfig:
-
-Tested-by: Daniel Gomez <da.gomez@samsung.com>
 
 
