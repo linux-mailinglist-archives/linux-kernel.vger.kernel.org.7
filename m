@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-886941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AC6C37033
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8026CC370F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E45660A28
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 055686453D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6D93009DD;
-	Wed,  5 Nov 2025 16:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0210335554;
+	Wed,  5 Nov 2025 16:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jDCjcipF"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zi3XNqgQ"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A590F32E13D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CCC318146
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762360760; cv=none; b=Un+nYGd0F3kxMgToamjC034PiTvTA6BuEwJvwtKLQlj3exUY653+LdncDf49wR0xXhEJtioJYv4YYL0ZWEwZ5a71hPs9TxEc8HypZskGh3aG42BPgw/sORreFcZ4q/aa0wuATP+2kWnGyyZlRqs0bKRQY7I132lLd90iIIQ1+g0=
+	t=1762360812; cv=none; b=o7vBIGErtfZmlFzUzCXbar9uVAfb3LdbzyK5NLzl++zyIpgI3P71r5o10N6gxV1tYVXZoDOuMt7IGlrVMV33GCgMY8m6kY4eQ85FvdwLKW1AARheMRUdABOF1GAdgFjELiBnwLx7kVyKZHMXU4okHU0StutEJMS95905dQzTzOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762360760; c=relaxed/simple;
-	bh=RtdcZleg562HB1IKBfzH1CRAYXHe+ayzn3QiyTSYBgA=;
+	s=arc-20240116; t=1762360812; c=relaxed/simple;
+	bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tnHxh6PCZSf+ymxqoMb71tgJpFt/DxZbaa+HOflLPK+0IsIj6yEon18tDtjJN/6mDvvO8g35g/yU8V+8ZZhjcq8jYKrDDNmJmGEy6M+szRz0kJGAcSa7R3/YNHPTxkpBlTGQmMB6zwQ7TxloSt6bi4JPUZBNrjx1JxJxQL8eSuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jDCjcipF; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=WEAHsPgCIBJgTu4uP7bmfTuwZuMjvE8x8KJRVuXj6hocGPR+Q4kI6A2+1oFrxBh8gsYmlJ/S8iKua2T4MDGL8pYfUX+5o1PqQ0vTJbkOy1Zi2iae9LICNkZE51tK+NC+NiW9OgwHmGBeVjTAB37kF5exN4PKCBmUE2iYlrbmcL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zi3XNqgQ; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4710665e7deso32325485e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:39:18 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c489f1e6cso52391a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:40:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762360757; x=1762965557; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762360809; x=1762965609; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6coJB5FIrKoPs69WVrPxR7daBhZI0zVIi12O0/0kVm4=;
-        b=jDCjcipFDmsdp3g/k4gfsx2xGHUuKxsZRx6WJBlXRitQb/6QxkXCcFfdwKwFUHrbPJ
-         qeSzyS3VhvNy+p00GUk7JK3OqHk4909tYXSMD54HtYwFhFNtdoZTYtWJZ/ylFRxrPO3M
-         /aul8I+mINYVsGPFPgMpzolMNbI5lJyaWTqd2lTNW+PjQ1/T5+xreee6v77FIklauHw+
-         /zyLqBdceHHuN7n3FSqqpkh4YFEROYzNheQTXxf/0Hd/h1Cw+oD6+XvNYdfOt1B7cdMR
-         ze9MmTe4Fr6CseTCVIQyvpW+tT9XAOGb+E5b17QxVa7mAkW96ZCp05kVhC7NyHRO6aBQ
-         vc6w==
+        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
+        b=Zi3XNqgQzrgwkf2OKfht20nI+Tb4tSvjgtK/ZG8cw+muxWsyhikkaxIEBivtdsyYDb
+         oNvfShzgEHSDcH+DuPZvMZIPt6s5nqwYU7Tc6RVlFpUYSLyBpIBgh2ELWJXpVEA3rzxk
+         VvDLl9fIhDEjI7BlhHHH3yBjnHR5RjAPNi+J4I4Gnb7g1h+zq0uKg6TPiIu5TgYGWfZQ
+         xWHW6kq2yYHYKqyS5yZp8VliOrXzIORHlYzw6u1htOEbJu55JcDIJG05+EAt0qVWNHmL
+         XAxJquiRB8jKRuFTtdnFRw8CTn1AvlCFuKPpzq8GvDML3ZvGd6KaQmv9up9NsE5CwLp1
+         xTWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762360757; x=1762965557;
+        d=1e100.net; s=20230601; t=1762360809; x=1762965609;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6coJB5FIrKoPs69WVrPxR7daBhZI0zVIi12O0/0kVm4=;
-        b=LlJqdKegVgc8ix6s9BuLYdg00bcFBfswQsdi24O/a78RlZWmmTodE1EpcAQyugEoML
-         uZDmtUAEiOFKk76NFHyzINBoM9/0kyyfU8WUdRa4baAtOjRouBNPXDWK7/I9sejZPnG9
-         3LKsMKjQBMgcCIoGpQgU7a7YV/eQNwmYHRh+ENLK+UruGxgMk7egb/RC1UWY5U1nFeYM
-         2X0qbQrbTdU20pq3xiF3DU+qyou+MTVKOMNFUHl3ecB55cwRsZpqgdptPcfCOU1c23DK
-         r7OegTiUAlfNWqpNRPYBR3GDkc+FqljozVn4mm9RjMp+V3BWSJ/cVZFQKSOOulzItfP9
-         9xug==
-X-Forwarded-Encrypted: i=1; AJvYcCWcivuMHALcZimJ47zhzI1brJIEgeUARMqjBfyKz0pkawGmqvU2e1iFp3Ul2CNm22rweGxmBM4jc/pixbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBajfK5Cr7PV/+FKvFIEwVkSM4vRf4El92GKYUoh/niEaLkRyx
-	Lm6EvlkDm5YC6iF126bETv+7BSEk5P7I+27CO6Oc1nEYkcQE5DTwTpRNu0hABGHjU88=
-X-Gm-Gg: ASbGncso1vfWnBrh1Q+ZTDidVXdqEIYjQbq3zQ6bDIGHVPAMCwKIoOAOGxnuQx4kPNN
-	Y8TIdEKEDKj3dfmteChgMAwSoJqgORRix5a62s7v0N5irXPMu4OKdQ30Vf3J4lXS0ZftzFC26GO
-	l+jpD1Y668x+8ODPFrKpPXNB6SW1lDZRBl0wpRduCYZ4KiRLHkAzuRNkLd108At2pt3vpbUchSs
-	p9kcxrbbH6OzyloKNU+0E1M8Jn/YK+KhhDZfuDgQ0A0xPeabnnTEDcNbHEUGzVusBYDa/jahrnn
-	DB2cOavCOEAK3eJSSSsnYJqGm8d1fdTZj5JFYSFcyFpwjBd3XwOjxGowEy5KJI5kWevA9b99Pzp
-	wHpypHeGwt8rhDsUoFs3/9/H0dS03aqzPdgJobuhZo8Jwjmn1X2u9jE+rC6SMO14Qp9JWa8J3Xv
-	Na7kSLeknHNARBa+S3AQYw/ZrbiR7LlczgpKSwlOc+AWCmB3o=
-X-Google-Smtp-Source: AGHT+IGKn9VjDmuchF50NhQmU9mYE2Yck3wWRt8JlnYOZfg/al72/4vJ9FLsGjEMxlxPqq49jUr7Xw==
-X-Received: by 2002:a05:600c:821b:b0:471:b5d:2db9 with SMTP id 5b1f17b1804b1-4775cdf26edmr39700985e9.21.1762360756845;
-        Wed, 05 Nov 2025 08:39:16 -0800 (PST)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc528sm57365575e9.7.2025.11.05.08.39.15
+        bh=gczMRuZ2fsGRpoCXUBhl7NeVLE82+ehtyW2OQrB7AVI=;
+        b=idiaHzGk3F/+OYPFILtj33Iz/D04PzIVnaVlUgqIF7P2JggX/POPzNpcSZobyVNvc4
+         vtqhBKZRTaJWxkp5K+/Pdu1MKj8eyepO5S1W3dqlF0Yef1XIG7R6Z0JisFqhBR6ZT27Y
+         wfaby6wR7DK7NAYZBA5Fp8fsDcv/PewyirugCMi4NfewGxJM231rn2O8q9KRQUw4W/+K
+         KG+0Uy9Vq7zJCkXuHMtHPK9mh+xK2GiyFU9RGd/YmIl8a0GPc87o7dOqBp3f7FkYQnJ4
+         8A1Ztm2nyu9y/S4MTf1AeAKqwxw5n4ODBV4p8R+i9y9E2g/WDz5jX2Timb1jmKO2iGur
+         gB0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUtwWmPyrD/073jQiJP5+HEXirdXWXCRvQgXJvzGzPKQulTgmS2uG0z567u2vJghzSwvziP07xVg821Pqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmTb5ERljaBCBF7oF/jrv/Tz3ymHpTGSh9O5b98pLoyalYh50z
+	jSWb5781dynD7xrdlo1/lXtqiRUCX9YJw5eqJrZSJRaukyFMBexW+yCWJwC8jCEmfjo=
+X-Gm-Gg: ASbGncvdRl84yHBVJpBPtENUidCLcYGTR1UQWuKiyT8HtKzBtjzv8yQjg4wE+rhzDf7
+	gRxeYjSYgdwm4uaYXGLD6sJOJrEvg89DbC3E1efgoidQFBnilEB/1Gl57/NwAKIxUNDpdkHSiGv
+	vn+wWVXGxlIenzoUMqfbpleqLF60SttmuEMog5NqDgrl2fk9JCwtUwcQ2pdEN0/mjJfamcpsXo3
+	mcSpEH4sur4CP/1nzcQvGX4kfxAt74FAmRPdWnO2nDVv+cDGtmIS5WuwM/r7s/YlD3PEoCnsLBl
+	3U2tnV5WdGf0EJuLzHqTqqfF6Enqp6QGrlY8pNnWHM/1Ps5orEDE4v9Unl8Xv9siv+5AiiA+kFs
+	IgfMo8ChnLDZCD1rKkFCKOfw595uQUOu07xpGOy+zogf5QPLYryRQzgYfvrFy+9hL0JHfniyhTE
+	nZYH87Jw3GWZxBJKOzWRgoj1opyu4a16yy+A==
+X-Google-Smtp-Source: AGHT+IE7wXx3urTFDNDSqobwKamWQF4BItgkmBjCAwdlchVnppz88UvExNlhgtNOLk7PtlOnGNVWQA==
+X-Received: by 2002:a05:6402:40c7:b0:640:9997:a229 with SMTP id 4fb4d7f45d1cf-6411d16412emr55871a12.3.1762360808780;
+        Wed, 05 Nov 2025 08:40:08 -0800 (PST)
+Received: from [172.20.148.132] ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a721f1sm5105380a12.32.2025.11.05.08.40.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 08:39:16 -0800 (PST)
-Message-ID: <ae167c7f-c32f-422b-9eb2-72889cbafef0@linaro.org>
-Date: Wed, 5 Nov 2025 17:39:14 +0100
+        Wed, 05 Nov 2025 08:40:07 -0800 (PST)
+Message-ID: <4ad47442-1c51-45b7-b709-3cca029e4fc7@linaro.org>
+Date: Wed, 5 Nov 2025 17:40:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,68 +82,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource/drivers/sh_cmt: Always leave device
- running after probe
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
- <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
- <20251105160627.GA3684509@ragnatech.se>
+Subject: Re: [PATCH 12/28] mtd: spinand: macronix: Convert vendor specific
+ operation to SPINAND_OP()
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Mark Brown
+ <broonie@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+ <20251031-winbond-v6-17-rc1-oddr-v1-12-be42de23ebf1@bootlin.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251105160627.GA3684509@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-12-be42de23ebf1@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/5/25 17:06, Niklas Söderlund wrote:
-> On 2025-11-05 16:36:15 +0100, Daniel Lezcano wrote:
->> On 10/16/25 20:20, Niklas Söderlund wrote:
->>> The CMT device can be used as both a clocksource and a clockevent
->>> provider. The driver tries to be smart and power itself on and off, as
->>> well as enabling and disabling its clock when it's not in operation.
->>> This behavior is slightly altered if the CMT is used as an early
->>> platform device in which case the device is left powered on after probe,
->>> but the clock is still enabled and disabled at runtime.
->>>
->>> This has worked for a long time, but recent improvements in PREEMPT_RT
->>> and PROVE_LOCKING have highlighted an issue. As the CMT registers itself
->>> as a clockevent provider, clockevents_register_device(), it needs to use
->>> raw spinlocks internally as this is the context of which the clockevent
->>> framework interacts with the CMT driver. However in the context of
->>> holding a raw spinlock the CMT driver can't really manage its power
->>> state or clock with calls to pm_runtime_*() and clk_*() as these calls
->>> end up in other platform drivers using regular spinlocks to control
->>> power and clocks.
->>
->> So the fix is to remove PM management in the driver ?
-> 
-> Yes. As I understand it we can't do runtime pm in these drivers as the
-> core calls into the functions with the raw spinlock held. I hope we can
-> improve this in future.
-
-
-IIUC, the changes done for PREEMPT_RT prevent to use pm_runtime by 
-functions running in atomic context because the spinlocks are actually 
-mutexes.
-
-But if PREEMPT_RT is not set, then everything is running as usual.
-
-This change drops the PM while it should be working for kernel compiled 
-without PREEMPT_RT.
-
-I suggest to handle the case with/out PREEMPT_RT.
-
-Hopefully pm_runtime will be fixed with PREEMPT_RT and you won't have to 
-reintroduce pm_runtime in this driver but just remove the PREEMPT_RT case.
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
