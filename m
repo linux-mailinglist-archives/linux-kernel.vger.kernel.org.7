@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-887166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDF4C376EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:09:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37864C376DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7775D3BE766
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113453BB315
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5239933DECC;
-	Wed,  5 Nov 2025 19:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E32329369;
+	Wed,  5 Nov 2025 19:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IBWlsteG"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF4D3203B6;
-	Wed,  5 Nov 2025 19:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rUZtdjJL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3057430F550
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762369616; cv=none; b=HuQEjqY8Pnea9gFTkz9LT0ce/KRYgThJdaWBkzNkgShy0Tnb98i5W28yxsO/IPCC3ZrWYQwXJiK6LwYsyIL2HhvGjaaSJLDbyfwmXdmgy5jLeDYrAwJAttmWVEWtEQyQYV5moCYYl8Z1PSznF+HF0SdkKRB9easPZLjXp+lxRkQ=
+	t=1762369603; cv=none; b=bXI0EOOJcjPyyMwiAX9L2vHQpk+eH+z5Mluaq+Tg1ITPZdeRD+ixW8jsxQBSHcbfCOxa8+8sLNaM4ws/heWR8Ko16q2kiDNdqufPI7J0wa0QS/CUgYDJK4q/Id4vUlZ2E/H1qigJkaToUPZrVFxpn/3IVdf/KjWd+zRBLjomrIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762369616; c=relaxed/simple;
-	bh=r1RUQ5w8cqf5Ixyk9+1OWb64pQySNdzgjfAjsvNRiJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlwWRp5UV7OxbHF3hRKd1ndf5QqsvcP52HKi4Psn52krWv9XFTwyK+n+LLurvAJLrdbCJyDphb2bU//mvlJL5C76ab4xeN2Y76HiqyjUEwgODJP3kUc5QIofSJiZKZ6pjrRtLxBgnBwdQ8y+P+mH46ja9HQ7xCmXWca0eoFBgek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IBWlsteG; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uNlLN91IPUmzKBqToljugUBHU3xTh3YeZQvGikTGxf8=; b=IBWlsteGV5BqKNpBp269P8rt+Z
-	0VKCpMHLJcEcVC5ca9y4mzUMBegTviTXPimmvvPBDSDtP77WZVHbwThO2KmT1T+XeAvGKLAHF0PRS
-	80OeZej4TWRoq+EBL9TfPVoHaT5QOWeDqbMqMYIPbHtgQcNFN/L4z1JJbVyFD/pSjiTrFgovznnIc
-	XkeQQXR5rl4/W2+7Z7UKzeQs8t3TjbaEvjtqAn49fXOGK2vvpbhXLkByLlSORalsuHmw82rYhXDs8
-	Uheq42GmULctQ5UcWDeMNW3yFM55Ral+on9Ve62bU57pkBQ0EU+4PaIXi/iqPUMHvyrIi9YQne70n
-	F2cEH7Kw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGipf-0000000EnwZ-1iQX;
-	Wed, 05 Nov 2025 19:06:11 +0000
-Date: Wed, 5 Nov 2025 19:06:11 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
- leaf entry logic
-Message-ID: <aQugI-F_Jig41FR9@casper.infradead.org>
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
- <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1762369603; c=relaxed/simple;
+	bh=ml7U1rpJGnGnBz5uXhKURx2Le0KM4QUiOupT0ekigfs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aDDImOg8+njPCKKblYsDwjycjozShISf5fS7cjFSiOG5uC2PbHNYUt1m2UYX+62as74x3H/kKqcmFRFyAkY8ET2711B4OwwT2CuvHV8aW5Xiu3L3KO+K+FPCgKQhVjgD+UsGJ4W875sDSlcztexGYJ+ti8LFq9NnkwGW52HVgwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rUZtdjJL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC.corp.microsoft.com (unknown [20.236.11.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 56B5B211D8B1;
+	Wed,  5 Nov 2025 11:06:41 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 56B5B211D8B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762369601;
+	bh=soKtQEHSTH0EKkfguo3Zbqya4px3IKSED90Pu4k4Nys=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rUZtdjJLauRH77VLb3VQ8iJu53HrqAd0+lrcMaxXUQoCwvm7DOaLVFY0Xh9YR1jy+
+	 Sy3d+aEaO6mMuP9eZJkH3LygkcAeuqjRnR41+vTAuyxl0ZXE4yDkL5dsrv2MGgdjoE
+	 emb3mkpyf+RUJMG9sg6+EcyDlIudNkSbRvIxFows=
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Mostafa Saleh <smostafa@google.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Zhang Yu <zhangyu1@linux.microsoft.com>,
+	Jean Philippe-Brucker <jean-philippe@linaro.org>,
+	Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: [PATCH v3 0/2] SMMU v3 CMDQ fix and improvement
+Date: Wed,  5 Nov 2025 11:06:36 -0800
+Message-Id: <20251105190638.23172-1-jacob.pan@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
-> The kernel maintains leaf page table entries which contain either:
-> 
-> - Nothing ('none' entries)
-> - Present entries (that is stuff the hardware can navigate without fault)
-> - Everything else that will cause a fault which the kernel handles
+Hi Will et al,
 
-The problem is that we're already using 'pmd leaf entries' to mean "this
-is a pointer to a PMD entry rather than a table of PTEs".  So I think
-we need a new name.  A boring name would be 'swent' (software entry).
-An acronym would be SWE.  In the XArray I distinguish between pointer
-entries and value entries -- would calling them value entries work here?
-Or we could call them something entirely different.  Say 'twig'.  Or
-'cask'.
+These two patches address logic issues that occur when SMMU CMDQ spaces
+are nearly exhausted at runtime. The problems become more pronounced
+when multiple CPUs submit to a single queue, a common scenario under SVA
+when shared buffers (used by both CPU and device) are being unmapped.
+
+
+Thanks,
+
+Jacob 
+
+
+
+Alexander Grest (1):
+  iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
+
+Jacob Pan (1):
+  iommu/arm-smmu-v3: Fix CMDQ timeout warning
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 74 +++++++++++----------
+ 1 file changed, 40 insertions(+), 34 deletions(-)
+
+-- 
+2.43.0
 
 
