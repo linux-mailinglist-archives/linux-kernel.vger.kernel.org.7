@@ -1,182 +1,174 @@
-Return-Path: <linux-kernel+bounces-886363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2359FC355A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67162C355CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BB1561A78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738C03AC65A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0295530FC3A;
-	Wed,  5 Nov 2025 11:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ugo+/H9y"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508FC2F5332
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54630F7F8;
+	Wed,  5 Nov 2025 11:25:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69309304BB7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341766; cv=none; b=ufEJfY/o/YygxrqDErr+hV62+8QhEoUaQrCkGddpS7a7hQItOtRXUMSowSE+PObKakhQDVli94Ma/Sob4Sf/G1MvmDyi14iaLkrQHWhFJnNwB/QKBDGq6JlKbRlMQFwtHeW6dzXg6MJ2YGvnNrDxswM+3fUZKIMmpLRt8eBacGQ=
+	t=1762341903; cv=none; b=i07XVjw46bO+jpln6uyc+myj1F7ejkdll8ApBbC6WIeSLziQLcnIjhVJdn3rZfDWfebMaAOOxByZCta9NxCSXc5Q0A7zx6ns5lTIYRE9hXoIEVHf+aAxjXF5oqljRFX34qlP1L0nAYPLHQP6j2ZXbHpME5TLdMv3XjGaNwmVjh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341766; c=relaxed/simple;
-	bh=Ii9b2rpzXiRDukDeUtY2WS5XvNAk5U97MkCbAXQdp7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JxjfYkKHGgZWhzgtpA0pbquSYuQD/H9QDtjn6JPiPYyc5+EAj42x9arVIGFFvZhsDyhx9yz+6O5SkIQTn7hunq0oAAVKVBpozX+ibC+XNNMkovkAn3zedWSRBG/MpfLrvturt5pW4YNdEuxUKn5VzlPBIWDpViifUW2TGSNZFOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ugo+/H9y; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37a3340391cso32413851fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 03:22:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762341762; x=1762946562; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lgjq5frjKtchDAt0hCN8TCDb53mEX1KChcG+cIgj+As=;
-        b=Ugo+/H9y30ONhr7fDfdxbpsqWR3tRjLh+BuyplYG+qinlo2qxVVE4FuU4lqg9t8UmP
-         fVDVTXoFX4dBwApTOCOGf3JNHagxzSd5IcYye46YRifeue4oQvK+rCDY6250s2aOUHg5
-         fWNdaQqGIKnqGL+6iwoCI4B1KwMjvSghMySRVbLo/w8XC1vtrbeE+e8rvaXdbSppm6Pu
-         jwzcMBE7OMaVCmpZm+PQVU/4EMvbFWk7ZoQe404b7k5sOktFJtHcSqzL3FIgWmRkzwO0
-         dAicFKMGSMh+zzlQdFh553R+WyaxAPatOLu++DAI9JeRl9GL5PnvoTJduTUCYgVMQAlm
-         q8Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762341762; x=1762946562;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lgjq5frjKtchDAt0hCN8TCDb53mEX1KChcG+cIgj+As=;
-        b=xF5RPXC+V2XAbezv+K0fPTE3y9w9xaiRXjB9G5XD5kzXQKHDUkBhyiBX0CHM67gZ77
-         S42yxVFzWfQhbJZ9LULBUf+vzjOkN38TmCyX0ixSbrpO4gGIsVi8VIkQJJHpg5UBFloX
-         D1RCQLUPpliavnns/CVLB4X3i4qXzXA/9GFXkUh3DmShU6hEp7dNq7LzjeYO1OcGjg8z
-         ysa/2QpeXvAoXJzMSDJy0tZb4Kk4hiBYVdUyUWjQTK2YpknVyd2UPKThagrpkclTViBk
-         5u5fag060tL4jxyPmPGTZucgxk4uV/jzThi2RiBemH9+MXgqece3UK612Y4D316MPnAh
-         kAGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIUwUwLV5CXpS0P72e+92ZFFiamAqMCuXPpQY8EZmmDrtb+QA7X5tfb2BVTaElqBP3cITkNtxQWmv2VSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJcp7xq008IOyTvSGNRZzfGq36yM2+DFsabe8xgtwlwhvvNXGy
-	aejNMUOrAT32O0aCogxQIj3mdG9WUGNzNrUUVKG6jh07pWaHwB90kdbc
-X-Gm-Gg: ASbGncuwQV1UF/kUJE0aS5LxOZhGH+Tbdg+0Pi/EBsSgWYXfsEznvpt4j/ruvtz+GP4
-	VSf8OaWKyoKRKeNnJPFr1uNdrAWhiqC4p6CIbkG5ZrZzoce9lce4m7f13g5qQkuB1/9NXjNHOst
-	79WhbMwlIaHQZR0MO4r0IBhNHMz3XlteDWey/dG3zQUSiwalkRhNIStyEbruXwl/pQ2GBL/Fkne
-	KNSdCrzCPD3UEKMC7iC7LqXfI7wrossZEAq1NnmiqOto9GTFFVfLl+ugFQuHSgAIc92lfz91Ldg
-	sGlf6k/HzHOKgtQ3NxwHBxwtYc3hKpPLFzL7U7jE4NORB7r3IN7+f82TjR29RD5GvR6eNqvG/ce
-	BDoNmvPXQIY97DsswwIEPpa0CAjEhSL6gwr62IdvVItLtlqJRzMIVKr9DdCStMzYs9rcPjBBnOt
-	LuuqjgBNPXNg1UNRqERmncj1bkjPaBCdRgwDKXTlQe4wPmn/q7fLiqrbfyMw==
-X-Google-Smtp-Source: AGHT+IHpvSjuUZgOT3CU6iwhd3QH+qr/blJkYgQLVxgzQhufOUjboKrykT4Eu5lvIJTa8VYLu1Svkg==
-X-Received: by 2002:a05:651c:4006:b0:37a:3b04:1a1b with SMTP id 38308e7fff4ca-37a513e604fmr6509411fa.12.1762341762189;
-        Wed, 05 Nov 2025 03:22:42 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a415c8070sm14290231fa.28.2025.11.05.03.22.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 03:22:41 -0800 (PST)
-Message-ID: <1aedf1a8-ddff-47fd-8afb-dd60dc42e12b@gmail.com>
-Date: Wed, 5 Nov 2025 13:22:40 +0200
+	s=arc-20240116; t=1762341903; c=relaxed/simple;
+	bh=hmU/qaIXwsENiD16foyteDE2erGI0Q+ynMc9NW62fCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EWL11Y2UYlXtsRyWEvGOV8ojz5UdZHaboU1oB9Fe43Ea0qjsAcBezJn/Si8/Vyi2Xn3NSz86QqPnA0K4HKUn1xAUtwKLMTeDWiRRmFWT5W/QsexSFcLi6kLgeayN4PQRDgJpKIYjXfMkBwmn2Re0r9efPnuajM1mn2d0KRPY/aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E44B0169C;
+	Wed,  5 Nov 2025 03:24:52 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7DC23F63F;
+	Wed,  5 Nov 2025 03:24:59 -0800 (PST)
+Date: Wed, 5 Nov 2025 11:24:54 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: syzbot <syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com>
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	will@kernel.org
+Subject: Re: [syzbot] [arm?] WARNING in fpsimd_restore_current_state
+Message-ID: <aQs0Bkrbnqinlqss@J2N7QTR9R3>
+References: <690a8dc2.050a0220.3d0d33.0018.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/16] dt-bindings: regulator: ROHM BD72720
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Matti Vaittinen <matti.vaittinen@linux.dev>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel
- <sre@kernel.org>, Andreas Kemnade <andreas@kemnade.info>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-gpio@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-leds@vger.kernel.org,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-rtc@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-References: <cover.1762327887.git.mazziesaccount@gmail.com>
- <48fe6e2642db4484640b173cd71be1b245929122.1762327887.git.mazziesaccount@gmail.com>
- <176233320981.143013.4115240062372455834.robh@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <176233320981.143013.4115240062372455834.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <690a8dc2.050a0220.3d0d33.0018.GAE@google.com>
 
-On 05/11/2025 11:00, Rob Herring (Arm) wrote:
+On Tue, Nov 04, 2025 at 03:35:30PM -0800, syzbot wrote:
+> Hello,
+
+Hi,
+
+Initial analysis / holding-reply below.
+
+> syzbot found the following issue on:
 > 
-> On Wed, 05 Nov 2025 09:35:59 +0200, Matti Vaittinen wrote:
->> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> The ROHM BD72720 is a new PMIC with 10 BUCk and 11 LDO regulators.
->>
->> The BD72720 is designed to support using the BUCK10 as a supply for
->> the LDOs 1 to 4. When the BUCK10 is used for this, it can be set to a
->> LDON_HEAD mode. In this mode, the BUCK10 voltage can't be controlled by
->> software, but the voltage is adjusted by PMIC to match the LDO1 .. LDO4
->> voltages with a given offset. Offset can be 50mV .. 300mV and is
->> changeable at 50mV steps.
->>
->> Add 'ldon-head-microvolt' property to denote a board which is designed
->> to utilize the LDON_HEAD mode.
->>
->> All other properties are already existing.
->>
->> Add dt-binding doc for ROHM BD72720 regulators to make it usable.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
->> Revision history:
->>   v2 => v3:
->>   - drop unnecessary descriptions
->>   - use microvolts for the 'ldon-head' dt-property
->>
->>   RFCv1 => v2:
->>   - No changes
->> ---
->>   .../regulator/rohm,bd72720-regulator.yaml     | 149 ++++++++++++++++++
->>   1 file changed, 149 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml
->>
+> HEAD commit:    dcb6fa37fd7b Linux 6.18-rc3
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11a79704580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b659f0cab27b22
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d4ab35af21e99d07ce67
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115fdf34580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1441d258580000
 > 
-> My bot found errors running 'make dt_binding_check' on your patch:
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ae6bec0d0398/disk-dcb6fa37.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/dcc732da66c3/vmlinux-dcb6fa37.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/301d1bbdecc2/Image-dcb6fa37.gz.xz
 > 
-> yamllint warnings/errors:
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com
 > 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml: patternProperties:^buck[1-10]$:properties:rohm,ldon-head-microvolt: '$ref' should not be valid under {'const': '$ref'}
-> 	hint: Standard unit suffix properties don't need a type $ref
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+> WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
 
-Nice! I'm not sure if anyone has said it but these bots are helpful :) I 
-forgot the type to ldon-head when switching from -millivolt to 
--microvolt. I'll address this for the next version.
+This warning is due to the saved state being in SVE format unexpectedly (with
+TIF_SVE clear and PSTATE.SM clear). Within task_fpsimd_load() we have:
 
-> doc reference errors (make refcheckdocs):
+	switch (current->thread.fp_type) {
+	...
+	case FP_STATE_SVE:
+		if (!thread_sm_enabled(&current->thread))
+			WARN_ON_ONCE(!test_and_set_thread_flag(TIF_SVE));
 
-Thanks for including the make -command to the mail! I didn't even know 
-about 'refcheckdocs' target.
+There's definitely some bug that allowed the task to get into a state that
+should be forbidden.
 
-> Warning: Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml: Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
+I see that the repro has:
 
-Hmm. I suppose this is because the MFD binding is added only later in 
-the series(?) I suppose we can't help it because the MFD binding 
-references the regulator binding as well. So, this is kind of a chicken 
-and egg problem?
+	ptrace$setregset(0x4205, r0, 0x405, &(0x7f0000000000)={0x0, 0x300})
 
-Yours,
-	-- Matti
+... which looks to be a write to NT_ARM_SVE.
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+That suggests there's some path through sve_set_common() that leaves the task
+in an inconsistent state.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+From a qucik look, it appears that's possible as a result of a partial SVE
+write; I'll go check and see what we can do to fix that.
+
+Mark.
+
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 6720 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+> pc : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+> lr : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
+> lr : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+> sp : ffff8000a1047de0
+> x29: ffff8000a1047de0 x28: ffff0000dcfd9ec0 x27: 0000000000000000
+> x26: 0000000000000000 x25: 0000000000000008 x24: 0000000000000040
+> x23: 00000000000020ff x22: dfff800000000000 x21: 1fffe0001b9fb3d8
+> x20: 0000000000000000 x19: ffff0000dcfd9ec0 x18: 1fffe000337db690
+> x17: ffff80008ae011f8 x16: ffff80008052ae04 x15: 0000000000000001
+> x14: 1fffe0001b9fb3d8 x13: 0000000000000000 x12: 0000000000000000
+> x11: ffff60001b9fb3d9 x10: 0000000000ff0100 x9 : 0000000000000000
+> x8 : ffff0000dcfd9ec0 x7 : 0000000000000000 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000000000008 x3 : ffff8000801f8344
+> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
+> Call trace:
+>  task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline] (P)
+>  fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746 (P)
+>  arch_exit_to_user_mode_work arch/arm64/include/asm/entry-common.h:25 [inline]
+>  exit_to_user_mode_loop+0xe4/0x178 kernel/entry/common.c:46
+>  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+>  arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+>  el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+>  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+>  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+> irq event stamp: 129
+> hardirqs last  enabled at (127): [<ffff80008ae151bc>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+> hardirqs last  enabled at (127): [<ffff80008ae151bc>] _raw_spin_unlock_irq+0x30/0x80 kernel/locking/spinlock.c:202
+> hardirqs last disabled at (129): [<ffff80008adecb80>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
+> softirqs last  enabled at (8): [<ffff8000801f95fc>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+> softirqs last disabled at (128): [<ffff8000801f95c8>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+> ---[ end trace 0000000000000000 ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
