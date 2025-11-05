@@ -1,276 +1,168 @@
-Return-Path: <linux-kernel+bounces-886552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CD7C35EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:49:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95479C35ED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609F518C6C41
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A32561630
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DED53126A8;
-	Wed,  5 Nov 2025 13:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7042630FC04;
+	Wed,  5 Nov 2025 13:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wmx54f+P"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bBWUlveh";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqxpsYeP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A429E3148A4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0BF321F2A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350537; cv=none; b=qqwtxEzgFw5DLMUCc3xy28u5QrSiV38Wr3JLuyQCdzlNLQJyw/CPpwps6RtoAmw0lShwmVR7FDasnQLji0vY3PFsZzJMzznXvftOJMO+q6Hgln2rkuwYU4Jrk8b44EhIRdrpBVVYu/M3iGQmyNqbB+LO9f+VjVLACmzeJSu/pdM=
+	t=1762350587; cv=none; b=ef6aXTLaTv6LqGXJdOYD2B9q0A5Wbycpx2MXQ0HvL6OMQ+S2/XlWETBmMIzRrNJFvsAl+h3Ewq3xRY/zPrIJwruZmTNf4r+EY+SiN3MUgq4swnlbq52fE/Y8w8kQzJe7xg7oaFtAlhTRaxG0HwGrAOYB70WqFubAhAOvperMvIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350537; c=relaxed/simple;
-	bh=5oI5qj5FAoT/zD4PITm/avrYSdsCmqjpO6F2XoPyDxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l9n4KvJDK7TiUEfaZSkTPenOstoJsueuZdlo/DanQr6CT2PHCLhr3gM1fgKJqU2sMFI6mv1F+I+VAdi7ytRgSAM7KL+Pyi18Ek+W0LJWZuj5+EXbQFWv8u57yZUGozRWDFBgFmpHhQcjBev/73EFiVuh1cM6a9tocRs06uvwewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wmx54f+P; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b71397df721so553421666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:48:55 -0800 (PST)
+	s=arc-20240116; t=1762350587; c=relaxed/simple;
+	bh=kzg8uR0x7L/MsfY3Iy+9dhek3bFid4Ly2GEmcaceXRA=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kAt0kb4KY0glBnQUikN0lKcqmh9LzlLux9DSnk0JekejoOQrEdXKgwhJyV5kZUv2Shc0P/rrG+iNyO8ZWHnazK5TZuw/z9nMiBpnhUOqh0aFxoTgb+24FLk+GDFQ7yUtuwkOGzj9p8PVEaJoNP9Xj/8SmgwTSGQXct/HpFlBERQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bBWUlveh; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqxpsYeP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762350584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uOBuFfF3B0NWyKgpCCN/9jCULZvQio1gCrlthonJhHg=;
+	b=bBWUlvehZMWo1WeMnxlSUBzNZ6hGlERVbtZMF5aZQue9CvMiUXUqlpgyaqz0VaLrHlx6hh
+	g9AgjQZn9pa0tNfwCE9myTkYDOrNgBJXBg0X9T6PxRlRHQHctJ1nFlqo6ct9oaO5Zdeh1/
+	2bFLJVmPXDslDgM6ocMTkk7DlldSXT0=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-634-gpZwCgHEMXmgWo3p315s2A-1; Wed, 05 Nov 2025 08:49:44 -0500
+X-MC-Unique: gpZwCgHEMXmgWo3p315s2A-1
+X-Mimecast-MFC-AGG-ID: gpZwCgHEMXmgWo3p315s2A_1762350583
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-89eb8ee2a79so3455189585a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:49:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350534; x=1762955334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6A5M4lHiwAqecEpYdy09Dd0pGpiHeylPQ1THRXjXvY=;
-        b=Wmx54f+PTu++Npt1dHK/kS2g/3FhETHIqetcTtY9dkCcDI4SlJcLJfQq/l3fTff+ke
-         GNZtS6cEw9C+F0McYtE2vpAhZeWk+oMNYfLwoqMjrsA32HJSBnW+C+hcLvF1V56ydpXQ
-         5dUa13jwxvFma40vuGbN5PY9tvLdkfho0opZHiZhZLHRavRUicFn1JSmAJHPDkB4iFUS
-         m0nbgX/XkRK2J1w4G/FOF+iazYswfD8PGwb1kofBzw8s4h1mrcWAgsnuBdLZJ/pDXCrn
-         oVrNIG5I7eNmbN5A24nLhcDTTzGNixYArCB4KBAf+JcZkvHAxZdH28EvsmW/Dxbt0350
-         91uA==
+        d=redhat.com; s=google; t=1762350583; x=1762955383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uOBuFfF3B0NWyKgpCCN/9jCULZvQio1gCrlthonJhHg=;
+        b=FqxpsYePjyZNTSKTyXjaktKnveU25tv3DXEU9t1uptwOsT9/1nXDeH2YeMgS7ibS6o
+         ktfGl3hdhWPmGDrk7g4ye48AYp7+6XnoVo2ZLZSLhZama1KruSqiolTdBItQoIA9LCmm
+         kvUzVnOQlRX5xIAncOdImMADkXZylu1O0n8uNH24vYs+oKpEICruetXNFfO7ixkHaOnC
+         IfjPmKOs4JUB2GjMM9Te5ySuwc/7O2lbqW29yQamDwyE9jYnA/7ZvDFPc5tM256EZw4y
+         lwpMazpuNtMwCRTK/rMNr+UrEg9vJiX0oKrc2oESZDekLgKTSBO7uiH37n/2FbTosyXQ
+         Ml5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350534; x=1762955334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H6A5M4lHiwAqecEpYdy09Dd0pGpiHeylPQ1THRXjXvY=;
-        b=MIMN503XSuAq/y4xUMcNlchY6v7b3NDMeRjSxYft78skJfhdkqtKPidoXmrv56254d
-         9HRfbDf46tVxis9zg2Dmcc8q+bdVYS6K/R+uSYx4ppe7IXX8jE7ywrp5unyW+BF5jUyH
-         Jpc2Q98TlSuZScXGbZvyaw5RPWH419Hm+3JaZf+YJT2Cw06pUgqvl+WRpsJzMV1PAuyP
-         MTWmXZRHjxmeAXE+uhboFYtGz7DjbUuOV+rU0/5C/bET/Noyo3XlF2YaIQvvYiKPFhjB
-         4b0faqxWJbwytd+PwWgdVtQPNE02TtHlcitRLFvvji+2Pso759YJypa1vnC3ziJNNxsa
-         SdHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVO77LP1uCi95+MLPrXvEO1SKpzKiQ9Cqu5AugH3K7BaCr5Fs8BZXmQFQkDwcO6j/sYT0jrIQOXK2wJnEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfHzTyu7TajnFleJdmkHpKbUTkLif3E1N0JYCddZwyvK2sVjQC
-	8rbxC5Vy42EMK3KQ2SUh/n6cfN9B+uunBA0mY2tt9ZqHfS6+DL1u2f/0Vu6fnW6qcQpkZeTPP0q
-	OauANZXXPwN4RmXRjTGVvtqsEEO+3b74=
-X-Gm-Gg: ASbGnctvA22wpcTpqu4MjKwILvrDweFK4IWIKUgRmywgjbnUAMMdKi9aXlrvXFjFKJm
-	dVRQ94YMztOeH1auw/IeKkXomhYDO8kRMBgEX2Z2oYbywhKZh5oSMznfISv27AqIIpn+0YGy7ch
-	XsGcKn1XeD/RdigpqQQKSMaIv2SguVtlrzirIzusQK5zckNUlzicixAdhvkPQT4IfzwWmHQqjMP
-	noYzs3SZYC1VTD/cDuGyIMdXgCk8s8Uuw9AKCH4XPVhuOXVEcakBfJ2/Lh8TDomaOmijcWp
-X-Google-Smtp-Source: AGHT+IEIOCx5nbP23B6IgW+Zf8q2gjqPW5IHj6AM03AAs1xYsEA2yw1wTJNGJI3WTD6OsF2moJ8RHSebS8878U8L/Y4=
-X-Received: by 2002:a17:907:d27:b0:b72:58b6:b263 with SMTP id
- a640c23a62f3a-b72656902a0mr343574366b.60.1762350533743; Wed, 05 Nov 2025
- 05:48:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762350583; x=1762955383;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uOBuFfF3B0NWyKgpCCN/9jCULZvQio1gCrlthonJhHg=;
+        b=KLqfdo9FAsakjgis4puYskzZj39zuiDc3qhRG5mFbX8DTe1FphtwimKddOp45JBXlp
+         c//c6hOW/KKRYjdeW5lAd0cthJ08GZ11pHKq+Yaslx4xDL2FzcQjaR17iauQpDfQ6vUF
+         CXYlM8dpmfgKaWO1gNJOLAmx5n+0BU+vvmOZslz5w52VaNOSdcvBfhncl/YH5lAUXA0P
+         bR0VBsHEseGRxK86DEpdfCMtFbAUlcyYCNnzF+vjk8RK3fHnhtI8FIIHpKoX0y9VsRDN
+         bU1dWcUtHnKYdfuYaW/vD99DK2rI6FqXrp2b4j/+3LbG48vI1oLvh/am2ClvOicRdeSX
+         vu+w==
+X-Gm-Message-State: AOJu0Yzjxj2DqPokJoTs32ulS58BgtIwvnSr04sWP+l6YByhYqxE8uQ8
+	E6XfSaN4/DtoRLO/ewHyuEYjnnRnuRFQWSXaRwn+9KM4C/Tg9Dqtjh82FhKXoYdSjvDSMZJZ6XH
+	/tlm/EzppxdXnJ1Z6zN1U1V5CXFoAuGYNZeJVRFmhP1iXWjkHJcU3cceSpGb4HMcrOg==
+X-Gm-Gg: ASbGncuYXbMkdi0x/VE8kyyWl/QekPPASwj3QLq1jHKA75k0OcYZQymZqcj5hwNo0l1
+	rLIOFEZ7XtQyytu1Po4PFpFiYXHW7TrR23bK1d0X5BtXfEuPtpvSiTl8BnlWOdQjao2ArZpGtnS
+	nbGJCM3qEyGRkmYSfqeORgB1bHt7qJzqC681zkVyZTqgYLVGKK36MEPrPDV6Yq2ckY0w+nfQzVn
+	l35uurq5EY1ZGhXKTpSv0pc3ycbmLJzpdXe7djWb9LPt4HNnAezBDsaXzjOPRphYwwdlY1NF2KM
+	zNWHm+Gi3vXrbh+gqaOSBXZBdRu1k2EMXaBynabn0FazqHgDEnAP2QpkOGr5dAnbVubfB+/9m4H
+	FVXbvcdqEWTRfb+40RLGTrL+9aCCwIZmmvBukJ+SIaBIhbA==
+X-Received: by 2002:a05:620a:28c4:b0:8a3:b6a9:d3c2 with SMTP id af79cd13be357-8b220bb8ab5mr509515285a.44.1762350582339;
+        Wed, 05 Nov 2025 05:49:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH5Nh03EnLV23RY3CTB4C7BADwRxkNyMDkpsAIitUMoGCnXQW2sEsEnbOV13RAvPiZx15s9jQ==
+X-Received: by 2002:a05:620a:28c4:b0:8a3:b6a9:d3c2 with SMTP id af79cd13be357-8b220bb8ab5mr509495785a.44.1762350579049;
+        Wed, 05 Nov 2025 05:49:39 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b0f8284e76sm408417785a.50.2025.11.05.05.49.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 05:49:06 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <10899bd0-09ca-4fcf-8142-3d5cd6e4fedf@redhat.com>
+Date: Wed, 5 Nov 2025 08:49:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
- <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
- <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com> <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
-In-Reply-To: <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 5 Nov 2025 21:48:42 +0800
-X-Gm-Features: AWmQ_bl8iNYRoJAtiKbBAMBI0VEiK9JYPyC0kuOrdZYworiStDsxnQijZbZj20g
-Message-ID: <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
- search for sorted BTF
-To: Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/mutex: Redo __mutex_init()
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Waiman Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Will Deacon <will@kernel.org>
+References: <20251104140023.jV9j77ld@linutronix.de>
+ <4207482b-fc63-4db7-ab98-36b31a600173@redhat.com>
+ <20251105075729.SJ4cL1rz@linutronix.de>
+Content-Language: en-US
+In-Reply-To: <20251105075729.SJ4cL1rz@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com>=
- wrote:
+On 11/5/25 2:57 AM, Sebastian Andrzej Siewior wrote:
+> On 2025-11-04 11:21:27 [-0500], Waiman Long wrote:
+>>> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+>>> +void mutex_init_ld(struct mutex *lock, const char *name, struct lock_class_key *key);
+>>> +
+>>> +static inline void __mutex_init(struct mutex *lock, const char *name,
+>>> +				struct lock_class_key *key)
+>>> +{
+>>> +	mutex_init_ld(lock, name, key);
+>>> +}
+>>> +#else
+>>> +extern void mutex_init_plain(struct mutex *lock);
+>>> +
+>>> +static inline void __mutex_init(struct mutex *lock, const char *name,
+>>> +				struct lock_class_key *key)
+>>> +{
+>>> +	mutex_init_plain(lock);
+>>> +}
+>>> +#endif /* !CONFIG_DEBUG_LOCK_ALLOC */
+>> I think it is a good idea to eliminate useless strings in non-lockdep
+>> kernel. However, the function names are kind of awkward to me. First of all,
+>> it is hard to associate "ld" with lockdep as ld is also the name of the GNU
+>> linker. I would prefer to fully spell out as "lockdep". The "_plain" suffix
+>> also looks odd to me. How about using the original __mutex_init for the
+>> plain version and __mutex_init_lockdep as the lockdep version which calls
+>> __mutex_init and use similar naming scheme for the RT versions. What do you
+>> think?
+> What about
+> 	mutex_init_plain() -> mutex_init_generic()
+> 	mutex_init_ld() -> mutex_init_lockdep()
+Yes, generic is a much better name.
 >
-> On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
-> > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
-com> wrote:
-> > >
-> > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
-> > >
-> > > [...]
-> > >
-> > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf *bt=
-f, __u32 type_id)
-> > > > >         return type_id;
-> > > > >  }
-> > > > >
-> > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *type_=
-name)
-> > > > > +/*
-> > > > > + * Find BTF types with matching names within the [left, right] i=
-ndex range.
-> > > > > + * On success, updates *left and *right to the boundaries of the=
- matching range
-> > > > > + * and returns the leftmost matching index.
-> > > > > + */
-> > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf=
-, const char *name,
-> > > > > +                                               __s32 *left, __s3=
-2 *right)
-> > > >
-> > > > I thought we discussed this, why do you need "right"? Two binary
-> > > > searches where one would do just fine.
-> > >
-> > > I think the idea is that there would be less strcmp's if there is a
-> > > long sequence of items with identical names.
-> >
-> > Sure, it's a tradeoff. But how long is the set of duplicate name
-> > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
-> > with high likelihood will take more comparisons.
+> Using __mutex_init() for the basic/ generic init could work but we have
+> already users 13 users (drivers/ mm/ net/) and the rust bindings are
+> also attached to it. I would prefer the generic/ lockdep suffix.
 >
-> $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sort | =
-uniq -c | sort -k1nr | head
->   51737 '(anon)'
->     277 'bpf_kfunc'
->       4 'long
->       3 'perf_aux_event'
->       3 'workspace'
->       2 'ata_acpi_gtm'
->       2 'avc_cache_stats'
->       2 'bh_accounting'
->       2 'bp_cpuinfo'
->       2 'bpf_fastcall'
->
-> 'bpf_kfunc' is probably for decl_tags.
-> So I agree with you regarding the second binary search, it is not
-> necessary.  But skipping all anonymous types (and thus having to
-> maintain nr_sorted_types) might be useful, on each search two
-> iterations would be wasted to skip those.
+> If you want __mutex_init() for the generic, regardless, we would first
+> need to make room and then something like mutex_init_lockdep() could be
+> the public interface replacing __mutex_init() in its current function.
 
-Thank you. After removing the redundant iterations, performance increased
-significantly compared with two iterations.
+Ah, I don't realize that there are users of __mutex_init() outside of 
+the locking subsystem. In this case, we have to maintain the semantics 
+of __mutex_init() to avoid affecting other subsystems.
 
-Test Case: Locate all 58,719 named types in vmlinux BTF
-Methodology:
-./vmtest.sh -- ./test_progs -t btf_permute/perf -v
+Thanks for the clarification.
 
-Two iterations:
-| Condition          | Lookup Time | Improvement |
-|--------------------|-------------|-------------|
-| Unsorted (Linear)  | 17,282 ms   | Baseline    |
-| Sorted (Binary)    | 19 ms       | 909x faster |
+Cheers,
+Longman
 
-One iteration:
-Results:
-| Condition          | Lookup Time | Improvement |
-|--------------------|-------------|-------------|
-| Unsorted (Linear)  | 17,619 ms   | Baseline    |
-| Sorted (Binary)    | 10 ms       | 1762x faster |
-
-Here is the code implementation with a single iteration approach.
-I believe this scenario differs from find_linfo because we cannot
-determine in advance whether the specified type name will be found.
-Please correct me if I've misunderstood anything, and I welcome any
-guidance on this matter.
-
-static __s32 btf_find_type_by_name_bsearch(const struct btf *btf,
-const char *name,
-                                                __s32 start_id)
-{
-        const struct btf_type *t;
-        const char *tname;
-        __s32 l, r, m, lmost =3D -ENOENT;
-        int ret;
-
-        /* found the leftmost btf_type that matches */
-        l =3D start_id;
-        r =3D btf__type_cnt(btf) - 1;
-        while (l <=3D r) {
-                m =3D l + (r - l) / 2;
-                t =3D btf_type_by_id(btf, m);
-                if (!t->name_off) {
-                        ret =3D 1;
-                } else {
-                        tname =3D btf__str_by_offset(btf, t->name_off);
-                        ret =3D !tname ? 1 : strcmp(tname, name);
-                }
-                if (ret < 0) {
-                        l =3D m + 1;
-                } else {
-                        if (ret =3D=3D 0)
-                                lmost =3D m;
-                        r =3D m - 1;
-                }
-        }
-
-        return lmost;
-}
-
-static __s32 btf_find_type_by_name_kind(const struct btf *btf, int start_id=
-,
-                                   const char *type_name, __u32 kind)
-{
-        const struct btf_type *t;
-        const char *tname;
-        int err =3D -ENOENT;
-        __u32 total;
-
-        if (!btf)
-                goto out;
-
-        if (start_id < btf->start_id) {
-                err =3D btf_find_type_by_name_kind(btf->base_btf, start_id,
-                                                 type_name, kind);
-                if (err =3D=3D -ENOENT)
-                        start_id =3D btf->start_id;
-        }
-
-        if (err =3D=3D -ENOENT) {
-                if (btf_check_sorted((struct btf *)btf)) {
-                        /* binary search */
-                        bool skip_first;
-                        int ret;
-
-                        /* return the leftmost with maching names */
-                        ret =3D btf_find_type_by_name_bsearch(btf,
-type_name, start_id);
-                        if (ret < 0)
-                                goto out;
-                        /* skip kind checking */
-                        if (kind =3D=3D -1)
-                                return ret;
-                        total =3D btf__type_cnt(btf);
-                        skip_first =3D true;
-                        do {
-                                t =3D btf_type_by_id(btf, ret);
-                                if (btf_kind(t) !=3D kind) {
-                                        if (skip_first) {
-                                                skip_first =3D false;
-                                                continue;
-                                        }
-                                } else if (skip_first) {
-                                        return ret;
-                                }
-                                if (!t->name_off)
-                                        break;
-                                tname =3D btf__str_by_offset(btf, t->name_o=
-ff);
-                                if (tname && !strcmp(tname, type_name))
-                                        return ret;
-                                else
-                                        break;
-                        } while (++ret < total);
-                } else {
-                        /* linear search */
-...
-                }
-        }
-
-out:
-        return err;
-}
 
