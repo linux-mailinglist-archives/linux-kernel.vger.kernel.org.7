@@ -1,137 +1,169 @@
-Return-Path: <linux-kernel+bounces-886026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68587C34883
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBB8C3488F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45AC94F045A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:44:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9F7C4F121F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5D82D9488;
-	Wed,  5 Nov 2025 08:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6722DAFDB;
+	Wed,  5 Nov 2025 08:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzGUfFRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X8yCRZJW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68DA2D6E6A;
-	Wed,  5 Nov 2025 08:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E652D94AC;
+	Wed,  5 Nov 2025 08:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332277; cv=none; b=XFYzVrUG0FgCpBuXksBL4s1SlCBYXrYYkomik4lExGerB1+8hq7lu7EV1b3xFfDC/RT5JnOtckr4Zg06g87lZM8jo4Pgi4VueZQ7spPZ7D9/5/FN97CJmZPKmZF3If5hlRxYBSmf8O2Jl1rCgkk00HH3uNRp4IkIThA5t4xL544=
+	t=1762332312; cv=none; b=bauEzMwzXlBC5RsgwGVpnw8+KEIU0QebIOkGfAmarvTc8PiS/+pXd35a9IOR2ff0UooL91FRoRwrZwT+1ToSTeCN65t7eVEmi+poyHPa5SmjVhy/8EV/IqvOAPeUbe5WXps8EmAeK589xDdWMUYqlGO7SBgSnsZ7wfLMEU9XClg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332277; c=relaxed/simple;
-	bh=B1mrzqdCotHeUPx6GmeRphi3vwwxC29uywn7AUaYpIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsukTHb7ZT5UC1XzdBRg4cyTYCPf6/A3zBpkp31JplJhX1TH9et1Tr7hn3ZChAYagEyI0XK1J68ZZHkKN3N5rJIjjqscOyOdiIMMA4rKObZzcicNR0sYujLoAPWr4BgMz2j4bf9+TwD9H1hh5WPgNXSbtTdLVaCjZA59l2457zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzGUfFRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4CD0C4CEF8;
-	Wed,  5 Nov 2025 08:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762332276;
-	bh=B1mrzqdCotHeUPx6GmeRphi3vwwxC29uywn7AUaYpIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CzGUfFRLTsL19Qi/+XP0OzEpr4fmO4sluqZzOHVtWApYci0N543doqZb2LYPRMQR4
-	 dY3EVAfT1DZ2vwrO7fYLaNlYaTSnc+KirvRrrwMu6Ew/NsyGtBg43SQTwVp6Sir5ET
-	 ODovueBinj4gWGjlSR5zIFRhClia0uE1HD8cXIzP6s91aSZItsvOjfYekB9LCByPlR
-	 +owTzT/WQLgiiks5rvCRODfMhUIKdFzoFYtM9H1JdeJAQTf3yvj8hbxZfQPqTT8I9z
-	 ILgsXLWk6nWUVl6SrnknhDK+0kpfZ5ka+Z1NQgsi801m2a32GWLRkoYE2Gd55ZaGeu
-	 mZFe9LQ00RxUA==
-Date: Wed, 5 Nov 2025 09:44:33 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ritesh Kumar <riteshk@qti.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, 
-	abhinav.kumar@linux.dev, jessica.zhang@oss.qualcomm.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_mahap@quicinc.com, 
-	andersson@kernel.org, konradybcio@kernel.org, mani@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, vkoul@kernel.org, kishon@kernel.org, 
-	cros-qcom-dts-watchers@chromium.org, Ritesh Kumar <quic_riteshk@quicinc.com>, 
-	linux-phy@lists.infradead.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, quic_vproddut@quicinc.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: phy: qcom-edp: Add eDP ref clk for
- sa8775p
-Message-ID: <20251105-juicy-rhino-of-action-b6be48@kuoka>
-References: <20251104114327.27842-1-riteshk@qti.qualcomm.com>
- <20251104114327.27842-2-riteshk@qti.qualcomm.com>
+	s=arc-20240116; t=1762332312; c=relaxed/simple;
+	bh=ONo3lQJBSG60YzvL0zPvRv2Ax2mJQO6EQfj7ir29EzU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dovbGD8wFMfqZCWCFc6GrgKf1pmKuDjrVI+9EbAmOnMy4ohj564KvlHlgVQRHxlEShbO9yDWpD9bp9MGcWFgraila2BL5KhYjVesTAMoWF3LQFv+Gio3mLbDG9NihkYKAMgVEqD67OJCaVvNpfUt6PyX0MCbg74D64N1/Eo0X50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X8yCRZJW; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762332310; x=1793868310;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ONo3lQJBSG60YzvL0zPvRv2Ax2mJQO6EQfj7ir29EzU=;
+  b=X8yCRZJWiax7I/HiP4/p9fNJGjI5+PIPrPPkkKjg2/zWcbWI+XPwnQiZ
+   zTYUMD3Wo3NvwRJTKQnUI1APDbqWlJ2xdd3v4hVEFTIQ7z7YdI8BdvgbQ
+   UukktHLUh9rB6zUkWbP7jHzbWzkkvm9Lq7ABHGW6F10TaMUQZFkiXDIMu
+   2eAk/cfIGv6sx/pUWDbnr409XtdiCvQKXP00M9P08SoyhIrdPqMeRHeHB
+   iSG+sphQu2MhdNqADclwtTbn9070thU/rMwEKth1zw/dgalhejHkA1ZDd
+   gxyr9urXhvBnWI9gKZI1tnfBQSzlh2yYpUYvAiO7rKa8+JuYDOkVFTtb0
+   Q==;
+X-CSE-ConnectionGUID: hwuDvibGQQa2GTp/0Yh4PA==
+X-CSE-MsgGUID: NyeJIO/fS72sYBrsCFcQkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="74733631"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="74733631"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:45:10 -0800
+X-CSE-ConnectionGUID: ncPN683IQSye5yDVr+RjIw==
+X-CSE-MsgGUID: xh+mfx/bSs2+IRun1f1wig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187086212"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 00:45:07 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 5 Nov 2025 10:45:04 +0200 (EET)
+To: Hans Zhang <18255117159@163.com>
+cc: bhelgaas@google.com, helgaas@kernel.org, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Manivannan Sadhasivam <mani@kernel.org>
+Subject: Re: [PATCH v3 1/1] PCI: of: Relax max-link-speed check to support
+ PCIe Gen5/Gen6
+In-Reply-To: <6fdc4f2c-16fa-9aed-6580-759e229e5606@linux.intel.com>
+Message-ID: <eba1f55e-3396-052c-0d77-09bf8b8c8216@linux.intel.com>
+References: <20251101164132.14145-1-18255117159@163.com> <6fdc4f2c-16fa-9aed-6580-759e229e5606@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104114327.27842-2-riteshk@qti.qualcomm.com>
+Content-Type: multipart/mixed; boundary="8323328-2034070910-1762332304=:33477"
 
-On Tue, Nov 04, 2025 at 05:13:26PM +0530, Ritesh Kumar wrote:
-> From: Ritesh Kumar <quic_riteshk@quicinc.com>
-> 
-> When the initial contribution of eDP PHY for sa8775p was done,
-> eDP reference clock voting was missed. It worked fine at that
-> time because the clock was already enabled by the UFS PHY driver.
-> 
-> After commit 77d2fa54a945 ("scsi: ufs: qcom : Refactor
-> phy_power_on/off calls"), eDP reference clock started getting
-> turned off, leading to the following PHY power-on failure:
-> 
-> phy phy-aec2a00.phy.10: phy poweron failed --> -110
-> 
-> To fix this, explicit voting for the eDP reference clock is
-> required. This patch adds the eDP reference clock for sa8775p
-> eDP PHY and updates the corresponding example node.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+--8323328-2034070910-1762332304=:33477
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> 
-> Signed-off-by: Ritesh Kumar <quic_riteshk@quicinc.com>
-> ---
->  .../devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml  | 6 ++++--
->  Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml     | 1 +
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> index e2730a2f25cf..6c827cf9692b 100644
-> --- a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> @@ -200,9 +200,11 @@ examples:
->                    <0x0aec2000 0x1c8>;
->  
->              clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-> -                     <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-> +                     <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +                     <&gcc GCC_EDP_REF_CLKREF_EN>;
->              clock-names = "aux",
-> -                          "cfg_ahb";
-> +                          "cfg_ahb",
-> +                          "ref";
->  
->              #clock-cells = <1>;
->              #phy-cells = <0>;
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> index bfc4d75f50ff..ba757b08b9b1 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> @@ -72,6 +72,7 @@ allOf:
->        properties:
->          compatible:
->            enum:
-> +            - qcom,sa8775p-edp-phy
->              - qcom,x1e80100-dp-phy
+On Wed, 5 Nov 2025, Ilpo J=E4rvinen wrote:
 
-I don't have such code in latest next, which makes it impossible to
-review.
+> On Sun, 2 Nov 2025, Hans Zhang wrote:
+>=20
+> > The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4)=
+,
+> > but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 suppor=
+t.
+> >=20
+> > While DT binding validation already checks this property, the code-leve=
+l
+> > validation in `of_pci_get_max_link_speed` also needs to be updated to a=
+llow
+> > values up to 6, ensuring compatibility with newer PCIe generations.
+> >=20
+> > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> > ---
+> > Changes for v3:
+> > - Modify the commit message.
+> > - Add Reviewed-by tag.
+> >=20
+> > Changes for v2:
+> > https://patchwork.kernel.org/project/linux-pci/cover/20250529021026.475=
+861-1-18255117159@163.com/
+> > - The following files have been deleted:
+> >   Documentation/devicetree/bindings/pci/pci.txt
+> >=20
+> >   Update to this file again:
+> >   dtschema/schemas/pci/pci-bus-common.yaml
+> > ---
+> >  drivers/pci/of.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> > index 3579265f1198..53928e4b3780 100644
+> > --- a/drivers/pci/of.c
+> > +++ b/drivers/pci/of.c
+> > @@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *n=
+ode)
+> >  =09u32 max_link_speed;
+> > =20
+> >  =09if (of_property_read_u32(node, "max-link-speed", &max_link_speed) |=
+|
+> > -=09    max_link_speed =3D=3D 0 || max_link_speed > 4)
+> > +=09    max_link_speed =3D=3D 0 || max_link_speed > 6)
+> >  =09=09return -EINVAL;
+> > =20
+> >  =09return max_link_speed;
+> >=20
+>=20
+> Hi,
+>=20
+> IMO, using a literal here is somewhat annoying as it's hard to find this=
+=20
+> spot when adding support to the next PCIe Link Speed. It would be nice if=
+=20
+> it could get updated at the same while the generic support for a new Link=
+=20
+> Speed is added.
+>=20
+> Perhaps include/linux/pci.h should have something along the lines of:
+>
+> static inline int pcie_max_supported_link_speed()
+> {
+> =09return PCI_EXP_LNKCAP_SLS_64_0GB - PCI_EXP_LNKCAP_SLS_2_5GB + 1;
+> }
 
->      then:
->        properties:
-> -- 
-> 2.17.1
-> 
+=2E..Or maybe put it just to drivers/pci/pci.h instead.
+
+> Then replace that 6 with pcie_max_supported_link_speed().
+>=20
+> So when the next speed get's added, somebody grepping for=20
+> PCI_EXP_LNKCAP_SLS_64_0GB will find pcie_max_supported_link_speed() has=
+=20
+> to be changed and the change will propagate also to of.c.
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-2034070910-1762332304=:33477--
 
