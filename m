@@ -1,377 +1,183 @@
-Return-Path: <linux-kernel+bounces-885739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FECFC33CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:48:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09666C33CEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3850B3AC266
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:48:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 491954EAF99
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23182522BA;
-	Wed,  5 Nov 2025 02:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177F6252912;
+	Wed,  5 Nov 2025 02:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZaG3Cm7O"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HoSWexWG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ToFShUS2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872571EB195
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC70221290
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762310883; cv=none; b=GxwdgWWEl/FTGaezXkQmKRNbqln1+ippOBszdbHw07Q5zamFXdbC+BtHrV2A0OPLZwqr/W9t4+XFQZsfjag095yVhdxdqFl4eEgx6FPQHbK/8UKOWHoMVlhnWmSspJU0UrVZuI2cgZXcvW//GxWZCXpeqUEV+qpyTTj+7US5KFc=
+	t=1762310992; cv=none; b=Wg2f7tSVCFkETQRdUg2zWkWjVbodmbS9l/yzqv9+24PUHpBaUeYu66tTs1UGsFAsyWgll2cDuzYPt6hHFQhYBsm3dkJAudzKCP8gJ+3ffD2Q6OrFuqiFhqijRpmFMVUn0qzW5neaUuN59n8tPukAHtR1YuZ4OqxkkGIadkA5m6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762310883; c=relaxed/simple;
-	bh=rXf5u+fnVQB8ijTEi6AvLLG2mpb9BXOpnmRrCXsI4IM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWqUnjtk0LoaFBgj1WCWNqMa3NUVl1mTORBoyVm0SYBW9k149DUP4gwgW/IYYDUrBxJ69/Uw8D0mL0wOfAnR80NG7YrATJ2jcbC/D1JajlcPAxKh9uYkmjC3rEb0SF3F55mENs8EFMoRqFULmwQdBaBHHl0wkmM/NByaBeSINvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZaG3Cm7O; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso5441516a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 18:48:00 -0800 (PST)
+	s=arc-20240116; t=1762310992; c=relaxed/simple;
+	bh=bdA5YaMWZUGOajbWkqFMXdVrbQu94SDAD8I7zKtcZ/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y/MwkgoFCShWu779QuH9EUKB03z+MQNnBXKHkTKtURqLLC0kAUXe541IZEGEmWol1oRnv89TCeoTCTG8WfaBG0Lfw/dXbjq2UXYeGpZu1eJ+jzNbaeXeHpajOWvMn5U326BOHgUz/zO4AAPCvfwTVj0r8Z+hnACXsdghsQJwPQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HoSWexWG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ToFShUS2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KgFd32928474
+	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 02:49:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	z6fE25BWx2cqViq02OoeLjnc0qT5FrD3WFYx473CdTs=; b=HoSWexWGizap5AgJ
+	FqZzHP/6i/annH3353tKGyBFj4mEZrJd9lUr/AXkC7ejnKlYtxBBWno+96D862ES
+	onQVPEOM1Dp9QQqnzCFiKH4IA53nR4BUOyf6iqfF+hynL5IkmOIyXM1wEhgAqW54
+	JNHiy5HW5+OPFudGFs9G2xOe1VYy9Jqf5ogvlesvqIBOFGKmWyaml9BVdigGw97g
+	E8DmIHGCXRTlhETVaicc7fDCCbrjvLjRsfHhCDU6uIAQn8K74atfo/1lGCuLQyzJ
+	g0+5rk6HG+VvJAjr6xnw/tHCj5kgPcBwVerFmKaINmBnT2mL4p5mfxNX5Flx+Fy3
+	k8gzvw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7me5sscm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 02:49:50 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-294df925293so67713105ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 18:49:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762310880; x=1762915680; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OPz8gud/XQUy5E/Kke8SRPmK6elIY9QqlM3PyIOa7cg=;
-        b=ZaG3Cm7OrmjG/OhloobS5j6vdVxLdh/BqI7vYnBpwloUHWwgXXLlHNm3tQGpfRnLHv
-         uAH57DuVh1Sn+IN+MbM7VNPtepOfv0SRChFbMELp4OHuXQUSpt9NdB+rT6jm752i5Zi/
-         hOG3lBO6F8BEz0xI1kSK5zpYeucdC4LSYbToKeErX/40epxRy0eNjk4dshiLmp1u4dNA
-         zjeExBGZre2EXqfIcBc91Od4GYqjdMloc/wUPtv3PrJpC7PvdbqvJTSJAMKfWOrK9cFp
-         vjpXi4Xy9OfulLClsSWbAcYn03P+5LFyd825GIikIQ/U93SFvazVLUiNw3ma4P759uwt
-         vI+Q==
+        d=oss.qualcomm.com; s=google; t=1762310989; x=1762915789; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z6fE25BWx2cqViq02OoeLjnc0qT5FrD3WFYx473CdTs=;
+        b=ToFShUS2DOBqSV6cfNrKgK2W0EPV2tgz7fe3HLZamtktkzjy4Ryhh8P4jukxLIFm8W
+         4JE4t+qHtxr5BFDY8XH++0mYrGG5AANM69knoDoEG4iKY2/+n2p3PoICKumtoHP1Kyla
+         xaa6QDH5PK06ARrIFlTwy53QfgHn3k37s+Y2PXiqnaWRLIeN8lxvdj3IlC2fA22tfkxz
+         s5GFbwTav3Y/kSk6OB19YhCPEoM83cDwoy6/yWJtBcyZITEr3qMSsCMqYIcEgULdbvyg
+         nA9REXMaCJeA+yhJUE4HRrYFEyeyXn3sDPekKS9vllwHc2LwZrQiUsHboxS+M9kSXyjU
+         HK/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762310880; x=1762915680;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OPz8gud/XQUy5E/Kke8SRPmK6elIY9QqlM3PyIOa7cg=;
-        b=P00Azw9yJjfbZkP1EsB/1598SQJHSleNePpk+CVhhDJfyJ+rqsjI8wDHbLVJKmqDxU
-         scFQHp3nrXpHqSiP73aLhM+7m10L9wXgk+qRLoyy/WhEnEoENkaTEMYK3HJ1V4Qw8RTG
-         kCln6A06ZDwBAancrBCwRP+WrfXCymjefp7Umd46jvZ4+wKlfjg6/+0Of4EOlncDRiHy
-         gugMapaISWnBKW7Z4LyMrFuY3XFVnEloJNPADGgsist2M+OJ11yoyH2p2UFLy/C59xMf
-         X4GaNY5f3Ay4JXQi7n3mxBPzLNEOrmJsozXuWfnN3+1iamqdbOrOgwuBwLJiUMZpPZq9
-         T9Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeG7ZlDpzE0WtxmueRmZjnhOFWkkmK0YBzG1mgzY+JVgY9qswxCdLKmpgCzU8LDSOuVdVNLoS0kxK1JwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyevDpBK/Ab8ftsyKFBpKzSUVRpLW5v/NKMYGkFoDeH0TfCBP3A
-	7RH7tsyOcVDepuKxjP/iyNnRLSvtt/jbL0OEbbCs1He+OKx68zmJzpziXDRbGQp/LYdahu/P55B
-	RFijks80TCzwDUALHUP10CGps3gyGF0EhNihmvkI7
-X-Gm-Gg: ASbGncuNh2vlPQu/UwzjW0f9OBpQLrsLC3eBRk7zbKFXzLBZxPWkHVsaKJ6obDALIEc
-	3GSbBGaKO4OKUArusc6Xll4rWmHObCH3l4KnX7YLvJNCnZOOILwZc68KQGj8wUxWkJsA0ExuiQj
-	Sxzq6GOPRRzuVN8z5s3xYc5QVVRyoMcFge2Wh9NlLLLgKP2DJuKp/9PtvVzYq3MVpXO8AAMVSoQ
-	HUDU6hNJx+0Xw2k4fA8jX5MUJ3G7qNCi2x4e5TgOvZDBlcKKLdSXdkNgthCIzebF74KpCY=
-X-Google-Smtp-Source: AGHT+IHnGx5CgEm/MoaWGt7F0FraTPi7R2fwUIX+qrXMRXnUPf+Tvb9LSvI/zqrUqWZwt/+nFfWSXcwZLQy2U8AshrU=
-X-Received: by 2002:a17:90b:28c3:b0:341:88ba:c6d3 with SMTP id
- 98e67ed59e1d1-341a6ddf6ffmr1643542a91.23.1762310879615; Tue, 04 Nov 2025
- 18:47:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762310989; x=1762915789;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z6fE25BWx2cqViq02OoeLjnc0qT5FrD3WFYx473CdTs=;
+        b=va+5XLE+YhUzIutqnCqMn1HegCIhqq8cg52os25ywvnrYeX4TZ1Ao2/ePiYPfuvGWV
+         aSxDB4PJAj+awR6Jzh4+91cvqbczgSk42SSWSGHBsClUnyUsVXqZqp0AayxdFCmiTwIZ
+         uaqrrl8+NypoLRK7tAdJoKYCGfSN8J5tCfafnkiNGIoXxxx1ex4vCwFp8kMlBG6+meDz
+         qlDgsxBe5EluFBPM1KJe2FZnSQFEWJmmaiDfVU0WYG3T6AQm4MbiHyIr/4LX0ykxOKrA
+         vCZHz7eJtJ937mX+QoGm2QqwKfTdCpAjc0zwgKlBCaY/Z5p85K89fu6EfNUQOXIWasw6
+         Lfng==
+X-Gm-Message-State: AOJu0Yw5C717wPJYrP5auFA0yaY21VGQ538/+NKTYHCsi7mSB5swRQv+
+	NZcpxBuEIoM0oo1VFdFVNtl1W0DqQQS+wWnGzOgHnrr8JQ3KQehlURX/VUVZ6YSmWHwGfdIiaKs
+	Y2M1O056dLejUfqtnHh31CQDpuOV0t59+Z6yfSJ3kbDuWx6NkFp4X/oxcUanvbqrWVd4=
+X-Gm-Gg: ASbGncvajc+AHBQHjkbukYprWExg30SUWgoNW9i/7olBl+q5eSj0FLctWagrPPRd7aO
+	l3rPiPaqSOj6QQSG6qeVwULUDQg+oolu3ScGPm5spdwLwd+dx6nnTtn9ejrwKPYmIvj1NVd+7gJ
+	l3V3t+9+t6smW6W1488GlYbLtTYi3HOja2jfC2Z+cgYWA+B3PpuXWRc2Scx1zycWEgJmRx+BXKu
+	8RpQDEaZbRwydeQMlhp8pp3FYyUMyaiSnlbg5LaejqS7bmpxyXVdqoOZvROdzcfkueiQt/viTmc
+	MsmCy9gJAlHGY0xMEeVlFkVq1fPLnvZbZ7u5Um7v6FK5wUjso5pNBwC+DUvWpuXBOtbuSRQPDpv
+	FcM7H03DqeJsGdeiIc9qRBhEyKofrSLDZSQWjCxxrGJYiJcggr3KZNM8e5nwPvnPWgDdVvaA=
+X-Received: by 2002:a17:903:4b4c:b0:295:275d:21d8 with SMTP id d9443c01a7336-2962abeccd8mr23192655ad.0.1762310989536;
+        Tue, 04 Nov 2025 18:49:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGasOAVoajsPy00I58jgS6ERqSmLZ5TtcB7lxyBLTzzfW7p5HgyQ6OUNo/j9HPzCCXDdgYuVA==
+X-Received: by 2002:a17:903:4b4c:b0:295:275d:21d8 with SMTP id d9443c01a7336-2962abeccd8mr23192405ad.0.1762310988979;
+        Tue, 04 Nov 2025 18:49:48 -0800 (PST)
+Received: from [10.133.33.42] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601998da3sm42602315ad.27.2025.11.04.18.49.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 18:49:48 -0800 (PST)
+Message-ID: <52b34262-ed22-43a1-b6dd-cea37c33d627@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 10:49:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928030358.3873311-1-coxu@redhat.com> <20251031074016.1975356-1-coxu@redhat.com>
- <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
- <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
- <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com> <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-In-Reply-To: <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 4 Nov 2025 21:47:48 -0500
-X-Gm-Features: AWmQ_blM1ev6BHzNyFPCCcGHeIapF6epj6-cnjfP4sh6gT-6Ml3ReEvCTyOT9dA
-Message-ID: <CAHC9VhRGwXvhU64Nk5jdmtPfrt9bbkzpLVqS0LRbtN3Q3HhnCw@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook security_kernel_module_read_file
- to access decompressed kernel module
-To: Coiby Xu <coxu@redhat.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next v2 6/6] wifi: ath11k: Register handler for CFR
+ capture event
+To: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>, jjohnson@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath11k@lists.infradead.org,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+References: <20251104162633.3007874-1-yu.zhang@oss.qualcomm.com>
+ <20251104162633.3007874-7-yu.zhang@oss.qualcomm.com>
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20251104162633.3007874-7-yu.zhang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: K3Fbxdw_Q6KnaJgXxRtk1eaS9i7dZwX3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxNiBTYWx0ZWRfX9mv2P0knU59H
+ dIls4kV+XUYEAMf5VwIFhvgMlnQ0Z2M0btpwcDo5h0WNlAfncgrWmG1B4PNRRiMQyN8etLgU2ve
+ pTilTkqh/+t1+VshVJ4sgbEV7NNc1WHd+2eJlb6+NJxyVH7KsDm+iqEKLJcFtXVL9rS4Q1nbMGC
+ 4WTOvJOncC5d0E7XTAu9hJptgeQyjomyBiaCK4fw9qq7n9/bPSOlDMx+Cpl2gG4Mm1P6XNQRgaA
+ YNo8qJsnLuO/iRBjGhtNya6vV352d0QmjHCq3z0m22iW8b7LpfbwNO2HnohauTt1AhqqJDq2VvL
+ lGys27VkbvxqNtuWVHatb91QgH9BBFYABIGMlSQ3Y6Y3sQMvxewio4BdByNWcDL4SCO4xcAFTZ6
+ g2yKzj4FQbxp5VDRjMKvjZnEI1iEFg==
+X-Proofpoint-ORIG-GUID: K3Fbxdw_Q6KnaJgXxRtk1eaS9i7dZwX3
+X-Authority-Analysis: v=2.4 cv=IpsTsb/g c=1 sm=1 tr=0 ts=690abb4e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=xBSK4iqqMxX8BZ_fnuAA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511050016
 
-On Tue, Nov 4, 2025 at 7:19=E2=80=AFPM Coiby Xu <coxu@redhat.com> wrote:
-> On Sun, Nov 02, 2025 at 10:43:04AM -0500, Paul Moore wrote:
-> >On Sun, Nov 2, 2025 at 10:06=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com>=
- wrote:
-> >> On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
-> >> > On Fri, Oct 31, 2025 at 3:41=E2=80=AFAM Coiby Xu <coxu@redhat.com> w=
-rote:
-> >> > >
-> >> > > Currently, when in-kernel module decompression (CONFIG_MODULE_DECO=
-MPRESS)
-> >> > > is enabled, IMA has no way to verify the appended module signature=
- as it
-> >> > > can't decompress the module.
-> >> > >
-> >> > > Define a new LSM hook security_kernel_module_read_file which will =
-be
-> >> > > called after kernel module decompression is done so IMA can access=
- the
-> >> > > decompressed kernel module to verify the appended signature.
-> >> > >
-> >> > > Since IMA can access both xattr and appended kernel module signatu=
-re
-> >> > > with the new LSM hook, it no longer uses the security_kernel_post_=
-read_file
-> >> > > LSM hook for kernel module loading.
-> >> > >
-> >> > > Before enabling in-kernel module decompression, a kernel module in
-> >> > > initramfs can still be loaded with ima_policy=3Dsecure_boot. So ad=
-just the
-> >> > > kernel module rule in secure_boot policy to allow either an IMA
-> >> > > signature OR an appended signature i.e. to use
-> >> > > "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
-> >> > >
-> >> > > Reported-by: Karel Srot <ksrot@redhat.com>
-> >> > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> >> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> >> > > ---
-> >> > > v1: https://lore.kernel.org/linux-integrity/20250928030358.3873311=
--1-coxu@redhat.com/
-> >> > >
-> >> > >  include/linux/lsm_hook_defs.h       |  2 ++
-> >> > >  include/linux/security.h            |  7 +++++++
-> >> > >  kernel/module/main.c                | 10 +++++++++-
-> >> > >  security/integrity/ima/ima_main.c   | 26 ++++++++++++++++++++++++=
-++
-> >> > >  security/integrity/ima/ima_policy.c |  2 +-
-> >> > >  security/security.c                 | 17 +++++++++++++++++
-> >> > >  6 files changed, 62 insertions(+), 2 deletions(-)
-> >> >
-> >> > We don't really need a new LSM hook for this do we?  Can't we just
-> >> > define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and do
-> >> > another call to security_kernel_post_read_file() after the module is
-> >> > unpacked?  Something like the snippet below ...
-> >>
-> >> Yes, this is similar to my suggestion based on defining multiple enume=
-rations:
-> >> READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_MO=
-DULE.
-> >> With this solution, IMA would need to make an exception in the post ke=
-rnel
-> >> module read for the READING_COMPRESSED_MODULE case, since the kernel m=
-odule has
-> >> not yet been decompressed.
-> >>
-> >> Coiby suggested further simplification by moving the call later.  At w=
-hich point
-> >> either there is or isn't an appended signature for non-compressed and
-> >> decompressed kernel modules.
-> >>
-> >> As long as you don't have a problem calling the security_kernel_post_r=
-ead_file()
-> >> hook again, could we move the call later and pass READING_MODULE_UNCOM=
-PRESSED?
-> >
-> >It isn't clear from these comments if you are talking about moving
-> >only the second security_kernel_post_read_file() call that was
-> >proposed for init_module_from_file() to later in the function, leaving
-> >the call in kernel_read_file() intact, or something else?
->
-> Hi Paul and Mimi,
->
-> Thanks for sharing your feedback! Yes, you are right, there is no need
-> for a new LSM hook. Actually by not introducing a new LSM hook, we can
-> have a much simpler solution!
->
-> >
-> >I think we want to leave the hook calls in kernel_read_file() intact,
-> >in which case I'm not certain what advantage there is in moving the
-> >security_kernel_post_read_file() call to a location where it is called
-> >in init_module_from_file() regardless of if the module is compressed
-> >or not.  In the uncompressed case you are calling the hook twice for
-> >no real benefit?  It may be helpful to submit a patch with your
-> >proposal as a patch can be worth a thousand words ;)
-> >
-> >
-> >> > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> >> > index c66b26184936..f127000d2e0a 100644
-> >> > --- a/kernel/module/main.c
-> >> > +++ b/kernel/module/main.c
-> >> > @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file =
-*f, const ch
-> >> > ar __user * uargs, int
-> >> >                        mod_stat_add_long(len, &invalid_decompress_by=
-tes);
-> >> >                        return err;
-> >> >                }
-> >> > +
-> >> > +               err =3D security_kernel_post_read_file(f,
-> >> > +                                                    (char *)info.hd=
-r, info.len,
-> >> > +                                                    READING_MODULE_=
-DECOMPRESS);
-> >> > +               if (err) {
-> >> > +                       mod_stat_inc(&failed_kreads);
-> >> > +                       return err;
-> >> > +               }
-> >> >        } else {
-> >> >                info.hdr =3D buf;
-> >> >                info.len =3D len;
-> >>
-> >> =3D=3D defer security_kernel_post_read_file() call to here =3D=3D
->
-> By moving security_kernel_post_read_file, I think what Mimi means is to
-> move security_kernel_post_read_file in init_module_from_file() to later
-> in the function,
->
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index c66b261849362a..66725e53fef0c1 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3678,6 +3678,7 @@ static int init_module_from_file(struct file *f, co=
-nst char __user * uargs, int
->         struct load_info info =3D { };
->         void *buf =3D NULL;
->         int len;
-> +       int err;
->
->         len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODUL=
-E);
->         if (len < 0) {
-> @@ -3686,7 +3687,7 @@ static int init_module_from_file(struct file *f, co=
-nst char __user * uargs, int
->         }
->
->         if (flags & MODULE_INIT_COMPRESSED_FILE) {
-> -               int err =3D module_decompress(&info, buf, len);
-> +               err =3D module_decompress(&info, buf, len);
->                 vfree(buf); /* compressed data is no longer needed */
->                 if (err) {
->                         mod_stat_inc(&failed_decompress);
-> @@ -3698,6 +3699,14 @@ static int init_module_from_file(struct file *f, c=
-onst char __user * uargs, int
->                 info.len =3D len;
->         }
->
-> +       err =3D security_kernel_post_read_file(f, (char *)info.hdr, info.=
-len,
-> +                                            READING_MODULE);
-> +       if (err) {
-> +               mod_stat_inc(&failed_kreads);
-> +               free_copy(&info, flags);
-> +               return err;
-> +       }
+
+
+On 11/5/2025 12:26 AM, Yu Zhang(Yuriy) wrote:
+
+> +static void ath11k_cfr_fill_hdr_info(struct ath11k *ar,
+> +				     struct ath11k_csi_cfr_header *header,
+> +				     struct ath11k_cfr_peer_tx_param *params)
+> +{
+> +	header->cfr_metadata_version = ATH11K_CFR_META_VERSION_4;
+> +	header->cfr_data_version = ATH11K_CFR_DATA_VERSION_1;
+> +	header->cfr_metadata_len = sizeof(struct cfr_metadata);
+> +	header->chip_type = ar->ab->hw_rev;
+> +	header->meta_data.status = FIELD_GET(WMI_CFR_PEER_CAPTURE_STATUS,
+> +					     params->status);
+> +	header->meta_data.capture_bw = params->bandwidth;
+> +	header->meta_data.phy_mode = params->phy_mode;
+> +	header->meta_data.prim20_chan = params->primary_20mhz_chan;
+> +	header->meta_data.center_freq1 = params->band_center_freq1;
+> +	header->meta_data.center_freq2 = params->band_center_freq2;
 > +
->         return load_module(&info, uargs, flags);
->   }
->
-> If we only call security_kernel_post_read_file the 2nd time for a
-> decompressed kernel module, IMA won't be sure what to do when
-> security_kernel_post_read_file is called for the 1st time because it
-> can't distinguish between a compressed module with appended signature or
-> a uncompressed module without appended signature. If it permits 1st
-> calling security_kernel_post_read_file, a uncompressed module without
-> appended signature can be loaded. If it doesn't permit 1st calling
-> security_kernel_post_read_file, there is no change to call
-> security_kernel_post_read_file again for decompressed module.
->
-> And you are right, there is no need to call
-> security_kernel_post_read_file twice. And from the perspective of IMA,
-> it simplifies reasoning if it is guaranteed that IMA will always access
-> uncompressed kernel module regardless regardless of its original
-> compression state.
->
-> So I think a better solution is to stop calling
-> security_kernel_post_read_file in kernel_read_file for READING_MODULE.
-> This can also avoiding introducing an unnecessary
-> READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration and
-> can make the solution even simpler,
->
-> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-> index de32c95d823dbd..7c78e84def6ec7 100644
-> --- a/fs/kernel_read_file.c
-> +++ b/fs/kernel_read_file.c
-> @@ -107,7 +107,12 @@ ssize_t kernel_read_file(struct file *file, loff_t o=
-ffset, void **buf,
->                         goto out_free;
->                 }
->
-> -               ret =3D security_kernel_post_read_file(file, *buf, i_size=
-, id);
-> +               /*
-> +                * security_kernel_post_read_file will be called later af=
-ter
-> +                * a read kernel module is truly decompressed
-> +                */
-> +               if (id !=3D READING_MODULE)
-> +                       ret =3D security_kernel_post_read_file(file, *buf=
-, i_size, id);
->         }
+> +	/* CFR capture is triggered by the ACK of a QoS Null frame:
+> +	 * - 20 MHz: Legacy ACK
+> +	 * - 40/80/160 MHz: DUP Legacy ACK
+> +	 */
 
-Assuming I'm understanding the problem correctly, I think you're
-making this harder than it needs to be.  I believe something like this
-should solve the problem without having to add more conditionals
-around the hooks in kernel_read_file(), and limiting the multiple
-security_kernel_post_read_file() calls to just the compressed case ...
-and honestly in each of the _post_read_file() calls in the compressed
-case, the buffer contents have changed so it somewhat makes sense.
+same comment as in path 5/6
 
-Given the code below, IMA could simply ignore the
-READING_MODULE_COMPRESSED case (or whatever it is the IMA needs to do
-in that case) and focus on the READING_MODULE case as it does today.
-I expect the associated IMA patch would be both trivial and small.
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index c66b26184936..b435c498ec01 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3675,17 +3675,19 @@ static int idempotent_wait_for_completion(struct id=
-empot
-ent *u)
-
-static int init_module_from_file(struct file *f, const char __user * uargs,=
- int
-flags)
-{
-+       bool compressed =3D !!(flags & MODULE_INIT_COMPRESSED_FILE);
-       struct load_info info =3D { };
-       void *buf =3D NULL;
-       int len;
-
--       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODULE)=
-;
-+       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL,
-+                              compressed ? READING_MODULE_COMPRESSED : REA=
-DING_
-MODULE);
-       if (len < 0) {
-               mod_stat_inc(&failed_kreads);
-               return len;
-       }
-
--       if (flags & MODULE_INIT_COMPRESSED_FILE) {
-+       if (compressed) {
-               int err =3D module_decompress(&info, buf, len);
-               vfree(buf); /* compressed data is no longer needed */
-               if (err) {
-@@ -3693,6 +3695,14 @@ static int init_module_from_file(struct file *f, con=
-st ch
-ar __user * uargs, int
-                       mod_stat_add_long(len, &invalid_decompress_bytes);
-                       return err;
-               }
-+
-+               err =3D security_kernel_post_read_file(f,
-+                                                    (char *)info.hdr, info=
-.len,
-+                                                    READING_MODULE);
-+               if (err) {
-+                       mod_stat_inc(&failed_kreads);
-+                       return err;
-+               }
-       } else {
-               info.hdr =3D buf;
-               info.len =3D len;
-
---=20
-paul-moore.com
+> +	header->meta_data.capture_mode = params->bandwidth ?
+> +		ATH11K_CFR_CAPTURE_DUP_LEGACY_ACK : ATH11K_CFR_CAPTURE_LEGACY_ACK;
+> +	header->meta_data.capture_type = params->capture_method;
+> +	header->meta_data.num_rx_chain = ar->num_rx_chains;
+> +	header->meta_data.sts_count = params->spatial_streams;
+> +	header->meta_data.timestamp = params->timestamp_us;
+> +	ether_addr_copy(header->meta_data.peer_addr, params->peer_mac_addr);
+> +	memcpy(header->meta_data.chain_rssi, params->chain_rssi,
+> +	       sizeof(params->chain_rssi));
+> +	memcpy(header->meta_data.chain_phase, params->chain_phase,
+> +	       sizeof(params->chain_phase));
+> +	memcpy(header->meta_data.agc_gain, params->agc_gain,
+> +	       sizeof(params->agc_gain));
+> +}
+> +
 
