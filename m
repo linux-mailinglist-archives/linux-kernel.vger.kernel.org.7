@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-886533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8EFC35DC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:36:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECD1C35DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6789F42386E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:34:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53BB74F8388
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B92316905;
-	Wed,  5 Nov 2025 13:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED86B31E10C;
+	Wed,  5 Nov 2025 13:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOEIWuRf"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1xA9WFF"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B344A41
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14803A41
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762349662; cv=none; b=i/Wt5y/O+VeM6rnGZnposqWGV2bUTc0pGHfO3NdgJWqF1VjkG1OARukBEPBBE8H/6KFK97d419miM6z5Z3UyURVRU4x5IUC5n93riw9hGBZ0j7Hj1nQntGF3jiuHCHdqV5DFTWm837zImAxuF4wT0TSUVnHQSV7JttE4nfbRAvY=
+	t=1762349731; cv=none; b=rARVcCDmUpbi2RRbgD1oddIuM0/LseRRWZ0vXeHcHaXEYuzC5EA9eqiD45CgD/LyRDQGmaVhFiEGTh71JFd4jGFUBHm2WlaEnyhx7mFPxJGJz89MneOh+MEefj/JmwdEKbkCoygIryziNs3/RZyT00aEmIPSI4TqSjDYZ3pT2WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762349662; c=relaxed/simple;
-	bh=ypdo8zAl0DVgm/CDQ6pygGtiv/KsYO7yoA/9YhLk1M8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdomHzRdRvkf96+BGUD4lq8fcRGAZTrYY7TCQYIsrEykaPnA0ACes2hLBLjWfp61TYuFyfvq5Op8ugpRHuBRg9/qK3zhpRvROqV5ZX9Wqoci0PP2w2h1h1t5HvGOvRZplJdTlA8msT7gj/c/sTKKLl7OK+4UV1czp++UkWWzbvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOEIWuRf; arc=none smtp.client-ip=209.85.161.53
+	s=arc-20240116; t=1762349731; c=relaxed/simple;
+	bh=YVzjZNvEY5wlcsOgc5iechhwm+0MSXEhvT2EVqSRpM4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L9/ouZF1tQCQ1dB0IMm+/0aenQ/7o0DGeauiwh2CdqxXtskojLYiZH98GgHjkRhCq6RMMORjhA6RazIZtRedsyP5RT/QjIc2eBH6c7CV0cZvPtZX6EuClvpCTVCw+B7v0GrDgFlAT7XS1fdFS7Y/73FZ/oVRkYbbGZEUiLjt8nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1xA9WFF; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-656b32a0cc4so448609eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:34:20 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a9c64dfa8aso3103540b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:35:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762349659; x=1762954459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sv/JzecOhMA8cZ94wcVGV+A+peoLF8ip0q5xsIEB14k=;
-        b=hOEIWuRf8xTVW0N7flEfmF86lDUhcljEugS6OKLFvMyRP6zXPQlt0ITiIG0bFu5Prz
-         T83ydlwkVsUcFDKKTVv0K5JGhXdBym2pz1L716XFhb8JoH6Q7MBlKjcOX6FfHHmpasl+
-         HhiDZg+iqnf8LO3sFw/oZnpOM6IowAgX0C6sPdw5BWzW2R3Bj1gbsN2VtVhk9nL/RRna
-         zGL7WAMokTo2lYoHZJ6lykm5oe+NCzlQnagUh4xgy+e9S5ytst4bofNmh/rozsenQZDo
-         7A2zw0nEmTn9KQwZkBHltTyoJPX9sKxY3GnzbUFSoKFAO+YFATjaL/6fsnVJ+JENRqra
-         n+Ig==
+        d=gmail.com; s=20230601; t=1762349729; x=1762954529; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMcpJM9U609o9K6c/w24YMzRJfQOd+BnRUVotnA4m/o=;
+        b=F1xA9WFF/c1QCjJ8qbDs76E/GIGR7d4k59pjS61abxgu+zw8ibTnVYbEl6P0+MncCe
+         Mjypz1FAm6JlFDNEGdjKV9dk0Wg4ly/Te3T00sv6RQSDNIGCNwObx2sBkHN1iFr+IX16
+         d102L7CKiVpualBJK93o7ZnHImxF7eg+AZRhB4R3QCWc+SYlzAtwc30mqTXIXluplJDr
+         1Kj2a5UJ8wv6hpUgZ8DLWuuilj84R33aEhCNTe6Z8GiRvi8CkLJrYkKD5U/8p7vjJvQh
+         ognYsUZAQk1bL/oskiCX8Fk6ollbChqtMJxmpehE4siqy9MIicPSZc0g6NO0yteP1RR0
+         v5tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762349659; x=1762954459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sv/JzecOhMA8cZ94wcVGV+A+peoLF8ip0q5xsIEB14k=;
-        b=jRhJUKy0O2J/Rq8CH62ESg1pfeCIzIUj+bh6/9KexKPlzkXQubrufzKeqcV5Lv2OQM
-         k/V3VEPbNGdpEAlc9JnGBS08v8wIf1IgedgdfGQkpaD5lCaIqVmJfXJ0Lv3Tmdvaww4s
-         JiHJmP4ACR9QyDqpty1QbZF/dkmrdsOgcWpEOX79gGrqydHfIj1XMhn4ww0D775klrpI
-         tdJ68gmtngnIXSyKemgDGxQ6jOBNtn5mOO+jg8EvU3VBWsl3UzDR0Q6Y7PGFW/4jJH7o
-         mQv4zAneaDwxeNtzcjstt8/sOIrSERFlEn9FkA6/c6it+0pzqrw/mZmA8WsUCIHSP7mp
-         uoqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg3fiwzULtfBZephq6rMD/D77YWGFI8JlDggTHhl2I2cKs3ao3z3ITF0vVQWBR97EeMRMSSM2COEzNIfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN5/X74LOkZeb8V7Ga8+RIMVztpruTv5UCOE2Ulj0SHxtsX6kR
-	IwQxR5mEjYv7eTTRkCNoMVru9DakNqopjEtKgmI8AAK9DhmfIs5pgO7i8M+dNP2ToMo=
-X-Gm-Gg: ASbGncuiORehAcXdrtQZwrbBlHQeZ56xLZf8pfuNkisp6ASz32sjUojKoXOBezgitGj
-	znNwLimQ1kUMJsUzvOrWYRnQvvwDr01/CkXwj5viSxWwnABUyQfPnjvDUSmX6ex3Q31UAn2GLVI
-	bhD2Raq7x4j9Vx/2aqgInWtS9FICRl6NSG34bkJa2EK2WQtfiw4wZtPSgmepoqM20weqHNuNUi9
-	4+cfCyrVhGVysA8b0AQpn83o5hpFnYYQ1MCcM25uRbgqR5HnaKiiqzWGoN5CZBsLJVGstOk2ySy
-	SBNLDMoJvF6OKlXZE+K8/gorTBHnndA9K4RbdIrD+/BfVJNMzXyIEuD+czBvOsKp1jV9PRzZmSR
-	wjptFrTiLpbbtqn2SWE0goGmsZbTOTn7ZE/bsMsatfAKq/xf9L+ZwJpN8CzO6L+Z1T14cJZclHR
-	e6vK2sjZr5TQ7Xj2urxda1yUYTy2O4UH4fmZhMkCd4ggXbTrupb6tzPA==
-X-Google-Smtp-Source: AGHT+IE8z6TNiU3ePk48BI+doqg/bH4NTxWdTXISMyBVQ21lhT2P1M3hdipDnXRTCcDABOBcmXjW8w==
-X-Received: by 2002:a05:6871:878a:b0:3c9:7e9b:632b with SMTP id 586e51a60fabf-3e19af07bc3mr1381694fac.30.1762349659507;
-        Wed, 05 Nov 2025 05:34:19 -0800 (PST)
-Received: from weg-ThinkPad-P16v-Gen-2 ([177.73.136.69])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3dff46fa5afsm2245210fac.5.2025.11.05.05.34.16
+        d=1e100.net; s=20230601; t=1762349729; x=1762954529;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMcpJM9U609o9K6c/w24YMzRJfQOd+BnRUVotnA4m/o=;
+        b=FEvUWHnpYO2ZGp2r7kCiTrUvhXfE8hJicEDN/VjyWYZkhTdTrebvArZSEMsBuRVBEo
+         DvBfvLxspyDg8pr8ZMl/7Dl+U1R+HwiJmQKnM86viBfijuc48FadzFleRhKPJLCYF/l6
+         UeFDq+DhHJzRHE6vJIKV9u0hMqaSIKfn9nCjBrErp4nX4Fg7vY3/JeAT1KKOVaj9fhlR
+         MHn6QnGHNGAtuXonkVlBxPCBOmu+DlpRJrgVlihOLKxo0lObxhZv6Fm+0guldt9dmKaO
+         UPjOWwdI041TH2mEWkXvu3yQ9y8U2okbuRXtoej2Fb+DusPq5ydFA1nOGBFQYWZLQiEV
+         jwXQ==
+X-Gm-Message-State: AOJu0Yx+LBJQQQ8i570gtb/93USM3s1nOCrSMxUCxUCg4jx/21LAyGCE
+	WJgPQ1190dJ/P1ur6mPJ89cOB+dLiT8pzHVkGP37OioWL/cLiVUBtZ9t
+X-Gm-Gg: ASbGnctIvJs1CTY3lz1MkUke6DqCqYPqofdP0Ormo2sGr490ChRmB/Q5aSPrYDpvsQO
+	IU9UkqhnoUQQnLsNwdSyzpzuQ+CEMXhs4UjTMaFDednXyf+dDmQm09pNovGt4brfODisJmTbAzu
+	tfzYvWS7Q6NBSQ1GK/d/9f9nMf6Xsg6q1RepLyfxfwpg4OhUAuRyhf1MX8qt/d9DnT/+SJGaSap
+	2EvkUnziT6Xj9isV16vtlBE+XHtZK5jaMQDhWlstIqZ1hTVtiGv5ftn/oCs3fwVq9KEDDfUgmnW
+	DnfrixK1Hlfq/9pASsTsU8PSn6Md+zG7RD+UebVzZYqtiCX6fwLR1+Vm4dPut+yH6pVCuCcSwal
+	j3xxy7U8C9Xd/Le3Pq5bjdejzIFnggrAY+sBWnvteVSL+AWk+IoCcCTokAs3uFvKxp1aF3AkQ
+X-Google-Smtp-Source: AGHT+IEMZ5fuJ86E4V4D8bLK1dn2Zk3jFYtQ6tft/Z6WD2q8e+rKY6orgtWKTyq3NHL/DJeWpblx2Q==
+X-Received: by 2002:a05:6a00:1496:b0:781:556:f33 with SMTP id d2e1a72fcca58-7ae1cb64038mr4101234b3a.5.1762349728805;
+        Wed, 05 Nov 2025 05:35:28 -0800 (PST)
+Received: from localhost ([2408:841b:d10:e194:6f22:8ad4:a287:fde3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd3824e5bsm6367965b3a.17.2025.11.05.05.35.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 05:34:19 -0800 (PST)
-Date: Wed, 5 Nov 2025 10:32:23 -0300
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] ksm: perform a range-walk in break_ksm
-Message-ID: <ff4jfxphz32fackvh2236an7575zhqnwntrx5ledudb4afu2ag@sk4vigyq5jif>
-References: <20251031174625.127417-1-pedrodemargomes@gmail.com>
- <20251031174625.127417-3-pedrodemargomes@gmail.com>
- <cd632ad0-c73e-4e6d-872b-2f4dad285e9d@kernel.org>
+        Wed, 05 Nov 2025 05:35:28 -0800 (PST)
+From: Encrow Thorne <jyc0019@gmail.com>
+Date: Wed, 05 Nov 2025 21:35:02 +0800
+Subject: [PATCH RFC] reset: fix BIT macro reference
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd632ad0-c73e-4e6d-872b-2f4dad285e9d@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251105-rfc-reset-include-bits-v1-1-d7e1bbc7e1ab@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIVSC2kC/x3MQQqDMBBG4avIrB0wMSL0KqULTX51oESZ0VIQ7
+ 25w+S3eO8mgAqNXdZLiJyZrLnB1RXEZ8gyWVEy+8Z1zTcc6RVYYdpYcv0cCj7IbB8TetyEkN7R
+ U4k0xyf8Zvz/XdQPqOefCaAAAAA==
+X-Change-ID: 20251105-rfc-reset-include-bits-4ec72344d1a3
+To: Philipp Zabel <p.zabel@pengutronix.de>, 
+ Troy Mitchell <troy.mitchell@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Encrow Thorne <jyc0019@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762349722; l=926;
+ i=jyc0019@gmail.com; s=20251009; h=from:subject:message-id;
+ bh=YVzjZNvEY5wlcsOgc5iechhwm+0MSXEhvT2EVqSRpM4=;
+ b=z5nNIh0yvOYQCqTKP/x+gq/NSPx+Kb6ubMHvNUA3XLH4pmdjKlDl9WzqfSI/MDGI8PrtxpTG0
+ si9n5TeXXGKDvKiuYB5D5lX3MGVDb6ZCd4hh3GTXEuAnAfKS4tixy5G
+X-Developer-Key: i=jyc0019@gmail.com; a=ed25519;
+ pk=nnjLv04DUE0FXih6IcJUOjWFTEoo4xYQOu7m5RRHvZ4=
 
-On Mon, Nov 03, 2025 at 06:06:26PM +0100, David Hildenbrand (Red Hat) wrote:
-> On 31.10.25 18:46, Pedro Demarchi Gomes wrote:
-> > Make break_ksm() receive an address range and change
-> > break_ksm_pmd_entry() to perform a range-walk and return the address of
-> > the first ksm page found.
-> > 
-> > This change allows break_ksm() to skip unmapped regions instead of
-> > iterating every page address. When unmerging large sparse VMAs, this
-> > significantly reduces runtime.
-> > 
-> > In a benchmark unmerging a 32 TiB sparse virtual address space where
-> > only one page was populated, the runtime dropped from 9 minutes to less
-> > then 5 seconds.
-> > 
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-> > ---
-> >   mm/ksm.c | 88 ++++++++++++++++++++++++++++++--------------------------
-> >   1 file changed, 48 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/mm/ksm.c b/mm/ksm.c
-> > index 922d2936e206..64d66699133d 100644
-> > --- a/mm/ksm.c
-> > +++ b/mm/ksm.c
-> > @@ -607,35 +607,55 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
-> >   	return atomic_read(&mm->mm_users) == 0;
-> >   }
-> > -static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
-> > +struct break_ksm_arg {
-> > +	unsigned long addr;
-> > +};
-> 
-> Leftover? :)
-> 
+RESET_CONTROL_FLAGS_BIT_* macros use BIT(), but reset.h does not
+include bits.h or bitops.h. This causes compilation errors when
+including reset.h standalone.
 
-Yes, I am sorry.
-I will remove it in the v3.
+Include bits.h to make reset.h self-contained.
 
-> > +
-> > +static int break_ksm_pmd_entry(pmd_t *pmdp, unsigned long addr, unsigned long end,
-> >   			struct mm_walk *walk)
-> >   {
-> > -	struct folio *folio = NULL;
-> > +	unsigned long *found_addr = (unsigned long *) walk->private;
-> > +	struct mm_struct *mm = walk->mm;
-> > +	pte_t *start_ptep, *ptep;
-> >   	spinlock_t *ptl;
-> > -	pte_t *pte;
-> > -	pte_t ptent;
-> > -	int ret;
-> > +	int found = 0;
-> 
-> Best to perform the ret -> found rename already in patch #1.
->
+This patch is sent as RFC to discuss whether including bits.h in
+reset.h is appropriate.
 
-Ok
+Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
+---
+ include/linux/reset.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-> With both things
-> 
-> Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index 840d75d172f6..d3102eef085e 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -5,6 +5,7 @@
+ #include <linux/err.h>
+ #include <linux/errno.h>
+ #include <linux/types.h>
++#include <linux/bits.h>
+ 
+ struct device;
+ struct device_node;
 
-Thanks!
+---
+base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+change-id: 20251105-rfc-reset-include-bits-4ec72344d1a3
 
-> -- 
-> Cheers
-> 
-> David
-> 
+Best regards,
+-- 
+Encrow Thorne <jyc0019@gmail.com>
+
 
