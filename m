@@ -1,150 +1,177 @@
-Return-Path: <linux-kernel+bounces-885963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B94C3464A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:06:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBA6C3464D
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB36618C5CE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:05:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91F834EFB0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82D92D8783;
-	Wed,  5 Nov 2025 08:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA42C21C5;
+	Wed,  5 Nov 2025 08:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQTA1yDQ"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHiP+mHE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0042877E8
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CBE19D093;
+	Wed,  5 Nov 2025 08:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762329879; cv=none; b=ULnPeLuOMqyziHUvjf22y8nszZl18JhmDVoufaVdwBRLugzSVGXqTc+YM4SloPNGwUgcP3skuDj/L05AM9XKbhs9vx7IM/nlK6FGVkF/DeGu3nqnxRg/lqrUlWR1QA/tj+cD7d7R/sS2W28MPgNTt+awVlvydem4Ge7Ym+6h7lY=
+	t=1762329962; cv=none; b=OjjrFB2ynEn1sQtjvqUkPA0RwS7v8YF/rI8YjXYyTUlgBd1lkzzz5JPtX5KCEzSasig5ign4O7In4B3llx63TKKegLraDiqHtRUYVzQ9QjmR824ZDHKJFRvaDV2BookGjk+Y++9n61ueNDyAwS1yqGE7iaJGHa5uizNuGH2zRE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762329879; c=relaxed/simple;
-	bh=LsTjAm09M/yGM5svcRs8AIkfB2f/URAn2Y/ln47haPc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BzUQgr3aLvsKJfxBgB0SH83LDmhIr4Hqk7RH75B/oTWYmb7Z8adBJ+FkuSOLD1TY4XUbL6k52+nlDLKyHxqUVydhiNC0x43avd0E+zF3tiwL0vTKdjF4rwwEbKzj4vrIuOMF00xuUvNr77ZkM4gf4onLZnOTy5jzRfjjKi/NnTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQTA1yDQ; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-341b2e98486so192245a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762329877; x=1762934677; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDe6kRSygVEphf3RSRGt9HkF/eyEhvziT45X27VBXsM=;
-        b=SQTA1yDQURc4KmPIgZSpUjvkM/w8kK/AL+NAd3a+3FyoHZ7MG4JHelmoMB3lzar3Rs
-         slXHx9aLOYeu927i8hsKL8gLgT3Q9+53k/B4Z8zdDGYQNpvm3ueG89r+OeQFtH4AkCMb
-         LLNnsTNAiK/34gqKGoVLBEQ+hj02mlqmgD4XK/RoR+QoqqQ1GQ9CvbYG3PJkphKuw6R0
-         2piOgVOjg8gXcWaHpxemgl0jHh/29DVweisrn5FbTIjxeLymJK0/UwPpKgYNQpKNolqe
-         O94iL/zVwkTjaFzEfjMv5frjtn2ubkh89p+QFaRG5ZiO1shJqt+TfQRP/lbC+NE3hXQc
-         gaOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762329877; x=1762934677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GDe6kRSygVEphf3RSRGt9HkF/eyEhvziT45X27VBXsM=;
-        b=Or0qsH+WvptSjeHf2Jv8BGdeaHEAK28f2LlESqgQhvrnFkE6kw7f8/qI102ZvbgZZM
-         x95QGZ1MHVBUXdW5vOUoD2kYw0cHJYu1aMUeBCnh+YNXRavukeDK9JvvU7dqNYCsb52w
-         EgwlirZBQFX5qZlYiMQcLohMUTTT4KZnseiM0y17jdXmV1KyuGFPN87efDqBgaeldQ26
-         pTUFlsHMLgyhDbY8zBD8VbOhaawQX6OpaDTMKoTqt8NUrIp1S55PMVScHm7wJv/w6cUu
-         cnDEWgylDn0912MxZUHn2KJ3valn3Aa2WfYIvypiGmsRPS4X/3Rhy/P4wyb7dE7oCb37
-         vHOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpLF/rqlAKS16f1rSMzvRXMaK69yqgrY9kLshsOt0W4ZWzCzVQeyxkAFfjfF+oxwezK0A3PG/gvml4Cbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNwKdljWOissMtUAneI5xRQut1lk2NJd4+ZvJfOp1/ps9Q18gC
-	mT2Z8yd9ghUUVuDA1DAj5Yiw1w3UuMUdFVTRXfK62kOhb9gfycovKqlq7ZqcUgwefSXGpdZrGAb
-	2NAwNhWQP9T6W0D1kyzgiqexSbGJJ8EA=
-X-Gm-Gg: ASbGncvgevY2+8rlqsmSSySK4nI1JoNFiQnsfKBMNocqH5w6K4ah4p25yu/oYFBBb8J
-	Fupi0POutysPtJM78165zI9PqtKbi75UbeexkJiEykhDNBLKQVXsg0WvLIRrRqAigNRq6eO9EnD
-	caypjqeNvdliV2zMf/uRfii5vFp6/CQuiMzPxRYODRMfojGxEQIaJpRpuAvNDYGLoCg3o8cc/vN
-	/70iXJ4i3FBr9IczrygGZpqZF3vYX85w6ajmyaapsJMj8izBvldG7jglM+udo8kM1MmmgQ=
-X-Google-Smtp-Source: AGHT+IE3kiYdO6A81tH3ocwujCNPCljvOzypJY9CyERGKSeoHzPi5nZ+xfnpKr+voNC9lIaFIPYuRWd+eHWQF6ZoNDQ=
-X-Received: by 2002:a17:90b:582e:b0:32e:6fae:ba52 with SMTP id
- 98e67ed59e1d1-341a6c1e406mr2591161a91.6.1762329876771; Wed, 05 Nov 2025
- 00:04:36 -0800 (PST)
+	s=arc-20240116; t=1762329962; c=relaxed/simple;
+	bh=CxAJ3KccY2zae38rhawiCFbJ66QYrjoRUmz87TLzoo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fSAySg2GJFxsIiJFxYqv90Wv1wwmp9P+1nTBgwgdkI3w47adV42/UxM3jAFO05nsKmd4Oe0rgDo7ZbZ5uHhVy7HUatx0/akuTZ4HnAyDNM4/LxFfoP6h56+hp1SRAGm/ykFK0xOkxYNWJEEmWqJsMvS2TsFSzcfz6orIbjLVXq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHiP+mHE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE10FC4CEFB;
+	Wed,  5 Nov 2025 08:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762329960;
+	bh=CxAJ3KccY2zae38rhawiCFbJ66QYrjoRUmz87TLzoo0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sHiP+mHEW8anzc5JEStyDPbaOWOHRf4eTzHGAo9eQ3Ki9ozyyaAJtv/Dvd822zJ+K
+	 pnHZxXnz3ROfAe/cdXJIG7i8OlnVqckVikd0JbtkPDsqK1dxaUtaP6z1Wdz5SEQwgE
+	 S5D+kFFpkjhJRpVyhS7CllzteeYSPuvKw9Mc4+rNOctscU4e13NcCY1bANMQvuk23J
+	 qjv0H7mb6B119OtSCEydDD5Behe8usMvmv22tHcIDaVAalqWUHEWR3F54IOI4sEgua
+	 Z067ylMnz5CkAAGCLpu3F3GZ6ZypHFVSR3DviT8nFIuzgyGuuWphgofAnhYWUR5+yW
+	 VEK+EeAhEeJ0Q==
+Message-ID: <d3f2810f-7361-4a23-adb3-32a73ad50519@kernel.org>
+Date: Wed, 5 Nov 2025 09:05:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
-In-Reply-To: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Wed, 5 Nov 2025 16:04:23 +0800
-X-Gm-Features: AWmQ_bka9Xr4B-LvpKHRbIbtt5BkAdNQKoTwEnWv8Ppu3FZE5Ou4N-m9M6c5JNE
-Message-ID: <CAA+D8AMgXCcQuH3SWh2UU5ib0h3EqdJOdXTkwyFx4duv7qL2Ug@mail.gmail.com>
-Subject: Re: [PATCH 00/11] remoteproc: imx_dsp_rproc: Refactor to use new ops
- and remove switch-case logic
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	Frank Li <frank.li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+To: Christian Marangi <ansuelsmth@gmail.com>, Ilia Lin <ilia.lin@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251104140635.25965-1-ansuelsmth@gmail.com>
+ <20251104140635.25965-2-ansuelsmth@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251104140635.25965-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 31, 2025 at 5:14=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
->
-> This patchset aligns imx_dsp_rproc with the cleanup and modernization
-> previously applied to imx_rproc.c. The goal is to simplify the driver by
-> transitioning to the new ops-based method, eliminating the legacy
-> switch-case logic for a cleaner and more maintainable design.
->
-> Patches 1=E2=80=935: General cleanup, including code simplification and a=
-doption
->              of the devres API.
-> Patches 6=E2=80=9310: Transition to the new ops-based approach, removing =
-the
->               switch-case structure.
-> Patch 11: Remove the obsolete enum imx_rproc_method.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-
-Best regards
-Shengjiu wang
+On 04/11/2025 15:06, Christian Marangi wrote:
+> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
+> case for some Google devices (the OnHub family) that can't make use of
+> SMEM to detect the SoC ID.
+> 
+> To handle these specific case, check if the SMEM is not initialized (by
+> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
+> OF machine compatible checking to identify the SoC variant.
+> 
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
-> Peng Fan (11):
->       remoteproc: imx_dsp_rproc: simplify power domain attach and error h=
-andling
->       remoteproc: imx_dsp_rproc: Use devm_rproc_add() helper
->       remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable() helper
->       remoteproc: imx_dsp_rproc: Use dev_err_probe() for firmware and mod=
-e errors
->       remoteproc: imx_dsp_rproc: Drop extra space
->       remoteproc: imx_dsp_rproc: Use start/stop/detect_mode ops from imx_=
-rproc_dcfg
->       remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg closer to imx_ds=
-p_rproc_of_match
->       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO switch case
->       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_SCU_API switch case
->       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_RESET_CONTROLLER swit=
-ch case
->       remoteproc: imx_rproc: Remove enum imx_rproc_method
->
->  drivers/remoteproc/imx_dsp_rproc.c | 344 ++++++++++++++++++++-----------=
-------
->  drivers/remoteproc/imx_rproc.h     |  14 --
->  2 files changed, 184 insertions(+), 174 deletions(-)
-> ---
-> base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
-> change-id: 20251031-imx-dsp-2025-10-31-260b2b979258
->
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
->
->
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 35 ++++++++++++++++++++++++++--
+>  1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> index 3a8ed723a23e..17c79955ff2f 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> @@ -252,13 +252,22 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
+>  	return ret;
+>  }
+>  
+> +static const struct of_device_id qcom_cpufreq_ipq806x_match_list[] = {
+> +	{ .compatible = "qcom,ipq8062", .data = (const void *)QCOM_ID_IPQ8062 },
+> +	{ .compatible = "qcom,ipq8064", .data = (const void *)QCOM_ID_IPQ8064 },
+> +	{ .compatible = "qcom,ipq8065", .data = (const void *)QCOM_ID_IPQ8065 },
+> +	{ .compatible = "qcom,ipq8066", .data = (const void *)QCOM_ID_IPQ8066 },
+> +	{ .compatible = "qcom,ipq8068", .data = (const void *)QCOM_ID_IPQ8068 },
+> +	{ .compatible = "qcom,ipq8069", .data = (const void *)QCOM_ID_IPQ8069 },
+> +};
+> +
+>  static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
+>  					     struct nvmem_cell *speedbin_nvmem,
+>  					     char **pvs_name,
+>  					     struct qcom_cpufreq_drv *drv)
+>  {
+> +	int msm_id = -1, ret = 0;
+>  	int speed = 0, pvs = 0;
+> -	int msm_id, ret = 0;
+>  	u8 *speedbin;
+>  	size_t len;
+>  
+> @@ -275,8 +284,30 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
+>  	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
+>  
+>  	ret = qcom_smem_get_soc_id(&msm_id);
+> -	if (ret)
+> +	if (ret == -ENODEV) {
+> +		const struct of_device_id *match;
+> +		struct device_node *root;
+> +
+> +		root = of_find_node_by_path("/");
+> +		if (!root) {
+> +			ret = -ENODEV;
+> +			goto exit;
+> +		}
+> +
+> +		/* Fallback to compatible match with no SMEM initialized */
+> +		match = of_match_node(qcom_cpufreq_ipq806x_match_list, root);
+
+Aren't you re-implementing matching machine? Or actually - the socinfo
+driver? You are doing the matching of compatible into SOC ID second
+time. Just do it once - via socinfo driver.
+
+Best regards,
+Krzysztof
 
