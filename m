@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-885832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6A0C34008
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:48:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06026C34017
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 06:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 405D64EF0C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5D8189E8EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 05:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAF426FDB3;
-	Wed,  5 Nov 2025 05:48:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313A828031C;
+	Wed,  5 Nov 2025 05:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FpVLnHkV"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E20C266B46
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 05:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D361C27F732;
+	Wed,  5 Nov 2025 05:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762321686; cv=none; b=CQKt5WC6o5BAhakmuURboRvU9ipPVPE7645XMUVtZE6w6r8D2rnksHU4hmyPSAw+9jZJFZaWGInJamy5KUUwHNbIK0YrQ0ybi1JnzvVIMBPdhgKlwgdLYwG7ilupeg4a1E4YmcW3ZPVU/gYiKLxnI5RsSVPxZfQSU9bOtcmnuRI=
+	t=1762321834; cv=none; b=SjIgAXWeP6n02smfyYyiztiIz/NoHPPtSzLaCCIf2ldLkWrcECtEaePpg0AdP3/oek694i6GeJNtl545BN8Yne6QKtnvnd0yzWxGmqjETyGsQBCJkGyxJhtdHXL5P5uLHYKrsvGwsV9aBWqy18HSHMwCpwPvbY96FM4LvOIWMn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762321686; c=relaxed/simple;
-	bh=GlQIhOpVt8G+BVYMy665LNIo97/TwQy9Ja+ALJ1AUDo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W+yNlQlJBJEHCrZPbY14ZEHesQEzzKscR1QSqAZnVw6TmZa8Rj1PtFW2G44UQOxBjRg145GDpp1CxZhrN8Qtbx24D9CxksEjQncInGv19x0BJM23M7Zgvl0JqEB2gtv31lgK2T4LEZqUKWbduCqE35luYOd6cXB5H67oZ8eET20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e8db8badeso648761439f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 21:48:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762321683; x=1762926483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4XDLXqrEs29g4qhc4+ZUYTByJ5LUyYE6CBWzXLnGEU=;
-        b=UPBSgdXuLDAMnMOLKOJQZwxU/aT46oQ9z5D2OYC602aX7h+feW3fSMA2CyYvq6WOrM
-         8aeHhd7g9aCb9o+G4IcUKKy/Ij1X2vlZra6I7xr4Xo3QdPlIrzO/9XtrmNv0h38Yukgb
-         8Sxvl5Yt/EL4chf6niwiy9rFPeaUDEdBJw1IE+NsGZ1yN3TRA5NOktEYFoujeaoPN8Wt
-         SVwnp0Y7AZL0fE+wN67CuMLBy+QUSBjLf0ES1wM468gQ8Pk9/SWE99EwkxGI5z3sZXtP
-         HHFDNj3D5+njdfP4a4Rr5nJK+pVA8i4PXE6ktZogWFvmK4MrdQ/X24aodYvjC4i41jpO
-         twVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUENntoFAdWdxyBayP7SSDGLHT7SVCptB4xQYCfOBG2MMnhZ7sQ205R/VvEQwp40D2i2CEXa5/p8wh2PrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD2cLyRos0VRaUCSeNX+pQNcYABODVI6pzturuOu8kgQal766g
-	3FIfZ+fFUewqhuabDfRGglv8evvVy2AfDjTB6cSe1l+p5HiBAfQsdNMIiT1Wqrnw3IAowrrjUXF
-	vXWjE+EkvLCFMd11eSFio+nIOsE5a+fLcpr4ntHYhfagRGARq0TJ+jS71iUk=
-X-Google-Smtp-Source: AGHT+IFp+75P9fzMNP6tFwZqfyhcKVqnVaql1CMi2hGDeHUR9fDxpaS8IRIyJ/54rHYeSSnjNRL0DzJ+OpUzQhVJDknW+FXvnEk4
+	s=arc-20240116; t=1762321834; c=relaxed/simple;
+	bh=cH8C/V1KqHlv4hG1tIXG8KMKsFaQ/K5GoKb8Y/NSu4I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NMK2YW9JozCbVdg1ZFB2ziv7FbHQ0c7WLUYk0uiQnOJG0+Nmmtl1ConHiw8D8mqBK+k/17vxOAElbva+hBphdRcvhy1A71t+CvrJdugLgEii9wQi5LRoFssq7S4g7iHNOLpnz+dFPe4UfyE04dFOOjxb9aj8QJ67n/QlrdAWcPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FpVLnHkV; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A55oLo15506869, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762321821; bh=JXuF9GAWIJ7qjp7g4zAP1U/n0HOtutxKOgYa7UAZ7sE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=FpVLnHkVWmsm9Kvm0TtaF1JuRcBUdCxNWcmV6fBTPe7udjN59Q2m1hP2NDpwZ4ckR
+	 hRD5yBVKKw7soZVHjIb/Q91/pCzDPXglZhzTprk1qIeXSXB9vwOpKGBqTZHRnbXnWc
+	 sdk71TA1dmY+KjhlVe4o2PKKOpIicn3QXomygI2SS9UZhosMBTisEk5E1ZMAzSFcHA
+	 qoWnujL3kwEMRS4I46jzGvKup0MQ3FdBZq4fzGtr2huuISQkJKoWlLSg8Y/p2izwkS
+	 uLt550kF6Ww8OWs4tId00O/RHUJBrXMO8DbkhhRaGtSWGxz4f8nFpdW9W3Qkn034t0
+	 gtCULbeN0uUpA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A55oLo15506869
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 13:50:21 +0800
+Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 5 Nov 2025 13:50:21 +0800
+Received: from rtkbt-D520MT-K.realtek.com.tw (172.24.54.67) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server id
+ 15.2.1544.27 via Frontend Transport; Wed, 5 Nov 2025 13:50:21 +0800
+From: Max Chou <max.chou@realtek.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+        <niall_ni@realsil.com.cn>, KidmanLee <kidman@realtek.com>,
+        Max Chou
+	<max.chou@realtek.com>
+Subject: [PATCH 0/3] Bluetooth: btusb: Add new VID/PID for RTL8852BE-VT
+Date: Wed, 5 Nov 2025 13:50:38 +0800
+Message-ID: <20251105055041.456142-1-max.chou@realtek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:29c9:b0:945:9f2d:592f with SMTP id
- ca18e2360f4ac-94869ebc957mr295259839f.17.1762321683439; Tue, 04 Nov 2025
- 21:48:03 -0800 (PST)
-Date: Tue, 04 Nov 2025 21:48:03 -0800
-In-Reply-To: <68132c08.050a0220.14dd7d.0007.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690ae513.050a0220.baf87.0009.GAE@google.com>
-Subject: Re: [syzbot] [nfs?] [netfs?] INFO: task hung in anon_pipe_write
-From: syzbot <syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, ceph-devel@vger.kernel.org, 
-	dhowells@redhat.com, ericvh@kernel.org, idryomov@gmail.com, jack@suse.cz, 
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	m@maowtm.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	netfs@lists.linux.dev, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-syzbot suspects this issue was fixed by commit:
+This patch series adds new VID/PID support for RTL8852BE-VT.
 
-commit 290434474c332a2ba9c8499fe699c7f2e1153280
-Author: Tingmao Wang <m@maowtm.org>
-Date:   Sun Apr 6 16:18:42 2025 +0000
+Max Chou (3):
+  Bluetooth: btusb: Add new VID/PID 0x0489/0xE12F for RTL8852BE-VT
+  Bluetooth: btusb: Add new VID/PID 0x13d3/0x3618 for RTL8852BE-VT
+  Bluetooth: btusb: Add new VID/PID 0x13d3/0x3619 for RTL8852BE-VT
 
-    fs/9p: Refresh metadata in d_revalidate for uncached mode too
+ drivers/bluetooth/btusb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10be532f980000
-start commit:   5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f5bd2a76d9d0b4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef2c1c404cbcbcc66453
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15631270580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a0b0d4580000
+-- 
+2.43.0
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/9p: Refresh metadata in d_revalidate for uncached mode too
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
