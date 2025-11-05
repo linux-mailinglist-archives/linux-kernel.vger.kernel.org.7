@@ -1,150 +1,181 @@
-Return-Path: <linux-kernel+bounces-886296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1116AC35380
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0BCC35247
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DDF6207BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8DB562D10
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96F0309DCF;
-	Wed,  5 Nov 2025 10:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A748D30596A;
+	Wed,  5 Nov 2025 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UmElAKMg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JucRCD8l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uXXCqiE5"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839CE306B00;
-	Wed,  5 Nov 2025 10:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530C7301007;
+	Wed,  5 Nov 2025 10:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762339481; cv=none; b=JbW37Mb9adnmI9aHdEbeba8V19Rq2qZhrIGFgwEmNZTV0IX5OrWXORs85gZDTT4SyxnnazkGrOAeb4Y4i26X7RpkX8RvdifobshiJwu8CetL4nf790Xxb7QGx/DjIupE+bp9ijWNMWlM72/TKY1JrPSo+4geQaox1eoLKh7WtHI=
+	t=1762339275; cv=none; b=KtUffElRtUfLP7LLgbdNyJ9/A5JhiwKfGXiFfvZnx9oVZOyCv4iXit2th4zsLcR7/8fpkYZ1QfCZylSzxplP/R5IjtgrozOwAebdYwmx8aEp3IJIY3eoK0J/gsX6kkC+BtdO+4D9fuaRvkvp5wMChksxdMBlQ9kvU0G9FJpFY7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762339481; c=relaxed/simple;
-	bh=D2OPaV/N+ShGujg/usR9RQSQG6FixJvGWqb+QpPi9Mo=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=THAd/yVsl84+wqAQ+AMqBFw0ffhiGNKi75fihndUVZC4G5OqpHvv55JkcyY4vtwQoI5NZm25uEyn+Xbj8ohi6IlnZ8RrwcKtlV4LW62XQZP7AtPwAoZeQB6yO/DYAFlIJwumGQVjnwqTm2M7fCOJ6J8I1dOJ8zXnooLplg6C95I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UmElAKMg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762339478; x=1793875478;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=D2OPaV/N+ShGujg/usR9RQSQG6FixJvGWqb+QpPi9Mo=;
-  b=UmElAKMgJ+Uw6+gP0wpAuEutJ9MQUkud1xDmJ0Dp5lQqcXBUXuQmmFTJ
-   p/idRz0VQWjmwl2+28vQ0EZN4Jr1av2sHjU++E80hO5tC9aqwG8ciQr2o
-   YsVixNJ0y6Sz90W4mjyuKeBl+rVNSilD1DvUS9JOST98SA6mWUVEJRmeG
-   5lsvOZIfRSCch77laI/XWxli6HPltNNiWB46Dk3k1uTWgfr/tmcafnQKK
-   APpou0OH52P6tLjJM7X6EtLQpkrOYNFW3Vda8wVB34IDXO7C2XL0W00By
-   +tXHq0LKyHVI6dAf2ghbi2m9Sep0ZgNYvrRna/e6LHVJ4ydHqSYaxryyu
-   w==;
-X-CSE-ConnectionGUID: hMx4K+ufQkO8b7z1Qb0gfA==
-X-CSE-MsgGUID: Z50TqMSoTiCfcSzY6ESZWw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="67066128"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="67066128"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 02:44:37 -0800
-X-CSE-ConnectionGUID: mTPu+iCOT5KTheZ9VmPT4w==
-X-CSE-MsgGUID: lGLGeO5rRAC2khOwzosehQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="187111770"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 02:44:35 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, Andy Shevchenko <andy@kernel.org>
-Date: Wed, 05 Nov 2025 12:37:05 +0200
-Subject: [GIT PULL] platform-drivers-x86 for v6.18-3
-Message-ID: <pdx86-pr-20251105123705-1390915696@linux.intel.com>
+	s=arc-20240116; t=1762339275; c=relaxed/simple;
+	bh=RAhuk8SB4STeVQWXzK35AWod9u15ucxFcd9ZonQyeXM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=i3Keb8ctqSUiWRpn77u915gVADIDLIAndApd9DVcx7SBNzRqEBVi1BYG+NML6dCPxZeSrhiiy/i9nop1JNp7w4rVw3tdsOYTbwve6IQ5faiPgPyLmI4OdRatbCG4OsrSP04OA6GHC8KyPTI4T6PrAlkQjp4waylrZT0+Ovf2Mgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JucRCD8l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uXXCqiE5; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0FD941D0004A;
+	Wed,  5 Nov 2025 05:41:11 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Wed, 05 Nov 2025 05:41:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762339270;
+	 x=1762425670; bh=bvAiRx3uwEuD8DW8gu/kdX/dizLums2NJ7ZQAKbtM/0=; b=
+	JucRCD8lPjgEyVrwbCPlnHfTNrcK89CLE+B4DoVqD805L2CoDH/s3hIRZCn9vnK8
+	crLgpagyHHqYjJ57aUYyuvoUz8rs/lL+avjn/f383RyeVLSRdAjvqez98RzJcgf7
+	7MZeXgVOsT2B7EXFwa/XX79SJz1s3r4MuXOdaJW1larpxpwF74jrFFlWALLqWI8w
+	Qz0ObY6i/1lEkq17Nte+CxpT1NDrXGT6cEzx21Br5Y6AKy0QO2t0G41bIlSEEHE1
+	AT21eTg8uLXWRHJLAthAgU2S+vaBlFMq0ue+a7Jh2K2dtkCK4/tehFeH/soCwFTO
+	ISCctO/A2PwOuMhIV2cL/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762339270; x=
+	1762425670; bh=bvAiRx3uwEuD8DW8gu/kdX/dizLums2NJ7ZQAKbtM/0=; b=u
+	XXCqiE5JdhnpTngrIvGHAzSQZ0+Zvt5fSYSrvC+xAV8Mnr+TzG1FdV/dP4hBP5td
+	HyU6GZ0b9/dUo7e79WmGgNIq6vZKyVqMTe3P1o/TnfzVL92HaTqC1+V6TtYKcGlA
+	g/RJlxxzxXKUwaoLj4IGSOYnqTAPyxJjpnm5btwi0hzlt0Y5EHJAQMSC72JfmZ0z
+	VkZv2G8zdAMGMfYA8jB8Gyq9sNHu5cN1/hVnIpY90JDIPqGW1+WfdEQTFFoEarun
+	x50s0Xfw6YtkcbQaWYagL9HcnpAne0iDuPj+UI1z3q3AO7wuy4vfAjJlCwwVJ1Q0
+	2pRC9iJKPJwImxSQivDOA==
+X-ME-Sender: <xms:xCkLadjqEgqBmmzaP9fGmrS18GGfJ3L9DQGuiRytSCSKL9SRhkCWnQ>
+    <xme:xCkLac3huvP4wJSMYLLwLftnuZYkZoFvQGR3p7ArHMLx4XjnxlZZr2M5BiQ7mRd2D
+    CZzjYlza5RJjn0fNhmpTav7G42lo0MdanwEJO6QkOP-6Phm7Jld4zvo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
+    phhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrrhhishhokh
+    hnsegrmhgriihonhdrtghomhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghs
+    segrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtoh
+    hmpdhrtghpthhtoheptghlsehgvghnthifohdrohhrghdprhgtphhtthhopehmvghmgiho
+    rhesghhmrghilhdrtghomhdprhgtphhtthhopeiihhgvnhhglhhifhgvnhhgudeshhhurg
+    ifvghirdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhg
+    pdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvg
+    hlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xSkLaSdibJWgIc9pb8TUJorGV9-b-GctbUSl5sYnAAlsGK-XDPGmEA>
+    <xmx:xSkLaXx7WhMnGyDxJDZTHgtU6UC-C6GxsXeQAGN0VLrskLOXpfdYPg>
+    <xmx:xSkLaTiYwrQXcuyWD-VR2oQCgAl7qFatxaBgtu8MJtIDmDhS6xPYqA>
+    <xmx:xSkLaU4TjrGy1u3JxXs6wZPNv9GVqWPraa4QvE557TLEo0_JBj0Omg>
+    <xmx:xikLaRd1VkHsvtAqk77tkfzl9M4ryinSq5T-ScnKLetKMA17SPWyrhGp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DFAFE700063; Wed,  5 Nov 2025 05:41:08 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Ab2ZwGVH8-qs
+Date: Wed, 05 Nov 2025 11:37:53 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ankur Arora" <ankur.a.arora@oracle.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ bpf@vger.kernel.org, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Haris Okanovic" <harisokn@amazon.com>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+ "Alexei Starovoitov" <ast@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, zhenglifeng1@huawei.com,
+ xueshuai@linux.alibaba.com, "Joao Martins" <joao.m.martins@oracle.com>,
+ "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+ "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
+Message-Id: <d087f250-daf1-429f-8ce0-c4f4332d0469@app.fastmail.com>
+In-Reply-To: <87jz04anq1.fsf@oracle.com>
+References: <20251028053136.692462-1-ankur.a.arora@oracle.com>
+ <20251028053136.692462-3-ankur.a.arora@oracle.com>
+ <3642cfd1-7da6-4a75-80b7-00c21ab6955f@app.fastmail.com>
+ <87qzumq51p.fsf@oracle.com> <aQEy6ObvE0s2Gfbg@arm.com>
+ <746c2de4-7613-4f13-911c-c2c4e071ed73@app.fastmail.com>
+ <87ikfqesr2.fsf@oracle.com> <aQoF1-uKTgJo89W8@arm.com>
+ <87jz04anq1.fsf@oracle.com>
+Subject: Re: [RESEND PATCH v7 2/7] arm64: barrier: Support
+ smp_cond_load_relaxed_timeout()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On Wed, Nov 5, 2025, at 09:27, Ankur Arora wrote:
+> Catalin Marinas <catalin.marinas@arm.com> writes:
+>> On Mon, Nov 03, 2025 at 01:00:33PM -0800, Ankur Arora wrote:
+>> With time_end_ns being passed to cpu_poll_relax(), we assume that this
+>> is always the absolute time. Do we still need time_expr in this case?
+>> It works for WFET as long as we can map this time_end_ns onto the
+>> hardware CNTVCT.
+>>
+>> Alternatively, we could pass something like remaining_ns, though not
+>> sure how smp_cond_load_relaxed_timeout() can decide to spin before
+>> checking time_expr again (we probably went over this in the past two
+>> years ;)).
+>
+> I'm sure it is in there somewhere :).
+> This one?: https://lore.kernel.org/lkml/aJy414YufthzC1nv@arm.com/.
+> Though the whole wait_policy thing confused the issue somewhat there.
+>
+> Though that problem exists for both remaining_ns and for time_end_ns
+> with WFE. I think we are fine so long as SMP_TIMEOUT_POLL_COUNT is
+> defined to be 1.
 
-Here is a platform-drivers-x86 fixes PR for v6.18.
+We need to be careful with the definition of the time_expr() if
+cpu_poll_relax requires the absolute time in CNTVCT domain.
+We're probably fine here, but it feels like a bit of a layering
+violation. I think passing relative time into it would be cleaner
+because it avoids the ambiguity it but probably requires an extra
+access to the timer register that is hopefully fast on arm64.
 
-Fixes and New Hotkey Support
+I'm ok with either way.
 
-- input + dell-wmi-base: Electronic privacy screen on/off hotkey support
+> For now, I think it makes sense to always pass the absolute deadline
+> even if the caller uses remaining_ns. So:
+>
+> #define smp_cond_load_relaxed_timeout(ptr, cond_expr, time_expr, remaining_ns)	\
+> ({									\
+> 	typeof(ptr) __PTR = (ptr);					\
+> 	__unqual_scalar_typeof(*ptr) VAL;				\
+> 	u32 __n = 0, __spin = SMP_TIMEOUT_POLL_COUNT;			\
+> 	u64 __time_start_ns = (time_expr);				\
+> 	s64 __time_end_ns = __time_start_ns + (remaining_ns);		\
+> 									\
+> 	for (;;) {							\
+> 		VAL = READ_ONCE(*__PTR);				\
+> 		if (cond_expr)						\
+> 			break;						\
+> 		cpu_poll_relax(__PTR, VAL, __time_end_ns);		\
 
-- int3472: Fix unregister double free
+This looks perfectly fine to me, thanks for the update!
 
-- wireless-hotkey: Fix Kconfig typo
-
-Regards, i.
-
-
-The following changes since commit 34cbd6e07fddf36e186c8bf26a456fb7f50af44e:
-
-  platform/x86: alienware-wmi-wmax: Add AWCC support to Dell G15 5530 (2025-10-15 11:22:35 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.18-3
-
-for you to fetch changes up to bd34bf518a5ffeb8eb7c8b9907ba97b606166f7b:
-
-  platform: x86: Kconfig: fix minor typo in help for WIRELESS_HOTKEY (2025-10-28 20:13:21 +0200)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.18-3
-
-Fixes and New Hotkey Support
-
-- input + dell-wmi-base: Electronic privacy screen on/off hotkey support
-
-- int3472: Fix unregister double free
-
-- wireless-hotkey: Fix Kconfig typo
-
-The following is an automated shortlog grouped by driver:
-
-dell-wmi-base:
- -  Handle electronic privacy screen on/off events
-
-Input:
- -  Add keycodes for electronic privacy screen on/off hotkeys
-
-int3472:
- -  Fix double free of GPIO device during unregister
-
-MAINTAINERS:
- -  Update int3472 maintainers
-
-x86: Kconfig:
- -  fix minor typo in help for WIRELESS_HOTKEY
-
-----------------------------------------------------------------
-Hans de Goede (2):
-      Input: Add keycodes for electronic privacy screen on/off hotkeys
-      platform/x86: dell-wmi-base: Handle electronic privacy screen on/off events
-
-Lazar Aleksic (1):
-      platform: x86: Kconfig: fix minor typo in help for WIRELESS_HOTKEY
-
-Qiu Wenbo (1):
-      platform/x86: int3472: Fix double free of GPIO device during unregister
-
-Sakari Ailus (1):
-      MAINTAINERS: Update int3472 maintainers
-
- MAINTAINERS                                            |  3 ++-
- drivers/platform/x86/Kconfig                           |  2 +-
- drivers/platform/x86/dell/dell-wmi-base.c              | 12 ++++++++++++
- drivers/platform/x86/intel/int3472/clk_and_regulator.c |  5 +----
- include/linux/platform_data/x86/int3472.h              |  1 -
- include/uapi/linux/input-event-codes.h                 | 12 ++++++++++++
- 6 files changed, 28 insertions(+), 7 deletions(-)
+    Arnd
 
