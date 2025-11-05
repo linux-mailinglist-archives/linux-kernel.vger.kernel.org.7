@@ -1,206 +1,266 @@
-Return-Path: <linux-kernel+bounces-887140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5454FC375B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:38:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FF3C375E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60381889DC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544383B5922
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554C28489A;
-	Wed,  5 Nov 2025 18:38:38 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629CC28851F;
+	Wed,  5 Nov 2025 18:40:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3DD2836A0
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DED2475E3;
+	Wed,  5 Nov 2025 18:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762367918; cv=none; b=VtGfG6yku4VjzHzd62krvVlnEvSUQNevtbQC9L4AZyO7qjs/ivw5gtFDbqzApOsmUXkejjIM0LMxDOs06RA+utMAt5ZWT4tR8weTjGJqPaBgFLpX8jwNYorHPAK5JTslkd7HmRXDjdO33SNGPlVMMs33pjw/8dvwli+7xYblSe0=
+	t=1762368057; cv=none; b=djX5qrZMxrZOprWpHGZEXGqgTJdvrXE9szp83bsbSZduEBLbdtQXYxsPDzYhhf4TIGJKKwqsOMKcy08BVlycuLK3eN9mz5ZbvhEy9wWjyVfbi8WqdvPOdB/UiXPn9DEv/FyEHV4m2cZCNstWzOMLY2l1OuDoRtU0qL8UTxJOgW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762367918; c=relaxed/simple;
-	bh=i7GhLJac4vonK6GWU02RBDmPuIBBSB8ckgKrfmHnlU0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AP+vXxV0DXk8ofiejNhfPEC8pGM38SnC8PJY5gFIpV2LqLlZbxqaywtylgIhq43EX7zczwRc6P18H73byHk6fsv5nFfZSY2nz/qq9oBYC+I63yKALvZMOo5Qgexq0nctfpmitnuMU79KJ1np9T9seV5ZWlCuVU49iQIvvdrFlXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-43328dcdac1so1861725ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:38:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762367915; x=1762972715;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mn+BtCh3vOD0zyKs8XLSj2XvKwZSbGcteQATczCoPMs=;
-        b=q4gLoZCh5kj4N4n7d+zAajBtMVGZhnoGvl4eMJJ80f9cQyoKmacU9eBfXCwFfKkw8o
-         rFbeQZexNwWiYG7bhtRblqsGEQSpwKH9nSngxcY51Kcp/q1jHByFhsSWwUUWxnrxt5me
-         MqJB2JDSLh4oLWeCAS3jexwDyCMr8Esn/ar6ZfV+NnDF+5B9YjrrB1NDXd5z4Kj7ltvL
-         v5MHn3SoOa5CMGqoU2GaqdEOwKgOqjYqKd0cGyErQ9UgD+e7hg6Idrk3nRSmwtBtkuIG
-         vf6tD2UCIb9fcoyeirhOevRFFs64Oi7C760NEDZn7QVRNz0gpYsX593MR+ZIJsIg+KUn
-         qnOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWs9FkVo997mp/eSU80x2kors/TEyvnyDXrQZTbLD4ns1hdWt4H/r1MytpjtcEKH47+lE5mS/XqMjECYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz20b0JpaHPcpxLRHv86MdgWPwKQKpWXQK25EWP+d9+m9W819/A
-	8+7fHRRXU/IOnwluH9xgbgikjttQETlhT0bAPfsPRf8/AxaUhAUxnHOimDUA0uiYrARxOJm+RCL
-	jwFTLvcwDk4Xoa8KDTqnuR73FU4VnsGDsJQ7ceJj278x2oXmiM8NIhXeqWu8=
-X-Google-Smtp-Source: AGHT+IFQpl8lpWxtSbzVqHE8LKdmISAAPmjAEteuXxAB51ZS87fITIQFSnOHk5W1KhqRM7pMy/U7YUh9m3ZljoGgW5JVcOkArmV1
+	s=arc-20240116; t=1762368057; c=relaxed/simple;
+	bh=nBjAQk/r/QCsdzkfYv155Dqw/UgNpwwufGrLsdVHe/E=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=diPJ6ktkU/iSCNHmRG75cVL6yBMZl74+7OfgDAGgDnbzDlk/nXiyuJ526rUxa1HKpnAWScSWFBF8j6mDgxg5qAttp9lLOzbtV1nLmBMNyBeo6qMSBIEhg7k1f7ztSdIzo8WUfVG3ndqkvH8YBEXd9VnfOlV1DmBTuD2sfGTR/M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d1vJt4YJ7zJ4683;
+	Thu,  6 Nov 2025 02:40:30 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B8AB140370;
+	Thu,  6 Nov 2025 02:40:52 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Nov
+ 2025 18:40:51 +0000
+Date: Wed, 5 Nov 2025 18:40:50 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<kernel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>, Andy Shevchenko
+	<andy.shevchenko@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Subject: Re: [PATCH v1 1/2] bindings: iio: adc: Add bindings for TI
+ ADS131M0x ADCs
+Message-ID: <20251105184050.000016f0@huawei.com>
+In-Reply-To: <20251105143814.1807444-2-o.rempel@pengutronix.de>
+References: <20251105143814.1807444-1-o.rempel@pengutronix.de>
+	<20251105143814.1807444-2-o.rempel@pengutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152d:b0:430:bfbf:4e4a with SMTP id
- e9e14a558f8ab-433407c0a59mr61771605ab.16.1762367915570; Wed, 05 Nov 2025
- 10:38:35 -0800 (PST)
-Date: Wed, 05 Nov 2025 10:38:35 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b99ab.050a0220.baf87.0057.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in lock_list_lru_of_memcg (2)
-From: syzbot <syzbot+c5b060ce82921a2fd500@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, david@fromorbit.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
-	roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com, 
-	zhengqi.arch@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Wed, 5 Nov 2025 15:38:13 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-syzbot found the following issue on:
+> Add device tree bindings documentation for the Texas Instruments
+> ADS131M0x analog-to-digital converters. This family includes the ADS131M02,
+> ADS131M03, ADS131M04, ADS131M06, and ADS131M08 variants.
+Hi Olkesij,
 
-HEAD commit:    ba36dd5ee6fd Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16515704580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=c5b060ce82921a2fd500
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/62471ef815ed/disk-ba36dd5e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e7a72af6e621/vmlinux-ba36dd5e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/352eec7dbce0/bzImage-ba36dd5e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c5b060ce82921a2fd500@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 13908 at mm/list_lru.c:100 lock_list_lru_of_memcg+0x30c/0x4c0 mm/list_lru.c:100
-Modules linked in:
-CPU: 0 UID: 0 PID: 13908 Comm: syz.0.1878 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:lock_list_lru_of_memcg+0x30c/0x4c0 mm/list_lru.c:100
-Code: 42 80 3c 30 00 74 0b 48 89 fb e8 2f 40 1d 00 48 89 df 48 8b 3f 48 8b 54 24 10 48 8b 74 24 28 e9 0a fe ff ff e8 e5 8a b7 ff 90 <0f> 0b 90 eb be 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 1e fe ff ff 48
-RSP: 0018:ffffc9000fb165c0 EFLAGS: 00010083
-RAX: ffffffff82087bab RBX: 0000000000000000 RCX: 0000000000080000
-RDX: ffffc9000f013000 RSI: 00000000000127d4 RDI: 00000000000127d5
-RBP: 0000000000000001 R08: ffff88801e3b8000 R09: 0000000000000002
-R10: 0000000000000406 R11: 0000000000000002 R12: ffffffff997ec9a0
-R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88812613e000(0063) knlGS:00000000f541bb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000f74089b4 CR3: 000000002ef4a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- list_lru_add+0x58/0x270 mm/list_lru.c:167
- list_lru_add_obj+0x191/0x270 mm/list_lru.c:190
- workingset_update_node+0x1d5/0x260 mm/workingset.c:629
- xas_update lib/xarray.c:357 [inline]
- update_node lib/xarray.c:765 [inline]
- xas_store+0xac4/0x1880 lib/xarray.c:852
- page_cache_delete mm/filemap.c:141 [inline]
- __filemap_remove_folio+0x3c7/0x500 mm/filemap.c:227
- __remove_mapping+0xb06/0xe40 mm/vmscan.c:811
- shrink_folio_list+0x2896/0x4c70 mm/vmscan.c:1553
- reclaim_folio_list+0xeb/0x500 mm/vmscan.c:2233
- reclaim_pages+0x454/0x520 mm/vmscan.c:2270
- madvise_cold_or_pageout_pte_range+0x1974/0x1d00 mm/madvise.c:565
- walk_pmd_range mm/pagewalk.c:130 [inline]
- walk_pud_range mm/pagewalk.c:224 [inline]
- walk_p4d_range mm/pagewalk.c:262 [inline]
- walk_pgd_range+0xfe9/0x1d40 mm/pagewalk.c:303
- __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
- walk_page_range_vma+0x393/0x440 mm/pagewalk.c:717
- madvise_pageout_page_range mm/madvise.c:624 [inline]
- madvise_pageout mm/madvise.c:649 [inline]
- madvise_vma_behavior+0x311f/0x3a10 mm/madvise.c:1352
- madvise_walk_vmas+0x51c/0xa30 mm/madvise.c:1669
- madvise_do_behavior+0x38e/0x550 mm/madvise.c:1885
- do_madvise+0x1bc/0x270 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __ia32_sys_madvise+0xa7/0xc0 mm/madvise.c:1985
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf706d539
-Code: 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f541b55c EFLAGS: 00000206 ORIG_RAX: 00000000000000db
-RAX: ffffffffffffffda RBX: 0000000080000000 RCX: 0000000000600000
-RDX: 0000000000000015 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   4:	10 07                	adc    %al,(%rdi)
-   6:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   a:	10 08                	adc    %cl,(%rax)
-   c:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  20:	00 51 52             	add    %dl,0x52(%rcx)
-  23:	55                   	push   %rbp
-  24:	89 e5                	mov    %esp,%ebp
-  26:	0f 34                	sysenter
-  28:	cd 80                	int    $0x80
-* 2a:	5d                   	pop    %rbp <-- trapping instruction
-  2b:	5a                   	pop    %rdx
-  2c:	59                   	pop    %rcx
-  2d:	c3                   	ret
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	90                   	nop
-  31:	90                   	nop
-  32:	90                   	nop
-  33:	90                   	nop
-  34:	90                   	nop
-  35:	90                   	nop
-  36:	90                   	nop
-  37:	90                   	nop
-  38:	90                   	nop
-  39:	90                   	nop
-  3a:	90                   	nop
-  3b:	90                   	nop
-  3c:	90                   	nop
-  3d:	90                   	nop
-  3e:	90                   	nop
-  3f:	90                   	nop
+Add a clear statement of difference between them that means we can't
+use a single fallback compatible. You kind of state it in the binding
+(number of channels) but having it here explicitly makes for easier review.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../bindings/iio/adc/ti,ads131m08.yaml        | 162 ++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads131m08.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads131m08.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads131m08.yaml
+> new file mode 100644
+> index 000000000000..193ac84c41cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads131m08.yaml
+> @@ -0,0 +1,162 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads131m08.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments ADS131M0x 2-, 3-, 4-, 6- and 8-Channel ADCs
+> +
+> +maintainers:
+> +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> +
+> +description: |
+> +  The ADS131M0x are a family of multichannel, simultaneous sampling,
+> +  24-bit, delta-sigma, analog-to-digital converters (ADCs) with a
+> +  built-in programmable gain amplifier (PGA) and internal reference.
+> +  Communication with the ADC chip is via SPI.
+> +
+> +  Datasheets:
+> +  - ADS131M08: https://www.ti.com/lit/ds/symlink/ads131m08.pdf
+> +  - ADS131M06: https://www.ti.com/lit/ds/symlink/ads131m06.pdf
+> +  - ADS131M04: https://www.ti.com/lit/ds/symlink/ads131m04.pdf
+> +  - ADS131M03: https://www.ti.com/lit/ds/symlink/ads131m03.pdf
+> +  - ADS131M02: https://www.ti.com/lit/ds/symlink/ads131m02.pdf
+Trivial but seems a little odd to have these in reverse order of the compatibles.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,ads131m02
+> +      - ti,ads131m03
+> +      - ti,ads131m04
+> +      - ti,ads131m06
+> +      - ti,ads131m08
+> +
+> +  reg:
+> +    description: SPI chip select number.
+> +
+> +  clocks:
+> +    description:
+> +      Phandle to the external clock source required by the ADC's CLKIN pin.
+> +      The datasheet recommends specific frequencies based on the desired power
+> +      mode (e.g., 8.192 MHz for High-Resolution mode).
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+There should be some supplies here.
+Looks like REFIN is optional but AVDD and DVDD are required.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +patternProperties:
+> +  "^channel@([0-7])$":
+> +    type: object
+> +    $ref: /schemas/iio/adc/adc.yaml#
+> +    description: |
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+No need for | on this one as I don't think formatting needs to be controlled.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> +      Properties for a single ADC channel. The maximum valid channel number
+> +      depends on the specific compatible string used (e.g., 0-1 for ads131m02,
+> +      0-7 for ads131m08).
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel index (0-7).
+> +        minimum: 0
+> +        maximum: 7 # Max channels on ADS131M08
+> +
+> +      label: true
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ti,ads131m02
+> +    then:
+> +      patternProperties:
+> +        "^channel@[0-7]$":
+> +          properties:
+> +            reg:
+> +              maximum: 1
+> +        "^channel@([2-7])$": false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ti,ads131m03
+> +    then:
+> +      patternProperties:
+> +        "^channel@[0-7]$":
+> +          properties:
+> +            reg:
+> +              maximum: 2
+> +        "^channel@([3-7])$": false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ti,ads131m04
+> +    then:
+> +      patternProperties:
+> +        "^channel@[0-7]$":
+> +          properties:
+> +            reg:
+> +              maximum: 3
+> +        "^channel@([4-7])$": false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ti,ads131m06
+> +    then:
+> +      patternProperties:
+> +        "^channel@[0-7]$":
+> +          properties:
+> +            reg:
+> +              maximum: 5
+> +        "^channel@([6-7])$": false
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +
+> +    spi1 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+> +            compatible = "ti,ads131m02";
+> +            reg = <0>;
+> +            spi-max-frequency = <8000000>;
+> +
+> +            clocks = <&rcc CK_MCO2>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            channel@0 {
+> +                reg = <0>;
+> +                label = "input_voltage";
+> +            };
+> +
+> +            channel@1 {
+> +                reg = <1>;
+> +                label = "input_current";
+> +            };
+> +        };
+> +    };
+
 
