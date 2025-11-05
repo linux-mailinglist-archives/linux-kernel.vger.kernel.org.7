@@ -1,116 +1,108 @@
-Return-Path: <linux-kernel+bounces-886505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C66DC35C5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:10:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4F1C35C54
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC8D461E9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:08:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8855834E9F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337733168F1;
-	Wed,  5 Nov 2025 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E1C3168F3;
+	Wed,  5 Nov 2025 13:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HTabv0Ir"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="MNTmIoYg"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E0F18A921;
-	Wed,  5 Nov 2025 13:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CCE3164D2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762348130; cv=none; b=H3MTs+FS05Ryys+ZqWvhhnvYDjv9hLZyxHInCtP3X6cyqhueraOCezS02B3wWwHpDZHNTZdZ5Wi7aGa+rxfbIyFmdwUYnSP++14uLPFoaglRloQVSsAC2zUhEpDpihEHmVkHkMpMhM4KoZ7lTpOvCWCtrptJ+tUIZfw1eGsink0=
+	t=1762348162; cv=none; b=NAAi2j9j5jpnEQtmja+I33NdbaRgMGD9mba6ptvDkHUjzMN0W+U0gPKcJIEeaIFaw6JtQJnoPo95h7YhYdVKmvL/9P90uN2IpQSXKqZxgx+N6Gt7Z4FeoXsoxWhVC30zHGBmquNG1Vg7J1TZvjIHQbXJ7BXV0VkRQnDN0BLHWxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762348130; c=relaxed/simple;
-	bh=tIXN69NhcMpIUNMTvR0fHGOEfPzcKsrg05Mq0Prh/K4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehlUJMjIcmPVMQtGzLVta79s8D+oI9bv25+SIXwEMh2rGG2DB/z1gzrc0YH49W9HjKHmD0PU1D8Xn0SjlHRFrdABnhAqNY68xib2dMtIvs15Y+9ENB3HWUKz7j5NvKJu0yEjnpEn8QjlnkH8ApFldXfbdRgpWE09DDJh5sPE4dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HTabv0Ir; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yagpRY+a+yMfMlbGTqpj5YyUleDnBH+cyCzDbrx1n98=; b=HTabv0IrhUjTaGC+iDA5NWyTyw
-	kPDwLnrjnlGPgKXG4boDqLcwLrIL+rjTJUItAWTPD756A+vne0GUUnW1wT/FBRrAr+jLZk4al6xI3
-	RpFjq6tU45rllMEwjdqPcDWP0NUQZBEonp+008EJgEYSz5UT6UoCKOYrXln/kvuacwpYGCSlZof7z
-	X0EK7q5s6x0b4c6vDM0GX3ynE7b8DGfkdXkaAm1WQD38svy2sNAXf0hJb5wEJpYdXnxQJgttrvFXn
-	MRVh7W8KAf4cd+kaHW2QDBG3ABg7EGWyw9uxP0MLLjFykOvh2GmktSajTcv69rIF4EHeNWhJUqn80
-	uDtMqikg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGdFZ-00000006g3w-0c3R;
-	Wed, 05 Nov 2025 13:08:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A1A9E300230; Wed, 05 Nov 2025 14:08:33 +0100 (CET)
-Date: Wed, 5 Nov 2025 14:08:33 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Jens Remus <jremus@linux.ibm.com>, Steven Rostedt <rostedt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>,
-	Carlos O'Donell <codonell@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20251105130833.GN3245006@noisy.programming.kicks-ass.net>
-References: <20251007214008.080852573@kernel.org>
- <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
- <20251024092926.GI4068168@noisy.programming.kicks-ass.net>
- <20251024104119.GJ4068168@noisy.programming.kicks-ass.net>
- <a59509f0-5888-4663-9e82-98e27fc3e813@linux.ibm.com>
- <20251024140815.GE3245006@noisy.programming.kicks-ass.net>
- <20251024145156.GM4068168@noisy.programming.kicks-ass.net>
- <lhuldkmujom.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1762348162; c=relaxed/simple;
+	bh=uguI1xGoSqMV/a92i80LW5vKXiSNa4y8fhfB+Wp0GW4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=qCZwONwNpTVnDqB89ZHU/EW7+pnPOMO9naCU84wXO0b2+sBSXvZu2QdWlXy9Ds1x8Tf0Z06rSPWDKIEFu/nR/WIwhDj8Cck4jrZEhQI2J1h02xAiUzR2qWyqeEX7U761/8Fvgsvdh8yrVHpvhetUQtVidPIBxKeT/HiKKFnhazA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=MNTmIoYg; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lhuldkmujom.fsf@oldenburg.str.redhat.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1762348154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JviihLCt3v6d6CZovBHWlp8JXmmPFCMHNUL+edx3LHs=;
+	b=MNTmIoYgYT8/lE217Au/8HIwzXrmYeDqSa3iJuB2cz2XV0ASGUqU4Jn+7U+k5/x8VuoUmh
+	wQM4ZwYXWDcsU7vOdXVFhoiwmcJe7dDaRSDvVJVGfGz3wrclxU+mpJ5dFoCmivN9vdAS18
+	sLVRoR2CRPiYUem7AmPTd7Whw6gsk+L6BDCkstcw4el/O7xgCyJ01yh2kvge79opSk7jAy
+	OvgqFm3rNxMCWNc1v/M/5WWG/ItEEUahS0kpFDtVv8XJR7SdC5LjYLCGmfRgRPrUFeg2dG
+	novMFhyOvhRD7jHLq93j6hNgrs0VqfXyipAM92miup/izAs0i8wqEVgnQ13kZw==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Nov 2025 14:08:59 +0100
+Message-Id: <DE0S9YBDI0NK.2892TZHYSQLFM@cknow-tech.com>
+To: "Heiko Stuebner" <heiko@sntech.de>
+Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <michael.riesch@collabora.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+References: <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-2-heiko@sntech.de>
+In-Reply-To: <20251103234926.416137-2-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 04, 2025 at 12:22:01PM +0100, Florian Weimer wrote:
-> * Peter Zijlstra:
-> 
-> > +/*
-> > + * Heuristic-based check if uprobe is installed at the function entry.
-> > + *
-> > + * Under assumption of user code being compiled with frame pointers,
-> > + * `push %rbp/%ebp` is a good indicator that we indeed are.
-> > + *
-> > + * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
-> > + * If we get this wrong, captured stack trace might have one extra bogus
-> > + * entry, but the rest of stack trace will still be meaningful.
-> > + */
-> > +bool is_uprobe_at_func_entry(struct pt_regs *regs)
-> 
-> Is this specifically for uprobes?  Wouldn't it make sense to tell the
-> kernel when the uprobe is installed whether the frame pointer has been
-> set up at this point?  Userspace can typically figure this out easily
-> enough (it's not much more difficult to find the address of the
-> function).
+On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
+> The Trusted Firmware on RK3568 exposes 3 clocks via the SCMI clock
+> interface. Add descriptive IDs for them.
+>
+> The clock ids are used in both the older vendor-binary TF-A, as well
+> as the recently merged upstream SCMI clock implementation.
+>
+> Link: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3126=
+5
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  include/dt-bindings/clock/rk3568-cru.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/include/dt-bindings/clock/rk3568-cru.h b/include/dt-bindings=
+/clock/rk3568-cru.h
+> index f01f0e9ce8f1..1e0aef8a645d 100644
+> --- a/include/dt-bindings/clock/rk3568-cru.h
+> +++ b/include/dt-bindings/clock/rk3568-cru.h
+> @@ -483,6 +483,12 @@
+> =20
+>  #define PCLK_CORE_PVTM		450
+> =20
+> +/* scmi-clocks indices */
+> +
+> +#define SCMI_CLK_CPU		0
+> +#define SCMI_CLK_GPU		1
+> +#define SCMI_CLK_NPU		2
+> +
 
-Yeah, I suppose so. Not sure the actual user interface for this allows
-for that. Someone would have to dig into that a bit.
+This corresponds with the id's in ``clock_table`` in TF-A's
+``plat/rockchip/rk3568/drivers/scmi/rk3568_clk.c`` file, so
+
+Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
+
+>  /* pmu soft-reset indices */
+>  /* pmucru_softrst_con0 */
+>  #define SRST_P_PDPMU_NIU	0
+
 
