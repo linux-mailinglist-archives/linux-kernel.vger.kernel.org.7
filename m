@@ -1,143 +1,285 @@
-Return-Path: <linux-kernel+bounces-887424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2621EC38335
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:30:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDFCC3831B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 23:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7B284F188C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1FD1A231B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 22:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E8A2F1FE6;
-	Wed,  5 Nov 2025 22:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B7E2F1FE6;
+	Wed,  5 Nov 2025 22:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlA+MohT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8iv9g/U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026BB2DF6EA;
-	Wed,  5 Nov 2025 22:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFD22DF6EA;
+	Wed,  5 Nov 2025 22:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762381836; cv=none; b=Cx9g5R2OTAC6tOkvhcoGrNkmxC1nE2VdkhHJmrVU1gR7v4/U+fUSpoY7v8m6OzBnas1ZL/sYftGx9zEmY9r/rsjakhgjTuYe4Del4TAYjmdYEI7CvrW1P5e+S+NwPylWUbjgxYTE8+ay0SKUVtpWVXfeZcMJF0FwORTLhxR2SS4=
+	t=1762381688; cv=none; b=e+pYpaDEiSnciWNgSSbU0llKmLf5LEfJTapVVh1rU+3LnGyvBJ16B7hTuoL32GHUnV7t3rsBlCfqhpV2UB7ZH1qqEeRp3j+qPBEr6ZRYYnXW/5qJoxBGR5waU9/qss7lcOzdARoSmhFrl+c6N5lZgRq2LRVIS1g+SZ+LGdrLIiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762381836; c=relaxed/simple;
-	bh=mYnvpEKBogT7BsYEja2SXk61pPZfhZQoW0bsF8Nq61w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ubkx4/vP9NNz0XDhd5vXyOGYeRYPK5UavJGwRH4BuaNH00WTc8uw8xbl87Vlf9aAxokhp08aPH5ytuYiupeWYCckTrGshzCeTlUGH/ouWtYnEdtxDeiQRR3uxPqL41VxA8eZNYOGyle729s8law+m0ZRNLscGQiNfyIQfrJq19Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlA+MohT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA4EC4CEF5;
-	Wed,  5 Nov 2025 22:30:33 +0000 (UTC)
+	s=arc-20240116; t=1762381688; c=relaxed/simple;
+	bh=YbGVu71YZkImQjgmhlDTu5GSqIXCdlKNFblMING4tEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzJ4jaBI4HnoIn5wfpLVTfcP8Vw88ycD0Djzucj+nfM83NU+xOD+0m3Gm6EoFn9cMG9Y3WZllm3870Yv/Fq/ejJyX/lA+vl0rzYxq0ZfQLl7U60n42DIHjXjIxfABkj67SBerVCjqPrTFdj09T3qHLFYlpKVFJH1GgBegG+0Jcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8iv9g/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2224C4CEF5;
+	Wed,  5 Nov 2025 22:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762381835;
-	bh=mYnvpEKBogT7BsYEja2SXk61pPZfhZQoW0bsF8Nq61w=;
-	h=From:Date:Subject:To:Cc:From;
-	b=qlA+MohTzsuKi72Z/CfMBJJ8Lc6lpGAN58JpC/EaOcDaFf+aqyK8LzKq0I+y97fFd
-	 Pn2zEwHe9ImEZM+Bho9tDelyf2sE9I0cj1eQIyHtyxRUgPp79Se6rwhcCCeAvAyMds
-	 6nTaV3WBlYpy7HWw2CVx1K6qQzrgzlKvJUWzBFfJnuy3FAhmLYN0gAihohH6zDBVLk
-	 bRa2epBAJVjznyjYyTtJemBA02lkAaszOgWVfDn6VkiFfdAqHjtuYs7jEtOFbMmp9g
-	 3ZYQ8zWQjat0xWXWtJfCNk8ltS+2swBfki4oV1eM/AepxbC1POvtIg/V207OIle0Zj
-	 bisRqH01QD2sg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Wed, 05 Nov 2025 15:30:27 -0700
-Subject: [PATCH] kbuild: Strip trailing padding bytes from
- modules.builtin.modinfo
+	s=k20201202; t=1762381687;
+	bh=YbGVu71YZkImQjgmhlDTu5GSqIXCdlKNFblMING4tEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W8iv9g/UIr+0WzwSQ+GeE1DSQOiECg8faqKgcYg6sN/OWDcp5fCQD6Hgf4llEb8XL
+	 +bTSDYym7s3ZsOGrvm1gKLlZXFmMBb5F4koR2juSVeU1m8zTimN4IQEnTb+JgadARK
+	 ekWAzXMnUWp9T7I1sm0J8Ojwx8tncA/NV1AJW3hBwDAQwS6mjpgI+4kEBiY7ukGi3K
+	 AR3Y13UGkFwIP0S0SYHxlaYu2bFjOtFhjstv9eNQ8pOgeuXLWlSchXxnkQ+gbxhS7h
+	 O+bVv6+6B6Bcxaebka87ebj0+CE9BzFzNKrJwqc/c3Y4r9UMOmUd3MGv4GjXVyQbpW
+	 hLYUAKMy77FXw==
+Date: Wed, 5 Nov 2025 16:31:49 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
+	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>, linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com
+Subject: Re: [PATCH v2 3/3] bus: mhi: ep: Add loopback driver for data path
+ testing
+Message-ID: <myzlzn6jv5ghpdj2k4gbcqh6bogi6w67yu6nj4haib4asgkapi@ddy4ebdpb6xt>
+References: <20251104-loopback_mhi-v2-0-727a3fd9aa74@oss.qualcomm.com>
+ <20251104-loopback_mhi-v2-3-727a3fd9aa74@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-kbuild-fix-builtin-modinfo-for-kmod-v1-1-b419d8ad4606@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAALQC2kC/x3NwQqDMBAE0F+RPXfB1YZqf6V40GRTF9ukJCqC5
- N+77W0eDDMnZE7CGe7VCYl3yRKDgi4V2HkMT0ZxamjqxhDVBpdpk5dDLwf+0ioB39FJ8BF9TLg
- o0FhLfXe9Ue9a0KVPYu3/Xx5DKV87Guc3dQAAAA==
-X-Change-ID: 20251105-kbuild-fix-builtin-modinfo-for-kmod-5cc1984719d3
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>
-Cc: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>, 
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>, 
- Samir M <samir@linux.ibm.com>, 
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2910; i=nathan@kernel.org;
- h=from:subject:message-id; bh=mYnvpEKBogT7BsYEja2SXk61pPZfhZQoW0bsF8Nq61w=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDJncFzifhWsavu1JSbIoMF+Yc6vJeUpsppLz1gfa27dcd
- Wbg8fjdUcrCIMbFICumyFL9WPW4oeGcs4w3Tk2CmcPKBDKEgYtTACay/ywjQ1uugjWHdkLbotqz
- XmcS3FKUONV7XqVdWTndV7rOXMYjn5Fh0YorfySe7Gec4tXp6PtqqX5M7rz4ezL3rnBsPBTBLX+
- FFQA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-loopback_mhi-v2-3-727a3fd9aa74@oss.qualcomm.com>
 
-After commit d50f21091358 ("kbuild: align modinfo section for Secureboot
-Authenticode EDK2 compat"), running modules_install with certain
-versions of kmod (such as 29.1 in Ubuntu Jammy) in certain
-configurations may fail with:
+On Tue, Nov 04, 2025 at 11:09:07AM +0530, Sumit Kumar wrote:
+> Add loopback driver for MHI endpoint devices. The driver receives
 
-  depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname prefix
+Start by establishing why we want this.
 
-The additional padding bytes to ensure .modinfo is aligned within
-vmlinux.unstripped are unexpected by kmod, as this section has always
-just been null-terminated strings.
+> data on the uplink channel and echoes it back on the downlink
+> channel using a workqueue for asynchronous processing.
+> 
+> The driver is useful for testing MHI endpoint data path functionality
+> and debugging communication issues.
+> 
+> Co-developed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+> ---
+>  drivers/bus/mhi/ep/Kconfig           |   8 +++
+>  drivers/bus/mhi/ep/Makefile          |   1 +
+>  drivers/bus/mhi/ep/mhi_ep_loopback.c | 134 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 143 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/ep/Kconfig b/drivers/bus/mhi/ep/Kconfig
+> index 90ab3b040672e0f04181d4802e3062afcc7cf782..ce7b63c2da82a6ca49528517687f4910552c35bb 100644
+> --- a/drivers/bus/mhi/ep/Kconfig
+> +++ b/drivers/bus/mhi/ep/Kconfig
+> @@ -8,3 +8,11 @@ config MHI_BUS_EP
+>  
+>  	  MHI_BUS_EP implements the MHI protocol for the endpoint devices,
+>  	  such as SDX55 modem connected to the host machine over PCIe.
+> +
+> +config MHI_BUS_EP_LOOPBACK
+> +	tristate "MHI Endpoint loopback driver"
+> +	depends on MHI_BUS_EP
+> +	help
+> +	  MHI endpoint loopback driver for data path testing.
+> +	  This driver receives data on the uplink channel and echoes
+> +	  it back on the downlink channel for testing purposes.
+> diff --git a/drivers/bus/mhi/ep/Makefile b/drivers/bus/mhi/ep/Makefile
+> index aad85f180b707fb997fcb541837eda9bbbb67437..02e4700e8dc3f860d40290476b0a852286683f8f 100644
+> --- a/drivers/bus/mhi/ep/Makefile
+> +++ b/drivers/bus/mhi/ep/Makefile
+> @@ -1,2 +1,3 @@
+>  obj-$(CONFIG_MHI_BUS_EP) += mhi_ep.o
+>  mhi_ep-y := main.o mmio.o ring.o sm.o
+> +obj-$(CONFIG_MHI_BUS_EP_LOOPBACK) += mhi_ep_loopback.o
+> diff --git a/drivers/bus/mhi/ep/mhi_ep_loopback.c b/drivers/bus/mhi/ep/mhi_ep_loopback.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ba6154dd9b785f051043c10a980ab340012ba986
+> --- /dev/null
+> +++ b/drivers/bus/mhi/ep/mhi_ep_loopback.c
+> @@ -0,0 +1,134 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#include <linux/mhi_ep.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +
+> +struct mhi_ep_loopback {
+> +	struct workqueue_struct *loopback_wq;
+> +	struct mhi_ep_device *mdev;
+> +};
+> +
+> +struct mhi_ep_loopback_work {
+> +	struct mhi_ep_device *mdev;
+> +	struct work_struct work;
+> +	void *buf;
+> +	size_t len;
+> +};
+> +
+> +static void mhi_ep_loopback_work_handler(struct work_struct *work)
+> +{
+> +	struct mhi_ep_loopback_work *mhi_ep_lb_work = container_of(work,
+> +								struct mhi_ep_loopback_work, work);
+> +	int ret;
+> +
+> +	ret = mhi_ep_queue_buf(mhi_ep_lb_work->mdev, mhi_ep_lb_work->buf,
+> +			       mhi_ep_lb_work->len);
 
-Strip the trailing padding bytes from modules.builtin.modinfo after it
-has been extracted from vmlinux.unstripped to restore the format that
-kmod expects while keeping .modinfo aligned within vmlinux.unstripped to
-avoid regressing the Authenticode calculation fix for EDK2.
+If you didn't use the "pile of abbreviations" naming scheme for your
+local variables, you wouldn't have to line break this.
 
-Cc: stable@vger.kernel.org
-Fixes: d50f21091358 ("kbuild: align modinfo section for Secureboot Authenticode EDK2 compat")
-Reported-by: Omar Sandoval <osandov@fb.com>
-Reported-by: Samir M <samir@linux.ibm.com>
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Closes: https://lore.kernel.org/7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com/
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Tested-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- scripts/Makefile.vmlinux | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> +	if (ret) {
+> +		dev_err(&mhi_ep_lb_work->mdev->dev, "Failed to send the packet\n");
+> +		kfree(mhi_ep_lb_work->buf);
+> +	}
+> +
+> +	kfree(mhi_ep_lb_work);
+> +}
+> +
+> +static void mhi_ep_loopback_ul_callback(struct mhi_ep_device *mhi_dev,
+> +					struct mhi_result *mhi_res)
+> +{
+> +	struct mhi_ep_loopback *mhi_ep_lb = dev_get_drvdata(&mhi_dev->dev);
+> +	struct mhi_ep_loopback_work *mhi_ep_lb_work;
+> +	void *buf;
+> +
+> +	if (!(mhi_res->transaction_status)) {
 
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index ced4379550d7..cd788cac9d91 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -102,11 +102,24 @@ vmlinux: vmlinux.unstripped FORCE
- # modules.builtin.modinfo
- # ---------------------------------------------------------------------------
- 
-+# .modinfo in vmlinux.unstripped is aligned to 8 bytes for compatibility with
-+# tools that expect vmlinux to have sufficiently aligned sections but the
-+# additional bytes used for padding .modinfo to satisfy this requirement break
-+# certain versions of kmod with
-+#
-+#   depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname prefix
-+#
-+# Strip the trailing padding bytes after extracting .modinfo to comply with
-+# what kmod expects to parse.
-+quiet_cmd_modules_builtin_modinfo = GEN     $@
-+      cmd_modules_builtin_modinfo = $(cmd_objcopy); \
-+                                    sed -i 's/\x00\+$$/\x00/g' $@
-+
- OBJCOPYFLAGS_modules.builtin.modinfo := -j .modinfo -O binary
- 
- targets += modules.builtin.modinfo
- modules.builtin.modinfo: vmlinux.unstripped FORCE
--	$(call if_changed,objcopy)
-+	$(call if_changed,modules_builtin_modinfo)
- 
- # modules.builtin
- # ---------------------------------------------------------------------------
+Unnecessary parenthesis.
 
----
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
-change-id: 20251105-kbuild-fix-builtin-modinfo-for-kmod-5cc1984719d3
+> +		buf = kmalloc(mhi_res->bytes_xferd, GFP_KERNEL);
+> +		if (!buf) {
+> +			dev_err(&mhi_dev->dev, "Failed to allocate buffer\n");
 
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
+No error prints on alloc failures, the kernel has already printed for
+you.
 
+> +			return;
+> +		}
+> +
+> +		memcpy(buf, mhi_res->buf_addr, mhi_res->bytes_xferd);
+
+kmalloc + memcpy == kmemdup()
+
+> +
+> +		mhi_ep_lb_work = kmalloc(sizeof(*mhi_ep_lb_work), GFP_KERNEL);
+> +		if (!mhi_ep_lb_work) {
+> +			dev_err(&mhi_dev->dev, "Unable to allocate the work structure\n");
+
+Ditto.
+
+> +			kfree(buf);
+> +			return;
+> +		}
+> +
+> +		INIT_WORK(&mhi_ep_lb_work->work, mhi_ep_loopback_work_handler);
+> +		mhi_ep_lb_work->mdev = mhi_dev;
+> +		mhi_ep_lb_work->buf = buf;
+> +		mhi_ep_lb_work->len = mhi_res->bytes_xferd;
+> +
+> +		queue_work(mhi_ep_lb->loopback_wq, &mhi_ep_lb_work->work);
+> +	}
+> +}
+> +
+> +static void mhi_ep_loopback_dl_callback(struct mhi_ep_device *mhi_dev,
+> +					struct mhi_result *mhi_res)
+> +{
+> +	void *buf;
+> +
+> +	if (mhi_res->transaction_status)
+> +		return;
+> +
+> +	buf = mhi_res->buf_addr;
+> +	if (buf)
+> +		kfree(buf);
+
+No need to check for NULL, or have a local variable.
+
+kfree(mhi_res->buf_addr);
+
+> +}
+> +
+> +static int mhi_ep_loopback_probe(struct mhi_ep_device *mhi_dev, const struct mhi_device_id *id)
+> +{
+> +	struct mhi_ep_loopback *mhi_ep_lb;
+> +
+> +	mhi_ep_lb = devm_kzalloc(&mhi_dev->dev, sizeof(struct mhi_ep_loopback), GFP_KERNEL);
+> +	if (!mhi_ep_lb)
+> +		return -ENOMEM;
+> +
+> +	mhi_ep_lb->loopback_wq = alloc_ordered_workqueue("mhi_loopback", WQ_MEM_RECLAIM);
+> +	if (!mhi_ep_lb->loopback_wq) {
+> +		dev_err(&mhi_dev->dev, "Failed to create workqueue.\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	mhi_ep_lb->mdev = mhi_dev;
+> +	dev_set_drvdata(&mhi_dev->dev, mhi_ep_lb);
+> +
+> +	return 0;
+> +}
+> +
+> +static void mhi_ep_loopback_remove(struct mhi_ep_device *mhi_dev)
+> +{
+> +	struct mhi_ep_loopback *mhi_ep_lb = dev_get_drvdata(&mhi_dev->dev);
+> +
+> +	destroy_workqueue(mhi_ep_lb->loopback_wq);
+> +	dev_set_drvdata(&mhi_dev->dev, NULL);
+
+Shouldn't be necessary to clear drvdata here.
+
+> +}
+> +
+> +static const struct mhi_device_id mhi_ep_loopback_id_table[] = {
+> +	{ .chan = "LOOPBACK"},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(mhi, mhi_ep_loopback_id_table);
+> +
+> +static struct mhi_ep_driver mhi_ep_loopback_driver = {
+> +	.probe = mhi_ep_loopback_probe,
+> +	.remove = mhi_ep_loopback_remove,
+> +	.dl_xfer_cb = mhi_ep_loopback_dl_callback,
+> +	.ul_xfer_cb = mhi_ep_loopback_ul_callback,
+> +	.id_table = mhi_ep_loopback_id_table,
+> +	.driver = {
+> +		.name = "mhi_ep_loopback",
+> +		.owner = THIS_MODULE,
+
+module_mhi_ep_driver() assigns owner for you...
+
+Regards,
+Bjorn
+
+> +	},
+> +};
+> +
+> +module_mhi_ep_driver(mhi_ep_loopback_driver);
+> +
+> +MODULE_AUTHOR("Krishna chaitanya chundru <krishna.chundru@oss.qualcomm.com>");
+> +MODULE_AUTHOR("Sumit Kumar <sumit.kumar@oss.qualcomm.com>");
+> +MODULE_DESCRIPTION("MHI Endpoint Loopback driver");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
