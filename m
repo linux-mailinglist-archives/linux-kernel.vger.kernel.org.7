@@ -1,593 +1,303 @@
-Return-Path: <linux-kernel+bounces-887035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE11C37183
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:33:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90929C37186
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3F234FEAF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA79684AC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9834D33FE19;
-	Wed,  5 Nov 2025 17:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F5D258ED7;
+	Wed,  5 Nov 2025 17:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cU+phUa1";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GfMaUepO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GDA9SUZR"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013061.outbound.protection.outlook.com [40.107.159.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E533C51A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363361; cv=none; b=W+rzjK+Re8YNhU98aLXEngZTpiRChwJVwytSKJGuqAtyoUBJTXPvwNqtQbq9TYoCUk51zxyHvcKYuxrZ6XZZRdp6IqDP2x//5cvRDpkoiwH/Z7ZdZCCKHH7DCY8YIX2zeNB94wKMCITGWL+h7v7m0fUz1K6rD0zOaxiJ9P/kVDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363361; c=relaxed/simple;
-	bh=HOqt9BuedG5uKv1yKxuShwimEq1mdstx+e5yGAecMMU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GT3OVc5HdAopxg8yL+Nr3pS4ywXK0X9JajL+8AKgcSG+3OvyVf2ZQucXOrOVDcqf9WUkw7otQ6AJfYaonAxJz6gnJhyxADtqlBKVU523LCwSh4yPrGbh3OwfThEY21NUA6gLI7bEalNVYINhPXMIAI5bZ43MFgeGoAfbxLkezk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cU+phUa1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GfMaUepO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5H2uor1379703
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 17:22:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=zDYaxendOKg
-	BXNHSEYqdstxwAT0j4LcK+vc404gFmq4=; b=cU+phUa1nSd2vrpn7DV7LYO5cGF
-	OHSrBv99yDi6KVRGpGLjHS5s7ykNhBKe8uwXDIWzTpkxOaiz347rkkd83S1zzf4L
-	vGs9bQ9kTvmhpuFbrNhEOxZWNsKYDDNuDvah8RdKLuq8/smjWaoY+LqX4edjvh/x
-	V1nphjiQ7k8uBAn259cRdHpkBtQsxzOdo3522+kum/cOsUYzs6pGg/HkIP9ExICc
-	zvVTZltiUBhANxiDcG1pHBb0EmJhwLlHq4bPcPqRcz4MrLuEI9U2jhQF9/sglVbp
-	zabXolZl5BN0Q8lD/kcZZ3vgpIPmsmuvSA0HGjfkGnX6Uc8tO91ni+wl5CQ==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8amx82j0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:22:37 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7ae220b9d18so82692b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:22:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762363357; x=1762968157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDYaxendOKgBXNHSEYqdstxwAT0j4LcK+vc404gFmq4=;
-        b=GfMaUepOcs4s4o5vh8oDWBLwnRSsfvg1nfjJMBlUHU19kw6/MJoj/lonnGnFY7PS/V
-         7hXIb8mx5CN9/73uTr/k8WPDIpMFzee7oF4Hc6zZXga0FxjTQvRr3mIyEvxzn5uTXTRJ
-         gxz1i/SkXjyUog8DjSFGCv+f+J4ioD0BiI8hLxmyocxdnBuzJGhBPhDrxhEq9SMfnYOd
-         oo9OY2eIDCKwAtB/iVxdiCL/npN/CHU8cSbxo3CdHx1BEl4AYbpxpeXB4SLfvOv+ybAQ
-         jc8U/zpU4AfqfMeOmJAHMMz9omU9yUAxyFoybkz4Mnpab66T5EH45h8lDDWJnPDYyTbs
-         +p0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762363357; x=1762968157;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zDYaxendOKgBXNHSEYqdstxwAT0j4LcK+vc404gFmq4=;
-        b=DbdLhTTd1Gbc8w4vQfBCzquU4qP8Nvcvj0dYV0orBdY74Z+cx8c1bGfPGfgiOobJOQ
-         HPeXtyVT127QIzp3KFd7bhvoRMr4rc9lxPsJqMY8w1wMFp+pSzrmMWeSMKtUnyDTi4ro
-         XzSrdzDQSpoorP49gl3FG3SWxe5BhMfsh+hYpQOfHKUAUoE+FhhTuz30t4XoWFXSB1Ua
-         Z/UMe1jslt5EbdEBBvgbqrfMPV+E44OHzF2/GfE81EggRHUSlbo2qb486mI2WGqHVSYu
-         6M5460PBBpEH+X6d14cKYkbA7lfud7stzPrg0bd93yE0Zkl5sl7Pp5psctQjKzlYT0wn
-         Evmg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6xTW0Iqq/KQhl7i7iQd+sdj1wkctcPIFz04mEXJJNzRlcUoRz9M5ntTFVqN0Sf3ziwO++I9oU6iWqo8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+9aXd4wAib+UuidkuftLtlrMNXtTbu439ecoOHOsB9wFC3nVf
-	TsUVQ8meTxuY77Hm9/mcho2nTyUmRShlLroeB6opffbzUJ9EbvvgpYK8XHwp3rMGj+bPKrf16dK
-	42nRfyOkRdUynGIhD/Skoure0l9jNNhr2/5OPSgXVDEJJw6EGPwh5FjNhNXdwCGMVkIA=
-X-Gm-Gg: ASbGncvCfkrmIEkk9r6LPcqtEfdnzmKOk4pnGmPOoHMNusd46dqW4YsrjgoDa05vplC
-	racjl1znhDkH3sdnBxVcYyVbVMggWa6z+biFqnV44abJ0Ofi0Feghnp1K+HTtmK/qbZQstze8MF
-	8RmQhoWPWB3kAPneV/Gb2I3VORsdOyVotfgvyjhUiWWXKiiQvMt7xncQQXmL/5L5yAUc1XFLx/y
-	9yAM0bdRoCNIj7UsxEpD8QUoW/VkR53yzyJd1E9iWuHRlGeTIE69bo4N+8nGpCrUGOAL3DRIvQt
-	JqUdPSmz+w0HF55LSyRjsstZZaZnAJQUDV5Szl1s4bi263CJXvkwbqfwTdMDbrhE/4DU5QYrdY8
-	rPftKrLoaohs6C4hch1Sghqv4lzHBvs6kpZs2eolv3bWF
-X-Received: by 2002:a05:6a00:1ac6:b0:7ad:df61:e67a with SMTP id d2e1a72fcca58-7ae1f48d17cmr4215975b3a.22.1762363356874;
-        Wed, 05 Nov 2025 09:22:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGuHkiMFhW7PI2amrhRkIUX0V7Y9Yv0M9IU6zLbW3SZkFglf8nG7gtIKmKWmIk9hfTfSV6R1A==
-X-Received: by 2002:a05:6a00:1ac6:b0:7ad:df61:e67a with SMTP id d2e1a72fcca58-7ae1f48d17cmr4215933b3a.22.1762363356264;
-        Wed, 05 Nov 2025 09:22:36 -0800 (PST)
-Received: from hu-yuzha-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af48d83c20sm518014b3a.62.2025.11.05.09.22.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 09:22:35 -0800 (PST)
-From: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>
-To: jjohnson@kernel.org
-Cc: baochen.qiang@oss.qualcomm.com, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        Yu Zhang <yu.zhang@oss.qualcomm.com>,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-Subject: [PATCH ath-next v3 6/6] wifi: ath11k: Register handler for CFR capture event
-Date: Wed,  5 Nov 2025 09:22:26 -0800
-Message-Id: <20251105172226.3182968-7-yu.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251105172226.3182968-1-yu.zhang@oss.qualcomm.com>
-References: <20251105172226.3182968-1-yu.zhang@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E7823EAA4;
+	Wed,  5 Nov 2025 17:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762363415; cv=fail; b=AmE4Ejo9WDBug0Z1Q2cb81rW6cHZrjwSZJjqvLx2H78MIW032TxcozxN+8DLhRXU+penCHOP39wc2bzXPABBfgHghIqGyO5y5H8moipXept+Ou5KRSeJq6lAw7zyxbjsxXc9ftbt/TkGpQ0GM0ecJGpjpfM42P2Bxs6M6woXatM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762363415; c=relaxed/simple;
+	bh=WwGxDtAo2I3w7vvfdq+3eUVAwZbleqLtbhh7F+NP578=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XS/wNzeKnXPIxZMTOnUj8ALXBHqzWI4x95lOqr2u8iBFbHcE4qX7GwceuLMNKSCcjrCEruXkax+vBGcjMHdx92LI514T/VCyF85LH3szRHl7Rar25gDVbrFacUimpdOzp+sO/NlN6nw8ADmSujOJvK1as67DXCMUe9ogbFGFAKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GDA9SUZR; arc=fail smtp.client-ip=40.107.159.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EYuOONZY1cOFiE66ptQWqXUq/hWO4lsq49YlLYw2WYrI9Wt6uh8gy6VGmrRf4dkZxjqd4kMw4C2ljLPb72x92Zj2R4PQflCA4Wk1YfOJrJUOahtr3YTtBbCg0uyG96iV3w4hX9BwZA/BuFwUQvjtPMnjTalMJJQuuJMdbPPfx3fVgK7p0If+oMgrQjwHDBv0tODc2J2f++JzMc8sKlGFZVGA6nC1eq7eDu8bgTCiIU2xcenGmih3GXN5zNg9f0TDVyvtByQyW27QQt73Ekip48Ew17g8bZBNifVeKmrospq5GScPzEVY8mYZkLD1vkv0gOZFt31eOJ0xqH4RiN4Xxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R4DdsEWMw/Go3OZQCUlrSq7tydHosWYqFtofeu7Glng=;
+ b=mBqiFaKBxzy478mAK64uPsA+YgxgOM2z6qgGQ9pq1dAfH2Kq2v28T/cU+uXIbQn9o9c6kaJ4Mggpi3JUmnGoTlH9Xmt+rfS33YTB5Cs0tO7gTtGLNQEgzS+2ssvZWofRf8h0ht58BqjklArOAz53jb8453bAwSdxs1fCNMz8NQFQFyr+L6EQflCf6TsqPBpIIi3Y2xFwmRUaUUIRg6gHLG2o1eVr/vWFgG8ROJ8kt1uLz3sNENeY9yF/Uo2oBJafZAwY6sieaV4E8ZbmIMyEmWENZ2GJ016MBWCgXefweh2ZrovElRyU0lv9SJjzGrwu9lwJweaNSzx/5zo5FcCjVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R4DdsEWMw/Go3OZQCUlrSq7tydHosWYqFtofeu7Glng=;
+ b=GDA9SUZRu2IEwJ3HYszgiC6bEmjt6dbRj0m1QEmZo1Q7NwjOA97TEz/sJNz9pBiKzQFw/E6tZ0JELL7pzKqgfiucrwEDXPvOKH0LKT3HuHY5BDL4gXitX8O1ZvF03pp31E1J572BeO1jceZIYMzRKsQJH756ODaDCf3fbTlbmDloY14F+iLOkqBSSlgg5yULQMeEyFw4XNLnhphIK1bDrUjuUAV7bsIPg48VbRhVomsZzBXVM2tvl6juMIarPS5kl+rvspem6mDdxJLzB6wHNpzmq646x+/VeTIGoBC+SHjXqRod8cyxQZD1m9bEeSzLa/yEY/NEIvCRCl549OgbsQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by MRWPR04MB11520.eurprd04.prod.outlook.com (2603:10a6:501:75::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
+ 2025 17:23:29 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 17:23:29 +0000
+Date: Wed, 5 Nov 2025 12:23:22 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH 4/4] power: sequencing: Add the Power Sequencing driver
+ for the PCIe M.2 connectors
+Message-ID: <aQuICrh4qP0wftIl@lizhi-Precision-Tower-5810>
+References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
+ <20251105-pci-m2-v1-4-84b5f1f1e5e8@oss.qualcomm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-pci-m2-v1-4-84b5f1f1e5e8@oss.qualcomm.com>
+X-ClientProxiedBy: PH7PR10CA0020.namprd10.prod.outlook.com
+ (2603:10b6:510:23d::18) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: kgz-YxvgcG_daGJ7nrT31Rv30HaVk7jP
-X-Authority-Analysis: v=2.4 cv=P443RyAu c=1 sm=1 tr=0 ts=690b87dd cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=RXpQw9b9vDifZkLeuRoA:9
- a=2VI0MkxyNR6bbpdq8BZq:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzNSBTYWx0ZWRfXxVF+zey5657U
- U8k94YbB29pycTqh8Fyf6TLCM3udwsD6Edvo27cWN5P44wnfVlQfsiqnLjWwTbVIaexDwbZAGuv
- 2vaogEt4rA1FSlwxRvkkSClKWH+evzdXFuOeoRf1pY5g94SCbwf9rN2TVlmR/q72xNzuky5ZNi4
- B9zPmE6LMeiNkh0FsAZRrVj1nvEHQ6k31tY+kJtH6y4GNmijNmN3lMY1iC4qzob/mL04LlGrNO/
- OaJlBJ7eJyaTeGVMS4ADjk+HavmfDGPmov9EHB+7aj3ccHSoc8fhg6D3ORUtHA6uwRtocSohlaw
- XZgAFLN+SvtcVwrY2EvWLd9i6nwPAlyxn/R91xlv+O0d6IepVbLs/9fsFQ7oG651JFd4ohKyBBx
- SfjLzgIYRSZ6P8nvkIlzqQTeBaInaw==
-X-Proofpoint-ORIG-GUID: kgz-YxvgcG_daGJ7nrT31Rv30HaVk7jP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_06,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- phishscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050135
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|MRWPR04MB11520:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e5ee0f5-b6ad-4fc9-da98-08de1c900974
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|19092799006|366016|7416014|376014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i5p3j2g9QXqQYnbVobNzHYv6rfGpvvMr/U32upR0mcrBR32W+AFGhrs2mLJF?=
+ =?us-ascii?Q?qQSZ6S/WENezLxOxD+lJ3XuxgRtYv1QQ63grNPZnliriOQk6Mrtrw4LAM672?=
+ =?us-ascii?Q?uFsyW2TG2/ibp8Y5iK4exTaHgY1aF1duevfEiOlfLfRNY05N5wNPARPp9KPR?=
+ =?us-ascii?Q?mecp1Ben8xUTz74J9sYf62ZLgtSxEwcUc4xxZIjsucIqw8n2PT+X9BeTuH4Z?=
+ =?us-ascii?Q?ORi1MpPMkoS0b9sjvAlpOfED02e6LqwwbYXC+5gK6qKMLYGRHRZnK+OWFshc?=
+ =?us-ascii?Q?4KyAlz7GjUw03SeX3LpaXr1u28SFsHPFkc8bEC0CegjMb5RY5PIsO0byD/cs?=
+ =?us-ascii?Q?3dmYl3iP2gzvhF8ErZLpo5mZCP58ZYvKirvJYZtzqRpeLUGO0PnCRfhdC9F4?=
+ =?us-ascii?Q?ittOBvTkEh6yIp0yBHnKwH4SEXkUNLflgvtGeO1EAcR9xYpk07CHdNDQsuBy?=
+ =?us-ascii?Q?bk6UbSxw1Hi9Gnej6y9thueuuCorvU/FN6dD7LzDhZ1RcqTbETuAyeuXtsSu?=
+ =?us-ascii?Q?HGjTKWYFVCD2uRi09cWQXywvBdC1cksQA4HGLSphYv686cB0N2TwgL1ycWD6?=
+ =?us-ascii?Q?bFGW0Jn43x0XzLexnllkGj9iDAkLmnwNIhpNkvJZZQEv/3Kn5p2AUyTpTjgr?=
+ =?us-ascii?Q?/FHgn8XTvpCSeRRibC0ANfpZK7as+HVwiAmEkHKIb+d2d8anB6P6NT6ziPOQ?=
+ =?us-ascii?Q?DUKSs2k3gA7JKTocIlDk7kUtl80BJAY6AiAinGJEDN1+FGWsPZplHCUNTyxk?=
+ =?us-ascii?Q?juDsXosnjLNWOSHWfm5l+nIjGinKH0RPlhUdmu5hsfq5bdIygMCGoID2gweB?=
+ =?us-ascii?Q?puXRIku6CDUVl1ArswdGyyoPhKPdZRHnw7nce6U4DLrY8UftTN+YVHeEV4vh?=
+ =?us-ascii?Q?rRZf5KUxcUQ9ICM8q4hisYDBKONiXy+w1hcebFrmxmxoVyV1ulmZRz5PHJQZ?=
+ =?us-ascii?Q?Y41NEOIUDJhDj/Xqas6NFnA/6t4i6jPP3aiNTqlWZmJobOW4fXMiFE3nGmxI?=
+ =?us-ascii?Q?POd8017pdJ0AtrvtXUm6YK/HPaUe6o6iQLeP4Ut+uDVC2ulj1ie2tmBXztgC?=
+ =?us-ascii?Q?qMl/8Xff8j2asRRDMpB06u80COg9P0T8vExeORGbdOu6ET4ABVCaAvrmQEMQ?=
+ =?us-ascii?Q?FtikCOxrWmngLO593ryOGwK3cVmdj7hOuMg6Fw4Uk5Gfm5Y2brutSFqdrAvP?=
+ =?us-ascii?Q?e2m9OTO2rG5NxGeHQBXhrIaHcSJQR1hwAUAtLZrW/XWU+Jnz7zYLWrBzrDGh?=
+ =?us-ascii?Q?LcKpZmJljXF1YDCoTH1OY6Vjk2O8LLnVgge7pxgDFfzBHqftymIgVkwtuS1f?=
+ =?us-ascii?Q?UWYgEZgOg14ph2GB3hVd+SqZlOc+cOqeRmjFOEFay85CnaV8V1JUOfqplXsG?=
+ =?us-ascii?Q?xlxRrtEYVDEq1al98QV3CzYbBV8u6zStlZMyFkb894NTqhdFV8R3avzxk4iW?=
+ =?us-ascii?Q?JXhP4KH/eEBMT5F69CAkrpEjraBsAK9Gb1ER4mmC6bw3v50RNaA99ObloLJb?=
+ =?us-ascii?Q?9SJP9yuyhf/rwy/It/4M2LJyeURR1Zy5w3/f?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(7416014)(376014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6o70NNiPVlmb2nGJ6zSjVz1u5HYmqsqZyHcwTTQYzawsJ1mJ8HXlQiTHlia7?=
+ =?us-ascii?Q?T1JB6fG2fRjDt6ZhwgIF5VIMECriBvZS/0sryMItwVDn56VIsDIig4iEO3/R?=
+ =?us-ascii?Q?f28XQz2YJ+LG0Pvfzl1J0Fl7FLQ5Tn11lWY+ni5izhZ9NgfCKIyge7D9wHm1?=
+ =?us-ascii?Q?SMW6X7VBgD8KG3kqwoYZqGj6mjvAYa4UBEE3IcMCuqFMVzRpM4ruacQDH8Ph?=
+ =?us-ascii?Q?dkT8SJdxpOzGAER1pKtmszy3CWQejG2c1Qoj3tVmfz0qQZoZKVfoKF/FFu1s?=
+ =?us-ascii?Q?+GFb5xWPYGKkMp/N+wGO/avg6dAmlSnJKtb2mTNYFz7DGHHoCJk/i2MS3qbJ?=
+ =?us-ascii?Q?ggIkniCatWhZ0q8N2VMn/WZN+x7YasF6KrsVlyK0EnSaSorno0bv4DEUm/im?=
+ =?us-ascii?Q?eLFJkVgUs8z10WItBEGKj+Euea4I8tyrgEnA5hop/zhtCks8zMNjtVy1b+Wl?=
+ =?us-ascii?Q?heno7uewfiBA+R/rSQNBCUUjJlrz0/KH1EF28J1XWT6oa5mSJRtViUWRiQ1E?=
+ =?us-ascii?Q?jZdUlOuqHtpCaT8hdTaFApX3tJw5Puvv5Z7efoxwTFIDbMk7+eXaAChmnnkK?=
+ =?us-ascii?Q?DGsNryamcRBCLHW5GORvRfYqof4/dkk/2eyhEfVcJL/26h0DImt0eXVFUCkg?=
+ =?us-ascii?Q?IQ2c7psPzQmD6fT148KPPkuNzyw5xNFGQNlo9956jT3EYeH79isf6Wm5X85b?=
+ =?us-ascii?Q?CTXMG9aWHySXS4uHOQ/Ji0LPz5o/+wvVm05wr/zlaDbLRvN9rfg10gx5CAqU?=
+ =?us-ascii?Q?lKa7JUL2KowRcke5jqKTt0h1lC+4yrTFe1sBrrL1KBi0+pPrmgAynx14A4yS?=
+ =?us-ascii?Q?eGanFw3IFtTEbPHhtyH+gDYOqDNnRNeXCnTOC5jCP153o7GxJa2KjUNgcdFq?=
+ =?us-ascii?Q?0/hUjbyG1wTZmArPYmzuTYB5p8E+M+JBdNXSNi6aTOua9yDRgTaPL8oxko3S?=
+ =?us-ascii?Q?RKbbpVAKUQn3xEGufDsibYMTR56So5crwkMjqq5eseqkB13W07tKl+ZH9dZa?=
+ =?us-ascii?Q?5VNOGG3EsfKymQhYDdc8hbj2z6HAfv3qSjaGJDcRoVJ9pDotkgEtrCkQXQQc?=
+ =?us-ascii?Q?xo+s6pOmZ/BlIc8L33IvZ0JR2+r4bdzkO5jXEWCJjM+Eux0oDEmyNpGvJN2J?=
+ =?us-ascii?Q?zFev9fWzriSQVXGWk1r6/ABMVA9+RIPotXbyawx39zWQf2rSXY1hjqiWUnv8?=
+ =?us-ascii?Q?PW5lWcGTKauv10QPFP85eRdccbIchO+BlqMBt7oPtehzKCelrb1sINwsyHgn?=
+ =?us-ascii?Q?dIHW8Rqd4/EWFKY9EWv2Hxs4L4Pk3Fw8BTvfywXfgINZ2lUJTWh97lK6Hqu0?=
+ =?us-ascii?Q?HSDX+RCHh0HulscVCXJf1+J6D4Bp/D/CCep/e0Rq7GsjOFAeeCxxMfwjiWyq?=
+ =?us-ascii?Q?7xLH3redH1vwsTJ1NNw2ScyiZrA++HlUlbhqNlbnZTge/MWKAeaGDoUtuYZs?=
+ =?us-ascii?Q?HzjMG42C69ogJDDgASIhxeFnOJOKACnhXMjwLZLB6evdZsynykwPvtWFLyXa?=
+ =?us-ascii?Q?bgdu/KqTEgMacIaq2wfZDzh2Sgm3s4vJIXF0c1aca8rUqu+2JraJh+YtrPNe?=
+ =?us-ascii?Q?tHB3tleTXk8GAAC49hSppu6Ebmu5IvRAp8XKH9nd?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e5ee0f5-b6ad-4fc9-da98-08de1c900974
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 17:23:29.4421
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AkfA3bzEpg/MQDpphwGpwGaLrGsk+4QuRrg+ejR3gwM8ZMyobE7UGowI8Xt1OgdqH1ULTQVWJrl+p+J4IQKtsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRWPR04MB11520
 
-From: Venkateswara Naralasetty <quic_vnaralas@quicinc.com>
+On Wed, Nov 05, 2025 at 02:45:52PM +0530, Manivannan Sadhasivam wrote:
+> This driver is used to control the PCIe M.2 connectors of different
+> Mechanical Keys attached to the host machines and supporting different
+> interfaces like PCIe/SATA, USB/UART etc...
+>
+> Currently, this driver supports only the Mechanical Key M connectors with
+> PCIe interface. The driver also only supports driving the mandatory 3.3v
+> and optional 1.8v power supplies. The optional signals of the Key M
+> connectors are not currently supported.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+>  MAINTAINERS                               |   7 ++
+>  drivers/power/sequencing/Kconfig          |   8 ++
+>  drivers/power/sequencing/Makefile         |   1 +
+>  drivers/power/sequencing/pwrseq-pcie-m2.c | 138 ++++++++++++++++++++++++++++++
+>  4 files changed, 154 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..9b3f689d1f50c62afa3772a0c6802f99a98ac2de 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20474,6 +20474,13 @@ F:	Documentation/driver-api/pwrseq.rst
+>  F:	drivers/power/sequencing/
+>  F:	include/linux/pwrseq/
+>
+> +PCIE M.2 POWER SEQUENCING
+> +M:	Manivannan Sadhasivam <mani@kernel.org>
+> +L:	linux-pci@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
+> +F:	drivers/power/sequencing/pwrseq-pcie-m2.c
+> +
+>  POWER STATE COORDINATION INTERFACE (PSCI)
+>  M:	Mark Rutland <mark.rutland@arm.com>
+>  M:	Lorenzo Pieralisi <lpieralisi@kernel.org>
+> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+> index 280f92beb5d0ed524e67a28d1c5dd264bbd6c87e..f5fff84566ba463b55d3cd0c07db34c82f9f1e31 100644
+> --- a/drivers/power/sequencing/Kconfig
+> +++ b/drivers/power/sequencing/Kconfig
+> @@ -35,4 +35,12 @@ config POWER_SEQUENCING_TH1520_GPU
+>  	  GPU. This driver handles the complex clock and reset sequence
+>  	  required to power on the Imagination BXM GPU on this platform.
+>
+> +config POWER_SEQUENCING_PCIE_M2
+> +	tristate "PCIe M.2 connector power sequencing driver"
+> +	depends on OF || COMPILE_TEST
+> +	help
+> +	  Say Y here to enable the power sequencing driver for PCIe M.2
+> +	  connectors. This driver handles the power sequencing for the M.2
+> +	  connectors exposing multiple interfaces like PCIe, SATA, UART, etc...
+> +
+>  endif
+> diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
+> index 96c1cf0a98ac54c9c1d65a4bb4e34289a3550fa1..0911d461829897c5018e26dbe475b28f6fb6914c 100644
+> --- a/drivers/power/sequencing/Makefile
+> +++ b/drivers/power/sequencing/Makefile
+> @@ -5,3 +5,4 @@ pwrseq-core-y				:= core.o
+>
+>  obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)	+= pwrseq-qcom-wcn.o
+>  obj-$(CONFIG_POWER_SEQUENCING_TH1520_GPU) += pwrseq-thead-gpu.o
+> +obj-$(CONFIG_POWER_SEQUENCING_PCIE_M2)	+= pwrseq-pcie-m2.o
+> diff --git a/drivers/power/sequencing/pwrseq-pcie-m2.c b/drivers/power/sequencing/pwrseq-pcie-m2.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b9f68ee9c5a377ce900a88de86a3e269f9c99e51
+> --- /dev/null
+> +++ b/drivers/power/sequencing/pwrseq-pcie-m2.c
+...
+> +
+> +static int pwrseq_pcie_m2_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pwrseq_pcie_m2_ctx *ctx;
+> +	struct pwrseq_config config;
+> +	int ret;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->pdata = of_device_get_match_data(dev);
+> +	if (!ctx->pdata)
+> +		return dev_err_probe(dev, -ENODEV,
+> +				     "Failed to obtain platform data\n");
+> +
+> +	ret = of_regulator_bulk_get_all(dev, dev_of_node(dev), &ctx->regs);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to get all regulators\n");
+> +
+> +	ctx->num_vregs = ret;
+> +
+> +	memset(&config, 0, sizeof(config));
+> +
+> +	config.parent = dev;
+> +	config.owner = THIS_MODULE;
+> +	config.drvdata = ctx;
+> +	config.match = pwrseq_pcie_m2_match;
+> +	config.targets = ctx->pdata->targets;
+> +
+> +	ctx->pwrseq = devm_pwrseq_device_register(dev, &config);
+> +	if (IS_ERR(ctx->pwrseq))
+> +		return dev_err_probe(dev, PTR_ERR(ctx->pwrseq),
+> +				     "Failed to register the power sequencer\n");
 
-Firmware sends CFR meta data through the WMI event
-WMI_PEER_CFR_CAPTURE_EVENT. Parse the meta data coming from the firmware
-and invoke correlate_and_relay function to correlate the CFR meta data
-with the CFR payload coming from the other WMI event
-WMI_PDEV_DMA_RING_BUF_RELEASE_EVENT.
+Does need free resources allocated by of_regulator_bulk_get_all() here?
 
-Release the buffer to user space once correlate and relay return
-success.
+Frank
 
-Tested-on: IPQ8074 hw2.0 PCI IPQ8074 WLAN.HK.2.5.0.1-00991-QCAHKSWPL_SILICONZ-1
-Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04685-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
-
-Signed-off-by: Venkateswara Naralasetty <quic_vnaralas@quicinc.com>
-Co-developed-by: Yu Zhang (Yuriy) <yu.zhang@oss.qualcomm.com>
-Signed-off-by: Yu Zhang (Yuriy) <yu.zhang@oss.qualcomm.com>
-Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
----
- drivers/net/wireless/ath/ath11k/cfr.c | 145 ++++++++++++++++++++++++++
- drivers/net/wireless/ath/ath11k/cfr.h |  62 ++++++++++-
- drivers/net/wireless/ath/ath11k/wmi.c |  90 ++++++++++++++++
- drivers/net/wireless/ath/ath11k/wmi.h |  44 ++++++++
- 4 files changed, 340 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/cfr.c b/drivers/net/wireless/ath/ath11k/cfr.c
-index ee7626bd4b1a..3a42e54ddf80 100644
---- a/drivers/net/wireless/ath/ath11k/cfr.c
-+++ b/drivers/net/wireless/ath/ath11k/cfr.c
-@@ -252,6 +252,151 @@ static int ath11k_cfr_process_data(struct ath11k *ar,
- 	return status;
- }
- 
-+static void ath11k_cfr_fill_hdr_info(struct ath11k *ar,
-+				     struct ath11k_csi_cfr_header *header,
-+				     struct ath11k_cfr_peer_tx_param *params)
-+{
-+	header->cfr_metadata_version = ATH11K_CFR_META_VERSION_4;
-+	header->cfr_data_version = ATH11K_CFR_DATA_VERSION_1;
-+	header->cfr_metadata_len = sizeof(struct cfr_metadata);
-+	header->chip_type = ar->ab->hw_rev;
-+	header->meta_data.status = FIELD_GET(WMI_CFR_PEER_CAPTURE_STATUS,
-+					     params->status);
-+	header->meta_data.capture_bw = params->bandwidth;
-+	header->meta_data.phy_mode = params->phy_mode;
-+	header->meta_data.prim20_chan = params->primary_20mhz_chan;
-+	header->meta_data.center_freq1 = params->band_center_freq1;
-+	header->meta_data.center_freq2 = params->band_center_freq2;
-+
-+	/*
-+	 * CFR capture is triggered by the ACK of a QoS Null frame:
-+	 * - 20 MHz: Legacy ACK
-+	 * - 40/80/160 MHz: DUP Legacy ACK
-+	 */
-+	header->meta_data.capture_mode = params->bandwidth ?
-+		ATH11K_CFR_CAPTURE_DUP_LEGACY_ACK : ATH11K_CFR_CAPTURE_LEGACY_ACK;
-+	header->meta_data.capture_type = params->capture_method;
-+	header->meta_data.num_rx_chain = ar->num_rx_chains;
-+	header->meta_data.sts_count = params->spatial_streams;
-+	header->meta_data.timestamp = params->timestamp_us;
-+	ether_addr_copy(header->meta_data.peer_addr, params->peer_mac_addr);
-+	memcpy(header->meta_data.chain_rssi, params->chain_rssi,
-+	       sizeof(params->chain_rssi));
-+	memcpy(header->meta_data.chain_phase, params->chain_phase,
-+	       sizeof(params->chain_phase));
-+	memcpy(header->meta_data.agc_gain, params->agc_gain,
-+	       sizeof(params->agc_gain));
-+}
-+
-+int ath11k_process_cfr_capture_event(struct ath11k_base *ab,
-+				     struct ath11k_cfr_peer_tx_param *params)
-+{
-+	struct ath11k_look_up_table *lut = NULL;
-+	u32 end_magic = ATH11K_CFR_END_MAGIC;
-+	struct ath11k_csi_cfr_header *header;
-+	struct ath11k_dbring_element *buff;
-+	struct ath11k_cfr *cfr;
-+	dma_addr_t buf_addr;
-+	struct ath11k *ar;
-+	u8 tx_status;
-+	int status;
-+	int i;
-+
-+	rcu_read_lock();
-+	ar = ath11k_mac_get_ar_by_vdev_id(ab, params->vdev_id);
-+	if (!ar) {
-+		rcu_read_unlock();
-+		ath11k_warn(ab, "Failed to get ar for vdev id %d\n",
-+			    params->vdev_id);
-+		return -ENOENT;
-+	}
-+
-+	cfr = &ar->cfr;
-+	rcu_read_unlock();
-+
-+	if (WMI_CFR_CAPTURE_STATUS_PEER_PS & params->status) {
-+		ath11k_warn(ab, "CFR capture failed as peer %pM is in powersave",
-+			    params->peer_mac_addr);
-+		return -EINVAL;
-+	}
-+
-+	if (!(WMI_CFR_PEER_CAPTURE_STATUS & params->status)) {
-+		ath11k_warn(ab, "CFR capture failed for the peer : %pM",
-+			    params->peer_mac_addr);
-+		cfr->tx_peer_status_cfr_fail++;
-+		return -EINVAL;
-+	}
-+
-+	tx_status = FIELD_GET(WMI_CFR_FRAME_TX_STATUS, params->status);
-+	if (tx_status != WMI_FRAME_TX_STATUS_OK) {
-+		ath11k_warn(ab, "WMI tx status %d for the peer %pM",
-+			    tx_status, params->peer_mac_addr);
-+		cfr->tx_evt_status_cfr_fail++;
-+		return -EINVAL;
-+	}
-+
-+	buf_addr = (((u64)FIELD_GET(WMI_CFR_CORRELATION_INFO2_BUF_ADDR_HIGH,
-+				    params->correlation_info_2)) << 32) |
-+		   params->correlation_info_1;
-+
-+	spin_lock_bh(&cfr->lut_lock);
-+
-+	if (!cfr->lut) {
-+		spin_unlock_bh(&cfr->lut_lock);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < cfr->lut_num; i++) {
-+		struct ath11k_look_up_table *temp = &cfr->lut[i];
-+
-+		if (temp->dbr_address == buf_addr) {
-+			lut = &cfr->lut[i];
-+			break;
-+		}
-+	}
-+
-+	if (!lut) {
-+		spin_unlock_bh(&cfr->lut_lock);
-+		ath11k_warn(ab, "lut failure to process tx event\n");
-+		cfr->tx_dbr_lookup_fail++;
-+		return -EINVAL;
-+	}
-+
-+	lut->tx_ppdu_id = FIELD_GET(WMI_CFR_CORRELATION_INFO2_PPDU_ID,
-+				    params->correlation_info_2);
-+	lut->txrx_tstamp = jiffies;
-+
-+	header = &lut->header;
-+	header->start_magic_num = ATH11K_CFR_START_MAGIC;
-+	header->vendorid = VENDOR_QCA;
-+	header->platform_type = PLATFORM_TYPE_ARM;
-+
-+	ath11k_cfr_fill_hdr_info(ar, header, params);
-+
-+	status = ath11k_cfr_correlate_and_relay(ar, lut,
-+						ATH11K_CORRELATE_TX_EVENT);
-+	if (status == ATH11K_CORRELATE_STATUS_RELEASE) {
-+		ath11k_dbg(ab, ATH11K_DBG_CFR,
-+			   "Releasing CFR data to user space");
-+		ath11k_cfr_rfs_write(ar, &lut->header,
-+				     sizeof(struct ath11k_csi_cfr_header),
-+				     lut->data, lut->data_len,
-+				     &end_magic, sizeof(u32));
-+		buff = lut->buff;
-+		ath11k_cfr_release_lut_entry(lut);
-+
-+		ath11k_dbring_bufs_replenish(ar, &cfr->rx_ring, buff,
-+					     WMI_DIRECT_BUF_CFR);
-+	} else if (status == ATH11K_CORRELATE_STATUS_HOLD) {
-+		ath11k_dbg(ab, ATH11K_DBG_CFR,
-+			   "dbr event is not yet received holding buf\n");
-+	}
-+
-+	spin_unlock_bh(&cfr->lut_lock);
-+
-+	return 0;
-+}
-+
- /* Helper function to check whether the given peer mac address
-  * is in unassociated peer pool or not.
-  */
-diff --git a/drivers/net/wireless/ath/ath11k/cfr.h b/drivers/net/wireless/ath/ath11k/cfr.h
-index c8e5086674d2..b17a8ca16b69 100644
---- a/drivers/net/wireless/ath/ath11k/cfr.h
-+++ b/drivers/net/wireless/ath/ath11k/cfr.h
-@@ -27,8 +27,37 @@ enum ath11k_cfr_correlate_event_type {
- struct ath11k_sta;
- struct ath11k_per_peer_cfr_capture;
- 
-+#define ATH11K_CFR_START_MAGIC 0xDEADBEAF
- #define ATH11K_CFR_END_MAGIC 0xBEAFDEAD
- 
-+#define VENDOR_QCA 0x8cfdf0
-+#define PLATFORM_TYPE_ARM 2
-+
-+enum ath11k_cfr_meta_version {
-+	ATH11K_CFR_META_VERSION_NONE,
-+	ATH11K_CFR_META_VERSION_1,
-+	ATH11K_CFR_META_VERSION_2,
-+	ATH11K_CFR_META_VERSION_3,
-+	ATH11K_CFR_META_VERSION_4,
-+	ATH11K_CFR_META_VERSION_MAX = 0xFF,
-+};
-+
-+enum ath11k_cfr_data_version {
-+	ATH11K_CFR_DATA_VERSION_NONE,
-+	ATH11K_CFR_DATA_VERSION_1,
-+	ATH11K_CFR_DATA_VERSION_MAX = 0xFF,
-+};
-+
-+enum ath11k_cfr_capture_ack_mode {
-+	ATH11K_CFR_CAPTURE_LEGACY_ACK,
-+	ATH11K_CFR_CAPTURE_DUP_LEGACY_ACK,
-+	ATH11K_CFR_CAPTURE_HT_ACK,
-+	ATH11K_CFR_CAPTURE_VHT_ACK,
-+
-+	/*Always keep this at last*/
-+	ATH11K_CFR_CAPTURE_INVALID_ACK
-+};
-+
- enum ath11k_cfr_correlate_status {
- 	ATH11K_CORRELATE_STATUS_RELEASE,
- 	ATH11K_CORRELATE_STATUS_HOLD,
-@@ -41,6 +70,28 @@ enum ath11k_cfr_preamble_type {
- 	ATH11K_CFR_PREAMBLE_TYPE_VHT,
- };
- 
-+struct ath11k_cfr_peer_tx_param {
-+	u32 capture_method;
-+	u32 vdev_id;
-+	u8 peer_mac_addr[ETH_ALEN];
-+	u32 primary_20mhz_chan;
-+	u32 bandwidth;
-+	u32 phy_mode;
-+	u32 band_center_freq1;
-+	u32 band_center_freq2;
-+	u32 spatial_streams;
-+	u32 correlation_info_1;
-+	u32 correlation_info_2;
-+	u32 status;
-+	u32 timestamp_us;
-+	u32 counter;
-+	u32 chain_rssi[WMI_MAX_CHAINS];
-+	u16 chain_phase[WMI_MAX_CHAINS];
-+	u32 cfo_measurement;
-+	u8 agc_gain[HOST_MAX_CHAINS];
-+	u32 rx_start_ts;
-+};
-+
- struct cfr_metadata {
- 	u8 peer_addr[ETH_ALEN];
- 	u8 status;
-@@ -70,7 +121,7 @@ struct ath11k_csi_cfr_header {
- 	u8 cfr_data_version;
- 	u8 chip_type;
- 	u8 platform_type;
--	u32 reserved;
-+	u32 cfr_metadata_len;
- 	struct cfr_metadata meta_data;
- } __packed;
- 
-@@ -181,6 +232,8 @@ int ath11k_cfr_send_peer_cfr_capture_cmd(struct ath11k *ar,
- 					 const u8 *peer_mac);
- struct ath11k_dbring *ath11k_cfr_get_dbring(struct ath11k *ar);
- void ath11k_cfr_release_lut_entry(struct ath11k_look_up_table *lut);
-+int ath11k_process_cfr_capture_event(struct ath11k_base *ab,
-+				     struct ath11k_cfr_peer_tx_param *params);
- 
- #else
- static inline int ath11k_cfr_init(struct ath11k_base *ab)
-@@ -238,5 +291,12 @@ struct ath11k_dbring *ath11k_cfr_get_dbring(struct ath11k *ar)
- {
- 	return NULL;
- }
-+
-+static inline
-+int ath11k_process_cfr_capture_event(struct ath11k_base *ab,
-+				     struct ath11k_cfr_peer_tx_param *params)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_ATH11K_CFR */
- #endif /* ATH11K_CFR_H */
-diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
-index 0b4cc943c290..65f084524855 100644
---- a/drivers/net/wireless/ath/ath11k/wmi.c
-+++ b/drivers/net/wireless/ath/ath11k/wmi.c
-@@ -8802,6 +8802,93 @@ static void ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
- 	kfree(tb);
- }
- 
-+static void ath11k_wmi_tlv_cfr_capture_event_fixed_param(const void *ptr,
-+							 void *data)
-+{
-+	struct ath11k_cfr_peer_tx_param *tx_params = data;
-+	const struct ath11k_wmi_cfr_peer_tx_event_param *params = ptr;
-+
-+	tx_params->capture_method = params->capture_method;
-+	tx_params->vdev_id = params->vdev_id;
-+	ether_addr_copy(tx_params->peer_mac_addr, params->mac_addr.addr);
-+	tx_params->primary_20mhz_chan = params->chan_mhz;
-+	tx_params->bandwidth = params->bandwidth;
-+	tx_params->phy_mode = params->phy_mode;
-+	tx_params->band_center_freq1 = params->band_center_freq1;
-+	tx_params->band_center_freq2 = params->band_center_freq2;
-+	tx_params->spatial_streams = params->sts_count;
-+	tx_params->correlation_info_1 = params->correlation_info_1;
-+	tx_params->correlation_info_2 = params->correlation_info_2;
-+	tx_params->status = params->status;
-+	tx_params->timestamp_us = params->timestamp_us;
-+	tx_params->counter = params->counter;
-+	tx_params->rx_start_ts = params->rx_start_ts;
-+
-+	memcpy(tx_params->chain_rssi, params->chain_rssi,
-+	       sizeof(tx_params->chain_rssi));
-+
-+	if (WMI_CFR_CFO_MEASUREMENT_VALID & params->cfo_measurement)
-+		tx_params->cfo_measurement = FIELD_GET(WMI_CFR_CFO_MEASUREMENT_RAW_DATA,
-+						       params->cfo_measurement);
-+}
-+
-+static void ath11k_wmi_tlv_cfr_capture_phase_fixed_param(const void *ptr,
-+							 void *data)
-+{
-+	struct ath11k_cfr_peer_tx_param *tx_params = data;
-+	const struct ath11k_wmi_cfr_peer_tx_event_phase_param *params = ptr;
-+	int i;
-+
-+	for (i = 0; i < WMI_MAX_CHAINS; i++) {
-+		tx_params->chain_phase[i] = params->chain_phase[i];
-+		tx_params->agc_gain[i] = params->agc_gain[i];
-+	}
-+}
-+
-+static int ath11k_wmi_tlv_cfr_capture_evt_parse(struct ath11k_base *ab,
-+						u16 tag, u16 len,
-+						const void *ptr, void *data)
-+{
-+	switch (tag) {
-+	case WMI_TAG_PEER_CFR_CAPTURE_EVENT:
-+		ath11k_wmi_tlv_cfr_capture_event_fixed_param(ptr, data);
-+		break;
-+	case WMI_TAG_CFR_CAPTURE_PHASE_PARAM:
-+		ath11k_wmi_tlv_cfr_capture_phase_fixed_param(ptr, data);
-+		break;
-+	default:
-+		ath11k_warn(ab, "Invalid tag received tag %d len %d\n",
-+			    tag, len);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void ath11k_wmi_parse_cfr_capture_event(struct ath11k_base *ab,
-+					       struct sk_buff *skb)
-+{
-+	struct ath11k_cfr_peer_tx_param params = {};
-+	int ret;
-+
-+	ath11k_dbg_dump(ab, ATH11K_DBG_CFR_DUMP, "cfr_dump:", "",
-+			skb->data, skb->len);
-+
-+	ret = ath11k_wmi_tlv_iter(ab, skb->data, skb->len,
-+				  ath11k_wmi_tlv_cfr_capture_evt_parse,
-+				  &params);
-+	if (ret) {
-+		ath11k_warn(ab, "failed to parse cfr capture event tlv %d\n",
-+			    ret);
-+		return;
-+	}
-+
-+	ret = ath11k_process_cfr_capture_event(ab, &params);
-+	if (ret)
-+		ath11k_dbg(ab, ATH11K_DBG_CFR,
-+			   "failed to process cfr capture ret = %d\n", ret);
-+}
-+
- static void ath11k_wmi_tlv_op_rx(struct ath11k_base *ab, struct sk_buff *skb)
- {
- 	struct wmi_cmd_hdr *cmd_hdr;
-@@ -8932,6 +9019,9 @@ static void ath11k_wmi_tlv_op_rx(struct ath11k_base *ab, struct sk_buff *skb)
- 	case WMI_P2P_NOA_EVENTID:
- 		ath11k_wmi_p2p_noa_event(ab, skb);
- 		break;
-+	case WMI_PEER_CFR_CAPTURE_EVENTID:
-+		ath11k_wmi_parse_cfr_capture_event(ab, skb);
-+		break;
- 	default:
- 		ath11k_dbg(ab, ATH11K_DBG_WMI, "unsupported event id 0x%x\n", id);
- 		break;
-diff --git a/drivers/net/wireless/ath/ath11k/wmi.h b/drivers/net/wireless/ath/ath11k/wmi.h
-index afc78fa4389b..baed501b640b 100644
---- a/drivers/net/wireless/ath/ath11k/wmi.h
-+++ b/drivers/net/wireless/ath/ath11k/wmi.h
-@@ -1889,6 +1889,8 @@ enum wmi_tlv_tag {
- 	WMI_TAG_NDP_EVENT,
- 	WMI_TAG_PDEV_PEER_PKTLOG_FILTER_CMD = 0x301,
- 	WMI_TAG_PDEV_PEER_PKTLOG_FILTER_INFO,
-+	WMI_TAG_PEER_CFR_CAPTURE_EVENT = 0x317,
-+	WMI_TAG_CFR_CAPTURE_PHASE_PARAM = 0x33b,
- 	WMI_TAG_FILS_DISCOVERY_TMPL_CMD = 0x344,
- 	WMI_TAG_PDEV_SRG_BSS_COLOR_BITMAP_CMD = 0x37b,
- 	WMI_TAG_PDEV_SRG_PARTIAL_BSSID_BITMAP_CMD,
-@@ -4237,6 +4239,48 @@ enum ath11k_wmi_cfr_capture_method {
- 	WMI_CFR_CAPTURE_METHOD_MAX,
- };
- 
-+#define WMI_CFR_FRAME_TX_STATUS GENMASK(1, 0)
-+#define WMI_CFR_CAPTURE_STATUS_PEER_PS BIT(30)
-+#define WMI_CFR_PEER_CAPTURE_STATUS BIT(31)
-+
-+#define WMI_CFR_CORRELATION_INFO2_BUF_ADDR_HIGH GENMASK(3, 0)
-+#define WMI_CFR_CORRELATION_INFO2_PPDU_ID GENMASK(31, 16)
-+
-+#define WMI_CFR_CFO_MEASUREMENT_VALID BIT(0)
-+#define WMI_CFR_CFO_MEASUREMENT_RAW_DATA GENMASK(14, 1)
-+
-+struct ath11k_wmi_cfr_peer_tx_event_param {
-+	u32 capture_method;
-+	u32 vdev_id;
-+	struct wmi_mac_addr mac_addr;
-+	u32 chan_mhz;
-+	u32 bandwidth;
-+	u32 phy_mode;
-+	u32 band_center_freq1;
-+	u32 band_center_freq2;
-+	u32 sts_count;
-+	u32 correlation_info_1;
-+	u32 correlation_info_2;
-+	u32 status;
-+	u32 timestamp_us;
-+	u32 counter;
-+	u32 chain_rssi[WMI_MAX_CHAINS];
-+	u32 cfo_measurement;
-+	u32 rx_start_ts;
-+} __packed;
-+
-+struct ath11k_wmi_cfr_peer_tx_event_phase_param {
-+	u32 chain_phase[WMI_MAX_CHAINS];
-+	u8 agc_gain[WMI_MAX_CHAINS];
-+} __packed;
-+
-+enum ath11k_wmi_frame_tx_status {
-+	WMI_FRAME_TX_STATUS_OK,
-+	WMI_FRAME_TX_STATUS_XRETRY,
-+	WMI_FRAME_TX_STATUS_DROP,
-+	WMI_FRAME_TX_STATUS_FILTERED,
-+};
-+
- struct wmi_peer_cfr_capture_conf_arg {
- 	enum ath11k_wmi_cfr_capture_bw bw;
- 	enum ath11k_wmi_cfr_capture_method method;
--- 
-2.34.1
-
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id pwrseq_pcie_m2_of_match[] = {
+> +	{
+> +		.compatible = "pcie-m2-m-connector",
+> +		.data = &pwrseq_pcie_m2_m_of_data,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, pwrseq_pcie_m2_of_match);
+> +
+> +static struct platform_driver pwrseq_pcie_m2_driver = {
+> +	.driver = {
+> +		.name = "pwrseq-pcie-m2",
+> +		.of_match_table = pwrseq_pcie_m2_of_match,
+> +	},
+> +	.probe = pwrseq_pcie_m2_probe,
+> +};
+> +module_platform_driver(pwrseq_pcie_m2_driver);
+> +
+> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>");
+> +MODULE_DESCRIPTION("Power Sequencing driver for PCIe M.2 connector");
+> +MODULE_LICENSE("GPL");
+>
+> --
+> 2.48.1
+>
 
