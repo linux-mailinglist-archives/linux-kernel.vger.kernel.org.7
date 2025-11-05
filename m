@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-886475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E13C35B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:50:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37387C35B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA811A21C2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC7D189B987
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464DF315D47;
-	Wed,  5 Nov 2025 12:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B2C3161AB;
+	Wed,  5 Nov 2025 12:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKshOQ/J"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1X+ZFtV"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F2730AAC2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B2313E04
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 12:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762346852; cv=none; b=BVT08/wiA/7y2QYJA2hxndtwf8nVoS0SG2foycH+A35r47UNndlj+S2kC9S88AnNUp6DdISR/G8TOwQU/d/mIr6vtFsxsBtFfgEkCzl4OIZP6ME71RRXiSwdH4SeM0PZ2c2IRT2qlSEAjlBpkHimi/0QRVWdD8m3euJGc+3v0jI=
+	t=1762347009; cv=none; b=j34N66EqAfpq4VAEJ3UjSPnGMHhfeZBUfdO/t+YpgyPIQs3SV/FxUnk+DN/ZTRFpoVCuYfgiKXUispPkiCohZINASn/aOCnfidjZvRnMSwz4WFW52zOp67aK+5tfx7m7GaU4YpxYRZaTUBYLcCVdW4S3S8yUAk6SHJsibiFbDwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762346852; c=relaxed/simple;
-	bh=6EDEoQ8G1aeH7k2mK0kTG53ah50zIFSO89NPX7Nmkvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=guby7r0EjQ8PpIdqW27SpBUTHagyKRF3gzyRksOc18/mU6Mju8RPSB1j2eWPPkYk4FM+NNvKddSyYEx7v/9k9CSp3+j+C+4QZSzZGe9dfLf2eXdTrwWxiGyyzlqKljddAYAnkVLGzMsqbj2fup4YxvR2OSSnrRDKMMNr2eapsM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKshOQ/J; arc=none smtp.client-ip=209.85.166.44
+	s=arc-20240116; t=1762347009; c=relaxed/simple;
+	bh=xjbGtqKysZbtqE74+mQMu9sHyix0L9a1Ew9b4i4fy/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dlzvc/nssDC7nKmbOZDoDA7S15ybuGVMBtZ7opClCShGOvB0OdyPJm4ea/rs6FSRc5ISxzR27FhwOUnght87XwuQiYiaq2ximD6z7HINrSTQPy+i8XNiKkrCTPaIf+ZK64R9+98cEBbyHTXTei0gFrWxjQR3KCuQkr8y8R06yzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1X+ZFtV; arc=none smtp.client-ip=209.85.166.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88703c873d5so239130039f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 04:47:29 -0800 (PST)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-9486696aafeso115801439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 04:50:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762346849; x=1762951649; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762347006; x=1762951806; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jK/gceny5PWDz/DbB/PatvWx/loVHzoFjA0SzuhB540=;
-        b=JKshOQ/JDrbEox4T9HnfRkoDfdHAcnFavdKFquyWV8hIiW1L4HxmuQhs1tEuDln+ap
-         C6S9wp6Qt3QNtREyLDIKHyWUgGuTdL56BrKSXkHE+rdT3almFN/Pi7VukOZUXI4MA28z
-         17cPR+knlYUEqIY44bbb2bGwWRDHoAetkhY1pE1dc5CArQeYR2xYq+0jT/2m69AAwpFq
-         gSemZTxPfqkiyoymxqDTSpHm23or73c7yrRcLMyFceQVKqWhkVudth2nGVhQ1w10/OcB
-         QA+2vATthIjtF4gGBjjQtVyG5jTuCRpAaEl94rLY91SvRGTolofuq/AWEoUdgDWcGYAK
-         QVxA==
+        bh=dhsqlGPMhr1QSeWTCatdCXsZNSn01c4d6RBeHfAS3ak=;
+        b=A1X+ZFtVdrO38xvENkqFJ9ugMNdrCVsGRCKGB8jXIfoZ4a+YZz7JeLyTsKGPp397/w
+         oUeX4luM+dwEkWnccyBvJzlRfd1fMawNBRgM/RUHeJGKDKQRZtC3m02m8p1AdwVvB4M3
+         /uNUeaBIIUrpRl+tTiabBsGHie3d8zG3uSxx0Lr36NnatPcx1d75M+Ecaivx7zPNh7a/
+         lMEyecbarLI0jtql/zu6mClgf53mUzIGVAUhztdai+PUspAp5HcERu4C6E0WGMPdUKai
+         2if+Qe4tQ+O2hEC0ojJ0l/3owWfvDiR5w1cQzRzSyZlFfOoJWGS0EdLn1l47Xy8p1/s1
+         /A4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762346849; x=1762951649;
+        d=1e100.net; s=20230601; t=1762347006; x=1762951806;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jK/gceny5PWDz/DbB/PatvWx/loVHzoFjA0SzuhB540=;
-        b=peLrnVNHCks5dEKn11dy25ywcsyYojxZ1s39PVZ0kJYx4BUKyKO+n7N1XSxmY2/VYd
-         jWozROnKV+b3mQPCKCfGqBi3FIob/NvmKaF7cIkljTPzvBm6XBFdD2IWD4StJWL33g6T
-         uYaex/nIoIkTO0Yfks+UzMl52vtPrEKGpNhZZGs0hYo8xhj9stifhNhWkpLXcoBPo3Xo
-         HLeadH9HbDSIiA7XyGcYMkOhmg+nvFoU8xLhE6Sb0aeS1kOwh0ova60GfS7QOhCUEXkm
-         6ZPHjpROKHqPMxP5vdjAUlPD84bv3bNFZt07LP8sQTse6Zc2PTuSZ62PJqmDyRrv0UQ3
-         ZXWQ==
-X-Gm-Message-State: AOJu0YwGBBfpcfapyleCUYQb6M0V1M2SUfxJKRBZDc2GB/fSvxD0auUF
-	cseteuOvd73ywayjQlbDmx6Ia1gNakC7dl3pILMppm+tBYLPY6SI/Zl6
-X-Gm-Gg: ASbGncuSd8Cjj/ebGwaiCY0iCMeP8K4LREwzBAnzeZfVnv2YTQvNR5gYzrH4bvwwUPp
-	3zanF/4PMjheQupPow6RHrbiTXCHFxWm4RyMgQSRMnGBFjX11qOss4/8ffYkUcJJvi1tKJGj7Pe
-	9H0Ij+kRWid/VcZeEhs1V/3pmUgiNLw9OFZE0xU/dkJ9ysYhfHz4mUwsv5XaycCpPBXSnFFrm/k
-	4CbnEXu5dwp3HRl7Xapph+K9SLFAcrA4o+eOQ/CniUgUgqrV9WYToPOpXW2eAX0j2hqG87g3Kc8
-	kbObhAWJqumsDqDVWwbFCek941maeL3wPH2EtqfqSv4XvbB/Isrbut8vTX8iU0PfwF2LP3401c/
-	hL/9YYTsY+AuZCcUz+H3ANkxqszZED5uONN1tXXXphh4IkINagTuvbyrX/7Whx/UjgMpeQ5/sm4
-	Yvvq/TJZto70Tqp212zI6DiQ==
-X-Google-Smtp-Source: AGHT+IEYO5OB88hN6eQ+81LrxblmPXtqVllaL/oYvPXtpbKz7v2GjUAoOuzLaXR4zN+F70sNBnHk1Q==
-X-Received: by 2002:a05:6e02:12c5:b0:433:2711:c5cc with SMTP id e9e14a558f8ab-433407d953bmr38615765ab.32.1762346848847;
-        Wed, 05 Nov 2025 04:47:28 -0800 (PST)
+        bh=dhsqlGPMhr1QSeWTCatdCXsZNSn01c4d6RBeHfAS3ak=;
+        b=NVMUbi1i22JoNrayoN2Qss1tJJJKlyDhkD7DPd+DrVIPbOz5CbxoNHr/upI5lLQ2CZ
+         aElkqmQZ/SqwGsoIlHcWhx6uqLf6sc1z0fHaC9I5K7LDYzwdhYHzFUZPUZ+ydmBc5rnu
+         nbwJll8ko2eqaRQBf+W4h0tYMelADu4OOcGvQgFCfaBiVgeWoD4/k17QmdzyJI1z0hub
+         r6mOWF6HTDmSwICLml7TJajfCG9giMT+VrKCHSwPkAaROI0Ygdxr7AlqjJQ6HKcWBb/E
+         HQacaMEhcZEKvIj2lQrC/dNkCkG9Xny/VOy51pQP01Cp7/D7nYqssEtSr8hLuLlyPSZD
+         Z7iw==
+X-Gm-Message-State: AOJu0YxcE5FWAZ3sHn0xjMs/bHoEh4p2hoeWlrrI/B8IDTGVhNDiTcYF
+	PFEgiDCLfq4EjFPx+fkPPDOCa32kl1Q/8ldFx/EDXM9/Cnb57SAJ/QJ9
+X-Gm-Gg: ASbGnctWGIubj1BXBf/w+AZpGMhxObC8sq2BeOzI4v6W9S2svy6y9QysIHUuOKcgWtj
+	9u8w2q+OjqmInCK+8v2hTarFFy8qJzn/dteJwsfkOyWLLA5MVYh4I+H3tKrlvh/6nUedyhlPvpF
+	lKbY0a4Ex1o4Ayw32zE+nuI284R3nFeuBh/78yiURdKtJb8JBP4S12AlhFjKmxtsFHQwEbTEag6
+	2eE/Mr4ugkTTro746tiZ4RxtzezLEb4Tv8j5XFthU7Q8UHLWxS0EWGeSC7MRgZn9DK/gu12Zu1T
+	sVn19XFknCm07mONloSzp+Dj+wwEGI41803Tx9RiYxFqN9g1+Bqd3LqbWFmXjUyhb69ERkCWKLw
+	P/p/aU8xvk6mtgAoe/ReJhI1bMfO+LW4N3DdHIkc62/uuMOph0PlM96g4OIuJYT+GJkANAEDVpn
+	c8DVzrfBkac34=
+X-Google-Smtp-Source: AGHT+IFUVVrpnWZ1eRQdwOKppyTRc2PEKlhHTvEBTZobu+ZXFbukcXv6clqDiwJYPg1JA4j1lN+v+A==
+X-Received: by 2002:a05:6e02:1a2a:b0:42f:8d40:6c4b with SMTP id e9e14a558f8ab-433407a4043mr46552705ab.11.1762347006403;
+        Wed, 05 Nov 2025 04:50:06 -0800 (PST)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335a91956sm25775835ab.6.2025.11.05.04.47.26
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335aafb84sm25233035ab.16.2025.11.05.04.50.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 04:47:27 -0800 (PST)
+        Wed, 05 Nov 2025 04:50:04 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id 34F4C420A6A0; Wed, 05 Nov 2025 19:47:23 +0700 (WIB)
+	id 6D5EF420A6A0; Wed, 05 Nov 2025 19:50:02 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux NVDIMM <nvdimm@lists.linux.dev>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-actions@lists.infradead.org
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH] Documentation: btt: Unwrap bit 31-30 nested table
-Date: Wed,  5 Nov 2025 19:47:08 +0700
-Message-ID: <20251105124707.44736-2-bagasdotme@gmail.com>
+Subject: [PATCH] Documentation: parport-lowlevel: Separate function listing code blocks
+Date: Wed,  5 Nov 2025 19:49:47 +0700
+Message-ID: <20251105124947.45048-1-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,31 +93,65 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1100; i=bagasdotme@gmail.com; h=from:subject; bh=6EDEoQ8G1aeH7k2mK0kTG53ah50zIFSO89NPX7Nmkvo=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJncbjOS1rX8C5NtP+1iKPE08O1B3+IO8QazyyabDETDT VNk3B93lLIwiHExyIopskxK5Gs6vctI5EL7WkeYOaxMIEMYuDgFYCLGmQz/fbmqW3c0rN3CrZr3 786N+jzWK8md8lbFakq3zDX8JKq9GBn6gypMP+cZrJy/wNT8Wc4f13k3brrduMjYqyDROeWzdTU DAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1826; i=bagasdotme@gmail.com; h=from:subject; bh=xjbGtqKysZbtqE74+mQMu9sHyix0L9a1Ew9b4i4fy/c=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJncbjM2XTjjc//cjh6DiqftrN/1X+ftExWde8FyQ+58w bIICQGbjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzk42RGhvsnbpWvFzNV3Xk+ +5jiKe2epHN1fL/19r3Z4D3j5u9PB3QZ/hcZsqtuYnWSOJZYuV5zNad2afDmie5Br99tZHr34sT SadwA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Bit 31-30 usage table is already formatted as reST simple table, but it
-is wrapped in literal code block instead. Unwrap it.
+Commit be9d0411f1608a ("parport-lowlevel.txt: standardize document
+format") reSTify parport interface documentation but forgets to properly
+mark function listing code blocks up. As such, these are rendered as
+long-running normal paragraph instead.
 
+Fix them by adding missing separator between the code block marker and
+the listing.
+
+Fixes: be9d0411f1608a ("parport-lowlevel.txt: standardize document format")
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/driver-api/nvdimm/btt.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/driver-api/parport-lowlevel.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/driver-api/nvdimm/btt.rst b/Documentation/driver-api/nvdimm/btt.rst
-index 107395c042ae07..2d8269f834bd60 100644
---- a/Documentation/driver-api/nvdimm/btt.rst
-+++ b/Documentation/driver-api/nvdimm/btt.rst
-@@ -83,7 +83,7 @@ flags, and the remaining form the internal block number.
- ======== =============================================================
- Bit      Description
- ======== =============================================================
--31 - 30	 Error and Zero flags - Used in the following way::
-+31 - 30	 Error and Zero flags - Used in the following way:
+diff --git a/Documentation/driver-api/parport-lowlevel.rst b/Documentation/driver-api/parport-lowlevel.rst
+index 0633d70ffda7fa..a907e279f509b4 100644
+--- a/Documentation/driver-api/parport-lowlevel.rst
++++ b/Documentation/driver-api/parport-lowlevel.rst
+@@ -7,6 +7,7 @@ PARPORT interface documentation
+ Described here are the following functions:
  
- 	   == ==  ====================================================
- 	   31 30  Description
+ Global functions::
++
+   parport_register_driver
+   parport_unregister_driver
+   parport_enumerate
+@@ -34,6 +35,7 @@ Global functions::
+ Port functions (can be overridden by low-level drivers):
+ 
+   SPP::
++
+     port->ops->read_data
+     port->ops->write_data
+     port->ops->read_status
+@@ -46,17 +48,20 @@ Port functions (can be overridden by low-level drivers):
+     port->ops->data_reverse
+ 
+   EPP::
++
+     port->ops->epp_write_data
+     port->ops->epp_read_data
+     port->ops->epp_write_addr
+     port->ops->epp_read_addr
+ 
+   ECP::
++
+     port->ops->ecp_write_data
+     port->ops->ecp_read_data
+     port->ops->ecp_write_addr
+ 
+   Other::
++
+     port->ops->nibble_read_data
+     port->ops->byte_read_data
+     port->ops->compat_write_data
 
 base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
 -- 
