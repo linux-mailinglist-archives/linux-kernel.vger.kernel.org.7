@@ -1,192 +1,354 @@
-Return-Path: <linux-kernel+bounces-886956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9BCC370D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:24:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB66C36F42
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AA2681DE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6196874BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4243533E34E;
-	Wed,  5 Nov 2025 16:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81BC338597;
+	Wed,  5 Nov 2025 16:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B/tK9eKu";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LDZXS1UY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YsWd72YT"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAD833859E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C7E3358B6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762361205; cv=none; b=FALf3wAlzrrJLOzr/Hv3zedmz4mac7qY3c++jQYo7INL83N7qmc/DDNFymm5KVawDLrPXVat+5TgHOslaFPq5LTcVYEqbmXjZ7jp812oNGBCur6samU4wYjAXjhPzfIivgeJNAjp5ONDBsBD0v4i66YzY7IjH0D6P2xV1x90C3A=
+	t=1762361355; cv=none; b=mECGEtYg/2f4+FZdibD1nlOebbgpzi10ktYecqLf0SkbUolEKKDYb2LM1SDPoOi9JKdByscrWhwgl0DQCHdmPyJ/iA83P1sr7BwvZI5CcJ4DaqBO1IKmyEkQd2LXO5yyvtl+5xdtl5RnZAqbzjWortkyYBcCLdyTC9kf69k5qM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762361205; c=relaxed/simple;
-	bh=ya263B/ZSqT4MVjFdASA/QB9AUBc/m4QKS8TyGIHwqI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BYi3779kMJ+bIit6yjgetiOSOrxh7C2G3elGhS6HNRNyIl5yHiK9xgpLIaf2QNG2XZ/lLf2I8hdi4cxB+R3R9yoMtrZGTCRREYCeFoAMxa8ABLXZ2JPBpp8Jd9zIC5g7FE21iKPB7ETfPT0d/l28ZWKglLIdsXIhSohoFim+NTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B/tK9eKu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LDZXS1UY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5DVkh33913782
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 16:46:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Js4xfc8+ozAN4gatGrEl/M6dM+koKQCIKD1ockMt0Kk=; b=B/tK9eKudBTYKxsy
-	GSJZazGbThxCm0WBUyndiev8r4z8jhWTP6pW/IYl9tjJfGSmqnqnrC4k47IXzLXl
-	+qDshDQgToQnMCynZBISGfRPxSD2uk6HT3k74Sg7afo3L3xNpnh6QWoKyywu6bXS
-	5eOXUnMRsIaGHJvoiYeWCsioEgID57sVhjJa4vBj2FJiNmYb4CSyW4wsymx/EFxy
-	5GqdKKpGEH6N8XfqqlN1LRcP1TF0lWgXH0IVu3CtezCclvXytndKe0Q5O6DimzBx
-	NaOGNCDGD00BUWdOoSFX/z4tVcp5K5u7jL7dhHNbv6rpsdanuHKkGc4mpjOroNWN
-	ok3T8Q==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7y37a0k1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:46:42 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-34176460924so62233a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:46:42 -0800 (PST)
+	s=arc-20240116; t=1762361355; c=relaxed/simple;
+	bh=1jCQO0jkv9vqFjnSPRWazK6/jJd0lesBBLKLlcIJaXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AKRmhJcBMjoM3tIxkVaxeQesY6337x0rxwjsPEF6D89ZGQV33rib7oGgrSfNb/okuIsMPKJB8Jci4gSyQ8l/SndprfFNxPSye92H35QfqNzMHjWHpRrs7nyvvme7KfkUZXf4gfjNKxjzXpwan7N7tKEFUaYrLG+Q4boAWlARF5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YsWd72YT; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b727f330dd2so1354766b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:49:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762361202; x=1762966002; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Js4xfc8+ozAN4gatGrEl/M6dM+koKQCIKD1ockMt0Kk=;
-        b=LDZXS1UYx5dTTJwqrpcBnvEXMxkUXDdSAHe7o7l8en6vr8J7EnbMk3nZMeQq9uD3Zy
-         i2PvI43JkETF+yb/Dblosm52nwdhfUjRW8X0uK2fftv98BA+nFDZGrxe/BiIpbl/3ItX
-         ETGTxpMaaXRFf479dJveoAf4aVeINz/XEpH0ttGUBK+xhlK49HhdIBHH0rvxjyfcWokG
-         jungL29jkHLlU2y9JhV/oUasPe2vXIoiqmus2S7tv48GlFX2oe/TX7X8HXQ9SmjCUY3u
-         NwQmoWhAfFJc+rGih61aj72nA89YYbRG9iE6k8bTpJMujxJNYPlc8IghBkb3hngv0QWM
-         11/A==
+        d=suse.com; s=google; t=1762361351; x=1762966151; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VzAdXoC6s7lAPFTJ0zwUPD4vM8vI+YgP+K4s+TQh7Uo=;
+        b=YsWd72YT9pzPedGm6qwzkDx8WiSjSTLduw/RKq2xFLtrLiiBdb2DStdclwzoNFUxKO
+         m7/3RQgSKG86Lx/pLiBRzM7xNUgxYq3131YdtWs02ZX9d8uO0a/40vqZJAoqt+JdbYDL
+         2ymJkvsGS0RPo4Ug0SlQ/GMSEoo9jUvwisgf1ZpJmmkMquvvdu7DeXjBYEjgh8kUvxVK
+         DRXk7h2h9bwU2Z2i5xreqT+soJKx5ygx4oLg1IjIGJvA0V1DzBGLyZeDiQx4hi02iQF4
+         aCBPFXimowCisVMOdJvOCO9w3/0qjJasxW74uxiAt2CtyVOFse6xWPZ1CMR2qyDghDmG
+         OuRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762361202; x=1762966002;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Js4xfc8+ozAN4gatGrEl/M6dM+koKQCIKD1ockMt0Kk=;
-        b=sPalSKeFp+IwBLFys9dVTc741doi0dn12GOII8DfcsS+owUexAfPFyhf0J7njnj30p
-         0csRkv3d5Nr5+YUm+J9U3WR5iMPXx4c67FRh3dJ20uX7UZeUDYHUmzW5vy0Zp4eVg9uv
-         BmK8YcEpOa8grUsCZMbZtbUSoN/h9SkQHqiQU7F8dBvpck46bfxfGQqo5BUxHV4Kua7G
-         T8TC7ux1KApvt1oSWg3xCMlpnETmwXQgQF7GDtfWFt2ijLqhSB9QZWzilSTISEJYnqoB
-         4dzftDdTUhIrne0w7AXLTT+5z69lrZcyBD8ZS7QTOOI/6fAiOBzqloiqS5ukgomRd6NQ
-         WKTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkK6+/DcatowPY001lVUAfYh7RkhL0F936dFkvNF4N8mEgcTzDQPukEoh3LfPAfzd79EmbajJxSRAqC4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw3TgPDs5egk2q+XV2/tTb278myOCZIvmoC4IiAi+bk9zuCqg2
-	AfMLGQUbtADg+jzFPhaCzvLn6ZpofkgCMW2RuVvRi6LEdJvqAx14qHLtRw011UQxr+4HAp5cRPu
-	h4V+rCK/31UXX5ZbT1nMsbIt/3EQnLL+IMg6xfwKP5kUH6tuVh3rZDMFS/ccUeG48G7Y=
-X-Gm-Gg: ASbGnctzTlPMDgyLr4R36Aua/ZT/PyDMPNae25lQirf1+bO3cgkx2jgQnkh092wOLtj
-	Ob3lELbEC+MmoRWlmkrY/qW5WvYbdju4Y/haz7HiTlcS1eS/Zw6WQKlQdratM89uWdZ/wiM3WZi
-	/FxWn+BzoYUCzi3j3PZWEHtTHR6N7a4pCln/QiqvWuyiPSyYdvsI5q35XdVuQfMXkuu54VDVrvJ
-	XWww6Yl3aKdxw/UmsRo3d51uJVSJkyNyAqCn07mOSoK+cfsdD++1kVvkoke3vhqv88vE9BZgWiN
-	v9hCvnj3LGYsp03c8Q7N+FcuQ0FptkymKfgA45U/jzK1Dd0L6TQX9w4Dz6AvAbpGW1L+uNiVMt4
-	gjTXtt83lMSCPJ0y/gMr4qec=
-X-Received: by 2002:a17:90b:4c4e:b0:340:d1b5:bfda with SMTP id 98e67ed59e1d1-341a6c1e216mr4653691a91.3.1762361201667;
-        Wed, 05 Nov 2025 08:46:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHPMHWdFNyWZRvVuGCjzCiFHWvN7Lxhr/hcgMjghCYGwwHQXJqqOAm/zVy06oneEFZN1o9qQA==
-X-Received: by 2002:a17:90b:4c4e:b0:340:d1b5:bfda with SMTP id 98e67ed59e1d1-341a6c1e216mr4653661a91.3.1762361201169;
-        Wed, 05 Nov 2025 08:46:41 -0800 (PST)
-Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68c822dsm3426249a91.8.2025.11.05.08.46.35
+        d=1e100.net; s=20230601; t=1762361351; x=1762966151;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VzAdXoC6s7lAPFTJ0zwUPD4vM8vI+YgP+K4s+TQh7Uo=;
+        b=SRLGdtjms1SposE9o3T01dhcCwZv8cTmF0FI6J5n6mM8OMZLx0ISlVrlINErJsFsjR
+         6oEQvET2WVGXHYqAv4AELB8JBoyML63K2QusuA2tkBk846Icc+jIDYma6mZuoTTpj9g9
+         7KOnCOoYEp3+kReZQbW2UpO56ZPyU6iLqoI/4ij3uHz94twL4vkcUjxgtT6kxpXllJUC
+         Eqovtg7bKHPOq+Ta/n6Psen2bfWkkKuXCl1+g4qK+EzE5qSLbqkBY7tEBssgDymLtfCa
+         VZY5OE0WRnhG7Vm2ptu8tto30Nd/rL1GPI9OJSx5SpAVxeu0LdgeaJ4MeS5FtM3fgLjo
+         VVjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtcMv+D1MdnbqfqhjoHhKGKgtmHC53ArWeNrj5BkcQ7mD2XRVmMec12m32JDpkV6VlNWB3GVJvaG8Y7DE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgd4Zkzl+Q2sKd8NlLOIPwry6cMASkx9V5IRbdqj/7xkbsleBb
+	TZnbJ3RZqsdYXdzGk+YVApxLUAynCW2Prq44EFJn/1IcFSiRkeWLzQD15o5oyCtgB8E=
+X-Gm-Gg: ASbGnct6ymRX14A66w87J08C0YDial/rNJvi1VKlM8GDOthLH8BLC0DdcFt5bPOsqxO
+	mTAzIfWX6RmjllRFGEfwY12MwAnvSaT5ImUX5x0YIEAOSFYopbM9GhK9vy3vz6uv8/sKlmutXi7
+	gitQg7lrebtPZiar7vPWG1rf5/eBq0pcnA8ThIe6amN12H7IkVFz5FtxXwC2QMqCxF1nmqLkHi5
+	tN8VXQ2dJT/0Ztk/1mB+ZFPMAirmsZ7EK7XHCGChd6T1n7u37fkFJBpENy/1S21LN/78i7uUGiR
+	b6gu2C9h32pt6q8d8Fdc1Fg1gTQiRkZFMKpxJ/mBanfFRYqoFUPTRilSp1JkkHYym8TySCSKyLs
+	ZkaOyVdvtifebmM9KNJFFLid4+nq7xVs7unrKib9n/XA51q6YCCsgbIsZxBvU5YZfuckf1Rqz6J
+	PMjD8=
+X-Google-Smtp-Source: AGHT+IGHUT5RniJcu8k42vGSvXXlGC0LkCHKON0glXSnAdByNfQbUjryvTXs5YwTdZkkYEVYpMM18A==
+X-Received: by 2002:a17:907:1c0a:b0:b28:b057:3958 with SMTP id a640c23a62f3a-b726554c3d8mr437513666b.48.1762361350790;
+        Wed, 05 Nov 2025 08:49:10 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72896c7991sm1061366b.71.2025.11.05.08.49.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:46:40 -0800 (PST)
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Wed, 05 Nov 2025 22:15:49 +0530
-Subject: [PATCH v7 5/5] arm64: dts: qcom: qcs9100-ride: Enable Adreno 663
- GPU
+        Wed, 05 Nov 2025 08:49:10 -0800 (PST)
+Date: Wed, 5 Nov 2025 17:49:08 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+	syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
+	"amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
+	brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+Message-ID: <aQuABK25fdBVTGZc@pathway.suse.cz>
+References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+ <69096836.a70a0220.88fb8.0006.GAE@google.com>
+ <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+ <aQpFLJM96uRpO4S-@pathway.suse.cz>
+ <87ldkk34yj.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-a663-gpu-support-v7-5-1bcf7f151125@oss.qualcomm.com>
-References: <20251105-a663-gpu-support-v7-0-1bcf7f151125@oss.qualcomm.com>
-In-Reply-To: <20251105-a663-gpu-support-v7-0-1bcf7f151125@oss.qualcomm.com>
-To: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: Gaurav Kohli <quic_gkohli@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762361159; l=879;
- i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=ya263B/ZSqT4MVjFdASA/QB9AUBc/m4QKS8TyGIHwqI=;
- b=llOeky1gtFuawhG9bs+RtN9AJEm5cGH54p+7rKBb4K2jSRLfFXnSsDFNa7H/0GucTQiOl1U8O
- TqCKRb3pmwlBVep2hTZjSzoGPxup8rkI0zoDUg+2wlrR6CpvDwnbTIg
-X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-GUID: 5cuVW97hXcGsNfFtv2eGD2QawT-w-ntG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEyOSBTYWx0ZWRfXz7IoQNlBrwC6
- MATW9lU+g/+FSYBdDwyVS9tl3gZRTXeGL1L0Dv+BwKcao9kS25OilKTaD5Br6R5MXMcEV0N4AUD
- nS0p9VA633a+n0KIvw1yv3J9bmQYn3P1lcdJjix95uU+Qp7qOaXRdJQOTpuqZdnOHcqEafvIB8v
- 7FnHafpgW/PLqegZzkWqYCpI5R0vNVaMACrdP5fF0xHLUDe2ZamEa+mm9/ywCgPuDEb15hg6TPj
- /hEYx618HKOauHaP0k0euDG8ABY7vfg6Zq85gwps/16Aox1H8niGlcztV58YfRgociUO0vuCJ/F
- b5dQSMwTMQPXNd2596rKWlQ1JCzW0CFOOwrGVr7oDekRYqfAwPuIc+03E67ohvoqnPuyCBpzVJQ
- TdS9jNJODMHgHmv5CrOwH7GltWxONA==
-X-Proofpoint-ORIG-GUID: 5cuVW97hXcGsNfFtv2eGD2QawT-w-ntG
-X-Authority-Analysis: v=2.4 cv=Ev3fbCcA c=1 sm=1 tr=0 ts=690b7f72 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Xl3f10jGzgz6Ja07nhwA:9
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_06,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldkk34yj.fsf@jogness.linutronix.de>
 
-Enable GPU on both qcs9100-ride platforms and provide the path
-for zap shader.
+On Wed 2025-11-05 16:00:28, John Ogness wrote:
+> On 2025-11-04, Petr Mladek <pmladek@suse.com> wrote:
+> > Adding John into Cc.
+> 
+> Thanks.
+> 
+> > It rather looks like an internal bug in the printk_ringbuffer code.
+> > And there is only one recent patch:
+> >
+> >    https://patch.msgid.link/20250905144152.9137-2-d-tatianin@yandex-team.ru
+> >
+> > The scenario leading to the WARN() is not obvious to me. But the patch
+> > touched this code path. So it is a likely culprit. I have to think
+> > more about it.
+> 
+> I have been digging into this all day and I can find no explanation.
+> 
+> The patch you refer to brings a minor semantic change: is_blk_wrapped()
+> returns false if begin_lpos and next_lpos are the same, whereas before
+> we would have true. However, these values are not allowed to be the same
+> (except for the data-less special case values).
+> 
+> > Anyway, I wonder if the WARNING is reproducible and if it happens even after
+> > reverting the commit 67e1b0052f6bb82be84e3 ("printk_ringbuffer: don't
+> > needlessly wrap data blocks around")
+> 
+> Note that a quick search on lore shows another similar report:
+> 
+> https://lore.kernel.org/all/69078fb6.050a0220.29fc44.0029.GAE@google.com/
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Great catch!
+
+There is a common pattern. There is always one dropped message before
+the WARNING() triggers.
+
+This is from
+https://syzkaller.appspot.com/x/log.txt?x=1653a342580000
+
+[  179.188108][ T7136] ntfs3(loop0): Different NTFS sector size (4096) and media sector size (512).
+** 1 printk messages dropped **
+[  179.211874][ T7136] ------------[ cut here ]------------
+[  179.211911][ T7136] WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840, CPU#1: syz.0.359/7136
+
+
+And this is from
+https://syzkaller.appspot.com/x/log.txt?x=1370a292580000
+
+[  216.317316][ T7652] loop0: detected capacity change from 0 to 16
+** 1 printk messages dropped **
+[  216.327750][ T7652] ------------[ cut here ]------------
+[  216.327789][ T7652] WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840, CPU#1: syz.0.585/7652
+
+
+I wonder whether it is related to blk_lpos->begin or blk_lpos->next
+overflow. They are supposed to overflow at the end of the 1st wrap,
+see kernel/printk/printk_ringbuffer.h:
+
+<paste>
+ *   BLK0_LPOS
+ *     The initial @head_lpos and @tail_lpos for data rings. It is at index
+ *     0 and the lpos value is such that it will overflow on the first wrap.
+[...]
+*/
+#define BLK0_LPOS(sz_bits)	(-(_DATA_SIZE(sz_bits)))
+</paste>
+
+
+Now, the question is why the following check ends by the WARN():
+
+static const char *get_data(struct prb_data_ring *data_ring,
+			    struct prb_data_blk_lpos *blk_lpos,
+			    unsigned int *data_size)
+{
+[...]
+	/* Regular data block: @begin less than @next and in same wrap. */
+	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
+	    blk_lpos->begin < blk_lpos->next) {
+		db = to_block(data_ring, blk_lpos->begin);
+		*data_size = blk_lpos->next - blk_lpos->begin;
+
+	/* Wrapping data block: @begin is one wrap behind @next. */
+	} else if (!is_blk_wrapped(data_ring,
+				   blk_lpos->begin + DATA_SIZE(data_ring),
+				   blk_lpos->next)) {
+		db = to_block(data_ring, 0);
+		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
+
+	/* Illegal block description. */
+	} else {
+		WARN_ON_ONCE(1);
+		return NULL;
+	}
+[...]
+
+The new is_blk_wrapped() check makes sense on its own.
+
+But what happens when blk_lpos->next overflows to "0"?
+is_blk_wrapped() returns false because it checks (blk_lpos->next - 1).
+But the extra check "blk_lpos->begin < blk_lpos->next" fails because
+it checks the overflown "blk_lpos->next".
+
+I guess that we should do:
+
+From f9cae42b4a910127fb7694aebe2e46247dbb0fcb Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Wed, 5 Nov 2025 17:14:57 +0100
+Subject: [PATCH] printk_ringbuffer: Fix check of valid data size when blk_lpos
+ overflows
+
+The commit 67e1b0052f6bb8 ("printk_ringbuffer: don't needlessly wrap
+data blocks around") allows to use the last 4 bytes of the ring buffer.
+
+But the check for the data_size was not properly updated. It fails
+when blk_lpos->next overflows to "0". In this case:
+
+  + is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)
+    returns false because it checks "blk_lpos->next - 1"
+
+  + but "blk_lpos->begin < blk_lpos->next" fails because
+    blk_lpos->next is already 0.
+
+  + is_blk_wrapped(data_ring, blk_lpos->begin + DATA_SIZE(data_ring),
+    blk_lpos->next) returns false because "begin_lpos" is from
+    next wrap but "next_lpos - 1" is from the previous one
+
+As a result, get_data() triggers the WARN_ON_ONCE() for "Illegal
+block description", for example:
+
+[  216.317316][ T7652] loop0: detected capacity change from 0 to 16
+** 1 printk messages dropped **
+[  216.327750][ T7652] ------------[ cut here ]------------
+[  216.327789][ T7652] WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840, CPU#1: syz.0.585/7652
+[  216.327848][ T7652] Modules linked in:
+[  216.327907][ T7652] CPU: 1 UID: 0 PID: 7652 Comm: syz.0.585 Not tainted syzkaller #0 PREEMPT(full)
+[  216.327933][ T7652] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+[  216.327953][ T7652] RIP: 0010:get_data+0x48a/0x840
+[  216.327986][ T7652] Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 a7 19 1f 00 90 <0f> 0b 90 eb 05 e8 9c 19 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
+[  216.328007][ T7652] RSP: 0018:ffffc900035170e0 EFLAGS: 00010293
+[  216.328029][ T7652] RAX: ffffffff81a1eee9 RBX: 00003fffffffffff RCX: ffff888033255b80
+[  216.328048][ T7652] RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
+[  216.328063][ T7652] RBP: 0000000000000012 R08: 0000000000000e55 R09: 000000325e213cc7
+[  216.328079][ T7652] R10: 000000325e213cc7 R11: 00001de4c2000037 R12: 0000000000000012
+[  216.328095][ T7652] R13: 0000000000000000 R14: ffffc90003517228 R15: 1ffffffff1bca646
+[  216.328111][ T7652] FS:  00007f44eb8da6c0(0000) GS:ffff888125fda000(0000) knlGS:0000000000000000
+[  216.328131][ T7652] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  216.328147][ T7652] CR2: 00007f44ea9722e0 CR3: 0000000066344000 CR4: 00000000003526f0
+[  216.328168][ T7652] Call Trace:
+[  216.328178][ T7652]  <TASK>
+[  216.328199][ T7652]  _prb_read_valid+0x672/0xa90
+[  216.328328][ T7652]  ? desc_read+0x1b8/0x3f0
+[  216.328381][ T7652]  ? __pfx__prb_read_valid+0x10/0x10
+[  216.328422][ T7652]  ? panic_on_this_cpu+0x32/0x40
+[  216.328450][ T7652]  prb_read_valid+0x3c/0x60
+[  216.328482][ T7652]  printk_get_next_message+0x15c/0x7b0
+[  216.328526][ T7652]  ? __pfx_printk_get_next_message+0x10/0x10
+[  216.328561][ T7652]  ? __lock_acquire+0xab9/0xd20
+[  216.328595][ T7652]  ? console_flush_all+0x131/0xb10
+[  216.328621][ T7652]  ? console_flush_all+0x478/0xb10
+[  216.328648][ T7652]  console_flush_all+0x4cc/0xb10
+[  216.328673][ T7652]  ? console_flush_all+0x131/0xb10
+[  216.328704][ T7652]  ? __pfx_console_flush_all+0x10/0x10
+[  216.328748][ T7652]  ? is_printk_cpu_sync_owner+0x32/0x40
+[  216.328781][ T7652]  console_unlock+0xbb/0x190
+[  216.328815][ T7652]  ? __pfx___down_trylock_console_sem+0x10/0x10
+[  216.328853][ T7652]  ? __pfx_console_unlock+0x10/0x10
+[  216.328899][ T7652]  vprintk_emit+0x4c5/0x590
+[  216.328935][ T7652]  ? __pfx_vprintk_emit+0x10/0x10
+[  216.328993][ T7652]  _printk+0xcf/0x120
+[  216.329028][ T7652]  ? __pfx__printk+0x10/0x10
+[  216.329051][ T7652]  ? kernfs_get+0x5a/0x90
+[  216.329090][ T7652]  _erofs_printk+0x349/0x410
+[  216.329130][ T7652]  ? __pfx__erofs_printk+0x10/0x10
+[  216.329161][ T7652]  ? __raw_spin_lock_init+0x45/0x100
+[  216.329186][ T7652]  ? __init_swait_queue_head+0xa9/0x150
+[  216.329231][ T7652]  erofs_fc_fill_super+0x1591/0x1b20
+[  216.329285][ T7652]  ? __pfx_erofs_fc_fill_super+0x10/0x10
+[  216.329324][ T7652]  ? sb_set_blocksize+0x104/0x180
+[  216.329356][ T7652]  ? setup_bdev_super+0x4c1/0x5b0
+[  216.329385][ T7652]  get_tree_bdev_flags+0x40e/0x4d0
+[  216.329410][ T7652]  ? __pfx_erofs_fc_fill_super+0x10/0x10
+[  216.329444][ T7652]  ? __pfx_get_tree_bdev_flags+0x10/0x10
+[  216.329483][ T7652]  vfs_get_tree+0x92/0x2b0
+[  216.329512][ T7652]  do_new_mount+0x302/0xa10
+[  216.329537][ T7652]  ? apparmor_capable+0x137/0x1b0
+[  216.329576][ T7652]  ? __pfx_do_new_mount+0x10/0x10
+[  216.329605][ T7652]  ? ns_capable+0x8a/0xf0
+[  216.329637][ T7652]  ? kmem_cache_free+0x19b/0x690
+[  216.329682][ T7652]  __se_sys_mount+0x313/0x410
+[  216.329717][ T7652]  ? __pfx___se_sys_mount+0x10/0x10
+[  216.329836][ T7652]  ? do_syscall_64+0xbe/0xfa0
+[  216.329869][ T7652]  ? __x64_sys_mount+0x20/0xc0
+[  216.329901][ T7652]  do_syscall_64+0xfa/0xfa0
+[  216.329932][ T7652]  ? lockdep_hardirqs_on+0x9c/0x150
+[  216.329964][ T7652]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  216.329988][ T7652]  ? clear_bhb_loop+0x60/0xb0
+[  216.330017][ T7652]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  216.330040][ T7652] RIP: 0033:0x7f44ea99076a
+[  216.330080][ T7652] Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+[  216.330100][ T7652] RSP: 002b:00007f44eb8d9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+[  216.330128][ T7652] RAX: ffffffffffffffda RBX: 00007f44eb8d9ef0 RCX: 00007f44ea99076a
+[  216.330146][ T7652] RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f44eb8d9eb0
+[  216.330164][ T7652] RBP: 0000200000000180 R08: 00007f44eb8d9ef0 R09: 0000000000000000
+[  216.330181][ T7652] R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
+[  216.330196][ T7652] R13: 00007f44eb8d9eb0 R14: 00000000000001a1 R15: 0000200000000080
+[  216.330233][ T7652]  </TASK>
+
+The check comparing "blk_lpos->next" must decrement 1 as well.
+
+Alternative:
+
+The check can be removed. Instead we might add a check for invalid
+*data_size, something like:
+
+	if (WARN_ON_ONCE(!data_check_size(data_ring, *data_size))
+		return NULL;
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/printk/printk_ringbuffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-index c69aa2f41ce29f9f841cc6e6651a8efc38690e19..8fb7d1fc6d563288288d24eb5d8288e7748f2c16 100644
---- a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-@@ -436,6 +436,14 @@ vreg_l8e: ldo8 {
- 	};
- };
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index 839f504db6d3..1272c220c8b4 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -1262,7 +1262,7 @@ static const char *get_data(struct prb_data_ring *data_ring,
  
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/sa8775p/a663_zap.mbn";
-+};
-+
- &i2c11 {
- 	clock-frequency = <400000>;
- 	status = "okay";
-
+ 	/* Regular data block: @begin less than @next and in same wrap. */
+ 	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
+-	    blk_lpos->begin < blk_lpos->next) {
++	    blk_lpos->begin < blk_lpos->next - 1) {
+ 		db = to_block(data_ring, blk_lpos->begin);
+ 		*data_size = blk_lpos->next - blk_lpos->begin;
+ 
 -- 
-2.51.0
+2.51.1
 
+Another question is whether this is the only problem caused the patch.
+
+> We may want to revert the commit until we can take a closer look at
+> this.
+> 
+> I will divert my energies from code-reading to trying to reproduce this.
+
+It might help to fill messages with a fixed size which might trigger
+blk_lpos->next == 0 in the 1st wrap.
+
+I could try this tomorrow. It is getting late here. But I wanted
+to send my thoughts ASAP.
+
+Best Regards,
+Petr
 
