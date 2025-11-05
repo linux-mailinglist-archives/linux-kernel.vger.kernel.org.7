@@ -1,320 +1,454 @@
-Return-Path: <linux-kernel+bounces-887302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B52C37CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:58:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B34C37CC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F07C3B6932
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:57:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2C0234FA69
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934AC34AB04;
-	Wed,  5 Nov 2025 20:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDrI6EBZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0CE2D97B8;
+	Wed,  5 Nov 2025 20:56:10 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B639F30EF7A;
-	Wed,  5 Nov 2025 20:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5002D8372
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762376215; cv=none; b=SvyxoRt1dzM90eVf+7BLVWrbItPqdDQJTa05+YcZe0Wawmj5vaqlbAFBg854ZTiI1+89h8ehkzCup+lid/1xHCGKIqzpxUmUacCk5OPFMtEc+B8072e8uICnvrWPog5hDYQp2CBLUH6TP/FGxLqx+9j/dBekpCIZ1/M6vcge7ro=
+	t=1762376169; cv=none; b=ROPwuQY9IUrDDO6igxEyy7RWgzrT6gqLFrFsPBYqhpUjVCsZ9Dk/4+m/JWCsoDXURxB/ad3eyH/UxQOZDMSZV/2mUhDRw27fbfzg3047mJnCtUcPqU1SMeUXMuZwyZUEq2x8iEuQsTaqSZbHSEzoNoRpxXzMJqN6w43dWIjzj6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762376215; c=relaxed/simple;
-	bh=fC9X5qQj+U0WNsqsc7Qvk95wkvv4i6g0VGE+cP4MB1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t3m5pkRzozRZ2XAb0cEUycNq/BsqPr9VfKbHGoQ4TkfUOUlfrmAcTpJF7rffN9QqrgU42BUb4HeE88BjSZnExnetLhHGSy9MPy6mFPRO/CT4UqBQje1PWZ5mwOfA07t3EnDtznBuGrfR659SFSDCqwGZv7ERZx4IjrGYsDECsJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDrI6EBZ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762376213; x=1793912213;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fC9X5qQj+U0WNsqsc7Qvk95wkvv4i6g0VGE+cP4MB1g=;
-  b=iDrI6EBZ0pWtm5nfv4Lhmq3YD9VmB7PVC/aJZHx/f+Z7oIdKsiOTCiBO
-   U5s83ziGDDs+4YzmjvHBQX8FTpeFSdXXMY7vYxpssdHqryitMjI3i1xuj
-   4v2CasrDZEFeg7yxATEvngSufhO+vT6Q05IwJl6ecHp1k09jRfwnaCHep
-   K6I3+ne/a1kA7BWtL8hLXtG7yPJbyaugbp+UIMp2HArkq5mfH4hM/c/R9
-   carFsrwUTFjo7hL0u7HvVYLpcdGGAZvsd/azKAZ/sBpk46c1uxYazJ8Is
-   Sa1UgVc62FXFAjV6pnlxNXUDjuy/CVQlCJbuR30ubpn6DAs89Pn1Dk2Fg
-   A==;
-X-CSE-ConnectionGUID: WTOw55ZhS/msdhXRrV9FrA==
-X-CSE-MsgGUID: FzHckbY+TUq+CEmvAEPPtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75618434"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="75618434"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 12:56:53 -0800
-X-CSE-ConnectionGUID: AeMS6Am/TCalEZpqKR8AjA==
-X-CSE-MsgGUID: 3GJ74quFQrKrVc0jEipUHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="187401197"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 05 Nov 2025 12:56:48 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGkYd-000T7m-1A;
-	Wed, 05 Nov 2025 20:56:46 +0000
-Date: Thu, 6 Nov 2025 04:55:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Mina Almasry <almasrymina@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx
- token management
-Message-ID: <202511060345.AQs0FTNg-lkp@intel.com>
-References: <20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3@meta.com>
+	s=arc-20240116; t=1762376169; c=relaxed/simple;
+	bh=hzBpjQv+o/DTCWMu5DBoc+BvgEjP1zhwMOs2yiBIAgw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ITYKHYLJ30fO4ciIF13sxnmLAvmBcstWMqIKhPO7Cnjxv/MVLT1uYzk03CBTZxasi9OgRtUfuG3FQE0BWN2V5vYd3bPNDVpuslHfMD9haoJbetl5er8x+NWqND3Z4o8h9vZr0eiBWYlLjMy2xrqXcveTdd9Ez+oJu5BQGNmuM54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-945c705df24so28095039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:56:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762376163; x=1762980963;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3ADeQpiOp638EHQGkX4nAhqUuOM9S519pNeKBgwEtw=;
+        b=Ktk4LIumaLzYjqSklzaB1MGflnnvgDouVYkk6Cu4kcn33pNdHECaeQjECuTivXpJ4R
+         Gv+avdnHlP1j5Lf/uIJr/+KwtboEL3x1cqNLt2VjGN4Fv2hbPGNj8whPK0kwtNFHZly5
+         wtWiJpDZzpNG60kd4PjRQadg6saUirhlCrTngUqtJrJekYBxezLweqvhBgW6e4rPhAkd
+         8r9t5HE6w4JTpXWU2HrKm+T87/PF1IwhO8Kp+WddqKt6u6f4RH1DeSk+eB+YiWR/kcO5
+         TOqElFvmI32WZgA0E+jIkG/52XaPNGiNynCUYOQvlOfAyfgacMV3M8hWJ8CRY+Y2XXIE
+         HsXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGiWM2mFJ/3oMAb1/uXqz+9St5EUQ/yWfe5SpnT/DixXqYqrR3798SA0f4nfnfFsCBOVo5BCHJCmECMbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVPDQtcCzdVnSqt05YkygPJ79ruZaSH0j0WqjIdPOEuk7Cgg5n
+	1sZxz/iCcpV2jUwaqkKtviwmaX9j0Ywy3u7VQY0Q9LRbo98mHgHoPDkD3hvfNEMcd6CSNi1OKGQ
+	GgyBAWmGHYuFHNF6O0vluYaU3G41aN/bXhfa4r5FA0yZA1H/bIZcyVdRp2Ss=
+X-Google-Smtp-Source: AGHT+IGiah7ThoXyNFEfYoip3cikOQAREySwBKaKQy+xzpkpiT14araBKpr4synk9JGzeisDrHn24NyjFVbKiWAi6riZ4lBN93Af
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3@meta.com>
+X-Received: by 2002:a05:6e02:2503:b0:433:2d7d:b8d8 with SMTP id
+ e9e14a558f8ab-4334ee298ecmr13672955ab.1.1762376163425; Wed, 05 Nov 2025
+ 12:56:03 -0800 (PST)
+Date: Wed, 05 Nov 2025 12:56:03 -0800
+In-Reply-To: <20251105193800.2340868-1-mic@digikod.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690bb9e3.050a0220.3d0d33.009d.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context
+ in hook_sb_delete
+From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
+To: brauner@kernel.org, eadavis@qq.com, gnoack@google.com, hdanton@sina.com, 
+	jack@suse.cz, jannh@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	m@maowtm.org, max.kellermann@ionos.com, mic@digikod.net, mjguzik@gmail.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bobby,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-[auto build test WARNING on 255d75ef029f33f75fcf5015052b7302486f7ad2]
+f
+[  104.167925][ T5820]  ? clear_bhb_loop+0x60/0xb0
+[  104.167948][ T5820]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  104.167967][ T5820] RIP: 0033:0x7f9a9fef16c5
+[  104.167983][ T5820] Code: Unable to access opcode bytes at 0x7f9a9fef169=
+b.
+[  104.167993][ T5820] RSP: 002b:00007fff0fc3e0f8 EFLAGS: 00000246 ORIG_RAX=
+: 00000000000000e7
+[  104.168021][ T5820] RAX: ffffffffffffffda RBX: 00005583ec761b10 RCX: 000=
+07f9a9fef16c5
+[  104.168036][ T5820] RDX: 00000000000000e7 RSI: fffffffffffffe68 RDI: 000=
+0000000000000
+[  104.168048][ T5820] RBP: 00005583ec738910 R08: 0000000000000000 R09: 000=
+0000000000000
+[  104.168060][ T5820] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+0000000000000
+[  104.168071][ T5820] R13: 00007fff0fc3e140 R14: 0000000000000000 R15: 000=
+0000000000000
+[  104.168101][ T5820]  </TASK>
+2025/11/05 20:54:56 parsed 1 programs
+[  105.509351][ T5829] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  105.518601][ T5829] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5829, name: syz-execprog
+[  105.528439][ T5829] preempt_count: 1, expected: 0
+[  105.533521][ T5829] RCU nest depth: 0, expected: 0
+[  105.538811][ T5829] 1 lock held by syz-execprog/5829:
+[  105.544194][ T5829]  #0: ffff88807e6f68d8 (&sb->s_type->i_lock_key#9){+.=
++.}-{3:3}, at: iput+0x2db/0x1050
+[  105.554222][ T5829] Preemption disabled at:
+[  105.554232][ T5829] [<0000000000000000>] 0x0
+[  105.564065][ T5829] CPU: 0 UID: 0 PID: 5829 Comm: syz-execprog Tainted: =
+G        W           syzkaller #0 PREEMPT(full)=20
+[  105.564091][ T5829] Tainted: [W]=3DWARN
+[  105.564096][ T5829] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  105.564105][ T5829] Call Trace:
+[  105.564114][ T5829]  <TASK>
+[  105.564121][ T5829]  dump_stack_lvl+0x189/0x250
+[  105.564144][ T5829]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  105.564160][ T5829]  ? __pfx__printk+0x10/0x10
+[  105.564176][ T5829]  ? call_rcu+0x6ff/0x9c0
+[  105.564197][ T5829]  ? print_lock_name+0xde/0x100
+[  105.564218][ T5829]  __might_resched+0x495/0x610
+[  105.564241][ T5829]  ? __pfx___might_resched+0x10/0x10
+[  105.564258][ T5829]  ? do_raw_spin_lock+0x121/0x290
+[  105.564286][ T5829]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  105.564320][ T5829]  iput+0x741/0x1050
+[  105.564352][ T5829]  __dentry_kill+0x209/0x660
+[  105.564371][ T5829]  ? dput+0x37/0x2b0
+[  105.564389][ T5829]  dput+0x19f/0x2b0
+[  105.564406][ T5829]  __fput+0x68e/0xa70
+[  105.564431][ T5829]  fput_close_sync+0x113/0x220
+[  105.564450][ T5829]  ? __pfx_fput_close_sync+0x10/0x10
+[  105.564470][ T5829]  ? do_raw_spin_unlock+0x122/0x240
+[  105.564495][ T5829]  __x64_sys_close+0x7f/0x110
+[  105.564517][ T5829]  do_syscall_64+0xfa/0xfa0
+[  105.564541][ T5829]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  105.564558][ T5829]  ? clear_bhb_loop+0x60/0xb0
+[  105.564577][ T5829]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  105.564593][ T5829] RIP: 0033:0x40dd0e
+[  105.564610][ T5829] Code: 24 28 44 8b 44 24 2c e9 70 ff ff ff cc cc cc c=
+c cc cc cc cc cc cc cc cc cc cc cc cc 49 89 f2 48 89 fa 48 89 ce 48 89 df 0=
+f 05 <48> 3d 01 f0 ff ff 76 15 48 f7 d8 48 89 c1 48 c7 c0 ff ff ff ff 48
+[  105.564625][ T5829] RSP: 002b:000000c002db1760 EFLAGS: 00000212 ORIG_RAX=
+: 0000000000000003
+[  105.564688][ T5829] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
+000000040dd0e
+[  105.564701][ T5829] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000003
+[  105.564711][ T5829] RBP: 000000c002db17a0 R08: 0000000000000000 R09: 000=
+0000000000000
+[  105.564723][ T5829] R10: 0000000000000000 R11: 0000000000000212 R12: 000=
+000c002db18c0
+[  105.564735][ T5829] R13: 00000000000007ff R14: 000000c000002380 R15: 000=
+000c0008937c0
+[  105.564765][ T5829]  </TASK>
+[  107.337546][ T5837] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  107.347227][ T5837] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5837, name: dhcpcd
+[  107.356267][ T5837] preempt_count: 1, expected: 0
+[  107.361915][ T5837] RCU nest depth: 0, expected: 0
+[  107.367125][ T5837] 1 lock held by dhcpcd/5837:
+[  107.373083][ T5837]  #0: ffff88807e6fa3d8 (&sb->s_type->i_lock_key#9){+.=
++.}-{3:3}, at: iput+0x2db/0x1050
+[  107.384068][ T5837] Preemption disabled at:
+[  107.384082][ T5837] [<0000000000000000>] 0x0
+[  107.393377][ T5837] CPU: 1 UID: 0 PID: 5837 Comm: dhcpcd Tainted: G     =
+   W           syzkaller #0 PREEMPT(full)=20
+[  107.393403][ T5837] Tainted: [W]=3DWARN
+[  107.393408][ T5837] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  107.393417][ T5837] Call Trace:
+[  107.393424][ T5837]  <TASK>
+[  107.393430][ T5837]  dump_stack_lvl+0x189/0x250
+[  107.393456][ T5837]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  107.393480][ T5837]  ? __pfx__printk+0x10/0x10
+[  107.393503][ T5837]  ? print_lock_name+0xde/0x100
+[  107.393526][ T5837]  __might_resched+0x495/0x610
+[  107.393553][ T5837]  ? __pfx___might_resched+0x10/0x10
+[  107.393570][ T5837]  ? do_raw_spin_lock+0x121/0x290
+[  107.393597][ T5837]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  107.393632][ T5837]  iput+0x741/0x1050
+[  107.393662][ T5837]  __dentry_kill+0x209/0x660
+[  107.393681][ T5837]  ? dput+0x37/0x2b0
+[  107.393699][ T5837]  dput+0x19f/0x2b0
+[  107.393717][ T5837]  __fput+0x68e/0xa70
+[  107.393749][ T5837]  fput_close_sync+0x113/0x220
+[  107.393768][ T5837]  ? __pfx_fput_close_sync+0x10/0x10
+[  107.393790][ T5837]  ? do_raw_spin_unlock+0x122/0x240
+[  107.393819][ T5837]  __x64_sys_close+0x7f/0x110
+[  107.393843][ T5837]  do_syscall_64+0xfa/0xfa0
+[  107.393871][ T5837]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  107.393890][ T5837]  ? clear_bhb_loop+0x60/0xb0
+[  107.393915][ T5837]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  107.393933][ T5837] RIP: 0033:0x7fc58c16c407
+[  107.393950][ T5837] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
+0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
+f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  107.393968][ T5837] RSP: 002b:00007ffc1197cc80 EFLAGS: 00000202 ORIG_RAX=
+: 0000000000000003
+[  107.393988][ T5837] RAX: ffffffffffffffda RBX: 00007fc58c0e2740 RCX: 000=
+07fc58c16c407
+[  107.394002][ T5837] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000003
+[  107.394014][ T5837] RBP: 000055fc7ab074b0 R08: 0000000000000000 R09: 000=
+0000000000000
+[  107.394026][ T5837] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+0000000000000
+[  107.394038][ T5837] R13: 000055fc83902290 R14: 0000000000000000 R15: 000=
+055fc7ab1cac0
+[  107.394071][ T5837]  </TASK>
+[  108.750656][ T5835] cgroup: Unknown subsys name 'net'
+[  108.759273][ T5835] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  108.769492][ T5835] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5835, name: syz-executor
+[  108.782190][ T5835] preempt_count: 1, expected: 0
+[  108.787683][ T5835] RCU nest depth: 0, expected: 0
+[  108.792976][ T5835] 2 locks held by syz-executor/5835:
+[  108.799370][ T5835]  #0: ffff8880340e80e0 (&type->s_umount_key#44){+.+.}=
+-{4:4}, at: deactivate_super+0xa9/0xe0
+[  108.811870][ T5835]  #1: ffff888077e41970 (&sb->s_type->i_lock_key#33){+=
+.+.}-{3:3}, at: iput+0x2db/0x1050
+[  108.822811][ T5835] Preemption disabled at:
+[  108.822824][ T5835] [<0000000000000000>] 0x0
+[  108.833460][ T5835] CPU: 1 UID: 0 PID: 5835 Comm: syz-executor Tainted: =
+G        W           syzkaller #0 PREEMPT(full)=20
+[  108.833488][ T5835] Tainted: [W]=3DWARN
+[  108.833493][ T5835] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  108.833502][ T5835] Call Trace:
+[  108.833508][ T5835]  <TASK>
+[  108.833515][ T5835]  dump_stack_lvl+0x189/0x250
+[  108.833542][ T5835]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  108.833561][ T5835]  ? __pfx__printk+0x10/0x10
+[  108.833580][ T5835]  ? print_lock_name+0xde/0x100
+[  108.833601][ T5835]  __might_resched+0x495/0x610
+[  108.833625][ T5835]  ? __pfx___might_resched+0x10/0x10
+[  108.833642][ T5835]  ? do_raw_spin_lock+0x121/0x290
+[  108.833666][ T5835]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  108.833699][ T5835]  iput+0x741/0x1050
+[  108.833731][ T5835]  __dentry_kill+0x209/0x660
+[  108.833751][ T5835]  ? dput+0x37/0x2b0
+[  108.833770][ T5835]  dput+0x19f/0x2b0
+[  108.833789][ T5835]  shrink_dcache_for_umount+0xa0/0x170
+[  108.833815][ T5835]  generic_shutdown_super+0x67/0x2c0
+[  108.833843][ T5835]  kill_anon_super+0x3b/0x70
+[  108.833868][ T5835]  kernfs_kill_sb+0x161/0x180
+[  108.833895][ T5835]  deactivate_locked_super+0xbc/0x130
+[  108.833920][ T5835]  cleanup_mnt+0x425/0x4c0
+[  108.833943][ T5835]  ? lockdep_hardirqs_on+0x9c/0x150
+[  108.833970][ T5835]  task_work_run+0x1d4/0x260
+[  108.833998][ T5835]  ? __pfx_task_work_run+0x10/0x10
+[  108.834027][ T5835]  ? exit_to_user_mode_loop+0x55/0x4f0
+[  108.834058][ T5835]  exit_to_user_mode_loop+0xff/0x4f0
+[  108.834084][ T5835]  ? rcu_is_watching+0x15/0xb0
+[  108.834109][ T5835]  do_syscall_64+0x2e9/0xfa0
+[  108.834135][ T5835]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  108.834152][ T5835]  ? clear_bhb_loop+0x60/0xb0
+[  108.834175][ T5835]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  108.834192][ T5835] RIP: 0033:0x7f2c235901f7
+[  108.834208][ T5835] Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1=
+f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0=
+f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+[  108.834224][ T5835] RSP: 002b:00007ffeee90f4f8 EFLAGS: 00000246 ORIG_RAX=
+: 00000000000000a6
+[  108.834244][ T5835] RAX: 0000000000000000 RBX: 00007ffeee90f5f0 RCX: 000=
+07f2c235901f7
+[  108.834256][ T5835] RDX: 00007f2c23623d15 RSI: 0000000000000000 RDI: 000=
+07f2c236125ca
+[  108.834266][ T5835] RBP: 00007f2c236125ca R08: 00007f2c236128ae R09: 000=
+0000000000000
+[  108.834277][ T5835] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+07f2c23612844
+[  108.834287][ T5835] R13: 00007f2c23623d15 R14: 00007ffeee90f608 R15: 000=
+07ffeee90f500
+[  108.834313][ T5835]  </TASK>
+[  109.214905][ T5835] cgroup: Unknown subsys name 'cpuset'
+[  109.226104][ T5835] cgroup: Unknown subsys name 'rlimit'
+[  110.666383][ T5835] Adding 124996k swap on ./swap-file.  Priority:0 exte=
+nts:1 across:124996k=20
+[  110.845546][ T5195] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  110.854984][ T5195] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5195, name: udevd
+[  110.865089][ T5195] preempt_count: 1, expected: 0
+[  110.870130][ T5195] RCU nest depth: 0, expected: 0
+[  110.875858][ T5195] 2 locks held by udevd/5195:
+[  110.881834][ T5195]  #0: ffff88802feb6420 (sb_writers#5){.+.+}-{0:0}, at=
+: mnt_want_write+0x41/0x90
+[  110.893073][ T5195]  #1: ffff8880306928e8 (&sb->s_type->i_lock_key){+.+.=
+}-{3:3}, at: iput+0x2db/0x1050
+[  110.903490][ T5195] Preemption disabled at:
+[  110.903505][ T5195] [<0000000000000000>] 0x0
+[  110.912829][ T5195] CPU: 1 UID: 0 PID: 5195 Comm: udevd Tainted: G      =
+  W           syzkaller #0 PREEMPT(full)=20
+[  110.912861][ T5195] Tainted: [W]=3DWARN
+[  110.912867][ T5195] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  110.912878][ T5195] Call Trace:
+[  110.912886][ T5195]  <TASK>
+[  110.912894][ T5195]  dump_stack_lvl+0x189/0x250
+[  110.912924][ T5195]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  110.912946][ T5195]  ? __pfx__printk+0x10/0x10
+[  110.912969][ T5195]  ? print_lock_name+0xde/0x100
+[  110.912994][ T5195]  __might_resched+0x495/0x610
+[  110.913020][ T5195]  ? __pfx___might_resched+0x10/0x10
+[  110.913036][ T5195]  ? do_raw_spin_lock+0x121/0x290
+[  110.913063][ T5195]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  110.913095][ T5195]  iput+0x741/0x1050
+[  110.913122][ T5195]  do_unlinkat+0x39f/0x560
+[  110.913155][ T5195]  ? __pfx_do_unlinkat+0x10/0x10
+[  110.913182][ T5195]  ? strncpy_from_user+0x150/0x2c0
+[  110.913209][ T5195]  ? getname_flags+0x1e5/0x540
+[  110.913232][ T5195]  __x64_sys_unlink+0x47/0x50
+[  110.913267][ T5195]  do_syscall_64+0xfa/0xfa0
+[  110.913295][ T5195]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  110.913313][ T5195]  ? clear_bhb_loop+0x60/0xb0
+[  110.913335][ T5195]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  110.913354][ T5195] RIP: 0033:0x7f9a9ff15937
+[  110.913371][ T5195] Code: 00 00 e9 a9 fd ff ff 66 2e 0f 1f 84 00 00 00 0=
+0 00 66 90 b8 5f 00 00 00 0f 05 c3 0f 1f 84 00 00 00 00 00 b8 57 00 00 00 0=
+f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 91 b4 0d 00 f7 d8 64 89 02 b8
+[  110.913387][ T5195] RSP: 002b:00007fff0fc3e2a8 EFLAGS: 00000202 ORIG_RAX=
+: 0000000000000057
+[  110.913408][ T5195] RAX: ffffffffffffffda RBX: 0000000000000bb8 RCX: 000=
+07f9a9ff15937
+[  110.913422][ T5195] RDX: ffffffffffffffff RSI: 000000000000000b RDI: 000=
+05583c5bc802e
+[  110.913434][ T5195] RBP: 0000000000000000 R08: 0000000000000000 R09: 000=
+0000000000000
+[  110.913445][ T5195] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+0000000000000
+[  110.913456][ T5195] R13: 00005583c5be3100 R14: 0000000000000000 R15: 000=
+0000000000000
+[  110.913486][ T5195]  </TASK>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/net-devmem-rename-tx_vec-to-vec-in-dmabuf-binding/20251105-092703
-base:   255d75ef029f33f75fcf5015052b7302486f7ad2
-patch link:    https://lore.kernel.org/r/20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3%40meta.com
-patch subject: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx token management
-config: arc-nsimosci_hs_defconfig (https://download.01.org/0day-ci/archive/20251106/202511060345.AQs0FTNg-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251106/202511060345.AQs0FTNg-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511060345.AQs0FTNg-lkp@intel.com/
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build2124321294=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
-All warnings (new ones prefixed by >>):
-
-   net/ipv4/tcp.c: In function 'tcp_recvmsg_dmabuf':
->> net/ipv4/tcp.c:2661:12: warning: 'refs' is used uninitialized [-Wuninitialized]
-    2661 |         if (refs > 0)
-         |            ^
-   net/ipv4/tcp.c:2496:13: note: 'refs' was declared here
-    2496 |         int refs;
-         |             ^~~~
+git status (err=3D<nil>)
+HEAD detached at 7e2882b3269
+nothing to commit, working tree clean
 
 
-vim +/refs +2661 net/ipv4/tcp.c
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
+og.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X github.com/goo=
+gle/syzkaller/prog.gitRevisionDate=3D20251007-152513"  ./sys/syz-sysgen | g=
+rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
+/prog.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X github.com/=
+google/syzkaller/prog.gitRevisionDate=3D20251007-152513"  ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251007-152513"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"7e2882b32698b70f3149aee00c41e3d2d9=
+41dca3\"
+/usr/bin/ld: /tmp/ccT2jI60.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+./tools/check-syzos.sh 2>/dev/null
 
-  2481	
-  2482	/* On error, returns the -errno. On success, returns number of bytes sent to the
-  2483	 * user. May not consume all of @remaining_len.
-  2484	 */
-  2485	static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
-  2486				      unsigned int offset, struct msghdr *msg,
-  2487				      int remaining_len)
-  2488	{
-  2489		struct net_devmem_dmabuf_binding *binding = NULL;
-  2490		struct dmabuf_cmsg dmabuf_cmsg = { 0 };
-  2491		struct tcp_xa_pool tcp_xa_pool;
-  2492		unsigned int start;
-  2493		int i, copy, n;
-  2494		int sent = 0;
-  2495		int err = 0;
-  2496		int refs;
-  2497	
-  2498		tcp_xa_pool.max = 0;
-  2499		tcp_xa_pool.idx = 0;
-  2500		do {
-  2501			start = skb_headlen(skb);
-  2502	
-  2503			if (skb_frags_readable(skb)) {
-  2504				err = -ENODEV;
-  2505				goto out;
-  2506			}
-  2507	
-  2508			/* Copy header. */
-  2509			copy = start - offset;
-  2510			if (copy > 0) {
-  2511				copy = min(copy, remaining_len);
-  2512	
-  2513				n = copy_to_iter(skb->data + offset, copy,
-  2514						 &msg->msg_iter);
-  2515				if (n != copy) {
-  2516					err = -EFAULT;
-  2517					goto out;
-  2518				}
-  2519	
-  2520				offset += copy;
-  2521				remaining_len -= copy;
-  2522	
-  2523				/* First a dmabuf_cmsg for # bytes copied to user
-  2524				 * buffer.
-  2525				 */
-  2526				memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
-  2527				dmabuf_cmsg.frag_size = copy;
-  2528				err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2529						       SO_DEVMEM_LINEAR,
-  2530						       sizeof(dmabuf_cmsg),
-  2531						       &dmabuf_cmsg);
-  2532				if (err)
-  2533					goto out;
-  2534	
-  2535				sent += copy;
-  2536	
-  2537				if (remaining_len == 0)
-  2538					goto out;
-  2539			}
-  2540	
-  2541			/* after that, send information of dmabuf pages through a
-  2542			 * sequence of cmsg
-  2543			 */
-  2544			for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-  2545				skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-  2546				struct net_iov *niov;
-  2547				u64 frag_offset;
-  2548				u32 token;
-  2549				int end;
-  2550	
-  2551				/* !skb_frags_readable() should indicate that ALL the
-  2552				 * frags in this skb are dmabuf net_iovs. We're checking
-  2553				 * for that flag above, but also check individual frags
-  2554				 * here. If the tcp stack is not setting
-  2555				 * skb_frags_readable() correctly, we still don't want
-  2556				 * to crash here.
-  2557				 */
-  2558				if (!skb_frag_net_iov(frag)) {
-  2559					net_err_ratelimited("Found non-dmabuf skb with net_iov");
-  2560					err = -ENODEV;
-  2561					goto out;
-  2562				}
-  2563	
-  2564				niov = skb_frag_net_iov(frag);
-  2565				if (!net_is_devmem_iov(niov)) {
-  2566					err = -ENODEV;
-  2567					goto out;
-  2568				}
-  2569	
-  2570				end = start + skb_frag_size(frag);
-  2571				copy = end - offset;
-  2572	
-  2573				if (copy > 0) {
-  2574					copy = min(copy, remaining_len);
-  2575	
-  2576					frag_offset = net_iov_virtual_addr(niov) +
-  2577						      skb_frag_off(frag) + offset -
-  2578						      start;
-  2579					dmabuf_cmsg.frag_offset = frag_offset;
-  2580					dmabuf_cmsg.frag_size = copy;
-  2581	
-  2582					binding = net_devmem_iov_binding(niov);
-  2583	
-  2584					if (!sk->sk_devmem_info.binding)
-  2585						sk->sk_devmem_info.binding = binding;
-  2586	
-  2587					if (sk->sk_devmem_info.binding != binding) {
-  2588						err = -EFAULT;
-  2589						goto out;
-  2590					}
-  2591	
-  2592					if (sk->sk_devmem_info.autorelease) {
-  2593						err = tcp_xa_pool_refill(sk, &tcp_xa_pool,
-  2594									 skb_shinfo(skb)->nr_frags - i);
-  2595						if (err)
-  2596							goto out;
-  2597	
-  2598						dmabuf_cmsg.frag_token =
-  2599							tcp_xa_pool.tokens[tcp_xa_pool.idx];
-  2600					} else {
-  2601						token = net_iov_virtual_addr(niov) >> PAGE_SHIFT;
-  2602						dmabuf_cmsg.frag_token = token;
-  2603					}
-  2604	
-  2605	
-  2606					/* Will perform the exchange later */
-  2607					dmabuf_cmsg.dmabuf_id = net_devmem_iov_binding_id(niov);
-  2608	
-  2609					offset += copy;
-  2610					remaining_len -= copy;
-  2611	
-  2612					err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2613							       SO_DEVMEM_DMABUF,
-  2614							       sizeof(dmabuf_cmsg),
-  2615							       &dmabuf_cmsg);
-  2616					if (err)
-  2617						goto out;
-  2618	
-  2619					if (sk->sk_devmem_info.autorelease) {
-  2620						atomic_long_inc(&niov->pp_ref_count);
-  2621						tcp_xa_pool.netmems[tcp_xa_pool.idx++] =
-  2622							skb_frag_netmem(frag);
-  2623					} else {
-  2624						if (atomic_inc_return(&niov->uref) == 1)
-  2625							atomic_long_inc(&niov->pp_ref_count);
-  2626						refs++;
-  2627					}
-  2628	
-  2629					sent += copy;
-  2630	
-  2631					if (remaining_len == 0)
-  2632						goto out;
-  2633				}
-  2634				start = end;
-  2635			}
-  2636	
-  2637			tcp_xa_pool_commit(sk, &tcp_xa_pool);
-  2638	
-  2639			if (!remaining_len)
-  2640				goto out;
-  2641	
-  2642			/* if remaining_len is not satisfied yet, we need to go to the
-  2643			 * next frag in the frag_list to satisfy remaining_len.
-  2644			 */
-  2645			skb = skb_shinfo(skb)->frag_list ?: skb->next;
-  2646	
-  2647			offset = offset - start;
-  2648		} while (skb);
-  2649	
-  2650		if (remaining_len) {
-  2651			err = -EFAULT;
-  2652			goto out;
-  2653		}
-  2654	
-  2655	out:
-  2656		tcp_xa_pool_commit(sk, &tcp_xa_pool);
-  2657	
-  2658		if (!sent)
-  2659			sent = err;
-  2660	
-> 2661		if (refs > 0)
-  2662			atomic_add(refs, &sk->sk_devmem_info.outstanding_urefs);
-  2663	
-  2664		return sent;
-  2665	}
-  2666	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D11651084580000
+
+
+Tested on:
+
+commit:         84d39fb9 Add linux-next specific files for 20251105
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbebc0cb9c2989b8=
+1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D12479ae15958fc3f5=
+4ec
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
+1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D139f532f9800=
+00
+
 
