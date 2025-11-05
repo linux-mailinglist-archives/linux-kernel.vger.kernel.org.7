@@ -1,245 +1,197 @@
-Return-Path: <linux-kernel+bounces-885717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E29C33C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:26:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59105C33C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B4C18C4A07
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193C618C538D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DA7221F29;
-	Wed,  5 Nov 2025 02:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2E822A4CC;
+	Wed,  5 Nov 2025 02:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aMiLjPSr"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010012.outbound.protection.outlook.com [52.101.201.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p6085tZf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88AA1F4188;
-	Wed,  5 Nov 2025 02:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762309573; cv=fail; b=BaMSoE674J9sgCXzbk53ERAY4OJ/4fsdGLgJ3wyFjjhNBmQjjlfQ0Cd/xuYN3U5hH2rQ/nxUdRpYQJNTJadltsPzel1Gs1xAXjz82dA7L+R+kdAeswEqTJhkQWAQ2nr4EbOLRyPjt5oF3AQPN+Wm/vTRTEjcNlm6hFf+VyZr3yQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762309573; c=relaxed/simple;
-	bh=Pjfvl/KbAPJ3kIcXP2kcK7Tke7S+KQtvY91s21r8GaM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a5nDwL19v7dhxPPeGXQOhmrg7IFWUKc3UZqOmpQz/wHJlXUw7lFRySDqRJbgsDkj6C6/VDmEsKbRs3+1Ue8i0vZWKY5ytUocyigUATqgdfr09QFMRa08IrQc16DHN9U4HapQBOqPbQaa7XXrRkrfAI3xc5GTl7T3aIMgo2KDTIg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aMiLjPSr; arc=fail smtp.client-ip=52.101.201.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D5oZqAbcyrgWyVXz7sNc2qmz9qtjaLrImGC8ZRvEkzojGuYpxOmJnDLcn6mCyBgfDJIFCYMAuXR+S/vNYTrFlJWWsIpzG5F0gyRR9YytCf9H9WezdQpqyKmeB0WUlS0yF9hQRBqH1xSQPu9IsrSxCP8g8cBu92cZnQ0wAHxbdNNh93Tj+t3tZQuUarH93eXLy+8ChXNY85rZRkklVK2dCA2ENiXuvs5KEWu+6X6n9swTt3TLj7Se3EzZG0PjIu/7ebtQw9iim1xtt/YwoqaXKdfjXzmWSVDHLJTtea/UuGOQ9BcfdRNXP5tA7MNzGuxi9b5MYz+smbEP684rtsmOZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jBH4Ogd4M9shLHmDEDq4nVRLWPr/bn7dhe31O5DLbw8=;
- b=bmznViT+HVmV3nKNETtZga/OsIj8gsFSG1NntHCQVpb43bvGD7wwtXOBEJH1QYMemRUm9b3Hwe6C+b0QbM+UJR06VRnDNlGEABdyuqvFFWLDkuxO+rxd0+Z9hSx1onoWPxdWs6NSR3EkYK4rdhpC6OZ9GdriE4tYRb3jvgoHyGESeN3ZQVLBLlERbChjAtsngVfxKj+WFGjJfC15tL3HSj0Uxen6x8UM8nSTZcS91DgYGLOvgQeuXVuwZXV1mcS5k+dMJOaK2llJIl7uwGY7zLgvpn1jdnf7Ou8WBqhsr3zASb7ei2Wk2TLXVtPv+dbUpleDXNms4tbQAIRTrkdyQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jBH4Ogd4M9shLHmDEDq4nVRLWPr/bn7dhe31O5DLbw8=;
- b=aMiLjPSrS32s6jkikVJlBuUPWUfU49t4XbIULYHyJTBLN2214m2lwwYxJCFuleAJAAif4hrXlSAIwgzkGW8xcUCNsN0CFOVzQnlfV+WEVxR/BLsczWW5+NMPQDjj+w/4PVLQqpep2N0VTsox9g2uRs/d5sj9yIP9Uw8sQYmodRVLh5ch/ILYR8klXn31qYeeQLvMSmQXTxo/YX7D95iFdijfw6jvcMJES+MmFCGfSEh6E4IJaLEoNLQPQ7fvfwmfmN1tLaRswli2OoXbdeh1t/Jbw1b6LA4u4xwYuR4zyjFHHVTvptJDREvXWro0h6kQuSAhsgW++OBr9OQ5UeYEcg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by MW4PR12MB6876.namprd12.prod.outlook.com (2603:10b6:303:208::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
- 2025 02:26:04 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
- 02:26:04 +0000
-Message-ID: <6c4d9e44-6ff4-43cc-a5a3-9b0cacf829b4@nvidia.com>
-Date: Tue, 4 Nov 2025 18:25:50 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table
- management
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
- Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
-References: <20251020185539.49986-1-joelagnelf@nvidia.com>
- <20251020185539.49986-8-joelagnelf@nvidia.com>
- <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
- <02d37e88-8bfe-45ab-86da-0afa98fa1ebe@nvidia.com>
- <CANiq72mR8jpsi4ekNWM3CZCtVYinjFjUhhnGtF+cNn+Q2qiTOw@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CANiq72mR8jpsi4ekNWM3CZCtVYinjFjUhhnGtF+cNn+Q2qiTOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY3PR05CA0056.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::31) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1008F212548;
+	Wed,  5 Nov 2025 02:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762309613; cv=none; b=ox1t8N9lW3rlFwpH2AwrNa6Oo6yJpblEo15CgUVK6A46w/wgZhMn4jaSSQ+Sg1Tt9UbyQ+6DbRN1YJe6BHW3XLWL7DHRA2iMLubhgRHJ604/5ZE8Tc3K8IOmWTbKCaVOBBNh1+b7GXV4LvjyWp7wEetYPqZ5z1uODiJQnj0BpnE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762309613; c=relaxed/simple;
+	bh=cl329UhLvY1eUGySS9zOB0PA/vLb/1DVdgsoUdvcNMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qXVT1xUMqi3XgrNJubFyKzuM1F2BXq1PGjG7YTvsGAzR7t05DFgXjl8ZtCIHmLvwBtTPAu9sx54cZ7d86wUGPKLaxRlsoR9T6akOr/rXe+x1KhlzJeSFNyHzbzzImK6T1S0/I7LH8j7NU32cyG7mPo3rhZxUEPMWBYwdWIqGRcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p6085tZf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A4KfmEg2904307;
+	Wed, 5 Nov 2025 02:26:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IEY0M6R23/BS8mR0Tg9Y8Wdg6If3RyMSXoF8BV/dzbI=; b=p6085tZf75yOTwhI
+	4V++P+/mUvwomrZ8BdRjan5lqG+CyM839T/Gfe3GJFyliEUX9sumkIM+c/JLwwUX
+	Y0FsEqzhvrqIvU1peyrIqYcWNiHA0nVcDfzh313lCX/fh2Pd/k95GmVK0I+yZSO4
+	0VW4RH2JB1CLUBltL9D6WgyP9saWRo1TRxBPPI5Od1rqf6ixcjsdDzClRDGhyHFa
+	dyvvEcx7uw3WL3HMj5f701IQmbmQ01eBmX4jEBTDVPUmuO+dpowUGpRTFAOzkRN/
+	8nYp4uoj6wnVa9PlIlj/CuDpV81kwj35KIpZiJB0B+iVZa2azo1udRlbXqlXHbut
+	f1IGVA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7mbbsrre-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 02:26:36 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A52QZEV003415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Nov 2025 02:26:35 GMT
+Received: from [10.253.38.19] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 4 Nov
+ 2025 18:26:32 -0800
+Message-ID: <e9facb3e-1f35-46e4-a1d4-a377ecdb6d4a@quicinc.com>
+Date: Wed, 5 Nov 2025 10:26:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|MW4PR12MB6876:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9bf6c1b3-b11a-4df5-45c8-08de1c12ab5d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aEFzQlk0MEw5d25zNHduR1p6V3lOUjRsMUEvM3ExOVFxRjBkODR2Q3E0NnVu?=
- =?utf-8?B?S1Qxb1A0SDN5alRzZkVhSCtSeUc4YlNSSUZlbkE4dGlUNi9RQUJlOGN0ZmFm?=
- =?utf-8?B?dVpJa2x4ZmtibGFMNzhvWm1vMzZYYURlMFAveTZrSEJZc0Ereit4RjFQblFO?=
- =?utf-8?B?Z3dsQTZVbTgva1FhYk9BRk9zdHlhaU5jZTlVMk5sSHdveWtNSVZUSWZYNVBs?=
- =?utf-8?B?VnZJUWc4U1EyWThEYWp4aW0yTVplZ0YzVjF1anorQjNwVFlWNm9IMHJ0ejFD?=
- =?utf-8?B?OGRUY2tkOXVUVE1xV1d1KzJYRjZIRTU0Q3NtNjhqSzhtTkl0TWRmWnJPVm0w?=
- =?utf-8?B?cHU2bmZReVRnOWJ4cjNoMG9qbHlxTk9tQ3hqZ1pqSW1SQmM0UFlFY0VuVnlj?=
- =?utf-8?B?ZXNydEN1VW9jeHgxLzRndVQ0VjRNNGRCRUFSYytBWXR1NDcrK1REamJQSFZL?=
- =?utf-8?B?TTg4RURsN2tONWJ6QnFUcEI0Rmg2MDMyUG81ZzJWWHczNXYxa1NBRlY4c2lx?=
- =?utf-8?B?SnE3SXJEM1VVRExxRjFRb0ZRUEZmc2RNTDBJSldKQ2laQlpMaGNVaUI2SnlI?=
- =?utf-8?B?ZzhBQ0lqbUZtTmlmbFpqRlVDaE1mcmhTaUplVzdiZDhheWdFQko0a3RRcGd3?=
- =?utf-8?B?ZEk2aThqL3JhTHBtL2ZMQjVSUzdycWVDQ2NFRi9JSWZ3SXd6NUFQdUpjMDFm?=
- =?utf-8?B?ZVhMN3hSemNreXpRNTlGclE1RnYrT1BxZjlMRzhSeXk2SEZpNE8xVFNDUHVG?=
- =?utf-8?B?bTJkZDhMUGVHUU9zS2EzcHBmRHZadUQ1OUNUUm1KNkdKMUs0bTY5Y1l4YkFs?=
- =?utf-8?B?V3ZvZk5mRlc1b3p3a0tNL2VuOEFBcHRWWERjTmlIc2xVWGlJTFNabldjQlBC?=
- =?utf-8?B?VmZtQThMYmNyWnV2SGV3RmExZTlxREJTdnliRE9sY3NUcmNHamZGT09WMEgz?=
- =?utf-8?B?S2YwTUlZLzVOWUR5NjlmckM0QmVET3BibUp5MVlLQ2gyZjM0NGl0bUNsZHNJ?=
- =?utf-8?B?STB4RjFqbnhHcmF6TzhpV1lnODN6Y3hvRzlrTGpFSkpNMm00dWlMNUhMeC81?=
- =?utf-8?B?Sm9pWVNHSHhMRDNsckJSOGhkeWpRTkw0NENUL0pHY2xORGpaZ21VdTZEL3ZY?=
- =?utf-8?B?V1NNa0YvMVZRUEhvNVRVUDBoMW1hYzh5N0ZvUU9NczNBVEVzUDk0bUgveUw5?=
- =?utf-8?B?N2svUTYwcXQvd1l1MzF0OGl1a3NwQkJEakk3cXM0N0JqSGkvbGNpdFcwNmJu?=
- =?utf-8?B?K2pNM09IOXJkYjREdUFhUmZVem53VjkrTzZxVnZBMW5PTDljRmw1Lys2V2ZQ?=
- =?utf-8?B?OHRGYnlLbExGUlhINzJweVFldjBhdUErT3pyeUNKLzFRcGxMbS92N1JYUFBO?=
- =?utf-8?B?V3BOWnV6WW9PM29XV1JaME5kc0hBU1dpVlFLR0U5L2xlcjA0V3JuYVFUVzRI?=
- =?utf-8?B?Y3VteldkTlhHQU9WYjUzRXE5U1gveDZic2lLRjU0QWdBZHF2SFU1Tk9XaHZF?=
- =?utf-8?B?YVJDcDVlYnlMbnBUMGFKbllvaWdnNU1vMjFseFd4VU5waDM0ZFhoY2JCV1Bk?=
- =?utf-8?B?eDFudjN4KzN5dE82TVBXMHpEOVV5ZDhZM2pCQkpYYVRyZlpEai94T000TnVO?=
- =?utf-8?B?RVhWRkdIOXo1dFc3SmJtc2FUN1UxSnBkUVZpWlBhZzhLN3ZEcFlmaFZSaXgr?=
- =?utf-8?B?a255QXdha3d4eTRlWVZKbktTU05mcWZrK2YxRHlscm1JMi9rRjNKOVBJU2cz?=
- =?utf-8?B?OXM3ZFk0VElhaitHVENpRGxoUEZBOFVHNDBHV0U1WFlORFdZZ3pka29Yd0NT?=
- =?utf-8?B?M29BNFZaSnA0V2ZQWk5iZW9uaC9OTmpTdUUrWm94VENHaUZlVlFKdUZJMkZK?=
- =?utf-8?B?V3V2NTJubGJmRmtEWlM3ZWpCQzNLWDBTT0VHQmVtZzZlYlVob2ZUM2RLazRV?=
- =?utf-8?B?TDlZUTZmSGhUMGhnY1ZTZU16ZER4ZGRLY0Y4anNJQzlrRnFDaERWbHd3a2VM?=
- =?utf-8?B?NVhVemVnb1hRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUFxc1lEVVBEaE1aSFRnSGZjSURyNStzblJ6UHExRGVjd3BtSlBDZDJQdW5W?=
- =?utf-8?B?bzlHdzBWckE1NTE4U3luZFYrR05ibnRjSk84NlhGZ215QU9sUnh1RWRaL3VU?=
- =?utf-8?B?dXJ2aTM2YmZ2T0lvMWEyeFlWSFh5Q3dmNFR1THBIZnkycVhSMlFsNTJiZlho?=
- =?utf-8?B?ck50am80NXhuT3MyVmh5VWlDa1ZSNEs4dkxmLzNhaXZpaENkSURNSFVCdUZM?=
- =?utf-8?B?SmFsc0Q4TTlOME1kWlR0OStSNzRXV0pLd0Y0UHBrL0VobmsvdWNqTDJ6MnJS?=
- =?utf-8?B?NHRjZlFkYW9VTkIyQis1UkU4dGh3VVdYd3Y1MnBieFRScXVQUkhHa2hBYlp4?=
- =?utf-8?B?MkNjTEFYMnFtY0RKOFNqV2lmQWRsbWMrUGVnaE1wSUkySVM4YllObHFXbjVt?=
- =?utf-8?B?Rm9BSlRFMUo0cUdSeVN0Z1RFTVJEdjYxZ1ZYN1JldEV4ZW1iQnVEZGQrWXZu?=
- =?utf-8?B?K09FVDRCMjFIbWlybGkxajNQcTltM3JXaUpNZVhFdFRYRDFyejFTOUNCRW9M?=
- =?utf-8?B?WS9GQnQ4bDlQbzU3SW80MVJRVVNaakNxbTFDYzNhdENJL21ib3ZhOWMwRm5s?=
- =?utf-8?B?T01yOTVjSGEzb3VkOCtJMUZoSEhEcGJmWXFMRzd2c2hoNnZ1blc5VVJ3WEF2?=
- =?utf-8?B?YmRhSHRabVN1d1RhcmlDOTArdWYxRnNRU1FMM2c3Y01wWFE0eXNHNzYyK0ls?=
- =?utf-8?B?ODFGNUQrSC9tZmptYm4rYy80cmMyVDN6Nm1tbnZtdmNjOWF1bmt4WUljMW9T?=
- =?utf-8?B?T2RWbWFjeHBCSDkvQmdhWEpJQlZKcy9MUk43akNYQVg0NEE2cGJXcW5sUm5v?=
- =?utf-8?B?YjFMdDE5WlVFY2VXWFhuN2Y2R01UUkYzTndFcWxZVjhBdks3anFWdVIrWVBL?=
- =?utf-8?B?WVRtMU54S2RIa090N0NGeUVhbldCSGkwZnZacUxydXhHSURJK09mMlEwaWhy?=
- =?utf-8?B?VzlRTEVPcjI4ZU1VNUw3dDVndnJWaThYTlllT0ROeWVWUnJ1L1Y3RjlkQ3BN?=
- =?utf-8?B?TGRObUxXblpwTHd3WFI4VG5XZGdwMjFFWEprY1ZWVHJtQXI2b3d1VUV0SmdG?=
- =?utf-8?B?SlZwTE1uYkgvTGcvcFZ1VWNDb1ZSYW44RTh4UTRTL2g2UGdMWXB1SzBaV0ZM?=
- =?utf-8?B?TWlUbWNKYU5COG1LOElnTm1vUTJJckxBdVJpRkI1ZWU3KzR5bHk5c3hpcHFG?=
- =?utf-8?B?eXRyamdvb3VNOFVzTmJCNC9lSEtnQ3VEcEdkaVRtYzJ2QnUvdEdBY2tzYVEx?=
- =?utf-8?B?SGhNT2Z0NFNXN0JiYjlJVHZjamFlSFl6NzF0VE9BM01pRERaT2JWcHN1R29O?=
- =?utf-8?B?b3RRUW9PM01sbUJsRnRBbGdSUE5xTEJwVGxYdTQ2R2RVVzBIdEdSU2NpZjM0?=
- =?utf-8?B?VG9Ocy90SzcyTjFqU3ZmeHBIS0VBNFkwREdOOXpPRjZkOHppdCsvMFZuQTg1?=
- =?utf-8?B?c1pUZTc2MjF6TzRIWEZ3emVpSk0yRW85Yndpb0d0am84eXZ6TDRzOG5hT21m?=
- =?utf-8?B?RG90aFI5NGU4aW85VHRXdGM4MHk3YjBwQVhWRTAyazArV0ZzL29mR2NCd0wz?=
- =?utf-8?B?OUxWRENqNWY2NTBFaHdTcjFtaGNPWUZjMHA5c3M5bGZnMFlZcHpNNnMvRTVZ?=
- =?utf-8?B?K1IvVzB1bFlZRTRpWWExWlJOTjJiT0lrMEM3T2c4MkE2MEl5K1RtVjFtNEVS?=
- =?utf-8?B?OVBxM050ODdPOXRRcnpiMlBiZG1TTWN4eUFqV2dTWXNudGx4cDZHT3ltVkNW?=
- =?utf-8?B?STVkVTB1RWg3bFpzdUptWUxkYS9BSlFuV3h3M2VPY1M2VDgzYm5hMkxBalA0?=
- =?utf-8?B?Njl2S2F3bk80KzVSR3dkV1B3NzRIQU9iam8ydG9BdjlCeXVyRk1weWF0c1FT?=
- =?utf-8?B?QTVrWCs3R0xIenoybzdrRFQwVWRveHFYOWVVSVgrLzN0SzZMajhva0J4V2JR?=
- =?utf-8?B?dkFxTTRaSjZSTm15WHNkbDU1bXlnWUVLbERZc2dObnB0MndFV0hyWlh0aGRk?=
- =?utf-8?B?TzZHaURLcDhvckVZSTBGZE92UXJVdU1IUUFlOVBPL1ZvS0dwdEpOTTRmNU91?=
- =?utf-8?B?WUZ3U0QyZFg1cXJyVTJBOUdqS0syeTZMZE5UNUxGODhFVS9iOFQ5SFBPTG0w?=
- =?utf-8?Q?SCspa+FKNteFQMP2H7cxOIjAD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9bf6c1b3-b11a-4df5-45c8-08de1c12ab5d
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 02:26:04.5541
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n6gJW4//IcOZvqwJW8G0vR2GKYo7YRGQB3BDX9HebR59Y3aGgTGJ6fO/0/URb2XpEt2sZOUxGpfqA9cZJLi96Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6876
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Fix SSR unable to wake up bug
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
+        <quic_chezhou@quicinc.com>
+References: <20251104112601.2670019-1-quic_shuaz@quicinc.com>
+ <0c54ccc4-0526-4d7a-9ce3-42dde5539c7b@molgen.mpg.de>
+Content-Language: en-US
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <0c54ccc4-0526-4d7a-9ce3-42dde5539c7b@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Zk960QH5Zp8rsCGVjSXKMPswKoyO9AVG
+X-Proofpoint-GUID: Zk960QH5Zp8rsCGVjSXKMPswKoyO9AVG
+X-Authority-Analysis: v=2.4 cv=MK1tWcZl c=1 sm=1 tr=0 ts=690ab5dc cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=b0gxvoJzpcTEPALTQqYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxMyBTYWx0ZWRfXzWw4wTuVVJlF
+ T3wHim4Z7bQaTuDTDJuEV8J9/guLy8aoR/ychn2995t/z+V24mI4+wyG2PgIJUsgM9jREQ/+PU8
+ 0l+B1+C8CYgLOZBPs2N/sXkri+790MTSBnks2c+OuJiN2vpQcmZBrH1rBYz7H30tLgkczmY/uHj
+ Qj1V3Ky8yaMsy/P2WNqFr9/ifbfBtkHsdikHYX81R2sSPlbfrIgiR1UnkivZqK913/lrIWbf2gS
+ /PQMJLCYQsa0y9d/mewsSpCE4sDUulbmLyV7EN7Ay0IrlN7xt1zn4aqCFFQMRd2Y5C2UD9dsmAD
+ 9XuBXjNGYKz2ajIMlNvpVGwFjuiFw0rTDXz9AqBfiPsj9t17L+3pVaFCfzEeSWysL724GP+Myws
+ cMVMo6jHbncm7cFBCU7zeDgXorTQYQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_01,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 clxscore=1015 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511050013
 
-On 11/4/25 9:56 AM, Miguel Ojeda wrote:
-> On Mon, Nov 3, 2025 at 8:29 PM John Hubbard <jhubbard@nvidia.com> wrote:
+Hi Paul
+
+Thanks for the feedback!
+
+On 11/4/2025 7:43 PM, Paul Menzel wrote:
+> Dear Shuai,
+> 
+> 
+> Thank you for your patch.
+> 
+> Am 04.11.25 um 12:26 schrieb Shuai Zhang:
+>> During SSR data collection period, the processing of hw_error events
+>> must wait until SSR data Collected or the timeout before it can proceed.
+> 
+> Collected → collected
+> 
+>> The wake_up_bit function has been added to address the issue
+> 
+> has been added → is added
+> 
+>> where hw_error events could only be processed after the timeout.
+> 
+> The problem is not totally clear to me. What is the current situation? Maybe start the commit message with that?
+> 
+>> The timeout unit has been changed from jiffies to milliseconds (ms).
+> 
+> Please give the numbers, and also document effect of this change. Is the timeout the same, or different?
+> 
+> Also, why not make that a separate commit?
+> 
+> Please document a test case.
+> 
+
+I’ll fix the grammar, add a commit message to describe the issue, 
+include a test case, and use clear_and_wake_up_bit for atomicity.
+
+Additionally, I will submit a new patch to explain the timeout unit issue.
+
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+>> ---
+>>   drivers/bluetooth/hci_qca.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
->> As Joel also was hinting at, is there any easy way to get this sort
->> of thing automatically checked? This is what scripts/checkpatch.pl
->> helps us out with on the C side, and maybe it is also the right
->> tool for Rust...?
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 888176b0f..a2e3c97a8 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -1105,6 +1105,7 @@ static void qca_controller_memdump(struct work_struct *work)
+>>                   cancel_delayed_work(&qca->ctrl_memdump_timeout);
+>>                   clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
+>>                   clear_bit(QCA_IBS_DISABLED, &qca->flags);
+>> +                wake_up_bit(&qca->flags, QCA_MEMDUMP_COLLECTION);
+>>                   mutex_unlock(&qca->hci_memdump_lock);
+>>                   return;
+>>               }
+>> @@ -1182,6 +1183,7 @@ static void qca_controller_memdump(struct work_struct *work)
+>>               qca->qca_memdump = NULL;
+>>               qca->memdump_state = QCA_MEMDUMP_COLLECTED;
+>>               clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
+>> +            wake_up_bit(&qca->flags, QCA_MEMDUMP_COLLECTION);
 > 
-> We have a few patches for that script (including for at least one of
-> the things above), but lately I have been thinking we may want to have
-> a different script or tools, ideally written in Rust, to encourage
-> contributions and reviews and tests and so on.
+> `include/linux/wait_bit.h` also contains `clear_and_wake_up_bit()`.
 > 
-> Moreover, for some of the cases above it is better to put it into
-> other tooling like `rustdoc`, Clippy, `rustfmt` or even klint,
-
-rustfmt sounds like a nice user experience: fixing things up
-upon file save then becomes possible.
-
-> depending on what it is -- over time I have opened quite a few
-> suggestions and some were implemented and work great, see e.g.
+>>           }
+>>             mutex_unlock(&qca->hci_memdump_lock);
+>> @@ -1602,7 +1604,7 @@ static void qca_wait_for_dump_collection(struct hci_dev *hdev)
+>>       struct qca_data *qca = hu->priv;
+>>         wait_on_bit_timeout(&qca->flags, QCA_MEMDUMP_COLLECTION,
+>> -                TASK_UNINTERRUPTIBLE, MEMDUMP_TIMEOUT_MS);
+>> +                TASK_UNINTERRUPTIBLE, msecs_to_jiffies(MEMDUMP_TIMEOUT_MS));
+>>         clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
+>>   }
 > 
->     https://github.com/Rust-for-Linux/linux/issues/349
 > 
-> If someone wants to help with some of that, of course, please ping me!
+> Kind regards,
 > 
-> I also had a bot I wrote back then when we used GitHub, with quite a
-> few checks (especially around development process for newcomers to the
-> kernel, e.g. using the right SoB and tags etc.) which people seemed to
-> appreciate (to the point of someone mentioning it in a talk... :).
-> 
-> A long time ago I asked about making the bot send messages to the
-> mailing list when we migrated, but it wasn't OK'd back then. I can try
+> Paul
 
-I'm grateful for that. I think tooling provides a much happier
-work environment: you can run the tools locally (and we can put
-than in a submitters-checklist.rst), as opposed to getting an
-email after posting.
+Kind regards,
 
-> again, or perhaps it would make sense to make it send messages in
-> private.
-> 
-> Finally, nowadays, I imagine an LLM could do a reasonable job for some
-> of these as well, if there is available AI time somewhere (please see
-> my reply to Joel on that too).
+Shuai
 
-Very true. I saw that. Yes, once we know what the AI should be
-reading for instructions, could help spot issues.
-
-
-thanks,
--- 
-John Hubbard
 
 
