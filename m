@@ -1,174 +1,152 @@
-Return-Path: <linux-kernel+bounces-886543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0368C35E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:46:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921ADC35E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E21E5636DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005EC18C6B11
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDCC321F5E;
-	Wed,  5 Nov 2025 13:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7EC19C556;
+	Wed,  5 Nov 2025 13:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQgnocUK"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="c3cD09nn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1392F1FD2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73A3321457;
+	Wed,  5 Nov 2025 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350284; cv=none; b=fi+32cM8I+IPitYpS6A4qnmuX2aYToyCX0nD3bQmqB4SH/Y/1GN9Mx7IzrpV+KJrJAjHmrUCEKegGTavxJW1V7453xtxZ04ltiU4lZbP95i/qUykO5JS4StOx3HsHlyJn912Eq/7+DtqPm1R05zPZo4nKlKWWgIRfOEImMLN4FI=
+	t=1762350313; cv=none; b=QbuSt2pX8NDsN0qlNeHRW5vlgO3gsBQy3W/0yDjk8cNqHUtPqz7Q6dyyq6j9tReG9yvXHnGdLXH5eV25LWme2VkkIrqfEqiJOzhy2mez0F0rrqK3OH+ZIkzrpM/pj3kVk3BeQDQ8X5G9z3PbdG5l1XtAF+Y6fYW+SB1TTGsUmo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350284; c=relaxed/simple;
-	bh=Lt/dlDoXaaRvBcACYFJ/k2lWmDZMa8qMR2ImcS7UhPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMQU4xGkdbL8PLKhySxSMZOkF7Po1ihx7WI0wX0+bDCLv91HLa/xpikQe/fm4m0YJe1FPtj12raX2X5Es7TeL0NaeBDEdum8h5fSQMLjHBJOZnlS0zP69TIeEUSlywTImj8ZffsS25uP6OB1HTP3p/XRmy3zvH8RiSOavTtpilA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQgnocUK; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-294fe7c2e69so64001785ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:44:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350281; x=1762955081; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qozxgj9+n8IudzDS4TqAFoNwmAmvO9fyBs0Aa70Hb2o=;
-        b=nQgnocUK0lkSKmfZeO2srLhYh108g+Cty8SK/XAqpc4FL/KSHMIJ+54Bgw8Lbw8k11
-         u+MoyzmGc2/tCCxDvoWSe63OAqIqw7VP/UXlLrrMTtke4pAgRCuCvi72hGDzP8RqCWhV
-         EPAZpNt+FxFhDM438VlS1xThgUe/F1KsJCXVVLY7g8aC8w/qMYSHZj6S6wfRIfcAxXfk
-         +zAcbOT5QcLv/jXl9UKSAes4Y0o/P7S34zvlz/fcyZi44B014+3UQ7VRbA4bd1aBjDeS
-         JrxcVehE+Fm53TTR94A/5Vm4xy+1kH85oMBG1OdwSA1i4eA3S5bMP8Nqu//jrsGTgtNS
-         0rrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350281; x=1762955081;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qozxgj9+n8IudzDS4TqAFoNwmAmvO9fyBs0Aa70Hb2o=;
-        b=DTtvlihoNYMuQBIgxVXnQDKPj6UPFNdhVU3PgQoURsb3HS7vow6H6YJM+cFWCZsg0f
-         98nFx68kJcybQ+uah/NBDN1TvGF04ZPUuhHQs7NjfRl+iSHqUPxUZy4K+aRce8NgYk4h
-         4Gd/1oC3KOb3R474UDOSh0lc5mTSeGjeyIAksnWP/SP7PoXDhaj9gar/JIuK4sp+RkrH
-         Miw3PYecLrxq+XB1aBj+7xyzkV6REBNzFqxekB21FsYC5M+xcKxk9x5pwMMerAfH7XOR
-         AC3LNQAqTyZUinkyZPL0MALSJu9w+5xEQbg32aqLDEXYuz/UBIzLthCgSooOhvXPaJHf
-         fDXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Xx45I3nQ/UiUavoICJkLWk9MoidCWcE7cb+I8OoMNm3+uqIg/qhdR7tJ4IKfW2aL8kHNFEqCT8qaJCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVleiDniUUncN1+ANuwReM0nBms+Js4zrCtVE7PsiFpRNpFpfn
-	FD11tAyDHN1BzV0PUDHLA8eD5bremtoqqTOaHW0GNvspBNw2utdOcLv+Fkwt1h2qNZxEGkm3G3A
-	5iOazJbliuupLZBOIEQgByPenX7RjBu0=
-X-Gm-Gg: ASbGncujif1b6scbGsdYHUFSI2R3dlyZSUycvI53U9sg3ulRRcUOlXBR4MG9f0bCJ/C
-	EJimVLmoOAX6CDyWQ0sq74IDOuU1XCfLhgYM0AHSjVUGfqbI6I8EXEySIG78P9GYD+aAdVy9Fpd
-	Gsuo3qodqb6gRLY8YOh1LW/zI4ffnfhpUBLonbIZY40yQUyGJs4X9NCS+IK6Coz+89uRAaRTs3F
-	0KAFThyPnvUcPNHM4b05xX2BPYz6sG+CRMJ5EcEY7Cfy1Na1fWsYdp64g8Jmg==
-X-Google-Smtp-Source: AGHT+IGOJWY9um79qVuxu4njBLsN3GbMeipdERxJ3YAlKCuabjVwh3d1X0BvNDhx4+pngzesRjCSQ9dXqon7QtnjBCc=
-X-Received: by 2002:a17:902:ef09:b0:295:5d0b:e119 with SMTP id
- d9443c01a7336-2962adf02f0mr47786145ad.26.1762350281231; Wed, 05 Nov 2025
- 05:44:41 -0800 (PST)
+	s=arc-20240116; t=1762350313; c=relaxed/simple;
+	bh=yKNA3oVVzi0L+e9kUYLujTvxg6mYCSlJKCPM3ACEjxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nu6zn1Oviy4M3zhr1UnXAP9qA/nfNvjAhaJGhDAIJSgWeoxCypFa8gxg75/9DTB8BBifMIpYx4GLjjNthvWQxhGu4jrEnyBu76LWYECVWP9IPSeYglQBNcmf+nrUmFlNQac/K957s6xFeE2Zjf3tp7kS4UJfn+YtjF7Tbyi8Jno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=c3cD09nn; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=YiTt2ITrdK+2NIR80LhtxcCKhBuNYvfqzXfa02zC0r4=;
+	b=c3cD09nn1x1DhCqk/InIc45fPVO+PRgaAIOZbswRlbPpyVROl0Ezg0/pwzkHJy
+	LOY8TwPUbB6itnHttrPB6s9CPJuwDz/OYXl9jFkOr16uRoH++rHsVGM3I4f10njn
+	ptiXOscQlRzDpe0wtVdrLmVhaNt3LtOUf/iphrP9X1VmE=
+Received: from [IPV6:240e:b8f:927e:1000:46aa:8d7c:6cdf:9166] (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCXW0_NVAtpSH37Bg--.5793S2;
+	Wed, 05 Nov 2025 21:44:45 +0800 (CST)
+Message-ID: <0bc327b3-ea1d-4d70-ba51-e79fd386f6fe@163.com>
+Date: Wed, 5 Nov 2025 21:44:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919183042.273687-1-marek.vasut@mailbox.org>
- <CAH9NwWcK_z_4CcDBRYS2nf3AxYV9-XwirvTd+O9uJtHMhyA3Og@mail.gmail.com>
- <CAH9NwWdkjpV5YHmOpuCE=f7RVm1kXzqAOgN6=Sx1s-wxO_SGGA@mail.gmail.com> <4ac9dd98-adc8-4be9-9f5c-4e653f656453@mailbox.org>
-In-Reply-To: <4ac9dd98-adc8-4be9-9f5c-4e653f656453@mailbox.org>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Wed, 5 Nov 2025 14:44:29 +0100
-X-Gm-Features: AWmQ_bkTuB0eZgSzf5gvoRARCsMfrXaYv_vl3dBWTq6IB-6XyDxKZI40c5vqEcA
-Message-ID: <CAH9NwWd+1MSBGdn6G0zRQgmC7cHCmG3BSxeDUQV-waMG75E2KQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP r6205
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Simona Vetter <simona@ffwll.ch>, etnaviv@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] PCI: of: Relax max-link-speed check to support
+ PCIe Gen5/Gen6
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bhelgaas@google.com, helgaas@kernel.org, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+References: <20251101164132.14145-1-18255117159@163.com>
+ <6fdc4f2c-16fa-9aed-6580-759e229e5606@linux.intel.com>
+ <eba1f55e-3396-052c-0d77-09bf8b8c8216@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <eba1f55e-3396-052c-0d77-09bf8b8c8216@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCXW0_NVAtpSH37Bg--.5793S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGw4xZrWDKr18Jr1rKw1Utrb_yoW5GFyrpa
+	y7AF1FkFW8Xr43ur4vg3WFvFy0qF9xJrWjqry5Gw1DuFnxKF43JFyS9F4a9Fna9r4xCr12
+	qr43tay3Gw4jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U45lnUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCww9lCWkLVM92hwAA3o
 
-> On 11/4/25 4:50 PM, Christian Gmeiner wrote:
-> >>> This is the GPU/NPU combined device found on the ST STM32MP25 SoC.
-> >>> Feature bits taken from the downstream kernel driver 6.4.21.
-> >>>
-> >>> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
-> >>
-> >> Acked-by: Christian Gmeiner <cgmeiner@igalia.com>
-> >>
-> >>> ---
-> >>> Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
-> >>> Cc: David Airlie <airlied@gmail.com>
-> >>> Cc: Lucas Stach <l.stach@pengutronix.de>
-> >>> Cc: Simona Vetter <simona@ffwll.ch>
-> >>> Cc: dri-devel@lists.freedesktop.org
-> >>> Cc: etnaviv@lists.freedesktop.org
-> >>> Cc: linux-kernel@vger.kernel.org
-> >>> ---
-> >>>   drivers/gpu/drm/etnaviv/etnaviv_hwdb.c | 32 ++++++++++++++++++++++++++
-> >>>   1 file changed, 32 insertions(+)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> >>> index 8665f2658d51b..32d710baf17fe 100644
-> >>> --- a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> >>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
-> >>> @@ -196,6 +196,38 @@ static const struct etnaviv_chip_identity etnaviv_chip_identities[] = {
-> >>>                  .minor_features10 = 0x90044250,
-> >>>                  .minor_features11 = 0x00000024,
-> >>>          },
-> >>> +       {
-> >>> +               .model = 0x8000,
-> >>> +               .revision = 0x6205,
-> >>> +               .product_id = 0x80003,
-> >>> +               .customer_id = 0x15,
-> >>> +               .eco_id = 0,
-> >>> +               .stream_count = 16,
-> >>> +               .register_max = 64,
-> >>> +               .thread_count = 512,
-> >>> +               .shader_core_count = 2,
-> >>> +               .nn_core_count = 2,
-> >>> +               .vertex_cache_size = 16,
-> >>> +               .vertex_output_buffer_size = 1024,
-> >>> +               .pixel_pipes = 1,
-> >>> +               .instruction_count = 512,
-> >>> +               .num_constants = 320,
-> >>> +               .buffer_size = 0,
-> >>> +               .varyings_count = 16,
-> >>> +               .features = 0xe0287c8d,
-> >>> +               .minor_features0 = 0xc1799eff,
-> >>> +               .minor_features1 = 0xfefbfad9,
-> >>> +               .minor_features2 = 0xeb9d4fbf,
-> >>> +               .minor_features3 = 0xedfffced,
-> >>> +               .minor_features4 = 0xdb0dafc7,
-> >>> +               .minor_features5 = 0x7b5ac333,
-> >>> +               .minor_features6 = 0xfcce6000,
-> >>> +               .minor_features7 = 0x03fbfa6f,
-> >>> +               .minor_features8 = 0x00ef0ef0,
-> >>> +               .minor_features9 = 0x0eca703c,
-> >>> +               .minor_features10 = 0x898048f0,
-> >>> +               .minor_features11 = 0x00000034,
-> >>> +       },
-> >>>          {
-> >>>                  .model = 0x8000,
-> >>>                  .revision = 0x7120,
-> >>> --
-> >>> 2.51.0
-> >>>
-> >>
-> >
-> > Applied to drm-misc-next.
-> Thank you.
->
-> I _think_ I will try to respin the flop reset patchset next.
 
-Gert told me on irc that he has reworked the series already and just
-needs to do some testing. Maybe wait another 1-2 weeks
-and/or sync with him directly.
 
--- 
-greets
---
-Christian Gmeiner, MSc
+On 2025/11/5 16:45, Ilpo Järvinen wrote:
+> On Wed, 5 Nov 2025, Ilpo Järvinen wrote:
+> 
+>> On Sun, 2 Nov 2025, Hans Zhang wrote:
+>>
+>>> The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
+>>> but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
+>>>
+>>> While DT binding validation already checks this property, the code-level
+>>> validation in `of_pci_get_max_link_speed` also needs to be updated to allow
+>>> values up to 6, ensuring compatibility with newer PCIe generations.
+>>>
+>>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>>> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+>>> ---
+>>> Changes for v3:
+>>> - Modify the commit message.
+>>> - Add Reviewed-by tag.
+>>>
+>>> Changes for v2:
+>>> https://patchwork.kernel.org/project/linux-pci/cover/20250529021026.475861-1-18255117159@163.com/
+>>> - The following files have been deleted:
+>>>    Documentation/devicetree/bindings/pci/pci.txt
+>>>
+>>>    Update to this file again:
+>>>    dtschema/schemas/pci/pci-bus-common.yaml
+>>> ---
+>>>   drivers/pci/of.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>>> index 3579265f1198..53928e4b3780 100644
+>>> --- a/drivers/pci/of.c
+>>> +++ b/drivers/pci/of.c
+>>> @@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
+>>>   	u32 max_link_speed;
+>>>   
+>>>   	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
+>>> -	    max_link_speed == 0 || max_link_speed > 4)
+>>> +	    max_link_speed == 0 || max_link_speed > 6)
+>>>   		return -EINVAL;
+>>>   
+>>>   	return max_link_speed;
+>>>
+>>
+>> Hi,
+>>
+>> IMO, using a literal here is somewhat annoying as it's hard to find this
+>> spot when adding support to the next PCIe Link Speed. It would be nice if
+>> it could get updated at the same while the generic support for a new Link
+>> Speed is added.
+>>
+>> Perhaps include/linux/pci.h should have something along the lines of:
+>>
+>> static inline int pcie_max_supported_link_speed()
+>> {
+>> 	return PCI_EXP_LNKCAP_SLS_64_0GB - PCI_EXP_LNKCAP_SLS_2_5GB + 1;
+>> }
+> 
+> ...Or maybe put it just to drivers/pci/pci.h instead.
+> 
+>> Then replace that 6 with pcie_max_supported_link_speed().
+>>
+>> So when the next speed get's added, somebody grepping for
+>> PCI_EXP_LNKCAP_SLS_64_0GB will find pcie_max_supported_link_speed() has
+>> to be changed and the change will propagate also to of.c.
+>>
+>>
+> 
 
-https://christian-gmeiner.info/privacypolicy
+Hi Ilpo,
+
+Thank you very much for your reply. Your feedback is so great. I will 
+resubmit a version. Thank you again.
+
+Best regards,
+Hans
+
+
 
