@@ -1,93 +1,102 @@
-Return-Path: <linux-kernel+bounces-886990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543BAC36F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE137C36FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F4B1A24607
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACEE1891BB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06205344027;
-	Wed,  5 Nov 2025 16:58:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2636D3446C6;
+	Wed,  5 Nov 2025 16:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQGTUh2j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589B3324B19;
-	Wed,  5 Nov 2025 16:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5792D337115;
+	Wed,  5 Nov 2025 16:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762361907; cv=none; b=IVMWKZuAKpChghcAOvVGt0J2rNRjXKsrmwFsZ8bHxpNICT5o8nJKfrWte90FYEQ0knLf6RHXCYafakylca6QVcF3hAcqz8s3qQQnFOHgXNdZeVI0yE/wABdSiqehxv2Bunps1xaHmw1Jc/Pe3bSWEW4KQMu7hpYRIn1LCcWLQHU=
+	t=1762361944; cv=none; b=VpTj8ewDoPOelevY+VvIfm8yMRlmN5e6J/mYpRwzwE/+qy39/p2nzO6DNcYUjScD6SuAKGjpPCdqwjXXSS1+LYNSoWPDew2ZjApQPwjdDWPNcDc9eyfpX+x6jmcbelo+fw3TN83vttHgnX7UEKzRqw5hwNsaHGDRejDcj4rSOTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762361907; c=relaxed/simple;
-	bh=9xrSG4KwzBel0h3uoDLn9/0RebfvkZQ771TsmVilbdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YeenuwE8gdFhECj8IrAna1S50ZFo1y0jPHadm8QrZPPjXe5Kg6VuovRQcDtt3npMlvFWV+6TzRdBs+tvqfNrSP0A5UVmibSdJu2adVH1RFgR3o3a4GbXl55MvwLrqS5DKKlc621EoiaM9eA3vwV6S3SDvobPl8yke+rk+2oAK4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d1s2c4zrkzJ46Dk;
-	Thu,  6 Nov 2025 00:58:00 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D57A1400D9;
-	Thu,  6 Nov 2025 00:58:22 +0800 (CST)
-Received: from [10.123.122.223] (10.123.122.223) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 19:58:21 +0300
-Message-ID: <dfad18c7-0721-486a-bd6e-75107bb54920@huawei.com>
-Date: Wed, 5 Nov 2025 19:58:21 +0300
+	s=arc-20240116; t=1762361944; c=relaxed/simple;
+	bh=1J87xzk9VW3lpoQ+hkZnGeccC3K0L5gdz2AKUwHegLo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FlxeGOvSqkVrmM83fAZtZ9NQUPi8yLgJSXMPLjAG66EDfkcw8nloXg8E/iskdtggsKnzJJBBLNzQ50wyNBtwMBPqwWH5EOVb4IGv7/BtjK9QNoFYSkGpYqIud6R/NYI0Pl8FRVp/Std55uW/KK891qeSedx/gUNgaVNa7y6Iqxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQGTUh2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFCDCC4CEF8;
+	Wed,  5 Nov 2025 16:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762361943;
+	bh=1J87xzk9VW3lpoQ+hkZnGeccC3K0L5gdz2AKUwHegLo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CQGTUh2juHjQ0qGUIJYSwANSA+HsCyK5E2ANQOb6XSJwLMqQtKobX/k4eSLUgrnrv
+	 cRqV/j6qaJEaBvihDxBZ9DTHbT4Xx6CIkG2i13JVfNiatzPdQu94ogqOT2c24kiwMF
+	 S7os2yloZfSuw+1CiKojJ722oHNUK+W2jpyliDw4xDcPBkjXcJ5QH5DAdU0XEPb9HL
+	 9cuSV/NzXN0RGN+z+sClJ9QkwHj6Ga0JcvLzGCoxXY752HSwBN1Du17A09MOoP8u86
+	 b0zZOGlB7UESmENdd2M67Z16PulHQrTGoNQjYqi49I1fR8g8CiOQJkN3J1AJM4yKPa
+	 Vk9T2qwFrJ+tQ==
+From: Srinivas Kandagatla <srini@kernel.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+ andy@kernel.org, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, ukleinek@kernel.org, 
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, daniel.lezcano@linaro.org, 
+ tglx@linutronix.de, chunfeng.yun@mediatek.com, wim@linux-watchdog.org, 
+ linux@roeck-us.net, sean.wang@mediatek.com, zhiyong.tao@mediatek.com, 
+ andrew-ct.chen@mediatek.com, lala.lin@mediatek.com, jitao.shi@mediatek.com, 
+ Jack Hsu <jh.hsu@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+In-Reply-To: <20251030134541.784011-1-jh.hsu@mediatek.com>
+References: <20251030134541.784011-1-jh.hsu@mediatek.com>
+Subject: Re: (subset) [PATCH v6 00/11] Add mt8189 dts evaluation board and
+ Makefile
+Message-Id: <176236193629.37589.12615931533548308117.b4-ty@kernel.org>
+Date: Wed, 05 Nov 2025 16:58:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 06/14] ipvlan: Support GSO for port -> ipvlan
-To: Eric Dumazet <edumazet@google.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<andrey.bokhanko@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
- <20251105161450.1730216-7-skorodumov.dmitry@huawei.com>
- <CANn89i+iq3PVz6_maSeGJT4DxcYfP8sN0_v=DTkin+AMhV-BNA@mail.gmail.com>
-Content-Language: en-US
-From: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
-In-Reply-To: <CANn89i+iq3PVz6_maSeGJT4DxcYfP8sN0_v=DTkin+AMhV-BNA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: mscpeml500004.china.huawei.com (7.188.26.250) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
 
-On 05.11.2025 19:29, Eric Dumazet wrote:
-> On Wed, Nov 5, 2025 at 8:15 AM Dmitry Skorodumov
-> <skorodumov.dmitry@huawei.com> wrote:
->> If main port interface supports GSO, we need manually segment
->> the skb before forwarding it to ipvlan interface.
-> Why ?
->
-> I think you need to explain much more than a neutral sentence,
+On Thu, 30 Oct 2025 21:44:32 +0800, Jack Hsu wrote:
+> In this patch series,
+> we add Mediatek MT8189 evaluation board dts, dtsi and Makefile,
+> and also related dt-binding documents.
+> 
+> based on tag: next-20251029
+> 
+> Note:
+> This patch series depends on following dt-binding headers and yamls
+> 1.dt-binding headers
+>   1. mt8189-pinfunc.h
+>        https://patchwork.kernel.org/project/linux-mediatek/patch/20250919020525.7904-1-ot_cathy.xu@mediatek.com/
+>   2. mt8189_gce.h
+>        https://patchwork.kernel.org/project/linux-mediatek/patch/20250820093831.23437-3-xiandong.wang@mediatek.com/
+> 
+> [...]
 
-Ok, got it. Will resend the patch with more description: I expect there will be v4 anyway.
+Applied, thanks!
 
-The reason is that this function is a protocol handler, installed on main port (with dev_add_pack()), so if main port supports GSO/checksum offload, OS will send us big/non-checksummed packets (tested with scp to IP of some child port). This packet is forwarded to child. I believe we may not expect child ipvlan-iface be prepared to RX big packet, without checksum. But I agree, that I should investigate behaviour in more details. May be I missed something and it is possible to force corresponding  TAP to somehow do this.
+[03/11] dt-bindings: nvmem: Support MediaTek MT8189 evb board efuse
+        commit: 2150cd7ffd14a39fb56c2b3cbfcc6dbf629b7643
 
-> Also I do not see any tests, for the whole series ?
-Ok, If modules like this have some kind of unit-tests, I should study it and provide it. I haven't seen this as a common practice for most of the modules here. So far all testing is made manually (likely this should be described anyway)
->
-> I have not seen the cover letter.
-Cover letter was sent to netdev@vger.kernel.org. Wasn't sure that it is a good practice to add to CC every maintainer to each email of the series.
-> Also you sent the series twice today :/
-
-Well, I've sent just 000* by mistake. And immediately resent patches (as v3 in cover letter) after noticing this
-
-Dmitry
-
+Best regards,
+-- 
+Srinivas Kandagatla <srini@kernel.org>
 
 
