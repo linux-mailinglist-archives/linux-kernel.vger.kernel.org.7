@@ -1,468 +1,328 @@
-Return-Path: <linux-kernel+bounces-885928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9ACC3449C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:41:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67F4C34533
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BD414F4B54
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EA61920EE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8745B2D73A6;
-	Wed,  5 Nov 2025 07:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A49F2DE200;
+	Wed,  5 Nov 2025 07:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f7/+tccf"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ApA574N8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416E72D94A1;
-	Wed,  5 Nov 2025 07:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF5C2D6E67;
+	Wed,  5 Nov 2025 07:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762328339; cv=none; b=e5P642DPnQ9/adpL+SE5mqiyZK9OLngnRbIwZBtyAyOVI3s1vVWJCeryuIWA7Ug+6jkz4RCv2OV5R8OLwGDH9hKROtDBGKBLVgC/YSgXHfCQsVvWaTO2TF8/bJOIwgVWPhZYKry/4XJNgAhK8RGj+uqk7GembDa/GNhvzO9xetc=
+	t=1762328385; cv=none; b=b9nm1Pj4en8kdpcUgp9VclonAXbUcJRqc398h9LUFr2t9lrSTbTYivA/LFyELINabnG7aDWPJe2pHgC+6wcT5BUS3IEGynii0pg3xVa0cRzCBMaC/YxpcbXoNsuCz6d8ODONlKdZAJ/nGIk1pHfd4D8CyjtPwTpJHJW4jBWx+JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762328339; c=relaxed/simple;
-	bh=X0n89M5dAsQ962IYITxZIcAZH43D8/wNA1KWtcsHQ3E=;
+	s=arc-20240116; t=1762328385; c=relaxed/simple;
+	bh=Vg/JTRWu5JYecUoj5fPJ3eUkXVB2fLJNM8hZuKAeDz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8HrvxOsxEAoMUQefPHU3aqVNw+88xnpqExyDzuUa+MuXXUZGtjgHKZL54UDVhFn1DZ2rU/JvOUeK88CcFiG+tr+LGzoZkZ+XBS4zcDxzM9z6YFYHwyrcvEtfp0T6FjibA7ou9kqPV2FkFPMBwxTCwdwMqfiv5bBvsVNBAg02dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f7/+tccf; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Nov 2025 09:38:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762328335; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=Ww42vRdS0tv3gE+rsMI3dHe9hl8CcI6RwLk1sOZdwsQ=;
-	b=f7/+tccfbevukwL8WpueOHGjPgGw877vidsGa+N94B1MBI2PMpAlkyC8gOEkHT5Gpz0V2u
-	IUOrJC1tbmcFHdYJ4HapzJWbsj4mhJG4QZk+V/498ua33vwSQFrlHYm9IoLos5H2dboEyg
-	Lx0fI78HZd8UaBdCJ8WJ3vXXZf9opoA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 11/16] gpio: Support ROHM BD72720 gpios
-Message-ID: <45857ab2888883db7462be6ebe6412c7ae68200d.1762327887.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1762327887.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDQlUgSj+RCChKgYd2GdHj1/eHoQqcb2kMyTU2i5XVNR9dtRu1pqUjiYbD4tPDthmBjbIlE+bXpSr099mLK2RdIJxNWC6/77BauqG2kr67GoAkBX5BTnHgUaDBe+yq2PhLzcFR0XIBR03IcG/JlIphwM/9WLAXGOnH4moeN3rPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ApA574N8; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762328382; x=1793864382;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Vg/JTRWu5JYecUoj5fPJ3eUkXVB2fLJNM8hZuKAeDz0=;
+  b=ApA574N88QZzaz0F4B1mPQitVS8vRcc0isoMoFrdT18IhbUWM5EuRAYU
+   erhYSrPtHS62cTTL9XOU9GpWQ44NDjCNEkoHLl3nvITn6iBI8XhdMH7zm
+   WNXfIySBK85oUqo+ALA89C2vn/BYdzmCVsHwBqGcOyYWWKrJRwGJUqGzQ
+   E2in2ScK955md1HWmblQHNQX317zlVGN1D0PB14spLPfG4aiIL1qM6EgG
+   CxmI/o2woy9INBmUOk38DkPteuBEtXe13ogxbRBE+faOy+9fSZhLKBglm
+   xHsgaQJw0hli/pLNBtqPuSPYArGwhmsihfxpi4+VLfzqk1UPLFlWKRF8r
+   A==;
+X-CSE-ConnectionGUID: 4K1FJuyfRCSz11FZRhY62A==
+X-CSE-MsgGUID: 2jiiq1/ZR0eN+5nZzGMPeg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="67050119"
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="67050119"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 23:39:42 -0800
+X-CSE-ConnectionGUID: 6fFnlBUySp+min9Gjs8BWA==
+X-CSE-MsgGUID: +9ukS+K2R4G7tGQW97VfLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
+   d="scan'208";a="187831902"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Nov 2025 23:39:38 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vGY7C-000SGq-2X;
+	Wed, 05 Nov 2025 07:39:34 +0000
+Date: Wed, 5 Nov 2025 15:39:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ian Abbott <abbotti@mev.co.uk>, linux-fpga@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+	Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH 1/4] fpga: altera-pr-ip: Add dummy definitions of API
+ functions
+Message-ID: <202511051539.q44jggF0-lkp@intel.com>
+References: <20251104153013.154463-2-abbotti@mev.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ejqcZDRfjp/bu0F+"
-Content-Disposition: inline
-In-Reply-To: <cover.1762327887.git.mazziesaccount@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
-
---ejqcZDRfjp/bu0F+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251104153013.154463-2-abbotti@mev.co.uk>
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+Hi Ian,
 
-The ROHM BD72720 has 6 pins which may be configured as GPIOs. The
-GPIO1 ... GPIO5 and EPDEN pins. The configuration is done to OTP at the
-manufacturing, and it can't be read at runtime. The device-tree is
-required to tell the software which of the pins are used as GPIOs.
+kernel test robot noticed the following build errors:
 
-Keep the pin mapping static regardless the OTP. This way the user-space
-can always access the BASE+N for GPIO(N+1) (N =3D 0 to 4), and BASE + 5
-for the EPDEN pin. Do this by setting always the number of GPIOs to 6,
-and by using the valid-mask to invalidate the pins which aren't configured
-as GPIOs.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.18-rc4 next-20251104]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-First two pins can be set to be either input or output by OTP. Direction
-can't be changed by software. Rest of the pins can be set as outputs
-only. All of the pins support generating interrupts.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Abbott/fpga-altera-pr-ip-Add-dummy-definitions-of-API-functions/20251105-000956
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251104153013.154463-2-abbotti%40mev.co.uk
+patch subject: [PATCH 1/4] fpga: altera-pr-ip: Add dummy definitions of API functions
+config: arm64-randconfig-001-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051539.q44jggF0-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251105/202511051539.q44jggF0-lkp@intel.com/reproduce)
 
-Support the Input/Output state getting/setting and the output mode
-configuration (open-drain/push-pull).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511051539.q44jggF0-lkp@intel.com/
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+All errors (new ones prefixed by >>):
 
----
-Revision history:
- RFCv1 =3D> :
- - No changes
----
- drivers/gpio/Kconfig        |   9 ++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-bd72720.c | 281 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 291 insertions(+)
- create mode 100644 drivers/gpio/gpio-bd72720.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 7ee3afbc2b05..0c612c5163c5 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1319,6 +1319,15 @@ config GPIO_BD71828
- 	  This driver can also be built as a module. If so, the module
- 	  will be called gpio-bd71828.
-=20
-+config GPIO_BD72720
-+	tristate "ROHM BD72720 and BD73900 PMIC GPIO support"
-+	depends on MFD_ROHM_BD71828
-+	help
-+	  Support for GPIO on ROHM BD72720 and BD73900 PMICs. There are two
-+	  pins which can be configured to GPI or GPO, and three pins which can
-+	  be configured to GPO on the ROHM PMIC. The pin configuration is done
-+	  on OTP at manufacturing.
-+
- config GPIO_BD9571MWV
- 	tristate "ROHM BD9571 GPIO support"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index ec296fa14bfd..7a5d03db3021 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_GPIO_BCM_KONA)		+=3D gpio-bcm-kona.o
- obj-$(CONFIG_GPIO_BCM_XGS_IPROC)	+=3D gpio-xgs-iproc.o
- obj-$(CONFIG_GPIO_BD71815)		+=3D gpio-bd71815.o
- obj-$(CONFIG_GPIO_BD71828)		+=3D gpio-bd71828.o
-+obj-$(CONFIG_GPIO_BD72720)		+=3D gpio-bd72720.o
- obj-$(CONFIG_GPIO_BD9571MWV)		+=3D gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BLZP1600)		+=3D gpio-blzp1600.o
- obj-$(CONFIG_GPIO_BRCMSTB)		+=3D gpio-brcmstb.o
-diff --git a/drivers/gpio/gpio-bd72720.c b/drivers/gpio/gpio-bd72720.c
-new file mode 100644
-index 000000000000..6549dbf4c7ad
---- /dev/null
-+++ b/drivers/gpio/gpio-bd72720.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support to GPIOs on ROHM BD72720 and BD79300
-+ * Copyright 2025 ROHM Semiconductors.
-+ * Author: Matti Vaittinen <mazziesaccount@gmail.com>
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/init.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/rohm-bd72720.h>
-+
-+#define BD72720_GPIO_OPEN_DRAIN		0
-+#define BD72720_GPIO_CMOS		BIT(1)
-+#define BD72720_INT_GPIO1_IN_SRC	4
-+/*
-+ * The BD72720 has several "one time programmable" (OTP) configurations wh=
-ich
-+ * can be set at manufacturing phase. A set of these options allow using p=
-ins
-+ * as GPIO. The OTP configuration can't be read at run-time, so drivers re=
-ly on
-+ * device-tree to advertise the correct options.
-+ *
-+ * Both DVS[0,1] pins can be configured to be used for:
-+ *  - OTP0: regulator RUN state control
-+ *  - OTP1: GPI
-+ *  - OTP2: GPO
-+ *  - OTP3: Power sequencer output
-+ *  Data-sheet also states that these PINs can always be used for IRQ but =
-the
-+ *  driver limits this by allowing them to be used for IRQs with OTP1 only.
-+ *
-+ * Pins GPIO_EXTEN0 (GPIO3), GPIO_EXTEN1 (GPIO4), GPIO_FAULT_B (GPIO5) hav=
-e OTP
-+ * options for a specific (non GPIO) purposes, but also an option to confi=
-gure
-+ * them to be used as a GPO.
-+ *
-+ * OTP settings can be separately configured for each pin.
-+ *
-+ * DT properties:
-+ * "rohm,pin-dvs0" and "rohm,pin-dvs1" can be set to one of the values:
-+ * "dvs-input", "gpi", "gpo".
-+ *
-+ * "rohm,pin-exten0", "rohm,pin-exten1" and "rohm,pin-fault_b" can be set =
-to:
-+ * "gpo"
-+ */
-+
-+enum bd72720_gpio_state {
-+	BD72720_PIN_UNKNOWN,
-+	BD72720_PIN_GPI,
-+	BD72720_PIN_GPO,
-+};
-+
-+enum {
-+	BD72720_GPIO1,
-+	BD72720_GPIO2,
-+	BD72720_GPIO3,
-+	BD72720_GPIO4,
-+	BD72720_GPIO5,
-+	BD72720_GPIO_EPDEN,
-+	BD72720_NUM_GPIOS
-+};
-+
-+struct bd72720_gpio {
-+	/* chip.parent points the MFD which provides DT node and regmap */
-+	struct gpio_chip chip;
-+	/* dev points to the platform device for devm and prints */
-+	struct device *dev;
-+	struct regmap *regmap;
-+	int gpio_is_input;
-+};
-+
-+static int bd72720gpi_get(struct bd72720_gpio *bdgpio, unsigned int reg_of=
-fset)
-+{
-+	int ret, val, shift;
-+
-+	ret =3D regmap_read(bdgpio->regmap, BD72720_REG_INT_ETC1_SRC, &val);
-+	if (ret)
-+		return ret;
-+
-+	shift =3D BD72720_INT_GPIO1_IN_SRC + reg_offset;
-+
-+	return (val >> shift) & 1;
-+}
-+
-+static int bd72720gpo_get(struct bd72720_gpio *bdgpio,
-+			  unsigned int offset)
-+{
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+	int ret, val;
-+
-+	ret =3D regmap_read(bdgpio->regmap, regs[offset], &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & BD72720_GPIO_HIGH;
-+}
-+
-+static int bd72720gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return bd72720gpi_get(bdgpio, offset);
-+
-+	return bd72720gpo_get(bdgpio, offset);
-+}
-+
-+static int bd72720gpo_set(struct gpio_chip *chip, unsigned int offset,
-+			  int value)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input) {
-+		dev_dbg(bdgpio->dev, "pin %d not output.\n", offset);
-+		return -EINVAL;
-+	}
-+
-+	if (value)
-+		return regmap_set_bits(bdgpio->regmap, regs[offset],
-+				      BD72720_GPIO_HIGH);
-+
-+	return regmap_clear_bits(bdgpio->regmap, regs[offset],
-+					BD72720_GPIO_HIGH);
-+}
-+
-+static int bd72720_gpio_set_config(struct gpio_chip *chip, unsigned int of=
-fset,
-+				   unsigned long config)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+	const int regs[] =3D { BD72720_REG_GPIO1_CTRL, BD72720_REG_GPIO2_CTRL,
-+			     BD72720_REG_GPIO3_CTRL, BD72720_REG_GPIO4_CTRL,
-+			     BD72720_REG_GPIO5_CTRL, BD72720_REG_EPDEN_CTRL };
-+
-+	/*
-+	 * We can only set the output mode, which makes sense only when output
-+	 * OTP configuration is used.
-+	 */
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return -ENOTSUPP;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(bdgpio->regmap,
-+					  regs[offset],
-+					  BD72720_GPIO_DRIVE_MASK,
-+					  BD72720_GPIO_OPEN_DRAIN);
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(bdgpio->regmap,
-+					  regs[offset],
-+					  BD72720_GPIO_DRIVE_MASK,
-+					  BD72720_GPIO_CMOS);
-+	default:
-+		break;
-+	}
-+
-+	return -ENOTSUPP;
-+}
-+
-+static int bd72720gpo_direction_get(struct gpio_chip *chip,
-+				    unsigned int offset)
-+{
-+	struct bd72720_gpio *bdgpio =3D gpiochip_get_data(chip);
-+
-+	if (BIT(offset) & bdgpio->gpio_is_input)
-+		return GPIO_LINE_DIRECTION_IN;
-+
-+	return GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static int bd72720_valid_mask(struct gpio_chip *gc,
-+			      unsigned long *valid_mask,
-+			      unsigned int ngpios)
-+{
-+	static const char * const properties[] =3D {
-+		"rohm,pin-dvs0", "rohm,pin-dvs1", "rohm,pin-exten0",
-+		"rohm,pin-exten1", "rohm,pin-fault_b"
-+	};
-+	struct bd72720_gpio *g =3D gpiochip_get_data(gc);
-+	const char *val;
-+	int i, ret;
-+
-+	*valid_mask =3D BIT(BD72720_GPIO_EPDEN);
-+
-+	if (!gc->parent)
-+		return 0;
-+
-+	for (i =3D 0; i < ARRAY_SIZE(properties); i++) {
-+		ret =3D fwnode_property_read_string(dev_fwnode(gc->parent),
-+						  properties[i], &val);
-+
-+		if (ret) {
-+			if (ret =3D=3D -EINVAL)
-+				continue;
-+
-+			dev_err(g->dev, "pin %d (%s), bad configuration\n", i,
-+				properties[i]);
-+
-+			return ret;
-+		}
-+
-+		if (strcmp(val, "gpi") =3D=3D 0) {
-+			if (i !=3D BD72720_GPIO1 && i !=3D BD72720_GPIO2) {
-+				dev_warn(g->dev,
-+					 "pin %d (%s) does not support INPUT mode",
-+					 i, properties[i]);
-+				continue;
-+			}
-+
-+			*valid_mask |=3D BIT(i);
-+			g->gpio_is_input |=3D BIT(i);
-+		} else if (strcmp(val, "gpo") =3D=3D 0) {
-+			*valid_mask |=3D BIT(i);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/* Template for GPIO chip */
-+static const struct gpio_chip bd72720gpo_chip =3D {
-+	.label			=3D "bd72720",
-+	.owner			=3D THIS_MODULE,
-+	.get			=3D bd72720gpio_get,
-+	.get_direction		=3D bd72720gpo_direction_get,
-+	.set			=3D bd72720gpo_set,
-+	.set_config		=3D bd72720_gpio_set_config,
-+	.init_valid_mask	=3D bd72720_valid_mask,
-+	.can_sleep		=3D true,
-+	.ngpio			=3D BD72720_NUM_GPIOS,
-+	.base			=3D -1,
-+};
-+
-+static int gpo_bd72720_probe(struct platform_device *pdev)
-+{
-+	struct bd72720_gpio *g;
-+	struct device *parent, *dev;
-+
-+	/*
-+	 * Bind devm lifetime to this platform device =3D> use dev for devm.
-+	 * also the prints should originate from this device.
-+	 */
-+	dev =3D &pdev->dev;
-+	/* The device-tree and regmap come from MFD =3D> use parent for that */
-+	parent =3D dev->parent;
-+
-+	g =3D devm_kzalloc(dev, sizeof(*g), GFP_KERNEL);
-+	if (!g)
-+		return -ENOMEM;
-+
-+	g->chip =3D bd72720gpo_chip;
-+	g->dev =3D dev;
-+	g->chip.parent =3D parent;
-+	g->regmap =3D dev_get_regmap(parent, NULL);
-+
-+	return devm_gpiochip_add_data(dev, &g->chip, g);
-+}
-+
-+static const struct platform_device_id bd72720_gpio_id[] =3D {
-+	{ "bd72720-gpio" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(platform, bd72720_gpio_id);
-+
-+static struct platform_driver gpo_bd72720_driver =3D {
-+	.driver =3D {
-+		.name =3D "bd72720-gpio",
-+		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
-+	},
-+	.probe =3D gpo_bd72720_probe,
-+	.id_table =3D bd72720_gpio_id,
-+};
-+module_platform_driver(gpo_bd72720_driver);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("GPIO interface for BD72720 and BD73900");
-+MODULE_LICENSE("GPL");
---=20
-2.51.0
+   In file included from drivers/fpga/altera-pr-ip-core.c:11:
+>> include/linux/fpga/altera-pr-ip-core.h:11:2: error: unterminated conditional directive
+      11 | #ifndef _ALT_PR_IP_CORE_H
+         |  ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                                       ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      99 |                         set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+     101 |                 return (set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                          ^         ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/fpga/altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+--
+   In file included from altera-pr-ip-core.c:11:
+>> include/linux/fpga/altera-pr-ip-core.h:11:2: error: unterminated conditional directive
+      11 | #ifndef _ALT_PR_IP_CORE_H
+         |  ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                                       ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      99 |                         set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+     101 |                 return (set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                          ^         ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from altera-pr-ip-core.c:12:
+   In file included from include/linux/fpga/fpga-mgr.h:12:
+   In file included from include/linux/platform_device.h:13:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
 
 
---ejqcZDRfjp/bu0F+
-Content-Type: application/pgp-signature; name=signature.asc
+vim +11 include/linux/fpga/altera-pr-ip-core.h
 
------BEGIN PGP SIGNATURE-----
+d201cc17a8a31cc Matthew Gerlach 2017-03-23 @11  #ifndef _ALT_PR_IP_CORE_H
+d201cc17a8a31cc Matthew Gerlach 2017-03-23  12  #define _ALT_PR_IP_CORE_H
+d201cc17a8a31cc Matthew Gerlach 2017-03-23  13  #include <linux/io.h>
+961ea9f518b4061 Ian Abbott      2025-11-04  14  #include <asm/errno.h>
+d201cc17a8a31cc Matthew Gerlach 2017-03-23  15  
 
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkK/wgACgkQeFA3/03a
-ocUwdwgAuUN4plCzDy+T9pBm3gIevtOno8zPl259Sov1iMWZ2UH6Edvjjf47Usdg
-NnvLOztvFcP+DyayhIWCirNNKTOgWQkk3YOw4ruH8j4gSxqW2CbbUD3tL+DiVLBB
-e/3Hp9ACdi/bE9j+v5ZEgi0j3IUHn6suk4skIOFbZ+99dxQwNFp/xT18KV8KWEHo
-xucdnmgb46+SSdJlOykpC9EI2kphSKpsMxzQhRsjCcBEsdzAV3RDOy4tXRs/EdP8
-Nzd1quTWZ7tZlCfUq4fXSvZQaSvrfrqDQ7POAWPera0o92SmujQmuAfzzNLJ1P1M
-cMJUJyzDPl4zi5do01hrwcMy5PQzsQ==
-=DTRH
------END PGP SIGNATURE-----
-
---ejqcZDRfjp/bu0F+--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
