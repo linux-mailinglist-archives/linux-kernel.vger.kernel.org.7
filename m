@@ -1,169 +1,186 @@
-Return-Path: <linux-kernel+bounces-887372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14DEC38129
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:43:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373E0C380E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 22:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BB93BBB10
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20453BBDCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 21:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FB32DBF7C;
-	Wed,  5 Nov 2025 21:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5C92C0F97;
+	Wed,  5 Nov 2025 21:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="NBHnJwpj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3M/rrUhi"
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1TG/tgX"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DF92C236D;
-	Wed,  5 Nov 2025 21:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21F423F424
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 21:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762378069; cv=none; b=n5YURDpxDuQmUtzARuFI80OXZhMWoF0LYMHA4URtQeX4tcDwOuA9Y9oh2D6lCjhtIA4Oe4RazGr3WvNZrbkC/ACaPF5XlasQU2KZEezr3+9axVq1BtvanY6TEaZU69/7W73eXqJR+86a1Kg0Zsp6g5XadzMx99mD0RAEuyTKOq8=
+	t=1762378140; cv=none; b=Tk39lPmBvKMzoyJJbuzvDkzIi79Isfc79TwH0fDGYkVOfLJ0EoHo1YjyBQfwywGHKh/PTU4x+4WHaRBvzdF/V7I6ATvQzJWPUu2jmncZXiAVcoXolCTrkTC4z7pw8qgnzUd/oiHnl5ONPWqyqicfu89yijb0mL0oiGlKJPiGNBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762378069; c=relaxed/simple;
-	bh=bsJ/Udr6HIBj2j3DHtF1mJqwIo8FnbCO8DJuuTTp7AY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=UF1HRXU3T5n1v8Zh88rIW7d38dZB8hJ0jejZ3gc1padRMQTcbYWaCTCOQvwNpktoLk50XzQixqlOHZnq3MBhRx+DAWwhoLZ2Su+MQ2cijeBGpE6cTL5eoxwAfjUs/0fBrV2lG3tiE/UfiY9pm/8ssIPtPuXQ8Th4fvSrMV60s/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=NBHnJwpj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3M/rrUhi; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 0D9511300C27;
-	Wed,  5 Nov 2025 16:27:45 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 05 Nov 2025 16:27:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762378064; x=1762385264; bh=5CX/6mtoYFxir8X1F5OVPvA/OUy5Hh9/ND3
-	R8DtJqdE=; b=NBHnJwpjzuHIsUT27Y57rWaJK10DtVOwxECp26qAgU5U2ikzYZl
-	M90AeLnEPJscbb16J19gvwy+B4NZoJRivr0Kl/sDL1WtKYsBIOcIU/852lrhgqq/
-	GKpuXfd3fOlM1hSTmng5Eykm2SDZU+rDa1/3QCl4npJjdOdSa4TG9dpLKZzWTZau
-	gQKLJddbfSk7iP2cfocCd6lwvv8WNjntDUxjyvhguNRIoYy5cYz8v7pgB6OdrZID
-	eo/hzOuwTPvx8j13d20hMasG3aiklwbNYaKqed8tm9GulrRukjfYfVMUU+ubDqNE
-	5IFnjPvLo6riN3CKxIUqANOUuK511UeBr+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762378064; x=
-	1762385264; bh=5CX/6mtoYFxir8X1F5OVPvA/OUy5Hh9/ND3R8DtJqdE=; b=3
-	M/rrUhioH8XUekNhjPbddPDnBn7n7UQz6zEWYhMdJzgaKPUZki5Si9V9oHY1Ogop
-	wXK5pvp5JtloGloRJyhjQ+2g3DFkHJIsPf1kJQ9SRoFA1OYYao78/h5ua/7WVVKr
-	DX+Ajwtsc07FWpwIeyLBbksAID7RZIbG2vTFcoPvGOBOYPZWyaoKettLH2wbO2Id
-	zKDpw89eEUWl/BgYOURwsIfdCSu9Zdtbf8szQKl7cVJ5bzYuDeYhoPqbJZCUYoKO
-	UZQ0HyqjcmXxStXvR2TDlvY0c4w3Pn/LIGuOHcFde9b8MNLY8rM1ER7IKpgSaQz2
-	fo67zQAgkeqNFzV2z+NIw==
-X-ME-Sender: <xms:UMELaTX303FHgII2VhPCDsLqAaz7DXpODKCSAw4DGpYCqOIYMw_8zQ>
-    <xme:UMELaalAv0IbTqHYOiNCaxTQxCHNYl3ObvfykhtHLjOM-xv4HXM4-O5UB5FicXKO4
-    aJ5vH9vBYrGmrMZ_ywg8xmZ6HOs7HRayKsq762rTphtV6QY5VU>
-X-ME-Received: <xmr:UMELaXr1-Ji_La_HqW1BRUEv9gTeMOwPrnbybPjNk5nkzekaJJ_jmOB-OurJPK7b-HcbN7SNbSmn59Pi_qJVyNSOkvZPYWst3NWLBXCl3DJX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:UMELaas2dgxfilRLBUrQKjBzvFla9FVJzR7OHV29epBrN0TxHC_Zrg>
-    <xmx:UMELaXL_tyUQYVcmu-B8I71Pa7g3b9MIUvkmgGp58Io5P9qADq2c4w>
-    <xmx:UMELaX8_nhpfJRosFBux8I7DSDNy8EkxssJf6tgxkmBv96HvCzl8zA>
-    <xmx:UMELaT6oKvaTbilSvWrldHDoodd9WTL6TODMPNKGUr-HrQG2M0IzRg>
-    <xmx:UMELacRM2CO16jgdzCpw14XismqrJauCEWxLaqWueHVYB4MJELrVVaIb>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 16:27:33 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1762378140; c=relaxed/simple;
+	bh=+HEydyOW1lU2ALcOZDdqPBn4aGTT1nlZWPBmPwdNamk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lBVC23Tx9YOWn+DM0w6Q4WSkV6ffA3zZz+LGcyDNCxdBT4mZK/X6a8nfJ2txLHfvAr+QpcpJGN77C+qzwWDermrg2tienW0xC35VAu0OBI3eHrO5cejO1ix2+VG2L6XjWLNLGMlNmaOZkhm3FBSZL0Oyt5fb/odNwjjbo4plA2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1TG/tgX; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b7260435287so34560966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 13:28:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762378137; x=1762982937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mKVAByp1/+LkpfKD4KN0974hBK7mn9fIh1iZgNrqkQU=;
+        b=L1TG/tgXV8gaYZQ5w1LWsOauPPbWn+/muZ7GkPm4RuUHyR3jGWVDskwcSXaTpXKA+L
+         q/716nhvndZZN2HTGky0JWHtGb6NKLzPKrKJLPvpE3HhrV/vQ9Ig4afTbc6gKdXsEFGU
+         jo+gXOuicn9xNJeUmXjnBrggJauE9krzeTSYeEDJw7ebj8t9aQkR1TKsYeIIF2WDMK4i
+         PgQLTobzYLVmsIE0A6FjL+Kly1TEkFIT8FysU3ywJe/NwE5iO+WLrvQOWcvDTfder+1K
+         s0mmBeWUFY807krc60yeStZ1rbDhlwiMC/Tc3rWjuZcZ+hpJWq2Khd18kVO1wVrtwIrY
+         UNbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762378137; x=1762982937;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mKVAByp1/+LkpfKD4KN0974hBK7mn9fIh1iZgNrqkQU=;
+        b=izSaEJHJhAEUHaraOQoRa1mgEoYVrIK01sUmI80GtMYihNwrVi+HJk802dGHsu8o11
+         JgwKDTY51qF5LjncQsVrTX6rWLp+KyIJerxVBgcJCa55g+w3Q/NUKDOHx6WiGoKO62nC
+         LxJJ5URTqYcn8NO2wWHRD8yAFdmellWOMK7NUkPD4ol0ctbKP7qoYUzTuv6HV8qbV29O
+         8csZ9izvG4TpT9g5myy81hvxza2k5GbXonPAi8d3qWbfczMWvjFPs60M97bHh9iaa0XW
+         ht13j+jPhFus4uiuS2ZqKnlTL7p3ZXrqeDob7xuMmvA2KfKJVU0w9gxtXS0y/sf4xqfc
+         TULQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9B/ynDfyuqDlqGE5pcEqyh6GoosJIeEp4e7pyZ7Ln5nEoZ2Sw0tfvfbGs0pT++8fTi+EEzdDTonPeZtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0JhEMFuWGugwpjBQtaRahsiT6e8JNC+xg6xj2NnAAO1tGeVmS
+	G7osCFZyGE45bSlDOHaQo5N13HivyGZkH4M0TuT/wBfKjCR73Q3rvPs8RC0ju9c1g5elzQ==
+X-Gm-Gg: ASbGnctVN7s87ymMJehGQQu3LQ3fH7bGdKJ7dM6kbQNAQYwQGGGaogNBl0WMbB4DNR7
+	1tDAYEoND9dVzChgNyYibGXdE1w/0nBT0h2MpsSVINhFBdWR7rOaJ5e4hcvF5vG5aB/GW22fS0w
+	psd4YTXpBzh5yCyHJNUdr07OuHhFUOV7mjVSPPEoP3zBWV/faTHPVeyFA+ceasakfYeTo5QVesq
+	4KqadkdOvfavQSixxT50MMoKPOD00Ot+0MV8ER+rvEMDqzRwuaUWe/ylZ43mmSFfmLsjalEODxx
+	q8XTkopDSSYh8PN2bw1quxochP1Cg2458KIGKNnJ/im0o3IDJLcsez4xn964qCZJ2A8w4I4a22d
+	LvKlfAQTT0+0QP9im423GHhDS+0n/jToRzCgRZHkVon5nbPr3uPD6R//kYHsWM+vzsrsefiWjm8
+	hwpzxtmcbFuSiZhzReJeH2SEyvP1kqzAVDUJrQVOvdZjA=
+X-Google-Smtp-Source: AGHT+IEUf4Irfo3WXUTbyMeP33gFkpX21nJc4K2bsAo4h2zMwVIw3b+fLJ4IkerZJz46FY1W6XtlWQ==
+X-Received: by 2002:a17:907:6d27:b0:b6d:7e01:cbc5 with SMTP id a640c23a62f3a-b726567f8c8mr491291866b.53.1762378136693;
+        Wed, 05 Nov 2025 13:28:56 -0800 (PST)
+Received: from [192.168.4.198] (92-110-11-83.cable.dynamic.v4.ziggo.nl. [92.110.11.83])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b728937d2fasm58104466b.19.2025.11.05.13.28.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 13:28:56 -0800 (PST)
+Message-ID: <eac10a43-5164-4ecf-8b56-6099e69001bc@gmail.com>
+Date: Wed, 5 Nov 2025 22:28:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Alexander Aring" <alex.aring@gmail.com>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
- "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "Kuniyuki Iwashima" <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH v5 09/17] vfs: clean up argument list for vfs_create()
-In-reply-to: <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
-References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>,
- <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
-Date: Thu, 06 Nov 2025 08:27:31 +1100
-Message-id: <176237805165.634289.1849067298194355086@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+To: Aaron Kling <webgeek1234@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+ <pedxgtvzfrfzihoshhfvntin3hwwi3znleilbz4abjad74nowb@un33lgiaa26z>
+ <CALHNRZ9-XrMUkQE0cwjq-HUYsy5uerhOQ9sNpirp23kKoaPuYw@mail.gmail.com>
+ <72llskwvuwyllvz24zoex4ad6v6t5skiehmwylj7exoh7bmzjo@xq3v7vja5w62>
+ <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
+Content-Language: en-US
+From: Jasper Korten <jja2000@gmail.com>
+In-Reply-To: <CALHNRZ_k6e9ZRmpK6Pzpet=RzUQ0fRYmfnea6U+9E2oZc8=z7w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 06 Nov 2025, Jeff Layton wrote:
-> As Neil points out:
-> 
-> "I would be in favour of dropping the "dir" arg because it is always
-> d_inode(dentry->d_parent) which is stable."
-> 
-> ...and...
-> 
-> "Also *every* caller of vfs_create() passes ".excl = true".  So maybe we
-> don't need that arg at all."
-> 
-> Drop both arguments from vfs_create() and fix up the callers.
-> 
-> Suggested-by: NeilBrown <neilb@ownmail.net>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hi all,
 
-This I like.
+On 11/4/25 19:12, Aaron Kling wrote:
+> On Tue, Nov 4, 2025 at 3:14 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>> On Mon, Nov 03, 2025 at 12:39:57PM -0600, Aaron Kling wrote:
+>>> On Mon, Nov 3, 2025 at 5:54 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>>>> On Sat, Nov 01, 2025 at 06:15:17PM -0500, Aaron Kling via B4 Relay wrote:
+>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+>>>>>
+>>>>> Without the cmu, nvdisplay will display colors that are notably darker
+>>>>> than intended. The vendor bootloader and the downstream display driver
+>>>>> enable the cmu and sets a sRGB table. Loading that table here results in
+>>>>> the intended colors.
+>>>>>
+>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+>>>>> ---
+>>>>>   drivers/gpu/drm/tegra/dc.h  |  13 +++
+>>>>>   drivers/gpu/drm/tegra/sor.c | 206 ++++++++++++++++++++++++++++++++++++++++++++
+>>>>>   2 files changed, 219 insertions(+)
+>>>> What does "darker than intended" mean? Who defines the intention? How do
+>>>> we know what the intention is? What this patch ultimately seems to be
+>>>> doing is define sRGB to be the default colorspace. Is that always the
+>>>> right default choice? What if people want to specify a different
+>>>> colorspace?
+>>> I reported this issue almost a month ago. See kernel lore [0] and
+>>> freedesktop issue [1]. The pictures in the latter show what nvdisplay
+>>> looks like right now. It's nigh unusably dark. When booted into
+>>> Android with a tv launcher that has a black background, as is default
+>>> for LineageOS, it is really hard to read anything. Is it correct as a
+>>> default? Well, cboot hardcodes this, so... presumably? It would be
+>>> more ideal to expose this and csc to userspace, but I'm not sure if
+>>> drm has a standardized interface for that or if tegra would have to
+>>> make something vendor specific. I think that would be a separate
+>>> change concept compared to setting this default, though.
+>> The reason I'm asking is because I don't recall ever seeing "broken"
+>> colors like you do. So I suspect that this may also be related to what
+>> display is connected, or the mode that we're setting.
+I have tried it on both a MacroSilicon HDMI capture card and an Arzopa 
+Z1FC 1080p portable monitor and run into the same darker colors. Both 
+have in common that they use HDMI which seems to line up with what Aaron 
+is reporting. I do not have an eDP display to test or another carrier 
+board with a different display out to test.
+>> It could perhaps
+>> also be related to what infoframes we're sending and how these are
+>> supported/interpreted by the attached display.
+>>
+>> All of that is to say that maybe this looks broken on the particular
+>> setup that you have but may works fine on other setups. Changing the
+>> default may fix your setup and break others.
+> Do you have a device set up so you can check? Or does the regression
+> test bench have a display that can be forwarded?
+>
+> My current setup is a rack of units plugged via hdmi to a kvm which is
+> then plugged to a pikvm. I also observed this issue before I had this
+> setup, plugged directly to a 1080p monitor. I have not checked
+> displayport. I can cycle through a couple other displays without this
+> patch to see if I get any other result. I am fairly certain I have
+> consistently seen this issue since I started trying to work with
+> tegra-drm on kernel 6.1 or maybe even 5.15. I've never seen it work to
+> allow for a bisect.
+>
+> I am in contact with one other person with a tx2 devkit, who
+> replicated the issue when I asked. Who plans to reply to this thread
+> with setup info later.
 
-Reviewed-by: NeilBrown <neil@brown.name>
-
-It would be consistent to also remove the 'dir' arg from vfs_mkdir(),
-vfs_mknod(), etc.  I wouldn't do that until we find out what other
-people think of the change.
-
-Thanks,
-NeilBrown
+For reference, I am said person. I have a Jetson TX2 Devkit that uses 
+the P2771 Device Tree. I'm running a Fedora distrokernel with no 
+additional patches applied by myself. I have personally noticed the 
+issue to at least be present on 6.14.5 and 6.17.4.
 
 
+I'm currently not at home to take screenshots with and without the 
+submitted patch, but will be able to do it tomorrownight or friday.
+
+
+Kindest regards,
+
+
+Jasper
+
+>
+> Aaron
+>
 
