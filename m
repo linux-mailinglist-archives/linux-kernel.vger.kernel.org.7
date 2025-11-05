@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-885860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06BCC34106
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:36:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8C5C3410F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 07:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6117E18C0F8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3366E18C11B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 06:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C082C027B;
-	Wed,  5 Nov 2025 06:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1738D2C027B;
+	Wed,  5 Nov 2025 06:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ciKBTREZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FgS0ckKl"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D40266B72;
-	Wed,  5 Nov 2025 06:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451B2C0F97;
+	Wed,  5 Nov 2025 06:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762324574; cv=none; b=rMAOUdZOrgTqxtUyYS+7B7sW8Q00TECR9/qdbKRgPM13lpslZbzYGXcXalWGLUd0e9Y4jC8jX/1IU9MZ2g0ygHSI6V4IvonSeryteBV6HXYnJykFvq9T+MAPA3L4Ll9EcnAVy9nXOFIVwW+mzzbtNmflaDzoc21uO3J1FciZY2E=
+	t=1762324650; cv=none; b=ZGDniQUjn2aqOqw/AaG0TKPkWCiwfUb1gFgr19q+WYhbaysVwY29iww07Pr6RFa65LjmofBszTcLfWSyGHaOXRMEdjrO5nj+9CPl6WGpSz31vAUuh5dbKczOlZzL87qTaXPVgSOZxJEn5M9N7uHN7HhFPE5bscgUu+ZehFIDCu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762324574; c=relaxed/simple;
-	bh=cyiUtBMf0HVK7nta4KCI5/6yhs0aN0/f1yRIycEVfeE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQ81Rhq8PSHUETdpVZStz/F5qI4rRNhPrP9jhVPXYG+T9m4cE9betJab+1wYItNJD8Tsca2AlaG8yxtFyarj8k/pw3SFtzxnMpmCahxZ0yGy9XYf4sHrRj+f/anTEHDbhnuj8Y4Z3gqzo1wKFCfc4OFvSAmYfsTFseKrb84Cykw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ciKBTREZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363C4C4CEF8;
-	Wed,  5 Nov 2025 06:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762324573;
-	bh=cyiUtBMf0HVK7nta4KCI5/6yhs0aN0/f1yRIycEVfeE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ciKBTREZ5bs98apzuR0e1OEKOkhwJJg/YRyZEThRF8K5pXzGx5ScMrxwZINOK9hmm
-	 85gderGg7s9AzQiSW19lp1c8lIYxPI9x4qLqXUm9ZbGIhPSqgmljvpTaNgWs2RWPfh
-	 yis4KDlrpogHI7B43C63tCkC6l/+7Pq00x0vZ3y3BgYC/LqE0r6A5F+UdzqMJq4vtY
-	 6dD8sHXzj/WJCkiWGMhnM3Zv/uRFrU2RSvVUngmdiG2VjSLolN2M8q8R0YPcs69rWr
-	 xNPdO0L6VPd8MfMxHX6Y2aye6oQkR/9+WJMwzil2DC/0eGQhO2vBUP6wEPohmj0kQF
-	 6a3i5fjeERILQ==
-Message-ID: <08ecbe3a-258b-4d02-b4cb-bb767e013d68@kernel.org>
-Date: Wed, 5 Nov 2025 07:36:08 +0100
+	s=arc-20240116; t=1762324650; c=relaxed/simple;
+	bh=8NxT66zCphvkQCfdIza22bbxIBzsHc7TisrsL7R5jjk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p5le+QCP+tyEBx0cHVLw5YBVsirQhruZKU1LeCZ1QrP74/0zrNjSHLh+0+9WZI5eARzR0fWg/DW+qYKcCgefQdOr6tR6BWMMdvUwMisRtamt/CH60i2xuN2pIdb4r+HJjEcn6EDKhALeBNlD8/Nv/Kt8R7q8I7rSWV+fNRWqt5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FgS0ckKl; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A56bH5E1630904, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762324637; bh=4ldqUFijuY4M4Ww4pUDqzKWGCyEgYoYPd767VqSYHa8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=FgS0ckKlTfOpMGULkk2vSnYbrR1iEZiKGr5Asa/Hns2e26JB8yxHDBDrZvlDQHeDJ
+	 964eP0OUlgNar8XLjZINhuImNOJhtAUZ/HVSce1ZVsmZejGiC4K89RVIaeizV3wAg4
+	 cYFuSVjpISlz7ytDke2x+clU2ehRlrjiWX14wvUZEJ7BXy/Q8fRSLKbYCzupahtMIp
+	 QCcAoXqRd+TsT+2PxoDjSqPXEFsy0TmFuMxrAomZSAq8lz9AMxhJKzpobuLn8XXlm0
+	 1IjQPhgCO+2eTe1YImBBKrXiEfSoPmIuMPz+OQ+t6FPtlwhMA3iWmN9WRcUBqFs0Ff
+	 gXDIjmOXT1NaQ==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A56bH5E1630904
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 14:37:17 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 5 Nov 2025 14:37:17 +0800
+Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 5 Nov 2025 14:37:16 +0800
+Received: from rtkbt-D520MT-K.realtek.com.tw (172.24.54.67) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server id
+ 15.2.1544.27 via Frontend Transport; Wed, 5 Nov 2025 14:37:16 +0800
+From: Max Chou <max.chou@realtek.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+        <niall_ni@realsil.com.cn>, KidmanLee <kidman@realtek.com>,
+        Max Chou
+	<max.chou@realtek.com>
+Subject: [PATCH] Bluetooth: btrtl: Avoid loading the config file on security chips
+Date: Wed, 5 Nov 2025 14:37:36 +0800
+Message-ID: <20251105063736.456618-1-max.chou@realtek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: defconfig: enable i.MX AIPSTZ driver
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251104150612.1874-1-laurentiumihalcea111@gmail.com>
- <20251104150612.1874-2-laurentiumihalcea111@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251104150612.1874-2-laurentiumihalcea111@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 04/11/2025 16:06, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> Enable the i.MX AIPSTZ driver, which is used for i.MX8MP-based boards such
-> as NXP's IMX8MP-EVK.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 03d89f29e7c1..ae5d32ea9fc3 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -271,6 +271,7 @@ CONFIG_GOOGLE_FIRMWARE=y
->  CONFIG_GOOGLE_CBMEM=m
->  CONFIG_GOOGLE_COREBOOT_TABLE=m
->  CONFIG_EFI_CAPSULE_LOADER=y
-> +CONFIG_IMX_AIPSTZ=y
+For chips with security enabled, it's only possible to load firmware
+with a valid signature pattern.
 
-This should be a module.
+- Example log for a security chip.
 
-Best regards,
-Krzysztof
+Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+  lmp_ver=0c lmp_subver=8922
+Bluetooth: hci0: RTL: rom_version status=0 version=1
+Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+Bluetooth: hci0: RTL: cfg_sz 0, total sz 71301
+Bluetooth: hci0: RTL: fw version 0x41c0c905
+
+- Example log for a normal chip.
+
+Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+  lmp_ver=0c lmp_subver=8922
+Bluetooth: hci0: RTL: rom_version status=0 version=1
+Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_config.bin
+Bluetooth: hci0: RTL: cfg_sz 6, total sz 71307
+Bluetooth: hci0: RTL: fw version 0x41c0c905
+
+Tested-by: Hilda Wu <hildawu@realtek.com>
+Signed-off-by: Nial Ni <niall_ni@realsil.com.cn>
+Signed-off-by: Max Chou <max.chou@realtek.com>
+---
+ drivers/bluetooth/btrtl.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 8290932b8f7b..f6fccc6fdf22 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -50,7 +50,7 @@
+ 
+ #define	RTL_CHIP_SUBVER (&(struct rtl_vendor_cmd) {{0x10, 0x38, 0x04, 0x28, 0x80}})
+ #define	RTL_CHIP_REV    (&(struct rtl_vendor_cmd) {{0x10, 0x3A, 0x04, 0x28, 0x80}})
+-#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0x0D, 0x00, 0xb0}})
++#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0xAD, 0x00, 0xb0}})
+ 
+ #define RTL_PATCH_SNIPPETS		0x01
+ #define RTL_PATCH_DUMMY_HEADER		0x02
+@@ -544,7 +544,6 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+ {
+ 	struct rtl_epatch_header_v2 *hdr;
+ 	int rc;
+-	u8 reg_val[2];
+ 	u8 key_id;
+ 	u32 num_sections;
+ 	struct rtl_section *section;
+@@ -559,14 +558,7 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+ 		.len  = btrtl_dev->fw_len - 7, /* Cut the tail */
+ 	};
+ 
+-	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
+-	if (rc < 0)
+-		return -EIO;
+-	key_id = reg_val[0];
+-
+-	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
+-
+-	btrtl_dev->key_id = key_id;
++	key_id = btrtl_dev->key_id;
+ 
+ 	hdr = rtl_iov_pull_data(&iov, sizeof(*hdr));
+ 	if (!hdr)
+@@ -1081,6 +1073,8 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+ 	u16 hci_rev, lmp_subver;
+ 	u8 hci_ver, lmp_ver, chip_type = 0;
+ 	int ret;
++	int rc;
++	u8 key_id;
+ 	u8 reg_val[2];
+ 
+ 	btrtl_dev = kzalloc(sizeof(*btrtl_dev), GFP_KERNEL);
+@@ -1191,6 +1185,14 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+ 		goto err_free;
+ 	}
+ 
++	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
++	if (rc < 0)
++		goto err_free;
++
++	key_id = reg_val[0];
++	btrtl_dev->key_id = key_id;
++	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
++
+ 	btrtl_dev->fw_len = -EIO;
+ 	if (lmp_subver == RTL_ROM_LMP_8852A && hci_rev == 0x000c) {
+ 		snprintf(fw_name, sizeof(fw_name), "%s_v2.bin",
+@@ -1213,7 +1215,7 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+ 		goto err_free;
+ 	}
+ 
+-	if (btrtl_dev->ic_info->cfg_name) {
++	if (btrtl_dev->ic_info->cfg_name && !btrtl_dev->key_id) {
+ 		if (postfix) {
+ 			snprintf(cfg_name, sizeof(cfg_name), "%s-%s.bin",
+ 				 btrtl_dev->ic_info->cfg_name, postfix);
+-- 
+2.43.0
+
 
