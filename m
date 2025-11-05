@@ -1,166 +1,312 @@
-Return-Path: <linux-kernel+bounces-887224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B16C379B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:01:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B97C379ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:04:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA2C1A20E44
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BF23A9422
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9F032E6B1;
-	Wed,  5 Nov 2025 20:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC508280CD5;
+	Wed,  5 Nov 2025 20:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZSxGdxX9"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HyiC742G"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012046.outbound.protection.outlook.com [52.101.48.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916632FB97F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372869; cv=none; b=CNBOH2vicXnGyK+cU/hjBTayeyyQSAmryhOy266XrRr36pgkaKDnn47K0NuxzOugQqT0oX2an9pK/32gE7C7B7W38Sx7huJC/UDlg1HduKV4z7W66En5PvqUgieQJjkODG4Xoz2OLss2wHCx/jyYeETYnSbIRVAtj0abSbpF/yM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372869; c=relaxed/simple;
-	bh=GsjEeX/yoeLxBaD+dnbSv8Mk07ocMdYdXojXWIK+l4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FI+DF0mI4InOMH+JWclSi3nivYUdNtrqZ9y+9EU78hCxLN1w6wzEqvuEkvapubQ8/w4MoA9Z+4dERn2/OX3BYgr3K3eNc+53wG121SvuPRJwjFgX4js8ABQyByjHvfZBC6/Zd3sqg64w74vZ/JRWFdOqtJHaHADYDXF/xxANhLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZSxGdxX9; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-88057f5d041so3064956d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:01:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762372865; x=1762977665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldDyq3tsFgYvyoHI8nWeYS5HdbVk0rd4V1r4ezrVHxs=;
-        b=ZSxGdxX9xCk1HKNpVIcM3JeGL4ppDGq/ppX1tKu4zzry89rvCfCuRLNhxVQTwFsO/1
-         xzBHvTqNEf1f//pxFOyyjiKoLv3JQ6jMFuZ1U0gtSFs0gUY5788vd0Bw+sW7CJcHcas5
-         /cwugQ+wGeG5ifFdnhLsHYmm7TAMulD3ytgLT9U21uBeTuEwU3xQhOJyUj57qplDnfTR
-         6OGd4k3TKUOwqaDx7S/HHNZKW9KXKtxkZML1HmUe3fcX1+KMtLTI5WtXaoSnN5l1vuRl
-         ThKKki1xOPnWTPWwyCqM3j+KNciRfeFxGonXxktJUKdXwJHAPgOsc3ryftcHX8Y9jd+0
-         lCyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762372865; x=1762977665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldDyq3tsFgYvyoHI8nWeYS5HdbVk0rd4V1r4ezrVHxs=;
-        b=sUDTyaeCqQlnS4QEVbSHEYy7HxGWYpqDhHAqyDzOZcsAkK7PDp91GzI9vQ60fZZJ/1
-         exCGX2xjun7NDS/lYx3Ski/h4qND7F2P9KffmsTLOfGDRcd2OI+cMnsu5cPIjPklqDOM
-         PmzDCV8ULOQXBcxnF5tmD9eETTTfpy8RAT5CTEeVUAWWL8YGVtSIurxXcw1wiLXsXSTO
-         wKQ/OCvChd089J3YFkmCS8HxDiI5L+LyZNrIx0dCFsyrCMResaOs1ICjwNY62Yp9i0YG
-         XXQdV49c5ebkx4sHo1/fjIUNzpE9KGn9oh5eXYIAZXNpiN+Xng9j9uoxelknuTvTOtzm
-         nxlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs+7ldlQm2qTROKQA760OQE6LbOBwL02eVL/gbfZJlGMxBNXYYXUl7jxeQ09Du1a45OM2GN1HPDXJ9FFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkgXgyA0i45xs26klgimzgF8sJt3TWMJ2Bx57x08ijiymicaZa
-	ycqvHBcDc6PC5P3WhuSrTGuXkP0tSgaMHFlI/Lnl5Ty75q0HvwnZChvp0Z2z/J2aeAA=
-X-Gm-Gg: ASbGncuGwcymNgGOJTBUkmKBqWOM2sN7H+g9MsuO4a/RVBsE0rbGhrsaLgEWLxpInIx
-	gLiyei/2jCkKuUey8pATeo0P+DiIOGUb5qZNTOzYDXzN+LElcF6dqs9XOYmj15X95To5qGEJJIq
-	slGjzpPzK7xzujCqPCFAEveS44dz/rU/2D3FR5qxELWR9TKLiviiah0ZnyuxhCVJVZfrZsgPLeO
-	bej+G523eSx+bxV5hEGX/J0Wcc/oZltOc2muz9T0Gok5FsAtjt2SAx1vCgSnFLNwmH+lLQtGA0h
-	GCE9P31PC4kcod7sMhOh/6nAhEncq704AsF82niy77w+fwwHAilOFtad7O3wqlgFLzZ3wBgwzdu
-	XsEbf7VPgPanXz8t5Jx445Tfz3hUHV1Zy4sAtl5d7j1HxG3nUA2Wgpmfy8+8gXO4GT/XXWZUig2
-	xjvXn/eu1c3A+OjbBVXPlTVqWFunGsmHgqSWaqtY0yPaCtNI5epQRsjKYu1+8=
-X-Google-Smtp-Source: AGHT+IFrPbLMeE9CYwB+D7eMKoLl9vB1NdinT/slFi02CGhPHxsO1o1rCTabfaRmYf3n9WMkLz+GWg==
-X-Received: by 2002:a05:6214:20ad:b0:880:4896:5d81 with SMTP id 6a1803df08f44-88071135a41mr51873106d6.3.1762372864533;
-        Wed, 05 Nov 2025 12:01:04 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880828c4570sm4100556d6.10.2025.11.05.12.01.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 12:01:03 -0800 (PST)
-Date: Wed, 5 Nov 2025 15:01:00 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
- leaf entry logic
-Message-ID: <aQus_MNi2gFyY_pL@gourry-fedora-PF4VCD3F>
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
- <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
- <aQugI-F_Jig41FR9@casper.infradead.org>
- <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
- <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7B0126C02;
+	Wed,  5 Nov 2025 20:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762372907; cv=fail; b=YB0Mu28JN8k/TleQmRNjNZoqF+Tr0aTPJR1HK5UfFB4gaznmRqtiqhY0l95XtO6StNhxOi7BAVdLOCeUMylY5X73JUGZmzDixL51nJci0ka+oMHdCgg1GmRdNqKwbbXBoinGTcFF5pzNG1ZQkjk5wqawuAcOwY2HWIWe7yaC32M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762372907; c=relaxed/simple;
+	bh=3TQU15fs3+vE77o9Gv2KAFIcs/n79D7im1R/A8bKj5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qaGVxTEh25K/KmUexVgOPTUajL3m/OKuQvhAa/ZHt8IOknxLy5YlZz1wnje17Uw8PEwqIjK0g4e1vj+QJOCojciCb+8WH04BfXMDIu738D8SDWnMSY87WbA3KGOxNBH/2zOOGaXcp4vdg7G9oEAlni8zDj/31oCWFUCknuNizuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HyiC742G; arc=fail smtp.client-ip=52.101.48.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HfR0LGoyfgq/245fOi+Q4YoUCRiPPm8qc6rEMd/1lKu4fNmu2o3Oq7GdCUSevavYIbO7avIwT7aIJiwCyx+ccl62jOEeMqgonec0zEfmu8Vpbv76p/LHLXMU6Cv+eh/4GkZnNvcnzdm/dYRzfLBRQ+Su7qEOpg82jbNQulfD3Uuk8i7CJZBTqo3HFCqjYpghoT7WwWlxSkR1e0CDiI+Af3Hk+Cms6it4gXuAnsaa5LHxSEi02u/8PCgH8bmV5LwTjCSd0UCfg9I0eN3/DmUuBlz8PBNn85vRouh7Bj/8AsP8wjNmV3V6Ak7Wpqv1uZw2/UTHF5/db2EeIpheb8RuFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AXs6Wovbj8ZphBmWGiIV9aU/XQauolR/VSCjMZPVhRA=;
+ b=n4v1YH/NrN0L170O9/gzpyMYWCNoBGjaodzrYm9tJb7Fo7ri+926a+VYLwCA+6O9/xnLZwEc3Q50zAOwqA9BZcYIyQ0juq2EMYyeSx6SjRVBZQ5QE3+1N+rmHNbFLUca6+okF+pXF5FBRpOhurugWDYgnKXJUNRnPx4ruPBCn5IM5v43o2xr3fnreKW7ctsH8LhhdK8bQllCG5C58mns0xodv/MGqUIK15H+S64halEdIdoR0zbfGxy33HXR+3LzE4vHpx3Bt4q/Vyq1Xr4yONNBDfYBOBdlyyV8QYwyS2pf5U/5rqs6sbBfSlSA0jIs2cV2+0wfmy9MaUaJlga72g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=toradex.com smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AXs6Wovbj8ZphBmWGiIV9aU/XQauolR/VSCjMZPVhRA=;
+ b=HyiC742G+Cwae5N8mYoMrESGU+rcqDUCO5GklaZwz/rDw6KbOb/wDVk3YojtztjEge09MKEGZ7R4SFO114sPj5uSKprp03Q198xWxLRp7qilsDrj+oq172M+cn5tHTW3H7bFZe9zNgdhP89cZy0JxOV9Lmlcg67TqO37VXblCFo=
+Received: from PH7PR13CA0004.namprd13.prod.outlook.com (2603:10b6:510:174::25)
+ by MW4PR10MB6439.namprd10.prod.outlook.com (2603:10b6:303:218::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
+ 2025 20:01:39 +0000
+Received: from SN1PEPF000397AE.namprd05.prod.outlook.com
+ (2603:10b6:510:174:cafe::5a) by PH7PR13CA0004.outlook.office365.com
+ (2603:10b6:510:174::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.5 via Frontend Transport; Wed, 5
+ Nov 2025 20:01:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ SN1PEPF000397AE.mail.protection.outlook.com (10.167.248.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Wed, 5 Nov 2025 20:01:38 +0000
+Received: from DLEE215.ent.ti.com (157.170.170.118) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
+ 2025 14:01:36 -0600
+Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE215.ent.ti.com
+ (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
+ 2025 14:01:36 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 5 Nov 2025 14:01:36 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A5K1ZrG025535;
+	Wed, 5 Nov 2025 14:01:36 -0600
+Message-ID: <7024f4b3-00a0-4618-8bf9-53e305fcc982@ti.com>
+Date: Wed, 5 Nov 2025 14:01:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] arm64: dts: ti: Add Aquila AM69 Support
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, "Tero
+ Kristo" <kristo@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Parth
+ Pancholi" <parth.pancholi@toradex.com>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Emanuele Ghidoli
+	<emanuele.ghidoli@toradex.com>, Ernest Van Hoecke
+	<ernest.vanhoecke@toradex.com>, =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
+	<joao.goncalves@toradex.com>, Francesco Dolcini
+	<francesco.dolcini@toradex.com>
+References: <20251104144915.60445-1-francesco@dolcini.it>
+ <20251104145240.61219-1-francesco@dolcini.it>
+ <20251104145240.61219-2-francesco@dolcini.it>
+ <d77bf3dd-4501-4f17-a776-3353f96f4fb1@ti.com>
+ <20251105115335.GA14157@francesco-nb>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20251105115335.GA14157@francesco-nb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397AE:EE_|MW4PR10MB6439:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49239e2f-ceb0-43c3-af69-08de1ca621aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013|34020700016|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cjBScGlIRlQ3S00wa0ZGV0ZaY1hCb3QxNFM2bTBOdVIweE80QTlVZHJtUlV4?=
+ =?utf-8?B?ZllYdms1Rk9VZnEwUjY0NEtCZUkrQ1BzK1FWN1Y3MnVCU3cyaG4xTjJSQjFY?=
+ =?utf-8?B?eXVGOTlHTWtybGE0d0t5dk5Ib1NYZGUxZ2RpTENiTjRZWE43OGI0ZVVVWXlJ?=
+ =?utf-8?B?VlVwbU52V3pPdnVBMmRzWS9lYVlnZzIrN0t5RXZMeC9kdnU4Z1M0VVYzVWsx?=
+ =?utf-8?B?WmlOQlNNZFlqOGVsdDFYOVFwRHphOVNQYW9FSTZid0xobkdod3VZRlVtTE1Y?=
+ =?utf-8?B?V2VLQndtWnAxOWQxTm8wWHNzYUtocnJZNTVXMjlrYnV4SmdsRC9uVGdYRlhT?=
+ =?utf-8?B?QllwRjJlcUJCVUZ5SEdpdW5WZ25iSGs3YUxXS3luQmtRSkVGbTZlejRCVWVU?=
+ =?utf-8?B?ekxhQ2FldmY1cmd3cFMvUDk4MitVSWxzUzVUMUx5TlQ4dWw3TXY3THZWK0Ni?=
+ =?utf-8?B?TC9NWk5MbzVmMTZCZ1phMFVqQ0pwMEtkbk9mc1A5TndmTjkwZW90WmtveWZT?=
+ =?utf-8?B?OVFKeGU0SHozd1RVamlhQ1I3cmMrV1ZEK3pLeXlCZDA5UWNmMHp3dWp4b3dM?=
+ =?utf-8?B?V01lRGoyZ3YzVUtRNDZydU1KazhySGtxU00rM1BlS1R3aDdWRjhrZndZblVU?=
+ =?utf-8?B?cDZBRVpNMDNhTG9wd0wzaC9Famc3SUNOaFZNNnJoL3dXVFpYSi95QTRDcVZS?=
+ =?utf-8?B?OGxDZDF0Sm9ScFRQNytKV3Q4YUYvdk9ldU93RlNPRVZMK29DTlJpcUdNWVVv?=
+ =?utf-8?B?bFF0NXMxdGJ5YW1iYXJQN0V6N0RQS21WVnROWXIyMWRHeW95b28raDVSdnpR?=
+ =?utf-8?B?YlN3dlRJRmpFT1BKaFJBTEh2ZEczc1p1VG5uN1YxMlFuWVZpTEZIZjRrdEhL?=
+ =?utf-8?B?Z2FZRDgwTlU2c3ArNHN3ZXBlTklJZkFrbGhWNjJsYUNWTWRINi9FWnFzSHh1?=
+ =?utf-8?B?QVkxUUtjaGdNeHhoVmw5RjZneUZMK1V1WFZRVGIzYW1SZXRSa3EyZDUrM2NL?=
+ =?utf-8?B?RGpnRkFGZzN2TTdjN2xEVHZwOEdKM1BCaXJ4NFdYT2Yrdmtad2hSY1JJRkhU?=
+ =?utf-8?B?Q0ZzeTFZVmg3TXpWS0gzeTJWMDlkVFZaaDJEWldFMk5seXMrMlNPZjNVRnFK?=
+ =?utf-8?B?SUVYdEdlODlZWFhGYm12bURqbE1XK0lBTjEzMWJHRHFaZklXeGxubnl2Ykgy?=
+ =?utf-8?B?OHkxS2ZpRWpKUlUzSE5naUc2UkgwRnNySTBlU1pDSjY4MXFTYlZWZ2grcFlY?=
+ =?utf-8?B?RTNIdFR6SFBvZ1BRYnZIK0haaHR1ZjJ2ZnB2SmZXd2lwUjk0aUU5eVdnb2dE?=
+ =?utf-8?B?ZEI5NzJIYkpsQVBaWjErTHlxUlFYQkdHUE5SQi80VnlzRDBsd3E5cytNb3FC?=
+ =?utf-8?B?WnNJVThKbnlWVytoUEJkRk9CZUxVY0ZUV055dkhaRDN4eXhFMkt0Y1VONHR2?=
+ =?utf-8?B?U0ZTM3U4WkZtTWJDaG93NEhRMlV4SkJ0S2VJeG9NSUdTNFdwSVk5OUg0LzdP?=
+ =?utf-8?B?eFMxSTZmRlZVS0QwUnUyVVFhNHRmSUlBMTVXR0dRQWpDNXpJdkJIVTdIVDFv?=
+ =?utf-8?B?K2ttWmI3YnR1bno2SmNNRzVFdE1UUjZCbkcyS3o1d0x5Y2RQVDlpMDNsaytY?=
+ =?utf-8?B?R3BrQUJJYmJLR2k0Tm9rZzg1K0xsUVJ2aUdFcXFWOGNLQW5Bc0sxczRoUTNl?=
+ =?utf-8?B?QzZBdXpDZGRyVitySlNjVWE4dVQrMThiSWVFNEROYWlYZWFWR1J6NGpjaERO?=
+ =?utf-8?B?YnduOVNocm9BZWs2UUdSUUpPUEp0aXpkZ1p5MHF4R3RoL0pBV3IxaDRTWGsv?=
+ =?utf-8?B?R2hlKzdBYUx4UnVnZGVTU09hYXJGeUhZUm5EWm9Tc2dSL1p2OXdXdzBhdWlv?=
+ =?utf-8?B?WjBieTJTTjNzdXZmb1J5b1VlZDIxZUtyejZLWW5sUkczWktibUxBMW5EbUZO?=
+ =?utf-8?B?b1dtOTBMSm90dTErUWtSZWQvYytMcGkxS0MrUHRiRjN2MVNHTU1nbngwS2VE?=
+ =?utf-8?B?TXRjUlBEZGg4WlNWYnJPMVBaTXJCcVV6YU8xOEphN2xXRGZJdEowTVRySFNa?=
+ =?utf-8?B?bWEzNjNZNFc1bzJtMzNKNkxvcFFHVWlRbzJKdkFvUW5sdmdWYUl3SlUrdHh3?=
+ =?utf-8?Q?GlIg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013)(34020700016)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 20:01:38.7689
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49239e2f-ceb0-43c3-af69-08de1ca621aa
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397AE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6439
 
-On Wed, Nov 05, 2025 at 07:52:36PM +0000, Lorenzo Stoakes wrote:
-> On Wed, Nov 05, 2025 at 02:25:34PM -0500, Gregory Price wrote:
-> > On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
-> I thought about doing this but it doesn't really work as the type is
-> _abstracted_ from the architecture-specific value, _and_ we use what is
-> currently the swp_type field to identify what this is.
+On 11/5/25 5:53 AM, Francesco Dolcini wrote:
+> Hello Andrew,
+> thanks for the review
 > 
-> So we would lose the architecture-specific information that any 'hardware leaf'
-> entry would require and not be able to reliably identify it without losing bits.
+> On Tue, Nov 04, 2025 at 11:41:54AM -0600, Andrew Davis wrote:
+>> On 11/4/25 8:52 AM, Francesco Dolcini wrote:
+>>> From: Parth Pancholi <parth.pancholi@toradex.com>
+>>>
+>>> Add support for the Toradex Aquila AM69 and its Development Carrier
+>>> Board.
+>>>
+>>> The Aquila AM69 SoM is based on the TI AM69 SoC from the Jacinto 7
+>>> family and is designed for high-end embedded computing, featuring up to
+>>> 32GB of LPDDR4 and 256GB eMMC storage, extensive multimedia support (3x
+>>> Quad CSI, 2x Quad DSI, DisplayPort, 5x Audio I2S/TDM), six Ethernet
+>>> interfaces (1x 1G, 4x 2.5G SGMII, 1x 10G), USB 3.2 Host/DRD support, and
+>>> a Wi-Fi 7/BT 5.3 module, alongside an RX8130 RTC, I2C EEPROM and
+>>> Temperature Sensor, and optional TPM 2.0 module.
+>>>
+>>> Link: https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
+>>> Link: https://www.toradex.com/products/carrier-board/aquila-development-board-kit
+>>> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+>>> Co-developed-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+>>> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+>>> Co-developed-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+>>> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+>>> Co-developed-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+>>> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+>>> Co-developed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+>>> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+>>> ---
+>>>    arch/arm64/boot/dts/ti/Makefile               |    1 +
+>>>    arch/arm64/boot/dts/ti/k3-am69-aquila-dev.dts |  576 ++++++
+>>>    arch/arm64/boot/dts/ti/k3-am69-aquila.dtsi    | 1840 +++++++++++++++++
+>>>    3 files changed, 2417 insertions(+)
+>>>    create mode 100644 arch/arm64/boot/dts/ti/k3-am69-aquila-dev.dts
+>>>    create mode 100644 arch/arm64/boot/dts/ti/k3-am69-aquila.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+>>> index 361248dcfff4..6ce652fe98fa 100644
+>>> --- a/arch/arm64/boot/dts/ti/Makefile
+>>> +++ b/arch/arm64/boot/dts/ti/Makefile
+>>> @@ -153,6 +153,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
+>>>    dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
+>>>    # Boards with J784s4 SoC
+>>> +dtb-$(CONFIG_ARCH_K3) += k3-am69-aquila-dev.dtb
+>>>    dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
+>>>    dtb-$(CONFIG_ARCH_K3) += k3-am69-sk-pcie0-ep.dtbo
+>>>    dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm.dtb
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-am69-aquila-dev.dts b/arch/arm64/boot/dts/ti/k3-am69-aquila-dev.dts
+>>> new file mode 100644
+>>> index 000000000000..c7ce804eac70
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/ti/k3-am69-aquila-dev.dts
+>>> @@ -0,0 +1,576 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+>>> +/*
+>>> + * Copyright (C) 2025 Toradex
+>>> + *
+>>> + * https://www.toradex.com/computer-on-modules/aquila-arm-family/ti-am69
+>>> + * https://www.toradex.com/products/carrier-board/aquila-development-board-kit
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include <dt-bindings/pwm/pwm.h>
+>>> +#include "k3-am69-aquila.dtsi"
+>>> +
+>>
+>> [...]
+>>
+>>> +/* Aquila SPI_2 */
+>>> +&main_spi0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +/* Aquila SPI_1 */
+>>> +&main_spi2 {
+>>> +	status = "okay";
+>>
+>> Why enable this with nothing connected to it?
 > 
-> Trying to preserve the value _and_ correctly identify it as a present entry
-> would be difficult.
+> It's a development carrier board, the SPI pins go to a pins header,
+> accessible to the user, where anything can be hooked up for
+> prototyping/testing.
 > 
-> And I _really_ didn't want to go on a deep dive through all the architectures to
-> see if we could encode it differently to allow for this.
-> 
-> Rather I think it's better to differentiate between s/w + h/w leaf entries.
->
 
-Reasonable - names are hard, but just about anything will be better than swp_entry.
+Sure, and when a device is attached to that pin header it will need
+described in DT with a node for that attached device and in that
+node/overlay is where you enable the nodes you make use of.
 
-SWE / sw_entry seems perfectly reasonable.
+> One use case would be to just bind this in userspace to spidev for some
+> prototyping/testing.
+> 
 
-~Gregory
+But you are not adding a spidev node here, you are attaching nothing
+but enabling the node anyway.
+
+> 
+>> [...]
+>>
+>>> +/* Aquila SPI_1 */
+>>> +&main_spi2 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_main_spi2>, <&pinctrl_main_spi2_cs0>;
+>>> +	status = "disabled";
+>>
+>> This is already disabled by default in the SoC dtsi file.
+> 
+> Yes, known. Is this an issue?
+> 
+> This node must be disabled, no matter what is present in any included
+> dtsi file, it's a deliberate decision.
+> 
+> This dtsi file describes a SoM, the used pins/functions are defined on
+> the pinout, but this node cannot be enabled unless the SoM is mated with
+> a carrier board that is exposing it.
+
+Same as my point above, you shouldn't enable nodes that are not used
+or have anything attached. The SoM only has some edge connectors so
+it should not be enabled at the SoM level, that we seem to agree, but
+the carrier board doesn't connect those lines to anything either. They
+just run to a pin header with nothing attached, how is that header
+any different than the pins on the edge of the SoM?
+
+Anyway, the right spot to enable would be when you bind a device to
+the SPI, which it seems you do in overlays[0], so that would be were
+you set status = "okay" and all the pinmux info for that SPI device
+and carrier board combination.
+
+Andrew
+
+[0] https://developer.toradex.com/torizon/os-customization/use-cases/device-tree-overlays-on-torizon/#spidev
+
+> 
+> Francesco
+> 
+
 
