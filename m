@@ -1,174 +1,273 @@
-Return-Path: <linux-kernel+bounces-886364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67162C355CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:30:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892D0C3557F
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738C03AC65A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:25:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EB1D4F5CB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54630F7F8;
-	Wed,  5 Nov 2025 11:25:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69309304BB7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3391830FC04;
+	Wed,  5 Nov 2025 11:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FU8oo6YB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yraSf4DV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FU8oo6YB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yraSf4DV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2183093D2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 11:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341903; cv=none; b=i07XVjw46bO+jpln6uyc+myj1F7ejkdll8ApBbC6WIeSLziQLcnIjhVJdn3rZfDWfebMaAOOxByZCta9NxCSXc5Q0A7zx6ns5lTIYRE9hXoIEVHf+aAxjXF5oqljRFX34qlP1L0nAYPLHQP6j2ZXbHpME5TLdMv3XjGaNwmVjh4=
+	t=1762341922; cv=none; b=DdQgMw0NgQQJNnlqLyiYbWRIeDRoj6aMI4MDmfadfmUNUQsh8ZwTmZ416QG8mioceuKFIjShzOloIDxKHC1rIzncdXF1lerjXBQilY8YB0/n8Vbm7Tc7oSYWUHV42zYy/Ygci8m+kRO6DcMigpvM6PGBPNFmsPWswjW+jLURx/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341903; c=relaxed/simple;
-	bh=hmU/qaIXwsENiD16foyteDE2erGI0Q+ynMc9NW62fCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWL11Y2UYlXtsRyWEvGOV8ojz5UdZHaboU1oB9Fe43Ea0qjsAcBezJn/Si8/Vyi2Xn3NSz86QqPnA0K4HKUn1xAUtwKLMTeDWiRRmFWT5W/QsexSFcLi6kLgeayN4PQRDgJpKIYjXfMkBwmn2Re0r9efPnuajM1mn2d0KRPY/aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E44B0169C;
-	Wed,  5 Nov 2025 03:24:52 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7DC23F63F;
-	Wed,  5 Nov 2025 03:24:59 -0800 (PST)
-Date: Wed, 5 Nov 2025 11:24:54 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: syzbot <syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com>
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	will@kernel.org
-Subject: Re: [syzbot] [arm?] WARNING in fpsimd_restore_current_state
-Message-ID: <aQs0Bkrbnqinlqss@J2N7QTR9R3>
-References: <690a8dc2.050a0220.3d0d33.0018.GAE@google.com>
+	s=arc-20240116; t=1762341922; c=relaxed/simple;
+	bh=WGjt1LZlkBB8w6gHVzXLXlbkP5HnD/BwtQ5i3ks0II4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FUP/muv4urBvHnU6io1I2iHhI2ovsTkzjRUNcH4Vsxk1Ec9HGmDT2dgnXyTS99EZIhaAQY/OUoprKKmD0MvF4xOT0MimZ2qVUT7T+mojh9aJHdOUBChwFWhttt5Nj8G6C1Ird/4ArKXL3LjCBdUYZA3E2I+HhKGThhvKO4pceY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FU8oo6YB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yraSf4DV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FU8oo6YB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yraSf4DV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DEB5B211BA;
+	Wed,  5 Nov 2025 11:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762341918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PP/vg4TETuUesnxpasg6ytdJ1cNcbiaaG4KK1fcuiIY=;
+	b=FU8oo6YBT7CVji0/a6quURnUbwznLcDOExmxbfxdXFtYnSS8PShRbYT4ARqEpaDtFIicwJ
+	JS0In1K9YI0YsGQrT1/ltls3nypEUSjkaN6YcRaxGDSX+0FikINZ1p91aY71KL9XKXicE0
+	VQRXBBX0kYkMkdiiCajXUc0IGqgmhK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762341918;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PP/vg4TETuUesnxpasg6ytdJ1cNcbiaaG4KK1fcuiIY=;
+	b=yraSf4DVWYl/W5BFC3s/lbeuDEv7YTuyVTIQMD/jIKmWChOFdkfVF/XaOrgLfmRjUbXjDT
+	55AGXH+HxCRUG3BQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762341918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PP/vg4TETuUesnxpasg6ytdJ1cNcbiaaG4KK1fcuiIY=;
+	b=FU8oo6YBT7CVji0/a6quURnUbwznLcDOExmxbfxdXFtYnSS8PShRbYT4ARqEpaDtFIicwJ
+	JS0In1K9YI0YsGQrT1/ltls3nypEUSjkaN6YcRaxGDSX+0FikINZ1p91aY71KL9XKXicE0
+	VQRXBBX0kYkMkdiiCajXUc0IGqgmhK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762341918;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PP/vg4TETuUesnxpasg6ytdJ1cNcbiaaG4KK1fcuiIY=;
+	b=yraSf4DVWYl/W5BFC3s/lbeuDEv7YTuyVTIQMD/jIKmWChOFdkfVF/XaOrgLfmRjUbXjDT
+	55AGXH+HxCRUG3BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2ADC132DD;
+	Wed,  5 Nov 2025 11:25:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +ShFKx40C2ncEQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 05 Nov 2025 11:25:18 +0000
+Message-ID: <1bda09da-93be-4737-aef0-d47f8c5c9301@suse.cz>
+Date: Wed, 5 Nov 2025 12:25:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <690a8dc2.050a0220.3d0d33.0018.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
+ operations
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, Daniel Gomez <da.gomez@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org, linux-modules@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+ <0406562e-2066-4cf8-9902-b2b0616dd742@kernel.org> <aQge2rmgRvd1JKxc@harry>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aQge2rmgRvd1JKxc@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,kernel.org,suse.com,atomlin.com,intel.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On Tue, Nov 04, 2025 at 03:35:30PM -0800, syzbot wrote:
-> Hello,
-
-Hi,
-
-Initial analysis / holding-reply below.
-
-> syzbot found the following issue on:
+On 11/3/25 04:17, Harry Yoo wrote:
+> On Fri, Oct 31, 2025 at 10:32:54PM +0100, Daniel Gomez wrote:
+>> 
+>> 
+>> On 10/09/2025 10.01, Vlastimil Babka wrote:
+>> > Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
+>> > For caches with sheaves, on each cpu maintain a rcu_free sheaf in
+>> > addition to main and spare sheaves.
+>> > 
+>> > kfree_rcu() operations will try to put objects on this sheaf. Once full,
+>> > the sheaf is detached and submitted to call_rcu() with a handler that
+>> > will try to put it in the barn, or flush to slab pages using bulk free,
+>> > when the barn is full. Then a new empty sheaf must be obtained to put
+>> > more objects there.
+>> > 
+>> > It's possible that no free sheaves are available to use for a new
+>> > rcu_free sheaf, and the allocation in kfree_rcu() context can only use
+>> > GFP_NOWAIT and thus may fail. In that case, fall back to the existing
+>> > kfree_rcu() implementation.
+>> > 
+>> > Expected advantages:
+>> > - batching the kfree_rcu() operations, that could eventually replace the
+>> >   existing batching
+>> > - sheaves can be reused for allocations via barn instead of being
+>> >   flushed to slabs, which is more efficient
+>> >   - this includes cases where only some cpus are allowed to process rcu
+>> >     callbacks (Android)
+>> > 
+>> > Possible disadvantage:
+>> > - objects might be waiting for more than their grace period (it is
+>> >   determined by the last object freed into the sheaf), increasing memory
+>> >   usage - but the existing batching does that too.
+>> > 
+>> > Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
+>> > implementation favors smaller memory footprint over performance.
+>> > 
+>> > Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
+>> > contexts where kfree_rcu() is called might not be compatible with taking
+>> > a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
+>> > spinlock - the current kfree_rcu() implementation avoids doing that.
+>> > 
+>> > Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all caches
+>> > that have them. This is not a cheap operation, but the barrier usage is
+>> > rare - currently kmem_cache_destroy() or on module unload.
+>> > 
+>> > Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
+>> > count how many kfree_rcu() used the rcu_free sheaf successfully and how
+>> > many had to fall back to the existing implementation.
+>> > 
+>> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> 
+>> Hi Vlastimil,
+>> 
+>> This patch increases kmod selftest (stress module loader) runtime by about
+>> ~50-60%, from ~200s to ~300s total execution time. My tested kernel has
+>> CONFIG_KVFREE_RCU_BATCHED enabled. Any idea or suggestions on what might be
+>> causing this, or how to address it?
 > 
-> HEAD commit:    dcb6fa37fd7b Linux 6.18-rc3
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11a79704580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b659f0cab27b22
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d4ab35af21e99d07ce67
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115fdf34580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1441d258580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ae6bec0d0398/disk-dcb6fa37.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/dcc732da66c3/vmlinux-dcb6fa37.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/301d1bbdecc2/Image-dcb6fa37.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d4ab35af21e99d07ce67@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
-> WARNING: CPU: 0 PID: 6720 at arch/arm64/kernel/fpsimd.c:370 fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
+> This is likely due to increased kvfree_rcu_barrier() during module unload.
 
-This warning is due to the saved state being in SVE format unexpectedly (with
-TIF_SVE clear and PSTATE.SM clear). Within task_fpsimd_load() we have:
+Hm so there are actually two possible sources of this. One is that the
+module creates some kmem_cache and calls kmem_cache_destroy() on it before
+unloading. That does kvfree_rcu_barrier() which iterates all caches via
+flush_all_rcu_sheaves(), but in this case it shouldn't need to - we could
+have a weaker form of kvfree_rcu_barrier() that only guarantees flushing of
+that single cache.
 
-	switch (current->thread.fp_type) {
-	...
-	case FP_STATE_SVE:
-		if (!thread_sm_enabled(&current->thread))
-			WARN_ON_ONCE(!test_and_set_thread_flag(TIF_SVE));
+The other source is codetag_unload_module(), and I'm afraid it's this one as
+it's hooked to evey module unload. Do you have CONFIG_CODE_TAGGING enabled?
+Disabling it should help in this case, if you don't need memory allocation
+profiling for that stress test. I think there's some space for improvement -
+when compiled in but memalloc profiling never enabled during the uptime,
+this could probably be skipped? Suren?
 
-There's definitely some bug that allowed the task to get into a state that
-should be forbidden.
+> It currently iterates over all CPUs x slab caches (that enabled sheaves,
+> there should be only a few now) pair to make sure rcu sheaf is flushed
+> by the time kvfree_rcu_barrier() returns.
 
-I see that the repro has:
+Yeah, also it's done under slab_mutex. Is the stress test trying to unload
+multiple modules in parallel? That would make things worse, although I'd
+expect there's a lot serialization in this area already.
 
-	ptrace$setregset(0x4205, r0, 0x405, &(0x7f0000000000)={0x0, 0x300})
+Unfortunately it will get worse with sheaves extended to all caches. We
+could probably mark caches once they allocate their first rcu_free sheaf
+(should not add visible overhead) and keep skipping those that never did.
+> Just being curious, do you have any serious workload that depends on
+> the performance of module unload?
 
-... which looks to be a write to NT_ARM_SVE.
-
-That suggests there's some path through sve_set_common() that leaves the task
-in an inconsistent state.
-
-From a qucik look, it appears that's possible as a result of a partial SVE
-write; I'll go check and see what we can do to fix that.
-
-Mark.
-
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6720 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
-> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> pc : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
-> pc : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
-> lr : task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline]
-> lr : fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746
-> sp : ffff8000a1047de0
-> x29: ffff8000a1047de0 x28: ffff0000dcfd9ec0 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000008 x24: 0000000000000040
-> x23: 00000000000020ff x22: dfff800000000000 x21: 1fffe0001b9fb3d8
-> x20: 0000000000000000 x19: ffff0000dcfd9ec0 x18: 1fffe000337db690
-> x17: ffff80008ae011f8 x16: ffff80008052ae04 x15: 0000000000000001
-> x14: 1fffe0001b9fb3d8 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff60001b9fb3d9 x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : ffff0000dcfd9ec0 x7 : 0000000000000000 x6 : 0000000000000000
-> x5 : 0000000000000001 x4 : 0000000000000008 x3 : ffff8000801f8344
-> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-> Call trace:
->  task_fpsimd_load arch/arm64/kernel/fpsimd.c:370 [inline] (P)
->  fpsimd_restore_current_state+0x4cc/0x708 arch/arm64/kernel/fpsimd.c:1746 (P)
->  arch_exit_to_user_mode_work arch/arm64/include/asm/entry-common.h:25 [inline]
->  exit_to_user_mode_loop+0xe4/0x178 kernel/entry/common.c:46
->  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
->  arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
->  el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
->  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-> irq event stamp: 129
-> hardirqs last  enabled at (127): [<ffff80008ae151bc>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-> hardirqs last  enabled at (127): [<ffff80008ae151bc>] _raw_spin_unlock_irq+0x30/0x80 kernel/locking/spinlock.c:202
-> hardirqs last disabled at (129): [<ffff80008adecb80>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-> softirqs last  enabled at (8): [<ffff8000801f95fc>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-> softirqs last disabled at (128): [<ffff8000801f95c8>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
 
