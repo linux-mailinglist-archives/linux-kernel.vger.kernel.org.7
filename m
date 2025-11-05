@@ -1,190 +1,277 @@
-Return-Path: <linux-kernel+bounces-885930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48900C3451B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6022FC3451E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 08:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152C318C7962
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295A918C7DD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 07:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5F22D9EED;
-	Wed,  5 Nov 2025 07:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588572DC346;
+	Wed,  5 Nov 2025 07:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TDkYgLTG"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtqN0hLm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883222D373F;
-	Wed,  5 Nov 2025 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782162D738A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762328372; cv=none; b=Ha02arTiRn/6ATIgT+/3SVXHIi4wYgWOsKJEP2nClC2eq1Usgweb2MI/5m7G8ye6ZIr8HGk/oxYGacYChXMkJlpG93JZEqu8MlapUCoTieSV9uOBsocnG931E0yfURlBoAbxTccvLkVygketpMFihj0vMeAnNYtsLJcqXk1phks=
+	t=1762328375; cv=none; b=J10dDGvpRrfqE06yQRNdPP2iHMEdS5zpASkXxnykLDVi+vT05vUY+SiupITFvwh7mdJ4KKD5bJC14izTDbhfH5qV5AW0zdxXwayfhh3VIZK+HgYVObx37c5x6oXJ9qSXe+bR6DamLrJVr12Nl0LGTWmWtV7Lu4T0sEDj3NnNmd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762328372; c=relaxed/simple;
-	bh=u0VVf8ZqHrJjYoFxcL413lScx3zM7KnGyo1FXINg9SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Da8dRY8H+XrPoazryhuE/iO/A5LiTsL1geM4cuCncRdpqUJuQvSnZ52+WeTqO0KXlag5L3rZxKUpgRi5ftzLxz+NvvMCKNHF4JL9NnWuXtzkZldz+Bj6wx4UlNXA6bQXvCvzl6Ihps7E6ohAUempfisaxK3QHobZSNJNU1z2jys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TDkYgLTG; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Nov 2025 09:39:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762328369; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=r86unFiu3koO7rhAE3NN9XZ/veKkNxb1YaySIAa69BA=;
-	b=TDkYgLTGzJZ9mm/Iwt0wL4UKO2QS+Ki1P3Z72OHQxUDxU/IDy0iLudsg0PR9bO64ZCm4aW
-	n+49sT2VfC8+NkTCADDnzjqYQc+JdIFq20pEoKdxrmCd9bE81sqtMRE7QVHd197gzWCfrx
-	1fbmVe4lj47jpCtBnjyNCK4Z3L03HAg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 13/16] rtc: bd70528: Support BD72720 rtc
-Message-ID: <f4007a3572111bc522f91f1a455a22094cdc5392.1762327887.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1762327887.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1762328375; c=relaxed/simple;
+	bh=/vg+7+Moo/OB+f9aYaClqZiz4nKKXBfk39XMf6w6D04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TpIFExMjKWsyTU2NNm3HwPMGKdZuIBc8+NS78sOr2E2eUyk9wM+TM6VS5ASxSwOSkS1lM/geEOA7gk+/dSuiVEMKoac92T18/j0yt/wK9+vs6ZfgB8Uu1RfKsxI5TSXdMY5NyPx5J/XGaqisKvYVZjdb69CTeJhEbXuspwocsMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtqN0hLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D12C2BC9E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 07:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762328375;
+	bh=/vg+7+Moo/OB+f9aYaClqZiz4nKKXBfk39XMf6w6D04=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NtqN0hLm4UCa0Eqs6HyuOcN8CZKcy1uTdfgGrGsELK3A3i0BgYb/EErEHZ4jMAdoi
+	 OcRtAN+ngjejWWVHF2+oOVdzB4MAt/+ZbjJoV77E6e1i7zExEgIOXLwcG2hX2N7Z6B
+	 ibFTN/x/IBVtmPrOkguUdN+UY+7kcNTyuB7KGhNNKmyLaSdO2bqVRD9Rp9kUqloUSl
+	 2fM609spqUZ3K1Zke0jWD4jwhTyDg8exZ+uWKA0Zz7tZbefnbu6FrXbMU5sAJOD9xm
+	 P+nGKPEQwWlR91xixsnXWML8/o2qV0G+wrRD/Y0j7Fp/7J0u7wWfAL/ebL+1QmtYOn
+	 sg/TWYo1TP4MA==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7867497ad2fso9001057b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 23:39:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXIV9mKvDFVyi70OyfwJGn/KUwRjSu3/qxk2Q/OszOLjYJMm0Gs3QlqtaV4u4Uy5AA27h2Qak7WRG1tNIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTien48yhwh5bKJRlrQHrJG/PhHeSXSQLBxcxQTuFPQVrIX6af
+	qDS6/nYd5DJ9XTClEYrCfYgi2SzoyTq2nXSaeNMqMMhDvcmkh3i6WA4oGVFckGksdkxF6JTKB6E
+	QYBT9F2DFPyxxEchrUvu6R8/zrH64fD/mzWhwBI+e5g==
+X-Google-Smtp-Source: AGHT+IGX86xgQBCmLrk/QzKuO4utxmWpZrge7RSgHnrJJ9y/6Mf1fWxn/yJu+oXQe4PK+p2VLbMWjHC84pqTrQmHqBE=
+X-Received: by 2002:a05:690e:190a:b0:63e:29af:bd23 with SMTP id
+ 956f58d0204a3-63fc74addabmr4307350d50.4.1762328374083; Tue, 04 Nov 2025
+ 23:39:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NgQJ7vh4x8uZ5ndB"
-Content-Disposition: inline
-In-Reply-To: <cover.1762327887.git.mazziesaccount@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
-
---NgQJ7vh4x8uZ5ndB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+In-Reply-To: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 4 Nov 2025 23:39:22 -0800
+X-Gmail-Original-Message-ID: <CACePvbWgMpKgHLB1=u0hbjb5Koncc11TpLLBd6objAs0PaKV1A@mail.gmail.com>
+X-Gm-Features: AWmQ_bnIYaNmRXhdYNKfzLAmy6l6ZxVb1e89MkVAHp2LAIM_idVKUcOc1WkvZys
+Message-ID: <CACePvbWgMpKgHLB1=u0hbjb5Koncc11TpLLBd6objAs0PaKV1A@mail.gmail.com>
+Subject: Re: [PATCH 00/19] mm, swap: never bypass swap cache and cleanup flags
+ (swap table phase II)
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+Sorry I have been super busy and late to the review party.
 
-The BD72720 has similar RTC block as a few other ROHM PMICs.
+I am still catching up on my backlogs.
 
-Add support for BD72720 RTC.
+The cover letter title is a bit too long, I suggest you put the swap
+table phase II in the beginning of the title rather than the end. The
+title is too long and "phase II" gets wrapped to another line. Maybe
+just use "swap table phase II" as the cover letter title is good
+enough. You can explain what this series does in more detail in the
+body of the cover letter.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Also we can mention the total estimate of phases for the swap tables
+(4-5 phases?). Does not need to be precise, just serves as an overall
+indication of the swap table progress bar.
 
----
-Revision history:
- RFCv1 =3D>:
- - No changes
----
- drivers/rtc/Kconfig       |  3 ++-
- drivers/rtc/rtc-bd70528.c | 21 ++++++++++++++-------
- 2 files changed, 16 insertions(+), 8 deletions(-)
+On Wed, Oct 29, 2025 at 8:59=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> This series removes the SWP_SYNCHRONOUS_IO swap cache bypass code and
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 2933c41c77c8..418f6c28847a 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -561,7 +561,8 @@ config RTC_DRV_BD70528
- 	depends on MFD_ROHM_BD71828
- 	help
- 	  If you say Y here you will get support for the RTC
--	  block on ROHM BD71815 and BD71828 Power Management IC.
-+	  block on ROHM BD71815, BD71828 and BD72720 Power
-+	  Management ICs.
-=20
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-bd70528.
-diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-index 954ac4ef53e8..4c8599761b2e 100644
---- a/drivers/rtc/rtc-bd70528.c
-+++ b/drivers/rtc/rtc-bd70528.c
-@@ -7,6 +7,7 @@
- #include <linux/bcd.h>
- #include <linux/mfd/rohm-bd71815.h>
- #include <linux/mfd/rohm-bd71828.h>
-+#include <linux/mfd/rohm-bd72720.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -262,13 +263,13 @@ static int bd70528_probe(struct platform_device *pdev)
-=20
- 		/*
- 		 * See also BD718XX_ALM_EN_OFFSET:
--		 * This works for BD71828 and BD71815 as they have same offset
--		 * between ALM0 start and ALM0_MASK. If new ICs are to be
--		 * added this requires proper check as ALM0_MASK is not located
--		 * at the end of ALM0 block - but after all ALM blocks so if
--		 * amount of ALMs differ the offset to enable/disable is likely
--		 * to be incorrect and enable/disable must be given as own
--		 * reg address here.
-+		 * This works for BD71828, BD71815, and BD72720 as they all
-+		 * have same offset between the ALM0 start and the ALM0_MASK.
-+		 * If new ICs are to be added this requires proper check as
-+		 * the  ALM0_MASK is not located at the end of ALM0 block -
-+		 * but after all ALM blocks. If amount of ALMs differ, the
-+		 * offset to enable/disable is likely to be incorrect and
-+		 * enable/disable must be given as own reg address here.
- 		 */
- 		bd_rtc->bd718xx_alm_block_start =3D BD71815_REG_RTC_ALM_START;
- 		hour_reg =3D BD71815_REG_HOUR;
-@@ -278,6 +279,11 @@ static int bd70528_probe(struct platform_device *pdev)
- 		bd_rtc->bd718xx_alm_block_start =3D BD71828_REG_RTC_ALM_START;
- 		hour_reg =3D BD71828_REG_RTC_HOUR;
- 		break;
-+	case ROHM_CHIP_TYPE_BD72720:
-+		bd_rtc->reg_time_start =3D BD72720_REG_RTC_START;
-+		bd_rtc->bd718xx_alm_block_start =3D BD72720_REG_RTC_ALM_START;
-+		hour_reg =3D BD72720_REG_RTC_HOUR;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "Unknown chip\n");
- 		return -ENOENT;
-@@ -337,6 +343,7 @@ static int bd70528_probe(struct platform_device *pdev)
- static const struct platform_device_id bd718x7_rtc_id[] =3D {
- 	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
- 	{ "bd71815-rtc", ROHM_CHIP_TYPE_BD71815 },
-+	{ "bd72720-rtc", ROHM_CHIP_TYPE_BD72720 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
---=20
-2.51.0
+Great job!
 
+> special swap bits including SWAP_HAS_CACHE, along with many historical
+> issues. The performance is about ~20% better for some workloads, like
+> Redis with persistence. This also cleans up the code to prepare for
+> later phases, some patches are from a previously posted series.
 
---NgQJ7vh4x8uZ5ndB
-Content-Type: application/pgp-signature; name=signature.asc
+That is wonderful we can remove SWAP_HAS_CACHE and remove sync IO swap
+cache bypass. Swap table is so fast the bypass does not make any sense
+any more.
 
------BEGIN PGP SIGNATURE-----
+> Swap cache bypassing and swap synchronization in general had many
+> issues. Some are solved as workarounds, and some are still there [1]. To
+> resolve them in a clean way, one good solution is to always use swap
+> cache as the synchronization layer [2]. So we have to remove the swap
+> cache bypass swap-in path first. It wasn't very doable due to
+> performance issues, but now combined with the swap table, removing
+> the swap cache bypass path will instead improve the performance,
+> there is no reason to keep it.
+>
+> Now we can rework the swap entry and cache synchronization following
+> the new design. Swap cache synchronization was heavily relying on
+> SWAP_HAS_CACHE, which is the cause of many issues. By dropping the usage
+> of special swap map bits and related workarounds, we get a cleaner code
+> base and prepare for merging the swap count into the swap table in the
+> next step.
+>
+> Test results:
+>
+> Redis / Valkey bench:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Testing on a ARM64 VM 1.5G memory:
+> Server: valkey-server --maxmemory 2560M
+> Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t get
+>
+>         no persistence              with BGSAVE
+> Before: 460475.84 RPS               311591.19 RPS
+> After:  451943.34 RPS (-1.9%)       371379.06 RPS (+19.2%)
+>
+> Testing on a x86_64 VM with 4G memory (system components takes about 2G):
+> Server:
+> Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t get
+>
+>         no persistence              with BGSAVE
+> Before: 306044.38 RPS               102745.88 RPS
+> After:  309645.44 RPS (+1.2%)       125313.28 RPS (+22.0%)
+>
+> The performance is a lot better when persistence is applied. This should
+> apply to many other workloads that involve sharing memory and COW. A
+> slight performance drop was observed for the ARM64 Redis test: We are
+> still using swap_map to track the swap count, which is causing redundant
+> cache and CPU overhead and is not very performance-friendly for some
+> arches. This will be improved once we merge the swap map into the swap
+> table (as already demonstrated previously [3]).
+>
+> vm-scabiity
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> usemem --init-time -O -y -x -n 32 1536M (16G memory, global pressure,
+> simulated PMEM as swap), average result of 6 test run:
+>
+>                            Before:         After:
+> System time:               282.22s         283.47s
+> Sum Throughput:            5677.35 MB/s    5688.78 MB/s
+> Single process Throughput: 176.41 MB/s     176.23 MB/s
+> Free latency:              518477.96 us    521488.06 us
+>
+> Which is almost identical.
+>
+> Build kernel test:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Test using ZRAM as SWAP, make -j48, defconfig, on a x86_64 VM
+> with 4G RAM, under global pressure, avg of 32 test run:
+>
+>                 Before            After:
+> System time:    1379.91s          1364.22s (-0.11%)
+>
+> Test using ZSWAP with NVME SWAP, make -j48, defconfig, on a x86_64 VM
+> with 4G RAM, under global pressure, avg of 32 test run:
+>
+>                 Before            After:
+> System time:    1822.52s          1803.33s (-0.11%)
+>
+> Which is almost identical.
+>
+> MySQL:
+> =3D=3D=3D=3D=3D=3D
+> sysbench /usr/share/sysbench/oltp_read_only.lua --tables=3D16
+> --table-size=3D1000000 --threads=3D96 --time=3D600 (using ZRAM as SWAP, i=
+n a
+> 512M memory cgroup, buffer pool set to 3G, 3 test run and 180s warm up).
+>
+> Before: 318162.18 qps
+> After:  318512.01 qps (+0.01%)
+>
+> In conclusion, the result is looking better or identical for most cases,
+> and it's especially better for workloads with swap count > 1 on SYNC_IO
+> devices, about ~20% gain in above test. Next phases will start to merge
+> swap count into swap table and reduce memory usage.
+>
+> One more gain here is that we now have better support for THP swapin.
+> Previously, the THP swapin was bound with swap cache bypassing, which
+> only works for single-mapped folios. Removing the bypassing path also
+> enabled THP swapin for all folios. It's still limited to SYNC_IO
+> devices, though, this limitation can will be removed later. This may
 
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkK/ykACgkQeFA3/03a
-ocWImwf/WY7gh5m0da4TXxuA8PLGZu7hGciU2Vker6Re6XPjElNRNwfGRbHy3z+C
-Kduzpa2NCahG8bLWTxAalMpC8lyahmC7TWO73z075gQ4HG0TWWR6jrdyaJrc5FGK
-FEQ1faPVBnLz/KFiXkr3lIrGIqZfX7DG1EGXZAVFuefl2M8/GDO3mp0Nbi7z62nL
-sWxwCJImr/mvxXPYC8OENsEgExRx7HLrNIW/FkYc3a4C2uO2sW3uAEVCWKD3+MYf
-5+v5Vn64gVSy9ND4xbmEGeOFvFqCt12zYQFE7wyztZVKiSY8c9k1KNFqVGKwvcbB
-HAoDjZ+P5IXuc34pNhCShrw2onkeEg==
-=aPaT
------END PGP SIGNATURE-----
+Grammer. "though, this"  "can will be"
 
---NgQJ7vh4x8uZ5ndB--
+ The THP swapin is still limited to SYNC_IO devices.  This limitation
+can be removed later.
+
+Chris
+
+> cause more serious thrashing for certain workloads, but that's not an
+> issue caused by this series, it's a common THP issue we should resolve
+> separately.
+>
+> Link: https://lore.kernel.org/linux-mm/CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG03+=
+2i_mhuP5CQPSOPrmQ@mail.gmail.com/ [1]
+> Link: https://lore.kernel.org/linux-mm/20240326185032.72159-1-ryncsn@gmai=
+l.com/ [2]
+> Link: https://lore.kernel.org/linux-mm/20250514201729.48420-1-ryncsn@gmai=
+l.com/ [3]
+>
+> Suggested-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+> Kairui Song (18):
+>       mm/swap: rename __read_swap_cache_async to swap_cache_alloc_folio
+>       mm, swap: split swap cache preparation loop into a standalone helpe=
+r
+>       mm, swap: never bypass the swap cache even for SWP_SYNCHRONOUS_IO
+>       mm, swap: always try to free swap cache for SWP_SYNCHRONOUS_IO devi=
+ces
+>       mm, swap: simplify the code and reduce indention
+>       mm, swap: free the swap cache after folio is mapped
+>       mm/shmem: never bypass the swap cache for SWP_SYNCHRONOUS_IO
+>       mm, swap: swap entry of a bad slot should not be considered as swap=
+ped out
+>       mm, swap: consolidate cluster reclaim and check logic
+>       mm, swap: split locked entry duplicating into a standalone helper
+>       mm, swap: use swap cache as the swap in synchronize layer
+>       mm, swap: remove workaround for unsynchronized swap map cache state
+>       mm, swap: sanitize swap entry management workflow
+>       mm, swap: add folio to swap cache directly on allocation
+>       mm, swap: check swap table directly for checking cache
+>       mm, swap: clean up and improve swap entries freeing
+>       mm, swap: drop the SWAP_HAS_CACHE flag
+>       mm, swap: remove no longer needed _swap_info_get
+>
+> Nhat Pham (1):
+>       mm/shmem, swap: remove SWAP_MAP_SHMEM
+>
+>  arch/s390/mm/pgtable.c |   2 +-
+>  include/linux/swap.h   |  77 ++---
+>  kernel/power/swap.c    |  10 +-
+>  mm/madvise.c           |   2 +-
+>  mm/memory.c            | 270 +++++++---------
+>  mm/rmap.c              |   7 +-
+>  mm/shmem.c             |  75 ++---
+>  mm/swap.h              |  69 +++-
+>  mm/swap_state.c        | 341 +++++++++++++-------
+>  mm/swapfile.c          | 849 +++++++++++++++++++++----------------------=
+------
+>  mm/userfaultfd.c       |  10 +-
+>  mm/vmscan.c            |   1 -
+>  mm/zswap.c             |   4 +-
+>  13 files changed, 840 insertions(+), 877 deletions(-)
+> ---
+> base-commit: f30d294530d939fa4b77d61bc60f25c4284841fa
+> change-id: 20251007-swap-table-p2-7d3086e5c38a
+>
+> Best regards,
+> --
+> Kairui Song <kasong@tencent.com>
+>
 
