@@ -1,196 +1,93 @@
-Return-Path: <linux-kernel+bounces-885710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9729EC33BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:15:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DC2C33BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 03:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BDC14E35D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:15:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8C294E2E80
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 02:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2038212548;
-	Wed,  5 Nov 2025 02:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5CE20A5C4;
+	Wed,  5 Nov 2025 02:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K/MnzXtg"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="DHFCDRTM"
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44252BB1D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550181F5E6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 02:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762308903; cv=none; b=O3zpMBMA556jmvXqis14ALmLZJJsizBD+tfdq0ukWn84wmk4aoM5nHxoM9DWyJgXV0Q+4dG6R2ASbejmiN/Hk/gNlZY+BJ745a6Rq0VhdjqSNdPt3Skr/l7WX+2zVLQ6oF0/kZkbi/OSy794Wvipj7DccjcMWbd/NaagYlcLL84=
+	t=1762309037; cv=none; b=BQdmmAKBf2XjdQ9SWdPamOl19RH63zMhAPp4qwtB1YmdI1VkE4H0/C8vmshijdDoEcsfX9btuiiohCjVpbWq3DIqBWxJGePFRnBENVhifhF6aH4oLdZzjlDC/wnuCMOYe1Kae5DULjyHAzTsLt+VgzTFWNL73ofMhO4GPqMUnK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762308903; c=relaxed/simple;
-	bh=RXDWshm6Ex7MNL5cVbopmcYhAaNsDnmZWnc7+Ob5r9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PaUxLq9UOLRq2TySsCJCIuefVOBU9MTvgnpgU5IG6GZu2mYi1+zdzxnZA6hMwp63V1a/R/1TV4m6u8SBG2qkWczKa8xr2XaLmusIHe+nNt5GFsBbDpjbNLAoqdVT8kKu4+6yxckQuCGXJ0jkoTC/PhWQHVPGmtkNJKOXIi/lFZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K/MnzXtg; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <697dc64e-8707-44ba-8cda-ba48747f2973@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762308897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0v5bIKUko3vv2CrNyaHGGFDSMjC9KVNlTvQ9aEKd2Vg=;
-	b=K/MnzXtgAAmStJjRw/4nBcq0PtRg7On7jB3oQbBRj4pcHZnuhPiYyEqwYErAVwbsgBgHF8
-	JiETZCObVdY4/m9HFhGwFQjGfxtzWRiiSX8crjVJ9AOznoklNZZ8MHRAYzmHukg6o3cx7+
-	ullmW0uAFJaFFG+/rf+s5dUUS3kFr9Q=
-Date: Wed, 5 Nov 2025 10:14:40 +0800
+	s=arc-20240116; t=1762309037; c=relaxed/simple;
+	bh=kCseptUFxbSlZvZ2Phsw4zdoMYwzMWDL7ZgnSRxT9qo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thGsjzr6qbUwJPHNsrQ20ubCgVf6cuIjNzlmjxnUWjAT/0j3weX0IuwvgNGACjEtgIPfWz3CyAsleJ8v702NjP+PXTH5a3aoDEIizxF1ZYn9GtAhWiBRt3+6LZiMaSKolt49sw1n35pUm3sPp48O9YoQB8Z4JpltgF5GSq6bJFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=DHFCDRTM; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2869c94a4;
+	Wed, 5 Nov 2025 10:17:01 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: dhowells@redhat.com
+Cc: marc.dionne@auristor.com,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] afs: use kvfree() to free memory allocated by kvcalloc()
+Date: Wed,  5 Nov 2025 02:16:58 +0000
+Message-Id: <20251105021658.1803652-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v4 4/4] selftests/bpf: Add tests to verify
- freeing the special fields when update hash and local storage maps
-Content-Language: en-US
-To: Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
- linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-References: <20251030152451.62778-1-leon.hwang@linux.dev>
- <20251030152451.62778-5-leon.hwang@linux.dev>
- <02b8c4ba-eb24-41e2-813c-98b83561ef9d@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leon Hwang <leon.hwang@linux.dev>
-In-Reply-To: <02b8c4ba-eb24-41e2-813c-98b83561ef9d@linux.dev>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-HM-Tid: 0a9a51cd9f7c03a1kunm21076fca6d09ce
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQkMaVk1LSx4fHUJNSx1NSVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=DHFCDRTMwfwpUPoN5N4Ri0cN4YlNHNgHdm0YCrQHS4M6ZTFeXz9T2wz5SCQSlvXjXoUhNNHWyk6aAExUiKt89O6mXIVO+6Qi/C8zVgMaU9L35IEUpvNUrRmgUrOjJD1NvYlYpwshTdjtDM0AhafcjdVUZHD2nJl+hMpegLhtZJc=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=SJJUc1UhBKizBdL83Bkhd6oYJLODgtHHo+SozLlqtcc=;
+	h=date:mime-version:subject:message-id:from;
 
+op->more_files is allocated with kvcalloc() but released via
+afs_put_operation(), which uses kfree() internally. This mismach prevents
+the resource from being released properly and may lead to undefined
+behavior.
 
+Fix this by using kvfree() to free op->more_files to match its allocation
+method.
 
-On 5/11/25 01:30, Yonghong Song wrote:
-> 
-> 
-> On 10/30/25 8:24 AM, Leon Hwang wrote:
->> Add tests to verify that updating hash and local storage maps decrements
->> refcount when BPF_KPTR_REF objects are involved.
->>
->> The tests perform the following steps:
->>
->> 1. Call update_elem() to insert an initial value.
->> 2. Use bpf_refcount_acquire() to increment the refcount.
->> 3. Store the node pointer in the map value.
->> 4. Add the node to a linked list.
->> 5. Probe-read the refcount and verify it is *2*.
->> 6. Call update_elem() again to trigger refcount decrement.
->> 7. Probe-read the refcount and verify it is *1*.
->>
->> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> 
-> I applied this patch only (i.e., not including patches 1/2/3) to master
-> branch and do bpf selftest and all tests succeeded.
-> 
-> [root@arch-fb-vm1 bpf]# ./test_progs -t refcounted_kptr
-> #294/1   refcounted_kptr/insert_read_both: remove from tree + list:OK
-> ...
-> #294/18  refcounted_kptr/pcpu_hash_refcount_leak:OK
-> #294/19  refcounted_kptr/check_pcpu_hash_refcount:OK
-> #294/20  refcounted_kptr/hash_lock_refcount_leak:OK
-> #294/21  refcounted_kptr/check_hash_lock_refcount:OK
-> #294/22  refcounted_kptr/rbtree_sleepable_rcu:OK
-> #294/23  refcounted_kptr/rbtree_sleepable_rcu_no_explicit_rcu_lock:OK
-> #294/24  refcounted_kptr/cgroup_storage_lock_refcount_leak:OK
-> #294/25  refcounted_kptr/check_cgroup_storage_lock_refcount:OK
-> ...
-> 
-> Did I miss anything?
-> 
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ fs/afs/fs_operation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oops.
-
-You should run:
-./test_progs -t kptr_refcount
-
-The results are as follows:
-
-test_percpu_hash_refcount_leak:PASS:libbpf_num_possible_cpus 0 nsec
-test_percpu_hash_refcount_leak:PASS:calloc values 0 nsec
-test_percpu_hash_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/1   kptr_refcount_leak/percpu_hash_refcount_leak:FAIL
-test_hash_lock_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/2   kptr_refcount_leak/hash_lock_refcount_leak:FAIL
-test_cgroup_storage_lock_refcount_leak:PASS:setup_cgroup_environment 0 nsec
-test_cgroup_storage_lock_refcount_leak:PASS:get_root_cgroup 0 nsec
-test_cgroup_storage_lock_refcount_leak:PASS:refcounted_kptr__open_and_load
-0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/3   kptr_refcount_leak/cgroup_storage_lock_refcount_leak:FAIL
-#158     kptr_refcount_leak:FAIL
-
-All error logs:
-test_percpu_hash_refcount_leak:PASS:libbpf_num_possible_cpus 0 nsec
-test_percpu_hash_refcount_leak:PASS:calloc values 0 nsec
-test_percpu_hash_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/1   kptr_refcount_leak/percpu_hash_refcount_leak:FAIL
-test_hash_lock_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/2   kptr_refcount_leak/hash_lock_refcount_leak:FAIL
-test_cgroup_storage_lock_refcount_leak:PASS:setup_cgroup_environment 0 nsec
-test_cgroup_storage_lock_refcount_leak:PASS:get_root_cgroup 0 nsec
-test_cgroup_storage_lock_refcount_leak:PASS:refcounted_kptr__open_and_load
-0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:PASS:refcount 0 nsec
-test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
-test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
-test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
-#158/3   kptr_refcount_leak/cgroup_storage_lock_refcount_leak:FAIL
-#158     kptr_refcount_leak:FAIL
-Summary: 0/0 PASSED, 0 SKIPPED, 1 FAILED
-
-All three tests failed because the refcount remained 2 instead of
-decreasing to 1 after the second update_elem() call.
-
-The CI result [1] also demonstrates this issue.
-
-Sorry for the misleading test name earlier.
-
-Links:
-[1] https://github.com/kernel-patches/bpf/pull/10203
-
-Thanks,
-Leon
-
-[...]
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index 8418813ee043..ae0c9750c6b6 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -348,7 +348,7 @@ int afs_put_operation(struct afs_operation *op)
+ 		for (i = 0; i < op->nr_files - 2; i++)
+ 			if (op->more_files[i].put_vnode)
+ 				iput(&op->more_files[i].vnode->netfs.inode);
+-		kfree(op->more_files);
++		kvfree(op->more_files);
+ 	}
+ 
+ 	if (op->estate) {
+-- 
+2.34.1
 
 
